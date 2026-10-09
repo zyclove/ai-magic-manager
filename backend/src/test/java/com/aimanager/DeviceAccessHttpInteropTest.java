@@ -345,6 +345,7 @@ class DeviceAccessHttpInteropTest {
                 signer.publicKeys(),
                 "grants",
                 grants));
+    runDart(fixture, "context");
     runDart(fixture, "missing");
     assertThat(count("access_window_attempts", tenant, " AND delivery_state='REJECTED'"))
         .isEqualTo(2);
@@ -374,6 +375,7 @@ class DeviceAccessHttpInteropTest {
     assertThat(count("access_window_documents", tenant, " AND action='REMOVE_ACCESS_WINDOW'"))
         .isEqualTo(2);
     transactions.executeWithoutResult(status -> credentials.revoke(tenant, registration));
+    runDart(fixture, "context-denied");
     runDart(fixture, "unauthenticated");
   }
 

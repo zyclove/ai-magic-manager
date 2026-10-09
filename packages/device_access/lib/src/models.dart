@@ -8,6 +8,36 @@ class AccessFailure implements Exception {
   String toString() => 'AccessFailure($code)';
 }
 
+/// Authenticated device facts only. Issuer and trust keys remain installation
+/// configuration; a response or an unverified access JWS cannot choose them.
+class AccessDeviceContext {
+  final String tenantId, subjectId, deviceId, registrationId;
+  const AccessDeviceContext._(
+      this.tenantId, this.subjectId, this.deviceId, this.registrationId);
+  factory AccessDeviceContext.fromJson(Map<String, dynamic> value) {
+    const fields = {'tenantId', 'subjectId', 'deviceId', 'registrationId'};
+    if (value.length != fields.length ||
+        !fields.every((f) => accessId(value[f]))) {
+      throw const AccessFailure('TRANSPORT_INVALID');
+    }
+    return AccessDeviceContext._(value['tenantId'], value['subjectId'],
+        value['deviceId'], value['registrationId']);
+  }
+  void requireIdentity(
+      {required String tenantId,
+      required String deviceId,
+      required String registrationId}) {
+    if (this.tenantId != tenantId ||
+        this.deviceId != deviceId ||
+        this.registrationId != registrationId) {
+      throw const AccessFailure('ACCESS_TARGET_CHANGED');
+    }
+  }
+
+  @override
+  String toString() => 'AccessDeviceContext(authenticated-binding)';
+}
+
 class DeviceAccessScope {
   final String issuer, tenantId, subjectId, deviceId, registrationId;
   const DeviceAccessScope(

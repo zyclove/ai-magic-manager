@@ -1,4 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
+import 'package:device_access/device_access.dart';
 import 'package:device_identity/device_identity.dart';
 import 'package:device_observation/device_observation.dart';
 import 'package:flutter/foundation.dart';
@@ -110,6 +113,68 @@ class AndroidObservationStore implements ObservationStore {
       await backend._flush();
     } catch (_) {
       throw const ObservationFailure('OBSERVATION_STORAGE_FAILED');
+    }
+  }
+}
+
+/// Scope-specific database keys protected by the existing Android storage SDK.
+/// This serializes callers in the app isolate; no multi-isolate writer support.
+/// A missing key must never silently replace an existing database's key.
+class AndroidAccessKeyStore {
+  static Future<void> _tail = Future.value();
+  final AndroidIdentityStore backend;
+  AndroidAccessKeyStore(
+      {FlutterSecureStorage? storage,
+      MethodChannel channel =
+          const MethodChannel('com.aimanager.child/runtime'),
+      bool Function()? available})
+      : backend = AndroidIdentityStore(
+            storage: storage, channel: channel, available: available);
+
+  Future<Uint8List> keyFor(String scopeKey,
+      {required bool existingDatabase}) async {
+    if (!RegExp(r'^[a-f0-9]{64}$').hasMatch(scopeKey)) {
+      throw const AccessFailure('ACCESS_KEY_UNAVAILABLE');
+    }
+    final previous = _tail;
+    final done = Completer<void>();
+    _tail = done.future;
+    await previous;
+    try {
+      if (!backend.available()) {
+        throw const AccessFailure('ACCESS_KEY_UNAVAILABLE');
+      }
+      final name = 'access_key_v1_$scopeKey';
+      var value = await backend.storage.read(key: name);
+      await backend._flush();
+      if (value == null) {
+        if (existingDatabase) {
+          throw const AccessFailure('ACCESS_KEY_UNAVAILABLE');
+        }
+        final random = Random.secure();
+        final generated =
+            base64Encode(List.generate(32, (_) => random.nextInt(256)));
+        await backend.storage.write(key: name, value: generated);
+        await backend._flush();
+        value = await backend.storage.read(key: name);
+        await backend._flush();
+        if (value != generated) {
+          throw const AccessFailure('ACCESS_KEY_UNAVAILABLE');
+        }
+      }
+      // Bound input before decoding and reject noncanonical or truncated keys.
+      if (value == null || !RegExp(r'^[A-Za-z0-9+/]{43}=$').hasMatch(value)) {
+        throw const AccessFailure('ACCESS_KEY_UNAVAILABLE');
+      }
+      final bytes = base64Decode(value);
+      if (bytes.length != 32 || base64Encode(bytes) != value) {
+        throw const AccessFailure('ACCESS_KEY_UNAVAILABLE');
+      }
+      return bytes;
+    } catch (_) {
+      throw const AccessFailure('ACCESS_KEY_UNAVAILABLE');
+    } finally {
+      done.complete();
     }
   }
 }

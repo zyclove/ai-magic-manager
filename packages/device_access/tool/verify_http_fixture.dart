@@ -11,6 +11,8 @@ void require(bool condition) {
 
 Future<void> main(List<String> arguments) async {
   const modes = {
+    'context',
+    'context-denied',
     'missing',
     'recover-unconfirmed',
     'resume',
@@ -29,6 +31,36 @@ Future<void> main(List<String> arguments) async {
   }
   final mode = arguments[1];
   final grants = (data['grants'] as List).cast<Map<String, dynamic>>();
+  if (mode == 'context' || mode == 'context-denied') {
+    final transport = DeviceAccessTransport(
+        apiRoot: apiRoot,
+        credential: () async => data['credential'],
+        allowLoopbackHttp: true);
+    try {
+      if (mode == 'context') {
+        final context = await transport.context();
+        context.requireIdentity(
+            tenantId: data['tenantId'],
+            deviceId: data['deviceId'],
+            registrationId: data['registrationId']);
+        require(context.subjectId == data['subjectId']);
+      } else {
+        var denied = false;
+        try {
+          await transport.context();
+        } on AccessTransportFailure catch (error) {
+          denied =
+              error.status == 401 && error.code == 'DEVICE_UNAUTHENTICATED';
+        }
+        require(denied);
+      }
+      stdout.writeln(
+          'PASS $mode: authenticated Spring/Dart context; no cached or caller-selected binding.');
+    } finally {
+      transport.close();
+    }
+    return;
+  }
   final database = await databaseFactoryIo
       .openDatabase('${file.parent.path}/access-cache.db');
   final verifier = AccessWindowVerifier(

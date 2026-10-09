@@ -198,6 +198,10 @@ class DeviceAccessTransport {
     }
   }
 
+  /// The authenticated device binding comes from the credential, never UI/JWS.
+  Future<AccessDeviceContext> context() =>
+      _request('GET', 'access-context', AccessDeviceContext.fromJson);
+
   Future<AccessReferencePage> list({String? cursor, int limit = 10}) {
     if ((cursor != null && !accessId(cursor)) || limit < 1 || limit > 100) {
       throw ArgumentError('Invalid access page input');

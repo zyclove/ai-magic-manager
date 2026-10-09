@@ -3,8 +3,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
 
-Future<Database> openConfigurationDatabase() async {
-  final directory = await getApplicationSupportDirectory();
+Future<Database> openConfigurationDatabase({String? directoryPath}) async {
+  final directory =
+      directoryPath ?? (await getApplicationSupportDirectory()).path;
   return databaseFactoryIo
-      .openDatabase(path.join(directory.path, 'configuration-v1.db'));
+      // neverFails (the SDK default) may erase corruption and resurrect state.
+      .openDatabase(path.join(directory, 'configuration-v1.db'),
+          mode: DatabaseMode.create);
 }

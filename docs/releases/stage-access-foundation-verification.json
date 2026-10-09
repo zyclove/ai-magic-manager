@@ -1,0 +1,203 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-09T19:24:07.518574+00:00",
+  "scope": "Authenticated device access context, encrypted child access database foundations and configuration corruption protection. Host/UI pending; excludes concurrent V21 notification/audit work.",
+  "parentHead": "0f67b85c2feb90a877fbe7110557af958039d999",
+  "sourceFiles": [
+    {
+      "path": "apps/child/lib/platform/access_codec.dart",
+      "sha256": "b95a681014b5b6cd674c54e85ff42e2a4f81177cb536de51b22762e14172433c"
+    },
+    {
+      "path": "apps/child/lib/platform/access_database.dart",
+      "sha256": "bfeed7ba45bb3b601b1273bbf8ebc2a374272ab51ca0e9f5eb8cd075c29c19d2"
+    },
+    {
+      "path": "apps/child/lib/platform/access_database_io.dart",
+      "sha256": "d5308d40772aeda9ded1b7d379dee3d2bba8e630aba2c398bd579d87de6ae927"
+    },
+    {
+      "path": "apps/child/lib/platform/access_database_stub.dart",
+      "sha256": "57cf766fa1bdf0909e53a80b527c52d0ab7de74699d7bd9861859b4cfbeeb970"
+    },
+    {
+      "path": "apps/child/lib/platform/configuration_database_io.dart",
+      "sha256": "5870e041323aa5e09f8b1a4c03e80fb2da57f81708fa0ebcdd58d866728877c7"
+    },
+    {
+      "path": "apps/child/lib/platform/configuration_database_stub.dart",
+      "sha256": "99bf0431a220edc7a5bb152803978507f7089d6dc2c375016df5f9cf2b066457"
+    },
+    {
+      "path": "apps/child/lib/platform/secret_store.dart",
+      "sha256": "1d598908d05f875122ed90e9d7e55847d8b3e3a36dfe16e2d68ae95af8a55603"
+    },
+    {
+      "path": "apps/child/pubspec.yaml",
+      "sha256": "f23664f3be8d743d1ebdac7ddfaab5fc9478ed7ae0e918fe1e7da1e54c87f117"
+    },
+    {
+      "path": "apps/child/pubspec.lock",
+      "sha256": "1918833053df4e030559aa8ae9d7bb07b76fd95a67d4789e6eefddf4a6dee944"
+    },
+    {
+      "path": "apps/child/test/access_database_test.dart",
+      "sha256": "f8028905088ba83dd698050233971365e99740a9a723c8ddcd1bb99c3862370e"
+    },
+    {
+      "path": "apps/child/test/access_database_open_test.dart",
+      "sha256": "7d6481fba00233ebe69b74aaf8206c329392891bb8332f9e9606dcbb6d543d2b"
+    },
+    {
+      "path": "apps/child/test/access_key_store_test.dart",
+      "sha256": "4090ecbd98b9cd9a044684c4055b8b111061e1045b9f4fc6c66873bd1096408e"
+    },
+    {
+      "path": "apps/child/test/configuration_database_test.dart",
+      "sha256": "53358b479b4a09f6ee38eb7c00669bf751acfe502159e464bb17a4d246235bed"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/fleet/internal/DeviceAccessContextController.java",
+      "sha256": "b5b2431e074a2588d812b77ae63207a46a802947775d4d24576dae4ad60a0d0a"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/fleet/internal/DeviceAccessContextService.java",
+      "sha256": "ee1baa955f4b61ae6b3f2d7976af7dfc897013321031018ad7c9a3def4040d78"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeviceAccessContextJourneyTest.java",
+      "sha256": "816e2b36cb27825ea85e78ee56d1e699013e55747c9fb28dd9afbb55de8e1c32"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeviceAccessHttpInteropTest.java",
+      "sha256": "2635efb7b6b79c2f93dccd39ef49ad7389185ecf40613c6fade45249d2721440"
+    },
+    {
+      "path": "packages/device_access/lib/src/models.dart",
+      "sha256": "013aaf6e35f03ec3820a13d722a38b5ce9ec6858cd0318b0e7e5ffd7f6dc7ab4"
+    },
+    {
+      "path": "packages/device_access/lib/src/transport.dart",
+      "sha256": "5a135e367381a119c1dcdf0bc8b736c7cf7b4760d02a2e9a0d0d2c8ded959663"
+    },
+    {
+      "path": "packages/device_access/tool/verify_http_fixture.dart",
+      "sha256": "08234a4f8f8cac934adfd80f2460cde965a57c7cb1ddc894246b5a463afe8388"
+    },
+    {
+      "path": "packages/device_access/test/context_test.dart",
+      "sha256": "26c92a5cbb8b7da81639176ad25f63d28e811385405c88d84e83f1fdadbad900"
+    }
+  ],
+  "documentFiles": [
+    {
+      "path": "docs/access-child-host-plan.md",
+      "sha256": "d8469d976c6fe0e922aeaf4cc14c0186cc361cc9fdd9474e92c5e700c88b8106"
+    },
+    {
+      "path": "docs/access-child-foundation-contract.md",
+      "sha256": "44426e02a5ac20b8e5208b9dd1a996c988b0af423fdc0a7ab176930b6a675a8c"
+    }
+  ],
+  "baselineOtherCodeBuildFilesChecked": 405,
+  "backend": {
+    "command": "mvn -B -o -Dmaven.repo.local=<workspace>/.local/m2 -Dspring.test.context.cache.maxSize=2 -Ddevice.dart.command=<flutter>/bin/dart.bat -Ddevice.access.package=<candidate>/packages/device_access -Ddevice.identity.package=<candidate>/packages/device_identity -Ddevice.policy.package=<candidate>/packages/device_policy -Dobservation.device.package=<candidate>/packages/device_observation -Dobservation.guardian.package=<candidate>/apps/guardian verify",
+    "tests": 262,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "exitCode": 0,
+    "elapsed": "02:36",
+    "httpInterop": [
+      "DeviceAccessHttpInteropTest (including context/context-denied)",
+      "DeviceConfigurationHttpInteropTest",
+      "DeviceIdentityHttpInteropTest",
+      "DeviceObservationHttpInteropTest"
+    ],
+    "moduleBoundariesPassed": true,
+    "artifactSha256": "7585a75e0f34cafd44c34753aee5e76b8219fbae24cdcc6131ccfe300a5d8dbe"
+  },
+  "mysql": {
+    "tests": 7,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "exitCode": 0,
+    "orderedMigrations": "V1-V20",
+    "isolatedSchemaAndGrantCleaned": true,
+    "sharedRuntimeReplaced": false
+  },
+  "deviceAccessSdk": {
+    "tests": 95,
+    "exitCode": 0,
+    "analysis": "No issues found"
+  },
+  "child": {
+    "tests": 37,
+    "newFileAndKeyProtectionTests": 15,
+    "exitCode": 0,
+    "analysis": "No issues found",
+    "fileStorageVerification": "Actual Sembast files: encrypted round trip, transaction rollback, reopen, wrong-key and missing-key failure retain bytes; configuration corruption retains file",
+    "keyProtectionVerification": "Mocked Flutter SDK MethodChannel with read/write durability barrier, read-back, unavailable platform, concurrent callers and missing/corrupt-key negative paths"
+  },
+  "android": {
+    "command": "flutter build apk --debug --no-pub",
+    "exitCode": 0,
+    "elapsedSeconds": 58.5,
+    "artifactSha256": "2486a64478c5d46e5707c215b575a5d3cde5fb427515685869e3c289a8e85cad",
+    "installed": false,
+    "newNativeCrossProcessKeyVerification": false
+  },
+  "redGreen": {
+    "sdkContext": "Missing model/context method RED -> 3 passing tests",
+    "codec": "Missing Codec RED -> actual encrypted file and authentication checks GREEN",
+    "privateStorage": "Missing key/opener adapters RED -> 7 initial and 2 added key protection tests GREEN",
+    "configurationCorruption": "Existing default opens corrupt file successfully (RED); explicit DatabaseMode.create retains file and throws (GREEN)",
+    "backendContext": "Missing endpoint 404 (RED); 7 real opaque authentication/security/database cases GREEN",
+    "fixtureCorrections": [
+      "Pending credential changed to real rotate service fixture",
+      "Illegal registration mutation rejected by FK; replaced with legitimate scope revocation without disabling constraints"
+    ]
+  },
+  "logs": [
+    {
+      "path": ".local/access-foundation-backend-verify.log",
+      "sha256": "a4ca7ec2d86f31beed71197702d31f7cd0642cce28728e4a307138f7dd67aea0"
+    },
+    {
+      "path": ".local/access-foundation-mysql.log",
+      "sha256": "0bb9e688b4b685b82e78a1cee75ae79a1446cb4105a15800ba1bf53c74efa93e"
+    },
+    {
+      "path": ".local/access-foundation-mysql-summary.log",
+      "sha256": "c91c1fc4707a32d16e09678975d9f3767db65b7d9bfbc12dd2dab57478e7f229"
+    },
+    {
+      "path": ".local/access-foundation-sdk-tests.log",
+      "sha256": "83c9936ad4182391f6cb9d8a3ac8664f801c65e97ea5065eb540214f86eeaec8"
+    },
+    {
+      "path": ".local/access-foundation-sdk-analysis.log",
+      "sha256": "90e7613774af3529464575b0ab224afcba9aba6af6f6693e296e6cab87564ff1"
+    },
+    {
+      "path": ".local/access-foundation-child-tests.log",
+      "sha256": "1641e2b00cd8748a26f3409a3ba1567cddf1482752e21d72b82bf4e4924135a7"
+    },
+    {
+      "path": ".local/access-foundation-child-analysis.log",
+      "sha256": "28411b335c254a16bb8ba838b4bf5951032a82ab0dc707f14d3d502730702e62"
+    },
+    {
+      "path": ".local/access-foundation-android-build.log",
+      "sha256": "0ab675df8ab30c26cf3d9a5989e669f9f1dfe686c6adb2618205f45e0242ec78"
+    }
+  ],
+  "limits": [
+    "No completed child access receiver/expiry lifecycle/UI in this stage",
+    "No device-origin child request authorization or system policy enforcement",
+    "Native APK build does not certify new key recovery across processes",
+    "No root, hardware anti-rollback or force-stop prevention guarantee",
+    "Default secure key provider currently Android only; no multi-isolate writers"
+  ]
+}
