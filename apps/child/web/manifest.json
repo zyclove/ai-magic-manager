@@ -1,0 +1,18 @@
+{
+    "name": "智能管家 · 设备端",
+    "short_name": "智能管家",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#FFFFFF",
+    "theme_color": "#19335C",
+    "description": "儿童端界面预览；安全设备身份仅在已支持的原生平台可用。",
+    "orientation": "portrait-primary",
+    "prefer_related_applications": false,
+    "icons": [
+        {
+            "src": "favicon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        }
+    ]
+}

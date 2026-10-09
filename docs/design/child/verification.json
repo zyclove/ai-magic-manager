@@ -1,0 +1,43 @@
+{
+  "date": "2026-10-09",
+  "scope": "Flutter child host / ordinary Android BYOD; system enforcement not implemented",
+  "flutter": "3.22.2",
+  "dart": "3.4.3",
+  "staticAnalysis": "passed",
+  "unitWidgetTests": {"passed": 16},
+  "configurationCompatibilityTests": {
+    "passed": 58,
+    "httpParser": "4.0.2",
+    "collection": "1.18.0",
+    "temporaryTestToolShelf": "1.4.1",
+    "productionOverridesAdded": false
+  },
+  "nativePersistence": {
+    "androidApi": 34,
+    "dedicatedEmulator": true,
+    "freshInstallation": true,
+    "processStoppedAndRestartedWithoutUninstall": true,
+    "encryptedIdentityRestored": true,
+    "persistedPrivateKeyCanSign": true,
+    "nativeConfigurationDatabaseRestored": true,
+    "cloud": "controlled substitute; not production backend interoperability evidence"
+  },
+  "ordinaryProductApk": {
+    "entrypoint": "lib/main.dart",
+    "package": "com.aimanager.child.debug",
+    "minimumApi": 24,
+    "targetApi": 34,
+    "compileApi": 36,
+    "buildPassed": true,
+    "coldLaunchAndHelpOpenClosePassed": true,
+    "configuration": "No production origin; shows deployment setup explanation",
+    "sha256": "318937fcaf27abc86a21a5d7f4997ea9dad7996c9fa6e0e441e5107ea742b042"
+  },
+  "webBuild": "passed; read-only native-unavailable preview",
+  "browserResults": "browser-qa.json",
+  "observedEnvironmentIssue": "Emulator System UI ANR initially covered ordinary app; Wait restored native interaction",
+  "physicalDeviceCertified": false,
+  "tvCertified": false,
+  "managedEnforcement": false,
+  "releaseCertified": false
+}

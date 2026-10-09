@@ -1,0 +1,34 @@
+name: child
+description: "智能管家儿童端：设备配对、身份恢复与签名配置接收。"
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: '>=3.4.3 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  device_identity:
+    path: ../../packages/device_identity
+  device_policy:
+    path: ../../packages/device_policy
+  flutter_secure_storage: 10.0.0
+  http: ^1.2.1
+  sembast: ^3.7.1
+  path_provider: ^2.1.3
+  path: ^1.9.0
+  logging: ^1.3.0
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  integration_test:
+    sdk: flutter
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true

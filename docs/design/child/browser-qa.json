@@ -1,0 +1,24 @@
+{
+  "scope": "Actual built Flutter Web; unsupported native identity explicitly disabled. No child data or credentials entered.",
+  "engine": "Installed Chrome via Playwright",
+  "results": [
+    {
+      "viewport": "mobile",
+      "width": 390,
+      "height": 844,
+      "horizontalOverflow": false,
+      "pageErrors": 0,
+      "browserEnrollmentDisabled": true,
+      "helpDialog": true
+    },
+    {
+      "viewport": "desktop",
+      "width": 1280,
+      "height": 900,
+      "horizontalOverflow": false,
+      "pageErrors": 0,
+      "browserEnrollmentDisabled": true,
+      "helpDialog": true
+    }
+  ]
+}
