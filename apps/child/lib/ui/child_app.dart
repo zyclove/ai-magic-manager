@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import '../core/session.dart';
 import 'design.dart';
+import 'observation_section.dart';
 
 class ChildApp extends StatelessWidget {
   final ChildSession? session;
@@ -334,6 +335,18 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
           ])),
       const Divider(),
       _ruleSection(),
+      if (session!.observationFactory != null) ...[
+        const Divider(),
+        ObservationSection(
+            view: session!.observationView,
+            busy: session!.busy,
+            available: app.nativeAvailable && session!.credentialReady,
+            errorCode: session!.observationErrorCode,
+            refresh: () =>
+                unawaited(session!.refreshObservationAuthorization()),
+            synchronize: () => unawaited(session!.synchronizeObservations()),
+            openSettings: () => unawaited(session!.openObservationSettings()))
+      ],
       const Divider(),
       Text('设备能力', style: Theme.of(context).textTheme.titleLarge),
       const SizedBox(height: 12),

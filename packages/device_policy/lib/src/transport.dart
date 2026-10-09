@@ -6,6 +6,16 @@ import 'page.dart';
 import 'journal.dart';
 import 'models.dart';
 
+/// 固定设备端观察路由；调用方不能传入 URL 或任意管理接口。
+enum DeviceObservationOperation {
+  settings('GET', 'observation-settings'),
+  inventory('POST', 'application-inventory'),
+  usage('POST', 'usage-observations');
+
+  final String method, path;
+  const DeviceObservationOperation(this.method, this.path);
+}
+
 /// No server copy, credentials, response bodies or transport causes.
 class DeviceTransportFailure implements Exception {
   final String code;
@@ -198,6 +208,16 @@ class DeviceConfigurationTransport {
         query: {'after': '$after', 'limit': '$limit'});
   }
 
+  Future<Map<String, dynamic>> observe(DeviceObservationOperation operation,
+      {Map<String, dynamic>? body}) {
+    if ((operation == DeviceObservationOperation.settings) != (body == null) ||
+        body != null && utf8.encode(jsonEncode(body)).length > 1048576) {
+      throw ArgumentError('Invalid observation request');
+    }
+    return _request(operation.method, operation.path,
+        (json) => freezeJson(json) as Map<String, dynamic>, body: body);
+  }
+
   Future<ReceiptAcknowledgement> acknowledge(
           StoredConfigurationReceipt receipt) =>
       _request(
@@ -255,6 +275,17 @@ class DeviceConfigurationTransport {
 }
 
 const _safeCodes = {
+  'OBSERVATION_NOT_AUTHORIZED',
+  'OBSERVATION_AUTHORIZATION_CHANGED',
+  'OBSERVATION_REPORT_RATE_LIMITED',
+  'USAGE_SEQUENCE_CONFLICT',
+  'USAGE_STALE_SEQUENCE',
+  'USAGE_REPORT_ID_CONFLICT',
+  'INVENTORY_SEQUENCE_CONFLICT',
+  'INVENTORY_STALE_SEQUENCE',
+  'INVALID_OBSERVATION_WINDOW',
+  'INVALID_TIME_ZONE',
+  'DEVICE_CREDENTIAL_REVOKED',
   'DEVICE_UNAUTHENTICATED',
   'SCOPE_DENIED',
   'SIGNING_KEY_NOT_CONFIGURED',

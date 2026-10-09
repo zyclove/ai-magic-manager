@@ -1,6 +1,6 @@
 # 智能管家儿童端
 
-独立 Flutter / Android 宿主，复用 `device_identity` 与 `device_policy`。当前提供设备配对、原密钥恢复、权威心跳、凭据轮换、签名配置保存和儿童侧状态说明。**当前不执行跨应用限制**，配置回执仅为 `STORED`。
+独立 Flutter / Android 宿主，复用 `device_identity`、`device_policy` 与 `device_observation`。当前提供设备配对、原密钥恢复、权威心跳、凭据轮换、签名配置保存，以及需独立授权的可见应用/系统聚合观察客户端。**当前不执行跨应用限制**，配置回执仅为 `STORED`。观察后端尚待有序提交，部署依赖及实际验收见 [观察客户端契约](../../docs/device-observation-client-contract.md)。
 
 ## 环境与启动
 

@@ -1,0 +1,32 @@
+{
+  "scope": "Actual Chrome rendering of a public state fixture; no native permissions, real data, identity or backend interaction.",
+  "engine": "Installed Chrome via Playwright",
+  "results": [
+    {
+      "viewport": "mobile",
+      "width": 390,
+      "height": 844,
+      "horizontalOverflow": false,
+      "pageErrors": 0,
+      "unknownDisabled": true,
+      "confirmationRequired": true,
+      "grantedEnabled": true,
+      "offlineDisabled": true,
+      "withdrawnDisabled": true,
+      "keyboardFocused": true
+    },
+    {
+      "viewport": "desktop",
+      "width": 1280,
+      "height": 900,
+      "horizontalOverflow": false,
+      "pageErrors": 0,
+      "unknownDisabled": true,
+      "confirmationRequired": true,
+      "grantedEnabled": true,
+      "offlineDisabled": true,
+      "withdrawnDisabled": true,
+      "keyboardFocused": true
+    }
+  ]
+}

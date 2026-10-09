@@ -15,6 +15,8 @@ dependencies:
     path: ../../packages/device_identity
   device_policy:
     path: ../../packages/device_policy
+  device_observation:
+    path: ../../packages/device_observation
   flutter_secure_storage: 10.0.0
   http: ^1.2.1
   sembast: ^3.7.1
@@ -29,6 +31,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
+  pigeon: 21.2.0
 
 flutter:
   uses-material-design: true

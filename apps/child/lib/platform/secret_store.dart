@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'package:device_identity/device_identity.dart';
+import 'package:device_observation/device_observation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -62,6 +64,52 @@ class AndroidIdentityStore implements DeviceSecretStore {
   Future<void> _flush() async {
     if (await channel.invokeMethod<bool>('flushIdentity') != true) {
       throw const DeviceIdentityFailure('SECURE_STORAGE_FAILED');
+    }
+  }
+}
+
+/// 复用已配置的成熟加密 SDK 与持久屏障，单独固定键，不改动设备身份记录。
+class AndroidObservationStore implements ObservationStore {
+  final AndroidIdentityStore backend;
+  AndroidObservationStore(
+      {FlutterSecureStorage? storage,
+      MethodChannel channel =
+          const MethodChannel('com.aimanager.child/runtime'),
+      bool Function()? available})
+      : backend = AndroidIdentityStore(
+            storage: storage, channel: channel, available: available);
+  void _available() {
+    if (!backend.available()) {
+      throw const ObservationFailure('OBSERVATION_STORAGE_UNAVAILABLE');
+    }
+  }
+
+  @override
+  Future<String?> read() async {
+    _available();
+    try {
+      final record = await backend.storage.read(key: 'observation_record');
+      await backend._flush();
+      if (record != null && utf8.encode(record).length > 1048576) {
+        throw const FormatException();
+      }
+      return record;
+    } catch (_) {
+      throw const ObservationFailure('OBSERVATION_STORAGE_FAILED');
+    }
+  }
+
+  @override
+  Future<void> write(String value) async {
+    _available();
+    if (utf8.encode(value).length > 1048576) {
+      throw const ObservationFailure('OBSERVATION_STORAGE_FAILED');
+    }
+    try {
+      await backend.storage.write(key: 'observation_record', value: value);
+      await backend._flush();
+    } catch (_) {
+      throw const ObservationFailure('OBSERVATION_STORAGE_FAILED');
     }
   }
 }

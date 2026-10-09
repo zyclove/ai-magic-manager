@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:device_identity/device_identity.dart';
+import 'package:device_observation/device_observation.dart' as observation;
 import 'package:device_policy/device_policy.dart' as policy;
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
@@ -52,6 +53,8 @@ abstract interface class ChildRuleReceiver {
 
 typedef ChildRuleReceiverFactory = Future<ChildRuleReceiver> Function(
     DeviceIdentityView identity);
+typedef ChildObservationFactory = Future<observation.ObservationAgent> Function(
+    DeviceIdentityView identity);
 
 /// Foreground child workflow. No adult token, reset, remote policy mutation,
 /// automatic enrollment or platform enforcement is exposed by this controller.
@@ -60,6 +63,12 @@ class ChildSession extends ChangeNotifier {
   final DeviceIdentityManager identity;
   final ChildRuleReceiverFactory? ruleReceiverFactory;
   final Future<List<Map<String, dynamic>>> Function()? observations;
+  final ChildObservationFactory? observationFactory;
+  observation.ObservationView observationView =
+      const observation.ObservationView();
+  String? observationErrorCode;
+  observation.ObservationAgent? _observationAgent;
+  bool _refreshObservationOnIdle = false;
   DeviceIdentityView? identityView;
   ChildRules rules = const ChildRules();
   bool initialized = false, busy = false, _foreground = true, _disposed = false;
@@ -67,7 +76,10 @@ class ChildSession extends ChangeNotifier {
   String? errorCode, _pairingCode;
   ChildRuleReceiver? _receiver;
   ChildSession(
-      {required this.identity, this.ruleReceiverFactory, this.observations});
+      {required this.identity,
+      this.ruleReceiverFactory,
+      this.observations,
+      this.observationFactory});
   String? get pairingCode => _foreground ? _pairingCode : null;
   bool get systemEnforced => false;
   void _changed() {
@@ -104,9 +116,16 @@ class ChildSession extends ChangeNotifier {
     });
     initialized = true;
     _changed();
+    if (observationFactory != null &&
+        credentialReady &&
+        !_disposed &&
+        _foreground) {
+      unawaited(refreshObservationAuthorization());
+    }
   }
 
-  Future<bool> _run(Future<void> Function() operation) async {
+  Future<bool> _run(Future<void> Function() operation,
+      {bool observationOperation = false}) async {
     if (busy || _disposed) return false;
     busy = true;
     errorCode = null;
@@ -126,8 +145,15 @@ class ChildSession extends ChangeNotifier {
       errorCode = failure.code;
     } on policy.DeviceTransportFailure catch (failure) {
       errorCode = failure.code;
+    } on observation.ObservationFailure catch (failure) {
+      errorCode = failure.code;
     } catch (_) {
       errorCode = 'LOCAL_OPERATION_FAILED';
+    }
+    if (observationOperation) {
+      observationErrorCode =
+          errorCode == 'OBSERVATION_PAUSED' ? null : errorCode;
+      errorCode = null;
     }
     try {
       await _refresh();
@@ -139,8 +165,19 @@ class ChildSession extends ChangeNotifier {
       success = false;
     }
     if (errorCode != null) _log.warning('code=$errorCode');
+    if (observationOperation && observationErrorCode != null) {
+      _log.warning('code=$observationErrorCode');
+    }
     busy = false;
     _changed();
+    if (_refreshObservationOnIdle &&
+        _foreground &&
+        !_disposed &&
+        observationFactory != null &&
+        credentialReady) {
+      _refreshObservationOnIdle = false;
+      unawaited(refreshObservationAuthorization());
+    }
     return success;
   }
 
@@ -152,6 +189,7 @@ class ChildSession extends ChangeNotifier {
         await identity.heartbeat(
             agentVersion: 'child/0.1.0',
             capabilities: await observations?.call() ?? const []);
+        _refreshObservationOnIdle = observationFactory != null;
       });
   Future<bool> recoverClaim() => _run(identity.recoverClaim);
   Future<bool> reloadIdentity() => _run(_refresh);
@@ -159,6 +197,44 @@ class ChildSession extends ChangeNotifier {
   Future<bool> requestRotation() => _run(identity.rotate);
   Future<bool> cancelRotation() => _run(identity.cancelRotation);
   Future<bool> activateRotation() => _run(identity.activateRotation);
+
+  Future<observation.ObservationAgent> _observer() async {
+    if (_observationAgent != null) return _observationAgent!;
+    if (observationFactory == null ||
+        identityView?.deviceId == null ||
+        identityView?.registrationId == null) {
+      throw const observation.ObservationFailure(
+          'OBSERVATION_NATIVE_UNAVAILABLE');
+    }
+    return _observationAgent = await observationFactory!(identityView!);
+  }
+
+  Future<bool> _observe({required bool collect, bool openSettings = false}) =>
+      _run(() async {
+        if (!_foreground || !credentialReady) {
+          throw const DeviceIdentityFailure('DEVICE_CREDENTIAL_UNAVAILABLE');
+        }
+        final observer = await _observer();
+        if (!_foreground) {
+          observer.pause();
+          throw const observation.ObservationFailure('OBSERVATION_PAUSED');
+        }
+        try {
+          if (openSettings) {
+            await observer.openUsageSettings();
+            observationView = await observer.restore();
+          } else {
+            observationView = await observer.synchronize(collect: collect);
+          }
+        } catch (_) {
+          observationView = await observer.restore();
+          rethrow;
+        }
+      }, observationOperation: true);
+  Future<bool> refreshObservationAuthorization() => _observe(collect: false);
+  Future<bool> synchronizeObservations() => _observe(collect: true);
+  Future<bool> openObservationSettings() =>
+      _observe(collect: false, openSettings: true);
 
   Future<ChildRuleReceiver> _rules() async {
     if (_receiver != null) return _receiver!;
@@ -188,6 +264,8 @@ class ChildSession extends ChangeNotifier {
   Future<void> setForeground(bool value) async {
     _foreground = value;
     if (!value) {
+      _observationAgent?.pause();
+      _refreshObservationOnIdle = true;
       _pairingCode = null;
       _changed();
       return;
@@ -199,6 +277,10 @@ class ChildSession extends ChangeNotifier {
       errorCode = failure.code;
     }
     _changed();
+    if (observationFactory != null && credentialReady && !_disposed) {
+      _refreshObservationOnIdle = false;
+      unawaited(refreshObservationAuthorization());
+    }
   }
 
   @override
@@ -206,6 +288,7 @@ class ChildSession extends ChangeNotifier {
     _disposed = true;
     _pairingCode = null;
     identity.api.close();
+    _observationAgent?.close();
     final receiver = _receiver;
     if (receiver != null) {
       unawaited(receiver.close().catchError((Object _) {

@@ -1,0 +1,47 @@
+{
+  "date": "2026-10-09",
+  "scope": "Observation client stage only; backend V20 and adult management UI are not included",
+  "baseline": "9ee446f057dcbbd293149f948157302198d56ec5",
+  "flutter": "3.22.2",
+  "dart": "3.4.3",
+  "pigeon": "21.2.0",
+  "pigeonArchiveSha256": "f938cbea2249d68843f96953da7c787a99960578066492ac5962da1da8cabf67",
+  "tests": {
+    "child": 22,
+    "deviceObservation": 14,
+    "devicePolicy": 60,
+    "analyzers": "all three exited 0 with no issues"
+  },
+  "native": {
+    "environment": "Owned API34 Android emulator, not physical or Android TV certification",
+    "denied": { "exitCode": 0, "visibleApplications": 19, "usageQueryDenied": true },
+    "granted": { "exitCode": 0, "visibleApplications": 19, "usageAggregates": 2 },
+    "revoked": { "exitCode": 0, "visibleApplications": 19, "usageQueryDenied": true }
+  },
+  "productApk": {
+    "entry": "lib/main.dart",
+    "mode": "debug",
+    "buildExitCode": 0,
+    "buildSeconds": 26.8,
+    "sha256": "fe6e8ab663752a2ca6775a32d894b4bc84653bc5d9925eff01871faed8416039",
+    "installedAfterIntegrationFixture": true,
+    "coldStart": "Status ok"
+  },
+  "browser": {
+    "entry": "tool/observation_preview.dart",
+    "buildExitCode": 0,
+    "buildSeconds": 39.5,
+    "playwrightUsed": "1.62.1 installed workspace runtime",
+    "viewportResults": "browser-qa.json",
+    "screenshotsVisuallyInspected": true,
+    "scope": "Public state fixture only; no real identity, native access or backend traffic"
+  },
+  "notVerified": [
+    "real observation HTTP and MySQL interoperation",
+    "encrypted observation pending recovery after process interruption",
+    "adult observation management UI",
+    "physical devices and Android TV",
+    "system enforcement, background scheduling and reboot recovery",
+    "production release signing, store compliance and dependency vulnerability certification"
+  ]
+}

@@ -1,0 +1,16 @@
+name: device_observation
+description: Consent-bound Android observations with encrypted pending report recovery.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+
+dependencies:
+  device_policy:
+    path: ../device_policy
+  uuid: ^4.4.2
+
+dev_dependencies:
+  test: ^1.25.2
+  lints: ^3.0.0

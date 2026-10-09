@@ -60,7 +60,7 @@ Flutter 3.22 的本地化固定 collection 1.18；因此将 device_policy 的 ht
 - 签名配置只接受 CONFIGURE_ONLY。缓存、游标、待补交 STORED 回执来自真实本地数据库；发送回执失败后重新读取已提交事实，不显示错误的旧游标。
 - 配置公钥/发行方缺失时明确提示部署管理员处理，不信任消息自带密钥。存储恢复重新验签；未收到配置为空态，不填充示例儿童数据。
 - 离线保留身份与最后保存配置，不自动延长票据/临时通行、不静默注册。尚未实现系统策略执行，因此不能将缓存意图称作已拦截应用。
-- 普通 Android 家庭模式当前 systemEnforced=false。没有 DPC、设备所有者、Accessibility、UsageStats、VPN、摄像头或开机接收器；不能防卸载、阻止强制停止或承诺重启自动施加限制。
+- 普通 Android 家庭模式当前 systemEnforced=false。没有 DPC、设备所有者、Accessibility、VPN、摄像头或开机接收器；不能防卸载、阻止强制停止或承诺重启自动施加限制。后续观察客户端阶段增加经独立授权的 UsageStats 聚合查询，详见 [观察客户端契约](device-observation-client-contract.md)；本文件下方 16 项测试等证据仍对应原身份宿主阶段。
 - TV 提供 Leanback 启动入口和遥控焦点基础；当前仅宽屏 widget 焦点验证，尚未做实体电视/Android TV 系统镜像、厂商策略和受管注册认证。
 - Web 仅预览，输入与连接均禁用；不能存储身份。iOS/Windows/macOS 仍需各自安全存储、系统策略 API 与资质审核。
 
