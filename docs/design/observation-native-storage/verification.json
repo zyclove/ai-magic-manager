@@ -1,0 +1,116 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-09T14:00:16.146953+00:00",
+  "scope": "Actual Android encrypted observation storage across separately stopped native processes; synthetic cloud and OS source, no network",
+  "avd": "AIManagerChildApi34",
+  "apiLevel": 34,
+  "package": "com.aimanager.child.debug",
+  "phases": [
+    {
+      "driverExitCode": 1,
+      "nativePid": 3917,
+      "processStopped": true,
+      "expectedMissingStateFailure": true,
+      "phase": "negative"
+    },
+    {
+      "phase": "write_inventory",
+      "pid": 4215,
+      "pendingReports": 1,
+      "inventoryReads": 1,
+      "usageReads": 0,
+      "originalRequestCompared": false,
+      "identityUnchanged": true,
+      "atRestFixturePlaintextAbsent": true,
+      "driverExitCode": 0,
+      "processStopped": true
+    },
+    {
+      "phase": "replay_inventory",
+      "pid": 4434,
+      "pendingReports": 1,
+      "inventoryReads": 0,
+      "usageReads": 1,
+      "originalRequestCompared": true,
+      "identityUnchanged": true,
+      "atRestFixturePlaintextAbsent": true,
+      "driverExitCode": 0,
+      "processStopped": true
+    },
+    {
+      "phase": "replay_usage",
+      "pid": 4649,
+      "pendingReports": 0,
+      "inventoryReads": 0,
+      "usageReads": 0,
+      "originalRequestCompared": true,
+      "identityUnchanged": true,
+      "driverExitCode": 0,
+      "processStopped": true
+    },
+    {
+      "phase": "verify_cleared",
+      "pid": 4762,
+      "pendingReports": 0,
+      "inventoryReads": 0,
+      "usageReads": 0,
+      "originalRequestCompared": false,
+      "identityUnchanged": true,
+      "driverExitCode": 0,
+      "processStopped": true
+    },
+    {
+      "phase": "cleanup",
+      "pid": 4916,
+      "fixtureRemoved": true,
+      "identityPresentBeforeCleanup": false,
+      "identityUnchanged": true,
+      "driverExitCode": 0,
+      "processStopped": true
+    }
+  ],
+  "sourceSha256": {
+    "apps/child/integration_test/observation_storage_test.dart": "979a5b760432210b7f6f248aabe5e5c2f218e4942196cb11fe7873a6d83f900b",
+    "apps/child/integration_test/observation_storage_cleanup_test.dart": "5b37fe9aa2ec44390d59daef02516e3f74bbc0aa4daf0c4fb446193197b3932c"
+  },
+  "apkSha256": {
+    "write_inventory": "61f2ca8005d9c17463ed33e941314684eb69337dbbbdb8fddafe19645ad188a8",
+    "replay_inventory": "bfd5690b4cfae8676f7b08deeb7b9f6f1c34e944c3fece6cf92bad921135ade8",
+    "replay_usage": "4636d2f1496962669c29f4216dd169170c20881a28e6668dfe4716c8fd389041",
+    "verify_cleared": "14c9296701f5887e4981e7081b0bd24d62ce3f9c98a98cbc048e71e4d42909cc",
+    "cleanup": "9cfb0a34b0bc65b8e9659cd8d3e635988e50dc06c53f57805a308c938e1d12d7",
+    "product": "08baab360e4c2199b4391fefd8e52db63dc5d7aba2f6eb7ee73aec4d45a246c1"
+  },
+  "childRegression": {
+    "tests": 22,
+    "failed": 0,
+    "log": ".local/observation-storage-final-regression.log"
+  },
+  "productRestore": {
+    "install": "Success",
+    "launchStatus": "ok",
+    "launchState": "COLD",
+    "activity": "com.aimanager.child.debug/com.aimanager.child.MainActivity",
+    "totalTimeMillis": 4823,
+    "emulatorStopped": true
+  },
+  "limitations": [
+    "No real network/OS inventory query in this storage fixture",
+    "Identity record was absent; unchanged null does not prove live credential recovery",
+    "No power-loss/upgrade/hardware attestation/OEM or TV certification",
+    "Does not prevent force-stop or provide autostart",
+    "Debug APK only; commercial signing and release gates remain"
+  ],
+  "environmentFailuresNotCounted": [
+    "Initial unbounded parallel child tests exhausted host memory",
+    "Initial default Gradle directory waited on distribution download; own wrapper terminated, project cache used",
+    "Initial replay_usage emulator UncheckedAllocate crash; preserved AVD data and recovered pending on retry",
+    "Final negative helper initially propagated expected nonzero pidof status after verified stop; helper exit handling corrected before positive phases"
+  ],
+  "finalStrengthening": "Replay compares uploaded JSON against immutable persisted snapshot captured before synchronize, including original report ID",
+  "childAnalysis": {
+    "exitCode": 0,
+    "issues": 0,
+    "log": ".local/observation-storage-final-analyze.log"
+  }
+}

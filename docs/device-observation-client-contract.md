@@ -86,3 +86,7 @@ flutter drive --driver=test_driver/identity_storage_driver.dart --target=integra
 - [UserManager](https://developer.android.com/reference/android/os/UserManager)：资料与用户状态的公开 API 级别。
 - [AppOpsManager](https://developer.android.com/reference/android/app/AppOpsManager)：系统特殊访问状态。
 - [包可见性声明](https://developer.android.com/training/package-visibility/declaring)、[Pigeon 21.2.0](https://pub.dev/packages/pigeon/versions/21.2.0)。
+
+## 后续增量：原生加密存储恢复
+
+实际 Android 加密 pending 已以最终源码完成负对照、四次独立进程、原快照逐字重放、ACK 清理重开与合成键清理。详见 [原生持久化验收](device-observation-native-persistence.md)。该增量补齐上文历史阶段的存储验证缺口；独立 HTTP 夹具与独立原生存储结果不能相加称作完整生产端到端认证。实体 TV、正式受管执行、启动恢复与容量门槛仍保留。
