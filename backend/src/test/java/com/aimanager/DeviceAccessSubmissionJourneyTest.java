@@ -621,6 +621,9 @@ class DeviceAccessSubmissionJourneyTest {
     fixture.put("resultFile", resultFile.toString());
     try {
       runDart(fixtureFile, fixture, directory, "submit");
+      assertThat(java.nio.file.Files.exists(directory.resolve("submissions.db")))
+          .as("The first Dart process must leave its original operation durable")
+          .isTrue();
       String id = mapper.readTree(resultFile.toFile()).get("requestId").asText();
       var approved =
           json(
@@ -647,6 +650,7 @@ class DeviceAccessSubmissionJourneyTest {
     } finally {
       java.nio.file.Files.deleteIfExists(fixtureFile);
       java.nio.file.Files.deleteIfExists(resultFile);
+      java.nio.file.Files.deleteIfExists(directory.resolve("submissions.db"));
       // Per-phase logs contain only safe status markers and remain local for diagnostics.
     }
   }

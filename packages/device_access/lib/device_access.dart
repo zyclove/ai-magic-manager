@@ -9,3 +9,4 @@ export 'src/transport.dart';
 export 'src/synchronizer.dart';
 
 export 'src/submission.dart';
+export 'src/submission_journal.dart';

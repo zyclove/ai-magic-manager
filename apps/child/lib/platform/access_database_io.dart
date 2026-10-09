@@ -14,7 +14,9 @@ typedef AccessKeyProvider = Future<Uint8List> Function(String scopeKey,
 /// Call only after the authenticated context has matched the active identity.
 /// The database remains opaque on corruption or missing/wrong key; no reset.
 Future<Database> openAccessDatabase(String scopeKey,
-    {String? directoryPath, AccessKeyProvider? keyProvider}) async {
+    {String? directoryPath,
+    AccessKeyProvider? keyProvider,
+    bool requireExisting = false}) async {
   if (!RegExp(r'^[a-f0-9]{64}$').hasMatch(scopeKey)) {
     throw const AccessFailure('ACCESS_STORAGE_FAILED');
   }
@@ -22,8 +24,12 @@ Future<Database> openAccessDatabase(String scopeKey,
     final directory =
         directoryPath ?? (await getApplicationSupportDirectory()).path;
     final file = File(path.join(directory, 'access-v1-$scopeKey.db'));
+    final exists = await file.exists();
+    if (requireExisting && !exists) {
+      throw const AccessFailure('ACCESS_STORAGE_FAILED');
+    }
     final provider = keyProvider ?? AndroidAccessKeyStore().keyFor;
-    final key = await provider(scopeKey, existingDatabase: await file.exists());
+    final key = await provider(scopeKey, existingDatabase: exists);
     return await databaseFactoryIo.openDatabase(file.path,
         mode: DatabaseMode.create,
         codec: AccessDatabaseCodec(key, scopeKey).sembastCodec);

@@ -6,5 +6,7 @@ typedef AccessKeyProvider = Future<Uint8List> Function(String scopeKey,
     {required bool existingDatabase});
 
 Future<Database> openAccessDatabase(String scopeKey,
-        {String? directoryPath, AccessKeyProvider? keyProvider}) =>
+        {String? directoryPath,
+        AccessKeyProvider? keyProvider,
+        bool requireExisting = false}) =>
     Future.error(const AccessFailure('ACCESS_STORAGE_FAILED'));

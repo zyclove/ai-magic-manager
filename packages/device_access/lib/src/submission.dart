@@ -107,6 +107,8 @@ class AccessSubmission {
   int? get absoluteNotAfter => _value['absoluteNotAfter'];
   int get version => _value['version'];
   bool get systemEnforced => false;
+  /// Immutable JSON for a host-protected cache; never contains device credentials.
+  Map<String, dynamic> toJson() => _value;
   void requireContext(AccessDeviceContext context) {
     if (subjectId != context.subjectId ||
         deviceId != context.deviceId ||

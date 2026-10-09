@@ -1,0 +1,142 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-09T22:21:06.083896+00:00",
+  "parentHead": "c9f90cdc76367873df5451b33fe401cc0afbb820",
+  "scope": "Durable device request journal and encrypted child host foundation. ChildSession, application entry and request UI are not wired in this stage.",
+  "sourceFiles": [
+    {
+      "path": "apps/child/lib/core/submission_receiver.dart",
+      "sha256": "66ba8aaeab88bbd0e6c253d163eddff6beb587abd8bee07c8fe49621a8cad575"
+    },
+    {
+      "path": "apps/child/lib/core/submissions.dart",
+      "sha256": "b0d97917b725bd890c4c04d4a0c2645f7d4d39f5e38db457703aac93f5614b14"
+    },
+    {
+      "path": "apps/child/lib/platform/access_database_io.dart",
+      "sha256": "468a5cffdc8c6425a8d597a20ba5a330798a31755fe14997f68075aef0fce482"
+    },
+    {
+      "path": "apps/child/lib/platform/access_database_stub.dart",
+      "sha256": "0e3abf692dea4c91ae82c75086cb66874c42eeb4d1508a77dca01a546fa18852"
+    },
+    {
+      "path": "apps/child/test/submission_receiver_test.dart",
+      "sha256": "cc31b7d47a0ad908fe35681a9487479553a591c7e6676052d87c8e845eca38f0"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeviceAccessSubmissionJourneyTest.java",
+      "sha256": "42d9b67e12a9fbf6ff9ce0794fc59abb005d415afbde128b9db48717ee860490"
+    },
+    {
+      "path": "packages/device_access/lib/device_access.dart",
+      "sha256": "2cbf4c8df8fcdfa945e3e026285f98bc564d0c7648cc11d607a4229a1f94bb19"
+    },
+    {
+      "path": "packages/device_access/lib/src/submission.dart",
+      "sha256": "f03060ec6b53ca5518353dfa763da6685258a82bece45ee5bcab1f9fa1cc262f"
+    },
+    {
+      "path": "packages/device_access/lib/src/submission_journal.dart",
+      "sha256": "b32e935c5535d3bca8f0a0540b1e287c4e49f1ff8f9a86f5681b089abc563a63"
+    },
+    {
+      "path": "packages/device_access/test/submission_test.dart",
+      "sha256": "fb7ddfcca41d694edcab347f7c4948f83e099992a5072a780bb0a1eb83e48eeb"
+    },
+    {
+      "path": "packages/device_access/test/submission_journal_test.dart",
+      "sha256": "9517abc41556be69fe854793e8951f2e6f8c95fd701b577b9b73673d5627b37d"
+    },
+    {
+      "path": "packages/device_access/test/support/submission_fixture.dart",
+      "sha256": "c52dc08e5add6cd2d4fe52547a793e426284d7108a70b40e1e6b073b16188762"
+    },
+    {
+      "path": "packages/device_access/tool/verify_submission_http.dart",
+      "sha256": "002bb018a5bd6956852dd040febd3aeb0aaeadf719f9cf02d959a30aec6a5392"
+    },
+    {
+      "path": "packages/device_access/README.md",
+      "sha256": "225243d5f16e7f67d3a092597c54897a462f8de77e0de634dff218bf548bca99"
+    },
+    {
+      "path": "docs/child-request-workflow-plan.md",
+      "sha256": "0a9d62e83eb2168e295dc273edc4625e8fbf74c77d27c4abb4a587c8fe0fcf4c"
+    },
+    {
+      "path": "docs/child-request-workflow-contract.md",
+      "sha256": "aff93ce6707eba7ab7042d60e979c694f26ff80dba6d755a468cd7a132bcd1ed"
+    }
+  ],
+  "verification": {
+    "backendFrozenV23Candidate": {
+      "path": ".local/submission-durable-backend-full.log",
+      "sha256": "4723ae35bf908ae2cff4a3e9efc5f4558c6b31a226c3f24ad28b713bca9f1531",
+      "tests": 315,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "independentProcessesActualHttp": {
+      "path": ".local/submission-durable-http-green.log",
+      "sha256": "18b41fa6e2f4ccdc2113240c97598f55c46ec05524f6056a78ef4ada14a4915c",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "deviceSdk": {
+      "tests": 123,
+      "path": ".local/submission-durable-sdk-full.log",
+      "sha256": "44615a44e94abb01da0cd187c763c478199d3dfde2ac574faf6c25a108456de9"
+    },
+    "childFullCompatibility": {
+      "tests": 66,
+      "path": ".local/submission-durable-child-full.log",
+      "sha256": "a678093e6ffcdce9826776e06561877fe185f19b077945a9280fd4075fe771c6"
+    },
+    "staticAnalysis": [
+      {
+        "path": ".local/submission-durable-sdk-analysis.log",
+        "sha256": "90e7613774af3529464575b0ab224afcba9aba6af6f6693e296e6cab87564ff1",
+        "clean": true
+      },
+      {
+        "path": ".local/submission-durable-child-analysis.log",
+        "sha256": "d94620fc58a6f4add08f84583022f9d9576666b3e88c4c3f6fc50fb0dfdc9b7b",
+        "clean": true
+      }
+    ],
+    "watchedRedCases": [
+      {
+        "path": ".local/submission-journal-red.log",
+        "sha256": "a025a9d7463818a73625f563da0fb2d353f2478d6209c9232858c83000690f07"
+      },
+      {
+        "path": ".local/submission-journal-consistency-red.log",
+        "sha256": "6b67d7bcc07a117c3e8d0bf6df325d28b691a365a5f186e8ac8dbdd6b56a5615"
+      },
+      {
+        "path": ".local/submission-host-red.log",
+        "sha256": "1486dec72630c7d4bfe57107fca83b911145348b2cd05142c8b4d5993f437951"
+      },
+      {
+        "path": ".local/submission-host-missing-db-red.log",
+        "sha256": "465a6712439247f40e84fb53a2ba53a21b08e11465d6ef9368ed463d4263fe9a"
+      },
+      {
+        "path": ".local/submission-durable-http-red.log",
+        "sha256": "3fa0e9d5e2d607d26051c439a21cb5219857d39f892312e1c82e74c64b40e8b3"
+      }
+    ]
+  },
+  "verificationBoundary": [
+    "Frozen backend sources matched c9f90cd exactly, with only the owned durable-HTTP test extension. Pending V24 reporting/classification work excluded.",
+    "Encrypted host tests use actual Sembast IO and AES-GCM, but inject synthetic keys and controlled HTTP; no real Android Keystore or new native recovery acceptance here.",
+    "Actual Spring HTTP uses independent Dart processes and a JVM-owned unencrypted synthetic journal. Adult MFA, registration and policy are fixtures. Credentials and journal files are cleaned; only safe phase logs remain.",
+    "No new server schema or production backend behavior changed; no MySQL or OceanBase execution in this stage.",
+    "Current 24-hour idempotency-key expiry cannot prove a prior mutation failed. Dedicated authorized recovery lookup is required before the full UI workflow can be claimed complete.",
+    "No new request UI, main/ChildSession integration, deployment, Android device acceptance, background scheduling or operating-system enforcement in this stage."
+  ]
+}

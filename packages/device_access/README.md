@@ -6,6 +6,8 @@
 
 `AccessSubmissionInput` 只包含策略/版本/应用/规则、时长与可选理由。宿主必须在发送前安全持久化原输入与键，并在断网、超时、异常成功响应或 `outcomeUnknown` 后继续使用原值确认结果。SDK 不自动重发，也不代替宿主的持久申请队列。分页选项可能为空但仍有下一游标。
 
+`AccessSubmissionJournal` 现提供上述持久队列基础：使用宿主加密数据库与完整 `DeviceAccessScope`，先 `prepareCreate/prepareCancel`，发送前 `markSending`，确认后 `complete`。同一范围只允许一条未解决变更；`inspect` 和重建 journal 不自动发请求。UNKNOWN 不可直接删除，只有未发送或明确拒绝的操作可以显式放弃。事实缓存有界并保护版本和原期限。详见[持久日志与儿童宿主契约](../../docs/child-request-workflow-contract.md)；24 小时过期键的专用恢复查询和产品界面仍待接入。
+
 批准事实不是系统放行：`systemEnforced` 始终为 false，实际签名交付继续使用原有协议。理由和凭证不写入异常文字。接口、身份隔离、错误流程及迁移发布限制见[申请契约](../../docs/device-access-submission-contract.md)。
 
 独立 Dart 审批配置接收组件，使用 `jose` 验证 ES256、`sembast` 保存事务、`crypto` 校验本地内容摘要。对应后端 V15/V16 协议。配置始终为 `CONFIGURE_ONLY`、`quotaEffect=UNCHANGED`、`systemEnforced=false`。
