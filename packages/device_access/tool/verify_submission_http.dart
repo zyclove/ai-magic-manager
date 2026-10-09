@@ -93,8 +93,20 @@ Future<void> main(List<String> arguments) async {
                 original.key == 'device-http-submission' &&
                 original.phase == SubmissionOperationPhase.unknown,
             'Original operation not restored in new process');
-        final replay = await transport.createSubmission(original!.input!,
-            context: context, idempotencyKey: original.key);
+        AccessSubmission replay;
+        try {
+          await transport.createSubmission(original!.input!,
+              context: context, idempotencyKey: original.key);
+          throw StateError('Expired mutation unexpectedly accepted');
+        } on AccessTransportFailure catch (failure) {
+          require(
+              failure.status == 409 &&
+                  failure.code == 'IDEMPOTENCY_KEY_EXPIRED' &&
+                  !failure.outcomeUnknown,
+              'Expected explicit expired original key');
+          replay = await transport.recoverSubmission(original!.input!,
+              context: context, idempotencyKey: original.key);
+        }
         require(
             replay.id == value.id &&
                 replay.absoluteNotAfter == value.absoluteNotAfter,

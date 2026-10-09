@@ -1,0 +1,147 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-09T22:42:16.575360+00:00",
+  "parentHead": "efb20e224fa0d878ad7b6c7a6d2be36e21a7ae20",
+  "scope": "Original device create/cancel recovery after idempotency replay expiry; SDK and encrypted child host integration. Product session/UI and native enforcement remain pending.",
+  "sourceFiles": [
+    {
+      "path": "apps/child/lib/core/submission_receiver.dart",
+      "sha256": "7b546478063cefcf2e3dffee197851227db0177e3098c49d45859c5e4a06e94b"
+    },
+    {
+      "path": "apps/child/test/submission_receiver_test.dart",
+      "sha256": "ac95baedbb98d2423b8dc982daca7323431cc3a1a7315392834f5aca1906a2c1"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/internal/ApprovalService.java",
+      "sha256": "376c1be0c06d9a261a35d7833edbf0458b73331d7f8a56b650f4d2765a9336d0"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/internal/DeviceAccessSubmissionController.java",
+      "sha256": "80e3ae86b869f636b5f9fbcdd07129046b9c92e91073ab2c17b7214d8423cb4c"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/internal/DeviceAccessSubmissionService.java",
+      "sha256": "c55cdc8ee7cf9e10eb9cb2240e34e60e4a57a8185521fcde3ce4d6542cdf3740"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyService.java",
+      "sha256": "0a3f52ad18ca67dd576e678ba8e4f93ed535948a4df6937f42b315419c5ff3cb"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeviceAccessSubmissionJourneyTest.java",
+      "sha256": "ed5b0e40144e5179b262b59edaf9347a12e04e4035f9280911221226bc3b70e7"
+    },
+    {
+      "path": "docs/child-request-workflow-contract.md",
+      "sha256": "7c7bf24e063ed69fa2f21a3b8c8cb2c354c298f097e503e9e3f4bdea71bc74ac"
+    },
+    {
+      "path": "docs/child-request-workflow-plan.md",
+      "sha256": "6c00ea81cf5ba0db582f665218151bd2c857a1f17f0b974bb98fb2cd09532a64"
+    },
+    {
+      "path": "docs/device-access-submission-contract.md",
+      "sha256": "5759d2260414ce7e847c3b88e3f8d81eb13fb522f80f68720429f88871d002ba"
+    },
+    {
+      "path": "packages/device_access/README.md",
+      "sha256": "9d2c3087f794fbcda36d75a70c4a6346598c48c2741fb66d20cfee7b8e104de9"
+    },
+    {
+      "path": "packages/device_access/lib/src/transport.dart",
+      "sha256": "ff4fbbb702693de6d53a3968ef5a25bdf1aaec90a5ca01ab17f64aa76cb88dec"
+    },
+    {
+      "path": "packages/device_access/test/submission_recovery_test.dart",
+      "sha256": "33013d6554c17e84163e7053dff63cbbdc239781c50f0a22b120355fa4969ef9"
+    },
+    {
+      "path": "packages/device_access/tool/verify_submission_http.dart",
+      "sha256": "e4b0fe1e8676388299e3e59437260c6d4aeba89455d955f5080deb8d52a43c18"
+    }
+  ],
+  "verification": {
+    "backendFrozenV23Candidate": {
+      "path": ".local/submission-recovery-backend-full.log",
+      "sha256": "ca1bc3c5e809b36cb9fb890fca423e614284f821972f4f8346f5725c74c7ffc0",
+      "tests": 321,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "independentProcessesActualHttp": {
+      "path": ".local/submission-recovery-http-green.log",
+      "sha256": "817c5d4923e7267754d81ba6ea6186be55657da6316a83391a9a962704f7c3f7",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "mysqlSubmissionJourney": {
+      "path": ".local/submission-recovery-mysql-journey.log",
+      "sha256": "afc173a9d7e37e9a7b8f6db4e61371af1a8523b04be516e91ace9cdef7888ea2",
+      "tests": 19,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "mysqlNonemptyUpgrade": {
+      "path": ".local/submission-recovery-mysql-migration.log",
+      "sha256": "723f0708ae1dc6c3ccbe752f2e587abc4a2531e3162f04ef9873c3905cc4282c",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "deviceSdk": {
+      "path": ".local/submission-recovery-sdk-full.log",
+      "sha256": "61d41f26f08a52c8990c37e00dd2c5dffffd0e3534dce888efbcbf3323573011",
+      "tests": 128
+    },
+    "childFullCompatibility": {
+      "path": ".local/submission-recovery-child-full.log",
+      "sha256": "42083c4055c91ffde977df2cc1435f3a3a38a9f5bf3244ed85910c3ebfabf4e4",
+      "tests": 69
+    },
+    "staticAnalysis": [
+      {
+        "path": ".local/submission-recovery-sdk-analysis.log",
+        "sha256": "90e7613774af3529464575b0ab224afcba9aba6af6f6693e296e6cab87564ff1",
+        "clean": true
+      },
+      {
+        "path": ".local/submission-recovery-child-analysis.log",
+        "sha256": "8cefae5e36bc7859a67e40bcb21c7acab0966abaa0a240ed0854eeb947b68754",
+        "clean": true
+      }
+    ],
+    "watchedRedCases": [
+      {
+        "path": ".local/submission-recovery-backend-red.log",
+        "sha256": "3ee098840fde51a791956bd9a9091c18043bbb0c0b161e477ae0347c54476bc5"
+      },
+      {
+        "path": ".local/submission-recovery-sdk-red.log",
+        "sha256": "cf246ce2bbf91b30cad00d0f1b61c2fab5860e0e9a07b73b9097b022dee8f17f"
+      },
+      {
+        "path": ".local/submission-recovery-host-red.log",
+        "sha256": "af4020baf070eeb06d426187f068b067377ab43e94dddc03e5ac73cfa15515d0"
+      },
+      {
+        "path": ".local/submission-recovery-http-red.log",
+        "sha256": "a4b40aea2d56ae5af66cc10d3d91c976334d00d5b38ddc1f5bcf271cbc497251"
+      }
+    ]
+  },
+  "verificationBoundary": [
+    "Frozen candidate checked all 221 tracked backend files against efb20e2; only four owned production files and the owned journey test differ. Pending V24 reporting/classification work excluded.",
+    "Expired lookup reads only the original committed resource reference and reauthorizes current device, registration, subject and requester kind. It does not create a key, renew expiry or run the original mutation. Current lifecycle reconciliation may expire, invalidate or revoke an existing request and emit existing audit/events.",
+    "Actual HTTP uses three independent Dart processes, synthetic JVM-owned journal data, and fixture adult MFA/registration/policy. It asserts the original key remains expired and grant deadline unchanged. Private fixture and journal files are removed; no real OIDC or system unlock acceptance.",
+    "MySQL uses separate temporary schemas for journey and nonempty V22-to-V23 upgrade. Ordered Flyway V1-V23 verified and both schemas removed. No new migration in this stage; no OceanBase certification.",
+    "Encrypted host tests use actual Sembast IO/AES-GCM with synthetic keys and controlled HTTP. No real Android Keystore, emulator recovery or TV interaction acceptance in this stage.",
+    "Missing original reference remains UNKNOWN and cannot be discarded or replaced. Data cleanup, archive, lost storage and revoked/reassigned identity require an authorized recovery/retention process; indefinite offline recovery is not promised.",
+    "No main/ChildSession/request UI wiring, production deployment, background scheduling or operating-system enforcement in this stage."
+  ]
+}

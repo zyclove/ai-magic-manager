@@ -327,20 +327,39 @@ class ChildSubmissionReceiver implements ChildSubmissions {
     }
     final operation = await _journal!.markSending(current.key);
     _check(epoch);
+    var recovering = false;
     try {
-      final value = operation.kind == 'CREATE'
-          ? await transport.createSubmission(operation.input!,
-              context: context, idempotencyKey: operation.key)
-          : await transport.cancelSubmission(operation.requestId!,
-              context: context,
-              version: operation.version!,
-              idempotencyKey: operation.key);
+      AccessSubmission value;
+      try {
+        value = operation.kind == 'CREATE'
+            ? await transport.createSubmission(operation.input!,
+                context: context, idempotencyKey: operation.key)
+            : await transport.cancelSubmission(operation.requestId!,
+                context: context,
+                version: operation.version!,
+                idempotencyKey: operation.key);
+      } on AccessTransportFailure catch (error) {
+        if (error.status != 409 ||
+            error.code != 'IDEMPOTENCY_KEY_EXPIRED' ||
+            error.outcomeUnknown) rethrow;
+        _check(epoch);
+        recovering = true;
+        // A lookup never renews or recreates this operation. Failure retains UNKNOWN.
+        value = operation.kind == 'CREATE'
+            ? await transport.recoverSubmission(operation.input!,
+                context: context, idempotencyKey: operation.key)
+            : await transport.recoverCancellation(operation.requestId!,
+                context: context,
+                version: operation.version!,
+                idempotencyKey: operation.key);
+      }
       _check(epoch);
       await _journal!.complete(operation.key, value);
       _check(epoch);
       _confirmed.add(value.id);
     } on AccessTransportFailure catch (error) {
-      if (!_closed &&
+      if (!recovering &&
+          !_closed &&
           !_paused &&
           epoch == _epoch &&
           !error.outcomeUnknown &&

@@ -639,6 +639,7 @@ class DeviceAccessSubmissionJourneyTest {
                   .getResponse()
                   .getContentAsString());
       fixture.put("absoluteNotAfter", approved.get("absoluteNotAfter").asLong());
+      expireOperation(s, "access.device.request");
       runDart(fixtureFile, fixture, directory, "approved");
       mvc.perform(
               post(management(s) + "/" + id + "/revoke")
@@ -647,6 +648,13 @@ class DeviceAccessSubmissionJourneyTest {
                   .header("Idempotency-Key", "revoke"))
           .andExpect(status().isOk());
       runDart(fixtureFile, fixture, directory, "revoked");
+      assertThat(
+              db.queryForObject(
+                  "SELECT expires_at FROM idempotency_requests WHERE scope_id=? AND"
+                      + " operation='access.device.request'",
+                  Long.class,
+                  s.tenant()))
+          .isEqualTo(1);
     } finally {
       java.nio.file.Files.deleteIfExists(fixtureFile);
       java.nio.file.Files.deleteIfExists(resultFile);
@@ -772,6 +780,188 @@ class DeviceAccessSubmissionJourneyTest {
                 String.class,
                 s.tenant()))
         .isEqualTo("DEVICE");
+  }
+
+  private org.springframework.test.web.servlet.ResultActions recoverCreate(
+      Scope s, String key, Object body) throws Exception {
+    return mvc.perform(
+        post(ROUTE + "/recovery")
+            .header("Authorization", "Bearer " + s.token())
+            .header("Idempotency-Key", key)
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(mapper.writeValueAsString(body)));
+  }
+
+  private void expireOperation(Scope s, String operation) {
+    db.update(
+        "UPDATE idempotency_requests SET expires_at=1 WHERE scope_id=? AND operation=?",
+        s.tenant(),
+        operation);
+  }
+
+  @Test
+  void expiredCreateRecoveryReturnsCurrentFactWithoutRenewingTheOriginalKey() throws Exception {
+    var s = scope();
+    var r = submit(s, "original");
+    expireOperation(s, "access.device.request");
+    db.update(
+        "UPDATE access_requests SET request_expires_at=? WHERE tenant_id=? AND id=?",
+        clock.millis() - 1,
+        s.tenant(),
+        r.get("id").asText());
+    recoverCreate(s, "original", input(s))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.id").value(r.get("id").asText()))
+        .andExpect(jsonPath("$.state").value("EXPIRED"))
+        .andExpect(header().string("ETag", "\"1\""))
+        .andExpect(header().string("Cache-Control", "no-store"));
+    assertThat(
+            db.queryForObject(
+                "SELECT expires_at FROM idempotency_requests WHERE scope_id=? AND"
+                    + " operation='access.device.request'",
+                Long.class,
+                s.tenant()))
+        .isEqualTo(1);
+    assertThat(
+            db.queryForObject(
+                "SELECT COUNT(*) FROM access_requests WHERE tenant_id=?",
+                Integer.class,
+                s.tenant()))
+        .isEqualTo(1);
+    mvc.perform(
+            post(ROUTE)
+                .header("Authorization", "Bearer " + s.token())
+                .header("Idempotency-Key", "original")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(input(s))))
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.errorCode").value("IDEMPOTENCY_KEY_EXPIRED"));
+  }
+
+  @Test
+  void recoveryNeverCreatesMissingOperationsAndRejectsDifferentOriginalInput() throws Exception {
+    var s = scope();
+    recoverCreate(s, "never-sent", input(s))
+        .andExpect(status().isNotFound())
+        .andExpect(jsonPath("$.errorCode").value("ACCESS_RECOVERY_UNAVAILABLE"));
+    assertThat(
+            db.queryForObject(
+                "SELECT COUNT(*) FROM idempotency_requests WHERE scope_id=? AND"
+                    + " operation='access.device.request'",
+                Integer.class,
+                s.tenant()))
+        .isZero();
+    submit(s, "original");
+    expireOperation(s, "access.device.request");
+    var changed = new HashMap<>(input(s));
+    changed.put("reason", "different");
+    recoverCreate(s, "original", changed)
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.errorCode").value("IDEMPOTENCY_KEY_CONFLICT"));
+  }
+
+  @Test
+  void recoveryRechecksCredentialDeviceSubjectAndDoesNotAcceptUserJwt() throws Exception {
+    var s = scope();
+    submit(s, "original");
+    expireOperation(s, "access.device.request");
+    var foreign = scope();
+    recoverCreate(foreign, "original", input(s)).andExpect(status().isNotFound());
+    mvc.perform(
+            post(ROUTE + "/recovery")
+                .with(adult(s.owner()))
+                .header("Idempotency-Key", "original")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(input(s))))
+        .andExpect(status().isForbidden());
+    db.update("UPDATE device_credentials SET expires_at=1 WHERE id=?", s.credential());
+    recoverCreate(s, "original", input(s)).andExpect(status().isUnauthorized());
+  }
+
+  @Test
+  void recoveryAfterSubjectReassignmentCannotDiscloseOldFacts() throws Exception {
+    var s = scope();
+    submit(s, "original");
+    expireOperation(s, "access.device.request");
+    String subject =
+        create(
+            "/api/v1/tenants/" + s.tenant() + "/subjects",
+            s.owner(),
+            Map.of("nickname", "新主体", "ageBand", "AGE_7_12"));
+    db.update(
+        "UPDATE devices SET subject_id=? WHERE tenant_id=? AND id=?",
+        subject,
+        s.tenant(),
+        s.device());
+    recoverCreate(s, "original", input(s)).andExpect(status().isForbidden());
+  }
+
+  @Test
+  void expiredCancelRecoveryUsesOriginalVersionAndDoesNotCancelAgain() throws Exception {
+    var s = scope();
+    String id = submit(s, "create").get("id").asText();
+    mvc.perform(
+            post(ROUTE + "/" + id + "/cancel")
+                .header("Authorization", "Bearer " + s.token())
+                .header("Idempotency-Key", "cancel")
+                .header("If-Match", "\"0\""))
+        .andExpect(status().isOk());
+    expireOperation(s, "access.device.cancel");
+    var facts = db.queryForList("SELECT * FROM access_requests WHERE tenant_id=?", s.tenant());
+    var events =
+        db.queryForList(
+            "SELECT * FROM notification_events WHERE tenant_id=? ORDER BY id", s.tenant());
+    mvc.perform(
+            post(ROUTE + "/" + id + "/cancel-recovery")
+                .header("Authorization", "Bearer " + s.token())
+                .header("Idempotency-Key", "cancel")
+                .header("If-Match", "\"0\""))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.state").value("CANCELLED"))
+        .andExpect(header().string("ETag", "\"1\""));
+    assertThat(db.queryForList("SELECT * FROM access_requests WHERE tenant_id=?", s.tenant()))
+        .isEqualTo(facts);
+    assertThat(
+            db.queryForList(
+                "SELECT * FROM notification_events WHERE tenant_id=? ORDER BY id", s.tenant()))
+        .isEqualTo(events);
+    mvc.perform(
+            post(ROUTE + "/" + id + "/cancel-recovery")
+                .header("Authorization", "Bearer " + s.token())
+                .header("Idempotency-Key", "cancel")
+                .header("If-Match", "\"1\""))
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.errorCode").value("IDEMPOTENCY_KEY_CONFLICT"));
+  }
+
+  @Test
+  void recoveryPreservesInProgressRecordsAndRejectsMissingHeadersOrAuthorityInjection()
+      throws Exception {
+    var s = scope();
+    submit(s, "original");
+    expireOperation(s, "access.device.request");
+    db.update(
+        "UPDATE idempotency_requests SET response_body=NULL WHERE scope_id=? AND"
+            + " operation='access.device.request'",
+        s.tenant());
+    recoverCreate(s, "original", input(s))
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.errorCode").value("REQUEST_IN_PROGRESS"));
+    mvc.perform(
+            post(ROUTE + "/recovery")
+                .header("Authorization", "Bearer " + s.token())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(input(s))))
+        .andExpect(status().isBadRequest());
+    var injected = new HashMap<>(input(s));
+    injected.put("subjectId", s.subject());
+    recoverCreate(s, "original", injected).andExpect(status().isBadRequest());
+    mvc.perform(
+            post(ROUTE + "/not-a-uuid/cancel-recovery")
+                .header("Authorization", "Bearer " + s.token())
+                .header("Idempotency-Key", "cancel")
+                .header("If-Match", "\"0\""))
+        .andExpect(status().isBadRequest());
   }
 
   private record Scope(

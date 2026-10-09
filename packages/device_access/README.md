@@ -6,7 +6,7 @@
 
 `AccessSubmissionInput` 只包含策略/版本/应用/规则、时长与可选理由。宿主必须在发送前安全持久化原输入与键，并在断网、超时、异常成功响应或 `outcomeUnknown` 后继续使用原值确认结果。SDK 不自动重发，也不代替宿主的持久申请队列。分页选项可能为空但仍有下一游标。
 
-`AccessSubmissionJournal` 现提供上述持久队列基础：使用宿主加密数据库与完整 `DeviceAccessScope`，先 `prepareCreate/prepareCancel`，发送前 `markSending`，确认后 `complete`。同一范围只允许一条未解决变更；`inspect` 和重建 journal 不自动发请求。UNKNOWN 不可直接删除，只有未发送或明确拒绝的操作可以显式放弃。事实缓存有界并保护版本和原期限。详见[持久日志与儿童宿主契约](../../docs/child-request-workflow-contract.md)；24 小时过期键的专用恢复查询和产品界面仍待接入。
+`AccessSubmissionJournal` 现提供上述持久队列基础：使用宿主加密数据库与完整 `DeviceAccessScope`，先 `prepareCreate/prepareCancel`，发送前 `markSending`，确认后 `complete`。同一范围只允许一条未解决变更；`inspect` 和重建 journal 不自动发请求。UNKNOWN 不可直接删除，只有未发送或明确拒绝的操作可以显式放弃。事实缓存有界并保护版本和原期限。详见[持久日志与儿童宿主契约](../../docs/child-request-workflow-contract.md)；过期键恢复已由 `recoverSubmission` / `recoverCancellation` 提供，产品会话与界面仍待接入。恢复沿用原正文/原键/原取消版本，不续期、不创建新变更；404 `ACCESS_RECOVERY_UNAVAILABLE` 仍是未知结果，不能删除原操作。只在当前授权范围及原服务端引用仍可读取时恢复，不保证无限期离线或数据丢失后的成功。
 
 批准事实不是系统放行：`systemEnforced` 始终为 false，实际签名交付继续使用原有协议。理由和凭证不写入异常文字。接口、身份隔离、错误流程及迁移发布限制见[申请契约](../../docs/device-access-submission-contract.md)。
 

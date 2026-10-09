@@ -64,6 +64,26 @@ class DeviceAccessSubmissionController {
     return view(service.cancel(DeviceContext.from(actor), requestId, etag, key), HttpStatus.OK);
   }
 
+  /** Read-only lookup of original input; POST keeps private input out of URLs. */
+  @PostMapping("/recovery")
+  ResponseEntity<AccessRequest> recoverCreate(
+      @AuthenticationPrincipal OAuth2AuthenticatedPrincipal actor,
+      @Valid @RequestBody Create original,
+      @RequestHeader(value = "Idempotency-Key", required = false) String key) {
+    return view(service.recoverCreate(DeviceContext.from(actor), original, key), HttpStatus.OK);
+  }
+
+  @PostMapping("/{requestId}/cancel-recovery")
+  ResponseEntity<AccessRequest> recoverCancel(
+      @AuthenticationPrincipal OAuth2AuthenticatedPrincipal actor,
+      @PathVariable @Pattern(regexp = UUID) String requestId,
+      @RequestHeader(value = "If-Match", required = false) String originalTag,
+      @RequestHeader(value = "Idempotency-Key", required = false) String key) {
+    return view(
+        service.recoverCancel(DeviceContext.from(actor), requestId, originalTag, key),
+        HttpStatus.OK);
+  }
+
   private ResponseEntity.BodyBuilder noStore() {
     return ResponseEntity.ok().cacheControl(CacheControl.noStore()).varyBy("Authorization");
   }

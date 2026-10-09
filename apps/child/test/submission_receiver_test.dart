@@ -37,6 +37,7 @@ void main() {
   int contextStatus = 200;
   int postStatus = 201;
   String? postCode;
+  int recoveryStatus = 200;
   Completer<void>? responseGate, postedSignal;
   Map<String, dynamic> value() => sample.submission({
         'subjectId': f.subject,
@@ -72,6 +73,7 @@ void main() {
     contextStatus = 200;
     postStatus = 201;
     postCode = null;
+    recoveryStatus = 200;
     responseGate = null;
     postedSignal = null;
     client = MockClient((request) async {
@@ -88,6 +90,15 @@ void main() {
         status = contextStatus;
       } else if (request.url.path.endsWith('/options')) {
         body = {'items': [], 'nextCursor': null};
+      } else if (request.url.path.endsWith('/recovery') ||
+          request.url.path.endsWith('/cancel-recovery')) {
+        posted.add(request);
+        status = recoveryStatus;
+        body = status == 200
+            ? (request.url.path.endsWith('/cancel-recovery')
+                ? {...value(), 'state': 'CANCELLED', 'version': 1}
+                : value())
+            : {'errorCode': 'ACCESS_RECOVERY_UNAVAILABLE'};
       } else if (request.method == 'POST') {
         posted.add(request);
         postedSignal?.complete();
@@ -240,5 +251,66 @@ void main() {
     expect((await receiver.restore()).journal!.pending!.phase,
         SubmissionOperationPhase.unknown);
     expect(posted.length, 1);
+  });
+  test(
+      'expired original create is resolved by lookup with the same input and key',
+      () async {
+    await receiver.refresh();
+    loseCreate = true;
+    await expectLater(
+        receiver.create(sample.input(), applicationName: '阅读', key: 'old-key'),
+        throwsA(isA<AccessTransportFailure>()));
+    loseCreate = false;
+    postStatus = 409;
+    postCode = 'IDEMPOTENCY_KEY_EXPIRED';
+    final recovered = await receiver.retry();
+    expect(recovered.journal!.pending, isNull);
+    expect(posted.length, 3);
+    expect(posted.last.url.path.endsWith('/recovery'), isTrue);
+    for (final request in posted) {
+      expect(request.headers['Idempotency-Key'], 'old-key');
+      expect(request.body, posted.first.body);
+    }
+  });
+  test(
+      'unavailable expired lookup keeps the unknown operation without changing keys',
+      () async {
+    await receiver.refresh();
+    loseCreate = true;
+    await expectLater(
+        receiver.create(sample.input(), applicationName: '阅读', key: 'old-key'),
+        throwsA(isA<AccessTransportFailure>()));
+    loseCreate = false;
+    postStatus = 409;
+    postCode = 'IDEMPOTENCY_KEY_EXPIRED';
+    recoveryStatus = 404;
+    await expectLater(
+        receiver.retry(),
+        throwsA(isA<AccessTransportFailure>()
+            .having((e) => e.code, 'code', 'ACCESS_RECOVERY_UNAVAILABLE')));
+    expect((await receiver.restore()).journal!.pending!.key, 'old-key');
+    await expectLater(receiver.discard(), throwsA(isA<AccessFailure>()));
+    expect(posted.length, 3);
+  });
+  test(
+      'expired original cancel uses its original version in the read-only recovery',
+      () async {
+    await receiver.refresh();
+    loseCreate = true;
+    final original = AccessSubmission.fromJson(value());
+    await expectLater(
+        receiver.cancel(original, applicationName: '阅读', key: 'old-cancel'),
+        throwsA(isA<AccessTransportFailure>()));
+    loseCreate = false;
+    postStatus = 409;
+    postCode = 'IDEMPOTENCY_KEY_EXPIRED';
+    final recovered = await receiver.retry();
+    expect(recovered.journal!.pending, isNull);
+    expect(recovered.journal!.entries.single.value.state, 'CANCELLED');
+    expect(posted.last.url.path.endsWith('/cancel-recovery'), isTrue);
+    for (final request in posted) {
+      expect(request.headers['If-Match'], '"0"');
+      expect(request.headers['Idempotency-Key'], 'old-cancel');
+    }
   });
 }

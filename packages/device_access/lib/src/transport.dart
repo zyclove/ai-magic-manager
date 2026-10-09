@@ -330,6 +330,40 @@ class DeviceAccessTransport {
     }, headers: {'Idempotency-Key': idempotencyKey, 'If-Match': '"$version"'});
   }
 
+  /// Look up an existing original operation without creating or renewing it.
+  Future<AccessSubmission> recoverSubmission(AccessSubmissionInput original,
+      {required AccessDeviceContext context, required String idempotencyKey}) {
+    _submissionKey(idempotencyKey);
+    return _request('POST', 'access-submissions/recovery', (json) {
+      final value = AccessSubmission.fromJson(json);
+      value.requireContext(context);
+      if (!original.matches(value)) {
+        throw const AccessFailure('TRANSPORT_MISMATCH');
+      }
+      return value;
+    }, body: original.toJson(), headers: {'Idempotency-Key': idempotencyKey});
+  }
+
+  Future<AccessSubmission> recoverCancellation(String id,
+      {required AccessDeviceContext context,
+      required int version,
+      required String idempotencyKey}) {
+    if (!accessId(id) || !accessInteger(version, 0)) {
+      throw ArgumentError('Invalid original cancellation revision');
+    }
+    _submissionKey(idempotencyKey);
+    return _request('POST', 'access-submissions/$id/cancel-recovery', (json) {
+      final value = AccessSubmission.fromJson(json);
+      value.requireContext(context);
+      if (value.id != id ||
+          value.state != 'CANCELLED' ||
+          value.version <= version) {
+        throw const AccessFailure('TRANSPORT_MISMATCH');
+      }
+      return value;
+    }, headers: {'Idempotency-Key': idempotencyKey, 'If-Match': '"$version"'});
+  }
+
   void _submissionPageInput(String? cursor, int limit) {
     if (limit < 1 || limit > 100 || cursor != null && !accessId(cursor)) {
       throw ArgumentError('Invalid access submission page input');
@@ -337,7 +371,7 @@ class DeviceAccessTransport {
   }
 
   void _submissionKey(String key) {
-    if (!RegExp(r'^[A-Za-z0-9._-]{1,128}$').hasMatch(key)) {
+    if (RegExp(r'^[A-Za-z0-9._-]{1,128}$').stringMatch(key) != key) {
       throw ArgumentError('Invalid idempotency key');
     }
   }
@@ -410,6 +444,7 @@ const _safeCodes = {
   'IDEMPOTENCY_KEY_REQUIRED',
   'IDEMPOTENCY_KEY_CONFLICT',
   'IDEMPOTENCY_KEY_EXPIRED',
+  'ACCESS_RECOVERY_UNAVAILABLE',
   'REQUEST_IN_PROGRESS',
   'VERSION_REQUIRED',
   'RESOURCE_VERSION_CONFLICT',

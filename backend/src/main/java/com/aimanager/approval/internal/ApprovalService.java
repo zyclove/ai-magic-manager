@@ -269,6 +269,49 @@ class ApprovalService implements ApprovalMaintenance {
     return reconcile(ownDeviceRequest(identity, subject, id));
   }
 
+  /**
+   * Current device authority is held by the entry transaction; old cached states are not returned.
+   */
+  @Transactional(propagation = Propagation.MANDATORY)
+  public AccessRequest recoverDeviceCreate(
+      DeviceContext identity, String subject, ApprovalController.Create original, String key) {
+    requiredKey(key);
+    var reference =
+        idempotency
+            .findCommitted(
+                identity.tenantId(),
+                deviceActor(identity),
+                "access.device.request",
+                key,
+                Map.of("input", original),
+                AccessRequest.class)
+            .orElseThrow(
+                () -> new DomainException(HttpStatus.NOT_FOUND, "ACCESS_RECOVERY_UNAVAILABLE"));
+    return reconcile(ownDeviceRequest(identity, subject, reference.id()));
+  }
+
+  @Transactional(propagation = Propagation.MANDATORY)
+  public AccessRequest recoverDeviceCancel(
+      DeviceContext identity, String subject, String id, String originalTag, String key) {
+    long originalVersion = ResourceVersions.require(originalTag);
+    requiredKey(key);
+    ownDeviceRequest(identity, subject, id);
+    var reference =
+        idempotency
+            .findCommitted(
+                identity.tenantId(),
+                deviceActor(identity),
+                "access.device.cancel",
+                key,
+                Map.of("id", id, "version", originalVersion),
+                AccessRequest.class)
+            .orElseThrow(
+                () -> new DomainException(HttpStatus.NOT_FOUND, "ACCESS_RECOVERY_UNAVAILABLE"));
+    if (!id.equals(reference.id()))
+      throw new IllegalStateException("Cancellation reference mismatch");
+    return reconcile(ownDeviceRequest(identity, subject, id));
+  }
+
   private String deviceActor(DeviceContext identity) {
     return "device:" + identity.registrationId();
   }

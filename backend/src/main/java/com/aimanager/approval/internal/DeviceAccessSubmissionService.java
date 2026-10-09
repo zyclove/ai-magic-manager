@@ -66,6 +66,21 @@ class DeviceAccessSubmissionService {
     return approvals.cancelForDevice(identity, target.subjectId(), id, etag, key);
   }
 
+  @Transactional(timeout = 10)
+  public AccessRequest recoverCreate(
+      DeviceContext identity, DeviceAccessSubmissionController.Create original, String key) {
+    var target = authenticate(identity);
+    return approvals.recoverDeviceCreate(
+        identity, target.subjectId(), original.forDevice(identity.deviceId()), key);
+  }
+
+  @Transactional(timeout = 10)
+  public AccessRequest recoverCancel(
+      DeviceContext identity, String id, String originalTag, String key) {
+    var target = authenticate(identity);
+    return approvals.recoverDeviceCancel(identity, target.subjectId(), id, originalTag, key);
+  }
+
   private Device authenticate(DeviceContext identity) {
     var observed = devices.observeActive(identity);
     boolean active = subjects.lockForDevice(identity.tenantId(), observed.subjectId());
