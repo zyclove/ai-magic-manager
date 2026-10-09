@@ -34,7 +34,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-class PolicyService implements PolicyReadAccess, PolicyExceptionAccess {
+class PolicyService
+    implements PolicyReadAccess, PolicyExceptionAccess, DevicePolicyExceptionAccess {
   @org.springframework.context.event.EventListener
   @org.springframework.core.annotation.Order(-200)
   @Transactional(propagation = org.springframework.transaction.annotation.Propagation.MANDATORY)
@@ -565,6 +566,44 @@ class PolicyService implements PolicyReadAccess, PolicyExceptionAccess {
     if (!device.subjectId().equals(visible.subjectId())
         || !device.registrationId().equals(visible.registrationId()))
       throw new DomainException(HttpStatus.CONFLICT, "ACCESS_TARGET_CHANGED");
+    return validateAccessWindow(tenant, device, policyId, versionId, applicationId, ruleIds);
+  }
+
+  @Override
+  @Transactional(propagation = org.springframework.transaction.annotation.Propagation.MANDATORY)
+  public Device lockRequestTarget(
+      com.aimanager.deviceidentity.DeviceContext identity, String policyId) {
+    readDraft(identity.tenantId(), policyId, true);
+    var observed = devices.observeActive(identity);
+    if (!subjects.lockForDevice(identity.tenantId(), observed.subjectId()))
+      throw DomainException.denied();
+    var current = devices.lockActive(identity);
+    if (!current.subjectId().equals(observed.subjectId()))
+      throw new DomainException(HttpStatus.CONFLICT, "ACCESS_TARGET_CHANGED");
+    return current;
+  }
+
+  @Override
+  @Transactional(propagation = org.springframework.transaction.annotation.Propagation.MANDATORY)
+  public PolicyExceptionAccess.Baseline accessWindow(
+      com.aimanager.deviceidentity.DeviceContext identity,
+      String policyId,
+      String versionId,
+      String applicationId,
+      List<String> ruleIds) {
+    var device = lockRequestTarget(identity, policyId);
+    return validateAccessWindow(
+        identity.tenantId(), device, policyId, versionId, applicationId, ruleIds);
+  }
+
+  private PolicyExceptionAccess.Baseline validateAccessWindow(
+      String tenant,
+      Device device,
+      String policyId,
+      String versionId,
+      String applicationId,
+      List<String> ruleIds) {
+    String deviceId = device.id();
     var current =
         jdbc.query(
             "SELECT * FROM policy_versions WHERE tenant_id=? AND policy_id=? ORDER BY"
@@ -635,6 +674,21 @@ class PolicyService implements PolicyReadAccess, PolicyExceptionAccess {
     ItemPage.validate(limit, cursor);
     var device = requestDevices.observeRequestTarget(tenant, actor, deviceId);
     if (!subjects.active(tenant, device.subjectId())) throw DomainException.denied();
+    return optionsForDevice(tenant, device, limit, cursor);
+  }
+
+  @Override
+  @Transactional(propagation = org.springframework.transaction.annotation.Propagation.MANDATORY)
+  public ItemPage<PolicyExceptionAccess.WindowOptions> requestOptions(
+      com.aimanager.deviceidentity.DeviceContext identity, int limit, String cursor) {
+    ItemPage.validate(limit, cursor);
+    var device = devices.observeActive(identity);
+    if (!subjects.active(identity.tenantId(), device.subjectId())) throw DomainException.denied();
+    return optionsForDevice(identity.tenantId(), device, limit, cursor);
+  }
+
+  private ItemPage<PolicyExceptionAccess.WindowOptions> optionsForDevice(
+      String tenant, Device device, int limit, String cursor) {
     var versions =
         jdbc.query(
             "SELECT v.* FROM policy_versions v WHERE v.tenant_id=? AND v.policy_id>? AND NOT EXISTS"

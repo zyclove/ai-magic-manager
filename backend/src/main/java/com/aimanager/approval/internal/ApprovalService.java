@@ -7,12 +7,14 @@ import com.aimanager.approval.AccessRequest;
 import com.aimanager.approval.AccessRequestChanged;
 import com.aimanager.approval.ApprovalMaintenance;
 import com.aimanager.audit.AuditService;
+import com.aimanager.deviceidentity.DeviceContext;
 import com.aimanager.fleet.AccessRequestDeviceScope;
 import com.aimanager.fleet.DeviceAccess;
 import com.aimanager.fleet.DeviceRegistrationRevoked;
 import com.aimanager.idempotency.IdempotencyService;
 import com.aimanager.identity.ActorKeys;
 import com.aimanager.identity.RecentAuthentication;
+import com.aimanager.policy.DevicePolicyExceptionAccess;
 import com.aimanager.policy.PolicyConfigurationRecorded;
 import com.aimanager.policy.PolicyExceptionAccess;
 import com.aimanager.shared.*;
@@ -50,6 +52,7 @@ class ApprovalService implements ApprovalMaintenance {
   private final AccessRequestDeviceScope requestDevices;
   private final SubjectAccess subjects;
   private final PolicyExceptionAccess policies;
+  private final DevicePolicyExceptionAccess devicePolicies;
   private final RecentAuthentication recent;
   private final IdempotencyService idempotency;
   private final AuditService audit;
@@ -66,6 +69,7 @@ class ApprovalService implements ApprovalMaintenance {
       AccessRequestDeviceScope requestDevices,
       SubjectAccess subjects,
       PolicyExceptionAccess policies,
+      DevicePolicyExceptionAccess devicePolicies,
       RecentAuthentication recent,
       IdempotencyService idempotency,
       AuditService audit,
@@ -80,6 +84,7 @@ class ApprovalService implements ApprovalMaintenance {
     this.access = access;
     this.devices = devices;
     this.policies = policies;
+    this.devicePolicies = devicePolicies;
     this.recent = recent;
     this.subjects = subjects;
     this.requestDevices = requestDevices;
@@ -116,58 +121,167 @@ class ApprovalService implements ApprovalMaintenance {
                       input.baseVersionId(),
                       input.applicationId(),
                       input.ruleIds());
-              var slot = slot(tenant, base);
-              if (slot.lastId() != null) {
-                var previous = row(tenant, slot.lastId(), true);
-                var state = effective(previous).state();
-                if (state == PENDING)
-                  throw new DomainException(HttpStatus.CONFLICT, "ACCESS_REQUEST_PENDING");
-                if (state == APPROVED_PENDING_DELIVERY)
-                  throw new DomainException(HttpStatus.CONFLICT, "ACCESS_EXCEPTION_EXISTS");
-              }
-              if (slot.nextAllowedAt() > clock.millis())
-                throw new DomainException(HttpStatus.TOO_MANY_REQUESTS, "ACCESS_REQUEST_COOLDOWN");
-              String id = UUID.randomUUID().toString();
-              long now = clock.millis();
-              jdbc.update(
-                  "INSERT INTO"
-                      + " access_requests(tenant_id,id,subject_id,device_id,registration_id,policy_id,base_version_id,base_sequence,application_id,rule_ids_json,requester_actor_id,requester_actor_key,requested_window_seconds,child_reason,state,request_expires_at,created_at,updated_at)"
-                      + " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,'PENDING',?,?,?)",
-                  tenant,
-                  id,
-                  base.subjectId(),
-                  base.deviceId(),
-                  base.registrationId(),
-                  base.policyId(),
-                  base.versionId(),
-                  base.sequence(),
-                  base.applicationId(),
-                  json(base.ruleIds()),
-                  actor,
-                  ActorKeys.key(actor),
-                  input.requestedWindowSeconds(),
-                  input.reason() == null ? null : input.reason().strip(),
-                  now + requestTtl,
-                  now,
-                  now);
-              jdbc.update(
-                  "UPDATE access_request_slots SET last_request_id=?,next_allowed_at=? WHERE"
-                      + " tenant_id=? AND subject_id=? AND registration_id=? AND application_id=?",
-                  id,
-                  now + cooldown,
-                  tenant,
-                  base.subjectId(),
-                  base.registrationId(),
-                  base.applicationId());
-              audit.record(tenant, actor, "ACCESS_REQUEST_CREATED", id);
-              notifyChange(tenant, id, now);
-              return effective(row(tenant, id, false));
+              return insertRequest(tenant, actor, input, base, "MEMBER");
             });
     // Cached creation responses must not resurrect an expired/revoked window or disclose lost
     // scope.
     var current = row(tenant, result.id(), true);
     visible(tenant, actor, grant, current);
     return reconcile(current);
+  }
+
+  private AccessRequest insertRequest(
+      String tenant,
+      String actor,
+      ApprovalController.Create input,
+      PolicyExceptionAccess.Baseline base,
+      String kind) {
+    var slot = slot(tenant, base);
+    if (slot.lastId() != null) {
+      var previous = row(tenant, slot.lastId(), true);
+      var state = effective(previous).state();
+      if (state == PENDING)
+        throw new DomainException(HttpStatus.CONFLICT, "ACCESS_REQUEST_PENDING");
+      if (state == APPROVED_PENDING_DELIVERY)
+        throw new DomainException(HttpStatus.CONFLICT, "ACCESS_EXCEPTION_EXISTS");
+    }
+    if (slot.nextAllowedAt() > clock.millis())
+      throw new DomainException(HttpStatus.TOO_MANY_REQUESTS, "ACCESS_REQUEST_COOLDOWN");
+    String id = UUID.randomUUID().toString();
+    long now = clock.millis();
+    jdbc.update(
+        "INSERT INTO"
+            + " access_requests(tenant_id,id,subject_id,device_id,registration_id,policy_id,base_version_id,base_sequence,application_id,rule_ids_json,requester_actor_id,requester_actor_key,requester_kind,requested_window_seconds,child_reason,state,request_expires_at,created_at,updated_at)"
+            + " VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,'PENDING',?,?,?)",
+        tenant,
+        id,
+        base.subjectId(),
+        base.deviceId(),
+        base.registrationId(),
+        base.policyId(),
+        base.versionId(),
+        base.sequence(),
+        base.applicationId(),
+        json(base.ruleIds()),
+        actor,
+        ActorKeys.key(actor),
+        kind,
+        input.requestedWindowSeconds(),
+        input.reason() == null ? null : input.reason().strip(),
+        now + requestTtl,
+        now,
+        now);
+    jdbc.update(
+        "UPDATE access_request_slots SET last_request_id=?,next_allowed_at=? WHERE"
+            + " tenant_id=? AND subject_id=? AND registration_id=? AND application_id=?",
+        id,
+        now + cooldown,
+        tenant,
+        base.subjectId(),
+        base.registrationId(),
+        base.applicationId());
+    audit.record(tenant, actor, "ACCESS_REQUEST_CREATED", id);
+    notifyChange(tenant, id, now);
+    return effective(row(tenant, id, false));
+  }
+
+  /** Policy/lifecycle and active credential have been locked by the device entry transaction. */
+  @Transactional(propagation = Propagation.MANDATORY)
+  public AccessRequest createForDevice(
+      DeviceContext identity, String subject, ApprovalController.Create input, String key) {
+    requiredKey(key);
+    String actor = deviceActor(identity);
+    var result =
+        idempotency.execute(
+            identity.tenantId(),
+            actor,
+            "access.device.request",
+            key,
+            Map.of("input", input),
+            AccessRequest.class,
+            () -> {
+              var base =
+                  devicePolicies.accessWindow(
+                      identity,
+                      input.policyId(),
+                      input.baseVersionId(),
+                      input.applicationId(),
+                      input.ruleIds());
+              if (!base.subjectId().equals(subject)) throw DomainException.denied();
+              return insertRequest(identity.tenantId(), actor, input, base, "DEVICE");
+            });
+    return reconcile(ownDeviceRequest(identity, subject, result.id()));
+  }
+
+  @Transactional(propagation = Propagation.MANDATORY)
+  public AccessRequest getForDevice(DeviceContext identity, String subject, String id) {
+    return reconcile(ownDeviceRequest(identity, subject, id));
+  }
+
+  @Transactional(propagation = Propagation.MANDATORY)
+  public ItemPage<AccessRequest> listForDevice(
+      DeviceContext identity, String subject, int limit, String cursor) {
+    ItemPage.validate(limit, cursor);
+    var ids =
+        jdbc.queryForList(
+            "SELECT id FROM access_requests WHERE tenant_id=? AND device_id=? AND registration_id=?"
+                + " AND subject_id=? AND requester_kind='DEVICE' AND id>? ORDER BY id LIMIT ?",
+            String.class,
+            identity.tenantId(),
+            identity.deviceId(),
+            identity.registrationId(),
+            subject,
+            cursor == null ? "" : cursor,
+            limit + 1);
+    var page = ItemPage.from(ids, limit, id -> id);
+    return new ItemPage<>(
+        page.items().stream().map(id -> getForDevice(identity, subject, id)).toList(),
+        page.nextCursor());
+  }
+
+  @Transactional(propagation = Propagation.MANDATORY)
+  public AccessRequest cancelForDevice(
+      DeviceContext identity, String subject, String id, String etag, String key) {
+    long expected = ResourceVersions.require(etag);
+    requiredKey(key);
+    ownDeviceRequest(identity, subject, id);
+    idempotency.execute(
+        identity.tenantId(),
+        deviceActor(identity),
+        "access.device.cancel",
+        key,
+        Map.of("id", id, "version", expected),
+        AccessRequest.class,
+        () -> {
+          var stored = ownDeviceRequest(identity, subject, id);
+          ResourceVersions.check(expected, stored.view().version());
+          if (effective(stored).state() != PENDING)
+            throw new DomainException(HttpStatus.CONFLICT, "ACCESS_REQUEST_NOT_PENDING");
+          transition(
+              identity.tenantId(),
+              deviceActor(identity),
+              id,
+              CANCELLED,
+              "DEVICE_CANCELLED",
+              "ACCESS_REQUEST_CANCELLED");
+          return row(identity.tenantId(), id, false).view();
+        });
+    return reconcile(ownDeviceRequest(identity, subject, id));
+  }
+
+  private String deviceActor(DeviceContext identity) {
+    return "device:" + identity.registrationId();
+  }
+
+  private Stored ownDeviceRequest(DeviceContext identity, String subject, String id) {
+    var stored = row(identity.tenantId(), id, true);
+    var r = stored.view();
+    if (!"DEVICE".equals(stored.requesterKind())
+        || !stored.requester().equals(deviceActor(identity))
+        || !identity.deviceId().equals(r.deviceId())
+        || !identity.registrationId().equals(r.registrationId())
+        || !subject.equals(r.subjectId())) throw DomainException.denied();
+    return stored;
   }
 
   @Transactional(timeout = 10)
@@ -219,7 +333,9 @@ class ApprovalService implements ApprovalMaintenance {
     String sql =
         "SELECT ar.id FROM access_requests ar WHERE ar.tenant_id=? AND ar.id>? AND "
             + filter.sql()
-            + (grant.role() == TEACHER || child ? " AND ar.requester_actor_key=?" : "")
+            + (grant.role() == TEACHER || child
+                ? " AND ar.requester_kind='MEMBER' AND ar.requester_actor_key=?"
+                : "")
             + " ORDER BY ar.id LIMIT ?";
     var args = new ArrayList<Object>(List.of(tenant, cursor == null ? "" : cursor));
     args.addAll(filter.args());
@@ -242,7 +358,8 @@ class ApprovalService implements ApprovalMaintenance {
       String key) {
     access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN);
     recent.require(actor);
-    if (row(tenant, id, false).requesterKey().equals(ActorKeys.key(actor.getSubject())))
+    if ("MEMBER".equals(row(tenant, id, false).requesterKind())
+        && row(tenant, id, false).requesterKey().equals(ActorKeys.key(actor.getSubject())))
       throw new DomainException(HttpStatus.FORBIDDEN, "ACCESS_SELF_DECISION_FORBIDDEN");
     long expected = ResourceVersions.require(etag);
     requiredKey(key);
@@ -419,7 +536,8 @@ class ApprovalService implements ApprovalMaintenance {
             stored.requesterKey(),
             request.version(),
             request.state(),
-            occurredAt));
+            occurredAt,
+            AccessRequestChanged.RequesterKind.valueOf(stored.requesterKind())));
   }
 
   /**
@@ -469,9 +587,9 @@ class ApprovalService implements ApprovalMaintenance {
   public void memberRevoked(MembershipRevoked event) {
     var rows =
         jdbc.query(
-            "SELECT * FROM access_requests WHERE tenant_id=? AND (requester_actor_key=? OR"
-                + " approver_actor_key=?) AND state IN ('PENDING','APPROVED_PENDING_DELIVERY')"
-                + " ORDER BY id FOR UPDATE",
+            "SELECT * FROM access_requests WHERE tenant_id=? AND ((requester_kind='MEMBER' AND"
+                + " requester_actor_key=?) OR approver_actor_key=?) AND state IN"
+                + " ('PENDING','APPROVED_PENDING_DELIVERY') ORDER BY id FOR UPDATE",
             (row, index) -> map(row),
             event.tenantId(),
             event.actorKey(),
@@ -495,7 +613,7 @@ class ApprovalService implements ApprovalMaintenance {
   public void ownershipTransferred(com.aimanager.tenant.OwnershipTransferred event) {
     invalidate(
         event.tenantId(),
-        "(requester_actor_key=? OR approver_actor_key=?)",
+        "((requester_kind='MEMBER' AND requester_actor_key=?) OR approver_actor_key=?)",
         new Object[] {event.formerOwnerActorKey(), event.formerOwnerActorKey()},
         "OWNERSHIP_CHANGED");
   }
@@ -508,7 +626,7 @@ class ApprovalService implements ApprovalMaintenance {
     if (event.revoked()) return;
     invalidate(
         event.tenantId(),
-        "(requester_actor_key=? OR approver_actor_key=?)",
+        "((requester_kind='MEMBER' AND requester_actor_key=?) OR approver_actor_key=?)",
         new Object[] {event.actorKey(), event.actorKey()},
         "MEMBERSHIP_CHANGED");
   }
@@ -528,7 +646,8 @@ class ApprovalService implements ApprovalMaintenance {
     // locking read also sees creators that committed before Organization obtained membership locks.
     var rows =
         jdbc.query(
-            "SELECT * FROM access_requests WHERE tenant_id=? AND requester_actor_key IN ("
+            "SELECT * FROM access_requests WHERE tenant_id=? AND requester_kind='MEMBER' AND"
+                + " requester_actor_key IN ("
                 + String.join(",", Collections.nCopies(actors.size(), "?"))
                 + ") AND subject_id IN ("
                 + String.join(",", Collections.nCopies(subjects.size(), "?"))
@@ -645,6 +764,7 @@ class ApprovalService implements ApprovalMaintenance {
     if (grant.role() == CHILD && !row.view().subjectId().equals(grant.subjectId()))
       throw DomainException.denied();
     if (grant.role() == TEACHER || grant.role() == CHILD) {
+      if (!"MEMBER".equals(row.requesterKind())) throw DomainException.denied();
       if (!row.requesterKey().equals(ActorKeys.key(actor))) throw DomainException.denied();
       access.requireSubjectRead(tenant, actor, grant, row.view().subjectId());
     }
@@ -695,6 +815,7 @@ class ApprovalService implements ApprovalMaintenance {
         row.getString("tenant_id"),
         row.getString("requester_actor_id"),
         row.getString("requester_actor_key"),
+        row.getString("requester_kind"),
         row.getString("approver_actor_id"),
         view);
   }
@@ -735,6 +856,11 @@ class ApprovalService implements ApprovalMaintenance {
   }
 
   private boolean requesterVisible(Stored stored) {
+    if ("DEVICE".equals(stored.requesterKind())) {
+      var r = stored.view();
+      return devices.registrationActive(
+          stored.tenant(), r.deviceId(), r.registrationId(), r.subjectId());
+    }
     try {
       var requester = access.requireRole(stored.tenant(), stored.requester(), CHILD, TEACHER);
       return access.canReadSubject(
@@ -778,5 +904,10 @@ class ApprovalService implements ApprovalMaintenance {
   private record Slot(String lastId, long nextAllowedAt) {}
 
   private record Stored(
-      String tenant, String requester, String requesterKey, String approver, AccessRequest view) {}
+      String tenant,
+      String requester,
+      String requesterKey,
+      String requesterKind,
+      String approver,
+      AccessRequest view) {}
 }

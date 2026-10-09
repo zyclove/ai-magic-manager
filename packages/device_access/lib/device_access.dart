@@ -7,3 +7,5 @@ export 'src/receipt.dart';
 export 'src/page.dart';
 export 'src/transport.dart';
 export 'src/synchronizer.dart';
+
+export 'src/submission.dart';

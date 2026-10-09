@@ -5,6 +5,7 @@ import 'package:http_parser/http_parser.dart';
 import 'page.dart';
 import 'receipt.dart';
 import 'models.dart';
+import 'submission.dart';
 
 /// No server copy, credentials, response bodies or transport causes.
 class AccessTransportFailure implements Exception {
@@ -72,7 +73,9 @@ class DeviceAccessTransport {
   }
   Future<T> _request<T>(
       String method, String path, T Function(Map<String, dynamic>) parse,
-      {Map<String, String>? query, Map<String, dynamic>? body}) async {
+      {Map<String, String>? query,
+      Map<String, dynamic>? body,
+      Map<String, String> headers = const {}}) async {
     if (_closed) {
       throw const AccessTransportFailure('CLIENT_CLOSED');
     }
@@ -111,6 +114,7 @@ class DeviceAccessTransport {
         ..maxRedirects = 0
         ..headers['Authorization'] = 'Bearer $token'
         ..headers['Accept'] = 'application/json';
+      request.headers.addAll(headers);
       if (body != null) {
         request.headers['Content-Type'] = 'application/json';
         request.body = jsonEncode(body);
@@ -261,6 +265,83 @@ class DeviceAccessTransport {
         });
   }
 
+  Future<AccessSubmissionOptionsPage> submissionOptions(
+      {String? cursor, int limit = 20}) {
+    _submissionPageInput(cursor, limit);
+    return _request(
+        'GET',
+        'access-submissions/options',
+        (json) => AccessSubmissionOptionsPage.fromJson(json,
+            after: cursor, limit: limit),
+        query: {'limit': '$limit', if (cursor != null) 'cursor': cursor});
+  }
+
+  Future<AccessSubmissionPage> submissions(
+      {required AccessDeviceContext context, String? cursor, int limit = 20}) {
+    _submissionPageInput(cursor, limit);
+    return _request('GET', 'access-submissions', (json) {
+      final page =
+          AccessSubmissionPage.fromJson(json, after: cursor, limit: limit);
+      for (final value in page.items) {
+        value.requireContext(context);
+      }
+      return page;
+    }, query: {'limit': '$limit', if (cursor != null) 'cursor': cursor});
+  }
+
+  Future<AccessSubmission> submission(String id,
+      {required AccessDeviceContext context}) {
+    if (!accessId(id)) throw ArgumentError('Invalid access submission ID');
+    return _request('GET', 'access-submissions/$id', (json) {
+      final value = AccessSubmission.fromJson(json);
+      value.requireContext(context);
+      if (value.id != id) throw const AccessFailure('TRANSPORT_MISMATCH');
+      return value;
+    });
+  }
+
+  /// No automatic retry: retain the original input/key whenever outcomeUnknown is true.
+  Future<AccessSubmission> createSubmission(AccessSubmissionInput input,
+      {required AccessDeviceContext context, required String idempotencyKey}) {
+    _submissionKey(idempotencyKey);
+    return _request('POST', 'access-submissions', (json) {
+      final value = AccessSubmission.fromJson(json);
+      value.requireContext(context);
+      if (!input.matches(value)) {
+        throw const AccessFailure('TRANSPORT_MISMATCH');
+      }
+      return value;
+    }, body: input.toJson(), headers: {'Idempotency-Key': idempotencyKey});
+  }
+
+  Future<AccessSubmission> cancelSubmission(String id,
+      {required AccessDeviceContext context,
+      required int version,
+      required String idempotencyKey}) {
+    if (!accessId(id) || !accessInteger(version, 0)) {
+      throw ArgumentError('Invalid access submission revision');
+    }
+    _submissionKey(idempotencyKey);
+    return _request('POST', 'access-submissions/$id/cancel', (json) {
+      final value = AccessSubmission.fromJson(json);
+      value.requireContext(context);
+      if (value.id != id) throw const AccessFailure('TRANSPORT_MISMATCH');
+      return value;
+    }, headers: {'Idempotency-Key': idempotencyKey, 'If-Match': '"$version"'});
+  }
+
+  void _submissionPageInput(String? cursor, int limit) {
+    if (limit < 1 || limit > 100 || cursor != null && !accessId(cursor)) {
+      throw ArgumentError('Invalid access submission page input');
+    }
+  }
+
+  void _submissionKey(String key) {
+    if (!RegExp(r'^[A-Za-z0-9._-]{1,128}$').hasMatch(key)) {
+      throw ArgumentError('Invalid idempotency key');
+    }
+  }
+
   void close() {
     if (_closed) {
       return;
@@ -315,5 +396,25 @@ const _safeCodes = {
   'DELIVERY_REJECTED_REPUBLISH_REQUIRED',
   'INPUT_INVALID',
   'RATE_LIMITED',
-  'SERVER_ERROR'
+  'SERVER_ERROR',
+  'DEVICE_CREDENTIAL_REVOKED',
+  'DEVICE_CREDENTIAL_UNAVAILABLE',
+  'ACCESS_REQUEST_PENDING',
+  'ACCESS_EXCEPTION_EXISTS',
+  'ACCESS_REQUEST_COOLDOWN',
+  'ACCESS_REQUEST_NOT_PENDING',
+  'BASELINE_CHANGED',
+  'EXCEPTION_RULE_INVALID',
+  'EXCEPTION_KIND_UNSUPPORTED',
+  'SAFETY_BASELINE_PROTECTED',
+  'IDEMPOTENCY_KEY_REQUIRED',
+  'IDEMPOTENCY_KEY_CONFLICT',
+  'IDEMPOTENCY_KEY_EXPIRED',
+  'REQUEST_IN_PROGRESS',
+  'VERSION_REQUIRED',
+  'RESOURCE_VERSION_CONFLICT',
+  'VALIDATION_FAILED',
+  'MALFORMED_REQUEST',
+  'INVALID_PAGE_SIZE',
+  'INVALID_CURSOR'
 };

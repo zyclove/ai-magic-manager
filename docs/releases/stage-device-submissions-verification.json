@@ -1,0 +1,150 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-09T21:53:11.706470+00:00",
+  "parentHead": "69b9c79ae9b3fee2aa1640cb99865afa9d46ef63",
+  "scope": "V23 device-authenticated request API and Dart SDK on the frozen V22 baseline. Child request UI and pending-report work excluded.",
+  "sourceFiles": [
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/AccessRequestChanged.java",
+      "sha256": "253ba16ac04243a0948c10217c2d8ff990204b8462bedcf206d05aceecfe60e7"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/internal/ApprovalService.java",
+      "sha256": "088955f18e0ecb665ed33fb0e45d014e944b4a42639c2b5716f54820ead6d99f"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/internal/DeviceAccessSubmissionController.java",
+      "sha256": "197519b2dc13acd0c20d1a18df80557dcb210d88330840cd16f65d8bdbd8f802"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/internal/DeviceAccessSubmissionService.java",
+      "sha256": "12807a794cdec6ca74d4362867b3ba8ff2598da4054a324facdd8ba4fcc1bb80"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/notification/internal/NotificationService.java",
+      "sha256": "72b70d65671306e827c7c463d7f29e455e7f96f44b8bdc9a85afa9e7e4b8ccac"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/policy/DevicePolicyExceptionAccess.java",
+      "sha256": "bbe584a1c693777ca119c479f99131938dbbe47de23549fa1bf4389bc870d9f9"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/policy/internal/PolicyService.java",
+      "sha256": "64868b3e6d6ed0b3036cc4067ff2d040e9dce4c60188a2185b524897e045c92d"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V23__device_access_submissions.sql",
+      "sha256": "149fc071f238f1fdf8ad05457930c738a567053a02061a5f0aed7d8e6ca2110b"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeviceAccessSubmissionJourneyTest.java",
+      "sha256": "f3bf5c3821b89325a285d527d09a85e474508a14c68e05afdd5c5170403acd0f"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeviceAccessSubmissionMigrationTest.java",
+      "sha256": "532169dca6e4e5da543d86414f7c7e10b461cfc043b9e7d5582a8429d75ccfcc"
+    },
+    {
+      "path": "packages/device_access/lib/device_access.dart",
+      "sha256": "efa0e0269e85550699a3cd16c5f2be1133c3d303ad5ff874314403635e305e0f"
+    },
+    {
+      "path": "packages/device_access/lib/src/submission.dart",
+      "sha256": "fbc96c7476c5886792ec3bed6dd711f4f7d7a8ab3de3d23dba09b67cefa26da6"
+    },
+    {
+      "path": "packages/device_access/lib/src/transport.dart",
+      "sha256": "90f114aaf1dad54fdc958eaf4c7c555821d20c94fad25d02e2d4eccd00c1d1f6"
+    },
+    {
+      "path": "packages/device_access/test/submission_test.dart",
+      "sha256": "9867f8dc7e43c579a06b2b026cf77a43140ef4425d008747701129a2b6b95bd4"
+    },
+    {
+      "path": "packages/device_access/tool/verify_submission_http.dart",
+      "sha256": "1cc59a9fd6d7534aee13d772efa3840b81fa310a0bc7dc5009d1bb6281c82100"
+    },
+    {
+      "path": "packages/device_access/README.md",
+      "sha256": "2485a01db6bbb1d4697af1735472be2d3b4632fe259c5f99b7c31fbf9d54378a"
+    },
+    {
+      "path": "docs/device-access-submission-plan.md",
+      "sha256": "b3036bfc758160459e7872703cbc079d5af75a88273daa702fc1ab1dcf939598"
+    },
+    {
+      "path": "docs/device-access-submission-contract.md",
+      "sha256": "03227463559cf1d1d1e2f067af26e0a8dba7af20c33d75877795ffb9be50a286"
+    }
+  ],
+  "verification": {
+    "backendFrozenCandidate": {
+      "path": ".local/device-submission-backend-full.log",
+      "sha256": "5c1cb0c8ab6bf3bb8f88b12753a3779a10de2ef09553bc8a2dc2c00302859b1f",
+      "tests": 315,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "finalFormattedHttpTool": {
+      "path": ".local/device-submission-final-tool-http.log",
+      "sha256": "9767e2c63e1bef0af98119e65796f00928fcdcd8f1ea595c7ae9f22128e26bb8",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "mysqlDeviceJourney": {
+      "path": ".local/device-submission-mysql-journey.log",
+      "sha256": "6a1f25d41438238623b93f23a434f18eecc41d87c4ebca54b17f4746afa348ef",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "mysqlNonemptyV22V23Migration": {
+      "path": ".local/device-submission-mysql-migration.log",
+      "sha256": "3ea7c879abb568f6fa693a0c8cf3f1940d13d10a85edd2246dad4c1dc93d611f",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "deviceSdk": {
+      "tests": 109,
+      "path": ".local/device-submission-sdk-final.log",
+      "sha256": "d2b0fb0142f4c75bd15600460b78a498f8bc7e1dd6f2a62eeab0da800af3bbbf"
+    },
+    "existingChildCompatibility": {
+      "tests": 59,
+      "path": ".local/device-submission-child-compat.log",
+      "sha256": "c3621c5701e5414be8dc1471c64b18bf5773426d626935e166de55d96d69e042"
+    },
+    "analysis": [
+      {
+        "path": ".local/device-submission-sdk-final-analysis.log",
+        "sha256": "90e7613774af3529464575b0ab224afcba9aba6af6f6693e296e6cab87564ff1",
+        "clean": true
+      },
+      {
+        "path": ".local/device-submission-child-compat-analysis.log",
+        "sha256": "90efb513985a12cc27a5de8eac6ec29cfe59f679d822fb8f716bfe0d9d870ff8",
+        "clean": true
+      }
+    ],
+    "watchedNotificationCollisionRed": {
+      "path": ".local/device-request-notification-red.log",
+      "sha256": "b0d0db7d15e8774794dce2e5c1ca1523a099fa1f6782aa6d648fa0eef4a5155e",
+      "expectedFailure": "Device and member with the same textual actor saw the device-origin notification before explicit kind filtering."
+    }
+  },
+  "mysqlCleanup": "Both independently generated, allowlisted local schemas dropped after verification. No real business database changed.",
+  "limitations": [
+    "Adult MFA, registration and policy fixtures are explicit test data; live commercial identity-provider approval flow was not certified in this stage.",
+    "Actual Dart-to-Spring HTTP covers request creation, original-key retry, approval and revocation observation plus existing delivery references; native unlock is not claimed.",
+    "The child request form and durable pending-request recovery are still pending. Existing child UI compatibility was checked, not the new request UI.",
+    "No production deployment, OceanBase certification, load capacity, backup restore or operating-system enforcement verified here.",
+    "All application instances must understand requester_kind before device-origin requests are enabled; mixing old approval/notification code with new DEVICE rows is unsupported.",
+    "Final formatting changes only the HTTP test tool; the final one-test actual-HTTP execution revalidates that tool after the 315-test backend suite."
+  ]
+}

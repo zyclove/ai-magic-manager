@@ -51,8 +51,8 @@ class NotificationService implements NotificationMaintenance {
     try {
       jdbc.update(
           "INSERT INTO"
-              + " notification_events(tenant_id,id,request_id,subject_id,device_id,requester_actor_key,request_version,state,occurred_at)"
-              + " VALUES(?,?,?,?,?,?,?,?,?)",
+              + " notification_events(tenant_id,id,request_id,subject_id,device_id,requester_actor_key,request_version,state,occurred_at,requester_kind)"
+              + " VALUES(?,?,?,?,?,?,?,?,?,?)",
           event.tenantId(),
           UUID.randomUUID().toString(),
           event.requestId(),
@@ -61,14 +61,22 @@ class NotificationService implements NotificationMaintenance {
           event.requesterKey(),
           event.requestVersion(),
           event.state().name(),
-          event.occurredAt());
+          event.occurredAt(),
+          event.requesterKind().name());
     } catch (DuplicateKeyException duplicate) {
       // Domain replays may repeat delivery, but cannot replace a previously recorded version.
       var existing =
           jdbc.query(
-              "SELECT subject_id,device_id,requester_actor_key,state FROM notification_events WHERE"
-                  + " tenant_id=? AND request_id=? AND request_version=? FOR UPDATE",
-              (r, i) -> List.of(r.getString(1), r.getString(2), r.getString(3), r.getString(4)),
+              "SELECT subject_id,device_id,requester_actor_key,state,requester_kind FROM"
+                  + " notification_events WHERE tenant_id=? AND request_id=? AND request_version=?"
+                  + " FOR UPDATE",
+              (r, i) ->
+                  List.of(
+                      r.getString(1),
+                      r.getString(2),
+                      r.getString(3),
+                      r.getString(4),
+                      r.getString(5)),
               event.tenantId(),
               event.requestId(),
               event.requestVersion());
@@ -80,7 +88,8 @@ class NotificationService implements NotificationMaintenance {
                       event.subjectId(),
                       event.deviceId(),
                       event.requesterKey(),
-                      event.state().name())))
+                      event.state().name(),
+                      event.requesterKind().name())))
         throw new IllegalStateException("Conflicting notification version");
     }
   }
@@ -191,7 +200,7 @@ class NotificationService implements NotificationMaintenance {
     var args = new ArrayList<Object>(List.of(tenant, clock.millis() - retentionMillis));
     args.addAll(subject.args());
     if (grant.role() == CHILD || grant.role() == TEACHER) {
-      sql += " AND n.requester_actor_key=?";
+      sql += " AND n.requester_kind='MEMBER' AND n.requester_actor_key=?";
       args.add(ActorKeys.key(actor));
     }
     return new TenantAccess.ScopeFilter(sql, args);

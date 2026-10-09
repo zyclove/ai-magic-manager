@@ -1,5 +1,13 @@
 # Device access-window reception
 
+## 设备发起申请（V23）
+
+`DeviceAccessTransport` 提供 `submissionOptions`、`createSubmission`、`submissions`、`submission` 和 `cancelSubmission`，返回严格解析的 `AccessSubmission`。沿用现有设备 opaque 凭证，不构造儿童成员令牌。详情、列表和变更需传入当前 `AccessDeviceContext`，提交必须提供稳定的原始幂等键，取消还需原版本。
+
+`AccessSubmissionInput` 只包含策略/版本/应用/规则、时长与可选理由。宿主必须在发送前安全持久化原输入与键，并在断网、超时、异常成功响应或 `outcomeUnknown` 后继续使用原值确认结果。SDK 不自动重发，也不代替宿主的持久申请队列。分页选项可能为空但仍有下一游标。
+
+批准事实不是系统放行：`systemEnforced` 始终为 false，实际签名交付继续使用原有协议。理由和凭证不写入异常文字。接口、身份隔离、错误流程及迁移发布限制见[申请契约](../../docs/device-access-submission-contract.md)。
+
 独立 Dart 审批配置接收组件，使用 `jose` 验证 ES256、`sembast` 保存事务、`crypto` 校验本地内容摘要。对应后端 V15/V16 协议。配置始终为 `CONFIGURE_ONLY`、`quotaEffect=UNCHANGED`、`systemEnforced=false`。
 
 ## 宿主接入
