@@ -663,6 +663,171 @@ class DeviceAccessSubmissionJourneyTest {
     }
   }
 
+  @Test
+  @org.junit.jupiter.api.condition.EnabledIfSystemProperty(
+      named = "device.child.package",
+      matches = ".+")
+  void actualChildSessionAndUiRecoverOriginalSubmissionAcrossProcesses() throws Exception {
+    var s = scope();
+    java.nio.file.Files.createDirectories(java.nio.file.Path.of(".local"));
+    var directory =
+        java.nio.file.Files.createTempDirectory(
+            java.nio.file.Path.of(".local").toAbsolutePath(), "child-submission-http-");
+    var fixtureFile = directory.resolve("fixture.json");
+    var fixture = childFixture(s);
+    try {
+      runChild(fixtureFile, fixture, directory, "submit");
+      String id =
+          db.queryForObject(
+              "SELECT id FROM access_requests WHERE tenant_id=?", String.class, s.tenant());
+      fixture.put("requestId", id);
+      var approved =
+          json(
+              mvc.perform(
+                      post(management(s) + "/" + id + "/decisions")
+                          .with(adult(s.owner()))
+                          .header("If-Match", "\"0\"")
+                          .header("Idempotency-Key", "child-approve")
+                          .contentType(MediaType.APPLICATION_JSON)
+                          .content("{\"decision\":\"APPROVE\",\"grantedWindowSeconds\":300}"))
+                  .andExpect(status().isOk())
+                  .andReturn()
+                  .getResponse()
+                  .getContentAsString());
+      fixture.put("absoluteNotAfter", approved.get("absoluteNotAfter").asLong());
+      expireOperation(s, "access.device.request");
+      runChild(fixtureFile, fixture, directory, "approved");
+      mvc.perform(
+              post(management(s) + "/" + id + "/revoke")
+                  .with(adult(s.owner()))
+                  .header("If-Match", "\"1\"")
+                  .header("Idempotency-Key", "child-revoke"))
+          .andExpect(status().isOk());
+      runChild(fixtureFile, fixture, directory, "revoked");
+      db.update("UPDATE device_credentials SET active=false WHERE id=?", s.credential());
+      runChild(fixtureFile, fixture, directory, "unauthenticated");
+      runChild(fixtureFile, fixture, directory, "blocked");
+      assertThat(
+              db.queryForObject(
+                  "SELECT COUNT(*) FROM access_requests WHERE tenant_id=?",
+                  Integer.class,
+                  s.tenant()))
+          .isEqualTo(1);
+      assertThat(
+              db.queryForObject(
+                  "SELECT expires_at FROM idempotency_requests WHERE scope_id=? AND"
+                      + " operation='access.device.request'",
+                  Long.class,
+                  s.tenant()))
+          .isEqualTo(1);
+    } finally {
+      cleanupChildFixture(directory);
+    }
+  }
+
+  @Test
+  @org.junit.jupiter.api.condition.EnabledIfSystemProperty(
+      named = "device.child.package",
+      matches = ".+")
+  void actualChildUiRecoversOriginalCancellationAcrossProcesses() throws Exception {
+    var s = scope();
+    java.nio.file.Files.createDirectories(java.nio.file.Path.of(".local"));
+    var directory =
+        java.nio.file.Files.createTempDirectory(
+            java.nio.file.Path.of(".local").toAbsolutePath(), "child-cancellation-http-");
+    var file = directory.resolve("fixture.json");
+    var fixture = childFixture(s);
+    try {
+      runChild(file, fixture, directory, "cancel-submit");
+      String id =
+          db.queryForObject(
+              "SELECT id FROM access_requests WHERE tenant_id=?", String.class, s.tenant());
+      fixture.put("requestId", id);
+      expireOperation(s, "access.device.cancel");
+      runChild(file, fixture, directory, "cancel-recover");
+      assertThat(
+              db.queryForObject(
+                  "SELECT state FROM access_requests WHERE tenant_id=? AND id=?",
+                  String.class,
+                  s.tenant(),
+                  id))
+          .isEqualTo("CANCELLED");
+      assertThat(
+              db.queryForObject(
+                  "SELECT COUNT(*) FROM access_requests WHERE tenant_id=?",
+                  Integer.class,
+                  s.tenant()))
+          .isEqualTo(1);
+      assertThat(
+              db.queryForObject(
+                  "SELECT expires_at FROM idempotency_requests WHERE scope_id=? AND"
+                      + " operation='access.device.cancel'",
+                  Long.class,
+                  s.tenant()))
+          .isEqualTo(1);
+    } finally {
+      cleanupChildFixture(directory);
+    }
+  }
+
+  private Map<String, Object> childFixture(Scope s) {
+    var fixture = new HashMap<String, Object>();
+    fixture.put("apiRoot", "http://127.0.0.1:" + port + "/api/v1");
+    fixture.put("credential", s.token());
+    fixture.put("tenantId", s.tenant());
+    fixture.put("subjectId", s.subject());
+    fixture.put("deviceId", s.device());
+    fixture.put("registrationId", s.registration());
+    fixture.put("nowMillis", clock.millis());
+    return fixture;
+  }
+
+  private void cleanupChildFixture(java.nio.file.Path directory) throws Exception {
+    // Only JVM-created private files; safe phase logs remain for diagnostics.
+    try (var files = java.nio.file.Files.list(directory)) {
+      for (var path : files.filter(p -> !p.getFileName().toString().endsWith(".log")).toList()) {
+        java.nio.file.Files.deleteIfExists(path);
+      }
+    }
+  }
+
+  private void runChild(
+      java.nio.file.Path file,
+      Map<String, Object> fixture,
+      java.nio.file.Path directory,
+      String phase)
+      throws Exception {
+    mapper.writeValue(file.toFile(), fixture);
+    var output = directory.resolve("child-" + phase + ".log");
+    var builder =
+        new ProcessBuilder(
+                System.getProperty("device.flutter.command"),
+                "test",
+                "--no-pub",
+                "tool/submission_http_session_test.dart",
+                "--reporter",
+                "expanded")
+            .directory(java.nio.file.Path.of(System.getProperty("device.child.package")).toFile())
+            .redirectErrorStream(true)
+            .redirectOutput(output.toFile());
+    builder.environment().put("CHILD_SUBMISSION_HTTP_FIXTURE", file.toString());
+    builder.environment().put("CHILD_SUBMISSION_HTTP_MODE", phase);
+    var process = builder.start();
+    if (!process.waitFor(90, java.util.concurrent.TimeUnit.SECONDS)) {
+      // A Windows batch wrapper otherwise leaves its Flutter descendants running.
+      var descendants = process.descendants().toList();
+      for (int i = descendants.size() - 1; i >= 0; i--) {
+        descendants.get(i).destroyForcibly();
+      }
+      process.destroyForcibly();
+      process.waitFor(5, java.util.concurrent.TimeUnit.SECONDS);
+      throw new AssertionError("Child submission exceeded bounded deadline");
+    }
+    assertThat(process.exitValue()).as("Child diagnostics: %s", output).isZero();
+    assertThat(java.nio.file.Files.readString(output))
+        .contains("Child submission HTTP " + phase + ": PASS");
+  }
+
   private void runDart(
       java.nio.file.Path file,
       Map<String, Object> fixture,

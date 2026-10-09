@@ -163,15 +163,21 @@ class ChildSession extends ChangeNotifier {
 
   Future<void> _refresh() async {
     final wasReady = credentialReady;
-    identityReadSucceeded = false;
-    credentialReady = false;
     _pairingCode = null;
     try {
-      identityView = await identity.view();
-      _pairingCode = _foreground ? await identity.pairingCode() : null;
-      credentialReady = await identity.activeCredential() != null;
+      // Publish a complete verified identity snapshot. A slow secure-store read
+      // must not look like credential revocation to an in-flight private form.
+      // The enclosing action stays busy and cannot mutate before this completes.
+      final nextView = await identity.view();
+      final nextPairing = _foreground ? await identity.pairingCode() : null;
+      final nextReady = await identity.activeCredential() != null;
+      identityView = nextView;
+      _pairingCode = _foreground ? nextPairing : null;
+      credentialReady = nextReady;
       identityReadSucceeded = true;
     } on DeviceIdentityFailure catch (failure) {
+      identityReadSucceeded = false;
+      credentialReady = false;
       if (failure.code == 'IDENTITY_NOT_FOUND') {
         identityView = null;
         _pairingCode = null;
@@ -179,6 +185,10 @@ class ChildSession extends ChangeNotifier {
       } else {
         rethrow;
       }
+    } catch (_) {
+      identityReadSucceeded = false;
+      credentialReady = false;
+      rethrow;
     } finally {
       _checkIdentityScope();
       if (!wasReady && credentialReady && accessFactory != null) {

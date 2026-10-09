@@ -1,0 +1,130 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-09T23:58:16.909292+00:00",
+  "parentHead": "c085377142be1742142ef7c209ca5b4ba15282c7",
+  "scope": "Real Spring HTTP -> production child request receiver/session/UI across fresh Flutter processes; atomic identity refresh fix. Native Android runtime is not part of this acceptance.",
+  "sourceFiles": [
+    {
+      "path": "apps/child/README.md",
+      "sha256": "c66f2d811ac9d6626daea45f4e6547cee274be091bb1ca06e0be9c6487eae670"
+    },
+    {
+      "path": "apps/child/lib/core/session.dart",
+      "sha256": "df61771034959f159ecd2a6c7fb4091732a436ebaacd21441bb12d39f0cddf09"
+    },
+    {
+      "path": "apps/child/test/submission_identity_refresh_test.dart",
+      "sha256": "03ae9d188d348342ba25341661607840f36f6db0f955ca65f0c01efa74be3402"
+    },
+    {
+      "path": "apps/child/tool/submission_http_session_test.dart",
+      "sha256": "0eed662d4945570b07e655030f1e836eeba48205ee179e0105a616b994ef80b8"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeviceAccessSubmissionJourneyTest.java",
+      "sha256": "16a7839c4b0740c84016cf92f59dac22c64d64ce0ef0a0dfd1b7b85cca305e0b"
+    },
+    {
+      "path": "docs/child-submission-http-acceptance.md",
+      "sha256": "d2e405e071a3ec32a9f98c1cae507249eecbe56cd31ec9c65caac8159b33cf64"
+    }
+  ],
+  "frozenBaselineInputCount": 496,
+  "baselineArchiveSha256": "d11d615f3bac5cf5b5f85df7c7e8105ea1600a79f98aa1b0ab397d6ea78a1710",
+  "checks": {
+    "backendFull": 323,
+    "backendFailures": 0,
+    "backendSkipped": 0,
+    "mysqlRequestJourney": 21,
+    "mysqlUpgrade": 1,
+    "childFull": 90,
+    "childAnalysis": "clean",
+    "normalMainWebBuild": "passed",
+    "normalMainAndroidDebugBuild": "passed"
+  },
+  "realHttpPhaseLogSha256": {
+    "submit": "6852448525906ec8598a0999ed0a9870725b5cb350ba80a7961bfa35ac537cb9",
+    "approved": "aaf5a5250d7494e7835666cf4400742702767122fd43d473dad51c6d92c53a83",
+    "revoked": "46123fc18e96ced70e327fcd0a3bb38feb6cb4cf4270aebe16f30818762bc16b",
+    "unauthenticated": "a5a90ac2ee83892976ed7acd75238a69cf89c4d04fc986aa41415e9ec611f044",
+    "blocked": "59ec74a9aacf398b8224792ddecf89ee2c65e861816b7403ed5c154f960fe066",
+    "cancel-submit": "310c8aeb7c7de54325901ef518a357412819e2ef90d2a916def1d075e2cdde61",
+    "cancel-recover": "9d905f051293559c23c67eff331bcd715703ad9e748f393bd7ab5274728f19b6"
+  },
+  "mysql": {
+    "isolatedSchemasCreatedAndDropped": 2,
+    "orderedMigrations": "V1-V23",
+    "credentialsSource": "local private configuration; no credential in artifacts"
+  },
+  "controlledFixtures": [
+    "initial device registration and identity heartbeat",
+    "adult authentication/MFA",
+    "synthetic local file encryption key",
+    "client response loss only after real committed 201/200"
+  ],
+  "privateFixtureCleanup": "all child request/cancellation run directories contain safe logs only",
+  "localLogs": [
+    {
+      "path": ".local/submission-journey-backend-full.log",
+      "sha256": "b8bb3993fc25fe488453906c4e6a6c9841bdc391319883698c518f6378adef5b"
+    },
+    {
+      "path": ".local/submission-journey-mysql-journey.log",
+      "sha256": "4ab10593e13640193e10e9f53e64313836938bea5101c5d1a5ebfdfa4c788762"
+    },
+    {
+      "path": ".local/submission-journey-mysql-migration.log",
+      "sha256": "cff93adb0d3c865201b784a357f9cfce932ddfb100f721ca22b865b6ec2cd4c9"
+    },
+    {
+      "path": ".local/submission-journey-child-full.log",
+      "sha256": "8c5d401b450937adf125ae83734659ebb77c09830ed1511c16f843b826689c8f"
+    },
+    {
+      "path": ".local/submission-journey-analysis.log",
+      "sha256": "35c191daec31f9a6844df873b80cbd064b0abfaa2a47b8213c950ffe001c0f8a"
+    },
+    {
+      "path": ".local/submission-journey-main-web-build.log",
+      "sha256": "935228825f872db1b3bfe2fee24a0c3438d2b9ecbff6885d92d0f7e163aaacd1"
+    },
+    {
+      "path": ".local/submission-journey-apk-build.log",
+      "sha256": "21c23bc50e064ba75479015e64c24aadeeb7181093f04eb9857ec1cdae02a5f7"
+    },
+    {
+      "path": ".local/submission-journey-red.log",
+      "sha256": "b833a702c4c21351395607816abcf3c6c28743e0b5272cd97173e523c042466f"
+    },
+    {
+      "path": ".local/submission-cancellation-red.log",
+      "sha256": "b775f4c7a07fba9589f8c7cb4215ee83931cee531ca5aead6ddde0ddd85bd378"
+    },
+    {
+      "path": ".local/submission-identity-refresh-red.log",
+      "sha256": "0678189d9db6711a7a1ae1b9a24a371825d7a2335b74ea7b7b614a735353a721"
+    },
+    {
+      "path": ".local/submission-identity-refresh-green.log",
+      "sha256": "86dd5a65a9f2ee505f4c7c4af197d9f648b55e65240ea554d4551a7fd169d5c4"
+    }
+  ],
+  "localBuildArtifacts": [
+    {
+      "path": ".local/root-submission-journey-candidate/apps/child/build/web/main.dart.js",
+      "sha256": "d3d2f5d5528e7674168815b591b6da4cd88b70b18568c09947ddabcf0571355e"
+    },
+    {
+      "path": ".local/root-submission-journey-candidate/apps/child/build/app/outputs/flutter-apk/app-debug.apk",
+      "sha256": "94c3723c9e7a01ba86f33eed7b1162a184d1059523b48c1e1a8db63908be0de2"
+    }
+  ],
+  "notVerifiedThisStage": [
+    "Android keystore and process termination for new submission journal",
+    "native Android production end-to-end runtime",
+    "TV hardware",
+    "operating-system enforcement/background persistence",
+    "OceanBase certification",
+    "deployment of peer report increment"
+  ]
+}

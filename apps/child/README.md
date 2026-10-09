@@ -57,3 +57,5 @@ debug 包名 `com.aimanager.child.debug`，release 包名 `com.aimanager.child`�
 进入后台或设备身份范围改变时隐藏申请与私人表单。启动、恢复前台及检查连接只刷新事实，不自动发送新申请或取消。批准状态与签名配置同步独立展示，当前没有跨应用解锁能力。服务端需包含 V23 设备申请和已提交的过期键恢复接口；未部署时不能把客户端已构建当作联调成功。
 
 公开交互预览入口为 `flutter run -t tool/submission_preview.dart -d chrome`；仅使用明确标识的合成内存夹具，不连接真实服务/设备，不输入真实私人资料。正式 `lib/main.dart` 不引用预览入口，Web 正式入口仍禁用设备身份和注册。流程及验收边界见[申请交互契约](../../docs/child-request-ui-contract.md)。
+
+真实 Spring → 设备申请宿主 → 会话 → 规则页的跨进程验收覆盖提交/取消响应丢失、过期原键恢复、批准截止时间保持及撤销凭证后缓存隐藏。运行方式与测试夹具边界见[申请 HTTP 验收契约](../../docs/child-submission-http-acceptance.md)。该检查使用桌面 Flutter 测试引擎和合成文件密钥，不能代替 Android 真机进程恢复或系统管控验收。
