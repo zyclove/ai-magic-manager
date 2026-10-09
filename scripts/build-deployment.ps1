@@ -12,6 +12,7 @@ param(
     [string]$SourceDirectory = (Split-Path $PSScriptRoot -Parent),
     [string]$MavenCommand = 'mvn',
     [string]$FlutterCommand = 'flutter',
+    [string]$DartCommand = '',
     [string]$MavenRepository = ''
 )
 $ErrorActionPreference = 'Stop'
@@ -23,6 +24,14 @@ foreach ($name in @('backend/pom.xml', 'apps/guardian/pubspec.yaml', 'packages/d
 }
 foreach ($command in @($MavenCommand, $FlutterCommand)) {
     if (-not (Get-Command $command -ErrorAction SilentlyContinue)) { throw 'Configure Maven and Flutter executable paths before building.' }
+}
+$hasDevicePolicy = Test-Path -LiteralPath (Join-Path $source 'packages/device_policy/pubspec.yaml')
+if ($hasDevicePolicy) {
+    if (-not $DartCommand) {
+        $flutterPath = (Get-Command $FlutterCommand).Source
+        $DartCommand = Join-Path (Split-Path $flutterPath -Parent) $(if ($IsWindows) { 'dart.bat' } else { 'dart' })
+    }
+    if (-not (Get-Command $DartCommand -ErrorAction SilentlyContinue)) { throw 'Configure the Dart executable path for device policy verification.' }
 }
 $snapshot = Join-Path $context.Root ('source-' + [Guid]::NewGuid().ToString('N'))
 $logs = Join-Path $context.Root 'logs'
@@ -42,13 +51,16 @@ $mavenArgs = @('-B', '-f', (Join-Path $snapshot 'backend/pom.xml'), 'verify', '-
 if ($MavenRepository) { $mavenArgs += "-Dmaven.repo.local=$([IO.Path]::GetFullPath($MavenRepository, $context.Repository))" }
 Write-Output 'Verifying backend source snapshot...'
 Invoke-DeploymentNative $MavenCommand $mavenArgs (Join-Path $logs 'backend-verify.log')
-foreach ($name in @('packages/device_operations', 'apps/guardian')) {
+$projects = @('packages/device_operations', 'apps/guardian')
+if ($hasDevicePolicy) { $projects += 'packages/device_policy' }
+foreach ($name in $projects) {
     Push-Location -LiteralPath (Join-Path $snapshot $name)
     try {
-        $label = if ($name -like 'apps/*') { 'guardian' } else { 'device-operations' }
+        $label = switch ($name) { 'apps/guardian' { 'guardian' }; 'packages/device_policy' { 'device-policy' }; default { 'device-operations' } }
+        $projectCommand = if ($name -eq 'packages/device_policy') { $DartCommand } else { $FlutterCommand }
         foreach ($operation in @('pub-get', 'analyze', 'test')) {
             $arguments = switch ($operation) { 'pub-get' { @('pub', 'get') }; 'test' { @('test', '--reporter', 'expanded') }; default { @('analyze') } }
-            Invoke-DeploymentNative $FlutterCommand $arguments (Join-Path $logs "$label-$operation.log")
+            Invoke-DeploymentNative $projectCommand $arguments (Join-Path $logs "$label-$operation.log")
         }
     } finally { Pop-Location }
 }

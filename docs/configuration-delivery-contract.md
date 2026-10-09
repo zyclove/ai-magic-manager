@@ -4,7 +4,7 @@
 
 ## 1. 交付范围
 
-当前实现 `CONFIGURE_ONLY` 的设备级签名配置、HTTP 拉取、持久游标、回执、防重放和通知适配层。`ENFORCE`、规则级系统执行、EMM、Flutter/Android 客户端验证器和真实 Broker/真机仍待完成。
+当前实现 `CONFIGURE_ONLY` 的设备级签名配置、HTTP 拉取、持久游标、回执、防重放和通知适配层。Flutter/Dart 的验签、事务保存及重开数据库恢复组件已交付，见[设备接收契约](device-configuration-client-contract.md)。`ENFORCE`、规则级系统执行、EMM、设备宿主/原生接入和真实 Broker/真机仍待完成。
 
 配置版本的状态继续是 `CONFIGURED_NOT_ENFORCED`。READY/SERVED/DEVICE_REPORTED_RECEIVED/DEVICE_REPORTED_STORED 是交付过程中的状态，不表示系统权限、应用拦截、额度或内容过滤生效。接口不接受 APPLIED 回执，也不提升 Fleet 中的能力证据。
 

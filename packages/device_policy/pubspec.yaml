@@ -1,0 +1,15 @@
+name: device_policy
+description: Verified configuration reception and transactional recovery for device clients.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+dependencies:
+  jose: 0.3.5+2
+  sembast: ^3.7.1
+  crypto: ^3.0.3
+  collection: ^1.18.0
+  uuid: ^4.4.2
+dev_dependencies:
+  test: ^1.25.2
+  lints: ^3.0.0

@@ -56,7 +56,7 @@ Compose secrets 采用文件挂载，环境配置只有文件路径。业务密�
 
 另建环境可传入 `-Directory .local/another-deployment -ProjectName another-manager -EdgePort 18091 -PublicUrl http://localhost:18091`，后续脚本传相同 `-Directory`。独立项目拥有独立数据库卷与网络，端口必须与公开 origin 一致。
 
-构建先执行后端 verify、设备组件和管理台 analyze/test，再构建 Web。构建结果位于唯一 `artifacts/release-<id>/`；`release-manifest.json` 记录源码文件哈希、JAR/JS 哈希和公开 origin。构建不会覆盖运行中的 JAR 或现有管理台目录，启动前会拒绝被修改的主产物或指向不同产物的 Compose 配置。
+构建先执行后端 verify、设备组件和管理台 analyze/test，再构建 Web。所选源码包含 `packages/device_policy` 时也执行纯 Dart 组件的 pub get/analyze/test；默认使用 Flutter 同目录的 Dart，可用 `-DartCommand` 显式指定。构建结果位于唯一 `artifacts/release-<id>/`；`release-manifest.json` 记录源码文件哈希、JAR/JS 哈希和公开 origin。构建不会覆盖运行中的 JAR 或现有管理台目录，启动前会拒绝被修改的主产物或指向不同产物的 Compose 配置。
 
 ## 身份初始化与权限
 

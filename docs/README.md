@@ -18,6 +18,7 @@
 | [设备退出与清理契约](device-deprovision-contract.md) | 后果预览/确认、业务撤销、原密钥清理认证、签名命令/回执、取消/到期与验证边界 | 产品、后端、Flutter、Android、QA 与 SRE |
 | [管理台交付记录](management-console-delivery.md) | 已接入的业务页面、身份联调、交互验证与剩余工作 | 产品、开发、QA 与交付 |
 | [设备退出组件接入契约](device-operations-ui-contract.md) | 共享 Flutter 组件、宿主认证、恢复限制、浏览器证据与截图 | Flutter、后端、Android 与 QA |
+| [设备签名配置接收契约](device-configuration-client-contract.md) | Dart JOSE 验签、注册绑定、事务接收、墓碑/回执恢复与 Nimbus 互操作证据 | Flutter、Android、后端与 QA |
 | [2026-10-09 阶段交付](stage-delivery-2026-10-09.md) | 本阶段提交范围、重新验证、仓库配置边界及后续发布门槛 | 全团队 |
 | [可复制部署手册](deployment-runbook.md) | 新环境初始化、独立构建、五服务 Compose、身份授权、TLS 与升级边界 | 开发、QA、交付与 SRE |
 
