@@ -4,9 +4,9 @@
 
 ## 1. 已实现与执行边界
 
-已实现儿童范围内申请、分页/详情、近期 MFA 决定、限时窗口、取消/撤销、版本与幂等、冷却、到期作业、基础策略/主体/设备/成员生命周期失效和事务审计。
+已实现儿童与教师范围内申请、分页/详情、近期 MFA 决定、限时窗口、取消/撤销、版本与幂等、冷却、到期作业、基础策略/主体/设备/成员及班级生命周期失效和事务审计。教师扩展的专项、MySQL、前端与运行验证见 organization-workflow-plan.md，不沿用旧阶段测试数字作为新功能验证。
 
-当前批准结果为 `APPROVED_PENDING_DELIVERY`，`executionState` 固定为 `NOT_ENFORCED`。它保存管理员决定和有限期的授权意图，**没有签发可在设备执行的例外许可证，没有解除应用限制，也没有增加使用额度**。正式例外交付、EMM/原生执行、规则级回执、通知和客户端仍需实现。
+当前批准结果为 `APPROVED_PENDING_DELIVERY`，`executionState` 固定为 `NOT_ENFORCED`。它保存管理员决定和有限期的授权意图，设备现可获取 CONFIGURE_ONLY 的签名窗口/撤回文档并报告收到、保存或拒绝，见[签名审批文档与回执](access-window-delivery-contract.md)。尚未启用可在设备执行的例外许可证，没有解除应用限制或增加使用额度。EMM/原生执行、规则级证据、通知和客户端仍需实现。
 
 当前支持 APP_LAUNCH 的 DENY 规则，以及 TIME_WINDOW 规则的临时访问窗口。未选中的规则、其他策略流和必要恢复底线仍然有效。DAILY_QUOTA、系统权限、安装/卸载或域名规则不能通过该窗口接口放宽；额度追加须通过后续额度账本，不将窗口秒数解释为新增使用秒数。
 
@@ -16,19 +16,20 @@
 
 | 操作 | 允许角色 | 附加约束 |
 |---|---|---|
-| 创建 | CHILD | 当前成员绑定主体、本人设备、有效主体/注册与最新基础版本 |
-| 列表/详情 | OWNER/GUARDIAN/ORG_ADMIN/AUDITOR/CHILD | 儿童只能查看自身主体；不返回审批人身份/联系方式 |
+| 创建 / 选项 | CHILD/TEACHER | 当前绑定主体或教师班级范围、有效主体/注册与最新基础版本；仅 APP_LAUNCH DENY / TIME_WINDOW |
+| 列表/详情 | OWNER/GUARDIAN/ORG_ADMIN/AUDITOR/CHILD/TEACHER | 儿童/教师仅当前范围内本人提交的申请；不返回审批人身份/联系方式 |
 | 批准/拒绝 | OWNER/GUARDIAN/ORG_ADMIN | 近期 MFA、If-Match、幂等键；批准再次复核基础和绑定 |
-| 取消 | CHILD | 原提交者的精确身份；只能取消待决申请 |
+| 取消 | CHILD/TEACHER | 原提交者的精确身份和当前范围；只能取消待决申请 |
 | 撤销 | OWNER/GUARDIAN/ORG_ADMIN | 近期 MFA；原来确实批准且未到期；不能声称设备已收到撤销 |
 
-当前 TEACHER 不获得审批权限，班级委派和双人审批待独立实施。成人手工发起授权也需要独立流程，不能伪装成 CHILD 创建申请。
+TEACHER 不获得审批权限、策略修改或设备管理权限。教师仅提交范围内申请；管理员仍需近期 MFA 决定，且不能审批本人曾提交的申请。双人审批及其他成人手工发起授权仍待独立实现。
 
 ## 3. REST 接口
 
 | 方法与相对路径 | 成功 | 输入/输出 |
 |---|---|---|
 | POST 根路径 | 201 + ETag | Create → AccessRequest |
+| GET /options | 200 | 必填 deviceId、limit=1..100、UUID cursor；返回该设备可申请的当前策略、应用和规则身份 |
 | GET 根路径 | 200 | limit=1..100、UUID cursor → ItemPage |
 | GET /{requestId} | 200 + ETag | AccessRequest |
 | POST /{requestId}/decisions | 200 + ETag | Decision → AccessRequest |
@@ -36,6 +37,10 @@
 | POST /{requestId}/revoke | 200 + ETag | 空正文 → AccessRequest |
 
 所有创建/决定/取消/撤销必须有 `Idempotency-Key`。变更已有申请必须有强 `If-Match`，缺失 428、陈旧 412；不接受通配符/弱版本。未知字段、非规范 UUID、重复规则 ID、非法类型/范围拒绝。
+
+选项页逐页扫描当前策略版本，只返回匹配设备当前注册周期的结果。页内可能没有可用选项但仍有 nextCursor，客户端必须继续允许加载。公共规则 commonRules 与各 applications[].rules 分开返回，避免重复膨胀；前端合并选择最多 20 条。选项不包含其他设备、完整草稿、签名身份、时间计划内容或其他申请理由。
+
+创建和审批的幂等回放在复核当前权限后重新读取申请状态，已到期或撤回时返回当前事实及版本，不重放过时的有效批准。原始决定及绝对截止时间不改变。
 
 ### 3.1 创建示例
 
@@ -69,7 +74,7 @@ AccessRequest 包含 id、subjectId、deviceId、registrationId、policyId、bas
 
 瞬时时间为 UTC epoch 毫秒，窗口时长为整数秒。审批人身份只在受保护的决定记录和审计中保存，不在该响应返回。DTO 的 toString 不输出儿童理由。
 
-儿童页应显示“家长已批准，设备尚未执行”，并说明截止时间；不得显示“现在可以打开”。管理员页分别显示决定与设备结果。当前不存在 APPLIED/VERIFIED_APPLIED 成功响应或设备例外回执入口。
+儿童页应显示“家长已批准，设备尚未执行”，并说明截止时间；不得显示“现在可以打开”。管理员页分别显示决定、文档交付与执行状态。已有签名文档接收/保存/拒绝回执入口；当前不存在 APPLIED/VERIFIED_APPLIED 成功响应或规则执行回执。
 
 ## 4. 状态和重试语义
 
@@ -128,4 +133,4 @@ V11 新表为 access_requests、access_request_slots 和 access_request_decision
 
 审批旅程验证真实 HTTP、SQL、事务和授权，使用受控 Clock 覆盖精确截止边界，使用两个独立监护人并发调用验证唯一决定。JWT 身份上下文和 BYOD 设备由测试夹具提供，不构成真实 IdP/EMM/设备执行证据。最新测试数量与构建时间见[实施记录](implementation-progress.md)。
 
-完整待办仍包括：签名限时例外/撤销交付、规则级执行与离线证据、可信额度追加、双人审批/机构委派、待审批过滤/客户端工作台与通知、账户级速率、保留/删除，以及 SAF 紧急恢复、END 正常解除/擦除/清理流程。不能将本后端工作流标记为整个 Task 5 或完整产品已完成。
+完整待办仍包括：正式执行模式的限时例外/撤销交付、独立客户端、规则级执行与离线证据、可信额度追加、双人审批/机构委派、待审批过滤/客户端工作台与通知、账户级速率、保留/删除，以及 SAF 紧急恢复、END 正常解除/擦除/清理流程。当前只读配置模式的文档与回执已接入，不能将本后端工作流标记为整个 Task 5 或完整产品已完成。

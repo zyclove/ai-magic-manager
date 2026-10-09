@@ -1,0 +1,720 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-09T14:04:28.422224+00:00",
+  "scope": "Frozen quota, access delivery and SDK, ownership, member scope, organization/teacher workflow and guardian integration; V13-V19",
+  "baseHead": "ae960275057d81095bd3f354895fb3a85e02c4c4",
+  "parentHead": "aa17f7f166c816852146b9f85ec9b6ca355f4804",
+  "sourceFiles": [
+    {
+      "path": "apps/guardian/lib/core/access.dart",
+      "sha256": "77771bedfe3eac423bbd88ea7dc6cc788d19ab6863c9803a98084515ba3eeb64",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/lib/core/api.dart",
+      "sha256": "49ce846e213d7b3f5817561740a8427ed48363a82ebd89ece423d196918cb118",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/lib/core/enrollment_ticket.dart",
+      "sha256": "f6a656179fa6bb5afd6a18cfbd7eb4296b9cc66226787c9c50138a56bbe96f87",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/lib/core/labels.dart",
+      "sha256": "dd27e4a9bd5b03186d3045a78e48bec16acf9ccc907e23b4c74e5cff9a84a16b",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/lib/core/local_date.dart",
+      "sha256": "691c879aac7431d5e2c0f263d2caae426e57b2faa4e57068aa1aed596fdb64fb",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/lib/core/member_access.dart",
+      "sha256": "ee2aa505ea3f6085393dec9e64fc43268a7d44a279e58559c49569d3a3587a7b",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/lib/core/session.dart",
+      "sha256": "1c361243ed9a7aa87663334d575de7f03e581270ddf98e29cf4b992751982bba",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/lib/pages/classes_page.dart",
+      "sha256": "accdd9ef31bcd1091a811ac293d3a11adb75aa133c53a60cd4fbc8e584b4a29f",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "sha256": "45977609f11e8a49f3114fe941950e1b9399338351886bac40212b7fd063e03a",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/lib/pages/members_page.dart",
+      "sha256": "081200ebc6a7532d9785f49165136b79654e32c4e6194a94803d0c1fbb3ae728",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/lib/pages/ownership_page.dart",
+      "sha256": "5397d28166fb76ab5685a3f45563d0d42316f10d376f27ab8d62eecf5b77eafb",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/lib/pages/quota_page.dart",
+      "sha256": "76a5206ee7be0ff45c1c50a4feb73500e5d7239f2329fb9c6220485363c35a97",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/lib/pages/quota_plan_editor.dart",
+      "sha256": "560156c823917acd930b9f6233e11c6b8acfdacdfdf54251c85601aa21ec26af",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/lib/pages/quota_plans_page.dart",
+      "sha256": "3635e1a03eab26f663c4dc2d404abd61a84b6f546e2754f5a8450e20ef635d6a",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/lib/ui/access_request_dialog.dart",
+      "sha256": "1447910f89f927d0c0423805463d187b79501b0f3a1ecdd37be470facb4b4dfd",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/lib/ui/class_action_dialog.dart",
+      "sha256": "453b3abcace6d2745ec1ef9d1147b995222ed9a9626632129efed686d08fe45d",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/lib/ui/design.dart",
+      "sha256": "45aec51eb12acd8a6c42aed8f520e531c66cdc0b85744e558da05fa111140edc",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/lib/ui/member_editor.dart",
+      "sha256": "c67222b914c5a234e1149c12300efecad1f33556fc79b133183742017d518919",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/lib/ui/quota_balance.dart",
+      "sha256": "5bc73835fe10fb8a34b192aac9641ca54a7a72a270afea7c264fe8212f5ba51a",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/lib/ui/shell.dart",
+      "sha256": "a157df48426a0904f2f2bad27fbab25290fc1253189b707ebb7dae9ca2a66d5b",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/README.md",
+      "sha256": "d535ff8ac3f753703e67f0eded3c3b20ae3c2b23121e85b95ca7d5266b3241be",
+      "group": "delivery-records"
+    },
+    {
+      "path": "apps/guardian/test/access_delivery_labels_test.dart",
+      "sha256": "b8739ba5fbf11c3ff91c98bcb0b4d5811b4d5e69ea355ee17661052dacd6927b",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/test/access_request_dialog_test.dart",
+      "sha256": "9d62d540d8d4d798376427dff95765af2ad080e306e74a999a50a60976415bac",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/test/class_action_dialog_test.dart",
+      "sha256": "8fd915ebfde7f27727034ddaec9f8caf0b1ef9691c4843187369b138f7a5234c",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/test/enrollment_ticket_test.dart",
+      "sha256": "0941f3922382af338e4609dd0233c2bfeca9aee433515083311b0b56589a980c",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/test/local_date_browser_test.dart",
+      "sha256": "99c0cc858c25e8d43bed5d6a9361de5153b5a086b56799bfa9100072f3f9b244",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/test/member_editor_test.dart",
+      "sha256": "c894ec060fa2edbcaef1e9884a16983cdf74d554c7d0a361aea12004480379f7",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/test/ownership_test.dart",
+      "sha256": "5751002fbea341ddb4bef03539b3ea1b36b7e2005303bb5650f326e259856dff",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/test/quota_balance_test.dart",
+      "sha256": "c2d31f67f9fd82c42c3393c711dd34a288ad4f1be33763456de4e3117ff43e8b",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "apps/guardian/test/quota_plan_editor_test.dart",
+      "sha256": "b1bde96e61d10d9bbee17c1560052ae51f7f98b12d49101c1d4ceb5925255a64",
+      "group": "guardian-integration"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/internal/AccessDeliveryController.java",
+      "sha256": "37919b30387c3a7675c7563068c9496337826201ac54c7dab96bdad6595a0a87",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/internal/AccessDeliveryService.java",
+      "sha256": "160f7026ed62b77ab6c1a5e0c310061617068880e1983cad17c26218445981f2",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/internal/ApprovalController.java",
+      "sha256": "05bfe74b5d76d6008b1c37853953c181257eeb4a341178e7ddd7389f8b6d1e6d",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/internal/ApprovalService.java",
+      "sha256": "8266d320764a5edef0d7b95bf129069f4616ef9e1e459fcbd954cfe30bc23943",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/catalog/ApplicationCatalog.java",
+      "sha256": "5fda00fe01c77a90375f8e3b06c4f91f87000dcea6d5b1353cf202c9a53a8225",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/catalog/internal/CatalogService.java",
+      "sha256": "2c33008f1808beca08158b9c6d5a5f268a49c1ebf32174ff8e80c0b6681b7a55",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/fleet/AccessRequestDeviceScope.java",
+      "sha256": "f6fde7c1ffe066367b899c49169f4e7deacf2fceceb147ecd08af89a29f26519",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/fleet/DeviceAccess.java",
+      "sha256": "32c123c091f850db9212d3e0f882371295b7a0a54691cb13d3e1ae842f6592cb",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/fleet/internal/EnrollmentService.java",
+      "sha256": "38c7744d6ad8c3119706d09fea2c7441e13391e7fd34778ab2f5273302a08a76",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/fleet/internal/FleetReads.java",
+      "sha256": "60bb57bd29f83d825b927f4d4ec7ea8677a4499116570b57f85f30553fa4dfc5",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/identity/CurrentActorController.java",
+      "sha256": "c6a2882ea7ca0bc79503fa7076a12b35c93fefb7b662c71a6fcb7da65698cd48",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/identity/IdentityProfiles.java",
+      "sha256": "bd233d835b29b21c10d3f32c615b947734589ae35d5a049fb4f4bbc79fd6071b",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/identity/internal/IdentityProfileService.java",
+      "sha256": "f87b3f8bde5c6542040a404b5182b3e1011042d2a717395f94a1912ce60ef812",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/lifecycle/internal/LifecycleService.java",
+      "sha256": "585120df5802cd953237fd18ea919fa90951e38e26a4240ffbd415618a4a0d35",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/policy/internal/PolicyService.java",
+      "sha256": "3e7c88ab92556ca07929828f9ac1febfda724e3f1002585f8b5d204d3cf29e3c",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/policy/PolicyExceptionAccess.java",
+      "sha256": "3f2b0c9f39563baa7f5f82c0ca5a8e33c589a5a8a3947ae840c4b69215222f2f",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaController.java",
+      "sha256": "b63c8e4dd07ba1fdda44743a7c4c72bd3489dffe04e93799d7ee14d01e74b864",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaPlanController.java",
+      "sha256": "d37a4fd6f8f999a95d6c4852398b5278401817e0a12c2611383350129a94262e",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaPlanJob.java",
+      "sha256": "096be53a27aacfea5909d1c29c6d82d52223d9181108b567c66f42a7c9493ab2",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaPlanService.java",
+      "sha256": "a19b197eb8258ab626f1660f44a624be384dfc21f5085c3c303bcf2494465103",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaPlanWorker.java",
+      "sha256": "5b9925c8f65818fa3f0ffd197c11e36fb017d9a94a5fc6b84ccb098d4598751d",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaPoolFactory.java",
+      "sha256": "e42379979d372e1ba9cc753a24b039bf72acf30de8e538c270d6173f95cc573a",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaService.java",
+      "sha256": "292ca96d6892d5ffbdf8d4508d42752682527a30f7394bd07526e452ab980f55",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/internal/UnconfiguredQuotaExecution.java",
+      "sha256": "72b7d2c511f99796f8bd63d61740bdd590ba6049d8a12ecff590dcc36a268c8c",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/QuotaExecutionSupport.java",
+      "sha256": "fea72886af25726a79e29ee67f05422c065b38d68f42733e195d0c2b9170f212",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/QuotaLease.java",
+      "sha256": "b18657ff34e3a53f9b70fab565a82e273a7d4b60e0359d36753ed262b352a6e6",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/QuotaPlan.java",
+      "sha256": "e2b0bab9639a0630b1dfe6a8608a4c3d082ee2e6f2cd12c15cbb747bcffc821b",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/QuotaPlanMaintenance.java",
+      "sha256": "104d7eaac16ba66d57d988930f7d0f655396a60ea0cea299c9f251bf0a654e95",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/QuotaPool.java",
+      "sha256": "cd2031b800fa050191260c1ed65c5f6acaaf739a37fca9cae911243726731a70",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/shared/ApiErrorHandler.java",
+      "sha256": "b805d1332f6e4cb7870f3db24f2fc279166011d25dd64cedfa2522e07530d3e0",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/signing/ConfigurationSigner.java",
+      "sha256": "e164637c422da94931aa20194bae48ba4c6a584074b0f1d3451ac05e41c431bf",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/subject/internal/SubjectService.java",
+      "sha256": "bf9d0c9da0562c921ccd0ba6769d0fb4a50cedf1f975a37fc8f8950d01d5167f",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/subject/SubjectAccess.java",
+      "sha256": "eb9f370b77f51ebe41b02ebedd661a912d3f315b9a023d59fea2a85d6fcc1684",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/ConsoleTenantService.java",
+      "sha256": "11b82a4da504ebc0a6d764464e91c83026f1ae97017d0c2e8edd2b007bd27389",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/MemberClassScopes.java",
+      "sha256": "826b54012945c659f8a59f7bcd5dc9b2db1f9a383616d5430d0e40c4a6fce0ff",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/MemberIntentService.java",
+      "sha256": "27ce7a40ee2c0564fd02ebbd4eab62265ce91ba001eb5fe04c5c4077e399bbd7",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/MembershipController.java",
+      "sha256": "43410158f36a4e5f0437fff87f0659232c1c05838dabf441a732320bd311c62b",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/MembershipMutex.java",
+      "sha256": "0b3ca3e49c46b4ab78c3834320d18d9bc930236ff3f01ea6763e721fa2c65720",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/MembershipService.java",
+      "sha256": "93546154701e4ece05c87bafb6b12717c0fa1f7a861f4ff83c48872c61b429e4",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/OrganizationController.java",
+      "sha256": "546905125342f72a536daa74fd32e4f10107cd5dfae0e218f7430550792e6ee0",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/OrganizationService.java",
+      "sha256": "746b58fa7f69fa5ec7d31a43603b3cd606d3959010374fabcd12eeeee1560706",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/OwnershipController.java",
+      "sha256": "c67a6f3b021c244c9510074d7fb7fff3196227ff16d6315285185a32e98f3d5e",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/OwnershipService.java",
+      "sha256": "c130143c125c91a5b3bd4277a88db2e25f25c261fe52f3396ff66595f8774331",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/TenantController.java",
+      "sha256": "2376ad759d5e9319e47c5f4ea252f010002eaa1e1a08cad1eb650b111839d98a",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/TenantService.java",
+      "sha256": "3531e641d215c0bc47ebe8c63267523e1838e4f034aab8e9d3b23b35ca8d9650",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/MembershipAccessChanged.java",
+      "sha256": "44511d3ce99fe178f5922232da86d7019d37d7668ad2345bcd7c43f39ad7c693",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/OrganizationScopeChanged.java",
+      "sha256": "3f320ee74c6dfaf674602dc77a7f085ba0e097b319fee70bef067d6b0b862a37",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/OwnershipTransferred.java",
+      "sha256": "877aeef119ed02a1ed904d6893c6d17145a4b2801c13c1063ca2d3e593c603cc",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/TenantAccess.java",
+      "sha256": "9e3261c93ddef6c79d76f84eec850ecdd54868c9494fcf25341c5e56b51520e3",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/resources/application.yml",
+      "sha256": "e72ba9f53d87edaf2eccf1f2f9a7c328bcd2c28ef6857ebe1fc2bb36daafc921",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V13__quota_ledger.sql",
+      "sha256": "1858b9ac1feef622039740e0130e2029aa0a84acc4d2331f0ad06e8d5680364c",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V14__recurring_quota_plans.sql",
+      "sha256": "0e2bc5af597da51cb1d22623e507501b11cbc0916c7cf4d9cd1a70b22506e780",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V15__access_window_documents.sql",
+      "sha256": "4cbe6edfbbd7ed7e898661de81ae6d62f23cc3f0b3914f3aa285cf496dfc3d92",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V16__access_delivery_attempts.sql",
+      "sha256": "df654f52989978c813b2b1b330cebb3de3051e5f45cddb5607f64a797e9deabd",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V17__ownership_transfer.sql",
+      "sha256": "0cff0327838ce64836fd028e7d5113f23a0c55af309a2f37a3bd3b71ed0935f4",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V18__member_access_profiles.sql",
+      "sha256": "27f25ceecb2c1a40cb66981b6ea8548141a3d12d7a6a90bf19d280a7ec73a03a",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V19__organization_classes.sql",
+      "sha256": "d691dfdbd68136dc7f54f078bce462caad324db0426255236a2055b280bd4df1",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/AccessDeliveryJourneyTest.java",
+      "sha256": "5f557c68dab9cf7f337d67dba83331cea975230b6c4b1f15c797cb72c40f2b28",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/AccessDeliveryMigrationTest.java",
+      "sha256": "735e29e4331b5ae4978154f3c792809620c33aadcd0612ac22d5b14e14cea1b3",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeviceAccessHttpInteropTest.java",
+      "sha256": "e2baf3d15aa47aec35625926d0be5af0ea05de8642a553769eb32db31de1bcf6",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/MemberAccessJourneyTest.java",
+      "sha256": "e79aaf7892e80d650b9981f87026101de405df80d0579dc8c63c3bda01e1da80",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/OrganizationJourneyTest.java",
+      "sha256": "0f9529f6749e567eb9436850271c44aaf3da8c9be44256aece1843539c193ef9",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/OwnershipTransferJourneyTest.java",
+      "sha256": "2d9e42875463b4ddcc194e2477dbc7b6b1f93d80de4679ceeca03b7fd2d31be1",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/QuotaConcurrencyTest.java",
+      "sha256": "53d7549219b20730160b123946378f48cf22268ee693eb2d8aa10f42ecf2e947",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/QuotaJourneyTest.java",
+      "sha256": "45a979b2359f525c7f33af7906bc5a5703cdd1cebd67c3ad828704eee0d1663a",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/QuotaPlanJourneyTest.java",
+      "sha256": "d103ed62f3f4d1f62cd1840506f2c0efa1944f8438a7723aa8f76c7f7fe72696",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/TeacherAccessJourneyTest.java",
+      "sha256": "bccc1e61ce6ac72d2567a5b34c48752622ac84e37edc7143206852a8786b75c9",
+      "group": "backend-v13-v19"
+    },
+    {
+      "path": "docs/access-delivery-plan.md",
+      "sha256": "3a2b6c07986c6a1726bbda96acfb3234e32974685d0ce14aef007ed47a3b369f",
+      "group": "delivery-records"
+    },
+    {
+      "path": "docs/access-device-client-plan.md",
+      "sha256": "c06242f204fecf9c64d46e53c48dd6e4bcd3f338a9226367e4a8d9b302177021",
+      "group": "delivery-records"
+    },
+    {
+      "path": "docs/access-request-contract.md",
+      "sha256": "50b3a15a1535ac50cf277dfcc51f3c5a25db2de6040b97f9c6b58bbd65ca8677",
+      "group": "delivery-records"
+    },
+    {
+      "path": "docs/access-window-delivery-contract.md",
+      "sha256": "3c59bea07b99959b6f757e3f83afcc145f730b6819e7b2cac6fd78e77215c72a",
+      "group": "delivery-records"
+    },
+    {
+      "path": "docs/backend-api-status.md",
+      "sha256": "fed5e76d4ae553732293cb03857d6d4f4e2d929f2571eb3e4c0af08a1355e609",
+      "group": "delivery-records"
+    },
+    {
+      "path": "docs/implementation-plan.md",
+      "sha256": "edc9fd896d9cd14aaa7adf2ac5ca6274a8187f4996a9f631d4b0fc1d6f1e05b8",
+      "group": "delivery-records"
+    },
+    {
+      "path": "docs/implementation-progress.md",
+      "sha256": "31931969b293d730e741c9c227d1ab5d40c8f40d63822a0d749f4f96c5cdcb80",
+      "group": "delivery-records"
+    },
+    {
+      "path": "docs/management-console-delivery.md",
+      "sha256": "5512b3f689cbc1f6d93534b9cf83e8e07e6bc8f3075f9e59e8ef5f715ed4c823",
+      "group": "delivery-records"
+    },
+    {
+      "path": "docs/member-access-plan.md",
+      "sha256": "895fb72e7f50ebeeea821c7c2924923eb1c49086619e31e1cfe4311e9641e9e4",
+      "group": "delivery-records"
+    },
+    {
+      "path": "docs/observation-console-integration.md",
+      "sha256": "40efca500269eae4c141a0dfd525af88ff8e0ae97203caa7724851f4411a689c",
+      "group": "delivery-records"
+    },
+    {
+      "path": "docs/organization-workflow-plan.md",
+      "sha256": "b4452dd09aeaad25df1497338081d2b4e7195b0802e8e7c779174676b5debb62",
+      "group": "delivery-records"
+    },
+    {
+      "path": "docs/ownership-transfer-plan.md",
+      "sha256": "159caa2971bf15c686750bd819bcf3ad16554470efc5ebf1adf06b6f61a2c5cb",
+      "group": "delivery-records"
+    },
+    {
+      "path": "docs/quota-recurring-plan.md",
+      "sha256": "d263b37a4b3889ee4827a82b7977246a90e842b188f31a737d71b6f4c28db742",
+      "group": "delivery-records"
+    },
+    {
+      "path": "docs/README.md",
+      "sha256": "bffed132c0b8e2f9bef39b19532b9034549e27484782b4edae95e3d5bb85b2be",
+      "group": "delivery-records"
+    },
+    {
+      "path": "docs/shared-quota-contract.md",
+      "sha256": "c55c9d5975f4613471d4bf343a5ce5c48a2ca0d903a1dc7b3c1e6f941ccb2bd7",
+      "group": "delivery-records"
+    },
+    {
+      "path": "packages/device_access/analysis_options.yaml",
+      "sha256": "69d5fc7c4dc082613882215d52d18b02b1688b833d674ce9b281f45821626b7d",
+      "group": "device-access-sdk"
+    },
+    {
+      "path": "packages/device_access/lib/device_access.dart",
+      "sha256": "6a046699ca3510af5ef9fd5a6e514d09b415f26c281501ee7045af9fb6922d8a",
+      "group": "device-access-sdk"
+    },
+    {
+      "path": "packages/device_access/lib/src/journal.dart",
+      "sha256": "f0396dc96a1a04edfb4d7e7b145e46998a766b12c4220280daef769e55a16efa",
+      "group": "device-access-sdk"
+    },
+    {
+      "path": "packages/device_access/lib/src/models.dart",
+      "sha256": "f00c6f2a6a9b73820bb26335409f1f6fec83b2af5e3014b59e0764e1d49110f9",
+      "group": "device-access-sdk"
+    },
+    {
+      "path": "packages/device_access/lib/src/page.dart",
+      "sha256": "2f9df7197a7c489d61c0e5e7f79fc2d7b00015bca9bba2674fc60f6536dcc94a",
+      "group": "device-access-sdk"
+    },
+    {
+      "path": "packages/device_access/lib/src/receipt.dart",
+      "sha256": "a12361cb39272c409b51066b7b4fbba04ce7d5c8ed643b4bb45b27966334f3c8",
+      "group": "device-access-sdk"
+    },
+    {
+      "path": "packages/device_access/lib/src/synchronizer.dart",
+      "sha256": "e280c3d06095e867ccb47d0aa621c12764c7d9c6f35c9174c52ccd0f6e8097d8",
+      "group": "device-access-sdk"
+    },
+    {
+      "path": "packages/device_access/lib/src/transport.dart",
+      "sha256": "0c5267e14e4f00843a1b0218c5ac5dc3435b45402aa0a722e41a2cb37441f948",
+      "group": "device-access-sdk"
+    },
+    {
+      "path": "packages/device_access/lib/src/verifier.dart",
+      "sha256": "41025927c24198537d7d7241dd61467eea97c4a4dfde1e8c8206ac7fbae95cb1",
+      "group": "device-access-sdk"
+    },
+    {
+      "path": "packages/device_access/pubspec.lock",
+      "sha256": "5e3dab5a123060832d7230234045435171cb87531737ca9eff8d3025c6c9c16e",
+      "group": "device-access-sdk"
+    },
+    {
+      "path": "packages/device_access/pubspec.yaml",
+      "sha256": "6efac4612480e40c657f753bfa40fc2d3ab3c4f20a8ffa700a60212f6e88d361",
+      "group": "device-access-sdk"
+    },
+    {
+      "path": "packages/device_access/README.md",
+      "sha256": "9fe6a30797d27e1587f93896b539d08fe63d6e17602b120671e5b2ea3587ad7f",
+      "group": "device-access-sdk"
+    },
+    {
+      "path": "packages/device_access/test/fixtures.dart",
+      "sha256": "19481a4fe3d318a3ec03a529b5ee64989d6b7850c5016dade0fd1c036bb46e38",
+      "group": "device-access-sdk"
+    },
+    {
+      "path": "packages/device_access/test/journal_portable_test.dart",
+      "sha256": "30af0df1a47ba033139e3032d97350307c645b18991f82a944afab6487882519",
+      "group": "device-access-sdk"
+    },
+    {
+      "path": "packages/device_access/test/journal_test.dart",
+      "sha256": "61f98f59fa942ed7d17f968296d7df7d550d11cc00f1023d7e53de9c759a1d92",
+      "group": "device-access-sdk"
+    },
+    {
+      "path": "packages/device_access/test/page_test.dart",
+      "sha256": "9a6022fc02735daa65c859999da2104e0d960d39240846f4ed8fab78a6797ab8",
+      "group": "device-access-sdk"
+    },
+    {
+      "path": "packages/device_access/test/synchronizer_test.dart",
+      "sha256": "83da0f2fa6f43833d9ebce8f21e0b1bb43eba4b9e2ea6d39b26a744820a64b9c",
+      "group": "device-access-sdk"
+    },
+    {
+      "path": "packages/device_access/test/transport_test.dart",
+      "sha256": "6eccf5ff3cd44ca1d8853ae1a9cb57d9ff70cff5b70cdd83c8b26990ad46e560",
+      "group": "device-access-sdk"
+    },
+    {
+      "path": "packages/device_access/test/verifier_test.dart",
+      "sha256": "e6d719ed04a3c901c294afdac7d1fc38ca0f44de108a371a9a69b48fc0b5416e",
+      "group": "device-access-sdk"
+    },
+    {
+      "path": "packages/device_access/tool/NimbusAccessFixture.java",
+      "sha256": "e4c74ae65916464aab97bbe8eefaaa9ead67e931cd2e0ef731a1cc185251318e",
+      "group": "device-access-sdk"
+    },
+    {
+      "path": "packages/device_access/tool/verify_http_fixture.dart",
+      "sha256": "f841c85055e38671ebd35ae4a567b16028058c78364d87a7c399951ca84e788f",
+      "group": "device-access-sdk"
+    },
+    {
+      "path": "packages/device_access/tool/verify_nimbus_fixture.dart",
+      "sha256": "1386cecb1269a1846b54186a51458dd72ae7df0c08259a8f7fbc99e628532ddd",
+      "group": "device-access-sdk"
+    },
+    {
+      "path": "packages/device_access/tool/verify-nimbus.ps1",
+      "sha256": "c212f579b6eb32e568963acc1ec626b00f78da64aee4a1259001c1d2c9a8a33c",
+      "group": "device-access-sdk"
+    }
+  ],
+  "backend": {
+    "tests": 247,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "jarSha256": "a2f3956195ca04cca9732c3d65661c82405c7330dcaab3768cc2488913c46e59",
+    "actualHttpInteropEnabled": [
+      "configuration",
+      "identity",
+      "access"
+    ],
+    "database": "H2 MySQL mode; ordered V1-V19",
+    "log": ".local/root-v19-verify.log"
+  },
+  "deviceAccess": {
+    "tests": 92,
+    "failed": 0,
+    "analysis": "No issues found",
+    "log": ".local/root-v19-access-tests.log"
+  },
+  "guardian": {
+    "tests": 57,
+    "failed": 0,
+    "analysis": "No issues found",
+    "webReleaseBuild": "passed",
+    "buildSeconds": 44.2,
+    "log": ".local/root-v19-guardian-tests.log"
+  },
+  "selection": "Frozen snapshots normalized to LF; working tree later notification changes retained",
+  "limitations": [
+    "No V20 observation backend in this prerequisite stage",
+    "No Notification/V21 included",
+    "Quota native execution adapter intentionally rejects unverified execution",
+    "No fresh MySQL/OceanBase/EMM/TV/production MFA certification in these candidate checks",
+    "Existing historical delivery records retain their original timestamps and verification scopes"
+  ]
+}

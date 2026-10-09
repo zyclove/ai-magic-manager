@@ -9,8 +9,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 class CurrentActorController {
+    private final IdentityProfiles profiles;
+    CurrentActorController(IdentityProfiles profiles) { this.profiles = profiles; }
     @GetMapping("/api/v1/me")
     Profile me(@AuthenticationPrincipal Jwt actor, Authentication authentication) {
+        profiles.observe(actor);
         return new Profile(actor.getSubject(), actor.getClaimAsString("email"), actor.getClaimAsString("name"),
             authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("SCOPE_tenant:create")),
             actor.getClaimAsStringList("amr") == null ? List.of() : actor.getClaimAsStringList("amr"));

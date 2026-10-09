@@ -492,7 +492,9 @@ class DetailAction {
   final String label;
   final Future<void> Function(BuildContext) run;
   final bool destructive;
-  const DetailAction(this.label, this.run, {this.destructive = false});
+  final bool closeOnSuccess;
+  const DetailAction(this.label, this.run,
+      {this.destructive = false, this.closeOnSuccess = true});
 }
 
 Future<void> actionDetails(
@@ -523,7 +525,7 @@ class _ActionDetailsState extends State<_ActionDetails> {
     });
     try {
       await action.run(context);
-      if (mounted) Navigator.pop(context);
+      if (mounted && action.closeOnSuccess) Navigator.pop(context);
     } catch (e) {
       if (mounted) setState(() => error = e);
     } finally {

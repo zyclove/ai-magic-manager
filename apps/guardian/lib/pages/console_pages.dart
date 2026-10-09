@@ -3,12 +3,21 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../core/api.dart';
+import '../core/enrollment_ticket.dart';
 import '../core/labels.dart';
+import '../core/observation.dart' show canReadObservation;
 import '../core/session.dart';
+import 'observation_page.dart';
 import '../ui/design.dart';
 import '../ui/resource_page.dart';
+import '../ui/member_editor.dart';
+import '../ui/access_request_dialog.dart';
+import 'members_page.dart';
+import 'classes_page.dart';
 import 'editors.dart';
 import 'device_exit_dialog.dart';
+import 'quota_page.dart';
+import 'ownership_page.dart';
 
 class ConsolePages extends StatelessWidget {
   final String section;
@@ -49,6 +58,10 @@ class ConsolePages extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
           const SizedBox(height: 20),
           Wrap(spacing: 12, runSpacing: 12, children: [
+            if (s.canOpen('classes'))
+              OutlinedButton(
+                  onPressed: () => context.go('/classes'),
+                  child: const Text('我的班级')),
             if (s.canOpen('subjects'))
               OutlinedButton(
                   onPressed: () => context.go('/subjects'),
@@ -73,6 +86,7 @@ class ConsolePages extends StatelessWidget {
         ]))
       ]);
     }
+    if (section == 'classes') return ClassesPage(session: s);
     ResourcePage resource(
             {required String title,
             required String subtitle,
@@ -101,6 +115,8 @@ class ConsolePages extends StatelessWidget {
             toolbar: toolbar,
             reauth: () => s.login(stepUp: true));
     switch (section) {
+      case 'quota':
+        return QuotaPage(session: s);
       case 'subjects':
         return resource(
             title: '儿童档案',
@@ -216,8 +232,10 @@ class ConsolePages extends StatelessWidget {
             notice: '当前支持云端配置保存。设备系统执行适配器未配置时，不会显示“策略已生效”。');
       case 'approvals':
         return resource(
-            title: '访问审批',
-            subtitle: '审阅儿童的临时访问请求，保留有期限的决定记录。',
+            title: s.role == 'TEACHER' ? '我的访问申请' : '访问审批',
+            subtitle: s.role == 'TEACHER'
+                ? '仅查看当前授课范围内由本人提交的申请；范围失效后申请将同步失效。'
+                : '查看临时访问请求，保留有期限的决定记录。',
             path: 'access-requests',
             columns: [
               ColumnSpec('请求',
@@ -229,12 +247,20 @@ class ConsolePages extends StatelessWidget {
               ColumnSpec('状态', (r) => StatusTag(r['state'])),
               ColumnSpec('创建时间', (r) => Text(dateLabel(r['createdAt'])))
             ],
+            create: ['TEACHER', 'CHILD'].contains(s.role)
+                ? actions.createAccessRequest
+                : null,
+            createLabel: '申请临时访问',
             open: actions.approvalDetails,
             empty: '暂无访问申请',
-            description: '儿童发起访问申请后，将在这里显示。',
-            notice: '批准代表同意一个有界访问窗口；当前未接入设备例外执行，批准不会直接解锁设备。');
+            description: ['TEACHER', 'CHILD'].contains(s.role)
+                ? '选择范围内的设备，向管理员说明需要临时访问的应用与时长。'
+                : '儿童或教师提交申请后，将在这里显示。',
+            notice: '批准后设备可获取带固定截止时间的签名文档。接收与保存回执单独记录；当前尚未接入设备例外执行。');
       case 'members':
-        return MembersPage(session: s, actions: actions);
+        return MembersPage(session: s, invite: actions.invite);
+      case 'ownership':
+        return OwnershipPage(session: s);
       case 'audit':
         return resource(
             title: '审计日志',
@@ -426,8 +452,10 @@ class ConsoleActions {
   }
 
   Future<void> enrollment() async {
-    final children = await s.api.all('$root/subjects');
-    if (!context.mounted) return;
+    final enrollmentRoot = root;
+    final tenantId = s.tenant!['id'] as String;
+    final children = await s.api.all('$enrollmentRoot/subjects');
+    if (!context.mounted || s.tenant?['id'] != tenantId) return;
     if (children.isEmpty) {
       toast(context, '请先创建儿童档案。');
       context.go('/subjects');
@@ -444,7 +472,8 @@ class ConsoleActions {
         ],
         initial: {'platform': 'ANDROID'},
         reauth: reauth,
-        onSubmit: (v) async => await s.api.send('POST', '$root/enrollments',
+        onSubmit: (v) async => await s.api.send(
+            'POST', '$enrollmentRoot/enrollments',
             body: {...v, 'requestedMode': 'BYOD'}) as Json);
     if (ticket != null && context.mounted) {
       await showDetails(context, '设备注册凭据', {
@@ -453,7 +482,20 @@ class ConsoleActions {
         '一次性注册凭据': ticket['token'],
         '有效期': dateLabel(ticket['expiresAt']),
         '状态': label(ticket['state'])
-      });
+      }, actions: [
+        FilledButton.icon(
+            onPressed: () async {
+              try {
+                await Clipboard.setData(ClipboardData(
+                    text: encodeEnrollmentTicket(tenantId, ticket)));
+                if (context.mounted) toast(context, '已复制设备注册凭据，请在可信任的设备端粘贴。');
+              } catch (_) {
+                if (context.mounted) toast(context, '复制失败，请手动填写上方注册编号与凭据。');
+              }
+            },
+            icon: const Icon(Icons.copy_outlined, size: 18),
+            label: const Text('复制设备注册凭据'))
+      ]);
     }
   }
 
@@ -499,8 +541,9 @@ class ConsoleActions {
   }
 
   Future<void> deviceDetails(Json row) async {
-    final r = await s.api.send('GET', '$root/devices/${row['id']}') as Json;
-    if (!context.mounted) return;
+    final workspace = root;
+    final r = await s.api.send('GET', '$workspace/devices/${row['id']}') as Json;
+    if (!context.mounted || s.root != workspace) return;
     await actionDetails(
         context,
         r['displayName'],
@@ -516,6 +559,13 @@ class ConsoleActions {
         },
         reauth: reauth,
         actions: [
+          if (canReadObservation(s.role))
+            DetailAction('使用情况与隐私', (ctx) async {
+              if (s.root != workspace) {
+                throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+              }
+              await openDeviceObservation(ctx, s, r);
+            }, closeOnSuccess: false),
           DetailAction('能力详情', (ctx) async {
             final value = await s.api
                 .send('GET', '$root/devices/${r['id']}/capabilities') as Json;
@@ -528,24 +578,25 @@ class ConsoleActions {
               });
             }
           }),
-          DetailAction('应用清单', (ctx) async {
-            final value = await s.api.send(
-                    'GET', '$root/devices/${r['id']}/application-inventory')
-                as Json;
-            if (ctx.mounted) {
-              await showDetails(ctx, '设备自报应用清单', {
-                '观察状态': label(value['observationStatus']),
-                '最近上报': dateLabel(value['receivedAt']),
-                '可信程度': label(value['evidenceStatus']),
-                '可见范围': label(value['visibility']),
-                if ((value['applications'] as List).isEmpty)
-                  '应用': '尚无可见应用上报，不能据此判断设备未安装应用。',
-                for (final app in value['applications'] as List)
-                  '${app['displayName']} · ${label(app['profile'])}':
-                      '${app['packageName']}\n版本号：${app['versionCode']} · ${app['systemApplication'] == true ? '系统应用' : '普通应用'}'
-              });
-            }
-          }),
+          if (s.role != 'TEACHER')
+            DetailAction('应用清单', (ctx) async {
+              final value = await s.api.send(
+                      'GET', '$root/devices/${r['id']}/application-inventory')
+                  as Json;
+              if (ctx.mounted) {
+                await showDetails(ctx, '设备自报应用清单', {
+                  '观察状态': label(value['observationStatus']),
+                  '最近上报': dateLabel(value['receivedAt']),
+                  '可信程度': label(value['evidenceStatus']),
+                  '可见范围': label(value['visibility']),
+                  if ((value['applications'] as List).isEmpty)
+                    '应用': '尚无可见应用上报，不能据此判断设备未安装应用。',
+                  for (final app in value['applications'] as List)
+                    '${app['displayName']} · ${label(app['profile'])}':
+                        '${app['packageName']}\n版本号：${app['versionCode']} · ${app['systemApplication'] == true ? '系统应用' : '普通应用'}'
+                });
+              }
+            }),
           if (s.canWrite && ['ACTIVE', 'REVOKED'].contains(r['state']))
             DetailAction('正常退出管理', (ctx) => deprovision(ctx, r),
                 destructive: true),
@@ -726,24 +777,84 @@ class ConsoleActions {
                 ]));
   }
 
+  Future<void> createAccessRequest() async {
+    final workspace = root, key = requestId();
+    void currentWorkspace() {
+      if (s.root != workspace) {
+        throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+      }
+    }
+
+    await showDialog<Json>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => AccessRequestDialog(load: (path, cursor) async {
+              currentWorkspace();
+              final page = await s.api.page('$workspace/$path', cursor: cursor);
+              currentWorkspace();
+              return page;
+            }, submit: (body) async {
+              currentWorkspace();
+              return await s.api.send('POST', '$workspace/access-requests',
+                  key: key, body: body) as Json;
+            }));
+  }
+
   Future<void> approvalDetails(Json row) async {
-    final r =
-        await s.api.send('GET', '$root/access-requests/${row['id']}') as Json;
-    if (!context.mounted) return;
+    final workspace = root;
+    final cancelKey = requestId();
+    final r = await s.api.send('GET', '$workspace/access-requests/${row['id']}')
+        as Json;
+    final delivery = await s.api.send(
+        'GET', '$workspace/access-requests/${row['id']}/delivery') as Json;
+    if (!context.mounted || s.root != workspace) return;
     await actionDetails(
         context,
         '临时访问申请',
         {
           '状态': label(r['state']),
+          if (r['reasonCode'] != null) '状态说明': label(r['reasonCode']),
           '申请时长': '${r['requestedWindowSeconds']} 秒',
           '申请理由': r['reason'],
           '有效期': dateLabel(r['requestExpiresAt']),
           '设备编号': r['deviceId'],
-          '儿童编号': r['subjectId'],
-          '执行状态': label(r['executionState'])
+          '学生 / 儿童编号': r['subjectId'],
+          '批准截止': dateLabel(r['absoluteNotAfter']),
+          '当前文档': label(delivery['action']),
+          '文档交付 / 设备报告': delivery['approvalVersion'] == r['version']
+              ? label(delivery['deliveryState'])
+              : '审批状态已更新，请关闭后重新打开',
+          '最近回执': dateLabel(delivery['receivedAt']),
+          '交付尝试': delivery['deliveryAttempt'] == null
+              ? '尚未开始'
+              : '第 ${delivery['deliveryAttempt']} 次（最多 10 次）',
+          if (delivery['reasonCode'] != null)
+            '设备拒收原因': accessRejectionLabel(delivery['reasonCode']),
+          if (delivery['deliveryState'] == 'REJECTED') ...{
+            '恢复状态': accessRetryLabel(delivery['retryStatus']),
+            if (delivery['retryAfter'] != null)
+              '最早可重试': dateLabel(delivery['retryAfter']),
+            '恢复说明': '重试由设备端发起，原文档和批准截止时间保持不变。旧尝试的回执仅保留追溯。'
+          },
+          '执行状态': label(r['executionState']),
+          '回执说明': '当前尚未接入设备例外执行。接收或保存回执仅表示文档状态；下载与重试不会延长原批准截止时间。'
         },
         reauth: reauth,
         actions: [
+          if (['TEACHER', 'CHILD'].contains(s.role) && r['state'] == 'PENDING')
+            DetailAction('取消我的申请', (ctx) async {
+              if (await confirmAction(ctx, '取消我的申请', '取消后管理员将无法批准此申请。')) {
+                if (s.root != workspace) {
+                  throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+                }
+                await s.api.send(
+                    'POST', '$workspace/access-requests/${r['id']}/cancel',
+                    version: r['version'], key: cancelKey);
+                if (ctx.mounted) Navigator.pop(ctx);
+              }
+            }, destructive: true, closeOnSuccess: false),
+          DetailAction('交付历史', (ctx) => approvalDeliveryHistory(ctx, r['id']),
+              closeOnSuccess: false),
           if (s.canWrite && r['state'] == 'PENDING') ...[
             DetailAction('批准', (ctx) async {
               final key = requestId();
@@ -795,33 +906,131 @@ class ConsoleActions {
         ]);
   }
 
-  Future<void> invite() async {
-    final children = await s.api.all('$root/subjects');
-    if (!context.mounted) return;
-    final result = await formDialog(context,
-        title: '邀请成员',
-        description: '邀请只适用于指定邮箱，令牌仅展示一次。儿童角色必须选择对应档案。',
-        fields: [
-          const FieldSpec('recipientEmail', '收件人邮箱', maxLength: 254),
-          FieldSpec('role', '成员角色',
-              options: options(s.tenant!['kind'] == 'FAMILY'
-                  ? ['GUARDIAN', 'CHILD']
-                  : ['ORG_ADMIN', 'TEACHER', 'AUDITOR', 'CHILD'])),
-          FieldSpec('subjectId', '关联儿童（仅儿童角色）',
-              required: false,
-              options: {'': '不关联', ...entityOptions(children, 'nickname')})
-        ],
-        reauth: reauth, onSubmit: (v) async {
-      if (v['role'] == 'CHILD' &&
-          (v['subjectId'] == null || v['subjectId'] == '')) {
-        throw const ApiFailure(400, 'CHILD_SUBJECT_REQUIRED');
-      }
-      return await s.api.send('POST', '$root/invitations', body: {
-        'recipientEmail': v['recipientEmail'],
-        'role': v['role'],
-        if (v['role'] == 'CHILD') 'subjectId': v['subjectId']
-      }) as Json;
-    });
+  Future<void> approvalDeliveryHistory(BuildContext ctx, String id) =>
+      showDialog<void>(
+          context: ctx,
+          builder: (dialog) => Dialog(
+              child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 940),
+                  child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(mainAxisSize: MainAxisSize.min, children: [
+                        Flexible(
+                            child: SingleChildScrollView(
+                                child: ResourcePage(
+                                    api: s.api,
+                                    path: '$root/access-requests/$id/documents',
+                                    title: '审批文档交付历史',
+                                    subtitle: '选择记录查看各次尝试与拒收原因。旧回执不会覆盖当前状态。',
+                                    emptyTitle: '设备尚未获取文档',
+                                    emptyDescription:
+                                        '设备获取批准或撤回文档后，这里会显示签发和回执记录。',
+                                    onOpen: (d) => approvalAttemptHistory(
+                                        dialog, id, d['documentId']),
+                                    columns: [
+                              ColumnSpec('审批版本',
+                                  (d) => Text('${d['approvalVersion']}')),
+                              ColumnSpec('动作', (d) => Text(label(d['action']))),
+                              ColumnSpec('交付 / 设备报告',
+                                  (d) => Text(label(d['deliveryState']))),
+                              ColumnSpec('尝试次数',
+                                  (d) => Text('${d['deliveryAttempt'] ?? 1}')),
+                              ColumnSpec(
+                                  '适用版本',
+                                  (d) =>
+                                      Text(d['current'] == true ? '当前' : '历史')),
+                              ColumnSpec(
+                                  '签发时间',
+                                  (d) =>
+                                      Text(dateLabel(d['documentIssuedAt']))),
+                              ColumnSpec('回执时间',
+                                  (d) => Text(dateLabel(d['receivedAt']))),
+                            ]))),
+                        Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                                onPressed: () => Navigator.pop(dialog),
+                                child: const Text('关闭')))
+                      ])))));
+
+  Future<void> approvalAttemptHistory(
+          BuildContext ctx, String request, String document) =>
+      showDialog<void>(
+          context: ctx,
+          builder: (dialog) => Dialog(
+              child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 980),
+                  child: Padding(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(mainAxisSize: MainAxisSize.min, children: [
+                        Flexible(
+                            child: SingleChildScrollView(
+                                child: ResourcePage(
+                                    api: s.api,
+                                    path:
+                                        '$root/access-requests/$request/documents/$document/attempts',
+                                    title: '交付尝试记录',
+                                    subtitle:
+                                        '每份文档最多 10 次尝试。接收与保存是设备报告，均不代表系统执行。',
+                                    emptyTitle: '暂无交付尝试',
+                                    emptyDescription: '设备获取文档后会建立第一次交付记录。',
+                                    columns: [
+                              ColumnSpec('尝试',
+                                  (a) => Text('第 ${a['deliveryAttempt']} 次')),
+                              ColumnSpec('交付状态',
+                                  (a) => Text(label(a['deliveryState']))),
+                              ColumnSpec(
+                                  '拒收原因',
+                                  (a) => Text(
+                                      accessRejectionLabel(a['reasonCode']))),
+                              ColumnSpec(
+                                  '适用记录',
+                                  (a) =>
+                                      Text(a['current'] == true ? '当前' : '历史')),
+                              ColumnSpec('开始时间',
+                                  (a) => Text(dateLabel(a['createdAt']))),
+                              ColumnSpec('回执时间',
+                                  (a) => Text(dateLabel(a['receivedAt']))),
+                            ]))),
+                        Align(
+                            alignment: Alignment.centerRight,
+                            child: TextButton(
+                                onPressed: () => Navigator.pop(dialog),
+                                child: const Text('关闭')))
+                      ])))));
+
+  Future<bool> invite() async {
+    final capturedRoot = root;
+    final children = await s.api.all('$capturedRoot/subjects');
+    final classes = s.tenant!['kind'] == 'ORGANIZATION'
+        ? await s.api.all('$capturedRoot/classes')
+        : <Json>[];
+    if (!context.mounted || s.root != capturedRoot) return false;
+    final result = await showDialog<Json>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => MemberEditor(
+              kind: s.tenant!['kind'] as String,
+              operatorRole: s.role,
+              subjects: {
+                for (final child in children)
+                  if (child['archived'] != true && child['archivedAt'] == null)
+                    child['id'] as String: child['nickname'] as String
+              },
+              classes: {
+                for (final c in classes) c['id'] as String: c['name'] as String
+              },
+              reauth: reauth,
+              retryUncertain: false,
+              onSubmit: (body) async {
+                if (s.root != capturedRoot) {
+                  throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+                }
+                return await s.api.send('POST', '$capturedRoot/invitations',
+                    body: body) as Json;
+              },
+            ));
+    if (result?['reviewInvitations'] == true) return true;
     if (result != null && context.mounted) {
       await showDetails(context, '邀请已创建', {
         '说明': '请将以下一次性令牌安全传递给收件人。系统尚未发送邮件。',
@@ -829,98 +1038,19 @@ class ConsoleActions {
         '过期时间': dateLabel(result['expiresAt'])
       }, actions: [
         TextButton.icon(
-            onPressed: () =>
-                Clipboard.setData(ClipboardData(text: result['token'])),
+            onPressed: () async {
+              try {
+                await Clipboard.setData(ClipboardData(text: result['token']));
+                if (context.mounted) toast(context, '邀请令牌已复制。');
+              } catch (_) {
+                if (context.mounted) toast(context, '复制失败，请选中令牌手动复制。');
+              }
+            },
             icon: const Icon(Icons.copy, size: 18),
             label: const Text('复制令牌'))
       ]);
     }
-  }
-}
-
-class MembersPage extends StatefulWidget {
-  final Session session;
-  final ConsoleActions actions;
-  const MembersPage({super.key, required this.session, required this.actions});
-  @override
-  State<MembersPage> createState() => _MembersPageState();
-}
-
-class _MembersPageState extends State<MembersPage> {
-  bool invitations = false;
-  @override
-  Widget build(BuildContext context) {
-    final s = widget.session;
-    final root = s.root;
-    if (!s.canManage) return const Notice('当前角色无权查看成员管理。', warning: true);
-    return ResourcePage(
-        key: ValueKey(invitations),
-        title: '成员与邀请',
-        subtitle: '管理工作空间访问权限，邀请家庭成员或机构同事。',
-        path: '$root/${invitations ? 'invitations' : 'members'}',
-        api: s.api,
-        reauth: widget.actions.reauth,
-        create: widget.actions.invite,
-        createLabel: '邀请成员',
-        toolbar: [
-          SegmentedButton<bool>(segments: const [
-            ButtonSegment(value: false, label: Text('成员')),
-            ButtonSegment(value: true, label: Text('邀请记录'))
-          ], selected: {
-            invitations
-          }, onSelectionChanged: (v) => setState(() => invitations = v.first))
-        ],
-        columns: invitations
-            ? [
-                ColumnSpec('邀请编号', (r) => Text(shortId(r['id']))),
-                ColumnSpec('角色', (r) => Text(label(r['role']))),
-                ColumnSpec('状态', (r) => StatusTag(r['state'])),
-                ColumnSpec('过期时间', (r) => Text(dateLabel(r['expiresAt'])))
-              ]
-            : [
-                ColumnSpec(
-                    '成员',
-                    (r) => Text(r['actorId'] == s.profile?['subject']
-                        ? '${s.displayName}（我）'
-                        : shortId(r['actorId']))),
-                ColumnSpec('角色', (r) => StatusTag(r['role'])),
-                ColumnSpec('关联儿童', (r) => Text(shortId(r['subjectId'])))
-              ],
-        emptyTitle: invitations ? '暂无邀请记录' : '暂无成员',
-        emptyDescription: invitations ? '新建邀请后可以在这里查看状态。' : '成员加入后将在这里显示。',
-        onOpen: (r) => actionDetails(
-                context,
-                invitations ? '邀请详情' : '成员详情',
-                invitations
-                    ? {
-                        '邀请编号': r['id'],
-                        '角色': label(r['role']),
-                        '状态': label(r['state']),
-                        '过期时间': dateLabel(r['expiresAt'])
-                      }
-                    : {
-                        '成员标识': r['actorId'],
-                        '角色': label(r['role']),
-                        '关联儿童': r['subjectId']
-                      },
-                reauth: widget.actions.reauth,
-                actions: [
-                  if (invitations && r['state'] == 'PENDING')
-                    DetailAction('取消邀请', (ctx) async {
-                      if (await confirmAction(ctx, '取消邀请', '取消后此邀请令牌将不再有效。')) {
-                        await s.api
-                            .send('DELETE', '$root/invitations/${r['id']}');
-                      }
-                    }, destructive: true),
-                  if (!invitations && r['role'] != 'OWNER')
-                    DetailAction('撤销访问', (ctx) async {
-                      if (await confirmAction(
-                          ctx, '撤销成员访问', '该成员将立即失去本工作空间的访问权限，相关临时访问窗口会失效。')) {
-                        await s.api.send('DELETE',
-                            '$root/members/${Uri.encodeComponent(r['actorId'])}');
-                      }
-                    }, destructive: true)
-                ]));
+    return result != null;
   }
 }
 

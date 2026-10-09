@@ -28,7 +28,7 @@ class TenantController {
     @ResponseStatus(HttpStatus.CREATED)
     Tenant create(@AuthenticationPrincipal Jwt actor, @Valid @RequestBody CreateTenant input,
                   @RequestHeader(name = "Idempotency-Key", required = false) String key) {
-        return tenants.create(actor.getSubject(), input.name(), input.kind(), input.timeZone(), key);
+        return tenants.create(actor, input.name(), input.kind(), input.timeZone(), key);
     }
 
     @GetMapping

@@ -9,12 +9,15 @@ import 'design.dart';
 const destinations = [
   ('overview', '工作台', Icons.space_dashboard_outlined),
   ('subjects', '儿童档案', Icons.person_outline),
+  ('classes', '班级与名册', Icons.school_outlined),
   ('devices', '设备管理', Icons.devices_outlined),
   ('applications', '应用目录', Icons.apps_outlined),
   ('schedules', '时间计划', Icons.schedule_outlined),
+  ('quota', '共享额度', Icons.timelapse_outlined),
   ('policies', '策略中心', Icons.shield_outlined),
   ('approvals', '访问审批', Icons.task_alt_outlined),
   ('members', '成员与邀请', Icons.group_outlined),
+  ('ownership', '所有者交接', Icons.swap_horiz_outlined),
   ('audit', '审计日志', Icons.receipt_long_outlined),
   ('settings', '设置', Icons.settings_outlined),
 ];
@@ -118,17 +121,25 @@ class ConsoleShell extends StatelessWidget {
                             tooltip: '打开导航',
                             onPressed: () => Scaffold.of(ctx).openDrawer(),
                             icon: const Icon(Icons.menu))),
-                  Expanded(
-                      child: Text(
-                          destinations
-                                  .where((d) => d.$1 == section)
-                                  .firstOrNull
-                                  ?.$2 ??
-                              '工作台',
-                          style: const TextStyle(color: muted, fontSize: 13))),
+                  if (wide)
+                    Expanded(
+                        child: Text(
+                            destinations
+                                    .where((d) => d.$1 == section)
+                                    .firstOrNull
+                                    ?.$2 ??
+                                '工作台',
+                            style:
+                                const TextStyle(color: muted, fontSize: 13))),
+                  if (!wide) const SizedBox(width: 8),
                   if (s.tenant != null)
                     ConstrainedBox(
-                        constraints: BoxConstraints(maxWidth: wide ? 280 : 180),
+                        constraints: BoxConstraints(
+                            maxWidth: wide
+                                ? 280
+                                : (MediaQuery.sizeOf(context).width - 156)
+                                    .clamp(100, 280)
+                                    .toDouble()),
                         child: DropdownButtonHideUnderline(
                             child: DropdownButton<String>(
                                 value: s.tenant!['id'],
@@ -154,6 +165,7 @@ class ConsoleShell extends StatelessWidget {
                                     }
                                   }
                                 }))),
+                  if (!wide) const Spacer(),
                   const SizedBox(width: 12),
                   PopupMenuButton<String>(
                       tooltip: '账户',

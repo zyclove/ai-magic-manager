@@ -64,6 +64,13 @@ management:
     health:
       show-details: never
 manager:
+  quota:
+    materialization-job:
+      enabled: ${QUOTA_MATERIALIZATION_JOB_ENABLED:true}
+      batch-size: ${QUOTA_MATERIALIZATION_BATCH_SIZE:100}
+      interval-seconds: ${QUOTA_MATERIALIZATION_INTERVAL_SECONDS:30}
+    lease-lifetime-seconds: ${QUOTA_LEASE_LIFETIME_SECONDS:300}
+    clock-skew-tolerance-seconds: ${QUOTA_CLOCK_SKEW_TOLERANCE_SECONDS:2}
   lifecycle:
     preview-lifetime-seconds: ${DEVICE_EXIT_PREVIEW_LIFETIME_SECONDS:300}
     cleanup-lifetime-seconds: ${DEVICE_CLEANUP_LIFETIME_SECONDS:86400}

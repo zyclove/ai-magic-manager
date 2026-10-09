@@ -25,6 +25,31 @@ import static com.aimanager.tenant.TenantAccess.Role.*;
 /** All enrollment transitions serialize in the database, including multi-replica claims and confirmations. */
 @Service
 class EnrollmentService implements FleetAdministration {
+    /** Runs after policy preview invalidation and before remaining approval cleanup. */
+    @org.springframework.context.event.EventListener
+    @org.springframework.core.annotation.Order(-100)
+    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.MANDATORY)
+    public void ownershipTransferred(com.aimanager.tenant.OwnershipTransferred event) {
+        invalidatePending(event.tenantId(),event.formerOwnerActorId(),"ENROLLMENT_OWNERSHIP_CANCELLED");
+    }
+    @org.springframework.context.event.EventListener
+    @org.springframework.core.annotation.Order(-100)
+    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.MANDATORY)
+    public void memberAccessChanged(com.aimanager.tenant.MembershipAccessChanged event) {
+        invalidatePending(event.tenantId(),event.actorId(),"ENROLLMENT_ACCESS_CANCELLED");
+    }
+    private void invalidatePending(String tenant,String actor,String action) {
+        var pending = jdbc.queryForList("SELECT id,device_id,creator_actor_id FROM device_enrollments WHERE tenant_id=? AND creator_actor_id=? AND state IN ('PENDING_CLAIM','AWAITING_CONFIRMATION') ORDER BY id FOR UPDATE",
+            tenant, actor).stream().filter(row->actor.equals(row.get("creator_actor_id"))).toList();
+        var devices = pending.stream().map(row -> (String) row.get("device_id")).filter(java.util.Objects::nonNull).distinct().sorted().toList();
+        // Lock all device rows before any nested revocation listeners acquire approval rows.
+        for (String device : devices) jdbc.queryForList("SELECT id FROM devices WHERE tenant_id=? AND id=? FOR UPDATE", tenant, device);
+        for (String device : devices) revokeDevice(tenant, device, "system:membership");
+        for (var enrollment : pending) {
+            jdbc.update("UPDATE device_enrollments SET state='CANCELLED',pairing_hash=NULL WHERE tenant_id=? AND id=?", tenant, enrollment.get("id"));
+            audit.record(tenant, "system:membership", action, enrollment.get("id").toString());
+        }
+    }
     private final JdbcTemplate jdbc;
     private final TenantAccess access;
     private final RecentAuthentication recent;

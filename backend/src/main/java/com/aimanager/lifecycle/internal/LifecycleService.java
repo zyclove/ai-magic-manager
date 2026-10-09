@@ -25,6 +25,22 @@ import static com.aimanager.tenant.TenantAccess.Role.*;
 /** Revocation, bounded signed command and audit are atomic. No native erasure or EMM result is synthesized. */
 @Service
 class LifecycleService implements CleanupMaintenance {
+    @org.springframework.context.event.EventListener
+    @org.springframework.core.annotation.Order(0)
+    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.MANDATORY)
+    public void ownershipTransferred(com.aimanager.tenant.OwnershipTransferred event) {
+        int changed = jdbc.update("UPDATE deprovision_previews SET expires_at=? WHERE tenant_id=? AND actor_key=? AND operation_id IS NULL AND expires_at>?",
+            event.occurredAt(), event.tenantId(), event.formerOwnerActorKey(), event.occurredAt());
+        if (changed > 0) audit.record(event.tenantId(), "system:ownership", "EXIT_PREVIEWS_OWNERSHIP_INVALIDATED", event.tenantId());
+    }
+    @org.springframework.context.event.EventListener
+    @org.springframework.core.annotation.Order(0)
+    @Transactional(propagation = org.springframework.transaction.annotation.Propagation.MANDATORY)
+    public void memberAccessChanged(com.aimanager.tenant.MembershipAccessChanged event) {
+        int changed=jdbc.update("UPDATE deprovision_previews SET expires_at=? WHERE tenant_id=? AND actor_key=? AND operation_id IS NULL AND expires_at>?",
+            event.occurredAt(),event.tenantId(),event.actorKey(),event.occurredAt());
+        if(changed>0)audit.record(event.tenantId(),"system:membership","EXIT_PREVIEWS_ACCESS_INVALIDATED",event.actorKey());
+    }
     private static final List<String> CONSEQUENCES = List.of("REVOKE_REMOTE_BUSINESS_CREDENTIALS", "INVALIDATE_ACCESS_REQUESTS",
         "REQUEST_OWN_AGENT_CACHE_AND_CREDENTIAL_CLEANUP", "REMOVE_REGISTRATION_KEY_AFTER_ACK");
     private static final List<String> LIMITATIONS = List.of("LOCAL_ERASURE_UNVERIFIED", "NO_SYSTEM_UNMANAGE", "NO_DEVICE_WIPE",

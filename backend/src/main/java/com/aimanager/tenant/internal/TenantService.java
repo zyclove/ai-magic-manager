@@ -21,12 +21,16 @@ class TenantService {
     private final AuditService audit;
     private final Clock clock;
     private final IdempotencyService idempotency;
-    TenantService(JdbcTemplate jdbc, AuditService audit, Clock clock, IdempotencyService idempotency) {
+    private final com.aimanager.identity.IdentityProfiles profiles;
+    TenantService(JdbcTemplate jdbc, AuditService audit, Clock clock, IdempotencyService idempotency, com.aimanager.identity.IdentityProfiles profiles) {
         this.jdbc = jdbc; this.audit = audit; this.clock = clock; this.idempotency = idempotency;
+        this.profiles = profiles;
     }
 
     @Transactional(timeout = 10)
-    public Tenant create(String actor, String name, Tenant.Kind kind, String timeZone, String key) {
+    public Tenant create(org.springframework.security.oauth2.jwt.Jwt identity, String name, Tenant.Kind kind, String timeZone, String key) {
+        String actor = identity.getSubject();
+        profiles.observe(identity);
         try { ZoneId.of(timeZone); } catch (DateTimeException failure) { throw DomainException.invalid("INVALID_TIME_ZONE"); }
         return idempotency.execute("bootstrap", actor, "tenant.create", key,
             Map.of("name", name, "kind", kind, "timeZone", timeZone), Tenant.class,
@@ -37,6 +41,7 @@ class TenantService {
         var tenant = new Tenant(UUID.randomUUID().toString(), name.strip(), kind, timeZone, 0);
         jdbc.update("INSERT INTO tenants(id,name,kind,time_zone,created_at,version) VALUES(?,?,?,?,?,?)",
             tenant.id(), tenant.name(), kind.name(), timeZone, clock.millis(), 0);
+        jdbc.update("INSERT INTO ownership_heads(tenant_id) VALUES(?)", tenant.id());
         jdbc.update("INSERT INTO tenant_members(tenant_id,actor_id,actor_key,role) VALUES(?,?,?,?)", tenant.id(), actor, ActorKeys.key(actor), "OWNER");
         audit.record(tenant.id(), actor, "TENANT_CREATED", tenant.id());
         return tenant;

@@ -70,6 +70,12 @@ public class ConfigurationSigner {
     public String signCleanup(String encodedCommand) {
         return signTyped(encodedCommand, "aimanager-cleanup-command+jws");
     }
+    public String signQuotaLease(String encodedLease) {
+        return signTyped(encodedLease, "aimanager-quota-lease+jws");
+    }
+    public String signAccessWindow(String encodedWindow) {
+        return signTyped(encodedWindow, "aimanager-access-window+jws");
+    }
     private String signTyped(String encodedEnvelope, String type) {
         requireConfigured();
         try {

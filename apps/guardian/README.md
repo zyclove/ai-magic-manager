@@ -1,16 +1,41 @@
-# guardian
+# 智能管家管理端
 
-A new Flutter project.
+Flutter Web 管理工作台，使用 Material、OIDC 授权码 + PKCE 和真实后端 API。覆盖工作空间、儿童档案、机构班级、设备、应用、时间计划、共享额度、策略、访问审批、成员、所有者交接和审计。当前交付范围与后续工作见[管理端交付记录](../../docs/management-console-delivery.md)。
 
-## Getting Started
+## 本机运行
 
-This project is a starting point for a Flutter application.
+项目根目录的 `scripts/start-local.ps1` 启动已配置的本机依赖、后端和 Web 服务。依赖与凭据保存在被 Git 忽略的 `.local/runtime/`；不将密码或密钥放入前端构建参数。
 
-A few resources to get you started if this is your first Flutter project:
+| 服务 | 地址 |
+|---|---|
+| 管理端 | http://localhost:3000 |
+| 业务 API | http://localhost:8082/api/v1 |
+| 身份服务 | http://localhost:8081/realms/ai-manager |
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+使用管理员账户进行安全登录。敏感操作需要近期多因素认证，管理员本人须在账户中心绑定验证器。
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+“所有者交接”支持发起、接受、拒绝和撤销，展示双方账号及权限变化。接收人须已加入工作空间并具有成人资格；交接完成会重新读取角色。设备注册成功弹窗可一次复制 `{tenantId,id,token,expiresAt}` 导入凭据；只向可信任设备传递，列表不会再次显示秘密。
+
+“成员与邀请”显示已同步姓名、已验证邮箱（儿童隐藏）和访问范围；支持强版本角色/范围调整、权限历史、稳定标识撤销。新邀请默认只读角色，儿童须选档案，教师须选择班级或单个档案。权限提交未知时原内容重试，邀请创建未知时进入记录核对并取消无令牌邀请；不会将邀请秘密写入幂等日志。
+
+机构工作空间新增“班级与名册”：新建/改名、关联学生、移出、原子转班及归档。每班最多 500 名学生，每位教师最多获授 50 个班级。教师可查看当前范围内的班级、未归档学生和设备状态，提交与取消本人的有限临时申请，无权读取应用清单或修改学生、设备、策略。课堂会话仍在后续实施范围内。
+
+## 构建
+
+在本目录运行：
+
+```powershell
+flutter pub get
+flutter build web --release --web-renderer html --pwa-strategy=none --no-web-resources-cdn
+```
+
+本机已验证的环境为 Flutter 3.22.2 / Dart 3.4.3。Windows 使用自定义 `--output` 时传绝对路径，避免 shader 编译器无法写入相对目录。部署构建参数由根目录 `scripts/build-deployment.ps1` 管理，生产服务使用正式 HTTPS 来源与身份服务配置。
+
+## 使用语义
+
+- 列表搜索范围为已加载记录；后续页需使用“加载更多”。
+- 记录修改使用资源版本；网络结果未知时保留原请求进行幂等重试。
+- 访问审批分别显示决定、文档交付、设备报告与执行状态。当前配置文档接收或保存不表示设备已解锁。
+- 教师和儿童可从当前范围设备的服务端选项中申请临时访问、查看与取消本人申请。表单支持规则分页、多选、1–60 分钟、选填理由及未知提交原样重试；教师失去最后一条学生授权时申请失效或批准撤回。
+- 共享额度展示账本与计划；真实设备计时、停止能力、原生客户端及完整产品剩余工作继续按[实施计划](../../docs/implementation-plan.md)推进。
+- 设备详情的“使用情况与隐私”向所有者、监护人、机构管理员开放。清单和使用摘要分别授权，修改需原因、影响确认及近期 MFA；未知提交原样重试，版本冲突关闭并刷新。报告展示实际系统聚合区间与设备自报状态，不能作为精确计费或实际控制证明。[集成与运行记录](../../docs/observation-console-integration.md)。

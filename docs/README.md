@@ -11,15 +11,24 @@
 | [完整产品交付与商业运营模型](parental-control-product-operating-model.md) | 全功能工作包、状态机、审批/批量流程、跨端交互、边缘场景、售卖计量、成本及上线责任 | 产品、设计、研发、QA、商务、支持与 SRE |
 | [数据库实施与认证规格](database-implementation-and-certification.md) | MySQL/OceanBase 决策、数据域、索引/事务、容量、真实数据库认证及迁移回退 | 后端、DBA、SRE、QA 与私有化交付 |
 | [当前后端接口](backend-api-status.md) | 实际路由、认证、版本/幂等、配置及未完成项 | 开发与联调 |
+| [所有者交接合同与实施](ownership-transfer-plan.md) | 双方确认、权限差异、成员版本、敏感待办失效与真实 MySQL 并发验证 | 产品、前后端与 QA |
+| [成员资料与权限调整](member-access-plan.md) | 可识别身份、角色/档案范围、强版本撤销、变更历史与旧待办失效 | 产品、前后端与 QA |
+| [机构班级与教师工作流](organization-workflow-plan.md) | 班级名册、原子转班、多班级教师范围及分阶段验证 | 产品、前后端与 QA |
 | [设备接入契约](device-registration-contract.md) | 实际注册/恢复、独立凭证、两阶段轮换、能力与心跳 API | 后端、Flutter、Android 与 QA |
 | [应用、时间与策略契约](policy-application-schedule-contract.md) | 应用身份/清单、日程/DST、草稿/模板、预览、配置版本、回滚及执行边界 | 产品、后端、Flutter、Android 与 QA |
 | [签名配置与消息交付](configuration-delivery-contract.md) | 单设备 JWS、持久游标/回执、过期重发、通知登记/重试与验证边界 | 后端、Flutter、Android、QA 与 SRE |
 | [临时访问申请与审批契约](access-request-contract.md) | 实际申请/决定/取消/撤销、窗口/到期、主体/设备/成员失效及执行边界 | 产品、后端、Flutter、Android 与 QA |
+| [签名审批文档与回执](access-window-delivery-contract.md) | 设备文档、固定期限、撤回版本、接收/保存报告与管理诊断 | 后端、Flutter、Android 与 QA |
+| [设备审批接收组件](../packages/device_access/README.md) | JOSE 验签、Sembast 事务、完整扫描/续点、HTTP 自动恢复、撤回与回执接入 | Flutter、Android、后端与 QA |
 | [设备退出与清理契约](device-deprovision-contract.md) | 后果预览/确认、业务撤销、原密钥清理认证、签名命令/回执、取消/到期与验证边界 | 产品、后端、Flutter、Android、QA 与 SRE |
 | [管理台交付记录](management-console-delivery.md) | 已接入的业务页面、身份联调、交互验证与剩余工作 | 产品、开发、QA 与交付 |
+| [共享额度契约](shared-quota-contract.md) | 每日池、重复计划、事务账本、设备租约与执行边界 | 产品、后端、Flutter、Android 与 QA |
+| [重复额度计划实施说明](quota-recurring-plan.md) | 星期/日期额度、生效规则、后台生成、来源版本与验收门槛 | 产品、后端、Flutter 与 QA |
 | [设备退出组件接入契约](device-operations-ui-contract.md) | 共享 Flutter 组件、宿主认证、恢复限制、浏览器证据与截图 | Flutter、后端、Android 与 QA |
 | [设备签名配置接收契约](device-configuration-client-contract.md) | Dart JOSE、设备 HTTPS/opaque 认证、整页事务/续点、回执重放与真实 Spring/Dart 互操作证据 | Flutter、Android、后端与 QA |
 | [设备身份客户端契约](device-identity-client-contract.md) | 原密钥认领/恢复、持久心跳、两阶段凭证轮换、认证暂停、secret-store 边界与真实联调 | Flutter、Android、后端与 QA |
+| [儿童端宿主契约](child-host-contract.md) | Flutter/Android 接入、加密存储、进程恢复与当前执行边界 | Flutter、Android、后端与 QA |
+| [设备观察授权契约](device-observation-contract.md) | 应用清单/使用摘要的单独授权与报告边界；V20 代码交付状态以该文档为准 | 产品、前后端与 QA |
 | [2026-10-09 阶段交付](stage-delivery-2026-10-09.md) | 本阶段提交范围、重新验证、仓库配置边界及后续发布门槛 | 全团队 |
 | [可复制部署手册](deployment-runbook.md) | 新环境初始化、独立构建、五服务 Compose、身份授权、TLS 与升级边界 | 开发、QA、交付与 SRE |
 

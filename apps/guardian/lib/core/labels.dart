@@ -1,6 +1,16 @@
 import 'package:intl/intl.dart';
 
 const labels = <String, String>{
+  'OWNERSHIP_CHANGED': '所有者已变更，请重新申请',
+  'OWNERSHIP_TRANSFER_PROPOSED': '发起所有者交接',
+  'OWNERSHIP_TRANSFER_ACCEPTED': '完成所有者交接',
+  'OWNERSHIP_TRANSFER_CANCELLED': '撤销所有者交接',
+  'OWNERSHIP_TRANSFER_DECLINED': '接收人拒绝交接',
+  'OWNERSHIP_TRANSFER_EXPIRED': '所有者交接已过期',
+  'OWNERSHIP_TRANSFER_INVALIDATED': '所有者交接已失效',
+  'ENROLLMENT_OWNERSHIP_CANCELLED': '交接后取消待确认配对',
+  'POLICY_PREVIEWS_OWNERSHIP_INVALIDATED': '交接后要求重新预览策略',
+  'EXIT_PREVIEWS_OWNERSHIP_INVALIDATED': '交接后要求重新预览设备退出',
   'WORKSPACE_CHANGED': '工作空间已变更',
   'RECENT': '最近已上报',
   'STALE': '上报已过期',
@@ -41,8 +51,43 @@ const labels = <String, String>{
   'ACCEPTED': '已接受',
   'DENIED': '已拒绝',
   'INVALIDATED': '已失效',
-  'APPROVED_PENDING_DELIVERY': '已批准 · 等待交付',
+  'APPROVED_PENDING_DELIVERY': '已批准 · 尚未执行',
   'NOT_ENFORCED': '尚未执行',
+  'REQUESTER_CANCELLED': '申请人已取消',
+  'CHILD_CANCELLED': '申请人已取消',
+  'REQUESTER_SCOPE_LOST': '申请人已失去该学生或设备的访问范围',
+  'APPROVER_SCOPE_LOST': '审批人的管理权限已失效',
+  'BASELINE_CHANGED': '基础策略已更新',
+  'TIME_EXPIRED': '申请或访问窗口已到期',
+  'DEVICE_REGISTRATION_INACTIVE': '设备注册已失效',
+  'ADMIN_REVOKED': '管理员已撤销批准',
+  'NOT_NOW': '当前不合适',
+  'NOT_ALLOWED': '不允许访问',
+  'ACCESS_ORGANIZATION_SCOPE_INVALIDATED': '班级范围变更使申请失效',
+  'NOT_GRANTED': '尚无批准窗口',
+  'NOT_FETCHED': '等待设备获取当前文档',
+  'SIGNED': '文档已签名 · 尚无回执',
+  'UPSERT_ACCESS_WINDOW': '批准访问窗口',
+  'REMOVE_ACCESS_WINDOW': '撤回访问窗口',
+  'DEVICE_REPORT_UNVERIFIED': '设备报告 · 未验证执行',
+  'ACCESS_DOCUMENT_SIGNED': '签发审批文档',
+  'ACCESS_DOCUMENT_RECEIVED': '设备报告收到审批文档',
+  'ACCESS_DOCUMENT_STORED': '设备报告保存审批文档',
+  'ACCESS_DOCUMENT_REJECTED': '设备报告拒绝审批文档',
+  'ACCESS_DOCUMENT_RETRIED': '重新尝试审批文档交付',
+  'ACCESS_REJECTION_SIGNATURE_INVALID': '签名校验未通过',
+  'ACCESS_REJECTION_BASELINE_MISSING': '缺少对应的基础配置',
+  'ACCESS_REJECTION_EXPIRED': '文档超过有效期',
+  'ACCESS_REJECTION_UNSUPPORTED_SCHEMA': '设备不支持文档格式',
+  'ACCESS_REJECTION_STORAGE_FAILED': '设备暂时无法保存文档',
+  'ACCESS_REJECTION_WRONG_DEVICE': '设备绑定不匹配',
+  'ACCESS_REJECTION_OTHER': '设备报告其他问题',
+  'ACCESS_RETRY_NOT_NEEDED': '无需重试',
+  'ACCESS_RETRY_WAITING': '等待重试间隔',
+  'ACCESS_RETRY_AVAILABLE': '设备可再次尝试',
+  'ACCESS_RETRY_NOT_ALLOWED': '需先排查，暂不重试',
+  'ACCESS_RETRY_EXHAUSTED': '已达 10 次上限，需要排查',
+  'ACCESS_RETRY_WINDOW_ENDING': '剩余批准时间不足以重试',
   'CONFIGURED_NOT_ENFORCED': '配置已保存 · 未执行',
   'POLICY': '策略',
   'TEMPLATE': '模板',
@@ -73,6 +118,15 @@ const labels = <String, String>{
   'INVITATION_CREATED': '创建邀请',
   'MEMBER_JOINED': '成员加入',
   'MEMBER_REVOKED': '撤销成员',
+  'MEMBER_INVITED': '邀请成员',
+  'INVITATION_REVOKED': '取消成员邀请',
+  'MEMBERSHIP_REVOKED': '撤销成员访问',
+  'MEMBERSHIP_ACCESS_CHANGED': '调整成员权限',
+  'MEMBERSHIP_CHANGED': '成员权限或档案范围已变化',
+  'INVITATIONS_ACCESS_INVALIDATED': '成员权限变化使旧邀请失效',
+  'ENROLLMENT_ACCESS_CANCELLED': '成员权限变化取消待确认配对',
+  'POLICY_PREVIEWS_ACCESS_INVALIDATED': '成员权限变化使策略预览失效',
+  'EXIT_PREVIEWS_ACCESS_INVALIDATED': '成员权限变化使退出预览失效',
   'ENROLLMENT_CREATED': '发起设备注册',
   'DECLARED_UNVERIFIED': '已登记 · 未验证',
   'AGENT_REPORTED_UNVERIFIED': '设备自报 · 未验证',
@@ -97,6 +151,10 @@ const labels = <String, String>{
 };
 String label(dynamic value) =>
     value == null ? '—' : labels[value.toString()] ?? value.toString();
+String accessRejectionLabel(dynamic value) =>
+    value == null ? '—' : label('ACCESS_REJECTION_$value');
+String accessRetryLabel(dynamic value) =>
+    value == null ? '—' : label('ACCESS_RETRY_$value');
 String dateLabel(dynamic value) {
   if (value == null) return '—';
   final d = value is num

@@ -55,6 +55,9 @@ class CatalogService implements ApplicationCatalog {
 
     @Override public ApplicationDefinition requireDeclared(String tenant, String actor, String id) {
         access.requireRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN, AUDITOR);
+        return requireKnownIdentity(tenant,id);
+    }
+    @Override public ApplicationDefinition requireKnownIdentity(String tenant, String id) {
         var rows = jdbc.query("SELECT definition_json FROM application_definitions WHERE tenant_id=? AND id=?",
             (row, index) -> read(row.getString(1)), tenant, id);
         if (rows.isEmpty()) throw DomainException.denied();
