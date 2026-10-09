@@ -1,0 +1,520 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-09T21:06:25.272620+00:00",
+  "parentHead": "2ed6a733a7b86f450cea1e42197ee13339dd0046",
+  "scope": "Android native temporary-access encrypted storage, real separate process restoration and controlled OS reboot; no production behavior changed",
+  "environment": {
+    "avd": "AIManagerChildApi34",
+    "serial": "emulator-5580",
+    "apiLevel": 34,
+    "architecture": "x86_64",
+    "package": "com.aimanager.child.debug",
+    "flutter": "3.22.2",
+    "dart": "3.4.3",
+    "java": "17"
+  },
+  "sourceFiles": [
+    {
+      "path": "apps/child/integration_test/access_storage_test.dart",
+      "sha256": "15bc55523696a70c5345ea6c213964d109a3ee901dba46575b042abaee810ad5"
+    },
+    {
+      "path": "scripts/tests/build-child-access-storage.ps1",
+      "sha256": "163ed9ae7a3e7d32e35024bf55d57b65253966ca1109815a1130a5091d1c7ed9"
+    },
+    {
+      "path": "scripts/tests/run-child-access-storage-phase.ps1",
+      "sha256": "125dec5c679d16f135e2fb7d6b0e121e9e991cd596b70fc4e6f586dde6af8901"
+    },
+    {
+      "path": "docs/access-native-storage-plan.md",
+      "sha256": "c8696e0c4b2486a3319faa4d8e3615d60c0a017bfcf9c023203d4c5dcb39d96a"
+    },
+    {
+      "path": "apps/child/test_driver/access_storage_driver.dart",
+      "sha256": "add7395d6ff8ab55a15e78c7f7eea8697c3245fdeaf6aec6a82b4d7deeecbb23"
+    },
+    {
+      "path": "docs/access-native-storage-contract.md",
+      "sha256": "dead3ee841656b93bf9541be01138b8d1d86efc2b5e4da8e076bfb133f5c5d49"
+    }
+  ],
+  "sourceIntegrity": {
+    "parentHead": "2ed6a733a7b86f450cea1e42197ee13339dd0046",
+    "baselineFilesCompared": 547,
+    "baselineDifferences": [],
+    "frozenSourceFilesCompared": 5,
+    "normalizedLineEndings": true
+  },
+  "sourceIntegrityTiming": "Five initial stage sources verified before appending completion docs; final source digests listed separately. All 547 parent files matched.",
+  "nativePhases": [
+    {
+      "processStopped": true,
+      "pid": 6324,
+      "driverExitCode": 1,
+      "expectedMissingStateFailure": true,
+      "nativeLogPidVerified": true,
+      "phase": "negative",
+      "apkSha256": "724d7713081650d891fb4f96f44656965a9bab1d52feb48db4eb8ed836889ab1"
+    },
+    {
+      "phase": "write_pending",
+      "pid": 6489,
+      "pendingReceipts": 1,
+      "httpCalls": 4,
+      "receiptPosts": 1,
+      "originalReceiptCompared": false,
+      "originalDeadlineUnchanged": true,
+      "identityUnchanged": true,
+      "observationUnchanged": true,
+      "configurationUnchanged": true,
+      "plaintextAbsent": true,
+      "fixtureRemoved": false,
+      "identityPresentBefore": true,
+      "states": [
+        "stored"
+      ],
+      "driverExitCode": 0,
+      "processStopped": true,
+      "nativeLogPidVerified": true,
+      "apkSha256": "2ea344d1f80f5b6909f9fb036a1aaf0cc5e248f72753230ad12905f23251d57a"
+    },
+    {
+      "phase": "replay_pending",
+      "pid": 6633,
+      "pendingReceipts": 0,
+      "httpCalls": 4,
+      "receiptPosts": 1,
+      "originalReceiptCompared": true,
+      "originalDeadlineUnchanged": true,
+      "identityUnchanged": true,
+      "observationUnchanged": true,
+      "configurationUnchanged": true,
+      "plaintextAbsent": true,
+      "fixtureRemoved": false,
+      "identityPresentBefore": true,
+      "states": [
+        "stored"
+      ],
+      "driverExitCode": 0,
+      "processStopped": true,
+      "nativeLogPidVerified": true,
+      "apkSha256": "724d7713081650d891fb4f96f44656965a9bab1d52feb48db4eb8ed836889ab1"
+    },
+    {
+      "phase": "offline_expire_pause",
+      "pid": 3063,
+      "pendingReceipts": 0,
+      "httpCalls": 1,
+      "receiptPosts": 0,
+      "originalReceiptCompared": false,
+      "originalDeadlineUnchanged": true,
+      "identityUnchanged": true,
+      "observationUnchanged": true,
+      "configurationUnchanged": true,
+      "plaintextAbsent": true,
+      "fixtureRemoved": false,
+      "identityPresentBefore": true,
+      "states": [
+        "expired"
+      ],
+      "driverExitCode": 0,
+      "processStopped": true,
+      "nativeLogPidVerified": true,
+      "apkSha256": "c9a236674a9086c23c321448c64e71e704fa3eb582ab7b0998d15ec973d06311"
+    },
+    {
+      "phase": "verify_checking_reject",
+      "pid": 3938,
+      "pendingReceipts": 0,
+      "httpCalls": 1,
+      "receiptPosts": 0,
+      "originalReceiptCompared": false,
+      "originalDeadlineUnchanged": true,
+      "identityUnchanged": true,
+      "observationUnchanged": true,
+      "configurationUnchanged": true,
+      "plaintextAbsent": true,
+      "fixtureRemoved": false,
+      "identityPresentBefore": true,
+      "states": [],
+      "driverExitCode": 0,
+      "processStopped": true,
+      "nativeLogPidVerified": true,
+      "apkSha256": "3fc8b7e20bd614a69a204d4c50a4f8d6b7f21ccd2115044b5666d25514639102"
+    },
+    {
+      "phase": "verify_blocked",
+      "pid": 4189,
+      "pendingReceipts": 0,
+      "httpCalls": 0,
+      "receiptPosts": 0,
+      "originalReceiptCompared": false,
+      "originalDeadlineUnchanged": true,
+      "identityUnchanged": true,
+      "observationUnchanged": true,
+      "configurationUnchanged": true,
+      "plaintextAbsent": true,
+      "fixtureRemoved": false,
+      "identityPresentBefore": true,
+      "states": [],
+      "driverExitCode": 0,
+      "processStopped": true,
+      "nativeLogPidVerified": true,
+      "apkSha256": "572a469ce4c897e0079a26e837bcb2090ee907e47e3cc0c4902726b0f378a92e"
+    },
+    {
+      "phase": "apply_removal",
+      "pid": 4363,
+      "pendingReceipts": 0,
+      "httpCalls": 4,
+      "receiptPosts": 1,
+      "originalReceiptCompared": false,
+      "originalDeadlineUnchanged": true,
+      "identityUnchanged": true,
+      "observationUnchanged": true,
+      "configurationUnchanged": true,
+      "plaintextAbsent": true,
+      "fixtureRemoved": false,
+      "identityPresentBefore": true,
+      "states": [
+        "removed"
+      ],
+      "driverExitCode": 0,
+      "processStopped": true,
+      "nativeLogPidVerified": true,
+      "apkSha256": "57c06f7ad17c07ae97b288bb9f116da090cdc1c626940403812aaec115fddd90"
+    },
+    {
+      "phase": "verify_removed",
+      "pid": 4502,
+      "pendingReceipts": 0,
+      "httpCalls": 0,
+      "receiptPosts": 0,
+      "originalReceiptCompared": false,
+      "originalDeadlineUnchanged": true,
+      "identityUnchanged": true,
+      "observationUnchanged": true,
+      "configurationUnchanged": true,
+      "plaintextAbsent": true,
+      "fixtureRemoved": false,
+      "identityPresentBefore": true,
+      "states": [
+        "removed"
+      ],
+      "driverExitCode": 0,
+      "processStopped": true,
+      "nativeLogPidVerified": true,
+      "apkSha256": "2f7fecb1df205a09fed8a0a1fcca358794a2fbd1e258e6a1766c1e13ba041daa"
+    },
+    {
+      "phase": "cleanup",
+      "pid": 4665,
+      "pendingReceipts": 0,
+      "httpCalls": 0,
+      "receiptPosts": 0,
+      "originalReceiptCompared": false,
+      "originalDeadlineUnchanged": true,
+      "identityUnchanged": true,
+      "observationUnchanged": true,
+      "configurationUnchanged": true,
+      "plaintextAbsent": false,
+      "fixtureRemoved": true,
+      "identityPresentBefore": true,
+      "states": [
+        "removed"
+      ],
+      "driverExitCode": 0,
+      "processStopped": true,
+      "nativeLogPidVerified": true,
+      "apkSha256": "f31c5bb244578147e473959093254a9ef37c1444cf3717808a9856e41b9a6249"
+    }
+  ],
+  "osReboot": {
+    "afterBootId": "4d26beef-a23b-4248-a877-29a7d1196fd5",
+    "elapsedSeconds": 32.86,
+    "bootIdChanged": true,
+    "automaticAppStartupClaimed": false,
+    "beforePhase": "offline_expire_pause",
+    "afterPhase": "replay_pending",
+    "bootCompleted": true,
+    "beforeBootId": "99cfd34d-8c19-4678-a53b-88129698ae2c"
+  },
+  "nonemptyPrerequisites": {
+    "bootstrap": {
+      "identityActiveFixtureVerified": true,
+      "processStopped": true,
+      "phase": "bootstrap",
+      "configurationFilePresent": true,
+      "apkSha256": "e65262382ec26a829c74367387eb62bca852af9f8f1131b7feaf26721a2a01b7",
+      "driverExitCode": 0,
+      "pid": 3901
+    },
+    "observationSeedPhases": [
+      {
+        "phase": "write_inventory",
+        "pid": 4148,
+        "pendingReports": 1,
+        "inventoryReads": 1,
+        "usageReads": 0,
+        "originalRequestCompared": false,
+        "identityUnchanged": true,
+        "atRestFixturePlaintextAbsent": true,
+        "driverExitCode": 0,
+        "processStopped": true
+      },
+      {
+        "phase": "replay_inventory",
+        "pid": 4307,
+        "pendingReports": 1,
+        "inventoryReads": 0,
+        "usageReads": 1,
+        "originalRequestCompared": true,
+        "identityUnchanged": true,
+        "atRestFixturePlaintextAbsent": true,
+        "driverExitCode": 0,
+        "processStopped": true
+      },
+      {
+        "phase": "replay_usage",
+        "pid": 4452,
+        "pendingReports": 0,
+        "inventoryReads": 0,
+        "usageReads": 0,
+        "originalRequestCompared": true,
+        "identityUnchanged": true,
+        "driverExitCode": 0,
+        "processStopped": true
+      },
+      {
+        "phase": "verify_cleared",
+        "pid": 4592,
+        "pendingReports": 0,
+        "inventoryReads": 0,
+        "usageReads": 0,
+        "originalRequestCompared": false,
+        "identityUnchanged": true,
+        "driverExitCode": 0,
+        "processStopped": true
+      }
+    ],
+    "configurationMarker": "Committed identity fixture writes and reads its test marker in native configuration-v1.db",
+    "identityAndObservationCloud": "Explicit committed fixtures, not production enrollment or authorization"
+  },
+  "cleanup": {
+    "access": {
+      "phase": "cleanup",
+      "pid": 4665,
+      "pendingReceipts": 0,
+      "httpCalls": 0,
+      "receiptPosts": 0,
+      "originalReceiptCompared": false,
+      "originalDeadlineUnchanged": true,
+      "identityUnchanged": true,
+      "observationUnchanged": true,
+      "configurationUnchanged": true,
+      "plaintextAbsent": false,
+      "fixtureRemoved": true,
+      "identityPresentBefore": true,
+      "states": [
+        "removed"
+      ],
+      "driverExitCode": 0,
+      "processStopped": true,
+      "nativeLogPidVerified": true,
+      "apkSha256": "f31c5bb244578147e473959093254a9ef37c1444cf3717808a9856e41b9a6249"
+    },
+    "observation": {
+      "phase": "cleanup",
+      "pid": 4856,
+      "fixtureRemoved": true,
+      "identityPresentBeforeCleanup": true,
+      "identityUnchanged": true,
+      "driverExitCode": 0,
+      "processStopped": true
+    },
+    "appDataCleared": false,
+    "packageUninstalled": false,
+    "sdkGrantsChanged": false
+  },
+  "normalAppRestore": {
+    "processStopped": true,
+    "installedApkHashMatched": true,
+    "fatalEngineErrorAbsent": true,
+    "apkSha256": "b0293a24ed9b3aa1638e2a84df3f59b09627f1cc04b6b3e96af58b033d58339b",
+    "identityAndConfigurationRetained": true,
+    "expectedChildUiVisible": true,
+    "pid": 5062
+  },
+  "regression": {
+    "childTestsPassed": 59,
+    "childTestsFailed": 0,
+    "childAnalysis": "No issues found",
+    "powerShell": {
+      "scriptsParsed": 2,
+      "ownedEmulatorStopped": true
+    }
+  },
+  "previousHttpEvidence": "docs/releases/stage-access-host-verification.json",
+  "artifacts": {
+    "localOnly": true,
+    "logs": [
+      {
+        "path": ".local/releases/access-native/drive-negative.log",
+        "sha256": "ed139a4979df239cc5630b00df5283daed74b66e7b0db13539ad44794ffbd634"
+      },
+      {
+        "path": ".local/releases/access-native/native-negative.log",
+        "sha256": "db51c8eccead293a5397f8021bceb34f743cfde7273fa9f1aad32b0016e20557"
+      },
+      {
+        "path": ".local/releases/access-native/drive-write_pending.log",
+        "sha256": "321f980be7e758d93a7bff790d6dc978a0b0b871ae7d9200c8c3560ce97e04c8"
+      },
+      {
+        "path": ".local/releases/access-native/native-write_pending.log",
+        "sha256": "81f842e362addfe1e9cbe5a98ea1d3411f7e30f98c130f6786b234cc7333fc16"
+      },
+      {
+        "path": ".local/releases/access-native/build-write_pending.log",
+        "sha256": "408dcc827c2084ac47c314b42202a26cd2ffb0e11667cd8178d1b326232598e9"
+      },
+      {
+        "path": ".local/releases/access-native/drive-replay_pending.log",
+        "sha256": "86550747d6d3176773c7e8b7dd9a4ed7fde118209e630c986a7ab8586a5cdf61"
+      },
+      {
+        "path": ".local/releases/access-native/native-replay_pending.log",
+        "sha256": "5c7d34b1def5681b9bfcbafbf6dfd368e1f8309b505e0d9c9a2d358ee1b35d58"
+      },
+      {
+        "path": ".local/releases/access-native/build-replay_pending.log",
+        "sha256": "eea8bfa07524d7043acb09642d71a547868fd86547987e000e09a9efda326fcd"
+      },
+      {
+        "path": ".local/releases/access-native/drive-offline_expire_pause.log",
+        "sha256": "33e3528d8af38e1a1305d7c6575eeedd8daa2ba9c0b776f4314a19e6cd5891de"
+      },
+      {
+        "path": ".local/releases/access-native/native-offline_expire_pause.log",
+        "sha256": "e82165303aea5531b477e7985b946a1beb9792f2f2e6ed4deaeb7c83983b993f"
+      },
+      {
+        "path": ".local/releases/access-native/build-offline_expire_pause.log",
+        "sha256": "964f3e057449e17bf1dcfd96f8407c62960fcdf5adaec2f51254c3fec557d8f5"
+      },
+      {
+        "path": ".local/releases/access-native/drive-verify_checking_reject.log",
+        "sha256": "f1beddbb088a96e723816456e427383731d9119c78de274c31e8c151b57346ea"
+      },
+      {
+        "path": ".local/releases/access-native/native-verify_checking_reject.log",
+        "sha256": "cbb1e3cefeb59ddfb254e48a63fbedbe821ac10c2c8b9e5197cd8d99a0d28618"
+      },
+      {
+        "path": ".local/releases/access-native/build-verify_checking_reject.log",
+        "sha256": "e836aa09618355b83c8a2c03c215902a5a5150718b4654b01c4cb947ba0e00f2"
+      },
+      {
+        "path": ".local/releases/access-native/drive-verify_blocked.log",
+        "sha256": "90ad64b930f9a0f0a3b423d158a47fdbf51a89b6374c10022b3ba818f18298ca"
+      },
+      {
+        "path": ".local/releases/access-native/native-verify_blocked.log",
+        "sha256": "afdd759b1f25b60d8eb462ce0fe89ebc6bc501652b1c15ccd913551d829bd36e"
+      },
+      {
+        "path": ".local/releases/access-native/build-verify_blocked.log",
+        "sha256": "a1b7cfeff66f1c1acf04037fe0b5b7297076a72590012e2c554012d156886f98"
+      },
+      {
+        "path": ".local/releases/access-native/drive-apply_removal.log",
+        "sha256": "ca0c5983ffa5240c4f566dc6076572aad57addc530212626620d17ae2dce91a9"
+      },
+      {
+        "path": ".local/releases/access-native/native-apply_removal.log",
+        "sha256": "6172270eb4276bc7a30c1f453d0dbeaa9550bdf209b02559a52bc1d12dd00c15"
+      },
+      {
+        "path": ".local/releases/access-native/build-apply_removal.log",
+        "sha256": "daea76701016167006133bfcd8dc80ba5055931ae75b3be554fc0d2d5f2e4c6d"
+      },
+      {
+        "path": ".local/releases/access-native/drive-verify_removed.log",
+        "sha256": "2879b77062822a5d6450743827ff77b15edbb553a7e3310703009e3fcd123e16"
+      },
+      {
+        "path": ".local/releases/access-native/native-verify_removed.log",
+        "sha256": "8c9076e80b294cb668ce1b9eb16b01e262690c08e1527b54f712cd756534279b"
+      },
+      {
+        "path": ".local/releases/access-native/build-verify_removed.log",
+        "sha256": "a1b7cfeff66f1c1acf04037fe0b5b7297076a72590012e2c554012d156886f98"
+      },
+      {
+        "path": ".local/releases/access-native/drive-cleanup.log",
+        "sha256": "5c723e525ccf33f820393f1261fe2a7505a60db99e462d3f0ac1e2eb292fdb01"
+      },
+      {
+        "path": ".local/releases/access-native/native-cleanup.log",
+        "sha256": "247a6298544a5741404556c9029ecd4e331edd5b09a9db8a02710b2da50cb6cb"
+      },
+      {
+        "path": ".local/releases/access-native/build-cleanup.log",
+        "sha256": "7ec453bc9dddc7702ba034f2756738fb5222c50385719c70014d11f632385316"
+      },
+      {
+        "path": ".local/root-access-native-candidate/child-regression.log",
+        "sha256": "b7bf85e6b7464f7c2a118400d29f418826227cc6d0ab8ebd54978fccffe114ad"
+      },
+      {
+        "path": ".local/root-access-native-candidate/child-analysis.log",
+        "sha256": "8cefae5e36bc7859a67e40bcb21c7acab0966abaa0a240ed0854eeb947b68754"
+      },
+      {
+        "path": ".local/releases/access-native/drive-bootstrap.log",
+        "sha256": "30ba2b66eff63904fb0d01ae7989ec628bdf19aed30d81e7c751e5958a0cb500"
+      },
+      {
+        "path": ".local/observation-storage-drive-cleanup.log",
+        "sha256": "59d0dd79835d6064bd3a115809ba391499ad4f163acd62f291f83bac3c06dad9"
+      },
+      {
+        "path": ".local/releases/access-native/restore-native.log",
+        "sha256": "7ff126022b62d663df13cc0b6d0cf815a7c07d9fa69a66e2824de87eb552e797"
+      },
+      {
+        "path": ".local/releases/access-native/restore-ui.xml",
+        "sha256": "1405a4e51aae12f83ce9fb1fc4e7f70fcaa90803a8c5abb231e2e4031cbb0fc8"
+      },
+      {
+        "path": ".local/observation-storage-drive-write_inventory.log",
+        "sha256": "bd86696332f4ccb47762cdde6474a3a6f2f6a46864a0e7615dd9dc06e2f51e01"
+      },
+      {
+        "path": ".local/observation-storage-drive-replay_inventory.log",
+        "sha256": "d39d9351ce28e97b028dcd5cf37ecd0ae545d1f69af6011a1e5e1030df97db60"
+      },
+      {
+        "path": ".local/observation-storage-drive-replay_usage.log",
+        "sha256": "e0b082ae3307a928db9e0e72b56a009fe8ffa98da094ed1cd192eb1c752d750d"
+      },
+      {
+        "path": ".local/observation-storage-drive-verify_cleared.log",
+        "sha256": "60b726ba89c0f6e71c6962bea1f7be511afc7270d972a4e9f0b4864eb94c2d46"
+      }
+    ],
+    "normalApkSha256": "b0293a24ed9b3aa1638e2a84df3f59b09627f1cc04b6b3e96af58b033d58339b",
+    "bootstrapApkSha256": "e65262382ec26a829c74367387eb62bca852af9f8f1131b7feaf26721a2a01b7"
+  },
+  "limitations": [
+    "Cloud and DeviceIdentityView are fixtures; this run makes no network requests.",
+    "System enforcement remains false; no boot auto-start, background delivery, DPC or app-launch blocking is proven.",
+    "Reboot follows a completed receipt and explicit process stop; physical power loss and disk fault durability are not proven.",
+    "Clock and pause are controlled test inputs; no OS clock-tamper protection or physical lifecycle-callback proof.",
+    "At-rest inspection only checks listed known markers; not an independent cryptographic audit.",
+    "Initial engine-start failure was excluded; its root cause is unresolved. The same APK later passed without resetting data.",
+    "First write test passed natively but console marker capture failed; corrected PID-native-buffer helper then completed a fresh full cycle.",
+    "Identity/configuration were deliberately retained; no secure-state reset or automatic recreation was used."
+  ]
+}
