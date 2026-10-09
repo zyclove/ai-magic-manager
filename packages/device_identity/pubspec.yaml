@@ -1,0 +1,13 @@
+name: device_identity
+description: Device enrollment proofs and recoverable opaque credential lifecycle.
+publish_to: none
+version: 0.1.0
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+dependencies:
+  jose: 0.3.5+2
+  http: 1.6.0
+  uuid: ^4.5.1
+dev_dependencies:
+  lints: ^3.0.0
+  test: 1.25.8

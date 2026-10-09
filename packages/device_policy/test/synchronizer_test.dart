@@ -81,7 +81,7 @@ void main() {
             apiRoot: Uri.parse('http://127.0.0.1:${server.port}/api/v1'),
             credential: () async => token,
             allowLoopbackHttp: true,
-            timeout: const Duration(milliseconds: 500)));
+            timeout: const Duration(seconds: 10)));
   });
   tearDown(() async {
     sync.close();
@@ -168,12 +168,9 @@ void main() {
         final body = Map<String, dynamic>.from(
             jsonDecode(await utf8.decoder.bind(r).join()));
         bodies.add(body);
-        r.response.statusCode = 200;
-        r.response.headers.contentType = ContentType.json;
-        r.response.write('{');
-        await r.response.flush();
-        await Future<void>.delayed(const Duration(milliseconds: 800));
-        await r.response.close();
+        // The request reached the server; no acknowledgement reaches the client.
+        final socket = await r.response.detachSocket(writeHeaders: false);
+        socket.destroy();
       } else {
         await defaultReply(r);
       }

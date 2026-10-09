@@ -157,3 +157,7 @@ V4～V6 管理 enrollment、device、credential、credential scope、rotation、
 自动化覆盖跨租户主体、过期/重复/并发认领、私钥/错误密钥/nonce/audience/期限证明、管理员/儿童边界、配对锁定、丢失响应恢复及反重放、独立路由认证、轮换/取消/到期/撤销、心跳重复/乱序、能力过期/未知及 OpenAPI 安全方案。
 
 当前仍缺真实 MySQL/OceanBase 事务和迁移验收、TLS/客户端安全存储、设备硬件证明/密钥更换、注册/凭证/证据保留与过期作业、接口速率治理、正式 EMM/DPC、Kotlin/TV 真机和策略执行。受管模式不得提前开启。详见[实施记录](implementation-progress.md)。
+
+## 8. 设备身份客户端接入
+
+`packages/device_identity` 已实现原密钥认领/恢复、物理配对等待、严格绑定心跳与持久重放、两阶段凭证轮换、认证暂停和地址绑定。真实 Spring HTTP/Nimbus/Dart 联调没有使用已激活设备 SQL 夹具；其成人 JWT/MFA 和安全存储是明确测试替身，不能代替真实身份与原生安全门槛。[客户端契约、状态机及证据](device-identity-client-contract.md)

@@ -156,3 +156,13 @@ HTTPS 覆盖当前仅完成配置设计与解析，真实证书登录/取钥仍�
 跨 SDK 用例绑定随机回环端口，使用隔离 H2、明确的成人与已激活注册夹具，实际执行设备 opaque 认证、Nimbus 签名、Dart JOSE、整页文件存储、回执入库和撤销后的 401。临时私钥与凭证夹具已删除，文件数据库和公共诊断保留。它没有验证真实 OIDC/MFA 注册、MySQL 交付并发、OS 启动作业或原生执行。[具体契约与范围](device-configuration-client-contract.md)
 
 发布清单按相对源路径排除 target/build/.dart_tool/.local；设备联调生成的缓存、日志与凭证夹具不得进入源摘要或 Docker build context。仅已验证的 JAR 与 Web 发布文件复制到独立产物目录。继续保留每次唯一 source/release 目录和摘要，复核不得覆盖已运行服务或其他任务的开发产物。
+
+## 设备身份生命周期的构建门槛
+
+构建源同时存在 `packages/device_identity` 与 `DeviceIdentityHttpInteropTest` 时，脚本自动执行 Dart 依赖解析并向 Maven 提供 `device.identity.package`；身份包也进入 analyze/test 门槛。backend-only Maven 没有该参数时明确跳过跨 SDK 用例，不能用跳过结果宣称身份流程联调完成。
+
+2026-10-09 最终独立快照 `.local/device-identity-build-check/` 基于 `e4e9edb` 加本阶段代码：后端 159 项（0 失败/错误/跳过）、管理台 7 项、设备操作 42 项、设备配置 58 项、设备身份 37 项全部通过，各组件 analyze 和 Web release 成功。另有部署保护 7 项、脚本解析 0 错误，自动测试合计 310 项；Chrome 身份证明 5 项和配置验签 15 项另列。未纳入并行额度/审批实现，未另启或替换服务。
+
+真实随机端口 Spring/Nimbus/Dart 联调覆盖原密钥认领、响应保存失败后恢复、监护人确认前 401、配对确认、心跳、两阶段轮换、激活保存失败后幂等恢复、旧凭证失效和撤销后暂停认证。设备身份与凭证没有 SQL bootstrap；成人 JWT/MFA、安全存储及可信时间为明确夹具。临时明文秘密文件已经删除，不是生产原生安全存储证据。[身份契约及剩余范围](device-identity-client-contract.md)
+
+首轮配置正常测试在并行负载下触发 500ms 误超时，改为正常 10 秒期限，并以真实 socket 断连模拟丢失 ACK 后重新完整构建通过；产品默认 20 秒与专门超时用例未改。C 盘临时空间不足时，当前构建进程将 TEMP/TMP 与 Java 临时目录指向本阶段 D 盘独立目录，不删除其他任务文件。首次失败保留为诊断记录，不计成功。

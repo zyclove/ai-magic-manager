@@ -26,7 +26,8 @@ foreach ($command in @($MavenCommand, $FlutterCommand)) {
     if (-not (Get-Command $command -ErrorAction SilentlyContinue)) { throw 'Configure Maven and Flutter executable paths before building.' }
 }
 $hasDevicePolicy = Test-Path -LiteralPath (Join-Path $source 'packages/device_policy/pubspec.yaml')
-if ($hasDevicePolicy) {
+$hasDeviceIdentity = Test-Path -LiteralPath (Join-Path $source 'packages/device_identity/pubspec.yaml')
+if ($hasDevicePolicy -or $hasDeviceIdentity) {
     if (-not $DartCommand) {
         $flutterPath = (Get-Command $FlutterCommand).Source
         $DartCommand = Join-Path (Split-Path $flutterPath -Parent) $(if ($IsWindows) { 'dart.bat' } else { 'dart' })
@@ -52,28 +53,38 @@ if ($MavenRepository) { $mavenArgs += "-Dmaven.repo.local=$([IO.Path]::GetFullPa
 # The Spring HTTP fixture launches Dart directly, so resolve the SDK executable
 # rather than passing a Windows batch wrapper to Java ProcessBuilder. Resolve
 # package dependencies before Maven; a skipped cross-SDK test is not evidence.
-$hasHttpInterop = $hasDevicePolicy -and (Test-Path -LiteralPath (Join-Path $snapshot 'backend/src/test/java/com/aimanager/DeviceConfigurationHttpInteropTest.java'))
-if ($hasHttpInterop) {
+$interopProjects = @(
+    @{ Package='device_policy'; Property='device.policy.package'; Test='DeviceConfigurationHttpInteropTest' },
+    @{ Package='device_identity'; Property='device.identity.package'; Test='DeviceIdentityHttpInteropTest' }
+) | Where-Object {
+    (Test-Path -LiteralPath (Join-Path $snapshot "packages/$($_.Package)/pubspec.yaml")) -and
+    (Test-Path -LiteralPath (Join-Path $snapshot "backend/src/test/java/com/aimanager/$($_.Test).java"))
+}
+if ($interopProjects) {
     $dartExecutable = (Get-Command $DartCommand).Source
     if ($IsWindows -and [IO.Path]::GetExtension($dartExecutable) -in @('.bat', '.cmd')) {
         $dartExecutable = Join-Path (Split-Path $dartExecutable -Parent) 'cache/dart-sdk/bin/dart.exe'
     }
     if (-not (Test-Path -LiteralPath $dartExecutable -PathType Leaf)) { throw 'Device HTTP interoperability requires a directly executable Dart SDK.' }
-    $policyPackage = Join-Path $snapshot 'packages/device_policy'
-    Push-Location -LiteralPath $policyPackage
-    try { Invoke-DeploymentNative $DartCommand @('pub', 'get') (Join-Path $logs 'device-policy-interop-pub-get.log') }
-    finally { Pop-Location }
-    $mavenArgs += "-Ddevice.dart.command=$dartExecutable", "-Ddevice.policy.package=$policyPackage"
+    $mavenArgs += "-Ddevice.dart.command=$dartExecutable"
+    foreach ($project in $interopProjects) {
+        $packagePath = Join-Path $snapshot "packages/$($project.Package)"
+        Push-Location -LiteralPath $packagePath
+        try { Invoke-DeploymentNative $DartCommand @('pub', 'get') (Join-Path $logs "$($project.Package.Replace('_','-'))-interop-pub-get.log") }
+        finally { Pop-Location }
+        $mavenArgs += "-D$($project.Property)=$packagePath"
+    }
 }
 Write-Output 'Verifying backend source snapshot...'
 Invoke-DeploymentNative $MavenCommand $mavenArgs (Join-Path $logs 'backend-verify.log')
 $projects = @('packages/device_operations', 'apps/guardian')
 if ($hasDevicePolicy) { $projects += 'packages/device_policy' }
+if ($hasDeviceIdentity) { $projects += 'packages/device_identity' }
 foreach ($name in $projects) {
     Push-Location -LiteralPath (Join-Path $snapshot $name)
     try {
-        $label = switch ($name) { 'apps/guardian' { 'guardian' }; 'packages/device_policy' { 'device-policy' }; default { 'device-operations' } }
-        $projectCommand = if ($name -eq 'packages/device_policy') { $DartCommand } else { $FlutterCommand }
+        $label = switch ($name) { 'apps/guardian' { 'guardian' }; 'packages/device_policy' { 'device-policy' }; 'packages/device_identity' { 'device-identity' }; default { 'device-operations' } }
+        $projectCommand = if ($name -in @('packages/device_policy', 'packages/device_identity')) { $DartCommand } else { $FlutterCommand }
         foreach ($operation in @('pub-get', 'analyze', 'test')) {
             $arguments = switch ($operation) { 'pub-get' { @('pub', 'get') }; 'test' { @('test', '--reporter', 'expanded') }; default { @('analyze') } }
             Invoke-DeploymentNative $projectCommand $arguments (Join-Path $logs "$label-$operation.log")
