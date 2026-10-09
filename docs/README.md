@@ -19,6 +19,7 @@
 | [管理台交付记录](management-console-delivery.md) | 已接入的业务页面、身份联调、交互验证与剩余工作 | 产品、开发、QA 与交付 |
 | [设备退出组件接入契约](device-operations-ui-contract.md) | 共享 Flutter 组件、宿主认证、恢复限制、浏览器证据与截图 | Flutter、后端、Android 与 QA |
 | [2026-10-09 阶段交付](stage-delivery-2026-10-09.md) | 本阶段提交范围、重新验证、仓库配置边界及后续发布门槛 | 全团队 |
+| [可复制部署手册](deployment-runbook.md) | 新环境初始化、独立构建、五服务 Compose、身份授权、TLS 与升级边界 | 开发、QA、交付与 SRE |
 
 ## 阅读顺序与变更规则
 

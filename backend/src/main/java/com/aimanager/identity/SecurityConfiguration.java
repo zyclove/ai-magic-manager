@@ -29,8 +29,13 @@ class SecurityConfiguration {
     @Bean
     @ConditionalOnMissingBean(JwtDecoder.class)
     JwtDecoder jwtDecoder(@Value("${manager.security.issuer-uri}") String issuer,
-                          @Value("${manager.security.audience}") String audience) {
-        var decoder = NimbusJwtDecoder.withIssuerLocation(issuer).build();
+                          @Value("${manager.security.audience}") String audience,
+                          @Value("${manager.security.jwk-set-uri:}") String jwkSetUri) {
+        // A trusted internal key endpoint can differ from the browser-visible
+        // issuer. Signature verification never replaces issuer/audience checks.
+        var decoder = jwkSetUri.isBlank()
+            ? NimbusJwtDecoder.withIssuerLocation(issuer).build()
+            : NimbusJwtDecoder.withJwkSetUri(jwkSetUri).build();
         decoder.setJwtValidator(IdentityTokenValidators.forIssuerAndAudience(issuer, audience));
         return decoder;
     }

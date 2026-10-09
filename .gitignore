@@ -4,5 +4,7 @@
 **/.flutter-plugins*
 .env
 .local/
+**/node_modules/
+**/__pycache__/
 *.log
 !**/.env.example

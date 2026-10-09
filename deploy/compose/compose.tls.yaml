@@ -1,0 +1,10 @@
+# Compose >= 2.24.4: replace, rather than append, the HTTP port mapping.
+services:
+  edge:
+    ports: !override ["${EDGE_BIND_ADDRESS:-127.0.0.1}:${EDGE_PORT:?Set EDGE_PORT}:8443"]
+    volumes:
+      - ${REPOSITORY_ROOT:?Set REPOSITORY_ROOT}/deploy/edge/tls.conf:/etc/nginx/conf.d/default.conf:ro
+    secrets: [tls_certificate, tls_private_key]
+secrets:
+  tls_certificate: {file: "${DEPLOYMENT_ROOT:?Set DEPLOYMENT_ROOT}/secrets/tls.crt"}
+  tls_private_key: {file: "${DEPLOYMENT_ROOT:?Set DEPLOYMENT_ROOT}/secrets/tls.key"}

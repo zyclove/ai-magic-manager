@@ -13,6 +13,8 @@
 
 ## 本机启动与管理端
 
+从干净克隆部署新环境，使用 `scripts/initialize-deployment.ps1`、`scripts/build-deployment.ps1`、`scripts/start-deployment.ps1`；流程与身份初始化见[可复制部署手册](docs/deployment-runbook.md)。该流程使用独立 Compose 项目和文件凭据。
+
 本机已配置的服务：管理端 `http://localhost:3000`、后端 `http://localhost:8082`、身份服务 `http://localhost:8081`。本地 MySQL 使用 3308 端口。运行 `./scripts/start-local.ps1` 可恢复本机服务；此入口使用忽略目录 `.local/runtime/` 中已配置的本机凭据，不会创建默认密码。
 
 管理员使用已单独配置的账号登录。首次执行设备注册、成员邀请或策略发布前，在“设置 → 账户与验证器”绑定自己的验证器，再执行“重新安全验证”。前端使用授权码 + PKCE，令牌仅保存在当前标签页会话中。

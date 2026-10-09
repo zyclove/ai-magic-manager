@@ -1,0 +1,16 @@
+{
+  "publicUrl": "http://localhost:18090",
+  "fixture": true,
+  "checks": [
+    "Flutter PKCE login",
+    "real API authentication",
+    "adult workspace creation",
+    "password-only MFA denial",
+    "desktop/mobile rendering",
+    "unassigned user requests creation scope -> HTTP 403",
+    "current full realm template accepted in empty realm"
+  ],
+  "issues": [],
+  "testTenantId": "8f6c0e7d-8f84-40f0-9bf7-7b17e8877699",
+  "sourceBaseline": "40bfd5c plus identity JWK endpoint configuration"
+}

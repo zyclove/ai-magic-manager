@@ -1,0 +1,7 @@
+{
+  "name": "ai-manager-deployment-verification",
+  "private": true,
+  "scripts": { "test:oidc": "node oidc-journey.cjs" },
+  "devDependencies": { "playwright": "1.59.1" },
+  "engines": { "node": ">=22" }
+}

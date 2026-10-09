@@ -109,5 +109,6 @@ manager:
     capability-max-age-seconds: ${DEVICE_CAPABILITY_MAX_AGE_SECONDS:900}
   security:
     issuer-uri: ${OIDC_ISSUER_URI:http://localhost:8081/realms/ai-manager}
+    jwk-set-uri: ${OIDC_JWK_SET_URI:}
     audience: ${OIDC_AUDIENCE:ai-manager-api}
     allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}
