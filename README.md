@@ -6,7 +6,30 @@
 
 - `backend/`：Spring Boot 模块化后端、SQL 迁移和行为测试。
 - `docs/`：产品、功能、架构、商业与实施契约。
-- Flutter 客户端、Android/TV 适配及部署模块将按计划接入，尚未交付。
+- `apps/guardian/`：Flutter Web 中文管理工作台，连接真实 OIDC 与业务 API。
+- `packages/device_operations/`：可复用设备退出操作组件。
+- `deploy/keycloak/themes/ai-manager/`：身份服务登录主题。
+- Android/TV 原生代理和系统执行适配仍按计划推进。
+
+## 本机启动与管理端
+
+本机已配置的服务：管理端 `http://localhost:3000`、后端 `http://localhost:8082`、身份服务 `http://localhost:8081`。本地 MySQL 使用 3308 端口。运行 `./scripts/start-local.ps1` 可恢复本机服务；此入口使用忽略目录 `.local/runtime/` 中已配置的本机凭据，不会创建默认密码。
+
+管理员使用已单独配置的账号登录。首次执行设备注册、成员邀请或策略发布前，在“设置 → 账户与验证器”绑定自己的验证器，再执行“重新安全验证”。前端使用授权码 + PKCE，令牌仅保存在当前标签页会话中。
+
+前端开发要求 Flutter 3.22.2 / Dart 3.4.3 或经验证的兼容版本：
+
+```powershell
+cd apps/guardian
+flutter pub get
+flutter run -d chrome --web-port 3000
+# 生成静态部署产物
+flutter build web --release --web-renderer html --pwa-strategy=none
+```
+
+其他环境通过 `--dart-define=API_URL=...`、`--dart-define=OIDC_ISSUER=...` 配置服务；同步设置身份客户端 `ai-manager-guardian` 的回调地址 `/auth/callback`、Web Origin 和后端 `CORS_ALLOWED_ORIGINS`。生产使用 HTTPS 并设置 `--dart-define=ALLOW_LOCAL_HTTP=false`，静态服务器需将前端路由回退至 `index.html`。
+
+功能范围和验收记录见[管理端交付记录](docs/management-console-delivery.md)。
 
 ## 产品与商业设计
 

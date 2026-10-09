@@ -1,6 +1,16 @@
 import 'package:intl/intl.dart';
 
 const labels = <String, String>{
+  'WORKSPACE_CHANGED': '工作空间已变更',
+  'RECENT': '最近已上报',
+  'STALE': '上报已过期',
+  'UNSUPPORTED': '当前不支持',
+  'UNVERIFIED': '尚未认证',
+  'NOT_REQUESTED': '尚未申请',
+  'GRANTED': '设备自报已授予',
+  'MANAGED_REGISTRATION_REQUIRED': '需要受管设备注册与正式执行适配器',
+  'EVIDENCE_NOT_CERTIFIED': '设备自报信息尚未认证',
+  'ENFORCEMENT_ADAPTER_UNAVAILABLE': '执行适配器尚未接入',
   'FAMILY': '家庭',
   'ORGANIZATION': '教育机构',
   'OWNER': '所有者',
