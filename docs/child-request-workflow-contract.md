@@ -2,7 +2,7 @@
 
 ## 当前交付与后续入口
 
-本阶段提供可复用的 `AccessSubmissionJournal`、儿童宿主 `ChildSubmissionReceiver` 及独立进程的真实 HTTP 恢复验证。当前尚未接入 `ChildSession`、`main.dart` 和申请界面，普通产品安装还不能从页面发起申请。过期键恢复查询现已接入 SDK 与宿主；下一阶段仍须补足会话接入、手机/电视表单和完整终端验收；本记录不表示整个平台已完成。
+本阶段提供可复用的 `AccessSubmissionJournal`、儿童宿主 `ChildSubmissionReceiver` 及独立进程的真实 HTTP 恢复验证。已接入 `ChildSession`、Android `main.dart` 和规则页的申请界面，支持应用/规则/时长/理由、提交前确认、列表详情、取消确认、原操作恢复及显式放弃。过期键查询继续沿用上一阶段协议。完整原生进程恢复、真实系统执行和电视厂商兼容仍须继续验收；本记录不表示整个平台已完成。
 
 沿用 Sembast 事务、现有 AES-GCM 文件编码器、设备传输 SDK、平台安全绑定与原生提交屏障。没有引入新的数据库、加密算法实现或第三方依赖。
 
@@ -60,3 +60,5 @@
 - Android 真机/模拟器上的新申请流程、界面、进程终止恢复、电视操作、后台任务及管理员生产 MFA 尚未在本阶段验证，不以单元或 HTTP 测试替代。
 
 持久日志基础的原始证据见[日志阶段记录](releases/stage-submission-journal-verification.json)；过期键恢复的新增验证与文件哈希见[恢复阶段记录](releases/stage-submission-recovery-verification.json)。相关：[实施计划](child-request-workflow-plan.md)、[设备申请接口](device-access-submission-contract.md)、[原生访问存储](access-native-storage-contract.md)。
+
+会话与页面的后续交付、产品流程和验证边界见[申请交互契约](child-request-ui-contract.md)及[界面阶段记录](releases/stage-submission-ui-verification.json)。

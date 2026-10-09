@@ -1,0 +1,96 @@
+{
+  "scope": "Built explicit public synthetic preview using the actual child session, journal and UI. Controlled in-memory identity/service; no production cloud, device or native storage.",
+  "engine": "Installed Chrome via Playwright",
+  "results": [
+    {
+      "viewport": "mobile",
+      "width": 390,
+      "height": 844,
+      "horizontalOverflow": false,
+      "pageErrors": 0,
+      "viewMetrics": [
+        {
+          "viewportWidth": 390,
+          "documentWidth": 390,
+          "scrollX": 0,
+          "bodyOverflow": "hidden"
+        },
+        {
+          "viewportWidth": 390,
+          "documentWidth": 390,
+          "scrollX": 0,
+          "bodyOverflow": "hidden"
+        },
+        {
+          "viewportWidth": 390,
+          "documentWidth": 390,
+          "scrollX": 0,
+          "bodyOverflow": "hidden"
+        },
+        {
+          "viewportWidth": 390,
+          "documentWidth": 390,
+          "scrollX": 0,
+          "bodyOverflow": "hidden"
+        },
+        {
+          "viewportWidth": 390,
+          "documentWidth": 390,
+          "scrollX": 0,
+          "bodyOverflow": "hidden"
+        }
+      ],
+      "viewportScreenshot": true,
+      "requestFormConfirmation": true,
+      "createAndCancel": true,
+      "unknownCannotDiscardOrReplace": true,
+      "explicitOriginalRetryConfirmation": true,
+      "offlineNewRequestDisabled": true
+    },
+    {
+      "viewport": "desktop",
+      "width": 1280,
+      "height": 900,
+      "horizontalOverflow": false,
+      "pageErrors": 0,
+      "viewMetrics": [
+        {
+          "viewportWidth": 1280,
+          "documentWidth": 1280,
+          "scrollX": 0,
+          "bodyOverflow": "hidden"
+        },
+        {
+          "viewportWidth": 1280,
+          "documentWidth": 1280,
+          "scrollX": 0,
+          "bodyOverflow": "hidden"
+        },
+        {
+          "viewportWidth": 1280,
+          "documentWidth": 1280,
+          "scrollX": 0,
+          "bodyOverflow": "hidden"
+        },
+        {
+          "viewportWidth": 1280,
+          "documentWidth": 1280,
+          "scrollX": 0,
+          "bodyOverflow": "hidden"
+        },
+        {
+          "viewportWidth": 1280,
+          "documentWidth": 1280,
+          "scrollX": 0,
+          "bodyOverflow": "hidden"
+        }
+      ],
+      "viewportScreenshot": true,
+      "requestFormConfirmation": true,
+      "createAndCancel": true,
+      "unknownCannotDiscardOrReplace": true,
+      "explicitOriginalRetryConfirmation": true,
+      "offlineNewRequestDisabled": true
+    }
+  ]
+}

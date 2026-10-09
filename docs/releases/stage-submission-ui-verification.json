@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-09T23:24:55.198813+00:00",
+  "parentHead": "793201d47970e0b6df4e4bf4f175bf4ef1ce0bad",
+  "scope": "Android child session, native entry factory, request UI and lifecycle privacy. Actual phone/desktop browser acceptance uses explicit public synthetic memory fixtures. Production native end-to-end and operating-system enforcement remain pending.",
+  "sourceFiles": [
+    {
+      "path": "apps/child/README.md",
+      "sha256": "dfaa358edfafc55d3326d81bc6baa739e62d4d5d9eb26bc5ff6a0076599fb798"
+    },
+    {
+      "path": "apps/child/lib/core/session.dart",
+      "sha256": "2900147cc4298db7f31bd476eadb95f3c3c330248be33692f4f1a25332261b26"
+    },
+    {
+      "path": "apps/child/lib/main.dart",
+      "sha256": "5fae219140a3472258d92a1b3e2a776ca30f5b43b72ed9d50e6993785a6cfd99"
+    },
+    {
+      "path": "apps/child/lib/ui/child_app.dart",
+      "sha256": "18826c5012e2a0661931fd83154f256c21965308a1099ce25e0d559501088c2b"
+    },
+    {
+      "path": "apps/child/lib/ui/submission_dialogs.dart",
+      "sha256": "1c2a6072d2d560d71d54e6fcf04d25934f13da131dffa306bc7ba9729949cc9f"
+    },
+    {
+      "path": "apps/child/lib/ui/submission_display.dart",
+      "sha256": "5fd3a0fbbbd09c11eb055d329777fd826bdbf7057767c93bedf8278dccac5fe7"
+    },
+    {
+      "path": "apps/child/lib/ui/submission_section.dart",
+      "sha256": "e46865ed14e4874745b510cd7a486a02727a1c645b53cbc0757b451bb51c47e0"
+    },
+    {
+      "path": "apps/child/test/submission_app_test.dart",
+      "sha256": "70908ee8880d8d96109177975d1adf0fec098155590d94b045e5c1d1ea7532e7"
+    },
+    {
+      "path": "apps/child/test/submission_section_test.dart",
+      "sha256": "ec16adf4a0e7eaee57479c698788540a9c40d02391e2fb5b50536f552881c8cc"
+    },
+    {
+      "path": "apps/child/test/submission_session_test.dart",
+      "sha256": "868975dd91ede4f49fcd22aa9777acf02fabe05abe211dacd914ba07389f46c4"
+    },
+    {
+      "path": "apps/child/test/support/submission_fixture.dart",
+      "sha256": "92a764799fa15c86c1ea21cbe9364af1e87ee626a12f5ae1a297c2b2af05abce"
+    },
+    {
+      "path": "apps/child/tool/submission_preview.dart",
+      "sha256": "fabaccbd99d3721bc219cfebd5020ec8fbd017adc153f261a4587faff16f318d"
+    },
+    {
+      "path": "docs/child-request-workflow-plan.md",
+      "sha256": "71f4f43e818a7745fcc68569fc2197e0d92212339c29c1f50380fd3ce355478e"
+    },
+    {
+      "path": "docs/child-request-workflow-contract.md",
+      "sha256": "ccc93e6168bbe82eb47205013b34f0442dcc4c9ebe1e5d67506c9e7d640de531"
+    },
+    {
+      "path": "docs/child-request-ui-contract.md",
+      "sha256": "df12eb2f3b811a15e8bbea8c2eba4462bacfb69538a7eed1c24eae353604934d"
+    },
+    {
+      "path": "docs/device-access-submission-contract.md",
+      "sha256": "29b63f12eb040dd1db3aaaf91777bde8fe2a89e313cdfb5cccb0ecc6381ff1fd"
+    },
+    {
+      "path": "packages/device_access/README.md",
+      "sha256": "8829ca55e54d1b23f9c469fb1ad8efb7819a34ccab91659bca307dd3948b0a33"
+    }
+  ],
+  "visualArtifacts": [
+    {
+      "path": "docs/design/child-submissions/browser-qa.json",
+      "sha256": "60a05da331f6490e4bbbb7e42e0300f94f6b8d237ff410a5c050e83160f03389"
+    },
+    {
+      "path": "docs/design/child-submissions/desktop-confirmation.png",
+      "sha256": "68ded7ab62c244ab70733cfbd6c442866e777058d7ce02bc3f4a461cb3b8b12f"
+    },
+    {
+      "path": "docs/design/child-submissions/desktop-form.png",
+      "sha256": "e79b4563897410895dc19f50e5eac109dc0c92960469c39f354778270ef2cdb6"
+    },
+    {
+      "path": "docs/design/child-submissions/desktop-offline.png",
+      "sha256": "8f435ad571ba6011d518c605a52ec5ccdac0dcabae7722ec7308c12d561295df"
+    },
+    {
+      "path": "docs/design/child-submissions/desktop-requests.png",
+      "sha256": "098e3d772251fed5e7581e60b9d2c6feecb886b7822ce0685c98979f4c2d8b59"
+    },
+    {
+      "path": "docs/design/child-submissions/desktop-unknown.png",
+      "sha256": "5f1518319ad0c4e307423196eb4bc54b6fcb1649c053324436f39196cfe4565e"
+    },
+    {
+      "path": "docs/design/child-submissions/mobile-confirmation.png",
+      "sha256": "e117893c16568e99d36242bacbc046f03a4875b77391bb48ba0555283eba9a67"
+    },
+    {
+      "path": "docs/design/child-submissions/mobile-form.png",
+      "sha256": "9bc739a697a1548bcbf0f7c9342944c494b214a35b7285f7a91ae3ab334c01dd"
+    },
+    {
+      "path": "docs/design/child-submissions/mobile-offline.png",
+      "sha256": "c60c1c1380376dc56cb7380af353aaa4d291515f942c3f143873e50d11991edd"
+    },
+    {
+      "path": "docs/design/child-submissions/mobile-requests.png",
+      "sha256": "3a1745ca74c88b581908b6150bdc9e92a2b1fff00a862d4cdf6bcef3f995c9f1"
+    },
+    {
+      "path": "docs/design/child-submissions/mobile-unknown.png",
+      "sha256": "6c1afdaec2e9e935df2a4a739207daab90a44b0313cf2a7b3bb98bcc26bca974"
+    },
+    {
+      "path": "docs/design/child-submissions/production-boundary.json",
+      "sha256": "0a7d6923af51ebfbf8f806a54966ba9e336ea2ff4440054fba47c1b8d0644411"
+    }
+  ],
+  "verification": {
+    "childFullCompatibility": {
+      "path": ".local/submission-ui-child-full.log",
+      "sha256": "4ec6ab52f95808bf32762b20997b13c0600075c5889f7d201fdfcb337ac42ef3",
+      "tests": 88,
+      "passed": true
+    },
+    "staticAnalysis": {
+      "path": ".local/submission-ui-analysis.log",
+      "sha256": "21cba7a0d33d02344d00f81f7f967b5ddea02576ca646d080a774e5b8cba6974",
+      "clean": true
+    },
+    "previewWebBuild": {
+      "path": ".local/submission-ui-preview-build.log",
+      "sha256": "b94b34f8ee55c6661d44976c076a7851f4c8dd63b3ae49cc67205b3ca039c4f4",
+      "passed": true
+    },
+    "productionWebBuild": {
+      "path": ".local/submission-ui-main-web-build.log",
+      "sha256": "428ef4176df388a0a8372811f48bd69fb3ec76fb8cf0f11dedccf487de62f285",
+      "passed": true
+    },
+    "androidDebugBuild": {
+      "path": ".local/submission-ui-apk-build.log",
+      "sha256": "064200a8e1904bb72e9bc715dbf0d6196ab50f8a0e02a86ba762d152140a7d4d",
+      "passed": true
+    },
+    "androidDebugArtifact": {
+      "path": ".local/root-submission-ui-candidate/apps/child/build/app/outputs/flutter-apk/app-debug.apk",
+      "sha256": "4e814ebaf22cd5b07e4188307361160aab19e34d23eb3ec94d484024cbb99af6"
+    },
+    "productionWebArtifact": {
+      "path": ".local/root-submission-ui-candidate/apps/child/build/web/main.dart.js",
+      "sha256": "768bf3b804761d248aefafa9c902e877936f86284e87b2f6c82b30d420eb017b"
+    },
+    "browser": {
+      "path": ".local/submission-ui-browser.log",
+      "sha256": "81b3bbb0626a082b21476c7c92fb68cffba40b3dcaf8fd1cbe68bc836ed73c5b",
+      "passed": true
+    },
+    "productionWebBoundary": {
+      "path": ".local/submission-ui-production-browser.log",
+      "sha256": "39a3fe7c589d4e84cd42149b34b9e5498d44ced880094e6f6fa758efad3f41eb",
+      "passed": true
+    },
+    "watchedRedCases": [
+      {
+        "path": ".local/submission-session-red.log",
+        "sha256": "1936822ee7730421b1e1f3c866706c932f3d11a7f299e91142d007d132405f07"
+      },
+      {
+        "path": ".local/submission-section-red.log",
+        "sha256": "f5c8de86dffc1d5cb3d634b8fba6c9e711cba81fdba081ea1870f44ff87e967d"
+      },
+      {
+        "path": ".local/submission-app-red.log",
+        "sha256": "0d8353ed1d75e79d38439309a7fb997da02fcb71fa6cb7bfa8f12eda29c1b010"
+      },
+      {
+        "path": ".local/submission-focus-red.log",
+        "sha256": "47c65f8ebc564ea85515141642388a0eb39705309e1f94ecafca1335e815fe23"
+      },
+      {
+        "path": ".local/submission-semantics-red.log",
+        "sha256": "2ed3da8494b09373c2225191bce54b2abaaceb55d29a493d5a3c304f21c7653a"
+      },
+      {
+        "path": ".local/submission-fixture-consistency-red.log",
+        "sha256": "ad3f526a5915d02698dee2a5d0235b1a3e2b53fd5923da75971f7c94a4d1c04f"
+      }
+    ]
+  },
+  "verificationBoundary": [
+    "Frozen candidate matched 173 tracked and owned child/client source inputs after LF normalization. Pending guardian, V24 classification and reporting changes excluded.",
+    "Foreground initialization/reentry/connection refreshes facts only. New create/cancel uses fresh secure random key; retry uses original durable input/key/version and prior committed expiry-recovery protocol. Child cannot approve, edit policies or grant operating-system access.",
+    "Tests cover response-loss recovery, refusal to discard UNKNOWN, authorization hiding, factory/lifecycle races, late response suppression, pagination, strong cancellation, confirmation, 320px/1.5 text scaling, actual Enter/directional/select activation, and merged actionable application semantics.",
+    "Browser renders actual session/journal/widgets in installed Chrome at 390x844 and 1280x900. Explicit public fixture entry uses in-memory identity/service data, no production connection/storage. Real keyboard text must appear in confirmation; create/cancel/unknown/offline and production Web boundary verified. Screenshots use application viewport rather than full DOM bounds.",
+    "Synthetic service fixture preserves original accepted reason/time/version; the observed optional-reason mismatch was fixed in the fixture rather than relaxing production journal consistency checks.",
+    "Builds prove compilation and packaging. Android debug APK uses the normal main entry with no deployment URL embedded; it has not been installed or exercised for the new request workflow in this stage. Web production enrollment remains disabled.",
+    "No backend source/migration changed or new backend/MySQL/OceanBase tests run in this stage; original real HTTP/MySQL recovery evidence remains in stage-submission-recovery-verification.json. Do not combine separate fixtures into a production native end-to-end claim.",
+    "Actual Android process recovery, real Spring product-session/UI journey, television vendor/IME compatibility, background reliability, EMM and operating-system enforcement remain required. No production server deployment in this stage.",
+    "Owned local preview servers were stopped after acceptance; parallel task services and working changes preserved."
+  ]
+}

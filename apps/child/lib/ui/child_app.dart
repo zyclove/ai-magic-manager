@@ -7,6 +7,7 @@ import '../core/session.dart';
 import 'design.dart';
 import 'observation_section.dart';
 import 'access_section.dart';
+import 'submission_section.dart';
 
 class ChildApp extends StatelessWidget {
   final ChildSession? session;
@@ -388,6 +389,10 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
                   maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text(
                   '包含 ${(rule.document?['rules'] as List?)?.length ?? 0} 条规则；系统执行尚不支持。'))
+        ],
+        if (session!.submissionFactory != null) ...[
+          const Divider(),
+          SubmissionSection(session: session!, available: app.nativeAvailable)
         ],
         if (session!.accessFactory != null) ...[
           const Divider(),

@@ -1,6 +1,6 @@
 # 智能管家儿童端
 
-独立 Flutter / Android 宿主，复用 `device_identity`、`device_policy` 与 `device_observation`。当前提供设备配对、原密钥恢复、权威心跳、凭据轮换、签名配置保存，以及需独立授权的可见应用/系统聚合观察客户端。**当前不执行跨应用限制**，配置回执仅为 `STORED`。观察后端尚待有序提交，部署依赖及实际验收见 [观察客户端契约](../../docs/device-observation-client-contract.md)。
+独立 Flutter / Android 宿主，复用 `device_identity`、`device_policy`、`device_observation` 与 `device_access`。当前提供设备配对、原密钥恢复、权威心跳、凭据轮换、签名配置保存，以及需独立授权的可见应用/系统聚合观察客户端。**当前不执行跨应用限制**，配置回执仅为 `STORED`。部署依赖及实际验收见 [观察客户端契约](../../docs/device-observation-client-contract.md)。
 
 ## 环境与启动
 
@@ -49,3 +49,11 @@ flutter drive --driver=test_driver/identity_storage_driver.dart --target=integra
 ## 发布边界
 
 debug 包名 `com.aimanager.child.debug`，release 包名 `com.aimanager.child`。release 必须外置 `CHILD_SIGNING_STORE`、`CHILD_SIGNING_STORE_PASSWORD`、`CHILD_SIGNING_KEY_ALIAS`、`CHILD_SIGNING_KEY_PASSWORD`，缺少时构建失败，不回退调试签名。商店目标 API、依赖漏洞与许可证检查、实体设备/TV 兼容、升级迁移和完整系统权限验收仍是发布门槛。
+
+## 临时访问申请
+
+已连接的 Android 设备可在「规则 → 临时访问申请」中选择监护安排和应用、1–20 条可申请限制、1–60 分钟及选填理由，核对后提交；支持状态与详情、强版本取消确认、分页和原操作恢复。请求发出前保存原正文/原键，未知结果不能删除或另起申请。重试由儿童主动确认，超过原键重放期限时调用专用恢复查询。
+
+进入后台或设备身份范围改变时隐藏申请与私人表单。启动、恢复前台及检查连接只刷新事实，不自动发送新申请或取消。批准状态与签名配置同步独立展示，当前没有跨应用解锁能力。服务端需包含 V23 设备申请和已提交的过期键恢复接口；未部署时不能把客户端已构建当作联调成功。
+
+公开交互预览入口为 `flutter run -t tool/submission_preview.dart -d chrome`；仅使用明确标识的合成内存夹具，不连接真实服务/设备，不输入真实私人资料。正式 `lib/main.dart` 不引用预览入口，Web 正式入口仍禁用设备身份和注册。流程及验收边界见[申请交互契约](../../docs/child-request-ui-contract.md)。

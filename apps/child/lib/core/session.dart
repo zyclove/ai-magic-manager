@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'package:device_identity/device_identity.dart';
 import 'package:device_access/device_access.dart' as temporary;
 import 'package:device_observation/device_observation.dart' as observation;
@@ -7,6 +8,7 @@ import 'package:device_policy/device_policy.dart' as policy;
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
 import 'access.dart';
+import 'submissions.dart';
 
 /// Only the administrator-issued ticket is accepted. Service origins, roles,
 /// trust keys and local confirmation are never taken from pasted content.
@@ -67,6 +69,17 @@ class ChildSession extends ChangeNotifier {
   final Future<List<Map<String, dynamic>>> Function()? observations;
   final ChildObservationFactory? observationFactory;
   final ChildAccessFactory? accessFactory;
+  final ChildSubmissionFactory? submissionFactory;
+  ChildSubmissionSnapshot submissions = const ChildSubmissionSnapshot();
+  String? submissionErrorCode, submissionCorrelationId;
+  ChildSubmissions? _submissionReceiver;
+  String? _submissionIdentityKey;
+  bool _submissionRefreshOnIdle = false;
+  int _submissionGeneration = 0;
+
+  /// Forms use this generation to discard private drafts after scope/lifecycle changes.
+  int get submissionGeneration => _submissionGeneration;
+  bool get foreground => _foreground && !_disposed;
   final int Function() nowMillis;
   ChildAccessSnapshot access = const ChildAccessSnapshot();
   String? accessErrorCode, accessCorrelationId;
@@ -92,6 +105,7 @@ class ChildSession extends ChangeNotifier {
       this.observations,
       this.observationFactory,
       this.accessFactory,
+      this.submissionFactory,
       int Function()? nowMillis})
       : nowMillis = nowMillis ?? (() => DateTime.now().millisecondsSinceEpoch);
   String? get pairingCode => _foreground ? _pairingCode : null;
@@ -123,6 +137,12 @@ class ChildSession extends ChangeNotifier {
   }
 
   void _checkIdentityScope() {
+    if (!credentialReady ||
+        !identityReadSucceeded ||
+        (_submissionIdentityKey != null &&
+            _submissionIdentityKey != _identityKey)) {
+      _clearSubmissions();
+    }
     if (!credentialReady ||
         !identityReadSucceeded ||
         (_accessIdentityKey != null && _accessIdentityKey != _identityKey)) {
@@ -164,6 +184,9 @@ class ChildSession extends ChangeNotifier {
       if (!wasReady && credentialReady && accessFactory != null) {
         _accessSyncOnIdle = true;
       }
+      if (!wasReady && credentialReady && submissionFactory != null) {
+        _submissionRefreshOnIdle = true;
+      }
     }
   }
 
@@ -182,22 +205,41 @@ class ChildSession extends ChangeNotifier {
           accessErrorCode = 'ACCESS_RESTORE_FAILED';
         }
       }
+      if (submissionFactory != null && credentialReady) {
+        try {
+          final generation = _submissionGeneration;
+          final restored = await (await _requests()).restore();
+          if (foreground && generation == _submissionGeneration) {
+            submissions = restored;
+          }
+        } catch (_) {
+          submissions = const ChildSubmissionSnapshot();
+          submissionErrorCode = 'SUBMISSION_RESTORE_FAILED';
+        }
+      }
     });
     initialized = true;
     _changed();
     _accessSyncOnIdle = accessFactory != null && credentialReady;
     _refreshObservationOnIdle = observationFactory != null && credentialReady;
+    _submissionRefreshOnIdle = submissionFactory != null && credentialReady;
     _drain();
   }
 
   Future<bool> _run(Future<void> Function() operation,
-      {bool observationOperation = false, bool accessOperation = false}) async {
+      {bool observationOperation = false,
+      bool accessOperation = false,
+      bool submissionOperation = false}) async {
     if (busy || _disposed) return false;
     busy = true;
     errorCode = null;
     if (accessOperation) {
       accessErrorCode = null;
       accessCorrelationId = null;
+    }
+    if (submissionOperation) {
+      submissionErrorCode = null;
+      submissionCorrelationId = null;
     }
     _changed();
     var success = false;
@@ -219,7 +261,11 @@ class ChildSession extends ChangeNotifier {
       errorCode = failure.code;
     } on temporary.AccessTransportFailure catch (failure) {
       errorCode = failure.code;
-      accessCorrelationId = failure.correlationId;
+      if (submissionOperation) {
+        submissionCorrelationId = failure.correlationId;
+      } else {
+        accessCorrelationId = failure.correlationId;
+      }
     } on observation.ObservationFailure catch (failure) {
       errorCode = failure.code;
     } catch (_) {
@@ -232,6 +278,10 @@ class ChildSession extends ChangeNotifier {
     }
     if (accessOperation) {
       accessErrorCode = errorCode == 'ACCESS_PAUSED' ? null : errorCode;
+      errorCode = null;
+    }
+    if (submissionOperation) {
+      submissionErrorCode = errorCode == 'SUBMISSION_PAUSED' ? null : errorCode;
       errorCode = null;
     }
     try {
@@ -250,6 +300,9 @@ class ChildSession extends ChangeNotifier {
     if (accessOperation && accessErrorCode != null) {
       _log.warning('code=$accessErrorCode');
     }
+    if (submissionOperation && submissionErrorCode != null) {
+      _log.warning('code=$submissionErrorCode');
+    }
     busy = false;
     _changed();
     _scheduleAccess();
@@ -267,6 +320,7 @@ class ChildSession extends ChangeNotifier {
             capabilities: await observations?.call() ?? const []);
         _refreshObservationOnIdle = observationFactory != null;
         _accessSyncOnIdle = accessFactory != null;
+        _submissionRefreshOnIdle = submissionFactory != null;
       });
   Future<bool> recoverClaim() => _run(identity.recoverClaim);
   Future<bool> reloadIdentity() => _run(_refresh);
@@ -405,6 +459,98 @@ class ChildSession extends ChangeNotifier {
         if (!_foreground || _disposed) access = const ChildAccessSnapshot();
       }, accessOperation: true);
 
+  void _clearSubmissions() {
+    final receiver = _submissionReceiver;
+    _submissionReceiver = null;
+    _submissionIdentityKey = null;
+    _submissionRefreshOnIdle = false;
+    _submissionGeneration++;
+    submissions = const ChildSubmissionSnapshot();
+    if (receiver != null) {
+      receiver.pause();
+      unawaited(receiver.close().catchError((Object _) {
+        _log.warning('code=SUBMISSION_STORE_CLOSE_FAILED');
+      }));
+    }
+  }
+
+  Future<ChildSubmissions> _requests() async {
+    if (!foreground) throw const temporary.AccessFailure('SUBMISSION_PAUSED');
+    if (_submissionReceiver != null) return _submissionReceiver!;
+    if (submissionFactory == null || !credentialReady || _identityKey == null) {
+      throw const temporary.AccessFailure('DEVICE_CREDENTIAL_UNAVAILABLE');
+    }
+    final scope = _submissionIdentityKey = _identityKey;
+    final generation = _submissionGeneration;
+    final receiver = await submissionFactory!(identityView!);
+    if (!foreground ||
+        !credentialReady ||
+        generation != _submissionGeneration ||
+        scope != _identityKey ||
+        scope != _submissionIdentityKey) {
+      receiver.pause();
+      try {
+        await receiver.close();
+      } catch (_) {
+        _log.warning('code=SUBMISSION_STORE_CLOSE_FAILED');
+      }
+      throw const temporary.AccessFailure('SUBMISSION_PAUSED');
+    }
+    return _submissionReceiver = receiver;
+  }
+
+  Future<bool> _requestAction(
+          Future<ChildSubmissionSnapshot> Function(ChildSubmissions) action) =>
+      _run(() async {
+        if (!foreground) {
+          throw const temporary.AccessFailure('SUBMISSION_PAUSED');
+        }
+        await _refresh();
+        final receiver = await _requests();
+        final generation = _submissionGeneration;
+        receiver.resume();
+        try {
+          final updated = await action(receiver);
+          if (foreground && generation == _submissionGeneration) {
+            submissions = updated;
+          }
+        } catch (error) {
+          submissions = const ChildSubmissionSnapshot();
+          if (_fatalAccess(error)) {
+            receiver.pause();
+            _submissionGeneration++;
+          } else if (foreground && generation == _submissionGeneration) {
+            try {
+              final restored = await receiver.restore();
+              if (foreground && generation == _submissionGeneration) {
+                submissions = restored;
+              }
+            } catch (_) {/* Never fall back to unverified or old-scope data. */}
+          }
+          rethrow;
+        }
+      }, submissionOperation: true);
+
+  String _submissionKey() => base64UrlEncode(
+          List<int>.generate(24, (_) => Random.secure().nextInt(256)))
+      .replaceAll('=', '');
+  Future<bool> refreshSubmissions() => _requestAction((r) => r.refresh());
+  Future<bool> moreSubmissionOptions() =>
+      _requestAction((r) => r.moreOptions());
+  Future<bool> moreSubmissions() => _requestAction((r) => r.moreRequests());
+  Future<bool> submissionDetail(String id) =>
+      _requestAction((r) => r.detail(id));
+  Future<bool> createSubmission(temporary.AccessSubmissionInput input,
+          {required String applicationName}) =>
+      _requestAction((r) => r.create(input,
+          applicationName: applicationName, key: _submissionKey()));
+  Future<bool> cancelSubmission(temporary.AccessSubmission value,
+          {required String applicationName}) =>
+      _requestAction((r) => r.cancel(value,
+          applicationName: applicationName, key: _submissionKey()));
+  Future<bool> retrySubmission() => _requestAction((r) => r.retry());
+  Future<bool> discardSubmission() => _requestAction((r) => r.discard());
+
   void _drain() {
     if (!initialized || busy || !_foreground || _disposed || !credentialReady) {
       return;
@@ -418,6 +564,11 @@ class ChildSession extends ChangeNotifier {
     if (_accessRestoreOnIdle && accessFactory != null) {
       _accessRestoreOnIdle = false;
       unawaited(refreshAccess());
+      return;
+    }
+    if (_submissionRefreshOnIdle && submissionFactory != null) {
+      _submissionRefreshOnIdle = false;
+      unawaited(refreshSubmissions());
       return;
     }
     if (_refreshObservationOnIdle && observationFactory != null) {
@@ -525,6 +676,10 @@ class ChildSession extends ChangeNotifier {
       _accessReceiver?.pause();
       access = const ChildAccessSnapshot();
       _accessSyncOnIdle = accessFactory != null;
+      _submissionReceiver?.pause();
+      submissions = const ChildSubmissionSnapshot();
+      _submissionGeneration++;
+      _submissionRefreshOnIdle = submissionFactory != null;
       _observationAgent?.pause();
       _refreshObservationOnIdle = true;
       _pairingCode = null;
@@ -540,6 +695,7 @@ class ChildSession extends ChangeNotifier {
     _changed();
     _accessSyncOnIdle = accessFactory != null;
     _refreshObservationOnIdle = observationFactory != null;
+    _submissionRefreshOnIdle = submissionFactory != null;
     _drain();
   }
 
@@ -547,6 +703,7 @@ class ChildSession extends ChangeNotifier {
   void dispose() {
     _disposed = true;
     _clearAccess();
+    _clearSubmissions();
     _pairingCode = null;
     identity.api.close();
     _observationAgent?.close();

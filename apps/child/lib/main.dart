@@ -10,6 +10,7 @@ import 'core/environment.dart';
 import 'core/rule_receiver.dart';
 import 'core/session.dart';
 import 'core/access_receiver.dart';
+import 'core/submission_receiver.dart';
 import 'platform/secret_store.dart';
 import 'platform/observation_source.dart';
 import 'ui/child_app.dart';
@@ -44,6 +45,13 @@ Future<void> main() async {
   final session = ChildSession(
       identity: identity,
       nowMillis: clock,
+      submissionFactory: nativeAvailable
+          ? (view) async => ChildSubmissionReceiver(
+              environment: configured,
+              identity: view,
+              credential: identity.activeCredential,
+              nowMillis: clock)
+          : null,
       accessFactory: nativeAvailable
           ? (view, baseline) async => SignedAccessReceiver(
               environment: configured,
