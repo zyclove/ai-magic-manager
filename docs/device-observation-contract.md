@@ -2,11 +2,11 @@
 
 ## 交付状态
 
-本次文档提交先发布契约与实施记录。下述后端实现在工作区已完成验证，待协作任务的完整 V13～V19 先合入后，才单独提交 V20 及后端代码；不能仅依据本文件认定当前仓库提交已包含这些接口。
+本次有序后端交付承接 V13～V19 前置提交 `60ce0e0`，包含下述 V20 迁移、观察授权、报告与查询接口及真实 HTTP 互通检查。Android 与管理端模块已在先前阶段提交；交付范围、最终候选指纹和验证边界见 [V20 阶段交付](releases/stage-v20-observation.md)。接口实现不等于受管系统执行认证。
 
 本阶段在 Spring Boot 后端增加每设备注册周期的应用清单、使用摘要授权以及使用摘要接收/查询。应用清单接收接口同步要求授权版本。复用 Spring Security、Bean Validation、Spring JDBC、Flyway、现有 MFA、强 ETag、幂等日志和审计组件。
 
-后续已交付 Android 原生查询和设备持久协议，见 [客户端阶段契约](device-observation-client-contract.md)；成人观察模块及真实 HTTP/MySQL 阶段见 [成人工作流契约](device-observation-guardian-contract.md)。这些独立阶段不改变本后端 V20 的有序提交门槛。服务端测试夹具不代表真机系统管控、准确计费或 TV 兼容认证。
+后续已交付 Android 原生查询和设备持久协议，见 [客户端阶段契约](device-observation-client-contract.md)；成人观察模块及真实 HTTP/MySQL 阶段见 [成人工作流契约](device-observation-guardian-contract.md)。本次交付按前序 V13～V19 完整提交后的顺序纳入 V20。服务端测试夹具不代表真机系统管控、准确计费或 TV 兼容认证。
 
 ## 权限与生命周期
 
@@ -130,7 +130,7 @@ Content-Type: application/json
 
 回退到不认识观察授权的旧应用版本前，必须在入口关闭 application-inventory 的上传及读取路由，并关闭 usage-observations 写入；否则旧应用可能重新接受未授权清单或暴露隐藏的遗留清单。恢复完整授权检查前不得重新开放，不能只依赖新版本表中的关闭标记约束旧代码。
 
-后端初始阶段使用 H2 MySQL 模式；后续真实 MySQL 8.4 HTTP 流程已通过，但只使用 V1～V12+V20 的独立新建库。**尚未完成有序生产候选、OceanBase、并发容量、执行计划和故障切换认证**，详细范围及 Flyway 兼容性提示见成人工作流契约。
+后端初始阶段使用 H2 MySQL 模式；早期 HTTP 证据只含 V1～V12+V20。本次另以真实 MySQL 8.4 独立临时库，先运行 V19 教师旅程11项，再运行 V20 清单、观察及真实 HTTP 共15项，确认成功迁移版本按顺序恰为 V1～V19、随后 V1～V20；临时库与授权已清理。该验证不涉及生产业务库。OceanBase、并发容量、执行计划、真实 OTP、故障切换及备份恢复仍未认证，Flyway 对 MySQL 8.4 的版本兼容提示仍须处理。
 
 ## 已有证据与下一步
 

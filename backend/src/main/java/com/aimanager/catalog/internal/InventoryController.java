@@ -24,7 +24,8 @@ class InventoryController {
     ApplicationInventory get(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId, @PathVariable String deviceId) {
         return inventories.read(tenantId, actor.getSubject(), deviceId);
     }
-    record InventoryReport(@NotNull @Min(1) @Max(9007199254740991L) Long sequence, @NotNull Visibility visibility,
+    record InventoryReport(@NotNull @Min(1) @Max(9007199254740991L) Long sequence,
+                           @NotNull @Min(1) @Max(9007199254740991L) Long authorizationVersion, @NotNull Visibility visibility,
                            @NotNull @Size(max = 500) List<@NotNull @Valid ReportedApplication> applications) {}
     enum Visibility { VISIBLE_PACKAGES }
 }

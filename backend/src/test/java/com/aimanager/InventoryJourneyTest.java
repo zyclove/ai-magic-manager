@@ -29,8 +29,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 /** Real opaque-token and database path; fixture registration does not claim Android execution or provenance. */
 @SpringBootTest(properties = {
-    "spring.datasource.url=jdbc:h2:mem:inventory;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE",
-    "spring.datasource.username=sa", "spring.datasource.password=", "spring.flyway.enabled=true"
+    "spring.datasource.url=${OBSERVATION_TEST_DATABASE_URL:jdbc:h2:mem:inventory;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE}",
+    "spring.datasource.username=${OBSERVATION_TEST_DATABASE_USERNAME:sa}",
+    "spring.datasource.password=${OBSERVATION_TEST_DATABASE_PASSWORD:}", "spring.flyway.enabled=true"
 })
 @AutoConfigureMockMvc
 class InventoryJourneyTest {
@@ -59,10 +60,14 @@ class InventoryJourneyTest {
         database.update("INSERT INTO device_credential_scopes(tenant_id,registration_id,device_id,active) VALUES(?,?,?,true)", tenant, registration, device);
         database.update("INSERT INTO device_credentials(id,tenant_id,device_id,registration_id,token_hash,active,issued_at,expires_at) VALUES(?,?,?,?,?,true,?,?)",
             UUID.randomUUID().toString(), tenant, device, registration, SecretMaterial.hash(token), Instant.now().toEpochMilli(), Instant.now().plusSeconds(3600).toEpochMilli());
+        mvc.perform(put("/api/v1/tenants/" + tenant + "/devices/" + device + "/observation-settings")
+            .with(actor(owner)).header("If-Match", "\"0\"").contentType(MediaType.APPLICATION_JSON)
+            .content("{\"inventoryEnabled\":true,\"usageEnabled\":false,\"reason\":\"监护人授权库存观察\"}"))
+            .andExpect(status().isOk());
         return new Scope(owner, tenant, subject, device, token);
     }
     private String input(int sequence, String packageName) {
-        return "{\"sequence\":" + sequence + ",\"visibility\":\"VISIBLE_PACKAGES\",\"applications\":[{\"packageName\":\"" + packageName
+        return "{\"sequence\":" + sequence + ",\"authorizationVersion\":1,\"visibility\":\"VISIBLE_PACKAGES\",\"applications\":[{\"packageName\":\"" + packageName
             + "\",\"displayName\":\"应用\",\"profile\":\"PRIMARY\",\"signingDigests\":[\"" + "a".repeat(64)
             + "\"],\"versionCode\":1,\"systemApplication\":false}]}";
     }
@@ -141,7 +146,7 @@ class InventoryJourneyTest {
         var first = report(s, payload.toString());
         var reordered = mapper.createArrayNode(); reordered.add(apps.get(1)); reordered.add(apps.get(0)); payload.set("applications", reordered);
         assertThat(report(s, payload.toString())).isEqualTo(first);
-        report(s, "{\"sequence\":2,\"visibility\":\"VISIBLE_PACKAGES\",\"applications\":[]}");
+        report(s, "{\"sequence\":2,\"authorizationVersion\":1,\"visibility\":\"VISIBLE_PACKAGES\",\"applications\":[]}");
         mvc.perform(get(path(s)).with(actor(s.owner()))).andExpect(status().isOk()).andExpect(jsonPath("$.applications.length()").value(0))
             .andExpect(jsonPath("$.visibility").value("VISIBLE_PACKAGES")).andExpect(jsonPath("$.evidenceStatus").value("AGENT_REPORTED_UNVERIFIED"));
     }

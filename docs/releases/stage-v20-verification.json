@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-09T14:20:11.814065+00:00",
+  "scope": "Ordered V1-V20 observation backend and guardian/device HTTP integration; no Notification/V21",
+  "parentHead": "60ce0e0e0af27c84c2db229417e633bc67586f5b",
+  "sourceFiles": [
+    {
+      "path": "backend/src/main/java/com/aimanager/catalog/internal/InventoryController.java",
+      "sha256": "30d980c199f6fb2b06e27588393f3e01246db5a055aa33f2f664ecacb3216a61"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/catalog/internal/InventoryService.java",
+      "sha256": "371eaec2068a81acc166f26e2aa848e544032ce29625adcfa6bdf06c1a53c8c7"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/observation/ObservationAuthorization.java",
+      "sha256": "265692ad94bce0d7a1165ecfb2722ec5c7f4e4c0088d0aed6137e8aef9562907"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/observation/ObservationAuthorizationChanged.java",
+      "sha256": "ec3425cfeeec92c46dc02437237a85eae18beee049750b54a35950e7f9c3312b"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/observation/ObservationSettings.java",
+      "sha256": "4753f51a97e4dba0440edc6b257a133c4c22d50fc6057e3d8f60da7cb1273c4e"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/observation/internal/ObservationController.java",
+      "sha256": "c70efb6aa6944eec49322d9075eb100f62c61eeb5ed74ff22f65c6a2472d583d"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/observation/internal/ObservationSettingsService.java",
+      "sha256": "614ecda5a12330bf54276003b92c9b5168ddbb6daa656e2182c1107ea04bf07c"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/observation/internal/UsageObservationController.java",
+      "sha256": "fe257f193d21c718ce551de3c230d1c8cca883adf7abe1dffabaac8ad25ca689"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/observation/internal/UsageObservationService.java",
+      "sha256": "8f4af1681aa4cf69b64225a2b556b2854f66a48b767d4b848cd26370afba1aec"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V20__device_observation.sql",
+      "sha256": "ed83c92abb57a37a5d93f3799b501db5ce0254fea6abb50df796a2b18f1e440b"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeviceObservationHttpInteropTest.java",
+      "sha256": "d249ac7533e6715fea8ad1b74ebe0261dd762b9203fbde60cbcaa680f4f61e21"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeviceObservationJourneyTest.java",
+      "sha256": "90700964b9a7dc135f7e744457677562b547ee3b43846f416104dab00b46589d"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/InventoryJourneyTest.java",
+      "sha256": "fe33d4080ce474b1a8154213c71b81013672a864171db146c007b67ad28ee935"
+    }
+  ],
+  "baselineCodeFilesChecked": 339,
+  "baselineMismatches": 0,
+  "backend": {
+    "tests": 255,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "testClasses": 30,
+    "actualHttpInteropEnabled": [
+      "configuration",
+      "identity",
+      "access",
+      "observation"
+    ],
+    "database": "H2 MySQL mode",
+    "orderedMigrations": "V1-V20",
+    "jarSha256": "fb0c5fe1b3ee93bef75ebd59871e9cd807b9fd45e4fc1b326284243cfcbeb017",
+    "log": ".local/root-v20-final-verify.log",
+    "logSha256": "394a7d9c2225acee1d5f3a88da75e12c52c1bdfd11b40bd00b9686434db8f627"
+  },
+  "mysqlUpgrade": {
+    "serverVersion": "8.4",
+    "initialStage": {
+      "migrations": "V1-V19",
+      "tests": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".local/root-v19-mysql-upgrade.log"
+    },
+    "upgradeStage": {
+      "migrations": "V1-V20",
+      "tests": 15,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "classes": [
+        "InventoryJourneyTest",
+        "DeviceObservationJourneyTest",
+        "DeviceObservationHttpInteropTest"
+      ],
+      "log": ".local/root-v20-mysql-upgrade.log"
+    },
+    "flywayHistoryContinuousVersionsAsserted": true,
+    "temporarySchemaAndGrantsRemoved": true,
+    "businessDatabaseModified": false,
+    "logSha256": {
+      "root-v19-mysql-upgrade.log": "2910fb2d276f8e110e5f880e57aef4eb3bf90067a26f85438d203ca5e2f5316d",
+      "root-v20-mysql-upgrade.log": "a6a3924d2371ffa63ba27c471ccf8eaf02e4058ccf4888cdfb32ab12fac6ddf3",
+      "root-mysql-upgrade-summary.log": "bdb6154ad377609ac8548546131d9e9f2174960146e6f81932361772c9a23c86"
+    }
+  },
+  "failedRunsNotCounted": {
+    "attempts": 2,
+    "reason": "First observation fixture tenant request: ClassCastException at java.time.Clock.millis, captured with type/frame-only diagnostics",
+    "fix": "Replace mocked Clock with concrete AtomicLong-backed primary test Clock; production source unchanged by this fix",
+    "evidenceDirectories": [
+      ".local/root-mysql-upgrade-first-failure",
+      ".local/root-mysql-upgrade-diagnostic-failure"
+    ]
+  },
+  "relatedEvidence": {
+    "guardianAndAccessSdk": "stage-v19-verification.json",
+    "androidNativeStorage": "../design/observation-native-storage/verification.json"
+  },
+  "deployment": "No running shared service replaced by this commit operation",
+  "remainingGates": [
+    "Flyway reports tested MySQL ceiling 8.1; 8.4 certification warning remains",
+    "OceanBase compatibility not certified",
+    "Real admin OTP and real device-to-production-cloud chain not certified",
+    "Managed EMM/TV enforcement, precise quota metering, content filters, billing, capacity and failover remain separate work",
+    "Notification/V21 worktree intentionally retained outside this delivery"
+  ]
+}

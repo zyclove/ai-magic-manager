@@ -111,3 +111,7 @@ mvn -Ddevice.dart.command=<dart可执行文件> -Dobservation.device.package=<�
 ## 后续增量：原生加密存储恢复
 
 实际 Android 加密 pending 已以最终源码完成负对照、四次独立进程、原快照逐字重放、ACK 清理重开与合成键清理。详见 [原生持久化验收](device-observation-native-persistence.md)。该增量补齐上文历史阶段的存储验证缺口；独立 HTTP 夹具与独立原生存储结果不能相加称作完整生产端到端认证。实体 TV、正式受管执行、启动恢复与容量门槛仍保留。
+
+## 后续增量：有序候选与 MySQL 升级
+
+前置 V13～V19 已按冻结审阅快照提交 `60ce0e0`，新候选纳入完整 V1～V20。真实 MySQL 8.4 从 V19 教师流程11项升级到 V20 清单/观察/HTTP 15项，全部通过、0跳过；最终按 Flyway history 断言连续版本1～20，临时库和权限已清理。早期13迁移快照的结果保持历史范围。本次没有替换正在运行的协作服务，运行环境、真实 OTP、实体设备与容量认证另行完成。见 [V20 交付记录](releases/stage-v20-observation.md)。
