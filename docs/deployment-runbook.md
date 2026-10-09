@@ -146,3 +146,13 @@ npm run test:oidc
 此脚本创建标记为部署验收的工作空间和临时身份，不操作真实设备、不发送邮件、不上传视频；身份/空 realm 自动清理，工作空间及其审计留在隔离数据库。错误日志只写步骤和错误类别，避免浏览器调用日志泄露输入凭据。OAuth 回调用有界请求事件监听，避免 HTTP 重定向目标不能被路由拦截导致死等。[Playwright 请求/重定向](https://playwright.dev/docs/api/class-page#page-wait-for-request)
 
 HTTPS 覆盖当前仅完成配置设计与解析，真实证书登录/取钥仍待专项验证；Windows 验证不代替 Linux UID/secret 挂载验证。没有真实 OTP 成功、原生/EMM、设备额度停止、生产备份恢复、多区域 HA 或百万设备压测证据。完整产品的商业渠道、智能识别及这些发布门槛仍按完整计划继续。
+
+## 设备配置 HTTP 同步的构建门槛
+
+构建源中存在 `packages/device_policy` 与 `DeviceConfigurationHttpInteropTest` 时，`build-deployment.ps1` 先解析设备包依赖，再给 Maven 传入真实 Dart 可执行文件及隔离包路径。Windows 从 Flutter 的 dart.bat 解析到 SDK 的 dart.exe，避免 Java 子进程无法直接运行 batch 包装器。此时真实跨 SDK 用例必须执行，不能以默认 backend-only Maven 的 skipped 结果代替。
+
+2026-10-09 的最终独立快照基于 `005fa1f` 加本阶段配置接收代码，保存在 `.local/device-http-build-check/`：后端 158 项（0 失败/错误/跳过）、设备配置 58 项、设备操作 42 项、管理台 7 项全部通过；analyze 与 Web release 成功。另有部署保护 7 项、真实 Chrome 验签 15 项通过，脚本解析 0 错误。自动测试合计 272 项，Chrome 另列。该快照未混入并行的额度/审批实现，未启动另一组服务。
+
+跨 SDK 用例绑定随机回环端口，使用隔离 H2、明确的成人与已激活注册夹具，实际执行设备 opaque 认证、Nimbus 签名、Dart JOSE、整页文件存储、回执入库和撤销后的 401。临时私钥与凭证夹具已删除，文件数据库和公共诊断保留。它没有验证真实 OIDC/MFA 注册、MySQL 交付并发、OS 启动作业或原生执行。[具体契约与范围](device-configuration-client-contract.md)
+
+发布清单按相对源路径排除 target/build/.dart_tool/.local；设备联调生成的缓存、日志与凭证夹具不得进入源摘要或 Docker build context。仅已验证的 JAR 与 Web 发布文件复制到独立产物目录。继续保留每次唯一 source/release 目录和摘要，复核不得覆盖已运行服务或其他任务的开发产物。

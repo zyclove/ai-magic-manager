@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:uuid/uuid.dart';
 import 'models.dart';
 import 'verifier.dart';
+import 'page.dart';
 
 /// Persisted before being exposed to a transport. Replays keep the same ID.
 class StoredConfigurationReceipt {
@@ -101,70 +102,115 @@ class ConfigurationJournal {
   /// delivery leaves the previous state and cursor intact. No APPLIED is emitted.
   Future<StoredConfigurationReceipt> accept(String compact) async {
     final value = await verifier.verify(compact, restoration: true);
-    return _storage(() => database.transaction((txn) async {
-          final head = await _head(txn);
-          final row = await _policies.record(value.policyId).get(txn);
-          VerifiedConfiguration? previous;
-          StoredConfigurationReceipt? receipt;
-          if (row != null) {
-            previous = await _saved(row);
-            if (previous.policyId != value.policyId) {
-              throw const ConfigurationFailure('STORAGE_FAILURE');
-            }
-            if (previous.envelopeHash == value.envelopeHash) {
-              receipt = _receipt(
-                  Map<String, Object?>.from(row['receipt'] as Map), value);
-            } else if (value.deliveryId == previous.deliveryId ||
-                value.sourceSequence < previous.sourceSequence ||
-                (value.sourceSequence == previous.sourceSequence &&
-                    (!_sameContent(value, previous) ||
-                        value.cursor != previous.cursor)) ||
-                (value.sourceSequence > previous.sourceSequence &&
-                    value.versionId == previous.versionId)) {
-              throw const ConfigurationFailure('OLDER_VERSION');
-            }
-          }
-          if (row == null && await _policies.count(txn) >= maxPolicyStreams) {
-            throw const ConfigurationFailure('STORAGE_FAILURE');
-          }
-          if (receipt == null) {
-            final time = verifier.nowMillis();
-            if (time < 0 ||
-                time > maxSafeInteger ||
-                time < (head['observedAt'] as int)) {
-              throw const ConfigurationFailure('CLOCK_UNTRUSTED');
-            }
-            value.requireFirstDelivery(time);
-            final newVersion = previous == null ||
-                value.sourceSequence > previous.sourceSequence;
-            if (newVersion && value.cursor <= (head['after'] as int)) {
-              throw const ConfigurationFailure('OLDER_VERSION');
-            }
-            receipt = StoredConfigurationReceipt._(const Uuid().v4(),
-                value.deliveryId, value.cursor, value.envelopeHash);
-            head['after'] = value.cursor > (head['after'] as int)
-                ? value.cursor
-                : head['after'];
-            head['observedAt'] = time;
-          }
-          final existing = await _receipts.record(receipt.receiptId).get(txn);
-          if (existing == null &&
-              await _receipts.count(txn) >= maxPendingReceipts) {
-            throw const ConfigurationFailure('STORAGE_FAILURE');
-          }
-          await _policies
-              .record(value.policyId)
-              .put(txn, {'compact': compact, 'receipt': receipt.toJson()});
-          await _receipts
-              .record(receipt.receiptId)
-              .put(txn, {'compact': compact, 'receipt': receipt.toJson()});
-          await _metadata.record('head').put(txn, head);
-          return receipt;
-        }));
+    return _storage(() => database.transaction((txn) => _saveOne(txn, value)));
+  }
+
+  Future<StoredConfigurationReceipt> _saveOne(
+      Transaction txn, VerifiedConfiguration value) async {
+    final head = await _head(txn);
+    final row = await _policies.record(value.policyId).get(txn);
+    VerifiedConfiguration? previous;
+    StoredConfigurationReceipt? receipt;
+    if (row != null) {
+      previous = await _saved(row);
+      if (previous.policyId != value.policyId) {
+        throw const ConfigurationFailure('STORAGE_FAILURE');
+      }
+      if (previous.envelopeHash == value.envelopeHash) {
+        receipt =
+            _receipt(Map<String, Object?>.from(row['receipt'] as Map), value);
+      } else if (value.deliveryId == previous.deliveryId ||
+          value.sourceSequence < previous.sourceSequence ||
+          (value.sourceSequence == previous.sourceSequence &&
+              (!_sameContent(value, previous) ||
+                  value.cursor != previous.cursor)) ||
+          (value.sourceSequence > previous.sourceSequence &&
+              value.versionId == previous.versionId)) {
+        throw const ConfigurationFailure('OLDER_VERSION');
+      }
+    }
+    if (row == null && await _policies.count(txn) >= maxPolicyStreams) {
+      throw const ConfigurationFailure('STORAGE_FAILURE');
+    }
+    if (receipt == null) {
+      final time = verifier.nowMillis();
+      if (time < 0 ||
+          time > maxSafeInteger ||
+          time < (head['observedAt'] as int)) {
+        throw const ConfigurationFailure('CLOCK_UNTRUSTED');
+      }
+      value.requireFirstDelivery(time);
+      final newVersion =
+          previous == null || value.sourceSequence > previous.sourceSequence;
+      if (newVersion && value.cursor <= (head['after'] as int)) {
+        throw const ConfigurationFailure('OLDER_VERSION');
+      }
+      receipt = StoredConfigurationReceipt._(const Uuid().v4(),
+          value.deliveryId, value.cursor, value.envelopeHash);
+      head['after'] =
+          value.cursor > (head['after'] as int) ? value.cursor : head['after'];
+      head['observedAt'] = time;
+    }
+    final existing = await _receipts.record(receipt.receiptId).get(txn);
+    if (existing == null && await _receipts.count(txn) >= maxPendingReceipts) {
+      throw const ConfigurationFailure('STORAGE_FAILURE');
+    }
+    await _policies
+        .record(value.policyId)
+        .put(txn, {'compact': value.compact, 'receipt': receipt.toJson()});
+    await _receipts
+        .record(receipt.receiptId)
+        .put(txn, {'compact': value.compact, 'receipt': receipt.toJson()});
+    await _metadata.record('head').put(txn, head);
+    return receipt;
   }
 
   Future<int> cursor() =>
       _storage(() async => (await _head(database))['after'] as int);
+
+  /// Verification precedes the transaction; all items, receipts and the server
+  /// continuation commit together. Conflicting concurrent coordinators must
+  /// restart from the durable cursor rather than skipping a page.
+  Future<List<StoredConfigurationReceipt>> acceptPage(
+      ConfigurationPage page) async {
+    final values = <VerifiedConfiguration>[];
+    final policies = <String>{};
+    for (final item in page.items) {
+      if (item.state == 'DEVICE_REPORTED_REJECTED') {
+        throw const ConfigurationFailure('SERVER_REJECTED');
+      }
+      final value = await verifier.verify(item.compactJws, restoration: true);
+      if (item.id != value.deliveryId ||
+          item.cursor != value.cursor ||
+          item.deliveryExpiresAt != value.deliveryExpiresAt ||
+          value.issuedAt > page.serverTime ||
+          !policies.add(value.policyId)) {
+        throw const ConfigurationFailure('TRANSPORT_MISMATCH');
+      }
+      values.add(value);
+    }
+    return _storage(() => database.transaction((txn) async {
+          final initial = await _head(txn);
+          if (initial['after'] != page.requestedAfter) {
+            throw const ConfigurationFailure('SYNC_CONFLICT');
+          }
+          final receipts = <StoredConfigurationReceipt>[];
+          for (final value in values) {
+            receipts.add(await _saveOne(txn, value));
+          }
+          final head = await _head(txn);
+          final now = verifier.nowMillis();
+          if (now < (head['observedAt'] as int) ||
+              now < 0 ||
+              now > maxSafeInteger) {
+            throw const ConfigurationFailure('CLOCK_UNTRUSTED');
+          }
+          head['after'] = page.nextAfter;
+          head['observedAt'] = now;
+          await _metadata.record('head').put(txn, head);
+          return List<StoredConfigurationReceipt>.unmodifiable(receipts);
+        }));
+  }
 
   /// Revalidates the original signature against the CURRENT trust ring on every
   /// restoration. Delivery TTL is not configuration lifetime. Removal remains

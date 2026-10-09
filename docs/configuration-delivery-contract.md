@@ -106,4 +106,6 @@ V9 建立交付域表。V10 按 MySQL/H2 vendor 使用 SDK 原始事件登记类
 
 已有证据包含真实 HTTP、数据库事务、Nimbus 签名/验证、设备凭证、目标变更、序列/分页、过期重发、回执顺序/重放及撤销。消息登记测试使用真实 Modulith/JDBC，Kafka 发送采用明确测试替身；JMS 测试调用真实 JmsTemplate，但 ConnectionFactory/Session/Producer 是替身。
 
-真实 Kafka ACK/集群、Artemis/MQTT/ACL、MySQL/OceanBase、正式 EMM、设备 JWS 验证/离线/重启、信任根轮换和高并发没有成功证据。ENFORCE、规则级系统回执、执行补偿/取消、供应商擦除后果确认及全客户端交互继续实施。
+设备接收已有 Dart JOSE/文件恢复、独立 opaque HTTP、有界分页与整页事务、原 ID 回执重放，以及真实 Spring/Dart 联调证据，见[设备接收契约](device-configuration-client-contract.md)。这些结果限于配置接收和保存。
+
+真实 Kafka ACK/集群、Artemis/MQTT/ACL、MySQL/OceanBase 交付域并发、正式 EMM、Android/TV 离线与重启、信任根轮换和高并发仍须专项验收。ENFORCE、规则级系统回执、执行补偿/取消、供应商擦除后果确认及全客户端交互继续实施。

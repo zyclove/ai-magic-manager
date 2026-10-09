@@ -49,6 +49,22 @@ function CopySourceTree([string]$From, [string]$To) {
 foreach ($name in @('backend', 'apps/guardian', 'packages')) { CopySourceTree (Join-Path $source $name) (Join-Path $snapshot $name) }
 $mavenArgs = @('-B', '-f', (Join-Path $snapshot 'backend/pom.xml'), 'verify', '-Dbackend.artifact-name=manager-backend')
 if ($MavenRepository) { $mavenArgs += "-Dmaven.repo.local=$([IO.Path]::GetFullPath($MavenRepository, $context.Repository))" }
+# The Spring HTTP fixture launches Dart directly, so resolve the SDK executable
+# rather than passing a Windows batch wrapper to Java ProcessBuilder. Resolve
+# package dependencies before Maven; a skipped cross-SDK test is not evidence.
+$hasHttpInterop = $hasDevicePolicy -and (Test-Path -LiteralPath (Join-Path $snapshot 'backend/src/test/java/com/aimanager/DeviceConfigurationHttpInteropTest.java'))
+if ($hasHttpInterop) {
+    $dartExecutable = (Get-Command $DartCommand).Source
+    if ($IsWindows -and [IO.Path]::GetExtension($dartExecutable) -in @('.bat', '.cmd')) {
+        $dartExecutable = Join-Path (Split-Path $dartExecutable -Parent) 'cache/dart-sdk/bin/dart.exe'
+    }
+    if (-not (Test-Path -LiteralPath $dartExecutable -PathType Leaf)) { throw 'Device HTTP interoperability requires a directly executable Dart SDK.' }
+    $policyPackage = Join-Path $snapshot 'packages/device_policy'
+    Push-Location -LiteralPath $policyPackage
+    try { Invoke-DeploymentNative $DartCommand @('pub', 'get') (Join-Path $logs 'device-policy-interop-pub-get.log') }
+    finally { Pop-Location }
+    $mavenArgs += "-Ddevice.dart.command=$dartExecutable", "-Ddevice.policy.package=$policyPackage"
+}
 Write-Output 'Verifying backend source snapshot...'
 Invoke-DeploymentNative $MavenCommand $mavenArgs (Join-Path $logs 'backend-verify.log')
 $projects = @('packages/device_operations', 'apps/guardian')
@@ -77,7 +93,10 @@ $guardianContext = Join-Path $releaseRoot 'guardian'
 $null = New-Item -ItemType Directory -Path $backendContext, $guardianContext
 Copy-Item -LiteralPath (Join-Path $snapshot 'backend/target/manager-backend.jar') -Destination (Join-Path $backendContext 'manager-backend.jar')
 Copy-Item -Path (Join-Path $snapshot 'apps/guardian/build/web/*') -Destination $guardianContext -Recurse -Force
-$files = Get-ChildItem -LiteralPath $snapshot -Recurse -File | Where-Object { $_.FullName -notmatch '[\\/](target|build|\.dart_tool)[\\/]' -and $_.Name -notlike '.flutter-plugins*' }
+$files = Get-ChildItem -LiteralPath $snapshot -Recurse -File | Where-Object {
+    $relative = [IO.Path]::GetRelativePath($snapshot, $_.FullName)
+    $relative -notmatch '(^|[\\/])(target|build|\.dart_tool|\.local)[\\/]' -and $_.Name -notlike '.flutter-plugins*'
+}
 $sourceDigests = @($files | Sort-Object FullName | ForEach-Object { @{path=[IO.Path]::GetRelativePath($snapshot, $_.FullName).Replace('\','/'); sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()} })
 $manifest = @{schemaVersion=1; builtAt=[DateTimeOffset]::UtcNow.ToString('O'); publicUrl=$origin; sourceFiles=$sourceDigests;
     artifactRoot=[IO.Path]::GetRelativePath($context.Root, $releaseRoot).Replace('\','/');
