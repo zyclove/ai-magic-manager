@@ -1,8 +1,43 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:guardian/ui/design.dart';
+import 'package:guardian/core/api.dart';
 
 void main() {
+  testWidgets('unknown submission freezes original values for explicit retry',
+      (tester) async {
+    final submissions = <Json>[];
+    await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+            body: Builder(
+                builder: (context) => TextButton(
+                    onPressed: () => formDialog(context,
+                            title: '创建',
+                            fields: const [FieldSpec('name', '名称')],
+                            onSubmit: (value) async {
+                          submissions.add(Map.of(value));
+                          if (submissions.length == 1) {
+                            throw const ApiFailure(0, 'NETWORK_ERROR');
+                          }
+                          return {'id': 'same-result'};
+                        }),
+                    child: const Text('打开'))))));
+    await tester.tap(find.text('打开'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextFormField), '原内容');
+    await tester.tap(find.text('保存'));
+    await tester.pumpAndSettle();
+    expect(tester.widget<TextFormField>(find.byType(TextFormField)).enabled,
+        isFalse);
+    expect(find.text('重试原提交'), findsOneWidget);
+    await tester.tap(find.text('重试原提交'));
+    await tester.pumpAndSettle();
+    expect(submissions, [
+      {'name': '原内容'},
+      {'name': '原内容'}
+    ]);
+    expect(find.byType(AlertDialog), findsNothing);
+  });
   testWidgets(
       'required fields block submission and server errors preserve input',
       (tester) async {

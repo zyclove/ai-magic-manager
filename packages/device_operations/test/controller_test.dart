@@ -8,8 +8,13 @@ class TestJournal implements ExitJournal {
   PendingExit? value;
   bool failWrite = false;
   bool failClear = false;
+  bool failRead = false;
   @override
-  Future<PendingExit?> read(ExitScope scope) async => value;
+  Future<PendingExit?> read(ExitScope scope) async {
+    if (failRead) throw StateError('storage read failed');
+    return value;
+  }
+
   @override
   Future<void> write(ExitScope scope, PendingExit pending) async {
     if (failWrite) throw StateError('disk full');
@@ -90,6 +95,37 @@ Future<void> ready(ExitController c) async {
 }
 
 void main() {
+  test('invalid restored registration cannot enable replay', () async {
+    final journal = TestJournal()
+      ..value = PendingExit(
+          kind: PendingKind.confirm,
+          key: requestKey,
+          registrationId: tenantId,
+          version: 7,
+          createdAt: now,
+          previewId: previewId,
+          previewHash: previewHash);
+    final api = TestGateway();
+    final c = makeController(api, journal);
+    await c.initialize();
+    expect(c.error?.code, 'JOURNAL_INVALID');
+    expect(c.canRetry, false);
+    await c.retryPending();
+    expect(api.confirms, 0);
+  });
+  test('failed reinitialization cannot retain old confirmation authority',
+      () async {
+    final journal = TestJournal();
+    final api = TestGateway();
+    final c = makeController(api, journal);
+    await ready(c);
+    expect(c.canConfirm, true);
+    journal.failRead = true;
+    await c.initialize();
+    expect(c.canConfirm, false);
+    await c.confirm();
+    expect(api.confirms, 0);
+  });
   test('explicit acknowledgement is required', () async {
     final api = TestGateway();
     final c = makeController(api, TestJournal());

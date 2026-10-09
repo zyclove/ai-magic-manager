@@ -22,29 +22,50 @@ http.Response response(Map<String, dynamic> body, {int status = 200}) =>
         headers: {'content-type': 'application/json; charset=utf-8'});
 
 void main() {
-  test('reads subsequent operation pages rather than assuming first page is complete', () async {
-    var count=0;
-    final api=client(MockClient((r) async {
+  test(
+      'reads subsequent operation pages rather than assuming first page is complete',
+      () async {
+    var count = 0;
+    final api = client(MockClient((r) async {
       count++;
-      if(count==1) return response({'items':[operationJson()], 'nextCursor':operationId});
-      expect(r.url.queryParameters['cursor'],operationId);
-      return response({'items':[{...operationJson(),'id':previewId}], 'nextCursor':null});
+      if (count == 1) {
+        return response({
+          'items': [operationJson()],
+          'nextCursor': operationId
+        });
+      }
+      expect(r.url.queryParameters['cursor'], operationId);
+      return response({
+        'items': [
+          {...operationJson(), 'id': previewId}
+        ],
+        'nextCursor': null
+      });
     }));
-    expect((await api.operations(scope())).length,2);
-    expect(count,2);
+    expect((await api.operations(scope())).length, 2);
+    expect(count, 2);
   });
-  test('repeated cursor fails safely rather than fetching an endless history', () async {
-    final api=client(MockClient((_) async => response({'items':[operationJson()], 'nextCursor':operationId})));
-    await expectLater(api.operations(scope()),throwsA(isA<ExitFailure>()));
+  test('repeated cursor fails safely rather than fetching an endless history',
+      () async {
+    final api = client(MockClient((_) async => response({
+          'items': [operationJson()],
+          'nextCursor': operationId
+        })));
+    await expectLater(api.operations(scope()), throwsA(isA<ExitFailure>()));
   });
   test('reads the actual Spring ProblemDetail errorCode field', () async {
     final api = client(MockClient((_) async => response({
-      'type':'about:blank', 'status':401, 'errorCode':'REAUTH_REQUIRED',
-      'messageKey':'error.reauth_required', 'correlationId':'request-456',
-    }, status:401)));
-    await expectLater(api.preview(scope(),7),throwsA(isA<ExitFailure>()
-      .having((e)=>e.code,'code','REAUTH_REQUIRED')
-      .having((e)=>e.correlationId,'correlation','request-456')));
+          'type': 'about:blank',
+          'status': 401,
+          'errorCode': 'REAUTH_REQUIRED',
+          'messageKey': 'error.reauth_required',
+          'correlationId': 'request-456',
+        }, status: 401)));
+    await expectLater(
+        api.preview(scope(), 7),
+        throwsA(isA<ExitFailure>()
+            .having((e) => e.code, 'code', 'REAUTH_REQUIRED')
+            .having((e) => e.correlationId, 'correlation', 'request-456')));
   });
   test('production transport rejects plaintext, query, and userinfo', () {
     for (final root in [

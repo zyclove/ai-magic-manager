@@ -283,6 +283,7 @@ class _EditDialogState extends State<EditDialog> {
   final form = GlobalKey<FormState>();
   final controls = <String, TextEditingController>{};
   final selected = <String, String?>{};
+  Json? pendingValues;
   bool busy = false;
   Object? error;
   @override
@@ -320,9 +321,14 @@ class _EditDialogState extends State<EditDialog> {
         values[f.key] =
             f.numeric ? (v == null || v.isEmpty ? null : int.parse(v)) : v;
       }
-      final result = await widget.onSubmit(values);
+      final submitted = pendingValues ?? values;
+      pendingValues = submitted;
+      final result = await widget.onSubmit(submitted);
       if (mounted) Navigator.pop(context, result ?? values);
     } catch (e) {
+      if (e is! ApiFailure || (e.status != 0 && e.status < 500)) {
+        pendingValues = null;
+      }
       if (mounted) setState(() => error = e);
     } finally {
       if (mounted) setState(() => busy = false);
@@ -347,6 +353,12 @@ class _EditDialogState extends State<EditDialog> {
                               Padding(
                                   padding: const EdgeInsets.only(bottom: 20),
                                   child: Notice(widget.description!)),
+                            if (pendingValues != null && !busy)
+                              const Padding(
+                                  padding: EdgeInsets.only(bottom: 16),
+                                  child: Notice(
+                                      '上次提交结果尚未确认。重试将发送相同内容；离开后请先刷新列表核对结果，避免重复创建。',
+                                      warning: true)),
                             ...widget.fields.map((f) => Padding(
                                 padding: const EdgeInsets.only(bottom: 18),
                                 child: f.options != null
@@ -362,7 +374,7 @@ class _EditDialogState extends State<EditDialog> {
                                                     overflow:
                                                         TextOverflow.ellipsis)))
                                             .toList(),
-                                        onChanged: busy
+                                        onChanged: busy || pendingValues != null
                                             ? null
                                             : (v) => setState(
                                                 () => selected[f.key] = v),
@@ -372,7 +384,7 @@ class _EditDialogState extends State<EditDialog> {
                                             : null)
                                     : TextFormField(
                                         controller: controls[f.key],
-                                        enabled: !busy,
+                                        enabled: !busy && pendingValues == null,
                                         autofocus: f == widget.fields.first,
                                         decoration: InputDecoration(
                                             labelText: f.label,
@@ -415,7 +427,7 @@ class _EditDialogState extends State<EditDialog> {
                         width: 18,
                         height: 18,
                         child: CircularProgressIndicator(strokeWidth: 2))
-                    : Text(widget.submit))
+                    : Text(pendingValues == null ? widget.submit : '重试原提交'))
           ]));
 }
 

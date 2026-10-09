@@ -18,24 +18,32 @@ Map<String, String> options(Iterable<String> keys) =>
 Map<String, String> entityOptions(List<Json> rows, String name) =>
     {for (final r in rows) r['id'] as String: r[name] as String};
 
-Future<void> scheduleEditor(BuildContext context, Session session) =>
-    showDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => ScheduleEditor(session: session));
+Future<void> scheduleEditor(BuildContext context, Session session) {
+  final root = session.root;
+  final timeZone = session.tenant?['timeZone'] as String? ?? 'Asia/Shanghai';
+  return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) =>
+          ScheduleEditor(session: session, root: root, timeZone: timeZone));
+}
 
 class ScheduleEditor extends StatefulWidget {
   final Session session;
   final String root;
-  ScheduleEditor({super.key, required this.session}) : root = session.root;
+  final String timeZone;
+  const ScheduleEditor(
+      {super.key,
+      required this.session,
+      required this.root,
+      required this.timeZone});
   @override
   State<ScheduleEditor> createState() => _ScheduleEditorState();
 }
 
 class _ScheduleEditorState extends State<ScheduleEditor> {
   final name = TextEditingController();
-  late final zone = TextEditingController(
-      text: widget.session.tenant?['timeZone'] ?? 'Asia/Shanghai');
+  late final zone = TextEditingController(text: widget.timeZone);
   final form = GlobalKey<FormState>();
   final days = <String>{...weekdays.take(5)};
   String start = '18:00', end = '20:00';

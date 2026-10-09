@@ -5,17 +5,43 @@ import 'controller_test.dart'
     show TestGateway, TestJournal, makeController, ready;
 import 'fixtures.dart';
 
-Widget host(ExitController c, {double scale = 1}) => MaterialApp(
-    theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF19335C))),
-    home: MediaQuery(
-        data: MediaQueryData(textScaler: TextScaler.linear(scale)),
-        child: Scaffold(
-            body: SingleChildScrollView(
-                child: DeviceExitPanel(controller: c, deviceName: '学习平板')))));
+Widget host(ExitController c,
+        {double scale = 1, Future<void> Function()? reauthenticate}) =>
+    MaterialApp(
+        theme: ThemeData(
+            useMaterial3: true,
+            colorScheme:
+                ColorScheme.fromSeed(seedColor: const Color(0xFF19335C))),
+        home: MediaQuery(
+            data: MediaQueryData(textScaler: TextScaler.linear(scale)),
+            child: Scaffold(
+                body: SingleChildScrollView(
+                    child: DeviceExitPanel(
+                        controller: c,
+                        deviceName: '学习平板',
+                        reauthenticate: reauthenticate)))));
 
 void main() {
+  testWidgets('HTTP 401 offers verification without automatically replaying',
+      (tester) async {
+    var verified = 0;
+    final api = TestGateway()
+      ..confirmFailure = const ExitFailure('AUTHENTICATION_REQUIRED', '需要登录',
+          status: 401, outcomeUnknown: true);
+    final c = makeController(api, TestJournal());
+    await ready(c);
+    await c.confirm();
+    await tester.pumpWidget(host(c, reauthenticate: () async {
+      verified++;
+    }));
+    expect(find.text('重新安全验证'), findsOneWidget);
+    await tester.ensureVisible(find.text('重新安全验证'));
+    await tester.tap(find.text('重新安全验证'));
+    await tester.pump();
+    expect(verified, 1);
+    expect(api.confirms, 1);
+    expect(c.pending, isNotNull);
+  });
   testWidgets('preview is readable and confirmation requires checkbox',
       (tester) async {
     final c = makeController(TestGateway(), TestJournal());

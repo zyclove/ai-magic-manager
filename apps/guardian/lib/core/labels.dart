@@ -89,7 +89,6 @@ const labels = <String, String>{
   'SATURDAY': '周六',
   'SUNDAY': '周日',
   'ONLINE': '近期在线',
-  'STALE': '状态过期',
   'NEVER_SEEN': '尚未连接',
   'OBSERVED': '已观察',
   'RECEIVED': '已接收',

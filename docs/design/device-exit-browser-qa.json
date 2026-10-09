@@ -1,0 +1,24 @@
+{
+  "url": "http://127.0.0.1:8173/?scenario=reported",
+  "title": "设备退出组件验收",
+  "viewports": [
+    "1440x1100",
+    "390x844"
+  ],
+  "browser": "Chrome isolated headless / Playwright 1.59.1",
+  "focusedBefore": {
+    "tag": "FLT-SEMANTICS",
+    "role": "checkbox",
+    "label": "我已了解退出后的影响"
+  },
+  "horizontalOverflow": false,
+  "checks": [
+    "explicit checkbox gate",
+    "keyboard Space acknowledgement",
+    "confirm -> operation",
+    "cancellation warning -> continue waiting",
+    "unknown submission -> replay -> current operation",
+    "mobile unverified report"
+  ],
+  "issues": []
+}

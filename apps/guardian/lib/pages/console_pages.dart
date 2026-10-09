@@ -491,8 +491,7 @@ class ConsoleActions {
                 }),
                 DetailAction('取消注册', (ctx) async {
                   if (await confirmAction(ctx, '取消注册', '此注册凭据将不再可用。')) {
-                    await s.api
-                        .send('DELETE', '$root/enrollments/${r['id']}');
+                    await s.api.send('DELETE', '$root/enrollments/${r['id']}');
                   }
                 }, destructive: true)
               ]
@@ -524,7 +523,8 @@ class ConsoleActions {
               await showDetails(ctx, '设备能力', {
                 '说明': '设备自报权限不等于系统执行能力已经认证。',
                 for (final item in value['items'] as List)
-                  label(item['key']): '${label(item['status'])} · ${label(item['grantStatus'])}\n${label(item['limitationCode'])}\n最近检查：${dateLabel(item['checkedAt'])}'
+                  label(item['key']):
+                      '${label(item['status'])} · ${label(item['grantStatus'])}\n${label(item['limitationCode'])}\n最近检查：${dateLabel(item['checkedAt'])}'
               });
             }
           }),
@@ -538,9 +538,11 @@ class ConsoleActions {
                 '最近上报': dateLabel(value['receivedAt']),
                 '可信程度': label(value['evidenceStatus']),
                 '可见范围': label(value['visibility']),
-                if ((value['applications'] as List).isEmpty) '应用': '尚无可见应用上报，不能据此判断设备未安装应用。',
+                if ((value['applications'] as List).isEmpty)
+                  '应用': '尚无可见应用上报，不能据此判断设备未安装应用。',
                 for (final app in value['applications'] as List)
-                  '${app['displayName']} · ${label(app['profile'])}': '${app['packageName']}\n版本号：${app['versionCode']} · ${app['systemApplication'] == true ? '系统应用' : '普通应用'}'
+                  '${app['displayName']} · ${label(app['profile'])}':
+                      '${app['packageName']}\n版本号：${app['versionCode']} · ${app['systemApplication'] == true ? '系统应用' : '普通应用'}'
               });
             }
           }),
@@ -609,8 +611,7 @@ class ConsoleActions {
         ],
         onSubmit: (v) async => v);
     if (picked == null) return;
-    final p = await s.api.send(
-        'POST', '$root/policies/${draft['id']}/previews',
+    final p = await s.api.send('POST', '$root/policies/${draft['id']}/previews',
         version: draft['revision'],
         body: {
           'deviceIds': [picked['deviceId']]
@@ -624,8 +625,14 @@ class ConsoleActions {
           '有效期': dateLabel(p['expiresAt']),
           '执行支持': p['enforceable'] == true ? '支持执行' : '设备能力不足或执行适配器未配置',
           '目标与检查': (p['targets'] as List).map((t) {
-            final name = devices.where((d) => d['id'] == t['deviceId']).firstOrNull?['displayName'] ?? shortId(t['deviceId']);
-            final rules = (t['rules'] as List).map((r) => '${label(r['kind'])}：${label(r['status'])} · ${label(r['reasonCode'])}').join('\n');
+            final name = devices
+                    .where((d) => d['id'] == t['deviceId'])
+                    .firstOrNull?['displayName'] ??
+                shortId(t['deviceId']);
+            final rules = (t['rules'] as List)
+                .map((r) =>
+                    '${label(r['kind'])}：${label(r['status'])} · ${label(r['reasonCode'])}')
+                .join('\n');
             return '$name · ${label(t['observationStatus'])}\n$rules';
           }).join('\n\n'),
           '发布说明': '仅保存配置不会使设备系统策略生效。发布需近期多因素认证。'
@@ -649,8 +656,10 @@ class ConsoleActions {
                 }) as Json;
             if (inner.mounted) {
               await showDetails(inner, '发布结果', {
-                '状态': label(result['state']), '发布方式': label(result['mode']),
-                '版本': result['sequence'], '发布时间': dateLabel(result['createdAt']),
+                '状态': label(result['state']),
+                '发布方式': label(result['mode']),
+                '版本': result['sequence'],
+                '发布时间': dateLabel(result['createdAt']),
                 '操作编号': result['id']
               });
             }
@@ -678,11 +687,17 @@ class ConsoleActions {
                           trailing: const Icon(Icons.chevron_right),
                           onTap: () async {
                             final rollbackKey = requestId();
-                            await actionDetails(dialog, '历史版本', {
-                                  '版本': r['sequence'], '发布方式': label(r['mode']),
+                            await actionDetails(
+                                dialog,
+                                '历史版本',
+                                {
+                                  '版本': r['sequence'],
+                                  '发布方式': label(r['mode']),
                                   '发布时间': dateLabel(r['createdAt']),
-                                  '规则数': (r['snapshot']['sourceRules'] as List).length,
-                                  '目标设备数': (r['snapshot']['targets'] as List).length,
+                                  '规则数': (r['snapshot']['sourceRules'] as List)
+                                      .length,
+                                  '目标设备数':
+                                      (r['snapshot']['targets'] as List).length,
                                   '版本编号': r['id']
                                 },
                                 reauth: reauth,
@@ -741,8 +756,8 @@ class ConsoleActions {
                   ],
                   initial: {'seconds': r['requestedWindowSeconds']},
                   reauth: reauth,
-                  onSubmit: (v) async => await s.api.send('POST',
-                          '$root/access-requests/${r['id']}/decisions',
+                  onSubmit: (v) async => await s.api.send(
+                          'POST', '$root/access-requests/${r['id']}/decisions',
                           version: r['version'],
                           key: key,
                           body: {
@@ -821,7 +836,6 @@ class ConsoleActions {
       ]);
     }
   }
-
 }
 
 class MembersPage extends StatefulWidget {

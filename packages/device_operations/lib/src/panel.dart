@@ -148,7 +148,8 @@ class _DeviceExitPanelState extends State<DeviceExitPanel> {
                       padding: const EdgeInsets.only(top: 8),
                       child: SelectableText('问题关联编号：${c.error!.correlationId}',
                           style: const TextStyle(fontSize: 12, color: _muted))),
-                if (c.error!.code == 'REAUTH_REQUIRED' &&
+                if ((c.error!.code == 'REAUTH_REQUIRED' ||
+                        c.error!.status == 401) &&
                     widget.reauthenticate != null)
                   TextButton.icon(
                       onPressed: disabled ? null : _reauthenticate,
@@ -169,7 +170,10 @@ class _DeviceExitPanelState extends State<DeviceExitPanel> {
                         color: _ink)),
                 const SizedBox(height: 8),
                 _notice('恢复记录已保留。核对将使用原请求标识，不会创建新的退出请求。', warning: true),
-                if (!c.canRetry && !c.busy)
+                if (c.initialized &&
+                    c.scope.canManage &&
+                    !c.canRetry &&
+                    !c.busy)
                   Padding(
                       padding: const EdgeInsets.only(top: 8),
                       child: _notice('原请求已超出核对期限，或本地时间异常。请查看操作记录并联系管理员，不要重复退出。',

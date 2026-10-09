@@ -16,6 +16,9 @@
 | [签名配置与消息交付](configuration-delivery-contract.md) | 单设备 JWS、持久游标/回执、过期重发、通知登记/重试与验证边界 | 后端、Flutter、Android、QA 与 SRE |
 | [临时访问申请与审批契约](access-request-contract.md) | 实际申请/决定/取消/撤销、窗口/到期、主体/设备/成员失效及执行边界 | 产品、后端、Flutter、Android 与 QA |
 | [设备退出与清理契约](device-deprovision-contract.md) | 后果预览/确认、业务撤销、原密钥清理认证、签名命令/回执、取消/到期与验证边界 | 产品、后端、Flutter、Android、QA 与 SRE |
+| [管理台交付记录](management-console-delivery.md) | 已接入的业务页面、身份联调、交互验证与剩余工作 | 产品、开发、QA 与交付 |
+| [设备退出组件接入契约](device-operations-ui-contract.md) | 共享 Flutter 组件、宿主认证、恢复限制、浏览器证据与截图 | Flutter、后端、Android 与 QA |
+| [2026-10-09 阶段交付](stage-delivery-2026-10-09.md) | 本阶段提交范围、重新验证、仓库配置边界及后续发布门槛 | 全团队 |
 
 ## 阅读顺序与变更规则
 

@@ -53,6 +53,7 @@ class ExitController extends ChangeNotifier {
               .contains(operation!.state));
   bool get canRetry =>
       !_disposed &&
+      _initialized &&
       scope.canManage &&
       !busy &&
       pending != null &&
@@ -60,6 +61,7 @@ class ExitController extends ChangeNotifier {
       clock().difference(pending!.createdAt) < replayWindow;
   bool get canCancel =>
       !_disposed &&
+      _initialized &&
       scope.canManage &&
       !busy &&
       pending == null &&
@@ -109,6 +111,9 @@ class ExitController extends ChangeNotifier {
   }
 
   Future<void> initialize() => _run(() async {
+        _initialized = false;
+        preview = null;
+        acknowledged = false;
         if (!scope.canRead) {
           throw const ExitFailure('SCOPE_DENIED', '当前账号无权查看此设备的退出操作。');
         }

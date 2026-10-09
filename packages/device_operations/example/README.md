@@ -1,16 +1,9 @@
-# device_operations_showcase
+# 设备退出组件验收
 
-A new Flutter project.
+此目录是明确标识的测试夹具页面，不请求业务 API、不持有用户会话、不操作真实设备。生产接入必须使用父目录库和真实管理台的 OIDC 会话。
 
-## Getting Started
+运行 flutter pub get、flutter test、flutter build web --release --web-renderer html --no-web-resources-cdn 后，可用本地静态服务器查看 build/web。
 
-This project is a starting point for a Flutter application.
+场景：后果预览和显式确认；首次提交结果未知后的原键核对；设备自报清理但未经独立验证。夹具恢复记录只保存在内存，不代表浏览器重载或原生存储已经认证。
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+详见 ../../../docs/device-operations-ui-contract.md。

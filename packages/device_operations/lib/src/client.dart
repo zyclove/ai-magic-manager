@@ -62,6 +62,7 @@ class DeviceOperationsClient implements ExitGateway {
   Future<T> _request<T>(
       String method, String path, T Function(Map<String, dynamic>) parse,
       {Map<String, dynamic>? body,
+      Map<String, String>? query,
       int? version,
       String? key,
       bool mutation = false}) async {
@@ -71,9 +72,9 @@ class DeviceOperationsClient implements ExitGateway {
     if (key != null) canonicalId(key);
     Future<T> execute() async {
       final transport = await clientFactory();
-      final request =
-          http.Request(method, apiRoot.replace(path: '${apiRoot.path}$path'))
-            ..headers['Accept'] = 'application/json';
+      final request = http.Request(method,
+          apiRoot.replace(path: '${apiRoot.path}$path', queryParameters: query))
+        ..headers['Accept'] = 'application/json';
       if (version != null) request.headers['If-Match'] = '"$version"';
       if (key != null) request.headers['Idempotency-Key'] = key;
       if (body != null) {
@@ -189,19 +190,47 @@ class DeviceOperationsClient implements ExitGateway {
           '${_path(scope)}/deprovision/operations/${canonicalId(operationId)}',
           (json) => _boundOperation(scope, json, id: operationId));
   @override
-  Future<List<ExitOperation>> operations(ExitScope scope) =>
-      _request('GET', '${_path(scope)}/deprovision/operations', (json) {
+  Future<List<ExitOperation>> operations(ExitScope scope) async {
+    final values = <ExitOperation>[];
+    final seenIds = <String>{}, seenCursors = <String>{};
+    String? cursor;
+    // Bounded traversal: do not silently present partial history as current.
+    for (var page = 0; page < 20; page++) {
+      final result = await _request<(List<ExitOperation>, String?)>(
+          'GET', '${_path(scope)}/deprovision/operations', (json) {
         final items = json['items'];
         if (items is! List || items.length > 100) {
           throw const FormatException('Invalid operation page');
         }
-        return List.unmodifiable(items.map((item) {
+        final next = json['nextCursor'];
+        if (next != null && next is! String) {
+          throw const FormatException('Invalid cursor');
+        }
+        if (next != null) canonicalId(next);
+        final parsed = items.map((item) {
           if (item is! Map<String, dynamic>) {
             throw const FormatException('Invalid operation');
           }
           return _boundOperation(scope, item);
-        }));
-      });
+        }).toList();
+        return (parsed, next as String?);
+      }, query: {'limit': '100', if (cursor != null) 'cursor': cursor});
+      for (final value in result.$1) {
+        if (!seenIds.add(value.id)) {
+          throw const ExitFailure('RESPONSE_INVALID', '操作记录重复，请稍后刷新。');
+        }
+        values.add(value);
+      }
+      cursor = result.$2;
+      if (cursor == null) return List.unmodifiable(values);
+      if (!seenCursors.add(cursor)) {
+        throw const ExitFailure('RESPONSE_INVALID', '操作分页异常，请联系管理员。');
+      }
+    }
+    throw const ExitFailure(
+        'HISTORY_LIMIT_REACHED', '操作历史超过本页处理范围，请联系管理员核对当前任务。');
+  }
+
   @override
   Future<ExitOperation> cancel(ExitScope scope,
           {required String operationId,

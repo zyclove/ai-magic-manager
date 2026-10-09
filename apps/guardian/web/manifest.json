@@ -1,36 +1,19 @@
 {
-    "name": "智能管家",
-    "short_name": "智能管家",
-    "start_url": ".",
-    "display": "standalone",
-    "background_color": "#19335C",
-    "theme_color": "#19335C",
-    "description": "家庭与教育设备管理工作台",
-    "orientation": "any",
-    "prefer_related_applications": false,
-    "icons": [
-        {
-            "src": "icons/Icon-192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        },
-        {
-            "src": "icons/Icon-512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        },
-        {
-            "src": "icons/Icon-maskable-192.png",
-            "sizes": "192x192",
-            "type": "image/png",
-            "purpose": "maskable"
-        },
-        {
-            "src": "icons/Icon-maskable-512.png",
-            "sizes": "512x512",
-            "type": "image/png",
-            "purpose": "maskable"
-        }
-    ]
+  "name": "智能管家",
+  "short_name": "智能管家",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#19335C",
+  "theme_color": "#19335C",
+  "description": "家庭与教育设备管理工作台",
+  "orientation": "any",
+  "prefer_related_applications": false,
+  "icons": [
+    {
+      "src": "icons/manager.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
 }
-

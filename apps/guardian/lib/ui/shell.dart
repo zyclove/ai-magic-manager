@@ -185,10 +185,9 @@ class ConsoleShell extends StatelessWidget {
                 child: SingleChildScrollView(
                     key: ValueKey('${s.tenant?['id']}-$section'),
                     padding: EdgeInsets.all(wide ? 32 : 18),
-                    child: SelectionArea(
-                        child: ConsolePages(
-                            section: section,
-                            key: ValueKey('${s.tenant?['id']}-$section')))))
+                    child: ConsolePages(
+                        section: section,
+                        key: ValueKey('${s.tenant?['id']}-$section'))))
           ]))
         ])));
   }
