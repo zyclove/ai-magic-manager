@@ -1,0 +1,113 @@
+spring:
+  application:
+    name: ai-manager
+  datasource:
+    url: ${DATABASE_URL:jdbc:mysql://localhost:3306/ai_manager?connectionTimeZone=UTC}
+    username: ${DATABASE_USERNAME:ai_manager}
+    password: ${DATABASE_PASSWORD:}
+  flyway:
+    enabled: true
+    locations:
+      - classpath:db/migration
+      - classpath:db/vendor/{vendor}
+  jackson:
+    mapper:
+      allow-coercion-of-scalars: false
+    parser:
+      strict-duplicate-detection: true
+    deserialization:
+      fail-on-unknown-properties: true
+      accept-float-as-int: false
+      fail-on-numbers-for-enums: true
+  modulith:
+    events:
+      completion-mode: DELETE
+      jdbc:
+        schema-initialization:
+          enabled: false
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    producer:
+      acks: all
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      properties:
+        enable.idempotence: true
+        delivery.timeout.ms: 5000
+        request.timeout.ms: 4000
+        max.block.ms: 5000
+  artemis:
+    mode: native
+    broker-url: ${ARTEMIS_BROKER_URL:tcp://localhost:61616?blockOnDurableSend=true&callTimeout=5000}
+    user: ${ARTEMIS_USERNAME:}
+    password: ${ARTEMIS_PASSWORD:}
+springdoc:
+  api-docs:
+    enabled: ${API_DOCS_ENABLED:false}
+    version: OPENAPI_3_1
+  swagger-ui:
+    enabled: ${API_DOCS_ENABLED:false}
+server:
+  port: ${PORT:8080}
+  error:
+    include-message: never
+    include-stacktrace: never
+management:
+  health:
+    jms:
+      enabled: ${ARTEMIS_NOTIFICATIONS_ENABLED:false}
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: never
+manager:
+  lifecycle:
+    preview-lifetime-seconds: ${DEVICE_EXIT_PREVIEW_LIFETIME_SECONDS:300}
+    cleanup-lifetime-seconds: ${DEVICE_CLEANUP_LIFETIME_SECONDS:86400}
+    expiry-job:
+      enabled: ${DEVICE_CLEANUP_EXPIRY_JOB_ENABLED:true}
+      batch-size: ${DEVICE_CLEANUP_EXPIRY_BATCH_SIZE:100}
+      interval-seconds: ${DEVICE_CLEANUP_EXPIRY_INTERVAL_SECONDS:30}
+  approval:
+    request-ttl-seconds: ${ACCESS_REQUEST_TTL_SECONDS:1800}
+    cooldown-seconds: ${ACCESS_REQUEST_COOLDOWN_SECONDS:60}
+    expiry-job:
+      enabled: ${ACCESS_EXPIRY_JOB_ENABLED:true}
+      batch-size: ${ACCESS_EXPIRY_BATCH_SIZE:100}
+      interval-seconds: ${ACCESS_EXPIRY_INTERVAL_SECONDS:30}
+  events:
+    core-threads: ${EVENT_CORE_THREADS:4}
+    max-threads: ${EVENT_MAX_THREADS:8}
+    queue-capacity: ${EVENT_QUEUE_CAPACITY:1000}
+  messaging:
+    retry-seconds: ${NOTIFICATION_RETRY_SECONDS:30}
+    kafka:
+      enabled: ${KAFKA_NOTIFICATIONS_ENABLED:false}
+      topic: ${KAFKA_CONFIGURATION_TOPIC:manager.configuration-changes.v1}
+    artemis:
+      enabled: ${ARTEMIS_NOTIFICATIONS_ENABLED:false}
+  delivery:
+    issuer: ${CONFIGURATION_ISSUER:ai-manager}
+    signing-key-file: ${CONFIGURATION_SIGNING_KEY_FILE:}
+    verification-keys-file: ${CONFIGURATION_VERIFICATION_KEYS_FILE:}
+    delivery-ttl-seconds: ${CONFIGURATION_DELIVERY_TTL_SECONDS:86400}
+  catalog:
+    inventory-max-age-seconds: ${APPLICATION_INVENTORY_MAX_AGE_SECONDS:900}
+  policies:
+    preview-ttl-seconds: ${POLICY_PREVIEW_TTL_SECONDS:300}
+    additional-protected-packages: ${POLICY_ADDITIONAL_PROTECTED_PACKAGES:}
+  devices:
+    enrollment-lifetime-seconds: ${DEVICE_ENROLLMENT_LIFETIME_SECONDS:900}
+    credential-lifetime-seconds: ${DEVICE_CREDENTIAL_LIFETIME_SECONDS:604800}
+    rotation-lifetime-seconds: ${DEVICE_ROTATION_LIFETIME_SECONDS:300}
+    max-pairing-failures: ${DEVICE_MAX_PAIRING_FAILURES:5}
+    max-recovery-attempts: ${DEVICE_MAX_RECOVERY_ATTEMPTS:3}
+    observation-max-age-seconds: ${DEVICE_OBSERVATION_MAX_AGE_SECONDS:180}
+    capability-max-age-seconds: ${DEVICE_CAPABILITY_MAX_AGE_SECONDS:900}
+  security:
+    issuer-uri: ${OIDC_ISSUER_URI:http://localhost:8081/realms/ai-manager}
+    audience: ${OIDC_AUDIENCE:ai-manager-api}
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000}

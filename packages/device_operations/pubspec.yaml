@@ -1,0 +1,19 @@
+name: device_operations
+description: Scoped device exit workflow for the AI Manager Flutter clients.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+  flutter: '>=3.22.0'
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.2
+  crypto: ^3.0.3
+  shared_preferences: ^2.3.2
+  uuid: ^4.4.2
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  shared_preferences_platform_interface: ^2.4.1

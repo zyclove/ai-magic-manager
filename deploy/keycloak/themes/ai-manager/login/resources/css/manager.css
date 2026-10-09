@@ -1,0 +1,19 @@
+:root { color-scheme: light; }
+.login-pf body { background: #f5f7fb; color: #172238; font-family: "Microsoft YaHei", "Noto Sans SC", system-ui, sans-serif; }
+.login-pf-page { padding-top: min(16vh, 150px); }
+#kc-header-wrapper { color: #19335c; font-size: 26px; font-weight: 700; padding-bottom: 28px; text-transform: none; letter-spacing: 1px; }
+.card-pf { border: 1px solid #e2e8f0; border-radius: 14px; box-shadow: 0 14px 48px #19335c0c; padding: 36px 40px; max-width: 490px; }
+#kc-page-title { font-size: 23px; font-weight: 600; margin-bottom: 24px; }
+.form-control { height: 46px; border: 1px solid #d7dfeb; border-radius: 8px; box-shadow: none; font-size: 15px; }
+.form-control:focus { border-color: #19335c; box-shadow: 0 0 0 3px #19335c12; }
+.control-label { margin-bottom: 9px; font-size: 13px; color: #536176; font-weight: 500; }
+.form-group { margin-bottom: 23px; }
+.btn-primary { background: #19335c; border: 0; border-radius: 8px; min-height: 46px; font-size: 15px; box-shadow: none; }
+.btn-primary:hover,.btn-primary:focus { background: #284a79; }
+.pf-c-button { border-radius: 0 8px 8px 0; }
+#kc-locale { top: 30px; }
+#kc-locale ul { border-radius: 8px; box-shadow: 0 6px 24px #19335c18; }
+#kc-locale-dropdown a { color: #67758a; }
+#kc-info-wrapper { background: transparent; border-top: 1px solid #e2e8f0; }
+a { color: #19335c; }
+@media (max-width: 767px) { .login-pf-page { padding: 40px 18px; } .card-pf { padding: 28px 22px; } #kc-header-wrapper { text-align: center; } #kc-locale { top: 15px; right: 16px; } }

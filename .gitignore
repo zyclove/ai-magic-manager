@@ -1,0 +1,8 @@
+**/target/
+**/.dart_tool/
+**/build/
+**/.flutter-plugins*
+.env
+.local/
+*.log
+!**/.env.example
