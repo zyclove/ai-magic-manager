@@ -64,6 +64,20 @@ management:
     health:
       show-details: never
 manager:
+  exports:
+    key-file: ${AUDIT_EXPORT_KEY_FILE:}
+    active-key-id: ${AUDIT_EXPORT_ACTIVE_KEY_ID:}
+    max-rows: ${AUDIT_EXPORT_MAX_ROWS:10000}
+    max-bytes: ${AUDIT_EXPORT_MAX_BYTES:8388608}
+    worker:
+      enabled: ${AUDIT_EXPORT_WORKER_ENABLED:true}
+      interval-seconds: ${AUDIT_EXPORT_WORKER_INTERVAL_SECONDS:5}
+  notifications:
+    retention-days: ${INAPP_NOTIFICATION_RETENTION_DAYS:30}
+    retention-job:
+      enabled: ${INAPP_NOTIFICATION_RETENTION_ENABLED:true}
+      batch-size: ${INAPP_NOTIFICATION_RETENTION_BATCH_SIZE:100}
+      interval-seconds: ${INAPP_NOTIFICATION_RETENTION_INTERVAL_SECONDS:300}
   quota:
     materialization-job:
       enabled: ${QUOTA_MATERIALIZATION_JOB_ENABLED:true}

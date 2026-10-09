@@ -1,0 +1,371 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-09T21:35:31.626791+00:00",
+  "parentHead": "79d509c031d13f07a77b90fb4daa028c1fe9cb3e",
+  "scope": "Frozen V21 approval inbox, audit explorer and V22 encrypted audit exports. Ongoing reports and device-submission work excluded.",
+  "sourceFiles": [
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/AccessRequestChanged.java",
+      "sha256": "bcd649d38818f053916c7b9c10143587e9da64fce34eb078ba998747e058e001",
+      "frozenSourceSha256": "bcd649d38818f053916c7b9c10143587e9da64fce34eb078ba998747e058e001"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/internal/ApprovalService.java",
+      "sha256": "5290f4525235b323e3f688ee8fdd939446d6333438c0e7181a07244d40c7d9fd",
+      "frozenSourceSha256": "5290f4525235b323e3f688ee8fdd939446d6333438c0e7181a07244d40c7d9fd"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/notification/NotificationMaintenance.java",
+      "sha256": "70db31d97bad3e7e5829e863aff1ff78c1e6fc635913fcfa9554f95a4d791977",
+      "frozenSourceSha256": "70db31d97bad3e7e5829e863aff1ff78c1e6fc635913fcfa9554f95a4d791977"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/notification/internal/NotificationController.java",
+      "sha256": "f6b5871c95e0d24ce7043c492c83fb9b3933a5f0d55a8daf0ccdf225365642e1",
+      "frozenSourceSha256": "f6b5871c95e0d24ce7043c492c83fb9b3933a5f0d55a8daf0ccdf225365642e1"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/notification/internal/NotificationService.java",
+      "sha256": "25cc210217ec58a69bdf96f01c078edefd9cbb4a7a0f8a7755fdb37b47bcb985",
+      "frozenSourceSha256": "25cc210217ec58a69bdf96f01c078edefd9cbb4a7a0f8a7755fdb37b47bcb985"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/notification/internal/NotificationRetentionJob.java",
+      "sha256": "d43aba0be3661534a3f933dba5ce5bea6522bb6394dfad2efa445a2be9366700",
+      "frozenSourceSha256": "d43aba0be3661534a3f933dba5ce5bea6522bb6394dfad2efa445a2be9366700"
+    },
+    {
+      "path": "backend/src/main/resources/application.yml",
+      "sha256": "76912b4a238adc787de64a238d2dce3a303ac61e7c0335a340abdfeb87d71168",
+      "frozenSourceSha256": "76912b4a238adc787de64a238d2dce3a303ac61e7c0335a340abdfeb87d71168"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V21__inapp_notifications.sql",
+      "sha256": "f864c48a7e01875001c6e8d3f923eee9deda98e131f9743777eb21f4da372cf3",
+      "frozenSourceSha256": "f864c48a7e01875001c6e8d3f923eee9deda98e131f9743777eb21f4da372cf3"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/NotificationJourneyTest.java",
+      "sha256": "3c9e2bac9a639d197fff09d59f998480286459bd80c6f86c76b442ea760d3cce",
+      "frozenSourceSha256": "3c9e2bac9a639d197fff09d59f998480286459bd80c6f86c76b442ea760d3cce"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/NotificationMigrationTest.java",
+      "sha256": "9e8ccf0ed33186bd693f608ebccabb154e1154f16446a54884e3613472abbcab",
+      "frozenSourceSha256": "9e8ccf0ed33186bd693f608ebccabb154e1154f16446a54884e3613472abbcab"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/TeacherAccessJourneyTest.java",
+      "sha256": "40f57d1ce135031526cc27f99b692f0931fb756f3225a1ba84cd04b34b989d7b",
+      "frozenSourceSha256": "40f57d1ce135031526cc27f99b692f0931fb756f3225a1ba84cd04b34b989d7b"
+    },
+    {
+      "path": "apps/guardian/lib/core/access.dart",
+      "sha256": "2ea1372dbd286d09384fe98644dd768514b74c886bdb0f24cb06b5f1c7ad14b3",
+      "frozenSourceSha256": "2ea1372dbd286d09384fe98644dd768514b74c886bdb0f24cb06b5f1c7ad14b3"
+    },
+    {
+      "path": "apps/guardian/lib/core/notifications.dart",
+      "sha256": "070976f28f8c96db06fa1124f4a9415207afd17952b02c503d258b8ecd3c7fdb",
+      "frozenSourceSha256": "070976f28f8c96db06fa1124f4a9415207afd17952b02c503d258b8ecd3c7fdb"
+    },
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "sha256": "c3b899871af65f28f55832a502776cb95fa087cd36205e292600e20ddecb7ab1",
+      "frozenSourceSha256": "c3b899871af65f28f55832a502776cb95fa087cd36205e292600e20ddecb7ab1"
+    },
+    {
+      "path": "apps/guardian/lib/pages/notifications_page.dart",
+      "sha256": "78b8facd828e4eae5ecb240ee81fb4ad007cd1df38681f655285e0c97b364e91",
+      "frozenSourceSha256": "78b8facd828e4eae5ecb240ee81fb4ad007cd1df38681f655285e0c97b364e91"
+    },
+    {
+      "path": "apps/guardian/lib/ui/design.dart",
+      "sha256": "960f8b36db22a5cb953464fcf5b7cb86b7224019549212ef2c5fa96993440634",
+      "frozenSourceSha256": "960f8b36db22a5cb953464fcf5b7cb86b7224019549212ef2c5fa96993440634"
+    },
+    {
+      "path": "apps/guardian/lib/ui/shell.dart",
+      "sha256": "091ea4155445d5880f23e288123b46ed370953096e62ce58d3b27127a36162d6",
+      "frozenSourceSha256": "091ea4155445d5880f23e288123b46ed370953096e62ce58d3b27127a36162d6"
+    },
+    {
+      "path": "apps/guardian/lib/ui/notifications_view.dart",
+      "sha256": "07c912356d6e5885fcc685570e3b7cb0e009405df88a16aa9e1cdedc3311ecbb",
+      "frozenSourceSha256": "07c912356d6e5885fcc685570e3b7cb0e009405df88a16aa9e1cdedc3311ecbb"
+    },
+    {
+      "path": "apps/guardian/lib/ui/notification_shortcut.dart",
+      "sha256": "264f090aa65e243a396264f536ebb92edef01e2b2d9e9775e51d64e81b458637",
+      "frozenSourceSha256": "264f090aa65e243a396264f536ebb92edef01e2b2d9e9775e51d64e81b458637"
+    },
+    {
+      "path": "apps/guardian/test/access_test.dart",
+      "sha256": "e79c5f172772180f4755d5a8e75823b7c8fdf94aa106a5e42f47adeabc8314c5",
+      "frozenSourceSha256": "e79c5f172772180f4755d5a8e75823b7c8fdf94aa106a5e42f47adeabc8314c5"
+    },
+    {
+      "path": "apps/guardian/test/notifications_test.dart",
+      "sha256": "df473311be176a15e65af1091dd0055599e072dba5228b5bc6722cd8467f0f20",
+      "frozenSourceSha256": "df473311be176a15e65af1091dd0055599e072dba5228b5bc6722cd8467f0f20"
+    },
+    {
+      "path": "apps/guardian/test/widget_test.dart",
+      "sha256": "08c74ac9115d60727973a5ef456cfaae4d049b1c3a939fc6b4a6e91c6215b87a",
+      "frozenSourceSha256": "08c74ac9115d60727973a5ef456cfaae4d049b1c3a939fc6b4a6e91c6215b87a"
+    },
+    {
+      "path": "docs/inapp-notifications-plan.md",
+      "sha256": "eff53e32a2c379e049cf87978b60eaf01320246bb904b6adc8f143c65a675c47",
+      "frozenSourceSha256": "eff53e32a2c379e049cf87978b60eaf01320246bb904b6adc8f143c65a675c47"
+    },
+    {
+      "path": "docs/inapp-notifications-contract.md",
+      "sha256": "95e56264cade500db9fe66cce9778b283f8179669b87007d893607b4f030f573",
+      "frozenSourceSha256": "95e56264cade500db9fe66cce9778b283f8179669b87007d893607b4f030f573"
+    },
+    {
+      "path": "docs/backend-api-status.md",
+      "sha256": "ca3fb70a7eda2c7e61338701f59c1a712bab706bbb78661791edfb4d77adea89",
+      "frozenSourceSha256": "5a0483aea0ad566c08d0fef51172254b67d6bdd2d1199e84c261bca256e46f73"
+    },
+    {
+      "path": "docs/implementation-progress.md",
+      "sha256": "b99788fa51d4c9004a72d4f334170837f708b776fa63edd94687a2ce190a97ba",
+      "frozenSourceSha256": "b99788fa51d4c9004a72d4f334170837f708b776fa63edd94687a2ce190a97ba"
+    },
+    {
+      "path": "docs/management-console-delivery.md",
+      "sha256": "ac576db42317d7641ca22c540325046af4b75364b7358e03eb15832330f0ebe9",
+      "frozenSourceSha256": "592d20a2a341354fb119eaa8844be30a3c05689e51607c8388274be06c1e68cd"
+    },
+    {
+      "path": "docs/README.md",
+      "sha256": "cc086893d6f3fe23a8da46a3b24db79f13b220b7e5ea5af11ea4ba38766627e5",
+      "frozenSourceSha256": "cc086893d6f3fe23a8da46a3b24db79f13b220b7e5ea5af11ea4ba38766627e5"
+    },
+    {
+      "path": "apps/guardian/README.md",
+      "sha256": "ea6ce9a6f6eab050a9ed102a3e72c738f573d252119b52cc1e151ab2b9ea07f3",
+      "frozenSourceSha256": "5a1cf889adf125d48dc4a6d4eb3852831954da8a15f31a4cbeb66f8ebe0a3906"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/AuditExplorer.java",
+      "sha256": "26f0fa967e20180db9829c0d8c27dbe54671774a1408619533d7337fa49c8f83",
+      "frozenSourceSha256": "48297228b65d542d2e6ac325401f9fbb9208f817eca940d128092b8e16bb876f"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/AuditExplorerTest.java",
+      "sha256": "10e7677a3f2bd86311085293450af7340c6a9c3f9eda2fbbd7bd91263110a750",
+      "frozenSourceSha256": "10e7677a3f2bd86311085293450af7340c6a9c3f9eda2fbbd7bd91263110a750"
+    },
+    {
+      "path": "apps/guardian/lib/core/audit.dart",
+      "sha256": "d4aba2276bc56fd246ae78e4318696b44a5b4479393b12bb8d3a8feb2cc63db0",
+      "frozenSourceSha256": "d4aba2276bc56fd246ae78e4318696b44a5b4479393b12bb8d3a8feb2cc63db0"
+    },
+    {
+      "path": "apps/guardian/lib/pages/audit_page.dart",
+      "sha256": "c0d822718e139e3d04a31b6b1886a6958588609b2de400074e6dc20f4a6edb17",
+      "frozenSourceSha256": "c0d822718e139e3d04a31b6b1886a6958588609b2de400074e6dc20f4a6edb17"
+    },
+    {
+      "path": "apps/guardian/lib/ui/audit_view.dart",
+      "sha256": "de75674dbb9c1106a0ac770f36ff532c1641bee073191b7c30c60d4a21a5f3ae",
+      "frozenSourceSha256": "de75674dbb9c1106a0ac770f36ff532c1641bee073191b7c30c60d4a21a5f3ae"
+    },
+    {
+      "path": "apps/guardian/test/audit_test.dart",
+      "sha256": "9c3067911062675c6408ad73f3e6ff98bda154c31298f5b15380294b00afe7de",
+      "frozenSourceSha256": "9c3067911062675c6408ad73f3e6ff98bda154c31298f5b15380294b00afe7de"
+    },
+    {
+      "path": "docs/audit-explorer-plan.md",
+      "sha256": "d38b9858af797202be62eda3ca9afa2a3a42bd7aa43b7544828b5c1f1823329b",
+      "frozenSourceSha256": "d38b9858af797202be62eda3ca9afa2a3a42bd7aa43b7544828b5c1f1823329b"
+    },
+    {
+      "path": "docs/audit-explorer-contract.md",
+      "sha256": "a319c64a8eb0e2e0f78a2796c08820f8c733561d68073f6d93abd253aa89f2d2",
+      "frozenSourceSha256": "a319c64a8eb0e2e0f78a2796c08820f8c733561d68073f6d93abd253aa89f2d2"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/audit/AuditSelection.java",
+      "sha256": "868adf84f27741f44ca6d197a2d1526afeb355d0d4935897e93b11fcad573021",
+      "frozenSourceSha256": "868adf84f27741f44ca6d197a2d1526afeb355d0d4935897e93b11fcad573021"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/audit/AuditService.java",
+      "sha256": "ed92ad4eefde432cb564bbc8f9054e88b4df15a6c34452093576e8714a616f94",
+      "frozenSourceSha256": "ed92ad4eefde432cb564bbc8f9054e88b4df15a6c34452093576e8714a616f94"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/reporting/ExportMaintenance.java",
+      "sha256": "1776f2108c3d5ae7788a827a15021078a48455cce7e2ad5f47d21ba629a644bc",
+      "frozenSourceSha256": "1776f2108c3d5ae7788a827a15021078a48455cce7e2ad5f47d21ba629a644bc"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/reporting/internal/AuditExportController.java",
+      "sha256": "2ed2238c358c732f2587b71506144e7f9d1c4eee31d71538b3003fc14c191edf",
+      "frozenSourceSha256": "2ed2238c358c732f2587b71506144e7f9d1c4eee31d71538b3003fc14c191edf"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/reporting/internal/AuditExportService.java",
+      "sha256": "1432c500915ff1f55f08b5d0ce2d74dc91b195a6cece282a0a649b0694e91cae",
+      "frozenSourceSha256": "1432c500915ff1f55f08b5d0ce2d74dc91b195a6cece282a0a649b0694e91cae"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/reporting/internal/ExportCipher.java",
+      "sha256": "a80e0d402f9da602605eb16865667072e890855781f897159975f2650153ea0b",
+      "frozenSourceSha256": "a80e0d402f9da602605eb16865667072e890855781f897159975f2650153ea0b"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/reporting/internal/ExportSchedule.java",
+      "sha256": "e02a7ec00f41c794fdb66222a7060778038040882af172b1cbeecf01588d1630",
+      "frozenSourceSha256": "e02a7ec00f41c794fdb66222a7060778038040882af172b1cbeecf01588d1630"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/reporting/internal/ExportStore.java",
+      "sha256": "1767f8d26913233a7f186d0c59f0b689af5fa763136160c292b824908aafdf12",
+      "frozenSourceSha256": "1767f8d26913233a7f186d0c59f0b689af5fa763136160c292b824908aafdf12"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/reporting/internal/ExportWorker.java",
+      "sha256": "c6c3d5cb052d49e99db6ee89686fa6c9924a9525c4fd7dd20e3befb07a8097ef",
+      "frozenSourceSha256": "c6c3d5cb052d49e99db6ee89686fa6c9924a9525c4fd7dd20e3befb07a8097ef"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V22__audit_exports.sql",
+      "sha256": "63bab99fcfe93da99686bb13dd6dcd251f9003372c1f28e9ee491dca108774c9",
+      "frozenSourceSha256": "63bab99fcfe93da99686bb13dd6dcd251f9003372c1f28e9ee491dca108774c9"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/AuditExportJourneyTest.java",
+      "sha256": "f8dd9bcf944242b6400e126dae61e17d912eb2ac8147905baae3a22a1fdbef14",
+      "frozenSourceSha256": "f8dd9bcf944242b6400e126dae61e17d912eb2ac8147905baae3a22a1fdbef14"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/AuditExportMigrationTest.java",
+      "sha256": "b880dddec319f56596eed68b22660eac473ebd375ad15f9c07e683bed339b93e",
+      "frozenSourceSha256": "b880dddec319f56596eed68b22660eac473ebd375ad15f9c07e683bed339b93e"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/reporting/internal/ExportHeadConcurrencyTest.java",
+      "sha256": "e64112abffeebf189e361b57d922950a87215887c9a042d83a0540721e5f283b",
+      "frozenSourceSha256": "e64112abffeebf189e361b57d922950a87215887c9a042d83a0540721e5f283b"
+    },
+    {
+      "path": "apps/guardian/lib/core/api.dart",
+      "sha256": "c0a27226ecf56ac4aac5076da1f65e9123051309a5f59ae469bdf16fa63eda78",
+      "frozenSourceSha256": "c0a27226ecf56ac4aac5076da1f65e9123051309a5f59ae469bdf16fa63eda78"
+    },
+    {
+      "path": "apps/guardian/lib/core/session.dart",
+      "sha256": "08801f2591b7cfff8aa10326849fd7ea779bfdb6b3668f2c2a9d053c6c4e1b13",
+      "frozenSourceSha256": "08801f2591b7cfff8aa10326849fd7ea779bfdb6b3668f2c2a9d053c6c4e1b13"
+    },
+    {
+      "path": "apps/guardian/lib/core/audit_exports.dart",
+      "sha256": "c2b85e97c31bff541dbba2560f9b4a175f609711786ceaaf09592077a104ac52",
+      "frozenSourceSha256": "c2b85e97c31bff541dbba2560f9b4a175f609711786ceaaf09592077a104ac52"
+    },
+    {
+      "path": "apps/guardian/lib/main.dart",
+      "sha256": "a1a1221bb89b86ae2d29d648594822d8991478d24c4ad2109437527322de0c1b",
+      "frozenSourceSha256": "a1a1221bb89b86ae2d29d648594822d8991478d24c4ad2109437527322de0c1b"
+    },
+    {
+      "path": "apps/guardian/lib/pages/audit_exports_page.dart",
+      "sha256": "7fb812f27ebf79301743a83c8664141985c747829154e63e65a78b0fb7fb01c7",
+      "frozenSourceSha256": "7fb812f27ebf79301743a83c8664141985c747829154e63e65a78b0fb7fb01c7"
+    },
+    {
+      "path": "apps/guardian/lib/ui/audit_exports_view.dart",
+      "sha256": "977a0b82101c834784af284f02c4481268e4746c11f0f63ec74f9685f776a7af",
+      "frozenSourceSha256": "977a0b82101c834784af284f02c4481268e4746c11f0f63ec74f9685f776a7af"
+    },
+    {
+      "path": "apps/guardian/lib/ui/export_create_dialog.dart",
+      "sha256": "e4808a55f80fea2dfe570f1f5c570f2ce9de2d208d07a8674844d162c0f145ab",
+      "frozenSourceSha256": "e4808a55f80fea2dfe570f1f5c570f2ce9de2d208d07a8674844d162c0f145ab"
+    },
+    {
+      "path": "apps/guardian/test/audit_exports_test.dart",
+      "sha256": "23c6d00d99254c3d4d1578430ca3b281f80ef502b952ced512fc489f1ea4e03b",
+      "frozenSourceSha256": "23c6d00d99254c3d4d1578430ca3b281f80ef502b952ced512fc489f1ea4e03b"
+    },
+    {
+      "path": "docs/audit-export-plan.md",
+      "sha256": "09d8c1b6f7e4efcff7860e8d942bc9d5a87abc1310bcee7744b98e2595d0b822",
+      "frozenSourceSha256": "09d8c1b6f7e4efcff7860e8d942bc9d5a87abc1310bcee7744b98e2595d0b822"
+    },
+    {
+      "path": "docs/audit-export-contract.md",
+      "sha256": "8213fd01a81e6f031b09a0d156f6160763e76e9a4264df6a00de64852d7381d6",
+      "frozenSourceSha256": "8213fd01a81e6f031b09a0d156f6160763e76e9a4264df6a00de64852d7381d6"
+    }
+  ],
+  "frozenManifests": [
+    {
+      "path": ".local/commit-ready-v21.json",
+      "sha256": "ea876cec0f330f66f916533533aa7cdcee941dc96d910bf3a80aedd3bdcf9803"
+    },
+    {
+      "path": ".local/commit-ready-audit.json",
+      "sha256": "2758e957fccb87cd65f3771a84e8fa9483d7aa2aeebcf8b19dfddeb28b56da79"
+    },
+    {
+      "path": ".local/commit-ready-export.json",
+      "sha256": "4794207d226746561021f47bde5b18fd033e7f6aed752ecc51246ffc3277e61f"
+    }
+  ],
+  "freshVerification": {
+    "backend": {
+      "tests": 301,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "guardianTests": 84,
+    "guardianAnalysis": "No issues found",
+    "guardianWebReleaseBuild": true,
+    "logs": {
+      "v22-review-backend.log": {
+        "path": ".local/v22-review-backend.log",
+        "sha256": "0e5a8294576cbf58a8057270b0b5d458cc7e69ecb26f59b1f9fbc3caf4078506"
+      },
+      "v22-review-guardian-tests.log": {
+        "path": ".local/v22-review-guardian-tests.log",
+        "sha256": "47386a1cef67b1a2ddf06f749edd1a642c93ea4047fa1afd9df4d90ca5e43249"
+      },
+      "v22-review-guardian-analysis.log": {
+        "path": ".local/v22-review-guardian-analysis.log",
+        "sha256": "733902dbd8aca65c201ac0c67cf7ec187bc14872a13fbd9cdd59d7ed755a853e"
+      },
+      "v22-review-guardian-build.log": {
+        "path": ".local/v22-review-guardian-build.log",
+        "sha256": "920f268454a467f37b99bc7f3b849cd77b4ddbeca412190fb63042db83ccabb8"
+      }
+    }
+  },
+  "priorMysqlEvidence": [
+    {
+      "path": ".local/audit-export-mysql-final.log",
+      "sha256": "4277397839a4ec237523474872d6a2852784be764ea35eee038b91644ee60fe2",
+      "execution": "Previously executed by coordinated task, frozen manifest/source matched; not reexecuted in this review"
+    },
+    {
+      "path": ".local/audit-export-migration-mysql.log",
+      "sha256": "cbd50a5988d9d7b9bab658836ef2c7fb8cf21bfa3cd0c8b046f50051b9dcd635",
+      "execution": "Previously executed by coordinated task, frozen manifest/source matched; not reexecuted in this review"
+    }
+  ],
+  "workingTreePreservation": "Only frozen blobs are staged; current report edits remain in the working tree. Original manifests unchanged.",
+  "deployment": "No running services updated or stopped by this phase; coordinated task owns deployment.",
+  "limitations": [
+    "No new native device enforcement or real adult OTP write was certified.",
+    "Report aggregation and device-submission code are excluded.",
+    "Existing manifest limitations for live permission dialogs, MFA drafts, data retention and backup erasure remain applicable.",
+    "Global capacity, OceanBase certification and complete product readiness are not proven."
+  ]
+}

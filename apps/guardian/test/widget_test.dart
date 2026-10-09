@@ -4,6 +4,46 @@ import 'package:guardian/ui/design.dart';
 import 'package:guardian/core/api.dart';
 
 void main() {
+  testWidgets('detail facts have explicit readable accessibility labels',
+      (tester) async {
+    final semantics = tester.ensureSemantics();
+    await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+            body: Builder(
+                builder: (context) => TextButton(
+                    onPressed: () =>
+                        actionDetails(context, '申请详情', {'状态': '已撤销'}),
+                    child: const Text('打开'))))));
+    await tester.tap(find.text('打开'));
+    await tester.pumpAndSettle();
+    expect(find.bySemanticsLabel('状态：已撤销'), findsOneWidget);
+    semantics.dispose();
+  });
+  testWidgets('live access loss removes details and mutation actions',
+      (tester) async {
+    final allowed = ValueNotifier(true);
+    await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+            body: Builder(
+                builder: (context) => TextButton(
+                    onPressed: () => actionDetails(
+                        context, '申请详情', {'理由': '私有申请理由'},
+                        actions: [DetailAction('批准申请', (_) async {})],
+                        accessChanges: allowed,
+                        hasAccess: () => allowed.value),
+                    child: const Text('打开'))))));
+    await tester.tap(find.text('打开'));
+    await tester.pumpAndSettle();
+    expect(find.text('私有申请理由'), findsOneWidget);
+    allowed.value = false;
+    await tester.pumpAndSettle();
+    expect(find.text('私有申请理由'), findsNothing);
+    expect(find.text('批准申请'), findsNothing);
+    expect(find.text('工作空间或权限已变化'), findsOneWidget);
+    await tester.tap(find.text('关闭'));
+    await tester.pumpAndSettle();
+    allowed.dispose();
+  });
   testWidgets('unknown submission freezes original values for explicit retry',
       (tester) async {
     final submissions = <Json>[];

@@ -14,10 +14,13 @@ import '../ui/member_editor.dart';
 import '../ui/access_request_dialog.dart';
 import 'members_page.dart';
 import 'classes_page.dart';
+import 'audit_page.dart';
+import 'audit_exports_page.dart';
 import 'editors.dart';
 import 'device_exit_dialog.dart';
 import 'quota_page.dart';
 import 'ownership_page.dart';
+import 'notifications_page.dart';
 
 class ConsolePages extends StatelessWidget {
   final String section;
@@ -87,6 +90,12 @@ class ConsolePages extends StatelessWidget {
       ]);
     }
     if (section == 'classes') return ClassesPage(session: s);
+    if (section == 'notifications') {
+      return NotificationsPage(
+          key: ValueKey('${s.root}-${s.role}'),
+          session: s,
+          onOpen: (id) => actions.approvalDetails({'id': id}));
+    }
     ResourcePage resource(
             {required String title,
             required String subtitle,
@@ -262,27 +271,11 @@ class ConsolePages extends StatelessWidget {
       case 'ownership':
         return OwnershipPage(session: s);
       case 'audit':
-        return resource(
-            title: '审计日志',
-            subtitle: '追踪工作空间中的管理操作与资源变更。',
-            path: 'audit-events',
-            columns: [
-              ColumnSpec('操作', (r) => Text(label(r['action']))),
-              ColumnSpec('资源', (r) => Text(shortId(r['resourceId']))),
-              ColumnSpec('操作者', (r) => Text(shortId(r['actorId']))),
-              ColumnSpec('时间', (r) => Text(dateLabel(r['occurredAt'])))
-            ],
-            open: (r) => showDetails(context, '审计事件', {
-                  '操作': label(r['action']),
-                  '资源编号': r['resourceId'],
-                  '操作者': r['actorId'],
-                  '时间': dateLabel(r['occurredAt']),
-                  '关联编号': r['correlationId'],
-                  '事件编号': r['id']
-                }),
-            empty: '暂无活动记录',
-            description: '新的管理操作将在这里留下记录。',
-            notice: '列表按资源游标稳定分页；记录时间以每条事件的发生时间为准。');
+        return AuditExplorerPage(
+            key: ValueKey('audit-${s.root}-${s.role}'), session: s);
+      case 'exports':
+        return AuditExportsPage(
+            key: ValueKey('exports-${s.root}-${s.role}'), session: s);
       case 'settings':
         return SettingsPage(session: s, actions: actions);
       default:
@@ -542,7 +535,8 @@ class ConsoleActions {
 
   Future<void> deviceDetails(Json row) async {
     final workspace = root;
-    final r = await s.api.send('GET', '$workspace/devices/${row['id']}') as Json;
+    final r =
+        await s.api.send('GET', '$workspace/devices/${row['id']}') as Json;
     if (!context.mounted || s.root != workspace) return;
     await actionDetails(
         context,
@@ -802,12 +796,21 @@ class ConsoleActions {
 
   Future<void> approvalDetails(Json row) async {
     final workspace = root;
+    final role = s.role;
+    bool current() =>
+        s.authenticated &&
+        s.tenant != null &&
+        s.root == workspace &&
+        s.role == role &&
+        s.canOpen('approvals');
+    if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
     final cancelKey = requestId();
     final r = await s.api.send('GET', '$workspace/access-requests/${row['id']}')
         as Json;
     final delivery = await s.api.send(
         'GET', '$workspace/access-requests/${row['id']}/delivery') as Json;
-    if (!context.mounted || s.root != workspace) return;
+    if (!context.mounted) return;
+    if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
     await actionDetails(
         context,
         '临时访问申请',
@@ -839,6 +842,8 @@ class ConsoleActions {
           '执行状态': label(r['executionState']),
           '回执说明': '当前尚未接入设备例外执行。接收或保存回执仅表示文档状态；下载与重试不会延长原批准截止时间。'
         },
+        accessChanges: s,
+        hasAccess: current,
         reauth: reauth,
         actions: [
           if (['TEACHER', 'CHILD'].contains(s.role) && r['state'] == 'PENDING')

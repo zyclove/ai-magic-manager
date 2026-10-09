@@ -2,6 +2,13 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:guardian/core/access.dart';
 
 void main() {
+  test('notification navigation includes requesters and excludes auditors', () {
+    for (final role in ['OWNER', 'GUARDIAN', 'ORG_ADMIN', 'TEACHER', 'CHILD']) {
+      expect(canOpenSection(role, 'notifications'), isTrue, reason: role);
+    }
+    expect(canOpenSection('AUDITOR', 'notifications'), isFalse);
+    expect(canOpenSection('', 'notifications'), isFalse);
+  });
   test('role navigation mirrors restricted resources', () {
     expect(canOpenSection('AUDITOR', 'subjects'), isFalse);
     expect(canOpenSection('AUDITOR', 'devices'), isFalse);

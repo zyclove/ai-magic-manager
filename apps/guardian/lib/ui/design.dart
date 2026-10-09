@@ -499,11 +499,29 @@ class DetailAction {
 
 Future<void> actionDetails(
         BuildContext context, String title, Map<String, dynamic> values,
-        {List<DetailAction> actions = const [], VoidCallback? reauth}) =>
+        {List<DetailAction> actions = const [],
+        VoidCallback? reauth,
+        Listenable? accessChanges,
+        bool Function()? hasAccess}) =>
     showDialog<void>(
         context: context,
         barrierDismissible: false,
-        builder: (_) => _ActionDetails(title, values, actions, reauth));
+        builder: (dialogContext) {
+          Widget content() => hasAccess != null && !hasAccess()
+              ? AlertDialog(
+                  title: const Text('工作空间或权限已变化'),
+                  content: const Text('已隐藏原申请内容。请关闭窗口，在当前工作空间重新打开。'),
+                  actions: [
+                      TextButton(
+                          onPressed: () => Navigator.pop(dialogContext),
+                          child: const Text('关闭'))
+                    ])
+              : _ActionDetails(title, values, actions, reauth);
+          return accessChanges == null
+              ? content()
+              : AnimatedBuilder(
+                  animation: accessChanges, builder: (_, __) => content());
+        });
 
 class _ActionDetails extends StatefulWidget {
   final String title;
@@ -547,17 +565,21 @@ class _ActionDetailsState extends State<_ActionDetails> {
                       children: [
                     ...widget.values.entries.map((e) => Padding(
                         padding: const EdgeInsets.symmetric(vertical: 9),
-                        child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(e.key,
-                                  style: const TextStyle(
-                                      fontSize: 12, color: muted)),
-                              const SizedBox(height: 4),
-                              SelectableText(e.value?.toString() ?? '—',
-                                  style: const TextStyle(
-                                      fontSize: 14, height: 1.6))
-                            ]))),
+                        child: Semantics(
+                            label: '${e.key}：${e.value?.toString() ?? '—'}',
+                            child: ExcludeSemantics(
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                  Text(e.key,
+                                      style: const TextStyle(
+                                          fontSize: 12, color: muted)),
+                                  const SizedBox(height: 4),
+                                  SelectableText(e.value?.toString() ?? '—',
+                                      style: const TextStyle(
+                                          fontSize: 14, height: 1.6))
+                                ]))))),
                     if (error != null)
                       FailureView(error!, reauth: widget.reauth)
                   ]))),

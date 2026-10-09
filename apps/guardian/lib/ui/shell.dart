@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../core/session.dart';
+import '../core/notifications.dart';
 import '../core/labels.dart';
 import '../pages/console_pages.dart';
 import 'design.dart';
+import 'notification_shortcut.dart';
 
 const destinations = [
   ('overview', '工作台', Icons.space_dashboard_outlined),
@@ -16,15 +18,30 @@ const destinations = [
   ('quota', '共享额度', Icons.timelapse_outlined),
   ('policies', '策略中心', Icons.shield_outlined),
   ('approvals', '访问审批', Icons.task_alt_outlined),
+  ('notifications', '通知中心', Icons.notifications_none_outlined),
   ('members', '成员与邀请', Icons.group_outlined),
   ('ownership', '所有者交接', Icons.swap_horiz_outlined),
   ('audit', '审计日志', Icons.receipt_long_outlined),
+  ('exports', '导出任务', Icons.file_download_outlined),
   ('settings', '设置', Icons.settings_outlined),
 ];
 
 class ConsoleShell extends StatelessWidget {
   final String section;
   const ConsoleShell({super.key, required this.section});
+  NotificationRepository notificationRepository(Session session) {
+    final root = session.root, role = session.role;
+    return NotificationRepository(
+        api: session.api,
+        root: root,
+        current: () =>
+            session.authenticated &&
+            session.tenant != null &&
+            session.root == root &&
+            session.role == role &&
+            notificationRoles.contains(role));
+  }
+
   Widget navigation(BuildContext context, Session s, bool drawer) => Container(
       width: 232,
       color: Colors.white,
@@ -137,7 +154,7 @@ class ConsoleShell extends StatelessWidget {
                         constraints: BoxConstraints(
                             maxWidth: wide
                                 ? 280
-                                : (MediaQuery.sizeOf(context).width - 156)
+                                : (MediaQuery.sizeOf(context).width - 204)
                                     .clamp(100, 280)
                                     .toDouble()),
                         child: DropdownButtonHideUnderline(
@@ -166,6 +183,11 @@ class ConsoleShell extends StatelessWidget {
                                   }
                                 }))),
                   if (!wide) const Spacer(),
+                  if (s.tenant != null && s.canOpen('notifications'))
+                    NotificationShortcut(
+                        key: ValueKey('notifications-${s.root}-${s.role}'),
+                        repository: notificationRepository(s),
+                        onOpen: () => context.go('/notifications')),
                   const SizedBox(width: 12),
                   PopupMenuButton<String>(
                       tooltip: '账户',

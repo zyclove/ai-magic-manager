@@ -23,14 +23,26 @@ class GuardianApp extends StatefulWidget {
 }
 
 class _GuardianAppState extends State<GuardianApp> {
-  late final router = GoRouter(routes: [
-    GoRoute(path: '/', builder: (_, __) => const Entry('overview')),
-    GoRoute(
-        path: '/auth/callback', builder: (_, __) => const Entry('overview')),
-    GoRoute(
-        path: '/:section',
-        builder: (_, s) => Entry(s.pathParameters['section']!))
-  ], errorBuilder: (_, __) => const Entry('overview'));
+  late final router = GoRouter(
+      refreshListenable: context.read<Session>(),
+      redirect: (_, state) {
+        final session = context.read<Session>();
+        return state.uri.path == '/auth/callback' &&
+                session.ready &&
+                session.authenticated
+            ? session.loginReturnPath
+            : null;
+      },
+      routes: [
+        GoRoute(path: '/', builder: (_, __) => const Entry('overview')),
+        GoRoute(
+            path: '/auth/callback',
+            builder: (_, __) => const Entry('overview')),
+        GoRoute(
+            path: '/:section',
+            builder: (_, s) => Entry(s.pathParameters['section']!))
+      ],
+      errorBuilder: (_, __) => const Entry('overview'));
   @override
   Widget build(BuildContext context) => MaterialApp.router(
       title: '智能管家 · 管理工作台',

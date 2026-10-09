@@ -135,3 +135,7 @@
 - 最终 Flutter 31 项、analyze、HTML release 构建通过。V19 发布包 236 项后端、38 项真实 MySQL 专项通过。真实管理员登录、班级列表 200、密码会话 MFA 拒绝提示和未变更列表通过。
 - 最终浏览器夹具 8 次写入、0 页面异常；截图包括 classes-list-desktop-fixture.png、classes-roster-desktop-fixture.png、classes-member-multiselect-desktop-fixture.png、classes-transfer-conflict-fixture.png、classes-roster-mobile-fixture.png、classes-teacher-mobile-fixture.png。真实界面为 classes-live-desktop.png 与 classes-live-mfa-mobile.png。
 - 本地后端已更新 V19，前端 3000/后端 8082 可用。真实 OTP 敏感成功写入、教师申请、课堂/设备组与其他剩余范围继续实施；不得将浏览器夹具当作生产写入或整个平台完成证据。
+
+## 站内通知中心增量（2026-10-09）
+
+已接入顶部未读提示与通知中心、全部/未读筛选、分页、当前页/逐条已读、原选项重试和最新申请详情。主详情在会话角色/工作空间变化时隐藏；字段有明确辅助访问标签。最终前端 70 项、静态分析、HTML 构建及桌面/手机浏览器流程通过，已部署到 3000；真实管理员三个工作空间读取正常。当前真实收件箱为空，未用夹具填充业务数据。见[通知契约](inapp-notifications-contract.md)与[验证及运行记录](inapp-notifications-plan.md)。

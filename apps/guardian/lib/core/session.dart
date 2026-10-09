@@ -18,6 +18,7 @@ class Session extends ChangeNotifier {
   Json? tenant;
   String role = '';
   bool ready = false;
+  String loginReturnPath = '/';
   Object? error;
   final _selection = SelectionGeneration();
   late final Api api = Api(authenticatedClient);
@@ -61,7 +62,8 @@ class Session extends ChangeNotifier {
             .handleAuthorizationResponse(uri.queryParameters)
             .timeout(const Duration(seconds: 30));
         _save(_client!.credentials);
-        html.window.history.replaceState(null, '', '/');
+        loginReturnPath = trustedReturnPath(pending['returnPath'] as String?);
+        html.window.history.replaceState(null, '', loginReturnPath);
       } else {
         final saved = html.window.sessionStorage['ai-manager.session'];
         if (saved != null) {
@@ -94,6 +96,7 @@ class Session extends ChangeNotifier {
     html.window.sessionStorage['ai-manager.pkce'] = jsonEncode({
       'verifier': verifier,
       'state': state,
+      'returnPath': trustedReturnPath(html.window.location.pathname),
       'created': DateTime.now().millisecondsSinceEpoch
     });
     final grant = _grant(verifier);

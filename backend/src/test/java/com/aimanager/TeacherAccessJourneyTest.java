@@ -653,6 +653,11 @@ class TeacherAccessJourneyTest {
     var low = request(s, teachers.get(1), true, "low");
     String highId = "ffffffff-ffff-ffff-ffff-ffffffffffff",
         lowId = "00000000-0000-0000-0000-000000000001";
+    // This deterministic lock-order fixture renames immutable request IDs. Preserve dependent
+    // notification facts explicitly; production commands never rename a request primary key.
+    var notices =
+        db.queryForList("SELECT * FROM notification_events WHERE tenant_id=?", s.tenant());
+    db.update("DELETE FROM notification_events WHERE tenant_id=?", s.tenant());
     db.update(
         "UPDATE access_requests SET id=? WHERE tenant_id=? AND id=?",
         highId,
@@ -663,6 +668,22 @@ class TeacherAccessJourneyTest {
         lowId,
         s.tenant(),
         low.path("id").asText());
+    for (var notice : notices) {
+      String renamed = notice.get("request_id").equals(high.path("id").asText()) ? highId : lowId;
+      db.update(
+          "INSERT INTO"
+              + " notification_events(tenant_id,id,request_id,subject_id,device_id,requester_actor_key,request_version,state,occurred_at)"
+              + " VALUES(?,?,?,?,?,?,?,?,?)",
+          notice.get("tenant_id"),
+          notice.get("id"),
+          renamed,
+          notice.get("subject_id"),
+          notice.get("device_id"),
+          notice.get("requester_actor_key"),
+          notice.get("request_version"),
+          notice.get("state"),
+          notice.get("occurred_at"));
+    }
     String reader = "reader-" + UUID.randomUUID();
     db.update(
         "INSERT INTO tenant_members(tenant_id,actor_id,actor_key,role) VALUES(?,?,?,'AUDITOR')",

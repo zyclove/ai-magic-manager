@@ -17,6 +17,11 @@ class ApiFailure implements Exception {
   const ApiFailure(this.status, this.code, [this.correlationId]);
   String get message => switch (code) {
         'REAUTH_REQUIRED' => '此操作需要近期多因素认证。请完成安全验证后重试。',
+        'EXPORT_ARTIFACT_UNAVAILABLE' => '导出文件暂时不可用，请稍后重试或联系管理员检查导出服务。',
+        'EXPORT_NOT_READY' => '此导出当前无法下载。请刷新任务状态，必要时重新生成。',
+        'EXPORT_RATE_LIMITED' => '导出提交过于频繁，请等待一分钟后重试。',
+        'EXPORT_CAPACITY_REACHED' => '导出提交过于频繁或任务数已满。请稍等一分钟；如仍受限，可取消不再需要的任务后重试。',
+        'INVALID_EXPORT_RESPONSE' => '导出数据校验未通过，未保存文件。请刷新后重试。',
         'UNAUTHENTICATED' => '登录已过期，请重新登录。',
         'SCOPE_DENIED' => '当前账号没有此操作权限。',
         'WORKSPACE_CHANGED' => '工作空间已切换。请关闭当前窗口，在新工作空间重新操作。',

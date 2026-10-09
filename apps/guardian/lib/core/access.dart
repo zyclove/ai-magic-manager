@@ -1,5 +1,12 @@
 /// Mirrors the server's persisted membership permissions; never grants API access.
 bool canOpenSection(String role, String section) {
+  if (section == 'exports') {
+    return ['OWNER', 'GUARDIAN', 'ORG_ADMIN', 'AUDITOR'].contains(role);
+  }
+  if (section == 'notifications') {
+    return ['OWNER', 'GUARDIAN', 'ORG_ADMIN', 'TEACHER', 'CHILD']
+        .contains(role);
+  }
   if (section == 'classes') {
     return ['OWNER', 'ORG_ADMIN', 'TEACHER'].contains(role);
   }
@@ -29,3 +36,25 @@ class SelectionGeneration {
   bool current(int generation) => generation == _generation;
   void invalidate() => _generation++;
 }
+
+/// Only known internal destinations may be restored after authentication.
+String trustedReturnPath(String? value) => const {
+      '/',
+      '/overview',
+      '/subjects',
+      '/classes',
+      '/devices',
+      '/applications',
+      '/schedules',
+      '/quota',
+      '/policies',
+      '/approvals',
+      '/notifications',
+      '/members',
+      '/ownership',
+      '/audit',
+      '/exports',
+      '/settings'
+    }.contains(value)
+        ? value!
+        : '/';

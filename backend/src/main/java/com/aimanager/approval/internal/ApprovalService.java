@@ -4,6 +4,7 @@ import static com.aimanager.approval.AccessRequest.State.*;
 import static com.aimanager.tenant.TenantAccess.Role.*;
 
 import com.aimanager.approval.AccessRequest;
+import com.aimanager.approval.AccessRequestChanged;
 import com.aimanager.approval.ApprovalMaintenance;
 import com.aimanager.audit.AuditService;
 import com.aimanager.fleet.AccessRequestDeviceScope;
@@ -27,6 +28,7 @@ import java.sql.SQLException;
 import java.time.Clock;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.event.EventListener;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
@@ -53,6 +55,7 @@ class ApprovalService implements ApprovalMaintenance {
   private final AuditService audit;
   private final ObjectMapper mapper;
   private final Clock clock;
+  private final ApplicationEventPublisher events;
   private final long requestTtl;
   private final long cooldown;
 
@@ -68,6 +71,7 @@ class ApprovalService implements ApprovalMaintenance {
       AuditService audit,
       ObjectMapper mapper,
       Clock clock,
+      ApplicationEventPublisher events,
       @Value("${manager.approval.request-ttl-seconds:1800}") long ttl,
       @Value("${manager.approval.cooldown-seconds:60}") long cooldown) {
     if (ttl < 60 || ttl > 86400 || cooldown < 1 || cooldown > 3600)
@@ -83,6 +87,7 @@ class ApprovalService implements ApprovalMaintenance {
     this.audit = audit;
     this.mapper = mapper;
     this.clock = clock;
+    this.events = events;
     this.requestTtl = ttl * 1000;
     this.cooldown = cooldown * 1000;
   }
@@ -155,6 +160,7 @@ class ApprovalService implements ApprovalMaintenance {
                   base.registrationId(),
                   base.applicationId());
               audit.record(tenant, actor, "ACCESS_REQUEST_CREATED", id);
+              notifyChange(tenant, id, now);
               return effective(row(tenant, id, false));
             });
     // Cached creation responses must not resurrect an expired/revoked window or disclose lost
@@ -309,6 +315,7 @@ class ApprovalService implements ApprovalMaintenance {
               actor.getSubject(),
               approve ? "ACCESS_REQUEST_APPROVED" : "ACCESS_REQUEST_DENIED",
               id);
+          notifyChange(tenant, id, now);
           return effective(row(tenant, id, false));
         });
     // The decision is idempotent, but its authority may since have expired or been withdrawn.
@@ -387,15 +394,32 @@ class ApprovalService implements ApprovalMaintenance {
       AccessRequest.State state,
       String reason,
       String action) {
+    long now = clock.millis();
     jdbc.update(
         "UPDATE access_requests SET state=?,reason_code=?,version=version+1,updated_at=? WHERE"
             + " tenant_id=? AND id=?",
         state.name(),
         reason,
-        clock.millis(),
+        now,
         tenant,
         id);
     audit.record(tenant, actor, action, id);
+    notifyChange(tenant, id, now);
+  }
+
+  private void notifyChange(String tenant, String id, long occurredAt) {
+    var stored = row(tenant, id, false);
+    var request = stored.view();
+    events.publishEvent(
+        new AccessRequestChanged(
+            tenant,
+            id,
+            request.subjectId(),
+            request.deviceId(),
+            stored.requesterKey(),
+            request.version(),
+            request.state(),
+            occurredAt));
   }
 
   /**
