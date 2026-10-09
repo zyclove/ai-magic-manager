@@ -78,7 +78,7 @@ flutter drive --driver=test_driver/identity_storage_driver.dart --target=integra
 
 ## 5. 发布门槛与后续
 
-仍待：后端有序提交与真实 MySQL 互操作、成人授权管理页、观察 pending 真实进程恢复、升级迁移与低内存/实体 TV、可信计时和额度执行、受管 EMM 接入、启动恢复、内容过滤、识别授权、商业订阅及性能安全验收。当前没有 DPC、应用阻止、防卸载、开机恢复、摄像头采集或后台周期观察，不能宣称完整平台全部可用。
+后续成人观察模块及隔离 MySQL 真实 HTTP 互操作见 [成人工作流交付](device-observation-guardian-contract.md)。仍待：后端有序提交与候选认证、观察 pending 真实加密存储进程恢复、升级迁移与低内存/实体 TV、可信计时和额度执行、受管 EMM 接入、启动恢复、内容过滤、识别授权、商业订阅及性能安全验收。当前没有 DPC、应用阻止、防卸载、开机恢复、摄像头采集或后台周期观察，不能宣称完整平台全部可用。
 
 ## 官方依据
 

@@ -1,0 +1,30 @@
+{
+  "scope": "Actual Chrome public component fixture only; no real data, native access, OIDC session or backend request.",
+  "engine": "Installed Chrome via Playwright",
+  "results": [
+    {
+      "viewport": "mobile",
+      "width": 390,
+      "height": 844,
+      "pageErrors": 0,
+      "horizontalOverflow": false,
+      "batchExpanded": true,
+      "readonlyHidden": true,
+      "withdrawnEmpty": true,
+      "invalidResponseHidden": true,
+      "unknownWriteFrozenAndRetried": true
+    },
+    {
+      "viewport": "desktop",
+      "width": 1280,
+      "height": 900,
+      "pageErrors": 0,
+      "horizontalOverflow": false,
+      "batchExpanded": true,
+      "readonlyHidden": true,
+      "withdrawnEmpty": true,
+      "invalidResponseHidden": true,
+      "unknownWriteFrozenAndRetried": true
+    }
+  ]
+}

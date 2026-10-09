@@ -1,0 +1,80 @@
+{
+  "baseline": "65b02bd5ecd4cbd0c84d59e8ec3fef8cd0278076",
+  "scope": "Independent adult observation module, tools and public fixtures. Backend V20 and console entry are separate coordinated submissions.",
+  "sourceSha256": {
+    "apps/guardian/lib/core/observation.dart": "1f6ce778078d2a0b11dd2a6ace5d317eb862c98e46e45d17f3fe167f0b440638",
+    "apps/guardian/lib/pages/observation_page.dart": "78784d19116b3d09fdc7cbda5abb4c56486d42dff94b60799b9bf25ac990f7de",
+    "apps/guardian/lib/ui/observation_editor.dart": "43d9e17708f8868e82022b17466724cceec12087f2b49b997337d4b834e39060",
+    "apps/guardian/lib/ui/observation_view.dart": "b3a1914fdf5aac5a61f0f915e27e18051f964e0824e88b80d4595fc756696b3f",
+    "apps/guardian/test/observation_model_test.dart": "5efbd7fbe48faa36cb735a9326aec14ca73c52a52eb1faa773427e4a13f1b2d6",
+    "apps/guardian/test/observation_editor_test.dart": "bf4e97461f42c0895c57f704f633c5f0244dded1554a47d387c4f123314461ee",
+    "apps/guardian/test/observation_view_test.dart": "a8d4b80b3087626c15635e0b31aa74e9c52d656bc98c3d574d09989e89f39bb0",
+    "apps/guardian/tool/observation_preview.dart": "c122eb98536f09c3c8e47ca8ebacd4b50749674e468d242717cbad47e2c3e4f4",
+    "apps/guardian/tool/verify_observation_fixture.dart": "c23d71e060c7895a755a2fbb6f22052688f88ed52fd13e3da1663cc0bec58795",
+    "packages/device_observation/tool/verify_http_fixture.dart": "e218a548357cac159a89c7bd57e2baa2b4983b6b5fa8796b7862a17316546b44",
+    "scripts/tests/guardian-observation-ui-journey.cjs": "56507f6b068269ffe42de75f911fa17891499a6dfe19bf7086b98cb6f86e1d05"
+  },
+  "verification": {
+    "guardianWorkspace": {
+      "analyze": "passed",
+      "tests": 57,
+      "exitCode": 0
+    },
+    "guardianIndependentBaseline": {
+      "tests": 19,
+      "exitCode": 0
+    },
+    "observationSdk": {
+      "analyze": "passed",
+      "tests": 14,
+      "exitCode": 0
+    },
+    "publicWebBuild": {
+      "renderer": "html",
+      "mode": "release",
+      "seconds": 32.9,
+      "exitCode": 0
+    },
+    "browser": {
+      "engine": "Installed Chrome via bundled Playwright 1.62.1",
+      "viewports": [
+        "390x844",
+        "1280x900"
+      ],
+      "exitCode": 0,
+      "data": "Synthetic credential-free public component fixture only"
+    },
+    "httpH2": {
+      "tests": 1,
+      "skipped": 0,
+      "exitCode": 0,
+      "testSeconds": 32.66,
+      "mavenSeconds": 42.458
+    },
+    "httpMysql": {
+      "serverReportedByFlyway": "8.4",
+      "tests": 1,
+      "skipped": 0,
+      "exitCode": 0,
+      "testSeconds": 55.62,
+      "mavenSeconds": 58.878,
+      "migrations": "V1-V12 plus V20; 13 isolated migrations, not the ordered release candidate",
+      "warning": "Flyway reports latest tested MySQL as 8.1; release compatibility remains unverified"
+    }
+  },
+  "limitations": [
+    "Backend V20 not included in this independent phase",
+    "Adult JWT decoder, source, registration and plaintext file store are explicit HTTP test fixtures",
+    "Not OIDC/MFA login proof or native encrypted pending process recovery",
+    "No OceanBase, managed enforcement, physical TV, capacity or production certification"
+  ],
+  "artifactsSha256": {
+    "docs/design/observation-guardian/browser-qa.json": "1debb5937cc8794a101de003ddddd25166ec13eff385d11996517cf412924850",
+    "docs/design/observation-guardian/browser-mobile.png": "46cfe8aa81cb5ac99d0fcb7b118f16801e21df2a8485296335f041474859f4ab",
+    "docs/design/observation-guardian/browser-desktop.png": "4bcbe30433ac4062e8623364a88d929f696f49edca9904c7dd921676ee978ffe",
+    "docs/design/observation-guardian/browser-mobile-expanded.png": "7a15d4c34a51655ae9da35c92ccc80fe7dfa80d6a87b140832c393d8c2251909",
+    "docs/design/observation-guardian/browser-desktop-expanded.png": "8fbafe123361731ed0bc4262f1724a1795759af5727f64682cf1ba263b86fd49",
+    "docs/design/observation-guardian/browser-mobile-retry.png": "f9b0dc2ec03d1b373ab8bfb98feebd990a96a4fce72875f7559a41cf3186b519",
+    "docs/design/observation-guardian/browser-desktop-retry.png": "51635dd9a65f842114ddba85eec54cf93113bfd9a620f8835661ce517658439d"
+  }
+}
