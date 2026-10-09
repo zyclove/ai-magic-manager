@@ -52,6 +52,18 @@ class DeviceAccessScope {
       .toString();
 }
 
+/// Read-only local configuration facts, never operating-system execution.
+enum AccessEntryState { stored, expired, removed, rejected, baselineMissing }
+
+class AccessJournalEntry {
+  final VerifiedAccessWindow window;
+  final AccessEntryState state;
+  final bool pendingAcknowledgement;
+  final String? reasonCode;
+  const AccessJournalEntry(this.window, this.state,
+      {required this.pendingAcknowledgement, this.reasonCode});
+}
+
 /// The receive path always validates raw JWS, never a caller-constructed model.
 class VerifiedAccessWindow {
   final String compact;

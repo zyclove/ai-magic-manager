@@ -272,6 +272,31 @@ class DeviceAccessHttpInteropTest {
     assertThat(Files.readString(output)).contains("PASS");
   }
 
+  /** Optional child-host proof; enabled explicitly by the phase verification command. */
+  void runChild(Map<String, Object> fixture, String mode) throws Exception {
+    String childPackage = System.getProperty("device.child.package");
+    if (childPackage == null || childPackage.isBlank()) return;
+    fixture.put("nowMillis", clock.millis());
+    Path file = DIRECTORY.resolve("fixture.json");
+    mapper.writeValue(file.toFile(), fixture);
+    Path output = DIRECTORY.resolve("child-" + mode + ".log");
+    var builder = new ProcessBuilder(
+        System.getProperty("device.flutter.command"), "test",
+        "tool/access_http_host_test.dart", "--no-pub", "--reporter", "expanded")
+        .directory(Path.of(childPackage).toAbsolutePath().toFile())
+        .redirectErrorStream(true).redirectOutput(output.toFile());
+    builder.environment().put("CHILD_ACCESS_HTTP_FIXTURE", file.toString());
+    builder.environment().put("CHILD_ACCESS_HTTP_MODE", mode);
+    var process = builder.start();
+    if (!process.waitFor(60, TimeUnit.SECONDS)) {
+      process.destroyForcibly();
+      process.waitFor(5, TimeUnit.SECONDS);
+      throw new AssertionError("Child host HTTP fixture exceeded bounded deadline");
+    }
+    assertThat(process.exitValue()).as("Child diagnostics: %s", output).isZero();
+    assertThat(Files.readString(output)).contains("Child access HTTP " + mode + ": PASS");
+  }
+
   @Test
   void realApprovalRetryReceiptsRevocationExpiryAndOpaqueRevocation() throws Exception {
     when(decoder.decode(anyString())).thenThrow(new BadJwtException("No user token fixture"));
@@ -356,6 +381,7 @@ class DeviceAccessHttpInteropTest {
     assertThat(count("access_window_attempt_receipts", tenant, "")).isEqualTo(4);
     runDart(fixture, "resume");
     assertThat(count("access_window_attempt_receipts", tenant, "")).isEqualTo(4);
+    runChild(fixture, "host");
     mvc.perform(
             post("/api/v1/tenants/"
                     + tenant
@@ -370,13 +396,17 @@ class DeviceAccessHttpInteropTest {
     runDart(fixture, "revoked");
     assertThat(count("access_window_documents", tenant, " AND action='REMOVE_ACCESS_WINDOW'"))
         .isEqualTo(1);
+    runChild(fixture, "host-revoked");
     clock.advance(300);
     runDart(fixture, "expired");
     assertThat(count("access_window_documents", tenant, " AND action='REMOVE_ACCESS_WINDOW'"))
         .isEqualTo(2);
+    runChild(fixture, "host-expired");
     transactions.executeWithoutResult(status -> credentials.revoke(tenant, registration));
     runDart(fixture, "context-denied");
     runDart(fixture, "unauthenticated");
+    runChild(fixture, "host-unauthenticated");
+    runChild(fixture, "host-blocked");
   }
 
   int count(String table, String tenant, String suffix) {

@@ -23,6 +23,7 @@ class AccessSyncResult {
   final bool hasMore;
   final int pendingReceipts;
   final List<AccessSyncIssue> issues;
+  final List<String> observedRequestIds;
   const AccessSyncResult(
       {required this.pages,
       required this.documentsStored,
@@ -30,6 +31,7 @@ class AccessSyncResult {
       required this.retriesCreated,
       required this.hasMore,
       this.pendingReceipts = 0,
+      this.observedRequestIds = const [],
       required this.issues});
   bool get systemEnforced => false;
 }
@@ -89,6 +91,7 @@ class DeviceAccessSynchronizer {
     final issues = <AccessSyncIssue>[];
     final issueKeys = <String>{};
     final attempted = <String>{};
+    final observed = <String>{};
     final confirmed = <String, AccessReceiptAcknowledgement>{};
     int posts = 0, acknowledged = 0, stored = 0, pages = 0, retried = 0;
     bool postsAvailable = true;
@@ -154,6 +157,7 @@ class DeviceAccessSynchronizer {
       _open();
       for (final reference in page.items) {
         _open();
+        observed.add(reference.requestId);
         try {
           var document = await transport.document(reference.requestId);
           var receipt = await receive(document, reference);
@@ -210,6 +214,7 @@ class DeviceAccessSynchronizer {
         retriesCreated: retried,
         hasMore: more,
         pendingReceipts: (await journal.pendingReceipts()).length,
+        observedRequestIds: List.unmodifiable(observed),
         issues: List.unmodifiable(issues));
   }
 

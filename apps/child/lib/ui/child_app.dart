@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import '../core/session.dart';
 import 'design.dart';
 import 'observation_section.dart';
+import 'access_section.dart';
 
 class ChildApp extends StatelessWidget {
   final ChildSession? session;
@@ -387,6 +388,16 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
                   maxLines: 2, overflow: TextOverflow.ellipsis),
               subtitle: Text(
                   '包含 ${(rule.document?['rules'] as List?)?.length ?? 0} 条规则；系统执行尚不支持。'))
+        ],
+        if (session!.accessFactory != null) ...[
+          const Divider(),
+          AccessSection(
+              view: session!.access,
+              busy: session!.busy,
+              available: app.nativeAvailable && session!.credentialReady,
+              errorCode: session!.accessErrorCode,
+              correlationId: session!.accessCorrelationId,
+              synchronize: () => unawaited(session!.synchronizeAccess()))
         ]
       ]);
   Widget _help() =>

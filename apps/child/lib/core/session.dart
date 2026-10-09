@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:device_identity/device_identity.dart';
+import 'package:device_access/device_access.dart' as temporary;
 import 'package:device_observation/device_observation.dart' as observation;
 import 'package:device_policy/device_policy.dart' as policy;
 import 'package:flutter/foundation.dart';
 import 'package:logging/logging.dart';
+import 'access.dart';
 
 /// Only the administrator-issued ticket is accepted. Service origins, roles,
 /// trust keys and local confirmation are never taken from pasted content.
@@ -64,6 +66,15 @@ class ChildSession extends ChangeNotifier {
   final ChildRuleReceiverFactory? ruleReceiverFactory;
   final Future<List<Map<String, dynamic>>> Function()? observations;
   final ChildObservationFactory? observationFactory;
+  final ChildAccessFactory? accessFactory;
+  final int Function() nowMillis;
+  ChildAccessSnapshot access = const ChildAccessSnapshot();
+  String? accessErrorCode, accessCorrelationId;
+  ChildAccessReceiver? _accessReceiver;
+  String? _accessIdentityKey, _rulesIdentityKey;
+  Timer? _accessTimer;
+  bool _accessSyncOnIdle = false, _accessRestoreOnIdle = false;
+  int? _accessTimeFloor;
   observation.ObservationView observationView =
       const observation.ObservationView();
   String? observationErrorCode;
@@ -79,14 +90,59 @@ class ChildSession extends ChangeNotifier {
       {required this.identity,
       this.ruleReceiverFactory,
       this.observations,
-      this.observationFactory});
+      this.observationFactory,
+      this.accessFactory,
+      int Function()? nowMillis})
+      : nowMillis = nowMillis ?? (() => DateTime.now().millisecondsSinceEpoch);
   String? get pairingCode => _foreground ? _pairingCode : null;
   bool get systemEnforced => false;
   void _changed() {
     if (!_disposed) notifyListeners();
   }
 
+  String? get _identityKey => identityView?.deviceId == null ||
+          identityView?.registrationId == null
+      ? null
+      : '${identityView!.tenantId}/${identityView!.deviceId}/${identityView!.registrationId}';
+  void _clearAccess() {
+    _accessTimer?.cancel();
+    _accessTimer = null;
+    final receiver = _accessReceiver;
+    _accessReceiver = null;
+    _accessIdentityKey = null;
+    access = const ChildAccessSnapshot();
+    _accessTimeFloor = null;
+    _accessSyncOnIdle = false;
+    _accessRestoreOnIdle = false;
+    if (receiver != null) {
+      receiver.pause();
+      unawaited(receiver.close().catchError((Object _) {
+        _log.warning('code=ACCESS_STORE_CLOSE_FAILED');
+      }));
+    }
+  }
+
+  void _checkIdentityScope() {
+    if (!credentialReady ||
+        !identityReadSucceeded ||
+        (_accessIdentityKey != null && _accessIdentityKey != _identityKey)) {
+      _clearAccess();
+    }
+    if (_rulesIdentityKey != null && _rulesIdentityKey != _identityKey) {
+      final previous = _receiver;
+      _receiver = null;
+      _rulesIdentityKey = null;
+      rules = const ChildRules();
+      if (previous != null) {
+        unawaited(previous.close().catchError((Object _) {
+          _log.warning('code=RULE_STORE_CLOSE_FAILED');
+        }));
+      }
+    }
+  }
+
   Future<void> _refresh() async {
+    final wasReady = credentialReady;
     identityReadSucceeded = false;
     credentialReady = false;
     _pairingCode = null;
@@ -103,6 +159,11 @@ class ChildSession extends ChangeNotifier {
       } else {
         rethrow;
       }
+    } finally {
+      _checkIdentityScope();
+      if (!wasReady && credentialReady && accessFactory != null) {
+        _accessSyncOnIdle = true;
+      }
     }
   }
 
@@ -113,22 +174,31 @@ class ChildSession extends ChangeNotifier {
           ruleReceiverFactory != null) {
         rules = await (await _rules()).restore();
       }
+      if (accessFactory != null && credentialReady) {
+        try {
+          access = await (await _access()).restore();
+        } catch (_) {
+          access = const ChildAccessSnapshot();
+          accessErrorCode = 'ACCESS_RESTORE_FAILED';
+        }
+      }
     });
     initialized = true;
     _changed();
-    if (observationFactory != null &&
-        credentialReady &&
-        !_disposed &&
-        _foreground) {
-      unawaited(refreshObservationAuthorization());
-    }
+    _accessSyncOnIdle = accessFactory != null && credentialReady;
+    _refreshObservationOnIdle = observationFactory != null && credentialReady;
+    _drain();
   }
 
   Future<bool> _run(Future<void> Function() operation,
-      {bool observationOperation = false}) async {
+      {bool observationOperation = false, bool accessOperation = false}) async {
     if (busy || _disposed) return false;
     busy = true;
     errorCode = null;
+    if (accessOperation) {
+      accessErrorCode = null;
+      accessCorrelationId = null;
+    }
     _changed();
     var success = false;
     try {
@@ -145,6 +215,11 @@ class ChildSession extends ChangeNotifier {
       errorCode = failure.code;
     } on policy.DeviceTransportFailure catch (failure) {
       errorCode = failure.code;
+    } on temporary.AccessFailure catch (failure) {
+      errorCode = failure.code;
+    } on temporary.AccessTransportFailure catch (failure) {
+      errorCode = failure.code;
+      accessCorrelationId = failure.correlationId;
     } on observation.ObservationFailure catch (failure) {
       errorCode = failure.code;
     } catch (_) {
@@ -153,6 +228,10 @@ class ChildSession extends ChangeNotifier {
     if (observationOperation) {
       observationErrorCode =
           errorCode == 'OBSERVATION_PAUSED' ? null : errorCode;
+      errorCode = null;
+    }
+    if (accessOperation) {
+      accessErrorCode = errorCode == 'ACCESS_PAUSED' ? null : errorCode;
       errorCode = null;
     }
     try {
@@ -168,16 +247,13 @@ class ChildSession extends ChangeNotifier {
     if (observationOperation && observationErrorCode != null) {
       _log.warning('code=$observationErrorCode');
     }
+    if (accessOperation && accessErrorCode != null) {
+      _log.warning('code=$accessErrorCode');
+    }
     busy = false;
     _changed();
-    if (_refreshObservationOnIdle &&
-        _foreground &&
-        !_disposed &&
-        observationFactory != null &&
-        credentialReady) {
-      _refreshObservationOnIdle = false;
-      unawaited(refreshObservationAuthorization());
-    }
+    _scheduleAccess();
+    _drain();
     return success;
   }
 
@@ -190,6 +266,7 @@ class ChildSession extends ChangeNotifier {
             agentVersion: 'child/0.1.0',
             capabilities: await observations?.call() ?? const []);
         _refreshObservationOnIdle = observationFactory != null;
+        _accessSyncOnIdle = accessFactory != null;
       });
   Future<bool> recoverClaim() => _run(identity.recoverClaim);
   Future<bool> reloadIdentity() => _run(_refresh);
@@ -244,7 +321,184 @@ class ChildSession extends ChangeNotifier {
       throw const policy.ConfigurationFailure(
           'CONFIGURATION_TRUST_UNAVAILABLE');
     }
+    _rulesIdentityKey = _identityKey;
     return _receiver = await ruleReceiverFactory!(identityView!);
+  }
+
+  Future<ChildAccessReceiver> _access() async {
+    if (!_foreground || _disposed) {
+      throw const temporary.AccessFailure('ACCESS_PAUSED');
+    }
+    if (_accessReceiver != null) return _accessReceiver!;
+    if (accessFactory == null || !credentialReady || _identityKey == null) {
+      throw const temporary.AccessFailure('DEVICE_CREDENTIAL_UNAVAILABLE');
+    }
+    final scopeKey = _accessIdentityKey = _identityKey;
+    final receiver = await accessFactory!(identityView!, () async {
+      rules = await (await _rules()).restore();
+      return rules.configurations;
+    });
+    if (_disposed ||
+        !_foreground ||
+        !credentialReady ||
+        scopeKey != _identityKey ||
+        scopeKey != _accessIdentityKey) {
+      receiver.pause();
+      try {
+        await receiver.close();
+      } catch (_) {
+        _log.warning('code=ACCESS_STORE_CLOSE_FAILED');
+      }
+      throw const temporary.AccessFailure('ACCESS_PAUSED');
+    }
+    return _accessReceiver = receiver;
+  }
+
+  bool _fatalAccess(Object error) =>
+      error is temporary.AccessTransportFailure &&
+          (error.status == 401 ||
+              error.status == 403 ||
+              {
+                'DEVICE_CREDENTIAL_UNAVAILABLE',
+                'CREDENTIAL_READ_FAILED',
+                'ACCESS_TARGET_CHANGED'
+              }.contains(error.code)) ||
+      error is temporary.AccessFailure &&
+          {'ACCESS_TARGET_CHANGED', 'DEVICE_CREDENTIAL_UNAVAILABLE'}
+              .contains(error.code);
+  Future<bool> synchronizeAccess() => _run(() async {
+        if (!_foreground || !credentialReady) {
+          throw const temporary.AccessFailure('ACCESS_PAUSED');
+        }
+        final receiver = await _access();
+        receiver.resume();
+        try {
+          access = await receiver.synchronize();
+        } catch (error) {
+          access = const ChildAccessSnapshot();
+          if (_fatalAccess(error)) {
+            receiver.pause();
+          } else if (_foreground && !_disposed) {
+            try {
+              access = await receiver.restore();
+            } catch (_) {/* No unverified fallback. */}
+          }
+          rethrow;
+        }
+        if (!_foreground || _disposed) {
+          access = const ChildAccessSnapshot();
+          return;
+        }
+        _accessTimeFloor = nowMillis();
+      }, accessOperation: true);
+  Future<bool> refreshAccess() => _run(() async {
+        if (!_foreground || !credentialReady) {
+          throw const temporary.AccessFailure('ACCESS_PAUSED');
+        }
+        try {
+          access = await (await _access()).restore();
+          _accessTimeFloor = nowMillis();
+        } catch (_) {
+          access = const ChildAccessSnapshot();
+          rethrow;
+        }
+        if (!_foreground || _disposed) access = const ChildAccessSnapshot();
+      }, accessOperation: true);
+
+  void _drain() {
+    if (!initialized || busy || !_foreground || _disposed || !credentialReady) {
+      return;
+    }
+    if (_accessSyncOnIdle && accessFactory != null) {
+      _accessSyncOnIdle = false;
+      _accessRestoreOnIdle = false;
+      unawaited(synchronizeAccess());
+      return;
+    }
+    if (_accessRestoreOnIdle && accessFactory != null) {
+      _accessRestoreOnIdle = false;
+      unawaited(refreshAccess());
+      return;
+    }
+    if (_refreshObservationOnIdle && observationFactory != null) {
+      _refreshObservationOnIdle = false;
+      unawaited(refreshObservationAuthorization());
+    }
+  }
+
+  void _scheduleAccess() {
+    _accessTimer?.cancel();
+    _accessTimer = null;
+    if (_disposed ||
+        !_foreground ||
+        !credentialReady ||
+        accessFactory == null) {
+      return;
+    }
+    try {
+      final now = nowMillis();
+      if (!temporary.accessInteger(now, 0) ||
+          _accessTimeFloor != null && now < _accessTimeFloor!) {
+        access = const ChildAccessSnapshot();
+        accessErrorCode = 'CLOCK_UNTRUSTED';
+        _changed();
+        return;
+      }
+      final ends = access.entries
+          .where((e) => e.record.state == temporary.AccessEntryState.stored)
+          .map((e) => e.record.window.absoluteNotAfter)
+          .toList()
+        ..sort();
+      if (ends.isEmpty) return;
+      var delay = ends.first - now;
+      if (delay < 1) delay = 1;
+      if (delay > 30000) delay = 30000;
+      _accessTimer = Timer(Duration(milliseconds: delay), () {
+        if (_disposed || !_foreground) return;
+        try {
+          final current = nowMillis();
+          if (!temporary.accessInteger(current, 0) ||
+              _accessTimeFloor != null && current < _accessTimeFloor!) {
+            access = const ChildAccessSnapshot();
+            accessErrorCode = 'CLOCK_UNTRUSTED';
+            _changed();
+            return;
+          } else {
+            access = ChildAccessSnapshot(
+                contextReady: access.contextReady,
+                onlineConfirmed: access.onlineConfirmed,
+                lastOnlineAt: access.lastOnlineAt,
+                pendingReceipts: access.pendingReceipts,
+                issues: access.issues,
+                hasMore: access.hasMore,
+                entries: List.unmodifiable(access.entries.map((e) =>
+                    e.record.state == temporary.AccessEntryState.stored &&
+                            current >= e.record.window.absoluteNotAfter
+                        ? ChildAccessEntry(
+                            temporary.AccessJournalEntry(e.record.window,
+                                temporary.AccessEntryState.expired,
+                                pendingAcknowledgement:
+                                    e.record.pendingAcknowledgement,
+                                reasonCode: e.record.reasonCode),
+                            e.applicationName,
+                            requiresReview: e.requiresReview)
+                        : e)));
+          }
+        } catch (_) {
+          access = const ChildAccessSnapshot();
+          accessErrorCode = 'CLOCK_UNTRUSTED';
+          _changed();
+          return;
+        }
+        _changed();
+        _accessRestoreOnIdle = true;
+        _drain();
+      });
+    } catch (_) {
+      access = const ChildAccessSnapshot();
+      accessErrorCode = 'CLOCK_UNTRUSTED';
+      _changed();
+    }
   }
 
   Future<bool> synchronizeRules() => _run(() async {
@@ -254,16 +508,23 @@ class ChildSession extends ChangeNotifier {
         final receiver = await _rules();
         try {
           rules = await receiver.synchronize();
+          _accessRestoreOnIdle = accessFactory != null;
         } catch (_) {
           // A failed receipt POST can follow a committed signed page. Refresh
           // local facts without pretending the whole synchronization succeeded.
           rules = await receiver.restore();
+          _accessRestoreOnIdle = accessFactory != null;
           rethrow;
         }
       });
   Future<void> setForeground(bool value) async {
     _foreground = value;
     if (!value) {
+      _accessTimer?.cancel();
+      _accessTimer = null;
+      _accessReceiver?.pause();
+      access = const ChildAccessSnapshot();
+      _accessSyncOnIdle = accessFactory != null;
       _observationAgent?.pause();
       _refreshObservationOnIdle = true;
       _pairingCode = null;
@@ -277,15 +538,15 @@ class ChildSession extends ChangeNotifier {
       errorCode = failure.code;
     }
     _changed();
-    if (observationFactory != null && credentialReady && !_disposed) {
-      _refreshObservationOnIdle = false;
-      unawaited(refreshObservationAuthorization());
-    }
+    _accessSyncOnIdle = accessFactory != null;
+    _refreshObservationOnIdle = observationFactory != null;
+    _drain();
   }
 
   @override
   void dispose() {
     _disposed = true;
+    _clearAccess();
     _pairingCode = null;
     identity.api.close();
     _observationAgent?.close();

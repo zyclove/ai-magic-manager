@@ -218,6 +218,7 @@ void main() {
       () async {
     final result = await sync.synchronize();
     expect(result.documentsStored, 1);
+    expect(result.observedRequestIds, [request]);
     expect(result.receiptsAcknowledged, 1);
     expect(result.systemEnforced, isFalse);
     expect(result.issues, isEmpty);

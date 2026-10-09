@@ -359,6 +359,55 @@ class AccessWindowJournal {
             return Map<String, VerifiedAccessWindow>.unmodifiable(active);
           }));
 
+  /// Explain durable terminal/current states without turning expired or removed
+  /// documents into active access. Reverify every signed row and pending receipt.
+  Future<List<AccessJournalEntry>> inspect() =>
+      _storage(() => database.transaction((txn) async {
+            final current = _requireTime(await _floor(txn), _sampleTime());
+            final records = await _requests.find(txn);
+            final pending = await _receipts.find(txn);
+            if (records.length > maxRequests ||
+                pending.length > maxPendingReceipts) {
+              throw const AccessFailure('STORAGE_CAPACITY');
+            }
+            final keys = <String>{};
+            for (final record in pending) {
+              final saved = await _saved(record.value);
+              if (record.key != saved.receipt.key) {
+                throw const AccessFailure('STORAGE_FAILURE');
+              }
+              keys.add(record.key);
+            }
+            final entries = <AccessJournalEntry>[];
+            for (final record in records) {
+              final saved = await _saved(record.value), value = saved.value;
+              if (record.key != value.requestId) {
+                throw const AccessFailure('STORAGE_FAILURE');
+              }
+              var state = value.isRemoval
+                  ? AccessEntryState.removed
+                  : !saved.accepted
+                      ? AccessEntryState.rejected
+                      : AccessEntryState.stored;
+              if (state == AccessEntryState.stored) {
+                try {
+                  value.requireCurrent(current);
+                } on AccessFailure catch (error) {
+                  if (error.code != 'EXPIRED') rethrow;
+                  state = AccessEntryState.expired;
+                }
+                if (state == AccessEntryState.stored && !_hasBaseline(value)) {
+                  state = AccessEntryState.baselineMissing;
+                }
+              }
+              entries.add(AccessJournalEntry(value, state,
+                  pendingAcknowledgement: keys.contains(saved.receipt.key),
+                  reasonCode: saved.receipt.reasonCode));
+            }
+            await _metadata.record('head').put(txn, {'observedAt': current});
+            return List<AccessJournalEntry>.unmodifiable(entries);
+          }));
+
   Future<List<AccessReceipt>> pendingReceipts() =>
       _storage(() => database.transaction((txn) async {
             final records = await _receipts.find(txn);

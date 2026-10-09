@@ -1,0 +1,244 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-09T20:17:46.920250+00:00",
+  "parentHead": "08a0e1ac3d2245103be94439d47b6eb711da7888",
+  "scope": "Child foreground temporary access receiver, durable context lifecycle, compiled baseline matching, rules UI and SDK readonly status. Concurrent notification/audit/export work excluded.",
+  "sourceFiles": [
+    {
+      "path": "apps/child/lib/core/access.dart",
+      "sha256": "99f5dadcb087f32cb42ef822548babeeb7ed4543fc4f9758a7794e7d88b83319"
+    },
+    {
+      "path": "apps/child/lib/core/access_receiver.dart",
+      "sha256": "cd4790c22adfd933aa4b7daeb5cccccf6e353fde33efe998d6d2b84b81dc397c"
+    },
+    {
+      "path": "apps/child/lib/core/session.dart",
+      "sha256": "df4c3505c6614bc2d98010df632893e3dec98b6bba1e5500bf93fa8bc05d8a07"
+    },
+    {
+      "path": "apps/child/lib/main.dart",
+      "sha256": "b845a001f57f9d601228e6bd1c4053e2a592f51328d37c6d01ad338c60e13a37"
+    },
+    {
+      "path": "apps/child/lib/platform/secret_store.dart",
+      "sha256": "8b7e41d052ac657eef481a939dbab8950d4f49ecb6744e569fbfa6aaf071632e"
+    },
+    {
+      "path": "apps/child/lib/ui/access_section.dart",
+      "sha256": "817b58ff0a751c7c3a696b98eaa1e92224958f49d925b9ff1a3f1cf3b1afde47"
+    },
+    {
+      "path": "apps/child/lib/ui/child_app.dart",
+      "sha256": "8e2efd6c0a05a131ef5ba36228e84e1e1057cef06bb81e5e51978b1f3c2855dc"
+    },
+    {
+      "path": "apps/child/test/access_binding_storage_test.dart",
+      "sha256": "7bef5154276d1fd2b761352719f4aca2c2c15eb1d497df23629a09f5e83a788a"
+    },
+    {
+      "path": "apps/child/test/access_receiver_test.dart",
+      "sha256": "44669489ac48dbc4a6f72ff5840a69eb2b570e10a500990884a480df8bb7636c"
+    },
+    {
+      "path": "apps/child/test/access_section_test.dart",
+      "sha256": "1261ea28b901861feb53daa09b468b925caf137f76b6022f4b9197519ede8f23"
+    },
+    {
+      "path": "apps/child/test/access_session_test.dart",
+      "sha256": "54de8d8613ccda9b6d0d04398427bc875241cdee27f26e2a8e905d9ce36db0c1"
+    },
+    {
+      "path": "apps/child/tool/access_http_host_test.dart",
+      "sha256": "c9746fe2a447a4fb3672ea04ec9c5eda56ba3f3065bb51d35a8958e402be4078"
+    },
+    {
+      "path": "packages/device_access/lib/src/journal.dart",
+      "sha256": "22f9b0509253ddbf41d3b0b87c80f2531b9f6ab59d0031ab1db1cf33f7a0eb00"
+    },
+    {
+      "path": "packages/device_access/lib/src/models.dart",
+      "sha256": "78c88916b759727ef7b8297fdb514302a561dca3d8d5aa0a1af9a4a0e9e5ac12"
+    },
+    {
+      "path": "packages/device_access/lib/src/synchronizer.dart",
+      "sha256": "24cea3c3faf9a6587d1218753dd0e9c717b9cedf94731fc25e636f3dcde6898c"
+    },
+    {
+      "path": "packages/device_access/test/journal_view_test.dart",
+      "sha256": "20e4e0cabf58d2e523ebde4e87c9eccd7cc44bfe0b0fed7d8f90c5bfda925a48"
+    },
+    {
+      "path": "packages/device_access/test/synchronizer_test.dart",
+      "sha256": "ecbacaae70286a348fcfe4d09ef4e3029b153dbdc1d12a0efcb5d1f88240f0bb"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeviceAccessHttpInteropTest.java",
+      "sha256": "ee56f901a444688a6c4751c074b6707db7b775665f7e2a8653c6cea77718d574"
+    },
+    {
+      "path": "docs/access-child-host-plan.md",
+      "sha256": "8a87afeac2aa9135c689e42ed9cdfc73bcb023528d4f771ce0bc5e012202393d"
+    },
+    {
+      "path": "apps/child/test/access_app_test.dart",
+      "sha256": "32d3f5e3dfe1206c899a9c2847abf8351a96fd5ebecebdd8c9df71e8ea9fb297"
+    },
+    {
+      "path": "apps/child/tool/access_preview.dart",
+      "sha256": "a71b4d199acfdcf8b0260a4ce5945537ba4b78e85ec6ece2dadff8a39627a490"
+    },
+    {
+      "path": "docs/access-child-host-contract.md",
+      "sha256": "1290851188404758608718a68eaa453caecac966340f476ce6ed8e6bfd7062b0"
+    },
+    {
+      "path": "scripts/tests/child-access-ui.cjs",
+      "sha256": "1674f8c71dfaa5b2fbf7863fba574ec6236153e15e86a47134c95bac49dda389"
+    },
+    {
+      "path": "docs/design/child-access/browser-qa.json",
+      "sha256": "236ebf4f57524fa348b347c6c1248e748143dde83464bdafc8f22b063ed27d12"
+    },
+    {
+      "path": "docs/design/child-access/desktop-details.png",
+      "sha256": "eacdf7c0d78f6a339d905d1157e723b1273cee92bd35bd2adb2acd0181cfadb5"
+    },
+    {
+      "path": "docs/design/child-access/desktop-offline.png",
+      "sha256": "2e45199e94af502bc976c9955db179da8a3df668ba57c4ddf9e28fd7f8898c14"
+    },
+    {
+      "path": "docs/design/child-access/mobile-details.png",
+      "sha256": "9ba8b1d6fd3499bbdff1b13c173cdfee1f404783fab4d9cd26496e036696531b"
+    },
+    {
+      "path": "docs/design/child-access/mobile-offline.png",
+      "sha256": "2e00350c4d8d9584192b6d29a8dcf684ba913258e94e849c89417fae924158a7"
+    }
+  ],
+  "unchangedBaselineFiles": 518,
+  "candidateWrapperLineEndingRepairs": [],
+  "backend": {
+    "tests": 262,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "childTests": 59,
+  "deviceAccessTests": 97,
+  "staticAnalysis": {
+    "child": "No issues found",
+    "deviceAccess": "No issues found"
+  },
+  "realSpringChildProcesses": [
+    {
+      "mode": "host",
+      "sha256": "80e20233384e3cde2a8a90188faaec463412a4714952b0e44f8f860317e43353",
+      "result": "PASS"
+    },
+    {
+      "mode": "host-revoked",
+      "sha256": "72444a963ec5050379e31cc6628c1a9088e494d606fd305ad84d7f1878a9658a",
+      "result": "PASS"
+    },
+    {
+      "mode": "host-expired",
+      "sha256": "6b798ca0bae7ba4b78aee6d3e5b266c8958a89116eea04ae61bf59a24581b019",
+      "result": "PASS"
+    },
+    {
+      "mode": "host-unauthenticated",
+      "sha256": "ed0929d3726e347158e89d0953d74494ef937ece5bff9a9228babc4d30d8c83a",
+      "result": "PASS"
+    },
+    {
+      "mode": "host-blocked",
+      "sha256": "77cef510b4d0b42a0236e395177e1cc4702484514659a8b1c166de43a07d2f8e",
+      "result": "PASS"
+    }
+  ],
+  "logs": [
+    {
+      "key": "backend",
+      "path": ".local/access-host-backend-final-verify.log",
+      "sha256": "e47869f013d5b9d47262db7b415c89d465c2e919c9da1e2f74008ae0fcac1265"
+    },
+    {
+      "key": "childTests",
+      "path": ".local/access-host-child-tests.log",
+      "sha256": "526cc904ce4ced282b6a5b839d6e30913e65d0299bc0c94b023d6820902cf2a2"
+    },
+    {
+      "key": "childAnalysis",
+      "path": ".local/access-host-child-analysis.log",
+      "sha256": "154600fec816a6478f9af548df3e31fce02948b27d93842be9f71adb5576ac16"
+    },
+    {
+      "key": "sdkTests",
+      "path": ".local/access-host-sdk-tests.log",
+      "sha256": "e122c5ac84cf40688636631e4848dc633f7bbdabe304bbde60e9326c582f6909"
+    },
+    {
+      "key": "sdkAnalysis",
+      "path": ".local/access-host-sdk-analysis.log",
+      "sha256": "90e7613774af3529464575b0ab224afcba9aba6af6f6693e296e6cab87564ff1"
+    },
+    {
+      "key": "androidBuild",
+      "path": ".local/access-host-android-build.log",
+      "sha256": "2bf9f9890a7810a24f601232fa6452daefc647a0792bb99a55a4c4576bbe7896"
+    },
+    {
+      "key": "browser",
+      "path": ".local/access-host-browser.log",
+      "sha256": "c489a0d97a168382e53445b2df0c7667444a9611bf9ddbf0252dc5fc24318973"
+    }
+  ],
+  "androidDebugApk": {
+    "sha256": "b0293a24ed9b3aa1638e2a84df3f59b09627f1cc04b6b3e96af58b033d58339b",
+    "bytes": 196954650,
+    "installed": false
+  },
+  "browser": {
+    "scope": "Built Flutter Web public synthetic component only; no native storage, real identity or OS enforcement.",
+    "engine": "Installed Chrome via Playwright",
+    "results": [
+      {
+        "viewport": "mobile",
+        "width": 390,
+        "height": 844,
+        "offline": true,
+        "originalDeadlineDetails": true,
+        "expired": true,
+        "revoked": true,
+        "review": true,
+        "syncAction": true,
+        "horizontalOverflow": false,
+        "pageErrors": 0
+      },
+      {
+        "viewport": "desktop",
+        "width": 1280,
+        "height": 1000,
+        "offline": true,
+        "originalDeadlineDetails": true,
+        "expired": true,
+        "revoked": true,
+        "review": true,
+        "syncAction": true,
+        "horizontalOverflow": false,
+        "pageErrors": 0
+      }
+    ]
+  },
+  "limits": [
+    "CONFIGURE_ONLY; quota UNCHANGED; no OS unlock or enforcement is certified.",
+    "Foreground host only; boot and background scheduling require a separate implementation.",
+    "HTTP tests use synthetic activated identity, adult JWT/MFA and file keys; they are not OTP or Android secure-storage proof.",
+    "Native new context/key paths across separate processes and physical TV remote remain to be verified.",
+    "APK is build evidence only; not installed or configured against production services.",
+    "No schema migration or new database compatibility claim; previous V1-V20 MySQL evidence remains separate.",
+    "Device-side access request submission, cache retention/pruning and EMM/system execution remain separate work."
+  ]
+}

@@ -7,6 +7,7 @@ import 'package:device_observation/device_observation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../core/access.dart' show ChildAccessBindingStore;
 
 /// One encrypted record, no readAll/delete/reset surface. Android only until
 /// each additional native storage implementation is separately certified.
@@ -175,6 +176,52 @@ class AndroidAccessKeyStore {
       throw const AccessFailure('ACCESS_KEY_UNAVAILABLE');
     } finally {
       done.complete();
+    }
+  }
+}
+
+/// Durable authenticated context/check intent; separate from identity and DB key.
+class AndroidAccessBindingStore implements ChildAccessBindingStore {
+  final AndroidIdentityStore backend;
+  AndroidAccessBindingStore(
+      {FlutterSecureStorage? storage,
+      MethodChannel channel =
+          const MethodChannel('com.aimanager.child/runtime'),
+      bool Function()? available})
+      : backend = AndroidIdentityStore(
+            storage: storage, channel: channel, available: available);
+  void _check(String key) {
+    if (!backend.available() || !RegExp(r'^[a-f0-9]{64}$').hasMatch(key)) {
+      throw const AccessFailure('ACCESS_STORAGE_FAILED');
+    }
+  }
+
+  @override
+  Future<String?> read(String key) async {
+    _check(key);
+    try {
+      final value = await backend.storage.read(key: 'access_context_v1_$key');
+      await backend._flush();
+      if (value != null && utf8.encode(value).length > 65536) {
+        throw const FormatException();
+      }
+      return value;
+    } catch (_) {
+      throw const AccessFailure('ACCESS_STORAGE_FAILED');
+    }
+  }
+
+  @override
+  Future<void> write(String key, String value) async {
+    _check(key);
+    if (utf8.encode(value).length > 65536) {
+      throw const AccessFailure('ACCESS_STORAGE_FAILED');
+    }
+    try {
+      await backend.storage.write(key: 'access_context_v1_$key', value: value);
+      await backend._flush();
+    } catch (_) {
+      throw const AccessFailure('ACCESS_STORAGE_FAILED');
     }
   }
 }

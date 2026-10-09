@@ -9,6 +9,7 @@ import 'package:logging/logging.dart';
 import 'core/environment.dart';
 import 'core/rule_receiver.dart';
 import 'core/session.dart';
+import 'core/access_receiver.dart';
 import 'platform/secret_store.dart';
 import 'platform/observation_source.dart';
 import 'ui/child_app.dart';
@@ -42,6 +43,15 @@ Future<void> main() async {
   final source = AndroidObservationSource();
   final session = ChildSession(
       identity: identity,
+      nowMillis: clock,
+      accessFactory: nativeAvailable
+          ? (view, baseline) async => SignedAccessReceiver(
+              environment: configured,
+              identity: view,
+              credential: identity.activeCredential,
+              readBaseline: baseline,
+              nowMillis: clock)
+          : null,
       observations: nativeAvailable
           ? () async {
               try {

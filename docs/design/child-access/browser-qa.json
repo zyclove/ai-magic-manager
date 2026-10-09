@@ -1,0 +1,32 @@
+{
+  "scope": "Built Flutter Web public synthetic component only; no native storage, real identity or OS enforcement.",
+  "engine": "Installed Chrome via Playwright",
+  "results": [
+    {
+      "viewport": "mobile",
+      "width": 390,
+      "height": 844,
+      "offline": true,
+      "originalDeadlineDetails": true,
+      "expired": true,
+      "revoked": true,
+      "review": true,
+      "syncAction": true,
+      "horizontalOverflow": false,
+      "pageErrors": 0
+    },
+    {
+      "viewport": "desktop",
+      "width": 1280,
+      "height": 1000,
+      "offline": true,
+      "originalDeadlineDetails": true,
+      "expired": true,
+      "revoked": true,
+      "review": true,
+      "syncAction": true,
+      "horizontalOverflow": false,
+      "pageErrors": 0
+    }
+  ]
+}
