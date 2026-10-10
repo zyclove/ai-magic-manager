@@ -1,18 +1,9 @@
-import 'package:device_identity/device_identity.dart';
-import 'package:device_observation/device_observation.dart' as observation;
-import 'package:device_policy/device_policy.dart'
-    show DeviceConfigurationTransport;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'core/environment.dart';
-import 'core/rule_receiver.dart';
-import 'core/session.dart';
-import 'core/access_receiver.dart';
-import 'core/submission_receiver.dart';
-import 'platform/secret_store.dart';
-import 'platform/observation_source.dart';
+import 'core/production_session.dart';
 import 'ui/child_app.dart';
 
 Future<void> main() async {
@@ -34,63 +25,9 @@ Future<void> main() async {
     return;
   }
   final configured = environment;
-  final api = DeviceIdentityApi(
-      apiRoot: configured.apiRoot,
-      allowLoopbackHttp: configured.allowLoopbackHttp);
-  int clock() => DateTime.now().millisecondsSinceEpoch;
-  // OS wall clock with persisted rollback detection, not hardware trusted time.
-  final identity = DeviceIdentityManager(
-      api: api, secrets: AndroidIdentityStore(), nowMillis: clock);
-  final source = AndroidObservationSource();
-  final session = ChildSession(
-      identity: identity,
-      nowMillis: clock,
-      submissionFactory: nativeAvailable
-          ? (view) async => ChildSubmissionReceiver(
-              environment: configured,
-              identity: view,
-              credential: identity.activeCredential,
-              nowMillis: clock)
-          : null,
-      accessFactory: nativeAvailable
-          ? (view, baseline) async => SignedAccessReceiver(
-              environment: configured,
-              identity: view,
-              credential: identity.activeCredential,
-              readBaseline: baseline,
-              nowMillis: clock)
-          : null,
-      observations: nativeAvailable
-          ? () async {
-              try {
-                final facts = await source.inspect();
-                return [
-                  {
-                    'key': 'usage.report',
-                    'reportedSupported': facts.usageSupported,
-                    'grantStatus': facts.usageGrantStatus
-                  }
-                ];
-              } catch (_) {
-                return [];
-              }
-            }
-          : null,
-      observationFactory: nativeAvailable
-          ? (view) async => observation.ObservationAgent(
-              scope: observation.ObservationScope(
-                  view.tenantId, view.deviceId!, view.registrationId!),
-              store: AndroidObservationStore(),
-              source: source,
-              nowMillis: clock,
-              api: observation.ObservationHttpApi(DeviceConfigurationTransport(
-                  apiRoot: configured.apiRoot,
-                  credential: identity.activeCredential,
-                  allowLoopbackHttp: configured.allowLoopbackHttp,
-                  maxResponseBytes: 65536)))
-          : null,
-      ruleReceiverFactory: (view) =>
-          SignedRuleReceiver.open(configured, identity, view, clock));
+  final runtime = ProductionChildRuntime.create(
+      environment: configured, nativeAvailable: nativeAvailable);
+  final session = runtime.session;
   var osVersion = 'Android';
   if (nativeAvailable) {
     try {

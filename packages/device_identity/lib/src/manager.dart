@@ -143,6 +143,35 @@ class DeviceIdentityManager {
     return state['credential'];
   }
 
+  /// Persist a 401/403 observed by a trusted device transport. Supply the exact
+  /// credential used for that request, never a newly fetched one. Late replies
+  /// cannot block another registration or a rotated credential. No HTTP or
+  /// secret logging. A failed secure write throws rather than claiming durability.
+  Future<bool> recordCredentialRejection(
+          {required DeviceIdentityView scope,
+          required String rejectedCredential}) =>
+      _exclusive(() async {
+        if (!validSecret(rejectedCredential)) {
+          throw const DeviceIdentityFailure('INVALID_CREDENTIAL_REJECTION');
+        }
+        final state = await _read();
+        if (state == null) return false;
+        _time(state);
+        if (!const {
+              IdentityPhase.active,
+              IdentityPhase.rotationRequested,
+              IdentityPhase.rotationPending
+            }.contains(_phase(state)) ||
+            state['tenantId'] != scope.tenantId ||
+            state['deviceId'] != scope.deviceId ||
+            state['registrationId'] != scope.registrationId ||
+            state['credential'] != rejectedCredential) return false;
+        if (state['authenticationBlocked'] == true) return true;
+        state['authenticationBlocked'] = true;
+        await _save(state);
+        return true;
+      });
+
   /// Physical pairing UI only; caller must not log/copy it to telemetry.
   Future<String?> pairingCode() async {
     final state = await _read();

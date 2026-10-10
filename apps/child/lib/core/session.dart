@@ -99,6 +99,12 @@ class ChildSession extends ChangeNotifier {
   bool identityReadSucceeded = false, credentialReady = false;
   String? errorCode, _pairingCode;
   ChildRuleReceiver? _receiver;
+  int _rulesGeneration = 0;
+  bool _rulesRestoreOnIdle = false, _rulesCloseFailed = false;
+  Future<void> _rulesClosing = Future.value();
+  // Await only actual close work. An already-completed chain may belong to an
+  // earlier async zone and must not delay unrelated request/UI operations.
+  int _rulesClosingCount = 0;
   ChildSession(
       {required this.identity,
       this.ruleReceiverFactory,
@@ -148,16 +154,29 @@ class ChildSession extends ChangeNotifier {
         (_accessIdentityKey != null && _accessIdentityKey != _identityKey)) {
       _clearAccess();
     }
-    if (_rulesIdentityKey != null && _rulesIdentityKey != _identityKey) {
-      final previous = _receiver;
-      _receiver = null;
-      _rulesIdentityKey = null;
-      rules = const ChildRules();
-      if (previous != null) {
-        unawaited(previous.close().catchError((Object _) {
-          _log.warning('code=RULE_STORE_CLOSE_FAILED');
-        }));
-      }
+    if (!credentialReady ||
+        !identityReadSucceeded ||
+        (_rulesIdentityKey != null && _rulesIdentityKey != _identityKey)) {
+      _clearRules();
+    }
+  }
+
+  /// Hide private projections immediately; preserve the signed database. Wait
+  /// for the previous owner to close before opening the same SDK database again.
+  void _clearRules() {
+    _rulesGeneration++;
+    final previous = _receiver;
+    _receiver = null;
+    _rulesIdentityKey = null;
+    _rulesRestoreOnIdle = false;
+    rules = const ChildRules();
+    if (previous != null) {
+      _rulesClosingCount++;
+      _rulesClosing =
+          _rulesClosing.then((_) => previous.close()).catchError((Object _) {
+        _rulesCloseFailed = true;
+        _log.warning('code=RULE_STORE_CLOSE_FAILED');
+      }).whenComplete(() => _rulesClosingCount--);
     }
   }
 
@@ -191,6 +210,9 @@ class ChildSession extends ChangeNotifier {
       rethrow;
     } finally {
       _checkIdentityScope();
+      if (!wasReady && credentialReady && ruleReceiverFactory != null) {
+        _rulesRestoreOnIdle = true;
+      }
       if (!wasReady && credentialReady && accessFactory != null) {
         _accessSyncOnIdle = true;
       }
@@ -205,7 +227,7 @@ class ChildSession extends ChangeNotifier {
       await _refresh();
       if (identityView?.phase == IdentityPhase.active &&
           ruleReceiverFactory != null) {
-        rules = await (await _rules()).restore();
+        rules = await _readRules();
       }
       if (accessFactory != null && credentialReady) {
         try {
@@ -228,6 +250,7 @@ class ChildSession extends ChangeNotifier {
         }
       }
     });
+    if (_disposed) return;
     initialized = true;
     _changed();
     _accessSyncOnIdle = accessFactory != null && credentialReady;
@@ -264,7 +287,7 @@ class ChildSession extends ChangeNotifier {
           ? 'AWAITING_GUARDIAN'
           : failure.code;
     } on policy.ConfigurationFailure catch (failure) {
-      errorCode = failure.code;
+      errorCode = failure.code == 'CONFIGURATION_PAUSED' ? null : failure.code;
     } on policy.DeviceTransportFailure catch (failure) {
       errorCode = failure.code;
     } on temporary.AccessFailure catch (failure) {
@@ -294,6 +317,11 @@ class ChildSession extends ChangeNotifier {
       submissionErrorCode = errorCode == 'SUBMISSION_PAUSED' ? null : errorCode;
       errorCode = null;
     }
+    if (_disposed) {
+      if (_rulesClosingCount > 0) await _rulesClosing;
+      busy = false;
+      return false;
+    }
     try {
       await _refresh();
     } on DeviceIdentityFailure catch (failure) {
@@ -313,6 +341,7 @@ class ChildSession extends ChangeNotifier {
     if (submissionOperation && submissionErrorCode != null) {
       _log.warning('code=$submissionErrorCode');
     }
+    if (_rulesClosingCount > 0) await _rulesClosing;
     busy = false;
     _changed();
     _scheduleAccess();
@@ -378,15 +407,89 @@ class ChildSession extends ChangeNotifier {
       _observe(collect: false, openSettings: true);
 
   Future<ChildRuleReceiver> _rules() async {
+    if (!_foreground || _disposed) {
+      throw const policy.ConfigurationFailure('CONFIGURATION_PAUSED');
+    }
     if (_receiver != null) return _receiver!;
     if (ruleReceiverFactory == null ||
+        !credentialReady ||
+        !identityReadSucceeded ||
         identityView?.deviceId == null ||
         identityView?.registrationId == null) {
       throw const policy.ConfigurationFailure(
           'CONFIGURATION_TRUST_UNAVAILABLE');
     }
-    _rulesIdentityKey = _identityKey;
-    return _receiver = await ruleReceiverFactory!(identityView!);
+    final generation = _rulesGeneration, scope = _identityKey;
+    if (_rulesClosingCount > 0) await _rulesClosing;
+    if (_rulesCloseFailed) {
+      throw const policy.ConfigurationFailure('STORAGE_FAILURE');
+    }
+    _requireRulesCurrent(generation, scope);
+    _rulesIdentityKey = scope;
+    final receiver = await ruleReceiverFactory!(identityView!);
+    try {
+      _requireRulesCurrent(generation, scope);
+    } catch (_) {
+      try {
+        await receiver.close();
+      } catch (_) {
+        _rulesCloseFailed = true;
+        _log.warning('code=RULE_STORE_CLOSE_FAILED');
+      }
+      rethrow;
+    }
+    return _receiver = receiver;
+  }
+
+  void _requireRulesCurrent(int generation, String? scope,
+      [ChildRuleReceiver? receiver]) {
+    if (_disposed ||
+        !_foreground ||
+        !credentialReady ||
+        !identityReadSucceeded ||
+        generation != _rulesGeneration ||
+        scope == null ||
+        scope != _identityKey ||
+        (receiver != null && !identical(receiver, _receiver))) {
+      throw const policy.ConfigurationFailure('CONFIGURATION_PAUSED');
+    }
+  }
+
+  Future<ChildRules> _readRules({bool synchronize = false}) async {
+    final generation = _rulesGeneration, scope = _identityKey;
+    final receiver = await _rules();
+    _requireRulesCurrent(generation, scope, receiver);
+    try {
+      final next =
+          synchronize ? await receiver.synchronize() : await receiver.restore();
+      _requireRulesCurrent(generation, scope, receiver);
+      _rulesRestoreOnIdle = false;
+      return next;
+    } catch (error) {
+      if (error is DeviceIdentityFailure ||
+          error is policy.DeviceTransportFailure &&
+              (error.status == 401 ||
+                  error.status == 403 ||
+                  {'CREDENTIAL_READ_FAILED', 'DEVICE_CREDENTIAL_UNAVAILABLE'}
+                      .contains(error.code))) {
+        _clearRules();
+        rethrow;
+      }
+      if (synchronize) {
+        try {
+          // A receipt failure can follow a committed, verified page. Only the
+          // current foreground owner may expose that persisted fact.
+          _requireRulesCurrent(generation, scope, receiver);
+          final stored = await receiver.restore();
+          _requireRulesCurrent(generation, scope, receiver);
+          rules = stored;
+          _accessRestoreOnIdle = accessFactory != null;
+        } catch (_) {
+          /* Never publish an old owner or replace the first error. */
+        }
+      }
+      rethrow;
+    }
   }
 
   Future<ChildAccessReceiver> _access() async {
@@ -399,7 +502,7 @@ class ChildSession extends ChangeNotifier {
     }
     final scopeKey = _accessIdentityKey = _identityKey;
     final receiver = await accessFactory!(identityView!, () async {
-      rules = await (await _rules()).restore();
+      rules = await _readRules();
       return rules.configurations;
     });
     if (_disposed ||
@@ -565,6 +668,13 @@ class ChildSession extends ChangeNotifier {
     if (!initialized || busy || !_foreground || _disposed || !credentialReady) {
       return;
     }
+    if (_rulesRestoreOnIdle && ruleReceiverFactory != null) {
+      _rulesRestoreOnIdle = false;
+      unawaited(_run(() async {
+        rules = await _readRules();
+      }));
+      return;
+    }
     if (_accessSyncOnIdle && accessFactory != null) {
       _accessSyncOnIdle = false;
       _accessRestoreOnIdle = false;
@@ -666,21 +776,16 @@ class ChildSession extends ChangeNotifier {
         if (await identity.activeCredential() == null) {
           throw const DeviceIdentityFailure('DEVICE_CREDENTIAL_UNAVAILABLE');
         }
-        final receiver = await _rules();
-        try {
-          rules = await receiver.synchronize();
-          _accessRestoreOnIdle = accessFactory != null;
-        } catch (_) {
-          // A failed receipt POST can follow a committed signed page. Refresh
-          // local facts without pretending the whole synchronization succeeded.
-          rules = await receiver.restore();
-          _accessRestoreOnIdle = accessFactory != null;
-          rethrow;
-        }
+        rules = await _readRules(synchronize: true);
+        _accessRestoreOnIdle = accessFactory != null;
       });
   Future<void> setForeground(bool value) async {
+    if (_disposed) return;
     _foreground = value;
     if (!value) {
+      _rulesGeneration++;
+      rules = const ChildRules();
+      _rulesRestoreOnIdle = ruleReceiverFactory != null;
       _accessTimer?.cancel();
       _accessTimer = null;
       _accessReceiver?.pause();
@@ -696,7 +801,8 @@ class ChildSession extends ChangeNotifier {
       _changed();
       return;
     }
-    if (busy || _disposed) return;
+    _rulesRestoreOnIdle = ruleReceiverFactory != null;
+    if (busy) return;
     try {
       await _refresh();
     } on DeviceIdentityFailure catch (failure) {
@@ -714,15 +820,10 @@ class ChildSession extends ChangeNotifier {
     _disposed = true;
     _clearAccess();
     _clearSubmissions();
+    _clearRules();
     _pairingCode = null;
     identity.api.close();
     _observationAgent?.close();
-    final receiver = _receiver;
-    if (receiver != null) {
-      unawaited(receiver.close().catchError((Object _) {
-        _log.warning('code=RULE_STORE_CLOSE_FAILED');
-      }));
-    }
     super.dispose();
   }
 }

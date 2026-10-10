@@ -106,6 +106,96 @@ void main() {
 
   DeviceIdentityManager recreated() =>
       DeviceIdentityManager(api: api, secrets: secrets, nowMillis: () => now);
+  test(
+      'matching external credential rejection is durable and makes no HTTP request',
+      () async {
+    await activate();
+    final scope = await manager.view(), calls = requests.length;
+    expect(
+        await manager.recordCredentialRejection(
+            scope: scope, rejectedCredential: initialToken),
+        isTrue);
+    expect(requests.length, calls);
+    expect(await manager.activeCredential(), isNull);
+    expect((await recreated().view()).cloudAuthenticationBlocked, isTrue);
+    expect(await recreated().activeCredential(), isNull);
+    final writes = secrets.writes;
+    expect(
+        await manager.recordCredentialRejection(
+            scope: scope, rejectedCredential: initialToken),
+        isTrue);
+    expect(secrets.writes, writes,
+        reason: 'Repeated refusal is a read-only replay.');
+  });
+  test('late refusal for old rotated credential cannot block its replacement',
+      () async {
+    await activate();
+    final oldScope = await manager.view();
+    await manager.rotate();
+    await manager.activateRotation();
+    final record = secrets.value, writes = secrets.writes;
+    expect(
+        await manager.recordCredentialRejection(
+            scope: oldScope, rejectedCredential: initialToken),
+        isFalse);
+    expect(await manager.activeCredential(), nextToken);
+    expect(secrets.value, record);
+    expect(secrets.writes, writes);
+  });
+  test('refusal for another registration is ignored without writes', () async {
+    await activate();
+    final scope = await manager.view();
+    final other = DeviceIdentityView(
+        phase: scope.phase,
+        tenantId: scope.tenantId,
+        deviceId: scope.deviceId,
+        registrationId: enrollment,
+        heartbeatSequence: scope.heartbeatSequence,
+        heartbeatPending: scope.heartbeatPending,
+        cloudAuthenticationBlocked: false);
+    final writes = secrets.writes;
+    expect(
+        await manager.recordCredentialRejection(
+            scope: other, rejectedCredential: initialToken),
+        isFalse);
+    expect(await manager.activeCredential(), initialToken);
+    expect(secrets.writes, writes);
+  });
+  test(
+      'awaiting-confirmation rejection cannot turn expected waiting into revocation',
+      () async {
+    await begin();
+    final scope = await manager.view(), writes = secrets.writes;
+    expect(
+        await manager.recordCredentialRejection(
+            scope: scope, rejectedCredential: initialToken),
+        isFalse);
+    expect((await manager.view()).cloudAuthenticationBlocked, isFalse);
+    expect(secrets.writes, writes);
+  });
+  test(
+      'external rejection storage failure is fixed-code and cannot reset identity',
+      () async {
+    await activate();
+    final scope = await manager.view(), original = secrets.value;
+    secrets.failWrites = true;
+    await expectLater(
+        manager.recordCredentialRejection(
+            scope: scope, rejectedCredential: initialToken),
+        throwsA(failure('SECURE_STORAGE_FAILED')));
+    expect(secrets.value, original);
+  });
+  test('only a fresh authenticated heartbeat can recover a persisted rejection',
+      () async {
+    await activate();
+    final scope = await manager.view();
+    await manager.recordCredentialRejection(
+        scope: scope, rejectedCredential: initialToken);
+    expect(await recreated().activeCredential(), isNull);
+    await manager.heartbeat(agentVersion: 'test', capabilities: []);
+    expect(await recreated().activeCredential(), initialToken);
+    expect((await manager.view()).cloudAuthenticationBlocked, isFalse);
+  });
   setUp(() async {
     now = time;
     requests.clear();

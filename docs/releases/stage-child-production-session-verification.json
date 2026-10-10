@@ -1,0 +1,134 @@
+{
+  "stage": "child-production-session-and-rule-lifecycle",
+  "verifiedAtUtc": "2026-10-10T03:00:40.520334+00:00",
+  "baselineCommit": "0474e7c411b77b31d4b7f14f825eec7e4a7f8dd4",
+  "candidate": ".local/root-production-session-candidate",
+  "baselineArchiveSha256": "7e7382535ba45949f0800c2f39a8ac9154c84cc9fa882989cb7e63f8b4ccfc7e",
+  "unchangedBaselineInputsVerified": 503,
+  "runtimeAndTestInputCount": 512,
+  "runtimeAndTestManifestSha256": "dd534c7bfec919d501afdb4ab8835eb3d7c564db96e0bb23c3123b94751b7a54",
+  "selectedSource": [
+    {
+      "path": "apps/child/lib/core/session.dart",
+      "sha256": "1a074cde3b263975f9b0ebc9bd15d15cf3a5fd70ce563d3e92efc82ffb0c46a2"
+    },
+    {
+      "path": "apps/child/lib/core/rule_receiver.dart",
+      "sha256": "c38ece199c1e94bb00014cab3e43ac9fb17c016c427992a8ce5bee31d9dbf902"
+    },
+    {
+      "path": "apps/child/lib/core/production_session.dart",
+      "sha256": "09f68221f0aa8959eab546b10ce19c3c437370f34aa6935122945156161dddc8"
+    },
+    {
+      "path": "apps/child/lib/main.dart",
+      "sha256": "8b8387908d8d66db0bda6b94dd742415baa2bf6d59c9b155c4c59cde8e9cc9d7"
+    },
+    {
+      "path": "apps/child/test/production_session_test.dart",
+      "sha256": "e83058f2e85f64b51388b6a061022b01cb83564eed2acee7cdc4bdbfcc95e780"
+    },
+    {
+      "path": "apps/child/test/rule_session_lifecycle_test.dart",
+      "sha256": "651aafc3f19fea137478b2893104fef67d5e697622c1139b35372fd7d2e4e8e9"
+    },
+    {
+      "path": "apps/child/test/rule_transport_auth_test.dart",
+      "sha256": "9e89665185b5877063f61e0284c6922ffc365637a8f743ad33079b7a9560b693"
+    },
+    {
+      "path": "packages/device_identity/lib/src/manager.dart",
+      "sha256": "00033a509d46843af3522c0d247bc6c1cabd914f3c9d14130c286e2530af5913"
+    },
+    {
+      "path": "packages/device_identity/test/identity_test.dart",
+      "sha256": "71f3fbd2a67f16b6edbc6fd86f7cd7c70a55dae38f90f59249f450c35513ee25"
+    },
+    {
+      "path": "docs/child-production-session-plan.md",
+      "sha256": "1abef1234ab419567d7247546d5d524069f781d9f71380dc61aee12811c464ee"
+    },
+    {
+      "path": "docs/child-production-session-acceptance.md",
+      "sha256": "ea2eccb26417a09761a1205f14f2ff85121aee634d03c4f1000f46e6505e331d"
+    }
+  ],
+  "mainIsolation": {
+    "committedMain": "tested baseline main using ProductionChildRuntime",
+    "workingTreeReportOverlayPreserved": true,
+    "unverifiedReportChangesIncluded": false
+  },
+  "verification": {
+    "child": {
+      "passed": 112,
+      "failed": 0,
+      "analysis": "No issues found"
+    },
+    "identitySdk": {
+      "passed": 43,
+      "failed": 0,
+      "analysis": "No issues found"
+    },
+    "focusedChild": {
+      "passed": 21,
+      "includedInFull112": true
+    },
+    "submissionUiAndRuleLifecycleAfterAsyncFix": {
+      "passed": 26,
+      "includedInFull112": true
+    },
+    "backend": {
+      "tests": 324,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1,
+      "skippedCases": [
+        "com.aimanager.AndroidChildSubmissionJourneyTest/realEnrollmentNativeCrashRecoveryAndRevocation"
+      ]
+    },
+    "androidDebugBuild": {
+      "entry": "lib/main.dart",
+      "passed": true,
+      "sha256": "efa42c7a61208779676f1cfd622eed96ce74e6e6eac56aca4f4fe971a6b1735d"
+    },
+    "webReleaseBuild": {
+      "entry": "lib/main.dart",
+      "renderer": "html",
+      "pwaStrategy": "none",
+      "passed": true,
+      "files": 27,
+      "manifestSha256": "e25dff4a988bcc63142cfd60ffb1f6b771f716115256bdc8c4e058f110ca798e"
+    },
+    "environment": {
+      "flutter": "3.22.2",
+      "dart": "3.4.3",
+      "java": "17",
+      "backendDatabase": "H2 in Spring tests",
+      "nativeJourneyExecuted": false
+    }
+  },
+  "localEvidenceSha256": {
+    "production-session-backend-final.log": "2d6b0202e2df6ce060c693224eb392f5f692539e5d4562051011f7d7863782d7",
+    "production-session-child-final.log": "53719398431e7bb7827036273698b342494ff46110341bbe4416a53f3854db2a",
+    "production-session-analysis-final.log": "0835256fd392b2df4da89c2632a6ef2892a07d0be58bb56cea61837044b8cc3c",
+    "production-identity-full.log": "53345dbc12eb951627744d377a9bd901b78a72e7489d875464329ceeee84b128",
+    "production-identity-analyze.log": "a8af9847cbe3b37fd0f493c27dfe6df7913df656ebfd08976e5f31d13ecc7f2b",
+    "production-session-focused.log": "f363693c1c856b916bb9447e7580c79146dfd37d04d83c209b60ad87b5af64c5",
+    "production-rules-red.log": "a2fce0665d68b6020824f85ad6111c79ae0dafa1ec3320565d68d5cdd6e7285b",
+    "production-rules-auth-red.log": "75e1b2b66ac8c0e472fa8f2f421fdeaf161b7013517bf98823bb182e5692cdbd",
+    "production-rules-submission-green.log": "de7512fa68bb9730b36958fbff22878d7c40717046c94bc859c790643460ed0e",
+    "production-session-child-full.log": "9b4d0845f07941160e32f2658dc21a5acf6a181be6f20add4c35841fae590dcc",
+    "production-factory-api-red.log": "f75d0d02e479fcc8a958c4deeb04b412fd1610057e3dae2b0b577f602f0250b6",
+    "production-session-apk.log": "e63f111197639f4f610052113e53c1dc3b0bec034a3d3cb0323e6f98bf45c2b5",
+    "production-session-web.log": "993ce41ed1f857336dbd4c797f4e5f031aa6adc87f5f73dc1c6954c8c18f5f75"
+  },
+  "limits": [
+    "Unit OS/store/network boundaries are controlled fixtures; ES256 verifier, SDK journals and business receivers are production implementations.",
+    "Lifecycle-only fixtures use synthetic verified objects and do not prove cryptography.",
+    "Factory API absence red output is compilation evidence only.",
+    "Prior 0474 native submission journey does not prove this new all-factory composition.",
+    "No new native joint journey, report composition, real OIDC/MFA, OS enforcement, reboot, TV, OceanBase or capacity claim.",
+    "Secure-storage failure throws; persistence across process death cannot be promised if that write fails.",
+    "System enforcement remains false; complete product remains unfinished."
+  ]
+}
