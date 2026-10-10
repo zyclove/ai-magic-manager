@@ -64,6 +64,11 @@ management:
     health:
       show-details: never
 manager:
+  contract:
+    evidence-enabled: ${CONTRACT_EVIDENCE_ENABLED:false}
+    issuer: ${CONTRACT_EVIDENCE_ISSUER:}
+    audience: ${CONTRACT_EVIDENCE_AUDIENCE:}
+    jwk-set-uri: ${CONTRACT_EVIDENCE_JWK_SET_URI:}
   diagnostic-packages:
     key-file: ${DIAGNOSTIC_PACKAGE_KEY_FILE:}
     active-key-id: ${DIAGNOSTIC_PACKAGE_ACTIVE_KEY_ID:}
