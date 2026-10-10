@@ -224,6 +224,7 @@ void main() {
     await tester.pump();
     await tester.tap(find.text('刷新授权列表'));
     await tester.pumpAndSettle();
+    expect(tester.getSemantics(find.text('查看授权标识与账号')).label, '查看授权标识与账号');
     await tester.ensureVisible(find.text('撤销授权'));
     await tester.tap(find.text('撤销授权'));
     await tester.pump();

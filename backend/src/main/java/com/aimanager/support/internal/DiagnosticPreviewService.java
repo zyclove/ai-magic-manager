@@ -72,6 +72,13 @@ class DiagnosticPreviewService {
     if (!observed.subjectId().equals(source.device().subjectId())
         || !observed.registrationId().equals(source.device().registrationId()))
       throw new DomainException(HttpStatus.CONFLICT, "DIAGNOSTIC_SCOPE_CHANGED");
+    byte[] bytes = read(tenant, source);
+    audit.record(tenant, principal, "DIAGNOSTIC_PREVIEWED", device);
+    return bytes;
+  }
+
+  /** Caller holds the current membership, subject and device locks for this exact source. */
+  byte[] read(String tenant, FleetDiagnosticSource.Snapshot source) {
     var configurations = deliveries.forAuthorizedDevice(tenant, source.device());
     var references = new TreeMap<String, String>();
     for (var item : configurations) {
@@ -96,7 +103,6 @@ class DiagnosticPreviewService {
     }
     if (bytes.length > 512 * 1024)
       throw new DomainException(HttpStatus.PAYLOAD_TOO_LARGE, "DIAGNOSTIC_TOO_LARGE");
-    audit.record(tenant, principal, "DIAGNOSTIC_PREVIEWED", device);
     return bytes;
   }
 }

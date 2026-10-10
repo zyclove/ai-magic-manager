@@ -22,6 +22,7 @@ import 'usage_reports_page.dart';
 import 'editors.dart';
 import 'device_exit_dialog.dart';
 import 'device_diagnostic_dialog.dart';
+import 'diagnostic_packages_dialog.dart';
 import 'quota_page.dart';
 import 'ownership_page.dart';
 import 'notifications_page.dart';
@@ -599,6 +600,13 @@ class ConsoleActions {
                 throw const ApiFailure(409, 'WORKSPACE_CHANGED');
               }
               await openDeviceDiagnostic(ctx, s, r);
+            }, closeOnSuccess: false),
+          if (s.canWrite && r['state'] == 'ACTIVE')
+            DetailAction('导出诊断包', (ctx) async {
+              if (s.root != workspace) {
+                throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+              }
+              await openDiagnosticPackages(ctx, s, device: r);
             }, closeOnSuccess: false),
           if (s.canWrite && r['state'] == 'ACTIVE')
             DetailAction('限时支持授权', (ctx) async {

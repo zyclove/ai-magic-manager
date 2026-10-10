@@ -14,6 +14,8 @@ class SupportCenterView extends StatefulWidget {
   final bool canAdmin;
   final bool canReceive;
   final VoidCallback onReauth, onOpenDevices;
+  final VoidCallback? onOpenReceivedPackages, onOpenAdminPackages;
+  final ValueChanged<SupportGrant>? onOpenGrantPackages;
   const SupportCenterView(
       {super.key,
       required this.repository,
@@ -21,6 +23,9 @@ class SupportCenterView extends StatefulWidget {
       this.accessChanges,
       required this.canAdmin,
       this.canReceive = true,
+      this.onOpenReceivedPackages,
+      this.onOpenAdminPackages,
+      this.onOpenGrantPackages,
       required this.onReauth,
       required this.onOpenDevices});
   @override
@@ -221,6 +226,7 @@ class _SupportCenterViewState extends State<SupportCenterView>
                   child: const Text('取消配对请求')),
           ])));
   Widget grantCard(SupportGrant grant) => Card(
+      semanticContainer: false,
       margin: const EdgeInsets.only(top: 12),
       child: Padding(
           padding: const EdgeInsets.all(16),
@@ -259,6 +265,17 @@ class _SupportCenterViewState extends State<SupportCenterView>
                           usable && !busy ? () => readDiagnostic(grant) : null,
                       icon: const Icon(Icons.search),
                       label: const Text('读取授权诊断'))),
+            if (grant.withinTerm(now) &&
+                section == 1 &&
+                widget.onOpenGrantPackages != null)
+              Align(
+                  alignment: Alignment.centerLeft,
+                  child: OutlinedButton.icon(
+                      onPressed: usable && !busy && !pendingWrite
+                          ? () => widget.onOpenGrantPackages!(grant)
+                          : null,
+                      icon: const Icon(Icons.note_add_outlined),
+                      label: const Text('生成诊断包'))),
             if (grant.state != 'REVOKED' && section == 2) ...[
               if (confirming?.id != grant.id)
                 Align(
@@ -388,7 +405,19 @@ class _SupportCenterViewState extends State<SupportCenterView>
                           onPressed: !busy && !pendingWrite
                               ? widget.onOpenDevices
                               : null,
-                          child: const Text('前往设备管理'))
+                          child: const Text('前往设备管理')),
+                    if (section == 1 && widget.onOpenReceivedPackages != null)
+                      OutlinedButton(
+                          onPressed: !busy && !pendingWrite
+                              ? widget.onOpenReceivedPackages
+                              : null,
+                          child: const Text('我的授权诊断包')),
+                    if (section == 2 && widget.onOpenAdminPackages != null)
+                      OutlinedButton(
+                          onPressed: !busy && !pendingWrite
+                              ? widget.onOpenAdminPackages
+                              : null,
+                          child: const Text('我的设备诊断包'))
                   ]),
                 ],
                 if (busy)

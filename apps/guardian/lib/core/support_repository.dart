@@ -24,7 +24,13 @@ const _errors = {
   'VALIDATION_FAILED',
   'DIAGNOSTIC_TOO_LARGE',
   'DIAGNOSTIC_SOURCE_INVALID',
-  'DIAGNOSTIC_SERIALIZATION_FAILED'
+  'DIAGNOSTIC_SERIALIZATION_FAILED',
+  'DIAGNOSTIC_PACKAGE_UNAVAILABLE',
+  'DIAGNOSTIC_PACKAGE_NOT_READY',
+  'DIAGNOSTIC_PACKAGE_EXPIRED',
+  'DIAGNOSTIC_PACKAGE_CAPACITY_REACHED',
+  'DIAGNOSTIC_PACKAGE_TEMPORARY_FAILURE',
+  'DIAGNOSTIC_PACKAGE_ATTEMPTS_EXHAUSTED'
 };
 
 class SupportRepository {
@@ -62,6 +68,7 @@ class SupportRepository {
       String? key,
       int? version,
       int status = 200,
+      bool rawBytes = false,
       int maximum = 131072}) async {
     ensureCurrent();
     StreamSubscription<List<int>>? subscription;
@@ -141,7 +148,7 @@ class SupportRepository {
                 .contains('no-store') ||
             (response.contentLength != null &&
                 response.contentLength != data.length)) invalidSupport();
-        return value;
+        return rawBytes ? data : value;
       })()
           .timeout(timeout);
     } on ApiFailure {

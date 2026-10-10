@@ -1,0 +1,242 @@
+{
+  "recordedAt": "2026-10-10T10:54:07.214869+00:00",
+  "status": "diagnostic-stage-verified-pending-submission-and-deployment",
+  "deployed": false,
+  "committed": false,
+  "workspaceHead": "feb42117c2fa2b5ff802bf9bf2efc1e82c5b7ad9",
+  "foundationCommit": "fb4bbf2a5d77b09624d5dcfc96b537892e713cb3",
+  "sourceFiles": [
+    {
+      "path": "backend/src/main/java/com/aimanager/support/DiagnosticPackageMaintenance.java",
+      "sha256": "15E87F3B77C567D76715D98B2A0E7C63863682B09CCEB1940BF666066036F7D7"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/support/internal/DiagnosticPackageAccess.java",
+      "sha256": "30C5F5DACB28F0AC0E87976815927D958743E7DB96A5534E07A6A49020D5A7B2"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/support/internal/DiagnosticPackageCipher.java",
+      "sha256": "132659011CC3FBD5D746773456978AA65288B88A30C99A0839D1C61D1657DC85"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/support/internal/DiagnosticPackageController.java",
+      "sha256": "0058136DF49BF9FC32B5B6DF58C9267B7C3FF1FF45647FA174A4256AA5022726"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/support/internal/DiagnosticPackageSchedule.java",
+      "sha256": "34C15F84797E39C03965757ED54F5CE4C77F4C0BF963A03039E42690DF52CA39"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/support/internal/DiagnosticPackageService.java",
+      "sha256": "25A47F14582E2B7E171DE637645DC444531EAB0325E19FD7BD9198EF9B8833A0"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/support/internal/DiagnosticPackageStore.java",
+      "sha256": "026D817D1BCE2F5D4FD2AF21B788A32847007AD0C378602F8BF8073038C381A4"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/support/internal/DiagnosticPackageWorker.java",
+      "sha256": "FF2588C8609F2055753910D1B1A8E704987CA5B5A1C37840F60FB9757B723A4B"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/support/internal/DiagnosticPreviewService.java",
+      "sha256": "E90394BD6F568319B4875A1B9C07011ACFC4080090663ADC52562175BD3F8479"
+    },
+    {
+      "path": "backend/src/main/resources/application.yml",
+      "sha256": "CCFDF4CB24760A89D6568FE8F5BE8C622D98E3C8990B1EEBFCF1C4735CE5B71E"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V29__diagnostic_packages.sql",
+      "sha256": "2E7DC7DBA54E7ACB4478F5F02F01E3CD38CF8541399653B6B82906B3C35CE546"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/support/internal/DiagnosticPackageCipherTest.java",
+      "sha256": "01875C45538ED19E4CB40EBECF528DDE5239551171FC68745FD20A4AB3A114A3"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/support/internal/DiagnosticPackageJourneyTest.java",
+      "sha256": "B00D3CD7BD849591A81C52A335FAB7AB12F1FBC176A51C0265BDA781CA694B8B"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/support/internal/DiagnosticPackageMigrationTest.java",
+      "sha256": "5FDEB1C3606621231357560CFAB7797F153E4AD95E1EAE1C2CA6FC386BFA1A3C"
+    },
+    {
+      "path": "apps/guardian/lib/core/diagnostic_package.dart",
+      "sha256": "DDF5764BECE18741CFB66108B4C990E725E23C89D47F8906EA419A612FB2038E"
+    },
+    {
+      "path": "apps/guardian/lib/core/diagnostic_package_repository.dart",
+      "sha256": "EA8C7CFC31B05CD73826B1CC36CC6CD9C7F57117FD4B6895E720A918F30797A5"
+    },
+    {
+      "path": "apps/guardian/lib/core/support_repository.dart",
+      "sha256": "613533321333931EAF99F0619629BAE8F1A5CC5DC847718A4F2269BE9C741CC5"
+    },
+    {
+      "path": "apps/guardian/test/fixtures/diagnostic_package.dart",
+      "sha256": "3752374950405A9EC2671B4D3B3463724B485424A68F0191495FBED22228FD00"
+    },
+    {
+      "path": "apps/guardian/test/diagnostic_package_model_test.dart",
+      "sha256": "C0B36A5E2644193209B09A0CD1D5334D73C315F230B8E9357EF3AF62A1B35043"
+    },
+    {
+      "path": "apps/guardian/test/diagnostic_package_repository_test.dart",
+      "sha256": "7BE89F4AB4D7B2E8958E1E7E7429320C442DB2FF66565D65316B39CADF64EC88"
+    },
+    {
+      "path": "apps/guardian/test/diagnostic_packages_view_test.dart",
+      "sha256": "124F2D2323F4496FA36A2DD98FC3660E9B6B94E0979BB00687B6ADF3B1BFCB3D"
+    },
+    {
+      "path": "apps/guardian/lib/ui/diagnostic_packages_view.dart",
+      "sha256": "EF3DEE58C26120675B5BE8BDE7E5EBD0280AC8D583FAD01F2F52E7CFED30BB0C"
+    },
+    {
+      "path": "apps/guardian/lib/ui/support_view_state.dart",
+      "sha256": "E280C5AB3F60ABE2DBE56606664506E538266CD2D236BC6D38B2874475129F0E"
+    },
+    {
+      "path": "apps/guardian/lib/pages/diagnostic_packages_dialog.dart",
+      "sha256": "3CCE4B227E03AD5E924D242CCD1054C0E9F5BEA5864A125CA9C267E4AC692166"
+    },
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "sha256": "7906F70B61CF5D3D4C02E5B166969D9F9151B82E2AF697AFA29A2F56FC53AE70"
+    },
+    {
+      "path": "apps/guardian/lib/ui/support_center_view.dart",
+      "sha256": "B6874A0F25D380E1044BF675AC5D947D38DCB069CB8EA1B7ED2BF8D0D50A650E"
+    },
+    {
+      "path": "apps/guardian/lib/pages/support_page.dart",
+      "sha256": "9695B44F0939D8E53908EF06AF56F4CBDB511C6408293BB88AE4E4B7226EC214"
+    },
+    {
+      "path": "apps/guardian/tool/verify_diagnostic_package_http.dart",
+      "sha256": "B3363B7505EE1E50532BEB79892F26F246DEDFCEA7C4CE94DAC54A1A634DBFF1"
+    },
+    {
+      "path": "apps/guardian/test/support_views_test.dart",
+      "sha256": "E180D1696E212B481CEAC07E36278008797B7C89885C15E5ECF29E9790B9A062"
+    },
+    {
+      "path": "docs/support-package-contract.md",
+      "sha256": "8D7A8E9FC12A2E28544CDFA5F0464FF04E4D6890AD320BC6338CD2338BFB0C6D"
+    },
+    {
+      "path": "docs/support-diagnostics-plan.md",
+      "sha256": "88B2FEFA332552A26E334548B474CFC2891F118D900783EE728644987E808012"
+    }
+  ],
+  "backendVerification": [
+    {
+      "path": ".local/support-package-backend-full.log",
+      "sha256": "249678FBBBD58670C4E8B1CB529B74A65C63C8D4624E86FE09B691601747E0C6",
+      "total": 515,
+      "passed": 514,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    {
+      "path": ".local/support-package-client-final-mysql.log",
+      "sha256": "7841ECFB8AC1D796EE2E8F522B865BCBA96A44AE3D23E7D8A8825DC6ACE3EB95",
+      "total": 100,
+      "passed": 100,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": ".local/support-package-final-migration-mysql.log",
+      "sha256": "37A8C271913FC2511EAC55E95C4A3A305F465EDEA46578FC11E5D85325E02C84",
+      "total": 1,
+      "passed": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": ".local/support-package-http-final.log",
+      "sha256": "CCE8FA187D5E1008BC5F540C406EBD33834D20E84DBC3F165CC864AF86E28B15",
+      "total": 1,
+      "passed": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "backendArtifact": {
+    "path": ".local/support-package-backend/target/manager-backend-0.1.0-SNAPSHOT.jar",
+    "sha256": "8CABB1B3B163379A0B6C699784C4A60CC16A6D4E3A060665BC66945674C0F278",
+    "buildLogSha256": "8CD73CF503C802D068D6F6A7FFA99652D21DAD9FCEA4341767635D29716E726E"
+  },
+  "frontendVerification": {
+    "tests": 241,
+    "passed": 241,
+    "suiteSha256": "39802D41F10A56CF54391578B9D958F375F094CEB5B422E38D28C72EEA2639DD",
+    "analysisSha256": "824E566C7BE7A1E301AE8E1F5027792831CE909E86AB2539796F66BBE677F136",
+    "analysisErrors": 0,
+    "analysisWarnings": 0,
+    "styleInformationNotFatal": true,
+    "buildSha256": "E83C939C35C9C4EAE4977DBF8630DEB2BEAE3F170291B7942A1A2A16385D6CBE",
+    "artifactSha256": "0DEDAF1FEFF8F4B730B48EB39521D610B92CCF8686DCC8E9B35185F909BF34C2"
+  },
+  "browser": {
+    "status": "PASS",
+    "artifactSha256": "0DEDAF1FEFF8F4B730B48EB39521D610B92CCF8686DCC8E9B35185F909BF34C2",
+    "kind": "isolated API browser fixtures; real Dart HTTP journey is separate; no real OTP claim",
+    "checks": [
+      "device entry and explicit scope confirmation",
+      "uncertain create retries identical request",
+      "visible queued task follows real interval and becomes ready",
+      "browser receives exactly validated authenticated bytes",
+      "explicit cancel clears ready artifact",
+      "admin history entry recovers existing tasks",
+      "history MFA requirement has recovery action",
+      "incorrect content length or digest blocks saving",
+      "mobile scroll and long identifiers remain usable",
+      "recipient without workspace creates and downloads restricted package",
+      "unexpected sensitive nested field blocked despite matching digest",
+      "real default-context background transition clears data and prevents file-save attempt",
+      "capacity rejection allows history refresh and freeing capacity",
+      "version conflict recovers with refreshed task and newly confirmed cancellation"
+    ],
+    "pageErrors": [],
+    "unhandledRoutes": []
+  },
+  "review": {
+    "scope": "Whole diagnostic stage: committed support foundation plus current V29 backend and management UI",
+    "reviewer": "/root/diagnostic_stage_review",
+    "model": "gpt-6-astra",
+    "independentFreshContext": true,
+    "reviewCount": 1,
+    "readOnly": true,
+    "findings": [
+      {
+        "priority": "P2",
+        "file": "apps/guardian/lib/ui/diagnostic_packages_view.dart",
+        "functions": [
+          "create",
+          "cancel"
+        ],
+        "issue": "Deterministic creation capacity errors and cancellation resource version conflicts retained the pending write and disabled all recovery operations.",
+        "resolution": "Use existing ambiguousSupportFailure: retain the original request only for uncertain outcomes; definite rejection clears pending state and confirmation, stops following, and permits refresh and newly confirmed operations.",
+        "redLog": ".local/support-package-recovery-red.log",
+        "tests": [
+          "cancel version conflict allows refresh and a newly confirmed request",
+          "capacity rejection restores access to existing task cancellation"
+        ]
+      }
+    ],
+    "otherBlockingFindings": 0,
+    "reviewerDidNotModifyRunTestsOrDeploy": true,
+    "separateBrowserFinding": "Material Card merged task and grant expansion semantics. Reproduced with exact semantic label assertions and fixed using semanticContainer=false; final browser build and regression are required."
+  },
+  "temporaryDatabaseUsersSchemasKeysAndHttpFixturesRemoved": true,
+  "transport": "Production Dart client uses actual HTTP to isolated Spring server with test JwtDecoder; browser uses isolated API fixtures and separate contexts for real file downloads and real visibility transitions. No real administrator OTP claim.",
+  "deploymentLimitation": "Existing services and business database V22 were not replaced or migrated; previous automatic approval rejection still requires explicit deployment authorization."
+}

@@ -145,17 +145,20 @@ Widget supportFact(BuildContext context, String title, String value) => Padding(
       const SizedBox(height: 4),
       SelectionArea(child: Text(value))
     ]));
-Widget supportFailure(ApiFailure failure, VoidCallback reauth) => Semantics(
-    liveRegion: true,
-    child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(supportErrorMessage(failure)),
-          if (failure.correlationId != null)
-            SelectionArea(child: Text('请求标识：${failure.correlationId}')),
-          if (failure.code == 'REAUTH_REQUIRED' || failure.status == 401)
-            TextButton.icon(
-                onPressed: reauth,
-                icon: const Icon(Icons.verified_user_outlined),
-                label: const Text('重新认证'))
-        ])));
+Widget supportFailure(ApiFailure failure, VoidCallback reauth,
+        {String? message}) =>
+    Semantics(
+        liveRegion: true,
+        child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Text(message ?? supportErrorMessage(failure)),
+              if (failure.correlationId != null)
+                SelectionArea(child: Text('请求标识：${failure.correlationId}')),
+              if (failure.code == 'REAUTH_REQUIRED' || failure.status == 401)
+                TextButton.icon(
+                    onPressed: reauth,
+                    icon: const Icon(Icons.verified_user_outlined),
+                    label: const Text('重新认证'))
+            ])));

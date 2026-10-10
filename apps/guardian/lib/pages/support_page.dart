@@ -7,6 +7,7 @@ import '../core/support_repository.dart';
 import '../ui/design.dart';
 import '../ui/support_center_view.dart';
 import '../ui/support_grant_view.dart';
+import 'diagnostic_packages_dialog.dart';
 
 class SupportWorkspacePage extends StatelessWidget {
   final Session session;
@@ -38,6 +39,11 @@ class SupportWorkspacePage extends StatelessWidget {
         accessChanges: session,
         canAdmin: admin,
         canReceive: receive,
+        onOpenGrantPackages: (grant) => openDiagnosticPackages(context, session,
+            received: true, grant: grant),
+        onOpenReceivedPackages: () =>
+            openDiagnosticPackages(context, session, received: true),
+        onOpenAdminPackages: () => openDiagnosticPackages(context, session),
         onReauth: () => session.login(stepUp: true),
         onOpenDevices: () => context.go('/devices'));
   }

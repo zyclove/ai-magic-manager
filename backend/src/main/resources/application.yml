@@ -64,6 +64,12 @@ management:
     health:
       show-details: never
 manager:
+  diagnostic-packages:
+    key-file: ${DIAGNOSTIC_PACKAGE_KEY_FILE:}
+    active-key-id: ${DIAGNOSTIC_PACKAGE_ACTIVE_KEY_ID:}
+    worker:
+      enabled: ${DIAGNOSTIC_PACKAGE_WORKER_ENABLED:true}
+      interval-seconds: ${DIAGNOSTIC_PACKAGE_WORKER_INTERVAL_SECONDS:5}
   report-jobs:
     worker:
       enabled: ${USAGE_REPORT_WORKER_ENABLED:true}
