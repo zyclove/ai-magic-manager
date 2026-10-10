@@ -59,3 +59,5 @@ debug 包名 `com.aimanager.child.debug`，release 包名 `com.aimanager.child`�
 公开交互预览入口为 `flutter run -t tool/submission_preview.dart -d chrome`；仅使用明确标识的合成内存夹具，不连接真实服务/设备，不输入真实私人资料。正式 `lib/main.dart` 不引用预览入口，Web 正式入口仍禁用设备身份和注册。流程及验收边界见[申请交互契约](../../docs/child-request-ui-contract.md)。
 
 真实 Spring → 设备申请宿主 → 会话 → 规则页的跨进程验收覆盖提交/取消响应丢失、过期原键恢复、批准截止时间保持及撤销凭证后缓存隐藏。运行方式与测试夹具边界见[申请 HTTP 验收契约](../../docs/child-submission-http-acceptance.md)。该检查使用桌面 Flutter 测试引擎和合成文件密钥，不能代替 Android 真机进程恢复或系统管控验收。
+
+Android 申请原生持久恢复使用独立入口 `integration_test/submission_storage_test.dart` 和官方 `test_driver/submission_storage_driver.dart`，通过保留安装、逐阶段终止进程验证原请求正文/键、取消版本、离线缓存、授权拒绝和密钥丢失行为。测试使用独立合成身份范围与受控云端，复用真实 Android 安全存储、持久化屏障和默认加密数据库；仅用于专用 debug 模拟器。阶段顺序、安全清理及证据要求见[申请原生验收契约](../../docs/child-submission-native-acceptance.md)，不得用卸载或清空数据代替恢复。

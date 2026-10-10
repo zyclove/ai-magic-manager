@@ -186,6 +186,25 @@ void main() {
         receiver.refresh(), throwsA(isA<AccessTransportFailure>()));
     expect((await receiver.restore()).contextReady, isFalse);
   });
+  test('offline recheck preserves a durable authorization block', () async {
+    await receiver.refresh();
+    contextStatus = 401;
+    await expectLater(
+        receiver.refresh(), throwsA(isA<AccessTransportFailure>()));
+    final blocked = bindings.values.values.single;
+    expect((jsonDecode(blocked) as Map)['phase'], 'BLOCKED');
+    await receiver.close();
+    receiver = await open();
+    expect((await receiver.restore()).contextReady, isFalse);
+    offline = true;
+    await expectLater(
+        receiver.refresh(), throwsA(isA<AccessTransportFailure>()));
+    expect(bindings.values.values.single, blocked,
+        reason:
+            'A failed offline recheck cannot erase known authorization rejection.');
+    expect((await receiver.restore()).contextReady, isFalse);
+    expect(posted, isEmpty);
+  });
   test('pause refuses work and requires an explicit foreground resume',
       () async {
     await receiver.refresh();

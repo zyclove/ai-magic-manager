@@ -222,8 +222,13 @@ class ChildSubmissionReceiver implements ChildSubmissions {
           _confirmed.clear();
           await _write(_ContextBinding(
               'BLOCKED', previous?.context, previous?.checkedAt ?? 0));
-        } else if (!received && error.retryable && previous?.phase == 'VALID') {
-          await _write(previous!);
+        } else if (!received &&
+            error.retryable &&
+            previous != null &&
+            (previous.phase == 'VALID' || previous.phase == 'BLOCKED')) {
+          // A transient offline check cannot erase a known authorization block.
+          // CHECKING remains unavailable; only a fresh authenticated context can change it.
+          await _write(previous);
         }
       }
       rethrow;
