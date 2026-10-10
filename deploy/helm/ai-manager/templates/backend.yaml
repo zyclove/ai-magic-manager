@@ -1,0 +1,120 @@
+{{- $root := . -}}
+{{- range $role := list "api" "worker" }}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ai-manager.name" $root }}-{{ $role }}
+  labels:
+    {{- include "ai-manager.labels" $root | nindent 4 }}
+    app.kubernetes.io/component: {{ $role }}
+spec:
+  {{- if and (eq $role "api") $root.Values.api.autoscaling.enabled }}
+  # HPA owns API replicas when enabled.
+  {{- else }}
+  replicas: {{ if eq $role "api" }}{{ $root.Values.api.replicas }}{{ else }}1{{ end }}
+  {{- end }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ $root.Release.Name | quote }}
+      app.kubernetes.io/component: {{ $role }}
+  template:
+    metadata:
+      labels:
+        {{- include "ai-manager.labels" $root | nindent 8 }}
+        app.kubernetes.io/component: {{ $role }}
+    spec:
+      serviceAccountName: {{ include "ai-manager.name" $root }}
+      automountServiceAccountToken: false
+      {{- with $root.Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: backend
+          image: {{ $root.Values.images.backend | quote }}
+          imagePullPolicy: {{ $root.Values.images.pullPolicy | quote }}
+          ports:
+            - {name: http, containerPort: 8080}
+          env:
+            - {name: PORT, value: "8080"}
+            - {name: SPRING_CONFIG_IMPORT, value: "configtree:/run/secrets/"}
+            - {name: DATABASE_URL, value: {{ $root.Values.database.jdbcUrl | quote }}}
+            - {name: DATABASE_USERNAME, value: {{ $root.Values.database.username | quote }}}
+            - {name: OIDC_ISSUER_URI, value: {{ printf "%s/identity/realms/ai-manager" $root.Values.publicOrigin | quote }}}
+            - {name: OIDC_JWK_SET_URI, value: {{ printf "http://%s:%v/identity/realms/ai-manager/protocol/openid-connect/certs" $root.Values.identity.serviceName $root.Values.identity.servicePort | quote }}}
+            - {name: OIDC_AUDIENCE, value: {{ $root.Values.identity.audience | quote }}}
+            - {name: CORS_ALLOWED_ORIGINS, value: {{ $root.Values.publicOrigin | quote }}}
+            - {name: CONFIGURATION_SIGNING_KEY_FILE, value: "/run/keys/signing.jwk"}
+            - {name: CONFIGURATION_VERIFICATION_KEYS_FILE, value: "/run/keys/verification.jwks"}
+            - {name: MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED, value: "true"}
+            - {name: MANAGEMENT_ENDPOINT_HEALTH_GROUP_READINESS_INCLUDE, value: "readinessState,db"}
+            - {name: API_DOCS_ENABLED, value: "false"}
+            - {name: KAFKA_NOTIFICATIONS_ENABLED, value: "false"}
+            - {name: ARTEMIS_NOTIFICATIONS_ENABLED, value: "false"}
+            - {name: JAVA_TOOL_OPTIONS, value: "-XX:MaxRAMPercentage=70 -XX:+ExitOnOutOfMemoryError"}
+            # API replicas serve requests; the single worker owns scheduled jobs.
+            - {name: USAGE_REPORT_WORKER_ENABLED, value: {{ eq $role "worker" | quote }}}
+            - {name: AUDIT_EXPORT_WORKER_ENABLED, value: {{ eq $role "worker" | quote }}}
+            - {name: INAPP_NOTIFICATION_RETENTION_ENABLED, value: {{ eq $role "worker" | quote }}}
+            - {name: QUOTA_MATERIALIZATION_JOB_ENABLED, value: {{ eq $role "worker" | quote }}}
+            - {name: DEVICE_CLEANUP_EXPIRY_JOB_ENABLED, value: {{ eq $role "worker" | quote }}}
+            - {name: ACCESS_EXPIRY_JOB_ENABLED, value: {{ eq $role "worker" | quote }}}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          volumeMounts:
+            - {name: database-password, mountPath: /run/secrets, readOnly: true}
+            - {name: signing-keys, mountPath: /run/keys, readOnly: true}
+            - {name: temporary, mountPath: /tmp}
+          resources:
+            {{- if eq $role "api" }}{{- toYaml $root.Values.api.resources | nindent 12 }}{{- else }}{{- toYaml $root.Values.worker.resources | nindent 12 }}{{- end }}
+          startupProbe:
+            httpGet: {path: /actuator/health/liveness, port: http}
+            periodSeconds: 5
+            failureThreshold: 60
+          livenessProbe:
+            httpGet: {path: /actuator/health/liveness, port: http}
+            periodSeconds: 10
+          readinessProbe:
+            httpGet: {path: /actuator/health/readiness, port: http}
+            periodSeconds: 5
+      volumes:
+        - name: database-password
+          secret:
+            secretName: {{ $root.Values.database.existingSecret | quote }}
+            items:
+              - {key: {{ $root.Values.database.passwordKey | quote }}, path: spring.datasource.password}
+        - name: signing-keys
+          secret:
+            secretName: {{ $root.Values.signing.existingSecret | quote }}
+            items:
+              - {key: {{ $root.Values.signing.privateKeyKey | quote }}, path: signing.jwk}
+              - {key: {{ $root.Values.signing.publicKeysKey | quote }}, path: verification.jwks}
+        - name: temporary
+          emptyDir: {sizeLimit: 256Mi}
+{{- end }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ai-manager.name" . }}-api
+  labels:
+    {{- include "ai-manager.labels" . | nindent 4 }}
+spec:
+  selector:
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/component: api
+  ports:
+    - {name: http, port: 8080, targetPort: http}

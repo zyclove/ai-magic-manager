@@ -1,0 +1,15 @@
+{{- range $role := list "api" "edge" }}
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "ai-manager.name" $ }}-{{ $role }}
+  labels:
+    {{- include "ai-manager.labels" $ | nindent 4 }}
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ $.Release.Name | quote }}
+      app.kubernetes.io/component: {{ $role }}
+{{- end }}

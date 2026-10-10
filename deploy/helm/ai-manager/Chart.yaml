@@ -1,0 +1,6 @@
+apiVersion: v2
+name: ai-manager
+description: Guardian web console and Spring API for an externally managed identity and data plane
+type: application
+version: 0.1.0
+appVersion: "0.1.0"

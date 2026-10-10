@@ -1,0 +1,125 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "publicOrigin": {"type": "string"},
+    "images": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "backend": {"type": "string"},
+        "edge": {"type": "string"},
+        "pullPolicy": {"enum": ["Always", "IfNotPresent", "Never"]}
+      },
+      "required": ["backend", "edge", "pullPolicy"]
+    },
+    "imagePullSecrets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {"name": {"type": "string", "minLength": 1}},
+        "required": ["name"]
+      }
+    },
+    "database": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "jdbcUrl": {"type": "string"},
+        "username": {"type": "string"},
+        "existingSecret": {"type": "string"},
+        "passwordKey": {"type": "string", "minLength": 1}
+      },
+      "required": ["jdbcUrl", "username", "existingSecret", "passwordKey"]
+    },
+    "identity": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "serviceName": {"type": "string"},
+        "servicePort": {"type": "integer", "minimum": 1, "maximum": 65535},
+        "audience": {"type": "string", "minLength": 1}
+      },
+      "required": ["serviceName", "servicePort", "audience"]
+    },
+    "signing": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "existingSecret": {"type": "string"},
+        "privateKeyKey": {"type": "string", "minLength": 1},
+        "publicKeysKey": {"type": "string", "minLength": 1}
+      },
+      "required": ["existingSecret", "privateKeyKey", "publicKeysKey"]
+    },
+    "ingress": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "className": {"type": "string"},
+        "host": {"type": "string"},
+        "tlsSecretName": {"type": "string"},
+        "annotations": {"type": "object", "additionalProperties": {"type": "string"}}
+      },
+      "required": ["enabled", "className", "host", "tlsSecretName", "annotations"]
+    },
+    "api": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "replicas": {"type": "integer", "minimum": 2},
+        "autoscaling": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "minReplicas": {"type": "integer", "minimum": 2},
+            "maxReplicas": {"type": "integer", "minimum": 2},
+            "targetCPUUtilizationPercentage": {"type": "integer", "minimum": 1, "maximum": 100}
+          },
+          "required": ["enabled", "minReplicas", "maxReplicas", "targetCPUUtilizationPercentage"]
+        },
+        "resources": {"$ref": "#/definitions/resources"}
+      },
+      "required": ["replicas", "autoscaling", "resources"]
+    },
+    "worker": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {"resources": {"$ref": "#/definitions/resources"}},
+      "required": ["resources"]
+    },
+    "edge": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "replicas": {"type": "integer", "minimum": 2},
+        "resources": {"$ref": "#/definitions/resources"}
+      },
+      "required": ["replicas", "resources"]
+    }
+  },
+  "definitions": {
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "requests": {"$ref": "#/definitions/resourceLimits"},
+        "limits": {"$ref": "#/definitions/resourceLimits"}
+      },
+      "required": ["requests", "limits"]
+    },
+    "resourceLimits": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "cpu": {"type": "string", "minLength": 1},
+        "memory": {"type": "string", "minLength": 1}
+      },
+      "required": ["cpu", "memory"]
+    }
+  }
+}

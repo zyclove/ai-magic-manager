@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ai-manager.name" . }}-edge
+  labels:
+    {{- include "ai-manager.labels" . | nindent 4 }}
+    app.kubernetes.io/component: edge
+spec:
+  replicas: {{ .Values.edge.replicas }}
+  strategy:
+    type: RollingUpdate
+    rollingUpdate: {maxUnavailable: 0, maxSurge: 1}
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: {{ .Release.Name | quote }}
+      app.kubernetes.io/component: edge
+  template:
+    metadata:
+      annotations:
+        checksum/nginx: {{ include (print $.Template.BasePath "/edge-config.yaml") . | sha256sum }}
+      labels:
+        {{- include "ai-manager.labels" . | nindent 8 }}
+        app.kubernetes.io/component: edge
+    spec:
+      serviceAccountName: {{ include "ai-manager.name" . }}
+      automountServiceAccountToken: false
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        seccompProfile: {type: RuntimeDefault}
+      containers:
+        - name: edge
+          image: {{ .Values.images.edge | quote }}
+          imagePullPolicy: {{ .Values.images.pullPolicy | quote }}
+          ports:
+            - {name: http, containerPort: 8080}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: {drop: [ALL]}
+          volumeMounts:
+            - {name: nginx-config, mountPath: /etc/nginx/nginx.conf, subPath: nginx.conf, readOnly: true}
+            - {name: temporary, mountPath: /tmp}
+            - {name: nginx-cache, mountPath: /var/cache/nginx}
+          resources:
+            {{- toYaml .Values.edge.resources | nindent 12 }}
+          startupProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 5
+            failureThreshold: 12
+          livenessProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 10
+          readinessProbe:
+            httpGet: {path: /healthz, port: http}
+            periodSeconds: 5
+      volumes:
+        - name: nginx-config
+          configMap: {name: {{ include "ai-manager.name" . }}-edge}
+        - name: temporary
+          emptyDir: {sizeLimit: 32Mi}
+        - name: nginx-cache
+          emptyDir: {sizeLimit: 64Mi}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "ai-manager.name" . }}-edge
+  labels:
+    {{- include "ai-manager.labels" . | nindent 4 }}
+spec:
+  selector:
+    app.kubernetes.io/instance: {{ .Release.Name | quote }}
+    app.kubernetes.io/component: edge
+  ports:
+    - {name: http, port: 8080, targetPort: http}

@@ -1,0 +1,41 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "ai-manager.name" . }}
+  labels:
+    {{- include "ai-manager.labels" . | nindent 4 }}
+  {{- with .Values.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with .Values.ingress.className }}
+  ingressClassName: {{ . | quote }}
+  {{- end }}
+  tls:
+    - hosts: [{{ .Values.ingress.host | quote }}]
+      secretName: {{ .Values.ingress.tlsSecretName | quote }}
+  rules:
+    - host: {{ .Values.ingress.host | quote }}
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "ai-manager.name" . }}-api
+                port: {name: http}
+          - path: /identity
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ .Values.identity.serviceName | quote }}
+                port: {number: {{ .Values.identity.servicePort }}}
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: {{ include "ai-manager.name" . }}-edge
+                port: {name: http}
+{{- end }}

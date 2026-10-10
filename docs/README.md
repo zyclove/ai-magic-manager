@@ -31,6 +31,7 @@
 | [设备观察授权契约](device-observation-contract.md) | 应用清单/使用摘要的单独授权与报告边界；V20 代码交付状态以该文档为准 | 产品、前后端与 QA |
 | [2026-10-09 阶段交付](stage-delivery-2026-10-09.md) | 本阶段提交范围、重新验证、仓库配置边界及后续发布门槛 | 全团队 |
 | [可复制部署手册](deployment-runbook.md) | 新环境初始化、独立构建、五服务 Compose、身份授权、TLS 与升级边界 | 开发、QA、交付与 SRE |
+| [Kubernetes 与 Helm 部署基线](kubernetes-deployment.md) | API/Web 多副本、独立作业、外部 MySQL/Keycloak/Secret、同源入口与验收门槛 | SRE、私有化交付与后端 |
 
 ## 阅读顺序与变更规则
 
