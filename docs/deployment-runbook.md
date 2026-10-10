@@ -88,7 +88,7 @@ TLS 覆盖使用 Compose 的端口替换语义，只发布 TLS 端口。默认�
 
 生产建议由现有受控负载均衡/证书管理系统终止 TLS。无论入口形式，OIDC issuer、客户端回调、Web origin、API 配置和实际入口必须一致。完成真实 HTTPS 登录、续期、登出和内部取钥验证后才标记 HTTPS 支持通过。
 
-## 检查、升级和恢复
+## 检查、初始化和恢复
 
 ```powershell
 docker compose --env-file .local/deployment/.env -f deploy/compose/compose.yaml ps
@@ -99,7 +99,7 @@ docker compose --env-file .local/deployment/.env -f deploy/compose/compose.yaml 
 
 健康依赖用于初始化顺序；故障期间应用仍须处理数据库断连。Nginx 使用 Docker DNS 动态解析后端/身份服务，避免容器重建后缓存旧 IP。访问日志只记录方法、路径和结果，省略 OAuth code/state、查询参数、Authorization 和密码。[Compose 启动顺序](https://docs.docker.com/compose/how-tos/startup-order/)
 
-升级前保存当前环境配置、发布清单和镜像摘要，进行数据库备份与恢复演练，再构建新版本；不要删除持久卷。Flyway 版本迁移自动执行，数据库已升级时旧应用镜像不保证兼容，不能把回退镜像当作数据库回滚。回滚必须按迁移兼容窗口或恢复至隔离验证过的备份执行。
+当前按 [1.0.0 首版初始化约定](version-1.0.0-initialization.md)创建新的空业务库，Flyway 执行完整初始表结构及数据库专属事件表初始化。既有开发库不执行旧版本升级或自动清空；重新搭建环境使用新的独立数据库/Compose 项目。环境配置、密钥、发布清单和镜像摘要仍需受控保存，灾难恢复在隔离环境演练后再开放服务。
 
 签名私钥备份必须受控；轮换时配置新的 SIGN 密钥并保留旧 VERIFY 公钥到所有有效离线配置/清理/额度许可到期。数据库密码轮换需同时更新实际数据库账号与 secret 文件；再次运行初始化不是轮换程序。区域驻留、保留删除、事件响应和灾难恢复遵循平台安全与数据库规格。
 

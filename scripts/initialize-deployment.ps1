@@ -95,7 +95,7 @@ $environment = [ordered]@{
     BACKEND_IMAGE="ai-manager/backend:$ProjectName"; IDENTITY_IMAGE="ai-manager/identity:$ProjectName"; EDGE_IMAGE="ai-manager/edge:$ProjectName"
 }
 WriteNewFile (Join-Path $destination '.env') (($environment.GetEnumerator() | ForEach-Object { "$($_.Key)=$(EnvValue $_.Value)" }) -join "`n")
-WriteNewFile (Join-Path $destination 'deployment.json') (@{publicUrl=$origin; edgePort=$EdgePort; projectName=$ProjectName; schemaVersion=1} | ConvertTo-Json)
+WriteNewFile (Join-Path $destination 'deployment.json') (@{publicUrl=$origin; edgePort=$EdgePort; projectName=$ProjectName; schemaVersion=1; applicationVersion='1.0.0'} | ConvertTo-Json)
 if (-not $IsWindows) {
     & chmod -R go-rwx -- $destination
     if ($LASTEXITCODE -ne 0) { throw 'Failed to restrict deployment file permissions.' }

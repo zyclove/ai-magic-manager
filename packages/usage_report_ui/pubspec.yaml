@@ -1,6 +1,6 @@
 name: usage_report_ui
 description: Material usage report views shared by guardian and device hosts.
-version: 0.1.0
+version: 1.0.0
 publish_to: none
 environment:
   sdk: '>=3.4.3 <4.0.0'

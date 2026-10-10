@@ -151,35 +151,35 @@ packages:
       path: "../../packages/device_access"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "1.0.0"
   device_identity:
     dependency: "direct main"
     description:
       path: "../../packages/device_identity"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "1.0.0"
   device_observation:
     dependency: "direct main"
     description:
       path: "../../packages/device_observation"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "1.0.0"
   device_policy:
     dependency: "direct main"
     description:
       path: "../../packages/device_policy"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "1.0.0"
   device_reports:
     dependency: "direct main"
     description:
       path: "../../packages/device_reports"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "1.0.0"
   fake_async:
     dependency: transitive
     description:
@@ -642,14 +642,14 @@ packages:
       path: "../../packages/usage_report_ui"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "1.0.0"
   usage_reporting:
     dependency: transitive
     description:
       path: "../../packages/usage_reporting"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "1.0.0"
   uuid:
     dependency: transitive
     description:

@@ -2,9 +2,11 @@
 
 面向家庭和教育机构的跨设备访问管理平台。完整功能正在按[实施计划](docs/implementation-plan.md)推进；当前状态和验证记录见[实施记录](docs/implementation-progress.md)。
 
+当前统一按 **1.0.0 首版**初始化和开发，不承担历史开发版本的兼容与数据升级迁移。全新安装、版本与数据库基线见 [1.0.0 初始化约定](docs/version-1.0.0-initialization.md)。
+
 ## 工程结构
 
-- `backend/`：Spring Boot 模块化后端、SQL 迁移和行为测试。
+- `backend/`：Spring Boot 模块化后端、全新数据库初始化和行为测试。
 - `docs/`：产品、功能、架构、商业与实施契约。
 - `apps/guardian/`：Flutter Web 中文管理工作台，连接真实 OIDC 与业务 API。
 - `packages/device_operations/`：可复用设备退出操作组件。

@@ -1,0 +1,387 @@
+{
+  "recordedAt": "2026-10-10T21:47:00.210975+00:00",
+  "applicationVersion": "1.0.0",
+  "status": "source-verified-not-deployed",
+  "deployed": false,
+  "existingLocalDatabaseReset": false,
+  "workspaceHeadBeforeSubmission": "ff107ff729d942eb482c897896112436659ae166",
+  "backendCandidateBase": "950b0b9b818d1ba383dfea6a1dcb9b35016604e8",
+  "reviewBase": "d3de1a083a8dd359178088e96502c1b40a112f25",
+  "sourceFiles": [
+    {
+      "path": "README.md",
+      "sha256": "7727adf43c2ddcac76c8243c2ac8df5e2cf39d2dc3ce59fe2e69ccf601da59fe"
+    },
+    {
+      "path": "apps/child/lib/core/session.dart",
+      "sha256": "3baec9f97cd80058a60b92337355100ceba89784cbf68e27052f72144ff7a015"
+    },
+    {
+      "path": "apps/child/pubspec.lock",
+      "sha256": "b5d0d38db895ccea8ad703e9fdacf686b3ffc6d29a5e53938f256c0ede9de6b3"
+    },
+    {
+      "path": "apps/child/pubspec.yaml",
+      "sha256": "2acbbc9df9012bcfd19d1dcfdbc86e76f54736245220c68b3d236cc8473db793"
+    },
+    {
+      "path": "backend/pom.xml",
+      "sha256": "d7464e9de39f34a5e024e2c11cb5ca90d4a2efc6afcc89a4aa7986a4af4fdba2"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasurePreflightController.java",
+      "sha256": "1d12b5917c9a2eaf1089c315aaacc0ec7b79b9a0482f0f28ea60830a3d0c71f8"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasurePreflightService.java",
+      "sha256": "0ea8a2a50ae7b6bb83c9914d413a3471271a7f76365b451f0829e27c2288db71"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/SubjectDataCatalog.java",
+      "sha256": "9a0e83c61bae7fd022382b83a114a0bb9d0a07019e6795da0e0e571ce33bc7c1"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V11__access_requests.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V12__device_deprovision.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V13__quota_ledger.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V14__recurring_quota_plans.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V15__access_window_documents.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V16__access_delivery_attempts.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V17__ownership_transfer.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V18__member_access_profiles.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V19__organization_classes.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V1__initial_schema.sql",
+      "sha256": "c079509549bb7b83d79027cff7c0e5bcb2954110c34c47ecf0f4042d52e59269"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V1__tenant_subject_audit.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V20__device_observation.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V21__inapp_notifications.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V22__audit_exports.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V23__device_access_submissions.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V24__application_classifications.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V25__usage_report_jobs.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V26__support_pairing.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V27__support_grants.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V28__commercial_entitlement_ledger.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V29__diagnostic_packages.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V2__member_invitations.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V30__commercial_catalog_drafts.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V3__idempotency_requests.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V4__device_registration.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V5__device_credential_rotations.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V6__enrollment_recovery.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V7__application_schedule_policy.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V8__application_inventory.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V9__configuration_delivery.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/vendor/h2/V10__modulith_event_publication.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/vendor/h2/V2__event_publication.sql",
+      "sha256": "ebfd16e19e120afaf4143f55a488dbd72d100b99c6c389127e164d6e41355668"
+    },
+    {
+      "path": "backend/src/main/resources/db/vendor/mysql/V10__modulith_event_publication.sql",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/main/resources/db/vendor/mysql/V2__event_publication.sql",
+      "sha256": "98db41f3300b769d1a246d02646a99e7908218f5829d978a94c5074f9f8e43a4"
+    },
+    {
+      "path": "backend/src/main/resources/retention/subject-data-stores.json",
+      "sha256": "aeb89e6ab51182555f0a0fc3ebffaf35b4da4f483bdafb04193c394e09c58287"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/AccessDeliveryMigrationTest.java",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/ApplicationClassificationMigrationTest.java",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/AuditExportMigrationTest.java",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DatabaseInitializationTest.java",
+      "sha256": "46e6d8f702b7524eac9fe49c1472e760e9dfc99fddf3ffc5783ccc5906dded8d"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeviceAccessSubmissionMigrationTest.java",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/NotificationMigrationTest.java",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/SupportGrantMigrationTest.java",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/SupportPairingMigrationTest.java",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/UsageReportJobMigrationTest.java",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/commerce/internal/CommercialCatalogMigrationTest.java",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasurePreflightJourneyTest.java",
+      "sha256": "4c21c214bd4a8d390d6c2447ebeca1bd988377ce3874b2af8f8d88c9446deef8"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/support/internal/DiagnosticPackageMigrationTest.java",
+      "sha256": null
+    },
+    {
+      "path": "deploy/helm/ai-manager/Chart.yaml",
+      "sha256": "e51da579a8756b242e8fe3111daf5fc584a981a79a50be33ea9772b88f585c47"
+    },
+    {
+      "path": "docs/data-erasure-contract.md",
+      "sha256": "b90861208b7cdd9962814db3d868552aaefb87af270bd1c49ccb3508ccb8eb94"
+    },
+    {
+      "path": "docs/deployment-runbook.md",
+      "sha256": "939e0b058e6148d8da4d2ed57c5e2b13a911e8d3b98efd5c111974a2324209b7"
+    },
+    {
+      "path": "docs/implementation-plan.md",
+      "sha256": "11a2a71652a90ab0156709540a49de29ac27d93836a6f9ac8e59d64bfb2f967b"
+    },
+    {
+      "path": "docs/version-1.0.0-initialization.md",
+      "sha256": "e250db3cd8a255b1ec04154a825bdc8ed2e80693ee83704418af440ac617d987"
+    },
+    {
+      "path": "packages/device_access/pubspec.yaml",
+      "sha256": "2da9e9b8daae8c74b9be98d34e420bc1bdf7f85bb028e53e6d0dba731a05cdcc"
+    },
+    {
+      "path": "packages/device_identity/pubspec.yaml",
+      "sha256": "65db8cb786f8afd416fa6696534f0ead3b7535bc69410f380865a57a4230941b"
+    },
+    {
+      "path": "packages/device_observation/pubspec.lock",
+      "sha256": "7b1d41839dba54851fdace2b01b6192de637b9d938d48ad5896c6b1ff5d9cbf3"
+    },
+    {
+      "path": "packages/device_observation/pubspec.yaml",
+      "sha256": "b7d3466203faf9d44bcf0cf46c22dac73d855154d71b268b7036dd1e7dea5f25"
+    },
+    {
+      "path": "packages/device_operations/example/pubspec.lock",
+      "sha256": "c86313dd835c653340a5085aee0f09dc275282a04e745d86da1cc5e867cd1840"
+    },
+    {
+      "path": "packages/device_operations/example/pubspec.yaml",
+      "sha256": "b9f2196aa65c14103e05a3e2b4baeb541f4e95135fb09f43051ed66d2c7abe98"
+    },
+    {
+      "path": "packages/device_operations/pubspec.yaml",
+      "sha256": "c6fd0fdbb4a2210ded4e010b6560f95e7ee2fa4f1e7217481f6f63a2f569f0fd"
+    },
+    {
+      "path": "packages/device_policy/pubspec.yaml",
+      "sha256": "db6c90e23639f9974a680677eb28b6b2caba82f5fc25068fd7f958419fc43af9"
+    },
+    {
+      "path": "packages/device_reports/pubspec.lock",
+      "sha256": "7172bb6f021f4cba5b15d71660c7a3c83b9588d00d0b2cbe5a9706cc7d7a9cd6"
+    },
+    {
+      "path": "packages/device_reports/pubspec.yaml",
+      "sha256": "59409fadfcdb836c530b36e4073ce80526f9e1c456cb534f4cc658d2be4847eb"
+    },
+    {
+      "path": "packages/usage_report_ui/pubspec.lock",
+      "sha256": "becf8be73b7d0eafa3fe133bda65477cfe85f1434cd3e10a654a43cae7916469"
+    },
+    {
+      "path": "packages/usage_report_ui/pubspec.yaml",
+      "sha256": "8e7dca93c1d7a29b186afdf932f03e815796d90b7078f316ad8eb448853572bc"
+    },
+    {
+      "path": "packages/usage_reporting/pubspec.yaml",
+      "sha256": "5d17164defb43bdfc7f3b6471e845ae3371d91adb78ff24971800341ea64c486"
+    },
+    {
+      "path": "scripts/build-deployment.ps1",
+      "sha256": "eed5481c689bf11ac45ffa934701d4b7062088a848f4aec79f2336ee506db0f1"
+    },
+    {
+      "path": "scripts/initialize-deployment.ps1",
+      "sha256": "5b38752d16d328395e6972bb5400ca00d2a4e02254534170e8fe220bbf529252"
+    },
+    {
+      "path": "scripts/tests/oidc-journey.cjs",
+      "sha256": "1d47f52b1ee386818d445d7d60a7212d5803b78d4103561a750640a41f6f12f4"
+    }
+  ],
+  "initialization": {
+    "commonScripts": 1,
+    "vendorScriptsPerDatabase": 1,
+    "stores": 77,
+    "columns": 664,
+    "historicalBackfillsRemoved": 4,
+    "columnsFoldedIntoCreateTable": 10
+  },
+  "verification": [
+    {
+      "name": "full-backend",
+      "total": 522,
+      "passed": 521,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1,
+      "localLog": ".local/initialization-backend-full.log",
+      "logSha256": "28318aacd2e16971abcd694dc2af1e39e37857cf767f4e0afbd36273e363de00"
+    },
+    {
+      "name": "fresh-mysql-initialization-and-repeat-start",
+      "total": 1,
+      "passed": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "localLog": ".local/initialization-fresh-mysql.log",
+      "logSha256": "b611e29d5d531d9dc5dfded87406b3fc12f0e47ad66fe9215a8a10963f9ab345"
+    },
+    {
+      "name": "mysql-erasure-preflight-and-module-boundary",
+      "total": 11,
+      "passed": 11,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "localLog": ".local/initialization-preflight-final-mysql.log",
+      "logSha256": "4826cee1e4ef777f999ba5098f0cf94146d2723b4fb864de29a8976153adc432"
+    },
+    {
+      "name": "focused-h2",
+      "total": 12,
+      "passed": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "localLog": ".local/initialization-final-h2.log",
+      "logSha256": "6883dc966007c332f0af4e8e502a7f27e480873ffdf06f5fb93d31507f823b1b"
+    },
+    {
+      "name": "deployment-initialization-scripts",
+      "passed": 7,
+      "localLog": ".local/initialization-deployment-tests.log",
+      "logSha256": "71aed0678c6f4d1e9323d8618f5bff1b3589f48cde52a0c76e031a3e781b8f61"
+    }
+  ],
+  "independentReview": {
+    "reviewer": "v1_initialization_review",
+    "blockingFindings": 0,
+    "reviewedScopeUnchanged": true,
+    "subsequentChanges": "Documentation only: record completed preflight checks and rename migration verification to fresh initialization."
+  },
+  "limitations": [
+    "Existing local V29 services and database were not replaced or reset by this source change.",
+    "Erasure preflight always reports executionAvailable=false and readyToErase=false; durable deletion jobs, restore ledger, external cleanup and management UI remain pending.",
+    "Full backend HTTP interoperability used existing isolated Dart/Flutter fixtures; no new full frontend 1.0.0 release build is claimed.",
+    "Native Android gate skip is not a device enforcement pass.",
+    "Focused H2 candidate preceded the later committed console changes; full backend and MySQL evidence use the recorded backend candidate base.",
+    "OIDC journey received syntax validation only in this stage; no new real OTP or live OIDC end-to-end run.",
+    "Storage coverage checks table and column names, not all SQL types, constraints or JSON field semantics."
+  ]
+}

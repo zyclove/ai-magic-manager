@@ -124,7 +124,7 @@ packages:
       path: "../device_policy"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "1.0.0"
   ffi:
     dependency: transitive
     description:
@@ -491,7 +491,7 @@ packages:
       path: "../usage_reporting"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "1.0.0"
   uuid:
     dependency: transitive
     description:

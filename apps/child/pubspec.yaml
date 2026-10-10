@@ -1,7 +1,7 @@
 name: child
 description: "智能管家儿童端：设备配对、身份恢复与签名配置接收。"
 publish_to: 'none'
-version: 0.1.0
+version: 1.0.0
 
 environment:
   sdk: '>=3.4.3 <4.0.0'

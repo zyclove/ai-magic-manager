@@ -355,7 +355,7 @@ class ChildSession extends ChangeNotifier {
           displayName: displayName, osVersion: osVersion));
   Future<bool> checkConnection() => _run(() async {
         await identity.heartbeat(
-            agentVersion: 'child/0.1.0',
+            agentVersion: 'child/1.0.0',
             capabilities: await observations?.call() ?? const []);
         _refreshObservationOnIdle = observationFactory != null;
         _accessSyncOnIdle = accessFactory != null;

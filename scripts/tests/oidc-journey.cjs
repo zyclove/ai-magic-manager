@@ -42,17 +42,11 @@ async function main() {
   let browser, freshRealm;
   const report = {publicUrl:origin, fixture:true, checks:[], issues:[]};
   try {
-    // Apply the additive email-verification migration if this environment was
-    // initialized before that template field was added. Never replace credentials.
+    // A fresh 1.0.0 identity environment must already have the required mapper.
     const scopes = await request('GET', `${realmRoute}/client-scopes`);
     const emailScope = scopes.find(s => s.name === 'email');
     const mappings = await request('GET', `${realmRoute}/client-scopes/${emailScope.id}/protocol-mappers/models`);
-    if (!mappings.some(m => m.config?.['claim.name'] === 'email_verified')) {
-      const template = JSON.parse(await fs.readFile(path.join(repository, 'deploy/keycloak/realm-template.json'), 'utf8'));
-      const mapper = template.clientScopes.find(s => s.name === 'email').protocolMappers.find(m => m.config['claim.name'] === 'email_verified');
-      await request('POST', `${realmRoute}/client-scopes/${emailScope.id}/protocol-mappers/models`, mapper, 201);
-      report.identityMigration = 'added email_verified mapper to earlier verification environment';
-    }
+    assert.ok(mappings.some(m => m.config?.['claim.name'] === 'email_verified'), 'Initialize identity from the current 1.0.0 realm template');
     async function createIdentity(adult) {
       const username = `deployment-${adult ? 'adult' : 'student'}-${crypto.randomUUID()}`;
       const secret = crypto.randomBytes(32).toString('base64url');

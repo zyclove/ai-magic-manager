@@ -1,6 +1,6 @@
 name: usage_reporting
 description: Shared immutable usage report, classification and delivery evidence models.
-version: 0.1.0
+version: 1.0.0
 publish_to: none
 environment:
   sdk: '>=3.4.0 <4.0.0'

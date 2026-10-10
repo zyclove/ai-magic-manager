@@ -1,0 +1,1208 @@
+{
+  "version": 1,
+  "stores": [
+    {
+      "table": "access_request_decisions",
+      "columns": [
+        "absolute_not_after",
+        "actor_id",
+        "decided_at",
+        "decision",
+        "granted_window_seconds",
+        "reason_code",
+        "request_id",
+        "tenant_id"
+      ],
+      "domain": "approval",
+      "category": "SUBJECT_DATA"
+    },
+    {
+      "table": "access_request_slots",
+      "columns": [
+        "application_id",
+        "last_request_id",
+        "next_allowed_at",
+        "registration_id",
+        "subject_id",
+        "tenant_id"
+      ],
+      "domain": "approval",
+      "category": "SUBJECT_DATA"
+    },
+    {
+      "table": "access_requests",
+      "columns": [
+        "absolute_not_after",
+        "application_id",
+        "approver_actor_id",
+        "approver_actor_key",
+        "base_sequence",
+        "base_version_id",
+        "child_reason",
+        "created_at",
+        "device_id",
+        "granted_window_seconds",
+        "id",
+        "issued_at",
+        "policy_id",
+        "reason_code",
+        "registration_id",
+        "request_expires_at",
+        "requested_window_seconds",
+        "requester_actor_id",
+        "requester_actor_key",
+        "requester_kind",
+        "rule_ids_json",
+        "state",
+        "subject_id",
+        "tenant_id",
+        "updated_at",
+        "version"
+      ],
+      "domain": "approval",
+      "category": "SUBJECT_DATA"
+    },
+    {
+      "table": "access_window_attempt_receipts",
+      "columns": [
+        "attempt_number",
+        "document_id",
+        "phase",
+        "reason_code",
+        "received_at",
+        "tenant_id"
+      ],
+      "domain": "approval",
+      "category": "SUBJECT_DATA"
+    },
+    {
+      "table": "access_window_attempts",
+      "columns": [
+        "attempt_number",
+        "created_at",
+        "delivery_state",
+        "document_id",
+        "last_receipt_at",
+        "reason_code",
+        "tenant_id"
+      ],
+      "domain": "approval",
+      "category": "SUBJECT_DATA"
+    },
+    {
+      "table": "access_window_documents",
+      "columns": [
+        "action",
+        "approval_version",
+        "current_attempt",
+        "delivery_state",
+        "id",
+        "issued_at",
+        "last_receipt_at",
+        "request_id",
+        "signed_document",
+        "tenant_id"
+      ],
+      "domain": "approval",
+      "category": "SUBJECT_DATA"
+    },
+    {
+      "table": "access_window_receipts",
+      "columns": [
+        "document_id",
+        "phase",
+        "reason_code",
+        "received_at",
+        "tenant_id"
+      ],
+      "domain": "approval",
+      "category": "SUBJECT_DATA"
+    },
+    {
+      "table": "actor_profiles",
+      "columns": [
+        "actor_id",
+        "actor_key",
+        "claims_issued_at",
+        "display_name",
+        "observed_at",
+        "verified_email"
+      ],
+      "domain": "identity",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "application_classifications",
+      "columns": [
+        "category",
+        "identity_hash",
+        "package_name",
+        "platform",
+        "profile",
+        "tenant_id",
+        "updated_at",
+        "version"
+      ],
+      "domain": "policy",
+      "category": "SHARED_CONFIGURATION"
+    },
+    {
+      "table": "application_definitions",
+      "columns": [
+        "definition_json",
+        "id",
+        "identity_hash",
+        "tenant_id"
+      ],
+      "domain": "policy",
+      "category": "SHARED_CONFIGURATION"
+    },
+    {
+      "table": "application_inventory_snapshots",
+      "columns": [
+        "device_id",
+        "received_at",
+        "registration_id",
+        "request_hash",
+        "sequence_number",
+        "snapshot_json",
+        "tenant_id"
+      ],
+      "domain": "catalog",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "audit_events",
+      "columns": [
+        "action",
+        "actor_id",
+        "correlation_id",
+        "id",
+        "occurred_at",
+        "resource_id",
+        "tenant_id"
+      ],
+      "domain": "audit",
+      "category": "AUDIT_RETENTION"
+    },
+    {
+      "table": "audit_export_heads",
+      "columns": [
+        "tenant_id"
+      ],
+      "domain": "reporting",
+      "category": "OPERATIONAL_METADATA"
+    },
+    {
+      "table": "audit_exports",
+      "columns": [
+        "action_filter",
+        "artifact",
+        "attempts",
+        "byte_count",
+        "claim_token",
+        "correlation_filter",
+        "created_at",
+        "creator_key",
+        "expires_at",
+        "failure_code",
+        "id",
+        "lease_until",
+        "member_version",
+        "next_attempt_at",
+        "range_from",
+        "range_to",
+        "record_count",
+        "requested_to",
+        "resource_filter",
+        "state",
+        "tenant_id",
+        "updated_at"
+      ],
+      "domain": "reporting",
+      "category": "DERIVED_COPY"
+    },
+    {
+      "table": "cleanup_receipts",
+      "columns": [
+        "operation_id",
+        "payload_hash",
+        "receipt_id",
+        "received_at",
+        "response_json",
+        "stage",
+        "tenant_id"
+      ],
+      "domain": "lifecycle",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "commercial_accounts",
+      "columns": [
+        "tenant_id",
+        "version"
+      ],
+      "domain": "billing",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "commercial_catalog_events",
+      "columns": [
+        "action",
+        "actor_id",
+        "correlation_id",
+        "event_id",
+        "occurred_at",
+        "offer_id",
+        "payload_hash",
+        "payload_json",
+        "reason",
+        "revision"
+      ],
+      "domain": "billing",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "commercial_catalog_offers",
+      "columns": [
+        "approved_by",
+        "channel",
+        "created_at",
+        "created_by",
+        "id",
+        "last_editor",
+        "offer_key",
+        "payload_hash",
+        "payload_json",
+        "region",
+        "revision",
+        "sku",
+        "state",
+        "updated_at"
+      ],
+      "domain": "billing",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "commercial_source_events",
+      "columns": [
+        "active_from",
+        "capacity_kind",
+        "device_capacity",
+        "evidence_hash",
+        "expires_at",
+        "features_json",
+        "id",
+        "payload_hash",
+        "product_key",
+        "source_key",
+        "source_revision",
+        "source_system",
+        "state",
+        "tenant_id",
+        "verified_at",
+        "verified_by"
+      ],
+      "domain": "billing",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "commercial_sources",
+      "columns": [
+        "active_from",
+        "capacity_kind",
+        "device_capacity",
+        "evidence_hash",
+        "expires_at",
+        "features_json",
+        "payload_hash",
+        "product_key",
+        "source_key",
+        "source_revision",
+        "source_system",
+        "state",
+        "tenant_id",
+        "verified_at",
+        "verified_by"
+      ],
+      "domain": "billing",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "configuration_deliveries",
+      "columns": [
+        "action",
+        "compact_jws",
+        "delivery_expires_at",
+        "device_cursor",
+        "device_id",
+        "document_json",
+        "envelope_hash",
+        "first_served_at",
+        "id",
+        "issued_at",
+        "policy_id",
+        "publication_id",
+        "received_reported_at",
+        "registration_id",
+        "rejection_code",
+        "signing_key_id",
+        "source_sequence",
+        "state",
+        "stored_reported_at",
+        "tenant_id",
+        "version_id"
+      ],
+      "domain": "delivery",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "configuration_device_heads",
+      "columns": [
+        "device_id",
+        "next_cursor",
+        "registration_id",
+        "tenant_id"
+      ],
+      "domain": "delivery",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "configuration_receipts",
+      "columns": [
+        "created_at",
+        "delivery_id",
+        "id",
+        "registration_id",
+        "request_hash",
+        "response_json",
+        "tenant_id"
+      ],
+      "domain": "delivery",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "configuration_streams",
+      "columns": [
+        "delivery_id",
+        "policy_id",
+        "registration_id",
+        "tenant_id"
+      ],
+      "domain": "delivery",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "deprovision_heads",
+      "columns": [
+        "device_id",
+        "operation_id",
+        "registration_id",
+        "tenant_id"
+      ],
+      "domain": "lifecycle",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "deprovision_operations",
+      "columns": [
+        "absolute_not_after",
+        "command_hash",
+        "command_id",
+        "compact_jws",
+        "device_id",
+        "id",
+        "issued_at",
+        "key_thumbprint",
+        "local_evidence",
+        "reason_code",
+        "registration_id",
+        "served_at",
+        "state",
+        "tenant_id",
+        "updated_at",
+        "version"
+      ],
+      "domain": "lifecycle",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "deprovision_previews",
+      "columns": [
+        "actor_key",
+        "device_id",
+        "device_version",
+        "expires_at",
+        "id",
+        "operation_id",
+        "preview_hash",
+        "registration_id",
+        "tenant_id"
+      ],
+      "domain": "lifecycle",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "device_capabilities",
+      "columns": [
+        "capability_key",
+        "checked_at",
+        "device_id",
+        "grant_status",
+        "reported_supported",
+        "tenant_id"
+      ],
+      "domain": "fleet",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "device_credential_rotations",
+      "columns": [
+        "cancelled_at",
+        "confirmed_at",
+        "expires_at",
+        "new_id",
+        "parent_id"
+      ],
+      "domain": "deviceidentity",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "device_credential_scopes",
+      "columns": [
+        "active",
+        "device_id",
+        "registration_id",
+        "revoked_at",
+        "tenant_id"
+      ],
+      "domain": "deviceidentity",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "device_credentials",
+      "columns": [
+        "active",
+        "device_id",
+        "expires_at",
+        "id",
+        "issued_at",
+        "registration_id",
+        "revoked_at",
+        "tenant_id",
+        "token_hash"
+      ],
+      "domain": "deviceidentity",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "device_enrollments",
+      "columns": [
+        "created_at",
+        "creator_actor_id",
+        "device_id",
+        "expires_at",
+        "id",
+        "pairing_failures",
+        "pairing_hash",
+        "platform",
+        "recovery_attempts",
+        "requested_mode",
+        "state",
+        "subject_id",
+        "tenant_id",
+        "token_hash"
+      ],
+      "domain": "fleet",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "device_observation_settings",
+      "columns": [
+        "device_id",
+        "inventory_enabled",
+        "last_reason",
+        "registration_id",
+        "tenant_id",
+        "updated_at",
+        "usage_enabled",
+        "version"
+      ],
+      "domain": "observation",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "devices",
+      "columns": [
+        "agent_version",
+        "created_at",
+        "display_name",
+        "heartbeat_hash",
+        "heartbeat_sequence",
+        "id",
+        "key_thumbprint",
+        "last_heartbeat_at",
+        "os_version",
+        "platform",
+        "public_key_jwk",
+        "registration_id",
+        "state",
+        "subject_id",
+        "tenant_id",
+        "version"
+      ],
+      "domain": "fleet",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "diagnostic_package_heads",
+      "columns": [
+        "tenant_id"
+      ],
+      "domain": "support",
+      "category": "OPERATIONAL_METADATA"
+    },
+    {
+      "table": "diagnostic_packages",
+      "columns": [
+        "access_mode",
+        "artifact",
+        "artifact_sha256",
+        "attempts",
+        "authority_actor_id",
+        "authority_key",
+        "authority_version",
+        "byte_count",
+        "claim_token",
+        "created_at",
+        "device_id",
+        "expires_at",
+        "failure_code",
+        "generated_at",
+        "grant_id",
+        "grant_version",
+        "id",
+        "lease_until",
+        "next_attempt_at",
+        "next_validation_at",
+        "registration_id",
+        "requester_actor_id",
+        "requester_key",
+        "state",
+        "subject_id",
+        "tenant_id",
+        "type_mask",
+        "updated_at",
+        "version"
+      ],
+      "domain": "support",
+      "category": "DERIVED_COPY"
+    },
+    {
+      "table": "enrollment_proofs",
+      "columns": [
+        "consumed_at",
+        "enrollment_id",
+        "jti_hash",
+        "purpose",
+        "tenant_id"
+      ],
+      "domain": "deviceidentity",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "event_publication",
+      "columns": [
+        "completion_date",
+        "event_type",
+        "id",
+        "listener_id",
+        "publication_date",
+        "serialized_event"
+      ],
+      "domain": "modulith",
+      "category": "DERIVED_COPY"
+    },
+    {
+      "table": "idempotency_requests",
+      "columns": [
+        "actor_id",
+        "actor_key",
+        "expires_at",
+        "key_hash",
+        "operation",
+        "request_hash",
+        "response_body",
+        "scope_id"
+      ],
+      "domain": "idempotency",
+      "category": "DERIVED_COPY"
+    },
+    {
+      "table": "invitation_class_scopes",
+      "columns": [
+        "class_id",
+        "invitation_id",
+        "tenant_id"
+      ],
+      "domain": "tenant",
+      "category": "AUTHORIZATION"
+    },
+    {
+      "table": "member_invitations",
+      "columns": [
+        "consumed_at",
+        "expires_at",
+        "id",
+        "inviter_actor_id",
+        "recipient_email_hash",
+        "revoked_at",
+        "role",
+        "subject_id",
+        "tenant_id",
+        "token_hash"
+      ],
+      "domain": "tenant",
+      "category": "AUTHORIZATION"
+    },
+    {
+      "table": "membership_access_changes",
+      "columns": [
+        "change_type",
+        "changed_by_actor_id",
+        "class_ids_json",
+        "id",
+        "member_key",
+        "member_version",
+        "occurred_at",
+        "previous_class_ids_json",
+        "previous_role",
+        "previous_subject_id",
+        "role",
+        "subject_id",
+        "tenant_id"
+      ],
+      "domain": "tenant",
+      "category": "AUTHORIZATION"
+    },
+    {
+      "table": "notification_events",
+      "columns": [
+        "device_id",
+        "id",
+        "occurred_at",
+        "request_id",
+        "request_version",
+        "requester_actor_key",
+        "requester_kind",
+        "state",
+        "subject_id",
+        "tenant_id"
+      ],
+      "domain": "notification",
+      "category": "DERIVED_COPY"
+    },
+    {
+      "table": "notification_reads",
+      "columns": [
+        "actor_key",
+        "notification_id",
+        "read_at",
+        "tenant_id"
+      ],
+      "domain": "notification",
+      "category": "DERIVED_COPY"
+    },
+    {
+      "table": "organization_class_students",
+      "columns": [
+        "added_at",
+        "class_id",
+        "subject_id",
+        "tenant_id"
+      ],
+      "domain": "tenant",
+      "category": "AUTHORIZATION"
+    },
+    {
+      "table": "organization_classes",
+      "columns": [
+        "archived_at",
+        "created_at",
+        "id",
+        "name",
+        "tenant_id",
+        "updated_at",
+        "version"
+      ],
+      "domain": "tenant",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "ownership_heads",
+      "columns": [
+        "pending_transfer_id",
+        "tenant_id"
+      ],
+      "domain": "tenant",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "ownership_transfers",
+      "columns": [
+        "created_at",
+        "expires_at",
+        "former_owner_role",
+        "id",
+        "reason",
+        "source_actor_id",
+        "source_actor_key",
+        "source_member_version",
+        "state",
+        "target_actor_id",
+        "target_actor_key",
+        "target_member_version",
+        "target_role",
+        "tenant_id",
+        "tenant_version",
+        "updated_at",
+        "version"
+      ],
+      "domain": "tenant",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "policy_drafts",
+      "columns": [
+        "created_at",
+        "id",
+        "kind",
+        "name",
+        "next_sequence",
+        "revision",
+        "rules_json",
+        "source_version_id",
+        "tenant_id",
+        "updated_at"
+      ],
+      "domain": "policy",
+      "category": "SHARED_CONFIGURATION"
+    },
+    {
+      "table": "policy_outbox",
+      "columns": [
+        "created_at",
+        "delivered_at",
+        "event_type",
+        "id",
+        "payload_json",
+        "publication_id",
+        "tenant_id"
+      ],
+      "domain": "policy",
+      "category": "DERIVED_COPY"
+    },
+    {
+      "table": "policy_previews",
+      "columns": [
+        "created_at",
+        "creator_actor_key",
+        "draft_revision",
+        "expires_at",
+        "hash",
+        "id",
+        "policy_id",
+        "snapshot_json",
+        "tenant_id"
+      ],
+      "domain": "policy",
+      "category": "SHARED_CONFIGURATION"
+    },
+    {
+      "table": "policy_publications",
+      "columns": [
+        "created_at",
+        "id",
+        "state",
+        "tenant_id",
+        "version_id"
+      ],
+      "domain": "policy",
+      "category": "SHARED_CONFIGURATION"
+    },
+    {
+      "table": "policy_versions",
+      "columns": [
+        "created_at",
+        "draft_revision",
+        "id",
+        "mode",
+        "policy_id",
+        "preview_hash",
+        "preview_id",
+        "sequence_number",
+        "snapshot_json",
+        "source_version_id",
+        "tenant_id"
+      ],
+      "domain": "policy",
+      "category": "SHARED_CONFIGURATION"
+    },
+    {
+      "table": "quota_calendars",
+      "columns": [
+        "subject_id",
+        "tenant_id",
+        "time_zone"
+      ],
+      "domain": "quota",
+      "category": "SUBJECT_DATA"
+    },
+    {
+      "table": "quota_lease_pools",
+      "columns": [
+        "lease_id",
+        "pool_id",
+        "tenant_id"
+      ],
+      "domain": "quota",
+      "category": "SUBJECT_DATA"
+    },
+    {
+      "table": "quota_leases",
+      "columns": [
+        "application_id",
+        "boot_id",
+        "device_id",
+        "id",
+        "issued_at",
+        "last_report_hash",
+        "last_sequence",
+        "last_tick_millis",
+        "not_after",
+        "registration_id",
+        "request_hash",
+        "request_id",
+        "reserved_seconds",
+        "session_id",
+        "signed_lease",
+        "start_tick_millis",
+        "state",
+        "subject_id",
+        "tenant_id",
+        "used_seconds"
+      ],
+      "domain": "quota",
+      "category": "SUBJECT_DATA"
+    },
+    {
+      "table": "quota_ledger",
+      "columns": [
+        "id",
+        "kind",
+        "lease_id",
+        "limit_delta",
+        "occurred_at",
+        "pool_id",
+        "reason",
+        "reserved_delta",
+        "sequence_number",
+        "tenant_id",
+        "used_delta"
+      ],
+      "domain": "quota",
+      "category": "SUBJECT_DATA"
+    },
+    {
+      "table": "quota_outbox",
+      "columns": [
+        "aggregate_id",
+        "event_json",
+        "event_type",
+        "id",
+        "occurred_at",
+        "tenant_id"
+      ],
+      "domain": "quota",
+      "category": "DERIVED_COPY"
+    },
+    {
+      "table": "quota_plan_revisions",
+      "columns": [
+        "configuration_json",
+        "created_at",
+        "effective_from",
+        "plan_id",
+        "tenant_id",
+        "version"
+      ],
+      "domain": "quota",
+      "category": "SUBJECT_DATA"
+    },
+    {
+      "table": "quota_plans",
+      "columns": [
+        "application_id",
+        "created_at",
+        "id",
+        "next_materialize_at",
+        "scope_key",
+        "subject_id",
+        "tenant_id",
+        "time_zone",
+        "version"
+      ],
+      "domain": "quota",
+      "category": "SUBJECT_DATA"
+    },
+    {
+      "table": "quota_pools",
+      "columns": [
+        "application_id",
+        "id",
+        "limit_seconds",
+        "name",
+        "period_end",
+        "period_id",
+        "period_start",
+        "plan_id",
+        "plan_version",
+        "reserved_seconds",
+        "scope_key",
+        "subject_id",
+        "tenant_id",
+        "time_zone",
+        "used_seconds",
+        "version"
+      ],
+      "domain": "quota",
+      "category": "SUBJECT_DATA"
+    },
+    {
+      "table": "schedule_definitions",
+      "columns": [
+        "definition_json",
+        "id",
+        "tenant_id"
+      ],
+      "domain": "policy",
+      "category": "SHARED_CONFIGURATION"
+    },
+    {
+      "table": "subjects",
+      "columns": [
+        "age_band",
+        "archived_at",
+        "created_at",
+        "id",
+        "nickname",
+        "tenant_id",
+        "version"
+      ],
+      "domain": "subject",
+      "category": "SUBJECT_DATA"
+    },
+    {
+      "table": "support_grant_heads",
+      "columns": [
+        "tenant_id"
+      ],
+      "domain": "support",
+      "category": "OPERATIONAL_METADATA"
+    },
+    {
+      "table": "support_grants",
+      "columns": [
+        "created_at",
+        "creator_actor_id",
+        "creator_key",
+        "creator_member_version",
+        "device_id",
+        "expires_at",
+        "id",
+        "pairing_id",
+        "recipient_actor_id",
+        "recipient_display_name",
+        "recipient_key",
+        "recipient_verified_email",
+        "registration_id",
+        "state",
+        "subject_id",
+        "tenant_id",
+        "type_mask",
+        "updated_at",
+        "version"
+      ],
+      "domain": "support",
+      "category": "AUTHORIZATION"
+    },
+    {
+      "table": "support_pairing_creation_locks",
+      "columns": [
+        "actor_key"
+      ],
+      "domain": "support",
+      "category": "OPERATIONAL_METADATA"
+    },
+    {
+      "table": "support_pairing_events",
+      "columns": [
+        "action",
+        "actor_key",
+        "id",
+        "occurred_at",
+        "request_id"
+      ],
+      "domain": "support",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "support_pairing_heads",
+      "columns": [
+        "actor_key",
+        "create_count",
+        "create_window",
+        "resolve_count",
+        "resolve_window"
+      ],
+      "domain": "support",
+      "category": "OPERATIONAL_METADATA"
+    },
+    {
+      "table": "support_pairing_requests",
+      "columns": [
+        "code_hash",
+        "created_at",
+        "display_name",
+        "expires_at",
+        "id",
+        "recipient_actor_id",
+        "recipient_key",
+        "state",
+        "updated_at",
+        "verified_email",
+        "version"
+      ],
+      "domain": "support",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "tenant_member_class_scopes",
+      "columns": [
+        "actor_key",
+        "class_id",
+        "member_version",
+        "tenant_id"
+      ],
+      "domain": "tenant",
+      "category": "AUTHORIZATION"
+    },
+    {
+      "table": "tenant_members",
+      "columns": [
+        "actor_id",
+        "actor_key",
+        "revoked_at",
+        "role",
+        "subject_id",
+        "tenant_id",
+        "version"
+      ],
+      "domain": "tenant",
+      "category": "AUTHORIZATION"
+    },
+    {
+      "table": "tenants",
+      "columns": [
+        "created_at",
+        "id",
+        "kind",
+        "name",
+        "time_zone",
+        "version"
+      ],
+      "domain": "tenant",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "usage_observation_batches",
+      "columns": [
+        "authorization_version",
+        "device_id",
+        "payload_json",
+        "received_at",
+        "registration_id",
+        "report_id",
+        "sequence_number",
+        "tenant_id"
+      ],
+      "domain": "observation",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "usage_observation_heads",
+      "columns": [
+        "device_id",
+        "received_at",
+        "registration_id",
+        "report_id",
+        "request_hash",
+        "sequence_number",
+        "tenant_id"
+      ],
+      "domain": "observation",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "usage_report_job_heads",
+      "columns": [
+        "tenant_id"
+      ],
+      "domain": "reporting",
+      "category": "OPERATIONAL_METADATA"
+    },
+    {
+      "table": "usage_report_jobs",
+      "columns": [
+        "attempts",
+        "byte_count",
+        "claim_token",
+        "completed_devices",
+        "created_at",
+        "creator_key",
+        "expires_at",
+        "failure_code",
+        "id",
+        "lease_until",
+        "member_version",
+        "next_attempt_at",
+        "selection_hash",
+        "selection_json",
+        "state",
+        "tenant_id",
+        "total_devices",
+        "updated_at"
+      ],
+      "domain": "reporting",
+      "category": "DERIVED_COPY"
+    },
+    {
+      "table": "usage_report_parts",
+      "columns": [
+        "artifact",
+        "authorization_version",
+        "byte_count",
+        "device_id",
+        "generated_at",
+        "job_id",
+        "ordinal",
+        "registration_id",
+        "subject_id",
+        "tenant_id",
+        "usage_enabled"
+      ],
+      "domain": "reporting",
+      "category": "DERIVED_COPY"
+    }
+  ]
+}
