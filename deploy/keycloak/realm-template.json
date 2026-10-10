@@ -14,9 +14,15 @@
   "internationalizationEnabled": true,
   "supportedLocales": ["zh-CN", "en"],
   "defaultLocale": "zh-CN",
-  "roles": {"realm": [{"name": "tenant-creator", "description": "Approved adult workspace creator"}]},
+  "roles": {"realm": [
+    {"name": "tenant-creator", "description": "Approved adult workspace creator"},
+    {"name": "catalog-operator", "description": "Platform commercial catalog draft operator"},
+    {"name": "catalog-approver", "description": "Independent platform commercial catalog approver"}
+  ]},
   "clientScopes": [
     {"name": "tenant:create", "protocol": "openid-connect", "attributes": {"include.in.token.scope": "true"}},
+    {"name": "catalog:manage", "protocol": "openid-connect", "attributes": {"include.in.token.scope": "true"}},
+    {"name": "catalog:approve", "protocol": "openid-connect", "attributes": {"include.in.token.scope": "true"}},
     {"name": "basic", "protocol": "openid-connect", "attributes": {"include.in.token.scope": "false"}, "protocolMappers": [
       {"name": "subject", "protocol": "openid-connect", "protocolMapper": "oidc-sub-mapper", "config": {"access.token.claim": "true", "id.token.claim": "true"}},
       {"name": "auth_time", "protocol": "openid-connect", "protocolMapper": "oidc-usersessionmodel-note-mapper", "config": {"user.session.note": "AUTH_TIME", "claim.name": "auth_time", "jsonType.label": "long", "access.token.claim": "true", "id.token.claim": "true"}}
@@ -30,14 +36,18 @@
       {"name": "email verified", "protocol": "openid-connect", "protocolMapper": "oidc-usermodel-property-mapper", "config": {"user.attribute": "emailVerified", "claim.name": "email_verified", "jsonType.label": "boolean", "access.token.claim": "true", "id.token.claim": "true", "userinfo.token.claim": "true"}}
     ]}
   ],
-  "scopeMappings": [{"clientScope": "tenant:create", "roles": ["tenant-creator"]}],
+  "scopeMappings": [
+    {"clientScope": "tenant:create", "roles": ["tenant-creator"]},
+    {"clientScope": "catalog:manage", "roles": ["catalog-operator"]},
+    {"clientScope": "catalog:approve", "roles": ["catalog-approver"]}
+  ],
   "clients": [{
     "clientId": "ai-manager-guardian", "name": "智能管家管理端", "protocol": "openid-connect", "enabled": true,
     "publicClient": true, "standardFlowEnabled": true, "implicitFlowEnabled": false,
     "directAccessGrantsEnabled": false, "serviceAccountsEnabled": false, "fullScopeAllowed": false,
     "redirectUris": ["http://localhost:18090/auth/callback"], "webOrigins": ["http://localhost:18090"],
     "attributes": {"pkce.code.challenge.method": "S256", "post.logout.redirect.uris": "http://localhost:18090/"},
-    "defaultClientScopes": ["basic", "profile", "email", "tenant:create"],
+    "defaultClientScopes": ["basic", "profile", "email", "tenant:create", "catalog:manage", "catalog:approve"],
     "protocolMappers": [
       {"name": "API audience", "protocol": "openid-connect", "protocolMapper": "oidc-audience-mapper", "config": {"included.custom.audience": "ai-manager-api", "access.token.claim": "true", "id.token.claim": "false"}},
       {"name": "Authentication methods", "protocol": "openid-connect", "protocolMapper": "oidc-amr-mapper", "config": {"access.token.claim": "true", "id.token.claim": "true"}}
