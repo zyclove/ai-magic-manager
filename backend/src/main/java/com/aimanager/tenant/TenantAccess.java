@@ -33,6 +33,16 @@ public class TenantAccess {
     return evaluate(tenantId, actorId, true, allowed);
   }
 
+  /** Current membership epoch, held with the authority lock until the caller's transaction ends. */
+  public long requireWriteVersion(String tenantId, String actorId, Role... allowed) {
+    requireWriteRole(tenantId, actorId, allowed);
+    return jdbc.queryForObject(
+        "SELECT version FROM tenant_members WHERE tenant_id=? AND actor_key=? FOR UPDATE",
+        Long.class,
+        tenantId,
+        ActorKeys.key(actorId));
+  }
+
   /** Lock delegated and confirming actors before domain rows, in a stable order across replicas. */
   public void requireWriteRoles(String tenantId, Collection<String> actors, Role... allowed) {
     if (!TransactionSynchronizationManager.isActualTransactionActive())

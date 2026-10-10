@@ -24,6 +24,7 @@ const destinations = [
   ('ownership', '所有者交接', Icons.swap_horiz_outlined),
   ('audit', '审计日志', Icons.receipt_long_outlined),
   ('exports', '导出任务', Icons.file_download_outlined),
+  ('support', '支持协作', Icons.support_agent_outlined),
   ('settings', '设置', Icons.settings_outlined),
 ];
 

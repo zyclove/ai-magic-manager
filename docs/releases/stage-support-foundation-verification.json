@@ -1,0 +1,316 @@
+{
+  "recordedAt": "2026-10-10T08:52:22.628391+00:00",
+  "status": "support-foundation-verified-encrypted-jobs-and-whole-stage-review-pending",
+  "deployed": false,
+  "reviewed": false,
+  "workspaceHead": "0c68cc950f3a27da09b37284d547d45a274dce33",
+  "candidate": {
+    "baseHead": "0c68cc950f3a27da09b37284d547d45a274dce33",
+    "candidate": "D:\\codes\\mobile\\ai-manager\\.local\\support-foundation-backend",
+    "supportBackendFiles": 28,
+    "pomSha256": "ECAE809F1ED87449395C0A48049F3EF65300C10794C6E6F606B8BEFB792606FC",
+    "excludes": "Uncommitted V28 commerce stage; V29 not yet implemented"
+  },
+  "files": [
+    {
+      "path": "apps/guardian/lib/core/access.dart",
+      "sha256": "541A35CF56E048D99B2BDD93EB0070A68556DEE3C2CA6927381DE3D3F4EDE6EB"
+    },
+    {
+      "path": "apps/guardian/lib/core/device_diagnostic.dart",
+      "sha256": "7CAEFCC43BAE78E9D11595B7C1B607C72A5898BA8576561FB5E11BB5C51FC923"
+    },
+    {
+      "path": "apps/guardian/lib/core/diagnostic_repository.dart",
+      "sha256": "0057CFF8A1F7B04C62C195E0A64E72C73C5664942F8B6E1B18DA65386BFEDF21"
+    },
+    {
+      "path": "apps/guardian/lib/core/session.dart",
+      "sha256": "1B662B5F7E9492D681E50BA712C544E935F7CD7C0425874424D954022C0CD75D"
+    },
+    {
+      "path": "apps/guardian/lib/core/support.dart",
+      "sha256": "4AA38CF5A8F0F5B02C578D9D30B2EAAA516005264BB96F24A05A7FC21F75E60D"
+    },
+    {
+      "path": "apps/guardian/lib/core/support_diagnostic.dart",
+      "sha256": "A4309BA85F07C871B477A777730EB5C8C85AF3A481BB0CFE6457B05C6FC6AFA8"
+    },
+    {
+      "path": "apps/guardian/lib/core/support_repository.dart",
+      "sha256": "A1D555C833B494B88F7C908FF6B7D66FF4A982BA6301A32752EABC2B5D3DE453"
+    },
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "sha256": "AB9805E99BBF25D6352727BB0251867F877CD08FEB268277290E27B9559CC919"
+    },
+    {
+      "path": "apps/guardian/lib/pages/device_diagnostic_dialog.dart",
+      "sha256": "F3CB13AEF91366CF4C0EA28440252BDE1B4992B0794D61E76D876BED59863612"
+    },
+    {
+      "path": "apps/guardian/lib/pages/support_page.dart",
+      "sha256": "66E4FEE75FD6FB9DDC76F42F4F0E3EB26EEB0588526CBBDAB287508024A0B7F1"
+    },
+    {
+      "path": "apps/guardian/lib/ui/diagnostic_preview_view.dart",
+      "sha256": "79D55E70C0FE2B2332667A76EF1A3FCA5772ACA4AF7FE974A9E469947505F86D"
+    },
+    {
+      "path": "apps/guardian/lib/ui/shell.dart",
+      "sha256": "916A51A733E4D0200161C75C66D08B0F998502921C3EEB9EF311FE62C9381175"
+    },
+    {
+      "path": "apps/guardian/lib/ui/support_center_view.dart",
+      "sha256": "A9936B5786E884A6D7D60EDF0E067175714564C3ECBA418F1EF33120401C335C"
+    },
+    {
+      "path": "apps/guardian/lib/ui/support_diagnostic_details.dart",
+      "sha256": "94854A04C9E87D550BC02571F2621267F3AF4EF19FF2455ED57C4A60753BFC1F"
+    },
+    {
+      "path": "apps/guardian/lib/ui/support_grant_view.dart",
+      "sha256": "BD2FCAA5E4FEF93CCF00430E87BB8D25902BAD91B772CE27050B014318898CE1"
+    },
+    {
+      "path": "apps/guardian/lib/ui/support_view_state.dart",
+      "sha256": "8AB0727D2B7ABF6DE2BC9AE1B53B5B96D17915EB77A16A37C4DFB39DB611BAD6"
+    },
+    {
+      "path": "apps/guardian/test/diagnostic_model_test.dart",
+      "sha256": "7FE5FC02BD8A64EE2DA07C6AE9E499CBEF25664352A573753121059E43A8CA93"
+    },
+    {
+      "path": "apps/guardian/test/diagnostic_preview_view_test.dart",
+      "sha256": "2471F6DFB42C317B07BA130EEA71CDF761D18483B834F1D87B4F2BBF857DE40F"
+    },
+    {
+      "path": "apps/guardian/test/diagnostic_repository_test.dart",
+      "sha256": "F9E59C2EF2CE90CAEBA0BD29B2208F4D32B1FCF38CD4BF5F5DC478FF4B175B68"
+    },
+    {
+      "path": "apps/guardian/test/fixtures/diagnostic.dart",
+      "sha256": "CF2C881CB811F422015ACD6C0956855413845C219A76177B8C01566E99275845"
+    },
+    {
+      "path": "apps/guardian/test/fixtures/support.dart",
+      "sha256": "5C5E4B187F041B2B10704B34DD4B0A08481EE81C4FEB46DF8AB4F98F6E04AF9C"
+    },
+    {
+      "path": "apps/guardian/test/support_model_test.dart",
+      "sha256": "AEC3A3472CE26ACE00578A36A764340174C7CBD5BD62B63CA444DC268E6AC422"
+    },
+    {
+      "path": "apps/guardian/test/support_repository_test.dart",
+      "sha256": "6258E80C8035787ADBA8724CBBEF4D82495C4B1F6D17B4B2E38AA64EAF126D63"
+    },
+    {
+      "path": "apps/guardian/test/support_views_test.dart",
+      "sha256": "6195C73F021627984321FF0DA9D2D2962408535BF581C2A3BAC641C4324D67C2"
+    },
+    {
+      "path": "apps/guardian/tool/verify_diagnostic_http.dart",
+      "sha256": "A37C4AF18E65CD3A774528594F49EE4D988EDF6A14E170DB07C4A105AB76EB8B"
+    },
+    {
+      "path": "apps/guardian/tool/verify_support_http.dart",
+      "sha256": "4B6F8A67029E390A6875DA6CDF95E2B95D0573F06B1B25BA94F062F6853D3CD9"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/delivery/DeliveryDiagnosticSource.java",
+      "sha256": "C10B7A64B6C5D6BBF18BA414BCFA4940FA10C54848FAD317BA974C44A1C635D7"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/delivery/internal/DeliveryDiagnosticReader.java",
+      "sha256": "E4532208407449224AFCD7589B4AB6C609A2BBB58383798BCF1C1F1AA5BD59E9"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/fleet/FleetDiagnosticSource.java",
+      "sha256": "3F443F4A485F3493C2A3FCF0B40E626BBCB064335CE38735783560B1B558B722"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/fleet/internal/FleetDiagnosticReader.java",
+      "sha256": "E5E1F1CA04ED54F9516DCCEA672DDDDA60FD655E9CD5ACB7D8130DA7F19400A0"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/identity/IdentityProfiles.java",
+      "sha256": "7B364A786502BF89A3FF55E6E9FC3A51820E966A1CED1E9234CB077219D72B68"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/policy/PolicyDiagnosticHashes.java",
+      "sha256": "78346CE3044059F26E8CC99A259D582FFDDB3386B4F29193386F1E83D434158F"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/policy/internal/PolicyDiagnosticHashReader.java",
+      "sha256": "178D5E745E91925A661C611642D5969BE34DB83B9D93A0A9D4FE9CB992790972"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/support/internal/DiagnosticPreviewController.java",
+      "sha256": "472CA1F8FE84F9A63149F0F185D0BE485391A168D69C498DB3662699D32DE284"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/support/internal/DiagnosticPreviewService.java",
+      "sha256": "1530EF755ADE240514A88402A8E32BCD2FB39D5303426E39AB370115826692EC"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/support/internal/DiagnosticProjection.java",
+      "sha256": "6CD991E661C11D80137E8661C2C45A357B07ECBE852393902F274EAC5FCB3949"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/support/internal/SupportDiagnosticReader.java",
+      "sha256": "89CC27843045B597A110A58BF2BFB57C089DB4E60C3A6746B23156ACCB572703"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/support/internal/SupportGrantController.java",
+      "sha256": "52CA876047F986823CFA601B4F8D7D1CA59D4A9F91BF79F33F1E28F7CEE6CB05"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/support/internal/SupportGrantService.java",
+      "sha256": "FD4451525DF09A47B1280A172E0D77AD472BC8DFF6DD399835DB31F5F04C0193"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/support/internal/SupportGrantStore.java",
+      "sha256": "F8CE5BDFA53111D7707E00466C24F367C993CF1AD78556ABFA32E31D9767E7CF"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/support/internal/SupportGrantTypes.java",
+      "sha256": "D37E332980ADC13B24DB6EBE40BA0E8D77D009E6D4EB56A16FC5B8F4F158CB45"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/support/internal/SupportPairingBudget.java",
+      "sha256": "2A32402AD73E2029747DAD06C9514CF33B6CD732F3605247C54F126618556BE3"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/support/internal/SupportPairingController.java",
+      "sha256": "65E9E4448DEFC9944B0581BBD917C5E2549137B37C4C670EF33F508EC80C6AE1"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/support/internal/SupportPairingService.java",
+      "sha256": "40EA472D5C2CAA7B3B9EDE72F92CE6425D3B58DC4B040E4E00D7F2A69E082174"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/support/internal/SupportSecrets.java",
+      "sha256": "865E7CC273F574601C75FB9FA0AED478455A61032A9AE88B5413E1CC5FFA0CE9"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/TenantAccess.java",
+      "sha256": "9892D39BFBA736727552504ABFE2FDCEED8C2E425D2F285DB020E14196FD502D"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V26__support_pairing.sql",
+      "sha256": "FCC4EAC242E1FC03AE20B368A8903A310A290CDABA628168B7AC1F4F00C80FA2"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V27__support_grants.sql",
+      "sha256": "7D128356832135E6D0E6D1E45F461BA1B4EB91EBFFEFAC41DD6E19886F4509E0"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DiagnosticPreviewJourneyTest.java",
+      "sha256": "DCCC8A46663ED2A06AD5636923E0541B1D7A9A7FE18E6EB220F90CCC711FB777"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/SupportGrantJourneyTest.java",
+      "sha256": "BB940FF88C1374B8700B14B2623A72AFBF201C27B56F121DDE3B3B0107612BB6"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/SupportGrantMigrationTest.java",
+      "sha256": "03003B861E013F5927A3FDF79B390EE06A8E8FDE74D297EF2B9F3D67D8B66147"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/SupportPairingJourneyTest.java",
+      "sha256": "3DA2704DDC3F25B6A6EA34BDC78F4851C160DA5D383474D5F1BBC66B9B8C1ADE"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/SupportPairingMigrationTest.java",
+      "sha256": "F3E5AF5782E167B8EC91730B1337A422B05584455A5170F0481493136C81AD64"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/support/internal/DiagnosticProjectionTest.java",
+      "sha256": "3648E9EEA61D30A2FFE85A4F862A8B8DF0A39770CA2A1D7812689A705309AA96"
+    }
+  ],
+  "documents": [
+    {
+      "path": "docs/support-diagnostics-plan.md",
+      "sha256": "DA6896F705D60F8A529AB37882AA33976B50AE8ACA51DCDE339B1DA6C1E08324"
+    },
+    {
+      "path": "docs/support-diagnostic-preview-contract.md",
+      "sha256": "553BEB1A5BA8D3F9192622E330D34AC19D122B453D898CBFE6A07E5974FC329F"
+    },
+    {
+      "path": "docs/support-pairing-contract.md",
+      "sha256": "AD0E3ACF6DA5F397606A49B3EB5A1FC106F1240090E51936C85FB7A343465295"
+    },
+    {
+      "path": "docs/support-grant-contract.md",
+      "sha256": "3BD4F6E987E4B53E084DB5378B0416CB73CC5DCB9774670B613033BE1F0BF7F3"
+    },
+    {
+      "path": "docs/support-collaboration-ui.md",
+      "sha256": "C82A4D49C17FF85F78BDF33AC6753482032F5BEF4C655ADF7505691493CC5225"
+    }
+  ],
+  "backendChecks": [
+    {
+      "path": ".local/support-foundation-backend-full.log",
+      "sha256": "0C8BA2509BF72125E1847E6ED79885281CD361C4420B135949B491534E435FE3",
+      "executions": 475,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    {
+      "path": ".local/support-foundation-mysql.log",
+      "sha256": "23259B6C57FF9A3B07B9C7BD06EC971F837032118A9821925A9DE8537FE6CB4B",
+      "executions": 72,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "path": ".local/support-foundation-migration-mysql.log",
+      "sha256": "B258926E20F4997E226FE802FF096DD07A24FB2435BBC7C55DB6447E9610248D",
+      "executions": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "flutter": {
+    "tests": 207,
+    "log": ".local/support-ui-full-current.log",
+    "sha256": "049909EFDFC48D9643C907FB9F0EC63A7DF46654F1E45220E09F9B51A9DAA09A",
+    "analysis": "No issues found"
+  },
+  "browser": {
+    "status": "PASS",
+    "artifactSha256": "ABF0D4C0E780F7648475B9372AD9A24F1DE1451770D61818CA723407FF0D5D1E",
+    "kind": "isolated browser API fixtures with real visibility transitions, not real MFA",
+    "checks": [
+      "device entry requires explicit resolved identity and confirmation",
+      "recent MFA error gives recovery action",
+      "uncertain submission freezes content and retries same key and payload",
+      "customer history and explicit revoke",
+      "real tab background clears code without regenerating",
+      "lost first response offers cancel and regenerate recovery",
+      "refresh removes consumed one-time code and offers received grants",
+      "recipient explicitly reads only granted typed diagnostic",
+      "real tab background clears received diagnostic",
+      "mobile diagnostic sections and long fingerprints",
+      "changed registration response discarded",
+      "eligible recipient works without customer membership or workspace",
+      "child without eligibility cannot open support operations",
+      "mobile grant draft cleared on real background transition"
+    ],
+    "pageErrors": [],
+    "unhandledRoutes": []
+  },
+  "mysqlCleanup": true,
+  "identityEvidence": "Production Dart support HTTP journey against isolated Spring server with injected JWT, plus browser API fixtures. Not real OTP.",
+  "pending": [
+    "V29 asynchronous encrypted diagnostic jobs, authenticated download and expiry cleanup",
+    "Complete diagnostic-stage integration and one independent review",
+    "Previously blocked running-service replacement and business database upgrade require explicit approval"
+  ]
+}

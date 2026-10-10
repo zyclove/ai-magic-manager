@@ -21,9 +21,11 @@ import 'audit_exports_page.dart';
 import 'usage_reports_page.dart';
 import 'editors.dart';
 import 'device_exit_dialog.dart';
+import 'device_diagnostic_dialog.dart';
 import 'quota_page.dart';
 import 'ownership_page.dart';
 import 'notifications_page.dart';
+import 'support_page.dart';
 
 class ConsolePages extends StatelessWidget {
   final String section;
@@ -32,6 +34,7 @@ class ConsolePages extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.watch<Session>();
     final actions = ConsoleActions(context, s);
+    if (section == 'support') return SupportWorkspacePage(s);
     if (s.tenant == null) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         const PageHeading('开始你的管理旅程', '创建工作空间，连接家庭或教育机构的设备。'),
@@ -585,6 +588,19 @@ class ConsoleActions {
         },
         reauth: reauth,
         actions: [
+          if (canReadDiagnostics(s.role))
+            DetailAction('诊断预览', (ctx) async {
+              if (s.root != workspace) {
+                throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+              }
+              await openDeviceDiagnostic(ctx, s, r);
+            }, closeOnSuccess: false),
+          if (s.canWrite && r['state'] == 'ACTIVE')
+            DetailAction('限时支持授权', (ctx) async {
+              if (s.root != workspace)
+                throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+              await openSupportGrant(ctx, s, r);
+            }, closeOnSuccess: false),
           if (canReadObservation(s.role))
             DetailAction('使用情况与隐私', (ctx) async {
               if (s.root != workspace) {
