@@ -110,10 +110,15 @@ class CatalogDraft {
         !catalogCapacityKinds.contains(raw['capacityKind']) ||
         raw['deviceCapacity'] is! int ||
         raw['deviceCapacity'] < 0 ||
+        raw['deviceCapacity'] > 1000000 ||
         raw['features'] is! List ||
         raw['availableFrom'] is! int ||
         raw['availableUntil'] is! int ||
-        raw['availableUntil'] <= raw['availableFrom']) _invalid();
+        raw['availableFrom'] < 0 ||
+        raw['availableUntil'] <= raw['availableFrom'] ||
+        raw['availableUntil'] - raw['availableFrom'] > 86400000 * 3650) {
+      _invalid();
+    }
     final features = <String>{};
     for (final feature in raw['features']) {
       if (feature is! String ||
@@ -122,8 +127,22 @@ class CatalogDraft {
     }
     final price = raw['priceMinor'];
     if (raw['priceType'] == 'FIXED'
-        ? price is! int || price < 0
+        ? price is! int ||
+            price < 0 ||
+            price > 1000000000000 ||
+            raw['taxBasis'] == 'QUOTE_REQUIRED'
         : price != null || raw['taxBasis'] != 'QUOTE_REQUIRED') _invalid();
+    if ((raw['capacityKind'] == 'BASE' && raw['deviceCapacity'] == 0) ||
+        (raw['channel'] == 'APP_STORE' && raw['platform'] != 'IOS') ||
+        (raw['channel'] == 'GOOGLE_PLAY' &&
+            !['ANDROID', 'ANDROID_TV'].contains(raw['platform'])) ||
+        (raw['deviceMode'] == 'WORK_PROFILE' && raw['platform'] != 'ANDROID') ||
+        (features.contains('MANAGED_ANDROID') &&
+            (raw['deviceMode'] == 'BYOD' ||
+                !['ANDROID', 'ANDROID_TV'].contains(raw['platform']))) ||
+        (features.contains('ORG_BULK') && raw['buyerKind'] != 'ORGANIZATION')) {
+      _invalid();
+    }
     return CatalogDraft(Map.unmodifiable({
       for (final key in const [
         'sku',
@@ -144,7 +163,7 @@ class CatalogDraft {
         'availableUntil'
       ])
         key: raw[key],
-      'features': features.toList()..sort()
+      'features': List<String>.unmodifiable(features.toList()..sort())
     }));
   }
 

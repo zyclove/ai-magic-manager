@@ -60,6 +60,26 @@ void main() {
     expect(() => CatalogOffer.parse({...snapshot(), 'purchaseAvailable': true}),
         throwsA(isA<ApiFailure>()));
     expect(
+        () => CatalogOffer.parse({
+              ...snapshot(),
+              'offer': {
+                ...draft(),
+                'buyerKind': 'FAMILY',
+                'features': ['ORG_BULK']
+              }
+            }),
+        throwsA(isA<ApiFailure>()));
+    expect(
+        () => CatalogOffer.parse({
+              ...snapshot(),
+              'offer': {
+                ...draft(),
+                'priceType': 'FIXED',
+                'taxBasis': 'QUOTE_REQUIRED'
+              }
+            }),
+        throwsA(isA<ApiFailure>()));
+    expect(
         () => CatalogOfferPage.parse({
               'items': [snapshot(), snapshot()],
               'nextCursor': null
