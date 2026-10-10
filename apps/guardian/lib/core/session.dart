@@ -26,10 +26,14 @@ class Session extends ChangeNotifier {
   bool get authenticated => _client != null && profile != null;
   bool get canWrite => ['OWNER', 'GUARDIAN', 'ORG_ADMIN'].contains(role);
   bool get canManage => ['OWNER', 'ORG_ADMIN'].contains(role);
+  bool get canManageCatalog => profile?['canManageCatalog'] == true;
+  bool get canApproveCatalog => profile?['canApproveCatalog'] == true;
   bool canOpen(String section) => section == 'support'
       ? authenticated && (canWrite || profile?['canCreateTenant'] == true)
-      : (section != 'classes' || tenant?['kind'] == 'ORGANIZATION') &&
-          canOpenSection(role, section);
+      : section == 'catalog'
+          ? authenticated && (canManageCatalog || canApproveCatalog)
+          : (section != 'classes' || tenant?['kind'] == 'ORGANIZATION') &&
+              canOpenSection(role, section);
   String get root => '/tenants/${tenant!['id']}';
   String get displayName =>
       profile?['name'] as String? ?? profile?['email'] as String? ?? '管理员';

@@ -28,6 +28,7 @@ void main() {
       expect(canOpenSection(role, 'commercial'), isFalse, reason: role);
     }
     expect(trustedReturnPath('/commercial'), '/commercial');
+    expect(trustedReturnPath('/catalog'), '/catalog');
   });
   test('late workspace responses and logout cannot restore stale selection',
       () {

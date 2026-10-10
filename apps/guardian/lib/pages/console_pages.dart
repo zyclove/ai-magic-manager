@@ -28,6 +28,7 @@ import 'ownership_page.dart';
 import 'notifications_page.dart';
 import 'support_page.dart';
 import 'commercial_account_page.dart';
+import 'commercial_catalog_page.dart';
 
 class ConsolePages extends StatelessWidget {
   final String section;
@@ -37,6 +38,12 @@ class ConsolePages extends StatelessWidget {
     final s = context.watch<Session>();
     final actions = ConsoleActions(context, s);
     if (section == 'support') return SupportWorkspacePage(s);
+    if (section == 'catalog') {
+      return s.canOpen('catalog')
+          ? CommercialCatalogPage(
+              key: ValueKey(s.profile?['subject']), session: s)
+          : const Panel(child: EmptyView('没有平台目录权限', '此功能仅向平台运营与独立审批角色开放。'));
+    }
     if (s.tenant == null) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         const PageHeading('开始你的管理旅程', '创建工作空间，连接家庭或教育机构的设备。'),
@@ -49,6 +56,12 @@ class ConsolePages extends StatelessWidget {
                         label: const Text('创建工作空间'))
                     : null)),
         const SizedBox(height: 16),
+        if (s.canOpen('catalog'))
+          OutlinedButton.icon(
+              onPressed: () => context.go('/catalog'),
+              icon: const Icon(Icons.inventory_2_outlined),
+              label: const Text('打开平台产品目录')),
+        if (s.canOpen('catalog')) const SizedBox(height: 12),
         OutlinedButton(
             onPressed: actions.acceptInvitation,
             child: const Text('我有邀请，加入工作空间'))

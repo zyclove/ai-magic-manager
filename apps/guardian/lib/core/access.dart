@@ -62,6 +62,7 @@ String trustedReturnPath(String? value) => const {
       '/exports',
       '/reports',
       '/commercial',
+      '/catalog',
       '/settings',
       '/support'
     }.contains(value)

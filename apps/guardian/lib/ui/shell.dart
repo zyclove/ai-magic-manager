@@ -21,6 +21,7 @@ const destinations = [
   ('notifications', '通知中心', Icons.notifications_none_outlined),
   ('reports', '使用报表', Icons.bar_chart_outlined),
   ('commercial', '商业账户', Icons.workspace_premium_outlined),
+  ('catalog', '平台产品目录', Icons.inventory_2_outlined),
   ('members', '成员与邀请', Icons.group_outlined),
   ('ownership', '所有者交接', Icons.swap_horiz_outlined),
   ('audit', '审计日志', Icons.receipt_long_outlined),
