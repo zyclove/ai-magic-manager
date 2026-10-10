@@ -139,6 +139,8 @@ Files: `apps/guardian/`、`apps/child/`、`packages/{api_client,design_system,do
 
 Files: `apps/child/android/`、Pigeon 契约、原生适配模块与 TV 页面。
 
+阶段实现：Android TV 原生模式识别、电视侧边导航与配对输入说明见 [电视界面阶段](android-tv-interface-stage.md)；真机焦点、系统键盘、重启对账和系统执行仍待验证。
+
 - [ ] 实现注册、能力探测、获准使用量、策略本地存储、离线回执、重启对账、儿童/成人 TV 会话。
 - [ ] 逐管理模式测试 Home/输入源/投屏/系统设置/资料隔离，不能伪装 DPC 权限。
 - [ ] 支持真机矩阵与可解释失败状态。

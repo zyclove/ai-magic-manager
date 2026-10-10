@@ -16,6 +16,7 @@ class ChildApp extends StatelessWidget {
   final String? serviceLabel;
   final String osVersion;
   final bool nativeAvailable;
+  final bool tvMode;
   final bool deploymentInvalid;
   final ChildReportFactory? reportFactory;
   const ChildApp(
@@ -24,13 +25,14 @@ class ChildApp extends StatelessWidget {
       this.serviceLabel,
       this.osVersion = 'Android',
       this.nativeAvailable = false,
+      this.tvMode = false,
       this.reportFactory,
       this.deploymentInvalid = false});
   @override
   Widget build(BuildContext context) => MaterialApp(
       title: '智能管家',
       debugShowCheckedModeBanner: false,
-      theme: childTheme(),
+      theme: childTheme(television: tvMode),
       locale: const Locale('zh', 'CN'),
       supportedLocales: const [Locale('zh', 'CN')],
       localizationsDelegates: GlobalMaterialLocalizations.delegates,
@@ -157,6 +159,11 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         _heading('连接我的设备', '请监护人在管理端生成注册凭据，并在下方填写完成设备连接。'),
         ChildNotice('服务地址由部署预设', detail: app.serviceLabel),
+        if (app.tvMode) ...[
+          const SizedBox(height: 16),
+          const ChildNotice('电视输入提示',
+              detail: '可使用电视系统键盘或外接键盘输入监护人提供的凭据；配对码仍需由监护人在管理端确认。')
+        ],
         const SizedBox(height: 24),
         Text('设备名称', style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 8),
@@ -421,6 +428,79 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
         const SizedBox(height: 24),
         OutlinedButton(onPressed: _helpDialog, child: const Text('查看连接步骤'))
       ]);
+
+  /// A remote-first rail leaves the active page visible while focus moves.
+  Widget _tvNavigation() => NavigationRail(
+        extended: true,
+        minExtendedWidth: 220,
+        backgroundColor: childSoft,
+        selectedIndex: _tab,
+        onDestinationSelected: (index) => setState(() => _tab = index),
+        leading: const Padding(
+            padding: EdgeInsets.fromLTRB(20, 24, 20, 32),
+            child: Text('智能管家',
+                style: TextStyle(
+                    color: childNavy,
+                    fontSize: 22,
+                    fontWeight: FontWeight.w700))),
+        destinations: const [
+          NavigationRailDestination(
+              icon: Icon(Icons.phone_android), label: Text('设备')),
+          NavigationRailDestination(
+              icon: Icon(Icons.description_outlined), label: Text('规则')),
+          NavigationRailDestination(
+              icon: Icon(Icons.bar_chart_outlined), label: Text('使用')),
+          NavigationRailDestination(
+              icon: Icon(Icons.help_outline), label: Text('帮助'))
+        ],
+      );
+
+  Widget _contentPane(Widget content) => SafeArea(
+        child: LayoutBuilder(
+          builder: (context, bounds) => Align(
+            alignment: Alignment.topCenter,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: app.tvMode ? 900 : 520),
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(
+                    horizontal: bounds.maxWidth < 380 ? 20 : 24, vertical: 32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(children: [
+                      const Icon(Icons.verified_user_outlined,
+                          color: childNavy, size: 36),
+                      const SizedBox(width: 12),
+                      Text('智能管家',
+                          style: Theme.of(context).textTheme.titleLarge)
+                    ]),
+                    const SizedBox(height: 40),
+                    if (!app.nativeAvailable && app.session != null) ...[
+                      const ChildNotice('浏览器仅供查看界面',
+                          detail: '请在 Android 安装设备端，才能安全保存身份并连接。'),
+                      const SizedBox(height: 24)
+                    ],
+                    if (session?.errorCode != null && app.nativeAvailable) ...[
+                      Semantics(
+                          liveRegion: true,
+                          child: ChildNotice(_error(session!.errorCode!),
+                              warning: true)),
+                      const SizedBox(height: 24)
+                    ],
+                    if (session?.busy == true)
+                      const Padding(
+                          padding: EdgeInsets.only(bottom: 20),
+                          child:
+                              LinearProgressIndicator(semanticsLabel: '正在处理')),
+                    content
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
   @override
   Widget build(BuildContext context) => Builder(builder: (context) {
         final view = session?.identityView;
@@ -484,63 +564,14 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
             },
             child: FocusTraversalGroup(
                 child: Scaffold(
-                    body: SafeArea(
-                        child: LayoutBuilder(
-                            builder: (context, bounds) => Align(
-                                alignment: Alignment.topCenter,
-                                child: ConstrainedBox(
-                                    constraints:
-                                        const BoxConstraints(maxWidth: 520),
-                                    child: SingleChildScrollView(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal:
-                                                bounds.maxWidth < 380 ? 20 : 24,
-                                            vertical: 32),
-                                        child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(children: [
-                                                const Icon(
-                                                    Icons
-                                                        .verified_user_outlined,
-                                                    color: childNavy,
-                                                    size: 36),
-                                                const SizedBox(width: 12),
-                                                Text('智能管家',
-                                                    style: Theme.of(context)
-                                                        .textTheme
-                                                        .titleLarge)
-                                              ]),
-                                              const SizedBox(height: 40),
-                                              if (!app.nativeAvailable &&
-                                                  app.session != null) ...[
-                                                const ChildNotice('浏览器仅供查看界面',
-                                                    detail:
-                                                        '请在 Android 安装设备端，才能安全保存身份并连接。'),
-                                                const SizedBox(height: 24)
-                                              ],
-                                              if (session?.errorCode != null &&
-                                                  app.nativeAvailable) ...[
-                                                Semantics(
-                                                    liveRegion: true,
-                                                    child: ChildNotice(
-                                                        _error(session!
-                                                            .errorCode!),
-                                                        warning: true)),
-                                                const SizedBox(height: 24)
-                                              ],
-                                              if (session?.busy == true)
-                                                const Padding(
-                                                    padding: EdgeInsets.only(
-                                                        bottom: 20),
-                                                    child:
-                                                        LinearProgressIndicator(
-                                                            semanticsLabel:
-                                                                '正在处理')),
-                                              content
-                                            ])))))),
-                    bottomNavigationBar: connected
+                    body: Row(children: [
+                      if (connected && app.tvMode) ...[
+                        SafeArea(child: _tvNavigation()),
+                        const VerticalDivider(width: 1)
+                      ],
+                      Expanded(child: _contentPane(content))
+                    ]),
+                    bottomNavigationBar: connected && !app.tvMode
                         ? NavigationBar(
                             selectedIndex: _tab,
                             onDestinationSelected: (index) =>

@@ -30,11 +30,13 @@ Future<void> main() async {
       environment: configured, nativeAvailable: nativeAvailable);
   final session = runtime.session;
   var osVersion = 'Android';
+  var tvMode = false;
   if (nativeAvailable) {
     try {
       final facts = await const MethodChannel('com.aimanager.child/runtime')
           .invokeMapMethod<String, dynamic>('platformFacts');
       osVersion = facts?['osVersion'] as String? ?? osVersion;
+      tvMode = facts?['isTelevision'] == true;
     } catch (_) {
       /* Platform version is optional; no authority is derived from it. */
     }
@@ -50,5 +52,6 @@ Future<void> main() async {
               allowLoopbackHttp: configured.allowLoopbackHttp,
               inspect: runtime.observationSource.inspect)
           : null,
-      osVersion: osVersion));
+      osVersion: osVersion,
+      tvMode: tvMode));
 }

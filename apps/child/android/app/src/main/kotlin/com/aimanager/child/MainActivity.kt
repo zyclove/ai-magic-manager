@@ -1,6 +1,8 @@
 package com.aimanager.child
 
 import android.content.Context
+import android.content.res.Configuration
+import android.app.UiModeManager
 import android.os.Build
 import android.os.Handler
 import android.os.Looper
@@ -37,6 +39,7 @@ class MainActivity: FlutterActivity() {
                         mainHandler.post { result.success(success) }
                     }
                     "platformFacts" -> result.success(mapOf("osVersion" to "Android ${Build.VERSION.RELEASE} / API ${Build.VERSION.SDK_INT}",
+                        "isTelevision" to (getSystemService(UiModeManager::class.java)?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION),
                         "systemEnforced" to false, "timeSource" to "OS_WALL_CLOCK"))
                     else -> result.notImplemented()
                 }

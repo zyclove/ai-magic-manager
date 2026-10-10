@@ -180,4 +180,44 @@ void main() {
     expect(find.text('连接设备需要监护人'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+  testWidgets('television uses remote rail and keeps rules visible',
+      (tester) async {
+    tester.view.physicalSize = const Size(1280, 720);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final fixture = IdentityFixture();
+    addTearDown(fixture.close);
+    await fixture.activate();
+    await tester.pumpWidget(ChildApp(
+        session: fixture.session(), nativeAvailable: true, tvMode: true));
+    await tester.pumpAndSettle();
+    expect(find.byType(NavigationRail), findsOneWidget);
+    expect(find.byType(NavigationBar), findsNothing);
+    expect(find.text('我的设备'), findsOneWidget);
+    await tester.tap(find.text('规则'));
+    await tester.pumpAndSettle();
+    expect(find.text('我的规则'), findsOneWidget);
+    await tester.tap(find.text('帮助'));
+    await tester.pumpAndSettle();
+    expect(find.text('设备帮助'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets(
+      'television pairing gives keyboard guidance without control claim',
+      (tester) async {
+    tester.view.physicalSize = const Size(1280, 720);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final fixture = IdentityFixture();
+    addTearDown(fixture.close);
+    await tester.pumpWidget(ChildApp(
+        session: fixture.session(), nativeAvailable: true, tvMode: true));
+    await tester.pumpAndSettle();
+    expect(find.text('电视输入提示'), findsOneWidget);
+    expect(find.byType(NavigationRail), findsNothing);
+    expect(find.text('安全连接'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
 }
