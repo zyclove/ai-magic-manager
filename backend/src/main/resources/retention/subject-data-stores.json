@@ -989,6 +989,25 @@
       "category": "SHARED_CONFIGURATION"
     },
     {
+      "table": "subject_erasure_previews",
+      "columns": [
+        "created_at",
+        "creator_actor_key",
+        "expires_at",
+        "id",
+        "key_hash",
+        "member_version",
+        "snapshot_json",
+        "state",
+        "subject_id",
+        "subject_version",
+        "tenant_id",
+        "version"
+      ],
+      "domain": "retention",
+      "category": "DERIVED_COPY"
+    },
+    {
       "table": "subjects",
       "columns": [
         "age_band",

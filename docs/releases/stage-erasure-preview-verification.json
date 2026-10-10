@@ -1,0 +1,112 @@
+{
+  "recordedAt": "2026-10-10T22:10:53.190940+00:00",
+  "status": "source-verified-not-deployed",
+  "deployed": false,
+  "databaseReset": false,
+  "applicationVersion": "1.0.0",
+  "base": "9ebf6ece6dc26c1e7128af6c0d411d6a5e2bbb35",
+  "workspaceHeadBeforeSubmission": "01e98803cdbc846f2fcc4e7ed4931a76f34aff76",
+  "sourceFiles": [
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasurePreviewService.java",
+      "sha256": "95d2cc020e6b24d43d32a01f7c6f8dc8743328dfaceeb1bd759647aebf0f5ff0"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasurePreviewController.java",
+      "sha256": "245659e65906cc6dd0f5d9ccaa813bf7b6acc3847e08b3fb99ed488e384eb469"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasurePreviewCleanup.java",
+      "sha256": "50b2203562f67adc37cf236f105c7ae511827671c58e3855727cf8b5ef47d56b"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasurePreviewJourneyTest.java",
+      "sha256": "d19f28a30aeac269c8327102c947f20e65f1acae1d7ffadbb52e385c82ddc85a"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V1__initial_schema.sql",
+      "sha256": "1dcc0c6cbe44b16535ea221363b5133edafe800c4cd66c0eff7e5a42398d9a5e"
+    },
+    {
+      "path": "backend/src/main/resources/retention/subject-data-stores.json",
+      "sha256": "2ae3487cc7cb7fba599c921795d35f94c8db06dddfb26f4ce00d5c988f512d04"
+    },
+    {
+      "path": "docs/data-erasure-contract.md",
+      "sha256": "1942693c862ef4c75ccdd6a12f38d58f616f1a7de2c87ceda6db96e3d543e912"
+    }
+  ],
+  "verification": [
+    {
+      "name": "full-backend",
+      "total": 534,
+      "passed": 533,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1,
+      "localLog": ".local/erasure-preview-backend-full.log",
+      "sha256": "dd1d927469c025d2177277495710905db099973f0bbfe7622484f8d68f229451"
+    },
+    {
+      "name": "h2-preview-preflight-initialization-module",
+      "total": 24,
+      "passed": 24,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "localLog": ".local/erasure-preview-boundaries-h2.log",
+      "sha256": "1f265bb947e6b19f572d5f81961b80f3469afa1ff022d07c30ac99882aefca1f"
+    },
+    {
+      "name": "mysql-preview-preflight-module",
+      "total": 23,
+      "passed": 23,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "localLog": ".local/erasure-preview-mysql.log",
+      "sha256": "e27c6e4f33bd593fd59655a2c63c3bf10201aea6e8cc19a7866ee5f638b579a3"
+    },
+    {
+      "name": "mysql-fresh-initialization-and-repeat-start",
+      "total": 1,
+      "passed": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "localLog": ".local/erasure-preview-fresh-mysql.log",
+      "sha256": "e6df15cbcaf5bdddad1916aeda3d2605ef6609bc6a340c7570290b94298fbc8d"
+    },
+    {
+      "name": "latest-committed-commercial-identity-integration",
+      "total": 36,
+      "passed": 36,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "localLog": ".local/erasure-preview-integrated.log",
+      "sha256": "c9a793d59412665223ddf26e258322bfd2c2c6dd936b9735db527f6cfe6c22a0"
+    }
+  ],
+  "integratedCandidateBase": "01e98803cdbc846f2fcc4e7ed4931a76f34aff76",
+  "review": {
+    "reviewer": "erasure_preview_review",
+    "findings": 0,
+    "frozenFilesMatched": 7,
+    "postReviewChanges": "Documentation completion evidence only"
+  },
+  "reviewedRulings": [
+    "Use current membership and subject transaction locks plus database uniqueness for retry serialization; no additional cache or persistence framework.",
+    "Five-minute preview TTL and 24-hour request tombstones describe operational cache retention, not personal-data or legal audit retention.",
+    "Permission or subject-version changes invalidate snapshot access on read; cleanup is bounded and eventual. Proactive erasure-isolation hooks remain a later requirement."
+  ],
+  "limitations": [
+    "Preparations always return executionAvailable=false; they never accept or authorize data deletion.",
+    "Counts are a point-in-time snapshot, not an immutable deletion scope. Actual submission must revalidate all domains and persist an independent deletion ledger.",
+    "Deletion execution, cross-domain isolation, external cleanup receipts, restore gating and management UI remain incomplete.",
+    "Existing local services and business database were not replaced or reset.",
+    "Full backend interoperability uses pre-existing isolated Dart/Flutter fixtures; no new frontend build or browser deletion journey is claimed.",
+    "Native Android runner skip is not evidence of real-device enforcement.",
+    "Full backend suite uses the recorded base plus preview changes; later committed commercial/identity changes received the separate targeted integration run. Foreign uncommitted work remains outside both candidates and the review."
+  ]
+}

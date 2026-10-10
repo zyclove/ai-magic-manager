@@ -1218,3 +1218,27 @@ CREATE TABLE commercial_catalog_events (
 );
 
 CREATE INDEX ix_commercial_catalog_event_time ON commercial_catalog_events(occurred_at, event_id);
+
+-- Short-lived preparation metadata; never a deletion acceptance ledger.
+CREATE TABLE subject_erasure_previews (
+    tenant_id VARCHAR(36) NOT NULL,
+    id VARCHAR(36) NOT NULL,
+    subject_id VARCHAR(36) NOT NULL,
+    creator_actor_key VARCHAR(64) NOT NULL,
+    member_version BIGINT NOT NULL,
+    subject_version BIGINT NOT NULL,
+    key_hash VARCHAR(64) NOT NULL,
+    state VARCHAR(24) NOT NULL,
+    snapshot_json TEXT,
+    created_at BIGINT NOT NULL,
+    expires_at BIGINT NOT NULL,
+    version BIGINT NOT NULL DEFAULT 0,
+    PRIMARY KEY (tenant_id, id),
+    CONSTRAINT uq_erasure_preview_request UNIQUE (tenant_id, subject_id, creator_actor_key, key_hash),
+    CONSTRAINT fk_erasure_preview_subject FOREIGN KEY (tenant_id, subject_id) REFERENCES subjects(tenant_id, id),
+    CONSTRAINT ck_erasure_preview_state CHECK (state IN ('PREPARED','CANCELLED','SUPERSEDED','EXPIRED','STALE')),
+    CONSTRAINT ck_erasure_preview_expiry CHECK (expires_at > created_at)
+);
+CREATE INDEX ix_erasure_preview_actor ON subject_erasure_previews(tenant_id,subject_id,creator_actor_key,created_at);
+CREATE INDEX ix_erasure_preview_expiry ON subject_erasure_previews(state,expires_at);
+CREATE INDEX ix_erasure_preview_retention ON subject_erasure_previews(created_at);
