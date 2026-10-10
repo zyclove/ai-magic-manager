@@ -16,7 +16,7 @@ import uuid
 from urllib.parse import urlsplit
 
 PACKAGE = 'com.aimanager.child.debug'
-PHASES = {'enroll', 'submit', 'recover', 'cancel', 'cancel-recover', 'expired', 'offline', 'revoked', 'blocked', 'cleanup'}
+PHASES = {'enroll', 'production', 'submit', 'recover', 'cancel', 'cancel-recover', 'expired', 'offline', 'revoked', 'blocked', 'cleanup'}
 
 
 def digest(path):
@@ -61,8 +61,12 @@ def main():
     if fixture.get('schemaVersion') != 1:
         raise RuntimeError('Unsupported fixture schema')
     uuid.UUID(fixture['runId'])
-    sources = ['integration_test/submission_http_test.dart', 'test_driver/submission_http_driver.dart', 'tool/run_submission_android.py',
-               'lib/core/session.dart', 'lib/core/submission_receiver.dart', 'lib/ui/child_app.dart']
+    sources = ['integration_test/submission_http_test.dart', 'integration_test/production_http_test.dart',
+               'integration_test/support/scoped_bindings.dart',
+               'test_driver/submission_http_driver.dart', 'tool/run_submission_android.py',
+               'lib/core/production_session.dart', 'lib/core/session.dart',
+               'lib/core/rule_receiver.dart', 'lib/core/submission_receiver.dart',
+               'lib/core/report_loader.dart', 'lib/ui/child_app.dart']
     source_sha = {name: digest(app / name) for name in sources}
     directory = fixture_path.parent / ('native-' + args.phase)
     directory.mkdir()
@@ -128,8 +132,10 @@ def main():
         env = os.environ.copy()
         env['FLUTTER_TEST_OUTPUTS_DIR'] = str(directory)
         options = {'creationflags': subprocess.CREATE_NO_WINDOW} if os.name == 'nt' else {'start_new_session': True}
+        target = ('integration_test/production_http_test.dart' if args.phase == 'production'
+                  else 'integration_test/submission_http_test.dart')
         build = [args.flutter, 'build', 'apk', '--debug', '--no-pub',
-                 '--target=integration_test/submission_http_test.dart',
+                 '--target=' + target,
                  '--dart-define=ANDROID_HTTP_PHASE=' + args.phase,
                  '--dart-define=ANDROID_HTTP_INPUT=' + leaf]
         with (directory / 'build.log').open('wb') as log:
@@ -167,7 +173,7 @@ def main():
         vm_uri = 'http://127.0.0.1:' + forwarded + vm.path
         command = [args.flutter, 'drive', '--no-pub', '--keep-app-running',
                    '--driver=test_driver/submission_http_driver.dart',
-                   '--target=integration_test/submission_http_test.dart', '-d', args.serial,
+                   '--target=' + target, '-d', args.serial,
                    '--use-existing-app=' + vm_uri]
         crash = args.phase in {'submit', 'cancel'}
         with (directory / 'driver.log').open('wb') as log:

@@ -17,6 +17,7 @@ import 'package:integration_test/integration_test.dart';
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 import 'package:pointycastle/digests/sha256.dart';
+import 'support/scoped_bindings.dart';
 
 /// Private, per-run Android encrypted identity namespace. The identity manager,
 /// ES256 enrollment, HTTP authentication and native persistence are production
@@ -217,7 +218,8 @@ void main() {
       if (await secrets.read() != null) view = await identity.view();
       final keys = <String>[
         'access_context_v1_$identityKey',
-        'access_context_v1_$oracleKey'
+        'access_context_v1_$oracleKey',
+        'observation_joint_${storageKey('android-http-joint-v1')}'
       ];
       File? file;
       if (view != null) expect(view.tenantId, tenant);
@@ -251,6 +253,24 @@ void main() {
           'access_key_v1_${scope.storageKey}',
           'access_context_v1_$contextKey'
         ]);
+        final accessScope = DeviceAccessScope(
+            issuer: 'ai-manager',
+            tenantId: tenant,
+            subjectId: fixture['subjectId'],
+            deviceId: view.deviceId!,
+            registrationId: view.registrationId!);
+        final accessContextKey = policy.DevicePolicyScope(
+                issuer: 'ai-manager|$apiRoot',
+                tenantId: tenant,
+                deviceId: view.deviceId!,
+                registrationId: view.registrationId!)
+            .storageKey;
+        keys.addAll([
+          'access_key_v1_${accessScope.storageKey}',
+          'access_context_v1_$accessContextKey',
+          'access_context_v1_${scopedBindingKey(runId, contextKey)}',
+          'access_context_v1_${scopedBindingKey(runId, accessContextKey)}'
+        ]);
       }
       for (final key in keys) {
         await native.storage.delete(key: key);
@@ -260,6 +280,14 @@ void main() {
         expect(await native.storage.read(key: key) == null, isTrue);
       }
       if (file != null) expect(await file.exists(), isFalse);
+      final productionDirectory =
+          Directory(path.join(directory.path, 'production-http-$runId'));
+      expect(path.isWithin(directory.path, productionDirectory.path), isTrue);
+      expect(path.basename(productionDirectory.path), 'production-http-$runId');
+      if (await productionDirectory.exists()) {
+        await productionDirectory.delete(recursive: true);
+      }
+      expect(await productionDirectory.exists(), isFalse);
       await unchanged();
       binding.reportData = {
         'phase': phase,
@@ -307,10 +335,14 @@ void main() {
       expect(session.identityView!.deviceId, fixture['deviceId']);
       expect(session.identityView!.registrationId, fixture['registrationId']);
       if (phase == 'submit') {
-        expect(session.identityView!.phase, IdentityPhase.awaitingConfirmation);
-        await tap('检查确认状态');
+        // The preceding real production composition already activated this
+        // same registration. A second explicit heartbeat keeps the submission
+        // phase observable without pretending it is still unconfirmed.
         expect(session.identityView!.phase, IdentityPhase.active);
-        expect(session.identityView!.heartbeatSequence, 1);
+        expect(await session.checkConnection(), isTrue);
+        await idle();
+        expect(session.identityView!.phase, IdentityPhase.active);
+        expect(session.identityView!.heartbeatSequence, 2);
       }
       if (phase == 'revoked') {
         expect(session.submissions.journal, isNull,

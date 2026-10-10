@@ -8,8 +8,11 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.aimanager.signing.ConfigurationSigner;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.nimbusds.jose.jwk.Curve;
+import com.nimbusds.jose.jwk.gen.ECKeyGenerator;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Clock;
@@ -19,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +35,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.BadJwtException;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
@@ -52,10 +58,39 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 @AutoConfigureMockMvc(print = MockMvcPrint.NONE)
 @EnabledIfSystemProperty(named = "device.android.runner", matches = ".+")
 class AndroidChildSubmissionJourneyTest {
+  private static final Path SIGNING_DIRECTORY;
+  private static final Path SIGNING_KEY;
+
+  static {
+    try {
+      Path root = Path.of(".local").toAbsolutePath();
+      Files.createDirectories(root);
+      SIGNING_DIRECTORY = Files.createTempDirectory(root, "android-production-signing-");
+      SIGNING_KEY = SIGNING_DIRECTORY.resolve("private.jwk");
+      Files.writeString(
+          SIGNING_KEY,
+          new ECKeyGenerator(Curve.P_256).keyID("android-production").generate().toJSONString());
+    } catch (Exception failure) {
+      throw new IllegalStateException("Android acceptance signing initialization failed");
+    }
+  }
+
+  @DynamicPropertySource
+  static void signing(DynamicPropertyRegistry registry) {
+    registry.add("manager.delivery.signing-key-file", () -> SIGNING_KEY.toString());
+  }
+
+  @AfterAll
+  static void removeSigningFixture() throws Exception {
+    Files.deleteIfExists(SIGNING_KEY);
+    Files.deleteIfExists(SIGNING_DIRECTORY);
+  }
+
   @Autowired MockMvc mvc;
   @Autowired JdbcTemplate db;
   @Autowired ObjectMapper mapper;
   @Autowired Clock clock;
+  @Autowired ConfigurationSigner signer;
   @LocalServerPort int port;
   @MockitoBean JwtDecoder decoder;
 
@@ -237,7 +272,13 @@ class AndroidChildSubmissionJourneyTest {
                               "CONFIGURE_ONLY"))))
           .andExpect(status().isCreated());
 
-      run(fixtureFile, fixture, directory, "submit");
+      // Public-only trust ring is immutable deployment input for the Android
+      // production composition. The private signing key never leaves Spring.
+      fixture.put("configurationIssuer", "ai-manager");
+      fixture.put("configurationKeys", signer.publicKeys());
+      run(fixtureFile, fixture, directory, "production");
+      fixture.remove("configurationIssuer");
+      fixture.remove("configurationKeys");
       assertThat(
               db.queryForObject(
                   "SELECT heartbeat_sequence FROM devices WHERE tenant_id=? AND id=?",
@@ -245,6 +286,15 @@ class AndroidChildSubmissionJourneyTest {
                   tenant,
                   device))
           .isEqualTo(1);
+
+      run(fixtureFile, fixture, directory, "submit");
+      assertThat(
+              db.queryForObject(
+                  "SELECT heartbeat_sequence FROM devices WHERE tenant_id=? AND id=?",
+                  Long.class,
+                  tenant,
+                  device))
+          .isEqualTo(2);
       String request =
           db.queryForObject(
               "SELECT id FROM access_requests WHERE tenant_id=?", String.class, tenant);

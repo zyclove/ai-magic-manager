@@ -7,6 +7,7 @@ import 'package:sembast/sembast.dart';
 import '../platform/configuration_database.dart';
 import '../platform/observation_source.dart';
 import '../platform/secret_store.dart';
+import 'access.dart' show ChildAccessBindingStore;
 import 'access_receiver.dart';
 import 'environment.dart';
 import 'rule_receiver.dart';
@@ -21,11 +22,21 @@ class ChildPlatformServices {
   final observation.ObservationStore observationStore;
   final observation.ObservationSource observationSource;
   final Future<Database> Function() openConfigurations;
+
+  /// Optional scoped storage for native acceptance and future managed profiles.
+  /// Null preserves each SDK receiver's existing Android encrypted defaults.
+  final ChildAccessBindingStore? accessBindings;
+  final ChildAccessDatabaseOpener? openAccess;
+  final Future<Database> Function(String, {required bool existingDatabase})?
+      openSubmissions;
   const ChildPlatformServices(
       {required this.identityStore,
       required this.observationStore,
       required this.observationSource,
-      required this.openConfigurations});
+      required this.openConfigurations,
+      this.accessBindings,
+      this.openAccess,
+      this.openSubmissions});
 
   factory ChildPlatformServices.android() => ChildPlatformServices(
       identityStore: AndroidIdentityStore(),
@@ -72,7 +83,9 @@ class ProductionChildRuntime {
                 environment: environment,
                 identity: view,
                 credential: identity.activeCredential,
-                nowMillis: clock)
+                nowMillis: clock,
+                bindingStore: services.accessBindings,
+                databaseOpener: services.openSubmissions)
             : null,
         accessFactory: nativeAvailable
             ? (view, baseline) async => SignedAccessReceiver(
@@ -80,7 +93,9 @@ class ProductionChildRuntime {
                 identity: view,
                 credential: identity.activeCredential,
                 readBaseline: baseline,
-                nowMillis: clock)
+                nowMillis: clock,
+                bindingStore: services.accessBindings,
+                databaseOpener: services.openAccess)
             : null,
         observations: nativeAvailable
             ? () async {
