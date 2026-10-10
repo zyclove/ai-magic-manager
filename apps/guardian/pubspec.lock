@@ -63,7 +63,7 @@ packages:
       path: "../../packages/device_operations"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "1.0.0"
   fake_async:
     dependency: transitive
     description:
@@ -423,14 +423,14 @@ packages:
       path: "../../packages/usage_report_ui"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "1.0.0"
   usage_reporting:
     dependency: "direct main"
     description:
       path: "../../packages/usage_reporting"
       relative: true
     source: path
-    version: "0.1.0"
+    version: "1.0.0"
   uuid:
     dependency: "direct main"
     description:

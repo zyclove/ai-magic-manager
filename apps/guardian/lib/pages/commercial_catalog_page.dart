@@ -287,7 +287,7 @@ class _CommercialCatalogPageState extends State<CommercialCatalogPage> {
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(fontWeight: FontWeight.w600)),
                       subtitle: Text(
-                          '${catalogLabel(offer.offer['channel'])} · v${offer.revision} · ${_date(offer.updatedAt)}',
+                          '${catalogLabel(offer.offer['channel'])} · v${offer.revision} · 不可购买 · ${_date(offer.updatedAt)}',
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis),
                       trailing: _state(offer.state),
