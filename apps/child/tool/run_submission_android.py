@@ -16,7 +16,7 @@ import uuid
 from urllib.parse import urlsplit
 
 PACKAGE = 'com.aimanager.child.debug'
-PHASES = {'enroll', 'production', 'submit', 'recover', 'cancel', 'cancel-recover', 'expired', 'offline', 'revoked', 'blocked', 'cleanup'}
+PHASES = {'enroll', 'production', 'observation', 'observation-revoked', 'submit', 'recover', 'cancel', 'cancel-recover', 'expired', 'offline', 'revoked', 'blocked', 'cleanup'}
 
 
 def digest(path):
@@ -79,6 +79,7 @@ def main():
     mapping = 'tcp:' + str(api.port)
     reverse_owned = False
     forward_owned = None
+    usage_grant_owned = False
     process = None
 
     def adb(*command, check=True, payload=None):
@@ -132,7 +133,7 @@ def main():
         env = os.environ.copy()
         env['FLUTTER_TEST_OUTPUTS_DIR'] = str(directory)
         options = {'creationflags': subprocess.CREATE_NO_WINDOW} if os.name == 'nt' else {'start_new_session': True}
-        target = ('integration_test/production_http_test.dart' if args.phase == 'production'
+        target = ('integration_test/production_http_test.dart' if args.phase in {'production', 'observation', 'observation-revoked'}
                   else 'integration_test/submission_http_test.dart')
         build = [args.flutter, 'build', 'apk', '--debug', '--no-pub',
                  '--target=' + target,
@@ -145,6 +146,20 @@ def main():
                 raise RuntimeError('Native APK build failed; no installation attempted')
         apk = app / 'build/app/outputs/flutter-apk/app-debug.apk'
         assert install_preserving_data(adb, metadata, apk) == before
+        if args.phase in {'observation', 'observation-revoked'}:
+            # Two independent grants: the guardian updates Spring consent;
+            # Android special access belongs only to this explicitly owned AVD.
+            prior = text('shell', 'appops', 'get', PACKAGE, 'GET_USAGE_STATS')
+            if 'allow' in prior.lower() or ('default' not in prior.lower() and 'no operations' not in prior.lower()):
+                raise RuntimeError('Refuse to replace an existing Android usage access decision')
+            adb('shell', 'appops', 'set', PACKAGE, 'GET_USAGE_STATS', 'allow')
+            usage_grant_owned = True
+            if 'allow' not in text('shell', 'appops', 'get', PACKAGE, 'GET_USAGE_STATS').lower():
+                raise RuntimeError('Android usage access grant was not applied')
+            if args.phase == 'observation':
+                # Real foreground activity; never synthesize UsageStats rows.
+                adb('shell', 'am', 'start', '-a', 'android.settings.SETTINGS')
+                time.sleep(5)
         if args.phase not in {'offline', 'blocked', 'cleanup'}:
             adb('reverse', mapping, mapping)
             reverse_owned = True
@@ -222,6 +237,12 @@ def main():
             (fixture_path.parent / 'pairing.json').write_bytes(handoff)
             adb('shell', 'run-as', PACKAGE, 'rm', private_handoff)
         stop_app()
+        if usage_grant_owned:
+            adb('shell', 'appops', 'set', PACKAGE, 'GET_USAGE_STATS', 'default')
+            if 'allow' in text('shell', 'appops', 'get', PACKAGE, 'GET_USAGE_STATS').lower():
+                raise RuntimeError('Android usage access grant was not restored')
+            usage_grant_owned = False
+            data['specialAccessRestored'] = True
         if crash:
             stop_driver()
             assert not (directory / 'android_http_result.json').exists()
@@ -251,6 +272,8 @@ def main():
                     finally:
                         if reverse_owned:
                             adb('reverse', '--remove', mapping, check=False)
+                        if usage_grant_owned:
+                            adb('shell', 'appops', 'set', PACKAGE, 'GET_USAGE_STATS', 'default', check=False)
 
 
 if __name__ == '__main__':

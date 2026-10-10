@@ -1,0 +1,241 @@
+{
+  "stage": "real-android-usage-consent-and-withdrawal",
+  "verifiedAtUtc": "2026-10-10T07:01:21.380620+00:00",
+  "baseline": "e7f2aa7cb73471f9a7b33570a95b4cf6fe3922d5",
+  "sourceManifestSha256": "5e9f6babb169be10c4f4ecb01f7d5e87438d619630f900ee946c3c6791db2419",
+  "candidateSourceFiles": 775,
+  "sourceOverlaySha256": {
+    "apps/child/integration_test/production_http_test.dart": "9c7e2dcc4cfa9ba8865753dcd9f49336cd79f1f9d83427e8dea3938a0fda94e7",
+    "apps/child/tool/run_submission_android.py": "55e48e359b9f04b5c8d425651086aa8335e0f8f454ec50d26c79fe16561b256e",
+    "backend/src/test/java/com/aimanager/AndroidChildSubmissionJourneyTest.java": "2e763f675f7b42f7cc3c45132980ada8918f7b20976f07ddb32c9e3bac7ef810",
+    "docs/child-native-usage-consent-plan.md": "f34a43260a009a7b8ccfe3d9fe2954df7932b9a371fd39f7f56135edb0df14ae"
+  },
+  "nativeSourceSha256": {
+    "integration_test/submission_http_test.dart": "2e34b069ee4aef1504b962d400faf728af7a39f874137dd71988dae3b6e2139a",
+    "integration_test/production_http_test.dart": "9c7e2dcc4cfa9ba8865753dcd9f49336cd79f1f9d83427e8dea3938a0fda94e7",
+    "integration_test/support/scoped_bindings.dart": "d8696f7d45a013976f235a1aa7c410c6f3d790ce51369a460109b7fc0d1d9eb0",
+    "test_driver/submission_http_driver.dart": "edc6a333b83e72e0627fc5cfd36bbfab4c191f3936f13bf30db8c5adaeb3822b",
+    "tool/run_submission_android.py": "55e48e359b9f04b5c8d425651086aa8335e0f8f454ec50d26c79fe16561b256e",
+    "lib/core/production_session.dart": "0ff6d4fcbc8d5ed7509b131b397fcd5df96f7f8e0b1dd5b9ea9bbd3a5d65655d",
+    "lib/core/session.dart": "1a074cde3b263975f9b0ebc9bd15d15cf3a5fd70ce563d3e92efc82ffb0c46a2",
+    "lib/core/rule_receiver.dart": "c38ece199c1e94bb00014cab3e43ac9fb17c016c427992a8ce5bee31d9dbf902",
+    "lib/core/submission_receiver.dart": "28863ce92019a1780247adf9f400b3816fa4d5e893b9b1b2e4758b50a9da5296",
+    "lib/core/report_loader.dart": "05be41e5216579a3a502ec1c51f862ce7ff66e86893424a5a929674ed57af11c",
+    "lib/ui/child_app.dart": "13742911b185cfcb9777b4e9d7839afab9d6abdcb888fe553a09431dcbb57496"
+  },
+  "nativeInstallation": {
+    "uid": "10195",
+    "firstInstallTime": "2026-10-10 01:19:20"
+  },
+  "journeys": [
+    {
+      "database": "H2",
+      "backendTests": 1,
+      "backendFailures": 0,
+      "backendLogSha256": "3af60050652425bdfa3e09267d17d2cd75e19cf55392399feee61d824e65fd04",
+      "nativePhases": [
+        {
+          "phase": "enroll",
+          "pid": 4204,
+          "hostResultSha256": "dab419739b57f4798d1afbfa5d1696a53d9debda3f73a1324348b8b8560d537d",
+          "installedApkSha256": "5c3f684446a708eac3829a6e7b55e8d793fc1d64ae51a9663b13af5a88223755"
+        },
+        {
+          "phase": "production",
+          "pid": 4491,
+          "hostResultSha256": "ee5c5f99902dc5b2581af448a65822658658f20c8ee9edec5fd8a5e3ce782918",
+          "installedApkSha256": "9ba046d9fff2d5aef29442822268452347a37af0101f3295970b799ab31d6b7b"
+        },
+        {
+          "phase": "observation",
+          "pid": 4801,
+          "hostResultSha256": "be981f83b16fb8398a1642b117072fe60f3cb1db6021ebc2321f118c0bfc0e8a",
+          "installedApkSha256": "c562f88b6cc1ad85b889942b02c90042c70e4be39cf7088625f86dd0f2ae686f"
+        },
+        {
+          "phase": "observation-revoked",
+          "pid": 5044,
+          "hostResultSha256": "cab82b9078f17e23ed0cf2936d81e6c315babfa87d38a33da307757ece05eb6c",
+          "installedApkSha256": "c1f11aed8153c1d0675280aebcb46ba7a29db87ed187400a11bc8380a78b0d14"
+        },
+        {
+          "phase": "submit",
+          "pid": 5279,
+          "hostResultSha256": "d09b6afaaa98fc3b09ad412391802eba41838555632fcbae5a236e32b5703ecd",
+          "installedApkSha256": "da389c7c17113937a9ae703f24fc8c5adaa617c05b2df379f4a82fa1ce553e58"
+        },
+        {
+          "phase": "recover",
+          "pid": 5477,
+          "hostResultSha256": "09b325b43220ea2099fd85aa0f210da8e32f7a3a1c556bdf70e0dedb1f4d0f71",
+          "installedApkSha256": "f26f545049beed0954b4aecfbe284b11febb26c96aed91642f045eab15de8047"
+        },
+        {
+          "phase": "cancel",
+          "pid": 5709,
+          "hostResultSha256": "51c1636a4b1d60cf5717678a4dc7b0a4656447ee52bb9831f4db56bf8b442cdb",
+          "installedApkSha256": "d54354aa94992c2228039f544f859cca919affc202dc50133bb6db767a7d4c2c"
+        },
+        {
+          "phase": "cancel-recover",
+          "pid": 5932,
+          "hostResultSha256": "108eb1a521ed5bfaa1af7481f4879a6098ddcbe3d0f6c894c0e16db19f7e7a4a",
+          "installedApkSha256": "e34e643b7d592ad17c4498d29a81be2afca9caebf4ebfe8bb65bb6160014eefb"
+        },
+        {
+          "phase": "expired",
+          "pid": 6218,
+          "hostResultSha256": "1d525fe71bd839019865bc97a5e7b4f1e0276de2cbae11d827f4571897a8f8d7",
+          "installedApkSha256": "5ea3add518123eb57a22256151b0bb84dfef061f45d0fc3fc08a02d99f9b426d"
+        },
+        {
+          "phase": "offline",
+          "pid": 6454,
+          "hostResultSha256": "abc979a88042cdeb4ddc808cc581c6cd93b73791096ce35f9556fb43739ae406",
+          "installedApkSha256": "fa8001a7c9007b950077e530917c848a70a1eb7010ba19a6f04dd95bc92c870d"
+        },
+        {
+          "phase": "revoked",
+          "pid": 6666,
+          "hostResultSha256": "097dfabe7a9cea4010b2b376c9a52b9bffc1635c111d3abd2f0c6a949849b807",
+          "installedApkSha256": "baf52967b36fa4ea828713f3d00cbc57f8328c8f4aafc4133b7d1344a1a2474f"
+        },
+        {
+          "phase": "blocked",
+          "pid": 6866,
+          "hostResultSha256": "6d41446111933867ccee44973b363fadddb8e06aa8c8be2a4c512491975ac23a",
+          "installedApkSha256": "ac4cc7cdad0fc38e9876f2821733db1b3a913979a7f925e78c9e943e561ed97f"
+        },
+        {
+          "phase": "cleanup",
+          "pid": 7083,
+          "hostResultSha256": "d041896c37d4c0e84cfa69cf35525226b4d72d38967c9c940dc89b48a002fd1a",
+          "installedApkSha256": "7334e504999f11c26489341036d74b78f1950f33649ab54571c7d8cfa5197f7a"
+        }
+      ],
+      "privateHandoffFilesRemoved": true
+    },
+    {
+      "database": "MySQL",
+      "backendTests": 1,
+      "backendFailures": 0,
+      "backendLogSha256": "cf569e31d73c7f45f8879207c22f33f0773aab5bec320513606641a9959a7b00",
+      "nativePhases": [
+        {
+          "phase": "enroll",
+          "pid": 7289,
+          "hostResultSha256": "5436470929b40245283970b9002fa2273df36cce3de48632306a1d53d3211e6b",
+          "installedApkSha256": "6f4b28560b68276af51eeff417964a960cacb2a4202ff75dc8470af81b66cb80"
+        },
+        {
+          "phase": "production",
+          "pid": 7601,
+          "hostResultSha256": "18a52395b168a7b380b29740ef9fed4fadffd8207f9092cbb2e8efe88e5eb455",
+          "installedApkSha256": "39ea3da972a73e12ffc382380abf5641a210d8efc4bb93374025e6112b34eaf4"
+        },
+        {
+          "phase": "observation",
+          "pid": 7848,
+          "hostResultSha256": "0a94dc76b953ae464636dd11d15a17300bb9fba72d83c0c4e82ee41afe2e22e9",
+          "installedApkSha256": "81260c5a6933ace49da76a94e707543ab0e4b5f5decf19225bdabbeac9e563b8"
+        },
+        {
+          "phase": "observation-revoked",
+          "pid": 8084,
+          "hostResultSha256": "410ac42c61d348fee155acfdfb3c751bfc6d49f9c1344010481bea544cfdb381",
+          "installedApkSha256": "2c199d44c6a1d393f1b3765d0400da46d650a1eee83c56f89b4450da52d4c2c9"
+        },
+        {
+          "phase": "submit",
+          "pid": 8332,
+          "hostResultSha256": "6a3b5068c4ab48bc4129a1b923abb9736851dd42d73d529906fba5749036f9dd",
+          "installedApkSha256": "7f15c38899b78e04236214dc22de8b03d1ab60e97f10d262d9531e46d94a249d"
+        },
+        {
+          "phase": "recover",
+          "pid": 8569,
+          "hostResultSha256": "26f1b22f939f749908cc9d7994934c3fcbf267c03e8625f1937a4592d486ae12",
+          "installedApkSha256": "59f79457dc67c2725c0ebae43addfe05d49dfe67d8747d1ae41b2106ba4151af"
+        },
+        {
+          "phase": "cancel",
+          "pid": 8778,
+          "hostResultSha256": "61d7ac82c45f019607995b378d3fe84843cbc2aa0ae52a503357b11ece4dcf4a",
+          "installedApkSha256": "dba21ae6fcaf1a6d6bdc456bd6063669e510793a0f89ebfa6152e60fd4044027"
+        },
+        {
+          "phase": "cancel-recover",
+          "pid": 9027,
+          "hostResultSha256": "02edf8c98288a82f4622fce5d46da2bf72b0828956d5a78f86b510560fa0e58e",
+          "installedApkSha256": "11a0187795506cb403323fa0bc10d5d53b4997fae006268facc09db494c1cdd0"
+        },
+        {
+          "phase": "expired",
+          "pid": 9204,
+          "hostResultSha256": "70e158c14b0c6d31af852888124f79df7d6a9eba42c97837ebdcf428e8e19ee2",
+          "installedApkSha256": "ebf2b833c9e2f7a7efca2c8b31ee153d69bc1075a290b9c8f4ef44e26517a931"
+        },
+        {
+          "phase": "offline",
+          "pid": 9461,
+          "hostResultSha256": "f0e42805fe899b117028988b767cf82f7c2b66c6c9c178e1b7d19e970763c0ac",
+          "installedApkSha256": "395e2c2b7d1bf4374450bdb8f3e757df530a59a1015ac4aa0ce0ced6d4f54866"
+        },
+        {
+          "phase": "revoked",
+          "pid": 9645,
+          "hostResultSha256": "13de14aacf78662fc81619198e1f3c46baf395e8d0dcc2cd8a2c3a2d3d2b6d86",
+          "installedApkSha256": "5743138bded41370e55371bdc368de332cd2ae8a98333be9f3fef069d2accd98"
+        },
+        {
+          "phase": "blocked",
+          "pid": 9835,
+          "hostResultSha256": "86b7f01533ba704d19be9cce2c646e06daaed546d213a0ed4ed891dbae8af105",
+          "installedApkSha256": "a019c19e0ac20898f941958b14154915c1ed99b550e065f84da22cd630b9276f"
+        },
+        {
+          "phase": "cleanup",
+          "pid": 10054,
+          "hostResultSha256": "44023a302d679053a1cd5d884a1d281b729ad1c13417ea154222d72292cd302f",
+          "installedApkSha256": "91a0e84771056844f083630abe92a6fd4ab5ccc3663a184be9ba73d28096afeb"
+        }
+      ],
+      "privateHandoffFilesRemoved": true
+    }
+  ],
+  "hostGuardTests": 8,
+  "childTests": 120,
+  "childTestLogSha256": "762da5becad9a70b375e5aa1d9a3a29fc4c8ddb9f8f7d0c9b2ed98afdd0ec94b",
+  "childAnalysisLogSha256": "377d3a925e3caf5db0f5c5567fd6d78390d9a045cc6d14d2c19b2ed26cb29b0e",
+  "normalAndroidApkSha256": "c4236a7988200dcab8d8ca2797417e425c4597004d1fde49132827ae1399df71",
+  "normalAndroidBuildLogSha256": "010caf6ff188475c671f5100758187222ec3f14942772a2d1a9268e76d5eb2bf",
+  "webMainDartSha256": "25d79328cfa37aa0c18b5ba8a33e13d4e1dc4cf7576602a1208a4931ff3eb6d1",
+  "webBuildLogSha256": "f6efa67478d175aaf1b32d6a38f4e953046cdf5566e94415c70318cd29af27e1",
+  "isolatedMysqlSchemaAbsent": true,
+  "mysqlAbsenceLogSha256": "cf102b27dc60e395fc20e03f5fceb3862fecd46d711a89410b03aeabdf41fc85",
+  "ownedEmulatorRestoration": {
+    "normalMainRestored": true,
+    "installationUnchanged": true,
+    "installation": {
+      "uid": "10195",
+      "firstInstallTime": "2026-10-10 01:19:20"
+    },
+    "installedApkSha256": "d46e5d91c63686096bdd6be73276b299e048a5faa09919785d9622b88bf707fa",
+    "normalUnconfiguredSemanticUiVerified": true,
+    "normalProcessStopped": true,
+    "ownedEmulatorStopped": true,
+    "uiXmlSha256": "1405a4e51aae12f83ce9fb1fc4e7f70fcaa90803a8c5abb231e2e4031cbb0fc8",
+    "screenCaptureUsed": false,
+    "windowProtection": "FLAG_SECURE retained",
+    "ownedPortMappingsRemoved": true,
+    "syntheticAccessContextKeysRemaining": 0,
+    "syntheticObservationKeysRemaining": 0,
+    "usageSpecialAccessRestored": true
+  },
+  "limits": [
+    "Adult OIDC and MFA are Spring test fixtures; no production identity provider was exercised.",
+    "Usage samples come from Android UsageStatsManager on one owned API34 debug emulator; they are OS aggregates and agent-reported, not verified billing or enforced quota data.",
+    "The appop grant is test-only and restored after each owned stage; a normal consumer must grant special access through system settings.",
+    "No DPC, EMM, reboot enforcement, camera recognition, physical Android TV, OceanBase or million-device capacity proof is provided."
+  ]
+}

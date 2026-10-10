@@ -61,7 +61,8 @@ void main() {
       (tester) async {
     const phase = String.fromEnvironment('ANDROID_HTTP_PHASE');
     const leaf = String.fromEnvironment('ANDROID_HTTP_INPUT');
-    expect(phase, 'production');
+    expect(phase,
+        isIn(const ['production', 'observation', 'observation-revoked']));
     expect(RegExp(r'^android-http-[0-9a-f]{32}\.json$').hasMatch(leaf), isTrue);
     final support = await getApplicationSupportDirectory();
     final privateInput = File(path.join(support.path, leaf));
@@ -99,9 +100,14 @@ void main() {
     expect(await secrets.read(), isNotNull);
     final privateDirectory =
         Directory(path.join(support.path, 'production-http-$runId'));
-    expect(await privateDirectory.exists(), isFalse,
-        reason: 'Never overwrite a previous acceptance run.');
-    await privateDirectory.create();
+    if (phase == 'production') {
+      expect(await privateDirectory.exists(), isFalse,
+          reason: 'Never overwrite a previous acceptance run.');
+      await privateDirectory.create();
+    } else {
+      expect(await privateDirectory.exists(), isTrue,
+          reason: 'Observation must reuse the owned production scope.');
+    }
     final source = AndroidObservationSource();
     final environment = ChildEnvironment(
         apiRoot: apiRoot,
@@ -156,24 +162,29 @@ void main() {
     await idle();
     expect(session.identityView!.deviceId, device);
     expect(session.identityView!.registrationId, registration);
-    expect(session.identityView!.phase, IdentityPhase.awaitingConfirmation);
-    expect(await session.checkConnection(), isTrue);
-    await idle();
-    expect(session.identityView!.phase, IdentityPhase.active);
-    expect(session.identityView!.heartbeatSequence, 1);
-    expect(await session.synchronizeRules(), isTrue);
-    await idle();
-    expect(session.rules.configurations, hasLength(1));
-    expect(session.rules.pendingReceipts, 0);
-    expect(session.rules.configurations.single.document?['name'], '原生阅读安排');
-    expect(session.systemEnforced, isFalse);
-    expect(await session.synchronizeAccess(), isTrue);
-    await idle();
-    expect(session.access.contextReady, isTrue);
-    expect(await session.refreshSubmissions(), isTrue);
-    await idle();
-    expect(session.submissions.contextReady, isTrue);
-    expect(session.submissions.onlineConfirmed, isTrue);
+    if (phase == 'production') {
+      expect(session.identityView!.phase, IdentityPhase.awaitingConfirmation);
+      expect(await session.checkConnection(), isTrue);
+      await idle();
+      expect(session.identityView!.phase, IdentityPhase.active);
+      expect(session.identityView!.heartbeatSequence, 1);
+      expect(await session.synchronizeRules(), isTrue);
+      await idle();
+      expect(session.rules.configurations, hasLength(1));
+      expect(session.rules.pendingReceipts, 0);
+      expect(session.rules.configurations.single.document?['name'], '原生阅读安排');
+      expect(session.systemEnforced, isFalse);
+      expect(await session.synchronizeAccess(), isTrue);
+      await idle();
+      expect(session.access.contextReady, isTrue);
+      expect(await session.refreshSubmissions(), isTrue);
+      await idle();
+      expect(session.submissions.contextReady, isTrue);
+      expect(session.submissions.onlineConfirmed, isTrue);
+    } else {
+      expect(session.identityView!.phase, IdentityPhase.active);
+      expect(session.identityView!.heartbeatSequence, 1);
+    }
     final platform = await source.inspect();
     expect(platform.unlocked, isTrue);
     expect(platform.usageSupported, isTrue);
@@ -183,17 +194,41 @@ void main() {
         inventory
             .any((app) => app['packageName'] == 'com.aimanager.child.debug'),
         isTrue);
-    // Collection is consent gated. Inspecting real OS capabilities cannot
-    // silently grant UsageStats or pretend a report has observed data.
+    if (phase == 'production') {
+      // Inspecting capabilities does not silently grant system or cloud access.
+      expect(platform.usageGranted, isFalse);
+    } else {
+      // The host grants only this owned app real Android special access. The
+      // guardian separately changes cloud consent through the management API.
+      expect(platform.usageGranted, isTrue);
+      expect(await session.refreshObservationAuthorization(), isTrue);
+      await idle();
+      expect(session.observationView.onlineConfirmed, isTrue);
+      expect(session.observationView.authorization!.usageEnabled,
+          phase == 'observation');
+      expect(await session.synchronizeObservations(), isTrue);
+      await idle();
+      expect(session.observationView.pendingReports, 0);
+      if (phase == 'observation') {
+        expect(session.observationView.usageCount, greaterThan(0));
+        expect(session.observationView.lastUsageAt, isNotNull);
+      } else {
+        expect(session.observationView.usageCount, 0);
+        expect(session.observationView.lastUsageAt, isNull);
+      }
+    }
     final now = DateTime.now().millisecondsSinceEpoch;
     final report = await reports
         .load(DeviceReportWindow(now - 3600000, now, 'UTC', 'DAY'));
     expect(report.devices.single.deviceId, device);
-    expect(report.devices.single.status, isIn(['NO_DATA', 'NOT_AUTHORIZED']));
-    await tester.tap(find.text('规则').last);
-    await tester.pumpAndSettle();
-    expect(find.text('原生阅读安排'), findsOneWidget);
-    expect(find.text('临时访问申请'), findsOneWidget);
+    expect(report.devices.single.status,
+        phase == 'observation' ? 'OBSERVED' : 'NOT_AUTHORIZED');
+    if (phase == 'production') {
+      await tester.tap(find.text('规则').last);
+      await tester.pumpAndSettle();
+      expect(find.text('原生阅读安排'), findsOneWidget);
+      expect(find.text('临时访问申请'), findsOneWidget);
+    }
     await tester.tap(find.text('使用').last);
     await tester.pumpAndSettle();
     expect(find.text('我的使用情况'), findsOneWidget);
@@ -214,6 +249,9 @@ void main() {
       'nativeUsageGranted': platform.usageGranted,
       'nativeApplicationCount': inventory.length,
       'reportStatus': report.devices.single.status,
+      'authorizationVersion': session.observationView.authorization?.version,
+      'usageCount': session.observationView.usageCount,
+      'lastUsageAt': session.observationView.lastUsageAt,
       'globalRecordsUnchanged': true,
       'systemEnforced': false,
     };

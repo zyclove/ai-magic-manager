@@ -4,7 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -277,8 +279,6 @@ class AndroidChildSubmissionJourneyTest {
       fixture.put("configurationIssuer", "ai-manager");
       fixture.put("configurationKeys", signer.publicKeys());
       run(fixtureFile, fixture, directory, "production");
-      fixture.remove("configurationIssuer");
-      fixture.remove("configurationKeys");
       assertThat(
               db.queryForObject(
                   "SELECT heartbeat_sequence FROM devices WHERE tenant_id=? AND id=?",
@@ -286,6 +286,68 @@ class AndroidChildSubmissionJourneyTest {
                   tenant,
                   device))
           .isEqualTo(1);
+
+      // Guardian cloud consent and Android special access are independent. The
+      // native phase grants only the owned emulator's OS appop and restores it.
+      observationSetting(prefix, owner, device, 0, true);
+      run(fixtureFile, fixture, directory, "observation");
+      assertThat(
+              db.queryForObject(
+                  "SELECT COUNT(*) FROM usage_observation_batches WHERE tenant_id=? AND"
+                      + " device_id=?",
+                  Integer.class,
+                  tenant,
+                  device))
+          .isEqualTo(1);
+      assertThat(
+              db.queryForObject(
+                  "SELECT payload_json FROM usage_observation_batches WHERE tenant_id=? AND"
+                      + " device_id=?",
+                  String.class,
+                  tenant,
+                  device))
+          .contains("ANDROID_USAGE_STATS");
+      long reportTo = clock.millis();
+      mvc.perform(
+              get(prefix + "/usage-reports")
+                  .with(adult(owner))
+                  .param("deviceId", device)
+                  .param("from", Long.toString(reportTo - 3_600_000))
+                  .param("to", Long.toString(reportTo))
+                  .param("timeZone", "UTC"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.precision").value("OS_AGGREGATE"))
+          .andExpect(jsonPath("$.evidenceStatus").value("AGENT_REPORTED_UNVERIFIED"))
+          .andExpect(jsonPath("$.devices[0].status").value("OBSERVED"));
+      observationSetting(prefix, owner, device, 1, false);
+      assertThat(
+              db.queryForObject(
+                  "SELECT COUNT(*) FROM usage_observation_batches WHERE tenant_id=? AND"
+                      + " device_id=?",
+                  Integer.class,
+                  tenant,
+                  device))
+          .isZero();
+      assertThat(
+              db.queryForObject(
+                  "SELECT COUNT(*) FROM usage_observation_heads WHERE tenant_id=? AND device_id=?",
+                  Integer.class,
+                  tenant,
+                  device))
+          .isZero();
+      mvc.perform(
+              get(prefix + "/usage-reports")
+                  .with(adult(owner))
+                  .param("deviceId", device)
+                  .param("from", Long.toString(reportTo - 3_600_000))
+                  .param("to", Long.toString(reportTo))
+                  .param("timeZone", "UTC"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.devices[0].status").value("NOT_AUTHORIZED"))
+          .andExpect(jsonPath("$.devices[0].applications.length()").value(0));
+      run(fixtureFile, fixture, directory, "observation-revoked");
+      fixture.remove("configurationIssuer");
+      fixture.remove("configurationKeys");
 
       run(fixtureFile, fixture, directory, "submit");
       assertThat(
@@ -417,6 +479,28 @@ class AndroidChildSubmissionJourneyTest {
         .asText();
   }
 
+  private void observationSetting(
+      String prefix, String owner, String device, int expected, boolean usage) throws Exception {
+    mvc.perform(
+            put(prefix + "/devices/" + device + "/observation-settings")
+                .with(adult(owner))
+                .header("If-Match", "\"" + expected + "\"")
+                .header("Idempotency-Key", UUID.randomUUID())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    mapper.writeValueAsString(
+                        Map.of(
+                            "inventoryEnabled",
+                            false,
+                            "usageEnabled",
+                            usage,
+                            "reason",
+                            usage ? "监护人确认原生使用摘要验收" : "监护人撤回原生使用摘要验收"))))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.version").value(expected + 1))
+        .andExpect(jsonPath("$.usageEnabled").value(usage));
+  }
+
   private void expire(String tenant, String operation) {
     assertThat(
             db.update(
@@ -472,6 +556,9 @@ class AndroidChildSubmissionJourneyTest {
     for (String phase :
         List.of(
             "enroll",
+            "production",
+            "observation",
+            "observation-revoked",
             "submit",
             "recover",
             "cancel",
