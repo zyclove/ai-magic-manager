@@ -47,13 +47,20 @@ class ConsoleJourneyTest {
             .andExpect(jsonPath("$.subject").value("console-owner"))
             .andExpect(jsonPath("$.canCreateTenant").value(true))
             .andExpect(jsonPath("$.canManageCatalog").value(false))
-            .andExpect(jsonPath("$.canApproveCatalog").value(false));
+            .andExpect(jsonPath("$.canApproveCatalog").value(false))
+            .andExpect(jsonPath("$.canManageContracts").value(false))
+            .andExpect(jsonPath("$.canApproveContracts").value(false));
         mvc.perform(get("/api/v1/me").with(jwt().jwt(t -> t.subject("catalog-operator"))
                 .authorities(new SimpleGrantedAuthority("SCOPE_catalog:manage"))))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.canCreateTenant").value(false))
             .andExpect(jsonPath("$.canManageCatalog").value(true))
             .andExpect(jsonPath("$.canApproveCatalog").value(false));
+        mvc.perform(get("/api/v1/me").with(jwt().jwt(t -> t.subject("contract-officer"))
+                .authorities(new SimpleGrantedAuthority("SCOPE_contract:manage"))))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.canManageContracts").value(true))
+            .andExpect(jsonPath("$.canApproveContracts").value(false));
         mvc.perform(get("/api/v1/me")).andExpect(status().isUnauthorized());
     }
     @Test void membershipAndMemberListRespectTenantBoundaries() throws Exception {

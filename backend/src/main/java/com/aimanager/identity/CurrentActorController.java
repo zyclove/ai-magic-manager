@@ -28,6 +28,10 @@ class CurrentActorController {
             .anyMatch(a -> a.getAuthority().equals("SCOPE_catalog:manage")),
         authentication.getAuthorities().stream()
             .anyMatch(a -> a.getAuthority().equals("SCOPE_catalog:approve")),
+        authentication.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("SCOPE_contract:manage")),
+        authentication.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("SCOPE_contract:approve")),
         actor.getClaimAsStringList("amr") == null ? List.of() : actor.getClaimAsStringList("amr"));
   }
 
@@ -38,5 +42,7 @@ class CurrentActorController {
       boolean canCreateTenant,
       boolean canManageCatalog,
       boolean canApproveCatalog,
+      boolean canManageContracts,
+      boolean canApproveContracts,
       List<String> authenticationMethods) {}
 }
