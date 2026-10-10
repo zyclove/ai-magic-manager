@@ -19,6 +19,7 @@ const destinations = [
   ('policies', '策略中心', Icons.shield_outlined),
   ('approvals', '访问审批', Icons.task_alt_outlined),
   ('notifications', '通知中心', Icons.notifications_none_outlined),
+  ('reports', '使用报表', Icons.bar_chart_outlined),
   ('members', '成员与邀请', Icons.group_outlined),
   ('ownership', '所有者交接', Icons.swap_horiz_outlined),
   ('audit', '审计日志', Icons.receipt_long_outlined),

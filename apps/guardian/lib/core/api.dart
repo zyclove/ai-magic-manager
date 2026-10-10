@@ -16,11 +16,33 @@ class ApiFailure implements Exception {
   final String? correlationId;
   const ApiFailure(this.status, this.code, [this.correlationId]);
   String get message => switch (code) {
+        'INVALID_REPORT_JOB_SELECTION' => '请选择 1–200 台设备、有效时区和不超过 32 天的时间范围。',
+        'INVALID_REPORT_JOB_RESPONSE' => '任务或结果与所选设备不一致，已隐藏结果。请刷新任务后重试。',
+        'REPORT_JOB_NOT_READY' => '这份报表暂时无法查看。请刷新任务状态，必要时重新生成。',
+        'REPORT_ARTIFACT_UNAVAILABLE' ||
+        'REPORT_JOB_UNAVAILABLE' =>
+          '报表结果暂时无法读取，请稍后刷新重试。',
+        'REPORT_JOB_CAPACITY_REACHED' => '提交过于频繁或任务数已满。请等候一分钟，或取消不再需要的任务后重试。',
+        'REPORT_ATTEMPTS_EXHAUSTED' => '多次生成仍未成功，请稍后重新创建任务。',
+        'REPORT_JOB_BYTE_LIMIT_EXCEEDED' ||
+        'REPORT_TOO_LARGE' =>
+          '报表数据量超出上限，请减少设备或缩短时间范围后重新生成。',
+        'REPORT_JOB_EXPIRED' => '报表已到期，请重新生成。',
+        'INVALID_CLASSIFICATION_RESPONSE' => '分类响应与当前应用不一致，已隐藏结果。请重新加载。',
+        'INVALID_REPORT_SCOPE' => '请选择有效的儿童或班级范围，并刷新当前名册后重试。',
+        'REPORT_SCOPE_CHANGED' => '班级名册或设备所属档案已变化。请刷新设备与范围后重新生成报表。',
+        'INVALID_USAGE_REPORT_QUERY' ||
+        'INVALID_REPORT_SELECTION' =>
+          '请选择 1–20 台设备、有效时区和不超过 32 天的时间范围。',
+        'USAGE_REPORT_TOO_LARGE' => '所选范围的数据量较大，请减少设备数量或缩短时间范围后重试。',
+        'USAGE_REPORT_DATA_UNAVAILABLE' => '部分观察数据暂时无法读取，请稍后重试或联系管理员。',
+        'INVALID_USAGE_REPORT_RESPONSE' => '报表响应与当前设备或查询范围不一致，已隐藏结果。请刷新后重试。',
         'REAUTH_REQUIRED' => '此操作需要近期多因素认证。请完成安全验证后重试。',
         'EXPORT_ARTIFACT_UNAVAILABLE' => '导出文件暂时不可用，请稍后重试或联系管理员检查导出服务。',
         'EXPORT_NOT_READY' => '此导出当前无法下载。请刷新任务状态，必要时重新生成。',
         'EXPORT_RATE_LIMITED' => '导出提交过于频繁，请等待一分钟后重试。',
-        'EXPORT_CAPACITY_REACHED' => '导出提交过于频繁或任务数已满。请稍等一分钟；如仍受限，可取消不再需要的任务后重试。',
+        'EXPORT_CAPACITY_REACHED' =>
+          '导出提交过于频繁或任务数已满。请稍等一分钟；如仍受限，可取消不再需要的任务后重试。',
         'INVALID_EXPORT_RESPONSE' => '导出数据校验未通过，未保存文件。请刷新后重试。',
         'UNAUTHENTICATED' => '登录已过期，请重新登录。',
         'SCOPE_DENIED' => '当前账号没有此操作权限。',

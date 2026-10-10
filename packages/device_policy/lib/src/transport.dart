@@ -82,7 +82,9 @@ class DeviceConfigurationTransport {
   }
   Future<T> _request<T>(
       String method, String path, T Function(Map<String, dynamic>) parse,
-      {Map<String, String>? query, Map<String, dynamic>? body}) async {
+      {Map<String, String>? query,
+      Map<String, dynamic>? body,
+      int? responseByteLimit}) async {
     if (_closed) {
       throw const DeviceTransportFailure('CLIENT_CLOSED');
     }
@@ -132,8 +134,12 @@ class DeviceConfigurationTransport {
             status: response.statusCode, outcomeUnknown: mutation);
       }
       final bytes = <int>[];
+      final limit =
+          responseByteLimit != null && responseByteLimit < maxResponseBytes
+              ? responseByteLimit
+              : maxResponseBytes;
       await for (final chunk in response.stream) {
-        if (bytes.length + chunk.length > maxResponseBytes) {
+        if (bytes.length + chunk.length > limit) {
           throw const FormatException('Response exceeds limit');
         }
         bytes.addAll(chunk);
@@ -215,7 +221,36 @@ class DeviceConfigurationTransport {
       throw ArgumentError('Invalid observation request');
     }
     return _request(operation.method, operation.path,
-        (json) => freezeJson(json) as Map<String, dynamic>, body: body);
+        (json) => freezeJson(json) as Map<String, dynamic>,
+        body: body);
+  }
+
+  /// Reads only the authenticated device. The report model layer must still
+  /// validate the response against the host's current binding before display.
+  Future<Map<String, dynamic>> usageReport(
+      {required int from,
+      required int to,
+      required String timeZone,
+      String period = 'DAY'}) {
+    if (from <= 0 ||
+        to <= from ||
+        to > 8640000000000000 ||
+        to - from > 32 * 86400000 ||
+        timeZone.isEmpty ||
+        timeZone.length > 100 ||
+        !RegExp(r'^[A-Za-z0-9_+./-]+$').hasMatch(timeZone) ||
+        !const {'DAY', 'WEEK'}.contains(period)) {
+      throw ArgumentError('Invalid device usage report query');
+    }
+    return _request('GET', 'usage-report',
+        (json) => freezeJson(json) as Map<String, dynamic>,
+        responseByteLimit: 8388608,
+        query: {
+          'from': '$from',
+          'to': '$to',
+          'timeZone': timeZone,
+          'period': period
+        });
   }
 
   Future<ReceiptAcknowledgement> acknowledge(
@@ -275,6 +310,10 @@ class DeviceConfigurationTransport {
 }
 
 const _safeCodes = {
+  'INVALID_USAGE_REPORT_QUERY',
+  'USAGE_REPORT_TOO_LARGE',
+  'USAGE_REPORT_DATA_UNAVAILABLE',
+  'REPORT_SCOPE_CHANGED',
   'OBSERVATION_NOT_AUTHORIZED',
   'OBSERVATION_AUTHORIZATION_CHANGED',
   'OBSERVATION_REPORT_RATE_LIMITED',

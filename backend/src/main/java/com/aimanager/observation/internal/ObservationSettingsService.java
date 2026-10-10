@@ -92,7 +92,7 @@ class ObservationSettingsService implements ObservationAuthorization {
             input.inventoryEnabled(), input.usageEnabled(), now);
     }
 
-    private ObservationSettings current(String tenant, String device, String registration, boolean lock) {
+    ObservationSettings current(String tenant, String device, String registration, boolean lock) {
         var rows = jdbc.query("SELECT version,inventory_enabled,usage_enabled,updated_at FROM device_observation_settings "
                 + "WHERE tenant_id=? AND device_id=? AND registration_id=?" + (lock ? " FOR UPDATE" : ""),
             (row, index) -> new ObservationSettings(device, registration, row.getLong(1),

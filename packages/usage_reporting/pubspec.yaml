@@ -1,0 +1,12 @@
+name: usage_reporting
+description: Shared immutable usage report, classification and delivery evidence models.
+version: 0.1.0
+publish_to: none
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+dependencies:
+  intl: ^0.19.0
+  timezone: ^0.9.4
+dev_dependencies:
+  test: ^1.25.2
+  lints: ^3.0.0

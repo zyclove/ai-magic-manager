@@ -64,6 +64,10 @@ management:
     health:
       show-details: never
 manager:
+  report-jobs:
+    worker:
+      enabled: ${USAGE_REPORT_WORKER_ENABLED:true}
+      interval-seconds: ${USAGE_REPORT_WORKER_INTERVAL_SECONDS:5}
   exports:
     key-file: ${AUDIT_EXPORT_KEY_FILE:}
     active-key-id: ${AUDIT_EXPORT_ACTIVE_KEY_ID:}

@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:device_policy/device_policy.dart';
 import 'package:test/test.dart';
 import 'fixtures.dart';
@@ -9,6 +11,27 @@ const token = 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA';
 Matcher transportFailure(String code) =>
     isA<DeviceTransportFailure>().having((e) => e.code, 'code', code);
 void main() {
+  test('usage report keeps its 8 MiB limit when other operations allow more',
+      () async {
+    final client = MockClient((_) async => http.Response(
+        jsonEncode({'oversized': 'x' * (8 * 1024 * 1024)}), 200,
+        headers: {'content-type': 'application/json'}));
+    final reader = DeviceConfigurationTransport(
+        apiRoot: Uri.parse('https://reports.example/api/v1'),
+        credential: () async => token,
+        client: client,
+        maxResponseBytes: 16 * 1024 * 1024);
+    try {
+      await expectLater(
+          reader
+              .usageReport(from: 1, to: 1000, timeZone: 'UTC')
+              .then((_) => true),
+          throwsA(transportFailure('RESPONSE_INVALID')));
+    } finally {
+      reader.close();
+      client.close();
+    }
+  });
   late HttpServer server;
   late DeviceConfigurationTransport transport;
   late Future<void> Function(HttpRequest) respond;
@@ -42,6 +65,82 @@ void main() {
   tearDown(() async {
     transport.close();
     await server.close(force: true);
+  });
+  test(
+      'usage report uses a fixed read-only route and freezes the returned document',
+      () async {
+    respond = (r) => json(r, {
+          'schemaVersion': 1,
+          'devices': [
+            {'status': 'NO_DATA'}
+          ]
+        });
+    final report = await transport.usageReport(
+        from: now - 86400000,
+        to: now,
+        timeZone: 'Asia/Shanghai',
+        period: 'WEEK');
+    expect(requests.single.method, 'GET');
+    expect(requests.single.uri.path, '/api/v1/device-api/usage-report');
+    expect(requests.single.uri.queryParameters, {
+      'from': '${now - 86400000}',
+      'to': '$now',
+      'timeZone': 'Asia/Shanghai',
+      'period': 'WEEK'
+    });
+    expect(requests.single.headers.value('authorization'), 'Bearer $token');
+    expect(() => report['schemaVersion'] = 2, throwsUnsupportedError);
+    expect(() => (report['devices'] as List).clear(), throwsUnsupportedError);
+    expect(() => report['devices'][0]['status'] = 'OBSERVED',
+        throwsUnsupportedError);
+  });
+  test('usage report validates its bounded query before requesting credentials',
+      () async {
+    int credentials = 0;
+    final guarded = DeviceConfigurationTransport(
+        apiRoot: Uri.parse('http://127.0.0.1:${server.port}/api/v1'),
+        credential: () async {
+          credentials++;
+          return token;
+        },
+        allowLoopbackHttp: true);
+    try {
+      expect(() => guarded.usageReport(from: now, to: now, timeZone: 'UTC'),
+          throwsArgumentError);
+      expect(
+          () => guarded.usageReport(
+              from: now - 33 * 86400000, to: now, timeZone: 'UTC'),
+          throwsArgumentError);
+      expect(() => guarded.usageReport(from: -1, to: now, timeZone: 'UTC'),
+          throwsArgumentError);
+      expect(
+          () => guarded.usageReport(
+              from: now - 1, to: now, timeZone: 'UTC&deviceId=other'),
+          throwsArgumentError);
+      expect(
+          () => guarded.usageReport(
+              from: now - 1, to: now, timeZone: 'UTC', period: 'MONTH'),
+          throwsArgumentError);
+      expect(credentials, 0);
+      expect(requests, isEmpty);
+    } finally {
+      guarded.close();
+    }
+  });
+  test('usage report preserves safe size errors without retry or server copy',
+      () async {
+    respond = (r) => json(
+        r, {'errorCode': 'USAGE_REPORT_TOO_LARGE', 'message': token},
+        status: 413);
+    await expectLater(
+        transport.usageReport(from: now - 1, to: now, timeZone: 'UTC'),
+        throwsA(isA<DeviceTransportFailure>()
+            .having((e) => e.code, 'code', 'USAGE_REPORT_TOO_LARGE')
+            .having((e) => e.retryable, 'retryable', false)
+            .having((e) => e.outcomeUnknown, 'outcome', false)
+            .having((e) => e.toString().contains(token), 'secret disclosure',
+                false)));
+    expect(requests, hasLength(1));
   });
   test(
       'actual HTTP sends only the independent opaque credential and paging fields',

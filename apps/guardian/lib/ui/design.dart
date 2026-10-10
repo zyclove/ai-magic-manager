@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/api.dart';
 import '../core/labels.dart';
+import 'package:usage_reporting/usage_reporting.dart' show UsageReportFailure;
 
 const navy = Color(0xFF19335C);
 const ink = Color(0xFF172238);
@@ -170,7 +171,11 @@ class FailureView extends StatelessWidget {
   const FailureView(this.error, {super.key, this.retry, this.reauth});
   @override
   Widget build(BuildContext context) {
-    final failure = error is ApiFailure ? error as ApiFailure : null;
+    final failure = switch (error) {
+      ApiFailure value => value,
+      UsageReportFailure value => ApiFailure(value.status, value.code),
+      _ => null,
+    };
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Notice(failure?.message ?? '加载未完成，请重试。', warning: true),
       if (failure != null)

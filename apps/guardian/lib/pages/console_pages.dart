@@ -3,12 +3,14 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../core/api.dart';
+import '../core/application_classification.dart';
 import '../core/enrollment_ticket.dart';
 import '../core/labels.dart';
 import '../core/observation.dart' show canReadObservation;
 import '../core/session.dart';
 import 'observation_page.dart';
 import '../ui/design.dart';
+import '../ui/application_classification_dialog.dart';
 import '../ui/resource_page.dart';
 import '../ui/member_editor.dart';
 import '../ui/access_request_dialog.dart';
@@ -16,6 +18,7 @@ import 'members_page.dart';
 import 'classes_page.dart';
 import 'audit_page.dart';
 import 'audit_exports_page.dart';
+import 'usage_reports_page.dart';
 import 'editors.dart';
 import 'device_exit_dialog.dart';
 import 'quota_page.dart';
@@ -90,6 +93,9 @@ class ConsolePages extends StatelessWidget {
       ]);
     }
     if (section == 'classes') return ClassesPage(session: s);
+    if (section == 'reports') {
+      return UsageReportsPage(key: ValueKey('${s.root}-${s.role}'), session: s);
+    }
     if (section == 'notifications') {
       return NotificationsPage(
           key: ValueKey('${s.root}-${s.role}'),
@@ -191,14 +197,17 @@ class ConsolePages extends StatelessWidget {
             ],
             create: s.canWrite ? actions.application : null,
             createLabel: '登记应用',
-            open: (r) => showDetails(context, r['displayName'], {
+            open: (r) => actionDetails(context, r['displayName'], {
                   '包名': r['packageName'],
                   '平台': label(r['platform']),
                   '资料空间': label(r['profile']),
                   '签名摘要': (r['signingDigests'] as List).join('\n'),
                   '身份状态': label(r['evidenceStatus']),
                   '应用编号': r['id']
-                }),
+                }, actions: [
+                  DetailAction(
+                      '查看与设置分类', (_) => actions.applicationClassification(r))
+                ]),
             notice: '目录中的身份由管理员登记，不代表应用已经安装或完成安全认证。');
       case 'schedules':
         return resource(
@@ -412,6 +421,29 @@ class ConsoleActions {
       return await s.api
           .send('POST', '$root/applications', body: data, key: key) as Json;
     });
+  }
+
+  Future<void> applicationClassification(Json application) async {
+    final capturedRole = s.role;
+    final repository = ApplicationClassificationRepository(
+        api: s.api,
+        root: root,
+        applicationId: application['id'],
+        identity: ApplicationClassificationIdentity(application['platform'],
+            application['profile'], application['packageName']),
+        current: () =>
+            s.authenticated &&
+            s.tenant != null &&
+            s.root == root &&
+            s.role == capturedRole);
+    await showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => ApplicationClassificationDialog(
+            repository: repository,
+            applicationName: application['displayName'],
+            canEdit: s.canWrite,
+            accessChanges: s));
   }
 
   Future<void> scheduleDetails(Json r) async {

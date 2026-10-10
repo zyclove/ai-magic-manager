@@ -19,6 +19,10 @@ dependencies:
     path: ../../packages/device_observation
   device_access:
     path: ../../packages/device_access
+  device_reports:
+    path: ../../packages/device_reports
+  usage_report_ui:
+    path: ../../packages/usage_report_ui
   pointycastle: 4.0.0
   flutter_secure_storage: 10.0.0
   http: ^1.2.1

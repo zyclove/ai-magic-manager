@@ -8,6 +8,8 @@ import 'design.dart';
 import 'observation_section.dart';
 import 'access_section.dart';
 import 'submission_section.dart';
+import 'report_section.dart';
+import '../core/report_loader.dart';
 
 class ChildApp extends StatelessWidget {
   final ChildSession? session;
@@ -15,12 +17,14 @@ class ChildApp extends StatelessWidget {
   final String osVersion;
   final bool nativeAvailable;
   final bool deploymentInvalid;
+  final ChildReportFactory? reportFactory;
   const ChildApp(
       {super.key,
       this.session,
       this.serviceLabel,
       this.osVersion = 'Android',
       this.nativeAvailable = false,
+      this.reportFactory,
       this.deploymentInvalid = false});
   @override
   Widget build(BuildContext context) => MaterialApp(
@@ -453,8 +457,18 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
         } else if (view.phase == IdentityPhase.awaitingConfirmation) {
           content = _waiting();
         } else {
-          content =
-              switch (_tab) { 1 => _rules(), 2 => _help(), _ => _device() };
+          content = switch (_tab) {
+            1 => _rules(),
+            2 => ChildReportSection(
+                key: ValueKey(
+                    '${view.tenantId}/${view.deviceId}/${view.registrationId}/${session!.observationView.authorization?.version}'),
+                session: session!,
+                factory: app.reportFactory,
+                nativeAvailable: app.nativeAvailable,
+                reconnect: () => setState(() => _tab = 0)),
+            3 => _help(),
+            _ => _device()
+          };
         }
         return Shortcuts(
             shortcuts: const {
@@ -538,6 +552,9 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
                                 NavigationDestination(
                                     icon: Icon(Icons.description_outlined),
                                     label: '规则'),
+                                NavigationDestination(
+                                    icon: Icon(Icons.bar_chart_outlined),
+                                    label: '使用'),
                                 NavigationDestination(
                                     icon: Icon(Icons.help_outline), label: '帮助')
                               ])

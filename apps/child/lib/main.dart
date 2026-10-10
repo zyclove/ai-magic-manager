@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:logging/logging.dart';
 import 'core/environment.dart';
 import 'core/production_session.dart';
+import 'core/report_loader.dart';
 import 'ui/child_app.dart';
 
 Future<void> main() async {
@@ -42,5 +43,12 @@ Future<void> main() async {
       session: session,
       serviceLabel: configured.apiRoot.toString(),
       nativeAvailable: nativeAvailable,
+      reportFactory: nativeAvailable
+          ? (session) => DeviceChildReports(
+              session: session,
+              apiRoot: configured.apiRoot,
+              allowLoopbackHttp: configured.allowLoopbackHttp,
+              inspect: runtime.observationSource.inspect)
+          : null,
       osVersion: osVersion));
 }

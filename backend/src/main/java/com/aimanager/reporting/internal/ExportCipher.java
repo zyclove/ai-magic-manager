@@ -58,13 +58,22 @@ final class ExportCipher {
   }
 
   String seal(String tenant, String job, String binding, byte[] plaintext) {
+    return sealPurpose("audit-export-v1", tenant, job, binding, plaintext);
+  }
+
+  String sealUsage(String tenant, String job, String binding, byte[] plaintext) {
+    return sealPurpose("usage-report-v1", tenant, job, binding, plaintext);
+  }
+
+  private String sealPurpose(
+      String purpose, String tenant, String job, String binding, byte[] plaintext) {
     requireAvailable();
     try {
       var header =
           new JWEHeader.Builder(JWEAlgorithm.DIR, EncryptionMethod.A256GCM)
               .keyID(active)
               .contentType("application/json")
-              .customParam("purpose", "audit-export-v1")
+              .customParam("purpose", purpose)
               .customParam("tenant", tenant)
               .customParam("job", job)
               .customParam("binding", binding)
@@ -78,6 +87,15 @@ final class ExportCipher {
   }
 
   byte[] open(String tenant, String job, String binding, String encrypted) {
+    return openPurpose("audit-export-v1", tenant, job, binding, encrypted);
+  }
+
+  byte[] openUsage(String tenant, String job, String binding, String encrypted) {
+    return openPurpose("usage-report-v1", tenant, job, binding, encrypted);
+  }
+
+  private byte[] openPurpose(
+      String purpose, String tenant, String job, String binding, String encrypted) {
     requireAvailable();
     try {
       if (encrypted == null || encrypted.length() > 12 * 1024 * 1024)
@@ -88,7 +106,7 @@ final class ExportCipher {
           || !EncryptionMethod.A256GCM.equals(h.getEncryptionMethod())
           || h.getCompressionAlgorithm() != null
           || h.getCriticalParams() != null
-          || !"audit-export-v1".equals(h.getCustomParam("purpose"))
+          || !purpose.equals(h.getCustomParam("purpose"))
           || !tenant.equals(h.getCustomParam("tenant"))
           || !job.equals(h.getCustomParam("job"))
           || !binding.equals(h.getCustomParam("binding"))

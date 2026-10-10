@@ -14,12 +14,17 @@ dependencies:
   cupertino_icons: ^1.0.8
   device_operations:
     path: ../../packages/device_operations
+  usage_reporting:
+    path: ../../packages/usage_reporting
+  usage_report_ui:
+    path: ../../packages/usage_report_ui
   http: ^1.2.1
   oauth2: ^2.0.3
   crypto: ^3.0.3
   go_router: ^14.2.0
   provider: ^6.1.2
   intl: ^0.19.0
+  timezone: ^0.9.4
 dev_dependencies:
   flutter_test:
     sdk: flutter

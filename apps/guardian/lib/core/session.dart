@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:oauth2/oauth2.dart' as oauth;
 import 'api.dart';
 import 'access.dart';
+import 'report_job_resume.dart';
 
 class Session extends ChangeNotifier {
   static const issuer = String.fromEnvironment('OIDC_ISSUER',
@@ -111,6 +112,28 @@ class Session extends ChangeNotifier {
         .assign(url.replace(queryParameters: params).toString());
   }
 
+  void reauthenticateReport(ReportJobResume resume) {
+    if (!authenticated || tenant == null || !canWrite) {
+      throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+    }
+    html.window.sessionStorage['ai-manager.report-resume'] = resume.encode(
+        actor: profile!['subject'],
+        root: root,
+        role: role,
+        now: DateTime.now().millisecondsSinceEpoch);
+    login(stepUp: true);
+  }
+
+  ReportJobResume? takeReportResume() {
+    final saved = html.window.sessionStorage.remove('ai-manager.report-resume');
+    if (!authenticated || tenant == null) return null;
+    return ReportJobResume.decode(saved,
+        actor: profile!['subject'],
+        root: root,
+        role: role,
+        now: DateTime.now().millisecondsSinceEpoch);
+  }
+
   Future<void> loadTenants() async {
     tenants = await api.all('/tenants');
     final selected = html.window.localStorage['ai-manager.workspace'];
@@ -125,6 +148,9 @@ class Session extends ChangeNotifier {
   }
 
   Future<void> selectTenant(Json next) async {
+    if (tenant != null && tenant!['id'] != next['id']) {
+      html.window.sessionStorage.remove('ai-manager.report-resume');
+    }
     final generation = _selection.begin();
     final membership =
         await api.send('GET', '/tenants/${next['id']}/membership') as Json;
@@ -144,6 +170,7 @@ class Session extends ChangeNotifier {
     tenant = null;
     role = '';
     html.window.sessionStorage.remove('ai-manager.session');
+    html.window.sessionStorage.remove('ai-manager.report-resume');
   }
 
   void logout() {
