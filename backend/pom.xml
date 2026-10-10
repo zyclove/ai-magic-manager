@@ -4,7 +4,7 @@
   <parent><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-parent</artifactId><version>3.5.16</version><relativePath/></parent>
   <groupId>com.aimanager</groupId><artifactId>manager-backend</artifactId><version>0.1.0-SNAPSHOT</version>
   <name>AI Manager Backend</name>
-  <properties><java.version>17</java.version><project.build.sourceEncoding>UTF-8</project.build.sourceEncoding><spring-modulith.version>1.4.0</spring-modulith.version><nimbus-jose-jwt.version>9.37.4</nimbus-jose-jwt.version><backend.artifact-name>${project.artifactId}-${project.version}</backend.artifact-name></properties>
+  <properties><java.version>17</java.version><project.build.sourceEncoding>UTF-8</project.build.sourceEncoding><spring-modulith.version>1.4.0</spring-modulith.version><nimbus-jose-jwt.version>9.37.4</nimbus-jose-jwt.version><android-management-client.version>v1-rev20260714-2.0.0</android-management-client.version><google-auth-library.version>1.54.0</google-auth-library.version><backend.artifact-name>${project.artifactId}-${project.version}</backend.artifact-name></properties>
   <dependencyManagement><dependencies><dependency><groupId>org.springframework.modulith</groupId><artifactId>spring-modulith-bom</artifactId><version>${spring-modulith.version}</version><type>pom</type><scope>import</scope></dependency></dependencies></dependencyManagement>
   <dependencies>
     <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-web</artifactId></dependency>
@@ -13,6 +13,9 @@
     <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-oauth2-resource-server</artifactId></dependency>
     <!-- Direct use for enrollment ES256 proofs; aligned with Spring Security 6.5.11's resolved dependency. -->
     <dependency><groupId>com.nimbusds</groupId><artifactId>nimbus-jose-jwt</artifactId><version>${nimbus-jose-jwt.version}</version></dependency>
+    <!-- Server-only official Android Enterprise API client; disabled until EMM eligibility and binding are configured. -->
+    <dependency><groupId>com.google.apis</groupId><artifactId>google-api-services-androidmanagement</artifactId><version>${android-management-client.version}</version></dependency>
+    <dependency><groupId>com.google.auth</groupId><artifactId>google-auth-library-oauth2-http</artifactId><version>${google-auth-library.version}</version></dependency>
     <dependency><groupId>org.springframework.boot</groupId><artifactId>spring-boot-starter-actuator</artifactId></dependency>
     <dependency><groupId>org.springdoc</groupId><artifactId>springdoc-openapi-starter-webmvc-ui</artifactId><version>2.9.1</version></dependency>
     <dependency><groupId>org.springframework.modulith</groupId><artifactId>spring-modulith-starter-core</artifactId></dependency>
