@@ -18,11 +18,17 @@
 - `write_unknown` 拒绝覆盖已有测试身份、绑定、夹具或申请文件。其余阶段要求前序进程留下的持久状态；缺少状态必须失败。
 - 阶段间保持应用安装，不卸载、不清空应用数据、不删除整个安全存储。`flutter test integration_test/...` 的卸载行为不能代替此验收。
 
-运行模板：
+保留安装运行方式（推荐用于后续复验）：
 
 ```text
-flutter drive --no-pub --driver=test_driver/submission_storage_driver.dart --target=integration_test/submission_storage_test.dart -d <owned-device> --keep-app-running --dart-define=SUBMISSION_STORE_PHASE=<phase>
+flutter build apk --debug --no-pub --target=integration_test/submission_storage_test.dart --dart-define=SUBMISSION_STORE_PHASE=<phase>
+adb -s <owned-device> install -r <built-apk>
+flutter drive --no-pub --driver=test_driver/submission_storage_driver.dart --target=integration_test/submission_storage_test.dart -d <owned-device> --keep-app-running --use-existing-app=<forwarded-vm-service-url>
 ```
+
+构建与安装分开执行。保留安装失败立即停止；核实原 UID/首次安装时间后，手动以 `start-paused` 启动 debug Activity，再将该进程的 VM 服务端口转发到本地，交给官方驱动连接。只移除自己建立的精确端口映射。不能把上述三行直接连续执行而省略安装身份、暂停启动和 VM 服务发现检查。
+
+后续真实 HTTP 验收发现 Flutter 代管安装可能在 ADB 失败后自动卸载重装，因此 `--keep-app-running` 本身不足以保护数据。新旅程的[主机实现与事件说明](child-android-http-acceptance.md)提供显式保留安装和连接现有应用的做法。下文原阶段证据来自此前成功运行，所有阶段当时的 UID/首次安装时间一致；不要将后来无效安装尝试算入该历史结果。
 
 完成阶段由官方驱动回传报告；主机核实报告 PID 与设备进程一致，再对同一专用设备执行 `am force-stop com.aimanager.child.debug` 并确认 PID 消失。申请和取消首次发送阶段在原日志预写后的请求回调中输出不含敏感数据的检查点，并保持响应未完成；主机此时直接终止 Android 进程和仅本次拥有的 Flutter 驱动，不能将驱动的预期中断当作普通测试通过。下一阶段必须从新的进程开始，并读取原日志证明其持久化。
 

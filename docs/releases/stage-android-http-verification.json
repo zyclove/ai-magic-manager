@@ -1,0 +1,883 @@
+{
+  "schemaVersion": 1,
+  "verifiedAt": "2026-10-10T02:11:18.662003+00:00",
+  "parentHead": "a194aa1ead115018c3e202201f2ae8337c82cb30",
+  "scope": "Single real Android -> Spring -> H2/MySQL enrollment and submission journeys. Real native encryption, ES256 claim, guardian confirmation, heartbeat, create/cancel commit interruptions and expired-key recovery, natural business expiry, offline cache and real revocation. Only adult OIDC/MFA is a controlled fixture. Dedicated test composition, not the entire production main or OS enforcement.",
+  "sourceFiles": [
+    {
+      "path": "apps/child/integration_test/submission_http_test.dart",
+      "sha256": "b4865a8a408a6a03ec7d976e8a901612b705481ec0affc74d10287faca92f61c"
+    },
+    {
+      "path": "apps/child/test_driver/submission_http_driver.dart",
+      "sha256": "edc6a333b83e72e0627fc5cfd36bbfab4c191f3936f13bf30db8c5adaeb3822b"
+    },
+    {
+      "path": "apps/child/tool/run_submission_android.py",
+      "sha256": "de134700c6f7a6581c45e5542a7b9e9d09f2a9a1e49228487392582201e20f02"
+    },
+    {
+      "path": "apps/child/tool/test_run_submission_android.py",
+      "sha256": "3bd031ed2dfbde63d56ee2a8f3444e43011da415725edd8fc0ea4d1d741b3eed"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/AndroidChildSubmissionJourneyTest.java",
+      "sha256": "2e6457c6c37852d95be33f8b34a4530b55c0753492f322d881c7439bd15d0268"
+    },
+    {
+      "path": "docs/child-android-http-plan.md",
+      "sha256": "ef0ab93d6551d9b7cef2bfaa6142210290c39f3edea995ef83f12f34f79e9ce2"
+    },
+    {
+      "path": "docs/child-android-http-acceptance.md",
+      "sha256": "8573b72168d9511536bd0c2a621b1e7db2828dc5b2e5547b5d7082a80b3ab4b7"
+    },
+    {
+      "path": "docs/child-submission-native-acceptance.md",
+      "sha256": "04da92ace610a4c58a1f94c6330796fd91174ba21b2d23c30f4979de2af638de"
+    }
+  ],
+  "runtimeSourceSha256": {
+    "integration_test/submission_http_test.dart": "b4865a8a408a6a03ec7d976e8a901612b705481ec0affc74d10287faca92f61c",
+    "test_driver/submission_http_driver.dart": "edc6a333b83e72e0627fc5cfd36bbfab4c191f3936f13bf30db8c5adaeb3822b",
+    "tool/run_submission_android.py": "de134700c6f7a6581c45e5542a7b9e9d09f2a9a1e49228487392582201e20f02",
+    "lib/core/session.dart": "df61771034959f159ecd2a6c7fb4091732a436ebaacd21441bb12d39f0cddf09",
+    "lib/core/submission_receiver.dart": "28863ce92019a1780247adf9f400b3816fa4d5e893b9b1b2e4758b50a9da5296",
+    "lib/ui/child_app.dart": "18826c5012e2a0661931fd83154f256c21965308a1099ce25e0d559501088c2b"
+  },
+  "frozenBaselineInputCount": 503,
+  "baselineArchiveSha256": "8586d1cbe22705b81f678ca5150bd9ec5b535c7be6fa35fe1b34d3111d421fa3",
+  "identicalRuntimeInputsInTwoFrozenCandidates": true,
+  "checks": {
+    "h2NativePhases": 10,
+    "mysqlNativePhases": 10,
+    "deliberateCommittedResponseInterruptions": 4,
+    "normallyCompletedDriverPhases": 16,
+    "distinctVerifiedNativeProcesses": 20,
+    "backendFull": {
+      "tests": 324,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1
+    },
+    "backendOrdinarySucceeded": 323,
+    "backendOrdinarySkipReason": "native Android test requires explicit owned-AVD properties; executed separately on both real databases",
+    "childFull": 91,
+    "childAnalysis": "clean",
+    "deviceAccessSdkFull": 128,
+    "deviceAccessSdkAnalysis": "clean",
+    "hostPreflightTests": 8,
+    "normalMainAndroidDebugBuild": "passed"
+  },
+  "environment": {
+    "androidApi": 34,
+    "abi": "x86_64",
+    "avd": "AIManagerChildApi34",
+    "serial": "emulator-5562",
+    "package": "com.aimanager.child.debug",
+    "stableInstallation": {
+      "uid": "10195",
+      "firstInstallTime": "2026-10-10 01:19:20"
+    },
+    "finalAcceptedJourneysNoUninstallOrDataWipe": true
+  },
+  "journeys": [
+    {
+      "database": "h2",
+      "backendTests": 1,
+      "backendSkipped": 0,
+      "backendLogSha256": "12000becc23d5aa4b0423935e6b8d536e9a06672a473bf5e8b28dd7ca5ffc693",
+      "nativePhases": [
+        {
+          "phase": "enroll",
+          "pid": 10952,
+          "realHttp": true,
+          "mutationPosts": 0,
+          "statuses": [],
+          "cachedFirstState": null,
+          "globalRecordsUnchanged": true,
+          "nativePreferencesPlaintextAbsent": true,
+          "systemEnforced": false,
+          "driverExitCode": 0,
+          "deliberateInFlightTermination": false,
+          "nativePidVerified": true,
+          "processStopped": true,
+          "installation": {
+            "uid": "10195",
+            "firstInstallTime": "2026-10-10 01:19:20"
+          },
+          "explicitPreservingInstallVerified": true,
+          "driverAttachedExistingApp": true,
+          "installedApkSha256": "f1573b69fe9b71979b3f01f9039ddca66d12fcd05572cb805f022f49879ef2a5",
+          "driverLogSha256": "0b7ff02adcdac53eaef2cd9d44510517ac2d582a3a9f6f30730122bc6d9571f3",
+          "buildLogSha256": "679e20c26fceef3b1b29ea9cf49920a860aaa1f8a413f55a2bc9e75e765d7758",
+          "evidencePath": ".local/root-android-http-candidate/backend/.local/android-child-http-1437340613769885436/native-enroll/host-result.json",
+          "hostResultSha256": "dc9d92d1a8c7c9c248a94d0edc4582d1bc505bfe25fbe0e415cb5793d5dc6179"
+        },
+        {
+          "phase": "submit",
+          "pid": 11173,
+          "committedStatus": 201,
+          "realResponseDrained": true,
+          "driverExitCode": 1,
+          "deliberateInFlightTermination": true,
+          "nativePidVerified": true,
+          "processStopped": true,
+          "installation": {
+            "uid": "10195",
+            "firstInstallTime": "2026-10-10 01:19:20"
+          },
+          "explicitPreservingInstallVerified": true,
+          "driverAttachedExistingApp": true,
+          "installedApkSha256": "f16e958e6c590ec7748cadaa993f8c267a8590374d3cccb7d05bb39e4f75a4af",
+          "driverLogSha256": "66ed6018073a8f9c7c9c4605cb56b365db7b23ffd9ea10573de1d1f0deea4eee",
+          "buildLogSha256": "09adb35fb49c445a65393b1be3cbf502563a607575c9b2b6c3a364e9d78c2f65",
+          "evidencePath": ".local/root-android-http-candidate/backend/.local/android-child-http-1437340613769885436/native-submit/host-result.json",
+          "hostResultSha256": "7b22b7d1ed8af0a00e78408114e2e0e5fae477aac1cd62bec9ae9a8118e9da3c"
+        },
+        {
+          "phase": "recover",
+          "pid": 11405,
+          "realHttp": true,
+          "mutationPosts": 2,
+          "statuses": [
+            "GET:access-context:200",
+            "GET:options:200",
+            "GET:access-submissions:200",
+            "GET:access-context:200",
+            "POST:access-submissions:409",
+            "POST:recovery:200"
+          ],
+          "cachedFirstState": "APPROVED_PENDING_DELIVERY",
+          "globalRecordsUnchanged": true,
+          "nativePreferencesPlaintextAbsent": true,
+          "systemEnforced": false,
+          "driverExitCode": 0,
+          "deliberateInFlightTermination": false,
+          "nativePidVerified": true,
+          "processStopped": true,
+          "installation": {
+            "uid": "10195",
+            "firstInstallTime": "2026-10-10 01:19:20"
+          },
+          "explicitPreservingInstallVerified": true,
+          "driverAttachedExistingApp": true,
+          "installedApkSha256": "c8e2bfceb784811ce6006499748fcb6abd7451fd4376ba920c201a32553291d6",
+          "driverLogSha256": "10993f99409343fcaee635a7f28cd5c3c0522994db161839ccd2c3de8ad2bde3",
+          "buildLogSha256": "1741583308f8cf30efa3b22d3af5f2fd76e806a93694f07ce2bc8414de980854",
+          "evidencePath": ".local/root-android-http-candidate/backend/.local/android-child-http-1437340613769885436/native-recover/host-result.json",
+          "hostResultSha256": "914ad3e2d64dc0c7b00ed0295dacf1cd71c0d8c5bc046a76ab2fbcc19df918fd"
+        },
+        {
+          "phase": "cancel",
+          "pid": 11588,
+          "committedStatus": 200,
+          "realResponseDrained": true,
+          "driverExitCode": 1,
+          "deliberateInFlightTermination": true,
+          "nativePidVerified": true,
+          "processStopped": true,
+          "installation": {
+            "uid": "10195",
+            "firstInstallTime": "2026-10-10 01:19:20"
+          },
+          "explicitPreservingInstallVerified": true,
+          "driverAttachedExistingApp": true,
+          "installedApkSha256": "5e7aa0d9fe17ec94ab077c26a878713153fc35b42bf64d8852c6f013fdc2bb9c",
+          "driverLogSha256": "c877214c7b5fd2dda8805192d143a834c7f7d35b3ad73a320c7156babd4058fc",
+          "buildLogSha256": "679e20c26fceef3b1b29ea9cf49920a860aaa1f8a413f55a2bc9e75e765d7758",
+          "evidencePath": ".local/root-android-http-candidate/backend/.local/android-child-http-1437340613769885436/native-cancel/host-result.json",
+          "hostResultSha256": "4b0d3a23debb913cbfcc356cc87052b388f2fb9db7b60f88b634fb3d695a667a"
+        },
+        {
+          "phase": "cancel-recover",
+          "pid": 11804,
+          "realHttp": true,
+          "mutationPosts": 2,
+          "statuses": [
+            "GET:access-context:200",
+            "GET:options:200",
+            "GET:access-submissions:200",
+            "GET:access-context:200",
+            "POST:cancel:409",
+            "POST:cancel-recovery:200"
+          ],
+          "cachedFirstState": "EXPIRED",
+          "globalRecordsUnchanged": true,
+          "nativePreferencesPlaintextAbsent": true,
+          "systemEnforced": false,
+          "driverExitCode": 0,
+          "deliberateInFlightTermination": false,
+          "nativePidVerified": true,
+          "processStopped": true,
+          "installation": {
+            "uid": "10195",
+            "firstInstallTime": "2026-10-10 01:19:20"
+          },
+          "explicitPreservingInstallVerified": true,
+          "driverAttachedExistingApp": true,
+          "installedApkSha256": "6cdcc5438785a9b17ef2ef3c812f7e2dfe3459893b4c5eb0d72fd2228799fbec",
+          "driverLogSha256": "211127321207e5e6c9483e9e51a75f278cda842077faea7edc4a9a8b1233ac81",
+          "buildLogSha256": "028deaa75358a8fbfaa2e64c155c449c286e4617392e0fb813a390ed087c724a",
+          "evidencePath": ".local/root-android-http-candidate/backend/.local/android-child-http-1437340613769885436/native-cancel-recover/host-result.json",
+          "hostResultSha256": "774c0fc43a93a428006c6eb455f1d0023ce117fc6f1d556825cb999b73604d26"
+        },
+        {
+          "phase": "expired",
+          "pid": 12055,
+          "realHttp": true,
+          "mutationPosts": 0,
+          "statuses": [
+            "GET:access-context:200",
+            "GET:options:200",
+            "GET:access-submissions:200"
+          ],
+          "cachedFirstState": "EXPIRED",
+          "globalRecordsUnchanged": true,
+          "nativePreferencesPlaintextAbsent": true,
+          "systemEnforced": false,
+          "driverExitCode": 0,
+          "deliberateInFlightTermination": false,
+          "nativePidVerified": true,
+          "processStopped": true,
+          "installation": {
+            "uid": "10195",
+            "firstInstallTime": "2026-10-10 01:19:20"
+          },
+          "explicitPreservingInstallVerified": true,
+          "driverAttachedExistingApp": true,
+          "installedApkSha256": "b9b84c2c396b59f33951af3fe14d94435ebffd3a2d2b199ebc94626008bc00cc",
+          "driverLogSha256": "d6fe0815b298e8c1f089e6a8c6e3c924393c2d09c7d9da16d91fcb80b68a632d",
+          "buildLogSha256": "dcb3bdab8a2066f7a5f5943525f653ba3994d5197d6fc782fdf6acd0d6814d73",
+          "evidencePath": ".local/root-android-http-candidate/backend/.local/android-child-http-1437340613769885436/native-expired/host-result.json",
+          "hostResultSha256": "8d1b8a54c1c0c5f9a10d8ef6cc997de6a656948cbc841f99360e733cd0d66a84"
+        },
+        {
+          "phase": "offline",
+          "pid": 12243,
+          "realHttp": true,
+          "mutationPosts": 0,
+          "statuses": [],
+          "cachedFirstState": "EXPIRED",
+          "globalRecordsUnchanged": true,
+          "nativePreferencesPlaintextAbsent": true,
+          "systemEnforced": false,
+          "driverExitCode": 0,
+          "deliberateInFlightTermination": false,
+          "nativePidVerified": true,
+          "processStopped": true,
+          "installation": {
+            "uid": "10195",
+            "firstInstallTime": "2026-10-10 01:19:20"
+          },
+          "explicitPreservingInstallVerified": true,
+          "driverAttachedExistingApp": true,
+          "installedApkSha256": "d04226a2c8f928371e2d4bea7bd49536ec9a359102f47a7414c0000661bbcc0e",
+          "driverLogSha256": "2e3652487717846b50d8fe6fb700bd69157c4c488365d603faa39b074818964d",
+          "buildLogSha256": "0a895f3463975f91fbc82b2a856b1eb3b0d2c0806282a19478b7206931eb1552",
+          "evidencePath": ".local/root-android-http-candidate/backend/.local/android-child-http-1437340613769885436/native-offline/host-result.json",
+          "hostResultSha256": "8fb1b9b4180eba486b4b6b3dbc6ff6670ab8d1e0da7287611447d88390287765"
+        },
+        {
+          "phase": "revoked",
+          "pid": 12470,
+          "realHttp": true,
+          "mutationPosts": 0,
+          "statuses": [
+            "GET:access-context:401"
+          ],
+          "cachedFirstState": "EXPIRED",
+          "globalRecordsUnchanged": true,
+          "nativePreferencesPlaintextAbsent": true,
+          "systemEnforced": false,
+          "driverExitCode": 0,
+          "deliberateInFlightTermination": false,
+          "nativePidVerified": true,
+          "processStopped": true,
+          "installation": {
+            "uid": "10195",
+            "firstInstallTime": "2026-10-10 01:19:20"
+          },
+          "explicitPreservingInstallVerified": true,
+          "driverAttachedExistingApp": true,
+          "installedApkSha256": "2f0e6d1e016513707f0460148e8100d0b914dbeea77c1360322a1f41c769c4d9",
+          "driverLogSha256": "cb65276e54c705bfff62e1c6caa1dbd621b039c8c914a9ea64e3a23c95afd465",
+          "buildLogSha256": "02721d04ec3a036ddbd5f055c0abd7167786b7cbe4d856d946abad69147dae08",
+          "evidencePath": ".local/root-android-http-candidate/backend/.local/android-child-http-1437340613769885436/native-revoked/host-result.json",
+          "hostResultSha256": "417c304626f25dac5d006b8c60cdd16abbc9a55ec722c32e67bf553aacd69731"
+        },
+        {
+          "phase": "blocked",
+          "pid": 12683,
+          "realHttp": true,
+          "mutationPosts": 0,
+          "statuses": [],
+          "cachedFirstState": "EXPIRED",
+          "globalRecordsUnchanged": true,
+          "nativePreferencesPlaintextAbsent": true,
+          "systemEnforced": false,
+          "driverExitCode": 0,
+          "deliberateInFlightTermination": false,
+          "nativePidVerified": true,
+          "processStopped": true,
+          "installation": {
+            "uid": "10195",
+            "firstInstallTime": "2026-10-10 01:19:20"
+          },
+          "explicitPreservingInstallVerified": true,
+          "driverAttachedExistingApp": true,
+          "installedApkSha256": "6688ebb8d7061d19f3ba7348ef5f82dcdea1f73af0a141e32869675b9a136bba",
+          "driverLogSha256": "623ed6b8e417d52affff7f7473be132cddee1065513620d6716750f19d4811ef",
+          "buildLogSha256": "09adb35fb49c445a65393b1be3cbf502563a607575c9b2b6c3a364e9d78c2f65",
+          "evidencePath": ".local/root-android-http-candidate/backend/.local/android-child-http-1437340613769885436/native-blocked/host-result.json",
+          "hostResultSha256": "5271ab80795e5871620eb7ad7249a30a8d001429a7f11211a3a47a08639124b5"
+        },
+        {
+          "phase": "cleanup",
+          "pid": 12860,
+          "fixtureRemoved": true,
+          "globalRecordsUnchanged": true,
+          "systemEnforced": false,
+          "driverExitCode": 0,
+          "deliberateInFlightTermination": false,
+          "nativePidVerified": true,
+          "processStopped": true,
+          "installation": {
+            "uid": "10195",
+            "firstInstallTime": "2026-10-10 01:19:20"
+          },
+          "explicitPreservingInstallVerified": true,
+          "driverAttachedExistingApp": true,
+          "installedApkSha256": "ba5f96d60be52ed140c6a43a29780deff60f0ed095088b27b9806ca410536efa",
+          "driverLogSha256": "ed35b39f5fd281e25dd83f41f1e4d8378a6a4580fd7166e456631d163e4cbc7f",
+          "buildLogSha256": "421db7576485a4b595a62569b56835e0957c92933fa6dad300dbd1a6c6f79d60",
+          "evidencePath": ".local/root-android-http-candidate/backend/.local/android-child-http-1437340613769885436/native-cleanup/host-result.json",
+          "hostResultSha256": "a6cf9d88a7c397a750b81c6ecc379f240e9c98b4ab2adc9405b2551ce533690d"
+        }
+      ],
+      "privateHandoffFilesRemoved": true
+    },
+    {
+      "database": "mysql",
+      "backendTests": 1,
+      "backendSkipped": 0,
+      "backendLogSha256": "95e5edca28e7bf61fd49db61ee434e3c27425e01da7586cd1245a70fecd89e00",
+      "nativePhases": [
+        {
+          "phase": "enroll",
+          "pid": 13096,
+          "realHttp": true,
+          "mutationPosts": 0,
+          "statuses": [],
+          "cachedFirstState": null,
+          "globalRecordsUnchanged": true,
+          "nativePreferencesPlaintextAbsent": true,
+          "systemEnforced": false,
+          "driverExitCode": 0,
+          "deliberateInFlightTermination": false,
+          "nativePidVerified": true,
+          "processStopped": true,
+          "installation": {
+            "uid": "10195",
+            "firstInstallTime": "2026-10-10 01:19:20"
+          },
+          "explicitPreservingInstallVerified": true,
+          "driverAttachedExistingApp": true,
+          "installedApkSha256": "4a5858a05b1fd9d14f235a3ee20bd8e316fc8eb2ac00007807360fe134f76e9c",
+          "driverLogSha256": "f06479d9c43bee966f8c441049e578510685ed69cdb13925d9a8ecc42d0e5f15",
+          "buildLogSha256": "10431d35cfd1e635900052292d93a62f32bc3413eb262db6204c1f89efd0efc5",
+          "evidencePath": ".local/root-android-http-candidate/backend/.local/android-child-http-11793615978857912535/native-enroll/host-result.json",
+          "hostResultSha256": "a9c305fa6b4a92c317c0fb4b18e85694b13b166f884241a2ead6e67d03caae05"
+        },
+        {
+          "phase": "submit",
+          "pid": 13323,
+          "committedStatus": 201,
+          "realResponseDrained": true,
+          "driverExitCode": 1,
+          "deliberateInFlightTermination": true,
+          "nativePidVerified": true,
+          "processStopped": true,
+          "installation": {
+            "uid": "10195",
+            "firstInstallTime": "2026-10-10 01:19:20"
+          },
+          "explicitPreservingInstallVerified": true,
+          "driverAttachedExistingApp": true,
+          "installedApkSha256": "a2e004001156aef00ee5f26bb018d935e54622419a6c4cbe295d3577d3af513a",
+          "driverLogSha256": "aac717bb90fa5be3dc37b8fec9c744b464df7e8f163cdad0735b0e6a9779d4f6",
+          "buildLogSha256": "7df4205c0c51562b89366bcbf5bd010b7043727856fa0599921d826e30b09fb3",
+          "evidencePath": ".local/root-android-http-candidate/backend/.local/android-child-http-11793615978857912535/native-submit/host-result.json",
+          "hostResultSha256": "eec6da9590c563300fd628dce4ba0d15bc7e5a924841d66213323f0f2e7117a2"
+        },
+        {
+          "phase": "recover",
+          "pid": 13556,
+          "realHttp": true,
+          "mutationPosts": 2,
+          "statuses": [
+            "GET:access-context:200",
+            "GET:options:200",
+            "GET:access-submissions:200",
+            "GET:access-context:200",
+            "POST:access-submissions:409",
+            "POST:recovery:200"
+          ],
+          "cachedFirstState": "APPROVED_PENDING_DELIVERY",
+          "globalRecordsUnchanged": true,
+          "nativePreferencesPlaintextAbsent": true,
+          "systemEnforced": false,
+          "driverExitCode": 0,
+          "deliberateInFlightTermination": false,
+          "nativePidVerified": true,
+          "processStopped": true,
+          "installation": {
+            "uid": "10195",
+            "firstInstallTime": "2026-10-10 01:19:20"
+          },
+          "explicitPreservingInstallVerified": true,
+          "driverAttachedExistingApp": true,
+          "installedApkSha256": "f86aa1291ebd0f90cda193aad3f97548a15ff23e07f65c6ce3811feca0407f95",
+          "driverLogSha256": "016453d4194d1688cde3599358a1af0848a953f19ddbffa26bb66df737be5b8b",
+          "buildLogSha256": "bc2c2e2ad558aa24ca94396a2c6dc5418f2d8dc4f28fa2459cc389c928843b07",
+          "evidencePath": ".local/root-android-http-candidate/backend/.local/android-child-http-11793615978857912535/native-recover/host-result.json",
+          "hostResultSha256": "ffc5748e5fa31cbfd9d62c0b6d7cf9ddc16e1b5a3610c42385004ff33354cbf0"
+        },
+        {
+          "phase": "cancel",
+          "pid": 13816,
+          "committedStatus": 200,
+          "realResponseDrained": true,
+          "driverExitCode": 1,
+          "deliberateInFlightTermination": true,
+          "nativePidVerified": true,
+          "processStopped": true,
+          "installation": {
+            "uid": "10195",
+            "firstInstallTime": "2026-10-10 01:19:20"
+          },
+          "explicitPreservingInstallVerified": true,
+          "driverAttachedExistingApp": true,
+          "installedApkSha256": "841bfef8890dfdd640163072a1a8202b978ae097d2c1b5b3b091325fdcef59f3",
+          "driverLogSha256": "e3cbeeb122e48d182d9adf8268f45ee7773a369cfe3b2bac03470aaebf31fdcc",
+          "buildLogSha256": "eb11170651d8ee901c0a1a0e744c8147c140aaf907be8bb1e64d4fd474d78f62",
+          "evidencePath": ".local/root-android-http-candidate/backend/.local/android-child-http-11793615978857912535/native-cancel/host-result.json",
+          "hostResultSha256": "106316f6a80e5d282592572b39a4d41077858f81e4e6f13d5f6acb1109cbe7f0"
+        },
+        {
+          "phase": "cancel-recover",
+          "pid": 14032,
+          "realHttp": true,
+          "mutationPosts": 2,
+          "statuses": [
+            "GET:access-context:200",
+            "GET:options:200",
+            "GET:access-submissions:200",
+            "GET:access-context:200",
+            "POST:cancel:409",
+            "POST:cancel-recovery:200"
+          ],
+          "cachedFirstState": "EXPIRED",
+          "globalRecordsUnchanged": true,
+          "nativePreferencesPlaintextAbsent": true,
+          "systemEnforced": false,
+          "driverExitCode": 0,
+          "deliberateInFlightTermination": false,
+          "nativePidVerified": true,
+          "processStopped": true,
+          "installation": {
+            "uid": "10195",
+            "firstInstallTime": "2026-10-10 01:19:20"
+          },
+          "explicitPreservingInstallVerified": true,
+          "driverAttachedExistingApp": true,
+          "installedApkSha256": "1ad762a1218aecf34c918717a8222fec27cad7e83e65ac3ca04d79bf12fa4263",
+          "driverLogSha256": "fe098973d3df4c9837fe3e8d61f504538da2cd9344f88d8b8cd16f24935c0ad8",
+          "buildLogSha256": "20d512e65b9e2b2a69df58902689fab311a1228085709e97e9e5126cebc1e468",
+          "evidencePath": ".local/root-android-http-candidate/backend/.local/android-child-http-11793615978857912535/native-cancel-recover/host-result.json",
+          "hostResultSha256": "3c26e21863b8ee4903da8e2f6641b19475e51357bcd54cd6bbf54790f17b2782"
+        },
+        {
+          "phase": "expired",
+          "pid": 14215,
+          "realHttp": true,
+          "mutationPosts": 0,
+          "statuses": [
+            "GET:access-context:200",
+            "GET:options:200",
+            "GET:access-submissions:200"
+          ],
+          "cachedFirstState": "EXPIRED",
+          "globalRecordsUnchanged": true,
+          "nativePreferencesPlaintextAbsent": true,
+          "systemEnforced": false,
+          "driverExitCode": 0,
+          "deliberateInFlightTermination": false,
+          "nativePidVerified": true,
+          "processStopped": true,
+          "installation": {
+            "uid": "10195",
+            "firstInstallTime": "2026-10-10 01:19:20"
+          },
+          "explicitPreservingInstallVerified": true,
+          "driverAttachedExistingApp": true,
+          "installedApkSha256": "a86442fee743a4f1217f3dbf4fac547e011bf9e9590a241033cb1d2878756004",
+          "driverLogSha256": "8f2a2177c009c9c6ffa403ea3f845eca1fbc5e9e50e364456711883f5747bf6c",
+          "buildLogSha256": "e9197f552a040e8efe0ed34d884c09b95a31b66b59fe5f84fa3bce71975b6ed9",
+          "evidencePath": ".local/root-android-http-candidate/backend/.local/android-child-http-11793615978857912535/native-expired/host-result.json",
+          "hostResultSha256": "e7a1a193f8bbffc7cdfa6261a472cb259d5e80341dac7e141cde85217f4ad88b"
+        },
+        {
+          "phase": "offline",
+          "pid": 14447,
+          "realHttp": true,
+          "mutationPosts": 0,
+          "statuses": [],
+          "cachedFirstState": "EXPIRED",
+          "globalRecordsUnchanged": true,
+          "nativePreferencesPlaintextAbsent": true,
+          "systemEnforced": false,
+          "driverExitCode": 0,
+          "deliberateInFlightTermination": false,
+          "nativePidVerified": true,
+          "processStopped": true,
+          "installation": {
+            "uid": "10195",
+            "firstInstallTime": "2026-10-10 01:19:20"
+          },
+          "explicitPreservingInstallVerified": true,
+          "driverAttachedExistingApp": true,
+          "installedApkSha256": "6a94c4fa11e81320f5733df1f0274a87bb8d7b352df70388f93a514014cc8416",
+          "driverLogSha256": "53bd29271c21d422a8b4534ba466cf6952bda01be197a338211e1c83d81413db",
+          "buildLogSha256": "09fc907bbddf570680d582920898802147c1ac7db76dc2aa7ffaee472da533c1",
+          "evidencePath": ".local/root-android-http-candidate/backend/.local/android-child-http-11793615978857912535/native-offline/host-result.json",
+          "hostResultSha256": "6623900c824191b8f32e482d622a9f7328cc02256cf32ce9226846f3e4a11b9a"
+        },
+        {
+          "phase": "revoked",
+          "pid": 14641,
+          "realHttp": true,
+          "mutationPosts": 0,
+          "statuses": [
+            "GET:access-context:401"
+          ],
+          "cachedFirstState": "EXPIRED",
+          "globalRecordsUnchanged": true,
+          "nativePreferencesPlaintextAbsent": true,
+          "systemEnforced": false,
+          "driverExitCode": 0,
+          "deliberateInFlightTermination": false,
+          "nativePidVerified": true,
+          "processStopped": true,
+          "installation": {
+            "uid": "10195",
+            "firstInstallTime": "2026-10-10 01:19:20"
+          },
+          "explicitPreservingInstallVerified": true,
+          "driverAttachedExistingApp": true,
+          "installedApkSha256": "84a856c03dc2dac1f9bc04f6cfaa1b9818466b4b23d9e361bc6114da2f4a7acb",
+          "driverLogSha256": "f1229fd08cafa00635a60fea586f204050478fe3ce88acb6f287fc4bc895c14c",
+          "buildLogSha256": "6d209dcfa5564fbf87c96a49922bf0f9c79e38e6d1178c2aaca8c3b90709693d",
+          "evidencePath": ".local/root-android-http-candidate/backend/.local/android-child-http-11793615978857912535/native-revoked/host-result.json",
+          "hostResultSha256": "f868d89808bd6917351e6ccccdaa31a1484848f1788af31cb37484b0efc678ba"
+        },
+        {
+          "phase": "blocked",
+          "pid": 14886,
+          "realHttp": true,
+          "mutationPosts": 0,
+          "statuses": [],
+          "cachedFirstState": "EXPIRED",
+          "globalRecordsUnchanged": true,
+          "nativePreferencesPlaintextAbsent": true,
+          "systemEnforced": false,
+          "driverExitCode": 0,
+          "deliberateInFlightTermination": false,
+          "nativePidVerified": true,
+          "processStopped": true,
+          "installation": {
+            "uid": "10195",
+            "firstInstallTime": "2026-10-10 01:19:20"
+          },
+          "explicitPreservingInstallVerified": true,
+          "driverAttachedExistingApp": true,
+          "installedApkSha256": "34fea10d03916f634f1b2558e2eb3a26dc4740e2fc9e85906ac40ff286e4870e",
+          "driverLogSha256": "391141b7323f1b93a39f010ff26578e7fb4a16ebb406679d29b380c3de8d084d",
+          "buildLogSha256": "7df4205c0c51562b89366bcbf5bd010b7043727856fa0599921d826e30b09fb3",
+          "evidencePath": ".local/root-android-http-candidate/backend/.local/android-child-http-11793615978857912535/native-blocked/host-result.json",
+          "hostResultSha256": "89eefbde5cc24c17382f7f5662ea78198d2011c8dc8a468417bf6a5916342089"
+        },
+        {
+          "phase": "cleanup",
+          "pid": 15083,
+          "fixtureRemoved": true,
+          "globalRecordsUnchanged": true,
+          "systemEnforced": false,
+          "driverExitCode": 0,
+          "deliberateInFlightTermination": false,
+          "nativePidVerified": true,
+          "processStopped": true,
+          "installation": {
+            "uid": "10195",
+            "firstInstallTime": "2026-10-10 01:19:20"
+          },
+          "explicitPreservingInstallVerified": true,
+          "driverAttachedExistingApp": true,
+          "installedApkSha256": "8d62be3d2fff5345e87e70689d0fabceed18ca3824afa022baaf0e9885405799",
+          "driverLogSha256": "2d5abbd927bbd81910f288d2af941d2b314a09369283f089ea8daecfb41728a1",
+          "buildLogSha256": "49e5dc694d68dae810f9a5c1a37c6e9bfefbfae2b4470414c798f1ea644e99a6",
+          "evidencePath": ".local/root-android-http-candidate/backend/.local/android-child-http-11793615978857912535/native-cleanup/host-result.json",
+          "hostResultSha256": "eb5d8430acd3d76a91090a40793d310e8bd63382985e501a01a4225dcd63bd17"
+        }
+      ],
+      "privateHandoffFilesRemoved": true
+    }
+  ],
+  "database": {
+    "mysqlJourney": "passed",
+    "mysqlOrderedMigrations": 23,
+    "isolatedMysqlSchemaDropped": true,
+    "h2Journey": "passed"
+  },
+  "excludedIncident": {
+    "cause": "ADB failure during Flutter-managed install caused an automatic uninstall fallback in a dedicated synthetic debug installation",
+    "invalidMysqlAttemptExcluded": true,
+    "isolatedFailedSchemaDropped": true,
+    "mitigation": "explicit adb install -r with no retry/uninstall; official driver attaches existing paused application; final journeys rerun from the current verified installation identity"
+  },
+  "excludedClockIncident": {
+    "cause": "an earlier H2 run logged a ten-minute gap and thread-starvation/clock-leap warning; the grant naturally expired but the test incorrectly required pending state; scheduling versus clock-adjustment cause is not established",
+    "invalidH2AttemptExcluded": true,
+    "scopedCleanupCompleted": true,
+    "mitigation": "allow legitimate natural expiry during original-operation recovery; explicitly verify real 60-second deadline online and persisted EXPIRED offline; never extend the deadline or fake the server clock"
+  },
+  "residualForwardCleanup": {
+    "ownership": "exclusive AIManagerChildApi34 owned by this stage; both native journeys terminal",
+    "serial": "emulator-5562",
+    "exactMappingsRemoved": [
+      [
+        "emulator-5562",
+        "tcp:53862",
+        "tcp:34921"
+      ],
+      [
+        "emulator-5562",
+        "tcp:50676",
+        "tcp:33285"
+      ],
+      [
+        "emulator-5562",
+        "tcp:61405",
+        "tcp:46031"
+      ],
+      [
+        "emulator-5562",
+        "tcp:54075",
+        "tcp:36883"
+      ],
+      [
+        "emulator-5562",
+        "tcp:61602",
+        "tcp:36783"
+      ],
+      [
+        "emulator-5562",
+        "tcp:63056",
+        "tcp:34063"
+      ],
+      [
+        "emulator-5562",
+        "tcp:62637",
+        "tcp:33147"
+      ],
+      [
+        "emulator-5562",
+        "tcp:50702",
+        "tcp:39411"
+      ],
+      [
+        "emulator-5562",
+        "tcp:55166",
+        "tcp:40621"
+      ],
+      [
+        "emulator-5562",
+        "tcp:58750",
+        "tcp:38867"
+      ],
+      [
+        "emulator-5562",
+        "tcp:56851",
+        "tcp:45349"
+      ],
+      [
+        "emulator-5562",
+        "tcp:56591",
+        "tcp:34125"
+      ],
+      [
+        "emulator-5562",
+        "tcp:58637",
+        "tcp:42123"
+      ],
+      [
+        "emulator-5562",
+        "tcp:50706",
+        "tcp:37209"
+      ],
+      [
+        "emulator-5562",
+        "tcp:64438",
+        "tcp:35865"
+      ],
+      [
+        "emulator-5562",
+        "tcp:51890",
+        "tcp:38515"
+      ],
+      [
+        "emulator-5562",
+        "tcp:57834",
+        "tcp:38587"
+      ],
+      [
+        "emulator-5562",
+        "tcp:50852",
+        "tcp:40865"
+      ],
+      [
+        "emulator-5562",
+        "tcp:62050",
+        "tcp:44175"
+      ],
+      [
+        "emulator-5562",
+        "tcp:62537",
+        "tcp:44297"
+      ],
+      [
+        "emulator-5562",
+        "tcp:63668",
+        "tcp:33835"
+      ],
+      [
+        "emulator-5562",
+        "tcp:59237",
+        "tcp:42933"
+      ],
+      [
+        "emulator-5562",
+        "tcp:56054",
+        "tcp:39777"
+      ]
+    ],
+    "otherSerialMappingsUnchanged": true,
+    "noRemoveAllUsed": true,
+    "stageServicesUntouched": [
+      3000,
+      8081,
+      8082
+    ],
+    "preciseCreationSourceOfResidualMappingsNotEstablished": true
+  },
+  "residualForwardCleanupEvidenceSha256": "8f9e1f69726706b4167e3715c8c8532b5ebfde5635021e9bb869863b218d44b7",
+  "normalMainRestoration": {
+    "normalMainRestored": true,
+    "installationUnchanged": true,
+    "installation": {
+      "uid": "10195",
+      "firstInstallTime": "2026-10-10 01:19:20"
+    },
+    "installedApkSha256": "d46e5d91c63686096bdd6be73276b299e048a5faa09919785d9622b88bf707fa",
+    "normalUnconfiguredSemanticUiVerified": true,
+    "normalProcessStopped": true,
+    "ownedEmulatorStopped": true,
+    "uiXmlSha256": "1405a4e51aae12f83ce9fb1fc4e7f70fcaa90803a8c5abb231e2e4031cbb0fc8",
+    "screenCaptureUsed": false,
+    "windowProtection": "FLAG_SECURE retained",
+    "ownedPortMappingsRemoved": true,
+    "syntheticAccessContextKeysRemaining": 0
+  },
+  "restorationEvidenceSha256": "a191d3f1308fb12eee9a607001eda115f508d5073ee08abe270571ef07ebd79e",
+  "caseFieldSemantics": {
+    "driverExitCode": "1 for four deliberate in-flight interruptions; 0 for sixteen normally completed phases",
+    "realHttp": "real transport configured; offline/blocked/cleanup may make no successful network calls",
+    "statuses": "submission transport statuses only; enrollment and heartbeat use the separate real identity transport"
+  },
+  "realComponents": [
+    "production ChildApp registration and request UI",
+    "DeviceIdentityManager and ES256 enrollment proofs",
+    "real HTTP and device opaque authentication",
+    "production ChildSession and ChildSubmissionReceiver",
+    "Android Keystore/flutter_secure_storage and native persistence barrier",
+    "default encrypted Sembast file opener",
+    "Spring domain transactions and real H2/MySQL"
+  ],
+  "controlledFixtures": [
+    "adult OIDC/JWT and recent MFA",
+    "synthetic family/student/application metadata",
+    "dedicated per-run native identity namespace using the production SDK",
+    "expiry of exact ordinary idempotency records only",
+    "response completion held only after the real committed response is drained"
+  ],
+  "localLogs": [
+    {
+      "path": ".local/android-http-h2-final.log",
+      "sha256": "12000becc23d5aa4b0423935e6b8d536e9a06672a473bf5e8b28dd7ca5ffc693"
+    },
+    {
+      "path": ".local/android-http-mysql-final.log",
+      "sha256": "95e5edca28e7bf61fd49db61ee434e3c27425e01da7586cd1245a70fecd89e00"
+    },
+    {
+      "path": ".local/android-http-regression-backend-full.log",
+      "sha256": "3e9363a9e3f18ae1f5be365f75da754bd28d9f64c80d968f9523a43253452ac2"
+    },
+    {
+      "path": ".local/android-http-regression-analysis.log",
+      "sha256": "7b6fd910842da50f690c37476f2858791cf5eb0ac6307ee700e16847d170055d"
+    },
+    {
+      "path": ".local/android-http-regression-child-full.log",
+      "sha256": "5d2853dd941acfab4e532d62552657a466828d4802dae364d12f969a07ce60b3"
+    },
+    {
+      "path": ".local/android-http-sdk-analysis.log",
+      "sha256": "90e7613774af3529464575b0ab224afcba9aba6af6f6693e296e6cab87564ff1"
+    },
+    {
+      "path": ".local/android-http-sdk-full.log",
+      "sha256": "adc028b1abd776c96bee10dafbfaaa686cf6aa8f6f302debc8de2925bf88e5ea"
+    },
+    {
+      "path": ".local/android-http-host-guards.log",
+      "sha256": "0aac5a08e6dfe2e0b22fc1c69be0e65a3eef20f2a6db10db64f5f0a7db9fb58b"
+    },
+    {
+      "path": ".local/android-http-normal-apk.log",
+      "sha256": "08f0eeff9003e83dd1a685571bb8f7c9dc3b84a6677afcb766059cadbae71e45"
+    },
+    {
+      "path": ".local/android-http-install-red.log",
+      "sha256": "e2538584e7f0e626768fdc4e70428452115c0bc5c1705b287063419286ac5b99"
+    },
+    {
+      "path": ".local/android-http-adb-install-incident.log",
+      "sha256": "19c24ca04931ce29629e84f29feabf8e077122ea8f44dae22de87240a89da137"
+    },
+    {
+      "path": ".local/android-http-expiry-expectation-incident.log",
+      "sha256": "7f47365cbce48f425e0e4d4f64f20f70bb40fce06b776335a6c53eb6a8be51fa"
+    }
+  ],
+  "notVerifiedThisStage": [
+    "real adult OIDC/MFA and production HTTPS",
+    "entire production main composition (signed rules/access, observations and reports)",
+    "hardware-backed enrollment keys/attestation",
+    "physical devices, system reboot and background protection",
+    "Android TV or EMM/system enforcement",
+    "OceanBase compatibility and million-device capacity",
+    "partial enrollment cleanup fallback with the final source",
+    "parallel reporting candidate integration/deployment"
+  ]
+}
