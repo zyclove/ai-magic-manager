@@ -287,6 +287,6 @@ Google Play 对具监控功能的家长控制应用有明确的监控类别声�
 
 ## 10. 本次增强与现有实现的关系
 
-现有后端覆盖部分身份/租户、设备注册、应用/时间/策略配置，以及签名配置交付、通知适配层和[云端访问审批](access-request-contract.md)。当前 CONFIGURE_ONLY 不是强管控，管理员批准也不是实际解锁；真实 MySQL/OceanBase、Broker、EMM、Flutter、Android/TV、支付与容量仍有待实现或验证的工作。
+截至 2026-10-10，仓库已具备身份/租户、设备注册、应用/时间/策略配置、签名交付、访问审批、额度、报表和部分 Flutter 管理/儿童界面；若干后端旅程已在独立 MySQL 临时库验证。受管 Android 连接器目前只有可替换接口和本地验证，没有合规 EMM/AMAPI 准入；家庭设备的 `CONFIGURE_ONLY` 与用量观测不能等同系统级强制执行，管理员批准也不能自动解锁所有应用。商业权益账本为核验事实预留只读展示，尚无正式产品目录、支付/合同核验和购买入口。Android/TV 真机模式矩阵、系统策略执行、Broker/高可用、OceanBase 认证、支付对账及百万设备容量仍需逐项取得发布证据；详细状态以[实施记录](implementation-progress.md)及[商业权益账本](commercial-entitlement-ledger.md)为准。
 
 本文新增的是完整产品与运营实施契约，不是已完成状态声明。所有功能继续保留在总目标；当前事实和下一步见[实施记录](implementation-progress.md)。数据库的表模型、事务、容量、认证与迁移操作进一步见[数据库实施与认证规格](database-implementation-and-certification.md)。

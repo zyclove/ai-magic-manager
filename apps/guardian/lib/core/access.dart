@@ -16,6 +16,9 @@ bool canOpenSection(String role, String section) {
   if (section == 'ownership') {
     return ['OWNER', 'GUARDIAN', 'ORG_ADMIN', 'AUDITOR'].contains(role);
   }
+  if (section == 'commercial') {
+    return ['OWNER', 'GUARDIAN', 'ORG_ADMIN', 'AUDITOR'].contains(role);
+  }
   if (section == 'overview' || section == 'settings') return true;
   if (role == 'OWNER' || role == 'ORG_ADMIN') return true;
   if (role == 'GUARDIAN') return section != 'members';
@@ -58,6 +61,7 @@ String trustedReturnPath(String? value) => const {
       '/audit',
       '/exports',
       '/reports',
+      '/commercial',
       '/settings',
       '/support'
     }.contains(value)

@@ -26,6 +26,7 @@ import 'quota_page.dart';
 import 'ownership_page.dart';
 import 'notifications_page.dart';
 import 'support_page.dart';
+import 'commercial_account_page.dart';
 
 class ConsolePages extends StatelessWidget {
   final String section;
@@ -98,6 +99,10 @@ class ConsolePages extends StatelessWidget {
     if (section == 'classes') return ClassesPage(session: s);
     if (section == 'reports') {
       return UsageReportsPage(key: ValueKey('${s.root}-${s.role}'), session: s);
+    }
+    if (section == 'commercial') {
+      return CommercialAccountPage(
+          key: ValueKey('${s.root}-${s.role}'), session: s);
     }
     if (section == 'notifications') {
       return NotificationsPage(
@@ -597,8 +602,9 @@ class ConsoleActions {
             }, closeOnSuccess: false),
           if (s.canWrite && r['state'] == 'ACTIVE')
             DetailAction('限时支持授权', (ctx) async {
-              if (s.root != workspace)
+              if (s.root != workspace) {
                 throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+              }
               await openSupportGrant(ctx, s, r);
             }, closeOnSuccess: false),
           if (canReadObservation(s.role))

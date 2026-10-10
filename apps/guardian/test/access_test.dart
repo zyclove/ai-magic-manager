@@ -19,6 +19,16 @@ void main() {
     expect(canOpenSection('GUARDIAN', 'members'), isFalse);
     expect(canOpenSection('OWNER', 'members'), isTrue);
   });
+  test('commercial account is read only for adult administrators and auditors',
+      () {
+    for (final role in ['OWNER', 'GUARDIAN', 'ORG_ADMIN', 'AUDITOR']) {
+      expect(canOpenSection(role, 'commercial'), isTrue, reason: role);
+    }
+    for (final role in ['CHILD', 'TEACHER', '']) {
+      expect(canOpenSection(role, 'commercial'), isFalse, reason: role);
+    }
+    expect(trustedReturnPath('/commercial'), '/commercial');
+  });
   test('late workspace responses and logout cannot restore stale selection',
       () {
     final selections = SelectionGeneration();

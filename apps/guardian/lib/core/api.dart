@@ -18,6 +18,7 @@ class ApiFailure implements Exception {
   String get message => switch (code) {
         'INVALID_REPORT_JOB_SELECTION' => '请选择 1–200 台设备、有效时区和不超过 32 天的时间范围。',
         'INVALID_REPORT_JOB_RESPONSE' => '任务或结果与所选设备不一致，已隐藏结果。请刷新任务后重试。',
+        'INVALID_COMMERCIAL_RESPONSE' => '商业权益数据校验未通过，已隐藏结果。请刷新后重试。',
         'REPORT_JOB_NOT_READY' => '这份报表暂时无法查看。请刷新任务状态，必要时重新生成。',
         'REPORT_ARTIFACT_UNAVAILABLE' ||
         'REPORT_JOB_UNAVAILABLE' =>

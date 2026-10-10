@@ -162,6 +162,8 @@ Files: reporting/retention/support 域，导出后台任务，Flutter 报表/诊
 
 Files: billing/entitlement/productcatalog 域、支付适配器、管理台商业页面。
 
+阶段实现：已新增 [商业权益账本](commercial-entitlement-ledger.md) 的来源版本、退款/撤销重算、租户只读接口与 V28 迁移；当前无核验支付渠道、已发布目录或购买入口，不能将这一阶段视为 COM-01～06 完成。
+
 - [ ] 实现 COM-01～06：目录、合同、订阅、权益、验签对账、退款/取消、降级、私有许可与客服。
 - [ ] 真实渠道沙箱验证；区域资格与售价由正式配置，欠费不能触发设备擦除/秘密放宽。
 
