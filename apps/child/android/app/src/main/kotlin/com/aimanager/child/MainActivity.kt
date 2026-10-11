@@ -19,11 +19,16 @@ import java.util.concurrent.Executors
 /** Platform glue only. Encryption/key management remain in the vetted plugin.
  * No device-owner, accessibility, VPN, app suspension or admin role is claimed. */
 class MainActivity: FlutterActivity() {
-    private val storageExecutor = Executors.newSingleThreadExecutor()
+    // Flutter can detach and reattach an engine to the same Activity. A closed
+    // executor must never be reused for a later durability barrier.
+    private var storageExecutor = Executors.newSingleThreadExecutor()
     private val mainHandler = Handler(Looper.getMainLooper())
     private var observationHost: ObservationHost? = null
     override fun configureFlutterEngine(engine: FlutterEngine) {
         super.configureFlutterEngine(engine)
+        if (storageExecutor.isShutdown) {
+            storageExecutor = Executors.newSingleThreadExecutor()
+        }
         window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         observationHost = ObservationHost(this)
         AndroidObservationApi.setUp(engine.dartExecutor.binaryMessenger, observationHost)
