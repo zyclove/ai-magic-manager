@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.Clock;
+import java.util.HashSet;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.Locale;
@@ -290,6 +291,92 @@ class DeviceGroupService {
         });
   }
 
+  /** Atomically adds an explicit, bounded device selection to one institution group. */
+  @Transactional(timeout = 15)
+  Group addMembers(
+      String tenant,
+      Jwt actor,
+      String groupId,
+      List<DeviceTarget> targets,
+      String etag,
+      String key) {
+    canWrite(tenant, actor);
+    long expected = ResourceVersions.require(etag);
+    if (key == null) throw DomainException.invalid("IDEMPOTENCY_KEY_REQUIRED");
+    if (targets == null || targets.isEmpty() || targets.size() > 50
+        || targets.stream().anyMatch(t -> t == null || t.deviceId() == null
+            || t.registrationId() == null)
+        || new HashSet<>(targets.stream().map(DeviceTarget::deviceId).toList()).size()
+            != targets.size()) {
+      throw DomainException.invalid("INVALID_DEVICE_GROUP_BATCH");
+    }
+    var ordered = targets.stream().sorted(java.util.Comparator.comparing(DeviceTarget::deviceId)).toList();
+    return idempotency.execute(
+        tenant,
+        actor.getSubject(),
+        "device.group.members.add",
+        key,
+        Map.of("group", groupId, "targets", ordered, "version", expected),
+        Group.class,
+        () -> {
+          Group current = read(tenant, groupId, true);
+          ResourceVersions.check(expected, current.version());
+          active(current);
+          var additions = new java.util.ArrayList<DeviceTarget>();
+          for (var target : ordered) {
+            var device = db.queryForList(
+                "SELECT d.registration_id,d.state,s.archived_at FROM devices d JOIN subjects s"
+                    + " ON s.tenant_id=d.tenant_id AND s.id=d.subject_id"
+                    + " WHERE d.tenant_id=? AND d.id=? FOR UPDATE",
+                tenant,
+                target.deviceId());
+            if (device.isEmpty()
+                || !target.registrationId().equals(device.get(0).get("registration_id"))
+                || !"ACTIVE".equals(device.get(0).get("state"))
+                || device.get(0).get("archived_at") != null) {
+              throw new DomainException(HttpStatus.CONFLICT, "DEVICE_GROUP_DEVICE_UNAVAILABLE");
+            }
+            var existing = db.queryForList(
+                "SELECT registration_id FROM device_group_members WHERE tenant_id=?"
+                    + " AND group_id=? AND device_id=?",
+                String.class,
+                tenant,
+                groupId,
+                target.deviceId());
+            if (!existing.isEmpty()) {
+              if (!target.registrationId().equals(existing.get(0))) {
+                throw new DomainException(HttpStatus.CONFLICT, "DEVICE_GROUP_STALE_MEMBERSHIP");
+              }
+            } else {
+              additions.add(target);
+            }
+          }
+          if (current.deviceCount() + additions.size() > MAX_MEMBERS) {
+            throw new DomainException(HttpStatus.CONFLICT, "DEVICE_GROUP_CAPACITY_REACHED");
+          }
+          if (additions.isEmpty()) return current;
+          long now = clock.millis();
+          for (var target : additions) {
+            db.update(
+                "INSERT INTO device_group_members(tenant_id,group_id,device_id,registration_id,added_at)"
+                    + " VALUES(?,?,?,?,?)",
+                tenant,
+                groupId,
+                target.deviceId(),
+                target.registrationId(),
+                now);
+            audit.record(tenant, actor.getSubject(), "DEVICE_GROUP_MEMBER_ADDED",
+                groupId + "/" + target.deviceId());
+          }
+          db.update(
+              "UPDATE device_groups SET version=version+1,updated_at=? WHERE tenant_id=? AND id=?",
+              now,
+              tenant,
+              groupId);
+          return read(tenant, groupId, true);
+        });
+  }
+
   @Transactional(readOnly = true, timeout = 10)
   ItemPage<Member> members(String tenant, String actor, String id, int limit, String cursor) {
     canRead(tenant, actor);
@@ -346,4 +433,6 @@ class DeviceGroupService {
 
   record Member(String deviceId, String registrationId, String displayName,
       String platform, String state, long addedAt) {}
+
+  record DeviceTarget(String deviceId, String registrationId) {}
 }

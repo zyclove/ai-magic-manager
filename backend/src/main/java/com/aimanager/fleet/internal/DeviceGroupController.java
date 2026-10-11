@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -104,6 +105,21 @@ class DeviceGroupController {
         body.registrationId(), true, etag, key), HttpStatus.OK);
   }
 
+  /** One transaction and one group revision for an explicit list of current registrations. */
+  @PostMapping("/{groupId}/devices/batches")
+  ResponseEntity<DeviceGroupService.Group> addBatch(
+      @AuthenticationPrincipal Jwt actor,
+      @PathVariable String tenantId,
+      @PathVariable String groupId,
+      @Valid @RequestBody Batch body,
+      @RequestHeader(name = "If-Match", required = false) String etag,
+      @RequestHeader(name = "Idempotency-Key", required = false) String key) {
+    var targets = body.devices().stream()
+        .map(d -> new DeviceGroupService.DeviceTarget(d.deviceId(), d.registrationId()))
+        .toList();
+    return response(groups.addMembers(tenantId, actor, groupId, targets, etag, key), HttpStatus.OK);
+  }
+
   @DeleteMapping("/{groupId}/devices/{deviceId}")
   ResponseEntity<DeviceGroupService.Group> remove(
       @AuthenticationPrincipal Jwt actor,
@@ -127,4 +143,6 @@ class DeviceGroupController {
   record Device(
       @NotNull @Pattern(regexp = UUID) String deviceId,
       @NotNull @Pattern(regexp = UUID) String registrationId) {}
+
+  record Batch(@NotNull @Size(min = 1, max = 50) List<@NotNull @Valid Device> devices) {}
 }

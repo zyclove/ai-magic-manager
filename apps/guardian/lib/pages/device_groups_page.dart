@@ -4,6 +4,7 @@ import '../core/labels.dart';
 import '../core/session.dart';
 import '../ui/class_action_dialog.dart';
 import '../ui/design.dart';
+import '../ui/device_group_batch_picker.dart';
 import '../ui/resource_page.dart';
 
 /// Institution inventory groups. Membership is never presented as a policy receipt.
@@ -290,6 +291,46 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     if (current && result != null) await open(group['id'] as String);
   }
 
+  Future<void> addDevices() async {
+    if (!current || detail == null) return;
+    final group = Map<String, dynamic>.of(detail!);
+    final chosen = await showDialog<List<Json>>(
+        context: context,
+        builder: (ctx) {
+          dialog = ModalRoute.of(ctx);
+          return DeviceGroupBatchPicker(
+              api: widget.session.api, root: root, current: () => current);
+        });
+    dialog = null;
+    if (!current ||
+        chosen == null ||
+        chosen.isEmpty ||
+        selectedId != group['id']) return;
+    final key = requestId();
+    final names = chosen.take(3).map((row) => row['displayName']).join('、');
+    final suffix = chosen.length > 3 ? '等' : '';
+    final result = await confirm(
+        title: '批量加入设备组',
+        description:
+            '将 $names$suffix ${chosen.length} 台设备加入“${group['name']}”。整批会以当前组版本核对，任一设备注册周期或状态变化都不会提交。设备组关联不改变设备规则。',
+        submit: '确认加入 ${chosen.length} 台',
+        operation: () => widget.session.api.send(
+              'POST',
+              '$root/device-groups/${group['id']}/devices/batches',
+              body: {
+                'devices': chosen
+                    .map((row) => {
+                          'deviceId': row['id'],
+                          'registrationId': row['registrationId']
+                        })
+                    .toList()
+              },
+              version: group['version'] as int,
+              key: key,
+            ));
+    if (current && result != null) await open(group['id'] as String);
+  }
+
   Future<void> removeDevice(Json member) async {
     if (!current || detail == null) return;
     final group = Map<String, dynamic>.of(detail!);
@@ -424,6 +465,10 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
                   onPressed: addDevice,
                   icon: const Icon(Icons.add),
                   label: const Text('加入设备')),
+              OutlinedButton.icon(
+                  onPressed: addDevices,
+                  icon: const Icon(Icons.playlist_add_check),
+                  label: const Text('批量加入')),
               OutlinedButton.icon(
                   onPressed: rename,
                   icon: const Icon(Icons.edit_outlined),
