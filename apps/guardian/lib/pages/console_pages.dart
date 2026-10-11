@@ -29,6 +29,7 @@ import 'notifications_page.dart';
 import 'support_page.dart';
 import 'commercial_account_page.dart';
 import 'commercial_catalog_page.dart';
+import 'contracts_page.dart';
 
 class ConsolePages extends StatelessWidget {
   final String section;
@@ -43,6 +44,14 @@ class ConsolePages extends StatelessWidget {
           ? CommercialCatalogPage(
               key: ValueKey(s.profile?['subject']), session: s)
           : const Panel(child: EmptyView('没有平台目录权限', '此功能仅向平台运营与独立审批角色开放。'));
+    }
+    if (section == 'contracts') {
+      return s.canOpen('contracts')
+          ? ContractsPage(
+              key: ValueKey('platform-contracts-${s.profile?['subject']}'),
+              session: s,
+              platform: true)
+          : const Panel(child: EmptyView('没有合同审核权限', '此功能仅向平台合同运营与独立审批角色开放。'));
     }
     if (s.tenant == null) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -62,6 +71,12 @@ class ConsolePages extends StatelessWidget {
               icon: const Icon(Icons.inventory_2_outlined),
               label: const Text('打开平台产品目录')),
         if (s.canOpen('catalog')) const SizedBox(height: 12),
+        if (s.canOpen('contracts'))
+          OutlinedButton.icon(
+              onPressed: () => context.go('/contracts'),
+              icon: const Icon(Icons.description_outlined),
+              label: const Text('打开平台机构合同')),
+        if (s.canOpen('contracts')) const SizedBox(height: 12),
         OutlinedButton(
             onPressed: actions.acceptInvitation,
             child: const Text('我有邀请，加入工作空间'))
@@ -117,6 +132,12 @@ class ConsolePages extends StatelessWidget {
     if (section == 'commercial') {
       return CommercialAccountPage(
           key: ValueKey('${s.root}-${s.role}'), session: s);
+    }
+    if (section == 'institution-contracts') {
+      return ContractsPage(
+          key: ValueKey('institution-contracts-${s.root}-${s.role}'),
+          session: s,
+          platform: false);
     }
     if (section == 'notifications') {
       return NotificationsPage(

@@ -5,6 +5,7 @@ import com.aimanager.shared.DomainException;
 import com.aimanager.shared.ItemPage;
 import com.aimanager.shared.ResourceVersions;
 import java.net.URI;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,14 +28,26 @@ class CommercialContractController {
   private final CommercialContractService contracts;
   private final ContractEvidenceVerifier verifier;
   private final RecentAuthentication recent;
+  private final boolean evidenceEnabled;
 
   CommercialContractController(
       CommercialContractService contracts,
       ContractEvidenceVerifier verifier,
-      RecentAuthentication recent) {
+      RecentAuthentication recent,
+      @Value("${manager.contract.evidence-enabled:false}") boolean evidenceEnabled) {
     this.contracts = contracts;
     this.verifier = verifier;
     this.recent = recent;
+    this.evidenceEnabled = evidenceEnabled;
+  }
+
+  @GetMapping("/capabilities")
+  ResponseEntity<ContractCapabilities> capabilities(Authentication authentication) {
+    CommercialContractService.requireEither(authentication);
+    return ResponseEntity.ok()
+        .cacheControl(CacheControl.noStore())
+        .header("Vary", "Authorization")
+        .body(new ContractCapabilities(evidenceEnabled, "CN", "CONTRACT", true, true, true));
   }
 
   @PostMapping
@@ -108,6 +121,14 @@ class CommercialContractController {
   record CreateInput(String id, String evidence) {}
 
   record ActionInput(String reason) {}
+
+  record ContractCapabilities(
+      boolean submissionEnabled,
+      String region,
+      String channel,
+      boolean recentAuthenticationRequired,
+      boolean independentApprovalRequired,
+      boolean customerAcceptanceRequired) {}
 
   private static String reason(ActionInput input) {
     return input == null ? null : input.reason();

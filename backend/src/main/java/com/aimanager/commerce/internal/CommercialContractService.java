@@ -70,7 +70,7 @@ class CommercialContractService {
     }
   }
 
-  private static void requireEither(Authentication authentication) {
+  static void requireEither(Authentication authentication) {
     if (authentication == null
         || authentication.getAuthorities().stream()
             .noneMatch(

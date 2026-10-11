@@ -286,6 +286,19 @@ class CommercialContractJourneyTest {
         .isZero();
   }
 
+  @Test
+  void capabilitiesHideUnconfiguredSubmissionAndRequirePlatformRole() throws Exception {
+    mvc.perform(get(CONTRACTS + "/capabilities").with(actor(owner, "SCOPE_tenant:create", false)))
+        .andExpect(status().isForbidden());
+    mvc.perform(
+            get(CONTRACTS + "/capabilities")
+                .with(actor("contract-author", "SCOPE_contract:manage", false)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.submissionEnabled").value(false))
+        .andExpect(jsonPath("$.independentApprovalRequired").value(true))
+        .andExpect(jsonPath("$.customerAcceptanceRequired").value(true));
+  }
+
   private void createReview(String id, String token) throws Exception {
     mvc.perform(
             post(CONTRACTS)

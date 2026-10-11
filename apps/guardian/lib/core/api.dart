@@ -19,6 +19,18 @@ class ApiFailure implements Exception {
         'INVALID_REPORT_JOB_SELECTION' => '请选择 1–200 台设备、有效时区和不超过 32 天的时间范围。',
         'INVALID_REPORT_JOB_RESPONSE' => '任务或结果与所选设备不一致，已隐藏结果。请刷新任务后重试。',
         'INVALID_COMMERCIAL_RESPONSE' => '商业权益数据校验未通过，已隐藏结果。请刷新后重试。',
+        'INVALID_CONTRACT_RESPONSE' => '合同数据校验未通过，已隐藏结果。请刷新后重试。',
+        'CONTRACT_PROVIDER_UNAVAILABLE' => '机构合同证据提供方尚未启用，暂不能提交新合同。',
+        'INVALID_CONTRACT_EVIDENCE' => '签名断言无效、过期或与可信来源不一致，请重新从签发方获取。',
+        'INVALID_CONTRACT_REASON' => '请填写 5–500 字的审核原因。',
+        'CONTRACT_REVIEW_EXISTS' => '同一合同来源版本或证据已提交，请刷新列表查看。',
+        'CONTRACT_NOT_PENDING' ||
+        'CONTRACT_NOT_AWAITING_CUSTOMER' =>
+          '合同状态已变化，请刷新后再操作。',
+        'CONTRACT_OFFER_MISMATCH' ||
+        'CONTRACT_NOT_ACTIVE' =>
+          '合同与当前报价或有效期不匹配，请联系平台核实。',
+        'CONTRACT_SOURCE_NOT_ACTIVE' => '撤销目标不是当前生效的合同来源，请刷新后核实。',
         'REPORT_JOB_NOT_READY' => '这份报表暂时无法查看。请刷新任务状态，必要时重新生成。',
         'REPORT_ARTIFACT_UNAVAILABLE' ||
         'REPORT_JOB_UNAVAILABLE' =>

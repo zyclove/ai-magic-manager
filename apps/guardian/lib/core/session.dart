@@ -28,12 +28,27 @@ class Session extends ChangeNotifier {
   bool get canManage => ['OWNER', 'ORG_ADMIN'].contains(role);
   bool get canManageCatalog => profile?['canManageCatalog'] == true;
   bool get canApproveCatalog => profile?['canApproveCatalog'] == true;
-  bool canOpen(String section) => section == 'support'
-      ? authenticated && (canWrite || profile?['canCreateTenant'] == true)
-      : section == 'catalog'
-          ? authenticated && (canManageCatalog || canApproveCatalog)
-          : (section != 'classes' || tenant?['kind'] == 'ORGANIZATION') &&
-              canOpenSection(role, section);
+  bool get canManageContracts => profile?['canManageContracts'] == true;
+  bool get canApproveContracts => profile?['canApproveContracts'] == true;
+  bool canOpen(String section) {
+    if (section == 'support') {
+      return authenticated && (canWrite || profile?['canCreateTenant'] == true);
+    }
+    if (section == 'catalog') {
+      return authenticated && (canManageCatalog || canApproveCatalog);
+    }
+    if (section == 'contracts') {
+      return authenticated && (canManageContracts || canApproveContracts);
+    }
+    if (section == 'institution-contracts') {
+      return authenticated &&
+          tenant?['kind'] == 'ORGANIZATION' &&
+          ['OWNER', 'ORG_ADMIN', 'AUDITOR'].contains(role);
+    }
+    return (section != 'classes' || tenant?['kind'] == 'ORGANIZATION') &&
+        canOpenSection(role, section);
+  }
+
   String get root => '/tenants/${tenant!['id']}';
   String get displayName =>
       profile?['name'] as String? ?? profile?['email'] as String? ?? '管理员';
