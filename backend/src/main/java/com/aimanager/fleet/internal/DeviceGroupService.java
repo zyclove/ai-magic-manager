@@ -36,6 +36,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 class DeviceGroupService implements DeviceGroupPolicyAccess {
   private static final int MAX_MEMBERS = 5000;
+  private static final String CURRENT_MEMBER =
+      "s.archived_at IS NULL AND m.registration_id=d.registration_id AND d.state='ACTIVE'";
+  private static final String STALE_MEMBER =
+      "s.archived_at IS NULL AND m.registration_id<>d.registration_id";
+  private static final String INACTIVE_MEMBER =
+      "s.archived_at IS NULL AND m.registration_id=d.registration_id AND d.state<>'ACTIVE'";
+  private static final String ARCHIVED_PROFILE_MEMBER = "s.archived_at IS NOT NULL";
   private final JdbcTemplate db;
   private final TenantAccess access;
   private final RecentAuthentication recent;
@@ -447,10 +454,19 @@ class DeviceGroupService implements DeviceGroupPolicyAccess {
   }
 
   @Transactional(readOnly = true, timeout = 10)
-  ItemPage<Member> members(String tenant, String actor, String id, int limit, String cursor) {
+  ItemPage<Member> members(
+      String tenant, String actor, String id, int limit, String cursor, String status) {
     canRead(tenant, actor);
     read(tenant, id, false);
     ItemPage.validate(limit, cursor);
+    String filter = switch (status == null ? "" : status) {
+      case "" -> "";
+      case "CURRENT" -> " AND " + CURRENT_MEMBER;
+      case "STALE_REGISTRATION" -> " AND " + STALE_MEMBER;
+      case "DEVICE_INACTIVE" -> " AND " + INACTIVE_MEMBER;
+      case "PROFILE_ARCHIVED" -> " AND " + ARCHIVED_PROFILE_MEMBER;
+      default -> throw DomainException.invalid("INVALID_DEVICE_GROUP_STATUS");
+    };
     return ItemPage.from(
         db.query(
             "SELECT m.device_id,m.registration_id,m.added_at,d.display_name,d.platform,d.state,"
@@ -458,7 +474,7 @@ class DeviceGroupService implements DeviceGroupPolicyAccess {
                 + " FROM device_group_members m JOIN devices d ON d.tenant_id=m.tenant_id"
                 + " AND d.id=m.device_id JOIN subjects s ON s.tenant_id=d.tenant_id"
                 + " AND s.id=d.subject_id WHERE m.tenant_id=? AND m.group_id=? AND m.device_id>?"
-                + " ORDER BY m.device_id LIMIT ?",
+                + filter + " ORDER BY m.device_id LIMIT ?",
             (r, n) -> new Member(
                 r.getString("device_id"),
                 r.getString("registration_id"),
@@ -476,6 +492,33 @@ class DeviceGroupService implements DeviceGroupPolicyAccess {
             limit + 1),
         limit,
         Member::deviceId);
+  }
+
+  /** Counts every group member, including expired links; this is not policy execution telemetry. */
+  @Transactional(readOnly = true, timeout = 10)
+  Summary summary(String tenant, String actor, String id) {
+    canRead(tenant, actor);
+    Group group = read(tenant, id, false);
+    Summary summary = db.queryForObject(
+        "SELECT COUNT(*) total_count,"
+            + " SUM(CASE WHEN " + CURRENT_MEMBER + " THEN 1 ELSE 0 END) current_count,"
+            + " SUM(CASE WHEN " + STALE_MEMBER + " THEN 1 ELSE 0 END) stale_count,"
+            + " SUM(CASE WHEN " + INACTIVE_MEMBER + " THEN 1 ELSE 0 END) inactive_count,"
+            + " SUM(CASE WHEN " + ARCHIVED_PROFILE_MEMBER + " THEN 1 ELSE 0 END) archived_count"
+            + " FROM device_group_members m JOIN devices d ON d.tenant_id=m.tenant_id"
+            + " AND d.id=m.device_id JOIN subjects s ON s.tenant_id=d.tenant_id"
+            + " AND s.id=d.subject_id WHERE m.tenant_id=? AND m.group_id=?",
+        (r, n) -> new Summary(id, group.version(), r.getInt("total_count"),
+            r.getInt("current_count"), r.getInt("stale_count"),
+            r.getInt("inactive_count"), r.getInt("archived_count")),
+        tenant,
+        id);
+    if (summary == null || summary.total() != group.deviceCount()
+        || summary.current() + summary.staleRegistration() + summary.deviceInactive()
+            + summary.profileArchived() != summary.total()) {
+      throw new DomainException(HttpStatus.SERVICE_UNAVAILABLE, "DEVICE_GROUP_SUMMARY_INCONSISTENT");
+    }
+    return summary;
   }
 
   /** Hold the group row while policy resolves the selected devices and their registration facts. */
@@ -538,6 +581,9 @@ class DeviceGroupService implements DeviceGroupPolicyAccess {
 
   record Member(String deviceId, String registrationId, String displayName,
       String platform, String state, String membershipStatus, long addedAt) {}
+
+  record Summary(String groupId, long version, int total, int current,
+      int staleRegistration, int deviceInactive, int profileArchived) {}
 
   record DeviceTarget(String deviceId, String registrationId) {}
 }

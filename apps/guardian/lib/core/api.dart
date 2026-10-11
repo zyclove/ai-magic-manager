@@ -83,6 +83,8 @@ class ApiFailure implements Exception {
         'DEVICE_GROUP_DEVICE_UNAVAILABLE' => '设备未激活或注册周期已变化，请刷新设备后重新选择。',
         'DEVICE_GROUP_STALE_MEMBERSHIP' => '设备组中的注册周期已变化，请刷新成员后核对。',
         'DEVICE_GROUP_MEMBER_UNAVAILABLE' => '所选设备已不在该组，请刷新成员列表后重新选择。',
+        'INVALID_DEVICE_GROUP_STATUS' => '成员状态筛选无效，请刷新页面后重新选择。',
+        'DEVICE_GROUP_SUMMARY_INCONSISTENT' => '设备组统计暂时无法核对，请稍后刷新。',
         'DEVICE_GROUP_CAPACITY_REACHED' => '设备组已达到 5000 台上限，请使用其他设备组。',
         'INVALID_DEVICE_GROUP_BATCH' => '单次请选择 1–50 台不同的设备，并核对当前注册身份。',
         'POLICY_GROUP_SELECTION_UNAVAILABLE' =>

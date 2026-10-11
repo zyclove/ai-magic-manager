@@ -89,8 +89,18 @@ class DeviceGroupController {
       @PathVariable String tenantId,
       @PathVariable String groupId,
       @RequestParam(defaultValue = "50") int limit,
-      @RequestParam(required = false) String cursor) {
-    return groups.members(tenantId, actor.getSubject(), groupId, limit, cursor);
+      @RequestParam(required = false) String cursor,
+      @RequestParam(required = false) String status) {
+    return groups.members(tenantId, actor.getSubject(), groupId, limit, cursor, status);
+  }
+
+  @GetMapping("/{groupId}/summary")
+  ResponseEntity<DeviceGroupService.Summary> summary(
+      @AuthenticationPrincipal Jwt actor,
+      @PathVariable String tenantId,
+      @PathVariable String groupId) {
+    var summary = groups.summary(tenantId, actor.getSubject(), groupId);
+    return ResponseEntity.ok().eTag(ResourceVersions.tag(summary.version())).body(summary);
   }
 
   @PostMapping("/{groupId}/devices")

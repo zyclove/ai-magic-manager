@@ -19,8 +19,8 @@ class DeviceGroupsPage extends StatefulWidget {
 class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
   late final String root, actor, role;
   final listKey = GlobalKey<ResourcePageState>();
-  String? selectedId, nextMemberCursor;
-  Json? detail;
+  String? selectedId, nextMemberCursor, memberFilter;
+  Json? detail, summary;
   List<Json> members = const [];
   Object? error;
   bool loading = false, loadingMore = false, archived = false;
@@ -52,8 +52,10 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
       if (mounted) {
         setState(() {
           detail = null;
+          summary = null;
           members = const [];
           selectedId = null;
+          memberFilter = null;
           error = null;
         });
       }
@@ -117,12 +119,45 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     return List.unmodifiable(rows);
   }
 
+  Json validSummary(dynamic value, Json group) {
+    if (value is! Json ||
+        value['groupId'] != group['id'] ||
+        value['version'] != group['version'] ||
+        value['total'] != group['deviceCount'] ||
+        value['total'] is! int ||
+        value['total'] < 0 ||
+        value['total'] > 5000) {
+      throw const ApiFailure(502, 'INVALID_DEVICE_GROUP_RESPONSE');
+    }
+    var counted = 0;
+    for (final key in [
+      'current',
+      'staleRegistration',
+      'deviceInactive',
+      'profileArchived'
+    ]) {
+      if (value[key] is! int || value[key] < 0 || value[key] > value['total']) {
+        throw const ApiFailure(502, 'INVALID_DEVICE_GROUP_RESPONSE');
+      }
+      counted += value[key] as int;
+    }
+    if (counted != value['total']) {
+      throw const ApiFailure(502, 'INVALID_DEVICE_GROUP_RESPONSE');
+    }
+    return value;
+  }
+
+  String membersPath(String id) =>
+      '$root/device-groups/$id/devices${memberFilter == null ? '' : '?status=$memberFilter'}';
+
   Future<void> open(String id) async {
     if (!current) return;
     final revision = ++generation;
+    if (selectedId != id) memberFilter = null;
     setState(() {
       selectedId = id;
       detail = null;
+      summary = null;
       members = const [];
       nextMemberCursor = null;
       error = null;
@@ -131,14 +166,17 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     try {
       final values = await Future.wait([
         widget.session.api.send('GET', '$root/device-groups/$id'),
-        widget.session.api.page('$root/device-groups/$id/devices')
+        widget.session.api.page(membersPath(id)),
+        widget.session.api.send('GET', '$root/device-groups/$id/summary')
       ]);
       if (!current || revision != generation) return;
       final group = validGroup(values[0], id);
       final page = values[1] as PageResult;
       final rows = validMembers(page.items);
+      final health = validSummary(values[2], group);
       setState(() {
         detail = group;
+        summary = health;
         members = rows;
         nextMemberCursor = page.nextCursor;
       });
@@ -155,8 +193,8 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     final revision = generation;
     setState(() => loadingMore = true);
     try {
-      final page = await widget.session.api
-          .page('$root/device-groups/$id/devices', cursor: cursor);
+      final page =
+          await widget.session.api.page(membersPath(id), cursor: cursor);
       if (!current || revision != generation) return;
       if (page.items.any((item) =>
           members.any((old) => old['deviceId'] == item['deviceId']))) {
@@ -175,6 +213,12 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
         setState(() => loadingMore = false);
       }
     }
+  }
+
+  void chooseFilter(String? status) {
+    if (!current || selectedId == null || memberFilter == status) return;
+    memberFilter = status;
+    open(selectedId!);
   }
 
   Future<Json?> editName({Json? group}) async {
@@ -446,6 +490,42 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     return current ? result : null;
   }
 
+  Widget healthPanel() {
+    final counts = summary!;
+    final total = counts['total'] as int;
+    final usable = counts['current'] as int;
+    Widget filterChip(String? status, String title, int count) => ChoiceChip(
+          label: Text('$title $count'),
+          selected: memberFilter == status,
+          onSelected: (_) => chooseFilter(status),
+        );
+    return Panel(
+        child:
+            Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      Text('成员关联状态', style: Theme.of(context).textTheme.titleMedium),
+      const SizedBox(height: 6),
+      const Text('统计覆盖整个设备组。关联有效仅表示当前注册身份可用于目标选择，不代表策略已在设备执行。'),
+      const SizedBox(height: 16),
+      Semantics(
+          label: '关联有效 $usable 台，共 $total 台',
+          child: LinearProgressIndicator(
+              value: total == 0 ? 0 : usable / total,
+              minHeight: 8,
+              backgroundColor: const Color(0xFFE8EDF3),
+              valueColor: const AlwaysStoppedAnimation(Color(0xFF00886C)))),
+      const SizedBox(height: 16),
+      Wrap(spacing: 8, runSpacing: 8, children: [
+        filterChip(null, '全部', total),
+        filterChip('CURRENT', '关联有效', usable),
+        filterChip(
+            'STALE_REGISTRATION', '旧注册周期', counts['staleRegistration'] as int),
+        filterChip('DEVICE_INACTIVE', '设备未激活', counts['deviceInactive'] as int),
+        filterChip(
+            'PROFILE_ARCHIVED', '档案已归档', counts['profileArchived'] as int),
+      ])
+    ]));
+  }
+
   @override
   Widget build(BuildContext context) {
     if (!current) {
@@ -484,6 +564,8 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
               onPressed: () => setState(() {
                     selectedId = null;
                     detail = null;
+                    summary = null;
+                    memberFilter = null;
                     members = const [];
                     generation++;
                   }),
@@ -533,18 +615,23 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
             ])
         ])),
         const SizedBox(height: 16),
+        if (summary != null) ...[healthPanel(), const SizedBox(height: 16)],
         Panel(
             child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
               Text('组内设备', style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 12),
-              if (members
-                  .any((member) => member['membershipStatus'] != 'CURRENT'))
+              if (summary != null &&
+                  (summary!['total'] as int) > (summary!['current'] as int))
                 const Notice('部分成员关联已失效，不会进入设备组策略目标。请核对注册周期后移出旧成员。',
                     warning: true),
               if (members.isEmpty)
-                const EmptyView('组内暂无设备', '从已激活的机构设备清单中选择并加入。'),
+                EmptyView(
+                    memberFilter == null ? '组内暂无设备' : '此状态下暂无设备',
+                    memberFilter == null
+                        ? '从已激活的机构设备清单中选择并加入。'
+                        : '可切换上方状态查看其他成员。'),
               for (final member in members)
                 ListTile(
                     contentPadding: EdgeInsets.zero,
