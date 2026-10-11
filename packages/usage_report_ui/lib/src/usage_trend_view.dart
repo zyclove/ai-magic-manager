@@ -22,7 +22,9 @@ class _UsageTrendViewState extends State<UsageTrendView> {
   @override
   Widget build(BuildContext context) {
     final all = widget.buckets,
-        trend = usageTrendComparison(all, widget.timeZone, widget.period);
+        insight =
+            usageInsightForApplication(all, widget.timeZone, widget.period),
+        trend = insight.comparison;
     final shown =
         expanded || all.length <= 7 ? all : all.sublist(all.length - 7);
     final maxMillis =
@@ -62,6 +64,8 @@ class _UsageTrendViewState extends State<UsageTrendView> {
           Text(
               '仅比较最后两个连续、完整且等长的时段。${trend.partialPeriods > 0 ? '${trend.partialPeriods} 个未完整时段仅展示，不参与比较。' : ''}汇总仍未经独立验证。',
               style: Theme.of(context).textTheme.bodySmall),
+          const SizedBox(height: 14),
+          _UsageInsightCard(insight: insight),
           const SizedBox(height: 14),
           Text('横条为下界至上界；圆点为汇总值。无证据不按零绘制。',
               style: Theme.of(context).textTheme.bodySmall),
@@ -147,5 +151,71 @@ class _UsageTrendViewState extends State<UsageTrendView> {
                         ? '收起至最近 7 个时段'
                         : '展开全部 ${all.length} 个时段（当前显示最近 7 个）'))),
         ]));
+  }
+}
+
+/// A human-review prompt. It never edits policy or labels a child's health.
+class _UsageInsightCard extends StatelessWidget {
+  final UsageInsight insight;
+  const _UsageInsightCard({required this.insight});
+
+  @override
+  Widget build(BuildContext context) {
+    final (title, description, icon) = switch (insight.kind) {
+      UsageInsightKind.reviewIncrease => (
+          '建议回看使用安排',
+          '这两段完整时段的应用使用范围显示增加。可以与儿童讨论原因，再由有权限的成人决定是否调整提醒或作息。',
+          Icons.tips_and_updates_outlined,
+        ),
+      UsageInsightKind.reviewDecrease => (
+          '近期使用有所减少',
+          '这两段完整时段的应用使用范围显示减少。可结合学习与休息安排继续观察。',
+          Icons.trending_down,
+        ),
+      UsageInsightKind.keepObserving => (
+          '继续观察',
+          '这两段完整时段报告的应用使用时长相同。单次比较不足以说明长期习惯。',
+          Icons.visibility_outlined,
+        ),
+      UsageInsightKind.checkEvidence => (
+          '先核对数据覆盖',
+          '目前无法可靠判断增减。请检查设备连接、观察授权与缺失时段，再决定是否调整规则。',
+          Icons.fact_check_outlined,
+        ),
+    };
+    final evidence = insight.comparedPeriods == 2 &&
+            insight.comparison.lowerDeltaMillis != null
+        ? '依据：两个连续、完整且等长的时段；变化范围 ${usageDeltaRange(insight.comparison.lowerDeltaMillis!, insight.comparison.upperDeltaMillis!)}。'
+        : '依据：${insight.comparison.partialPeriods} 个不完整时段未参与比较；${switch (insight.comparison.status) {
+            'NO_EVIDENCE' => '完整时段仍缺少使用证据。',
+            'NOT_COMPARABLE' => '最近两个完整时段不连续或长度不同。',
+            'UNCERTAIN' => '上下界重叠，不能确定方向。',
+            _ => '可比较的完整时段不足。',
+          }}';
+    return Semantics(
+        container: true,
+        child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+                color: const Color(0xFFEAF3F2),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: line)),
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              Row(children: [
+                Icon(icon, color: navy),
+                const SizedBox(width: 10),
+                Expanded(
+                    child: Text(title,
+                        style: Theme.of(context).textTheme.titleSmall))
+              ]),
+              const SizedBox(height: 8),
+              Text(description),
+              const SizedBox(height: 8),
+              Text(evidence, style: Theme.of(context).textTheme.bodySmall),
+              const SizedBox(height: 4),
+              Text('仅使用本次已授权报表在本机生成；不自动修改规则，不作健康或身份判断。',
+                  style: Theme.of(context).textTheme.bodySmall),
+            ])));
   }
 }
