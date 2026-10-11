@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import '../lib/core/api.dart';
-import '../lib/core/support.dart';
-import '../lib/core/support_repository.dart';
+import 'package:guardian/core/api.dart';
+import 'package:guardian/core/support.dart';
+import 'package:guardian/core/support_repository.dart';
 
 class TokenClient extends http.BaseClient {
   final http.Client delegate = http.Client();

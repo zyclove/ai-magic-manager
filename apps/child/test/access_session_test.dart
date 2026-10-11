@@ -10,6 +10,8 @@ class SessionAccessReceiver implements ChildAccessReceiver {
   final IdentityFixture fixture;
   int syncs = 0, restores = 0, pauses = 0;
   bool closed = false, denied = false;
+  bool closing = false;
+  Completer<void>? closeGate;
   SessionAccessReceiver(this.fixture);
   ChildAccessSnapshot snapshot() =>
       ChildAccessSnapshot(contextReady: true, entries: [
@@ -52,11 +54,53 @@ class SessionAccessReceiver implements ChildAccessReceiver {
   void resume() {}
   @override
   Future<void> close() async {
+    closing = true;
+    await closeGate?.future;
     closed = true;
   }
 }
 
 void main() {
+  test(
+      'connection rejection waits for private receiver shutdown before completing',
+      () async {
+    final fixture = IdentityFixture();
+    addTearDown(fixture.close);
+    await fixture.activate();
+    final receiver = SessionAccessReceiver(fixture)
+      ..closeGate = Completer<void>();
+    final session = ChildSession(
+        identity: fixture.identity,
+        nowMillis: () => fixture.clock,
+        accessFactory: (_, baseline) async => receiver);
+    addTearDown(session.dispose);
+    await session.initialize();
+    for (var i = 0; i < 100 && session.busy; i++) {
+      await Future<void>.delayed(Duration.zero);
+    }
+    expect(session.busy, isFalse);
+    fixture.rejectAuthentication = true;
+    var completed = false;
+    final check = session.checkConnection().then((value) {
+      completed = true;
+      return value;
+    });
+    for (var i = 0; i < 100 && !receiver.closing; i++) {
+      await Future<void>.delayed(Duration.zero);
+    }
+    await Future<void>.delayed(Duration.zero);
+    try {
+      expect(receiver.closing, isTrue);
+      expect(session.access.entries, isEmpty);
+      expect(completed, isFalse);
+      expect(session.busy, isTrue);
+    } finally {
+      receiver.closeGate!.complete();
+      await check;
+    }
+    expect(receiver.closed, isTrue);
+    expect(session.busy, isFalse);
+  });
   test('receiver created after background transition is closed before restore',
       () async {
     final fixture = IdentityFixture();

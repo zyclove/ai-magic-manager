@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/core/api.dart';
-import '../lib/core/device_diagnostic.dart';
+import 'package:guardian/core/api.dart';
+import 'package:guardian/core/device_diagnostic.dart';
 
 import 'fixtures/diagnostic.dart';
 

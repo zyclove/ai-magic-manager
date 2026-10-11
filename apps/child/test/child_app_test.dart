@@ -158,8 +158,8 @@ void main() {
         ChildApp(session: fixture.session(), nativeAvailable: true));
     await tester.pumpAndSettle();
     fixture.rejectAuthentication = true;
-    await tester.ensureVisible(find.text('检查连接'));
-    await tester.tap(find.text('检查连接'));
+    await tester.ensureVisible(find.text('检查连接与退出状态'));
+    await tester.tap(find.text('检查连接与退出状态'));
     await tester.pumpAndSettle();
     expect(find.text('连接需要检查'), findsOneWidget);
     expect(await fixture.identity.activeCredential(), isNull);

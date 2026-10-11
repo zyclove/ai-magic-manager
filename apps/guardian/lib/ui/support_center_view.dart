@@ -81,13 +81,16 @@ class _SupportCenterViewState extends State<SupportCenterView>
     if ((created != null && created!.request.expiresAt <= stamp) ||
         (diagnostic != null && diagnostic!.grant.expiresAt <= stamp) ||
         pairings.any((v) => v.expiresAt > lastTick && v.expiresAt <= stamp) ||
-        grants.any((v) => v.expiresAt > lastTick && v.expiresAt <= stamp))
+        grants.any((v) => v.expiresAt > lastTick && v.expiresAt <= stamp)) {
       setState(() {
-        if (created != null && created!.request.expiresAt <= stamp)
+        if (created != null && created!.request.expiresAt <= stamp) {
           created = null;
-        if (diagnostic != null && diagnostic!.grant.expiresAt <= stamp)
+        }
+        if (diagnostic != null && diagnostic!.grant.expiresAt <= stamp) {
           diagnostic = null;
+        }
       });
+    }
     lastTick = stamp;
   }
 
@@ -120,7 +123,7 @@ class _SupportCenterViewState extends State<SupportCenterView>
     if (!usable || busy) return;
     final after = more ? cursor : null;
     if (more && after == null) return;
-    if (!more)
+    if (!more) {
       setState(() {
         pairings = [];
         grants = [];
@@ -129,15 +132,18 @@ class _SupportCenterViewState extends State<SupportCenterView>
         diagnostic = null;
         confirming = null;
       });
+    }
     if (section == 0) {
       await perform(() => widget.repository.pairings(cursor: after), (value) {
         final merged = [if (more) ...pairings, ...value.items];
-        if (merged.map((v) => v.id).toSet().length != merged.length)
+        if (merged.map((v) => v.id).toSet().length != merged.length) {
           invalidSupport();
+        }
         if (created != null) {
           for (final pair in value.items) {
-            if (pair.id == created!.request.id)
+            if (pair.id == created!.request.id) {
               created = created!.refreshed(pair);
+            }
           }
         }
         pairings = merged;
@@ -149,8 +155,9 @@ class _SupportCenterViewState extends State<SupportCenterView>
           () => widget.repository.grants(received: section == 1, cursor: after),
           (value) {
         final merged = [if (more) ...grants, ...value.items];
-        if (merged.map((v) => v.id).toSet().length != merged.length)
+        if (merged.map((v) => v.id).toSet().length != merged.length) {
           invalidSupport();
+        }
         grants = merged;
         cursor = value.nextCursor;
         loaded = true;
@@ -198,10 +205,11 @@ class _SupportCenterViewState extends State<SupportCenterView>
     if (!usable || busy || !grant.withinTerm(now)) return;
     setState(() => diagnostic = null);
     await perform(() => widget.repository.diagnostic(grant), (value) {
-      if (value.grant.withinTerm(now))
+      if (value.grant.withinTerm(now)) {
         diagnostic = value;
-      else
+      } else {
         error = const ApiFailure(403, 'SCOPE_DENIED');
+      }
     });
   }
 

@@ -130,8 +130,9 @@ class _DiagnosticPackagesViewState extends State<DiagnosticPackagesView>
     perform(() => widget.repository.list(cursor: after), (page) {
       for (final job in page.items) {
         validate(job);
-        if (more && jobs.any((old) => old.id == job.id))
+        if (more && jobs.any((old) => old.id == job.id)) {
           invalidDiagnosticPackage();
+        }
       }
       for (final job in page.items) {
         if (focused?.id == job.id) focused = job;
@@ -179,11 +180,13 @@ class _DiagnosticPackagesViewState extends State<DiagnosticPackagesView>
       final expected = generation;
       final result = await widget.repository.download(job);
       void ensure() {
-        if (!usable || generation != expected)
+        if (!usable || generation != expected) {
           throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+        }
         widget.repository.ensureCurrent();
-        if (!result.job.readyAt(now))
+        if (!result.job.readyAt(now)) {
           throw const ApiFailure(410, 'DIAGNOSTIC_PACKAGE_EXPIRED');
+        }
       }
 
       ensure();

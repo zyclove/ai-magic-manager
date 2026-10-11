@@ -3,10 +3,10 @@ import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import '../lib/core/api.dart';
-import '../lib/core/support.dart';
-import '../lib/core/diagnostic_package.dart';
-import '../lib/core/diagnostic_package_repository.dart';
+import 'package:guardian/core/api.dart';
+import 'package:guardian/core/support.dart';
+import 'package:guardian/core/diagnostic_package.dart';
+import 'package:guardian/core/diagnostic_package_repository.dart';
 import 'fixtures/diagnostic_package.dart';
 import 'fixtures/diagnostic.dart' as diagnostic;
 import 'fixtures/support.dart' show grantFixture;
@@ -117,8 +117,9 @@ void main() {
     final client = PackageClient((r) async {
       paths.add(r.url.path);
       if (r.url.path.endsWith('/content')) return response(documentBytes(doc));
-      if (r.url.path.endsWith('/grants/$grantId'))
+      if (r.url.path.endsWith('/grants/$grantId')) {
         return response(grantFixture(now: diagnostic.now - 1000));
+      }
       return response(row);
     });
     expect(
@@ -133,9 +134,10 @@ void main() {
       () async {
     for (final mode in ['cache', 'partial', 'redirect', 'scope']) {
       final client = PackageClient((r) async {
-        if (!r.url.path.endsWith('/content'))
+        if (!r.url.path.endsWith('/content')) {
           return response(packageFixture(state: 'READY')
             ..['registrationId'] = mode == 'scope' ? device : registration);
+        }
         return response(documentBytes(packageDocument()),
             status: mode == 'partial'
                 ? 206

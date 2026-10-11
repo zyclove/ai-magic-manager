@@ -397,7 +397,7 @@ class ChildSession extends ChangeNotifier {
       errorCode = null;
     }
     if (_disposed) {
-      if (_rulesClosingCount > 0) await _rulesClosing;
+      await _awaitReceiverClosures();
       busy = false;
       return false;
     }
@@ -420,12 +420,18 @@ class ChildSession extends ChangeNotifier {
     if (submissionOperation && submissionErrorCode != null) {
       _log.warning('code=$submissionErrorCode');
     }
-    if (_rulesClosingCount > 0) await _rulesClosing;
+    await _awaitReceiverClosures();
     busy = false;
     _changed();
     _scheduleAccess();
     _drain();
     return success;
+  }
+
+  Future<void> _awaitReceiverClosures() async {
+    if (_rulesClosingCount > 0) await _rulesClosing;
+    if (_accessClosingCount > 0) await _accessClosing;
+    if (_submissionsClosingCount > 0) await _submissionsClosing;
   }
 
   Future<bool> pair(String ticket,

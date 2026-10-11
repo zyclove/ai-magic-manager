@@ -1,4 +1,4 @@
-import '../../lib/core/api.dart';
+import 'package:guardian/core/api.dart';
 import 'diagnostic.dart' as diagnostic;
 export 'diagnostic.dart' show tenant, device, registration;
 

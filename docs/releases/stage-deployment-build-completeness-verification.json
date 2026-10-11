@@ -1,0 +1,319 @@
+{
+  "stage": "deployment-build-completeness",
+  "applicationVersion": "1.0.0",
+  "baseCommit": "fa303477ac7b90169ec9afa7f683ba0c058bb3ed",
+  "finishedAt": "2026-10-11T21:53:52.4761899+08:00",
+  "buildExitCode": 0,
+  "publicOrigin": "http://localhost:18100",
+  "backend": {
+    "tests": 685,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 8,
+    "passed": 677,
+    "suites": 71
+  },
+  "conditionalSkips": [
+    {
+      "class": "com.aimanager.AndroidChildSubmissionJourneyTest",
+      "test": "realEnrollmentNativeCrashRecoveryAndRevocation"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureAdmissionStoreTest",
+      "test": "leastPrivilegeRuntimeCanDrainWorkButCannotRewriteAcceptedRecords"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "mismatchedIdentityAndMissingLedgerAreReportedWithoutAutomaticRecreation"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "servletAsyncCannotEscapeTheRegisteredSynchronousPermit"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "acceptedLedgerStopsAuthorizedBusinessRequestsWithoutDeletingTheirData"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "realHttpRequestDrainsBeforeAcceptanceAndProbesRemainAvailable"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+      "test": "nonTransactionalEngineIsRejectedBeforeAppending"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+      "test": "initializationPinsTransactionalEngineEvenWhenServerDefaultDiffers"
+    }
+  ],
+  "clients": [
+    {
+      "path": "apps/child",
+      "analysis": "passed",
+      "toolkit": "flutter",
+      "tests": "passed",
+      "passed": 123
+    },
+    {
+      "path": "apps/guardian",
+      "analysis": "passed",
+      "toolkit": "flutter",
+      "tests": "passed",
+      "passed": 254
+    },
+    {
+      "path": "packages/device_access",
+      "analysis": "passed",
+      "toolkit": "dart",
+      "tests": "passed",
+      "passed": 128
+    },
+    {
+      "path": "packages/device_cleanup",
+      "analysis": "passed",
+      "toolkit": "dart",
+      "tests": "not-present",
+      "passed": 0
+    },
+    {
+      "path": "packages/device_identity",
+      "analysis": "passed",
+      "toolkit": "dart",
+      "tests": "passed",
+      "passed": 43
+    },
+    {
+      "path": "packages/device_observation",
+      "analysis": "passed",
+      "toolkit": "dart",
+      "tests": "passed",
+      "passed": 14
+    },
+    {
+      "path": "packages/device_operations",
+      "analysis": "passed",
+      "toolkit": "flutter",
+      "tests": "passed",
+      "passed": 42
+    },
+    {
+      "path": "packages/device_operations/example",
+      "analysis": "passed",
+      "toolkit": "flutter",
+      "tests": "passed",
+      "passed": 1
+    },
+    {
+      "path": "packages/device_policy",
+      "analysis": "passed",
+      "toolkit": "dart",
+      "tests": "passed",
+      "passed": 64
+    },
+    {
+      "path": "packages/device_reports",
+      "analysis": "passed",
+      "toolkit": "dart",
+      "tests": "passed",
+      "passed": 5
+    },
+    {
+      "path": "packages/usage_report_ui",
+      "analysis": "passed",
+      "toolkit": "flutter",
+      "tests": "passed",
+      "passed": 8
+    },
+    {
+      "path": "packages/usage_reporting",
+      "analysis": "passed",
+      "toolkit": "dart",
+      "tests": "passed",
+      "passed": 2
+    }
+  ],
+  "clientPassedTotal": 684,
+  "backendSha256": "4f8ee6e225cbe86e066d1ef3652e69428253794307acd0168bc68608ed26dc48",
+  "guardianSha256": "8ed240e1797d7b1d02a99d6a1df10b55df7f6ef7a14c786985f0233ed510a0a1",
+  "releaseManifestSha256": "a70f9976ceac428d340bbc62bf3a52e15fdc01fd7de8b9de3c214669a126eeaa",
+  "changedFiles": [
+    {
+      "path": "apps/guardian/test/diagnostic_model_test.dart",
+      "sha256": "9e52d0e4ce5aa37e6243848fe73e8cfc1c1104555be443cf0fcbce7bfcc47ee1"
+    },
+    {
+      "path": "apps/guardian/test/diagnostic_packages_view_test.dart",
+      "sha256": "a5f6d5d94632e49b54da0c13699fe89e74bebcb0b70b356ff635f0942ac19660"
+    },
+    {
+      "path": "apps/guardian/test/diagnostic_package_model_test.dart",
+      "sha256": "f13b5c8ad63b9fde62c01c8afba1a612d0c78789423b80557994406187ac770b"
+    },
+    {
+      "path": "apps/guardian/test/diagnostic_package_repository_test.dart",
+      "sha256": "c4d9c54c6f13601e149beb3910be7df4a2f40a90bffe8a613c545fc3aa9d4cea"
+    },
+    {
+      "path": "apps/guardian/test/diagnostic_preview_view_test.dart",
+      "sha256": "f8865b49a7505ba4ca4689b3bdf688081364c421a9f0d4a369ca4b9622abb761"
+    },
+    {
+      "path": "apps/guardian/test/diagnostic_repository_test.dart",
+      "sha256": "21a1e22311c47726a4bf756a19b5e39404414e980cea12a36a0abd07149a1a28"
+    },
+    {
+      "path": "apps/guardian/test/support_model_test.dart",
+      "sha256": "2da6ae894ae47db6a6617443fdaa34cf7752161b39de8a6d1a98e93e435a0a9a"
+    },
+    {
+      "path": "apps/guardian/test/support_repository_test.dart",
+      "sha256": "235385c3122f8553ea2e169b88be2868b8d78f601bbcc6acd604b6715c5cda5a"
+    },
+    {
+      "path": "apps/guardian/test/support_views_test.dart",
+      "sha256": "2afef3ab81da2be8406fee6f1a1dce6147d620238dce8a4b615d24c3eed584cd"
+    },
+    {
+      "path": "apps/guardian/tool/verify_diagnostic_package_http.dart",
+      "sha256": "d9325d7530cee6023a4f76802eca1ce7af5ff4ab8b1020602e131f27017ed092"
+    },
+    {
+      "path": "apps/guardian/tool/verify_support_http.dart",
+      "sha256": "756fb0dda6dec179a4737e6f1f7e75294a2908034a7675a57ef8fac68b7c543a"
+    },
+    {
+      "path": "apps/guardian/test/fixtures/diagnostic_package.dart",
+      "sha256": "4ba0832b7c3de496bd27f971399891a093c9fffcc785b9b62a87c6bbc8ca6518"
+    },
+    {
+      "path": "apps/guardian/test/fixtures/support.dart",
+      "sha256": "239ec5fe6241eafbac9a6c074364dbb4be9816a51cc741bf3e3a27c502f7076d"
+    },
+    {
+      "path": "apps/guardian/lib/core/device_diagnostic.dart",
+      "sha256": "0d955a8f150622ba3f39ff2a1daed41b925d4dd3c234ba52e581fea752be629c"
+    },
+    {
+      "path": "apps/guardian/lib/core/diagnostic_package.dart",
+      "sha256": "10858a1035f416cbd9a70082d0ca56e9eddf688e0a5521afaf6a23860b3f57bf"
+    },
+    {
+      "path": "apps/guardian/lib/core/diagnostic_package_repository.dart",
+      "sha256": "aab8d417ead4ad477255a7ccc12ac45cee93f0ba3e705f9d809d638228b38232"
+    },
+    {
+      "path": "apps/guardian/lib/core/diagnostic_repository.dart",
+      "sha256": "6140251402f88ba42ac632a8c78f158719df1638355cd471aee364cb700c1998"
+    },
+    {
+      "path": "apps/guardian/lib/core/support.dart",
+      "sha256": "2182084d9bdb855702dc623683ab2ac7bd715c4ff04faf66f39d44cf055aeca3"
+    },
+    {
+      "path": "apps/guardian/lib/core/support_repository.dart",
+      "sha256": "c800e6cd4fbf6f42fdbd5de88dfc2c245ea62989ea9ce78731fde0f6b9935f8a"
+    },
+    {
+      "path": "apps/guardian/lib/pages/diagnostic_packages_dialog.dart",
+      "sha256": "d33a909d7ca51079a5a1c24029131c67ae79d0e0868abe3ed09082d147ce26b5"
+    },
+    {
+      "path": "apps/guardian/lib/pages/support_page.dart",
+      "sha256": "a06154b47446743ddaa12d35f8ad4ef8598caf5319f7a35f60e5b7bee6bd0c5f"
+    },
+    {
+      "path": "apps/guardian/lib/ui/diagnostic_packages_view.dart",
+      "sha256": "e2a877592dcf72f3994637b5d156cb35a216f5a08bffbb74937eb932f1a654f3"
+    },
+    {
+      "path": "apps/guardian/lib/ui/diagnostic_preview_view.dart",
+      "sha256": "b6d6d946e184aab70d7ee397e3f000c2d88e325f3e9f7fbd28e0206c324d2dc0"
+    },
+    {
+      "path": "apps/guardian/lib/ui/support_center_view.dart",
+      "sha256": "d6cd6843b34d3a76e95311cb972f5000f0a311b77cfa67f47b35c82a1f332e9b"
+    },
+    {
+      "path": "apps/guardian/lib/ui/support_grant_view.dart",
+      "sha256": "7a3939ad4b0d6959b18839e71bb79b558e33b646189eb4ad97a990bf7a3ef992"
+    },
+    {
+      "path": "apps/guardian/lib/ui/support_view_state.dart",
+      "sha256": "4665f61c54ce56db3a721a76a2a9d1a07cad5c4344bd5a54752bc1c1b209b7c1"
+    },
+    {
+      "path": "scripts/build-deployment.ps1",
+      "sha256": "21157cad068144f39046eaa2c18f2a477b78e2b00a8f1f75830ddba09fb786d2"
+    },
+    {
+      "path": "scripts/tests/test_deployment_build.py",
+      "sha256": "5b9efe08cc1456a8ed028a27c6da1f7789700b95719184df3081128aaffde116"
+    },
+    {
+      "path": "docs/deployment-build-completeness-plan.md",
+      "sha256": "a20ad3e542e8929aedd4c267c839ff9490967c96323815d508fba00776c098cd"
+    },
+    {
+      "path": "docs/deployment-runbook.md",
+      "sha256": "8b66da447740cf4aec7779992f767b4ce22f8983e6d87349b4a56d12a9b81003"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/policy/internal/PolicyController.java",
+      "sha256": "c5002afe59e06a2f2cfa1bc1c215c6eb5da7f5d91dbad65046f1c7bab2d0299a"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/policy/internal/PolicyPreviewValidationTest.java",
+      "sha256": "3fd303ecbecee687eb257867ec13b38de0ca46f2420dcbd51cea8c2c314c9d4e"
+    },
+    {
+      "path": "apps/child/lib/core/session.dart",
+      "sha256": "2fff78fae52f900c2332e3e5ef9fb67d18cd457c14a4ca5144b5bce5de115304"
+    },
+    {
+      "path": "apps/child/test/access_session_test.dart",
+      "sha256": "f636ca7730e13b0e1853225bc486fcb8651e358e1b974b0f10c388a77ca2510b"
+    },
+    {
+      "path": "apps/child/test/child_app_test.dart",
+      "sha256": "3886408793efd77829e7ec78aa5ad5dbf8589840ab66e8f5f1cb672d4e5408c7"
+    },
+    {
+      "path": "apps/child/test/rule_session_lifecycle_test.dart",
+      "sha256": "ee28cc672505e84b397415d7c7686f4e506437375e544ad487f3eb04b994e5b1"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/UsageReportJourneyTest.java",
+      "sha256": "2059b3f8f7708e52067f3d17c0630b266e9ab4782dd0cf5344354e5cad521d5c"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/UsageReportClientCommandTest.java",
+      "sha256": "caa7c2770d80109cbc2a1fc7ed2ca8bf202d03bfc8c6800893062737bcd03f75"
+    }
+  ],
+  "review": {
+    "reviewer": "gpt-6-astra",
+    "criticalFindings": 0,
+    "importantFindings": 1,
+    "minorFindings": 0,
+    "importantFix": "Nested report Flutter invocation disables implicit Pub resolution; actual ProcessBuilder contract regression RED then GREEN, followed by complete release pipeline.",
+    "fixTest": "UsageReportClientCommandTest.nestedFlutterUsesPreparedDependenciesWithoutImplicitPubResolution",
+    "secondReview": false
+  },
+  "rulings": [
+    "Task 1: Ruling: actual full build found canonical UUID rejection in PolicyController.Preview (missing one four-character group). Scope includes two validation annotations and 10 parameterized regression cases; RED 4 failures, GREEN 46/46 including real policy and approval journeys. Cost if wrong: policy preview boundary could accept malformed IDs; malformed regression cases remain mandatory.",
+    "Task 1: Ruling: real client suite found early completion before access/submission receiver closure after authentication rejection. Add a controlled close barrier regression (RED) and await all active receiver closures; full child suite GREEN 123/123. Cost if wrong: a stuck receiver can keep the action pending; this is safer than announcing completion before private storage is closed and matches existing rule-store lifecycle.",
+    "Final: Ruling: Android/MySQL conditional and deployment/browser gates remain separate — build evidence explicitly lists skips; no claim these gates passed — cost if wrong: runtime-only faults remain undiscovered until those gates.",
+    "Final: Ruling: concurrent publication against one deployment directory remains outside this sequential stage — existing behavior unchanged; this run has one writer — cost if wrong: concurrent operator runs can race on manifest and environment files.",
+    "Final: Ruling: candidate immutability and supported SDK/pubspec layout remain required inputs — frozen hashes and current 12-project discovery match these inputs — cost if wrong: future layouts require explicit discovery updates.",
+    "Final: Ruling: analysis uses current Dart tool severity without redefining every informational lint as fatal — existing source was nevertheless cleaned through official fixes — cost if wrong: future informational lints may not fail the build.",
+    "Final: Ruling: receiver-close completion remains required and close failure/hang is not silently ignored — matches private-store lifecycle; no concrete added disposal race identified — cost if wrong: a noncompleting receiver stalls the action.",
+    "Final: Ruling: docs and newly added script tests are supplied through the immutable review package rather than compiled snapshot — no runtime source is omitted — cost if wrong: unrelated documentation drift requires a separate check."
+  ],
+  "deferredMinors": [],
+  "limitations": [
+    "One Android conditional suite requires the separate owned-device runner; seven ledger/admission MySQL conditional cases require isolated database configuration and were not run by this standard H2 build.",
+    "device_cleanup has no standalone test suite; strict analysis ran.",
+    "This artifact records build verification; deployment and browser acceptance are separate."
+  ]
+}

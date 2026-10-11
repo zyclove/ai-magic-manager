@@ -204,7 +204,7 @@ class _DiagnosticPreviewViewState extends State<DiagnosticPreviewView>
       ]);
   Widget configuration(DiagnosticConfiguration value, int index) =>
       ExpansionTile(
-          key: ValueKey('${generation}/${value.id}'),
+          key: ValueKey('$generation/${value.id}'),
           tilePadding: EdgeInsets.zero,
           expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
           title: Text('配置 $index'),

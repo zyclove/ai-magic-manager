@@ -69,13 +69,14 @@ class _SupportGrantViewState extends State<SupportGrantView>
         created!.state == 'ACTIVE' &&
         created!.expiresAt <= now &&
         !createdExpiryShown) setState(() => createdExpiryShown = true);
-    if (recipient != null && !recipient!.pendingAt(now) && pending == null)
+    if (recipient != null && !recipient!.pendingAt(now) && pending == null) {
       setState(() {
         recipient = null;
         confirmed = false;
         code.clear();
         error = const ApiFailure(404, 'SUPPORT_PAIRING_UNAVAILABLE');
       });
+    }
   }
 
   @override

@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import '../lib/core/api.dart';
-import '../lib/core/diagnostic_repository.dart';
+import 'package:guardian/core/api.dart';
+import 'package:guardian/core/diagnostic_repository.dart';
 import 'fixtures/diagnostic.dart' show fixture, tenant, device, registration;
 
 class Client extends http.BaseClient {

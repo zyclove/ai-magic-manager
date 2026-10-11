@@ -4,11 +4,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
-import '../lib/core/api.dart';
-import '../lib/core/support.dart';
-import '../lib/core/diagnostic_package.dart';
-import '../lib/core/diagnostic_package_repository.dart';
-import '../lib/ui/diagnostic_packages_view.dart';
+import 'package:guardian/core/api.dart';
+import 'package:guardian/core/support.dart';
+import 'package:guardian/core/diagnostic_package.dart';
+import 'package:guardian/core/diagnostic_package_repository.dart';
+import 'package:guardian/ui/diagnostic_packages_view.dart';
 import 'fixtures/diagnostic_package.dart';
 
 class PackageFake extends DiagnosticPackageRepository {

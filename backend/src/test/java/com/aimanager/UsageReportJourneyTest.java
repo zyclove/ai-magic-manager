@@ -819,15 +819,7 @@ class UsageReportJourneyTest {
       java.nio.file.Path fixture, java.nio.file.Path output, String marker) throws Exception {
     String flutter = System.getProperty("device.flutter.command");
     assertThat(flutter).as("Child report acceptance requires device.flutter.command").isNotBlank();
-    var builder =
-        new ProcessBuilder(flutter, "test", "tool/report_http_session_test.dart", "--concurrency=1")
-            .directory(
-                java.nio.file.Path.of(System.getProperty("device.child.package", "../apps/child"))
-                    .toAbsolutePath()
-                    .toFile())
-            .redirectErrorStream(true)
-            .redirectOutput(output.toFile());
-    builder.environment().put("CHILD_REPORT_HTTP_FIXTURE", fixture.toString());
+    var builder = childReportProcess(flutter, fixture, output);
     var process = builder.start();
     if (!process.waitFor(60, TimeUnit.SECONDS)) {
       process.destroyForcibly();
@@ -835,6 +827,21 @@ class UsageReportJourneyTest {
     }
     assertThat(process.exitValue()).as("Child report diagnostics: %s", output).isZero();
     assertThat(java.nio.file.Files.readString(output)).contains(marker);
+  }
+
+  static ProcessBuilder childReportProcess(
+      String flutter, java.nio.file.Path fixture, java.nio.file.Path output) {
+    var builder =
+        new ProcessBuilder(
+                flutter, "test", "--no-pub", "tool/report_http_session_test.dart", "--concurrency=1")
+            .directory(
+                java.nio.file.Path.of(System.getProperty("device.child.package", "../apps/child"))
+                    .toAbsolutePath()
+                    .toFile())
+            .redirectErrorStream(true)
+            .redirectOutput(output.toFile());
+    builder.environment().put("CHILD_REPORT_HTTP_FIXTURE", fixture.toString());
+    return builder;
   }
 
   @Autowired org.springframework.transaction.support.TransactionTemplate transactions;

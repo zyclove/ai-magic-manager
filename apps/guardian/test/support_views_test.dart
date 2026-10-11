@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/testing.dart';
 import 'package:http/http.dart' as http;
-import '../lib/core/api.dart';
-import '../lib/core/support.dart';
-import '../lib/core/support_repository.dart';
-import '../lib/ui/support_grant_view.dart';
-import '../lib/ui/support_center_view.dart';
+import 'package:guardian/core/api.dart';
+import 'package:guardian/core/support.dart';
+import 'package:guardian/core/support_repository.dart';
+import 'package:guardian/ui/support_grant_view.dart';
+import 'package:guardian/ui/support_center_view.dart';
 import 'fixtures/support.dart';
 
 class FakeSupport extends SupportRepository {

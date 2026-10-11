@@ -26,8 +26,9 @@ Never invalidDiagnosticPackage() =>
     throw const ApiFailure(502, 'INVALID_DIAGNOSTIC_PACKAGE_RESPONSE');
 Json _object(Object? input, Set<String> keys) {
   final value = supportObject(input);
-  if (value.length != keys.length || !value.keys.every(keys.contains))
+  if (value.length != keys.length || !value.keys.every(keys.contains)) {
     invalidDiagnosticPackage();
+  }
   return value;
 }
 
@@ -95,8 +96,9 @@ class DiagnosticPackage {
         'sha256',
         'failureCode'
       });
-      if (!diagnosticPackageStates.contains(o['state']))
+      if (!diagnosticPackageStates.contains(o['state'])) {
         invalidDiagnosticPackage();
+      }
       final types = parseSupportTypes(o['diagnosticTypes']),
           state = o['state'] as String,
           access = _mode(o['accessMode']);
@@ -133,8 +135,9 @@ class DiagnosticPackage {
           o['failureCode'] != value.failureCode ||
           (value.failureCode != null &&
               !diagnosticPackageFailures.contains(value.failureCode)) ||
-          (state == 'FAILED' && value.failureCode == null))
+          (state == 'FAILED' && value.failureCode == null)) {
         invalidDiagnosticPackage();
+      }
       if (state == 'READY') {
         if (value.generatedAt == null ||
             value.generatedAt! < value.createdAt ||
@@ -142,8 +145,9 @@ class DiagnosticPackage {
             value.byteCount == null ||
             value.byteCount! > 512 * 1024 ||
             value.sha256 == null ||
-            !RegExp(r'^[0-9a-f]{64}$').hasMatch(value.sha256!))
+            !RegExp(r'^[0-9a-f]{64}$').hasMatch(value.sha256!)) {
           invalidDiagnosticPackage();
+        }
       } else if (value.generatedAt != null ||
           value.byteCount != null ||
           value.sha256 != null) {
@@ -177,8 +181,9 @@ class DiagnosticPackage {
         next.expiresAt != expiresAt ||
         next.version < version ||
         next.updatedAt < updatedAt) invalidDiagnosticPackage();
-    if (!{'QUEUED', 'RUNNING', 'READY'}.contains(state) && next.state != state)
+    if (!{'QUEUED', 'RUNNING', 'READY'}.contains(state) && next.state != state) {
       invalidDiagnosticPackage();
+    }
     if (state == 'READY' &&
         ({'QUEUED', 'RUNNING'}.contains(next.state) ||
             (next.state == 'READY' &&
@@ -238,8 +243,9 @@ Uint8List validateDiagnosticPackageDownload(
         bytes.isEmpty ||
         bytes.length > 512 * 1024 ||
         bytes.length != job.byteCount ||
-        sha256.convert(bytes).toString() != job.sha256)
+        sha256.convert(bytes).toString() != job.sha256) {
       invalidDiagnosticPackage();
+    }
     final o = _object(jsonDecode(utf8.decode(bytes)), {
       'schemaVersion',
       'type',
@@ -257,8 +263,9 @@ Uint8List validateDiagnosticPackageDownload(
         o['generatedAt'] != job.generatedAt ||
         o['expiresAt'] != job.expiresAt ||
         !_typesEqual(
-            parseSupportTypes(o['diagnosticTypes']), job.diagnosticTypes))
+            parseSupportTypes(o['diagnosticTypes']), job.diagnosticTypes)) {
       invalidDiagnosticPackage();
+    }
     final received = job.accessMode == 'SUPPORT_GRANT',
         inner = _object(o['diagnostic'], {
           'schemaVersion',
@@ -275,8 +282,9 @@ Uint8List validateDiagnosticPackageDownload(
         });
     _diagnosticKeys(inner);
     final generated = _time(inner['generatedAt']);
-    if (generated < job.generatedAt! || generated >= job.expiresAt)
+    if (generated < job.generatedAt! || generated >= job.expiresAt) {
       invalidDiagnosticPackage();
+    }
     if (received) {
       if (grant == null) invalidDiagnosticPackage();
       validateDiagnosticPackageGrant(job, grant, now);
@@ -305,8 +313,9 @@ void validateDiagnosticPackageGrant(
       grant.recipientActorId != job.requesterActorId ||
       grant.createdAt > job.createdAt ||
       grant.expiresAt < job.expiresAt ||
-      !_typesEqual(grant.diagnosticTypes, job.diagnosticTypes))
+      !_typesEqual(grant.diagnosticTypes, job.diagnosticTypes)) {
     invalidDiagnosticPackage();
+  }
 }
 
 void _diagnosticKeys(Json o) {
@@ -317,7 +326,7 @@ void _diagnosticKeys(Json o) {
       _object(value, {'value', 'status'});
     }
   }
-  if (o['device'] != null)
+  if (o['device'] != null) {
     _object(o['device'], {
       'platform',
       'state',
@@ -326,6 +335,7 @@ void _diagnosticKeys(Json o) {
       'observationStatus',
       'lastHeartbeatAt'
     });
+  }
   if (o['capabilities'] != null) {
     final list = o['capabilities'];
     if (list is! List || list.length > 8) invalidDiagnosticPackage();

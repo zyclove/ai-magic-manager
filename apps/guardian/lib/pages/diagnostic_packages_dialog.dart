@@ -15,17 +15,20 @@ Future<void> openDiagnosticPackages(BuildContext context, Session session,
   final eligible = session.profile?['canCreateTenant'] == true;
   if (!session.authenticated ||
       actor is! String ||
-      (received ? !eligible : (!session.canWrite || tenant is! String)))
+      (received ? !eligible : (!session.canWrite || tenant is! String))) {
     throw const ApiFailure(403, 'SCOPE_DENIED');
+  }
   DiagnosticPackageDraft? target;
   if (received && grant != null) {
     if (grant.recipientActorId != actor ||
-        !grant.withinTerm(DateTime.now().millisecondsSinceEpoch))
+        !grant.withinTerm(DateTime.now().millisecondsSinceEpoch)) {
       throw const ApiFailure(403, 'SCOPE_DENIED');
+    }
     target = DiagnosticPackageDraft.received(grant);
   } else if (!received && device != null) {
-    if (device['state'] != 'ACTIVE')
+    if (device['state'] != 'ACTIVE') {
       throw const ApiFailure(409, 'DEVICE_NOT_ACTIVE');
+    }
     target = DiagnosticPackageDraft.admin(
         deviceId: supportId(device['id']),
         registrationId: supportId(device['registrationId']),

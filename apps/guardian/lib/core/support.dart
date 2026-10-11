@@ -176,8 +176,9 @@ class SupportPage<T> {
       previous = current;
     }
     final cursor = o['nextCursor'];
-    if (cursor != null && (supportId(cursor) != previous || items.length != 25))
+    if (cursor != null && (supportId(cursor) != previous || items.length != 25)) {
       invalidSupport();
+    }
     return SupportPage(items, cursor as String?);
   }
 }
@@ -211,8 +212,9 @@ class SupportGrantDraft {
     supportInteger(deviceVersion);
     if (!supportCode.hasMatch(pairingCode) ||
         durationMinutes < 5 ||
-        durationMinutes > 1440)
+        durationMinutes > 1440) {
       throw const ApiFailure(400, 'INVALID_SUPPORT_SELECTION');
+    }
   }
   Json get body => {
         'pairingCode': pairingCode,

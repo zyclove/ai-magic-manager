@@ -158,8 +158,9 @@ class SupportRepository {
       throw const ApiFailure(0, 'NETWORK_ERROR');
     } finally {
       aborted = true;
-      if (!ended && subscription != null)
+      if (!ended && subscription != null) {
         unawaited(subscription!.cancel().catchError((Object _) {}));
+      }
     }
   }
 
@@ -185,8 +186,9 @@ class SupportRepository {
   }
 
   Future<SupportPairing> resolve(String code) async {
-    if (!supportCode.hasMatch(code))
+    if (!supportCode.hasMatch(code)) {
       throw const ApiFailure(400, 'INVALID_SUPPORT_SELECTION');
+    }
     return SupportPairing.parse(await request(
         'POST', '$customer/support-pairing/resolve',
         body: {'code': code}));
@@ -206,8 +208,9 @@ class SupportRepository {
     if (grant.deviceId != draft.deviceId ||
         grant.registrationId != draft.registrationId ||
         grant.creatorActorId != actor ||
-        grant.diagnosticTypes.join(',') != draft.diagnosticTypes.join(','))
+        grant.diagnosticTypes.join(',') != draft.diagnosticTypes.join(',')) {
       invalidSupport();
+    }
     return grant;
   }
 

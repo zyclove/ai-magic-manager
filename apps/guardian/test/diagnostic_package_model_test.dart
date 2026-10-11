@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/core/api.dart';
-import '../lib/core/support.dart';
-import '../lib/core/diagnostic_package.dart';
+import 'package:guardian/core/api.dart';
+import 'package:guardian/core/support.dart';
+import 'package:guardian/core/diagnostic_package.dart';
 import 'fixtures/diagnostic_package.dart';
 import 'fixtures/diagnostic.dart' as diagnostic;
 import 'fixtures/support.dart' show grantFixture;
@@ -22,7 +22,9 @@ void main() {
       'EXPIRED',
       'REVOKED',
       'FAILED'
-    ]) expect(parse(packageFixture(state: state)).state, state);
+    ]) {
+      expect(parse(packageFixture(state: state)).state, state);
+    }
     for (final change in <String, Object?>{
       'requesterActorId': recipient,
       'accessMode': 'PUBLIC',
@@ -30,9 +32,10 @@ void main() {
       'version': -1,
       'byteCount': 1,
       'artifact': 'PRIVATE'
-    }.entries)
+    }.entries) {
       expect(() => parse(packageFixture()..[change.key] = change.value),
           throwsA(invalid));
+    }
     expect(() => parse(packageFixture(state: 'READY')..['sha256'] = 'broken'),
         throwsA(invalid));
   });

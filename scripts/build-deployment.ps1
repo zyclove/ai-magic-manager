@@ -13,27 +13,36 @@ param(
     [string]$MavenCommand = 'mvn',
     [string]$FlutterCommand = 'flutter',
     [string]$DartCommand = '',
-    [string]$MavenRepository = ''
+    [string]$MavenRepository = '',
+    [switch]$Offline
 )
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'deployment-common.ps1')
 $context = Get-DeploymentContext $Directory
 $source = [IO.Path]::GetFullPath($SourceDirectory, $context.Repository)
-foreach ($name in @('backend/pom.xml', 'apps/guardian/pubspec.yaml', 'packages/device_operations/pubspec.yaml')) {
+$interopPaths = [ordered]@{
+    'device.policy.package' = 'packages/device_policy'
+    'device.identity.package' = 'packages/device_identity'
+    'device.access.package' = 'packages/device_access'
+    'device.child.package' = 'apps/child'
+    'observation.device.package' = 'packages/device_observation'
+    'observation.guardian.package' = 'apps/guardian'
+    'usage.report.device.package' = 'packages/device_reports'
+    'usage.report.guardian.package' = 'apps/guardian'
+    'diagnostic.guardian.package' = 'apps/guardian'
+}
+$required = @('backend/pom.xml', 'packages/device_operations/pubspec.yaml') + @($interopPaths.Values | Select-Object -Unique | ForEach-Object { "$_/pubspec.yaml" })
+foreach ($name in $required) {
     if (-not (Test-Path -LiteralPath (Join-Path $source $name))) { throw 'Source snapshot is missing a required project.' }
 }
 foreach ($command in @($MavenCommand, $FlutterCommand)) {
     if (-not (Get-Command $command -ErrorAction SilentlyContinue)) { throw 'Configure Maven and Flutter executable paths before building.' }
 }
-$hasDevicePolicy = Test-Path -LiteralPath (Join-Path $source 'packages/device_policy/pubspec.yaml')
-$hasDeviceIdentity = Test-Path -LiteralPath (Join-Path $source 'packages/device_identity/pubspec.yaml')
-if ($hasDevicePolicy -or $hasDeviceIdentity) {
-    if (-not $DartCommand) {
-        $flutterPath = (Get-Command $FlutterCommand).Source
-        $DartCommand = Join-Path (Split-Path $flutterPath -Parent) $(if ($IsWindows) { 'dart.bat' } else { 'dart' })
-    }
-    if (-not (Get-Command $DartCommand -ErrorAction SilentlyContinue)) { throw 'Configure the Dart executable path for device policy verification.' }
+$flutterPath = (Get-Command $FlutterCommand).Source
+if (-not $DartCommand) {
+    $DartCommand = Join-Path (Split-Path $flutterPath -Parent) $(if ($IsWindows) { 'dart.bat' } else { 'dart' })
 }
+if (-not (Get-Command $DartCommand -ErrorAction SilentlyContinue)) { throw 'Configure the Dart executable path for client verification.' }
 $snapshot = Join-Path $context.Root ('source-' + [Guid]::NewGuid().ToString('N'))
 $logs = Join-Path $context.Root 'logs'
 $null = New-Item -ItemType Directory -Path $snapshot
@@ -47,55 +56,67 @@ function CopySourceTree([string]$From, [string]$To) {
         else { Copy-Item -LiteralPath $entry.FullName -Destination (Join-Path $To $entry.Name) }
     }
 }
-foreach ($name in @('backend', 'apps/guardian', 'packages')) { CopySourceTree (Join-Path $source $name) (Join-Path $snapshot $name) }
-$mavenArgs = @('-B', '-f', (Join-Path $snapshot 'backend/pom.xml'), 'verify', '-Dbackend.artifact-name=manager-backend')
+foreach ($name in @('backend', 'apps/guardian', 'apps/child', 'packages')) { CopySourceTree (Join-Path $source $name) (Join-Path $snapshot $name) }
+$projects = @(
+    foreach ($path in @('apps/guardian', 'apps/child') + @(Get-ChildItem -LiteralPath (Join-Path $snapshot 'packages') -Filter 'pubspec.yaml' -Recurse -File | Sort-Object FullName | ForEach-Object { [IO.Path]::GetRelativePath($snapshot, $_.DirectoryName).Replace('\', '/') })) {
+        $pubspecPath = Join-Path $snapshot "$path/pubspec.yaml"
+        if (-not (Test-Path -LiteralPath $pubspecPath -PathType Leaf)) { continue }
+        $pubspec = Get-Content -LiteralPath $pubspecPath -Raw
+        $toolkit = if ($pubspec -match '(?m)^\s+sdk:\s*flutter\s*$') { 'flutter' } else { 'dart' }
+        @{ Path=$path; Toolkit=$toolkit; Command=$(if ($toolkit -eq 'flutter') { $FlutterCommand } else { $DartCommand }); Label=$path.Replace('/', '-').Replace('_', '-') }
+    }
+)
+# Resolve every package before the backend launches real HTTP clients. All
+# interoperability paths are from this snapshot, never another working copy.
+foreach ($project in $projects) {
+    Write-Output "Preparing $($project.Path)..."
+    Push-Location -LiteralPath (Join-Path $snapshot $project.Path)
+    try {
+        $pubArguments = @('pub', 'get')
+        if ($Offline) { $pubArguments += '--offline' }
+        Invoke-DeploymentNative $project.Command $pubArguments (Join-Path $logs "$($project.Label)-pub-get.log")
+    } finally { Pop-Location }
+}
+$mavenArgs = @('-B', '-f', (Join-Path $snapshot 'backend/pom.xml'), 'verify', '-Dbackend.artifact-name=manager-backend', '-DreuseForks=false')
+if ($Offline) { $mavenArgs += '-o' }
 if ($MavenRepository) { $mavenArgs += "-Dmaven.repo.local=$([IO.Path]::GetFullPath($MavenRepository, $context.Repository))" }
 # The Spring HTTP fixture launches Dart directly, so resolve the SDK executable
 # rather than passing a Windows batch wrapper to Java ProcessBuilder. Resolve
 # package dependencies before Maven; a skipped cross-SDK test is not evidence.
-$interopProjects = @(
-    @{ Package='device_policy'; Property='device.policy.package'; Test='DeviceConfigurationHttpInteropTest' },
-    @{ Package='device_identity'; Property='device.identity.package'; Test='DeviceIdentityHttpInteropTest' }
-) | Where-Object {
-    (Test-Path -LiteralPath (Join-Path $snapshot "packages/$($_.Package)/pubspec.yaml")) -and
-    (Test-Path -LiteralPath (Join-Path $snapshot "backend/src/test/java/com/aimanager/$($_.Test).java"))
+$dartExecutable = (Get-Command $DartCommand).Source
+if ($IsWindows -and [IO.Path]::GetExtension($dartExecutable) -in @('.bat', '.cmd')) {
+    $dartExecutable = Join-Path (Split-Path $dartExecutable -Parent) 'cache/dart-sdk/bin/dart.exe'
 }
-if ($interopProjects) {
-    $dartExecutable = (Get-Command $DartCommand).Source
-    if ($IsWindows -and [IO.Path]::GetExtension($dartExecutable) -in @('.bat', '.cmd')) {
-        $dartExecutable = Join-Path (Split-Path $dartExecutable -Parent) 'cache/dart-sdk/bin/dart.exe'
-    }
-    if (-not (Test-Path -LiteralPath $dartExecutable -PathType Leaf)) { throw 'Device HTTP interoperability requires a directly executable Dart SDK.' }
-    $mavenArgs += "-Ddevice.dart.command=$dartExecutable"
-    foreach ($project in $interopProjects) {
-        $packagePath = Join-Path $snapshot "packages/$($project.Package)"
-        Push-Location -LiteralPath $packagePath
-        try { Invoke-DeploymentNative $DartCommand @('pub', 'get') (Join-Path $logs "$($project.Package.Replace('_','-'))-interop-pub-get.log") }
-        finally { Pop-Location }
-        $mavenArgs += "-D$($project.Property)=$packagePath"
-    }
+if (-not (Test-Path -LiteralPath $dartExecutable -PathType Leaf)) { throw 'Device HTTP interoperability requires a directly executable Dart SDK.' }
+$mavenArgs += "-Ddevice.dart.command=$dartExecutable"
+$mavenArgs += "-Ddevice.flutter.command=$flutterPath"
+foreach ($property in $interopPaths.Keys) {
+    $mavenArgs += "-D${property}=$(Join-Path $snapshot $interopPaths[$property])"
 }
 Write-Output 'Verifying backend source snapshot...'
 Invoke-DeploymentNative $MavenCommand $mavenArgs (Join-Path $logs 'backend-verify.log')
-$projects = @('packages/device_operations', 'apps/guardian')
-if ($hasDevicePolicy) { $projects += 'packages/device_policy' }
-if ($hasDeviceIdentity) { $projects += 'packages/device_identity' }
-foreach ($name in $projects) {
-    Push-Location -LiteralPath (Join-Path $snapshot $name)
+$verifiedProjects = @()
+foreach ($project in $projects) {
+    Write-Output "Verifying $($project.Path)..."
+    Push-Location -LiteralPath (Join-Path $snapshot $project.Path)
     try {
-        $label = switch ($name) { 'apps/guardian' { 'guardian' }; 'packages/device_policy' { 'device-policy' }; 'packages/device_identity' { 'device-identity' }; default { 'device-operations' } }
-        $projectCommand = if ($name -in @('packages/device_policy', 'packages/device_identity')) { $DartCommand } else { $FlutterCommand }
-        foreach ($operation in @('pub-get', 'analyze', 'test')) {
-            $arguments = switch ($operation) { 'pub-get' { @('pub', 'get') }; 'test' { @('test', '--reporter', 'expanded') }; default { @('analyze') } }
-            Invoke-DeploymentNative $projectCommand $arguments (Join-Path $logs "$label-$operation.log")
+        $analysisArguments = @('analyze')
+        if ($project.Toolkit -eq 'flutter') { $analysisArguments += '--no-pub' }
+        Invoke-DeploymentNative $project.Command $analysisArguments (Join-Path $logs "$($project.Label)-analyze.log")
+        $hasTests = (Test-Path -LiteralPath 'test') -and @(Get-ChildItem -LiteralPath 'test' -Filter '*_test.dart' -Recurse -File).Count -gt 0
+        if ($hasTests) {
+            $testArguments = @('test', '--reporter', 'expanded')
+            if ($project.Toolkit -eq 'flutter') { $testArguments += '--no-pub' }
+            Invoke-DeploymentNative $project.Command $testArguments (Join-Path $logs "$($project.Label)-test.log")
         }
+        $verifiedProjects += @{path=$project.Path; toolkit=$project.Toolkit; analysis='passed'; tests=$(if ($hasTests) { 'passed' } else { 'not-present' })}
     } finally { Pop-Location }
 }
 $origin = $context.Settings.publicUrl
 $allowHttp = if ([Uri]::new($origin).Scheme -eq 'http') { 'true' } else { 'false' }
 Push-Location -LiteralPath (Join-Path $snapshot 'apps/guardian')
 try {
-    Invoke-DeploymentNative $FlutterCommand @('build', 'web', '--release', '--web-renderer', 'html', '--pwa-strategy=none', '--no-web-resources-cdn',
+    Invoke-DeploymentNative $FlutterCommand @('build', 'web', '--release', '--no-pub', '--web-renderer', 'html', '--pwa-strategy=none', '--no-web-resources-cdn',
         "--dart-define=API_URL=$origin/api/v1", "--dart-define=OIDC_ISSUER=$origin/identity/realms/ai-manager", "--dart-define=ALLOW_LOCAL_HTTP=$allowHttp") (Join-Path $logs 'guardian-release.log')
 } finally { Pop-Location }
 $releaseRoot = Join-Path $context.Root ('artifacts/release-' + [Guid]::NewGuid().ToString('N'))
@@ -110,6 +131,7 @@ $files = Get-ChildItem -LiteralPath $snapshot -Recurse -File | Where-Object {
 }
 $sourceDigests = @($files | Sort-Object FullName | ForEach-Object { @{path=[IO.Path]::GetRelativePath($snapshot, $_.FullName).Replace('\','/'); sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()} })
 $manifest = @{schemaVersion=1; applicationVersion='1.0.0'; builtAt=[DateTimeOffset]::UtcNow.ToString('O'); publicUrl=$origin; sourceFiles=$sourceDigests;
+    verifiedProjects=$verifiedProjects; interoperabilityProperties=@($interopPaths.Keys);
     artifactRoot=[IO.Path]::GetRelativePath($context.Root, $releaseRoot).Replace('\','/');
     backendSha256=(Get-FileHash -LiteralPath (Join-Path $backendContext 'manager-backend.jar') -Algorithm SHA256).Hash.ToLowerInvariant();
     guardianSha256=(Get-FileHash -LiteralPath (Join-Path $guardianContext 'main.dart.js') -Algorithm SHA256).Hash.ToLowerInvariant()}

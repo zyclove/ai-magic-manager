@@ -19,8 +19,9 @@ class SupportWorkspacePage extends StatelessWidget {
         role = session.role;
     final receive = session.profile?['canCreateTenant'] == true,
         admin = session.canWrite && tenant is String;
-    if (actor is! String || !session.authenticated || (!receive && !admin))
+    if (actor is! String || !session.authenticated || (!receive && !admin)) {
       return const Panel(child: Text('当前账号未具备支持协作所需资格。请联系账号管理员。'));
+    }
     bool current() =>
         session.authenticated &&
         session.profile?['subject'] == actor &&
@@ -54,10 +55,12 @@ Future<void> openSupportGrant(
   final actor = session.profile?['subject'],
       tenant = session.tenant?['id'],
       role = session.role;
-  if (!session.authenticated || !session.canWrite)
+  if (!session.authenticated || !session.canWrite) {
     throw const ApiFailure(403, 'SCOPE_DENIED');
-  if (device['state'] != 'ACTIVE')
+  }
+  if (device['state'] != 'ACTIVE') {
     throw const ApiFailure(409, 'DEVICE_NOT_ACTIVE');
+  }
   if (actor is! String || tenant is! String) invalidSupport();
   final id = supportId(device['id']),
       registration = supportId(device['registrationId']),

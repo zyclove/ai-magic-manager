@@ -86,13 +86,14 @@ mixin SupportViewState<T extends StatefulWidget> on State<T> {
       final result = await operation();
       if (usable && generation == expected) setState(() => done(result));
     } catch (failure) {
-      if (usable && generation == expected)
+      if (usable && generation == expected) {
         setState(() {
           error = failure is ApiFailure
               ? failure
               : const ApiFailure(0, 'NETWORK_ERROR');
           failed?.call(error!);
         });
+      }
     } finally {
       if (usable && generation == expected) setState(() => busy = false);
     }

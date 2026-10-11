@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import '../lib/core/api.dart';
-import '../lib/core/device_diagnostic.dart';
-import '../lib/ui/diagnostic_preview_view.dart';
+import 'package:guardian/core/api.dart';
+import 'package:guardian/core/device_diagnostic.dart';
+import 'package:guardian/ui/diagnostic_preview_view.dart';
 import 'fixtures/diagnostic.dart';
 
 DeviceDiagnostic sample() => DeviceDiagnostic.parse(fixture(),

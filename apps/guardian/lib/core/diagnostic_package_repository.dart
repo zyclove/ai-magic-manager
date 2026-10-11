@@ -42,8 +42,9 @@ class DiagnosticPackageRepository {
     ensureCurrent();
     if (job.requesterActorId != actor ||
         job.accessMode != mode ||
-        (!received && job.tenantId != tenant))
+        (!received && job.tenantId != tenant)) {
       throw const ApiFailure(403, 'SCOPE_DENIED');
+    }
   }
 
   Future<DiagnosticPackage> create(DiagnosticPackageDraft draft) async {
@@ -51,8 +52,9 @@ class DiagnosticPackageRepository {
     if (draft.mode != mode) throw const ApiFailure(403, 'SCOPE_DENIED');
     if (received &&
         (draft.grant!.recipientActorId != actor ||
-            !draft.grant!.withinTerm(clock())))
+            !draft.grant!.withinTerm(clock()))) {
       throw const ApiFailure(403, 'SCOPE_DENIED');
+    }
     final path = received
         ? '/support/grants/${supportId(draft.grantId)}/diagnostic-packages'
         : '${_transport.customer}/devices/${draft.deviceId}/diagnostic-packages';
@@ -93,10 +95,12 @@ class DiagnosticPackageRepository {
     final current = await get(expected.id);
     expected.validateUpdate(current);
     if (!current.readyAt(clock())) {
-      if (current.stateAt(clock()) == 'EXPIRED')
+      if (current.stateAt(clock()) == 'EXPIRED') {
         throw const ApiFailure(410, 'DIAGNOSTIC_PACKAGE_EXPIRED');
-      if (current.state == 'REVOKED')
+      }
+      if (current.state == 'REVOKED') {
         throw const ApiFailure(403, 'SCOPE_DENIED');
+      }
       throw const ApiFailure(409, 'DIAGNOSTIC_PACKAGE_NOT_READY');
     }
     SupportGrant? grant;

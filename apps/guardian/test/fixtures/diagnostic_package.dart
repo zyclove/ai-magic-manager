@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:crypto/crypto.dart';
-import '../../lib/core/api.dart';
-import '../../lib/core/support.dart';
+import 'package:guardian/core/api.dart';
+import 'package:guardian/core/support.dart';
 import 'diagnostic.dart' as diagnostic;
 import 'support.dart';
 export 'support.dart'

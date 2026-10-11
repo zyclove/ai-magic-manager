@@ -2,9 +2,9 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
-import '../lib/core/api.dart';
-import '../lib/core/support.dart';
-import '../lib/core/support_repository.dart';
+import 'package:guardian/core/api.dart';
+import 'package:guardian/core/support.dart';
+import 'package:guardian/core/support_repository.dart';
 import 'fixtures/support.dart';
 import 'diagnostic_repository_test.dart' show Client;
 

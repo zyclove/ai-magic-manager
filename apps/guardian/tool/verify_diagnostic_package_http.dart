@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import '../lib/core/api.dart';
-import '../lib/core/support_repository.dart';
-import '../lib/core/diagnostic_package.dart';
-import '../lib/core/diagnostic_package_repository.dart';
+import 'package:guardian/core/api.dart';
+import 'package:guardian/core/support_repository.dart';
+import 'package:guardian/core/diagnostic_package.dart';
+import 'package:guardian/core/diagnostic_package_repository.dart';
 import 'verify_support_http.dart' show TokenClient, check, denied;
 
 Future<void> main(List<String> args) async {

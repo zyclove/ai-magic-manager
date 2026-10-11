@@ -41,8 +41,9 @@ class DiagnosticRepository {
 
   Future<DeviceDiagnostic> load() async {
     _ensureCurrent();
-    if (![tenantId, deviceId, registrationId].every(_identifier.hasMatch))
+    if (![tenantId, deviceId, registrationId].every(_identifier.hasMatch)) {
       _invalid();
+    }
     StreamSubscription<List<int>>? subscription;
     bool aborted = false, ended = false;
     try {

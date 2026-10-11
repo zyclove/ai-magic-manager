@@ -215,8 +215,9 @@ class DeviceDiagnostic {
       required String registrationId}) {
     final object = _object(input), scope = _object(object['scope']);
     if (object['schemaVersion'] != 1 ||
-        object['evidenceStatus'] != 'DEVICE_REPORTS_NOT_EXECUTION_PROOF')
+        object['evidenceStatus'] != 'DEVICE_REPORTS_NOT_EXECUTION_PROOF') {
       _invalid();
+    }
     if (_id(scope['tenantId']) != tenantId ||
         _id(scope['deviceId']) != deviceId ||
         _id(scope['registrationId']) != registrationId) _invalid();

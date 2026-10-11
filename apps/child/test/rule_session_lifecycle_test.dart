@@ -5,15 +5,24 @@ import 'package:device_policy/device_policy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'support/identity_fixture.dart';
+import '../../../packages/device_policy/test/fixtures.dart' as configurations;
 
 /// Synthetic verified-object boundary: these tests exercise the real session's
 /// lifecycle, not signature verification or native storage. Those have their
 /// own SDK/native journeys. No such receiver is available to the product.
 class _Rules implements ChildRuleReceiver {
   final snapshot = ChildRules(cursor: 7, configurations: [
-    VerifiedConfiguration.internal('synthetic-not-a-signature', {
-      'document': {'name': '合成家庭规则'}
-    })
+    VerifiedConfiguration.internal(
+        'synthetic-not-a-signature',
+        configurations.envelope({
+          'document': {
+            'name': '合成家庭规则',
+            'rules': [],
+            'applications': [],
+            'schedules': [],
+            'protectedPackageExemptions': []
+          }
+        }))
   ]);
   int restores = 0, syncs = 0, closes = 0;
   Completer<ChildRules>? synchronization;
