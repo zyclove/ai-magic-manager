@@ -14,6 +14,7 @@ import '../ui/application_classification_dialog.dart';
 import '../ui/resource_page.dart';
 import '../ui/member_editor.dart';
 import '../ui/access_request_dialog.dart';
+import '../ui/policy_target_picker.dart';
 import 'members_page.dart';
 import 'classes_page.dart';
 import 'device_groups_page.dart';
@@ -774,27 +775,48 @@ class ConsoleActions {
   }
 
   Future<void> previewPolicy(BuildContext ctx, Json draft) async {
-    final devices = (await s.api.all('$root/devices'))
-        .where((d) => d['state'] == 'ACTIVE')
-        .toList();
-    if (!ctx.mounted) return;
-    if (devices.isEmpty) {
-      toast(ctx, '没有已注册设备，请先完成设备配对。');
-      return;
+    final actor = s.profile?['subject'] as String?, role = s.role;
+    if (actor == null) return;
+    bool current() =>
+        ctx.mounted &&
+        s.authenticated &&
+        s.tenant != null &&
+        s.root == root &&
+        s.profile?['subject'] == actor &&
+        s.role == role &&
+        s.canOpen('policies');
+    Future<bool> groupCurrent(PolicyTargetSelection target) async {
+      if (target.groupId == null) return current();
+      if (!current() || !s.canOpen('device-groups')) return false;
+      final latest =
+          await s.api.send('GET', '$root/device-groups/${target.groupId}');
+      return current() &&
+          latest is Json &&
+          latest['state'] == 'ACTIVE' &&
+          latest['version'] == target.groupVersion;
     }
-    final picked = await formDialog(ctx,
-        title: '选择预览设备',
-        fields: [
-          FieldSpec('deviceId', '设备',
-              options: entityOptions(devices, 'displayName'))
-        ],
-        onSubmit: (v) async => v);
-    if (picked == null) return;
+
+    final picked = await showDialog<PolicyTargetSelection>(
+        context: ctx,
+        barrierDismissible: false,
+        builder: (_) => PolicyTargetPicker(
+            session: s, root: root, actor: actor, role: role));
+    if (picked == null || !current()) return;
+    if (picked.groupId != null && !await groupCurrent(picked)) {
+      throw const ApiFailure(409, 'POLICY_GROUP_CHANGED');
+    }
+    if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
     final p = await s.api.send('POST', '$root/policies/${draft['id']}/previews',
         version: draft['revision'],
-        body: {
-          'deviceIds': [picked['deviceId']]
-        }) as Json;
+        body: {'deviceIds': picked.deviceIds}) as Json;
+    if (!current()) return;
+    final returnedTargets = (p['targets'] as List)
+        .map((target) => (target as Json)['deviceId'] as String)
+        .toSet();
+    if (returnedTargets.length != picked.deviceIds.length ||
+        !returnedTargets.containsAll(picked.deviceIds)) {
+      throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+    }
     if (!ctx.mounted) return;
     final publicationKey = requestId();
     await actionDetails(
@@ -803,20 +825,22 @@ class ConsoleActions {
         {
           '有效期': dateLabel(p['expiresAt']),
           '执行支持': p['enforceable'] == true ? '支持执行' : '设备能力不足或执行适配器未配置',
+          '选择来源': picked.groupId == null
+              ? '手动选择 ${picked.deviceIds.length} 台设备'
+              : '设备组“${picked.groupName}”第 ${picked.groupVersion} 版的 ${picked.deviceIds.length} 台有效设备快照',
           '目标与检查': (p['targets'] as List).map((t) {
-            final name = devices
-                    .where((d) => d['id'] == t['deviceId'])
-                    .firstOrNull?['displayName'] ??
-                shortId(t['deviceId']);
+            final name = picked.names[t['deviceId']] ?? shortId(t['deviceId']);
             final rules = (t['rules'] as List)
                 .map((r) =>
                     '${label(r['kind'])}：${label(r['status'])} · ${label(r['reasonCode'])}')
                 .join('\n');
             return '$name · ${label(t['observationStatus'])}\n$rules';
           }).join('\n\n'),
-          '发布说明': '仅保存配置不会使设备系统策略生效。发布需近期多因素认证。'
+          '发布说明': '本次目标为明确设备快照；组成员日后变化不会自动影响此版本。仅保存配置不会使系统策略生效，发布需近期多因素认证。'
         },
         reauth: reauth,
+        accessChanges: s,
+        hasAccess: current,
         actions: [
           DetailAction('仅保存配置', (inner) async {
             if (!await confirmAction(
@@ -824,6 +848,11 @@ class ConsoleActions {
                 confirm: '发布配置')) {
               return;
             }
+            if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+            if (picked.groupId != null && !await groupCurrent(picked)) {
+              throw const ApiFailure(409, 'POLICY_GROUP_CHANGED');
+            }
+            if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
             final result = await s.api.send(
                 'POST', '$root/policies/${draft['id']}/publications',
                 version: draft['revision'],
