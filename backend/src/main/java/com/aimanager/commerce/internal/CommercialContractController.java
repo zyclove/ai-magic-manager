@@ -98,6 +98,18 @@ class CommercialContractController {
     return response(contracts.platformGet(authentication, id));
   }
 
+  @GetMapping("/{id}/history")
+  ResponseEntity<CommercialContractService.PlatformHistoryPage> history(
+      Authentication authentication,
+      @PathVariable String id,
+      @RequestParam(defaultValue = "50") int limit,
+      @RequestParam(required = false) Long beforeVersion) {
+    return ResponseEntity.ok()
+        .cacheControl(CacheControl.noStore())
+        .header("Vary", "Authorization")
+        .body(contracts.platformHistory(authentication, id, limit, beforeVersion));
+  }
+
   @GetMapping
   ResponseEntity<ItemPage<CommercialContractService.ReviewView>> list(
       Authentication authentication,

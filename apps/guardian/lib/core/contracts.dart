@@ -3,6 +3,7 @@ import 'commercial_catalog.dart' show catalogFeatures;
 
 final _contractId =
     RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$');
+final _sha256 = RegExp(r'^[0-9a-f]{64}$');
 const contractStates = {
   'PENDING_REVIEW',
   'AWAITING_CUSTOMER',
@@ -18,9 +19,10 @@ Never _invalid() => throw const ApiFailure(502, 'INVALID_CONTRACT_RESPONSE');
 class ContractReview {
   final String id, tenantId, offerId, contractReference, state, buyerReference;
   final String capacityKind, sourceState;
+  final String evidenceHash;
   final String? submittedBy, approvedBy, acceptedBy;
   final int offerRevision, sourceRevision, version, deviceCapacity;
-  final int activeFrom, expiresAt, createdAt, updatedAt;
+  final int activeFrom, expiresAt, executedAt, createdAt, updatedAt;
   final List<String> features;
   final bool entitlementApplied;
 
@@ -33,6 +35,7 @@ class ContractReview {
         buyerReference = raw['buyerReference'],
         capacityKind = raw['capacityKind'],
         sourceState = raw['sourceState'],
+        evidenceHash = raw['evidenceHash'],
         submittedBy = raw['submittedBy'],
         approvedBy = raw['approvedBy'],
         acceptedBy = raw['acceptedBy'],
@@ -42,6 +45,7 @@ class ContractReview {
         deviceCapacity = raw['deviceCapacity'],
         activeFrom = raw['activeFrom'],
         expiresAt = raw['expiresAt'],
+        executedAt = raw['executedAt'],
         createdAt = raw['createdAt'],
         updatedAt = raw['updatedAt'],
         features = List<String>.unmodifiable(raw['features']),
@@ -78,6 +82,10 @@ class ContractReview {
         raw['activeFrom'] < 0 ||
         raw['expiresAt'] is! int ||
         raw['expiresAt'] <= raw['activeFrom'] ||
+        raw['executedAt'] is! int ||
+        raw['executedAt'] < 0 ||
+        raw['evidenceHash'] is! String ||
+        !_sha256.hasMatch(raw['evidenceHash']) ||
         raw['createdAt'] is! int ||
         raw['createdAt'] < 0 ||
         raw['updatedAt'] is! int ||
@@ -143,6 +151,81 @@ class ContractCapabilities {
   }
 }
 
+const contractActions = {
+  'SUBMITTED',
+  'APPROVED',
+  'REJECTED',
+  'CUSTOMER_ACCEPTED',
+  'REVOKED'
+};
+
+class ContractHistory {
+  final int version, occurredAt;
+  final String action;
+  final String? reason, actorId, eventId, correlationId;
+  ContractHistory._(Json raw)
+      : version = raw['version'],
+        occurredAt = raw['occurredAt'],
+        action = raw['action'],
+        reason = raw['reason'],
+        actorId = raw['actorId'],
+        eventId = raw['eventId'],
+        correlationId = raw['correlationId'];
+
+  static ContractHistory parse(dynamic raw, {required bool platform}) {
+    if (raw is! Json ||
+        raw['version'] is! int ||
+        raw['version'] < 1 ||
+        raw['occurredAt'] is! int ||
+        raw['occurredAt'] < 0 ||
+        !contractActions.contains(raw['action']) ||
+        (raw['reason'] != null && raw['reason'] is! String) ||
+        (platform &&
+            (raw['actorId'] is! String ||
+                raw['eventId'] is! String ||
+                !isContractId(raw['eventId']) ||
+                raw['correlationId'] is! String ||
+                !isContractId(raw['correlationId']))) ||
+        (!platform &&
+            (raw.containsKey('reason') ||
+                raw.containsKey('actorId') ||
+                raw.containsKey('eventId') ||
+                raw.containsKey('correlationId')))) _invalid();
+    return ContractHistory._(raw);
+  }
+}
+
+class ContractHistoryPage {
+  final List<ContractHistory> items;
+  final int? nextBeforeVersion;
+  const ContractHistoryPage(this.items, this.nextBeforeVersion);
+
+  static ContractHistoryPage parse(dynamic raw, {required bool platform}) {
+    if (raw is! Json ||
+        raw['items'] is! List ||
+        (raw['nextBeforeVersion'] != null &&
+            (raw['nextBeforeVersion'] is! int ||
+                raw['nextBeforeVersion'] < 1))) {
+      _invalid();
+    }
+    final items = (raw['items'] as List)
+        .map((item) => ContractHistory.parse(item, platform: platform))
+        .toList();
+    if (items.length > 50 ||
+        items.map((item) => item.version).toSet().length != items.length ||
+        (raw['nextBeforeVersion'] != null &&
+            (items.isEmpty ||
+                items.last.version != raw['nextBeforeVersion']))) {
+      _invalid();
+    }
+    for (var index = 1; index < items.length; index++) {
+      if (items[index - 1].version <= items[index].version) _invalid();
+    }
+    return ContractHistoryPage(
+        List.unmodifiable(items), raw['nextBeforeVersion']);
+  }
+}
+
 String contractStateLabel(String state) => switch (state) {
       'PENDING_REVIEW' => '待独立审核',
       'AWAITING_CUSTOMER' => '待机构确认',
@@ -156,3 +239,12 @@ String contractReviewLabel(ContractReview review) => review.state == 'APPLIED'
         ? '撤销已执行'
         : '权益已生效'
     : contractStateLabel(review.state);
+
+String contractActionLabel(String action) => switch (action) {
+      'SUBMITTED' => '已提交核验',
+      'APPROVED' => '独立审核通过',
+      'REJECTED' => '独立审核驳回',
+      'CUSTOMER_ACCEPTED' => '机构已确认',
+      'REVOKED' => '撤销已执行',
+      _ => '未知事件'
+    };

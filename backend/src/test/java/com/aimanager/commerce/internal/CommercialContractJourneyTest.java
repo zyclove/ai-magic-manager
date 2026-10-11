@@ -206,6 +206,33 @@ class CommercialContractJourneyTest {
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.paidDeviceCapacity").value(25));
     mvc.perform(
+            get(CONTRACTS + "/" + id)
+                .with(actor("contract-approver", "SCOPE_contract:approve", false)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.evidenceHash").isString())
+        .andExpect(jsonPath("$.executedAt").isNumber());
+    mvc.perform(
+            get(CONTRACTS + "/" + id + "/history")
+                .with(actor("contract-approver", "SCOPE_contract:approve", false))
+                .param("limit", "2"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.items.length()").value(2))
+        .andExpect(jsonPath("$.items[0].action").value("CUSTOMER_ACCEPTED"))
+        .andExpect(jsonPath("$.items[0].actorId").value(owner))
+        .andExpect(jsonPath("$.nextBeforeVersion").value(2));
+    mvc.perform(
+            get(CONTRACTS + "/" + id + "/history")
+                .with(actor("contract-approver", "SCOPE_contract:approve", false))
+                .param("beforeVersion", "2"))
+        .andExpect(jsonPath("$.items[0].action").value("SUBMITTED"))
+        .andExpect(jsonPath("$.nextBeforeVersion").doesNotExist());
+    mvc.perform(get(tenantPath(id) + "/history").with(actor(owner, "SCOPE_tenant:create", false)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.items.length()").value(3))
+        .andExpect(jsonPath("$.items[0].actorId").doesNotExist())
+        .andExpect(jsonPath("$.items[0].reason").doesNotExist())
+        .andExpect(jsonPath("$.items[0].correlationId").doesNotExist());
+    mvc.perform(
             post(tenantPath(id) + "/accept")
                 .with(actor(owner, "SCOPE_tenant:create", true))
                 .header("If-Match", "\"2\""))
@@ -265,6 +292,10 @@ class CommercialContractJourneyTest {
         .andExpect(status().isForbidden());
     mvc.perform(
             get("/api/v1/tenants/" + UUID.randomUUID() + "/contracts/" + id)
+                .with(actor(owner, "SCOPE_tenant:create", false)))
+        .andExpect(status().isForbidden());
+    mvc.perform(
+            get("/api/v1/tenants/" + UUID.randomUUID() + "/contracts/" + id + "/history")
                 .with(actor(owner, "SCOPE_tenant:create", false)))
         .andExpect(status().isForbidden());
     mvc.perform(

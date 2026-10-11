@@ -39,6 +39,19 @@ class TenantContractController {
     return response(contracts.tenantGet(tenantId, actor.getSubject(), id));
   }
 
+  @GetMapping("/{id}/history")
+  ResponseEntity<CommercialContractService.TenantHistoryPage> history(
+      @PathVariable String tenantId,
+      @AuthenticationPrincipal Jwt actor,
+      @PathVariable String id,
+      @RequestParam(defaultValue = "50") int limit,
+      @RequestParam(required = false) Long beforeVersion) {
+    return ResponseEntity.ok()
+        .cacheControl(CacheControl.noStore())
+        .header("Vary", "Authorization")
+        .body(contracts.tenantHistory(tenantId, actor.getSubject(), id, limit, beforeVersion));
+  }
+
   @GetMapping
   ResponseEntity<ItemPage<CommercialContractService.TenantReviewView>> list(
       @PathVariable String tenantId,

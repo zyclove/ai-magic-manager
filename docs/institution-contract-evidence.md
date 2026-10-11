@@ -55,21 +55,23 @@
 | `POST /api/v1/platform/contracts` | `contract:manage` + 近期 MFA；`{id,evidence}`，其中 `evidence` 为完整 Compact JWS；201 创建、200 同提交者幂等重放；仅接受外部签名证据 |
 | `GET /api/v1/platform/contracts/capabilities` | 平台合同角色查询签发方开关与审核/客户确认要求；默认 `submissionEnabled=false`，管理端据此禁用提交 |
 | `GET /api/v1/platform/contracts[/{id}]` | `contract:manage` 或 `contract:approve`，分页列表/详情；列表 `limit` 1–100、UUID 游标 |
+| `GET /api/v1/platform/contracts/{id}/history` | 平台合同角色读取按版本倒序的不可变事件；`limit` 1–100、`beforeVersion` 游标，包含操作人、原因与关联请求 ID |
 | `POST /api/v1/platform/contracts/{id}/approve|reject` | `contract:approve` + 近期 MFA；`If-Match` 与 `{reason}`；不同于提交人 |
 | `GET /api/v1/tenants/{tenantId}/contracts[/{id}]` | 当前 OWNER、ORG_ADMIN 或 AUDITOR；租户限定的分页列表/详情 |
+| `GET /api/v1/tenants/{tenantId}/contracts/{id}/history` | 当前 OWNER、ORG_ADMIN 或 AUDITOR 读取租户限定事件时间线；仅提供动作、版本与时间，不暴露内部审批原因、操作人及请求标识 |
 | `POST /api/v1/tenants/{tenantId}/contracts/{id}/accept` | 当前 OWNER 或 ORG_ADMIN + 近期 MFA + `If-Match`；只有 ACTIVE 且待客户确认的合同可接受 |
 
 所有响应禁止共享缓存，单项带强 ETag。正式接入需考虑由合同来源按需重新签发短期断言；浏览器不得长期保存 JWS。合同主数据的删除/保留与财务、争议流程须另定策略，当前只在留存目录中分类为租户级 `SHARED_ACCOUNT`。
 
 ### 管理端交互
 
-Flutter 管理台新增“平台机构合同”和“机构合同”两个入口。平台人员看到当前已加载记录的状态统计、合同列表与详情；合同运营仅在签发方开关已启用时可粘贴短期 JWS 提交，独立审批人可批准或驳回并填写原因。机构 OWNER/ORG_ADMIN 在自己的机构空间核对采购方引用、报价版本、设备名额、功能和期限后确认；AUDITOR 只读。页面会在工作空间/账号变更时清空旧数据，处理加载、空态、错误、版本冲突和近期 MFA 重新验证提示；机构视图不接收平台操作者标识。撤销完成统一显示“已处理”，并明确解释对应权益停止。
+Flutter 管理台新增“平台机构合同”和“机构合同”两个入口。平台人员看到当前已加载记录的状态统计、合同列表与详情；合同运营仅在签发方开关已启用时可粘贴短期 JWS 提交，独立审批人可批准或驳回并填写原因。机构 OWNER/ORG_ADMIN 在自己的机构空间核对采购方引用、报价版本、签约确认时间、设备名额、功能、期限及签名断言摘要后确认；AUDITOR 只读。双方均可分页查看不可变事件时间线，机构视图不接收平台操作人或关联请求标识。页面会在工作空间/账号变更时清空旧数据，处理加载、空态、错误、版本冲突和近期 MFA 重新验证提示；撤销完成明确显示“撤销已执行”，说明对应来源权益停止。
 
 界面沿用现有控制台组件与配色，尚未在浏览器完成真实账号和视觉回归。曾按项目 UI 技能要求调用 12ui 生成候选，服务返回 `unsupported_country_region_territory`（HTTP 403），因此没有获得设计图或完成像素级对照；保留了现有设计体系和响应式列表/详情布局。
 
 ### 仍需完成的产品化能力
 
-- 证据摘要/差异对照、合同不可变事件时间线、浏览器真实操作员验收与重新认证成功回跳尚未交付；不可把模型、接口和组件静态检查等同于真实运营可用。
+- 报价与合同事实差异对照、浏览器真实操作员验收与重新认证成功回跳尚未交付；现有 SHA-256 是签名断言摘要，不是合同文件摘要。不可把模型、接口和组件静态检查等同于真实运营可用。
 - 外部合同提供方、买方引用与租户法定主体的独立映射、证据可重查/吊销、到期及更高版本续约的自动同步、财务对账与开票未接入。
 - 真实 MySQL 并发审批、签发方 JWKS 轮换、可用性和运营恢复演练尚需专门验收。撤销发生时，保留基础安全策略，付费权益按账本规则失效。
 
@@ -77,4 +79,4 @@ Flutter 管理台新增“平台机构合同”和“机构合同”两个入口
 
 ## 验证
 
-`ContractEvidenceVerifierTest` 用真实 RSA 签名与 Spring/Nimbus 解码检查正确断言、篡改、错误签发方/受众、过期/过旧/未来时间、地区/渠道/容量/功能矛盾和默认关闭行为。`CommercialContractJourneyTest` 通过 Spring HTTP、真实数据库事务与可替换的已核验证据接口，覆盖角色、MFA、同人审批禁止、机构确认前无权益、跨租户阻断、幂等重试、强版本、拒绝、入账、撤销和默认未启用签发方的能力响应。隔离源码 H2 验收中，验签 4 项、机构合同 4 项、现有产品目录 5 项、新库初始化 1 项和删除准备/留存分类 12 项均通过，共 26 项。Flutter 全部 249 项测试通过（含 `contracts_test.dart` 的 4 项模型/HTTP 仓库测试）；静态分析没有错误或警告，但既有文件保留信息级提示；Flutter Web Release 构建成功。外部真实签发方、MySQL 并发、浏览器操作与生产交付不在这组测试结论内。
+`ContractEvidenceVerifierTest` 用真实 RSA 签名与 Spring/Nimbus 解码检查正确断言、篡改、错误签发方/受众、过期/过旧/未来时间、地区/渠道/容量/功能矛盾和默认关闭行为。`CommercialContractJourneyTest` 通过 Spring HTTP、真实数据库事务与可替换的已核验证据接口，覆盖角色、MFA、同人审批禁止、机构确认前无权益、跨租户阻断、幂等重试、强版本、拒绝、入账、撤销、默认未启用签发方的能力响应、事件分页及机构时间线脱敏。隔离源码 H2 验收中，验签 4 项、机构合同 4 项、现有产品目录 5 项、新库初始化 1 项和删除准备/留存分类 12 项均通过，共 26 项。Flutter 全部 250 项测试通过（含新增时间线模型），静态分析无错误或警告，既有文件保留信息级提示；Flutter Web Release 构建成功。外部真实签发方、MySQL 并发、浏览器操作与生产交付不在这组测试结论内。

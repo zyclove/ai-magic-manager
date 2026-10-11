@@ -31,6 +31,8 @@ Json review(
       'activeFrom': 1791619200000,
       'expiresAt': 1823155200000,
       'sourceState': sourceState,
+      'executedAt': 1791619200000,
+      'evidenceHash': 'a' * 64,
       'createdAt': 100,
       'updatedAt': 200,
       'entitlementApplied': state == 'APPLIED',
@@ -62,6 +64,11 @@ void main() {
             }, platform: false),
         throwsA(isA<ApiFailure>()));
     expect(contractStateLabel('APPLIED'), '已处理');
+    expect(
+        () => ContractReview.parse(
+            {...review(platform: false), 'evidenceHash': 'bad'},
+            platform: false),
+        throwsA(isA<ApiFailure>()));
     expect(
         contractReviewLabel(ContractReview.parse(
             review(state: 'APPLIED', sourceState: 'REVOKED'),
@@ -157,5 +164,56 @@ void main() {
         }),
         200,
         headers: {'content-type': 'application/json'}));
+  });
+
+  test(
+      'history pages are ordered and tenant events exclude operator identities',
+      () async {
+    final requests = <http.Request>[];
+    final client = MockClient((request) async {
+      requests.add(request);
+      final second = request.url.queryParameters['beforeVersion'] == '2';
+      return http.Response(
+          jsonEncode({
+            'items': second
+                ? [
+                    {'version': 1, 'action': 'SUBMITTED', 'occurredAt': 100}
+                  ]
+                : [
+                    {
+                      'version': 3,
+                      'action': 'CUSTOMER_ACCEPTED',
+                      'occurredAt': 300
+                    },
+                    {'version': 2, 'action': 'APPROVED', 'occurredAt': 200}
+                  ],
+            'nextBeforeVersion': second ? null : 2
+          }),
+          200,
+          headers: {'content-type': 'application/json'});
+    });
+    final repository = ContractsRepository.tenant(
+        api: Api(() async => client, baseUrl: 'https://example.test/api/v1'),
+        current: () => true,
+        tenantId: tenant);
+    final first = await repository.history(reviewId);
+    expect(first.items.first.actorId, isNull);
+    expect(first.nextBeforeVersion, 2);
+    final second = await repository.history(reviewId, beforeVersion: 2);
+    expect(second.items.single.version, 1);
+    expect(requests.last.url.queryParameters['beforeVersion'], '2');
+    expect(
+        () => ContractHistoryPage.parse({
+              'items': [
+                {
+                  'version': 2,
+                  'action': 'APPROVED',
+                  'reason': 'Internal-only details',
+                  'occurredAt': 200,
+                }
+              ],
+              'nextBeforeVersion': null
+            }, platform: false),
+        throwsA(isA<ApiFailure>()));
   });
 }

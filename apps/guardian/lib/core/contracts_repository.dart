@@ -77,6 +77,24 @@ class ContractsRepository {
     return review;
   }
 
+  Future<ContractHistoryPage> history(String id, {int? beforeVersion}) async {
+    _ensureCurrent();
+    if (!isContractId(id) || (beforeVersion != null && beforeVersion < 1)) {
+      throw const ApiFailure(400, 'INVALID_CONTRACT_HISTORY_PAGE');
+    }
+    final query = beforeVersion == null
+        ? '?limit=50'
+        : '?limit=50&beforeVersion=$beforeVersion';
+    final raw = await _read('$_path/$id/history$query', 128 * 1024);
+    _ensureCurrent();
+    final page = ContractHistoryPage.parse(raw, platform: platform);
+    if (beforeVersion != null &&
+        page.items.any((event) => event.version >= beforeVersion)) {
+      throw const ApiFailure(502, 'INVALID_CONTRACT_RESPONSE');
+    }
+    return page;
+  }
+
   /// The caller keeps the same ID and JWS for an uncertain network retry.
   Future<ContractReview> create(String id, String compactJws) async {
     if (!platform) throw const ApiFailure(403, 'SCOPE_DENIED');

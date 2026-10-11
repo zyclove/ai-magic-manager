@@ -250,6 +250,28 @@ class CommercialContractService {
   }
 
   @Transactional(readOnly = true, timeout = 10)
+  PlatformHistoryPage platformHistory(
+      Authentication authentication, String id, int limit, Long beforeVersion) {
+    requireEither(authentication);
+    ReviewRow row = required(id, false);
+    HistorySlice events = history(row.id(), limit, beforeVersion);
+    return new PlatformHistoryPage(
+        events.items().stream()
+            .map(
+                event ->
+                    new PlatformHistory(
+                        event.version(),
+                        event.eventId(),
+                        event.action(),
+                        event.actorId(),
+                        event.reason(),
+                        event.correlationId(),
+                        event.occurredAt()))
+            .toList(),
+        events.nextBeforeVersion());
+  }
+
+  @Transactional(readOnly = true, timeout = 10)
   TenantReviewView tenantGet(String tenantId, String actorId, String id) {
     access.requireRole(tenantId, actorId, Role.OWNER, Role.ORG_ADMIN, Role.AUDITOR);
     ReviewRow row = required(id, false);
@@ -270,6 +292,46 @@ class CommercialContractService {
             cursor == null ? "" : cursor,
             limit + 1);
     return ItemPage.from(rows, limit, TenantReviewView::id);
+  }
+
+  @Transactional(readOnly = true, timeout = 10)
+  TenantHistoryPage tenantHistory(
+      String tenantId, String actorId, String id, int limit, Long beforeVersion) {
+    access.requireRole(tenantId, actorId, Role.OWNER, Role.ORG_ADMIN, Role.AUDITOR);
+    ReviewRow row = required(id, false);
+    if (!row.tenantId().equals(tenantId)) throw DomainException.denied();
+    HistorySlice events = history(row.id(), limit, beforeVersion);
+    return new TenantHistoryPage(
+        events.items().stream()
+            .map(event -> new TenantHistory(event.version(), event.action(), event.occurredAt()))
+            .toList(),
+        events.nextBeforeVersion());
+  }
+
+  private HistorySlice history(String id, int limit, Long beforeVersion) {
+    if (limit < 1 || limit > 100 || (beforeVersion != null && beforeVersion < 1)) {
+      throw DomainException.invalid("INVALID_CONTRACT_HISTORY_PAGE");
+    }
+    List<EventRow> rows =
+        jdbc.query(
+            "SELECT version,event_id,action,actor_id,reason,correlation_id,occurred_at"
+                + " FROM commercial_contract_events WHERE review_id=? AND version<?"
+                + " ORDER BY version DESC LIMIT ?",
+            (result, index) ->
+                new EventRow(
+                    result.getLong("version"),
+                    result.getString("event_id"),
+                    result.getString("action"),
+                    result.getString("actor_id"),
+                    result.getString("reason"),
+                    result.getString("correlation_id"),
+                    result.getLong("occurred_at")),
+            id,
+            beforeVersion == null ? Long.MAX_VALUE : beforeVersion,
+            limit + 1);
+    boolean more = rows.size() > limit;
+    List<EventRow> page = List.copyOf(rows.subList(0, Math.min(rows.size(), limit)));
+    return new HistorySlice(page, more ? page.get(page.size() - 1).version() : null);
   }
 
   private CommercialOfferDraft checkOfferAndTenant(ContractEvidence evidence, boolean lock) {
@@ -406,6 +468,8 @@ class CommercialContractService {
         evidence.activeFrom(),
         evidence.expiresAt(),
         evidence.state().name(),
+        evidence.executedAt(),
+        row.evidenceHash(),
         row.submittedBy(),
         row.approvedBy(),
         row.acceptedBy(),
@@ -433,6 +497,8 @@ class CommercialContractService {
         review.activeFrom(),
         review.expiresAt(),
         review.sourceState(),
+        review.executedAt(),
+        review.evidenceHash(),
         review.createdAt(),
         review.updatedAt(),
         review.entitlementApplied());
@@ -508,6 +574,17 @@ class CommercialContractService {
 
   private record SourceRecord(long revision, String state) {}
 
+  private record EventRow(
+      long version,
+      String eventId,
+      String action,
+      String actorId,
+      String reason,
+      String correlationId,
+      long occurredAt) {}
+
+  private record HistorySlice(List<EventRow> items, Long nextBeforeVersion) {}
+
   private record ReviewRow(
       String id,
       String tenantId,
@@ -542,6 +619,8 @@ class CommercialContractService {
       long activeFrom,
       long expiresAt,
       String sourceState,
+      long executedAt,
+      String evidenceHash,
       String submittedBy,
       String approvedBy,
       String acceptedBy,
@@ -565,9 +644,26 @@ class CommercialContractService {
       long activeFrom,
       long expiresAt,
       String sourceState,
+      long executedAt,
+      String evidenceHash,
       long createdAt,
       long updatedAt,
       boolean entitlementApplied) {}
+
+  record PlatformHistory(
+      long version,
+      String eventId,
+      String action,
+      String actorId,
+      String reason,
+      String correlationId,
+      long occurredAt) {}
+
+  record TenantHistory(long version, String action, long occurredAt) {}
+
+  record PlatformHistoryPage(List<PlatformHistory> items, Long nextBeforeVersion) {}
+
+  record TenantHistoryPage(List<TenantHistory> items, Long nextBeforeVersion) {}
 
   record Creation(ReviewView review, boolean created) {}
 }

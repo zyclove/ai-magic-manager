@@ -22,11 +22,16 @@ class _ContractsPageState extends State<ContractsPage> {
   late final String actorId, tenantId, initialRole;
   late final ContractsRepository repository;
   final reviews = <ContractReview>[];
+  final events = <ContractHistory>[];
   ContractReview? selected;
   ContractCapabilities? capabilities;
   String? selectedId, nextCursor;
-  Object? listError, detailError, capabilityError;
-  bool loadingList = false, loadingMore = false, loadingDetail = false;
+  int? nextBeforeVersion;
+  Object? listError, detailError, historyError, capabilityError;
+  bool loadingList = false,
+      loadingMore = false,
+      loadingDetail = false,
+      loadingHistory = false;
   int generation = 0, listGeneration = 0, detailGeneration = 0;
 
   bool current() {
@@ -63,12 +68,14 @@ class _ContractsPageState extends State<ContractsPage> {
       detailGeneration++;
       setState(() {
         reviews.clear();
+        events.clear();
         selected = null;
         selectedId = nextCursor = null;
+        nextBeforeVersion = null;
         capabilities = null;
         listError = const ApiFailure(403, 'SCOPE_DENIED');
-        detailError = capabilityError = null;
-        loadingList = loadingMore = loadingDetail = false;
+        detailError = historyError = capabilityError = null;
+        loadingList = loadingMore = loadingDetail = loadingHistory = false;
       });
     }
   }
@@ -149,8 +156,11 @@ class _ContractsPageState extends State<ContractsPage> {
     setState(() {
       selectedId = id;
       selected = null;
-      detailError = null;
+      events.clear();
+      nextBeforeVersion = null;
+      detailError = historyError = null;
       loadingDetail = true;
+      loadingHistory = false;
     });
     try {
       final detail = await repository.get(id);
@@ -159,11 +169,45 @@ class _ContractsPageState extends State<ContractsPage> {
         selected = detail;
         loadingDetail = false;
       });
+      await loadHistory(id, ticket);
     } catch (failure) {
       if (mounted && current() && ticket == detailGeneration) {
         setState(() {
           detailError = failure;
           loadingDetail = false;
+        });
+      }
+    }
+  }
+
+  Future<void> loadHistory(String id, int ticket, {bool more = false}) async {
+    if (!current() ||
+        ticket != detailGeneration ||
+        (more && (nextBeforeVersion == null || loadingHistory))) return;
+    final before = more ? nextBeforeVersion : null;
+    setState(() {
+      loadingHistory = true;
+      historyError = null;
+    });
+    try {
+      final page = await repository.history(id, beforeVersion: before);
+      if (!mounted || !current() || ticket != detailGeneration) return;
+      if (more &&
+          page.items.any(
+              (item) => events.any((old) => old.version == item.version))) {
+        throw const ApiFailure(502, 'INVALID_CONTRACT_RESPONSE');
+      }
+      setState(() {
+        if (!more) events.clear();
+        events.addAll(page.items);
+        nextBeforeVersion = page.nextBeforeVersion;
+        loadingHistory = false;
+      });
+    } catch (failure) {
+      if (mounted && current() && ticket == detailGeneration) {
+        setState(() {
+          historyError = failure;
+          loadingHistory = false;
         });
       }
     }
@@ -180,8 +224,8 @@ class _ContractsPageState extends State<ContractsPage> {
             repository: repository,
             reauthenticate: () => widget.session.login(stepUp: true)));
     if (!mounted || !current() || result == null) return;
+    setState(() => selectedId = result.id);
     await loadList();
-    if (mounted && current()) await select(result.id);
   }
 
   Future<void> act(ContractReview review, String action) async {
@@ -199,8 +243,11 @@ class _ContractsPageState extends State<ContractsPage> {
                 },
             reauthenticate: () => widget.session.login(stepUp: true)));
     if (!mounted || !current()) return;
-    if (result != null) await loadList();
-    if (mounted && current()) await select(review.id);
+    if (result != null) {
+      await loadList();
+    } else if (mounted && current()) {
+      await select(review.id);
+    }
   }
 
   @override
@@ -358,8 +405,10 @@ class _ContractsPageState extends State<ContractsPage> {
             _fact('设备名额',
                 '${selected!.capacityKind == 'BASE' ? '基础' : '附加'} ${selected!.deviceCapacity} 台'),
             _fact('来源状态', selected!.sourceState == 'ACTIVE' ? '有效' : '撤销'),
+            _fact('签约确认时间', _date(selected!.executedAt)),
             _fact('服务开始', _date(selected!.activeFrom)),
             _fact('服务结束', _date(selected!.expiresAt)),
+            _fact('签名断言摘要', selected!.evidenceHash),
             _fact(
                 '授权功能',
                 selected!.features.isEmpty
@@ -399,7 +448,54 @@ class _ContractsPageState extends State<ContractsPage> {
               selected!.sourceState == 'ACTIVE') ...[
             const SizedBox(height: 12),
             const Notice('商业权益已记录。设备系统策略是否真正执行，仍以设备能力与回执为准。')
-          ]
+          ],
+          const SizedBox(height: 24),
+          const Divider(),
+          const SizedBox(height: 18),
+          const Text('审核与确认记录',
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 8),
+          const Text('摘要对应签名断言，不是合同文件摘要；正式证据请在签发方系统核对。',
+              style: TextStyle(fontSize: 12, color: muted)),
+          if (loadingHistory) const LinearProgressIndicator(),
+          if (historyError != null)
+            FailureView(historyError!,
+                retry: () => loadHistory(selected!.id, detailGeneration,
+                    more: nextBeforeVersion != null)),
+          if (!loadingHistory && historyError == null && events.isEmpty)
+            const EmptyView('暂无审核事件', '请刷新合同记录；若持续缺失，请联系平台运维核对。'),
+          for (final event in events)
+            ExpansionTile(
+                tilePadding: EdgeInsets.zero,
+                title: Text(
+                    '第 ${event.version} 步 · ${contractActionLabel(event.action)}'),
+                subtitle: Text(widget.platform && event.actorId != null
+                    ? '${_date(event.occurredAt)} · ${event.actorId}'
+                    : _date(event.occurredAt)),
+                children: [
+                  Align(
+                      alignment: Alignment.centerLeft,
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (widget.platform)
+                              Text('原因：${event.reason ?? '流程提交或机构确认'}')
+                            else
+                              const Text('操作详情由平台审计记录保管。'),
+                            if (widget.platform && event.correlationId != null)
+                              SelectableText('关联请求 ${event.correlationId}',
+                                  style: const TextStyle(
+                                      fontSize: 11, color: muted))
+                          ]))
+                ]),
+          if (nextBeforeVersion != null)
+            TextButton.icon(
+                onPressed: loadingHistory
+                    ? null
+                    : () =>
+                        loadHistory(selected!.id, detailGeneration, more: true),
+                icon: const Icon(Icons.expand_more),
+                label: const Text('更多记录'))
         ]
       ]));
 
