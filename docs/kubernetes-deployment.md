@@ -10,7 +10,8 @@
 2. MySQL 8.4 LTS 业务库、专用账号和经过演练的备份。OceanBase MySQL 模式仅在单独 SQL/迁移/故障切换认证后选用。
 3. 已存在的 Kubernetes Secret：业务库密码键 `spring.datasource.password`；签名密钥键 `signing.jwk` 和 `verification.jwks`。Chart 仅引用 Secret 名称，不把密钥写入 values 或镜像。签名私钥仅供获授权的 Pod 读取；轮换时保留仍有效文档对应的验签公钥。
 4. 与公开域名匹配的 TLS Secret、入口控制器及可信代理配置。仅对外开放 HTTPS，浏览器回调必须在 Keycloak 客户端允许列表中；Guardian Web 产物用同一公开 origin 的 `API_URL`/`OIDC_ISSUER` 构建。部署镜像应使用经过验证的不可变 digest。
-5. 为 Flyway 自动迁移留出数据库写锁窗口；升级前备份并验证恢复。数据库迁移之后，不保证简单回退镜像能回退数据模式。
+5. 独立 MySQL 删除账本、固定小写 UUID、独立运行账号及 Secret。先按 `erasure-ledger-plan.md` 显式初始化空账本，运行账号只授予账本头 SELECT/UPDATE、条目 SELECT/INSERT。账本身份、凭据、备份与恢复权限不得随业务库一起回退。
+6. 当前按未上线的 1.0.0 基线从空业务库执行 V1/V2 初始化，不提供历史开发库升级路径。需要更换开发数据结构时使用新库，保留既有数据由部署方明确处理。
 
 ## 安装配置
 
@@ -25,6 +26,12 @@ database:
   jdbcUrl: "jdbc:mysql://mysql.example.internal:3306/ai_manager?connectionTimeZone=UTC"
   username: ai_manager
   existingSecret: manager-db-password
+erasureLedger:
+  jdbcUrl: "jdbc:mysql://erasure.example.internal:3306/erasure_ledger?connectionTimeZone=UTC"
+  username: erasure_runtime
+  id: 11111111-2222-4333-8444-555555555555 # replace with the provisioned fixed identity
+  existingSecret: manager-erasure-password
+  passwordKey: password
 identity:
   serviceName: manager-keycloak
   servicePort: 8080
@@ -38,7 +45,7 @@ ingress:
 
 使用已固定版本的 Helm 在独立环境执行 `helm lint deploy/helm/ai-manager -f manager-values.yaml` 和 `helm template manager deploy/helm/ai-manager -f manager-values.yaml`；检查渲染结果没有私钥或密码，且所有容器镜像 digest 与发布清单一致。经变更审批后才执行 `helm upgrade --install manager deploy/helm/ai-manager -n <namespace> -f manager-values.yaml --atomic --wait`。仓库没有附带可直接部署的真实凭据或镜像地址。
 
-Chart 在缺少 HTTPS origin、镜像、数据库地址/账号、Secret、身份 Service 或 TLS 域名时拒绝渲染。`publicOrigin` 必须严格等于 `https://ingress.host`。Ingress 将 `/api` 交给 API Service、`/identity` 交给现有 Keycloak Service，其余路径交给 Flutter Web。Web 容器对误入的 `/api`、`/identity` 返回 404，不把这些路径回退成前端页面。入口控制器须保留路径，不做剥前缀重写。`ingress.enabled=false` 时，部署方必须自己提供语义相同的 HTTPS 路由。
+Chart 在缺少 HTTPS origin、镜像、业务或账本数据库地址/账号、固定账本 ID、Secret、身份 Service 或 TLS 域名时拒绝渲染。`publicOrigin` 必须严格等于 `https://ingress.host`。Ingress 将 `/api` 交给 API Service、`/identity` 交给现有 Keycloak Service，其余路径交给 Flutter Web。Web 容器对误入的 `/api`、`/identity` 返回 404，不把这些路径回退成前端页面。入口控制器须保留路径，不做剥前缀重写。`ingress.enabled=false` 时，部署方必须自己提供语义相同的 HTTPS 路由。
 
 镜像必须使用完整的 SHA-256 digest；示例中的全零值仅用于说明字段形状，不能部署。入口控制器还须强制 HTTP 跳转 HTTPS；配置 Ingress TLS Secret 本身不能证明跳转已生效，应在部署前后分别验证。
 
@@ -49,11 +56,13 @@ Chart 在缺少 HTTPS origin、镜像、数据库地址/账号、Secret、身份
 - Pod 使用固定非 root UID、只读根文件系统、禁用权限提升、丢弃 Linux capability、RuntimeDefault seccomp、禁用 ServiceAccount Token 自动挂载，并给 `/tmp` 等写入点加有界临时卷。不同环境仍需实施 NetworkPolicy、数据库/TLS 出站策略、Secret 加密与 RBAC；Chart 本身不宣称完成这些集群级措施。
 - Spring 用 Kubernetes Secret 作为 `configtree:` 数据库密码及只读签名文件；健康探针分 startup、liveness、readiness。工作 Pod 不对外路由。当前 Kafka/Artemis 通知传输默认关闭，启用前须补齐真实 Broker 的认证、TLS、ACL 和故障演练。
 
-## 发布检查与回滚
+API 与 worker 都强制在启动完成前检查独立账本。当前仅允许已验证空账本进入就绪；缺失、损坏、不可访问或非空时启动失败。尚未实现的域处理器与已应用水位不能通过人工把读取游标置为完成来替代；启动保护也不等于运行期跨节点隔离已经完成。
 
-部署前检查 Flyway 待执行版本、Keycloak issuer/JWKS、浏览器回调、证书、镜像摘要、Secret 键、数据库容量与备份恢复记录。部署后检查 `/actuator/health/readiness`、Web `/healthz`、公开 `/identity`、真实 PKCE 登录、普通 API 读取、近期 MFA 敏感写入、设备凭证调用和一次受控的签名配置回执；没有这些证据不能宣称集群生产可用。
+## 发布检查与恢复
 
-升级失败时先停止流量或恢复兼容应用版本，查看 Flyway 结果，再根据**实际数据模式兼容性**选择镜像回退或备份恢复；不要直接把 `helm rollback` 当作数据库回滚。定期演练 MySQL 和 Keycloak 的备份、恢复、跨节点切换、密钥轮换、长连接/Broker 恢复与断网重连风暴。百万注册设备只作为压测基线，在线比例和心跳频率必须用实际试点数据确定。
+部署前检查 1.0.0 初始化基线、独立账本初始化与权限、Keycloak issuer/JWKS、浏览器回调、证书、镜像摘要、Secret 键、数据库容量与备份恢复记录。部署后检查 `/actuator/health/readiness`、Web `/healthz`、公开 `/identity`、真实 PKCE 登录、普通 API 读取、近期 MFA 敏感写入、设备凭证调用和一次受控的签名配置回执；没有这些证据不能宣称集群生产可用。
+
+首版初始化失败时先停止流量，检查初始化结果并保留现场；不要自动清空库或把 `helm rollback` 当作数据库恢复。恢复业务备份时保留独立账本的最新状态，并重新执行启动保护；完整恢复再删除演练仍待域处理器实现后验收。定期演练 MySQL 和 Keycloak 的备份、恢复、跨节点切换、密钥轮换、长连接/Broker 恢复与断网重连风暴。百万注册设备只作为压测基线，在线比例和心跳频率必须用实际试点数据确定。
 
 本 Chart 只完成可配置部署模板。Android 受管执行、电视适配、OceanBase 认证、真实多区域部署与高并发验收仍需独立实现及证据。
 

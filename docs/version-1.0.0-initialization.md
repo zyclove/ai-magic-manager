@@ -21,7 +21,7 @@
 
 ## 初始化与验证
 
-从空环境按 `scripts/initialize-deployment.ps1` → `scripts/build-deployment.ps1` → `scripts/start-deployment.ps1` 创建、构建和启动，具体凭据与身份初始化参见部署手册。构建产物带有 `applicationVersion=1.0.0` 的清单。
+从空环境按 `scripts/initialize-deployment.ps1` → `scripts/build-deployment.ps1` → `scripts/initialize-erasure-ledger.ps1` → `scripts/start-deployment.ps1` 创建、构建、显式初始化独立账本和启动，具体凭据与身份初始化参见部署手册。账本初始化只执行一次，普通重启不得重建。构建产物带有 `applicationVersion=1.0.0` 的清单。
 
 验收覆盖全新 H2/MySQL 初始化、再次启动不重复建库、完整表/列清单、模块边界及业务流程。删除前检查覆盖清单不能代替业务测试；H2 成功不能代替 MySQL、OIDC、设备与外部服务的实际验证。
 

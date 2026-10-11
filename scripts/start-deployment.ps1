@@ -32,6 +32,10 @@ foreach ($service in @('backend', 'edge')) {
     if ($configuration.services.$service.build.context.Replace('\','/') -ne $expected) { throw 'Compose build context does not match the verified release.' }
 }
 if ($configuration.services.backend.environment.OIDC_ISSUER_URI -ne "$($context.Settings.publicUrl)/identity/realms/ai-manager") { throw 'Compose issuer differs from the verified client origin.' }
+$receiptPath = Join-Path $context.Root 'erasure-ledger-initialized.json'
+if (-not (Test-Path -LiteralPath $receiptPath)) { throw 'Explicit ledger initialization is required; run initialize-erasure-ledger.ps1 once for a new ledger.' }
+$receipt = Get-Content -LiteralPath $receiptPath -Raw | ConvertFrom-Json
+if ($receipt.schemaVersion -ne 1 -or $receipt.ledgerId -cne $configuration.services.backend.environment.ERASURE_LEDGER_ID -or $configuration.services.backend.environment.ERASURE_RECOVERY_REQUIRED -ne 'true') { throw 'Ledger identity or mandatory recovery protection differs from the initialized deployment.' }
 Invoke-DeploymentNative 'docker' ($arguments + @('up', '-d', '--build', '--wait', '--wait-timeout', '300')) (Join-Path $logs 'compose-start.log')
 Write-Output "Deployment is healthy: $($context.Settings.publicUrl)"
 Write-Output 'Identity setup: /identity/admin/ (bootstrap-admin; password is the restricted bootstrap_admin file).'

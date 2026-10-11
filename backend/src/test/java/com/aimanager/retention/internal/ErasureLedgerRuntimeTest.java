@@ -47,6 +47,13 @@ class ErasureLedgerRuntimeTest {
 
   @DynamicPropertySource
   static void databaseProperties(DynamicPropertyRegistry properties) {
+    // The real startup guard must see a provisioned empty ledger before context refresh.
+    ErasureLedgerBootstrap.initialize(
+        new DriverManagerDataSource(
+            url("LEDGER_STORE_TEST"),
+            System.getenv("LEDGER_STORE_TEST_USERNAME"),
+            System.getenv("LEDGER_STORE_TEST_PASSWORD")),
+        LEDGER_ID);
     properties.add("spring.datasource.url", () -> url("LEDGER_BUSINESS_TEST"));
     properties.add(
         "spring.datasource.username", () -> System.getenv("LEDGER_BUSINESS_TEST_USERNAME"));

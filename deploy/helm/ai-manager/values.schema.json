@@ -34,6 +34,18 @@
       },
       "required": ["jdbcUrl", "username", "existingSecret", "passwordKey"]
     },
+    "erasureLedger": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "jdbcUrl": {"type": "string"},
+        "username": {"type": "string"},
+        "id": {"type": "string"},
+        "existingSecret": {"type": "string"},
+        "passwordKey": {"type": "string", "minLength": 1}
+      },
+      "required": ["jdbcUrl", "username", "id", "existingSecret", "passwordKey"]
+    },
     "identity": {
       "type": "object",
       "additionalProperties": false,

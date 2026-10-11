@@ -62,7 +62,7 @@ if ($IsWindows) {
 }
 $secrets = Join-Path $destination 'secrets'
 $null = New-Item -ItemType Directory -Path $secrets
-foreach ($name in @('mysql_root', 'mysql_app', 'identity_root', 'identity_app', 'bootstrap_admin')) {
+foreach ($name in @('mysql_root', 'mysql_app', 'identity_root', 'identity_app', 'bootstrap_admin', 'erasure_root', 'erasure_app')) {
     WriteNewFile (Join-Path $secrets $name) (RandomSecret)
 }
 $key = [Security.Cryptography.ECDsa]::Create([Security.Cryptography.ECCurve+NamedCurves]::nistP256)
@@ -85,6 +85,7 @@ WriteNewFile (Join-Path $destination 'realm.json') ($realm | ConvertTo-Json -Dep
 $artifactRoot = Join-Path $destination 'artifacts'
 $null = New-Item -ItemType Directory -Path (Join-Path $artifactRoot 'backend'), (Join-Path $artifactRoot 'guardian')
 $environment = [ordered]@{
+    ERASURE_LEDGER_ID=[Guid]::NewGuid().ToString()
     COMPOSE_PROJECT_NAME=$ProjectName; REPOSITORY_ROOT=$repository; DEPLOYMENT_ROOT=$destination
     BACKEND_BUILD_CONTEXT=(Join-Path $artifactRoot 'backend'); GUARDIAN_BUILD_CONTEXT=(Join-Path $artifactRoot 'guardian')
     PUBLIC_URL=$origin; EDGE_PORT="$EdgePort"; EDGE_BIND_ADDRESS='127.0.0.1'; APP_UID=$appUid; APP_GID=$appGid

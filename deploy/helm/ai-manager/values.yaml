@@ -10,6 +10,13 @@ database:
   username: ""
   existingSecret: ""
   passwordKey: spring.datasource.password
+erasureLedger:
+  # Provision explicitly in an independent MySQL database; runtime never initializes it.
+  jdbcUrl: ""
+  username: ""
+  id: ""
+  existingSecret: ""
+  passwordKey: password
 identity:
   # Existing HTTP Service in this namespace, serving Keycloak at /identity.
   serviceName: ""

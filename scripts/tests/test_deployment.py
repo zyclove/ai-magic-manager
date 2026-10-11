@@ -38,10 +38,12 @@ class DeploymentInitializationTest(unittest.TestCase):
         result = self.initialize()
         self.assertEqual(result.returncode, 0, "Deployment initialization failed")
         env = (self.directory / ".env").read_text(encoding="utf-8")
+        self.assertTrue((self.directory / "secrets/erasure_root").is_file(), "Independent ledger root credential is missing")
+        self.assertTrue((self.directory / "secrets/erasure_app").is_file(), "Independent ledger application credential is missing")
         passwords = [(self.directory / "secrets" / name).read_text(encoding="utf-8")
                      for name in ("mysql_root", "mysql_app", "identity_root",
-                                  "identity_app", "bootstrap_admin")]
-        self.assertEqual(len(set(passwords)), 5, "Credentials must be independent")
+                                  "identity_app", "bootstrap_admin", "erasure_root", "erasure_app")]
+        self.assertEqual(len(set(passwords)), 7, "Credentials must be independent")
         for password in passwords:
             self.assertGreaterEqual(len(password), 48)
             self.assertNotIn(password, env, "Compose environment must not contain passwords")
@@ -58,14 +60,23 @@ class DeploymentInitializationTest(unittest.TestCase):
         configured = subprocess.run(command, cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=60)
         self.assertEqual(configured.returncode, 0, "Compose did not accept the generated environment")
         services = json.loads(configured.stdout)["services"]
-        self.assertEqual(set(services), {"database", "identity-database", "identity", "backend", "edge"})
-        for name in ("database", "identity-database", "identity", "backend"):
+        self.assertEqual(set(services), {"database", "identity-database", "erasure-database", "identity", "backend", "edge"})
+        for name in ("database", "identity-database", "erasure-database", "identity", "backend"):
             self.assertFalse(services[name].get("ports"), "Internal services must not publish ports")
         self.assertEqual(services["edge"]["ports"][0]["host_ip"], "127.0.0.1")
         self.assertEqual(services["backend"]["environment"]["OIDC_ISSUER_URI"],
                          "http://localhost:18090/identity/realms/ai-manager")
         self.assertEqual(services["backend"]["environment"]["OIDC_JWK_SET_URI"],
                          "http://identity:8080/identity/realms/ai-manager/protocol/openid-connect/certs")
+        backend = services["backend"]["environment"]
+        self.assertEqual(str(backend["ERASURE_RECOVERY_REQUIRED"]).lower(), "true")
+        self.assertIn("erasure-database:3306/erasure_ledger", backend["ERASURE_LEDGER_URL"])
+        self.assertEqual(backend["ERASURE_LEDGER_USERNAME"], "erasure_app")
+        self.assertEqual(str(uuid.UUID(backend["ERASURE_LEDGER_ID"])), backend["ERASURE_LEDGER_ID"])
+        self.assertNotEqual(services["database"]["volumes"][0]["source"],
+                            services["erasure-database"]["volumes"][0]["source"])
+        self.assertIn({"source": "erasure_app", "target": "manager.erasure-ledger.password"},
+                      services["backend"]["secrets"])
         for password in passwords:
             self.assertNotIn(password, configured.stdout, "Compose must expose only secret file references")
 
@@ -99,6 +110,13 @@ class DeploymentInitializationTest(unittest.TestCase):
     def test_start_without_verified_build_is_rejected(self):
         self.assertEqual(self.initialize().returncode, 0)
         result = subprocess.run([PWSH, "-NoProfile", "-File", str(ROOT / "scripts/start-deployment.ps1"),
+                                 "-Directory", str(self.directory)], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=30)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("Verified build contexts are missing", result.stderr)
+
+    def test_ledger_initialization_without_verified_build_is_rejected(self):
+        self.assertEqual(self.initialize().returncode, 0)
+        result = subprocess.run([PWSH, "-NoProfile", "-File", str(ROOT / "scripts/initialize-erasure-ledger.ps1"),
                                  "-Directory", str(self.directory)], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=30)
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("Verified build contexts are missing", result.stderr)

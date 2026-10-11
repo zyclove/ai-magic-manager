@@ -1,0 +1,213 @@
+{
+  "recordedAt": "2026-10-11T02:51:15.764528+00:00",
+  "status": "source-verified-not-deployed",
+  "applicationVersion": "1.0.0",
+  "deployed": false,
+  "existingDatabaseReset": false,
+  "fullRegressionBase": "ed01948226a9c96d06a8f4ba18e23756e154e9da",
+  "integrationBase": "2120f02671d6753e5e43d2403d0610f5e5ba95bc",
+  "sourceFiles": [
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureStartupGuard.java",
+      "sha256": "0208a200456087ce153f646afa5dfaefcdc07127381ef432e26d5c101f19f3f3"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureStartupGuardTest.java",
+      "sha256": "456c217ffa2d882cf078aa00097378cc658f49ffd4911d663e7b264862c41ba3"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureLedgerRuntimeTest.java",
+      "sha256": "b4da381b72effbd9f7b8f1fc1ff450da29069b328595b32c04488c9afaec0e25"
+    },
+    {
+      "path": "deploy/compose/.env.example",
+      "sha256": "3bc9c3da6632fb911a1fa83e5f01bf2c48cfcf0c8c0264dd3914f15bc2e56ae6"
+    },
+    {
+      "path": "deploy/compose/compose.yaml",
+      "sha256": "18defd086b9e7b343f28bab3dca32311e6f343deb79ba9176099d653af86ddda"
+    },
+    {
+      "path": "deploy/helm/ai-manager/templates/_helpers.tpl",
+      "sha256": "6c81d28f37208933eef0cb446189d7df1e4a25d2ca713499be82e53ab836f33d"
+    },
+    {
+      "path": "deploy/helm/ai-manager/templates/backend.yaml",
+      "sha256": "de6ddad94aa375fbf3d623656f1ad4d831facc2e0a8bdba8165d8e13e9be935c"
+    },
+    {
+      "path": "deploy/helm/ai-manager/values.schema.json",
+      "sha256": "6b1829b67244b21801b255b022b7d8fc557e06b8856445e61b6c1bf5df3723a3"
+    },
+    {
+      "path": "deploy/helm/ai-manager/values.yaml",
+      "sha256": "a38f47955537a9d5c446ad741104b5a4b7aa0aa914d48a5c7f7ef49ac837dc3f"
+    },
+    {
+      "path": "scripts/initialize-deployment.ps1",
+      "sha256": "ec9d7ffdf97a867a78a6667733839a07724f180501d0b005907f1035e0ac343e"
+    },
+    {
+      "path": "scripts/initialize-erasure-ledger.ps1",
+      "sha256": "2935d75b7449f1f15094e9936860b111e3718db0b46a444b7db29b9c652b1769"
+    },
+    {
+      "path": "scripts/start-deployment.ps1",
+      "sha256": "5776be45cf5f973c7a173ae91ec03adf500e701720f1cc9f4bd3747fb95e1e51"
+    },
+    {
+      "path": "scripts/tests/test_deployment.py",
+      "sha256": "496caa0a9e0ec922199f48f177de9e75a34dc01c14a002c4ac42ab47114c5397"
+    },
+    {
+      "path": "scripts/tests/test_erasure_helm.py",
+      "sha256": "56003163ea32627f853790d49d451a4384f427727d4d6a9e107035a3e1e34437"
+    },
+    {
+      "path": "docs/erasure-startup-guard-plan.md",
+      "sha256": "bbeecc87cff31c7dad2e44e0c495c7ec60ef59009d9e7c8be8c1392112582f8a"
+    },
+    {
+      "path": "docs/deployment-runbook.md",
+      "sha256": "7b75577ec6608b6b08c083305b66b18defaa18a374f5bd2342a569221c04c219"
+    },
+    {
+      "path": "docs/kubernetes-deployment.md",
+      "sha256": "867efaeb1cdd2a008fe563136e2d5a9f371b9678ed41f1a781b2c2fc871b577a"
+    },
+    {
+      "path": "docs/version-1.0.0-initialization.md",
+      "sha256": "1b3e2c0dbc3406fb6dc74e63e1bf3cc29432c05e32afe93fecbb3577f1d5e1d7"
+    }
+  ],
+  "verification": [
+    {
+      "name": "full-backend",
+      "tests": 569,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 5,
+      "passed": 564,
+      "localLog": ".local/erasure-startup-backend-full.log",
+      "sha256": "292d6b7fc763154e92d60e9f90df3bf939e987af521f063f0f66683b304f7788"
+    },
+    {
+      "name": "latest-integration",
+      "tests": 54,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2,
+      "passed": 52,
+      "localLog": ".local/erasure-startup-integrated-green.log",
+      "sha256": "4443c0155cb0d0492eb41574a699ab115dac8a0ad3527d2b6b90f11501ab7fac"
+    },
+    {
+      "name": "mysql-runtime",
+      "tests": 2,
+      "passed": 2,
+      "localLog": ".local/erasure-startup-runtime-mysql.log",
+      "sha256": "c9fd8d7f507ed1f54e65c43a2457ef11d7657ca7c63dcd7f4e9248b68c738ed5"
+    },
+    {
+      "name": "deployment-tools",
+      "tests": 8,
+      "passed": 8,
+      "localLog": ".local/erasure-startup-deployment-green.log",
+      "sha256": "8a26e7782f567e15da05fc8a5efbe71d1f5216ecbedece2f21486be83676d638"
+    },
+    {
+      "name": "helm-render",
+      "tests": 3,
+      "passed": 3,
+      "localLog": ".local/erasure-startup-helm.log",
+      "sha256": "4881970fe7d85b38e4f4df07e6493293fd99781f4034f5e4b62971e457a35035"
+    }
+  ],
+  "review": {
+    "reviewer": "/root/erasure_startup_review",
+    "matchedFiles": 14,
+    "findings": [],
+    "readOnly": true,
+    "secondReview": false,
+    "declined": [
+      "runtime cross-node isolation, applied watermark, domain erasure, real backup restore erasure",
+      "Kubernetes deployment, production fault domains, Linux credentials mounts",
+      "independent reexecution of supplied test evidence",
+      "commerce/frontend and other out-of-scope WIP"
+    ]
+  },
+  "latestBackendArtifact": {
+    "base": "2120f02671d6753e5e43d2403d0610f5e5ba95bc",
+    "path": ".local/erasure-startup-integrated-backend/target/manager-backend-1.0.0.jar",
+    "sha256": "590b2b95d71c798ce577cacf1b65a15e870606f482b2a9b1594df097a01d26f2",
+    "buildLog": ".local/erasure-startup-final-package.log",
+    "buildLogSha256": "acc3f5b3de037ddf44699fd1dce8dffb4f7c98cc49471489b537c74feee9b23d",
+    "containerSmokePerformedOnThisExactArtifact": false
+  },
+  "composeSmoke": {
+    "result": {
+      "runtimeGrants": "table-scoped",
+      "pendingLedgerStartup": "blocked-before-ready",
+      "completedAt": "2026-10-11T02:33:34.4607287+00:00",
+      "missingConfigurationStartup": "blocked-before-ready",
+      "runtimeDelete": "denied",
+      "emptyLedgerStartup": "healthy"
+    },
+    "artifactSha256": "cef013f74498edd0c8a7b8325c77c0e60246488828cdc7410eba35a70b247e32",
+    "artifactScope": "Earlier 2a57523 candidate plus identical production startup guard; backend-only isolated fixture, not a complete frontend deployment.",
+    "syntheticLedgerRecordOnly": true,
+    "repeatInitializationRejectedWithFilesUnchanged": true,
+    "fixturesRemoved": true,
+    "logs": [
+      {
+        "path": ".local/erasure-startup-empty-container.log",
+        "sha256": "236b2a34f2719419faf650c13035e887e9825e6544917fff7ac85b062bec093f"
+      },
+      {
+        "path": ".local/erasure-startup-pending-container.log",
+        "sha256": "51648e3144d03310e01285eb6eec633368278e67e8db42110810dd22406c62b2"
+      },
+      {
+        "path": ".local/erasure-startup-missing-configuration-container.log",
+        "sha256": "507cdf470e0dfb52422c88a90e870235112d64d68517677416e5676d767a4c58"
+      },
+      {
+        "path": ".local/erasure-startup-runtime-grants.log",
+        "sha256": "6fde886770dca8ffda2b6969ae84824b6e9579f7d2426717a3eb5736fca444ac"
+      },
+      {
+        "path": ".local/erasure-startup-delete-denied.log",
+        "sha256": "6a8d6ee260f4dc5853754c1df82f69246e05d99d3cec35b65017186a8822d4d2"
+      },
+      {
+        "path": ".local/erasure-startup-repeat-initialization.log",
+        "sha256": "1539342da5bdc48f3c93803aca011d585acdafe0d2d7b990e96a549fee6e3953"
+      },
+      {
+        "path": ".local/erasure-startup-fixed-fixture-cleanup.log",
+        "sha256": "7e58a8a8b326a6bf1814db21abf52956e6c8422b5f47b6f26fb0731d0cd5c650"
+      }
+    ]
+  },
+  "initialFailureEvidence": [
+    {
+      "path": ".local/erasure-startup-red.log",
+      "sha256": "637edb1b877577f497ad762355b82b7b67135c8d820415aaa06218495478528c"
+    },
+    {
+      "path": ".local/erasure-startup-deployment-red.log",
+      "sha256": "881f0b91eee0fd3e1617872de5b11e454c586ca3d28e0c2dd801e409532a3184"
+    },
+    {
+      "path": ".local/erasure-startup-integrated.log",
+      "sha256": "833be63275ae8f3bb4991d823cd010497b6d82feeb84f5720bd2682a7ef03af7"
+    }
+  ],
+  "limitations": [
+    "Only startup protection: domain erasure, applied watermark, runtime cross-node isolation and real backup restore followed by erasure remain incomplete; execution stays disabled.",
+    "Full regression skips four MySQL-only cases and one Android runner case. Two MySQL runtime cases passed separately this stage; the two unchanged storage engine cases passed in the prior ledger stage.",
+    "MockMvc authentication is not real OIDC/OTP verification.",
+    "Helm rendering is not Kubernetes deployment, production fault-domain or Linux credential-mount certification.",
+    "Existing local runtime was not replaced; this stage does not claim full product or frontend acceptance."
+  ]
+}

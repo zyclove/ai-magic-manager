@@ -2,19 +2,20 @@
 
 ## 范围与组件
 
-交付版本使用 Docker Compose、官方 MySQL 8.4、Keycloak、Eclipse Temurin 17 和 Nginx；Flutter 与 Maven 在宿主/CI 构建独立源码快照。业务数据库和身份数据库分开，现有 `.local/runtime/` 不参与新环境部署。
+交付版本使用 Docker Compose、官方 MySQL 8.4、Keycloak、Eclipse Temurin 17 和 Nginx；Flutter 与 Maven 在宿主/CI 构建独立源码快照。业务、身份与删除账本分别使用独立数据库实例和卷，现有 `.local/runtime/` 不参与新环境部署。
 
 默认是回环地址上的单机部署验证环境。Compose 不代表数据库高可用、百万设备容量或全球多区域已经验收。生产仍须完成 TLS、备份恢复、供应链、容量及区域发布门槛。
 
 | 文件 | 职责 |
 |---|---|
-| `deploy/compose/compose.yaml` | 五服务、健康依赖、独立持久卷、网络与文件凭据 |
+| `deploy/compose/compose.yaml` | 六服务、健康依赖、独立持久卷、网络与文件凭据 |
 | `deploy/compose/compose.tls.yaml` | 替换 HTTP 发布端口并挂载证书 |
 | `deploy/containers/` | 从已验证产物生成应用镜像，优化 Keycloak 镜像 |
 | `deploy/edge/` | API/身份反向代理、Flutter 路由回退、动态服务 DNS、脱敏访问日志 |
 | `deploy/keycloak/realm-template.json` | 无用户/密码的身份模板、PKCE、API audience、条件建空间 scope、实际认证方法 |
 | `scripts/initialize-deployment.ps1` | 生成独立凭据、系统 API 生成 P-256 密钥、限制目录权限、不覆盖已有环境 |
 | `scripts/build-deployment.ps1` | 独立源码快照、全后端/管理台/组件验证、唯一产物目录、哈希清单 |
+| `scripts/initialize-erasure-ledger.ps1` | 显式初始化新账本，完成后收紧运行账号权限；拒绝覆盖已有账本 |
 | `scripts/start-deployment.ps1` | 核对产物及 Compose 指向，再启动指定项目并等待健康 |
 
 ```mermaid
@@ -23,6 +24,7 @@ flowchart LR
   edge --> api[Spring Boot API]
   edge --> idp[Keycloak 身份服务]
   api --> business[(MySQL 业务库)]
+  api --> ledger[(MySQL 独立删除账本)]
   idp --> identity[(MySQL 身份库)]
   api -->|内部 JWKS 取钥 / 公开 issuer 校验| idp
 ```
@@ -32,7 +34,7 @@ Compose secrets 采用文件挂载，环境配置只有文件路径。业务密�
 ## 前置条件
 
 - PowerShell 7、Docker Engine/Desktop 与 Compose ≥ 2.24.4、Java 17、Maven 3.9、已验证的 Flutter 3.22.2 / Dart 3.4.3。
-- Docker Linux 容器模式；有足够空间保存两份数据库、源码快照、镜像和发布物。
+- Docker Linux 容器模式；有足够空间保存三份数据库、源码快照、镜像和发布物。
 - 工具位于 PATH，或显式传入 Maven/Flutter 路径。首次构建需要访问依赖仓库；镜像清单和应用锁文件已固定。
 - Linux 使用非 root 部署用户初始化；脚本把容器 UID/GID 配置为该用户，避免文件型 secret 不可读。Windows 目录只授予当前用户和 SYSTEM 继承权限。
 
@@ -43,6 +45,7 @@ Compose secrets 采用文件挂载，环境配置只有文件路径。业务密�
 ```powershell
 ./scripts/initialize-deployment.ps1
 ./scripts/build-deployment.ps1
+./scripts/initialize-erasure-ledger.ps1
 ./scripts/start-deployment.ps1
 ```
 
@@ -53,6 +56,12 @@ Compose secrets 采用文件挂载，环境配置只有文件路径。业务密�
 ```
 
 默认管理台为 `http://localhost:18090`；身份入口为 `/identity/`。所有内部服务不发布主机端口。初始化只写 `.local/deployment/`，不会启动服务；重复初始化明确失败，避免无意更换数据库密码或设备签名密钥。
+
+`initialize-erasure-ledger.ps1` 是独立的显式操作，会启动账本数据库、构建已核对摘要的后端镜像并执行离线建表，然后收紧运行账号为账本头 SELECT/UPDATE、条目 SELECT/INSERT。根密码只挂载给账本数据库，后端不挂载。成功后保存初始化回执；普通启动检查回执与固定账本 ID，并由后端再次检查真实账本。初始化中断、凭据/ID 丢失或已有非空账本时停止处理，由管理员核对和恢复，不能删除卷或重新生成 ID 来绕过。
+
+标准部署在 API/worker 启动前强制检查账本；缺失、不可访问、损坏或已有接受记录时停止启动。当前还没有域处理器和已应用水位，非空账本不能自动放行。源码开发未配置账本时不启用该启动检查，但正式删除同样不可执行。该检查只覆盖启动时刻，不代表运行期跨节点隔离、全部删除处理或旧备份再删除演练已经完成。
+
+独立账本卷、ID 和凭据不得随业务库一起恢复到旧时点。Compose 仍是单机验证环境，独立卷并不证明跨基础设施故障域隔离；备份和恢复权限需独立安排。
 
 另建环境可传入 `-Directory .local/another-deployment -ProjectName another-manager -EdgePort 18091 -PublicUrl http://localhost:18091`，后续脚本传相同 `-Directory`。独立项目拥有独立数据库卷与网络，端口必须与公开 origin 一致。
 

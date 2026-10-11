@@ -19,6 +19,25 @@ services:
     restart: unless-stopped
     mem_limit: 1g
     networks: [internal]
+  erasure-database:
+    image: ${MYSQL_IMAGE:?Set MYSQL_IMAGE}
+    environment:
+      MYSQL_DATABASE: erasure_ledger
+      MYSQL_USER: erasure_app
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/erasure_root
+      MYSQL_PASSWORD_FILE: /run/secrets/erasure_app
+    secrets: [erasure_root, erasure_app]
+    volumes: [erasure-data:/var/lib/mysql]
+    command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_0900_as_cs"]
+    healthcheck:
+      test: [CMD-SHELL, "mysqladmin ping -h 127.0.0.1 --silent"]
+      interval: 5s
+      timeout: 3s
+      retries: 40
+      start_period: 30s
+    restart: unless-stopped
+    mem_limit: 1g
+    networks: [internal]
   identity-database:
     image: ${MYSQL_IMAGE:?Set MYSQL_IMAGE}
     environment:
@@ -86,6 +105,10 @@ services:
       SPRING_CONFIG_IMPORT: configtree:/run/secrets/
       DATABASE_URL: jdbc:mysql://database:3306/ai_manager?connectionTimeZone=UTC
       DATABASE_USERNAME: ai_manager
+      ERASURE_RECOVERY_REQUIRED: "true"
+      ERASURE_LEDGER_URL: jdbc:mysql://erasure-database:3306/erasure_ledger?connectionTimeZone=UTC&connectTimeout=5000&socketTimeout=10000
+      ERASURE_LEDGER_USERNAME: erasure_app
+      ERASURE_LEDGER_ID: ${ERASURE_LEDGER_ID:?Initialize a new ledger identity}
       OIDC_ISSUER_URI: ${PUBLIC_URL:?Set PUBLIC_URL}/identity/realms/ai-manager
       OIDC_JWK_SET_URI: http://identity:8080/identity/realms/ai-manager/protocol/openid-connect/certs
       OIDC_AUDIENCE: ai-manager-api
@@ -98,12 +121,15 @@ services:
     secrets:
       - source: mysql_app
         target: spring.datasource.password
+      - source: erasure_app
+        target: manager.erasure-ledger.password
       - source: signing_key
         target: /run/keys/signing.jwk
       - source: verification_keys
         target: /run/keys/verification.jwks
     depends_on:
       database: {condition: service_healthy}
+      erasure-database: {condition: service_healthy}
       identity: {condition: service_healthy}
     read_only: true
     tmpfs: [/tmp:mode=1777]
@@ -137,6 +163,8 @@ services:
 secrets:
   mysql_root: {file: "${DEPLOYMENT_ROOT:?Set DEPLOYMENT_ROOT}/secrets/mysql_root"}
   mysql_app: {file: "${DEPLOYMENT_ROOT:?Set DEPLOYMENT_ROOT}/secrets/mysql_app"}
+  erasure_root: {file: "${DEPLOYMENT_ROOT:?Set DEPLOYMENT_ROOT}/secrets/erasure_root"}
+  erasure_app: {file: "${DEPLOYMENT_ROOT:?Set DEPLOYMENT_ROOT}/secrets/erasure_app"}
   identity_root: {file: "${DEPLOYMENT_ROOT:?Set DEPLOYMENT_ROOT}/secrets/identity_root"}
   identity_app: {file: "${DEPLOYMENT_ROOT:?Set DEPLOYMENT_ROOT}/secrets/identity_app"}
   bootstrap_admin: {file: "${DEPLOYMENT_ROOT:?Set DEPLOYMENT_ROOT}/secrets/bootstrap_admin"}
@@ -145,6 +173,7 @@ secrets:
 volumes:
   business-data:
   identity-data:
+  erasure-data:
 networks:
   internal: {internal: true}
   edge:
