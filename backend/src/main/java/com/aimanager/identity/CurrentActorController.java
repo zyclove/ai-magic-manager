@@ -32,6 +32,8 @@ class CurrentActorController {
             .anyMatch(a -> a.getAuthority().equals("SCOPE_contract:manage")),
         authentication.getAuthorities().stream()
             .anyMatch(a -> a.getAuthority().equals("SCOPE_contract:approve")),
+        authentication.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("SCOPE_emm:approve")),
         actor.getClaimAsStringList("amr") == null ? List.of() : actor.getClaimAsStringList("amr"));
   }
 
@@ -44,5 +46,6 @@ class CurrentActorController {
       boolean canApproveCatalog,
       boolean canManageContracts,
       boolean canApproveContracts,
+      boolean canReviewManagedAndroid,
       List<String> authenticationMethods) {}
 }

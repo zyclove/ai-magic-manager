@@ -25,7 +25,7 @@
 
 机构所有者或机构管理员使用已完成近期多因素认证的身份，向 `POST /api/v1/tenants/{tenantId}/managed-android/enterprise-binding` 提交 `enterpriseId` 与 `contractReference`。申请写入 `PENDING`，并生成同事务审计记录；此时不向 EMM 发出任何写操作。`GET` 同一路径供机构所有者、管理员及审计员查看进度；租户视图隐藏平台审核员身份和内部证据索引。一个机构当前只能有一份绑定，且同一提供方企业资源不能被两个机构同时认领。
 
-平台审核员使用独立 `SCOPE_emm:approve`、近期多因素认证和 `If-Match` 版本调用 `POST /api/v1/platform/managed-android/enterprise-bindings/{tenantId}/approve`，请求体包含 `ownershipEvidenceReference`（外部权属证明的索引）和 `reason`。系统先从提供方只读核对完整企业资源名，再在事务内检查：申请仍为 `PENDING`、申请人与审核人不同、相同合同号存在已应用审核、当前合同授予仍有效并含 `MANAGED_ANDROID`。全部通过才写为 `ACTIVE`。**提供方可读性本身不是客户所有权证明；证据索引需要平台人工复核对应合同和企业权属。** 默认连接器不可用时批准返回 `503 EMM_UNAVAILABLE`，申请仍可留在待审核队列，不会生成虚假已批准结果。
+平台审核员使用独立 `SCOPE_emm:approve`、近期多因素认证和 `If-Match` 版本调用 `POST /api/v1/platform/managed-android/enterprise-bindings/{tenantId}/approve`，请求体包含 `ownershipEvidenceReference`（外部权属证明的索引）和 `reason`。Keycloak 模板将该 scope 映射到需人工授予的 `emm-binding-reviewer` 角色，`/api/v1/me` 只基于已验证令牌返回 `canReviewManagedAndroid`。系统先从提供方只读核对完整企业资源名，再在事务内检查：申请仍为 `PENDING`、申请人与审核人不同、相同合同号存在已应用审核、当前合同授予仍有效并含 `MANAGED_ANDROID`。全部通过才写为 `ACTIVE`。**提供方可读性本身不是客户所有权证明；证据索引需要平台人工复核对应合同和企业权属。** 默认连接器不可用时批准返回 `503 EMM_UNAVAILABLE`，申请仍可留在待审核队列，不会生成虚假已批准结果。
 
 平台审核队列是 `GET /api/v1/platform/managed-android/enterprise-bindings`，单条查看路径为 `/{tenantId}`；仅审核权限可访问。批准或撤销均需 `If-Match`，并写入版本化事件和租户审计。`POST /api/v1/platform/managed-android/enterprise-bindings/{tenantId}/revoke` 会将本地映射改为 `REVOKED`，阻止后续基于此映射的新受管操作；**该动作不等于从设备移除 DPC、取消现有 Google 策略或完成退管**，这些需要单独的真机流程和回执。当前 `ACTIVE` 只是企业资源审核结果，业务策略和设备身份仍未接通，不能视为设备管控已生效。
 
