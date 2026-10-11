@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:crypto/crypto.dart';
 import 'package:jose/jose.dart';
 import 'package:uuid/uuid.dart';
 import 'models.dart';
@@ -59,10 +60,11 @@ class EnrollmentProof {
 /// Short-lived authentication for the cleanup namespace only. It is still a
 /// bearer proof until expiry, so callers must never log or persist it.
 class CleanupProof {
-  final String compact;
-  CleanupProof(this.compact) {
+  final String compact, keyThumbprint;
+  CleanupProof(this.compact, this.keyThumbprint) {
     try {
       if (compact.length > 8192 ||
+          !validSecret(keyThumbprint) ||
           !RegExp(r'^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$')
               .hasMatch(compact)) {
         throw const FormatException('Invalid cleanup proof');
@@ -218,7 +220,15 @@ class JoseDeviceEnrollmentKeys
       builder.setProtectedHeader('typ', 'aimanager-cleanup-auth+jwt');
       builder.setProtectedHeader('kid', registrationId);
       builder.addRecipient(JsonWebKey.fromJson(map), algorithm: 'ES256');
-      return CleanupProof(builder.build().toCompactSerialization());
+      // RFC 7638 canonical EC public members in lexicographic order.
+      // The mature crypto package computes SHA-256; private JWK fields never
+      // enter the fingerprint or leave the encrypted identity record.
+      final canonical =
+          '{"crv":"P-256","kty":"EC","x":"${map['x']}","y":"${map['y']}"}';
+      final thumbprint = base64Url
+          .encode(sha256.convert(utf8.encode(canonical)).bytes)
+          .replaceAll('=', '');
+      return CleanupProof(builder.build().toCompactSerialization(), thumbprint);
     } catch (_) {
       throw const DeviceIdentityFailure('DEVICE_KEY_UNAVAILABLE');
     }

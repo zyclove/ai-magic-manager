@@ -1,0 +1,13 @@
+name: device_cleanup
+description: Strict verification of scoped, signed agent cleanup commands.
+version: 1.0.0
+publish_to: none
+environment:
+  sdk: '>=3.4.0 <4.0.0'
+dependencies:
+  crypto: ^3.0.3
+  device_identity:
+    path: ../device_identity
+  jose: 0.3.5+2
+dev_dependencies:
+  lints: ^3.0.0

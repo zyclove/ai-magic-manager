@@ -120,6 +120,8 @@ sequenceDiagram
 
 设备仅清理自身代理保存的策略缓存、使用缓存和业务凭证；保留提交本次回执所必需的窄范围材料直到收到确认，再清除原注册密钥。第三方 App、个人媒体、系统账户、工作资料和整机存储均不在范围内。服务器不能独立证明设备实际执行或密钥删除。
 
+设备端已新增独立 `device_cleanup` 验签模块：复用成熟 JOSE/crypto，核对公钥环、JOSE 类型、ES256、设备/注册/原密钥指纹、固定清理动作与截止时间，给出绑定范围的命令哈希。当前只有验证能力；可信 TLS 获取命令、持久恢复、实际本代理数据删除、回执和原密钥删除仍未接通，不能因验签模块存在就展示“清理成功”。
+
 重复拉取同一持久 JWS，截止时间不延长；新任务使用新的 operationId/commandId。缺外置签名密钥时，正常退出确认返回 503，凭证不撤销；原有紧急 `/devices/{deviceId}/revoke` 仍可立即撤销访问，二者不混淆。
 
 回执字段：receiptId、commandId、commandHash（compactJws UTF-8 的 SHA-256 小写十六进制）、stage、reasonCode。stage 为 RECEIVED / AGENT_DATA_CLEARED / FAILED；只有 FAILED 必须带 reasonCode（STORAGE_FAILURE、KEY_UNAVAILABLE、UNSUPPORTED_AGENT、USER_ACTION_REQUIRED），其他阶段不得带。设备身份/操作由认证上下文确定，正文不能改绑。

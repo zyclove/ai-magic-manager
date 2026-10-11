@@ -26,6 +26,7 @@ final safeUiFacts = await identity.view();
 // The proof is a short-lived bearer: send it only over the configured TLS
 // origin, and never log, store, or treat it as a cleanup command.
 final proof = await identity.cleanupProof(action: 'READ');
+// proof.keyThumbprint binds a later signed command to this original key.
 ```
 
 The example's storage, trusted service selection, parent-issued ticket, time,
