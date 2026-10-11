@@ -17,6 +17,7 @@ import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Clock;
+import java.util.ArrayList;
 import java.util.HexFormat;
 import java.util.List;
 import java.util.UUID;
@@ -308,6 +309,87 @@ class CommercialContractService {
         events.nextBeforeVersion());
   }
 
+  @Transactional(readOnly = true, timeout = 10)
+  ContractComparison platformComparison(Authentication authentication, String id) {
+    requireEither(authentication);
+    return comparison(required(id, false));
+  }
+
+  @Transactional(readOnly = true, timeout = 10)
+  ContractComparison tenantComparison(String tenantId, String actorId, String id) {
+    access.requireRole(tenantId, actorId, Role.OWNER, Role.ORG_ADMIN, Role.AUDITOR);
+    ReviewRow row = required(id, false);
+    if (!row.tenantId().equals(tenantId)) throw DomainException.denied();
+    return comparison(row);
+  }
+
+  /** A read-only preview; the write path still locks and revalidates the catalog offer. */
+  private ContractComparison comparison(ReviewRow row) {
+    ContractEvidence evidence = decode(row.evidenceJson());
+    List<OfferRecord> rows =
+        jdbc.query(
+            "SELECT state,revision,payload_json,updated_at FROM commercial_catalog_offers WHERE"
+                + " id=?",
+            (result, index) ->
+                new OfferRecord(
+                    result.getString(1), result.getLong(2), result.getString(3), result.getLong(4)),
+            row.offerId());
+    if (rows.isEmpty()) {
+      return new ContractComparison(
+          row.id(),
+          row.version(),
+          row.offerId(),
+          row.offerRevision(),
+          null,
+          "MISSING",
+          false,
+          List.of("OFFER_MISSING"),
+          null);
+    }
+    OfferRecord current = rows.get(0);
+    CommercialOfferDraft offer = decodeOffer(current.payloadJson());
+    List<String> issues = new ArrayList<>();
+    if (current.revision() != evidence.offerRevision()) issues.add("REVISION_CHANGED");
+    if (!"APPROVED".equals(current.state())
+        && !(evidence.state() == State.REVOKED && "RETIRED".equals(current.state()))) {
+      issues.add("OFFER_NOT_APPROVED");
+    }
+    if (!"CN".equals(offer.region())
+        || offer.channel() != CommercialOfferDraft.Channel.CONTRACT
+        || offer.buyerKind() != CommercialOfferDraft.BuyerKind.ORGANIZATION
+        || offer.priceType() != CommercialOfferDraft.PriceType.QUOTE
+        || !"CNY".equals(offer.currency())) issues.add("SALES_SCOPE_CHANGED");
+    if (offer.capacityKind() != evidence.capacityKind()) issues.add("CAPACITY_KIND_CHANGED");
+    if (offer.deviceCapacity() != evidence.deviceCapacity()) issues.add("CAPACITY_CHANGED");
+    if (!offer.features().equals(evidence.features())) issues.add("FEATURES_CHANGED");
+    if (evidence.state() == State.ACTIVE) {
+      if (evidence.expiresAt() <= clock.millis()) issues.add("CONTRACT_EXPIRED");
+      if (evidence.executedAt() < current.updatedAt()
+          || evidence.executedAt() < offer.availableFrom()
+          || evidence.executedAt() >= offer.availableUntil())
+        issues.add("SIGNATURE_OUTSIDE_OFFER_WINDOW");
+    }
+    return new ContractComparison(
+        row.id(),
+        row.version(),
+        row.offerId(),
+        row.offerRevision(),
+        current.revision(),
+        current.state(),
+        issues.isEmpty(),
+        List.copyOf(issues),
+        new OfferTerms(
+            offer.sku(),
+            offer.platform().name(),
+            offer.deviceMode().name(),
+            offer.billingPeriod().name(),
+            offer.capacityKind().name(),
+            offer.deviceCapacity(),
+            offer.features().stream().map(Enum::name).sorted().toList(),
+            offer.availableFrom(),
+            offer.availableUntil()));
+  }
+
   private HistorySlice history(String id, int limit, Long beforeVersion) {
     if (limit < 1 || limit > 100 || (beforeVersion != null && beforeVersion < 1)) {
       throw DomainException.invalid("INVALID_CONTRACT_HISTORY_PAGE");
@@ -354,12 +436,7 @@ class CommercialContractService {
             evidence.offerId());
     if (rows.size() != 1) throw DomainException.invalid("INVALID_CONTRACT_OFFER");
     OfferRecord row = rows.get(0);
-    CommercialOfferDraft offer;
-    try {
-      offer = json.readValue(row.payloadJson(), CommercialOfferDraft.class);
-    } catch (JsonProcessingException malformed) {
-      throw new IllegalStateException("Stored catalog offer cannot be read", malformed);
-    }
+    CommercialOfferDraft offer = decodeOffer(row.payloadJson());
     boolean active = evidence.state() == State.ACTIVE;
     if (row.revision() != evidence.offerRevision()
         || !("APPROVED".equals(row.state()) || (!active && "RETIRED".equals(row.state())))
@@ -527,6 +604,14 @@ class CommercialContractService {
     }
   }
 
+  private CommercialOfferDraft decodeOffer(String value) {
+    try {
+      return json.readValue(value, CommercialOfferDraft.class);
+    } catch (JsonProcessingException malformed) {
+      throw new IllegalStateException("Stored catalog offer cannot be read", malformed);
+    }
+  }
+
   private String encode(ContractEvidence evidence) {
     try {
       return json.writeValueAsString(evidence);
@@ -664,6 +749,28 @@ class CommercialContractService {
   record PlatformHistoryPage(List<PlatformHistory> items, Long nextBeforeVersion) {}
 
   record TenantHistoryPage(List<TenantHistory> items, Long nextBeforeVersion) {}
+
+  record OfferTerms(
+      String sku,
+      String platform,
+      String deviceMode,
+      String billingPeriod,
+      String capacityKind,
+      int deviceCapacity,
+      List<String> features,
+      long availableFrom,
+      long availableUntil) {}
+
+  record ContractComparison(
+      String reviewId,
+      long reviewVersion,
+      String offerId,
+      long contractOfferRevision,
+      Long currentOfferRevision,
+      String offerState,
+      boolean factsMatch,
+      List<String> issues,
+      OfferTerms offer) {}
 
   record Creation(ReviewView review, boolean created) {}
 }

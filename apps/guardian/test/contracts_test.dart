@@ -44,6 +44,28 @@ Json review(
       }
     };
 
+Json comparison({int version = 1, bool match = true}) => {
+      'reviewId': reviewId,
+      'reviewVersion': version,
+      'offerId': offerId,
+      'contractOfferRevision': 3,
+      'currentOfferRevision': match ? 3 : 4,
+      'offerState': 'APPROVED',
+      'factsMatch': match,
+      'issues': match ? <String>[] : ['REVISION_CHANGED'],
+      'offer': {
+        'sku': 'ORG_STANDARD',
+        'platform': 'ANDROID',
+        'deviceMode': 'FULLY_MANAGED',
+        'billingPeriod': 'YEAR',
+        'capacityKind': 'BASE',
+        'deviceCapacity': 25,
+        'features': ['ORG_BULK'],
+        'availableFrom': 100,
+        'availableUntil': 500
+      }
+    };
+
 void main() {
   test(
       'tenant contract projection rejects platform actor data and false claims',
@@ -164,6 +186,43 @@ void main() {
         }),
         200,
         headers: {'content-type': 'application/json'}));
+  });
+
+  test('current offer comparison is bound to the reviewed contract', () async {
+    final requests = <http.Request>[];
+    final client = MockClient((request) async {
+      requests.add(request);
+      return http.Response(jsonEncode(comparison()), 200,
+          headers: {'content-type': 'application/json'});
+    });
+    final repository = ContractsRepository.tenant(
+        api: Api(() async => client, baseUrl: 'https://example.test/api/v1'),
+        current: () => true,
+        tenantId: tenant);
+    final contract =
+        ContractReview.parse(review(platform: false), platform: false);
+    final result = await repository.comparison(contract);
+    expect(result.factsMatch, isTrue);
+    expect(result.offer?.deviceMode, 'FULLY_MANAGED');
+    expect(requests.single.url.path,
+        '/api/v1/tenants/$tenant/contracts/$reviewId/comparison');
+    expect(ContractComparison.parse(comparison(match: false)).issues,
+        ['REVISION_CHANGED']);
+    expect(
+        () => ContractComparison.parse({...comparison(), 'factsMatch': false}),
+        throwsA(isA<ApiFailure>()));
+    expect(
+        () => ContractComparison.parse({...comparison(), 'reviewId': offerId}),
+        returnsNormally);
+    final bad = ContractsRepository.tenant(
+        api: Api(
+            () async => MockClient((_) async => http.Response(
+                jsonEncode({...comparison(), 'reviewId': offerId}), 200,
+                headers: {'content-type': 'application/json'})),
+            baseUrl: 'https://example.test/api/v1'),
+        current: () => true,
+        tenantId: tenant);
+    await expectLater(bad.comparison(contract), throwsA(isA<ApiFailure>()));
   });
 
   test(

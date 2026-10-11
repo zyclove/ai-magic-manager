@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import '../core/api.dart';
 import '../core/contracts.dart';
 import '../core/contracts_repository.dart';
+import '../core/commercial_catalog.dart' show catalogLabel;
 import '../core/commercial_entitlements.dart' show commercialFeatureLabel;
 import '../core/session.dart';
 import '../ui/design.dart';
@@ -24,14 +25,20 @@ class _ContractsPageState extends State<ContractsPage> {
   final reviews = <ContractReview>[];
   final events = <ContractHistory>[];
   ContractReview? selected;
+  ContractComparison? comparison;
   ContractCapabilities? capabilities;
   String? selectedId, nextCursor;
   int? nextBeforeVersion;
-  Object? listError, detailError, historyError, capabilityError;
+  Object? listError,
+      detailError,
+      historyError,
+      comparisonError,
+      capabilityError;
   bool loadingList = false,
       loadingMore = false,
       loadingDetail = false,
-      loadingHistory = false;
+      loadingHistory = false,
+      loadingComparison = false;
   int generation = 0, listGeneration = 0, detailGeneration = 0;
 
   bool current() {
@@ -70,12 +77,14 @@ class _ContractsPageState extends State<ContractsPage> {
         reviews.clear();
         events.clear();
         selected = null;
+        comparison = null;
         selectedId = nextCursor = null;
         nextBeforeVersion = null;
         capabilities = null;
         listError = const ApiFailure(403, 'SCOPE_DENIED');
-        detailError = historyError = capabilityError = null;
-        loadingList = loadingMore = loadingDetail = loadingHistory = false;
+        detailError = historyError = comparisonError = capabilityError = null;
+        loadingList = loadingMore =
+            loadingDetail = loadingHistory = loadingComparison = false;
       });
     }
   }
@@ -156,11 +165,13 @@ class _ContractsPageState extends State<ContractsPage> {
     setState(() {
       selectedId = id;
       selected = null;
+      comparison = null;
       events.clear();
       nextBeforeVersion = null;
-      detailError = historyError = null;
+      detailError = historyError = comparisonError = null;
       loadingDetail = true;
       loadingHistory = false;
+      loadingComparison = false;
     });
     try {
       final detail = await repository.get(id);
@@ -169,12 +180,39 @@ class _ContractsPageState extends State<ContractsPage> {
         selected = detail;
         loadingDetail = false;
       });
-      await loadHistory(id, ticket);
+      await Future.wait([
+        loadHistory(id, ticket),
+        loadComparison(detail, ticket),
+      ]);
     } catch (failure) {
       if (mounted && current() && ticket == detailGeneration) {
         setState(() {
           detailError = failure;
           loadingDetail = false;
+        });
+      }
+    }
+  }
+
+  Future<void> loadComparison(ContractReview review, int ticket) async {
+    if (!current() || ticket != detailGeneration) return;
+    setState(() {
+      loadingComparison = true;
+      comparisonError = null;
+    });
+    try {
+      final result = await repository.comparison(review);
+      if (!mounted || !current() || ticket != detailGeneration) return;
+      setState(() {
+        comparison = result;
+        loadingComparison = false;
+      });
+    } catch (failure) {
+      if (mounted && current() && ticket == detailGeneration) {
+        setState(() {
+          comparison = null;
+          comparisonError = failure;
+          loadingComparison = false;
         });
       }
     }
@@ -416,6 +454,52 @@ class _ContractsPageState extends State<ContractsPage> {
                     : selected!.features.map(commercialFeatureLabel).join('、'))
           ]),
           const SizedBox(height: 18),
+          const Text('报价与签约事实对照',
+              style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600)),
+          const SizedBox(height: 8),
+          if (loadingComparison) const LinearProgressIndicator(),
+          if (comparisonError != null)
+            FailureView(comparisonError!,
+                retry: () => loadComparison(selected!, detailGeneration)),
+          if (comparison != null) ...[
+            Notice(
+                comparison!.factsMatch
+                    ? '当前报价版本、设备名额和功能与签名事实一致；正式审批时服务端仍会重新核验。'
+                    : '发现报价或签约条件变化。请核对并处理差异；当前无法批准或确认。',
+                warning: !comparison!.factsMatch),
+            if (comparison!.issues.isNotEmpty)
+              Padding(
+                  padding: const EdgeInsets.only(top: 8),
+                  child: Text(comparison!.issues
+                      .map(contractComparisonIssueLabel)
+                      .join(' · '))),
+            if (comparison!.offer != null) ...[
+              const SizedBox(height: 12),
+              Wrap(spacing: 14, runSpacing: 16, children: [
+                _fact('报价状态', catalogLabel(comparison!.offerState)),
+                _fact('当前版本', '${comparison!.currentOfferRevision}'),
+                _fact('产品 SKU', comparison!.offer!.sku),
+                _fact('适用平台', catalogLabel(comparison!.offer!.platform)),
+                _fact('设备模式', catalogLabel(comparison!.offer!.deviceMode)),
+                _fact('计费周期', catalogLabel(comparison!.offer!.billingPeriod)),
+                _fact('报价名额',
+                    '${comparison!.offer!.capacityKind == 'BASE' ? '基础' : '附加'} ${comparison!.offer!.deviceCapacity} 台'),
+                _fact(
+                    '报价功能',
+                    comparison!.offer!.features.isEmpty
+                        ? '未配置'
+                        : comparison!.offer!.features
+                            .map(commercialFeatureLabel)
+                            .join('、')),
+                _fact('报价有效期',
+                    '${_date(comparison!.offer!.availableFrom)} 至 ${_date(comparison!.offer!.availableUntil)}')
+              ])
+            ],
+            const SizedBox(height: 8),
+            const Text('此处不包含合同金额、签约主体法定身份或原始合同文件；请在签发方系统核对。',
+                style: TextStyle(fontSize: 12, color: muted))
+          ],
+          const SizedBox(height: 18),
           if (widget.platform) ...[
             Text(
                 '提交者 ${selected!.submittedBy ?? '—'} · 审批人 ${selected!.approvedBy ?? '待审核'}',
@@ -426,8 +510,9 @@ class _ContractsPageState extends State<ContractsPage> {
                 selected!.submittedBy != actorId)
               Wrap(spacing: 8, runSpacing: 8, children: [
                 FilledButton.icon(
-                    onPressed:
-                        current() ? () => act(selected!, 'approve') : null,
+                    onPressed: current() && comparison?.factsMatch == true
+                        ? () => act(selected!, 'approve')
+                        : null,
                     icon: const Icon(Icons.verified_outlined),
                     label: Text(selected!.sourceState == 'REVOKED'
                         ? '核验撤销'
@@ -441,7 +526,9 @@ class _ContractsPageState extends State<ContractsPage> {
           ] else if (selected!.state == 'AWAITING_CUSTOMER' &&
               ['OWNER', 'ORG_ADMIN'].contains(widget.session.role))
             FilledButton.icon(
-                onPressed: current() ? () => act(selected!, 'accept') : null,
+                onPressed: current() && comparison?.factsMatch == true
+                    ? () => act(selected!, 'accept')
+                    : null,
                 icon: const Icon(Icons.fact_check_outlined),
                 label: const Text('核对并确认生效')),
           if (selected!.state == 'APPLIED' &&

@@ -110,6 +110,15 @@ class CommercialContractController {
         .body(contracts.platformHistory(authentication, id, limit, beforeVersion));
   }
 
+  @GetMapping("/{id}/comparison")
+  ResponseEntity<CommercialContractService.ContractComparison> comparison(
+      Authentication authentication, @PathVariable String id) {
+    return ResponseEntity.ok()
+        .cacheControl(CacheControl.noStore())
+        .header("Vary", "Authorization")
+        .body(contracts.platformComparison(authentication, id));
+  }
+
   @GetMapping
   ResponseEntity<ItemPage<CommercialContractService.ReviewView>> list(
       Authentication authentication,

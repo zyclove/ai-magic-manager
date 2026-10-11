@@ -95,6 +95,23 @@ class ContractsRepository {
     return page;
   }
 
+  Future<ContractComparison> comparison(ContractReview review) async {
+    _ensureCurrent();
+    if (!platform && review.tenantId != tenantId) {
+      throw const ApiFailure(403, 'SCOPE_DENIED');
+    }
+    final raw = await _read('$_path/${review.id}/comparison', 16 * 1024);
+    _ensureCurrent();
+    final result = ContractComparison.parse(raw);
+    if (result.reviewId != review.id ||
+        result.reviewVersion != review.version ||
+        result.offerId != review.offerId ||
+        result.contractOfferRevision != review.offerRevision) {
+      throw const ApiFailure(502, 'INVALID_CONTRACT_RESPONSE');
+    }
+    return result;
+  }
+
   /// The caller keeps the same ID and JWS for an uncertain network retry.
   Future<ContractReview> create(String id, String compactJws) async {
     if (!platform) throw const ApiFailure(403, 'SCOPE_DENIED');

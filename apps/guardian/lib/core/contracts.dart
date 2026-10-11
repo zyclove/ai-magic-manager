@@ -1,5 +1,11 @@
 import 'api.dart';
-import 'commercial_catalog.dart' show catalogFeatures;
+import 'commercial_catalog.dart'
+    show
+        catalogFeatures,
+        catalogPlatforms,
+        catalogDeviceModes,
+        catalogBillingPeriods,
+        catalogStates;
 
 final _contractId =
     RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$');
@@ -150,6 +156,120 @@ class ContractCapabilities {
     return ContractCapabilities(raw['submissionEnabled']);
   }
 }
+
+const contractComparisonIssues = {
+  'OFFER_MISSING',
+  'REVISION_CHANGED',
+  'OFFER_NOT_APPROVED',
+  'SALES_SCOPE_CHANGED',
+  'CAPACITY_KIND_CHANGED',
+  'CAPACITY_CHANGED',
+  'FEATURES_CHANGED',
+  'CONTRACT_EXPIRED',
+  'SIGNATURE_OUTSIDE_OFFER_WINDOW'
+};
+
+/// A current catalog snapshot for review. The write path rechecks it under a database lock.
+class ContractComparison {
+  final String reviewId, offerId, offerState;
+  final int reviewVersion, contractOfferRevision;
+  final int? currentOfferRevision;
+  final bool factsMatch;
+  final List<String> issues;
+  final ContractOfferTerms? offer;
+
+  ContractComparison._(Json raw)
+      : reviewId = raw['reviewId'],
+        offerId = raw['offerId'],
+        offerState = raw['offerState'],
+        reviewVersion = raw['reviewVersion'],
+        contractOfferRevision = raw['contractOfferRevision'],
+        currentOfferRevision = raw['currentOfferRevision'],
+        factsMatch = raw['factsMatch'],
+        issues = List<String>.unmodifiable(raw['issues']),
+        offer = raw['offer'] == null
+            ? null
+            : ContractOfferTerms.parse(raw['offer']);
+
+  static ContractComparison parse(dynamic raw) {
+    if (raw is! Json ||
+        raw['reviewId'] is! String ||
+        !isContractId(raw['reviewId']) ||
+        raw['offerId'] is! String ||
+        !isContractId(raw['offerId']) ||
+        raw['reviewVersion'] is! int ||
+        raw['reviewVersion'] < 1 ||
+        raw['contractOfferRevision'] is! int ||
+        raw['contractOfferRevision'] < 1 ||
+        ![...catalogStates, 'MISSING'].contains(raw['offerState']) ||
+        raw['factsMatch'] is! bool ||
+        raw['issues'] is! List ||
+        (raw['issues'] as List).any((issue) =>
+            issue is! String || !contractComparisonIssues.contains(issue)) ||
+        (raw['issues'] as List).toSet().length != raw['issues'].length ||
+        raw['factsMatch'] != (raw['issues'] as List).isEmpty ||
+        (raw['offerState'] == 'MISSING'
+            ? raw['offer'] != null ||
+                raw['currentOfferRevision'] != null ||
+                !raw['issues'].contains('OFFER_MISSING')
+            : raw['offer'] == null ||
+                raw['currentOfferRevision'] is! int ||
+                raw['currentOfferRevision'] < 1)) _invalid();
+    return ContractComparison._(raw);
+  }
+}
+
+class ContractOfferTerms {
+  final String sku, platform, deviceMode, billingPeriod, capacityKind;
+  final int deviceCapacity, availableFrom, availableUntil;
+  final List<String> features;
+
+  ContractOfferTerms._(Json raw)
+      : sku = raw['sku'],
+        platform = raw['platform'],
+        deviceMode = raw['deviceMode'],
+        billingPeriod = raw['billingPeriod'],
+        capacityKind = raw['capacityKind'],
+        deviceCapacity = raw['deviceCapacity'],
+        availableFrom = raw['availableFrom'],
+        availableUntil = raw['availableUntil'],
+        features = List<String>.unmodifiable(raw['features']);
+
+  static ContractOfferTerms parse(dynamic raw) {
+    if (raw is! Json ||
+        raw['sku'] is! String ||
+        !RegExp(r'^[A-Z0-9_]{1,80}$').hasMatch(raw['sku']) ||
+        !catalogPlatforms.contains(raw['platform']) ||
+        !catalogDeviceModes.contains(raw['deviceMode']) ||
+        !catalogBillingPeriods.contains(raw['billingPeriod']) ||
+        !['BASE', 'ADD_ON'].contains(raw['capacityKind']) ||
+        raw['deviceCapacity'] is! int ||
+        raw['deviceCapacity'] < 0 ||
+        raw['deviceCapacity'] > 1000000 ||
+        raw['features'] is! List ||
+        (raw['features'] as List).any((feature) =>
+            feature is! String || !catalogFeatures.contains(feature)) ||
+        (raw['features'] as List).toSet().length != raw['features'].length ||
+        raw['availableFrom'] is! int ||
+        raw['availableFrom'] < 0 ||
+        raw['availableUntil'] is! int ||
+        raw['availableUntil'] <= raw['availableFrom']) _invalid();
+    return ContractOfferTerms._(raw);
+  }
+}
+
+String contractComparisonIssueLabel(String issue) => switch (issue) {
+      'OFFER_MISSING' => '当前报价不存在',
+      'REVISION_CHANGED' => '报价版本已变化',
+      'OFFER_NOT_APPROVED' => '报价不在可审核状态',
+      'SALES_SCOPE_CHANGED' => '销售地区、渠道或采购类型不符',
+      'CAPACITY_KIND_CHANGED' => '名额类型不一致',
+      'CAPACITY_CHANGED' => '设备名额不一致',
+      'FEATURES_CHANGED' => '授权功能不一致',
+      'CONTRACT_EXPIRED' => '签约服务期已结束',
+      'SIGNATURE_OUTSIDE_OFFER_WINDOW' => '签约时间不在报价有效期内',
+      _ => '需要人工核对'
+    };
 
 const contractActions = {
   'SUBMITTED',

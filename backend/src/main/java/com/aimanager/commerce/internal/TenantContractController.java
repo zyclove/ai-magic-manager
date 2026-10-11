@@ -52,6 +52,15 @@ class TenantContractController {
         .body(contracts.tenantHistory(tenantId, actor.getSubject(), id, limit, beforeVersion));
   }
 
+  @GetMapping("/{id}/comparison")
+  ResponseEntity<CommercialContractService.ContractComparison> comparison(
+      @PathVariable String tenantId, @AuthenticationPrincipal Jwt actor, @PathVariable String id) {
+    return ResponseEntity.ok()
+        .cacheControl(CacheControl.noStore())
+        .header("Vary", "Authorization")
+        .body(contracts.tenantComparison(tenantId, actor.getSubject(), id));
+  }
+
   @GetMapping
   ResponseEntity<ItemPage<CommercialContractService.TenantReviewView>> list(
       @PathVariable String tenantId,

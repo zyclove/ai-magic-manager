@@ -167,6 +167,19 @@ class CommercialContractJourneyTest {
                 "SELECT COUNT(*) FROM commercial_sources WHERE tenant_id=?", Integer.class, tenant))
         .isZero();
     mvc.perform(
+            get(CONTRACTS + "/" + id + "/comparison")
+                .with(actor("contract-approver", "SCOPE_contract:approve", false)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.factsMatch").value(true))
+        .andExpect(jsonPath("$.offer.deviceCapacity").value(25))
+        .andExpect(jsonPath("$.offer.deviceMode").value("FULLY_MANAGED"))
+        .andExpect(jsonPath("$.issues.length()").value(0));
+    mvc.perform(
+            get(tenantPath(id) + "/comparison").with(actor(owner, "SCOPE_tenant:create", false)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.factsMatch").value(true))
+        .andExpect(jsonPath("$.offer.sku").isString());
+    mvc.perform(
             post(CONTRACTS + "/" + id + "/approve")
                 .with(actor("contract-author", "SCOPE_contract:approve", true))
                 .header("If-Match", "\"1\"")
@@ -299,6 +312,10 @@ class CommercialContractJourneyTest {
                 .with(actor(owner, "SCOPE_tenant:create", false)))
         .andExpect(status().isForbidden());
     mvc.perform(
+            get("/api/v1/tenants/" + UUID.randomUUID() + "/contracts/" + id + "/comparison")
+                .with(actor(owner, "SCOPE_tenant:create", false)))
+        .andExpect(status().isForbidden());
+    mvc.perform(
             post(CONTRACTS + "/" + id + "/reject")
                 .with(actor("contract-approver", "SCOPE_contract:approve", true))
                 .header("If-Match", "\"1\"")
@@ -315,6 +332,28 @@ class CommercialContractJourneyTest {
             jdbc.queryForObject(
                 "SELECT COUNT(*) FROM commercial_sources WHERE tenant_id=?", Integer.class, tenant))
         .isZero();
+  }
+
+  @Test
+  void changedCatalogRevisionAppearsInPreviewAndStillBlocksApproval() throws Exception {
+    String id = UUID.randomUUID().toString();
+    when(verifier.verify("signed-drift"))
+        .thenReturn(evidence("contract-drift-" + id, 1, State.ACTIVE));
+    createReview(id, "signed-drift");
+    jdbc.update("UPDATE commercial_catalog_offers SET revision=revision+1 WHERE id=?", offerId);
+    mvc.perform(
+            get(CONTRACTS + "/" + id + "/comparison")
+                .with(actor("contract-approver", "SCOPE_contract:approve", false)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.factsMatch").value(false))
+        .andExpect(jsonPath("$.issues[0]").value("REVISION_CHANGED"));
+    mvc.perform(
+            post(CONTRACTS + "/" + id + "/approve")
+                .with(actor("contract-approver", "SCOPE_contract:approve", true))
+                .header("If-Match", "\"1\"")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"reason\":\"Offer revision drift detected\"}"))
+        .andExpect(status().isConflict());
   }
 
   @Test
