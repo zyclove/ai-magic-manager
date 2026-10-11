@@ -3,6 +3,7 @@ import 'api.dart';
 final _id = RegExp(
     r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
 final _providerId = RegExp(r'^[A-Za-z0-9_-]{1,128}$');
+bool isManagedTenantId(String value) => _id.hasMatch(value);
 const _maxEpoch = 9007199254740991;
 
 Never _invalid() =>
@@ -46,6 +47,86 @@ class ManagedEnterpriseBinding {
         !_time(raw['updatedAt']) ||
         raw['updatedAt'] < raw['createdAt']) _invalid();
     return ManagedEnterpriseBinding._(raw);
+  }
+}
+
+/// Platform view includes reviewer-only evidence references and actor identities.
+class ManagedEnterpriseReview {
+  final String tenantId, provider, enterpriseId, contractReference, state;
+  final String requestedBy;
+  final String? approvedBy, providerDisplayName, ownershipEvidenceReference;
+  final int version, createdAt, updatedAt;
+
+  ManagedEnterpriseReview._(Json raw)
+      : tenantId = raw['tenantId'],
+        provider = raw['provider'],
+        enterpriseId = raw['enterpriseId'],
+        contractReference = raw['contractReference'],
+        state = raw['state'],
+        requestedBy = raw['requestedBy'],
+        approvedBy = raw['approvedBy'],
+        providerDisplayName = raw['providerDisplayName'],
+        ownershipEvidenceReference = raw['ownershipEvidenceReference'],
+        version = raw['version'],
+        createdAt = raw['createdAt'],
+        updatedAt = raw['updatedAt'];
+
+  static ManagedEnterpriseReview parse(Object? raw, {String? expectedTenant}) {
+    if (raw is! Json ||
+        raw['tenantId'] is! String ||
+        !_id.hasMatch(raw['tenantId']) ||
+        (expectedTenant != null && raw['tenantId'] != expectedTenant) ||
+        raw['provider'] != 'GOOGLE_AMAPI' ||
+        raw['enterpriseId'] is! String ||
+        !_providerId.hasMatch(raw['enterpriseId']) ||
+        raw['contractReference'] is! String ||
+        (raw['contractReference'] as String).isEmpty ||
+        (raw['contractReference'] as String).length > 200 ||
+        !const {'PENDING', 'ACTIVE', 'REVOKED'}.contains(raw['state']) ||
+        raw['requestedBy'] is! String ||
+        (raw['requestedBy'] as String).isEmpty ||
+        (raw['approvedBy'] != null && raw['approvedBy'] is! String) ||
+        (raw['providerDisplayName'] != null &&
+            (raw['providerDisplayName'] is! String ||
+                (raw['providerDisplayName'] as String).length > 255)) ||
+        (raw['ownershipEvidenceReference'] != null &&
+            (raw['ownershipEvidenceReference'] is! String ||
+                (raw['ownershipEvidenceReference'] as String).length > 200)) ||
+        raw['version'] is! int ||
+        raw['version'] < 1 ||
+        !_time(raw['createdAt']) ||
+        !_time(raw['updatedAt']) ||
+        raw['updatedAt'] < raw['createdAt'] ||
+        (raw['state'] != 'PENDING' &&
+            (raw['approvedBy'] == null ||
+                raw['ownershipEvidenceReference'] == null))) _invalid();
+    return ManagedEnterpriseReview._(raw);
+  }
+}
+
+class ManagedEnterpriseReviewPage {
+  final List<ManagedEnterpriseReview> items;
+  final String? nextCursor;
+  const ManagedEnterpriseReviewPage(this.items, this.nextCursor);
+
+  static ManagedEnterpriseReviewPage parse(Object? raw) {
+    if (raw is! Json ||
+        raw['items'] is! List ||
+        (raw['items'] as List).length > 50 ||
+        (raw['nextCursor'] != null &&
+            (raw['nextCursor'] is! String ||
+                !_id.hasMatch(raw['nextCursor'])))) {
+      _invalid();
+    }
+    final items = (raw['items'] as List)
+        .map((item) => ManagedEnterpriseReview.parse(item))
+        .toList();
+    if (items.any((item) => item.state != 'PENDING') ||
+        items.map((item) => item.tenantId).toSet().length != items.length) {
+      _invalid();
+    }
+    return ManagedEnterpriseReviewPage(
+        List.unmodifiable(items), raw['nextCursor']);
   }
 }
 
@@ -123,7 +204,8 @@ class ManagedEnrollmentPageResult {
         raw['items'] is! List ||
         (raw['items'] as List).length > 50 ||
         (raw['nextCursor'] != null &&
-            (raw['nextCursor'] is! String || !_id.hasMatch(raw['nextCursor'])))) {
+            (raw['nextCursor'] is! String ||
+                !_id.hasMatch(raw['nextCursor'])))) {
       _invalid();
     }
     final items = (raw['items'] as List)

@@ -120,3 +120,81 @@ class ManagedAndroidRepository {
     return result;
   }
 }
+
+/// Independent reviewer API. This repository is never bound to a tenant membership.
+class ManagedAndroidReviewRepository {
+  final Api api;
+  final bool Function() current;
+  static const _root = '/platform/managed-android/enterprise-bindings';
+
+  const ManagedAndroidReviewRepository(
+      {required this.api, required this.current});
+
+  void _ensureCurrent() {
+    if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+  }
+
+  Future<ManagedEnterpriseReviewPage> pending({String? cursor}) async {
+    _ensureCurrent();
+    if (cursor != null && !isManagedTenantId(cursor)) {
+      throw const ApiFailure(400, 'INVALID_CURSOR');
+    }
+    final query = cursor == null ? '?limit=50' : '?limit=50&cursor=$cursor';
+    final raw = await boundedJson(api, 'GET', '$_root$query',
+        maxBytes: 256 * 1024, ensureCurrent: _ensureCurrent);
+    _ensureCurrent();
+    return ManagedEnterpriseReviewPage.parse(raw);
+  }
+
+  Future<ManagedEnterpriseReview> get(String tenantId) async {
+    _ensureCurrent();
+    if (!isManagedTenantId(tenantId)) {
+      throw const ApiFailure(400, 'INVALID_TENANT_ID');
+    }
+    final raw = await boundedJson(api, 'GET', '$_root/$tenantId',
+        maxBytes: 16 * 1024, ensureCurrent: _ensureCurrent);
+    _ensureCurrent();
+    return ManagedEnterpriseReview.parse(raw, expectedTenant: tenantId);
+  }
+
+  Future<ManagedEnterpriseReview> approve(ManagedEnterpriseReview review,
+      String evidenceReference, String reason) async {
+    _ensureCurrent();
+    final raw = await boundedJson(
+        api, 'POST', '$_root/${review.tenantId}/approve',
+        body: {
+          'ownershipEvidenceReference': evidenceReference,
+          'reason': reason
+        },
+        version: review.version,
+        maxBytes: 16 * 1024,
+        ensureCurrent: _ensureCurrent);
+    _ensureCurrent();
+    final result =
+        ManagedEnterpriseReview.parse(raw, expectedTenant: review.tenantId);
+    if (result.state != 'ACTIVE' ||
+        result.version <= review.version ||
+        result.ownershipEvidenceReference != evidenceReference) {
+      throw const ApiFailure(502, 'INVALID_MANAGED_ANDROID_RESPONSE');
+    }
+    return result;
+  }
+
+  Future<ManagedEnterpriseReview> revoke(
+      ManagedEnterpriseReview review, String reason) async {
+    _ensureCurrent();
+    final raw = await boundedJson(
+        api, 'POST', '$_root/${review.tenantId}/revoke',
+        body: {'reason': reason},
+        version: review.version,
+        maxBytes: 16 * 1024,
+        ensureCurrent: _ensureCurrent);
+    _ensureCurrent();
+    final result =
+        ManagedEnterpriseReview.parse(raw, expectedTenant: review.tenantId);
+    if (result.state != 'REVOKED' || result.version <= review.version) {
+      throw const ApiFailure(502, 'INVALID_MANAGED_ANDROID_RESPONSE');
+    }
+    return result;
+  }
+}

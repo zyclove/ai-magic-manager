@@ -29,6 +29,8 @@
 
 平台审核队列是 `GET /api/v1/platform/managed-android/enterprise-bindings`，单条查看路径为 `/{tenantId}`；仅审核权限可访问。批准或撤销均需 `If-Match`，并写入版本化事件和租户审计。`POST /api/v1/platform/managed-android/enterprise-bindings/{tenantId}/revoke` 会将本地映射改为 `REVOKED`，阻止后续基于此映射的新受管操作；**该动作不等于从设备移除 DPC、取消现有 Google 策略或完成退管**，这些需要单独的真机流程和回执。当前 `ACTIVE` 只是企业资源审核结果，业务策略和设备身份仍未接通，不能视为设备管控已生效。
 
+平台管理台现有“企业绑定审核”入口，仅对 `/me` 返回 `canReviewManagedAndroid=true` 的独立审核员显示。页面可查看待审核队列、按机构 ID 查询已处理记录，并提交权属证明索引及审核理由；申请人与审核人为同一人时禁用批准，服务端再次核验。撤销操作要求填写理由，并明确提示不会自动退管。网络状态不确定时应重新读取该机构记录，界面只按服务端版本和状态展示结果。
+
 后续设备注册与策略服务应通过服务端 `ManagedEnterpriseAuthority.requireActive(tenantId)` 解析企业，而非直接接受浏览器传来的企业 ID。该入口每次检查绑定仍为 `ACTIVE`、提供方仍可用、对应合同及 `MANAGED_ANDROID` 权益在当前时间仍有效。它只返回企业资源定位信息，不授予设备级执行权限；后续调用还需独立核对设备注册、管理模式和策略版本。
 
 ## 短时受管注册与提供方设备核对

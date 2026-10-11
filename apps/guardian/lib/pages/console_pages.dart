@@ -19,6 +19,7 @@ import 'members_page.dart';
 import 'classes_page.dart';
 import 'device_groups_page.dart';
 import 'managed_android_page.dart';
+import 'managed_android_review_page.dart';
 import 'audit_page.dart';
 import 'audit_exports_page.dart';
 import 'usage_reports_page.dart';
@@ -56,6 +57,13 @@ class ConsolePages extends StatelessWidget {
               session: s,
               platform: true)
           : const Panel(child: EmptyView('没有合同审核权限', '此功能仅向平台合同运营与独立审批角色开放。'));
+    }
+    if (section == 'managed-android-review') {
+      return s.canOpen('managed-android-review')
+          ? ManagedAndroidReviewPage(
+              key: ValueKey('managed-review-${s.profile?['subject']}'),
+              session: s)
+          : const Panel(child: EmptyView('没有企业绑定审核权限', '此功能仅向经过授权的独立平台审核员开放。'));
     }
     if (s.tenant == null) {
       return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

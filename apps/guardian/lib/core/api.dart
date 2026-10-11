@@ -27,6 +27,10 @@ class ApiFailure implements Exception {
         'ENTERPRISE_BINDING_NOT_FOUND' => '尚未提交企业绑定申请。',
         'ENTERPRISE_BINDING_EXISTS' => '已有企业绑定申请，请刷新查看当前状态。',
         'ENTERPRISE_BINDING_NOT_ACTIVE' => '企业资源尚未完成独立审核。',
+        'INVALID_TENANT_ID' => '请输入有效的机构工作空间 ID。',
+        'INVALID_OWNERSHIP_EVIDENCE' => '请填写 8–200 字的权属证明索引。',
+        'INVALID_BINDING_REASON' => '请填写 5–500 字的审核或撤销理由。',
+        'ENTERPRISE_BINDING_NOT_PENDING' => '申请状态已变化，请刷新后再审核。',
         'MANAGED_ANDROID_CONTRACT_REQUIRED' => '当前机构合同尚未授予有效的受管 Android 权益。',
         'MANAGED_ENROLLMENT_ALREADY_PENDING' => '此儿童档案已有待处理注册资料，请先查看或取消。',
         'MANAGED_ENROLLMENT_RATE_LIMITED' ||

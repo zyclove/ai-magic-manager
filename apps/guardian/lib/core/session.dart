@@ -31,7 +31,12 @@ class Session extends ChangeNotifier {
   bool get canApproveCatalog => profile?['canApproveCatalog'] == true;
   bool get canManageContracts => profile?['canManageContracts'] == true;
   bool get canApproveContracts => profile?['canApproveContracts'] == true;
+  bool get canReviewManagedAndroid =>
+      profile?['canReviewManagedAndroid'] == true;
   bool canOpen(String section) {
+    if (section == 'managed-android-review') {
+      return authenticated && canReviewManagedAndroid;
+    }
     if (section == 'managed-android') {
       return authenticated &&
           tenant?['kind'] == 'ORGANIZATION' &&
