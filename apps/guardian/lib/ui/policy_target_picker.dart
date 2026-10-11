@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/api.dart';
+import '../core/device_group_summary.dart';
 import '../core/session.dart';
 import 'design.dart';
 
@@ -178,47 +179,52 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
       final group = await widget.session.api
           .send('GET', '${widget.root}/device-groups/$id');
       if (!current || revision != generation) return;
+      if (group is! Json ||
+          group['id'] != id ||
+          group['state'] != 'ACTIVE' ||
+          group['version'] is! int ||
+          group['name'] is! String) {
+        throw const ApiFailure(409, 'POLICY_GROUP_SELECTION_UNAVAILABLE');
+      }
+      final health = DeviceGroupSummary.read(
+          await widget.session.api
+              .send('GET', '${widget.root}/device-groups/$id/summary'),
+          group);
+      if (!current || revision != generation) return;
+      if (health.current == 0) {
+        throw const ApiFailure(409, 'POLICY_GROUP_SELECTION_UNAVAILABLE');
+      }
+      if (health.current > 50) {
+        throw const ApiFailure(409, 'POLICY_GROUP_TOO_MANY_ELIGIBLE_DEVICES');
+      }
       final page = await widget.session.api
-          .page('${widget.root}/device-groups/$id/devices');
+          .page('${widget.root}/device-groups/$id/devices?status=CURRENT');
       if (!current || revision != generation) return;
       final latest = await widget.session.api
           .send('GET', '${widget.root}/device-groups/$id');
       if (!current || revision != generation) return;
-      if (group is! Json ||
-          latest is! Json ||
-          group['id'] != id ||
-          group['state'] != 'ACTIVE' ||
-          group['version'] is! int ||
-          group['name'] is! String ||
+      if (latest is! Json ||
           latest['id'] != id ||
           latest['state'] != 'ACTIVE' ||
           latest['version'] != group['version'] ||
+          latest['deviceCount'] != health.total ||
           page.nextCursor != null ||
+          page.items.length != health.current ||
+          page.items.map((row) => row['deviceId']).toSet().length !=
+              health.current ||
           page.items.any((row) =>
               row['deviceId'] is! String ||
               row['registrationId'] is! String ||
               row['displayName'] is! String ||
-              row['state'] is! String ||
-              !const {
-                'CURRENT',
-                'STALE_REGISTRATION',
-                'DEVICE_INACTIVE',
-                'PROFILE_ARCHIVED'
-              }.contains(row['membershipStatus']))) {
-        throw const ApiFailure(409, 'POLICY_GROUP_SELECTION_UNAVAILABLE');
-      }
-      final active = page.items
-          .where((row) =>
-              row['state'] == 'ACTIVE' && row['membershipStatus'] == 'CURRENT')
-          .toList();
-      if (active.isEmpty) {
+              row['state'] != 'ACTIVE' ||
+              row['membershipStatus'] != 'CURRENT')) {
         throw const ApiFailure(409, 'POLICY_GROUP_SELECTION_UNAVAILABLE');
       }
       setState(() {
         selected
           ..clear()
-          ..addAll(active.map((row) => row['deviceId'] as String));
-        for (final row in active) {
+          ..addAll(page.items.map((row) => row['deviceId'] as String));
+        for (final row in page.items) {
           names[row['deviceId'] as String] = row['displayName'] as String;
           groupRegistrations[row['deviceId'] as String] =
               row['registrationId'] as String;
@@ -226,7 +232,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
         groupId = id;
         groupName = group['name'] as String;
         groupVersion = group['version'] as int;
-        excludedGroupDevices = page.items.length - active.length;
+        excludedGroupDevices = health.excluded;
       });
     } catch (failure) {
       if (current && revision == generation) {
@@ -315,8 +321,10 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
                       if (groupError != null)
                         FailureView(groupError!,
                             retry: groupError is ApiFailure &&
-                                    (groupError as ApiFailure).code ==
-                                        'POLICY_GROUP_SELECTION_UNAVAILABLE'
+                                    const {
+                                      'POLICY_GROUP_SELECTION_UNAVAILABLE',
+                                      'POLICY_GROUP_TOO_MANY_ELIGIBLE_DEVICES'
+                                    }.contains((groupError as ApiFailure).code)
                                 ? null
                                 : () => requestedGroupId == null
                                     ? loadGroups()

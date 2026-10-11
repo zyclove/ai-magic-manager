@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../core/api.dart';
+import '../core/device_group_summary.dart';
 import '../core/labels.dart';
 import '../core/session.dart';
 import '../ui/class_action_dialog.dart';
@@ -20,7 +21,8 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
   late final String root, actor, role;
   final listKey = GlobalKey<ResourcePageState>();
   String? selectedId, nextMemberCursor, memberFilter;
-  Json? detail, summary;
+  Json? detail;
+  DeviceGroupSummary? summary;
   List<Json> members = const [];
   Object? error;
   bool loading = false, loadingMore = false, archived = false;
@@ -119,34 +121,6 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     return List.unmodifiable(rows);
   }
 
-  Json validSummary(dynamic value, Json group) {
-    if (value is! Json ||
-        value['groupId'] != group['id'] ||
-        value['version'] != group['version'] ||
-        value['total'] != group['deviceCount'] ||
-        value['total'] is! int ||
-        value['total'] < 0 ||
-        value['total'] > 5000) {
-      throw const ApiFailure(502, 'INVALID_DEVICE_GROUP_RESPONSE');
-    }
-    var counted = 0;
-    for (final key in [
-      'current',
-      'staleRegistration',
-      'deviceInactive',
-      'profileArchived'
-    ]) {
-      if (value[key] is! int || value[key] < 0 || value[key] > value['total']) {
-        throw const ApiFailure(502, 'INVALID_DEVICE_GROUP_RESPONSE');
-      }
-      counted += value[key] as int;
-    }
-    if (counted != value['total']) {
-      throw const ApiFailure(502, 'INVALID_DEVICE_GROUP_RESPONSE');
-    }
-    return value;
-  }
-
   String membersPath(String id) =>
       '$root/device-groups/$id/devices${memberFilter == null ? '' : '?status=$memberFilter'}';
 
@@ -173,7 +147,7 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
       final group = validGroup(values[0], id);
       final page = values[1] as PageResult;
       final rows = validMembers(page.items);
-      final health = validSummary(values[2], group);
+      final health = DeviceGroupSummary.read(values[2], group);
       setState(() {
         detail = group;
         summary = health;
@@ -492,8 +466,8 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
 
   Widget healthPanel() {
     final counts = summary!;
-    final total = counts['total'] as int;
-    final usable = counts['current'] as int;
+    final total = counts.total;
+    final usable = counts.current;
     Widget filterChip(String? status, String title, int count) => ChoiceChip(
           label: Text('$title $count'),
           selected: memberFilter == status,
@@ -517,11 +491,9 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
       Wrap(spacing: 8, runSpacing: 8, children: [
         filterChip(null, '全部', total),
         filterChip('CURRENT', '关联有效', usable),
-        filterChip(
-            'STALE_REGISTRATION', '旧注册周期', counts['staleRegistration'] as int),
-        filterChip('DEVICE_INACTIVE', '设备未激活', counts['deviceInactive'] as int),
-        filterChip(
-            'PROFILE_ARCHIVED', '档案已归档', counts['profileArchived'] as int),
+        filterChip('STALE_REGISTRATION', '旧注册周期', counts.staleRegistration),
+        filterChip('DEVICE_INACTIVE', '设备未激活', counts.deviceInactive),
+        filterChip('PROFILE_ARCHIVED', '档案已归档', counts.profileArchived),
       ])
     ]));
   }
@@ -622,8 +594,7 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
                 children: [
               Text('组内设备', style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 12),
-              if (summary != null &&
-                  (summary!['total'] as int) > (summary!['current'] as int))
+              if (summary != null && summary!.excluded > 0)
                 const Notice('部分成员关联已失效，不会进入设备组策略目标。请核对注册周期后移出旧成员。',
                     warning: true),
               if (members.isEmpty)

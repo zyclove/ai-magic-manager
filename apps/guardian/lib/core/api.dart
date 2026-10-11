@@ -88,7 +88,9 @@ class ApiFailure implements Exception {
         'DEVICE_GROUP_CAPACITY_REACHED' => '设备组已达到 5000 台上限，请使用其他设备组。',
         'INVALID_DEVICE_GROUP_BATCH' => '单次请选择 1–50 台不同的设备，并核对当前注册身份。',
         'POLICY_GROUP_SELECTION_UNAVAILABLE' =>
-          '该设备组没有可用设备，或成员超过单次 50 台预览上限。请缩小分组或手动选择设备。',
+          '该设备组没有可用设备，或成员状态已变化。请刷新设备组后重新选择。',
+        'POLICY_GROUP_TOO_MANY_ELIGIBLE_DEVICES' =>
+          '该组当前有效设备超过 50 台。请拆分设备组，或手动选择不超过 50 台预览。',
         'POLICY_GROUP_CHANGED' => '设备组成员或状态已变化。请重新选择目标并生成预览。',
         'INVALID_POLICY_PREVIEW_RESPONSE' => '策略预览目标与选择不一致，已停止发布。请刷新后重试。',
         'ORGANIZATION_REQUIRED' => '此功能仅适用于机构工作空间。',
