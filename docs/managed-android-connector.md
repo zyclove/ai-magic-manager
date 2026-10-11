@@ -10,12 +10,16 @@
 
 | 操作 | 实现 | 成功语义 |
 |---|---|---|
-| 写应用策略 | `putApplicationPolicy`，仅更新 AMAPI `applications` 字段 | Google 接收策略版本；设备是否应用须回读 |
+| 写应用策略 | `putApplicationPolicy` 先回读已预置的专用策略，要求明确 `playStoreMode=BLACKLIST` 且未启用 `installAppsDisabled`，然后仅更新 AMAPI `applications` 字段 | Google 接收策略版本；设备是否应用须回读 |
 | 创建注册令牌 | `createEnrollmentToken`，一次性、5–30 分钟、禁止个人使用 | 仅得到临时敏感注册材料；设备仍未受管 |
 | 分配策略 | `assignPolicy`，仅更新设备 `policyName` | 服务端请求已接收；不是系统执行成功 |
 | 回读执行状态 | `readDeviceState`，读取 `appliedPolicyName`、`appliedPolicyVersion`、`policyCompliant`、`nonComplianceDetails` | 名称和目标版本都匹配且明确合规才标记 `APPLIED`；未知或未同步为 `PENDING` |
 
 当前应用映射仅支持 `ALLOW`、`BLOCK_LAUNCH`、`BLOCK_INSTALL`。`BLOCK_LAUNCH` 使用 `ApplicationPolicy.disabled=true`，`BLOCK_INSTALL` 使用 `installType=BLOCKED`，后者可能移除已安装应用，必须在产品界面提前说明。应用包名必须合法且单个策略最多 3000 条。日使用时长、时段、网站内容、摄像头识别等**没有**被映射到 AMAPI，不能宣称由此连接器保证执行。系统应用、不同 Android 版本与 OEM 的限制要逐机型验收。
+
+Google 的设备级 `playStoreMode` 未设置时默认 `WHITELIST`：只把少数应用写入 `applications` 会使列表外应用不再可用，并可能被自动卸载。因此连接器**拒绝**不存在、未明确设为 `BLACKLIST`、或启用 `installAppsDisabled` 的策略；它不会悄悄创建策略或切换原有白名单。运维须在合格提供方、企业所有权和独占策略命名空间均已核实后预置策略。`BLACKLIST` 下未列出的应用通常仍可安装，这不是“仅允许所选应用”的全局白名单能力。完整白名单需独立的应用清单、系统必要应用保护、后果预览和真机签收流程。现有 `putApplicationPolicy` 会替换这份**专用策略**的完整应用列表，不能与其他管理工具共写同一策略。
+
+领域规则的安全底线现包含儿童端正式包 `com.aimanager.child` 和调试包 `com.aimanager.child.debug`；两者的启动、安装和必要权限不能被普通策略禁止。未来更换应用 ID 时必须同步更新这一基线并核对恢复路径。连接器尚未接到领域编译与真实企业绑定，直接调用它不构成完成此项安全验收。
 
 ## 启用门槛与配置
 
@@ -48,5 +52,6 @@ manager.emm.google.eligibility-confirmed=false
 - [Android Management API 简介](https://developers.google.com/android/management/introduction)
 - [允许用途与资格](https://developers.google.com/android/management/permissible-usage)
 - [Policies patch](https://developers.google.com/android/management/reference/rest/v1/enterprises.policies/patch)
+- [Policy playStoreMode 与默认行为](https://developers.google.com/android/management/reference/rest/v1/enterprises.policies#PlayStoreMode)
 - [Enrollment tokens](https://developers.google.com/android/management/reference/rest/v1/enterprises.enrollmentTokens)
 - [Device resource 与合规状态](https://developers.google.com/android/management/reference/rest/v1/enterprises.devices)

@@ -63,6 +63,18 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
                 })
             .toList();
     try {
+      // An unspecified Play Store mode defaults to WHITELIST: replacing applications could
+      // uninstall every app omitted from this list. Only an explicitly provisioned, exclusively
+      // owned BLACKLIST policy may be updated by this narrow adapter.
+      Policy existing = client.enterprises().policies().get(name).execute();
+      if (existing == null
+          || !name.equals(existing.getName())
+          || !"BLACKLIST".equals(existing.getPlayStoreMode())
+          || Boolean.TRUE.equals(existing.getInstallAppsDisabled())) {
+        LOG.warn("Android management application policy preflight rejected: unsafe policy mode");
+        throw new IllegalStateException(
+            "Managed application policy is not explicitly provisioned for blocklist updates");
+      }
       Policy result =
           client
               .enterprises()
@@ -74,6 +86,13 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
         throw new IllegalStateException("Android management policy response has no valid version");
       }
       return new PolicyReceipt(name, result.getVersion());
+    } catch (GoogleJsonResponseException error) {
+      if (error.getStatusCode() == 404) {
+        LOG.warn("Android management application policy preflight rejected: policy missing");
+        throw new IllegalStateException(
+            "Managed application policy must be provisioned before application updates");
+      }
+      throw providerFailure("policy patch", error);
     } catch (IOException error) {
       throw providerFailure("policy patch", error);
     }

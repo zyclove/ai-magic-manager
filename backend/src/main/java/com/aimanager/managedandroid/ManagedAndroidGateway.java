@@ -10,7 +10,11 @@ import java.util.List;
 public interface ManagedAndroidGateway {
   boolean available();
 
-  /** Replaces only the applications field of a policy owned by this integration. */
+  /**
+   * Replaces the complete applications field of an exclusively owned policy. The Google adapter
+   * requires that policy to exist with an explicit BLACKLIST Play Store mode; callers must not use
+   * this operation to implement an app allowlist or to modify a policy shared with another EMM.
+   */
   PolicyReceipt putApplicationPolicy(
       String enterpriseId, String policyId, List<AppRestriction> rules);
 

@@ -24,7 +24,7 @@ class RuleCompiler {
         "RECEIVE_SMS", "RECEIVE_MMS", "RECEIVE_WAP_PUSH", "READ_CALL_LOG", "WRITE_CALL_LOG", "UWB_RANGING");
     private static final Set<String> SPECIAL = Set.of("USAGE_ACCESS", "OVERLAY", "NOTIFICATION_ACCESS", "ACCESSIBILITY", "VPN");
     private static final Set<String> BASELINE = Set.of("com.android.settings", "com.android.dialer", "com.google.android.dialer",
-        "com.aimanager.device", "com.aimanager.guardian");
+        "com.aimanager.device", "com.aimanager.child", "com.aimanager.child.debug", "com.aimanager.guardian");
     private final Set<String> protectedPackages;
     RuleCompiler(@Value("${manager.policies.additional-protected-packages:}") String configured) {
         var packages = new HashSet<>(BASELINE);

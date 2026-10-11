@@ -150,6 +150,9 @@ class GoogleManagedAndroidGatewayTest {
           "{\"name\":\"enterprises/e1/enrollmentTokens/t1\",\"value\":\"local-secret\",\"expirationTimestamp\":\"2026-10-10T00:15:00Z\"}";
     } else if (path.get().contains("/devices/")) {
       response = deviceResponse.get();
+    } else if ("GET".equals(method.get()) && path.get().contains("/policies/")) {
+      response =
+          "{\"name\":\"enterprises/e1/policies/p1\",\"version\":\"6\",\"playStoreMode\":\"BLACKLIST\"}";
     } else {
       response = "{\"name\":\"enterprises/e1/policies/p1\",\"version\":\"7\"}";
     }
