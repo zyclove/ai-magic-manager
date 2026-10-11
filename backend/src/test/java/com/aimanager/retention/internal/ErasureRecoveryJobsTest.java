@@ -44,8 +44,14 @@ class ErasureRecoveryJobsTest {
     journal = source("LEDGER_STORE_TEST");
     db = new JdbcTemplate(business);
     ledgerDb = new JdbcTemplate(journal);
-    Flyway.configure().dataSource(business).locations("classpath:db/migration").load().migrate();
+    String vendor = System.getenv("LEDGER_BUSINESS_TEST_URL") == null ? "h2" : "mysql";
+    Flyway.configure()
+        .dataSource(business)
+        .locations("classpath:db/migration", "classpath:db/vendor/" + vendor)
+        .load()
+        .migrate();
     // Only explicitly isolated fixture schemas can reach this setup.
+    if (hasTable("erasure_recovery_steps")) db.update("DELETE FROM erasure_recovery_steps");
     if (hasTable("erasure_recovery_jobs")) db.update("DELETE FROM erasure_recovery_jobs");
     if (hasTable("erasure_recovery_state")) db.update("DELETE FROM erasure_recovery_state");
     ledgerDb.execute("DROP TABLE IF EXISTS erasure_work_admissions");

@@ -23,12 +23,14 @@
 | POST | `/{groupId}/devices` | `{deviceId,registrationId}`，加入当前有效设备 |
 | DELETE | `/{groupId}/devices/{deviceId}` | `registrationId` 查询参数，移出精确成员 |
 
-组响应包括 `id,name,state,version,deviceCount,createdAt,updatedAt`；成员响应包括 `deviceId,registrationId,displayName,platform,state,addedAt`，不含儿童活动或系统密钥。名称经去首尾空格、长度与控制字符检查，同机构名称按大小写折叠去重。数据库在 V3 迁移中建立复合外键，成员与设备注册周期绑定；读接口与写接口都限制机构范围。
+组响应包括 `id,name,state,version,deviceCount,createdAt,updatedAt`；成员响应包括 `deviceId,registrationId,displayName,platform,state,addedAt`，不含儿童活动或系统密钥。名称经去首尾空格、长度与控制字符检查，同机构名称按大小写折叠去重。两张设备组表及复合外键直接纳入 1.0.0 的 V1 初始化基线，不提供旧开发库升级脚本；成员与设备注册周期绑定，读接口与写接口都限制机构范围。
+
 
 ## 界面与恢复
 
 管理端导航只向机构 OWNER/ORG_ADMIN 展示。列表有空态、分页、已归档筛选及“关联不等于执行”的常驻提示。详情展示组版本、当前设备状态和完整注册周期；设备选择复用分页设备清单，已撤销设备不能选择。创建、重命名和成员操作使用固定幂等键；网络结果不明时原样重试，版本冲突关闭并刷新，多因素认证通过统一身份服务完成。
 
+
 ## 上线前仍需验证
 
-本阶段只做编译与静态分析，尚无真实数据库迁移执行、HTTP 权限回归、浏览器视觉核对或受管 Android 批量执行证据。发布前应覆盖跨租户拒绝、成员撤权与并发写、同名竞争、旧注册周期、归档与加入竞争、分页、历史成员、设备撤销、真实 MySQL/OceanBase 兼容，以及手机/宽屏和键盘操作。不能用构建成功替代这些结论。
+设备组功能阶段已做编译与静态分析；随后随首版基线通过 H2 和独立 MySQL 空库初始化、重复启动验证，见 [观测清理阶段记录](erasure-observation-plan.md)。这些结果不覆盖设备组 HTTP 权限回归、浏览器视觉核对或受管 Android 批量执行。发布前应覆盖跨租户拒绝、成员撤权与并发写、同名竞争、旧注册周期、归档与加入竞争、分页、历史成员、设备撤销、真实 MySQL/OceanBase 业务行为，以及手机/宽屏和键盘操作。不能用构建或建库成功替代这些结论。

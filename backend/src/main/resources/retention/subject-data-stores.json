@@ -555,6 +555,33 @@
       "category": "DEVICE_DATA"
     },
     {
+      "table": "device_group_members",
+      "columns": [
+        "added_at",
+        "device_id",
+        "group_id",
+        "registration_id",
+        "tenant_id"
+      ],
+      "domain": "fleet",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "device_groups",
+      "columns": [
+        "archived_at",
+        "created_at",
+        "id",
+        "name",
+        "name_key",
+        "tenant_id",
+        "updated_at",
+        "version"
+      ],
+      "domain": "fleet",
+      "category": "SHARED_CONFIGURATION"
+    },
+    {
       "table": "device_observation_settings",
       "columns": [
         "device_id",
@@ -684,6 +711,21 @@
       ],
       "domain": "retention",
       "category": "OPERATIONAL_METADATA"
+    },
+    {
+      "table": "erasure_recovery_steps",
+      "columns": [
+        "batches_processed",
+        "cursor_id",
+        "handler_version",
+        "phase",
+        "request_id",
+        "rows_processed",
+        "step_code",
+        "updated_at"
+      ],
+      "domain": "retention",
+      "category": "AUDIT_RETENTION"
     },
     {
       "table": "event_publication",

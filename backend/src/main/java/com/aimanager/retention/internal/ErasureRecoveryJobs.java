@@ -191,10 +191,7 @@ class ErasureRecoveryJobs {
           var job = stored.job();
           var entry = job.entry();
           // Compare to the independent journal, not just consistent hashes in the business mirror.
-          var page =
-              ledger.readAfter(
-                  checkpoint(job.ledgerId(), entry.sequence() - 1, entry.previousHash()), 1);
-          if (page.entries().size() != 1 || !entry.equals(page.entries().get(0))) throw corrupt();
+          verifyJournal(job);
           if (job.fence() == Long.MAX_VALUE) throw failure("ERASURE_RECOVERY_FENCE_EXHAUSTED");
           long fence = job.fence() + 1;
           time = now();
@@ -248,6 +245,30 @@ class ErasureRecoveryJobs {
               claim.job().entry().request().requestId());
           return null;
         });
+  }
+
+  <T> T applyBatch(Claim claim, Supplier<T> action) {
+    Objects.requireNonNull(claim);
+    Objects.requireNonNull(action);
+    return transaction(
+        () -> {
+          var stored = lease(claim);
+          var job = stored.job();
+          verifyJournal(job);
+          T result = action.get();
+          // Keep the job lock through mutation and checkpoint; a lease that expired mid-batch
+          // cannot commit either of them. A new owner only acquires the row after rollback.
+          verifyJournal(job);
+          lease(claim);
+          return result;
+        });
+  }
+
+  private void verifyJournal(Job job) {
+    var entry = job.entry();
+    var page =
+        ledger.readAfter(checkpoint(job.ledgerId(), entry.sequence() - 1, entry.previousHash()), 1);
+    if (page.entries().size() != 1 || !entry.equals(page.entries().get(0))) throw corrupt();
   }
 
   private Stored lease(Claim claim) {

@@ -1328,3 +1328,53 @@ CREATE TABLE erasure_recovery_jobs (
 );
 CREATE INDEX ix_erasure_recovery_due ON erasure_recovery_jobs(state,next_attempt_at,sequence_number);
 CREATE INDEX ix_erasure_recovery_lease ON erasure_recovery_jobs(state,lease_until,sequence_number);
+
+-- Domain progress only. DONE here is not a global erasure-completion watermark.
+CREATE TABLE erasure_recovery_steps (
+    request_id VARCHAR(36) NOT NULL,
+    step_code VARCHAR(48) NOT NULL,
+    handler_version INTEGER NOT NULL,
+    phase VARCHAR(20) NOT NULL,
+    cursor_id VARCHAR(36),
+    rows_processed BIGINT NOT NULL DEFAULT 0,
+    batches_processed BIGINT NOT NULL DEFAULT 0,
+    updated_at BIGINT NOT NULL,
+    PRIMARY KEY(request_id,step_code),
+    CONSTRAINT fk_erasure_step_job FOREIGN KEY(request_id) REFERENCES erasure_recovery_jobs(request_id),
+    CONSTRAINT ck_erasure_step_version CHECK(handler_version>0),
+    CONSTRAINT ck_erasure_step_counts CHECK(rows_processed>=0 AND batches_processed>=0),
+    CONSTRAINT ck_erasure_step_phase CHECK(phase IN ('REPORTS','DATA','DONE')),
+    CONSTRAINT ck_erasure_step_cursor CHECK(phase='REPORTS' OR cursor_id IS NULL)
+);
+
+-- Institution device groups are part of the initial 1.0.0 schema.
+-- Membership is pinned to a registration; reenrollment cannot inherit old membership.
+CREATE TABLE device_groups (
+    tenant_id VARCHAR(36) NOT NULL,
+    id VARCHAR(36) NOT NULL,
+    name VARCHAR(100) NOT NULL,
+    name_key VARCHAR(64) NOT NULL,
+    version BIGINT NOT NULL DEFAULT 0,
+    created_at BIGINT NOT NULL,
+    updated_at BIGINT NOT NULL,
+    archived_at BIGINT,
+    PRIMARY KEY (tenant_id,id),
+    CONSTRAINT uq_device_group_name UNIQUE (tenant_id,name_key),
+    CONSTRAINT fk_device_group_tenant FOREIGN KEY (tenant_id) REFERENCES tenants(id)
+);
+
+CREATE TABLE device_group_members (
+    tenant_id VARCHAR(36) NOT NULL,
+    group_id VARCHAR(36) NOT NULL,
+    device_id VARCHAR(36) NOT NULL,
+    registration_id VARCHAR(36) NOT NULL,
+    added_at BIGINT NOT NULL,
+    PRIMARY KEY (tenant_id,group_id,device_id),
+    CONSTRAINT fk_device_group_member_group FOREIGN KEY (tenant_id,group_id)
+      REFERENCES device_groups(tenant_id,id),
+    CONSTRAINT fk_device_group_member_device FOREIGN KEY (tenant_id,device_id,registration_id)
+      REFERENCES devices(tenant_id,id,registration_id)
+);
+
+CREATE INDEX ix_device_group_member_device
+  ON device_group_members(tenant_id,device_id,group_id);

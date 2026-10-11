@@ -1,0 +1,224 @@
+{
+  "recordedAt": "2026-10-11T11:51:30.380862+00:00",
+  "applicationVersion": "1.0.0",
+  "status": "source-verified-not-deployed",
+  "base": "710c5ebad71f10ea493c8c0e2f8c4c398749bf18",
+  "deployed": false,
+  "existingBusinessDatabaseModified": false,
+  "existingErasureLedgerModified": false,
+  "historicalMigrationAdded": false,
+  "schemaPolicy": "Fresh V1 business schema plus V2 vendor event schema; device-group V3 folded into V1",
+  "sourceFiles": [
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureRecoveryJobs.java",
+      "sha256": "fe94f430419f7bd44bb8d35e5ced2fdf2327d6cc9fdeac1adb06e385680bd3be"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureObservationProcessor.java",
+      "sha256": "d8a0e7fccc6529bd77ebb63f5ea652fff9b8e438a858978ad8dc480004ec86a0"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureRecoveryJobsTest.java",
+      "sha256": "c0ff2dd9bc72295d6b6fa6a933bfc6383fa1c5ff9716b058620ed4cf0291b7e1"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureRecoveryBatchTest.java",
+      "sha256": "057a55e7a96b3fabca92697aa5fef18ad08f4584f9aaf5391712e7579dc76b5b"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureObservationProcessorTest.java",
+      "sha256": "0b6b38ded01015ac0f4dcfea4dabbe0dfd6b0cfbe17c64c55db64d2b8eac189c"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DatabaseInitializationTest.java",
+      "sha256": "9705b4d7822612251e350c95d4fe30309e0be6e47fcad942d643413019ccb23a"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V1__initial_schema.sql",
+      "sha256": "9aaaf36bbe510dd97e6bc9e43eda0dd6620cb1d417264fa5de6697ca59c286c3"
+    },
+    {
+      "path": "backend/src/main/resources/retention/subject-data-stores.json",
+      "sha256": "2ab806aec80b5261d3a4d6bb445fb3912ca7b021f39a3a61743b70b022ea3db8"
+    }
+  ],
+  "removedFiles": [
+    {
+      "path": "backend/src/main/resources/db/migration/V3__device_groups.sql",
+      "baseSha256": "01aa2a1d4e1ed298449135adb9138fda4093cceac1d9dc78bb77c354e67705d2"
+    }
+  ],
+  "testRuns": [
+    {
+      "name": "integrated-focused-h2",
+      "total": 67,
+      "passed": 67,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".local/erasure-observation-integrated-green.log",
+      "sha256": "d7f48088a35fe0da554f1faad39fc0bef68df412d841d1d483eae1c187722da3"
+    },
+    {
+      "name": "mysql-processors-batches-recovery",
+      "total": 42,
+      "passed": 42,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".local/erasure-observation-mysql.log",
+      "sha256": "be870794077acbfb14d79dab3de336ef414d6ead1a153fa338ec7bc05251bb3c"
+    },
+    {
+      "name": "mysql-fresh-initialization",
+      "total": 1,
+      "passed": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".local/erasure-observation-initialization-mysql.log",
+      "sha256": "b3e52334b6e9ddcf10fa6ce5b3c32a2faa5ad6261841dbbc47a51de5fae9c21a"
+    },
+    {
+      "name": "final-full-backend",
+      "total": 643,
+      "passed": 635,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 8,
+      "log": ".local/erasure-observation-full.log",
+      "sha256": "f39b1346fe3270fe2da2288ea018bb9f5ceaa62f1e6178d5a4f6b235e59d8320"
+    }
+  ],
+  "testCountsOverlap": true,
+  "reportSuiteCount": 68,
+  "timingObservation": "Full regression reported TenantJourneyTest at 5773 seconds with 31 passing tests; cause of elapsed-time anomaly not established. No performance conclusion drawn.",
+  "skippedSuites": [
+    {
+      "class": "com.aimanager.AndroidChildSubmissionJourneyTest",
+      "skipped": 1
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureAdmissionStoreTest",
+      "skipped": 1
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "skipped": 4
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+      "skipped": 2
+    }
+  ],
+  "review": {
+    "passes": 1,
+    "reviewedHashes": [
+      {
+        "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureRecoveryJobs.java",
+        "sha256": "fe94f430419f7bd44bb8d35e5ced2fdf2327d6cc9fdeac1adb06e385680bd3be"
+      },
+      {
+        "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureObservationProcessor.java",
+        "sha256": "d8a0e7fccc6529bd77ebb63f5ea652fff9b8e438a858978ad8dc480004ec86a0"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureRecoveryJobsTest.java",
+        "sha256": "c0ff2dd9bc72295d6b6fa6a933bfc6383fa1c5ff9716b058620ed4cf0291b7e1"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureRecoveryBatchTest.java",
+        "sha256": "057a55e7a96b3fabca92697aa5fef18ad08f4584f9aaf5391712e7579dc76b5b"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureObservationProcessorTest.java",
+        "sha256": "0b6b38ded01015ac0f4dcfea4dabbe0dfd6b0cfbe17c64c55db64d2b8eac189c"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/DatabaseInitializationTest.java",
+        "sha256": "9705b4d7822612251e350c95d4fe30309e0be6e47fcad942d643413019ccb23a"
+      },
+      {
+        "path": "backend/src/main/resources/db/migration/V1__initial_schema.sql",
+        "sha256": "9aaaf36bbe510dd97e6bc9e43eda0dd6620cb1d417264fa5de6697ca59c286c3"
+      },
+      {
+        "path": "backend/src/main/resources/retention/subject-data-stores.json",
+        "sha256": "2ab806aec80b5261d3a4d6bb445fb3912ca7b021f39a3a61743b70b022ea3db8"
+      }
+    ],
+    "reviewedRemovedFiles": [
+      {
+        "path": "backend/src/main/resources/db/migration/V3__device_groups.sql",
+        "baseSha256": "01aa2a1d4e1ed298449135adb9138fda4093cceac1d9dc78bb77c354e67705d2"
+      }
+    ],
+    "findings": [],
+    "conclusion": "No reproducible P1/P2 findings in the single final read-only review",
+    "matchedSourceFiles": 8,
+    "removedMigrationHashVerified": true,
+    "testsRunByReviewer": false,
+    "scope": "Frozen processor, fencing transaction primitive, tests, initial schema, catalog and V3 removal",
+    "limitations": "Static review does not certify public erasure, all domains, real backup recovery or full product readiness",
+    "secondReviewPerformed": false
+  },
+  "redEvidence": [
+    {
+      "log": ".local/erasure-observation-batch-red.log",
+      "total": 6,
+      "failures": 5,
+      "errors": 1,
+      "reason": "Missing fenced transaction primitive",
+      "sha256": "6ab935bf923de3807bde3addda9541a0e0d84a629a4f43f0e4de7cfb1d509599"
+    },
+    {
+      "log": ".local/erasure-observation-handlers-red.log",
+      "total": 17,
+      "failures": 6,
+      "errors": 5,
+      "reason": "Missing domain erasure processor; existing 6 transaction tests passed",
+      "sha256": "97c91127c7b4d64c6dd3d004d776d289eb9cf765bc4ab33040cf8a84d90610b4"
+    },
+    {
+      "log": ".local/erasure-observation-expanded-red.log",
+      "total": 21,
+      "failures": 1,
+      "errors": 0,
+      "reason": "Journal identity loss during callback did not prevent commit",
+      "sha256": "8b9d1e18d60fcea43e90c8038616f585150ddf912ac2857dc44f9953a1cecb2e"
+    },
+    {
+      "log": ".local/erasure-observation-initialization-red.log",
+      "total": 1,
+      "failures": 1,
+      "errors": 0,
+      "reason": "Committed V3 caused expected 2, actual 3 initialization scripts",
+      "sha256": "1218a18d1de20f6e1a761f1ee22576749a80c556f2bbb9e6e65bda50d9e5a0ff"
+    }
+  ],
+  "coveredStores": [
+    "usage_observation_batches",
+    "usage_observation_heads",
+    "application_inventory_snapshots",
+    "device_observation_settings",
+    "usage_report_jobs",
+    "usage_report_parts"
+  ],
+  "behavior": [
+    "Ledger-bound tenant, subject and immutable registrations; conflicting or incomplete scope blocks mutation",
+    "Job row lock, fencing token and database-time lease validated; independent journal checked before and after callback",
+    "Domain mutation and versioned step progress commit atomically or roll back together",
+    "Shared report copies removed as whole artifacts; unaffected source data and other tenants/reenrollments preserved",
+    "Report selection digest and part identity set checked in bounded scans; malformed metadata rejected",
+    "Step DONE does not complete recovery job, advance global applied watermark or reopen traffic"
+  ],
+  "limitations": [
+    "Only six named stores processed; other domains, generic idempotency, events, diagnostic packages, audit and shared configuration still need handlers",
+    "No automatic erasure worker, public acceptance/control-plane/progress API or global completion certification",
+    "No target-specific admission isolation preserving other tenants, safe orphan reclaim or real backup-restore-and-erasure exercise",
+    "No large-scale throughput, OceanBase, cloud identity/object storage or external-copy certification",
+    "Device-group initialization and storage categorization integrated; this does not certify its new HTTP/UI workflows",
+    "Existing localhost:18099 deployment remains on its prior frozen release; source changes not deployed",
+    "Full backend interop uses frozen report-child-ui/report-web/support-package-web fixtures, not latest unrelated client changes"
+  ]
+}
