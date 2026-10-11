@@ -8,6 +8,7 @@ import 'package:oauth2/oauth2.dart' as oauth;
 import 'api.dart';
 import 'access.dart';
 import 'report_job_resume.dart';
+import 'contract_action_resume.dart';
 
 class Session extends ChangeNotifier {
   static const issuer = String.fromEnvironment('OIDC_ISSUER',
@@ -144,6 +145,41 @@ class Session extends ChangeNotifier {
     login(stepUp: true);
   }
 
+  void reauthenticateContractAction(ContractActionResume resume,
+      {required bool platform}) {
+    final scope = platform ? 'platform' : 'tenant';
+    if (!authenticated ||
+        (platform
+            ? !canOpen('contracts')
+            : !canOpen('institution-contracts'))) {
+      throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+    }
+    html.window.sessionStorage['ai-manager.contract-resume'] = resume.encode(
+        actor: profile!['subject'],
+        scope: scope,
+        tenantId: platform ? '' : tenant!['id'],
+        role: role,
+        now: DateTime.now().millisecondsSinceEpoch);
+    login(stepUp: true);
+  }
+
+  ContractActionResume? takeContractActionResume({required bool platform}) {
+    final saved =
+        html.window.sessionStorage.remove('ai-manager.contract-resume');
+    if (!authenticated ||
+        (platform
+            ? !canOpen('contracts')
+            : !canOpen('institution-contracts'))) {
+      return null;
+    }
+    return ContractActionResume.decode(saved,
+        actor: profile!['subject'],
+        scope: platform ? 'platform' : 'tenant',
+        tenantId: platform ? '' : tenant!['id'],
+        role: role,
+        now: DateTime.now().millisecondsSinceEpoch);
+  }
+
   ReportJobResume? takeReportResume() {
     final saved = html.window.sessionStorage.remove('ai-manager.report-resume');
     if (!authenticated || tenant == null) return null;
@@ -170,6 +206,7 @@ class Session extends ChangeNotifier {
   Future<void> selectTenant(Json next) async {
     if (tenant != null && tenant!['id'] != next['id']) {
       html.window.sessionStorage.remove('ai-manager.report-resume');
+      html.window.sessionStorage.remove('ai-manager.contract-resume');
     }
     final generation = _selection.begin();
     final membership =
@@ -191,6 +228,7 @@ class Session extends ChangeNotifier {
     role = '';
     html.window.sessionStorage.remove('ai-manager.session');
     html.window.sessionStorage.remove('ai-manager.report-resume');
+    html.window.sessionStorage.remove('ai-manager.contract-resume');
   }
 
   void logout() {

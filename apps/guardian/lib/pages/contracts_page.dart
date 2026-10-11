@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import '../core/api.dart';
 import '../core/contracts.dart';
 import '../core/contracts_repository.dart';
+import '../core/contract_action_resume.dart';
 import '../core/commercial_catalog.dart' show catalogLabel;
 import '../core/commercial_entitlements.dart' show commercialFeatureLabel;
 import '../core/session.dart';
@@ -28,6 +29,7 @@ class _ContractsPageState extends State<ContractsPage> {
   ContractComparison? comparison;
   ContractCapabilities? capabilities;
   String? selectedId, nextCursor;
+  String? resumeAction;
   int? nextBeforeVersion;
   Object? listError,
       detailError,
@@ -63,6 +65,10 @@ class _ContractsPageState extends State<ContractsPage> {
             api: widget.session.api, current: current)
         : ContractsRepository.tenant(
             api: widget.session.api, current: current, tenantId: tenantId);
+    final resumed =
+        widget.session.takeContractActionResume(platform: widget.platform);
+    selectedId = resumed?.reviewId;
+    resumeAction = resumed?.action;
     widget.session.addListener(accessChanged);
     if (widget.platform) loadCapabilities();
     loadList();
@@ -79,6 +85,7 @@ class _ContractsPageState extends State<ContractsPage> {
         selected = null;
         comparison = null;
         selectedId = nextCursor = null;
+        resumeAction = null;
         nextBeforeVersion = null;
         capabilities = null;
         listError = const ApiFailure(403, 'SCOPE_DENIED');
@@ -163,6 +170,7 @@ class _ContractsPageState extends State<ContractsPage> {
     if (!current() || !isContractId(id)) return;
     final ticket = ++detailGeneration;
     setState(() {
+      if (selectedId != id) resumeAction = null;
       selectedId = id;
       selected = null;
       comparison = null;
@@ -279,9 +287,12 @@ class _ContractsPageState extends State<ContractsPage> {
                   'reject' => repository.reject(review, reason),
                   _ => repository.accept(review)
                 },
-            reauthenticate: () => widget.session.login(stepUp: true)));
+            reauthenticate: () => widget.session.reauthenticateContractAction(
+                ContractActionResume(review.id, action),
+                platform: widget.platform)));
     if (!mounted || !current()) return;
     if (result != null) {
+      setState(() => resumeAction = null);
       await loadList();
     } else if (mounted && current()) {
       await select(review.id);
@@ -317,6 +328,12 @@ class _ContractsPageState extends State<ContractsPage> {
       if (!widget.platform)
         const Notice(
             '只有本机构所有者或机构管理员可以确认。确认前请核对签约主体、服务期限、名额及设备适用范围；功能权益不保证设备具备受管系统权限。'),
+      if (resumeAction != null)
+        Notice('安全验证已返回，请重新核对最新合同与报价后再${switch (resumeAction) {
+          'approve' => '批准',
+          'reject' => '驳回',
+          _ => '确认'
+        }}。此前操作未自动提交；审核原因需要重新填写。'),
       if (capabilityError != null) ...[
         const SizedBox(height: 12),
         FailureView(capabilityError!, retry: loadCapabilities)
@@ -688,10 +705,16 @@ class _EvidenceDialogState extends State<_EvidenceDialog> {
                       FailureView(error!),
                       if (error is ApiFailure &&
                           (error as ApiFailure).status == 401)
-                        TextButton.icon(
-                            onPressed: widget.reauthenticate,
-                            icon: const Icon(Icons.verified_user_outlined),
-                            label: const Text('重新安全验证'))
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('返回后请向签发方重新索取短期断言，再提交待审。'),
+                              TextButton.icon(
+                                  onPressed: widget.reauthenticate,
+                                  icon:
+                                      const Icon(Icons.verified_user_outlined),
+                                  label: const Text('重新安全验证'))
+                            ])
                     ]
                   ])),
           actions: [
