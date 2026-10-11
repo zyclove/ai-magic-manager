@@ -29,6 +29,8 @@
 
 平台审核队列是 `GET /api/v1/platform/managed-android/enterprise-bindings`，单条查看路径为 `/{tenantId}`；仅审核权限可访问。批准或撤销均需 `If-Match`，并写入版本化事件和租户审计。`POST /api/v1/platform/managed-android/enterprise-bindings/{tenantId}/revoke` 会将本地映射改为 `REVOKED`，阻止后续基于此映射的新受管操作；**该动作不等于从设备移除 DPC、取消现有 Google 策略或完成退管**，这些需要单独的真机流程和回执。当前 `ACTIVE` 只是企业资源审核结果，业务策略和设备身份仍未接通，不能视为设备管控已生效。
 
+后续设备注册与策略服务应通过服务端 `ManagedEnterpriseAuthority.requireActive(tenantId)` 解析企业，而非直接接受浏览器传来的企业 ID。该入口每次检查绑定仍为 `ACTIVE`、提供方仍可用、对应合同及 `MANAGED_ANDROID` 权益在当前时间仍有效。它只返回企业资源定位信息，不授予设备级执行权限；后续调用还需独立核对设备注册、管理模式和策略版本。
+
 Google 的设备级 `playStoreMode` 未设置时默认 `WHITELIST`：只把少数应用写入 `applications` 会使列表外应用不再可用，并可能被自动卸载。因此连接器**拒绝**不存在、未明确设为 `BLACKLIST`、或启用 `installAppsDisabled` 的策略；它不会悄悄创建策略或切换原有白名单。运维须在合格提供方、企业所有权和独占策略命名空间均已核实后预置策略。`BLACKLIST` 下未列出的应用通常仍可安装，这不是“仅允许所选应用”的全局白名单能力。完整白名单需独立的应用清单、系统必要应用保护、后果预览和真机签收流程。现有 `putApplicationPolicy` 会替换这份**专用策略**的完整应用列表，不能与其他管理工具共写同一策略。
 
 领域规则与 Google 连接器共用 `SafetyCriticalPackages` 安全底线，包含儿童端正式包 `com.aimanager.child`、调试包 `com.aimanager.child.debug`、Android Device Policy `com.google.android.apps.work.clouddpc`、设置与电话等恢复所需应用。部署项 `manager.policies.additional-protected-packages` 只能增加，不能删减基础清单。普通策略不能禁止这些包的启动、安装和必要权限；连接器直接收到 `BLOCK_LAUNCH` 或 `BLOCK_INSTALL` 时也会拒绝。未来更换应用 ID 或 EMM 提供方时必须同步核对恢复路径。连接器尚未接到领域编译与真实设备绑定，企业审核记录也未用于策略调用；包名保护本身不构成完成受管执行验收。

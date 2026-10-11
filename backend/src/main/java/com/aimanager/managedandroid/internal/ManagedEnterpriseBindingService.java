@@ -3,6 +3,7 @@ package com.aimanager.managedandroid.internal;
 import com.aimanager.audit.AuditService;
 import com.aimanager.managedandroid.ManagedAndroidGateway;
 import com.aimanager.managedandroid.ManagedAndroidUnavailableException;
+import com.aimanager.managedandroid.ManagedEnterpriseAuthority;
 import com.aimanager.shared.DomainException;
 import com.aimanager.shared.ItemPage;
 import com.aimanager.shared.ResourceVersions;
@@ -28,7 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
  * ownership is represented by an independently reviewed external evidence reference.
  */
 @Service
-class ManagedEnterpriseBindingService {
+class ManagedEnterpriseBindingService implements ManagedEnterpriseAuthority {
   static final String REVIEW_SCOPE = "SCOPE_emm:approve";
   private static final String PROVIDER = "GOOGLE_AMAPI";
   private static final Pattern PROVIDER_ID = Pattern.compile("[A-Za-z0-9_-]{1,128}");
@@ -100,6 +101,17 @@ class ManagedEnterpriseBindingService {
   Binding platformGet(Authentication auth, String tenantId) {
     requireReviewer(auth);
     return required(tenantId, false);
+  }
+
+  /** Rechecks the current contract on every future managed write, not only at approval time. */
+  @Override
+  @Transactional(readOnly = true, timeout = 10)
+  public EnterpriseAccess requireActive(String tenantId) {
+    Binding binding = required(tenantId, false);
+    if (!"ACTIVE".equals(binding.state())) throw conflict("ENTERPRISE_BINDING_NOT_ACTIVE");
+    if (!gateway.available()) throw new DomainException(HttpStatus.SERVICE_UNAVAILABLE, "EMM_UNAVAILABLE");
+    requireCurrentContract(binding);
+    return new EnterpriseAccess(binding.provider(), binding.enterpriseId(), binding.version());
   }
 
   @Transactional(readOnly = true, timeout = 10)
