@@ -2,7 +2,7 @@
 
 ## 当前边界
 
-本仓库现在提供服务端 `ManagedAndroidGateway` 接口及 Google Android Management API 官方 Java 客户端实现。默认实现为不可用且拒绝所有调用。**当前未取得 Android Enterprise EMM/Android Management API 商业准入，也没有绑定真实 enterprise 和设备；不能把它宣传为已实现受管设备强管控。** 现有家庭 BYOD 注册、策略预览与下发状态仍按原有能力边界运行，`ENFORCE` 不会因为本连接器存在而自动开放。
+本仓库现在提供服务端 `ManagedAndroidGateway` 接口及 Google Android Management API 官方 Java 客户端实现。默认实现为不可用且拒绝所有调用。机构企业绑定申请和审核状态已可持久化，但**当前未取得 Android Enterprise EMM/Android Management API 商业准入，也没有绑定真实设备；不能把它宣传为已实现受管设备强管控。** 现有家庭 BYOD 注册、策略预览与下发状态仍按原有能力边界运行，`ENFORCE` 不会因为企业绑定记录存在而自动开放。
 
 代码位置：`backend/src/main/java/com/aimanager/managedandroid/`。连接器仅在服务端运行；Flutter 和设备端不得持有 Google 服务账号凭证。
 
@@ -19,11 +19,19 @@
 
 当前应用映射仅支持 `ALLOW`、`BLOCK_LAUNCH`、`BLOCK_INSTALL`。`BLOCK_LAUNCH` 使用 `ApplicationPolicy.disabled=true`，`BLOCK_INSTALL` 使用 `installType=BLOCKED`，后者可能移除已安装应用，必须在产品界面提前说明。应用包名必须合法且单个策略最多 3000 条。日使用时长、时段、网站内容、摄像头识别等**没有**被映射到 AMAPI，不能宣称由此连接器保证执行。系统应用、不同 Android 版本与 OEM 的限制要逐机型验收。
 
-注册令牌可附带 32–128 字符的随机 opaque `additionalData`。Google 在设备资源的 `enrollmentTokenData` 回报该值，后续绑定服务应只保存随机值摘要，并核对企业资源、令牌名称、注册模式、注册时间、一次性关联值、本地设备注册周期与机构授权。关联值不得包含儿童姓名、档案 ID 或租户 ID，也不得写日志或返回机构普通页面。当前连接器只提供读取证据的 SDK 边界；尚无企业/设备持久绑定与双人批准流程，因此这些数据不会提升本地设备能力或开启 `ENFORCE`。
+注册令牌可附带 32–128 字符的随机 opaque `additionalData`。Google 在设备资源的 `enrollmentTokenData` 回报该值，后续设备绑定服务应只保存随机值摘要，并核对企业资源、令牌名称、注册模式、注册时间、一次性关联值、本地设备注册周期与机构授权。关联值不得包含儿童姓名、档案 ID 或租户 ID，也不得写日志或返回机构普通页面。当前仍无设备持久绑定流程；这些证据不会提升本地设备能力或开启 `ENFORCE`。
+
+## 机构企业绑定审核
+
+机构所有者或机构管理员使用已完成近期多因素认证的身份，向 `POST /api/v1/tenants/{tenantId}/managed-android/enterprise-binding` 提交 `enterpriseId` 与 `contractReference`。申请写入 `PENDING`，并生成同事务审计记录；此时不向 EMM 发出任何写操作。`GET` 同一路径供机构所有者、管理员及审计员查看进度；租户视图隐藏平台审核员身份和内部证据索引。一个机构当前只能有一份绑定，且同一提供方企业资源不能被两个机构同时认领。
+
+平台审核员使用独立 `SCOPE_emm:approve`、近期多因素认证和 `If-Match` 版本调用 `POST /api/v1/platform/managed-android/enterprise-bindings/{tenantId}/approve`，请求体包含 `ownershipEvidenceReference`（外部权属证明的索引）和 `reason`。系统先从提供方只读核对完整企业资源名，再在事务内检查：申请仍为 `PENDING`、申请人与审核人不同、相同合同号存在已应用审核、当前合同授予仍有效并含 `MANAGED_ANDROID`。全部通过才写为 `ACTIVE`。**提供方可读性本身不是客户所有权证明；证据索引需要平台人工复核对应合同和企业权属。** 默认连接器不可用时批准返回 `503 EMM_UNAVAILABLE`，申请仍可留在待审核队列，不会生成虚假已批准结果。
+
+平台审核队列是 `GET /api/v1/platform/managed-android/enterprise-bindings`，单条查看路径为 `/{tenantId}`；仅审核权限可访问。批准或撤销均需 `If-Match`，并写入版本化事件和租户审计。`POST /api/v1/platform/managed-android/enterprise-bindings/{tenantId}/revoke` 会将本地映射改为 `REVOKED`，阻止后续基于此映射的新受管操作；**该动作不等于从设备移除 DPC、取消现有 Google 策略或完成退管**，这些需要单独的真机流程和回执。当前 `ACTIVE` 只是企业资源审核结果，业务策略和设备身份仍未接通，不能视为设备管控已生效。
 
 Google 的设备级 `playStoreMode` 未设置时默认 `WHITELIST`：只把少数应用写入 `applications` 会使列表外应用不再可用，并可能被自动卸载。因此连接器**拒绝**不存在、未明确设为 `BLACKLIST`、或启用 `installAppsDisabled` 的策略；它不会悄悄创建策略或切换原有白名单。运维须在合格提供方、企业所有权和独占策略命名空间均已核实后预置策略。`BLACKLIST` 下未列出的应用通常仍可安装，这不是“仅允许所选应用”的全局白名单能力。完整白名单需独立的应用清单、系统必要应用保护、后果预览和真机签收流程。现有 `putApplicationPolicy` 会替换这份**专用策略**的完整应用列表，不能与其他管理工具共写同一策略。
 
-领域规则与 Google 连接器共用 `SafetyCriticalPackages` 安全底线，包含儿童端正式包 `com.aimanager.child`、调试包 `com.aimanager.child.debug`、Android Device Policy `com.google.android.apps.work.clouddpc`、设置与电话等恢复所需应用。部署项 `manager.policies.additional-protected-packages` 只能增加，不能删减基础清单。普通策略不能禁止这些包的启动、安装和必要权限；连接器直接收到 `BLOCK_LAUNCH` 或 `BLOCK_INSTALL` 时也会拒绝。未来更换应用 ID 或 EMM 提供方时必须同步核对恢复路径。连接器尚未接到领域编译与真实企业绑定，包名保护本身不构成完成受管执行验收。
+领域规则与 Google 连接器共用 `SafetyCriticalPackages` 安全底线，包含儿童端正式包 `com.aimanager.child`、调试包 `com.aimanager.child.debug`、Android Device Policy `com.google.android.apps.work.clouddpc`、设置与电话等恢复所需应用。部署项 `manager.policies.additional-protected-packages` 只能增加，不能删减基础清单。普通策略不能禁止这些包的启动、安装和必要权限；连接器直接收到 `BLOCK_LAUNCH` 或 `BLOCK_INSTALL` 时也会拒绝。未来更换应用 ID 或 EMM 提供方时必须同步核对恢复路径。连接器尚未接到领域编译与真实设备绑定，企业审核记录也未用于策略调用；包名保护本身不构成完成受管执行验收。
 
 ## 启用门槛与配置
 
@@ -38,7 +46,7 @@ manager.emm.google.eligibility-confirmed=false
 
 正式接入前还必须完成：
 
-1. 建立租户到 Google enterprise 的持久绑定，核实企业所有权与商业用途；所有调用以当前租户授权范围解析 enterprise，禁止客户端直接提交任意 enterprise 名称。
+1. 将已审核的企业绑定接入后续受管操作：所有写调用应从当前租户解析 `ACTIVE` 企业资源，实时检查合同和设备绑定；目前连接器仍是独立边界，没有任何策略写入入口。
 2. 设计经监护人/机构管理员重新认证的受管注册流程，令牌只通过短时一次性通道显示；不记录明文令牌或二维码，过期后不可重放。
 3. 将真实设备 ID、注册来源、受管模式与租户绑定；设备自报不能作为 `DEVICE_OWNER` 证明。只有从提供方获取的设备资源和当前所有权证明才能升级能力矩阵。
 4. 将领域策略编译为可执行 AMAPI 子集，并对无法映射、系统应用例外、版本/OEM 差异显式返回 `UNSUPPORTED`；建立预览、二次确认、回滚与版本关联。
