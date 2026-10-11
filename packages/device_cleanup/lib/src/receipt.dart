@@ -78,12 +78,8 @@ class CleanupReceiptAck {
         value['issuedAt'] != command.issuedAt ||
         value['notAfter'] != command.notAfter ||
         !safeInteger(value['version']) ||
-        !const {
-          'COMMAND_SERVED',
-          'COMMAND_RECEIVED',
-          'CLEANUP_FAILED',
-          'CLEANUP_REPORTED'
-        }.contains(value['state']) ||
+        !const {'COMMAND_RECEIVED', 'CLEANUP_FAILED', 'CLEANUP_REPORTED'}
+            .contains(value['state']) ||
         !const {'NONE', 'DEVICE_REPORT_UNVERIFIED'}
             .contains(value['localEvidence']) ||
         value['reasonCode'] != null &&
@@ -92,7 +88,15 @@ class CleanupReceiptAck {
               'KEY_UNAVAILABLE',
               'UNSUPPORTED_AGENT',
               'USER_ACTION_REQUIRED'
-            }.contains(value['reasonCode'])) {
+            }.contains(value['reasonCode']) ||
+        receipt.stage == CleanupReceiptStage.agentDataCleared &&
+            (value['state'] != 'CLEANUP_REPORTED' ||
+                value['localEvidence'] != 'DEVICE_REPORT_UNVERIFIED' ||
+                value['reasonCode'] != null) ||
+        receipt.stage == CleanupReceiptStage.failed &&
+            (value['state'] != 'CLEANUP_FAILED' ||
+                value['localEvidence'] != 'DEVICE_REPORT_UNVERIFIED' ||
+                value['reasonCode'] != receipt.reasonCode)) {
       throw const CleanupFailure('CLEANUP_ACK_INVALID', outcomeUnknown: true);
     }
     return CleanupReceiptAck._(command.operationId, receipt.receiptId,

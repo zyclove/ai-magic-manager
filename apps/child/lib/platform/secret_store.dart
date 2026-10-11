@@ -11,9 +11,10 @@ import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../core/access.dart' show ChildAccessBindingStore;
 
-/// One encrypted record, no readAll/delete/reset surface. Android only until
-/// each additional native storage implementation is separately certified.
-class AndroidIdentityStore implements DeviceSecretStore {
+/// One encrypted record, no readAll/reset surface. Explicit deletion is used
+/// only after an acknowledged agent cleanup. Android only until each additional
+/// native storage implementation is separately certified.
+class AndroidIdentityStore implements DeviceSecretStore, DeviceSecretDeletion {
   static const options = AndroidOptions(
       resetOnError: false,
       // v10 treats missing algorithm markers as legacy storage, including on
@@ -61,6 +62,21 @@ class AndroidIdentityStore implements DeviceSecretStore {
       await storage.write(key: 'identity_record', value: record);
       // Plugin v10 uses SharedPreferences.apply(). Wait for native commit of
       // wrapping key/config/data before identity intent is allowed onto HTTP.
+      await _flush();
+    } catch (_) {
+      throw const DeviceIdentityFailure('SECURE_STORAGE_FAILED');
+    }
+  }
+
+  @override
+  Future<void> deleteIdentity() async {
+    _requireAvailable();
+    try {
+      await storage.delete(key: 'identity_record');
+      await _flush();
+      if (await storage.read(key: 'identity_record') != null) {
+        throw const DeviceIdentityFailure('SECURE_STORAGE_FAILED');
+      }
       await _flush();
     } catch (_) {
       throw const DeviceIdentityFailure('SECURE_STORAGE_FAILED');

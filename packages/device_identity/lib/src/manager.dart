@@ -154,7 +154,8 @@ class DeviceIdentityManager {
           IdentityPhase.active,
           IdentityPhase.rotationRequested,
           IdentityPhase.rotationPending,
-          IdentityPhase.activationUncertain
+          IdentityPhase.activationUncertain,
+          IdentityPhase.cleanupPending
         });
         final now = _time(state);
         if (keys is! DeviceCleanupKeys) {
@@ -168,6 +169,94 @@ class DeviceIdentityManager {
             action,
             operationId,
             now));
+      });
+
+  /// Enter the cleanup-only phase after the host has verified an exact signed
+  /// command. Ordinary credentials and rotation/heartbeat intents are removed
+  /// durably; the original key remains for short-lived cleanup proofs.
+  Future<void> beginAgentCleanup(
+          {required String tenantId,
+          required String deviceId,
+          required String registrationId,
+          required String keyThumbprint,
+          required String commandHash}) =>
+      _exclusive(() async {
+        if (!validUuid(tenantId) ||
+            !validUuid(deviceId) ||
+            !validUuid(registrationId) ||
+            !validSecret(keyThumbprint) ||
+            !RegExp(r'^[0-9a-f]{64}$').hasMatch(commandHash)) {
+          throw const DeviceIdentityFailure('IDENTITY_STATE_INVALID');
+        }
+        final state = await _require();
+        if (state['tenantId'] != tenantId ||
+            state['deviceId'] != deviceId ||
+            state['registrationId'] != registrationId) {
+          throw const DeviceIdentityFailure('IDENTITY_SCOPE_MISMATCH');
+        }
+        if (_phase(state) == IdentityPhase.cleanupPending) {
+          if (state['cleanupCommandHash'] != commandHash ||
+              state['cleanupKeyThumbprint'] != keyThumbprint) {
+            throw const DeviceIdentityFailure('IDENTITY_SCOPE_MISMATCH');
+          }
+          return;
+        }
+        _allow(state, {
+          IdentityPhase.active,
+          IdentityPhase.rotationRequested,
+          IdentityPhase.rotationPending,
+          IdentityPhase.activationUncertain
+        });
+        if (keys is! DeviceCleanupKeys) {
+          throw const DeviceIdentityFailure('DEVICE_KEY_UNAVAILABLE');
+        }
+        final proof = await _keyOperation(() => (keys as DeviceCleanupKeys)
+            .cleanupProof(state['keyHandle'], tenantId, deviceId,
+                registrationId, 'READ', null, _time(state)));
+        if (proof.keyThumbprint != keyThumbprint) {
+          throw const DeviceIdentityFailure('IDENTITY_SCOPE_MISMATCH');
+        }
+        state['phase'] = IdentityPhase.cleanupPending.name;
+        state['authenticationBlocked'] = true;
+        state['cleanupCommandHash'] = commandHash;
+        state['cleanupKeyThumbprint'] = keyThumbprint;
+        state.remove('credential');
+        state.remove('credentialExpiresAt');
+        state.remove('pendingCredential');
+        state.remove('pendingHeartbeat');
+        await _save(state);
+      });
+
+  /// Call only after a strict AGENT_DATA_CLEARED receipt acknowledgement has
+  /// been saved by the cleanup journal. Repeated removal is safe at the store
+  /// boundary; no normal identity operation can run in cleanupPending.
+  Future<void> finishAgentCleanup(
+          {required String tenantId,
+          required String deviceId,
+          required String registrationId,
+          required String keyThumbprint,
+          required String commandHash}) =>
+      _exclusive(() async {
+        final state = await _require();
+        if (_phase(state) != IdentityPhase.cleanupPending ||
+            state['tenantId'] != tenantId ||
+            state['deviceId'] != deviceId ||
+            state['registrationId'] != registrationId ||
+            state['cleanupKeyThumbprint'] != keyThumbprint ||
+            state['cleanupCommandHash'] != commandHash) {
+          throw const DeviceIdentityFailure('IDENTITY_SCOPE_MISMATCH');
+        }
+        if (keys is! DeviceCleanupKeyDeletion ||
+            secrets is! DeviceSecretDeletion) {
+          throw const DeviceIdentityFailure('DEVICE_KEY_UNAVAILABLE');
+        }
+        await _keyOperation(() => (keys as DeviceCleanupKeyDeletion)
+            .deleteOriginalHandle(state['keyHandle']));
+        try {
+          await (secrets as DeviceSecretDeletion).deleteIdentity();
+        } catch (_) {
+          throw const DeviceIdentityFailure('SECURE_STORAGE_FAILED');
+        }
       });
 
   /// Persist a 401/403 observed by a trusted device transport. Supply the exact
@@ -446,11 +535,27 @@ class DeviceIdentityManager {
       if (!validSecret(s['enrollmentToken']) ||
           s['deviceId'] != null ||
           s['credential'] != null) return false;
+    } else if (phase == IdentityPhase.cleanupPending) {
+      if (!validUuid(s['deviceId']) ||
+          !validUuid(s['registrationId']) ||
+          s['credential'] != null ||
+          s['credentialExpiresAt'] != null ||
+          s['authenticationBlocked'] != true ||
+          !validSecret(s['cleanupKeyThumbprint']) ||
+          s['cleanupCommandHash'] is! String ||
+          !RegExp(r'^[0-9a-f]{64}$').hasMatch(s['cleanupCommandHash'])) {
+        return false;
+      }
     } else {
       if (!validUuid(s['deviceId']) ||
           !validUuid(s['registrationId']) ||
           !validSecret(s['credential']) ||
           !safeInteger(s['credentialExpiresAt'], minimum: 1)) return false;
+    }
+    if (phase != IdentityPhase.cleanupPending &&
+        (s['cleanupKeyThumbprint'] != null ||
+            s['cleanupCommandHash'] != null)) {
+      return false;
     }
     if (phase == IdentityPhase.awaitingConfirmation) {
       if (!validSecret(s['enrollmentToken']) ||
@@ -485,7 +590,8 @@ class DeviceIdentityManager {
         (heartbeat is! Map<String, dynamic> ||
             !_validHeartbeat(heartbeat) ||
             heartbeat['sequence'] != s['heartbeatSequence'] + 1 ||
-            phase == IdentityPhase.claimUncertain)) return false;
+            phase == IdentityPhase.claimUncertain ||
+            phase == IdentityPhase.cleanupPending)) return false;
     return true;
   }
 

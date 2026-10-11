@@ -60,11 +60,22 @@ The returned operation is an accepted-receipt snapshot, not a live status
 check. `AGENT_DATA_CLEARED` is permitted only after the host reports its own
 idempotent data clear to the journal. No cleaner is included yet.
 
+`CleanupCoordinator.runOnce()` now sequences command verification, replay of
+any pending receipt, a received acknowledgement, the host's idempotent local
+clear, the cleared acknowledgement, and final removal of the original key.
+It requires an `AgentCleanupExecutor` supplied by the Android host; there is
+no no-op implementation. A local clear error reports a fixed FAILED reason;
+an unknown network response remains pending and blocks the next stage. The
+final key-removal call occurs only after a `CLEANUP_REPORTED` acknowledgement
+bound to the cleared receipt. The host must keep this app's cleanup journal
+and original key until that point and must not clear third-party or system
+data. This coordinator is not wired into the child runtime yet.
+
 ## Delivery state
 
-Proof generation, command retrieval/verification, explicit receipt submission
-and a reusable receipt journal are present. The child runtime has not yet
-wired this client or supplied a production encrypted store. Local agent-data
-deletion, final key removal, full reboot recovery and real Android/TV
-validation remain to be built. This package has no path that performs a local
-destructive operation.
+Proof generation, command retrieval/verification, explicit receipt submission,
+a reusable receipt journal and coordinator are present. The child runtime has
+an encrypted journal store adapter, but has not wired the coordinator or
+supplied a real cleanup executor. Local agent-data deletion, final key
+removal, full reboot recovery and real Android/TV validation remain to be
+built. This package itself has no path that directly deletes local data.

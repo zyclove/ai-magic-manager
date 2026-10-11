@@ -47,6 +47,7 @@ adapter. The default JOSE provider does not prove hardware identity.
 | `rotationRequested` | If the staging response was lost, cancel using the durable old credential before starting another rotation. |
 | `rotationPending` | Old credential stays active; activate with the saved new credential. Expired unsent activation needs explicit cancellation. |
 | `activationUncertain` | Retry activation with the new credential, even after its activation deadline, until its credential expires. Never fall back to the old credential. |
+| `cleanupPending` | A verified cleanup coordinator has durably removed ordinary business credentials and rotation/heartbeat intents. Only the original key may sign cleanup proofs. Final key deletion requires a persisted cleared-receipt acknowledgement and an explicit host call. |
 
 A pending heartbeat replays the same sequence/body. `replayed=true` tells the
 host to schedule a newer snapshot separately. ACK requires exact registration,
@@ -66,6 +67,16 @@ fail closed and never create a replacement key. The server must still verify
 revoked registration, current cleanup task, signature, purpose and expiry.
 Command retrieval, signed-command verification, local cache deletion, receipt
 recovery and final key removal are separate steps not implemented by this API.
+
+`beginAgentCleanup` is a host-only transition after verified command binding:
+it checks the current registration and original key thumbprint, writes the
+cleanup command hash, removes ordinary bearer material, and keeps the original
+key solely for READ/RECEIPT proofs. `finishAgentCleanup` is a host-only final
+step after a persisted cleared-receipt acknowledgement. It requires both a
+durable `DeviceSecretDeletion` store and a `DeviceCleanupKeyDeletion` provider;
+the JOSE software key has no external alias, while a native provider must
+delete its own alias. These methods do not themselves verify the server
+command or receipt, and the child runtime has not wired the coordinator yet.
 
 All API roots are confirmed HTTPS addresses ending in `/api/v1`; redirects are
 refused. Loopback HTTP is explicitly test-only. Requests cover headers/body with

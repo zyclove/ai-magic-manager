@@ -17,13 +17,20 @@ abstract interface class DeviceSecretStore {
   Future<void> write(String record);
 }
 
+/// Optional destructive capability used only after an acknowledged cleanup.
+/// Implementations must make repeated deletion safe and durably flush it.
+abstract interface class DeviceSecretDeletion {
+  Future<void> deleteIdentity();
+}
+
 enum IdentityPhase {
   claimUncertain,
   awaitingConfirmation,
   active,
   rotationRequested,
   rotationPending,
-  activationUncertain
+  activationUncertain,
+  cleanupPending
 }
 
 class EnrollmentTicket {

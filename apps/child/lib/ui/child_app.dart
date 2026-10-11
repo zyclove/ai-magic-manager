@@ -311,6 +311,15 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
         ]);
   }
 
+  Widget _cleanupPending() =>
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        _heading('设备正在退出管理', '监护人已发起设备退出。普通连接凭据已停用。'),
+        const ChildNotice('本机清理结果尚未确认',
+            detail: '请保持网络连接，并联系监护人查看管理端进度。不要卸载或重新注册来处理未完成的退出。'),
+        const SizedBox(height: 16),
+        _helpLink('查看连接帮助')
+      ]);
+
   Widget _device() {
     final blocked = session!.identityView!.cloudAuthenticationBlocked ||
         !session!.credentialReady;
@@ -505,7 +514,8 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
         final connected = session?.identityReadSucceeded == true &&
             view != null &&
             view.phase != IdentityPhase.claimUncertain &&
-            view.phase != IdentityPhase.awaitingConfirmation;
+            view.phase != IdentityPhase.awaitingConfirmation &&
+            view.phase != IdentityPhase.cleanupPending;
         Widget content;
         if (app.session == null) {
           content =
@@ -534,6 +544,8 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
           content = _recover();
         } else if (view.phase == IdentityPhase.awaitingConfirmation) {
           content = _waiting();
+        } else if (view.phase == IdentityPhase.cleanupPending) {
+          content = _cleanupPending();
         } else {
           content = switch (_tab) {
             1 => _rules(),

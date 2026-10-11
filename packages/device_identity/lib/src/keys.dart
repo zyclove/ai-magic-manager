@@ -99,6 +99,13 @@ abstract interface class DeviceCleanupKeys {
       int nowMillis);
 }
 
+/// A native alias provider must delete its original signing alias. The JOSE
+/// software adapter keeps its key in the encrypted identity record, so its
+/// implementation has nothing external to remove.
+abstract interface class DeviceCleanupKeyDeletion {
+  Future<void> deleteOriginalHandle(String handle);
+}
+
 /// A native provider may keep only an alias in the encrypted identity record.
 /// Its handle must remain usable after host/process recreation.
 abstract interface class DeviceEnrollmentKeys {
@@ -111,8 +118,16 @@ abstract interface class DeviceEnrollmentKeys {
 /// the manager writes it only to DeviceSecretStore. This is not non-exportable
 /// hardware key generation, attestation or a device-owner capability.
 class JoseDeviceEnrollmentKeys
-    implements DeviceEnrollmentKeys, DeviceCleanupKeys {
+    implements
+        DeviceEnrollmentKeys,
+        DeviceCleanupKeys,
+        DeviceCleanupKeyDeletion {
   const JoseDeviceEnrollmentKeys();
+  @override
+  Future<void> deleteOriginalHandle(String handle) async {
+    // Software private material lives only inside DeviceSecretStore. The host
+    // must durably delete that record immediately after this method returns.
+  }
   @override
   Future<String> generateHandle() async {
     try {
