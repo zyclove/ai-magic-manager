@@ -73,6 +73,9 @@ class ChildSession extends ChangeNotifier {
   final ChildSubmissionFactory? submissionFactory;
   final Future<CleanupRunStage?> Function()? cleanupCheck;
   String? cleanupErrorCode;
+
+  /// Ephemeral confirmation only; the identity and cleanup journal are gone.
+  bool cleanupCompletedThisSession = false;
   ChildSubmissionSnapshot submissions = const ChildSubmissionSnapshot();
   String? submissionErrorCode, submissionCorrelationId;
   ChildSubmissions? _submissionReceiver;
@@ -298,7 +301,13 @@ class ChildSession extends ChangeNotifier {
           throw const CleanupFailure('CLEANUP_NOT_QUIESCENT');
         }
       }
-      await cleanupCheck!();
+      final stage = await cleanupCheck!();
+      if (stage == CleanupRunStage.localClearFailed) {
+        cleanupErrorCode = 'CLEANUP_LOCAL_CLEAR_FAILED';
+        _log.warning('code=CLEANUP_LOCAL_CLEAR_FAILED');
+      } else if (stage == CleanupRunStage.keyRemoved) {
+        cleanupCompletedThisSession = true;
+      }
     } on CleanupFailure catch (failure) {
       cleanupErrorCode = failure.code;
       _log.warning('code=${failure.code}');

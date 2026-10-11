@@ -324,6 +324,15 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
         _helpLink('查看连接帮助')
       ]);
 
+  Widget _cleanupComplete() =>
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        _heading('本应用已退出管理', '本应用已按已确认命令清理自身数据，并移除原连接密钥。'),
+        const ChildNotice('请监护人核对管理端记录',
+            detail: '此状态只说明本应用的退出流程完成；不代表其他应用、系统设置或整台设备已被清理。'),
+        const SizedBox(height: 16),
+        _helpLink('查看连接帮助')
+      ]);
+
   Widget _device() {
     final blocked = session!.identityView!.cloudAuthenticationBlocked ||
         !session!.credentialReady;
@@ -552,6 +561,8 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
             _button('重新读取状态', session!.reloadIdentity),
             _helpLink('查看连接帮助')
           ]);
+        } else if (view == null && session!.cleanupCompletedThisSession) {
+          content = _cleanupComplete();
         } else if (view == null) {
           content = _pair();
         } else if (view.phase == IdentityPhase.claimUncertain) {
