@@ -68,6 +68,19 @@ class ManagedAndroidRepository {
     return ManagedEnrollmentIntent.parse(raw, tenantId, expectedId: id);
   }
 
+  Future<ManagedProviderStatus> providerStatus(
+      ManagedEnrollmentIntent intent) async {
+    _ensureCurrent();
+    if (intent.tenantId != tenantId || intent.state != 'VERIFIED') {
+      throw const ApiFailure(400, 'MANAGED_ENROLLMENT_NOT_VERIFIED');
+    }
+    final raw = await boundedJson(
+        api, 'GET', '$_root/enrollment-intents/${intent.id}/provider-status',
+        maxBytes: 16 * 1024, ensureCurrent: _ensureCurrent);
+    _ensureCurrent();
+    return ManagedProviderStatus.parse(raw, intent);
+  }
+
   /// A lost response cannot be replayed. Check the intent list, cancel, then reissue.
   Future<ManagedEnrollmentIssued> issue(String subjectId) async {
     _ensureCurrent();

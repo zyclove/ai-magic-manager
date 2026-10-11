@@ -163,6 +163,21 @@ class ManagedEnrollmentStore {
     return intent;
   }
 
+  /** Read-only provider check still needs a currently approved enterprise and valid contract. */
+  @Transactional(readOnly = true, timeout = 10)
+  Intent forProviderStatus(String tenant, String id, String actor) {
+    access.requireRole(tenant, actor, Role.OWNER, Role.ORG_ADMIN, Role.AUDITOR);
+    Intent intent = required(tenant, id, false);
+    if (!"VERIFIED".equals(intent.state()))
+      throw conflict("MANAGED_ENROLLMENT_NOT_VERIFIED");
+    var enterprise = enterprises.requireActive(tenant);
+    if (!enterprise.provider().equals(intent.provider())
+        || !enterprise.enterpriseId().equals(intent.enterpriseId())
+        || enterprise.bindingVersion() != intent.bindingVersion())
+      throw conflict("MANAGED_ENTERPRISE_CHANGED");
+    return intent;
+  }
+
   @Transactional(timeout = 10)
   Intent verify(String tenant, String id, String actor, String providerDeviceId,
       ManagedEnrollmentIdentity evidence, long expectedVersion) {
@@ -174,6 +189,23 @@ class ManagedEnrollmentStore {
     if (!enterprise.enterpriseId().equals(intent.enterpriseId())
         || enterprise.bindingVersion() != intent.bindingVersion())
       throw conflict("MANAGED_ENTERPRISE_CHANGED");
+    requireProvenance(intent, providerDeviceId, evidence);
+    jdbc.update(
+        "UPDATE managed_enrollment_intents SET state='VERIFIED',version=version+1,"
+            + "provider_device_id=?,provider_mode=?,verified_at=?,updated_at=?"
+            + " WHERE tenant_id=? AND id=?",
+        providerDeviceId, evidence.managementMode(), clock.millis(), clock.millis(), tenant, id);
+    Intent updated = required(tenant, id, true);
+    event(updated, "VERIFIED", actor);
+    audit.record(tenant, actor, "MANAGED_PROVIDER_DEVICE_VERIFIED", id);
+    return updated;
+  }
+
+  /** Reusable immutable enrollment provenance check; a device ID alone proves nothing. */
+  static void requireProvenance(Intent intent, String providerDeviceId,
+      ManagedEnrollmentIdentity evidence) {
+    if (evidence == null)
+      throw new DomainException(HttpStatus.BAD_GATEWAY, "EMM_DEVICE_IDENTITY_INVALID");
     long enrolledAt;
     try {
       enrolledAt = Instant.parse(evidence.enrollmentTime()).toEpochMilli();
@@ -193,15 +225,6 @@ class ManagedEnrollmentStore {
         || enrolledAt > intent.expiresAt() + 30_000) {
       throw new DomainException(HttpStatus.CONFLICT, "EMM_DEVICE_IDENTITY_MISMATCH");
     }
-    jdbc.update(
-        "UPDATE managed_enrollment_intents SET state='VERIFIED',version=version+1,"
-            + "provider_device_id=?,provider_mode=?,verified_at=?,updated_at=?"
-            + " WHERE tenant_id=? AND id=?",
-        providerDeviceId, evidence.managementMode(), clock.millis(), clock.millis(), tenant, id);
-    Intent updated = required(tenant, id, true);
-    event(updated, "VERIFIED", actor);
-    audit.record(tenant, actor, "MANAGED_PROVIDER_DEVICE_VERIFIED", id);
-    return updated;
   }
 
   @Transactional(timeout = 10)

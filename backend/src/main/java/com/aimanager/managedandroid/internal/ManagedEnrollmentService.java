@@ -4,6 +4,7 @@ import com.aimanager.managedandroid.ManagedAndroidGateway;
 import com.aimanager.shared.DomainException;
 import com.aimanager.shared.ItemPage;
 import com.aimanager.shared.SecretMaterial;
+import java.time.Clock;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
@@ -21,15 +22,23 @@ class ManagedEnrollmentService {
   private static final Pattern RESOURCE_ID = Pattern.compile("[A-Za-z0-9_-]{1,128}");
   private final ManagedEnrollmentStore store;
   private final ManagedAndroidGateway gateway;
+  private final Clock clock;
   private final String bootstrapPolicyId;
+  private final long maxProviderStatusAgeMillis;
 
   ManagedEnrollmentService(
       ManagedEnrollmentStore store,
       ManagedAndroidGateway gateway,
-      @Value("${manager.emm.google.bootstrap-policy-id:}") String bootstrapPolicyId) {
+      Clock clock,
+      @Value("${manager.emm.google.bootstrap-policy-id:}") String bootstrapPolicyId,
+      @Value("${manager.emm.provider-status-max-age-seconds:86400}") long maxProviderStatusAgeSeconds) {
     this.store = store;
     this.gateway = gateway;
+    this.clock = clock;
     this.bootstrapPolicyId = bootstrapPolicyId;
+    if (maxProviderStatusAgeSeconds < 3600 || maxProviderStatusAgeSeconds > 604800)
+      throw new IllegalArgumentException("Invalid EMM provider status age configuration");
+    this.maxProviderStatusAgeMillis = maxProviderStatusAgeSeconds * 1000;
     if (!bootstrapPolicyId.isBlank() && !RESOURCE_ID.matcher(bootstrapPolicyId).matches())
       throw new IllegalArgumentException("Invalid configured Android enrollment policy ID");
   }
@@ -121,6 +130,67 @@ class ManagedEnrollmentService {
     return view(store.get(tenant, id, actor));
   }
 
+  /** Manual live read of the original enrollment baseline; never certifies the local agent. */
+  ProviderStatus providerStatus(String tenant, String id, String actor) {
+    var intent = store.forProviderStatus(tenant, id, actor);
+    var identity = gateway.readEnrollmentIdentity(intent.enterpriseId(), intent.providerDeviceId());
+    ManagedEnrollmentStore.requireProvenance(intent, intent.providerDeviceId(), identity);
+    var baseline = gateway.requireSafeEnrollmentPolicy(intent.enterpriseId(), intent.policyId());
+    String expectedName = "enterprises/" + intent.enterpriseId() + "/policies/" + intent.policyId();
+    if (baseline == null || !expectedName.equals(baseline.policyName())
+        || baseline.providerVersion() == null
+        || baseline.providerVersion() != intent.policyVersion())
+      throw new DomainException(HttpStatus.CONFLICT, "EMM_ENROLLMENT_POLICY_CHANGED");
+    var state = gateway.readDeviceState(intent.enterpriseId(), intent.providerDeviceId(),
+        intent.policyId(), intent.policyVersion());
+    if (state == null
+        || !("enterprises/" + intent.enterpriseId() + "/devices/" + intent.providerDeviceId())
+            .equals(state.deviceName())
+        || !"DEVICE_OWNER".equals(state.managementMode()))
+      throw new DomainException(HttpStatus.BAD_GATEWAY, "EMM_DEVICE_IDENTITY_INVALID");
+    // Re-read provenance after status to avoid presenting a re-enrolled device as this intent.
+    ManagedEnrollmentStore.requireProvenance(intent, intent.providerDeviceId(),
+        gateway.readEnrollmentIdentity(intent.enterpriseId(), intent.providerDeviceId()));
+    String result;
+    String limitation;
+    if (!expectedName.equals(state.requestedPolicyName())
+        || (state.appliedPolicyVersion() != null
+            && state.appliedPolicyVersion() > intent.policyVersion())) {
+      result = "DRIFT";
+      limitation = "PROVIDER_POLICY_CHANGED";
+    } else if (state.state() == ManagedAndroidGateway.ApplyState.NON_COMPLIANT) {
+      result = "NON_COMPLIANT";
+      limitation = "PROVIDER_REPORTED_NON_COMPLIANCE";
+    } else if (state.state() == ManagedAndroidGateway.ApplyState.APPLIED
+        && expectedName.equals(state.appliedPolicyName())
+        && state.appliedPolicyVersion() != null
+        && state.appliedPolicyVersion() == intent.policyVersion()) {
+      result = "APPLIED";
+      limitation = null;
+    } else {
+      result = "PENDING";
+      limitation = "PROVIDER_APPLICATION_UNCONFIRMED";
+    }
+    Long lastSync = null;
+    if (state.lastPolicySyncTime() != null) {
+      try {
+        lastSync = Instant.parse(state.lastPolicySyncTime()).toEpochMilli();
+      } catch (DateTimeParseException malformed) {
+        throw new DomainException(HttpStatus.BAD_GATEWAY, "EMM_DEVICE_STATE_INVALID");
+      }
+    }
+    long checkedAt = clock.millis();
+    if (("APPLIED".equals(result) || "NON_COMPLIANT".equals(result))
+        && (lastSync == null || lastSync < checkedAt - maxProviderStatusAgeMillis
+            || lastSync > checkedAt + 300_000)) {
+      result = "STALE";
+      limitation = "PROVIDER_REPORT_STALE";
+    }
+    return new ProviderStatus(intent.id(), intent.tenantId(), intent.providerDeviceId(),
+        result, limitation, intent.policyVersion(), state.appliedPolicyVersion(),
+        checkedAt, lastSync, false);
+  }
+
   ItemPage<View> list(String tenant, String actor, int limit, String cursor) {
     var page = store.list(tenant, actor, limit, cursor);
     return new ItemPage<>(page.items().stream().map(ManagedEnrollmentService::view).toList(),
@@ -143,4 +213,10 @@ class ManagedEnrollmentService {
   record Issued(View intent, String tokenValue, String qrCode) {
     @Override public String toString() { return "ManagedEnrollmentIssued[REDACTED]"; }
   }
+
+  /** providerBaselineApplied never means the Flutter child app is bound or enforcing rules. */
+  record ProviderStatus(String intentId, String tenantId, String providerDeviceId,
+      String state, String limitationCode, long expectedPolicyVersion,
+      Long appliedPolicyVersion, long checkedAt, Long lastPolicySyncAt,
+      boolean localAgentBound) {}
 }

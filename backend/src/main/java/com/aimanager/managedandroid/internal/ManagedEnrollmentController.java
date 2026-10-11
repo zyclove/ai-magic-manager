@@ -63,6 +63,16 @@ class ManagedEnrollmentController {
     return response(service.get(tenantId, id, actor.getSubject()));
   }
 
+  /** On-demand provider read; no cache and no claim about the local child agent. */
+  @GetMapping("/{id}/provider-status")
+  ResponseEntity<ManagedEnrollmentService.ProviderStatus> providerStatus(
+      @PathVariable String tenantId,
+      @PathVariable String id,
+      @AuthenticationPrincipal Jwt actor) {
+    return ResponseEntity.ok().cacheControl(CacheControl.noStore()).header("Vary", "Authorization")
+        .body(service.providerStatus(tenantId, id, actor.getSubject()));
+  }
+
   @PostMapping("/{id}/verify")
   ResponseEntity<ManagedEnrollmentService.View> verify(
       @PathVariable String tenantId,

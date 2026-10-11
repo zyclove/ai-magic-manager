@@ -194,6 +194,56 @@ class ManagedEnrollmentIntent {
   }
 }
 
+/// Fresh provider evidence for the enrollment baseline only, never local enforcement.
+class ManagedProviderStatus {
+  final String intentId, tenantId, providerDeviceId, state;
+  final String? limitationCode;
+  final int expectedPolicyVersion, checkedAt;
+  final int? appliedPolicyVersion, lastPolicySyncAt;
+
+  ManagedProviderStatus._(Json raw)
+      : intentId = raw['intentId'],
+        tenantId = raw['tenantId'],
+        providerDeviceId = raw['providerDeviceId'],
+        state = raw['state'],
+        limitationCode = raw['limitationCode'],
+        expectedPolicyVersion = raw['expectedPolicyVersion'],
+        appliedPolicyVersion = raw['appliedPolicyVersion'],
+        checkedAt = raw['checkedAt'],
+        lastPolicySyncAt = raw['lastPolicySyncAt'];
+
+  static ManagedProviderStatus parse(
+      Object? raw, ManagedEnrollmentIntent intent) {
+    const limitations = {
+      'PENDING': 'PROVIDER_APPLICATION_UNCONFIRMED',
+      'NON_COMPLIANT': 'PROVIDER_REPORTED_NON_COMPLIANCE',
+      'DRIFT': 'PROVIDER_POLICY_CHANGED',
+      'STALE': 'PROVIDER_REPORT_STALE'
+    };
+    if (raw is! Json ||
+        intent.state != 'VERIFIED' ||
+        raw['intentId'] != intent.id ||
+        raw['tenantId'] != intent.tenantId ||
+        raw['providerDeviceId'] != intent.providerDeviceId ||
+        !const {'PENDING', 'APPLIED', 'NON_COMPLIANT', 'DRIFT', 'STALE'}
+            .contains(raw['state']) ||
+        raw['expectedPolicyVersion'] is! int ||
+        raw['expectedPolicyVersion'] < 1 ||
+        (raw['appliedPolicyVersion'] != null &&
+            (raw['appliedPolicyVersion'] is! int ||
+                raw['appliedPolicyVersion'] < 1)) ||
+        !_time(raw['checkedAt']) ||
+        (raw['lastPolicySyncAt'] != null && !_time(raw['lastPolicySyncAt'])) ||
+        raw['localAgentBound'] != false ||
+        (raw['state'] == 'APPLIED' &&
+            (raw['limitationCode'] != null ||
+                raw['appliedPolicyVersion'] != raw['expectedPolicyVersion'])) ||
+        (raw['state'] != 'APPLIED' &&
+            raw['limitationCode'] != limitations[raw['state']])) _invalid();
+    return ManagedProviderStatus._(raw);
+  }
+}
+
 class ManagedEnrollmentPageResult {
   final List<ManagedEnrollmentIntent> items;
   final String? nextCursor;

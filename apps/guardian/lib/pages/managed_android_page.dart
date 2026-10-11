@@ -22,10 +22,12 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
   late final ManagedAndroidRepository repository;
   ManagedEnterpriseBinding? binding;
   List<ManagedEnrollmentIntent> intents = const [];
+  final providerStatuses = <String, ManagedProviderStatus>{};
   List<Json> subjects = const [];
   String? nextCursor, subjectCursor;
   Object? error;
   bool loading = true, busy = false, moreSubjects = false;
+  String? checkingIntentId;
   int generation = 0;
   ModalRoute<dynamic>? issuedRoute;
 
@@ -58,7 +60,9 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
         setState(() {
           binding = null;
           intents = const [];
+          providerStatuses.clear();
           subjects = const [];
+          checkingIntentId = null;
           error = const ApiFailure(409, 'WORKSPACE_CHANGED');
         });
       }
@@ -90,6 +94,7 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
     setState(() {
       loading = true;
       error = null;
+      checkingIntentId = null;
     });
     try {
       final results =
@@ -99,6 +104,7 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
       setState(() {
         binding = results[0] as ManagedEnterpriseBinding?;
         intents = page.items;
+        providerStatuses.clear();
         nextCursor = page.nextCursor;
       });
     } catch (failure) {
@@ -375,6 +381,33 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
     }
   }
 
+  Future<void> _checkProvider(ManagedEnrollmentIntent intent) async {
+    if (!current || checkingIntentId != null || intent.state != 'VERIFIED') {
+      return;
+    }
+    final ticket = generation;
+    setState(() {
+      checkingIntentId = intent.id;
+      providerStatuses.remove(intent.id);
+      error = null;
+    });
+    try {
+      final status = await repository.providerStatus(intent);
+      if (current &&
+          ticket == generation &&
+          intents.any(
+              (row) => row.id == intent.id && row.version == intent.version)) {
+        setState(() => providerStatuses[intent.id] = status);
+      }
+    } catch (failure) {
+      if (current && ticket == generation) setState(() => error = failure);
+    } finally {
+      if (current && ticket == generation) {
+        setState(() => checkingIntentId = null);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -472,8 +505,26 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
                       if (writable && intent.canCancel)
                         TextButton(
                             onPressed: busy ? null : () => _cancel(intent),
-                            child: const Text('取消令牌'))
-                    ]))
+                            child: const Text('取消令牌')),
+                      if (intent.state == 'VERIFIED')
+                        TextButton.icon(
+                            onPressed: busy || checkingIntentId != null
+                                ? null
+                                : () => _checkProvider(intent),
+                            icon: const Icon(Icons.fact_check_outlined),
+                            label: const Text('实时复核提供方'))
+                    ])),
+            if (checkingIntentId == intent.id) const LinearProgressIndicator(),
+            if (providerStatuses[intent.id] case final status?)
+              Notice(
+                  '本次提供方读取：${switch (status.state) {
+                    'APPLIED' => '初始安全策略已报告应用',
+                    'NON_COMPLIANT' => '提供方报告不合规',
+                    'DRIFT' => '提供方策略已偏离初始版本',
+                    'STALE' => '提供方报告已过期',
+                    _ => '执行尚未确认'
+                  }}。读取时间 ${dateLabel(status.checkedAt)}；最近策略同步 ${dateLabel(status.lastPolicySyncAt)}。本地儿童 App 仍未建立受管身份绑定。',
+                  warning: status.state != 'APPLIED')
           ],
           if (nextCursor != null)
             TextButton(

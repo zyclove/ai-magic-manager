@@ -38,6 +38,10 @@ class ApiFailure implements Exception {
           '注册资料申请过于频繁或已达到机构上限，请稍后再试。',
         'MANAGED_ENROLLMENT_POLICY_CHANGED' => '初始设备策略在注册过程中发生变化，请联系平台核对后重试。',
         'EMM_DEVICE_IDENTITY_MISMATCH' => '提供方设备身份与本次注册资料不匹配，未完成核对。',
+        'MANAGED_ENROLLMENT_NOT_VERIFIED' => '需先完成提供方注册身份核对，才能读取当前状态。',
+        'EMM_DEVICE_IDENTITY_INVALID' ||
+        'EMM_DEVICE_STATE_INVALID' =>
+          '提供方设备资料不完整或身份异常，当前状态未被采信。',
         'CONTRACT_PROVIDER_UNAVAILABLE' =>
           '机构合同签发方当前不可用，提交、审批和机构确认已暂停；已有记录仍可查看。',
         'CONTRACT_ACTIVE_SUBMISSIONS_PAUSED' =>
