@@ -75,6 +75,13 @@ try {
     WriteNewFile (Join-Path $destination 'verification.jwks') (@{keys=@($public)} | ConvertTo-Json -Depth 8)
 } finally { $key.Dispose() }
 
+# Export/report artifacts and diagnostic packages use independent authenticated-encryption keys.
+# Only the backend mounts these files; key material never enters Compose environment values.
+foreach ($purpose in @('audit-export', 'diagnostic-package')) {
+    $encryptionKey = [ordered]@{kty='oct'; use='enc'; alg='dir'; kid=($purpose + '-' + [Guid]::NewGuid().ToString('N')); k=(Base64Url ([Security.Cryptography.RandomNumberGenerator]::GetBytes(32)))}
+    WriteNewFile (Join-Path $secrets "$purpose.jwks") (@{keys=@($encryptionKey)} | ConvertTo-Json -Depth 8)
+}
+
 $realm = Get-Content -LiteralPath (Join-Path $repository 'deploy/keycloak/realm-template.json') -Raw | ConvertFrom-Json
 $client = $realm.clients | Where-Object clientId -eq 'ai-manager-guardian'
 $client.redirectUris = @("$origin/auth/callback")

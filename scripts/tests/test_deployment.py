@@ -16,7 +16,18 @@ ROOT = Path(__file__).resolve().parents[2]
 PWSH = shutil.which("pwsh")
 
 
+def assert_no_secret(case, secret, output):
+    # unittest.assertNotIn includes both operands in failure output, even with a custom msg.
+    case.assertFalse(secret in output, "Sensitive material appeared in captured output")
+
+
 class DeploymentInitializationTest(unittest.TestCase):
+    def test_secret_assertion_failure_does_not_print_material(self):
+        material = "synthetic-sensitive-value"
+        with self.assertRaises(AssertionError) as failure:
+            assert_no_secret(self, material, "captured: " + material)
+        self.assertFalse(material in str(failure.exception), "Secret assertion leaks its input")
+
     def setUp(self):
         self.directory = ROOT / ".local" / ("deployment-test-" + uuid.uuid4().hex)
 
@@ -46,8 +57,8 @@ class DeploymentInitializationTest(unittest.TestCase):
         self.assertEqual(len(set(passwords)), 7, "Credentials must be independent")
         for password in passwords:
             self.assertGreaterEqual(len(password), 48)
-            self.assertNotIn(password, env, "Compose environment must not contain passwords")
-            self.assertNotIn(password, result.stdout + result.stderr, "Secrets must not be printed")
+            assert_no_secret(self, password, env)
+            assert_no_secret(self, password, result.stdout + result.stderr)
         private = json.loads((self.directory / "secrets/signing.jwk").read_text())
         public = json.loads((self.directory / "verification.jwks").read_text())["keys"][0]
         self.assertEqual(private["crv"], "P-256")
@@ -78,7 +89,7 @@ class DeploymentInitializationTest(unittest.TestCase):
         self.assertIn({"source": "erasure_app", "target": "manager.erasure-ledger.password"},
                       services["backend"]["secrets"])
         for password in passwords:
-            self.assertNotIn(password, configured.stdout, "Compose must expose only secret file references")
+            assert_no_secret(self, password, configured.stdout)
 
     def test_second_initialization_preserves_existing_credentials(self):
         self.assertEqual(self.initialize().returncode, 0)
@@ -89,6 +100,39 @@ class DeploymentInitializationTest(unittest.TestCase):
         after = {str(p.relative_to(self.directory)): hashlib.sha256(p.read_bytes()).hexdigest()
                  for p in self.directory.rglob("*") if p.is_file()}
         self.assertEqual(before, after)
+
+    def test_export_and_diagnostic_keys_are_independent_and_mounted_read_only(self):
+        result = self.initialize()
+        self.assertEqual(result.returncode, 0)
+        materials = []
+        for name in ("audit-export.jwks", "diagnostic-package.jwks"):
+            path = self.directory / "secrets" / name
+            self.assertTrue(path.is_file(), f"Missing runtime encryption key: {name}")
+            key = json.loads(path.read_text(encoding="utf-8"))["keys"][0]
+            self.assertEqual((key["kty"], key["use"], key["alg"]), ("oct", "enc", "dir"))
+            import base64
+            self.assertEqual(len(base64.urlsafe_b64decode(key["k"] + "=")), 32)
+            assert_no_secret(self, key["k"], result.stdout + result.stderr)
+            materials.append(key["k"])
+        self.assertEqual(len(set(materials)), 2)
+        configured = subprocess.run(
+            ["docker", "compose", "--env-file", str(self.directory / ".env"),
+             "-f", str(ROOT / "deploy/compose/compose.yaml"), "config", "--format", "json"],
+            cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=60)
+        self.assertEqual(configured.returncode, 0)
+        services = json.loads(configured.stdout)["services"]
+        backend = services["backend"]
+        for variable, source, filename in (
+            ("AUDIT_EXPORT_KEY_FILE", "audit_export_key", "audit-export.jwks"),
+            ("DIAGNOSTIC_PACKAGE_KEY_FILE", "diagnostic_package_key", "diagnostic-package.jwks"),
+        ):
+            target = f"/run/keys/{filename}"
+            self.assertEqual(backend["environment"][variable], target)
+            self.assertIn({"source": source, "target": target}, backend["secrets"])
+            for service in ("edge", "identity", "database", "erasure-database", "identity-database"):
+                self.assertNotIn(source, str(services[service].get("secrets", [])))
+        for material in materials:
+            assert_no_secret(self, material, configured.stdout)
 
     def test_public_http_origin_is_rejected_before_writing_secrets(self):
         result = self.initialize("-PublicUrl", "http://public.example.com:18090")

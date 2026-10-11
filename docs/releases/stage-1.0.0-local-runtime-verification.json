@@ -1,0 +1,198 @@
+{
+  "recordedAt": "2026-10-11T03:14:06.043404+00:00",
+  "applicationVersion": "1.0.0",
+  "status": "deployed-local-independent-environment",
+  "publicUrl": "http://localhost:18099",
+  "sourceBase": "d3d977746a99edd659b896b169d9ed61245cd8ce",
+  "sourceFiles": [
+    {
+      "path": "scripts/initialize-deployment.ps1",
+      "sha256": "61a06035d1e9953493a5e633640f7b63d2bf5845f1df1b3f8743b9bf03c115fc"
+    },
+    {
+      "path": "deploy/compose/compose.yaml",
+      "sha256": "544b8ab421cf4549aacf417f1f3186d5f61f310407f624ac9d4ed62581e8b269"
+    },
+    {
+      "path": "scripts/tests/test_deployment.py",
+      "sha256": "9532718b1bb8c3c5fc0bba5d5acd8135c390460e245f68ee657e61c5ab1ea541"
+    },
+    {
+      "path": "docs/deployment-runbook.md",
+      "sha256": "a8b131a14d2acf2ebfb5806a8197f7e05f4e29cf2e7cf70b4cbcd4e38cd5e6d3"
+    },
+    {
+      "path": "docs/version-1.0.0-local-runtime.md",
+      "sha256": "71de177f54da9ca2db5c185d9fc96100288834f54c0c393c3d10720776a55c5d"
+    }
+  ],
+  "runtime": {
+    "independentEncryptionKeysMatch": true,
+    "ledgerIdentityMatches": true,
+    "services": [
+      {
+        "service": "database",
+        "health": "healthy",
+        "image": "sha256:8d132912e9d3c985237567595ec2aeae04936044eb1f9336e8e4da2326238b84",
+        "status": "running"
+      },
+      {
+        "service": "identity-database",
+        "health": "healthy",
+        "image": "sha256:8d132912e9d3c985237567595ec2aeae04936044eb1f9336e8e4da2326238b84",
+        "status": "running"
+      },
+      {
+        "service": "erasure-database",
+        "health": "healthy",
+        "image": "sha256:8d132912e9d3c985237567595ec2aeae04936044eb1f9336e8e4da2326238b84",
+        "status": "running"
+      },
+      {
+        "service": "identity",
+        "health": "healthy",
+        "image": "sha256:cd0640ef87655ec2b1ab5cc701d3f43c650ef18e78648b9992901275fd43f617",
+        "status": "running"
+      },
+      {
+        "service": "backend",
+        "health": "healthy",
+        "image": "sha256:78adc2bd8a9373aa05773313dbfa319f6820a4289a4661c3703836ce986be0cf",
+        "status": "running"
+      },
+      {
+        "service": "edge",
+        "health": "healthy",
+        "image": "sha256:ebd5b3e4f7b5667ec20e100a9cac1c1a7ac65b868513330158d32d82e2d964c6",
+        "status": "running"
+      }
+    ],
+    "restartHealthy": true,
+    "freshSchema": [
+      "1:initial schema",
+      "2:event publication"
+    ],
+    "publicUrl": "http://localhost:18099",
+    "guardianSha256": "e83103e08a9adf963853a598e4e0cf420557f391dcebb18d01a44b039c1d9387",
+    "ledgerSequence": 0,
+    "existingDatabaseModified": false,
+    "encryptionMountsReadOnly": true,
+    "applicationVersion": "1.0.0",
+    "backendSha256": "590b2b95d71c798ce577cacf1b65a15e870606f482b2a9b1594df097a01d26f2",
+    "browser": {
+      "observedConsoleWarnings": 0,
+      "observedConsoleErrors": 0,
+      "adminWorkbench": true,
+      "sessionRetainedAfterServiceRestart": true,
+      "realPasswordPkceLogin": true,
+      "mfaVerified": false,
+      "contractsRead": true,
+      "catalogRead": true,
+      "unconfiguredContractsDisabled": true,
+      "workspaceDialogOpenedAndCancelled": true
+    },
+    "anonymousBusinessStatus": 401,
+    "verifiedAt": "2026-10-11T03:11:48.7076421+00:00"
+  },
+  "backendVerification": {
+    "source": "stage-erasure-startup-verification.json",
+    "identicalProductionFilesBeforeReuse": 242,
+    "newBackendBuildPerformedThisStage": false
+  },
+  "frontendVerification": {
+    "tests": 253,
+    "passed": 253,
+    "errors": 0,
+    "warnings": 0,
+    "styleInfos": 86,
+    "build": "success"
+  },
+  "deploymentVerification": {
+    "tests": 10,
+    "passed": 10,
+    "red": "Missing audit-export.jwks; one expected failure",
+    "reviewFixRed": "Secret assertion failure included input; one expected failure using synthetic material"
+  },
+  "review": {
+    "reviewer": "/root/v1_deployment_review",
+    "filesMatched": 3,
+    "findings": [
+      {
+        "severity": "P2",
+        "issue": "unittest.assertNotIn echoes sensitive operands on failure",
+        "status": "fixed-once-with-red-green-and-full-deployment-suite"
+      }
+    ],
+    "secondReview": false
+  },
+  "evidence": [
+    {
+      "path": ".local/v1-guardian-analyze.log",
+      "sha256": "225681587484cae64be05450cf3fe375bdde0964cf2e7862491991076c7d883c"
+    },
+    {
+      "path": ".local/v1-guardian-analyze-final.log",
+      "sha256": "011fe6f5f20f508b3ff10b15075bb973bf06d719e93831aee4145eaa28aa025f"
+    },
+    {
+      "path": ".local/v1-guardian-test.log",
+      "sha256": "fdd972177ba5d0a13109c3e0a12ff9028d7c3ae69751cbc8f029ea4687619368"
+    },
+    {
+      "path": ".local/v1-guardian-build.log",
+      "sha256": "7b19bc4157178a72825e55c7ae406ed7d56abbf9ca1f50d83f5dd5ee2ce7a5c5"
+    },
+    {
+      "path": ".local/v1-encryption-red.log",
+      "sha256": "105687e74f7016312ccf9ad7520c102b75cfdea9fafa333f64f0945d11a88583"
+    },
+    {
+      "path": ".local/v1-encryption-green.log",
+      "sha256": "b453975f43b9ac7dc67fb323661d0d9aa7fada7c36e5e9baea14af4c6d04302f"
+    },
+    {
+      "path": ".local/v1-secret-assertion-red.log",
+      "sha256": "c054344808f9d4e0873236b8f5ec4e876d5c6341794061b31962567855854569"
+    },
+    {
+      "path": ".local/v1-encryption-final.log",
+      "sha256": "66fc49339f476e9937ca1e7e448ab76a3ff3d475f5bf0fd31a725c1705d4e2fb"
+    },
+    {
+      "path": ".local/v1-live-schema.log",
+      "sha256": "ee0992d2c31c9e71e5f35b15556770264e5f2774fb56f2c2e553a3fbebc1105b"
+    },
+    {
+      "path": ".local/v1-restart.log",
+      "sha256": "8bee91f9d5acac46354fa57a82a0ec061b3aca132b2574c9ae1b6117fddc02f6"
+    },
+    {
+      "path": ".local/v1-restart-health.log",
+      "sha256": "01cb9bcf6001021ab4a873ebd1d71f92cdf7024bbd27a15e2fe073201014f449"
+    },
+    {
+      "path": ".local/runtime/v1-browser-verification.json",
+      "sha256": "2b77aed06d928dab35585420d89910b8558928d6e58c3057da254a955b6b94de"
+    },
+    {
+      "path": ".local/v1-admin-workbench.jpg",
+      "sha256": "884066c8891a0a4afaddb6867f396b3d80179994c01358fc704431132a670791"
+    }
+  ],
+  "backup": {
+    "localReceipt": ".local/runtime/v1-before-backup.json",
+    "businessAndApplicationBackupCreated": true,
+    "oldEnvironmentRetained": true,
+    "restoreExercised": false,
+    "identityVolumeRetainedNotIndependentBackup": true
+  },
+  "limitations": [
+    "No OTP enrollment or real MFA verification; sensitive operations still require it.",
+    "No seeded business workspace, subject or device; creation dialog was opened and cancelled.",
+    "Existing containers and artifacts remain available separately; no historic schema upgrade or reset.",
+    "This manually assembled release reuses a byte-verified backend artifact; the full build-deployment pipeline was not rerun.",
+    "Style infos remain; analysis is not described as zero issues.",
+    "No completed erasure/recovery, real device enforcement, commercial issuer, Android APK or production-scale acceptance.",
+    "Key readability and restart do not prove decrypting historical artifacts, MFA export/diagnostic journeys or image-content scanning."
+  ]
+}
