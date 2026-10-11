@@ -24,6 +24,7 @@ class MainActivity: FlutterActivity() {
     private var storageExecutor = Executors.newSingleThreadExecutor()
     private val mainHandler = Handler(Looper.getMainLooper())
     private var observationHost: ObservationHost? = null
+    private val deviceKeysHost = DeviceKeysHost()
     override fun configureFlutterEngine(engine: FlutterEngine) {
         super.configureFlutterEngine(engine)
         if (storageExecutor.isShutdown) {
@@ -32,6 +33,19 @@ class MainActivity: FlutterActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         observationHost = ObservationHost(this)
         AndroidObservationApi.setUp(engine.dartExecutor.binaryMessenger, observationHost)
+        MethodChannel(engine.dartExecutor.binaryMessenger, "com.aimanager.child/device_keys")
+            .setMethodCallHandler { call, result ->
+                storageExecutor.execute {
+                    try {
+                        val output = deviceKeysHost.invoke(call.method, call.arguments)
+                        mainHandler.post { result.success(output) }
+                    } catch (_: Exception) {
+                        // Arguments, aliases, private material and provider errors
+                        // must not be reflected into Flutter logs or UI text.
+                        mainHandler.post { result.error("DEVICE_KEY_UNAVAILABLE", "Device key unavailable", null) }
+                    }
+                }
+            }
         MethodChannel(engine.dartExecutor.binaryMessenger, "com.aimanager.child/runtime")
             .setMethodCallHandler { call, result ->
                 when (call.method) {
@@ -78,6 +92,7 @@ class MainActivity: FlutterActivity() {
         observationHost?.close()
         observationHost = null
         MethodChannel(engine.dartExecutor.binaryMessenger, "com.aimanager.child/runtime").setMethodCallHandler(null)
+        MethodChannel(engine.dartExecutor.binaryMessenger, "com.aimanager.child/device_keys").setMethodCallHandler(null)
         storageExecutor.shutdown()
         super.cleanUpFlutterEngine(engine)
     }

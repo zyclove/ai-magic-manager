@@ -78,6 +78,8 @@ stateDiagram-v2
 
 Android 安全存储拟用平台成熟 SDK；例如 [flutter_secure_storage](https://pub.dev/packages/flutter_secure_storage) 的版本/Android 最低要求、备份和迁移需要按现有 Flutter SDK 解析与真机认证。当前没有安装该插件、没有生产 encrypted-store 实现，也没有宣称软件 JWK 不可导出。Web 的浏览器存储不能冒充 Android Keystore。
 
+2026-10-11 补充：生产 Android 宿主现用 `flutter_secure_storage 10.0.0` 保存身份状态；新注册改用 AndroidKeyStore 的 P-256 签名别名，Nimbus JOSE 9.37.4 生成 ES256 证明并在本机自验，私钥不通过 Flutter 通道。旧加密记录中的软件 JWK 继续按原注册密钥签名和退出，避免静默换钥。此实现通过静态分析和 Android 调试包编译；尚无真实 Android/TV 注册、后端 Nimbus 互操作、Keystore 丢失/恢复、硬件证明或厂商兼容证据。上述历史阶段记录保留原时间范围，不视为当前发布认证。
+
 ## 6. 当前验收证据与剩余范围
 
 | 验证 | 实际证据 |

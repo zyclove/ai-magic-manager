@@ -7,6 +7,7 @@ import 'package:sembast/sembast.dart';
 import '../platform/configuration_database.dart';
 import '../platform/observation_source.dart';
 import '../platform/secret_store.dart';
+import '../platform/device_keys.dart';
 import 'cleanup_runner.dart';
 import 'access.dart' show ChildAccessBindingStore;
 import 'access_receiver.dart';
@@ -20,6 +21,7 @@ import 'submission_receiver.dart';
 /// Construction performs no platform access, database opening or collection.
 class ChildPlatformServices {
   final DeviceSecretStore identityStore;
+  final DeviceEnrollmentKeys? enrollmentKeys;
   final observation.ObservationStore observationStore;
   final observation.ObservationSource observationSource;
   final Future<Database> Function() openConfigurations;
@@ -32,6 +34,7 @@ class ChildPlatformServices {
       openSubmissions;
   const ChildPlatformServices(
       {required this.identityStore,
+      this.enrollmentKeys,
       required this.observationStore,
       required this.observationSource,
       required this.openConfigurations,
@@ -41,6 +44,7 @@ class ChildPlatformServices {
 
   factory ChildPlatformServices.android() => ChildPlatformServices(
       identityStore: AndroidIdentityStore(),
+      enrollmentKeys: AndroidDeviceKeys(),
       observationStore: AndroidObservationStore(),
       observationSource: AndroidObservationSource(),
       openConfigurations: () => openConfigurationDatabase());
@@ -70,6 +74,7 @@ class ProductionChildRuntime {
             allowLoopbackHttp: environment.allowLoopbackHttp,
             client: identityClient),
         secrets: services.identityStore,
+        keys: services.enrollmentKeys ?? const JoseDeviceEnrollmentKeys(),
         nowMillis: clock);
     var cleanupWindow = false;
     final session = ChildSession(

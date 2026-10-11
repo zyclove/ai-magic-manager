@@ -73,3 +73,9 @@ android {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    // JOSE encoding stays in a maintained library; AndroidKeyStore supplies
+    // the non-exportable private-key operation through JCA.
+    implementation 'com.nimbusds:nimbus-jose-jwt:9.37.4'
+}
