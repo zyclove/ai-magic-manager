@@ -8,6 +8,20 @@ import '../core/managed_android_repository.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
 
+String _readinessMessage(String reason) => switch (reason) {
+      'REGION_PROVIDER_UNAVAILABLE' =>
+        '中国大陆当前未开通 Google 企业受管方案。请由平台接入已审核的本地合作提供方。',
+      'PROVIDER_NOT_CONFIGURED' => '受管提供方尚未开通。可先提交企业绑定申请，暂不能发放注册资料。',
+      'BINDING_REQUIRED' => '请先提交机构企业资源绑定申请，并等待独立审核。',
+      'BINDING_REVIEW_PENDING' => '企业资源正在等待平台独立审核。',
+      'BINDING_REVOKED' => '企业资源绑定已撤销。需要平台复核后才能恢复注册。',
+      'PROVIDER_CHANGED' => '已审核的企业绑定属于另一提供方，请联系平台管理员处理迁移。',
+      'CONTRACT_REQUIRED' => '当前合同未授予有效的受管 Android 权益。',
+      'BOOTSTRAP_POLICY_REQUIRED' => '初始安全策略尚未完成配置，请联系平台管理员。',
+      'PROVISIONING_CONFIGURED' => '注册通道已配置。创建资料时仍会实时核对提供方与初始策略；设备管控须另看执行回执。',
+      _ => '受管注册状态未知，请刷新后联系平台管理员。'
+    };
+
 /// Institution provisioning console. A provider receipt never changes local device capabilities.
 class ManagedAndroidPage extends StatefulWidget {
   final Session session;
@@ -21,6 +35,7 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
   late final String tenantId, actor, role;
   late final ManagedAndroidRepository repository;
   ManagedEnterpriseBinding? binding;
+  ManagedProvisioningReadiness? readiness;
   List<ManagedEnrollmentIntent> intents = const [];
   final providerStatuses = <String, ManagedProviderStatus>{};
   List<Json> subjects = const [];
@@ -59,6 +74,7 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
       if (mounted) {
         setState(() {
           binding = null;
+          readiness = null;
           intents = const [];
           providerStatuses.clear();
           subjects = const [];
@@ -97,13 +113,14 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
       checkingIntentId = null;
     });
     try {
-      final results =
-          await Future.wait([repository.binding(), repository.intents()]);
+      final results = await Future.wait(
+          [repository.binding(), repository.intents(), repository.readiness()]);
       if (!current || ticket != generation) return;
       final page = results[1] as ManagedEnrollmentPageResult;
       setState(() {
         binding = results[0] as ManagedEnterpriseBinding?;
         intents = page.items;
+        readiness = results[2] as ManagedProvisioningReadiness;
         providerStatuses.clear();
         nextCursor = page.nextCursor;
       });
@@ -208,6 +225,7 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
   }
 
   Future<void> _issue() async {
+    if (readiness?.canIssueEnrollment != true) return;
     if (subjects.isEmpty) await _loadSubjects();
     if (!mounted || !current || subjects.isEmpty) return;
     String? selected;
@@ -420,6 +438,22 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
             warning: true),
         const SizedBox(height: 16),
         if (loading) const LinearProgressIndicator(),
+        if (readiness case final state?) ...[
+          Panel(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                Text('受管注册可用性', style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 8),
+                Text(
+                    '目标地区 ${state.targetCountryCode} · 提供方 ${label(state.provider)}',
+                    style: const TextStyle(color: muted)),
+                const SizedBox(height: 12),
+                Notice(_readinessMessage(state.reasonCode),
+                    warning: !state.canIssueEnrollment)
+              ])),
+          const SizedBox(height: 16)
+        ],
         if (error != null) ...[
           FailureView(error!,
               retry: current ? _load : null,
@@ -475,7 +509,11 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
                 Text('设备注册进度', style: Theme.of(context).textTheme.titleMedium),
                 if (writable && binding?.state == 'ACTIVE')
                   FilledButton.icon(
-                      onPressed: busy || loading ? null : _issue,
+                      onPressed: busy ||
+                              loading ||
+                              readiness?.canIssueEnrollment != true
+                          ? null
+                          : _issue,
                       icon: const Icon(Icons.add),
                       label: const Text('创建注册资料'))
               ]),

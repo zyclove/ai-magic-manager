@@ -12,6 +12,44 @@ Never _invalid() =>
 
 bool _time(Object? value) => value is int && value >= 0 && value <= _maxEpoch;
 
+/// Local configuration and contract readiness; remote policy application is separate.
+class ManagedProvisioningReadiness {
+  final String tenantId, provider, targetCountryCode, reasonCode;
+  final bool canIssueEnrollment;
+
+  ManagedProvisioningReadiness._(Json raw)
+      : tenantId = raw['tenantId'],
+        provider = raw['provider'],
+        targetCountryCode = raw['targetCountryCode'],
+        reasonCode = raw['reasonCode'],
+        canIssueEnrollment = raw['canIssueEnrollment'];
+
+  static ManagedProvisioningReadiness parse(Object? raw, String tenantId) {
+    const reasons = {
+      'REGION_PROVIDER_UNAVAILABLE',
+      'PROVIDER_NOT_CONFIGURED',
+      'BINDING_REQUIRED',
+      'BINDING_REVIEW_PENDING',
+      'BINDING_REVOKED',
+      'PROVIDER_CHANGED',
+      'CONTRACT_REQUIRED',
+      'BOOTSTRAP_POLICY_REQUIRED',
+      'PROVISIONING_CONFIGURED'
+    };
+    if (raw is! Json ||
+        raw['tenantId'] != tenantId ||
+        raw['provider'] is! String ||
+        !_providerCode.hasMatch(raw['provider']) ||
+        raw['targetCountryCode'] is! String ||
+        !RegExp(r'^[A-Z]{2}$').hasMatch(raw['targetCountryCode']) ||
+        !reasons.contains(raw['reasonCode']) ||
+        raw['canIssueEnrollment'] is! bool ||
+        raw['canIssueEnrollment'] !=
+            (raw['reasonCode'] == 'PROVISIONING_CONFIGURED')) _invalid();
+    return ManagedProvisioningReadiness._(raw);
+  }
+}
+
 /// A reviewed enterprise is permission to start provisioning, not device enforcement.
 class ManagedEnterpriseBinding {
   final String tenantId, provider, enterpriseId, contractReference, state;

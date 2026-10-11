@@ -41,6 +41,8 @@
 
 管理台新增依赖 `qr_flutter 4.1.0`（BSD-3-Clause）及传递依赖 `qr 3.0.2`，版本与校验和锁定在 `apps/guardian/pubspec.lock`。发布前仍需纳入统一 SBOM、许可证与漏洞核验。[qr_flutter 包资料](https://pub.dev/packages/qr_flutter)
 
+机构管理台进入页面时读取 `GET /api/v1/tenants/{tenantId}/managed-android/readiness`，显示目标地区、当前提供方与注册前置状态。接口仅向机构所有者、管理员和审计员开放，响应禁用缓存；`canIssueEnrollment=true` 只表示本地配置、企业审核和合同权益已具备，不证明提供方实时连通、设备已受管或应用策略已执行。原因码包括地区不可用、提供方未配置、企业未绑定/待审核/已撤销、提供方切换、合同权益不足、初始策略缺失及配置就绪。管理台在未就绪时禁用“创建注册资料”，但仍可查看已有记录和提交待审企业绑定；服务端创建接口继续独立核验，不能相信界面状态。
+
 服务端已建立 `managed_enrollment_intents` 及版本事件账本，与原有 BYOD 设备注册分开。机构所有者或管理员完成近期多因素认证后，调用 `POST /api/v1/tenants/{tenantId}/managed-android/enrollment-intents`，请求体为 `{ "subjectId": "..." }`。服务端核对当前企业绑定、合同权益和有效儿童档案，限制同一儿童一个有效申请、每儿童每小时最多 10 次、每机构最多 100 个有效申请。部署时需配置经人工预置并独占的 `manager.emm.google.bootstrap-policy-id`。Google 连接器会先后两次读取初始策略，要求明确 `BLACKLIST`、空应用清单且没有其他配置字段，确认版本未变化后才接受一次性 5 分钟令牌；若本地持久化失败，会尝试立即删除提供方令牌。Google 支持[删除注册令牌](https://developers.google.com/android/management/reference/rest/v1/enterprises.enrollmentTokens/delete)，删除后不能继续用该令牌注册。
 
 创建成功的响应一次性返回 `tokenValue` 和 `qrCode`，设置 `Cache-Control: no-store`；数据库只保存随机 `additionalData` 的 SHA-256 摘要、提供方令牌资源名、关联儿童、企业/策略版本及过期时间。查询 `GET .../enrollment-intents[/{id}]` 仅返回不含令牌和摘要的进度，可用于提交结果丢失后的核对；丢失的一次性材料不能从查询接口恢复，应取消旧申请并重新创建。管理员可带 `If-Match` 调用 `POST .../{id}/cancel`，服务端先标记 `CANCEL_PENDING` 再删除令牌；远端暂不可用时保留待清理状态，不能把它显示为已取消。后台清理任务使用数据库租约跨节点竞争，按有上限的退避重试删除令牌，成功后写入 `CANCELLED` 与审计；默认每 30 秒处理最多 25 项，可用 `manager.emm.enrollment-cleanup.*` 调整。

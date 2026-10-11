@@ -16,6 +16,14 @@ class ManagedAndroidRepository {
     if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
   }
 
+  Future<ManagedProvisioningReadiness> readiness() async {
+    _ensureCurrent();
+    final raw = await boundedJson(api, 'GET', '$_root/readiness',
+        maxBytes: 16 * 1024, ensureCurrent: _ensureCurrent);
+    _ensureCurrent();
+    return ManagedProvisioningReadiness.parse(raw, tenantId);
+  }
+
   Future<ManagedEnterpriseBinding?> binding() async {
     _ensureCurrent();
     try {

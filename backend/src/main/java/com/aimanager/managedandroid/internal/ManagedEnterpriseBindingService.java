@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.Authentication;
@@ -38,18 +39,50 @@ class ManagedEnterpriseBindingService implements ManagedEnterpriseAuthority {
   private final AuditService audit;
   private final ManagedAndroidGateway gateway;
   private final Clock clock;
+  private final String targetCountryCode;
+  private final String bootstrapPolicyId;
 
   ManagedEnterpriseBindingService(
       JdbcTemplate jdbc,
       TenantAccess access,
       AuditService audit,
       ManagedAndroidGateway gateway,
-      Clock clock) {
+      Clock clock,
+      @Value("${manager.emm.target-country-code:CN}") String targetCountryCode,
+      @Value("${manager.emm.bootstrap-policy-id:${manager.emm.google.bootstrap-policy-id:}}")
+          String bootstrapPolicyId) {
     this.jdbc = jdbc;
     this.access = access;
     this.audit = audit;
     this.gateway = gateway;
     this.clock = clock;
+    this.targetCountryCode = targetCountryCode;
+    this.bootstrapPolicyId = bootstrapPolicyId;
+  }
+
+  /** Local provisioning readiness only; no remote liveness or device enforcement claim. */
+  @Transactional(readOnly = true, timeout = 10)
+  Readiness readiness(String tenantId, String actor) {
+    access.requireRole(tenantId, actor, Role.OWNER, Role.ORG_ADMIN, Role.AUDITOR);
+    String kind = jdbc.queryForObject("SELECT kind FROM tenants WHERE id=?", String.class, tenantId);
+    if (!"ORGANIZATION".equals(kind)) throw DomainException.denied();
+    String provider = configuredProvider();
+    String reason;
+    if ("CN".equals(targetCountryCode) && "GOOGLE_AMAPI".equals(provider))
+      reason = "REGION_PROVIDER_UNAVAILABLE";
+    else if (!gateway.available()) reason = "PROVIDER_NOT_CONFIGURED";
+    else {
+      Binding binding = find(tenantId, false);
+      if (binding == null) reason = "BINDING_REQUIRED";
+      else if ("PENDING".equals(binding.state())) reason = "BINDING_REVIEW_PENDING";
+      else if (!"ACTIVE".equals(binding.state())) reason = "BINDING_REVOKED";
+      else if (!provider.equals(binding.provider())) reason = "PROVIDER_CHANGED";
+      else if (!hasCurrentContract(binding)) reason = "CONTRACT_REQUIRED";
+      else if (bootstrapPolicyId.isBlank()) reason = "BOOTSTRAP_POLICY_REQUIRED";
+      else reason = "PROVISIONING_CONFIGURED";
+    }
+    return new Readiness(tenantId, provider, targetCountryCode,
+        "PROVISIONING_CONFIGURED".equals(reason), reason);
   }
 
   /** A tenant administrator may propose; this does not call or authorize the provider. */
@@ -203,6 +236,10 @@ class ManagedEnterpriseBindingService implements ManagedEnterpriseAuthority {
   }
 
   private void requireCurrentContract(Binding binding) {
+    if (!hasCurrentContract(binding)) throw conflict("MANAGED_ANDROID_CONTRACT_REQUIRED");
+  }
+
+  private boolean hasCurrentContract(Binding binding) {
     String key = sha256("CONTRACT\u0000" + binding.contractReference());
     int eligible = jdbc.queryForObject(
         "SELECT COUNT(*) FROM commercial_contract_reviews r JOIN commercial_sources s"
@@ -212,7 +249,7 @@ class ManagedEnterpriseBindingService implements ManagedEnterpriseAuthority {
             + " AND s.features_json LIKE '%\"MANAGED_ANDROID\"%'",
         Integer.class,
         binding.tenantId(), binding.contractReference(), key, clock.millis(), clock.millis());
-    if (eligible == 0) throw conflict("MANAGED_ANDROID_CONTRACT_REQUIRED");
+    return eligible > 0;
   }
 
   private String configuredProvider() {
@@ -287,4 +324,8 @@ class ManagedEnterpriseBindingService implements ManagedEnterpriseAuthority {
       String state, long version, String requestedBy, String approvedBy,
       String providerDisplayName, String ownershipEvidenceReference,
       long createdAt, long updatedAt) {}
+
+  record Readiness(
+      String tenantId, String provider, String targetCountryCode,
+      boolean canIssueEnrollment, String reasonCode) {}
 }

@@ -49,6 +49,13 @@ class ManagedEnterpriseBindingController {
     return tenantResponse(HttpStatus.OK, service.tenantGet(tenantId, actor.getSubject()));
   }
 
+  @GetMapping("/api/v1/tenants/{tenantId}/managed-android/readiness")
+  ResponseEntity<ManagedEnterpriseBindingService.Readiness> readiness(
+      @PathVariable String tenantId, @AuthenticationPrincipal Jwt actor) {
+    return ResponseEntity.ok().cacheControl(CacheControl.noStore()).header("Vary", "Authorization")
+        .body(service.readiness(tenantId, actor.getSubject()));
+  }
+
   @GetMapping("/api/v1/platform/managed-android/enterprise-bindings")
   ResponseEntity<ItemPage<ManagedEnterpriseBindingService.Binding>> pending(
       Authentication auth,
