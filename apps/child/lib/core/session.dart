@@ -71,7 +71,7 @@ class ChildSession extends ChangeNotifier {
   final ChildObservationFactory? observationFactory;
   final ChildAccessFactory? accessFactory;
   final ChildSubmissionFactory? submissionFactory;
-  final Future<CleanupRunStage?> Function()? cleanupOnStartup;
+  final Future<CleanupRunStage?> Function()? cleanupCheck;
   String? cleanupErrorCode;
   ChildSubmissionSnapshot submissions = const ChildSubmissionSnapshot();
   String? submissionErrorCode, submissionCorrelationId;
@@ -87,6 +87,9 @@ class ChildSession extends ChangeNotifier {
   ChildAccessSnapshot access = const ChildAccessSnapshot();
   String? accessErrorCode, accessCorrelationId;
   ChildAccessReceiver? _accessReceiver;
+  Future<void> _accessClosing = Future.value();
+  int _accessClosingCount = 0;
+  bool _accessCloseFailed = false;
   String? _accessIdentityKey, _rulesIdentityKey;
   Timer? _accessTimer;
   bool _accessSyncOnIdle = false, _accessRestoreOnIdle = false;
@@ -108,6 +111,9 @@ class ChildSession extends ChangeNotifier {
   // Await only actual close work. An already-completed chain may belong to an
   // earlier async zone and must not delay unrelated request/UI operations.
   int _rulesClosingCount = 0;
+  Future<void> _submissionsClosing = Future.value();
+  int _submissionsClosingCount = 0;
+  bool _submissionsCloseFailed = false;
   ChildSession(
       {required this.identity,
       this.ruleReceiverFactory,
@@ -115,7 +121,7 @@ class ChildSession extends ChangeNotifier {
       this.observationFactory,
       this.accessFactory,
       this.submissionFactory,
-      this.cleanupOnStartup,
+      this.cleanupCheck,
       int Function()? nowMillis})
       : nowMillis = nowMillis ?? (() => DateTime.now().millisecondsSinceEpoch);
   String? get pairingCode => _foreground ? _pairingCode : null;
@@ -140,9 +146,12 @@ class ChildSession extends ChangeNotifier {
     _accessRestoreOnIdle = false;
     if (receiver != null) {
       receiver.pause();
-      unawaited(receiver.close().catchError((Object _) {
+      _accessClosingCount++;
+      _accessClosing =
+          _accessClosing.then((_) => receiver.close()).catchError((Object _) {
+        _accessCloseFailed = true;
         _log.warning('code=ACCESS_STORE_CLOSE_FAILED');
-      }));
+      }).whenComplete(() => _accessClosingCount--);
     }
   }
 
@@ -231,20 +240,7 @@ class ChildSession extends ChangeNotifier {
     await _run(() async {
       // This runs before any Sembast receiver opens. A signed command can
       // remove this app's caches only while their owners are quiescent.
-      if (cleanupOnStartup != null) {
-        try {
-          await cleanupOnStartup!();
-        } on CleanupFailure catch (failure) {
-          cleanupErrorCode = failure.code;
-          _log.warning('code=${failure.code}');
-        } on DeviceIdentityFailure catch (failure) {
-          cleanupErrorCode = failure.code;
-          _log.warning('code=${failure.code}');
-        } catch (_) {
-          cleanupErrorCode = 'CLEANUP_CHECK_FAILED';
-          _log.warning('code=CLEANUP_CHECK_FAILED');
-        }
-      }
+      await _checkCleanup(quiesce: false);
       await _refresh();
       if (identityView?.phase == IdentityPhase.active &&
           ruleReceiverFactory != null) {
@@ -278,6 +274,59 @@ class ChildSession extends ChangeNotifier {
     _refreshObservationOnIdle = observationFactory != null && credentialReady;
     _submissionRefreshOnIdle = submissionFactory != null && credentialReady;
     _drain();
+  }
+
+  /// Only a verified command may remove this app's data. A foreground retry
+  /// first closes every cache owner; a failed close leaves the result unknown.
+  Future<void> _checkCleanup({required bool quiesce}) async {
+    if (cleanupCheck == null) return;
+    cleanupErrorCode = null;
+    try {
+      if (quiesce) {
+        _clearRules();
+        _clearAccess();
+        _clearSubmissions();
+        _observationAgent?.close();
+        _observationAgent = null;
+        observationView = const observation.ObservationView();
+        if (_rulesClosingCount > 0) await _rulesClosing;
+        if (_accessClosingCount > 0) await _accessClosing;
+        if (_submissionsClosingCount > 0) await _submissionsClosing;
+        if (_rulesCloseFailed ||
+            _accessCloseFailed ||
+            _submissionsCloseFailed) {
+          throw const CleanupFailure('CLEANUP_NOT_QUIESCENT');
+        }
+      }
+      await cleanupCheck!();
+    } on CleanupFailure catch (failure) {
+      cleanupErrorCode = failure.code;
+      _log.warning('code=${failure.code}');
+    } on DeviceIdentityFailure catch (failure) {
+      cleanupErrorCode = failure.code;
+      _log.warning('code=${failure.code}');
+    } catch (_) {
+      cleanupErrorCode = 'CLEANUP_CHECK_FAILED';
+      _log.warning('code=CLEANUP_CHECK_FAILED');
+    } finally {
+      if (quiesce) {
+        _rulesRestoreOnIdle = ruleReceiverFactory != null;
+        _accessSyncOnIdle = accessFactory != null;
+        _submissionRefreshOnIdle = submissionFactory != null;
+        _refreshObservationOnIdle = observationFactory != null;
+      }
+    }
+  }
+
+  /// Retry an uncertain device-exit check while the app is visible. The
+  /// session serializes this with all rule, access and observation operations.
+  Future<bool> retryCleanup() async {
+    if (!initialized ||
+        !_foreground ||
+        identityView == null ||
+        cleanupCheck == null) return false;
+    final completed = await _run(() => _checkCleanup(quiesce: true));
+    return completed && cleanupErrorCode == null;
   }
 
   Future<bool> _run(Future<void> Function() operation,
@@ -521,6 +570,10 @@ class ChildSession extends ChangeNotifier {
     if (accessFactory == null || !credentialReady || _identityKey == null) {
       throw const temporary.AccessFailure('DEVICE_CREDENTIAL_UNAVAILABLE');
     }
+    if (_accessClosingCount > 0) await _accessClosing;
+    if (_accessCloseFailed) {
+      throw const temporary.AccessFailure('STORAGE_FAILURE');
+    }
     final scopeKey = _accessIdentityKey = _identityKey;
     final receiver = await accessFactory!(identityView!, () async {
       rules = await _readRules();
@@ -602,9 +655,13 @@ class ChildSession extends ChangeNotifier {
     submissions = const ChildSubmissionSnapshot();
     if (receiver != null) {
       receiver.pause();
-      unawaited(receiver.close().catchError((Object _) {
+      _submissionsClosingCount++;
+      _submissionsClosing = _submissionsClosing
+          .then((_) => receiver.close())
+          .catchError((Object _) {
+        _submissionsCloseFailed = true;
         _log.warning('code=SUBMISSION_STORE_CLOSE_FAILED');
-      }));
+      }).whenComplete(() => _submissionsClosingCount--);
     }
   }
 
@@ -613,6 +670,10 @@ class ChildSession extends ChangeNotifier {
     if (_submissionReceiver != null) return _submissionReceiver!;
     if (submissionFactory == null || !credentialReady || _identityKey == null) {
       throw const temporary.AccessFailure('DEVICE_CREDENTIAL_UNAVAILABLE');
+    }
+    if (_submissionsClosingCount > 0) await _submissionsClosing;
+    if (_submissionsCloseFailed) {
+      throw const temporary.AccessFailure('STORAGE_FAILURE');
     }
     final scope = _submissionIdentityKey = _identityKey;
     final generation = _submissionGeneration;
@@ -824,6 +885,12 @@ class ChildSession extends ChangeNotifier {
     }
     _rulesRestoreOnIdle = ruleReceiverFactory != null;
     if (busy) return;
+    if (cleanupCheck != null &&
+        (identityView?.phase == IdentityPhase.cleanupPending ||
+            cleanupErrorCode != null)) {
+      await retryCleanup();
+      return;
+    }
     try {
       await _refresh();
     } on DeviceIdentityFailure catch (failure) {

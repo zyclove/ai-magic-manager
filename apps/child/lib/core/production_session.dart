@@ -71,24 +71,25 @@ class ProductionChildRuntime {
             client: identityClient),
         secrets: services.identityStore,
         nowMillis: clock);
-    var cleanupStartupWindow = true;
+    var cleanupWindow = false;
     final session = ChildSession(
         identity: identity,
         nowMillis: clock,
-        cleanupOnStartup: nativeAvailable &&
+        cleanupCheck: nativeAvailable &&
                 services.identityStore is AndroidIdentityStore
             ? () async {
+                cleanupWindow = true;
                 try {
                   return await ChildCleanupRunner(
                           environment: environment,
                           identity: identity,
                           secureStore:
                               services.identityStore as AndroidIdentityStore,
-                          ownersClosed: () => cleanupStartupWindow,
+                          ownersClosed: () => cleanupWindow,
                           nowMillis: clock)
                       .runOnce();
                 } finally {
-                  cleanupStartupWindow = false;
+                  cleanupWindow = false;
                 }
               }
             : null,

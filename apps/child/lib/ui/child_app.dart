@@ -317,6 +317,10 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
         const ChildNotice('本机清理结果尚未确认',
             detail: '请保持网络连接，并联系监护人查看管理端进度。不要卸载或重新注册来处理未完成的退出。'),
         const SizedBox(height: 16),
+        if (app.nativeAvailable) ...[
+          _button('重新核对退出状态', session!.retryCleanup),
+          const SizedBox(height: 12)
+        ],
         _helpLink('查看连接帮助')
       ]);
 
@@ -363,6 +367,8 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
       if (cleanupUnknown) ...[
         const ChildNotice('设备退出核对暂未完成',
             detail: '可能是网络或本机存储暂不可用。请保持网络连接，联系监护人核对管理端记录；此处不代表本机已经清理。'),
+        const SizedBox(height: 12),
+        if (app.nativeAvailable) _button('重新核对退出状态', session!.retryCleanup),
         const SizedBox(height: 12)
       ],
       _ruleSection(),
