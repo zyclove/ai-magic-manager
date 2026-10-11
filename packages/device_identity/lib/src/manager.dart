@@ -143,6 +143,33 @@ class DeviceIdentityManager {
     return state['credential'];
   }
 
+  /// Sign only for the independent cleanup channel with the original
+  /// registration key. A rejected ordinary bearer is not cleanup authority;
+  /// the server still requires a current, revoked registration and task.
+  Future<CleanupProof> cleanupProof(
+          {required String action, String? operationId}) =>
+      _exclusive(() async {
+        final state = await _require();
+        _allow(state, {
+          IdentityPhase.active,
+          IdentityPhase.rotationRequested,
+          IdentityPhase.rotationPending,
+          IdentityPhase.activationUncertain
+        });
+        final now = _time(state);
+        if (keys is! DeviceCleanupKeys) {
+          throw const DeviceIdentityFailure('DEVICE_KEY_UNAVAILABLE');
+        }
+        return _keyOperation(() => (keys as DeviceCleanupKeys).cleanupProof(
+            state['keyHandle'],
+            state['tenantId'],
+            state['deviceId'],
+            state['registrationId'],
+            action,
+            operationId,
+            now));
+      });
+
   /// Persist a 401/403 observed by a trusted device transport. Supply the exact
   /// credential used for that request, never a newly fetched one. Late replies
   /// cannot block another registration or a rotated credential. No HTTP or

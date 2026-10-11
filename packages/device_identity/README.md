@@ -20,6 +20,12 @@ await identity.heartbeat(agentVersion: agentVersion, capabilities: grantedFacts)
 final safeUiFacts = await identity.view();
 // Pass identity.activeCredential as the callback to DeviceConfigurationTransport.
 // Its verifier scope/ring/time and native execution remain separate host inputs.
+
+// If an administrator has revoked this registration and created a cleanup
+// task, the original key can authenticate to the separate cleanup namespace.
+// The proof is a short-lived bearer: send it only over the configured TLS
+// origin, and never log, store, or treat it as a cleanup command.
+final proof = await identity.cleanupProof(action: 'READ');
 ```
 
 The example's storage, trusted service selection, parent-issued ticket, time,
@@ -48,6 +54,17 @@ block: the configuration callback returns null, while identity/keys/pending work
 remain. An explicit successful authenticated operation clears it. No automatic
 retry or erase occurs. Admin confirmation must be demonstrated by an actual
 successful authenticated heartbeat, never by tapping a local button.
+
+`cleanupProof` signs with the original registration key even if ordinary cloud
+authentication is blocked. The default JOSE provider emits an ES256 JWT with
+the cleanup-only audience, exact tenant/device/registration identity, READ or
+RECEIPT action, optional operation ID (required for RECEIPT), random JWT ID and
+60-second lifetime. The original identity record and key remain untouched.
+Native key providers must opt into `DeviceCleanupKeys`; unsupported providers
+fail closed and never create a replacement key. The server must still verify
+revoked registration, current cleanup task, signature, purpose and expiry.
+Command retrieval, signed-command verification, local cache deletion, receipt
+recovery and final key removal are separate steps not implemented by this API.
 
 All API roots are confirmed HTTPS addresses ending in `/api/v1`; redirects are
 refused. Loopback HTTP is explicitly test-only. Requests cover headers/body with

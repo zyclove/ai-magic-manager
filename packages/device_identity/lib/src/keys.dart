@@ -56,6 +56,47 @@ class EnrollmentProof {
   String toString() => 'EnrollmentProof(redacted)';
 }
 
+/// Short-lived authentication for the cleanup namespace only. It is still a
+/// bearer proof until expiry, so callers must never log or persist it.
+class CleanupProof {
+  final String compact;
+  CleanupProof(this.compact) {
+    try {
+      if (compact.length > 8192 ||
+          !RegExp(r'^[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+$')
+              .hasMatch(compact)) {
+        throw const FormatException('Invalid cleanup proof');
+      }
+      final header = Map<String, dynamic>.from(jsonDecode(utf8.decode(
+          base64Url.decode(base64Url.normalize(compact.split('.').first)))));
+      if (header['alg'] != 'ES256' ||
+          header['typ'] != 'aimanager-cleanup-auth+jwt' ||
+          !validUuid(header['kid']) ||
+          header.keys
+              .any((key) => !const {'alg', 'typ', 'kid'}.contains(key))) {
+        throw const FormatException('Unsupported cleanup proof');
+      }
+    } catch (_) {
+      throw const DeviceIdentityFailure('DEVICE_KEY_UNAVAILABLE');
+    }
+  }
+  @override
+  String toString() => 'CleanupProof(redacted)';
+}
+
+/// Optional native-key capability. A host that cannot sign with the original
+/// enrollment key must stop; it must never generate a replacement key.
+abstract interface class DeviceCleanupKeys {
+  Future<CleanupProof> cleanupProof(
+      String handle,
+      String tenantId,
+      String deviceId,
+      String registrationId,
+      String action,
+      String? operationId,
+      int nowMillis);
+}
+
 /// A native provider may keep only an alias in the encrypted identity record.
 /// Its handle must remain usable after host/process recreation.
 abstract interface class DeviceEnrollmentKeys {
@@ -67,7 +108,8 @@ abstract interface class DeviceEnrollmentKeys {
 /// Mature JOSE software-key adapter. The handle contains PRIVATE JWK material;
 /// the manager writes it only to DeviceSecretStore. This is not non-exportable
 /// hardware key generation, attestation or a device-owner capability.
-class JoseDeviceEnrollmentKeys implements DeviceEnrollmentKeys {
+class JoseDeviceEnrollmentKeys
+    implements DeviceEnrollmentKeys, DeviceCleanupKeys {
   const JoseDeviceEnrollmentKeys();
   @override
   Future<String> generateHandle() async {
@@ -128,6 +170,55 @@ class JoseDeviceEnrollmentKeys implements DeviceEnrollmentKeys {
       builder.addRecipient(key, algorithm: 'ES256');
       return EnrollmentProof(
           jsonEncode(public), builder.build().toCompactSerialization());
+    } catch (_) {
+      throw const DeviceIdentityFailure('DEVICE_KEY_UNAVAILABLE');
+    }
+  }
+
+  @override
+  Future<CleanupProof> cleanupProof(
+      String handle,
+      String tenantId,
+      String deviceId,
+      String registrationId,
+      String action,
+      String? operationId,
+      int nowMillis) async {
+    if (![tenantId, deviceId, registrationId].every(validUuid) ||
+        !const {'READ', 'RECEIPT'}.contains(action) ||
+        (operationId != null && !validUuid(operationId)) ||
+        (action == 'RECEIPT' && operationId == null) ||
+        !safeInteger(nowMillis, minimum: 1)) {
+      throw const DeviceIdentityFailure('IDENTITY_STATE_INVALID');
+    }
+    try {
+      final map = Map<String, dynamic>.from(jsonDecode(handle));
+      if (map['kty'] != 'EC' ||
+          map['crv'] != 'P-256' ||
+          !validSecret(map['d']) ||
+          !validSecret(map['x']) ||
+          !validSecret(map['y'])) {
+        throw const FormatException('Invalid private key');
+      }
+      final issued = nowMillis ~/ 1000;
+      final builder = JsonWebSignatureBuilder()
+        ..stringContent = jsonEncode({
+          'iss': 'device:$registrationId',
+          'sub': deviceId,
+          'aud': ['ai-manager:cleanup'],
+          'purpose': 'AGENT_CLEANUP',
+          'tenantId': tenantId,
+          'registrationId': registrationId,
+          'action': action,
+          if (operationId != null) 'operationId': operationId,
+          'iat': issued,
+          'exp': issued + 60,
+          'jti': const Uuid().v4()
+        });
+      builder.setProtectedHeader('typ', 'aimanager-cleanup-auth+jwt');
+      builder.setProtectedHeader('kid', registrationId);
+      builder.addRecipient(JsonWebKey.fromJson(map), algorithm: 'ES256');
+      return CleanupProof(builder.build().toCompactSerialization());
     } catch (_) {
       throw const DeviceIdentityFailure('DEVICE_KEY_UNAVAILABLE');
     }
