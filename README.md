@@ -10,6 +10,7 @@
 - `docs/`：产品、功能、架构、商业与实施契约。
 - `apps/guardian/`：Flutter Web 中文管理工作台，连接真实 OIDC 与业务 API。
 - `packages/device_operations/`：可复用设备退出操作组件。
+- `packages/device_cleanup/`：设备侧清理命令的独立只读领取与验签模块；尚未执行本地清理。
 - `deploy/keycloak/themes/ai-manager/`：身份服务登录主题。
 - Android/TV 原生代理和系统执行适配仍按计划推进。
 

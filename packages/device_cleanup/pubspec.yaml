@@ -8,6 +8,7 @@ dependencies:
   crypto: ^3.0.3
   device_identity:
     path: ../device_identity
+  http: 1.6.0
   jose: 0.3.5+2
 dev_dependencies:
   lints: ^3.0.0

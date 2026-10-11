@@ -15,19 +15,21 @@ final proof = await identity.cleanupProof(action: 'READ');
 // origin to obtain the public-only ring and command. Never use a ticket URL.
 final scope = CleanupScope(identityView.tenantId, identityView.deviceId!,
     identityView.registrationId!, proof.keyThumbprint);
-final verifier = CleanupCommandVerifier(
-    scope: scope, trustedKeys: authenticatedPublicRing,
+final client = CleanupCommandClient(
+    scope: scope, apiRoot: deploymentApiRoot,
+    proofFactory: (action, operationId) =>
+        identity.cleanupProof(action: action, operationId: operationId),
     nowMillis: hostTimeSource);
-final command = await verifier.verify(response.compactJws,
-    operationId: response.operationId,
-    commandId: response.commandId,
-    notAfter: response.notAfter);
+final command = await client.fetchAndVerify();
 // command is verified evidence, not a call to execute cleanup.
+client.close();
 ```
 
-`authenticatedPublicRing` and `response` are placeholders for future
-transport results, not values to copy from a user, QR code or the JWS header.
-The verifier accepts one authenticated JWK set with at most 32 P-256 public
+`deploymentApiRoot` is a deployment-controlled HTTPS `/api/v1` URI, never a
+value copied from a user, QR code or JWS header. The read-only client obtains
+the public ring and current command with separate fresh READ proofs, refuses
+redirects and limits response time and size. The verifier accepts one
+authenticated JWK set with at most 32 P-256 public
 verification keys. It checks ES256, the cleanup-specific JOSE type, exact
 registration and original-key thumbprint, command identity, fixed action list,
 scope, schema and deadline. Unexpected fields or actions fail closed. The
@@ -40,7 +42,8 @@ persisted. A device API 401 alone never authorizes local deletion.
 
 ## Delivery state
 
-Only proof generation and command verification are present. The cleanup HTTP
-client, durable command/receipt journal, local agent-data deletion, final key
-removal, reboot recovery and real Android/TV validation remain to be built.
-This package has no path that performs a destructive operation.
+Proof generation, read-only command retrieval and verification are present.
+The child runtime has not yet wired this client. A durable command/receipt
+journal, local agent-data deletion, final key removal, reboot recovery and
+real Android/TV validation remain to be built. This package has no path that
+performs a destructive operation.
