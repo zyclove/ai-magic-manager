@@ -9,6 +9,8 @@
 
 实施细节见[产品实施与功能闭环](parental-control-product-delivery-spec.md)。进一步增强见[完整产品交付与商业运营模型](parental-control-product-operating-model.md)：全功能工作包、状态机、审批与批量故障收敛、跨端页面、共享监护/学校与家庭边界、套餐计量、渠道与服务运营。数据库默认仍采用 MySQL 8.4 LTS，OceanBase 的真实兼容与切换要求见[数据库实施与认证规格](database-implementation-and-certification.md)。
 
+**当前商业实施顺序：** 中国大陆机构合同先行，家庭自助购买和其他地区仅保留规划。机构报价、签名事实、独立审批、机构确认和权益账本已有联调实现，但外部签发方及受管 EMM 未接入，正式销售与强设备控制仍受发布门槛阻断。岗位、证据和交付操作见[机构合同首发手册](institution-commercial-launch-runbook.md)。
+
 ## 1. 产品定位与原则
 
 ### 1.1 产品定位

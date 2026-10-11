@@ -1,12 +1,13 @@
 # 智能管家设计文档
 
-更新日期：2026-10-09。设计文档构成实现契约，后端代码正在按[实施计划](implementation-plan.md)开发；验证与未完成范围见[实施记录](implementation-progress.md)。客户端、设备适配与部署验收尚未完成。
+更新日期：2026-10-11。设计文档构成实现契约，代码正在按[实施计划](implementation-plan.md)开发；验证与未完成范围见[实施记录](implementation-progress.md)。管理端和部分设备客户端已进入联调，正式受管执行、真实签约和客户环境部署验收尚未完成。
 
 | 文档 | 用途 | 主要读者 |
 |---|---|---|
 | [平台设计蓝图](parental-control-platform-design.md) | 产品定位、设备能力、架构、技术与数据库决策、安全、容量、阶段门槛 | 全团队 |
 | [功能规格与流程](parental-control-functional-spec.md) | 功能编号、正常/异常流程、跨设备额度、电视身份、接口数据、逐项验收 | 产品、客户端、后端、QA |
 | [商业运营与交付规格](parental-control-commercial-spec.md) | 可售能力、权益、账单、交付、支持、成本、试点与上市门槛 | 产品、商务、交付、财务、SRE |
+| [中国大陆机构合同首发手册](institution-commercial-launch-runbook.md) | 合同优先的实际产品包、角色分工、签约/开通/交付/撤销步骤、异常处理与发布阻断项 | 商务、交付、财务、产品、安全与 SRE |
 | [产品实施与功能闭环](parental-control-product-delivery-spec.md) | 全量功能对应、页面状态、实施/故障流程、数据库落地、渠道分权和交付门槛 | 产品、开发、QA、商务与交付 |
 | [完整产品交付与商业运营模型](parental-control-product-operating-model.md) | 全功能工作包、状态机、审批/批量流程、跨端交互、边缘场景、售卖计量、成本及上线责任 | 产品、设计、研发、QA、商务、支持与 SRE |
 | [数据库实施与认证规格](database-implementation-and-certification.md) | MySQL/OceanBase 决策、数据域、索引/事务、容量、真实数据库认证及迁移回退 | 后端、DBA、SRE、QA 与私有化交付 |
