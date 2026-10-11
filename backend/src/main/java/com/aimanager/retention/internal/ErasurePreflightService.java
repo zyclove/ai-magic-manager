@@ -108,6 +108,18 @@ class ErasurePreflightService {
             tenant,
             subject,
             now);
+    long managedPending =
+        count(
+            "SELECT COUNT(*) FROM managed_enrollment_intents WHERE tenant_id=? AND subject_id=?"
+                + " AND state IN ('PREPARING','ISSUED','CANCEL_PENDING')",
+            tenant,
+            subject);
+    long managedVerified =
+        count(
+            "SELECT COUNT(*) FROM managed_enrollment_intents WHERE tenant_id=? AND subject_id=?"
+                + " AND state='VERIFIED'",
+            tenant,
+            subject);
     long reported =
         count(
             "SELECT COUNT(*) FROM devices d WHERE d.tenant_id=? AND d.subject_id=? AND EXISTS"
@@ -128,6 +140,8 @@ class ErasurePreflightService {
     if (active > 0) blockers.add("DEVICE_EXIT_REQUIRED");
     if (credentials > 0) blockers.add("ACTIVE_DEVICE_CREDENTIALS");
     if (enrollments > 0) blockers.add("PENDING_DEVICE_ENROLLMENTS");
+    if (managedPending > 0) blockers.add("PENDING_MANAGED_ENROLLMENT_CLEANUP");
+    if (managedVerified > 0) blockers.add("MANAGED_DEVICE_EXIT_REQUIRED");
     var notices = new ArrayList<String>();
     notices.add("PREFLIGHT_IS_NOT_ERASURE_AUTHORIZATION");
     notices.add("AUDIT_RETENTION_POLICY_REQUIRES_REVIEW");

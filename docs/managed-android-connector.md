@@ -31,6 +31,16 @@
 
 后续设备注册与策略服务应通过服务端 `ManagedEnterpriseAuthority.requireActive(tenantId)` 解析企业，而非直接接受浏览器传来的企业 ID。该入口每次检查绑定仍为 `ACTIVE`、提供方仍可用、对应合同及 `MANAGED_ANDROID` 权益在当前时间仍有效。它只返回企业资源定位信息，不授予设备级执行权限；后续调用还需独立核对设备注册、管理模式和策略版本。
 
+## 短时受管注册与提供方设备核对
+
+服务端已建立 `managed_enrollment_intents` 及版本事件账本，与原有 BYOD 设备注册分开。机构所有者或管理员完成近期多因素认证后，调用 `POST /api/v1/tenants/{tenantId}/managed-android/enrollment-intents`，请求体为 `{ "subjectId": "..." }`。服务端核对当前企业绑定、合同权益和有效儿童档案，限制同一儿童一个有效申请、每儿童每小时最多 10 次、每机构最多 100 个有效申请。部署时需配置经人工预置并独占的 `manager.emm.google.bootstrap-policy-id`。Google 连接器会先后两次读取初始策略，要求明确 `BLACKLIST`、空应用清单且没有其他配置字段，确认版本未变化后才接受一次性 5 分钟令牌；若本地持久化失败，会尝试立即删除提供方令牌。Google 支持[删除注册令牌](https://developers.google.com/android/management/reference/rest/v1/enterprises.enrollmentTokens/delete)，删除后不能继续用该令牌注册。
+
+创建成功的响应一次性返回 `tokenValue` 和 `qrCode`，设置 `Cache-Control: no-store`；数据库只保存随机 `additionalData` 的 SHA-256 摘要、提供方令牌资源名、关联儿童、企业/策略版本及过期时间。查询 `GET .../enrollment-intents[/{id}]` 仅返回不含令牌和摘要的进度，可用于提交结果丢失后的核对；丢失的一次性材料不能从查询接口恢复，应取消旧申请并重新创建。管理员可带 `If-Match` 调用 `POST .../{id}/cancel`，服务端先标记 `CANCEL_PENDING` 再删除令牌；远端暂不可用时保留待清理状态，不能把它显示为已取消。后台清理任务使用数据库租约跨节点竞争，按有上限的退避重试删除令牌，成功后写入 `CANCELLED` 与审计；默认每 30 秒处理最多 25 项，可用 `manager.emm.enrollment-cleanup.*` 调整。
+
+设备完成系统级注册后，管理员带 `If-Match` 提交 `POST .../{id}/verify` 与 `{ "providerDeviceId": "..." }`。服务端从提供方回读设备资源，核对完整资源名、`DEVICE_OWNER` 模式、令牌资源名、随机关联值摘要和真实注册时间，再把意图记为 `VERIFIED`。**这里验证的是提供方设备与机构儿童档案的关联证据，不是本地儿童 App 的密钥/注册周期，也不是应用策略生效回执。** 原 BYOD `devices` 记录不会因此变成受管设备；真实设备链接、策略执行、退管和 Android TV 兼容仍需继续实现。没有合规 EMM 时，令牌创建保持 `503 EMM_UNAVAILABLE`，不得展示虚构二维码。
+
+新建的企业和注册数据表已纳入儿童数据覆盖目录；数据删除预检遇到待清理令牌或已核对的提供方设备会显示明确阻断项。当前儿童数据执行删除整体尚未开放，后续必须先完成 EMM 真正退管、令牌取消、审计保留和跨系统清理，再允许删除关联档案；本阶段不能用删除数据库行代替远端退管。
+
 Google 的设备级 `playStoreMode` 未设置时默认 `WHITELIST`：只把少数应用写入 `applications` 会使列表外应用不再可用，并可能被自动卸载。因此连接器**拒绝**不存在、未明确设为 `BLACKLIST`、或启用 `installAppsDisabled` 的策略；它不会悄悄创建策略或切换原有白名单。运维须在合格提供方、企业所有权和独占策略命名空间均已核实后预置策略。`BLACKLIST` 下未列出的应用通常仍可安装，这不是“仅允许所选应用”的全局白名单能力。完整白名单需独立的应用清单、系统必要应用保护、后果预览和真机签收流程。现有 `putApplicationPolicy` 会替换这份**专用策略**的完整应用列表，不能与其他管理工具共写同一策略。
 
 领域规则与 Google 连接器共用 `SafetyCriticalPackages` 安全底线，包含儿童端正式包 `com.aimanager.child`、调试包 `com.aimanager.child.debug`、Android Device Policy `com.google.android.apps.work.clouddpc`、设置与电话等恢复所需应用。部署项 `manager.policies.additional-protected-packages` 只能增加，不能删减基础清单。普通策略不能禁止这些包的启动、安装和必要权限；连接器直接收到 `BLOCK_LAUNCH` 或 `BLOCK_INSTALL` 时也会拒绝。未来更换应用 ID 或 EMM 提供方时必须同步核对恢复路径。连接器尚未接到领域编译与真实设备绑定，企业审核记录也未用于策略调用；包名保护本身不构成完成受管执行验收。

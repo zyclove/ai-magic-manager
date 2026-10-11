@@ -766,6 +766,46 @@
       "category": "AUTHORIZATION"
     },
     {
+      "table": "managed_enrollment_intent_events",
+      "columns": [
+        "action", "actor_id", "correlation_id", "id", "intent_id", "occurred_at",
+        "tenant_id", "version"
+      ],
+      "domain": "managedandroid",
+      "category": "AUDIT_RETENTION"
+    },
+    {
+      "table": "managed_enrollment_intents",
+      "columns": [
+        "binding_version", "cleanup_attempts", "cleanup_claim_id", "cleanup_lease_until",
+        "created_at", "enterprise_id", "expires_at", "id", "issued_at", "next_cleanup_at",
+        "nonce_hash", "policy_id", "policy_version", "provider", "provider_device_id",
+        "provider_mode", "requested_by", "state", "subject_id", "tenant_id", "token_name",
+        "updated_at", "verified_at", "version"
+      ],
+      "domain": "managedandroid",
+      "category": "SUBJECT_DATA"
+    },
+    {
+      "table": "managed_enterprise_binding_events",
+      "columns": [
+        "action", "actor_id", "correlation_id", "id", "occurred_at", "reason",
+        "tenant_id", "version"
+      ],
+      "domain": "managedandroid",
+      "category": "AUDIT_RETENTION"
+    },
+    {
+      "table": "managed_enterprise_bindings",
+      "columns": [
+        "approved_by", "contract_reference", "created_at", "enterprise_id",
+        "ownership_evidence_ref", "provider", "provider_display_name", "requested_by",
+        "state", "tenant_id", "updated_at", "version"
+      ],
+      "domain": "managedandroid",
+      "category": "SHARED_CONFIGURATION"
+    },
+    {
       "table": "member_invitations",
       "columns": [
         "consumed_at",

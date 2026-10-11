@@ -21,6 +21,9 @@ public interface ManagedAndroidGateway {
   /** Confirms that this provider can read the exact enterprise resource. Not customer ownership. */
   EnterpriseIdentity readEnterprise(String enterpriseId);
 
+  /** Requires an exclusively provisioned, minimal policy before issuing an enrollment token. */
+  PolicyReceipt requireSafeEnrollmentPolicy(String enterpriseId, String policyId);
+
   /** Returns secret provisioning material to a trusted, short-lived delivery flow only. */
   default EnrollmentMaterial createEnrollmentToken(
       String enterpriseId, String policyId, Duration lifetime) {
@@ -30,6 +33,9 @@ public interface ManagedAndroidGateway {
   /** Additional data is an opaque enrollment nonce, never a child or tenant identifier. */
   EnrollmentMaterial createEnrollmentToken(
       String enterpriseId, String policyId, Duration lifetime, String additionalData);
+
+  /** Invalidates unused provisioning material by its exact resource name. Safe to repeat. */
+  void deleteEnrollmentToken(String enterpriseId, String tokenName);
 
   /** Reads provider identity evidence before a local device can be bound to it. */
   ManagedEnrollmentIdentity readEnrollmentIdentity(String enterpriseId, String deviceId);

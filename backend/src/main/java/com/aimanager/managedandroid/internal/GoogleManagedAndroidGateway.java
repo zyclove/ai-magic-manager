@@ -133,6 +133,28 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
   }
 
   @Override
+  public PolicyReceipt requireSafeEnrollmentPolicy(String enterpriseId, String policyId) {
+    String name = policyName(enterpriseId, policyId);
+    try {
+      Policy policy = client.enterprises().policies().get(name).execute();
+      if (policy == null
+          || !name.equals(policy.getName())
+          || policy.getVersion() == null
+          || policy.getVersion() < 1
+          || !"BLACKLIST".equals(policy.getPlayStoreMode())
+          || (policy.getApplications() != null && !policy.getApplications().isEmpty())
+          || policy.keySet().stream().anyMatch(
+              field -> !Set.of("name", "version", "playStoreMode", "applications").contains(field))) {
+        LOG.warn("Android management enrollment policy preflight rejected: non-minimal policy");
+        throw new IllegalStateException("Managed enrollment policy is not an empty safety baseline");
+      }
+      return new PolicyReceipt(name, policy.getVersion());
+    } catch (IOException error) {
+      throw providerFailure("enrollment policy read", error);
+    }
+  }
+
+  @Override
   public EnrollmentMaterial createEnrollmentToken(
       String enterpriseId, String policyId, Duration lifetime, String additionalData) {
     String enterprise = enterpriseName(enterpriseId);
@@ -162,6 +184,23 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
           result.getName(), result.getValue(), result.getQrCode(), result.getExpirationTimestamp());
     } catch (IOException error) {
       throw providerFailure("enrollment token create", error);
+    }
+  }
+
+  @Override
+  public void deleteEnrollmentToken(String enterpriseId, String tokenName) {
+    String prefix = enterpriseName(enterpriseId) + "/enrollmentTokens/";
+    if (tokenName == null || !tokenName.startsWith(prefix)
+        || !RESOURCE_ID.matcher(tokenName.substring(prefix.length())).matches()) {
+      throw new IllegalArgumentException("Invalid provider enrollment token resource");
+    }
+    try {
+      client.enterprises().enrollmentTokens().delete(tokenName).execute();
+    } catch (GoogleJsonResponseException error) {
+      // The token was already invalidated or expired. Do not make cleanup require a live token.
+      if (error.getStatusCode() != 404) throw providerFailure("enrollment token delete", error);
+    } catch (IOException error) {
+      throw providerFailure("enrollment token delete", error);
     }
   }
 
