@@ -46,6 +46,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
       "spring.datasource.url=${CONTRACT_TEST_DATABASE_URL:jdbc:h2:mem:commercial-contract;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE}",
       "spring.datasource.username=${CONTRACT_TEST_DATABASE_USERNAME:sa}",
       "spring.datasource.password=${CONTRACT_TEST_DATABASE_PASSWORD:}",
+      "manager.contract.active-submissions-enabled=true",
       "manager.exports.worker.enabled=false"
     })
 @AutoConfigureMockMvc
@@ -365,6 +366,7 @@ class CommercialContractJourneyTest {
                 .with(actor("contract-author", "SCOPE_contract:manage", false)))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.submissionEnabled").value(false))
+        .andExpect(jsonPath("$.revocationSubmissionEnabled").value(false))
         .andExpect(jsonPath("$.independentApprovalRequired").value(true))
         .andExpect(jsonPath("$.customerAcceptanceRequired").value(true));
   }

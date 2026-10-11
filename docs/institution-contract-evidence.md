@@ -13,11 +13,12 @@
 | 配置 | 要求 |
 |---|---|
 | `manager.contract.evidence-enabled` | 默认 `false`；未接入签发方时保持关闭 |
+| `manager.contract.active-submissions-enabled` | 默认 `false`；即使签发方可信，也须另行批准后才可提交、批准并由机构确认新的 ACTIVE 合同。关闭时不影响可信签名 REVOKED 事实提交及独立审批 |
 | `manager.contract.issuer` | 可信采购/签约服务的 HTTPS issuer，精确匹配断言 `iss` |
 | `manager.contract.audience` | 专用受众标识，不能复用管理端用户令牌的 audience |
 | `manager.contract.jwk-set-uri` | 签发方 HTTPS JWKS；只接受 RS256，凭 `kid` 选取公钥 |
 
-部署环境变量依次为 `CONTRACT_EVIDENCE_ENABLED`、`CONTRACT_EVIDENCE_ISSUER`、`CONTRACT_EVIDENCE_AUDIENCE` 和 `CONTRACT_EVIDENCE_JWK_SET_URI`。默认配置全部为空或关闭，现有服务不会向任何签发方发起请求。
+部署环境变量依次为 `CONTRACT_EVIDENCE_ENABLED`、`CONTRACT_ACTIVE_SUBMISSIONS_ENABLED`、`CONTRACT_EVIDENCE_ISSUER`、`CONTRACT_EVIDENCE_AUDIENCE` 和 `CONTRACT_EVIDENCE_JWK_SET_URI`。两个开关默认关闭，现有服务不会向任何签发方发起请求。`evidence-enabled=false` 停止所有签名事实受理，包括撤销；`active-submissions-enabled=false` 则只暂停新 ACTIVE 商业权益。所有后端副本必须保持相同配置，变更期间逐实例验证，不可把尚存旧配置的实例当成已暂停。
 
 配置仅由部署管理员和密钥治理流程变更。启用时缺少 issuer、受众或 HTTPS JWKS 会导致应用启动失败。JWKS 公钥轮换由签发方公布及部署验收；私钥不得进入本系统。接入正式系统前需签发方提供认证环境、密钥轮换与吊销规则、合同签署事实的定义、可重查接口、对账与事故流程。配置签发方不等于已完成商业上架。
 
@@ -44,8 +45,8 @@
 ## 机构合同状态与执行流程
 
 1. 合同来源按需签发断言，平台合同运营使用 `POST /api/v1/platform/contracts` 提交短期 JWS 和客户端生成的 UUID。服务端先鉴权及近期 MFA，再验签；在同一数据库事务中核对机构租户、当前已批准报价的版本及 `CN/CONTRACT/ORGANIZATION/QUOTE/CNY`、容量与功能，写入 `PENDING_REVIEW` 和 `SUBMITTED` 事件。仅同一提交人、同一证据摘要、同一 ID 的重试返回原记录；来源版本、事件 ID 和证据摘要均有唯一约束。
-2. 独立审批人在 `POST /api/v1/platform/contracts/{id}/approve` 或 `/reject` 提交理由及强 `If-Match`。MFA、角色、提交人分离及报价状态再次检查通过后，普通 ACTIVE 合同进入 `AWAITING_CUSTOMER`，驳回进入 `REJECTED`；二者均不发权益。已签名的 REVOKED 事实还要核对已生效且较低版本的同来源记录，审批后在同一事务调用账本并进入 `APPLIED`。
-3. 目标机构 OWNER/ORG_ADMIN 在 `POST /api/v1/tenants/{tenantId}/contracts/{id}/accept` 提交强 `If-Match`。服务端锁定当前成员授权与合同记录，复核来源有效期、报价和角色分离，再在同一事务调用 `CommercialLedger.apply`、更新 `APPLIED`、写入事件与审计。失败整体回滚；过期或被撤权的角色无法接受。机构 `GET` 列表/详情只显示合同业务事实，不返回平台运营人员身份；平台审核角色有自己的列表/详情。
+2. 独立审批人在 `POST /api/v1/platform/contracts/{id}/approve` 或 `/reject` 提交理由及强 `If-Match`。MFA、角色、提交人分离及报价状态再次检查通过后，普通 ACTIVE 合同进入 `AWAITING_CUSTOMER`，驳回进入 `REJECTED`；二者均不发权益。暂停新 ACTIVE 受理时，已提交待审的 ACTIVE 合同也不能继续批准。已签名的 REVOKED 事实还要核对已生效且较低版本的同来源记录，审批后在同一事务调用账本并进入 `APPLIED`。
+3. 目标机构 OWNER/ORG_ADMIN 在 `POST /api/v1/tenants/{tenantId}/contracts/{id}/accept` 提交强 `If-Match`。服务端锁定当前成员授权与合同记录，复核来源有效期、报价、角色分离和当前 ACTIVE 受理开关，再在同一事务调用 `CommercialLedger.apply`、更新 `APPLIED`、写入事件与审计。失败整体回滚；过期、暂停或被撤权的角色无法接受。机构 `GET` 列表/详情只显示合同业务事实，不返回平台运营人员身份；平台审核角色有自己的列表/详情。
 4. 所有状态按版本单调递增，重复或陈旧 `If-Match` 返回 412；状态转换冲突返回 409。合同记录、事件、账本和审计均按租户关联。设备管控实际生效仍由设备能力与策略回执独立证明。
 
 ### API 摘要
@@ -53,7 +54,7 @@
 | 方法与路径 | 权限与作用 |
 |---|---|
 | `POST /api/v1/platform/contracts` | `contract:manage` + 近期 MFA；`{id,evidence}`，其中 `evidence` 为完整 Compact JWS；201 创建、200 同提交者幂等重放；仅接受外部签名证据 |
-| `GET /api/v1/platform/contracts/capabilities` | 平台合同角色查询签发方开关与审核/客户确认要求；默认 `submissionEnabled=false`，管理端据此禁用提交 |
+| `GET /api/v1/platform/contracts/capabilities` | 平台合同角色查询 ACTIVE 受理与可信撤销受理两个独立能力；默认 `submissionEnabled=false`、`revocationSubmissionEnabled=false` |
 | `GET /api/v1/platform/contracts[/{id}]` | `contract:manage` 或 `contract:approve`，分页列表/详情；列表 `limit` 1–100、UUID 游标 |
 | `GET /api/v1/platform/contracts/{id}/history` | 平台合同角色读取按版本倒序的不可变事件；`limit` 1–100、`beforeVersion` 游标，包含操作人、原因与关联请求 ID |
 | `GET /api/v1/platform/contracts/{id}/comparison` | 平台合同角色读取当前报价快照与签名合同事实的差异代码；只读预览，不代替审批时的锁定复核 |
@@ -67,7 +68,7 @@
 
 ### 管理端交互
 
-Flutter 管理台新增“平台机构合同”和“机构合同”两个入口。平台人员看到当前已加载记录的状态统计、合同列表与详情；合同运营仅在签发方开关已启用时可粘贴短期 JWS 提交，独立审批人可批准或驳回并填写原因。机构 OWNER/ORG_ADMIN 在自己的机构空间核对采购方引用、报价版本、签约确认时间、设备名额、功能、期限及签名断言摘要后确认；AUDITOR 只读。双方均可分页查看不可变事件时间线和当前报价对照。对照加载失败或发现差异时，页面暂停批准/确认，但仍允许驳回；服务器在写入时重新加锁核验。机构视图不接收平台操作人或关联请求标识。页面会在工作空间/账号变更时清空旧数据，处理加载、空态、错误、版本冲突和近期 MFA 重新验证提示；撤销完成明确显示“撤销已执行”，说明对应来源权益停止。敏感操作触发 OIDC 重新认证时，同一浏览器标签仅短期保存合同 ID 与拟执行动作，并绑定原操作人、机构和角色；返回后重新读取最新记录并要求人工再次提交，不保存原因或自动重放写入。短期 JWS 不跨重定向保存，运营员需从签发方重新索取。
+Flutter 管理台新增“平台机构合同”和“机构合同”两个入口。平台人员看到当前已加载记录的状态统计、合同列表与详情；合同运营仅在可信签发方可用时可粘贴短期 JWS，若 ACTIVE 受理暂停则入口明确限定为签名撤销事实。独立审批人可批准或驳回并填写原因。机构 OWNER/ORG_ADMIN 在自己的机构空间核对采购方引用、报价版本、签约确认时间、设备名额、功能、期限及签名断言摘要后确认；AUDITOR 只读。双方均可分页查看不可变事件时间线和当前报价对照。对照加载失败或发现差异时，页面暂停批准/确认，但仍允许驳回；服务器在写入时重新加锁核验。机构视图不接收平台操作人或关联请求标识。页面会在工作空间/账号变更时清空旧数据，处理加载、空态、错误、版本冲突和近期 MFA 重新验证提示；撤销完成明确显示“撤销已执行”，说明对应来源权益停止。敏感操作触发 OIDC 重新认证时，同一浏览器标签仅短期保存合同 ID 与拟执行动作，并绑定原操作人、机构和角色；返回后重新读取最新记录并要求人工再次提交，不保存原因或自动重放写入。短期 JWS 不跨重定向保存，运营员需从签发方重新索取。
 
 界面沿用现有控制台组件与配色，尚未在浏览器完成真实账号和视觉回归。曾按项目 UI 技能要求调用 12ui 生成候选，服务返回 `unsupported_country_region_territory`（HTTP 403），因此没有获得设计图或完成像素级对照；保留了现有设计体系和响应式列表/详情布局。
 
@@ -81,4 +82,4 @@ Flutter 管理台新增“平台机构合同”和“机构合同”两个入口
 
 ## 验证
 
-`ContractEvidenceVerifierTest` 用真实 RSA 签名与 Spring/Nimbus 解码检查正确断言、篡改、错误签发方/受众、过期/过旧/未来时间、地区/渠道/容量/功能矛盾和默认关闭行为。`CommercialContractJourneyTest` 通过 Spring HTTP、真实数据库事务与可替换的已核验证据接口，覆盖角色、MFA、同人审批禁止、机构确认前无权益、跨租户阻断、幂等重试、强版本、拒绝、入账、撤销、默认未启用签发方的能力响应、事件分页、机构时间线脱敏、当前报价对照、报价版本漂移时预览提示与写入拒绝。隔离源码 H2 验收中，合同流程 5 项通过；此前同一隔离副本还通过验签 4 项、产品目录 5 项、新库初始化 1 项和删除准备/留存分类 12 项，但这些其他模块未随本轮报价对照重跑。Flutter 本轮全部 253 项测试通过，包括重新认证指针的身份、机构、角色和超时限制；静态分析无错误或警告，既有文件保留信息级提示；Flutter Web Release 构建成功。外部真实签发方、MySQL 并发、浏览器操作与生产交付不在这组测试结论内。
+`ContractEvidenceVerifierTest` 用真实 RSA 签名与 Spring/Nimbus 解码检查正确断言、篡改、错误签发方/受众、过期/过旧/未来时间、地区/渠道/容量/功能矛盾和默认关闭行为。`CommercialContractJourneyTest` 通过 Spring HTTP、真实数据库事务与可替换的已核验证据接口，覆盖角色、MFA、同人审批禁止、机构确认前无权益、跨租户阻断、幂等重试、强版本、拒绝、入账、撤销、默认未启用签发方的能力响应、事件分页、机构时间线脱敏、当前报价对照、报价版本漂移时预览提示与写入拒绝。`PausedContractSubmissionJourneyTest` 验证暂停新 ACTIVE 时已有请求幂等读取、待审批准及机构确认阻断，并验证可信签名撤销仍可受理和独立审批入账。隔离源码 H2 本轮合同流程 5 项、暂停流程 1 项、策略单元 2 项均通过，共 8 项；其他模块未随本轮重跑。Flutter 全部 253 项测试通过；静态分析无错误或警告，既有文件保留 86 条信息级提示；Flutter Web Release 构建成功。外部真实签发方、MySQL 并发、浏览器操作与生产交付不在这组测试结论内。

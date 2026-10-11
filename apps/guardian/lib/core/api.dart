@@ -21,6 +21,8 @@ class ApiFailure implements Exception {
         'INVALID_COMMERCIAL_RESPONSE' => '商业权益数据校验未通过，已隐藏结果。请刷新后重试。',
         'INVALID_CONTRACT_RESPONSE' => '合同数据校验未通过，已隐藏结果。请刷新后重试。',
         'CONTRACT_PROVIDER_UNAVAILABLE' => '机构合同证据提供方尚未启用，暂不能提交新合同。',
+        'CONTRACT_ACTIVE_SUBMISSIONS_PAUSED' =>
+          '新机构合同受理已暂停。已签名的撤销事实仍可提交；请先核对当前合同状态。',
         'INVALID_CONTRACT_EVIDENCE' => '签名断言无效、过期或与可信来源不一致，请重新从签发方获取。',
         'INVALID_CONTRACT_REASON' => '请填写 5–500 字的审核原因。',
         'CONTRACT_REVIEW_EXISTS' => '同一合同来源版本或证据已提交，请刷新列表查看。',

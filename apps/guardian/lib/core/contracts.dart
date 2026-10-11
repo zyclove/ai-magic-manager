@@ -142,18 +142,23 @@ class ContractReviewPage {
 }
 
 class ContractCapabilities {
-  final bool submissionEnabled;
-  const ContractCapabilities(this.submissionEnabled);
+  final bool submissionEnabled, revocationSubmissionEnabled;
+  const ContractCapabilities(
+      this.submissionEnabled, this.revocationSubmissionEnabled);
+
+  bool get canSubmit => submissionEnabled || revocationSubmissionEnabled;
 
   static ContractCapabilities parse(dynamic raw) {
     if (raw is! Json ||
         raw['submissionEnabled'] is! bool ||
+        raw['revocationSubmissionEnabled'] is! bool ||
         raw['region'] != 'CN' ||
         raw['channel'] != 'CONTRACT' ||
         raw['recentAuthenticationRequired'] != true ||
         raw['independentApprovalRequired'] != true ||
         raw['customerAcceptanceRequired'] != true) _invalid();
-    return ContractCapabilities(raw['submissionEnabled']);
+    return ContractCapabilities(
+        raw['submissionEnabled'], raw['revocationSubmissionEnabled']);
   }
 }
 

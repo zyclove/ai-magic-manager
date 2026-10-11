@@ -5,7 +5,6 @@ import com.aimanager.shared.DomainException;
 import com.aimanager.shared.ItemPage;
 import com.aimanager.shared.ResourceVersions;
 import java.net.URI;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,17 +27,17 @@ class CommercialContractController {
   private final CommercialContractService contracts;
   private final ContractEvidenceVerifier verifier;
   private final RecentAuthentication recent;
-  private final boolean evidenceEnabled;
+  private final ContractSubmissionPolicy submissionPolicy;
 
   CommercialContractController(
       CommercialContractService contracts,
       ContractEvidenceVerifier verifier,
       RecentAuthentication recent,
-      @Value("${manager.contract.evidence-enabled:false}") boolean evidenceEnabled) {
+      ContractSubmissionPolicy submissionPolicy) {
     this.contracts = contracts;
     this.verifier = verifier;
     this.recent = recent;
-    this.evidenceEnabled = evidenceEnabled;
+    this.submissionPolicy = submissionPolicy;
   }
 
   @GetMapping("/capabilities")
@@ -47,7 +46,15 @@ class CommercialContractController {
     return ResponseEntity.ok()
         .cacheControl(CacheControl.noStore())
         .header("Vary", "Authorization")
-        .body(new ContractCapabilities(evidenceEnabled, "CN", "CONTRACT", true, true, true));
+        .body(
+            new ContractCapabilities(
+                submissionPolicy.activeAvailable(),
+                submissionPolicy.revocationAvailable(),
+                "CN",
+                "CONTRACT",
+                true,
+                true,
+                true));
   }
 
   @PostMapping
@@ -145,6 +152,7 @@ class CommercialContractController {
 
   record ContractCapabilities(
       boolean submissionEnabled,
+      boolean revocationSubmissionEnabled,
       String region,
       String channel,
       boolean recentAuthenticationRequired,

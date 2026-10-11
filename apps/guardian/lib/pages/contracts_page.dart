@@ -261,13 +261,14 @@ class _ContractsPageState extends State<ContractsPage> {
 
   Future<void> submitEvidence() async {
     if (!current() ||
-        capabilities?.submissionEnabled != true ||
+        capabilities?.canSubmit != true ||
         !widget.session.canManageContracts) return;
     final result = await showDialog<ContractReview>(
         context: context,
         barrierDismissible: false,
         builder: (_) => _EvidenceDialog(
             repository: repository,
+            revocationOnly: capabilities?.submissionEnabled != true,
             reauthenticate: () => widget.session.login(stepUp: true)));
     if (!mounted || !current() || result == null) return;
     setState(() => selectedId = result.id);
@@ -315,15 +316,23 @@ class _ContractsPageState extends State<ContractsPage> {
                 label: const Text('刷新')),
             if (widget.platform && widget.session.canManageContracts)
               FilledButton.icon(
-                  onPressed:
-                      capabilities?.submissionEnabled == true && current()
-                          ? submitEvidence
-                          : null,
+                  onPressed: capabilities?.canSubmit == true && current()
+                      ? submitEvidence
+                      : null,
                   icon: const Icon(Icons.add),
-                  label: const Text('提交签约证据'))
+                  label: Text(capabilities?.submissionEnabled == true
+                      ? '提交签约或撤销事实'
+                      : capabilities?.revocationSubmissionEnabled == true
+                          ? '提交签名撤销'
+                          : '提交签约证据'))
           ])),
-      if (widget.platform && capabilities?.submissionEnabled != true)
-        const Notice('合同证据提供方尚未启用，暂不能提交新合同。审核与查询仅用于已存在的联调记录；机构签约、支付和开票未开放。',
+      if (widget.platform && capabilities != null && !capabilities!.canSubmit)
+        const Notice('合同证据提供方尚未启用，暂不能提交合同事实。审核与查询仅用于已有记录；机构签约、支付和开票未开放。',
+            warning: true),
+      if (widget.platform &&
+          capabilities?.submissionEnabled == false &&
+          capabilities?.revocationSubmissionEnabled == true)
+        const Notice('新合同受理已暂停。仅可提交可信签发方的签名撤销事实，经独立审批后停止对应来源权益。',
             warning: true),
       if (!widget.platform)
         const Notice(
@@ -637,9 +646,12 @@ class _ContractsPageState extends State<ContractsPage> {
 
 class _EvidenceDialog extends StatefulWidget {
   final ContractsRepository repository;
+  final bool revocationOnly;
   final VoidCallback reauthenticate;
   const _EvidenceDialog(
-      {required this.repository, required this.reauthenticate});
+      {required this.repository,
+      required this.revocationOnly,
+      required this.reauthenticate});
 
   @override
   State<_EvidenceDialog> createState() => _EvidenceDialogState();
@@ -684,15 +696,16 @@ class _EvidenceDialogState extends State<_EvidenceDialog> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-          title: const Text('提交已签名合同事实'),
+          title: Text(widget.revocationOnly ? '提交签名撤销事实' : '提交已签名合同事实'),
           content: SizedBox(
               width: 520,
               child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Notice(
-                        '仅粘贴可信签发方按需签发的短期 JWS。提交后进入独立审核，暂不产生权益；不要粘贴合同全文或付款信息。'),
+                    Notice(widget.revocationOnly
+                        ? '仅粘贴可信签发方按需签发的 REVOKED 短期 JWS。新合同受理已暂停；撤销仍需独立审批。'
+                        : '仅粘贴可信签发方按需签发的短期 JWS。提交后进入独立审核，暂不产生权益；不要粘贴合同全文或付款信息。'),
                     const SizedBox(height: 16),
                     TextField(
                         controller: evidence,

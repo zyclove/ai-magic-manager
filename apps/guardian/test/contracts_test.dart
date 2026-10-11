@@ -107,6 +107,7 @@ void main() {
         return http.Response(
             jsonEncode({
               'submissionEnabled': false,
+              'revocationSubmissionEnabled': false,
               'region': 'CN',
               'channel': 'CONTRACT',
               'recentAuthenticationRequired': true,
@@ -128,6 +129,17 @@ void main() {
         api: Api(() async => client, baseUrl: 'https://example.test/api/v1'),
         current: () => active);
     expect((await repository.capabilities()).submissionEnabled, isFalse);
+    expect(
+        ContractCapabilities.parse({
+          'submissionEnabled': false,
+          'revocationSubmissionEnabled': true,
+          'region': 'CN',
+          'channel': 'CONTRACT',
+          'recentAuthenticationRequired': true,
+          'independentApprovalRequired': true,
+          'customerAcceptanceRequired': true
+        }).canSubmit,
+        isTrue);
     final id = repository.newId();
     expect(isContractId(id), isTrue);
     final created = await repository.create(reviewId, 'a.b.c');

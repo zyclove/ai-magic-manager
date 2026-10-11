@@ -45,6 +45,7 @@ class CommercialContractService {
   private final TenantAccess access;
   private final CommercialLedger ledger;
   private final AuditService audit;
+  private final ContractSubmissionPolicy submissionPolicy;
 
   CommercialContractService(
       JdbcTemplate jdbc,
@@ -53,7 +54,8 @@ class CommercialContractService {
       RecentAuthentication recent,
       TenantAccess access,
       CommercialLedger ledger,
-      AuditService audit) {
+      AuditService audit,
+      ContractSubmissionPolicy submissionPolicy) {
     this.jdbc = jdbc;
     this.json = json;
     this.clock = clock;
@@ -61,6 +63,7 @@ class CommercialContractService {
     this.access = access;
     this.ledger = ledger;
     this.audit = audit;
+    this.submissionPolicy = submissionPolicy;
   }
 
   static void require(Authentication authentication, String scope) {
@@ -101,6 +104,7 @@ class CommercialContractService {
       }
       return new Creation(view(previous), false);
     }
+    submissionPolicy.requireAllowed(evidence);
     checkOfferAndTenant(evidence, true);
     long now = clock.millis();
     // MySQL and H2 MySQL mode both permit an idempotent insert without poisoning the enclosing
@@ -149,6 +153,7 @@ class CommercialContractService {
     if (!"PENDING_REVIEW".equals(row.state())) throw conflict("CONTRACT_NOT_PENDING");
     if (actor.getSubject().equals(row.submittedBy())) throw DomainException.denied();
     ContractEvidence evidence = decode(row.evidenceJson());
+    submissionPolicy.requireAllowed(evidence);
     CommercialOfferDraft offer = checkOfferAndTenant(evidence, true);
     String nextState;
     if (evidence.state() == State.REVOKED) {
@@ -217,6 +222,7 @@ class CommercialContractService {
     if (evidence.state() != State.ACTIVE || evidence.expiresAt() <= clock.millis()) {
       throw conflict("CONTRACT_NOT_ACTIVE");
     }
+    submissionPolicy.requireActive();
     CommercialOfferDraft offer = checkOfferAndTenant(evidence, true);
     ledger.apply(fact(evidence, offer, row.approvedBy()));
     jdbc.update(
