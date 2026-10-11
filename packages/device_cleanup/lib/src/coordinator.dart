@@ -71,12 +71,18 @@ class CleanupCoordinator {
         try {
           await executor.clearOwnData(command);
         } on AgentCleanupFailure catch (failure) {
+          if (state.failureAcknowledged) {
+            return CleanupRunStage.localClearFailed;
+          }
           await _send(await journal.prepare(CleanupReceiptStage.failed,
               reasonCode: failure.reasonCode));
           return CleanupRunStage.localClearFailed;
         } catch (_) {
           // Never copy native exception text, paths or secret material into a
           // receipt. A partial clear is retried by the idempotent executor.
+          if (state.failureAcknowledged) {
+            return CleanupRunStage.localClearFailed;
+          }
           await _send(await journal.prepare(CleanupReceiptStage.failed,
               reasonCode: 'STORAGE_FAILURE'));
           return CleanupRunStage.localClearFailed;

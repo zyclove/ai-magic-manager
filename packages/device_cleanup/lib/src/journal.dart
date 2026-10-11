@@ -14,10 +14,13 @@ abstract interface class CleanupRecordStore {
 }
 
 class CleanupJournalView {
-  final bool receivedAcknowledged, localDataCleared, cleanupAcknowledged;
+  final bool receivedAcknowledged,
+      failureAcknowledged,
+      localDataCleared,
+      cleanupAcknowledged;
   final CleanupReceipt? pending;
-  const CleanupJournalView(this.receivedAcknowledged, this.localDataCleared,
-      this.cleanupAcknowledged, this.pending);
+  const CleanupJournalView(this.receivedAcknowledged, this.failureAcknowledged,
+      this.localDataCleared, this.cleanupAcknowledged, this.pending);
 }
 
 /// One owner per registration. A new command cannot silently replace a
@@ -75,8 +78,12 @@ class CleanupReceiptJournal {
   CleanupJournalView get view => _view();
   CleanupJournalView _view() {
     final record = _require();
-    return CleanupJournalView(record.accepted != null, record.localDataCleared,
-        record.accepted == 'AGENT_DATA_CLEARED', record.pendingReceipt());
+    return CleanupJournalView(
+        record.accepted != null,
+        record.accepted == 'FAILED',
+        record.localDataCleared,
+        record.accepted == 'AGENT_DATA_CLEARED',
+        record.pendingReceipt());
   }
 
   /// The stable ID/body is durably written before this returns. If a previous
