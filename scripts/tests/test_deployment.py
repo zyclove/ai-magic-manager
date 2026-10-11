@@ -22,6 +22,18 @@ def assert_no_secret(case, secret, output):
 
 
 class DeploymentInitializationTest(unittest.TestCase):
+    def test_runtime_ledger_permissions_preserve_immutable_acceptance_records(self):
+        import re
+        script = (ROOT / "scripts/initialize-erasure-ledger.ps1").read_text(encoding="utf-8-sig")
+        grants = dict((table, set(privileges.split(","))) for privileges, table in
+                      re.findall(r"GRANT ([A-Z,]+) ON erasure_ledger\.([a-z_]+) TO", script))
+        self.assertEqual({
+            "erasure_ledger_head": {"SELECT", "UPDATE"},
+            "erasure_ledger_entries": {"SELECT", "INSERT"},
+            "erasure_work_admissions": {"SELECT", "INSERT", "DELETE"},
+            "erasure_admission_pause": {"SELECT", "INSERT", "DELETE"},
+        }, grants)
+
     def test_secret_assertion_failure_does_not_print_material(self):
         material = "synthetic-sensitive-value"
         with self.assertRaises(AssertionError) as failure:

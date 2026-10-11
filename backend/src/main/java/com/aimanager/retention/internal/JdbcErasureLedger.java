@@ -30,7 +30,10 @@ final class JdbcErasureLedger implements ErasureLedger {
                   "request_json",
                   "accepted_at",
                   "previous_hash",
-                  "entry_hash"));
+                  "entry_hash"),
+          "erasure_work_admissions", Set.of("admission_id", "worker_id", "started_at"),
+          "erasure_admission_pause",
+              Set.of("singleton_id", "request_id", "request_hash", "request_json", "created_at"));
   private static final String COLUMNS =
       "sequence_number,request_id,request_hash,CASE WHEN OCTET_LENGTH(request_json)<=262144 THEN"
           + " request_json ELSE NULL END AS request_json,accepted_at,previous_hash,entry_hash";
@@ -75,55 +78,156 @@ final class JdbcErasureLedger implements ErasureLedger {
   }
 
   @Override
-  public Entry append(Request request) {
-    Objects.requireNonNull(request, "request");
+  public WorkState workState() {
     return transaction(
         () -> {
           var head = lockedHead();
-          var prior = rows(" WHERE request_id=?", request.requestId());
-          String requestHash = LedgerIntegrity.requestHash(request);
-          if (!prior.isEmpty()) {
-            var entry = verify(prior.get(0));
-            if (!LedgerIntegrity.requestHash(entry.request()).equals(requestHash))
-              throw failure("ERASURE_LEDGER_REQUEST_CONFLICT");
-            return entry;
-          }
-          if (head.sequence() == Long.MAX_VALUE) throw failure("ERASURE_LEDGER_SEQUENCE_EXHAUSTED");
-          long sequence = head.sequence() + 1, acceptedAt = clock.millis();
-          if (acceptedAt <= 0) throw failure("ERASURE_LEDGER_CLOCK_INVALID");
-          String hash =
-              LedgerIntegrity.entryHash(ledgerId, sequence, acceptedAt, head.hash(), requestHash);
-          final String payload;
-          try {
-            payload = json.writeValueAsString(request);
-          } catch (Exception invalid) {
-            throw failure("ERASURE_LEDGER_REQUEST_INVALID");
-          }
-          if (payload.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 262144)
-            throw failure("ERASURE_LEDGER_REQUEST_INVALID");
-          db.update(
-              "INSERT INTO"
-                  + " erasure_ledger_entries(sequence_number,request_id,request_hash,request_json,accepted_at,previous_hash,entry_hash)"
-                  + " VALUES(?,?,?,?,?,?,?)",
-              sequence,
-              request.requestId(),
-              requestHash,
-              payload,
-              acceptedAt,
-              head.hash(),
-              hash);
-          int changed =
-              db.update(
-                  "UPDATE erasure_ledger_head SET last_sequence=?,last_hash=? WHERE singleton_id=1"
-                      + " AND ledger_id=? AND last_sequence=? AND last_hash=?",
-                  sequence,
-                  hash,
-                  ledgerId,
-                  head.sequence(),
-                  head.hash());
-          if (changed != 1) throw failure("ERASURE_LEDGER_CORRUPT");
-          return new Entry(sequence, request, acceptedAt, head.hash(), hash);
+          var pause = pausedRequest();
+          if (head.sequence() != 0) return WorkState.RECOVERY_REQUIRED;
+          return pause == null ? WorkState.READY : WorkState.PAUSING;
         });
+  }
+
+  @Override
+  public WorkPermit beginWork(String workerId) {
+    new Checkpoint(workerId, 0, LedgerIntegrity.genesis(workerId));
+    String admission = UUID.randomUUID().toString();
+    transaction(
+        () -> {
+          var head = lockedHead();
+          var pause = pausedRequest();
+          if (head.sequence() != 0) throw failure("ERASURE_LEDGER_RECONCILIATION_REQUIRED");
+          if (pause != null) throw failure("ERASURE_LEDGER_WORK_PAUSED");
+          long now =
+              db.queryForObject("SELECT CURRENT_TIMESTAMP(3)", java.sql.Timestamp.class)
+                  .toInstant()
+                  .toEpochMilli();
+          if (now <= 0) throw failure("ERASURE_LEDGER_CLOCK_INVALID");
+          db.update(
+              "INSERT INTO erasure_work_admissions(admission_id,worker_id,started_at)"
+                  + " VALUES(?,?,?)",
+              admission,
+              workerId,
+              now);
+          return null;
+        });
+    return new WorkPermit() {
+      private boolean closed;
+
+      @Override
+      public synchronized void close() {
+        if (closed) return;
+        transaction(
+            () -> {
+              lockedHead();
+              if (db.update(
+                      "DELETE FROM erasure_work_admissions WHERE admission_id=? AND worker_id=?",
+                      admission,
+                      workerId)
+                  != 1) throw failure("ERASURE_LEDGER_ADMISSION_LOST");
+              return null;
+            });
+        closed = true;
+      }
+    };
+  }
+
+  private Request pausedRequest() {
+    var values =
+        db.queryForList(
+            "SELECT singleton_id,request_id,request_hash,CASE WHEN"
+                + " OCTET_LENGTH(request_json)<=262144 THEN request_json ELSE NULL END AS"
+                + " request_json,created_at FROM erasure_admission_pause");
+    if (values.isEmpty()) return null;
+    if (values.size() != 1) throw failure("ERASURE_LEDGER_CORRUPT");
+    try {
+      var row = values.get(0);
+      var request = json.readValue((String) row.get("request_json"), Request.class);
+      if (((Number) row.get("singleton_id")).intValue() != 1
+          || ((Number) row.get("created_at")).longValue() <= 0
+          || !request.requestId().equals(row.get("request_id"))
+          || !LedgerIntegrity.requestHash(request).equals(row.get("request_hash")))
+        throw failure("ERASURE_LEDGER_CORRUPT");
+      return request;
+    } catch (Exception invalid) {
+      throw failure("ERASURE_LEDGER_CORRUPT");
+    }
+  }
+
+  @Override
+  public Entry append(Request request) {
+    Objects.requireNonNull(request, "request");
+    Entry accepted =
+        transaction(
+            () -> {
+              var head = lockedHead();
+              var pause = pausedRequest();
+              if (pause != null && !pause.equals(request))
+                throw failure("ERASURE_LEDGER_REQUEST_CONFLICT");
+              var prior = rows(" WHERE request_id=?", request.requestId());
+              String requestHash = LedgerIntegrity.requestHash(request);
+              if (!prior.isEmpty()) {
+                var entry = verify(prior.get(0));
+                if (!LedgerIntegrity.requestHash(entry.request()).equals(requestHash))
+                  throw failure("ERASURE_LEDGER_REQUEST_CONFLICT");
+                return entry;
+              }
+              if (head.sequence() == Long.MAX_VALUE)
+                throw failure("ERASURE_LEDGER_SEQUENCE_EXHAUSTED");
+              long sequence = head.sequence() + 1, acceptedAt = clock.millis();
+              if (acceptedAt <= 0) throw failure("ERASURE_LEDGER_CLOCK_INVALID");
+              String hash =
+                  LedgerIntegrity.entryHash(
+                      ledgerId, sequence, acceptedAt, head.hash(), requestHash);
+              final String payload;
+              try {
+                payload = json.writeValueAsString(request);
+              } catch (Exception invalid) {
+                throw failure("ERASURE_LEDGER_REQUEST_INVALID");
+              }
+              if (payload.getBytes(java.nio.charset.StandardCharsets.UTF_8).length > 262144)
+                throw failure("ERASURE_LEDGER_REQUEST_INVALID");
+              if (db.queryForObject("SELECT COUNT(*) FROM erasure_work_admissions", Long.class)
+                  != 0) {
+                if (pause == null)
+                  db.update(
+                      "INSERT INTO"
+                          + " erasure_admission_pause(singleton_id,request_id,request_hash,request_json,created_at)"
+                          + " VALUES(1,?,?,?,?)",
+                      request.requestId(),
+                      requestHash,
+                      payload,
+                      acceptedAt);
+                return null;
+              }
+              db.update(
+                  "INSERT INTO"
+                      + " erasure_ledger_entries(sequence_number,request_id,request_hash,request_json,accepted_at,previous_hash,entry_hash)"
+                      + " VALUES(?,?,?,?,?,?,?)",
+                  sequence,
+                  request.requestId(),
+                  requestHash,
+                  payload,
+                  acceptedAt,
+                  head.hash(),
+                  hash);
+              int changed =
+                  db.update(
+                      "UPDATE erasure_ledger_head SET last_sequence=?,last_hash=? WHERE"
+                          + " singleton_id=1 AND ledger_id=? AND last_sequence=? AND last_hash=?",
+                      sequence,
+                      hash,
+                      ledgerId,
+                      head.sequence(),
+                      head.hash());
+              if (changed != 1) throw failure("ERASURE_LEDGER_CORRUPT");
+              if (pause != null)
+                db.update("DELETE FROM erasure_admission_pause WHERE singleton_id=1");
+              return new Entry(sequence, request, acceptedAt, head.hash(), hash);
+            });
+    // The pause must COMMIT before reporting that acceptance is still pending.
+    if (accepted == null) throw failure("ERASURE_LEDGER_WORK_ACTIVE");
+    return accepted;
   }
 
   @Override

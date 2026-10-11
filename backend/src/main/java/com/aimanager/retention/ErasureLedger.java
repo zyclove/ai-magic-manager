@@ -65,6 +65,24 @@ public interface ErasureLedger {
 
   Page readAfter(Checkpoint checkpoint, int limit);
 
+  enum WorkState {
+    READY,
+    PAUSING,
+    RECOVERY_REQUIRED
+  }
+
+  /**
+   * Durable in-flight work; only explicit completion releases it. There is no time-based expiry.
+   */
+  interface WorkPermit extends AutoCloseable {
+    @Override
+    void close();
+  }
+
+  WorkState workState();
+
+  WorkPermit beginWork(String workerId);
+
   /** Stable code only; never return JDBC messages, credentials or a stored manifest. */
   final class Failure extends RuntimeException {
     private final String code;

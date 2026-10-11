@@ -43,6 +43,8 @@ class ErasureLedgerStoreTest {
     ledger = source("LEDGER_STORE_TEST");
     businessDb = new JdbcTemplate(business);
     ledgerDb = new JdbcTemplate(ledger);
+    ledgerDb.execute("DROP TABLE IF EXISTS erasure_work_admissions");
+    ledgerDb.execute("DROP TABLE IF EXISTS erasure_admission_pause");
     ledgerDb.execute("DROP TABLE IF EXISTS erasure_ledger_entries");
     ledgerDb.execute("DROP TABLE IF EXISTS erasure_ledger_head");
     businessDb.execute(
@@ -96,6 +98,8 @@ class ErasureLedgerStoreTest {
     } finally {
       ledgerDb.execute("DROP TABLE unrelated_store");
     }
+    ledgerDb.execute("DROP TABLE IF EXISTS erasure_work_admissions");
+    ledgerDb.execute("DROP TABLE IF EXISTS erasure_admission_pause");
     ledgerDb.execute("DROP TABLE erasure_ledger_entries");
     failure("ERASURE_LEDGER_SCHEMA_INVALID", store::head);
   }
@@ -387,6 +391,8 @@ class ErasureLedgerStoreTest {
       named = "LEDGER_STORE_TEST_URL",
       matches = "jdbc:mysql:.*")
   void initializationPinsTransactionalEngineEvenWhenServerDefaultDiffers() {
+    ledgerDb.execute("DROP TABLE IF EXISTS erasure_work_admissions");
+    ledgerDb.execute("DROP TABLE IF EXISTS erasure_admission_pause");
     ledgerDb.execute("DROP TABLE erasure_ledger_entries");
     ledgerDb.execute("DROP TABLE erasure_ledger_head");
     var nonTransactionalDefault =
@@ -408,7 +414,7 @@ class ErasureLedgerStoreTest {
         };
     ErasureLedgerBootstrap.initialize(nonTransactionalDefault, id);
     assertEquals(
-        List.of("InnoDB", "InnoDB"),
+        List.of("InnoDB", "InnoDB", "InnoDB", "InnoDB"),
         ledgerDb.queryForList(
             "SELECT engine FROM information_schema.tables WHERE table_schema=DATABASE() ORDER BY"
                 + " table_name",

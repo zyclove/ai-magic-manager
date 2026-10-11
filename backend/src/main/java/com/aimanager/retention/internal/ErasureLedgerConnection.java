@@ -67,6 +67,16 @@ class ErasureLedgerConnection implements ErasureLedger, AutoCloseable {
   }
 
   @Override
+  public WorkState workState() {
+    return required().workState();
+  }
+
+  @Override
+  public WorkPermit beginWork(String workerId) {
+    return required().beginWork(workerId);
+  }
+
+  @Override
   @PreDestroy
   public void close() {
     if (pool != null) pool.close();

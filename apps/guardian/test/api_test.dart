@@ -5,6 +5,33 @@ import 'package:http/testing.dart';
 import 'package:guardian/core/api.dart';
 
 void main() {
+  test('maintenance explains uncertainty and preserves the original operation',
+      () async {
+    var calls = 0;
+    final api = Api(() async => MockClient((request) async {
+          calls++;
+          return calls == 1
+              ? http.Response(
+                  '{"errorCode":"ERASURE_MAINTENANCE_REQUIRED"}', 503)
+              : http.Response('{"id":"original-result"}', 200);
+        }));
+    await expectLater(
+        api.send('POST', '/copies',
+            body: {'name': 'original'}, key: 'maintenance-key'),
+        throwsA(isA<ApiFailure>().having(
+            (error) => error.message,
+            'maintenance explanation',
+            '系统正在暂停或恢复数据处理，暂时无法确认本次结果。请保留原操作内容，稍后重试。')));
+    await expectLater(
+        api.send('POST', '/copies',
+            body: {'name': 'changed'}, key: 'maintenance-key'),
+        throwsA(isA<ApiFailure>().having((error) => error.code,
+            'unchanged retry', 'PENDING_OPERATION_UNCHANGED')));
+    final result = await api.send('POST', '/copies',
+        body: {'name': 'original'}, key: 'maintenance-key');
+    expect(result['id'], 'original-result');
+    expect(calls, 2);
+  });
   test('unknown writes retain original key and reject changed retry payload',
       () async {
     var calls = 0;

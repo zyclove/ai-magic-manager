@@ -40,12 +40,12 @@ class ContractEvidenceVerifierTest {
     generator.initialize(2048);
     KeyPair pair = generator.generateKeyPair();
     privateKey = (RSAPrivateKey) pair.getPrivate();
-    verifier =
-        new JwtContractEvidenceVerifier(
-            NimbusJwtDecoder.withPublicKey((RSAPublicKey) pair.getPublic()).build(),
-            ISSUER,
-            AUDIENCE,
-            Clock.fixed(NOW, ZoneOffset.UTC));
+    var clock = Clock.fixed(NOW, ZoneOffset.UTC);
+    var decoder = NimbusJwtDecoder.withPublicKey((RSAPublicKey) pair.getPublic()).build();
+    var timestamps = new org.springframework.security.oauth2.jwt.JwtTimestampValidator();
+    timestamps.setClock(clock);
+    decoder.setJwtValidator(timestamps);
+    verifier = new JwtContractEvidenceVerifier(decoder, ISSUER, AUDIENCE, clock);
   }
 
   @Test

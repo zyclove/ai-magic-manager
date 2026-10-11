@@ -52,6 +52,10 @@ class MemberAccessJourneyTest {
   static class FailureListener {
     volatile String tenant;
 
+    public void failTenant(String value) {
+      tenant = value;
+    }
+
     @org.springframework.context.event.EventListener
     @org.springframework.core.annotation.Order(1000)
     public void on(com.aimanager.tenant.MembershipAccessChanged event) {
@@ -66,7 +70,7 @@ class MemberAccessJourneyTest {
     String admin = "ops-" + UUID.randomUUID();
     join(s, admin, "ORG_ADMIN", null);
     invite(s, admin, "recipient-" + UUID.randomUUID(), "AUDITOR", null);
-    failure.tenant = s.id();
+    failure.failTenant(s.id());
     try {
       mvc.perform(
               patch(s.access(admin))
@@ -77,7 +81,7 @@ class MemberAccessJourneyTest {
                   .content("{\"role\":\"AUDITOR\"}"))
           .andExpect(status().isInternalServerError());
     } finally {
-      failure.tenant = null;
+      failure.failTenant(null);
     }
     mvc.perform(get(s.access(admin)).with(actor(s.owner())))
         .andExpect(status().isOk())

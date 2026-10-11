@@ -48,6 +48,8 @@ class ErasureRecoveryJobsTest {
     // Only explicitly isolated fixture schemas can reach this setup.
     if (hasTable("erasure_recovery_jobs")) db.update("DELETE FROM erasure_recovery_jobs");
     if (hasTable("erasure_recovery_state")) db.update("DELETE FROM erasure_recovery_state");
+    ledgerDb.execute("DROP TABLE IF EXISTS erasure_work_admissions");
+    ledgerDb.execute("DROP TABLE IF EXISTS erasure_admission_pause");
     ledgerDb.execute("DROP TABLE IF EXISTS erasure_ledger_entries");
     ledgerDb.execute("DROP TABLE IF EXISTS erasure_ledger_head");
     id = UUID.randomUUID().toString();
@@ -319,6 +321,8 @@ class ErasureRecoveryJobsTest {
   void startupRejectsLedgerRestoredToAnOlderEmptySnapshot() {
     ledger.append(request());
     jobs.reconcile(10);
+    ledgerDb.execute("DROP TABLE IF EXISTS erasure_work_admissions");
+    ledgerDb.execute("DROP TABLE IF EXISTS erasure_admission_pause");
     ledgerDb.execute("DROP TABLE erasure_ledger_entries");
     ledgerDb.execute("DROP TABLE erasure_ledger_head");
     ErasureLedgerBootstrap.initialize(journal, id);
@@ -333,6 +337,8 @@ class ErasureRecoveryJobsTest {
   void startupRejectsSwitchToADifferentValidEmptyLedger() {
     ledger.append(request());
     jobs.reconcile(10);
+    ledgerDb.execute("DROP TABLE IF EXISTS erasure_work_admissions");
+    ledgerDb.execute("DROP TABLE IF EXISTS erasure_admission_pause");
     ledgerDb.execute("DROP TABLE erasure_ledger_entries");
     ledgerDb.execute("DROP TABLE erasure_ledger_head");
     String replacementId = UUID.randomUUID().toString();

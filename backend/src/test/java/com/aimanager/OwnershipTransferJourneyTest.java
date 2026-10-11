@@ -54,6 +54,14 @@ class OwnershipTransferJourneyTest {
     volatile String failTenant;
     volatile OwnershipBarrier barrier;
 
+    public void failTenant(String tenant) {
+      failTenant = tenant;
+    }
+
+    public void barrier(OwnershipBarrier value) {
+      barrier = value;
+    }
+
     @org.springframework.context.event.EventListener
     @org.springframework.core.annotation.Order(-300)
     public void beforeCleanup(com.aimanager.tenant.OwnershipTransferred event) {
@@ -105,7 +113,7 @@ class OwnershipTransferJourneyTest {
     var entered = new java.util.concurrent.CountDownLatch(1);
     var proceed = new java.util.concurrent.CountDownLatch(1);
     var previewLocked = new java.util.concurrent.CountDownLatch(1);
-    failureListener.barrier = new OwnershipBarrier(f.id(), entered, proceed);
+    failureListener.barrier(new OwnershipBarrier(f.id(), entered, proceed));
     var pool = java.util.concurrent.Executors.newFixedThreadPool(2);
     try {
       var other =
@@ -159,7 +167,7 @@ class OwnershipTransferJourneyTest {
       assertThat(transfer.get(20, java.util.concurrent.TimeUnit.SECONDS)).isEqualTo(200);
     } finally {
       proceed.countDown();
-      failureListener.barrier = null;
+      failureListener.barrier(null);
       pool.shutdownNow();
     }
     role(f, f.target(), "OWNER");
@@ -169,7 +177,7 @@ class OwnershipTransferJourneyTest {
   void listenerFailureRollsBackBothRolesTenantVersionAndTransfer() throws Exception {
     var f = family("FAMILY");
     var p = start(f);
-    failureListener.failTenant = f.id();
+    failureListener.failTenant(f.id());
     try {
       mvc.perform(
               post(path(f, p) + "/accept")
@@ -178,7 +186,7 @@ class OwnershipTransferJourneyTest {
                   .header("If-Match", "\"0\""))
           .andExpect(status().isInternalServerError());
     } finally {
-      failureListener.failTenant = null;
+      failureListener.failTenant(null);
     }
     role(f, f.owner(), "OWNER");
     role(f, f.target(), "GUARDIAN");

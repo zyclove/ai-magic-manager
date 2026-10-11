@@ -1,0 +1,340 @@
+{
+  "recordedAt": "2026-10-11T09:31:59.078854+00:00",
+  "applicationVersion": "1.0.0",
+  "status": "source-verified-not-deployed",
+  "base": "b68f6716efba65fa040d5618a93c0bf353d68f25",
+  "deployed": false,
+  "existingBusinessDatabaseModified": false,
+  "existingErasureLedgerModified": false,
+  "historicalMigrationAdded": false,
+  "schemaPolicy": "Fresh 1.0.0 ledger initialization only; no existing schema migration or ledger reset",
+  "sourceFiles": [
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/ErasureLedger.java",
+      "sha256": "32216a3ff3cc89b9be79f3b1e1ed9f4ebbfe355b95c08de657fc9feed00123af"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/JdbcErasureLedger.java",
+      "sha256": "baa54d5f560a15647bb0327da549d7440c04674fe2e122da886fed592f91ccb4"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureLedgerConnection.java",
+      "sha256": "3c10d8de89c20058e45d876c6795b00a0729a40df30222bda92676c27ffa344b"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureWorkScope.java",
+      "sha256": "ff70b7450f391d6db9f18f7626f21a6d0dbf8f793c86d54f50f9b13cbf10b231"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureRuntimeFilter.java",
+      "sha256": "198536fa7eeeec060633c22ed565acdb65150ed7ce45850855cf59ce233c1d88"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureRuntimeConfiguration.java",
+      "sha256": "d008fbeff71ec43598d98f769354611313bd25f5c9832aee12b713e6afc0566b"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureReadiness.java",
+      "sha256": "41ef37460b8a6f75c3c139ded0d59c2d84c01e3555659d0c182748d97ac97258"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureWorkAdvisor.java",
+      "sha256": "0e5afc320f4684d8bb0f733e0d02088c5fd4e4852f238d5e9c323735a0d00617"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureAdmissionStoreTest.java",
+      "sha256": "c86ab62cb8e845e10e18ef7b39b36649b6dc7bd58044038b623b78be023d4a88"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureLedgerStoreTest.java",
+      "sha256": "3898fdfc1fc37389580da027081fcf3010a42e6eddd2938d572fca79aa380dc0"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureLedgerRuntimeTest.java",
+      "sha256": "7d6b9c746a2f0d4025189fe0f87e9ffebd8065e1047da62415a2f328369e5f31"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureRecoveryJobsTest.java",
+      "sha256": "fb80a1ecc2db17f2af1b225740780f43105192f3340edf6244f329d03cc516bc"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureWorkScopeTest.java",
+      "sha256": "2e8d4c32f3561ac11f534195853f606e376396e14118069e9248a63a656c4640"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureRuntimeWebTest.java",
+      "sha256": "cbf2d157d956c72294743f851bda751ce00c51ce8ec357181c5c4dfde035ccb0"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureWorkAdvisorTest.java",
+      "sha256": "bcade287090e02f80a8a4fe79b7088b5da400451acb1f6e96be010a52e57bbd6"
+    },
+    {
+      "path": "backend/src/main/resources/erasure-ledger/initial-schema.sql",
+      "sha256": "9c26b2c6ee690da41d4384bde9da1c8e65c70674e68f87a3f6f8cd27252d4ef8"
+    },
+    {
+      "path": "backend/src/main/resources/application.yml",
+      "sha256": "df4ce0bfda300aba4344b19a3db70d9b78cd75d3252aaa7df50059e28b7bfb1c"
+    },
+    {
+      "path": "scripts/initialize-erasure-ledger.ps1",
+      "sha256": "9957faf71b0bf648f10e372c838ab7bbc519d0afe295e297b115272e148cb18d"
+    },
+    {
+      "path": "scripts/tests/test_deployment.py",
+      "sha256": "c1c64d3459487f8f03f2c19b29b1ce98a0268c81a0e93a4f1d2c7299c4d53e40"
+    },
+    {
+      "path": "apps/guardian/lib/core/api.dart",
+      "sha256": "1d5fea50e3711a030c15665d7080f29872d059f9415d00c240f26436a9b4d3c2"
+    },
+    {
+      "path": "apps/guardian/test/api_test.dart",
+      "sha256": "9225787b928e22e8bf18ba7fbca45252850d4628c7d8cb9f87233e8b960b784d"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/OwnershipTransferJourneyTest.java",
+      "sha256": "3a1dadbc4a0d2713b4eeac42b7b003bb10235a8f5664c3aba7b6736a4c5ec1b2"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/MemberAccessJourneyTest.java",
+      "sha256": "05db6bea8c3e0db6c0ef057b8c6e5170cebd3276d619767eb081734bc422eb9c"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/commerce/internal/ContractEvidenceVerifierTest.java",
+      "sha256": "9c6ffda233c9883327ac647eb5378f913d5f076cbda76e2a1995b472e1ae2f52"
+    }
+  ],
+  "testRuns": [
+    {
+      "name": "review-fix-focused-h2",
+      "total": 28,
+      "passed": 27,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 1,
+      "log": ".local/erasure-admission-review-fix-green.log",
+      "sha256": "b58b2f8c63f9877e52053ce0f174c648d83f1343e6b2dac1ddea9cedfe62936d"
+    },
+    {
+      "name": "full-regression-fixture-corrections",
+      "total": 31,
+      "passed": 31,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".local/erasure-admission-regression-fixtures-green.log",
+      "sha256": "2cc283e578008fbc81a7f570611f5c9bfa79e87362534a5cae125c319744f0f4"
+    },
+    {
+      "name": "reviewed-mysql-admission-advisor",
+      "total": 16,
+      "passed": 16,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".local/erasure-admission-reviewed-store-mysql.log",
+      "sha256": "932becfcec6a70e11551ecd6105185eb7124fa8c76468d5e89f4d15d4dd60c14"
+    },
+    {
+      "name": "reviewed-mysql-runtime-http",
+      "total": 4,
+      "passed": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".local/erasure-admission-reviewed-runtime-mysql.log",
+      "sha256": "f5d1ddabc95372d8db2c68abb5505572518a7b672f62f9de114ed5741cddc6bc"
+    },
+    {
+      "name": "final-full-backend",
+      "total": 618,
+      "passed": 610,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 8,
+      "log": ".local/erasure-admission-reviewed-full.log",
+      "sha256": "b5acf7d8bbc529bf4ae47a3839fc50c4fb60f5a48c801f5033e0d8b436e2720a"
+    },
+    {
+      "name": "deployment-permissions",
+      "passed": 11,
+      "log": ".local/erasure-admission-deployment-tests.log",
+      "sha256": "7ad7e55d3bb0ad0bb20d5562344054f14c05d07e8cfdc2782002250947201c24"
+    },
+    {
+      "name": "guardian-api-retry-and-maintenance-message",
+      "passed": 4,
+      "log": ".local/erasure-admission-ui-green.log",
+      "sha256": "994a85d438a724434f6d2c64aca9cff480b8541b7a76666598025444abc985dd"
+    }
+  ],
+  "testCountsOverlap": true,
+  "excludedFailedAttempt": {
+    "log": ".local/erasure-admission-reviewed-mysql.log",
+    "reason": "Combining store and runtime classes reused an initialized test ledger; runtime bootstrap correctly rejected ERASURE_LEDGER_NOT_EMPTY",
+    "resolution": "Run runtime tests in separately created fresh temporary schemas; no production initialization guard changed"
+  },
+  "fullRegressionCorrections": {
+    "failedLog": ".local/erasure-admission-full.log",
+    "failedTotals": {
+      "tests": 617,
+      "failures": 2,
+      "errors": 2,
+      "skipped": 8
+    },
+    "sourceFiles": [
+      "backend/src/test/java/com/aimanager/OwnershipTransferJourneyTest.java",
+      "backend/src/test/java/com/aimanager/MemberAccessJourneyTest.java",
+      "backend/src/test/java/com/aimanager/commerce/internal/ContractEvidenceVerifierTest.java"
+    ],
+    "changes": [
+      "Membership and ownership test listeners are now proxied; use setter methods so fault/barrier state reaches the target instance",
+      "Contract verifier test uses the same fixed clock for Nimbus timestamp validator and domain validation"
+    ],
+    "productionSemanticsWeakened": false,
+    "includedInOriginalReview": false
+  },
+  "skippedSuites": [
+    {
+      "class": "com.aimanager.AndroidChildSubmissionJourneyTest",
+      "skipped": 1
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureAdmissionStoreTest",
+      "skipped": 1
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "skipped": 4
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+      "skipped": 2
+    }
+  ],
+  "review": {
+    "passes": 1,
+    "scope": "21 immutable source files in erasure-admission-review.json",
+    "reviewedHashes": [
+      {
+        "path": "backend/src/main/java/com/aimanager/retention/ErasureLedger.java",
+        "sha256": "32216a3ff3cc89b9be79f3b1e1ed9f4ebbfe355b95c08de657fc9feed00123af"
+      },
+      {
+        "path": "backend/src/main/java/com/aimanager/retention/internal/JdbcErasureLedger.java",
+        "sha256": "baa54d5f560a15647bb0327da549d7440c04674fe2e122da886fed592f91ccb4"
+      },
+      {
+        "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureLedgerConnection.java",
+        "sha256": "3c10d8de89c20058e45d876c6795b00a0729a40df30222bda92676c27ffa344b"
+      },
+      {
+        "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureWorkScope.java",
+        "sha256": "ff70b7450f391d6db9f18f7626f21a6d0dbf8f793c86d54f50f9b13cbf10b231"
+      },
+      {
+        "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureRuntimeFilter.java",
+        "sha256": "198536fa7eeeec060633c22ed565acdb65150ed7ce45850855cf59ce233c1d88"
+      },
+      {
+        "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureRuntimeConfiguration.java",
+        "sha256": "d008fbeff71ec43598d98f769354611313bd25f5c9832aee12b713e6afc0566b"
+      },
+      {
+        "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureReadiness.java",
+        "sha256": "41ef37460b8a6f75c3c139ded0d59c2d84c01e3555659d0c182748d97ac97258"
+      },
+      {
+        "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureWorkAdvisor.java",
+        "sha256": "34b1997653fb026626b5d560217a17b876c73d7ff31fe43f201f8545818c78a9"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureAdmissionStoreTest.java",
+        "sha256": "c86ab62cb8e845e10e18ef7b39b36649b6dc7bd58044038b623b78be023d4a88"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureLedgerStoreTest.java",
+        "sha256": "3898fdfc1fc37389580da027081fcf3010a42e6eddd2938d572fca79aa380dc0"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureLedgerRuntimeTest.java",
+        "sha256": "7d6b9c746a2f0d4025189fe0f87e9ffebd8065e1047da62415a2f328369e5f31"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureRecoveryJobsTest.java",
+        "sha256": "fb80a1ecc2db17f2af1b225740780f43105192f3340edf6244f329d03cc516bc"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureWorkScopeTest.java",
+        "sha256": "2e8d4c32f3561ac11f534195853f606e376396e14118069e9248a63a656c4640"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureRuntimeWebTest.java",
+        "sha256": "cbf2d157d956c72294743f851bda751ce00c51ce8ec357181c5c4dfde035ccb0"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureWorkAdvisorTest.java",
+        "sha256": "5615a01e0ef367ccddeb0d5b8675661a755167d07288bde6d8dddb33316cedab"
+      },
+      {
+        "path": "backend/src/main/resources/erasure-ledger/initial-schema.sql",
+        "sha256": "9c26b2c6ee690da41d4384bde9da1c8e65c70674e68f87a3f6f8cd27252d4ef8"
+      },
+      {
+        "path": "backend/src/main/resources/application.yml",
+        "sha256": "df4ce0bfda300aba4344b19a3db70d9b78cd75d3252aaa7df50059e28b7bfb1c"
+      },
+      {
+        "path": "scripts/initialize-erasure-ledger.ps1",
+        "sha256": "9957faf71b0bf648f10e372c838ab7bbc519d0afe295e297b115272e148cb18d"
+      },
+      {
+        "path": "scripts/tests/test_deployment.py",
+        "sha256": "c1c64d3459487f8f03f2c19b29b1ce98a0268c81a0e93a4f1d2c7299c4d53e40"
+      },
+      {
+        "path": "apps/guardian/lib/core/api.dart",
+        "sha256": "1d5fea50e3711a030c15665d7080f29872d059f9415d00c240f26436a9b4d3c2"
+      },
+      {
+        "path": "apps/guardian/test/api_test.dart",
+        "sha256": "9225787b928e22e8bf18ba7fbca45252850d4628c7d8cb9f87233e8b960b784d"
+      }
+    ],
+    "findings": [
+      {
+        "priority": "P1",
+        "issue": "Exceptional Future completion released admission before its producer was known to stop",
+        "resolution": "Treat exceptional and cancelled Future completion as uncertain; retain durable admission and clear thread scope",
+        "redTests": 6,
+        "redFailures": 1,
+        "redErrors": 0,
+        "redLog": ".local/erasure-admission-review-fix-red.log",
+        "redLogSha256": "f48cb726599ba859cb84571adb21119526ed9164bc1884307a467be051144390",
+        "regression": "Real producer thread, Spring Async proxy, durable ledger pause, rejection before and after producer exit, fresh admission on executor reuse"
+      }
+    ],
+    "fixedByRegression": true,
+    "secondReviewPerformed": false
+  },
+  "runtimeEvidence": [
+    "MySQL tests create and clean only isolated notification_it UUID schemas and dedicated temporary accounts",
+    "Real MySQL runtime account can insert/delete work and pause rows but cannot update work rows, mutate accepted entries or perform DDL",
+    "Real HTTP tests use embedded Tomcat and a stub JwtDecoder identity; they do not certify live OIDC/MFA",
+    "Paused runtime rejects new business HTTP with uncached 503 while liveness remains UP and readiness becomes DOWN",
+    "Real Servlet async escape is rejected; in-flight synchronous request must release before acceptance",
+    "Deferred Future regression also runs on MySQL and preserves admission after timeout even when the actual producer later finishes"
+  ],
+  "limitations": [
+    "No public deletion acceptance/control-plane/progress API, domain erasure handlers, applied watermark or completion certification",
+    "Nonempty ledger currently requires global maintenance; target-specific isolation preserving other tenants remains future work",
+    "No automatic expiration or orphan permit reclaim; safe fenced recovery tooling remains future work",
+    "No dynamic process-kill/connection-loss certification or real backup-restore-and-erasure exercise",
+    "No large-scale capacity or OceanBase certification",
+    "TransactionalEventListener annotation matching is covered, but actual after-commit transactional event timing is not dynamically certified",
+    "Existing localhost:18099 deployment remains on its prior frozen release; these source changes have not been deployed",
+    "Client interop fixtures use existing frozen report-child-ui/report-web/support-package-web packages, not later unrelated client commits"
+  ]
+}

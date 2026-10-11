@@ -63,6 +63,13 @@ management:
   endpoint:
     health:
       show-details: never
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: readinessState,erasureAdmission
+        liveness:
+          include: livenessState
 manager:
   contract:
     evidence-enabled: ${CONTRACT_EVIDENCE_ENABLED:false}
