@@ -48,6 +48,19 @@ class DatabaseInitializationTest {
         .isZero();
     assertThat(db.queryForObject("SELECT COUNT(*) FROM erasure_recovery_steps", Integer.class))
         .isZero();
+    for (String table :
+        List.of(
+            "managed_enterprise_bindings",
+            "managed_enterprise_binding_events",
+            "managed_enrollment_intents",
+            "managed_enrollment_intent_events")) {
+      assertThat(db.queryForObject("SELECT COUNT(*) FROM " + table, Integer.class)).isZero();
+    }
+    db.queryForList(
+        "SELECT ownership_evidence_ref,version,state FROM managed_enterprise_bindings WHERE 1=0");
+    db.queryForList(
+        "SELECT nonce_hash,binding_version,cleanup_claim_id,cleanup_lease_until,cleanup_attempts,"
+            + "next_cleanup_at FROM managed_enrollment_intents WHERE 1=0");
     // Freshly created columns include current authority epochs, scopes and delivery-attempt fields.
     db.queryForList("SELECT version,revoked_at FROM tenant_members WHERE 1=0");
     db.queryForList("SELECT requester_kind FROM access_requests WHERE 1=0");

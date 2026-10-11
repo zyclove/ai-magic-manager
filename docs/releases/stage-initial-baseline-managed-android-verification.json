@@ -1,0 +1,162 @@
+{
+  "stage": "initial-baseline-managed-android",
+  "applicationVersion": "1.0.0",
+  "baseCommit": "00659273057c976ee88f5ed16552ac594142476f",
+  "finishedAt": "2026-10-11T21:51:05.2565004+08:00",
+  "backend": {
+    "tests": 685,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 20,
+    "passed": 665,
+    "suites": 71
+  },
+  "conditionalSkips": [
+    {
+      "class": "com.aimanager.AndroidChildSubmissionJourneyTest",
+      "test": "realEnrollmentNativeCrashRecoveryAndRevocation"
+    },
+    {
+      "class": "com.aimanager.DeviceAccessHttpInteropTest",
+      "test": "realApprovalRetryReceiptsRevocationExpiryAndOpaqueRevocation"
+    },
+    {
+      "class": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+      "test": "actualDartSubmissionAdultDecisionAndExistingDeviceDeliveryReference"
+    },
+    {
+      "class": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+      "test": "actualChildUiRecoversOriginalCancellationAcrossProcesses"
+    },
+    {
+      "class": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+      "test": "actualChildSessionAndUiRecoverOriginalSubmissionAcrossProcesses"
+    },
+    {
+      "class": "com.aimanager.DeviceConfigurationHttpInteropTest",
+      "test": "realDeviceTransportStoresTwoPagesAndRejectsRevokedCredential"
+    },
+    {
+      "class": "com.aimanager.DeviceIdentityHttpInteropTest",
+      "test": "actualEnrollmentRecoveryConfirmationRotationAndRevocation"
+    },
+    {
+      "class": "com.aimanager.DeviceObservationHttpInteropTest",
+      "test": "adultConsentDeviceLostAcknowledgementReplayWithdrawalAndRevocation"
+    },
+    {
+      "class": "com.aimanager.DiagnosticPreviewJourneyTest",
+      "test": "productionDartClientReadsRealHttpAndRechecksCurrentAccess"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureAdmissionStoreTest",
+      "test": "leastPrivilegeRuntimeCanDrainWorkButCannotRewriteAcceptedRecords"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "mismatchedIdentityAndMissingLedgerAreReportedWithoutAutomaticRecreation"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "servletAsyncCannotEscapeTheRegisteredSynchronousPermit"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "acceptedLedgerStopsAuthorizedBusinessRequestsWithoutDeletingTheirData"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "realHttpRequestDrainsBeforeAcceptanceAndProbesRemainAvailable"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+      "test": "nonTransactionalEngineIsRejectedBeforeAppending"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+      "test": "initializationPinsTransactionalEngineEvenWhenServerDefaultDiffers"
+    },
+    {
+      "class": "com.aimanager.support.internal.DiagnosticPackageJourneyTest",
+      "test": "productionDartClientCompletesPackageLifecycleOverRealHttp"
+    },
+    {
+      "class": "com.aimanager.SupportGrantJourneyTest",
+      "test": "productionDartSupportClientCompletesRealHttpGrantLifecycle"
+    },
+    {
+      "class": "com.aimanager.UsageReportJobJourneyTest",
+      "test": "realHttpJobsAreConsumedByProductionDartClient"
+    },
+    {
+      "class": "com.aimanager.UsageReportJourneyTest",
+      "test": "realHttpResponseIsConsumedByProductionDartReportClient"
+    }
+  ],
+  "h2Focused": {
+    "tests": 7,
+    "failed": 0
+  },
+  "mysqlFreshInitializationAndRestart": {
+    "tests": 1,
+    "failed": 0,
+    "temporaryDatabaseRemoved": true
+  },
+  "schemaPreservation": {
+    "preservedInitialPrefix": "072e4e01897b63d31b1756fe91acb0a572db42dd6577adc5bb184e772f6784ff",
+    "appendedUnmodified": [
+      {
+        "path": "backend\\src\\main\\resources\\db\\migration\\V3__managed_enterprise_bindings.sql",
+        "sha256": "2cb958feace2bdfb17b46f261416ad151837d3f97c97d10ff6cef5cfd165b55d"
+      },
+      {
+        "path": "backend\\src\\main\\resources\\db\\migration\\V4__managed_enrollment_intents.sql",
+        "sha256": "a9aed56a27190b5ecbd8c4365490cddfab400b3e659eedeeb7d844d04b9f0f4e"
+      }
+    ],
+    "resultSha256": "2602260cf00d6bdd5b706205f29340beeb4332553eda709d44e60fc3f260d71a"
+  },
+  "files": [
+    {
+      "path": "backend/src/main/resources/db/migration/V1__initial_schema.sql",
+      "sha256": "2602260cf00d6bdd5b706205f29340beeb4332553eda709d44e60fc3f260d71a"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V3__managed_enterprise_bindings.sql",
+      "deleted": true
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V4__managed_enrollment_intents.sql",
+      "deleted": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DatabaseInitializationTest.java",
+      "sha256": "cd12c4ff2a151b2f62e16b14e6bb316e9154a43a88bbae49ed3710f65c013547"
+    },
+    {
+      "path": "docs/version-1.0.0-initialization.md",
+      "sha256": "c941b23a339d0c43772f52d00a84aca0919bffad6f2baef5b896ad39a8f2c689"
+    },
+    {
+      "path": "docs/initial-baseline-managed-android-plan.md",
+      "sha256": "975bb5ea000d48fc72f896be3cc16bca856721425a2513b4a93f64f2198e0a62"
+    }
+  ],
+  "review": {
+    "reviewer": "gpt-6-astra",
+    "critical": 0,
+    "important": 0,
+    "minor": 0,
+    "result": "clean"
+  },
+  "rulings": [
+    "Ruling: keep vendor V2 event-publication initialization — database-specific Modulith schema is part of the same initial install and unrelated to historical release compatibility — cost if wrong: collapsing it would lose supported database adaptation.",
+    "Final: Ruling: live runtime verification remains a separate deployment gate — this six-file schema patch never modifies a running database — cost if wrong: a runtime configuration issue is only discovered during deployment acceptance.",
+    "Final: Ruling: 20 conditional skips remain unverified in this schema-only suite — list each skip and rely only on actually executed initialization evidence — cost if wrong: skipped integration-specific regressions need their own configured run."
+  ],
+  "deferredMinors": [],
+  "limitations": [
+    "Schema-only backend verify omitted cross-SDK, Android, and independent-ledger database configuration; conditional skips are listed explicitly.",
+    "Live environments are not modified by this schema verification. Current release candidate is pinned separately."
+  ]
+}
