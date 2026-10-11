@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
+import 'package:crypto/crypto.dart';
 import 'package:device_access/device_access.dart';
+import 'package:device_cleanup/device_cleanup.dart';
 import 'package:device_identity/device_identity.dart';
 import 'package:device_observation/device_observation.dart';
 import 'package:flutter/foundation.dart';
@@ -114,6 +116,61 @@ class AndroidObservationStore implements ObservationStore {
       await backend._flush();
     } catch (_) {
       throw const ObservationFailure('OBSERVATION_STORAGE_FAILED');
+    }
+  }
+}
+
+/// Stores one cleanup journal for one original registration. A distinct key
+/// prevents old or replacement registrations from reading each other's record.
+/// This uses the same Android encrypted SDK and native durable-write barrier as
+/// identity. One isolate must own a registration; there is no cross-process lock.
+class AndroidCleanupRecordStore implements CleanupRecordStore {
+  final AndroidIdentityStore backend;
+  final String _key;
+
+  AndroidCleanupRecordStore(CleanupScope scope,
+      {FlutterSecureStorage? storage,
+      MethodChannel channel =
+          const MethodChannel('com.aimanager.child/runtime'),
+      bool Function()? available})
+      : backend = AndroidIdentityStore(
+            storage: storage, channel: channel, available: available),
+        _key = 'cleanup_journal_v1_${sha256.convert(utf8.encode([
+          scope.tenantId,
+          scope.deviceId,
+          scope.registrationId,
+          scope.keyThumbprint
+        ].join('/')))}';
+
+  @override
+  Future<String?> read() async {
+    if (!backend.available()) {
+      throw const CleanupFailure('CLEANUP_JOURNAL_UNAVAILABLE');
+    }
+    try {
+      final value = await backend.storage.read(key: _key);
+      await backend._flush();
+      if (value != null && utf8.encode(value).length > 4096) {
+        throw const FormatException();
+      }
+      return value;
+    } catch (_) {
+      throw const CleanupFailure('CLEANUP_JOURNAL_UNAVAILABLE');
+    }
+  }
+
+  @override
+  Future<void> write(String record) async {
+    if (!backend.available() || utf8.encode(record).length > 4096) {
+      throw const CleanupFailure('CLEANUP_JOURNAL_UNAVAILABLE');
+    }
+    try {
+      await backend.storage.write(key: _key, value: record);
+      await backend._flush();
+    } catch (_) {
+      // A write can be durable even when its completion is lost. The journal
+      // invalidates memory and rereads this exact key before another send.
+      throw const CleanupFailure('CLEANUP_JOURNAL_UNAVAILABLE');
     }
   }
 }
