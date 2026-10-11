@@ -21,12 +21,20 @@ final client = CleanupCommandClient(
         identity.cleanupProof(action: action, operationId: operationId),
     nowMillis: hostTimeSource);
 final command = await client.fetchAndVerify();
-// command is verified evidence, not a call to execute cleanup.
+// This must be an atomic, durable, encrypted app-private record.
+final journal = CleanupReceiptJournal(
+    scope: scope, store: encryptedCleanupRecordStore,
+    nowMillis: hostTimeSource);
+await journal.load(command);
+final receipt = await journal.prepare(CleanupReceiptStage.received);
+final ack = await client.submitReceipt(receipt);
+await journal.acknowledge(receipt, ack);
+// A RECEIVED acknowledgement is not evidence of local deletion.
 client.close();
 ```
 
 `deploymentApiRoot` is a deployment-controlled HTTPS `/api/v1` URI, never a
-value copied from a user, QR code or JWS header. The read-only client obtains
+value copied from a user, QR code or JWS header. The client obtains
 the public ring and current command with separate fresh READ proofs, refuses
 redirects and limits response time and size. The verifier accepts one
 authenticated JWK set with at most 32 P-256 public
@@ -40,10 +48,20 @@ the original registration key and computes its RFC 7638 public thumbprint.
 Those proofs are bearer credentials until expiry and must not be logged or
 persisted. A device API 401 alone never authorizes local deletion.
 
+`submitReceipt` sends an explicit `CleanupReceipt` using a fresh RECEIPT proof
+bound to the verified operation. `CleanupReceiptJournal` durably saves the
+exact receipt ID, stage and body before the first send, and returns that same
+record after an unknown result. A failed store write blocks progress until a
+fresh read; restoring a journal requires the same newly verified command.
+The returned operation is an accepted-receipt snapshot, not a live status
+check. `AGENT_DATA_CLEARED` is permitted only after the host reports its own
+idempotent data clear to the journal. No cleaner is included yet.
+
 ## Delivery state
 
-Proof generation, read-only command retrieval and verification are present.
-The child runtime has not yet wired this client. A durable command/receipt
-journal, local agent-data deletion, final key removal, reboot recovery and
-real Android/TV validation remain to be built. This package has no path that
-performs a destructive operation.
+Proof generation, command retrieval/verification, explicit receipt submission
+and a reusable receipt journal are present. The child runtime has not yet
+wired this client or supplied a production encrypted store. Local agent-data
+deletion, final key removal, full reboot recovery and real Android/TV
+validation remain to be built. This package has no path that performs a local
+destructive operation.

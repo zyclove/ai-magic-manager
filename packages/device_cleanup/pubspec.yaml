@@ -10,5 +10,6 @@ dependencies:
     path: ../device_identity
   http: 1.6.0
   jose: 0.3.5+2
+  uuid: ^4.4.2
 dev_dependencies:
   lints: ^3.0.0

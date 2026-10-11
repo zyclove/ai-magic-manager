@@ -4,7 +4,8 @@ import 'package:device_identity/device_identity.dart'
 /// Diagnostics never include command content, signatures or private keys.
 class CleanupFailure implements Exception {
   final String code;
-  const CleanupFailure(this.code);
+  final bool outcomeUnknown;
+  const CleanupFailure(this.code, {this.outcomeUnknown = false});
   @override
   String toString() => 'CleanupFailure($code)';
 }

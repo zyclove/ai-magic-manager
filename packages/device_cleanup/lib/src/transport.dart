@@ -1,14 +1,15 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:device_identity/device_identity.dart'
-    show CleanupProof, validUuid, safeInteger;
+    show CleanupProof, DeviceIdentityFailure, validUuid, safeInteger;
 import 'package:http/http.dart' as http;
 import 'models.dart';
+import 'receipt.dart';
 import 'verifier.dart';
 
-/// Read-only command discovery. The proof callback must use the original
-/// registration key, and the API root must be deployment-controlled. A 401
-/// from another API is never interpreted as cleanup authorization.
+/// Command discovery and explicit receipt submission. The proof callback must
+/// use the original registration key, and the API root must be deployment-
+/// controlled. A 401 from another API is never cleanup authorization.
 class CleanupCommandClient {
   final CleanupScope scope;
   final Uri apiRoot;
@@ -58,8 +59,8 @@ class CleanupCommandClient {
   /// Both reads are authenticated separately because a 60-second proof may
   /// expire between requests. No received command is persisted or executed.
   Future<VerifiedCleanupCommand> fetchAndVerify() async {
-    final ring = await _get('signing-keys');
-    final command = await _get('command');
+    final ring = await _request('GET', 'signing-keys', action: 'READ');
+    final command = await _request('GET', 'command', action: 'READ');
     if (command.length != 4 ||
         !validUuid(command['operationId']) ||
         !validUuid(command['commandId']) ||
@@ -82,46 +83,89 @@ class CleanupCommandClient {
         notAfter: command['notAfter']);
   }
 
-  Future<Map<String, dynamic>> _get(String suffix) async {
+  /// The caller owns a durable receipt record and must replay the same body
+  /// after an unknown result. A 200 response is only a receipt acknowledgement,
+  /// not independent proof of local deletion or current operation state.
+  Future<CleanupReceiptAck> submitReceipt(CleanupReceipt receipt) async {
+    final command = receipt.command;
+    if (command.scope.tenantId != scope.tenantId ||
+        command.scope.deviceId != scope.deviceId ||
+        command.scope.registrationId != scope.registrationId ||
+        command.scope.keyThumbprint != scope.keyThumbprint) {
+      throw const CleanupFailure('CLEANUP_IDENTITY_CHANGED');
+    }
+    final now = nowMillis();
+    if (!safeInteger(now, minimum: 1)) {
+      throw const CleanupFailure('CLOCK_UNTRUSTED');
+    }
+    if (now + 300000 < command.issuedAt) {
+      throw const CleanupFailure('CLOCK_UNTRUSTED');
+    }
+    if (now >= command.notAfter) {
+      throw const CleanupFailure('CLEANUP_COMMAND_EXPIRED');
+    }
+    final result = await _request('POST', 'receipts',
+        action: 'RECEIPT',
+        operationId: command.operationId,
+        body: receipt.body);
+    return CleanupReceiptAck.parse(result, receipt);
+  }
+
+  Future<Map<String, dynamic>> _request(String method, String suffix,
+      {required String action,
+      String? operationId,
+      Map<String, dynamic>? body}) async {
     if (_closed) throw const CleanupFailure('CLEANUP_CLIENT_CLOSED');
+    final writing = method == 'POST';
     final abort = Completer<void>();
     _active.add(abort);
+    var sent = false;
     void cancel() {
       if (!abort.isCompleted) abort.complete();
     }
 
     Future<Map<String, dynamic>> execute() async {
-      final proof = await proofFactory('READ', null);
+      final proof = await proofFactory(action, operationId);
       if (proof.keyThumbprint != scope.keyThumbprint) {
         throw const CleanupFailure('CLEANUP_IDENTITY_CHANGED');
       }
       if (_closed) throw const CleanupFailure('CLEANUP_CLIENT_CLOSED');
-      final request = http.AbortableRequest('GET',
+      final request = http.AbortableRequest(method,
           apiRoot.replace(path: '${apiRoot.path}/device-cleanup/$suffix'),
           abortTrigger: abort.future)
         ..followRedirects = false
         ..maxRedirects = 0
         ..headers['Accept'] = 'application/json'
         ..headers['Authorization'] = 'Bearer ${proof.compact}';
+      if (body != null) {
+        request.headers['Content-Type'] = 'application/json';
+        request.body = jsonEncode(body);
+      }
+      sent = true;
       final response = await _client.send(request);
       if (response.statusCode >= 300 && response.statusCode < 400) {
-        throw const CleanupFailure('CLEANUP_REDIRECT_REFUSED');
+        throw CleanupFailure('CLEANUP_REDIRECT_REFUSED',
+            outcomeUnknown: writing);
       }
       final bytes = <int>[];
       await for (final part in response.stream) {
         if (bytes.length + part.length > maxResponseBytes) {
-          throw const CleanupFailure('CLEANUP_RESPONSE_INVALID');
+          throw CleanupFailure('CLEANUP_RESPONSE_INVALID',
+              outcomeUnknown: writing);
         }
         bytes.addAll(part);
       }
-      if (_closed) throw const CleanupFailure('CLEANUP_CLIENT_CLOSED');
+      if (_closed) {
+        throw CleanupFailure('CLEANUP_CLIENT_CLOSED', outcomeUnknown: writing);
+      }
       if (response.statusCode == 401 ||
           response.statusCode == 403 ||
           response.statusCode == 404) {
-        throw const CleanupFailure('CLEANUP_NOT_AVAILABLE');
+        throw CleanupFailure('CLEANUP_NOT_AVAILABLE', outcomeUnknown: writing);
       }
       if (response.statusCode != 200) {
-        throw const CleanupFailure('CLEANUP_SERVICE_UNAVAILABLE');
+        throw CleanupFailure('CLEANUP_SERVICE_UNAVAILABLE',
+            outcomeUnknown: writing);
       }
       if (response.headers['content-type']
               ?.split(';')
@@ -129,7 +173,8 @@ class CleanupCommandClient {
               .trim()
               .toLowerCase() !=
           'application/json') {
-        throw const CleanupFailure('CLEANUP_RESPONSE_INVALID');
+        throw CleanupFailure('CLEANUP_RESPONSE_INVALID',
+            outcomeUnknown: writing);
       }
       try {
         final decoded = jsonDecode(utf8.decode(bytes));
@@ -137,19 +182,23 @@ class CleanupCommandClient {
       } catch (_) {
         // Do not expose server response bodies in diagnostics.
       }
-      throw const CleanupFailure('CLEANUP_RESPONSE_INVALID');
+      throw CleanupFailure('CLEANUP_RESPONSE_INVALID', outcomeUnknown: writing);
     }
 
     try {
       return await execute().timeout(timeout, onTimeout: () {
         cancel();
-        throw const CleanupFailure('CLEANUP_NETWORK_TIMEOUT');
+        throw CleanupFailure('CLEANUP_NETWORK_TIMEOUT',
+            outcomeUnknown: writing && sent);
       });
     } on CleanupFailure {
       rethrow;
+    } on DeviceIdentityFailure {
+      throw const CleanupFailure('CLEANUP_KEY_UNAVAILABLE');
     } catch (_) {
       throw CleanupFailure(
-          _closed ? 'CLEANUP_CLIENT_CLOSED' : 'CLEANUP_NETWORK_UNAVAILABLE');
+          _closed ? 'CLEANUP_CLIENT_CLOSED' : 'CLEANUP_NETWORK_UNAVAILABLE',
+          outcomeUnknown: writing && sent);
     } finally {
       cancel();
       _active.remove(abort);
