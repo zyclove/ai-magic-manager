@@ -41,8 +41,8 @@ class ObservationView extends StatelessWidget {
                       icon: const Icon(Icons.privacy_tip_outlined),
                       label: const Text('修改观察授权')),
               ])),
-          const Notice('观察与系统控制分开：清单仅含可见启动应用；使用摘要是设备自报系统聚合。'
-              '不读取摄像头、原始行为或网页内容，不将重叠区间相加为今日总量，也不用于精确计费。'),
+          const Notice('观察与系统控制分开：清单仅含可见启动应用；新采样按设备本地日请求系统聚合。'
+              '旧报告可能使用较短请求区间，均须查看实际系统区间。不读取摄像头、原始行为或网页内容，不将重叠区间相加为今日总量，也不用于精确额度扣减。'),
           const SizedBox(height: 16),
           if (busy) ...[
             const LinearProgressIndicator(),

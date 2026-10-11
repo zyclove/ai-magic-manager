@@ -78,7 +78,7 @@ class ObservationSection extends StatelessWidget {
                 title: const Text('允许查看系统使用摘要'),
                 content: const SingleChildScrollView(
                     child: Text('监护人已允许使用摘要。接下来由系统设置决定本应用能否访问系统聚合数据。\n\n'
-                        '只报告当前用户可见启动应用的聚合区间与时长，不读取原始操作事件、网页内容或摄像头。该访问不会阻止其他应用。\n\n'
+                        '手动同步时按设备本地当天查询，只报告当前用户可见启动应用的系统日聚合区间与时长；不读取原始操作事件、网页内容或摄像头。该访问不会阻止其他应用。\n\n'
                         '你可以在系统中撤回访问。返回后会重新核对，未满足两项授权前不会读取使用记录。')),
                 actions: [
                   TextButton(
@@ -136,7 +136,7 @@ class ObservationSection extends StatelessWidget {
       const SizedBox(height: 8),
       Text('摘要最近确认：${_time(view.lastUsageAt)}'),
       if (view.lastUsageAt != null)
-        Text('最近报告 ${view.usageCount} 条系统聚合记录；区间可能超出查询范围，不作为精确计费。'),
+        Text('最近报告 ${view.usageCount} 条系统日聚合记录；区间可能超出查询范围，不代表精确小时，也不作为额度扣减依据。'),
       if (view.pendingReports > 0)
         Padding(
             padding: const EdgeInsets.only(top: 8),

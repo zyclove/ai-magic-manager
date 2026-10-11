@@ -135,8 +135,16 @@ class ObservationAgent {
         if (journal.pendingUsage == null &&
             (journal.lastUsageAt == null ||
                 now - journal.lastUsageAt! >= 60000)) {
+          // Android INTERVAL_DAILY 以设备本地日为桶。请求最近一小时仍会返回
+          // 当天的聚合，进而把日报的覆盖时长错误标成一小时。
+          final localNow = DateTime.fromMillisecondsSinceEpoch(now);
+          final dayStart = DateTime(localNow.year, localNow.month, localNow.day)
+              .millisecondsSinceEpoch;
+          if (dayStart >= now) {
+            return journal.view(platform: facts, online: true);
+          }
           final sample =
-              await source.usage(queryStart: now - 3600000, queryEnd: now);
+              await source.usage(queryStart: dayStart, queryEnd: now);
           _check(generation);
           if (sample.profile != facts.profile ||
               sample.observedAt > nowMillis() + 300000 ||
