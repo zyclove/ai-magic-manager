@@ -32,12 +32,20 @@ final class ContractSubmissionPolicy {
   }
 
   void requireAllowed(ContractEvidence evidence) {
+    requireIssuer();
     if (evidence.state() == State.ACTIVE) requireActive();
   }
 
   void requireActive() {
+    requireIssuer();
     if (!activeSubmissionsEnabled) {
       throw new DomainException(HttpStatus.CONFLICT, "CONTRACT_ACTIVE_SUBMISSIONS_PAUSED");
+    }
+  }
+
+  private void requireIssuer() {
+    if (!evidenceEnabled) {
+      throw new DomainException(HttpStatus.SERVICE_UNAVAILABLE, "CONTRACT_PROVIDER_UNAVAILABLE");
     }
   }
 }

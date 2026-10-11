@@ -20,7 +20,7 @@ class ApiFailure implements Exception {
         'INVALID_REPORT_JOB_RESPONSE' => '任务或结果与所选设备不一致，已隐藏结果。请刷新任务后重试。',
         'INVALID_COMMERCIAL_RESPONSE' => '商业权益数据校验未通过，已隐藏结果。请刷新后重试。',
         'INVALID_CONTRACT_RESPONSE' => '合同数据校验未通过，已隐藏结果。请刷新后重试。',
-        'CONTRACT_PROVIDER_UNAVAILABLE' => '机构合同证据提供方尚未启用，暂不能提交新合同。',
+        'CONTRACT_PROVIDER_UNAVAILABLE' => '机构合同签发方当前不可用，提交、审批和机构确认已暂停；已有记录仍可查看。',
         'CONTRACT_ACTIVE_SUBMISSIONS_PAUSED' =>
           '新机构合同受理已暂停。已签名的撤销事实仍可提交；请先核对当前合同状态。',
         'INVALID_CONTRACT_EVIDENCE' => '签名断言无效、过期或与可信来源不一致，请重新从签发方获取。',
