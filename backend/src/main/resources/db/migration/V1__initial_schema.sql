@@ -1343,8 +1343,8 @@ CREATE TABLE erasure_recovery_steps (
     CONSTRAINT fk_erasure_step_job FOREIGN KEY(request_id) REFERENCES erasure_recovery_jobs(request_id),
     CONSTRAINT ck_erasure_step_version CHECK(handler_version>0),
     CONSTRAINT ck_erasure_step_counts CHECK(rows_processed>=0 AND batches_processed>=0),
-    CONSTRAINT ck_erasure_step_phase CHECK(phase IN ('REPORTS','DATA','DONE')),
-    CONSTRAINT ck_erasure_step_cursor CHECK(phase='REPORTS' OR cursor_id IS NULL)
+    CONSTRAINT ck_erasure_step_phase CHECK(phase IN ('REPORTS','EVENTS','VERIFY','RECHECK','DATA','DONE')),
+    CONSTRAINT ck_erasure_step_cursor CHECK(phase IN ('REPORTS','EVENTS','VERIFY','RECHECK') OR cursor_id IS NULL)
 );
 
 -- Institution device groups are part of the initial 1.0.0 schema.

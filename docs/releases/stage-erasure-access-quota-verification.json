@@ -1,0 +1,195 @@
+{
+  "recordedAt": "2026-10-11T12:33:58.014697+00:00",
+  "applicationVersion": "1.0.0",
+  "status": "source-verified-not-deployed",
+  "base": "8bbe3f052449d15ec915457a5113874006116b57",
+  "deployed": false,
+  "existingBusinessDatabaseModified": false,
+  "existingErasureLedgerModified": false,
+  "historicalMigrationAdded": false,
+  "sourceFiles": [
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureAccessQuotaProcessor.java",
+      "sha256": "4cf477dd8964d61e192a6e9e001f4ebf279d2b3488295ef3ccf2c81e2b592e30"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureAccessQuotaProcessorTest.java",
+      "sha256": "27a260cac1de129a48bf7aa1a2655e3dfcb55d49ab668da8c5bd98a439b605a4"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V1__initial_schema.sql",
+      "sha256": "072e4e01897b63d31b1756fe91acb0a572db42dd6577adc5bb184e772f6784ff"
+    }
+  ],
+  "testRuns": [
+    {
+      "name": "final-focused-h2",
+      "total": 58,
+      "passed": 58,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".local/erasure-access-quota-final-h2.log",
+      "sha256": "4e2c873a1d1ce519bbfd67693d6a3b80ec470f318c7172186971dc4c256c27c3"
+    },
+    {
+      "name": "final-mysql-processors-recovery",
+      "total": 73,
+      "passed": 73,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".local/erasure-access-quota-corrected-mysql.log",
+      "sha256": "920c5eb102cd8e9392a747ef6f307a8cafc0ab5479855d11dbcb3036914ec76b"
+    },
+    {
+      "name": "mysql-fresh-initialization",
+      "total": 1,
+      "passed": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".local/erasure-access-quota-initialization-mysql.log",
+      "sha256": "1f28e5f6f805eea676220d08484b55a986876dd9a8b8ab3ed49eacc66ae78c9e"
+    },
+    {
+      "name": "final-full-backend",
+      "total": 674,
+      "passed": 666,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 8,
+      "log": ".local/erasure-access-quota-full.log",
+      "sha256": "d372cd40f0b8381887244261aa8c86eda92311c28571f1652bf7003ebe005549"
+    }
+  ],
+  "testCountsOverlap": true,
+  "reportSuiteCount": 69,
+  "skippedSuites": [
+    {
+      "class": "com.aimanager.AndroidChildSubmissionJourneyTest",
+      "skipped": 1
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureAdmissionStoreTest",
+      "skipped": 1
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "skipped": 4
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+      "skipped": 2
+    }
+  ],
+  "review": {
+    "passes": 1,
+    "reviewedHashes": [
+      {
+        "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureAccessQuotaProcessor.java",
+        "sha256": "c4a3693c2e70563987af0af511950da48e4e4d66033da390c7b6a4a37527a7b3"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureAccessQuotaProcessorTest.java",
+        "sha256": "91f9b88caccd7cb52d1b188be4681c83eeefc50627be8eb16f8585d426595eca"
+      },
+      {
+        "path": "backend/src/main/resources/db/migration/V1__initial_schema.sql",
+        "sha256": "2bbbbaa005c7af4a1331cd99e1facaa578a7d2323aac111e7afeb538f2f3c3c4"
+      }
+    ],
+    "originalFindings": [
+      {
+        "severity": "P2",
+        "issue": "Request cascade deleted unbounded notification rows and undercounted physical work",
+        "fix": "Explicit bounded notification/read leaves, parent ownership checks and peer preservation"
+      },
+      {
+        "severity": "P2",
+        "issue": "DATA/DONE rechecks trusted aggregate columns without checking reappeared JSON payloads",
+        "fix": "Bounded VERIFY before data batches and RECHECK on DONE replay; strict payload validation on every page"
+      }
+    ],
+    "fixPasses": 1,
+    "reproductionTests": 5,
+    "reproductionFailures": 5,
+    "reproductionErrors": 0,
+    "fixVerification": "Final H2/MySQL and full regression; no second independent review",
+    "minorFindings": [],
+    "secondReviewPerformed": false
+  },
+  "testFixtureCorrection": "Initial MySQL run rejected 65537-byte TEXT fixture before processor invocation. Test now separately asserts MySQL storage rejection or H2 processor rejection of oversized valid JSON; both preserve rows and checkpoint.",
+  "priorRuns": [
+    {
+      "log": ".local/erasure-access-quota-red-final.log",
+      "total": 11,
+      "failures": 11,
+      "errors": 0,
+      "reason": "Missing processor behavior",
+      "sha256": "1e09eb20c9e813ac0b7cf1a7eb38db4749134d835030cfbe3dac010af2c7796f"
+    },
+    {
+      "log": ".local/erasure-access-quota-mysql.log",
+      "total": 66,
+      "failures": 0,
+      "errors": 1,
+      "reason": "Oversized TEXT test fixture rejected by MySQL storage",
+      "sha256": "be05b219f3f525768d2e0ac6a7bda01eb7b28f4ec20a71ee0f5c6a83d49ca426"
+    },
+    {
+      "log": ".local/erasure-access-quota-mysql-final.log",
+      "total": 67,
+      "failures": 0,
+      "errors": 0,
+      "reason": "Pre-review-fix MySQL run; superseded by corrected final run",
+      "sha256": "84540718cd45852797718b13430d00eb6455a8c08d80367c73cce2e776bb2d64"
+    },
+    {
+      "log": ".local/erasure-access-quota-review-red.log",
+      "total": 30,
+      "failures": 5,
+      "errors": 0,
+      "reason": "Two review findings reproduced in five tests",
+      "sha256": "9d58a11ff934c2e58f059bc9b1a6d6f855a0deca1299cf2091696e03dc02ad2c"
+    }
+  ],
+  "coveredStores": [
+    "access_requests",
+    "access_request_slots",
+    "access_request_decisions",
+    "access_window_documents",
+    "access_window_receipts",
+    "access_window_attempts",
+    "access_window_attempt_receipts",
+    "quota_calendars",
+    "quota_pools",
+    "quota_leases",
+    "quota_lease_pools",
+    "quota_ledger",
+    "quota_outbox",
+    "quota_plans",
+    "quota_plan_revisions",
+    "notification_events",
+    "notification_reads"
+  ],
+  "behavior": [
+    "Tenant/subject/immutable-registration scope; missing historical registrations and cross-subject edges block mutation",
+    "Supported event fields and parent identity strictly checked before event deletion, before data batches and on DONE revalidation",
+    "At most 25 event payloads read per invocation and at most 25 physical domain rows deleted; cursors resume verification across calls",
+    "Notification leaves removed explicitly before requests, no hidden cascade undercount",
+    "Data changes and checkpoint commit atomically through fenced journal-verified transaction",
+    "DONE replay may return RECHECK until all retained event pages checked; deletion total unchanged, verification batch count may increase",
+    "No global job completion or traffic reopening"
+  ],
+  "limitations": [
+    "Only named 17 stores plus previously implemented observation/report stage; other domains remain incomplete",
+    "Public submission/MFA/confirmation/progress UI, target-specific isolation, global completion and automatic worker remain unavailable",
+    "Generic idempotency, other event/external copies, credentials, shared configuration, retention policy and real backup-restore exercise still require work",
+    "Requires durable global admission pause and drained business work; arbitrary concurrent database writes outside the gate are unsupported",
+    "Repeated bounded verification may require many calls for large retained event sets; production-scale throughput and OceanBase not certified",
+    "Final snapshot is based on recorded commit plus only named sources; later unrelated commits and shared WIP excluded",
+    "Full backend interop uses existing frozen report-child-ui/report-web/support-package-web clients, not latest unrelated client changes",
+    "Existing localhost:18099 runtime remains on prior release; this source batch has not been deployed"
+  ]
+}
