@@ -379,6 +379,73 @@ class DeviceGroupService implements DeviceGroupPolicyAccess {
         });
   }
 
+  /** Remove an exact list of historical registrations without affecting device enrollment. */
+  @Transactional(timeout = 15)
+  Group removeMembers(
+      String tenant,
+      Jwt actor,
+      String groupId,
+      List<DeviceTarget> targets,
+      String etag,
+      String key) {
+    canWrite(tenant, actor);
+    long expected = ResourceVersions.require(etag);
+    if (key == null) throw DomainException.invalid("IDEMPOTENCY_KEY_REQUIRED");
+    if (targets == null || targets.isEmpty() || targets.size() > 50
+        || targets.stream().anyMatch(t -> t == null || t.deviceId() == null
+            || t.registrationId() == null)
+        || new HashSet<>(targets.stream().map(DeviceTarget::deviceId).toList()).size()
+            != targets.size()) {
+      throw DomainException.invalid("INVALID_DEVICE_GROUP_BATCH");
+    }
+    var ordered = targets.stream().sorted(java.util.Comparator.comparing(DeviceTarget::deviceId)).toList();
+    return idempotency.execute(
+        tenant,
+        actor.getSubject(),
+        "device.group.members.remove",
+        key,
+        Map.of("group", groupId, "targets", ordered, "version", expected),
+        Group.class,
+        () -> {
+          Group current = read(tenant, groupId, true);
+          ResourceVersions.check(expected, current.version());
+          active(current);
+          for (var target : ordered) {
+            var existing = db.queryForList(
+                "SELECT registration_id FROM device_group_members WHERE tenant_id=?"
+                    + " AND group_id=? AND device_id=? FOR UPDATE",
+                String.class,
+                tenant,
+                groupId,
+                target.deviceId());
+            if (existing.isEmpty()) {
+              throw new DomainException(HttpStatus.CONFLICT, "DEVICE_GROUP_MEMBER_UNAVAILABLE");
+            }
+            if (!target.registrationId().equals(existing.get(0))) {
+              throw new DomainException(HttpStatus.CONFLICT, "DEVICE_GROUP_STALE_MEMBERSHIP");
+            }
+          }
+          long now = clock.millis();
+          for (var target : ordered) {
+            db.update(
+                "DELETE FROM device_group_members WHERE tenant_id=? AND group_id=?"
+                    + " AND device_id=? AND registration_id=?",
+                tenant,
+                groupId,
+                target.deviceId(),
+                target.registrationId());
+            audit.record(tenant, actor.getSubject(), "DEVICE_GROUP_MEMBER_REMOVED",
+                groupId + "/" + target.deviceId());
+          }
+          db.update(
+              "UPDATE device_groups SET version=version+1,updated_at=? WHERE tenant_id=? AND id=?",
+              now,
+              tenant,
+              groupId);
+          return read(tenant, groupId, true);
+        });
+  }
+
   @Transactional(readOnly = true, timeout = 10)
   ItemPage<Member> members(String tenant, String actor, String id, int limit, String cursor) {
     canRead(tenant, actor);

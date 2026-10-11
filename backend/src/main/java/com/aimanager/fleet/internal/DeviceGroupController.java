@@ -120,6 +120,21 @@ class DeviceGroupController {
     return response(groups.addMembers(tenantId, actor, groupId, targets, etag, key), HttpStatus.OK);
   }
 
+  /** Bulk directory cleanup; this does not revoke enrollment or published device policies. */
+  @PostMapping("/{groupId}/devices/removals")
+  ResponseEntity<DeviceGroupService.Group> removeBatch(
+      @AuthenticationPrincipal Jwt actor,
+      @PathVariable String tenantId,
+      @PathVariable String groupId,
+      @Valid @RequestBody Batch body,
+      @RequestHeader(name = "If-Match", required = false) String etag,
+      @RequestHeader(name = "Idempotency-Key", required = false) String key) {
+    var targets = body.devices().stream()
+        .map(d -> new DeviceGroupService.DeviceTarget(d.deviceId(), d.registrationId()))
+        .toList();
+    return response(groups.removeMembers(tenantId, actor, groupId, targets, etag, key), HttpStatus.OK);
+  }
+
   @DeleteMapping("/{groupId}/devices/{deviceId}")
   ResponseEntity<DeviceGroupService.Group> remove(
       @AuthenticationPrincipal Jwt actor,

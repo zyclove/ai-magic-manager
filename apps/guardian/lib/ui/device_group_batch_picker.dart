@@ -8,12 +8,14 @@ import 'design.dart';
 class DeviceGroupBatchPicker extends StatefulWidget {
   final Api api;
   final String root;
+  final String? groupId;
   final bool Function() current;
 
   const DeviceGroupBatchPicker(
       {super.key,
       required this.api,
       required this.root,
+      this.groupId,
       required this.current});
 
   @override
@@ -26,6 +28,8 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
   String? cursor;
   Object? error;
   bool loading = false;
+  bool get removing => widget.groupId != null;
+  String idOf(Json row) => row[removing ? 'deviceId' : 'id'] as String;
 
   @override
   void initState() {
@@ -43,17 +47,20 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
       error = null;
     });
     try {
-      final page = await widget.api
-          .page('${widget.root}/devices', cursor: requestedCursor);
+      final path = removing
+          ? '${widget.root}/device-groups/${widget.groupId}/devices'
+          : '${widget.root}/devices';
+      final page = await widget.api.page(path, cursor: requestedCursor);
       if (!mounted || !widget.current()) return;
-      final seen = more ? devices.map((d) => d['id']).toSet() : <Object?>{};
+      final seen = more ? devices.map(idOf).toSet() : <String>{};
       for (final row in page.items) {
-        if (row['id'] is! String ||
+        if (row[removing ? 'deviceId' : 'id'] is! String ||
             row['registrationId'] is! String ||
             row['displayName'] is! String ||
             row['state'] is! String ||
             row['platform'] is! String ||
-            !seen.add(row['id'])) {
+            (removing && row['membershipStatus'] is! String) ||
+            !seen.add(idOf(row))) {
           throw const ApiFailure(502, 'INVALID_DEVICE_GROUP_RESPONSE');
         }
       }
@@ -70,7 +77,7 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
   }
 
   void toggle(Json row) {
-    final id = row['id'] as String;
+    final id = idOf(row);
     setState(() {
       if (selected.containsKey(id)) {
         selected.remove(id);
@@ -89,9 +96,12 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text('批量加入设备组', style: Theme.of(context).textTheme.titleLarge),
+                Text(removing ? '批量移出设备组' : '批量加入设备组',
+                    style: Theme.of(context).textTheme.titleLarge),
                 const SizedBox(height: 8),
-                const Text('仅可选择已激活的本机构设备；单次最多 50 台。确认时会重新核对每台设备的注册周期。'),
+                Text(removing
+                    ? '可清理停用、旧注册周期及其他成员；单次最多 50 台。移出不撤销设备注册或已有独立策略。'
+                    : '仅可选择已激活的本机构设备；单次最多 50 台。确认时会重新核对每台设备的注册周期。'),
                 const SizedBox(height: 12),
                 Text('已选择 ${selected.length} / 50 台',
                     style: Theme.of(context).textTheme.titleMedium),
@@ -101,7 +111,8 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
                   FailureView(error!, retry: () => load(more: cursor != null)),
                 Expanded(
                   child: devices.isEmpty && !loading && error == null
-                      ? const EmptyView('没有可选设备', '请先注册并激活机构设备。')
+                      ? EmptyView(removing ? '组内没有设备' : '没有可选设备',
+                          removing ? '当前设备组已没有需要清理的成员。' : '请先注册并激活机构设备。')
                       : ListView.builder(
                           itemCount: devices.length + (cursor == null ? 0 : 1),
                           itemBuilder: (context, index) {
@@ -114,18 +125,19 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
                               );
                             }
                             final row = devices[index];
-                            final id = row['id'] as String;
+                            final id = idOf(row);
                             final active = row['state'] == 'ACTIVE';
                             final checked = selected.containsKey(id);
                             return CheckboxListTile(
                               value: checked,
-                              onChanged:
-                                  active && (checked || selected.length < 50)
-                                      ? (_) => toggle(row)
-                                      : null,
+                              onChanged: (removing || active) &&
+                                      (checked || selected.length < 50)
+                                  ? (_) => toggle(row)
+                                  : null,
                               title: Text(row['displayName'] as String),
                               subtitle: Text(
-                                  '${label(row['platform'])} · ${label(row['state'])}\n$id'),
+                                  '${label(row['platform'])} · ${label(row['state'])}'
+                                  '${removing ? ' · ${label(row['membershipStatus'])}' : ''}\n$id'),
                               isThreeLine: true,
                               controlAffinity: ListTileControlAffinity.leading,
                             );
@@ -145,7 +157,8 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
                             ? null
                             : () => Navigator.of(context)
                                 .pop(List<Json>.unmodifiable(selected.values)),
-                        child: Text('核对并加入 ${selected.length} 台')),
+                        child: Text(
+                            '核对并${removing ? '移出' : '加入'} ${selected.length} 台')),
                   ],
                 ),
               ],

@@ -117,14 +117,6 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     return List.unmodifiable(rows);
   }
 
-  String membershipLabel(Object? status) => switch (status) {
-        'CURRENT' => '关联有效',
-        'STALE_REGISTRATION' => '注册周期已变更',
-        'DEVICE_INACTIVE' => '设备未激活',
-        'PROFILE_ARCHIVED' => '儿童档案已归档',
-        _ => '关联状态未知'
-      };
-
   Future<void> open(String id) async {
     if (!current) return;
     final revision = ++generation;
@@ -345,6 +337,49 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
     if (current && result != null) await open(group['id'] as String);
   }
 
+  Future<void> removeDevices() async {
+    if (!current || detail == null) return;
+    final group = Map<String, dynamic>.of(detail!);
+    final chosen = await showDialog<List<Json>>(
+        context: context,
+        builder: (ctx) {
+          dialog = ModalRoute.of(ctx);
+          return DeviceGroupBatchPicker(
+              api: widget.session.api,
+              root: root,
+              groupId: group['id'] as String,
+              current: () => current);
+        });
+    dialog = null;
+    if (!current ||
+        chosen == null ||
+        chosen.isEmpty ||
+        selectedId != group['id']) return;
+    final key = requestId();
+    final names = chosen.take(3).map((row) => row['displayName']).join('、');
+    final suffix = chosen.length > 3 ? '等' : '';
+    final result = await confirm(
+        title: '批量移出设备组',
+        description:
+            '将 $names$suffix ${chosen.length} 台设备从“${group['name']}”移出。整批按当前组版本及原注册周期核对；不会撤销设备注册或已发布的独立配置。',
+        submit: '确认移出 ${chosen.length} 台',
+        operation: () => widget.session.api.send(
+              'POST',
+              '$root/device-groups/${group['id']}/devices/removals',
+              body: {
+                'devices': chosen
+                    .map((row) => {
+                          'deviceId': row['deviceId'],
+                          'registrationId': row['registrationId']
+                        })
+                    .toList()
+              },
+              version: group['version'] as int,
+              key: key,
+            ));
+    if (current && result != null) await open(group['id'] as String);
+  }
+
   Future<void> removeDevice(Json member) async {
     if (!current || detail == null) return;
     final group = Map<String, dynamic>.of(detail!);
@@ -484,6 +519,10 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
                   icon: const Icon(Icons.playlist_add_check),
                   label: const Text('批量加入')),
               OutlinedButton.icon(
+                  onPressed: removeDevices,
+                  icon: const Icon(Icons.playlist_remove),
+                  label: const Text('批量移出')),
+              OutlinedButton.icon(
                   onPressed: rename,
                   icon: const Icon(Icons.edit_outlined),
                   label: const Text('修改名称')),
@@ -511,7 +550,7 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
                     contentPadding: EdgeInsets.zero,
                     title: Text('${member['displayName']}'),
                     subtitle: Text(
-                        '${label(member['platform'])} · ${label(member['state'])} · ${membershipLabel(member['membershipStatus'])}\n设备 ${member['deviceId']} · 注册 ${member['registrationId']}'),
+                        '${label(member['platform'])} · ${label(member['state'])} · ${label(member['membershipStatus'])}\n设备 ${member['deviceId']} · 注册 ${member['registrationId']}'),
                     isThreeLine: true,
                     trailing: detail!['state'] == 'ACTIVE'
                         ? IconButton(
