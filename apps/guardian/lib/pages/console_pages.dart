@@ -22,6 +22,7 @@ import 'usage_reports_page.dart';
 import 'editors.dart';
 import 'device_exit_dialog.dart';
 import 'device_diagnostic_dialog.dart';
+import 'device_capabilities_dialog.dart';
 import 'diagnostic_packages_dialog.dart';
 import 'quota_page.dart';
 import 'ownership_page.dart';
@@ -610,9 +611,13 @@ class ConsoleActions {
 
   Future<void> deviceDetails(Json row) async {
     final workspace = root;
+    final openedRole = s.role;
     final r =
         await s.api.send('GET', '$workspace/devices/${row['id']}') as Json;
-    if (!context.mounted || s.root != workspace) return;
+    if (!context.mounted ||
+        s.tenant == null ||
+        s.root != workspace ||
+        s.role != openedRole) return;
     await actionDetails(
         context,
         r['displayName'],
@@ -657,15 +662,20 @@ class ConsoleActions {
               await openDeviceObservation(ctx, s, r);
             }, closeOnSuccess: false),
           DetailAction('能力详情', (ctx) async {
-            final value = await s.api
-                .send('GET', '$root/devices/${r['id']}/capabilities') as Json;
+            if (s.tenant == null ||
+                s.root != workspace ||
+                s.role != openedRole) {
+              throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+            }
+            final value = await s.api.send(
+                'GET', '$workspace/devices/${r['id']}/capabilities') as Json;
+            if (s.tenant == null ||
+                s.root != workspace ||
+                s.role != openedRole) {
+              throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+            }
             if (ctx.mounted) {
-              await showDetails(ctx, '设备能力', {
-                '说明': '设备自报权限不等于系统执行能力已经认证。',
-                for (final item in value['items'] as List)
-                  label(item['key']):
-                      '${label(item['status'])} · ${label(item['grantStatus'])}\n${label(item['limitationCode'])}\n最近检查：${dateLabel(item['checkedAt'])}'
-              });
+              await showDeviceCapabilitiesDialog(ctx, s, r, value);
             }
           }),
           if (s.role != 'TEACHER')

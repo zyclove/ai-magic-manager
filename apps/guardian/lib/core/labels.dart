@@ -20,6 +20,7 @@ const labels = <String, String>{
   'GRANTED': '设备自报已授予',
   'MANAGED_REGISTRATION_REQUIRED': '需要受管设备注册与正式执行适配器',
   'EVIDENCE_NOT_CERTIFIED': '设备自报信息尚未认证',
+  'CAPABILITY_RESPONSE_INVALID': '设备能力数据不完整，请稍后重试或联系管理员',
   'ENFORCEMENT_ADAPTER_UNAVAILABLE': '执行适配器尚未接入',
   'FAMILY': '家庭',
   'ORGANIZATION': '教育机构',
