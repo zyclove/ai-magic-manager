@@ -433,6 +433,14 @@ class ChildSession extends ChangeNotifier {
       _run(() => identity.begin(parseRegistrationTicket(ticket),
           displayName: displayName, osVersion: osVersion));
   Future<bool> checkConnection() => _run(() async {
+        // A device-exit command can arrive while this process stays open.
+        // Close cache owners before checking the signed original-key channel.
+        await _checkCleanup(quiesce: cleanupCheck != null);
+        if (cleanupCompletedThisSession ||
+            cleanupErrorCode != null ||
+            identityView?.phase == IdentityPhase.cleanupPending) {
+          return;
+        }
         await identity.heartbeat(
             agentVersion: 'child/1.0.0',
             capabilities: await observations?.call() ?? const []);

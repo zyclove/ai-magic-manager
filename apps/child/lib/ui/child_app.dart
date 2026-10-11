@@ -404,7 +404,7 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
       ListTile(
           contentPadding: EdgeInsets.zero,
           leading: const Icon(Icons.sync, color: childNavy),
-          title: const Text('检查连接'),
+          title: const Text('检查连接与退出状态'),
           trailing: const Icon(Icons.chevron_right),
           onTap: session!.busy || !app.nativeAvailable
               ? null
