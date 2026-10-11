@@ -9,6 +9,7 @@ import 'api.dart';
 Future<dynamic> boundedJson(Api api, String method, String path,
     {Json? body,
     String? key,
+    int? version,
     required void Function() ensureCurrent,
     int successStatus = 200,
     int maxBytes = 2 * 1024 * 1024,
@@ -26,6 +27,7 @@ Future<dynamic> boundedJson(Api api, String method, String path,
         request.body = jsonEncode(body);
       }
       if (key != null) request.headers['Idempotency-Key'] = key;
+      if (version != null) request.headers['If-Match'] = '"$version"';
       final client = await api.client();
       ensureCurrent();
       if (aborted) throw const ApiFailure(0, 'NETWORK_ERROR');

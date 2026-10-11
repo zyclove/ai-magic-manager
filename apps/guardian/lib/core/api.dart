@@ -22,6 +22,18 @@ class ApiFailure implements Exception {
         'INVALID_REPORT_JOB_RESPONSE' => '任务或结果与所选设备不一致，已隐藏结果。请刷新任务后重试。',
         'INVALID_COMMERCIAL_RESPONSE' => '商业权益数据校验未通过，已隐藏结果。请刷新后重试。',
         'INVALID_CONTRACT_RESPONSE' => '合同数据校验未通过，已隐藏结果。请刷新后重试。',
+        'INVALID_MANAGED_ANDROID_RESPONSE' => '受管设备资料校验未通过，已隐藏结果。请刷新后重试。',
+        'EMM_UNAVAILABLE' => '受管设备提供方尚未开通或暂时不可用。请先确认准入与服务配置。',
+        'ENTERPRISE_BINDING_NOT_FOUND' => '尚未提交企业绑定申请。',
+        'ENTERPRISE_BINDING_EXISTS' => '已有企业绑定申请，请刷新查看当前状态。',
+        'ENTERPRISE_BINDING_NOT_ACTIVE' => '企业资源尚未完成独立审核。',
+        'MANAGED_ANDROID_CONTRACT_REQUIRED' => '当前机构合同尚未授予有效的受管 Android 权益。',
+        'MANAGED_ENROLLMENT_ALREADY_PENDING' => '此儿童档案已有待处理注册资料，请先查看或取消。',
+        'MANAGED_ENROLLMENT_RATE_LIMITED' ||
+        'MANAGED_ENROLLMENT_CAPACITY_REACHED' =>
+          '注册资料申请过于频繁或已达到机构上限，请稍后再试。',
+        'MANAGED_ENROLLMENT_POLICY_CHANGED' => '初始设备策略在注册过程中发生变化，请联系平台核对后重试。',
+        'EMM_DEVICE_IDENTITY_MISMATCH' => '提供方设备身份与本次注册资料不匹配，未完成核对。',
         'CONTRACT_PROVIDER_UNAVAILABLE' =>
           '机构合同签发方当前不可用，提交、审批和机构确认已暂停；已有记录仍可查看。',
         'CONTRACT_ACTIVE_SUBMISSIONS_PAUSED' =>

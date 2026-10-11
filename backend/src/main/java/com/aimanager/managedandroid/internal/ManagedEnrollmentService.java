@@ -46,6 +46,9 @@ class ManagedEnrollmentService {
       material = gateway.createEnrollmentToken(
           prepared.enterpriseId(), bootstrapPolicyId, Duration.ofMinutes(5), nonce);
       if (material == null || material.value() == null || material.value().isBlank()
+          || material.value().length() > 4096
+          || material.qrCode() == null || material.qrCode().isBlank()
+          || material.qrCode().length() > 16384
           || material.tokenName() == null || material.expiresAt() == null)
         throw new DomainException(HttpStatus.BAD_GATEWAY, "EMM_ENROLLMENT_RESPONSE_INVALID");
       var after = gateway.requireSafeEnrollmentPolicy(prepared.enterpriseId(), bootstrapPolicyId);
