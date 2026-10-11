@@ -35,6 +35,87 @@ class CleanupReceiptJournal {
   CleanupReceiptJournal(
       {required this.scope, required this.store, required this.nowMillis});
 
+  /// Recovery after the server accepted a cleared receipt but the app died
+  /// before original-key removal. The command may already be expired, so it
+  /// cannot be refetched. Trust only the authenticated app-private journal
+  /// bound to the independently persisted cleanupPending identity state.
+  /// This never authorizes a new clear or receipt, only final key deletion.
+  static Future<bool> finalKeyRemovalReady(
+      {required CleanupScope scope,
+      required String commandHash,
+      required CleanupRecordStore store}) async {
+    if (!RegExp(r'^[0-9a-f]{64}$').hasMatch(commandHash)) {
+      throw const CleanupFailure('CLEANUP_JOURNAL_INVALID');
+    }
+    String? raw;
+    try {
+      raw = await store.read();
+    } catch (_) {
+      throw const CleanupFailure('CLEANUP_JOURNAL_UNAVAILABLE');
+    }
+    if (raw == null) return false;
+    try {
+      if (utf8.encode(raw).length > 4096) throw const FormatException();
+      final value = jsonDecode(raw);
+      if (value is! Map<String, dynamic> ||
+          value.length != 15 ||
+          !const {
+            'schemaVersion',
+            'tenantId',
+            'deviceId',
+            'registrationId',
+            'keyThumbprint',
+            'operationId',
+            'commandId',
+            'commandHash',
+            'issuedAt',
+            'notAfter',
+            'accepted',
+            'localDataCleared',
+            'pendingId',
+            'pendingStage',
+            'pendingReason'
+          }.containsAll(value.keys) ||
+          value['schemaVersion'] != 1 ||
+          value['tenantId'] != scope.tenantId ||
+          value['deviceId'] != scope.deviceId ||
+          value['registrationId'] != scope.registrationId ||
+          value['keyThumbprint'] != scope.keyThumbprint ||
+          value['commandHash'] != commandHash ||
+          !validUuid(value['operationId']) ||
+          !validUuid(value['commandId']) ||
+          !safeInteger(value['issuedAt'], minimum: 1) ||
+          !safeInteger(value['notAfter'], minimum: 1) ||
+          value['notAfter'] <= value['issuedAt'] ||
+          value['notAfter'] - value['issuedAt'] > 7 * 86400000 ||
+          value['localDataCleared'] is! bool ||
+          value['accepted'] != null &&
+              !const {'RECEIVED', 'FAILED', 'AGENT_DATA_CLEARED'}
+                  .contains(value['accepted']) ||
+          value['pendingId'] != null && !validUuid(value['pendingId']) ||
+          value['pendingStage'] != null &&
+              !const {'RECEIVED', 'FAILED', 'AGENT_DATA_CLEARED'}
+                  .contains(value['pendingStage']) ||
+          (value['pendingId'] == null) != (value['pendingStage'] == null) ||
+          value['pendingReason'] != null &&
+              !const {
+                'STORAGE_FAILURE',
+                'KEY_UNAVAILABLE',
+                'UNSUPPORTED_AGENT',
+                'USER_ACTION_REQUIRED'
+              }.contains(value['pendingReason'])) {
+        throw const FormatException();
+      }
+      return value['accepted'] == 'AGENT_DATA_CLEARED' &&
+          value['localDataCleared'] == true &&
+          value['pendingId'] == null &&
+          value['pendingStage'] == null &&
+          value['pendingReason'] == null;
+    } catch (_) {
+      throw const CleanupFailure('CLEANUP_JOURNAL_INVALID');
+    }
+  }
+
   Future<T> _exclusive<T>(Future<T> Function() work) async {
     if (_busy) throw const CleanupFailure('CLEANUP_JOURNAL_BUSY');
     _busy = true;

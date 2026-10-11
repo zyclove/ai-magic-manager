@@ -127,6 +127,22 @@ class DeviceIdentityManager {
         cloudAuthenticationBlocked: state['authenticationBlocked'] == true);
   }
 
+  /// Host-only recovery data for a cleanup already durably started. This is
+  /// insufficient by itself to delete the key: the encrypted receipt journal
+  /// must independently show an acknowledged AGENT_DATA_CLEARED stage.
+  Future<CleanupPendingBinding?> cleanupPendingBinding() async {
+    final state = await _read();
+    if (state == null || _phase(state) != IdentityPhase.cleanupPending) {
+      return null;
+    }
+    return CleanupPendingBinding(
+        state['tenantId'],
+        state['deviceId'],
+        state['registrationId'],
+        state['cleanupKeyThumbprint'],
+        state['cleanupCommandHash']);
+  }
+
   /// For an authenticated configuration transport callback. Never supplies a
   /// pending or potentially activated-but-unconfirmed credential as active.
   Future<String?> activeCredential() async {

@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.res.Configuration
 import android.app.UiModeManager
 import android.os.Build
+import android.system.Os
+import android.system.OsConstants
 import android.os.Handler
 import android.os.Looper
 import android.view.WindowManager
@@ -11,6 +13,7 @@ import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import java.util.UUID
+import java.io.File
 import java.util.concurrent.Executors
 
 /** Platform glue only. Encryption/key management remain in the vetted plugin.
@@ -35,6 +38,26 @@ class MainActivity: FlutterActivity() {
                             listOf("FlutterSecureKeyStorage", "FlutterSecureStorageConfiguration", "aimanager_identity_v1")
                                 .all { name -> applicationContext.getSharedPreferences(name, Context.MODE_PRIVATE)
                                     .edit().putString("__durability_barrier", UUID.randomUUID().toString()).commit() }
+                        } catch (_: Exception) { false }
+                        mainHandler.post { result.success(success) }
+                    }
+                    "flushAgentFiles" -> storageExecutor.execute {
+                        // Only persist metadata in this app's private files
+                        // directory. The Dart caller cannot supply an external
+                        // path or use this channel to remove arbitrary files.
+                        val success = try {
+                            val requested = call.argument<String>("directory")
+                            val root = applicationContext.filesDir.canonicalFile
+                            val target = requested?.let { File(it).canonicalFile }
+                            if (target == null || !target.isDirectory ||
+                                !(target == root || target.path.startsWith(root.path + File.separator))) {
+                                false
+                            } else {
+                                val descriptor = Os.open(target.path,
+                                    OsConstants.O_RDONLY, 0)
+                                try { Os.fsync(descriptor); true }
+                                finally { Os.close(descriptor) }
+                            }
                         } catch (_: Exception) { false }
                         mainHandler.post { result.success(success) }
                     }

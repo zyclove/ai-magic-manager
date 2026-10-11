@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'package:device_identity/device_identity.dart';
+import 'package:device_cleanup/device_cleanup.dart';
 import 'package:device_access/device_access.dart' as temporary;
 import 'package:device_observation/device_observation.dart' as observation;
 import 'package:device_policy/device_policy.dart' as policy;
@@ -70,6 +71,8 @@ class ChildSession extends ChangeNotifier {
   final ChildObservationFactory? observationFactory;
   final ChildAccessFactory? accessFactory;
   final ChildSubmissionFactory? submissionFactory;
+  final Future<CleanupRunStage?> Function()? cleanupOnStartup;
+  String? cleanupErrorCode;
   ChildSubmissionSnapshot submissions = const ChildSubmissionSnapshot();
   String? submissionErrorCode, submissionCorrelationId;
   ChildSubmissions? _submissionReceiver;
@@ -112,6 +115,7 @@ class ChildSession extends ChangeNotifier {
       this.observationFactory,
       this.accessFactory,
       this.submissionFactory,
+      this.cleanupOnStartup,
       int Function()? nowMillis})
       : nowMillis = nowMillis ?? (() => DateTime.now().millisecondsSinceEpoch);
   String? get pairingCode => _foreground ? _pairingCode : null;
@@ -223,7 +227,24 @@ class ChildSession extends ChangeNotifier {
   }
 
   Future<void> initialize() async {
+    if (initialized) return;
     await _run(() async {
+      // This runs before any Sembast receiver opens. A signed command can
+      // remove this app's caches only while their owners are quiescent.
+      if (cleanupOnStartup != null) {
+        try {
+          await cleanupOnStartup!();
+        } on CleanupFailure catch (failure) {
+          cleanupErrorCode = failure.code;
+          _log.warning('code=${failure.code}');
+        } on DeviceIdentityFailure catch (failure) {
+          cleanupErrorCode = failure.code;
+          _log.warning('code=${failure.code}');
+        } catch (_) {
+          cleanupErrorCode = 'CLEANUP_CHECK_FAILED';
+          _log.warning('code=CLEANUP_CHECK_FAILED');
+        }
+      }
       await _refresh();
       if (identityView?.phase == IdentityPhase.active &&
           ruleReceiverFactory != null) {

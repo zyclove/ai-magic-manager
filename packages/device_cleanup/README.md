@@ -58,7 +58,8 @@ A failed store write blocks progress until a fresh read; restoring a journal
 requires the same newly verified command.
 The returned operation is an accepted-receipt snapshot, not a live status
 check. `AGENT_DATA_CLEARED` is permitted only after the host reports its own
-idempotent data clear to the journal. No cleaner is included yet.
+idempotent data clear to the journal. This pure Dart package contains no
+platform cleaner; the Android child host supplies one.
 
 `CleanupCoordinator.runOnce()` now sequences command verification, replay of
 any pending receipt, a received acknowledgement, the host's idempotent local
@@ -69,13 +70,22 @@ an unknown network response remains pending and blocks the next stage. The
 final key-removal call occurs only after a `CLEANUP_REPORTED` acknowledgement
 bound to the cleared receipt. The host must keep this app's cleanup journal
 and original key until that point and must not clear third-party or system
-data. This coordinator is not wired into the child runtime yet.
+data. The Android child runtime now invokes it once before opening local cache
+databases on startup; it does not create a background or reboot worker.
+
+If power loss occurs after the cleared receipt was durably acknowledged but
+before key removal, `finalKeyRemovalReady` lets the host match its encrypted
+cleanup-only identity binding against the encrypted journal and remove only
+the original key. This works after the remote command expires and cannot run
+a new clear or report a new receipt. Missing, malformed or incomplete journal
+state fails closed.
 
 ## Delivery state
 
 Proof generation, command retrieval/verification, explicit receipt submission,
-a reusable receipt journal and coordinator are present. The child runtime has
-an encrypted journal store adapter, but has not wired the coordinator or
-supplied a real cleanup executor. Local agent-data deletion, final key
-removal, full reboot recovery and real Android/TV validation remain to be
-built. This package itself has no path that directly deletes local data.
+a reusable receipt journal and coordinator are present. The Android child host
+has an encrypted journal store and a scoped local executor wired into the
+startup session. The native path has not undergone physical-device or TV
+validation; background retry, orphaned journal retention and complete
+reboot/fault-injection acceptance remain.
+This package itself has no path that directly deletes local data.

@@ -3,6 +3,7 @@ import 'models.dart';
 import 'receipt.dart';
 import 'transport.dart';
 import 'verifier.dart';
+import 'package:device_identity/device_identity.dart' show safeInteger;
 
 /// A platform implementation may delete only this application's policy and
 /// usage caches and ordinary business bearer. It must preserve the journal
@@ -68,6 +69,13 @@ class CleanupCoordinator {
       }
 
       if (!state.localDataCleared) {
+        final now = client.nowMillis();
+        if (!safeInteger(now, minimum: 1) || now + 300000 < command.issuedAt) {
+          throw const CleanupFailure('CLOCK_UNTRUSTED');
+        }
+        if (now >= command.notAfter) {
+          throw const CleanupFailure('CLEANUP_COMMAND_EXPIRED');
+        }
         try {
           await executor.clearOwnData(command);
         } on AgentCleanupFailure catch (failure) {

@@ -7,6 +7,7 @@ import 'package:sembast/sembast.dart';
 import '../platform/configuration_database.dart';
 import '../platform/observation_source.dart';
 import '../platform/secret_store.dart';
+import 'cleanup_runner.dart';
 import 'access.dart' show ChildAccessBindingStore;
 import 'access_receiver.dart';
 import 'environment.dart';
@@ -70,9 +71,27 @@ class ProductionChildRuntime {
             client: identityClient),
         secrets: services.identityStore,
         nowMillis: clock);
+    var cleanupStartupWindow = true;
     final session = ChildSession(
         identity: identity,
         nowMillis: clock,
+        cleanupOnStartup: nativeAvailable &&
+                services.identityStore is AndroidIdentityStore
+            ? () async {
+                try {
+                  return await ChildCleanupRunner(
+                          environment: environment,
+                          identity: identity,
+                          secureStore:
+                              services.identityStore as AndroidIdentityStore,
+                          ownersClosed: () => cleanupStartupWindow,
+                          nowMillis: clock)
+                      .runOnce();
+                } finally {
+                  cleanupStartupWindow = false;
+                }
+              }
+            : null,
         ruleReceiverFactory: nativeAvailable
             ? (view) => SignedRuleReceiver.open(
                 environment, identity, view, clock,

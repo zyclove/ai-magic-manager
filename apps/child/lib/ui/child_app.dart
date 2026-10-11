@@ -324,7 +324,8 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
     final blocked = session!.identityView!.cloudAuthenticationBlocked ||
         !session!.credentialReady;
     final updating = session!.identityView!.phase != IdentityPhase.active;
-    final attention = blocked || updating;
+    final cleanupUnknown = session!.cleanupErrorCode != null;
+    final attention = blocked || updating || cleanupUnknown;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       _heading('我的设备', '与监护人管理端保持连接。'),
       Container(
@@ -347,7 +348,9 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
                           ? '连接更新待完成'
                           : blocked
                               ? '连接需要检查'
-                              : '设备身份已确认',
+                              : cleanupUnknown
+                                  ? '设备退出状态待核对'
+                                  : '设备身份已确认',
                       style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
@@ -357,6 +360,11 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
                 ]))
           ])),
       const Divider(),
+      if (cleanupUnknown) ...[
+        const ChildNotice('设备退出核对暂未完成',
+            detail: '可能是网络或本机存储暂不可用。请保持网络连接，联系监护人核对管理端记录；此处不代表本机已经清理。'),
+        const SizedBox(height: 12)
+      ],
       _ruleSection(),
       if (session!.observationFactory != null) ...[
         const Divider(),

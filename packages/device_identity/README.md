@@ -76,7 +76,10 @@ step after a persisted cleared-receipt acknowledgement. It requires both a
 durable `DeviceSecretDeletion` store and a `DeviceCleanupKeyDeletion` provider;
 the JOSE software key has no external alias, while a native provider must
 delete its own alias. These methods do not themselves verify the server
-command or receipt, and the child runtime has not wired the coordinator yet.
+command or receipt. `cleanupPendingBinding` exposes only the retained scope,
+thumbprint and command hash so the Android host can validate its encrypted
+cleared-receipt journal and finish key deletion after command expiry. It never
+authorizes a new data clear or receipt by itself.
 
 All API roots are confirmed HTTPS addresses ending in `/api/v1`; redirects are
 refused. Loopback HTTP is explicitly test-only. Requests cover headers/body with

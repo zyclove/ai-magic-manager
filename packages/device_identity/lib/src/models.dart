@@ -80,6 +80,17 @@ class DeviceIdentityView {
   String toString() => 'DeviceIdentityView(${phase.name})';
 }
 
+/// Private-host recovery binding for a cleanup already entered. No bearer or
+/// private key is exposed. A journal must independently prove a persisted
+/// cleared-receipt acknowledgement before this may authorize final deletion.
+class CleanupPendingBinding {
+  final String tenantId, deviceId, registrationId, keyThumbprint, commandHash;
+  const CleanupPendingBinding(this.tenantId, this.deviceId, this.registrationId,
+      this.keyThumbprint, this.commandHash);
+  @override
+  String toString() => 'CleanupPendingBinding(redacted)';
+}
+
 class HeartbeatAcknowledgement {
   final int sequence, receivedAt;
   final bool replayed;

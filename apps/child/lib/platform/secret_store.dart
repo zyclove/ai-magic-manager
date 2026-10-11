@@ -88,6 +88,28 @@ class AndroidIdentityStore implements DeviceSecretStore, DeviceSecretDeletion {
       throw const DeviceIdentityFailure('SECURE_STORAGE_FAILED');
     }
   }
+
+  /// The cleanup executor uses the same native commit barrier after deleting
+  /// known app-private cache keys. It cannot bypass identity storage checks.
+  Future<void> flushForCleanup() async {
+    _requireAvailable();
+    await _flush();
+  }
+
+  /// Native fsync of this app's private support directory after cache unlink.
+  /// The native side validates the canonical path under Android filesDir.
+  Future<void> flushAgentFiles(String directory) async {
+    _requireAvailable();
+    try {
+      if (await channel.invokeMethod<bool>(
+              'flushAgentFiles', {'directory': directory}) !=
+          true) {
+        throw const DeviceIdentityFailure('SECURE_STORAGE_FAILED');
+      }
+    } catch (_) {
+      throw const DeviceIdentityFailure('SECURE_STORAGE_FAILED');
+    }
+  }
 }
 
 /// 复用已配置的成熟加密 SDK 与持久屏障，单独固定键，不改动设备身份记录。
@@ -144,6 +166,14 @@ class AndroidCleanupRecordStore implements CleanupRecordStore {
   final AndroidIdentityStore backend;
   final String _key;
 
+  static String keyForScope(CleanupScope scope) =>
+      'cleanup_journal_v1_${sha256.convert(utf8.encode([
+        scope.tenantId,
+        scope.deviceId,
+        scope.registrationId,
+        scope.keyThumbprint
+      ].join('/')))}';
+
   AndroidCleanupRecordStore(CleanupScope scope,
       {FlutterSecureStorage? storage,
       MethodChannel channel =
@@ -151,12 +181,7 @@ class AndroidCleanupRecordStore implements CleanupRecordStore {
       bool Function()? available})
       : backend = AndroidIdentityStore(
             storage: storage, channel: channel, available: available),
-        _key = 'cleanup_journal_v1_${sha256.convert(utf8.encode([
-          scope.tenantId,
-          scope.deviceId,
-          scope.registrationId,
-          scope.keyThumbprint
-        ].join('/')))}';
+        _key = keyForScope(scope);
 
   @override
   Future<String?> read() async {
