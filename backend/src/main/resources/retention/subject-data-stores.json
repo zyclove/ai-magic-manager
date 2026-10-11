@@ -284,6 +284,44 @@
       "category": "SHARED_ACCOUNT"
     },
     {
+      "table": "commercial_contract_events",
+      "columns": [
+        "action",
+        "actor_id",
+        "correlation_id",
+        "event_id",
+        "occurred_at",
+        "reason",
+        "review_id",
+        "version"
+      ],
+      "domain": "billing",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "commercial_contract_reviews",
+      "columns": [
+        "accepted_by",
+        "approved_by",
+        "contract_reference",
+        "created_at",
+        "evidence_event_id",
+        "evidence_hash",
+        "evidence_json",
+        "id",
+        "offer_id",
+        "offer_revision",
+        "source_revision",
+        "state",
+        "submitted_by",
+        "tenant_id",
+        "updated_at",
+        "version"
+      ],
+      "domain": "billing",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
       "table": "commercial_source_events",
       "columns": [
         "active_from",

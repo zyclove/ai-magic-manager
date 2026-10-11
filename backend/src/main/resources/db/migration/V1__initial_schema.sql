@@ -1219,6 +1219,50 @@ CREATE TABLE commercial_catalog_events (
 
 CREATE INDEX ix_commercial_catalog_event_time ON commercial_catalog_events(occurred_at, event_id);
 
+-- Signed contract evidence is reviewed independently before the organization accepts a grant.
+-- The external JWS and signed agreement are never stored in these tables.
+CREATE TABLE commercial_contract_reviews (
+    id VARCHAR(36) NOT NULL PRIMARY KEY,
+    tenant_id VARCHAR(36) NOT NULL,
+    offer_id VARCHAR(36) NOT NULL,
+    offer_revision BIGINT NOT NULL,
+    contract_reference VARCHAR(200) NOT NULL,
+    source_revision BIGINT NOT NULL,
+    evidence_event_id VARCHAR(36) NOT NULL,
+    evidence_hash VARCHAR(64) NOT NULL,
+    evidence_json TEXT NOT NULL,
+    state VARCHAR(24) NOT NULL,
+    version BIGINT NOT NULL,
+    submitted_by VARCHAR(255) NOT NULL,
+    approved_by VARCHAR(255),
+    accepted_by VARCHAR(255),
+    created_at BIGINT NOT NULL,
+    updated_at BIGINT NOT NULL,
+    CONSTRAINT uq_contract_review_source UNIQUE (tenant_id, contract_reference, source_revision),
+    CONSTRAINT uq_contract_review_event UNIQUE (evidence_event_id),
+    CONSTRAINT uq_contract_review_evidence UNIQUE (evidence_hash),
+    CONSTRAINT fk_contract_review_tenant FOREIGN KEY (tenant_id) REFERENCES tenants(id),
+    CONSTRAINT fk_contract_review_offer FOREIGN KEY (offer_id) REFERENCES commercial_catalog_offers(id),
+    CONSTRAINT ck_contract_review_state CHECK (state IN ('PENDING_REVIEW','AWAITING_CUSTOMER','APPLIED','REJECTED'))
+);
+CREATE INDEX ix_contract_review_tenant ON commercial_contract_reviews(tenant_id, id);
+CREATE INDEX ix_contract_review_queue ON commercial_contract_reviews(state, id);
+
+CREATE TABLE commercial_contract_events (
+    review_id VARCHAR(36) NOT NULL,
+    version BIGINT NOT NULL,
+    event_id VARCHAR(36) NOT NULL,
+    action VARCHAR(24) NOT NULL,
+    actor_id VARCHAR(255) NOT NULL,
+    reason VARCHAR(500),
+    correlation_id VARCHAR(36) NOT NULL,
+    occurred_at BIGINT NOT NULL,
+    PRIMARY KEY (review_id, version),
+    CONSTRAINT uq_contract_event_id UNIQUE (event_id),
+    CONSTRAINT fk_contract_event_review FOREIGN KEY (review_id) REFERENCES commercial_contract_reviews(id)
+);
+CREATE INDEX ix_contract_event_time ON commercial_contract_events(occurred_at, event_id);
+
 -- Short-lived preparation metadata; never a deletion acceptance ledger.
 CREATE TABLE subject_erasure_previews (
     tenant_id VARCHAR(36) NOT NULL,
