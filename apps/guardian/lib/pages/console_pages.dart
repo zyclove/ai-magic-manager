@@ -690,6 +690,30 @@ class ConsoleActions {
           if (s.canWrite && ['ACTIVE', 'REVOKED'].contains(r['state']))
             DetailAction('正常退出管理', (ctx) => deprovision(ctx, r),
                 destructive: true),
+          if (s.canWrite && r['state'] == 'ACTIVE')
+            DetailAction('紧急撤销云端访问', (ctx) async {
+              final accepted = await confirmAction(
+                  ctx,
+                  '紧急撤销云端访问',
+                  '将立即撤销“${r['displayName']}”当前注册的云端访问凭证，并使该设备的临时访问窗口失效。'
+                      '此操作不会向设备发送本地清理命令，不能证明其他应用已被阻止或本地数据已删除。'
+                      '若需正常退出和本代理数据清理，请使用“正常退出管理”。',
+                  confirm: '确认撤销云端访问');
+              if (!accepted || !ctx.mounted) return;
+              if (s.root != workspace) {
+                throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+              }
+              try {
+                await s.api
+                    .send('POST', '$workspace/devices/${r['id']}/revoke');
+              } on ApiFailure catch (failure) {
+                if (failure.code == 'NETWORK_ERROR') {
+                  throw const ApiFailure(0, 'DEVICE_REVOKE_RESULT_UNKNOWN');
+                }
+                rethrow;
+              }
+              if (ctx.mounted) Navigator.pop(ctx);
+            }, destructive: true, closeOnSuccess: false),
           if (s.canWrite) DetailAction('退出操作记录', (ctx) => deprovision(ctx, r))
         ]);
   }

@@ -93,6 +93,8 @@ class ApiFailure implements Exception {
         'BASELINE_CHANGED' =>
           '设备绑定或策略版本已变化，请刷新可申请规则后重新提交。',
         'DEVICE_NOT_ACTIVE' => '设备当前不可申请访问，请检查设备状态并刷新。',
+        'DEVICE_REVOKE_RESULT_UNKNOWN' =>
+          '连接中断，云端撤销可能已提交。请关闭窗口并刷新设备状态，再决定是否需要重试。此结果不代表设备本地数据已清理。',
         'EXCEPTION_RULE_INVALID' => '请选择 1–20 条当前应用支持的规则。',
         'EXCEPTION_KIND_UNSUPPORTED' => '当前只能申请应用启动与使用时段规则。',
         'GRANT_EXCEEDS_REQUEST' => '批准时长不能超过申请时长。',
