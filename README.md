@@ -18,7 +18,9 @@
 
 从干净克隆部署新环境，使用 `scripts/initialize-deployment.ps1`、`scripts/build-deployment.ps1`、`scripts/start-deployment.ps1`；流程与身份初始化见[可复制部署手册](docs/deployment-runbook.md)。该流程使用独立 Compose 项目和文件凭据。
 
-本机 **1.0.0 首版环境**入口为 [管理工作台](http://localhost:18099/)，前端、业务 API 和身份服务通过同一入口访问，使用独立 Compose 项目 `ai-manager-v1`。该环境运行的是已构建的发布快照；源码后续变更需要重新构建部署才能生效。
+本机 **1.0.0 首版环境**入口为 [管理工作台](http://localhost:18100/)，前端、业务 API 和身份服务通过同一入口访问，使用独立 Compose 项目 `ai-manager-v1-next`。管理员账号为 `admin@super.com`，密码使用本机已配置的凭据。真实浏览器登录、工作空间对话框和手机导航已完成检查。
+
+当前运行的是固定源码和修复组成的已验证发布快照，范围与条件跳过项见 [发布构建证据](docs/releases/stage-deployment-build-completeness-verification.json)。后续受管 Android 管理功能尚未进入本次运行包；最新源码的相关表已并入 1.0.0 的 V1 初始化。此前 `18099` 的 `ai-manager-v1` 环境已备份并保留，源码后续变更需要重新构建部署才能生效。
 
 `http://localhost:3000`、后端 8082、身份服务 8081 和 MySQL 3308 属于此前保留的本机开发环境。`scripts/start-local.ps1` 仅恢复这套既有环境，不是 1.0.0 首版初始化入口。新开发环境按上述部署手册使用独立数据库创建。
 

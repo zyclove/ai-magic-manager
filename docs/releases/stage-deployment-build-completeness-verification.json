@@ -314,6 +314,80 @@
   "limitations": [
     "One Android conditional suite requires the separate owned-device runner; seven ledger/admission MySQL conditional cases require isolated database configuration and were not run by this standard H2 build.",
     "device_cleanup has no standalone test suite; strict analysis ran.",
-    "This artifact records build verification; deployment and browser acceptance are separate."
-  ]
+    "Runtime uses the frozen base and verified deployment fixes. Later managed Android work and its consolidated V1 schema are committed source work, not part of this running artifact.",
+    "Browser acceptance covers password login and read-only/dialog navigation. MFA enrollment and native device execution remain unverified."
+  ],
+  "runtime": {
+    "origin": "http://localhost:18100",
+    "laterManagedAndroidChangesIncluded": false,
+    "frontendHashMatches": true,
+    "services": [
+      {
+        "Service": "backend",
+        "State": "running",
+        "Health": "healthy"
+      },
+      {
+        "Service": "database",
+        "State": "running",
+        "Health": "healthy"
+      },
+      {
+        "Service": "edge",
+        "State": "running",
+        "Health": "healthy"
+      },
+      {
+        "Service": "erasure-database",
+        "State": "running",
+        "Health": "healthy"
+      },
+      {
+        "Service": "identity",
+        "State": "running",
+        "Health": "healthy"
+      },
+      {
+        "Service": "identity-database",
+        "State": "running",
+        "Health": "healthy"
+      }
+    ],
+    "backendHashMatches": true,
+    "sourceBase": "fa303477ac7b90169ec9afa7f683ba0c058bb3ed",
+    "releasePatchCommit": "d257930",
+    "verifiedAt": "2026-10-11T21:59:55.2294366+08:00",
+    "schema": [
+      "1\tinitial schema\t1",
+      "2\tevent publication\t1"
+    ]
+  },
+  "browserAcceptance": {
+    "origin": "http://localhost:18100",
+    "title": "智能管家 · 管理工作台",
+    "username": "admin@super.com",
+    "browser": "Chrome via Playwright",
+    "browserAvailability": "Browser plugin not available",
+    "viewports": [
+      "1440x1000",
+      "390x844"
+    ],
+    "checks": [
+      "real password PKCE login",
+      "authenticated backend profile",
+      "meaningful empty workspace screen",
+      "workspace create dialog opens and cancels without writing data",
+      "mobile navigation opens",
+      "no horizontal document overflow",
+      "no browser runtime errors"
+    ],
+    "errors": [],
+    "warnings": [],
+    "screenshots": [
+      "desktop.png",
+      "create-dialog.png",
+      "mobile-navigation.png"
+    ],
+    "mfaVerified": false
+  }
 }
