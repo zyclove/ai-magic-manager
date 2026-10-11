@@ -50,7 +50,7 @@ class PolicyController {
     @PostMapping("/policies/{policyId}/previews") @ResponseStatus(HttpStatus.CREATED)
     PolicyPreview preview(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId, @PathVariable String policyId,
                           @Valid @RequestBody Preview input, @RequestHeader(name = "If-Match", required = false) String etag) {
-        return policies.preview(tenantId, actor.getSubject(), policyId, etag, input.deviceIds());
+        return policies.preview(tenantId, actor.getSubject(), policyId, etag, input);
     }
     @PostMapping("/policies/{policyId}/publications") @ResponseStatus(HttpStatus.CREATED)
     PolicyPublication publish(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId, @PathVariable String policyId,
@@ -83,7 +83,9 @@ class PolicyController {
                        @NotNull @Size(max = 100) List<@NotNull @Valid PolicyRule> rules) {}
     record EditDraft(@NotBlank @Size(max = 100) String name, @NotNull @Size(max = 100) List<@NotNull @Valid PolicyRule> rules) {}
     record Named(@NotBlank @Size(max = 100) String name) {}
-    record Preview(@NotNull @Size(min = 1, max = 50) List<@NotNull @Pattern(regexp = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}") String> deviceIds) {}
+    record Preview(@NotNull @Size(min = 1, max = 50) List<@NotNull @Pattern(regexp = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}") String> deviceIds,
+                   @Pattern(regexp = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}") String groupId,
+                   @Min(0) Long groupVersion) {}
     record Publish(@NotNull @Pattern(regexp = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}") String previewId,
                    @NotNull @Pattern(regexp = "[0-9a-f]{64}") String previewHash, @NotNull PolicyPublication.Mode mode) {}
 }

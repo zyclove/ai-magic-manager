@@ -808,8 +808,22 @@ class ConsoleActions {
     if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
     final p = await s.api.send('POST', '$root/policies/${draft['id']}/previews',
         version: draft['revision'],
-        body: {'deviceIds': picked.deviceIds}) as Json;
+        body: {
+          'deviceIds': picked.deviceIds,
+          if (picked.groupId != null) 'groupId': picked.groupId,
+          if (picked.groupVersion != null) 'groupVersion': picked.groupVersion
+        }) as Json;
     if (!current()) return;
+    if (picked.groupId != null &&
+        (p['snapshot'] is! Json ||
+            (p['snapshot'] as Json)['groupSelection'] is! Json ||
+            ((p['snapshot'] as Json)['groupSelection'] as Json)['groupId'] !=
+                picked.groupId ||
+            ((p['snapshot'] as Json)['groupSelection']
+                    as Json)['groupVersion'] !=
+                picked.groupVersion)) {
+      throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+    }
     final targets = p['targets'];
     if (targets is! List) {
       throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');

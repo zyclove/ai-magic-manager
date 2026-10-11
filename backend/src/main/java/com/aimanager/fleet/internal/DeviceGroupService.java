@@ -4,6 +4,7 @@ import static com.aimanager.tenant.TenantAccess.Role.ORG_ADMIN;
 import static com.aimanager.tenant.TenantAccess.Role.OWNER;
 
 import com.aimanager.audit.AuditService;
+import com.aimanager.fleet.DeviceGroupPolicyAccess;
 import com.aimanager.idempotency.IdempotencyService;
 import com.aimanager.identity.RecentAuthentication;
 import com.aimanager.shared.DomainException;
@@ -16,6 +17,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.Clock;
 import java.util.HashSet;
 import java.util.HexFormat;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -32,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
  * device policy. Every mutation serializes with current membership revocation and the group row.
  */
 @Service
-class DeviceGroupService {
+class DeviceGroupService implements DeviceGroupPolicyAccess {
   private static final int MAX_MEMBERS = 5000;
   private final JdbcTemplate db;
   private final TenantAccess access;
@@ -407,6 +409,36 @@ class DeviceGroupService {
             limit + 1),
         limit,
         Member::deviceId);
+  }
+
+  /** Hold the group row while policy resolves the selected devices and their registration facts. */
+  @Override
+  @Transactional(propagation = org.springframework.transaction.annotation.Propagation.MANDATORY)
+  public Selection resolveCurrent(String tenant, String actor, String id, long version) {
+    access.requireWriteRole(tenant, actor, OWNER, ORG_ADMIN);
+    organization(tenant);
+    Group group = read(tenant, id, true);
+    if (!"ACTIVE".equals(group.state()) || group.version() != version) {
+      throw new DomainException(HttpStatus.CONFLICT, "POLICY_GROUP_CHANGED");
+    }
+    var registrations = new LinkedHashMap<String, String>();
+    db.query(
+        "SELECT m.device_id,m.registration_id,d.registration_id current_registration_id,"
+            + " d.state,s.archived_at FROM device_group_members m JOIN devices d"
+            + " ON d.tenant_id=m.tenant_id AND d.id=m.device_id JOIN subjects s"
+            + " ON s.tenant_id=d.tenant_id AND s.id=d.subject_id"
+            + " WHERE m.tenant_id=? AND m.group_id=? ORDER BY m.device_id",
+        r -> {
+          String registration = r.getString("registration_id");
+          if (registration.equals(r.getString("current_registration_id"))
+              && "ACTIVE".equals(r.getString("state"))
+              && r.getObject("archived_at") == null) {
+            registrations.put(r.getString("device_id"), registration);
+          }
+        },
+        tenant,
+        id);
+    return new Selection(id, version, Map.copyOf(registrations));
   }
 
   private Group read(String tenant, String id, boolean lock) {

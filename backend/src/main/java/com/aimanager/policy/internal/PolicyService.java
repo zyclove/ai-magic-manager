@@ -8,6 +8,7 @@ import com.aimanager.catalog.ApplicationDefinition;
 import com.aimanager.fleet.AccessRequestDeviceScope;
 import com.aimanager.fleet.Device;
 import com.aimanager.fleet.DeviceAccess;
+import com.aimanager.fleet.DeviceGroupPolicyAccess;
 import com.aimanager.fleet.FleetPolicyAccess;
 import com.aimanager.idempotency.IdempotencyService;
 import com.aimanager.identity.ActorKeys;
@@ -83,6 +84,7 @@ class PolicyService
   private final ApplicationCatalog catalog;
   private final ScheduleCatalog schedules;
   private final FleetPolicyAccess fleet;
+  private final DeviceGroupPolicyAccess groups;
   private final DeviceAccess devices;
   private final AccessRequestDeviceScope requestDevices;
   private final SubjectAccess subjects;
@@ -101,6 +103,7 @@ class PolicyService
       ApplicationCatalog catalog,
       ScheduleCatalog schedules,
       FleetPolicyAccess fleet,
+      DeviceGroupPolicyAccess groups,
       DeviceAccess devices,
       AccessRequestDeviceScope requestDevices,
       SubjectAccess subjects,
@@ -119,6 +122,7 @@ class PolicyService
     this.catalog = catalog;
     this.schedules = schedules;
     this.fleet = fleet;
+    this.groups = groups;
     this.compiler = compiler;
     this.previewTtlMillis = previewTtl * 1000;
     this.devices = devices;
@@ -275,15 +279,22 @@ class PolicyService
 
   @Transactional(timeout = 10)
   public PolicyPreview preview(
-      String tenant, String actor, String id, String ifMatch, List<String> deviceIds) {
+      String tenant, String actor, String id, String ifMatch, PolicyController.Preview input) {
     access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
+    var deviceIds = input.deviceIds();
     if (deviceIds.stream().distinct().count() != deviceIds.size())
       throw DomainException.invalid("DUPLICATE_DEVICE_TARGET");
+    if ((input.groupId() == null) != (input.groupVersion() == null))
+      throw DomainException.invalid("INVALID_POLICY_GROUP_SELECTION");
     var draft = readDraft(tenant, id, true);
     ResourceVersions.check(ResourceVersions.require(ifMatch), draft.revision());
     if (draft.kind() == PolicyDraft.Kind.TEMPLATE)
       throw DomainException.invalid("TEMPLATE_REQUIRES_COPY");
-    var snapshot = snapshot(tenant, actor, draft, deviceIds);
+    var source = input.groupId() == null
+        ? null : new PolicySnapshot.GroupSelection(input.groupId(), input.groupVersion());
+    var registrations = resolveGroup(tenant, actor, source, deviceIds);
+    var snapshot = snapshot(tenant, actor, draft, deviceIds, source);
+    checkGroupRegistrations(snapshot, registrations);
     if (snapshot.targets().stream().anyMatch(t -> t.state() != Device.State.ACTIVE))
       throw new DomainException(HttpStatus.CONFLICT, "DEVICE_NOT_ACTIVE");
     String previewId = UUID.randomUUID().toString(), hash = fingerprint(tenant, draft, snapshot);
@@ -360,14 +371,18 @@ class PolicyService
               || reviewed.expiresAt() <= clock.millis()
               || !reviewed.hash().equals(input.previewHash()))
             throw new DomainException(HttpStatus.CONFLICT, "PREVIEW_STALE");
+          var targetIds = reviewed.snapshot().targets().stream()
+              .map(PolicySnapshot.Target::deviceId).toList();
+          var source = reviewed.snapshot().groupSelection();
+          var registrations = resolveGroup(tenant, actor.getSubject(), source, targetIds);
           var current =
               snapshot(
                   tenant,
                   actor.getSubject(),
                   draft,
-                  reviewed.snapshot().targets().stream()
-                      .map(PolicySnapshot.Target::deviceId)
-                      .toList());
+                  targetIds,
+                  source);
+          checkGroupRegistrations(current, registrations);
           if (!reviewed.hash().equals(fingerprint(tenant, draft, current)))
             throw new DomainException(HttpStatus.CONFLICT, "PREVIEW_STALE");
           if (input.mode() == PolicyPublication.Mode.ENFORCE) {
@@ -816,7 +831,8 @@ class PolicyService
   }
 
   private PolicySnapshot snapshot(
-      String tenant, String actor, PolicyDraft draft, List<String> deviceIds) {
+      String tenant, String actor, PolicyDraft draft, List<String> deviceIds,
+      PolicySnapshot.GroupSelection groupSelection) {
     var inputs = resolve(tenant, actor, draft.rules());
     var targets = new ArrayList<PolicySnapshot.Target>();
     for (var id : deviceIds.stream().sorted().toList()) {
@@ -842,7 +858,29 @@ class PolicyService
         List.copyOf(inputs.apps().values()),
         List.copyOf(inputs.plans().values()),
         compiler.protectedPackageExemptions(),
-        List.copyOf(targets));
+        List.copyOf(targets),
+        groupSelection);
+  }
+
+  private Map<String, String> resolveGroup(
+      String tenant, String actor, PolicySnapshot.GroupSelection source, List<String> deviceIds) {
+    if (source == null) return null;
+    var selection = groups.resolveCurrent(tenant, actor, source.groupId(), source.groupVersion());
+    if (selection.registrations().isEmpty()
+        || selection.registrations().size() > 50
+        || !selection.registrations().keySet().equals(Set.copyOf(deviceIds))) {
+      throw new DomainException(HttpStatus.CONFLICT, "POLICY_GROUP_CHANGED");
+    }
+    return selection.registrations();
+  }
+
+  private void checkGroupRegistrations(
+      PolicySnapshot snapshot, Map<String, String> registrations) {
+    if (registrations == null) return;
+    if (snapshot.targets().stream().anyMatch(target ->
+        !target.registrationId().equals(registrations.get(target.deviceId())))) {
+      throw new DomainException(HttpStatus.CONFLICT, "POLICY_GROUP_CHANGED");
+    }
   }
 
   private boolean enforceable(PolicySnapshot snapshot) {
