@@ -31,5 +31,24 @@ class ContractSubmissionPolicyTest {
     var policy = new ContractSubmissionPolicy(false, false);
     assertThat(policy.activeAvailable()).isFalse();
     assertThat(policy.revocationAvailable()).isFalse();
+    ContractEvidence active = mock(ContractEvidence.class);
+    when(active.state()).thenReturn(State.ACTIVE);
+    assertThatThrownBy(() -> policy.requireAllowed(active))
+        .isInstanceOf(DomainException.class)
+        .hasMessageContaining("CONTRACT_PROVIDER_UNAVAILABLE");
+    ContractEvidence revoked = mock(ContractEvidence.class);
+    when(revoked.state()).thenReturn(State.REVOKED);
+    assertThatThrownBy(() -> policy.requireAllowed(revoked))
+        .isInstanceOf(DomainException.class)
+        .hasMessageContaining("CONTRACT_PROVIDER_UNAVAILABLE");
+  }
+
+  @Test
+  void activeSwitchCannotOverrideDisabledIssuer() {
+    var policy = new ContractSubmissionPolicy(false, true);
+    assertThat(policy.activeAvailable()).isFalse();
+    assertThatThrownBy(policy::requireActive)
+        .isInstanceOf(DomainException.class)
+        .hasMessageContaining("CONTRACT_PROVIDER_UNAVAILABLE");
   }
 }

@@ -46,6 +46,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
       "spring.datasource.url=${CONTRACT_TEST_DATABASE_URL:jdbc:h2:mem:commercial-contract;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE}",
       "spring.datasource.username=${CONTRACT_TEST_DATABASE_USERNAME:sa}",
       "spring.datasource.password=${CONTRACT_TEST_DATABASE_PASSWORD:}",
+      "manager.contract.evidence-enabled=true",
       "manager.contract.active-submissions-enabled=true",
       "manager.exports.worker.enabled=false"
     })
@@ -358,15 +359,15 @@ class CommercialContractJourneyTest {
   }
 
   @Test
-  void capabilitiesHideUnconfiguredSubmissionAndRequirePlatformRole() throws Exception {
+  void capabilitiesReflectConfiguredTestIssuerAndRequirePlatformRole() throws Exception {
     mvc.perform(get(CONTRACTS + "/capabilities").with(actor(owner, "SCOPE_tenant:create", false)))
         .andExpect(status().isForbidden());
     mvc.perform(
             get(CONTRACTS + "/capabilities")
                 .with(actor("contract-author", "SCOPE_contract:manage", false)))
         .andExpect(status().isOk())
-        .andExpect(jsonPath("$.submissionEnabled").value(false))
-        .andExpect(jsonPath("$.revocationSubmissionEnabled").value(false))
+        .andExpect(jsonPath("$.submissionEnabled").value(true))
+        .andExpect(jsonPath("$.revocationSubmissionEnabled").value(true))
         .andExpect(jsonPath("$.independentApprovalRequired").value(true))
         .andExpect(jsonPath("$.customerAcceptanceRequired").value(true));
   }
