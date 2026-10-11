@@ -1,6 +1,7 @@
 package com.aimanager.managedandroid.internal;
 
 import com.aimanager.managedandroid.ManagedAndroidGateway;
+import com.aimanager.shared.SafetyCriticalPackages;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.gson.GsonFactory;
 import com.google.api.services.androidmanagement.v1.AndroidManagement;
@@ -24,7 +25,8 @@ class ManagedAndroidConfiguration {
   @Bean
   ManagedAndroidGateway managedAndroidGateway(
       @Value("${manager.emm.google.enabled:false}") boolean enabled,
-      @Value("${manager.emm.google.eligibility-confirmed:false}") boolean eligibilityConfirmed)
+      @Value("${manager.emm.google.eligibility-confirmed:false}") boolean eligibilityConfirmed,
+      @Value("${manager.policies.additional-protected-packages:}") String protectedPackages)
       throws IOException, GeneralSecurityException {
     if (!enabled) return new UnavailableManagedAndroidGateway();
     if (!eligibilityConfirmed) {
@@ -40,6 +42,7 @@ class ManagedAndroidConfiguration {
                 new HttpCredentialsAdapter(credentials))
             .setApplicationName("ai-manager-managed-android")
             .build();
-    return new GoogleManagedAndroidGateway(client);
+    return new GoogleManagedAndroidGateway(
+        client, SafetyCriticalPackages.withAdditional(protectedPackages));
   }
 }

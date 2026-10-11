@@ -1,6 +1,7 @@
 package com.aimanager.managedandroid.internal;
 
 import com.aimanager.managedandroid.ManagedAndroidGateway;
+import com.aimanager.shared.SafetyCriticalPackages;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.androidmanagement.v1.AndroidManagement;
 import com.google.api.services.androidmanagement.v1.model.ApplicationPolicy;
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.time.Duration;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -26,9 +28,21 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
       Pattern.compile("[A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)+");
   private static final int MAX_APPLICATIONS = 3000;
   private final AndroidManagement client;
+  private final Set<String> protectedPackages;
 
   public GoogleManagedAndroidGateway(AndroidManagement client) {
+    this(client, SafetyCriticalPackages.withAdditional(""));
+  }
+
+  public GoogleManagedAndroidGateway(AndroidManagement client, Set<String> protectedPackages) {
     this.client = Objects.requireNonNull(client);
+    var safety = new HashSet<>(SafetyCriticalPackages.withAdditional(""));
+    Objects.requireNonNull(protectedPackages).stream()
+        .map(String::strip)
+        .filter(value -> !value.isEmpty())
+        .map(value -> value.toLowerCase(Locale.ROOT))
+        .forEach(safety::add);
+    this.protectedPackages = Set.copyOf(safety);
   }
 
   @Override
@@ -54,6 +68,11 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
                     throw new IllegalArgumentException("Invalid or duplicate application package");
                   }
                   AppControl control = Objects.requireNonNull(rule.control(), "control");
+                  if (control != AppControl.ALLOW
+                      && protectedPackages.contains(packageName.toLowerCase(Locale.ROOT))) {
+                    throw new IllegalArgumentException(
+                        "A safety-critical application cannot be blocked");
+                  }
                   ApplicationPolicy app = new ApplicationPolicy().setPackageName(packageName);
                   return switch (control) {
                     case ALLOW -> app.setInstallType("AVAILABLE").setDisabled(false);

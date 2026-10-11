@@ -4,6 +4,7 @@ import com.aimanager.catalog.ApplicationDefinition;
 import com.aimanager.fleet.*;
 import com.aimanager.policy.*;
 import com.aimanager.shared.DomainException;
+import com.aimanager.shared.SafetyCriticalPackages;
 import java.net.IDN;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,14 +24,9 @@ class RuleCompiler {
         "ANSWER_PHONE_CALLS", "ADD_VOICEMAIL", "USE_SIP", "PROCESS_OUTGOING_CALLS", "ACTIVITY_RECOGNITION", "READ_SMS", "SEND_SMS",
         "RECEIVE_SMS", "RECEIVE_MMS", "RECEIVE_WAP_PUSH", "READ_CALL_LOG", "WRITE_CALL_LOG", "UWB_RANGING");
     private static final Set<String> SPECIAL = Set.of("USAGE_ACCESS", "OVERLAY", "NOTIFICATION_ACCESS", "ACCESSIBILITY", "VPN");
-    private static final Set<String> BASELINE = Set.of("com.android.settings", "com.android.dialer", "com.google.android.dialer",
-        "com.aimanager.device", "com.aimanager.child", "com.aimanager.child.debug", "com.aimanager.guardian");
     private final Set<String> protectedPackages;
     RuleCompiler(@Value("${manager.policies.additional-protected-packages:}") String configured) {
-        var packages = new HashSet<>(BASELINE);
-        Arrays.stream(configured.split(",")).map(String::strip).filter(p -> !p.isEmpty())
-            .map(p -> p.toLowerCase(Locale.ROOT)).forEach(packages::add);
-        this.protectedPackages = Set.copyOf(packages);
+        this.protectedPackages = SafetyCriticalPackages.withAdditional(configured);
     }
 
     void validate(List<PolicyRule> rules, Map<String, ApplicationDefinition> apps) {

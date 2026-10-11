@@ -19,7 +19,7 @@
 
 Google 的设备级 `playStoreMode` 未设置时默认 `WHITELIST`：只把少数应用写入 `applications` 会使列表外应用不再可用，并可能被自动卸载。因此连接器**拒绝**不存在、未明确设为 `BLACKLIST`、或启用 `installAppsDisabled` 的策略；它不会悄悄创建策略或切换原有白名单。运维须在合格提供方、企业所有权和独占策略命名空间均已核实后预置策略。`BLACKLIST` 下未列出的应用通常仍可安装，这不是“仅允许所选应用”的全局白名单能力。完整白名单需独立的应用清单、系统必要应用保护、后果预览和真机签收流程。现有 `putApplicationPolicy` 会替换这份**专用策略**的完整应用列表，不能与其他管理工具共写同一策略。
 
-领域规则的安全底线现包含儿童端正式包 `com.aimanager.child` 和调试包 `com.aimanager.child.debug`；两者的启动、安装和必要权限不能被普通策略禁止。未来更换应用 ID 时必须同步更新这一基线并核对恢复路径。连接器尚未接到领域编译与真实企业绑定，直接调用它不构成完成此项安全验收。
+领域规则与 Google 连接器共用 `SafetyCriticalPackages` 安全底线，包含儿童端正式包 `com.aimanager.child`、调试包 `com.aimanager.child.debug`、Android Device Policy `com.google.android.apps.work.clouddpc`、设置与电话等恢复所需应用。部署项 `manager.policies.additional-protected-packages` 只能增加，不能删减基础清单。普通策略不能禁止这些包的启动、安装和必要权限；连接器直接收到 `BLOCK_LAUNCH` 或 `BLOCK_INSTALL` 时也会拒绝。未来更换应用 ID 或 EMM 提供方时必须同步核对恢复路径。连接器尚未接到领域编译与真实企业绑定，包名保护本身不构成完成受管执行验收。
 
 ## 启用门槛与配置
 
@@ -53,5 +53,6 @@ manager.emm.google.eligibility-confirmed=false
 - [允许用途与资格](https://developers.google.com/android/management/permissible-usage)
 - [Policies patch](https://developers.google.com/android/management/reference/rest/v1/enterprises.policies/patch)
 - [Policy playStoreMode 与默认行为](https://developers.google.com/android/management/reference/rest/v1/enterprises.policies#PlayStoreMode)
+- [Android Device Policy 包名](https://developers.google.com/android/management/work-profile-detection)
 - [Enrollment tokens](https://developers.google.com/android/management/reference/rest/v1/enterprises.enrollmentTokens)
 - [Device resource 与合规状态](https://developers.google.com/android/management/reference/rest/v1/enterprises.devices)
