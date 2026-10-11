@@ -16,6 +16,7 @@ import '../ui/member_editor.dart';
 import '../ui/access_request_dialog.dart';
 import 'members_page.dart';
 import 'classes_page.dart';
+import 'device_groups_page.dart';
 import 'audit_page.dart';
 import 'audit_exports_page.dart';
 import 'usage_reports_page.dart';
@@ -127,6 +128,9 @@ class ConsolePages extends StatelessWidget {
       ]);
     }
     if (section == 'classes') return ClassesPage(session: s);
+    if (section == 'device-groups') {
+      return DeviceGroupsPage(key: ValueKey('${s.root}-${s.role}'), session: s);
+    }
     if (section == 'reports') {
       return UsageReportsPage(key: ValueKey('${s.root}-${s.role}'), session: s);
     }

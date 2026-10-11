@@ -32,6 +32,11 @@ class Session extends ChangeNotifier {
   bool get canManageContracts => profile?['canManageContracts'] == true;
   bool get canApproveContracts => profile?['canApproveContracts'] == true;
   bool canOpen(String section) {
+    if (section == 'device-groups') {
+      return authenticated &&
+          tenant?['kind'] == 'ORGANIZATION' &&
+          const {'OWNER', 'ORG_ADMIN'}.contains(role);
+    }
     if (section == 'support') {
       return authenticated && (canWrite || profile?['canCreateTenant'] == true);
     }

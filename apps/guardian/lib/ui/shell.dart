@@ -12,6 +12,7 @@ const destinations = [
   ('overview', '工作台', Icons.space_dashboard_outlined),
   ('subjects', '儿童档案', Icons.person_outline),
   ('classes', '班级与名册', Icons.school_outlined),
+  ('device-groups', '机构设备组', Icons.grid_view_outlined),
   ('devices', '设备管理', Icons.devices_outlined),
   ('applications', '应用目录', Icons.apps_outlined),
   ('schedules', '时间计划', Icons.schedule_outlined),
