@@ -19,8 +19,18 @@ public final class UnavailableManagedAndroidGateway implements ManagedAndroidGat
   }
 
   @Override
+  public EnterpriseIdentity readEnterprise(String enterpriseId) {
+    throw new ManagedAndroidUnavailableException();
+  }
+
+  @Override
   public EnrollmentMaterial createEnrollmentToken(
-      String enterpriseId, String policyId, Duration lifetime) {
+      String enterpriseId, String policyId, Duration lifetime, String additionalData) {
+    throw new ManagedAndroidUnavailableException();
+  }
+
+  @Override
+  public ManagedEnrollmentIdentity readEnrollmentIdentity(String enterpriseId, String deviceId) {
     throw new ManagedAndroidUnavailableException();
   }
 

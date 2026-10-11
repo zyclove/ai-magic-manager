@@ -26,6 +26,7 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
   private static final Pattern RESOURCE_ID = Pattern.compile("[A-Za-z0-9_-]{1,128}");
   private static final Pattern PACKAGE =
       Pattern.compile("[A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)+");
+  private static final Pattern ENROLLMENT_NONCE = Pattern.compile("[A-Za-z0-9_-]{32,128}");
   private static final int MAX_APPLICATIONS = 3000;
   private final AndroidManagement client;
   private final Set<String> protectedPackages;
@@ -118,11 +119,28 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
   }
 
   @Override
+  public EnterpriseIdentity readEnterprise(String enterpriseId) {
+    String name = enterpriseName(enterpriseId);
+    try {
+      var result = client.enterprises().get(name).execute();
+      if (result == null || !name.equals(result.getName())) {
+        throw new IllegalStateException("Android management enterprise response identity mismatch");
+      }
+      return new EnterpriseIdentity(name, result.getEnterpriseDisplayName());
+    } catch (IOException error) {
+      throw providerFailure("enterprise identity read", error);
+    }
+  }
+
+  @Override
   public EnrollmentMaterial createEnrollmentToken(
-      String enterpriseId, String policyId, Duration lifetime) {
+      String enterpriseId, String policyId, Duration lifetime, String additionalData) {
     String enterprise = enterpriseName(enterpriseId);
     String policy = policyName(enterpriseId, policyId);
     Objects.requireNonNull(lifetime, "lifetime");
+    if (additionalData != null && !ENROLLMENT_NONCE.matcher(additionalData).matches()) {
+      throw new IllegalArgumentException("Invalid opaque enrollment correlation data");
+    }
     long seconds = lifetime.getSeconds();
     if (seconds < 300 || seconds > 1800 || lifetime.getNano() != 0) {
       throw new IllegalArgumentException("Enrollment lifetime must be 5-30 whole minutes");
@@ -133,6 +151,7 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
             .setDuration(seconds + "s")
             .setOneTimeOnly(true)
             .setAllowPersonalUsage("PERSONAL_USAGE_DISALLOWED");
+    if (additionalData != null) request.setAdditionalData(additionalData);
     try {
       EnrollmentToken result =
           client.enterprises().enrollmentTokens().create(enterprise, request).execute();
@@ -143,6 +162,25 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
           result.getName(), result.getValue(), result.getQrCode(), result.getExpirationTimestamp());
     } catch (IOException error) {
       throw providerFailure("enrollment token create", error);
+    }
+  }
+
+  @Override
+  public ManagedEnrollmentIdentity readEnrollmentIdentity(String enterpriseId, String deviceId) {
+    String name = deviceName(enterpriseId, deviceId);
+    try {
+      Device result = client.enterprises().devices().get(name).execute();
+      if (result == null || !name.equals(result.getName())) {
+        throw new IllegalStateException("Android management device response identity mismatch");
+      }
+      return new ManagedEnrollmentIdentity(
+          name,
+          result.getManagementMode(),
+          result.getEnrollmentTime(),
+          result.getEnrollmentTokenName(),
+          result.getEnrollmentTokenData());
+    } catch (IOException error) {
+      throw providerFailure("device enrollment identity read", error);
     }
   }
 
