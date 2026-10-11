@@ -2,6 +2,8 @@
 
 独立 Flutter / Android 宿主，复用 `device_identity`、`device_policy`、`device_observation` 与 `device_access`。当前提供设备配对、原密钥恢复、权威心跳、凭据轮换、签名配置保存，以及需独立授权的可见应用/系统聚合观察客户端。**当前不执行跨应用限制**，配置回执仅为 `STORED`。部署依赖及实际验收见 [观察客户端契约](../../docs/device-observation-client-contract.md)。
 
+「我的规则」可展开查看签名配置中的应用、时段、额度和网站规则意图，并解释设备能力缺口；规则项可聚焦并打开详情。它不显示系统执行成功，也不提供儿童修改入口。见[规则解释界面](../../docs/child-rule-explanation.md)。
+
 ## 环境与启动
 
 - 已验证 Flutter 3.22.2 / Dart 3.4.3；Java 17、Android SDK 36、NDK 27.0.12077973。Android 最低 API 24。
