@@ -86,6 +86,8 @@ $artifactRoot = Join-Path $destination 'artifacts'
 $null = New-Item -ItemType Directory -Path (Join-Path $artifactRoot 'backend'), (Join-Path $artifactRoot 'guardian')
 $environment = [ordered]@{
     ERASURE_LEDGER_ID=[Guid]::NewGuid().ToString()
+    CONTRACT_EVIDENCE_ENABLED='false'; CONTRACT_ACTIVE_SUBMISSIONS_ENABLED='false'
+    CONTRACT_EVIDENCE_ISSUER=''; CONTRACT_EVIDENCE_AUDIENCE=''; CONTRACT_EVIDENCE_JWK_SET_URI=''
     COMPOSE_PROJECT_NAME=$ProjectName; REPOSITORY_ROOT=$repository; DEPLOYMENT_ROOT=$destination
     BACKEND_BUILD_CONTEXT=(Join-Path $artifactRoot 'backend'); GUARDIAN_BUILD_CONTEXT=(Join-Path $artifactRoot 'guardian')
     PUBLIC_URL=$origin; EDGE_PORT="$EdgePort"; EDGE_BIND_ADDRESS='127.0.0.1'; APP_UID=$appUid; APP_GID=$appGid

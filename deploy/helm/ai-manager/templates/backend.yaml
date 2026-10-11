@@ -61,6 +61,11 @@ spec:
             - {name: CORS_ALLOWED_ORIGINS, value: {{ $root.Values.publicOrigin | quote }}}
             - {name: CONFIGURATION_SIGNING_KEY_FILE, value: "/run/keys/signing.jwk"}
             - {name: CONFIGURATION_VERIFICATION_KEYS_FILE, value: "/run/keys/verification.jwks"}
+            - {name: CONTRACT_EVIDENCE_ENABLED, value: {{ $root.Values.contract.evidenceEnabled | quote }}}
+            - {name: CONTRACT_ACTIVE_SUBMISSIONS_ENABLED, value: {{ $root.Values.contract.activeSubmissionsEnabled | quote }}}
+            - {name: CONTRACT_EVIDENCE_ISSUER, value: {{ $root.Values.contract.issuer | quote }}}
+            - {name: CONTRACT_EVIDENCE_AUDIENCE, value: {{ $root.Values.contract.audience | quote }}}
+            - {name: CONTRACT_EVIDENCE_JWK_SET_URI, value: {{ $root.Values.contract.jwkSetUri | quote }}}
             - {name: MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED, value: "true"}
             - {name: MANAGEMENT_ENDPOINT_HEALTH_GROUP_READINESS_INCLUDE, value: "readinessState,db"}
             - {name: API_DOCS_ENABLED, value: "false"}

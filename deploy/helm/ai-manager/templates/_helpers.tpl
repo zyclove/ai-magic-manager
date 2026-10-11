@@ -21,6 +21,11 @@ app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
 {{- $_ = required "erasureLedger.existingSecret is required" .Values.erasureLedger.existingSecret -}}
 {{- if not (regexMatch "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$" .Values.erasureLedger.id) -}}{{ fail "erasureLedger.id must be a fixed lowercase UUID" }}{{- end -}}
 {{- $_ = required "signing.existingSecret is required" .Values.signing.existingSecret -}}
+{{- if .Values.contract.evidenceEnabled -}}
+{{- $_ = required "contract.issuer is required when evidence is enabled" .Values.contract.issuer -}}
+{{- $_ = required "contract.audience is required when evidence is enabled" .Values.contract.audience -}}
+{{- $_ = required "contract.jwkSetUri is required when evidence is enabled" .Values.contract.jwkSetUri -}}
+{{- end -}}
 {{- $_ = required "identity.serviceName is required" .Values.identity.serviceName -}}
 {{- if lt (int .Values.api.replicas) 2 -}}{{ fail "api.replicas must be at least 2 for the availability profile" }}{{- end -}}
 {{- if lt (int .Values.edge.replicas) 2 -}}{{ fail "edge.replicas must be at least 2 for the availability profile" }}{{- end -}}

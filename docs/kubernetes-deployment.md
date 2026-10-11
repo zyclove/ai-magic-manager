@@ -37,6 +37,12 @@ identity:
   servicePort: 8080
 signing:
   existingSecret: manager-signing-keys
+contract:
+  evidenceEnabled: false
+  activeSubmissionsEnabled: false
+  issuer: ""
+  audience: ""
+  jwkSetUri: ""
 ingress:
   host: manager.example.com
   tlsSecretName: manager-tls
@@ -46,6 +52,8 @@ ingress:
 使用已固定版本的 Helm 在独立环境执行 `helm lint deploy/helm/ai-manager -f manager-values.yaml` 和 `helm template manager deploy/helm/ai-manager -f manager-values.yaml`；检查渲染结果没有私钥或密码，且所有容器镜像 digest 与发布清单一致。经变更审批后才执行 `helm upgrade --install manager deploy/helm/ai-manager -n <namespace> -f manager-values.yaml --atomic --wait`。仓库没有附带可直接部署的真实凭据或镜像地址。
 
 Chart 在缺少 HTTPS origin、镜像、业务或账本数据库地址/账号、固定账本 ID、Secret、身份 Service 或 TLS 域名时拒绝渲染。`publicOrigin` 必须严格等于 `https://ingress.host`。Ingress 将 `/api` 交给 API Service、`/identity` 交给现有 Keycloak Service，其余路径交给 Flutter Web。Web 容器对误入的 `/api`、`/identity` 返回 404，不把这些路径回退成前端页面。入口控制器须保留路径，不做剥前缀重写。`ingress.enabled=false` 时，部署方必须自己提供语义相同的 HTTPS 路由。
+
+`contract` 的双开关默认关闭，API 和 worker 使用相同配置。取得合格合同签发方、完成商业审核与签名验证后，才填写 HTTPS `issuer` / `jwkSetUri` 及专用 `audience` 并开启 `evidenceEnabled`；新 ACTIVE 合同另需开启 `activeSubmissionsEnabled`。Chart 在开启证据开关但缺少签发方字段时拒绝渲染，Spring 启动时再次校验 HTTPS。只关闭 ACTIVE 开关仍可处理可信撤销；关闭证据开关也会停止待审合同的批准和待机构确认合同的入账。多副本暂停销售时须先排空旧配置 Pod，再宣布暂停生效。当前没有正式签发方，生产配置应维持关闭；具体流程见[机构合同首发手册](institution-commercial-launch-runbook.md)。
 
 镜像必须使用完整的 SHA-256 digest；示例中的全零值仅用于说明字段形状，不能部署。入口控制器还须强制 HTTP 跳转 HTTPS；配置 Ingress TLS Secret 本身不能证明跳转已生效，应在部署前后分别验证。
 

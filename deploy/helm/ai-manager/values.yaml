@@ -26,6 +26,13 @@ signing:
   existingSecret: ""
   privateKeyKey: signing.jwk
   publicKeysKey: verification.jwks
+contract:
+  # China institution contracts: disable new facts until a qualified signer is connected.
+  evidenceEnabled: false
+  activeSubmissionsEnabled: false
+  issuer: ""
+  audience: ""
+  jwkSetUri: ""
 ingress:
   enabled: true
   className: ""

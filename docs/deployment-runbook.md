@@ -57,6 +57,8 @@ Compose secrets 采用文件挂载，环境配置只有文件路径。业务密�
 
 默认管理台为 `http://localhost:18090`；身份入口为 `/identity/`。所有内部服务不发布主机端口。初始化只写 `.local/deployment/`，不会启动服务；重复初始化明确失败，避免无意更换数据库密码或设备签名密钥。
 
+初始化生成的 `.env` 将 `CONTRACT_EVIDENCE_ENABLED` 和 `CONTRACT_ACTIVE_SUBMISSIONS_ENABLED` 均设为 `false`，机构合同签名来源、audience 和 JWKS 地址留空；Compose 将五项映射到后端。中国大陆机构合同试点经正式签发方和发布门槛批准后，才在专用环境配置 HTTPS `CONTRACT_EVIDENCE_ISSUER`、`CONTRACT_EVIDENCE_JWK_SET_URI`、专用 `CONTRACT_EVIDENCE_AUDIENCE`，并逐步启用。先只开启证据开关可接收经核验的撤销，但不能新增 ACTIVE 权益；新销售另需开启 ACTIVE 开关。关闭证据开关会阻止已入库待审合同的批准和待机构确认合同的入账；运维应按[机构合同首发手册](institution-commercial-launch-runbook.md)处理签发方事故、客户通知和旧副本排空。当前缺少合格签发方，保持两个开关关闭。
+
 `initialize-erasure-ledger.ps1` 是独立的显式操作，会启动账本数据库、构建已核对摘要的后端镜像并执行离线建表，然后收紧运行账号为账本头 SELECT/UPDATE、条目 SELECT/INSERT。根密码只挂载给账本数据库，后端不挂载。成功后保存初始化回执；普通启动检查回执与固定账本 ID，并由后端再次检查真实账本。初始化中断、凭据/ID 丢失或已有非空账本时停止处理，由管理员核对和恢复，不能删除卷或重新生成 ID 来绕过。
 
 标准部署在 API/worker 启动前强制检查账本；缺失、不可访问、损坏或已有接受记录时停止启动。当前还没有域处理器和已应用水位，非空账本不能自动放行。源码开发未配置账本时不启用该启动检查，但正式删除同样不可执行。该检查只覆盖启动时刻，不代表运行期跨节点隔离、全部删除处理或旧备份再删除演练已经完成。

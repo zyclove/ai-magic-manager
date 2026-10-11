@@ -66,6 +66,18 @@
       },
       "required": ["existingSecret", "privateKeyKey", "publicKeysKey"]
     },
+    "contract": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "evidenceEnabled": {"type": "boolean"},
+        "activeSubmissionsEnabled": {"type": "boolean"},
+        "issuer": {"type": "string"},
+        "audience": {"type": "string"},
+        "jwkSetUri": {"type": "string"}
+      },
+      "required": ["evidenceEnabled", "activeSubmissionsEnabled", "issuer", "audience", "jwkSetUri"]
+    },
     "ingress": {
       "type": "object",
       "additionalProperties": false,
