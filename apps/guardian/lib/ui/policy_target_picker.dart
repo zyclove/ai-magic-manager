@@ -8,13 +8,18 @@ import 'design.dart';
 class PolicyTargetSelection {
   final List<String> deviceIds;
   final Map<String, String> names;
+  final Map<String, String> groupRegistrations;
   final String? groupId;
   final int? groupVersion;
   final String? groupName;
   PolicyTargetSelection(Iterable<String> deviceIds, Map<String, String> names,
-      {this.groupId, this.groupVersion, this.groupName})
+      {this.groupId,
+      this.groupVersion,
+      this.groupName,
+      Map<String, String> groupRegistrations = const {}})
       : deviceIds = List.unmodifiable(deviceIds),
-        names = Map.unmodifiable(names);
+        names = Map.unmodifiable(names),
+        groupRegistrations = Map.unmodifiable(groupRegistrations);
 }
 
 class PolicyTargetPicker extends StatefulWidget {
@@ -36,6 +41,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
   final groups = <Json>[];
   final selected = <String>{};
   final names = <String, String>{};
+  final groupRegistrations = <String, String>{};
   String? deviceCursor, groupCursor, groupId, groupName, requestedGroupId;
   int? groupVersion;
   int excludedGroupDevices = 0;
@@ -162,6 +168,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
       groupError = null;
       requestedGroupId = id;
       selected.clear();
+      groupRegistrations.clear();
       groupId = null;
       groupName = null;
       groupVersion = null;
@@ -189,12 +196,21 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
           page.nextCursor != null ||
           page.items.any((row) =>
               row['deviceId'] is! String ||
+              row['registrationId'] is! String ||
               row['displayName'] is! String ||
-              row['state'] is! String)) {
+              row['state'] is! String ||
+              !const {
+                'CURRENT',
+                'STALE_REGISTRATION',
+                'DEVICE_INACTIVE',
+                'PROFILE_ARCHIVED'
+              }.contains(row['membershipStatus']))) {
         throw const ApiFailure(409, 'POLICY_GROUP_SELECTION_UNAVAILABLE');
       }
-      final active =
-          page.items.where((row) => row['state'] == 'ACTIVE').toList();
+      final active = page.items
+          .where((row) =>
+              row['state'] == 'ACTIVE' && row['membershipStatus'] == 'CURRENT')
+          .toList();
       if (active.isEmpty) {
         throw const ApiFailure(409, 'POLICY_GROUP_SELECTION_UNAVAILABLE');
       }
@@ -204,6 +220,8 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
           ..addAll(active.map((row) => row['deviceId'] as String));
         for (final row in active) {
           names[row['deviceId'] as String] = row['displayName'] as String;
+          groupRegistrations[row['deviceId'] as String] =
+              row['registrationId'] as String;
         }
         groupId = id;
         groupName = group['name'] as String;
@@ -232,6 +250,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
         selected.remove(id);
       }
       groupId = null;
+      groupRegistrations.clear();
       groupName = null;
       groupVersion = null;
       excludedGroupDevices = 0;
@@ -245,7 +264,8 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
         PolicyTargetSelection(selected.toList()..sort(), names,
             groupId: groupId,
             groupVersion: groupVersion,
-            groupName: groupName));
+            groupName: groupName,
+            groupRegistrations: groupRegistrations));
   }
 
   @override
@@ -308,7 +328,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
                         '已选 ${selected.length} / 50 台${groupName == null ? '' : ' · 来自“$groupName”第 $groupVersion 版'}'),
                     if (groupId != null)
                       Text(
-                          '选择来自当前设备组快照；发布前会再次核对组版本。${excludedGroupDevices > 0 ? '$excludedGroupDevices 台非活动设备已排除。' : ''}',
+                          '选择来自当前设备组快照；发布前会再次核对组版本。${excludedGroupDevices > 0 ? '$excludedGroupDevices 台非活动或关联失效设备已排除。' : ''}',
                           style: const TextStyle(color: muted)),
                     if (selected.isNotEmpty)
                       Align(
@@ -316,6 +336,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
                           child: TextButton(
                               onPressed: () => setState(() {
                                     selected.clear();
+                                    groupRegistrations.clear();
                                     groupId = null;
                                     groupName = null;
                                     groupVersion = null;

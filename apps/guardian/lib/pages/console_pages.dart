@@ -810,12 +810,28 @@ class ConsoleActions {
         version: draft['revision'],
         body: {'deviceIds': picked.deviceIds}) as Json;
     if (!current()) return;
-    final returnedTargets = (p['targets'] as List)
-        .map((target) => (target as Json)['deviceId'] as String)
-        .toSet();
-    if (returnedTargets.length != picked.deviceIds.length ||
-        !returnedTargets.containsAll(picked.deviceIds)) {
+    final targets = p['targets'];
+    if (targets is! List) {
       throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+    }
+    final returnedRegistrations = <String, String>{};
+    for (final target in targets) {
+      if (target is! Json ||
+          target['deviceId'] is! String ||
+          target['registrationId'] is! String ||
+          returnedRegistrations.containsKey(target['deviceId'])) {
+        throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+      }
+      returnedRegistrations[target['deviceId'] as String] =
+          target['registrationId'] as String;
+    }
+    if (returnedRegistrations.length != picked.deviceIds.length ||
+        !returnedRegistrations.keys.toSet().containsAll(picked.deviceIds)) {
+      throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+    }
+    if (picked.groupRegistrations.entries
+        .any((entry) => returnedRegistrations[entry.key] != entry.value)) {
+      throw const ApiFailure(409, 'POLICY_GROUP_CHANGED');
     }
     if (!ctx.mounted) return;
     final publicationKey = requestId();

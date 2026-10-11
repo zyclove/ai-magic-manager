@@ -384,9 +384,11 @@ class DeviceGroupService {
     ItemPage.validate(limit, cursor);
     return ItemPage.from(
         db.query(
-            "SELECT m.device_id,m.registration_id,m.added_at,d.display_name,d.platform,d.state"
+            "SELECT m.device_id,m.registration_id,m.added_at,d.display_name,d.platform,d.state,"
+                + " d.registration_id current_registration_id,s.archived_at subject_archived_at"
                 + " FROM device_group_members m JOIN devices d ON d.tenant_id=m.tenant_id"
-                + " AND d.id=m.device_id WHERE m.tenant_id=? AND m.group_id=? AND m.device_id>?"
+                + " AND d.id=m.device_id JOIN subjects s ON s.tenant_id=d.tenant_id"
+                + " AND s.id=d.subject_id WHERE m.tenant_id=? AND m.group_id=? AND m.device_id>?"
                 + " ORDER BY m.device_id LIMIT ?",
             (r, n) -> new Member(
                 r.getString("device_id"),
@@ -394,6 +396,10 @@ class DeviceGroupService {
                 r.getString("display_name"),
                 r.getString("platform"),
                 r.getString("state"),
+                r.getObject("subject_archived_at") != null ? "PROFILE_ARCHIVED"
+                    : !r.getString("registration_id").equals(r.getString("current_registration_id"))
+                        ? "STALE_REGISTRATION"
+                        : !"ACTIVE".equals(r.getString("state")) ? "DEVICE_INACTIVE" : "CURRENT",
                 r.getLong("added_at")),
             tenant,
             id,
@@ -432,7 +438,7 @@ class DeviceGroupService {
       long createdAt, long updatedAt) {}
 
   record Member(String deviceId, String registrationId, String displayName,
-      String platform, String state, long addedAt) {}
+      String platform, String state, String membershipStatus, long addedAt) {}
 
   record DeviceTarget(String deviceId, String registrationId) {}
 }

@@ -104,12 +104,26 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
           row['displayName'] is! String ||
           row['platform'] is! String ||
           row['state'] is! String ||
+          !const {
+            'CURRENT',
+            'STALE_REGISTRATION',
+            'DEVICE_INACTIVE',
+            'PROFILE_ARCHIVED'
+          }.contains(row['membershipStatus']) ||
           row['addedAt'] is! int) {
         throw const ApiFailure(502, 'INVALID_DEVICE_GROUP_RESPONSE');
       }
     }
     return List.unmodifiable(rows);
   }
+
+  String membershipLabel(Object? status) => switch (status) {
+        'CURRENT' => '关联有效',
+        'STALE_REGISTRATION' => '注册周期已变更',
+        'DEVICE_INACTIVE' => '设备未激活',
+        'PROFILE_ARCHIVED' => '儿童档案已归档',
+        _ => '关联状态未知'
+      };
 
   Future<void> open(String id) async {
     if (!current) return;
@@ -486,6 +500,10 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
                 children: [
               Text('组内设备', style: Theme.of(context).textTheme.titleMedium),
               const SizedBox(height: 12),
+              if (members
+                  .any((member) => member['membershipStatus'] != 'CURRENT'))
+                const Notice('部分成员关联已失效，不会进入设备组策略目标。请核对注册周期后移出旧成员。',
+                    warning: true),
               if (members.isEmpty)
                 const EmptyView('组内暂无设备', '从已激活的机构设备清单中选择并加入。'),
               for (final member in members)
@@ -493,7 +511,7 @@ class _DeviceGroupsPageState extends State<DeviceGroupsPage> {
                     contentPadding: EdgeInsets.zero,
                     title: Text('${member['displayName']}'),
                     subtitle: Text(
-                        '${label(member['platform'])} · ${label(member['state'])}\n设备 ${member['deviceId']} · 注册 ${member['registrationId']}'),
+                        '${label(member['platform'])} · ${label(member['state'])} · ${membershipLabel(member['membershipStatus'])}\n设备 ${member['deviceId']} · 注册 ${member['registrationId']}'),
                     isThreeLine: true,
                     trailing: detail!['state'] == 'ACTIVE'
                         ? IconButton(
