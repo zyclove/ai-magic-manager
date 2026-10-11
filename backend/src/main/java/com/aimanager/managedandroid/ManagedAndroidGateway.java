@@ -8,6 +8,9 @@ import java.util.List;
  * client.
  */
 public interface ManagedAndroidGateway {
+  /** Stable provider identity persisted with every enterprise binding and enrollment intent. */
+  String providerCode();
+
   boolean available();
 
   /**

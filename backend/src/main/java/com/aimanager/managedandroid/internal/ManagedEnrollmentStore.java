@@ -157,7 +157,8 @@ class ManagedEnrollmentStore {
     Intent intent = required(tenant, id, false);
     if (!"ISSUED".equals(intent.state())) throw conflict("MANAGED_ENROLLMENT_NOT_ISSUED");
     var enterprise = enterprises.requireActive(tenant);
-    if (!enterprise.enterpriseId().equals(intent.enterpriseId())
+    if (!enterprise.provider().equals(intent.provider())
+        || !enterprise.enterpriseId().equals(intent.enterpriseId())
         || enterprise.bindingVersion() != intent.bindingVersion())
       throw conflict("MANAGED_ENTERPRISE_CHANGED");
     return intent;
@@ -186,7 +187,8 @@ class ManagedEnrollmentStore {
     ResourceVersions.check(expectedVersion, intent.version());
     if (!"ISSUED".equals(intent.state())) throw conflict("MANAGED_ENROLLMENT_NOT_ISSUED");
     var enterprise = enterprises.requireActive(tenant);
-    if (!enterprise.enterpriseId().equals(intent.enterpriseId())
+    if (!enterprise.provider().equals(intent.provider())
+        || !enterprise.enterpriseId().equals(intent.enterpriseId())
         || enterprise.bindingVersion() != intent.bindingVersion())
       throw conflict("MANAGED_ENTERPRISE_CHANGED");
     requireProvenance(intent, providerDeviceId, evidence);
@@ -260,25 +262,25 @@ class ManagedEnrollmentStore {
 
   /** Compare-and-swap leases let several scheduler replicas clean up without double ownership. */
   @Transactional(timeout = 10)
-  List<CleanupLease> claimCleanup(int limit) {
+  List<CleanupLease> claimCleanup(int limit, String provider) {
     if (limit < 1 || limit > 100) throw new IllegalArgumentException("Invalid cleanup batch");
     long now = clock.millis();
     var candidates = jdbc.query(
         "SELECT tenant_id,id,enterprise_id,token_name FROM managed_enrollment_intents"
-            + " WHERE state='CANCEL_PENDING' AND next_cleanup_at<=?"
+            + " WHERE provider=? AND state='CANCEL_PENDING' AND next_cleanup_at<=?"
             + " AND (cleanup_lease_until IS NULL OR cleanup_lease_until<?)"
             + " ORDER BY next_cleanup_at,id LIMIT ?",
         (r, n) -> new CleanupLease(r.getString(1), r.getString(2), r.getString(3),
-            r.getString(4), null), now, now, limit);
+            r.getString(4), null), provider, now, now, limit);
     List<CleanupLease> claimed = new ArrayList<>();
     for (var candidate : candidates) {
       String claim = UUID.randomUUID().toString();
       int changed = jdbc.update(
           "UPDATE managed_enrollment_intents SET cleanup_claim_id=?,cleanup_lease_until=?,"
               + "cleanup_attempts=cleanup_attempts+1 WHERE tenant_id=? AND id=?"
-              + " AND state='CANCEL_PENDING' AND next_cleanup_at<=?"
+              + " AND provider=? AND state='CANCEL_PENDING' AND next_cleanup_at<=?"
               + " AND (cleanup_lease_until IS NULL OR cleanup_lease_until<?)",
-          claim, now + 60_000, candidate.tenantId(), candidate.id(), now, now);
+          claim, now + 60_000, candidate.tenantId(), candidate.id(), provider, now, now);
       if (changed == 1) claimed.add(new CleanupLease(candidate.tenantId(), candidate.id(),
           candidate.enterpriseId(), candidate.tokenName(), claim));
     }

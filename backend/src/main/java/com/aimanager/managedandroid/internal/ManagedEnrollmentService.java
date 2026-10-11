@@ -30,7 +30,7 @@ class ManagedEnrollmentService {
       ManagedEnrollmentStore store,
       ManagedAndroidGateway gateway,
       Clock clock,
-      @Value("${manager.emm.google.bootstrap-policy-id:}") String bootstrapPolicyId,
+      @Value("${manager.emm.bootstrap-policy-id:${manager.emm.google.bootstrap-policy-id:}}") String bootstrapPolicyId,
       @Value("${manager.emm.provider-status-max-age-seconds:86400}") long maxProviderStatusAgeSeconds) {
     this.store = store;
     this.gateway = gateway;
@@ -114,6 +114,8 @@ class ManagedEnrollmentService {
   View cancel(String tenant, String id, String actor, long version) {
     var intent = store.requestCancel(tenant, id, actor, version);
     if ("CANCELLED".equals(intent.state())) return view(intent);
+    // Preserve pending cleanup for the original provider after a connector switch.
+    if (!intent.provider().equals(gateway.providerCode())) return view(intent);
     if (intent.tokenName() != null) {
       try {
         gateway.deleteEnrollmentToken(intent.enterpriseId(), intent.tokenName());

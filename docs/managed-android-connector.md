@@ -2,7 +2,9 @@
 
 ## 当前边界
 
-本仓库现在提供服务端 `ManagedAndroidGateway` 接口及 Google Android Management API 官方 Java 客户端实现。默认实现为不可用且拒绝所有调用。机构企业绑定申请和审核状态已可持久化，但**当前未取得 Android Enterprise EMM/Android Management API 商业准入，也没有绑定真实设备；不能把它宣传为已实现受管设备强管控。** 现有家庭 BYOD 注册、策略预览与下发状态仍按原有能力边界运行，`ENFORCE` 不会因为企业绑定记录存在而自动开放。
+本仓库现在提供服务端 `ManagedAndroidGateway` 接口及 Google Android Management API 官方 Java 客户端实现。默认实现为不可用且拒绝所有调用。机构企业绑定、注册意图与提供方设备证据流程已可持久化，但**当前未取得 Android Enterprise EMM/Android Management API 商业准入，也未把提供方设备与本地儿童 Agent 的可信身份打通；不能把它宣传为已实现受管设备强管控。** 现有家庭 BYOD 注册、策略预览与下发状态仍按原有能力边界运行，`ENFORCE` 不会因为企业绑定记录存在而自动开放。
+
+中国大陆、机构合同优先的首发部署默认 `manager.emm.target-country-code=CN`。Google 当前公布的 [Android Enterprise 可用国家/地区列表](https://support.google.com/work/android/answer/6270910?hl=en)列有香港、澳门和台湾，但未列出中国大陆；这是依据现行名单作出的产品准入判断，不能据此推断所有厂商受管方案都不可用。Google 的 [AMAPI 允许用途](https://developers.google.com/android/management/permissible-usage)还限制提供方资质与客户关系。因此 `CN` 部署会在启用 Google 连接器时拒绝启动，且默认无受管提供方时不发放注册资料、不承诺系统级管控。机构强管控需要另行签约、审核适用于目标地区和机型的合作 EMM/OEM 方案，并完成真机验证；家庭侧仍按 BYOD 能力展示。
 
 代码位置：`backend/src/main/java/com/aimanager/managedandroid/`。连接器仅在服务端运行；Flutter 和设备端不得持有 Google 服务账号凭证。
 
@@ -56,11 +58,15 @@ Google 的设备级 `playStoreMode` 未设置时默认 `WHITELIST`：只把少�
 ## 启用门槛与配置
 
 ```properties
+manager.emm.target-country-code=CN
 manager.emm.google.enabled=false
 manager.emm.google.eligibility-confirmed=false
+manager.emm.bootstrap-policy-id=
 ```
 
-只有经法务/商务确认的准入、允许用途、客户关系及 Google 项目配置具备后，运维才可同时打开这两项。`enabled=true` 且未确认资格会导致服务启动失败；仅关闭时不会加载云端凭证。正式环境使用服务端 Application Default Credentials（工作负载身份优先），只授予 `androidmanagement` 所需权限；不把账号密钥放入仓库、移动客户端或聊天记录。
+只有目标地区由官方明确支持、经法务/商务确认的准入、允许用途、客户关系及 Google 项目配置具备后，运维才可为非 `CN` 部署同时打开这两项。`enabled=true` 且未确认资格，或目标地区为 `CN`，会导致服务启动失败；仅关闭时不会加载云端凭证。正式环境使用服务端 Application Default Credentials（工作负载身份优先），只授予 `androidmanagement` 所需权限；不把账号密钥放入仓库、移动客户端或聊天记录。`manager.emm.bootstrap-policy-id` 是连接器无关的独占初始策略 ID；旧配置 `manager.emm.google.bootstrap-policy-id` 仍作为兼容回退。
+
+合作方可实现 `ManagedAndroidGateway` 并向 Spring 注册唯一 Bean；内置缺省 Bean 仅在没有合作方 Bean 时创建。每个实现必须提供稳定的 `providerCode`（大写字母起始，随后 2–31 位大写字母、数字或下划线），自行完成资质、签约、凭证、地区/机型和初始策略安全前置核验。企业绑定申请自动记录当前连接器标识；审核、后续受管写入和设备核对要求其与绑定提供方一致，否则返回 `EMM_PROVIDER_MISMATCH`。切换提供方不会自动迁移既有绑定或设备；旧提供方的待清理令牌不会交给新提供方删除。若配置开启 Google 却注入其他合作方 Bean，服务拒绝启动。合作方还须满足本接口要求的规范化资源名与注册证据语义；适配器不能简单返回“成功”或伪造设备回执。没有合作方接入时，该接口只是可替换边界，不代表中国大陆已具备强管控能力。
 
 当前锁定依赖为 `google-api-services-androidmanagement:v1-rev20260714-2.0.0` 与 `google-auth-library-oauth2-http:1.54.0`。正式发布前应把直接和传递依赖纳入 SBOM、许可证核验和漏洞扫描；升级官方生成客户端时重跑本地请求契约与真机回归。
 

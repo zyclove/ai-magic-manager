@@ -47,6 +47,11 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
   }
 
   @Override
+  public String providerCode() {
+    return "GOOGLE_AMAPI";
+  }
+
+  @Override
   public boolean available() {
     return true;
   }

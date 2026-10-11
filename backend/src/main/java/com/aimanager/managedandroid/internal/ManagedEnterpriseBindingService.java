@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 class ManagedEnterpriseBindingService implements ManagedEnterpriseAuthority {
   static final String REVIEW_SCOPE = "SCOPE_emm:approve";
-  private static final String PROVIDER = "GOOGLE_AMAPI";
+  private static final Pattern PROVIDER_CODE = Pattern.compile("[A-Z][A-Z0-9_]{2,31}");
   private static final Pattern PROVIDER_ID = Pattern.compile("[A-Za-z0-9_-]{1,128}");
   private final JdbcTemplate jdbc;
   private final TenantAccess access;
@@ -56,6 +56,7 @@ class ManagedEnterpriseBindingService implements ManagedEnterpriseAuthority {
   @Transactional(timeout = 10)
   Binding propose(String tenantId, String actor, String enterpriseId, String contractReference) {
     access.requireWriteRole(tenantId, actor, Role.OWNER, Role.ORG_ADMIN);
+    String provider = configuredProvider();
     if (!PROVIDER_ID.matcher(String.valueOf(enterpriseId)).matches())
       throw DomainException.invalid("INVALID_ENTERPRISE_ID");
     String contract = text(contractReference, 1, 200, "INVALID_CONTRACT_REFERENCE");
@@ -64,6 +65,7 @@ class ManagedEnterpriseBindingService implements ManagedEnterpriseAuthority {
     Binding existing = find(tenantId, true);
     if (existing != null) {
       if (existing.state().equals("PENDING")
+          && existing.provider().equals(provider)
           && existing.enterpriseId().equals(enterpriseId)
           && existing.contractReference().equals(contract)
           && existing.requestedBy().equals(actor)) return existing;
@@ -76,9 +78,10 @@ class ManagedEnterpriseBindingService implements ManagedEnterpriseAuthority {
         "INSERT INTO managed_enterprise_bindings(tenant_id,provider,enterprise_id,"
             + "contract_reference,state,version,requested_by,created_at,updated_at)"
             + " VALUES(?,?,?,?,'PENDING',1,?,?,?) ON DUPLICATE KEY UPDATE tenant_id=tenant_id",
-        tenantId, PROVIDER, enterpriseId, contract, actor, now, now);
+        tenantId, provider, enterpriseId, contract, actor, now, now);
     Binding created = find(tenantId, true);
     if (created == null
+        || !created.provider().equals(provider)
         || !created.enterpriseId().equals(enterpriseId)
         || !created.contractReference().equals(contract)
         || !created.requestedBy().equals(actor)) throw conflict("ENTERPRISE_BINDING_EXISTS");
@@ -109,6 +112,7 @@ class ManagedEnterpriseBindingService implements ManagedEnterpriseAuthority {
   public EnterpriseAccess requireActive(String tenantId) {
     Binding binding = required(tenantId, false);
     if (!"ACTIVE".equals(binding.state())) throw conflict("ENTERPRISE_BINDING_NOT_ACTIVE");
+    requireProvider(binding);
     if (!gateway.available()) throw new DomainException(HttpStatus.SERVICE_UNAVAILABLE, "EMM_UNAVAILABLE");
     requireCurrentContract(binding);
     return new EnterpriseAccess(binding.provider(), binding.enterpriseId(), binding.version());
@@ -132,6 +136,7 @@ class ManagedEnterpriseBindingService implements ManagedEnterpriseAuthority {
     Binding binding = required(tenantId, false);
     ResourceVersions.check(expectedVersion, binding.version());
     if (!"PENDING".equals(binding.state())) throw conflict("ENTERPRISE_BINDING_NOT_PENDING");
+    requireProvider(binding);
     if (!gateway.available()) throw new DomainException(HttpStatus.SERVICE_UNAVAILABLE, "EMM_UNAVAILABLE");
     try {
       var identity = gateway.readEnterprise(binding.enterpriseId());
@@ -160,6 +165,7 @@ class ManagedEnterpriseBindingService implements ManagedEnterpriseAuthority {
     Binding binding = required(tenantId, true);
     ResourceVersions.check(expectedVersion, binding.version());
     if (!"PENDING".equals(binding.state())) throw conflict("ENTERPRISE_BINDING_NOT_PENDING");
+    requireProvider(binding);
     if (actor.equals(binding.requestedBy())) throw DomainException.denied();
     if (providerIdentity == null
         || !("enterprises/" + binding.enterpriseId()).equals(providerIdentity.enterpriseName()))
@@ -207,6 +213,18 @@ class ManagedEnterpriseBindingService implements ManagedEnterpriseAuthority {
         Integer.class,
         binding.tenantId(), binding.contractReference(), key, clock.millis(), clock.millis());
     if (eligible == 0) throw conflict("MANAGED_ANDROID_CONTRACT_REQUIRED");
+  }
+
+  private String configuredProvider() {
+    String provider = gateway.providerCode();
+    if (provider == null || !PROVIDER_CODE.matcher(provider).matches())
+      throw new IllegalStateException("Invalid managed Android provider code");
+    return provider;
+  }
+
+  private void requireProvider(Binding binding) {
+    if (!binding.provider().equals(configuredProvider()))
+      throw new DomainException(HttpStatus.SERVICE_UNAVAILABLE, "EMM_PROVIDER_MISMATCH");
   }
 
   private Binding required(String tenantId, boolean lock) {

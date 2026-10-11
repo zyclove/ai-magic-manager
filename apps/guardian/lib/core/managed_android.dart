@@ -3,6 +3,7 @@ import 'api.dart';
 final _id = RegExp(
     r'^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$');
 final _providerId = RegExp(r'^[A-Za-z0-9_-]{1,128}$');
+final _providerCode = RegExp(r'^[A-Z][A-Z0-9_]{2,31}$');
 bool isManagedTenantId(String value) => _id.hasMatch(value);
 const _maxEpoch = 9007199254740991;
 
@@ -31,7 +32,8 @@ class ManagedEnterpriseBinding {
   static ManagedEnterpriseBinding parse(Object? raw, String tenantId) {
     if (raw is! Json ||
         raw['tenantId'] != tenantId ||
-        raw['provider'] != 'GOOGLE_AMAPI' ||
+        raw['provider'] is! String ||
+        !_providerCode.hasMatch(raw['provider']) ||
         raw['enterpriseId'] is! String ||
         !_providerId.hasMatch(raw['enterpriseId']) ||
         raw['contractReference'] is! String ||
@@ -76,7 +78,8 @@ class ManagedEnterpriseReview {
         raw['tenantId'] is! String ||
         !_id.hasMatch(raw['tenantId']) ||
         (expectedTenant != null && raw['tenantId'] != expectedTenant) ||
-        raw['provider'] != 'GOOGLE_AMAPI' ||
+        raw['provider'] is! String ||
+        !_providerCode.hasMatch(raw['provider']) ||
         raw['enterpriseId'] is! String ||
         !_providerId.hasMatch(raw['enterpriseId']) ||
         raw['contractReference'] is! String ||
@@ -163,7 +166,8 @@ class ManagedEnrollmentIntent {
         raw['tenantId'] != tenantId ||
         raw['subjectId'] is! String ||
         !_id.hasMatch(raw['subjectId']) ||
-        raw['provider'] != 'GOOGLE_AMAPI' ||
+        raw['provider'] is! String ||
+        !_providerCode.hasMatch(raw['provider']) ||
         raw['enterpriseId'] is! String ||
         !_providerId.hasMatch(raw['enterpriseId']) ||
         !const {

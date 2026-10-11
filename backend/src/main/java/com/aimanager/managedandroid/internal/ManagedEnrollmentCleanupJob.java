@@ -36,7 +36,7 @@ class ManagedEnrollmentCleanupJob {
       timeUnit = TimeUnit.SECONDS)
   void clean() {
     if (!gateway.available()) return;
-    for (var lease : store.claimCleanup(batch)) {
+    for (var lease : store.claimCleanup(batch, gateway.providerCode())) {
       try {
         if (lease.tokenName() != null)
           gateway.deleteEnrollmentToken(lease.enterpriseId(), lease.tokenName());

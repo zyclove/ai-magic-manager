@@ -8,6 +8,11 @@ import java.util.List;
 /** Explicit safe default; an unavailable provider never simulates managed enforcement. */
 public final class UnavailableManagedAndroidGateway implements ManagedAndroidGateway {
   @Override
+  public String providerCode() {
+    return "GOOGLE_AMAPI";
+  }
+
+  @Override
   public boolean available() {
     return false;
   }

@@ -91,6 +91,8 @@ Android 锁定任务和设备级控制依赖受管模式；远程重启也要求
 
 Android Management API 是机构受管设备的优先官方评估方案，但生产接入限于符合规则的商业 EMM 等提供方，且有准入和配额要求；满足条件时使用 Google 提供的 Android Device Policy，不默认自研 DPC。不符合准入时使用经过审查的 EMM 合作方接入，家庭 BYOD 不借用受限 EMM API。[API 概览](https://developers.google.com/android/management/introduction)、[使用规则](https://developers.google.com/android/management/permissible-usage)、[新 EMM 方案指南](https://developers.google.com/android/work/play/emm-api/register)
 
+**中国大陆首发决策（2026-10 核对）：** Google 的[现行 Android Enterprise 地区列表](https://support.google.com/work/android/answer/6270910?hl=en)未列出中国大陆。首发机构版不把 AMAPI 作为可售的强管控执行路径；默认配置拒绝在目标地区 `CN` 启动 Google 连接器。商务先完成目标地区可用的 EMM/OEM 提供方合同、数据处理与设备兼容审查，再通过同一服务端连接器接口接入。提供方未就绪时，只销售已真实可执行且清楚标注边界的能力，不以待审核企业绑定或提供方初始策略状态代替设备受控验收。地区名单与商业规则可能变化，每次发布和签约前重新核对官方资料。
+
 电视需按 Android TV/Google TV 版本、厂商和受管模式建立支持矩阵。设备不支持系统策略时，使用电视自带家长设置、受控启动器或网络过滤提供有限功能，并标记控制盲区。
 
 ### 3.2 统一能力状态
