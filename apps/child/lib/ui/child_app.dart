@@ -9,6 +9,7 @@ import 'observation_section.dart';
 import 'access_section.dart';
 import 'submission_section.dart';
 import 'report_section.dart';
+import 'rule_explanations.dart';
 import '../core/report_loader.dart';
 
 class ChildApp extends StatelessWidget {
@@ -394,12 +395,9 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
         const SizedBox(height: 24),
         for (final rule in session!.rules.configurations) ...[
           const Divider(height: 1),
-          ListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text(rule.document?['name'] as String? ?? '已保存配置',
-                  maxLines: 2, overflow: TextOverflow.ellipsis),
-              subtitle: Text(
-                  '包含 ${(rule.document?['rules'] as List?)?.length ?? 0} 条规则；系统执行尚不支持。'))
+          ChildPolicyExplanation(
+              key: ValueKey('${rule.policyId}/${rule.versionId}'),
+              configuration: rule)
         ],
         if (session!.submissionFactory != null) ...[
           const Divider(),
