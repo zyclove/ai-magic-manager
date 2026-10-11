@@ -69,6 +69,16 @@ class ErasurePreflightJourneyTest {
   }
 
   @Test
+  void missingIndependentLedgerRemainsAnExplicitExecutionBlocker() throws Exception {
+    mvc.perform(get(path).with(actor(owner, true)))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("executionAvailable").value(false))
+        .andExpect(
+            jsonPath("blockers")
+                .value(org.hamcrest.Matchers.hasItem("ERASURE_LEDGER_NOT_CONFIGURED")));
+  }
+
+  @Test
   void ownerGetsExplicitNonExecutablePreflightWithoutPersonalContent() throws Exception {
     var response =
         mvc.perform(get(path).with(actor(owner, true)))

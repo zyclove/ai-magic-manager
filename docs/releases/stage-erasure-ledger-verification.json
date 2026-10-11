@@ -1,0 +1,148 @@
+{
+  "recordedAt": "2026-10-11T02:07:45.480494+00:00",
+  "status": "source-verified-not-deployed",
+  "applicationVersion": "1.0.0",
+  "deployed": false,
+  "databaseReset": false,
+  "fullRegressionBase": "9b06b65a0c9174a0ddcfa54c051deb5a2fd7d149",
+  "integrationBase": "2854a36ed0a66096d671c707004d5ad998146277",
+  "sourceFiles": [
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/ErasureLedger.java",
+      "sha256": "96a8a04b7688189d7b95b96742488e30e0ce9ce183e645b19f6751ee3b24b982"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasurePreflightService.java",
+      "sha256": "090f1c748e031961d2a6c686dc3a8bd470400572f347c10cd0a3aed5893cc3bc"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureLedgerBootstrap.java",
+      "sha256": "131fecb01bb18fb1d22a8b796c0ee276269f1b5ea98d8d0eb455e287ba009aeb"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureLedgerConnection.java",
+      "sha256": "f9b85f0a7cfdc067912ff83c685da2610879c111631cd905f5410c89b0c272d7"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/JdbcErasureLedger.java",
+      "sha256": "4183081aa48e15993dbade7699492fa2f4e4e7129d85d3bdbdd52356039eb7ad"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/LedgerIntegrity.java",
+      "sha256": "d6823629df770e2bfdc2c9065719f9dd4bae8d20e6269d9018f426c8b7663ae6"
+    },
+    {
+      "path": "backend/src/main/resources/erasure-ledger/initial-schema.sql",
+      "sha256": "7f43c7262a12e4563034ed5c2c6330744ab8f2aa85c27e582c4cbbbeaedca23e"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasurePreflightJourneyTest.java",
+      "sha256": "99911df52c8bb717075874d787594c6222265ba6f72dc4631bab2dd3b4beb252"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureLedgerStoreTest.java",
+      "sha256": "9c783901a68eceabda0a2a292e7de4faebced27a120a1c46328028f29dc61bfb"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureLedgerRuntimeTest.java",
+      "sha256": "e22f19eae7ec19aa7e24e1f7ef40b584b1c031cf7f8a3d5d5cbb8c0c3ecb52ed"
+    },
+    {
+      "path": "docs/data-erasure-contract.md",
+      "sha256": "854f34cc4a5952e4108a6b30ec05d68d63c49330b680e633960ce0fec51e3d75"
+    },
+    {
+      "path": "docs/version-1.0.0-initialization.md",
+      "sha256": "cf6309c7e4a7ce4fa8f967a4f92dbf06fcff513ca59e52bc91f29d6f09aa0129"
+    },
+    {
+      "path": "docs/erasure-ledger-plan.md",
+      "sha256": "aec87f572e1fb694f60a56dc2800c4f46dcdce0f78f6cd9f5ba0d4af826ec7cc"
+    }
+  ],
+  "verification": [
+    {
+      "name": "full-backend-final-fix",
+      "total": 558,
+      "passed": 553,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 5,
+      "localLog": ".local/erasure-ledger-final-full.log",
+      "sha256": "b33fbe4a3eac469effdff5e0453b430498b05f06d40af5dec8b50a42742eb2e2"
+    },
+    {
+      "name": "mysql-store-final-fix",
+      "total": 14,
+      "passed": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "localLog": ".local/erasure-ledger-review-green-mysql.log",
+      "sha256": "14b4a15872c07b26a9b3f41136ffa03a42ae356b996e90cb308041e749d179a1"
+    },
+    {
+      "name": "mysql-runtime-final-fix",
+      "total": 2,
+      "passed": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "localLog": ".local/erasure-ledger-review-runtime-mysql.log",
+      "sha256": "5e7ff5e1f95e7c4bbcdc73ef0dc3babf0004f394c25f0115d7e1ac90f11ebdb0"
+    },
+    {
+      "name": "latest-committed-commerce-integration",
+      "total": 47,
+      "passed": 45,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 2,
+      "localLog": ".local/erasure-ledger-integrated.log",
+      "sha256": "1684ff9c1d2a2737d6348d4b1cb6d0f538b64a179a0a8e49cf8ef79d98d7cbec"
+    }
+  ],
+  "review": {
+    "reviewer": "/root/erasure_ledger_review",
+    "initialFilesMatched": 10,
+    "findings": [
+      {
+        "priority": "P1",
+        "issue": "Nontransactional default engine",
+        "status": "fixed with red-green MySQL coverage"
+      },
+      {
+        "priority": "P2",
+        "issue": "Permission-dependent same-schema detection",
+        "status": "fixed with red-green restricted metadata coverage"
+      },
+      {
+        "priority": "P2",
+        "issue": "Ignored trailing JSON roots",
+        "status": "fixed with red-green MySQL coverage"
+      }
+    ],
+    "fixPasses": 1,
+    "secondReview": false,
+    "redTestFailures": 4,
+    "redTestErrors": 0
+  },
+  "package": {
+    "localPath": ".local/erasure-ledger-integrated-backend/target/manager-backend-1.0.0.jar",
+    "sha256": "60c4b44cfe78b2ced918182bacfc2e02391c064c0b253a8894624c8d3e5d8d54",
+    "logSha256": "30b4bf7452787579a53e6fe3419eef318272ffcba975949a615de5a8d7e77749",
+    "bootstrapFirstExit": 0,
+    "bootstrapRepeatExit": 1
+  },
+  "limitations": [
+    "Full H2 suite skips two MySQL-only storage cases and two MySQL runtime cases; these pass separately on isolated MySQL.",
+    "Physical Android/EMM test skipped where the existing suite requires external device tooling.",
+    "No public erasure acceptance or execution endpoint; executionAvailable remains false.",
+    "No global startup or request restore gate, domain erasure handlers, business applied watermark, or actual old-backup restore exercise yet.",
+    "Local separate schemas validate logical and transaction separation, not independent infrastructure or backup failure domains.",
+    "Snapshot read completion is not erasure completion or permission to reopen traffic.",
+    "Chain hashes do not protect against a privileged whole-chain rewrite.",
+    "MockMvc authentication claims do not establish real OIDC/OTP verification.",
+    "Distinct nonempty database catalog names required, including across different servers."
+  ]
+}

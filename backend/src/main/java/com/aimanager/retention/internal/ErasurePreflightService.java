@@ -4,6 +4,7 @@ import static com.aimanager.tenant.TenantAccess.Role.*;
 
 import com.aimanager.audit.AuditService;
 import com.aimanager.identity.RecentAuthentication;
+import com.aimanager.retention.ErasureLedger;
 import com.aimanager.shared.DomainException;
 import com.aimanager.tenant.TenantAccess;
 import java.time.Clock;
@@ -45,6 +46,7 @@ class ErasurePreflightService {
   private final SubjectDataCatalog catalog;
   private final AuditService audit;
   private final Clock clock;
+  private final ErasureLedger ledger;
 
   ErasurePreflightService(
       JdbcTemplate db,
@@ -52,13 +54,15 @@ class ErasurePreflightService {
       RecentAuthentication recent,
       SubjectDataCatalog catalog,
       AuditService audit,
-      Clock clock) {
+      Clock clock,
+      ErasureLedger ledger) {
     this.db = db;
     this.access = access;
     this.recent = recent;
     this.catalog = catalog;
     this.audit = audit;
     this.clock = clock;
+    this.ledger = ledger;
   }
 
   @Transactional(timeout = 10)
@@ -116,6 +120,11 @@ class ErasurePreflightService {
             subject);
     var blockers = new ArrayList<String>();
     blockers.add("ERASURE_EXECUTION_UNAVAILABLE");
+    try {
+      if (ledger.head().sequence() > 0) blockers.add("ERASURE_LEDGER_RECONCILIATION_REQUIRED");
+    } catch (ErasureLedger.Failure unavailable) {
+      blockers.add(unavailable.code());
+    }
     if (active > 0) blockers.add("DEVICE_EXIT_REQUIRED");
     if (credentials > 0) blockers.add("ACTIVE_DEVICE_CREDENTIALS");
     if (enrollments > 0) blockers.add("PENDING_DEVICE_ENROLLMENTS");
