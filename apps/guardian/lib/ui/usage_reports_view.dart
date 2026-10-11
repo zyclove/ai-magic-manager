@@ -20,6 +20,7 @@ class UsageReportsView extends StatefulWidget {
   final VoidCallback? reauth;
   final ValueChanged<UsageReportJobDraft>? onBackground;
   final VoidCallback? onJobs;
+  final VoidCallback? onReviewRules, onCheckDevice;
   const UsageReportsView(
       {super.key,
       required this.repository,
@@ -30,6 +31,8 @@ class UsageReportsView extends StatefulWidget {
       this.accessChanges,
       this.onBackground,
       this.onJobs,
+      this.onReviewRules,
+      this.onCheckDevice,
       this.reauth});
   @override
   State<UsageReportsView> createState() => _UsageReportsViewState();
@@ -501,6 +504,8 @@ class _UsageReportsViewState extends State<UsageReportsView>
                         '${report!.generatedAt}-${device.deviceId}-$categoryFilter'),
                     device: device,
                     categoryFilter: categoryFilter,
+                    onReviewRules: widget.onReviewRules,
+                    onCheckDevice: widget.onCheckDevice,
                     report: report!)),
         ] else
           const Panel(
@@ -515,11 +520,14 @@ class UsageReportDeviceView extends StatefulWidget {
   final UsageReport report;
   final String categoryFilter;
   final bool historical;
+  final VoidCallback? onReviewRules, onCheckDevice;
   const UsageReportDeviceView(
       {super.key,
       required this.device,
       required this.report,
       this.historical = false,
+      this.onReviewRules,
+      this.onCheckDevice,
       required this.categoryFilter});
   @override
   State<UsageReportDeviceView> createState() => UsageReportDeviceViewState();
@@ -605,7 +613,9 @@ class UsageReportDeviceViewState extends State<UsageReportDeviceView> {
               key: ValueKey('${app.profile}-${app.packageName}'),
               buckets: app.buckets,
               timeZone: r.timeZone,
-              period: r.period),
+              period: r.period,
+              onReviewRules: widget.historical ? null : widget.onReviewRules,
+              onCheckDevice: widget.historical ? null : widget.onCheckDevice),
           const SizedBox(height: 14),
           for (final bucket in app.buckets)
             Padding(

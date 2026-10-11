@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../core/api.dart';
 import '../core/session.dart';
 import '../core/usage_reports.dart';
@@ -244,6 +245,20 @@ class _UsageReportsPageState extends State<UsageReportsPage>
           onBackground: usageReportJobRoles.contains(role) ? createJob : null,
           onJobs: usageReportJobRoles.contains(role)
               ? () => setState(() => showJobs = true)
+              : null,
+          onReviewRules: widget.session.canWrite
+              ? () {
+                  if (current() && widget.session.canOpen('policies')) {
+                    context.go('/policies');
+                  }
+                }
+              : null,
+          onCheckDevice: widget.session.canWrite
+              ? () {
+                  if (current() && widget.session.canOpen('devices')) {
+                    context.go('/devices');
+                  }
+                }
               : null,
           reauth: () => widget.session.login(stepUp: true));
 }

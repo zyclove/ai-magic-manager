@@ -8,11 +8,14 @@ import 'design.dart';
 class UsageTrendView extends StatefulWidget {
   final List<UsageReportBucket> buckets;
   final String timeZone, period;
+  final VoidCallback? onReviewRules, onCheckDevice;
   const UsageTrendView(
       {super.key,
       required this.buckets,
       required this.timeZone,
-      required this.period});
+      required this.period,
+      this.onReviewRules,
+      this.onCheckDevice});
   @override
   State<UsageTrendView> createState() => _UsageTrendViewState();
 }
@@ -65,7 +68,10 @@ class _UsageTrendViewState extends State<UsageTrendView> {
               '仅比较最后两个连续、完整且等长的时段。${trend.partialPeriods > 0 ? '${trend.partialPeriods} 个未完整时段仅展示，不参与比较。' : ''}汇总仍未经独立验证。',
               style: Theme.of(context).textTheme.bodySmall),
           const SizedBox(height: 14),
-          _UsageInsightCard(insight: insight),
+          _UsageInsightCard(
+              insight: insight,
+              onReviewRules: widget.onReviewRules,
+              onCheckDevice: widget.onCheckDevice),
           const SizedBox(height: 14),
           Text('横条为下界至上界；圆点为汇总值。无证据不按零绘制。',
               style: Theme.of(context).textTheme.bodySmall),
@@ -157,7 +163,9 @@ class _UsageTrendViewState extends State<UsageTrendView> {
 /// A human-review prompt. It never edits policy or labels a child's health.
 class _UsageInsightCard extends StatelessWidget {
   final UsageInsight insight;
-  const _UsageInsightCard({required this.insight});
+  final VoidCallback? onReviewRules, onCheckDevice;
+  const _UsageInsightCard(
+      {required this.insight, this.onReviewRules, this.onCheckDevice});
 
   @override
   Widget build(BuildContext context) {
@@ -192,6 +200,11 @@ class _UsageInsightCard extends StatelessWidget {
             'UNCERTAIN' => '上下界重叠，不能确定方向。',
             _ => '可比较的完整时段不足。',
           }}';
+    final action = insight.kind == UsageInsightKind.checkEvidence
+        ? onCheckDevice
+        : onReviewRules;
+    final actionLabel =
+        insight.kind == UsageInsightKind.checkEvidence ? '查看设备与授权' : '前往规则中心';
     return Semantics(
         container: true,
         child: Container(
@@ -216,6 +229,15 @@ class _UsageInsightCard extends StatelessWidget {
               const SizedBox(height: 4),
               Text('仅使用本次已授权报表在本机生成；不自动修改规则，不作健康或身份判断。',
                   style: Theme.of(context).textTheme.bodySmall),
+              if (action != null) ...[
+                const SizedBox(height: 10),
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: OutlinedButton.icon(
+                        onPressed: action,
+                        icon: const Icon(Icons.arrow_forward, size: 18),
+                        label: Text(actionLabel)))
+              ]
             ])));
   }
 }
