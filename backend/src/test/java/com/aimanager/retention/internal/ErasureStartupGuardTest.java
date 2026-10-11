@@ -21,6 +21,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 class ErasureStartupGuardTest {
   static ErasureLedger ledger;
+  static ErasureRecoveryJobs recovery;
   static AtomicInteger refreshed, started;
   static CountDownLatch scheduled;
   ApplicationContextRunner runner =
@@ -29,11 +30,18 @@ class ErasureStartupGuardTest {
   @BeforeEach
   void setup() {
     ledger = mock(ErasureLedger.class);
+    recovery = mock(ErasureRecoveryJobs.class);
     refreshed = new AtomicInteger();
     started = new AtomicInteger();
     scheduled = new CountDownLatch(1);
     when(ledger.head())
         .thenReturn(new ErasureLedger.Checkpoint(UUID.randomUUID().toString(), 0, "a".repeat(64)));
+    when(recovery.reconcile(100))
+        .thenAnswer(
+            invocation -> {
+              var head = ledger.head();
+              return new ErasureRecoveryJobs.Batch(0, head, head, true);
+            });
   }
 
   @Test
@@ -82,6 +90,26 @@ class ErasureStartupGuardTest {
               assertThat(started.get()).isZero();
               verify(ledger, never()).readAfter(any(), anyInt());
               verify(ledger, never()).append(any());
+              verify(recovery).reconcile(100);
+            });
+  }
+
+  @Test
+  void failedRecoveryPersistenceStopsBeforeAnyApplicationWork() {
+    when(ledger.head())
+        .thenReturn(new ErasureLedger.Checkpoint(UUID.randomUUID().toString(), 1, "b".repeat(64)));
+    when(recovery.reconcile(100))
+        .thenThrow(new ErasureLedger.Failure("ERASURE_RECOVERY_UNAVAILABLE"));
+    runner
+        .withPropertyValues("manager.erasure-recovery.required=true")
+        .run(
+            context -> {
+              assertThat(context).hasFailed();
+              assertThat(context.getStartupFailure())
+                  .hasStackTraceContaining("ERASURE_RECOVERY_UNAVAILABLE");
+              assertThat(refreshed.get()).isZero();
+              assertThat(started.get()).isZero();
+              assertThat(scheduled.getCount()).isEqualTo(1);
             });
   }
 
@@ -93,6 +121,7 @@ class ErasureStartupGuardTest {
             context -> {
               assertThat(context).hasNotFailed();
               verify(ledger).head();
+              verify(recovery).reconcile(100);
               assertThat(refreshed.get()).isEqualTo(1);
               assertThat(started.get()).isEqualTo(1);
               assertThat(scheduled.await(5, TimeUnit.SECONDS)).isTrue();
@@ -104,7 +133,7 @@ class ErasureStartupGuardTest {
     runner.run(
         context -> {
           assertThat(context).hasNotFailed();
-          verifyNoInteractions(ledger);
+          verifyNoInteractions(ledger, recovery);
         });
   }
 
@@ -140,6 +169,11 @@ class ErasureStartupGuardTest {
     @Bean
     ErasureLedger ledger() {
       return ledger;
+    }
+
+    @Bean
+    ErasureRecoveryJobs recovery() {
+      return recovery;
     }
 
     @Bean

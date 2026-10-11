@@ -649,6 +649,43 @@
       "category": "DEVICE_DATA"
     },
     {
+      "table": "erasure_recovery_jobs",
+      "columns": [
+        "accepted_at",
+        "created_at",
+        "entry_hash",
+        "failure_code",
+        "fence",
+        "lease_owner",
+        "lease_until",
+        "ledger_id",
+        "next_attempt_at",
+        "previous_hash",
+        "request_hash",
+        "request_id",
+        "request_json",
+        "sequence_number",
+        "state",
+        "subject_id",
+        "tenant_id",
+        "updated_at"
+      ],
+      "domain": "retention",
+      "category": "AUDIT_RETENTION"
+    },
+    {
+      "table": "erasure_recovery_state",
+      "columns": [
+        "ledger_id",
+        "read_hash",
+        "read_sequence",
+        "singleton_id",
+        "updated_at"
+      ],
+      "domain": "retention",
+      "category": "OPERATIONAL_METADATA"
+    },
+    {
       "table": "event_publication",
       "columns": [
         "completion_date",

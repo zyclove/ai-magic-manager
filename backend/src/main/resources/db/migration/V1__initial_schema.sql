@@ -1286,3 +1286,45 @@ CREATE TABLE subject_erasure_previews (
 CREATE INDEX ix_erasure_preview_actor ON subject_erasure_previews(tenant_id,subject_id,creator_actor_key,created_at);
 CREATE INDEX ix_erasure_preview_expiry ON subject_erasure_previews(state,expires_at);
 CREATE INDEX ix_erasure_preview_retention ON subject_erasure_previews(created_at);
+
+-- Reading progress is not an applied-erasure watermark or permission to reopen traffic.
+CREATE TABLE erasure_recovery_state (
+    singleton_id INTEGER NOT NULL PRIMARY KEY,
+    ledger_id VARCHAR(36) NOT NULL,
+    read_sequence BIGINT NOT NULL,
+    read_hash VARCHAR(64) NOT NULL,
+    updated_at BIGINT NOT NULL,
+    CONSTRAINT ck_erasure_recovery_singleton CHECK (singleton_id = 1),
+    CONSTRAINT ck_erasure_recovery_sequence CHECK (read_sequence >= 0)
+);
+-- Opaque recovery scope survives disappearance of its business subject or tenant.
+-- No cascading personal-data relationship; no completed state before handlers exist.
+CREATE TABLE erasure_recovery_jobs (
+    request_id VARCHAR(36) NOT NULL PRIMARY KEY,
+    ledger_id VARCHAR(36) NOT NULL,
+    sequence_number BIGINT NOT NULL,
+    tenant_id VARCHAR(36) NOT NULL,
+    subject_id VARCHAR(36) NOT NULL,
+    request_json MEDIUMTEXT NOT NULL,
+    request_hash VARCHAR(64) NOT NULL,
+    previous_hash VARCHAR(64) NOT NULL,
+    entry_hash VARCHAR(64) NOT NULL,
+    accepted_at BIGINT NOT NULL,
+    state VARCHAR(24) NOT NULL,
+    fence BIGINT NOT NULL DEFAULT 0,
+    lease_owner VARCHAR(36),
+    lease_until BIGINT,
+    next_attempt_at BIGINT NOT NULL,
+    failure_code VARCHAR(40),
+    created_at BIGINT NOT NULL,
+    updated_at BIGINT NOT NULL,
+    CONSTRAINT uq_erasure_recovery_sequence UNIQUE (ledger_id, sequence_number),
+    CONSTRAINT ck_erasure_recovery_job_sequence CHECK (sequence_number > 0),
+    CONSTRAINT ck_erasure_recovery_fence CHECK (fence >= 0),
+    CONSTRAINT ck_erasure_recovery_job_state CHECK (state IN ('ACCEPTED','CLAIMED','RETRY_REQUIRED')),
+    CONSTRAINT ck_erasure_recovery_lease CHECK (
+      (state = 'CLAIMED' AND lease_owner IS NOT NULL AND lease_until IS NOT NULL) OR
+      (state <> 'CLAIMED' AND lease_owner IS NULL AND lease_until IS NULL))
+);
+CREATE INDEX ix_erasure_recovery_due ON erasure_recovery_jobs(state,next_attempt_at,sequence_number);
+CREATE INDEX ix_erasure_recovery_lease ON erasure_recovery_jobs(state,lease_until,sequence_number);

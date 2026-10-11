@@ -1,0 +1,142 @@
+{
+  "recordedAt": "2026-10-11T04:11:57.544442+00:00",
+  "applicationVersion": "1.0.0",
+  "status": "source-verified-not-deployed",
+  "base": "5205619bd1938fc7093c5ba398f77b6077cc2712",
+  "deployed": false,
+  "existingDatabaseModified": false,
+  "historicalMigrationAdded": false,
+  "sourceFiles": [
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureRecoveryJobs.java",
+      "sha256": "94eca77f5b4ec0c15c2ce6d4ea5d0ca049e57ade37cddd6049875d0b440d5906"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureStartupGuard.java",
+      "sha256": "9a654d88669d265b76c48a807bd380d8752da0ec231ad208bacd4d6469cf9678"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureRecoveryJobsTest.java",
+      "sha256": "93e19bb529a45aefed5ea5d88ca7ec82538818ea584156e736227f51408600ec"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureStartupGuardTest.java",
+      "sha256": "7d531d1eabdee068879e7badaaa08b9e15b91f7571e4ada37f82fffc2e672425"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V1__initial_schema.sql",
+      "sha256": "b6833e945141722fe758ac2dc5a8ee3081cddd4dbbab03143ba8c8f4ac2eaa1f"
+    },
+    {
+      "path": "backend/src/main/resources/retention/subject-data-stores.json",
+      "sha256": "2590724380f087c0e7d0eae560aa3c56d88cfb817ebefff77717e1915dc967be"
+    }
+  ],
+  "testRuns": [
+    {
+      "name": "final-focused-h2",
+      "total": 49,
+      "passed": 49,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".local/erasure-recovery-review-green.log",
+      "sha256": "e11f462f8529f4a30b35cd4851070bfffdf3d8b75f112f502ead08f1c40734f5"
+    },
+    {
+      "name": "final-recovery-mysql",
+      "total": 17,
+      "passed": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".local/erasure-recovery-final-mysql.log",
+      "sha256": "36190c299c7935e78d4de8dc6312dfd7fc123cf4cfd6c672ce12c3e6cf3505c1"
+    },
+    {
+      "name": "final-spring-runtime-mysql",
+      "total": 2,
+      "passed": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".local/erasure-recovery-final-runtime-mysql.log",
+      "sha256": "52e6583d5db6e8e8edf8f5e512e6493649875d265cf6f28f1cea8207b52aeff6"
+    },
+    {
+      "name": "final-full-backend",
+      "total": 588,
+      "passed": 583,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 5,
+      "log": ".local/erasure-recovery-final-full.log",
+      "sha256": "6f42ebe50e13a4c3306b2ee18e4825c10a289425eb059fcda9a8956520385432"
+    }
+  ],
+  "skippedSuites": [
+    {
+      "class": "com.aimanager.AndroidChildSubmissionJourneyTest",
+      "skipped": 1
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "skipped": 2
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+      "skipped": 2
+    }
+  ],
+  "review": {
+    "passes": 1,
+    "scope": "Six immutable source files in erasure-recovery-review.json",
+    "reviewedHashes": [
+      {
+        "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureRecoveryJobs.java",
+        "sha256": "94eca77f5b4ec0c15c2ce6d4ea5d0ca049e57ade37cddd6049875d0b440d5906"
+      },
+      {
+        "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureStartupGuard.java",
+        "sha256": "41b76598bcc2a15a8ade2b54050bdc858e6217fa3a457de8d39df4f61f7559d7"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureRecoveryJobsTest.java",
+        "sha256": "a45fe91e7180c40c362a41e6b42f755e9b0c4f26407a99f23f828f60f4f376aa"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureStartupGuardTest.java",
+        "sha256": "ec7e75e07957af601a8e78338a0c61d06872f73ed238c2d442caf23b35c97a19"
+      },
+      {
+        "path": "backend/src/main/resources/db/migration/V1__initial_schema.sql",
+        "sha256": "b6833e945141722fe758ac2dc5a8ee3081cddd4dbbab03143ba8c8f4ac2eaa1f"
+      },
+      {
+        "path": "backend/src/main/resources/retention/subject-data-stores.json",
+        "sha256": "2590724380f087c0e7d0eae560aa3c56d88cfb817ebefff77717e1915dc967be"
+      }
+    ],
+    "findings": [
+      {
+        "priority": "P1",
+        "issue": "Empty journal bypassed business recovery cursor and identity checks",
+        "resolution": "Always reconcile before readiness decision",
+        "redTests": 2,
+        "redFailures": 2,
+        "redErrors": 0,
+        "redLog": ".local/erasure-recovery-review-red.log"
+      }
+    ],
+    "fixedByRegression": true,
+    "secondReviewPerformed": false
+  },
+  "limitations": [
+    "No public deletion acceptance, domain erasure handlers, automatic worker, completion API or applied watermark",
+    "No cross-node runtime isolation or real backup-restore-and-erasure acceptance",
+    "No retention-policy certification, finished-job cleanup or journal compaction",
+    "No large-scale capacity or OceanBase certification",
+    "Existing localhost:18099 deployment remains on its prior frozen release",
+    "Client interop fixtures use existing frozen report-child-ui/report-web/support-package-web packages, not later unrelated client commits"
+  ]
+}
