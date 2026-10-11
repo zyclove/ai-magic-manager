@@ -49,10 +49,13 @@ Those proofs are bearer credentials until expiry and must not be logged or
 persisted. A device API 401 alone never authorizes local deletion.
 
 `submitReceipt` sends an explicit `CleanupReceipt` using a fresh RECEIPT proof
-bound to the verified operation. `CleanupReceiptJournal` durably saves the
-exact receipt ID, stage and body before the first send, and returns that same
-record after an unknown result. A failed store write blocks progress until a
-fresh read; restoring a journal requires the same newly verified command.
+bound to the verified operation. `CleanupReceiptJournal` derives one stable
+UUID v5 per signed command and stage, durably saves its exact body before the
+first send, and returns that record after an unknown result. If the journal is
+unexpectedly lost, a matching stage keeps the same ID; a changed failure
+reason gets a server conflict instead of silently creating a second receipt.
+A failed store write blocks progress until a fresh read; restoring a journal
+requires the same newly verified command.
 The returned operation is an accepted-receipt snapshot, not a live status
 check. `AGENT_DATA_CLEARED` is permitted only after the host reports its own
 idempotent data clear to the journal. No cleaner is included yet.

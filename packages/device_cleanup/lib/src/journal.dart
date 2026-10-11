@@ -102,7 +102,19 @@ class CleanupReceiptJournal {
                 (record.accepted != 'RECEIVED' || record.localDataCleared)) {
           throw const CleanupFailure('CLEANUP_STAGE_INVALID');
         }
-        final receipt = CleanupReceipt(record.command, const Uuid().v4(), stage,
+        // The ID is stable even if the encrypted record is unexpectedly lost.
+        // A changed FAILED reason then conflicts on the server instead of
+        // silently creating a second receipt for the same command/stage.
+        final stageName = switch (stage) {
+          CleanupReceiptStage.received => 'RECEIVED',
+          CleanupReceiptStage.agentDataCleared => 'AGENT_DATA_CLEARED',
+          CleanupReceiptStage.failed => 'FAILED'
+        };
+        final receiptId = const Uuid().v5(
+            '6ba7b811-9dad-11d1-80b4-00c04fd430c8',
+            'aimanager-cleanup-v1/${record.command.operationId}/'
+                '${record.command.commandHash}/$stageName');
+        final receipt = CleanupReceipt(record.command, receiptId, stage,
             reasonCode: reasonCode);
         record.pendingId = receipt.receiptId;
         record.pendingStage = receipt.wireStage;
