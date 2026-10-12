@@ -1,0 +1,322 @@
+{
+  "stage": "child-help-behavior",
+  "applicationVersion": "1.0.0",
+  "recordedAt": "2026-10-12T07:28:15.751176+00:00",
+  "frozenBase": "e59248ec4aa9dcc943ef4324abe6070e9668fb8f",
+  "baselineFilesVerified": 806,
+  "sourceHashNormalization": "CRLF to LF for git blob comparison; candidate matches raw working file bytes",
+  "sourceFiles": [
+    {
+      "path": "apps/child/lib/core/help_requests.dart",
+      "sha256": "2126fd5173b5ca46e7419047fdd71afc23026f1e62156036b342ce4c26ab09d0",
+      "rawSha256": "2fa3e7b3e292254b4bb96739e3b77f2550a9fe3d57b3a56e2b65af69d585e3a1"
+    },
+    {
+      "path": "apps/child/test/help_requests_test.dart",
+      "sha256": "5674046e42041d684ff526405d5fb8d6a0add92d44a67cd9895e72541ac685f9",
+      "rawSha256": "8ab04a675433aa16eba390822f51a91b0a7cb608b2e6444b56972f2b7b4182eb"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/safety/internal/HelpRequestService.java",
+      "sha256": "6d78e0465df42a2ef1780e0d2af45ece155419e229e275b8b38e21d275b5b6e5",
+      "rawSha256": "6d78e0465df42a2ef1780e0d2af45ece155419e229e275b8b38e21d275b5b6e5"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/HelpRequestJourneyTest.java",
+      "sha256": "f9f58e0109d280f4da5cb3666aec27d171421b4183b93266253b2d3d77c677a9",
+      "rawSha256": "d33fd70812fbb4b6f3d03142600ef1dbd608f3b461152db56b1ccbcabc984f08"
+    },
+    {
+      "path": "docs/child-help-request-contract.md",
+      "sha256": "1cb6d6c87e1ddb34fc41a4e718299c361b5a1f0b4c5a54ab010115f2820b692d",
+      "rawSha256": "7717d875adadb6e1f90e1ef0d0c4fb18c9e1621e2ab026329788197fb09bb3f0"
+    },
+    {
+      "path": "docs/child-help-verification-plan.md",
+      "sha256": "340d03bfae7d3c94613343e517805097b761e1450240da22e78b9583d66a8f49",
+      "rawSha256": "6abbdb19b4b8ee4b83db65b9c02f1d2d20bf4b6106b20f3aa16be1dfaa6198dc"
+    }
+  ],
+  "logs": {
+    "client-red2": {
+      "path": ".local/child-help-client-red2.log",
+      "sha256": "82af9a2ca6e6cc294199b10f47e3bd120e7981bdd11073864e85e5ace23a366a"
+    },
+    "client-green": {
+      "path": ".local/child-help-client-green.log",
+      "sha256": "44b7733aa466f29537ff70ead4e6bb0ada4e5598718d84d89ec4047fb7864734"
+    },
+    "client-lifecycle-red": {
+      "path": ".local/child-help-client-lifecycle-red.log",
+      "sha256": "bfce4601068966b16b347a9afcb5e26de2aee75ddeb7c4c85c1d07cfbe195110"
+    },
+    "client-final2": {
+      "path": ".local/child-help-client-final2.log",
+      "sha256": "50ce6323bb8288cfc9b2331a04485d2ce621e9aa1ac371b33555e3d889db3384"
+    },
+    "client-analyze-final2": {
+      "path": ".local/child-help-client-analyze-final2.log",
+      "sha256": "3540c7f24dcd0a648f19e68d6e173b37e8bd51a6697750e46a57c57e3432b1fe"
+    },
+    "backend-h2": {
+      "path": ".local/child-help-backend-h2.log",
+      "sha256": "6af9a1f044b752352f6f4987a46b92013f346916a1c2ec7d354c961773776d35"
+    },
+    "backend-green": {
+      "path": ".local/child-help-backend-green.log",
+      "sha256": "991621998c122efa1fdf18c68578c463bfa140121d03b748795be0c95f9dd1f7"
+    },
+    "backend-mysql": {
+      "path": ".local/child-help-backend-mysql.log",
+      "sha256": "388764a21e0187bbc2536b9db3a3166c8c79b6ca6fcc3079d69350bd721d64af"
+    },
+    "backend-mysql-green": {
+      "path": ".local/child-help-backend-mysql-green.log",
+      "sha256": "74ab3e0c6cddcec842f1278173b2d004e2eb03a2ab2db5e841557d95e3ec73f5"
+    },
+    "backend-final": {
+      "path": ".local/child-help-backend-final.log",
+      "sha256": "cf5c79ae55976eff07af336716dc6664ef23a21c3c5e7c106e7e977e4bf09af7"
+    },
+    "backendFull": {
+      "path": ".local/child-help-full.log",
+      "sha256": "85d98f24b9f5c56eb568078d44191b806c83bbd3f76c60695de01ae6de96b962"
+    }
+  },
+  "tests": {
+    "clientInitialRed": {
+      "total": 26,
+      "passed": 18,
+      "failed": 8
+    },
+    "clientLifecycleRed": {
+      "total": 28,
+      "passed": 26,
+      "failed": 2
+    },
+    "clientFinal": {
+      "total": 152,
+      "passed": 152,
+      "newHelpCases": 28
+    },
+    "clientStaticAnalysis": "no issues",
+    "backendInitialH2": {
+      "total": 28,
+      "passed": 25,
+      "errors": 3,
+      "note": "fixture errors: invalid registration FK, AOP spy setup and cascading unfinished stubbing; not product failures"
+    },
+    "backendMysqlRed": {
+      "total": 28,
+      "passed": 26,
+      "failed": 2,
+      "errors": 0
+    },
+    "backendMysqlGreen": {
+      "total": 28,
+      "passed": 28,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "backendFinalH2": {
+      "total": 40,
+      "passed": 40,
+      "help": 28,
+      "teacher": 11,
+      "moduleBoundary": 1,
+      "failed": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "backendFull": {
+      "total": 864,
+      "passed": 844,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 20
+    }
+  },
+  "mysqlCleanup": {
+    "attempts": 2,
+    "schemasCreated": 2,
+    "schemasRemoved": 2,
+    "usersCreated": 2,
+    "usersRemoved": 2,
+    "evidence": "Executor observed terminal cleanup messages for failed run session57812 and successful run session22404"
+  },
+  "fixes": [
+    "Retry looks up original request and only POSTs after explicit404; unknown GET outcomes preserve pending intent",
+    "Typed storage errors preserve prepared records and keep UI restore error handling effective",
+    "Same registration mutations excluded across coordinator replacements in UI isolate; read-only restore remains available",
+    "READ_COMMITTED creation observes committed request/rate facts after lifecycle lock; MySQL concurrent replay no longer500 and last rate slot cannot double spend"
+  ],
+  "review": {
+    "status": "approved_with_deferred_minor",
+    "reviewer": "/root/child_help_final_review",
+    "model": "gpt-6-astra",
+    "reasoningEffort": "high",
+    "critical": 0,
+    "important": 0,
+    "minor": 1,
+    "sourceChangesAfterReview": false,
+    "verdict": "seven owned paths ready to merge",
+    "deferredMinors": [
+      {
+        "file": "backend/src/test/java/com/aimanager/HelpRequestJourneyTest.java",
+        "line": 482,
+        "finding": "Concurrent acknowledgement test uses the same adult; membership-row locking serializes before request-row contention",
+        "action": "Add future OWNER+GUARDIAN same-ETag race coverage; existing request row lock/version guard/same-transaction audit remain in implementation"
+      }
+    ],
+    "declinedToJudgeRulings": [
+      {
+        "decision": "Do not certify real Android process death, power loss, hardware durability or multi-process exclusion",
+        "reason": "Controlled storage and HTTP prove coordinator behavior, not native hardware persistence",
+        "costIfWrong": "Native installation and recovery still require dedicated acceptance"
+      },
+      {
+        "decision": "Do not certify identity issuance, real mobile network, notification delivery, adult response or emergency service",
+        "reason": "This stage uses JWT/HTTP boundaries and records receipt/acknowledgement only",
+        "costIfWrong": "Operational response and delivery remain unavailable as a verified promise"
+      },
+      {
+        "decision": "Full backend evidence is pending and latest parent app is excluded from the frozen review",
+        "reason": "Full session62949 still live; parent aecb8d1 came after frozen e59248e",
+        "costIfWrong": "Latest combined product requires subsequent source-aligned integration"
+      },
+      {
+        "decision": "Do not claim this patch deployed, complete erasure orchestration or production capacity",
+        "reason": "No deployment, final erasure orchestration or load acceptance performed here",
+        "costIfWrong": "Running service remains earlier version and those capabilities remain incomplete"
+      },
+      {
+        "decision": "Accept executor archive comparison of806 baseline files while stating reviewer did not repeat it",
+        "reason": "Executor checked every byte against git archive; reviewer independently verified7input and10log hashes plus4candidate files",
+        "costIfWrong": "Baseline provenance has one executor comparison rather than independent duplicate comparison"
+      }
+    ],
+    "fullBackendAfterReview": {
+      "status": "executor verified terminal exit0,864total/844pass/20skipped and JAR",
+      "sourceChanges": false,
+      "note": "Original review did not certify the then-running full backend; its scoped verdict is retained without a second review"
+    }
+  },
+  "runtimeUpdated": false,
+  "schemaChanged": false,
+  "limitations": [
+    "MockMvc executes real Spring security/domain/SQL but user JWT issuance is a fixture; no real IdP/mobile HTTP acceptance here",
+    "Flutter uses real coordinator/session with controlled HTTP/storage boundaries; no real Android process death, encryption hardware or remote notification evidence",
+    "No new rendered UI, guardian model/widget acceptance, TV/accessibility certification or parent-app integration",
+    "UI-isolate exclusion is not an inter-process storage lock",
+    "Other shared WIP and later commits excluded; current18101 runtime unchanged",
+    "Full erasure orchestration, retention scheduling, delivery follow-up and emergency response remain incomplete",
+    "Full backend20conditional skips remain unverified; latest parent app and real native/IdP integration excluded"
+  ],
+  "fullBuildSkippedTests": [
+    {
+      "suite": "com.aimanager.AndroidChildSubmissionJourneyTest",
+      "test": "realEnrollmentNativeCrashRecoveryAndRevocation",
+      "reason": "System property [device.android.runner] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceAccessHttpInteropTest",
+      "test": "realApprovalRetryReceiptsRevocationExpiryAndOpaqueRevocation",
+      "reason": "System property [device.access.package] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+      "test": "actualDartSubmissionAdultDecisionAndExistingDeviceDeliveryReference",
+      "reason": "System property [device.access.package] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+      "test": "actualChildUiRecoversOriginalCancellationAcrossProcesses",
+      "reason": "System property [device.child.package] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+      "test": "actualChildSessionAndUiRecoverOriginalSubmissionAcrossProcesses",
+      "reason": "System property [device.child.package] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceConfigurationHttpInteropTest",
+      "test": "realDeviceTransportStoresTwoPagesAndRejectsRevokedCredential",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceIdentityHttpInteropTest",
+      "test": "actualEnrollmentRecoveryConfirmationRotationAndRevocation",
+      "reason": "System property [device.identity.package] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceObservationHttpInteropTest",
+      "test": "adultConsentDeviceLostAcknowledgementReplayWithdrawalAndRevocation",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DiagnosticPreviewJourneyTest",
+      "test": "productionDartClientReadsRealHttpAndRechecksCurrentAccess",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureAdmissionStoreTest",
+      "test": "leastPrivilegeRuntimeCanDrainWorkButCannotRewriteAcceptedRecords",
+      "reason": "Environment variable [NOTICE_IT_ROOT_PASSWORD] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "mismatchedIdentityAndMissingLedgerAreReportedWithoutAutomaticRecreation",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "servletAsyncCannotEscapeTheRegisteredSynchronousPermit",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "acceptedLedgerStopsAuthorizedBusinessRequestsWithoutDeletingTheirData",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "realHttpRequestDrainsBeforeAcceptanceAndProbesRemainAvailable",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+      "test": "nonTransactionalEngineIsRejectedBeforeAppending",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+      "test": "initializationPinsTransactionalEngineEvenWhenServerDefaultDiffers",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.support.internal.DiagnosticPackageJourneyTest",
+      "test": "productionDartClientCompletesPackageLifecycleOverRealHttp",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.SupportGrantJourneyTest",
+      "test": "productionDartSupportClientCompletesRealHttpGrantLifecycle",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.UsageReportJobJourneyTest",
+      "test": "realHttpJobsAreConsumedByProductionDartClient",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.UsageReportJourneyTest",
+      "test": "realHttpResponseIsConsumedByProductionDartReportClient",
+      "reason": "System property [device.dart.command] does not exist"
+    }
+  ],
+  "artifact": {
+    "path": ".local/child-help-20261012/backend/target/manager-backend-1.0.0.jar",
+    "sha256": "90c2c7ac027aad85f1578afc965c203325ad711dbeeb35484ec3a88aa9cbf91f"
+  }
+}

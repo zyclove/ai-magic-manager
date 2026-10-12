@@ -20,6 +20,7 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 /** Records a child's request for adult attention without claiming delivery or emergency response. */
@@ -51,7 +52,9 @@ class HelpRequestService {
   }
 
   /** The client UUID is durably chosen before HTTP; retries return the original record. */
-  @Transactional(timeout = 10)
+  // observeActive reads before the lifecycle lock. Under MySQL REPEATABLE_READ,
+  // that snapshot would hide a request committed while this caller waited.
+  @Transactional(isolation = Isolation.READ_COMMITTED, timeout = 10)
   Created create(DeviceContext identity, UUID clientRequestId, Reason reason) {
     var device = activeDevice(identity);
     var existing = own(identity, clientRequestId.toString());

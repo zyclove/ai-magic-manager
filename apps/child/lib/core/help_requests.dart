@@ -92,6 +92,9 @@ class ChildHelpCoordinator {
   final DeviceIdentityView identity;
   late final String scopeKey;
   bool closed = false;
+  // The native app has one UI isolate. A page replacement can create a new
+  // coordinator before the previous encrypted write has finished.
+  static final Set<String> _activeOperations = {};
 
   ChildHelpCoordinator(
       {required this.session,
@@ -133,43 +136,85 @@ class ChildHelpCoordinator {
     if (!current) throw const ChildHelpFailure('HELP_CONTEXT_CHANGED');
   }
 
-  Future<ChildHelpRecord?> restore() async {
+  // Serialize journal operations before their first await. A second action is
+  // rejected, not queued into a surprise new request after the first completes.
+  Future<T> _exclusive<T>(Future<T> Function() action) async {
     _check();
-    final raw = await store.read(scopeKey);
+    if (!_activeOperations.add(scopeKey)) {
+      throw const ChildHelpFailure('HELP_REQUEST_BUSY');
+    }
+    try {
+      return await action();
+    } finally {
+      _activeOperations.remove(scopeKey);
+    }
+  }
+
+  Future<void> _write(ChildHelpRecord record) async {
+    _check();
+    try {
+      await store.write(scopeKey, jsonEncode(record.toJson()));
+    } catch (_) {
+      throw const ChildHelpFailure('HELP_STORAGE_UNAVAILABLE');
+    }
+    _check();
+  }
+
+  // A foreground restore is a read-only durable snapshot; it must not turn an
+  // in-flight request into a storage-blocked UI. Mutations remain exclusive.
+  Future<ChildHelpRecord?> restore() => _restore();
+
+  Future<ChildHelpRecord?> _restore() async {
+    _check();
+    String? raw;
+    try {
+      raw = await store.read(scopeKey);
+    } catch (_) {
+      throw const ChildHelpFailure('HELP_STORAGE_UNAVAILABLE');
+    }
     _check();
     return raw == null ? null : ChildHelpRecord.parse(raw);
   }
 
-  Future<ChildHelpRecord> submit(String reason) async {
-    _check();
-    if (!_reason(reason)) throw const ChildHelpFailure('HELP_REASON_INVALID');
-    final previous = await restore();
-    if (previous != null && !previous.confirmed) {
-      throw const ChildHelpFailure('HELP_REQUEST_PENDING');
-    }
-    final now = nowMillis();
-    if (now < 0) throw const ChildHelpFailure('CLOCK_UNTRUSTED');
-    final record =
-        ChildHelpRecord(uuid.v4(), reason, 'PREPARED', now, null, null, null);
-    await store.write(scopeKey, jsonEncode(record.toJson()));
-    _check();
-    return _send(record);
-  }
+  Future<ChildHelpRecord> submit(String reason) => _exclusive(() async {
+        _check();
+        if (!_reason(reason)) {
+          throw const ChildHelpFailure('HELP_REASON_INVALID');
+        }
+        final previous = await _restore();
+        if (previous != null && !previous.confirmed) {
+          throw const ChildHelpFailure('HELP_REQUEST_PENDING');
+        }
+        final now = nowMillis();
+        if (now < 0) throw const ChildHelpFailure('CLOCK_UNTRUSTED');
+        final record = ChildHelpRecord(
+            uuid.v4(), reason, 'PREPARED', now, null, null, null);
+        await _write(record);
+        return _send(record);
+      });
 
-  Future<ChildHelpRecord> retry() async {
-    final record = await restore();
-    if (record == null || record.confirmed) {
-      throw const ChildHelpFailure('HELP_REQUEST_NOT_PENDING');
-    }
-    return _send(record);
-  }
+  Future<ChildHelpRecord> retry() => _exclusive(() async {
+        final record = await _restore();
+        if (record == null || record.confirmed) {
+          throw const ChildHelpFailure('HELP_REQUEST_NOT_PENDING');
+        }
+        Map<String, dynamic> status;
+        try {
+          status = await _request('GET', record.clientRequestId);
+        } on ChildHelpFailure catch (failure) {
+          if (failure.code != 'HELP_NOT_RECEIVED') rethrow;
+          // Only this explicit user retry and an authoritative 404 permit a POST.
+          return _send(record);
+        }
+        return _confirm(record, status);
+      });
 
-  Future<ChildHelpRecord?> refresh() async {
-    final record = await restore();
-    if (record == null) return null;
-    final status = await _request('GET', record.clientRequestId);
-    return _confirm(record, status);
-  }
+  Future<ChildHelpRecord?> refresh() => _exclusive(() async {
+        final record = await _restore();
+        if (record == null) return null;
+        final status = await _request('GET', record.clientRequestId);
+        return _confirm(record, status);
+      });
 
   Future<ChildHelpRecord> _send(ChildHelpRecord record) async {
     // Local PREPARED stays durable on timeout, process death or malformed reply.
@@ -211,8 +256,7 @@ class ChildHelpCoordinator {
         status['id'] as String,
         status['state'] as String,
         status['acknowledgedAt'] as int?);
-    await store.write(scopeKey, jsonEncode(next.toJson()));
-    _check();
+    await _write(next);
     return next;
   }
 
