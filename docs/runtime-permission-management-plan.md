@@ -62,6 +62,8 @@ Android `PackageInfo.requestedPermissions` 是应用清单声明，包含未获�
 
 策略规则应引用经核验的应用包名、签名/提供方应用 ID、权限名称、期望状态、设备目标快照和策略版本。发布前在服务端做能力判断、恢复应用保护和后果预览；需要近期认证。连接器输入使用不可变规则 ID 和幂等命令 ID；回执区分 `UNSUPPORTED`、`REQUESTED`、`PENDING`、`APPLIED`、`NON_COMPLIANT`、`FAILED`、`STALE`。仅在提供方回读同一设备、同一权限和同一策略版本后显示 `APPLIED`。Android Management API 提供应用级权限配置，但其合规接入资格和中国大陆实际可用性仍是独立发布门槛。[Android Management API policy](https://developers.google.com/android/management/reference/rest/v1/enterprises.policies)
 
+Google 官方 SDK 的连接器方法现可对已存在于独占 `BLACKLIST` 策略中的单个应用提交 `DENY`/`PROMPT` 权限决定，并使用字段掩码保留该应用其他设置；同一权限仅接受一项，超过 64 项拒绝。返回值是提供方策略版本，不是设备执行回执。`GRANT`、领域策略发布映射、目标设备模式证明与逐权限设备回读尚未接通，所以界面仍不得提供“已生效”的系统权限操作。详见[受管连接器](managed-android-connector.md)。
+
 ## 3. 界面和交互状态
 
 1. 设备详情 > 应用清单：保留“代理自报、可见范围有限”的标签。选应用后显示权限卡片；未授权时主按钮为“了解并授权权限观察”，不把旧应用清单开关复用。

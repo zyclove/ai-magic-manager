@@ -1,13 +1,17 @@
 package com.aimanager.managedandroid.internal;
 
 import com.aimanager.managedandroid.ManagedAndroidGateway;
+import com.aimanager.shared.AndroidRuntimePermissions;
 import com.aimanager.shared.SafetyCriticalPackages;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.androidmanagement.v1.AndroidManagement;
 import com.google.api.services.androidmanagement.v1.model.ApplicationPolicy;
+import com.google.api.services.androidmanagement.v1.model.ApplicationPolicyChange;
 import com.google.api.services.androidmanagement.v1.model.Device;
 import com.google.api.services.androidmanagement.v1.model.EnrollmentToken;
+import com.google.api.services.androidmanagement.v1.model.ModifyPolicyApplicationsRequest;
 import com.google.api.services.androidmanagement.v1.model.NonComplianceDetail;
+import com.google.api.services.androidmanagement.v1.model.PermissionGrant;
 import com.google.api.services.androidmanagement.v1.model.Policy;
 import java.io.IOException;
 import java.time.Duration;
@@ -95,7 +99,10 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
       if (existing == null
           || !name.equals(existing.getName())
           || !"BLACKLIST".equals(existing.getPlayStoreMode())
-          || Boolean.TRUE.equals(existing.getInstallAppsDisabled())) {
+          || Boolean.TRUE.equals(existing.getInstallAppsDisabled())
+          || (existing.getApplications() != null && existing.getApplications().stream()
+              .anyMatch(app -> app.getPermissionGrants() != null
+                  && !app.getPermissionGrants().isEmpty()))) {
         LOG.warn("Android management application policy preflight rejected: unsafe policy mode");
         throw new IllegalStateException(
             "Managed application policy is not explicitly provisioned for blocklist updates");
@@ -120,6 +127,59 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
       throw providerFailure("policy patch", error);
     } catch (IOException error) {
       throw providerFailure("policy patch", error);
+    }
+  }
+
+  @Override
+  public PolicyReceipt putRuntimePermissionDecisions(
+      String enterpriseId, String policyId, String packageName,
+      List<RuntimePermissionDecision> decisions) {
+    String name = policyName(enterpriseId, policyId);
+    if (packageName == null || packageName.length() > 255 || !PACKAGE.matcher(packageName).matches())
+      throw new IllegalArgumentException("Invalid application package");
+    Objects.requireNonNull(decisions, "decisions");
+    if (decisions.size() > 64) throw new IllegalArgumentException("Too many permission decisions");
+    Set<String> seen = new HashSet<>();
+    List<PermissionGrant> grants = decisions.stream().map(decision -> {
+      Objects.requireNonNull(decision, "decision");
+      if (!AndroidRuntimePermissions.contains(decision.permission())
+          || !seen.add(decision.permission()))
+        throw new IllegalArgumentException("Invalid or duplicate runtime permission");
+      PermissionDecision value = Objects.requireNonNull(decision.decision(), "decision value");
+      if (value == PermissionDecision.DENY
+          && protectedPackages.contains(packageName.toLowerCase(Locale.ROOT)))
+        throw new IllegalArgumentException("A safety-critical application permission cannot be denied");
+      return new PermissionGrant().setPermission(decision.permission()).setPolicy(value.name());
+    }).sorted((left, right) -> left.getPermission().compareTo(right.getPermission())).toList();
+    try {
+      Policy existing = client.enterprises().policies().get(name).execute();
+      if (existing == null || !name.equals(existing.getName())
+          || !"BLACKLIST".equals(existing.getPlayStoreMode())
+          || Boolean.TRUE.equals(existing.getInstallAppsDisabled())
+          || existing.getApplications() == null
+          || existing.getApplications().stream().filter(app -> packageName.equals(app.getPackageName()))
+              .count() != 1) {
+        LOG.warn("Android management runtime permission preflight rejected: unsafe policy or app");
+        throw new IllegalStateException("Managed application must already exist in an owned policy");
+      }
+      var change = new ApplicationPolicyChange()
+          .setApplication(new ApplicationPolicy().setPackageName(packageName).setPermissionGrants(grants))
+          .setUpdateMask("permissionGrants");
+      var response = client.enterprises().policies().modifyPolicyApplications(name,
+          new ModifyPolicyApplicationsRequest().setChanges(List.of(change))).execute();
+      Policy updated = response == null ? null : response.getPolicy();
+      if (updated == null || !name.equals(updated.getName())
+          || updated.getVersion() == null || updated.getVersion() < 1)
+        throw new IllegalStateException("Android management permission policy response is incomplete");
+      return new PolicyReceipt(name, updated.getVersion());
+    } catch (GoogleJsonResponseException error) {
+      if (error.getStatusCode() == 404) {
+        LOG.warn("Android management runtime permission preflight rejected: policy missing");
+        throw new IllegalStateException("Managed permission policy must be provisioned first");
+      }
+      throw providerFailure("permission policy update", error);
+    } catch (IOException error) {
+      throw providerFailure("permission policy update", error);
     }
   }
 

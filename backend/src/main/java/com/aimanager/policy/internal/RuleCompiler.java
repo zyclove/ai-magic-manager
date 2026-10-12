@@ -4,6 +4,7 @@ import com.aimanager.catalog.ApplicationDefinition;
 import com.aimanager.fleet.*;
 import com.aimanager.policy.*;
 import com.aimanager.shared.DomainException;
+import com.aimanager.shared.AndroidRuntimePermissions;
 import com.aimanager.shared.SafetyCriticalPackages;
 import java.net.IDN;
 import java.util.*;
@@ -16,13 +17,6 @@ import static com.aimanager.policy.PolicyRule.Effect.*;
 /** Declarative validation and conflict explanation; actual OS execution belongs to certified adapters. */
 @Component
 class RuleCompiler {
-    private static final Set<String> RUNTIME = Set.of("CAMERA", "RECORD_AUDIO", "READ_CONTACTS", "WRITE_CONTACTS", "GET_ACCOUNTS",
-        "READ_CALENDAR", "WRITE_CALENDAR", "ACCESS_COARSE_LOCATION", "ACCESS_FINE_LOCATION", "ACCESS_BACKGROUND_LOCATION",
-        "POST_NOTIFICATIONS", "READ_MEDIA_IMAGES", "READ_MEDIA_VIDEO", "READ_MEDIA_AUDIO", "READ_MEDIA_VISUAL_USER_SELECTED",
-        "READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE", "BLUETOOTH_SCAN", "BLUETOOTH_CONNECT", "BLUETOOTH_ADVERTISE",
-        "NEARBY_WIFI_DEVICES", "BODY_SENSORS", "BODY_SENSORS_BACKGROUND", "READ_PHONE_STATE", "READ_PHONE_NUMBERS", "CALL_PHONE",
-        "ANSWER_PHONE_CALLS", "ADD_VOICEMAIL", "USE_SIP", "PROCESS_OUTGOING_CALLS", "ACTIVITY_RECOGNITION", "READ_SMS", "SEND_SMS",
-        "RECEIVE_SMS", "RECEIVE_MMS", "RECEIVE_WAP_PUSH", "READ_CALL_LOG", "WRITE_CALL_LOG", "UWB_RANGING");
     private static final Set<String> SPECIAL = Set.of("USAGE_ACCESS", "OVERLAY", "NOTIFICATION_ACCESS", "ACCESSIBILITY", "VPN");
     private final Set<String> protectedPackages;
     RuleCompiler(@Value("${manager.policies.additional-protected-packages:}") String configured) {
@@ -40,8 +34,7 @@ class RuleCompiler {
                 case RUNTIME_PERMISSION, SPECIAL_ACCESS -> {
                     required(rule.applicationId()); required(rule.permission()); used.addAll(Set.of("applicationId", "permission"));
                     effects = Set.of(GRANT, DENY, DEFAULT);
-                    if (rule.kind() == RUNTIME_PERMISSION && (!rule.permission().startsWith("android.permission.")
-                        || !RUNTIME.contains(rule.permission().substring("android.permission.".length()))))
+                    if (rule.kind() == RUNTIME_PERMISSION && !AndroidRuntimePermissions.contains(rule.permission()))
                         throw DomainException.invalid("NOT_RUNTIME_PERMISSION");
                     if (rule.kind() == SPECIAL_ACCESS && !SPECIAL.contains(rule.permission())) throw DomainException.invalid("INVALID_SPECIAL_ACCESS");
                 }

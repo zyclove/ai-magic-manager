@@ -13,6 +13,7 @@
 | 操作 | 实现 | 成功语义 |
 |---|---|---|
 | 写应用策略 | `putApplicationPolicy` 先回读已预置的专用策略，要求明确 `playStoreMode=BLACKLIST` 且未启用 `installAppsDisabled`，然后仅更新 AMAPI `applications` 字段 | Google 接收策略版本；设备是否应用须回读 |
+| 逐应用运行时权限请求 | `putRuntimePermissionDecisions` 先回读专用策略及已存在的目标应用，再使用官方 `modifyPolicyApplications`、`updateMask=permissionGrants` 仅更新该应用的权限字段 | 只得到提供方策略版本；目前仅 `DENY`/`PROMPT`，没有管理员发布入口和设备逐权限执行回执 |
 | 核对企业资源 | `readEnterprise` 只读官方 Enterprise 资源并验证返回名称 | 仅证明当前服务账号能读到该资源，不证明它属于某机构租户 |
 | 创建注册令牌 | `createEnrollmentToken`，一次性、5–30 分钟、禁止个人使用 | 仅得到临时敏感注册材料；设备仍未受管 |
 | 核对设备注册身份 | `readEnrollmentIdentity` 只读设备资源、管理模式、注册时间及令牌关联数据 | 供后续绑定流程核对；设备未与本地儿童档案自动关联 |
@@ -20,6 +21,8 @@
 | 回读执行状态 | `readDeviceState`，读取 `appliedPolicyName`、`appliedPolicyVersion`、`policyCompliant`、`nonComplianceDetails` | 名称和目标版本都匹配且明确合规才标记 `APPLIED`；未知或未同步为 `PENDING` |
 
 当前应用映射仅支持 `ALLOW`、`BLOCK_LAUNCH`、`BLOCK_INSTALL`。`BLOCK_LAUNCH` 使用 `ApplicationPolicy.disabled=true`，`BLOCK_INSTALL` 使用 `installType=BLOCKED`，后者可能移除已安装应用，必须在产品界面提前说明。应用包名必须合法且单个策略最多 3000 条。日使用时长、时段、网站内容、摄像头识别等**没有**被映射到 AMAPI，不能宣称由此连接器保证执行。系统应用、不同 Android 版本与 OEM 的限制要逐机型验收。
+
+逐应用运行时权限请求复用领域层的 Android 权限白名单，单应用最多 64 个不同权限；不可对恢复关键应用提交 `DENY`。接口只允许 `DENY` 与 `PROMPT`，`GRANT` 须在证明目标设备管理模式、Android 版本和提供方能力后另行接入。空列表表示清除此应用的显式逐项权限决定。连接器要求目标应用已存在于明确 `BLACKLIST` 的独占策略中，避免通过部分更新隐式新增应用。完整应用策略更新如遇已有逐应用 `permissionGrants` 会拒绝覆盖，防止删去权限决定。**目前没有从领域发布到连接器的调用链、独立受管权限授权、设备身份闭环或逐权限回读；新增方法只是服务端提供方适配能力。**
 
 注册令牌可附带 32–128 字符的随机 opaque `additionalData`。Google 在设备资源的 `enrollmentTokenData` 回报该值，后续设备绑定服务应只保存随机值摘要，并核对企业资源、令牌名称、注册模式、注册时间、一次性关联值、本地设备注册周期与机构授权。关联值不得包含儿童姓名、档案 ID 或租户 ID，也不得写日志或返回机构普通页面。当前仍无设备持久绑定流程；这些证据不会提升本地设备能力或开启 `ENFORCE`。
 
@@ -100,6 +103,8 @@ manager.emm.bootstrap-policy-id=
 - [Android Management API 简介](https://developers.google.com/android/management/introduction)
 - [允许用途与资格](https://developers.google.com/android/management/permissible-usage)
 - [Policies patch](https://developers.google.com/android/management/reference/rest/v1/enterprises.policies/patch)
+- [逐应用权限字段与策略语义](https://developers.google.com/android/management/reference/rest/v1/enterprises.policies#ApplicationPolicy)
+- [逐应用字段更新](https://developers.google.com/android/management/reference/rest/v1/enterprises.policies/modifyPolicyApplications)
 - [Policy playStoreMode 与默认行为](https://developers.google.com/android/management/reference/rest/v1/enterprises.policies#PlayStoreMode)
 - [Android Device Policy 包名](https://developers.google.com/android/management/work-profile-detection)
 - [Enrollment tokens](https://developers.google.com/android/management/reference/rest/v1/enterprises.enrollmentTokens)

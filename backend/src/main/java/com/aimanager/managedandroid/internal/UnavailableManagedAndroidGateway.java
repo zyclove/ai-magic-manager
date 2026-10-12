@@ -24,6 +24,13 @@ public final class UnavailableManagedAndroidGateway implements ManagedAndroidGat
   }
 
   @Override
+  public PolicyReceipt putRuntimePermissionDecisions(
+      String enterpriseId, String policyId, String packageName,
+      List<RuntimePermissionDecision> decisions) {
+    throw new ManagedAndroidUnavailableException();
+  }
+
+  @Override
   public EnterpriseIdentity readEnterprise(String enterpriseId) {
     throw new ManagedAndroidUnavailableException();
   }

@@ -21,6 +21,17 @@ public interface ManagedAndroidGateway {
   PolicyReceipt putApplicationPolicy(
       String enterpriseId, String policyId, List<AppRestriction> rules);
 
+  /**
+   * Replaces one existing app's runtime permission decisions without changing its installation
+   * or other application policy fields. This is a provider request, not an applied-device receipt.
+   * Auto-grant is deliberately excluded until device-mode-specific validation is available.
+   */
+  default PolicyReceipt putRuntimePermissionDecisions(
+      String enterpriseId, String policyId, String packageName,
+      List<RuntimePermissionDecision> decisions) {
+    throw new ManagedAndroidUnavailableException();
+  }
+
   /** Confirms that this provider can read the exact enterprise resource. Not customer ownership. */
   EnterpriseIdentity readEnterprise(String enterpriseId);
 
@@ -57,6 +68,10 @@ public interface ManagedAndroidGateway {
   }
 
   record AppRestriction(String packageName, AppControl control) {}
+
+  enum PermissionDecision { DENY, PROMPT }
+
+  record RuntimePermissionDecision(String permission, PermissionDecision decision) {}
 
   record PolicyReceipt(String policyName, Long providerVersion) {}
 
