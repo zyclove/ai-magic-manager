@@ -20,7 +20,10 @@ class ErasureObservationProcessor {
           "usage_observation_batches",
           "usage_observation_heads",
           "application_inventory_snapshots",
-          "device_observation_settings");
+          "device_observation_settings",
+          "device_permission_observation_snapshots",
+          "device_permission_observation_rate",
+          "device_permission_observation_settings");
   private final ErasureRecoveryJobs jobs;
   private final JdbcTemplate db;
   private final SubjectDataCatalog catalog;

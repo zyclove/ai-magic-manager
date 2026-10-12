@@ -53,7 +53,10 @@ class DatabaseInitializationTest {
             "managed_enterprise_bindings",
             "managed_enterprise_binding_events",
             "managed_enrollment_intents",
-            "managed_enrollment_intent_events")) {
+            "managed_enrollment_intent_events",
+            "device_permission_observation_settings",
+            "device_permission_observation_snapshots",
+            "device_permission_observation_rate")) {
       assertThat(db.queryForObject("SELECT COUNT(*) FROM " + table, Integer.class)).isZero();
     }
     db.queryForList(
@@ -61,6 +64,20 @@ class DatabaseInitializationTest {
     db.queryForList(
         "SELECT nonce_hash,binding_version,cleanup_claim_id,cleanup_lease_until,cleanup_attempts,"
             + "next_cleanup_at FROM managed_enrollment_intents WHERE 1=0");
+    assertThat(indexColumns(db, "managed_enrollment_intents", "ix_managed_intent_provider_expiry"))
+        .containsExactly("provider", "state", "expires_at", "id");
+    assertThat(
+            indexColumns(
+                db,
+                "device_permission_observation_snapshots",
+                "ix_permission_observation_retention"))
+        .containsExactly("received_at");
+    assertThat(
+            indexColumns(
+                db,
+                "device_permission_observation_rate",
+                "ix_permission_observation_rate_retention"))
+        .containsExactly("window_started_at");
     // Freshly created columns include current authority epochs, scopes and delivery-attempt fields.
     db.queryForList("SELECT version,revoked_at FROM tenant_members WHERE 1=0");
     db.queryForList("SELECT requester_kind FROM access_requests WHERE 1=0");
@@ -77,5 +94,26 @@ class DatabaseInitializationTest {
     assertThat(initializer.migrate().migrationsExecuted).isZero();
     assertThat(db.queryForObject("SELECT name FROM tenants WHERE id=?", String.class, tenant))
         .isEqualTo("New 1.0.0 workspace");
+  }
+
+  private List<String> indexColumns(JdbcTemplate db, String table, String index) {
+    return db.execute(
+        (org.springframework.jdbc.core.ConnectionCallback<List<String>>)
+            connection -> {
+              var columns = new TreeMap<Integer, String>();
+              try (var rows =
+                  connection
+                      .getMetaData()
+                      .getIndexInfo(
+                          connection.getCatalog(), connection.getSchema(), table, false, false)) {
+                while (rows.next()) {
+                  if (index.equalsIgnoreCase(rows.getString("INDEX_NAME")))
+                    columns.put(
+                        rows.getInt("ORDINAL_POSITION"),
+                        rows.getString("COLUMN_NAME").toLowerCase(Locale.ROOT));
+                }
+              }
+              return List.copyOf(columns.values());
+            });
   }
 }

@@ -1,0 +1,347 @@
+{
+  "stage": "permission-observation-initialization-erasure",
+  "applicationVersion": "1.0.0",
+  "recordedAt": "2026-10-12T01:47:25.725683+00:00",
+  "frozenBase": "378a13b0f8fe3bdf01230bc8f1fb34a1625a50cb",
+  "sourceFiles": [
+    {
+      "path": "backend/src/main/resources/db/migration/V1__initial_schema.sql",
+      "sha256": "00a0f51017313d70003431e4e7f77ecc0fb4f596ca5048fa76c616ad8a6de7a3",
+      "status": "present"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V2__managed_enrollment_expiry_scan.sql",
+      "sha256": null,
+      "status": "deleted"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V3__permission_observation.sql",
+      "sha256": null,
+      "status": "deleted"
+    },
+    {
+      "path": "backend/src/main/resources/retention/subject-data-stores.json",
+      "sha256": "3516561cdc41dfe48026294f5ebb34fdbc7ec7cfbe860cec3676785fdb9c8011",
+      "status": "present"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureObservationProcessor.java",
+      "sha256": "8b95ec2a04dc59ccc104134bf3165dfd13b7b5a35b402c3d8dff6ad29f2797f0",
+      "status": "present"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DatabaseInitializationTest.java",
+      "sha256": "0a1bbbb55a5d6e394d2e2eed09b5287c3a2cb03e286c2fd47909fd721e693830",
+      "status": "present"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasurePermissionObservationTest.java",
+      "sha256": "4f515c705ce66becbfddb3e9f7ca4a1fb9d73e559ca5cac5b29f23d0a8d6452b",
+      "status": "present"
+    },
+    {
+      "path": "docs/permission-observation-initialization-plan.md",
+      "sha256": "5c936c9ca003e16c1400464170a28a78ec6dc8342e56e9ca17fc0239e3b9be9f",
+      "status": "present"
+    },
+    {
+      "path": "docs/data-erasure-contract.md",
+      "sha256": "95a2881d4fecdf2f9d55999eb78c613c9e48a4611116c610c3adae0f541277c0",
+      "status": "present"
+    },
+    {
+      "path": "docs/version-1.0.0-initialization.md",
+      "sha256": "48c8a4f033cf3aaf88a7653d7e13c36f6d257dbb461ef981f44dbc015cc9e93b",
+      "status": "present"
+    }
+  ],
+  "foldedInitializers": [
+    {
+      "path": "backend/src/main/resources/db/migration/V2__managed_enrollment_expiry_scan.sql",
+      "originalSha256": "3009a0e7f11782d7aca0c9c70e89f89268f4bb17ec744f52c0564994e623b326",
+      "preservedByteForByteInV1": true
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V3__permission_observation.sql",
+      "originalSha256": "0601317b28844f5a274d49b1efc717d2231d0cc7f48a342a524d419a240d9386",
+      "preservedByteForByteInV1": true
+    }
+  ],
+  "tests": {
+    "initializationRed": {
+      "path": ".local/permission-initialization-red.log",
+      "sha256": "7050c087f880d10a6dc324351db5e06868bf6ff00526f9e8b17e1724a8cedac9",
+      "total": 1,
+      "failures": 0,
+      "errors": 1,
+      "skipped": 0
+    },
+    "initializationGreen": {
+      "path": ".local/permission-initialization-green.log",
+      "sha256": "cc1d8ec61f7844343691873368a7defaae77d27131fc3d3b808c1ab94825e4af",
+      "total": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "permissionRed": {
+      "path": ".local/permission-erasure-red.log",
+      "sha256": "75fe19f5b1e80ef81107e772a0865c5551ec9f97b798d3ececfa9105306997b3",
+      "total": 15,
+      "failures": 13,
+      "errors": 0,
+      "skipped": 0
+    },
+    "focusedH2": {
+      "path": ".local/permission-erasure-focused.log",
+      "sha256": "64a62a3e04c9f497d456a0cbfbfd4413ea7e388c9d094d657db3b9b2455b3d1e",
+      "total": 133,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "mysqlFixtureFailure": {
+      "path": ".local/permission-mysql-fixture-failed.log",
+      "sha256": "5867a14cb4bd25b3c80ad4ea8bad860274eaaa5ef20881f0aaabb9b7ff15d401",
+      "total": 147,
+      "failures": 15,
+      "errors": 37,
+      "skipped": 0
+    },
+    "isolatedMysql": {
+      "path": ".local/permission-mysql.log",
+      "sha256": "a9e54d8e23b4fceb4c356818355c5ceba8acf517e9f9fe082dd84f2e8b2e7be1",
+      "total": 133,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "isolatedLedgerMysql": {
+      "path": ".local/permission-ledger-mysql.log",
+      "sha256": "94e2cbe16fa5ff35c844f1128a63eab83395839077bcbe6c91140fd986aa0cdb",
+      "total": 14,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "fullBackend": {
+      "path": ".local/permission-full.log",
+      "sha256": "cfdff40ae3953f69ed6561e4f21e6cf9170c41d9cdb1aafc0ca66950a649bfde",
+      "total": 751,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 20
+    }
+  },
+  "fullSuite": {
+    "tests": 751,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 20,
+    "suites": 74,
+    "passed": 731
+  },
+  "skippedCases": [
+    {
+      "class": "com.aimanager.AndroidChildSubmissionJourneyTest",
+      "test": "realEnrollmentNativeCrashRecoveryAndRevocation",
+      "reason": "System property [device.android.runner] does not exist"
+    },
+    {
+      "class": "com.aimanager.DeviceAccessHttpInteropTest",
+      "test": "realApprovalRetryReceiptsRevocationExpiryAndOpaqueRevocation",
+      "reason": "System property [device.access.package] does not exist"
+    },
+    {
+      "class": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+      "test": "actualDartSubmissionAdultDecisionAndExistingDeviceDeliveryReference",
+      "reason": "System property [device.access.package] does not exist"
+    },
+    {
+      "class": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+      "test": "actualChildUiRecoversOriginalCancellationAcrossProcesses",
+      "reason": "System property [device.child.package] does not exist"
+    },
+    {
+      "class": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+      "test": "actualChildSessionAndUiRecoverOriginalSubmissionAcrossProcesses",
+      "reason": "System property [device.child.package] does not exist"
+    },
+    {
+      "class": "com.aimanager.DeviceConfigurationHttpInteropTest",
+      "test": "realDeviceTransportStoresTwoPagesAndRejectsRevokedCredential",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "class": "com.aimanager.DeviceIdentityHttpInteropTest",
+      "test": "actualEnrollmentRecoveryConfirmationRotationAndRevocation",
+      "reason": "System property [device.identity.package] does not exist"
+    },
+    {
+      "class": "com.aimanager.DeviceObservationHttpInteropTest",
+      "test": "adultConsentDeviceLostAcknowledgementReplayWithdrawalAndRevocation",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "class": "com.aimanager.DiagnosticPreviewJourneyTest",
+      "test": "productionDartClientReadsRealHttpAndRechecksCurrentAccess",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureAdmissionStoreTest",
+      "test": "leastPrivilegeRuntimeCanDrainWorkButCannotRewriteAcceptedRecords",
+      "reason": "Environment variable [NOTICE_IT_ROOT_PASSWORD] does not exist"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "mismatchedIdentityAndMissingLedgerAreReportedWithoutAutomaticRecreation",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "servletAsyncCannotEscapeTheRegisteredSynchronousPermit",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "acceptedLedgerStopsAuthorizedBusinessRequestsWithoutDeletingTheirData",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "realHttpRequestDrainsBeforeAcceptanceAndProbesRemainAvailable",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+      "test": "nonTransactionalEngineIsRejectedBeforeAppending",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+      "test": "initializationPinsTransactionalEngineEvenWhenServerDefaultDiffers",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "class": "com.aimanager.support.internal.DiagnosticPackageJourneyTest",
+      "test": "productionDartClientCompletesPackageLifecycleOverRealHttp",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "class": "com.aimanager.SupportGrantJourneyTest",
+      "test": "productionDartSupportClientCompletesRealHttpGrantLifecycle",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "class": "com.aimanager.UsageReportJobJourneyTest",
+      "test": "realHttpJobsAreConsumedByProductionDartClient",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "class": "com.aimanager.UsageReportJourneyTest",
+      "test": "realHttpResponseIsConsumedByProductionDartReportClient",
+      "reason": "System property [device.dart.command] does not exist"
+    }
+  ],
+  "artifact": {
+    "path": ".local/permission-initialization-full-20261012/backend/target/manager-backend-1.0.0.jar",
+    "sha256": "1e95ee652e3509f8e1da5aa63c8e7b71f86d713b9cb9762d8846734bedd00e11"
+  },
+  "mysqlIsolation": {
+    "schemas": 5,
+    "purpose": [
+      "erasure business",
+      "independent ledger",
+      "fresh initialization",
+      "standalone ledger business marker",
+      "standalone ledger journal"
+    ],
+    "cleanup": "all five schemas and users removed after terminal success; initial failed run three schemas/users also removed",
+    "initialFailureCause": "ErasureLedgerStoreTest leaves ledger_test_business_marker in its business fixture; running it with domain catalog checks caused expected unknown-schema rejection. Separate isolated databases preserve all tests without weakening production schema guards."
+  },
+  "deployed": false,
+  "overallGoalComplete": false,
+  "limitations": [
+    "Source integration only; running frontend/backend unchanged",
+    "Permission observation feature flag remains disabled by default",
+    "Native/HTTP consented permission feature acceptance and complete public erasure workflow remain separate unfinished work",
+    "Other-domain event, audit and idempotency copies remain mandatory for global erasure completion",
+    "No compatibility or in-place migration of existing development databases"
+  ],
+  "rulings": [
+    "Ruling: fold both recently added incremental files into V1 and keep vendor V2 only — user requires fresh unreleased 1.0.0 and current duplicate V2 blocks startup — cost if wrong: existing development databases must use a separate fresh environment, not an in-place upgrade.",
+    "Ruling: all three permission stores are observation DEVICE_DATA and must be physically removed even when consent is disabled — settings reasons, application permission snapshots and device-linked counters belong to the accepted registration — cost if wrong: other derived event/idempotency copies still require their separate handlers before global completion.",
+    "Final: Ruling: existing development databases receive no in-place upgrade path — the user explicitly requires a fresh unreleased 1.0.0 baseline — cost if wrong: a separate fresh environment is needed rather than starting this code against an old development schema.",
+    "Final: Ruling: native permission collection, consent UI and deployment remain separate acceptance work — the frozen patch verifies initialization and internal erasure only — cost if wrong: successful source tests cannot prove running services or real-device behavior.",
+    "Final: Ruling: other-domain events, audit, idempotency copies, external receipts and the public erasure workflow remain mandatory unfinished obligations — this patch expands one internal handler and does not mark global completion — cost if wrong: treating this step as final could retain personal copies.",
+    "Final: Ruling: bypass writes and full backup restoration are not certified by this stage — processing requires drained continuously paused business work; DONE rechecks detect returning permission rows but do not replace a restore exercise — cost if wrong: out-of-protocol writes or an unverified restoration could reintroduce data."
+  ],
+  "review": {
+    "model": "gpt-6-astra",
+    "passes": 1,
+    "criticalFindings": [],
+    "importantFindings": [],
+    "minorFindings": [],
+    "fixPasses": 0,
+    "secondReviewPerformed": false,
+    "verdict": "Ready to merge the frozen initialization and internal permission-erasure stage",
+    "reviewedHashes": [
+      {
+        "path": "backend/src/main/resources/db/migration/V1__initial_schema.sql",
+        "sha256": "00a0f51017313d70003431e4e7f77ecc0fb4f596ca5048fa76c616ad8a6de7a3",
+        "status": "present"
+      },
+      {
+        "path": "backend/src/main/resources/db/migration/V2__managed_enrollment_expiry_scan.sql",
+        "sha256": null,
+        "status": "deleted"
+      },
+      {
+        "path": "backend/src/main/resources/db/migration/V3__permission_observation.sql",
+        "sha256": null,
+        "status": "deleted"
+      },
+      {
+        "path": "backend/src/main/resources/retention/subject-data-stores.json",
+        "sha256": "3516561cdc41dfe48026294f5ebb34fdbc7ec7cfbe860cec3676785fdb9c8011",
+        "status": "present"
+      },
+      {
+        "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureObservationProcessor.java",
+        "sha256": "8b95ec2a04dc59ccc104134bf3165dfd13b7b5a35b402c3d8dff6ad29f2797f0",
+        "status": "present"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/DatabaseInitializationTest.java",
+        "sha256": "0a1bbbb55a5d6e394d2e2eed09b5287c3a2cb03e286c2fd47909fd721e693830",
+        "status": "present"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/retention/internal/ErasurePermissionObservationTest.java",
+        "sha256": "4f515c705ce66becbfddb3e9f7ca4a1fb9d73e559ca5cac5b29f23d0a8d6452b",
+        "status": "present"
+      },
+      {
+        "path": "docs/permission-observation-initialization-plan.md",
+        "sha256": "5c936c9ca003e16c1400464170a28a78ec6dc8342e56e9ca17fc0239e3b9be9f",
+        "status": "present"
+      },
+      {
+        "path": "docs/data-erasure-contract.md",
+        "sha256": "95a2881d4fecdf2f9d55999eb78c613c9e48a4611116c610c3adae0f541277c0",
+        "status": "present"
+      },
+      {
+        "path": "docs/version-1.0.0-initialization.md",
+        "sha256": "48c8a4f033cf3aaf88a7653d7e13c36f6d257dbb461ef981f44dbc015cc9e93b",
+        "status": "present"
+      }
+    ],
+    "declinedToJudgeRulings": [
+      "Final: Ruling: existing development databases receive no in-place upgrade path — the user explicitly requires a fresh unreleased 1.0.0 baseline — cost if wrong: a separate fresh environment is needed rather than starting this code against an old development schema.",
+      "Final: Ruling: native permission collection, consent UI and deployment remain separate acceptance work — the frozen patch verifies initialization and internal erasure only — cost if wrong: successful source tests cannot prove running services or real-device behavior.",
+      "Final: Ruling: other-domain events, audit, idempotency copies, external receipts and the public erasure workflow remain mandatory unfinished obligations — this patch expands one internal handler and does not mark global completion — cost if wrong: treating this step as final could retain personal copies.",
+      "Final: Ruling: bypass writes and full backup restoration are not certified by this stage — processing requires drained continuously paused business work; DONE rechecks detect returning permission rows but do not replace a restore exercise — cost if wrong: out-of-protocol writes or an unverified restoration could reintroduce data."
+    ]
+  }
+}

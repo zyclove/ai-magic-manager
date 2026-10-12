@@ -597,6 +597,50 @@
       "category": "DEVICE_DATA"
     },
     {
+      "table": "device_permission_observation_rate",
+      "columns": [
+        "device_id",
+        "registration_id",
+        "report_count",
+        "tenant_id",
+        "window_started_at"
+      ],
+      "domain": "observation",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "device_permission_observation_settings",
+      "columns": [
+        "device_id",
+        "enabled",
+        "last_reason",
+        "registration_id",
+        "tenant_id",
+        "updated_at",
+        "version"
+      ],
+      "domain": "observation",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "device_permission_observation_snapshots",
+      "columns": [
+        "authorization_version",
+        "device_id",
+        "package_name",
+        "profile",
+        "received_at",
+        "registration_id",
+        "report_id",
+        "request_hash",
+        "sequence_number",
+        "snapshot_json",
+        "tenant_id"
+      ],
+      "domain": "observation",
+      "category": "DEVICE_DATA"
+    },
+    {
       "table": "devices",
       "columns": [
         "agent_version",
