@@ -34,6 +34,7 @@ import 'quota_page.dart';
 import 'ownership_page.dart';
 import 'notifications_page.dart';
 import 'support_page.dart';
+import 'scoped_overview_page.dart';
 import 'commercial_account_page.dart';
 import 'commercial_catalog_page.dart';
 import 'contracts_page.dart';
@@ -101,43 +102,8 @@ class ConsolePages extends StatelessWidget {
           child: EmptyView('此角色无权访问该页面', '请从导航中选择可用功能，或联系工作空间管理员。'));
     }
     if (section == 'overview' && !s.canWrite) {
-      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        PageHeading(
-            '欢迎，${s.displayName}', '${label(s.role)} · ${s.tenant!['name']}'),
-        Panel(
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          const Text('选择你需要查看的内容',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-          const SizedBox(height: 20),
-          Wrap(spacing: 12, runSpacing: 12, children: [
-            if (s.canOpen('classes'))
-              OutlinedButton(
-                  onPressed: () => context.go('/classes'),
-                  child: const Text('我的班级')),
-            if (s.canOpen('subjects'))
-              OutlinedButton(
-                  onPressed: () => context.go('/subjects'),
-                  child: const Text('我的档案')),
-            if (s.canOpen('devices'))
-              OutlinedButton(
-                  onPressed: () => context.go('/devices'),
-                  child: const Text('我的设备')),
-            if (s.canOpen('approvals'))
-              OutlinedButton(
-                  onPressed: () => context.go('/approvals'),
-                  child: const Text('我的访问申请')),
-            if (s.canOpen('policies'))
-              OutlinedButton(
-                  onPressed: () => context.go('/policies'),
-                  child: const Text('查看策略')),
-            if (s.canOpen('audit'))
-              OutlinedButton(
-                  onPressed: () => context.go('/audit'),
-                  child: const Text('审计日志')),
-          ])
-        ]))
-      ]);
+      return ScopedOverviewPage(
+          key: ValueKey('${s.root}/${s.role}'), session: s);
     }
     if (section == 'classes') return ClassesPage(session: s);
     if (section == 'device-groups') {
@@ -1400,6 +1366,12 @@ class _DashboardState extends State<Dashboard> {
     try {
       final result =
           OverviewSummary.parse(await s.api.send('GET', '$root/overview'));
+      if (result.subjectCount == null ||
+          result.activeDeviceCount == null ||
+          result.connectionCheckCount == null ||
+          result.policyDraftCount == null) {
+        throw const ApiFailure(502, 'INVALID_RESPONSE');
+      }
       if (mounted &&
           epoch == generation &&
           s.tenant != null &&
