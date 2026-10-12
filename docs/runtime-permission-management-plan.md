@@ -1,0 +1,61 @@
+# Android 应用权限观察与受管执行契约
+
+状态：实施设计；**当前仓库尚未实现本文件中的权限观察上报、权限执行与界面**。现有应用清单授权不能自动扩展成权限状态授权。首期针对 Android 手机/平板与经兼容确认的 Android TV；中国大陆机构合同优先。没有合规 EMM 时，受管执行入口保持不可用。
+
+## 1. 用户要完成的事
+
+监护人/机构管理员在设备详情中选一个应用，看到它向 Android 请求了哪些可识别的运行时权限、设备最近一次观察到的授予状态、观察时间、来源和盲区；随后可创建“希望允许/拒绝”的规则，并明确看到该设备是否有系统执行能力。规则发布、提供方受理、设备回报和实际生效分开显示。儿童可查看规则解释和申请限时使用，不能更改权限或关闭观察授权。
+
+按设备模式呈现动作：
+
+| 模式 | 可查看 | 可执行 | 界面主动作 |
+| --- | --- | --- | --- |
+| 普通家庭 Android 应用 | 当前用户可见应用中、经单独同意的权限观察；不保证完整性 | 本代理不能替其他应用修改 Android 运行时权限 | 查看状态、打开系统应用详情、提示家长在系统中操作 |
+| 机构合格受管设备 | 经提供方和本地回读的对应资料 | 经合格 EMM 的权限策略，具体范围按提供方、Android 版本及管理模式确认 | 预览影响、近期认证、发布、查看规则级回执和回读 |
+| Android TV / Google TV | 经厂商、系统版本和启动器兼容矩阵确认后展示 | 仅展示实际支持的受管权限项 | 不支持时显示“此设备不能远程修改此权限” |
+
+现有 `application-inventory` 只能作为**候选应用列表**，最多报告当前用户可见的启动应用；不应将其空列表解释为设备没有应用。Android 11 起包可见性受系统过滤，查询其他应用需要声明相应 `<queries>`，不能依赖普通应用获得全设备完整清单。[Android 包可见性](https://developer.android.com/training/package-visibility/declaring)
+
+## 2. 数据语义和隐私边界
+
+采用**单独的权限观察授权**，默认关闭。管理员需要近期 MFA、设备写权限和强版本提交；界面逐项说明“收集所选可见应用的权限名称、请求/授予状态、观察时间”，可随时撤回。儿童端采集前重新在线读取当前授权，展示采集提示；离线不新采集。撤回后拒绝新报告并删除当前注册周期的权限观察快照，审计只保留操作事实，不保留具体权限列表。权限观察不包含联系人、位置、照片、应用内容、摄像头画面或原始行为事件。
+
+Android `PackageInfo.requestedPermissions` 是应用清单声明，包含未获授予及系统未知的权限；`requestedPermissionsFlags` 只在 `GET_PERMISSIONS` 查询时填充，并可携带授予标志。它们不证明权限正在被使用，更不证明家长可以远程修改。[Android PackageInfo](https://developer.android.com/reference/android/content/pm/PackageInfo)
+
+每个权限展示三个不同字段：`requested`（应用清单声明）、`observedGrant`（`GRANTED`/`DENIED`/`UNKNOWN`）和 `policyGrant`（`GRANTED`/`DENIED`/`DEFAULT`/`NOT_SUPPORTED`/`UNKNOWN`）。普通应用只能给出前两项的有限本地观察；不能把 `observedGrant` 解释成设备策略。Android `DevicePolicyManager.getPermissionGrantState` 在策略为 `DEFAULT` 时**不能用于判断应用实际是否获授权**，而 `setPermissionGrantState` 仅限设备所有者、资料所有者或获授权的委派方。[Android DevicePolicyManager](https://developer.android.com/reference/android/app/admin/DevicePolicyManager)
+
+### 服务端数据与协议
+
+- 新增独立的 `device_permission_observation_settings`：`tenant_id`、`device_id`、`registration_id`、`version`、`enabled`、`updated_at`、`last_reason`。默认关闭；设备换注册周期不继承授权。沿用现有租户/设备/凭证与审计锁序。关闭时同一事务清空该注册周期的权限快照。
+- 管理端 `GET/PUT /api/v1/tenants/{tenantId}/devices/{deviceId}/permission-observation-settings`；PUT 使用近期 MFA、`If-Match` 和明确原因。设备端 `GET /api/v1/device-api/permission-observation-settings` 只回当前注册周期的版本与开关，不返回其他设备数据。
+- 设备端 `POST /api/v1/device-api/permission-observations`：`reportId`、`authorizationVersion`、`packageName`、`profile`、`observedAt`、`source=ANDROID_PACKAGE_MANAGER`、`visibility=VISIBLE_PACKAGE`、权限条目。`reportId` + 正文哈希做幂等；同 ID 异文返回冲突，旧授权版本拒收。包名必须属于当前已授权可见清单，或在一次原生查询中同时证明可见；不能信任请求体自称全设备可见。
+- 管理端 `GET .../devices/{deviceId}/permission-observations?packageName=...` 返回授权状态、观察时间、`RECENT`/`STALE`/`NOT_AUTHORIZED`/`UNKNOWN`、来源和逐权限结果；禁用共享缓存。每次读取重新核验成员、设备范围、当前注册周期和当前授权。儿童/教师不读取详细权限清单，机构审计员只看授权/操作审计。
+- 每次只观察**管理员选定的单个应用**，上限 64 个权限、单次正文 32 KiB、单设备每 15 分钟最多 20 次；Android 原生异步查询在有界执行队列处理，不能阻塞 UI。超过上限显示“权限较多，需在系统设置中查看”，不悄悄截断为完整结果。
+- 快照保存 24 小时后删除；显示年龄以服务端接收时刻为准，另展示设备观察时刻和可能的时钟偏差。设备端待上传正文继续使用现有加密、提交屏障和不可变重放思路，单独受权限授权版本约束；撤回时清除本地待发权限正文。
+
+权限条目仅接受 `android.permission.*` 名称；服务端不靠固定旧版本名单推断所有新 Android 权限。原生层通过系统 `PermissionInfo` 分类，对 `dangerous` 权限提供最清楚的逐项状态；签名/特权/厂商权限可标为 `OTHER` 与 `UNKNOWN`，不在普通管控页误呈现为可调运行时权限。空权限列表表示该**可见应用**没有被观察到相应请求，不能推断系统没有其他权限。
+
+### 受管策略和回执
+
+策略规则应引用经核验的应用包名、签名/提供方应用 ID、权限名称、期望状态、设备目标快照和策略版本。发布前在服务端做能力判断、恢复应用保护和后果预览；需要近期认证。连接器输入使用不可变规则 ID 和幂等命令 ID；回执区分 `UNSUPPORTED`、`REQUESTED`、`PENDING`、`APPLIED`、`NON_COMPLIANT`、`FAILED`、`STALE`。仅在提供方回读同一设备、同一权限和同一策略版本后显示 `APPLIED`。Android Management API 提供应用级权限配置，但其合规接入资格和中国大陆实际可用性仍是独立发布门槛。[Android Management API policy](https://developers.google.com/android/management/reference/rest/v1/enterprises.policies)
+
+## 3. 界面和交互状态
+
+1. 设备详情 > 应用清单：保留“代理自报、可见范围有限”的标签。选应用后显示权限卡片；未授权时主按钮为“了解并授权权限观察”，不把旧应用清单开关复用。
+2. 授权弹层：用途、数据项、保留时间、撤回后果，近期身份验证；成功后需要儿童端前台/在线确认采集，不显示虚构进度。
+3. 结果页：按“相机/麦克风/位置/通知/其他”分组，但以系统权限名作为可核对细节；每行显示请求、观察授予、策略期望与实际执行四列。显示设备时间、服务器接收时间、版本、来源、资料范围和“不完整”说明。读屏标签按同样顺序读取；TV 用大字、明显焦点和遥控器返回。
+4. 普通模式点“如何调整”：说明须在设备系统设置中处理，并让**设备本地用户明确操作**打开对应应用详情；服务器不发送伪装成权限变更的指令。
+5. 受管模式点“设置策略”：仅列当前连接器确认可执行的权限。预览影响、保存草稿、发布、查看回执；提供方不可用或没有合同/企业审核时禁用发布并显示具体原因。
+6. 撤回授权：显示将清除云端当前快照与设备端待上报正文，执行后页面变 `NOT_AUTHORIZED`；已发布的受管权限策略是另一授权面，需单独撤销或修改，避免误导。
+
+失败/空态必须区分：设备离线、Android 锁定、包不可见、应用已卸载、权限查询失败、授权版本已变化、儿童端尚未提交、过期快照、提供方能力不支持、提供方接受但未回读、真实策略不合规。每种状态有一个可执行的下一步，不默默复用旧成功结果。
+
+## 4. 实施顺序与发布门槛
+
+1. 独立授权和数据生命周期：新增 Flyway 结构、范围授权、设备身份校验、撤回清理、请求限额与审计；先不更改现有观察授权语义。
+2. 原生查询与客户端：Pigeon 生成通道、Android `PackageManager.GET_PERMISSIONS`、可见性校验、单应用有界查询、加密待发与授权撤回。不得请求 `QUERY_ALL_PACKAGES` 来掩盖范围问题。
+3. 管理端详情与状态：真实 API、权限矩阵、时间/可信度标签、撤回操作、空态和 TV 焦点适配；普通模式只提供可执行的系统设置指引。
+4. 合格 EMM 接入后增加受管规则编译、下发、回读与退管；没有合作方时保持禁用。机构合同名额与系统级权限生效是两套独立证据。
+5. 发布前以真实 Android 版本/厂商/TV 样机核对权限读取与变更差异；另核验中国大陆数据处理告知、授权文案、保留删除、合同和供应商条款。当前静态分析/构建或模拟器结果都不能替代这些门槛。
+
+本契约的边界是：**权限请求、当前观察、策略期望、系统执行分别有来源和状态**。任何一层不可用时明确显示未知或不支持，不用推断值填充成功。
