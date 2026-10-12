@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/parent_api.dart';
 import 'core/parent_session.dart';
 import 'core/paged_collection.dart';
+import 'ui/commercial_account.dart';
 import 'ui/device_capabilities.dart';
 import 'ui/enrollment_flow.dart';
 
@@ -660,6 +661,12 @@ class _Account extends StatelessWidget {
                 ),
             ]),
           ),
+          if (session.tenant != null &&
+              const {'OWNER', 'GUARDIAN', 'ORG_ADMIN', 'AUDITOR'}
+                  .contains(session.role)) ...[
+            const SizedBox(height: 24),
+            CommercialAccount(session: session),
+          ],
           const SizedBox(height: 20),
           OutlinedButton.icon(
               onPressed: session.signOut,

@@ -13,6 +13,7 @@
 | 求助 | 展示未确认求助，成人确认已看到；明确不是紧急服务 | `GET /help-requests?state=OPEN`、`POST /help-requests/{id}/acknowledge`，`If-Match` |
 | 设备 | 分页展示注册状态和管理模式；点开设备可看连接观察及逐项能力证据、限制原因，提醒另查策略执行回执 | `GET /devices`、`GET /devices/{id}`、`GET /devices/{id}/capabilities` |
 | 设备配对 | 分页选择儿童与 Android/TV；近期认证后生成 BYOD 一次性凭据；儿童端认领后刷新状态、输入物理设备配对码再次认证确认；可取消，进程恢复只保留非秘密注册编号 | `POST /enrollments`、`GET /enrollments/{id}`、`POST /enrollments/{id}/confirm`、`DELETE /enrollments/{id}` |
+| 商业账户 | 在“我的”只读显示已核验的设备名额和功能权益；无购买、合同自授权按钮，明确与设备系统能力区分 | `GET /commercial-entitlements`；服务端限成人管理员/审计员 |
 
 手机端复用现有 `/api/v1` 后端契约，采用独立 Flutter 工程，避免 Web 专有 `dart:html`、浏览器存储与 URL 回调渗入原生客户端。依赖锁定在 `apps/parent/pubspec.lock`：`flutter_appauth 9.0.1`、`flutter_secure_storage 10.0.0`，分别用于原生 OIDC 与安全存储；升级需按 Flutter 版本和 Android 兼容矩阵审查。Android 仅声明网络权限，不声明相机或无障碍权限。
 
