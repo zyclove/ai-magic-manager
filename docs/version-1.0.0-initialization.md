@@ -31,4 +31,4 @@
 
 取消旧版本数据升级迁移，不取消产品所需的隐私删除和灾难恢复能力。已接受删除的数据在恢复备份后不能再次公开，这是主体删除功能的要求，与版本兼容不同。
 
-当前数据删除模块仍在开发：已实现存储清单、前置检查和短期准备；独立账本的持久化与读取检查见 [账本实施记录](erasure-ledger-plan.md)，持久恢复作业和租约见 [恢复作业实施记录](erasure-recovery-jobs-plan.md)，运行期全局工作许可与排空保护见 [运行期许可实施记录](erasure-runtime-admission-plan.md)。观察数据以及审批、额度、通知数据的内部域处理器已实现，分别见 [观察数据处理记录](erasure-observation-plan.md)和[审批、额度与通知处理记录](erasure-access-quota-plan.md)。正式删除提交、目标级隔离、完整处理编排、完成判定、安全许可回收及管理端交互尚未完成，不应显示为可执行删除。源码阶段验收不代表现有运行服务已经更新。
+当前数据删除模块仍在开发：已实现存储清单、前置检查和短期准备；独立账本的持久化与读取检查见 [账本实施记录](erasure-ledger-plan.md)，持久恢复作业和租约见 [恢复作业实施记录](erasure-recovery-jobs-plan.md)，运行期全局工作许可与排空保护见 [运行期许可实施记录](erasure-runtime-admission-plan.md)。观察数据、审批/额度/通知以及支持授权/诊断数据的内部域处理器已实现，分别见 [观察数据处理记录](erasure-observation-plan.md)、[审批、额度与通知处理记录](erasure-access-quota-plan.md)和[支持与诊断处理记录](erasure-support-diagnostics-plan.md)。正式删除提交、目标级隔离、完整处理编排、完成判定、安全许可回收及管理端交互尚未完成，不应显示为可执行删除。源码阶段验收不代表现有运行服务已经更新。

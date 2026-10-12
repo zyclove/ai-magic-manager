@@ -1,0 +1,339 @@
+{
+  "recordedAt": "2026-10-12T00:44:04.715385+00:00",
+  "applicationVersion": "1.0.0",
+  "status": "source-verified-not-deployed",
+  "base": "d4da6a34a7d5c41f43d4fe15b4c22115afe1a2dc",
+  "deployed": false,
+  "existingBusinessDatabaseModified": false,
+  "existingErasureLedgerModified": false,
+  "historicalMigrationAdded": false,
+  "sourceFiles": [
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureSupportDiagnosticsProcessor.java",
+      "sha256": "b1731377673ef12012f09d78241f0481adb5798fb00a4ad6f57b6c52cb523e65"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureSupportDiagnosticsProcessorTest.java",
+      "sha256": "bbf458ef62e60c3323fc1f5a5fe0804fc6c745e890a3b250da5d77670e54cdb0"
+    },
+    {
+      "path": "docs/data-erasure-contract.md",
+      "sha256": "b14aebe02d122c7f5596985e0e100e967ace865bed5d1cfe7601c9578e0732a6"
+    },
+    {
+      "path": "docs/erasure-support-diagnostics-plan.md",
+      "sha256": "27d7809a68024394d04daa171a0ea99de0d297b184c76d94dc6b245351b122ce"
+    },
+    {
+      "path": "docs/version-1.0.0-initialization.md",
+      "sha256": "a9305aadcd1b7c78a64f79599fcdc2012d9922931bd7eb6954dcbc9ccf98a5a8"
+    }
+  ],
+  "testRuns": [
+    {
+      "name": "focused-h2",
+      "total": 82,
+      "passed": 82,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".local/erasure-support-focused-final.log",
+      "sha256": "96a4c5da1da7e93c346bea6bccf4e8a39e22f191bbc1186ff07e3ed136e7ccc9"
+    },
+    {
+      "name": "mysql-processors-recovery",
+      "total": 97,
+      "passed": 97,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".local/erasure-support-mysql.log",
+      "sha256": "bc2bc90420d50170212435c7fab283941cd2187c89f5449c160bc3da896c386c"
+    },
+    {
+      "name": "full-backend",
+      "total": 709,
+      "passed": 689,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 20,
+      "log": ".local/erasure-support-full.log",
+      "sha256": "0cb3875815bb50b966c41b7bb5ff67a59176715ad828cdee6e0646667de77e45"
+    }
+  ],
+  "testCountsOverlap": true,
+  "conditionalSkips": [
+    {
+      "suite": "com.aimanager.AndroidChildSubmissionJourneyTest",
+      "skipped": 1
+    },
+    {
+      "suite": "com.aimanager.DeviceAccessHttpInteropTest",
+      "skipped": 1
+    },
+    {
+      "suite": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+      "skipped": 3
+    },
+    {
+      "suite": "com.aimanager.DeviceConfigurationHttpInteropTest",
+      "skipped": 1
+    },
+    {
+      "suite": "com.aimanager.DeviceIdentityHttpInteropTest",
+      "skipped": 1
+    },
+    {
+      "suite": "com.aimanager.DeviceObservationHttpInteropTest",
+      "skipped": 1
+    },
+    {
+      "suite": "com.aimanager.DiagnosticPreviewJourneyTest",
+      "skipped": 1
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureAdmissionStoreTest",
+      "skipped": 1
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "skipped": 4
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+      "skipped": 2
+    },
+    {
+      "suite": "com.aimanager.support.internal.DiagnosticPackageJourneyTest",
+      "skipped": 1
+    },
+    {
+      "suite": "com.aimanager.SupportGrantJourneyTest",
+      "skipped": 1
+    },
+    {
+      "suite": "com.aimanager.UsageReportJobJourneyTest",
+      "skipped": 1
+    },
+    {
+      "suite": "com.aimanager.UsageReportJourneyTest",
+      "skipped": 1
+    }
+  ],
+  "behavior": [
+    "Diagnostic artifact rows deleted before support grants; at most 25 physical rows per call",
+    "Accepted tenant/subject/device/immutable registration scope and grant link checks before mutation",
+    "Actual data and checkpoint rollback on storage failure or expired lease; concurrent calls serialized",
+    "DONE replay rejects reappearing target rows; no global completion or traffic reopening",
+    "Peer subjects, tenants, re-enrolled registrations, support pairing history and tenant heads retained"
+  ],
+  "rulings": [
+    "Ruling: retain global support pairing records and tenant heads — pairing records describe the support recipient account and not the erased child; deleting grants removes the child's linking edge — cost if wrong: a future pairing schema that adds subject content requires an explicit handler update, enforced by the reviewed schema catalog.",
+    "Ruling: erase diagnostic rows without decrypting artifact content — existing A256GCM envelope binds tenant/job and immutable row scope; all data is stored in the deleted row — cost if wrong: corrupt metadata is not a substitute for a cryptographic forensic audit; scope and grant inconsistencies fail before deleting.",
+    "Final: Ruling: full erasure orchestration, public submission, generic idempotency/events/audit/external copies and real restoration remain mandatory subsequent work — this internal step has no global completion or public destructive endpoint — cost if wrong: omitted domains would make a future full-erasure completion claim false.",
+    "Final: Ruling: business admission must remain drained and paused; arbitrary direct SQL writes are unsupported — consistent with accepted-ledger admission and this step prerequisite — cost if wrong: bypass writes can reintroduce or change data outside the fenced batch.",
+    "Final: Ruling: retain the recorded ciphertext decision; whole-row deletion does not perform forensic reconstruction of independently corrupted metadata — normal artifact generation binds tenant, job and immutable scope — cost if wrong: external metadata/ciphertext corruption needs separate investigation and cannot be certified by this handler.",
+    "Final: Ruling: no historical compatibility or deployment acceptance is added to this source stage — human requires unreleased fresh 1.0.0 initialization and running artifact is separately recorded — cost if wrong: old development databases are not converted and this new handler is not available in the current service until an integrated release."
+  ],
+  "limitations": [
+    "Internal SUPPORT_DIAGNOSTICS step only; full subject erasure remains incomplete",
+    "Public submission, target-specific isolation, orchestration, generic idempotency/events/audit retention/external copies, completion and restore exercise still require work",
+    "Requires accepted independent ledger and durable drained business admission pause; arbitrary external concurrent SQL writes unsupported",
+    "Frozen backend source excludes later unrelated managed Android/readiness and wellbeing WIP",
+    "Existing localhost:18100 runtime unchanged; native device execution and new feature deployment not verified",
+    "Interrupted original MySQL/full runs are not passing evidence; confirmed terminated and removed only matched temporary schema/user pairs before rerun"
+  ],
+  "fullSuiteXmlSummary": {
+    "suites": 72,
+    "tests": 709,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 20
+  },
+  "priorRuns": [
+    {
+      "name": "initial-behavioral-red",
+      "total": 7,
+      "failures": 7,
+      "errors": 0,
+      "log": ".local/erasure-support-red.log",
+      "sha256": "2b7bdafc16054f6419e0aeb162318afd5478b9a9e80eb14a57f8df9db80814f2"
+    },
+    {
+      "name": "initial-green",
+      "total": 7,
+      "failures": 0,
+      "errors": 0,
+      "log": ".local/erasure-support-green.log",
+      "sha256": "9f758a388de15f558339840f0a0dbf545c65b5ac478f1783985bfa2d2caad494"
+    },
+    {
+      "name": "interrupted-mysql",
+      "complete": false,
+      "log": ".local/erasure-support-mysql-interrupted.log",
+      "sha256": "8d38265b6930d3ce738b56da532175201f0bde4d247d1442bd9cf758e4be2ea1"
+    },
+    {
+      "name": "interrupted-full",
+      "complete": false,
+      "log": ".local/erasure-support-full-interrupted.log",
+      "sha256": "489179fc129260f8830b3c9d43397de0721b1952da8554a6e949de2e97288c36"
+    }
+  ],
+  "temporaryDatabaseCleanup": {
+    "rerun": "both isolated databases and users removed; process exit 0",
+    "interruptedRun": "both temporary schemas/users matched original run timestamps and were removed after process absence confirmed"
+  },
+  "artifact": {
+    "name": "manager-backend-1.0.0.jar",
+    "applicationVersion": "1.0.0",
+    "sha256": "0b49e0e593ec656c11cd2903e70d87be2256ada1ae72478321a6821df2b2351e",
+    "sizeBytes": 81373407,
+    "deployed": false
+  },
+  "conditionalSkipDetails": [
+    {
+      "suite": "com.aimanager.AndroidChildSubmissionJourneyTest",
+      "test": "realEnrollmentNativeCrashRecoveryAndRevocation",
+      "reason": "System property [device.android.runner] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceAccessHttpInteropTest",
+      "test": "realApprovalRetryReceiptsRevocationExpiryAndOpaqueRevocation",
+      "reason": "System property [device.access.package] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+      "test": "actualDartSubmissionAdultDecisionAndExistingDeviceDeliveryReference",
+      "reason": "System property [device.access.package] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+      "test": "actualChildUiRecoversOriginalCancellationAcrossProcesses",
+      "reason": "System property [device.child.package] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+      "test": "actualChildSessionAndUiRecoverOriginalSubmissionAcrossProcesses",
+      "reason": "System property [device.child.package] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceConfigurationHttpInteropTest",
+      "test": "realDeviceTransportStoresTwoPagesAndRejectsRevokedCredential",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceIdentityHttpInteropTest",
+      "test": "actualEnrollmentRecoveryConfirmationRotationAndRevocation",
+      "reason": "System property [device.identity.package] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceObservationHttpInteropTest",
+      "test": "adultConsentDeviceLostAcknowledgementReplayWithdrawalAndRevocation",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DiagnosticPreviewJourneyTest",
+      "test": "productionDartClientReadsRealHttpAndRechecksCurrentAccess",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureAdmissionStoreTest",
+      "test": "leastPrivilegeRuntimeCanDrainWorkButCannotRewriteAcceptedRecords",
+      "reason": "Environment variable [NOTICE_IT_ROOT_PASSWORD] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "mismatchedIdentityAndMissingLedgerAreReportedWithoutAutomaticRecreation",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "servletAsyncCannotEscapeTheRegisteredSynchronousPermit",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "acceptedLedgerStopsAuthorizedBusinessRequestsWithoutDeletingTheirData",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "realHttpRequestDrainsBeforeAcceptanceAndProbesRemainAvailable",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+      "test": "nonTransactionalEngineIsRejectedBeforeAppending",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+      "test": "initializationPinsTransactionalEngineEvenWhenServerDefaultDiffers",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.support.internal.DiagnosticPackageJourneyTest",
+      "test": "productionDartClientCompletesPackageLifecycleOverRealHttp",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.SupportGrantJourneyTest",
+      "test": "productionDartSupportClientCompletesRealHttpGrantLifecycle",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.UsageReportJobJourneyTest",
+      "test": "realHttpJobsAreConsumedByProductionDartClient",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.UsageReportJourneyTest",
+      "test": "realHttpResponseIsConsumedByProductionDartReportClient",
+      "reason": "System property [device.dart.command] does not exist"
+    }
+  ],
+  "conditionalSkipSummary": {
+    "nativeAndroidRunner": 1,
+    "clientInteropConfiguration": 12,
+    "dedicatedLedgerEnvironment": 7
+  },
+  "review": {
+    "passes": 1,
+    "model": "gpt-6-astra",
+    "criticalFindings": [],
+    "importantFindings": [],
+    "minorFindings": [],
+    "fixPasses": 0,
+    "secondReviewPerformed": false,
+    "verdict": "Ready to merge this internal stage; overall erasure workflow remains incomplete",
+    "reviewedHashes": [
+      {
+        "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureSupportDiagnosticsProcessor.java",
+        "sha256": "b1731377673ef12012f09d78241f0481adb5798fb00a4ad6f57b6c52cb523e65"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureSupportDiagnosticsProcessorTest.java",
+        "sha256": "bbf458ef62e60c3323fc1f5a5fe0804fc6c745e890a3b250da5d77670e54cdb0"
+      },
+      {
+        "path": "docs/data-erasure-contract.md",
+        "sha256": "b14aebe02d122c7f5596985e0e100e967ace865bed5d1cfe7601c9578e0732a6"
+      },
+      {
+        "path": "docs/erasure-support-diagnostics-plan.md",
+        "sha256": "27d7809a68024394d04daa171a0ea99de0d297b184c76d94dc6b245351b122ce"
+      },
+      {
+        "path": "docs/version-1.0.0-initialization.md",
+        "sha256": "a9305aadcd1b7c78a64f79599fcdc2012d9922931bd7eb6954dcbc9ccf98a5a8"
+      }
+    ],
+    "declinedToJudgeRulings": [
+      "Final: Ruling: full erasure orchestration, public submission, generic idempotency/events/audit/external copies and real restoration remain mandatory subsequent work — this internal step has no global completion or public destructive endpoint — cost if wrong: omitted domains would make a future full-erasure completion claim false.",
+      "Final: Ruling: business admission must remain drained and paused; arbitrary direct SQL writes are unsupported — consistent with accepted-ledger admission and this step prerequisite — cost if wrong: bypass writes can reintroduce or change data outside the fenced batch.",
+      "Final: Ruling: retain the recorded ciphertext decision; whole-row deletion does not perform forensic reconstruction of independently corrupted metadata — normal artifact generation binds tenant, job and immutable scope — cost if wrong: external metadata/ciphertext corruption needs separate investigation and cannot be certified by this handler.",
+      "Final: Ruling: no historical compatibility or deployment acceptance is added to this source stage — human requires unreleased fresh 1.0.0 initialization and running artifact is separately recorded — cost if wrong: old development databases are not converted and this new handler is not available in the current service until an integrated release."
+    ]
+  }
+}
