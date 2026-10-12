@@ -1,0 +1,298 @@
+{
+  "recordedAt": "2026-10-12T01:21:02.230731+00:00",
+  "applicationVersion": "1.0.0",
+  "status": "source-verified-not-deployed",
+  "base": "5d0aa70c2544cfb969f596a33127980ec412e8e1",
+  "deployed": false,
+  "existingBusinessDatabaseModified": false,
+  "existingErasureLedgerModified": false,
+  "historicalMigrationAdded": false,
+  "sourceFiles": [
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureDeviceIdentityProcessor.java",
+      "sha256": "f41fa90acf3e599d73570ab91bbf82ee4fa042b7dca2da301fd433771741abf0"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureDeviceIdentityProcessorTest.java",
+      "sha256": "b8f97c485e0018439cca8d7f68b4e6f6b1abc40815c57ba001f2b915749ff656"
+    },
+    {
+      "path": "docs/data-erasure-contract.md",
+      "sha256": "e1fcefc205eefb69c92c2a801faabb28cfdaeac6c205b4b3b12f824685652ab9"
+    },
+    {
+      "path": "docs/erasure-device-identity-plan.md",
+      "sha256": "05aca0d7e62d0951ca51fca100dfc0ff16bbbca3299030be01617a2fdf468abf"
+    },
+    {
+      "path": "docs/version-1.0.0-initialization.md",
+      "sha256": "e92591c068df668225b6c2bb00017c6c9db926bc065a4b10969f5ae55c2c6325"
+    }
+  ],
+  "testRuns": [
+    {
+      "name": "focused-h2-before-formatting",
+      "total": 109,
+      "passed": 109,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".local/erasure-device-identity-focused.log",
+      "sha256": "bed6b126c21257f4fbbef5f977c3c098e86c175c1d3a82a3271dadee84dbce52"
+    },
+    {
+      "name": "mysql-processors-recovery",
+      "total": 124,
+      "passed": 124,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".local/erasure-device-identity-mysql-final.log",
+      "sha256": "5aec3bb16a348cf0f6ca0ef881a87b95c1587c49f1ca32a0100aec9b48b248e4"
+    },
+    {
+      "name": "full-backend",
+      "total": 736,
+      "passed": 716,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 20,
+      "log": ".local/erasure-device-identity-full.log",
+      "sha256": "7d23bf1ba0cb727c8b53ec7130663264be14ce704a686dcbb62576e2fd03bfcf"
+    }
+  ],
+  "testCountsOverlap": true,
+  "fullSuiteXmlSummary": {
+    "suites": 73,
+    "tests": 736,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 20
+  },
+  "conditionalSkips": [
+    {
+      "suite": "com.aimanager.AndroidChildSubmissionJourneyTest",
+      "test": "realEnrollmentNativeCrashRecoveryAndRevocation",
+      "reason": "System property [device.android.runner] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceAccessHttpInteropTest",
+      "test": "realApprovalRetryReceiptsRevocationExpiryAndOpaqueRevocation",
+      "reason": "System property [device.access.package] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+      "test": "actualDartSubmissionAdultDecisionAndExistingDeviceDeliveryReference",
+      "reason": "System property [device.access.package] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+      "test": "actualChildUiRecoversOriginalCancellationAcrossProcesses",
+      "reason": "System property [device.child.package] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+      "test": "actualChildSessionAndUiRecoverOriginalSubmissionAcrossProcesses",
+      "reason": "System property [device.child.package] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceConfigurationHttpInteropTest",
+      "test": "realDeviceTransportStoresTwoPagesAndRejectsRevokedCredential",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceIdentityHttpInteropTest",
+      "test": "actualEnrollmentRecoveryConfirmationRotationAndRevocation",
+      "reason": "System property [device.identity.package] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceObservationHttpInteropTest",
+      "test": "adultConsentDeviceLostAcknowledgementReplayWithdrawalAndRevocation",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DiagnosticPreviewJourneyTest",
+      "test": "productionDartClientReadsRealHttpAndRechecksCurrentAccess",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureAdmissionStoreTest",
+      "test": "leastPrivilegeRuntimeCanDrainWorkButCannotRewriteAcceptedRecords",
+      "reason": "Environment variable [NOTICE_IT_ROOT_PASSWORD] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "mismatchedIdentityAndMissingLedgerAreReportedWithoutAutomaticRecreation",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "servletAsyncCannotEscapeTheRegisteredSynchronousPermit",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "acceptedLedgerStopsAuthorizedBusinessRequestsWithoutDeletingTheirData",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "realHttpRequestDrainsBeforeAcceptanceAndProbesRemainAvailable",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+      "test": "nonTransactionalEngineIsRejectedBeforeAppending",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+      "test": "initializationPinsTransactionalEngineEvenWhenServerDefaultDiffers",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.support.internal.DiagnosticPackageJourneyTest",
+      "test": "productionDartClientCompletesPackageLifecycleOverRealHttp",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.SupportGrantJourneyTest",
+      "test": "productionDartSupportClientCompletesRealHttpGrantLifecycle",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.UsageReportJobJourneyTest",
+      "test": "realHttpJobsAreConsumedByProductionDartClient",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.UsageReportJourneyTest",
+      "test": "realHttpResponseIsConsumedByProductionDartReportClient",
+      "reason": "System property [device.dart.command] does not exist"
+    }
+  ],
+  "formattingNote": "Focused H2 preceded formatting and the MySQL fixture tenant-isolation correction; final MySQL/full runs use exact recorded final source hashes. Production implementation unchanged by fixture correction.",
+  "artifact": {
+    "name": "manager-backend-1.0.0.jar",
+    "sha256": "7c6bd0a2ccbc11133da6049320c7f1d5d121076d9fb3c9483306fd0bf5360561",
+    "sizeBytes": 81396861,
+    "deployed": false
+  },
+  "behavior": [
+    "Accepted tenant/subject/device/immutable registration scope and device exit required",
+    "Target-related rotations checked in both directions for tenant/device/registration equality before mutation",
+    "Rotation leaves precede credentials; all five stores share maximum25 physical rows per call",
+    "Capabilities bound through current device tuple; reenrolled peers and shared groups remain",
+    "Actual rollback on post-delete storage failure or expired lease; concurrent and old workers fenced",
+    "Checkpoint resume, DONE data reappearance, counter/version/phase and unknown schema checks",
+    "No global completion, public deletion, automatic worker or business reopening"
+  ],
+  "coveredStores": [
+    "device_credential_rotations",
+    "device_credentials",
+    "device_credential_scopes",
+    "device_group_members",
+    "device_capabilities"
+  ],
+  "rulings": [
+    "Ruling: retain device rows, shared groups and enrollment/configuration/lifecycle history for their own processors — removing them now would destroy scope links required by the remaining chain — cost if wrong: a future global completion must still prove those separate stores handled.",
+    "Ruling: require current accepted devices REVOKED and reject active scopes or usable active credentials before physical deletion — follows the prior device-exit requirement without implicit remote device erasure — cost if wrong: inconsistent revoked-device/active-scope states need repair before this step can progress.",
+    "Final: Ruling: device rows/shared groups/enrollment/proofs/configuration/lifecycle history remain the responsibility of later domain handlers — preserves scope links and shared data while this step clears identity attachments — cost if wrong: future global completion could omit retained personal data, so those stores must be explicitly accounted for.",
+    "Final: Ruling: public submission, automatic worker, target isolation, global completion and real restore exercise remain mandatory unfinished work — internal component exposes no claim of full erasure — cost if wrong: the overall product cannot yet provide a complete subject-erasure workflow.",
+    "Final: Ruling: arbitrary SQL concurrency bypassing admission is unsupported — this processor depends on accepted ledger and drained, continuously paused business work — cost if wrong: out-of-protocol writes may reintroduce data outside its fenced transaction.",
+    "Final: Ruling: no historical upgrade compatibility or migration is introduced — user requires fresh unreleased 1.0.0 and this stage changes no schema — cost if wrong: existing development databases receive no upgrade guarantee.",
+    "Final: Ruling: deployment and skipped client/native/dedicated-ledger-environment cases remain unverified by this stage — final MySQL/full backend evidence covers the recorded source scope only — cost if wrong: running service or device behavior cannot be inferred from this source-stage acceptance.",
+    "Final: Ruling: later shared commits and other WIP are excluded from the frozen review — five-file manifest identifies tested ownership while preserving ongoing work — cost if wrong: an integrated latest-source release still needs separate initialization, coverage and runtime acceptance."
+  ],
+  "limitations": [
+    "Internal identity domain step only; full subject erasure remains incomplete",
+    "Enrollment/proofs, configuration/lifecycle history, managed provider/device cleanup, shared configuration, generic idempotency/events/audit/external copies still require their own handlers",
+    "Device and shared group rows deliberately retained until remaining references and personal fields are handled",
+    "Requires durable drained business admission pause; arbitrary direct SQL writes outside the gate unsupported",
+    "Source snapshot excludes later unrelated commits/WIP; runtime localhost:18100 unchanged",
+    "Public confirmation/target isolation/orchestration/completion and real restoration exercise remain unfinished"
+  ],
+  "priorRuns": [
+    {
+      "name": "initial-red",
+      "total": 9,
+      "failures": 9,
+      "errors": 0,
+      "log": ".local/erasure-device-identity-red.log",
+      "sha256": "5613b616091053e5891f597d52a5ee23c31c34db3b728339aae96ff0a5676846"
+    },
+    {
+      "name": "initial-green",
+      "total": 9,
+      "failures": 0,
+      "errors": 0,
+      "log": ".local/erasure-device-identity-green.log",
+      "sha256": "198d2324cee42c5aed4e60541b63825272b9fab14e5dfdb7a510d363050787d5"
+    },
+    {
+      "name": "mysql-before-fixture-correction",
+      "total": 124,
+      "failures": 25,
+      "errors": 1,
+      "skipped": 0,
+      "log": ".local/erasure-device-identity-mysql-fixture-failed.log",
+      "sha256": "22abb8e646d5572829bd7669e1f7515aafea7534e511b899028b40c77bbdd7b0"
+    },
+    {
+      "name": "full-before-fixture-correction",
+      "total": 736,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 20,
+      "log": ".local/erasure-device-identity-full-before-fixture-correction.log",
+      "sha256": "9a9ae56ca519a04cd2f78095ef9da1d0d048fa6023b200403516906c0a2d0f73"
+    }
+  ],
+  "fixtureCorrection": "Initial MySQL run: 25 assertion failures and 1 incorrect-result-size error from unscoped test queries counting retained rows of previous test tenants. Scoped all domain assertions and two fixture deletion statements to the current fixture tenants/keys. Production processor unchanged. Final MySQL and full backend rerun cover corrected sources.",
+  "temporaryDatabaseCleanup": "Initial failed and final successful MySQL runs each removed both isolated databases and temporary users.",
+  "conditionalSkipSummary": {
+    "nativeAndroidRunner": 1,
+    "clientInteropConfiguration": 12,
+    "dedicatedLedgerEnvironment": 7
+  },
+  "review": {
+    "passes": 1,
+    "model": "gpt-6-astra",
+    "criticalFindings": [],
+    "importantFindings": [],
+    "minorFindings": [],
+    "fixPasses": 0,
+    "secondReviewPerformed": false,
+    "verdict": "Ready to merge the internal DEVICE_IDENTITY step; overall workflow incomplete",
+    "reviewedHashes": [
+      {
+        "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureDeviceIdentityProcessor.java",
+        "sha256": "f41fa90acf3e599d73570ab91bbf82ee4fa042b7dca2da301fd433771741abf0"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureDeviceIdentityProcessorTest.java",
+        "sha256": "b8f97c485e0018439cca8d7f68b4e6f6b1abc40815c57ba001f2b915749ff656"
+      },
+      {
+        "path": "docs/data-erasure-contract.md",
+        "sha256": "e1fcefc205eefb69c92c2a801faabb28cfdaeac6c205b4b3b12f824685652ab9"
+      },
+      {
+        "path": "docs/erasure-device-identity-plan.md",
+        "sha256": "05aca0d7e62d0951ca51fca100dfc0ff16bbbca3299030be01617a2fdf468abf"
+      },
+      {
+        "path": "docs/version-1.0.0-initialization.md",
+        "sha256": "e92591c068df668225b6c2bb00017c6c9db926bc065a4b10969f5ae55c2c6325"
+      }
+    ],
+    "declinedToJudgeRulings": [
+      "Final: Ruling: device rows/shared groups/enrollment/proofs/configuration/lifecycle history remain the responsibility of later domain handlers — preserves scope links and shared data while this step clears identity attachments — cost if wrong: future global completion could omit retained personal data, so those stores must be explicitly accounted for.",
+      "Final: Ruling: public submission, automatic worker, target isolation, global completion and real restore exercise remain mandatory unfinished work — internal component exposes no claim of full erasure — cost if wrong: the overall product cannot yet provide a complete subject-erasure workflow.",
+      "Final: Ruling: arbitrary SQL concurrency bypassing admission is unsupported — this processor depends on accepted ledger and drained, continuously paused business work — cost if wrong: out-of-protocol writes may reintroduce data outside its fenced transaction.",
+      "Final: Ruling: no historical upgrade compatibility or migration is introduced — user requires fresh unreleased 1.0.0 and this stage changes no schema — cost if wrong: existing development databases receive no upgrade guarantee.",
+      "Final: Ruling: deployment and skipped client/native/dedicated-ledger-environment cases remain unverified by this stage — final MySQL/full backend evidence covers the recorded source scope only — cost if wrong: running service or device behavior cannot be inferred from this source-stage acceptance.",
+      "Final: Ruling: later shared commits and other WIP are excluded from the frozen review — five-file manifest identifies tested ownership while preserving ongoing work — cost if wrong: an integrated latest-source release still needs separate initialization, coverage and runtime acceptance."
+    ]
+  }
+}
