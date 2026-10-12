@@ -76,11 +76,17 @@ class OverviewReadService {
             + (ownRequests ? " AND ar.requester_kind='MEMBER' AND ar.requester_actor_key=?" : ""),
         tenant,
         requestArgs);
-    Long openHelp = grant.role() == OWNER || grant.role() == GUARDIAN || grant.role() == ORG_ADMIN
-        ? jdbc.queryForObject(
-            "SELECT COUNT(*) FROM child_help_requests WHERE tenant_id=? AND state='OPEN'",
-            Long.class, tenant)
-        : null;
+    Long openHelp = null;
+    boolean teacherOrganization = grant.role() != TEACHER || "ORGANIZATION".equals(
+        jdbc.queryForObject("SELECT kind FROM tenants WHERE id=?", String.class, tenant));
+    if (teacherOrganization && (grant.role() == OWNER || grant.role() == GUARDIAN
+        || grant.role() == ORG_ADMIN || grant.role() == TEACHER)) {
+      var helpScope = access.subjectFilter(tenant, actor, grant, "h.subject_id");
+      openHelp = count(
+          "SELECT COUNT(*) FROM child_help_requests h WHERE h.tenant_id=? AND h.state='OPEN'"
+              + " AND " + helpScope.sql(),
+          tenant, helpScope.args());
+    }
     List<Activity> activity = policies
         ? jdbc.query(
             "SELECT id,action,resource_id,occurred_at FROM audit_events WHERE tenant_id=?"

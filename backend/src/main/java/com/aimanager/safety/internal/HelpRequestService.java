@@ -60,7 +60,7 @@ class HelpRequestService {
         throw new DomainException(HttpStatus.NOT_FOUND, "HELP_REQUEST_UNAVAILABLE");
       if (existing.reasonCode() != reason)
         throw new DomainException(HttpStatus.CONFLICT, "HELP_REQUEST_ID_REUSED");
-      return new Created(existing, false);
+      return new Created(forDevice(existing), false);
     }
     long now = clock.millis();
     Long recent = jdbc.queryForObject(
@@ -78,7 +78,7 @@ class HelpRequestService {
         identity.tenantId(), id, device.subjectId(), identity.deviceId(),
         identity.registrationId(), clientRequestId.toString(), reason.name(), now);
     audit.record(identity.tenantId(), "device:" + identity.deviceId(), "CHILD_HELP_REQUESTED", id);
-    return new Created(new HelpRequest(id, device.subjectId(), identity.deviceId(),
+    return new Created(new HelpRequest(id, device.subjectId(), null, identity.deviceId(),
         clientRequestId.toString(), reason, State.OPEN, now, null, 0), true);
   }
 
@@ -88,35 +88,42 @@ class HelpRequestService {
     var value = own(identity, clientRequestId.toString());
     if (value == null || !value.subjectId().equals(device.subjectId()))
       throw new DomainException(HttpStatus.NOT_FOUND, "HELP_REQUEST_UNAVAILABLE");
-    return value;
+    return forDevice(value);
   }
 
   @Transactional(readOnly = true, timeout = 10)
   ItemPage<HelpRequest> list(String tenant, String actor, int limit, String cursor, State state) {
-    access.requireRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
+    var grant = access.requireRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN, TEACHER);
+    requireTeacherOrganization(tenant, grant);
     ItemPage.validate(limit, cursor);
+    var scope = access.subjectFilter(tenant, actor, grant, "h.subject_id");
     Long beforeTime = null;
     if (cursor != null) {
       // The anchor remains valid if another adult acknowledges it between pages.
       var times = jdbc.query(
-          "SELECT created_at FROM child_help_requests WHERE tenant_id=? AND id=?",
-          (row, index) -> row.getLong(1), tenant, cursor);
+          "SELECT h.created_at FROM child_help_requests h WHERE h.tenant_id=? AND h.id=?"
+              + " AND " + scope.sql(),
+          (row, index) -> row.getLong(1),
+          arguments(List.of(tenant, cursor), scope.args()));
       if (times.size() != 1) throw DomainException.invalid("INVALID_CURSOR");
       beforeTime = times.get(0);
     }
     var args = new ArrayList<Object>(List.of(tenant));
-    String sql = "SELECT * FROM child_help_requests WHERE tenant_id=?";
+    args.addAll(scope.args());
+    String sql = "SELECT h.*,s.nickname AS subject_nickname FROM child_help_requests h"
+        + " JOIN subjects s ON s.tenant_id=h.tenant_id AND s.id=h.subject_id"
+        + " WHERE h.tenant_id=? AND " + scope.sql();
     if (state != null) {
-      sql += " AND state=?";
+      sql += " AND h.state=?";
       args.add(state.name());
     }
     if (cursor != null) {
-      sql += " AND (created_at<? OR (created_at=? AND id<?))";
+      sql += " AND (h.created_at<? OR (h.created_at=? AND h.id<?))";
       args.add(beforeTime);
       args.add(beforeTime);
       args.add(cursor);
     }
-    sql += " ORDER BY created_at DESC,id DESC LIMIT ?";
+    sql += " ORDER BY h.created_at DESC,h.id DESC LIMIT ?";
     args.add(limit + 1);
     return ItemPage.from(jdbc.query(sql, (row, index) -> map(row), args.toArray()),
         limit, HelpRequest::id);
@@ -124,25 +131,35 @@ class HelpRequestService {
 
   @Transactional(readOnly = true, timeout = 10)
   HelpRequest get(String tenant, String actor, UUID id) {
-    access.requireRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
-    return required(tenant, id.toString(), false);
+    var grant = access.requireRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN, TEACHER);
+    requireTeacherOrganization(tenant, grant);
+    var result = required(tenant, id.toString(), false);
+    if (!access.canReadSubject(tenant, actor, grant, result.subjectId()))
+      throw new DomainException(HttpStatus.NOT_FOUND, "HELP_REQUEST_UNAVAILABLE");
+    return result;
   }
 
   @Transactional(readOnly = true, timeout = 10)
   OpenCount openCount(String tenant, String actor) {
-    access.requireRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
+    var grant = access.requireRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN, TEACHER);
+    requireTeacherOrganization(tenant, grant);
+    var scope = access.subjectFilter(tenant, actor, grant, "h.subject_id");
     var ids = jdbc.query(
-        "SELECT id FROM child_help_requests WHERE tenant_id=? AND state='OPEN'"
-            + " ORDER BY created_at DESC,id DESC LIMIT 1001",
-        (row, index) -> row.getString(1), tenant);
+        "SELECT h.id FROM child_help_requests h WHERE h.tenant_id=? AND h.state='OPEN'"
+            + " AND " + scope.sql() + " ORDER BY h.created_at DESC,h.id DESC LIMIT 1001",
+        (row, index) -> row.getString(1),
+        arguments(List.of(tenant), scope.args()));
     return new OpenCount(Math.min(ids.size(), 1000), ids.size() > 1000);
   }
 
   @Transactional(timeout = 10)
   HelpRequest acknowledge(String tenant, String actor, UUID id, String etag) {
-    access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
+    var grant = access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN, TEACHER);
+    requireTeacherOrganization(tenant, grant);
     long expected = ResourceVersions.require(etag);
     var current = required(tenant, id.toString(), true);
+    if (!access.canReadSubject(tenant, actor, grant, current.subjectId()))
+      throw new DomainException(HttpStatus.NOT_FOUND, "HELP_REQUEST_UNAVAILABLE");
     ResourceVersions.check(expected, current.version());
     if (current.state() == State.ACKNOWLEDGED) return current;
     long now = clock.millis();
@@ -153,7 +170,7 @@ class HelpRequestService {
     if (changed != 1)
       throw new DomainException(HttpStatus.CONFLICT, "HELP_REQUEST_VERSION_CHANGED");
     audit.record(tenant, actor, "CHILD_HELP_ACKNOWLEDGED", id.toString());
-    return new HelpRequest(current.id(), current.subjectId(), current.deviceId(),
+    return new HelpRequest(current.id(), current.subjectId(), current.subjectNickname(), current.deviceId(),
         current.clientRequestId(), current.reasonCode(), State.ACKNOWLEDGED,
         current.createdAt(), now, expected + 1);
   }
@@ -171,8 +188,10 @@ class HelpRequestService {
 
   private HelpRequest own(DeviceContext identity, String clientRequestId) {
     var rows = jdbc.query(
-        "SELECT * FROM child_help_requests WHERE tenant_id=? AND device_id=?"
-            + " AND registration_id=? AND client_request_id=?",
+        "SELECT h.*,s.nickname AS subject_nickname FROM child_help_requests h"
+            + " JOIN subjects s ON s.tenant_id=h.tenant_id AND s.id=h.subject_id"
+            + " WHERE h.tenant_id=? AND h.device_id=?"
+            + " AND h.registration_id=? AND h.client_request_id=?",
         (row, index) -> map(row), identity.tenantId(), identity.deviceId(),
         identity.registrationId(), clientRequestId);
     return rows.isEmpty() ? null : rows.get(0);
@@ -180,26 +199,48 @@ class HelpRequestService {
 
   private HelpRequest required(String tenant, String id, boolean lock) {
     var rows = jdbc.query(
-        "SELECT * FROM child_help_requests WHERE tenant_id=? AND id=?"
+        "SELECT h.*,s.nickname AS subject_nickname FROM child_help_requests h"
+            + " JOIN subjects s ON s.tenant_id=h.tenant_id AND s.id=h.subject_id"
+            + " WHERE h.tenant_id=? AND h.id=?"
             + (lock ? " FOR UPDATE" : ""),
         (row, index) -> map(row), tenant, id);
     if (rows.isEmpty()) throw new DomainException(HttpStatus.NOT_FOUND, "HELP_REQUEST_UNAVAILABLE");
     return rows.get(0);
   }
 
+  private static Object[] arguments(List<Object> first, List<Object> rest) {
+    var args = new ArrayList<Object>(first);
+    args.addAll(rest);
+    return args.toArray();
+  }
+
+  private void requireTeacherOrganization(String tenant, TenantAccess.Grant grant) {
+    if (grant.role() == TEACHER && !"ORGANIZATION".equals(
+        jdbc.queryForObject("SELECT kind FROM tenants WHERE id=?", String.class, tenant)))
+      throw DomainException.denied();
+  }
+
   private HelpRequest map(ResultSet row) throws SQLException {
     Number acknowledged = (Number) row.getObject("acknowledged_at");
     return new HelpRequest(row.getString("id"), row.getString("subject_id"),
+        row.getString("subject_nickname"),
         row.getString("device_id"), row.getString("client_request_id"),
         Reason.valueOf(row.getString("reason_code")), State.valueOf(row.getString("state")),
         row.getLong("created_at"), acknowledged == null ? null : acknowledged.longValue(),
         row.getLong("version"));
   }
 
+  private static HelpRequest forDevice(HelpRequest value) {
+    return new HelpRequest(value.id(), value.subjectId(), null, value.deviceId(),
+        value.clientRequestId(), value.reasonCode(), value.state(), value.createdAt(),
+        value.acknowledgedAt(), value.version());
+  }
+
   enum Reason { NEED_HELP, UNCOMFORTABLE_CONTENT, DEVICE_PROBLEM }
   enum State { OPEN, ACKNOWLEDGED }
 
-  record HelpRequest(String id, String subjectId, String deviceId, String clientRequestId,
+  record HelpRequest(String id, String subjectId, String subjectNickname, String deviceId,
+      String clientRequestId,
       Reason reasonCode, State state, long createdAt, Long acknowledgedAt, long version) {}
   record Created(HelpRequest request, boolean created) {}
   record OpenCount(int count, boolean capped) {}

@@ -62,6 +62,9 @@ class Session extends ChangeNotifier {
           ['OWNER', 'ORG_ADMIN', 'AUDITOR'].contains(role);
     }
     return (section != 'classes' || tenant?['kind'] == 'ORGANIZATION') &&
+        (section != 'help-requests' ||
+            role != 'TEACHER' ||
+            tenant?['kind'] == 'ORGANIZATION') &&
         canOpenSection(role, section);
   }
 

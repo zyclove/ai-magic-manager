@@ -26,7 +26,7 @@ class _HelpShortcutState extends State<HelpShortcut>
       widget.session.tenant != null &&
       widget.session.root == root &&
       widget.session.role == role &&
-      widget.session.canWrite;
+      widget.session.canOpen('help-requests');
 
   @override
   void initState() {

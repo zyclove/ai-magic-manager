@@ -3,12 +3,14 @@ import 'api.dart';
 /// Minimal, validated projection; no private child message or adult identity is returned.
 class HelpRequest {
   final String id, subjectId, deviceId, clientRequestId, reasonCode, state;
+  final String? subjectNickname;
   final int createdAt, version;
   final int? acknowledgedAt;
 
   const HelpRequest._(
       this.id,
       this.subjectId,
+      this.subjectNickname,
       this.deviceId,
       this.clientRequestId,
       this.reasonCode,
@@ -22,6 +24,7 @@ class HelpRequest {
     final value = input;
     final id = _id(value['id']);
     final subject = _id(value['subjectId']);
+    final nickname = value['subjectNickname'];
     final device = _id(value['deviceId']);
     final client = _id(value['clientRequestId']);
     final reason = value['reasonCode'];
@@ -29,6 +32,10 @@ class HelpRequest {
     final createdAt = value['createdAt'];
     final acknowledgedAt = value['acknowledgedAt'];
     final version = value['version'];
+    if (nickname != null &&
+        (nickname is! String ||
+            nickname.trim().isEmpty ||
+            nickname.length > 60)) _invalid();
     if (!const {'NEED_HELP', 'UNCOMFORTABLE_CONTENT', 'DEVICE_PROBLEM'}
             .contains(reason) ||
         !const {'OPEN', 'ACKNOWLEDGED'}.contains(state) ||
@@ -40,8 +47,17 @@ class HelpRequest {
         version < 0 ||
         (state == 'OPEN' && acknowledgedAt != null) ||
         (state == 'ACKNOWLEDGED' && acknowledgedAt == null)) _invalid();
-    return HelpRequest._(id, subject, device, client, reason as String,
-        state as String, createdAt, acknowledgedAt as int?, version);
+    return HelpRequest._(
+        id,
+        subject,
+        nickname as String?,
+        device,
+        client,
+        reason as String,
+        state as String,
+        createdAt,
+        acknowledgedAt as int?,
+        version);
   }
 }
 

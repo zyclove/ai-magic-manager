@@ -223,7 +223,7 @@ class _ChildHelpSectionState extends State<ChildHelpSection>
             const ChildNotice('提交结果待核对',
                 detail: '原编号已在本机加密保存。请先核对服务器；如果尚未收到，再重试同一请求。')
           else if (current.serverState == 'ACKNOWLEDGED')
-            const ChildNotice('管理员已在管理台确认看到',
+            const ChildNotice('获授权成人已在管理台确认看到',
                 detail: '这不代表实际帮助已经完成，请继续与可信任的成人联系。')
           else
             const ChildNotice('云端已收到求助',

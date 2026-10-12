@@ -29,7 +29,7 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
       widget.session.tenant != null &&
       widget.session.root == root &&
       widget.session.role == role &&
-      widget.session.canWrite;
+      widget.session.canOpen('help-requests');
 
   @override
   void initState() {
@@ -123,7 +123,11 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
       builder: (context, _) => !current
           ? const Panel(child: EmptyView('工作空间或权限已变化', '已隐藏旧求助记录，请重新打开当前工作空间。'))
           : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              const PageHeading('儿童求助记录', '查看设备提交的求助，并跟进实际联系与处理。'),
+              PageHeading(
+                  role == 'TEACHER' ? '授权学生求助' : '儿童求助记录',
+                  role == 'TEACHER'
+                      ? '只显示当前获授权学生的求助；请按机构值班流程联系并跟进。'
+                      : '查看设备提交的求助，并跟进实际联系与处理。'),
               const Notice(
                   '此页面只记录服务端收到的求助。它不是紧急呼叫，也没有短信或系统推送保证；若存在即时危险，应通过当地紧急服务或可信任的成人寻求即时帮助。',
                   warning: true),
@@ -190,10 +194,10 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
             ]),
         const SizedBox(height: 6),
         Text(
-            '提交：${dateLabel(item.createdAt)} · 档案 ${shortId(item.subjectId)} · 设备 ${shortId(item.deviceId)}',
+            '提交：${dateLabel(item.createdAt)} · ${item.subjectNickname ?? '档案 ${shortId(item.subjectId)}'} · 设备 ${shortId(item.deviceId)}',
             style: const TextStyle(color: muted)),
         if (item.acknowledgedAt != null)
-          Text('管理员已查看：${dateLabel(item.acknowledgedAt)}。实际帮助仍需线下跟进。',
+          Text('已在管理台确认看到：${dateLabel(item.acknowledgedAt)}。实际帮助仍需线下跟进。',
               style: const TextStyle(color: muted)),
         if (item.state == 'OPEN')
           Align(

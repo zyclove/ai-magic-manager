@@ -60,7 +60,7 @@ class _ScopedOverviewPageState extends State<ScopedOverviewPage> {
     final role = session.role;
     final description = switch (role) {
       'CHILD' => '查看自己的档案、设备状态和临时访问申请；规则由监护人管理。',
-      'TEACHER' => '查看获授权班级和学生的必要状态，跟进本人提交的访问申请。',
+      'TEACHER' => '查看获授权班级和学生的必要状态、授权学生求助，以及本人提交的访问申请。',
       'AUDITOR' => '查看策略草稿、待处理申请和最近的审计事实。',
       _ => '仅展示当前身份获准查看的信息。',
     };
@@ -95,11 +95,24 @@ class _ScopedOverviewPageState extends State<ScopedOverviewPage> {
                         Icons.description_outlined),
                   _metric(box.maxWidth, role == 'AUDITOR' ? '待处理申请' : '我的待处理申请',
                       summary!.pendingRequestCount, Icons.schedule_outlined),
+                  if (role == 'TEACHER' &&
+                      summary!.openHelpRequestCount != null)
+                    _metric(
+                        box.maxWidth,
+                        '授权学生待查看求助',
+                        summary!.openHelpRequestCount!,
+                        Icons.volunteer_activism_outlined),
                 ])),
         if (role != 'AUDITOR' && (summary!.connectionCheckCount ?? 0) > 0) ...[
           const SizedBox(height: 16),
           Notice(
               '${summary!.connectionCheckCount} 台可见设备尚无近期心跳。请检查连接；失联不能证明规则已失效。',
+              warning: true),
+        ],
+        if (role == 'TEACHER' && (summary!.openHelpRequestCount ?? 0) > 0) ...[
+          const SizedBox(height: 16),
+          Notice(
+              '当前授权范围有 ${summary!.openHelpRequestCount} 条学生求助尚未确认看到。请打开收件记录，并按机构流程实际联系与跟进。',
               warning: true),
         ],
         const SizedBox(height: 20),
@@ -117,6 +130,9 @@ class _ScopedOverviewPageState extends State<ScopedOverviewPage> {
               _link('我的设备', Icons.devices_outlined, '/devices'),
             if (session.canOpen('approvals'))
               _link('访问申请', Icons.task_alt_outlined, '/approvals'),
+            if (session.canOpen('help-requests'))
+              _link('授权学生求助', Icons.volunteer_activism_outlined,
+                  '/help-requests'),
             if (session.canOpen('policies'))
               _link('策略中心', Icons.shield_outlined, '/policies'),
             if (session.canOpen('audit'))
