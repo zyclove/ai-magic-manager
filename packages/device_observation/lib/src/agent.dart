@@ -340,7 +340,10 @@ class ObservationAgent {
       final pending = journal.pendingPermission;
       if (pending != null) {
         final age = nowMillis() - (pending['observedAt'] as int);
-        if (age < -300000 || age >= dayMillis) {
+        // The server rejects new reports after 15 minutes. Leave a minute for
+        // transport latency; a late acknowledgement can be replaced by a fresh
+        // report with the next sequence rather than trapping foreground retries.
+        if (age < -300000 || age >= 14 * 60000) {
           journal.pendingPermission = null;
           await journal.save();
           _check(generation);
