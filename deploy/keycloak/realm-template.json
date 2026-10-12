@@ -61,6 +61,17 @@
       {"name": "API audience", "protocol": "openid-connect", "protocolMapper": "oidc-audience-mapper", "config": {"included.custom.audience": "ai-manager-api", "access.token.claim": "true", "id.token.claim": "false"}},
       {"name": "Authentication methods", "protocol": "openid-connect", "protocolMapper": "oidc-amr-mapper", "config": {"access.token.claim": "true", "id.token.claim": "true"}}
     ]
+  }, {
+    "clientId": "ai-manager-parent", "name": "智能管家监护人 Android", "protocol": "openid-connect", "enabled": true,
+    "publicClient": true, "standardFlowEnabled": true, "implicitFlowEnabled": false,
+    "directAccessGrantsEnabled": false, "serviceAccountsEnabled": false, "fullScopeAllowed": false,
+    "redirectUris": ["com.aimanager.parent:/oauth2redirect"], "webOrigins": [],
+    "attributes": {"pkce.code.challenge.method": "S256", "post.logout.redirect.uris": "com.aimanager.parent:/oauth2redirect"},
+    "defaultClientScopes": ["basic", "profile", "email", "tenant:create"],
+    "protocolMappers": [
+      {"name": "API audience", "protocol": "openid-connect", "protocolMapper": "oidc-audience-mapper", "config": {"included.custom.audience": "ai-manager-api", "access.token.claim": "true", "id.token.claim": "false"}},
+      {"name": "Authentication methods", "protocol": "openid-connect", "protocolMapper": "oidc-amr-mapper", "config": {"access.token.claim": "true", "id.token.claim": "true"}}
+    ]
   }],
   "browserFlow": "manager-browser",
   "authenticatorConfig": [
