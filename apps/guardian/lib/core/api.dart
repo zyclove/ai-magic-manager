@@ -23,6 +23,7 @@ class ApiFailure implements Exception {
         'INVALID_COMMERCIAL_RESPONSE' => '商业权益数据校验未通过，已隐藏结果。请刷新后重试。',
         'INVALID_CONTRACT_RESPONSE' => '合同数据校验未通过，已隐藏结果。请刷新后重试。',
         'INVALID_MANAGED_ANDROID_RESPONSE' => '受管设备资料校验未通过，已隐藏结果。请刷新后重试。',
+        'INVALID_PERMISSION_CATALOG_RESPONSE' => 'Android 权限目录未通过校验，暂不能编辑权限规则。请刷新后重试。',
         'INVALID_WELLBEING_INSIGHT_RESPONSE' => '使用建议资料校验未通过，已隐藏结果。请刷新后重试。',
         'EMM_UNAVAILABLE' => '受管设备提供方尚未开通或暂时不可用。请先确认准入与服务配置。',
         'EMM_PROVIDER_MISMATCH' => '当前提供方与企业绑定记录不一致。请联系平台管理员核对接入配置。',

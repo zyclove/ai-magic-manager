@@ -1,6 +1,7 @@
 package com.aimanager.shared;
 
 import java.util.Set;
+import java.util.List;
 
 /** Android permissions accepted by the product's per-application runtime policy surface. */
 public final class AndroidRuntimePermissions {
@@ -22,5 +23,9 @@ public final class AndroidRuntimePermissions {
   public static boolean contains(String permission) {
     return permission != null && permission.startsWith(PREFIX)
         && NAMES.contains(permission.substring(PREFIX.length()));
+  }
+
+  public static List<String> names() {
+    return NAMES.stream().map(name -> PREFIX + name).sorted().toList();
   }
 }

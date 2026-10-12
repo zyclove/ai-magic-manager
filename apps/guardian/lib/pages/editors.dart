@@ -268,8 +268,8 @@ const ruleEffects = {
   'APP_LAUNCH': ['ALLOW', 'DENY'],
   'APP_INSTALL': ['ALLOW', 'DENY'],
   'APP_UNINSTALL': ['ALLOW', 'PROTECT'],
-  'RUNTIME_PERMISSION': ['GRANT', 'DENY', 'DEFAULT'],
-  'SPECIAL_ACCESS': ['GRANT', 'DENY', 'DEFAULT'],
+  'RUNTIME_PERMISSION': ['DEFAULT', 'DENY', 'GRANT'],
+  'SPECIAL_ACCESS': ['DEFAULT', 'DENY', 'GRANT'],
   'DAILY_QUOTA': ['LIMIT'],
   'TIME_WINDOW': ['ALLOW'],
   'DOMAIN_ACCESS': ['ALLOW', 'DENY'],
@@ -278,26 +278,71 @@ const ruleEffects = {
 Future<void> policyEditor(BuildContext context, Session session,
     {Json? draft}) async {
   final root = session.root;
-  final data = await Future.wait([
-    session.api.all('$root/applications'),
-    session.api.all('$root/schedules')
-  ]);
-  if (!context.mounted) return;
+  late final List<dynamic> data;
+  late final Map<String, String> runtimePermissions;
+  try {
+    data = await Future.wait<dynamic>([
+      session.api.all('$root/applications'),
+      session.api.all('$root/schedules'),
+      session.api.send('GET', '/policy-metadata/android-runtime-permissions')
+    ]);
+    runtimePermissions = runtimePermissionOptions(data[2]);
+  } catch (failure) {
+    if (context.mounted) {
+      toast(context, failure is ApiFailure ? failure.message : '无法加载权限目录，请稍后重试。');
+    }
+    return;
+  }
+  if (!context.mounted || session.tenant?['id'] != root.substring(9)) return;
   await showDialog<void>(
       context: context,
       barrierDismissible: false,
       builder: (_) => PolicyEditor(
           session: session,
           root: root,
-          applications: data[0],
-          schedules: data[1],
+          applications: data[0] as List<Json>,
+          schedules: data[1] as List<Json>,
+          runtimePermissions: runtimePermissions,
           draft: draft));
+}
+
+Map<String, String> runtimePermissionOptions(dynamic raw) {
+  final rows = raw is Json ? raw['permissions'] : null;
+  if (raw is! Json ||
+      raw.length != 2 ||
+      raw['schemaVersion'] != 1 ||
+      rows is! List ||
+      rows.isEmpty ||
+      rows.length > 100) {
+    throw const ApiFailure(502, 'INVALID_PERMISSION_CATALOG_RESPONSE');
+  }
+  const common = {
+    'CAMERA': '相机',
+    'RECORD_AUDIO': '麦克风',
+    'ACCESS_FINE_LOCATION': '精确位置',
+    'ACCESS_COARSE_LOCATION': '大致位置',
+    'ACCESS_BACKGROUND_LOCATION': '后台位置',
+    'READ_CONTACTS': '读取联系人',
+    'READ_CALENDAR': '读取日历',
+    'POST_NOTIFICATIONS': '发送通知'
+  };
+  final result = <String, String>{};
+  final pattern = RegExp(r'^android\.permission\.[A-Z][A-Z0-9_]{1,100}$');
+  for (final value in rows) {
+    if (value is! String || !pattern.hasMatch(value) || result.containsKey(value)) {
+      throw const ApiFailure(502, 'INVALID_PERMISSION_CATALOG_RESPONSE');
+    }
+    final short = value.substring('android.permission.'.length);
+    result[value] = common[short] == null ? short : '${common[short]} · $short';
+  }
+  return Map.unmodifiable(result);
 }
 
 class PolicyEditor extends StatefulWidget {
   final Session session;
   final String root;
   final List<Json> applications, schedules;
+  final Map<String, String> runtimePermissions;
   final Json? draft;
   const PolicyEditor(
       {super.key,
@@ -305,6 +350,7 @@ class PolicyEditor extends StatefulWidget {
       required this.root,
       required this.applications,
       required this.schedules,
+      required this.runtimePermissions,
       this.draft});
   @override
   State<PolicyEditor> createState() => _PolicyEditorState();
@@ -357,6 +403,12 @@ class _PolicyEditorState extends State<PolicyEditor> {
       toast(context, '请先创建时间计划。');
       return;
     }
+    if (index != null &&
+        type == 'RUNTIME_PERMISSION' &&
+        !widget.runtimePermissions.containsKey(rules[index]['permission'])) {
+      toast(context, '原权限名称已不在当前目录中。请重新创建受支持的规则。');
+      return;
+    }
     final fields = [
       FieldSpec('effect', '规则行为', options: options(ruleEffects[type]!)),
       if (hasApp)
@@ -374,8 +426,8 @@ class _PolicyEditorState extends State<PolicyEditor> {
         const FieldSpec('domain', '域名',
             hint: 'example.com（不含协议或路径）', maxLength: 253),
       if (type == 'RUNTIME_PERMISSION')
-        const FieldSpec('permission', 'Android 权限名称',
-            hint: 'android.permission.CAMERA', maxLength: 150),
+        FieldSpec('permission', 'Android 运行时权限',
+            options: widget.runtimePermissions),
       if (type == 'SPECIAL_ACCESS')
         const FieldSpec('permission', '特殊访问权限', options: {
           'USAGE_ACCESS': '使用情况访问',
@@ -396,6 +448,11 @@ class _PolicyEditorState extends State<PolicyEditor> {
     final result = await formDialog(context,
         title: '${index == null ? '添加' : '编辑'}${label(type)}',
         fields: fields,
+        description: type == 'RUNTIME_PERMISSION'
+            ? '此处保存规则草稿。设备预览会说明是否支持；普通设备不能替其他应用修改系统权限，受管设备也须等待提供方和设备回执。'
+            : type == 'SPECIAL_ACCESS'
+                ? '特殊访问通常需要设备本地用户或受管系统单独授权；保存规则不表示已经授予。'
+                : null,
         initial: initial, onSubmit: (data) async {
       if (data['seconds'] != null &&
           (data['seconds'] < 1 || data['seconds'] > 86400)) {
