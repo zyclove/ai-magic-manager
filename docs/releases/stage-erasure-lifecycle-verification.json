@@ -1,0 +1,303 @@
+{
+  "stage": "erasure-lifecycle",
+  "applicationVersion": "1.0.0",
+  "recordedAt": "2026-10-12T05:04:29.781783+00:00",
+  "frozenBase": "db7b10c27c8b4e13d517887772184095176644de",
+  "sourceFiles": [
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureLifecycleProcessor.java",
+      "sha256": "6bd4fbc860ecf87a28d52064ed21986f355c0e9fee02de787fa2dc27938830f2"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureLifecycleProcessorTest.java",
+      "sha256": "7d2a6823947c56c7c61e944ffcdd69811ff72250292333f4eeb74f05cb0aacf5"
+    },
+    {
+      "path": "docs/erasure-lifecycle-plan.md",
+      "sha256": "c2e7c71688dece1e41188c6ae47d61a5a37dde856cb870b7518605d2eee80f86"
+    },
+    {
+      "path": "docs/data-erasure-contract.md",
+      "sha256": "0b0fc5318a8847c3dbcf3817274bf028ebf9b865ea0fa1a7e9f73835d1295087"
+    }
+  ],
+  "frozenBaseBackendFilesVerified": 357,
+  "baseArchiveSha256": "bf78330c38d8b4f17d30c3e07e60426ee041879190db1122a16cd761a077c34e",
+  "tests": {
+    "red": {
+      "path": ".local/erasure-lifecycle-red.log",
+      "sha256": "50cca36e8c96e67e6424a151d8dafcf8c5006098334866ad54b9411b51559224",
+      "total": 51,
+      "passed": 0,
+      "failures": 51,
+      "errors": 0,
+      "skipped": 0
+    },
+    "green": {
+      "path": ".local/erasure-lifecycle-green.log",
+      "sha256": "3aa750ed2e0c5e2d68b7f2e93015e391ed16729b5e744997ac6f29efdc26d0f1",
+      "total": 51,
+      "passed": 51,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "focused": {
+      "path": ".local/erasure-lifecycle-focused.log",
+      "sha256": "d2bd3ff8016180b8c36da444b604d60b10e9d97ef7dbbca813948287fb4bb090",
+      "total": 218,
+      "passed": 218,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "mysql": {
+      "path": ".local/erasure-lifecycle-mysql.log",
+      "sha256": "e59d6fac7a13e995b11182f7edb34e79ff96640c8ae7ab3e3e33dc52b243e8be",
+      "total": 218,
+      "passed": 218,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "full": {
+      "path": ".local/erasure-lifecycle-full.log",
+      "sha256": "347490cea653922299b580a97e50bbbfdc07e1c68ec2b7ce88670f1585363361",
+      "total": 836,
+      "passed": 816,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 20
+    }
+  },
+  "fullBuildSkippedTests": [
+    {
+      "suite": "com.aimanager.AndroidChildSubmissionJourneyTest",
+      "test": "realEnrollmentNativeCrashRecoveryAndRevocation",
+      "reason": "System property [device.android.runner] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceAccessHttpInteropTest",
+      "test": "realApprovalRetryReceiptsRevocationExpiryAndOpaqueRevocation",
+      "reason": "System property [device.access.package] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+      "test": "actualDartSubmissionAdultDecisionAndExistingDeviceDeliveryReference",
+      "reason": "System property [device.access.package] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+      "test": "actualChildUiRecoversOriginalCancellationAcrossProcesses",
+      "reason": "System property [device.child.package] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+      "test": "actualChildSessionAndUiRecoverOriginalSubmissionAcrossProcesses",
+      "reason": "System property [device.child.package] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceConfigurationHttpInteropTest",
+      "test": "realDeviceTransportStoresTwoPagesAndRejectsRevokedCredential",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceIdentityHttpInteropTest",
+      "test": "actualEnrollmentRecoveryConfirmationRotationAndRevocation",
+      "reason": "System property [device.identity.package] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DeviceObservationHttpInteropTest",
+      "test": "adultConsentDeviceLostAcknowledgementReplayWithdrawalAndRevocation",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.DiagnosticPreviewJourneyTest",
+      "test": "productionDartClientReadsRealHttpAndRechecksCurrentAccess",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureAdmissionStoreTest",
+      "test": "leastPrivilegeRuntimeCanDrainWorkButCannotRewriteAcceptedRecords",
+      "reason": "Environment variable [NOTICE_IT_ROOT_PASSWORD] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "mismatchedIdentityAndMissingLedgerAreReportedWithoutAutomaticRecreation",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "servletAsyncCannotEscapeTheRegisteredSynchronousPermit",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "acceptedLedgerStopsAuthorizedBusinessRequestsWithoutDeletingTheirData",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "realHttpRequestDrainsBeforeAcceptanceAndProbesRemainAvailable",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+      "test": "nonTransactionalEngineIsRejectedBeforeAppending",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+      "test": "initializationPinsTransactionalEngineEvenWhenServerDefaultDiffers",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "suite": "com.aimanager.support.internal.DiagnosticPackageJourneyTest",
+      "test": "productionDartClientCompletesPackageLifecycleOverRealHttp",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.SupportGrantJourneyTest",
+      "test": "productionDartSupportClientCompletesRealHttpGrantLifecycle",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.UsageReportJobJourneyTest",
+      "test": "realHttpJobsAreConsumedByProductionDartClient",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "suite": "com.aimanager.UsageReportJourneyTest",
+      "test": "realHttpResponseIsConsumedByProductionDartReportClient",
+      "reason": "System property [device.dart.command] does not exist"
+    }
+  ],
+  "mysqlCleanup": {
+    "failures": 0,
+    "candidate": ".local/erasure-lifecycle-20261012/backend",
+    "tests": 218,
+    "temporarySchemasRemoved": 3,
+    "temporaryUsersRemoved": 3,
+    "temporarySchemasCreated": 3,
+    "skipped": 0,
+    "errors": 0,
+    "log": ".local/erasure-lifecycle-mysql.log",
+    "session": 4862,
+    "exitCode": 0,
+    "finishedAt": "2026-10-12T12:56:38.0346632+08:00"
+  },
+  "testFirst": "51 behavioral failures0errors against non-deleting stub, then51pass against implementation; affected and full suites run afterwards",
+  "schemaChanged": false,
+  "scope": [
+    "enrollment_proofs",
+    "device_enrollments",
+    "deprovision_previews",
+    "deprovision_heads",
+    "cleanup_receipts",
+    "deprovision_operations"
+  ],
+  "artifact": {
+    "path": ".local/erasure-lifecycle-full-20261012/backend/target/manager-backend-1.0.0.jar",
+    "sha256": "a01a7d62ba4408568a9f2330d27b9011fec83c078a5967f6e769f6c444b32a96"
+  },
+  "review": {
+    "status": "clean",
+    "reviewer": "/root/erasure_lifecycle_final_review",
+    "model": "gpt-6-astra",
+    "reasoningEffort": "high",
+    "critical": 0,
+    "important": 0,
+    "minor": 0,
+    "verdict": "ready to merge five owned paths",
+    "sourceChangesAfterReview": false,
+    "documentationClarification": "Record preservation does not guarantee cleanup API availability during global maintenance; completion checkboxes and hashes updated after review",
+    "declinedToJudgeRulings": [
+      {
+        "decision": "Public authorization/submission, automatic worker, complete orchestration and global completion remain unavailable",
+        "reason": "the internal six-store step is one part of the accepted deletion contract",
+        "costIfWrong": "users cannot yet execute complete erasure from the product"
+      },
+      {
+        "decision": "Keep the existing global maintenance model; preserving acknowledgement records does not guarantee interface availability during maintenance",
+        "reason": "target isolation and continued availability have not been implemented",
+        "costIfWrong": "other work can remain unavailable and cleanup acknowledgement still depends on the admission model"
+      },
+      {
+        "decision": "All accepted local registrations remain unverified, including absent records, expired/cancelled operations and device reports",
+        "reason": "server-copy deletion and device claims are not proof of terminal erasure",
+        "costIfWrong": "final local or external obligations still need separate handling"
+      },
+      {
+        "decision": "Device main records, managed-provider enrollment, shared references, caches/events/audit and external copies remain later domain work",
+        "reason": "they are outside the six stores implemented here",
+        "costIfWrong": "personal copies remain elsewhere and global erasure cannot be declared complete"
+      },
+      {
+        "decision": "No old-backup restore or disaster-recovery acceptance is claimed",
+        "reason": "no restoration exercise ran in this stage",
+        "costIfWrong": "recovery safety remains unverified"
+      },
+      {
+        "decision": "No new UI/native-device acceptance or success for the20conditionally skipped checks is claimed",
+        "reason": "this stage changes no client and those environments were absent",
+        "costIfWrong": "client, independent-ledger and minimum-privilege conditional behavior requires separate evidence"
+      },
+      {
+        "decision": "No production throughput, scan cost or latency guarantee is claimed",
+        "reason": "small functional and concurrency cases do not establish capacity",
+        "costIfWrong": "large-tenant performance still requires measured acceptance"
+      },
+      {
+        "decision": "Continue fresh unreleased1.0.0 without historical compatibility or upgrade paths",
+        "reason": "the user explicitly selected this development model",
+        "costIfWrong": "existing development databases need separately authorized recreation"
+      },
+      {
+        "decision": "Exclude later Android/parent/UI/Keycloak changes from this frozen candidate",
+        "reason": "the source archive is pinned to db7b10c and shared WIP must be preserved",
+        "costIfWrong": "the latest combined product needs a later integrated build and acceptance"
+      },
+      {
+        "decision": "Accept the witnessed3temporary-schema/user cleanup receipts; runtime18101 is unchanged",
+        "reason": "executor observed terminal cleanup and separately saw six healthy existing services; reviewer did not reconnect or deploy",
+        "costIfWrong": "source acceptance does not prove deployment of this stage or an independent live cleanup audit"
+      }
+    ],
+    "checked": [
+      "five review input and five log hashes",
+      "357basebackendfiles match frozen commit",
+      "explicit enrollment tenant/subject ownership and accepteddevice links",
+      "bidirectional lifecycle links before deletion",
+      "all noncancelled unexpired cleanup windows including acknowledgement replay",
+      "persistent conservative local-unverified count from independent acceptance scope",
+      "25physicalrowbudget shared across six tables",
+      "real deletion rollback, lease fencing, concurrency, resume andDONErecheck",
+      "all final test counts match existing evidence"
+    ]
+  },
+  "rulings": [
+    "Ruling: preserve every unexpired non-cancelled cleanup operation, including reported acknowledgement windows — preserve protocol records through acknowledgement window without changing existing maintenance admission — cost if wrong: erasure server cleanup waits until the established window closes or admin cancellation occurs.",
+    "Ruling: derive unverifiedLocalRegistrations from the immutable accepted registration list on every result — existing device reports are explicitly unverified and server-copy deletion cannot create local proof — cost if wrong: full completion still needs a separate terminal/external obligation policy and cannot claim verified cleanup.",
+    "Ruling: enrollment/proof rows use explicit tenant/subject ownership, while non-null device IDs must occur in the accepted list; other-subject rows remain untouched — enrollment lacks an immutable registration column and must not be guessed from current device ownership — cost if wrong: malformed target links block until repaired and device main records remain for later orchestration.",
+    "Ruling: freeze latest committed db7b10c before RED and overlay owned files only — includes already delivered help work while preserving uncommitted shared changes — cost if wrong: later shared changes still need integrated verification.",
+    "Final: Ruling: Public authorization/submission, automatic worker, complete orchestration and global completion remain unavailable — the internal six-store step is one part of the accepted deletion contract — cost if wrong: users cannot yet execute complete erasure from the product.",
+    "Final: Ruling: Keep the existing global maintenance model; preserving acknowledgement records does not guarantee interface availability during maintenance — target isolation and continued availability have not been implemented — cost if wrong: other work can remain unavailable and cleanup acknowledgement still depends on the admission model.",
+    "Final: Ruling: All accepted local registrations remain unverified, including absent records, expired/cancelled operations and device reports — server-copy deletion and device claims are not proof of terminal erasure — cost if wrong: final local or external obligations still need separate handling.",
+    "Final: Ruling: Device main records, managed-provider enrollment, shared references, caches/events/audit and external copies remain later domain work — they are outside the six stores implemented here — cost if wrong: personal copies remain elsewhere and global erasure cannot be declared complete.",
+    "Final: Ruling: No old-backup restore or disaster-recovery acceptance is claimed — no restoration exercise ran in this stage — cost if wrong: recovery safety remains unverified.",
+    "Final: Ruling: No new UI/native-device acceptance or success for the20conditionally skipped checks is claimed — this stage changes no client and those environments were absent — cost if wrong: client, independent-ledger and minimum-privilege conditional behavior requires separate evidence.",
+    "Final: Ruling: No production throughput, scan cost or latency guarantee is claimed — small functional and concurrency cases do not establish capacity — cost if wrong: large-tenant performance still requires measured acceptance.",
+    "Final: Ruling: Continue fresh unreleased1.0.0 without historical compatibility or upgrade paths — the user explicitly selected this development model — cost if wrong: existing development databases need separately authorized recreation.",
+    "Final: Ruling: Exclude later Android/parent/UI/Keycloak changes from this frozen candidate — the source archive is pinned to db7b10c and shared WIP must be preserved — cost if wrong: the latest combined product needs a later integrated build and acceptance.",
+    "Final: Ruling: Accept the witnessed3temporary-schema/user cleanup receipts; runtime18101 is unchanged — executor observed terminal cleanup and separately saw six healthy existing services; reviewer did not reconnect or deploy — cost if wrong: source acceptance does not prove deployment of this stage or an independent live cleanup audit."
+  ],
+  "runtimeUpdated": false,
+  "limitations": [
+    "Internal domain step only; public authorization/submission, worker, target isolation, full orchestration, final completion and UI remain incomplete",
+    "All accepted local-device registrations remain unverified; server-copy erasure is not proof of device cleanup",
+    "Managed-provider enrollment, shared policy references, main device records, caches/events/audit and external copies still require later handling",
+    "No old-backup restoration or disaster-recovery exercise in this stage",
+    "Later commits and uncommitted shared WIP are excluded from the frozen candidate",
+    "Production-scale capacity and latency remain unverified"
+  ]
+}
