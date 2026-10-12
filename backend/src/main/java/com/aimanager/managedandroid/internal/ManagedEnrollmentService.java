@@ -76,16 +76,20 @@ class ManagedEnrollmentService {
     } catch (RuntimeException failure) {
       // Creation may have succeeded remotely while a later check failed. Never leave an
       // untracked enrollment token intentionally active.
+      boolean cleanupConfirmed = material == null;
       if (material != null && material.tokenName() != null) {
         try {
           gateway.deleteEnrollmentToken(prepared.enterpriseId(), material.tokenName());
+          cleanupConfirmed = true;
         } catch (RuntimeException cleanupFailure) {
           LOG.error("Managed enrollment token cleanup failed: intent={}, type={}",
               prepared.id(), cleanupFailure.getClass().getSimpleName());
         }
       }
       try {
-        store.failed(tenant, prepared.id(), actor);
+        if (cleanupConfirmed || material == null || material.tokenName() == null)
+          store.failed(tenant, prepared.id(), actor);
+        else store.cleanupFailedIssue(tenant, prepared.id(), actor, material.tokenName());
       } catch (RuntimeException ledgerFailure) {
         LOG.error("Managed enrollment failure record unavailable: intent={}, type={}",
             prepared.id(), ledgerFailure.getClass().getSimpleName());

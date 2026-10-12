@@ -50,6 +50,45 @@ class ManagedProvisioningReadiness {
   }
 }
 
+/// Commercial admission count, not a provider or local policy execution receipt.
+class ManagedCapacitySnapshot {
+  final String tenantId;
+  final int paidCapacity, verifiedDevices, reservedIntents;
+  final int expiredUnresolvedIntents, cancelledUnreconciledIntents;
+  final int availableForNew, evaluatedAt;
+  final bool overCapacity;
+
+  ManagedCapacitySnapshot._(Json raw)
+      : tenantId = raw['tenantId'],
+        paidCapacity = raw['paidCapacity'],
+        verifiedDevices = raw['verifiedDevices'],
+        reservedIntents = raw['reservedIntents'],
+        expiredUnresolvedIntents = raw['expiredUnresolvedIntents'],
+        cancelledUnreconciledIntents = raw['cancelledUnreconciledIntents'],
+        availableForNew = raw['availableForNew'],
+        overCapacity = raw['overCapacity'],
+        evaluatedAt = raw['evaluatedAt'];
+
+  static ManagedCapacitySnapshot parse(Object? raw, String tenantId) {
+    if (raw is! Json || raw['tenantId'] != tenantId) _invalid();
+    final paid = raw['paidCapacity'],
+        verified = raw['verifiedDevices'],
+        reserved = raw['reservedIntents'],
+        expired = raw['expiredUnresolvedIntents'],
+        cancelled = raw['cancelledUnreconciledIntents'],
+        available = raw['availableForNew'];
+    if (![paid, verified, reserved, expired, cancelled, available]
+            .every(_time) ||
+        raw['overCapacity'] is! bool ||
+        !_time(raw['evaluatedAt']) ||
+        expired + cancelled > reserved ||
+        available !=
+            (paid > verified + reserved ? paid - verified - reserved : 0) ||
+        raw['overCapacity'] != (verified + reserved > paid)) _invalid();
+    return ManagedCapacitySnapshot._(raw);
+  }
+}
+
 /// A reviewed enterprise is permission to start provisioning, not device enforcement.
 class ManagedEnterpriseBinding {
   final String tenantId, provider, enterpriseId, contractReference, state;

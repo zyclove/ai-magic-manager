@@ -43,9 +43,17 @@
 
 机构管理台进入页面时读取 `GET /api/v1/tenants/{tenantId}/managed-android/readiness`，显示目标地区、当前提供方与注册前置状态。接口仅向机构所有者、管理员和审计员开放，响应禁用缓存；`canIssueEnrollment=true` 只表示本地配置、企业审核和合同权益已具备，不证明提供方实时连通、设备已受管或应用策略已执行。原因码包括地区不可用、提供方未配置、企业未绑定/待审核/已撤销、提供方切换、合同权益不足、初始策略缺失及配置就绪。管理台在未就绪时禁用“创建注册资料”，但仍可查看已有记录和提交待审企业绑定；服务端创建接口继续独立核验，不能相信界面状态。
 
-服务端已建立 `managed_enrollment_intents` 及版本事件账本，与原有 BYOD 设备注册分开。机构所有者或管理员完成近期多因素认证后，调用 `POST /api/v1/tenants/{tenantId}/managed-android/enrollment-intents`，请求体为 `{ "subjectId": "..." }`。服务端核对当前企业绑定、合同权益和有效儿童档案，限制同一儿童一个有效申请、每儿童每小时最多 10 次、每机构最多 100 个有效申请。部署时需配置经人工预置并独占的 `manager.emm.google.bootstrap-policy-id`。Google 连接器会先后两次读取初始策略，要求明确 `BLACKLIST`、空应用清单且没有其他配置字段，确认版本未变化后才接受一次性 5 分钟令牌；若本地持久化失败，会尝试立即删除提供方令牌。Google 支持[删除注册令牌](https://developers.google.com/android/management/reference/rest/v1/enterprises.enrollmentTokens/delete)，删除后不能继续用该令牌注册。
+机构管理台同时读取 `GET /api/v1/tenants/{tenantId}/managed-android/capacity`，展示合同有效设备名额、已核对的提供方设备、仍被预留的注册意图、过期未清理及取消后待提供方设备核对的数量、当前可新增数量。该接口只向当前机构所有者、管理员和审计员开放，禁用共享缓存。名额是商业准入数量，**不是系统执行回执**。读取时若合同缩容或到期，`overCapacity=true` 与可新增 0 会提示人工处置；已有儿童基础安全规则不因此移除。
 
-创建成功的响应一次性返回 `tokenValue` 和 `qrCode`，设置 `Cache-Control: no-store`；数据库只保存随机 `additionalData` 的 SHA-256 摘要、提供方令牌资源名、关联儿童、企业/策略版本及过期时间。查询 `GET .../enrollment-intents[/{id}]` 仅返回不含令牌和摘要的进度，可用于提交结果丢失后的核对；丢失的一次性材料不能从查询接口恢复，应取消旧申请并重新创建。管理员可带 `If-Match` 调用 `POST .../{id}/cancel`，服务端先标记 `CANCEL_PENDING` 再删除令牌；远端暂不可用时保留待清理状态，不能把它显示为已取消。后台清理任务使用数据库租约跨节点竞争，按有上限的退避重试删除令牌，成功后写入 `CANCELLED` 与审计；默认每 30 秒处理最多 25 项，可用 `manager.emm.enrollment-cleanup.*` 调整。
+新增注册在同一数据库短事务内锁定租户商业账户，再以当前合同名额核对该租户 `PREPARING`、`ISSUED`、`CANCEL_PENDING`、`VERIFIED` 及已发令牌但尚无设备去向证明的 `CANCELLED` 意图总数；超过或等于名额返回 `409 MANAGED_PAID_CAPACITY_REACHED`，不会向提供方申请令牌。商业事实更新也锁同一账户，因此多个后端副本的并发新增不能只凭管理台旧快照越额。该短事务使用 `READ COMMITTED`，确保等待账户锁后读取的占用数包含前一事务刚提交的注册；MySQL 默认 `REPEATABLE READ` 的普通查询会沿用第一次查询时的旧快照，不能直接用于这里的并发名额判断。[MySQL 8.4 一致性读说明](https://dev.mysql.com/doc/refman/8.4/en/innodb-consistent-read.html)
+
+过期令牌与已取消的已发令牌不会自动释放名额：删除令牌不能证明设备在删除前未完成注册。当前尚无提供方设备盘点与退管后释放席位流程，这类预留需由后续合格适配器核实，现阶段只能保守占位。当前也未覆盖外部 EMM 中既有设备或其他工具创建的令牌；正式销售与容量验收需先完成提供方存量盘点、退管证明和对账，否则不能宣称全面防超额。
+
+服务端已建立 `managed_enrollment_intents` 及版本事件账本，与原有 BYOD 设备注册分开。机构所有者或管理员完成近期多因素认证后，调用 `POST /api/v1/tenants/{tenantId}/managed-android/enrollment-intents`，请求体为 `{ "subjectId": "..." }`。服务端核对当前企业绑定、合同权益、有效儿童档案和剩余合同名额，限制同一儿童一个未解决申请、每儿童每小时最多 10 次、每机构最多 100 个有效申请。部署时需配置经人工预置并独占的 `manager.emm.google.bootstrap-policy-id`。Google 连接器会先后两次读取初始策略，要求明确 `BLACKLIST`、空应用清单且没有其他配置字段，确认版本未变化后才接受一次性 5 分钟令牌；若本地持久化失败，会尝试立即删除提供方令牌。Google 支持[删除注册令牌](https://developers.google.com/android/management/reference/rest/v1/enterprises.enrollmentTokens/delete)，删除后不能继续用该令牌注册。
+
+创建成功的响应一次性返回 `tokenValue` 和 `qrCode`，设置 `Cache-Control: no-store`；数据库只保存随机 `additionalData` 的 SHA-256 摘要、提供方令牌资源名、关联儿童、企业/策略版本及过期时间。查询 `GET .../enrollment-intents[/{id}]` 仅返回不含令牌和摘要的进度，可用于提交结果丢失后的核对；丢失的一次性材料不能从查询接口恢复，应取消旧申请，并在核对合同名额和提供方设备去向后重新创建。管理员可带 `If-Match` 调用 `POST .../{id}/cancel`，服务端先标记 `CANCEL_PENDING` 再删除令牌；远端暂不可用时保留待清理状态，不能把它显示为已取消。后台清理任务使用数据库租约跨节点竞争，按有上限的退避重试删除令牌，成功后写入 `CANCELLED` 与审计；默认每 30 秒处理最多 25 项，可用 `manager.emm.enrollment-cleanup.*` 调整。
+
+若提供方已经返回令牌，但后续本地步骤失败且即时删除令牌也失败，服务端保存令牌资源名和 `CANCEL_PENDING` 意图，交由同一清理任务重试；不把这类结果直接记为已失败并释放名额。提供方返回非法或缺失的令牌资源名且无法删除时，仍需运维排查供应商侧遗留令牌，不能只凭本地状态证明清理完成。
 
 设备完成系统级注册后，管理员带 `If-Match` 提交 `POST .../{id}/verify` 与 `{ "providerDeviceId": "..." }`。服务端从提供方回读设备资源，核对完整资源名、`DEVICE_OWNER` 模式、令牌资源名、随机关联值摘要和真实注册时间，再把意图记为 `VERIFIED`。**这里验证的是提供方设备与机构儿童档案的关联证据，不是本地儿童 App 的密钥/注册周期，也不是应用策略生效回执。** 原 BYOD `devices` 记录不会因此变成受管设备；真实设备链接、策略执行、退管和 Android TV 兼容仍需继续实现。没有合规 EMM 时，令牌创建保持 `503 EMM_UNAVAILABLE`，不得展示虚构二维码。
 

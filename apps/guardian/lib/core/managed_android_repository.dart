@@ -24,6 +24,14 @@ class ManagedAndroidRepository {
     return ManagedProvisioningReadiness.parse(raw, tenantId);
   }
 
+  Future<ManagedCapacitySnapshot> capacity() async {
+    _ensureCurrent();
+    final raw = await boundedJson(api, 'GET', '$_root/capacity',
+        maxBytes: 16 * 1024, ensureCurrent: _ensureCurrent);
+    _ensureCurrent();
+    return ManagedCapacitySnapshot.parse(raw, tenantId);
+  }
+
   Future<ManagedEnterpriseBinding?> binding() async {
     _ensureCurrent();
     try {

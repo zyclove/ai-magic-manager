@@ -1,6 +1,7 @@
 package com.aimanager.commerce.internal;
 
 import com.aimanager.audit.AuditService;
+import com.aimanager.commerce.CommercialCapacity;
 import com.aimanager.commerce.internal.CommercialFact.CapacityKind;
 import com.aimanager.commerce.internal.CommercialFact.Feature;
 import com.aimanager.commerce.internal.CommercialFact.State;
@@ -26,13 +27,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
  * Stores normalized, already-verified commercial facts. No public API calls {@link #apply}; a
  * future certified payment or contract adapter must verify its source before invoking it.
  */
 @Service
-class CommercialLedger {
+class CommercialLedger implements CommercialCapacity {
   private static final Pattern PRODUCT_KEY = Pattern.compile("[A-Z0-9_]{1,80}");
   private static final Pattern SHA256 = Pattern.compile("[0-9a-f]{64}");
   private static final int MAX_CAPACITY = 1_000_000;
@@ -202,6 +204,49 @@ class CommercialLedger {
             now,
             tenantId);
     long version = rows.isEmpty() ? 0 : rows.get(0).version();
+    var rights = calculate(rows, now);
+    return new CommercialEntitlementView(
+        tenantId,
+        version,
+        now,
+        rights.active(),
+        rights.base(),
+        rights.addOn(),
+        rights.total(),
+        rights.features(),
+        true);
+  }
+
+  @Override
+  public long currentForUpdate(String tenantId) {
+    if (!TransactionSynchronizationManager.isActualTransactionActive())
+      throw new IllegalStateException("Paid capacity lock needs transaction");
+    var account = jdbc.queryForList(
+        "SELECT version FROM commercial_accounts WHERE tenant_id=? FOR UPDATE", tenantId);
+    if (account.isEmpty()) return 0;
+    long now = clock.millis();
+    return calculate(currentRows(tenantId, now, true), now).total();
+  }
+
+  @Override
+  @Transactional(readOnly = true, timeout = 10)
+  public long current(String tenantId) {
+    long now = clock.millis();
+    return calculate(currentRows(tenantId, now, false), now).total();
+  }
+
+  private List<Row> currentRows(String tenantId, long now, boolean lock) {
+    return jdbc.query(
+        "SELECT capacity_kind,device_capacity,features_json,active_from,expires_at,state"
+            + " FROM commercial_sources WHERE tenant_id=? AND state='ACTIVE'"
+            + " AND active_from<=? AND expires_at>?" + (lock ? " FOR UPDATE" : ""),
+        (r, i) -> new Row(0, r.getString("capacity_kind"), r.getInt("device_capacity"),
+            r.getString("features_json"), r.getLong("active_from"),
+            r.getLong("expires_at"), r.getString("state")),
+        tenantId, now, now);
+  }
+
+  private CalculatedRights calculate(List<Row> rows, long now) {
     long base = 0;
     long addOn = 0;
     int active = 0;
@@ -209,8 +254,7 @@ class CommercialLedger {
     Set<String> addOnFeatures = new HashSet<>();
     for (Row row : rows) {
       if (!State.ACTIVE.name().equals(row.state())
-          || row.activeFrom() > now
-          || row.expiresAt() <= now) continue;
+          || row.activeFrom() > now || row.expiresAt() <= now) continue;
       active++;
       if (CapacityKind.BASE.name().equals(row.capacityKind())) {
         base = Math.max(base, row.deviceCapacity());
@@ -220,20 +264,12 @@ class CommercialLedger {
         addOnFeatures.addAll(decode(row.featuresJson()));
       }
     }
-    // Add-ons require a live base plan; commercial expiry never disables basic safety controls.
+    // Add-ons require a live base plan; expiry never disables basic safety controls.
     long effectiveAddOn = base > 0 ? addOn : 0;
-    long total = Math.addExact(base, effectiveAddOn);
     if (base > 0) baseFeatures.addAll(addOnFeatures);
-    return new CommercialEntitlementView(
-        tenantId,
-        version,
-        now,
-        active,
-        base,
-        effectiveAddOn,
-        total,
-        baseFeatures.stream().sorted(Comparator.naturalOrder()).toList(),
-        true);
+    return new CalculatedRights(base, effectiveAddOn,
+        Math.addExact(base, effectiveAddOn), active,
+        baseFeatures.stream().sorted(Comparator.naturalOrder()).toList());
   }
 
   private void validate(CommercialFact fact) {
@@ -297,6 +333,8 @@ class CommercialLedger {
   record ApplyResult(long accountVersion, boolean changed) {}
 
   private record Existing(long revision, String payloadHash) {}
+  private record CalculatedRights(long base, long addOn, long total, int active,
+      List<String> features) {}
 
   private record Row(
       long version,

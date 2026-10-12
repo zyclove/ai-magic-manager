@@ -35,6 +35,8 @@ class ApiFailure implements Exception {
         'ENTERPRISE_BINDING_NOT_PENDING' => '申请状态已变化，请刷新后再审核。',
         'MANAGED_ANDROID_CONTRACT_REQUIRED' => '当前机构合同尚未授予有效的受管 Android 权益。',
         'MANAGED_ENROLLMENT_ALREADY_PENDING' => '此儿童档案已有待处理注册资料，请先查看或取消。',
+        'MANAGED_PAID_CAPACITY_REACHED' =>
+          '当前机构合同名额已用尽或仍被待核对注册占用。请核对受管设备和合同后重试。',
         'MANAGED_ENROLLMENT_RATE_LIMITED' ||
         'MANAGED_ENROLLMENT_CAPACITY_REACHED' =>
           '注册资料申请过于频繁或已达到机构上限，请稍后再试。',

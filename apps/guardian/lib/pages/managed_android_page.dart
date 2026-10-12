@@ -36,6 +36,7 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
   late final ManagedAndroidRepository repository;
   ManagedEnterpriseBinding? binding;
   ManagedProvisioningReadiness? readiness;
+  ManagedCapacitySnapshot? capacity;
   List<ManagedEnrollmentIntent> intents = const [];
   final providerStatuses = <String, ManagedProviderStatus>{};
   List<Json> subjects = const [];
@@ -54,6 +55,9 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
       widget.session.role == role &&
       widget.session.canOpen('managed-android');
   bool get writable => role == 'OWNER' || role == 'ORG_ADMIN';
+  bool get canIssue =>
+      readiness?.canIssueEnrollment == true &&
+      (capacity?.availableForNew ?? 0) > 0;
 
   @override
   void initState() {
@@ -75,6 +79,7 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
         setState(() {
           binding = null;
           readiness = null;
+          capacity = null;
           intents = const [];
           providerStatuses.clear();
           subjects = const [];
@@ -113,14 +118,19 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
       checkingIntentId = null;
     });
     try {
-      final results = await Future.wait(
-          [repository.binding(), repository.intents(), repository.readiness()]);
+      final results = await Future.wait([
+        repository.binding(),
+        repository.intents(),
+        repository.readiness(),
+        repository.capacity()
+      ]);
       if (!current || ticket != generation) return;
       final page = results[1] as ManagedEnrollmentPageResult;
       setState(() {
         binding = results[0] as ManagedEnterpriseBinding?;
         intents = page.items;
         readiness = results[2] as ManagedProvisioningReadiness;
+        capacity = results[3] as ManagedCapacitySnapshot;
         providerStatuses.clear();
         nextCursor = page.nextCursor;
       });
@@ -225,7 +235,7 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
   }
 
   Future<void> _issue() async {
-    if (readiness?.canIssueEnrollment != true) return;
+    if (!canIssue) return;
     if (subjects.isEmpty) await _loadSubjects();
     if (!mounted || !current || subjects.isEmpty) return;
     String? selected;
@@ -377,7 +387,8 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
         context: context,
         builder: (context) => AlertDialog(
               title: const Text('取消注册资料？'),
-              content: const Text('提交后会撤销提供方注册令牌；若提供方暂时不可用，状态会显示“待清理”。'),
+              content: const Text('提交后会撤销提供方注册令牌；若提供方暂时不可用，状态会显示“待清理”。'
+                  '令牌已取消也不能证明没有设备在取消前完成注册，合同名额需另行核对。'),
               actions: [
                 TextButton(
                     onPressed: () => Navigator.pop(context, false),
@@ -454,6 +465,47 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
               ])),
           const SizedBox(height: 16)
         ],
+        if (capacity case final seats?) ...[
+          Panel(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                Text('机构受管设备名额',
+                    style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 8),
+                Text(
+                    '合同名额 ${seats.paidCapacity} · 已核对 ${seats.verifiedDevices} · '
+                    '预留/待核对 ${seats.reservedIntents} · 可新增 ${seats.availableForNew}'),
+                const SizedBox(height: 12),
+                Text(
+                    '统计时间 ${dateLabel(seats.evaluatedAt)}。待处理注册资料会预留名额；'
+                    '离线、令牌到期、取消令牌或合同降级都不能单独证明设备已退管。',
+                    style: const TextStyle(color: muted)),
+                if (seats.expiredUnresolvedIntents > 0) ...[
+                  const SizedBox(height: 12),
+                  Notice(
+                      '有 ${seats.expiredUnresolvedIntents} 份已到期但未完成清理的注册资料，'
+                      '仍占用名额。请核对提供方并完成取消。',
+                      warning: true)
+                ],
+                if (seats.cancelledUnreconciledIntents > 0) ...[
+                  const SizedBox(height: 12),
+                  Notice(
+                      '有 ${seats.cancelledUnreconciledIntents} 份令牌已取消，'
+                      '仍需核对提供方没有关联设备，名额暂不释放。',
+                      warning: true)
+                ],
+                if (seats.overCapacity || seats.availableForNew == 0) ...[
+                  const SizedBox(height: 12),
+                  Notice(
+                      seats.overCapacity
+                          ? '当前占用超过有效合同名额，已暂停新增；现有儿童安全规则不会自动解除。'
+                          : '当前没有可新增名额。请先处理待清理注册资料或核对机构合同。',
+                      warning: true)
+                ]
+              ])),
+          const SizedBox(height: 16)
+        ],
         if (error != null) ...[
           FailureView(error!,
               retry: current ? _load : null,
@@ -509,11 +561,7 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
                 Text('设备注册进度', style: Theme.of(context).textTheme.titleMedium),
                 if (writable && binding?.state == 'ACTIVE')
                   FilledButton.icon(
-                      onPressed: busy ||
-                              loading ||
-                              readiness?.canIssueEnrollment != true
-                          ? null
-                          : _issue,
+                      onPressed: busy || loading || !canIssue ? null : _issue,
                       icon: const Icon(Icons.add),
                       label: const Text('创建注册资料'))
               ]),

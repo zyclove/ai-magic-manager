@@ -1,6 +1,7 @@
 package com.aimanager.managedandroid.internal;
 
 import com.aimanager.audit.AuditService;
+import com.aimanager.commerce.CommercialCapacity;
 import com.aimanager.managedandroid.ManagedAndroidGateway.ManagedEnrollmentIdentity;
 import com.aimanager.managedandroid.ManagedEnterpriseAuthority;
 import com.aimanager.shared.DomainException;
@@ -24,6 +25,7 @@ import org.slf4j.MDC;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 /** Transactional enrollment ledger. Provider calls are made by the orchestrator outside locks. */
@@ -34,20 +36,23 @@ class ManagedEnrollmentStore {
   private final JdbcTemplate jdbc;
   private final TenantAccess access;
   private final ManagedEnterpriseAuthority enterprises;
+  private final CommercialCapacity commercialCapacity;
   private final AuditService audit;
   private final Clock clock;
 
   ManagedEnrollmentStore(
       JdbcTemplate jdbc, TenantAccess access, ManagedEnterpriseAuthority enterprises,
+      CommercialCapacity commercialCapacity,
       AuditService audit, Clock clock) {
     this.jdbc = jdbc;
     this.access = access;
     this.enterprises = enterprises;
+    this.commercialCapacity = commercialCapacity;
     this.audit = audit;
     this.clock = clock;
   }
 
-  @Transactional(timeout = 10)
+  @Transactional(isolation = Isolation.READ_COMMITTED, timeout = 10)
   Intent prepare(String tenant, String actor, String subject, String policy, String nonceHash) {
     access.requireWriteRole(tenant, actor, Role.OWNER, Role.ORG_ADMIN);
     var enterprise = enterprises.requireActive(tenant);
@@ -62,6 +67,15 @@ class ManagedEnrollmentStore {
         tenant, subject);
     if (subjectRows.size() != 1) throw DomainException.denied();
     long now = clock.millis();
+    long capacity = commercialCapacity.currentForUpdate(tenant);
+    // A token may already have provisioned a device even when local verification is pending.
+    // Token deletion alone cannot prove that no device enrolled before deletion.
+    long held = jdbc.queryForObject(
+        "SELECT COUNT(*) FROM managed_enrollment_intents WHERE tenant_id=?"
+            + " AND (state IN ('PREPARING','ISSUED','CANCEL_PENDING','VERIFIED')"
+            + " OR (state='CANCELLED' AND token_name IS NOT NULL))",
+        Long.class, tenant);
+    if (held >= capacity) throw conflict("MANAGED_PAID_CAPACITY_REACHED");
     int tenantOutstanding = jdbc.queryForObject(
         "SELECT COUNT(*) FROM managed_enrollment_intents WHERE tenant_id=?"
             + " AND state IN ('PREPARING','ISSUED','CANCEL_PENDING') AND expires_at>?",
@@ -69,8 +83,8 @@ class ManagedEnrollmentStore {
     if (tenantOutstanding >= 100) throw conflict("MANAGED_ENROLLMENT_CAPACITY_REACHED");
     int outstanding = jdbc.queryForObject(
         "SELECT COUNT(*) FROM managed_enrollment_intents WHERE tenant_id=? AND subject_id=?"
-            + " AND state IN ('PREPARING','ISSUED','CANCEL_PENDING') AND expires_at>?",
-        Integer.class, tenant, subject, now);
+            + " AND state IN ('PREPARING','ISSUED','CANCEL_PENDING')",
+        Integer.class, tenant, subject);
     if (outstanding > 0) throw conflict("MANAGED_ENROLLMENT_ALREADY_PENDING");
     int recent = jdbc.queryForObject(
         "SELECT COUNT(*) FROM managed_enrollment_intents WHERE tenant_id=? AND subject_id=?"
@@ -133,6 +147,24 @@ class ManagedEnrollmentStore {
     audit.record(tenant, actor, "MANAGED_ENROLLMENT_FAILED", id);
   }
 
+  /** Preserve a provider token for the existing cleanup worker when immediate deletion fails. */
+  @Transactional(timeout = 10)
+  void cleanupFailedIssue(String tenant, String id, String actor, String tokenName) {
+    if (tokenName == null || !TOKEN_NAME.matcher(tokenName).matches())
+      throw new DomainException(HttpStatus.BAD_GATEWAY, "EMM_ENROLLMENT_RESPONSE_INVALID");
+    Intent intent = required(tenant, id, true);
+    if (!"PREPARING".equals(intent.state())) return;
+    if (!tokenName.startsWith("enterprises/" + intent.enterpriseId() + "/enrollmentTokens/"))
+      throw new DomainException(HttpStatus.BAD_GATEWAY, "EMM_ENROLLMENT_RESPONSE_INVALID");
+    jdbc.update(
+        "UPDATE managed_enrollment_intents SET state='CANCEL_PENDING',token_name=?,"
+            + "version=version+1,updated_at=? WHERE tenant_id=? AND id=?",
+        tokenName, clock.millis(), tenant, id);
+    Intent updated = required(tenant, id, true);
+    event(updated, "CANCEL_REQUESTED", actor);
+    audit.record(tenant, actor, "MANAGED_ENROLLMENT_CLEANUP_PENDING", id);
+  }
+
   @Transactional(readOnly = true, timeout = 10)
   Intent get(String tenant, String id, String actor) {
     access.requireRole(tenant, actor, Role.OWNER, Role.ORG_ADMIN, Role.AUDITOR);
@@ -149,6 +181,32 @@ class ManagedEnrollmentStore {
         (r, n) -> row(r),
         tenant, cursor == null ? "" : cursor, limit + 1);
     return ItemPage.from(rows, limit, Intent::id);
+  }
+
+  @Transactional(readOnly = true, timeout = 10)
+  CapacitySnapshot capacity(String tenant, String actor) {
+    access.requireRole(tenant, actor, Role.OWNER, Role.ORG_ADMIN, Role.AUDITOR);
+    long now = clock.millis();
+    long paid = commercialCapacity.current(tenant);
+    long verified = jdbc.queryForObject(
+        "SELECT COUNT(*) FROM managed_enrollment_intents WHERE tenant_id=? AND state='VERIFIED'",
+        Long.class, tenant);
+    long reserved = jdbc.queryForObject(
+        "SELECT COUNT(*) FROM managed_enrollment_intents WHERE tenant_id=?"
+            + " AND (state IN ('PREPARING','ISSUED','CANCEL_PENDING')"
+            + " OR (state='CANCELLED' AND token_name IS NOT NULL))",
+        Long.class, tenant);
+    long unresolvedExpired = jdbc.queryForObject(
+        "SELECT COUNT(*) FROM managed_enrollment_intents WHERE tenant_id=?"
+            + " AND state IN ('PREPARING','ISSUED','CANCEL_PENDING') AND expires_at<=?",
+        Long.class, tenant, now);
+    long cancelledUnreconciled = jdbc.queryForObject(
+        "SELECT COUNT(*) FROM managed_enrollment_intents WHERE tenant_id=?"
+            + " AND state='CANCELLED' AND token_name IS NOT NULL",
+        Long.class, tenant);
+    long held = Math.addExact(verified, reserved);
+    return new CapacitySnapshot(tenant, paid, verified, reserved, unresolvedExpired,
+        cancelledUnreconciled, Math.max(0, paid - held), held > paid, now);
   }
 
   @Transactional(readOnly = true, timeout = 10)
@@ -361,6 +419,11 @@ class ManagedEnrollmentStore {
       long updatedAt) {
     @Override public String toString() { return "ManagedEnrollmentIntent[REDACTED]"; }
   }
+
+  record CapacitySnapshot(String tenantId, long paidCapacity, long verifiedDevices,
+      long reservedIntents, long expiredUnresolvedIntents, long cancelledUnreconciledIntents,
+      long availableForNew,
+      boolean overCapacity, long evaluatedAt) {}
 
   record CleanupLease(String tenantId, String id, String enterpriseId,
       String tokenName, String claimId) {}
