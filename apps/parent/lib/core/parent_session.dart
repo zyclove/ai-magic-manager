@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:http/http.dart' as http;
 
 import 'parent_api.dart';
 
@@ -33,6 +34,7 @@ class ParentSession extends ChangeNotifier {
   final FlutterAppAuth _appAuth;
   final FlutterSecureStorage _storage;
   late final ParentApi api;
+  late final http.Client _authenticatedClient;
 
   String? _accessToken;
   String? _idToken;
@@ -51,6 +53,16 @@ class ParentSession extends ChangeNotifier {
       : _appAuth = appAuth ?? const FlutterAppAuth(),
         _storage = storage ?? const FlutterSecureStorage() {
     api = ParentApi(token, baseUrl: ParentConfig.apiUrl);
+    _authenticatedClient = _ParentAuthenticatedClient(token);
+  }
+
+  /// Shared with vetted workflow packages. Each request obtains a current
+  /// access token; redirects cannot forward a bearer token to another origin.
+  Future<http.Client> authenticatedClient() async {
+    if (!authenticated) {
+      throw const ParentApiException(401, 'UNAUTHENTICATED');
+    }
+    return _authenticatedClient;
   }
 
   bool get authenticated => profile != null && _accessToken != null;
@@ -240,6 +252,24 @@ class ParentSession extends ChangeNotifier {
   @override
   void dispose() {
     api.close();
+    _authenticatedClient.close();
     super.dispose();
   }
+}
+
+class _ParentAuthenticatedClient extends http.BaseClient {
+  final Future<String> Function() token;
+  final http.Client _inner = http.Client();
+  _ParentAuthenticatedClient(this.token);
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) async {
+    request.followRedirects = false;
+    request.headers['Authorization'] = 'Bearer ${await token()}';
+    request.headers['Cache-Control'] = 'no-store';
+    return _inner.send(request);
+  }
+
+  @override
+  void close() => _inner.close();
 }

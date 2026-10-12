@@ -6,6 +6,7 @@ import 'core/parent_session.dart';
 import 'core/paged_collection.dart';
 import 'ui/commercial_account.dart';
 import 'ui/device_capabilities.dart';
+import 'ui/device_exit.dart';
 import 'ui/enrollment_flow.dart';
 
 const _navy = Color(0xFF17324B);
@@ -610,7 +611,24 @@ class _DeviceListState extends State<_DeviceList> {
                     subtitle: Text(
                         '${_deviceState(device['state'])} · ${device['managementMode'] ?? '未知模式'}\n${_controlLevel(device['controlLevel'])}'),
                     isThreeLine: true,
-                    trailing: const Icon(Icons.chevron_right),
+                    trailing: widget.session.canDecide &&
+                            device['managementMode'] == 'BYOD' &&
+                            const {'ACTIVE', 'REVOKED'}
+                                .contains(device['state'])
+                        ? PopupMenuButton<String>(
+                            tooltip: '设备操作',
+                            onSelected: (action) {
+                              if (action == 'exit') {
+                                openParentDeviceExit(
+                                    context, widget.session, device);
+                              }
+                            },
+                            itemBuilder: (_) => const [
+                              PopupMenuItem(
+                                  value: 'exit', child: Text('正常退出管理')),
+                            ],
+                          )
+                        : const Icon(Icons.chevron_right),
                   ),
                 ),
               const _Notice(

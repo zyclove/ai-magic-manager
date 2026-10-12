@@ -13,6 +13,7 @@
 | 求助 | 展示未确认求助，成人确认已看到；明确不是紧急服务 | `GET /help-requests?state=OPEN`、`POST /help-requests/{id}/acknowledge`，`If-Match` |
 | 设备 | 分页展示注册状态和管理模式；点开设备可看连接观察及逐项能力证据、限制原因，提醒另查策略执行回执 | `GET /devices`、`GET /devices/{id}`、`GET /devices/{id}/capabilities` |
 | 设备配对 | 分页选择儿童与 Android/TV；近期认证后生成 BYOD 一次性凭据；儿童端认领后刷新状态、输入物理设备配对码再次认证确认；可取消，进程恢复只保留非秘密注册编号 | `POST /enrollments`、`GET /enrollments/{id}`、`POST /enrollments/{id}/confirm`、`DELETE /enrollments/{id}` |
+| 正常退出 | 复用 Web 管理台 `device_operations` 组件；先预览后果、近期认证、带版本和幂等确认；网络结果未知时保留恢复记录，云端撤权与本代理清理回执分开展示 | `GET /devices/{id}`、`/devices/{id}/deprovision` 路由；只开放当前 BYOD 注册，服务端逐请求鉴权 |
 | 商业账户 | 在“我的”只读显示已核验的设备名额和功能权益；无购买、合同自授权按钮，明确与设备系统能力区分 | `GET /commercial-entitlements`；服务端限成人管理员/审计员 |
 
 手机端复用现有 `/api/v1` 后端契约，采用独立 Flutter 工程，避免 Web 专有 `dart:html`、浏览器存储与 URL 回调渗入原生客户端。依赖锁定在 `apps/parent/pubspec.lock`：`flutter_appauth 9.0.1`、`flutter_secure_storage 10.0.0`，分别用于原生 OIDC 与安全存储；升级需按 Flutter 版本和 Android 兼容矩阵审查。Android 仅声明网络权限，不声明相机或无障碍权限。
@@ -31,6 +32,7 @@
 4. 读取失败保留错误与重试入口；版本冲突或网络结果未知时，成人刷新原申请/求助，不自动重复批准。API 错误保留 correlation ID 供诊断，但不在日志中写令牌。
 5. 登出先清除本地刷新令牌和内存状态，再尝试结束浏览器 SSO；后者失败时本地会话仍已清除。设备遗失时还须在身份系统撤销会话/刷新令牌。
 6. 设备配对只允许 `BYOD`。完整 JSON 注册凭据与儿童端现有解析格式一致，仅在创建响应后留于内存；复制操作由成人触发，Android 剪贴板不是安全存储。成人从物理设备读取 8 位配对码并确认。创建网络结果不明时可能已生成服务端记录，移动端不会自动重试；先去管理工作台核对，避免叠加注册。当前仅持久保存本人当前租户的注册编号，不能恢复已消失的一次性令牌。
+7. BYOD 正常退出由复用的 `device_operations` 控制器核验精确租户、设备、注册周期、当前版本和预览后果；手机端 HTTP 适配器每次发送前取当前令牌并禁止跨源重定向。取消系统浏览器重新验证不会自动提交写入。恢复日志只存请求键及绑定元数据，不存凭据；云端撤权不证明设备本地已完成清理或系统级解除管理。
 
 ## 尚未完成
 
