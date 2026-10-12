@@ -175,6 +175,8 @@ Files: billing/entitlement/productcatalog 域、支付适配器、管理台商�
 
 ### Task 12：智能辅助
 
+阶段增量：基于已授权的日级使用汇总，提供按需、无模型的七日复核建议；只报告记录下界与覆盖，监护人自行决定是否调整规则，见[近七日使用复核建议契约](wellbeing-insight-contract.md)。连续使用、夜间行为、视觉识别、模型注册、授权撤回和真机误报评估仍未完成。
+
 Files: insight/consent/modelregistry/assistant 域，客户端前台视觉适配。
 
 - [ ] 聚合趋势建议、结构化草稿和人工发布、前台可选识别与撤回。

@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../core/api.dart';
 import '../core/application_classification.dart';
 import '../core/usage_reports.dart';
 import '../core/usage_report_jobs.dart';
+import '../core/wellbeing_insight.dart';
 import '../core/observation.dart' show observationProfile;
 import 'design.dart';
 import 'usage_trend_view.dart';
@@ -21,6 +23,7 @@ class UsageReportsView extends StatefulWidget {
   final ValueChanged<UsageReportJobDraft>? onBackground;
   final VoidCallback? onJobs;
   final VoidCallback? onReviewRules, onCheckDevice;
+  final Future<WellbeingInsight> Function(String, String)? loadInsight;
   const UsageReportsView(
       {super.key,
       required this.repository,
@@ -33,6 +36,7 @@ class UsageReportsView extends StatefulWidget {
       this.onJobs,
       this.onReviewRules,
       this.onCheckDevice,
+      this.loadInsight,
       this.reauth});
   @override
   State<UsageReportsView> createState() => _UsageReportsViewState();
@@ -506,6 +510,7 @@ class _UsageReportsViewState extends State<UsageReportsView>
                     categoryFilter: categoryFilter,
                     onReviewRules: widget.onReviewRules,
                     onCheckDevice: widget.onCheckDevice,
+                    loadInsight: widget.loadInsight,
                     report: report!)),
         ] else
           const Panel(
@@ -521,6 +526,7 @@ class UsageReportDeviceView extends StatefulWidget {
   final String categoryFilter;
   final bool historical;
   final VoidCallback? onReviewRules, onCheckDevice;
+  final Future<WellbeingInsight> Function(String, String)? loadInsight;
   const UsageReportDeviceView(
       {super.key,
       required this.device,
@@ -528,6 +534,7 @@ class UsageReportDeviceView extends StatefulWidget {
       this.historical = false,
       this.onReviewRules,
       this.onCheckDevice,
+      this.loadInsight,
       required this.categoryFilter});
   @override
   State<UsageReportDeviceView> createState() => UsageReportDeviceViewState();
@@ -535,6 +542,36 @@ class UsageReportDeviceView extends StatefulWidget {
 
 class UsageReportDeviceViewState extends State<UsageReportDeviceView> {
   int selected = 0;
+  WellbeingInsight? insight;
+  Object? insightError;
+  bool insightLoading = false;
+
+  Future<void> _loadInsight() async {
+    final loader = widget.loadInsight;
+    if (loader == null || insightLoading) return;
+    setState(() {
+      insightLoading = true;
+      insightError = null;
+      insight = null;
+    });
+    try {
+      final result =
+          await loader(widget.device.deviceId, widget.device.registrationId);
+      if (mounted) setState(() => insight = result);
+    } catch (error) {
+      if (mounted) setState(() => insightError = error);
+    } finally {
+      if (mounted) setState(() => insightLoading = false);
+    }
+  }
+
+  String _insightSummary(WellbeingInsight value) => switch (value.status) {
+        'NOT_AUTHORIZED' => '这台设备未授权使用观察。不会生成建议。',
+        'NO_DATA' => '近七个完整自然日没有可用记录；不能据此判断使用量为零。',
+        'INSUFFICIENT_COVERAGE' => '近七日记录覆盖不足 80%，暂不生成使用建议。',
+        'NO_PATTERN' => '现有记录没有达到“同一应用至少三天、每天至少两小时”的提示条件。',
+        _ => '以下仅供监护人复核，系统不会自动修改规则。'
+      };
   @override
   Widget build(BuildContext context) {
     final d = widget.device,
@@ -559,6 +596,43 @@ class UsageReportDeviceViewState extends State<UsageReportDeviceView> {
           timeZone: r.timeZone,
           historical: widget.historical),
       const SizedBox(height: 14),
+      if (!widget.historical && widget.loadInsight != null) ...[
+        const Divider(height: 1),
+        const SizedBox(height: 14),
+        Semantics(
+            header: true,
+            child: Text('近七日使用复核建议',
+                style: Theme.of(context).textTheme.titleMedium)),
+        const SizedBox(height: 8),
+        const Text('按这台设备最近七个完整自然日的已授权汇总记录按需生成；不使用摄像头、面部或情绪识别。'),
+        const SizedBox(height: 12),
+        OutlinedButton.icon(
+            onPressed: insightLoading ? null : () => unawaited(_loadInsight()),
+            icon: const Icon(Icons.insights_outlined),
+            label: Text(insight == null ? '生成复核建议' : '重新生成建议')),
+        if (insightLoading) const LinearProgressIndicator(),
+        if (insightError != null) ...[
+          const SizedBox(height: 8),
+          FailureView(insightError!, retry: () => unawaited(_loadInsight()))
+        ],
+        if (insight case final value?) ...[
+          const SizedBox(height: 12),
+          Notice(_insightSummary(value),
+              warning: value.status != 'SUGGESTIONS'),
+          const SizedBox(height: 8),
+          Text(
+              '依据：设备上报的汇总数据，未经独立验证 · 查询覆盖 ${(100 * value.queryCoverageMillis / (value.to - value.from)).toStringAsFixed(0)}%',
+              style: Theme.of(context).textTheme.bodySmall),
+          for (final suggestion in value.suggestions)
+            ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.tips_and_updates_outlined),
+                title: Text(suggestion.displayName),
+                subtitle: Text(
+                    '近七日有 ${suggestion.days} 天，记录下界达到每天 2 小时。建议与孩子一起复核使用安排。'))
+        ],
+        const SizedBox(height: 14)
+      ],
       if (d.status == 'NOT_AUTHORIZED')
         const EmptyView('尚未授权使用观察', '需要有权限的监护人或机构管理员在设备详情中明确授权。')
       else if (d.status == 'NO_DATA')

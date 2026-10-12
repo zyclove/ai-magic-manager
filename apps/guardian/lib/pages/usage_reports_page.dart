@@ -4,6 +4,7 @@ import '../core/api.dart';
 import '../core/session.dart';
 import '../core/usage_reports.dart';
 import '../core/usage_report_jobs.dart';
+import '../core/wellbeing_insight.dart';
 import '../core/report_job_resume.dart';
 import '../core/bounded_json.dart';
 import '../core/browser_json_download.dart';
@@ -23,6 +24,7 @@ class _UsageReportsPageState extends State<UsageReportsPage>
   late final String root, role, actor;
   late final UsageReportRepository repository;
   late final UsageReportJobRepository jobs;
+  late final WellbeingInsightRepository insights;
   bool showJobs = false, foreground = true;
   ModalRoute<dynamic>? dialog;
   bool current() =>
@@ -46,6 +48,11 @@ class _UsageReportsPageState extends State<UsageReportsPage>
         api: widget.session.api,
         root: root,
         current: () => current() && usageReportJobRoles.contains(role));
+    insights = WellbeingInsightRepository(
+        api: widget.session.api,
+        root: root,
+        tenantId: widget.session.tenant!['id'] as String,
+        current: () => current() && role != 'CHILD' && foreground);
     WidgetsBinding.instance.addObserver(this);
     widget.session.addListener(accessChanged);
     final resume = widget.session.takeReportResume();
@@ -260,5 +267,6 @@ class _UsageReportsPageState extends State<UsageReportsPage>
                   }
                 }
               : null,
+          loadInsight: role == 'CHILD' ? null : insights.load,
           reauth: () => widget.session.login(stepUp: true));
 }
