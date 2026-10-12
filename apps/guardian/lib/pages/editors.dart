@@ -302,14 +302,25 @@ Future<void> policyEditor(BuildContext context, Session session,
           draft: draft));
 }
 
-Map<String, String> runtimePermissionOptions(dynamic raw) {
+class RuntimePermissionCatalog {
+  final Map<String, String> permissions;
+  final List<String> editableEffects;
+  const RuntimePermissionCatalog(this.permissions, this.editableEffects);
+}
+
+RuntimePermissionCatalog parseRuntimePermissionCatalog(dynamic raw) {
   final rows = raw is Json ? raw['permissions'] : null;
+  final effects = raw is Json ? raw['editableEffects'] : null;
   if (raw is! Json ||
-      raw.length != 2 ||
-      raw['schemaVersion'] != 1 ||
+      raw.length != 3 ||
+      raw['schemaVersion'] != 2 ||
       rows is! List ||
       rows.isEmpty ||
-      rows.length > 100) {
+      rows.length > 100 ||
+      effects is! List ||
+      effects.length != 2 ||
+      effects[0] != 'DEFAULT' ||
+      effects[1] != 'DENY') {
     throw const ApiFailure(502, 'INVALID_PERMISSION_CATALOG_RESPONSE');
   }
   const common = {
@@ -331,7 +342,8 @@ Map<String, String> runtimePermissionOptions(dynamic raw) {
     final short = value.substring('android.permission.'.length);
     result[value] = common[short] == null ? short : '${common[short]} · $short';
   }
-  return Map.unmodifiable(result);
+  return RuntimePermissionCatalog(
+      Map.unmodifiable(result), List.unmodifiable(effects.cast<String>()));
 }
 
 class PolicyEditor extends StatefulWidget {
@@ -400,13 +412,16 @@ class _PolicyEditorState extends State<PolicyEditor> {
       return;
     }
     Map<String, String> runtimePermissions = const {};
+    List<String>? runtimeEffects;
     if (type == 'RUNTIME_PERMISSION') {
       setState(() => loadingRule = true);
       try {
         final raw = await widget.session.api.send(
             'GET', '/policy-metadata/android-runtime-permissions');
         if (!mounted || widget.session.tenant?['id'] != widget.root.substring(9)) return;
-        runtimePermissions = runtimePermissionOptions(raw);
+        final catalog = parseRuntimePermissionCatalog(raw);
+        runtimePermissions = catalog.permissions;
+        runtimeEffects = catalog.editableEffects;
       } catch (failure) {
         if (mounted) {
           toast(context, failure is ApiFailure
@@ -424,8 +439,15 @@ class _PolicyEditorState extends State<PolicyEditor> {
       toast(context, '原权限名称已不在当前目录中。请重新创建受支持的规则。');
       return;
     }
+    if (index != null &&
+        type == 'RUNTIME_PERMISSION' &&
+        !runtimeEffects!.contains(rules[index]['effect'])) {
+      toast(context, '原规则的自动授予动作目前不可编辑。请删除后选择系统默认或拒绝重新创建。');
+      return;
+    }
+    final editableEffects = runtimeEffects ?? ruleEffects[type]!;
     final fields = [
-      FieldSpec('effect', '规则行为', options: options(ruleEffects[type]!)),
+      FieldSpec('effect', '规则行为', options: options(editableEffects)),
       if (hasApp)
         FieldSpec('applicationId', '目标应用', required: requiresApp, options: {
           if (!requiresApp) '': '所有适用应用',
@@ -456,7 +478,7 @@ class _PolicyEditorState extends State<PolicyEditor> {
     ];
     final initial = index == null
         ? <String, dynamic>{
-            'effect': ruleEffects[type]!.first,
+            'effect': editableEffects.first,
             'required': 'true'
           }
         : {...rules[index], 'required': rules[index]['required'].toString()};

@@ -14,8 +14,9 @@ class RuntimePermissionCatalogController {
   ResponseEntity<Catalog> list() {
     return ResponseEntity.ok().cacheControl(CacheControl.noStore())
         .header("Vary", "Authorization")
-        .body(new Catalog(1, AndroidRuntimePermissions.names()));
+        .body(new Catalog(2, AndroidRuntimePermissions.names(), List.of("DEFAULT", "DENY")));
   }
 
-  record Catalog(int schemaVersion, List<String> permissions) {}
+  /** Editable effects are a product contract, not proof of device execution. */
+  record Catalog(int schemaVersion, List<String> permissions, List<String> editableEffects) {}
 }
