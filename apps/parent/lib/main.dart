@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'core/parent_api.dart';
 import 'core/parent_session.dart';
 import 'core/paged_collection.dart';
+import 'ui/device_capabilities.dart';
 import 'ui/enrollment_flow.dart';
 
 const _navy = Color(0xFF17324B);
@@ -599,6 +600,8 @@ class _DeviceListState extends State<_DeviceList> {
               for (final device in devices.items)
                 Card(
                   child: ListTile(
+                    onTap: () => showDeviceCapabilities(
+                        context, widget.session, device['id'] as String),
                     leading: Icon(device['platform'] == 'ANDROID_TV'
                         ? Icons.tv_outlined
                         : Icons.smartphone_outlined),
@@ -606,9 +609,11 @@ class _DeviceListState extends State<_DeviceList> {
                     subtitle: Text(
                         '${_deviceState(device['state'])} · ${device['managementMode'] ?? '未知模式'}\n${_controlLevel(device['controlLevel'])}'),
                     isThreeLine: true,
+                    trailing: const Icon(Icons.chevron_right),
                   ),
                 ),
-              const _Notice('设备在线或商业权益生效，不等于系统策略已执行。请在管理工作台查看逐项回执。'),
+              const _Notice(
+                  '点开设备可查看逐项能力。设备在线或商业权益生效，不等于系统策略已执行；请在管理工作台查看逐项回执。'),
               if (devices.error != null)
                 _Notice('${devices.error}', error: true),
               if (devices.loadingMore) const LinearProgressIndicator(),

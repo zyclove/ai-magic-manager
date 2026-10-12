@@ -11,12 +11,14 @@
 | 今日概览 | 服务端授权范围内的儿童、已注册设备、待审批和求助计数；儿童仅展示前 5 条；标明“在线/权益”不等于执行 | `GET /overview`、`GET /subjects?limit=5` |
 | 访问申请 | 服务端筛选待处理项，成人选择批准/拒绝并再次认证；批准窗口不超过申请时长，提示需等待设备实际执行 | `GET /access-requests?state=PENDING`、`POST /access-requests/{id}/decisions`，`If-Match` 和服务端近期认证 |
 | 求助 | 展示未确认求助，成人确认已看到；明确不是紧急服务 | `GET /help-requests?state=OPEN`、`POST /help-requests/{id}/acknowledge`，`If-Match` |
-| 设备 | 展示设备名称、注册状态和管理模式，并提醒逐项检查策略执行回执 | `GET /devices` |
+| 设备 | 分页展示注册状态和管理模式；点开设备可看连接观察及逐项能力证据、限制原因，提醒另查策略执行回执 | `GET /devices`、`GET /devices/{id}`、`GET /devices/{id}/capabilities` |
 | 设备配对 | 分页选择儿童与 Android/TV；近期认证后生成 BYOD 一次性凭据；儿童端认领后刷新状态、输入物理设备配对码再次认证确认；可取消，进程恢复只保留非秘密注册编号 | `POST /enrollments`、`GET /enrollments/{id}`、`POST /enrollments/{id}/confirm`、`DELETE /enrollments/{id}` |
 
 手机端复用现有 `/api/v1` 后端契约，采用独立 Flutter 工程，避免 Web 专有 `dart:html`、浏览器存储与 URL 回调渗入原生客户端。依赖锁定在 `apps/parent/pubspec.lock`：`flutter_appauth 9.0.1`、`flutter_secure_storage 10.0.0`，分别用于原生 OIDC 与安全存储；升级需按 Flutter 版本和 Android 兼容矩阵审查。Android 仅声明网络权限，不声明相机或无障碍权限。
 
 今日计数由服务端授权范围内的聚合接口计算。申请、求助和设备列表一次只读 50 条，用户主动加载下一页；重载和账号/租户/角色改变会使旧页面与未完成响应失效。分页响应要求唯一记录 ID 和单调前进的游标，避免重复结果混入当前列表。
+
+设备能力详情只呈现服务端按当前成员范围返回的证据投影；切换账号、租户或角色时立即关闭旧设备详情。`reportedSupported` 是设备自报，`effectiveSupported` 是服务端可用性判断，两者均不代表某条规则已执行。当前 BYOD 注册仍是有限能力，管理端须进一步核对该规则的交付与执行回执。
 
 当前 Android 最低 API 24、编译 API 36、NDK `27.0.12077973`、Java/Kotlin 17，沿用仓库已安装的 Gradle 8.13 工具链。此组合已完成 debug APK 构建；构建时的示例 HTTPS 域名仅用于编译配置，不代表真实身份联调或生产地址。
 
