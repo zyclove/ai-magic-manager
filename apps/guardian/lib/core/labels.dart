@@ -22,6 +22,8 @@ const labels = <String, String>{
   'EVIDENCE_NOT_CERTIFIED': '设备自报信息尚未认证',
   'CAPABILITY_RESPONSE_INVALID': '设备能力数据不完整，请稍后重试或联系管理员',
   'ENFORCEMENT_ADAPTER_UNAVAILABLE': '执行适配器尚未接入',
+  'AUTO_GRANT_NOT_AVAILABLE': '当前未开放自动授予应用权限',
+  'SYSTEM_USER_ACTION_REQUIRED': '此权限需要设备本地用户操作',
   'FAMILY': '家庭',
   'ORGANIZATION': '教育机构',
   'OWNER': '所有者',

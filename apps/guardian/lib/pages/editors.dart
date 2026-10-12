@@ -268,7 +268,7 @@ const ruleEffects = {
   'APP_LAUNCH': ['ALLOW', 'DENY'],
   'APP_INSTALL': ['ALLOW', 'DENY'],
   'APP_UNINSTALL': ['ALLOW', 'PROTECT'],
-  'RUNTIME_PERMISSION': ['DEFAULT', 'DENY', 'GRANT'],
+  'RUNTIME_PERMISSION': ['DEFAULT', 'DENY'],
   'SPECIAL_ACCESS': ['DEFAULT', 'DENY', 'GRANT'],
   'DAILY_QUOTA': ['LIMIT'],
   'TIME_WINDOW': ['ALLOW'],
@@ -464,7 +464,7 @@ class _PolicyEditorState extends State<PolicyEditor> {
         title: '${index == null ? '添加' : '编辑'}${label(type)}',
         fields: fields,
         description: type == 'RUNTIME_PERMISSION'
-            ? '此处保存规则草稿。设备预览会说明是否支持；普通设备不能替其他应用修改系统权限，受管设备也须等待提供方和设备回执。'
+            ? '可选择系统默认提示或拒绝。自动授予尚未开放；此处仅保存规则草稿，设备预览会说明支持情况，最终仍需提供方和设备回执。'
             : type == 'SPECIAL_ACCESS'
                 ? '特殊访问通常需要设备本地用户或受管系统单独授权；保存规则不表示已经授予。'
                 : null,

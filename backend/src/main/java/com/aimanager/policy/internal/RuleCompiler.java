@@ -112,6 +112,14 @@ class RuleCompiler {
             var evidence = target.capabilities().stream().filter(c -> c.key().equals(capability)).findFirst().orElse(null);
             String status = evidence == null ? "UNKNOWN" : evidence.status(), reason = evidence == null ? "CAPABILITY_NOT_VERIFIED" : evidence.limitationCode();
             if (evidence != null && evidence.effectiveSupported()) { status = "SUPPORTED_PENDING"; reason = "AWAITING_EXECUTION"; }
+            // The shipped managed adapter deliberately maps only DENY and DEFAULT (PROMPT).
+            // A generic capability flag must never advertise an automatic grant as executable.
+            if (first.kind() == RUNTIME_PERMISSION && predicted == GRANT) {
+                status = "UNSUPPORTED"; reason = "AUTO_GRANT_NOT_AVAILABLE";
+            }
+            if (first.kind() == SPECIAL_ACCESS && predicted == GRANT) {
+                status = "UNSUPPORTED"; reason = "SYSTEM_USER_ACTION_REQUIRED";
+            }
             // Capability alone does not prove a declared package/profile/signing identity matches installed software.
             if ("SUPPORTED_PENDING".equals(status) && first.applicationId() != null
                 && !"INSTALLED_VERIFIED".equals(apps.get(first.applicationId()).evidenceStatus())) {

@@ -64,8 +64,8 @@
 | APP_LAUNCH | ALLOW/DENY | applicationId | app.launch_block |
 | APP_INSTALL | ALLOW/DENY | applicationId | app.install_policy |
 | APP_UNINSTALL | ALLOW/PROTECT | applicationId | managed.app_policy |
-| RUNTIME_PERMISSION | GRANT/DENY/DEFAULT | applicationId、permission | permission.runtime |
-| SPECIAL_ACCESS | GRANT/DENY/DEFAULT | applicationId、permission | permission.special_access |
+| RUNTIME_PERMISSION | 历史规则可含 GRANT；新建仅 DEFAULT/DENY | applicationId、permission | permission.runtime；GRANT 预览为 UNSUPPORTED/AUTO_GRANT_NOT_AVAILABLE |
+| SPECIAL_ACCESS | GRANT/DENY/DEFAULT | applicationId、permission | permission.special_access；GRANT 预览为 UNSUPPORTED/SYSTEM_USER_ACTION_REQUIRED |
 | DAILY_QUOTA | LIMIT | seconds，applicationId 可选 | usage.shared_quota_enforced |
 | TIME_WINDOW | ALLOW | scheduleId，applicationId 可选 | usage.schedule_enforced |
 | DOMAIN_ACCESS | ALLOW/DENY | domain | network.domain_filter |
