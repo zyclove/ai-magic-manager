@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import '../core/api.dart';
 import '../core/observation.dart';
+import '../core/permission_observation.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
 import '../ui/observation_editor.dart';
 import '../ui/observation_view.dart';
+import '../ui/permission_observation_panel.dart';
 
 /// Device-detail entry. Capture workspace/device/registration before any await.
 Future<void> openDeviceObservation(
@@ -144,28 +146,52 @@ class _ObservationDialogState extends State<_ObservationDialog> {
             Expanded(
                 child: SingleChildScrollView(
                     padding: const EdgeInsets.all(24),
-                    child: ObservationView(
-                        snapshot: snapshot,
-                        error: error,
-                        busy: busy,
-                        deviceName: widget.deviceName,
-                        canEdit: canEditObservation(
-                            widget.session.role, widget.deviceState),
-                        refresh: () => load(),
-                        edit: edit,
-                        reauth: () => widget.session.login(stepUp: true),
-                        previous: cursors.length > 1
-                            ? () {
-                                cursors.removeLast();
-                                load(cursor: cursors.last, reset: false);
-                              }
-                            : null,
-                        next: snapshot?.nextCursor == null
-                            ? null
-                            : () {
-                                cursors.add(snapshot!.nextCursor);
-                                load(cursor: cursors.last, reset: false);
-                              }))),
+                    child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ObservationView(
+                              snapshot: snapshot,
+                              error: error,
+                              busy: busy,
+                              deviceName: widget.deviceName,
+                              canEdit: canEditObservation(
+                                  widget.session.role, widget.deviceState),
+                              refresh: () => load(),
+                              edit: edit,
+                              reauth: () => widget.session.login(stepUp: true),
+                              previous: cursors.length > 1
+                                  ? () {
+                                      cursors.removeLast();
+                                      load(cursor: cursors.last, reset: false);
+                                    }
+                                  : null,
+                              next: snapshot?.nextCursor == null
+                                  ? null
+                                  : () {
+                                      cursors.add(snapshot!.nextCursor);
+                                      load(cursor: cursors.last, reset: false);
+                                    }),
+                          if (const bool.fromEnvironment(
+                              'PERMISSION_OBSERVATION_ENABLED')) ...[
+                            const SizedBox(height: 24),
+                            const Divider(),
+                            const SizedBox(height: 24),
+                            PermissionObservationPanel(
+                                repository: PermissionObservationRepository(
+                                    api: widget.repository.api,
+                                    root: widget.repository.root,
+                                    deviceId: widget.repository.deviceId,
+                                    registrationId:
+                                        widget.repository.registrationId,
+                                    current: widget.repository.current),
+                                canEdit: canEditObservation(
+                                    widget.session.role, widget.deviceState),
+                                inventoryEnabled:
+                                    snapshot?.settings.inventoryEnabled,
+                                reauth: () =>
+                                    widget.session.login(stepUp: true))
+                          ]
+                        ]))),
             const Divider(),
             Align(
                 alignment: Alignment.centerRight,

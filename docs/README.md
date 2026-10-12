@@ -30,7 +30,7 @@
 | [设备身份客户端契约](device-identity-client-contract.md) | 原密钥认领/恢复、持久心跳、两阶段凭证轮换、认证暂停、secret-store 边界与真实联调 | Flutter、Android、后端与 QA |
 | [儿童端宿主契约](child-host-contract.md) | Flutter/Android 接入、加密存储、进程恢复与当前执行边界 | Flutter、Android、后端与 QA |
 | [设备观察授权契约](device-observation-contract.md) | 应用清单/使用摘要的单独授权与报告边界；V20 代码交付状态以该文档为准 | 产品、前后端与 QA |
-| [Android 应用权限观察与受管执行契约](runtime-permission-management-plan.md) | 单独授权的权限观察、设备模式差异、接口/界面状态和受管执行发布门槛；后端接口默认关闭，客户端与系统执行待接入 | 产品、前后端、Android、安全与 QA |
+| [Android 应用权限观察与受管执行契约](runtime-permission-management-plan.md) | 单独授权、按需原生观察、设备模式差异及发布门槛；三端默认关闭，真实设备验收与受管执行待完成 | 产品、前后端、Android、安全与 QA |
 | [2026-10-09 阶段交付](stage-delivery-2026-10-09.md) | 本阶段提交范围、重新验证、仓库配置边界及后续发布门槛 | 全团队 |
 | [可复制部署手册](deployment-runbook.md) | 1.0.0 全新初始化、独立构建、六服务 Compose、身份授权、TLS 与恢复边界 | 开发、QA、交付与 SRE |
 | [Kubernetes 与 Helm 部署基线](kubernetes-deployment.md) | API/Web 多副本、独立作业、外部 MySQL/Keycloak/Secret、同源入口与验收门槛 | SRE、私有化交付与后端 |
