@@ -1,0 +1,374 @@
+{
+  "stage": "erasure-configuration",
+  "applicationVersion": "1.0.0",
+  "recordedAt": "2026-10-12T04:25:33.795102+00:00",
+  "frozenBase": "1634fc2ff0595ab97b1a8ecc0abc01faa326a0f7",
+  "sourceFiles": [
+    {
+      "path": "backend/src/main/resources/db/migration/V1__initial_schema.sql",
+      "status": "present",
+      "sha256": "cd2041dbc661deece90eefed4e0d165c41e8f2dab29f97ec56e2a3aeb4d513e0"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V3__overview_indexes.sql",
+      "status": "deleted",
+      "sha256": null
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DatabaseInitializationTest.java",
+      "status": "present",
+      "sha256": "30ddc7f21094b2ad50c6b717c8f08fbcdf04ea59bbd3a6771293c8595b4604f0"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureConfigurationProcessor.java",
+      "status": "present",
+      "sha256": "0c5689ac33d7b33aabb9cf2790ef75877b43780980bb39e78d79cbc0c9c79ac3"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureConfigurationProcessorTest.java",
+      "status": "present",
+      "sha256": "e3577b1a57977e9e59b9284fa9c948f7b26e5a28b80dbb64d59c4fd387c43025"
+    },
+    {
+      "path": "docs/erasure-configuration-plan.md",
+      "status": "present",
+      "sha256": "003bb80d4b86192fc249e93ff0077665d95a263ef6b60e16e039bcb605a695cd"
+    },
+    {
+      "path": "docs/data-erasure-contract.md",
+      "status": "present",
+      "sha256": "68752d02b8217b1af95b1b127e19eaf4de415361984f73ec30807cbb9d6f896c"
+    },
+    {
+      "path": "docs/version-1.0.0-initialization.md",
+      "status": "present",
+      "sha256": "160b403d68d9d5ff10df065a6ee65c8a1fcece5b1c107214c81ac202e65c270f"
+    }
+  ],
+  "foldedInitializer": {
+    "path": "backend/src/main/resources/db/migration/V3__overview_indexes.sql",
+    "originalSha256": "29243649728bd39b18cd00da88998fe9f8a73e2d208e745bb06a06a3e5472990",
+    "preservedByteForByteInV1": true
+  },
+  "tests": {
+    "initialization-red": {
+      "path": ".local/erasure-configuration-initialization-red.log",
+      "sha256": "c748c7736e71d6bab4a9b60015a98d4560c31074e409424fbac41aa18e8f1ae2",
+      "total": 1,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 0
+    },
+    "initialization-green": {
+      "path": ".local/erasure-configuration-initialization-green.log",
+      "sha256": "1b5b3743cdb754bc300f56d37f5b99c54ed7f1e6e2e705eec116140a7ecb6d9d",
+      "total": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 1
+    },
+    "red": {
+      "path": ".local/erasure-configuration-red.log",
+      "sha256": "19e53e18d0b6df1ffefa53392f64772100ef25e3d11fb3251a66c6a5ad62d010",
+      "total": 28,
+      "failures": 27,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 1
+    },
+    "green": {
+      "path": ".local/erasure-configuration-green.log",
+      "sha256": "43ad549c0b703b0f1abb7c5e1f8065786b475d6baa6d0f618013f21f61a02411",
+      "total": 28,
+      "failures": 0,
+      "errors": 1,
+      "skipped": 0,
+      "passed": 27
+    },
+    "scope-red": {
+      "path": ".local/erasure-configuration-scope-red.log",
+      "sha256": "8c706485b88c01085667f73773782ffa9ae6a471bb7fe8160ccda7704a69f207",
+      "total": 34,
+      "failures": 1,
+      "errors": 1,
+      "skipped": 0,
+      "passed": 32
+    },
+    "mysql-first-failed": {
+      "path": ".local/erasure-configuration-mysql-first-failed.log",
+      "sha256": "2f27a4a1a8d0a3508bde126674e0be25990c166e4d56a0d53ed7ad7f929f7827",
+      "total": 167,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 166
+    },
+    "full-before-portable-assertion": {
+      "path": ".local/erasure-configuration-full-before-portable-assertion.log",
+      "sha256": "b44a303f8125570928066051e11b873fb77e010811b80a5e5d883c7b3b637a78",
+      "total": 785,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 20,
+      "passed": 765
+    },
+    "focused": {
+      "path": ".local/erasure-configuration-focused.log",
+      "sha256": "766bfd0218512f8df08b41ea615effa501949c18b7f9d08d6bf61ff6483f68a3",
+      "total": 167,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 167
+    },
+    "mysql": {
+      "path": ".local/erasure-configuration-mysql.log",
+      "sha256": "4f4888f9edc314dd7a2ec1ca87e1c033cd9ff4dde9b8b68ac8f4aa7377ca762b",
+      "total": 167,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 167
+    },
+    "full": {
+      "path": ".local/erasure-configuration-full.log",
+      "sha256": "a9a10b1fc08f9a79fafada1c4f20d01624771679ed8ab30e07df8fc718682b63",
+      "total": 785,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 20,
+      "passed": 765
+    }
+  },
+  "failuresExplained": {
+    "initialization-red": "Existing V1/V2 contract expected2 scripts, actual3 due newly added V3 indexes",
+    "red": "Non-deleting test-first stub,28 tests27 behavioral failures0 errors",
+    "green": "One fixture attempted a phase forbidden by SQL CHECK; fixed fixture, no production guard weakened",
+    "scope-red": "One real reverse device/head association hole; one fixture tried DATA cursor forbidden by SQL CHECK; both corrected before complete green suites",
+    "mysql-first-failed": "The same ck_erasure_step_cursor CHECK is translated into different Spring exception subclasses on H2 and MySQL. Final assertion requires DataAccessException, the exact JDBC CHECK code (23513 or 3819), the named constraint and unchanged phase/cursor. No production constraint was weakened.",
+    "full-before-portable-assertion": "Full backend passed before the MySQL-only assertion correction; final full run verifies the portable assertion on identical production source."
+  },
+  "artifact": {
+    "path": ".local/erasure-configuration-full-20261012/backend/target/manager-backend-1.0.0.jar",
+    "sha256": "f76311327032323f24cdf5ba922292dac564bc8bf093c3fabe96fbe442ede482"
+  },
+  "review": {
+    "status": "clean",
+    "reviewer": "/root/erasure_configuration_final_review",
+    "model": "gpt-6-astra",
+    "reasoningEffort": "high",
+    "critical": 0,
+    "important": 0,
+    "minor": 0,
+    "verdict": "ready to merge scoped stage",
+    "sourceChangesAfterReview": false,
+    "declinedToJudgeRulings": [
+      {
+        "decision": "Public erasure submission, authorization confirmation, idempotent control plane and worker remain unavailable",
+        "reason": "this internal step must not expose an incomplete deletion flow",
+        "costIfWrong": "users cannot yet submit or schedule complete erasure"
+      },
+      {
+        "decision": "Target isolation, cross-domain orchestration, global completion watermark, maintenance release and safe permit reclamation remain incomplete",
+        "reason": "retain the existing global maintenance barrier",
+        "costIfWrong": "erasure cannot safely complete or resume normal access yet"
+      },
+      {
+        "decision": "Other stores, shared policy references, enrollment, lifecycle, local-cleanup evidence, caches, events, audit and external copies require further handlers",
+        "reason": "four-store completion is only a domain checkpoint",
+        "costIfWrong": "personal copies may remain outside this step and must not be described as fully erased"
+      },
+      {
+        "decision": "No new native-device, Android, Dart, Flutter, browser or accessibility acceptance is claimed",
+        "reason": "this patch changes no client and 13 conditional client checks were skipped",
+        "costIfWrong": "client behavior and actual terminal cleanup remain unverified by this stage"
+      },
+      {
+        "decision": "Old-backup restoration, ledger disaster recovery and complete re-erasure remain unverified",
+        "reason": "no restoration exercise was run",
+        "costIfWrong": "backup recovery safety cannot be claimed from these tests"
+      },
+      {
+        "decision": "Six independent-ledger and one least-privilege conditional checks remain skipped in the full build",
+        "reason": "domain MySQL checks do not substitute for these environments",
+        "costIfWrong": "full-suite totals must retain the20skips rather than claim785passes"
+      },
+      {
+        "decision": "No historical compatibility or in-place upgrade is added",
+        "reason": "the user explicitly requires fresh unreleased1.0.0",
+        "costIfWrong": "existing development databases need separately authorized recreation"
+      },
+      {
+        "decision": "Later child-help/V4, UI WIP and post-baseline integration belong to their owning task",
+        "reason": "freeze and commit only reviewed owned inputs",
+        "costIfWrong": "the combined shared checkout still requires later integrated verification"
+      },
+      {
+        "decision": "This stage does not replace runtime18101 or its database",
+        "reason": "source verification and runtime deployment are distinct",
+        "costIfWrong": "the running environment does not include this stage yet"
+      },
+      {
+        "decision": "No production capacity or long-duration fault-recovery claim is made",
+        "reason": "small bounded-batch and concurrency tests do not establish capacity",
+        "costIfWrong": "latency and scan cost at scale remain to be measured"
+      },
+      {
+        "decision": "The internal processor requires maintained admission barriers and database constraints",
+        "reason": "direct writes that bypass the established runtime model are unsupported",
+        "costIfWrong": "bypassing barriers can invalidate erasure assumptions and must not be used to resume work"
+      },
+      {
+        "decision": "Accept the observed terminal harness cleanup receipts for3temporary databases/users",
+        "reason": "the executor saw all3successful removals; reviewer intentionally made no extra database connection",
+        "costIfWrong": "the review is not an independent live cleanup audit"
+      },
+      {
+        "decision": "No legal retention or jurisdictional compliance conclusion is made",
+        "reason": "this is an engineering storage step and no legal determination was performed",
+        "costIfWrong": "retention policy still needs its separate product/legal decision"
+      }
+    ],
+    "checked": [
+      "9owned input hashes",
+      "all listed log hashes and1.0.0JAR hash",
+      "exact registration/tenant deletion scope",
+      "two-way relationship checks before mutation",
+      "transaction rollback after real deletion and lease loss",
+      "shared25rowbudget and persistent resume",
+      "V3indexes preserved byte-for-byte inV1",
+      "finalH2167andMySQL167andfull785counts"
+    ]
+  },
+  "rulings": [
+    "Ruling: retain existing mature JDBC transaction/ledger architecture and add a configuration-domain step — accepted deletion contract requires clearing these personal copies — cost if wrong: full erasure still needs later lifecycle/shared configuration/audit/external handling and cannot yet be exposed publicly.",
+    "Ruling: fold the three new overview indexes into V1 byte-for-byte — user explicitly requires unreleased fresh1.0.0 and existing initialization test expects V1/V2 — cost if wrong: already-used development databases must be recreated separately; no in-place upgrade support.",
+    "Ruling: use fixed1634fc2 archives plus owned overlays in the shared checkout — preserve concurrent WIP and keep test inputs stable — cost if wrong: later shared changes are not covered by this stage.",
+    "Ruling: reject inconsistent delivery/head device endpoints even across an unaccepted registration sharing the target device ID — otherwise corrupted target copies can hide under a peer head — cost if wrong: malformed data in a reused device may block cleanup until repaired, but deletion never broadens beyond accepted pairs.",
+    "Final: Ruling: Public erasure submission, authorization confirmation, idempotent control plane and worker remain unavailable — this internal step must not expose an incomplete deletion flow — cost if wrong: users cannot yet submit or schedule complete erasure.",
+    "Final: Ruling: Target isolation, cross-domain orchestration, global completion watermark, maintenance release and safe permit reclamation remain incomplete — retain the existing global maintenance barrier — cost if wrong: erasure cannot safely complete or resume normal access yet.",
+    "Final: Ruling: Other stores, shared policy references, enrollment, lifecycle, local-cleanup evidence, caches, events, audit and external copies require further handlers — four-store completion is only a domain checkpoint — cost if wrong: personal copies may remain outside this step and must not be described as fully erased.",
+    "Final: Ruling: No new native-device, Android, Dart, Flutter, browser or accessibility acceptance is claimed — this patch changes no client and 13 conditional client checks were skipped — cost if wrong: client behavior and actual terminal cleanup remain unverified by this stage.",
+    "Final: Ruling: Old-backup restoration, ledger disaster recovery and complete re-erasure remain unverified — no restoration exercise was run — cost if wrong: backup recovery safety cannot be claimed from these tests.",
+    "Final: Ruling: Six independent-ledger and one least-privilege conditional checks remain skipped in the full build — domain MySQL checks do not substitute for these environments — cost if wrong: full-suite totals must retain the20skips rather than claim785passes.",
+    "Final: Ruling: No historical compatibility or in-place upgrade is added — the user explicitly requires fresh unreleased1.0.0 — cost if wrong: existing development databases need separately authorized recreation.",
+    "Final: Ruling: Later child-help/V4, UI WIP and post-baseline integration belong to their owning task — freeze and commit only reviewed owned inputs — cost if wrong: the combined shared checkout still requires later integrated verification.",
+    "Final: Ruling: This stage does not replace runtime18101 or its database — source verification and runtime deployment are distinct — cost if wrong: the running environment does not include this stage yet.",
+    "Final: Ruling: No production capacity or long-duration fault-recovery claim is made — small bounded-batch and concurrency tests do not establish capacity — cost if wrong: latency and scan cost at scale remain to be measured.",
+    "Final: Ruling: The internal processor requires maintained admission barriers and database constraints — direct writes that bypass the established runtime model are unsupported — cost if wrong: bypassing barriers can invalidate erasure assumptions and must not be used to resume work.",
+    "Final: Ruling: Accept the observed terminal harness cleanup receipts for3temporary databases/users — the executor saw all3successful removals; reviewer intentionally made no extra database connection — cost if wrong: the review is not an independent live cleanup audit.",
+    "Final: Ruling: No legal retention or jurisdictional compliance conclusion is made — this is an engineering storage step and no legal determination was performed — cost if wrong: retention policy still needs its separate product/legal decision."
+  ],
+  "scope": [
+    "configuration_receipts",
+    "configuration_streams",
+    "configuration_deliveries",
+    "configuration_device_heads"
+  ],
+  "runtimeUpdated": false,
+  "limitations": [
+    "Internal step only: public submit, worker, target isolation, overall completion and UI remain incomplete",
+    "Shared policies, lifecycle/local-cleanup records, enrollment, generic caches/events/audit and external copies require other handlers",
+    "Server copy deletion is not proof of native-device cleanup",
+    "Full backup restoration not exercised",
+    "Later shared help-request schema and other commits/WIP excluded from frozen candidate"
+  ],
+  "mysqlCleanup": {
+    "temporarySchemasCreated": 3,
+    "temporarySchemasRemoved": 3,
+    "log": ".local/erasure-configuration-mysql.log",
+    "tests": 167,
+    "errors": 0,
+    "candidate": ".local/erasure-configuration-20261012/backend",
+    "temporaryUsersRemoved": 3,
+    "session": 19606,
+    "skipped": 0,
+    "finishedAt": "2026-10-12T12:17:22.0925535+08:00",
+    "exitCode": 0,
+    "failures": 0
+  },
+  "fullBuildSkippedTests": [
+    {
+      "test": "realEnrollmentNativeCrashRecoveryAndRevocation",
+      "reason": "System property [device.android.runner] does not exist"
+    },
+    {
+      "test": "realApprovalRetryReceiptsRevocationExpiryAndOpaqueRevocation",
+      "reason": "System property [device.access.package] does not exist"
+    },
+    {
+      "test": "actualDartSubmissionAdultDecisionAndExistingDeviceDeliveryReference",
+      "reason": "System property [device.access.package] does not exist"
+    },
+    {
+      "test": "actualChildUiRecoversOriginalCancellationAcrossProcesses",
+      "reason": "System property [device.child.package] does not exist"
+    },
+    {
+      "test": "actualChildSessionAndUiRecoverOriginalSubmissionAcrossProcesses",
+      "reason": "System property [device.child.package] does not exist"
+    },
+    {
+      "test": "realDeviceTransportStoresTwoPagesAndRejectsRevokedCredential",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "test": "actualEnrollmentRecoveryConfirmationRotationAndRevocation",
+      "reason": "System property [device.identity.package] does not exist"
+    },
+    {
+      "test": "adultConsentDeviceLostAcknowledgementReplayWithdrawalAndRevocation",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "test": "productionDartClientReadsRealHttpAndRechecksCurrentAccess",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "test": "leastPrivilegeRuntimeCanDrainWorkButCannotRewriteAcceptedRecords",
+      "reason": "Environment variable [NOTICE_IT_ROOT_PASSWORD] does not exist"
+    },
+    {
+      "test": "mismatchedIdentityAndMissingLedgerAreReportedWithoutAutomaticRecreation",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "test": "servletAsyncCannotEscapeTheRegisteredSynchronousPermit",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "test": "acceptedLedgerStopsAuthorizedBusinessRequestsWithoutDeletingTheirData",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "test": "realHttpRequestDrainsBeforeAcceptanceAndProbesRemainAvailable",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "test": "nonTransactionalEngineIsRejectedBeforeAppending",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "test": "initializationPinsTransactionalEngineEvenWhenServerDefaultDiffers",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "test": "productionDartClientCompletesPackageLifecycleOverRealHttp",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "test": "productionDartSupportClientCompletesRealHttpGrantLifecycle",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "test": "realHttpJobsAreConsumedByProductionDartClient",
+      "reason": "System property [device.dart.command] does not exist"
+    },
+    {
+      "test": "realHttpResponseIsConsumedByProductionDartReportClient",
+      "reason": "System property [device.dart.command] does not exist"
+    }
+  ]
+}

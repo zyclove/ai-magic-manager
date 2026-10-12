@@ -78,6 +78,12 @@ class DatabaseInitializationTest {
                 "device_permission_observation_rate",
                 "ix_permission_observation_rate_retention"))
         .containsExactly("window_started_at");
+    assertThat(indexColumns(db, "subjects", "ix_subject_active_count"))
+        .containsExactly("tenant_id", "archived_at", "id");
+    assertThat(indexColumns(db, "devices", "ix_device_observation_count"))
+        .containsExactly("tenant_id", "state", "last_heartbeat_at");
+    assertThat(indexColumns(db, "access_requests", "ix_access_pending_count"))
+        .containsExactly("tenant_id", "state", "request_expires_at");
     // Freshly created columns include current authority epochs, scopes and delivery-attempt fields.
     db.queryForList("SELECT version,revoked_at FROM tenant_members WHERE 1=0");
     db.queryForList("SELECT requester_kind FROM access_requests WHERE 1=0");

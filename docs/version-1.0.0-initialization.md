@@ -23,6 +23,8 @@
 
 初始化面向新的空业务数据库。已有本机开发库不由构建或初始化脚本隐式清空，也不提供原地升级到此基线的承诺。需要新的开发环境时使用独立数据库或独立 Compose 项目；身份服务数据库与业务数据库保持分离。
 
+工作台汇总所需的主体归档、设备心跳和待审批请求三个组合索引同样进入 V1，不保留独立 V3 升级脚本。初始化检查核对其索引列顺序；该整理不更新既有运行库，也不改变工作台查询逻辑。
+
 ## 初始化与验证
 
 从空环境按 `scripts/initialize-deployment.ps1` → `scripts/build-deployment.ps1` → `scripts/initialize-erasure-ledger.ps1` → `scripts/start-deployment.ps1` 创建、构建、显式初始化独立账本和启动，具体凭据与身份初始化参见部署手册。账本初始化只执行一次，普通重启不得重建。构建产物带有 `applicationVersion=1.0.0` 的清单。
