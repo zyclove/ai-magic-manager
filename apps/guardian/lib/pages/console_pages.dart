@@ -10,6 +10,7 @@ import '../core/observation.dart' show canReadObservation;
 import '../core/session.dart';
 import 'observation_page.dart';
 import '../ui/design.dart';
+import '../ui/device_observation_status.dart';
 import '../ui/application_classification_dialog.dart';
 import '../ui/resource_page.dart';
 import '../ui/member_editor.dart';
@@ -228,12 +229,14 @@ class ConsolePages extends StatelessWidget {
                           : Icons.smartphone_outlined)),
               ColumnSpec('平台', (r) => Text(label(r['platform']))),
               ColumnSpec('注册状态', (r) => StatusTag(r['state'])),
+              ColumnSpec('心跳观察',
+                  (r) => DeviceObservationStatus(r['observationStatus'])),
               ColumnSpec('最近心跳', (r) => Text(dateLabel(r['lastHeartbeatAt'])))
             ],
             create: s.canWrite ? actions.enrollment : null,
             createLabel: '添加设备',
             open: actions.deviceDetails,
-            notice: '设备注册成功代表已绑定。策略是否实际执行，需以设备能力和执行回执为准。',
+            notice: '心跳仅反映服务端近期能否观察设备。心跳过期需检查连接，不能据此判断规则已失效。策略执行仍以设备能力和执行回执为准。',
             empty: '尚未连接设备',
             description: '先创建儿童档案，再通过配对流程绑定 Android 或 TV 设备。',
             toolbar: [
@@ -646,6 +649,7 @@ class ConsoleActions {
           '控制能力': label(r['controlLevel']),
           '最近心跳': dateLabel(r['lastHeartbeatAt']),
           '观察状态': label(r['observationStatus']),
+          '观察说明': DeviceObservationStatus.explanation(r['observationStatus']),
           '设备编号': r['id'],
           '儿童编号': r['subjectId']
         },
