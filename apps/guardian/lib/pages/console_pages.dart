@@ -7,6 +7,7 @@ import '../core/application_classification.dart';
 import '../core/enrollment_ticket.dart';
 import '../core/labels.dart';
 import '../core/observation.dart' show canReadObservation;
+import '../core/overview_summary.dart';
 import '../core/session.dart';
 import 'observation_page.dart';
 import '../ui/design.dart';
@@ -1367,31 +1368,53 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
-  List<List<Json>>? data;
+  OverviewSummary? data;
   Object? error;
+  int generation = 0;
+  String? sourceRoot;
+  String? sourceRole;
   @override
   void initState() {
     super.initState();
     load();
   }
 
+  @override
+  void didUpdateWidget(Dashboard oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (sourceRoot != widget.session.root ||
+        sourceRole != widget.session.role) {
+      load();
+    }
+  }
+
   Future<void> load() async {
+    final epoch = ++generation;
+    final s = widget.session;
+    final root = sourceRoot = s.root;
+    final role = sourceRole = s.role;
     setState(() {
       error = null;
       data = null;
     });
     try {
-      final s = widget.session;
-      final result = await Future.wait([
-        'subjects',
-        'devices',
-        'policies',
-        'access-requests',
-        'audit-events'
-      ].map((p) => s.api.all('${s.root}/$p')));
-      if (mounted) setState(() => data = result);
+      final result =
+          OverviewSummary.parse(await s.api.send('GET', '$root/overview'));
+      if (mounted &&
+          epoch == generation &&
+          s.tenant != null &&
+          s.root == root &&
+          s.role == role) {
+        setState(() => data = result);
+      }
     } catch (e) {
-      if (mounted) setState(() => error = e);
+      if (mounted &&
+          epoch == generation &&
+          s.tenant != null &&
+          s.root == root &&
+          s.role == role) {
+        setState(() => error = e);
+      }
     }
   }
 
@@ -1425,21 +1448,29 @@ class _DashboardState extends State<Dashboard> {
             child: LayoutBuilder(
                 builder: (ctx, box) =>
                     Wrap(spacing: 16, runSpacing: 24, children: [
-                      _metric('儿童档案', data![0].length, Icons.person_outline,
+                      _metric('儿童档案', data!.subjectCount!, Icons.person_outline,
                           box.maxWidth),
-                      _metric(
-                          '已注册设备',
-                          data![1].where((r) => r['state'] == 'ACTIVE').length,
-                          Icons.devices_outlined,
-                          box.maxWidth),
-                      _metric('策略草稿', data![2].length,
+                      _metric('已注册设备', data!.activeDeviceCount!,
+                          Icons.devices_outlined, box.maxWidth),
+                      _metric('策略草稿', data!.policyDraftCount!,
                           Icons.description_outlined, box.maxWidth),
-                      _metric(
-                          '待处理审批',
-                          data![3].where((r) => r['state'] == 'PENDING').length,
-                          Icons.schedule_outlined,
-                          box.maxWidth)
+                      _metric('待处理审批', data!.pendingRequestCount,
+                          Icons.schedule_outlined, box.maxWidth)
                     ]))),
+        if (data!.connectionCheckCount! > 0) ...[
+          const SizedBox(height: 16),
+          Panel(
+              child: Row(children: [
+            const Icon(Icons.wifi_off_rounded, color: Color(0xFFA65B17)),
+            const SizedBox(width: 12),
+            Expanded(
+                child: Text(
+                    '有 ${data!.connectionCheckCount} 台设备需要检查连接。心跳缺失或过期不能证明设备规则失效。')),
+            TextButton(
+                onPressed: () => context.go('/devices'),
+                child: const Text('查看设备'))
+          ]))
+        ],
         const SizedBox(height: 24),
         Flex(
             direction: wide ? Axis.horizontal : Axis.vertical,
@@ -1499,17 +1530,17 @@ class _DashboardState extends State<Dashboard> {
                 child: const Text('查看全部'))
           ]),
           const SizedBox(height: 12),
-          if (data![4].isEmpty)
+          if (data!.recentActivity.isEmpty)
             const EmptyView('暂无活动记录', '新的管理操作将在这里显示。')
           else
-            ..._recent().map((r) => ListTile(
+            ...data!.recentActivity.map((r) => ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.receipt_long_outlined, color: muted),
-                title: Text(label(r['action']),
-                    style: const TextStyle(fontSize: 14)),
-                subtitle: Text(shortId(r['resourceId']),
+                title:
+                    Text(label(r.action), style: const TextStyle(fontSize: 14)),
+                subtitle: Text(shortId(r.resourceId),
                     style: const TextStyle(fontSize: 12)),
-                trailing: Text(dateLabel(r['occurredAt']),
+                trailing: Text(dateLabel(r.occurredAt),
                     style: const TextStyle(fontSize: 12, color: muted))))
         ])),
         const SizedBox(height: 16),
@@ -1521,13 +1552,6 @@ class _DashboardState extends State<Dashboard> {
                 label: const Text('刷新数据')))
       ]
     ]);
-  }
-
-  List<Json> _recent() {
-    final rows = [...data![4]];
-    rows.sort(
-        (a, b) => (b['occurredAt'] as num).compareTo(a['occurredAt'] as num));
-    return rows.take(5).toList();
   }
 
   Widget _metric(String title, int value, IconData icon, double width) =>
