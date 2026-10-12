@@ -5,6 +5,7 @@ import 'package:device_policy/device_policy.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'support/identity_fixture.dart';
+import 'support/session_idle.dart';
 import '../../../packages/device_policy/test/fixtures.dart' as configurations;
 
 /// Synthetic verified-object boundary: these tests exercise the real session's
@@ -50,13 +51,6 @@ class _Rules implements ChildRuleReceiver {
   }
 }
 
-Future<void> _idle(ChildSession session) async {
-  for (var i = 0; i < 100 && session.busy; i++) {
-    await Future<void>.delayed(const Duration(milliseconds: 2));
-  }
-  expect(session.busy, isFalse);
-}
-
 void main() {
   testWidgets(
       'actual child rule names hide on background and credential rejection',
@@ -77,13 +71,41 @@ void main() {
     tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
     await tester.pumpAndSettle();
     expect(find.text('合成家庭规则'), findsOneWidget);
-    expect(receiver.syncs, 0);
+    expect(receiver.syncs, 2);
     fixture.rejectAuthentication = true;
     await session.checkConnection();
     await tester.pumpAndSettle();
     expect(find.text('合成家庭规则'), findsNothing);
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
+  });
+
+  testWidgets(
+      'automatic rule refresh runs every five minutes only in foreground',
+      (tester) async {
+    final fixture = IdentityFixture();
+    addTearDown(fixture.close);
+    await fixture.activate();
+    final receiver = _Rules();
+    final session = fixture.session(rules: (_) async => receiver);
+    await tester.pumpWidget(ChildApp(session: session, nativeAvailable: true));
+    await tester.pumpAndSettle();
+    expect(receiver.syncs, 1);
+    await tester.pump(const Duration(minutes: 5));
+    await tester.pumpAndSettle();
+    expect(receiver.syncs, 2);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    await tester.pumpAndSettle();
+    await tester.pump(const Duration(minutes: 10));
+    expect(receiver.syncs, 2);
+    expect(session.rules.configurations, isEmpty);
+    tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+    await tester.pumpAndSettle();
+    expect(receiver.syncs, 3);
+    await tester.pumpWidget(const SizedBox());
+    await tester.pump(const Duration(minutes: 5));
+    expect(receiver.syncs, 3);
+    expect(tester.takeException(), isNull);
   });
 
   test(
@@ -98,6 +120,7 @@ void main() {
         fixture.session(rules: (_) async => ++creations == 1 ? old : next);
     addTearDown(session.dispose);
     await session.initialize();
+    await waitForSessionIdle(session);
     fixture.secrets.failRead = true;
     final failure = session.reloadIdentity();
     while (old.closes == 0) {
@@ -110,7 +133,7 @@ void main() {
     expect(await failure, isFalse);
     fixture.secrets.failRead = false;
     expect(await session.reloadIdentity(), isTrue);
-    await _idle(session);
+    await waitForSessionIdle(session);
     expect(creations, 2);
     expect(session.rules.configurations, hasLength(1));
   });
@@ -128,11 +151,12 @@ void main() {
     });
     addTearDown(session.dispose);
     await session.initialize();
+    await waitForSessionIdle(session);
     fixture.secrets.failRead = true;
     expect(await session.reloadIdentity(), isFalse);
     fixture.secrets.failRead = false;
     expect(await session.reloadIdentity(), isTrue);
-    await _idle(session);
+    await waitForSessionIdle(session);
     expect(creations, 1);
     expect(session.rules.configurations, isEmpty);
     expect(session.errorCode, 'STORAGE_FAILURE');
@@ -162,7 +186,7 @@ void main() {
     await session.setForeground(true);
     creation.complete(old);
     await initialization;
-    await _idle(session);
+    await waitForSessionIdle(session);
     expect(old.closes, 1);
     expect(old.restores, 0);
     expect(next.restores, 1);
@@ -179,6 +203,7 @@ void main() {
       final session = fixture.session(rules: (_) async => receiver);
       addTearDown(session.dispose);
       await session.initialize();
+      await waitForSessionIdle(session);
       receiver.failure =
           DeviceTransportFailure('DEVICE_UNAUTHENTICATED', status: status);
       expect(await session.synchronizeRules(), isFalse);
@@ -197,6 +222,7 @@ void main() {
     final session = fixture.session(rules: (_) async => receiver);
     addTearDown(session.dispose);
     await session.initialize();
+    await waitForSessionIdle(session);
     expect(session.rules.configurations, hasLength(1));
     fixture.rejectAuthentication = true;
     expect(await session.checkConnection(), isFalse);
@@ -216,6 +242,7 @@ void main() {
     final session = fixture.session(rules: (_) async => receiver);
     addTearDown(session.dispose);
     await session.initialize();
+    await waitForSessionIdle(session);
     final original = fixture.secrets.record;
     fixture.secrets.failRead = true;
     expect(await session.reloadIdentity(), isFalse);
@@ -224,7 +251,7 @@ void main() {
     expect(fixture.secrets.record, original);
   });
 
-  test('background hides rules and foreground restores without network replay',
+  test('background hides rules and foreground restores then refreshes once',
       () async {
     final fixture = IdentityFixture();
     addTearDown(fixture.close);
@@ -237,14 +264,15 @@ void main() {
     });
     addTearDown(session.dispose);
     await session.initialize();
+    await waitForSessionIdle(session);
     await session.setForeground(false);
     expect(session.rules.configurations, isEmpty);
     expect(session.rules.cursor, 0);
     await session.setForeground(true);
-    await _idle(session);
+    await waitForSessionIdle(session);
     expect(session.rules.configurations, hasLength(1));
     expect(receiver.restores, 2);
-    expect(receiver.syncs, 0);
+    expect(receiver.syncs, 2);
     expect(creations, 1);
   });
 
@@ -280,9 +308,10 @@ void main() {
     final session = fixture.session(rules: (_) async => receiver);
     addTearDown(session.dispose);
     await session.initialize();
+    await waitForSessionIdle(session);
     receiver.synchronization = Completer<ChildRules>();
     final synchronizing = session.synchronizeRules();
-    while (receiver.syncs == 0) {
+    while (receiver.syncs < 2) {
       await Future<void>.delayed(Duration.zero);
     }
     await session.setForeground(false);
@@ -290,9 +319,9 @@ void main() {
     expect(await synchronizing, isFalse);
     expect(session.rules.configurations, isEmpty);
     await session.setForeground(true);
-    await _idle(session);
+    await waitForSessionIdle(session);
     expect(session.rules.configurations, hasLength(1));
-    expect(receiver.syncs, 1);
+    expect(receiver.syncs, 3);
   });
 
   test('receiver created after dispose is closed and never restored', () async {
@@ -324,9 +353,10 @@ void main() {
     final receiver = _Rules();
     final session = fixture.session(rules: (_) async => receiver);
     await session.initialize();
+    await waitForSessionIdle(session);
     receiver.synchronization = Completer<ChildRules>();
     final synchronizing = session.synchronizeRules();
-    while (receiver.syncs == 0) {
+    while (receiver.syncs < 2) {
       await Future<void>.delayed(Duration.zero);
     }
     session.dispose();
@@ -349,6 +379,7 @@ void main() {
     });
     addTearDown(session.dispose);
     await session.initialize();
+    await waitForSessionIdle(session);
     expect(await session.reloadIdentity(), isTrue);
     expect(session.rules.configurations, hasLength(1));
     expect(receiver.closes, 0);

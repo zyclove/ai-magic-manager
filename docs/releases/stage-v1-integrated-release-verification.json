@@ -1,0 +1,313 @@
+{
+  "stage": "v1-integrated-release",
+  "applicationVersion": "1.0.0",
+  "recordedAt": "2026-10-12T03:33:03.389891+00:00",
+  "frozenBase": "db9a720ff17e4cb98be35f93cd2eb964ec103071",
+  "sourceOverlay": [
+    {
+      "path": "apps/child/test/rule_session_lifecycle_test.dart",
+      "sha256": "2f05434cfa9aa281b22ba6c749aa66f344e210f759c9670fc0e6bb150a655233"
+    },
+    {
+      "path": "apps/child/test/rule_failure_test.dart",
+      "sha256": "75d7e0b374fa31632417f97df145f51c940008d6a0d34f6e16fe430ed00fd444"
+    },
+    {
+      "path": "apps/child/test/rule_transport_auth_test.dart",
+      "sha256": "5c68dd8d47855a2e758161c3b42282b369cfeb0562bb3ac8f61e051d38c98421"
+    },
+    {
+      "path": "apps/child/test/support/session_idle.dart",
+      "sha256": "32049f76a09b94f8ddd13d9d9e15b3ec4396a9c153a1277962da29997cc39bdb"
+    }
+  ],
+  "productionSourceUnchangedByStage": true,
+  "laterSharedCommitsExcluded": [
+    "3b6ac0dcf4b9054fec806565456febee7637a165",
+    "a71c8d253074c441b9ff4f298904db8ba85de365",
+    "13235dd166a927482cc174d28afac3e33100d5bb",
+    "791eeba393ac976ee023a1e318774ccfd3a53659",
+    "34c1c0766b415afcacaca80973602a23b63d15ef",
+    "cb69429215b44a28513b6c6eeb680b222cd01ecb",
+    "90c1c7d84659a98611fd91f33b8e532c1ee37c61",
+    "5e17511ee07fde76ecbba63e07d3627944930ace",
+    "c34232d633fed25abe57be46180ca29f22259d13",
+    "7c1e64b18151d693b78a6e0bcd6b629b9601bf30",
+    "5f0f53ce0370c07c3658de22c5e01b263149cdf7"
+  ],
+  "backup": {
+    "fileCount": 79,
+    "dumps": [
+      {
+        "path": "business.sql",
+        "bytes": 124640,
+        "sha256": "58793770063ca3a9950449d3ae4866c5973cfcc866a5f65dff393c91e0927af5"
+      },
+      {
+        "path": "identity.sql",
+        "bytes": 326434,
+        "sha256": "1d9097960dc017f157d6945b8f03930fb44a52590262aea0b6b857dd8ae5bf6a"
+      },
+      {
+        "path": "ledger-preserve-separately.sql",
+        "bytes": 6058,
+        "sha256": "7649a8a58ffcd37faea1b8734ce9310b2fe0fa930fefe694b7f77028c676108d"
+      }
+    ],
+    "restored": false,
+    "consistency": "Independent single-transaction snapshots; not coordinated across databases"
+  },
+  "build": {
+    "exitCode": 0,
+    "manifestSha256": "06d4153dcd30c3ccf76a1787f188f31e23bc790cc6e1ff9a31d73274e9ae0710",
+    "backend": {
+      "total": 751,
+      "passed": 743,
+      "failures": 0,
+      "errors": 0,
+      "conditionalSkipped": 8,
+      "logSha256": "8fdfcc5e7faa463dc45112d0ed1f0bb34015a23238841df7531d5e214ca373dc"
+    },
+    "projects": [
+      {
+        "toolkit": "flutter",
+        "analysis": "passed",
+        "path": "apps/guardian",
+        "tests": "passed",
+        "passed": 254,
+        "log": ".local/v1-integrated-source-20261012/.local/deployment/logs/apps-guardian-test.log",
+        "sha256": "a43574a1f78b3121a52f6dab7a8f8602884936ba69d479dba272630941b16b28"
+      },
+      {
+        "toolkit": "flutter",
+        "analysis": "passed",
+        "path": "apps/child",
+        "tests": "passed",
+        "passed": 124,
+        "log": ".local/v1-integrated-source-20261012/.local/deployment/logs/apps-child-test.log",
+        "sha256": "42610be26942ec141fb1b8892f7bdd92d49ea66b01444b64bcc567a6e20d50fb"
+      },
+      {
+        "toolkit": "dart",
+        "analysis": "passed",
+        "path": "packages/device_access",
+        "tests": "passed",
+        "passed": 128,
+        "log": ".local/v1-integrated-source-20261012/.local/deployment/logs/packages-device-access-test.log",
+        "sha256": "3d44f91b0b981f96850739ec770374bdedc5a791ea56a0adaf5f51b9f4f32a07"
+      },
+      {
+        "toolkit": "dart",
+        "analysis": "passed",
+        "path": "packages/device_cleanup",
+        "tests": "not-present"
+      },
+      {
+        "toolkit": "dart",
+        "analysis": "passed",
+        "path": "packages/device_identity",
+        "tests": "passed",
+        "passed": 43,
+        "log": ".local/v1-integrated-source-20261012/.local/deployment/logs/packages-device-identity-test.log",
+        "sha256": "0cfa5f848bf177716096d86679d143fe35f083e55c98d9627837c466243c4902"
+      },
+      {
+        "toolkit": "dart",
+        "analysis": "passed",
+        "path": "packages/device_observation",
+        "tests": "passed",
+        "passed": 14,
+        "log": ".local/v1-integrated-source-20261012/.local/deployment/logs/packages-device-observation-test.log",
+        "sha256": "604d2f1cd5efaf8f694c35978b58ffe2fd60af0892fb1fb43999013f80381263"
+      },
+      {
+        "toolkit": "flutter",
+        "analysis": "passed",
+        "path": "packages/device_operations/example",
+        "tests": "passed",
+        "passed": 1,
+        "log": ".local/v1-integrated-source-20261012/.local/deployment/logs/packages-device-operations-example-test.log",
+        "sha256": "c443185b15bff15145df1b4f354cc5bfb04126e704f6a648996aab3b731f227a"
+      },
+      {
+        "toolkit": "flutter",
+        "analysis": "passed",
+        "path": "packages/device_operations",
+        "tests": "passed",
+        "passed": 42,
+        "log": ".local/v1-integrated-source-20261012/.local/deployment/logs/packages-device-operations-test.log",
+        "sha256": "cb744f943ff76447dd89a5743e355c107cc89ca4a4e41ce3b8a34a13c421e6ea"
+      },
+      {
+        "toolkit": "dart",
+        "analysis": "passed",
+        "path": "packages/device_policy",
+        "tests": "passed",
+        "passed": 64,
+        "log": ".local/v1-integrated-source-20261012/.local/deployment/logs/packages-device-policy-test.log",
+        "sha256": "e693831610c423748125e1e06d70e953bb574a79ca4b61fe988773c704f122d4"
+      },
+      {
+        "toolkit": "dart",
+        "analysis": "passed",
+        "path": "packages/device_reports",
+        "tests": "passed",
+        "passed": 5,
+        "log": ".local/v1-integrated-source-20261012/.local/deployment/logs/packages-device-reports-test.log",
+        "sha256": "fe5f44adf838cc34dfdc801313fb1cf079248523eb454fd10bbf2acfb384458c"
+      },
+      {
+        "toolkit": "flutter",
+        "analysis": "passed",
+        "path": "packages/usage_report_ui",
+        "tests": "passed",
+        "passed": 8,
+        "log": ".local/v1-integrated-source-20261012/.local/deployment/logs/packages-usage-report-ui-test.log",
+        "sha256": "2932cd158611bfb7e47f78dd7568188c2d1c8186c547d4ebeb0ee76430324b99"
+      },
+      {
+        "toolkit": "dart",
+        "analysis": "passed",
+        "path": "packages/usage_reporting",
+        "tests": "passed",
+        "passed": 2,
+        "log": ".local/v1-integrated-source-20261012/.local/deployment/logs/packages-usage-reporting-test.log",
+        "sha256": "fa439721642ac21b6dd9c233cfc294d4601460242c0c8891a9f9ff8872d47843"
+      }
+    ],
+    "deploymentHarness": {
+      "passed": 18,
+      "logSha256": "8d3bb3c13b619b2ab612c6197951e206414910c7286abd798e3a2e02e486b222"
+    },
+    "firstFailure": {
+      "childTotal": 123,
+      "childPassed": 111,
+      "childFailures": 12,
+      "logSha256": "266dc2ae4ee45f231a0def4217161b04dbcda875376938ebf37d7fb380af189a",
+      "cause": "Old tests assumed no automatic sync or invoked actions before foreground work settled; production unchanged."
+    }
+  },
+  "runtime": {
+    "origin": "http://localhost:18101",
+    "sourceBase": "db9a720ff17e4cb98be35f93cd2eb964ec103071",
+    "verifiedAt": "2026-10-12T11:28:14.5731805+08:00",
+    "services": [
+      {
+        "Service": "backend",
+        "State": "running",
+        "Health": "healthy"
+      },
+      {
+        "Service": "database",
+        "State": "running",
+        "Health": "healthy"
+      },
+      {
+        "Service": "edge",
+        "State": "running",
+        "Health": "healthy"
+      },
+      {
+        "Service": "erasure-database",
+        "State": "running",
+        "Health": "healthy"
+      },
+      {
+        "Service": "identity",
+        "State": "running",
+        "Health": "healthy"
+      },
+      {
+        "Service": "identity-database",
+        "State": "running",
+        "Health": "healthy"
+      }
+    ],
+    "backendHashMatches": true,
+    "frontendHashMatches": true,
+    "backendSha256": "54a87f8b9df6c232fbc76f4d4269a57154f2cab4c9b39f42ab28aa1253f44d15",
+    "frontendSha256": "59eb217f73512b1e185d80ceae5f3a2a9f075b795b5bbae9e83a0c29c750643a",
+    "schema": [
+      "1\tinitial schema\t1",
+      "2\tevent publication\t1"
+    ],
+    "permissionTablesPresent": true,
+    "mandatoryLedgerProtection": true,
+    "laterManagedConnectorChangesIncluded": false,
+    "nativeDeviceExecutionVerified": false
+  },
+  "browser": {
+    "origin": "http://localhost:18101",
+    "title": "智能管家 · 管理工作台",
+    "username": "admin@super.com",
+    "browser": "Chrome via Playwright",
+    "browserAvailability": "Browser plugin not available",
+    "viewports": [
+      "1440x1000",
+      "390x844"
+    ],
+    "checks": [
+      "real password PKCE login",
+      "authenticated backend profile",
+      "meaningful empty workspace screen",
+      "workspace create dialog opens and cancels without writing data",
+      "mobile navigation opens",
+      "catalog navigation returns HTTP 200",
+      "catalog refresh returns HTTP 200",
+      "no horizontal document overflow",
+      "no browser runtime errors"
+    ],
+    "errors": [],
+    "warnings": [],
+    "screenshots": [
+      "desktop.png",
+      "create-dialog.png",
+      "mobile-navigation.png",
+      "mobile-catalog.png",
+      "desktop-catalog.png"
+    ],
+    "mfaVerified": false
+  },
+  "browserArtifactDirectory": "C:\\Users\\Administrator\\AppData\\Local\\Temp\\ai-manager-v1-integrated-browser-qa",
+  "limitations": [
+    "Native Android execution not verified in this release",
+    "Real EMM/managed Android integration not verified",
+    "Administrator MFA enrollment and sensitive operations not verified",
+    "Backup restore exercise not performed",
+    "Full erasure orchestration remains incomplete",
+    "Later shared commits listed above are excluded from these running artifacts"
+  ],
+  "review": {
+    "status": "passed",
+    "reviewer": "v1_integrated_release_final_review",
+    "model": "gpt-6-astra",
+    "reasoningEffort": "high",
+    "critical": 0,
+    "important": 0,
+    "minor": 0,
+    "verdict": "Ready to merge",
+    "sourceManifestEntries": 790,
+    "frozenOrOwnedEntries": 788,
+    "generatedEntries": 2,
+    "generatedExplanation": "Flutter-generated Android registration and local SDK path files; no later shared code found",
+    "declinedToJudge": [
+      "Native execution and external EMM",
+      "MFA-sensitive operations and full erasure orchestration",
+      "Restore, production HTTPS, capacity and HA",
+      "Later shared commits"
+    ],
+    "rereviewPerformed": false
+  },
+  "rulings": [
+    "Ruling: initialize a separate fresh environment on 18101 and preserve 18100 — user requires fresh unreleased 1.0.0 and authorized backup/update, while existing databases must not be silently cleared — cost if wrong: old development data will not appear in the new workspace and both local environments consume resources.",
+    "Ruling: release only the frozen committed source fcc7ed8 — protects ongoing shared work and ensures reproducible frontend/backend inputs — cost if wrong: subsequent changes require another integrated release before users can see them.",
+    "Ruling: preserve the independent ledger backup without rolling it back alongside the business dump — accepted erasure history must survive restoration — cost if wrong: restoring an old ledger could allow erased data to reappear; a full restore exercise remains required.",
+    "Ruling: advance the release base from fcc7ed8 to db9a720 before freezing any build input — the newly committed permission panel mobile-layout fix belongs in this integrated release — cost if wrong: frontend acceptance must cover that additional committed change; ongoing uncommitted WIP remains excluded.",
+    "Ruling: update the test contract to await foreground idle and assert startup/resume refresh, retaining all credential rejection/storage/background/dispose assertions — the accepted child-host-contract explicitly specifies automatic sync — cost if wrong: changed counts could mask a regression; real signed transport tests and new deterministic five-minute/background/dispose checks cover this risk. Production source unchanged.",
+    "Ruling: package only owned stage files for fresh final review in this shared checkout — a db9a720..HEAD diff includes unrelated later commits and misses our uncommitted changes — cost if wrong: reviewer must inspect frozen source and runtime evidence as well as the explicit owned patch.",
+    "Final: Ruling: native execution and external EMM stay unverified — browser and SDK evidence cannot prove device system effects — cost if wrong: users may expect enforcement not yet demonstrated; release report explicitly excludes it.",
+    "Final: Ruling: MFA-sensitive operations and full erasure orchestration stay incomplete — no OTP ceremony or complete public erasure implementation was performed — cost if wrong: users may expect those workflows to work; report expressly excludes them.",
+    "Final: Ruling: restore/production HTTPS/capacity/HA remain unverified — local fresh-start success is insufficient evidence — cost if wrong: production availability or restoration could fail; no production readiness claim.",
+    "Final: Ruling: later shared commits remain excluded — fixed db9a720 build is the demonstrated runtime — cost if wrong: new shared features may be expected in the running UI; exact base and excluded revisions are recorded."
+  ]
+}

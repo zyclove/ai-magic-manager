@@ -10,6 +10,7 @@ import 'package:http/testing.dart';
 import 'package:sembast/sembast_memory.dart';
 import '../../../packages/device_policy/test/fixtures.dart' as signatures;
 import 'support/identity_fixture.dart';
+import 'support/session_idle.dart';
 
 /// Real signature verifier, journal, transport and identity manager. Only the
 /// HTTP server response and platform database are controlled unit boundaries.
@@ -66,8 +67,8 @@ void main() {
               client: client));
       addTearDown(session.dispose);
       await session.initialize();
-      expect(session.rules.configurations, hasLength(1));
-      expect(await session.synchronizeRules(), isFalse);
+      await waitForSessionIdle(session);
+      expect(session.errorCode, 'HTTP_FAILURE');
       expect(attempts, 1);
       expect(session.rules.configurations, isEmpty);
       expect(session.credentialReady, isFalse);
@@ -115,12 +116,11 @@ void main() {
                 databaseFactoryMemory.openDatabase('late-rule-auth')));
     addTearDown(session.dispose);
     await session.initialize();
-    final synchronizing = session.synchronizeRules();
     await entered.future;
     await fixture.identity.rotate();
     await fixture.identity.activateRotation();
     release.complete();
-    expect(await synchronizing, isFalse);
+    await waitForSessionIdle(session);
     expect(await fixture.identity.activeCredential(), 'c' * 43);
     expect((await fixture.identity.view()).cloudAuthenticationBlocked, isFalse);
     expect(session.credentialReady, isTrue);

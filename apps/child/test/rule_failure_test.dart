@@ -2,6 +2,7 @@ import 'package:child/core/session.dart';
 import 'package:device_policy/device_policy.dart' as policy;
 import 'package:flutter_test/flutter_test.dart';
 import 'support/identity_fixture.dart';
+import 'support/session_idle.dart';
 
 class PendingRuleReceiver implements ChildRuleReceiver {
   bool saved = false;
@@ -30,8 +31,8 @@ void main() {
     final session = fixture.session(rules: (_) => Future.value(receiver));
     addTearDown(session.dispose);
     await session.initialize();
-    expect(session.rules.cursor, 0);
-    expect(await session.synchronizeRules(), isFalse);
+    await waitForSessionIdle(session);
+    expect(session.errorCode, 'NETWORK_UNAVAILABLE');
     expect(session.rules.cursor, 42);
     expect(session.rules.pendingReceipts, 1);
     expect(session.systemEnforced, isFalse);
