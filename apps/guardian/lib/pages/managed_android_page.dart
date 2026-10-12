@@ -616,9 +616,10 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
             TextButton(
                 onPressed: busy ? null : _moreIntents,
                 child: const Text('加载更多')),
-          if (intents.any((intent) => intent.state == 'VERIFIED')) ...[
+          if (intents.isNotEmpty) ...[
             const SizedBox(height: 12),
-            const Notice('“已核对”只表示提供方注册身份吻合；本地设备、应用限制与执行状态仍需分别核验。')
+            const Notice(
+                '令牌到期或取消后，若设备此前已注册，仍可凭提供方设备 ID 补做核对；这类名额不会仅因删除令牌而释放。“已核对”只表示提供方注册身份吻合；本地设备、应用限制与执行状态仍需分别核验。')
           ]
         ]))
       ]);

@@ -232,7 +232,11 @@ class ManagedEnrollmentIntent {
         verifiedAt = raw['verifiedAt'];
 
   bool get canCancel => state == 'PREPARING' || state == 'ISSUED';
-  bool get canVerify => state == 'ISSUED';
+  // A token may have enrolled a device before expiry/cancellation. The server
+  // checks provider provenance before accepting a late verification.
+  bool get canVerify =>
+      issuedAt != null &&
+      const {'ISSUED', 'CANCEL_PENDING', 'CANCELLED'}.contains(state);
 
   static ManagedEnrollmentIntent parse(Object? raw, String tenantId,
       {String? expectedId}) {

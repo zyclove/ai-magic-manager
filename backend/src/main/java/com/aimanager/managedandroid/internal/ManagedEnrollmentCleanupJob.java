@@ -36,6 +36,9 @@ class ManagedEnrollmentCleanupJob {
       timeUnit = TimeUnit.SECONDS)
   void clean() {
     if (!gateway.available()) return;
+    // Expired issuance still holds a seat: deletion prevents reuse, but only
+    // provider inventory can establish whether a device enrolled before expiry.
+    store.expireIssued(batch, gateway.providerCode());
     for (var lease : store.claimCleanup(batch, gateway.providerCode())) {
       try {
         if (lease.tokenName() != null)

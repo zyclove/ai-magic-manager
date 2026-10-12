@@ -213,7 +213,9 @@ class ManagedEnrollmentStore {
   Intent forVerification(String tenant, String id, String actor) {
     access.requireRole(tenant, actor, Role.OWNER, Role.ORG_ADMIN);
     Intent intent = required(tenant, id, false);
-    if (!"ISSUED".equals(intent.state())) throw conflict("MANAGED_ENROLLMENT_NOT_ISSUED");
+    // An issued token can have enrolled a device just before expiry or cancellation.
+    // Keep provider-backed verification possible after token cleanup; the seat is held.
+    if (!verifiable(intent)) throw conflict("MANAGED_ENROLLMENT_NOT_ISSUED");
     var enterprise = enterprises.requireActive(tenant);
     if (!enterprise.provider().equals(intent.provider())
         || !enterprise.enterpriseId().equals(intent.enterpriseId())
@@ -243,7 +245,7 @@ class ManagedEnrollmentStore {
     access.requireWriteRole(tenant, actor, Role.OWNER, Role.ORG_ADMIN);
     Intent intent = required(tenant, id, true);
     ResourceVersions.check(expectedVersion, intent.version());
-    if (!"ISSUED".equals(intent.state())) throw conflict("MANAGED_ENROLLMENT_NOT_ISSUED");
+    if (!verifiable(intent)) throw conflict("MANAGED_ENROLLMENT_NOT_ISSUED");
     var enterprise = enterprises.requireActive(tenant);
     if (!enterprise.provider().equals(intent.provider())
         || !enterprise.enterpriseId().equals(intent.enterpriseId())
@@ -318,6 +320,34 @@ class ManagedEnrollmentStore {
     return updated;
   }
 
+  /** Move expired issued tokens into the leased cleanup queue without releasing their seat. */
+  @Transactional(timeout = 10)
+  int expireIssued(int limit, String provider) {
+    if (limit < 1 || limit > 100) throw new IllegalArgumentException("Invalid cleanup batch");
+    long now = clock.millis();
+    var candidates = jdbc.query(
+        "SELECT tenant_id,id FROM managed_enrollment_intents"
+            + " WHERE provider=? AND state='ISSUED' AND expires_at<=?"
+            + " ORDER BY expires_at,id LIMIT ?",
+        (r, n) -> new String[] {r.getString(1), r.getString(2)}, provider, now, limit);
+    int changed = 0;
+    for (var candidate : candidates) {
+      int updated = jdbc.update(
+          "UPDATE managed_enrollment_intents SET state='CANCEL_PENDING',version=version+1,"
+              + "updated_at=? WHERE tenant_id=? AND id=? AND provider=?"
+              + " AND state='ISSUED' AND expires_at<=?",
+          now, candidate[0], candidate[1], provider, now);
+      if (updated == 1) {
+        Intent intent = required(candidate[0], candidate[1], false);
+        event(intent, "EXPIRED_CLEANUP", "system:enrollment-cleanup");
+        audit.record(candidate[0], "system:enrollment-cleanup",
+            "MANAGED_ENROLLMENT_EXPIRED_CLEANUP", candidate[1]);
+        changed++;
+      }
+    }
+    return changed;
+  }
+
   /** Compare-and-swap leases let several scheduler replicas clean up without double ownership. */
   @Transactional(timeout = 10)
   List<CleanupLease> claimCleanup(int limit, String provider) {
@@ -384,6 +414,12 @@ class ManagedEnrollmentStore {
         tenant, id);
     if (rows.isEmpty()) throw new DomainException(HttpStatus.NOT_FOUND, "MANAGED_ENROLLMENT_NOT_FOUND");
     return rows.get(0);
+  }
+
+  private static boolean verifiable(Intent intent) {
+    return ("ISSUED".equals(intent.state()) || "CANCEL_PENDING".equals(intent.state())
+        || "CANCELLED".equals(intent.state()))
+        && intent.tokenName() != null && intent.issuedAt() > 0 && intent.policyVersion() > 0;
   }
 
   private static Intent row(ResultSet r) throws SQLException {
