@@ -25,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import static com.aimanager.tenant.TenantAccess.Role.*;
 
 @Service
-class ObservationSettingsService implements ObservationAuthorization {
+class ObservationSettingsService implements ObservationAuthorization, PermissionObservationAuthorization {
     private static final long MAX_SAFE_VERSION = 9007199254740991L;
     private final JdbcTemplate jdbc;
     private final DeviceAccess devices;
@@ -48,6 +48,55 @@ class ObservationSettingsService implements ObservationAuthorization {
     ObservationSettings read(String tenant, String actor, String deviceId) {
         var device = devices.requireVisible(tenant, actor, deviceId);
         return current(tenant, deviceId, device.registrationId(), false);
+    }
+
+    PermissionObservationSettings readPermission(String tenant, String actor, String deviceId) {
+        access.requireRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
+        var device = devices.requireVisible(tenant, actor, deviceId);
+        return currentPermission(tenant, deviceId, device.registrationId(), false);
+    }
+
+    @Transactional(timeout = 10)
+    PermissionObservationSettings devicePermission(DeviceContext identity) {
+        devices.lockActive(identity);
+        credentials.requireActive(identity);
+        return currentPermission(identity.tenantId(), identity.deviceId(), identity.registrationId(), true);
+    }
+
+    @Transactional(timeout = 10)
+    PermissionObservationSettings updatePermission(String tenant, Jwt actor, String deviceId,
+            long expected, String key, PermissionObservationController.Update input) {
+        access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN);
+        recent.require(actor);
+        var device = devices.lockVisibleActive(tenant, actor.getSubject(), deviceId);
+        return idempotency.execute(tenant, actor.getSubject(), "permission.observation.update", key,
+            Map.of("deviceId", deviceId, "expectedVersion", expected, "input", input),
+            PermissionObservationSettings.class,
+            () -> changePermission(tenant, actor.getSubject(), device, expected, input));
+    }
+
+    private PermissionObservationSettings changePermission(String tenant, String actor,
+            Device device, long expected, PermissionObservationController.Update input) {
+        var before = currentPermission(tenant, device.id(), device.registrationId(), true);
+        ResourceVersions.check(expected, before.version());
+        if (before.version() >= MAX_SAFE_VERSION) throw DomainException.invalid("VERSION_EXHAUSTED");
+        long version = before.version() + 1, now = clock.millis();
+        if (before.version() == 0) {
+            jdbc.update("INSERT INTO device_permission_observation_settings(tenant_id,device_id,"
+                + "registration_id,version,enabled,updated_at,last_reason) VALUES(?,?,?,?,?,?,?)",
+                tenant, device.id(), device.registrationId(), version, input.enabled(), now,
+                input.reason().strip());
+        } else {
+            jdbc.update("UPDATE device_permission_observation_settings SET version=?,enabled=?,"
+                + "updated_at=?,last_reason=? WHERE tenant_id=? AND device_id=? AND registration_id=?",
+                version, input.enabled(), now, input.reason().strip(), tenant,
+                device.id(), device.registrationId());
+        }
+        events.publishEvent(new PermissionObservationAuthorizationChanged(
+            tenant, device.id(), device.registrationId()));
+        audit.record(tenant, actor, "PERMISSION_OBSERVATION_AUTHORIZATION_CHANGED", device.id());
+        return new PermissionObservationSettings(device.id(), device.registrationId(),
+            version, input.enabled(), now);
     }
 
     @Transactional(timeout = 10)
@@ -100,6 +149,32 @@ class ObservationSettingsService implements ObservationAuthorization {
         return rows.isEmpty() ? new ObservationSettings(device, registration, 0, false, false, null) : rows.get(0);
     }
 
+    private PermissionObservationSettings currentPermission(String tenant, String device,
+            String registration, boolean lock) {
+        var rows = jdbc.query("SELECT version,enabled,updated_at FROM device_permission_observation_settings "
+                + "WHERE tenant_id=? AND device_id=? AND registration_id=?" + (lock ? " FOR UPDATE" : ""),
+            (row, index) -> new PermissionObservationSettings(device, registration,
+                row.getLong(1), row.getBoolean(2), row.getLong(3)), tenant, device, registration);
+        return rows.isEmpty() ? new PermissionObservationSettings(device, registration, 0, false, null)
+            : rows.get(0);
+    }
+
+    @Override
+    public boolean permissionObservationEnabled(String tenant, String device, String registration) {
+        return currentPermission(tenant, device, registration, false).enabled();
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void requirePermissionObservation(DeviceContext identity, long authorizationVersion) {
+        var value = currentPermission(identity.tenantId(), identity.deviceId(),
+            identity.registrationId(), true);
+        if (!value.enabled())
+            throw new DomainException(HttpStatus.FORBIDDEN, "PERMISSION_OBSERVATION_NOT_AUTHORIZED");
+        if (value.version() != authorizationVersion)
+            throw new DomainException(HttpStatus.CONFLICT, "PERMISSION_OBSERVATION_AUTHORIZATION_CHANGED");
+    }
+
     @Override
     public boolean inventoryEnabled(String tenant, String device, String registration) {
         return current(tenant, device, registration, false).inventoryEnabled();
@@ -132,5 +207,10 @@ class ObservationSettingsService implements ObservationAuthorization {
             event.tenantId(), event.deviceId(), event.registrationId());
         events.publishEvent(new ObservationAuthorizationChanged(event.tenantId(), event.deviceId(),
             event.registrationId(), false, false));
+        jdbc.update("DELETE FROM device_permission_observation_settings WHERE tenant_id=?"
+            + " AND device_id=? AND registration_id=?",
+            event.tenantId(), event.deviceId(), event.registrationId());
+        events.publishEvent(new PermissionObservationAuthorizationChanged(event.tenantId(),
+            event.deviceId(), event.registrationId()));
     }
 }

@@ -91,6 +91,24 @@ class InventoryService {
         return new ApplicationInventory(deviceId, device.registrationId(), entry.report().sequence(), entry.receivedAt(),
             entry.report().visibility().name(), state, "AGENT_REPORTED_UNVERIFIED", entry.report().applications());
     }
+
+    /** A permission report must refer to a recent visible application with the same identity. */
+    ReportedApplication requireCurrentVisible(DeviceContext identity, String packageName,
+            ApplicationDefinition.Profile profile) {
+        if (!authorization.inventoryEnabled(identity.tenantId(), identity.deviceId(),
+                identity.registrationId()))
+            throw new DomainException(HttpStatus.CONFLICT, "PERMISSION_INVENTORY_NOT_AUTHORIZED");
+        var rows = jdbc.query("SELECT snapshot_json,received_at FROM application_inventory_snapshots"
+                + " WHERE tenant_id=? AND device_id=? AND registration_id=?",
+            (row, index) -> new Stored(parse(row.getString(1)), row.getLong(2)),
+            identity.tenantId(), identity.deviceId(), identity.registrationId());
+        if (rows.isEmpty() || clock.millis() - rows.get(0).receivedAt() > maxAgeMillis)
+            throw new DomainException(HttpStatus.CONFLICT, "PERMISSION_INVENTORY_STALE");
+        return rows.get(0).report().applications().stream()
+            .filter(app -> app.packageName().equals(packageName) && app.profile() == profile)
+            .findFirst().orElseThrow(() -> new DomainException(HttpStatus.CONFLICT,
+                "PERMISSION_APPLICATION_NOT_VISIBLE"));
+    }
     private String json(Object value) {
         try { return mapper.writeValueAsString(value); }
         catch (JsonProcessingException failure) { throw new IllegalStateException("Inventory serialization failed", failure); }

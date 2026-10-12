@@ -1,6 +1,6 @@
 # Android 应用权限观察与受管执行契约
 
-状态：实施设计；**当前仓库尚未实现本文件中的权限观察上报、权限执行与界面**。现有应用清单授权不能自动扩展成权限状态授权。首期针对 Android 手机/平板与经兼容确认的 Android TV；中国大陆机构合同优先。没有合规 EMM 时，受管执行入口保持不可用。
+状态：后端独立授权、单应用快照接口和保留清理已进入代码；**原生权限查询、儿童端上传、管理界面和系统权限执行尚未实现**。后端新路由默认关闭，只有显式设置 `manager.observation.permissions.enabled=true` 才开放本地联调；不应在未补齐儿童端授权撤回、主体删除和真实设备验证前对外开放。现有应用清单授权不能自动扩展成权限状态授权。首期针对 Android 手机/平板与经兼容确认的 Android TV；中国大陆机构合同优先。没有合规 EMM 时，受管执行入口保持不可用。
 
 ## 1. 用户要完成的事
 
@@ -28,10 +28,33 @@ Android `PackageInfo.requestedPermissions` 是应用清单声明，包含未获�
 
 - 新增独立的 `device_permission_observation_settings`：`tenant_id`、`device_id`、`registration_id`、`version`、`enabled`、`updated_at`、`last_reason`。默认关闭；设备换注册周期不继承授权。沿用现有租户/设备/凭证与审计锁序。关闭时同一事务清空该注册周期的权限快照。
 - 管理端 `GET/PUT /api/v1/tenants/{tenantId}/devices/{deviceId}/permission-observation-settings`；PUT 使用近期 MFA、`If-Match` 和明确原因。设备端 `GET /api/v1/device-api/permission-observation-settings` 只回当前注册周期的版本与开关，不返回其他设备数据。
-- 设备端 `POST /api/v1/device-api/permission-observations`：`reportId`、`authorizationVersion`、`packageName`、`profile`、`observedAt`、`source=ANDROID_PACKAGE_MANAGER`、`visibility=VISIBLE_PACKAGE`、权限条目。`reportId` + 正文哈希做幂等；同 ID 异文返回冲突，旧授权版本拒收。包名必须属于当前已授权可见清单，或在一次原生查询中同时证明可见；不能信任请求体自称全设备可见。
+- 设备端 `POST /api/v1/device-api/permission-observations`：`reportId`、单设备递增 `sequence`、`authorizationVersion`、`packageName`、`profile`、签名摘要、版本号、`observedAt`、`source=ANDROID_PACKAGE_MANAGER`、权限条目。服务端以序号和正文哈希对**当前快照**幂等，旧序号或同序号异文返回冲突，旧授权版本拒收。当前代码要求应用匹配同注册周期**最近 15 分钟**的已授权应用清单，且版本号与签名摘要相同；服务端仍不能把代理自报当作硬件证明。
 - 管理端 `GET .../devices/{deviceId}/permission-observations?packageName=...` 返回授权状态、观察时间、`RECENT`/`STALE`/`NOT_AUTHORIZED`/`UNKNOWN`、来源和逐权限结果；禁用共享缓存。每次读取重新核验成员、设备范围、当前注册周期和当前授权。儿童/教师不读取详细权限清单，机构审计员只看授权/操作审计。
-- 每次只观察**管理员选定的单个应用**，上限 64 个权限、单次正文 32 KiB、单设备每 15 分钟最多 20 次；Android 原生异步查询在有界执行队列处理，不能阻塞 UI。超过上限显示“权限较多，需在系统设置中查看”，不悄悄截断为完整结果。
-- 快照保存 24 小时后删除；显示年龄以服务端接收时刻为准，另展示设备观察时刻和可能的时钟偏差。设备端待上传正文继续使用现有加密、提交屏障和不可变重放思路，单独受权限授权版本约束；撤回时清除本地待发权限正文。
+- 每次只观察**管理员选定的单个应用**，上限 64 个权限、单次正文 32 KiB、单设备每 15 分钟最多 20 次。当前后端每设备只保留**最近一个应用**的快照，新应用上报会替换旧快照；前端必须对其他应用显示“尚无当前快照”，不能拿旧应用结果拼接。Android 原生异步查询待接入有界执行队列，不能阻塞 UI。超过上限显示“权限较多，需在系统设置中查看”，不悄悄截断为完整结果。
+- 快照到达 24 小时后读取变为 `UNKNOWN`，后台默认每 30 秒最多删除 1,000 条过期快照，实际物理删除延迟须监控队列积压并按部署容量调整；不能把定时清理的节奏称为硬实时删除。显示年龄以服务端接收时刻为准，另展示设备观察时刻和可能的时钟偏差。设备端待上传正文继续使用现有加密、提交屏障和不可变重放思路，单独受权限授权版本约束；撤回时清除本地待发权限正文。
+
+当前后端联调请求示例（先为设备取得**独立权限观察授权**，并保持应用清单授权开启与新鲜）：
+
+```json
+{
+  "reportId": "00000000-0000-4000-8000-000000000001",
+  "sequence": 1,
+  "authorizationVersion": 1,
+  "packageName": "org.example.reader",
+  "profile": "PRIMARY",
+  "signingDigests": ["0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"],
+  "versionCode": 42,
+  "observedAt": 1791514800000,
+  "source": "ANDROID_PACKAGE_MANAGER",
+  "permissions": [{
+    "permissionName": "android.permission.CAMERA",
+    "classification": "DANGEROUS",
+    "observedGrant": "DENIED"
+  }]
+}
+```
+
+示例时间仅说明格式，联调必须使用真实系统时间。管理员 `PUT .../permission-observation-settings` 请求体为 `{ "enabled": true, "reason": "告知并授权查看所选应用权限" }`，要求 `If-Match`、幂等键和近期 MFA；设备 `GET .../permission-observation-settings` 取得当前授权版本。设备报告必须使用设备凭证，不能使用管理员 JWT。普通设备读取结果固定 `evidenceStatus=AGENT_REPORTED_UNVERIFIED`，不能作为系统权限修改成功的证明。
 
 权限条目仅接受 `android.permission.*` 名称；服务端不靠固定旧版本名单推断所有新 Android 权限。原生层通过系统 `PermissionInfo` 分类，对 `dangerous` 权限提供最清楚的逐项状态；签名/特权/厂商权限可标为 `OTHER` 与 `UNKNOWN`，不在普通管控页误呈现为可调运行时权限。空权限列表表示该**可见应用**没有被观察到相应请求，不能推断系统没有其他权限。
 
