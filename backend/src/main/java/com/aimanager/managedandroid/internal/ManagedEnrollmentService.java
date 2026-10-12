@@ -157,6 +157,11 @@ class ManagedEnrollmentService {
     // Re-read provenance after status to avoid presenting a re-enrolled device as this intent.
     ManagedEnrollmentStore.requireProvenance(intent, intent.providerDeviceId(),
         gateway.readEnrollmentIdentity(intent.enterpriseId(), intent.providerDeviceId()));
+    // Provider I/O is deliberately outside database locks. Recheck the local authority after
+    // those reads so a concurrent binding/contract revocation or intent change cannot be
+    // presented as a current provider status for this enrollment.
+    if (!intent.equals(store.forProviderStatus(tenant, id, actor)))
+      throw new DomainException(HttpStatus.CONFLICT, "MANAGED_ENROLLMENT_CHANGED");
     String result;
     String limitation;
     if (!expectedName.equals(state.requestedPolicyName())
