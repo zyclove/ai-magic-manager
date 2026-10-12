@@ -71,7 +71,7 @@ class _ChildPolicyExplanationState extends State<ChildPolicyExplanation> {
   String _status(String? status) => switch (status) {
         'SUPPORTED_PENDING' => '设备能力待执行验证',
         'UNVERIFIED' => '应用或设备身份待核对',
-        'UNSUPPORTED' => '当前设备模式不支持',
+        'UNSUPPORTED' => '当前不支持执行',
         'UNAVAILABLE' => '设备暂不可用',
         'STALE' => '设备能力信息已过期',
         'UNKNOWN' => '设备能力尚未核对',
@@ -88,6 +88,8 @@ class _ChildPolicyExplanationState extends State<ChildPolicyExplanation> {
         'CAPABILITY_NOT_VERIFIED' =>
           '目前没有可证明此规则已执行的系统证据。',
         'AWAITING_EXECUTION' => '等待独立的设备执行回执。',
+        'AUTO_GRANT_NOT_AVAILABLE' => '当前不会自动授予其他应用的系统权限。',
+        'SYSTEM_USER_ACTION_REQUIRED' => '此特殊访问需要在设备上由用户单独操作。',
         _ => '请监护人检查设备能力和规则状态。'
       };
 
@@ -144,6 +146,10 @@ class _ChildPolicyExplanationState extends State<ChildPolicyExplanation> {
                     Text(_status(_code(rule['status']))),
                     const SizedBox(height: 8),
                     Text(_reason(_code(rule['reasonCode']))),
+                    if (rule['kind'] == 'DOMAIN_ACCESS') ...[
+                      const SizedBox(height: 12),
+                      const Text('此规则只指向列出的域名。当前没有全设备网站过滤，其他应用、子域名及加密网页内容未被此配置自动限制。')
+                    ],
                     const SizedBox(height: 16),
                     const Text('这是已保存的监护规则意图。当前设备端不能据此阻止其他应用。')
                   ])),
