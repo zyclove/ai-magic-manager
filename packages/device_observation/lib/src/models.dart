@@ -67,6 +67,50 @@ class ObservationAuthorization {
       };
 }
 
+/// Separate, registration-bound consent; inventory consent is also required.
+class PermissionObservationAuthorization {
+  final String deviceId, registrationId;
+  final int version;
+  final bool enabled;
+  final int? updatedAt;
+  const PermissionObservationAuthorization._(this.deviceId, this.registrationId,
+      this.version, this.enabled, this.updatedAt);
+
+  static PermissionObservationAuthorization parse(
+      Map<String, dynamic> raw, ObservationScope scope) {
+    if (!exactKeys(raw, {
+          'deviceId',
+          'registrationId',
+          'version',
+          'enabled',
+          'updatedAt'
+        }) ||
+        raw['deviceId'] != scope.deviceId ||
+        raw['registrationId'] != scope.registrationId ||
+        !safeNumber(raw['version']) ||
+        raw['enabled'] is! bool ||
+        (raw['version'] == 0
+            ? raw['enabled'] == true || raw['updatedAt'] != null
+            : !safeNumber(raw['updatedAt'], minimum: 1))) {
+      throw const ObservationFailure('PERMISSION_AUTHORIZATION_INVALID');
+    }
+    return PermissionObservationAuthorization._(
+        raw['deviceId'] as String,
+        raw['registrationId'] as String,
+        raw['version'] as int,
+        raw['enabled'] as bool,
+        raw['updatedAt'] as int?);
+  }
+
+  Map<String, dynamic> toJson() => {
+        'deviceId': deviceId,
+        'registrationId': registrationId,
+        'version': version,
+        'enabled': enabled,
+        'updatedAt': updatedAt
+      };
+}
+
 /// 检查特殊访问不读取使用记录；系统授权与云端管理员授权互相独立。
 class ObservationPlatformState {
   final bool usageGranted, unlocked, television;
@@ -120,18 +164,23 @@ abstract interface class ObservationApi {
 /// UI 最小状态，不包含原始清单、原始行为、管理员身份或设备凭证。
 class ObservationView {
   final ObservationAuthorization? authorization;
+  final PermissionObservationAuthorization? permissionAuthorization;
   final ObservationPlatformState? platform;
   final int pendingReports, inventoryCount, usageCount;
-  final int? lastInventoryAt, lastUsageAt;
+  final int? lastInventoryAt, lastUsageAt, lastPermissionAt;
+  final String? lastPermissionPackage;
   final bool onlineConfirmed;
   const ObservationView(
       {this.authorization,
+      this.permissionAuthorization,
       this.platform,
       this.pendingReports = 0,
       this.inventoryCount = 0,
       this.usageCount = 0,
       this.lastInventoryAt,
       this.lastUsageAt,
+      this.lastPermissionAt,
+      this.lastPermissionPackage,
       this.onlineConfirmed = false});
 }
 

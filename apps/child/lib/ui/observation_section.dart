@@ -7,6 +7,9 @@ class ObservationSection extends StatelessWidget {
   final bool busy, available;
   final String? errorCode;
   final VoidCallback? refresh, synchronize, openSettings;
+  final VoidCallback? loadPermissionCandidates;
+  final ValueChanged<String>? observePermission;
+  final List<PermissionCandidate> permissionCandidates;
   const ObservationSection(
       {super.key,
       required this.view,
@@ -15,7 +18,10 @@ class ObservationSection extends StatelessWidget {
       this.errorCode,
       this.refresh,
       this.synchronize,
-      this.openSettings});
+      this.openSettings,
+      this.loadPermissionCandidates,
+      this.observePermission,
+      this.permissionCandidates = const []});
   String _authorization(bool? enabled) {
     if (enabled == null) return '等待在线核对';
     if (!view.onlineConfirmed) return enabled ? '上次允许，需在线核对' : '上次关闭，需在线核对';
@@ -42,6 +48,18 @@ class ObservationSection extends StatelessWidget {
         'OBSERVATION_LIMIT_EXCEEDED' =>
           '系统数据暂时无法安全报告，未上传不完整或异常数据。请联系监护人。',
         'OBSERVATION_DEVICE_LOCKED' => '设备尚未解锁，暂不读取使用情况。',
+        'PERMISSION_OBSERVATION_NOT_AUTHORIZED' ||
+        'PERMISSION_OBSERVATION_AUTHORIZATION_CHANGED' ||
+        'PERMISSION_AUTHORIZATION_ROLLBACK' =>
+          '应用权限观察授权已关闭或变化，待发结果已停止使用。请监护人重新核对授权。',
+        'PERMISSION_INVENTORY_STALE' ||
+        'PERMISSION_APPLICATION_IDENTITY_CHANGED' =>
+          '应用清单已过期或应用发生更新，请重新加载后再查看。',
+        'OBSERVATION_APPLICATION_NOT_VISIBLE' ||
+        'PERMISSION_APPLICATION_NOT_VISIBLE' =>
+          '该应用已不在当前用户可见列表中，请重新选择。',
+        'PERMISSION_OBSERVATION_RATE_LIMITED' => '权限观察过于频繁，请稍后再试。',
+        'PERMISSION_OBSERVATION_UNAVAILABLE' => '此安装尚未启用应用权限观察。',
         _ => '此次同步未完成。请刷新授权状态或联系监护人。'
       };
   Widget _status(IconData icon, String title, String value) => Padding(
@@ -91,6 +109,63 @@ class ObservationSection extends StatelessWidget {
     if (confirmed == true) openSettings?.call();
   }
 
+  Future<void> _choosePermissionApp(BuildContext context) async {
+    final search = TextEditingController();
+    try {
+      final selected = await showDialog<String>(
+          context: context,
+          builder: (dialogContext) =>
+              StatefulBuilder(builder: (dialogContext, update) {
+                final query = search.text.trim().toLowerCase();
+                final shown = permissionCandidates
+                    .where((app) =>
+                        query.isEmpty ||
+                        app.displayName.toLowerCase().contains(query) ||
+                        app.packageName.toLowerCase().contains(query))
+                    .toList(growable: false);
+                return AlertDialog(
+                    title: const Text('选择要查看权限的应用'),
+                    content: SizedBox(
+                        width: 500,
+                        height: 450,
+                        child: Column(children: [
+                          TextField(
+                              controller: search,
+                              onChanged: (_) => update(() {}),
+                              decoration: const InputDecoration(
+                                  labelText: '搜索应用名或包名',
+                                  prefixIcon: Icon(Icons.search))),
+                          const SizedBox(height: 12),
+                          Expanded(
+                              child: shown.isEmpty
+                                  ? const Center(child: Text('没有匹配的可见应用'))
+                                  : ListView.builder(
+                                      itemCount: shown.length,
+                                      itemBuilder: (context, index) {
+                                        final app = shown[index];
+                                        return ListTile(
+                                            title: Text(app.displayName),
+                                            subtitle: Text(
+                                                '${app.packageName} · ${app.profile}'),
+                                            onTap: () => Navigator.pop(
+                                                dialogContext,
+                                                app.packageName));
+                                      }))
+                        ])),
+                    actions: [
+                      TextButton(
+                          onPressed: () => Navigator.pop(dialogContext),
+                          child: const Text('取消'))
+                    ]);
+              }));
+      if (context.mounted && selected != null) {
+        observePermission?.call(selected);
+      }
+    } finally {
+      search.dispose();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final authorization = view.authorization, platform = view.platform;
@@ -116,6 +191,11 @@ class ObservationSection extends StatelessWidget {
           _authorization(authorization?.inventoryEnabled)),
       _status(Icons.timer_outlined, '使用摘要',
           _authorization(authorization?.usageEnabled)),
+      if (view.permissionAuthorization != null) ...[
+        _status(Icons.admin_panel_settings_outlined, '应用权限观察',
+            _authorization(view.permissionAuthorization?.enabled)),
+        const Text('只查看所选应用向 Android 请求的权限及最近观察到的授予标志；不能修改其他应用权限，也不代表权限正在被使用。')
+      ],
       _status(
           Icons.privacy_tip_outlined,
           '系统特殊访问',
@@ -137,6 +217,34 @@ class ObservationSection extends StatelessWidget {
       Text('摘要最近确认：${_time(view.lastUsageAt)}'),
       if (view.lastUsageAt != null)
         Text('最近报告 ${view.usageCount} 条系统日聚合记录；区间可能超出查询范围，不代表精确小时，也不作为额度扣减依据。'),
+      if (view.permissionAuthorization != null) ...[
+        const SizedBox(height: 8),
+        Text('权限最近确认：${_time(view.lastPermissionAt)}'),
+        if (view.lastPermissionPackage != null)
+          Text('应用：${view.lastPermissionPackage}；仅是代理自报观察，具体权限请由监护人在管理端查看。'),
+        const SizedBox(height: 12),
+        SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+                onPressed: usable &&
+                        view.onlineConfirmed &&
+                        authorization?.inventoryEnabled == true &&
+                        view.permissionAuthorization?.enabled == true &&
+                        platform?.unlocked == true
+                    ? loadPermissionCandidates
+                    : null,
+                icon: const Icon(Icons.apps_outlined),
+                label: const Text('加载可查看的应用'))),
+        if (permissionCandidates.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          SizedBox(
+              width: double.infinity,
+              child: FilledButton.tonal(
+                  onPressed:
+                      usable ? () => _choosePermissionApp(context) : null,
+                  child: Text('选择应用查看权限（${permissionCandidates.length}）')))
+        ]
+      ],
       if (view.pendingReports > 0)
         Padding(
             padding: const EdgeInsets.only(top: 8),

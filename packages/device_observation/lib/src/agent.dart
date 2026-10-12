@@ -4,6 +4,7 @@ import 'payloads.dart';
 import 'package:device_policy/device_policy.dart'
     show DeviceTransportFailure, maxSafeInteger, freezeJson;
 import 'package:uuid/uuid.dart';
+import 'permission_snapshot.dart';
 
 /// 每个注册周期仅一个实例。先取得实时授权再采集，先持久化原请求再上传。
 class ObservationAgent {
@@ -11,6 +12,8 @@ class ObservationAgent {
   final ObservationStore store;
   final ObservationApi api;
   final ObservationSource source;
+  final PermissionObservationApi? permissionApi;
+  final PermissionObservationSource? permissionSource;
   final int Function() nowMillis;
   bool _busy = false, _closed = false;
   int _generation = 0;
@@ -19,6 +22,8 @@ class ObservationAgent {
       required this.store,
       required this.api,
       required this.source,
+      this.permissionApi,
+      this.permissionSource,
       required this.nowMillis}) {
     if (!validScope(scope)) throw ArgumentError('Invalid observation scope');
   }
@@ -61,11 +66,34 @@ class ObservationAgent {
         journal.forgetReports();
       }
       journal.authorization = authorization;
+      if (permissionApi != null) {
+        final permissionAuthorization =
+            PermissionObservationAuthorization.parse(
+                await permissionApi!.permissionSettings(), scope);
+        _check(generation);
+        if (permissionAuthorization.version <
+            (journal.permissionAuthorization?.version ?? 0)) {
+          throw const ObservationFailure('PERMISSION_AUTHORIZATION_ROLLBACK');
+        }
+        if (journal.permissionAuthorization?.version !=
+            permissionAuthorization.version) {
+          journal.forgetPermissionReports();
+        }
+        journal.permissionAuthorization = permissionAuthorization;
+        if (!permissionAuthorization.enabled ||
+            !authorization.inventoryEnabled) {
+          journal.forgetPermissionReports();
+        }
+      } else {
+        journal.forgetPermissionReports();
+        journal.permissionAuthorization = null;
+      }
       if (!authorization.inventoryEnabled) {
         journal.pendingInventory = null;
         journal.pendingInventoryAt = null;
         journal.inventoryCount = 0;
         journal.lastInventoryAt = null;
+        journal.forgetPermissionReports();
       }
       if (!authorization.usageEnabled) {
         journal.pendingUsage = null;
@@ -192,6 +220,7 @@ class ObservationAgent {
         journal.pendingUsage = null;
         journal.pendingInventory = null;
         journal.pendingInventoryAt = null;
+        journal.pendingPermission = null;
         await journal.save();
       }
       rethrow;
@@ -236,6 +265,185 @@ class ObservationAgent {
       rethrow;
     } catch (_) {
       throw const ObservationFailure('OBSERVATION_SETTINGS_UNAVAILABLE');
+    }
+  }
+
+  Future<PermissionCandidates> permissionCandidates() async {
+    if (permissionApi == null || permissionSource == null) {
+      throw const ObservationFailure('PERMISSION_OBSERVATION_UNAVAILABLE');
+    }
+    final view = await synchronize(collect: false);
+    if (view.authorization?.inventoryEnabled != true ||
+        view.permissionAuthorization?.enabled != true ||
+        view.platform?.unlocked != true) {
+      throw const ObservationFailure('PERMISSION_OBSERVATION_NOT_AUTHORIZED');
+    }
+    if (_closed || _busy) throw const ObservationFailure('OBSERVATION_BUSY');
+    _busy = true;
+    final generation = _generation;
+    try {
+      final facts = await source.inspect();
+      _check(generation);
+      if (!facts.unlocked) {
+        throw const ObservationFailure('OBSERVATION_DEVICE_LOCKED');
+      }
+      final apps = inventoryApplications(await source.inventory());
+      _check(generation);
+      return PermissionCandidates(
+          view,
+          List.unmodifiable(apps.map((app) => PermissionCandidate(
+              app['packageName'] as String,
+              app['displayName'] as String,
+              app['profile'] as String))));
+    } finally {
+      _busy = false;
+    }
+  }
+
+  /// Explicit foreground action for one visible app. Never runs from heartbeat or boot.
+  Future<ObservationView> observePermission(String packageName) async {
+    if (permissionApi == null || permissionSource == null) {
+      throw const ObservationFailure('PERMISSION_OBSERVATION_UNAVAILABLE');
+    }
+    if (!RegExp(r'^[A-Za-z][A-Za-z0-9_]*(\.[A-Za-z][A-Za-z0-9_]*)+$')
+            .hasMatch(packageName) ||
+        packageName.length > 255) invalid();
+    await synchronize(collect: false);
+    if (_closed || _busy) throw const ObservationFailure('OBSERVATION_BUSY');
+    _busy = true;
+    final generation = _generation, journal = ObservationJournal(scope, store);
+    try {
+      await journal.load();
+      _check(generation);
+      if (journal.authorization?.inventoryEnabled != true ||
+          journal.permissionAuthorization?.enabled != true) {
+        throw const ObservationFailure('PERMISSION_OBSERVATION_NOT_AUTHORIZED');
+      }
+      final facts = await source.inspect();
+      _check(generation);
+      if (!facts.unlocked) {
+        throw const ObservationFailure('OBSERVATION_DEVICE_LOCKED');
+      }
+      if (journal.pendingInventory != null) {
+        final priorInventory = journal.pendingInventory!;
+        final priorAck = await api.inventory(priorInventory);
+        _check(generation);
+        _ack(priorAck, priorInventory, false);
+        journal.lastInventoryAt = priorAck['receivedAt'];
+        journal.inventoryCount =
+            (priorInventory['applications'] as List).length;
+        journal.pendingInventory = null;
+        journal.pendingInventoryAt = null;
+        await journal.save();
+        _check(generation);
+      }
+      final pending = journal.pendingPermission;
+      if (pending != null) {
+        final age = nowMillis() - (pending['observedAt'] as int);
+        if (age < -300000 || age >= dayMillis) {
+          journal.pendingPermission = null;
+          await journal.save();
+          _check(generation);
+        } else {
+          final ack = await permissionApi!.permissionReport(pending);
+          _check(generation);
+          _ack(ack, pending, false);
+          journal.lastPermissionAt = ack['receivedAt'];
+          journal.lastPermissionPackage = pending['packageName'];
+          journal.pendingPermission = null;
+          await journal.save();
+          _check(generation);
+          if (pending['packageName'] == packageName) {
+            return journal.view(platform: facts, online: true);
+          }
+        }
+      }
+      // The backend checks a recent inventory with matching version and signers.
+      // Refresh it here even when an older inventory report has been acknowledged.
+      final applications = inventoryApplications(await source.inventory());
+      _check(generation);
+      final matches = applications.where((app) =>
+          app['packageName'] == packageName && app['profile'] == facts.profile);
+      if (matches.length != 1) {
+        throw const ObservationFailure('OBSERVATION_APPLICATION_NOT_VISIBLE');
+      }
+      if (journal.inventorySequence >= maxSafeInteger) {
+        throw const ObservationFailure('OBSERVATION_SEQUENCE_EXHAUSTED');
+      }
+      journal.pendingInventory = freezeJson({
+        'sequence': ++journal.inventorySequence,
+        'authorizationVersion': journal.authorization!.version,
+        'visibility': 'VISIBLE_PACKAGES',
+        'applications': applications
+      });
+      journal.pendingInventoryAt = nowMillis();
+      await journal.save();
+      _check(generation);
+      final inventoryAck = await api.inventory(journal.pendingInventory!);
+      _check(generation);
+      _ack(inventoryAck, journal.pendingInventory!, false);
+      journal.lastInventoryAt = inventoryAck['receivedAt'];
+      journal.inventoryCount = applications.length;
+      journal.pendingInventory = null;
+      journal.pendingInventoryAt = null;
+      await journal.save();
+      _check(generation);
+      final snapshot = await permissionSource!.permissionSnapshot(packageName);
+      _check(generation);
+      final expected = matches.single;
+      if (snapshot.profile != facts.profile ||
+          snapshot.versionCode != expected['versionCode'] ||
+          snapshot.signingDigests.join('|') !=
+              (expected['signingDigests'] as List).join('|')) invalid();
+      final now = nowMillis();
+      if (snapshot.observedAt < now - 15 * 60000 ||
+          snapshot.observedAt > now + 300000) invalid();
+      if (journal.permissionSequence >= maxSafeInteger) {
+        throw const ObservationFailure('OBSERVATION_SEQUENCE_EXHAUSTED');
+      }
+      final body = snapshot.report(++journal.permissionSequence,
+          journal.permissionAuthorization!.version, const Uuid().v4());
+      journal.pendingPermission = freezeJson(body);
+      await journal.save();
+      _check(generation);
+      // Permission consent can be withdrawn while PackageManager is reading.
+      final current = PermissionObservationAuthorization.parse(
+          await permissionApi!.permissionSettings(), scope);
+      _check(generation);
+      if (current.version < journal.permissionAuthorization!.version) {
+        throw const ObservationFailure('PERMISSION_AUTHORIZATION_ROLLBACK');
+      }
+      if (!current.enabled ||
+          current.version != journal.permissionAuthorization!.version) {
+        journal.permissionAuthorization = current;
+        journal.forgetPermissionReports();
+        await journal.save();
+        throw const ObservationFailure(
+            'PERMISSION_OBSERVATION_AUTHORIZATION_CHANGED');
+      }
+      final ack =
+          await permissionApi!.permissionReport(journal.pendingPermission!);
+      _check(generation);
+      _ack(ack, journal.pendingPermission!, false);
+      journal.lastPermissionAt = ack['receivedAt'];
+      journal.lastPermissionPackage = packageName;
+      journal.pendingPermission = null;
+      await journal.save();
+      return journal.view(platform: facts, online: true);
+    } on DeviceTransportFailure catch (failure) {
+      if (failure.status == 401 ||
+          failure.status == 403 ||
+          failure.code == 'PERMISSION_OBSERVATION_AUTHORIZATION_CHANGED') {
+        journal.forgetPermissionReports();
+        journal.permissionAuthorization = null;
+        await journal.save();
+      } else if (failure.status == 400) {
+        journal.pendingPermission = null;
+        await journal.save();
+      }
+      rethrow;
+    } finally {
+      _busy = false;
     }
   }
 

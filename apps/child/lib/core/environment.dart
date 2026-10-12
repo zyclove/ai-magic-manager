@@ -8,11 +8,15 @@ class ChildEnvironment {
   final String configurationIssuer;
   final Map<String, dynamic>? configurationKeys;
   final bool allowLoopbackHttp;
+
+  /// Enabled only when backend routes, consent UI and erasure are deployed together.
+  final bool permissionObservationEnabled;
   ChildEnvironment(
       {required this.apiRoot,
       this.configurationIssuer = '',
       this.configurationKeys,
-      this.allowLoopbackHttp = false}) {
+      this.allowLoopbackHttp = false,
+      this.permissionObservationEnabled = false}) {
     if (apiRoot.host.isEmpty ||
         apiRoot.userInfo.isNotEmpty ||
         apiRoot.hasQuery ||
@@ -41,7 +45,9 @@ class ChildEnvironment {
               const String.fromEnvironment('CONFIGURATION_ISSUER'),
           configurationKeys:
               ring.isEmpty ? null : Map<String, dynamic>.from(jsonDecode(ring)),
-          allowLoopbackHttp: const bool.fromEnvironment('ALLOW_LOCAL_HTTP'));
+          allowLoopbackHttp: const bool.fromEnvironment('ALLOW_LOCAL_HTTP'),
+          permissionObservationEnabled:
+              const bool.fromEnvironment('PERMISSION_OBSERVATION_ENABLED'));
     } catch (_) {
       throw const FormatException('Invalid child deployment configuration');
     }

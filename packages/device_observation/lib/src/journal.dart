@@ -2,18 +2,22 @@ import 'dart:convert';
 import 'package:device_policy/device_policy.dart' show validId, freezeJson;
 import 'models.dart';
 import 'payloads.dart';
+import 'permission_snapshot.dart';
 
 /// 两类 pending 与序号在一个加密记录里提交；读取错误不得重置为新设备。
 class ObservationJournal {
   final ObservationScope scope;
   final ObservationStore store;
   ObservationAuthorization? authorization;
+  PermissionObservationAuthorization? permissionAuthorization;
   int inventorySequence = 0,
       usageSequence = 0,
+      permissionSequence = 0,
       inventoryCount = 0,
       usageCount = 0;
-  int? lastInventoryAt, lastUsageAt, pendingInventoryAt;
-  Map<String, dynamic>? pendingInventory, pendingUsage;
+  int? lastInventoryAt, lastUsageAt, pendingInventoryAt, lastPermissionAt;
+  String? lastPermissionPackage;
+  Map<String, dynamic>? pendingInventory, pendingUsage, pendingPermission;
   ObservationJournal(this.scope, this.store);
   Future<void> load() async {
     try {
@@ -21,7 +25,11 @@ class ObservationJournal {
       if (encoded == null) return;
       if (utf8.encode(encoded).length > 1048576) throw const FormatException();
       final json = jsonDecode(encoded);
-      if (json is! Map<String, dynamic> ||
+      if (json is! Map<String, dynamic> || json['schema'] is! int) {
+        throw const FormatException();
+      }
+      final schema = json['schema'] as int;
+      if (!const {1, 2}.contains(schema) ||
           !exactKeys(json, {
             'schema',
             'scope',
@@ -34,14 +42,20 @@ class ObservationJournal {
             'lastInventoryAt',
             'lastUsageAt',
             'inventoryCount',
-            'usageCount'
+            'usageCount',
+            if (schema == 2) ...{
+              'permissionAuthorization',
+              'permissionSequence',
+              'pendingPermission',
+              'lastPermissionAt',
+              'lastPermissionPackage'
+            }
           }) ||
-          json['schema'] is! int ||
-          json['schema'] != 1 ||
           json['scope'] != scope.storageKey) throw const FormatException();
       for (final key in [
         'inventorySequence',
         'usageSequence',
+        if (schema == 2) 'permissionSequence',
         'inventoryCount',
         'usageCount'
       ]) {
@@ -58,6 +72,7 @@ class ObservationJournal {
       }
       inventorySequence = json['inventorySequence'];
       usageSequence = json['usageSequence'];
+      if (schema == 2) permissionSequence = json['permissionSequence'];
       inventoryCount = json['inventoryCount'];
       usageCount = json['usageCount'];
       if (inventoryCount > 500 || usageCount > 500) {
@@ -72,12 +87,70 @@ class ObservationJournal {
       }
       pendingInventory = _pending(json['pendingInventory'], false);
       pendingUsage = _pending(json['pendingUsage'], true);
+      if (schema == 2) {
+        if (json['lastPermissionAt'] != null &&
+            !safeNumber(json['lastPermissionAt'], minimum: 1)) {
+          throw const FormatException();
+        }
+        if (json['lastPermissionPackage'] != null &&
+            (json['lastPermissionPackage'] is! String ||
+                !packageName(json['lastPermissionPackage']))) {
+          throw const FormatException();
+        }
+        if ((json['lastPermissionAt'] == null) !=
+            (json['lastPermissionPackage'] == null)) {
+          throw const FormatException();
+        }
+        lastPermissionAt = json['lastPermissionAt'];
+        lastPermissionPackage = json['lastPermissionPackage'];
+        if (json['permissionAuthorization'] != null) {
+          permissionAuthorization = PermissionObservationAuthorization.parse(
+              Map<String, dynamic>.from(json['permissionAuthorization'] as Map),
+              scope);
+        }
+        pendingPermission = _pendingPermission(json['pendingPermission']);
+      }
       if ((pendingInventory == null) != (pendingInventoryAt == null)) {
         throw const FormatException();
       }
     } catch (_) {
       throw const ObservationFailure('OBSERVATION_STORAGE_FAILED');
     }
+  }
+
+  Map<String, dynamic>? _pendingPermission(dynamic raw) {
+    if (raw == null) return null;
+    if (raw is! Map<String, dynamic> ||
+        permissionAuthorization?.enabled != true ||
+        authorization?.inventoryEnabled != true ||
+        !exactKeys(raw, {
+          'reportId',
+          'sequence',
+          'authorizationVersion',
+          'packageName',
+          'profile',
+          'signingDigests',
+          'versionCode',
+          'observedAt',
+          'source',
+          'permissions'
+        }) ||
+        !validId(raw['reportId']) ||
+        raw['sequence'] != permissionSequence ||
+        !safeNumber(raw['sequence'], minimum: 1) ||
+        raw['authorizationVersion'] != permissionAuthorization!.version ||
+        raw['source'] != 'ANDROID_PACKAGE_MANAGER') {
+      throw const FormatException();
+    }
+    PermissionSnapshot.parse({
+      'packageName': raw['packageName'],
+      'profile': raw['profile'],
+      'signingDigests': raw['signingDigests'],
+      'versionCode': raw['versionCode'],
+      'observedAt': raw['observedAt'],
+      'permissions': raw['permissions']
+    });
+    return freezeJson(raw);
   }
 
   Map<String, dynamic>? _pending(dynamic raw, bool usage) {
@@ -135,11 +208,16 @@ class ObservationJournal {
   Future<void> save() async {
     try {
       final encoded = jsonEncode({
-        'schema': 1,
+        'schema': 2,
         'scope': scope.storageKey,
         'authorization': authorization?.toJson(),
         'inventorySequence': inventorySequence,
         'usageSequence': usageSequence,
+        'permissionSequence': permissionSequence,
+        'permissionAuthorization': permissionAuthorization?.toJson(),
+        'pendingPermission': pendingPermission,
+        'lastPermissionAt': lastPermissionAt,
+        'lastPermissionPackage': lastPermissionPackage,
         'pendingInventory': pendingInventory,
         'pendingInventoryAt': pendingInventoryAt,
         'pendingUsage': pendingUsage,
@@ -163,19 +241,33 @@ class ObservationJournal {
     usageCount = 0;
     lastInventoryAt = null;
     lastUsageAt = null;
-    if (forgetAuthorization) authorization = null;
+    forgetPermissionReports();
+    if (forgetAuthorization) {
+      authorization = null;
+      permissionAuthorization = null;
+    }
+  }
+
+  void forgetPermissionReports() {
+    pendingPermission = null;
+    lastPermissionAt = null;
+    lastPermissionPackage = null;
   }
 
   ObservationView view(
           {ObservationPlatformState? platform, bool online = false}) =>
       ObservationView(
           authorization: authorization,
+          permissionAuthorization: permissionAuthorization,
           platform: platform,
           onlineConfirmed: online,
           pendingReports: (pendingInventory == null ? 0 : 1) +
-              (pendingUsage == null ? 0 : 1),
+              (pendingUsage == null ? 0 : 1) +
+              (pendingPermission == null ? 0 : 1),
           inventoryCount: inventoryCount,
           usageCount: usageCount,
           lastInventoryAt: lastInventoryAt,
-          lastUsageAt: lastUsageAt);
+          lastUsageAt: lastUsageAt,
+          lastPermissionAt: lastPermissionAt,
+          lastPermissionPackage: lastPermissionPackage);
 }

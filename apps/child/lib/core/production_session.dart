@@ -139,18 +139,30 @@ class ProductionChildRuntime {
               }
             : null,
         observationFactory: nativeAvailable
-            ? (view) async => observation.ObservationAgent(
-                scope: observation.ObservationScope(
-                    view.tenantId, view.deviceId!, view.registrationId!),
-                store: services.observationStore,
-                source: services.observationSource,
-                nowMillis: clock,
-                api: observation.ObservationHttpApi(
+            ? (view) async {
+                final api = observation.ObservationHttpApi(
                     DeviceConfigurationTransport(
                         apiRoot: environment.apiRoot,
                         credential: identity.activeCredential,
                         allowLoopbackHttp: environment.allowLoopbackHttp,
-                        maxResponseBytes: 65536)))
+                        maxResponseBytes: 65536));
+                final permissionSource = services.observationSource;
+                final permissionAvailable = environment
+                        .permissionObservationEnabled &&
+                    permissionSource is observation.PermissionObservationSource;
+                return observation.ObservationAgent(
+                    scope: observation.ObservationScope(
+                        view.tenantId, view.deviceId!, view.registrationId!),
+                    store: services.observationStore,
+                    source: services.observationSource,
+                    permissionSource: permissionAvailable
+                        ? permissionSource
+                            as observation.PermissionObservationSource
+                        : null,
+                    permissionApi: permissionAvailable ? api : null,
+                    nowMillis: clock,
+                    api: api);
+              }
             : null);
     return ProductionChildRuntime._(session, services.observationSource);
   }

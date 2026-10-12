@@ -108,3 +108,20 @@ class PermissionFact {
 abstract interface class PermissionObservationSource {
   Future<PermissionSnapshot> permissionSnapshot(String packageName);
 }
+
+/// Ephemeral picker entry; never persisted in the observation journal.
+class PermissionCandidate {
+  final String packageName, displayName, profile;
+  const PermissionCandidate(this.packageName, this.displayName, this.profile);
+}
+
+class PermissionCandidates {
+  final ObservationView view;
+  final List<PermissionCandidate> items;
+  const PermissionCandidates(this.view, this.items);
+}
+
+abstract interface class PermissionObservationApi {
+  Future<Map<String, dynamic>> permissionSettings();
+  Future<Map<String, dynamic>> permissionReport(Map<String, dynamic> body);
+}

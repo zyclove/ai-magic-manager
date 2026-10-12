@@ -393,7 +393,12 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
             refresh: () =>
                 unawaited(session!.refreshObservationAuthorization()),
             synchronize: () => unawaited(session!.synchronizeObservations()),
-            openSettings: () => unawaited(session!.openObservationSettings()))
+            openSettings: () => unawaited(session!.openObservationSettings()),
+            permissionCandidates: session!.permissionCandidates,
+            loadPermissionCandidates: () =>
+                unawaited(session!.loadPermissionCandidates()),
+            observePermission: (packageName) =>
+                unawaited(session!.observePermission(packageName)))
       ],
       const Divider(),
       Text('设备能力', style: Theme.of(context).textTheme.titleLarge),

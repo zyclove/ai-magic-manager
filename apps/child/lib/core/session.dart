@@ -100,6 +100,8 @@ class ChildSession extends ChangeNotifier {
   int? _accessTimeFloor;
   observation.ObservationView observationView =
       const observation.ObservationView();
+  List<observation.PermissionCandidate> permissionCandidates = const [];
+  String? _permissionCandidatesIdentityKey;
   String? observationErrorCode;
   observation.ObservationAgent? _observationAgent;
   bool _refreshObservationOnIdle = false;
@@ -162,6 +164,13 @@ class ChildSession extends ChangeNotifier {
   }
 
   void _checkIdentityScope() {
+    if (!credentialReady ||
+        !identityReadSucceeded ||
+        (_permissionCandidatesIdentityKey != null &&
+            _permissionCandidatesIdentityKey != _identityKey)) {
+      permissionCandidates = const [];
+      _permissionCandidatesIdentityKey = null;
+    }
     if (!credentialReady ||
         !identityReadSucceeded ||
         (_submissionIdentityKey != null &&
@@ -299,6 +308,8 @@ class ChildSession extends ChangeNotifier {
         _observationAgent?.close();
         _observationAgent = null;
         observationView = const observation.ObservationView();
+        permissionCandidates = const [];
+        _permissionCandidatesIdentityKey = null;
         if (_rulesClosingCount > 0) await _rulesClosing;
         if (_accessClosingCount > 0) await _accessClosing;
         if (_submissionsClosingCount > 0) await _submissionsClosing;
@@ -501,12 +512,57 @@ class ChildSession extends ChangeNotifier {
         } catch (_) {
           observationView = await observer.restore();
           rethrow;
+        } finally {
+          if (observationView.permissionAuthorization?.enabled != true ||
+              observationView.authorization?.inventoryEnabled != true) {
+            permissionCandidates = const [];
+            _permissionCandidatesIdentityKey = null;
+          }
         }
       }, observationOperation: true);
   Future<bool> refreshObservationAuthorization() => _observe(collect: false);
   Future<bool> synchronizeObservations() => _observe(collect: true);
   Future<bool> openObservationSettings() =>
       _observe(collect: false, openSettings: true);
+
+  Future<bool> loadPermissionCandidates() => _run(() async {
+        permissionCandidates = const [];
+        _permissionCandidatesIdentityKey = null;
+        if (!_foreground || !credentialReady) {
+          throw const DeviceIdentityFailure('DEVICE_CREDENTIAL_UNAVAILABLE');
+        }
+        final result = await (await _observer()).permissionCandidates();
+        if (!_foreground) {
+          throw const observation.ObservationFailure('OBSERVATION_PAUSED');
+        }
+        observationView = result.view;
+        permissionCandidates = result.items;
+        _permissionCandidatesIdentityKey = _identityKey;
+      }, observationOperation: true);
+
+  Future<bool> observePermission(String packageName) => _run(() async {
+        if (!_foreground ||
+            !credentialReady ||
+            _permissionCandidatesIdentityKey != _identityKey ||
+            !permissionCandidates
+                .any((item) => item.packageName == packageName)) {
+          throw const observation.ObservationFailure(
+              'OBSERVATION_APPLICATION_NOT_VISIBLE');
+        }
+        final observer = await _observer();
+        try {
+          observationView = await observer.observePermission(packageName);
+        } catch (_) {
+          observationView = await observer.restore();
+          rethrow;
+        } finally {
+          if (observationView.permissionAuthorization?.enabled != true ||
+              observationView.authorization?.inventoryEnabled != true) {
+            permissionCandidates = const [];
+            _permissionCandidatesIdentityKey = null;
+          }
+        }
+      }, observationOperation: true);
 
   Future<ChildRuleReceiver> _rules() async {
     if (!_foreground || _disposed) {
@@ -947,6 +1003,8 @@ class ChildSession extends ChangeNotifier {
       _submissionGeneration++;
       _submissionRefreshOnIdle = submissionFactory != null;
       _observationAgent?.pause();
+      permissionCandidates = const [];
+      _permissionCandidatesIdentityKey = null;
       _refreshObservationOnIdle = true;
       _pairingCode = null;
       _changed();
@@ -985,6 +1043,7 @@ class ChildSession extends ChangeNotifier {
     _pairingCode = null;
     identity.api.close();
     _observationAgent?.close();
+    permissionCandidates = const [];
     super.dispose();
   }
 }

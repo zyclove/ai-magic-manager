@@ -10,7 +10,9 @@ import 'models.dart';
 enum DeviceObservationOperation {
   settings('GET', 'observation-settings'),
   inventory('POST', 'application-inventory'),
-  usage('POST', 'usage-observations');
+  usage('POST', 'usage-observations'),
+  permissionSettings('GET', 'permission-observation-settings'),
+  permissionReport('POST', 'permission-observations');
 
   final String method, path;
   const DeviceObservationOperation(this.method, this.path);
@@ -216,8 +218,12 @@ class DeviceConfigurationTransport {
 
   Future<Map<String, dynamic>> observe(DeviceObservationOperation operation,
       {Map<String, dynamic>? body}) {
-    if ((operation == DeviceObservationOperation.settings) != (body == null) ||
-        body != null && utf8.encode(jsonEncode(body)).length > 1048576) {
+    if ((operation.method == 'GET') != (body == null) ||
+        body != null &&
+            utf8.encode(jsonEncode(body)).length >
+                (operation == DeviceObservationOperation.permissionReport
+                    ? 32768
+                    : 1048576)) {
       throw ArgumentError('Invalid observation request');
     }
     return _request(operation.method, operation.path,
@@ -316,6 +322,17 @@ const _safeCodes = {
   'REPORT_SCOPE_CHANGED',
   'OBSERVATION_NOT_AUTHORIZED',
   'OBSERVATION_AUTHORIZATION_CHANGED',
+  'PERMISSION_OBSERVATION_NOT_AUTHORIZED',
+  'PERMISSION_OBSERVATION_AUTHORIZATION_CHANGED',
+  'PERMISSION_OBSERVATION_SEQUENCE_CONFLICT',
+  'PERMISSION_OBSERVATION_STALE_SEQUENCE',
+  'PERMISSION_OBSERVATION_RATE_LIMITED',
+  'PERMISSION_INVENTORY_NOT_AUTHORIZED',
+  'PERMISSION_INVENTORY_STALE',
+  'PERMISSION_APPLICATION_NOT_VISIBLE',
+  'PERMISSION_APPLICATION_IDENTITY_CHANGED',
+  'PERMISSION_OBSERVATION_TIME_INVALID',
+  'PERMISSION_OBSERVATION_TOO_LARGE',
   'OBSERVATION_REPORT_RATE_LIMITED',
   'USAGE_SEQUENCE_CONFLICT',
   'USAGE_STALE_SEQUENCE',

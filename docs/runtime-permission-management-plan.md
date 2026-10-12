@@ -1,6 +1,6 @@
 # Android 应用权限观察与受管执行契约
 
-状态：后端独立授权、单应用快照接口和保留清理已进入代码；Android 原生单应用权限读取与 Pigeon 模型已接入并完成 debug 包编译。**儿童端在线授权与加密待发上传、管理界面和系统权限执行尚未实现**。后端新路由默认关闭，只有显式设置 `manager.observation.permissions.enabled=true` 才开放本地联调；不应在未补齐儿童端授权撤回、主体删除和真实设备验证前对外开放。现有应用清单授权不能自动扩展成权限状态授权。首期针对 Android 手机/平板与经兼容确认的 Android TV；中国大陆机构合同优先。没有合规 EMM 时，受管执行入口保持不可用。
+状态：后端独立授权、单应用快照接口和保留清理已进入代码；Android 原生单应用权限读取、Pigeon 模型和儿童端按需上传已接入。**管理端授权/详情、主体删除覆盖、真实设备与系统权限执行尚未完成**。后端新路由默认关闭，只有显式设置 `manager.observation.permissions.enabled=true` 且儿童安装设置 `PERMISSION_OBSERVATION_ENABLED=true` 才开放联调；两端开关应在保留删除和设备验证后一起发布。现有应用清单授权不能自动扩展成权限状态授权。首期针对 Android 手机/平板与经兼容确认的 Android TV；中国大陆机构合同优先。没有合规 EMM 时，受管执行入口保持不可用。
 
 ## 1. 用户要完成的事
 
@@ -85,4 +85,6 @@ Android `PackageInfo.requestedPermissions` 是应用清单声明，包含未获�
 
 ## 原生查询阶段记录
 
-儿童端 `ObservationHost.permissionSnapshot` 只接受合法包名且要求应用仍出现在当前用户的启动器可见清单中；使用 `PackageManager.GET_PERMISSIONS` 读取 `android.permission.*` 声明，并通过系统 `PermissionInfo` 区分危险权限。危险权限的 `observedGrant` 来自 `requestedPermissionsFlags` 的授予标志，其他类别返回 `UNKNOWN`；因此它**不是 AppOps 实际访问记录**，不能用于断言相机/麦克风正在使用。最多 64 项，超限整次拒绝；签名摘要、版本号和资料范围与应用清单沿用同一原生来源。Pigeon 21.2.0 的 Dart/Kotlin 生成文件随源一同维护，`PermissionSnapshot.parse` 对名称、分类、授予值、唯一性和范围做二次校验。客户端上报代理与界面尚未接线，所以本阶段**没有真实权限观察上传**。Android debug 构建只说明代码可编译，不替代手机/电视或授权撤回验证。[PackageInfo](https://developer.android.com/reference/android/content/pm/PackageInfo)、[PermissionInfo](https://developer.android.com/reference/android/content/pm/PermissionInfo)
+儿童端 `ObservationHost.permissionSnapshot` 只接受合法包名且要求应用仍出现在当前用户的启动器可见清单中；使用 `PackageManager.GET_PERMISSIONS` 读取 `android.permission.*` 声明，并通过系统 `PermissionInfo` 区分危险权限。危险权限的 `observedGrant` 来自 `requestedPermissionsFlags` 的授予标志，其他类别返回 `UNKNOWN`；因此它**不是 AppOps 实际访问记录**，不能用于断言相机/麦克风正在使用。最多 64 项，超限整次拒绝；签名摘要、版本号和资料范围与应用清单沿用同一原生来源。Pigeon 21.2.0 的 Dart/Kotlin 生成文件随源一同维护，`PermissionSnapshot.parse` 对名称、分类、授予值、唯一性和范围做二次校验。Android debug 构建只说明代码可编译，不替代手机/电视或授权撤回验证。[PackageInfo](https://developer.android.com/reference/android/content/pm/PackageInfo)、[PermissionInfo](https://developer.android.com/reference/android/content/pm/PermissionInfo)
+
+儿童端后续阶段已接入独立在线授权读取、加密待发正文、单调序号、原请求重放与服务器回执核对。用户需在前台明确加载可见应用、选择一个应用；客户端先刷新应用清单，再核对原生返回的资料范围、签名摘要和版本号，采集后再次检查独立授权才上传。权限授权或原有应用清单授权变化时清除旧待发和最近确认状态；本机加密记录从 schema 1 读取后以 schema 2 保存，原有应用清单和使用摘要不会因新增字段被直接丢弃。`PERMISSION_OBSERVATION_ENABLED` 默认为 `false`，当前阶段未做真实网络、Android 进程恢复或管理端端到端验收。
