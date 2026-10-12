@@ -629,7 +629,22 @@ class UsageReportDeviceViewState extends State<UsageReportDeviceView> {
                 leading: const Icon(Icons.tips_and_updates_outlined),
                 title: Text(suggestion.displayName),
                 subtitle: Text(
-                    '近七日有 ${suggestion.days} 天，记录下界达到每天 2 小时。建议与孩子一起复核使用安排。'))
+                    '近七日有 ${suggestion.days} 天，记录下界达到每天 2 小时。建议与孩子一起复核使用安排。')),
+          if (value.status == 'SUGGESTIONS' && widget.onReviewRules != null)
+            Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                    onPressed: widget.onReviewRules,
+                    icon: const Icon(Icons.rule_outlined),
+                    label: const Text('查看现有规则'))),
+          if (value.status == 'INSUFFICIENT_COVERAGE' &&
+              widget.onCheckDevice != null)
+            Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                    onPressed: widget.onCheckDevice,
+                    icon: const Icon(Icons.devices_outlined),
+                    label: const Text('检查设备与观察授权')))
         ],
         const SizedBox(height: 14)
       ],
