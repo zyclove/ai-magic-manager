@@ -1,6 +1,6 @@
 # Android 应用权限观察与受管执行契约
 
-状态：后端独立授权、单应用快照接口和保留清理已进入代码；**原生权限查询、儿童端上传、管理界面和系统权限执行尚未实现**。后端新路由默认关闭，只有显式设置 `manager.observation.permissions.enabled=true` 才开放本地联调；不应在未补齐儿童端授权撤回、主体删除和真实设备验证前对外开放。现有应用清单授权不能自动扩展成权限状态授权。首期针对 Android 手机/平板与经兼容确认的 Android TV；中国大陆机构合同优先。没有合规 EMM 时，受管执行入口保持不可用。
+状态：后端独立授权、单应用快照接口和保留清理已进入代码；Android 原生单应用权限读取与 Pigeon 模型已接入并完成 debug 包编译。**儿童端在线授权与加密待发上传、管理界面和系统权限执行尚未实现**。后端新路由默认关闭，只有显式设置 `manager.observation.permissions.enabled=true` 才开放本地联调；不应在未补齐儿童端授权撤回、主体删除和真实设备验证前对外开放。现有应用清单授权不能自动扩展成权限状态授权。首期针对 Android 手机/平板与经兼容确认的 Android TV；中国大陆机构合同优先。没有合规 EMM 时，受管执行入口保持不可用。
 
 ## 1. 用户要完成的事
 
@@ -82,3 +82,7 @@ Android `PackageInfo.requestedPermissions` 是应用清单声明，包含未获�
 5. 发布前以真实 Android 版本/厂商/TV 样机核对权限读取与变更差异；另核验中国大陆数据处理告知、授权文案、保留删除、合同和供应商条款。当前静态分析/构建或模拟器结果都不能替代这些门槛。
 
 本契约的边界是：**权限请求、当前观察、策略期望、系统执行分别有来源和状态**。任何一层不可用时明确显示未知或不支持，不用推断值填充成功。
+
+## 原生查询阶段记录
+
+儿童端 `ObservationHost.permissionSnapshot` 只接受合法包名且要求应用仍出现在当前用户的启动器可见清单中；使用 `PackageManager.GET_PERMISSIONS` 读取 `android.permission.*` 声明，并通过系统 `PermissionInfo` 区分危险权限。危险权限的 `observedGrant` 来自 `requestedPermissionsFlags` 的授予标志，其他类别返回 `UNKNOWN`；因此它**不是 AppOps 实际访问记录**，不能用于断言相机/麦克风正在使用。最多 64 项，超限整次拒绝；签名摘要、版本号和资料范围与应用清单沿用同一原生来源。Pigeon 21.2.0 的 Dart/Kotlin 生成文件随源一同维护，`PermissionSnapshot.parse` 对名称、分类、授予值、唯一性和范围做二次校验。客户端上报代理与界面尚未接线，所以本阶段**没有真实权限观察上传**。Android debug 构建只说明代码可编译，不替代手机/电视或授权撤回验证。[PackageInfo](https://developer.android.com/reference/android/content/pm/PackageInfo)、[PermissionInfo](https://developer.android.com/reference/android/content/pm/PermissionInfo)

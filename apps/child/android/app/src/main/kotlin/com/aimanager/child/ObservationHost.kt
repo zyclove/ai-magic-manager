@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.content.pm.PermissionInfo
 import android.net.Uri
 import android.os.Build
 import android.os.Handler
@@ -125,6 +126,43 @@ class ObservationHost(private val activity: Activity) : AndroidObservationApi {
                 ((info.applicationInfo?.flags ?: 0) and (android.content.pm.ApplicationInfo.FLAG_SYSTEM or
                     android.content.pm.ApplicationInfo.FLAG_UPDATED_SYSTEM_APP)) != 0)
         }
+    }
+
+    /** Read only one launcher-visible package after the Flutter consent gate has been checked. */
+    @Suppress("DEPRECATION")
+    override fun permissionSnapshot(packageName: String, callback: (Result<NativePermissionSnapshot>) -> Unit) = query(callback) {
+        if (packageName.length > 255 ||
+            !packageName.matches(Regex("[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+")))
+            throw failure("OBSERVATION_SAMPLE_INVALID")
+        if (!launchable().contains(packageName)) throw failure("OBSERVATION_APPLICATION_NOT_VISIBLE")
+        val manager = context.packageManager
+        val signing = if (Build.VERSION.SDK_INT >= 28) PackageManager.GET_SIGNING_CERTIFICATES else PackageManager.GET_SIGNATURES
+        val info = manager.getPackageInfo(packageName, signing or PackageManager.GET_PERMISSIONS)
+        val version = if (Build.VERSION.SDK_INT >= 28) info.longVersionCode else info.versionCode.toLong()
+        if (version < 0 || version > 9007199254740991L) throw failure("OBSERVATION_SAMPLE_INVALID")
+        val names = info.requestedPermissions ?: emptyArray()
+        val flags = info.requestedPermissionsFlags
+        val observed = mutableListOf<NativePermissionFact?>()
+        val seen = hashSetOf<String>()
+        for (index in names.indices) {
+            val name = names[index]
+            // This endpoint describes Android runtime permissions, not app-defined privileges.
+            if (!name.matches(Regex("android\\.permission\\.[A-Z][A-Z0-9_]{1,100}"))) continue
+            if (!seen.add(name)) throw failure("OBSERVATION_SAMPLE_INVALID")
+            val classification = try {
+                val detail = manager.getPermissionInfo(name, 0)
+                val base = if (Build.VERSION.SDK_INT >= 28) detail.protection
+                    else detail.protectionLevel and PermissionInfo.PROTECTION_MASK_BASE
+                if (base == PermissionInfo.PROTECTION_DANGEROUS) "DANGEROUS" else "OTHER"
+            } catch (_: PackageManager.NameNotFoundException) { "UNKNOWN" }
+            val grant = if (classification == "DANGEROUS" && flags != null && index < flags.size)
+                if (flags[index] and PackageInfo.REQUESTED_PERMISSION_GRANTED != 0) "GRANTED" else "DENIED"
+            else "UNKNOWN"
+            observed.add(NativePermissionFact(name, classification, grant))
+            if (observed.size > 64) throw failure("OBSERVATION_LIMIT_EXCEEDED")
+        }
+        NativePermissionSnapshot(packageName, profile(), signingDigests(info), version,
+            System.currentTimeMillis(), observed.sortedBy { it!!.permissionName })
     }
 
     override fun usage(queryStart: Long, queryEnd: Long, callback: (Result<NativeUsageSample>) -> Unit) = query(callback) {

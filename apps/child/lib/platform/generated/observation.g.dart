@@ -107,6 +107,83 @@ class NativeObservedApplication {
   }
 }
 
+class NativePermissionFact {
+  NativePermissionFact({
+    required this.permissionName,
+    required this.classification,
+    required this.observedGrant,
+  });
+
+  String permissionName;
+
+  String classification;
+
+  String observedGrant;
+
+  Object encode() {
+    return <Object?>[
+      permissionName,
+      classification,
+      observedGrant,
+    ];
+  }
+
+  static NativePermissionFact decode(Object result) {
+    result as List<Object?>;
+    return NativePermissionFact(
+      permissionName: result[0]! as String,
+      classification: result[1]! as String,
+      observedGrant: result[2]! as String,
+    );
+  }
+}
+
+class NativePermissionSnapshot {
+  NativePermissionSnapshot({
+    required this.packageName,
+    required this.profile,
+    required this.signingDigests,
+    required this.versionCode,
+    required this.observedAt,
+    required this.permissions,
+  });
+
+  String packageName;
+
+  String profile;
+
+  List<String?> signingDigests;
+
+  int versionCode;
+
+  int observedAt;
+
+  List<NativePermissionFact?> permissions;
+
+  Object encode() {
+    return <Object?>[
+      packageName,
+      profile,
+      signingDigests,
+      versionCode,
+      observedAt,
+      permissions,
+    ];
+  }
+
+  static NativePermissionSnapshot decode(Object result) {
+    result as List<Object?>;
+    return NativePermissionSnapshot(
+      packageName: result[0]! as String,
+      profile: result[1]! as String,
+      signingDigests: (result[2] as List<Object?>?)!.cast<String?>(),
+      versionCode: result[3]! as int,
+      observedAt: result[4]! as int,
+      permissions: (result[5] as List<Object?>?)!.cast<NativePermissionFact?>(),
+    );
+  }
+}
+
 class NativeUsageEntry {
   NativeUsageEntry({
     required this.packageName,
@@ -204,11 +281,17 @@ class _PigeonCodec extends StandardMessageCodec {
     } else if (value is NativeObservedApplication) {
       buffer.putUint8(130);
       writeValue(buffer, value.encode());
-    } else if (value is NativeUsageEntry) {
+    } else if (value is NativePermissionFact) {
       buffer.putUint8(131);
       writeValue(buffer, value.encode());
-    } else if (value is NativeUsageSample) {
+    } else if (value is NativePermissionSnapshot) {
       buffer.putUint8(132);
+      writeValue(buffer, value.encode());
+    } else if (value is NativeUsageEntry) {
+      buffer.putUint8(133);
+      writeValue(buffer, value.encode());
+    } else if (value is NativeUsageSample) {
+      buffer.putUint8(134);
       writeValue(buffer, value.encode());
     } else {
       super.writeValue(buffer, value);
@@ -223,8 +306,12 @@ class _PigeonCodec extends StandardMessageCodec {
       case 130:
         return NativeObservedApplication.decode(readValue(buffer)!);
       case 131:
-        return NativeUsageEntry.decode(readValue(buffer)!);
+        return NativePermissionFact.decode(readValue(buffer)!);
       case 132:
+        return NativePermissionSnapshot.decode(readValue(buffer)!);
+      case 133:
+        return NativeUsageEntry.decode(readValue(buffer)!);
+      case 134:
         return NativeUsageSample.decode(readValue(buffer)!);
       default:
         return super.readValueOfType(type, buffer);
@@ -303,6 +390,36 @@ class AndroidObservationApi {
     } else {
       return (pigeonVar_replyList[0] as List<Object?>?)!
           .cast<NativeObservedApplication?>();
+    }
+  }
+
+  Future<NativePermissionSnapshot> permissionSnapshot(
+      String packageName) async {
+    final String pigeonVar_channelName =
+        'dev.flutter.pigeon.child.AndroidObservationApi.permissionSnapshot$pigeonVar_messageChannelSuffix';
+    final BasicMessageChannel<Object?> pigeonVar_channel =
+        BasicMessageChannel<Object?>(
+      pigeonVar_channelName,
+      pigeonChannelCodec,
+      binaryMessenger: pigeonVar_binaryMessenger,
+    );
+    final List<Object?>? pigeonVar_replyList =
+        await pigeonVar_channel.send(<Object?>[packageName]) as List<Object?>?;
+    if (pigeonVar_replyList == null) {
+      throw _createConnectionError(pigeonVar_channelName);
+    } else if (pigeonVar_replyList.length > 1) {
+      throw PlatformException(
+        code: pigeonVar_replyList[0]! as String,
+        message: pigeonVar_replyList[1] as String?,
+        details: pigeonVar_replyList[2],
+      );
+    } else if (pigeonVar_replyList[0] == null) {
+      throw PlatformException(
+        code: 'null-error',
+        message: 'Host platform returned null value for non-null return value.',
+      );
+    } else {
+      return (pigeonVar_replyList[0] as NativePermissionSnapshot?)!;
     }
   }
 

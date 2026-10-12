@@ -111,6 +111,63 @@ data class NativeObservedApplication (
 }
 
 /** Generated class from Pigeon that represents data sent in messages. */
+data class NativePermissionFact (
+  val permissionName: String,
+  val classification: String,
+  val observedGrant: String
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): NativePermissionFact {
+      val permissionName = pigeonVar_list[0] as String
+      val classification = pigeonVar_list[1] as String
+      val observedGrant = pigeonVar_list[2] as String
+      return NativePermissionFact(permissionName, classification, observedGrant)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      permissionName,
+      classification,
+      observedGrant,
+    )
+  }
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
+data class NativePermissionSnapshot (
+  val packageName: String,
+  val profile: String,
+  val signingDigests: List<String?>,
+  val versionCode: Long,
+  val observedAt: Long,
+  val permissions: List<NativePermissionFact?>
+)
+ {
+  companion object {
+    fun fromList(pigeonVar_list: List<Any?>): NativePermissionSnapshot {
+      val packageName = pigeonVar_list[0] as String
+      val profile = pigeonVar_list[1] as String
+      val signingDigests = pigeonVar_list[2] as List<String?>
+      val versionCode = pigeonVar_list[3].let { num -> if (num is Int) num.toLong() else num as Long }
+      val observedAt = pigeonVar_list[4].let { num -> if (num is Int) num.toLong() else num as Long }
+      val permissions = pigeonVar_list[5] as List<NativePermissionFact?>
+      return NativePermissionSnapshot(packageName, profile, signingDigests, versionCode, observedAt, permissions)
+    }
+  }
+  fun toList(): List<Any?> {
+    return listOf(
+      packageName,
+      profile,
+      signingDigests,
+      versionCode,
+      observedAt,
+      permissions,
+    )
+  }
+}
+
+/** Generated class from Pigeon that represents data sent in messages. */
 data class NativeUsageEntry (
   val packageName: String,
   val displayName: String,
@@ -187,10 +244,20 @@ private object ObservationApiPigeonCodec : StandardMessageCodec() {
       }
       131.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
-          NativeUsageEntry.fromList(it)
+          NativePermissionFact.fromList(it)
         }
       }
       132.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          NativePermissionSnapshot.fromList(it)
+        }
+      }
+      133.toByte() -> {
+        return (readValue(buffer) as? List<Any?>)?.let {
+          NativeUsageEntry.fromList(it)
+        }
+      }
+      134.toByte() -> {
         return (readValue(buffer) as? List<Any?>)?.let {
           NativeUsageSample.fromList(it)
         }
@@ -208,12 +275,20 @@ private object ObservationApiPigeonCodec : StandardMessageCodec() {
         stream.write(130)
         writeValue(stream, value.toList())
       }
-      is NativeUsageEntry -> {
+      is NativePermissionFact -> {
         stream.write(131)
         writeValue(stream, value.toList())
       }
-      is NativeUsageSample -> {
+      is NativePermissionSnapshot -> {
         stream.write(132)
+        writeValue(stream, value.toList())
+      }
+      is NativeUsageEntry -> {
+        stream.write(133)
+        writeValue(stream, value.toList())
+      }
+      is NativeUsageSample -> {
+        stream.write(134)
         writeValue(stream, value.toList())
       }
       else -> super.writeValue(stream, value)
@@ -226,6 +301,7 @@ private object ObservationApiPigeonCodec : StandardMessageCodec() {
 interface AndroidObservationApi {
   fun inspect(callback: (Result<NativeObservationFacts>) -> Unit)
   fun inventory(callback: (Result<List<NativeObservedApplication?>>) -> Unit)
+  fun permissionSnapshot(packageName: String, callback: (Result<NativePermissionSnapshot>) -> Unit)
   fun usage(queryStart: Long, queryEnd: Long, callback: (Result<NativeUsageSample>) -> Unit)
   fun openUsageSettings(callback: (Result<Unit>) -> Unit)
 
@@ -261,6 +337,26 @@ interface AndroidObservationApi {
         if (api != null) {
           channel.setMessageHandler { _, reply ->
             api.inventory{ result: Result<List<NativeObservedApplication?>> ->
+              val error = result.exceptionOrNull()
+              if (error != null) {
+                reply.reply(wrapError(error))
+              } else {
+                val data = result.getOrNull()
+                reply.reply(wrapResult(data))
+              }
+            }
+          }
+        } else {
+          channel.setMessageHandler(null)
+        }
+      }
+      run {
+        val channel = BasicMessageChannel<Any?>(binaryMessenger, "dev.flutter.pigeon.child.AndroidObservationApi.permissionSnapshot$separatedMessageChannelSuffix", codec)
+        if (api != null) {
+          channel.setMessageHandler { message, reply ->
+            val args = message as List<Any?>
+            val packageNameArg = args[0] as String
+            api.permissionSnapshot(packageNameArg) { result: Result<NativePermissionSnapshot> ->
               val error = result.exceptionOrNull()
               if (error != null) {
                 reply.reply(wrapError(error))

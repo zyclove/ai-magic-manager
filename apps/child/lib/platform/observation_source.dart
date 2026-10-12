@@ -4,7 +4,8 @@ import 'package:flutter/services.dart';
 import 'generated/observation.g.dart';
 
 /// Pigeon 负责跨语言序列化；此层只转换领域模型和固定诊断。
-class AndroidObservationSource implements ObservationSource {
+class AndroidObservationSource
+    implements ObservationSource, PermissionObservationSource {
   final AndroidObservationApi api;
   AndroidObservationSource({AndroidObservationApi? api})
       : api = api ?? AndroidObservationApi();
@@ -25,7 +26,8 @@ class AndroidObservationSource implements ObservationSource {
         'OBSERVATION_LIMIT_EXCEEDED',
         'USAGE_ACCESS_NOT_GRANTED',
         'OBSERVATION_USAGE_UNAVAILABLE',
-        'OBSERVATION_SETTINGS_UNAVAILABLE'
+        'OBSERVATION_SETTINGS_UNAVAILABLE',
+        'OBSERVATION_APPLICATION_NOT_VISIBLE'
       };
       throw ObservationFailure(codes.contains(error.code)
           ? error.code
@@ -90,4 +92,32 @@ class AndroidObservationSource implements ObservationSource {
       });
   @override
   Future<void> openUsageSettings() => _native(api.openUsageSettings);
+
+  @override
+  Future<PermissionSnapshot> permissionSnapshot(String packageName) =>
+      _native(() async {
+        final value = await api.permissionSnapshot(packageName);
+        if (value.permissions.any((fact) => fact == null) ||
+            value.signingDigests.any((digest) => digest == null)) {
+          throw const ObservationFailure('OBSERVATION_SAMPLE_INVALID');
+        }
+        final snapshot = PermissionSnapshot.parse({
+          'packageName': value.packageName,
+          'profile': value.profile,
+          'signingDigests': value.signingDigests.cast<String>(),
+          'versionCode': value.versionCode,
+          'observedAt': value.observedAt,
+          'permissions': value.permissions
+              .map((fact) => {
+                    'permissionName': fact!.permissionName,
+                    'classification': fact.classification,
+                    'observedGrant': fact.observedGrant
+                  })
+              .toList()
+        });
+        if (snapshot.packageName != packageName) {
+          throw const ObservationFailure('OBSERVATION_SAMPLE_INVALID');
+        }
+        return snapshot;
+      });
 }

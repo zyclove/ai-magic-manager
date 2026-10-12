@@ -39,6 +39,32 @@ class NativeObservedApplication {
   bool systemApplication;
 }
 
+class NativePermissionFact {
+  NativePermissionFact(
+      {required this.permissionName,
+      required this.classification,
+      required this.observedGrant});
+  String permissionName;
+  String classification;
+  String observedGrant;
+}
+
+class NativePermissionSnapshot {
+  NativePermissionSnapshot(
+      {required this.packageName,
+      required this.profile,
+      required this.signingDigests,
+      required this.versionCode,
+      required this.observedAt,
+      required this.permissions});
+  String packageName;
+  String profile;
+  List<String?> signingDigests;
+  int versionCode;
+  int observedAt;
+  List<NativePermissionFact?> permissions;
+}
+
 class NativeUsageEntry {
   NativeUsageEntry(
       {required this.packageName,
@@ -75,6 +101,8 @@ abstract class AndroidObservationApi {
   NativeObservationFacts inspect();
   @async
   List<NativeObservedApplication?> inventory();
+  @async
+  NativePermissionSnapshot permissionSnapshot(String packageName);
   @async
   NativeUsageSample usage(int queryStart, int queryEnd);
   @async
