@@ -1,0 +1,129 @@
+{
+  "stage": "parent-build-gate",
+  "applicationVersion": "1.0.0",
+  "recordedAt": "2026-10-12T07:39:35.590962+00:00",
+  "base": "731612d07f6b9d45799db1164d58b391aa9c4ff2",
+  "sourceFiles": [
+    {
+      "path": "scripts/build-deployment.ps1",
+      "sha256": "e47129d85b37621cbf2c944c6f19eb7a6ef49685800c45e763045c903817cc03"
+    },
+    {
+      "path": "scripts/tests/test_deployment_build.py",
+      "sha256": "f64a342bf976d255918745457d5d9e17412d4984b5c4d25051c0ffc1841d09f6"
+    },
+    {
+      "path": "docs/deployment-runbook.md",
+      "sha256": "7b090e7f12b7062dc0901d61a110e3a126b865f3dcd29697af80cae691c80174"
+    },
+    {
+      "path": "docs/parent-build-gate-plan.md",
+      "sha256": "36e481bbb599f7ff8523b4672163f2c7004acb7d3aa9c21cd7d1f44cb9956656"
+    }
+  ],
+  "hashNormalization": "CRLF to LF",
+  "tests": {
+    "red": {
+      "total": 8,
+      "failed": 5
+    },
+    "greenDeployment": {
+      "total": 19,
+      "passed": 19
+    },
+    "allDeploymentAndHelm": {
+      "total": 22,
+      "passed": 22,
+      "skipped": 0
+    },
+    "reviewRed": {
+      "total": 9,
+      "passed": 8,
+      "failed": 1
+    },
+    "finalAllDeploymentAndHelm": {
+      "total": 23,
+      "passed": 23,
+      "skipped": 0
+    }
+  },
+  "logs": {
+    "red": {
+      "path": ".local/parent-build-gate-red.log",
+      "sha256": "f892923d55ac518f02b399ad932794e9a6e0f2255af8f1b4b844e5c69fb56b32"
+    },
+    "green": {
+      "path": ".local/parent-build-gate-green.log",
+      "sha256": "3179e1140a3a4908e6ce82d17d21764a3fe00d3a3e6b4737d4ff830bc064467a"
+    },
+    "full": {
+      "path": ".local/parent-build-gate-full.log",
+      "sha256": "e89e36b947f3cacff365d81626426a43048d72324abed3be7c88b01f55f9bf3d"
+    },
+    "review-red": {
+      "path": ".local/parent-build-gate-review-red.log",
+      "sha256": "852101655e152ab5a5107ebe5689abee1cd7f0f3962f4fe4733993f6a6b3395b"
+    },
+    "review-green": {
+      "path": ".local/parent-build-gate-review-green.log",
+      "sha256": "4c3328b2718bc6503d1d28a113873c2b59e398406e6ca94eafdf96db31a0e426"
+    }
+  },
+  "scope": [
+    "parent required pubspec before compiler invocation",
+    "same application list drives snapshot and dependency/analysis/test coverage",
+    "parent failure preserves previous manifest/environment selection",
+    "guardian-only web release",
+    "not-present test state recorded honestly"
+  ],
+  "review": {
+    "status": "important_fixed_with_red_green",
+    "reviewer": "/root/parent_build_gate_final_review",
+    "model": "gpt-6-astra",
+    "reasoningEffort": "high",
+    "critical": 0,
+    "important": 1,
+    "minor": 0,
+    "unresolvedImportant": 0,
+    "fixPasses": 1,
+    "reReviewPerformed": false,
+    "finding": "Directory named parent/pubspec.yaml was accepted then silently skipped",
+    "fix": "Require Leaf in source preflight and fail rather than continue for missing snapshot manifests",
+    "regression": "test_parent_manifest_directory_fails_before_any_compiler_runs",
+    "verification": "RED9tests1fail -> GREENall23/23",
+    "declinedToJudgeRulings": [
+      {
+        "decision": "Parent is required for fresh1.0.0 source; incomplete older snapshots fail",
+        "reason": "All committed applications must participate in release gates",
+        "costIfWrong": "Older snapshots lacking parent cannot use this new build script"
+      },
+      {
+        "decision": "Treat compiler doubles only as orchestration evidence",
+        "reason": "The tests exercise real snapshot/manifest/publication logic, not actual SDK compiler results",
+        "costIfWrong": "Real Flutter/Dart/Maven integration still needs a separate frozen-source build"
+      },
+      {
+        "decision": "Parent app functionality, APK signing, real IdP and device acceptance remain with their dedicated stage",
+        "reason": "This patch edits release orchestration rather than parent runtime source",
+        "costIfWrong": "This stage alone does not establish installable production parent app"
+      },
+      {
+        "decision": "Exclude unrelated child-help commit and shared WIP from this review",
+        "reason": "Child-help has its own source/test evidence, other WIP remains owner-controlled",
+        "costIfWrong": "Latest combined product requires integrated acceptance"
+      },
+      {
+        "decision": "Do not declare overall product production-ready",
+        "reason": "Capacity, native enforcement, external services and complete erasure remain outstanding",
+        "costIfWrong": "Operational delivery remains incomplete"
+      }
+    ]
+  },
+  "runtimeUpdated": false,
+  "limitations": [
+    "Real PowerShell/manifest/snapshot/publication logic with controlled Maven/Flutter/Dart compiler boundaries; no new real SDK/APK/IdP/device acceptance",
+    "No signed parent native release or parent Web deployment",
+    "Parent UI/source controlled by another thread and excluded from this patch",
+    "Production capacity, full data erasure and external service delivery remain incomplete"
+  ]
+}

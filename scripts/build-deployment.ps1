@@ -20,6 +20,7 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'deployment-common.ps1')
 $context = Get-DeploymentContext $Directory
 $source = [IO.Path]::GetFullPath($SourceDirectory, $context.Repository)
+$applicationPaths = @('apps/guardian', 'apps/child', 'apps/parent')
 $interopPaths = [ordered]@{
     'device.policy.package' = 'packages/device_policy'
     'device.identity.package' = 'packages/device_identity'
@@ -31,9 +32,9 @@ $interopPaths = [ordered]@{
     'usage.report.guardian.package' = 'apps/guardian'
     'diagnostic.guardian.package' = 'apps/guardian'
 }
-$required = @('backend/pom.xml', 'packages/device_operations/pubspec.yaml') + @($interopPaths.Values | Select-Object -Unique | ForEach-Object { "$_/pubspec.yaml" })
+$required = @('backend/pom.xml', 'packages/device_operations/pubspec.yaml') + @(@($applicationPaths) + @($interopPaths.Values) | Select-Object -Unique | ForEach-Object { "$_/pubspec.yaml" })
 foreach ($name in $required) {
-    if (-not (Test-Path -LiteralPath (Join-Path $source $name))) { throw 'Source snapshot is missing a required project.' }
+    if (-not (Test-Path -LiteralPath (Join-Path $source $name) -PathType Leaf)) { throw 'Source snapshot is missing a required project file.' }
 }
 foreach ($command in @($MavenCommand, $FlutterCommand)) {
     if (-not (Get-Command $command -ErrorAction SilentlyContinue)) { throw 'Configure Maven and Flutter executable paths before building.' }
@@ -56,11 +57,11 @@ function CopySourceTree([string]$From, [string]$To) {
         else { Copy-Item -LiteralPath $entry.FullName -Destination (Join-Path $To $entry.Name) }
     }
 }
-foreach ($name in @('backend', 'apps/guardian', 'apps/child', 'packages')) { CopySourceTree (Join-Path $source $name) (Join-Path $snapshot $name) }
+foreach ($name in @('backend', 'packages') + $applicationPaths) { CopySourceTree (Join-Path $source $name) (Join-Path $snapshot $name) }
 $projects = @(
-    foreach ($path in @('apps/guardian', 'apps/child') + @(Get-ChildItem -LiteralPath (Join-Path $snapshot 'packages') -Filter 'pubspec.yaml' -Recurse -File | Sort-Object FullName | ForEach-Object { [IO.Path]::GetRelativePath($snapshot, $_.DirectoryName).Replace('\', '/') })) {
+    foreach ($path in $applicationPaths + @(Get-ChildItem -LiteralPath (Join-Path $snapshot 'packages') -Filter 'pubspec.yaml' -Recurse -File | Sort-Object FullName | ForEach-Object { [IO.Path]::GetRelativePath($snapshot, $_.DirectoryName).Replace('\', '/') })) {
         $pubspecPath = Join-Path $snapshot "$path/pubspec.yaml"
-        if (-not (Test-Path -LiteralPath $pubspecPath -PathType Leaf)) { continue }
+        if (-not (Test-Path -LiteralPath $pubspecPath -PathType Leaf)) { throw 'A project manifest is missing from the source snapshot.' }
         $pubspec = Get-Content -LiteralPath $pubspecPath -Raw
         $toolkit = if ($pubspec -match '(?m)^\s+sdk:\s*flutter\s*$') { 'flutter' } else { 'dart' }
         @{ Path=$path; Toolkit=$toolkit; Command=$(if ($toolkit -eq 'flutter') { $FlutterCommand } else { $DartCommand }); Label=$path.Replace('/', '-').Replace('_', '-') }

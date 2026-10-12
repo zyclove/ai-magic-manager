@@ -71,9 +71,9 @@ Compose secrets 采用文件挂载，环境配置只有文件路径。业务密�
 
 另建环境可传入 `-Directory .local/another-deployment -ProjectName another-manager -EdgePort 18091 -PublicUrl http://localhost:18091`，后续脚本传相同 `-Directory`。独立项目拥有独立数据库卷与网络，端口必须与公开 origin 一致。
 
-构建要求完整的首版源码，复制后端、管理台、儿童端及全部内部包到独立快照。先为两个应用和 `packages/` 下所有 Dart/Flutter 工程（包括组件示例）准备依赖，再执行后端 `verify`；策略、身份、访问申请、观察、报表、诊断及儿童端 HTTP 联调均使用这份快照的客户端路径。每个工程使用对应的 Dart/Flutter 工具执行分析及已有测试，最后生成管理台 Web 发布物。Windows 上后端启动 Dart 使用 SDK 的直接可执行文件；可用 `-DartCommand` 显式指定。
+构建要求完整的首版源码，复制后端、管理台、儿童端、家长 Android 端及全部内部包到独立快照。三个应用的 pubspec 均为必需输入，缺失时在调用任何编译器之前停止。先为三个应用和 `packages/` 下所有 Dart/Flutter 工程（包括组件示例）准备依赖，再执行后端 `verify`；策略、身份、访问申请、观察、报表、诊断及儿童端 HTTP 联调均使用这份快照的客户端路径。每个工程使用对应的 Dart/Flutter 工具执行分析及已有测试，最后生成管理台 Web 发布物。Windows 上后端启动 Dart 使用 SDK 的直接可执行文件；可用 `-DartCommand` 显式指定。
 
-已缓存全部依赖的环境可使用 `-Offline`，同时限制 Maven 与 Pub 的依赖解析；首次准备环境不要启用此参数。缺失依赖、分析或测试失败会中止构建，原有发布清单与产物选择保持不变。儿童端的 Flutter 检查和 HTTP 联调不代表 Android APK、系统能力或真机已验收；这些仍走独立的原生与真机流程。
+已缓存全部依赖的环境可使用 `-Offline`，同时限制 Maven 与 Pub 的依赖解析；首次准备环境不要启用此参数。缺失依赖、分析或测试失败会中止构建，原有发布清单与产物选择保持不变。儿童端与家长端的 Flutter 检查不代表 Android APK、系统能力或真机已验收；这些仍走独立的原生与真机流程。发布脚本只构建管理台 Web 产物，不尝试把原生家长端编译成 Web 或声称已签名发布。家长端没有测试文件时，清单明确记为 `not-present`；有测试时必须运行且通过，否则保留此前发布选择。
 
 构建结果位于唯一 `artifacts/release-<id>/`；`release-manifest.json` 记录源码文件哈希、JAR/JS 哈希、公开 origin、参与验证的工程及联调路径属性。没有测试目录的组件标注 `not-present`，不宣称测试通过。构建不会覆盖运行中的 JAR 或现有管理台目录，启动前会拒绝被修改的主产物或指向不同产物的 Compose 配置。
 

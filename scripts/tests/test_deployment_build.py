@@ -14,7 +14,7 @@ import uuid
 ROOT = Path(__file__).resolve().parents[2]
 PWSH = shutil.which("pwsh")
 PROJECTS = {
-    "apps/guardian": "flutter", "apps/child": "flutter",
+    "apps/guardian": "flutter", "apps/child": "flutter", "apps/parent": "flutter",
     "packages/device_operations": "flutter", "packages/usage_report_ui": "flutter",
     "packages/device_operations/example": "flutter",
     "packages/device_policy": "dart", "packages/device_identity": "dart",
@@ -74,7 +74,7 @@ $toolArgs = @($args)
 $toolName = [IO.Path]::GetFileNameWithoutExtension($MyInvocation.MyCommand.Path)
 $cwd = (Get-Location).Path
 @{tool=$toolName; cwd=$cwd; arguments=$toolArgs} | ConvertTo-Json -Compress -Depth 5 | Add-Content -LiteralPath $env:BUILD_TEST_CALLS
-if ($env:BUILD_TEST_FAIL -and $cwd.Replace('\','/').EndsWith($env:BUILD_TEST_FAIL) -and $toolArgs[0] -eq 'analyze') { exit 23 }
+if ($env:BUILD_TEST_FAIL -and $cwd.Replace('\','/').EndsWith($env:BUILD_TEST_FAIL) -and $toolArgs[0] -eq $env:BUILD_TEST_FAIL_ACTION) { exit 23 }
 if ($toolName -eq 'maven') {
     $index = [Array]::IndexOf($toolArgs, '-f')
     $target = Join-Path (Split-Path $toolArgs[$index + 1] -Parent) 'target'
@@ -95,9 +95,10 @@ exit 0
         self.assertEqual(self.directory.resolve().parent, (ROOT / ".local").resolve())
         shutil.rmtree(self.directory)
 
-    def build(self, fail="", extra=()):
+    def build(self, fail="", extra=(), fail_action="analyze"):
         env = os.environ.copy()
-        env.update(BUILD_TEST_CALLS=str(self.calls), BUILD_TEST_FAIL=fail)
+        env.update(BUILD_TEST_CALLS=str(self.calls), BUILD_TEST_FAIL=fail,
+                   BUILD_TEST_FAIL_ACTION=fail_action)
         return subprocess.run([
             PWSH, "-NoProfile", "-File", str(ROOT / "scripts/build-deployment.ps1"),
             "-Directory", str(self.deployment), "-SourceDirectory", str(self.source),
@@ -136,6 +137,13 @@ exit 0
         self.assertEqual(set(coverage), set(PROJECTS))
         self.assertEqual(coverage["packages/device_cleanup"]["tests"], "not-present")
         self.assertEqual(coverage["apps/child"]["tests"], "passed")
+        self.assertEqual(coverage["apps/parent"]["tests"], "passed")
+        self.assertTrue(any(entry["path"] == "apps/parent/pubspec.yaml"
+                            for entry in manifest["sourceFiles"]))
+        release_calls = [call for call in calls if call["arguments"][0] == "build"]
+        self.assertEqual(len(release_calls), 1, "Native app must not be built as Web")
+        self.assertEqual(Path(release_calls[0]["cwd"]), snapshot / "apps/guardian")
+        self.assertEqual(release_calls[0]["arguments"][:2], ["build", "web"])
         self.assertEqual(manifest["applicationVersion"], "1.0.0")
         self.assertFalse(any("stale.marker" in entry["path"] for entry in manifest["sourceFiles"]))
         self.assertFalse((self.source / "backend/target").exists(), "Build polluted input source")
@@ -145,6 +153,50 @@ exit 0
         result = self.build()
         self.assertNotEqual(result.returncode, 0, "Incomplete release source was accepted")
         self.assertFalse(self.calls.exists(), "Incomplete source invoked compilers")
+
+    def test_missing_parent_fails_before_any_compiler_runs(self):
+        (self.source / "apps/parent/pubspec.yaml").unlink()
+        result = self.build()
+        self.assertNotEqual(result.returncode, 0, "Parent source silently omitted")
+        self.assertFalse(self.calls.exists(), "Incomplete source invoked compilers")
+        self.assertEqual((self.deployment / ".env").read_text(), self.old_env)
+
+    def test_parent_manifest_directory_fails_before_any_compiler_runs(self):
+        pubspec = self.source / "apps/parent/pubspec.yaml"
+        pubspec.unlink()
+        pubspec.mkdir()
+        manifest = self.deployment / "release-manifest.json"
+        manifest.write_text('{"previous":"release"}', encoding="utf-8")
+        result = self.build()
+        self.assertNotEqual(result.returncode, 0, "Directory accepted as required manifest")
+        self.assertFalse(self.calls.exists(), "Invalid source invoked compilers")
+        self.assertEqual(manifest.read_text(), '{"previous":"release"}')
+        self.assertEqual((self.deployment / ".env").read_text(), self.old_env)
+
+    def test_parent_analysis_failure_keeps_previous_release_selected(self):
+        self.assert_parent_failure_preserves_release("analyze")
+
+    def test_parent_test_failure_keeps_previous_release_selected(self):
+        self.assert_parent_failure_preserves_release("test")
+
+    def assert_parent_failure_preserves_release(self, action):
+        manifest = self.deployment / "release-manifest.json"
+        manifest.write_text('{"previous":"release"}', encoding="utf-8")
+        result = self.build(fail="apps/parent", fail_action=action)
+        self.assertNotEqual(result.returncode, 0, f"Parent {action} failure was ignored")
+        self.assertEqual(manifest.read_text(), '{"previous":"release"}')
+        self.assertEqual((self.deployment / ".env").read_text(), self.old_env)
+        self.assertFalse(any(call["arguments"][0] == "build" for call in self.read_calls()))
+
+    def test_parent_without_tests_is_recorded_without_native_release_claim(self):
+        (self.source / "apps/parent/test/example_test.dart").unlink()
+        result = self.build()
+        self.assertEqual(result.returncode, 0, result.stderr)
+        manifest = json.loads((self.deployment / "release-manifest.json").read_text(encoding="utf-8-sig"))
+        coverage = {project["path"]: project for project in manifest["verifiedProjects"]}
+        self.assertIn("apps/parent", coverage)
+        self.assertEqual(coverage["apps/parent"]["tests"], "not-present")
+        self.assertNotIn("parentSha256", manifest)
 
     def test_client_analysis_failure_keeps_previous_release_selected(self):
         manifest = self.deployment / "release-manifest.json"
