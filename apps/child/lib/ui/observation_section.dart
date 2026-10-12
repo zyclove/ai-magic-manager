@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:device_observation/device_observation.dart';
 import 'package:flutter/material.dart';
 import 'design.dart';
@@ -111,6 +113,7 @@ class ObservationSection extends StatelessWidget {
 
   Future<void> _choosePermissionApp(BuildContext context) async {
     final search = TextEditingController();
+    final television = view.platform?.television == true;
     try {
       final selected = await showDialog<String>(
           context: context,
@@ -123,15 +126,24 @@ class ObservationSection extends StatelessWidget {
                         app.displayName.toLowerCase().contains(query) ||
                         app.packageName.toLowerCase().contains(query))
                     .toList(growable: false);
+                final size = MediaQuery.sizeOf(dialogContext);
+                final usableHeight =
+                    size.height - MediaQuery.viewInsetsOf(dialogContext).bottom;
                 return AlertDialog(
+                    scrollable: true,
                     title: const Text('选择要查看权限的应用'),
                     content: SizedBox(
-                        width: 500,
-                        height: 450,
+                        width: math.min(500, size.width * 0.78),
+                        height: math.min(450, usableHeight * 0.6),
                         child: Column(children: [
+                          if (television) ...[
+                            const Text('使用方向键选择应用，按确认键查看权限；需要筛选时移到搜索框。'),
+                            const SizedBox(height: 12)
+                          ],
                           TextField(
                               controller: search,
                               onChanged: (_) => update(() {}),
+                              textInputAction: TextInputAction.search,
                               decoration: const InputDecoration(
                                   labelText: '搜索应用名或包名',
                                   prefixIcon: Icon(Icons.search))),
@@ -144,7 +156,16 @@ class ObservationSection extends StatelessWidget {
                                       itemBuilder: (context, index) {
                                         final app = shown[index];
                                         return ListTile(
-                                            title: Text(app.displayName),
+                                            autofocus: television && index == 0,
+                                            focusColor: const Color(0xFFD7ECE7),
+                                            minVerticalPadding:
+                                                television ? 18 : null,
+                                            title: Text(app.displayName,
+                                                style: television
+                                                    ? Theme.of(context)
+                                                        .textTheme
+                                                        .titleMedium
+                                                    : null),
                                             subtitle: Text(
                                                 '${app.packageName} · ${app.profile}'),
                                             onTap: () => Navigator.pop(
@@ -154,6 +175,7 @@ class ObservationSection extends StatelessWidget {
                         ])),
                     actions: [
                       TextButton(
+                          autofocus: television && shown.isEmpty,
                           onPressed: () => Navigator.pop(dialogContext),
                           child: const Text('取消'))
                     ]);
