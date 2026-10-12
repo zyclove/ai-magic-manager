@@ -297,26 +297,31 @@ class _PermissionObservationPanelState
               runSpacing: 12,
               crossAxisAlignment: WrapCrossAlignment.center,
               children: [
-                SizedBox(
-                    width: 360,
-                    child: DropdownButtonFormField<String>(
-                        value: unique.containsKey(selectedPackage)
-                            ? selectedPackage
-                            : null,
-                        decoration: const InputDecoration(labelText: '选择可见应用'),
-                        items: unique.values
-                            .map((app) => DropdownMenuItem(
-                                value: app.packageName,
-                                child: Text(
-                                    '${app.displayName} · ${app.packageName}',
-                                    overflow: TextOverflow.ellipsis)))
-                            .toList(),
-                        onChanged: busy
-                            ? null
-                            : (value) => setState(() {
-                                  selectedPackage = value;
-                                  result = null;
-                                }))),
+                LayoutBuilder(
+                    builder: (context, constraints) => SizedBox(
+                        width: constraints.maxWidth < 360
+                            ? constraints.maxWidth
+                            : 360,
+                        child: DropdownButtonFormField<String>(
+                            isExpanded: true,
+                            value: unique.containsKey(selectedPackage)
+                                ? selectedPackage
+                                : null,
+                            decoration:
+                                const InputDecoration(labelText: '选择可见应用'),
+                            items: unique.values
+                                .map((app) => DropdownMenuItem(
+                                    value: app.packageName,
+                                    child: Text(
+                                        '${app.displayName} · ${app.packageName}',
+                                        overflow: TextOverflow.ellipsis)))
+                                .toList(),
+                            onChanged: busy
+                                ? null
+                                : (value) => setState(() {
+                                      selectedPackage = value;
+                                      result = null;
+                                    })))),
                 FilledButton.icon(
                     onPressed: busy || selectedPackage == null ? null : read,
                     icon: const Icon(Icons.fact_check_outlined),

@@ -1,6 +1,6 @@
 # Android 应用权限观察与受管执行契约
 
-状态：后端独立授权、单应用快照接口和保留清理已进入代码；Android 原生单应用权限读取、Pigeon 模型、儿童端按需上传及监护人端授权/结果界面已接入。**主体删除覆盖的并行改动尚未提交核对，真实设备/网络端到端与系统权限执行尚未完成**。后端新路由默认关闭，只有显式设置 `manager.observation.permissions.enabled=true` 且儿童端和监护人端构建均设置 `PERMISSION_OBSERVATION_ENABLED=true` 才开放联调；三端开关应在保留删除和设备验证后一起发布。现有应用清单授权不能自动扩展成权限状态授权。首期针对 Android 手机/平板与经兼容确认的 Android TV；中国大陆机构合同优先。没有合规 EMM 时，受管执行入口保持不可用。
+状态：后端独立授权、单应用快照接口、保留清理和主体删除覆盖已进入代码及 1.0.0 初始化基线；Android 原生单应用权限读取、Pigeon 模型、儿童端按需上传及监护人端授权/结果界面已接入。**真实设备/网络端到端、Android TV 兼容及系统权限执行尚未完成**。后端新路由默认关闭，只有显式设置 `manager.observation.permissions.enabled=true` 且儿童端和监护人端构建均设置 `PERMISSION_OBSERVATION_ENABLED=true` 才开放联调；三端开关应在设备与端到端验证后一起发布。现有应用清单授权不能自动扩展成权限状态授权。首期针对 Android 手机/平板与经兼容确认的 Android TV；中国大陆机构合同优先。没有合规 EMM 时，受管执行入口保持不可用。主体删除与初始化阶段证据见[权限观察初始化记录](permission-observation-initialization-plan.md)。
 
 ## 1. 用户要完成的事
 
@@ -30,7 +30,7 @@ Android `PackageInfo.requestedPermissions` 是应用清单声明，包含未获�
 - 管理端 `GET/PUT /api/v1/tenants/{tenantId}/devices/{deviceId}/permission-observation-settings`；PUT 使用近期 MFA、`If-Match` 和明确原因。设备端 `GET /api/v1/device-api/permission-observation-settings` 只回当前注册周期的版本与开关，不返回其他设备数据。
 - 设备端 `POST /api/v1/device-api/permission-observations`：`reportId`、单设备递增 `sequence`、`authorizationVersion`、`packageName`、`profile`、签名摘要、版本号、`observedAt`、`source=ANDROID_PACKAGE_MANAGER`、权限条目。服务端以序号和正文哈希对**当前快照**幂等，旧序号或同序号异文返回冲突，旧授权版本拒收。当前代码要求应用匹配同注册周期**最近 15 分钟**的已授权应用清单，且版本号与签名摘要相同；服务端仍不能把代理自报当作硬件证明。
 - 管理端 `GET .../devices/{deviceId}/permission-observations?packageName=...` 返回授权状态、观察时间、`RECENT`/`STALE`/`NOT_AUTHORIZED`/`UNKNOWN`、来源和逐权限结果；禁用共享缓存。每次读取重新核验成员、设备范围、当前注册周期和当前授权。儿童/教师不读取详细权限清单，机构审计员只看授权/操作审计。
-- 每次只观察**管理员选定的单个应用**，上限 64 个权限、单次正文 32 KiB、单设备每 15 分钟最多 20 次。当前后端每设备只保留**最近一个应用**的快照，新应用上报会替换旧快照；前端必须对其他应用显示“尚无当前快照”，不能拿旧应用结果拼接。Android 原生异步查询待接入有界执行队列，不能阻塞 UI。超过上限显示“权限较多，需在系统设置中查看”，不悄悄截断为完整结果。
+- 每次只观察**设备前台用户选定的单个应用**，上限 64 个权限、单次正文 32 KiB、单设备每 15 分钟最多 20 次。当前后端每设备只保留**最近一个应用**的快照，新应用上报会替换旧快照；前端必须对其他应用显示“尚无当前快照”，不能拿旧应用结果拼接。Android 原生查询已进入单线程、8 项排队上限的有界执行队列并将回调送回主线程；队列满时返回忙碌错误，不阻塞 UI。超过上限整次拒绝，不能悄悄截断为完整结果。
 - 快照到达 24 小时后读取变为 `UNKNOWN`，后台默认每 30 秒最多删除 1,000 条过期快照，实际物理删除延迟须监控队列积压并按部署容量调整；不能把定时清理的节奏称为硬实时删除。显示年龄以服务端接收时刻为准，另展示设备观察时刻和可能的时钟偏差。设备端待上传正文继续使用现有加密、提交屏障和不可变重放思路，单独受权限授权版本约束；撤回时清除本地待发权限正文。
 
 当前后端联调请求示例（先为设备取得**独立权限观察授权**，并保持应用清单授权开启与新鲜）：
