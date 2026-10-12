@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/parent_api.dart';
 import 'core/parent_session.dart';
+import 'ui/enrollment_flow.dart';
 
 const _navy = Color(0xFF17324B);
 const _blue = Color(0xFF315E86);
@@ -523,6 +524,15 @@ class _DeviceListState extends State<_DeviceList> {
   void reload() => setState(
       () => devices = widget.session.api.all('${widget.session.root}/devices'));
 
+  Future<void> addDevice() async {
+    final completed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => EnrollmentFlow(session: widget.session),
+    );
+    if (completed == true && mounted) reload();
+  }
+
   @override
   Widget build(BuildContext context) => FutureBuilder<List<Json>>(
         future: devices,
@@ -538,6 +548,15 @@ class _DeviceListState extends State<_DeviceList> {
             },
             child: ListView(padding: const EdgeInsets.all(20), children: [
               const _SectionTitle('设备状态', '管理模式决定可用的系统能力'),
+              const SizedBox(height: 12),
+              if (widget.session.canDecide)
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: FilledButton.icon(
+                      onPressed: addDevice,
+                      icon: const Icon(Icons.add),
+                      label: const Text('连接儿童设备')),
+                ),
               const SizedBox(height: 12),
               if (result.data!.isEmpty)
                 const _Empty('暂无设备', '请先在管理工作台创建配对并由儿童设备完成确认。'),
