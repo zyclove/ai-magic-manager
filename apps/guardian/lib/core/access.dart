@@ -1,5 +1,8 @@
 /// Mirrors the server's persisted membership permissions; never grants API access.
 bool canOpenSection(String role, String section) {
+  if (section == 'help-requests') {
+    return ['OWNER', 'GUARDIAN', 'ORG_ADMIN'].contains(role);
+  }
   if (section == 'reports') {
     return ['OWNER', 'GUARDIAN', 'ORG_ADMIN', 'CHILD'].contains(role);
   }
@@ -56,6 +59,7 @@ String trustedReturnPath(String? value) => const {
       '/policies',
       '/approvals',
       '/notifications',
+      '/help-requests',
       '/members',
       '/ownership',
       '/audit',

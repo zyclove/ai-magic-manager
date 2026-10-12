@@ -76,6 +76,11 @@ class OverviewReadService {
             + (ownRequests ? " AND ar.requester_kind='MEMBER' AND ar.requester_actor_key=?" : ""),
         tenant,
         requestArgs);
+    Long openHelp = grant.role() == OWNER || grant.role() == GUARDIAN || grant.role() == ORG_ADMIN
+        ? jdbc.queryForObject(
+            "SELECT COUNT(*) FROM child_help_requests WHERE tenant_id=? AND state='OPEN'",
+            Long.class, tenant)
+        : null;
     List<Activity> activity = policies
         ? jdbc.query(
             "SELECT id,action,resource_id,occurred_at FROM audit_events WHERE tenant_id=?"
@@ -85,7 +90,7 @@ class OverviewReadService {
                 row.getLong("occurred_at")),
             tenant)
         : List.of();
-    return new Summary(subjects, devices, needsConnectionCheck, drafts, pending, activity);
+    return new Summary(subjects, devices, needsConnectionCheck, drafts, pending, openHelp, activity);
   }
 
   private long count(String sql, String tenant, List<Object> rest) {
@@ -104,5 +109,6 @@ class OverviewReadService {
       Long connectionCheckCount,
       Long policyDraftCount,
       Long pendingRequestCount,
+      Long openHelpRequestCount,
       List<Activity> recentActivity) {}
 }

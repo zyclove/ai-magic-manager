@@ -34,6 +34,7 @@ import 'quota_page.dart';
 import 'ownership_page.dart';
 import 'notifications_page.dart';
 import 'support_page.dart';
+import 'help_requests_page.dart';
 import 'scoped_overview_page.dart';
 import 'commercial_account_page.dart';
 import 'commercial_catalog_page.dart';
@@ -100,6 +101,9 @@ class ConsolePages extends StatelessWidget {
     if (!s.canOpen(section)) {
       return const Panel(
           child: EmptyView('此角色无权访问该页面', '请从导航中选择可用功能，或联系工作空间管理员。'));
+    }
+    if (section == 'help-requests') {
+      return HelpRequestsPage(key: ValueKey('${s.root}/${s.role}'), session: s);
     }
     if (section == 'overview' && !s.canWrite) {
       return ScopedOverviewPage(
@@ -1369,7 +1373,8 @@ class _DashboardState extends State<Dashboard> {
       if (result.subjectCount == null ||
           result.activeDeviceCount == null ||
           result.connectionCheckCount == null ||
-          result.policyDraftCount == null) {
+          result.policyDraftCount == null ||
+          result.openHelpRequestCount == null) {
         throw const ApiFailure(502, 'INVALID_RESPONSE');
       }
       if (mounted &&
@@ -1441,6 +1446,21 @@ class _DashboardState extends State<Dashboard> {
             TextButton(
                 onPressed: () => context.go('/devices'),
                 child: const Text('查看设备'))
+          ]))
+        ],
+        if (data!.openHelpRequestCount! > 0) ...[
+          const SizedBox(height: 16),
+          Panel(
+              child: Row(children: [
+            const Icon(Icons.volunteer_activism_outlined,
+                color: Color(0xFFA7473C)),
+            const SizedBox(width: 12),
+            Expanded(
+                child: Text(
+                    '有 ${data!.openHelpRequestCount} 条儿童求助尚未在管理台确认看到。请尽快核对并实际联系孩子。')),
+            TextButton(
+                onPressed: () => context.go('/help-requests'),
+                child: const Text('查看求助'))
           ]))
         ],
         const SizedBox(height: 24),

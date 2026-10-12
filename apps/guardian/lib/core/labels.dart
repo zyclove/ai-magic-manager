@@ -156,6 +156,8 @@ const labels = <String, String>{
   'SATURDAY': '周六',
   'SUNDAY': '周日',
   'ONLINE': '近期在线',
+  'OPEN': '待查看',
+  'ACKNOWLEDGED': '管理员已查看',
   'NEVER_SEEN': '尚未连接',
   'OBSERVED': '已观察',
   'RECEIVED': '已接收',

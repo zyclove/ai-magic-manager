@@ -23,7 +23,8 @@ class ApiFailure implements Exception {
         'INVALID_COMMERCIAL_RESPONSE' => '商业权益数据校验未通过，已隐藏结果。请刷新后重试。',
         'INVALID_CONTRACT_RESPONSE' => '合同数据校验未通过，已隐藏结果。请刷新后重试。',
         'INVALID_MANAGED_ANDROID_RESPONSE' => '受管设备资料校验未通过，已隐藏结果。请刷新后重试。',
-        'INVALID_PERMISSION_CATALOG_RESPONSE' => 'Android 权限目录未通过校验，暂不能编辑权限规则。请刷新后重试。',
+        'INVALID_PERMISSION_CATALOG_RESPONSE' =>
+          'Android 权限目录未通过校验，暂不能编辑权限规则。请刷新后重试。',
         'INVALID_WELLBEING_INSIGHT_RESPONSE' => '使用建议资料校验未通过，已隐藏结果。请刷新后重试。',
         'EMM_UNAVAILABLE' => '受管设备提供方尚未开通或暂时不可用。请先确认准入与服务配置。',
         'EMM_PROVIDER_MISMATCH' => '当前提供方与企业绑定记录不一致。请联系平台管理员核对接入配置。',
@@ -138,6 +139,9 @@ class ApiFailure implements Exception {
         'BASELINE_CHANGED' =>
           '设备绑定或策略版本已变化，请刷新可申请规则后重新提交。',
         'DEVICE_NOT_ACTIVE' => '设备当前不可申请访问，请检查设备状态并刷新。',
+        'HELP_REQUEST_UNAVAILABLE' => '求助记录不可用，请刷新并核对设备状态。',
+        'HELP_REQUEST_ID_REUSED' => '这次求助编号已用于其他内容，请恢复原请求。',
+        'HELP_REQUEST_RATE_LIMITED' => '短时间内求助次数过多。请直接联系可信任的成人；有即时危险时使用当地紧急服务。',
         'DEVICE_REVOKE_RESULT_UNKNOWN' =>
           '连接中断，云端撤销可能已提交。请关闭窗口并刷新设备状态，再决定是否需要重试。此结果不代表设备本地数据已清理。',
         'EXCEPTION_RULE_INVALID' => '请选择 1–20 条当前应用支持的规则。',

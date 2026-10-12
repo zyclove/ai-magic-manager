@@ -14,6 +14,7 @@ class AndroidAgentCleanupExecutor implements AgentCleanupExecutor {
   static final _journalKey = RegExp(r'^cleanup_journal_v1_[0-9a-f]{64}$');
   static final _accessSecret =
       RegExp(r'^(access_key_v1_|access_context_v1_)[0-9a-f]{64}$');
+  static final _helpSecret = RegExp(r'^help_request_v1_[0-9a-f]{64}$');
 
   final DeviceIdentityManager identity;
   final AndroidIdentityStore secureStore;
@@ -82,7 +83,8 @@ class AndroidAgentCleanupExecutor implements AgentCleanupExecutor {
           key != 'identity_record' &&
           key != 'observation_record' &&
           !_journalKey.hasMatch(key) &&
-          !_accessSecret.hasMatch(key))) {
+          !_accessSecret.hasMatch(key) &&
+          !_helpSecret.hasMatch(key))) {
         throw AgentCleanupFailure('UNSUPPORTED_AGENT');
       }
 
@@ -91,7 +93,9 @@ class AndroidAgentCleanupExecutor implements AgentCleanupExecutor {
       }
       await secureStore.flushAgentFiles(directory.path);
       for (final key in keys) {
-        if (key == 'observation_record' || _accessSecret.hasMatch(key)) {
+        if (key == 'observation_record' ||
+            _accessSecret.hasMatch(key) ||
+            _helpSecret.hasMatch(key)) {
           await secureStore.storage.delete(key: key);
         }
       }
@@ -100,7 +104,9 @@ class AndroidAgentCleanupExecutor implements AgentCleanupExecutor {
         if (await file.exists()) throw const FileSystemException();
       }
       for (final key in keys) {
-        if ((key == 'observation_record' || _accessSecret.hasMatch(key)) &&
+        if ((key == 'observation_record' ||
+                _accessSecret.hasMatch(key) ||
+                _helpSecret.hasMatch(key)) &&
             await secureStore.storage.read(key: key) != null) {
           throw const FileSystemException();
         }

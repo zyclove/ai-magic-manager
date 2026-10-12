@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../core/access.dart' show ChildAccessBindingStore;
+import '../core/help_requests.dart' show ChildHelpStore, ChildHelpFailure;
 
 /// One encrypted record, no readAll/reset surface. Explicit deletion is used
 /// only after an acknowledged agent cleanup. Android only until each additional
@@ -320,6 +321,52 @@ class AndroidAccessBindingStore implements ChildAccessBindingStore {
       await backend._flush();
     } catch (_) {
       throw const AccessFailure('ACCESS_STORAGE_FAILED');
+    }
+  }
+}
+
+/// One encrypted help intent per registration; commit and read-back precede HTTP.
+class AndroidHelpRequestStore implements ChildHelpStore {
+  final AndroidIdentityStore backend;
+  AndroidHelpRequestStore({AndroidIdentityStore? backend})
+      : backend = backend ?? AndroidIdentityStore();
+
+  String _name(String scopeKey) {
+    if (!backend.available() || !RegExp(r'^[a-f0-9]{64}$').hasMatch(scopeKey)) {
+      throw const ChildHelpFailure('HELP_STORAGE_UNAVAILABLE');
+    }
+    return 'help_request_v1_$scopeKey';
+  }
+
+  @override
+  Future<String?> read(String scopeKey) async {
+    final name = _name(scopeKey);
+    try {
+      final value = await backend.storage.read(key: name);
+      await backend.flushForCleanup();
+      if (value != null && utf8.encode(value).length > 4096) {
+        throw const FormatException();
+      }
+      return value;
+    } catch (_) {
+      throw const ChildHelpFailure('HELP_STORAGE_UNAVAILABLE');
+    }
+  }
+
+  @override
+  Future<void> write(String scopeKey, String value) async {
+    final name = _name(scopeKey);
+    if (utf8.encode(value).length > 4096) {
+      throw const ChildHelpFailure('HELP_STORAGE_UNAVAILABLE');
+    }
+    try {
+      await backend.storage.write(key: name, value: value);
+      await backend.flushForCleanup();
+      final confirmed = await backend.storage.read(key: name);
+      await backend.flushForCleanup();
+      if (confirmed != value) throw const FormatException();
+    } catch (_) {
+      throw const ChildHelpFailure('HELP_STORAGE_UNAVAILABLE');
     }
   }
 }

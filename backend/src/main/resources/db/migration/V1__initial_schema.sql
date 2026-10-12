@@ -1529,3 +1529,36 @@ CREATE INDEX ix_permission_observation_rate_retention
 CREATE INDEX ix_subject_active_count ON subjects(tenant_id, archived_at, id);
 CREATE INDEX ix_device_observation_count ON devices(tenant_id, state, last_heartbeat_at);
 CREATE INDEX ix_access_pending_count ON access_requests(tenant_id, state, request_expires_at);
+
+-- Device-authenticated help records. A cloud record is not an emergency dispatch.
+CREATE TABLE child_help_requests (
+    tenant_id VARCHAR(36) NOT NULL,
+    id VARCHAR(36) NOT NULL,
+    subject_id VARCHAR(36) NOT NULL,
+    device_id VARCHAR(36) NOT NULL,
+    registration_id VARCHAR(36) NOT NULL,
+    client_request_id VARCHAR(36) NOT NULL,
+    reason_code VARCHAR(32) NOT NULL,
+    state VARCHAR(20) NOT NULL,
+    created_at BIGINT NOT NULL,
+    acknowledged_at BIGINT NULL,
+    version BIGINT NOT NULL DEFAULT 0,
+    PRIMARY KEY (tenant_id, id),
+    CONSTRAINT uq_help_device_request UNIQUE
+        (tenant_id, device_id, registration_id, client_request_id),
+    CONSTRAINT fk_help_subject FOREIGN KEY (tenant_id, subject_id)
+        REFERENCES subjects(tenant_id, id),
+    CONSTRAINT fk_help_registration FOREIGN KEY (tenant_id, device_id, registration_id)
+        REFERENCES devices(tenant_id, id, registration_id),
+    CONSTRAINT ck_help_version CHECK (version >= 0),
+    CONSTRAINT ck_help_reason CHECK
+        (reason_code IN ('NEED_HELP', 'UNCOMFORTABLE_CONTENT', 'DEVICE_PROBLEM')),
+    CONSTRAINT ck_help_state CHECK
+        ((state = 'OPEN' AND acknowledged_at IS NULL)
+         OR (state = 'ACKNOWLEDGED' AND acknowledged_at >= created_at))
+);
+
+CREATE INDEX ix_help_tenant_time ON child_help_requests(tenant_id, created_at, id);
+CREATE INDEX ix_help_state_time ON child_help_requests(tenant_id, state, created_at, id);
+CREATE INDEX ix_help_device_rate ON child_help_requests
+    (tenant_id, device_id, registration_id, created_at);

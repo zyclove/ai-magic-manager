@@ -1,6 +1,6 @@
 # 智能管家设计文档
 
-更新日期：2026-10-11。设计文档构成实现契约，代码正在按[实施计划](implementation-plan.md)开发；验证与未完成范围见[实施记录](implementation-progress.md)。管理端和部分设备客户端已进入联调，正式受管执行、真实签约和客户环境部署验收尚未完成。
+更新日期：2026-10-12。设计文档构成实现契约，代码正在按[实施计划](implementation-plan.md)开发；验证与未完成范围见[实施记录](implementation-progress.md)。管理端和部分设备客户端已进入联调，正式受管执行、真实签约和客户环境部署验收尚未完成。
 
 | 文档 | 用途 | 主要读者 |
 |---|---|---|
@@ -29,6 +29,7 @@
 | [设备签名配置接收契约](device-configuration-client-contract.md) | Dart JOSE、设备 HTTPS/opaque 认证、整页事务/续点、回执重放与真实 Spring/Dart 互操作证据 | Flutter、Android、后端与 QA |
 | [设备身份客户端契约](device-identity-client-contract.md) | 原密钥认领/恢复、持久心跳、两阶段凭证轮换、认证暂停、secret-store 边界与真实联调 | Flutter、Android、后端与 QA |
 | [儿童端宿主契约](child-host-contract.md) | Flutter/Android 接入、加密存储、进程恢复与当前执行边界 | Flutter、Android、后端与 QA |
+| [儿童求助记录契约](child-help-request-contract.md) | 设备端求助、云端幂等记录、成人收件与确认、离线恢复及非紧急服务边界 | 产品、Flutter、后端、QA 与交付 |
 | [设备观察授权契约](device-observation-contract.md) | 应用清单/使用摘要的单独授权与报告边界；V20 代码交付状态以该文档为准 | 产品、前后端与 QA |
 | [Android 应用权限观察与受管执行契约](runtime-permission-management-plan.md) | 单独授权、按需原生观察、设备模式差异及发布门槛；三端默认关闭，真实设备验收与受管执行待完成 | 产品、前后端、Android、安全与 QA |
 | [网站与内容安全适配器准入](content-safety-adapter-gate.md) | 受管网络、BYOD VPN、受控浏览器的执行范围、隐私和验收门槛 | 产品、Android、后端、安全与交付 |

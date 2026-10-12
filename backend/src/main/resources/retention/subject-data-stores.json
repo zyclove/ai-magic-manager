@@ -223,6 +223,24 @@
       "category": "DERIVED_COPY"
     },
     {
+      "table": "child_help_requests",
+      "columns": [
+        "acknowledged_at",
+        "client_request_id",
+        "created_at",
+        "device_id",
+        "id",
+        "reason_code",
+        "registration_id",
+        "state",
+        "subject_id",
+        "tenant_id",
+        "version"
+      ],
+      "domain": "safety",
+      "category": "SUBJECT_DATA"
+    },
+    {
       "table": "cleanup_receipts",
       "columns": [
         "operation_id",

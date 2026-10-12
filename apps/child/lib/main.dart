@@ -5,6 +5,8 @@ import 'package:logging/logging.dart';
 import 'core/environment.dart';
 import 'core/production_session.dart';
 import 'core/report_loader.dart';
+import 'core/help_requests.dart';
+import 'platform/secret_store.dart';
 import 'ui/child_app.dart';
 
 Future<void> main() async {
@@ -51,6 +53,12 @@ Future<void> main() async {
               apiRoot: configured.apiRoot,
               allowLoopbackHttp: configured.allowLoopbackHttp,
               inspect: runtime.observationSource.inspect)
+          : null,
+      helpFactory: nativeAvailable
+          ? (session) => ChildHelpCoordinator(
+              session: session,
+              environment: configured,
+              store: AndroidHelpRequestStore())
           : null,
       osVersion: osVersion,
       tvMode: tvMode));

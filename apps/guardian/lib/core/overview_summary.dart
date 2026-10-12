@@ -7,6 +7,7 @@ class OverviewSummary {
   final int? connectionCheckCount;
   final int? policyDraftCount;
   final int pendingRequestCount;
+  final int? openHelpRequestCount;
   final List<OverviewActivity> recentActivity;
 
   OverviewSummary._(
@@ -15,6 +16,7 @@ class OverviewSummary {
       this.connectionCheckCount,
       this.policyDraftCount,
       this.pendingRequestCount,
+      this.openHelpRequestCount,
       this.recentActivity);
 
   static OverviewSummary parse(Object? input) {
@@ -28,6 +30,7 @@ class OverviewSummary {
         _count(value['connectionCheckCount']),
         _count(value['policyDraftCount']),
         _count(value['pendingRequestCount'], required: true)!,
+        _count(value['openHelpRequestCount']),
         List<OverviewActivity>.unmodifiable(
             activity.map(OverviewActivity.parse)));
   }

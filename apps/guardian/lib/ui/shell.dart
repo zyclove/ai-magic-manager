@@ -7,6 +7,7 @@ import '../core/labels.dart';
 import '../pages/console_pages.dart';
 import 'design.dart';
 import 'notification_shortcut.dart';
+import 'help_shortcut.dart';
 
 const destinations = [
   ('overview', '工作台', Icons.space_dashboard_outlined),
@@ -21,6 +22,7 @@ const destinations = [
   ('policies', '策略中心', Icons.shield_outlined),
   ('approvals', '访问审批', Icons.task_alt_outlined),
   ('notifications', '通知中心', Icons.notifications_none_outlined),
+  ('help-requests', '儿童求助', Icons.volunteer_activism_outlined),
   ('reports', '使用报表', Icons.bar_chart_outlined),
   ('commercial', '商业账户', Icons.workspace_premium_outlined),
   ('catalog', '平台产品目录', Icons.inventory_2_outlined),
@@ -197,6 +199,11 @@ class ConsoleShell extends StatelessWidget {
                         key: ValueKey('notifications-${s.root}-${s.role}'),
                         repository: notificationRepository(s),
                         onOpen: () => context.go('/notifications')),
+                  if (s.tenant != null && s.canOpen('help-requests'))
+                    HelpShortcut(
+                        key: ValueKey('help-${s.root}-${s.role}'),
+                        session: s,
+                        onOpen: () => context.go('/help-requests')),
                   const SizedBox(width: 12),
                   PopupMenuButton<String>(
                       tooltip: '账户',

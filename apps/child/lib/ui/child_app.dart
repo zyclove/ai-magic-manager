@@ -11,6 +11,8 @@ import 'submission_section.dart';
 import 'report_section.dart';
 import 'rule_explanations.dart';
 import '../core/report_loader.dart';
+import '../core/help_requests.dart';
+import 'help_request_section.dart';
 
 class ChildApp extends StatelessWidget {
   final ChildSession? session;
@@ -20,6 +22,7 @@ class ChildApp extends StatelessWidget {
   final bool tvMode;
   final bool deploymentInvalid;
   final ChildReportFactory? reportFactory;
+  final ChildHelpFactory? helpFactory;
   const ChildApp(
       {super.key,
       this.session,
@@ -28,6 +31,7 @@ class ChildApp extends StatelessWidget {
       this.nativeAvailable = false,
       this.tvMode = false,
       this.reportFactory,
+      this.helpFactory,
       this.deploymentInvalid = false});
   @override
   Widget build(BuildContext context) => MaterialApp(
@@ -456,6 +460,16 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
   Widget _help() =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         _heading('设备帮助', '连接或使用遇到问题时，请先与监护人一起检查。'),
+        if (app.helpFactory != null && session != null) ...[
+          ChildHelpSection(
+              key: ValueKey(
+                  '${session!.identityView?.tenantId}/${session!.identityView?.deviceId}/${session!.identityView?.registrationId}'),
+              session: session!,
+              factory: app.helpFactory,
+              nativeAvailable: app.nativeAvailable),
+          const SizedBox(height: 24),
+          const Divider(),
+        ],
         const ChildNotice('已保存状态会保留', detail: '断网后不能据此认定监护规则已解除；临时放行也不会自动延长。'),
         const SizedBox(height: 24),
         const Text(
