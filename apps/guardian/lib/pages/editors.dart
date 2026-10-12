@@ -278,15 +278,12 @@ const ruleEffects = {
 Future<void> policyEditor(BuildContext context, Session session,
     {Json? draft}) async {
   final root = session.root;
-  late final List<dynamic> data;
-  late final Map<String, String> runtimePermissions;
+  late final List<List<Json>> data;
   try {
-    data = await Future.wait<dynamic>([
+    data = await Future.wait<List<Json>>([
       session.api.all('$root/applications'),
-      session.api.all('$root/schedules'),
-      session.api.send('GET', '/policy-metadata/android-runtime-permissions')
+      session.api.all('$root/schedules')
     ]);
-    runtimePermissions = runtimePermissionOptions(data[2]);
   } catch (failure) {
     if (context.mounted) {
       toast(context, failure is ApiFailure ? failure.message : '无法加载权限目录，请稍后重试。');
@@ -300,9 +297,8 @@ Future<void> policyEditor(BuildContext context, Session session,
       builder: (_) => PolicyEditor(
           session: session,
           root: root,
-          applications: data[0] as List<Json>,
-          schedules: data[1] as List<Json>,
-          runtimePermissions: runtimePermissions,
+          applications: data[0],
+          schedules: data[1],
           draft: draft));
 }
 
@@ -342,7 +338,6 @@ class PolicyEditor extends StatefulWidget {
   final Session session;
   final String root;
   final List<Json> applications, schedules;
-  final Map<String, String> runtimePermissions;
   final Json? draft;
   const PolicyEditor(
       {super.key,
@@ -350,7 +345,6 @@ class PolicyEditor extends StatefulWidget {
       required this.root,
       required this.applications,
       required this.schedules,
-      required this.runtimePermissions,
       this.draft});
   @override
   State<PolicyEditor> createState() => _PolicyEditorState();
@@ -364,6 +358,7 @@ class _PolicyEditorState extends State<PolicyEditor> {
       .toList();
   final form = GlobalKey<FormState>();
   bool busy = false;
+  bool loadingRule = false;
   Object? error;
   final key = requestId();
   @override
@@ -373,6 +368,7 @@ class _PolicyEditorState extends State<PolicyEditor> {
   }
 
   Future<void> editRule([int? index]) async {
+    if (busy || loadingRule) return;
     String? type = index == null ? null : rules[index]['kind'];
     type ??= await showDialog<String>(
         context: context,
@@ -403,9 +399,28 @@ class _PolicyEditorState extends State<PolicyEditor> {
       toast(context, '请先创建时间计划。');
       return;
     }
+    Map<String, String> runtimePermissions = const {};
+    if (type == 'RUNTIME_PERMISSION') {
+      setState(() => loadingRule = true);
+      try {
+        final raw = await widget.session.api.send(
+            'GET', '/policy-metadata/android-runtime-permissions');
+        if (!mounted || widget.session.tenant?['id'] != widget.root.substring(9)) return;
+        runtimePermissions = runtimePermissionOptions(raw);
+      } catch (failure) {
+        if (mounted) {
+          toast(context, failure is ApiFailure
+              ? failure.message
+              : '无法加载权限目录，请稍后重试。');
+        }
+        return;
+      } finally {
+        if (mounted) setState(() => loadingRule = false);
+      }
+    }
     if (index != null &&
         type == 'RUNTIME_PERMISSION' &&
-        !widget.runtimePermissions.containsKey(rules[index]['permission'])) {
+        !runtimePermissions.containsKey(rules[index]['permission'])) {
       toast(context, '原权限名称已不在当前目录中。请重新创建受支持的规则。');
       return;
     }
@@ -427,7 +442,7 @@ class _PolicyEditorState extends State<PolicyEditor> {
             hint: 'example.com（不含协议或路径）', maxLength: 253),
       if (type == 'RUNTIME_PERMISSION')
         FieldSpec('permission', 'Android 运行时权限',
-            options: widget.runtimePermissions),
+            options: runtimePermissions),
       if (type == 'SPECIAL_ACCESS')
         const FieldSpec('permission', '特殊访问权限', options: {
           'USAGE_ACCESS': '使用情况访问',
@@ -557,12 +572,13 @@ class _PolicyEditorState extends State<PolicyEditor> {
                                       fontWeight: FontWeight.w600)),
                               const Spacer(),
                               TextButton.icon(
-                                  onPressed: busy || rules.length >= 100
+                                  onPressed: busy || loadingRule || rules.length >= 100
                                       ? null
                                       : () => editRule(),
                                   icon: const Icon(Icons.add, size: 18),
                                   label: const Text('添加规则'))
                             ]),
+                            if (loadingRule) const LinearProgressIndicator(),
                             if (rules.isEmpty)
                               const EmptyView('尚未添加规则', '可以先保存空草稿，稍后完善。'),
                             ...rules.asMap().entries.map((e) => Container(
@@ -580,14 +596,14 @@ class _PolicyEditorState extends State<PolicyEditor> {
                                     trailing: Wrap(children: [
                                       IconButton(
                                           tooltip: '编辑规则',
-                                          onPressed: busy
+                                          onPressed: busy || loadingRule
                                               ? null
                                               : () => editRule(e.key),
                                           icon: const Icon(Icons.edit_outlined,
                                               size: 18)),
                                       IconButton(
                                           tooltip: '删除规则',
-                                          onPressed: busy
+                                          onPressed: busy || loadingRule
                                               ? null
                                               : () => setState(
                                                   () => rules.removeAt(e.key)),
@@ -604,7 +620,7 @@ class _PolicyEditorState extends State<PolicyEditor> {
                 onPressed: busy ? null : () => Navigator.pop(context),
                 child: const Text('取消')),
             FilledButton(
-                onPressed: busy ? null : save,
+                onPressed: busy || loadingRule ? null : save,
                 child: Text(busy ? '保存中…' : '保存草稿'))
           ]));
 }
