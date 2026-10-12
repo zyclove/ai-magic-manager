@@ -279,8 +279,8 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
   @override
   void initState() {
     super.initState();
-    pending = PagedCollection(
-        widget.session.api, '${widget.session.root}/access-requests');
+    pending = PagedCollection(widget.session.api,
+        '${widget.session.root}/access-requests?state=PENDING');
   }
 
   @override

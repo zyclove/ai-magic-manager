@@ -9,7 +9,7 @@
 | 登录与会话 | AppAuth 系统浏览器发起 Authorization Code + PKCE；内存访问令牌、加密存储刷新令牌；到期自动刷新、退出清除本地凭据 | Keycloak 公共客户端 `ai-manager-parent`；`GET /api/v1/me` |
 | 工作空间 | 读取当前成员可见的家庭/机构，切换时重新核对成员角色；儿童角色没有成人操作入口 | `GET /tenants`、`GET /tenants/{id}/membership`；后端仍做逐请求鉴权 |
 | 今日概览 | 服务端授权范围内的儿童、已注册设备、待审批和求助计数；儿童仅展示前 5 条；标明“在线/权益”不等于执行 | `GET /overview`、`GET /subjects?limit=5` |
-| 访问申请 | 展示待处理项，成人选择批准/拒绝并再次认证；批准窗口不超过申请时长，提示需等待设备实际执行 | `GET /access-requests`、`POST /access-requests/{id}/decisions`，`If-Match` 和服务端近期认证 |
+| 访问申请 | 服务端筛选待处理项，成人选择批准/拒绝并再次认证；批准窗口不超过申请时长，提示需等待设备实际执行 | `GET /access-requests?state=PENDING`、`POST /access-requests/{id}/decisions`，`If-Match` 和服务端近期认证 |
 | 求助 | 展示未确认求助，成人确认已看到；明确不是紧急服务 | `GET /help-requests?state=OPEN`、`POST /help-requests/{id}/acknowledge`，`If-Match` |
 | 设备 | 展示设备名称、注册状态和管理模式，并提醒逐项检查策略执行回执 | `GET /devices` |
 | 设备配对 | 分页选择儿童与 Android/TV；近期认证后生成 BYOD 一次性凭据；儿童端认领后刷新状态、输入物理设备配对码再次认证确认；可取消，进程恢复只保留非秘密注册编号 | `POST /enrollments`、`GET /enrollments/{id}`、`POST /enrollments/{id}/confirm`、`DELETE /enrollments/{id}` |
@@ -32,7 +32,7 @@
 ## 尚未完成
 
 - 真机安装、系统浏览器回跳、Keycloak 近期 MFA、令牌轮换/吊销、TLS 与 Android 生命周期恢复的端到端验收；当前不能称为已可生产发布。
-- 临时访问申请的人性化儿童/应用名称、超长列表虚拟滚动、推送通知、离线只读快照和结果不确定态仍需完善。当前列表每次按 50 条主动加载，尚无服务端 `PENDING` 专用筛选；机构有大量历史记录时，成人可能需要继续翻页才看到旧的待审批申请。
+- 临时访问申请的人性化儿童/应用名称、超长列表虚拟滚动、推送通知、离线只读快照和结果不确定态仍需完善。当前列表经服务端按持久化 `PENDING` 筛选后每次加载 50 条；主体/设备生命周期可能在读取时使申请失效，客户端按响应实际状态隐藏这类项目。
 - 政策编辑/预览/发布、日程/额度、机构班级与合同确认等完整成人工作流仍由 Flutter Web 管理台承担；需设计和实现手机端后续页面并逐项确认无 Web 专属依赖。设备配对的网络结果不确定态、令牌跨设备安全传递、一次性注册列表查询、扫码输入与 TV 遥控体验仍需专门验收。
 - Android 受管 EMM/OEM 连接器、Android TV 型号认证、摄像头可选识别和真实设备系统策略执行均未由本客户端实现。没有提供方资格时，客户端不显示“不可绕过”的承诺。
 - 发布前仍需 Android release 签名、供应链/SBOM、无障碍和字体缩放检查、低网速/断网/进程回收演练及客户试点签收。

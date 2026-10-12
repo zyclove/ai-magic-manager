@@ -30,7 +30,7 @@ TEACHER 不获得审批权限、策略修改或设备管理权限。教师仅提
 |---|---|---|
 | POST 根路径 | 201 + ETag | Create → AccessRequest |
 | GET /options | 200 | 必填 deviceId、limit=1..100、UUID cursor；返回该设备可申请的当前策略、应用和规则身份 |
-| GET 根路径 | 200 | limit=1..100、UUID cursor → ItemPage |
+| GET 根路径 | 200 | limit=1..100、UUID cursor、可选 `state`（AccessRequest.State 枚举）→ ItemPage；仍按原租户/主体/提交者范围鉴权。筛选依据持久化状态，响应会再次按设备与主体生命周期协调，客户端应以响应中的实际状态决定是否展示待办。 |
 | GET /{requestId} | 200 + ETag | AccessRequest |
 | POST /{requestId}/decisions | 200 + ETag | Decision → AccessRequest |
 | POST /{requestId}/cancel | 200 + ETag | 空正文 → AccessRequest |

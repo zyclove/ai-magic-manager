@@ -36,8 +36,9 @@ class ApprovalController {
       @AuthenticationPrincipal Jwt actor,
       @PathVariable String tenantId,
       @RequestParam(defaultValue = "50") int limit,
-      @RequestParam(required = false) String cursor) {
-    return approvals.list(tenantId, actor.getSubject(), limit, cursor);
+      @RequestParam(required = false) String cursor,
+      @RequestParam(required = false) AccessRequest.State state) {
+    return approvals.list(tenantId, actor.getSubject(), limit, cursor, state);
   }
 
   @GetMapping("/options")

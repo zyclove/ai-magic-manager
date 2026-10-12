@@ -366,7 +366,8 @@ class ApprovalService implements ApprovalMaintenance {
   }
 
   @Transactional(timeout = 10)
-  public ItemPage<AccessRequest> list(String tenant, String actor, int limit, String cursor) {
+  public ItemPage<AccessRequest> list(
+      String tenant, String actor, int limit, String cursor, AccessRequest.State state) {
     var grant =
         access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN, AUDITOR, CHILD, TEACHER);
     ItemPage.validate(limit, cursor);
@@ -376,12 +377,14 @@ class ApprovalService implements ApprovalMaintenance {
     String sql =
         "SELECT ar.id FROM access_requests ar WHERE ar.tenant_id=? AND ar.id>? AND "
             + filter.sql()
+            + (state == null ? "" : " AND ar.state=?")
             + (grant.role() == TEACHER || child
                 ? " AND ar.requester_kind='MEMBER' AND ar.requester_actor_key=?"
                 : "")
             + " ORDER BY ar.id LIMIT ?";
     var args = new ArrayList<Object>(List.of(tenant, cursor == null ? "" : cursor));
     args.addAll(filter.args());
+    if (state != null) args.add(state.name());
     if (grant.role() == TEACHER || child) args.add(ActorKeys.key(actor));
     args.add(limit + 1);
     var ids = jdbc.query(sql, (row, index) -> row.getString("id"), args.toArray());
