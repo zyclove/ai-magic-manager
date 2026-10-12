@@ -280,6 +280,8 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
         _button(session!.rules.hasMore ? '继续同步规则' : '同步规则',
             session!.synchronizeRules),
         const SizedBox(height: 16),
+        const Text('打开或返回本应用时会核对新配置；断网时仍可查看已验证的本地副本。'),
+        const SizedBox(height: 12),
         const ChildNotice('当前为个人设备模式，收到配置不代表已限制其他应用。'),
         if (session!.rules.pendingReceipts > 0)
           Padding(
@@ -451,7 +453,8 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
         _heading('设备帮助', '连接或使用遇到问题时，请先与监护人一起检查。'),
         const ChildNotice('已保存状态会保留', detail: '断网后不能据此认定监护规则已解除；临时放行也不会自动延长。'),
         const SizedBox(height: 24),
-        const Text('当前应用接收配置并维护设备身份，尚未实现其他应用的系统级阻止。卸载和强制停止的能力由设备管理模式决定。'),
+        const Text(
+            '重启后打开本应用，会恢复已验证的本地配置并尝试联网核对。个人设备模式下，系统仍可能停止本应用；当前应用尚未实现其他应用的系统级阻止。卸载和强制停止的能力由设备管理模式决定。'),
         const Divider(),
         Text('服务地址', style: Theme.of(context).textTheme.titleMedium),
         SelectableText(app.serviceLabel ?? '尚未配置'),

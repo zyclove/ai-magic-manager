@@ -95,6 +95,7 @@ class ChildSession extends ChangeNotifier {
   bool _accessCloseFailed = false;
   String? _accessIdentityKey, _rulesIdentityKey;
   Timer? _accessTimer;
+  Timer? _rulesSyncTimer;
   bool _accessSyncOnIdle = false, _accessRestoreOnIdle = false;
   int? _accessTimeFloor;
   observation.ObservationView observationView =
@@ -109,7 +110,9 @@ class ChildSession extends ChangeNotifier {
   String? errorCode, _pairingCode;
   ChildRuleReceiver? _receiver;
   int _rulesGeneration = 0;
-  bool _rulesRestoreOnIdle = false, _rulesCloseFailed = false;
+  bool _rulesRestoreOnIdle = false,
+      _rulesSyncOnIdle = false,
+      _rulesCloseFailed = false;
   Future<void> _rulesClosing = Future.value();
   // Await only actual close work. An already-completed chain may belong to an
   // earlier async zone and must not delay unrelated request/UI operations.
@@ -185,6 +188,7 @@ class ChildSession extends ChangeNotifier {
     _receiver = null;
     _rulesIdentityKey = null;
     _rulesRestoreOnIdle = false;
+    _rulesSyncOnIdle = false;
     rules = const ChildRules();
     if (previous != null) {
       _rulesClosingCount++;
@@ -228,6 +232,7 @@ class ChildSession extends ChangeNotifier {
       _checkIdentityScope();
       if (!wasReady && credentialReady && ruleReceiverFactory != null) {
         _rulesRestoreOnIdle = true;
+        _rulesSyncOnIdle = true;
       }
       if (!wasReady && credentialReady && accessFactory != null) {
         _accessSyncOnIdle = true;
@@ -274,8 +279,10 @@ class ChildSession extends ChangeNotifier {
     initialized = true;
     _changed();
     _accessSyncOnIdle = accessFactory != null && credentialReady;
+    _rulesSyncOnIdle = ruleReceiverFactory != null && credentialReady;
     _refreshObservationOnIdle = observationFactory != null && credentialReady;
     _submissionRefreshOnIdle = submissionFactory != null && credentialReady;
+    _scheduleRuleSync();
     _drain();
   }
 
@@ -424,6 +431,7 @@ class ChildSession extends ChangeNotifier {
     busy = false;
     _changed();
     _scheduleAccess();
+    _scheduleRuleSync();
     _drain();
     return success;
   }
@@ -450,6 +458,7 @@ class ChildSession extends ChangeNotifier {
         await identity.heartbeat(
             agentVersion: 'child/1.0.0',
             capabilities: await observations?.call() ?? const []);
+        _rulesSyncOnIdle = ruleReceiverFactory != null;
         _refreshObservationOnIdle = observationFactory != null;
         _accessSyncOnIdle = accessFactory != null;
         _submissionRefreshOnIdle = submissionFactory != null;
@@ -776,8 +785,22 @@ class ChildSession extends ChangeNotifier {
     if (_rulesRestoreOnIdle && ruleReceiverFactory != null) {
       _rulesRestoreOnIdle = false;
       unawaited(_run(() async {
-        rules = await _readRules();
+        try {
+          rules = await _readRules();
+        } catch (_) {
+          _rulesSyncOnIdle = false;
+          rethrow;
+        }
       }));
+      return;
+    }
+    if (_rulesSyncOnIdle &&
+        ruleReceiverFactory != null &&
+        identityView?.phase == IdentityPhase.active) {
+      _rulesSyncOnIdle = false;
+      // A visible session rechecks signed configuration after restoring local
+      // state. Network failure leaves the last verified snapshot in place.
+      unawaited(synchronizeRules());
       return;
     }
     if (_accessSyncOnIdle && accessFactory != null) {
@@ -877,6 +900,26 @@ class ChildSession extends ChangeNotifier {
     }
   }
 
+  void _scheduleRuleSync() {
+    if (_disposed ||
+        !_foreground ||
+        !credentialReady ||
+        ruleReceiverFactory == null ||
+        identityView?.phase != IdentityPhase.active) {
+      _rulesSyncTimer?.cancel();
+      _rulesSyncTimer = null;
+      return;
+    }
+    _rulesSyncTimer ??= Timer.periodic(const Duration(minutes: 5), (_) {
+      if (_disposed ||
+          !_foreground ||
+          !credentialReady ||
+          identityView?.phase != IdentityPhase.active) return;
+      _rulesSyncOnIdle = true;
+      _drain();
+    });
+  }
+
   Future<bool> synchronizeRules() => _run(() async {
         if (await identity.activeCredential() == null) {
           throw const DeviceIdentityFailure('DEVICE_CREDENTIAL_UNAVAILABLE');
@@ -891,6 +934,9 @@ class ChildSession extends ChangeNotifier {
       _rulesGeneration++;
       rules = const ChildRules();
       _rulesRestoreOnIdle = ruleReceiverFactory != null;
+      _rulesSyncOnIdle = false;
+      _rulesSyncTimer?.cancel();
+      _rulesSyncTimer = null;
       _accessTimer?.cancel();
       _accessTimer = null;
       _accessReceiver?.pause();
@@ -907,6 +953,7 @@ class ChildSession extends ChangeNotifier {
       return;
     }
     _rulesRestoreOnIdle = ruleReceiverFactory != null;
+    _rulesSyncOnIdle = ruleReceiverFactory != null;
     if (busy) return;
     if (cleanupCheck != null &&
         (identityView?.phase == IdentityPhase.cleanupPending ||
@@ -923,6 +970,7 @@ class ChildSession extends ChangeNotifier {
     _accessSyncOnIdle = accessFactory != null;
     _refreshObservationOnIdle = observationFactory != null;
     _submissionRefreshOnIdle = submissionFactory != null;
+    _scheduleRuleSync();
     _drain();
   }
 
@@ -932,6 +980,8 @@ class ChildSession extends ChangeNotifier {
     _clearAccess();
     _clearSubmissions();
     _clearRules();
+    _rulesSyncTimer?.cancel();
+    _rulesSyncTimer = null;
     _pairingCode = null;
     identity.api.close();
     _observationAgent?.close();
