@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import 'core/parent_api.dart';
 import 'core/parent_session.dart';
+import 'core/paged_collection.dart';
 import 'ui/enrollment_flow.dart';
 
 const _navy = Color(0xFF17324B);
@@ -48,7 +49,9 @@ class ParentApp extends StatelessWidget {
             }
             if (!session.authenticated) return _Login(session: session);
             return _Workspace(
-                key: ValueKey(session.tenant?['id']), session: session);
+                key: ValueKey(
+                    '${session.profile?['subject']}:${session.tenant?['id']}:${session.role}'),
+                session: session);
           },
         ),
       );
@@ -269,21 +272,27 @@ class _ApprovalInbox extends StatefulWidget {
 }
 
 class _ApprovalInboxState extends State<_ApprovalInbox> {
-  Future<List<Json>>? pending;
+  late final PagedCollection pending;
   bool sending = false;
   Object? actionError;
 
   @override
   void initState() {
     super.initState();
-    reload();
+    pending = PagedCollection(
+        widget.session.api, '${widget.session.root}/access-requests');
   }
 
-  void reload() => setState(() {
-        pending =
-            widget.session.api.all('${widget.session.root}/access-requests');
-        actionError = null;
-      });
+  @override
+  void dispose() {
+    pending.dispose();
+    super.dispose();
+  }
+
+  Future<void> reload() async {
+    setState(() => actionError = null);
+    await pending.reload();
+  }
 
   Future<void> decide(Json item, bool approve) async {
     if (!widget.session.canDecide || sending) return;
@@ -337,26 +346,27 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
   }
 
   @override
-  Widget build(BuildContext context) => FutureBuilder<List<Json>>(
-        future: pending,
-        builder: (context, result) {
-          if (result.hasError) return _LoadError(result.error!, retry: reload);
-          if (!result.hasData) {
+  Widget build(BuildContext context) => AnimatedBuilder(
+        animation: pending,
+        builder: (context, _) {
+          if (pending.error != null && !pending.loaded) {
+            return _LoadError(pending.error!, retry: reload);
+          }
+          if (!pending.loaded) {
             return const Center(child: CircularProgressIndicator());
           }
-          final items = result.data!
+          final items = pending.items
               .where((item) => item['state'] == 'PENDING')
               .toList(growable: false);
           return RefreshIndicator(
-            onRefresh: () async {
-              reload();
-              await pending;
-            },
+            onRefresh: reload,
             child: ListView(padding: const EdgeInsets.all(20), children: [
               const _SectionTitle('临时访问申请', '先核对用途，再决定是否开放'),
               const SizedBox(height: 12),
               if (actionError != null) _Notice('$actionError', error: true),
-              if (items.isEmpty) const _Empty('暂无待处理申请', '孩子发起的临时访问申请会显示在这里。'),
+              if (items.isEmpty)
+                _Empty(pending.hasMore ? '本页没有待处理申请' : '暂无待处理申请',
+                    pending.hasMore ? '继续加载后续记录。' : '孩子发起的临时访问申请会显示在这里。'),
               for (final item in items)
                 Card(
                   child: Padding(
@@ -392,6 +402,14 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
                     ),
                   ),
                 ),
+              if (pending.error != null)
+                _Notice('${pending.error}', error: true),
+              if (pending.loadingMore) const LinearProgressIndicator(),
+              if (pending.hasMore)
+                TextButton.icon(
+                    onPressed: pending.loadingMore ? null : pending.loadMore,
+                    icon: const Icon(Icons.expand_more),
+                    label: const Text('加载更多申请')),
             ]),
           );
         },
@@ -407,21 +425,27 @@ class _HelpInbox extends StatefulWidget {
 }
 
 class _HelpInboxState extends State<_HelpInbox> {
-  Future<List<Json>>? requests;
+  late final PagedCollection requests;
   bool sending = false;
   Object? actionError;
 
   @override
   void initState() {
     super.initState();
-    reload();
+    requests = PagedCollection(
+        widget.session.api, '${widget.session.root}/help-requests?state=OPEN');
   }
 
-  void reload() => setState(() {
-        requests = widget.session.api
-            .all('${widget.session.root}/help-requests?state=OPEN');
-        actionError = null;
-      });
+  @override
+  void dispose() {
+    requests.dispose();
+    super.dispose();
+  }
+
+  Future<void> reload() async {
+    setState(() => actionError = null);
+    await requests.reload();
+  }
 
   Future<void> acknowledge(Json item) async {
     if (sending) return;
@@ -457,19 +481,18 @@ class _HelpInboxState extends State<_HelpInbox> {
   }
 
   @override
-  Widget build(BuildContext context) => FutureBuilder<List<Json>>(
-        future: requests,
-        builder: (context, result) {
-          if (result.hasError) return _LoadError(result.error!, retry: reload);
-          if (!result.hasData) {
+  Widget build(BuildContext context) => AnimatedBuilder(
+        animation: requests,
+        builder: (context, _) {
+          if (requests.error != null && !requests.loaded) {
+            return _LoadError(requests.error!, retry: reload);
+          }
+          if (!requests.loaded) {
             return const Center(child: CircularProgressIndicator());
           }
-          final items = result.data!;
+          final items = requests.items;
           return RefreshIndicator(
-            onRefresh: () async {
-              reload();
-              await requests;
-            },
+            onRefresh: reload,
             child: ListView(padding: const EdgeInsets.all(20), children: [
               const _SectionTitle('孩子的求助', '看到后请通过现实渠道尽快回应'),
               const SizedBox(height: 10),
@@ -498,6 +521,14 @@ class _HelpInboxState extends State<_HelpInbox> {
                     ),
                   ),
                 ),
+              if (requests.error != null)
+                _Notice('${requests.error}', error: true),
+              if (requests.loadingMore) const LinearProgressIndicator(),
+              if (requests.hasMore)
+                TextButton.icon(
+                    onPressed: requests.loadingMore ? null : requests.loadMore,
+                    icon: const Icon(Icons.expand_more),
+                    label: const Text('加载更多求助')),
             ]),
           );
         },
@@ -513,16 +544,22 @@ class _DeviceList extends StatefulWidget {
 }
 
 class _DeviceListState extends State<_DeviceList> {
-  Future<List<Json>>? devices;
+  late final PagedCollection devices;
 
   @override
   void initState() {
     super.initState();
-    reload();
+    devices =
+        PagedCollection(widget.session.api, '${widget.session.root}/devices');
   }
 
-  void reload() => setState(
-      () => devices = widget.session.api.all('${widget.session.root}/devices'));
+  @override
+  void dispose() {
+    devices.dispose();
+    super.dispose();
+  }
+
+  Future<void> reload() => devices.reload();
 
   Future<void> addDevice() async {
     final completed = await showDialog<bool>(
@@ -534,18 +571,17 @@ class _DeviceListState extends State<_DeviceList> {
   }
 
   @override
-  Widget build(BuildContext context) => FutureBuilder<List<Json>>(
-        future: devices,
-        builder: (context, result) {
-          if (result.hasError) return _LoadError(result.error!, retry: reload);
-          if (!result.hasData) {
+  Widget build(BuildContext context) => AnimatedBuilder(
+        animation: devices,
+        builder: (context, _) {
+          if (devices.error != null && !devices.loaded) {
+            return _LoadError(devices.error!, retry: reload);
+          }
+          if (!devices.loaded) {
             return const Center(child: CircularProgressIndicator());
           }
           return RefreshIndicator(
-            onRefresh: () async {
-              reload();
-              await devices;
-            },
+            onRefresh: reload,
             child: ListView(padding: const EdgeInsets.all(20), children: [
               const _SectionTitle('设备状态', '管理模式决定可用的系统能力'),
               const SizedBox(height: 12),
@@ -558,9 +594,9 @@ class _DeviceListState extends State<_DeviceList> {
                       label: const Text('连接儿童设备')),
                 ),
               const SizedBox(height: 12),
-              if (result.data!.isEmpty)
+              if (devices.items.isEmpty)
                 const _Empty('暂无设备', '请先在管理工作台创建配对并由儿童设备完成确认。'),
-              for (final device in result.data!)
+              for (final device in devices.items)
                 Card(
                   child: ListTile(
                     leading: Icon(device['platform'] == 'ANDROID_TV'
@@ -573,6 +609,14 @@ class _DeviceListState extends State<_DeviceList> {
                   ),
                 ),
               const _Notice('设备在线或商业权益生效，不等于系统策略已执行。请在管理工作台查看逐项回执。'),
+              if (devices.error != null)
+                _Notice('${devices.error}', error: true),
+              if (devices.loadingMore) const LinearProgressIndicator(),
+              if (devices.hasMore)
+                TextButton.icon(
+                    onPressed: devices.loadingMore ? null : devices.loadMore,
+                    icon: const Icon(Icons.expand_more),
+                    label: const Text('加载更多设备')),
             ]),
           );
         },
