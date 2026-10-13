@@ -7,6 +7,7 @@ import 'core/parent_api.dart';
 import 'core/parent_session.dart';
 import 'core/paged_collection.dart';
 import 'core/pending_decisions.dart';
+import 'ui/access_history.dart';
 import 'ui/commercial_account.dart';
 import 'ui/device_capabilities.dart';
 import 'ui/device_exit.dart';
@@ -283,6 +284,8 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
   List<PendingDecision> _recoveries = const [];
   final _recoveryStatus = <String, String>{};
   final _checkedRecoveries = <String>{};
+  String? _lastDecisionId;
+  bool _lastDecisionApproved = false;
   bool sending = false;
   bool _recoveryBusy = false;
   bool _recoveriesLoaded = false;
@@ -421,9 +424,13 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
       await _decisionStore.remove(tenantId, actor, decisionKey);
       recorded = false;
       if (_sameDecisionScope(actor, tenantId)) {
-        setState(() => _recoveries = _recoveries
-            .where((item) => item.idempotencyKey != decisionKey)
-            .toList());
+        setState(() {
+          _recoveries = _recoveries
+              .where((item) => item.idempotencyKey != decisionKey)
+              .toList();
+          _lastDecisionId = requestId;
+          _lastDecisionApproved = approve;
+        });
         await reload(afterDecision: true);
       }
     } catch (failure) {
@@ -623,6 +630,14 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
         builder: (context, _) {
           if (pending.error != null && !pending.loaded) {
             return Column(children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                child: OutlinedButton.icon(
+                  onPressed: () => showAccessHistory(context, widget.session),
+                  icon: const Icon(Icons.history),
+                  label: const Text('查看申请记录与交付状态'),
+                ),
+              ),
               if (actionError != null)
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
@@ -649,6 +664,22 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
             child: ListView(padding: const EdgeInsets.all(20), children: [
               const _SectionTitle('临时访问申请', '先核对用途，再决定是否开放'),
               const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () => showAccessHistory(context, widget.session),
+                icon: const Icon(Icons.history),
+                label: const Text('查看申请记录与交付状态'),
+              ),
+              const SizedBox(height: 10),
+              if (_lastDecisionId != null) ...[
+                _Notice(
+                    _lastDecisionApproved ? '批准决定已保存；设备系统执行仍需核对。' : '拒绝决定已保存。'),
+                TextButton.icon(
+                  onPressed: () => showAccessRequestDetail(
+                      context, widget.session, _lastDecisionId!),
+                  icon: const Icon(Icons.open_in_new),
+                  label: const Text('查看本次申请状态'),
+                ),
+              ],
               if (actionError != null) _Notice('$actionError', error: true),
               ..._recoveryCards(),
               if (items.isEmpty)
