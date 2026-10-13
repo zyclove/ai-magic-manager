@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Map;
 import java.util.UUID;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import static com.aimanager.tenant.TenantAccess.Role.*;
@@ -35,6 +36,19 @@ class ScheduleService implements ScheduleCatalog {
             audit.record(tenant, actor, "SCHEDULE_CREATED", entry.id());
             return entry;
         });
+    }
+    /** Match original payload/creator, reauthorize its reference, never repeat creation. */
+    @Transactional(timeout = 10)
+    public ScheduleEntry creationResult(String tenant, String actor, String requestId, ScheduleController.CreateSchedule input) {
+        access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
+        if (requestId == null || !requestId.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
+            throw DomainException.invalid("INVALID_CREATION_RESULT_REFERENCE");
+        var reference = idempotency.findCommitted(tenant, actor, "schedule.create", requestId, Map.of("input", input), ScheduleEntry.class)
+            .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "SCHEDULE_CREATION_RESULT_UNAVAILABLE"));
+        var current = requireDefinition(tenant, actor, reference.id());
+        if (!current.name().equals(input.name().strip()) || !current.definition().equals(input.definition()))
+            throw new IllegalStateException("Creation journal does not match immutable schedule");
+        return current;
     }
     @Override public ScheduleEntry requireDefinition(String tenant, String actor, String id) {
         access.requireRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN, AUDITOR);

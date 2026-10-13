@@ -337,6 +337,51 @@ class PolicyJourneyTest {
         }
     }
 
+    @Test void scheduleRecoveryMatchesExactCreatorAndDefinitionWithoutRepeatingCreation() throws Exception {
+        var s = scope(); String key = UUID.randomUUID().toString();
+        String payload = "{\"name\":\"晚间计划\",\"definition\":{\"timeZone\":\"Asia/Shanghai\",\"weekly\":[{\"day\":\"MONDAY\",\"start\":\"22:00\",\"end\":\"01:00\"}],\"exceptions\":[]}}";
+        var created = body(mvc.perform(post(path(s) + "/schedules").with(actor(s.owner())).header("Idempotency-Key", key)
+            .contentType(MediaType.APPLICATION_JSON).content(payload)).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString());
+        database.update("UPDATE idempotency_requests SET expires_at=0 WHERE scope_id=? AND operation='schedule.create'", s.tenant());
+        String target = path(s) + "/schedules/creation-results/" + key + "/query";
+        for (int attempt=0; attempt<2; attempt++) {
+            var recovered = body(mvc.perform(post(target).with(actor(s.owner())).contentType(MediaType.APPLICATION_JSON).content(payload))
+                .andExpect(status().isOk()).andExpect(header().string("Cache-Control", "no-store"))
+                .andReturn().getResponse().getContentAsString());
+            assertThat(recovered).isEqualTo(created);
+        }
+        mvc.perform(post(target).with(actor(s.owner())).contentType(MediaType.APPLICATION_JSON).content(payload.replace("22:00", "23:00")))
+            .andExpect(status().isConflict()).andExpect(jsonPath("$.errorCode").value("IDEMPOTENCY_KEY_CONFLICT"));
+        String guardian = "guardian-" + UUID.randomUUID();
+        database.update("INSERT INTO tenant_members(tenant_id,actor_id,actor_key,role) VALUES(?,?,?,'GUARDIAN')", s.tenant(), guardian, ActorKeys.key(guardian));
+        mvc.perform(post(target).with(actor(guardian)).contentType(MediaType.APPLICATION_JSON).content(payload))
+            .andExpect(status().isNotFound()).andExpect(jsonPath("$.errorCode").value("SCHEDULE_CREATION_RESULT_UNAVAILABLE"));
+        mvc.perform(post(path(s) + "/schedules/creation-results/" + UUID.randomUUID() + "/query").with(actor(s.owner()))
+            .contentType(MediaType.APPLICATION_JSON).content(payload)).andExpect(status().isNotFound());
+        database.update("UPDATE tenant_members SET role='AUDITOR' WHERE tenant_id=? AND actor_key=?", s.tenant(), ActorKeys.key(s.owner()));
+        mvc.perform(post(target).with(actor(s.owner())).contentType(MediaType.APPLICATION_JSON).content(payload)).andExpect(status().isForbidden());
+        assertThat(database.queryForObject("SELECT COUNT(*) FROM schedule_definitions WHERE tenant_id=?", Integer.class, s.tenant())).isEqualTo(1);
+        assertThat(database.queryForObject("SELECT MAX(expires_at) FROM idempotency_requests WHERE scope_id=? AND operation='schedule.create'", Long.class, s.tenant())).isZero();
+    }
+
+    @Test void closedDateOverridesCrossMidnightCarryoverAndDstFoldHasTwoWindows() throws Exception {
+        var s = scope();
+        String input = "{\"name\":\"跨夜例外\",\"definition\":{\"timeZone\":\"Asia/Shanghai\",\"weekly\":[{\"day\":\"MONDAY\",\"start\":\"22:00\",\"end\":\"01:00\"}],\"exceptions\":[{\"date\":\"2026-10-06\",\"windows\":[]}]}}";
+        var schedule = body(mvc.perform(post(path(s) + "/schedules").with(actor(s.owner())).contentType(MediaType.APPLICATION_JSON).content(input))
+            .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString());
+        mvc.perform(get(path(s) + "/schedules/" + schedule.get("id").asText() + "/evaluation").with(actor(s.owner())).param("at", "2026-10-05T16:30:00Z"))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.allowed").value(false)).andExpect(jsonPath("$.localDate").value("2026-10-06"));
+        String foldInput = "{\"name\":\"重叠时段\",\"definition\":{\"timeZone\":\"America/New_York\",\"weekly\":[{\"day\":\"SUNDAY\",\"start\":\"01:15\",\"end\":\"01:45\"}],\"exceptions\":[]}}";
+        var fold = body(mvc.perform(post(path(s) + "/schedules").with(actor(s.owner())).contentType(MediaType.APPLICATION_JSON).content(foldInput))
+            .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString());
+        String target = path(s) + "/schedules/" + fold.get("id").asText() + "/evaluation";
+        for (String at : List.of("2026-11-01T05:30:00Z", "2026-11-01T06:30:00Z")) {
+            mvc.perform(get(target).with(actor(s.owner())).param("at", at)).andExpect(status().isOk()).andExpect(jsonPath("$.allowed").value(true));
+        }
+        mvc.perform(get(target).with(actor(s.owner())).param("at", "2026-11-01T05:50:00Z"))
+            .andExpect(status().isOk()).andExpect(jsonPath("$.allowed").value(false)).andExpect(jsonPath("$.nextAllowedAt").value("2026-11-01T06:15:00Z"));
+    }
+
     @Test void templateCopyAndRollbackPreserveHistoricalVersion() throws Exception {
         var s = scope(); var a = app(s, "org.example.game");
         var template = body(mvc.perform(post(path(s) + "/policies").with(actor(s.owner())).contentType(MediaType.APPLICATION_JSON)

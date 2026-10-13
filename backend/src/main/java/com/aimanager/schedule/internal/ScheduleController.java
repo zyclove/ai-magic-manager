@@ -6,6 +6,8 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import java.time.Instant;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.CacheControl;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,13 @@ class ScheduleController {
     @GetMapping ItemPage<ScheduleEntry> list(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId,
                                             @RequestParam(defaultValue = "50") int limit, @RequestParam(required = false) String cursor) {
         return schedules.list(tenantId, actor.getSubject(), limit, cursor);
+    }
+    /** Read-only recovery: keep schedule names and routines out of URL logs. */
+    @PostMapping("/creation-results/{requestId}/query")
+    ResponseEntity<ScheduleEntry> creationResult(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId,
+            @PathVariable String requestId, @Valid @RequestBody CreateSchedule input) {
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore())
+            .body(schedules.creationResult(tenantId, actor.getSubject(), requestId, input));
     }
     @GetMapping("/{scheduleId}") ScheduleEntry get(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId, @PathVariable String scheduleId) {
         return schedules.requireDefinition(tenantId, actor.getSubject(), scheduleId);

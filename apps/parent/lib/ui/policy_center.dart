@@ -9,6 +9,7 @@ import 'policy_editor.dart';
 import 'policy_creation_page.dart';
 import '../core/policy_group_selection.dart';
 import 'policy_group_picker.dart';
+import 'schedule_center.dart';
 
 const _ink = Color(0xFF17324B);
 const _muted = Color(0xFF315E86);
@@ -203,6 +204,14 @@ class _PolicyCenterState extends State<PolicyCenter> {
     }
   }
 
+  Future<void> _schedules() async {
+    if (!_current || recoveryBusy) return;
+    setState(() => recoveryBusy = true);
+    await Navigator.of(context).push(MaterialPageRoute<void>(
+        builder: (_) => ScheduleCenter(session: widget.session)));
+    if (_current) setState(() => recoveryBusy = false);
+  }
+
   @override
   Widget build(BuildContext context) => PopScope(
         canPop: !recoveryBusy,
@@ -242,6 +251,10 @@ class _PolicyCenterState extends State<PolicyCenter> {
                     const Text('先选择草稿，再核对目标设备和逐项规则。预览不会改变设备设置。',
                         style: TextStyle(color: _muted)),
                     const SizedBox(height: 18),
+                    OutlinedButton.icon(
+                        onPressed: recoveryBusy ? null : _schedules,
+                        icon: const Icon(Icons.calendar_month_outlined),
+                        label: const Text('查看与管理时间计划')),
                     if (recoveryError != null)
                       Text('$recoveryError',
                           style: const TextStyle(color: Color(0xFF9A3931))),

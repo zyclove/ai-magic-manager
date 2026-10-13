@@ -3,6 +3,8 @@ import 'package:uuid/uuid.dart';
 
 import '../core/parent_api.dart';
 import '../core/parent_session.dart';
+import '../core/schedules.dart';
+import 'schedule_center.dart';
 
 const _kinds = <String, String>{
   'APP_LAUNCH': '应用启动',
@@ -158,9 +160,21 @@ class _PolicyDraftEditorState extends State<PolicyDraftEditor> {
           ? await widget.session.api.all('/tenants/$tenant/applications')
           : <Json>[];
       if (!current) return;
-      final schedules = kind == 'TIME_WINDOW'
-          ? await widget.session.api.all('/tenants/$tenant/schedules')
-          : <Json>[];
+      final schedules = <Json>[];
+      if (kind == 'TIME_WINDOW' &&
+          index != null &&
+          rules[index]['scheduleId'] is String) {
+        final id = rules[index]['scheduleId'];
+        final value = await widget.session.api
+            .object('/tenants/$tenant/schedules/$id', isCurrent: () => current);
+        if (value['id'] != id) {
+          throw const ParentApiException(502, 'INVALID_RESPONSE');
+        }
+        schedules.add(value);
+      }
+      for (final schedule in schedules) {
+        readSchedule(schedule);
+      }
       if (!current) return;
       Map<String, String> permissions = _special;
       if (kind == 'RUNTIME_PERMISSION') {
@@ -192,6 +206,7 @@ class _PolicyDraftEditorState extends State<PolicyDraftEditor> {
               initial: index == null ? null : rules[index],
               applications: apps,
               schedules: schedules,
+              session: widget.session,
               permissions: permissions,
               isCurrent: () => current,
               scopeChanges: widget.session)));
@@ -231,6 +246,14 @@ class _PolicyDraftEditorState extends State<PolicyDraftEditor> {
         dirty = true;
       });
     }
+  }
+
+  Future<void> _schedules() async {
+    if (!current || busy || mustReload) return;
+    setState(() => busy = true);
+    await Navigator.of(context).push(MaterialPageRoute<void>(
+        builder: (_) => ScheduleCenter(session: widget.session)));
+    if (mounted) setState(() => busy = false);
   }
 
   Future<void> _save() async {
@@ -308,6 +331,10 @@ class _PolicyDraftEditorState extends State<PolicyDraftEditor> {
               const SizedBox(height: 12),
               Text('规则 · ${rules.length}/100',
                   style: Theme.of(context).textTheme.titleLarge),
+              OutlinedButton.icon(
+                  onPressed: busy || mustReload ? null : _schedules,
+                  icon: const Icon(Icons.calendar_month_outlined),
+                  label: const Text('查看或新建时间计划')),
               if (rules.isEmpty)
                 const Padding(
                     padding: EdgeInsets.symmetric(vertical: 20),
@@ -349,6 +376,7 @@ class _PolicyDraftEditorState extends State<PolicyDraftEditor> {
 }
 
 class _RuleForm extends StatefulWidget {
+  final ParentSession session;
   final String kind;
   final Json? initial;
   final List<Json> applications, schedules;
@@ -356,7 +384,8 @@ class _RuleForm extends StatefulWidget {
   final bool Function() isCurrent;
   final Listenable scopeChanges;
   const _RuleForm(
-      {required this.kind,
+      {required this.session,
+      required this.kind,
       required this.initial,
       required this.applications,
       required this.schedules,
@@ -369,6 +398,7 @@ class _RuleForm extends StatefulWidget {
 
 class _RuleFormState extends State<_RuleForm> {
   final form = GlobalKey<FormState>();
+  late final schedules = List<Json>.from(widget.schedules);
   late String effect =
       widget.initial?['effect'] ?? _effects[widget.kind]!.first;
   late String app = widget.initial?['applicationId'] ?? '';
@@ -460,6 +490,21 @@ class _RuleFormState extends State<_RuleForm> {
                 }
               }));
 
+  Future<void> _selectSchedule() async {
+    if (!widget.isCurrent()) return;
+    final plan = await Navigator.of(context).push<Json>(MaterialPageRoute(
+      builder: (_) => ScheduleCenter(session: widget.session, choosing: true),
+    ));
+    if (!mounted || !widget.isCurrent() || plan == null) return;
+    final selected = readSchedule(plan);
+    setState(() {
+      schedules.removeWhere((s) => s['id'] == selected['id']);
+      schedules.add(selected);
+      schedule = selected['id'];
+      dirty = true;
+    });
+  }
+
   void _done() {
     if (!widget.isCurrent() || !form.currentState!.validate()) return;
     final result = <String, dynamic>{
@@ -523,11 +568,16 @@ class _RuleFormState extends State<_RuleForm> {
                     '时间计划',
                     schedule,
                     {
-                      for (final s in widget.schedules)
+                      for (final s in schedules)
                         s['id'] as String: s['name'] as String
                     },
                     (v) => schedule = v),
-                const Text('时区、跨午夜及例外日期沿用所选计划；计划维护请使用完整管理台。'),
+                OutlinedButton.icon(
+                    onPressed: _selectSchedule,
+                    icon: const Icon(Icons.calendar_month_outlined),
+                    label: const Text('选择或新建时间计划')),
+                for (final plan in schedules.where((p) => p['id'] == schedule))
+                  ScheduleDefinitionView(definition: plan['definition']),
               ],
               if (const {'DAILY_QUOTA', 'USAGE_REMINDER'}.contains(widget.kind))
                 TextFormField(
