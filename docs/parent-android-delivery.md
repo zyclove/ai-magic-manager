@@ -18,7 +18,7 @@
 
 手机端复用现有 `/api/v1` 后端契约，采用独立 Flutter 工程，避免 Web 专有 `dart:html`、浏览器存储与 URL 回调渗入原生客户端。依赖锁定在 `apps/parent/pubspec.lock`：`flutter_appauth 9.0.1`、`flutter_secure_storage 10.0.0`，分别用于原生 OIDC 与安全存储；升级需按 Flutter 版本和 Android 兼容矩阵审查。Android 仅声明网络权限，不声明相机或无障碍权限。
 
-完整管理台入口由构建时 `CONSOLE_URL` 指向已部署的 HTTPS Flutter Web 站点，使用 Flutter 官方 `url_launcher 6.3.1` 在系统浏览器打开。移动端不会把访问/刷新令牌放入链接，也不绕过 Web 管理台自身的 OIDC、权限和近期认证；未配置时隐藏该入口。
+完整管理台入口由构建时 `CONSOLE_URL` 指向已部署的 HTTPS Flutter Web 站点，使用 Flutter 官方 `url_launcher 6.3.1` 在系统浏览器打开。移动端不会把访问/刷新令牌放入链接，也不绕过 Web 管理台自身的 OIDC、权限和近期认证；未配置时隐藏该入口。手机端 API 请求禁用自动重定向并限制单次响应为 1 MiB，避免携带令牌的跨源跳转和异常大响应。
 
 今日计数由服务端授权范围内的聚合接口计算。申请、求助和设备列表一次只读 50 条，用户主动加载下一页；重载和账号/租户/角色改变会使旧页面与未完成响应失效。分页响应要求唯一记录 ID 和单调前进的游标，避免重复结果混入当前列表。
 

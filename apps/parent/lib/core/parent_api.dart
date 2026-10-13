@@ -57,6 +57,8 @@ class ParentApi {
     try {
       final token = await accessToken();
       final request = http.Request(method, Uri.parse('$baseUrl$path'));
+      // An API redirect must not forward the bearer token to another origin.
+      request.followRedirects = false;
       request.headers.addAll({
         'Accept': 'application/json',
         'Authorization': 'Bearer $token',
@@ -68,19 +70,32 @@ class ParentApi {
         request.headers['Content-Type'] = 'application/json';
         request.body = jsonEncode(body);
       }
-      final response = await http.Response.fromStream(await _http.send(request))
+      final (status, bytes) = await (() async {
+        final streamed = await _http.send(request);
+        final bytes = <int>[];
+        await for (final chunk in streamed.stream) {
+          if (bytes.length + chunk.length > 1024 * 1024) {
+            throw const ParentApiException(502, 'INVALID_RESPONSE');
+          }
+          bytes.addAll(chunk);
+        }
+        return (streamed.statusCode, bytes);
+      })()
           .timeout(const Duration(seconds: 25));
+      if (status >= 300 && status < 400) {
+        throw const ParentApiException(502, 'INVALID_RESPONSE');
+      }
       dynamic decoded;
-      if (response.bodyBytes.isNotEmpty) {
+      if (bytes.isNotEmpty) {
         try {
-          decoded = jsonDecode(utf8.decode(response.bodyBytes));
+          decoded = jsonDecode(utf8.decode(bytes));
         } on FormatException {
           throw const ParentApiException(502, 'INVALID_RESPONSE');
         }
       }
-      if (response.statusCode >= 400) {
+      if (status >= 400) {
         throw ParentApiException(
-            response.statusCode,
+            status,
             decoded is Map && decoded['errorCode'] is String
                 ? decoded['errorCode'] as String
                 : 'REQUEST_FAILED',
