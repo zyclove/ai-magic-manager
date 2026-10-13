@@ -6,6 +6,7 @@ import com.aimanager.shared.ResourceVersions;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import java.util.List;
+import org.springframework.http.CacheControl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -57,6 +58,14 @@ class PolicyController {
                               @Valid @RequestBody Publish input, @RequestHeader(name = "If-Match", required = false) String etag,
                               @RequestHeader(name = "Idempotency-Key", required = false) String key) {
         return policies.publish(tenantId, actor, policyId, input, etag, key);
+    }
+    @GetMapping("/policies/{policyId}/publication-results/{requestId}")
+    ResponseEntity<PolicyPublication> publicationResult(@AuthenticationPrincipal Jwt actor,
+            @PathVariable String tenantId, @PathVariable String policyId, @PathVariable String requestId,
+            @RequestParam long revision, @RequestParam String previewId, @RequestParam String previewHash) {
+        var result = policies.publicationResult(tenantId, actor.getSubject(), policyId, requestId,
+                revision, previewId, previewHash);
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(result);
     }
     @GetMapping("/policies/{policyId}/versions")
     ItemPage<PolicyVersion> versions(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId, @PathVariable String policyId,

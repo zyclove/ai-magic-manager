@@ -1,14 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 import '../core/paged_collection.dart';
 import '../core/parent_api.dart';
 import '../core/parent_session.dart';
+import '../core/pending_publications.dart';
 
 const _ink = Color(0xFF17324B);
 const _muted = Color(0xFF315E86);
 
-/// Mobile policy reader and explicit device preview. Publication is a separate
-/// workflow: a preview never changes an Android setting or grants enforcement.
+/// Returns only the exact committed result for the current creator/key/body.
+/// A missing journal entry is inconclusive and must never trigger an auto POST.
+Future<Json?> _publicationResult(
+    ParentApi api, String tenantId, PendingPublication marker) async {
+  final query = Uri(queryParameters: {
+    'revision': '${marker.revision}',
+    'previewId': marker.previewId,
+    'previewHash': marker.previewHash,
+  }).query;
+  try {
+    final result = await api.object(
+        '/tenants/$tenantId/policies/${marker.policyId}/publication-results/${marker.idempotencyKey}?$query');
+    if (result['id'] is! String ||
+        result['versionId'] is! String ||
+        result['sequence'] is! int ||
+        result['mode'] != 'CONFIGURE_ONLY' ||
+        result['state'] != 'CONFIGURED_NOT_ENFORCED') {
+      throw const ParentApiException(502, 'INVALID_RESPONSE');
+    }
+    return result;
+  } on ParentApiException catch (failure) {
+    if (failure.status == 404 &&
+        failure.code == 'POLICY_PUBLICATION_RESULT_UNAVAILABLE') return null;
+    rethrow;
+  }
+}
+
+/// Mobile policy preview and CONFIGURE_ONLY publication. A preview never
+/// changes Android settings, and a saved configuration is not enforcement.
 Future<void> showPolicyCenter(BuildContext context, ParentSession session) {
   return Navigator.of(context).push(MaterialPageRoute<void>(
     builder: (_) => PolicyCenter(session: session),
@@ -28,6 +57,12 @@ class _PolicyCenterState extends State<PolicyCenter> {
   late final String actor;
   late final String role;
   late final PagedCollection policies;
+  final publicationStore = PendingPublicationStore();
+  List<PendingPublication> recoveries = const [];
+  final recoveryStatus = <String, String>{};
+  final checkedRecoveries = <String>{};
+  bool recoveryBusy = false;
+  Object? recoveryError;
 
   @override
   void initState() {
@@ -38,6 +73,7 @@ class _PolicyCenterState extends State<PolicyCenter> {
     policies =
         PagedCollection(widget.session.api, '/tenants/$tenantId/policies');
     widget.session.addListener(_closeIfScopeChanged);
+    _loadRecoveries();
   }
 
   bool get _current =>
@@ -48,7 +84,92 @@ class _PolicyCenterState extends State<PolicyCenter> {
       widget.session.role == role;
 
   void _closeIfScopeChanged() {
-    if (mounted && !_current) Navigator.of(context).pop();
+    if (!mounted || _current) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _current) return;
+      final route = ModalRoute.of(context);
+      if (route != null && route.isActive) {
+        Navigator.of(context).removeRoute(route);
+      }
+    });
+  }
+
+  Future<void> _loadRecoveries() async {
+    if (!widget.session.canDecide) return;
+    try {
+      final rows = await publicationStore.load(tenantId, actor);
+      if (_current) {
+        setState(() {
+          recoveries = rows;
+          recoveryError = null;
+          checkedRecoveries.removeWhere(
+              (key) => !rows.any((row) => row.idempotencyKey == key));
+        });
+      }
+    } catch (failure) {
+      if (_current) setState(() => recoveryError = failure);
+    }
+  }
+
+  Future<void> _checkRecovery(PendingPublication marker) async {
+    if (!_current || recoveryBusy) return;
+    setState(() => recoveryBusy = true);
+    try {
+      final result =
+          await _publicationResult(widget.session.api, tenantId, marker);
+      if (!_current) return;
+      setState(() {
+        checkedRecoveries.add(marker.idempotencyKey);
+        recoveryStatus[marker.idempotencyKey] = result == null
+            ? '未找到可读取的原提交结果。这不能证明配置没有保存；请到管理台核对版本后决定是否清除提醒。'
+            : '原提交已保存为配置版本 ${result['sequence']}，状态：仅配置、未执行。操作编号：${result['id']}。';
+      });
+    } catch (failure) {
+      if (_current) setState(() => recoveryError = failure);
+    } finally {
+      if (_current) setState(() => recoveryBusy = false);
+    }
+  }
+
+  Future<void> _clearRecovery(PendingPublication marker) async {
+    if (!_current ||
+        recoveryBusy ||
+        !checkedRecoveries.contains(marker.idempotencyKey)) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('清除本机发布提醒？'),
+        content: const Text('这只清除本机的待核对记录，不会创建、撤销或执行策略配置。请先核对原发布结果。'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('返回')),
+          FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('已核对，清除提醒')),
+        ],
+      ),
+    );
+    if (confirmed != true ||
+        !_current ||
+        recoveryBusy ||
+        !checkedRecoveries.contains(marker.idempotencyKey)) return;
+    setState(() => recoveryBusy = true);
+    try {
+      await publicationStore.remove(tenantId, actor, marker.idempotencyKey);
+      if (!_current) return;
+      setState(() {
+        recoveries = recoveries
+            .where((row) => row.idempotencyKey != marker.idempotencyKey)
+            .toList();
+        recoveryStatus.remove(marker.idempotencyKey);
+        checkedRecoveries.remove(marker.idempotencyKey);
+      });
+    } catch (failure) {
+      if (_current) setState(() => recoveryError = failure);
+    } finally {
+      if (_current) setState(() => recoveryBusy = false);
+    }
   }
 
   @override
@@ -59,74 +180,129 @@ class _PolicyCenterState extends State<PolicyCenter> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('策略中心')),
-        body: AnimatedBuilder(
-          animation: policies,
-          builder: (context, _) {
-            if (!policies.loaded && policies.error != null) {
-              return _error(policies.error!, policies.reload);
-            }
-            if (!policies.loaded) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            return RefreshIndicator(
-              onRefresh: policies.reload,
-              child: ListView(
-                padding: const EdgeInsets.all(20),
-                children: [
-                  Text('策略草稿与模板',
-                      style:
-                          Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                color: _ink,
-                                fontWeight: FontWeight.w700,
-                              )),
-                  const SizedBox(height: 7),
-                  const Text('先选择草稿，再核对目标设备和逐项规则。预览不会改变设备设置。',
-                      style: TextStyle(color: _muted)),
-                  const SizedBox(height: 18),
-                  if (policies.items.isEmpty)
-                    const Card(
+  Widget build(BuildContext context) => PopScope(
+        canPop: !recoveryBusy,
+        child: Scaffold(
+          appBar: AppBar(title: const Text('策略中心')),
+          body: AnimatedBuilder(
+            animation: policies,
+            builder: (context, _) {
+              if (!policies.loaded && policies.error != null) {
+                return _error(policies.error!, policies.reload);
+              }
+              if (!policies.loaded) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              return RefreshIndicator(
+                onRefresh: () async {
+                  if (recoveryBusy) return;
+                  await _loadRecoveries();
+                  await policies.reload();
+                },
+                child: ListView(
+                  padding: const EdgeInsets.all(20),
+                  children: [
+                    Text('策略草稿与模板',
+                        style:
+                            Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                  color: _ink,
+                                  fontWeight: FontWeight.w700,
+                                )),
+                    const SizedBox(height: 7),
+                    const Text('先选择草稿，再核对目标设备和逐项规则。预览不会改变设备设置。',
+                        style: TextStyle(color: _muted)),
+                    const SizedBox(height: 18),
+                    if (recoveryError != null)
+                      Text('$recoveryError',
+                          style: const TextStyle(color: Color(0xFF9A3931))),
+                    if (recoveries.isNotEmpty)
+                      const Card(
                         child: Padding(
-                            padding: EdgeInsets.all(20),
-                            child: Text('还没有策略。请先在完整管理台创建草稿或模板。'))),
-                  for (final row in policies.items)
-                    Card(
-                      margin: const EdgeInsets.only(bottom: 10),
-                      child: ListTile(
-                        contentPadding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 9),
-                        leading:
-                            const Icon(Icons.shield_outlined, color: _muted),
-                        title: Text(_name(row['name'], '未命名策略')),
-                        subtitle: Text(
-                            '${row['kind'] == 'TEMPLATE' ? '模板 · 需先复制' : '策略草稿'} · ${(row['rules'] as List?)?.length ?? 0} 条规则 · 修订 ${row['revision'] ?? '—'}'),
-                        trailing: const Icon(Icons.chevron_right),
-                        onTap: row['id'] is String && _current
-                            ? () => Navigator.of(context)
-                                    .push(MaterialPageRoute<void>(
-                                  builder: (_) => _PolicyDetail(
-                                      session: widget.session,
-                                      policyId: row['id'] as String),
-                                ))
-                            : null,
+                          padding: EdgeInsets.all(16),
+                          child: Text('存在尚未核对的配置发布。客户端不会自动重复提交；先查询原结果。'),
+                        ),
                       ),
-                    ),
-                  if (policies.error != null)
-                    Text('${policies.error}',
-                        style: const TextStyle(color: Color(0xFF9A3931))),
-                  if (policies.loadingMore) const LinearProgressIndicator(),
-                  if (policies.hasMore)
-                    TextButton.icon(
-                      onPressed:
-                          policies.loadingMore ? null : policies.loadMore,
-                      icon: const Icon(Icons.expand_more),
-                      label: const Text('加载更多策略'),
-                    ),
-                ],
-              ),
-            );
-          },
+                    for (final marker in recoveries)
+                      Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('待核对的配置发布',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.w700)),
+                              SelectableText('策略编号：${marker.policyId}'),
+                              Text('提交时间：${_time(marker.createdAt)}'),
+                              if (recoveryStatus[marker.idempotencyKey] != null)
+                                Text(recoveryStatus[marker.idempotencyKey]!),
+                              Wrap(spacing: 8, children: [
+                                OutlinedButton(
+                                  onPressed: recoveryBusy
+                                      ? null
+                                      : () => _checkRecovery(marker),
+                                  child: const Text('查询原发布结果'),
+                                ),
+                                TextButton(
+                                  onPressed: recoveryBusy ||
+                                          !checkedRecoveries
+                                              .contains(marker.idempotencyKey)
+                                      ? null
+                                      : () => _clearRecovery(marker),
+                                  child: const Text('已核对'),
+                                ),
+                              ]),
+                            ],
+                          ),
+                        ),
+                      ),
+                    if (policies.items.isEmpty)
+                      const Card(
+                          child: Padding(
+                              padding: EdgeInsets.all(20),
+                              child: Text('还没有策略。请先在完整管理台创建草稿或模板。'))),
+                    for (final row in policies.items)
+                      Card(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        child: ListTile(
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 9),
+                          leading:
+                              const Icon(Icons.shield_outlined, color: _muted),
+                          title: Text(_name(row['name'], '未命名策略')),
+                          subtitle: Text(
+                              '${row['kind'] == 'TEMPLATE' ? '模板 · 需先复制' : '策略草稿'} · ${(row['rules'] as List?)?.length ?? 0} 条规则 · 修订 ${row['revision'] ?? '—'}'),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap:
+                              row['id'] is String && _current && !recoveryBusy
+                                  ? () async {
+                                      await Navigator.of(context)
+                                          .push(MaterialPageRoute<void>(
+                                        builder: (_) => _PolicyDetail(
+                                            session: widget.session,
+                                            policyId: row['id'] as String),
+                                      ));
+                                      if (_current) await _loadRecoveries();
+                                    }
+                                  : null,
+                        ),
+                      ),
+                    if (policies.error != null)
+                      Text('${policies.error}',
+                          style: const TextStyle(color: Color(0xFF9A3931))),
+                    if (policies.loadingMore) const LinearProgressIndicator(),
+                    if (policies.hasMore)
+                      TextButton.icon(
+                        onPressed:
+                            policies.loadingMore ? null : policies.loadMore,
+                        icon: const Icon(Icons.expand_more),
+                        label: const Text('加载更多策略'),
+                      ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       );
 }
@@ -148,7 +324,11 @@ class _PolicyDetailState extends State<_PolicyDetail> {
   late Future<Json> draft;
   final selected = <String, String>{};
   final selectedNames = <String, String>{};
+  final publicationStore = PendingPublicationStore();
+  List<PendingPublication> markers = const [];
+  bool journalLoaded = false;
   Json? preview;
+  Json? publication;
   bool busy = false;
   Object? actionError;
 
@@ -164,6 +344,7 @@ class _PolicyDetailState extends State<_PolicyDetail> {
     }
     widget.session.addListener(_closeIfScopeChanged);
     draft = _readDraft();
+    _loadJournal();
   }
 
   bool get _current =>
@@ -174,7 +355,30 @@ class _PolicyDetailState extends State<_PolicyDetail> {
       widget.session.role == role;
 
   void _closeIfScopeChanged() {
-    if (mounted && !_current) Navigator.of(context).pop();
+    if (!mounted || _current) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _current) return;
+      final route = ModalRoute.of(context);
+      if (route != null && route.isActive) {
+        Navigator.of(context).removeRoute(route);
+      }
+    });
+  }
+
+  Future<void> _loadJournal() async {
+    if (!widget.session.canDecide) return;
+    if (_current) setState(() => journalLoaded = false);
+    try {
+      final rows = await publicationStore.load(tenantId, actor);
+      if (_current) {
+        setState(() {
+          markers = rows;
+          journalLoaded = true;
+        });
+      }
+    } catch (failure) {
+      if (_current) setState(() => actionError = failure);
+    }
   }
 
   Future<Json> _readDraft() async {
@@ -191,8 +395,10 @@ class _PolicyDetailState extends State<_PolicyDetail> {
   }
 
   void _reload() {
+    if (busy) return;
     setState(() {
       preview = null;
+      publication = null;
       actionError = null;
       selected.clear();
       selectedNames.clear();
@@ -244,10 +450,13 @@ class _PolicyDetailState extends State<_PolicyDetail> {
       if (!_current) return;
       if (raw is! Json ||
           raw['id'] is! String ||
+          !RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
+              .hasMatch(raw['id'] as String) ||
           raw['policyId'] != widget.policyId ||
           raw['draftRevision'] != revision ||
           raw['phase'] != 'PREVIEW' ||
           raw['hash'] is! String ||
+          !RegExp(r'^[0-9a-f]{64}$').hasMatch(raw['hash'] as String) ||
           raw['enforceable'] is! bool ||
           raw['targets'] is! List ||
           raw['expiresAt'] is! int ||
@@ -288,6 +497,133 @@ class _PolicyDetailState extends State<_PolicyDetail> {
     }
   }
 
+  Future<void> _publish(Json policy) async {
+    final reviewed = preview;
+    if (!_current ||
+        busy ||
+        !journalLoaded ||
+        !widget.session.canDecide ||
+        reviewed == null ||
+        policy['kind'] != 'POLICY' ||
+        reviewed['draftRevision'] != policy['revision'] ||
+        reviewed['expiresAt'] is! int ||
+        (reviewed['expiresAt'] as int) <=
+            DateTime.now().millisecondsSinceEpoch ||
+        markers.any((row) => row.policyId == widget.policyId)) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('仅保存策略配置？'),
+        content:
+            Text('将为本次选定的 ${(reviewed['targets'] as List).length} 台设备记录不可变配置版本。'
+                '当前服务端尚未开放系统强制执行；保存后应用限制不会因此生效。设备与规则会在提交时重新检查。'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('返回')),
+          FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('继续安全验证')),
+        ],
+      ),
+    );
+    if (confirmed != true || !_current || busy || preview != reviewed) return;
+    final marker = PendingPublication(
+      policyId: widget.policyId,
+      revision: policy['revision'] as int,
+      previewId: reviewed['id'] as String,
+      previewHash: reviewed['hash'] as String,
+      idempotencyKey: const Uuid().v4(),
+      createdAt: DateTime.now().millisecondsSinceEpoch,
+    );
+    var recorded = false;
+    var submitted = false;
+    setState(() {
+      busy = true;
+      actionError = null;
+    });
+    try {
+      if (!await widget.session.reauthenticate()) {
+        if (_current && widget.session.error != null) {
+          setState(() => actionError = widget.session.error);
+        }
+        return;
+      }
+      if (!_current) return;
+      if ((reviewed['expiresAt'] as int) <=
+          DateTime.now().millisecondsSinceEpoch) {
+        throw const ParentApiException(409, 'PREVIEW_STALE');
+      }
+      await publicationStore.add(tenantId, actor, marker);
+      recorded = true;
+      if (!_current) return;
+      setState(() => markers = [...markers, marker]);
+      submitted = true;
+      final raw = await widget.session.api.send(
+          'POST', '/tenants/$tenantId/policies/${widget.policyId}/publications',
+          version: marker.revision,
+          idempotencyKey: marker.idempotencyKey,
+          body: {
+            'previewId': marker.previewId,
+            'previewHash': marker.previewHash,
+            'mode': 'CONFIGURE_ONLY'
+          });
+      if (raw is! Json ||
+          raw['id'] is! String ||
+          raw['versionId'] is! String ||
+          raw['sequence'] is! int ||
+          raw['mode'] != 'CONFIGURE_ONLY' ||
+          raw['state'] != 'CONFIGURED_NOT_ENFORCED') {
+        throw const ParentApiException(502, 'INVALID_RESPONSE');
+      }
+      await publicationStore.remove(tenantId, actor, marker.idempotencyKey);
+      recorded = false;
+      if (!_current) return;
+      setState(() {
+        markers = markers
+            .where((row) => row.idempotencyKey != marker.idempotencyKey)
+            .toList();
+        publication = raw;
+        preview = null;
+      });
+    } catch (failure) {
+      if (!_current) return;
+      if (submitted &&
+          (failure is! ParentApiException ||
+              failure.status == 0 ||
+              failure.status >= 500 ||
+              failure.code == 'REQUEST_IN_PROGRESS' ||
+              failure.code == 'IDEMPOTENCY_KEY_CONFLICT')) {
+        setState(() {
+          actionError = '配置发布结果不明。本机已保留原请求，请返回策略中心查询；客户端不会自动重发。';
+          preview = null;
+        });
+      } else {
+        if (recorded) {
+          try {
+            await publicationStore.remove(
+                tenantId, actor, marker.idempotencyKey);
+            if (!_current) return;
+            setState(() => markers = markers
+                .where((row) => row.idempotencyKey != marker.idempotencyKey)
+                .toList());
+          } catch (_) {
+            if (_current) {
+              setState(() => actionError = '发布未完成，且本机待核对记录未能清理。请返回策略中心查询原结果。');
+            }
+            return;
+          }
+        }
+        setState(() {
+          actionError = failure;
+          preview = null;
+        });
+      }
+    } finally {
+      if (mounted) setState(() => busy = false);
+    }
+  }
+
   @override
   void dispose() {
     widget.session.removeListener(_closeIfScopeChanged);
@@ -296,85 +632,131 @@ class _PolicyDetailState extends State<_PolicyDetail> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        appBar: AppBar(title: const Text('策略详情与预览')),
-        body: FutureBuilder<Json>(
-          future: draft,
-          builder: (context, snapshot) {
-            if (snapshot.hasError) return _error(snapshot.error!, _reload);
-            if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
-            }
-            final policy = snapshot.data!;
-            return RefreshIndicator(
-              onRefresh: () async {
-                _reload();
-                try {
-                  await draft;
-                } catch (_) {
-                  // The FutureBuilder displays the scoped read failure.
-                }
-              },
-              child: ListView(padding: const EdgeInsets.all(20), children: [
-                Text(_name(policy['name'], '未命名策略'),
-                    style: Theme.of(context)
-                        .textTheme
-                        .headlineSmall
-                        ?.copyWith(color: _ink, fontWeight: FontWeight.w700)),
-                const SizedBox(height: 6),
-                Text(
-                    '${policy['kind'] == 'TEMPLATE' ? '模板' : '策略草稿'} · 修订 ${policy['revision']} · ${(policy['rules'] as List).length} 条规则',
-                    style: const TextStyle(color: _muted)),
-                const SizedBox(height: 16),
-                for (final raw in policy['rules'] as List)
-                  if (raw is Json)
-                    Card(
-                      child: ListTile(
-                        leading: const Icon(Icons.rule_outlined),
-                        title: Text(
-                            '${_rule(raw['kind'])} · ${_effect(raw['effect'])}'),
-                        subtitle: Text(_ruleDetail(raw)),
+  Widget build(BuildContext context) => PopScope(
+        canPop: !busy,
+        child: Scaffold(
+          appBar: AppBar(title: const Text('策略详情与预览')),
+          body: FutureBuilder<Json>(
+            future: draft,
+            builder: (context, snapshot) {
+              if (snapshot.hasError) return _error(snapshot.error!, _reload);
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              final policy = snapshot.data!;
+              return RefreshIndicator(
+                onRefresh: () async {
+                  _reload();
+                  try {
+                    await draft;
+                  } catch (_) {
+                    // The FutureBuilder displays the scoped read failure.
+                  }
+                },
+                child: ListView(padding: const EdgeInsets.all(20), children: [
+                  Text(_name(policy['name'], '未命名策略'),
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineSmall
+                          ?.copyWith(color: _ink, fontWeight: FontWeight.w700)),
+                  const SizedBox(height: 6),
+                  Text(
+                      '${policy['kind'] == 'TEMPLATE' ? '模板' : '策略草稿'} · 修订 ${policy['revision']} · ${(policy['rules'] as List).length} 条规则',
+                      style: const TextStyle(color: _muted)),
+                  const SizedBox(height: 16),
+                  for (final raw in policy['rules'] as List)
+                    if (raw is Json)
+                      Card(
+                        child: ListTile(
+                          leading: const Icon(Icons.rule_outlined),
+                          title: Text(
+                              '${_rule(raw['kind'])} · ${_effect(raw['effect'])}'),
+                          subtitle: Text(_ruleDetail(raw)),
+                        ),
+                      ),
+                  if (policy['kind'] == 'TEMPLATE')
+                    const Card(
+                        child: Padding(
+                            padding: EdgeInsets.all(18),
+                            child: Text('模板不能直接预览或发布。请先在完整管理台复制为策略草稿。')))
+                  else if (!widget.session.canDecide)
+                    const Card(
+                        child: Padding(
+                            padding: EdgeInsets.all(18),
+                            child: Text('当前角色可查看策略，不能预览或发布。')))
+                  else ...[
+                    const SizedBox(height: 18),
+                    Text('选择目标设备 · ${selected.length}/50',
+                        style: Theme.of(context).textTheme.titleLarge),
+                    const Text('本次为明确设备快照。设备组成员后续变化不会自动更新此策略。',
+                        style: TextStyle(color: _muted)),
+                    const SizedBox(height: 10),
+                    _devicePicker(),
+                    const SizedBox(height: 12),
+                    FilledButton.icon(
+                      onPressed: busy || selected.isEmpty
+                          ? null
+                          : () => _preview(policy),
+                      icon: const Icon(Icons.fact_check_outlined),
+                      label: Text(busy ? '正在检查设备…' : '预览所选设备'),
+                    ),
+                  ],
+                  if (actionError != null) ...[
+                    const SizedBox(height: 12),
+                    Text('$actionError',
+                        style: const TextStyle(color: Color(0xFF9A3931))),
+                  ],
+                  if (markers.any((row) => row.policyId == widget.policyId))
+                    const Card(
+                      child: Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Text('此策略有待核对的配置发布。请返回策略中心查询原结果，核对前不能再次发布。'),
                       ),
                     ),
-                if (policy['kind'] == 'TEMPLATE')
-                  const Card(
+                  if (preview != null) ...[
+                    const SizedBox(height: 18),
+                    _previewContent(preview!),
+                    const SizedBox(height: 14),
+                    FilledButton.icon(
+                      onPressed: busy ||
+                              !journalLoaded ||
+                              markers.any(
+                                  (row) => row.policyId == widget.policyId) ||
+                              (preview!['expiresAt'] as int) <=
+                                  DateTime.now().millisecondsSinceEpoch
+                          ? null
+                          : () => _publish(policy),
+                      icon: const Icon(Icons.save_outlined),
+                      label: Text(busy ? '正在处理…' : '仅保存配置版本'),
+                    ),
+                    if ((preview!['expiresAt'] as int) <=
+                        DateTime.now().millisecondsSinceEpoch)
+                      const Text('预览已过期，请重新预览后再保存。',
+                          style: TextStyle(color: _muted)),
+                    if (!journalLoaded)
+                      const Text('正在核对本机待处理发布记录，完成后才可保存。',
+                          style: TextStyle(color: _muted)),
+                  ],
+                  if (publication != null)
+                    Card(
                       child: Padding(
-                          padding: EdgeInsets.all(18),
-                          child: Text('模板不能直接预览或发布。请先在完整管理台复制为策略草稿。')))
-                else if (!widget.session.canDecide)
-                  const Card(
-                      child: Padding(
-                          padding: EdgeInsets.all(18),
-                          child: Text('当前角色可查看策略，不能预览或发布。')))
-                else ...[
-                  const SizedBox(height: 18),
-                  Text('选择目标设备 · ${selected.length}/50',
-                      style: Theme.of(context).textTheme.titleLarge),
-                  const Text('本次为明确设备快照。设备组成员后续变化不会自动更新此策略。',
-                      style: TextStyle(color: _muted)),
-                  const SizedBox(height: 10),
-                  _devicePicker(),
-                  const SizedBox(height: 12),
-                  FilledButton.icon(
-                    onPressed: busy || selected.isEmpty
-                        ? null
-                        : () => _preview(policy),
-                    icon: const Icon(Icons.fact_check_outlined),
-                    label: Text(busy ? '正在检查设备…' : '预览所选设备'),
-                  ),
-                ],
-                if (actionError != null) ...[
-                  const SizedBox(height: 12),
-                  Text('$actionError',
-                      style: const TextStyle(color: Color(0xFF9A3931))),
-                ],
-                if (preview != null) ...[
-                  const SizedBox(height: 18),
-                  _previewContent(preview!),
-                ],
-              ]),
-            );
-          },
+                        padding: const EdgeInsets.all(18),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('配置版本已保存',
+                                style: TextStyle(fontWeight: FontWeight.w700)),
+                            Text('版本序号：${publication!['sequence']}'),
+                            SelectableText('操作编号：${publication!['id']}'),
+                            const Text('状态：仅保存配置，尚未执行设备系统限制。'),
+                          ],
+                        ),
+                      ),
+                    ),
+                ]),
+              );
+            },
+          ),
         ),
       );
 

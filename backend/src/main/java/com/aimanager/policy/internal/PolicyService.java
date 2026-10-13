@@ -396,6 +396,47 @@ class PolicyService
         });
   }
 
+  /**
+   * Creator-only lookup of a committed CONFIGURE_ONLY publication after a lost HTTP response.
+   * An absent/expired journal is inconclusive; this read never repeats the mutation.
+   */
+  @Transactional(timeout = 10)
+  public PolicyPublication publicationResult(
+      String tenant,
+      String actor,
+      String policyId,
+      String requestId,
+      long revision,
+      String previewId,
+      String previewHash) {
+    access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
+    if (revision < 0
+        || requestId == null
+        || !requestId.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+        || previewId == null
+        || !previewId.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
+        || previewHash == null
+        || !previewHash.matches("[0-9a-f]{64}"))
+      throw DomainException.invalid("INVALID_PUBLICATION_RESULT_REFERENCE");
+    readDraft(tenant, policyId, false);
+    var input = new PolicyController.Publish(
+        previewId, previewHash, PolicyPublication.Mode.CONFIGURE_ONLY);
+    var reference = idempotency.findCommitted(
+        tenant,
+        actor,
+        "policy.publish",
+        requestId,
+        Map.of("policyId", policyId, "revision", revision, "input", input),
+        PolicyPublication.class).orElseThrow(
+            () -> new DomainException(HttpStatus.NOT_FOUND, "POLICY_PUBLICATION_RESULT_UNAVAILABLE"));
+    var version = readVersion(tenant, policyId, reference.versionId());
+    if (version.draftRevision() != revision
+        || !previewHash.equals(version.previewHash())
+        || version.mode() != PolicyPublication.Mode.CONFIGURE_ONLY)
+      throw new IllegalStateException("Publication journal does not match its version");
+    return publication(tenant, actor, reference.id());
+  }
+
   private PolicyPublication recordConfiguration(
       String tenant,
       String actor,

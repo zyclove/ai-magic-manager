@@ -22,6 +22,7 @@ class ParentApiException implements Exception {
   String get message => switch (code) {
         'REAUTH_REQUIRED' => '请完成近期安全验证后重试。',
         'RESOURCE_VERSION_CONFLICT' => '记录已发生变化，请刷新后重新处理。',
+        'PREVIEW_STALE' => '预览已过期或设备已变化，请重新预览。',
         'ACCESS_REQUEST_NOT_PENDING' => '申请状态已变化，请刷新列表。',
         'HELP_REQUEST_VERSION_CHANGED' => '求助状态已变化，请刷新列表。',
         'SCOPE_DENIED' => '当前账号没有此操作权限。',
