@@ -23,6 +23,25 @@ if (flutterVersionName == null) {
     flutterVersionName = "1.0"
 }
 
+// Credentials are supplied by the institution's secret store at build time.
+// An absent key must never silently produce an unsigned or debug-signed release.
+def releaseRequested = gradle.startParameter.taskNames.any {
+    it.toLowerCase(java.util.Locale.ROOT).contains("release")
+}
+def releaseStore = System.getenv("PARENT_ANDROID_KEYSTORE")
+def releaseStorePassword = System.getenv("PARENT_ANDROID_STORE_PASSWORD")
+def releaseAlias = System.getenv("PARENT_ANDROID_KEY_ALIAS")
+def releaseKeyPassword = System.getenv("PARENT_ANDROID_KEY_PASSWORD")
+def signingConfigured = [releaseStore, releaseStorePassword, releaseAlias, releaseKeyPassword]
+    .every { it != null && !it.trim().isEmpty() }
+if (releaseRequested && !signingConfigured) {
+    throw new GradleException("Parent release signing requires the four PARENT_ANDROID_* environment variables")
+}
+if (releaseRequested &&
+    (!new File(releaseStore).isAbsolute() || !file(releaseStore).isFile())) {
+    throw new GradleException("Parent release signing keystore must be an existing absolute file")
+}
+
 android {
     namespace = "com.aimanager.parent"
     compileSdk = 36
@@ -43,9 +62,20 @@ android {
         manifestPlaceholders += ['appAuthRedirectScheme': 'com.aimanager.parent']
     }
 
+    signingConfigs {
+        release {
+            if (signingConfigured) {
+                storeFile = file(releaseStore)
+                storePassword = releaseStorePassword
+                keyAlias = releaseAlias
+                keyPassword = releaseKeyPassword
+            }
+        }
+    }
+
     buildTypes {
         release {
-            // Release signing is supplied by the distribution pipeline.
+            if (signingConfigured) signingConfig = signingConfigs.release
         }
     }
 }
