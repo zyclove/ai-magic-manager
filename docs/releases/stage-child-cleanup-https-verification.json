@@ -1,0 +1,402 @@
+{
+  "stage": "child-cleanup-https-verification",
+  "version": "1.0.0",
+  "recordedAt": "2026-10-13T06:45:09.205117+00:00",
+  "sourceBase": "22aea05f760b12195d9daff25322fddc1a4a0274",
+  "sourceFiles": [
+    {
+      "path": "apps/child/integration_test/cleanup_https_test.dart",
+      "sha256": "53636e0b2c656827d76f94ad713e89df282a35a2c0a3747fecceba85764c2590"
+    },
+    {
+      "path": "apps/child/test_driver/cleanup_https_driver.dart",
+      "sha256": "1591169c3b086683e5e2d246f3819aadbbe9fb229ac15a0392ea7fcb5df9129b"
+    },
+    {
+      "path": "apps/child/tool/run_cleanup_https_android.py",
+      "sha256": "799bf9c065f453775ba8a06052d60c99db49880a72cffc7c9b6305c10aebf022"
+    },
+    {
+      "path": "apps/child/tool/test_run_cleanup_https_android.py",
+      "sha256": "9b755de337664d3210bcf4422c3ff71eb89e5400aa53337e218584be0ec26250"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/AndroidCleanupHttpsJourneyTest.java",
+      "sha256": "1fb83c61ed96c347ea2316ab1c2844f81c0cb3fdb8564c5b684c0c3e8b313bb0"
+    },
+    {
+      "path": "apps/child/integration_test/support/cleanup_https_certificate.dart",
+      "sha256": "5f671f3531ba3cecabc62424fa97844063e445f56ece042f82ee5b4338b124e8"
+    },
+    {
+      "path": "apps/child/test/cleanup_https_certificate_test.dart",
+      "sha256": "0a2c85475a8c0a6498b60b7429fb41e1452172984ae90391f54e2f3deeea3d12"
+    }
+  ],
+  "unchangedArchiveFilesCompared": 1129,
+  "tests": {
+    "child": 178,
+    "host": 12,
+    "nativeHttpsJourney": 1,
+    "nativeJourneySkipped": 0,
+    "analysis": "passed"
+  },
+  "native": {
+    "phases": [
+      {
+        "phase": "negative",
+        "pid": 4899,
+        "expectedMissingSeedFailure": true,
+        "driverExitCode": 1,
+        "installation": {
+          "uid": "10190",
+          "firstInstallTime": "2026-10-13 06:06:54"
+        },
+        "serial": "emulator-5586",
+        "avd": "AIManagerCleanupHttpsRetry20261013",
+        "apiLevel": 34,
+        "nativePidVerified": true,
+        "processStopped": true,
+        "installPreserved": true,
+        "metadataReadRetries": 0,
+        "driverAttachedExistingApp": true,
+        "apkSha256": "945ab51319d9ab754313cefa464804d2a0c0f586203fd98e0a1e802c44eefe7b",
+        "driverLogSha256": "8e7f3a8d16361a177e3b4432b9151d51619987e68ae119f5d6fe93e4f7fa79fa",
+        "nativeLogSha256": "78e7502cfca27699f3dcdb6485e647e350373190c57a13a1a0fb8516f6922e24",
+        "path": ".local/cleanup-https-source-20261013/backend/.local/android-cleanup-https-12225511185261761641/native-negative",
+        "hostReceiptSha256": "29d33e8f71ff6e71d1425897141d2b2732cb1480b0457fc787263377628abcc9"
+      },
+      {
+        "phase": "enroll",
+        "pid": 5586,
+        "realTls": true,
+        "untrustedCertificateRejected": true,
+        "realAndroidKey": true,
+        "cloudResponsesAreReal": true,
+        "adultIdentityIsFixture": true,
+        "cleanupCompleted": false,
+        "journalRetained": false,
+        "originalKeyDeleted": false,
+        "cachesDeleted": false,
+        "physicalWipeProven": false,
+        "driverExitCode": 0,
+        "installation": {
+          "uid": "10190",
+          "firstInstallTime": "2026-10-13 06:06:54"
+        },
+        "serial": "emulator-5586",
+        "avd": "AIManagerCleanupHttpsRetry20261013",
+        "apiLevel": 34,
+        "nativePidVerified": true,
+        "processStopped": true,
+        "installPreserved": true,
+        "metadataReadRetries": 0,
+        "driverAttachedExistingApp": true,
+        "apkSha256": "945ab51319d9ab754313cefa464804d2a0c0f586203fd98e0a1e802c44eefe7b",
+        "driverLogSha256": "9521dcae1b49855f2d12eb921258b30860d79109c2905de93dd366c74f828979",
+        "nativeLogSha256": "7ddfd57f0806ded06a9ae00328cda2a595467cc3293bebc3e44fcc0743becdc6",
+        "path": ".local/cleanup-https-source-20261013/backend/.local/android-cleanup-https-12225511185261761641/native-enroll",
+        "hostReceiptSha256": "6fcca54aaddc1bd3266ca480b18d37e157692e7d860829b57901d2566af1ebc6"
+      },
+      {
+        "phase": "active",
+        "pid": 6058,
+        "realTls": true,
+        "untrustedCertificateRejected": true,
+        "realAndroidKey": true,
+        "cloudResponsesAreReal": true,
+        "adultIdentityIsFixture": true,
+        "cleanupCompleted": false,
+        "journalRetained": false,
+        "originalKeyDeleted": false,
+        "cachesDeleted": false,
+        "physicalWipeProven": false,
+        "driverExitCode": 0,
+        "installation": {
+          "uid": "10190",
+          "firstInstallTime": "2026-10-13 06:06:54"
+        },
+        "serial": "emulator-5586",
+        "avd": "AIManagerCleanupHttpsRetry20261013",
+        "apiLevel": 34,
+        "nativePidVerified": true,
+        "processStopped": true,
+        "installPreserved": true,
+        "metadataReadRetries": 0,
+        "driverAttachedExistingApp": true,
+        "apkSha256": "945ab51319d9ab754313cefa464804d2a0c0f586203fd98e0a1e802c44eefe7b",
+        "driverLogSha256": "222f3e11cd7e558a94d071ec4dda341083a55b780d6c373eee9c8dbb2f366326",
+        "nativeLogSha256": "ff7cc4dd03c1423cc0a3d2627b54a2ce90186dab72ef0b3c51b2157a1c8d4241",
+        "path": ".local/cleanup-https-source-20261013/backend/.local/android-cleanup-https-12225511185261761641/native-active",
+        "hostReceiptSha256": "2242390ddcfffc4566e1b578564e0124448ccae1d29c6e5e1d4085b9fd3d322b"
+      },
+      {
+        "phase": "cleanup",
+        "pid": 6342,
+        "realTls": true,
+        "untrustedCertificateRejected": true,
+        "realAndroidKey": true,
+        "cloudResponsesAreReal": true,
+        "adultIdentityIsFixture": true,
+        "cleanupCompleted": true,
+        "journalRetained": true,
+        "originalKeyDeleted": true,
+        "cachesDeleted": true,
+        "physicalWipeProven": false,
+        "driverExitCode": 0,
+        "installation": {
+          "uid": "10190",
+          "firstInstallTime": "2026-10-13 06:06:54"
+        },
+        "serial": "emulator-5586",
+        "avd": "AIManagerCleanupHttpsRetry20261013",
+        "apiLevel": 34,
+        "nativePidVerified": true,
+        "processStopped": true,
+        "installPreserved": true,
+        "metadataReadRetries": 0,
+        "driverAttachedExistingApp": true,
+        "apkSha256": "945ab51319d9ab754313cefa464804d2a0c0f586203fd98e0a1e802c44eefe7b",
+        "driverLogSha256": "3f7cf66281798521fb4df3541be6f82df2819b6d5648dba33cfea9e5141ca020",
+        "nativeLogSha256": "5043f6b5873758a3bfef66e8b270f5d35015b77c22434e0238c9ee133d7bec27",
+        "path": ".local/cleanup-https-source-20261013/backend/.local/android-cleanup-https-12225511185261761641/native-cleanup",
+        "hostReceiptSha256": "c59f620e0cbee8e20c04f7eb06dbc3c41f7fd3da815b4c79c1274234fe691664"
+      },
+      {
+        "phase": "verify",
+        "pid": 6698,
+        "realTls": true,
+        "untrustedCertificateRejected": true,
+        "realAndroidKey": true,
+        "cloudResponsesAreReal": true,
+        "adultIdentityIsFixture": true,
+        "cleanupCompleted": true,
+        "journalRetained": true,
+        "originalKeyDeleted": true,
+        "cachesDeleted": true,
+        "physicalWipeProven": false,
+        "driverExitCode": 0,
+        "installation": {
+          "uid": "10190",
+          "firstInstallTime": "2026-10-13 06:06:54"
+        },
+        "serial": "emulator-5586",
+        "avd": "AIManagerCleanupHttpsRetry20261013",
+        "apiLevel": 34,
+        "nativePidVerified": true,
+        "processStopped": true,
+        "installPreserved": true,
+        "metadataReadRetries": 0,
+        "driverAttachedExistingApp": true,
+        "apkSha256": "945ab51319d9ab754313cefa464804d2a0c0f586203fd98e0a1e802c44eefe7b",
+        "driverLogSha256": "e6d60c33c18da2a02bcded809f0edf3aa61150f6bb23d9642283032ca6c8722f",
+        "nativeLogSha256": "cdd81780a18da8ab4dbaf12cdfe5791300ecbd8974261255d25d3a1a206d818c",
+        "path": ".local/cleanup-https-source-20261013/backend/.local/android-cleanup-https-12225511185261761641/native-verify",
+        "hostReceiptSha256": "26a0ec7ca739c4c28cee58f0e33ac2f4c267da30f6ed075bbf797953e2bd8167"
+      }
+    ],
+    "distinctPids": 5,
+    "singleInstallation": true,
+    "singleApk": true,
+    "stop": {
+      "stopped": true,
+      "dataPreserved": true,
+      "serial": "emulator-5586",
+      "avd": "AIManagerCleanupHttpsRetry20261013",
+      "ownedPortMappingsRemoved": true,
+      "previousAttemptEmulatorStopped": true,
+      "finishedAt": "2026-10-13T06:45:07.306269+00:00"
+    }
+  },
+  "server": {
+    "schemaVersion": 1,
+    "tenantId": "58581a28-cc10-486c-b1cd-1cd8dec2cd75",
+    "deviceId": "efa07944-ff26-49cb-a845-3aa2a70905fb",
+    "registrationId": "3d114a51-d5d0-491c-b54b-df28cf427faa",
+    "operationId": "b730dd98-03a1-4af2-ae89-0b191784c7a1",
+    "commandHash": "4c1c5ce8fd31f9dc070a22af9ae23724a80c041f17f7280f6d617a8a9ebbc265",
+    "state": "CLEANUP_REPORTED",
+    "remoteAccess": "REVOKED",
+    "localEvidence": "DEVICE_REPORT_UNVERIFIED",
+    "receiptCount": 2,
+    "receiptStages": [
+      "RECEIVED",
+      "AGENT_DATA_CLEARED"
+    ],
+    "credentialsRevoked": true,
+    "realAndroidKey": true,
+    "realTls": true,
+    "untrustedCertificateRejectedInFourProcesses": true,
+    "cloudResponsesAreReal": true,
+    "adultIdentityIsFixture": true,
+    "physicalWipeProven": false,
+    "nativeEvidence": {
+      "phasePids": {
+        "negative": 4899,
+        "enroll": 5586,
+        "active": 6058,
+        "cleanup": 6342,
+        "verify": 6698
+      },
+      "installation": {
+        "uid": "10190",
+        "firstInstallTime": "2026-10-13 06:06:54"
+      },
+      "apkSha256": "945ab51319d9ab754313cefa464804d2a0c0f586203fd98e0a1e802c44eefe7b"
+    }
+  },
+  "serverReceiptPath": ".local/cleanup-https-source-20261013/backend/.local/android-cleanup-https-12225511185261761641/server-result.json",
+  "serverReceiptSha256": "bb9d159a6c70b7ed00465cb8d07238ead496cf7580ad6aad136aed9385840b1f",
+  "apkSha256": "945ab51319d9ab754313cefa464804d2a0c0f586203fd98e0a1e802c44eefe7b",
+  "publicCertificateSha256": "1b72069181560c41d99dbffb4e4fa9a0aceceb574ef3aeeb9e7fd8913b2a21a2",
+  "logs": [
+    {
+      "path": ".local/cleanup-https-runner-red.log",
+      "sha256": "67d00da5a10352c7e87848ad26f978d69c857b50893dd206ef754b24af2d5525"
+    },
+    {
+      "path": ".local/cleanup-https-runner-green.log",
+      "sha256": "4a203f958ef9d765ff1f89816631e1bdf553b4acf1d56449f1d10ad92bb46ff3"
+    },
+    {
+      "path": ".local/cleanup-https-host-final.log",
+      "sha256": "4cd88a0e73e5b977eb77e515f42858b09c8c6ac58b1a91dfd7096e0a5d6c8851"
+    },
+    {
+      "path": ".local/cleanup-https-certificate-red.log",
+      "sha256": "07ae859886c2c09f20fbd9cdd760f7036a61f982afe578d652f8ad664cbe7d96"
+    },
+    {
+      "path": ".local/cleanup-https-certificate-green.log",
+      "sha256": "5ac106a8227c7b085201c135f532b9c645b283b6f2f50632c7eefe1f7811ed30"
+    },
+    {
+      "path": ".local/cleanup-https-metadata-red.log",
+      "sha256": "7a0a8de8abe8afeddf539995e5da8ce7f720ebe2c0f0557ea8326569413ab6c1"
+    },
+    {
+      "path": ".local/cleanup-https-metadata-green.log",
+      "sha256": "3bef3bd33ddc50b3a969999e1bee964c09b93c6a183f674bc4b57d6636f41d97"
+    },
+    {
+      "path": ".local/cleanup-https-child-analyze-first.log",
+      "sha256": "5d720d91bb42fc5fa639cca9c78ab1954adbed16a092a54d0ec5fb313d2db766"
+    },
+    {
+      "path": ".local/cleanup-https-child-analyze-second.log",
+      "sha256": "22eccd8c5bc5f5cd63c7842489ccae17286f94703aac436db6d9e069d3c510ad"
+    },
+    {
+      "path": ".local/cleanup-https-apk-build-second.log",
+      "sha256": "797b4cb00b33211caab5d97322bb268de40f418219d370877ace2d0de78c8c99"
+    },
+    {
+      "path": ".local/cleanup-https-child-test.log",
+      "sha256": "d1133d2fc6b10c2e76b6b131483416849cfedef11377ca5f590477a75aa001a8"
+    },
+    {
+      "path": ".local/cleanup-https-java-compile.log",
+      "sha256": "4e4d9182ead94fa932d07d835201fb46cb6128a25551d209bbde4804676e6377"
+    },
+    {
+      "path": ".local/cleanup-https-native-first.log",
+      "sha256": "807d6206bb1fbda95e804ed9ad9e9d649ce8473c7d3b44b67b56286289787a19"
+    },
+    {
+      "path": ".local/cleanup-https-native-first-report.txt",
+      "sha256": "36c03f811e9dbc2d71c88786dd6ec26d101010b2fb378bea244738f0f0185334"
+    },
+    {
+      "path": ".local/cleanup-https-native-second.log",
+      "sha256": "3b790cbe273bc15dd1288caa3f81570f9703e4454e2375cb88098e3d488c77a5"
+    },
+    {
+      "path": ".local/cleanup-https-native-second-report.txt",
+      "sha256": "9bbffbdca8582d7cae46603fbd07b65249064c84fc50bd64770aa671d57d084e"
+    },
+    {
+      "path": ".local/cleanup-https-native-third.log",
+      "sha256": "a64a89d1e485df4ccaabc67c6f64c1d0c2d2bde14656a60c3a834591c8b7ef7b"
+    }
+  ],
+  "attempts": [
+    "First static analysis stopped at three brace warnings; corrected before APK build.",
+    "First native attempt failed at publicDER trust import BAD_PKCS12_DATA before identity/oracle mutation; untrusted TLS handshake rejection had passed. Actual TLS host regression RED then publicDER-to-PEM adaptation GREEN; original APK/log/source manifest preserved.",
+    "Second native attempt passed negative and realHTTPS/native enrollment, then failed at a read-only dumpsys exchange before active launch. Three later identical reads passed; emulator recorded adb protocol fault. Added bounded read-only metadata retry RED then GREEN12; no mutation retry. Registered installation and data preserved in stopped old AVD.",
+    "Third attempt uses a fresh owned AVD; all five phases complete under the same final APK and seven frozen sources. Host helper changed after terminal build; Dart/APK sources unchanged."
+  ],
+  "boundaries": [
+    "Adult OIDC/MFA remains a MockMvc identity fixture.",
+    "Local test certificate and loopback TLS; no production CA/DNS/rotation/deployment certification.",
+    "Isolated H2, not MySQL/production concurrency or backup restoration.",
+    "Actual Android API34 emulator key/storage channels; no hardware isolation attestation, physical phone/TV, flash forensics or physical powerloss.",
+    "Explicitly closed test DBs and ownersClosed=true; whole native UI lifecycle orchestration remains unverified.",
+    "Acknowledged journal retained; final journal governance/global erasure, system unmanage/wipe and other app data remain unfinished.",
+    "No native cancellation/unknown-ack/background/boot scheduling or multiprocess writer acceptance.",
+    "No production runtime service/database/released installation updated; full product objective active.",
+    "Independent fresh source review accepted all seven files; independent terminal-evidence supplement was unavailable due service capacity. Actual completed run receipts and hashes were validated by the author."
+  ],
+  "review": {
+    "sourceReview": {
+      "reviewer": "fresh-context independent agent /root/cleanup_https_final_review",
+      "critical": 0,
+      "important": 0,
+      "minor": 0,
+      "result": "Source accepted, including bounded metadata retry delta; no further source changes."
+    },
+    "nativeEvidenceReview": {
+      "mode": "author validation of actual terminal receipts, hashes and logs",
+      "independentSupplement": "Reviewer follow-up failed twice with model capacity error; no independent terminal-evidence endorsement claimed.",
+      "sourceFiles": 7,
+      "unchangedArchiveFiles": 1129,
+      "nativeJourneyTests": 1,
+      "skipped": 0
+    },
+    "rulings": [
+      {
+        "scope": "完整产品1.0.0",
+        "decisionAndRemainingRisk": "仅复核七个新增验收文件，整体目标仍未完成"
+      },
+      {
+        "scope": "生产安全策略",
+        "decisionAndRemainingRisk": "只读取调用所需的直接依赖，未全面认证生产安全策略"
+      },
+      {
+        "scope": "成人OIDC/MFA",
+        "decisionAndRemainingRisk": "保留MockMvc身份夹具，真实管理员写入仍待联调"
+      },
+      {
+        "scope": "MySQL与并发",
+        "decisionAndRemainingRisk": "证据限隔离H2，生产数据库和并发验收仍待完成"
+      },
+      {
+        "scope": "生产TLS部署",
+        "decisionAndRemainingRisk": "证据限回环HTTPS与测试信任证书，公网CA/DNS/轮换仍待验证"
+      },
+      {
+        "scope": "实体设备与硬件证明",
+        "decisionAndRemainingRisk": "证据限API34模拟器，实体手机/TV和硬件等级仍待验收"
+      },
+      {
+        "scope": "断电与任意中断窗口",
+        "decisionAndRemainingRisk": "只验证五次独立进程启动，不能代表掉电或任意窗口恢复"
+      },
+      {
+        "scope": "完整界面缓存持有者",
+        "decisionAndRemainingRisk": "测试显式关闭数据库并设ownersClosed=true，完整生命周期尚未原生认证"
+      },
+      {
+        "scope": "物理或整机擦除",
+        "decisionAndRemainingRisk": "physicalWipeProven=false，不清除其他应用或整机数据"
+      },
+      {
+        "scope": "其他平台及并发进程",
+        "decisionAndRemainingRisk": "iOS及其他平台、多进程并发未验收"
+      },
+      {
+        "scope": "共享修改",
+        "decisionAndRemainingRisk": "其他会话guardian/parent/backend/deploy修改排除于本阶段"
+      }
+    ]
+  }
+}

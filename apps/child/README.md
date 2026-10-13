@@ -77,3 +77,7 @@ debug 包名 `com.aimanager.child.debug`，release 包名 `com.aimanager.child`�
 真实 Spring → 设备申请宿主 → 会话 → 规则页的跨进程验收覆盖提交/取消响应丢失、过期原键恢复、批准截止时间保持及撤销凭证后缓存隐藏。运行方式与测试夹具边界见[申请 HTTP 验收契约](../../docs/child-submission-http-acceptance.md)。该检查使用桌面 Flutter 测试引擎和合成文件密钥，不能代替 Android 真机进程恢复或系统管控验收。
 
 Android 申请原生持久恢复使用独立入口 `integration_test/submission_storage_test.dart` 和官方 `test_driver/submission_storage_driver.dart`，通过保留安装、逐阶段终止进程验证原请求正文/键、取消版本、离线缓存、授权拒绝和密钥丢失行为。测试使用独立合成身份范围与受控云端，复用真实 Android 安全存储、持久化屏障和默认加密数据库；仅用于专用 debug 模拟器。阶段顺序、安全清理及证据要求见[申请原生验收契约](../../docs/child-submission-native-acceptance.md)，不得用卸载或清空数据代替恢复。
+
+## 真实 HTTPS 退出清理联调
+
+独立API34模拟器已完成真实注册、心跳、凭据撤销、原密钥认证的命令领取与两阶段回执、原生缓存和密钥删除，以及重启后的最终确认日志保留核对。使用单个APK、不同进程和同一安装；每个成功进程先验证未受信任证书被拒绝，再导入唯一公有测试证书。成人OIDC/MFA仍是明确夹具，后端使用独立H2；正式部署、MySQL和实体设备验收继续进行。复现入口及证据见[HTTPS清理验收说明](../../docs/child-cleanup-https-acceptance.md)。
