@@ -132,6 +132,8 @@ sequenceDiagram
 
 服务端已确认清理回执、但设备尚未删除原密钥时，任务可能已经到期。启动恢复可在不联网重取命令的情况下，将加密身份记录的设备范围/原密钥指纹/命令哈希与加密日志中的 `AGENT_DATA_CLEARED` 已确认阶段、`localDataCleared=true`、无待发回执严格匹配，**仅执行最后的原密钥删除**。日志缺失、损坏或阶段未确认时不得用此路径补报清理或删除原密钥；需联网重新核对或人工处理。正式发布仍需真机断电、文件损坏和密钥删除结果不明验收。
 
+此恢复分支已在独立 Android API34 模拟器上执行 seed、clear、finish、verify 四次进程启动：使用真实 AndroidKeyStore 别名、加密插件、文件及提交/目录同步通道；清理阶段原密钥仍可签名，确认记录持久保存后，生产 `ChildCleanupRunner` 在固定测试时钟超过命令期限时完成最终删除，再次启动验证原别名不可签名且普通身份/已知缓存不存在。注册云端、命令发行与回执确认均为显式合成替身；不覆盖生产 HTTP/TLS、真实设备断电、硬件背书或整机擦除。流程及证据见[原生清理验收契约](child-cleanup-native-acceptance.md)。
+
 重复拉取同一持久 JWS，截止时间不延长；新任务使用新的 operationId/commandId。缺外置签名密钥时，正常退出确认返回 503，凭证不撤销；原有紧急 `/devices/{deviceId}/revoke` 仍可立即撤销访问，二者不混淆。
 
 回执字段：receiptId、commandId、commandHash（compactJws UTF-8 的 SHA-256 小写十六进制）、stage、reasonCode。stage 为 RECEIVED / AGENT_DATA_CLEARED / FAILED；只有 FAILED 必须带 reasonCode（STORAGE_FAILURE、KEY_UNAVAILABLE、UNSUPPORTED_AGENT、USER_ACTION_REQUIRED），其他阶段不得带。设备身份/操作由认证上下文确定，正文不能改绑。

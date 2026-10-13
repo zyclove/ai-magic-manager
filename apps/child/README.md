@@ -44,7 +44,7 @@ Android 生产宿主启动时，在配置/访问数据库打开前，用原注�
 
 删除数据库文件后，Android 原生通道会检查目录规范路径确实位于本应用 `filesDir` 下，并对目录执行 `fsync`；加密记录删除复用安全存储持久化屏障。任一步失败都不发送 `AGENT_DATA_CLEARED`。不同 Android 文件系统/厂商对目录同步的支持仍须真机确认，失败时维持未确认状态。
 
-这是前台有界尝试，尚无 Android 后台/开机任务保证；断网、到期、取消或进程中断后的继续处理依赖下次启动、回到前台或用户手动核对。若服务端已确认清理回执、但进程在最终删除原密钥前退出，启动时可用加密身份记录中的命令哈希与加密回执日志的已确认阶段相互核对，仅恢复原密钥删除；不需要重新领取可能已到期的命令，也不重新发送清理成功回执。未确认的日志绝不走这条恢复路径。新注册的 Keystore 别名在最终确认后显式删除并复查不存在；旧软件私钥仍随加密身份记录删除。原生真机、电视、断电/进程恢复与目标服务联调尚未验收；完成回执仍是设备自报，不是独立擦除证明。最终回执日志的留存清理和未知旧版本存储键迁移仍需专门治理。
+这是前台有界尝试，尚无 Android 后台/开机任务保证；断网、到期、取消或进程中断后的继续处理依赖下次启动、回到前台或用户手动核对。若服务端已确认清理回执、但进程在最终删除原密钥前退出，启动时可用加密身份记录中的命令哈希与加密回执日志的已确认阶段相互核对，仅恢复原密钥删除；不需要重新领取可能已到期的命令，也不重新发送清理成功回执。未确认的日志绝不走这条恢复路径。新注册的 Keystore 别名在最终确认后显式删除并复查不存在；软件私钥仍随加密身份记录删除。API34 专用模拟器已验证跨进程缓存清理、原密钥保留及确认后的过期恢复删除；真实云端由明确替身代替。实体手机、电视、真实断电与目标服务联调尚未验收；完成回执仍是设备自报，不是独立擦除证明。最终回执日志留存和未知存储键仍需专门核对，当前按未上线 1.0.0 初始化，不提供历史迁移链。
 
 ## 验收命令
 
@@ -62,7 +62,9 @@ flutter drive --driver=test_driver/identity_storage_driver.dart --target=integra
 
 ## 发布边界
 
-debug 包名 `com.aimanager.child.debug`，release 包名 `com.aimanager.child`。release 必须外置 `CHILD_SIGNING_STORE`、`CHILD_SIGNING_STORE_PASSWORD`、`CHILD_SIGNING_KEY_ALIAS`、`CHILD_SIGNING_KEY_PASSWORD`，缺少时构建失败，不回退调试签名。商店目标 API、依赖漏洞与许可证检查、实体设备/TV 兼容、升级迁移和完整系统权限验收仍是发布门槛。
+debug 包名 `com.aimanager.child.debug`，release 包名 `com.aimanager.child`。release 必须外置 `CHILD_SIGNING_STORE`、`CHILD_SIGNING_STORE_PASSWORD`、`CHILD_SIGNING_KEY_ALIAS`、`CHILD_SIGNING_KEY_PASSWORD`，缺少时构建失败，不回退调试签名。商店目标 API、依赖漏洞与许可证检查、实体设备/TV 兼容、首次安装与恢复和完整系统权限验收仍是发布门槛。
+
+退出清理原生验收使用独立 API34 AVD、真实 Android 加密插件/目录屏障/Keystore，以及明确的合成云端响应。缺失前序数据负控和 seed → clear → finish → verify 四次进程启动、安装保持及 APK 摘要要求见[原生清理验收契约](../../docs/child-cleanup-native-acceptance.md)。它不经过生产 HTTP 清理接口，不代表正式发布或物理擦除。
 
 ## 临时访问申请
 
