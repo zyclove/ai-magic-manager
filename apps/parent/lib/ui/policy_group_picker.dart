@@ -115,7 +115,7 @@ class _PolicyGroupPickerState extends State<PolicyGroupPicker> {
                           TextStyle(fontSize: 24, fontWeight: FontWeight.w700)),
                   const SizedBox(height: 8),
                   const Text(
-                      '每次完整选择最多 50 台。更大的组请先在管理台拆分；不会只取前 50 台。分组维护在完整管理台进行。'),
+                      '每次完整选择最多 50 台，不会只取前 50 台。可在“我的 → 机构设备组”维护或拆分设备组后重新选择。'),
                   if (busy && !confirming ||
                       !groups.loaded && groups.error == null)
                     const LinearProgressIndicator(),
@@ -133,7 +133,7 @@ class _PolicyGroupPickerState extends State<PolicyGroupPicker> {
                   if (groups.loaded && groups.items.isEmpty)
                     const Padding(
                         padding: EdgeInsets.symmetric(vertical: 24),
-                        child: Text('尚无设备组，请先在机构管理台创建并添加设备。')),
+                        child: Text('尚无设备组，请先在“我的 → 机构设备组”创建并添加设备。')),
                   for (final group in groups.items)
                     Card(
                         child: ListTile(

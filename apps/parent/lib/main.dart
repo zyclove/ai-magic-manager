@@ -13,6 +13,7 @@ import 'ui/device_capabilities.dart';
 import 'ui/device_exit.dart';
 import 'ui/enrollment_flow.dart';
 import 'ui/policy_center.dart';
+import 'ui/device_group_center.dart';
 
 const _navy = Color(0xFF17324B);
 const _blue = Color(0xFF315E86);
@@ -1105,6 +1106,17 @@ class _Account extends StatelessWidget {
               ),
             ),
           ],
+          if (session.tenant?['kind'] == 'ORGANIZATION' &&
+              const {'OWNER', 'ORG_ADMIN'}.contains(session.role))
+            Card(
+                child: ListTile(
+              leading: const Icon(Icons.devices_outlined, color: _blue),
+              title: const Text('机构设备组'),
+              subtitle: const Text('维护班级设备、清理失效关联与核对操作结果'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => DeviceGroupCenter(session: session))),
+            )),
           if (session.tenant != null &&
               session.canDecide &&
               ParentConfig.console != null) ...[

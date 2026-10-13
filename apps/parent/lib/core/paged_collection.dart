@@ -8,13 +8,15 @@ class PagedCollection extends ChangeNotifier {
   final ParentApi api;
   final String path;
   final int pageSize;
+  final String idField;
   final _items = <Json>[];
   final _seenCursors = <String>{};
   int _generation = 0;
   String? _nextCursor;
   bool _disposed = false;
 
-  PagedCollection(this.api, this.path, {this.pageSize = 50}) {
+  PagedCollection(this.api, this.path,
+      {this.pageSize = 50, this.idField = 'id'}) {
     reload();
   }
 
@@ -70,7 +72,7 @@ class PagedCollection extends ChangeNotifier {
         throw const ParentApiException(502, 'INVALID_RESPONSE');
       }
       _requireUniqueIds(
-          page.items, _items.map((item) => item['id'] as String).toSet());
+          page.items, _items.map((item) => item[idField] as String).toSet());
       _items.addAll(page.items);
       _nextCursor = page.nextCursor;
       if (_nextCursor != null) _seenCursors.add(_nextCursor!);
@@ -84,10 +86,10 @@ class PagedCollection extends ChangeNotifier {
     }
   }
 
-  static void _requireUniqueIds(List<Json> page, Set<String> existing) {
+  void _requireUniqueIds(List<Json> page, Set<String> existing) {
     final ids = {...existing};
     for (final item in page) {
-      final id = item['id'];
+      final id = item[idField];
       if (id is! String || id.isEmpty || !ids.add(id)) {
         throw const ParentApiException(502, 'INVALID_RESPONSE');
       }

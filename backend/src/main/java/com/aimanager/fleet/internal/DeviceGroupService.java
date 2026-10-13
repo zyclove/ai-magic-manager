@@ -102,6 +102,57 @@ class DeviceGroupService implements DeviceGroupPolicyAccess {
     }
   }
 
+  /** Reauthorize original actor and payload, returning historical outcome separately from now. */
+  @Transactional(timeout = 10)
+  RecoveryResult operationResult(String tenant, String actor, String key,
+      DeviceGroupController.Recovery input) {
+    access.requireWriteRole(tenant, actor, OWNER, ORG_ADMIN);
+    organization(tenant);
+    if (key == null || !key.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
+      throw DomainException.invalid("INVALID_DEVICE_GROUP_RECOVERY");
+    boolean create = input.operation() == DeviceGroupController.Operation.CREATE;
+    boolean named = create || input.operation() == DeviceGroupController.Operation.RENAME;
+    boolean batch = input.operation() == DeviceGroupController.Operation.ADD
+        || input.operation() == DeviceGroupController.Operation.REMOVE;
+    if (create ? input.groupId() != null || input.version() != null
+        : input.groupId() == null || input.version() == null)
+      throw DomainException.invalid("INVALID_DEVICE_GROUP_RECOVERY");
+    if (named != (input.name() != null) || batch != (input.devices() != null))
+      throw DomainException.invalid("INVALID_DEVICE_GROUP_RECOVERY");
+    Map<String, ?> attributes;
+    String operation;
+    switch (input.operation()) {
+      case CREATE -> {
+        operation = "device.group.create";
+        attributes = Map.of("name", name(input.name()));
+      }
+      case RENAME -> {
+        operation = "device.group.rename";
+        attributes = Map.of("id", input.groupId(), "name", name(input.name()), "version", input.version());
+      }
+      case ARCHIVE -> {
+        operation = "device.group.archive";
+        attributes = Map.of("id", input.groupId(), "version", input.version());
+      }
+      case ADD, REMOVE -> {
+        var targets = input.devices().stream()
+            .map(d -> new DeviceTarget(d.deviceId(), d.registrationId()))
+            .sorted(java.util.Comparator.comparing(DeviceTarget::deviceId)).toList();
+        if (new HashSet<>(targets.stream().map(DeviceTarget::deviceId).toList()).size() != targets.size())
+          throw DomainException.invalid("INVALID_DEVICE_GROUP_BATCH");
+        operation = input.operation() == DeviceGroupController.Operation.ADD
+            ? "device.group.members.add" : "device.group.members.remove";
+        attributes = Map.of("group", input.groupId(), "targets", targets, "version", input.version());
+      }
+      default -> throw DomainException.invalid("INVALID_DEVICE_GROUP_RECOVERY");
+    }
+    var committed = idempotency.findCommitted(tenant, actor, operation, key, attributes, Group.class)
+        .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "DEVICE_GROUP_RESULT_UNAVAILABLE"));
+    if (!create && !committed.id().equals(input.groupId()))
+      throw new IllegalStateException("Group operation journal reference mismatch");
+    return new RecoveryResult(input.operation(), committed, read(tenant, committed.id(), false));
+  }
+
   @Transactional(timeout = 10)
   Group create(String tenant, Jwt actor, String inputName, String key) {
     canWrite(tenant, actor);
@@ -586,4 +637,5 @@ class DeviceGroupService implements DeviceGroupPolicyAccess {
       int staleRegistration, int deviceInactive, int profileArchived) {}
 
   record DeviceTarget(String deviceId, String registrationId) {}
+  record RecoveryResult(DeviceGroupController.Operation operation, Group committed, Group current) {}
 }

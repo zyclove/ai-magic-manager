@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -60,6 +61,15 @@ class DeviceGroupController {
       @PathVariable String tenantId,
       @PathVariable String groupId) {
     return response(groups.get(tenantId, actor.getSubject(), groupId), HttpStatus.OK);
+  }
+
+  /** Read-only original-result recovery; never repeats a group mutation. */
+  @PostMapping("/operation-results/{requestId}/query")
+  ResponseEntity<DeviceGroupService.RecoveryResult> operationResult(
+      @AuthenticationPrincipal Jwt actor, @PathVariable String tenantId,
+      @PathVariable String requestId, @Valid @RequestBody Recovery body) {
+    return ResponseEntity.ok().cacheControl(CacheControl.noStore())
+        .body(groups.operationResult(tenantId, actor.getSubject(), requestId, body));
   }
 
   @PatchMapping("/{groupId}")
@@ -170,4 +180,10 @@ class DeviceGroupController {
       @NotNull @Pattern(regexp = UUID) String registrationId) {}
 
   record Batch(@NotNull @Size(min = 1, max = 50) List<@NotNull @Valid Device> devices) {}
+
+  enum Operation { CREATE, RENAME, ARCHIVE, ADD, REMOVE }
+
+  record Recovery(@NotNull Operation operation, @Pattern(regexp = UUID) String groupId,
+      @jakarta.validation.constraints.PositiveOrZero Long version, @Size(max = 100) String name,
+      @Size(min = 1, max = 50) List<@NotNull @Valid Device> devices) {}
 }
