@@ -6,6 +6,7 @@ import 'package:uuid/uuid.dart';
 import 'core/parent_api.dart';
 import 'core/parent_session.dart';
 import 'core/paged_collection.dart';
+import 'core/pending_decisions.dart';
 import 'ui/commercial_account.dart';
 import 'ui/device_capabilities.dart';
 import 'ui/device_exit.dart';
@@ -278,7 +279,13 @@ class _ApprovalInbox extends StatefulWidget {
 
 class _ApprovalInboxState extends State<_ApprovalInbox> {
   late final PagedCollection pending;
+  final _decisionStore = PendingDecisionStore();
+  List<PendingDecision> _recoveries = const [];
+  final _recoveryStatus = <String, String>{};
+  final _checkedRecoveries = <String>{};
   bool sending = false;
+  bool _recoveryBusy = false;
+  bool _recoveriesLoaded = false;
   Object? actionError;
 
   @override
@@ -286,6 +293,7 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
     super.initState();
     pending = PagedCollection(widget.session.api,
         '${widget.session.root}/access-requests?state=PENDING');
+    _loadRecoveries();
   }
 
   @override
@@ -294,13 +302,46 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
     super.dispose();
   }
 
-  Future<void> reload() async {
+  Future<void> reload({bool afterDecision = false}) async {
+    if ((sending && !afterDecision) || _recoveryBusy) return;
     setState(() => actionError = null);
+    await _loadRecoveries();
     await pending.reload();
   }
 
+  Future<void> _loadRecoveries() async {
+    if (mounted) setState(() => _recoveriesLoaded = false);
+    final actor = widget.session.profile?['subject'];
+    final tenantId = widget.session.tenant?['id'];
+    if (actor is! String || tenantId is! String || !widget.session.canDecide) {
+      if (mounted) setState(() => _recoveriesLoaded = true);
+      return;
+    }
+    try {
+      final records = await _decisionStore.load(tenantId, actor);
+      if (_sameDecisionScope(actor, tenantId)) {
+        setState(() {
+          _recoveries = records;
+          _checkedRecoveries.removeWhere(
+              (key) => !records.any((record) => record.idempotencyKey == key));
+          _recoveriesLoaded = true;
+        });
+      }
+    } catch (failure) {
+      if (_sameDecisionScope(actor, tenantId)) {
+        setState(() {
+          actionError = failure;
+          _recoveriesLoaded = false;
+        });
+      }
+    }
+  }
+
   Future<void> decide(Json item, bool approve) async {
-    if (!widget.session.canDecide || sending) return;
+    if (!widget.session.canDecide ||
+        sending ||
+        _recoveryBusy ||
+        !_recoveriesLoaded) return;
     final requested = item['requestedWindowSeconds'] as int? ?? 0;
     final confirmed = await showDialog<bool>(
       context: context,
@@ -319,7 +360,11 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
         ],
       ),
     );
-    if (confirmed != true || !mounted) return;
+    if (confirmed != true ||
+        !mounted ||
+        sending ||
+        _recoveryBusy ||
+        !_recoveriesLoaded) return;
     final actor = widget.session.profile?['subject'];
     final tenantId = widget.session.tenant?['id'];
     if (actor is! String || tenantId is! String) {
@@ -335,7 +380,20 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
           actionError = const ParentApiException(502, 'INVALID_RESPONSE'));
       return;
     }
+    if (_recoveries.any((record) =>
+        record.requestId == requestId && record.version == requestVersion)) {
+      setState(() => actionError = '同一申请已有待核对操作，请先查询原申请。');
+      return;
+    }
     final decisionKey = const Uuid().v4();
+    final marker = PendingDecision(
+      requestId: requestId,
+      version: requestVersion,
+      idempotencyKey: decisionKey,
+      choice: approve ? 'APPROVE' : 'DENY',
+      createdAt: DateTime.now().millisecondsSinceEpoch,
+    );
+    var recorded = false;
     var submitted = false;
     setState(() => sending = true);
     try {
@@ -348,6 +406,10 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
       if (!_sameDecisionScope(actor, tenantId)) {
         throw const ParentApiException(409, 'SCOPE_DENIED');
       }
+      await _decisionStore.add(tenantId, actor, marker);
+      recorded = true;
+      if (!_sameDecisionScope(actor, tenantId)) return;
+      setState(() => _recoveries = [..._recoveries, marker]);
       submitted = true;
       await widget.session.api.send(
           'POST', '$root/access-requests/$requestId/decisions',
@@ -356,21 +418,42 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
           body: approve
               ? {'decision': 'APPROVE', 'grantedWindowSeconds': requested}
               : {'decision': 'DENY', 'reasonCode': 'NOT_NOW'});
+      await _decisionStore.remove(tenantId, actor, decisionKey);
+      recorded = false;
       if (_sameDecisionScope(actor, tenantId)) {
-        await reload();
+        setState(() => _recoveries = _recoveries
+            .where((item) => item.idempotencyKey != decisionKey)
+            .toList());
+        await reload(afterDecision: true);
       }
     } catch (failure) {
       if (!_sameDecisionScope(actor, tenantId)) return;
       if (submitted &&
           (failure is! ParentApiException ||
               failure.status == 0 ||
-              failure.status >= 500)) {
+              failure.status >= 500 ||
+              failure.code == 'REQUEST_IN_PROGRESS' ||
+              failure.code == 'IDEMPOTENCY_KEY_CONFLICT')) {
         final message =
             await _reconcileUncertainDecision(root, requestId, requestVersion);
         if (!_sameDecisionScope(actor, tenantId)) return;
         await pending.reload();
         if (mounted) setState(() => actionError = message);
       } else {
+        if (recorded) {
+          try {
+            await _decisionStore.remove(tenantId, actor, decisionKey);
+            if (!_sameDecisionScope(actor, tenantId)) return;
+            setState(() => _recoveries = _recoveries
+                .where((item) => item.idempotencyKey != decisionKey)
+                .toList());
+          } catch (_) {
+            if (_sameDecisionScope(actor, tenantId)) {
+              setState(() => actionError = '操作未完成，且本机待核对记录未能清理。请在此页查询原申请。');
+            }
+            return;
+          }
+        }
         setState(() => actionError = failure);
       }
     } finally {
@@ -406,6 +489,134 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
     }
   }
 
+  Future<void> _checkRecovery(PendingDecision record) async {
+    final actor = widget.session.profile?['subject'];
+    final tenantId = widget.session.tenant?['id'];
+    if (actor is! String ||
+        tenantId is! String ||
+        sending ||
+        _recoveryBusy ||
+        !_sameDecisionScope(actor, tenantId)) return;
+    setState(() => _recoveryBusy = true);
+    String message;
+    var verified = false;
+    try {
+      final current = await widget.session.api
+          .object('/tenants/$tenantId/access-requests/${record.requestId}');
+      if (current['id'] != record.requestId ||
+          current['version'] is! int ||
+          current['state'] is! String) {
+        message = '服务端返回的数据无法核对，请稍后重试。';
+      } else if (current['state'] == 'PENDING' &&
+          current['version'] == record.version) {
+        verified = true;
+        message = '服务端目前仍显示待处理；无法证明上次提交到达。请核对后再决定是否重试。';
+      } else {
+        verified = true;
+        message = '服务端当前状态：${current['state']}。请核对原申请和设备执行回执；状态变化不能证明由本机提交造成。';
+      }
+    } catch (_) {
+      message = '暂时无法查询服务端原申请，请恢复网络后重试。';
+    } finally {
+      if (_sameDecisionScope(actor, tenantId)) {
+        setState(() => _recoveryBusy = false);
+      }
+    }
+    if (_sameDecisionScope(actor, tenantId)) {
+      setState(() {
+        if (verified) _checkedRecoveries.add(record.idempotencyKey);
+        _recoveryStatus[record.idempotencyKey] = message;
+      });
+    }
+  }
+
+  Future<void> _clearRecovery(PendingDecision record) async {
+    final actor = widget.session.profile?['subject'];
+    final tenantId = widget.session.tenant?['id'];
+    if (actor is! String ||
+        tenantId is! String ||
+        sending ||
+        _recoveryBusy ||
+        !_sameDecisionScope(actor, tenantId)) return;
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('清除本机待核对提醒？'),
+        content: const Text('这只删除手机上的提醒，不会批准、拒绝或撤销申请。请先核对服务端原申请。'),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('返回')),
+          FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('已核对，清除提醒')),
+        ],
+      ),
+    );
+    if (confirmed != true ||
+        sending ||
+        _recoveryBusy ||
+        !_checkedRecoveries.contains(record.idempotencyKey) ||
+        !_sameDecisionScope(actor, tenantId)) return;
+    setState(() => _recoveryBusy = true);
+    try {
+      await _decisionStore.remove(tenantId, actor, record.idempotencyKey);
+      if (!_sameDecisionScope(actor, tenantId)) return;
+      setState(() {
+        _recoveries = _recoveries
+            .where((item) => item.idempotencyKey != record.idempotencyKey)
+            .toList();
+        _recoveryStatus.remove(record.idempotencyKey);
+        _checkedRecoveries.remove(record.idempotencyKey);
+      });
+    } catch (failure) {
+      if (_sameDecisionScope(actor, tenantId)) {
+        setState(() => actionError = failure);
+      }
+    } finally {
+      if (_sameDecisionScope(actor, tenantId)) {
+        setState(() => _recoveryBusy = false);
+      }
+    }
+  }
+
+  List<Widget> _recoveryCards() => [
+        if (_recoveries.isNotEmpty)
+          const _Notice('有上次提交后尚未核对的审批。请查询原申请；这里不会自动重新提交。'),
+        for (final record in _recoveries)
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('待核对：${record.choice == 'APPROVE' ? '批准' : '拒绝'}申请',
+                      style: const TextStyle(fontWeight: FontWeight.w700)),
+                  SelectableText('申请编号：${record.requestId}'),
+                  Text('提交时间：${_time(record.createdAt)}'),
+                  if (_recoveryStatus[record.idempotencyKey] != null)
+                    Text(_recoveryStatus[record.idempotencyKey]!),
+                  Wrap(spacing: 8, children: [
+                    OutlinedButton(
+                        onPressed: sending || _recoveryBusy
+                            ? null
+                            : () => _checkRecovery(record),
+                        child: const Text('查询原申请')),
+                    TextButton(
+                        onPressed: sending ||
+                                _recoveryBusy ||
+                                !_checkedRecoveries
+                                    .contains(record.idempotencyKey)
+                            ? null
+                            : () => _clearRecovery(record),
+                        child: const Text('已核对')),
+                  ]),
+                ],
+              ),
+            ),
+          ),
+      ];
+
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
         animation: pending,
@@ -416,6 +627,13 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
                   child: _Notice('$actionError', error: true),
+                ),
+              if (_recoveries.isNotEmpty)
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 20),
+                    child: Column(children: _recoveryCards()),
+                  ),
                 ),
               Expanded(child: _LoadError(pending.error!, retry: reload)),
             ]);
@@ -432,6 +650,7 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
               const _SectionTitle('临时访问申请', '先核对用途，再决定是否开放'),
               const SizedBox(height: 12),
               if (actionError != null) _Notice('$actionError', error: true),
+              ..._recoveryCards(),
               if (items.isEmpty)
                 _Empty(pending.hasMore ? '本页没有待处理申请' : '暂无待处理申请',
                     pending.hasMore ? '继续加载后续记录。' : '孩子发起的临时访问申请会显示在这里。'),
@@ -462,12 +681,24 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
                         if (widget.session.canDecide)
                           Wrap(spacing: 8, children: [
                             OutlinedButton(
-                                onPressed:
-                                    sending ? null : () => decide(item, false),
+                                onPressed: sending ||
+                                        _recoveryBusy ||
+                                        !_recoveriesLoaded ||
+                                        _recoveries.any((record) =>
+                                            record.requestId == item['id'] &&
+                                            record.version == item['version'])
+                                    ? null
+                                    : () => decide(item, false),
                                 child: const Text('拒绝')),
                             FilledButton(
-                                onPressed:
-                                    sending ? null : () => decide(item, true),
+                                onPressed: sending ||
+                                        _recoveryBusy ||
+                                        !_recoveriesLoaded ||
+                                        _recoveries.any((record) =>
+                                            record.requestId == item['id'] &&
+                                            record.version == item['version'])
+                                    ? null
+                                    : () => decide(item, true),
                                 child: const Text('批准')),
                           ])
                         else

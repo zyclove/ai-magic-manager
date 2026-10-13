@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:uuid/uuid.dart';
 
 import '../core/parent_api.dart';
+import '../core/parent_durable_storage.dart';
 import '../core/parent_session.dart';
 
 /// Adult side of the existing two-device BYOD registration protocol. The
@@ -19,7 +19,7 @@ class EnrollmentFlow extends StatefulWidget {
 }
 
 class _EnrollmentFlowState extends State<EnrollmentFlow> {
-  static const _storage = FlutterSecureStorage();
+  static final _storage = ParentDurableStorage();
   final pairingCode = TextEditingController();
   final subjects = <Json>[];
   String? selectedSubject, nextCursor, enrollmentId, pendingCreateId;
@@ -516,8 +516,7 @@ class _EnrollmentFlowState extends State<EnrollmentFlow> {
             if (progress?['state'] == 'PENDING_CLAIM' ||
                 progress?['state'] == 'AWAITING_CONFIRMATION')
               TextButton(
-                  onPressed: busy ? null : _cancel,
-                  child: const Text('取消注册')),
+                  onPressed: busy ? null : _cancel, child: const Text('取消注册')),
             TextButton(
                 onPressed: busy ? null : _refreshProgress,
                 child: const Text('检查状态')),
