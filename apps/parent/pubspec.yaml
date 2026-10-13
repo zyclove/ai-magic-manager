@@ -39,6 +39,8 @@ dependencies:
     path: ../../packages/device_operations
   usage_reporting:
     path: ../../packages/usage_reporting
+  usage_report_ui:
+    path: ../../packages/usage_report_ui
   url_launcher: 6.3.1
   uuid: 4.6.0
   collection: 1.18.0

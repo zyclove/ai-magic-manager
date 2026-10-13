@@ -15,6 +15,7 @@ import 'ui/enrollment_flow.dart';
 import 'ui/policy_center.dart';
 import 'ui/device_group_center.dart';
 import 'ui/application_center.dart';
+import 'ui/usage_report_center.dart';
 
 const _navy = Color(0xFF17324B);
 const _blue = Color(0xFF315E86);
@@ -1096,6 +1097,17 @@ class _Account extends StatelessWidget {
                   .contains(session.role)) ...[
             const SizedBox(height: 24),
             CommercialAccount(session: session),
+            if (session.canDecide)
+              Card(
+                  child: ListTile(
+                      leading:
+                          const Icon(Icons.insights_outlined, color: _blue),
+                      title: const Text('使用情况报告'),
+                      subtitle: const Text('查看授权使用区间、趋势、分类与数据缺口'),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) =>
+                              UsageReportCenter(session: session))))),
             Card(
                 child: ListTile(
               leading: const Icon(Icons.apps_outlined, color: _blue),

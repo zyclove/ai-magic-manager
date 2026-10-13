@@ -20,6 +20,8 @@ class DeviceUsageReportView extends StatefulWidget {
   final bool Function() available;
   final VoidCallback? reconnect;
   final String timeZone;
+  final String title, description;
+  final String notAuthorizedMessage;
   final DateTime Function()? now;
   const DeviceUsageReportView(
       {super.key,
@@ -29,6 +31,9 @@ class DeviceUsageReportView extends StatefulWidget {
       required this.available,
       this.reconnect,
       this.timeZone = 'Asia/Shanghai',
+      this.title = '我的使用情况',
+      this.description = '查看这台设备的使用记录，了解自己的使用习惯。',
+      this.notAuthorizedMessage = '请与监护人确认使用观察设置；此处不会显示以前的用量。',
       this.now});
   @override
   State<DeviceUsageReportView> createState() => _DeviceUsageReportViewState();
@@ -354,10 +359,10 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       Semantics(
           header: true,
-          child: Text('我的使用情况',
+          child: Text(widget.title,
               style: Theme.of(context).textTheme.headlineMedium)),
       const SizedBox(height: 12),
-      const Text('查看这台设备的使用记录，了解自己的使用习惯。'),
+      Text(widget.description),
       const SizedBox(height: 20),
       if (!_available) ...[
         const _Info('报表暂不可用', '请先确认设备连接，并在应用前台查看。'),
@@ -449,7 +454,7 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
       if (device.status == 'NO_DATA')
         const _Info('暂无使用记录', '这个时段还没有可展示的记录，不代表使用时长为零。')
       else if (device.status == 'NOT_AUTHORIZED')
-        const _Info('使用观察尚未授权', '请与监护人确认使用观察设置；此处不会显示以前的用量。')
+        _Info('使用观察尚未授权', widget.notAuthorizedMessage)
       else ...[
         Text(
             '查询区间覆盖 ${(100 * device.queryCoverageMillis / (report.to - report.from)).toStringAsFixed(1)}% · 来源 ${device.sourceBatchCount} 批',
