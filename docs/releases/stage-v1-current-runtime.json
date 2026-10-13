@@ -1,0 +1,333 @@
+{
+  "stage": "v1-current-runtime",
+  "applicationVersion": "1.0.0",
+  "recordedAt": "2026-10-13T02:57:10.183397+00:00",
+  "sourceBase": "2965813f2b791e1937eecaf80b22a6c906fe2af3",
+  "unchangedArchiveFilesCompared": 1093,
+  "patch": [
+    {
+      "path": "backend/src/main/resources/db/migration/V1__initial_schema.sql",
+      "sha256": "9a040530d467d39083e4743f98c313143050d3ad92ec3968b354e99706621aec"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DatabaseInitializationTest.java",
+      "sha256": "35d485cc3791f4eb487a61fb22e69cd43d3904e30195804d6f06f5f872813ad1"
+    }
+  ],
+  "removed": [
+    "backend/src/main/resources/db/migration/V2__access_request_inbox_index.sql"
+  ],
+  "regression": "Frozen base failed DatabaseInitializationTest: duplicate Flyway V2; index folded into V1, exact index-column regression added; complete corrected SDK build passed.",
+  "backend": {
+    "tests": 864,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 8
+  },
+  "skipped": [
+    {
+      "class": "com.aimanager.AndroidChildSubmissionJourneyTest",
+      "test": "realEnrollmentNativeCrashRecoveryAndRevocation",
+      "reason": "System property [device.android.runner] does not exist"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureAdmissionStoreTest",
+      "test": "leastPrivilegeRuntimeCanDrainWorkButCannotRewriteAcceptedRecords",
+      "reason": "Environment variable [NOTICE_IT_ROOT_PASSWORD] does not exist"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "mismatchedIdentityAndMissingLedgerAreReportedWithoutAutomaticRecreation",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "servletAsyncCannotEscapeTheRegisteredSynchronousPermit",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "acceptedLedgerStopsAuthorizedBusinessRequestsWithoutDeletingTheirData",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "test": "realHttpRequestDrainsBeforeAcceptanceAndProbesRemainAvailable",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+      "test": "nonTransactionalEngineIsRejectedBeforeAppending",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+      "test": "initializationPinsTransactionalEngineEvenWhenServerDefaultDiffers",
+      "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+    }
+  ],
+  "projects": [
+    {
+      "analysis": "passed",
+      "path": "apps/guardian",
+      "tests": "passed",
+      "toolkit": "flutter"
+    },
+    {
+      "analysis": "passed",
+      "path": "apps/child",
+      "tests": "passed",
+      "toolkit": "flutter"
+    },
+    {
+      "analysis": "passed",
+      "path": "apps/parent",
+      "tests": "not-present",
+      "toolkit": "flutter"
+    },
+    {
+      "analysis": "passed",
+      "path": "packages/device_access",
+      "tests": "passed",
+      "toolkit": "dart"
+    },
+    {
+      "analysis": "passed",
+      "path": "packages/device_cleanup",
+      "tests": "not-present",
+      "toolkit": "dart"
+    },
+    {
+      "analysis": "passed",
+      "path": "packages/device_identity",
+      "tests": "passed",
+      "toolkit": "dart"
+    },
+    {
+      "analysis": "passed",
+      "path": "packages/device_observation",
+      "tests": "passed",
+      "toolkit": "dart"
+    },
+    {
+      "analysis": "passed",
+      "path": "packages/device_operations/example",
+      "tests": "passed",
+      "toolkit": "flutter"
+    },
+    {
+      "analysis": "passed",
+      "path": "packages/device_operations",
+      "tests": "passed",
+      "toolkit": "flutter"
+    },
+    {
+      "analysis": "passed",
+      "path": "packages/device_policy",
+      "tests": "passed",
+      "toolkit": "dart"
+    },
+    {
+      "analysis": "passed",
+      "path": "packages/device_reports",
+      "tests": "passed",
+      "toolkit": "dart"
+    },
+    {
+      "analysis": "passed",
+      "path": "packages/usage_report_ui",
+      "tests": "passed",
+      "toolkit": "flutter"
+    },
+    {
+      "analysis": "passed",
+      "path": "packages/usage_reporting",
+      "tests": "passed",
+      "toolkit": "dart"
+    }
+  ],
+  "projectTestCounts": {
+    "apps-child-test.log": 152,
+    "apps-guardian-test.log": 254,
+    "packages-device-access-test.log": 128,
+    "packages-device-identity-test.log": 43,
+    "packages-device-observation-test.log": 14,
+    "packages-device-operations-example-test.log": 1,
+    "packages-device-operations-test.log": 42,
+    "packages-device-policy-test.log": 64,
+    "packages-device-reports-test.log": 5,
+    "packages-usage-report-ui-test.log": 8,
+    "packages-usage-reporting-test.log": 2
+  },
+  "backendSha256": "cebf87ea5664fcd5140976e7acc50e3ce2bbc9cf8d67e3ed032044d03d80dbd7",
+  "guardianSha256": "be77ab087fb851e3b8f1f6d0541f1a87996cd2ea92d4c9aeb65f17cbd1d428e5",
+  "runtime": {
+    "origin": "http://localhost:18101",
+    "sourceBase": "2965813f2b791e1937eecaf80b22a6c906fe2af3",
+    "verifiedAt": "2026-10-13T10:55:41.8274231+08:00",
+    "services": [
+      {
+        "Service": "backend",
+        "State": "running",
+        "Health": "healthy"
+      },
+      {
+        "Service": "database",
+        "State": "running",
+        "Health": "healthy"
+      },
+      {
+        "Service": "edge",
+        "State": "running",
+        "Health": "healthy"
+      },
+      {
+        "Service": "erasure-database",
+        "State": "running",
+        "Health": "healthy"
+      },
+      {
+        "Service": "identity",
+        "State": "running",
+        "Health": "healthy"
+      },
+      {
+        "Service": "identity-database",
+        "State": "running",
+        "Health": "healthy"
+      }
+    ],
+    "backendHashMatches": true,
+    "frontendHashMatches": true,
+    "backendSha256": "cebf87ea5664fcd5140976e7acc50e3ce2bbc9cf8d67e3ed032044d03d80dbd7",
+    "frontendSha256": "be77ab087fb851e3b8f1f6d0541f1a87996cd2ea92d4c9aeb65f17cbd1d428e5",
+    "schema": [
+      "1\tinitial schema\t1",
+      "2\tevent publication\t1"
+    ],
+    "permissionTablesPresent": true,
+    "childHelpTablePresent": true,
+    "inboxIndexColumns": [
+      "tenant_id",
+      "state",
+      "id"
+    ],
+    "mandatoryLedgerProtection": true,
+    "parentSourceIncluded": true,
+    "nativeDeviceExecutionVerified": false
+  },
+  "browser": {
+    "origin": "http://localhost:18101",
+    "title": "智能管家 · 管理工作台",
+    "username": "admin@super.com",
+    "browser": "Chrome via Playwright",
+    "viewports": [
+      "1440x1000",
+      "390x844"
+    ],
+    "checks": [
+      "real password PKCE login",
+      "authenticated backend profile",
+      "meaningful empty workspace screen",
+      "workspace create dialog opens and cancels without writing data",
+      "mobile navigation opens",
+      "catalog navigation returns HTTP 200",
+      "catalog refresh returns HTTP 200",
+      "no horizontal document overflow",
+      "no browser runtime errors"
+    ],
+    "errors": [],
+    "warnings": [],
+    "screenshots": [
+      "desktop.png",
+      "create-dialog.png",
+      "mobile-navigation.png",
+      "mobile-catalog.png",
+      "desktop-catalog.png"
+    ],
+    "mfaVerified": false
+  },
+  "backup": {
+    "directory": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\backups\\v1-integrated-before-current-20261013-104459",
+    "fileCount": 79,
+    "restored": false,
+    "consistency": "Independent single-transaction snapshots; not coordinated across databases",
+    "ledger": "Preserve independently; never roll the ledger back with a business restore"
+  },
+  "boundaries": [
+    "Frozen base plus listed patch only; later parent commits and shared WIP excluded.",
+    "Independent database backups were not restore-tested or coordinated across databases.",
+    "Parent SDK analysis/tests do not certify signed APK, real Android hardware, production HTTPS IdP or MFA.",
+    "No historical migration; former development data stays in preserved old volumes."
+  ],
+  "review": {
+    "reviewer": "/root/v1_current_runtime_final_review",
+    "model": "gpt-6-astra",
+    "critical": 0,
+    "important": 0,
+    "minor": 0,
+    "result": "passed",
+    "readOnly": true,
+    "rulings": [
+      {
+        "subject": "历史原地升级",
+        "decision": "按用户要求只支持全新1.0.0初始化，旧开发数据留在原卷。",
+        "costIfWrongOrUnproven": "不能将当前补丁用于旧库升级。"
+      },
+      {
+        "subject": "其他代码和后续提交",
+        "decision": "复核只覆盖指定补丁及部署证据，冻结后的提交/WIP排除。",
+        "costIfWrongOrUnproven": "后续变更需要独立验收。"
+      },
+      {
+        "subject": "1093文件比较",
+        "decision": "保留执行方实际逐字节比较结果，复核方仅重核修改文件和清单。",
+        "costIfWrongOrUnproven": "不声称整份比较被独立重复。"
+      },
+      {
+        "subject": "备份恢复与一致性",
+        "decision": "79文件受限备份已完成，但独立数据库快照未做恢复演练。",
+        "costIfWrongOrUnproven": "无法承诺跨库一致时间点或灾难恢复成功。"
+      },
+      {
+        "subject": "失败回退",
+        "decision": "成功切换未触发回退；原卷及账本保留，回退脚本未实演。",
+        "costIfWrongOrUnproven": "回退仍须后续演练。"
+      },
+      {
+        "subject": "8个跳过测试",
+        "decision": "Android runner 1项、专用数据库凭据1项、账本数据库6项缺少环境，均不计通过。",
+        "costIfWrongOrUnproven": "对应行为本轮未认证。"
+      },
+      {
+        "subject": "原生与缺失测试",
+        "decision": "parent/device_cleanup无测试目录；原生签名、真机、系统能力仍待验收。",
+        "costIfWrongOrUnproven": "分析通过不能证明这些行为。"
+      },
+      {
+        "subject": "生产身份与外部服务",
+        "decision": "仅本机密码PKCE登录实测；HTTPS/外部IdP/MFA、外部送达及凭据审计不作完成声明。",
+        "costIfWrongOrUnproven": "正式环境仍需专门验收。"
+      },
+      {
+        "subject": "完整产品验收",
+        "decision": "本阶段不代表全业务写入闭环、容量/高可用、完整删除恢复编排或广泛安全认证。",
+        "costIfWrongOrUnproven": "总体目标保持进行中。"
+      },
+      {
+        "subject": "浏览器重放与持续健康",
+        "decision": "执行方完成Chrome操作；复核读取结果并现场读取容器状态。",
+        "costIfWrongOrUnproven": "不承诺独立重放或未来持续可用。"
+      }
+    ]
+  },
+  "oldEnvironmentObserved": {
+    "containers": 6,
+    "state": "exited",
+    "volumesPresent": [
+      "business-data",
+      "identity-data",
+      "erasure-data"
+    ]
+  }
+}

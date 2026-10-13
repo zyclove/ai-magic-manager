@@ -84,6 +84,8 @@ class DatabaseInitializationTest {
         .containsExactly("tenant_id", "state", "last_heartbeat_at");
     assertThat(indexColumns(db, "access_requests", "ix_access_pending_count"))
         .containsExactly("tenant_id", "state", "request_expires_at");
+    assertThat(indexColumns(db, "access_requests", "ix_access_tenant_state_id"))
+        .containsExactly("tenant_id", "state", "id");
     // Freshly created columns include current authority epochs, scopes and delivery-attempt fields.
     db.queryForList("SELECT version,revoked_at FROM tenant_members WHERE 1=0");
     db.queryForList("SELECT requester_kind FROM access_requests WHERE 1=0");
