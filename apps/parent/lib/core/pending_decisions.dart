@@ -33,7 +33,7 @@ class PendingDecision {
         value['version'] is! int ||
         value['idempotencyKey'] is! String ||
         value['createdAt'] is! int ||
-        !const {'APPROVE', 'DENY'}.contains(value['choice'])) {
+        !const {'APPROVE', 'DENY', 'REVOKE'}.contains(value['choice'])) {
       return null;
     }
     final id = value['requestId'] as String;
@@ -66,17 +66,17 @@ class PendingDecisionStore {
     try {
       decoded = jsonDecode(raw);
     } on FormatException {
-      throw const FormatException('待核对审批记录无法读取，请联系管理员处理。');
+      throw const FormatException('待核对操作记录无法读取，请联系管理员处理。');
     }
     if (decoded is! List || decoded.length > 20) {
-      throw const FormatException('待核对审批记录格式异常，请联系管理员处理。');
+      throw const FormatException('待核对操作记录格式异常，请联系管理员处理。');
     }
     final records = <PendingDecision>[];
     final keys = <String>{};
     for (final item in decoded) {
       final record = PendingDecision.fromJson(item);
       if (record == null || !keys.add(record.idempotencyKey)) {
-        throw const FormatException('待核对审批记录格式异常，请联系管理员处理。');
+        throw const FormatException('待核对操作记录格式异常，请联系管理员处理。');
       }
       records.add(record);
     }
@@ -87,7 +87,7 @@ class PendingDecisionStore {
       String tenantId, String actorId, PendingDecision record) async {
     final records = await load(tenantId, actorId);
     if (records.length >= 20) {
-      throw const FormatException('待核对审批已达 20 条，请先核对已有记录。');
+      throw const FormatException('待核对操作已达 20 条，请先核对已有记录。');
     }
     if (records.any((item) =>
         item.idempotencyKey == record.idempotencyKey ||

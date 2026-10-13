@@ -514,10 +514,10 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
           current['version'] is! int ||
           current['state'] is! String) {
         message = '服务端返回的数据无法核对，请稍后重试。';
-      } else if (current['state'] == 'PENDING' &&
-          current['version'] == record.version) {
+      } else if (current['version'] == record.version) {
         verified = true;
-        message = '服务端目前仍显示待处理；无法证明上次提交到达。请核对后再决定是否重试。';
+        message =
+            '服务端原申请版本未变化，当前状态：${current['state']}。无法证明上次提交到达；请核对后再决定是否重试。';
       } else {
         verified = true;
         message = '服务端当前状态：${current['state']}。请核对原申请和设备执行回执；状态变化不能证明由本机提交造成。';
@@ -589,7 +589,7 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
 
   List<Widget> _recoveryCards() => [
         if (_recoveries.isNotEmpty)
-          const _Notice('有上次提交后尚未核对的审批。请查询原申请；这里不会自动重新提交。'),
+          const _Notice('有上次提交后尚未核对的审批或撤销。请查询原申请；这里不会自动重新提交。'),
         for (final record in _recoveries)
           Card(
             child: Padding(
@@ -597,7 +597,12 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('待核对：${record.choice == 'APPROVE' ? '批准' : '拒绝'}申请',
+                  Text(
+                      '待核对：${switch (record.choice) {
+                        'APPROVE' => '批准申请',
+                        'DENY' => '拒绝申请',
+                        _ => '撤销临时访问'
+                      }}',
                       style: const TextStyle(fontWeight: FontWeight.w700)),
                   SelectableText('申请编号：${record.requestId}'),
                   Text('提交时间：${_time(record.createdAt)}'),
@@ -633,7 +638,12 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
                 child: OutlinedButton.icon(
-                  onPressed: () => showAccessHistory(context, widget.session),
+                  onPressed: sending || _recoveryBusy
+                      ? null
+                      : () async {
+                          await showAccessHistory(context, widget.session);
+                          if (mounted) await _loadRecoveries();
+                        },
                   icon: const Icon(Icons.history),
                   label: const Text('查看申请记录与交付状态'),
                 ),
@@ -665,7 +675,12 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
               const _SectionTitle('临时访问申请', '先核对用途，再决定是否开放'),
               const SizedBox(height: 12),
               OutlinedButton.icon(
-                onPressed: () => showAccessHistory(context, widget.session),
+                onPressed: sending || _recoveryBusy
+                    ? null
+                    : () async {
+                        await showAccessHistory(context, widget.session);
+                        if (mounted) await _loadRecoveries();
+                      },
                 icon: const Icon(Icons.history),
                 label: const Text('查看申请记录与交付状态'),
               ),
@@ -674,8 +689,13 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
                 _Notice(
                     _lastDecisionApproved ? '批准决定已保存；设备系统执行仍需核对。' : '拒绝决定已保存。'),
                 TextButton.icon(
-                  onPressed: () => showAccessRequestDetail(
-                      context, widget.session, _lastDecisionId!),
+                  onPressed: sending || _recoveryBusy
+                      ? null
+                      : () async {
+                          await showAccessRequestDetail(
+                              context, widget.session, _lastDecisionId!);
+                          if (mounted) await _loadRecoveries();
+                        },
                   icon: const Icon(Icons.open_in_new),
                   label: const Text('查看本次申请状态'),
                 ),
