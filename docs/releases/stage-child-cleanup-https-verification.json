@@ -6,31 +6,38 @@
   "sourceFiles": [
     {
       "path": "apps/child/integration_test/cleanup_https_test.dart",
-      "sha256": "53636e0b2c656827d76f94ad713e89df282a35a2c0a3747fecceba85764c2590"
+      "sha256": "53636e0b2c656827d76f94ad713e89df282a35a2c0a3747fecceba85764c2590",
+      "gitCanonicalSha256": "53636e0b2c656827d76f94ad713e89df282a35a2c0a3747fecceba85764c2590"
     },
     {
       "path": "apps/child/test_driver/cleanup_https_driver.dart",
-      "sha256": "1591169c3b086683e5e2d246f3819aadbbe9fb229ac15a0392ea7fcb5df9129b"
+      "sha256": "1591169c3b086683e5e2d246f3819aadbbe9fb229ac15a0392ea7fcb5df9129b",
+      "gitCanonicalSha256": "1591169c3b086683e5e2d246f3819aadbbe9fb229ac15a0392ea7fcb5df9129b"
     },
     {
       "path": "apps/child/tool/run_cleanup_https_android.py",
-      "sha256": "799bf9c065f453775ba8a06052d60c99db49880a72cffc7c9b6305c10aebf022"
+      "sha256": "799bf9c065f453775ba8a06052d60c99db49880a72cffc7c9b6305c10aebf022",
+      "gitCanonicalSha256": "9d69acc88d5235933914c30345fc6cb6f72bccaeb71450308b21d24b110e5c98"
     },
     {
       "path": "apps/child/tool/test_run_cleanup_https_android.py",
-      "sha256": "9b755de337664d3210bcf4422c3ff71eb89e5400aa53337e218584be0ec26250"
+      "sha256": "9b755de337664d3210bcf4422c3ff71eb89e5400aa53337e218584be0ec26250",
+      "gitCanonicalSha256": "87013c4f65fa04a48c11aee05f16fd0c84a652219157695b2ed422c50b7d2ca4"
     },
     {
       "path": "backend/src/test/java/com/aimanager/AndroidCleanupHttpsJourneyTest.java",
-      "sha256": "1fb83c61ed96c347ea2316ab1c2844f81c0cb3fdb8564c5b684c0c3e8b313bb0"
+      "sha256": "1fb83c61ed96c347ea2316ab1c2844f81c0cb3fdb8564c5b684c0c3e8b313bb0",
+      "gitCanonicalSha256": "1fb83c61ed96c347ea2316ab1c2844f81c0cb3fdb8564c5b684c0c3e8b313bb0"
     },
     {
       "path": "apps/child/integration_test/support/cleanup_https_certificate.dart",
-      "sha256": "5f671f3531ba3cecabc62424fa97844063e445f56ece042f82ee5b4338b124e8"
+      "sha256": "5f671f3531ba3cecabc62424fa97844063e445f56ece042f82ee5b4338b124e8",
+      "gitCanonicalSha256": "b10f0201b5b0dd4a72faedc0ee84140a09ba77d77162fb57f6a6eea0d134826b"
     },
     {
       "path": "apps/child/test/cleanup_https_certificate_test.dart",
-      "sha256": "0a2c85475a8c0a6498b60b7429fb41e1452172984ae90391f54e2f3deeea3d12"
+      "sha256": "0a2c85475a8c0a6498b60b7429fb41e1452172984ae90391f54e2f3deeea3d12",
+      "gitCanonicalSha256": "24cb5d397fb6df535586971bffebc4cf5ba14a76a51917a1639279b7765d1929"
     }
   ],
   "unchangedArchiveFilesCompared": 1129,
@@ -398,5 +405,6 @@
         "decisionAndRemainingRisk": "其他会话guardian/parent/backend/deploy修改排除于本阶段"
       }
     ]
-  }
+  },
+  "sourceEncoding": "sha256 records exact executed frozen bytes; gitCanonicalSha256 records Git LF-normalized bytes. All seven Git blobs equal executed sources after CRLF-to-LF normalization only."
 }
