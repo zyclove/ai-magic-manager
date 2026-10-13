@@ -53,6 +53,9 @@ class ParentSession extends ChangeNotifier {
   String? _idToken;
   DateTime? _expiresAt;
   Future<void>? _refreshing;
+  Future<void> _storageMutation = Future<void>.value();
+  int _credentialEpoch = 0;
+  bool _signingOut = false;
   Json? profile;
   List<Json> tenants = const [];
   Json? tenant;
@@ -108,13 +111,21 @@ class ParentSession extends ChangeNotifier {
   }
 
   Future<bool> signIn({bool stepUp = false}) async {
-    if (busy) return false;
+    if (busy || _signingOut) return false;
     if (!ParentConfig.valid) {
       error = const ParentApiException(0, 'CONFIGURATION_REQUIRED');
       notifyListeners();
       return false;
     }
+    if (stepUp && profile?['subject'] is! String) {
+      error = const ParentApiException(401, 'UNAUTHENTICATED');
+      notifyListeners();
+      return false;
+    }
     busy = true;
+    final epoch = _credentialEpoch;
+    final expectedActor = stepUp ? (profile?['subject'] as String?) : null;
+    bool exchanged = false;
     error = null;
     notifyListeners();
     try {
@@ -133,8 +144,15 @@ class ParentSession extends ChangeNotifier {
               if (stepUp) 'max_age': '0',
             }),
       );
-      await _accept(response);
-      await _loadIdentity();
+      exchanged = true;
+      // A new authorization code invalidates any refresh started under the
+      // previous credential generation; the new refresh token remains last.
+      if (epoch != _credentialEpoch) {
+        throw const ParentApiException(401, 'UNAUTHENTICATED');
+      }
+      final authorizationEpoch = ++_credentialEpoch;
+      await _accept(response, epoch: authorizationEpoch);
+      await _loadIdentity(expectedActor: expectedActor);
       return true;
     } on FlutterAppAuthUserCancelledException {
       // Closing the system browser leaves the current session intact.
@@ -144,7 +162,7 @@ class ParentSession extends ChangeNotifier {
       error = failure is ParentApiException
           ? failure
           : const ParentApiException(0, 'LOGIN_FAILED');
-      if (!stepUp) await _clear();
+      if (!stepUp || exchanged) await _clear();
       return false;
     } finally {
       busy = false;
@@ -159,8 +177,10 @@ class ParentSession extends ChangeNotifier {
   }
 
   Future<String> token() async {
-    if (_accessToken == null ||
-        _expiresAt == null ||
+    if (_signingOut || _accessToken == null) {
+      throw const ParentApiException(401, 'UNAUTHENTICATED');
+    }
+    if (_expiresAt == null ||
         _expiresAt!.isBefore(DateTime.now().add(const Duration(seconds: 45)))) {
       _refreshing ??= _refresh().whenComplete(() => _refreshing = null);
       await _refreshing;
@@ -171,18 +191,22 @@ class ParentSession extends ChangeNotifier {
   }
 
   Future<void> _refresh() async {
+    final epoch = _credentialEpoch;
     final refresh = await _storage.read(key: _refreshKey);
+    if (epoch != _credentialEpoch) {
+      throw const ParentApiException(401, 'UNAUTHENTICATED');
+    }
     if (refresh == null) throw const ParentApiException(401, 'UNAUTHENTICATED');
     final response = await _appAuth.token(TokenRequest(
         ParentConfig.clientId, ParentConfig.redirectUri,
         issuer: ParentConfig.issuer,
         refreshToken: refresh,
         scopes: const ['openid', 'profile', 'email', 'tenant:create']));
-    await _accept(response, previousRefresh: refresh);
+    await _accept(response, epoch: epoch, previousRefresh: refresh);
   }
 
   Future<void> _accept(TokenResponse response,
-      {String? previousRefresh}) async {
+      {required int epoch, String? previousRefresh}) async {
     if (response.accessToken == null || response.accessToken!.isEmpty) {
       throw const ParentApiException(401, 'UNAUTHENTICATED');
     }
@@ -190,14 +214,32 @@ class ParentSession extends ChangeNotifier {
     if (refresh == null || refresh.isEmpty) {
       throw const ParentApiException(401, 'UNAUTHENTICATED');
     }
-    await _storage.write(key: _refreshKey, value: refresh);
+    if (epoch != _credentialEpoch) {
+      throw const ParentApiException(401, 'UNAUTHENTICATED');
+    }
+    await _enqueueStorage(() async {
+      if (epoch == _credentialEpoch) {
+        await _storage.write(key: _refreshKey, value: refresh);
+      }
+    });
+    if (epoch != _credentialEpoch) {
+      throw const ParentApiException(401, 'UNAUTHENTICATED');
+    }
     _accessToken = response.accessToken;
     _idToken = response.idToken;
     _expiresAt = response.accessTokenExpirationDateTime;
   }
 
-  Future<void> _loadIdentity() async {
+  Future<void> _loadIdentity({String? expectedActor}) async {
+    final epoch = _credentialEpoch;
+    final identityGeneration = generation;
     final me = await api.object('/me');
+    if (me['subject'] is! String || (me['subject'] as String).isEmpty) {
+      throw const ParentApiException(502, 'INVALID_RESPONSE');
+    }
+    if (expectedActor != null && me['subject'] != expectedActor) {
+      throw const ParentApiException(401, 'UNAUTHENTICATED');
+    }
     final workspaces = await api.all('/tenants');
     final selected = await _storage.read(key: _workspaceKey);
     Json? next;
@@ -207,6 +249,9 @@ class ParentSession extends ChangeNotifier {
           orElse: () => workspaces.first);
       final membership = await api.object('/tenants/${next['id']}/membership');
       nextRole = membership['role'] as String? ?? '';
+    }
+    if (epoch != _credentialEpoch || identityGeneration != generation) {
+      throw const ParentApiException(401, 'UNAUTHENTICATED');
     }
     // Publish an identity and its membership together. A failed membership read
     // must not leave an adult profile paired with a stale workspace role.
@@ -226,13 +271,26 @@ class ParentSession extends ChangeNotifier {
     final epoch = ++generation;
     final membership = await api.object('/tenants/$id/membership');
     if (epoch != generation) return;
+    final nextRole = membership['role'] as String? ?? '';
+    await _enqueueStorage(() async {
+      if (epoch == generation && authenticated) {
+        await _storage.write(key: _workspaceKey, value: id);
+      }
+    });
+    if (epoch != generation) return;
     tenant = next;
-    role = membership['role'] as String? ?? '';
-    await _storage.write(key: _workspaceKey, value: id);
+    role = nextRole;
     notifyListeners();
   }
 
+  Future<void> _enqueueStorage(Future<void> Function() action) {
+    final current = _storageMutation.then((_) => action());
+    _storageMutation = current.then<void>((_) {}, onError: (Object _) {});
+    return current;
+  }
+
   Future<void> _clear() async {
+    _credentialEpoch++;
     generation++;
     _accessToken = null;
     _idToken = null;
@@ -241,24 +299,33 @@ class ParentSession extends ChangeNotifier {
     tenants = const [];
     tenant = null;
     role = '';
-    await _storage.delete(key: _refreshKey);
-    await _storage.delete(key: _workspaceKey);
+    await _enqueueStorage(() async {
+      await _storage.delete(key: _refreshKey);
+      await _storage.delete(key: _workspaceKey);
+    });
   }
 
   Future<void> signOut() async {
+    if (_signingOut) return;
+    _signingOut = true;
     final idToken = _idToken;
-    await _clear();
-    notifyListeners();
-    if (idToken != null) {
-      try {
-        await _appAuth.endSession(EndSessionRequest(
-          idTokenHint: idToken,
-          issuer: ParentConfig.issuer,
-          postLogoutRedirectUrl: ParentConfig.redirectUri,
-        ));
-      } catch (_) {
-        // Local credentials are already removed; browser SSO may still exist.
+    try {
+      await _clear();
+      notifyListeners();
+      if (idToken != null) {
+        try {
+          await _appAuth.endSession(EndSessionRequest(
+            idTokenHint: idToken,
+            issuer: ParentConfig.issuer,
+            postLogoutRedirectUrl: ParentConfig.redirectUri,
+          ));
+        } catch (_) {
+          // Local credentials are already removed; browser SSO may still exist.
+        }
       }
+    } finally {
+      _signingOut = false;
+      notifyListeners();
     }
   }
 
