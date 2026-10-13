@@ -540,18 +540,66 @@ class _HelpInboxState extends State<_HelpInbox> {
       ),
     );
     if (confirmed != true || !mounted) return;
-    final root = widget.session.root;
+    final actor = widget.session.profile?['subject'];
+    final tenantId = widget.session.tenant?['id'];
+    final requestId = item['id'];
+    final version = item['version'];
+    if (actor is! String ||
+        tenantId is! String ||
+        requestId is! String ||
+        version is! int) {
+      setState(() =>
+          actionError = const ParentApiException(502, 'INVALID_RESPONSE'));
+      return;
+    }
+    final root = '/tenants/$tenantId';
+    var submitted = false;
     setState(() => sending = true);
     try {
-      if (widget.session.root != root) return;
+      if (!_sameHelpScope(actor, tenantId)) return;
+      submitted = true;
       await widget.session.api.send(
-          'POST', '$root/help-requests/${item['id']}/acknowledge',
-          version: item['version'] as int);
-      reload();
+          'POST', '$root/help-requests/$requestId/acknowledge',
+          version: version);
+      if (_sameHelpScope(actor, tenantId)) await reload();
     } catch (failure) {
-      if (mounted) setState(() => actionError = failure);
+      if (!_sameHelpScope(actor, tenantId)) return;
+      if (submitted &&
+          (failure is! ParentApiException ||
+              failure.status == 0 ||
+              failure.status >= 500)) {
+        final message = await _reconcileUncertainAcknowledge(root, requestId);
+        if (!_sameHelpScope(actor, tenantId)) return;
+        await requests.reload();
+        if (mounted) setState(() => actionError = message);
+      } else {
+        setState(() => actionError = failure);
+      }
     } finally {
       if (mounted) setState(() => sending = false);
+    }
+  }
+
+  bool _sameHelpScope(String actor, String tenantId) =>
+      mounted &&
+      widget.session.profile?['subject'] == actor &&
+      widget.session.tenant?['id'] == tenantId &&
+      widget.session.canSeeHelp;
+
+  Future<String> _reconcileUncertainAcknowledge(
+      String root, String requestId) async {
+    try {
+      final current =
+          await widget.session.api.object('$root/help-requests/$requestId');
+      if (current['id'] != requestId || current['state'] is! String) {
+        return '求助确认结果无法核对。请在管理台查看原记录，并尽快联系孩子。';
+      }
+      if (current['state'] == 'ACKNOWLEDGED') {
+        return '服务端显示这条求助已被看到；请仍通过现实渠道尽快联系孩子。';
+      }
+      return '提交时连接中断，服务端目前仍显示未确认。请核对原记录，并尽快联系孩子。';
+    } catch (_) {
+      return '求助确认结果暂时无法查询。请恢复网络后核对原记录，并尽快联系孩子。';
     }
   }
 
@@ -560,7 +608,14 @@ class _HelpInboxState extends State<_HelpInbox> {
         animation: requests,
         builder: (context, _) {
           if (requests.error != null && !requests.loaded) {
-            return _LoadError(requests.error!, retry: reload);
+            return Column(children: [
+              if (actionError != null)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                  child: _Notice('$actionError', error: true),
+                ),
+              Expanded(child: _LoadError(requests.error!, retry: reload)),
+            ]);
           }
           if (!requests.loaded) {
             return const Center(child: CircularProgressIndicator());

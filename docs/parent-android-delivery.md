@@ -10,7 +10,7 @@
 | 工作空间 | 读取当前成员可见的家庭/机构，切换时重新核对成员角色；儿童角色没有成人操作入口 | `GET /tenants`、`GET /tenants/{id}/membership`；后端仍做逐请求鉴权 |
 | 今日概览 | 服务端授权范围内的儿童、已注册设备、待审批和求助计数；儿童仅展示前 5 条；标明“在线/权益”不等于执行 | `GET /overview`、`GET /subjects?limit=5` |
 | 访问申请 | 服务端筛选待处理项并在授权结果中附儿童、应用、包名和设备名称；成人在卡片及确认弹窗核对对象后批准/拒绝并再次认证；提交带版本及幂等键，连接中断后查询原申请且不自动重发；批准窗口不超过申请时长，提示需等待设备实际执行 | `GET /access-requests?state=PENDING`、`GET /access-requests/{id}`、`POST /access-requests/{id}/decisions`，`If-Match`、`Idempotency-Key` 和服务端近期认证 |
-| 求助 | 展示未确认求助，成人确认已看到；明确不是紧急服务 | `GET /help-requests?state=OPEN`、`POST /help-requests/{id}/acknowledge`，`If-Match` |
+| 求助 | 展示未确认求助，成人确认已看到；传输结果未知时查询原记录并保持联系孩子的提醒，明确不是紧急服务 | `GET /help-requests?state=OPEN`、`GET /help-requests/{id}`、`POST /help-requests/{id}/acknowledge`，`If-Match` |
 | 设备 | 分页展示注册状态和管理模式；点开设备可看连接观察及逐项能力证据、限制原因，提醒另查策略执行回执 | `GET /devices`、`GET /devices/{id}`、`GET /devices/{id}/capabilities` |
 | 设备配对 | 分页选择儿童与 Android/TV；近期认证后生成 BYOD 一次性凭据；儿童端认领后刷新状态、输入物理设备配对码再次认证确认；可取消，进程恢复只保留非秘密注册编号 | `POST /enrollments`、`GET /enrollments/{id}`、`POST /enrollments/{id}/confirm`、`DELETE /enrollments/{id}` |
 | 正常退出 | 复用 Web 管理台 `device_operations` 组件；先预览后果、近期认证、带版本和幂等确认；网络结果未知时保留恢复记录，云端撤权与本代理清理回执分开展示 | `GET /devices/{id}`、`/devices/{id}/deprovision` 路由；只开放当前 BYOD 注册，服务端逐请求鉴权 |
