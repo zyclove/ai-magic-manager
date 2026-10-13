@@ -5,6 +5,7 @@ import '../core/paged_collection.dart';
 import '../core/parent_api.dart';
 import '../core/parent_session.dart';
 import '../core/pending_publications.dart';
+import 'policy_editor.dart';
 
 const _ink = Color(0xFF17324B);
 const _muted = Color(0xFF315E86);
@@ -282,7 +283,10 @@ class _PolicyCenterState extends State<PolicyCenter> {
                                             session: widget.session,
                                             policyId: row['id'] as String),
                                       ));
-                                      if (_current) await _loadRecoveries();
+                                      if (_current) {
+                                        await _loadRecoveries();
+                                        policies.reload();
+                                      }
                                     }
                                   : null,
                         ),
@@ -424,6 +428,22 @@ class _PolicyDetailState extends State<_PolicyDetail> {
         selectedNames[id] = _name(row['displayName'], '未命名设备');
       }
     });
+  }
+
+  Future<void> _edit(Json policy) async {
+    if (!_current || busy || !widget.session.canDecide) return;
+    setState(() {
+      busy = true;
+      preview = null;
+      publication = null;
+    });
+    await Navigator.of(context).push<Json>(MaterialPageRoute(
+      builder: (_) => PolicyDraftEditor(session: widget.session, draft: policy),
+    ));
+    if (!_current) return;
+    setState(() => busy = false);
+    // An interrupted PUT may have committed: always re-read the authority.
+    _reload();
   }
 
   Future<void> _preview(Json policy) async {
@@ -664,6 +684,12 @@ class _PolicyDetailState extends State<_PolicyDetail> {
                       '${policy['kind'] == 'TEMPLATE' ? '模板' : '策略草稿'} · 修订 ${policy['revision']} · ${(policy['rules'] as List).length} 条规则',
                       style: const TextStyle(color: _muted)),
                   const SizedBox(height: 16),
+                  if (widget.session.canDecide)
+                    OutlinedButton.icon(
+                      onPressed: busy ? null : () => _edit(policy),
+                      icon: const Icon(Icons.edit_outlined),
+                      label: const Text('编辑草稿规则'),
+                    ),
                   for (final raw in policy['rules'] as List)
                     if (raw is Json)
                       Card(

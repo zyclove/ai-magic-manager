@@ -23,6 +23,9 @@ class ParentApiException implements Exception {
         'REAUTH_REQUIRED' => '请完成近期安全验证后重试。',
         'RESOURCE_VERSION_CONFLICT' => '记录已发生变化，请刷新后重新处理。',
         'PREVIEW_STALE' => '预览已过期或设备已变化，请重新预览。',
+        'SAFETY_BASELINE_PROTECTED' => '此规则会影响紧急联系或恢复管理，请调整目标应用或限制方式。',
+        'DOMAIN_NOT_CANONICAL' => '域名格式不正确，请使用小写域名，不含协议或路径。',
+        'NOT_RUNTIME_PERMISSION' => '该权限已不在支持目录中，请重新选择权限项目。',
         'ACCESS_REQUEST_NOT_PENDING' => '申请状态已变化，请刷新列表。',
         'HELP_REQUEST_VERSION_CHANGED' => '求助状态已变化，请刷新列表。',
         'SCOPE_DENIED' => '当前账号没有此操作权限。',
@@ -58,12 +61,18 @@ class ParentApi {
       int? version,
       String? idempotencyKey,
       String? clientRequestId,
+      bool Function()? isCurrent,
       int maxResponseBytes = 1024 * 1024}) async {
     if (maxResponseBytes < 1 || maxResponseBytes > 4 * 1024 * 1024) {
       throw const ParentApiException(400, 'INVALID_RESPONSE');
     }
     try {
       final token = await accessToken();
+      // A screen can lose its account or workspace while token refresh waits.
+      // Check again immediately before constructing and dispatching the request.
+      if (isCurrent != null && !isCurrent()) {
+        throw const ParentApiException(409, 'SCOPE_DENIED');
+      }
       final request = http.Request(method, Uri.parse('$baseUrl$path'));
       // An API redirect must not forward the bearer token to another origin.
       request.followRedirects = false;

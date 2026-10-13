@@ -196,6 +196,51 @@ class PolicyJourneyTest {
             .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString());
     }
 
+    @Test void publicationRecoveryIsExactReadOnlyAndSurvivesReplayExpiry() throws Exception {
+        var s = scope(); var d = draft(s); var p = preview(s, d);
+        String key = UUID.randomUUID().toString();
+        var original = configure(s, d, p, key);
+        configure(s, d, p, UUID.randomUUID().toString());
+        database.update("UPDATE idempotency_requests SET expires_at=0 WHERE scope_id=? AND operation='policy.publish'", s.tenant());
+        String target = path(s) + "/policies/" + d.get("id").asText() + "/publication-results/" + key;
+        for (int attempt = 0; attempt < 2; attempt++) {
+            var recovered = body(mvc.perform(get(target).with(actor(s.owner()))
+                .param("revision", "0").param("previewId", p.get("id").asText()).param("previewHash", p.get("hash").asText()))
+                .andExpect(status().isOk()).andExpect(header().string("Cache-Control", "no-store"))
+                .andReturn().getResponse().getContentAsString());
+            assertThat(recovered).isEqualTo(original);
+        }
+        mvc.perform(get(target).with(actor(s.owner())).param("revision", "1")
+            .param("previewId", p.get("id").asText()).param("previewHash", p.get("hash").asText()))
+            .andExpect(status().isConflict()).andExpect(jsonPath("$.errorCode").value("IDEMPOTENCY_KEY_CONFLICT"));
+        assertThat(database.queryForObject("SELECT COUNT(*) FROM policy_versions WHERE tenant_id=?", Integer.class, s.tenant())).isEqualTo(2);
+        assertThat(database.queryForObject("SELECT COUNT(*) FROM policy_outbox WHERE tenant_id=?", Integer.class, s.tenant())).isEqualTo(2);
+        assertThat(database.queryForObject("SELECT MAX(expires_at) FROM idempotency_requests WHERE scope_id=? AND operation='policy.publish'", Long.class, s.tenant())).isZero();
+    }
+
+    @Test void publicationRecoveryRequiresOriginalActorAndCurrentAuthority() throws Exception {
+        var s = scope(); var d = draft(s); var p = preview(s, d);
+        String key = UUID.randomUUID().toString(); configure(s, d, p, key);
+        String guardian = "guardian-" + UUID.randomUUID();
+        database.update("INSERT INTO tenant_members(tenant_id,actor_id,actor_key,role) VALUES(?,?,?,'GUARDIAN')",
+            s.tenant(), guardian, ActorKeys.key(guardian));
+        String target = path(s) + "/policies/" + d.get("id").asText() + "/publication-results/";
+        mvc.perform(get(target + key).with(actor(guardian)).param("revision", "0")
+            .param("previewId", p.get("id").asText()).param("previewHash", p.get("hash").asText()))
+            .andExpect(status().isNotFound()).andExpect(jsonPath("$.errorCode").value("POLICY_PUBLICATION_RESULT_UNAVAILABLE"));
+        mvc.perform(get(target + UUID.randomUUID()).with(actor(s.owner())).param("revision", "0")
+            .param("previewId", p.get("id").asText()).param("previewHash", p.get("hash").asText()))
+            .andExpect(status().isNotFound());
+        mvc.perform(get(target + key).with(actor("outsider")).param("revision", "0")
+            .param("previewId", p.get("id").asText()).param("previewHash", p.get("hash").asText()))
+            .andExpect(status().isForbidden());
+        database.update("UPDATE tenant_members SET role='AUDITOR' WHERE tenant_id=? AND actor_key=?", s.tenant(), ActorKeys.key(s.owner()));
+        mvc.perform(get(target + key).with(actor(s.owner())).param("revision", "0")
+            .param("previewId", p.get("id").asText()).param("previewHash", p.get("hash").asText()))
+            .andExpect(status().isForbidden());
+        assertThat(database.queryForObject("SELECT COUNT(*) FROM policy_versions WHERE tenant_id=?", Integer.class, s.tenant())).isEqualTo(1);
+    }
+
     @Test void templateCopyAndRollbackPreserveHistoricalVersion() throws Exception {
         var s = scope(); var a = app(s, "org.example.game");
         var template = body(mvc.perform(post(path(s) + "/policies").with(actor(s.owner())).contentType(MediaType.APPLICATION_JSON)
