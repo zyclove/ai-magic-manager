@@ -19,7 +19,7 @@
 | 时间计划 | 新建/复制独立计划，编辑星期、跨午夜和例外日期，分页查看并直接用于规则；后端计算当前计划安排；创建结果未知时按原参数恢复，不自动重发 | `/schedules`、`/{id}/evaluation`、`/creation-results/{requestId}/query`；见[时间计划交付](parent-schedule-delivery.md) |
 | 观察授权 | 从设备操作或使用报告管理应用清单与系统使用摘要授权；确认影响后再次验证，绑定原注册及授权版本提交；安全存储保留未知结果，只读查询原提交和当前状态 | 观察设置 `/changes` 与 `/operation-results/{requestId}/query`；见[手机观察授权交付](parent-observation-authorization-delivery.md) |
 | 应用目录与分类 | 手机登记不可变应用身份、核对平台/资料/签名、维护共享报表分类；规则中分页选择或登记应用；写入有原请求持久恢复 | `/applications`、`/{id}/classification` 及各自结果查询；见[应用目录交付](parent-application-catalog-delivery.md) |
-| 使用报告 | 分页选择当前有效设备，按日期/时区查看应用区间、日周趋势、分类和配置交付；未授权/无数据不显示零，后台/撤权取消并隐藏旧结果 | 既有 `/usage-reports` 与当前注册预检，复用 usage_report_ui；见[手机报告交付](parent-usage-report-delivery.md) |
+| 使用报告 | 单设备或明确选择 1–20 台有效设备；分页筛选与状态概览，逐设备查看日期/时区内应用区间、日周趋势、分类和配置交付；未授权/无数据不显示零，后台/撤权清除旧结果 | 既有 `/usage-reports` 与全部目标当前注册预检，复用 usage_report_ui；见[多设备报告交付](parent-multi-device-report-delivery.md) |
 | 求助 | 展示未确认求助，成人确认已看到；传输结果未知时查询原记录并保持联系孩子的提醒，明确不是紧急服务 | `GET /help-requests?state=OPEN`、`GET /help-requests/{id}`、`POST /help-requests/{id}/acknowledge`，`If-Match` |
 | 设备 | 分页展示注册状态和管理模式；点开设备可看连接观察及逐项能力证据、限制原因，提醒另查策略执行回执 | `GET /devices`、`GET /devices/{id}`、`GET /devices/{id}/capabilities` |
 | 设备配对 | 分页选择儿童与 Android/TV；近期认证后先保存随机注册请求编号，再生成 BYOD 一次性凭据；响应丢失或进程重启后可按原编号查询、不回显秘密；儿童端认领后刷新状态、输入物理设备配对码再次认证确认；可取消 | `POST /enrollments`（`Client-Request-Id`）、`GET /enrollment-creation-results/{id}`、`GET /enrollments/{id}`、`POST /enrollments/{id}/confirm`、`DELETE /enrollments/{id}` |

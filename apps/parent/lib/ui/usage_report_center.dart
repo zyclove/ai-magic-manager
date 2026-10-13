@@ -6,6 +6,7 @@ import '../core/parent_api.dart';
 import '../core/parent_session.dart';
 import '../core/usage_reports.dart';
 import 'observation_settings_page.dart';
+import 'multi_device_reports.dart';
 
 /// Parent reports expose only server-authorized activity; directory visibility is not consent.
 class UsageReportCenter extends StatefulWidget {
@@ -90,6 +91,19 @@ class _UsageReportCenterState extends State<UsageReportCenter> {
                     style: Theme.of(context).textTheme.headlineSmall),
                 const Text(
                     '只显示已授权的使用观测。未授权、缺少数据和实际使用为零分别展示；不同应用的时长不能直接相加为总屏幕时长。'),
+                const SizedBox(height: 12),
+                FilledButton.icon(
+                    icon: const Icon(Icons.devices_outlined),
+                    label: const Text('选择多台设备查看报告'),
+                    onPressed: !current || opening
+                        ? null
+                        : () async {
+                            setState(() => opening = true);
+                            await Navigator.of(context).push(MaterialPageRoute(
+                                builder: (_) => ParentReportDevicePicker(
+                                    session: widget.session)));
+                            if (current) setState(() => opening = false);
+                          }),
                 if (devices.loading || devices.loadingMore)
                   const LinearProgressIndicator(),
                 if (devices.error != null) ...[

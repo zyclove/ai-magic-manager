@@ -46,7 +46,7 @@ class ParentUsageReportLoader {
       return await (() async {
         check();
         // A fresh registration check prevents an old page reading a re-enrolled device.
-        for (final target in query.targets) {
+        Future<void> verifyTarget(UsageReportTarget target) async {
           final device = await api.object(
               '/tenants/$tenant/devices/${target.deviceId}',
               isCurrent: () => generation == _generation && available());
@@ -58,6 +58,15 @@ class ParentUsageReportLoader {
               device['state'] != 'ACTIVE') {
             throw const UsageReportFailure(409, 'REPORT_SCOPE_CHANGED');
           }
+        }
+
+        // At most four independent directory reads; every selected registration
+        // must pass before opening the report connection. Never truncate a set.
+        for (var offset = 0; offset < query.targets.length; offset += 4) {
+          check();
+          await Future.wait(
+              query.targets.skip(offset).take(4).map(verifyTarget),
+              eagerError: true);
         }
         final accessToken = await token();
         check();

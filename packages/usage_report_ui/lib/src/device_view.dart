@@ -23,6 +23,10 @@ class DeviceUsageReportView extends StatefulWidget {
   final String title, description;
   final String notAuthorizedMessage;
   final DateTime Function()? now;
+
+  /// Explicit immutable device scope for an adult multi-device host. Omitted
+  /// by child hosts, which continue to accept exactly one device only.
+  final List<UsageReportTarget>? targets;
   const DeviceUsageReportView(
       {super.key,
       required this.load,
@@ -34,6 +38,7 @@ class DeviceUsageReportView extends StatefulWidget {
       this.title = '我的使用情况',
       this.description = '查看这台设备的使用记录，了解自己的使用习惯。',
       this.notAuthorizedMessage = '请与监护人确认使用观察设置；此处不会显示以前的用量。',
+      this.targets,
       this.now});
   @override
   State<DeviceUsageReportView> createState() => _DeviceUsageReportViewState();
@@ -45,6 +50,8 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
   late DateTimeRange _dates;
   String _period = 'DAY', _category = 'ALL';
   int _generation = 0, _selected = 0;
+  int _deviceIndex = 0;
+  List<UsageReportTarget>? _targets;
   int? _quickDays = 7;
   bool _loading = false, _foreground = true;
   UsageReport? _report;
@@ -61,6 +68,8 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
   @override
   void initState() {
     super.initState();
+    _targets =
+        widget.targets == null ? null : List.unmodifiable(widget.targets!);
     _zone = widget.timeZone;
     try {
       usageLocation(_zone);
@@ -99,6 +108,7 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
     _loading = false;
     _category = 'ALL';
     _selected = 0;
+    _deviceIndex = 0;
     try {
       widget.cancel();
     } catch (_) {/* Invalidated results stay hidden. */}
@@ -121,6 +131,11 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
   @override
   void didUpdateWidget(covariant DeviceUsageReportView oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (_scopeKey(_targets) != _scopeKey(widget.targets)) {
+      _clear(closeDialog: true);
+      _targets =
+          widget.targets == null ? null : List.unmodifiable(widget.targets!);
+    }
     if (oldWidget.accessChanges != widget.accessChanges) {
       oldWidget.accessChanges.removeListener(_accessChanged);
       widget.accessChanges.addListener(_accessChanged);
@@ -152,9 +167,19 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
       _applied = window;
     });
     try {
+      final targets = _targets;
+      if (targets != null &&
+          (targets.isEmpty ||
+              targets.length > 20 ||
+              targets.any((t) => !t.valid) ||
+              targets.map((t) => t.deviceId).toSet().length !=
+                  targets.length)) {
+        throw const UsageReportFailure(400, 'INVALID_USAGE_REPORT_QUERY');
+      }
       final value = await widget.load(window);
       if (!mounted || revision != _generation || !_available) return;
-      if (value.devices.length != 1 ||
+      if (value.devices.length != (targets?.length ?? 1) ||
+          (targets != null && !_matchesTargets(value, targets)) ||
           value.scope.kind != 'DEVICES' ||
           value.from != window.from ||
           value.to > window.to ||
@@ -166,6 +191,7 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
         _report = value;
         _category = 'ALL';
         _selected = 0;
+        _deviceIndex = 0;
       });
     } catch (error) {
       if (mounted && revision == _generation && _available) {
@@ -173,6 +199,65 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
       }
     } finally {
       if (mounted && revision == _generation) setState(() => _loading = false);
+    }
+  }
+
+  String _scopeKey(List<UsageReportTarget>? targets) => targets == null
+      ? 'SINGLE'
+      : targets
+          .map((t) =>
+              '${t.deviceId}/${t.registrationId}/${t.subjectId}/${t.platform}')
+          .join('|');
+  bool _matchesTargets(UsageReport report, List<UsageReportTarget> targets) {
+    final expected = {for (final t in targets) t.deviceId: t},
+        seen = <String>{};
+    return report.devices.every((d) =>
+        seen.add(d.deviceId) &&
+        expected[d.deviceId] != null &&
+        expected[d.deviceId]!.registrationId == d.registrationId &&
+        expected[d.deviceId]!.subjectId == d.subjectId);
+  }
+
+  Future<void> _chooseDevice() async {
+    final report = _report, generation = _generation;
+    if (!_available || report == null) return;
+    final chosen = await showDialog<int>(
+        context: context,
+        builder: (context) {
+          _dialog = ModalRoute.of(context);
+          return AlertDialog(
+              title: const Text('查看哪台设备'),
+              content: SizedBox(
+                  width: 480,
+                  height:
+                      (MediaQuery.sizeOf(context).height * .55).clamp(160, 480),
+                  child: ListView.builder(
+                      itemCount: report.devices.length,
+                      itemBuilder: (ctx, i) {
+                        final d = report.devices[i];
+                        return ListTile(
+                            selected: _deviceIndex == i,
+                            title: Text(d.displayName),
+                            subtitle: Text(
+                                '${_deviceStatus(d.status)}\n设备：${d.deviceId}'),
+                            trailing: _deviceIndex == i
+                                ? const Icon(Icons.check)
+                                : null,
+                            onTap: () => Navigator.pop(ctx, i));
+                      })),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('取消'))
+              ]);
+        });
+    _dialog = null;
+    if (mounted && _available && generation == _generation && chosen != null) {
+      setState(() {
+        _deviceIndex = chosen;
+        _category = 'ALL';
+        _selected = 0;
+      });
     }
   }
 
@@ -436,7 +521,7 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
   }
 
   List<Widget> _result(BuildContext context, UsageReport report) {
-    final device = report.devices.single;
+    final device = report.devices[_deviceIndex];
     final apps = device.applications
         .where(
             (a) => _category == 'ALL' || a.classification.category == _category)
@@ -449,6 +534,23 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
           '${usageTimestamp(report.from, report.timeZone)} 至 ${usageTimestamp(report.to, report.timeZone)} · ${report.timeZone}',
           style: Theme.of(context).textTheme.bodySmall),
       const SizedBox(height: 12),
+      if (_targets != null) ...[
+        _Info(
+            '设备概览 · ${report.devices.length} 台',
+            '有记录 ${report.devices.where((d) => d.status == 'OBSERVED').length} 台 · '
+                '暂无数据 ${report.devices.where((d) => d.status == 'NO_DATA').length} 台 · '
+                '未授权 ${report.devices.where((d) => d.status == 'NOT_AUTHORIZED').length} 台。'
+                '仅包含明确选择的设备，不表示儿童或机构全部设备的情况。'),
+        const SizedBox(height: 12),
+        OutlinedButton.icon(
+            key: const Key('report-device-picker'),
+            onPressed: _chooseDevice,
+            icon: const Icon(Icons.devices_outlined),
+            label: Text('当前设备：${device.displayName}')),
+        Text('${_deviceStatus(device.status)} · 设备 ${device.deviceId}',
+            style: Theme.of(context).textTheme.bodySmall),
+        const SizedBox(height: 12),
+      ],
       const _Info('如何理解这些记录', '数据来自设备汇总，尚未经独立验证。未知时段不按零计算，多个应用的时长也不等于你的在线总时长。'),
       const SizedBox(height: 16),
       if (device.status == 'NO_DATA')
@@ -462,6 +564,7 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
         const Text('覆盖率只表示查询过这些时间，不证明持续监测或所有应用均可见。'),
         const SizedBox(height: 16),
         DropdownButtonFormField<String>(
+            key: ValueKey('category/${device.deviceId}'),
             value: _category,
             isExpanded: true,
             decoration: const InputDecoration(labelText: '应用类别'),
@@ -499,11 +602,14 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
                 style: Theme.of(context).textTheme.bodySmall),
           const SizedBox(height: 14),
           UsageTrendView(
-              key: ValueKey('$_generation/${app.profile}/${app.packageName}'),
+              key: ValueKey(
+                  '$_generation/${device.deviceId}/${app.profile}/${app.packageName}'),
               buckets: app.buckets,
               timeZone: report.timeZone,
               period: report.period),
           ExpansionTile(
+              key: ValueKey(
+                  'source/${device.deviceId}/${app.profile}/${app.packageName}'),
               tilePadding: EdgeInsets.zero,
               title: const Text('查看时段明细与来源'),
               children: [
@@ -522,12 +628,20 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
       ],
       const SizedBox(height: 20),
       ReportConfigurationsView(
-          state: device.configurationState, timeZone: report.timeZone),
+          key: ValueKey('configurations/$_generation/${device.deviceId}'),
+          state: device.configurationState,
+          timeZone: report.timeZone),
       Text('保留边界 ${usageTimestamp(device.retentionFrom, report.timeZone)}',
           style: Theme.of(context).textTheme.bodySmall),
     ];
   }
 }
+
+String _deviceStatus(String value) => switch (value) {
+      'OBSERVED' => '有观测记录',
+      'NOT_AUTHORIZED' => '使用观察未授权',
+      _ => '暂无使用数据',
+    };
 
 String _date(DateTime value) =>
     '${value.year}-${value.month.toString().padLeft(2, '0')}-${value.day.toString().padLeft(2, '0')}';

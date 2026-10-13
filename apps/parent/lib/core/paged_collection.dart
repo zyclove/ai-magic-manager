@@ -9,6 +9,9 @@ class PagedCollection extends ChangeNotifier {
   final String path;
   final int pageSize;
   final String idField;
+
+  /// Rechecked after asynchronous token refresh and before accepting a page.
+  final bool Function()? isCurrent;
   final _items = <Json>[];
   final _seenCursors = <String>{};
   int _generation = 0;
@@ -16,7 +19,7 @@ class PagedCollection extends ChangeNotifier {
   bool _disposed = false;
 
   PagedCollection(this.api, this.path,
-      {this.pageSize = 50, this.idField = 'id'}) {
+      {this.pageSize = 50, this.idField = 'id', this.isCurrent}) {
     reload();
   }
 
@@ -31,6 +34,7 @@ class PagedCollection extends ChangeNotifier {
   Object? _error;
 
   Future<void> reload() async {
+    if (_disposed || !(isCurrent?.call() ?? true)) return;
     final epoch = ++_generation;
     _items.clear();
     _seenCursors.clear();
@@ -41,8 +45,15 @@ class PagedCollection extends ChangeNotifier {
     _error = null;
     notifyListeners();
     try {
-      final page = await api.page(path, limit: pageSize);
-      if (_disposed || epoch != _generation) return;
+      final page = await api.page(path,
+          limit: pageSize,
+          isCurrent: () =>
+              !_disposed &&
+              epoch == _generation &&
+              (isCurrent?.call() ?? true));
+      if (_disposed || epoch != _generation || !(isCurrent?.call() ?? true)) {
+        return;
+      }
       _requireUniqueIds(page.items, const {});
       _items.addAll(page.items);
       _nextCursor = page.nextCursor;
@@ -60,14 +71,26 @@ class PagedCollection extends ChangeNotifier {
 
   Future<void> loadMore() async {
     final cursor = _nextCursor;
-    if (_disposed || cursor == null || _loading || _loadingMore) return;
+    if (_disposed ||
+        cursor == null ||
+        _loading ||
+        _loadingMore ||
+        !(isCurrent?.call() ?? true)) return;
     final epoch = _generation;
     _loadingMore = true;
     _error = null;
     notifyListeners();
     try {
-      final page = await api.page(path, cursor: cursor, limit: pageSize);
-      if (_disposed || epoch != _generation) return;
+      final page = await api.page(path,
+          cursor: cursor,
+          limit: pageSize,
+          isCurrent: () =>
+              !_disposed &&
+              epoch == _generation &&
+              (isCurrent?.call() ?? true));
+      if (_disposed || epoch != _generation || !(isCurrent?.call() ?? true)) {
+        return;
+      }
       if (page.nextCursor != null && _seenCursors.contains(page.nextCursor)) {
         throw const ParentApiException(502, 'INVALID_RESPONSE');
       }
