@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'core/parent_api.dart';
 import 'core/parent_session.dart';
@@ -684,6 +685,30 @@ class _Account extends StatelessWidget {
                   .contains(session.role)) ...[
             const SizedBox(height: 24),
             CommercialAccount(session: session),
+          ],
+          if (session.tenant != null && ParentConfig.console != null) ...[
+            const SizedBox(height: 20),
+            OutlinedButton.icon(
+              onPressed: () async {
+                try {
+                  if (!await launchUrl(ParentConfig.console!,
+                          mode: LaunchMode.externalApplication) &&
+                      context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('无法打开管理台，请检查浏览器和部署地址。')));
+                  }
+                } catch (_) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('无法打开管理台，请检查浏览器和部署地址。')));
+                  }
+                }
+              },
+              icon: const Icon(Icons.open_in_browser),
+              label: const Text('打开完整管理台'),
+            ),
+            const Text('策略编辑、批量管理和合同审核在系统浏览器中完成。',
+                style: TextStyle(color: _blue)),
           ],
           const SizedBox(height: 20),
           OutlinedButton.icon(

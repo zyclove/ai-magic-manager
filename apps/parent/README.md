@@ -8,10 +8,12 @@
 
 ```powershell
 flutter pub get
-flutter run --dart-define=OIDC_ISSUER=https://id.example.cn/realms/ai-manager --dart-define=API_URL=https://api.example.cn/api/v1
+flutter run --dart-define=OIDC_ISSUER=https://id.example.cn/realms/ai-manager --dart-define=API_URL=https://api.example.cn/api/v1 --dart-define=CONSOLE_URL=https://console.example.cn/
 ```
 
 `OIDC_ISSUER` 必须与 Keycloak Discovery 的 issuer 完全相同。`API_URL` 必须以 `/api/v1` 结尾。普通 Android 设备上的 `localhost` 指向手机自身；本应用拒绝 HTTP 配置，也不允许明文网络。试点需先部署可验证证书，并确保设备能访问上述两个地址。
+
+`CONSOLE_URL` 为可选的完整 Flutter Web 管理台 HTTPS 地址。配置后“我的”页面会在系统浏览器打开管理台；链接不携带令牌，浏览器仍按 OIDC 独立验证。该入口支持在手机上完成尚未移植到原生页面的策略与机构管理流程。
 
 Keycloak 新建或导入 `deploy/keycloak/realm-template.json` 中的 `ai-manager-parent` 公共客户端，启用 Authorization Code + S256 PKCE，精确注册 `com.aimanager.parent:/oauth2redirect`。已初始化的 Realm 不会因重新放置导入模板而自动更新；需由身份管理员按模板迁移客户端配置。这个移动客户端不授予平台目录/合同审批 scope。发布构建由交付流水线注入正式 Android 签名配置，不使用开发签名。
 

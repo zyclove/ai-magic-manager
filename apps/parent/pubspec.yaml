@@ -37,6 +37,7 @@ dependencies:
   http: ^1.2.1
   device_operations:
     path: ../../packages/device_operations
+  url_launcher: 6.3.1
 
 
   # The following adds the Cupertino Icons font to your application.

@@ -10,6 +10,7 @@ import 'parent_api.dart';
 class ParentConfig {
   static const issuer = String.fromEnvironment('OIDC_ISSUER');
   static const apiUrl = String.fromEnvironment('API_URL');
+  static const consoleUrl = String.fromEnvironment('CONSOLE_URL');
   static const clientId = 'ai-manager-parent';
   static const redirectUri = 'com.aimanager.parent:/oauth2redirect';
 
@@ -23,6 +24,18 @@ class ParentConfig {
         api.path.endsWith('/api/v1') &&
         !api.hasQuery &&
         !api.hasFragment;
+  }
+
+  static Uri? get console {
+    final parsed = Uri.tryParse(consoleUrl);
+    if (parsed?.scheme != 'https' ||
+        parsed!.host.isEmpty ||
+        parsed.userInfo.isNotEmpty ||
+        parsed.hasQuery ||
+        parsed.hasFragment) {
+      return null;
+    }
+    return parsed;
   }
 }
 
