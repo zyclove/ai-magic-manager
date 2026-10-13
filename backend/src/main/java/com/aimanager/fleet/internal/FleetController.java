@@ -21,8 +21,10 @@ class FleetController {
     FleetController(EnrollmentService enrollments, FleetReads reads) { this.enrollments = enrollments; this.reads = reads; }
 
     @PostMapping("/tenants/{tenantId}/enrollments") @ResponseStatus(HttpStatus.CREATED)
-    EnrollmentService.Ticket create(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId, @Valid @RequestBody Create input) {
-        return enrollments.create(tenantId, actor, input.subjectId(), input.requestedMode(), input.platform());
+    EnrollmentService.Ticket create(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId,
+                                    @RequestHeader(name = "Client-Request-Id", required = false) String clientRequestId,
+                                    @Valid @RequestBody Create input) {
+        return enrollments.create(tenantId, actor, input.subjectId(), input.requestedMode(), input.platform(), clientRequestId);
     }
 
     @PostMapping("/enrollment-claims") @ResponseStatus(HttpStatus.CREATED)
@@ -35,6 +37,11 @@ class FleetController {
     @GetMapping("/tenants/{tenantId}/enrollments/{id}")
     Enrollment getEnrollment(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId, @PathVariable String id) {
         return reads.enrollment(tenantId, actor.getSubject(), id);
+    }
+
+    @GetMapping("/tenants/{tenantId}/enrollment-creation-results/{id}")
+    Enrollment creationResult(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId, @PathVariable String id) {
+        return reads.creationResult(tenantId, actor.getSubject(), id);
     }
 
     @PostMapping("/tenants/{tenantId}/enrollments/{id}/confirm")

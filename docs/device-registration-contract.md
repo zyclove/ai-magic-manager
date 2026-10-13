@@ -30,8 +30,9 @@ CONFIRMED 只表示云端设备绑定和凭证授权完成。Device.ACTIVE 不�
 
 | 方法与路径 | 输入/输出 | 控制 |
 |---|---|---|
-| POST /enrollments | subjectId、requestedMode、platform → id、token、expiresAt、state | OWNER/GUARDIAN/ORG_ADMIN、近期 MFA、主体有效且同租户 |
+| POST /enrollments | subjectId、requestedMode、platform；可选 `Client-Request-Id`（规范小写 UUIDv4）→ id、token、expiresAt、state | OWNER/GUARDIAN/ORG_ADMIN、近期 MFA、主体有效且同租户；有请求编号时以其作为注册 ID |
 | GET /enrollments/{id} | 安全 Enrollment 视图 | 管理范围；不含 token、pairingCode 或 credential |
+| GET /enrollment-creation-results/{id} | 按预保存的创建请求编号返回安全 Enrollment 视图 | 仅原创建者且仍有成人管理角色；不存在或非本人均返回 404，不含 token |
 | POST /enrollments/{id}/confirm | pairingCode → Device | 当前管理员与原授权者仍有权；近期 MFA；期限/状态校验 |
 | DELETE /enrollments/{id} | 204 | 取消幂等；仅未确认状态；已有 pending 凭证同时撤销 |
 | GET /devices | limit/cursor → ItemPage<Device> | 成人租户范围；CHILD 只看绑定主体设备 |
@@ -48,6 +49,8 @@ CONFIRMED 只表示云端设备绑定和凭证授权完成。Device.ACTIVE 不�
   "platform": "ANDROID"
 }
 ```
+
+监护人原生端在发送创建请求**之前**把新生成的 `Client-Request-Id` 保存在本机安全存储。后端接受规范小写 UUIDv4，并将其作为注册 ID；缺少该头时继续由服务端生成随机 ID。重复使用同一编号返回 `409 ENROLLMENT_REQUEST_ALREADY_USED`，不会再次签发或回放一次性 token。创建响应丢失时，原操作者通过 `GET /enrollment-creation-results/{Client-Request-Id}` 查询不含秘密的注册状态；该接口同时将其他操作者/不存在记录隐藏为 404。若仍在 `PENDING_CLAIM` 且本机已丢失 token，可取消该注册并生成新票据，若已由设备认领则可继续现场配对码确认。查询暂时返回 404 不能证明创建事务没有提交，应稍后重查。不同应用版本必须协调部署；旧服务端不支持此请求编号恢复。
 
 platform 为 ANDROID/ANDROID_TV；requestedMode 还定义了 WORK_PROFILE/FULLY_MANAGED/DEDICATED，但当前无 EMM 实现时返回 422 CAPABILITY_UNSUPPORTED。电视注册只表示有限伴随应用绑定，不能阻断 HDMI、投屏、系统主页或其他输入源。
 

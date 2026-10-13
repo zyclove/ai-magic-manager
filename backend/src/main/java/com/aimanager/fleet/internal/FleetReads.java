@@ -10,6 +10,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Clock;
 import java.util.*;
+import org.springframework.http.HttpStatus;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -54,20 +55,35 @@ class FleetReads
     var rows =
         jdbc.query(
             "SELECT * FROM device_enrollments WHERE tenant_id=? AND id=?",
-            (row, index) ->
-                new Enrollment(
-                    row.getString("id"),
-                    row.getString("subject_id"),
-                    Device.Platform.valueOf(row.getString("platform")),
-                    Device.Mode.valueOf(row.getString("requested_mode")),
-                    derivedState(row.getString("state"), row.getLong("expires_at")),
-                    row.getLong("expires_at"),
-                    row.getString("device_id"),
-                    row.getInt("pairing_failures")),
+            (row, index) -> mapEnrollment(row),
             tenant,
             id);
     if (rows.isEmpty()) throw DomainException.denied();
     return rows.get(0);
+  }
+
+  /** Exact, non-secret recovery for the adult who initiated a native enrollment creation. */
+  Enrollment creationResult(String tenant, String actor, String id) {
+    access.requireRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
+    var rows = jdbc.query(
+        "SELECT * FROM device_enrollments"
+            + " WHERE tenant_id=? AND id=? AND creator_actor_id=?",
+        (row, index) -> mapEnrollment(row), tenant, id, actor);
+    if (rows.isEmpty())
+      throw new DomainException(HttpStatus.NOT_FOUND, "ENROLLMENT_CREATION_UNAVAILABLE");
+    return rows.get(0);
+  }
+
+  private Enrollment mapEnrollment(ResultSet row) throws SQLException {
+    return new Enrollment(
+        row.getString("id"),
+        row.getString("subject_id"),
+        Device.Platform.valueOf(row.getString("platform")),
+        Device.Mode.valueOf(row.getString("requested_mode")),
+        derivedState(row.getString("state"), row.getLong("expires_at")),
+        row.getLong("expires_at"),
+        row.getString("device_id"),
+        row.getInt("pairing_failures"));
   }
 
   private String derivedState(String state, long expires) {

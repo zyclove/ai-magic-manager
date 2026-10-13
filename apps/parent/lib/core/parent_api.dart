@@ -53,7 +53,10 @@ class ParentApi {
   /// All sensitive reads are no-store. Writes use an explicit version and
   /// idempotency key when the endpoint supports one.
   Future<dynamic> send(String method, String path,
-      {Json? body, int? version, String? idempotencyKey}) async {
+      {Json? body,
+      int? version,
+      String? idempotencyKey,
+      String? clientRequestId}) async {
     try {
       final token = await accessToken();
       final request = http.Request(method, Uri.parse('$baseUrl$path'));
@@ -65,6 +68,7 @@ class ParentApi {
         'Cache-Control': 'no-store',
         if (version != null) 'If-Match': '"$version"',
         if (idempotencyKey != null) 'Idempotency-Key': idempotencyKey,
+        if (clientRequestId != null) 'Client-Request-Id': clientRequestId,
       });
       if (body != null) {
         request.headers['Content-Type'] = 'application/json';

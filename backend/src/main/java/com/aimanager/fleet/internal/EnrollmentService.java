@@ -78,18 +78,36 @@ class EnrollmentService implements FleetAdministration {
     }
 
     @Transactional(timeout = 10)
-    public Ticket create(String tenant, Jwt actor, String subject, Device.Mode mode, Device.Platform platform) {
+    public Ticket create(String tenant, Jwt actor, String subject, Device.Mode mode, Device.Platform platform,
+                         String clientRequestId) {
         access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN);
         recent.require(actor); requireSubject(tenant, subject);
         // No EMM adapter is configured yet: ordinary pairing cannot produce system privileges.
         if (mode != Device.Mode.BYOD) throw new DomainException(HttpStatus.UNPROCESSABLE_ENTITY, "CAPABILITY_UNSUPPORTED");
-        String id = UUID.randomUUID().toString(), token = SecretMaterial.token();
+        String id = enrollmentId(clientRequestId), token = SecretMaterial.token();
         long expires = clock.instant().plusSeconds(lifetimeSeconds).toEpochMilli();
-        jdbc.update("INSERT INTO device_enrollments(tenant_id,id,subject_id,creator_actor_id,platform,requested_mode,token_hash,state,created_at,expires_at) "
-            + "VALUES(?,?,?,?,?,?,?,?,?,?)", tenant, id, subject, actor.getSubject(), platform.name(), mode.name(),
-            SecretMaterial.hash(token), "PENDING_CLAIM", clock.millis(), expires);
+        try {
+            jdbc.update("INSERT INTO device_enrollments(tenant_id,id,subject_id,creator_actor_id,platform,requested_mode,token_hash,state,created_at,expires_at) "
+                + "VALUES(?,?,?,?,?,?,?,?,?,?)", tenant, id, subject, actor.getSubject(), platform.name(), mode.name(),
+                SecretMaterial.hash(token), "PENDING_CLAIM", clock.millis(), expires);
+        } catch (DuplicateKeyException duplicate) {
+            // A repeated client request must not mint or replay another one-time secret.
+            throw new DomainException(HttpStatus.CONFLICT, "ENROLLMENT_REQUEST_ALREADY_USED");
+        }
         audit.record(tenant, actor.getSubject(), "ENROLLMENT_CREATED", id);
         return new Ticket(id, token, expires, "PENDING_CLAIM");
+    }
+
+    private String enrollmentId(String clientRequestId) {
+        if (clientRequestId == null) return UUID.randomUUID().toString();
+        try {
+            var id = UUID.fromString(clientRequestId);
+            if (id.version() != 4 || !id.toString().equals(clientRequestId))
+                throw new IllegalArgumentException();
+            return clientRequestId;
+        } catch (IllegalArgumentException invalid) {
+            throw DomainException.invalid("INVALID_CLIENT_REQUEST_ID");
+        }
     }
 
     private void requireSubject(String tenant, String subject) {
