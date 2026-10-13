@@ -72,6 +72,8 @@ TEACHER 不获得审批权限、策略修改或设备管理权限。教师仅提
 
 AccessRequest 包含 id、subjectId、deviceId、registrationId、policyId、baseVersionId、applicationId、ruleIds、requestedWindowSeconds、reason、state、requestExpiresAt、grantedWindowSeconds、issuedAt、absoluteNotAfter、reasonCode、executionState、version 和 createdAt。
 
+管理侧 `GET /access-requests` 列表在原授权范围内可额外返回 `subjectName`、`deviceName`、`applicationName`、`applicationPackageName` 四个可选展示字段；审计角色不获得这些名称。单条查询、写入响应和设备侧仍只返回核心字段。名称与包名是目录资料，不能当作安装证据、应用安全评级或规则执行证明。
+
 瞬时时间为 UTC epoch 毫秒，窗口时长为整数秒。审批人身份只在受保护的决定记录和审计中保存，不在该响应返回。DTO 的 toString 不输出儿童理由。
 
 儿童页应显示“家长已批准，设备尚未执行”，并说明截止时间；不得显示“现在可以打开”。管理员页分别显示决定、文档交付与执行状态。已有签名文档接收/保存/拒绝回执入口；当前不存在 APPLIED/VERIFIED_APPLIED 成功响应或规则执行回执。

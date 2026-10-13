@@ -51,6 +51,8 @@
 
 沿用 `AccessRequest` 的 19 个字段：`id`、`subjectId`、`deviceId`、`registrationId`、`policyId`、`baseVersionId`、`applicationId`、`ruleIds`、`requestedWindowSeconds`、`reason`、`state`、`requestExpiresAt`、`grantedWindowSeconds`、`issuedAt`、`absoluteNotAfter`、`reasonCode`、`executionState`、`version`、`createdAt`。时间均为 UTC Unix 毫秒。
 
+管理员列表上的四个可选展示名称仅用于有权成员核对审批对象；设备提交、设备查询和原提交恢复响应不会附带这些展示字段。
+
 `executionState` 在该契约中始终为 `NOT_ENFORCED`。批准只产生成人授权事实；系统执行结果应从后续签名验证、持久化、平台能力和实际执行回执判断。申请查询接口不返回设备密钥、凭证或管理员个人资料。
 
 待审批使用 PENDING；批准使用 APPROVED_PENDING_DELIVERY；其他终态为 DENIED、CANCELLED、EXPIRED、REVOKED、INVALIDATED。待审失去基准或有效作用域可被失效；批准失去授权可被撤回。批准截止时间固定为 `issuedAt + grantedWindowSeconds * 1000`，重试和离线不得延长。终态保留历史事实。

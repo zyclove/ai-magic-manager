@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import io.swagger.v3.oas.annotations.security.SecurityRequirements;
 import jakarta.validation.constraints.*;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
@@ -40,8 +41,9 @@ class FleetController {
     }
 
     @GetMapping("/tenants/{tenantId}/enrollment-creation-results/{id}")
-    Enrollment creationResult(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId, @PathVariable String id) {
-        return reads.creationResult(tenantId, actor.getSubject(), id);
+    ResponseEntity<Enrollment> creationResult(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId, @PathVariable String id) {
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore()).varyBy("Authorization")
+            .body(reads.creationResult(tenantId, actor.getSubject(), id));
     }
 
     @PostMapping("/tenants/{tenantId}/enrollments/{id}/confirm")
