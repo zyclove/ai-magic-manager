@@ -56,7 +56,11 @@ class ParentApi {
       {Json? body,
       int? version,
       String? idempotencyKey,
-      String? clientRequestId}) async {
+      String? clientRequestId,
+      int maxResponseBytes = 1024 * 1024}) async {
+    if (maxResponseBytes < 1 || maxResponseBytes > 4 * 1024 * 1024) {
+      throw const ParentApiException(400, 'INVALID_RESPONSE');
+    }
     try {
       final token = await accessToken();
       final request = http.Request(method, Uri.parse('$baseUrl$path'));
@@ -78,7 +82,7 @@ class ParentApi {
         final streamed = await _http.send(request);
         final bytes = <int>[];
         await for (final chunk in streamed.stream) {
-          if (bytes.length + chunk.length > 1024 * 1024) {
+          if (bytes.length + chunk.length > maxResponseBytes) {
             throw const ParentApiException(502, 'INVALID_RESPONSE');
           }
           bytes.addAll(chunk);

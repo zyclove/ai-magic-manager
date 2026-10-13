@@ -12,6 +12,7 @@ import 'ui/commercial_account.dart';
 import 'ui/device_capabilities.dart';
 import 'ui/device_exit.dart';
 import 'ui/enrollment_flow.dart';
+import 'ui/policy_center.dart';
 
 const _navy = Color(0xFF17324B);
 const _blue = Color(0xFF315E86);
@@ -1093,6 +1094,16 @@ class _Account extends StatelessWidget {
                   .contains(session.role)) ...[
             const SizedBox(height: 24),
             CommercialAccount(session: session),
+            const SizedBox(height: 18),
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.shield_outlined, color: _blue),
+                title: const Text('策略中心'),
+                subtitle: const Text('查看草稿并按设备预览规则支持情况'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => showPolicyCenter(context, session),
+              ),
+            ),
           ],
           if (session.tenant != null &&
               session.canDecide &&
