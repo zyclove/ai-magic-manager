@@ -7,6 +7,8 @@ import '../core/parent_session.dart';
 import '../core/pending_publications.dart';
 import 'policy_editor.dart';
 import 'policy_creation_page.dart';
+import '../core/policy_group_selection.dart';
+import 'policy_group_picker.dart';
 
 const _ink = Color(0xFF17324B);
 const _muted = Color(0xFF315E86);
@@ -355,6 +357,7 @@ class _PolicyDetailState extends State<_PolicyDetail> {
   late Future<Json> draft;
   final selected = <String, String>{};
   final selectedNames = <String, String>{};
+  PolicyGroupSelection? selectedGroup;
   final publicationStore = PendingPublicationStore();
   List<PendingPublication> markers = const [];
   bool journalLoaded = false;
@@ -433,6 +436,7 @@ class _PolicyDetailState extends State<_PolicyDetail> {
       actionError = null;
       selected.clear();
       selectedNames.clear();
+      selectedGroup = null;
       draft = _readDraft();
     });
     devices?.reload();
@@ -441,7 +445,7 @@ class _PolicyDetailState extends State<_PolicyDetail> {
   void _toggleDevice(Json row) {
     final id = row['id'];
     final registration = row['registrationId'];
-    if (busy || id is! String) return;
+    if (busy || selectedGroup != null || id is! String) return;
     setState(() {
       preview = null;
       actionError = null;
@@ -471,6 +475,46 @@ class _PolicyDetailState extends State<_PolicyDetail> {
     setState(() => busy = false);
     // An interrupted PUT may have committed: always re-read the authority.
     _reload();
+  }
+
+  bool get _canChooseGroup =>
+      widget.session.tenant?['kind'] == 'ORGANIZATION' &&
+      const {'OWNER', 'ORG_ADMIN'}.contains(role);
+
+  Future<void> _chooseGroup() async {
+    if (!_current || busy || !_canChooseGroup) return;
+    setState(() => busy = true);
+    final result = await Navigator.of(context)
+        .push<PolicyGroupSelection>(MaterialPageRoute(
+      builder: (_) => PolicyGroupPicker(session: widget.session),
+    ));
+    if (!_current) return;
+    setState(() {
+      busy = false;
+      if (result == null) return;
+      selectedGroup = result;
+      selected
+        ..clear()
+        ..addAll(result.registrations);
+      selectedNames
+        ..clear()
+        ..addAll(result.names);
+      preview = null;
+      publication = null;
+      actionError = null;
+    });
+  }
+
+  void _manualSelection() {
+    if (busy) return;
+    setState(() {
+      selectedGroup = null;
+      selected.clear();
+      selectedNames.clear();
+      preview = null;
+      publication = null;
+      actionError = null;
+    });
   }
 
   Future<void> _copy(Json template) async {
@@ -504,16 +548,25 @@ class _PolicyDetailState extends State<_PolicyDetail> {
     final revision = policy['revision'];
     if (revision is! int) return;
     final expected = Map<String, String>.from(selected);
+    final group = selectedGroup;
     setState(() {
       busy = true;
       actionError = null;
       preview = null;
     });
     try {
+      if (group != null) {
+        await group.recheck(widget.session.api, tenantId, () => _current);
+      }
+      if (!_current) return;
       final raw = await widget.session.api.send(
           'POST', '/tenants/$tenantId/policies/${widget.policyId}/previews',
           version: revision,
-          body: {'deviceIds': expected.keys.toList()},
+          body: {
+            'deviceIds': expected.keys.toList(),
+            if (group != null) ...group.reference
+          },
+          isCurrent: () => _current && !widget.session.busy,
           maxResponseBytes: 4 * 1024 * 1024);
       if (!_current) return;
       if (raw is! Json ||
@@ -530,7 +583,10 @@ class _PolicyDetailState extends State<_PolicyDetail> {
           raw['expiresAt'] is! int ||
           (raw['expiresAt'] as int) <= DateTime.now().millisecondsSinceEpoch ||
           raw['snapshot'] is! Json ||
-          (raw['snapshot'] as Json)['groupSelection'] != null) {
+          (group == null
+              ? (raw['snapshot'] as Json)['groupSelection'] != null
+              : !group.matchesReference(
+                  (raw['snapshot'] as Json)['groupSelection']))) {
         throw const ParentApiException(502, 'INVALID_RESPONSE');
       }
       final returned = <String, String>{};
@@ -551,7 +607,8 @@ class _PolicyDetailState extends State<_PolicyDetail> {
         returned[target['deviceId'] as String] =
             target['registrationId'] as String;
       }
-      if (returned.length != expected.length ||
+      if (selectedGroup != group ||
+          returned.length != expected.length ||
           expected.entries.any((entry) => returned[entry.key] != entry.value) ||
           selected.length != expected.length ||
           expected.entries.any((entry) => selected[entry.key] != entry.value)) {
@@ -567,6 +624,7 @@ class _PolicyDetailState extends State<_PolicyDetail> {
 
   Future<void> _publish(Json policy) async {
     final reviewed = preview;
+    final group = selectedGroup;
     if (!_current ||
         busy ||
         !journalLoaded ||
@@ -595,7 +653,11 @@ class _PolicyDetailState extends State<_PolicyDetail> {
         ],
       ),
     );
-    if (confirmed != true || !_current || busy || preview != reviewed) return;
+    if (confirmed != true ||
+        !_current ||
+        busy ||
+        preview != reviewed ||
+        group != selectedGroup) return;
     final marker = PendingPublication(
       policyId: widget.policyId,
       revision: policy['revision'] as int,
@@ -618,6 +680,10 @@ class _PolicyDetailState extends State<_PolicyDetail> {
         return;
       }
       if (!_current) return;
+      if (group != null) {
+        await group.recheck(widget.session.api, tenantId, () => _current);
+      }
+      if (!_current) return;
       if ((reviewed['expiresAt'] as int) <=
           DateTime.now().millisecondsSinceEpoch) {
         throw const ParentApiException(409, 'PREVIEW_STALE');
@@ -631,6 +697,7 @@ class _PolicyDetailState extends State<_PolicyDetail> {
           'POST', '/tenants/$tenantId/policies/${widget.policyId}/publications',
           version: marker.revision,
           idempotencyKey: marker.idempotencyKey,
+          isCurrent: () => _current && !widget.session.busy,
           body: {
             'previewId': marker.previewId,
             'previewHash': marker.previewHash,
@@ -770,7 +837,37 @@ class _PolicyDetailState extends State<_PolicyDetail> {
                     const Text('本次为明确设备快照。设备组成员后续变化不会自动更新此策略。',
                         style: TextStyle(color: _muted)),
                     const SizedBox(height: 10),
-                    _devicePicker(),
+                    if (_canChooseGroup)
+                      OutlinedButton.icon(
+                          onPressed: busy ? null : _chooseGroup,
+                          icon: const Icon(Icons.devices_outlined),
+                          label: Text(
+                              selectedGroup == null ? '从设备组选择' : '重新选择设备组')),
+                    if (selectedGroup != null) ...[
+                      Card(
+                          child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                        '来源：${selectedGroup!.name} · 修订 ${selectedGroup!.version}',
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w700)),
+                                    Text(
+                                        '包含 ${selected.length} 台有效设备；排除 ${selectedGroup!.excludedCount} 条失效或不可用成员记录。'),
+                                    const Text('分组来源要求使用完整快照，不能在这里勾选部分设备。'),
+                                    for (final name in selectedNames.values)
+                                      ListTile(
+                                          dense: true,
+                                          leading: const Icon(Icons.devices),
+                                          title: Text(name)),
+                                  ]))),
+                      TextButton(
+                          onPressed: busy ? null : _manualSelection,
+                          child: const Text('清空分组选择，改为逐台选择')),
+                    ] else
+                      _devicePicker(),
                     const SizedBox(height: 12),
                     FilledButton.icon(
                       onPressed: busy || selected.isEmpty

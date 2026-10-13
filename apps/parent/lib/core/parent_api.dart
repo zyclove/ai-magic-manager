@@ -23,6 +23,9 @@ class ParentApiException implements Exception {
         'REAUTH_REQUIRED' => '请完成近期安全验证后重试。',
         'RESOURCE_VERSION_CONFLICT' => '记录已发生变化，请刷新后重新处理。',
         'PREVIEW_STALE' => '预览已过期或设备已变化，请重新预览。',
+        'POLICY_GROUP_CHANGED' => '设备组或成员状态已变化，请重新选择设备组并预览。',
+        'POLICY_GROUP_TOO_LARGE' => '该组超过 50 台有效设备，请在管理台拆分后重试。不会截取部分设备。',
+        'POLICY_GROUP_EMPTY' => '该组没有当前有效设备，请检查成员注册及启用状态。',
         'SAFETY_BASELINE_PROTECTED' => '此规则会影响紧急联系或恢复管理，请调整目标应用或限制方式。',
         'DOMAIN_NOT_CANONICAL' => '域名格式不正确，请使用小写域名，不含协议或路径。',
         'NOT_RUNTIME_PERMISSION' => '该权限已不在支持目录中，请重新选择权限项目。',
@@ -131,21 +134,23 @@ class ParentApi {
     }
   }
 
-  Future<Json> object(String path) async {
-    final result = await send('GET', path);
+  Future<Json> object(String path, {bool Function()? isCurrent}) async {
+    final result = await send('GET', path, isCurrent: isCurrent);
     if (result is! Map<String, dynamic>) {
       throw const ParentApiException(502, 'INVALID_RESPONSE');
     }
     return result;
   }
 
-  Future<ParentPage> page(String path, {String? cursor, int limit = 50}) async {
+  Future<ParentPage> page(String path,
+      {String? cursor, int limit = 50, bool Function()? isCurrent}) async {
     if (limit < 1 || limit > 50) {
       throw const ParentApiException(400, 'INVALID_RESPONSE');
     }
     final separator = path.contains('?') ? '&' : '?';
     final result = await send('GET',
-        '$path${separator}limit=$limit${cursor == null ? '' : '&cursor=${Uri.encodeQueryComponent(cursor)}'}');
+        '$path${separator}limit=$limit${cursor == null ? '' : '&cursor=${Uri.encodeQueryComponent(cursor)}'}',
+        isCurrent: isCurrent);
     if (result is! Map || result['items'] is! List) {
       throw const ParentApiException(502, 'INVALID_RESPONSE');
     }

@@ -304,6 +304,39 @@ class PolicyJourneyTest {
         assertThat(database.queryForObject("SELECT COUNT(*) FROM idempotency_requests WHERE scope_id=? AND operation IN ('policy.create','policy.template.copy')", Integer.class, s.tenant())).isZero();
     }
 
+    @Test void groupBoundPreviewCannotPublishAfterGroupOrDeviceLifecycleChanges() throws Exception {
+        for (boolean deviceRevoked : List.of(false, true)) {
+            var s = scope(); database.update("UPDATE tenants SET kind='ORGANIZATION' WHERE id=?", s.tenant());
+            var group = body(mvc.perform(post(path(s) + "/device-groups").with(actor(s.owner()))
+                .contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"学习设备\"}"))
+                .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString());
+            String groupId = group.get("id").asText();
+            String registration = database.queryForObject("SELECT registration_id FROM devices WHERE tenant_id=? AND id=?", String.class, s.tenant(), s.device());
+            mvc.perform(post(path(s) + "/device-groups/" + groupId + "/devices").with(actor(s.owner()))
+                .header("If-Match", "\"0\"").contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(Map.of("deviceId", s.device(), "registrationId", registration))))
+                .andExpect(status().isOk());
+            var d = draft(s);
+            var p = body(mvc.perform(post(path(s) + "/policies/" + d.get("id").asText() + "/previews").with(actor(s.owner()))
+                .header("If-Match", "\"0\"").contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(Map.of("deviceIds", List.of(s.device()), "groupId", groupId, "groupVersion", 1))))
+                .andExpect(status().isCreated()).andExpect(jsonPath("$.snapshot.groupSelection.groupId").value(groupId))
+                .andExpect(jsonPath("$.snapshot.groupSelection.groupVersion").value(1)).andReturn().getResponse().getContentAsString());
+            if (deviceRevoked) {
+                // Device lifecycle can change without changing the group row version.
+                mvc.perform(post(path(s) + "/devices/" + s.device() + "/revoke").with(actor(s.owner()))).andExpect(status().isNoContent());
+            } else {
+                mvc.perform(patch(path(s) + "/device-groups/" + groupId).with(actor(s.owner())).header("If-Match", "\"1\"")
+                    .contentType(MediaType.APPLICATION_JSON).content("{\"name\":\"新设备组名\"}")).andExpect(status().isOk());
+            }
+            mvc.perform(post(path(s) + "/policies/" + d.get("id").asText() + "/publications").with(actor(s.owner()))
+                .header("If-Match", "\"0\"").header("Idempotency-Key", UUID.randomUUID().toString()).contentType(MediaType.APPLICATION_JSON)
+                .content(mapper.writeValueAsString(Map.of("previewId", p.get("id").asText(), "previewHash", p.get("hash").asText(), "mode", "CONFIGURE_ONLY"))))
+                .andExpect(status().isConflict()).andExpect(jsonPath("$.errorCode").value("POLICY_GROUP_CHANGED"));
+            assertThat(database.queryForObject("SELECT COUNT(*) FROM policy_versions WHERE tenant_id=?", Integer.class, s.tenant())).isZero();
+        }
+    }
+
     @Test void templateCopyAndRollbackPreserveHistoricalVersion() throws Exception {
         var s = scope(); var a = app(s, "org.example.game");
         var template = body(mvc.perform(post(path(s) + "/policies").with(actor(s.owner())).contentType(MediaType.APPLICATION_JSON)
