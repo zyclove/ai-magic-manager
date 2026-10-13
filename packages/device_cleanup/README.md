@@ -89,3 +89,20 @@ startup session. The native path has not undergone physical-device or TV
 validation; background retry, orphaned journal retention and complete
 reboot/fault-injection acceptance remain.
 This package itself has no path that directly deletes local data.
+
+## Coordination and verification
+
+Foreground coordinators reject overlapping runs for the same tenant, device
+and registration across instances in one Dart isolate. Rebuilding a host
+session must not start another local clear while its predecessor is still
+running. Different registrations remain independent; failures release this
+in-memory ownership only after the attempt exits. This is not a cross-isolate
+or cross-process lock. Hosts must still close cache owners and provide durable,
+idempotent execution and encrypted storage.
+
+The package's `dart test` suite uses real ES256 command verification and strict
+receipt parsing. It covers durable receipt replay, unknown network results,
+storage failure, expiry, overlapping coordinators and final-key-removal order.
+HTTP, proof authentication, storage and native deletion are explicit test
+substitutes; passing these tests does not certify physical-device cleanup,
+secure storage, server proof authentication or Android lifecycle behavior.

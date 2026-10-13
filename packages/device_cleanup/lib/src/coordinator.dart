@@ -40,6 +40,11 @@ enum CleanupRunStage {
 /// the durable journal in place for a later run of the same signed command.
 /// Calling this requires a real host executor; there is no no-op default.
 class CleanupCoordinator {
+  // A replacement host session can create another coordinator before the old
+  // clear completes. Reject overlap across instances in this isolate; do not
+  // queue a second destructive operation behind the first. Native hosts still
+  // own cross-isolate/process exclusion and cache-owner quiescence.
+  static final _activeRegistrations = <(String, String, String)>{};
   final CleanupCommandClient client;
   final CleanupReceiptJournal journal;
   final AgentCleanupExecutor executor;
@@ -49,7 +54,11 @@ class CleanupCoordinator {
       {required this.client, required this.journal, required this.executor});
 
   Future<CleanupRunStage> runOnce() async {
-    if (_busy) throw const CleanupFailure('CLEANUP_ALREADY_RUNNING');
+    final scope = client.scope;
+    final registration = (scope.tenantId, scope.deviceId, scope.registrationId);
+    if (_busy || !_activeRegistrations.add(registration)) {
+      throw const CleanupFailure('CLEANUP_ALREADY_RUNNING');
+    }
     _busy = true;
     try {
       final command = await client.fetchAndVerify();
@@ -113,6 +122,7 @@ class CleanupCoordinator {
       return CleanupRunStage.keyRemoved;
     } finally {
       _busy = false;
+      _activeRegistrations.remove(registration);
     }
   }
 

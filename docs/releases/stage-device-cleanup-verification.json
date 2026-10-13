@@ -1,0 +1,159 @@
+{
+  "stage": "device-cleanup-verification",
+  "version": "1.0.0",
+  "recordedAt": "2026-10-13T03:29:38.541274+00:00",
+  "sourceBase": "36d5c49612fa14e3f0ab2a82da3fc86011ecaf84",
+  "sourceFiles": [
+    {
+      "path": "packages/device_cleanup/README.md",
+      "sha256": "5d9927ac27245dd112db103a382f684bf18d568ac1093fb4eb5d9f425327a48e"
+    },
+    {
+      "path": "packages/device_cleanup/pubspec.yaml",
+      "sha256": "e9eb96c79691b6daa96700fffdac37822fc59a9be7f93905e3c60cce41cfda66"
+    },
+    {
+      "path": "packages/device_cleanup/pubspec.lock",
+      "sha256": "dd48ab882c0bef5725a4892c865d6892963aacbc967a4fd97e72cb2d3b13c52d"
+    },
+    {
+      "path": "packages/device_cleanup/lib/src/coordinator.dart",
+      "sha256": "04f49f311ee31834df980cf1e5491d48157b02aae8ad5ea57b0e574ec1c16375"
+    },
+    {
+      "path": "packages/device_cleanup/test/coordinator_test.dart",
+      "sha256": "9149b00e7a861dcd1f6d9eb9cbd2fe9d4a7cbe7d1185c96cb9df30191b66d0ba"
+    },
+    {
+      "path": "packages/device_cleanup/test/fixtures.dart",
+      "sha256": "0e5e967fc88d6e979122eafecdd15be46889b60c2540e662d4f5af72fffc1382"
+    },
+    {
+      "path": "packages/device_cleanup/test/journal_test.dart",
+      "sha256": "ab361064e4efaae8feb52a1df3991f9bf6c0beef752623c3bb161f18b4fa9036"
+    },
+    {
+      "path": "packages/device_cleanup/test/protocol_test.dart",
+      "sha256": "dd3a589e52bc345f9e41c4e3519084ddfbd78786ac65356714bbe5cfc468a902"
+    },
+    {
+      "path": "packages/device_cleanup/test/transport_test.dart",
+      "sha256": "4a376f1103134fc1600f45a14246a500b381dd47768f61018d1c2857a05b5869"
+    }
+  ],
+  "unchangedArchiveFilesCompared": 1096,
+  "regression": {
+    "red": "9 passed / 1 failed: replacement coordinator returned keyRemoved while original clear was still blocked",
+    "fix": "Reject same tenant/device/registration overlap across coordinator instances in one Dart isolate before I/O; release ownership when attempt exits.",
+    "initialGreen": 10,
+    "finalPackageTests": 74,
+    "childTests": 152,
+    "analysis": "Both passed"
+  },
+  "fixtureCorrections": [
+    "JOSE test-key export padding and unsigned coordinate width normalized to fixed 32-byte unpadded server format; product verifier unchanged.",
+    "Initial ledger write used package-relative directory and failed; no file created; corrected to root plan workspace.",
+    "Formatter initially lacked SDK filesystem access; rerun successfully with required access."
+  ],
+  "logs": [
+    {
+      "path": ".local/device-cleanup-red.log",
+      "sha256": "0280de05a2455ec8c64e0913be09362996f5148129e40a62343569aef6c67045"
+    },
+    {
+      "path": ".local/device-cleanup-red-behavior.log",
+      "sha256": "6674e09f172ce809128a0384a674dd629295bdc1529e21d3edc72f470c4936c2"
+    },
+    {
+      "path": ".local/device-cleanup-green-initial.log",
+      "sha256": "09250915b3602abd478d886f8e863a6170e916fb4bc49f392c396c249cabdb97"
+    },
+    {
+      "path": ".local/device-cleanup-fixture-coordinate-failure.log",
+      "sha256": "e5d9f391e846844294334b97344973679aa83bd0c72647e43ca140b25792e686"
+    },
+    {
+      "path": ".local/device-cleanup-green.log",
+      "sha256": "651ba08e84f64e48105e1b726ed95cef4f9b0e8ddaa20f0bb1620c5756cbb331"
+    },
+    {
+      "path": ".local/device-cleanup-candidate-cleanup-pub.log",
+      "sha256": "0d7f84fcfc2f3b371080fc5adc99fbe4d73c396cc1a00cd21f9c8ca983f35a0a"
+    },
+    {
+      "path": ".local/device-cleanup-candidate-cleanup-analyze.log",
+      "sha256": "b8dee8d3b7a0a94fbac49434b272651ac2df1706071bb5eb78f673ad8192b1dd"
+    },
+    {
+      "path": ".local/device-cleanup-candidate-cleanup-test.log",
+      "sha256": "3b3f8c99459066067aab9e51668fd56bb0ac68b132fa60e6d93c09927a823bb5"
+    },
+    {
+      "path": ".local/device-cleanup-candidate-child-pub.log",
+      "sha256": "9666381f029776ad97a6206f4719b32ce023789ae7d12e07b8cc376a90d74224"
+    },
+    {
+      "path": ".local/device-cleanup-candidate-child-analyze.log",
+      "sha256": "28411b335c254a16bb8ba838b4bf5951032a82ab0dc707f14d3d502730702e62"
+    },
+    {
+      "path": ".local/device-cleanup-candidate-child-test.log",
+      "sha256": "81a243fc9c549af919aeeda148cb2d95833228f7a255aa48af06927553790c16"
+    }
+  ],
+  "boundaries": [
+    "ES256 command verification and receipt parsing are real; HTTP/proof authentication, storage and native deletion use explicit substitutes.",
+    "Single-isolate registration ownership is not a cross-isolate or process lock; host still must quiesce cache owners and provide idempotent encrypted durable operations.",
+    "No Android/TV physical-device, reboot/power-loss, native key deletion, background worker or full END-01 certification.",
+    "No backend, database or running service updated in this stage.",
+    "Shared WIP and later commits excluded from frozen regression candidate."
+  ],
+  "review": {
+    "reviewer": "/root/device_cleanup_final_review",
+    "model": "gpt-6-astra",
+    "readOnly": true,
+    "critical": 0,
+    "important": 0,
+    "minor": 0,
+    "result": "passed",
+    "verifiedSourceHashes": 9,
+    "verifiedLogHashes": 11,
+    "rulings": [
+      {
+        "subject": "跨隔离单元协调",
+        "decision": "本轮仅保证runOnce在同一Dart isolate中的注册互斥；宿主仍负责进程/隔离单元和缓存关闭。",
+        "costIfUnproven": "不能以此替代原生并发隔离。"
+      },
+      {
+        "subject": "真实设备删除与存储",
+        "decision": "真实ES256与解析已测试，原生删除、加密存储、硬件密钥仍使用明确替身。",
+        "costIfUnproven": "不能认证真实Android/TV数据删除或持久性。"
+      },
+      {
+        "subject": "生命周期故障",
+        "decision": "重启、断电、损坏、后台重试和孤立日志恢复未做真机演练。",
+        "costIfUnproven": "这些恢复路径仍需专门验收。"
+      },
+      {
+        "subject": "服务端与网络",
+        "decision": "HTTP/TLS、部署信任、服务端原密钥认证、回执幂等及数据库并发不由本包替身测试证明。",
+        "costIfUnproven": "仍需真实链路验收。"
+      },
+      {
+        "subject": "协议输入覆盖",
+        "decision": "已验证所列签名/绑定/回执边界，不声称穷尽所有畸形组合。",
+        "costIfUnproven": "其他输入仍可能需要补充回归。"
+      },
+      {
+        "subject": "其他等待阶段并发",
+        "decision": "明确闩锁重入回归覆盖本地清理；网络、存储、删密钥等待期间的持锁由await控制流及最终复核核对。",
+        "costIfUnproven": "未逐个阶段新增并发闩锁实验。"
+      },
+      {
+        "subject": "交付范围",
+        "decision": "只提交冻结候选中本阶段文件，不含共享WIP及后续提交，不更新运行服务。",
+        "costIfUnproven": "不代表完整END-01或生产发布认证，总体目标继续。"
+      }
+    ]
+  }
+}
