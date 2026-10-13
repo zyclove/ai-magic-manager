@@ -1,0 +1,176 @@
+{
+  "stage": "child-cleanup-storage-verification",
+  "version": "1.0.0",
+  "recordedAt": "2026-10-13T04:18:40.783085+00:00",
+  "sourceBase": "da8577cef5da86f9c14bb94caa415a089af476ac",
+  "sourceFiles": [
+    {
+      "path": "apps/child/lib/platform/cleanup_executor_io.dart",
+      "sha256": "cabbaabeadaae398deaf5bb388c4ca9433886dd7eeca7731efcb6d744ea6ad6c"
+    },
+    {
+      "path": "apps/child/test/cleanup_executor_test.dart",
+      "sha256": "fa8812e823b7c73e2ad4f009a2ff3627bad874f3bf995779f6180f426cebd9de"
+    },
+    {
+      "path": "apps/child/test/cleanup_session_test.dart",
+      "sha256": "e6ea93a928c9da8ac69a6aa0582a849f82b41a0bd2afd9cc4fbedf16a6b5c7a5"
+    },
+    {
+      "path": "docs/device-deprovision-contract.md",
+      "sha256": "a920158eacf2710db55209c842b9d193a4b117a2e6d90d7b9d150104a8c8308d"
+    }
+  ],
+  "unchangedArchiveFilesCompared": 1107,
+  "regression": {
+    "red": "0 passed / 1 failed. Real Sembast restored synthetic policy from its ~basename recovery file; original executor then returned success but retained that recoverable file.",
+    "fix": "Include exact canonical and single-tilde Sembast database filenames. Unknown related filenames, repeated recovery prefixes, directories and symbolic links fail; unrelated files remain untouched.",
+    "initialGreen": 1,
+    "newHostTests": 18,
+    "newSessionTests": 7,
+    "newTestsTotal": 25,
+    "allChildTests": 177,
+    "cleanupSdkTests": 74,
+    "analysis": "Both passed"
+  },
+  "dependencyEvidence": {
+    "package": "sembast",
+    "version": "3.7.2",
+    "source": "lib/src/sembast_fs.dart tmpPath/tmpRecover; lib/src/database_impl.dart txnCompact",
+    "observed": "Installed source writes compaction output to ~basename and can restore it even if main database is absent. The regression additionally executes actual database recovery."
+  },
+  "logs": [
+    {
+      "path": ".local/child-cleanup-storage-red.log",
+      "sha256": "5312e7fe944311106babf8309421567469a0925ac0f7f15eb0c079fe1ac5cf6e"
+    },
+    {
+      "path": ".local/child-cleanup-storage-green-initial.log",
+      "sha256": "23a1e1ae6b3edaa1a92287f7861d058e6fa17afb6a2e4e38fd00f90f46d0b43c"
+    },
+    {
+      "path": ".local/child-cleanup-storage-expanded.log",
+      "sha256": "25f09d624a69657d384d4a4fa936db1e5858f90f31bb4627d5f022a8514a3c72"
+    },
+    {
+      "path": ".local/child-cleanup-storage-expanded-final.log",
+      "sha256": "5e74829689ac562bf892c8d7c617db008180333fa4489a5bac37bcbba011c011"
+    },
+    {
+      "path": ".local/child-cleanup-storage-analyze-first-failure.log",
+      "sha256": "0b5af4828d2ed4236d8baca7792ca6ab1ae9476d31dfbb9cd7ae2c5d086c20d6"
+    },
+    {
+      "path": ".local/child-cleanup-storage-candidate-cleanup-pub.log",
+      "sha256": "0d7f84fcfc2f3b371080fc5adc99fbe4d73c396cc1a00cd21f9c8ca983f35a0a"
+    },
+    {
+      "path": ".local/child-cleanup-storage-candidate-cleanup-analyze.log",
+      "sha256": "b8dee8d3b7a0a94fbac49434b272651ac2df1706071bb5eb78f673ad8192b1dd"
+    },
+    {
+      "path": ".local/child-cleanup-storage-candidate-cleanup-test.log",
+      "sha256": "e85d2987b89819f4be6e868dc93e9df78d9df575dcffb372105628c8773994c4"
+    },
+    {
+      "path": ".local/child-cleanup-storage-candidate-child-pub.log",
+      "sha256": "9666381f029776ad97a6206f4719b32ce023789ae7d12e07b8cc376a90d74224"
+    },
+    {
+      "path": ".local/child-cleanup-storage-candidate-child-analyze.log",
+      "sha256": "a3c53ed35ac5100e5e6ec4132f14d05506b4404e594551c5f0b2988e0b8592e0"
+    },
+    {
+      "path": ".local/child-cleanup-storage-candidate-child-test.log",
+      "sha256": "b4071bc5b8f44c8308692fcfa470924d9301418e5f96831c1ced9f7ca91f2c77"
+    }
+  ],
+  "executionNotes": [
+    "Two sandbox plan-script starts could not access dirname; required tool access resolved this without product changes.",
+    "Initial test launch used incorrect relative log path and did not execute; corrected absolute path before witnessed RED.",
+    "Formatter changed test layout only; all candidate inputs then frozen.",
+    "First full gate exited at child analysis on one missing test if-block brace. Preserved log and fixed only formatting after terminal exit; full gate rerun."
+  ],
+  "boundaries": [
+    "Real host temporary files, Sembast recovery, signed ES256 commands, DeviceIdentityManager and AndroidAgentCleanupExecutor are exercised.",
+    "Flutter secure-storage platform method channel, native fsync/commit and enrollment cloud are explicit test substitutes. This is not Android encryption, physical power-loss, hardware-key or storage-erasure certification.",
+    "Session tests use controlled cache owners and cleanup callback; they prove wait/reject/error projection ordering, not end-to-end native deletion.",
+    "No device attached in adb inventory; no emulator boot, installation, native app data or deployed service changed.",
+    "Existing current/orphan cleanup journals remain for recovery; this stage does not change retention policy or complete global erasure.",
+    "Shared WIP and later commits excluded from frozen candidate; no schema or migration change."
+  ],
+  "review": {
+    "reviewer": "fresh gpt-6-astra/high",
+    "critical": 0,
+    "important": 0,
+    "minor": 0,
+    "independentChecks": [
+      "4 root/candidate/source hashes",
+      "1107 unchanged archive files",
+      "11 log hashes",
+      "RED/GREEN and terminal 177/74 test results"
+    ],
+    "rulings": [
+      {
+        "subject": "Android/TV及加密插件",
+        "decision": "本阶段使用明确平台替身；未连接真机。",
+        "costIfUnproven": "尚不能证明各厂商原生运行与加密实现。"
+      },
+      {
+        "subject": "断电持久性",
+        "decision": "只验证屏障调用及失败传播。",
+        "costIfUnproven": "真实fsync/commit与断电恢复仍需原生验收。"
+      },
+      {
+        "subject": "密钥及物理擦除",
+        "decision": "本轮保持原密钥至确认，未认证硬件销毁或闪存擦除。",
+        "costIfUnproven": "不能据此声称取证级数据不可恢复。"
+      },
+      {
+        "subject": "云端及TLS认证",
+        "decision": "受控云端替身与真实签名验证分开记录。",
+        "costIfUnproven": "正式信任配置与真实服务鉴权尚需联调。"
+      },
+      {
+        "subject": "跨进程并发及路径替换",
+        "decision": "继续要求同一宿主关闭全部缓存持有者；未引入跨进程文件锁。",
+        "costIfUnproven": "不能保证其他进程或隔离单元在枚举后替换文件时的行为。"
+      },
+      {
+        "subject": "清理日志保留",
+        "decision": "当前及孤立日志继续保留用于退出恢复。",
+        "costIfUnproven": "日志最终清除和全局擦除仍未完成。"
+      },
+      {
+        "subject": "文件格式与版本",
+        "decision": "仅覆盖1.0.0当前Sembast规范主文件及单个~恢复文件；未知相关文件失败。",
+        "costIfUnproven": "后续改变格式需要更新白名单并验收；不做历史迁移。"
+      },
+      {
+        "subject": "其他数据范围",
+        "decision": "仅清理本应用配置、访问/申请和已知加密缓存。",
+        "costIfUnproven": "不删除第三方应用、个人媒体、系统账户、工作资料或整机数据。"
+      },
+      {
+        "subject": "后台及任务过期恢复",
+        "decision": "本轮不改变前台、取消/过期和离线退出语义。",
+        "costIfUnproven": "长期离线或后台启动仍不保证自动完成。"
+      },
+      {
+        "subject": "原生端到端关闭",
+        "decision": "会话顺序与宿主文件分别验证，替身边界明确。",
+        "costIfUnproven": "尚不能证明真实Android各持有者共同关闭并删除的端到端流程。"
+      },
+      {
+        "subject": "依赖源码独立复核",
+        "decision": "实施者读取了安装Sembast源码；复核者访问被限制，核对实际恢复测试、日志和依赖配置。",
+        "costIfUnproven": "不声称复核者独立重读了依赖源码。"
+      },
+      {
+        "subject": "交付及共享范围",
+        "decision": "只提交本阶段六文件；本机六服务健康由实施者只读检查，复核者未验收部署。",
+        "costIfUnproven": "本阶段未发布到原生安装包或服务，不代表整体产品完成。"
+      }
+    ]
+  }
+}

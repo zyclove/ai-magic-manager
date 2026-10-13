@@ -10,7 +10,11 @@ import 'secret_store.dart';
 /// owners have been closed. It never touches other apps, system accounts,
 /// third-party storage or device management state.
 class AndroidAgentCleanupExecutor implements AgentCleanupExecutor {
-  static final _accessFile = RegExp(r'^access-v1-[0-9a-f]{64}\.db$');
+  // Sembast compaction writes ~basename and can restore it after interruption,
+  // even when the canonical database is absent. Both contain agent data.
+  static final _databaseFile =
+      RegExp(r'^~?(configuration-v1\.db|access-v1-[0-9a-f]{64}\.db)$');
+  static final _recoveryPrefix = RegExp(r'^~+');
   static final _journalKey = RegExp(r'^cleanup_journal_v1_[0-9a-f]{64}$');
   static final _accessSecret =
       RegExp(r'^(access_key_v1_|access_context_v1_)[0-9a-f]{64}$');
@@ -59,10 +63,10 @@ class AndroidAgentCleanupExecutor implements AgentCleanupExecutor {
       final files = <File>[];
       await for (final entity in directory.list(followLinks: false)) {
         final name = path.basename(entity.path);
-        if (name.startsWith('configuration-v1.db') ||
-            name.startsWith('access-v1-')) {
-          if (entity is! File ||
-              name != 'configuration-v1.db' && !_accessFile.hasMatch(name)) {
+        final base = name.replaceFirst(_recoveryPrefix, '');
+        if (base.startsWith('configuration-v1.db') ||
+            base.startsWith('access-v1-')) {
+          if (entity is! File || !_databaseFile.hasMatch(name)) {
             throw AgentCleanupFailure('UNSUPPORTED_AGENT');
           }
           files.add(entity);
