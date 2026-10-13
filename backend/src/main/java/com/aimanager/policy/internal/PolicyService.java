@@ -146,6 +146,43 @@ class PolicyService
         () -> insertDraft(tenant, actor, input.name(), input.kind(), input.rules(), null));
   }
 
+  /**
+   * Recover a mobile empty-draft/template-copy result without replaying creation.
+   * Match the original creator, key and payload, then re-read the current scoped draft.
+   * A missing journal entry is inconclusive, including after retention cleanup.
+   */
+  @Transactional(timeout = 10)
+  public PolicyDraft creationResult(String tenant, String actor, String requestId,
+      PolicyController.CreationQuery input) {
+    access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
+    if (requestId == null || !requestId.matches(
+        "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
+      throw DomainException.invalid("INVALID_CREATION_RESULT_REFERENCE");
+    String operation;
+    Map<String, ?> attributes;
+    switch (input.operation()) {
+      case EMPTY_DRAFT -> {
+        if (input.templateId() != null || input.templateRevision() != null)
+          throw DomainException.invalid("INVALID_CREATION_RESULT_REFERENCE");
+        operation = "policy.create";
+        attributes = Map.of("input", new PolicyController.CreateDraft(input.name(), input.kind(), List.of()));
+      }
+      case TEMPLATE_COPY -> {
+        if (input.templateId() == null || input.templateRevision() == null || input.kind() != PolicyDraft.Kind.POLICY)
+          throw DomainException.invalid("INVALID_CREATION_RESULT_REFERENCE");
+        operation = "policy.template.copy";
+        attributes = Map.of("id", input.templateId(), "name", input.name(), "revision", input.templateRevision());
+      }
+      default -> throw DomainException.invalid("INVALID_CREATION_RESULT_REFERENCE");
+    }
+    var reference = idempotency.findCommitted(tenant, actor, operation, requestId, attributes, PolicyDraft.class)
+        .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "POLICY_CREATION_RESULT_UNAVAILABLE"));
+    var current = readDraft(tenant, reference.id(), false);
+    if (current.kind() != input.kind())
+      throw new IllegalStateException("Creation journal does not match the draft kind");
+    return current;
+  }
+
   private PolicyDraft insertDraft(
       String tenant,
       String actor,

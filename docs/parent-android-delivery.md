@@ -12,7 +12,8 @@
 | 访问申请 | 服务端筛选待处理项并在授权结果中附儿童、应用、包名和设备名称；成人在卡片及确认弹窗核对对象后批准/拒绝并再次认证；提交带版本及幂等键，连接中断后查询原申请且不自动重发；批准窗口不超过申请时长，提示需等待设备实际执行 | `GET /access-requests?state=PENDING`、`GET /access-requests/{id}`、`POST /access-requests/{id}/decisions`，`If-Match`、`Idempotency-Key` 和服务端近期认证 |
 | 申请记录、撤销与交付 | 申请页可分页查看授权范围内的历史，处理成功后直达原申请状态；详情同时核对申请版本和交付摘要，分开展示审批、文档交付、设备自报及系统执行。仍有效的批准可在确认、近期认证后撤销；撤销提交前持久保存待核对记录，结果不明时不自动重发。设备收到或保存撤销文档不显示成限制已恢复 | `GET /access-requests`、`GET /access-requests/{id}`、`GET /access-requests/{id}/delivery`、`POST /access-requests/{id}/revoke`；撤销需 `If-Match`、`Idempotency-Key` 与近期认证 |
 | 策略预览与配置发布 | “我的”进入策略中心，分页查看草稿和模板；成人选择最多 50 台有效注册设备，按草稿修订预览并核对返回目标与注册周期。确认后近期认证，仅保存 `CONFIGURE_ONLY` 版本；发送前持久记录幂等键，结果不明时按原请求查询且不自动重发。模板需先复制，配置版本不代表系统限制已执行 | `GET /policies`、`GET /policies/{id}`、`GET /devices`、`POST /policies/{id}/previews`、`POST /policies/{id}/publications`、`GET /policies/{id}/publication-results/{requestId}`；详情见[发布恢复契约](policy-publication-recovery-contract.md) |
-| 草稿规则编辑 | 成人在详情编辑名称及九类规则，最多 100 条；应用/日程从当前租户目录选择，运行时权限来自服务端目录。删除需确认，未保存退出有提醒；保存带原修订号，冲突或结果不明要求返回核对，退出编辑后清除旧预览。模板可编辑但仍须在完整管理台复制后才能发布 | `PUT /policies/{id}`、`GET /applications`、`GET /schedules`、`GET /policy-metadata/android-runtime-permissions`；见[手机草稿编辑交付](parent-policy-editor-delivery.md) |
+| 草稿规则编辑 | 成人在详情编辑名称及九类规则，最多 100 条；应用/日程从当前租户目录选择，运行时权限来自服务端目录。删除需确认，未保存退出有提醒；保存带原修订号，冲突或结果不明要求返回核对，退出编辑后清除旧预览。模板可编辑，复制为独立策略后才能发布 | `PUT /policies/{id}`、`GET /applications`、`GET /schedules`、`GET /policy-metadata/android-runtime-permissions`；见[手机草稿编辑交付](parent-policy-editor-delivery.md) |
+| 新建和模板复制 | 策略中心“新建 / 恢复”创建空策略或模板；模板详情可按原修订创建独立策略。发送前保存恢复记录，未决创建禁止重复提交；按原操作者/原参数查询成功后打开当前草稿，查不到需成人另行核对，不自动重发 | `POST /policies`、`POST /policies/{id}/copies`、`POST /policy-draft-creation-results/{requestId}/query`；见[创建恢复交付](parent-policy-creation-delivery.md) |
 | 求助 | 展示未确认求助，成人确认已看到；传输结果未知时查询原记录并保持联系孩子的提醒，明确不是紧急服务 | `GET /help-requests?state=OPEN`、`GET /help-requests/{id}`、`POST /help-requests/{id}/acknowledge`，`If-Match` |
 | 设备 | 分页展示注册状态和管理模式；点开设备可看连接观察及逐项能力证据、限制原因，提醒另查策略执行回执 | `GET /devices`、`GET /devices/{id}`、`GET /devices/{id}/capabilities` |
 | 设备配对 | 分页选择儿童与 Android/TV；近期认证后先保存随机注册请求编号，再生成 BYOD 一次性凭据；响应丢失或进程重启后可按原编号查询、不回显秘密；儿童端认领后刷新状态、输入物理设备配对码再次认证确认；可取消 | `POST /enrollments`（`Client-Request-Id`）、`GET /enrollment-creation-results/{id}`、`GET /enrollments/{id}`、`POST /enrollments/{id}/confirm`、`DELETE /enrollments/{id}` |
@@ -44,7 +45,7 @@
 
 - 真机安装、系统浏览器回跳、Keycloak 近期 MFA、令牌轮换/吊销、TLS 与 Android 生命周期恢复的端到端验收；当前不能称为已可生产发布。
 - 临时访问申请已显示授权范围内的儿童、应用、包名和设备名称；审计角色不额外获得这些展示资料。跨进程待核对提醒已接入 Android 本地安全存储，但真机进程回收和存储故障演练仍未完成；超长列表虚拟滚动、推送通知和离线只读快照仍待完善。当前列表经服务端按持久化 `PENDING` 筛选后每次加载 50 条；主体/设备生命周期可能在读取时使申请失效，客户端按响应实际状态隐藏这类项目。名称是帮助成人核对的目录资料，并非应用安全性或设备执行证明。
-- 新建策略、模板复制、设备组来源选择、应用目录登记、日程维护、共享额度、机构班级与合同确认等完整成人工作流仍由 Flutter Web 管理台承担。手机端已能编辑已有草稿、选设备、预览及仅保存配置版本，但服务端 `ENFORCE` 尚未开放，真实设备执行与回执不能由配置保存推定；需继续实现手机端后续页面并逐项确认无 Web 专属依赖。设备配对已具备原编号恢复查询，但令牌跨设备安全传递、扫码输入与 TV 遥控体验仍需专门验收。
+- 设备组来源选择、应用目录登记、日程维护、共享额度、机构班级与合同确认等完整成人工作流仍由 Flutter Web 管理台承担。手机端已能新建策略/模板、复制模板、编辑草稿、选设备、预览及仅保存配置版本，但服务端 `ENFORCE` 尚未开放，真实设备执行与回执不能由配置保存推定；需继续实现手机端后续页面并逐项确认无 Web 专属依赖。设备配对已具备原编号恢复查询，但令牌跨设备安全传递、扫码输入与 TV 遥控体验仍需专门验收。
 - Android 受管 EMM/OEM 连接器、Android TV 型号认证、摄像头可选识别和真实设备系统策略执行均未由本客户端实现。没有提供方资格时，客户端不显示“不可绕过”的承诺。
 - 已补齐 Android release 签名的构建门槛与 [发布规程](parent-android-release.md)，但尚无真实密钥及正式签名产物；供应链/SBOM、无障碍和字体缩放检查、低网速/断网/进程回收演练及客户试点签收仍待完成。
 

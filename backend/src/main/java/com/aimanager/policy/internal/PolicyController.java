@@ -30,6 +30,13 @@ class PolicyController {
                               @RequestParam(required = false) PolicyDraft.Kind kind) {
         return policies.list(tenantId, actor.getSubject(), limit, cursor, kind);
     }
+    /** Read-only lookup uses a body so draft names do not enter URLs/access logs. */
+    @PostMapping("/policy-draft-creation-results/{requestId}/query")
+    ResponseEntity<PolicyDraft> creationResult(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId,
+            @PathVariable String requestId, @Valid @RequestBody CreationQuery input) {
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore())
+            .body(policies.creationResult(tenantId, actor.getSubject(), requestId, input));
+    }
     @GetMapping("/policies/{policyId}")
     ResponseEntity<PolicyDraft> get(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId, @PathVariable String policyId) {
         var draft = policies.get(tenantId, actor.getSubject(), policyId);
@@ -92,6 +99,11 @@ class PolicyController {
                        @NotNull @Size(max = 100) List<@NotNull @Valid PolicyRule> rules) {}
     record EditDraft(@NotBlank @Size(max = 100) String name, @NotNull @Size(max = 100) List<@NotNull @Valid PolicyRule> rules) {}
     record Named(@NotBlank @Size(max = 100) String name) {}
+    enum CreationOperation { EMPTY_DRAFT, TEMPLATE_COPY }
+    record CreationQuery(@NotNull CreationOperation operation, @NotBlank @Size(max = 100) String name,
+                         @NotNull PolicyDraft.Kind kind,
+                         @Pattern(regexp = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}") String templateId,
+                         @Min(0) Long templateRevision) {}
     record Preview(@NotNull @Size(min = 1, max = 50) List<@NotNull @Pattern(regexp = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}") String> deviceIds,
                    @Pattern(regexp = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}") String groupId,
                    @Min(0) Long groupVersion) {}

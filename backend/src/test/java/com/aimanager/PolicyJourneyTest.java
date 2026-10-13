@@ -241,6 +241,69 @@ class PolicyJourneyTest {
         assertThat(database.queryForObject("SELECT COUNT(*) FROM policy_versions WHERE tenant_id=?", Integer.class, s.tenant())).isEqualTo(1);
     }
 
+    @Test void emptyDraftRecoveryReturnsCurrentDraftWithoutRecreatingIt() throws Exception {
+        var s = scope(); String key = UUID.randomUUID().toString();
+        var created = body(mvc.perform(post(path(s) + "/policies").with(actor(s.owner()))
+            .header("Idempotency-Key", key).contentType(MediaType.APPLICATION_JSON)
+            .content("{\"name\":\"空草稿\",\"kind\":\"POLICY\",\"rules\":[]}"))
+            .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString());
+        var updated = edit(s, created.get("id").asText(), "\"0\"", List.of());
+        database.update("UPDATE idempotency_requests SET expires_at=0 WHERE scope_id=? AND operation='policy.create'", s.tenant());
+        String target = path(s) + "/policy-draft-creation-results/" + key + "/query";
+        String query = "{\"operation\":\"EMPTY_DRAFT\",\"name\":\"空草稿\",\"kind\":\"POLICY\"}";
+        for (int attempt=0; attempt<2; attempt++) {
+            var recovered = body(mvc.perform(post(target).with(actor(s.owner())).contentType(MediaType.APPLICATION_JSON).content(query))
+                .andExpect(status().isOk()).andExpect(header().string("Cache-Control", "no-store"))
+                .andReturn().getResponse().getContentAsString());
+            assertThat(recovered).isEqualTo(updated);
+        }
+        mvc.perform(post(target).with(actor(s.owner())).contentType(MediaType.APPLICATION_JSON).content(query.replace("空草稿", "另一个名称")))
+            .andExpect(status().isConflict()).andExpect(jsonPath("$.errorCode").value("IDEMPOTENCY_KEY_CONFLICT"));
+        assertThat(database.queryForObject("SELECT COUNT(*) FROM policy_drafts WHERE tenant_id=?", Integer.class, s.tenant())).isEqualTo(1);
+        assertThat(database.queryForObject("SELECT MAX(expires_at) FROM idempotency_requests WHERE scope_id=? AND operation='policy.create'", Long.class, s.tenant())).isZero();
+    }
+
+    @Test void templateCopyRecoveryBindsTheOriginalTemplateRevisionAndCreator() throws Exception {
+        var s = scope(); String key = UUID.randomUUID().toString();
+        var template = body(mvc.perform(post(path(s) + "/policies").with(actor(s.owner())).contentType(MediaType.APPLICATION_JSON)
+            .content("{\"name\":\"模板\",\"kind\":\"TEMPLATE\",\"rules\":[]}"))
+            .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString());
+        var created = body(mvc.perform(post(path(s) + "/policies/" + template.get("id").asText() + "/copies").with(actor(s.owner()))
+            .header("If-Match", "\"0\"").header("Idempotency-Key", key).contentType(MediaType.APPLICATION_JSON)
+            .content("{\"name\":\"复制结果\"}")).andExpect(status().isCreated()).andReturn().getResponse().getContentAsString());
+        edit(s, template.get("id").asText(), "\"0\"", List.of());
+        var fields = new java.util.HashMap<String, Object>(Map.of("operation", "TEMPLATE_COPY", "name", "复制结果",
+            "kind", "POLICY", "templateId", template.get("id").asText(), "templateRevision", 0));
+        String target = path(s) + "/policy-draft-creation-results/" + key + "/query";
+        String query = mapper.writeValueAsString(fields);
+        var recovered = body(mvc.perform(post(target).with(actor(s.owner())).contentType(MediaType.APPLICATION_JSON).content(query))
+            .andExpect(status().isOk()).andReturn().getResponse().getContentAsString());
+        assertThat(recovered).isEqualTo(created);
+        String guardian = "guardian-" + UUID.randomUUID();
+        database.update("INSERT INTO tenant_members(tenant_id,actor_id,actor_key,role) VALUES(?,?,?,'GUARDIAN')", s.tenant(), guardian, ActorKeys.key(guardian));
+        mvc.perform(post(target).with(actor(guardian)).contentType(MediaType.APPLICATION_JSON).content(query))
+            .andExpect(status().isNotFound()).andExpect(jsonPath("$.errorCode").value("POLICY_CREATION_RESULT_UNAVAILABLE"));
+        fields.put("templateRevision", 1);
+        mvc.perform(post(target).with(actor(s.owner())).contentType(MediaType.APPLICATION_JSON).content(mapper.writeValueAsString(fields)))
+            .andExpect(status().isConflict());
+        database.update("UPDATE tenant_members SET role='AUDITOR' WHERE tenant_id=? AND actor_key=?", s.tenant(), ActorKeys.key(s.owner()));
+        mvc.perform(post(target).with(actor(s.owner())).contentType(MediaType.APPLICATION_JSON).content(query)).andExpect(status().isForbidden());
+        assertThat(database.queryForObject("SELECT COUNT(*) FROM policy_drafts WHERE tenant_id=?", Integer.class, s.tenant())).isEqualTo(2);
+    }
+
+    @Test void creationRecoveryRejectsMixedShapesAndDoesNotCreateMissingEntries() throws Exception {
+        var s = scope(); String target = path(s) + "/policy-draft-creation-results/" + UUID.randomUUID() + "/query";
+        String query = "{\"operation\":\"EMPTY_DRAFT\",\"name\":\"草稿\",\"kind\":\"POLICY\"}";
+        mvc.perform(post(target).with(actor(s.owner())).contentType(MediaType.APPLICATION_JSON).content(query)).andExpect(status().isNotFound());
+        mvc.perform(post(target).with(actor(s.owner())).contentType(MediaType.APPLICATION_JSON)
+            .content(query.replace("\"POLICY\"", "\"POLICY\",\"templateRevision\":0"))).andExpect(status().isBadRequest());
+        mvc.perform(post(target).with(actor(s.owner())).contentType(MediaType.APPLICATION_JSON)
+            .content(query.replace("EMPTY_DRAFT", "TEMPLATE_COPY"))).andExpect(status().isBadRequest());
+        mvc.perform(post(target).with(actor("outsider")).contentType(MediaType.APPLICATION_JSON).content(query)).andExpect(status().isForbidden());
+        assertThat(database.queryForObject("SELECT COUNT(*) FROM policy_drafts WHERE tenant_id=?", Integer.class, s.tenant())).isZero();
+        assertThat(database.queryForObject("SELECT COUNT(*) FROM idempotency_requests WHERE scope_id=? AND operation IN ('policy.create','policy.template.copy')", Integer.class, s.tenant())).isZero();
+    }
+
     @Test void templateCopyAndRollbackPreserveHistoricalVersion() throws Exception {
         var s = scope(); var a = app(s, "org.example.game");
         var template = body(mvc.perform(post(path(s) + "/policies").with(actor(s.owner())).contentType(MediaType.APPLICATION_JSON)

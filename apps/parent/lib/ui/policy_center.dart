@@ -6,6 +6,7 @@ import '../core/parent_api.dart';
 import '../core/parent_session.dart';
 import '../core/pending_publications.dart';
 import 'policy_editor.dart';
+import 'policy_creation_page.dart';
 
 const _ink = Color(0xFF17324B);
 const _muted = Color(0xFF315E86);
@@ -180,11 +181,37 @@ class _PolicyCenterState extends State<PolicyCenter> {
     super.dispose();
   }
 
+  Future<void> _create() async {
+    if (!_current || recoveryBusy || !widget.session.canDecide) return;
+    setState(() => recoveryBusy = true);
+    final result = await Navigator.of(context).push<Json>(MaterialPageRoute(
+      builder: (_) => PolicyCreationPage(session: widget.session),
+    ));
+    if (!_current) return;
+    setState(() => recoveryBusy = false);
+    if (mounted && result != null) {
+      await Navigator.of(context).push(MaterialPageRoute<void>(
+        builder: (_) => _PolicyDetail(
+            session: widget.session, policyId: result['id'] as String),
+      ));
+    }
+    if (_current) {
+      policies.reload();
+      await _loadRecoveries();
+    }
+  }
+
   @override
   Widget build(BuildContext context) => PopScope(
         canPop: !recoveryBusy,
         child: Scaffold(
-          appBar: AppBar(title: const Text('策略中心')),
+          appBar: AppBar(title: const Text('策略中心'), actions: [
+            if (widget.session.canDecide)
+              TextButton.icon(
+                  onPressed: recoveryBusy ? null : _create,
+                  icon: const Icon(Icons.add),
+                  label: const Text('新建 / 恢复')),
+          ]),
           body: AnimatedBuilder(
             animation: policies,
             builder: (context, _) {
@@ -261,7 +288,7 @@ class _PolicyCenterState extends State<PolicyCenter> {
                       const Card(
                           child: Padding(
                               padding: EdgeInsets.all(20),
-                              child: Text('还没有策略。请先在完整管理台创建草稿或模板。'))),
+                              child: Text('还没有策略。管理员可点击右上角“新建 / 恢复”创建草稿或模板。'))),
                     for (final row in policies.items)
                       Card(
                         margin: const EdgeInsets.only(bottom: 10),
@@ -444,6 +471,27 @@ class _PolicyDetailState extends State<_PolicyDetail> {
     setState(() => busy = false);
     // An interrupted PUT may have committed: always re-read the authority.
     _reload();
+  }
+
+  Future<void> _copy(Json template) async {
+    if (!_current ||
+        busy ||
+        !widget.session.canDecide ||
+        template['kind'] != 'TEMPLATE') return;
+    setState(() => busy = true);
+    final result = await Navigator.of(context).push<Json>(MaterialPageRoute(
+      builder: (_) =>
+          PolicyCreationPage(session: widget.session, template: template),
+    ));
+    if (!_current) return;
+    setState(() => busy = false);
+    _reload();
+    if (mounted && result != null) {
+      await Navigator.of(context).push(MaterialPageRoute<void>(
+        builder: (_) => _PolicyDetail(
+            session: widget.session, policyId: result['id'] as String),
+      ));
+    }
   }
 
   Future<void> _preview(Json policy) async {
@@ -700,12 +748,17 @@ class _PolicyDetailState extends State<_PolicyDetail> {
                           subtitle: Text(_ruleDetail(raw)),
                         ),
                       ),
-                  if (policy['kind'] == 'TEMPLATE')
+                  if (policy['kind'] == 'TEMPLATE') ...[
                     const Card(
                         child: Padding(
                             padding: EdgeInsets.all(18),
-                            child: Text('模板不能直接预览或发布。请先在完整管理台复制为策略草稿。')))
-                  else if (!widget.session.canDecide)
+                            child: Text('模板不能直接预览或发布。请先复制为独立策略草稿。'))),
+                    if (widget.session.canDecide)
+                      FilledButton.icon(
+                          onPressed: busy ? null : () => _copy(policy),
+                          icon: const Icon(Icons.copy_outlined),
+                          label: const Text('从模板创建策略')),
+                  ] else if (!widget.session.canDecide)
                     const Card(
                         child: Padding(
                             padding: EdgeInsets.all(18),
