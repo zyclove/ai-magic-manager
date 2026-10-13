@@ -5,6 +5,8 @@ import '../core/parent_api.dart';
 import '../core/parent_session.dart';
 import '../core/schedules.dart';
 import 'schedule_center.dart';
+import 'application_center.dart';
+import '../core/application_catalog.dart';
 
 const _kinds = <String, String>{
   'APP_LAUNCH': '应用启动',
@@ -155,10 +157,16 @@ class _PolicyDraftEditorState extends State<PolicyDraftEditor> {
       error = null;
     });
     try {
-      final needsApps = kind != 'DOMAIN_ACCESS';
-      final apps = needsApps
-          ? await widget.session.api.all('/tenants/$tenant/applications')
-          : <Json>[];
+      final apps = <Json>[];
+      if (kind != 'DOMAIN_ACCESS' &&
+          index != null &&
+          rules[index]['applicationId'] is String) {
+        final id = rules[index]['applicationId'] as String;
+        apps.add(readApplication(
+            await widget.session.api.object('/tenants/$tenant/applications/$id',
+                isCurrent: () => current),
+            id: id));
+      }
       if (!current) return;
       final schedules = <Json>[];
       if (kind == 'TIME_WINDOW' &&
@@ -398,6 +406,7 @@ class _RuleForm extends StatefulWidget {
 
 class _RuleFormState extends State<_RuleForm> {
   final form = GlobalKey<FormState>();
+  late final applications = List<Json>.from(widget.applications);
   late final schedules = List<Json>.from(widget.schedules);
   late String effect =
       widget.initial?['effect'] ?? _effects[widget.kind]!.first;
@@ -505,6 +514,21 @@ class _RuleFormState extends State<_RuleForm> {
     });
   }
 
+  Future<void> _selectApplication() async {
+    if (!widget.isCurrent()) return;
+    final selected = await Navigator.of(context).push<Json>(MaterialPageRoute(
+        builder: (_) =>
+            ApplicationCenter(session: widget.session, choosing: true)));
+    if (!mounted || !widget.isCurrent() || selected == null) return;
+    final value = readApplication(selected);
+    setState(() {
+      applications.removeWhere((a) => a['id'] == value['id']);
+      applications.add(value);
+      app = value['id'];
+      dirty = true;
+    });
+  }
+
   void _done() {
     if (!widget.isCurrent() || !form.currentState!.validate()) return;
     final result = <String, dynamic>{
@@ -556,13 +580,21 @@ class _RuleFormState extends State<_RuleForm> {
                     app,
                     {
                       if (!requiresApp) '': '所有适用应用',
-                      for (final a in widget.applications)
+                      for (final a in applications)
                         a['id'] as String:
                             '${a['displayName']} · ${a['packageName']} · ${a['platform']}',
                     },
                     (v) => app = v),
-              if (requiresApp && widget.applications.isEmpty)
-                const Text('请先在完整管理台登记应用，然后返回重新添加。'),
+              if (widget.kind != 'DOMAIN_ACCESS') ...[
+                OutlinedButton.icon(
+                    onPressed: _selectApplication,
+                    icon: const Icon(Icons.apps_outlined),
+                    label: const Text('选择或登记应用')),
+                for (final a in applications.where((a) => a['id'] == app))
+                  ApplicationIdentityView(application: a),
+                if (requiresApp && applications.isEmpty)
+                  const Text('请先选择应用；可在目录内登记后继续编辑这条规则。'),
+              ],
               if (widget.kind == 'TIME_WINDOW') ...[
                 select(
                     '时间计划',

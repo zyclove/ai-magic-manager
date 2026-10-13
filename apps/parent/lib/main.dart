@@ -14,6 +14,7 @@ import 'ui/device_exit.dart';
 import 'ui/enrollment_flow.dart';
 import 'ui/policy_center.dart';
 import 'ui/device_group_center.dart';
+import 'ui/application_center.dart';
 
 const _navy = Color(0xFF17324B);
 const _blue = Color(0xFF315E86);
@@ -1095,6 +1096,15 @@ class _Account extends StatelessWidget {
                   .contains(session.role)) ...[
             const SizedBox(height: 24),
             CommercialAccount(session: session),
+            Card(
+                child: ListTile(
+              leading: const Icon(Icons.apps_outlined, color: _blue),
+              title: const Text('应用目录'),
+              subtitle: const Text('登记应用身份、核对签名与维护报表分类'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => ApplicationCenter(session: session))),
+            )),
             const SizedBox(height: 18),
             Card(
               child: ListTile(

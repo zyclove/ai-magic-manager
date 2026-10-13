@@ -17,6 +17,7 @@
 | 机构按设备组选择 | 机构所有者/管理员分页选择设备组，确认全部当前有效成员快照（1–50 台），预览/发布前核对组修订及设备注册事实；超限不截断，改为逐台选择会清空组来源和旧预览 | 复用 `/device-groups`、`/{id}/devices?status=CURRENT` 及策略 `groupId/groupVersion`；见[设备组阶段交付](parent-policy-group-delivery.md) |
 | 机构设备组维护 | 创建、重命名、归档与每次 1–50 台批量加入/移出；详情按成员有效性分页筛选，变更前安全验证和持久记录，未知结果只读恢复 | 既有设备组写接口与 `/device-groups/operation-results/{requestId}/query`；见[设备组维护交付](parent-device-group-management.md) |
 | 时间计划 | 新建/复制独立计划，编辑星期、跨午夜和例外日期，分页查看并直接用于规则；后端计算当前计划安排；创建结果未知时按原参数恢复，不自动重发 | `/schedules`、`/{id}/evaluation`、`/creation-results/{requestId}/query`；见[时间计划交付](parent-schedule-delivery.md) |
+| 应用目录与分类 | 手机登记不可变应用身份、核对平台/资料/签名、维护共享报表分类；规则中分页选择或登记应用；写入有原请求持久恢复 | `/applications`、`/{id}/classification` 及各自结果查询；见[应用目录交付](parent-application-catalog-delivery.md) |
 | 求助 | 展示未确认求助，成人确认已看到；传输结果未知时查询原记录并保持联系孩子的提醒，明确不是紧急服务 | `GET /help-requests?state=OPEN`、`GET /help-requests/{id}`、`POST /help-requests/{id}/acknowledge`，`If-Match` |
 | 设备 | 分页展示注册状态和管理模式；点开设备可看连接观察及逐项能力证据、限制原因，提醒另查策略执行回执 | `GET /devices`、`GET /devices/{id}`、`GET /devices/{id}/capabilities` |
 | 设备配对 | 分页选择儿童与 Android/TV；近期认证后先保存随机注册请求编号，再生成 BYOD 一次性凭据；响应丢失或进程重启后可按原编号查询、不回显秘密；儿童端认领后刷新状态、输入物理设备配对码再次认证确认；可取消 | `POST /enrollments`（`Client-Request-Id`）、`GET /enrollment-creation-results/{id}`、`GET /enrollments/{id}`、`POST /enrollments/{id}/confirm`、`DELETE /enrollments/{id}` |
@@ -48,7 +49,7 @@
 
 - 真机安装、系统浏览器回跳、Keycloak 近期 MFA、令牌轮换/吊销、TLS 与 Android 生命周期恢复的端到端验收；当前不能称为已可生产发布。
 - 临时访问申请已显示授权范围内的儿童、应用、包名和设备名称；审计角色不额外获得这些展示资料。跨进程待核对提醒已接入 Android 本地安全存储，但真机进程回收和存储故障演练仍未完成；超长列表虚拟滚动、推送通知和离线只读快照仍待完善。当前列表经服务端按持久化 `PENDING` 筛选后每次加载 50 条；主体/设备生命周期可能在读取时使申请失效，客户端按响应实际状态隐藏这类项目。名称是帮助成人核对的目录资料，并非应用安全性或设备执行证明。
-- 应用目录登记、共享额度、机构班级与合同确认等完整成人工作流仍由 Flutter Web 管理台承担。手机端已能维护机构设备组及成员、新建策略/模板、复制模板、维护独立时间计划并绑定规则、编辑草稿、逐台或按设备组选目标、预览及仅保存配置版本，但服务端 `ENFORCE` 尚未开放，真实设备执行与回执不能由配置保存推定；需继续实现手机端后续页面并逐项确认无 Web 专属依赖。设备配对已具备原编号恢复查询，但令牌跨设备安全传递、扫码输入与 TV 遥控体验仍需专门验收。
+- 共享额度、机构班级与合同确认等完整成人工作流仍由 Flutter Web 管理台承担。手机端已能登记应用/维护分类、维护机构设备组及成员、新建策略/模板、复制模板、维护独立时间计划并绑定规则、编辑草稿、逐台或按设备组选目标、预览及仅保存配置版本，但服务端 `ENFORCE` 尚未开放，真实设备执行与回执不能由配置保存推定；需继续实现手机端后续页面并逐项确认无 Web 专属依赖。设备配对已具备原编号恢复查询，但令牌跨设备安全传递、扫码输入与 TV 遥控体验仍需专门验收。
 - Android 受管 EMM/OEM 连接器、Android TV 型号认证、摄像头可选识别和真实设备系统策略执行均未由本客户端实现。没有提供方资格时，客户端不显示“不可绕过”的承诺。
 - 已补齐 Android release 签名的构建门槛与 [发布规程](parent-android-release.md)，但尚无真实密钥及正式签名产物；供应链/SBOM、无障碍和字体缩放检查、低网速/断网/进程回收演练及客户试点签收仍待完成。
 

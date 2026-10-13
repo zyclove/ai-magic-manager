@@ -44,6 +44,22 @@ class ClassificationService implements ApplicationCategories {
     return current(tenant, identity(app), false);
   }
 
+  /** Historical response is separate from current shared classification; queries do not mutate. */
+  @Transactional(timeout = 10)
+  Recovery operationResult(String tenant, String actor, String applicationId, String key, long expected, Category category) {
+    access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
+    var identity = identity(catalog.requireKnownIdentity(tenant, applicationId));
+    if (key == null || !key.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
+      throw DomainException.invalid("INVALID_CLASSIFICATION_RESULT_REFERENCE");
+    var committed = idempotency.findCommitted(tenant, actor, "application.classification", key,
+        Map.of("applicationId", applicationId, "expectedVersion", expected, "category", category), Classification.class)
+        .orElseThrow(() -> new DomainException(org.springframework.http.HttpStatus.NOT_FOUND, "CLASSIFICATION_RESULT_UNAVAILABLE"));
+    if (!committed.identity().equals(identity) || committed.category() != category || committed.version() != expected + 1)
+      throw new IllegalStateException("Classification journal mismatch");
+    return new Recovery(committed, current(tenant, identity, false));
+  }
+  record Recovery(Classification committed, Classification current) {}
+
   @Transactional(timeout = 10)
   public Classification update(
       String tenant,

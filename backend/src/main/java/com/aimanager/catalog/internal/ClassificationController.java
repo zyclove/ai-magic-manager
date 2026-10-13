@@ -52,5 +52,16 @@ class ClassificationController {
         .body(value);
   }
 
+  @PostMapping("/operation-results/{requestId}/query")
+  ResponseEntity<ClassificationService.Recovery> operationResult(@AuthenticationPrincipal Jwt actor,
+      @PathVariable String tenantId, @PathVariable String applicationId, @PathVariable String requestId,
+      @Valid @RequestBody RecoveryQuery input) {
+    return ResponseEntity.ok().header("Cache-Control", "no-store").header("Vary", "Authorization")
+        .body(service.operationResult(tenantId, actor.getSubject(), applicationId, requestId,
+            input.version(), input.category()));
+  }
+
+  record RecoveryQuery(@NotNull @jakarta.validation.constraints.PositiveOrZero Long version, @NotNull Category category) {}
+
   record Update(@NotNull Category category) {}
 }

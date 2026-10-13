@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import java.util.List;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,14 @@ class CatalogController {
     @GetMapping("/{applicationId}")
     ApplicationDefinition get(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId, @PathVariable String applicationId) {
         return catalog.requireDeclared(tenantId, actor.getSubject(), applicationId);
+    }
+    /** Original creation lookup, never retries declaration. Payload stays out of URL logs. */
+    @PostMapping("/creation-results/{requestId}/query")
+    ResponseEntity<ApplicationDefinition> creationResult(@AuthenticationPrincipal Jwt actor,
+            @PathVariable String tenantId, @PathVariable String requestId,
+            @Valid @RequestBody CreateApplication input) {
+        return ResponseEntity.ok().header("Cache-Control", "no-store").header("Vary", "Authorization")
+            .body(catalog.creationResult(tenantId, actor.getSubject(), requestId, input));
     }
     record CreateApplication(@NotBlank @Size(max = 100) String displayName, @NotNull Device.Platform platform,
                              @NotBlank @Size(max = 255) @Pattern(regexp = "[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+") String packageName,
