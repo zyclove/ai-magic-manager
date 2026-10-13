@@ -1,0 +1,1411 @@
+{
+  "version": "1.0.0",
+  "recordedAt": "2026-10-13T11:08:12.220552+00:00",
+  "status": "approval-quota-attribution-and-canonical-tenant-boundary-verified",
+  "deployed": false,
+  "publicErasureExecutionAvailable": false,
+  "originalAuditBase": "cc78efa0dcbc19e3f2a0beae9a8bf974a8539450",
+  "integratedSourceBase": "75efd38a2471b64c41e3ed0971dc688098490889",
+  "sourceManifest": {
+    "path": ".local/runtime/p0-idempotency-full-source.json",
+    "sha256": "80f0264df32c73c2e602aaa1006478e2bca2f59b930d1b3cd9cd0de8c819205c",
+    "sourceBase": "75efd38a2471b64c41e3ed0971dc688098490889",
+    "sourceDirectory": "D:\\codes\\mobile\\ai-manager\\.local\\p0-idempotency-full-20261013",
+    "files": [
+      {
+        "path": "backend/src/main/java/com/aimanager/approval/internal/ApprovalService.java",
+        "sha256": "cdab791d069822999e487e564fc8f7d4146f9fe38fc3eccba72848f808746b00"
+      },
+      {
+        "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaService.java",
+        "sha256": "3f18e7036fe955c92d643f89380e4978ed3858baee30fde2dec9f59c94f206a1"
+      },
+      {
+        "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaPlanService.java",
+        "sha256": "7574f09fd5359c6f428f4c93a63878f22788cd5a9297a50b2fd35045ed2b4a06"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/ApprovalIdempotencyAttributionJourneyTest.java",
+        "sha256": "29e42535b73675fb35341d8d7985167f0925c37dc346e86c328506e391fa48e4"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/DeviceApprovalIdempotencyAttributionJourneyTest.java",
+        "sha256": "406c8d0c281d12acc8ff2ee6a9cd6e5fed42ceacd1df729f7253837584cc0f79"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/QuotaIdempotencyAttributionJourneyTest.java",
+        "sha256": "aa252625fa4f50ea05a4b901674ae555f258a83a3ff27372b692971711f9406f"
+      },
+      {
+        "path": "backend/src/main/java/com/aimanager/tenant/TenantAccess.java",
+        "sha256": "8127d6715d5a7f0cffe692429e9b16d3d42c106b021ddbcc1df0f52ca981ce7e"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/TenantResourceIdentityJourneyTest.java",
+        "sha256": "751f9b06c54e88cdaac69c88b3fc28304b2d03f1f1dc97dfc275c51e93741c85"
+      }
+    ],
+    "frozenAt": "2026-10-13T10:51:28.258172+00:00",
+    "revision": "real-erased-marker-and-persisted-row-oracles"
+  },
+  "sourceValidation": {
+    "sourceBase": "75efd38a2471b64c41e3ed0971dc688098490889",
+    "candidate": "D:\\codes\\mobile\\ai-manager\\.local\\p0-idempotency-full-20261013",
+    "status": "verified",
+    "validatedAt": "2026-10-13T11:04:01.290054+00:00",
+    "frozenManifestSha256": "80f0264df32c73c2e602aaa1006478e2bca2f59b930d1b3cd9cd0de8c819205c",
+    "ownedFilesVerified": 8,
+    "unchangedArchiveFilesVerified": 1178,
+    "executedResourcesVerified": [
+      {
+        "path": "db/migration/V1__initial_schema.sql",
+        "sha256": "2aba58629df21b3141d1a23551a0cf826d4565b5892468cc7f1b1aff676cb75c"
+      },
+      {
+        "path": "retention/subject-data-stores.json",
+        "sha256": "5461717b6beac5b32a702e00910d8fab9b968d3cf3a5e76b38b05fd664f961e1"
+      }
+    ]
+  },
+  "files": [
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/internal/ApprovalService.java",
+      "sha256": "cdab791d069822999e487e564fc8f7d4146f9fe38fc3eccba72848f808746b00",
+      "lfNormalizedSha256": "cdab791d069822999e487e564fc8f7d4146f9fe38fc3eccba72848f808746b00"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaService.java",
+      "sha256": "3f18e7036fe955c92d643f89380e4978ed3858baee30fde2dec9f59c94f206a1",
+      "lfNormalizedSha256": "3f18e7036fe955c92d643f89380e4978ed3858baee30fde2dec9f59c94f206a1"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaPlanService.java",
+      "sha256": "7574f09fd5359c6f428f4c93a63878f22788cd5a9297a50b2fd35045ed2b4a06",
+      "lfNormalizedSha256": "7574f09fd5359c6f428f4c93a63878f22788cd5a9297a50b2fd35045ed2b4a06"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/ApprovalIdempotencyAttributionJourneyTest.java",
+      "sha256": "29e42535b73675fb35341d8d7985167f0925c37dc346e86c328506e391fa48e4",
+      "lfNormalizedSha256": "29e42535b73675fb35341d8d7985167f0925c37dc346e86c328506e391fa48e4"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeviceApprovalIdempotencyAttributionJourneyTest.java",
+      "sha256": "406c8d0c281d12acc8ff2ee6a9cd6e5fed42ceacd1df729f7253837584cc0f79",
+      "lfNormalizedSha256": "406c8d0c281d12acc8ff2ee6a9cd6e5fed42ceacd1df729f7253837584cc0f79"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/QuotaIdempotencyAttributionJourneyTest.java",
+      "sha256": "aa252625fa4f50ea05a4b901674ae555f258a83a3ff27372b692971711f9406f",
+      "lfNormalizedSha256": "aa252625fa4f50ea05a4b901674ae555f258a83a3ff27372b692971711f9406f"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/TenantAccess.java",
+      "sha256": "8127d6715d5a7f0cffe692429e9b16d3d42c106b021ddbcc1df0f52ca981ce7e",
+      "lfNormalizedSha256": "8127d6715d5a7f0cffe692429e9b16d3d42c106b021ddbcc1df0f52ca981ce7e"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/TenantResourceIdentityJourneyTest.java",
+      "sha256": "751f9b06c54e88cdaac69c88b3fc28304b2d03f1f1dc97dfc275c51e93741c85",
+      "lfNormalizedSha256": "751f9b06c54e88cdaac69c88b3fc28304b2d03f1f1dc97dfc275c51e93741c85"
+    }
+  ],
+  "documents": [
+    {
+      "path": "docs/erasure-access-quota-idempotency-plan.md",
+      "sha256": "b314db58031a68926a2faea6b3e98f49448a51a5ddb2eae428b304f19684be42"
+    },
+    {
+      "path": "docs/data-erasure-contract.md",
+      "sha256": "6f2256bbb1b5d9834f4a86d701bbca0709ec47f08fea59771925006aac3a4b55"
+    }
+  ],
+  "operations": [
+    "access.request",
+    "access.device.request",
+    "access.device.cancel",
+    "access.decide",
+    "access.cancel",
+    "access.revoke",
+    "quota.create",
+    "quota.adjust",
+    "quota.plan.create",
+    "quota.plan.update"
+  ],
+  "distinctOperations": 10,
+  "productionCallbacks": 10,
+  "originalAuditCoverage": {
+    "executeCalls": 46,
+    "attributedBeforeThisIncrement": 1,
+    "attributedThisIncrement": 10,
+    "remainingUnclassified": 35
+  },
+  "gates": [
+    {
+      "name": "final-focused-h2",
+      "tests": 56,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 56,
+      "log": ".local/runtime/p0-idempotency-gates/final-focused-corrected/gate.log",
+      "logSha256": "4c8ed8a3d698e987b97e09c7814474990b625d9a13d8272b263d427b7abf16ed",
+      "reports": [
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-focused-corrected/TEST-com.aimanager.ApprovalIdempotencyAttributionJourneyTest.xml",
+          "sha256": "8cce1c8ab6abafea8b002f6c1f742b420af14a60968d14622ad8a1f17099181a"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-focused-corrected/TEST-com.aimanager.DeviceApprovalIdempotencyAttributionJourneyTest.xml",
+          "sha256": "9dd15c397dd1ce9f59daeff78dce1f89cdac98edc92de0835c2d79255caa404e"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-focused-corrected/TEST-com.aimanager.QuotaIdempotencyAttributionJourneyTest.xml",
+          "sha256": "47b9dfd694fd8cfb8aa5695887262e96d6407516bfa92d47b19bf242417d90ff"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-focused-corrected/TEST-com.aimanager.TenantResourceIdentityJourneyTest.xml",
+          "sha256": "82e42b21897d8bd60d5ccc3bf6921a6173b2736bb9ed7018fe45ed97dc0692e0"
+        }
+      ],
+      "skippedTests": [],
+      "exitReceipt": {
+        "path": ".local/runtime/p0-idempotency-gates/final-focused-corrected/exit.json",
+        "sha256": "4b1f9cf99caea3bc148cdaa51ee289b8e488638b9f7ef7205d8eac5fe6aed060",
+        "gate": "GREEN",
+        "exitCode": 0,
+        "completedAt": "2026-10-13T18:52:51.0865514+08:00",
+        "log": "D:\\codes\\mobile\\ai-manager\\.local\\p0-idempotency-green.log"
+      },
+      "sourceManifest": {
+        "path": ".local/runtime/p0-idempotency-gates/final-focused-corrected/source.json",
+        "sha256": "80f0264df32c73c2e602aaa1006478e2bca2f59b930d1b3cd9cd0de8c819205c"
+      },
+      "actualRunDirectory": "D:\\codes\\mobile\\ai-manager\\.local\\p0-idempotency-source-20261013\\backend",
+      "observedTerminalSessionId": 42036,
+      "testSelection": "ApprovalIdempotencyAttributionJourneyTest,DeviceApprovalIdempotencyAttributionJourneyTest,QuotaIdempotencyAttributionJourneyTest,TenantResourceIdentityJourneyTest"
+    },
+    {
+      "name": "final-isolated-mysql",
+      "tests": 56,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 56,
+      "log": ".local/runtime/p0-idempotency-gates/final-mysql-corrected/gate.log",
+      "logSha256": "8e22085a7a97b56de8818f5b0fa3d8a1edd8340b50f1cabcfb939958b02da764",
+      "reports": [
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-mysql-corrected/TEST-com.aimanager.ApprovalIdempotencyAttributionJourneyTest.xml",
+          "sha256": "8e584b41cb2e74a924d1180adf2064a24c5124a59834e2e1c64dd5822b779e11"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-mysql-corrected/TEST-com.aimanager.DeviceApprovalIdempotencyAttributionJourneyTest.xml",
+          "sha256": "9621e6401cc003957c55fca275f9935d653872d98d0b8ae4eff1d732a827b234"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-mysql-corrected/TEST-com.aimanager.QuotaIdempotencyAttributionJourneyTest.xml",
+          "sha256": "b68c9520a5083066b1f03eb4cbdfe67dd2273fadad417372c4fefcb5012f5224"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-mysql-corrected/TEST-com.aimanager.TenantResourceIdentityJourneyTest.xml",
+          "sha256": "76a182e2779bacb96598d1f919862a2dbb7a2506763edb87755ad067e682935c"
+        }
+      ],
+      "skippedTests": [],
+      "exitReceipt": {
+        "path": ".local/runtime/p0-idempotency-gates/final-mysql-corrected/exit.json",
+        "sha256": "52055cd2fcf20ffe94a918cca5ac8c6701b563b929d9caf0872ee7be3d6db479",
+        "gate": "FINAL",
+        "exitCode": 0,
+        "cleanupSucceeded": true,
+        "completedAt": "2026-10-13T18:56:42.3057457+08:00"
+      },
+      "sourceManifest": {
+        "path": ".local/runtime/p0-idempotency-gates/final-mysql-corrected/source.json",
+        "sha256": "80f0264df32c73c2e602aaa1006478e2bca2f59b930d1b3cd9cd0de8c819205c"
+      },
+      "actualRunDirectory": "D:\\codes\\mobile\\ai-manager\\.local\\p0-idempotency-source-20261013\\backend",
+      "observedTerminalSessionId": 56120,
+      "testSelection": "ApprovalIdempotencyAttributionJourneyTest,DeviceApprovalIdempotencyAttributionJourneyTest,QuotaIdempotencyAttributionJourneyTest,TenantResourceIdentityJourneyTest"
+    },
+    {
+      "name": "full-integrated-backend-verify",
+      "tests": 992,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 22,
+      "passed": 970,
+      "log": ".local/runtime/p0-idempotency-gates/final-full-corrected/gate.log",
+      "logSha256": "c9fdcee1e45c044a3216172ec04147417773704474c8a057fd99c4d2bd363e0d",
+      "reports": [
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.AccessDeliveryJourneyTest.xml",
+          "sha256": "f251e608ff5d03976ee5ea5d32e271a1b06686fe262e5648bec9b210aa0e7223"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.AndroidChildSubmissionJourneyTest.xml",
+          "sha256": "e1a6f38bcaeb732ac7c91bab160fb13f30742dec97aaff8f0da95df7b5bb8a38"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.AndroidCleanupHttpsJourneyTest.xml",
+          "sha256": "920e499a323f69d1df2e72e9330a63dad25d1506061542bd4b4024172511b8bb"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.ApplicationCatalogRecoveryTest.xml",
+          "sha256": "8e9b35123748cc5a527d13a438b8971a45f58ed84dc4448593f2b50c87098b0d"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.ApplicationClassificationJourneyTest.xml",
+          "sha256": "46f9ff28e9e422ecbde48ac67a8de13e5cdbc17a69b82b6c635df4630b857a70"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.ApprovalIdempotencyAttributionJourneyTest.xml",
+          "sha256": "94bde657d04f8c50f7529466a352c781a0be96364ee2570984565b3ddf41b270"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.ApprovalJourneyTest.xml",
+          "sha256": "64ce158cd30ba34efc378eac47489837c2ac207776e77c183c2da0b4d43261a9"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.AuditExplorerTest.xml",
+          "sha256": "2a4823b5219c37a3f337a4bc98af1c8b873b60790b22321468679907750e4f14"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.AuditExportJourneyTest.xml",
+          "sha256": "8074513eb1bd6e23cacf2ac26f6abce33232b5a513a4cf84884016be35a285ed"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.commerce.internal.CommercialCatalogJourneyTest.xml",
+          "sha256": "85114ead1049add5cc6fa18ea584ac3e910388f3bf814077d7f279ded8cae4ab"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.commerce.internal.CommercialContractJourneyTest.xml",
+          "sha256": "72c269dbd4e4c3ddd452ee82acd8a3c8074004e558cdde10717947e655d524be"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.commerce.internal.CommercialLedgerJourneyTest.xml",
+          "sha256": "801f3f0ab9be0b3e51396b452eca3ae435b5fb3c4bd78c2786283dd0fe7e026d"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.commerce.internal.CommercialOfferDraftTest.xml",
+          "sha256": "3ff08b906c9ce2006aae9c291eccc2fd4d67b4d22ec74b89be133af413142566"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.commerce.internal.ContractEvidenceVerifierTest.xml",
+          "sha256": "b0d5ff8aca1b1e2e9ad6aae53ceed1f898756ff27122ea1c9fa9a57fcf0b209a"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.commerce.internal.ContractSubmissionPolicyTest.xml",
+          "sha256": "82779ea8dbc092fc78dcfd99d9746d0cc860fa1d9830015790af8714dbdf6f1c"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.commerce.internal.PausedContractSubmissionJourneyTest.xml",
+          "sha256": "0c934517f201cbed33ae739b5b557cb06c6da914eb5298366641326d1032db40"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.ConsoleJourneyTest.xml",
+          "sha256": "1f5fc46129b76d16950c776507d31418828c4cde749dc177d5146319d988a700"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.DatabaseInitializationTest.xml",
+          "sha256": "859ca02ab58f856440b9e840db18b6137565f232fd2a9fa9b1137ad5108ccca4"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.DeliveryJourneyTest.xml",
+          "sha256": "29216b2efdd9e6ae0426a7a2e3bc2031fb223822eb5b7f3b5ac8eeb1d33aa21f"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.DeprovisionJourneyTest.xml",
+          "sha256": "c920018d738b8bf4911f2e413a4d15798826a90cfd6b0a94bec6243d458ec1aa"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.DeprovisionWithoutSigningTest.xml",
+          "sha256": "194415f3745f52959395361aaecd7a1ff13a98501d1db2d2d5b33cc334a15afd"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.DeviceAccessContextJourneyTest.xml",
+          "sha256": "731e91b59ef10b1267b7623469715ca35a9b319d93a8d7f8cf64430dae550507"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.DeviceAccessHttpInteropTest.xml",
+          "sha256": "ccf7947980593f19b7320896660123fde299ec054e9c11e44f664e741dc126cc"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.DeviceAccessSubmissionJourneyTest.xml",
+          "sha256": "1e7c7c180e632c81c79927cc5ff5e38b1549bde851b6901f4c582ea7cac106f4"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.DeviceApprovalIdempotencyAttributionJourneyTest.xml",
+          "sha256": "55195c093cb18f0040f868537205ee81e6cc189d06a452fd1e53836d1a0a7769"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.DeviceConfigurationHttpInteropTest.xml",
+          "sha256": "628c1ee73e51288142914b86f9eb7af474c64e2adcbb30d7e0555e6d662addd7"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.DeviceGroupRecoveryTest.xml",
+          "sha256": "7a8050cedce7bfd4080ee40868a6f652255eaaf6461aab5401d01c141ad4540a"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.DeviceIdentityHttpInteropTest.xml",
+          "sha256": "e8df068c3d83ba4063b970283b3e447d2f6b9e2d45b05c1c8415a4ebfe439559"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.DeviceObservationHttpInteropTest.xml",
+          "sha256": "d3a960d65ee3dcab53c7f7404dbfb460b78444823808487d21ccbe3b0423d783"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.DeviceObservationJourneyTest.xml",
+          "sha256": "a45e95c7d09cf85979d91429dca6e10fa852f600271fc92704d5316997b1a183"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.DiagnosticPreviewJourneyTest.xml",
+          "sha256": "47afa277db36091c41523403550a8cd716e415b19f0feaff0aeafcfbf68cb8d0"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.FleetJourneyTest.xml",
+          "sha256": "3a303ab7fc81e5410fa421517c706e9a6f5fddc5c76106be7d62a7cb18152ba7"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.HelpRequestJourneyTest.xml",
+          "sha256": "f0ce9a641ae63a595cbfc0999420c937359b3326123810b18a80d8f258cb8dd4"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.idempotency.IdempotencyOwnershipTest.xml",
+          "sha256": "ae4f7e8efe46dc38c242590834233ea7fb645fe178cccb547197fc192b18b88b"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.identity.IdentityJwkEndpointTest.xml",
+          "sha256": "79e3f4d27ca32f20fd276c00a04c727d102f625c11d4e2b818133a561b76f908"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.identity.IdentityTokenValidationTest.xml",
+          "sha256": "51d4ac595065943d6c9d52040cc5fe5cf7c5c3a20aa6e4bb5392da69267820af"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.InventoryJourneyTest.xml",
+          "sha256": "7ce27bcc818a0a41dbcd655f6870ba919d47d27a10a1ac620c55334beac46e59"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.managedandroid.GoogleManagedAndroidGatewayTest.xml",
+          "sha256": "5d2becf58f17853c753b6678c5c34a229c12bf022a2549eb3ef7bcc9463371e9"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.managedandroid.internal.ManagedAndroidConfigurationTest.xml",
+          "sha256": "adf34fa790a56d144dd764c6fec4e0cb1b2cf21d8bfcf0f28cf3f0d91b246dbb"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.MemberAccessJourneyTest.xml",
+          "sha256": "82beae0d9fcbfa913fabd597705a0f41c03f4235e1402cc2d94693e83c1dba2c"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.MessageRegistryTest.xml",
+          "sha256": "c6de4277eeaeb39c77fd4694b7a5d40c627bad9b8fe1f786b42b421ff8196f04"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.messaging.internal.ArtemisNotificationPublisherTest.xml",
+          "sha256": "f6bea5f3791b16721667a9f8c3cc7e7a82bb4cb34f997a35017d5c8af5b2cab3"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.ModuleBoundariesTest.xml",
+          "sha256": "efe24acf6670cbe4d65dddc829ad1188a19896f827eac7330137494839c445a8"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.NotificationJourneyTest.xml",
+          "sha256": "7a173ee645a299af4c9fa5f241235d8059b6cf4caeb517c37c999d162f4853c8"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.ObservationRecoveryTest.xml",
+          "sha256": "b03d6ac3fe11044103d9ba5f17a1ca5a99008adbde156459b18d063373fdf802"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.OrganizationJourneyTest.xml",
+          "sha256": "2603853db2861bd00db657afa6851326612ad9ba5c38b94c7b0aae730ec1e02f"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.OwnershipTransferJourneyTest.xml",
+          "sha256": "d7e820c204d2736735e3dc2528ef608b46bd54306d5688954b559ecb7c75103f"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.ParentObservationHttpInteropTest.xml",
+          "sha256": "a52778c6ac6a82416f7df1f3e417a7e64418f1d695f5ee2a3b3698168bf9fa8c"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.policy.internal.PolicyPreviewValidationTest.xml",
+          "sha256": "14220b4f94fd1281a8558f378cf8b2c41a8c879b26a782b6396c2a857249bfb7"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.PolicyJourneyTest.xml",
+          "sha256": "90a88db59eaed448e8294c44bad3f9a2e912463a6c2fc644c4b6776bc0ee8e9b"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.QuotaConcurrencyTest.xml",
+          "sha256": "9dfc2f3eb6e307474c03336eeead03e8e5e95a18b5e3fa3a19023b7afa6859ae"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.QuotaIdempotencyAttributionJourneyTest.xml",
+          "sha256": "070cbde4a518a8afbd6572eb4e00af7e89ea3d0789b11278449113b2a29246dd"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.QuotaJourneyTest.xml",
+          "sha256": "59ede65f4e702787140d69fd6c4e2e538d3adcb303db2b62d994e1cfb603aa70"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.QuotaPlanJourneyTest.xml",
+          "sha256": "6ffcf4a38c459aaa7dc2110964fd9111c457f2fd979cbfffe181bf2821b45ada"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.reporting.internal.ExportHeadConcurrencyTest.xml",
+          "sha256": "8524bc73fb42809155c8a4427212093f8d63aa149eba29ad6f522808d9a04114"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.reporting.internal.UsageAggregationTest.xml",
+          "sha256": "527ffaedf29dbfe32f48176391edae8615bcad4cd2902d4402b6517f72e7a233"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.retention.internal.ErasureAccessQuotaProcessorTest.xml",
+          "sha256": "956157934a2977882e8ca4d37982174da347db9f282b4f1cf4feb3a90da4601a"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.retention.internal.ErasureAdmissionStoreTest.xml",
+          "sha256": "6a581d3e0478e51b1c9c90caa7d8079c84e5b87f67612dc12d7cdbe99cbaa26f"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.retention.internal.ErasureConfigurationProcessorTest.xml",
+          "sha256": "fcc5e078a3a298006019294b62118c80ad53ee5bbca3f536b220dc90b2dd63de"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.retention.internal.ErasureDeviceIdentityProcessorTest.xml",
+          "sha256": "2afbb21cc7726617ca4cb8a0e1a2069e3d86c653d4ac24bf181a6e23f86ea72b"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.retention.internal.ErasureIdempotencyProcessorTest.xml",
+          "sha256": "95a0448dd6220b8f99933d51c1bff3e95078a73b54ca5dfc27174f47982596a7"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.retention.internal.ErasureLedgerRuntimeTest.xml",
+          "sha256": "2db79c4e39ec6bb6191daa87bae02ca5ed79d43456ef4a9d9793fdf449e7237a"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.retention.internal.ErasureLedgerStoreTest.xml",
+          "sha256": "e8c9cc46ab31f9969f18ba29edce5b0d81bfe86ed5851efaee7ebd35d7d5a1f3"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.retention.internal.ErasureLifecycleProcessorTest.xml",
+          "sha256": "67f7494ca53939f727b06a21ee1cb921adebfffbdca59efaf65bbdb52a078a88"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.retention.internal.ErasureObservationProcessorTest.xml",
+          "sha256": "806ff9369e4a538735b4e24123ba35194304757cf2c45aa207ae37618c9d186d"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.retention.internal.ErasurePermissionObservationTest.xml",
+          "sha256": "3582facb7a546f99d3e64889d69594fcd959dd513d8b37a1f0a7f5868b6fc04a"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.retention.internal.ErasurePreflightJourneyTest.xml",
+          "sha256": "1d77618075441e3471cab885c921f53fcac108479eb6798b155bb04ea5d2610f"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.retention.internal.ErasurePreviewJourneyTest.xml",
+          "sha256": "1b1967e532557a923df139495bd647b56261b277c1934f2e89c1439a733970a7"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.retention.internal.ErasureRecoveryBatchTest.xml",
+          "sha256": "ffa655cf94c3a4a1a51532e927c0bb6ba1d2e2e2e3f3916dde3ec5cfa7c1ffc5"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.retention.internal.ErasureRecoveryJobsTest.xml",
+          "sha256": "0eb68401724ef50009e0105f678438204ea147f5718366bf8cc4887524880f21"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.retention.internal.ErasureRuntimeWebTest.xml",
+          "sha256": "77debcb484a7569d101971ac3430c902862c040bc1ab60d393663ec9075b1bf3"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.retention.internal.ErasureStartupGuardTest.xml",
+          "sha256": "348d0cb7464db18a5d52dae457375a1d5d564b62ee8dbd055523be152c9d6c5d"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.retention.internal.ErasureSupportDiagnosticsProcessorTest.xml",
+          "sha256": "873802df03d012296032b61930088a32909f00a53efb8a7fd332245c7cec54ec"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.retention.internal.ErasureWorkAdvisorTest.xml",
+          "sha256": "6473b8f0b1bc36e1d4b7a2dfff3e52b39eb40943a5189f53730fbe65bc3060da"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.retention.internal.ErasureWorkScopeTest.xml",
+          "sha256": "573e62585ccac3a682e2b7d8cccc5eea119d79749ce8a392e86e67f4f7fdee9e"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.ScheduleTest.xml",
+          "sha256": "0be414bd3b689b957f85332304eeb02a10e6a6ccf999b9ba5eadf60fac2d4220"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.signing.ConfigurationSignerTest.xml",
+          "sha256": "f2e15726ff961fb69ca05857dcc2fc93eac8b27533311dfde1d72ee897bb1537"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.SubjectIdempotencyAttributionJourneyTest.xml",
+          "sha256": "be0a13b66daa5153cc994a981c14bb5684b5a4571cd1a9016fe549af29f2b909"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.support.internal.DiagnosticPackageCipherTest.xml",
+          "sha256": "1e3f9e7e63aed0aba3708c442478aa40be931804b8d12b946b4f23f6f7b4347f"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.support.internal.DiagnosticPackageJourneyTest.xml",
+          "sha256": "d93a8e34e5bad12a3139db968d4b9e2f442eb1d87559d6cafff1ff09ce2d11b0"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.support.internal.DiagnosticProjectionTest.xml",
+          "sha256": "cd3dd5692524f11194b0e2fe5b467601b48862e466da336c4ca35e016f80440a"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.SupportGrantJourneyTest.xml",
+          "sha256": "a4f19de83c46d40a10222abd263eca0f43f00f0e971485154f397b3d22fe8c4a"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.SupportPairingJourneyTest.xml",
+          "sha256": "cc951718d112b16b4e207ee977051c514a5517d47d8c0d4ad271f36e44d8fd85"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.TeacherAccessJourneyTest.xml",
+          "sha256": "a42cd5f9faffb9cd9127e10882369f11a10af7818e1e6fc27bb8f5cd84cba16f"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.TenantJourneyTest.xml",
+          "sha256": "09122af4b396c38097f81c88cbf16dc9a8a113f171dd8f39f25ebb250f1d8eca"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.TenantResourceIdentityJourneyTest.xml",
+          "sha256": "ef84e2a1a4ee252d09a4aae98457d556098d9b649000c36de4ea8fc3519c1545"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.UsageReportClientCommandTest.xml",
+          "sha256": "c3af5ff24673b15f47ce062b67588a0953256012f616abd67e1e9397b95e0608"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.UsageReportJobJourneyTest.xml",
+          "sha256": "5fa6f6cd0e7fb81129650eb6cfeb6af339835a5b29c9a3d5e82b8dda3fc7de2a"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/TEST-com.aimanager.UsageReportJourneyTest.xml",
+          "sha256": "9f8dce863296de0be3c3d00ecd832284e9a27ed58431f56a91f606843caf36bd"
+        }
+      ],
+      "skippedTests": [
+        {
+          "className": "com.aimanager.AndroidChildSubmissionJourneyTest",
+          "test": "realEnrollmentNativeCrashRecoveryAndRevocation",
+          "reason": "System property [device.android.runner] does not exist"
+        },
+        {
+          "className": "com.aimanager.AndroidCleanupHttpsJourneyTest",
+          "test": "nativeOriginalKeyExecutesRealHttpsCleanupAndRetainsAcknowledgedJournal",
+          "reason": "System property [device.cleanup.android.runner] does not exist"
+        },
+        {
+          "className": "com.aimanager.DeviceAccessHttpInteropTest",
+          "test": "realApprovalRetryReceiptsRevocationExpiryAndOpaqueRevocation",
+          "reason": "System property [device.access.package] does not exist"
+        },
+        {
+          "className": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+          "test": "actualDartSubmissionAdultDecisionAndExistingDeviceDeliveryReference",
+          "reason": "System property [device.access.package] does not exist"
+        },
+        {
+          "className": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+          "test": "actualChildUiRecoversOriginalCancellationAcrossProcesses",
+          "reason": "System property [device.child.package] does not exist"
+        },
+        {
+          "className": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+          "test": "actualChildSessionAndUiRecoverOriginalSubmissionAcrossProcesses",
+          "reason": "System property [device.child.package] does not exist"
+        },
+        {
+          "className": "com.aimanager.DeviceConfigurationHttpInteropTest",
+          "test": "realDeviceTransportStoresTwoPagesAndRejectsRevokedCredential",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "className": "com.aimanager.DeviceIdentityHttpInteropTest",
+          "test": "actualEnrollmentRecoveryConfirmationRotationAndRevocation",
+          "reason": "System property [device.identity.package] does not exist"
+        },
+        {
+          "className": "com.aimanager.DeviceObservationHttpInteropTest",
+          "test": "adultConsentDeviceLostAcknowledgementReplayWithdrawalAndRevocation",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "className": "com.aimanager.DiagnosticPreviewJourneyTest",
+          "test": "productionDartClientReadsRealHttpAndRechecksCurrentAccess",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "className": "com.aimanager.ParentObservationHttpInteropTest",
+          "test": "lostResponseRecoveryAndWithdrawalThroughParentController",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "className": "com.aimanager.retention.internal.ErasureAdmissionStoreTest",
+          "test": "leastPrivilegeRuntimeCanDrainWorkButCannotRewriteAcceptedRecords",
+          "reason": "Environment variable [NOTICE_IT_ROOT_PASSWORD] does not exist"
+        },
+        {
+          "className": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+          "test": "mismatchedIdentityAndMissingLedgerAreReportedWithoutAutomaticRecreation",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "className": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+          "test": "servletAsyncCannotEscapeTheRegisteredSynchronousPermit",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "className": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+          "test": "acceptedLedgerStopsAuthorizedBusinessRequestsWithoutDeletingTheirData",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "className": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+          "test": "realHttpRequestDrainsBeforeAcceptanceAndProbesRemainAvailable",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "className": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+          "test": "nonTransactionalEngineIsRejectedBeforeAppending",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "className": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+          "test": "initializationPinsTransactionalEngineEvenWhenServerDefaultDiffers",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "className": "com.aimanager.support.internal.DiagnosticPackageJourneyTest",
+          "test": "productionDartClientCompletesPackageLifecycleOverRealHttp",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "className": "com.aimanager.SupportGrantJourneyTest",
+          "test": "productionDartSupportClientCompletesRealHttpGrantLifecycle",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "className": "com.aimanager.UsageReportJobJourneyTest",
+          "test": "realHttpJobsAreConsumedByProductionDartClient",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "className": "com.aimanager.UsageReportJourneyTest",
+          "test": "realHttpResponseIsConsumedByProductionDartReportClient",
+          "reason": "System property [device.dart.command] does not exist"
+        }
+      ],
+      "exitReceipt": {
+        "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/exit.json",
+        "sha256": "71af99d15431c4d8ef10cb1f48172e8c2f263496c891446120169d134bc204dd",
+        "gate": "FULL",
+        "exitCode": 0,
+        "completedAt": "2026-10-13T19:03:11.6519898+08:00",
+        "log": "D:\\codes\\mobile\\ai-manager\\.local\\p0-idempotency-full.log"
+      },
+      "sourceManifest": {
+        "path": ".local/runtime/p0-idempotency-gates/final-full-corrected/source.json",
+        "sha256": "80f0264df32c73c2e602aaa1006478e2bca2f59b930d1b3cd9cd0de8c819205c"
+      },
+      "actualRunDirectory": "D:\\codes\\mobile\\ai-manager\\.local\\p0-idempotency-full-20261013\\backend",
+      "observedTerminalSessionId": 67115,
+      "testSelection": "all backend tests: clean verify"
+    }
+  ],
+  "observedRedRegressions": [
+    {
+      "name": "unattributed-adult-and-quota",
+      "tests": 39,
+      "failures": 13,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 26,
+      "log": ".local/runtime/p0-idempotency-gates/first-red/red.log",
+      "logSha256": "6c0f52380eb3df0ac7f1435508af52701d8d6a61a1a7d26ea6b6d2dada314513",
+      "reports": [
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-red/TEST-com.aimanager.ApprovalIdempotencyAttributionJourneyTest.xml",
+          "sha256": "7930759c7b74f93af4d17b05172f9093b9b4ca03e4439a3b1ddc90c677fae34c"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-red/TEST-com.aimanager.QuotaIdempotencyAttributionJourneyTest.xml",
+          "sha256": "662325662fc995c5fcda8f23cd4d40a0989fbb7173889b91f6a6a8b3b7dd0547"
+        }
+      ],
+      "skippedTests": [],
+      "exitReceipt": {
+        "path": ".local/runtime/p0-idempotency-gates/first-red/exit.json",
+        "sha256": "6fb87e9e034358368549b0a8df65fb95d6ddea039888432b7739cd9a5759780b",
+        "gate": "RED",
+        "exitCode": 1,
+        "completedAt": "2026-10-13T18:24:11.0843008+08:00",
+        "log": "D:\\codes\\mobile\\ai-manager\\.local\\p0-idempotency-red.log"
+      },
+      "observedTerminalSessionId": 96686
+    },
+    {
+      "name": "unattributed-device",
+      "tests": 13,
+      "failures": 9,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 4,
+      "log": ".local/runtime/p0-idempotency-gates/device-red/red.log",
+      "logSha256": "1d45e2513704685ceedde96e632cf47b6e0f77eb6c717178bf1166fedd1415f7",
+      "reports": [
+        {
+          "path": ".local/runtime/p0-idempotency-gates/device-red/TEST-com.aimanager.DeviceApprovalIdempotencyAttributionJourneyTest.xml",
+          "sha256": "778b747829a06f394a6d1af33ccc640a6a956d6cdd5432e697586e0180b0a290"
+        }
+      ],
+      "skippedTests": [],
+      "exitReceipt": {
+        "path": ".local/runtime/p0-idempotency-gates/device-red/exit.json",
+        "sha256": "55349a87a026659784f64414f7f31da8e3cc86647710b324b8e34db11796401b",
+        "gate": "RED",
+        "exitCode": 1,
+        "completedAt": "2026-10-13T18:27:26.4682994+08:00",
+        "log": "D:\\codes\\mobile\\ai-manager\\.local\\p0-idempotency-red.log"
+      },
+      "observedTerminalSessionId": 88306
+    },
+    {
+      "name": "mysql-uppercase-tenant-alias",
+      "tests": 2,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 1,
+      "log": ".local/runtime/p0-idempotency-gates/resource-alias-red/red.log",
+      "logSha256": "0d8eef80073d37b4dc35784b828d671783bdf9bef4c7deef6653c8cf4cd2d5b4",
+      "reports": [
+        {
+          "path": ".local/runtime/p0-idempotency-gates/resource-alias-red/TEST-com.aimanager.TenantResourceIdentityJourneyTest.xml",
+          "sha256": "77f4017060025c890553de1b429f7cfd141cf2195e7501708b6401047b10f8b2"
+        }
+      ],
+      "skippedTests": [],
+      "exitReceipt": {
+        "path": ".local/runtime/p0-idempotency-gates/resource-alias-red/exit.json",
+        "sha256": "0c58b0d5a525b5d2e1fd3d8c88c99a46255d80ec6ad99b233845aeeb18778fba",
+        "gate": "RESOURCE_RED",
+        "exitCode": 1,
+        "cleanupSucceeded": true,
+        "completedAt": "2026-10-13T18:31:08.0804331+08:00"
+      },
+      "observedTerminalSessionId": 22610
+    },
+    {
+      "name": "adult-tenant-scope-shortcuts",
+      "tests": 4,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 2,
+      "log": ".local/runtime/p0-idempotency-gates/tenant-shortcuts-red/red.log",
+      "logSha256": "180f011633f150222249b9f3d3f9866a49512a12077666a412d841eaafbafac1",
+      "reports": [
+        {
+          "path": ".local/runtime/p0-idempotency-gates/tenant-shortcuts-red/TEST-com.aimanager.TenantResourceIdentityJourneyTest.xml",
+          "sha256": "c39aeb19b82303c5595cf838390b9a5f30914b3b71144cadc0a4ddb0c9926d38"
+        }
+      ],
+      "skippedTests": [],
+      "observedTerminalSessionId": 96347
+    }
+  ],
+  "supersededPredecessorGates": [
+    {
+      "name": "predecessor-full",
+      "tests": 992,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 22,
+      "passed": 970,
+      "log": ".local/runtime/p0-idempotency-gates/first-full/gate.log",
+      "logSha256": "ad70b3364b33bcc56ad6ebf3072d23bca350f93036891eae76a0a55552e11f0b",
+      "reports": [
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.AccessDeliveryJourneyTest.xml",
+          "sha256": "965c6fc4be51f5084b5c245b91ca9587b2c21dc2bc3abddbb8e12293b9b37907"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.AndroidChildSubmissionJourneyTest.xml",
+          "sha256": "0872e5d5bffa00da9ded907c29773abcd5a8d5878f06896507cca7f50aa146a4"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.AndroidCleanupHttpsJourneyTest.xml",
+          "sha256": "b13df72ae0a3c446d73937ea6f0e78c5c204a8eb6e97df158be3c8431d944098"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.ApplicationCatalogRecoveryTest.xml",
+          "sha256": "d75b99e0714ab926b218482b7f50896edf28c8c4566d26c108c8f8a9a1732362"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.ApplicationClassificationJourneyTest.xml",
+          "sha256": "e3a05acee41d2841e19eac0e3a18b5e64c5387da27dd80101ea6c271846482fd"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.ApprovalIdempotencyAttributionJourneyTest.xml",
+          "sha256": "5f1acb0954a9626d6a151baf1e734d53c2e47a7c19381f43bbc6fbef2cdb6ac4"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.ApprovalJourneyTest.xml",
+          "sha256": "36a61bd1353cb97722447946d4c155a3e3ecd456d29278679bf3f27f6842d9a6"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.AuditExplorerTest.xml",
+          "sha256": "e130617258cefa5160b47f1acc94380fccbdaf72bb54d7abbf06200ac52aba60"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.AuditExportJourneyTest.xml",
+          "sha256": "ec78b4af892b57239ed61a92af6022478350a00ec51d22b454613816e852cd00"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.commerce.internal.CommercialCatalogJourneyTest.xml",
+          "sha256": "63be1cf5c49623b576f0c7332d6cd41ac1e7854f1453f6fa3e80d4fd0e3e443f"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.commerce.internal.CommercialContractJourneyTest.xml",
+          "sha256": "faf423dc0bcaff11ebe45d90d62cb886e79d02b575a611e0c385c3aff9c79965"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.commerce.internal.CommercialLedgerJourneyTest.xml",
+          "sha256": "1aa6a8b261e9f4aca77b4f76b8f2c9d5634a25e1fa8321538165901bb243ca14"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.commerce.internal.CommercialOfferDraftTest.xml",
+          "sha256": "def74ffb48fbb16fa32568c04357e13db58d7f691f7d42b2de0df580c6febf9f"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.commerce.internal.ContractEvidenceVerifierTest.xml",
+          "sha256": "2bd1127ba193a61235063e2f407244816b712e31be84442540bf6c53c9aa8ab5"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.commerce.internal.ContractSubmissionPolicyTest.xml",
+          "sha256": "357382eb0cf09076a14c0278b423e8f300ff60e450cb2b39b74fdc238c377e6d"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.commerce.internal.PausedContractSubmissionJourneyTest.xml",
+          "sha256": "20a424b076b3322aa6aeda64581376de511202107c758a653edc3a7dec36e5af"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.ConsoleJourneyTest.xml",
+          "sha256": "01d3bf7b6e03428ea0a236a8afd6a3aa500f16ea94e10be8e1af8163fc3682f9"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.DatabaseInitializationTest.xml",
+          "sha256": "f1fb44e416f5d48a12c6a6d5977cb66aad2b78cc0db50379db0dd77827f3ec91"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.DeliveryJourneyTest.xml",
+          "sha256": "47edb2456b97801cc8da0e06dabbbba8a428d5af5ba096f16b8aad96872cb80a"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.DeprovisionJourneyTest.xml",
+          "sha256": "c1073026b01e774b75ebed59a6ee8ee8e3151f8baa1c98a759abfd24c21ae6e0"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.DeprovisionWithoutSigningTest.xml",
+          "sha256": "d5e3ff44744dccffbcb1a4afbfc70b82bf3311582022bb8b7851893db42f0d4a"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.DeviceAccessContextJourneyTest.xml",
+          "sha256": "374794ced0c4550ef68f01ce433f8d83d516506e5406c87e1becd30928246544"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.DeviceAccessHttpInteropTest.xml",
+          "sha256": "25824bdb71a3e336444dc3fb4c35babd5502076be910f6377eb164a65f77e44d"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.DeviceAccessSubmissionJourneyTest.xml",
+          "sha256": "fe9071a16634005817089ea7dbdebc58073e6a1b078460a0ee5206a8ded4489c"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.DeviceApprovalIdempotencyAttributionJourneyTest.xml",
+          "sha256": "699c0ec531d8af3c7c53a2d1e62ffde29ff80cd8ebb272dad9323399dbaf4c72"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.DeviceConfigurationHttpInteropTest.xml",
+          "sha256": "7a5e28b70be3f921b54600336fdee4133fa932b1fd2486be3feff958ff85e4a9"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.DeviceGroupRecoveryTest.xml",
+          "sha256": "570c815aee3a08c950a7a65287cde5082d75a830adbe0dc283b98b775a2308ae"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.DeviceIdentityHttpInteropTest.xml",
+          "sha256": "e8df068c3d83ba4063b970283b3e447d2f6b9e2d45b05c1c8415a4ebfe439559"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.DeviceObservationHttpInteropTest.xml",
+          "sha256": "113667133ed52f7ff438f697fec58bf37fe5e17475d79d7bda0c183d93232134"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.DeviceObservationJourneyTest.xml",
+          "sha256": "102e428226446929ac58ec059c1950ce53d6c5c672fc28a3cd909a787b126e4b"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.DiagnosticPreviewJourneyTest.xml",
+          "sha256": "a820a9fc86378d787cf07dd9e4fbc1730298e3037e73f7a71be8690a616a1c27"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.FleetJourneyTest.xml",
+          "sha256": "cc9387541acc27edd4da0e3300506ae875c1265dd93af8e276d434e1710bd6c9"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.HelpRequestJourneyTest.xml",
+          "sha256": "d5f6888953dbff81ce715b78d00eabb49871c44c0716cd1aea4e9fecde79ff95"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.idempotency.IdempotencyOwnershipTest.xml",
+          "sha256": "446562a7b3c44256690c4138cb79a9a05db3ce22a10cadb715a7d83d7b5b17e7"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.identity.IdentityJwkEndpointTest.xml",
+          "sha256": "1cc8f3b856b19662a6db8517522b931491a125b2d260b8615e7ee89d80d79607"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.identity.IdentityTokenValidationTest.xml",
+          "sha256": "2d6d3239ec47b4f0388581e5a35fabf29ebded0b5695fdf64e6df6201b180ed8"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.InventoryJourneyTest.xml",
+          "sha256": "ed08b01f8aa805ce620d85ab94ab048ed486ad902e76e60a5335258050075cbf"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.managedandroid.GoogleManagedAndroidGatewayTest.xml",
+          "sha256": "0e07c861baa6fda50a3b0350a1a23c37dd8b4155899fe80b6e0df913b90e5ee7"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.managedandroid.internal.ManagedAndroidConfigurationTest.xml",
+          "sha256": "60df6c005d9c0f178066203c8b25a16f698841f4279a77a071fa2e923d4b4aee"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.MemberAccessJourneyTest.xml",
+          "sha256": "ccbcfd31c4d487f986ba71877ae5b230fde14e548218c5cd4bd1a1bb5120f1fe"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.MessageRegistryTest.xml",
+          "sha256": "df7a24ad6472fd18e92a2c12d21cffbb0168a4fe223cc050e721650e6a916494"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.messaging.internal.ArtemisNotificationPublisherTest.xml",
+          "sha256": "82b07a0e994a514627aef4c27ab92772fdff66c783cefd59369880aaa3705ae1"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.ModuleBoundariesTest.xml",
+          "sha256": "d888e996de2fe7524d8c0e9cbbf464d8e14721fdbac0afdadd6eb0441d70f4ac"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.NotificationJourneyTest.xml",
+          "sha256": "020666bdcd10dcc1e894f027b8558a770d952731d0f84df82455f852aafba0c2"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.ObservationRecoveryTest.xml",
+          "sha256": "27e1472f18d96b237d2366afe098664a80aafb6423deac395af8cf52e25f3466"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.OrganizationJourneyTest.xml",
+          "sha256": "ef812303f7197d45434ec59f8aa77599eadec3db359ffbc30b984b56d74913a0"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.OwnershipTransferJourneyTest.xml",
+          "sha256": "d3da2226392ddea4626a1ceafb5bec7fc8ab7bf0615a6f8b0895212d8bf2b58b"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.ParentObservationHttpInteropTest.xml",
+          "sha256": "512e70b8a7faf9b7d213d7ab20ad3544a27f3f39b7940344c0aea19d4ac9272c"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.policy.internal.PolicyPreviewValidationTest.xml",
+          "sha256": "3acf4bcb0df94f41e5b5fc0219e8df47e010b4d56ce2d42911104b7f3b29d704"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.PolicyJourneyTest.xml",
+          "sha256": "ccd9cf6acb9af730988a34a1bbcf14f142f5f6781dde01e58e115218cfdd91f9"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.QuotaConcurrencyTest.xml",
+          "sha256": "460deb105927cd56d1bbdc839b07b438ee1b2553b805019dd63509b21fc8877c"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.QuotaIdempotencyAttributionJourneyTest.xml",
+          "sha256": "8e980d5c23e8f527f485ad3236609bdc9e20754d2221549a80e863d65cfbf7be"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.QuotaJourneyTest.xml",
+          "sha256": "7a9462f7154d3155a5e0848315fdbb67967c4e4780afa73035b9d68d8cffeda3"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.QuotaPlanJourneyTest.xml",
+          "sha256": "cd80519753adb82091c52623f9447b1aadedba4e8d3314d28e4db2c6bb9c8d8d"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.reporting.internal.ExportHeadConcurrencyTest.xml",
+          "sha256": "6e84989c6d2169e3cc2e23d15d87d7a4b7e581310ce0f9c3a7d1e207eb6ad7fa"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.reporting.internal.UsageAggregationTest.xml",
+          "sha256": "9809a9b7cf7f281abd055d98073364e721bfd7147cdd1b42c659a204fe3ca0e3"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.retention.internal.ErasureAccessQuotaProcessorTest.xml",
+          "sha256": "afc9e6131fae94dca29efc28ff972c2f55467077618fd9fed348fb19c4e3fafe"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.retention.internal.ErasureAdmissionStoreTest.xml",
+          "sha256": "25f4fa40e5710aafc729be0575eb187ef6965675224accf34ebc6419f8bd1658"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.retention.internal.ErasureConfigurationProcessorTest.xml",
+          "sha256": "312b9762057ae88dca93bf07f32351b5ebde0f8f9acc02fb8c1845c6f8dca2ef"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.retention.internal.ErasureDeviceIdentityProcessorTest.xml",
+          "sha256": "f305c12edd2939d7f3bd59b7c8f406e4da213b80c6fe312c4dab98b619ef9604"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.retention.internal.ErasureIdempotencyProcessorTest.xml",
+          "sha256": "cfa6c1f135fc47d2dc84e3701de4424d2c07952b700dd35b4a7d926387e5a0c7"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.retention.internal.ErasureLedgerRuntimeTest.xml",
+          "sha256": "a850e4bd892d58a5df169426cc83ce7a3b32ab742a03e61d30ee81f580b1f778"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.retention.internal.ErasureLedgerStoreTest.xml",
+          "sha256": "22c7409d0636f88a14d74eca463777825c52e62039c4dbefbf866408b173c1d3"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.retention.internal.ErasureLifecycleProcessorTest.xml",
+          "sha256": "64c28ea1073fbf1f45f82e8e5b97a28450b558b1b2d8143c50fccfa69cd0d048"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.retention.internal.ErasureObservationProcessorTest.xml",
+          "sha256": "d3d802c0674d37636814a72b5dc78553ad661aa052256f416253263d777ad609"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.retention.internal.ErasurePermissionObservationTest.xml",
+          "sha256": "4f4c16042e1dd9417927edd66bc999c839186d56e33122cb538776555183046d"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.retention.internal.ErasurePreflightJourneyTest.xml",
+          "sha256": "97ecb6391f04c7b274e4eb0510db5129bb67a599e25ef326bc2bcec6def729cf"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.retention.internal.ErasurePreviewJourneyTest.xml",
+          "sha256": "2e7777546e32e563cd9dd3358ffe7197916a41f194fe881f9b792fbdb82eed20"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.retention.internal.ErasureRecoveryBatchTest.xml",
+          "sha256": "00306f5f5f2283f44826d87a531a3ecb46b35175c939d86ae9adc037e26475be"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.retention.internal.ErasureRecoveryJobsTest.xml",
+          "sha256": "7095fb3892b522e25edbb11719e557117866a64e06722eaa9ba1785cd98f0226"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.retention.internal.ErasureRuntimeWebTest.xml",
+          "sha256": "657c27f2ed0a3de5bacd943dc1204562776c024604e371c44e8a6e8ef1598e44"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.retention.internal.ErasureStartupGuardTest.xml",
+          "sha256": "2736be5ebb966ef2b503e576295fba14ca95f7f6add3508d29459245a1fa1958"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.retention.internal.ErasureSupportDiagnosticsProcessorTest.xml",
+          "sha256": "d5ac5b8e7d9d0fa9964711eac7203a0bc316fbf320b2a7045a4c0eb64e166699"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.retention.internal.ErasureWorkAdvisorTest.xml",
+          "sha256": "7a9d0638ced862e676fb550a895171ab0f4f338da5093216cff3b36fca60c6e8"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.retention.internal.ErasureWorkScopeTest.xml",
+          "sha256": "e751fe8da6c25e74337107a5d0b08e172180491c6d86ce420fa4a7bf4d83b2d2"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.ScheduleTest.xml",
+          "sha256": "764b0ddd17bd87eb4af080d89ec2859b4cdf6e1771514bf78211770735aa334d"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.signing.ConfigurationSignerTest.xml",
+          "sha256": "ac1b07e4b59e5f149d67dc5564d6ad95ed02991809c5d1031392a9f7363d5122"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.SubjectIdempotencyAttributionJourneyTest.xml",
+          "sha256": "060bfe62803d09418c2782f5a9348c6b846900d115ce97a6c6d0690334d32ea8"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.support.internal.DiagnosticPackageCipherTest.xml",
+          "sha256": "8d0fb3f901b61e09e625d72021ec2f13a2cc6824c49fcfa73ecfb8ecbcf58f2b"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.support.internal.DiagnosticPackageJourneyTest.xml",
+          "sha256": "8c3bfe621d674715e28cff1c16864f530e9a1bad99fbf235ddf2bca529d362a7"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.support.internal.DiagnosticProjectionTest.xml",
+          "sha256": "72d2f3d37a045423ed16d8b1bd1dce7a3dba13a410f23240c5239770000c952c"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.SupportGrantJourneyTest.xml",
+          "sha256": "d969461430dcc455afa3e56d7c1bacebd06ff066a8cb697682cb8cf467b01bb3"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.SupportPairingJourneyTest.xml",
+          "sha256": "760e8aea1b8ece4f41221de868c72143432cd270a12beb9415419fa12c8d9b74"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.TeacherAccessJourneyTest.xml",
+          "sha256": "d9dc2e4d374d432fc0dd789d76083c91993f27ccefc4249cb037404a762e2be4"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.TenantJourneyTest.xml",
+          "sha256": "736c2ec6e33102183bd31d04152e40460b4bae647336094f9dad1d59fd99f9a9"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.TenantResourceIdentityJourneyTest.xml",
+          "sha256": "d4a8bd7add815ae260bbf4dcd16cf42f07a6a312eb6784b111c50fff131dc170"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.UsageReportClientCommandTest.xml",
+          "sha256": "449d22f0e19b066229f8d17455939a5a2907a723bc5308f302cf194ba0f0648e"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.UsageReportJobJourneyTest.xml",
+          "sha256": "1706549ba77b0517cb80a87a0761f8fa54a7fe462f796f4855100d8fe33cad9b"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-full/TEST-com.aimanager.UsageReportJourneyTest.xml",
+          "sha256": "45c489b6314e8f3be6face46efa44977c5597732f0c5a16580158312b10ada40"
+        }
+      ],
+      "skippedTests": [
+        {
+          "className": "com.aimanager.AndroidChildSubmissionJourneyTest",
+          "test": "realEnrollmentNativeCrashRecoveryAndRevocation",
+          "reason": "System property [device.android.runner] does not exist"
+        },
+        {
+          "className": "com.aimanager.AndroidCleanupHttpsJourneyTest",
+          "test": "nativeOriginalKeyExecutesRealHttpsCleanupAndRetainsAcknowledgedJournal",
+          "reason": "System property [device.cleanup.android.runner] does not exist"
+        },
+        {
+          "className": "com.aimanager.DeviceAccessHttpInteropTest",
+          "test": "realApprovalRetryReceiptsRevocationExpiryAndOpaqueRevocation",
+          "reason": "System property [device.access.package] does not exist"
+        },
+        {
+          "className": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+          "test": "actualDartSubmissionAdultDecisionAndExistingDeviceDeliveryReference",
+          "reason": "System property [device.access.package] does not exist"
+        },
+        {
+          "className": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+          "test": "actualChildUiRecoversOriginalCancellationAcrossProcesses",
+          "reason": "System property [device.child.package] does not exist"
+        },
+        {
+          "className": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+          "test": "actualChildSessionAndUiRecoverOriginalSubmissionAcrossProcesses",
+          "reason": "System property [device.child.package] does not exist"
+        },
+        {
+          "className": "com.aimanager.DeviceConfigurationHttpInteropTest",
+          "test": "realDeviceTransportStoresTwoPagesAndRejectsRevokedCredential",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "className": "com.aimanager.DeviceIdentityHttpInteropTest",
+          "test": "actualEnrollmentRecoveryConfirmationRotationAndRevocation",
+          "reason": "System property [device.identity.package] does not exist"
+        },
+        {
+          "className": "com.aimanager.DeviceObservationHttpInteropTest",
+          "test": "adultConsentDeviceLostAcknowledgementReplayWithdrawalAndRevocation",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "className": "com.aimanager.DiagnosticPreviewJourneyTest",
+          "test": "productionDartClientReadsRealHttpAndRechecksCurrentAccess",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "className": "com.aimanager.ParentObservationHttpInteropTest",
+          "test": "lostResponseRecoveryAndWithdrawalThroughParentController",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "className": "com.aimanager.retention.internal.ErasureAdmissionStoreTest",
+          "test": "leastPrivilegeRuntimeCanDrainWorkButCannotRewriteAcceptedRecords",
+          "reason": "Environment variable [NOTICE_IT_ROOT_PASSWORD] does not exist"
+        },
+        {
+          "className": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+          "test": "mismatchedIdentityAndMissingLedgerAreReportedWithoutAutomaticRecreation",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "className": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+          "test": "servletAsyncCannotEscapeTheRegisteredSynchronousPermit",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "className": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+          "test": "acceptedLedgerStopsAuthorizedBusinessRequestsWithoutDeletingTheirData",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "className": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+          "test": "realHttpRequestDrainsBeforeAcceptanceAndProbesRemainAvailable",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "className": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+          "test": "nonTransactionalEngineIsRejectedBeforeAppending",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "className": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+          "test": "initializationPinsTransactionalEngineEvenWhenServerDefaultDiffers",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "className": "com.aimanager.support.internal.DiagnosticPackageJourneyTest",
+          "test": "productionDartClientCompletesPackageLifecycleOverRealHttp",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "className": "com.aimanager.SupportGrantJourneyTest",
+          "test": "productionDartSupportClientCompletesRealHttpGrantLifecycle",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "className": "com.aimanager.UsageReportJobJourneyTest",
+          "test": "realHttpJobsAreConsumedByProductionDartClient",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "className": "com.aimanager.UsageReportJourneyTest",
+          "test": "realHttpResponseIsConsumedByProductionDartReportClient",
+          "reason": "System property [device.dart.command] does not exist"
+        }
+      ],
+      "exitReceipt": {
+        "path": ".local/runtime/p0-idempotency-gates/first-full/exit.json",
+        "sha256": "654e42e0a4b2770a14ffee11217f77e512657956ec7a9173ffbf287dc02c35a5",
+        "gate": "FULL",
+        "exitCode": 0,
+        "completedAt": "2026-10-13T18:46:50.8216165+08:00",
+        "log": "D:\\codes\\mobile\\ai-manager\\.local\\p0-idempotency-full.log"
+      },
+      "sourceManifest": {
+        "path": ".local/runtime/p0-idempotency-gates/first-full/source.json",
+        "sha256": "cfeb94e8ee7331dd475072a6b6477fd7d576e7c7a730da1d83c3cac7f214022c"
+      },
+      "observedTerminalSessionId": 39996,
+      "supersededBy": "Final corrected gates above: real ERASED marker fixture and complete persisted-row retry oracles."
+    },
+    {
+      "name": "predecessor-mysql",
+      "tests": 56,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "passed": 56,
+      "log": ".local/runtime/p0-idempotency-gates/first-mysql-final/gate.log",
+      "logSha256": "45ffc03d0576b52ca68751f6738eb0a9ef17c394ca407265244907b0968e5655",
+      "reports": [
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-mysql-final/TEST-com.aimanager.ApprovalIdempotencyAttributionJourneyTest.xml",
+          "sha256": "500fe193756cf0f41d5be70f28d51fbfb21b71ff55a6d35b6017509ef6633b73"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-mysql-final/TEST-com.aimanager.DeviceApprovalIdempotencyAttributionJourneyTest.xml",
+          "sha256": "acaa209474e687d1f356ce14f7193ad598dd9675b64613a26e1429f2077a5552"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-mysql-final/TEST-com.aimanager.QuotaIdempotencyAttributionJourneyTest.xml",
+          "sha256": "1335bddee411c6c4451bc8431272fb815dfa3ca4b8492de7969f148f7a1ed6fa"
+        },
+        {
+          "path": ".local/runtime/p0-idempotency-gates/first-mysql-final/TEST-com.aimanager.TenantResourceIdentityJourneyTest.xml",
+          "sha256": "ea5add2a2be290dfec1e03637a11d252a770dc4643b813cf355db1ae7b871fd5"
+        }
+      ],
+      "skippedTests": [],
+      "exitReceipt": {
+        "path": ".local/runtime/p0-idempotency-gates/first-mysql-final/exit.json",
+        "sha256": "ed2949b52a2ae55dc516ce929a858f3edacf1e13b2fe17244718d48c3303f1cf",
+        "gate": "FINAL",
+        "exitCode": 0,
+        "cleanupSucceeded": true,
+        "completedAt": "2026-10-13T18:41:26.4335008+08:00"
+      },
+      "sourceManifest": {
+        "path": ".local/runtime/p0-idempotency-gates/first-mysql-final/source.json",
+        "sha256": "cfeb94e8ee7331dd475072a6b6477fd7d576e7c7a730da1d83c3cac7f214022c"
+      },
+      "observedTerminalSessionId": 19374,
+      "supersededBy": "Final corrected gates above: real ERASED marker fixture and complete persisted-row retry oracles."
+    }
+  ],
+  "artifact": {
+    "path": ".local/p0-idempotency-full-20261013/backend/target/manager-backend-1.0.0.jar",
+    "sha256": "5c5f53fb333999a821f5b6e60e0a951e26f9a525815279afc4416eb882d6c8b2",
+    "sizeBytes": 81559754,
+    "packagedResourcesMatchFrozenSource": true,
+    "packagedProductionClassesMatchExecutedClasses": true
+  },
+  "environment": {
+    "java": "17.0.14",
+    "mysql": "8.4",
+    "buildMode": "offline clean builds",
+    "fullForkCount": 2,
+    "reuseForks": false,
+    "temporaryDirectory": ".local/p0-idempotency-temp",
+    "databaseIsolation": "Four fresh loopback MySQL schemas/users; strict validation before DataSource/Flyway; removed in finally."
+  },
+  "review": {
+    "production": {
+      "critical": 0,
+      "important": 0,
+      "minor": 0
+    },
+    "testOracles": {
+      "critical": 0,
+      "important": 0,
+      "minor": 0,
+      "deviceErasedFixtureMinorClosed": true,
+      "adultNotificationSnapshotAdded": true,
+      "quotaPersistedRowsSnapshotAdded": true
+    },
+    "scope": "Independent read-only source review; author validated terminal handles, logs, XML, manifests, packaged bytes and fixture cleanup."
+  },
+  "limitations": [
+    "Original-audit coverage is 11 of 46 execute calls; other 35 remain UNCLASSIFIED. New calls must be audited against their own source baseline.",
+    "Public erasure submission, automatic worker, all-domain orchestration/global completion and real old-backup restoration/re-erasure remain unfinished.",
+    "These journey tests construct committed ERASED markers; they do not execute the erasure worker.",
+    "Adult JWT/MFA uses an issuer double; device registration and opaque credential rows are seeded. Real opaque credential authentication and domain transactions execute, but native enrollment and real adult MFA are not proven here.",
+    "Canonical tenant tests directly cover uppercase aliases and adult filter/read shortcuts, not separate null/malformed/version matrices.",
+    "This increment does not add mutation-midflight rollback injection; complete project regression does not remove environment-dependent skipped gates.",
+    "Processing still requires drained and continuously paused business admission; no complete product or deployment claim is made.",
+    "Flyway emits its existing MySQL 8.4 tested-support-through-8.1 warning.",
+    "The original tenant-shortcut RED has archived XML/log and observed terminal handle; no separate archived exit JSON."
+  ]
+}

@@ -7,6 +7,7 @@ import com.aimanager.catalog.ApplicationCatalog;
 import com.aimanager.deviceidentity.*;
 import com.aimanager.fleet.*;
 import com.aimanager.idempotency.IdempotencyService;
+import com.aimanager.idempotency.ResponseOwnership;
 import com.aimanager.identity.RecentAuthentication;
 import com.aimanager.quota.*;
 import com.aimanager.shared.*;
@@ -133,7 +134,8 @@ class QuotaService {
                   null,
                   actor.getSubject());
           return pool(tenant, id, false);
-        });
+        },
+        response -> ResponseOwnership.subjects(tenant, List.of(response.subjectId())));
   }
 
   public ItemPage<QuotaPool> list(String tenant, String actor, int limit, String cursor) {
@@ -202,7 +204,8 @@ class QuotaService {
               "QUOTA_ADJUSTED",
               Map.of("poolId", id, "deltaSeconds", in.deltaSeconds()));
           return pool(tenant, id, false);
-        });
+        },
+        response -> ResponseOwnership.subjects(tenant, List.of(response.subjectId())));
   }
 
   public ItemPage<Entry> ledger(

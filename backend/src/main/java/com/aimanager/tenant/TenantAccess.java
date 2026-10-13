@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.UUID;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
@@ -56,6 +57,7 @@ public class TenantAccess {
   }
 
   private Grant evaluate(String tenantId, String actorId, boolean lock, Role[] allowed) {
+    requireCanonicalTenant(tenantId);
     var grants =
         jdbc.query(
             "SELECT role,subject_id FROM tenant_members WHERE tenant_id=? AND actor_key=? AND"
@@ -81,6 +83,7 @@ public class TenantAccess {
 
   /** Code-owned predicate for read-only subject and device listings. */
   public ScopeFilter subjectFilter(String tenant, String actor, Grant grant, String column) {
+    requireCanonicalTenant(tenant);
     if (!column.matches("[a-z_]+(?:\\.[a-z_]+)?"))
       throw new IllegalArgumentException("Invalid scope column");
     if (grant.role() == Role.CHILD) {
@@ -105,6 +108,7 @@ public class TenantAccess {
   }
 
   public boolean canReadSubject(String tenant, String actor, Grant grant, String subject) {
+    requireCanonicalTenant(tenant);
     if (grant.role() != Role.TEACHER && grant.role() != Role.CHILD) return true;
     var filter = subjectFilter(tenant, actor, grant, "checked_s.id");
     var args = new java.util.ArrayList<Object>(List.of(tenant, subject));
@@ -120,6 +124,16 @@ public class TenantAccess {
 
   public void requireSubjectRead(String tenant, String actor, Grant grant, String subject) {
     if (!canReadSubject(tenant, actor, grant, subject)) throw DomainException.denied();
+  }
+
+  /** SQL text collations must not turn a noncanonical resource path into another tenant spelling. */
+  private void requireCanonicalTenant(String tenant) {
+    if (tenant == null) throw DomainException.denied();
+    try {
+      if (!UUID.fromString(tenant).toString().equals(tenant)) throw DomainException.denied();
+    } catch (IllegalArgumentException malformed) {
+      throw DomainException.denied();
+    }
   }
 
   public record ScopeFilter(String sql, List<Object> args) {

@@ -5,6 +5,7 @@ import static com.aimanager.tenant.TenantAccess.Role.*;
 import com.aimanager.audit.AuditService;
 import com.aimanager.catalog.ApplicationCatalog;
 import com.aimanager.idempotency.IdempotencyService;
+import com.aimanager.idempotency.ResponseOwnership;
 import com.aimanager.identity.RecentAuthentication;
 import com.aimanager.quota.*;
 import com.aimanager.shared.*;
@@ -127,7 +128,8 @@ class QuotaPlanService {
           pools.event(tenant, id, "QUOTA_PLAN_CREATED", Map.of("planId", id, "version", 0));
           materializeLocked(tenant, read(tenant, id, true));
           return read(tenant, id, false);
-        });
+        },
+        response -> ResponseOwnership.subjects(tenant, List.of(response.subjectId())));
   }
 
   @Transactional(timeout = 10)
@@ -170,7 +172,8 @@ class QuotaPlanService {
               "QUOTA_PLAN_UPDATED",
               Map.of("planId", id, "version", next, "effectiveFrom", from.toString()));
           return read(tenant, id, false);
-        });
+        },
+        response -> ResponseOwnership.subjects(tenant, List.of(response.subjectId())));
   }
 
   public ItemPage<QuotaPlan> list(String tenant, String actor, int limit, String cursor) {

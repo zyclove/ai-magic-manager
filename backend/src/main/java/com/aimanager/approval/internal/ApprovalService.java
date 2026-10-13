@@ -12,6 +12,7 @@ import com.aimanager.fleet.AccessRequestDeviceScope;
 import com.aimanager.fleet.DeviceAccess;
 import com.aimanager.fleet.DeviceRegistrationRevoked;
 import com.aimanager.idempotency.IdempotencyService;
+import com.aimanager.idempotency.ResponseOwnership;
 import com.aimanager.identity.ActorKeys;
 import com.aimanager.identity.RecentAuthentication;
 import com.aimanager.policy.DevicePolicyExceptionAccess;
@@ -122,7 +123,8 @@ class ApprovalService implements ApprovalMaintenance {
                       input.applicationId(),
                       input.ruleIds());
               return insertRequest(tenant, actor, input, base, "MEMBER");
-            });
+            },
+            response -> ResponseOwnership.subjects(tenant, List.of(response.subjectId())));
     // Cached creation responses must not resurrect an expired/revoked window or disclose lost
     // scope.
     var current = row(tenant, result.id(), true);
@@ -209,7 +211,8 @@ class ApprovalService implements ApprovalMaintenance {
                       input.ruleIds());
               if (!base.subjectId().equals(subject)) throw DomainException.denied();
               return insertRequest(identity.tenantId(), actor, input, base, "DEVICE");
-            });
+            },
+            response -> ResponseOwnership.subjects(identity.tenantId(), List.of(response.subjectId())));
     return reconcile(ownDeviceRequest(identity, subject, result.id()));
   }
 
@@ -265,7 +268,8 @@ class ApprovalService implements ApprovalMaintenance {
               "DEVICE_CANCELLED",
               "ACCESS_REQUEST_CANCELLED");
           return row(identity.tenantId(), id, false).view();
-        });
+        },
+        response -> ResponseOwnership.subjects(identity.tenantId(), List.of(response.subjectId())));
     return reconcile(ownDeviceRequest(identity, subject, id));
   }
 
@@ -505,7 +509,8 @@ class ApprovalService implements ApprovalMaintenance {
               id);
           notifyChange(tenant, id, now);
           return effective(row(tenant, id, false));
-        });
+        },
+        response -> ResponseOwnership.subjects(tenant, List.of(response.subjectId())));
     // The decision is idempotent, but its authority may since have expired or been withdrawn.
     return reconcile(row(tenant, id, true));
   }
@@ -546,7 +551,8 @@ class ApprovalService implements ApprovalMaintenance {
               grant.role() == TEACHER ? "REQUESTER_CANCELLED" : "CHILD_CANCELLED",
               "ACCESS_REQUEST_CANCELLED");
           return effective(row(tenant, id, false));
-        });
+        },
+        response -> ResponseOwnership.subjects(tenant, List.of(response.subjectId())));
   }
 
   @Transactional(timeout = 10)
@@ -572,7 +578,8 @@ class ApprovalService implements ApprovalMaintenance {
           transition(
               tenant, actor.getSubject(), id, REVOKED, "ADMIN_REVOKED", "ACCESS_EXCEPTION_REVOKED");
           return effective(row(tenant, id, false));
-        });
+        },
+        response -> ResponseOwnership.subjects(tenant, List.of(response.subjectId())));
   }
 
   private void transition(
