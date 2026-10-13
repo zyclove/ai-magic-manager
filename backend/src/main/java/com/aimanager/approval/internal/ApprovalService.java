@@ -375,7 +375,13 @@ class ApprovalService implements ApprovalMaintenance {
     if (child && grant.subjectId() == null) throw DomainException.denied();
     var filter = access.subjectFilter(tenant, actor, grant, "ar.subject_id");
     String sql =
-        "SELECT ar.id FROM access_requests ar WHERE ar.tenant_id=? AND ar.id>? AND "
+        "SELECT ar.id, s.nickname AS subject_name, d.display_name AS device_name,"
+            + " a.definition_json AS application_json FROM access_requests ar"
+            + " LEFT JOIN subjects s ON s.tenant_id=ar.tenant_id AND s.id=ar.subject_id"
+            + " LEFT JOIN devices d ON d.tenant_id=ar.tenant_id AND d.id=ar.device_id"
+            + " LEFT JOIN application_definitions a"
+            + " ON a.tenant_id=ar.tenant_id AND a.id=ar.application_id"
+            + " WHERE ar.tenant_id=? AND ar.id>? AND "
             + filter.sql()
             + (state == null ? "" : " AND ar.state=?")
             + (grant.role() == TEACHER || child
@@ -387,11 +393,30 @@ class ApprovalService implements ApprovalMaintenance {
     if (state != null) args.add(state.name());
     if (grant.role() == TEACHER || child) args.add(ActorKeys.key(actor));
     args.add(limit + 1);
-    var ids = jdbc.query(sql, (row, index) -> row.getString("id"), args.toArray());
-    var page = ItemPage.from(ids, limit, id -> id);
+    var listings = jdbc.query(sql, (row, index) -> new RequestListing(
+        row.getString("id"), row.getString("subject_name"), row.getString("device_name"),
+        row.getString("application_json")), args.toArray());
+    var page = ItemPage.from(listings, limit, RequestListing::id);
+    boolean showDisplayContext = grant.role() != AUDITOR;
     return new ItemPage<>(
-        page.items().stream().map(id -> reconcile(row(tenant, id, true))).toList(),
+        page.items().stream().map(item -> {
+          var request = reconcile(row(tenant, item.id(), true));
+          if (!showDisplayContext) return request;
+          var application = applicationLabel(item.applicationJson());
+          return request.withDisplayContext(
+              item.subjectName(), item.deviceName(), application.name(), application.packageName());
+        }).toList(),
         page.nextCursor());
+  }
+
+  private ApplicationLabel applicationLabel(String definitionJson) {
+    if (definitionJson == null) return new ApplicationLabel(null, null);
+    try {
+      var root = mapper.readTree(definitionJson);
+      return new ApplicationLabel(root.path("displayName").asText(null), root.path("packageName").asText(null));
+    } catch (JsonProcessingException failure) {
+      throw new IllegalStateException("Application identity cannot be read", failure);
+    }
   }
 
   @Transactional(timeout = 10)
@@ -856,7 +881,8 @@ class ApprovalService implements ApprovalMaintenance {
             row.getString("reason_code"),
             "NOT_ENFORCED",
             row.getLong("version"),
-            row.getLong("created_at"));
+            row.getLong("created_at"),
+            null, null, null, null);
     return new Stored(
         row.getString("tenant_id"),
         row.getString("requester_actor_id"),
@@ -936,7 +962,11 @@ class ApprovalService implements ApprovalMaintenance {
         reason,
         r.executionState(),
         r.version(),
-        r.createdAt());
+        r.createdAt(),
+        r.subjectName(),
+        r.deviceName(),
+        r.applicationName(),
+        r.applicationPackageName());
   }
 
   private String json(Object value) {
@@ -948,6 +978,10 @@ class ApprovalService implements ApprovalMaintenance {
   }
 
   private record Slot(String lastId, long nextAllowedAt) {}
+
+  private record RequestListing(String id, String subjectName, String deviceName, String applicationJson) {}
+
+  private record ApplicationLabel(String name, String packageName) {}
 
   private record Stored(
       String tenant,

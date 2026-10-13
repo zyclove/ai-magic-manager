@@ -306,8 +306,8 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
       builder: (context) => AlertDialog(
         title: Text(approve ? '批准临时访问？' : '拒绝申请？'),
         content: Text(approve
-            ? '最多开放 ${_minutes(requested)}。批准先生成限时访问窗口，是否真正生效仍取决于设备接收和执行结果。'
-            : '拒绝后孩子会看到申请结果。'),
+            ? '儿童：${_requestLabel(item['subjectName'], '未命名儿童')}\n应用：${_requestLabel(item['applicationName'], '未命名应用')}\n包名：${_requestLabel(item['applicationPackageName'], '未知')}\n设备：${_requestLabel(item['deviceName'], '未命名设备')}\n申请原因：${_requestLabel(item['reason'], '未填写')}\n\n最多开放 ${_minutes(requested)}。批准先生成限时访问窗口，是否真正生效仍取决于设备接收和执行结果。'
+            : '儿童：${_requestLabel(item['subjectName'], '未命名儿童')}\n应用：${_requestLabel(item['applicationName'], '未命名应用')}\n包名：${_requestLabel(item['applicationPackageName'], '未知')}\n设备：${_requestLabel(item['deviceName'], '未命名设备')}\n\n拒绝后孩子会看到申请结果。'),
         actions: [
           TextButton(
               onPressed: () => Navigator.pop(context, false),
@@ -378,15 +378,22 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('访问申请',
-                            style: TextStyle(
+                        Text(
+                            '${_requestLabel(item['subjectName'], '儿童')}申请使用${_requestLabel(item['applicationName'], '应用')}',
+                            style: const TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.w700)),
                         const SizedBox(height: 8),
-                        Text('原因：${item['reason'] ?? '未填写'}'),
+                        Text(
+                            '应用包名：${_requestLabel(item['applicationPackageName'], '未知')}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis),
+                        Text('原因：${_requestLabel(item['reason'], '未填写')}'),
                         Text(
                             '申请时长：${_minutes(item['requestedWindowSeconds'] as int? ?? 0)}'),
-                        Text('设备：${item['deviceId'] ?? '未知'}',
-                            maxLines: 1, overflow: TextOverflow.ellipsis),
+                        Text(
+                            '设备：${_requestLabel(item['deviceName'], '未命名设备')} · ${item['deviceId'] ?? '未知'}',
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis),
                         const SizedBox(height: 12),
                         if (widget.session.canDecide)
                           Wrap(spacing: 8, children: [
@@ -859,6 +866,11 @@ String _controlLevel(Object? value) => switch (value) {
       'SYSTEM' => '受管系统能力，请核对执行回执',
       _ => '有限控制，不能防止系统层面绕过',
     };
+
+String _requestLabel(Object? value, String fallback) {
+  final label = value is String ? value.trim() : '';
+  return label.isEmpty ? fallback : label;
+}
 
 String _minutes(int seconds) => seconds < 60
     ? '$seconds 秒'
