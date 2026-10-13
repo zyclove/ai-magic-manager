@@ -48,6 +48,16 @@ class DatabaseInitializationTest {
         .isZero();
     assertThat(db.queryForObject("SELECT COUNT(*) FROM erasure_recovery_steps", Integer.class))
         .isZero();
+    assertThat(db.queryForObject("SELECT COUNT(*) FROM idempotency_subject_owners", Integer.class))
+        .isZero();
+    db.queryForList("SELECT id FROM idempotency_subject_owners WHERE 1=0");
+    assertThat(indexColumns(db, "idempotency_subject_owners", "uq_idempotency_owner_id", true))
+        .containsExactly("id");
+    db.queryForList("SELECT id,operation_key,response_state FROM idempotency_requests WHERE 1=0");
+    assertThat(indexColumns(db, "idempotency_requests", "ix_idempotency_state"))
+        .containsExactly("response_state", "id");
+    assertThat(indexColumns(db, "idempotency_subject_owners", "ix_idempotency_subject_owner"))
+        .containsExactly("tenant_id", "subject_key", "scope_id", "actor_key", "operation_key", "key_hash");
     for (String table :
         List.of(
             "managed_enterprise_bindings",
@@ -105,6 +115,10 @@ class DatabaseInitializationTest {
   }
 
   private List<String> indexColumns(JdbcTemplate db, String table, String index) {
+    return indexColumns(db, table, index, false);
+  }
+
+  private List<String> indexColumns(JdbcTemplate db, String table, String index, boolean unique) {
     return db.execute(
         (org.springframework.jdbc.core.ConnectionCallback<List<String>>)
             connection -> {
@@ -113,7 +127,7 @@ class DatabaseInitializationTest {
                   connection
                       .getMetaData()
                       .getIndexInfo(
-                          connection.getCatalog(), connection.getSchema(), table, false, false)) {
+                          connection.getCatalog(), connection.getSchema(), table, unique, false)) {
                 while (rows.next()) {
                   if (index.equalsIgnoreCase(rows.getString("INDEX_NAME")))
                     columns.put(

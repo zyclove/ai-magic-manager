@@ -73,18 +73,39 @@ CREATE TABLE member_invitations (
 CREATE INDEX ix_invitation_tenant_expiry ON member_invitations(tenant_id, expires_at);
 
 CREATE TABLE idempotency_requests (
+    id VARCHAR(36) NOT NULL,
     scope_id VARCHAR(100) NOT NULL,
     actor_id VARCHAR(255) NOT NULL,
     actor_key VARCHAR(64) NOT NULL,
     operation VARCHAR(80) NOT NULL,
+    operation_key VARCHAR(64) NOT NULL,
     key_hash VARCHAR(64) NOT NULL,
     request_hash VARCHAR(64) NOT NULL,
     response_body TEXT NULL,
+    response_state VARCHAR(20) NOT NULL DEFAULT 'UNCLASSIFIED',
     expires_at BIGINT NOT NULL,
-    PRIMARY KEY (scope_id, actor_key, operation, key_hash)
+    PRIMARY KEY (scope_id, actor_key, operation_key, key_hash),
+    CONSTRAINT uq_idempotency_id UNIQUE(id)
 );
 
 CREATE INDEX ix_idempotency_expiry ON idempotency_requests(expires_at);
+CREATE INDEX ix_idempotency_state ON idempotency_requests(response_state,id);
+
+CREATE TABLE idempotency_subject_owners (
+    id VARCHAR(36) NOT NULL,
+    scope_id VARCHAR(100) NOT NULL,
+    actor_key VARCHAR(64) NOT NULL,
+    operation_key VARCHAR(64) NOT NULL,
+    key_hash VARCHAR(64) NOT NULL,
+    tenant_id VARCHAR(36) NOT NULL,
+    subject_key VARCHAR(64) NOT NULL,
+    PRIMARY KEY(scope_id,actor_key,operation_key,key_hash,tenant_id,subject_key),
+    CONSTRAINT fk_idempotency_owner_request FOREIGN KEY(scope_id,actor_key,operation_key,key_hash)
+        REFERENCES idempotency_requests(scope_id,actor_key,operation_key,key_hash)
+);
+
+CREATE UNIQUE INDEX uq_idempotency_owner_id ON idempotency_subject_owners(id);
+CREATE INDEX ix_idempotency_subject_owner ON idempotency_subject_owners(tenant_id,subject_key,scope_id,actor_key,operation_key,key_hash);
 
 CREATE TABLE device_enrollments (
     recovery_attempts INTEGER NOT NULL DEFAULT 0,

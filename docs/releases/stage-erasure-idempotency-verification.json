@@ -1,0 +1,721 @@
+{
+  "version": "1.0.0",
+  "recordedAt": "2026-10-13T10:08:41.092370+00:00",
+  "status": "internal-idempotency-response-erasure-increment-verified",
+  "deployed": false,
+  "publicErasureExecutionAvailable": false,
+  "originalAuditBase": "cc78efa0dcbc19e3f2a0beae9a8bf974a8539450",
+  "integratedSourceBase": "9c85594237e680b249d9d9973b0af60a4c7b122b",
+  "sourceValidation": {
+    "sourceBase": "9c85594237e680b249d9d9973b0af60a4c7b122b",
+    "ownedFilesVerified": 10,
+    "unchangedArchiveFilesVerified": 1161,
+    "candidate": "D:\\codes\\mobile\\ai-manager\\.local\\idempotency-erasure-integrated-20261013",
+    "status": "verified",
+    "executedResourcesVerified": [
+      {
+        "path": "db/migration/V1__initial_schema.sql",
+        "sha256": "2aba58629df21b3141d1a23551a0cf826d4565b5892468cc7f1b1aff676cb75c"
+      },
+      {
+        "path": "retention/subject-data-stores.json",
+        "sha256": "5461717b6beac5b32a702e00910d8fab9b968d3cf3a5e76b38b05fd664f961e1"
+      }
+    ]
+  },
+  "files": [
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyService.java",
+      "sha256": "12035d6d2e459a8670b93aa27fc9640297149fcb916e1fe1b9d9ed95ae732544",
+      "lfNormalizedSha256": "12035d6d2e459a8670b93aa27fc9640297149fcb916e1fe1b9d9ed95ae732544"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/ResponseOwnership.java",
+      "sha256": "64823ead8849234240e9b7656811a8bfaab6a56cc01383043b384e3ff52a950a",
+      "lfNormalizedSha256": "64823ead8849234240e9b7656811a8bfaab6a56cc01383043b384e3ff52a950a"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureIdempotencyProcessor.java",
+      "sha256": "ba8aeeaa98fa924b12a703e14fdd71ac051e548600284df090a132b31efd0812",
+      "lfNormalizedSha256": "ba8aeeaa98fa924b12a703e14fdd71ac051e548600284df090a132b31efd0812"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/subject/internal/SubjectService.java",
+      "sha256": "4cebfd6ad5fbdc59df3895208f22567ade0f7acae9082f51dfd603d0013d50c3",
+      "lfNormalizedSha256": "4cebfd6ad5fbdc59df3895208f22567ade0f7acae9082f51dfd603d0013d50c3"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/idempotency/IdempotencyOwnershipTest.java",
+      "sha256": "91a4f51d2d829822505e0d935bbe8e3537c71879a14a0302c41e213b3ac61f18",
+      "lfNormalizedSha256": "91a4f51d2d829822505e0d935bbe8e3537c71879a14a0302c41e213b3ac61f18"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureIdempotencyProcessorTest.java",
+      "sha256": "18f1f4558e1c518d95add163c917e578edf8fe2c0ef598f0809d736c10130dd9",
+      "lfNormalizedSha256": "18f1f4558e1c518d95add163c917e578edf8fe2c0ef598f0809d736c10130dd9"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DatabaseInitializationTest.java",
+      "sha256": "17d324438ddcc68b9fe17d8e654f579d92ea04cfe7c9278a88e74ec76fc9a2fa",
+      "lfNormalizedSha256": "0871d794bf7307de0296c2e70614fff5652ded11ff82b4aa17e30ef33baf91d6"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/SubjectIdempotencyAttributionJourneyTest.java",
+      "sha256": "545981d8959b0951d66939ca4f7917a5a1cd0ba66f558b560be062a15ca0f084",
+      "lfNormalizedSha256": "545981d8959b0951d66939ca4f7917a5a1cd0ba66f558b560be062a15ca0f084"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V1__initial_schema.sql",
+      "sha256": "2aba58629df21b3141d1a23551a0cf826d4565b5892468cc7f1b1aff676cb75c",
+      "lfNormalizedSha256": "eedd8c875dae2ecdc7b809e9862eb89db48e31b4190fbfcc2ac1b4753596de86"
+    },
+    {
+      "path": "backend/src/main/resources/retention/subject-data-stores.json",
+      "sha256": "5461717b6beac5b32a702e00910d8fab9b968d3cf3a5e76b38b05fd664f961e1",
+      "lfNormalizedSha256": "10dfa7663e78b46644891219a7188174aa35e66526b1d1bccfed78143adb3473"
+    }
+  ],
+  "documents": [
+    {
+      "path": "docs/erasure-idempotency-plan.md",
+      "sha256": "21b5c60a859f347f676da66cd3a4edeca96868efcc0638611f1761ba0fd6eb86"
+    },
+    {
+      "path": "docs/data-erasure-contract.md",
+      "sha256": "1ae17aae92d21c10e11905601e770812d287dc23c159840aada369cd1189deda"
+    }
+  ],
+  "gates": [
+    {
+      "name": "final-focused-h2",
+      "tests": 53,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".local\\idempotency-erasure-final-focused.log",
+      "logSha256": "cfbeca417a8f66843b3a8421b6104e1a82f955c57b79d0dbd8a437ac485c3632",
+      "reports": [
+        {
+          "path": ".local\\runtime\\idempotency-erasure-gates\\final-focused\\TEST-com.aimanager.DatabaseInitializationTest.xml",
+          "sha256": "1bd85bee69af68f24fc360dca79717c7d5d1172124e2c6bfbd8b660902c2ab00"
+        },
+        {
+          "path": ".local\\runtime\\idempotency-erasure-gates\\final-focused\\TEST-com.aimanager.idempotency.IdempotencyOwnershipTest.xml",
+          "sha256": "dd078dc3c7c9f7b5c2d6124da61742bb0284b79b2708e2574a2ec92dfbd6ef7a"
+        },
+        {
+          "path": ".local\\runtime\\idempotency-erasure-gates\\final-focused\\TEST-com.aimanager.retention.internal.ErasureIdempotencyProcessorTest.xml",
+          "sha256": "c17668cb336dae3b8d9fcc2cf75490a6a932b3dfe299c53c469d593ad30191ee"
+        },
+        {
+          "path": ".local\\runtime\\idempotency-erasure-gates\\final-focused\\TEST-com.aimanager.SubjectIdempotencyAttributionJourneyTest.xml",
+          "sha256": "36d003f5b54f0fddd60780831e06afdf9aa7ea753e3a2ac39a4dde5b575126c4"
+        }
+      ],
+      "skippedTests": []
+    },
+    {
+      "name": "mysql-core",
+      "tests": 25,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".local\\idempotency-erasure-mysql-core.log",
+      "logSha256": "5a0cb13c6a1d1292af88a611de960319c64d7cf4ce206a81db176f73da3177d1",
+      "reports": [
+        {
+          "path": ".local\\runtime\\idempotency-erasure-gates\\mysql-core.xml",
+          "sha256": "79f851160de348f125277a2d173414e3a150edb51ddbbb6ec43688bae2ade9b6"
+        }
+      ],
+      "skippedTests": []
+    },
+    {
+      "name": "mysql-processor",
+      "tests": 24,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".local\\idempotency-erasure-mysql-processor.log",
+      "logSha256": "4f0fe5f7304a3bdcf10212db8d65af815c6cb7c93139c40e8703503f4af4858a",
+      "reports": [
+        {
+          "path": ".local\\runtime\\idempotency-erasure-gates\\mysql-processor.xml",
+          "sha256": "7a520d7da64d069ab153eba603c95c9b0688a386d6dcbb85c46cd55c8adcd280"
+        }
+      ],
+      "skippedTests": []
+    },
+    {
+      "name": "mysql-fresh-initialization-and-restart",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".local\\idempotency-erasure-mysql-initialization.log",
+      "logSha256": "4b732815c9a1260490247ea79a752179c8b3a7787361f812c0d278bb5f6e190f",
+      "reports": [
+        {
+          "path": ".local\\runtime\\idempotency-erasure-gates\\mysql-initialization.xml",
+          "sha256": "f54d6230aba2e8057de72ce6669c952d1e9119945466c9113eda1129ce5f90df"
+        }
+      ],
+      "skippedTests": []
+    },
+    {
+      "name": "full-integrated-backend-verify",
+      "tests": 932,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 21,
+      "log": ".local\\idempotency-erasure-backend-full.log",
+      "logSha256": "743c5c9974031c70e5809f8e44ff3f71dd52fad92738a9ad2398bab2a6163266",
+      "reports": [
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.AccessDeliveryJourneyTest.xml",
+          "sha256": "9796ffc817d81b262f7d391c4c3158fbe9f5d5ec51350b4723f4e71389455d54"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.AndroidChildSubmissionJourneyTest.xml",
+          "sha256": "6e0472af45497278798fbbc8b6321b9adb7bd1d29dc66a3e415a9bd9fed89820"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.AndroidCleanupHttpsJourneyTest.xml",
+          "sha256": "cf26224a8e9b84c9cf3e71feb4044a240750d314e165818728256962612b3d32"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.ApplicationCatalogRecoveryTest.xml",
+          "sha256": "de7b00f3baac83d537c361251b8d6bb68b7abe487904e0974e509e0ec3d5ecca"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.ApplicationClassificationJourneyTest.xml",
+          "sha256": "a5485f93d5b3c72c125d958f6e51b283e2272209bf97da2993be7904c1b9d4b1"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.ApprovalJourneyTest.xml",
+          "sha256": "a62f8898036ce8edacd5772c23edf67bd16df57ab9457c140f9131b7967302cc"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.AuditExplorerTest.xml",
+          "sha256": "21c20fa4aca0a992a97ad246ed0ecad73faa633879164acc7d70bbb61dbced67"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.AuditExportJourneyTest.xml",
+          "sha256": "ed38a6db19d59df50c1be5e2eb2ba22a675228fb83d55cb9fb67704881e017ad"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.commerce.internal.CommercialCatalogJourneyTest.xml",
+          "sha256": "458cbb602600575fe99c0ea27bbe345ff5d0fcb75595b70b8ee3f5edc4c1f85a"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.commerce.internal.CommercialContractJourneyTest.xml",
+          "sha256": "193d01a65c420c793ebe4ccb6eb1fb18f76a5fe0467eebbd2a9344192ae36622"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.commerce.internal.CommercialLedgerJourneyTest.xml",
+          "sha256": "b4f63bd552a18657bff1be1d3274fdb72787cc11f8b25b667ecec495912609c6"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.commerce.internal.CommercialOfferDraftTest.xml",
+          "sha256": "fd677e477a7859a47e63f6957b4ac080ad5ca0cc353ebfa693e4e126ef6eceb0"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.commerce.internal.ContractEvidenceVerifierTest.xml",
+          "sha256": "f027fb2e73b6bd076438cecd31f4e19f200b2e4931c4185b004ae39e3ae58c52"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.commerce.internal.ContractSubmissionPolicyTest.xml",
+          "sha256": "4f663ceb4b573d3de8f60abc66173805871c2349fb711ef5352f36b717a21bdf"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.commerce.internal.PausedContractSubmissionJourneyTest.xml",
+          "sha256": "44521dd39f1be50706ac279833abd12b539678c0984cf08158db392b6727b544"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.ConsoleJourneyTest.xml",
+          "sha256": "d9993f2e0d679b3524f06c1c1c3c6af002551f368268654704dd22b7e24c80d8"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.DatabaseInitializationTest.xml",
+          "sha256": "64671a9a2bc4692bfb9d94a90288f7d8e8ccec493502a50c0237c279c2fa11ae"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.DeliveryJourneyTest.xml",
+          "sha256": "bd25f02720a6106c89b308b333b066f27cd2ccef3429d5edc62c4efd95e381f7"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.DeprovisionJourneyTest.xml",
+          "sha256": "6e1e213b3b977711901710036fc8418e10fbc0f1ed5374ef45bd58f2561b42b5"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.DeprovisionWithoutSigningTest.xml",
+          "sha256": "152adeeef9eb9682d7316f3472fc14beb7431a89f96433091e2210845269c053"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.DeviceAccessContextJourneyTest.xml",
+          "sha256": "b9411b507197fa1be20d4a87d26f6857ebb71b3c3736d0bd5a38ff886ccdc2a5"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.DeviceAccessHttpInteropTest.xml",
+          "sha256": "5d40465c5b3867937fd6109317adadd6ffae41b5a7afe933bb6397792c98eb7d"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.DeviceAccessSubmissionJourneyTest.xml",
+          "sha256": "ff0dfd8c26957c4de582ea86307e62a1a77dab9defa0f5c942f7d63d613a71e8"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.DeviceConfigurationHttpInteropTest.xml",
+          "sha256": "54f5d8f1294a27ee0c799156b1688fb58eb6c2f461d6acb260471e362ec7ae98"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.DeviceGroupRecoveryTest.xml",
+          "sha256": "6179d603118e16ee6c1877c8d5db0d73096c0ea030e92b71556a7851b80b93bf"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.DeviceIdentityHttpInteropTest.xml",
+          "sha256": "1e7c8fba5cefdb2c85455f4c7574a38234f9e75eb5f5aa481ea7715dcd476784"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.DeviceObservationHttpInteropTest.xml",
+          "sha256": "113667133ed52f7ff438f697fec58bf37fe5e17475d79d7bda0c183d93232134"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.DeviceObservationJourneyTest.xml",
+          "sha256": "248f56640e188297afef6cb772907a6a039f43409d345a34330df3df8f2b92e1"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.DiagnosticPreviewJourneyTest.xml",
+          "sha256": "aa3a4a2330eb86543d5035f2f99a8e81be0be6198fd0b35b2adb59ea0f50c950"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.FleetJourneyTest.xml",
+          "sha256": "a5e93f52028b7250b9800e8f656c64abd5be084db37aad761f0c1dc53cd32107"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.HelpRequestJourneyTest.xml",
+          "sha256": "821aaed62f5bacbc0b356840b2f21b4cb9b61a618cfcc2947c89fa38629f011c"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.idempotency.IdempotencyOwnershipTest.xml",
+          "sha256": "6b72ad2a12c0b63c34847cfbd50db732ca537b4adaba33ccabe92d630f39a253"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.identity.IdentityJwkEndpointTest.xml",
+          "sha256": "7f4ef41b02cf12db58dff7a8b97692291e4fd74cbfd50bb220c87459f3566194"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.identity.IdentityTokenValidationTest.xml",
+          "sha256": "84a872b6ec5e18a7cb9c7372f46d6386b5147219935b910a1b82e858d7f028f0"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.InventoryJourneyTest.xml",
+          "sha256": "0fa623f61fa16e4c86bed2dc3e3eaada8795e5e8d7ae90cfea6cdec01662a70f"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.managedandroid.GoogleManagedAndroidGatewayTest.xml",
+          "sha256": "832ecdea80e723b15a6249d1e4e1fce4a14ff783240fd8557e6eb85aaae9bcdf"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.managedandroid.internal.ManagedAndroidConfigurationTest.xml",
+          "sha256": "eb39ff6a6d8455393c43fbfb24fbc76bd58e1d568e5d0b4edef781190b70be78"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.MemberAccessJourneyTest.xml",
+          "sha256": "5f17cef85aa1534ca8475dfdf53499069299ad6f2be8a6fa279e9292463026c7"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.MessageRegistryTest.xml",
+          "sha256": "82ba2ab0f0cb57efa448b58deb9902c7ea9a2a53e44f2340085bf96a881fb37e"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.messaging.internal.ArtemisNotificationPublisherTest.xml",
+          "sha256": "1f5981a0f9647e22d31a4964dc24c2aded5fe6f660f5f99aacaa2ce252235e91"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.ModuleBoundariesTest.xml",
+          "sha256": "4d9d8e5738a125bf634e2e2f1404f54cba1e8b5fbf6a29a6ee6994c431d4cdad"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.NotificationJourneyTest.xml",
+          "sha256": "4390c958959f17452e5f39c810952f12c50ac41dc93448fe8d214f984257c010"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.OrganizationJourneyTest.xml",
+          "sha256": "d58b6e84a30af5bd989fe02b92404ffff3d985ed52411e0f426904b272b9534e"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.OwnershipTransferJourneyTest.xml",
+          "sha256": "967a5086cae0c4529534a4ecdbd899697d58b9bc80634258471a0676ce38b040"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.policy.internal.PolicyPreviewValidationTest.xml",
+          "sha256": "90ab5a1dd09310b5ac24670afb8fe83e74c03293b9656647366769cc5eda3d77"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.PolicyJourneyTest.xml",
+          "sha256": "f8ebb388cbe75a855228ce656e718d1aa580226e17addf4d74b28dd0b4652de6"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.QuotaConcurrencyTest.xml",
+          "sha256": "df28b7be994dc234b5c2e0a74c4da1413f8a052bde3cd6ec8db12c5adfa1861c"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.QuotaJourneyTest.xml",
+          "sha256": "761c9e4bd26585cfba143e0bf60e3750a2864694d1b8322e4201a06fe52e80c9"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.QuotaPlanJourneyTest.xml",
+          "sha256": "757f436675be8faf93b4ac60ceb92d2e692460f218a951d26856d6a117076c42"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.reporting.internal.ExportHeadConcurrencyTest.xml",
+          "sha256": "93684cea84499789bf7799fd905f4d8febcd70f588665a7608f2d6efd214e23f"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.reporting.internal.UsageAggregationTest.xml",
+          "sha256": "dc7b68b12479878a6ce627e77dbae43df0b33f371fe5046c7273cae90ccb1969"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.retention.internal.ErasureAccessQuotaProcessorTest.xml",
+          "sha256": "0788b25c27c9aba4e12a7064fe2c1c28c6e3861f330fbd3efa2777b708fc559d"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.retention.internal.ErasureAdmissionStoreTest.xml",
+          "sha256": "5d924ac82c4150474fc62eaf1327f683add564da3c05f8037e2c42ee672ee633"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.retention.internal.ErasureConfigurationProcessorTest.xml",
+          "sha256": "5993c1a06ad6aa4e3f03521e217ecf1cb438e699b54256a2bd5452e6bc8d1201"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.retention.internal.ErasureDeviceIdentityProcessorTest.xml",
+          "sha256": "ee6da16312d09ba05e632bba8fb211e0ab3000b748649a1dd2ace4c8c6035516"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.retention.internal.ErasureIdempotencyProcessorTest.xml",
+          "sha256": "deca1b413a72e8bad491d621f0f03f089239e5b0ba9d1f0c69e50ca423290471"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.retention.internal.ErasureLedgerRuntimeTest.xml",
+          "sha256": "5bf4249b45d67edf2d8fc34ca33a51cb35df53e36918c96f740c5b9d244beb13"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.retention.internal.ErasureLedgerStoreTest.xml",
+          "sha256": "ead4d8c7636022a49b42adad46c014230f2ca24af79461777bae7bf3df049cc3"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.retention.internal.ErasureLifecycleProcessorTest.xml",
+          "sha256": "a0a3330af3cc5b170596893a2eaa72dafab27b3fcce5c357b3d154fa444043f8"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.retention.internal.ErasureObservationProcessorTest.xml",
+          "sha256": "e976dbfdeb434ea441c82608f697537cc933f1b3773519846a7d172b18cd5f29"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.retention.internal.ErasurePermissionObservationTest.xml",
+          "sha256": "0edecb80dcff67128f886f04da06d3dadae296a98e5e43ae05fb8a17efa269ab"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.retention.internal.ErasurePreflightJourneyTest.xml",
+          "sha256": "39dcadc491d74bdd54361622843d3b61e8df2478e791b42a6874d867016240f3"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.retention.internal.ErasurePreviewJourneyTest.xml",
+          "sha256": "2f7f213ecf351045c87ff75edb1ec1e88bd7eda399e8e7282631e00ab9541c3d"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.retention.internal.ErasureRecoveryBatchTest.xml",
+          "sha256": "8e46b6881b7df53a9d10bc57632df7257072319aa08ba09793fdacb04eed2395"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.retention.internal.ErasureRecoveryJobsTest.xml",
+          "sha256": "992fc08638eb4e2f17142fca9a3e2b95b3bae42bd4c8759809737bc01bf0207a"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.retention.internal.ErasureRuntimeWebTest.xml",
+          "sha256": "175734138aac1f8378cc1a47b7e8e62f25edc921affe1b8d41f2be2847377c51"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.retention.internal.ErasureStartupGuardTest.xml",
+          "sha256": "30cabb9af2204e8f868b786eba8b379082ba0b397cc0bf9e1465b6c127949861"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.retention.internal.ErasureSupportDiagnosticsProcessorTest.xml",
+          "sha256": "3df0dcf62677fcacf18e4fdeb84a219961d12666e96a74394b8f8c5c5d8be5b1"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.retention.internal.ErasureWorkAdvisorTest.xml",
+          "sha256": "3708383a102e8074fe940dd26552ed1fcc313f16afa6e6e7754fa037487d0f2e"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.retention.internal.ErasureWorkScopeTest.xml",
+          "sha256": "8172823e2b0f56701ca3d004ec1b649a3240ae6404fb4b9bd22b5deb156c2f29"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.ScheduleTest.xml",
+          "sha256": "48d0e7c57dc495315f9eed313b67ae1b7468f91e0e5a9e7ab97d1030acb3a814"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.signing.ConfigurationSignerTest.xml",
+          "sha256": "1e3312e7c6a051f76bb5d659c2c46d750f88ab5e00ad1d4f1c7f21ebf7827295"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.SubjectIdempotencyAttributionJourneyTest.xml",
+          "sha256": "e3bca9302241046afe5e123254bc1f0a8e44ecdfbe07d8122535ee6eaf5fc8b4"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.support.internal.DiagnosticPackageCipherTest.xml",
+          "sha256": "91c8bf6d5068524bd5388362c555f03700e317a741f495565d16775159821dfc"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.support.internal.DiagnosticPackageJourneyTest.xml",
+          "sha256": "a06514621fc7463103fc7efa958fdfe9b621908f6b4afb62a757307e543f21d1"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.support.internal.DiagnosticProjectionTest.xml",
+          "sha256": "94f71900328b8f4bea226bcbe48bee5915fd0a36789ade71ef93ea58655755dd"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.SupportGrantJourneyTest.xml",
+          "sha256": "a4abd2787c0e18cdcab0f89698af507c45babbd4aadf5eb3fa7d40087dfe4102"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.SupportPairingJourneyTest.xml",
+          "sha256": "90ae5d255a18cb0fd83d1784c813fe1444a08dcf80bc45ba5af408d0bb042996"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.TeacherAccessJourneyTest.xml",
+          "sha256": "1ca1ef9813a1fa1d38d6fcd2078d9fe425a195cc93a490bfdc289252e8b99594"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.TenantJourneyTest.xml",
+          "sha256": "fde373e188806d579ea447e52e5ed0fcf7b5f624012d81c10f02bd1995990094"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.UsageReportClientCommandTest.xml",
+          "sha256": "83fd1a4350a6cec3e19605f137c39a06e8ee06282399cf8841e678ec56f0c330"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.UsageReportJobJourneyTest.xml",
+          "sha256": "53046d416636478ca9dce5c0d996afed295c6b7a4776fca61ef52ad046cbdfee"
+        },
+        {
+          "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\surefire-reports\\TEST-com.aimanager.UsageReportJourneyTest.xml",
+          "sha256": "34f72352ec1618b82805d2b17890e211304cddf482bc34844dcd9fe305f958aa"
+        }
+      ],
+      "skippedTests": [
+        {
+          "class": "com.aimanager.AndroidChildSubmissionJourneyTest",
+          "test": "realEnrollmentNativeCrashRecoveryAndRevocation",
+          "reason": "System property [device.android.runner] does not exist"
+        },
+        {
+          "class": "com.aimanager.AndroidCleanupHttpsJourneyTest",
+          "test": "nativeOriginalKeyExecutesRealHttpsCleanupAndRetainsAcknowledgedJournal",
+          "reason": "System property [device.cleanup.android.runner] does not exist"
+        },
+        {
+          "class": "com.aimanager.DeviceAccessHttpInteropTest",
+          "test": "realApprovalRetryReceiptsRevocationExpiryAndOpaqueRevocation",
+          "reason": "System property [device.access.package] does not exist"
+        },
+        {
+          "class": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+          "test": "actualDartSubmissionAdultDecisionAndExistingDeviceDeliveryReference",
+          "reason": "System property [device.access.package] does not exist"
+        },
+        {
+          "class": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+          "test": "actualChildUiRecoversOriginalCancellationAcrossProcesses",
+          "reason": "System property [device.child.package] does not exist"
+        },
+        {
+          "class": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+          "test": "actualChildSessionAndUiRecoverOriginalSubmissionAcrossProcesses",
+          "reason": "System property [device.child.package] does not exist"
+        },
+        {
+          "class": "com.aimanager.DeviceConfigurationHttpInteropTest",
+          "test": "realDeviceTransportStoresTwoPagesAndRejectsRevokedCredential",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.DeviceIdentityHttpInteropTest",
+          "test": "actualEnrollmentRecoveryConfirmationRotationAndRevocation",
+          "reason": "System property [device.identity.package] does not exist"
+        },
+        {
+          "class": "com.aimanager.DeviceObservationHttpInteropTest",
+          "test": "adultConsentDeviceLostAcknowledgementReplayWithdrawalAndRevocation",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.DiagnosticPreviewJourneyTest",
+          "test": "productionDartClientReadsRealHttpAndRechecksCurrentAccess",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.retention.internal.ErasureAdmissionStoreTest",
+          "test": "leastPrivilegeRuntimeCanDrainWorkButCannotRewriteAcceptedRecords",
+          "reason": "Environment variable [NOTICE_IT_ROOT_PASSWORD] does not exist"
+        },
+        {
+          "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+          "test": "mismatchedIdentityAndMissingLedgerAreReportedWithoutAutomaticRecreation",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+          "test": "servletAsyncCannotEscapeTheRegisteredSynchronousPermit",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+          "test": "acceptedLedgerStopsAuthorizedBusinessRequestsWithoutDeletingTheirData",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+          "test": "realHttpRequestDrainsBeforeAcceptanceAndProbesRemainAvailable",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "class": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+          "test": "nonTransactionalEngineIsRejectedBeforeAppending",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "class": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+          "test": "initializationPinsTransactionalEngineEvenWhenServerDefaultDiffers",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "class": "com.aimanager.support.internal.DiagnosticPackageJourneyTest",
+          "test": "productionDartClientCompletesPackageLifecycleOverRealHttp",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.SupportGrantJourneyTest",
+          "test": "productionDartSupportClientCompletesRealHttpGrantLifecycle",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.UsageReportJobJourneyTest",
+          "test": "realHttpJobsAreConsumedByProductionDartClient",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.UsageReportJourneyTest",
+          "test": "realHttpResponseIsConsumedByProductionDartReportClient",
+          "reason": "System property [device.dart.command] does not exist"
+        }
+      ]
+    }
+  ],
+  "observedRedRegressions": [
+    {
+      "log": ".local\\idempotency-erasure-red.log",
+      "sha256": "5ee285518761352108f16d6c3aab81aaf7c60b5bb23e135b0110d8147b5eb41d",
+      "tests": 46,
+      "failures": 40,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "log": ".local\\idempotency-erasure-bounded-red.log",
+      "sha256": "928d701b4c0bdbc9b46b273a9fed8676405b6ca77d480307cb841553c1dcc5b7",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "log": ".local\\idempotency-erasure-http-red.log",
+      "sha256": "b0d3aa9d78349cb0a5b393abf1d3aa9db1dd08d7ebf041fde8a1d232aa49de47",
+      "tests": 3,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "log": ".local\\idempotency-erasure-owner-red.log",
+      "sha256": "e16fd66a898b422dd8475d05b4cb55f798d0bae1bc7cd665ee62b8d5d64556d1",
+      "tests": 2,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    {
+      "log": ".local\\idempotency-erasure-index-red.log",
+      "sha256": "3ad5eaea3488fdd83f98d1b60b1a65f14c18c66fe302e01cdf408988f81e986e",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    }
+  ],
+  "artifact": {
+    "path": ".local\\idempotency-erasure-integrated-20261013\\backend\\target\\manager-backend-1.0.0.jar",
+    "sha256": "1bbf4d1b14966d34aa4d3e62502307f7c0c71199283455f9482d1e2b0546be5d",
+    "sizeBytes": 81554457,
+    "packagedResourcesMatchFrozenSource": true
+  },
+  "review": {
+    "core": {
+      "critical": 0,
+      "important": 0,
+      "minor": 0,
+      "minorUniqueIndexAssertionClosedAfterObservedMutationRed": true
+    },
+    "processor": {
+      "critical": 0,
+      "important": 0,
+      "minor": 0,
+      "sourceSha256": "ba8aeeaa98fa924b12a703e14fdd71ac051e548600284df090a132b31efd0812"
+    },
+    "runtimeEvidence": "Author validated exact exit handles, logs, XML totals, source receipts and isolated fixture cleanup; reviewers reviewed source without running builds."
+  },
+  "bounds": {
+    "parentSourceRowsPerBatch": 25,
+    "ownerReadsPerParentMaximum": 101,
+    "ownerSourceRowsPerRecheckBatch": 25,
+    "acceptedOwnersPerResponseMaximum": 100
+  },
+  "limitations": [
+    "Only subject.create is attributed in this increment; 45 other execute calls in the original audit remain UNCLASSIFIED.",
+    "Public submission, automatic worker, global completion watermark and real old-backup restoration/re-erasure remain unfinished.",
+    "Processing requires drained and continuously paused business admission.",
+    "Concurrency execution covers one shared job claim; different subject jobs with overlapping responses were reviewed for lock order but not directly run concurrently.",
+    "Checkpoint validation checks structure, not authenticity of administrator-forged valid phase/cursor.",
+    "Initial 46-test RED XML was not archived before the next test run; its complete text log is retained.",
+    "MySQL 8.4 tests passed; the pinned Flyway version emitted its existing tested-support-through-8.1 warning."
+  ],
+  "supersededMysqlAttempt": {
+    "directory": ".local/runtime/idempotency-erasure-gates/stale-resource-attempt",
+    "initialization": {
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "reason": "Restoring source preserved its older file timestamp, so incremental resource copy retained the intentionally nonunique index mutation in target/classes. Prior core25/processor24 passing attempts used that stale SQL and are superseded.",
+    "resolution": "Clean every isolated MySQL build and compare executed V1/catalog bytes with frozen resource bytes; final gates above are the clean reruns."
+  },
+  "supersededFullAttempt": {
+    "directory": ".local/runtime/idempotency-erasure-gates/full-first-attempt",
+    "tests": 932,
+    "failures": 0,
+    "errors": 9,
+    "skipped": 21,
+    "reason": "JUnit TempDir cleanup raised AccessDeniedException beneath the OS temporary directory in ConfigurationSignerTest (4 cases) and DiagnosticPackageCipherTest (5 cases).",
+    "isolatedRecheck": {
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": ".local/idempotency-erasure-temp-recheck.log"
+    },
+    "resolution": "Reran the complete unchanged source with workspace-owned TEMP/TMP, clean build, forkCount=2 and reuseForks=false; final full gate above is this rerun."
+  }
+}

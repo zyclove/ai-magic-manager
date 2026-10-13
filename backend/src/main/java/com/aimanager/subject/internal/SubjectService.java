@@ -4,6 +4,7 @@ import static com.aimanager.tenant.TenantAccess.Role.*;
 
 import com.aimanager.audit.AuditService;
 import com.aimanager.idempotency.IdempotencyService;
+import com.aimanager.idempotency.ResponseOwnership;
 import com.aimanager.identity.RecentAuthentication;
 import com.aimanager.shared.DomainException;
 import com.aimanager.shared.ItemPage;
@@ -59,7 +60,8 @@ class SubjectService implements SubjectAccess {
         key,
         Map.of("nickname", nickname, "ageBand", ageBand),
         Subject.class,
-        () -> insert(tenantId, actor, nickname, ageBand));
+        () -> insert(tenantId, actor, nickname, ageBand),
+        created -> ResponseOwnership.subjects(tenantId, java.util.List.of(created.id())));
   }
 
   private Subject insert(String tenantId, String actor, String nickname, Subject.AgeBand ageBand) {
