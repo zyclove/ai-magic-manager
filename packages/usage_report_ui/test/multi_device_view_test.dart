@@ -83,6 +83,8 @@ void main() {
                 body: SingleChildScrollView(
                     padding: const EdgeInsets.all(20),
                     child: DeviceUsageReportView(
+                        compactControls: true,
+                        description: '了解使用趋势，安排更合适的学习和休息。',
                         targets: const [target, second],
                         accessChanges: scope,
                         available: () => true,
@@ -93,6 +95,17 @@ void main() {
                         now: () =>
                             DateTime.fromMillisecondsSinceEpoch(now)))))));
     await tester.pumpAndSettle();
+    if (const bool.fromEnvironment('CAPTURE_MULTI_REPORT_UI')) {
+      await tester.runAsync(() async {
+        final image = await (boundary.currentContext!.findRenderObject()
+                as RenderRepaintBoundary)
+            .toImage(pixelRatio: 1);
+        final data = await image.toByteData(format: ui.ImageByteFormat.png);
+        await File('../../.local/parent-report-compact.png')
+            .writeAsBytes(data!.buffer.asUint8List());
+        image.dispose();
+      });
+    }
     await tester.ensureVisible(find.byKey(const Key('report-device-picker')));
     await tester.tap(find.byKey(const Key('report-device-picker')));
     await tester.pumpAndSettle();
@@ -117,6 +130,8 @@ void main() {
   Future<void> mount(WidgetTester tester,
       Future<UsageReport> Function(DeviceReportWindow) load,
       {List<UsageReportTarget>? targets = const [target, second],
+      bool compact = false,
+      void Function(String)? manage,
       ValueNotifier<bool>? access,
       VoidCallback? cancel}) async {
     final scope = access ?? ValueNotifier(true);
@@ -125,6 +140,8 @@ void main() {
         home: Scaffold(
             body: SingleChildScrollView(
                 child: DeviceUsageReportView(
+                    compactControls: compact,
+                    onManageObservation: manage,
                     targets: targets,
                     accessChanges: scope,
                     available: () => scope.value,
@@ -135,6 +152,44 @@ void main() {
     await tester.pump();
   }
 
+  testWidgets('compact ranges apply once and advanced settings start folded',
+      (tester) async {
+    final windows = <DeviceReportWindow>[];
+    await mount(tester, (w) async {
+      windows.add(w);
+      return multi(w);
+    }, compact: true);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('report-timezone')), findsNothing);
+    expect(windows.length, 1);
+    await tester.tap(find.text('近 14 天'));
+    await tester.pumpAndSettle();
+    expect(windows.length, 2);
+    expect(windows.last.from, lessThan(windows.first.from));
+    expect(find.text('设备概览 · 2 台'), findsOneWidget);
+    await tester.tap(find.text('更多筛选'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('report-timezone')), findsOneWidget);
+    expect(windows.length, 2);
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets(
+      'compact unauthorized result points directly to the selected device consent',
+      (tester) async {
+    String? requested;
+    await mount(tester, (w) async => multi(w),
+        compact: true, manage: (id) => requested = id);
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byKey(const Key('report-device-picker')));
+    await tester.tap(find.byKey(const Key('report-device-picker')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('卧室电视'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('查看并管理授权'));
+    await tester.tap(find.text('查看并管理授权'));
+    expect(requested, second.deviceId);
+    expect(find.text('0 分钟'), findsNothing);
+  });
   testWidgets(
       'explicit devices show status overview and switch without summing usage',
       (tester) async {

@@ -120,9 +120,24 @@ void main() {
                     .copyWith(textScaler: const TextScaler.linear(1.5)),
                 child: child!),
             home: ParentReportDevicePicker(
-                session: Session(api), onSelected: (_) async {}))));
+                session: Session(api),
+                browseFirst: true,
+                onSelected: (_) async {}))));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
+    if (const bool.fromEnvironment('CAPTURE_MULTI_REPORT_UI')) {
+      await tester.runAsync(() async {
+        final image = await (boundary.currentContext!.findRenderObject()
+                as RenderRepaintBoundary)
+            .toImage(pixelRatio: 1);
+        final data = await image.toByteData(format: ui.ImageByteFormat.png);
+        await File('../../.local/parent-report-browse.png')
+            .writeAsBytes(data!.buffer.asUint8List());
+        image.dispose();
+      });
+    }
+    await tester.tap(find.text('多选'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('选择筛选结果'));
     await tester.pumpAndSettle();
     expect(find.text('已明确选择 3 / 20 台'), findsOneWidget);

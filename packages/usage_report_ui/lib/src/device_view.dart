@@ -24,6 +24,10 @@ class DeviceUsageReportView extends StatefulWidget {
   final String notAuthorizedMessage;
   final DateTime Function()? now;
 
+  /// Adult hosts opt into quick range apply and progressive disclosure.
+  final bool compactControls;
+  final void Function(String deviceId)? onManageObservation;
+
   /// Explicit immutable device scope for an adult multi-device host. Omitted
   /// by child hosts, which continue to accept exactly one device only.
   final List<UsageReportTarget>? targets;
@@ -39,6 +43,8 @@ class DeviceUsageReportView extends StatefulWidget {
       this.description = '查看这台设备的使用记录，了解自己的使用习惯。',
       this.notAuthorizedMessage = '请与监护人确认使用观察设置；此处不会显示以前的用量。',
       this.targets,
+      this.compactControls = false,
+      this.onManageObservation,
       this.now});
   @override
   State<DeviceUsageReportView> createState() => _DeviceUsageReportViewState();
@@ -437,6 +443,83 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
     };
   }
 
+  List<Widget> _controls(bool enabled, UsageReport? report) {
+    final advanced = <Widget>[
+      SegmentedButton<String>(
+          segments: const [
+            ButtonSegment(value: 'DAY', label: Text('日')),
+            ButtonSegment(value: 'WEEK', label: Text('周'))
+          ],
+          selected: {
+            _period
+          },
+          onSelectionChanged:
+              enabled ? (v) => _edit(() => _period = v.single) : null),
+      const SizedBox(height: 12),
+      OutlinedButton.icon(
+          key: const Key('report-dates'),
+          onPressed: enabled ? _chooseDates : null,
+          icon: const Icon(Icons.date_range),
+          label: Text('${_date(_dates.start)} 至 ${_date(_dates.end)}')),
+      OutlinedButton.icon(
+          key: const Key('report-timezone'),
+          onPressed: enabled ? _chooseZone : null,
+          icon: const Icon(Icons.public),
+          label: Text('时区：$_zone')),
+    ];
+    final quick = Wrap(spacing: 8, runSpacing: 8, children: [
+      for (final days in [7, 14, 30])
+        ChoiceChip(
+            label: Text('近 $days 天'),
+            selected: _quickDays == days,
+            onSelected: enabled
+                ? (_) {
+                    _edit(() {
+                      _quickDays = days;
+                      _dates = DateTimeRange(
+                          start: _today.subtract(Duration(days: days - 1)),
+                          end: _today);
+                    });
+                    // Adult quick ranges apply immediately; child hosts retain explicit apply.
+                    if (widget.compactControls) unawaited(_run());
+                  }
+                : null),
+    ]);
+    return [
+      if (!widget.compactControls) ...advanced.take(2),
+      quick,
+      if (!widget.compactControls) ...advanced.skip(2),
+      if (widget.compactControls)
+        ExpansionTile(
+            key: const Key('report-advanced'),
+            tilePadding: EdgeInsets.zero,
+            title: const Text('更多筛选'),
+            subtitle: Text('${_period == 'DAY' ? '按日' : '按周'} · $_zone',
+                style: Theme.of(context).textTheme.bodySmall),
+            children: [
+              Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: advanced)
+            ]),
+      const SizedBox(height: 8),
+      if (widget.compactControls)
+        Align(
+            alignment: Alignment.centerRight,
+            child: TextButton.icon(
+                key: const Key('report-query'),
+                onPressed: enabled ? () => _run() : null,
+                icon: const Icon(Icons.refresh),
+                label: Text(report == null ? '查看报表' : '刷新报告')))
+      else
+        FilledButton.icon(
+            key: const Key('report-query'),
+            onPressed: enabled ? () => _run() : null,
+            icon: const Icon(Icons.refresh),
+            label: Text(report == null ? '查看报表' : '更新报表')),
+      const SizedBox(height: 16),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     final enabled = _available && !_loading;
@@ -454,49 +537,7 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
         if (widget.reconnect != null)
           TextButton(onPressed: widget.reconnect, child: const Text('检查设备连接')),
       ] else ...[
-        SegmentedButton<String>(
-            segments: const [
-              ButtonSegment(value: 'DAY', label: Text('日')),
-              ButtonSegment(value: 'WEEK', label: Text('周'))
-            ],
-            selected: {
-              _period
-            },
-            onSelectionChanged:
-                enabled ? (v) => _edit(() => _period = v.single) : null),
-        const SizedBox(height: 12),
-        Wrap(spacing: 8, runSpacing: 8, children: [
-          for (final days in [7, 14, 30])
-            ChoiceChip(
-                label: Text('近 $days 天'),
-                selected: _quickDays == days,
-                onSelected: enabled
-                    ? (_) => _edit(() {
-                          _quickDays = days;
-                          _dates = DateTimeRange(
-                              start: _today.subtract(Duration(days: days - 1)),
-                              end: _today);
-                        })
-                    : null)
-        ]),
-        const SizedBox(height: 8),
-        OutlinedButton.icon(
-            key: const Key('report-dates'),
-            onPressed: enabled ? _chooseDates : null,
-            icon: const Icon(Icons.date_range),
-            label: Text('${_date(_dates.start)} 至 ${_date(_dates.end)}')),
-        OutlinedButton.icon(
-            key: const Key('report-timezone'),
-            onPressed: enabled ? _chooseZone : null,
-            icon: const Icon(Icons.public),
-            label: Text('时区：$_zone')),
-        const SizedBox(height: 12),
-        FilledButton.icon(
-            key: const Key('report-query'),
-            onPressed: enabled ? () => _run() : null,
-            icon: const Icon(Icons.refresh),
-            label: Text(report == null ? '查看报表' : '更新报表')),
-        const SizedBox(height: 20),
+        ..._controls(enabled, report),
         if (_loading) ...[
           const LinearProgressIndicator(semanticsLabel: '正在读取使用报表'),
           TextButton(
@@ -535,12 +576,15 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
           style: Theme.of(context).textTheme.bodySmall),
       const SizedBox(height: 12),
       if (_targets != null) ...[
-        _Info(
-            '设备概览 · ${report.devices.length} 台',
-            '有记录 ${report.devices.where((d) => d.status == 'OBSERVED').length} 台 · '
-                '暂无数据 ${report.devices.where((d) => d.status == 'NO_DATA').length} 台 · '
-                '未授权 ${report.devices.where((d) => d.status == 'NOT_AUTHORIZED').length} 台。'
-                '仅包含明确选择的设备，不表示儿童或机构全部设备的情况。'),
+        if (widget.compactControls)
+          _DeviceOverview(devices: report.devices)
+        else
+          _Info(
+              '设备概览 · ${report.devices.length} 台',
+              '有记录 ${report.devices.where((d) => d.status == 'OBSERVED').length} 台 · '
+                  '暂无数据 ${report.devices.where((d) => d.status == 'NO_DATA').length} 台 · '
+                  '未授权 ${report.devices.where((d) => d.status == 'NOT_AUTHORIZED').length} 台。'
+                  '仅包含明确选择的设备，不表示儿童或机构全部设备的情况。'),
         const SizedBox(height: 12),
         OutlinedButton.icon(
             key: const Key('report-device-picker'),
@@ -551,7 +595,19 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
             style: Theme.of(context).textTheme.bodySmall),
         const SizedBox(height: 12),
       ],
-      const _Info('如何理解这些记录', '数据来自设备汇总，尚未经独立验证。未知时段不按零计算，多个应用的时长也不等于你的在线总时长。'),
+      if (widget.compactControls)
+        const ExpansionTile(
+            tilePadding: EdgeInsets.zero,
+            leading: Icon(Icons.info_outline),
+            title: Text('如何理解这些记录'),
+            children: [
+              Padding(
+                  padding: EdgeInsets.only(bottom: 12),
+                  child: Text('数据来自设备汇总，尚未经独立验证。未知时段不按零计算，多个应用的时长也不等于你的在线总时长。'))
+            ])
+      else
+        const _Info(
+            '如何理解这些记录', '数据来自设备汇总，尚未经独立验证。未知时段不按零计算，多个应用的时长也不等于你的在线总时长。'),
       const SizedBox(height: 16),
       if (device.status == 'NO_DATA')
         const _Info('暂无使用记录', '这个时段还没有可展示的记录，不代表使用时长为零。')
@@ -626,6 +682,16 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
               ]),
         ],
       ],
+      if (device.status == 'NOT_AUTHORIZED' &&
+          widget.onManageObservation != null)
+        Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: FilledButton.tonalIcon(
+                onPressed: _available
+                    ? () => widget.onManageObservation!(device.deviceId)
+                    : null,
+                icon: const Icon(Icons.privacy_tip_outlined),
+                label: const Text('查看并管理授权'))),
       const SizedBox(height: 20),
       ReportConfigurationsView(
           key: ValueKey('configurations/$_generation/${device.deviceId}'),
@@ -634,6 +700,35 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
       Text('保留边界 ${usageTimestamp(device.retentionFrom, report.timeZone)}',
           style: Theme.of(context).textTheme.bodySmall),
     ];
+  }
+}
+
+class _DeviceOverview extends StatelessWidget {
+  final List<UsageReportDevice> devices;
+  const _DeviceOverview({required this.devices});
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text('设备概览 · ${devices.length} 台',
+          style: Theme.of(context).textTheme.titleMedium),
+      const SizedBox(height: 8),
+      Wrap(spacing: 8, runSpacing: 8, children: [
+        for (final item in [
+          ('OBSERVED', '有记录', Icons.bar_chart),
+          ('NO_DATA', '暂无数据', Icons.hourglass_empty),
+          ('NOT_AUTHORIZED', '未授权', Icons.lock_outline)
+        ])
+          Chip(
+              backgroundColor: item.$1 == 'OBSERVED'
+                  ? scheme.primaryContainer
+                  : scheme.surfaceContainerHighest,
+              avatar: Icon(item.$3, size: 18),
+              label: Text(
+                  '${item.$2} ${devices.where((d) => d.status == item.$1).length}')),
+      ]),
+      Text('仅包含本次所选设备', style: Theme.of(context).textTheme.bodySmall),
+    ]);
   }
 }
 
