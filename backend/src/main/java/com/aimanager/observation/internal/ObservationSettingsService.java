@@ -117,6 +117,52 @@ class ObservationSettingsService implements ObservationAuthorization, Permission
             ObservationSettings.class, () -> change(tenant, actor.getSubject(), device, expected, input));
     }
 
+    /** 注册检查和写入在同一设备行锁内完成；沿用既有请求指纹和审计事件。 */
+    @Transactional(timeout = 10)
+    ObservationSettings changeBound(String tenant, Jwt actor, String deviceId, String key,
+            ObservationController.Change input) {
+        access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN);
+        recent.require(actor);
+        if (key == null || !key.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")) {
+            throw DomainException.invalid("INVALID_IDEMPOTENCY_KEY");
+        }
+        var device = devices.lockVisibleActive(tenant, actor.getSubject(), deviceId);
+        requireRegistration(device, input.registrationId());
+        return update(tenant, actor, deviceId, input.version(), key, input.update());
+    }
+
+    /** 读取已提交结果不要求再次 MFA；当前成人写权限与原操作身份仍必须匹配。 */
+    @Transactional(timeout = 10)
+    Recovery operationResult(String tenant, String actor, String deviceId, String key,
+            ObservationController.Change input) {
+        access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
+        var device = devices.lockVisibleActive(tenant, actor, deviceId);
+        requireRegistration(device, input.registrationId());
+        if (key == null || !key.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")) {
+            throw DomainException.invalid("INVALID_OBSERVATION_RESULT_REFERENCE");
+        }
+        var committed = idempotency.findCommitted(tenant, actor, "observation.update", key,
+            Map.of("deviceId", deviceId, "expectedVersion", input.version(), "input", input.update()),
+            ObservationSettings.class).orElseThrow(() ->
+                new DomainException(HttpStatus.NOT_FOUND, "OBSERVATION_RESULT_UNAVAILABLE"));
+        if (!committed.deviceId().equals(deviceId)
+                || !committed.registrationId().equals(input.registrationId())
+                || committed.version() != input.version() + 1
+                || committed.inventoryEnabled() != input.inventoryEnabled()
+                || committed.usageEnabled() != input.usageEnabled()) {
+            throw new IllegalStateException("Observation journal mismatch");
+        }
+        return new Recovery(committed, current(tenant, deviceId, input.registrationId(), true));
+    }
+
+    private void requireRegistration(Device device, String registration) {
+        if (!registration.equals(device.registrationId())) {
+            throw new DomainException(HttpStatus.CONFLICT, "REGISTRATION_CHANGED");
+        }
+    }
+
+    record Recovery(ObservationSettings committed, ObservationSettings current) {}
+
     private ObservationSettings change(String tenant, String actor, Device device, long expected,
             ObservationController.Update input) {
         var before = current(tenant, device.id(), device.registrationId(), true);
