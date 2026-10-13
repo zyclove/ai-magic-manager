@@ -686,7 +686,9 @@ class _Account extends StatelessWidget {
             const SizedBox(height: 24),
             CommercialAccount(session: session),
           ],
-          if (session.tenant != null && ParentConfig.console != null) ...[
+          if (session.tenant != null &&
+              session.canDecide &&
+              ParentConfig.console != null) ...[
             const SizedBox(height: 20),
             OutlinedButton.icon(
               onPressed: () async {
