@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:uuid/uuid.dart';
 
 import 'core/parent_api.dart';
 import 'core/parent_session.dart';
@@ -320,7 +321,22 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
     );
     if (confirmed != true || !mounted) return;
     final actor = widget.session.profile?['subject'];
-    final root = widget.session.root;
+    final tenantId = widget.session.tenant?['id'];
+    if (actor is! String || tenantId is! String) {
+      setState(
+          () => actionError = const ParentApiException(401, 'UNAUTHENTICATED'));
+      return;
+    }
+    final root = '/tenants/$tenantId';
+    final requestId = item['id'];
+    final requestVersion = item['version'];
+    if (requestId is! String || requestVersion is! int) {
+      setState(() =>
+          actionError = const ParentApiException(502, 'INVALID_RESPONSE'));
+      return;
+    }
+    final decisionKey = const Uuid().v4();
+    var submitted = false;
     setState(() => sending = true);
     try {
       if (!await widget.session.reauthenticate()) {
@@ -329,23 +345,64 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
         }
         return;
       }
-      if (!mounted ||
-          widget.session.profile?['subject'] != actor ||
-          widget.session.root != root ||
-          !widget.session.canDecide) {
+      if (!_sameDecisionScope(actor, tenantId)) {
         throw const ParentApiException(409, 'SCOPE_DENIED');
       }
+      submitted = true;
       await widget.session.api.send(
-          'POST', '$root/access-requests/${item['id']}/decisions',
-          version: item['version'] as int,
+          'POST', '$root/access-requests/$requestId/decisions',
+          version: requestVersion,
+          idempotencyKey: decisionKey,
           body: approve
               ? {'decision': 'APPROVE', 'grantedWindowSeconds': requested}
               : {'decision': 'DENY', 'reasonCode': 'NOT_NOW'});
-      reload();
+      if (_sameDecisionScope(actor, tenantId)) {
+        await reload();
+      }
     } catch (failure) {
-      if (mounted) setState(() => actionError = failure);
+      if (!_sameDecisionScope(actor, tenantId)) return;
+      if (submitted &&
+          (failure is! ParentApiException ||
+              failure.status == 0 ||
+              failure.status >= 500)) {
+        final message =
+            await _reconcileUncertainDecision(root, requestId, requestVersion);
+        if (!_sameDecisionScope(actor, tenantId)) return;
+        await pending.reload();
+        if (mounted) setState(() => actionError = message);
+      } else {
+        setState(() => actionError = failure);
+      }
     } finally {
       if (mounted) setState(() => sending = false);
+    }
+  }
+
+  bool _sameDecisionScope(String actor, String tenantId) =>
+      mounted &&
+      widget.session.profile?['subject'] == actor &&
+      widget.session.tenant?['id'] == tenantId &&
+      widget.session.canDecide;
+
+  /// A failed transport cannot prove that the decision transaction rolled back.
+  /// Read the same request once; never silently send a second decision.
+  Future<String> _reconcileUncertainDecision(
+      String root, String requestId, int expectedVersion) async {
+    try {
+      final current =
+          await widget.session.api.object('$root/access-requests/$requestId');
+      if (current['id'] != requestId ||
+          current['version'] is! int ||
+          current['state'] is! String) {
+        return '审批提交后的结果无法核对。请到管理台查看原申请，暂勿重复操作。';
+      }
+      if (current['state'] == 'PENDING' &&
+          current['version'] == expectedVersion) {
+        return '提交时连接中断；服务端目前仍显示待处理。请先刷新并核对原申请，再决定是否重试。';
+      }
+      return '申请状态已变化。本次提交是否生效尚不能仅凭网络错误确认，请核对原申请和设备执行回执。';
+    } catch (_) {
+      return '审批提交后的结果暂时无法查询。请恢复网络后核对原申请，暂勿重复操作。';
     }
   }
 
@@ -354,7 +411,14 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
         animation: pending,
         builder: (context, _) {
           if (pending.error != null && !pending.loaded) {
-            return _LoadError(pending.error!, retry: reload);
+            return Column(children: [
+              if (actionError != null)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
+                  child: _Notice('$actionError', error: true),
+                ),
+              Expanded(child: _LoadError(pending.error!, retry: reload)),
+            ]);
           }
           if (!pending.loaded) {
             return const Center(child: CircularProgressIndicator());
