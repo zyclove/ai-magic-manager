@@ -21,6 +21,7 @@ import 'core/permission_observation.dart' show permissionObservationEnabled;
 import 'ui/permission_observation_page.dart';
 import 'ui/subject_center.dart';
 import 'ui/notification_center.dart';
+import 'ui/help_center.dart';
 
 const _navy = Color(0xFF17324B);
 const _blue = Color(0xFF315E86);
@@ -649,180 +650,12 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
       );
 }
 
-class _HelpInbox extends StatefulWidget {
+class _HelpInbox extends StatelessWidget {
   final ParentSession session;
   const _HelpInbox({required this.session});
-
   @override
-  State<_HelpInbox> createState() => _HelpInboxState();
+  Widget build(BuildContext context) => ParentHelpCenter(session: session);
 }
-
-class _HelpInboxState extends State<_HelpInbox> {
-  late final PagedCollection requests;
-  bool sending = false;
-  Object? actionError;
-
-  @override
-  void initState() {
-    super.initState();
-    requests = PagedCollection(
-        widget.session.api, '${widget.session.root}/help-requests?state=OPEN');
-  }
-
-  @override
-  void dispose() {
-    requests.dispose();
-    super.dispose();
-  }
-
-  Future<void> reload() async {
-    setState(() => actionError = null);
-    await requests.reload();
-  }
-
-  Future<void> acknowledge(Json item) async {
-    if (sending) return;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('确认已看到求助？'),
-        content: const Text('此操作只记录你已看到，不能代表已联系孩子或问题已解决。请尽快实际联系。'),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('返回')),
-          FilledButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('已看到')),
-        ],
-      ),
-    );
-    if (confirmed != true || !mounted) return;
-    final actor = widget.session.profile?['subject'];
-    final tenantId = widget.session.tenant?['id'];
-    final requestId = item['id'];
-    final version = item['version'];
-    if (actor is! String ||
-        tenantId is! String ||
-        requestId is! String ||
-        version is! int) {
-      setState(() =>
-          actionError = const ParentApiException(502, 'INVALID_RESPONSE'));
-      return;
-    }
-    final root = '/tenants/$tenantId';
-    var submitted = false;
-    setState(() => sending = true);
-    try {
-      if (!_sameHelpScope(actor, tenantId)) return;
-      submitted = true;
-      await widget.session.api.send(
-          'POST', '$root/help-requests/$requestId/acknowledge',
-          version: version);
-      if (_sameHelpScope(actor, tenantId)) await reload();
-    } catch (failure) {
-      if (!_sameHelpScope(actor, tenantId)) return;
-      if (submitted &&
-          (failure is! ParentApiException ||
-              failure.status == 0 ||
-              failure.status >= 500)) {
-        final message = await _reconcileUncertainAcknowledge(root, requestId);
-        if (!_sameHelpScope(actor, tenantId)) return;
-        await requests.reload();
-        if (mounted) setState(() => actionError = message);
-      } else {
-        setState(() => actionError = failure);
-      }
-    } finally {
-      if (mounted) setState(() => sending = false);
-    }
-  }
-
-  bool _sameHelpScope(String actor, String tenantId) =>
-      mounted &&
-      widget.session.profile?['subject'] == actor &&
-      widget.session.tenant?['id'] == tenantId &&
-      widget.session.canSeeHelp;
-
-  Future<String> _reconcileUncertainAcknowledge(
-      String root, String requestId) async {
-    try {
-      final current =
-          await widget.session.api.object('$root/help-requests/$requestId');
-      if (current['id'] != requestId || current['state'] is! String) {
-        return '求助确认结果无法核对。请在管理台查看原记录，并尽快联系孩子。';
-      }
-      if (current['state'] == 'ACKNOWLEDGED') {
-        return '服务端显示这条求助已被看到；请仍通过现实渠道尽快联系孩子。';
-      }
-      return '提交时连接中断，服务端目前仍显示未确认。请核对原记录，并尽快联系孩子。';
-    } catch (_) {
-      return '求助确认结果暂时无法查询。请恢复网络后核对原记录，并尽快联系孩子。';
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) => AnimatedBuilder(
-        animation: requests,
-        builder: (context, _) {
-          if (requests.error != null && !requests.loaded) {
-            return Column(children: [
-              if (actionError != null)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
-                  child: _Notice('$actionError', error: true),
-                ),
-              Expanded(child: _LoadError(requests.error!, retry: reload)),
-            ]);
-          }
-          if (!requests.loaded) {
-            return const Center(child: CircularProgressIndicator());
-          }
-          final items = requests.items;
-          return RefreshIndicator(
-            onRefresh: reload,
-            child: ListView(padding: const EdgeInsets.all(20), children: [
-              const _SectionTitle('孩子的求助', '看到后请通过现实渠道尽快回应'),
-              const SizedBox(height: 10),
-              const _Notice('这里不是紧急救援服务；遇到即时危险请直接联系当地紧急服务。'),
-              if (actionError != null) _Notice('$actionError', error: true),
-              if (items.isEmpty) const _Empty('暂无未确认求助', '孩子的求助信息会在这里显示。'),
-              for (final item in items)
-                Card(
-                  child: Padding(
-                    padding: const EdgeInsets.all(18),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(item['subjectNickname'] as String? ?? '孩子',
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w700)),
-                        const SizedBox(height: 6),
-                        Text(_helpReason(item['reasonCode'])),
-                        Text(_time(item['createdAt']),
-                            style: const TextStyle(color: _blue)),
-                        const SizedBox(height: 10),
-                        FilledButton.tonal(
-                            onPressed: sending ? null : () => acknowledge(item),
-                            child: const Text('确认已看到')),
-                      ],
-                    ),
-                  ),
-                ),
-              if (requests.error != null)
-                _Notice('${requests.error}', error: true),
-              if (requests.loadingMore) const LinearProgressIndicator(),
-              if (requests.hasMore)
-                TextButton.icon(
-                    onPressed: requests.loadingMore ? null : requests.loadMore,
-                    icon: const Icon(Icons.expand_more),
-                    label: const Text('加载更多求助')),
-            ]),
-          );
-        },
-      );
-}
-
 class _DeviceList extends StatefulWidget {
   final ParentSession session;
   const _DeviceList({required this.session});
@@ -1191,12 +1024,6 @@ String _ageBand(Object? value) => switch (value) {
       'AGE_7_12' => '7–12 岁',
       'AGE_13_17' => '13–17 岁',
       _ => '年龄段未设置',
-    };
-
-String _helpReason(Object? value) => switch (value) {
-      'UNCOMFORTABLE_CONTENT' => '看到了不舒服的内容',
-      'DEVICE_PROBLEM' => '设备遇到问题',
-      _ => '需要帮助',
     };
 
 String _deviceState(Object? value) => switch (value) {

@@ -12,6 +12,9 @@ class PagedCollection extends ChangeNotifier {
 
   /// Rechecked after asynchronous token refresh and before accepting a page.
   final bool Function()? isCurrent;
+
+  /// Optional typed contract validation before a page is exposed to widgets.
+  final void Function(Json)? validateItem;
   final _items = <Json>[];
   final _seenCursors = <String>{};
   int _generation = 0;
@@ -19,7 +22,10 @@ class PagedCollection extends ChangeNotifier {
   bool _disposed = false;
 
   PagedCollection(this.api, this.path,
-      {this.pageSize = 50, this.idField = 'id', this.isCurrent}) {
+      {this.pageSize = 50,
+      this.idField = 'id',
+      this.isCurrent,
+      this.validateItem}) {
     reload();
   }
 
@@ -112,6 +118,7 @@ class PagedCollection extends ChangeNotifier {
   void _requireUniqueIds(List<Json> page, Set<String> existing) {
     final ids = {...existing};
     for (final item in page) {
+      validateItem?.call(item);
       final id = item[idField];
       if (id is! String || id.isEmpty || !ids.add(id)) {
         throw const ParentApiException(502, 'INVALID_RESPONSE');
