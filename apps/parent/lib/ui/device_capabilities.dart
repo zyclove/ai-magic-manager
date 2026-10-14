@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../core/parent_api.dart';
@@ -9,6 +10,11 @@ import 'permission_observation_page.dart';
 /// never presented as proof that a policy was enforced by Android.
 Future<void> showDeviceCapabilities(
     BuildContext context, ParentSession session, String deviceId) {
+  if (!session.authenticated ||
+      session.tenant == null ||
+      session.profile == null) {
+    return Future.value();
+  }
   return showDialog<void>(
     context: context,
     builder: (_) => _DeviceCapabilities(session: session, deviceId: deviceId),
@@ -32,6 +38,7 @@ class _DeviceCapabilitiesState extends State<_DeviceCapabilities>
   late Future<(Json, List<Json>)> result;
   bool foreground = true;
   int generation = 0;
+  _CapabilityFilter filter = _CapabilityFilter.all;
   bool get current =>
       mounted &&
       widget.session.authenticated &&
@@ -92,10 +99,14 @@ class _DeviceCapabilitiesState extends State<_DeviceCapabilities>
       widget.session.api.object('$root/capabilities', isCurrent: valid),
     ).wait;
     if (!valid()) throw const ParentApiException(409, 'SCOPE_DENIED');
-    if (device['id'] != widget.deviceId || capabilities['items'] is! List) {
+    if (device['id'] != widget.deviceId ||
+        device['displayName'] is! String ||
+        capabilities['items'] is! List ||
+        (capabilities['items'] as List).length > 128) {
       throw const ParentApiException(502, 'INVALID_RESPONSE');
     }
     final items = <Json>[];
+    final keys = <String>{};
     for (final raw in capabilities['items'] as List) {
       if (raw is! Json ||
           raw['key'] is! String ||
@@ -104,10 +115,21 @@ class _DeviceCapabilitiesState extends State<_DeviceCapabilities>
           raw['grantStatus'] is! String ||
           raw['evidenceSource'] is! String ||
           raw['reportedSupported'] is! bool ||
-          raw['effectiveSupported'] is! bool) {
+          raw['effectiveSupported'] is! bool ||
+          !RegExp(r'^[a-z][a-z0-9_.]{1,63}$').hasMatch(raw['key']) ||
+          !keys.add(raw['key']) ||
+          (raw['checkedAt'] != null &&
+              (raw['checkedAt'] is! int ||
+                  raw['checkedAt'] < 0 ||
+                  raw['checkedAt'] > 8640000000000000))) {
         throw const ParentApiException(502, 'INVALID_RESPONSE');
       }
       items.add(raw);
+    }
+    // Contradictory evidence must never produce a green availability badge.
+    if (items.any((item) =>
+        item['effectiveSupported'] == true && item['status'] != 'SUPPORTED')) {
+      throw const ParentApiException(502, 'INVALID_RESPONSE');
     }
     return (device, items);
   }
@@ -127,41 +149,63 @@ class _DeviceCapabilitiesState extends State<_DeviceCapabilities>
     }
     final height = MediaQuery.sizeOf(context).height;
     return Dialog(
+      insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       child: ConstrainedBox(
         constraints: BoxConstraints(maxWidth: 560, maxHeight: height * .84),
         child: FutureBuilder<(Json, List<Json>)>(
           future: result,
-          builder: (context, snapshot) => ListView(
-            shrinkWrap: true,
-            padding: const EdgeInsets.all(22),
+          builder: (context, snapshot) => Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Row(children: [
-                const Icon(Icons.verified_user_outlined,
-                    color: Color(0xFF315E86)),
-                const SizedBox(width: 10),
-                Expanded(
-                    child: Text('设备能力',
-                        style: Theme.of(context).textTheme.titleLarge)),
-                IconButton(
-                    tooltip: '关闭',
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close)),
-              ]),
-              const SizedBox(height: 10),
-              if (snapshot.hasError) ...[
-                Text('${snapshot.error}',
-                    style: const TextStyle(color: Color(0xFF9A3931))),
-                const SizedBox(height: 10),
-                OutlinedButton.icon(
-                    onPressed: _reload,
-                    icon: const Icon(Icons.refresh),
-                    label: const Text('重新加载')),
-              ] else if (snapshot.connectionState != ConnectionState.done)
-                const Padding(
-                    padding: EdgeInsets.all(28),
-                    child: Center(child: CircularProgressIndicator()))
-              else
-                ..._content(snapshot.data!.$1, snapshot.data!.$2),
+              Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 12, 8, 4),
+                  child: Row(children: [
+                    const Icon(Icons.verified_user_outlined,
+                        color: Color(0xFF315E86)),
+                    const SizedBox(width: 10),
+                    Expanded(
+                        child: Text('设备能力',
+                            style: Theme.of(context).textTheme.titleLarge)),
+                    IconButton(
+                        tooltip: '关闭',
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.close)),
+                  ])),
+              const Divider(height: 1),
+              Flexible(
+                  child: ListView(
+                      shrinkWrap: true,
+                      padding: const EdgeInsets.all(20),
+                      children: [
+                    if (snapshot.hasError) ...[
+                      const Icon(Icons.cloud_off_outlined, size: 32),
+                      const SizedBox(height: 12),
+                      Text('暂时无法读取设备能力',
+                          style: Theme.of(context).textTheme.titleMedium),
+                      const SizedBox(height: 8),
+                      Text(_readError(snapshot.error),
+                          style: const TextStyle(color: Color(0xFF9A3931))),
+                    ] else if (snapshot.connectionState != ConnectionState.done)
+                      const Padding(
+                          padding: EdgeInsets.all(28),
+                          child: Center(child: CircularProgressIndicator()))
+                    else
+                      ..._content(snapshot.data!.$1, snapshot.data!.$2),
+                  ])),
+              const Divider(height: 1),
+              Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed:
+                          snapshot.connectionState == ConnectionState.done
+                              ? _reload
+                              : null,
+                      icon: const Icon(Icons.refresh),
+                      label: Text(snapshot.hasError ? '重新加载' : '刷新状态'),
+                    ),
+                  )),
             ],
           ),
         ),
@@ -172,6 +216,13 @@ class _DeviceCapabilitiesState extends State<_DeviceCapabilities>
   List<Widget> _content(Json device, List<Json> items) {
     final usable =
         items.where((item) => item['effectiveSupported'] == true).length;
+    final visible = items
+        .where((item) => switch (filter) {
+              _CapabilityFilter.all => true,
+              _CapabilityFilter.available => item['effectiveSupported'] == true,
+              _CapabilityFilter.attention => item['effectiveSupported'] != true,
+            })
+        .toList();
     return [
       Text(device['displayName'] as String? ?? '未命名设备',
           style: Theme.of(context).textTheme.titleMedium),
@@ -186,11 +237,21 @@ class _DeviceCapabilitiesState extends State<_DeviceCapabilities>
             borderRadius: BorderRadius.circular(12)),
         child: Padding(
           padding: const EdgeInsets.all(14),
-          child: Text(usable == 0
-              ? '当前没有经服务端确认可用于系统执行的能力。设备自报支持或最近连线，都不等于应用限制已生效。'
-              : '服务端确认 $usable 项能力可用。具体规则是否已执行，还需查看策略执行回执。'),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text('当前可确认 $usable 项能力',
+                style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            Text(usable == 0
+                ? '暂不能确认系统限制可执行。设备在线或自报支持，不代表规则已生效。'
+                : '能力可用不代表规则已执行；执行结果请查看策略回执。'),
+          ]),
         ),
       ),
+      const SizedBox(height: 12),
+      Text('下一步', style: Theme.of(context).textTheme.titleSmall),
+      const SizedBox(height: 4),
+      Text(_nextStep(device, items)),
       const SizedBox(height: 18),
       if (permissionObservationEnabled &&
           widget.session.canDecide &&
@@ -201,12 +262,29 @@ class _DeviceCapabilitiesState extends State<_DeviceCapabilities>
                 openParentPermissions(context, widget.session, device),
             icon: const Icon(Icons.privacy_tip_outlined),
             label: const Text('查看应用权限')),
-      Text('逐项能力 · ${items.length}',
-          style: Theme.of(context).textTheme.titleMedium),
+      const SizedBox(height: 12),
+      Text('逐项能力', style: Theme.of(context).textTheme.titleMedium),
       const SizedBox(height: 8),
+      Wrap(spacing: 8, runSpacing: 4, children: [
+        for (final option in _CapabilityFilter.values)
+          ChoiceChip(
+            label: Text(switch (option) {
+              _CapabilityFilter.all => '全部 ${items.length}',
+              _CapabilityFilter.available => '可用 $usable',
+              _CapabilityFilter.attention => '待确认 ${items.length - usable}',
+            }),
+            selected: filter == option,
+            onSelected: (_) => setState(() => filter = option),
+          ),
+      ]),
+      const SizedBox(height: 12),
       if (items.isEmpty) const Text('尚无能力记录。请检查设备注册和最近连接。'),
-      for (final item in items) ...[
-        _CapabilityCard(item),
+      if (items.isNotEmpty && visible.isEmpty)
+        Text(filter == _CapabilityFilter.available
+            ? '暂无可用能力。切换“待确认”查看原因。'
+            : '没有待确认的能力。规则执行结果仍需查看策略回执。'),
+      for (final item in visible) ...[
+        _CapabilityCard(item, key: ValueKey(item['key'])),
         const SizedBox(height: 9),
       ],
     ];
@@ -215,7 +293,7 @@ class _DeviceCapabilitiesState extends State<_DeviceCapabilities>
 
 class _CapabilityCard extends StatelessWidget {
   final Json item;
-  const _CapabilityCard(this.item);
+  const _CapabilityCard(this.item, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -223,8 +301,7 @@ class _CapabilityCard extends StatelessWidget {
     final key = item['key'] as String;
     return Semantics(
       container: true,
-      label:
-          '${_names[key] ?? key}，${usable ? '服务端确认可用' : _status(item['status'])}',
+      label: '${_names[key] ?? '其他能力'}，${_availability(item)}',
       child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
@@ -241,20 +318,77 @@ class _CapabilityCard extends StatelessWidget {
             Expanded(
                 child: Text(_names[key] ?? '其他能力',
                     style: Theme.of(context).textTheme.titleSmall)),
-            Text(_status(item['status'])),
           ]),
-          const SizedBox(height: 5),
-          SelectableText(key, style: Theme.of(context).textTheme.bodySmall),
-          const SizedBox(height: 7),
-          Text('限制：${_limitation(item['limitationCode'])}'),
-          Text(
-              '授权：${_grant(item['grantStatus'])} · ${item['reportedSupported'] == true ? '设备自报支持' : '设备未报告支持'}'),
-          Text(
-              '来源：${_source(item['evidenceSource'])} · 核对 ${_time(item['checkedAt'])}'),
+          const SizedBox(height: 8),
+          Text(_availability(item),
+              style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  color: usable
+                      ? const Color(0xFF13745C)
+                      : const Color(0xFF315E86))),
+          const SizedBox(height: 4),
+          Text(usable
+              ? '查看策略回执，确认具体规则是否已执行。'
+              : _limitation(item['limitationCode'])),
+          ExpansionTile(
+            tilePadding: EdgeInsets.zero,
+            childrenPadding: const EdgeInsets.only(bottom: 8),
+            expandedCrossAxisAlignment: CrossAxisAlignment.start,
+            title: const Text('查看依据', style: TextStyle(fontSize: 14)),
+            children: [
+              SelectableText('能力标识：$key',
+                  style: Theme.of(context).textTheme.bodySmall),
+              Text('授权：${_grant(item['grantStatus'])}'),
+              Text(item['reportedSupported'] == true ? '设备自报支持' : '设备未报告支持'),
+              Text('来源：${_source(item['evidenceSource'])}'),
+              Text('核对时间：${_time(item['checkedAt'])}'),
+              if (item['limitationCode'] != '')
+                SelectableText('原因编号：${item['limitationCode']}'),
+            ],
+          ),
         ]),
       ),
     );
   }
+}
+
+enum _CapabilityFilter { all, available, attention }
+
+String _availability(Json item) => item['effectiveSupported'] == true
+    ? '服务端确认可用'
+    : item['status'] == 'SUPPORTED'
+        ? '尚未确认可用'
+        : _status(item['status']);
+
+/// Suggest only actions supported by the current evidence. Refreshing never
+/// upgrades a BYOD device or authorizes another data collection purpose.
+String _nextStep(Json device, List<Json> items) {
+  if (device['state'] != 'ACTIVE' || device['observationStatus'] == 'REVOKED') {
+    return '设备已停用或撤销，请返回设备列表核对注册状态。';
+  }
+  if (device['observationStatus'] != 'RECENT') {
+    return '请先让儿童设备联网并打开智能管家，再刷新状态。';
+  }
+  if (items.any((item) => item['status'] == 'STALE')) {
+    return '部分能力记录已过期，请在儿童设备重新上报后刷新。';
+  }
+  if (items.any(
+      (item) => item['limitationCode'] == 'MANAGED_REGISTRATION_REQUIRED')) {
+    return '需要阻止应用启动？请联系管理员确认受管接入条件；普通个人设备可能不支持。';
+  }
+  return '选择下方能力查看说明；需要核对来源时展开“查看依据”。';
+}
+
+String _readError(Object? error) {
+  if (error is ParentApiException) return error.toString();
+  // Tuple.wait wraps errors; keep useful API messages without exposing internals.
+  if (error is ParallelWaitError) {
+    final errors = error.errors;
+    if (errors is (AsyncError?, AsyncError?)) {
+      return _readError(errors.$1?.error ?? errors.$2?.error);
+    }
+  }
+  return '读取未完成，请稍后重新加载。';
 }
 
 const _names = <String, String>{
@@ -294,7 +428,7 @@ String _status(Object? value) => switch (value) {
 String _limitation(Object? value) => switch (value) {
       'MANAGED_REGISTRATION_REQUIRED' => '需要受管设备注册',
       'EVIDENCE_NOT_CERTIFIED' => '设备自报尚未经过系统能力认证',
-      _ => value is String && value.isNotEmpty ? value : '原因未知',
+      _ => '尚无明确说明，请展开依据并联系管理员核对。',
     };
 
 String _grant(Object? value) => switch (value) {
@@ -311,7 +445,9 @@ String _source(Object? value) => switch (value) {
     };
 
 String _time(Object? milliseconds) {
-  if (milliseconds is! int) return '时间未知';
+  if (milliseconds is! int ||
+      milliseconds < 0 ||
+      milliseconds > 8640000000000000) return '时间未知';
   final value = DateTime.fromMillisecondsSinceEpoch(milliseconds).toLocal();
   return '${value.year}-${value.month.toString().padLeft(2, '0')}-${value.day.toString().padLeft(2, '0')} '
       '${value.hour.toString().padLeft(2, '0')}:${value.minute.toString().padLeft(2, '0')}';

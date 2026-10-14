@@ -25,7 +25,7 @@
 | 应用目录与分类 | 手机登记不可变应用身份、核对平台/资料/签名、维护共享报表分类；规则中分页选择或登记应用；写入有原请求持久恢复 | `/applications`、`/{id}/classification` 及各自结果查询；见[应用目录交付](parent-application-catalog-delivery.md) |
 | 使用报告 | 单设备或明确选择 1–20 台有效设备；分页筛选与状态概览，逐设备查看日期/时区内应用区间、日周趋势、分类和配置交付；未授权/无数据不显示零，后台/撤权清除旧结果 | 既有 `/usage-reports` 与全部目标当前注册预检，复用 usage_report_ui；见[多设备报告交付](parent-multi-device-report-delivery.md) |
 | 求助与历史 | 待查看/已查看/全部分页，直达详情，明确确认已看到；成功直接结束，未知结果持久保留并只读恢复，后台隐藏 | 既有 `/help-requests`、`/{id}`、`/{id}/acknowledge` 与原 `If-Match`；见[手机求助中心交付](parent-help-center-delivery.md) |
-| 设备 | 分页展示注册状态和管理模式；点开设备可看连接观察及逐项能力证据、限制原因，提醒另查策略执行回执 | `GET /devices`、`GET /devices/{id}`、`GET /devices/{id}/capabilities` |
+| 设备 | 分页展示注册状态和管理模式；详情先显示能力摘要与下一步建议，支持可用/待确认筛选、依据折叠、固定刷新关闭；后台隐藏、身份变化关闭，提醒另查策略执行回执 | `GET /devices`、`GET /devices/{id}`、`GET /devices/{id}/capabilities`；见[设备能力操作简化](parent-device-capability-usability.md) |
 | 设备配对 | 分页选择儿童与 Android/TV；近期认证后先保存随机注册请求编号，再生成 BYOD 一次性凭据；响应丢失或进程重启后可按原编号查询、不回显秘密；儿童端认领后刷新状态、输入物理设备配对码再次认证确认；可取消 | `POST /enrollments`（`Client-Request-Id`）、`GET /enrollment-creation-results/{id}`、`GET /enrollments/{id}`、`POST /enrollments/{id}/confirm`、`DELETE /enrollments/{id}` |
 | 正常退出 | 复用 Web 管理台 `device_operations` 组件；先预览后果、近期认证、带版本和幂等确认；网络结果未知时保留恢复记录，云端撤权与本代理清理回执分开展示 | `GET /devices/{id}`、`/devices/{id}/deprovision` 路由；只开放当前 BYOD 注册，服务端逐请求鉴权 |
 | 商业账户 | 在“我的”只读显示已核验的设备名额和功能权益；无购买、合同自授权按钮，明确与设备系统能力区分 | `GET /commercial-entitlements`；服务端限成人管理员/审计员 |
