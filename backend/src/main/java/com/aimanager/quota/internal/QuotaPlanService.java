@@ -176,6 +176,47 @@ class QuotaPlanService {
         response -> ResponseOwnership.subjects(tenant, List.of(response.subjectId())));
   }
 
+  @Transactional(timeout = 10)
+  public OperationResult creationResult(String tenant, String actor, String requestId,
+      QuotaPlanController.Create input) {
+    access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
+    subjects.lockActiveForScope(tenant, actor, input.subjectId());
+    requireResultKey(requestId);
+    var committed = idempotency.findCommitted(tenant, actor, "quota.plan.create", requestId,
+        Map.of("input", input), QuotaPlan.class)
+        .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "QUOTA_RESULT_UNAVAILABLE"));
+    var current = read(tenant, committed.id(), true);
+    if (!committed.subjectId().equals(input.subjectId())
+        || !current.subjectId().equals(committed.subjectId()))
+      throw new IllegalStateException("Quota plan creation journal scope mismatch");
+    return new OperationResult(requestId, "PLAN_CREATE", committed, current);
+  }
+
+  @Transactional(timeout = 10)
+  public OperationResult updateResult(String tenant, String actor, String planId,
+      String requestId, String etag, QuotaPlanController.Update input) {
+    access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
+    var target = read(tenant, planId, false);
+    subjects.lockActiveForScope(tenant, actor, target.subjectId());
+    requireResultKey(requestId);
+    long version = ResourceVersions.require(etag);
+    var committed = idempotency.findCommitted(tenant, actor, "quota.plan.update", requestId,
+        Map.of("planId", planId, "version", version, "input", input), QuotaPlan.class)
+        .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "QUOTA_RESULT_UNAVAILABLE"));
+    var current = read(tenant, planId, true);
+    if (!committed.id().equals(planId) || !committed.subjectId().equals(current.subjectId()))
+      throw new IllegalStateException("Quota plan update journal scope mismatch");
+    return new OperationResult(requestId, "PLAN_UPDATE", committed, current);
+  }
+
+  private void requireResultKey(String key) {
+    if (key == null || !key.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
+      throw DomainException.invalid("INVALID_QUOTA_RESULT_REFERENCE");
+  }
+
+  /** Historical committed configuration and latest saved configuration are intentionally distinct. */
+  record OperationResult(String requestId, String operation, QuotaPlan committed, QuotaPlan current) {}
+
   public ItemPage<QuotaPlan> list(String tenant, String actor, int limit, String cursor) {
     var role = access.requireRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN, AUDITOR, CHILD);
     ItemPage.validate(limit, cursor);

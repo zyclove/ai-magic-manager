@@ -4,6 +4,8 @@ import '../core/parent_api.dart';
 import '../core/parent_session.dart';
 import '../core/quotas.dart';
 
+part 'quota_plan_pages.dart';
+
 /// Every route and dialog is bound to the identity/workspace generation that opened it.
 mixin _QuotaScope<T extends StatefulWidget> on State<T> {
   ParentSession get session;
@@ -146,6 +148,32 @@ class _QuotaCenterState extends State<QuotaCenter> with _QuotaScope {
                           const Text(
                               '总额度与单应用额度共同约束。这里显示服务端账本；是否能实际限制设备，取决于经验证的执行能力。'),
                           const SizedBox(height: 16),
+                          Card(
+                              child: ListTile(
+                                  leading:
+                                      const Icon(Icons.date_range_outlined),
+                                  title: const Text('每周自动安排'),
+                                  subtitle: const Text('一次设置工作日和周末，特殊日期单独调整'),
+                                  trailing: const Icon(Icons.chevron_right),
+                                  onTap: opening || operation.busy
+                                      ? null
+                                      : () async {
+                                          setState(() => opening = true);
+                                          try {
+                                            await Navigator.of(context).push(
+                                                MaterialPageRoute<void>(
+                                                    builder: (_) =>
+                                                        _QuotaPlanCenter(
+                                                            session: session,
+                                                            operation:
+                                                                operation)));
+                                          } finally {
+                                            if (mounted) {
+                                              setState(() => opening = false);
+                                            }
+                                          }
+                                          if (current) await pools.reload();
+                                        })),
                           if (session.canDecide) ...[
                             _QuotaRecovery(
                                 session: session,
@@ -232,19 +260,29 @@ class _QuotaRecovery extends StatelessWidget {
                     children: [
                       Text(committed == null ? '先核对上一次额度操作' : '原操作已提交',
                           style: Theme.of(context).textTheme.titleLarge),
-                      Text(p['operation'] == 'CREATE'
-                          ? '创建：${p['body']['name']} · ${p['body']['periodId']}'
-                          : '调整：${p['before']['name']} · ${p['body']['deltaSeconds'] > 0 ? '增加' : '减少'} ${quotaTime((p['body']['deltaSeconds'] as int).abs())}'),
+                      Text(operation.isPlan
+                          ? '每周计划：${p['body']['name']}'
+                          : p['operation'] == 'CREATE'
+                              ? '创建：${p['body']['name']} · ${p['body']['periodId']}'
+                              : '调整：${p['before']['name']} · ${p['body']['deltaSeconds'] > 0 ? '增加' : '减少'} ${quotaTime((p['body']['deltaSeconds'] as int).abs())}'),
                       const Text('内容已固定。网络异常不代表失败，不会自动再次增加额度。'),
-                      if (committed != null)
+                      if (committed != null && operation.isPlan)
+                        Text(
+                            '已保存版本 ${committed['version']} · ${committed['effectiveFrom']} 起${committed['state'] == 'PAUSED' ? '暂停' : '启用'}（历史快照）'),
+                      if (latest != null && operation.isPlan)
+                        Text(
+                            '最新保存版本 ${latest['version']} · ${latest['effectiveFrom']} 起${latest['state'] == 'PAUSED' ? '暂停' : '启用'}'),
+                      if (committed != null && !operation.isPlan)
                         Text(
                             '原操作后总额度：${quotaTime(committed['limitSeconds'])}（历史快照）'),
-                      if (latest != null)
+                      if (latest != null && !operation.isPlan)
                         Text(
                             '最近核对的可分配额度：${quotaTime(latest['availableSeconds'])}'),
                       if (operation.queried && committed == null)
-                        const Text('没有可读取的原结果。请核对每日额度和账本，不要据此认为未提交。'),
-                      SelectableText('请求编号：${p['requestId']}'),
+                        const Text('没有可读取的原结果。请核对额度、计划及版本记录，不要据此认为未提交。'),
+                      ExpansionTile(
+                          title: const Text('操作详情'),
+                          children: [SelectableText('请求编号：${p['requestId']}')]),
                       Wrap(spacing: 8, children: [
                         OutlinedButton(
                             onPressed: operation.busy ? null : operation.query,
@@ -267,8 +305,8 @@ class _QuotaRecovery extends StatelessWidget {
                                   : () async {
                                       if (committed == null &&
                                           !await confirm(
-                                              '已核对账本？',
-                                              '这里只清除本机提醒，不会撤销服务端操作。请确认已检查每日额度和账本。',
+                                              '已核对额度或计划？',
+                                              '这里只清除本机提醒，不会撤销服务端操作。请确认已检查每日额度、每周计划及历史记录。',
                                               '已核对，清除提醒')) return;
                                       if (await operation.acknowledge()) {
                                         await onCleared();

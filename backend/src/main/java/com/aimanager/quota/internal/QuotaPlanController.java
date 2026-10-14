@@ -76,6 +76,25 @@ class QuotaPlanController {
     return plans.revisions(tenantId, actor.getSubject(), planId, limit, cursor);
   }
 
+  /** Read a durable original result without repeating a write or requiring fresh MFA. */
+  @PostMapping("/creation-results/{requestId}/query")
+  ResponseEntity<QuotaPlanService.OperationResult> creationResult(
+      @AuthenticationPrincipal Jwt actor, @PathVariable String tenantId,
+      @PathVariable String requestId, @Valid @RequestBody Create input) {
+    return ResponseEntity.ok().cacheControl(CacheControl.noStore())
+        .body(plans.creationResult(tenantId, actor.getSubject(), requestId, input));
+  }
+
+  @PostMapping("/{planId}/update-results/{requestId}/query")
+  ResponseEntity<QuotaPlanService.OperationResult> updateResult(
+      @AuthenticationPrincipal Jwt actor, @PathVariable String tenantId,
+      @PathVariable String planId, @PathVariable String requestId,
+      @RequestHeader(name = "If-Match", required = false) String etag,
+      @Valid @RequestBody Update input) {
+    return ResponseEntity.ok().cacheControl(CacheControl.noStore())
+        .body(plans.updateResult(tenantId, actor.getSubject(), planId, requestId, etag, input));
+  }
+
   private ResponseEntity<QuotaPlan> response(QuotaPlan plan, HttpStatus status) {
     return ResponseEntity.status(status).eTag(ResourceVersions.tag(plan.version())).body(plan);
   }

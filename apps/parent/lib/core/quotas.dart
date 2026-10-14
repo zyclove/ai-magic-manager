@@ -4,6 +4,8 @@ import 'package:uuid/uuid.dart';
 import 'parent_api.dart';
 import 'parent_durable_storage.dart';
 
+part 'quota_plans.dart';
+
 final _id =
     RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$');
 bool _uuid(dynamic value) => value is String && _id.hasMatch(value);
@@ -83,7 +85,9 @@ String quotaDelta(int seconds) =>
     '${seconds > 0 ? '+' : seconds < 0 ? '−' : ''}${quotaTime(seconds.abs())}';
 
 void validateQuotaInput(String operation, Json body, Json? before) {
-  if (operation == 'CREATE') {
+  if (operation == 'PLAN_CREATE' || operation == 'PLAN_UPDATE') {
+    validateQuotaPlanInput(operation, body, before);
+  } else if (operation == 'CREATE') {
     if (!_text(body['name'], 100) ||
         !_uuid(body['subjectId']) ||
         !const {'TOTAL', 'APPLICATION'}.contains(body['scope']) ||
@@ -229,8 +233,13 @@ class QuotaOperationController extends ChangeNotifier {
     }
   }
 
-  String get _path => '/tenants/$tenant/quota-pools';
+  bool get isPlan =>
+      pending?['operation'] == 'PLAN_CREATE' ||
+      pending?['operation'] == 'PLAN_UPDATE';
+  String get _path =>
+      '/tenants/$tenant/${isPlan ? 'quota-plans' : 'quota-pools'}';
   Json _checkCommitted(dynamic raw) {
+    if (isPlan) return _checkCommittedPlan(raw, pending!);
     final result = readQuota(raw), body = pending!['body'] as Json;
     if (pending!['operation'] == 'CREATE') {
       for (final key in [
@@ -267,7 +276,10 @@ class QuotaOperationController extends ChangeNotifier {
   Future<void> _send() async {
     final p = pending!, before = p['before'] as Json?;
     final raw = await api.send(
-        'POST', before == null ? _path : '$_path/${before['id']}/adjustments',
+        isPlan && before != null ? 'PUT' : 'POST',
+        before == null
+            ? _path
+            : '$_path/${before['id']}${isPlan ? '' : '/adjustments'}',
         body: p['body'],
         version: before?['version'],
         idempotencyKey: p['requestId'],
@@ -296,7 +308,7 @@ class QuotaOperationController extends ChangeNotifier {
     final p = pending!, before = p['before'] as Json?;
     final path = before == null
         ? '$_path/creation-results/${p['requestId']}/query'
-        : '$_path/${before['id']}/adjustment-results/${p['requestId']}/query';
+        : '$_path/${before['id']}/${isPlan ? 'update' : 'adjustment'}-results/${p['requestId']}/query';
     try {
       final raw = await api.send('POST', path,
           body: p['body'],
@@ -307,13 +319,15 @@ class QuotaOperationController extends ChangeNotifier {
           raw['requestId'] != p['requestId'] ||
           raw['operation'] != p['operation']) throw _invalid;
       final original = _checkCommitted(raw['committed']),
-          now = readQuota(raw['current']);
+          now = isPlan
+              ? readQuotaPlan(raw['current'])
+              : readQuota(raw['current']);
       for (final key in [
         'id',
         'subjectId',
         'scope',
         'applicationId',
-        'periodId',
+        if (!isPlan) 'periodId',
         'timeZone'
       ]) {
         if (now[key] != original[key]) throw _invalid;
@@ -375,6 +389,10 @@ class QuotaOperationController extends ChangeNotifier {
 
 String quotaFailure(Object failure) => failure is ParentApiException
     ? switch (failure.code) {
+        'QUOTA_PLAN_EXISTS' => '该儿童和应用范围已有每周计划，请在列表中编辑现有计划。',
+        'QUOTA_PLAN_START_INVALID' => '日期已变化，请重新选择儿童，读取今天和明天的日期。',
+        'QUOTA_WEEK_INCOMPLETE' => '请为一周七天都设置额度。',
+        'QUOTA_OVERRIDE_DATE_INVALID' => '特殊日期须在允许范围内，请重新选择。',
         'QUOTA_BALANCE_CONFLICT' => '余额已变化，减少后不能低于已结算与预留之和。请先核对原操作，再读取最新额度。',
         'QUOTA_PERIOD_CLOSED' ||
         'QUOTA_PERIOD_UNAVAILABLE' =>
