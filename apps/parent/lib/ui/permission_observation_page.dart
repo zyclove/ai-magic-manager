@@ -318,7 +318,15 @@ class _ParentPermissionsPageState extends State<ParentPermissionsPage>
                         ]),
                   ]))),
       if (result.permissions.isEmpty)
-        _notice('暂无权限明细，请在儿童设备选择此应用并上报。没有明细不代表没有权限。', Icons.help_outline),
+        _notice(
+            switch (result.status) {
+              'UNKNOWN' =>
+                '还没有这款应用的权限记录。请在儿童设备“使用情况与隐私”中加载应用、选择这款应用完成观察，再点此页刷新。空记录不代表没有权限。',
+              'STALE' => '这份记录已过期。请在儿童设备重新选择这款应用完成观察，再刷新本页。旧记录不能代表当前权限。',
+              'NOT_AUTHORIZED' => '设备当前未获准上报权限观察。请重新读取授权状态；在恢复授权前不会显示权限明细。',
+              _ => 'Android 没有返回可显示的权限明细。空列表不代表没有权限。',
+            },
+            Icons.help_outline),
       for (final fact in result.permissions)
         Card(
             child: ListTile(

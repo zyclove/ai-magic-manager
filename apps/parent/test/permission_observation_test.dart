@@ -259,6 +259,39 @@ void main() {
         (v.error as ParentApiException).code, 'PERMISSION_BACKEND_UNAVAILABLE');
     v.dispose();
   });
+  testWidgets('unknown permission snapshot explains the child-side action',
+      (tester) async {
+    final session = Session(f.api((r) async {
+      if (r.url.path.endsWith('/permission-observations')) {
+        return f.response({
+          ...snapshot(),
+          'observationStatus': 'UNKNOWN',
+          'profile': null,
+          'versionCode': null,
+          'observedAt': null,
+          'receivedAt': null,
+          'permissions': <Json>[],
+        });
+      }
+      return normal(r);
+    }));
+    await tester.pumpWidget(MaterialApp(
+        home: Builder(
+            builder: (context) => Scaffold(
+                body: TextButton(
+                    onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (_) => ParentPermissionsPage(
+                                session: session, target: f.target))),
+                    child: const Text('打开应用权限'))))));
+    await tester.tap(find.text('打开应用权限'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('学习课堂'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('请在儿童设备“使用情况与隐私”中加载应用'), findsOneWidget);
+    expect(find.textContaining('空记录不代表没有权限'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
   testWidgets(
       'search, select, large text, background hiding and nested revocation',
       (tester) async {
