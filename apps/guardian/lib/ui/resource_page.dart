@@ -43,8 +43,12 @@ class ResourcePageState extends State<ResourcePage> {
   String query = '';
   bool loading = true;
   bool more = false;
+  bool acting = false;
   Object? error;
+  Object? appendError;
+  Object? actionError;
   int generation = 0;
+  int resourceGeneration = 0;
   @override
   void initState() {
     super.initState();
@@ -54,26 +58,37 @@ class ResourcePageState extends State<ResourcePage> {
   @override
   void didUpdateWidget(ResourcePage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.path != widget.path) {
+    if (oldWidget.path != widget.path || oldWidget.api != widget.api) {
+      resourceGeneration++;
+      rows = [];
+      cursor = null;
+      query = '';
+      acting = false;
+      actionError = null;
       load();
     }
   }
 
   Future<void> load({bool append = false}) async {
+    if (append && (loading || more || acting || cursor == null)) return;
     final epoch = ++generation;
+    final api = widget.api;
+    final path = widget.path;
+    final requestCursor = append ? cursor : null;
     setState(() {
       if (append) {
         more = true;
+        appendError = null;
       } else {
         loading = true;
-        rows = [];
-        cursor = null;
+        more = false;
+        error = null;
+        appendError = null;
+        actionError = null;
       }
-      error = null;
     });
     try {
-      final result =
-          await widget.api.page(widget.path, cursor: append ? cursor : null);
+      final result = await api.page(path, cursor: requestCursor);
       if (mounted && generation == epoch) {
         setState(() {
           rows = append ? [...rows, ...result.items] : result.items;
@@ -81,7 +96,20 @@ class ResourcePageState extends State<ResourcePage> {
         });
       }
     } catch (e) {
-      if (mounted && generation == epoch) setState(() => error = e);
+      if (mounted && generation == epoch) {
+        setState(() {
+          if (e is ApiFailure && (e.status == 401 || e.status == 403)) {
+            rows = [];
+            cursor = null;
+            appendError = null;
+            error = e;
+          } else if (append) {
+            appendError = e;
+          } else {
+            error = e;
+          }
+        });
+      }
     } finally {
       if (mounted && generation == epoch) {
         setState(() {
@@ -93,11 +121,23 @@ class ResourcePageState extends State<ResourcePage> {
   }
 
   Future<void> action(Future<void> Function() callback) async {
+    if (acting || loading) return;
+    final scope = resourceGeneration;
+    setState(() {
+      acting = true;
+      actionError = null;
+    });
     try {
       await callback();
-      if (mounted) await load();
+      if (mounted && resourceGeneration == scope) await load();
     } catch (e) {
-      if (mounted) setState(() => error = e);
+      if (mounted && resourceGeneration == scope) {
+        setState(() => actionError = e);
+      }
+    } finally {
+      if (mounted && resourceGeneration == scope) {
+        setState(() => acting = false);
+      }
     }
   }
 
@@ -108,12 +148,13 @@ class ResourcePageState extends State<ResourcePage> {
             (v) => v.toString().toLowerCase().contains(query.toLowerCase())))
         .toList();
     final narrow = MediaQuery.sizeOf(context).width < 760;
+    final canAct = !loading && !acting;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       PageHeading(widget.title, widget.subtitle,
           action: widget.create == null
               ? null
               : FilledButton.icon(
-                  onPressed: () => action(widget.create!),
+                  onPressed: canAct ? () => action(widget.create!) : null,
                   icon: const Icon(Icons.add, size: 18),
                   label: Text(widget.createLabel))),
       if (widget.notice != null)
@@ -134,6 +175,7 @@ class ResourcePageState extends State<ResourcePage> {
                       SizedBox(
                           width: narrow ? 240 : 300,
                           child: TextField(
+                              key: ValueKey(resourceGeneration),
                               onChanged: (v) => setState(() => query = v),
                               decoration: const InputDecoration(
                                   hintText: '搜索已加载记录',
@@ -141,35 +183,73 @@ class ResourcePageState extends State<ResourcePage> {
                                   isDense: true))),
                       IconButton(
                           tooltip: '刷新',
-                          onPressed: loading ? null : () => load(),
+                          onPressed: loading || acting ? null : () => load(),
                           icon: const Icon(Icons.refresh, size: 20)),
                       ...widget.toolbar
                     ])),
             const Divider(),
-            if (loading)
+            if (loading && rows.isNotEmpty)
+              const LinearProgressIndicator(minHeight: 2),
+            if (actionError != null)
+              Padding(
+                  padding: const EdgeInsets.all(18),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('操作未完成，已保留当前列表',
+                            style: TextStyle(fontWeight: FontWeight.w600)),
+                        const SizedBox(height: 8),
+                        FailureView(actionError!, reauth: widget.reauth),
+                        const Text('请先刷新列表核对结果，再重新打开详情或重新操作。',
+                            style: TextStyle(color: muted, fontSize: 12)),
+                        TextButton.icon(
+                            onPressed: loading || acting ? null : () => load(),
+                            icon: const Icon(Icons.refresh, size: 18),
+                            label: const Text('刷新列表'))
+                      ])),
+            if (error != null && rows.isNotEmpty)
+              Padding(
+                  padding: const EdgeInsets.all(18),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('刷新未完成，已保留已加载记录',
+                            style: TextStyle(fontWeight: FontWeight.w600)),
+                        const SizedBox(height: 8),
+                        FailureView(error!, reauth: widget.reauth),
+                        TextButton.icon(
+                            onPressed: loading || acting ? null : () => load(),
+                            icon: const Icon(Icons.refresh, size: 18),
+                            label: const Text('重新刷新列表'))
+                      ])),
+            if (loading && rows.isEmpty)
               const Padding(
                   padding: EdgeInsets.all(60),
                   child:
                       Center(child: CircularProgressIndicator(strokeWidth: 2)))
-            else if (error != null)
+            else if (error != null && rows.isEmpty)
               Padding(
                   padding: const EdgeInsets.all(24),
                   child: FailureView(error!,
-                      retry: () => load(append: rows.isNotEmpty),
+                      retry: () => load(),
                       reauth: widget.reauth))
             else if (rows.isEmpty)
               EmptyView(widget.emptyTitle, widget.emptyDescription,
                   action: widget.create == null
                       ? null
                       : OutlinedButton.icon(
-                          onPressed: () => action(widget.create!),
+                          onPressed: canAct ? () => action(widget.create!) : null,
                           icon: const Icon(Icons.add, size: 18),
                           label: Text(widget.createLabel)))
             else if (filtered.isEmpty)
-              const EmptyView('没有匹配记录', '调整搜索关键词后再试。')
+              EmptyView(
+                  '没有匹配记录',
+                  cursor == null
+                      ? '调整搜索关键词后再试。'
+                      : '搜索仅匹配已加载记录，可加载更多后继续查找。')
             else if (narrow)
               ...filtered.map((row) => InkWell(
-                  onTap: widget.onOpen == null
+                  onTap: widget.onOpen == null || !canAct
                       ? null
                       : () => action(() => widget.onOpen!(row)),
                   child: Container(
@@ -217,7 +297,8 @@ class ResourcePageState extends State<ResourcePage> {
                               ],
                               rows: filtered
                                   .map((row) => DataRow(
-                                          onSelectChanged: widget.onOpen == null
+                                          onSelectChanged:
+                                              widget.onOpen == null || !canAct
                                               ? null
                                               : (_) => action(
                                                   () => widget.onOpen!(row)),
@@ -230,11 +311,24 @@ class ResourcePageState extends State<ResourcePage> {
                                                     child: c.build(row)))),
                                             if (widget.onOpen != null)
                                               DataCell(TextButton(
-                                                  onPressed: () => action(() =>
-                                                      widget.onOpen!(row)),
+                                                  onPressed: canAct
+                                                      ? () => action(() =>
+                                                          widget.onOpen!(row))
+                                                      : null,
                                                   child: const Text('查看详情')))
                                           ]))
                                   .toList())))),
+            if (appendError != null)
+              Padding(
+                  padding: const EdgeInsets.all(18),
+                  child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('后续记录未加载，已保留已加载记录',
+                            style: TextStyle(fontWeight: FontWeight.w600)),
+                        const SizedBox(height: 8),
+                        FailureView(appendError!, reauth: widget.reauth)
+                      ])),
             if (!loading)
               Padding(
                   padding: const EdgeInsets.all(16),
@@ -246,8 +340,13 @@ class ResourcePageState extends State<ResourcePage> {
                                 const TextStyle(color: muted, fontSize: 12))),
                     if (cursor != null)
                       OutlinedButton(
-                          onPressed: more ? null : () => load(append: true),
-                          child: Text(more ? '加载中…' : '加载更多'))
+                          onPressed:
+                              more || acting ? null : () => load(append: true),
+                          child: Text(more
+                              ? '加载中…'
+                              : appendError != null
+                                  ? '重试加载更多'
+                                  : '加载更多'))
                   ]))
           ]))
     ]);

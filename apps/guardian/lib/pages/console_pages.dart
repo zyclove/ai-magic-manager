@@ -14,6 +14,8 @@ import '../ui/design.dart';
 import '../ui/device_observation_status.dart';
 import '../ui/application_classification_dialog.dart';
 import '../ui/resource_page.dart';
+import '../ui/workbench_view.dart';
+import '../ui/workspace_welcome.dart';
 import '../ui/member_editor.dart';
 import '../ui/access_request_dialog.dart';
 import '../ui/policy_target_picker.dart';
@@ -70,33 +72,27 @@ class ConsolePages extends StatelessWidget {
           : const Panel(child: EmptyView('没有企业绑定审核权限', '此功能仅向经过授权的独立平台审核员开放。'));
     }
     if (s.tenant == null) {
-      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const PageHeading('开始你的管理旅程', '创建工作空间，连接家庭或教育机构的设备。'),
-        Panel(
-            child: EmptyView('还没有工作空间', '所有档案、设备和规则都归属于一个工作空间。',
-                action: s.profile?['canCreateTenant'] == true
-                    ? FilledButton.icon(
-                        onPressed: actions.createTenant,
-                        icon: const Icon(Icons.add),
-                        label: const Text('创建工作空间'))
-                    : null)),
-        const SizedBox(height: 16),
-        if (s.canOpen('catalog'))
-          OutlinedButton.icon(
-              onPressed: () => context.go('/catalog'),
-              icon: const Icon(Icons.inventory_2_outlined),
-              label: const Text('打开平台产品目录')),
-        if (s.canOpen('catalog')) const SizedBox(height: 12),
-        if (s.canOpen('contracts'))
-          OutlinedButton.icon(
-              onPressed: () => context.go('/contracts'),
-              icon: const Icon(Icons.description_outlined),
-              label: const Text('打开平台机构合同')),
-        if (s.canOpen('contracts')) const SizedBox(height: 12),
-        OutlinedButton(
-            onPressed: actions.acceptInvitation,
-            child: const Text('我有邀请，加入工作空间'))
-      ]);
+      return WorkspaceWelcome(
+          onCreate: s.profile?['canCreateTenant'] == true
+              ? actions.createTenant : null,
+          onJoin: actions.acceptInvitation,
+          platformTools: [
+            if (s.canOpen('catalog'))
+              OutlinedButton.icon(
+                  onPressed: () => context.go('/catalog'),
+                  icon: const Icon(Icons.inventory_2_outlined, size: 18),
+                  label: const Text('平台产品目录')),
+            if (s.canOpen('contracts'))
+              OutlinedButton.icon(
+                  onPressed: () => context.go('/contracts'),
+                  icon: const Icon(Icons.description_outlined, size: 18),
+                  label: const Text('平台机构合同')),
+            if (s.canOpen('managed-android-review'))
+              OutlinedButton.icon(
+                  onPressed: () => context.go('/managed-android-review'),
+                  icon: const Icon(Icons.fact_check_outlined, size: 18),
+                  label: const Text('企业绑定审核')),
+          ]);
     }
     if (!s.canOpen(section)) {
       return const Panel(
@@ -1340,6 +1336,8 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   OverviewSummary? data;
   Object? error;
+  DateTime? refreshedAt;
+  bool actionBusy = false;
   int generation = 0;
   String? sourceRoot;
   String? sourceRole;
@@ -1358,14 +1356,26 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
+  bool current(String root, String role) {
+    final s = widget.session;
+    return mounted &&
+        s.authenticated &&
+        s.tenant != null &&
+        s.canWrite &&
+        s.root == root &&
+        s.role == role;
+  }
+
   Future<void> load() async {
     final epoch = ++generation;
     final s = widget.session;
+    if (!s.authenticated || s.tenant == null || !s.canWrite) return;
     final root = sourceRoot = s.root;
     final role = sourceRole = s.role;
     setState(() {
       error = null;
       data = null;
+      refreshedAt = null;
     });
     try {
       final result =
@@ -1377,232 +1387,75 @@ class _DashboardState extends State<Dashboard> {
           result.openHelpRequestCount == null) {
         throw const ApiFailure(502, 'INVALID_RESPONSE');
       }
-      if (mounted &&
-          epoch == generation &&
-          s.tenant != null &&
-          s.root == root &&
-          s.role == role) {
-        setState(() => data = result);
+      if (epoch == generation && current(root, role)) {
+        setState(() {
+          data = result;
+          refreshedAt = DateTime.now();
+        });
       }
     } catch (e) {
-      if (mounted &&
-          epoch == generation &&
-          s.tenant != null &&
-          s.root == root &&
-          s.role == role) {
+      if (epoch == generation && current(root, role)) {
         setState(() => error = e);
       }
     }
   }
 
+  Future<void> perform(Future<void> Function() action) async {
+    final s = widget.session;
+    if (actionBusy || s.tenant == null || !s.canWrite) return;
+    final root = s.root, role = s.role;
+    if (!current(root, role)) return;
+    setState(() {
+      actionBusy = true;
+      error = null;
+    });
+    try {
+      await action();
+      if (current(root, role)) await load();
+    } catch (e) {
+      if (current(root, role)) setState(() => error = e);
+    } finally {
+      if (mounted) setState(() => actionBusy = false);
+    }
+  }
+
+  void open(String section) {
+    final s = widget.session;
+    if (actionBusy ||
+        s.tenant == null ||
+        sourceRoot != s.root ||
+        sourceRole != s.role ||
+        !current(s.root, s.role) ||
+        !s.canOpen(section)) return;
+    context.go('/$section');
+  }
+
   @override
   Widget build(BuildContext context) {
     final s = widget.session;
-    final wide = MediaQuery.sizeOf(context).width > 1150;
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      PageHeading('工作台', '家庭设备与访问管理',
-          action: s.canWrite
-              ? FilledButton.icon(
-                  onPressed: () async {
-                    await widget.actions.subject();
-                    if (mounted) load();
-                  },
-                  icon: const Icon(Icons.add, size: 18),
-                  label: const Text('添加儿童'))
-              : null),
-      if (error != null)
-        Panel(
-            child: FailureView(error!,
-                retry: load, reauth: () => s.login(stepUp: true)))
-      else if (data == null)
-        const Panel(
-            child: SizedBox(
-                height: 260,
-                child:
-                    Center(child: CircularProgressIndicator(strokeWidth: 2))))
-      else ...[
-        Panel(
-            child: LayoutBuilder(
-                builder: (ctx, box) =>
-                    Wrap(spacing: 16, runSpacing: 24, children: [
-                      _metric('儿童档案', data!.subjectCount!, Icons.person_outline,
-                          box.maxWidth),
-                      _metric('已注册设备', data!.activeDeviceCount!,
-                          Icons.devices_outlined, box.maxWidth),
-                      _metric('策略草稿', data!.policyDraftCount!,
-                          Icons.description_outlined, box.maxWidth),
-                      _metric('待处理审批', data!.pendingRequestCount,
-                          Icons.schedule_outlined, box.maxWidth)
-                    ]))),
-        if (data!.connectionCheckCount! > 0) ...[
-          const SizedBox(height: 16),
-          Panel(
-              child: Row(children: [
-            const Icon(Icons.wifi_off_rounded, color: Color(0xFFA65B17)),
-            const SizedBox(width: 12),
-            Expanded(
-                child: Text(
-                    '有 ${data!.connectionCheckCount} 台设备需要检查连接。心跳缺失或过期不能证明设备规则失效。')),
-            TextButton(
-                onPressed: () => context.go('/devices'),
-                child: const Text('查看设备'))
-          ]))
-        ],
-        if (data!.openHelpRequestCount! > 0) ...[
-          const SizedBox(height: 16),
-          Panel(
-              child: Row(children: [
-            const Icon(Icons.volunteer_activism_outlined,
-                color: Color(0xFFA7473C)),
-            const SizedBox(width: 12),
-            Expanded(
-                child: Text(
-                    '有 ${data!.openHelpRequestCount} 条儿童求助尚未在管理台确认看到。请尽快核对并实际联系孩子。')),
-            TextButton(
-                onPressed: () => context.go('/help-requests'),
-                child: const Text('查看求助'))
-          ]))
-        ],
-        const SizedBox(height: 24),
-        Flex(
-            direction: wide ? Axis.horizontal : Axis.vertical,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              FlexibleIf(
-                  wide: wide,
-                  flex: 2,
-                  child: Panel(
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                        const Text('开始管理',
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w700)),
-                        const SizedBox(height: 12),
-                        _step('1', '创建儿童档案', '录入昵称和年龄段，建立专属档案。', '创建档案',
-                            '/subjects'),
-                        const Divider(),
-                        _step('2', '连接第一台设备', '通过一次性凭据和配对码完成绑定。', '添加设备',
-                            '/devices'),
-                        const Divider(),
-                        _step('3', '配置时间与规则', '设置使用时段，预览配置影响。', '创建策略',
-                            '/policies')
-                      ]))),
-              SizedBox(width: wide ? 20 : 0, height: wide ? 0 : 20),
-              FlexibleIf(
-                  wide: wide,
-                  flex: 1,
-                  child: Panel(
-                      child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                        const Text('系统连接',
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w700)),
-                        const SizedBox(height: 22),
-                        _connection('业务服务', '已连接', Icons.cloud_outlined, true),
-                        const Divider(),
-                        _connection(
-                            '身份认证', '已连接', Icons.verified_user_outlined, true),
-                        const Divider(),
-                        _connection(
-                            '策略执行', '尚未接入', Icons.settings_outlined, false)
-                      ])))
-            ]),
-        const SizedBox(height: 24),
-        Panel(
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(children: [
-            const Text('最近活动',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w700)),
-            const Spacer(),
-            TextButton(
-                onPressed: () => context.go('/audit'),
-                child: const Text('查看全部'))
-          ]),
-          const SizedBox(height: 12),
-          if (data!.recentActivity.isEmpty)
-            const EmptyView('暂无活动记录', '新的管理操作将在这里显示。')
-          else
-            ...data!.recentActivity.map((r) => ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: const Icon(Icons.receipt_long_outlined, color: muted),
-                title:
-                    Text(label(r.action), style: const TextStyle(fontSize: 14)),
-                subtitle: Text(shortId(r.resourceId),
-                    style: const TextStyle(fontSize: 12)),
-                trailing: Text(dateLabel(r.occurredAt),
-                    style: const TextStyle(fontSize: 12, color: muted))))
-        ])),
-        const SizedBox(height: 16),
-        Align(
-            alignment: Alignment.centerRight,
-            child: TextButton.icon(
-                onPressed: load,
-                icon: const Icon(Icons.refresh, size: 16),
-                label: const Text('刷新数据')))
-      ]
-    ]);
+    if (!s.authenticated || s.tenant == null || !s.canWrite) {
+      return const Panel(child: EmptyView('工作空间或权限已变化', '请重新打开工作台。'));
+    }
+    final visible = sourceRoot == s.root && sourceRole == s.role;
+    return WorkbenchView(
+        workspaceName: s.tenant!['name'] as String,
+        role: s.role,
+        organization: s.tenant!['kind'] == 'ORGANIZATION',
+        summary: visible ? data : null,
+        error: visible ? error : null,
+        refreshedAt: visible ? refreshedAt : null,
+        busy: actionBusy,
+        canOpen: s.canOpen,
+        onOpen: open,
+        onAddSubject: s.canOpen('subjects')
+            ? () => perform(() => widget.actions.subject())
+            : null,
+        onAddDevice: s.canOpen('devices')
+            ? () => perform(widget.actions.enrollment)
+            : null,
+        onRefresh: load,
+        onReauth: () => s.login(stepUp: true));
   }
-
-  Widget _metric(String title, int value, IconData icon, double width) =>
-      SizedBox(
-          width: width > 700 ? (width - 48) / 4 : (width - 16) / 2,
-          child: Row(children: [
-            Icon(icon, color: muted, size: 28),
-            const SizedBox(width: 14),
-            Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              Text(title, style: const TextStyle(color: muted, fontSize: 13)),
-              const SizedBox(height: 10),
-              Text('$value',
-                  style: const TextStyle(
-                      fontSize: 30, fontWeight: FontWeight.w700, color: ink))
-            ])
-          ]));
-  Widget _step(
-          String num, String title, String text, String button, String path) =>
-      Padding(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            CircleAvatar(
-                radius: 20,
-                backgroundColor: const Color(0xFFEDF4FC),
-                child: Text(num, style: const TextStyle(color: navy))),
-            const SizedBox(width: 16),
-            Expanded(
-                child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                  Text(title,
-                      style: const TextStyle(fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 6),
-                  Text(text,
-                      style: const TextStyle(
-                          color: muted, fontSize: 12, height: 1.6)),
-                  if (MediaQuery.sizeOf(context).width < 650)
-                    TextButton(
-                        onPressed: () => context.go(path), child: Text(button))
-                ])),
-            if (MediaQuery.sizeOf(context).width >= 650)
-              OutlinedButton(
-                  onPressed: () => context.go(path), child: Text(button))
-          ]));
-  Widget _connection(String name, String state, IconData icon, bool ok) =>
-      Padding(
-          padding: const EdgeInsets.symmetric(vertical: 22),
-          child: Row(children: [
-            Icon(icon, color: muted, size: 24),
-            const SizedBox(width: 14),
-            Expanded(child: Text(name)),
-            Icon(Icons.circle,
-                size: 8,
-                color: ok ? const Color(0xFF00886C) : const Color(0xFFD49522)),
-            const SizedBox(width: 6),
-            Text(state,
-                style: TextStyle(
-                    color: ok ? const Color(0xFF00886C) : muted, fontSize: 12))
-          ]));
 }
 
 class FlexibleIf extends StatelessWidget {

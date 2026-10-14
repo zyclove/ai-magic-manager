@@ -1,0 +1,713 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "stage": "console-experience-simplification",
+  "recordedAt": "2026-10-14T04:06:08.987226+00:00",
+  "source": {
+    "sourceBase": "642a5e7ff2b1dc6fcf09d1798ea010bc5755a268",
+    "sourceDirectory": "D:\\codes\\mobile\\ai-manager\\.local\\console-experience-source-20261014",
+    "frozenAt": "2026-10-14T03:36:03.404897+00:00",
+    "files": [
+      {
+        "path": "apps/guardian/lib/ui/console_navigation.dart",
+        "sha256": "b14ce6d4d406532ecb2bd072fe1e8cbfcbd6760f744c346d255c5371279ac916"
+      },
+      {
+        "path": "apps/guardian/test/console_navigation_test.dart",
+        "sha256": "4e6f1f3dfd3232487ea8a3a3ac569403990419802008b875a2460436ea0eb9da"
+      },
+      {
+        "path": "apps/guardian/lib/ui/shell.dart",
+        "sha256": "ceb1cba3efa9b006aee97e40977e7dd7807dbc31d47a180e881a10ec8404a3bf"
+      },
+      {
+        "path": "apps/guardian/lib/ui/resource_page.dart",
+        "sha256": "ab6906bceefc8f5d96a364a900ffbe40b144869f885013b9af39c123ad0dd08d"
+      },
+      {
+        "path": "apps/guardian/test/resource_page_resilience_test.dart",
+        "sha256": "b1b9936751dcb1728e8ce5080bcec53e0abcd559bf1e2220ed524d8efdc5f6fd"
+      },
+      {
+        "path": "apps/guardian/lib/pages/console_pages.dart",
+        "sha256": "79f08978ffd7e6b8335191bb856ffedd276bf62e3dc2ea66b4f03bbc2f0929f7"
+      },
+      {
+        "path": "apps/guardian/lib/ui/workbench_view.dart",
+        "sha256": "9d067cee188e4ad41509a31845d8861cad759884d7d0080654288454153143a1"
+      },
+      {
+        "path": "apps/guardian/test/workbench_view_test.dart",
+        "sha256": "87561d803f3ab0121a04d0900827dfbd0f92efabf34680281f7f09fd57e4a6a3"
+      },
+      {
+        "path": "apps/guardian/lib/ui/workspace_welcome.dart",
+        "sha256": "50236f6f49746171470c50a2d6410b5ef0ac2e665a72fd85ee4f87384f00a584"
+      },
+      {
+        "path": "apps/guardian/test/workspace_welcome_test.dart",
+        "sha256": "670689dc45f7301d4279871037c4d35644c89684c276a699199f27d9c9ab67b7"
+      }
+    ]
+  },
+  "sourceManifestSha256": "c496b9169c3d30c9504fdca694beb1a30bf86ce4ae2a716726d8439a7facf5a4",
+  "sourceValidation": {
+    "sourceManifestSha256": "c496b9169c3d30c9504fdca694beb1a30bf86ce4ae2a716726d8439a7facf5a4",
+    "ownedFilesMatched": 10,
+    "unchangedArchiveFilesMatched": 1196,
+    "validatedAt": "2026-10-14T03:36:03.405387+00:00"
+  },
+  "red": {
+    "initial": {
+      "total": 14,
+      "passed": 3,
+      "failed": 11,
+      "logSha256": "c229eb683627309c8ecd0b27c18933c2a6f82c978b366cabaae788ef4d2078c0"
+    },
+    "authorizationBoundary": {
+      "gate": "auth-red",
+      "exitCode": 1,
+      "completedAt": "2026-10-14T11:33:55.6378345+08:00",
+      "testSha256": "acc6f67d8e2ee802a019c383c139ca4fa96f5c8eb211e37da94adfa58d98961b",
+      "productionSha256": "a5d735dc065d0c4ce81c50648e82dce261cdadaee91a3a8fce17273dd559666d",
+      "total": 4,
+      "passed": 0,
+      "failed": 4,
+      "reason": "Old private rows remain after GET 401/403",
+      "logSha256": "af13678f6c20e5fc56d260415b4d9dcbb8d3ef29780f194a0bc914fdf8c66793"
+    }
+  },
+  "finalGates": {
+    "focused": {
+      "exitCode": 0,
+      "completedAt": "2026-10-14T11:36:11.2903191+08:00",
+      "logSha256": "3ca0121284f2b6753f807c18007b5b523a8a7483681b01d1120294fa07c0ea83",
+      "receiptSha256": "33849bbe5e47fc9b6188e9c421d2c38ec7b30b3e98e84d669ae16bfe15a46eef"
+    },
+    "full": {
+      "exitCode": 0,
+      "completedAt": "2026-10-14T11:37:18.2099352+08:00",
+      "logSha256": "05071832f2ebfa4e721d8cae3081b5e3a920b5ab4f8550fd8d4a81c0a36f165b",
+      "receiptSha256": "362959b291e971e43891aa73eb55526f01d2c12c915380297ac2886d68735641"
+    },
+    "analyze": {
+      "exitCode": 0,
+      "completedAt": "2026-10-14T11:37:24.7832050+08:00",
+      "logSha256": "85999d4d5097805ebd02ef0613a9aeb579875247ba6ffbeb75c4a7fd15ccafa5",
+      "receiptSha256": "d60736e7e2493136d8db780be8e87dc20eda3758866b86fbf80edb8a92a78fe7"
+    },
+    "web": {
+      "exitCode": 0,
+      "completedAt": "2026-10-14T11:38:23.2751478+08:00",
+      "logSha256": "4c74fb0403edb6f44f3fb6704aa925a4e7eff8718a305c5aba01337a508ecfdd",
+      "receiptSha256": "9e5fea0c5a3ce63bdc404b37d6e887cbfcb6a8220b01325f64907a2d15edec97"
+    }
+  },
+  "testCounts": {
+    "focused": {
+      "navigation": 6,
+      "resource": 24,
+      "workbench": 12,
+      "welcome": 3,
+      "passed": 45
+    },
+    "full": {
+      "passed": 299,
+      "failed": 0,
+      "skipped": 0
+    }
+  },
+  "webArtifact": {
+    "version": "1.0.0",
+    "sourceManifestSha256": "c496b9169c3d30c9504fdca694beb1a30bf86ce4ae2a716726d8439a7facf5a4",
+    "directory": "D:\\codes\\mobile\\ai-manager\\.local\\console-experience-web-20261014",
+    "files": [
+      {
+        "path": ".last_build_id",
+        "sha256": "8c6c49d6ae78186a2ee2db867ebfe37edb9ec39d963df895841d322d7dc80ec8",
+        "bytes": 32
+      },
+      {
+        "path": "assets/AssetManifest.bin",
+        "sha256": "00af55ad3d6f21898fe77e0ff092d1a1cda52c941b6860e9928d45c8af8c095d",
+        "bytes": 117
+      },
+      {
+        "path": "assets/AssetManifest.bin.json",
+        "sha256": "8460b5f4299ca1ed677c5a54c8038ae9cf1f26f6e91966b1b767ca6cb6d2e5d2",
+        "bytes": 158
+      },
+      {
+        "path": "assets/AssetManifest.json",
+        "sha256": "4a9b3de7eec9ba46b279bbccd132e32f52d6d555d79dda4aa7f3bcb4e9bd651f",
+        "bytes": 109
+      },
+      {
+        "path": "assets/FontManifest.json",
+        "sha256": "cd7e03645bc44b2dd47b7cb626f51c4ecbf55a197ab77241628b47ac165fbe21",
+        "bytes": 208
+      },
+      {
+        "path": "assets/fonts/MaterialIcons-Regular.otf",
+        "sha256": "ff5e4cc4d33e008aad4c32e921eae51379d8c53473d0f40cf3efa8129e38b609",
+        "bytes": 19504
+      },
+      {
+        "path": "assets/NOTICES",
+        "sha256": "d4e98cabb707163d4d104585940ca8f3b62237c50fa51a69cf6c89b3c2e8eee4",
+        "bytes": 1727671
+      },
+      {
+        "path": "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf",
+        "sha256": "4464f5aa68311c023ff7bc5561a0b8164db76d26c197c8b0e12724a0137ff6fd",
+        "bytes": 1172
+      },
+      {
+        "path": "assets/shaders/ink_sparkle.frag",
+        "sha256": "e01b61b394cf66a641bea87e3b4fe3787d372f636c8bc8a2a67438cdc29da6f6",
+        "bytes": 8867
+      },
+      {
+        "path": "canvaskit/canvaskit.js",
+        "sha256": "2db1ce7bb6f13b2ebd2254ee24d577193a2f5ae84d62da0bd9a9b053cc98b748",
+        "bytes": 93469
+      },
+      {
+        "path": "canvaskit/canvaskit.js.symbols",
+        "sha256": "7629ce549d27e59d121852c3ed3c49c8332e6fdbcbf88a6be6fda1667fd295d3",
+        "bytes": 1310224
+      },
+      {
+        "path": "canvaskit/canvaskit.wasm",
+        "sha256": "c5711063eb95ad3c1ca680ff2f1daea65ea10a228567d4e69c371f3f450e5cee",
+        "bytes": 6755439
+      },
+      {
+        "path": "canvaskit/chromium/canvaskit.js",
+        "sha256": "155cde139018d01b4ae16c67542595943ce4c118bde1e8799e01e03bfa1a4653",
+        "bytes": 93105
+      },
+      {
+        "path": "canvaskit/chromium/canvaskit.js.symbols",
+        "sha256": "09e839ba38f8d1e3b262df6a1fb9d745547cbfc03289b2b0f1b511aab71a4cc3",
+        "bytes": 1231686
+      },
+      {
+        "path": "canvaskit/chromium/canvaskit.wasm",
+        "sha256": "086c9d3823481d35f2c929703519707ea220ea16082f70178ccf9ba2b662df35",
+        "bytes": 5348073
+      },
+      {
+        "path": "canvaskit/skwasm.js",
+        "sha256": "67d75e0eeabc548f69e45dc61dab21e25d07b8681afc3e76dae593033a1edcfa",
+        "bytes": 69687
+      },
+      {
+        "path": "canvaskit/skwasm.js.symbols",
+        "sha256": "364b03e4a7c2b4b5559410b6cb732a00ec363ecd64ac3b279cf7b7f5f2a5f3ff",
+        "bytes": 1437032
+      },
+      {
+        "path": "canvaskit/skwasm.wasm",
+        "sha256": "56b54c56d79be77aab9180d779245757b2e517d2787dc43a96dbac9297c9be38",
+        "bytes": 3208062
+      },
+      {
+        "path": "canvaskit/skwasm.worker.js",
+        "sha256": "0ff2a95082525c9c79cc54cfd68fa042e3967f21d8c53614128c173e7fb654de",
+        "bytes": 2916
+      },
+      {
+        "path": "favicon.png",
+        "sha256": "7ab2525f4b86b65d3e4c70358a17e5a1aaf6f437f99cbcc046dad73d59bb9015",
+        "bytes": 917
+      },
+      {
+        "path": "flutter.js",
+        "sha256": "5e89bd8789a8f2ea7f00394fddb6c173e1661513e1c1c62fc31b6c4f89b7e74a",
+        "bytes": 7778
+      },
+      {
+        "path": "flutter_bootstrap.js",
+        "sha256": "d944f93100d98fccf1410ff82cdf04613b3ebd611637480bec1260e7d3e1c1ff",
+        "bytes": 8097
+      },
+      {
+        "path": "flutter_service_worker.js",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "path": "icons/Icon-192.png",
+        "sha256": "3dce99077602f70421c1c6b2a240bc9b83d64d86681d45f2154143310c980be3",
+        "bytes": 5292
+      },
+      {
+        "path": "icons/Icon-512.png",
+        "sha256": "baccb205ae45f0b421be1657259b4943ac40c95094ab877f3bcbe12cd544dcbe",
+        "bytes": 8252
+      },
+      {
+        "path": "icons/Icon-maskable-192.png",
+        "sha256": "d2c842e22a9f4ec9d996b23373a905c88d9a203b220c5c151885ad621f974b5c",
+        "bytes": 5594
+      },
+      {
+        "path": "icons/Icon-maskable-512.png",
+        "sha256": "6aee06cdcab6b2aef74b1734c4778f4421d2da100b0ff9e52b21b55240202929",
+        "bytes": 20998
+      },
+      {
+        "path": "icons/manager.svg",
+        "sha256": "bd10bcc2ed647a9a11e4be51c85cb66e2dc5533e11697c46cf30ef43b540bd87",
+        "bytes": 327
+      },
+      {
+        "path": "index.html",
+        "sha256": "801f4676bef6e4eec47be58e8ff1ce811502c2d09ab64175ad2ecff1aa317218",
+        "bytes": 1268
+      },
+      {
+        "path": "main.dart.js",
+        "sha256": "c34d386811c77ebb348067c7aae0fbbf1fc68ae1af8f7a9320660f33564d4935",
+        "bytes": 5255672
+      },
+      {
+        "path": "manifest.json",
+        "sha256": "852117056aca3bf5d059b51c026b57d9caf74aba4f1b4e478c00fd1ea02367a2",
+        "bytes": 447
+      },
+      {
+        "path": "version.json",
+        "sha256": "842ba1889303c52d440ae1a8f93d3d881e054ebe7708a4f2ab3087b8f7d7bb3b",
+        "bytes": 86
+      }
+    ]
+  },
+  "webManifestSha256": "8d72a0797f483d8f9818c5ca1b5435775d0a4057b8b9b586758769d1e176c248",
+  "deployment": {
+    "deployed": true,
+    "version": "1.0.0",
+    "deployedAt": "2026-10-14T11:55:05.8520616+08:00",
+    "origin": "http://localhost:18101",
+    "statusCode": 200,
+    "healthyServices": 6,
+    "persistentReleaseConfigured": true,
+    "artifactRoot": "artifacts/release-2e5c68f40909477392ebc57d125356c1",
+    "environmentSha256": "e638ddaf51b07cdbd7e3a6e6232f25e63f8e82f7906c40a87b72c37995701642",
+    "releaseManifestSha256": "482188265ba1fe2ffca17b2a3ccaed5cbab6ac67ee49833830f9382c545adc92",
+    "sourceBase": "642a5e7ff2b1dc6fcf09d1798ea010bc5755a268",
+    "sourceManifestSha256": "c496b9169c3d30c9504fdca694beb1a30bf86ce4ae2a716726d8439a7facf5a4",
+    "webManifestSha256": "8d72a0797f483d8f9818c5ca1b5435775d0a4057b8b9b586758769d1e176c248",
+    "runningStaticFilesVerified": 32,
+    "mainDartJsSha256": "c34d386811c77ebb348067c7aae0fbbf1fc68ae1af8f7a9320660f33564d4935",
+    "image": "ai-manager/edge:console-experience-20261014-115316",
+    "imageId": "sha256:deae724a51f68f8c65af7e8d6c36040380ed6dedff707b7212f08a5010a96647",
+    "backup": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\backups\\console-experience-20261014-115316-f2dd30a0",
+    "rollbackOverride": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\backups\\console-experience-20261014-115316-f2dd30a0\\rollback.override.yaml",
+    "backendFiles": [
+      {
+        "path": "manager-backend.jar",
+        "sha256": "cebf87ea5664fcd5140976e7acc50e3ce2bbc9cf8d67e3ed032044d03d80dbd7",
+        "bytes": 81509257
+      }
+    ],
+    "otherServices": [
+      {
+        "Service": "backend",
+        "ID": "1db11974243e"
+      },
+      {
+        "Service": "database",
+        "ID": "41fb3ad254ac"
+      },
+      {
+        "Service": "erasure-database",
+        "ID": "8f0cfb1e3bad"
+      },
+      {
+        "Service": "identity",
+        "ID": "088d3c7e36c1"
+      },
+      {
+        "Service": "identity-database",
+        "ID": "18df97257d73"
+      }
+    ],
+    "backendUpdated": false,
+    "databasesUpdated": false,
+    "otherFiveContainerIdsUnchanged": true
+  },
+  "postDeploymentVerification": {
+    "verified": true,
+    "verifiedAt": "2026-10-14T11:55:45.4515237+08:00",
+    "persistentReleaseConfigured": true,
+    "artifactRoot": "artifacts/release-2e5c68f40909477392ebc57d125356c1",
+    "imageId": "sha256:deae724a51f68f8c65af7e8d6c36040380ed6dedff707b7212f08a5010a96647",
+    "staticFilesVerified": 32,
+    "healthyServices": 6,
+    "otherFiveContainerIdsUnchanged": true,
+    "backendUpdated": false,
+    "databasesUpdated": false,
+    "operationalMutations": false
+  },
+  "updater": {
+    "sha256": "051f2978ba51d6c8c83497f66ee9b3a34d8a6223cc3cdac661901d8a3a9f9601",
+    "preflight": {
+      "verified": true,
+      "verifiedAt": "2026-10-14T11:50:40.9533262+08:00",
+      "sourceManifestSha256": "c496b9169c3d30c9504fdca694beb1a30bf86ce4ae2a716726d8439a7facf5a4",
+      "webManifestSha256": "8d72a0797f483d8f9818c5ca1b5435775d0a4057b8b9b586758769d1e176c248",
+      "staticFilesVerified": 32,
+      "environmentSha256": "a5645ac4dbe733c49b360ac03a13ba7ae89f64d01087c816a38086abcc22b79c",
+      "releaseManifestSha256": "8bc723d35077d279036af9909931c96e678b6badfb544efb83cb2dc592ccf2ce",
+      "currentImageId": "sha256:e49b694b3b65efa8081808c35a8e01ec2937d57f7ec0e281596e429654720a57",
+      "healthyServices": 6,
+      "otherServices": [
+        {
+          "Service": "backend",
+          "ID": "1db11974243e"
+        },
+        {
+          "Service": "database",
+          "ID": "41fb3ad254ac"
+        },
+        {
+          "Service": "erasure-database",
+          "ID": "8f0cfb1e3bad"
+        },
+        {
+          "Service": "identity",
+          "ID": "088d3c7e36c1"
+        },
+        {
+          "Service": "identity-database",
+          "ID": "18df97257d73"
+        }
+      ],
+      "backendUpdated": false,
+      "databasesUpdated": false,
+      "operationalMutations": false
+    },
+    "transformVerification": {
+      "passed": true,
+      "updaterSha256": "051f2978ba51d6c8c83497f66ee9b3a34d8a6223cc3cdac661901d8a3a9f9601",
+      "syntaxValid": true,
+      "utf8BomPreserved": true,
+      "uncontrolledEnvironmentBytesPreserved": true,
+      "controlledKeysChanged": true,
+      "manifestParsedAndBackendShaUnchanged": true,
+      "pathEscapeRejected": true,
+      "operationalMutations": false,
+      "completedAt": "2026-10-14T11:50:32.5541535+08:00"
+    },
+    "independentReviewRemainingCriticalOrImportant": 0,
+    "realRollbackDrillPerformed": false
+  },
+  "browser": {
+    "origin": "http://localhost:18101",
+    "existingAdminLoginSucceeded": true,
+    "liveWorkspaceState": "no-workspace",
+    "writesPerformed": false,
+    "liveChecks": [
+      "new workspace welcome",
+      "create and invitation separated",
+      "platform group expands"
+    ],
+    "liveScreenshots": [
+      {
+        "path": ".local/runtime/console-experience-live-desktop.jpg",
+        "sha256": "5a6f52c73a0c54afc7bc31467900f303f478c4d520bf33fd14bac802f5d3fdda"
+      },
+      {
+        "path": ".local/runtime/console-experience-live-mobile.jpg",
+        "sha256": "c75de286cb720801a3bee6ab7c6de0f86af93575810bc803744751277b172504"
+      }
+    ],
+    "readOnlyExampleViewports": [
+      {
+        "width": 1280,
+        "height": 900
+      },
+      {
+        "width": 390,
+        "height": 844
+      }
+    ],
+    "exampleScreenshots": [
+      {
+        "path": "docs/design/console-experience/workbench-example-desktop.jpg",
+        "sha256": "bc6fe1756b496d14ea4040df98ed68828d8d967ce2ad7b81336dfe806c534778"
+      },
+      {
+        "path": "docs/design/console-experience/workbench-example-mobile.jpg",
+        "sha256": "09d54e314ac0ea21e0165bcd62657abd85353b9e77c0a704e0a0c2d57db412c0"
+      }
+    ],
+    "searchBrowserCheckPassed": false,
+    "searchCoveredByWidgetTests": true,
+    "temporaryPreviewTabAndServerClosed": true,
+    "viewportOverrideReset": true
+  },
+  "limitations": [
+    "Presentation and HTTP fixture checks do not verify real MFA or real account revocation.",
+    "Filled workbench uses explicitly labeled read-only example data; live admin has no workspace.",
+    "Normal startup contract was verified without restarting other five services.",
+    "Process interruption requires inspection of recorded recovery intent; no cross-process transaction lock.",
+    "Existing enrollment unknown-result recovery and backend increments remain separate work.",
+    "External 12ui paid/upload workflow was rejected by automatic approval; local design system used."
+  ],
+  "latestCommittedIntegration": {
+    "verified": true,
+    "terminal": true,
+    "exitCode": 0,
+    "verifiedAt": "2026-10-14T04:05:24.758260+00:00",
+    "scope": "Independent guardian integration verification; no web build or runtime update.",
+    "archiveBase": "ada090c7b7ac3c07b3c257ddd1b611754345aa6d",
+    "deployedArtifactSourceBase": "642a5e7ff2b1dc6fcf09d1798ea010bc5755a268",
+    "sourceManifestSha256": "c496b9169c3d30c9504fdca694beb1a30bf86ce4ae2a716726d8439a7facf5a4",
+    "integrationManifestSha256": "942cd89dd620cbbd6ff10f15913a43da3e3aeb6c3f1fdd9a71c926d344969bb9",
+    "integrationManifestPath": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\console-experience-integration-source.json",
+    "archiveSha256": "7d2391b6a453c2ab16d38f971f261a65e601d6617414d395df222031b901f9f4",
+    "directory": "D:\\codes\\mobile\\ai-manager\\.local\\console-experience-integration-20261014",
+    "ownedFiles": [
+      {
+        "path": "apps/guardian/lib/ui/console_navigation.dart",
+        "sha256": "b14ce6d4d406532ecb2bd072fe1e8cbfcbd6760f744c346d255c5371279ac916"
+      },
+      {
+        "path": "apps/guardian/test/console_navigation_test.dart",
+        "sha256": "4e6f1f3dfd3232487ea8a3a3ac569403990419802008b875a2460436ea0eb9da"
+      },
+      {
+        "path": "apps/guardian/lib/ui/shell.dart",
+        "sha256": "ceb1cba3efa9b006aee97e40977e7dd7807dbc31d47a180e881a10ec8404a3bf"
+      },
+      {
+        "path": "apps/guardian/lib/ui/resource_page.dart",
+        "sha256": "ab6906bceefc8f5d96a364a900ffbe40b144869f885013b9af39c123ad0dd08d"
+      },
+      {
+        "path": "apps/guardian/test/resource_page_resilience_test.dart",
+        "sha256": "b1b9936751dcb1728e8ce5080bcec53e0abcd559bf1e2220ed524d8efdc5f6fd"
+      },
+      {
+        "path": "apps/guardian/lib/pages/console_pages.dart",
+        "sha256": "79f08978ffd7e6b8335191bb856ffedd276bf62e3dc2ea66b4f03bbc2f0929f7"
+      },
+      {
+        "path": "apps/guardian/lib/ui/workbench_view.dart",
+        "sha256": "9d067cee188e4ad41509a31845d8861cad759884d7d0080654288454153143a1"
+      },
+      {
+        "path": "apps/guardian/test/workbench_view_test.dart",
+        "sha256": "87561d803f3ab0121a04d0900827dfbd0f92efabf34680281f7f09fd57e4a6a3"
+      },
+      {
+        "path": "apps/guardian/lib/ui/workspace_welcome.dart",
+        "sha256": "50236f6f49746171470c50a2d6410b5ef0ac2e665a72fd85ee4f87384f00a584"
+      },
+      {
+        "path": "apps/guardian/test/workspace_welcome_test.dart",
+        "sha256": "670689dc45f7301d4279871037c4d35644c89684c276a699199f27d9c9ab67b7"
+      }
+    ],
+    "unchangedArchiveFiles": 1222,
+    "allFrozenFilesVerified": 1232,
+    "validationReceiptSha256": "1b8e3c40a4f11b66c241b0463b7872943a250455bc735bfe79871f4181c38e69",
+    "gates": [
+      {
+        "gate": "pub",
+        "exitCode": 0,
+        "completedAt": "2026-10-14T12:03:20.3445192+08:00",
+        "arguments": [
+          "pub",
+          "get",
+          "--offline"
+        ],
+        "directory": "D:\\codes\\mobile\\ai-manager\\.local\\console-experience-integration-20261014\\apps\\guardian",
+        "archiveBase": "ada090c7b7ac3c07b3c257ddd1b611754345aa6d",
+        "sourceManifestSha256": "c496b9169c3d30c9504fdca694beb1a30bf86ce4ae2a716726d8439a7facf5a4",
+        "integrationManifestSha256": "942cd89dd620cbbd6ff10f15913a43da3e3aeb6c3f1fdd9a71c926d344969bb9",
+        "ownedFiles": [
+          {
+            "path": "apps/guardian/lib/ui/console_navigation.dart",
+            "sha256": "b14ce6d4d406532ecb2bd072fe1e8cbfcbd6760f744c346d255c5371279ac916"
+          },
+          {
+            "path": "apps/guardian/test/console_navigation_test.dart",
+            "sha256": "4e6f1f3dfd3232487ea8a3a3ac569403990419802008b875a2460436ea0eb9da"
+          },
+          {
+            "path": "apps/guardian/lib/ui/shell.dart",
+            "sha256": "ceb1cba3efa9b006aee97e40977e7dd7807dbc31d47a180e881a10ec8404a3bf"
+          },
+          {
+            "path": "apps/guardian/lib/ui/resource_page.dart",
+            "sha256": "ab6906bceefc8f5d96a364a900ffbe40b144869f885013b9af39c123ad0dd08d"
+          },
+          {
+            "path": "apps/guardian/test/resource_page_resilience_test.dart",
+            "sha256": "b1b9936751dcb1728e8ce5080bcec53e0abcd559bf1e2220ed524d8efdc5f6fd"
+          },
+          {
+            "path": "apps/guardian/lib/pages/console_pages.dart",
+            "sha256": "79f08978ffd7e6b8335191bb856ffedd276bf62e3dc2ea66b4f03bbc2f0929f7"
+          },
+          {
+            "path": "apps/guardian/lib/ui/workbench_view.dart",
+            "sha256": "9d067cee188e4ad41509a31845d8861cad759884d7d0080654288454153143a1"
+          },
+          {
+            "path": "apps/guardian/test/workbench_view_test.dart",
+            "sha256": "87561d803f3ab0121a04d0900827dfbd0f92efabf34680281f7f09fd57e4a6a3"
+          },
+          {
+            "path": "apps/guardian/lib/ui/workspace_welcome.dart",
+            "sha256": "50236f6f49746171470c50a2d6410b5ef0ac2e665a72fd85ee4f87384f00a584"
+          },
+          {
+            "path": "apps/guardian/test/workspace_welcome_test.dart",
+            "sha256": "670689dc45f7301d4279871037c4d35644c89684c276a699199f27d9c9ab67b7"
+          }
+        ],
+        "log": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\console-experience-integration-pub.log",
+        "logSha256": "6e978bb91ec11f72725cb27389a3c15eeb5391a63efb43d5ee30488e8e308d0d",
+        "receiptSha256": "ec6c41f183757e7faa14acac296ef65aaa9105544810ce7ca521b95db9dfaffc"
+      },
+      {
+        "gate": "test",
+        "exitCode": 0,
+        "completedAt": "2026-10-14T12:04:32.7315249+08:00",
+        "arguments": [
+          "test",
+          "--no-pub",
+          "--reporter",
+          "expanded"
+        ],
+        "directory": "D:\\codes\\mobile\\ai-manager\\.local\\console-experience-integration-20261014\\apps\\guardian",
+        "archiveBase": "ada090c7b7ac3c07b3c257ddd1b611754345aa6d",
+        "sourceManifestSha256": "c496b9169c3d30c9504fdca694beb1a30bf86ce4ae2a716726d8439a7facf5a4",
+        "integrationManifestSha256": "942cd89dd620cbbd6ff10f15913a43da3e3aeb6c3f1fdd9a71c926d344969bb9",
+        "ownedFiles": [
+          {
+            "path": "apps/guardian/lib/ui/console_navigation.dart",
+            "sha256": "b14ce6d4d406532ecb2bd072fe1e8cbfcbd6760f744c346d255c5371279ac916"
+          },
+          {
+            "path": "apps/guardian/test/console_navigation_test.dart",
+            "sha256": "4e6f1f3dfd3232487ea8a3a3ac569403990419802008b875a2460436ea0eb9da"
+          },
+          {
+            "path": "apps/guardian/lib/ui/shell.dart",
+            "sha256": "ceb1cba3efa9b006aee97e40977e7dd7807dbc31d47a180e881a10ec8404a3bf"
+          },
+          {
+            "path": "apps/guardian/lib/ui/resource_page.dart",
+            "sha256": "ab6906bceefc8f5d96a364a900ffbe40b144869f885013b9af39c123ad0dd08d"
+          },
+          {
+            "path": "apps/guardian/test/resource_page_resilience_test.dart",
+            "sha256": "b1b9936751dcb1728e8ce5080bcec53e0abcd559bf1e2220ed524d8efdc5f6fd"
+          },
+          {
+            "path": "apps/guardian/lib/pages/console_pages.dart",
+            "sha256": "79f08978ffd7e6b8335191bb856ffedd276bf62e3dc2ea66b4f03bbc2f0929f7"
+          },
+          {
+            "path": "apps/guardian/lib/ui/workbench_view.dart",
+            "sha256": "9d067cee188e4ad41509a31845d8861cad759884d7d0080654288454153143a1"
+          },
+          {
+            "path": "apps/guardian/test/workbench_view_test.dart",
+            "sha256": "87561d803f3ab0121a04d0900827dfbd0f92efabf34680281f7f09fd57e4a6a3"
+          },
+          {
+            "path": "apps/guardian/lib/ui/workspace_welcome.dart",
+            "sha256": "50236f6f49746171470c50a2d6410b5ef0ac2e665a72fd85ee4f87384f00a584"
+          },
+          {
+            "path": "apps/guardian/test/workspace_welcome_test.dart",
+            "sha256": "670689dc45f7301d4279871037c4d35644c89684c276a699199f27d9c9ab67b7"
+          }
+        ],
+        "log": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\console-experience-integration-test.log",
+        "testsPassed": 299,
+        "testsSkipped": 0,
+        "testsFailed": 0,
+        "logSha256": "af107ce209f392c3f2cbb493f14be48f2773080b8e6bf58d534b715613c81960",
+        "receiptSha256": "2f50936d0f0209a9f83c30ceaa152313acf02e1a1ed9ed04fe842cd73fb43d87"
+      },
+      {
+        "gate": "analyze",
+        "exitCode": 0,
+        "completedAt": "2026-10-14T12:04:46.4690330+08:00",
+        "arguments": [
+          "analyze",
+          "--no-pub"
+        ],
+        "directory": "D:\\codes\\mobile\\ai-manager\\.local\\console-experience-integration-20261014\\apps\\guardian",
+        "archiveBase": "ada090c7b7ac3c07b3c257ddd1b611754345aa6d",
+        "sourceManifestSha256": "c496b9169c3d30c9504fdca694beb1a30bf86ce4ae2a716726d8439a7facf5a4",
+        "integrationManifestSha256": "942cd89dd620cbbd6ff10f15913a43da3e3aeb6c3f1fdd9a71c926d344969bb9",
+        "ownedFiles": [
+          {
+            "path": "apps/guardian/lib/ui/console_navigation.dart",
+            "sha256": "b14ce6d4d406532ecb2bd072fe1e8cbfcbd6760f744c346d255c5371279ac916"
+          },
+          {
+            "path": "apps/guardian/test/console_navigation_test.dart",
+            "sha256": "4e6f1f3dfd3232487ea8a3a3ac569403990419802008b875a2460436ea0eb9da"
+          },
+          {
+            "path": "apps/guardian/lib/ui/shell.dart",
+            "sha256": "ceb1cba3efa9b006aee97e40977e7dd7807dbc31d47a180e881a10ec8404a3bf"
+          },
+          {
+            "path": "apps/guardian/lib/ui/resource_page.dart",
+            "sha256": "ab6906bceefc8f5d96a364a900ffbe40b144869f885013b9af39c123ad0dd08d"
+          },
+          {
+            "path": "apps/guardian/test/resource_page_resilience_test.dart",
+            "sha256": "b1b9936751dcb1728e8ce5080bcec53e0abcd559bf1e2220ed524d8efdc5f6fd"
+          },
+          {
+            "path": "apps/guardian/lib/pages/console_pages.dart",
+            "sha256": "79f08978ffd7e6b8335191bb856ffedd276bf62e3dc2ea66b4f03bbc2f0929f7"
+          },
+          {
+            "path": "apps/guardian/lib/ui/workbench_view.dart",
+            "sha256": "9d067cee188e4ad41509a31845d8861cad759884d7d0080654288454153143a1"
+          },
+          {
+            "path": "apps/guardian/test/workbench_view_test.dart",
+            "sha256": "87561d803f3ab0121a04d0900827dfbd0f92efabf34680281f7f09fd57e4a6a3"
+          },
+          {
+            "path": "apps/guardian/lib/ui/workspace_welcome.dart",
+            "sha256": "50236f6f49746171470c50a2d6410b5ef0ac2e665a72fd85ee4f87384f00a584"
+          },
+          {
+            "path": "apps/guardian/test/workspace_welcome_test.dart",
+            "sha256": "670689dc45f7301d4279871037c4d35644c89684c276a699199f27d9c9ab67b7"
+          }
+        ],
+        "log": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\console-experience-integration-analyze.log",
+        "logSha256": "ab4a2b25e976b32f32d4e8d8fbfb6ca137bf665a1c6b332d7b05e802447cc651",
+        "receiptSha256": "1d86f39bb9e88b9b66fe29ca028247cb45a605eb0225d66a87b2c0bdf816d095"
+      }
+    ],
+    "testsPassed": 299,
+    "testsSkipped": 0,
+    "testsFailed": 0,
+    "analysis": "No issues found",
+    "terminalObservation": {
+      "sessionId": 53546,
+      "exitCode": 0,
+      "observed": true
+    },
+    "webBuilt": false,
+    "servicesUpdated": false,
+    "rootSourcesModified": false
+  }
+}

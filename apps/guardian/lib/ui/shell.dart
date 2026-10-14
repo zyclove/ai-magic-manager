@@ -8,34 +8,7 @@ import '../pages/console_pages.dart';
 import 'design.dart';
 import 'notification_shortcut.dart';
 import 'help_shortcut.dart';
-
-const destinations = [
-  ('overview', '工作台', Icons.space_dashboard_outlined),
-  ('subjects', '儿童档案', Icons.person_outline),
-  ('classes', '班级与名册', Icons.school_outlined),
-  ('device-groups', '机构设备组', Icons.grid_view_outlined),
-  ('managed-android', '受管 Android', Icons.phonelink_lock_outlined),
-  ('devices', '设备管理', Icons.devices_outlined),
-  ('applications', '应用目录', Icons.apps_outlined),
-  ('schedules', '时间计划', Icons.schedule_outlined),
-  ('quota', '共享额度', Icons.timelapse_outlined),
-  ('policies', '策略中心', Icons.shield_outlined),
-  ('approvals', '访问审批', Icons.task_alt_outlined),
-  ('notifications', '通知中心', Icons.notifications_none_outlined),
-  ('help-requests', '儿童求助', Icons.volunteer_activism_outlined),
-  ('reports', '使用报表', Icons.bar_chart_outlined),
-  ('commercial', '商业账户', Icons.workspace_premium_outlined),
-  ('catalog', '平台产品目录', Icons.inventory_2_outlined),
-  ('contracts', '平台机构合同', Icons.description_outlined),
-  ('managed-android-review', '企业绑定审核', Icons.fact_check_outlined),
-  ('institution-contracts', '机构合同', Icons.fact_check_outlined),
-  ('members', '成员与邀请', Icons.group_outlined),
-  ('ownership', '所有者交接', Icons.swap_horiz_outlined),
-  ('audit', '审计日志', Icons.receipt_long_outlined),
-  ('exports', '导出任务', Icons.file_download_outlined),
-  ('support', '支持协作', Icons.support_agent_outlined),
-  ('settings', '设置', Icons.settings_outlined),
-];
+import 'console_navigation.dart';
 
 class ConsoleShell extends StatelessWidget {
   final String section;
@@ -74,31 +47,15 @@ class ConsoleShell extends StatelessWidget {
               ])
             ])),
         Expanded(
-            child: ListView(
-                padding: const EdgeInsets.symmetric(horizontal: 12),
-                children: [
-              for (final d in destinations.where((d) => s.canOpen(d.$1)))
-                Padding(
-                    padding: const EdgeInsets.only(bottom: 6),
-                    child: ListTile(
-                        minLeadingWidth: 22,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
-                        selected: section == d.$1,
-                        selectedTileColor: const Color(0xFFEAF2FC),
-                        selectedColor: navy,
-                        leading: Icon(d.$3, size: 21),
-                        title: Text(d.$2,
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: section == d.$1
-                                    ? FontWeight.w600
-                                    : FontWeight.w400)),
-                        onTap: () {
-                          if (drawer) Navigator.pop(context);
-                          context.go(d.$1 == 'overview' ? '/' : '/${d.$1}');
-                        }))
-            ])),
+            child: ConsoleNavigation(
+                key: ValueKey('navigation-${s.tenant?['id']}-${s.role}'),
+                section: section,
+                organization: s.tenant?['kind'] == 'ORGANIZATION',
+                canOpen: s.canOpen,
+                onSelect: (destination) {
+                  if (drawer) Navigator.pop(context);
+                  context.go(destination == 'overview' ? '/' : '/$destination');
+                })),
         const Divider(),
         Padding(
             padding: const EdgeInsets.all(18),
@@ -152,11 +109,8 @@ class ConsoleShell extends StatelessWidget {
                   if (wide)
                     Expanded(
                         child: Text(
-                            destinations
-                                    .where((d) => d.$1 == section)
-                                    .firstOrNull
-                                    ?.$2 ??
-                                '工作台',
+                            navigationLabel(section,
+                                organization: s.tenant?['kind'] == 'ORGANIZATION'),
                             style:
                                 const TextStyle(color: muted, fontSize: 13))),
                   if (!wide) const SizedBox(width: 8),
