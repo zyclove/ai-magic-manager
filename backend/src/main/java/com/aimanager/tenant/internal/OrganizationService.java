@@ -435,6 +435,68 @@ class OrganizationService {
       long createdAt,
       long updatedAt) {}
 
+  /** Read only: current authorization, exact original fingerprint, and fresh classroom snapshots. */
+  @Transactional(timeout = 10)
+  public OperationResult result(String tenant, String actor, String requestId,
+      OrganizationController.ResultQuery in) {
+    mutex.lock(tenant);
+    mutex.actors(tenant, List.of(actor));
+    access.requireWriteRole(tenant, actor, OWNER, ORG_ADMIN);
+    organization(tenant);
+    if (requestId == null || !requestId.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
+      throw DomainException.invalid("INVALID_CLASS_RESULT_REFERENCE");
+    boolean create = in.operation() == OrganizationController.Operation.CREATE;
+    boolean named = create || in.operation() == OrganizationController.Operation.RENAME;
+    boolean student = Set.of(OrganizationController.Operation.ADD, OrganizationController.Operation.REMOVE,
+        OrganizationController.Operation.TRANSFER).contains(in.operation());
+    boolean transfer = in.operation() == OrganizationController.Operation.TRANSFER;
+    if ((create ? in.classId() != null || in.version() != null : in.classId() == null || in.version() == null)
+        || (named ? in.name() == null || in.name().isBlank() : in.name() != null)
+        || (student ? in.subjectId() == null : in.subjectId() != null)
+        || (transfer ? in.targetClassId() == null || in.targetVersion() == null || in.targetClassId().equals(in.classId())
+                     : in.targetClassId() != null || in.targetVersion() != null))
+      throw DomainException.invalid("INVALID_CLASS_RESULT_QUERY");
+    String operation = switch (in.operation()) {
+      case CREATE -> "class.create";
+      case RENAME -> "class.rename";
+      case ARCHIVE -> "class.archive";
+      case ADD -> "class.student.add";
+      case REMOVE -> "class.student.remove";
+      case TRANSFER -> "class.student.transfer";
+    };
+    Map<String, ?> attributes = switch (in.operation()) {
+      case CREATE -> Map.of("name", in.name());
+      case RENAME -> Map.of("id", in.classId(), "name", in.name(), "version", in.version());
+      case ARCHIVE -> Map.of("id", in.classId(), "version", in.version());
+      case ADD, REMOVE -> Map.of("id", in.classId(), "subject", in.subjectId(), "version", in.version());
+      case TRANSFER -> Map.of("source", in.classId(), "target", in.targetClassId(), "subject", in.subjectId(),
+          "sourceVersion", in.version(), "targetVersion", in.targetVersion());
+    };
+    List<Classroom> committed;
+    if (transfer) {
+      var original = idempotency.findCommitted(tenant, actor, operation, requestId, attributes, Transfer.class)
+          .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "CLASS_RESULT_UNAVAILABLE"));
+      if (!original.source().id().equals(in.classId()) || !original.target().id().equals(in.targetClassId()))
+        throw new IllegalStateException("Class transfer journal scope mismatch");
+      committed = List.of(original.source(), original.target());
+    } else {
+      var original = idempotency.findCommitted(tenant, actor, operation, requestId, attributes, Classroom.class)
+          .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "CLASS_RESULT_UNAVAILABLE"));
+      if (!create && !original.id().equals(in.classId()))
+        throw new IllegalStateException("Class journal scope mismatch");
+      committed = List.of(original);
+    }
+    var locked = new HashMap<String, Classroom>();
+    // Match the transfer write's lock order. Return source/target in request order.
+    for (String id : new TreeSet<>(committed.stream().map(Classroom::id).toList()))
+      locked.put(id, read(tenant, id, true));
+    return new OperationResult(requestId, in.operation(), committed,
+        committed.stream().map(c -> locked.get(c.id())).toList());
+  }
+
+  record OperationResult(String requestId, OrganizationController.Operation operation,
+      List<Classroom> committed, List<Classroom> current) {}
+
   record Student(String id, String nickname, String ageBand, boolean archived, long addedAt) {}
 
   record Transfer(Classroom source, Classroom target) {}

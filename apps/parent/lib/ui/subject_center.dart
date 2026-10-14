@@ -3,6 +3,7 @@ import '../core/paged_collection.dart';
 import '../core/parent_api.dart';
 import '../core/parent_session.dart';
 import '../core/subjects.dart';
+import 'class_center.dart';
 
 /// Identity is captured once; background content is hidden and reads invalidated.
 mixin SubjectScope<T extends StatefulWidget> on State<T>
@@ -168,6 +169,44 @@ class _SubjectCenterState extends State<SubjectCenter>
                                       const SizedBox(height: 8),
                                       const Text('只需昵称和年龄段，无需真实姓名、生日或照片。'),
                                       const SizedBox(height: 16),
+                                      if (session.tenant?['kind'] ==
+                                              'ORGANIZATION' &&
+                                          const {'OWNER', 'ORG_ADMIN'}
+                                              .contains(role))
+                                        Card(
+                                            child: ListTile(
+                                                leading: const Icon(
+                                                    Icons.groups_outlined),
+                                                title: const Text('班级与名册'),
+                                                subtitle:
+                                                    const Text('按班管理学生、转班和归档'),
+                                                trailing: const Icon(
+                                                    Icons.chevron_right),
+                                                onTap: opening
+                                                    ? null
+                                                    : () async {
+                                                        setState(() =>
+                                                            opening = true);
+                                                        try {
+                                                          await Navigator.of(
+                                                                  context)
+                                                              .push(MaterialPageRoute<
+                                                                      void>(
+                                                                  builder: (_) =>
+                                                                      ClassCenter(
+                                                                          session:
+                                                                              session)));
+                                                        } finally {
+                                                          if (mounted) {
+                                                            setState(() =>
+                                                                opening =
+                                                                    false);
+                                                          }
+                                                        }
+                                                        if (available) {
+                                                          await _reload();
+                                                        }
+                                                      })),
                                       TextField(
                                           controller: search,
                                           onChanged: (_) => setState(() {}),

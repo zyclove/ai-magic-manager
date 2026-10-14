@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.CacheControl;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
@@ -120,6 +121,26 @@ class OrganizationController {
       OrganizationService.Classroom result, HttpStatus status) {
     return ResponseEntity.status(status).eTag(ResourceVersions.tag(result.version())).body(result);
   }
+
+  @PostMapping("/operation-results/{requestId}/query")
+  ResponseEntity<OrganizationService.OperationResult> result(
+      @AuthenticationPrincipal Jwt actor, @PathVariable String tenantId,
+      @PathVariable String requestId, @Valid @RequestBody ResultQuery query) {
+    return ResponseEntity.ok().cacheControl(CacheControl.noStore())
+        .body(classes.result(tenantId, actor.getSubject(), requestId, query));
+  }
+
+  enum Operation { CREATE, RENAME, ADD, REMOVE, TRANSFER, ARCHIVE }
+
+  /** Exact original request descriptor. Per-operation required/forbidden fields are checked by service. */
+  record ResultQuery(
+      @NotNull Operation operation,
+      @Pattern(regexp = UUID) String classId,
+      @Size(max = 100) String name,
+      @Min(0) Long version,
+      @Pattern(regexp = UUID) String subjectId,
+      @Pattern(regexp = UUID) String targetClassId,
+      @Min(0) Long targetVersion) {}
 
   record Name(@NotBlank @Size(max = 100) String name) {}
 
