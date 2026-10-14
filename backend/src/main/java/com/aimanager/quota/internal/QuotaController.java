@@ -39,6 +39,25 @@ class QuotaController {
     return quotas.list(tenantId, actor.getSubject(), limit, cursor);
   }
 
+  /** Read-only recovery of a specific original request, never a second mutation. */
+  @PostMapping("/tenants/{tenantId}/quota-pools/creation-results/{requestId}/query")
+  ResponseEntity<QuotaService.OperationResult> creationResult(
+      @AuthenticationPrincipal Jwt actor, @PathVariable String tenantId,
+      @PathVariable String requestId, @Valid @RequestBody Create input) {
+    return ResponseEntity.ok().cacheControl(CacheControl.noStore())
+        .body(quotas.creationResult(tenantId, actor.getSubject(), requestId, input));
+  }
+
+  @PostMapping("/tenants/{tenantId}/quota-pools/{poolId}/adjustment-results/{requestId}/query")
+  ResponseEntity<QuotaService.OperationResult> adjustmentResult(
+      @AuthenticationPrincipal Jwt actor, @PathVariable String tenantId,
+      @PathVariable String poolId, @PathVariable String requestId,
+      @RequestHeader(name = "If-Match", required = false) String etag,
+      @Valid @RequestBody Adjustment input) {
+    return ResponseEntity.ok().cacheControl(CacheControl.noStore())
+        .body(quotas.adjustmentResult(tenantId, actor.getSubject(), poolId, requestId, etag, input));
+  }
+
   @GetMapping("/tenants/{tenantId}/quota-pools/{poolId}")
   ResponseEntity<QuotaPool> get(
       @AuthenticationPrincipal Jwt actor,

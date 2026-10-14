@@ -10,6 +10,7 @@ import 'policy_creation_page.dart';
 import '../core/policy_group_selection.dart';
 import 'policy_group_picker.dart';
 import 'schedule_center.dart';
+import 'quota_center.dart';
 
 const _ink = Color(0xFF17324B);
 const _muted = Color(0xFF315E86);
@@ -255,6 +256,15 @@ class _PolicyCenterState extends State<PolicyCenter> {
                         onPressed: recoveryBusy ? null : _schedules,
                         icon: const Icon(Icons.calendar_month_outlined),
                         label: const Text('查看与管理时间计划')),
+                    OutlinedButton.icon(
+                        onPressed: recoveryBusy
+                            ? null
+                            : () => Navigator.of(context).push(
+                                MaterialPageRoute<void>(
+                                    builder: (_) =>
+                                        QuotaCenter(session: widget.session))),
+                        icon: const Icon(Icons.timelapse_outlined),
+                        label: const Text('查看与管理每日额度')),
                     if (recoveryError != null)
                       Text('$recoveryError',
                           style: const TextStyle(color: Color(0xFF9A3931))),

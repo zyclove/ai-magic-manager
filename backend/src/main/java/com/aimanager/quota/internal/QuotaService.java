@@ -165,6 +165,45 @@ class QuotaService {
   }
 
   @Transactional(timeout = 10)
+  public OperationResult creationResult(String tenant, String actor, String requestId, QuotaController.Create input) {
+    access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
+    subjects.lockActiveForScope(tenant, actor, input.subjectId());
+    requireResultKey(requestId);
+    var committed = idempotency.findCommitted(tenant, actor, "quota.create", requestId,
+        Map.of("input", input), QuotaPool.class)
+        .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "QUOTA_RESULT_UNAVAILABLE"));
+    var current = pool(tenant, committed.id(), true);
+    if (!committed.subjectId().equals(input.subjectId()) || !current.subjectId().equals(committed.subjectId()))
+      throw new IllegalStateException("Quota creation journal scope mismatch");
+    return new OperationResult(requestId, "CREATE", committed, current);
+  }
+
+  @Transactional(timeout = 10)
+  public OperationResult adjustmentResult(String tenant, String actor, String poolId,
+      String requestId, String etag, QuotaController.Adjustment input) {
+    access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
+    var target = pool(tenant, poolId, false);
+    subjects.lockActiveForScope(tenant, actor, target.subjectId());
+    requireResultKey(requestId);
+    long version = ResourceVersions.require(etag);
+    var committed = idempotency.findCommitted(tenant, actor, "quota.adjust", requestId,
+        Map.of("pool", poolId, "version", version, "input", input), QuotaPool.class)
+        .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "QUOTA_RESULT_UNAVAILABLE"));
+    var current = pool(tenant, poolId, true);
+    if (!committed.id().equals(poolId) || !committed.subjectId().equals(current.subjectId()))
+      throw new IllegalStateException("Quota adjustment journal scope mismatch");
+    return new OperationResult(requestId, "ADJUST", committed, current);
+  }
+
+  private void requireResultKey(String key) {
+    if (key == null || !key.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
+      throw DomainException.invalid("INVALID_QUOTA_RESULT_REFERENCE");
+  }
+
+  /** A historical committed balance is separate from the currently locked ledger balance. */
+  record OperationResult(String requestId, String operation, QuotaPool committed, QuotaPool current) {}
+
+  @Transactional(timeout = 10)
   public QuotaPool adjust(
       String tenant, Jwt actor, String id, QuotaController.Adjustment in, String etag, String key) {
     access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN);
