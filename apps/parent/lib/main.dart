@@ -17,6 +17,7 @@ import 'ui/device_group_center.dart';
 import 'ui/application_center.dart';
 import 'ui/usage_report_center.dart';
 import 'ui/observation_settings_page.dart';
+import 'ui/subject_center.dart';
 
 const _navy = Color(0xFF17324B);
 const _blue = Color(0xFF315E86);
@@ -1106,6 +1107,14 @@ class _Account extends StatelessWidget {
                   .contains(session.role)) ...[
             const SizedBox(height: 24),
             CommercialAccount(session: session),
+            if (session.canDecide)
+              Card(child: ListTile(
+                leading: const Icon(Icons.face_outlined, color: _blue),
+                title: const Text('儿童与学生档案'),
+                subtitle: const Text('添加昵称、修改年龄段与归档管理'),
+                trailing: const Icon(Icons.chevron_right),
+                onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => SubjectCenter(session: session))))),
             if (session.canDecide)
               Card(
                   child: ListTile(

@@ -50,6 +50,8 @@ class ParentApiException implements Exception {
         'ACCESS_REQUEST_NOT_PENDING' => '申请状态已变化，请刷新列表。',
         'HELP_REQUEST_VERSION_CHANGED' => '求助状态已变化，请刷新列表。',
         'SCOPE_DENIED' => '当前账号没有此操作权限。',
+        'INVALID_SUBJECT_CHANGE' => '档案参数已失效或不完整，请重新核对昵称、年龄段和版本。',
+        'SUBJECT_RESULT_UNAVAILABLE' => '未找到原档案操作结果，不代表没有提交。请另行核对目录与审计。',
         'UNAUTHENTICATED' => '登录已过期，请重新登录。',
         'NETWORK_ERROR' => '连接服务失败，请检查网络后重试。',
         'INVALID_RESPONSE' => '服务返回的数据无法识别，请稍后刷新。',
