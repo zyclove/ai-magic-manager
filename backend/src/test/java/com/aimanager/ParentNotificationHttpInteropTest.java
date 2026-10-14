@@ -63,4 +63,35 @@ class ParentNotificationHttpInteropTest extends NotificationJourneyTest {
     assertThat(db.queryForObject("SELECT COUNT(*) FROM notification_reads WHERE tenant_id=?",
         Integer.class, s.tenant())).isEqualTo(3);
   }
+
+  @Test void productionDecisionClientRecoversWithoutResubmittingApproval() throws Exception {
+    var s = scope();
+    var request = request(s, "parent-decision-http");
+    String token = SecretMaterial.token();
+    when(decoder.decode(anyString())).thenAnswer(invocation -> {
+      if (!token.equals(invocation.getArgument(0))) throw new BadJwtException("Not a fixture identity");
+      return Jwt.withTokenValue(token).header("alg", "fixture").subject(s.owner())
+          .claim("auth_time", clock.instant().getEpochSecond()).claim("amr", java.util.List.of("pwd", "otp"))
+          .issuedAt(Instant.now()).expiresAt(Instant.now().plusSeconds(600)).build();
+    });
+    Path output = Path.of("target", "parent-decision-http.log").toAbsolutePath();
+    var builder = new ProcessBuilder(System.getProperty("parent.dart.command"),
+        Path.of(System.getProperty("parent.flutter.tool")).toAbsolutePath().toString(),
+        "test", "--no-pub", "tool/verify_decision_http_test.dart")
+        .directory(Path.of(System.getProperty("parent.package", "../apps/parent")).toAbsolutePath().toFile())
+        .redirectErrorStream(true).redirectOutput(output.toFile());
+    builder.environment().put("PARENT_DECISION_HTTP_FIXTURE", json.writeValueAsString(Map.of(
+        "testOnly", true, "apiRoot", "http://127.0.0.1:" + port + "/api/v1", "tenantId", s.tenant(),
+        "actorId", s.owner(), "requestId", request.path("id").asText(), "token", token)));
+    var process = builder.start();
+    try {
+      assertThat(process.waitFor(90, TimeUnit.SECONDS)).isTrue();
+      assertThat(process.exitValue()).as("Flutter diagnostics: %s", output).isZero();
+      assertThat(Files.readString(output)).contains("All tests passed!");
+    } finally { if (process.isAlive()) process.destroyForcibly(); }
+    assertThat(db.queryForObject("SELECT COUNT(*) FROM access_request_decisions WHERE tenant_id=?",
+        Integer.class, s.tenant())).isEqualTo(1);
+    assertThat(db.queryForObject("SELECT granted_window_seconds FROM access_requests WHERE tenant_id=? AND id=?",
+        Long.class, s.tenant(), request.path("id").asText())).isEqualTo(300L);
+  }
 }

@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:uuid/uuid.dart';
 
 import 'core/parent_api.dart';
 import 'core/parent_session.dart';
 import 'core/paged_collection.dart';
 import 'core/pending_decisions.dart';
 import 'ui/access_history.dart';
+import 'ui/access_decision_page.dart';
 import 'ui/commercial_account.dart';
 import 'ui/device_capabilities.dart';
 import 'ui/device_exit.dart';
@@ -349,160 +349,26 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
   }
 
   Future<void> decide(Json item, bool approve) async {
-    if (!widget.session.canDecide ||
-        sending ||
-        _recoveryBusy ||
-        !_recoveriesLoaded) return;
-    final requested = item['requestedWindowSeconds'] as int? ?? 0;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(approve ? '批准临时访问？' : '拒绝申请？'),
-        content: Text(approve
-            ? '儿童：${_requestLabel(item['subjectName'], '未命名儿童')}\n应用：${_requestLabel(item['applicationName'], '未命名应用')}\n包名：${_requestLabel(item['applicationPackageName'], '未知')}\n设备：${_requestLabel(item['deviceName'], '未命名设备')}\n申请原因：${_requestLabel(item['reason'], '未填写')}\n\n最多开放 ${_minutes(requested)}。批准先生成限时访问窗口，是否真正生效仍取决于设备接收和执行结果。'
-            : '儿童：${_requestLabel(item['subjectName'], '未命名儿童')}\n应用：${_requestLabel(item['applicationName'], '未命名应用')}\n包名：${_requestLabel(item['applicationPackageName'], '未知')}\n设备：${_requestLabel(item['deviceName'], '未命名设备')}\n\n拒绝后孩子会看到申请结果。'),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('返回')),
-          FilledButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: Text(approve ? '继续安全验证' : '确认拒绝')),
-        ],
-      ),
-    );
-    if (confirmed != true ||
-        !mounted ||
-        sending ||
-        _recoveryBusy ||
-        !_recoveriesLoaded) return;
     final actor = widget.session.profile?['subject'];
     final tenantId = widget.session.tenant?['id'];
-    if (actor is! String || tenantId is! String) {
-      setState(
-          () => actionError = const ParentApiException(401, 'UNAUTHENTICATED'));
-      return;
-    }
-    final root = '/tenants/$tenantId';
     final requestId = item['id'];
-    final requestVersion = item['version'];
-    if (requestId is! String || requestVersion is! int) {
-      setState(() =>
-          actionError = const ParentApiException(502, 'INVALID_RESPONSE'));
-      return;
-    }
-    if (_recoveries.any((record) =>
-        record.requestId == requestId && record.version == requestVersion)) {
-      setState(() => actionError = '同一申请已有待核对操作，请先查询原申请。');
-      return;
-    }
-    final decisionKey = const Uuid().v4();
-    final marker = PendingDecision(
-      requestId: requestId,
-      version: requestVersion,
-      idempotencyKey: decisionKey,
-      choice: approve ? 'APPROVE' : 'DENY',
-      createdAt: DateTime.now().millisecondsSinceEpoch,
-    );
-    var recorded = false;
-    var submitted = false;
-    setState(() => sending = true);
+    if (sending || _recoveryBusy || !_recoveriesLoaded || actor is! String ||
+        tenantId is! String || requestId is! String || !_sameDecisionScope(actor, tenantId)) return;
+    setState(() { sending = true; actionError = null; });
     try {
-      if (!await widget.session.reauthenticate()) {
-        if (mounted && widget.session.error != null) {
-          setState(() => actionError = widget.session.error);
-        }
-        return;
-      }
-      if (!_sameDecisionScope(actor, tenantId)) {
-        throw const ParentApiException(409, 'SCOPE_DENIED');
-      }
-      await _decisionStore.add(tenantId, actor, marker);
-      recorded = true;
+      final result = await showAccessDecision(context, widget.session, requestId, approve: approve);
       if (!_sameDecisionScope(actor, tenantId)) return;
-      setState(() => _recoveries = [..._recoveries, marker]);
-      submitted = true;
-      await widget.session.api.send(
-          'POST', '$root/access-requests/$requestId/decisions',
-          version: requestVersion,
-          idempotencyKey: decisionKey,
-          body: approve
-              ? {'decision': 'APPROVE', 'grantedWindowSeconds': requested}
-              : {'decision': 'DENY', 'reasonCode': 'NOT_NOW'});
-      await _decisionStore.remove(tenantId, actor, decisionKey);
-      recorded = false;
-      if (_sameDecisionScope(actor, tenantId)) {
-        setState(() {
-          _recoveries = _recoveries
-              .where((item) => item.idempotencyKey != decisionKey)
-              .toList();
-          _lastDecisionId = requestId;
-          _lastDecisionApproved = approve;
-        });
-        await reload(afterDecision: true);
+      if (result != null) {
+        setState(() { _lastDecisionId = requestId; _lastDecisionApproved = result == 'APPROVE'; });
       }
-    } catch (failure) {
-      if (!_sameDecisionScope(actor, tenantId)) return;
-      if (submitted &&
-          (failure is! ParentApiException ||
-              failure.status == 0 ||
-              failure.status >= 500 ||
-              failure.code == 'REQUEST_IN_PROGRESS' ||
-              failure.code == 'IDEMPOTENCY_KEY_CONFLICT')) {
-        final message =
-            await _reconcileUncertainDecision(root, requestId, requestVersion);
-        if (!_sameDecisionScope(actor, tenantId)) return;
-        await pending.reload();
-        if (mounted) setState(() => actionError = message);
-      } else {
-        if (recorded) {
-          try {
-            await _decisionStore.remove(tenantId, actor, decisionKey);
-            if (!_sameDecisionScope(actor, tenantId)) return;
-            setState(() => _recoveries = _recoveries
-                .where((item) => item.idempotencyKey != decisionKey)
-                .toList());
-          } catch (_) {
-            if (_sameDecisionScope(actor, tenantId)) {
-              setState(() => actionError = '操作未完成，且本机待核对记录未能清理。请在此页查询原申请。');
-            }
-            return;
-          }
-        }
-        setState(() => actionError = failure);
-      }
-    } finally {
-      if (mounted) setState(() => sending = false);
-    }
+      await reload(afterDecision: true);
+    } finally { if (mounted) setState(() => sending = false); }
   }
-
   bool _sameDecisionScope(String actor, String tenantId) =>
       mounted &&
       widget.session.profile?['subject'] == actor &&
       widget.session.tenant?['id'] == tenantId &&
       widget.session.canDecide;
-
-  /// A failed transport cannot prove that the decision transaction rolled back.
-  /// Read the same request once; never silently send a second decision.
-  Future<String> _reconcileUncertainDecision(
-      String root, String requestId, int expectedVersion) async {
-    try {
-      final current =
-          await widget.session.api.object('$root/access-requests/$requestId');
-      if (current['id'] != requestId ||
-          current['version'] is! int ||
-          current['state'] is! String) {
-        return '审批提交后的结果无法核对。请到管理台查看原申请，暂勿重复操作。';
-      }
-      if (current['state'] == 'PENDING' &&
-          current['version'] == expectedVersion) {
-        return '提交时连接中断；服务端目前仍显示待处理。请先刷新并核对原申请，再决定是否重试。';
-      }
-      return '申请状态已变化。本次提交是否生效尚不能仅凭网络错误确认，请核对原申请和设备执行回执。';
-    } catch (_) {
-      return '审批提交后的结果暂时无法查询。请恢复网络后核对原申请，暂勿重复操作。';
-    }
-  }
 
   Future<void> _checkRecovery(PendingDecision record) async {
     final actor = widget.session.profile?['subject'];

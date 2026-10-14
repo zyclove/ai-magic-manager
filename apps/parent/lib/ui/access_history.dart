@@ -5,6 +5,7 @@ import '../core/paged_collection.dart';
 import '../core/parent_api.dart';
 import '../core/parent_session.dart';
 import '../core/pending_decisions.dart';
+import 'access_decision_page.dart';
 
 const _ink = Color(0xFF17324B);
 const _muted = Color(0xFF315E86);
@@ -61,7 +62,14 @@ class _AccessHistoryState extends State<AccessHistory> {
       widget.session.role == role;
 
   void _closeIfScopeChanged() {
-    if (mounted && !_current) Navigator.of(context).pop();
+    if (!mounted || _current) return;
+    setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _current) return;
+      final route = ModalRoute.of(context);
+      if (route != null && route.isActive) Navigator.of(context).removeRoute(route);
+    });
+    WidgetsBinding.instance.ensureVisualUpdate();
   }
 
   @override
@@ -213,7 +221,14 @@ class _AccessRequestDetailState extends State<_AccessRequestDetail>
       widget.session.role == role;
 
   void _closeIfScopeChanged() {
-    if (mounted && !_current) Navigator.of(context).pop();
+    if (!mounted || _current) return;
+    setState(() {});
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || _current) return;
+      final route = ModalRoute.of(context);
+      if (route != null && route.isActive) Navigator.of(context).removeRoute(route);
+    });
+    WidgetsBinding.instance.ensureVisualUpdate();
   }
 
   void _reload() {
@@ -511,6 +526,26 @@ class _AccessRequestDetailState extends State<_AccessRequestDetail>
         icon: const Icon(Icons.refresh),
         label: const Text('刷新状态'),
       ),
+      if (request['state'] == 'PENDING' && widget.session.canDecide)
+        FilledButton.icon(
+          onPressed: _busy || !_journalLoaded
+              ? null
+              : () async {
+                  setState(() => _busy = true);
+                  try {
+                    await showAccessDecision(
+                        context, widget.session, widget.requestId);
+                    if (_current) {
+                      _reload();
+                      await _loadJournal();
+                    }
+                  } finally {
+                    if (mounted) setState(() => _busy = false);
+                  }
+                },
+          icon: const Icon(Icons.fact_check_outlined),
+          label: const Text('现在处理申请'),
+        ),
       if (approved && widget.session.canDecide) ...[
         const SizedBox(height: 9),
         FilledButton.icon(

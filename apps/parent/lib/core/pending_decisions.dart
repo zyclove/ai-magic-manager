@@ -10,6 +10,8 @@ class PendingDecision {
   final String idempotencyKey;
   final String choice;
   final int createdAt;
+  final int? grantedWindowSeconds;
+  final String? reasonCode;
 
   const PendingDecision({
     required this.requestId,
@@ -17,6 +19,8 @@ class PendingDecision {
     required this.idempotencyKey,
     required this.choice,
     required this.createdAt,
+    this.grantedWindowSeconds,
+    this.reasonCode,
   });
 
   Map<String, Object> toJson() => {
@@ -25,6 +29,9 @@ class PendingDecision {
         'idempotencyKey': idempotencyKey,
         'choice': choice,
         'createdAt': createdAt,
+        if (grantedWindowSeconds != null)
+          'grantedWindowSeconds': grantedWindowSeconds!,
+        if (reasonCode != null) 'reasonCode': reasonCode!,
       };
 
   static PendingDecision? fromJson(Object? value) {
@@ -39,12 +46,25 @@ class PendingDecision {
     final id = value['requestId'] as String;
     final key = value['idempotencyKey'] as String;
     if (id.isEmpty || key.isEmpty) return null;
+    final seconds = value['grantedWindowSeconds'], reason = value['reasonCode'];
+    if (seconds != null &&
+            (value['choice'] != 'APPROVE' ||
+                seconds is! int ||
+                seconds < 1 ||
+                seconds > 3600) ||
+        reason != null &&
+            (value['choice'] != 'DENY' ||
+                !{'NOT_NOW', 'NOT_ALLOWED', 'OTHER'}.contains(reason))) {
+      return null;
+    }
     return PendingDecision(
       requestId: id,
       version: value['version'] as int,
       idempotencyKey: key,
       choice: value['choice'] as String,
       createdAt: value['createdAt'] as int,
+      grantedWindowSeconds: seconds,
+      reasonCode: reason,
     );
   }
 }
