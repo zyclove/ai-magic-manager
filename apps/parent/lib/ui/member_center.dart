@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../core/invitations.dart';
 import '../core/member_access.dart';
 import '../core/organization_classes.dart' show readSchoolClass;
 import '../core/paged_collection.dart';
 import '../core/parent_api.dart';
 import '../core/parent_session.dart';
+
+part 'invitation_center.dart';
 
 mixin _MemberScope<T extends StatefulWidget> on State<T>
     implements WidgetsBindingObserver {
@@ -163,8 +167,29 @@ class _MemberCenterState extends State<MemberCenter>
                           Text('让每个人只访问所需内容',
                               style: Theme.of(context).textTheme.headlineSmall),
                           const SizedBox(height: 8),
-                          const Text(
-                              '选择成员，查看职责和访问范围，再调整权限。新增成员邀请及所有权交接继续在管理台完成。'),
+                          const Text('选择成员，查看职责和访问范围，再调整权限。所有权交接继续在管理台完成。'),
+                          const SizedBox(height: 12),
+                          OutlinedButton.icon(
+                              onPressed: opening
+                                  ? null
+                                  : () async {
+                                      if (!available) return;
+                                      setState(() => opening = true);
+                                      try {
+                                        await Navigator.of(context).push(
+                                            MaterialPageRoute<void>(
+                                                builder: (_) =>
+                                                    InvitationCenter(
+                                                        session: session)));
+                                      } finally {
+                                        if (mounted) {
+                                          setState(() => opening = false);
+                                        }
+                                      }
+                                      if (available) await members.reload();
+                                    },
+                              icon: const Icon(Icons.person_add_alt_outlined),
+                              label: const Text('邀请成员与记录')),
                           _MemberRecovery(
                               session: session,
                               operation: operation,

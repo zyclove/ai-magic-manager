@@ -104,10 +104,10 @@ class ConsoleTenantService {
                     r.getString("role"),
                     r.getString("subject_id"),
                     r.getLong("expires_at"),
-                    r.getObject("revoked_at") != null
-                        ? "CANCELLED"
-                        : r.getObject("consumed_at") != null
-                            ? "ACCEPTED"
+                    r.getObject("consumed_at") != null
+                        ? "ACCEPTED"
+                        : r.getObject("revoked_at") != null
+                            ? "CANCELLED"
                             : r.getLong("expires_at") <= clock.millis() ? "EXPIRED" : "PENDING",
                     classScopes.invitation(tenant, r.getString("id"))),
             tenant,

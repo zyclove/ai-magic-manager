@@ -509,6 +509,11 @@ class MembershipService {
             invitationId);
     if (roles.isEmpty()) throw DomainException.denied();
     if (roles.get(0) == ORG_ADMIN && grant.role() != OWNER) throw DomainException.denied();
+    // Acceptance and cancellation share the membership mutex. A used invitation is history,
+    // not an authorization revocation command for the member who already joined.
+    if (jdbc.queryForObject("SELECT COUNT(*) FROM member_invitations WHERE tenant_id=? AND id=? AND consumed_at IS NOT NULL",
+        Integer.class, tenantId, invitationId) != 0)
+      throw new DomainException(HttpStatus.CONFLICT, "INVITATION_ALREADY_ACCEPTED");
     int changed =
         jdbc.update(
             "UPDATE member_invitations SET revoked_at=? WHERE tenant_id=? AND id=? AND revoked_at"

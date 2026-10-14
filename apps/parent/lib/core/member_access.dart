@@ -51,7 +51,7 @@ bool _classes(dynamic v) =>
     v.every(_uuid) &&
     v.toSet().length == v.length;
 const _invalid = ParentApiException(502, 'INVALID_RESPONSE');
-bool _scope(String role, dynamic subject, dynamic classes,
+bool validMemberScope(String role, dynamic subject, dynamic classes,
     {bool allowUnassignedTeacher = false}) {
   if (!_classes(classes)) return false;
   if (role == 'CHILD') return _uuid(subject) && (classes as List).isEmpty;
@@ -71,7 +71,7 @@ Json readMemberAccess(dynamic raw) {
       !_key(raw['memberKey']) ||
       raw['role'] is! String ||
       !_version(raw['version']) ||
-      !_scope(raw['role'], raw['subjectId'], raw['classIds'],
+      !validMemberScope(raw['role'], raw['subjectId'], raw['classIds'],
           allowUnassignedTeacher: true)) throw _invalid;
   return Map<String, dynamic>.unmodifiable(raw);
 }
@@ -91,7 +91,7 @@ void validateMemberHistory(Json row) {
       row['occurredAt'] > 253402300799999 ||
       !_text(row['changedByActorId'], 255) ||
       row['previousRole'] is! String ||
-      !_scope(row['previousRole'], row['previousSubjectId'],
+      !validMemberScope(row['previousRole'], row['previousSubjectId'],
           row['previousClassIds'], allowUnassignedTeacher: true) ||
       (row['changeType'] == 'REVOKED'
           ? row['role'] != null ||
@@ -100,7 +100,7 @@ void validateMemberHistory(Json row) {
               row['classIds'].isNotEmpty
           : row['changeType'] != 'UPDATED' ||
               row['role'] is! String ||
-              !_scope(row['role'], row['subjectId'], row['classIds'],
+              !validMemberScope(row['role'], row['subjectId'], row['classIds'],
                   allowUnassignedTeacher: true))) throw _invalid;
 }
 
@@ -132,7 +132,8 @@ void validateMemberOperation(Json input, Json before) {
   if (!revoke &&
       (input['role'] is! String ||
           input['role'] == 'OWNER' ||
-          !_scope(input['role'], input['subjectId'], input['classIds']) ||
+          !validMemberScope(
+              input['role'], input['subjectId'], input['classIds']) ||
           (before['role'] == 'CHILD') != (input['role'] == 'CHILD'))) {
     throw const FormatException('请核对角色和范围；儿童与成人身份不能通过编辑直接互换。');
   }
