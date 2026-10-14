@@ -183,10 +183,23 @@ class PermissionObservationService {
     long age = clock.millis() - snapshot.receivedAt();
     if (age >= RETENTION_MILLIS)
       return empty(deviceId, device.registrationId(), packageName, "UNKNOWN");
+    // A later inventory can describe an updated/reinstalled application. Never
+    // attribute an old permission snapshot to that different observed identity.
+    var inventory = inventories.read(tenant, actor, deviceId);
+    var application = inventory.applications().stream()
+        .filter(app -> app.packageName().equals(packageName)
+            && app.profile() == snapshot.report().profile()).findFirst();
+    if (application.isEmpty()
+        || !application.get().versionCode().equals(snapshot.report().versionCode())
+        || !new HashSet<>(application.get().signingDigests())
+            .equals(new HashSet<>(snapshot.report().signingDigests()))) {
+      return empty(deviceId, device.registrationId(), packageName, "UNKNOWN");
+    }
     return new View(deviceId, device.registrationId(), packageName,
         snapshot.report().profile(), snapshot.report().versionCode(),
         snapshot.report().observedAt(), snapshot.receivedAt(),
-        age < 0 || age > MAX_AGE_MILLIS ? "STALE" : "RECENT", "AGENT_REPORTED_UNVERIFIED",
+        age < 0 || age > MAX_AGE_MILLIS || !"RECENT".equals(inventory.observationStatus())
+            ? "STALE" : "RECENT", "AGENT_REPORTED_UNVERIFIED",
         snapshot.report().permissions());
   }
 

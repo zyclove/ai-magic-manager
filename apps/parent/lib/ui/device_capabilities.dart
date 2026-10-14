@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../core/parent_api.dart';
 import '../core/parent_session.dart';
+import '../core/permission_observation.dart' show permissionObservationEnabled;
+import 'permission_observation_page.dart';
 
 /// Reads the server's scoped capability projection. Agent observations are
 /// never presented as proof that a policy was enforced by Android.
@@ -22,11 +24,20 @@ class _DeviceCapabilities extends StatefulWidget {
   State<_DeviceCapabilities> createState() => _DeviceCapabilitiesState();
 }
 
-class _DeviceCapabilitiesState extends State<_DeviceCapabilities> {
+class _DeviceCapabilitiesState extends State<_DeviceCapabilities>
+    with WidgetsBindingObserver {
   late final String tenantId;
   late final String actor;
   late final String role;
   late Future<(Json, List<Json>)> result;
+  bool foreground = true;
+  int generation = 0;
+  bool get current =>
+      mounted &&
+      widget.session.authenticated &&
+      widget.session.tenant?['id'] == tenantId &&
+      widget.session.profile?['subject'] == actor &&
+      widget.session.role == role;
 
   @override
   void initState() {
@@ -34,30 +45,53 @@ class _DeviceCapabilitiesState extends State<_DeviceCapabilities> {
     tenantId = widget.session.tenant!['id'] as String;
     actor = widget.session.profile!['subject'] as String;
     role = widget.session.role;
+    foreground = WidgetsBinding.instance.lifecycleState == null ||
+        WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
+    WidgetsBinding.instance.addObserver(this);
     widget.session.addListener(_closeIfScopeChanged);
     result = _read('/tenants/$tenantId/devices/${widget.deviceId}');
   }
 
   void _closeIfScopeChanged() {
     if (!mounted) return;
-    if (!widget.session.authenticated ||
-        widget.session.tenant?['id'] != tenantId ||
-        widget.session.profile?['subject'] != actor ||
-        widget.session.role != role) {
-      Navigator.of(context).pop();
+    if (!current) {
+      generation++;
+      setState(() {});
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || current) return;
+        final route = ModalRoute.of(context);
+        if (route != null && route.isActive) {
+          Navigator.of(context).removeRoute(route);
+        }
+      });
+      WidgetsBinding.instance.ensureVisualUpdate();
     }
   }
 
   void _reload() {
+    if (!current || !foreground) return;
     final root = '/tenants/$tenantId/devices/${widget.deviceId}';
-    setState(() => result = _read(root));
+    setState(() {
+      result = _read(root);
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    foreground = state == AppLifecycleState.resumed;
+    generation++;
+    if (mounted) setState(() {});
+    if (foreground && current) _reload();
   }
 
   Future<(Json, List<Json>)> _read(String root) async {
+    final epoch = ++generation;
+    bool valid() => current && foreground && generation == epoch;
     final (device, capabilities) = await (
-      widget.session.api.object(root),
-      widget.session.api.object('$root/capabilities'),
+      widget.session.api.object(root, isCurrent: valid),
+      widget.session.api.object('$root/capabilities', isCurrent: valid),
     ).wait;
+    if (!valid()) throw const ParentApiException(409, 'SCOPE_DENIED');
     if (device['id'] != widget.deviceId || capabilities['items'] is! List) {
       throw const ParentApiException(502, 'INVALID_RESPONSE');
     }
@@ -81,11 +115,16 @@ class _DeviceCapabilitiesState extends State<_DeviceCapabilities> {
   @override
   void dispose() {
     widget.session.removeListener(_closeIfScopeChanged);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    if (!current || !foreground) {
+      return const Dialog(
+          child: Padding(padding: EdgeInsets.all(24), child: Text('设备信息已隐藏。')));
+    }
     final height = MediaQuery.sizeOf(context).height;
     return Dialog(
       child: ConstrainedBox(
@@ -153,6 +192,15 @@ class _DeviceCapabilitiesState extends State<_DeviceCapabilities> {
         ),
       ),
       const SizedBox(height: 18),
+      if (permissionObservationEnabled &&
+          widget.session.canDecide &&
+          device['state'] == 'ACTIVE' &&
+          const {'ANDROID', 'ANDROID_TV'}.contains(device['platform']))
+        FilledButton.tonalIcon(
+            onPressed: () =>
+                openParentPermissions(context, widget.session, device),
+            icon: const Icon(Icons.privacy_tip_outlined),
+            label: const Text('查看应用权限')),
       Text('逐项能力 · ${items.length}',
           style: Theme.of(context).textTheme.titleMedium),
       const SizedBox(height: 8),

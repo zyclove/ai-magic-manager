@@ -7,6 +7,7 @@ import com.aimanager.fleet.Device;
 import com.aimanager.fleet.DeviceAccess;
 import com.aimanager.fleet.DeviceRegistrationRevoked;
 import com.aimanager.idempotency.IdempotencyService;
+import com.aimanager.idempotency.ResponseOwnership;
 import com.aimanager.identity.RecentAuthentication;
 import com.aimanager.observation.*;
 import com.aimanager.shared.DomainException;
@@ -72,8 +73,54 @@ class ObservationSettingsService implements ObservationAuthorization, Permission
         return idempotency.execute(tenant, actor.getSubject(), "permission.observation.update", key,
             Map.of("deviceId", deviceId, "expectedVersion", expected, "input", input),
             PermissionObservationSettings.class,
-            () -> changePermission(tenant, actor.getSubject(), device, expected, input));
+            () -> changePermission(tenant, actor.getSubject(), device, expected, input),
+            ignored -> ResponseOwnership.subjects(tenant, java.util.List.of(device.subjectId())));
     }
+
+    @Transactional(timeout = 10)
+    PermissionObservationSettings changePermissionBound(String tenant, Jwt actor, String deviceId,
+            String key, PermissionObservationController.Change input) {
+        access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN);
+        recent.require(actor);
+        requirePermissionReference(key);
+        var device = devices.lockVisibleActive(tenant, actor.getSubject(), deviceId);
+        requireRegistration(device, input.registrationId());
+        var result = updatePermission(tenant, actor, deviceId, input.version(), key, input.update());
+        if (!input.registrationId().equals(result.registrationId())) {
+            throw new DomainException(HttpStatus.CONFLICT, "REGISTRATION_CHANGED");
+        }
+        return result;
+    }
+
+    /** Current authority and original identity are checked even for historical receipts. */
+    @Transactional(timeout = 10)
+    PermissionRecovery permissionOperationResult(String tenant, String actor, String deviceId,
+            String key, PermissionObservationController.Change input) {
+        access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
+        var device = devices.lockVisibleActive(tenant, actor, deviceId);
+        requireRegistration(device, input.registrationId());
+        requirePermissionReference(key);
+        var committed = idempotency.findCommitted(tenant, actor, "permission.observation.update", key,
+            Map.of("deviceId", deviceId, "expectedVersion", input.version(), "input", input.update()),
+            PermissionObservationSettings.class).orElseThrow(() ->
+                new DomainException(HttpStatus.NOT_FOUND, "OBSERVATION_RESULT_UNAVAILABLE"));
+        if (!committed.deviceId().equals(deviceId)
+                || !committed.registrationId().equals(input.registrationId())
+                || committed.version() != input.version() + 1
+                || committed.enabled() != input.enabled()) {
+            throw new IllegalStateException("Permission observation journal mismatch");
+        }
+        return new PermissionRecovery(committed,
+            currentPermission(tenant, deviceId, input.registrationId(), true));
+    }
+
+    private void requirePermissionReference(String key) {
+        if (key == null || !key.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")) {
+            throw DomainException.invalid("INVALID_IDEMPOTENCY_KEY");
+        }
+    }
+
+    record PermissionRecovery(PermissionObservationSettings committed, PermissionObservationSettings current) {}
 
     private PermissionObservationSettings changePermission(String tenant, String actor,
             Device device, long expected, PermissionObservationController.Update input) {

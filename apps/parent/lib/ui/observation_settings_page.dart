@@ -317,7 +317,7 @@ class _ParentObservationPageState extends State<ParentObservationPage>
                         ],
                         const SizedBox(height: 24),
                         const Text(
-                            '本页管理应用清单与使用摘要授权。逐应用系统权限观察为另一项独立授权，请在完整管理台配置。'),
+                            '本页管理应用清单与使用摘要授权。逐应用系统权限观察为另一项独立授权。启用该功能后，可在设备的“应用权限”页面配置。'),
                       ])));
       });
 }

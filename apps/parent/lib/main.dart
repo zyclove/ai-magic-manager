@@ -17,6 +17,8 @@ import 'ui/device_group_center.dart';
 import 'ui/application_center.dart';
 import 'ui/usage_report_center.dart';
 import 'ui/observation_settings_page.dart';
+import 'core/permission_observation.dart' show permissionObservationEnabled;
+import 'ui/permission_observation_page.dart';
 import 'ui/subject_center.dart';
 import 'ui/notification_center.dart';
 
@@ -905,12 +907,22 @@ class _DeviceListState extends State<_DeviceList> {
                                 openParentObservation(
                                     context, widget.session, device);
                               }
+                              if (action == 'permissions') {
+                                openParentPermissions(
+                                    context, widget.session, device);
+                              }
                               if (action == 'exit') {
                                 openParentDeviceExit(
                                     context, widget.session, device);
                               }
                             },
                             itemBuilder: (_) => [
+                              if (permissionObservationEnabled &&
+                                  device['state'] == 'ACTIVE' &&
+                                  const {'ANDROID', 'ANDROID_TV'}
+                                      .contains(device['platform']))
+                                const PopupMenuItem(
+                                    value: 'permissions', child: Text('应用权限')),
                               if (device['state'] == 'ACTIVE')
                                 const PopupMenuItem(
                                     value: 'observation', child: Text('观察授权')),

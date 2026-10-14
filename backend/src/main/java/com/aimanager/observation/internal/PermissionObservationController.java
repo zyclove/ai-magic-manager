@@ -8,6 +8,9 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Pattern;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
@@ -17,12 +20,13 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 /** Consent for permission observations is independent of the existing inventory/usage consent. */
-@RestController
+@RestController("permissionObservationSettingsController")
 @ConditionalOnProperty(name = "manager.observation.permissions.enabled", havingValue = "true")
 class PermissionObservationController {
   private final ObservationSettingsService settings;
@@ -57,6 +61,30 @@ class PermissionObservationController {
   private ResponseEntity<PermissionObservationSettings> response(PermissionObservationSettings value) {
     return ResponseEntity.ok().eTag(ResourceVersions.tag(value.version()))
         .cacheControl(CacheControl.noStore()).header("Vary", "Authorization").body(value);
+  }
+
+  /** Registration-bound mobile mutation; the server checks registration under the device lock. */
+  @PostMapping("/api/v1/tenants/{tenantId}/devices/{deviceId}/permission-observation-settings/changes")
+  ResponseEntity<PermissionObservationSettings> change(@AuthenticationPrincipal Jwt actor,
+      @PathVariable String tenantId, @PathVariable String deviceId,
+      @RequestHeader(name = "Idempotency-Key", required = false) String key,
+      @Valid @RequestBody Change input) {
+    return response(settings.changePermissionBound(tenantId, actor, deviceId, key, input));
+  }
+
+  /** A query never creates consent, renews replay expiry, or invokes the original mutation. */
+  @PostMapping("/api/v1/tenants/{tenantId}/devices/{deviceId}/permission-observation-settings/operation-results/{requestId}/query")
+  ResponseEntity<ObservationSettingsService.PermissionRecovery> result(@AuthenticationPrincipal Jwt actor,
+      @PathVariable String tenantId, @PathVariable String deviceId,
+      @PathVariable String requestId, @Valid @RequestBody Change input) {
+    return ResponseEntity.ok().cacheControl(CacheControl.noStore()).header("Vary", "Authorization")
+        .body(settings.permissionOperationResult(tenantId, actor.getSubject(), deviceId, requestId, input));
+  }
+
+  record Change(@NotNull @Pattern(regexp = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}") String registrationId,
+      @NotNull @Min(0) @Max(9007199254740990L) Long version,
+      @NotNull Boolean enabled, @NotBlank @Size(max = 300) String reason) {
+    Update update() { return new Update(enabled, reason); }
   }
 
   record Update(@NotNull Boolean enabled, @NotBlank @Size(max = 300) String reason) {}
