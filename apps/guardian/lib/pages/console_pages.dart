@@ -6,6 +6,8 @@ import 'package:provider/provider.dart';
 import '../core/api.dart';
 import '../core/application_classification.dart';
 import '../core/enrollment_recovery.dart';
+import '../core/device_management.dart';
+import '../ui/device_management_dialog.dart';
 import '../core/browser_enrollment_journal.dart';
 import '../ui/enrollment_dialog.dart';
 import 'package:uuid/uuid.dart';
@@ -34,7 +36,6 @@ import 'usage_reports_page.dart';
 import 'editors.dart';
 import 'device_exit_dialog.dart';
 import 'device_diagnostic_dialog.dart';
-import 'device_capabilities_dialog.dart';
 import 'diagnostic_packages_dialog.dart';
 import 'quota_page.dart';
 import 'ownership_page.dart';
@@ -57,7 +58,11 @@ class ConsolePages extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.watch<Session>();
     final actions = ConsoleActions(context, s);
-    if (section == 'support') return SupportWorkspacePage(s);
+    if (section == 'support') {
+      return SupportWorkspacePage(s, key: ValueKey((s.profile?['subject'],
+          s.tenant?['id'], s.role, s.scopeGeneration,
+          s.profile?['canCreateTenant'] == true)));
+    }
     if (section == 'catalog') {
       return s.canOpen('catalog')
           ? CommercialCatalogPage(
@@ -677,128 +682,50 @@ class ConsoleActions {
   }
 
   Future<void> deviceDetails(Json row) async {
+    if (!context.mounted || !s.authenticated || s.tenant == null ||
+        !s.canOpen('devices') || s.root != root) return;
+    final actor = s.profile?['subject'], tenant = s.tenant!['id'];
+    final openedRole = s.role, generation = s.scopeGeneration;
     final workspace = root;
-    final openedRole = s.role;
-    final r =
-        await s.api.send('GET', '$workspace/devices/${row['id']}') as Json;
-    if (!context.mounted ||
-        s.tenant == null ||
-        s.root != workspace ||
-        s.role != openedRole) return;
-    await actionDetails(
-        context,
-        r['displayName'],
-        {
-          '平台': '${label(r['platform'])} · ${r['osVersion']}',
-          '注册状态': label(r['state']),
-          '管理模式': label(r['managementMode']),
-          '控制能力': label(r['controlLevel']),
-          '最近心跳': dateLabel(r['lastHeartbeatAt']),
-          '观察状态': label(r['observationStatus']),
-          '观察说明': DeviceObservationStatus.explanation(r['observationStatus']),
-          '设备编号': r['id'],
-          '儿童编号': r['subjectId']
-        },
-        reauth: reauth,
-        actions: [
-          if (canReadDiagnostics(s.role))
-            DetailAction('诊断预览', (ctx) async {
-              if (s.root != workspace) {
-                throw const ApiFailure(409, 'WORKSPACE_CHANGED');
-              }
-              await openDeviceDiagnostic(ctx, s, r);
-            }, closeOnSuccess: false),
-          if (s.canWrite && r['state'] == 'ACTIVE')
-            DetailAction('导出诊断包', (ctx) async {
-              if (s.root != workspace) {
-                throw const ApiFailure(409, 'WORKSPACE_CHANGED');
-              }
-              await openDiagnosticPackages(ctx, s, device: r);
-            }, closeOnSuccess: false),
-          if (s.canWrite && r['state'] == 'ACTIVE')
-            DetailAction('限时支持授权', (ctx) async {
-              if (s.root != workspace) {
-                throw const ApiFailure(409, 'WORKSPACE_CHANGED');
-              }
-              await openSupportGrant(ctx, s, r);
-            }, closeOnSuccess: false),
-          if (canReadObservation(s.role))
-            DetailAction('使用情况与隐私', (ctx) async {
-              if (s.root != workspace) {
-                throw const ApiFailure(409, 'WORKSPACE_CHANGED');
-              }
-              await openDeviceObservation(ctx, s, r);
-            }, closeOnSuccess: false),
-          DetailAction('能力详情', (ctx) async {
-            if (s.tenant == null ||
-                s.root != workspace ||
-                s.role != openedRole) {
-              throw const ApiFailure(409, 'WORKSPACE_CHANGED');
-            }
-            final value = await s.api.send(
-                'GET', '$workspace/devices/${r['id']}/capabilities') as Json;
-            if (s.tenant == null ||
-                s.root != workspace ||
-                s.role != openedRole) {
-              throw const ApiFailure(409, 'WORKSPACE_CHANGED');
-            }
-            if (ctx.mounted) {
-              await showDeviceCapabilitiesDialog(ctx, s, r, value);
-            }
-          }),
-          if (s.role != 'TEACHER')
-            DetailAction('应用清单', (ctx) async {
-              final value = await s.api.send(
-                      'GET', '$root/devices/${r['id']}/application-inventory')
-                  as Json;
-              if (ctx.mounted) {
-                await showDetails(ctx, '设备自报应用清单', {
-                  '观察状态': label(value['observationStatus']),
-                  '最近上报': dateLabel(value['receivedAt']),
-                  '可信程度': label(value['evidenceStatus']),
-                  '可见范围': label(value['visibility']),
-                  if ((value['applications'] as List).isEmpty)
-                    '应用': '尚无可见应用上报，不能据此判断设备未安装应用。',
-                  for (final app in value['applications'] as List)
-                    '${app['displayName']} · ${label(app['profile'])}':
-                        '${app['packageName']}\n版本号：${app['versionCode']} · ${app['systemApplication'] == true ? '系统应用' : '普通应用'}'
-                });
-              }
-            }),
-          if (s.canWrite && ['ACTIVE', 'REVOKED'].contains(r['state']))
-            DetailAction('正常退出管理', (ctx) => deprovision(ctx, r),
-                destructive: true),
-          if (s.canWrite && r['state'] == 'ACTIVE')
-            DetailAction('紧急撤销云端访问', (ctx) async {
-              final accepted = await confirmAction(
-                  ctx,
-                  '紧急撤销云端访问',
-                  '将立即撤销“${r['displayName']}”当前注册的云端访问凭证，并使该设备的临时访问窗口失效。'
-                      '此操作不会向设备发送本地清理命令，不能证明其他应用已被阻止或本地数据已删除。'
-                      '若需正常退出和本代理数据清理，请使用“正常退出管理”。',
-                  confirm: '确认撤销云端访问');
-              if (!accepted || !ctx.mounted) return;
-              if (s.root != workspace) {
-                throw const ApiFailure(409, 'WORKSPACE_CHANGED');
-              }
-              try {
-                await s.api
-                    .send('POST', '$workspace/devices/${r['id']}/revoke');
-              } on ApiFailure catch (failure) {
-                if (failure.code == 'NETWORK_ERROR') {
-                  throw const ApiFailure(0, 'DEVICE_REVOKE_RESULT_UNKNOWN');
-                }
-                rethrow;
-              }
-              if (ctx.mounted) Navigator.pop(ctx);
-            }, destructive: true, closeOnSuccess: false),
-          if (s.canWrite) DetailAction('退出操作记录', (ctx) => deprovision(ctx, r))
-        ]);
-  }
-
-  Future<void> deprovision(BuildContext ctx, Json device) async {
-    if (s.root != root) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
-    await openDeviceExit(ctx, s, device);
+    if (actor is! String || tenant is! String || row['id'] is! String) return;
+    bool live = true;
+    bool current() => live && s.authenticated &&
+        s.profile?['subject'] == actor && s.tenant?['id'] == tenant &&
+        s.role == openedRole && s.scopeGeneration == generation &&
+        s.canOpen('devices');
+    final controller = DeviceManagementController(
+        repository: DeviceManagementRepository(api: s.api, root: workspace,
+            deviceId: row['id'] as String, current: current),
+        canWrite: s.canWrite, canReadApplications: openedRole != 'TEACHER');
+    Future<void> child(Future<void> Function() action) async {
+      if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+      await action();
+      if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+    }
+    try {
+      await showDialog<void>(context: context, barrierDismissible: false,
+          builder: (dialogContext) => DeviceManagementDialog(
+              controller: controller, accessChanges: s, onReauth: reauth,
+              onClose: () => Navigator.of(dialogContext).pop(),
+              onDiagnostic: canReadDiagnostics(openedRole)
+                  ? (device) => child(() => openDeviceDiagnostic(
+                      dialogContext, s, device.toJson())) : null,
+              onExport: s.canWrite
+                  ? (device) => child(() => openDiagnosticPackages(
+                      dialogContext, s, device: device.toJson())) : null,
+              onSupport: s.canWrite
+                  ? (device) => child(() => openSupportGrant(
+                      dialogContext, s, device.toJson())) : null,
+              onPrivacy: canReadObservation(openedRole)
+                  ? (device) => child(() => openDeviceObservation(
+                      dialogContext, s, device.toJson())) : null,
+              onExit: s.canWrite
+                  ? (device) => child(() => openDeviceExit(
+                      dialogContext, s, device.toJson())) : null));
+    } finally {
+      live = false;
+      controller.dispose();
+    }
   }
 
   Future<void> policyDetails(Json row) async {

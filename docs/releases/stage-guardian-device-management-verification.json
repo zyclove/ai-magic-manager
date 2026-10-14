@@ -1,0 +1,649 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "stage": "guardian-device-management",
+  "recordedAt": "2026-10-14T13:53:39.603312+00:00",
+  "experience": [
+    "One device window: overview, capabilities and applications",
+    "Local application search and read timestamps",
+    "Child workflows return to the retained device window and reread facts",
+    "Mobile, large text and keyboard layouts",
+    "Unknown write results reconcile by read without automatic replay"
+  ],
+  "releaseSource": {
+    "base": "1778d4617899ab3f80f4d43d55f89f6112ab32da",
+    "manifestSha256": "a38f24554194e951c2d5ebaf94933a1e63486a318e189a5419b655d9759c1097",
+    "allFrozenFilesMatched": 1295,
+    "ownedFiles": [
+      {
+        "path": "apps/guardian/lib/core/api.dart",
+        "sha256": "f63f03b77052d7b8f67d1b3fb9b7a4f856f4a40394ccbc8d76d1287b35d0443f",
+        "bytes": 21990
+      },
+      {
+        "path": "apps/guardian/lib/core/scoped_http_client.dart",
+        "sha256": "dc8653e88438bc9678c28e634f9a176db86493a601fede7f2db15df54c1c61ad",
+        "bytes": 7888
+      },
+      {
+        "path": "apps/guardian/lib/core/device_management.dart",
+        "sha256": "4615e4869803dd80911dcd7f8e46006decfc12f83937fbe0d4174f78bc94a89b",
+        "bytes": 20055
+      },
+      {
+        "path": "apps/guardian/lib/ui/device_management_dialog.dart",
+        "sha256": "a74c02c62ed6484ca474a55dfae17de3406a05435d5d6aedfa06731e21f3e6d8",
+        "bytes": 31948
+      },
+      {
+        "path": "apps/guardian/lib/pages/console_pages.dart",
+        "sha256": "0983c9590445a212893c35fb8fe2048aaa7013ba405937cf5c9a41faf4d8be12",
+        "bytes": 64857
+      },
+      {
+        "path": "apps/guardian/lib/pages/device_subflow_scope.dart",
+        "sha256": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e",
+        "bytes": 1512
+      },
+      {
+        "path": "apps/guardian/lib/pages/device_diagnostic_dialog.dart",
+        "sha256": "d39982d236676428a189002d632b44b6109206877e9f33fa472a7ae841dcf21f",
+        "bytes": 1976
+      },
+      {
+        "path": "apps/guardian/lib/pages/diagnostic_packages_dialog.dart",
+        "sha256": "e885c2a7ec6adcae6f7e54ce6cb3bc9efb4326576be37f128ec06c46a59ea0ad",
+        "bytes": 2959
+      },
+      {
+        "path": "apps/guardian/lib/pages/support_page.dart",
+        "sha256": "73cc30da97d0ae9f72ae8df784aaffa1bd521c53b44523aacd9355bee2bb7d92",
+        "bytes": 4875
+      },
+      {
+        "path": "apps/guardian/lib/pages/observation_page.dart",
+        "sha256": "c3f5f3e1d7e08cd87af1b47d620926d5720a80acbaafef6ed2ea5969bdaea1be",
+        "bytes": 9714
+      },
+      {
+        "path": "apps/guardian/lib/pages/device_exit_dialog.dart",
+        "sha256": "dde0fde5ea64b5cd971872bee2d1c88bd62c2f49a62bf0730b026163ff4ed1c7",
+        "bytes": 4832
+      },
+      {
+        "path": "apps/guardian/test/api_bound_scope_test.dart",
+        "sha256": "4968f5f287432325ac5105aca1b0b34a0757b9df002fc1f85154d58ed5ef645e",
+        "bytes": 10678
+      },
+      {
+        "path": "apps/guardian/test/scope_binding_client_test.dart",
+        "sha256": "36af4d8aff75ee08dcd31408e5cca06a95135578937d2614a71a713ddbfbc746",
+        "bytes": 27373
+      },
+      {
+        "path": "apps/guardian/test/device_management_test.dart",
+        "sha256": "16a673db1f72ec50d8808d312811dd2455ddf4f0feeb3090ae47888e441049b3",
+        "bytes": 17765
+      },
+      {
+        "path": "apps/guardian/test/device_management_dialog_test.dart",
+        "sha256": "123d8e6ce6bfdaf4afe94e89beabbfdbd59eca0e64c038c82444edb2a49d8a4c",
+        "bytes": 35968
+      },
+      {
+        "path": "apps/guardian/test/device_management_entry_test.dart",
+        "sha256": "bf41e4e882a21d1560f35f999667ea506c617a327d2896b102bccbadd596e4a1",
+        "bytes": 5303
+      },
+      {
+        "path": "apps/guardian/test/device_subflow_scope_test.dart",
+        "sha256": "a9112faa51f845bb338f8d4ab6ec50567bc9b7af3703e543d740fb5c05960fe3",
+        "bytes": 19713
+      },
+      {
+        "path": "apps/guardian/test/device_management_browser_test.dart",
+        "sha256": "ba8ff2379bd90b383fab91415dfe117598b333ef0dfe65f5479c4e6882fc2663",
+        "bytes": 1609
+      },
+      {
+        "path": "apps/guardian/tool/verify_device_management_http_test.dart",
+        "sha256": "ffbac3b76d7a84a4066ea37441b905bb2f17f079546388184a49074d4b533224",
+        "bytes": 15533
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/GuardianDeviceManagementHttpTest.java",
+        "sha256": "d654d14a49f14e6874ea5606a6e4f222b69ad1695d28306c38f0fb92cfa83046",
+        "bytes": 16951
+      },
+      {
+        "path": "docs/superpowers/plans/2026-10-14-guardian-device-management.md",
+        "sha256": "1bcefddd256229b3755b45cae4dc385d6b06dfd89602d87038bf7a8a8dc002f7",
+        "bytes": 4283
+      },
+      {
+        "path": "docs/guardian-device-management-experience.md",
+        "sha256": "6db91e305f2f18bc3ecd819b0b867094818a7938a40cbe461d67ca3c16be1339",
+        "bytes": 2523
+      }
+    ],
+    "otherWorkingTreeChangesIncluded": false
+  },
+  "build": {
+    "inspection": {
+      "path": ".local/runtime/guardian-device-management-build-inspection.json",
+      "sha256": "2559f1221b730df5d423c44751b625c750304777b5c9dc538a39868d4ba9663a"
+    },
+    "releaseManifestSha256": "47b777d1a495e36c2f4bc54b6d19fc3a21b7bd9be3c30f690ff7745e218c5fd1",
+    "artifactRoot": "artifacts/release-9dffc1f0a3d84e1b9c53edb09ba74194",
+    "backendSha256": "85910f1993a05aaefc0a60beca10f6e93b891d3281f3c0f0c6debb36c6ffce15",
+    "guardianSha256": "1f781ea3488dfd8f0d190c5c70a7922d81c04b18646ea7fcb031b27d9482a673",
+    "backend": {
+      "errors": 0,
+      "suites": 97,
+      "tests": 1022,
+      "skipped": 9,
+      "failures": 0,
+      "passed": 1013
+    },
+    "skippedCases": [
+      {
+        "name": "realEnrollmentNativeCrashRecoveryAndRevocation",
+        "suite": "com.aimanager.AndroidChildSubmissionJourneyTest",
+        "className": "com.aimanager.AndroidChildSubmissionJourneyTest"
+      },
+      {
+        "name": "nativeOriginalKeyExecutesRealHttpsCleanupAndRetainsAcknowledgedJournal",
+        "suite": "com.aimanager.AndroidCleanupHttpsJourneyTest",
+        "className": "com.aimanager.AndroidCleanupHttpsJourneyTest"
+      },
+      {
+        "name": "leastPrivilegeRuntimeCanDrainWorkButCannotRewriteAcceptedRecords",
+        "suite": "com.aimanager.retention.internal.ErasureAdmissionStoreTest",
+        "className": "com.aimanager.retention.internal.ErasureAdmissionStoreTest"
+      },
+      {
+        "name": "mismatchedIdentityAndMissingLedgerAreReportedWithoutAutomaticRecreation",
+        "suite": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+        "className": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest"
+      },
+      {
+        "name": "servletAsyncCannotEscapeTheRegisteredSynchronousPermit",
+        "suite": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+        "className": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest"
+      },
+      {
+        "name": "acceptedLedgerStopsAuthorizedBusinessRequestsWithoutDeletingTheirData",
+        "suite": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+        "className": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest"
+      },
+      {
+        "name": "realHttpRequestDrainsBeforeAcceptanceAndProbesRemainAvailable",
+        "suite": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+        "className": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest"
+      },
+      {
+        "name": "nonTransactionalEngineIsRejectedBeforeAppending",
+        "suite": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+        "className": "com.aimanager.retention.internal.ErasureLedgerStoreTest"
+      },
+      {
+        "name": "initializationPinsTransactionalEngineEvenWhenServerDefaultDiffers",
+        "suite": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+        "className": "com.aimanager.retention.internal.ErasureLedgerStoreTest"
+      }
+    ],
+    "applicationTestCounts": {
+      "apps/parent": 199,
+      "apps/child": 178,
+      "apps/guardian": 531
+    },
+    "verifiedProjects": [
+      {
+        "path": "apps/guardian",
+        "analysis": "passed",
+        "toolkit": "flutter",
+        "tests": "passed"
+      },
+      {
+        "path": "apps/child",
+        "analysis": "passed",
+        "toolkit": "flutter",
+        "tests": "passed"
+      },
+      {
+        "path": "apps/parent",
+        "analysis": "passed",
+        "toolkit": "flutter",
+        "tests": "passed"
+      },
+      {
+        "path": "packages/device_access",
+        "analysis": "passed",
+        "toolkit": "dart",
+        "tests": "passed"
+      },
+      {
+        "path": "packages/device_cleanup",
+        "analysis": "passed",
+        "toolkit": "dart",
+        "tests": "passed"
+      },
+      {
+        "path": "packages/device_identity",
+        "analysis": "passed",
+        "toolkit": "dart",
+        "tests": "passed"
+      },
+      {
+        "path": "packages/device_observation",
+        "analysis": "passed",
+        "toolkit": "dart",
+        "tests": "passed"
+      },
+      {
+        "path": "packages/device_operations/example",
+        "analysis": "passed",
+        "toolkit": "flutter",
+        "tests": "passed"
+      },
+      {
+        "path": "packages/device_operations",
+        "analysis": "passed",
+        "toolkit": "flutter",
+        "tests": "passed"
+      },
+      {
+        "path": "packages/device_policy",
+        "analysis": "passed",
+        "toolkit": "dart",
+        "tests": "passed"
+      },
+      {
+        "path": "packages/device_reports",
+        "analysis": "passed",
+        "toolkit": "dart",
+        "tests": "passed"
+      },
+      {
+        "path": "packages/notification_client",
+        "analysis": "passed",
+        "toolkit": "dart",
+        "tests": "not-present"
+      },
+      {
+        "path": "packages/usage_report_ui",
+        "analysis": "passed",
+        "toolkit": "flutter",
+        "tests": "passed"
+      },
+      {
+        "path": "packages/usage_reporting",
+        "analysis": "passed",
+        "toolkit": "dart",
+        "tests": "passed"
+      }
+    ],
+    "selectedHttpSuites": [
+      {
+        "name": "com.aimanager.GuardianDeviceManagementHttpTest",
+        "reportSha256": "0705d35cfd8e82f58eec88f85d81b8d857479d2aa67a5d4f8de5430dc7fe7fd4",
+        "failures": 0,
+        "skipped": 0,
+        "reportPath": "D:\\codes\\mobile\\ai-manager\\.local\\v1-device-management-final-source-20261014\\.local\\deployment\\source-11d8754373a1484fb1d25a5ab82ec44e\\backend\\target\\surefire-reports\\TEST-com.aimanager.GuardianDeviceManagementHttpTest.xml",
+        "errors": 0,
+        "tests": 1
+      },
+      {
+        "name": "com.aimanager.GuardianEnrollmentRecoveryHttpInteropTest",
+        "reportSha256": "b754f2c14fea6a41ec7f2d72da5307a31415e4691d6577294753a3f745f995d8",
+        "failures": 0,
+        "skipped": 0,
+        "reportPath": "D:\\codes\\mobile\\ai-manager\\.local\\v1-device-management-final-source-20261014\\.local\\deployment\\source-11d8754373a1484fb1d25a5ab82ec44e\\backend\\target\\surefire-reports\\TEST-com.aimanager.GuardianEnrollmentRecoveryHttpInteropTest.xml",
+        "errors": 0,
+        "tests": 1
+      },
+      {
+        "name": "com.aimanager.ParentHelpHttpInteropTest",
+        "reportSha256": "381854324303f57f2333526d90222f9e6004f41a315bcc16d650813d6a78251a",
+        "failures": 0,
+        "skipped": 0,
+        "reportPath": "D:\\codes\\mobile\\ai-manager\\.local\\v1-device-management-final-source-20261014\\.local\\deployment\\source-11d8754373a1484fb1d25a5ab82ec44e\\backend\\target\\surefire-reports\\TEST-com.aimanager.ParentHelpHttpInteropTest.xml",
+        "errors": 0,
+        "tests": 1
+      },
+      {
+        "name": "com.aimanager.ParentNotificationHttpInteropTest",
+        "reportSha256": "6fad655139e82dc41f7e6bbe5c6db943dca819585028d6cd6417dc339a3d52cf",
+        "failures": 0,
+        "skipped": 0,
+        "reportPath": "D:\\codes\\mobile\\ai-manager\\.local\\v1-device-management-final-source-20261014\\.local\\deployment\\source-11d8754373a1484fb1d25a5ab82ec44e\\backend\\target\\surefire-reports\\TEST-com.aimanager.ParentNotificationHttpInteropTest.xml",
+        "errors": 0,
+        "tests": 15
+      },
+      {
+        "name": "com.aimanager.ParentObservationHttpInteropTest",
+        "reportSha256": "5c422be70788147121090873ec325919d716614b653aed4ffa677b386c34f2cb",
+        "failures": 0,
+        "skipped": 0,
+        "reportPath": "D:\\codes\\mobile\\ai-manager\\.local\\v1-device-management-final-source-20261014\\.local\\deployment\\source-11d8754373a1484fb1d25a5ab82ec44e\\backend\\target\\surefire-reports\\TEST-com.aimanager.ParentObservationHttpInteropTest.xml",
+        "errors": 0,
+        "tests": 1
+      },
+      {
+        "name": "com.aimanager.ParentPermissionHttpInteropTest",
+        "reportSha256": "ada97ae1c954d080d6f4834e27b364aa050e45eac01de06cbeba976da6e8ceb6",
+        "failures": 0,
+        "skipped": 0,
+        "reportPath": "D:\\codes\\mobile\\ai-manager\\.local\\v1-device-management-final-source-20261014\\.local\\deployment\\source-11d8754373a1484fb1d25a5ab82ec44e\\backend\\target\\surefire-reports\\TEST-com.aimanager.ParentPermissionHttpInteropTest.xml",
+        "errors": 0,
+        "tests": 1
+      },
+      {
+        "name": "com.aimanager.ParentSubjectHttpInteropTest",
+        "reportSha256": "0b2297a13445c597dc13107b1b942f6c54fe7a3668518ae73e4ec641b35344cc",
+        "failures": 0,
+        "skipped": 0,
+        "reportPath": "D:\\codes\\mobile\\ai-manager\\.local\\v1-device-management-final-source-20261014\\.local\\deployment\\source-11d8754373a1484fb1d25a5ab82ec44e\\backend\\target\\surefire-reports\\TEST-com.aimanager.ParentSubjectHttpInteropTest.xml",
+        "errors": 0,
+        "tests": 1
+      }
+    ],
+    "realSpringDartDeviceTestsPassed": 11,
+    "sourceChecks": {
+      "owned": {
+        "files": 22,
+        "root": "D:/codes/mobile/ai-manager/.local/v1-device-management-final-source-20261014",
+        "verified": true,
+        "different": [],
+        "missing": []
+      },
+      "inner": {
+        "files": 983,
+        "root": "D:\\codes\\mobile\\ai-manager\\.local\\v1-device-management-final-source-20261014\\.local\\deployment\\source-11d8754373a1484fb1d25a5ab82ec44e",
+        "verified": true,
+        "different": [],
+        "missing": []
+      },
+      "outer": {
+        "files": 1295,
+        "root": "D:/codes/mobile/ai-manager/.local/v1-device-management-final-source-20261014",
+        "verified": true,
+        "different": [],
+        "missing": []
+      },
+      "releaseSourceFiles": {
+        "files": 988,
+        "root": "D:\\codes\\mobile\\ai-manager\\.local\\v1-device-management-final-source-20261014\\.local\\deployment\\source-11d8754373a1484fb1d25a5ab82ec44e",
+        "verified": true,
+        "different": [],
+        "missing": []
+      },
+      "manifestBinding": {
+        "verified": true,
+        "releaseSourceFiles": 988,
+        "extra": [
+          "apps/child/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java",
+          "apps/child/android/local.properties",
+          "apps/parent/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java",
+          "apps/parent/android/local.properties",
+          "packages/notification_client/pubspec.lock"
+        ],
+        "unexplainedExtra": [],
+        "generatedOutputs": [
+          {
+            "bytes": 1339,
+            "pubspecSha256": "f5ee89b34866bd45ed730e0adc5ccfd4464d09a986dda6360c3fdbe47a4833e8",
+            "project": "apps/child",
+            "pubGetLogPath": "D:/codes/mobile/ai-manager/.local/v1-device-management-final-source-20261014/.local/deployment/logs/apps-child-pub-get.log",
+            "actualSha256": "01c2cd83f4cb35dcdbd6716fbce85441ea1225340a16eaef9cbec5d239176349",
+            "releaseManifestSha256": "47b777d1a495e36c2f4bc54b6d19fc3a21b7bd9be3c30f690ff7745e218c5fd1",
+            "path": "apps/child/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java",
+            "sourceOrigin": "SDK dependency preparation during the completed build",
+            "pubGetLogSha256": "9666381f029776ad97a6206f4719b32ce023789ae7d12e07b8cc376a90d74224",
+            "releaseEntrySha256": "01c2cd83f4cb35dcdbd6716fbce85441ea1225340a16eaef9cbec5d239176349",
+            "contentVerified": true,
+            "kind": "flutter-plugin-registrant",
+            "pubspecPath": "D:\\codes\\mobile\\ai-manager\\.local\\v1-device-management-final-source-20261014\\.local\\deployment\\source-11d8754373a1484fb1d25a5ab82ec44e/apps/child/pubspec.yaml",
+            "sha256Verified": true
+          },
+          {
+            "bytes": 1882,
+            "pubspecSha256": "356d6f554a0e00497f446e63d410cc75907049ab13d96ee2785da32fe9b95c9a",
+            "project": "apps/parent",
+            "pubGetLogPath": "D:/codes/mobile/ai-manager/.local/v1-device-management-final-source-20261014/.local/deployment/logs/apps-parent-pub-get.log",
+            "actualSha256": "d246e1936e7b86c7ff684cdf4c13d52aaec6da11534b85b349fa4a14426bc301",
+            "releaseManifestSha256": "47b777d1a495e36c2f4bc54b6d19fc3a21b7bd9be3c30f690ff7745e218c5fd1",
+            "path": "apps/parent/android/app/src/main/java/io/flutter/plugins/GeneratedPluginRegistrant.java",
+            "sourceOrigin": "SDK dependency preparation during the completed build",
+            "pubGetLogSha256": "6e978bb91ec11f72725cb27389a3c15eeb5391a63efb43d5ee30488e8e308d0d",
+            "releaseEntrySha256": "d246e1936e7b86c7ff684cdf4c13d52aaec6da11534b85b349fa4a14426bc301",
+            "contentVerified": true,
+            "kind": "flutter-plugin-registrant",
+            "pubspecPath": "D:\\codes\\mobile\\ai-manager\\.local\\v1-device-management-final-source-20261014\\.local\\deployment\\source-11d8754373a1484fb1d25a5ab82ec44e/apps/parent/pubspec.yaml",
+            "sha256Verified": true
+          },
+          {
+            "bytes": 69,
+            "pubspecSha256": "f5ee89b34866bd45ed730e0adc5ccfd4464d09a986dda6360c3fdbe47a4833e8",
+            "project": "apps/child",
+            "pubGetLogPath": "D:/codes/mobile/ai-manager/.local/v1-device-management-final-source-20261014/.local/deployment/logs/apps-child-pub-get.log",
+            "actualSha256": "b294c5ab31ab50f97d902a81f58cdb240196d50b1680ebe4cf689032b87c7257",
+            "releaseManifestSha256": "47b777d1a495e36c2f4bc54b6d19fc3a21b7bd9be3c30f690ff7745e218c5fd1",
+            "path": "apps/child/android/local.properties",
+            "sourceOrigin": "SDK dependency preparation during the completed build",
+            "pubGetLogSha256": "9666381f029776ad97a6206f4719b32ce023789ae7d12e07b8cc376a90d74224",
+            "releaseEntrySha256": "b294c5ab31ab50f97d902a81f58cdb240196d50b1680ebe4cf689032b87c7257",
+            "contentVerified": true,
+            "kind": "flutter-android-local-properties",
+            "pubspecPath": "D:\\codes\\mobile\\ai-manager\\.local\\v1-device-management-final-source-20261014\\.local\\deployment\\source-11d8754373a1484fb1d25a5ab82ec44e/apps/child/pubspec.yaml",
+            "sha256Verified": true
+          },
+          {
+            "bytes": 69,
+            "pubspecSha256": "356d6f554a0e00497f446e63d410cc75907049ab13d96ee2785da32fe9b95c9a",
+            "project": "apps/parent",
+            "pubGetLogPath": "D:/codes/mobile/ai-manager/.local/v1-device-management-final-source-20261014/.local/deployment/logs/apps-parent-pub-get.log",
+            "actualSha256": "b294c5ab31ab50f97d902a81f58cdb240196d50b1680ebe4cf689032b87c7257",
+            "releaseManifestSha256": "47b777d1a495e36c2f4bc54b6d19fc3a21b7bd9be3c30f690ff7745e218c5fd1",
+            "path": "apps/parent/android/local.properties",
+            "sourceOrigin": "SDK dependency preparation during the completed build",
+            "pubGetLogSha256": "6e978bb91ec11f72725cb27389a3c15eeb5391a63efb43d5ee30488e8e308d0d",
+            "releaseEntrySha256": "b294c5ab31ab50f97d902a81f58cdb240196d50b1680ebe4cf689032b87c7257",
+            "contentVerified": true,
+            "kind": "flutter-android-local-properties",
+            "pubspecPath": "D:\\codes\\mobile\\ai-manager\\.local\\v1-device-management-final-source-20261014\\.local\\deployment\\source-11d8754373a1484fb1d25a5ab82ec44e/apps/parent/pubspec.yaml",
+            "sha256Verified": true
+          },
+          {
+            "bytes": 114,
+            "pubspecSha256": "e9175499f37e955de2a6f760d4d4eb4e9b5caff86e7bc83493e5f8ba3a2eef7c",
+            "project": "packages/notification_client",
+            "pubGetLogPath": "D:/codes/mobile/ai-manager/.local/v1-device-management-final-source-20261014/.local/deployment/logs/packages-notification-client-pub-get.log",
+            "actualSha256": "445e4cfcbf26466ce4df8cfc4d75db31b1c478ec293995351c078b88de0acf8e",
+            "releaseManifestSha256": "47b777d1a495e36c2f4bc54b6d19fc3a21b7bd9be3c30f690ff7745e218c5fd1",
+            "path": "packages/notification_client/pubspec.lock",
+            "sourceOrigin": "SDK dependency preparation during the completed build",
+            "pubGetLogSha256": "c083f9ce64654caa4975b431c9e24916bd2b0af137a60f0e49f45dfb26fee81c",
+            "releaseEntrySha256": "445e4cfcbf26466ce4df8cfc4d75db31b1c478ec293995351c078b88de0acf8e",
+            "contentVerified": true,
+            "kind": "pub-empty-dependency-lockfile",
+            "pubspecPath": "D:\\codes\\mobile\\ai-manager\\.local\\v1-device-management-final-source-20261014\\.local\\deployment\\source-11d8754373a1484fb1d25a5ab82ec44e/packages/notification_client/pubspec.yaml",
+            "sha256Verified": true
+          }
+        ],
+        "missingGenerated": [],
+        "different": [],
+        "generatedOutputCount": 5,
+        "expectedFiles": 983,
+        "missing": []
+      }
+    }
+  },
+  "targetedVerification": {
+    "receipt": {
+      "path": ".local/runtime/device-management-fourth-green-exit.json",
+      "sha256": "9c9d7b751652172205127f2f086fcff3518075183a22211ba02c16743ad8956e"
+    },
+    "vmAndWidgetPassed": 103,
+    "chromeHtmlPassed": 35,
+    "logs": [
+      {
+        "path": ".local/runtime/device-management-fourth-green-core-ui.log",
+        "sha256": "3ef1f2d45b8f6475975a35078a0f2098cd5d0b68042ba2e682723d3f9bc54585"
+      },
+      {
+        "path": ".local/runtime/device-management-fourth-green-browser.log",
+        "sha256": "889b1efbc3771a848a392e87cb0f79d169d86e54d0c667dbc3a674ac6967efa0"
+      },
+      {
+        "path": ".local/runtime/device-management-fourth-green-analyze.log",
+        "sha256": "bb4182674c387c7d7a7cb7e112f628140e4bc666a36dd78e4cdfa142ae5d887c"
+      }
+    ]
+  },
+  "reviews": {
+    "deviceCoreAndResponseAdapter": {
+      "critical": 0,
+      "important": 0
+    },
+    "deviceWindow": {
+      "critical": 0,
+      "important": 0
+    },
+    "sixChildFlowsFinalReadReview": {
+      "critical": 0,
+      "important": 0
+    }
+  },
+  "visualVerification": {
+    "desktop": [
+      1280,
+      720
+    ],
+    "mobile": [
+      390,
+      844
+    ],
+    "screenshots": [
+      {
+        "path": "C:\\Users\\Administrator\\.codex\\visualizations\\2026\\10\\09\\01a11ea6-cc46-7563-baf7-82638043ee15\\guardian-device-management-desktop.jpg",
+        "sha256": "36f7f069597e9b8b39d7c9c3a84a88511cdafaf031f2f6d13d4f47994a610fe9",
+        "data": "explicitly labelled local mock preview"
+      },
+      {
+        "path": "C:\\Users\\Administrator\\.codex\\visualizations\\2026\\10\\09\\01a11ea6-cc46-7563-baf7-82638043ee15\\guardian-device-management-mobile.jpg",
+        "sha256": "44a2dbcc70533eba82b3abcf07f2893477b18e727a6ca2a11fa85a35bc369acf",
+        "data": "explicitly labelled local mock preview"
+      },
+      {
+        "path": "C:\\Users\\Administrator\\.codex\\visualizations\\2026\\10\\09\\01a11ea6-cc46-7563-baf7-82638043ee15\\guardian-device-management-filtered.jpg",
+        "sha256": "d37d3749ee6cd9689d728015001d873609a21f5001feb193e3ee79b9bc72316c",
+        "data": "explicitly labelled local mock preview"
+      },
+      {
+        "path": "C:\\Users\\Administrator\\.codex\\visualizations\\2026\\10\\09\\01a11ea6-cc46-7563-baf7-82638043ee15\\guardian-device-management-unknown.jpg",
+        "sha256": "27a903acc9cdd8f2420a4fe7eaa825529d4778dd01e344b29cbc829ca5498757",
+        "data": "explicitly labelled local mock preview"
+      }
+    ],
+    "checks": [
+      "tabs retain window",
+      "four application items filter to one",
+      "unknown result remains read-only after reread"
+    ],
+    "realDeviceDataUsed": false
+  },
+  "backup": {
+    "receipt": {
+      "path": ".local/runtime/guardian-device-management-backup-20261014-213129-ec0eabcc.json",
+      "sha256": "a0cefe8b91818725304420b790f3bb613957b09b88f0b8216df843a6828b234b"
+    },
+    "files": 106,
+    "restorationSucceeded": true,
+    "backupRestoreTested": false,
+    "externalAdministrativeWritersExcludedByOperator": false,
+    "independentLedgerPreservedSeparately": true
+  },
+  "activation": {
+    "receipt": {
+      "path": ".local/runtime/guardian-device-management-activation-20261014-214613-894a26ec06eb455da2acc11cefb0d7c9.json",
+      "sha256": "5d998e41bb1aa7824d7b198702f6f4ff82c270601f2e7a51d67b4dad6af4caa8"
+    },
+    "state": "COMMITTED",
+    "mode": "SAME_PROJECT_FULL_BUNDLE",
+    "origin": "http://localhost:18101",
+    "project": "ai-manager-v1-enrollment-20261014",
+    "sameThreeVolumesPreserved": true,
+    "databaseIdentitySchemaAndLedgerIdentityPreserved": true,
+    "containersRecreated": [
+      {
+        "previousContainerId": "4c662aad812b9d71fd0d7d6f8168bf069f2dc91d6ae53721bce006a2ed71632d",
+        "service": "backend",
+        "currentContainerId": "a23c891ed2e18fe45be748e3ef75973fe5c04d7813ca776a53e2c79b9a1385e1"
+      },
+      {
+        "previousContainerId": "3270936c3bccb48bc676a8d2db1de82a2a31e1ccd2b324443641fda32a72c4b1",
+        "service": "edge",
+        "currentContainerId": "8feff52af8aed361c90e513f9bff2da990833c1662a1bf2d5bef39b2bfc84ff6"
+      },
+      {
+        "previousContainerId": "583ca2dd22833dcc06de2414af97caf12778e12aca58701612258827f6288729",
+        "service": "identity",
+        "currentContainerId": "46ca56bc761357ba6edb47b1453e2eae698aff3945b30c7dff23e501d3eb6e5d"
+      }
+    ],
+    "httpSmoke": {
+      "nativeDeviceExecution": "NOT_RUN",
+      "servedMainSha256": "1f781ea3488dfd8f0d190c5c70a7922d81c04b18646ea7fcb031b27d9482a673",
+      "callbackFallback": "PASS",
+      "anonymousApi": "PASS",
+      "discovery": "PASS",
+      "authenticatedJourney": "NOT_RUN",
+      "frontend": "PASS"
+    },
+    "normalLogin": {
+      "schemaVersion": 1,
+      "origin": "http://localhost:18101",
+      "journey": "Normal administrator OIDC authorization code and PKCE login",
+      "authenticated": true,
+      "result": "Authenticated workspace welcome page with create workspace and join invitation actions visible",
+      "businessFixturesCreated": false,
+      "mfaVerified": false,
+      "nativeDeviceJourneyVerified": false,
+      "browser": "Codex in-app browser",
+      "screenshot": ".local/runtime/guardian-device-management-live-after-update.jpg",
+      "pageErrors": 0,
+      "checkedAt": "2026-10-14T13:52:25.010Z",
+      "consoleWarnings": [
+        {
+          "level": "warn",
+          "message": "Exception while loading service worker: Error: prepareServiceWorker took more than 4000ms to resolve. Moving on."
+        },
+        {
+          "level": "warn",
+          "message": "Exception while loading service worker: Error: prepareServiceWorker took more than 4000ms to resolve. Moving on."
+        }
+      ],
+      "startupCacheWorkerWarningRequiresFollowup": true
+    },
+    "primaryEntry": {
+      "exitCode": 0,
+      "origin": "http://localhost:18101",
+      "project": "ai-manager-v1-enrollment-20261014",
+      "sourceDirectory": "D:\\codes\\mobile\\ai-manager\\.local\\v1-device-management-final-source-20261014",
+      "releaseManifestSha256": "47b777d1a495e36c2f4bc54b6d19fc3a21b7bd9be3c30f690ff7745e218c5fd1",
+      "checkOnly": true,
+      "checkedAt": "2026-10-14T21:51:09.9211831+08:00"
+    },
+    "databasesRestored": false,
+    "databasesInitialized": false
+  },
+  "limitations": [
+    "Nine backend tests remain skipped; this is not all product functionality acceptance.",
+    "HTTP fixtures use H2 and explicit test JWT/MFA claims; real IdP/OTP/Android execution is not proven by them.",
+    "Normal administrator login is verified; no business workspace, child or device fixtures were created in the live database.",
+    "Database checks cover same volumes, server UUIDs, columns, Flyway history and ledger identity, not all row contents or a restore rehearsal.",
+    "Preview screenshots use mock data; full public erasure orchestration remains unavailable.",
+    "Release uses the pinned base and owned files; later peer commits and unrelated work in the shared checkout were not deployed."
+  ]
+}

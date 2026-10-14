@@ -8,12 +8,51 @@ import '../ui/design.dart';
 import '../ui/support_center_view.dart';
 import '../ui/support_grant_view.dart';
 import 'diagnostic_packages_dialog.dart';
+import 'device_subflow_scope.dart';
 
-class SupportWorkspacePage extends StatelessWidget {
+class SupportWorkspacePage extends StatefulWidget {
   final Session session;
   const SupportWorkspacePage(this.session, {super.key});
   @override
+  State<SupportWorkspacePage> createState() => _SupportWorkspacePageState();
+}
+
+class _SupportWorkspacePageState extends State<SupportWorkspacePage> {
+  late DeviceSubflowScope scope;
+
+  void capture() {
+    final session = widget.session;
+    final receive = session.profile?['canCreateTenant'] == true;
+    scope = DeviceSubflowScope(session,
+        permitted: () =>
+            (session.profile?['canCreateTenant'] == true) == receive &&
+            (receive || session.canWrite));
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    capture();
+  }
+
+  @override
+  void didUpdateWidget(covariant SupportWorkspacePage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.session, widget.session)) {
+      scope.dispose();
+      capture();
+    }
+  }
+
+  @override
+  void dispose() {
+    scope.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final session = widget.session;
     final actor = session.profile?['subject'],
         tenant = session.tenant?['id'],
         role = session.role;
@@ -22,39 +61,44 @@ class SupportWorkspacePage extends StatelessWidget {
     if (actor is! String || !session.authenticated || (!receive && !admin)) {
       return const Panel(child: Text('当前账号未具备支持协作所需资格。请联系账号管理员。'));
     }
-    bool current() =>
-        session.authenticated &&
-        session.profile?['subject'] == actor &&
-        session.tenant?['id'] == tenant &&
-        session.role == role &&
-        (session.profile?['canCreateTenant'] == true) == receive;
+    final captured = scope;
+    bool current() => captured.current;
     final repository = SupportRepository(
-        api: session.api,
+        api: captured.api,
         actor: actor,
         tenant: tenant is String ? tenant : null,
         current: current);
     return SupportCenterView(
-        key: ValueKey((actor, tenant, role, receive)),
+        key: ValueKey((captured.generation, actor, tenant, role, receive)),
         repository: repository,
         current: current,
-        accessChanges: session,
+        accessChanges: captured,
         canAdmin: admin,
         canReceive: receive,
-        onOpenGrantPackages: (grant) => openDiagnosticPackages(context, session,
-            received: true, grant: grant),
-        onOpenReceivedPackages: () =>
-            openDiagnosticPackages(context, session, received: true),
-        onOpenAdminPackages: () => openDiagnosticPackages(context, session),
-        onReauth: () => session.login(stepUp: true),
-        onOpenDevices: () => context.go('/devices'));
+        onOpenGrantPackages: (grant) {
+          if (current()) {
+            openDiagnosticPackages(context, session, received: true, grant: grant);
+          }
+        },
+        onOpenReceivedPackages: () {
+          if (current()) openDiagnosticPackages(context, session, received: true);
+        },
+        onOpenAdminPackages: () {
+          if (current()) openDiagnosticPackages(context, session);
+        },
+        onReauth: () {
+          if (current()) session.login(stepUp: true);
+        },
+        onOpenDevices: () {
+          if (current()) context.go('/devices');
+        });
   }
 }
 
 Future<void> openSupportGrant(
     BuildContext context, Session session, Json device) async {
   final actor = session.profile?['subject'],
-      tenant = session.tenant?['id'],
-      role = session.role;
+      tenant = session.tenant?['id'];
   if (!session.authenticated || !session.canWrite) {
     throw const ApiFailure(403, 'SCOPE_DENIED');
   }
@@ -65,14 +109,11 @@ Future<void> openSupportGrant(
   final id = supportId(device['id']),
       registration = supportId(device['registrationId']),
       version = supportInteger(device['version']);
-  bool current() =>
-      session.authenticated &&
-      session.profile?['subject'] == actor &&
-      session.tenant?['id'] == tenant &&
-      session.role == role &&
-      session.canWrite;
+  final scope = DeviceSubflowScope(session, permitted: () => session.canWrite);
+  bool current() => scope.current;
+  try {
   final repository = SupportRepository(
-      api: session.api, actor: actor, tenant: tenant, current: current);
+      api: scope.api, actor: actor, tenant: tenant, current: current);
   if (!context.mounted || !current()) return;
   await showDialog<void>(
       context: context,
@@ -91,7 +132,12 @@ Future<void> openSupportGrant(
                       ? device['displayName'] as String
                       : '当前设备',
                   current: current,
-                  accessChanges: session,
+                  accessChanges: scope,
                   onClose: () => Navigator.of(dialogContext).pop(),
-                  onReauth: () => session.login(stepUp: true)))));
+                  onReauth: () {
+                    if (current()) session.login(stepUp: true);
+                  }))));
+  } finally {
+    scope.dispose();
+  }
 }

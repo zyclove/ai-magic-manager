@@ -3,6 +3,7 @@ import '../core/api.dart';
 import '../core/session.dart';
 import '../core/diagnostic_repository.dart';
 import '../ui/diagnostic_preview_view.dart';
+import 'device_subflow_scope.dart';
 
 bool canReadDiagnostics(String role) =>
     const {'OWNER', 'GUARDIAN', 'ORG_ADMIN'}.contains(role);
@@ -22,14 +23,12 @@ Future<void> openDeviceDiagnostic(
       registration is! String) {
     throw const ApiFailure(502, 'INVALID_DIAGNOSTIC_RESPONSE');
   }
-  bool current() =>
-      session.authenticated &&
-      session.tenant?['id'] == tenant &&
-      session.profile?['subject'] == actor &&
-      session.role == role &&
-      canReadDiagnostics(session.role);
+  final scope = DeviceSubflowScope(session,
+      permitted: () => canReadDiagnostics(session.role));
+  bool current() => scope.current;
+  try {
   final repository = DiagnosticRepository(
-      api: session.api,
+      api: scope.api,
       tenantId: tenant,
       deviceId: deviceId,
       registrationId: registration,
@@ -46,7 +45,12 @@ Future<void> openDeviceDiagnostic(
               child: DiagnosticPreviewView(
                   load: repository.load,
                   current: current,
-                  accessChanges: session,
-                  onReauth: () => session.login(stepUp: true),
+                  accessChanges: scope,
+                  onReauth: () {
+                    if (current()) session.login(stepUp: true);
+                  },
                   onClose: () => Navigator.of(dialogContext).pop()))));
+  } finally {
+    scope.dispose();
+  }
 }

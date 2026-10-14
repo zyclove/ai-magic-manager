@@ -204,20 +204,46 @@ class PageResult {
 }
 
 class Api {
-  final _pendingWrites = <String, String>{};
+  final Map<String, String> _pendingWrites;
+  final bool Function()? _boundScope;
   final Future<http.Client> Function() client;
   final String baseUrl;
   Api(this.client,
       {this.baseUrl = const String.fromEnvironment('API_URL',
-          defaultValue: 'http://localhost:8082/api/v1')});
+          defaultValue: 'http://localhost:8082/api/v1')})
+      : _pendingWrites = <String, String>{},
+        _boundScope = null;
+
+  Api._bound(this.client, this.baseUrl, this._pendingWrites, this._boundScope);
+
+  /// A borrowed API view shares pending writes and retains every parent guard.
+  Api scoped(bool Function() isCurrent) {
+    final current = _withScope(isCurrent)!;
+    Future<http.Client> boundClient() async {
+      _ensureCurrent(current);
+      final authenticated = await client();
+      _ensureCurrent(current);
+      return ScopeBindingClient(authenticated, isCurrent: current);
+    }
+
+    return Api._bound(boundClient, baseUrl, _pendingWrites, current);
+  }
+
+  bool Function()? _withScope(bool Function()? isCurrent) {
+    final bound = _boundScope;
+    if (bound == null) return isCurrent;
+    return () => bound() && (isCurrent == null || isCurrent());
+  }
+
   Future<dynamic> send(String method, String path,
       {Json? body,
       int? version,
       String? key,
       String? clientRequestId,
       bool Function()? isCurrent}) async {
+    final current = _withScope(isCurrent);
     try {
-      _ensureCurrent(isCurrent);
+      _ensureCurrent(current);
       if (clientRequestId != null) {
         final match = _clientRequestIdPattern.firstMatch(clientRequestId);
         if (match == null || match.end != clientRequestId.length) {
@@ -232,9 +258,9 @@ class Api {
         throw const ApiFailure(409, 'PENDING_OPERATION_UNCHANGED');
       }
       final uri = Uri.parse('$baseUrl$path');
-      final req = isCurrent == null
+      final req = current == null
           ? http.Request(method, uri)
-          : ScopeGuardedRequest(method, uri, isCurrent: isCurrent);
+          : ScopeGuardedRequest(method, uri, isCurrent: current);
       req.headers['Accept'] = 'application/json';
       if (body != null) {
         req.headers['Content-Type'] = 'application/json';
@@ -248,10 +274,10 @@ class Api {
       if (key != null) _pendingWrites[key] = signature;
       final response = await (() async {
         final authenticated = await client();
-        _ensureCurrent(isCurrent);
+        _ensureCurrent(current);
         final value =
             await http.Response.fromStream(await authenticated.send(req));
-        _ensureCurrent(isCurrent);
+        _ensureCurrent(current);
         return value;
       })()
           .timeout(const Duration(seconds: 25));
@@ -278,21 +304,23 @@ class Api {
     } on ScopeChangedException {
       throw const ApiFailure(409, 'WORKSPACE_CHANGED');
     } on TimeoutException {
-      _ensureCurrent(isCurrent);
+      _ensureCurrent(current);
       throw const ApiFailure(0, 'NETWORK_ERROR');
     } on http.ClientException {
-      _ensureCurrent(isCurrent);
+      _ensureCurrent(current);
       throw const ApiFailure(0, 'NETWORK_ERROR');
     }
   }
 
   Future<PageResult> page(String path,
       {String? cursor, bool Function()? isCurrent}) async {
+    final current = _withScope(isCurrent);
+    _ensureCurrent(current);
     final separator = path.contains('?') ? '&' : '?';
     final result = await send('GET',
         '$path${separator}limit=50${cursor == null ? '' : '&cursor=${Uri.encodeQueryComponent(cursor)}'}',
-        isCurrent: isCurrent);
-    _ensureCurrent(isCurrent);
+        isCurrent: current);
+    _ensureCurrent(current);
     if (result is! Map || result['items'] is! List) {
       throw const ApiFailure(502, 'INVALID_RESPONSE');
     }
@@ -304,13 +332,14 @@ class Api {
   }
 
   Future<List<Json>> all(String path, {bool Function()? isCurrent}) async {
+    final current = _withScope(isCurrent);
     final items = <Json>[];
     String? cursor;
     final seen = <String>{};
     do {
-      _ensureCurrent(isCurrent);
-      final next = await page(path, cursor: cursor, isCurrent: isCurrent);
-      _ensureCurrent(isCurrent);
+      _ensureCurrent(current);
+      final next = await page(path, cursor: cursor, isCurrent: current);
+      _ensureCurrent(current);
       items.addAll(next.items);
       cursor = next.nextCursor;
       if (cursor != null && !seen.add(cursor)) {
@@ -318,7 +347,7 @@ class Api {
       }
       if (items.length > 10000) throw const ApiFailure(400, 'TOO_MANY_RESULTS');
     } while (cursor != null);
-    _ensureCurrent(isCurrent);
+    _ensureCurrent(current);
     return items;
   }
 }
