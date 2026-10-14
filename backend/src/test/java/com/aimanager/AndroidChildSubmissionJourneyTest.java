@@ -1,6 +1,7 @@
 package com.aimanager;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.Matchers.contains;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
@@ -55,7 +56,8 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
       "spring.datasource.url=${ANDROID_CHILD_TEST_DATABASE_URL:jdbc:h2:mem:androidchild;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE}",
       "spring.datasource.username=${ANDROID_CHILD_TEST_DATABASE_USERNAME:sa}",
       "spring.datasource.password=${ANDROID_CHILD_TEST_DATABASE_PASSWORD:}",
-      "manager.approval.expiry-job.enabled=false"
+      "manager.approval.expiry-job.enabled=false",
+      "manager.observation.permissions.enabled=true"
     })
 @AutoConfigureMockMvc(print = MockMvcPrint.NONE)
 @EnabledIfSystemProperty(named = "device.android.runner", matches = ".+")
@@ -346,6 +348,63 @@ class AndroidChildSubmissionJourneyTest {
           .andExpect(jsonPath("$.devices[0].status").value("NOT_AUTHORIZED"))
           .andExpect(jsonPath("$.devices[0].applications.length()").value(0));
       run(fixtureFile, fixture, directory, "observation-revoked");
+      // Permission observation has independent consent. Real PackageManager
+      // facts are uploaded by the production native composition, not by Java.
+      inventorySetting(prefix, owner, device, 2, true);
+      permissionSetting(prefix, owner, device, 0, true);
+      run(fixtureFile, fixture, directory, "permission");
+      mvc.perform(
+              get(prefix + "/devices/" + device + "/permission-observations")
+                  .with(adult(owner))
+                  .param("packageName", "com.aimanager.child.debug"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.observationStatus").value("RECENT"))
+          .andExpect(jsonPath("$.evidenceStatus").value("AGENT_REPORTED_UNVERIFIED"))
+          .andExpect(
+              jsonPath(
+                      "$.permissions[?(@.permissionName == 'android.permission.INTERNET')].classification")
+                  .value(contains("OTHER")))
+          .andExpect(
+              jsonPath(
+                      "$.permissions[?(@.permissionName == 'android.permission.INTERNET')].observedGrant")
+                  .value(contains("UNKNOWN")));
+      assertThat(
+              db.queryForObject(
+                  "SELECT COUNT(*) FROM device_permission_observation_snapshots WHERE tenant_id=? AND device_id=?",
+                  Integer.class,
+                  tenant,
+                  device))
+          .isEqualTo(1);
+      permissionSetting(prefix, owner, device, 1, false);
+      assertThat(
+              db.queryForObject(
+                  "SELECT COUNT(*) FROM device_permission_observation_snapshots WHERE tenant_id=? AND device_id=?",
+                  Integer.class,
+                  tenant,
+                  device))
+          .isZero();
+      run(fixtureFile, fixture, directory, "permission-revoked");
+      mvc.perform(
+              get(prefix + "/devices/" + device + "/permission-observations")
+                  .with(adult(owner))
+                  .param("packageName", "com.aimanager.child.debug"))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.observationStatus").value("NOT_AUTHORIZED"))
+          .andExpect(jsonPath("$.permissions.length()").value(0));
+      assertThat(
+              db.queryForObject(
+                  "SELECT COUNT(*) FROM device_permission_observation_snapshots WHERE tenant_id=? AND device_id=?",
+                  Integer.class,
+                  tenant,
+                  device))
+          .isZero();
+      mvc.perform(
+              get(prefix + "/devices/" + device + "/observation-settings")
+                  .with(adult(owner)))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.inventoryEnabled").value(true))
+          .andExpect(jsonPath("$.usageEnabled").value(false));
+      inventorySetting(prefix, owner, device, 3, false);
       fixture.remove("configurationIssuer");
       fixture.remove("configurationKeys");
 
@@ -510,6 +569,48 @@ class AndroidChildSubmissionJourneyTest {
         .isEqualTo(1);
   }
 
+  private void inventorySetting(
+      String prefix, String owner, String device, int expected, boolean enabled) throws Exception {
+    mvc.perform(
+            put(prefix + "/devices/" + device + "/observation-settings")
+                .with(adult(owner))
+                .header("If-Match", "\"" + expected + "\"")
+                .header("Idempotency-Key", UUID.randomUUID())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    mapper.writeValueAsString(
+                        Map.of(
+                            "inventoryEnabled",
+                            enabled,
+                            "usageEnabled",
+                            false,
+                            "reason",
+                            "监护人确认原生权限观察验收的独立应用清单授权"))))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.version").value(expected + 1))
+        .andExpect(jsonPath("$.inventoryEnabled").value(enabled));
+  }
+
+  private void permissionSetting(
+      String prefix, String owner, String device, int expected, boolean enabled) throws Exception {
+    mvc.perform(
+            put(prefix + "/devices/" + device + "/permission-observation-settings")
+                .with(adult(owner))
+                .header("If-Match", "\"" + expected + "\"")
+                .header("Idempotency-Key", UUID.randomUUID())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    mapper.writeValueAsString(
+                        Map.of(
+                            "enabled",
+                            enabled,
+                            "reason",
+                            "监护人确认原生权限观察验收的独立权限授权"))))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.version").value(expected + 1))
+        .andExpect(jsonPath("$.enabled").value(enabled));
+  }
+
   private void run(Path file, Map<String, Object> fixture, Path directory, String phase)
       throws Exception {
     mapper.writeValue(file.toFile(), fixture);
@@ -559,6 +660,8 @@ class AndroidChildSubmissionJourneyTest {
             "production",
             "observation",
             "observation-revoked",
+            "permission",
+            "permission-revoked",
             "submit",
             "recover",
             "cancel",

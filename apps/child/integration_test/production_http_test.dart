@@ -61,8 +61,15 @@ void main() {
       (tester) async {
     const phase = String.fromEnvironment('ANDROID_HTTP_PHASE');
     const leaf = String.fromEnvironment('ANDROID_HTTP_INPUT');
-    expect(phase,
-        isIn(const ['production', 'observation', 'observation-revoked']));
+    expect(
+        phase,
+        isIn(const [
+          'production',
+          'observation',
+          'observation-revoked',
+          'permission',
+          'permission-revoked'
+        ]));
     expect(RegExp(r'^android-http-[0-9a-f]{32}\.json$').hasMatch(leaf), isTrue);
     final support = await getApplicationSupportDirectory();
     final privateInput = File(path.join(support.path, leaf));
@@ -112,6 +119,7 @@ void main() {
     final environment = ChildEnvironment(
         apiRoot: apiRoot,
         allowLoopbackHttp: true,
+        permissionObservationEnabled: phase.startsWith('permission'),
         configurationIssuer: fixture['configurationIssuer'] as String,
         configurationKeys:
             Map<String, dynamic>.from(fixture['configurationKeys'] as Map));
@@ -197,7 +205,7 @@ void main() {
     if (phase == 'production') {
       // Inspecting capabilities does not silently grant system or cloud access.
       expect(platform.usageGranted, isFalse);
-    } else {
+    } else if (!phase.startsWith('permission')) {
       // The host grants only this owned app real Android special access. The
       // guardian separately changes cloud consent through the management API.
       expect(platform.usageGranted, isTrue);
@@ -215,6 +223,49 @@ void main() {
       } else {
         expect(session.observationView.usageCount, 0);
         expect(session.observationView.lastUsageAt, isNull);
+      }
+    }
+    var nativePermissionCount = 0;
+    if (phase.startsWith('permission')) {
+      // Cloud permission consent never depends on UsageStats special access.
+      expect(platform.usageGranted, isFalse);
+      expect(await session.refreshObservationAuthorization(), isTrue);
+      await idle();
+      expect(session.observationView.authorization!.inventoryEnabled, isTrue);
+      expect(session.observationView.authorization!.usageEnabled, isFalse);
+      expect(session.observationView.permissionAuthorization!.enabled,
+          phase == 'permission');
+      const ownPackage = 'com.aimanager.child.debug';
+      if (phase == 'permission') {
+        expect(await session.loadPermissionCandidates(), isTrue);
+        await idle();
+        expect(
+            session.permissionCandidates
+                .any((app) => app.packageName == ownPackage),
+            isTrue);
+        final nativePermissions = await source.permissionSnapshot(ownPackage);
+        expect(nativePermissions.packageName, ownPackage);
+        expect(nativePermissions.profile, platform.profile);
+        expect(nativePermissions.permissions, isNotEmpty);
+        final internet = nativePermissions.permissions.singleWhere(
+            (fact) => fact.permissionName == 'android.permission.INTERNET');
+        expect(internet.classification, 'OTHER');
+        expect(internet.observedGrant, 'UNKNOWN');
+        nativePermissionCount = nativePermissions.permissions.length;
+        expect(await session.observePermission(ownPackage), isTrue);
+        await idle();
+        expect(session.observationView.lastPermissionPackage, ownPackage);
+        expect(session.observationView.lastPermissionAt, isNotNull);
+        expect(session.observationView.pendingReports, 0);
+      } else {
+        // A newly started Android process must remove the prior durable report
+        // after refreshing revoked consent, without collecting a new snapshot.
+        expect(session.observationView.lastPermissionPackage, isNull);
+        expect(session.observationView.lastPermissionAt, isNull);
+        expect(session.permissionCandidates, isEmpty);
+        expect(await session.loadPermissionCandidates(), isFalse);
+        expect(await session.observePermission(ownPackage), isFalse);
+        expect(session.observationView.pendingReports, 0);
       }
     }
     final now = DateTime.now().millisecondsSinceEpoch;
@@ -252,6 +303,15 @@ void main() {
       'authorizationVersion': session.observationView.authorization?.version,
       'usageCount': session.observationView.usageCount,
       'lastUsageAt': session.observationView.lastUsageAt,
+      if (phase.startsWith('permission')) ...{
+        'permissionEnabled':
+            session.observationView.permissionAuthorization?.enabled,
+        'permissionAuthorizationVersion':
+            session.observationView.permissionAuthorization?.version,
+        'nativePermissionCount': nativePermissionCount,
+        'permissionPendingReports': session.observationView.pendingReports,
+        'permissionRecorded': session.observationView.lastPermissionAt != null,
+      },
       'globalRecordsUnchanged': true,
       'systemEnforced': false,
     };

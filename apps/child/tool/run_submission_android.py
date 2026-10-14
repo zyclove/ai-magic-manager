@@ -16,7 +16,8 @@ import uuid
 from urllib.parse import urlsplit
 
 PACKAGE = 'com.aimanager.child.debug'
-PHASES = {'enroll', 'production', 'observation', 'observation-revoked', 'submit', 'recover', 'cancel', 'cancel-recover', 'expired', 'offline', 'revoked', 'blocked', 'cleanup'}
+PRODUCTION_PHASES = {'production', 'observation', 'observation-revoked', 'permission', 'permission-revoked'}
+PHASES = {'enroll', 'submit', 'recover', 'cancel', 'cancel-recover', 'expired', 'offline', 'revoked', 'blocked', 'cleanup'} | PRODUCTION_PHASES
 
 
 def digest(path):
@@ -83,8 +84,14 @@ def main():
     process = None
 
     def adb(*command, check=True, payload=None):
-        result = subprocess.run([args.adb, '-s', args.serial, *command], input=payload,
-                                capture_output=True, timeout=30)
+        try:
+            result = subprocess.run([args.adb, '-s', args.serial, *command], input=payload,
+                                    capture_output=True, timeout=30)
+        except FileNotFoundError as failure:
+            # Keep diagnostics useful while never logging arguments, input data,
+            # environment secrets or private device output.
+            executable = Path(failure.filename or args.adb).name
+            raise RuntimeError('Could not launch configured local tool ' + executable) from None
         if check and result.returncode:
             # Neither command output nor private file contents enter diagnostics.
             raise RuntimeError('Owned AVD command failed: ' + command[0])
@@ -120,7 +127,7 @@ def main():
             raise RuntimeError('Install the ordinary owned debug application first')
         return {'uid': uid.group(1), 'firstInstallTime': installed.group(1).strip()}
 
-    if text('emu', 'avd', 'name').splitlines()[0].strip() != args.expected_avd:
+    if text('shell', 'getprop', 'ro.boot.qemu.avd_name') != args.expected_avd:
         raise RuntimeError('AVD ownership/name mismatch')
     if text('shell', 'getprop', 'sys.boot_completed') != '1':
         raise RuntimeError('Owned AVD has not finished booting')
@@ -133,7 +140,7 @@ def main():
         env = os.environ.copy()
         env['FLUTTER_TEST_OUTPUTS_DIR'] = str(directory)
         options = {'creationflags': subprocess.CREATE_NO_WINDOW} if os.name == 'nt' else {'start_new_session': True}
-        target = ('integration_test/production_http_test.dart' if args.phase in {'production', 'observation', 'observation-revoked'}
+        target = ('integration_test/production_http_test.dart' if args.phase in PRODUCTION_PHASES
                   else 'integration_test/submission_http_test.dart')
         build = [args.flutter, 'build', 'apk', '--debug', '--no-pub',
                  '--target=' + target,

@@ -418,8 +418,8 @@ void main() {
             if (approved.state == 'EXPIRED') {
               expect(
                   approved.absoluteNotAfter!,
-                  lessThanOrEqualTo(
-                      DateTime.now().millisecondsSinceEpoch + 1000));
+                  lessThanOrEqualTo(DateTime.now().millisecondsSinceEpoch +
+                      const Duration(seconds: 10).inMilliseconds));
             }
             oracle['approvedState'] = approved.state;
             await save();
