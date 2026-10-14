@@ -1,6 +1,6 @@
 # Android 应用权限观察与受管执行契约
 
-状态：后端独立授权、单应用快照接口、保留清理和主体删除覆盖已进入代码及 1.0.0 初始化基线；Android 原生单应用权限读取、Pigeon 模型、儿童端按需上传及监护人端授权/结果界面已接入。**真实设备/网络端到端、Android TV 兼容及系统权限执行尚未完成**。后端新路由默认关闭，只有显式设置 `manager.observation.permissions.enabled=true` 且儿童端和监护人端构建均设置 `PERMISSION_OBSERVATION_ENABLED=true` 才开放联调；三端开关应在设备与端到端验证后一起发布。现有应用清单授权不能自动扩展成权限状态授权。首期针对 Android 手机/平板与经兼容确认的 Android TV；中国大陆机构合同优先。没有合规 EMM 时，受管执行入口保持不可用。主体删除与初始化阶段证据见[权限观察初始化记录](permission-observation-initialization-plan.md)。
+状态：后端独立授权、单应用快照接口、保留清理和主体删除覆盖已进入代码及 1.0.0 初始化基线；Android 原生单应用权限读取、Pigeon 模型、儿童端按需上传及监护人端授权/结果界面已接入。Android 34 专用模拟器经真实 Spring HTTP 的读取、上报、撤回和进程恢复已通过，[原生验收记录](child-native-permission-acceptance.md)说明夹具、数据库和权限样本范围。**物理设备/OEM、Android TV 兼容及系统权限执行尚未完成**。后端新路由默认关闭，只有显式设置 `manager.observation.permissions.enabled=true` 且儿童端和监护人端构建均设置 `PERMISSION_OBSERVATION_ENABLED=true` 才开放联调；三端开关应在目标设备与端到端验证后一起发布。现有应用清单授权不能自动扩展成权限状态授权。首期针对 Android 手机/平板与经兼容确认的 Android TV；中国大陆机构合同优先。没有合规 EMM 时，受管执行入口保持不可用。主体删除与初始化阶段证据见[权限观察初始化记录](permission-observation-initialization-plan.md)。
 
 ## 1. 用户要完成的事
 
@@ -88,6 +88,8 @@ Google 官方 SDK 的连接器方法现可对已存在于独占 `BLACKLIST` 策�
 本契约的边界是：**权限请求、当前观察、策略期望、系统执行分别有来源和状态**。任何一层不可用时明确显示未知或不支持，不用推断值填充成功。
 
 ## 原生查询阶段记录
+
+下文保留各早期阶段的验证边界；其中“尚未做真实网络/进程恢复”是当时状态。2026-10-14 后续专用模拟器已完成真实 Spring HTTP 旅程，包含权限授权与撤回，详细证据见[原生验收记录](child-native-permission-acceptance.md)。这项增量没有通过物理设备、电视或 EMM 系统执行门槛。
 
 儿童端 `ObservationHost.permissionSnapshot` 只接受合法包名且要求应用仍出现在当前用户的启动器可见清单中；使用 `PackageManager.GET_PERMISSIONS` 读取 `android.permission.*` 声明，并通过系统 `PermissionInfo` 区分危险权限。危险权限的 `observedGrant` 来自 `requestedPermissionsFlags` 的授予标志，其他类别返回 `UNKNOWN`；因此它**不是 AppOps 实际访问记录**，不能用于断言相机/麦克风正在使用。最多 64 项，超限整次拒绝；签名摘要、版本号和资料范围与应用清单沿用同一原生来源。Pigeon 21.2.0 的 Dart/Kotlin 生成文件随源一同维护，`PermissionSnapshot.parse` 对名称、分类、授予值、唯一性和范围做二次校验。Android debug 构建只说明代码可编译，不替代手机/电视或授权撤回验证。[PackageInfo](https://developer.android.com/reference/android/content/pm/PackageInfo)、[PermissionInfo](https://developer.android.com/reference/android/content/pm/PermissionInfo)
 

@@ -79,6 +79,11 @@ class ParentPermissionView extends ChangeNotifier {
     return (permission, common);
   }
 
+  /// Refresh an already displayed app through the same device, inventory and
+  /// consent checks as selection. A hidden/failed view recovers the catalog
+  /// first instead of reusing a candidate whose inventory is no longer held.
+  Future<void> refresh() => load(app: inventory == null ? null : selected);
+
   Future<void> load({PermissionCandidate? app}) async {
     if (!available || busy) return;
     if (app != null &&
@@ -137,6 +142,10 @@ class ParentPermissionView extends ChangeNotifier {
       settings = after.$1;
       inventory = catalog;
       result = view;
+      selected = view == null
+          ? null
+          : catalog!.applications.firstWhere((v) =>
+              v.packageName == app!.packageName && v.profile == app.profile);
     } catch (e) {
       if (_valid(epoch)) {
         error = e is PermissionViewException || e is ObservationFailure

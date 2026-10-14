@@ -144,7 +144,7 @@ class _ParentPermissionsPageState extends State<ParentPermissionsPage>
                   tooltip: '刷新权限状态',
                   onPressed: !current || !foreground || view.busy
                       ? null
-                      : () => view.load(),
+                      : view.refresh,
                   icon: const Icon(Icons.refresh)),
             ]),
             body: !current || !foreground

@@ -170,6 +170,52 @@ void main() {
       v.dispose();
     });
   }
+  test('refresh drops a revoked selection without reading permission facts',
+      () async {
+    var revoked = false, snapshotReads = 0;
+    final v = viewer(f.api((r) async {
+      if (r.url.path.endsWith('/permission-observation-settings')) {
+        return f.response(f.settings(revoked ? 2 : 1, !revoked));
+      }
+      if (r.url.path.endsWith('/permission-observations')) snapshotReads++;
+      return normal(r);
+    }));
+    await v.load();
+    await v.load(app: v.inventory!.applications.single);
+    revoked = true;
+    await v.refresh();
+    expect(snapshotReads, 1);
+    expect(v.settings!.enabled, isFalse);
+    expect(v.selected, isNull);
+    expect(v.inventory, isNull);
+    expect(v.result, isNull);
+    v.dispose();
+  });
+  test('removed application cannot be refreshed and catalog recovery works',
+      () async {
+    var removed = false, snapshotReads = 0;
+    final v = viewer(f.api((r) async {
+      if (removed && r.url.path.endsWith('/application-inventory')) {
+        return f.response({...inventory(), 'applications': <Json>[]});
+      }
+      if (r.url.path.endsWith('/permission-observations')) snapshotReads++;
+      return normal(r);
+    }));
+    await v.load();
+    await v.load(app: v.inventory!.applications.single);
+    removed = true;
+    await v.refresh();
+    expect(
+        (v.error as ParentApiException).code, 'INVALID_PERMISSION_SELECTION');
+    expect(snapshotReads, 1);
+    expect(v.result, isNull);
+    await v.refresh();
+    expect(v.error, isNull);
+    expect(v.inventory!.applications, isEmpty);
+    expect(v.selected, isNull);
+    expect(snapshotReads, 1);
+    v.dispose();
+  });
   for (final failure in ['profile', 'registration', 'consent', 'malformed']) {
     test('$failure cannot be presented as a permission state', () async {
       var selected = false, reads = 0;
@@ -259,10 +305,14 @@ void main() {
         (v.error as ParentApiException).code, 'PERMISSION_BACKEND_UNAVAILABLE');
     v.dispose();
   });
-  testWidgets('unknown permission snapshot explains the child-side action',
+  testWidgets('refresh shows a newly reported snapshot without reselecting',
       (tester) async {
+    var reported = false, snapshotReads = 0;
     final session = Session(f.api((r) async {
       if (r.url.path.endsWith('/permission-observations')) {
+        snapshotReads++;
+        expect(r.url.queryParameters['packageName'], 'org.example.study');
+        if (reported) return f.response(snapshot());
         return f.response({
           ...snapshot(),
           'observationStatus': 'UNKNOWN',
@@ -290,6 +340,13 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.textContaining('请在儿童设备“使用情况与隐私”中加载应用'), findsOneWidget);
     expect(find.textContaining('空记录不代表没有权限'), findsOneWidget);
+    reported = true;
+    await tester.tap(find.byTooltip('刷新权限状态'));
+    await tester.pumpAndSettle();
+    expect(snapshotReads, 2);
+    expect(find.text('近期上报 · 设备自报，未经核实'), findsOneWidget);
+    expect(find.text('麦克风'), findsOneWidget);
+    expect(find.textContaining('空记录不代表没有权限'), findsNothing);
     expect(tester.takeException(), isNull);
   });
   testWidgets(
