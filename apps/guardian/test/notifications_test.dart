@@ -208,22 +208,22 @@ void main() {
       {...notice(), 'readAt': 'today'},
       {...notice(), 'requestId': '../other'},
     ]) {
-      expect(() => InboxNotice.parse(row), throwsA(isA<ApiFailure>()));
+      expect(() => InboxNotice.parse(row), throwsA(isA<NotificationFailure>()));
     }
     expect(
         () => InboxPage.parse({
               'items': [notice(), notice()],
               'nextCursor': null
             }),
-        throwsA(isA<ApiFailure>()));
+        throwsA(isA<NotificationFailure>()));
     expect(
         () => InboxPage.parse({
               'items': [notice(readAt: at)],
               'nextCursor': null
             }, unreadOnly: true),
-        throwsA(isA<ApiFailure>()));
+        throwsA(isA<NotificationFailure>()));
     expect(() => InboxCount.parse({'count': 1, 'capped': true}),
-        throwsA(isA<ApiFailure>()));
+        throwsA(isA<NotificationFailure>()));
   });
   test('late workspace responses and later writes are rejected', () async {
     var current = true;

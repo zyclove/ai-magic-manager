@@ -18,6 +18,7 @@ import 'ui/application_center.dart';
 import 'ui/usage_report_center.dart';
 import 'ui/observation_settings_page.dart';
 import 'ui/subject_center.dart';
+import 'ui/notification_center.dart';
 
 const _navy = Color(0xFF17324B);
 const _blue = Color(0xFF315E86);
@@ -140,6 +141,7 @@ class _WorkspaceState extends State<_Workspace> {
     final session = widget.session;
     return Scaffold(
       appBar: AppBar(
+        actions: [if (session.tenant != null && session.canDecide) ParentNotificationShortcut(session: session)],
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

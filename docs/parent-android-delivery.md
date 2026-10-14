@@ -9,6 +9,7 @@
 | 登录与会话 | AppAuth 系统浏览器发起 Authorization Code + PKCE；内存访问令牌、加密存储刷新令牌；到期自动刷新、退出清除本地凭据 | Keycloak 公共客户端 `ai-manager-parent`；`GET /api/v1/me` |
 | 工作空间 | 读取当前成员可见的家庭/机构，切换时重新核对成员角色；儿童角色没有成人操作入口 | `GET /tenants`、`GET /tenants/{id}/membership`；后端仍做逐请求鉴权 |
 | 儿童/学生档案 | 昵称与年龄段一页填写；分页搜索、修改、归档与历史结果恢复；写前安全验证和持久记录，后台隐藏，未知结果不自动重发 | `/subjects/management`、`/{id}/management`、`/changes`、`/operation-results/{requestId}/query`；见[档案管理交付](parent-subject-management-delivery.md) |
+| 消息中心 | 顶部未读提醒、全部/未读分页、单条及本页已读；未知结果按原选择重试；直达当前申请与交付详情，后台隐藏并暂停轮询 | 既有 `/notifications`、`/unread-count`、`/{id}/read`、`/read`；与管理台共享纯 Dart 协议，见[手机消息中心交付](parent-notifications-delivery.md) |
 | 今日概览 | 服务端授权范围内的儿童、已注册设备、待审批和求助计数；儿童仅展示前 5 条；标明“在线/权益”不等于执行 | `GET /overview`、`GET /subjects?limit=5` |
 | 访问申请 | 服务端筛选待处理项并在授权结果中附儿童、应用、包名和设备名称；成人在卡片及确认弹窗核对对象后批准/拒绝并再次认证；提交带版本及幂等键，连接中断后查询原申请且不自动重发；批准窗口不超过申请时长，提示需等待设备实际执行 | `GET /access-requests?state=PENDING`、`GET /access-requests/{id}`、`POST /access-requests/{id}/decisions`，`If-Match`、`Idempotency-Key` 和服务端近期认证 |
 | 申请记录、撤销与交付 | 申请页可分页查看授权范围内的历史，处理成功后直达原申请状态；详情同时核对申请版本和交付摘要，分开展示审批、文档交付、设备自报及系统执行。仍有效的批准可在确认、近期认证后撤销；撤销提交前持久保存待核对记录，结果不明时不自动重发。设备收到或保存撤销文档不显示成限制已恢复 | `GET /access-requests`、`GET /access-requests/{id}`、`GET /access-requests/{id}/delivery`、`POST /access-requests/{id}/revoke`；撤销需 `If-Match`、`Idempotency-Key` 与近期认证 |

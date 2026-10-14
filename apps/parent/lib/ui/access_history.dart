@@ -177,7 +177,9 @@ class _AccessRequestDetail extends StatefulWidget {
   State<_AccessRequestDetail> createState() => _AccessRequestDetailState();
 }
 
-class _AccessRequestDetailState extends State<_AccessRequestDetail> {
+class _AccessRequestDetailState extends State<_AccessRequestDetail>
+    with WidgetsBindingObserver {
+  bool _foreground = true;
   late final String tenantId;
   late final String actor;
   late final String role;
@@ -198,6 +200,9 @@ class _AccessRequestDetailState extends State<_AccessRequestDetail> {
     widget.session.addListener(_closeIfScopeChanged);
     _reload();
     _loadJournal();
+    WidgetsBinding.instance.addObserver(this);
+    _foreground = WidgetsBinding.instance.lifecycleState == null ||
+        WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
   }
 
   bool get _current =>
@@ -213,7 +218,17 @@ class _AccessRequestDetailState extends State<_AccessRequestDetail> {
 
   void _reload() {
     final root = '/tenants/$tenantId/access-requests/${widget.requestId}';
-    setState(() => details = _read(root));
+    final next = _read(root);
+    setState(() {
+      details = next;
+    });
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (!mounted) return;
+    setState(() => _foreground = state == AppLifecycleState.resumed);
+    if (_foreground && _current && !_busy) _reload();
   }
 
   Future<void> _loadJournal() async {
@@ -233,8 +248,8 @@ class _AccessRequestDetailState extends State<_AccessRequestDetail> {
 
   Future<(Json, Json)> _read(String root) async {
     final (request, delivery) = await (
-      widget.session.api.object(root),
-      widget.session.api.object('$root/delivery'),
+      widget.session.api.object(root, isCurrent: () => _current),
+      widget.session.api.object('$root/delivery', isCurrent: () => _current),
     ).wait;
     if (request['id'] != widget.requestId ||
         delivery['requestId'] != widget.requestId ||
@@ -358,69 +373,73 @@ class _AccessRequestDetailState extends State<_AccessRequestDetail> {
   @override
   void dispose() {
     widget.session.removeListener(_closeIfScopeChanged);
+    WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => Dialog(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(
-              maxWidth: 560,
-              maxHeight: MediaQuery.sizeOf(context).height * .86),
-          child: FutureBuilder<(Json, Json)>(
-            future: details,
-            builder: (context, snapshot) => ListView(
-              shrinkWrap: true,
-              padding: const EdgeInsets.all(20),
-              children: [
-                Row(children: [
-                  Expanded(
-                      child: Text('申请与交付状态',
-                          style: Theme.of(context).textTheme.titleLarge)),
-                  IconButton(
-                    tooltip: '关闭',
-                    onPressed: () => Navigator.pop(context),
-                    icon: const Icon(Icons.close),
-                  ),
-                ]),
-                const SizedBox(height: 10),
-                if (_operationError != null) ...[
-                  Text('$_operationError',
-                      style: const TextStyle(color: Color(0xFF9A3931))),
+  Widget build(BuildContext context) => !_foreground || !_current
+      ? const Dialog(
+          child: Padding(padding: EdgeInsets.all(24), child: Text('申请内容已隐藏。')))
+      : Dialog(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+                maxWidth: 560,
+                maxHeight: MediaQuery.sizeOf(context).height * .86),
+            child: FutureBuilder<(Json, Json)>(
+              future: details,
+              builder: (context, snapshot) => ListView(
+                shrinkWrap: true,
+                padding: const EdgeInsets.all(20),
+                children: [
+                  Row(children: [
+                    Expanded(
+                        child: Text('申请与交付状态',
+                            style: Theme.of(context).textTheme.titleLarge)),
+                    IconButton(
+                      tooltip: '关闭',
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close),
+                    ),
+                  ]),
                   const SizedBox(height: 10),
+                  if (_operationError != null) ...[
+                    Text('$_operationError',
+                        style: const TextStyle(color: Color(0xFF9A3931))),
+                    const SizedBox(height: 10),
+                  ],
+                  if (_operationMessage != null) ...[
+                    Text(_operationMessage!,
+                        style: const TextStyle(color: Color(0xFF13745C))),
+                    const SizedBox(height: 10),
+                  ],
+                  if (_markers
+                      .any((item) => item.requestId == widget.requestId)) ...[
+                    const Text('此申请有本机待核对操作。请先查询原申请；返回申请页可清除已核对提醒。',
+                        style: TextStyle(color: _muted)),
+                    const SizedBox(height: 10),
+                  ],
+                  if (snapshot.hasError) ...[
+                    Text('${snapshot.error}',
+                        style: const TextStyle(color: Color(0xFF9A3931))),
+                    const SizedBox(height: 10),
+                    OutlinedButton.icon(
+                      onPressed: _reload,
+                      icon: const Icon(Icons.refresh),
+                      label: const Text('重新查询'),
+                    ),
+                  ] else if (snapshot.connectionState != ConnectionState.done)
+                    const Padding(
+                      padding: EdgeInsets.all(24),
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  else
+                    ..._content(snapshot.data!.$1, snapshot.data!.$2),
                 ],
-                if (_operationMessage != null) ...[
-                  Text(_operationMessage!,
-                      style: const TextStyle(color: Color(0xFF13745C))),
-                  const SizedBox(height: 10),
-                ],
-                if (_markers
-                    .any((item) => item.requestId == widget.requestId)) ...[
-                  const Text('此申请有本机待核对操作。请先查询原申请；返回申请页可清除已核对提醒。',
-                      style: TextStyle(color: _muted)),
-                  const SizedBox(height: 10),
-                ],
-                if (snapshot.hasError) ...[
-                  Text('${snapshot.error}',
-                      style: const TextStyle(color: Color(0xFF9A3931))),
-                  const SizedBox(height: 10),
-                  OutlinedButton.icon(
-                    onPressed: _reload,
-                    icon: const Icon(Icons.refresh),
-                    label: const Text('重新查询'),
-                  ),
-                ] else if (snapshot.connectionState != ConnectionState.done)
-                  const Padding(
-                    padding: EdgeInsets.all(24),
-                    child: Center(child: CircularProgressIndicator()),
-                  )
-                else
-                  ..._content(snapshot.data!.$1, snapshot.data!.$2),
-              ],
+              ),
             ),
           ),
-        ),
-      );
+        );
 
   List<Widget> _content(Json request, Json delivery) {
     if (request['version'] != delivery['approvalVersion']) {

@@ -1,0 +1,6 @@
+name: notification_client
+description: Shared scoped notification protocol for AI Manager clients.
+publish_to: none
+version: 1.0.0
+environment:
+  sdk: '>=3.4.0 <4.0.0'

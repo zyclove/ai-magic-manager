@@ -55,6 +55,9 @@ class ParentApiException implements Exception {
         'UNAUTHENTICATED' => '登录已过期，请重新登录。',
         'NETWORK_ERROR' => '连接服务失败，请检查网络后重试。',
         'INVALID_RESPONSE' => '服务返回的数据无法识别，请稍后刷新。',
+        'INVALID_NOTIFICATION_RESPONSE' => '消息响应不完整，请重新读取后核对。',
+        'INVALID_NOTIFICATION_SELECTION' => '所选消息已失效，请重新读取列表。',
+        'WORKSPACE_CHANGED' => '当前身份或工作空间已变化，请重新打开消息中心。',
         'CONFIGURATION_REQUIRED' => '请先配置可从手机访问的 HTTPS 身份服务和 API。',
         'LOGIN_FAILED' => '安全登录未完成，请检查身份服务或稍后重试。',
         _ => status == 403
