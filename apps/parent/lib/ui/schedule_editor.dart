@@ -17,19 +17,21 @@ class ScheduleEditorPage extends StatefulWidget {
 
 class _ScheduleEditorPageState extends State<ScheduleEditorPage> {
   late final String tenant, actor, role;
+  late final int generation;
   late final ScheduleCreationController controller;
   final name = TextEditingController(), zone = TextEditingController();
   final form = GlobalKey<FormState>();
   List<Json> weekly = [], exceptions = [];
   bool dirty = false, allowExit = false;
   Object? editError;
-  bool loadingPresets = false;
+  bool loadingPresets = false, choosingPresets = false;
   String? presetNotice;
   Route<dynamic>? presetRoute;
   bool get current =>
       mounted &&
       widget.session.authenticated &&
       widget.session.canDecide &&
+      widget.session.generation == generation &&
       widget.session.tenant?['id'] == tenant &&
       widget.session.profile?['subject'] == actor &&
       widget.session.role == role;
@@ -39,6 +41,7 @@ class _ScheduleEditorPageState extends State<ScheduleEditorPage> {
     tenant = widget.session.tenant!['id'];
     actor = widget.session.profile!['subject'];
     role = widget.session.role;
+    generation = widget.session.generation;
     zone.text =
         widget.session.tenant?['timeZone'] as String? ?? 'Asia/Shanghai';
     if (widget.seed != null) {
@@ -71,6 +74,8 @@ class _ScheduleEditorPageState extends State<ScheduleEditorPage> {
         Navigator.of(context).removeRoute(route);
       }
     });
+    // A settled dialog has no animation to schedule the frame needed above.
+    WidgetsBinding.instance.ensureVisualUpdate();
   }
 
   @override
@@ -117,17 +122,19 @@ class _ScheduleEditorPageState extends State<ScheduleEditorPage> {
   }
 
   Future<void> _choosePreset() async {
-    if (!current || controller.busy || loadingPresets) return;
+    if (!current || controller.busy || choosingPresets) return;
     setState(() {
+      choosingPresets = true;
       loadingPresets = true;
       presetNotice = null;
     });
     try {
-      final response = await widget.session.api.send('GET',
-          '/api/v1/tenants/${Uri.encodeComponent(tenant)}/schedule-presets',
+      final response = await widget.session.api.send(
+          'GET', '/tenants/${Uri.encodeComponent(tenant)}/schedule-presets',
           isCurrent: () => current, maxResponseBytes: 65536);
       if (!current) return;
       final presets = SchedulePreset.readCatalog(response);
+      setState(() => loadingPresets = false);
       if (presets.isEmpty) {
         setState(() => presetNotice = '暂未提供时间安排示例，可以在下方自行设置。');
         return;
@@ -204,7 +211,12 @@ class _ScheduleEditorPageState extends State<ScheduleEditorPage> {
     } catch (_) {
       if (current) setState(() => presetNotice = '暂时无法读取示例。可以重新选择，或在下方自行设置。');
     } finally {
-      if (mounted) setState(() => loadingPresets = false);
+      if (mounted) {
+        setState(() {
+          loadingPresets = false;
+          choosingPresets = false;
+        });
+      }
     }
   }
 
@@ -236,7 +248,7 @@ class _ScheduleEditorPageState extends State<ScheduleEditorPage> {
   }
 
   Future<void> _save() async {
-    if (!current || loadingPresets || !form.currentState!.validate()) return;
+    if (!current || choosingPresets || !form.currentState!.validate()) return;
     final definition = <String, dynamic>{
       'timeZone': zone.text.trim(),
       'weekly': weekly,
@@ -359,7 +371,7 @@ class _ScheduleEditorPageState extends State<ScheduleEditorPage> {
                           controller.result == null ? '已核对，清除本机提醒' : '打开时间计划')),
               ] else if (controller.loaded)
                 AbsorbPointer(
-                    absorbing: controller.busy || loadingPresets,
+                    absorbing: controller.busy || choosingPresets,
                     child: Form(
                         key: form,
                         child: Column(
@@ -381,7 +393,7 @@ class _ScheduleEditorPageState extends State<ScheduleEditorPage> {
                                                 '可以用示例快速填写，也可以直接在下方设置自己的时间。'),
                                             const SizedBox(height: 12),
                                             OutlinedButton.icon(
-                                                onPressed: loadingPresets
+                                                onPressed: choosingPresets
                                                     ? null
                                                     : _choosePreset,
                                                 icon: const Icon(Icons
