@@ -234,13 +234,7 @@ class MembershipService {
     if (current.role() == ORG_ADMIN && grant.role() != OWNER) throw DomainException.denied();
     long expected = com.aimanager.shared.ResourceVersions.require(etag);
     var classes = classScopes.normalize(inputClasses);
-    var fingerprint = new java.util.TreeMap<String, Object>();
-    fingerprint.put("memberKey", memberKey);
-    fingerprint.put("role", role);
-    fingerprint.put("subjectId", subject == null ? "" : subject);
-    fingerprint.put("version", expected);
-    // Preserve fingerprints of requests issued before class scopes were introduced.
-    if (!classes.isEmpty()) fingerprint.put("classIds", classes);
+    var fingerprint = accessFingerprint(memberKey, role, subject, classes, expected);
     return idempotency.execute(
         tenant,
         actor.getSubject(),
@@ -275,6 +269,56 @@ class MembershipService {
   private MemberAccess readAccess(String tenant, String memberKey, boolean lock) {
     return readAccess(tenant, memberKey, lock, false);
   }
+
+  private java.util.Map<String, Object> accessFingerprint(String memberKey, Role role, String subject,
+      java.util.List<String> classes, long version) {
+    var fingerprint = new java.util.TreeMap<String, Object>();
+    fingerprint.put("memberKey", memberKey);
+    fingerprint.put("role", role);
+    fingerprint.put("subjectId", subject == null ? "" : subject);
+    fingerprint.put("version", version);
+    // Preserve original normalized fingerprints, including pre-class-scope requests.
+    if (!classes.isEmpty()) fingerprint.put("classIds", classes);
+    return fingerprint;
+  }
+
+  /** Recover historical success without reapplying authority or assuming a revoked member stayed revoked. */
+  @Transactional(timeout = 10)
+  public OperationResult accessResult(String tenant, String actor, String memberKey, String requestId,
+      MembershipController.ResultQuery input) {
+    mutex.lock(tenant);
+    access.requireRole(tenant, actor, OWNER, ORG_ADMIN);
+    var target = readAccess(tenant, memberKey, false, true);
+    mutex.actors(tenant, java.util.List.of(actor, target.actorId()));
+    access.requireWriteRole(tenant, actor, OWNER, ORG_ADMIN);
+    if (requestId == null || !requestId.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
+      throw DomainException.invalid("INVALID_MEMBER_RESULT_REFERENCE");
+    boolean revoke = input.operation() == MembershipController.Operation.REVOKE;
+    if ((revoke && (input.role() != null || input.subjectId() != null || input.classIds() != null))
+        || (!revoke && input.role() == null)) throw DomainException.invalid("INVALID_MEMBER_RESULT_QUERY");
+    MemberAccess committed = null;
+    if (revoke) {
+      var result = idempotency.findCommitted(tenant, actor, "membership.revoke", requestId,
+          java.util.Map.of("memberKey", memberKey, "version", input.version()), Boolean.class)
+          .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "MEMBER_RESULT_UNAVAILABLE"));
+      if (!Boolean.TRUE.equals(result)) throw new IllegalStateException("Membership revocation journal invalid");
+    } else {
+      committed = idempotency.findCommitted(tenant, actor, "membership.access", requestId,
+          accessFingerprint(memberKey, input.role(), input.subjectId(), classScopes.normalize(input.classIds()), input.version()),
+          MemberAccess.class)
+          .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "MEMBER_RESULT_UNAVAILABLE"));
+      if (!committed.memberKey().equals(memberKey) || !committed.actorId().equals(target.actorId()))
+        throw new IllegalStateException("Membership journal scope mismatch");
+    }
+    var current = readAccess(tenant, memberKey, true, true);
+    boolean active = jdbc.queryForObject(
+        "SELECT COUNT(*) FROM tenant_members WHERE tenant_id=? AND actor_key=? AND revoked_at IS NULL",
+        Integer.class, tenant, memberKey) == 1;
+    return new OperationResult(requestId, input.operation(), committed, revoke, current, active ? "ACTIVE" : "REVOKED");
+  }
+
+  record OperationResult(String requestId, MembershipController.Operation operation,
+      MemberAccess committedAccess, boolean revocationCommitted, MemberAccess current, String currentState) {}
 
   private MemberAccess readAccess(
       String tenant, String memberKey, boolean lock, boolean includeRevoked) {

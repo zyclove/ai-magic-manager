@@ -1,6 +1,6 @@
 # 监护人 Android 客户端：阶段交付与剩余门槛
 
-更新：2026-10-13。此文档区分已提交代码和生产可用状态。目标区域为中国大陆，首发机构合同优先；现有 Web 管理台仍承担平台运营、批量策略、合同和诊断流程。
+更新：2026-10-14。此文档区分已提交代码和生产可用状态。目标区域为中国大陆，首发机构合同优先；现有 Web 管理台仍承担平台运营、批量策略、合同和诊断流程。
 
 ## 当前实现
 
@@ -9,6 +9,7 @@
 | 登录与会话 | AppAuth 系统浏览器发起 Authorization Code + PKCE；内存访问令牌、加密存储刷新令牌；到期自动刷新、退出清除本地凭据 | Keycloak 公共客户端 `ai-manager-parent`；`GET /api/v1/me` |
 | 工作空间 | 读取当前成员可见的家庭/机构，切换时重新核对成员角色；儿童角色没有成人操作入口 | `GET /tenants`、`GET /tenants/{id}/membership`；后端仍做逐请求鉴权 |
 | 儿童/学生档案 | 昵称与年龄段一页填写；分页搜索、修改、归档与历史结果恢复；写前安全验证和持久记录，后台隐藏，未知结果不自动重发 | `/subjects/management`、`/{id}/management`、`/changes`、`/operation-results/{requestId}/query`；见[档案管理交付](parent-subject-management-delivery.md) |
+| 成员与权限 | 家庭所有者和机构管理员从档案页进入，查看成员、调整角色及学生/班级范围、撤销、查历史和恢复原操作；主按钮固定底部，支持两倍字体 | 既有成员 access/history 与新增 `/access-results/{requestId}/query`；见[手机成员权限交付](parent-member-access-delivery.md) |
 | 消息中心 | 顶部未读提醒、全部/未读分页、单条及本页已读；未知结果按原选择重试；直达当前申请与交付详情，后台隐藏并暂停轮询 | 既有 `/notifications`、`/unread-count`、`/{id}/read`、`/read`；与管理台共享纯 Dart 协议，见[手机消息中心交付](parent-notifications-delivery.md) |
 | 统一审批表单 | 申请列表和消息/历史详情均可直接处理；核对目标，选择不超过申请的时长或拒绝原因，验证后提交；未知结果保留原记录并只读恢复 | 复用原 `/access-requests/{id}/decisions`、版本与幂等接口；见[统一审批交付](parent-access-decision-delivery.md) |
 | 应用权限观察 | 设备卡片直达；搜索应用、查看近期/陈旧/未知权限状态，独立授权及撤回；写前验证、持久记录和只读恢复，默认功能开关关闭 | 注册绑定 `/permission-observation-settings/changes` 及原结果查询，复用设备上报和快照接口；见[手机权限观察交付](parent-permission-observation-delivery.md) |
@@ -53,7 +54,7 @@
 
 ## 尚未完成
 
-2026-10-14 增量：手机策略中心已接入[每日额度](parent-quota-delivery.md)与[每周计划](parent-quota-plan-delivery.md)；机构档案页已接入[班级与名册](parent-class-management-delivery.md)的新建、改名、添加/移出、转班、归档及原操作恢复。下文关于这些流程仅由 Web 管理台承担的历史描述已被上述阶段交付取代；真实设备执行、合同确认和其余发布门槛仍未因此完成。
+2026-10-14 增量：手机策略中心已接入[每日额度](parent-quota-delivery.md)与[每周计划](parent-quota-plan-delivery.md)；机构档案页已接入[班级与名册](parent-class-management-delivery.md)的新建、改名、添加/移出、转班、归档及原操作恢复。手机成员目录、角色/范围编辑、撤销和原结果恢复亦已接入，见[成员权限交付](parent-member-access-delivery.md)。下文关于这些流程仅由 Web 管理台承担的历史描述已被上述阶段交付取代；真实设备执行、合同确认和其余发布门槛仍未因此完成。
 
 - 真机安装、系统浏览器回跳、Keycloak 近期 MFA、令牌轮换/吊销、TLS 与 Android 生命周期恢复的端到端验收；当前不能称为已可生产发布。
 - 临时访问申请已显示授权范围内的儿童、应用、包名和设备名称；审计角色不额外获得这些展示资料。跨进程待核对提醒已接入 Android 本地安全存储，但真机进程回收和存储故障演练仍未完成；超长列表虚拟滚动、推送通知和离线只读快照仍待完善。当前列表经服务端按持久化 `PENDING` 筛选后每次加载 50 条；主体/设备生命周期可能在读取时使申请失效，客户端按响应实际状态隐藏这类项目。名称是帮助成人核对的目录资料，并非应用安全性或设备执行证明。

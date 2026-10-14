@@ -4,6 +4,7 @@ import '../core/parent_api.dart';
 import '../core/parent_session.dart';
 import '../core/subjects.dart';
 import 'class_center.dart';
+import 'member_center.dart';
 
 /// Identity is captured once; background content is hidden and reads invalidated.
 mixin SubjectScope<T extends StatefulWidget> on State<T>
@@ -169,6 +170,42 @@ class _SubjectCenterState extends State<SubjectCenter>
                                       const SizedBox(height: 8),
                                       const Text('只需昵称和年龄段，无需真实姓名、生日或照片。'),
                                       const SizedBox(height: 16),
+                                      if (const {'OWNER', 'ORG_ADMIN'}
+                                          .contains(role))
+                                        Card(
+                                            child: ListTile(
+                                                leading: const Icon(Icons
+                                                    .admin_panel_settings_outlined),
+                                                title: const Text('成员与权限'),
+                                                subtitle: const Text(
+                                                    '分配职责、学生和班级访问范围'),
+                                                trailing: const Icon(
+                                                    Icons.chevron_right),
+                                                onTap: opening
+                                                    ? null
+                                                    : () async {
+                                                        setState(() =>
+                                                            opening = true);
+                                                        try {
+                                                          await Navigator.of(
+                                                                  context)
+                                                              .push(MaterialPageRoute<
+                                                                      void>(
+                                                                  builder: (_) =>
+                                                                      MemberCenter(
+                                                                          session:
+                                                                              session)));
+                                                        } finally {
+                                                          if (mounted) {
+                                                            setState(() =>
+                                                                opening =
+                                                                    false);
+                                                          }
+                                                        }
+                                                        if (available) {
+                                                          await _reload();
+                                                        }
+                                                      })),
                                       if (session.tenant?['kind'] ==
                                               'ORGANIZATION' &&
                                           const {'OWNER', 'ORG_ADMIN'}

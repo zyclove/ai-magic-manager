@@ -96,6 +96,22 @@ class MembershipController {
       @Size(max = 36) String subjectId,
       @Size(max = 50) java.util.List<@NotBlank @Size(max = 36) String> classIds) {}
 
+  @PostMapping("/tenants/{tenantId}/members/{memberKey}/access-results/{requestId}/query")
+  org.springframework.http.ResponseEntity<MembershipService.OperationResult> accessResult(
+      @AuthenticationPrincipal Jwt actor, @PathVariable String tenantId,
+      @PathVariable String memberKey, @PathVariable String requestId,
+      @Valid @RequestBody ResultQuery input) {
+    return org.springframework.http.ResponseEntity.ok()
+        .cacheControl(org.springframework.http.CacheControl.noStore())
+        .body(members.accessResult(tenantId, actor.getSubject(), memberKey, requestId, input));
+  }
+
+  enum Operation { UPDATE, REVOKE }
+  record ResultQuery(
+      @NotNull Operation operation, @NotNull @Min(0) Long version,
+      Role role, @Size(max = 36) String subjectId,
+      @Size(max = 50) java.util.List<@NotBlank @Size(max = 36) String> classIds) {}
+
   @DeleteMapping("/tenants/{tenantId}/members/{memberKey}/access")
   @ResponseStatus(HttpStatus.NO_CONTENT)
   void revokeAccess(
