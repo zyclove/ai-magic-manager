@@ -1,0 +1,575 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "stage": "guardian-enrollment-experience",
+  "recordedAt": "2026-10-14T10:13:15.632526+00:00",
+  "releaseSource": {
+    "base": "620d157d405a78fd23329d6cc9c223fa1f21b63e",
+    "manifestSha256": "d63f5a5315bddae4ebcf3f5731ca443f31d37c9c56bbcabd0236d70a11d660f0",
+    "allFrozenFilesMatched": 1269,
+    "ownedFiles": [
+      {
+        "path": "apps/guardian/lib/core/api.dart",
+        "sha256": "dcd2d8c25b3888310eb313056b15c773288de238413efb8f6eba598c78295578",
+        "bytes": 20998
+      },
+      {
+        "path": "apps/guardian/lib/core/session.dart",
+        "sha256": "2b5517b7ac7c08455b0a1fbf6b010e37bc6e6c90e4718b56ee9237043236bde3",
+        "bytes": 12209
+      },
+      {
+        "path": "apps/guardian/lib/core/scoped_http_client.dart",
+        "sha256": "f6084c134439b08be507e4c8d89e138c57e2bfba824702f6a713c08213402e5f",
+        "bytes": 1553
+      },
+      {
+        "path": "apps/guardian/lib/pages/console_pages.dart",
+        "sha256": "dfcc2fbf2242652ca36472102aa6ba53de2b7991c83435c66137a4816a01b3d3",
+        "bytes": 68129
+      },
+      {
+        "path": "apps/guardian/test/api_scope_test.dart",
+        "sha256": "8861f7b316e7df4460bfc06a09563c471e9e3b1f673d22651a08a674afcf8a9f",
+        "bytes": 10115
+      },
+      {
+        "path": "apps/guardian/test/scoped_http_client_test.dart",
+        "sha256": "b3ad56e5eafcf6e6c0dadec5fb178062acbc9d3d6f7275b4a926b52167f9bb0f",
+        "bytes": 5023
+      },
+      {
+        "path": "apps/guardian/lib/core/enrollment_journal.dart",
+        "sha256": "dd6b856d97234f764eb91e420bb623d4228305513dd1444f1dda9adb6d9924ef",
+        "bytes": 6613
+      },
+      {
+        "path": "apps/guardian/lib/core/browser_enrollment_journal.dart",
+        "sha256": "95f94130f32c7f6b77bcd95805e673f4ad48e148c66c55b3313b5e6a054f4175",
+        "bytes": 704
+      },
+      {
+        "path": "apps/guardian/test/enrollment_journal_test.dart",
+        "sha256": "2166ac745d79d2b608f5ee806ca6c3d82fad4282b8b4b5409dc85c1b8ad8c2fd",
+        "bytes": 13932
+      },
+      {
+        "path": "apps/guardian/lib/core/enrollment_recovery.dart",
+        "sha256": "88d37239c5c5db68dcf42abd3b0a1dd3666ede3c7e09f7af307f7b0bf561069e",
+        "bytes": 20733
+      },
+      {
+        "path": "apps/guardian/test/enrollment_recovery_test.dart",
+        "sha256": "26c449a7696dab960f61a6a4f9f2066366b02f28cff8cac1448349f9267fdd85",
+        "bytes": 32544
+      },
+      {
+        "path": "apps/guardian/lib/ui/enrollment_dialog.dart",
+        "sha256": "45d90e99285fe29280a5eb5d627d375497a37fafe308fb4e6ff201a97f9fa82b",
+        "bytes": 22876
+      },
+      {
+        "path": "apps/guardian/test/enrollment_dialog_test.dart",
+        "sha256": "7c4ac2fb8573d365ff97afda119c9626ea0bd76bc7615ffdd15de2e82bcd18b7",
+        "bytes": 15072
+      },
+      {
+        "path": "apps/guardian/tool/verify_enrollment_http_test.dart",
+        "sha256": "265a3191ec04a42b1261c07624403689d4dffb69512e64e8b89a01700d3048dc",
+        "bytes": 9607
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/GuardianEnrollmentRecoveryHttpInteropTest.java",
+        "sha256": "754e7d235e50da905e6ba4fdbae2348934217ec29be39b63392605032c585ade",
+        "bytes": 9489
+      },
+      {
+        "path": "scripts/build-deployment.ps1",
+        "sha256": "804909dc7cbc8326c03d5a6cd208139f4eec086f46f695fddfea35e957aba82c",
+        "bytes": 10908
+      },
+      {
+        "path": "docs/superpowers/plans/2026-10-14-guardian-enrollment-recovery.md",
+        "sha256": "586e3ac2d531934bc1b3d90f13c3b7a75bfd1d78a0b3acca1c13cc28cf7ee8ff",
+        "bytes": 5328
+      }
+    ]
+  },
+  "orchestrationSource": {
+    "manifestSha256": "6e8e22b055429081375fd8f64817315ce9875e58cef041bbcabe9f487660e338",
+    "files": [
+      {
+        "path": "scripts/console-activation.ps1",
+        "sha256": "8c1d5406b89c98e64744ef0532e3c05e7cabb3218fd7552ba2b365fb77bec380"
+      },
+      {
+        "path": "scripts/start-active-console.ps1",
+        "sha256": "64c6f23c4ea73b9cd53bebc404e60b0a2d920cc6071c01b70b44d402341c3a5f"
+      },
+      {
+        "path": "scripts/tests/test_console_activation.py",
+        "sha256": "360cdeaeb2f38cd9876fefeee07100a3731203cb0374ca709e5f48f8e6f41c3d"
+      },
+      {
+        "path": "scripts/tests/test_start_active_console.py",
+        "sha256": "5930be25bc35d46eb5a8bc7367730c9d43e21c93033faa64cf4acf37928b1e1d"
+      }
+    ]
+  },
+  "gates": {
+    "focused": {
+      "tests": 133,
+      "passed": 133,
+      "analysisIssues": 0,
+      "receipt": {
+        "analysisExitCode": 0,
+        "focusedExitCode": 0,
+        "completedAt": "2026-10-14T14:22:51.8827435+08:00"
+      },
+      "logs": [
+        {
+          "path": ".local/runtime/guardian-enrollment-release-focused.log",
+          "sha256": "c2aa258e38b48ca2948edb7132d35acb355b0677189fb13afa27186b188dfac6",
+          "bytes": 24845
+        },
+        {
+          "path": ".local/runtime/guardian-enrollment-release-analyze.log",
+          "sha256": "74b1651f8f41f1a3a514ce35bf9ae0f2f3b19a2ed8636a87fab9e2c2bdafe4b3",
+          "bytes": 202
+        }
+      ]
+    },
+    "fullBuild": {
+      "receipt": {
+        "exitCode": 0,
+        "completedAt": "2026-10-14T14:59:21.3790813+08:00",
+        "stage": "verified-build",
+        "source": "D:/codes/mobile/ai-manager/.local/v1-enrollment-final-source-20261014",
+        "receiptSha256": "be7b787da470ab06b1fdf5a798df42393ab045cb9cb45c06ad0669f06a6638d8"
+      },
+      "inspection": {
+        "artifactRoot": "artifacts/release-2fc2c365a9784842aeaf48560394ccff",
+        "backendSha256": "bbc8332bcc522e3bc6caba0899102d454de4bb3e1e6836563007bd480b709944",
+        "inspectedAt": "2026-10-14T15:16:43.6683085+08:00",
+        "releaseManifestSha256": "0c0bb527d44fb35a1e1c80c523c090873827a8b66c29c8d79ddf313396e38ed7",
+        "source": "D:/codes/mobile/ai-manager/.local/v1-enrollment-final-source-20261014",
+        "backend": {
+          "skipped": 9,
+          "errors": 0,
+          "failures": 0,
+          "tests": 1021
+        },
+        "skippedSuites": [
+          {
+            "skipped": 1,
+            "name": "com.aimanager.AndroidChildSubmissionJourneyTest",
+            "tests": 1
+          },
+          {
+            "skipped": 1,
+            "name": "com.aimanager.AndroidCleanupHttpsJourneyTest",
+            "tests": 1
+          },
+          {
+            "skipped": 1,
+            "name": "com.aimanager.retention.internal.ErasureAdmissionStoreTest",
+            "tests": 10
+          },
+          {
+            "skipped": 4,
+            "name": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+            "tests": 4
+          },
+          {
+            "skipped": 2,
+            "name": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+            "tests": 14
+          }
+        ],
+        "interop": [
+          {
+            "skipped": 0,
+            "errors": 0,
+            "name": "com.aimanager.GuardianEnrollmentRecoveryHttpInteropTest",
+            "failures": 0,
+            "tests": 1
+          },
+          {
+            "skipped": 0,
+            "errors": 0,
+            "name": "com.aimanager.ParentHelpHttpInteropTest",
+            "failures": 0,
+            "tests": 1
+          },
+          {
+            "skipped": 0,
+            "errors": 0,
+            "name": "com.aimanager.ParentNotificationHttpInteropTest",
+            "failures": 0,
+            "tests": 15
+          },
+          {
+            "skipped": 0,
+            "errors": 0,
+            "name": "com.aimanager.ParentObservationHttpInteropTest",
+            "failures": 0,
+            "tests": 1
+          },
+          {
+            "skipped": 0,
+            "errors": 0,
+            "name": "com.aimanager.ParentPermissionHttpInteropTest",
+            "failures": 0,
+            "tests": 1
+          },
+          {
+            "skipped": 0,
+            "errors": 0,
+            "name": "com.aimanager.ParentSubjectHttpInteropTest",
+            "failures": 0,
+            "tests": 1
+          }
+        ],
+        "guardianSha256": "3912157e01e08aaa10900b4e8a51ffa0a0bb1cff293bbc3de480d18902dfeab1",
+        "applications": [
+          {
+            "testSummary": [
+              "00:32 +427: D:/codes/mobile/ai-manager/.local/v1-enrollment-final-source-20261014/.local/deployment/source-e1ede4194b374d11be2254cbedea24ad/apps/guardian/test/usage_report_jobs_view_test.dart: cancel requires confirmation and replaces ready state",
+              "00:33 +428: All tests passed!"
+            ],
+            "project": "apps-guardian",
+            "analysisSummary": [
+              "Analyzing guardian...                                           ",
+              "No issues found! (ran in 12.2s)"
+            ]
+          },
+          {
+            "testSummary": [
+              "00:16 +186: D:/codes/mobile/ai-manager/.local/v1-enrollment-final-source-20261014/.local/deployment/source-e1ede4194b374d11be2254cbedea24ad/apps/parent/test/schedules_test.dart: plan detail labels evaluation as plan-only and keeps its original zone",
+              "00:17 +187: All tests passed!"
+            ],
+            "project": "apps-parent",
+            "analysisSummary": [
+              "Analyzing parent...                                             ",
+              "No issues found! (ran in 11.1s)"
+            ]
+          },
+          {
+            "testSummary": [
+              "00:21 +177: D:/codes/mobile/ai-manager/.local/v1-enrollment-final-source-20261014/.local/deployment/source-e1ede4194b374d11be2254cbedea24ad/apps/child/test/submission_section_test.dart: optional reason stays consistent after create and detail refresh",
+              "00:21 +178: All tests passed!"
+            ],
+            "project": "apps-child",
+            "analysisSummary": [
+              "Analyzing child...                                              ",
+              "No issues found! (ran in 17.6s)"
+            ]
+          }
+        ],
+        "snapshot": "D:\\codes\\mobile\\ai-manager\\.local\\v1-enrollment-final-source-20261014\\.local\\deployment\\source-e1ede4194b374d11be2254cbedea24ad",
+        "verifiedProjects": [
+          {
+            "analysis": "passed",
+            "tests": "passed",
+            "toolkit": "flutter",
+            "path": "apps/guardian"
+          },
+          {
+            "analysis": "passed",
+            "tests": "passed",
+            "toolkit": "flutter",
+            "path": "apps/child"
+          },
+          {
+            "analysis": "passed",
+            "tests": "passed",
+            "toolkit": "flutter",
+            "path": "apps/parent"
+          },
+          {
+            "analysis": "passed",
+            "tests": "passed",
+            "toolkit": "dart",
+            "path": "packages/device_access"
+          },
+          {
+            "analysis": "passed",
+            "tests": "passed",
+            "toolkit": "dart",
+            "path": "packages/device_cleanup"
+          },
+          {
+            "analysis": "passed",
+            "tests": "passed",
+            "toolkit": "dart",
+            "path": "packages/device_identity"
+          },
+          {
+            "analysis": "passed",
+            "tests": "passed",
+            "toolkit": "dart",
+            "path": "packages/device_observation"
+          },
+          {
+            "analysis": "passed",
+            "tests": "passed",
+            "toolkit": "flutter",
+            "path": "packages/device_operations/example"
+          },
+          {
+            "analysis": "passed",
+            "tests": "passed",
+            "toolkit": "flutter",
+            "path": "packages/device_operations"
+          },
+          {
+            "analysis": "passed",
+            "tests": "passed",
+            "toolkit": "dart",
+            "path": "packages/device_policy"
+          },
+          {
+            "analysis": "passed",
+            "tests": "passed",
+            "toolkit": "dart",
+            "path": "packages/device_reports"
+          },
+          {
+            "analysis": "passed",
+            "tests": "not-present",
+            "toolkit": "dart",
+            "path": "packages/notification_client"
+          },
+          {
+            "analysis": "passed",
+            "tests": "passed",
+            "toolkit": "flutter",
+            "path": "packages/usage_report_ui"
+          },
+          {
+            "analysis": "passed",
+            "tests": "passed",
+            "toolkit": "dart",
+            "path": "packages/usage_reporting"
+          }
+        ]
+      }
+    },
+    "launcher": {
+      "tests": 44,
+      "passed": 44,
+      "receipt": {
+        "completedAt": "2026-10-14T17:56:12.6541723+08:00",
+        "exitCode": 0,
+        "receiptSha256": "00285e88bb40b28f76b3d6d7b74f658d81dd10305f8e42a8223795801a039e73"
+      },
+      "log": {
+        "path": ".local/runtime/console-launcher-release.log",
+        "sha256": "b6aaa5b8e0fff3bd193e885ee68d621677acf679432670ee0cc5e162e12da615",
+        "bytes": 150
+      }
+    },
+    "primaryCheckOnly": {
+      "receipt": {
+        "exitCode": 0,
+        "checkedAt": "2026-10-14T18:10:40.8844989+08:00",
+        "sourceSha256": "64c6f23c4ea73b9cd53bebc404e60b0a2d920cc6071c01b70b44d402341c3a5f",
+        "receiptSha256": "4738f89ba818a68b89174f650b2c042616d14851bbe92fa9a4f41200a06af512"
+      },
+      "log": {
+        "path": ".local/runtime/guardian-enrollment-primary-final-check.log",
+        "sha256": "b4e9aa51eeb48335e8eed42f26eafce455a5c6714d4f8265b9a1884ff046695c",
+        "bytes": 297
+      }
+    },
+    "primaryActualRestart": {
+      "receipt": {
+        "project": "ai-manager-v1-enrollment-20261014",
+        "hostProjectAndTemporaryPortRestored": true,
+        "activationPointerUnchanged": true,
+        "completedAt": "2026-10-14T18:06:23.8319952+08:00",
+        "exitCode": 0,
+        "sixSameHealthyContainersImagesAndMounts": true,
+        "publicUrl": "http://localhost:18101",
+        "schemaVersion": 1,
+        "actualEdgeStopAndPrimaryStart": true,
+        "receiptSha256": "0e04d9561cc923cdda8b39da9e89e3ef7fa66d3d6db917e307edbd1ff539c8ef"
+      },
+      "log": {
+        "path": ".local/runtime/guardian-enrollment-primary-restart.log",
+        "sha256": "47a745672e27be2fc695cd818ad79ddf2c7a75a7d7a0e4ea5b2adaa38bc212ea",
+        "bytes": 446
+      }
+    }
+  },
+  "runtime": {
+    "state": "COMMITTED",
+    "project": "ai-manager-v1-enrollment-20261014",
+    "publicUrl": "http://localhost:18101",
+    "committedAt": "2026-10-14T17:44:50.6376382+08:00",
+    "backendSha256": "bbc8332bcc522e3bc6caba0899102d454de4bb3e1e6836563007bd480b709944",
+    "guardianSha256": "3912157e01e08aaa10900b4e8a51ffa0a0bb1cff293bbc3de480d18902dfeab1",
+    "releaseManifestSha256": "0c0bb527d44fb35a1e1c80c523c090873827a8b66c29c8d79ddf313396e38ed7",
+    "activationReceiptSha256": "39eedfcc6487765a78b3ffd4c8b5739ce9d9fd5f34d09697427617f634bba645",
+    "pointerSha256": "9b0558e3dfe37cf53ef7ca662894f2230d01a689440cd9f76c03087bf1d5eceb",
+    "schemaVersions": [
+      "1",
+      "2"
+    ],
+    "oldVolumesPreserved": true,
+    "newIndependentVolumes": [
+      "ai-manager-v1-enrollment-20261014_business-data",
+      "ai-manager-v1-enrollment-20261014_identity-data",
+      "ai-manager-v1-enrollment-20261014_erasure-data"
+    ],
+    "ledgerReceiptSha256": "09efdb4f592873a6dcb7c3c24e8bb0a6b92a025783c3cb8733a892ac291c5dab",
+    "services": [
+      {
+        "Service": "backend",
+        "ID": "4c662aad812b",
+        "Image": "ai-manager/backend:ai-manager-v1-enrollment-20261014",
+        "State": "running",
+        "Health": "healthy"
+      },
+      {
+        "Service": "database",
+        "ID": "df81395e6b1c",
+        "Image": "mysql:8.4.11@sha256:6ea90827b1100f8f2ae306a539f86d2c264a26ed435a2a9f75551dd5c3aeb242",
+        "State": "running",
+        "Health": "healthy"
+      },
+      {
+        "Service": "edge",
+        "ID": "3270936c3bcc",
+        "Image": "ai-manager/edge:ai-manager-v1-enrollment-20261014",
+        "State": "running",
+        "Health": "healthy"
+      },
+      {
+        "Service": "erasure-database",
+        "ID": "4a7a27f05ad6",
+        "Image": "mysql:8.4.11@sha256:6ea90827b1100f8f2ae306a539f86d2c264a26ed435a2a9f75551dd5c3aeb242",
+        "State": "running",
+        "Health": "healthy"
+      },
+      {
+        "Service": "identity",
+        "ID": "583ca2dd2283",
+        "Image": "ai-manager/identity:ai-manager-v1-enrollment-20261014",
+        "State": "running",
+        "Health": "healthy"
+      },
+      {
+        "Service": "identity-database",
+        "ID": "d1449a9c44b2",
+        "Image": "mysql:8.4.11@sha256:6ea90827b1100f8f2ae306a539f86d2c264a26ed435a2a9f75551dd5c3aeb242",
+        "State": "running",
+        "Health": "healthy"
+      }
+    ],
+    "smoke": {
+      "publicUrl": "http://localhost:18101",
+      "frontend": "PASS",
+      "callbackFallback": "PASS",
+      "discovery": "PASS",
+      "anonymousApi": "PASS",
+      "backendHealth": "PASS",
+      "authenticatedJourney": "NOT_RUN",
+      "nativeDeviceExecution": "NOT_RUN"
+    },
+    "authenticatedBrowser": {
+      "schemaVersion": 1,
+      "origin": "http://localhost:18101",
+      "journey": "Normal OIDC authorization code and PKCE login with the user-authorized administrator",
+      "result": "Authenticated welcome page visible with create workspace and join invitation actions",
+      "businessFixturesCreated": false,
+      "mfaEnrolled": false,
+      "nativeDeviceJourneyVerified": false,
+      "checkedAt": "2026-10-14T10:02:30.131Z"
+    }
+  },
+  "backup": {
+    "receiptSha256": "ec31aaa9cc9200ed26de460c2ccf25bd9626ba31f81914a736cf1ad2056eb207",
+    "threeDatabaseDumpsCaptured": true,
+    "oldWritersStoppedDuringDump": true,
+    "eventConfigurations": [
+      {
+        "scheduler": "ON",
+        "service": "database",
+        "performanceSchemaEnabled": true,
+        "eventWorkerInstrumentEnabled": true,
+        "eventWorkerThreads": 0,
+        "enabledEvents": 0
+      },
+      {
+        "scheduler": "ON",
+        "service": "identity-database",
+        "performanceSchemaEnabled": true,
+        "eventWorkerInstrumentEnabled": true,
+        "eventWorkerThreads": 0,
+        "enabledEvents": 0
+      },
+      {
+        "scheduler": "ON",
+        "service": "erasure-database",
+        "performanceSchemaEnabled": true,
+        "eventWorkerInstrumentEnabled": true,
+        "eventWorkerThreads": 0,
+        "enabledEvents": 0
+      }
+    ],
+    "externalAdministrativeWritersExcludedByOperator": false,
+    "databaseRestoreTested": false,
+    "firstCutoverRollback": {
+      "recoveryRequired": false,
+      "failedStage": "canonical-verification",
+      "newStopExit": 0,
+      "oldRestartExit": 0,
+      "failedAt": "2026-10-14T17:35:34.5104891+08:00",
+      "metadataRestored": true,
+      "restoredDatabases": false,
+      "rollbackVerified": true
+    },
+    "failedNewInitializationArchiveSha256": "20cc2060623b6182e9b30f7fac1562d32be01cd112e4603281018ef26e127d0a",
+    "failedNewArchiveContent": "Directory and 56-byte auto.cnf only; backend never started; only failed fresh business volume replaced"
+  },
+  "browserEvidence": [
+    {
+      "path": "docs/images/guardian-enrollment-desktop.jpg",
+      "sha256": "f3c4bf946c08dda2ce655b5a8e2d4805416e01fe9bb39e3b904c6e471d538208",
+      "viewport": {
+        "width": 1280,
+        "height": 720
+      },
+      "scope": "Production dialog with explicitly labeled local mock data"
+    },
+    {
+      "path": "docs/images/guardian-enrollment-mobile.jpg",
+      "sha256": "7064145debfaf7b98aae93926ad9b3a7667dabe045edd95b19679233a3f1832e",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "scope": "Production dialog with explicitly labeled local mock data"
+    },
+    {
+      "path": "docs/images/guardian-enrollment-live-admin.jpg",
+      "sha256": "c75de286cb720801a3bee6ab7c6de0f86af93575810bc803744751277b172504",
+      "viewport": {
+        "width": 457,
+        "height": 668
+      },
+      "scope": "Real authenticated local welcome page; no business fixtures created"
+    }
+  ],
+  "limits": [
+    "Full build covers the frozen 620d157d base plus 17 exact files, not unrelated later shared-worktree edits.",
+    "Nine backend tests were skipped; see skippedSuites. They are not counted as passed.",
+    "HTTP interop uses H2, test JWT/MFA claims and SQL prepared claimed-device prerequisites; no real IdP, MFA or hardware proof.",
+    "Actual local login uses normal OIDC/PKCE; no real workspace, subject, enrollment or device fixture was created in this runtime.",
+    "Recovery journal is non-secret sessionStorage scoped to actor/tenant/role in the same tab; browser storage and cross-tab exclusivity are not fully verified.",
+    "MFA enrollment, real hardware scanning/install, native authorization/EMM and full public erasure remain separate acceptance work.",
+    "One failed canonical HTTP verification triggered an actual successful old-service rollback. Database backup restoration and forced-process-crash recovery were not tested.",
+    "Primary startup is start-active-console.ps1. The other session owns legacy start-console.ps1, which does not consume the new pointer."
+  ]
+}

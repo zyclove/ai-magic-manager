@@ -2,8 +2,18 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:math';
 import 'package:http/http.dart' as http;
+import 'scoped_http_client.dart';
 
 typedef Json = Map<String, dynamic>;
+final _clientRequestIdPattern = RegExp(
+    r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$');
+
+void _ensureCurrent(bool Function()? isCurrent) {
+  if (isCurrent != null && !isCurrent()) {
+    throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+  }
+}
+
 String requestId() {
   final random = Random.secure();
   return List.generate(
@@ -32,6 +42,8 @@ class ApiFailure implements Exception {
         'ENTERPRISE_BINDING_EXISTS' => '已有企业绑定申请，请刷新查看当前状态。',
         'ENTERPRISE_BINDING_NOT_ACTIVE' => '企业资源尚未完成独立审核。',
         'INVALID_TENANT_ID' => '请输入有效的机构工作空间 ID。',
+        'INVALID_CLIENT_REQUEST_ID' => '本次操作编号无效，请关闭窗口后重新开始。',
+        'INVALID_ENROLLMENT_ID' => '请输入完整的原注册编号，格式为 36 位小写字母、数字和连字符。',
         'INVALID_OWNERSHIP_EVIDENCE' => '请填写 8–200 字的权属证明索引。',
         'INVALID_BINDING_REASON' => '请填写 5–500 字的审核或撤销理由。',
         'ENTERPRISE_BINDING_NOT_PENDING' => '申请状态已变化，请刷新后再审核。',
@@ -199,15 +211,30 @@ class Api {
       {this.baseUrl = const String.fromEnvironment('API_URL',
           defaultValue: 'http://localhost:8082/api/v1')});
   Future<dynamic> send(String method, String path,
-      {Json? body, int? version, String? key}) async {
+      {Json? body,
+      int? version,
+      String? key,
+      String? clientRequestId,
+      bool Function()? isCurrent}) async {
     try {
-      final signature = jsonEncode([method, path, version, body]);
+      _ensureCurrent(isCurrent);
+      if (clientRequestId != null) {
+        final match = _clientRequestIdPattern.firstMatch(clientRequestId);
+        if (match == null || match.end != clientRequestId.length) {
+          throw const ApiFailure(400, 'INVALID_CLIENT_REQUEST_ID');
+        }
+      }
+      final signature =
+          jsonEncode([method, path, version, body, clientRequestId]);
       if (key != null &&
           _pendingWrites.containsKey(key) &&
           _pendingWrites[key] != signature) {
         throw const ApiFailure(409, 'PENDING_OPERATION_UNCHANGED');
       }
-      final req = http.Request(method, Uri.parse('$baseUrl$path'));
+      final uri = Uri.parse('$baseUrl$path');
+      final req = isCurrent == null
+          ? http.Request(method, uri)
+          : ScopeGuardedRequest(method, uri, isCurrent: isCurrent);
       req.headers['Accept'] = 'application/json';
       if (body != null) {
         req.headers['Content-Type'] = 'application/json';
@@ -215,9 +242,18 @@ class Api {
       }
       if (version != null) req.headers['If-Match'] = '"$version"';
       if (key != null) req.headers['Idempotency-Key'] = key;
+      if (clientRequestId != null) {
+        req.headers['Client-Request-Id'] = clientRequestId;
+      }
       if (key != null) _pendingWrites[key] = signature;
-      final response = await (() async =>
-              http.Response.fromStream(await (await client()).send(req)))()
+      final response = await (() async {
+        final authenticated = await client();
+        _ensureCurrent(isCurrent);
+        final value =
+            await http.Response.fromStream(await authenticated.send(req));
+        _ensureCurrent(isCurrent);
+        return value;
+      })()
           .timeout(const Duration(seconds: 25));
       if (key != null && response.statusCode < 500) _pendingWrites.remove(key);
       dynamic decoded;
@@ -239,17 +275,24 @@ class Api {
       return decoded;
     } on ApiFailure {
       rethrow;
+    } on ScopeChangedException {
+      throw const ApiFailure(409, 'WORKSPACE_CHANGED');
     } on TimeoutException {
+      _ensureCurrent(isCurrent);
       throw const ApiFailure(0, 'NETWORK_ERROR');
     } on http.ClientException {
+      _ensureCurrent(isCurrent);
       throw const ApiFailure(0, 'NETWORK_ERROR');
     }
   }
 
-  Future<PageResult> page(String path, {String? cursor}) async {
+  Future<PageResult> page(String path,
+      {String? cursor, bool Function()? isCurrent}) async {
     final separator = path.contains('?') ? '&' : '?';
     final result = await send('GET',
-        '$path${separator}limit=50${cursor == null ? '' : '&cursor=${Uri.encodeQueryComponent(cursor)}'}');
+        '$path${separator}limit=50${cursor == null ? '' : '&cursor=${Uri.encodeQueryComponent(cursor)}'}',
+        isCurrent: isCurrent);
+    _ensureCurrent(isCurrent);
     if (result is! Map || result['items'] is! List) {
       throw const ApiFailure(502, 'INVALID_RESPONSE');
     }
@@ -260,12 +303,14 @@ class Api {
         result['nextCursor']);
   }
 
-  Future<List<Json>> all(String path) async {
+  Future<List<Json>> all(String path, {bool Function()? isCurrent}) async {
     final items = <Json>[];
     String? cursor;
     final seen = <String>{};
     do {
-      final next = await page(path, cursor: cursor);
+      _ensureCurrent(isCurrent);
+      final next = await page(path, cursor: cursor, isCurrent: isCurrent);
+      _ensureCurrent(isCurrent);
       items.addAll(next.items);
       cursor = next.nextCursor;
       if (cursor != null && !seen.add(cursor)) {
@@ -273,6 +318,7 @@ class Api {
       }
       if (items.length > 10000) throw const ApiFailure(400, 'TOO_MANY_RESULTS');
     } while (cursor != null);
+    _ensureCurrent(isCurrent);
     return items;
   }
 }

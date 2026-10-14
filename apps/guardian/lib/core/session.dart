@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:oauth2/oauth2.dart' as oauth;
 import 'api.dart';
 import 'access.dart';
+import 'scoped_http_client.dart';
 import 'report_job_resume.dart';
 import 'contract_action_resume.dart';
 
@@ -23,6 +24,9 @@ class Session extends ChangeNotifier {
   String loginReturnPath = '/';
   Object? error;
   final _selection = SelectionGeneration();
+  final _authenticationOwners = AuthenticationOwner();
+  int _scopeGeneration = 0;
+  int get scopeGeneration => _scopeGeneration;
   late final Api api = Api(authenticatedClient);
   bool get authenticated => _client != null && profile != null;
   bool get canWrite => ['OWNER', 'GUARDIAN', 'ORG_ADMIN'].contains(role);
@@ -72,19 +76,45 @@ class Session extends ChangeNotifier {
   String get displayName =>
       profile?['name'] as String? ?? profile?['email'] as String? ?? '管理员';
   Uri get redirect => Uri.parse('${html.window.location.origin}/auth/callback');
-  void _save(oauth.Credentials credentials) =>
-      html.window.sessionStorage['ai-manager.session'] = credentials.toJson();
-  oauth.AuthorizationCodeGrant _grant(String verifier) =>
+  void _save(oauth.Credentials credentials, Object owner) =>
+      _authenticationOwners.saveIfCurrent(owner, () {
+        html.window.sessionStorage['ai-manager.session'] = credentials.toJson();
+      });
+
+  bool _installClient(oauth.Client next, Object owner) {
+    if (!_authenticationOwners.isCurrent(owner)) {
+      next.close();
+      return false;
+    }
+    _client?.close();
+    _client = next;
+    _scopeGeneration++;
+    return true;
+  }
+
+  oauth.AuthorizationCodeGrant _grant(String verifier, Object owner) =>
       oauth.AuthorizationCodeGrant(
           clientId,
           Uri.parse('$issuer/protocol/openid-connect/auth'),
           Uri.parse('$issuer/protocol/openid-connect/token'),
           codeVerifier: verifier,
           basicAuth: false,
-          onCredentialsRefreshed: _save);
+          httpClient: ScopeGuardedClient(http.Client()),
+          onCredentialsRefreshed: (credentials) => _save(credentials, owner));
   Future<void> initialize() async {
     ready = false;
     error = null;
+    final owner = _authenticationOwners.begin();
+    _scopeGeneration++;
+    _selection.invalidate();
+    final previousClient = _client;
+    _client = null;
+    profile = null;
+    tenants = [];
+    tenant = null;
+    role = '';
+    previousClient?.close();
+    notifyListeners();
     try {
       final uri = Uri.base;
       if (uri.path == '/auth/callback') {
@@ -94,33 +124,47 @@ class Session extends ChangeNotifier {
         if (DateTime.now().millisecondsSinceEpoch -
                 (pending['created'] as int) >
             600000) throw const ApiFailure(401, 'LOGIN_STATE_EXPIRED');
-        final grant = _grant(pending['verifier']);
+        final grant = _grant(pending['verifier'], owner);
         grant.getAuthorizationUrl(redirect,
             scopes: ['openid', 'profile', 'email', 'tenant:create'],
             state: pending['state']);
-        _client = await grant
+        final next = await grant
             .handleAuthorizationResponse(uri.queryParameters)
             .timeout(const Duration(seconds: 30));
-        _save(_client!.credentials);
+        if (!_installClient(next, owner)) return;
+        _save(next.credentials, owner);
         loginReturnPath = trustedReturnPath(pending['returnPath'] as String?);
         html.window.history.replaceState(null, '', loginReturnPath);
       } else {
         final saved = html.window.sessionStorage['ai-manager.session'];
         if (saved != null) {
-          _client = oauth.Client(oauth.Credentials.fromJson(saved),
+          final next = oauth.Client(oauth.Credentials.fromJson(saved),
               identifier: clientId,
               basicAuth: false,
-              onCredentialsRefreshed: _save);
+              httpClient: ScopeGuardedClient(http.Client()),
+              onCredentialsRefreshed: (credentials) => _save(credentials, owner));
+          if (!_installClient(next, owner)) return;
         }
       }
       if (_client != null) {
-        profile = await api.send('GET', '/me') as Json;
+        final activeClient = _client!;
+        final nextProfile = await api.send('GET', '/me',
+            isCurrent: () =>
+                _authenticationOwners.isCurrent(owner) &&
+                identical(_client, activeClient)) as Json;
+        if (!_authenticationOwners.isCurrent(owner)) return;
+        profile = nextProfile;
         await loadTenants();
       }
     } catch (e) {
+      if (!_authenticationOwners.isCurrent(owner)) return;
       error = e;
       _clear();
+      ready = true;
+      notifyListeners();
+      return;
     }
+    if (!_authenticationOwners.isCurrent(owner)) return;
     ready = true;
     notifyListeners();
   }
@@ -139,7 +183,8 @@ class Session extends ChangeNotifier {
       'returnPath': trustedReturnPath(html.window.location.pathname),
       'created': DateTime.now().millisecondsSinceEpoch
     });
-    final grant = _grant(verifier);
+    // This grant builds a redirect URL only; it never owns a signed-in client.
+    final grant = _grant(verifier, Object());
     final url = grant.getAuthorizationUrl(redirect,
         scopes: ['openid', 'profile', 'email', 'tenant:create'], state: state);
     final params = {
@@ -209,7 +254,12 @@ class Session extends ChangeNotifier {
   }
 
   Future<void> loadTenants() async {
-    tenants = await api.all('/tenants');
+    final activeClient = _client;
+    if (activeClient == null) throw const ApiFailure(401, 'UNAUTHENTICATED');
+    final nextTenants = await api.all('/tenants',
+        isCurrent: () => identical(_client, activeClient));
+    if (!identical(_client, activeClient)) return;
+    tenants = nextTenants;
     final selected = html.window.localStorage['ai-manager.workspace'];
     if (tenants.isNotEmpty) {
       await selectTenant(tenants.firstWhere((t) => t['id'] == selected,
@@ -222,14 +272,28 @@ class Session extends ChangeNotifier {
   }
 
   Future<void> selectTenant(Json next) async {
+    final activeClient = _client;
+    if (activeClient == null) throw const ApiFailure(401, 'UNAUTHENTICATED');
+    final generation = _selection.begin();
+    _scopeGeneration++;
+    notifyListeners();
     if (tenant != null && tenant!['id'] != next['id']) {
       html.window.sessionStorage.remove('ai-manager.report-resume');
       html.window.sessionStorage.remove('ai-manager.contract-resume');
     }
-    final generation = _selection.begin();
-    final membership =
-        await api.send('GET', '/tenants/${next['id']}/membership') as Json;
-    if (!_selection.current(generation)) return;
+    late final Json membership;
+    try {
+      membership = await api.send('GET', '/tenants/${next['id']}/membership',
+          isCurrent: () =>
+              _selection.current(generation) &&
+              identical(_client, activeClient)) as Json;
+    } on ApiFailure {
+      if (!_selection.current(generation) ||
+          !identical(_client, activeClient)) return;
+      rethrow;
+    }
+    if (!_selection.current(generation) ||
+        !identical(_client, activeClient)) return;
     tenant = next;
     role = membership['role'];
     html.window.localStorage['ai-manager.workspace'] = next['id'];
@@ -237,13 +301,16 @@ class Session extends ChangeNotifier {
   }
 
   void _clear() {
+    _authenticationOwners.invalidate();
+    _scopeGeneration++;
     _selection.invalidate();
-    _client?.close();
+    final previousClient = _client;
     _client = null;
     profile = null;
     tenants = [];
     tenant = null;
     role = '';
+    previousClient?.close();
     html.window.sessionStorage.remove('ai-manager.session');
     html.window.sessionStorage.remove('ai-manager.report-resume');
     html.window.sessionStorage.remove('ai-manager.contract-resume');

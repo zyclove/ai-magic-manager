@@ -1,10 +1,14 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../core/api.dart';
 import '../core/application_classification.dart';
-import '../core/enrollment_ticket.dart';
+import '../core/enrollment_recovery.dart';
+import '../core/browser_enrollment_journal.dart';
+import '../ui/enrollment_dialog.dart';
+import 'package:uuid/uuid.dart';
 import '../core/labels.dart';
 import '../core/observation.dart' show canReadObservation;
 import '../core/overview_summary.dart';
@@ -41,6 +45,10 @@ import 'scoped_overview_page.dart';
 import 'commercial_account_page.dart';
 import 'commercial_catalog_page.dart';
 import 'contracts_page.dart';
+
+final _enrollmentJournal = BrowserEnrollmentJournal();
+final _enrollmentChanges = ValueNotifier<int>(0);
+final _openEnrollmentScopes = <String>{};
 
 class ConsolePages extends StatelessWidget {
   final String section;
@@ -182,7 +190,9 @@ class ConsolePages extends StatelessWidget {
             empty: '还没有儿童档案',
             description: '只记录昵称和年龄段，不需要完整生日。');
       case 'devices':
-        return resource(
+        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          enrollmentRecoveryNotice(s, actions),
+          resource(
             title: '设备管理',
             subtitle: '查看设备注册、连接状态和实际管理能力。',
             path: 'devices',
@@ -211,7 +221,8 @@ class ConsolePages extends StatelessWidget {
                 TextButton(
                     onPressed: actions.findEnrollment,
                     child: const Text('查询注册进度'))
-            ]);
+            ]),
+        ]);
       case 'applications':
         return resource(
             title: '应用目录',
@@ -320,8 +331,24 @@ class ConsolePages extends StatelessWidget {
       case 'settings':
         return SettingsPage(session: s, actions: actions);
       default:
-        return Dashboard(session: s, actions: actions);
+        return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          enrollmentRecoveryNotice(s, actions),
+          Dashboard(session: s, actions: actions),
+        ]);
     }
+  }
+
+  Widget enrollmentRecoveryNotice(Session s, ConsoleActions actions) {
+    if (!s.authenticated || s.tenant == null || !s.canWrite ||
+        s.profile?['subject'] is! String) return const SizedBox.shrink();
+    final scope = EnrollmentScope(actorId: s.profile!['subject'] as String,
+        tenantId: s.tenant!['id'] as String, role: s.role);
+    final generation = s.scopeGeneration;
+    return EnrollmentResumeNotice(key: ValueKey('enrollment-${scope.key}-$generation'),
+        journal: _enrollmentJournal, scope: scope, changes: _enrollmentChanges,
+        isCurrent: () => s.authenticated && s.canWrite && s.scopeGeneration == generation &&
+            s.profile?['subject'] == scope.actorId && s.tenant?['id'] == scope.tenantId && s.role == scope.role,
+        onOpen: actions.enrollment);
   }
 
   Widget _name(dynamic value, IconData icon) =>
@@ -508,93 +535,145 @@ class ConsoleActions {
     ]);
   }
 
-  Future<void> enrollment() async {
-    final enrollmentRoot = root;
-    final tenantId = s.tenant!['id'] as String;
-    final children = await s.api.all('$enrollmentRoot/subjects');
-    if (!context.mounted || s.tenant?['id'] != tenantId) return;
-    if (children.isEmpty) {
-      toast(context, '请先创建儿童档案。');
-      context.go('/subjects');
-      return;
+  Future<void> enrollment() => _connectEnrollment();
+
+  Future<void> _connectEnrollment({String? lookupId}) async {
+    if (!s.authenticated || s.tenant == null || !s.canWrite) return;
+    final scope = EnrollmentScope(
+        actorId: s.profile!['subject'] as String,
+        tenantId: s.tenant!['id'] as String,
+        role: s.role);
+    final generation = s.scopeGeneration;
+    bool current() =>
+        context.mounted && s.authenticated && s.canWrite &&
+        s.profile?['subject'] == scope.actorId &&
+        s.tenant?['id'] == scope.tenantId && s.role == scope.role &&
+        s.scopeGeneration == generation;
+    if (!current() || root != s.root || !_openEnrollmentScopes.add(scope.key)) return;
+    final gateway = lookupId == null
+        ? EnrollmentGateway(s.api) : EnrollmentGateway.lookup(s.api);
+    EnrollmentController? controller;
+    ModalRoute<dynamic>? route;
+    void accessChanged() {
+      if (current()) return;
+      controller?.invalidate();
+      final active = route;
+      if (active != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (active.isActive) active.navigator?.removeRoute(active);
+        });
+      }
     }
-    final ticket = await formDialog(context,
-        title: '添加设备',
-        description: '创建一次性注册凭据后，需要在设备端完成密钥证明与配对。当前仅开放个人设备模式。',
-        fields: [
-          FieldSpec('subjectId', '所属儿童',
-              options: entityOptions(children, 'nickname')),
-          FieldSpec('platform', '平台',
-              options: options(['ANDROID', 'ANDROID_TV']))
-        ],
-        initial: {'platform': 'ANDROID'},
-        reauth: reauth,
-        onSubmit: (v) async => await s.api.send(
-            'POST', '$enrollmentRoot/enrollments',
-            body: {...v, 'requestedMode': 'BYOD'}) as Json);
-    if (ticket != null && context.mounted) {
-      await showDetails(context, '设备注册凭据', {
-        '请妥善保存': '一次性凭据只显示此次，不会再次查询到。请在设备端输入并按设备提示完成配对。',
-        '注册编号': ticket['id'],
-        '一次性注册凭据': ticket['token'],
-        '有效期': dateLabel(ticket['expiresAt']),
-        '状态': label(ticket['state'])
-      }, actions: [
-        FilledButton.icon(
-            onPressed: () async {
-              try {
-                await Clipboard.setData(ClipboardData(
-                    text: encodeEnrollmentTicket(tenantId, ticket)));
-                if (context.mounted) toast(context, '已复制设备注册凭据，请在可信任的设备端粘贴。');
-              } catch (_) {
-                if (context.mounted) toast(context, '复制失败，请手动填写上方注册编号与凭据。');
-              }
+    s.addListener(accessChanged);
+    try {
+      EnrollmentJournal journal = _enrollmentJournal;
+      if (lookupId != null) {
+        final intent = await gateway.lookupIntent(scope, lookupId,
+            now: DateTime.now().millisecondsSinceEpoch, isCurrent: current);
+        if (!context.mounted || !current()) return;
+        journal = EnrollmentLookupJournal(intent);
+      }
+      final active = EnrollmentController(scope: scope, journal: journal,
+          gateway: gateway, isCurrent: current,
+          newId: () => const Uuid().v4(),
+          now: () => DateTime.now().millisecondsSinceEpoch);
+      controller = active;
+      await active.initialize();
+      if (!context.mounted || !current()) return;
+      var children = <Json>[];
+      final failure = active.error;
+      final denied = failure is ApiFailure &&
+          (failure.status == 401 || failure.status == 403);
+      if (lookupId == null && !denied &&
+          (active.pending != null || active.error == null)) {
+        try {
+          children = await s.api.all('$root/subjects', isCurrent: current);
+        } catch (_) {
+          if (active.pending == null) rethrow;
+        }
+        if (!context.mounted || !current()) return;
+        if (children.isEmpty && active.pending == null) {
+          toast(context, '请先创建儿童或学生档案。');
+          context.go('/subjects');
+          return;
+        }
+      }
+      if (!context.mounted || !current()) return;
+      await showDialog<void>(context: context, barrierDismissible: false,
+          builder: (dialogContext) {
+        route = ModalRoute.of(dialogContext);
+        return EnrollmentDialog(controller: active, subjects: children,
+            organization: s.tenant?['kind'] == 'ORGANIZATION',
+            onReauthenticate: () {
+              if (current()) {active.conceal();s.login(stepUp: true);}
             },
-            icon: const Icon(Icons.copy_outlined, size: 18),
-            label: const Text('复制设备注册凭据'))
-      ]);
+            onViewDevice: (id) {
+              if (!context.mounted || !current()) return;
+              Navigator.of(dialogContext).pop();
+              WidgetsBinding.instance.addPostFrameCallback((_) async {
+                if (!context.mounted || !current()) return;
+                try {
+                  await _enrollmentDeviceDetails(id, scope, current,
+                      subjectId: active.pending!.subjectId,
+                      platform: active.pending!.platform);
+                }
+                catch (failure) { if (context.mounted && current()) toast(context, failure.toString()); }
+              });
+            });
+      });
+    } catch (failure) {
+      if (context.mounted && current()) toast(context, failure.toString());
+    } finally {
+      s.removeListener(accessChanged);
+      controller?.dispose();
+      _openEnrollmentScopes.remove(scope.key);
+      _enrollmentChanges.value++;
     }
   }
 
   Future<void> findEnrollment() async {
-    final r = await formDialog(context,
+    if (!s.authenticated || s.tenant == null || !s.canWrite) return;
+    final generation = s.scopeGeneration;
+    final workspace = root;
+    final result = await formDialog(context,
         title: '查询注册进度',
+        description: '输入原注册编号，在同一窗口核对进度、现场确认或取消。',
+        submit: '查询进度',
         fields: const [FieldSpec('id', '注册编号', maxLength: 36)],
-        onSubmit: (v) async => await s.api.send(
-                'GET', '$root/enrollments/${Uri.encodeComponent(v['id'])}')
-            as Json);
-    if (r == null || !context.mounted) return;
-    await actionDetails(
-        context,
-        '注册进度',
-        {
-          '注册编号': r['id'],
-          '状态': label(r['state']),
-          '有效期': dateLabel(r['expiresAt']),
-          '设备编号': r['deviceId']
-        },
-        reauth: reauth,
-        actions: s.canWrite
-            ? [
-                DetailAction('确认配对', (ctx) async {
-                  await formDialog(ctx,
-                      title: '确认设备配对',
-                      description: '核对设备上显示的 8 位配对码。',
-                      fields: const [
-                        FieldSpec('pairingCode', '配对码', maxLength: 8)
-                      ],
-                      reauth: reauth,
-                      onSubmit: (v) async => await s.api.send(
-                          'POST', '$root/enrollments/${r['id']}/confirm',
-                          body: v) as Json);
-                }),
-                DetailAction('取消注册', (ctx) async {
-                  if (await confirmAction(ctx, '取消注册', '此注册凭据将不再可用。')) {
-                    await s.api.send('DELETE', '$root/enrollments/${r['id']}');
-                  }
-                }, destructive: true)
-              ]
-            : []);
+        onSubmit: (values) async {
+          final id = (values['id'] as String).trim();
+          if (!RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$').hasMatch(id)) {
+            throw const ApiFailure(400, 'INVALID_ENROLLMENT_ID');
+          }
+          return {'id': id};
+        });
+    if (result == null || !context.mounted || !s.authenticated ||
+        s.scopeGeneration != generation || s.root != workspace) return;
+    await _connectEnrollment(lookupId: result['id'] as String);
+  }
+
+  Future<void> _enrollmentDeviceDetails(String id, EnrollmentScope scope,
+      bool Function() current,
+      {required String subjectId, required String platform}) async {
+    if (!context.mounted || !current()) return;
+    final value = await s.api.send('GET',
+        '/tenants/${scope.tenantId}/devices/$id', isCurrent: current);
+    if (!context.mounted || !current()) return;
+    if (value is! Json || value['id'] != id ||
+        value['subjectId'] != subjectId || value['platform'] != platform ||
+        value['displayName'] is! String) {
+      throw const ApiFailure(502, 'INVALID_ENROLLMENT_RESPONSE');
+    }
+    await actionDetails(context, value['displayName'] as String, {
+      '平台': '${label(value['platform'])} · ${value['osVersion']}',
+      '注册状态': label(value['state']),
+      '管理模式': label(value['managementMode']),
+      '控制能力': label(value['controlLevel']),
+      '最近心跳': dateLabel(value['lastHeartbeatAt']),
+      '观察状态': label(value['observationStatus']),
+      '观察说明': DeviceObservationStatus.explanation(value['observationStatus']),
+      '设备编号': value['id'],
+    }, accessChanges: s, hasAccess: current);
   }
 
   Future<void> deviceDetails(Json row) async {

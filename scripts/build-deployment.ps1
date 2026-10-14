@@ -91,6 +91,17 @@ if ($IsWindows -and [IO.Path]::GetExtension($dartExecutable) -in @('.bat', '.cmd
 if (-not (Test-Path -LiteralPath $dartExecutable -PathType Leaf)) { throw 'Device HTTP interoperability requires a directly executable Dart SDK.' }
 $mavenArgs += "-Ddevice.dart.command=$dartExecutable"
 $mavenArgs += "-Ddevice.flutter.command=$flutterPath"
+$flutterSdk = Split-Path (Split-Path $flutterPath -Parent) -Parent
+$flutterTool = Join-Path $flutterSdk 'bin/cache/flutter_tools.snapshot'
+if (-not (Test-Path -LiteralPath $flutterTool -PathType Leaf)) {
+    throw 'Parent and guardian HTTP interoperability require the installed Flutter tools snapshot.'
+}
+$mavenArgs += "-Dparent.dart.command=$dartExecutable"
+$mavenArgs += "-Dparent.flutter.tool=$flutterTool"
+$mavenArgs += "-Dparent.package=$(Join-Path $snapshot 'apps/parent')"
+$mavenArgs += "-Dguardian.dart.command=$dartExecutable"
+$mavenArgs += "-Dguardian.flutter.tool=$flutterTool"
+$mavenArgs += "-Dguardian.package=$(Join-Path $snapshot 'apps/guardian')"
 foreach ($property in $interopPaths.Keys) {
     $mavenArgs += "-D${property}=$(Join-Path $snapshot $interopPaths[$property])"
 }
@@ -132,7 +143,9 @@ $files = Get-ChildItem -LiteralPath $snapshot -Recurse -File | Where-Object {
 }
 $sourceDigests = @($files | Sort-Object FullName | ForEach-Object { @{path=[IO.Path]::GetRelativePath($snapshot, $_.FullName).Replace('\','/'); sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()} })
 $manifest = @{schemaVersion=1; applicationVersion='1.0.0'; builtAt=[DateTimeOffset]::UtcNow.ToString('O'); publicUrl=$origin; sourceFiles=$sourceDigests;
-    verifiedProjects=$verifiedProjects; interoperabilityProperties=@($interopPaths.Keys);
+    verifiedProjects=$verifiedProjects; interoperabilityProperties=@($interopPaths.Keys) + @(
+        'device.dart.command', 'device.flutter.command', 'parent.dart.command', 'parent.flutter.tool',
+        'parent.package', 'guardian.dart.command', 'guardian.flutter.tool', 'guardian.package');
     artifactRoot=[IO.Path]::GetRelativePath($context.Root, $releaseRoot).Replace('\','/');
     backendSha256=(Get-FileHash -LiteralPath (Join-Path $backendContext 'manager-backend.jar') -Algorithm SHA256).Hash.ToLowerInvariant();
     guardianSha256=(Get-FileHash -LiteralPath (Join-Path $guardianContext 'main.dart.js') -Algorithm SHA256).Hash.ToLowerInvariant()}
