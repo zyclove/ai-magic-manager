@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "items": [
+    {
+      "id": "weekday-evening",
+      "name": "工作日晚间示例",
+      "description": "周一至周五 18:00–20:00。仅供填写参考，请按家庭实际安排调整。",
+      "weekly": [
+        {"day": "MONDAY", "start": "18:00", "end": "20:00"},
+        {"day": "TUESDAY", "start": "18:00", "end": "20:00"},
+        {"day": "WEDNESDAY", "start": "18:00", "end": "20:00"},
+        {"day": "THURSDAY", "start": "18:00", "end": "20:00"},
+        {"day": "FRIDAY", "start": "18:00", "end": "20:00"}
+      ]
+    },
+    {
+      "id": "weekend-morning",
+      "name": "周末上午示例",
+      "description": "周六、周日 09:00–11:00。仅供填写参考，可修改后再保存。",
+      "weekly": [
+        {"day": "SATURDAY", "start": "09:00", "end": "11:00"},
+        {"day": "SUNDAY", "start": "09:00", "end": "11:00"}
+      ]
+    }
+  ]
+}

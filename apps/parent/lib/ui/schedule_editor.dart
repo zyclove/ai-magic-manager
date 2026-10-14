@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../core/parent_api.dart';
 import '../core/parent_session.dart';
 import '../core/schedules.dart';
+import '../core/schedule_presets.dart';
 
 class ScheduleEditorPage extends StatefulWidget {
   final ParentSession session;
@@ -22,6 +23,9 @@ class _ScheduleEditorPageState extends State<ScheduleEditorPage> {
   List<Json> weekly = [], exceptions = [];
   bool dirty = false, allowExit = false;
   Object? editError;
+  bool loadingPresets = false;
+  String? presetNotice;
+  Route<dynamic>? presetRoute;
   bool get current =>
       mounted &&
       widget.session.authenticated &&
@@ -58,6 +62,10 @@ class _ScheduleEditorPageState extends State<ScheduleEditorPage> {
     if (!mounted || current) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || current) return;
+      final dialog = presetRoute;
+      if (dialog != null && dialog.isActive) {
+        dialog.navigator?.removeRoute(dialog);
+      }
       final route = ModalRoute.of(context);
       if (route != null && route.isActive) {
         Navigator.of(context).removeRoute(route);
@@ -97,6 +105,109 @@ class _ScheduleEditorPageState extends State<ScheduleEditorPage> {
     });
   }
 
+  // Own these routes so a workspace change also closes a pending picker/confirmation.
+  Future<T?> _presetDialog<T>(WidgetBuilder builder) async {
+    final route = DialogRoute<T>(context: context, builder: builder);
+    presetRoute = route;
+    try {
+      return await Navigator.of(context).push(route);
+    } finally {
+      if (identical(presetRoute, route)) presetRoute = null;
+    }
+  }
+
+  Future<void> _choosePreset() async {
+    if (!current || controller.busy || loadingPresets) return;
+    setState(() {
+      loadingPresets = true;
+      presetNotice = null;
+    });
+    try {
+      final response = await widget.session.api.send('GET',
+          '/api/v1/tenants/${Uri.encodeComponent(tenant)}/schedule-presets',
+          isCurrent: () => current, maxResponseBytes: 65536);
+      if (!current) return;
+      final presets = SchedulePreset.readCatalog(response);
+      if (presets.isEmpty) {
+        setState(() => presetNotice = '暂未提供时间安排示例，可以在下方自行设置。');
+        return;
+      }
+      final selected = await _presetDialog<SchedulePreset>((ctx) => AlertDialog(
+              title: const Text('选择时间安排示例'),
+              content: SizedBox(
+                  width: 520,
+                  child: SingleChildScrollView(
+                      child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                        const Text('选择后填入草稿，可继续调整。示例不代表适合孩子的建议时长。'),
+                        const SizedBox(height: 12),
+                        for (final preset in presets)
+                          Card(
+                              child: Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.stretch,
+                                      children: [
+                                        Text(preset.name,
+                                            style: Theme.of(ctx)
+                                                .textTheme
+                                                .titleMedium),
+                                        const SizedBox(height: 8),
+                                        Text(preset.description),
+                                        const SizedBox(height: 8),
+                                        for (final day in scheduleDays)
+                                          if (preset.weekly
+                                              .any((row) => row['day'] == day))
+                                            Text(
+                                                '${scheduleDayNames[scheduleDays.indexOf(day)]}  '
+                                                '${preset.weekly.where((row) => row['day'] == day).map(scheduleWindowLabel).join('、')}'),
+                                        const SizedBox(height: 12),
+                                        OutlinedButton(
+                                            onPressed: () =>
+                                                Navigator.pop(ctx, preset),
+                                            child: Text('使用${preset.name}')),
+                                      ]))),
+                      ]))),
+              actions: [
+                TextButton(
+                    onPressed: () => Navigator.pop(ctx),
+                    child: const Text('自行设置'))
+              ]));
+      if (!current || selected == null) return;
+      if (weekly.isNotEmpty) {
+        final confirmed = await _presetDialog<bool>((ctx) => AlertDialog(
+                title: const Text('替换当前每周时段？'),
+                content: Text(
+                    '将使用“${selected.name}”替换当前 ${weekly.length} 条每周时段。计划名称、时区和 ${exceptions.length} 个例外日期会保留。'),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(ctx, false),
+                      child: const Text('保留原安排')),
+                  FilledButton(
+                      onPressed: () => Navigator.pop(ctx, true),
+                      child: const Text('替换每周时段')),
+                ]));
+        if (!current || confirmed != true) return;
+      }
+      setState(() {
+        weekly = selected.weekly
+            .map((row) => Map<String, dynamic>.from(row))
+            .toList();
+        if (name.text.trim().isEmpty) name.text = selected.name;
+        dirty = true;
+        editError = null;
+        presetNotice = '示例已填入，尚未保存。请检查下方安排后再保存。';
+      });
+    } catch (_) {
+      if (current) setState(() => presetNotice = '暂时无法读取示例。可以重新选择，或在下方自行设置。');
+    } finally {
+      if (mounted) setState(() => loadingPresets = false);
+    }
+  }
+
   Future<void> _date([Json? original]) async {
     final date = original == null
         ? await showDatePicker(
@@ -125,7 +236,7 @@ class _ScheduleEditorPageState extends State<ScheduleEditorPage> {
   }
 
   Future<void> _save() async {
-    if (!current || !form.currentState!.validate()) return;
+    if (!current || loadingPresets || !form.currentState!.validate()) return;
     final definition = <String, dynamic>{
       'timeZone': zone.text.trim(),
       'weekly': weekly,
@@ -248,12 +359,43 @@ class _ScheduleEditorPageState extends State<ScheduleEditorPage> {
                           controller.result == null ? '已核对，清除本机提醒' : '打开时间计划')),
               ] else if (controller.loaded)
                 AbsorbPointer(
-                    absorbing: controller.busy,
+                    absorbing: controller.busy || loadingPresets,
                     child: Form(
                         key: form,
                         child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
                             children: [
+                              Card(
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(16),
+                                      child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.stretch,
+                                          children: [
+                                            Text('先选安排，再做微调',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleMedium),
+                                            const SizedBox(height: 8),
+                                            const Text(
+                                                '可以用示例快速填写，也可以直接在下方设置自己的时间。'),
+                                            const SizedBox(height: 12),
+                                            OutlinedButton.icon(
+                                                onPressed: loadingPresets
+                                                    ? null
+                                                    : _choosePreset,
+                                                icon: const Icon(Icons
+                                                    .auto_awesome_outlined),
+                                                label: Text(loadingPresets
+                                                    ? '正在读取示例…'
+                                                    : '选择时间安排示例')),
+                                            if (loadingPresets)
+                                              const LinearProgressIndicator(),
+                                            if (presetNotice != null)
+                                              Semantics(
+                                                  liveRegion: true,
+                                                  child: Text(presetNotice!)),
+                                          ]))),
                               const SizedBox(height: 20),
                               TextFormField(
                                   controller: name,
@@ -286,6 +428,16 @@ class _ScheduleEditorPageState extends State<ScheduleEditorPage> {
                                   onChanged: (_) =>
                                       setState(() => dirty = true)),
                               const SizedBox(height: 16),
+                              if (weekly.isNotEmpty)
+                                _WeeklyOverview(
+                                    weekly: weekly,
+                                    onRemove: (row) {
+                                      if (!current) return;
+                                      setState(() {
+                                        weekly.remove(row);
+                                        dirty = true;
+                                      });
+                                    }),
                               Text('每周时段 · ${weekly.length}/56',
                                   style:
                                       Theme.of(context).textTheme.titleLarge),
@@ -306,18 +458,6 @@ class _ScheduleEditorPageState extends State<ScheduleEditorPage> {
                                       });
                                     }
                                   }),
-                              for (int i = 0; i < weekly.length; i++)
-                                ListTile(
-                                    title: Text(
-                                        '${scheduleDayNames[scheduleDays.indexOf(weekly[i]['day'])]} ${scheduleWindowLabel(weekly[i])}'),
-                                    trailing: IconButton(
-                                        tooltip: '移除每周时段 ${i + 1}',
-                                        onPressed: () => setState(() {
-                                              weekly.removeAt(i);
-                                              dirty = true;
-                                            }),
-                                        icon:
-                                            const Icon(Icons.delete_outline))),
                               const SizedBox(height: 16),
                               Text('例外日期 · ${exceptions.length}/366',
                                   style:
@@ -356,6 +496,44 @@ class _ScheduleEditorPageState extends State<ScheduleEditorPage> {
                             ]))),
             ]),
           )));
+}
+
+/// Text-backed overview stays readable with screen readers and large font sizes.
+class _WeeklyOverview extends StatelessWidget {
+  final List<Json> weekly;
+  final ValueChanged<Json> onRemove;
+  const _WeeklyOverview({required this.weekly, required this.onRemove});
+  @override
+  Widget build(BuildContext context) => Card(
+      child: Padding(
+          padding: const EdgeInsets.all(16),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            Text('一周安排预览', style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            const Text('按时段开始的星期展示；例外日期会覆盖当天安排。'),
+            const SizedBox(height: 8),
+            for (var i = 0; i < scheduleDays.length; i++)
+              Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Wrap(
+                      spacing: 12,
+                      runSpacing: 4,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Text(scheduleDayNames[i],
+                            style: Theme.of(context).textTheme.labelLarge),
+                        if (!weekly.any((row) => row['day'] == scheduleDays[i]))
+                          const Text('无新开始时段'),
+                        for (final row in weekly
+                            .where((row) => row['day'] == scheduleDays[i]))
+                          InputChip(
+                              label: Text(scheduleWindowLabel(row)),
+                              deleteButtonTooltipMessage:
+                                  '移除${scheduleDayNames[i]} ${scheduleWindowLabel(row)}',
+                              onDeleted: () => onRemove(row)),
+                      ])),
+          ])));
 }
 
 /// Flutter owns accessible clock input; these are wall times, not UTC instants.
