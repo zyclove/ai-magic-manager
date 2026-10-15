@@ -73,24 +73,24 @@ void main() {
     expect(ContractReview.parse(review(platform: false), platform: false).id,
         reviewId);
     expect(() => ContractReview.parse(review(), platform: false),
-        throwsA(isA<ApiFailure>()));
+        throwsA(isA<ContractProtocolException>()));
     expect(
         () => ContractReview.parse(
             {...review(platform: false), 'entitlementApplied': true},
             platform: false),
-        throwsA(isA<ApiFailure>()));
+        throwsA(isA<ContractProtocolException>()));
     expect(
         () => ContractReviewPage.parse({
               'items': [review(platform: false), review(platform: false)],
               'nextCursor': null
             }, platform: false),
-        throwsA(isA<ApiFailure>()));
+        throwsA(isA<ContractProtocolException>()));
     expect(contractStateLabel('APPLIED'), '已处理');
     expect(
         () => ContractReview.parse(
             {...review(platform: false), 'evidenceHash': 'bad'},
             platform: false),
-        throwsA(isA<ApiFailure>()));
+        throwsA(isA<ContractProtocolException>()));
     expect(
         contractReviewLabel(ContractReview.parse(
             review(state: 'APPLIED', sourceState: 'REVOKED'),
@@ -222,7 +222,7 @@ void main() {
         ['REVISION_CHANGED']);
     expect(
         () => ContractComparison.parse({...comparison(), 'factsMatch': false}),
-        throwsA(isA<ApiFailure>()));
+        throwsA(isA<ContractProtocolException>()));
     expect(
         () => ContractComparison.parse({...comparison(), 'reviewId': offerId}),
         returnsNormally);
@@ -285,6 +285,6 @@ void main() {
               ],
               'nextBeforeVersion': null
             }, platform: false),
-        throwsA(isA<ApiFailure>()));
+        throwsA(isA<ContractProtocolException>()));
   });
 }

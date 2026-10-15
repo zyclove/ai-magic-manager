@@ -28,6 +28,14 @@ class ContractsRepository {
 
   String newId() => _uuid.v4();
 
+  T _parse<T>(T Function() read) {
+    try {
+      return read();
+    } on ContractProtocolException {
+      throw const ApiFailure(502, 'INVALID_CONTRACT_RESPONSE');
+    }
+  }
+
   Future<dynamic> _read(String path, int maxBytes) async {
     try {
       return await boundedJson(api, 'GET', path,
@@ -45,7 +53,7 @@ class ContractsRepository {
     _ensureCurrent();
     final raw = await _read('$_path/capabilities', 4096);
     _ensureCurrent();
-    return ContractCapabilities.parse(raw);
+    return _parse(() => ContractCapabilities.parse(raw));
   }
 
   Future<ContractReviewPage> list({String? cursor}) async {
@@ -56,7 +64,8 @@ class ContractsRepository {
     final query = cursor == null ? '?limit=50' : '?limit=50&cursor=$cursor';
     final raw = await _read('$_path$query', 256 * 1024);
     _ensureCurrent();
-    final page = ContractReviewPage.parse(raw, platform: platform);
+    final page =
+        _parse(() => ContractReviewPage.parse(raw, platform: platform));
     if (!platform && page.items.any((item) => item.tenantId != tenantId)) {
       throw const ApiFailure(502, 'INVALID_CONTRACT_RESPONSE');
     }
@@ -70,7 +79,7 @@ class ContractsRepository {
     }
     final raw = await _read('$_path/$id', 16 * 1024);
     _ensureCurrent();
-    final review = ContractReview.parse(raw, platform: platform);
+    final review = _parse(() => ContractReview.parse(raw, platform: platform));
     if (review.id != id || (!platform && review.tenantId != tenantId)) {
       throw const ApiFailure(502, 'INVALID_CONTRACT_RESPONSE');
     }
@@ -87,7 +96,8 @@ class ContractsRepository {
         : '?limit=50&beforeVersion=$beforeVersion';
     final raw = await _read('$_path/$id/history$query', 128 * 1024);
     _ensureCurrent();
-    final page = ContractHistoryPage.parse(raw, platform: platform);
+    final page =
+        _parse(() => ContractHistoryPage.parse(raw, platform: platform));
     if (beforeVersion != null &&
         page.items.any((event) => event.version >= beforeVersion)) {
       throw const ApiFailure(502, 'INVALID_CONTRACT_RESPONSE');
@@ -102,7 +112,7 @@ class ContractsRepository {
     }
     final raw = await _read('$_path/${review.id}/comparison', 16 * 1024);
     _ensureCurrent();
-    final result = ContractComparison.parse(raw);
+    final result = _parse(() => ContractComparison.parse(raw));
     if (result.reviewId != review.id ||
         result.reviewVersion != review.version ||
         result.offerId != review.offerId ||
@@ -122,7 +132,7 @@ class ContractsRepository {
     final raw =
         await api.send('POST', _path, body: {'id': id, 'evidence': compactJws});
     _ensureCurrent();
-    final review = ContractReview.parse(raw, platform: true);
+    final review = _parse(() => ContractReview.parse(raw, platform: true));
     if (review.id != id) {
       throw const ApiFailure(502, 'INVALID_CONTRACT_RESPONSE');
     }
@@ -142,7 +152,7 @@ class ContractsRepository {
     final raw = await api.send('POST', '$_path/${review.id}/$action',
         version: review.version, body: {'reason': reason});
     _ensureCurrent();
-    final next = ContractReview.parse(raw, platform: true);
+    final next = _parse(() => ContractReview.parse(raw, platform: true));
     if (next.id != review.id || next.version <= review.version) {
       throw const ApiFailure(502, 'INVALID_CONTRACT_RESPONSE');
     }
@@ -157,7 +167,7 @@ class ContractsRepository {
     final raw = await api.send('POST', '$_path/${review.id}/accept',
         version: review.version);
     _ensureCurrent();
-    final next = ContractReview.parse(raw, platform: false);
+    final next = _parse(() => ContractReview.parse(raw, platform: false));
     if (next.id != review.id ||
         next.tenantId != tenantId ||
         next.version <= review.version ||

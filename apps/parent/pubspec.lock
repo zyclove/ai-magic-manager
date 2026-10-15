@@ -57,6 +57,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.18.0"
+  commerce_contracts:
+    dependency: "direct main"
+    description:
+      path: "../../packages/commerce_contracts"
+      relative: true
+    source: path
+    version: "1.0.0"
   convert:
     dependency: transitive
     description:

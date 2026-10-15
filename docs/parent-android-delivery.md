@@ -32,7 +32,8 @@
 | 设备 | 分页展示注册状态和管理模式；详情先显示能力摘要与下一步建议，支持可用/待确认筛选、依据折叠、固定刷新关闭；后台隐藏、身份变化关闭，提醒另查策略执行回执 | `GET /devices`、`GET /devices/{id}`、`GET /devices/{id}/capabilities`；见[设备能力操作简化](parent-device-capability-usability.md) |
 | 设备配对 | 分页选择儿童与 Android/TV；近期认证后先保存随机注册请求编号，再生成 BYOD 一次性凭据；响应丢失或进程重启后可按原编号查询、不回显秘密；儿童端认领后刷新状态、输入物理设备配对码再次认证确认；可取消 | `POST /enrollments`（`Client-Request-Id`）、`GET /enrollment-creation-results/{id}`、`GET /enrollments/{id}`、`POST /enrollments/{id}/confirm`、`DELETE /enrollments/{id}` |
 | 正常退出 | 复用 Web 管理台 `device_operations` 组件；先预览后果、近期认证、带版本和幂等确认；网络结果未知时保留恢复记录，云端撤权与本代理清理回执分开展示 | `GET /devices/{id}`、`/devices/{id}/deprovision` 路由；只开放当前 BYOD 注册，服务端逐请求鉴权 |
-| 商业账户 | 在“我的”只读显示已核验的设备名额和功能权益；无购买、合同自授权按钮，明确与设备系统能力区分 | `GET /commercial-entitlements`；服务端限成人管理员/审计员 |
+| 商业账户 | 在“我的”显示已核验的设备名额和功能权益；按身份、机构与登录代次隔离，切换后丢弃旧响应；当前权益与设备系统能力分别呈现 | `GET /commercial-entitlements`；服务端限成人管理员/审计员 |
+| 机构合同 | 机构管理员查看合同、核对报价差异并确认已独立审核的合同；审计员只读，提供历史、当前权益与回复丢失后的状态查询 | 既有 `/contracts`、`/{id}/comparison`、`/{id}/history`、`/{id}/accept`；见[手机机构合同交付](parent-contract-delivery.md) |
 
 手机端复用现有 `/api/v1` 后端契约，采用独立 Flutter 工程，避免 Web 专有 `dart:html`、浏览器存储与 URL 回调渗入原生客户端。依赖锁定在 `apps/parent/pubspec.lock`：`flutter_appauth 9.0.1`、`flutter_secure_storage 10.0.0`，分别用于原生 OIDC 与安全存储；升级需按 Flutter 版本和 Android 兼容矩阵审查。Android 仅声明网络权限，不声明相机或无障碍权限。
 
@@ -56,6 +57,8 @@
 7. BYOD 正常退出由复用的 `device_operations` 控制器核验精确租户、设备、注册周期、当前版本和预览后果；手机端 HTTP 适配器每次发送前取当前令牌并禁止跨源重定向。取消系统浏览器重新验证不会自动提交写入。恢复日志只存请求键及绑定元数据，不存凭据；云端撤权不证明设备本地已完成清理或系统级解除管理。
 
 ## 尚未完成
+
+2026-10-15 增量：手机[所有者交接](parent-ownership-delivery.md)与[机构合同核对及确认](parent-contract-delivery.md)已接入，后者复用管理台共享协议及现有后端。下文“合同确认仅由 Web 管理台承担”是早期范围；真实签约来源、真实机构试点与发布验收仍需完成。
 
 2026-10-14 增量：手机策略中心已接入[每日额度](parent-quota-delivery.md)与[每周计划](parent-quota-plan-delivery.md)；机构档案页已接入[班级与名册](parent-class-management-delivery.md)的新建、改名、添加/移出、转班、归档及原操作恢复。手机成员目录、角色/范围编辑、撤销和原结果恢复亦已接入，见[成员权限交付](parent-member-access-delivery.md)。下文关于这些流程仅由 Web 管理台承担的历史描述已被上述阶段交付取代；真实设备执行、合同确认和其余发布门槛仍未因此完成。
 

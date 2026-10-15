@@ -35,6 +35,8 @@ dependencies:
   flutter_appauth: 9.0.1
   flutter_secure_storage: 10.0.0
   http: ^1.2.1
+  commerce_contracts:
+    path: ../../packages/commerce_contracts
   notification_client:
     path: ../../packages/notification_client
   device_operations:

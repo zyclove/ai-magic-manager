@@ -2,66 +2,127 @@ import 'package:flutter/material.dart';
 
 import '../core/commercial_entitlements.dart';
 import '../core/parent_session.dart';
+import 'contracts_center.dart';
 
-/// Read-only account summary. Purchase and contract approval stay in the
-/// verified institution channel, never in a local self-grant flow.
-class CommercialAccount extends StatefulWidget {
+/// Keep the account projection bound to the current identity and workspace.
+class CommercialAccount extends StatelessWidget {
   final ParentSession session;
   const CommercialAccount({super.key, required this.session});
-
   @override
-  State<CommercialAccount> createState() => _CommercialAccountState();
+  Widget build(BuildContext context) => AnimatedBuilder(
+      animation: session,
+      builder: (context, _) {
+        if (!session.authenticated ||
+            session.tenant == null ||
+            !const {'OWNER', 'GUARDIAN', 'ORG_ADMIN', 'AUDITOR'}
+                .contains(session.role)) return const SizedBox.shrink();
+        return _ScopedCommercialAccount(
+            key: ValueKey(
+                '${session.profile?['subject']}:${session.tenant?['id']}:${session.role}:${session.generation}'),
+            session: session);
+      });
 }
 
-class _CommercialAccountState extends State<CommercialAccount> {
-  late final String tenantId;
-  late Future<ParentCommercialEntitlements> result;
+class _ScopedCommercialAccount extends StatefulWidget {
+  final ParentSession session;
+  const _ScopedCommercialAccount({super.key, required this.session});
+  @override
+  State<_ScopedCommercialAccount> createState() => _CommercialAccountState();
+}
 
+class _CommercialAccountState extends State<_ScopedCommercialAccount>
+    with WidgetsBindingObserver {
+  late final String tenantId, actor, role;
+  late final int generation;
+  late Future<ParentCommercialEntitlements> result;
+  bool foreground = true;
+  bool get current =>
+      mounted &&
+      foreground &&
+      widget.session.authenticated &&
+      widget.session.tenant?['id'] == tenantId &&
+      widget.session.profile?['subject'] == actor &&
+      widget.session.role == role &&
+      widget.session.generation == generation;
   @override
   void initState() {
     super.initState();
-    tenantId = widget.session.tenant!['id'] as String;
+    tenantId = widget.session.tenant!['id'];
+    actor = widget.session.profile!['subject'];
+    role = widget.session.role;
+    generation = widget.session.generation;
+    foreground = WidgetsBinding.instance.lifecycleState == null ||
+        WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
+    WidgetsBinding.instance.addObserver(this);
     result = _load();
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    foreground = state == AppLifecycleState.resumed;
+    if (mounted) {
+      setState(() {
+        if (foreground) result = _load();
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
   Future<ParentCommercialEntitlements> _load() async {
-    final raw = await widget.session.api
-        .object('/tenants/$tenantId/commercial-entitlements');
+    final raw = await widget.session.api.send(
+        'GET', '/tenants/$tenantId/commercial-entitlements',
+        isCurrent: () => current);
     return ParentCommercialEntitlements.parse(raw, tenantId);
   }
 
-  void _refresh() => setState(() => result = _load());
+  void _refresh() {
+    if (current) setState(() => result = _load());
+  }
 
   @override
-  Widget build(BuildContext context) =>
-      FutureBuilder<ParentCommercialEntitlements>(
-        future: result,
-        builder: (context, snapshot) => Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(children: [
-              Expanded(
-                child:
-                    Text('商业账户', style: Theme.of(context).textTheme.titleLarge),
-              ),
-              IconButton(
-                  tooltip: '刷新商业账户',
-                  onPressed: _refresh,
-                  icon: const Icon(Icons.refresh)),
-            ]),
-            const SizedBox(height: 5),
-            if (snapshot.connectionState != ConnectionState.done)
-              const LinearProgressIndicator()
-            else if (snapshot.hasError) ...[
-              Text('${snapshot.error}',
-                  style: const TextStyle(color: Color(0xFF9A3931))),
-              const SizedBox(height: 8),
-              OutlinedButton(onPressed: _refresh, child: const Text('重试')),
-            ] else if (snapshot.hasData)
-              _AccountView(snapshot.data!),
-          ],
-        ),
-      );
+  Widget build(BuildContext context) => !current
+      ? const Text('商业账户信息已隐藏。')
+      : FutureBuilder<ParentCommercialEntitlements>(
+          future: result,
+          builder: (context, snapshot) =>
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Row(children: [
+                  Expanded(
+                      child: Text('商业账户',
+                          style: Theme.of(context).textTheme.titleLarge)),
+                  IconButton(
+                      tooltip: '刷新商业账户',
+                      onPressed: _refresh,
+                      icon: const Icon(Icons.refresh))
+                ]),
+                const SizedBox(height: 5),
+                if (widget.session.tenant?['kind'] == 'ORGANIZATION' &&
+                    const {'OWNER', 'ORG_ADMIN', 'AUDITOR'}.contains(role))
+                  OutlinedButton.icon(
+                      onPressed: () async {
+                        await Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                                builder: (_) =>
+                                    ContractsCenter(session: widget.session)));
+                        if (current) _refresh();
+                      },
+                      icon: const Icon(Icons.description_outlined),
+                      label: const Text('机构合同与确认')),
+                if (snapshot.connectionState != ConnectionState.done)
+                  const LinearProgressIndicator()
+                else if (snapshot.hasError) ...[
+                  Text('${snapshot.error}',
+                      style: const TextStyle(color: Color(0xFF9A3931))),
+                  const SizedBox(height: 8),
+                  OutlinedButton(onPressed: _refresh, child: const Text('重试'))
+                ] else if (snapshot.hasData)
+                  _AccountView(snapshot.data!)
+              ]));
 }
 
 class _AccountView extends StatelessWidget {

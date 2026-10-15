@@ -12,6 +12,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   cupertino_icons: ^1.0.8
+  commerce_contracts:
+    path: ../../packages/commerce_contracts
   notification_client:
     path: ../../packages/notification_client
   device_operations:

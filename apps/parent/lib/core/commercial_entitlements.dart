@@ -36,6 +36,7 @@ class ParentCommercialEntitlements {
         value['technicalCapabilityIndependent'] != true ||
         !valid(value['version']) ||
         !valid(value['evaluatedAt']) ||
+        value['evaluatedAt'] > 253402300799999 ||
         !valid(value['activeSourceCount']) ||
         !valid(value['baseDeviceCapacity']) ||
         !valid(value['addOnDeviceCapacity']) ||
