@@ -1,0 +1,2251 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "stage": "Erasure response ownership cardinality and immutable report attribution",
+  "status": "VERIFIED",
+  "overallGoalStatus": "ACTIVE",
+  "scope": [
+    "Accept 200 distinct canonical response subjects, deduplicate repeated inputs and reject a stored or requested 201st subject without truncation.",
+    "Create usage-report ownership from the same authorized and locked snapshot used for report parts; cached replay and read-only recovery preserve original ownership.",
+    "Exercise two independent subject jobs discovering one real shared response before either locks it, with redaction once, retained owner tombstones, lease fencing and transaction rollback."
+  ],
+  "source": {
+    "manifest": {
+      "path": ".local/runtime/erasure-cardinality-green-20261015-final-r1.json",
+      "sha256": "0c871fdaf5246104d9d20815c260b9ef5793628a8bc70dcebc8608433abd02bd",
+      "bytes": 262385
+    },
+    "base": "610b0419af5de41292dae3923fb840b6d569d0e3",
+    "allFiles": 1385,
+    "ownedFiles": [
+      {
+        "path": "backend/src/test/java/com/aimanager/idempotency/IdempotencyOwnershipTest.java",
+        "bytes": 23590,
+        "sha256": "49b4fad93a23bff797dc8cc3f25330fddbe1858691b3724ec29cb33d4d783012"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/UsageReportJobJourneyTest.java",
+        "bytes": 31393,
+        "sha256": "45df530bcf0a8d56988d7cc26016ec42aa1f733fcc77acac2b50230f321ca207"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureIdempotencyCardinalityTest.java",
+        "bytes": 22291,
+        "sha256": "a40bddee7f65add48a02a190f2750bc512331433aa60097c8ed55273d3e0cbaa"
+      },
+      {
+        "path": "docs/superpowers/plans/2026-10-15-erasure-response-cardinality.md",
+        "bytes": 5206,
+        "sha256": "351d68d654e301cbc5aebc3d4fe167eb06d1181b56779f21fd64498f5424a369"
+      },
+      {
+        "path": "backend/src/main/java/com/aimanager/idempotency/ResponseOwnership.java",
+        "bytes": 2222,
+        "sha256": "110f371a57b69a72ffa4f0001237dbb1589ed5298df59f7f1331c68d6cc6650a"
+      },
+      {
+        "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyService.java",
+        "bytes": 10903,
+        "sha256": "97ee110c1a9ac216bc0ce6f5df675546a1e46bf3090afb75bb864815171129b4"
+      },
+      {
+        "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureIdempotencyProcessor.java",
+        "bytes": 16648,
+        "sha256": "747c7a445f39c949e538d50af86b3ba0f5134dd6370c01e8913675684623ddcb"
+      },
+      {
+        "path": "backend/src/main/java/com/aimanager/reporting/internal/ReportJobService.java",
+        "bytes": 14897,
+        "sha256": "aa98c3f9b5dcb103aefbb0455a6137f2baa6712e6e781f9700f012779cd2d8a4"
+      },
+      {
+        "path": "docs/erasure-idempotency-plan.md",
+        "bytes": 6054,
+        "sha256": "f0a3816cd7395787185c34123cae3c014933b194cc64e92022db2e62ccb983ef"
+      }
+    ],
+    "ownedCount": 9,
+    "peerWipExcluded": true,
+    "rootFrozenAndMysqlCloneBytesVerified": true
+  },
+  "red": {
+    "receipt": {
+      "path": ".local/runtime/erasure-cardinality-all-red-r3-valid-exit.json",
+      "sha256": "e2fdf91e8708c15e08d8044381e7c8b948b64858c39843d60217fd9ee98b805e",
+      "bytes": 747
+    },
+    "sourceManifest": {
+      "path": ".local/runtime/erasure-cardinality-red-20261015-r3.json",
+      "sha256": "62aceaabd35f42c58d783d0caed2926b4ef723b53c1feb6396df876cb4423b74",
+      "bytes": 261361
+    },
+    "log": {
+      "path": ".local/runtime/erasure-cardinality-all-red-r3-valid.log",
+      "sha256": "3471611b1d3e68c1956869dbf357d5aabb054b83859adee7eb214d9e47c3e525",
+      "bytes": 222728
+    },
+    "tests": 57,
+    "failures": 8,
+    "errors": 0,
+    "skipped": 1,
+    "expectedAssertionFailures": [
+      {
+        "class": "com.aimanager.idempotency.IdempotencyOwnershipTest",
+        "name": "repeatedOwnersDoNotConsumeDistinctSubjectCapacity",
+        "type": "org.opentest4j.AssertionFailedError"
+      },
+      {
+        "class": "com.aimanager.idempotency.IdempotencyOwnershipTest",
+        "name": "maximumSharedResponseCommitsAndReplaysAllTwoHundredOwners",
+        "type": "org.opentest4j.AssertionFailedError"
+      },
+      {
+        "class": "com.aimanager.idempotency.IdempotencyOwnershipTest",
+        "name": "replayAndRecoveryRejectTheTwoHundredFirstRestoredOwner",
+        "type": "org.opentest4j.AssertionFailedError"
+      },
+      {
+        "class": "com.aimanager.retention.internal.ErasureIdempotencyCardinalityTest",
+        "name": "twoHundredDistinctOwnersCommitAndRemainReadableThroughBothJournalMethods",
+        "type": "org.opentest4j.AssertionFailedError"
+      },
+      {
+        "class": "com.aimanager.retention.internal.ErasureIdempotencyCardinalityTest",
+        "name": "twoSubjectJobsInterleaveAndRedactTheSharedResponseOnceWithoutLosingOtherOwners",
+        "type": "org.opentest4j.AssertionFailedError"
+      },
+      {
+        "class": "com.aimanager.retention.internal.ErasureIdempotencyCardinalityTest",
+        "name": "concurrentSubjectJobsAndReclaimedLeasesNeverDoubleCountTheSharedResponse",
+        "type": "org.opentest4j.AssertionFailedError"
+      },
+      {
+        "class": "com.aimanager.UsageReportJobJourneyTest",
+        "name": "maximumDistinctSubjectSelectionCommitsEveryHistoricalResponseOwner",
+        "type": "org.opentest4j.AssertionFailedError"
+      },
+      {
+        "class": "com.aimanager.UsageReportJobJourneyTest",
+        "name": "manyDevicesSharingOneSubjectCommitOnlyOneResponseOwner",
+        "type": "org.opentest4j.AssertionFailedError"
+      }
+    ]
+  },
+  "intermediateTargetedGreen": {
+    "receipt": {
+      "path": ".local/runtime/erasure-cardinality-targeted-green-r1-exit.json",
+      "sha256": "9af30373486a55bc47432e18e03d590b1ff7b66bab2bd763bcada9fa22df6cc5",
+      "bytes": 784
+    },
+    "sourceManifest": {
+      "path": ".local/runtime/erasure-cardinality-green-20261015-r1.json",
+      "sha256": "9d18f51a84dc42a0c6eab845cf3a249126aa4ca9104dd015bf4bbb3b25330d35",
+      "bytes": 262379
+    },
+    "log": {
+      "path": ".local/runtime/erasure-cardinality-targeted-green-r1.log",
+      "sha256": "6e79554e86feb2252ef8e4a0a485905afa5453b1c2b5c73bd485e5027de8d67a",
+      "bytes": 94731
+    },
+    "tests": 81,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 1,
+    "expectedAssertionFailures": []
+  },
+  "deterministicBarrierGreen": {
+    "receipt": {
+      "path": ".local/runtime/erasure-cardinality-barrier-green-r3-exit.json",
+      "sha256": "e0563074b634c946003daa65304d53b4365f52f0bd4d4fed01fab22804d8ed54",
+      "bytes": 700
+    },
+    "sourceManifest": {
+      "path": ".local/runtime/erasure-cardinality-green-20261015-r3.json",
+      "sha256": "bb08854277865d511f2f2a87535cf00c7c1759fd866fe644088e2311cb9daa13",
+      "bytes": 262379
+    },
+    "log": {
+      "path": ".local/runtime/erasure-cardinality-barrier-green-r3.log",
+      "sha256": "24df41acd40b172dccf3981db2fe69744a113a28a0c5087e14e5a438da902e3c",
+      "bytes": 8237
+    },
+    "tests": 5,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "expectedAssertionFailures": []
+  },
+  "fullBackend": {
+    "receipt": {
+      "path": ".local/runtime/erasure-cardinality-full-backend-final-r1-exit.json",
+      "sha256": "4107fd47f16a620137bf5acee29d0fd1f62bb24d7762ff95c82307621c02b98f",
+      "bytes": 687
+    },
+    "sourceManifest": {
+      "path": ".local/runtime/erasure-cardinality-green-20261015-final-r1.json",
+      "sha256": "0c871fdaf5246104d9d20815c260b9ef5793628a8bc70dcebc8608433abd02bd",
+      "bytes": 262385
+    },
+    "log": {
+      "path": ".local/runtime/erasure-cardinality-full-backend-final-r1.log",
+      "sha256": "cd631bc3197471877e8325526d07f3b3562edf974c1a0f42c6e78718b1868337",
+      "bytes": 1742225
+    },
+    "tests": 1069,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 58,
+    "expectedAssertionFailures": [],
+    "suiteCount": 116,
+    "passed": 1011,
+    "skipReview": {
+      "path": ".local/runtime/erasure-cardinality-full-backend-skips-review.json",
+      "sha256": "d978d827c9258b7c86a057041961146e9d079cc0a7738387752992505b9b06a7",
+      "bytes": 159784
+    },
+    "skipReasons": [
+      {
+        "reason": "System property [parent.dart.command] does not exist",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "skippedCount": 35,
+        "classCount": 14,
+        "classes": [
+          "com.aimanager.ParentAcceptanceHttpInteropTest",
+          "com.aimanager.ParentAuditHttpInteropTest",
+          "com.aimanager.ParentClassHttpInteropTest",
+          "com.aimanager.ParentHelpHttpInteropTest",
+          "com.aimanager.ParentInvitationHttpInteropTest",
+          "com.aimanager.ParentMemberHttpInteropTest",
+          "com.aimanager.ParentNotificationHttpInteropTest",
+          "com.aimanager.ParentObservationHttpInteropTest",
+          "com.aimanager.ParentOwnershipHttpInteropTest",
+          "com.aimanager.ParentPermissionHttpInteropTest",
+          "com.aimanager.ParentQuotaHttpInteropTest",
+          "com.aimanager.ParentQuotaPlanHttpInteropTest",
+          "com.aimanager.ParentSubjectHttpInteropTest",
+          "com.aimanager.commerce.internal.ParentContractHttpInteropTest"
+        ],
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentAcceptanceHttpInteropTest.java",
+            "line": 35,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentAuditHttpInteropTest.java",
+            "line": 24,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentClassHttpInteropTest.java",
+            "line": 35,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentHelpHttpInteropTest.java",
+            "line": 35,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentInvitationHttpInteropTest.java",
+            "line": 35,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentMemberHttpInteropTest.java",
+            "line": 35,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentNotificationHttpInteropTest.java",
+            "line": 22,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentObservationHttpInteropTest.java",
+            "line": 35,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentOwnershipHttpInteropTest.java",
+            "line": 35,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentPermissionHttpInteropTest.java",
+            "line": 35,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentQuotaHttpInteropTest.java",
+            "line": 35,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentQuotaPlanHttpInteropTest.java",
+            "line": 35,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentSubjectHttpInteropTest.java",
+            "line": 36,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/commerce/internal/ParentContractHttpInteropTest.java",
+            "line": 44,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "coverageLimitation": "35 cases in 14 classes did not execute, including all 8 ParentAuditHttpInteropTest and all 15 ParentNotificationHttpInteropTest cases. Inherited backend transaction/concurrency assertions in those gated classes are also not executed coverage. Other cases cover parent production-client HTTP/recovery flows."
+      },
+      {
+        "reason": "System property [device.dart.command] does not exist",
+        "conditionKind": "system_property",
+        "conditionName": "device.dart.command",
+        "skippedCount": 7,
+        "classCount": 7,
+        "classes": [
+          "com.aimanager.DeviceConfigurationHttpInteropTest",
+          "com.aimanager.DeviceObservationHttpInteropTest",
+          "com.aimanager.DiagnosticPreviewJourneyTest",
+          "com.aimanager.SupportGrantJourneyTest",
+          "com.aimanager.UsageReportJobJourneyTest",
+          "com.aimanager.UsageReportJourneyTest",
+          "com.aimanager.support.internal.DiagnosticPackageJourneyTest"
+        ],
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/DeviceConfigurationHttpInteropTest.java",
+            "line": 40,
+            "kind": "system_property",
+            "name": "device.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/DeviceObservationHttpInteropTest.java",
+            "line": 36,
+            "kind": "system_property",
+            "name": "device.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/DiagnosticPreviewJourneyTest.java",
+            "line": 394,
+            "kind": "system_property",
+            "name": "device.dart.command",
+            "matches": ".+",
+            "scope": "method",
+            "method": "productionDartClientReadsRealHttpAndRechecksCurrentAccess"
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/SupportGrantJourneyTest.java",
+            "line": 594,
+            "kind": "system_property",
+            "name": "device.dart.command",
+            "matches": ".+",
+            "scope": "method",
+            "method": "productionDartSupportClientCompletesRealHttpGrantLifecycle"
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/UsageReportJobJourneyTest.java",
+            "line": 52,
+            "kind": "system_property",
+            "name": "device.dart.command",
+            "matches": ".+",
+            "scope": "method",
+            "method": "realHttpJobsAreConsumedByProductionDartClient"
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/UsageReportJourneyTest.java",
+            "line": 673,
+            "kind": "system_property",
+            "name": "device.dart.command",
+            "matches": ".+",
+            "scope": "method",
+            "method": "realHttpResponseIsConsumedByProductionDartReportClient"
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/support/internal/DiagnosticPackageJourneyTest.java",
+            "line": 198,
+            "kind": "system_property",
+            "name": "device.dart.command",
+            "matches": ".+",
+            "scope": "method",
+            "method": "productionDartClientCompletesPackageLifecycleOverRealHttp"
+          }
+        ],
+        "coverageLimitation": "7 production Dart over real HTTP cases did not execute: device configuration/observation, diagnostic preview/package, support grants, report jobs and report consumption. Observation defaults to H2 without its separate database fixture."
+      },
+      {
+        "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist",
+        "conditionKind": "environment_variable",
+        "conditionName": "LEDGER_STORE_TEST_URL",
+        "skippedCount": 6,
+        "classCount": 2,
+        "classes": [
+          "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+          "com.aimanager.retention.internal.ErasureLedgerStoreTest"
+        ],
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/retention/internal/ErasureLedgerRuntimeTest.java",
+            "line": 33,
+            "kind": "environment_variable",
+            "name": "LEDGER_STORE_TEST_URL",
+            "matches": "jdbc:mysql:.*",
+            "scope": "class",
+            "method": null
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/retention/internal/ErasureLedgerStoreTest.java",
+            "line": 375,
+            "kind": "environment_variable",
+            "name": "LEDGER_STORE_TEST_URL",
+            "matches": "jdbc:mysql:.*",
+            "scope": "method",
+            "method": "nonTransactionalEngineIsRejectedBeforeAppending"
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/retention/internal/ErasureLedgerStoreTest.java",
+            "line": 390,
+            "kind": "environment_variable",
+            "name": "LEDGER_STORE_TEST_URL",
+            "matches": "jdbc:mysql:.*",
+            "scope": "method",
+            "method": "initializationPinsTransactionalEngineEvenWhenServerDefaultDiffers"
+          }
+        ],
+        "coverageLimitation": "6 MySQL-specific tests did not execute: 4 independent-ledger runtime/real HTTP admission, synchronous drain/async rejection/identity tests, plus MyISAM refusal and forced InnoDB initialization. Separate validated business/store URL and credential fixtures are required; H2 cannot prove MySQL engine/privilege behavior."
+      },
+      {
+        "reason": "System property [device.access.package] does not exist",
+        "conditionKind": "system_property",
+        "conditionName": "device.access.package",
+        "skippedCount": 2,
+        "classCount": 2,
+        "classes": [
+          "com.aimanager.DeviceAccessHttpInteropTest",
+          "com.aimanager.DeviceAccessSubmissionJourneyTest"
+        ],
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/DeviceAccessHttpInteropTest.java",
+            "line": 44,
+            "kind": "system_property",
+            "name": "device.access.package",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/DeviceAccessSubmissionJourneyTest.java",
+            "line": 600,
+            "kind": "system_property",
+            "name": "device.access.package",
+            "matches": ".+",
+            "scope": "method",
+            "method": "actualDartSubmissionAdultDecisionAndExistingDeviceDeliveryReference"
+          }
+        ],
+        "coverageLimitation": "Production device access transport/submission interop cases did not execute. The internal child-host proof also returns if device.child.package is absent; enabling only the access gate is insufficient for that additional path."
+      },
+      {
+        "reason": "System property [device.child.package] does not exist",
+        "conditionKind": "system_property",
+        "conditionName": "device.child.package",
+        "skippedCount": 2,
+        "classCount": 1,
+        "classes": [
+          "com.aimanager.DeviceAccessSubmissionJourneyTest"
+        ],
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/DeviceAccessSubmissionJourneyTest.java",
+            "line": 667,
+            "kind": "system_property",
+            "name": "device.child.package",
+            "matches": ".+",
+            "scope": "method",
+            "method": "actualChildSessionAndUiRecoverOriginalSubmissionAcrossProcesses"
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/DeviceAccessSubmissionJourneyTest.java",
+            "line": 729,
+            "kind": "system_property",
+            "name": "device.child.package",
+            "matches": ".+",
+            "scope": "method",
+            "method": "actualChildUiRecoversOriginalCancellationAcrossProcesses"
+          }
+        ],
+        "coverageLimitation": "Actual child session/UI original-submission and cancellation recovery across processes did not execute."
+      },
+      {
+        "reason": "System property [guardian.dart.command] does not exist",
+        "conditionKind": "system_property",
+        "conditionName": "guardian.dart.command",
+        "skippedCount": 2,
+        "classCount": 2,
+        "classes": [
+          "com.aimanager.GuardianDeviceManagementHttpTest",
+          "com.aimanager.GuardianEnrollmentRecoveryHttpInteropTest"
+        ],
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/GuardianDeviceManagementHttpTest.java",
+            "line": 48,
+            "kind": "system_property",
+            "name": "guardian.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          },
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/GuardianEnrollmentRecoveryHttpInteropTest.java",
+            "line": 42,
+            "kind": "system_property",
+            "name": "guardian.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "coverageLimitation": "2 guardian production-client real HTTP management/enrollment recovery cases did not execute. The enabled methods additionally require guardian.flutter.tool."
+      },
+      {
+        "reason": "Environment variable [NOTICE_IT_ROOT_PASSWORD] does not exist",
+        "conditionKind": "environment_variable",
+        "conditionName": "NOTICE_IT_ROOT_PASSWORD",
+        "skippedCount": 1,
+        "classCount": 1,
+        "classes": [
+          "com.aimanager.retention.internal.ErasureAdmissionStoreTest"
+        ],
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/retention/internal/ErasureAdmissionStoreTest.java",
+            "line": 216,
+            "kind": "environment_variable",
+            "name": "NOTICE_IT_ROOT_PASSWORD",
+            "matches": ".+",
+            "scope": "method",
+            "method": "leastPrivilegeRuntimeCanDrainWorkButCannotRewriteAcceptedRecords"
+          }
+        ],
+        "coverageLimitation": "MySQL least-privilege admission proof did not execute. It also needs a strictly isolated loopback MySQL schema and administrator CREATE USER/GRANT capability. No runtime credential values were read."
+      },
+      {
+        "reason": "System property [device.android.runner] does not exist",
+        "conditionKind": "system_property",
+        "conditionName": "device.android.runner",
+        "skippedCount": 1,
+        "classCount": 1,
+        "classes": [
+          "com.aimanager.AndroidChildSubmissionJourneyTest"
+        ],
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/AndroidChildSubmissionJourneyTest.java",
+            "line": 63,
+            "kind": "system_property",
+            "name": "device.android.runner",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "coverageLimitation": "The native Android enrollment/crash-recovery/revocation path did not execute. Runner presence alone does not establish the additional owned-runner, command and AVD prerequisites."
+      },
+      {
+        "reason": "System property [device.cleanup.android.runner] does not exist",
+        "conditionKind": "system_property",
+        "conditionName": "device.cleanup.android.runner",
+        "skippedCount": 1,
+        "classCount": 1,
+        "classes": [
+          "com.aimanager.AndroidCleanupHttpsJourneyTest"
+        ],
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/AndroidCleanupHttpsJourneyTest.java",
+            "line": 59,
+            "kind": "system_property",
+            "name": "device.cleanup.android.runner",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "coverageLimitation": "The native original-key HTTPS cleanup and acknowledged-journal recovery path did not execute. Owned runner, command/AVD and TLS fixtures remain additional prerequisites."
+      },
+      {
+        "reason": "System property [device.identity.package] does not exist",
+        "conditionKind": "system_property",
+        "conditionName": "device.identity.package",
+        "skippedCount": 1,
+        "classCount": 1,
+        "classes": [
+          "com.aimanager.DeviceIdentityHttpInteropTest"
+        ],
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/DeviceIdentityHttpInteropTest.java",
+            "line": 36,
+            "kind": "system_property",
+            "name": "device.identity.package",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "coverageLimitation": "Actual device identity enrollment recovery, confirmation, rotation and revocation client interop did not execute."
+      }
+    ],
+    "skippedTests": [
+      {
+        "index": 1,
+        "class": "com.aimanager.AndroidChildSubmissionJourneyTest",
+        "name": "realEnrollmentNativeCrashRecoveryAndRevocation",
+        "reason": "System property [device.android.runner] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "device.android.runner",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/AndroidChildSubmissionJourneyTest.java",
+            "line": 63,
+            "kind": "system_property",
+            "name": "device.android.runner",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.AndroidChildSubmissionJourneyTest.xml",
+        "xmlSha256": "59e2b8c0280573753e39403effa9ddfb30a2ccd5d0f33c7d8cd2e76d28c983af"
+      },
+      {
+        "index": 2,
+        "class": "com.aimanager.AndroidCleanupHttpsJourneyTest",
+        "name": "nativeOriginalKeyExecutesRealHttpsCleanupAndRetainsAcknowledgedJournal",
+        "reason": "System property [device.cleanup.android.runner] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "device.cleanup.android.runner",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/AndroidCleanupHttpsJourneyTest.java",
+            "line": 59,
+            "kind": "system_property",
+            "name": "device.cleanup.android.runner",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.AndroidCleanupHttpsJourneyTest.xml",
+        "xmlSha256": "3a85ad97d7f2563f1cdc2db73f9a211c14a444198b08cfa1e6b48da38368fd31"
+      },
+      {
+        "index": 3,
+        "class": "com.aimanager.commerce.internal.ParentContractHttpInteropTest",
+        "name": "productionPhoneAcceptsOnceAndRecoversCurrentContractAfterReplyLoss",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/commerce/internal/ParentContractHttpInteropTest.java",
+            "line": 44,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.commerce.internal.ParentContractHttpInteropTest.xml",
+        "xmlSha256": "c2906e07830b0e72fe7af5e9656e7fc548bdeb9cd9c6a26e1e519a7327e8b631"
+      },
+      {
+        "index": 4,
+        "class": "com.aimanager.DeviceAccessHttpInteropTest",
+        "name": "realApprovalRetryReceiptsRevocationExpiryAndOpaqueRevocation",
+        "reason": "System property [device.access.package] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "device.access.package",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/DeviceAccessHttpInteropTest.java",
+            "line": 44,
+            "kind": "system_property",
+            "name": "device.access.package",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.DeviceAccessHttpInteropTest.xml",
+        "xmlSha256": "6df65d03e9c7c823c74f5fe0656ae8951855318b4fe42200f45187b215d58713"
+      },
+      {
+        "index": 5,
+        "class": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+        "name": "actualDartSubmissionAdultDecisionAndExistingDeviceDeliveryReference",
+        "reason": "System property [device.access.package] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "device.access.package",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/DeviceAccessSubmissionJourneyTest.java",
+            "line": 600,
+            "kind": "system_property",
+            "name": "device.access.package",
+            "matches": ".+",
+            "scope": "method",
+            "method": "actualDartSubmissionAdultDecisionAndExistingDeviceDeliveryReference"
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.DeviceAccessSubmissionJourneyTest.xml",
+        "xmlSha256": "5d6cdfad7d1530bad7ee7828380b32dce82567699109816d6f0971c5c31f07a5"
+      },
+      {
+        "index": 6,
+        "class": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+        "name": "actualChildUiRecoversOriginalCancellationAcrossProcesses",
+        "reason": "System property [device.child.package] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "device.child.package",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/DeviceAccessSubmissionJourneyTest.java",
+            "line": 729,
+            "kind": "system_property",
+            "name": "device.child.package",
+            "matches": ".+",
+            "scope": "method",
+            "method": "actualChildUiRecoversOriginalCancellationAcrossProcesses"
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.DeviceAccessSubmissionJourneyTest.xml",
+        "xmlSha256": "5d6cdfad7d1530bad7ee7828380b32dce82567699109816d6f0971c5c31f07a5"
+      },
+      {
+        "index": 7,
+        "class": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+        "name": "actualChildSessionAndUiRecoverOriginalSubmissionAcrossProcesses",
+        "reason": "System property [device.child.package] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "device.child.package",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/DeviceAccessSubmissionJourneyTest.java",
+            "line": 667,
+            "kind": "system_property",
+            "name": "device.child.package",
+            "matches": ".+",
+            "scope": "method",
+            "method": "actualChildSessionAndUiRecoverOriginalSubmissionAcrossProcesses"
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.DeviceAccessSubmissionJourneyTest.xml",
+        "xmlSha256": "5d6cdfad7d1530bad7ee7828380b32dce82567699109816d6f0971c5c31f07a5"
+      },
+      {
+        "index": 8,
+        "class": "com.aimanager.DeviceConfigurationHttpInteropTest",
+        "name": "realDeviceTransportStoresTwoPagesAndRejectsRevokedCredential",
+        "reason": "System property [device.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "device.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/DeviceConfigurationHttpInteropTest.java",
+            "line": 40,
+            "kind": "system_property",
+            "name": "device.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.DeviceConfigurationHttpInteropTest.xml",
+        "xmlSha256": "307829a5630c29a9d160ee89cabe4113a3ee190d2f4be4c61bb65c205e9e28e0"
+      },
+      {
+        "index": 9,
+        "class": "com.aimanager.DeviceIdentityHttpInteropTest",
+        "name": "actualEnrollmentRecoveryConfirmationRotationAndRevocation",
+        "reason": "System property [device.identity.package] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "device.identity.package",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/DeviceIdentityHttpInteropTest.java",
+            "line": 36,
+            "kind": "system_property",
+            "name": "device.identity.package",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.DeviceIdentityHttpInteropTest.xml",
+        "xmlSha256": "f97722e547a092d2c68e6ef93e8268f6f488ce3dab0755b88ec0abe99bd18d10"
+      },
+      {
+        "index": 10,
+        "class": "com.aimanager.DeviceObservationHttpInteropTest",
+        "name": "adultConsentDeviceLostAcknowledgementReplayWithdrawalAndRevocation",
+        "reason": "System property [device.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "device.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/DeviceObservationHttpInteropTest.java",
+            "line": 36,
+            "kind": "system_property",
+            "name": "device.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.DeviceObservationHttpInteropTest.xml",
+        "xmlSha256": "cae60263b0a83c565698b4e1abe2c1cf670592b81f0c9570ff8eb4033cc59536"
+      },
+      {
+        "index": 11,
+        "class": "com.aimanager.DiagnosticPreviewJourneyTest",
+        "name": "productionDartClientReadsRealHttpAndRechecksCurrentAccess",
+        "reason": "System property [device.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "device.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/DiagnosticPreviewJourneyTest.java",
+            "line": 394,
+            "kind": "system_property",
+            "name": "device.dart.command",
+            "matches": ".+",
+            "scope": "method",
+            "method": "productionDartClientReadsRealHttpAndRechecksCurrentAccess"
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.DiagnosticPreviewJourneyTest.xml",
+        "xmlSha256": "5ab71da3861bcbee9e9821a8941d243d1e65ab9667e68e4c0884276bf3d7ba81"
+      },
+      {
+        "index": 12,
+        "class": "com.aimanager.GuardianDeviceManagementHttpTest",
+        "name": "dartReadsRealContractsAndRecoversCommittedRevokeWithoutReplay",
+        "reason": "System property [guardian.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "guardian.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/GuardianDeviceManagementHttpTest.java",
+            "line": 48,
+            "kind": "system_property",
+            "name": "guardian.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.GuardianDeviceManagementHttpTest.xml",
+        "xmlSha256": "073333686802ff818f804eac9c37fa833930c3f163ce63a30ff76c070357e305"
+      },
+      {
+        "index": 13,
+        "class": "com.aimanager.GuardianEnrollmentRecoveryHttpInteropTest",
+        "name": "lostCreationRecoversWithoutSecretReplayAndFailedConfirmationCommitsItsCount",
+        "reason": "System property [guardian.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "guardian.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/GuardianEnrollmentRecoveryHttpInteropTest.java",
+            "line": 42,
+            "kind": "system_property",
+            "name": "guardian.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.GuardianEnrollmentRecoveryHttpInteropTest.xml",
+        "xmlSha256": "0dcfb5631655f951247fde44876f86462665501114a6e5bf35be8880fd410847"
+      },
+      {
+        "index": 14,
+        "class": "com.aimanager.ParentAcceptanceHttpInteropTest",
+        "name": "productionRecipientDistinguishesAcceptedRevokedAndRejoinedMembership",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentAcceptanceHttpInteropTest.java",
+            "line": 35,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentAcceptanceHttpInteropTest.xml",
+        "xmlSha256": "b5a22ac0d6ee34b155422bedc48ef8d15cb04fb8d14459aadd694c4025668b19"
+      },
+      {
+        "index": 15,
+        "class": "com.aimanager.ParentAuditHttpInteropTest",
+        "name": "filtersIntersectAndEndIsExclusive",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentAuditHttpInteropTest.java",
+            "line": 24,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentAuditHttpInteropTest.xml",
+        "xmlSha256": "ef21e2999ac4753b9a1d4ce6ed1056f4db05c18fd89d71fe730c6e43dedd3864"
+      },
+      {
+        "index": 16,
+        "class": "com.aimanager.ParentAuditHttpInteropTest",
+        "name": "cursorCannotCrossFilterOrTenant",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentAuditHttpInteropTest.java",
+            "line": 24,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentAuditHttpInteropTest.xml",
+        "xmlSha256": "ef21e2999ac4753b9a1d4ce6ed1056f4db05c18fd89d71fe730c6e43dedd3864"
+      },
+      {
+        "index": 17,
+        "class": "com.aimanager.ParentAuditHttpInteropTest",
+        "name": "hashedActorResourceCanBeSearched",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentAuditHttpInteropTest.java",
+            "line": 24,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentAuditHttpInteropTest.xml",
+        "xmlSha256": "ef21e2999ac4753b9a1d4ce6ed1056f4db05c18fd89d71fe730c6e43dedd3864"
+      },
+      {
+        "index": 18,
+        "class": "com.aimanager.ParentAuditHttpInteropTest",
+        "name": "invalidBoundsFiltersAndCursorAre400",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentAuditHttpInteropTest.java",
+            "line": 24,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentAuditHttpInteropTest.xml",
+        "xmlSha256": "ef21e2999ac4753b9a1d4ce6ed1056f4db05c18fd89d71fe730c6e43dedd3864"
+      },
+      {
+        "index": 19,
+        "class": "com.aimanager.ParentAuditHttpInteropTest",
+        "name": "newestFirstStableTiesAndBoundedPages",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentAuditHttpInteropTest.java",
+            "line": 24,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentAuditHttpInteropTest.xml",
+        "xmlSha256": "ef21e2999ac4753b9a1d4ce6ed1056f4db05c18fd89d71fe730c6e43dedd3864"
+      },
+      {
+        "index": 20,
+        "class": "com.aimanager.ParentAuditHttpInteropTest",
+        "name": "detailFreshAuthorizationAndLegacyCompatibility",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentAuditHttpInteropTest.java",
+            "line": 24,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentAuditHttpInteropTest.xml",
+        "xmlSha256": "ef21e2999ac4753b9a1d4ce6ed1056f4db05c18fd89d71fe730c6e43dedd3864"
+      },
+      {
+        "index": 21,
+        "class": "com.aimanager.ParentAuditHttpInteropTest",
+        "name": "rolesRevocationAndTenantIsolation",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentAuditHttpInteropTest.java",
+            "line": 24,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentAuditHttpInteropTest.xml",
+        "xmlSha256": "ef21e2999ac4753b9a1d4ce6ed1056f4db05c18fd89d71fe730c6e43dedd3864"
+      },
+      {
+        "index": 22,
+        "class": "com.aimanager.ParentAuditHttpInteropTest",
+        "name": "mobileReaderUsesRealPaginationFiltersAndAuthorization",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentAuditHttpInteropTest.java",
+            "line": 24,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentAuditHttpInteropTest.xml",
+        "xmlSha256": "ef21e2999ac4753b9a1d4ce6ed1056f4db05c18fd89d71fe730c6e43dedd3864"
+      },
+      {
+        "index": 23,
+        "class": "com.aimanager.ParentClassHttpInteropTest",
+        "name": "productionClientRecoversClassCreationAndTransferWithoutDuplicateAssociations",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentClassHttpInteropTest.java",
+            "line": 35,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentClassHttpInteropTest.xml",
+        "xmlSha256": "f1985b66a02d62d6648ff9f9446eb2d88a3606a8e6acf652285019c08cc6d396"
+      },
+      {
+        "index": 24,
+        "class": "com.aimanager.ParentHelpHttpInteropTest",
+        "name": "lostAcknowledgementRecoveryThroughParentController",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentHelpHttpInteropTest.java",
+            "line": 35,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentHelpHttpInteropTest.xml",
+        "xmlSha256": "cf6a69dfe6798ced8f076ee3e4a72f2d088e4ae5f92fbdcea487cf5ecd4f3a9d"
+      },
+      {
+        "index": 25,
+        "class": "com.aimanager.ParentInvitationHttpInteropTest",
+        "name": "productionClientRecoversIssuanceAndPreservesAcceptedMembership",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentInvitationHttpInteropTest.java",
+            "line": 35,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentInvitationHttpInteropTest.xml",
+        "xmlSha256": "9ff46172eff889373ea8d4ef2ac3394d9e86b0e46f1c7914b95929e24fc6c414"
+      },
+      {
+        "index": 26,
+        "class": "com.aimanager.ParentMemberHttpInteropTest",
+        "name": "productionClientRecoversMemberEditsAndRevocationWithoutDuplicateHistory",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentMemberHttpInteropTest.java",
+            "line": 35,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentMemberHttpInteropTest.xml",
+        "xmlSha256": "ca6cda2a6b2c88bb8de922eca568f9e6398a07eda680c85b3ed4b8e0170da453"
+      },
+      {
+        "index": 27,
+        "class": "com.aimanager.ParentNotificationHttpInteropTest",
+        "name": "requestReplayProducesOnePrivateNoticeAndReadStateBelongsToCurrentActor",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentNotificationHttpInteropTest.java",
+            "line": 22,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentNotificationHttpInteropTest.xml",
+        "xmlSha256": "76a66ae1816d1a8b96abf37fec794ebcd4edd8d1469d7f02fa16df8f6e47ceef"
+      },
+      {
+        "index": 28,
+        "class": "com.aimanager.ParentNotificationHttpInteropTest",
+        "name": "privateScopeRevocationAndCaseDistinctActorsCannotReadOrMarkEachOthersNotices",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentNotificationHttpInteropTest.java",
+            "line": 22,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentNotificationHttpInteropTest.xml",
+        "xmlSha256": "76a66ae1816d1a8b96abf37fec794ebcd4edd8d1469d7f02fa16df8f6e47ceef"
+      },
+      {
+        "index": 29,
+        "class": "com.aimanager.ParentNotificationHttpInteropTest",
+        "name": "repeatedDomainDeliveryDoesNotDuplicateOrResetPersonalReadState",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentNotificationHttpInteropTest.java",
+            "line": 22,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentNotificationHttpInteropTest.xml",
+        "xmlSha256": "76a66ae1816d1a8b96abf37fec794ebcd4edd8d1469d7f02fa16df8f6e47ceef"
+      },
+      {
+        "index": 30,
+        "class": "com.aimanager.ParentNotificationHttpInteropTest",
+        "name": "approvalRevocationAndExpiryAreVersionedFactsWithoutClaimingExecution",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentNotificationHttpInteropTest.java",
+            "line": 22,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentNotificationHttpInteropTest.xml",
+        "xmlSha256": "76a66ae1816d1a8b96abf37fec794ebcd4edd8d1469d7f02fa16df8f6e47ceef"
+      },
+      {
+        "index": 31,
+        "class": "com.aimanager.ParentNotificationHttpInteropTest",
+        "name": "mixedScopeBatchIsAtomicAndMalformedInputIsRejected",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentNotificationHttpInteropTest.java",
+            "line": 22,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentNotificationHttpInteropTest.xml",
+        "xmlSha256": "76a66ae1816d1a8b96abf37fec794ebcd4edd8d1469d7f02fa16df8f6e47ceef"
+      },
+      {
+        "index": 32,
+        "class": "com.aimanager.ParentNotificationHttpInteropTest",
+        "name": "teacherNoticesRequireOwnRequestAndCurrentStudentScope",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentNotificationHttpInteropTest.java",
+            "line": 22,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentNotificationHttpInteropTest.xml",
+        "xmlSha256": "76a66ae1816d1a8b96abf37fec794ebcd4edd8d1469d7f02fa16df8f6e47ceef"
+      },
+      {
+        "index": 33,
+        "class": "com.aimanager.ParentNotificationHttpInteropTest",
+        "name": "concurrentReadRetriesCreateExactlyOnePersonalReceipt",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentNotificationHttpInteropTest.java",
+            "line": 22,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentNotificationHttpInteropTest.xml",
+        "xmlSha256": "76a66ae1816d1a8b96abf37fec794ebcd4edd8d1469d7f02fa16df8f6e47ceef"
+      },
+      {
+        "index": 34,
+        "class": "com.aimanager.ParentNotificationHttpInteropTest",
+        "name": "expiredRetentionIsExcludedFromListAndUnreadCountWithoutDeletingApprovalHistory",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentNotificationHttpInteropTest.java",
+            "line": 22,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentNotificationHttpInteropTest.xml",
+        "xmlSha256": "76a66ae1816d1a8b96abf37fec794ebcd4edd8d1469d7f02fa16df8f6e47ceef"
+      },
+      {
+        "index": 35,
+        "class": "com.aimanager.ParentNotificationHttpInteropTest",
+        "name": "boundedRetentionRemovesOnlyOldNoticesAndTheirReceipts",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentNotificationHttpInteropTest.java",
+            "line": 22,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentNotificationHttpInteropTest.xml",
+        "xmlSha256": "76a66ae1816d1a8b96abf37fec794ebcd4edd8d1469d7f02fa16df8f6e47ceef"
+      },
+      {
+        "index": 36,
+        "class": "com.aimanager.ParentNotificationHttpInteropTest",
+        "name": "failedTransactionalNotificationRollsBackRequestAuditAndIdempotencyBeforeSafeRetry",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentNotificationHttpInteropTest.java",
+            "line": 22,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentNotificationHttpInteropTest.xml",
+        "xmlSha256": "76a66ae1816d1a8b96abf37fec794ebcd4edd8d1469d7f02fa16df8f6e47ceef"
+      },
+      {
+        "index": 37,
+        "class": "com.aimanager.ParentNotificationHttpInteropTest",
+        "name": "repeatedDeliverySeesConcurrentCommitBeyondAnEarlierSnapshot",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentNotificationHttpInteropTest.java",
+            "line": 22,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentNotificationHttpInteropTest.xml",
+        "xmlSha256": "76a66ae1816d1a8b96abf37fec794ebcd4edd8d1469d7f02fa16df8f6e47ceef"
+      },
+      {
+        "index": 38,
+        "class": "com.aimanager.ParentNotificationHttpInteropTest",
+        "name": "paginationDoesNotSkipEqualTimestampsAndBatchReadOnlyMarksExplicitIds",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentNotificationHttpInteropTest.java",
+            "line": 22,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentNotificationHttpInteropTest.xml",
+        "xmlSha256": "76a66ae1816d1a8b96abf37fec794ebcd4edd8d1469d7f02fa16df8f6e47ceef"
+      },
+      {
+        "index": 39,
+        "class": "com.aimanager.ParentNotificationHttpInteropTest",
+        "name": "cancellationAndDenialCreateTheirOwnNotificationVersions",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentNotificationHttpInteropTest.java",
+            "line": 22,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentNotificationHttpInteropTest.xml",
+        "xmlSha256": "76a66ae1816d1a8b96abf37fec794ebcd4edd8d1469d7f02fa16df8f6e47ceef"
+      },
+      {
+        "index": 40,
+        "class": "com.aimanager.ParentNotificationHttpInteropTest",
+        "name": "productionDecisionClientRecoversWithoutResubmittingApproval",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentNotificationHttpInteropTest.java",
+            "line": 22,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentNotificationHttpInteropTest.xml",
+        "xmlSha256": "76a66ae1816d1a8b96abf37fec794ebcd4edd8d1469d7f02fa16df8f6e47ceef"
+      },
+      {
+        "index": 41,
+        "class": "com.aimanager.ParentNotificationHttpInteropTest",
+        "name": "productionClientRecoversReadAndFetchesCurrentRequest",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentNotificationHttpInteropTest.java",
+            "line": 22,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentNotificationHttpInteropTest.xml",
+        "xmlSha256": "76a66ae1816d1a8b96abf37fec794ebcd4edd8d1469d7f02fa16df8f6e47ceef"
+      },
+      {
+        "index": 42,
+        "class": "com.aimanager.ParentObservationHttpInteropTest",
+        "name": "lostResponseRecoveryAndWithdrawalThroughParentController",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentObservationHttpInteropTest.java",
+            "line": 35,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentObservationHttpInteropTest.xml",
+        "xmlSha256": "16f8251976567b7938a9ebed2507526a5dd78ed996168ec76ecf0c0e55a1a826"
+      },
+      {
+        "index": 43,
+        "class": "com.aimanager.ParentOwnershipHttpInteropTest",
+        "name": "productionOwnershipControllersRecoverLostRepliesAcrossRoleChanges",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentOwnershipHttpInteropTest.java",
+            "line": 35,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentOwnershipHttpInteropTest.xml",
+        "xmlSha256": "971cd9b14dc5e96495167e8d221506980d471a68562f17e67c77f0a5ee6e4125"
+      },
+      {
+        "index": 44,
+        "class": "com.aimanager.ParentPermissionHttpInteropTest",
+        "name": "lostResponseRecoveryAndWithdrawalThroughParentController",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentPermissionHttpInteropTest.java",
+            "line": 35,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentPermissionHttpInteropTest.xml",
+        "xmlSha256": "6df5fec7428f31f9f511ab6334fb2415e09c2bdc265754f349c942b75480d81d"
+      },
+      {
+        "index": 45,
+        "class": "com.aimanager.ParentQuotaHttpInteropTest",
+        "name": "productionClientRecoversLostRepliesWithoutDoubleGranting",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentQuotaHttpInteropTest.java",
+            "line": 35,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentQuotaHttpInteropTest.xml",
+        "xmlSha256": "77ca9bf909450083b7a9b94807adb172744c84cb488c5b82e1ef84d3eee0c261"
+      },
+      {
+        "index": 46,
+        "class": "com.aimanager.ParentQuotaPlanHttpInteropTest",
+        "name": "productionClientRecoversLostPlanRepliesWithoutDuplicateRevisions",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentQuotaPlanHttpInteropTest.java",
+            "line": 35,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentQuotaPlanHttpInteropTest.xml",
+        "xmlSha256": "2c0fe3935031379d688b4105ceee21d04f07fa8bc36ba59abbb2fbdd989edb19"
+      },
+      {
+        "index": 47,
+        "class": "com.aimanager.ParentSubjectHttpInteropTest",
+        "name": "fullManagementFlowUsesProductionClient",
+        "reason": "System property [parent.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "parent.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/ParentSubjectHttpInteropTest.java",
+            "line": 36,
+            "kind": "system_property",
+            "name": "parent.dart.command",
+            "matches": ".+",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.ParentSubjectHttpInteropTest.xml",
+        "xmlSha256": "21d75749a63a36cd167097a227935fdd2edca0a7423dd9dc21e9a2d4373ee668"
+      },
+      {
+        "index": 48,
+        "class": "com.aimanager.retention.internal.ErasureAdmissionStoreTest",
+        "name": "leastPrivilegeRuntimeCanDrainWorkButCannotRewriteAcceptedRecords",
+        "reason": "Environment variable [NOTICE_IT_ROOT_PASSWORD] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "environment_variable",
+        "conditionName": "NOTICE_IT_ROOT_PASSWORD",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/retention/internal/ErasureAdmissionStoreTest.java",
+            "line": 216,
+            "kind": "environment_variable",
+            "name": "NOTICE_IT_ROOT_PASSWORD",
+            "matches": ".+",
+            "scope": "method",
+            "method": "leastPrivilegeRuntimeCanDrainWorkButCannotRewriteAcceptedRecords"
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.retention.internal.ErasureAdmissionStoreTest.xml",
+        "xmlSha256": "f798d696f08675b19a11e0ad8f2638dfa4de09363c397567379b7fc22d380bbc"
+      },
+      {
+        "index": 49,
+        "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+        "name": "mismatchedIdentityAndMissingLedgerAreReportedWithoutAutomaticRecreation",
+        "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "environment_variable",
+        "conditionName": "LEDGER_STORE_TEST_URL",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/retention/internal/ErasureLedgerRuntimeTest.java",
+            "line": 33,
+            "kind": "environment_variable",
+            "name": "LEDGER_STORE_TEST_URL",
+            "matches": "jdbc:mysql:.*",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.retention.internal.ErasureLedgerRuntimeTest.xml",
+        "xmlSha256": "99b8dc9de1083253699ced2d871e15da39b5942a2449ba32108f3d9355211ea1"
+      },
+      {
+        "index": 50,
+        "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+        "name": "servletAsyncCannotEscapeTheRegisteredSynchronousPermit",
+        "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "environment_variable",
+        "conditionName": "LEDGER_STORE_TEST_URL",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/retention/internal/ErasureLedgerRuntimeTest.java",
+            "line": 33,
+            "kind": "environment_variable",
+            "name": "LEDGER_STORE_TEST_URL",
+            "matches": "jdbc:mysql:.*",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.retention.internal.ErasureLedgerRuntimeTest.xml",
+        "xmlSha256": "99b8dc9de1083253699ced2d871e15da39b5942a2449ba32108f3d9355211ea1"
+      },
+      {
+        "index": 51,
+        "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+        "name": "acceptedLedgerStopsAuthorizedBusinessRequestsWithoutDeletingTheirData",
+        "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "environment_variable",
+        "conditionName": "LEDGER_STORE_TEST_URL",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/retention/internal/ErasureLedgerRuntimeTest.java",
+            "line": 33,
+            "kind": "environment_variable",
+            "name": "LEDGER_STORE_TEST_URL",
+            "matches": "jdbc:mysql:.*",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.retention.internal.ErasureLedgerRuntimeTest.xml",
+        "xmlSha256": "99b8dc9de1083253699ced2d871e15da39b5942a2449ba32108f3d9355211ea1"
+      },
+      {
+        "index": 52,
+        "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+        "name": "realHttpRequestDrainsBeforeAcceptanceAndProbesRemainAvailable",
+        "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "environment_variable",
+        "conditionName": "LEDGER_STORE_TEST_URL",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/retention/internal/ErasureLedgerRuntimeTest.java",
+            "line": 33,
+            "kind": "environment_variable",
+            "name": "LEDGER_STORE_TEST_URL",
+            "matches": "jdbc:mysql:.*",
+            "scope": "class",
+            "method": null
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.retention.internal.ErasureLedgerRuntimeTest.xml",
+        "xmlSha256": "99b8dc9de1083253699ced2d871e15da39b5942a2449ba32108f3d9355211ea1"
+      },
+      {
+        "index": 53,
+        "class": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+        "name": "nonTransactionalEngineIsRejectedBeforeAppending",
+        "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "environment_variable",
+        "conditionName": "LEDGER_STORE_TEST_URL",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/retention/internal/ErasureLedgerStoreTest.java",
+            "line": 375,
+            "kind": "environment_variable",
+            "name": "LEDGER_STORE_TEST_URL",
+            "matches": "jdbc:mysql:.*",
+            "scope": "method",
+            "method": "nonTransactionalEngineIsRejectedBeforeAppending"
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.retention.internal.ErasureLedgerStoreTest.xml",
+        "xmlSha256": "c4302c1723d7f5d2e5471eb1a34ff0d6a920324fa4aee917c5732f3899eb267f"
+      },
+      {
+        "index": 54,
+        "class": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+        "name": "initializationPinsTransactionalEngineEvenWhenServerDefaultDiffers",
+        "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "environment_variable",
+        "conditionName": "LEDGER_STORE_TEST_URL",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/retention/internal/ErasureLedgerStoreTest.java",
+            "line": 390,
+            "kind": "environment_variable",
+            "name": "LEDGER_STORE_TEST_URL",
+            "matches": "jdbc:mysql:.*",
+            "scope": "method",
+            "method": "initializationPinsTransactionalEngineEvenWhenServerDefaultDiffers"
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.retention.internal.ErasureLedgerStoreTest.xml",
+        "xmlSha256": "c4302c1723d7f5d2e5471eb1a34ff0d6a920324fa4aee917c5732f3899eb267f"
+      },
+      {
+        "index": 55,
+        "class": "com.aimanager.support.internal.DiagnosticPackageJourneyTest",
+        "name": "productionDartClientCompletesPackageLifecycleOverRealHttp",
+        "reason": "System property [device.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "device.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/support/internal/DiagnosticPackageJourneyTest.java",
+            "line": 198,
+            "kind": "system_property",
+            "name": "device.dart.command",
+            "matches": ".+",
+            "scope": "method",
+            "method": "productionDartClientCompletesPackageLifecycleOverRealHttp"
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.support.internal.DiagnosticPackageJourneyTest.xml",
+        "xmlSha256": "5b15f5667fe1924b6724179d21c73d5c75d9d820c452327078ec8c7752d932f6"
+      },
+      {
+        "index": 56,
+        "class": "com.aimanager.SupportGrantJourneyTest",
+        "name": "productionDartSupportClientCompletesRealHttpGrantLifecycle",
+        "reason": "System property [device.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "device.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/SupportGrantJourneyTest.java",
+            "line": 594,
+            "kind": "system_property",
+            "name": "device.dart.command",
+            "matches": ".+",
+            "scope": "method",
+            "method": "productionDartSupportClientCompletesRealHttpGrantLifecycle"
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.SupportGrantJourneyTest.xml",
+        "xmlSha256": "69b59a9e38627262b158103319f4bdc27ba227a45c3755db20bfeeed7b82ac78"
+      },
+      {
+        "index": 57,
+        "class": "com.aimanager.UsageReportJobJourneyTest",
+        "name": "realHttpJobsAreConsumedByProductionDartClient",
+        "reason": "System property [device.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "device.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/UsageReportJobJourneyTest.java",
+            "line": 52,
+            "kind": "system_property",
+            "name": "device.dart.command",
+            "matches": ".+",
+            "scope": "method",
+            "method": "realHttpJobsAreConsumedByProductionDartClient"
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.UsageReportJobJourneyTest.xml",
+        "xmlSha256": "565210789eac02eb628d7cb8a2547d7e4a8f94e109d41c32407f0b40dffbe37d"
+      },
+      {
+        "index": 58,
+        "class": "com.aimanager.UsageReportJourneyTest",
+        "name": "realHttpResponseIsConsumedByProductionDartReportClient",
+        "reason": "System property [device.dart.command] does not exist",
+        "skippedType": null,
+        "skippedText": "",
+        "conditionKind": "system_property",
+        "conditionName": "device.dart.command",
+        "sourceConditionRefs": [
+          {
+            "sourcePath": "backend/src/test/java/com/aimanager/UsageReportJourneyTest.java",
+            "line": 673,
+            "kind": "system_property",
+            "name": "device.dart.command",
+            "matches": ".+",
+            "scope": "method",
+            "method": "realHttpResponseIsConsumedByProductionDartReportClient"
+          }
+        ],
+        "xmlFile": "TEST-com.aimanager.UsageReportJourneyTest.xml",
+        "xmlSha256": "833636651e782cbfef3886ab2a05c3e3858d0e0c72c86aa71830ecf956995d56"
+      }
+    ],
+    "additionalFixtureLimitations": [
+      {
+        "source": "backend/src/test/java/com/aimanager/retention/internal/ErasureAdmissionStoreTest.java",
+        "lines": [
+          220,
+          222,
+          228,
+          237,
+          250
+        ],
+        "detail": "Requires a query-bearing jdbc:mysql URL for 127.0.0.1:3308/notification_it_<32 hex> isolated schema and root CREATE USER/GRANT permissions."
+      },
+      {
+        "source": "backend/src/test/java/com/aimanager/retention/internal/ErasureLedgerRuntimeTest.java",
+        "lines": [
+          48,
+          59,
+          65,
+          70
+        ],
+        "detail": "Requires independently validated LEDGER_BUSINESS_TEST_URL and LEDGER_STORE_TEST_URL plus their *_USERNAME/*_PASSWORD fixtures. Only static variable names were read."
+      },
+      {
+        "source": "backend/src/test/java/com/aimanager/retention/internal/ErasureLedgerStoreTest.java",
+        "lines": [
+          379,
+          404,
+          417
+        ],
+        "detail": "Skipped methods explicitly test MyISAM refusal and InnoDB initialization when the session engine default differs."
+      },
+      {
+        "source": "backend/src/test/java/com/aimanager/DeviceAccessHttpInteropTest.java",
+        "lines": [
+          277,
+          278
+        ],
+        "detail": "Child-host proof directly returns when device.child.package is absent. This is an internal condition, not a separate Surefire skip."
+      },
+      {
+        "source": "backend/src/test/java/com/aimanager/DeviceObservationHttpInteropTest.java",
+        "lines": [
+          52,
+          53,
+          59,
+          60
+        ],
+        "detail": "Without OBSERVATION_TEST_DATABASE_URL the fixture stays H2; additional static names are OBSERVATION_TEST_DATABASE_USERNAME and OBSERVATION_TEST_DATABASE_PASSWORD."
+      },
+      {
+        "source": "backend/src/test/java/com/aimanager/AndroidChildSubmissionJourneyTest.java",
+        "lines": [
+          126,
+          620
+        ],
+        "detail": "Enabled runner also needs an owned native runner, command and AVD fixture."
+      },
+      {
+        "source": "backend/src/test/java/com/aimanager/AndroidCleanupHttpsJourneyTest.java",
+        "lines": [
+          103,
+          106,
+          108
+        ],
+        "detail": "Enabled cleanup runner also needs owned command/AVD and TLS fixtures."
+      },
+      {
+        "source": "backend/src/test/java/com/aimanager/GuardianDeviceManagementHttpTest.java",
+        "lines": [
+          325
+        ],
+        "detail": "Enabled guardian gate additionally requires guardian.flutter.tool."
+      },
+      {
+        "source": "backend/src/test/java/com/aimanager/GuardianEnrollmentRecoveryHttpInteropTest.java",
+        "lines": [
+          116
+        ],
+        "detail": "Enabled guardian gate additionally requires guardian.flutter.tool."
+      }
+    ],
+    "scopeLimitations": [
+      "All 58 skips are individually preserved. Reasons are JUnit messages from this invocation, not a read of present environment values or proof that tools/databases are unavailable.",
+      "1069 includes 58 skipped tests: 1011 non-skipped successful testcase records. Zero failures/errors does not convert skips into passed coverage.",
+      "No XML has a timestamp attribute. XML hashes identify contents but do not independently prove native exit, freshness, a single JVM invocation or source-to-compiled-class provenance.",
+      "No XML properties/system-out values were extracted or included. No environment variable values, secrets, passwords, tokens or deployment environment files were read.",
+      "No tests, SDK, Maven or Docker were run, and no source/tests/frozen manifest/XML were modified. Only this ignored review JSON is written.",
+      "Fixture JWT/MockMvc or client HTTP coverage is not real account/workspace/MFA/device certification. Other separately run gates need their own evidence; these skips describe this full backend run only.",
+      "This review does not establish public erasure execution, independent production dispatch/ledger completion, comprehensive failure injection, or overall goal completion."
+    ]
+  },
+  "mysql": {
+    "receipt": {
+      "path": ".local/runtime/erasure-cardinality-mysql-1e03635225e846998ea31e343deb7fef-exit.json",
+      "sha256": "d8aed9e32ed15c884454594bb018327afa31c45133cd4af5ac821de6ed27de30",
+      "bytes": 4500
+    },
+    "tests": 57,
+    "passed": 57,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suites": [
+      {
+        "name": "com.aimanager.idempotency.IdempotencyOwnershipTest",
+        "errors": 0,
+        "sha256": "f4eaee0e26d5fdfd332da466354de716736cc847dbb7f3689eb3563e72e0f5f7",
+        "skipped": 0,
+        "failures": 0,
+        "path": "D:\\codes\\mobile\\ai-manager\\.local\\v1-erasure-cardinality-green-mysql-1e03635225e846998ea31e343deb7fef\\backend\\target\\surefire-reports\\TEST-com.aimanager.idempotency.IdempotencyOwnershipTest.xml",
+        "tests": 28
+      },
+      {
+        "name": "com.aimanager.retention.internal.ErasureIdempotencyCardinalityTest",
+        "errors": 0,
+        "sha256": "d85baac2a76248479b4dbaf15ee8e7068e6981538a7c23e749c3c9ade4af7b64",
+        "skipped": 0,
+        "failures": 0,
+        "path": "D:\\codes\\mobile\\ai-manager\\.local\\v1-erasure-cardinality-green-mysql-1e03635225e846998ea31e343deb7fef\\backend\\target\\surefire-reports\\TEST-com.aimanager.retention.internal.ErasureIdempotencyCardinalityTest.xml",
+        "tests": 5
+      },
+      {
+        "name": "com.aimanager.retention.internal.ErasureIdempotencyProcessorTest",
+        "errors": 0,
+        "sha256": "9b80874442e9b4950bbd3ed40d1cdeb4068e1940a1ed4707f063a968633aefb1",
+        "skipped": 0,
+        "failures": 0,
+        "path": "D:\\codes\\mobile\\ai-manager\\.local\\v1-erasure-cardinality-green-mysql-1e03635225e846998ea31e343deb7fef\\backend\\target\\surefire-reports\\TEST-com.aimanager.retention.internal.ErasureIdempotencyProcessorTest.xml",
+        "tests": 24
+      }
+    ],
+    "cleanupVerified": true,
+    "environmentRestored": true,
+    "originalH2ReportsPreserved": true,
+    "sourceManifestSha256": "0c871fdaf5246104d9d20815c260b9ef5793628a8bc70dcebc8608433abd02bd",
+    "fixtureHost": "127.0.0.1",
+    "fixturePort": 3308,
+    "fixtureServerPort": 3306,
+    "fixtureServerUuid": "7a321ef8-c390-11f1-a181-4edda6365891",
+    "temporaryAccountHost": "172.19.0.1",
+    "partialRevokes": 0,
+    "log": {
+      "path": ".local/runtime/erasure-cardinality-mysql-1e03635225e846998ea31e343deb7fef/maven-sanitized.log",
+      "sha256": "0f421c2fd5836d9f6777769dc8688c3898b7966687c67dc192dd705b43ea4311",
+      "bytes": 60411
+    },
+    "observedFrameworkWarnings": [
+      {
+        "component": "Flyway 11.7.2",
+        "database": "MySQL 8.4.11",
+        "message": "Flyway upgrade recommended: MySQL 8.4 is newer than this version of Flyway and support has not been tested. The latest supported version of MySQL is 8.1.",
+        "attribution": "Observed in the sanitized Maven log; 57 named tests pass. This does not establish general engine or migration-tool compatibility."
+      }
+    ]
+  },
+  "inspection": {
+    "path": ".local/runtime/erasure-cardinality-final-inspection.json",
+    "sha256": "faa42594a1c1348c57dd974191a1aedb09d40be92508b31d4021fce069243204",
+    "bytes": 59142
+  },
+  "backendJar": {
+    "path": ".local/v1-erasure-cardinality-green-20261015-final-r1/backend/target/manager-backend-1.0.0.jar",
+    "sha256": "98779f4ad9c071ea64d42ae892b472b725db3ebfe45f79b5869c007e4f0aa13d",
+    "bytes": 81639204
+  },
+  "independentReviews": [
+    {
+      "path": ".local/runtime/erasure-cardinality-production-review.json",
+      "sha256": "21b80215448dc1c6962fc06afb745828b27c39b7623e03d16eb9170dd277e6ab",
+      "bytes": 12201
+    },
+    {
+      "path": ".local/runtime/erasure-cardinality-tests-review-followup-20261015.json",
+      "sha256": "c658ca5913c61f72a74b16ef6bb65a0bbf4c898f7ac9dbb9c708e2009770aeaf",
+      "bytes": 2283
+    },
+    {
+      "path": ".local/runtime/erasure-cardinality-mysql-ops-review.json",
+      "sha256": "fdc64a0da3f5540d305a9f63d30c7450a0806828a0071acfe15f42dd62fea16e",
+      "bytes": 4501
+    }
+  ],
+  "history": {
+    "invalidRedInvocation": {
+      "path": ".local/runtime/erasure-cardinality-invalid-invocation-r3.json",
+      "sha256": "f52f3465543529e08a0c81136d4297454b3afef50cdeed40aee9a8c496277c1a",
+      "bytes": 698
+    },
+    "invalidRedInvocationIsTestEvidence": false,
+    "interruptedMysqlAttempt": {
+      "path": ".local/runtime/erasure-cardinality-mysql-interrupted-r1.json",
+      "sha256": "42f0da1eb75cb3a4b1a7e2b3b7f28c1480764afac551c82ebb4174169e93378b",
+      "bytes": 1323
+    },
+    "interruptedMysqlIsTestEvidence": false,
+    "interruptedAttemptZeroFixtureInventory": {
+      "path": ".local/runtime/erasure-cardinality-mysql-recovery-inventory.json",
+      "sha256": "11206bc9d50174350827792bcaa2eda8243c671d3a9202556b990df85e743eab",
+      "bytes": 345
+    },
+    "initialTestReview": {
+      "path": ".local/runtime/erasure-cardinality-tests-review-20261015.json",
+      "sha256": "d6533d119890108d089763ed20c5004feb5e3da2735601775550e203a99ca7ea",
+      "bytes": 8809
+    },
+    "initialImportantFinding": "A thread-start-only latch did not prove both real discovery queries saw the original response. A true post-query two-arrival barrier replaced it; final five-case, full and MySQL gates execute the replacement.",
+    "planCheckboxesDescribeStateAtFreeze": true,
+    "planTaskCompletionAtThisRecord": [
+      "Regression RED and targeted GREEN",
+      "Deterministic interleaving, fencing, corruption rollback and isolated MySQL",
+      "Complete backend suite, every skipped testcase review and independent code review"
+    ],
+    "exactCommitAndPush": "A later private commit/push receipt proves the exact nine source/doc bytes plus this record; this pre-commit record does not assert a commit hash."
+  },
+  "coverageBoundaries": [
+    "The 200-subject bound applies to current classified producers and the existing 200-device report contract; it is not a substitute for complete scalable ownership of larger groups or exports.",
+    "Report endpoint cases use MockMvc/JWT fixtures, not external IdP/MFA or native/network execution.",
+    "The full backend command conditionally skips 58 tests; whole ParentAudit/ParentNotification fixture groups are among them. The isolated MySQL gate covers only the named three classes.",
+    "The internal ledger/processor/service-level 410 journey retains RECOVERY_REQUIRED; ordinary HTTP remains paused after ledger acceptance. Public executionAvailable remains false.",
+    "No current implementation-phase code, schema or artifact was deployed. A runtime restart restored the previously verified startup release independently.",
+    "No historical migration chain, business database restoration or backup restoration is performed by this stage."
+  ],
+  "remainingFullGoal": [
+    "Classify every remaining domain writer without blanket NON_SUBJECT or tenant-filtered completion shortcuts.",
+    "Design complete owner manifests/paging for 5000-member groups, before/after class transfers up to 999 subjects and AuditExport whose 10000-event limit does not bound subjects.",
+    "Complete production erasure dispatcher, independent control plane, applied watermark, safe reopening and public create-to-erasure-to-HTTP contract.",
+    "Cover all subject references, external copies, audit/export event manifests, restore-and-redelete and writer isolation requirements.",
+    "Continue full frontend, native interaction and deployment integration work; this backend stage does not complete the overall product objective.",
+    "Review the observed Flyway 11.7.2/MySQL 8.4 support warning before claiming complete database-tool compatibility; do not infer it from the limited three-class MySQL gate."
+  ],
+  "domainScopeAudits": [
+    {
+      "path": ".local/runtime/erasure-support-ownership-current-audit.md",
+      "sha256": "e5e8d3a3039ee0167703267c233d8aec12f9279101a0173f20180e41324a2fe9",
+      "bytes": 23532
+    },
+    {
+      "path": ".local/runtime/erasure-catalog-fleet-ownership-current-audit.md",
+      "sha256": "c76355f9423e77da137fd65187817761a567ddc614b4635f8c0edc8c677fae8c",
+      "bytes": 28657
+    }
+  ],
+  "runtimeDeploymentPerformed": false,
+  "recordedAt": "2026-10-15T12:40:09.136747+00:00",
+  "runtimeRecovery": {
+    "path": ".local/runtime/guardian-startup-recovery-20261015-evening.json",
+    "sha256": "f7e64b2028a76751a5e048e8edad42245fc9ad6f4e86bc6cf120202ccbabfacc",
+    "scope": "Restart of prior verified release only; six healthy containers and actual bootstrap hash verified. This stage code was not deployed."
+  }
+}

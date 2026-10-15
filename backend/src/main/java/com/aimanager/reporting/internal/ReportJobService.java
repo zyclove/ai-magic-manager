@@ -2,6 +2,7 @@ package com.aimanager.reporting.internal;
 
 import com.aimanager.audit.AuditService;
 import com.aimanager.idempotency.IdempotencyService;
+import com.aimanager.idempotency.ResponseOwnership;
 import com.aimanager.identity.*;
 import com.aimanager.observation.UsageReportSource;
 import com.aimanager.shared.*;
@@ -61,6 +62,8 @@ class ReportJobService {
     reports.validateQuery(input.from(), input.to(), input.timeZone(), input.period());
     if (key == null || key.isBlank()) throw DomainException.invalid("IDEMPOTENCY_KEY_REQUIRED");
     store.head(tenant);
+    // 仅捕获本次事务内锁定的授权快照；缓存重放不会执行此快照或归属回调。
+    var responseSubjects = new ArrayList<String>();
     var ref =
         idempotency.execute(
             tenant,
@@ -123,6 +126,8 @@ class ReportJobService {
                       tenant, actor.getSubject(), selection.deviceIds(), selection.scope());
               var snapshot = source.authorize(tenant, actor.getSubject(), selection.deviceIds());
               scopes.verify(scope, snapshot);
+              responseSubjects.addAll(snapshot.devices().stream()
+                  .map(data -> data.device().subjectId()).toList());
               final String encoded;
               try {
                 encoded = store.json.writeValueAsString(selection);
@@ -161,7 +166,8 @@ class ReportJobService {
                     data.settings().usageEnabled());
               audit.record(tenant, actor.getSubject(), "USAGE_REPORT_JOB_REQUESTED", id);
               return new Ref(id);
-            });
+            },
+            ignored -> ResponseOwnership.subjects(tenant, responseSubjects));
     return store.view(
         store.owned(tenant, ref.id(), actor.getSubject(), true), member, clock.millis());
   }

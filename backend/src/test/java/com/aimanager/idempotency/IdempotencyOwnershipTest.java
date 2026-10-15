@@ -248,13 +248,86 @@ class IdempotencyOwnershipTest {
   @Test
   void oversizedOwnershipCannotCommitPartOfItsSubjectSet() {
     var tooMany =
-        IntStream.range(0, 101)
+        IntStream.range(0, 201)
             .mapToObj(i -> new UUID(0x4000L, 0x8000000000000000L + i).toString())
             .toList();
     assertThatThrownBy(() -> create(KEY, r -> ResponseOwnership.subjects(TENANT, tooMany)))
         .isInstanceOf(RuntimeException.class);
 
     assertNoCommittedMutationOrJournal();
+  }
+
+  @Test
+  void maximumSharedResponseCommitsAndReplaysAllTwoHundredOwners() {
+    var subjects = IntStream.range(0, 200)
+        .mapToObj(i -> new UUID(0x4000L, 0x8000000000000000L + i).toString()).toList();
+    var input = Map.of("selection", subjects);
+    var original = org.junit.jupiter.api.Assertions.assertDoesNotThrow(() -> tx.execute(status -> journal.execute(
+        TENANT, ACTOR, "shared.report", KEY, input, SharedResponse.class,
+        () -> new SharedResponse(subjects, "All selected profiles"),
+        response -> ResponseOwnership.subjects(TENANT, response.subjectIds()))));
+    assertThat(original.subjectIds()).containsExactlyElementsOf(subjects);
+    assertThat(state()).isEqualTo("SCOPED");
+    assertThat(ownerKeys()).containsExactlyInAnyOrderElementsOf(
+        subjects.stream().map(this::independentSubjectKey).toList());
+    var replay = tx.execute(status -> journal.execute(
+        TENANT, ACTOR, "shared.report", KEY, input, SharedResponse.class,
+        () -> { throw new AssertionError("A cached mutation must not run"); },
+        response -> { throw new AssertionError("Historical owners must not be recomputed"); }));
+    assertThat(replay).isEqualTo(original);
+    var recovered = tx.execute(status -> journal.findCommitted(
+        TENANT, ACTOR, "shared.report", KEY, input, SharedResponse.class));
+    assertThat(recovered).contains(original);
+    assertThat(ownerKeys()).hasSize(200);
+    assertThat(db.queryForObject("SELECT COUNT(*) FROM idempotency_requests", Integer.class)).isEqualTo(1);
+  }
+
+  @Test
+  void repeatedOwnersDoNotConsumeDistinctSubjectCapacity() {
+    var subjects = new ArrayList<String>();
+    for (int i = 0; i < 200; i++) {
+      var subject = new UUID(0x4000L, 0x8000000000000000L + i).toString();
+      subjects.add(subject);
+      subjects.add(subject);
+    }
+    var owners = org.junit.jupiter.api.Assertions.assertDoesNotThrow(() -> ResponseOwnership.subjects(TENANT, subjects));
+    subjects.clear();
+    assertThat(owners.subjectIds()).hasSize(200).isSorted().doesNotHaveDuplicates();
+    assertThatThrownBy(() -> owners.subjectIds().clear()).isInstanceOf(UnsupportedOperationException.class);
+  }
+
+  @Test
+  void replayAndRecoveryRejectTheTwoHundredFirstRestoredOwner() {
+    var subjects = IntStream.range(0, 200)
+        .mapToObj(i -> new UUID(0x4000L, 0x8000000000000000L + i).toString()).toList();
+    var input = Map.of("selection", subjects);
+    org.junit.jupiter.api.Assertions.assertDoesNotThrow(() -> tx.execute(status -> journal.execute(
+        TENANT, ACTOR, "shared.report", KEY, input, SharedResponse.class,
+        () -> new SharedResponse(subjects, "All selected profiles"),
+        response -> ResponseOwnership.subjects(TENANT, response.subjectIds()))));
+    db.update("INSERT INTO idempotency_subject_owners(id,scope_id,actor_key,operation_key,key_hash,tenant_id,subject_key)"
+        + " SELECT ?,scope_id,actor_key,operation_key,key_hash,?,? FROM idempotency_requests",
+        UUID.randomUUID().toString(), TENANT, independentSubjectKey(OTHER_SUBJECT));
+    assertThatThrownBy(() -> tx.execute(status -> journal.execute(
+        TENANT, ACTOR, "shared.report", KEY, input, SharedResponse.class,
+        () -> { throw new AssertionError("Corrupted replay must not mutate"); },
+        response -> { throw new AssertionError("Corrupted replay must not replace owners"); })))
+        .isInstanceOf(IllegalStateException.class).hasMessage("Journal response ownership is invalid");
+    assertThatThrownBy(() -> tx.execute(status -> journal.findCommitted(
+        TENANT, ACTOR, "shared.report", KEY, input, SharedResponse.class)))
+        .isInstanceOf(IllegalStateException.class).hasMessage("Journal response ownership is invalid");
+    assertThat(ownerKeys()).hasSize(201);
+    assertThat(state()).isEqualTo("SCOPED");
+  }
+
+  private String independentSubjectKey(String subject) {
+    try {
+      return java.util.HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256")
+          .digest(("idempotency-subject-v1\n" + TENANT + "\n" + subject)
+              .getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+    } catch (java.security.NoSuchAlgorithmException impossible) {
+      throw new AssertionError(impossible);
+    }
   }
 
   @Test

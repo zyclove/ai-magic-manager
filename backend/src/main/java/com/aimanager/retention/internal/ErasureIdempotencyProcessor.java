@@ -211,13 +211,15 @@ class ErasureIdempotencyProcessor {
   }
 
   private List<Owner> owners(Key key) {
+    var arguments = new ArrayList<Object>(java.util.Arrays.asList(key.arguments()));
+    arguments.add(ResponseOwnership.MAX_SUBJECTS + 1);
     var owners =
         db.query(
             "SELECT id,tenant_id,subject_key FROM idempotency_subject_owners WHERE " + MATCH
-                + " ORDER BY tenant_id,subject_key LIMIT 101 FOR UPDATE",
+                + " ORDER BY tenant_id,subject_key LIMIT ? FOR UPDATE",
             (r, n) -> new Owner(r.getString(1), r.getString(2), r.getString(3)),
-            key.arguments());
-    if (owners.size() > 100) throw corrupt();
+            arguments.toArray());
+    if (owners.size() > ResponseOwnership.MAX_SUBJECTS) throw corrupt();
     return owners;
   }
 

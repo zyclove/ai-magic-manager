@@ -170,6 +170,77 @@ class UsageReportJobJourneyTest {
   }
 
   @Test
+  void maximumDistinctSubjectSelectionCommitsEveryHistoricalResponseOwner() throws Exception {
+    while (devices.size() < 200) addDevice();
+    var subjects = new ArrayList<String>();
+    subjects.add(subject);
+    for (int i = 1; i < 200; i++) {
+      String selectedSubject = UUID.randomUUID().toString();
+      subjects.add(selectedSubject);
+      db.update("INSERT INTO subjects(tenant_id,id,nickname,age_band,created_at) VALUES(?,?,'Selected child','AGE_7_12',?)",
+          tenant, selectedSubject, now);
+      db.update("UPDATE devices SET subject_id=? WHERE tenant_id=? AND id=?",
+          selectedSubject, tenant, devices.get(i));
+    }
+    String key = UUID.randomUUID().toString();
+    String id = body(create(key, input()).andExpect(status().isAccepted())).path("id").asText();
+    assertReportOwners(subjects);
+    assertThat(db.queryForObject("SELECT COUNT(*) FROM usage_report_parts WHERE tenant_id=? AND job_id=?",
+        Integer.class, tenant, id)).isEqualTo(200);
+    String reboundSubject = UUID.randomUUID().toString();
+    db.update("INSERT INTO subjects(tenant_id,id,nickname,age_band,created_at) VALUES(?,?,'Later child','AGE_7_12',?)",
+        tenant, reboundSubject, now);
+    db.update("UPDATE devices SET subject_id=? WHERE tenant_id=? AND id=?",
+        reboundSubject, tenant, devices.get(0));
+    create(key, input()).andExpect(status().isAccepted()).andExpect(jsonPath("$.id").value(id));
+    assertReportOwners(subjects);
+    assertThat(db.queryForObject("SELECT COUNT(*) FROM usage_report_jobs WHERE tenant_id=?", Integer.class, tenant)).isEqualTo(1);
+  }
+
+  @Test
+  void manyDevicesSharingOneSubjectCommitOnlyOneResponseOwner() throws Exception {
+    while (devices.size() < 200) addDevice();
+    create();
+    assertReportOwners(List.of(subject));
+  }
+
+  @Test
+  void unauthorizedSelectionRollsBackReportAndOwnershipTogether() throws Exception {
+    var selected = new HashMap<>(input());
+    var ids = new ArrayList<>(devices);
+    ids.add(UUID.randomUUID().toString());
+    selected.put("deviceIds", ids);
+    create(UUID.randomUUID().toString(), selected).andExpect(status().isForbidden());
+    assertThat(db.queryForObject("SELECT COUNT(*) FROM usage_report_jobs WHERE tenant_id=?", Integer.class, tenant)).isZero();
+    assertThat(db.queryForObject("SELECT COUNT(*) FROM usage_report_parts WHERE tenant_id=?", Integer.class, tenant)).isZero();
+    assertThat(db.queryForObject("SELECT COUNT(*) FROM idempotency_requests WHERE scope_id=? AND operation_key=?",
+        Integer.class, tenant, reportDigest("USAGE_REPORT_JOB_CREATE"))).isZero();
+    assertThat(db.queryForObject("SELECT COUNT(*) FROM idempotency_subject_owners WHERE scope_id=?",
+        Integer.class, tenant)).isZero();
+    assertThat(db.queryForObject("SELECT COUNT(*) FROM audit_events WHERE tenant_id=? AND action='USAGE_REPORT_JOB_REQUESTED'",
+        Integer.class, tenant)).isZero();
+  }
+
+  private void assertReportOwners(List<String> expectedSubjects) {
+    String operation = reportDigest("USAGE_REPORT_JOB_CREATE");
+    assertThat(db.queryForObject("SELECT response_state FROM idempotency_requests WHERE scope_id=? AND operation_key=?",
+        String.class, tenant, operation)).isEqualTo("SCOPED");
+    var owners = db.queryForList("SELECT subject_key FROM idempotency_subject_owners WHERE scope_id=? AND operation_key=?",
+        String.class, tenant, operation);
+    assertThat(owners).containsExactlyInAnyOrderElementsOf(expectedSubjects.stream()
+        .map(id -> reportDigest("idempotency-subject-v1\n" + tenant + "\n" + id)).toList());
+  }
+
+  private String reportDigest(String value) {
+    try {
+      return java.util.HexFormat.of().formatHex(java.security.MessageDigest.getInstance("SHA-256")
+          .digest(value.getBytes(java.nio.charset.StandardCharsets.UTF_8)));
+    } catch (java.security.NoSuchAlgorithmException impossible) {
+      throw new AssertionError(impossible);
+    }
+  }
+
+  @Test
   void archivedClassRevokesAlreadyGeneratedJob() throws Exception {
     devices = new ArrayList<>(List.of(devices.get(0)));
     db.update("UPDATE tenants SET kind='ORGANIZATION' WHERE id=?", tenant);

@@ -8,6 +8,9 @@ import java.util.UUID;
 
 /** Explicit subject dependencies of one cached response, committed with its mutation. */
 public record ResponseOwnership(Kind kind, String tenantId, List<String> subjectIds) {
+  /** 与最大报表选择兼容；创建、重放及删除校验使用同一主体数量上限。 */
+  public static final int MAX_SUBJECTS = 200;
+
   public enum Kind { UNCLASSIFIED, NON_SUBJECT, SCOPED }
 
   public ResponseOwnership {
@@ -18,7 +21,7 @@ public record ResponseOwnership(Kind kind, String tenantId, List<String> subject
       for (String subject : subjectIds) {
         requireUuid(subject);
         unique.add(subject);
-        if (unique.size() > 100) throw invalid();
+        if (unique.size() > MAX_SUBJECTS) throw invalid();
       }
       if (unique.isEmpty()) throw invalid();
       subjectIds = List.copyOf(unique);

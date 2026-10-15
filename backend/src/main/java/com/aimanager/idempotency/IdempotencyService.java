@@ -165,9 +165,10 @@ public class IdempotencyService {
     var owners = jdbc.queryForList(
         "SELECT tenant_id,subject_key FROM idempotency_subject_owners WHERE scope_id=?"
             + " AND actor_key=? AND operation_key=? AND key_hash=? ORDER BY tenant_id,subject_key"
-            + " LIMIT 101 FOR UPDATE", scope, actorKey, operationKey, keyHash);
+            + " LIMIT ? FOR UPDATE", scope, actorKey, operationKey, keyHash,
+        ResponseOwnership.MAX_SUBJECTS + 1);
     if ("SCOPED".equals(row.get("response_state"))) {
-      if (owners.isEmpty() || owners.size() > 100)
+      if (owners.isEmpty() || owners.size() > ResponseOwnership.MAX_SUBJECTS)
         throw new IllegalStateException("Journal response ownership is invalid");
       for (var owner : owners) {
         if (!scope.equals(owner.get("tenant_id")) || !canonicalUuid(scope)
