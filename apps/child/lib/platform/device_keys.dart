@@ -8,6 +8,7 @@ class AndroidDeviceKeys
     implements
         DeviceEnrollmentKeys,
         DeviceCleanupKeys,
+        DeviceManagedBindingKeys,
         DeviceCleanupKeyDeletion {
   static const _channel = MethodChannel('com.aimanager.child/device_keys');
   static final _alias = RegExp(
@@ -63,6 +64,29 @@ class AndroidDeviceKeys
       throw const DeviceIdentityFailure('DEVICE_KEY_UNAVAILABLE');
     }
     return EnrollmentProof(result['publicKeyJwk'], result['compact']);
+  }
+
+  @override
+  Future<ManagedAgentBindingProof> managedBindingProof(
+      String handle, ManagedAgentChallenge challenge, int nowMillis) async {
+    challenge.requireCurrent(nowMillis);
+    if (_software(handle)) {
+      return _legacy.managedBindingProof(handle, challenge, nowMillis);
+    }
+    _requireAlias(handle);
+    final result = await _invoke('managedBindingProof', {
+      'handle': handle,
+      'challengeId': challenge.id,
+      'nonce': challenge.nonce,
+      'audience': managedAgentAudience,
+      'createdAt': challenge.createdAt,
+      'expiresAt': challenge.expiresAt,
+      'nowMillis': nowMillis,
+    });
+    if (result.length != 1 || result['compact'] is! String) {
+      throw const DeviceIdentityFailure('DEVICE_KEY_UNAVAILABLE');
+    }
+    return ManagedAgentBindingProof(result['compact'], challenge, nowMillis);
   }
 
   @override

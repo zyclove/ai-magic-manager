@@ -3,6 +3,7 @@ import 'package:crypto/crypto.dart';
 import 'package:jose/jose.dart';
 import 'package:uuid/uuid.dart';
 import 'models.dart';
+import 'managed_binding.dart';
 
 class EnrollmentProof {
   final String publicKeyJwk, compact;
@@ -121,8 +122,13 @@ class JoseDeviceEnrollmentKeys
     implements
         DeviceEnrollmentKeys,
         DeviceCleanupKeys,
+        DeviceManagedBindingKeys,
         DeviceCleanupKeyDeletion {
   const JoseDeviceEnrollmentKeys();
+  @override
+  Future<ManagedAgentBindingProof> managedBindingProof(
+          String handle, ManagedAgentChallenge challenge, int nowMillis) =>
+      JoseManagedBindingSigner.sign(handle, challenge, nowMillis);
   @override
   Future<void> deleteOriginalHandle(String handle) async {
     // Software private material lives only inside DeviceSecretStore. The host

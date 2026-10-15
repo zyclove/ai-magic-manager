@@ -9,7 +9,8 @@ enum IdentityOperation {
   heartbeat('device-api/heartbeats', 200, true),
   rotate('device-api/credentials/rotate', 200, true),
   activate('device-api/credentials/activate', 204, true),
-  cancel('device-api/credentials/rotation/cancel', 204, true);
+  cancel('device-api/credentials/rotation/cancel', 204, true),
+  managedAgentChallenge('device-api/managed-agent-challenge', 200, true);
 
   final String path;
   final int successStatus;
@@ -74,13 +75,18 @@ class DeviceIdentityApi {
 
     Future<Map<String, dynamic>> execute() async {
       final request = http.AbortableRequest(
-          'POST', apiRoot.replace(path: '${apiRoot.path}/${operation.path}'),
+          operation == IdentityOperation.managedAgentChallenge ? 'GET' : 'POST',
+          apiRoot.replace(path: '${apiRoot.path}/${operation.path}'),
           abortTrigger: abort.future)
         ..followRedirects = false
         ..maxRedirects = 0
-        ..headers['Accept'] = 'application/json'
-        ..headers['Content-Type'] = 'application/json'
-        ..body = jsonEncode(body);
+        ..headers['Accept'] = 'application/json';
+      if (operation != IdentityOperation.managedAgentChallenge) {
+        request.headers['Content-Type'] = 'application/json';
+        request.body = jsonEncode(body);
+      } else if (body.isNotEmpty) {
+        throw const DeviceIdentityFailure('INPUT_INVALID');
+      }
       if (credential != null) {
         request.headers['Authorization'] = 'Bearer $credential';
       }
@@ -117,14 +123,19 @@ class DeviceIdentityApi {
             retryable: status == 429 || status >= 500,
             outcomeUnknown: status >= 500);
       }
-      if (response.statusCode != operation.successStatus) {
+      final noChallenge =
+          operation == IdentityOperation.managedAgentChallenge &&
+              response.statusCode == 204;
+      if (response.statusCode != operation.successStatus && !noChallenge) {
         throw const FormatException('Unexpected success');
       }
-      if (operation.successStatus == 204) {
+      if (operation.successStatus == 204 || noChallenge) {
         if (bytes.isNotEmpty) throw const FormatException('Unexpected content');
         return const {};
       }
       if (value == null ||
+          (operation == IdentityOperation.managedAgentChallenge &&
+              value.isEmpty) ||
           response.headers['content-type']
                   ?.split(';')
                   .first

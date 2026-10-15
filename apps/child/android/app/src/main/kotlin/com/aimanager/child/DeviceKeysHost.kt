@@ -33,6 +33,7 @@ internal class DeviceKeysHost {
             "generate" -> generate()
             "proof" -> proof(args)
             "cleanupProof" -> cleanupProof(args)
+            "managedBindingProof" -> managedBindingProof(args)
             "delete" -> delete(args)
             else -> throw IllegalArgumentException("Unsupported key operation")
         }
@@ -146,6 +147,15 @@ internal class DeviceKeysHost {
             .build()
         return mapOf("compact" to sign(handle, header, payload),
             "keyThumbprint" to publicKey(handle).computeThumbprint().toString())
+    }
+
+    private fun managedBindingProof(args: Map<*, *>): Map<String, String> {
+        val handle = alias(args)
+        val claims = ManagedBindingClaims.create(args)
+        val header = JWSHeader.Builder(JWSAlgorithm.ES256).type(JOSEObjectType.JWT).build()
+        val compact = sign(handle, header, JSONObject(claims))
+        check(compact.length <= 1000)
+        return mapOf("compact" to compact)
     }
 
     private fun delete(args: Map<*, *>): Boolean {

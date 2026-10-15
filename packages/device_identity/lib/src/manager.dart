@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'api.dart';
 import 'keys.dart';
 import 'models.dart';
+import 'managed_binding.dart';
 
 /// Recoverable device identity. ONE owner per secret record, no implicit reset,
 /// parent authorization, native enforcement or unbounded background loop.
@@ -158,6 +159,52 @@ class DeviceIdentityManager {
         now >= state['credentialExpiresAt']) return null;
     return state['credential'];
   }
+
+  /// Fetch a server challenge and sign with this registration's ORIGINAL key.
+  /// The result is ephemeral feedback, never proof of system enforcement.
+  Future<ManagedAgentBindingProof?> managedAgentBindingProof() =>
+      _exclusive(() async {
+        final state = await _require();
+        _allow(state, {
+          IdentityPhase.active,
+          IdentityPhase.rotationRequested,
+          IdentityPhase.rotationPending
+        });
+        if (state['authenticationBlocked'] == true) {
+          throw const DeviceIdentityFailure('DEVICE_CREDENTIAL_UNAVAILABLE');
+        }
+        if (keys is! DeviceManagedBindingKeys) {
+          throw const DeviceIdentityFailure('DEVICE_KEY_UNAVAILABLE');
+        }
+        final credential = _credential(state);
+        final original = jsonEncode(state);
+        final response = await _sendAuthenticated(
+            IdentityOperation.managedAgentChallenge, state, credential);
+        if (response.isEmpty) return null;
+        final challenge = ManagedAgentChallenge.fromJson(response);
+        final now = _time(state);
+        challenge.requireCurrent(now);
+        final signed = await _keyOperation(() =>
+            (keys as DeviceManagedBindingKeys)
+                .managedBindingProof(state['keyHandle'], challenge, now));
+        final proof = ManagedAgentBindingProof(signed.compact, challenge, now);
+        // A parallel native owner may revoke/rotate/delete while HTTP or signing
+        // is pending. Re-read before releasing feedback; never overwrite it.
+        final latest = await _require();
+        if (jsonEncode(latest) != original ||
+            _credential(latest) != credential) {
+          throw const DeviceIdentityFailure('IDENTITY_STATE_CONFLICT');
+        }
+        final finished = _time(latest);
+        if (finished < now) {
+          throw const DeviceIdentityFailure('CLOCK_UNTRUSTED');
+        }
+        challenge.requireCurrent(finished);
+        if (finished >= proof.expiresAt) {
+          throw const DeviceIdentityFailure('MANAGED_CHALLENGE_EXPIRED');
+        }
+        return proof;
+      });
 
   /// Sign only for the independent cleanup channel with the original
   /// registration key. A rejected ordinary bearer is not cleanup authority;
