@@ -22,6 +22,7 @@ import 'ui/permission_observation_page.dart';
 import 'ui/subject_center.dart';
 import 'ui/notification_center.dart';
 import 'ui/help_center.dart';
+import 'ui/invitation_acceptance.dart';
 
 const _navy = Color(0xFF17324B);
 const _blue = Color(0xFF315E86);
@@ -157,7 +158,9 @@ class _WorkspaceState extends State<_Workspace> {
       body: tab == 4
           ? _Account(session: session)
           : session.tenant == null
-              ? const _Empty('尚无工作空间', '请先由管理员在管理台创建家庭或机构。')
+              ? InvitationJoinLanding(
+                  session: session,
+                  child: const _Empty('尚无工作空间', '请先由管理员创建家庭或机构，或使用邀请码加入。'))
               : !session.canSeeHelp
                   ? const _Empty('当前角色无监护权限', '请切换到具有监护或机构管理权限的工作空间。')
                   : IndexedStack(index: tab, children: [
@@ -792,6 +795,8 @@ class _Account extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         children: [
           _SectionTitle('我的账号', session.displayName),
+          const SizedBox(height: 12),
+          InvitationAcceptanceEntry(session: session),
           const SizedBox(height: 12),
           Card(
             child: Column(children: [

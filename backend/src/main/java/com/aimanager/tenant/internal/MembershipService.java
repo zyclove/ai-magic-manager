@@ -87,7 +87,8 @@ class MembershipService {
     return new Invitation(id, token, role, expires);
   }
 
-  private void validateGrant(
+  // Shared with recipient preview; acceptance always validates again in its transaction.
+  void validateGrant(
       String tenantId,
       TenantAccess.Grant grant,
       Role requested,
