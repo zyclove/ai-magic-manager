@@ -1,9 +1,11 @@
 package com.aimanager.managedandroid.internal;
 
 import com.aimanager.managedandroid.ManagedAndroidGateway;
+import com.aimanager.managedandroid.ManagedAgentEvidence;
 import com.aimanager.shared.AndroidRuntimePermissions;
 import com.aimanager.shared.SafetyCriticalPackages;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
+import com.google.api.client.http.HttpResponseException;
 import com.google.api.services.androidmanagement.v1.AndroidManagement;
 import com.google.api.services.androidmanagement.v1.model.ApplicationPolicy;
 import com.google.api.services.androidmanagement.v1.model.ApplicationPolicyChange;
@@ -19,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import org.slf4j.Logger;
@@ -289,6 +292,22 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
   }
 
   @Override
+  public Optional<ManagedAgentEvidence> readAgentEvidence(
+      String enterpriseId, String deviceId, String packageName) {
+    String name = deviceName(enterpriseId, deviceId);
+    if (packageName == null || packageName.length() > 255 || !PACKAGE.matcher(packageName).matches()) {
+      throw new IllegalArgumentException("Invalid managed application package");
+    }
+    try {
+      return GoogleManagedAgentEvidenceReader.read(client, name, packageName);
+    } catch (IOException error) {
+      throw providerFailure("agent evidence read", error);
+    } catch (RuntimeException malformed) {
+      throw new IllegalStateException("Invalid managed application evidence response");
+    }
+  }
+
+  @Override
   public AssignmentReceipt assignPolicy(String enterpriseId, String deviceId, String policyId) {
     String device = deviceName(enterpriseId, deviceId);
     String policy = policyName(enterpriseId, policyId);
@@ -375,7 +394,7 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
     // Google error bodies may contain enrollment secrets or tenant identifiers; never propagate
     // them.
     int status =
-        error instanceof GoogleJsonResponseException response ? response.getStatusCode() : 0;
+        error instanceof HttpResponseException response ? response.getStatusCode() : 0;
     LOG.warn(
         "Android management operation failed: operation={}, status={}, errorType={}",
         operation,

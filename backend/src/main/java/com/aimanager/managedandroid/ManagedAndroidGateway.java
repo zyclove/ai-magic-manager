@@ -2,6 +2,7 @@ package com.aimanager.managedandroid;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Server-side boundary for a qualified Android Enterprise provider. Never expose it to a device
@@ -53,6 +54,15 @@ public interface ManagedAndroidGateway {
 
   /** Reads provider identity evidence before a local device can be bound to it. */
   ManagedEnrollmentIdentity readEnrollmentIdentity(String enterpriseId, String deviceId);
+
+  /**
+   * 从提供方读取指定应用的短期绑定证明。空值表示报告尚未包含该反馈，不能视为绑定成功。
+   * 未实现此能力的合作提供方保持关闭；调用方必须独立验证当前注册、企业权属与证明。
+   */
+  default Optional<ManagedAgentEvidence> readAgentEvidence(
+      String enterpriseId, String deviceId, String packageName) {
+    throw new ManagedAndroidUnavailableException();
+  }
 
   /** Requests assignment; it does not prove the device has applied the policy. */
   AssignmentReceipt assignPolicy(String enterpriseId, String deviceId, String policyId);

@@ -96,6 +96,8 @@ manager.emm.bootstrap-policy-id=
 
 ## 本地验证
 
+受管儿童端可信绑定的前置证据读取与 ES256 验签见 [绑定证明阶段](managed-agent-proof-delivery.md)。这不代表已建立本地设备绑定，也不开放系统执行能力。
+
 机构控制台的接入指引、原位表单校验和小屏交互见 [接入流程简化阶段](managed-enrollment-experience.md)。该阶段不改变提供方准入与设备执行边界。
 
 `GoogleManagedAndroidGatewayTest` 使用本地 HTTP 假服务驱动官方生成客户端，验证应用字段更新范围、包名校验、一次性令牌、敏感值脱敏、策略分配，以及目标版本未同步、管理模式未确认时的 `PENDING`。`ManagedAndroidConfigurationTest` 验证默认关闭和未确认资格时启动失败。测试不需要 Google 项目和密钥，不能替代正式准入或真机验收。
