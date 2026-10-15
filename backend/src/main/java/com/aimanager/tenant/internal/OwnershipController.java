@@ -4,8 +4,10 @@ import com.aimanager.shared.ItemPage;
 import com.aimanager.shared.ResourceVersions;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.CacheControl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -47,6 +49,15 @@ class OwnershipController {
         HttpStatus.CREATED, service.start(tenantId, actor, input.targetActorId(), etag, key));
   }
 
+  /** Query the caller's committed request without executing or reconciling a transfer. */
+  @PostMapping("/operation-results/{requestId}/query")
+  ResponseEntity<OwnershipService.OperationResult> result(
+      @PathVariable String tenantId, @PathVariable String requestId,
+      @AuthenticationPrincipal Jwt actor, @Valid @RequestBody ResultInput input) {
+    return ResponseEntity.ok().cacheControl(CacheControl.noStore())
+        .body(service.result(tenantId, actor.getSubject(), requestId, input));
+  }
+
   @PostMapping("/{id}/{action:accept|decline|cancel}")
   ResponseEntity<OwnershipService.Transfer> act(
       @PathVariable String tenantId,
@@ -64,8 +75,9 @@ class OwnershipController {
 
   private ResponseEntity<OwnershipService.Transfer> response(
       HttpStatus status, OwnershipService.Transfer t) {
-    return ResponseEntity.status(status).eTag(ResourceVersions.tag(t.version())).body(t);
+    return ResponseEntity.status(status).cacheControl(CacheControl.noStore()).eTag(ResourceVersions.tag(t.version())).body(t);
   }
 
   record Start(@NotBlank @Size(max = 255) String targetActorId) {}
+  record ResultInput(@NotBlank String operation, @NotNull Long version, String targetActorId, String transferId) {}
 }

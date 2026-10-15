@@ -1,6 +1,6 @@
 # 手机成员与权限：简化操作及阶段交付
 
-更新：2026-10-14。后续增量已接入[手机邀请方流程](parent-invitation-delivery.md)，下文关于邀请仍依赖管理台的描述仅保留为本阶段历史；[接收方手机接受](parent-invitation-acceptance-delivery.md)也已接入，所有权交接仍待实现。
+更新：2026-10-15。后续增量已接入[手机邀请方流程](parent-invitation-delivery.md)、[接收方手机接受](parent-invitation-acceptance-delivery.md)和[所有者交接](parent-ownership-delivery.md)。下文关于这些操作仍依赖管理台的描述仅保留为本阶段历史。
 
 本阶段打通手机成员目录、角色与访问范围编辑、撤销成员资格、权限历史与原操作恢复。复用现有 Flutter Material、分页组件、安全存储、Spring tenant 领域和幂等记录；不新增框架、依赖或数据表。
 

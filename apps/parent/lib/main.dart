@@ -23,6 +23,7 @@ import 'ui/subject_center.dart';
 import 'ui/notification_center.dart';
 import 'ui/help_center.dart';
 import 'ui/invitation_acceptance.dart';
+import 'ui/ownership_center.dart';
 
 const _navy = Color(0xFF17324B);
 const _blue = Color(0xFF315E86);
@@ -797,6 +798,7 @@ class _Account extends StatelessWidget {
           _SectionTitle('我的账号', session.displayName),
           const SizedBox(height: 12),
           InvitationAcceptanceEntry(session: session),
+          OwnershipEntry(session: session),
           const SizedBox(height: 12),
           Card(
             child: Column(children: [

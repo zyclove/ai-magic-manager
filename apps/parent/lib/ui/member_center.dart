@@ -6,6 +6,7 @@ import '../core/organization_classes.dart' show readSchoolClass;
 import '../core/paged_collection.dart';
 import '../core/parent_api.dart';
 import '../core/parent_session.dart';
+import 'ownership_center.dart';
 
 part 'invitation_center.dart';
 
@@ -167,7 +168,8 @@ class _MemberCenterState extends State<MemberCenter>
                           Text('让每个人只访问所需内容',
                               style: Theme.of(context).textTheme.headlineSmall),
                           const SizedBox(height: 8),
-                          const Text('选择成员，查看职责和访问范围，再调整权限。所有权交接继续在管理台完成。'),
+                          const Text('选择成员，查看职责和访问范围，再调整权限。所有者变更由双方确认后生效。'),
+                          OwnershipEntry(session: session),
                           const SizedBox(height: 12),
                           OutlinedButton.icon(
                               onPressed: opening

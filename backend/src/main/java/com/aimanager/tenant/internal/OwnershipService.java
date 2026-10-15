@@ -4,6 +4,7 @@ import static com.aimanager.tenant.TenantAccess.Role.*;
 
 import com.aimanager.audit.AuditService;
 import com.aimanager.idempotency.IdempotencyService;
+import com.aimanager.idempotency.ResponseOwnership;
 import com.aimanager.identity.ActorKeys;
 import com.aimanager.identity.RecentAuthentication;
 import com.aimanager.shared.DomainException;
@@ -107,7 +108,7 @@ class OwnershipService {
               "UPDATE ownership_heads SET pending_transfer_id=? WHERE tenant_id=?", id, tenant);
           audit.record(tenant, actor.getSubject(), "OWNERSHIP_TRANSFER_PROPOSED", id);
           return row(tenant, id);
-        });
+        }, ignored -> ResponseOwnership.nonSubject());
   }
 
   @Transactional(timeout = 10)
@@ -173,8 +174,46 @@ class OwnershipService {
                     clock.millis()));
           }
           return transition(current, next, null, actor.getSubject());
-        });
+        }, ignored -> ResponseOwnership.nonSubject());
   }
+
+  @Transactional(timeout = 10)
+  public OperationResult result(String tenant, String actor, String key, OwnershipController.ResultInput in) {
+    boolean start = "start".equals(in.operation());
+    if (!java.util.Set.of("start", "accept", "decline", "cancel").contains(in.operation())
+        || in.version() == null || in.version() < 0 || in.version() > 9007199254740991L
+        || (start ? in.targetActorId() == null || in.targetActorId().isBlank()
+            || in.targetActorId().length() > 255 || in.transferId() != null
+            : in.targetActorId() != null || !canonicalUuid(in.transferId())))
+      throw DomainException.invalid("INVALID_OWNERSHIP_RESULT_QUERY");
+    if (!canonicalUuid(key)) throw DomainException.invalid("INVALID_OWNERSHIP_RESULT_QUERY");
+    mutex.lock(tenant);
+    lockActors(tenant, actor, null, null);
+    var grant = authorize(tenant, actor);
+    Map<String, ?> fingerprint = start
+        ? Map.of("target", in.targetActorId(), "version", in.version())
+        : Map.of("id", in.transferId(), "version", in.version());
+    var original = idempotency.findCommitted(tenant, actor, "ownership." + in.operation(), key,
+        fingerprint, Transfer.class).orElseThrow(() ->
+            new DomainException(HttpStatus.NOT_FOUND, "OWNERSHIP_RESULT_UNAVAILABLE"));
+    if (!tenant.equals(original.tenantId())
+        || (start ? !actor.equals(original.sourceActorId()) || !in.targetActorId().equals(original.targetActorId())
+            : !in.transferId().equals(original.id())
+                || !("cancel".equals(in.operation()) ? actor.equals(original.sourceActorId()) : actor.equals(original.targetActorId()))))
+      throw new IllegalStateException("Ownership journal scope mismatch");
+    lockActors(tenant, actor, null, original);
+    visible(grant, actor, original);
+    var current = row(tenant, original.id());
+    // Do not call get/reconcile: recovery must never change state or emit audit events.
+    return new OperationResult(key, actor, in.operation(), original, current, grant.role().name());
+  }
+
+  private boolean canonicalUuid(String value) {
+    return value != null && value.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}");
+  }
+
+  record OperationResult(String requestId, String actorId, String operation, Transfer original,
+      Transfer current, String currentRole) {}
 
   @Transactional(timeout = 10)
   public Transfer get(String tenant, String id, String actor) {

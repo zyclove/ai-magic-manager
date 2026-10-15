@@ -12,6 +12,7 @@
 | 成员与权限 | 家庭所有者和机构管理员从档案页进入，查看成员、调整角色及学生/班级范围、撤销、查历史和恢复原操作；主按钮固定底部，支持两倍字体 | 既有成员 access/history 与新增 `/access-results/{requestId}/query`；见[手机成员权限交付](parent-member-access-delivery.md) |
 | 成员邀请 | 填邮箱、选角色和学生/班级范围，创建后复制一次性邀请码；状态分页、取消与结果恢复；邀请码遗失可直接作废旧邀请 | 新增 `/invitations/issuances`、原结果查询及详情，复用接受/取消规则；接收方已由后续增量接入，见[邀请交付](parent-invitation-delivery.md) |
 | 接受成员邀请 | 无工作空间首页及我的页均可进入；先核对家庭/机构、角色与学生/班级，再确认加入；原结果和当前资格分开恢复，后台清除邀请码 | `/invitations/preview`、`/acceptances`、`/{id}/acceptance-results/{requestId}`；见[接收邀请交付](parent-invitation-acceptance-delivery.md) |
+| 所有者交接 | 我的页及成员管理可进入；按姓名选择成员、核对双方权限、发起与接受/拒绝/撤销；原操作和当前角色分开恢复 | 复用 `/ownership-transfers` 并新增 `/operation-results/{requestId}/query`；见[所有者交接交付](parent-ownership-delivery.md) |
 | 消息中心 | 顶部未读提醒、全部/未读分页、单条及本页已读；未知结果按原选择重试；直达当前申请与交付详情，后台隐藏并暂停轮询 | 既有 `/notifications`、`/unread-count`、`/{id}/read`、`/read`；与管理台共享纯 Dart 协议，见[手机消息中心交付](parent-notifications-delivery.md) |
 | 统一审批表单 | 申请列表和消息/历史详情均可直接处理；核对目标，选择不超过申请的时长或拒绝原因，验证后提交；未知结果保留原记录并只读恢复 | 复用原 `/access-requests/{id}/decisions`、版本与幂等接口；见[统一审批交付](parent-access-decision-delivery.md) |
 | 应用权限观察 | 设备卡片直达；搜索应用、查看近期/陈旧/未知权限状态，独立授权及撤回；写前验证、持久记录和只读恢复，默认功能开关关闭 | 注册绑定 `/permission-observation-settings/changes` 及原结果查询，复用设备上报和快照接口；见[手机权限观察交付](parent-permission-observation-delivery.md) |
