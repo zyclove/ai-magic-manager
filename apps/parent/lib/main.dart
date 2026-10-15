@@ -24,6 +24,7 @@ import 'ui/notification_center.dart';
 import 'ui/help_center.dart';
 import 'ui/invitation_acceptance.dart';
 import 'ui/ownership_center.dart';
+import 'ui/audit_center.dart';
 
 const _navy = Color(0xFF17324B);
 const _blue = Color(0xFF315E86);
@@ -827,6 +828,14 @@ class _Account extends StatelessWidget {
                   .contains(session.role)) ...[
             const SizedBox(height: 24),
             CommercialAccount(session: session),
+            Card(child: ListTile(
+              leading: const Icon(Icons.history_outlined, color: _blue),
+              title: const Text('操作记录'),
+              subtitle: const Text('查找管理变更、操作对象与关联请求'),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                  builder: (_) => AuditCenter(session: session))),
+            )),
             if (session.canDecide)
               Card(child: ListTile(
                 leading: const Icon(Icons.face_outlined, color: _blue),

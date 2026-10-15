@@ -1,0 +1,6 @@
+name: audit_client
+description: Shared audit search and event contracts for manager clients.
+version: 1.0.0
+publish_to: none
+environment:
+  sdk: '>=3.4.3 <4.0.0'

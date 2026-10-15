@@ -353,7 +353,12 @@ class AuditExportRepository {
     final ids = <String>{};
     AuditEvent? previous;
     for (final raw in v['events']) {
-      final event = AuditEvent.parse(raw);
+      final AuditEvent event;
+      try {
+        event = AuditEvent.parse(raw);
+      } on AuditProtocolException {
+        _invalid();
+      }
       if (!ids.add(event.id) ||
           event.occurredAt < q.from ||
           event.occurredAt >= q.to ||

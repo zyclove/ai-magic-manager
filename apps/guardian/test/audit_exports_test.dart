@@ -64,6 +64,31 @@ Widget host(Widget child) => MaterialApp(
     theme: consoleTheme(),
     home: Scaffold(body: SingleChildScrollView(child: child)));
 void main() {
+  test('shared event protocol failures retain the export API error contract',
+      () async {
+    final data = {
+      ...payload(),
+      'recordCount': 1,
+      'events': [
+        {
+          'id': id,
+          'actorId': 'guardian',
+          'action': 'SUBJECT_CREATED',
+          'resourceId': id,
+          'correlationId': id,
+          'occurredAt': now - 1,
+          'unexpectedPrivateField': 'must not be exported'
+        }
+      ]
+    };
+    final bytes = utf8.encode(jsonEncode(data));
+    final selected = AuditExportJob.parse(
+        {...job(state: 'READY', bytes: bytes.length), 'recordCount': 1});
+    await expectLater(
+        repository((_) => response(data)).download(selected),
+        throwsA(isA<ApiFailure>()
+            .having((e) => e.code, 'code', 'INVALID_EXPORT_RESPONSE')));
+  });
   test(
       'exports follow audit roles and login return paths are internal allowlisted routes',
       () {

@@ -25,6 +25,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.11.0"
+  audit_client:
+    dependency: "direct main"
+    description:
+      path: "../../packages/audit_client"
+      relative: true
+    source: path
+    version: "1.0.0"
   boolean_selector:
     dependency: transitive
     description:
