@@ -22,7 +22,9 @@ import org.springframework.security.oauth2.jwt.Jwt;
 @SpringBootTest(webEnvironment=SpringBootTest.WebEnvironment.RANDOM_PORT, properties={
   "spring.datasource.url=jdbc:h2:mem:parentexporthttp;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE",
   "spring.datasource.username=sa","spring.datasource.password=","server.address=127.0.0.1",
-  "manager.exports.worker.enabled=false","manager.notifications.retention-job.enabled=false"
+  "manager.exports.worker.enabled=false",
+  "manager.exports.max-rows=3","manager.exports.max-bytes=2048",
+  "manager.notifications.retention-job.enabled=false"
 })
 class ParentAuditExportHttpInteropTest extends AuditExportJourneyTest {
   @LocalServerPort int port;
