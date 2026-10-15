@@ -1,0 +1,143 @@
+{
+  "schemaVersion": 1,
+  "applicationVersion": "1.0.0",
+  "status": "VERIFIED_SOURCE_STAGE",
+  "baseCommit": "3094497a4db4ff6f2a8ee4077096ffebe372a153",
+  "scope": "Guardian exact trusted authentication return-path allowlist only",
+  "allowedRoutesAdded": [
+    "/managed-android",
+    "/managed-android-review",
+    "/device-groups"
+  ],
+  "rejectionMatrixCases": 24,
+  "files": [
+    {
+      "path": "apps/guardian/lib/core/access.dart",
+      "sha256": "3840ddaf013d288bf2034fdef950d177919966619237e4df007de5dd4a60e8c5",
+      "bytes": 2400
+    },
+    {
+      "path": "apps/guardian/test/access_test.dart",
+      "sha256": "b0c24e19a8821fcf64b24d542cb4400598e7e242fc31282946d6529afcecfcea",
+      "bytes": 2993
+    }
+  ],
+  "stages": [
+    {
+      "phase": "RED",
+      "nativeSessionId": 11586,
+      "nativeTerminalExitCode": 1,
+      "sourceManifest": {
+        "path": ".local/runtime/managed-return-path-red-20261015-r1-source.json",
+        "sha256": "9177d5d9c27cf5ed6e4e653fe7dfb175267fdcdd97e2bf33595658de856c08ad",
+        "bytes": 273545
+      },
+      "receipt": {
+        "path": ".local/runtime/managed-return-path-red-20261015-r1-exit.json",
+        "sha256": "15decd0e40faf97681dfee5ddefa2f99c6e307179509e3678cb84f3fb4a65ac2",
+        "bytes": 1181
+      },
+      "log": {
+        "path": ".local/runtime/managed-return-path-red-20261015-r1.log",
+        "sha256": "9f8c5b8d2d26d1735e5f57b5a077fb2194e6ba747701b25f1eeb91f088195617",
+        "bytes": 3366
+      },
+      "sourceFileCount": 1414,
+      "allFrozenFilesMatchManifest": true,
+      "nonOverlayFilesMatchBaseCommit": true,
+      "tests": {
+        "total": 8,
+        "passed": 5,
+        "failed": 3,
+        "skipped": 0
+      },
+      "ownedFiles": [
+        {
+          "path": "apps/guardian/lib/core/access.dart",
+          "sha256": "5fd959ae555596f8b55e6bca5f055141d75383dce8166886d8c853fefaa8b5c0",
+          "bytes": 2317
+        },
+        {
+          "path": "apps/guardian/test/access_test.dart",
+          "sha256": "b0c24e19a8821fcf64b24d542cb4400598e7e242fc31282946d6529afcecfcea",
+          "bytes": 2993
+        }
+      ]
+    },
+    {
+      "phase": "GREEN",
+      "nativeSessionId": 51159,
+      "nativeTerminalExitCode": 0,
+      "sourceManifest": {
+        "path": ".local/runtime/managed-return-path-green-20261015-r1-source.json",
+        "sha256": "ee093d62d6c4f1f788b63d65484d4a10c58454a042a0cd0f0acc8d43f7ba251f",
+        "bytes": 273592
+      },
+      "receipt": {
+        "path": ".local/runtime/managed-return-path-green-20261015-r1-exit.json",
+        "sha256": "6806af8b9a2f34e96d26255252d4704285309c54cfa52e163452cf9517905113",
+        "bytes": 1187
+      },
+      "log": {
+        "path": ".local/runtime/managed-return-path-green-20261015-r1.log",
+        "sha256": "e86ee16961264199f784dbf7b49cd1470169d72c02fe18671c32eabb95ad6d47",
+        "bytes": 1950
+      },
+      "sourceFileCount": 1414,
+      "allFrozenFilesMatchManifest": true,
+      "nonOverlayFilesMatchBaseCommit": true,
+      "tests": {
+        "total": 8,
+        "passed": 8,
+        "failed": 0,
+        "skipped": 0
+      },
+      "ownedFiles": [
+        {
+          "path": "apps/guardian/lib/core/access.dart",
+          "sha256": "3840ddaf013d288bf2034fdef950d177919966619237e4df007de5dd4a60e8c5",
+          "bytes": 2400
+        },
+        {
+          "path": "apps/guardian/test/access_test.dart",
+          "sha256": "b0c24e19a8821fcf64b24d542cb4400598e7e242fc31282946d6529afcecfcea",
+          "bytes": 2993
+        }
+      ]
+    }
+  ],
+  "helpers": [
+    {
+      "path": ".local/runtime/freeze-managed-return-path.py",
+      "sha256": "30bb9aadadb11b923e8edc7155217a25e41664996f79eef4e0a2d37c6926da9e",
+      "bytes": 2997
+    },
+    {
+      "path": ".local/runtime/run-managed-return-path.ps1",
+      "sha256": "789c97860ca92051e91ffc272660998b4192ee9bf29e39896ac5e6278fb9675a",
+      "bytes": 4233
+    },
+    {
+      "path": ".local/runtime/inspect-managed-return-path.py",
+      "sha256": "9deda0a8d89d2c913fc3f28160fc8f978be776f1dcb020fb999cc7f2957c7b57",
+      "bytes": 5996
+    }
+  ],
+  "independentReview": {
+    "path": ".local/runtime/usability-integration-preparation-and-return-review.json",
+    "sha256": "5b2dc76765f279346a58f53d2cd13f579ab2710cfb209a1f5975791f028c310a",
+    "critical": 0,
+    "important": 0
+  },
+  "sourceEvidence": {
+    "path": ".local/runtime/managed-return-path-verification-20261015-r1.json",
+    "sha256": "bc9f1d2b32c1991744e49acfa7d12c73579a5f3dc7ec184981c4bfddbcf665cf"
+  },
+  "limitations": [
+    "Only test/access_test.dart executed; full Guardian and browser suites are delegated to the subsequent integration release gate.",
+    "No live authentication, browser, Docker, database, secret, deployment or native APK operation occurred.",
+    "Flutter offline pub get printed configured asset mirror and 21 newer incompatible dependency version notices; existing committed source files and locks remained byte-identical."
+  ],
+  "runtimeDeploymentChanged": false,
+  "createdAt": "2026-10-15T14:09:34.539486+00:00"
+}

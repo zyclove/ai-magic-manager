@@ -30,6 +30,45 @@ void main() {
     expect(trustedReturnPath('/commercial'), '/commercial');
     expect(trustedReturnPath('/catalog'), '/catalog');
   });
+  for (final path in [
+    '/managed-android',
+    '/managed-android-review',
+    '/device-groups',
+  ]) {
+    test('authentication returns to the requested $path page', () {
+      expect(trustedReturnPath(path), path);
+    });
+  }
+  test('authentication rejects external, altered and unknown return paths', () {
+    for (final path in <String?>[
+      null,
+      '',
+      'managed-android',
+      '//managed-android',
+      'https://example.invalid/managed-android',
+      'javascript:alert(1)',
+      '/managed-android?next=/devices',
+      '/managed-android#devices',
+      '/managed-android/',
+      '/managed-android/details',
+      '/managed-android-review?next=/devices',
+      '/managed-android-review/',
+      '/device-groups?group=1',
+      '/device-groups/',
+      '/Device-groups',
+      '/managed%2Dandroid',
+      '/%2fmanaged-android',
+      r'\managed-android',
+      ' /managed-android',
+      '/managed-android ',
+      '/devices/../managed-android',
+      '/unknown',
+      '/login',
+      '/auth/callback',
+    ]) {
+      expect(trustedReturnPath(path), '/', reason: 'return path: $path');
+    }
+  });
   test('late workspace responses and logout cannot restore stale selection',
       () {
     final selections = SelectionGeneration();
