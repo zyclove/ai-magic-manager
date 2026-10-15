@@ -57,7 +57,7 @@
 
 ## 尚需独立完成
 
-AndroidX 反馈发送、客户端签名与重试、真实 EMM 与设备验收、最终策略执行接入。管理员可视化操作已在后续阶段接入，详见 [儿童端关联操作流程](managed-agent-binding-experience.md)。正式准入与发布证书未提供时，不启用生产绑定通道。
+真实 EMM 与设备验收、完整 Android 构建、最终策略执行接入。管理员可视化操作已在后续阶段接入，详见 [儿童端关联操作流程](managed-agent-binding-experience.md)；签名、AndroidX 提交和有限重试见 [自动反馈运行设计](managed-agent-feedback-runtime.md)。正式准入与发布证书未提供时，不启用生产绑定通道。
 
 ## 验证记录
 

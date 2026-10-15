@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:async';
 import 'package:device_identity/device_identity.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -30,6 +31,28 @@ class HookBindingKeys extends JoseDeviceEnrollmentKeys {
   }
 }
 
+class BindingFeedbackFixture implements ManagedAgentFeedbackPort {
+  int submissions = 0, pauses = 0, closes = 0;
+  bool fail = false;
+  Future<void> Function()? submitting;
+  @override
+  Future<void> submit(ManagedAgentBindingProof proof) async {
+    submissions++;
+    await submitting?.call();
+    if (fail) throw StateError('PRIVATE SDK CAUSE');
+  }
+
+  @override
+  void pause() {
+    pauses++;
+  }
+
+  @override
+  void close() {
+    closes++;
+  }
+}
+
 Map<String, dynamic> bindingChallenge() => {
       'challengeId': challengeId,
       'nonce': nonce,
@@ -37,6 +60,9 @@ Map<String, dynamic> bindingChallenge() => {
       'createdAt': bindingNow - 1000,
       'expiresAt': bindingNow + 599000,
     };
+
+Matcher failure(String code) =>
+    isA<DeviceIdentityFailure>().having((e) => e.code, 'code', code);
 
 void main() {
   late BindingSecrets secrets;
@@ -87,6 +113,137 @@ void main() {
   });
   tearDown(() => api.close());
 
+  test('feedback is submitted once per challenge and never called verified',
+      () async {
+    final feedback = BindingFeedbackFixture();
+    final sender = ManagedAgentFeedbackSender(
+        identity: manager, feedback: feedback, nowMillis: () => now);
+    expect(await sender.synchronize(current: () => true),
+        ManagedFeedbackStage.submitted);
+    now += 60000;
+    expect(await sender.synchronize(current: () => true),
+        ManagedFeedbackStage.awaitingVerification);
+    expect(feedback.submissions, 1);
+    sender.close();
+  });
+  test('paused HTTP completion never reaches native feedback', () async {
+    final feedback = BindingFeedbackFixture();
+    final sender = ManagedAgentFeedbackSender(
+        identity: manager, feedback: feedback, nowMillis: () => now);
+    responding = () async => sender.pause();
+    expect(await sender.synchronize(current: () => true),
+        ManagedFeedbackStage.paused);
+    expect(feedback.submissions, 0);
+    sender.close();
+  });
+  test('scope invalidation after signing prevents native feedback', () async {
+    var current = true;
+    final feedback = BindingFeedbackFixture();
+    manager = DeviceIdentityManager(
+        api: api,
+        secrets: secrets,
+        nowMillis: () => now,
+        keys: HookBindingKeys(() async {
+          current = false;
+        }));
+    final sender = ManagedAgentFeedbackSender(
+        identity: manager, feedback: feedback, nowMillis: () => now);
+    expect(await sender.synchronize(current: () => current),
+        ManagedFeedbackStage.paused);
+    expect(feedback.submissions, 0);
+    sender.close();
+  });
+  test('native failure is bounded to three spaced attempts per challenge',
+      () async {
+    final feedback = BindingFeedbackFixture()..fail = true;
+    final sender = ManagedAgentFeedbackSender(
+        identity: manager, feedback: feedback, nowMillis: () => now);
+    for (var i = 0; i < 3; i++) {
+      await expectLater(sender.synchronize(current: () => true),
+          throwsA(failure('MANAGED_FEEDBACK_UNAVAILABLE')));
+      now += 60000;
+    }
+    await expectLater(sender.synchronize(current: () => true),
+        throwsA(failure('MANAGED_FEEDBACK_RETRY_EXHAUSTED')));
+    expect(feedback.submissions, 3);
+    response = bindingChallenge()
+      ..['challengeId'] = '88888888-8888-4888-8888-888888888888';
+    feedback.fail = false;
+    expect(await sender.synchronize(current: () => true),
+        ManagedFeedbackStage.submitted);
+    sender.close();
+  });
+  test('retry delay cannot be bypassed by repeated synchronization', () async {
+    final feedback = BindingFeedbackFixture()..fail = true;
+    final sender = ManagedAgentFeedbackSender(
+        identity: manager, feedback: feedback, nowMillis: () => now);
+    await expectLater(sender.synchronize(current: () => true),
+        throwsA(failure('MANAGED_FEEDBACK_UNAVAILABLE')));
+    await expectLater(sender.synchronize(current: () => true),
+        throwsA(failure('MANAGED_FEEDBACK_RETRY_LATER')));
+    expect(feedback.submissions, 1);
+    sender.close();
+  });
+  test('late native success after pause cannot report submitted', () async {
+    final feedback = BindingFeedbackFixture();
+    final sender = ManagedAgentFeedbackSender(
+        identity: manager, feedback: feedback, nowMillis: () => now);
+    feedback.submitting = () async => sender.pause();
+    expect(await sender.synchronize(current: () => true),
+        ManagedFeedbackStage.paused);
+    sender.close();
+  });
+  test('late native success after deadline cannot report submitted', () async {
+    final feedback = BindingFeedbackFixture()
+      ..submitting = () async {
+        now += 600000;
+      };
+    final sender = ManagedAgentFeedbackSender(
+        identity: manager, feedback: feedback, nowMillis: () => now);
+    await expectLater(sender.synchronize(current: () => true),
+        throwsA(failure('MANAGED_CHALLENGE_EXPIRED')));
+    sender.close();
+  });
+  test('closed sender never polls and closes its port once', () async {
+    final feedback = BindingFeedbackFixture();
+    final sender = ManagedAgentFeedbackSender(
+        identity: manager, feedback: feedback, nowMillis: () => now);
+    sender.close();
+    sender.close();
+    expect(await sender.synchronize(current: () => true),
+        ManagedFeedbackStage.paused);
+    expect(requests, isEmpty);
+    expect(feedback.closes, 1);
+  });
+  test('no challenge never invokes native feedback', () async {
+    final feedback = BindingFeedbackFixture();
+    final sender = ManagedAgentFeedbackSender(
+        identity: manager, feedback: feedback, nowMillis: () => now);
+    status = 204;
+    expect(await sender.synchronize(current: () => true),
+        ManagedFeedbackStage.idle);
+    expect(feedback.submissions, 0);
+    sender.close();
+  });
+  test('concurrent sync is refused without a second HTTP request', () async {
+    final feedback = BindingFeedbackFixture();
+    final sender = ManagedAgentFeedbackSender(
+        identity: manager, feedback: feedback, nowMillis: () => now);
+    final started = Completer<void>(), complete = Completer<void>();
+    responding = () async {
+      started.complete();
+      await complete.future;
+    };
+    final first = sender.synchronize(current: () => true);
+    await started.future;
+    await expectLater(sender.synchronize(current: () => true),
+        throwsA(failure('IDENTITY_BUSY')));
+    complete.complete();
+    expect(await first, ManagedFeedbackStage.submitted);
+    expect(requests, hasLength(1));
+    sender.close();
+  });
+
   test(
       'active original key signs minimal proof from authenticated GET challenge',
       () async {
@@ -122,8 +279,6 @@ void main() {
     expect(await manager.managedAgentBindingProof(), isNull);
     expect(requests, hasLength(1));
   });
-  Matcher failure(String code) =>
-      isA<DeviceIdentityFailure>().having((e) => e.code, 'code', code);
   void mutate(String field, Object? value) {
     final record = jsonDecode(secrets.record!);
     record[field] = value;

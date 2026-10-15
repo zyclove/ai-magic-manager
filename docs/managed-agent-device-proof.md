@@ -65,6 +65,8 @@ sequenceDiagram
 
 ## 下一接入点
 
+后续实现进展：AndroidX 提交与前台会话调度已接入，默认关闭，详见 [自动反馈运行设计与验证记录](managed-agent-feedback-runtime.md)。下述内容保留本签名阶段的边界及官方依据。
+
 AndroidX Enterprise Feedback 官方稳定版本当前为 1.1.0；后续采用可回报错误的 API，并保持单实例、有限重试和短期有效期。官方明确指出反馈可见于 EMM 管理方，不能携带个人信息；因此本协议只传随机挑战及其签名。[官方发布记录](https://developer.android.com/jetpack/androidx/releases/enterprise)、[反馈内容约束](https://developer.android.com/work/app-feedback/overview)
 
 SDK 的成功回调只表示发送给本机符合条件的接收者；零接收者也可能报告成功，且不能证明 DPC 或云端已成功处理。请求立即上传也不保证云端立刻可见。因此未来客户端状态应为「已提交反馈，等待管理员核验」，服务端从提供方读取并验签后才可显示关联成功。[回调含义](https://developer.android.com/reference/androidx/enterprise/feedback/KeyedAppStatesCallback)、[上传边界](https://developer.android.com/reference/androidx/enterprise/feedback/KeyedAppStatesReporter)

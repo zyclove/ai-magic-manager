@@ -62,11 +62,12 @@ final class ManagedAgentChallenge {
 
 /// Minimal, short-lived feedback data. Identity verification remains server-side.
 final class ManagedAgentBindingProof {
-  final String compact;
+  final String compact, challengeId;
   final int expiresAt;
   ManagedAgentBindingProof(
       this.compact, ManagedAgentChallenge challenge, int nowMillis)
-      : expiresAt = _validate(compact, challenge, nowMillis);
+      : challengeId = challenge.id,
+        expiresAt = _validate(compact, challenge, nowMillis);
   static int _validate(
       String compact, ManagedAgentChallenge challenge, int now) {
     challenge.requireCurrent(now);

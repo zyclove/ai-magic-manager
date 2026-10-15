@@ -11,12 +11,16 @@ class ChildEnvironment {
 
   /// Enabled only when backend routes, consent UI and erasure are deployed together.
   final bool permissionObservationEnabled;
+
+  /// Only enable on a deployment approved for the managed feedback channel.
+  final bool managedFeedbackEnabled;
   ChildEnvironment(
       {required this.apiRoot,
       this.configurationIssuer = '',
       this.configurationKeys,
       this.allowLoopbackHttp = false,
-      this.permissionObservationEnabled = false}) {
+      this.permissionObservationEnabled = false,
+      this.managedFeedbackEnabled = false}) {
     if (apiRoot.host.isEmpty ||
         apiRoot.userInfo.isNotEmpty ||
         apiRoot.hasQuery ||
@@ -47,7 +51,9 @@ class ChildEnvironment {
               ring.isEmpty ? null : Map<String, dynamic>.from(jsonDecode(ring)),
           allowLoopbackHttp: const bool.fromEnvironment('ALLOW_LOCAL_HTTP'),
           permissionObservationEnabled:
-              const bool.fromEnvironment('PERMISSION_OBSERVATION_ENABLED'));
+              const bool.fromEnvironment('PERMISSION_OBSERVATION_ENABLED'),
+          managedFeedbackEnabled:
+              const bool.fromEnvironment('MANAGED_FEEDBACK_ENABLED'));
     } catch (_) {
       throw const FormatException('Invalid child deployment configuration');
     }

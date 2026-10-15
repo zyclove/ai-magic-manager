@@ -72,6 +72,19 @@ class ChildSession extends ChangeNotifier {
   final ChildAccessFactory? accessFactory;
   final ChildSubmissionFactory? submissionFactory;
   final Future<CleanupRunStage?> Function()? cleanupCheck;
+  final ManagedAgentFeedbackPort? managedFeedback;
+  late final ManagedAgentFeedbackSender? _managedFeedbackSender =
+      managedFeedback == null
+          ? null
+          : ManagedAgentFeedbackSender(
+              identity: identity,
+              feedback: managedFeedback!,
+              nowMillis: nowMillis);
+  Timer? _managedFeedbackTimer;
+  String? _managedFeedbackScope, managedFeedbackErrorCode;
+  int _managedFeedbackGeneration = 0;
+  bool _managedFeedbackDue = false;
+  ManagedFeedbackStage managedFeedbackStage = ManagedFeedbackStage.idle;
   String? cleanupErrorCode;
 
   /// Ephemeral confirmation only; the identity and cleanup journal are gone.
@@ -130,12 +143,65 @@ class ChildSession extends ChangeNotifier {
       this.accessFactory,
       this.submissionFactory,
       this.cleanupCheck,
+      this.managedFeedback,
       int Function()? nowMillis})
       : nowMillis = nowMillis ?? (() => DateTime.now().millisecondsSinceEpoch);
   String? get pairingCode => _foreground ? _pairingCode : null;
   bool get systemEnforced => false;
   void _changed() {
+    _updateManagedFeedbackLifecycle();
     if (!_disposed) notifyListeners();
+  }
+
+  /// Foreground-only, bounded polling; timers enqueue work behind existing user actions.
+  void _updateManagedFeedbackLifecycle() {
+    if (managedFeedback == null || _disposed) return;
+    final scope =
+        initialized && foreground && credentialReady && identityReadSucceeded
+            ? _identityKey
+            : null;
+    if (scope != _managedFeedbackScope) {
+      _managedFeedbackGeneration++;
+      _managedFeedbackScope = scope;
+      _managedFeedbackTimer?.cancel();
+      _managedFeedbackTimer = null;
+      _managedFeedbackDue = scope != null;
+      _managedFeedbackSender?.pause();
+      managedFeedbackStage = ManagedFeedbackStage.paused;
+      managedFeedbackErrorCode = null;
+    }
+    if (scope == null || _managedFeedbackTimer != null) return;
+    _managedFeedbackTimer =
+        Timer(Duration(seconds: 60 + Random().nextInt(16)), () {
+      _managedFeedbackTimer = null;
+      if (_disposed || !foreground) return;
+      _managedFeedbackDue = true;
+      _drain();
+      _updateManagedFeedbackLifecycle();
+    });
+  }
+
+  Future<void> _sendManagedFeedback() async {
+    final generation = _managedFeedbackGeneration;
+    final scope = _managedFeedbackScope;
+    bool current() =>
+        !_disposed &&
+        foreground &&
+        scope != null &&
+        scope == _managedFeedbackScope &&
+        generation == _managedFeedbackGeneration;
+    try {
+      final stage = await _managedFeedbackSender!.synchronize(current: current);
+      if (current()) {
+        managedFeedbackStage = stage;
+        managedFeedbackErrorCode = null;
+      }
+    } on DeviceIdentityFailure catch (failure) {
+      if (current()) {
+        managedFeedbackErrorCode = failure.code;
+        _log.warning('code=${failure.code}');
+      }
+    }
   }
 
   String? get _identityKey => identityView?.deviceId == null ||
@@ -878,6 +944,11 @@ class ChildSession extends ChangeNotifier {
     if (_refreshObservationOnIdle && observationFactory != null) {
       _refreshObservationOnIdle = false;
       unawaited(refreshObservationAuthorization());
+      return;
+    }
+    if (_managedFeedbackDue && managedFeedback != null) {
+      _managedFeedbackDue = false;
+      unawaited(_run(_sendManagedFeedback));
     }
   }
 
@@ -1035,6 +1106,10 @@ class ChildSession extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _managedFeedbackGeneration++;
+    _managedFeedbackTimer?.cancel();
+    _managedFeedbackTimer = null;
+    _managedFeedbackSender?.close();
     _clearAccess();
     _clearSubmissions();
     _clearRules();

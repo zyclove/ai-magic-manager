@@ -25,8 +25,11 @@ class MainActivity: FlutterActivity() {
     private val mainHandler = Handler(Looper.getMainLooper())
     private var observationHost: ObservationHost? = null
     private val deviceKeysHost = DeviceKeysHost()
+    private var managedFeedbackHost: ManagedFeedbackHost? = null
     override fun configureFlutterEngine(engine: FlutterEngine) {
         super.configureFlutterEngine(engine)
+        managedFeedbackHost?.close()
+        managedFeedbackHost = ManagedFeedbackHost(this, engine.dartExecutor.binaryMessenger)
         if (storageExecutor.isShutdown) {
             storageExecutor = Executors.newSingleThreadExecutor()
         }
@@ -88,6 +91,8 @@ class MainActivity: FlutterActivity() {
             }
     }
     override fun cleanUpFlutterEngine(engine: FlutterEngine) {
+        managedFeedbackHost?.close()
+        managedFeedbackHost = null
         AndroidObservationApi.setUp(engine.dartExecutor.binaryMessenger, null)
         observationHost?.close()
         observationHost = null

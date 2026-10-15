@@ -8,6 +8,7 @@ import '../platform/configuration_database.dart';
 import '../platform/observation_source.dart';
 import '../platform/secret_store.dart';
 import '../platform/device_keys.dart';
+import '../platform/managed_feedback.dart';
 import 'cleanup_runner.dart';
 import 'access.dart' show ChildAccessBindingStore;
 import 'access_receiver.dart';
@@ -22,6 +23,7 @@ import 'submission_receiver.dart';
 class ChildPlatformServices {
   final DeviceSecretStore identityStore;
   final DeviceEnrollmentKeys? enrollmentKeys;
+  final ManagedAgentFeedbackPort? managedFeedback;
   final observation.ObservationStore observationStore;
   final observation.ObservationSource observationSource;
   final Future<Database> Function() openConfigurations;
@@ -35,6 +37,7 @@ class ChildPlatformServices {
   const ChildPlatformServices(
       {required this.identityStore,
       this.enrollmentKeys,
+      this.managedFeedback,
       required this.observationStore,
       required this.observationSource,
       required this.openConfigurations,
@@ -79,6 +82,8 @@ class ProductionChildRuntime {
     var cleanupWindow = false;
     final session = ChildSession(
         identity: identity,
+        managedFeedback: nativeAvailable && environment.managedFeedbackEnabled
+            ? services.managedFeedback ?? AndroidManagedFeedback() : null,
         nowMillis: clock,
         cleanupCheck: nativeAvailable &&
                 services.identityStore is AndroidIdentityStore
