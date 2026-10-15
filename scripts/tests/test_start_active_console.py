@@ -49,7 +49,22 @@ switch ($env:PRIMARY_TEST_VERIFY_MODE) {
 WRAPPER = r"""
 $ErrorActionPreference = 'Stop'
 $global:LASTEXITCODE = 0
+$global:PRIMARY_TEST_COMPOSE_COUNT = 0
 function global:Write-LauncherTestEvent($Event) {
+    if ($env:PRIMARY_TEST_LEASE_PROBE -ceq 'true') {
+        $probeStream = $null
+        try {
+            $probeStream = [IO.File]::Open($env:PRIMARY_TEST_RUNTIME_LEASE,
+                [IO.FileMode]::OpenOrCreate, [IO.FileAccess]::ReadWrite, [IO.FileShare]::None)
+            $Event.leaseHeld = $false
+        } catch [IO.IOException] {
+            # The fixture owns the directory; an exclusive OS file handle
+            # held by the real launcher is the only expected IO conflict.
+            $Event.leaseHeld = $true
+        } finally {
+            if ($null -ne $probeStream) { $probeStream.Dispose() }
+        }
+    }
     $line = ConvertTo-Json -InputObject $Event -Depth 10 -Compress
     [IO.File]::AppendAllText($env:PRIMARY_TEST_EVENTS, $line + "`n",
         [Text.UTF8Encoding]::new($false))
@@ -77,6 +92,21 @@ function global:docker {
             explicitProject=$explicitProject
         }
         if ($arguments -cnotcontains 'ps') { throw 'Unexpected Compose fake command.' }
+        $global:PRIMARY_TEST_COMPOSE_COUNT += 1
+        if ($env:PRIMARY_TEST_ENGINE_OFF -ceq 'true' -and $global:PRIMARY_TEST_COMPOSE_COUNT -eq 1) {
+            $global:LASTEXITCODE = 1
+            Write-Output 'Synthetic Docker engine is unavailable.'
+            return
+        }
+        if ($env:PRIMARY_TEST_RETRY_COMPOSE_MODE -ceq 'fail' -and $global:PRIMARY_TEST_COMPOSE_COUNT -gt 1) {
+            $global:LASTEXITCODE = 37
+            Write-Output 'Synthetic Docker engine remains unavailable.'
+            return
+        }
+        if ($env:PRIMARY_TEST_COMPOSE_JSON_MODE -ceq 'invalid') {
+            Write-Output 'Synthetic successful Compose command with malformed JSON.'
+            return
+        }
         if ($env:PRIMARY_TEST_HEALTH -ceq 'healthy') {
             foreach ($service in @('backend', 'database', 'edge', 'erasure-database',
                                    'identity', 'identity-database')) {
@@ -84,6 +114,28 @@ function global:docker {
                     ConvertTo-Json -Compress
             }
         }
+        return
+    }
+    if ($arguments[0] -ceq 'context') {
+        if ($arguments.Count -ne 2 -or $arguments[1] -cne 'show') {
+            throw 'The launcher fixture permits context inspection only.'
+        }
+        Write-LauncherTestEvent @{kind='context'; argv=$arguments}
+        Write-Output $env:PRIMARY_TEST_DOCKER_CONTEXT
+        return
+    }
+    if ($arguments[0] -ceq 'desktop') {
+        Write-LauncherTestEvent @{kind='desktop'; argv=$arguments}
+        if ($arguments.Count -ne 4 -or $arguments[1] -cne 'start' -or
+            $arguments[2] -cne '--timeout' -or $arguments[3] -cne '120') {
+            throw 'The launcher fixture only permits bounded Docker Desktop start.'
+        }
+        if ($env:PRIMARY_TEST_DESKTOP_START_MODE -ceq 'fail') {
+            $global:LASTEXITCODE = 31
+            Write-Output 'Synthetic Docker Desktop start failure.'
+            return
+        }
+        Write-Output 'Synthetic Docker Desktop start completed.'
         return
     }
     if ($arguments[0] -ceq 'ps') {
@@ -105,7 +157,12 @@ $failed = $false
 $callSucceeded = $false
 $callCode = 0
 $errorText = $null
+$externalLeaseStream = $null
 try {
+    if ($env:PRIMARY_TEST_EXTERNAL_LEASE -ceq 'true') {
+        $externalLeaseStream = [IO.File]::Open($env:PRIMARY_TEST_RUNTIME_LEASE,
+            [IO.FileMode]::OpenOrCreate, [IO.FileAccess]::ReadWrite, [IO.FileShare]::None)
+    }
     $switches = @{NoBrowser=$true}
     if ($env:PRIMARY_TEST_CHECK_ONLY -ceq 'true') { $switches.CheckOnly = $true }
     & $env:PRIMARY_TEST_LAUNCHER @switches |
@@ -116,6 +173,23 @@ try {
     $failed = $true
     $callCode = $global:LASTEXITCODE
     $errorText = $_.Exception.Message
+} finally {
+    if ($null -ne $externalLeaseStream) { $externalLeaseStream.Dispose() }
+}
+$runtimeLeaseReleased = $null
+if ($env:PRIMARY_TEST_LEASE_PROBE -ceq 'true') {
+    $probeStream = $null
+    try {
+        # Release the wrapper's external lease before checking whether the
+        # primary launcher leaked any of its own handles on return/failure.
+        $probeStream = [IO.File]::Open($env:PRIMARY_TEST_RUNTIME_LEASE,
+            [IO.FileMode]::OpenOrCreate, [IO.FileAccess]::ReadWrite, [IO.FileShare]::None)
+        $runtimeLeaseReleased = $true
+    } catch [IO.IOException] {
+        $runtimeLeaseReleased = $false
+    } finally {
+        if ($null -ne $probeStream) { $probeStream.Dispose() }
+    }
 }
 $environmentValue = [Environment]::GetEnvironmentVariable('COMPOSE_PROJECT_NAME', 'Process')
 $edgePortValue = [Environment]::GetEnvironmentVariable('EDGE_PORT', 'Process')
@@ -125,6 +199,7 @@ $ready = @($messages | Where-Object { $_.StartsWith('Console ready:') }).Count -
     failed=$failed; code=$callCode; ready=$ready; error=$errorText
     environmentPresent=($null -ne $environmentValue); environmentValue=$environmentValue
     edgePortPresent=($null -ne $edgePortValue); edgePortValue=$edgePortValue
+    runtimeLeaseReleased=$runtimeLeaseReleased
 } | ConvertTo-Json -Compress
 """
 
@@ -181,6 +256,7 @@ class StartActiveConsoleTest(unittest.TestCase):
         self.write_json(self.local / "console-active.json", pointer)
         self.write_json(self.local / "console-activation-intent.json", pointer)
         self.events_path = Path(self.temporary.name) / "events.jsonl"
+        self.runtime_lease_path = self.local / "runtime/console-runtime.lock"
 
     def tearDown(self):
         # Only this newly created ignored fixture directory can be removed.
@@ -200,7 +276,9 @@ class StartActiveConsoleTest(unittest.TestCase):
 
     def invoke(self, *, host_project=HOST_PROJECT, health="unhealthy", check_only=False,
                foreign_edge="", start_mode="ok", verify_mode="ok", host_edge_port=None,
-               foreign_edge_port="18101"):
+               foreign_edge_port="18101", engine_off=False, docker_context="desktop-linux",
+               docker_host=None, desktop_start_mode="ok", retry_compose_mode="ok",
+               compose_json_mode="valid", lease_probe=False, external_lease=False):
         environment = os.environ.copy()
         environment.pop("COMPOSE_PROJECT_NAME", None)
         if host_project is not None:
@@ -208,6 +286,10 @@ class StartActiveConsoleTest(unittest.TestCase):
         environment.pop("EDGE_PORT", None)
         if host_edge_port is not None:
             environment["EDGE_PORT"] = host_edge_port
+        environment.pop("DOCKER_HOST", None)
+        environment.pop("DOCKER_CONTEXT", None)
+        if docker_host is not None:
+            environment["DOCKER_HOST"] = docker_host
         environment.update({
             "PRIMARY_TEST_LAUNCHER": str(self.scripts / "start-active-console.ps1"),
             "PRIMARY_TEST_EVENTS": str(self.events_path),
@@ -218,6 +300,14 @@ class StartActiveConsoleTest(unittest.TestCase):
             "PRIMARY_TEST_FOREIGN_EDGE_PORT": foreign_edge_port,
             "PRIMARY_TEST_START_MODE": start_mode,
             "PRIMARY_TEST_VERIFY_MODE": verify_mode,
+            "PRIMARY_TEST_ENGINE_OFF": "true" if engine_off else "false",
+            "PRIMARY_TEST_DOCKER_CONTEXT": docker_context,
+            "PRIMARY_TEST_DESKTOP_START_MODE": desktop_start_mode,
+            "PRIMARY_TEST_RETRY_COMPOSE_MODE": retry_compose_mode,
+            "PRIMARY_TEST_COMPOSE_JSON_MODE": compose_json_mode,
+            "PRIMARY_TEST_RUNTIME_LEASE": str(self.runtime_lease_path),
+            "PRIMARY_TEST_LEASE_PROBE": "true" if lease_probe else "false",
+            "PRIMARY_TEST_EXTERNAL_LEASE": "true" if external_lease else "false",
         })
         # The executable is absolute. No executable named Docker can be found
         # if the production code accidentally stops using the command fake.
@@ -274,6 +364,24 @@ class StartActiveConsoleTest(unittest.TestCase):
     def assert_rejected(self, payload):
         self.assertFalse(payload["ok"], "Launcher failure did not reach its caller")
         self.assertFalse(payload["ready"], "A failed launcher still announced readiness")
+
+    def assert_edge_port_restored(self, payload, original):
+        self.assertEqual(payload["edgePortPresent"], original is not None)
+        self.assertEqual(payload["edgePortValue"], original)
+
+    def assert_no_release_start_or_verification(self, events):
+        self.assertEqual(self.of_kind(events, "start"), [])
+        self.assertEqual(self.of_kind(events, "verify"), [])
+
+    def assert_runtime_lease_held(self, events):
+        self.assertTrue(events, "Runtime lease inspection needs an actual launcher operation")
+        for event in events:
+            self.assertIs(event.get("leaseHeld"), True,
+                          f"The launcher did not hold its runtime lease during {event['kind']}")
+
+    def assert_runtime_lease_released(self, payload):
+        self.assertIs(payload["runtimeLeaseReleased"], True,
+                      "The launcher retained its runtime lease after returning")
 
     def test_host_project_cannot_select_compose_or_frozen_scripts(self):
         payload, events = self.invoke()
@@ -394,6 +502,228 @@ class StartActiveConsoleTest(unittest.TestCase):
         self.assert_rejected(payload)
         self.assertEqual(events, [])
         self.assert_restored(payload, HOST_PROJECT)
+
+    def test_engine_off_starts_local_desktop_once_then_rechecks_same_selection(self):
+        for original_project in (None, HOST_PROJECT):
+            for original_port in (None, "18112"):
+                for health in ("unhealthy", "healthy"):
+                    with self.subTest(project=original_project, port=original_port, health=health):
+                        payload, events = self.invoke(
+                            engine_off=True, health=health, host_project=original_project,
+                            host_edge_port=original_port,
+                        )
+                        self.assertTrue(payload["ok"], "Local engine recovery did not complete startup")
+                        self.assertTrue(payload["ready"])
+                        self.assertEqual(len(self.of_kind(events, "desktop")), 1)
+                        self.assertEqual(self.of_kind(events, "desktop")[0]["argv"],
+                                         ["desktop", "start", "--timeout", "120"])
+                        compose = self.of_kind(events, "compose")
+                        self.assertEqual(len(compose), 2, "Engine recovery must recheck the selected runtime once")
+                        self.assertEqual(compose[0]["argv"], compose[1]["argv"])
+                        self.assertEqual(len(self.of_kind(events, "start")), 1 if health == "unhealthy" else 0)
+                        self.assertEqual(len(self.of_kind(events, "verify")), 1)
+                        kinds = [event["kind"] for event in events]
+                        self.assertEqual(kinds[:4], ["compose", "context", "desktop", "compose"])
+                        self.assert_selected(events)
+                        self.assert_restored(payload, original_project)
+                        self.assert_edge_port_restored(payload, original_port)
+
+    def test_check_only_engine_off_never_starts_desktop_or_release(self):
+        payload, events = self.invoke(engine_off=True, check_only=True, host_edge_port="18112")
+        self.assert_rejected(payload)
+        self.assertEqual([event["kind"] for event in events], ["compose"])
+        self.assert_no_release_start_or_verification(events)
+        self.assert_selected(events)
+        self.assert_restored(payload, HOST_PROJECT)
+        self.assert_edge_port_restored(payload, "18112")
+
+    def test_remote_context_or_explicit_docker_host_never_starts_local_desktop(self):
+        for context, host in (("remote-production", None),
+                              ("desktop-linux", "tcp://remote.example.test:2376"),
+                              ("desktop-linux", "npipe:////./pipe/docker_engine")):
+            with self.subTest(context=context, docker_host=host):
+                payload, events = self.invoke(
+                    engine_off=True, docker_context=context, docker_host=host,
+                    host_edge_port="18112",
+                )
+                self.assert_rejected(payload)
+                self.assertEqual(self.of_kind(events, "desktop"), [])
+                self.assertEqual(len(self.of_kind(events, "compose")), 1)
+                self.assert_no_release_start_or_verification(events)
+                for event in self.of_kind(events, "context"):
+                    self.assertEqual(event["argv"], ["context", "show"])
+                self.assert_selected(events)
+                self.assert_restored(payload, HOST_PROJECT)
+                self.assert_edge_port_restored(payload, "18112")
+
+    def test_desktop_start_failure_never_starts_or_verifies_release(self):
+        for original_project in (None, HOST_PROJECT):
+            for original_port in (None, "18112"):
+                with self.subTest(project=original_project, port=original_port):
+                    payload, events = self.invoke(
+                        engine_off=True, desktop_start_mode="fail", host_project=original_project,
+                        host_edge_port=original_port,
+                    )
+                    self.assert_rejected(payload)
+                    self.assertEqual(len(self.of_kind(events, "desktop")), 1)
+                    self.assertEqual(len(self.of_kind(events, "compose")), 1)
+                    self.assert_no_release_start_or_verification(events)
+                    self.assertEqual(self.of_kind(events, "edges"), [])
+                    self.assert_selected(events)
+                    self.assert_restored(payload, original_project)
+                    self.assert_edge_port_restored(payload, original_port)
+
+    def test_failed_engine_recheck_never_starts_or_verifies_release(self):
+        for original_project in (None, HOST_PROJECT):
+            for original_port in (None, "18112"):
+                with self.subTest(project=original_project, port=original_port):
+                    payload, events = self.invoke(
+                        engine_off=True, retry_compose_mode="fail", host_project=original_project,
+                        host_edge_port=original_port,
+                    )
+                    self.assert_rejected(payload)
+                    self.assertEqual(len(self.of_kind(events, "desktop")), 1)
+                    compose = self.of_kind(events, "compose")
+                    self.assertEqual(len(compose), 2)
+                    self.assertEqual(compose[0]["argv"], compose[1]["argv"])
+                    self.assert_no_release_start_or_verification(events)
+                    self.assertEqual(self.of_kind(events, "edges"), [])
+                    self.assert_selected(events)
+                    self.assert_restored(payload, original_project)
+                    self.assert_edge_port_restored(payload, original_port)
+
+    def test_successful_compose_with_malformed_json_is_not_engine_recovery(self):
+        payload, events = self.invoke(compose_json_mode="invalid", host_edge_port="18112")
+        self.assert_rejected(payload)
+        self.assertEqual([event["kind"] for event in events], ["compose"])
+        self.assert_no_release_start_or_verification(events)
+        self.assert_selected(events)
+        self.assert_restored(payload, HOST_PROJECT)
+        self.assert_edge_port_restored(payload, "18112")
+
+    def test_prepared_activation_is_rejected_before_any_engine_recovery(self):
+        intent_path = self.local / "console-activation-intent.json"
+        intent = json.loads(intent_path.read_text(encoding="utf-8"))
+        self.write_json(intent_path, {**intent, "state": "PREPARED"})
+        payload, events = self.invoke(engine_off=True, host_edge_port="18112")
+        self.assert_rejected(payload)
+        self.assertEqual(events, [])
+        self.assert_restored(payload, HOST_PROJECT)
+        self.assert_edge_port_restored(payload, "18112")
+
+    def test_external_runtime_lease_blocks_launcher_without_docker_or_file_replacement(self):
+        marker = b"another runtime operation owns this existing lease file\n"
+        self.runtime_lease_path.write_bytes(marker)
+        for check_only in (False, True):
+            for engine_off in (False, True):
+                with self.subTest(check_only=check_only, engine_off=engine_off):
+                    payload, events = self.invoke(
+                        lease_probe=True, external_lease=True, check_only=check_only,
+                        engine_off=engine_off, host_edge_port="18112",
+                    )
+                    self.assert_rejected(payload)
+                    self.assertEqual(events, [], "A runtime lease conflict must precede every Docker operation")
+                    self.assert_no_release_start_or_verification(events)
+                    self.assertTrue(self.runtime_lease_path.is_file(), "The launcher removed another operation's lease file")
+                    self.assertEqual(self.runtime_lease_path.read_bytes(), marker,
+                                     "The launcher replaced another operation's existing lease file")
+                    self.assert_runtime_lease_released(payload)
+                    self.assert_restored(payload, HOST_PROJECT)
+                    self.assert_edge_port_restored(payload, "18112")
+
+    def test_healthy_normal_start_holds_runtime_lease_through_verification(self):
+        payload, events = self.invoke(lease_probe=True, health="healthy")
+        self.assertTrue(payload["ok"])
+        self.assertTrue(payload["ready"])
+        self.assertEqual([event["kind"] for event in events], ["compose", "verify"])
+        self.assert_runtime_lease_held(events)
+        self.assert_runtime_lease_released(payload)
+        self.assert_selected(events)
+
+    def test_healthy_check_only_holds_runtime_lease_through_verification(self):
+        payload, events = self.invoke(lease_probe=True, health="healthy", check_only=True)
+        self.assertTrue(payload["ok"])
+        self.assertTrue(payload["ready"])
+        self.assertEqual([event["kind"] for event in events], ["compose", "verify"])
+        self.assert_runtime_lease_held(events)
+        self.assert_runtime_lease_released(payload)
+        self.assert_selected(events)
+
+    def test_unhealthy_normal_start_holds_runtime_lease_through_selected_scripts(self):
+        payload, events = self.invoke(lease_probe=True, host_edge_port="18112")
+        self.assertTrue(payload["ok"])
+        self.assertTrue(payload["ready"])
+        self.assertEqual([event["kind"] for event in events], ["compose", "edges", "start", "verify"])
+        self.assert_runtime_lease_held(events)
+        self.assert_runtime_lease_released(payload)
+        self.assert_selected(events)
+        self.assert_restored(payload, HOST_PROJECT)
+        self.assert_edge_port_restored(payload, "18112")
+
+    def test_engine_recovery_holds_runtime_lease_through_desktop_and_release_start(self):
+        payload, events = self.invoke(lease_probe=True, engine_off=True, host_edge_port="18112")
+        self.assertTrue(payload["ok"])
+        self.assertTrue(payload["ready"])
+        self.assertEqual([event["kind"] for event in events],
+                         ["compose", "context", "desktop", "compose", "edges", "start", "verify"])
+        self.assert_runtime_lease_held(events)
+        self.assert_runtime_lease_released(payload)
+        self.assert_selected(events)
+        self.assert_restored(payload, HOST_PROJECT)
+        self.assert_edge_port_restored(payload, "18112")
+
+    def test_child_start_and_verification_failures_release_runtime_lease(self):
+        for stage in ("start", "verify"):
+            for mode in ("throw", "exit"):
+                with self.subTest(stage=stage, mode=mode):
+                    payload, events = self.invoke(
+                        lease_probe=True, host_edge_port="18112", **{f"{stage}_mode": mode},
+                    )
+                    self.assert_rejected(payload)
+                    self.assert_runtime_lease_held(events)
+                    self.assert_runtime_lease_released(payload)
+                    self.assert_selected(events)
+                    self.assert_restored(payload, HOST_PROJECT)
+                    self.assert_edge_port_restored(payload, "18112")
+
+    def test_engine_and_inspection_failures_release_runtime_lease(self):
+        for options in (
+            {"engine_off": True, "desktop_start_mode": "fail"},
+            {"engine_off": True, "retry_compose_mode": "fail"},
+            {"engine_off": True, "docker_context": "remote-production"},
+            {"engine_off": True, "check_only": True},
+            {"compose_json_mode": "invalid"},
+        ):
+            with self.subTest(options=options):
+                payload, events = self.invoke(lease_probe=True, host_edge_port="18112", **options)
+                self.assert_rejected(payload)
+                self.assert_no_release_start_or_verification(events)
+                self.assert_runtime_lease_held(events)
+                self.assert_runtime_lease_released(payload)
+                self.assert_selected(events)
+                self.assert_restored(payload, HOST_PROJECT)
+                self.assert_edge_port_restored(payload, "18112")
+
+    def test_invalid_or_prepared_activation_releases_runtime_lease_without_docker(self):
+        pointer_path = self.local / "console-active.json"
+        intent_path = self.local / "console-activation-intent.json"
+        original_pointer = pointer_path.read_bytes()
+        original_intent = intent_path.read_bytes()
+        for state in ("invalid-pointer", "prepared-intent"):
+            with self.subTest(state=state):
+                pointer_path.write_bytes(original_pointer)
+                intent_path.write_bytes(original_intent)
+                if state == "invalid-pointer":
+                    pointer_path.write_text("not json", encoding="utf-8")
+                else:
+                    intent = json.loads(original_intent)
+                    self.write_json(intent_path, {**intent, "state": "PREPARED"})
+                payload, events = self.invoke(lease_probe=True, host_edge_port="18112")
+                self.assert_rejected(payload)
+                self.assertEqual(events, [])
+                self.assert_runtime_lease_released(payload)
+                self.assert_restored(payload, HOST_PROJECT)
+                self.assert_edge_port_restored(payload, "18112")
 
 
 if __name__ == "__main__":

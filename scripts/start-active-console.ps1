@@ -4,14 +4,50 @@
 param([switch]$CheckOnly, [switch]$NoBrowser)
 $ErrorActionPreference = 'Stop'
 $repository = [IO.Path]::GetFullPath((Split-Path $PSScriptRoot -Parent))
+$runtimeDirectory = Join-Path $repository '.local/runtime'
+$runtimeLeasePath = Join-Path $runtimeDirectory 'console-runtime.lock'
+$runtimeLease = $null
+try {
+    foreach ($runtimePath in @((Join-Path $repository '.local'), $runtimeDirectory, $runtimeLeasePath)) {
+        if ((Test-Path -LiteralPath $runtimePath) -and
+            ((Get-Item -LiteralPath $runtimePath -Force).Attributes -band [IO.FileAttributes]::ReparsePoint)) {
+            throw 'The console runtime path cannot contain a link.'
+        }
+    }
+    if (-not (Test-Path -LiteralPath $runtimeDirectory -PathType Container)) {
+        throw 'No activated console runtime is configured.'
+    }
+    try {
+        $runtimeLease = [IO.File]::Open($runtimeLeasePath, [IO.FileMode]::OpenOrCreate,
+            [IO.FileAccess]::ReadWrite, [IO.FileShare]::None)
+    } catch [IO.IOException] {
+        throw 'Another console startup, backup or update is in progress. Wait for it to finish.'
+    }
 . (Join-Path $PSScriptRoot 'console-activation.ps1')
 $selection = Get-ActiveConsoleSelection -RepositoryRoot $repository
 if ($null -eq $selection) { throw 'No activated console is configured. Finish the local deployment before starting.' }
 if (-not (Get-Command docker -ErrorAction SilentlyContinue)) { throw 'Docker Desktop is required.' }
 $compose = @('compose', '-p', $selection.project, '--env-file', (Join-Path $selection.deploymentDirectory '.env'),
     '-f', (Join-Path $selection.sourceDirectory 'deploy/compose/compose.yaml'))
-$rows = @(& docker @compose ps --format json | ConvertFrom-Json)
-if ($LASTEXITCODE -ne 0) { throw 'Unable to inspect the activated console.' }
+$inspection = @(& docker @compose ps --format json 2>$null)
+$inspectionExit = $LASTEXITCODE
+if ($inspectionExit -ne 0) {
+    if ($CheckOnly) { throw 'The Docker engine is unavailable. Start the console before checking it.' }
+    $dockerHost = [Environment]::GetEnvironmentVariable('DOCKER_HOST', 'Process')
+    if (-not [string]::IsNullOrEmpty($dockerHost)) {
+        throw 'An explicit Docker host is configured. Restore that connection before starting the console.'
+    }
+    $dockerContext = @(& docker context show 2>$null)
+    if ($LASTEXITCODE -ne 0 -or $dockerContext.Count -ne 1 -or $dockerContext[0].Trim() -cne 'desktop-linux') {
+        throw 'The selected Docker context is unavailable. Restore that connection before starting the console.'
+    }
+    Write-Output 'Starting Docker Desktop. Waiting up to 120 seconds for the local engine.'
+    & docker desktop start --timeout 120 *> $null
+    if ($LASTEXITCODE -ne 0) { throw 'Docker Desktop could not start. Open Docker Desktop and resolve its startup error.' }
+    $inspection = @(& docker @compose ps --format json 2>$null)
+    if ($LASTEXITCODE -ne 0) { throw 'The local Docker engine is still unavailable after startup.' }
+}
+$rows = @($inspection | ConvertFrom-Json)
 $required = @('backend', 'database', 'edge', 'erasure-database', 'identity', 'identity-database')
 $healthy = $rows.Count -eq 6
 foreach ($name in $required) {
@@ -72,4 +108,7 @@ try {
 Write-Output "Console ready: $($selection.publicUrl)/"
 if (-not $NoBrowser -and -not $CheckOnly) {
     Start-Process -FilePath "$($selection.publicUrl)/"
+}
+} finally {
+    if ($null -ne $runtimeLease) { $runtimeLease.Dispose() }
 }

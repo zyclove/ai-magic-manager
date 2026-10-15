@@ -1,0 +1,675 @@
+{
+  "schemaVersion": 1,
+  "status": "VERIFIED",
+  "stage": "guardian-startup",
+  "applicationVersion": "1.0.0",
+  "recordedAt": "2026-10-15T03:41:12.829288+00:00",
+  "publicUrl": "http://localhost:18101/",
+  "overallGoalStatus": "ACTIVE_NOT_COMPLETE",
+  "source": {
+    "baseCommit": "1778d4617899ab3f80f4d43d55f89f6112ab32da",
+    "directory": "D:\\codes\\mobile\\ai-manager\\.local\\v1-guardian-startup-final-source-20261015-r2",
+    "manifest": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-final-source-r2.json",
+      "sha256": "467cdf1a05dbabab308556f061222ec12e8fbc3f31d575105938ec7ac36fc351"
+    },
+    "allFiles": 1298,
+    "ownedImplementationFiles": 6,
+    "patchFiles": [
+      {
+        "path": "apps/guardian/web/flutter_bootstrap.js",
+        "sha256": "32fababde22d6dfc99bdc925bb96aebb6c48c04203886573270a9386c3b88b1a",
+        "bytes": 65
+      },
+      {
+        "path": "scripts/tests/test_guardian_bootstrap.mjs",
+        "sha256": "4ef4d1679a5c13a49c3f93e8c028d155b53f81cddbc47b6508cffa6dcc4416b3",
+        "bytes": 8527
+      },
+      {
+        "path": "docs/guardian-web-startup.md",
+        "sha256": "ab4c0eff909587dbef4a0bdd9042c952701fac083dc90e512aae0bd78ab42f94",
+        "bytes": 2384
+      },
+      {
+        "path": "scripts/start-active-console.ps1",
+        "sha256": "8f4da31ca3675af395ae691fd63f7431b9dd4fa25376554fb081959cefa29a75",
+        "bytes": 6715
+      },
+      {
+        "path": "scripts/tests/test_start_active_console.py",
+        "sha256": "04a7c91a65acabc42a2ad4c9552b9610bb4dbae5e8e68cc23391ee7a90f8b4d5",
+        "bytes": 37952
+      },
+      {
+        "path": "scripts/tests/test_deployment_build.py",
+        "sha256": "05ab2634e883d20398260dc12894f3076339e18d3d98687a96e2732a42edce9d",
+        "bytes": 16327
+      }
+    ],
+    "previousDirectory": "D:\\codes\\mobile\\ai-manager\\.local\\v1-device-management-final-source-20261014",
+    "previousManifest": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-device-management-final-source.json",
+      "sha256": "a38f24554194e951c2d5ebaf94933a1e63486a318e189a5419b655d9759c1097"
+    },
+    "previousAllFiles": 1295,
+    "added": [
+      "apps/guardian/web/flutter_bootstrap.js",
+      "docs/guardian-web-startup.md",
+      "scripts/tests/test_guardian_bootstrap.mjs"
+    ],
+    "changed": [
+      "scripts/start-active-console.ps1",
+      "scripts/tests/test_deployment_build.py",
+      "scripts/tests/test_start_active_console.py"
+    ],
+    "removed": [],
+    "rootAndFrozenSha256AndBytesRechecked": true,
+    "releaseRecordIsSeventhOwnedFileOutsideFrozenBuild": true
+  },
+  "build": {
+    "inspection": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-build-inspection.json",
+      "sha256": "19bc9f1c677839d13623995994cb4dfde6484e2b35fd30ee0851ac957f50cbdd"
+    },
+    "releaseManifestSha256": "47d3bb6c7f6acaac94049956147676cd531ef720bebd89a2e6b360ae4f1541d0",
+    "artifactRoot": "artifacts/release-f33a12d4af414948a3ecdf8d58f9d696",
+    "artifactFiles": 33,
+    "releaseSourceFiles": 984,
+    "backendSha256": "85910f1993a05aaefc0a60beca10f6e93b891d3281f3c0f0c6debb36c6ffce15",
+    "guardianSha256": "1f781ea3488dfd8f0d190c5c70a7922d81c04b18646ea7fcb031b27d9482a673",
+    "guardianBootstrapSha256": "17b4f3a04ff9ce9d2f0fd292f79409d88bb356a74dc55d5c2ed29aa4e900efab",
+    "guardianIndexSha256": "801f4676bef6e4eec47be58e8ff1ce811502c2d09ab64175ad2ecff1aa317218",
+    "terminalReceipt": {
+      "exitCode": 0,
+      "completedAt": "2026-10-15T02:58:35.6909383+00:00",
+      "exitReceiptPath": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-build-r2-exit.json",
+      "exitReceiptSha256": "19025f10f57413a9fed859d44a1acb5cf5835cd8bc2e2366b822d8d889f13b22",
+      "stage": "publish-verified-contexts"
+    },
+    "freshVerification": {
+      "python": {
+        "tests": 83,
+        "passed": 83,
+        "failed": 0,
+        "skipped": 0
+      },
+      "guardian": {
+        "tests": 531,
+        "passed": 531,
+        "analysis": "No issues found"
+      },
+      "bootstrapTemplate": {
+        "tests": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0,
+        "inputPath": "D:\\codes\\mobile\\ai-manager\\.local\\v1-guardian-startup-final-source-20261015-r2\\apps\\guardian\\web\\flutter_bootstrap.js",
+        "inputSha256": "4280a07d38c0218bda12c2d236f7ab0ef349f358d55341dc7c261660bcc6e0b5",
+        "cases": [
+          "a pending first worker registration cannot delay startup",
+          "an existing worker is preserved and cannot delay startup",
+          "startup works without the service worker API",
+          "subpath deployment keeps its base href through startup"
+        ]
+      },
+      "bootstrapArtifact": {
+        "tests": 4,
+        "passed": 4,
+        "failed": 0,
+        "skipped": 0,
+        "cancelled": 0,
+        "todo": 0,
+        "inputPath": "D:\\codes\\mobile\\ai-manager\\.local\\v1-guardian-startup-final-source-20261015-r2\\apps\\guardian\\build\\web\\flutter_bootstrap.js",
+        "inputSha256": "17b4f3a04ff9ce9d2f0fd292f79409d88bb356a74dc55d5c2ed29aa4e900efab",
+        "cases": [
+          "a pending first worker registration cannot delay startup",
+          "an existing worker is preserved and cannot delay startup",
+          "startup works without the service worker API",
+          "subpath deployment keeps its base href through startup"
+        ]
+      },
+      "guardianWebRelease": "passed",
+      "logs": [
+        {
+          "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-build-r2\\bootstrap-artifact.log",
+          "sha256": "f1ba436fc339acd65427ad51b677538ef3e408c3c872c74c4e07e7c6971d2ce0",
+          "bytes": 1763
+        },
+        {
+          "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-build-r2\\bootstrap-template.log",
+          "sha256": "d24bd27d8f167e6d93341656ff0b083650de76858c631bde5f52b7b1426b6a41",
+          "bytes": 1735
+        },
+        {
+          "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-build-r2\\guardian-analyze.log",
+          "sha256": "6faa3ab5b9c7ad7d7298b5b859232b3213eb12a24d842be49b04c63fdff15241",
+          "bytes": 202
+        },
+        {
+          "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-build-r2\\guardian-pub-get.log",
+          "sha256": "6e978bb91ec11f72725cb27389a3c15eeb5391a63efb43d5ee30488e8e308d0d",
+          "bytes": 1094
+        },
+        {
+          "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-build-r2\\guardian-release.log",
+          "sha256": "a515bd94a0d0ef5ca8be72e3ecf0a2df873d6e56437b766be173808e40923022",
+          "bytes": 684
+        },
+        {
+          "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-build-r2\\guardian-test.log",
+          "sha256": "566d412fa28a659ccdf48eabbb7417064767922500dc44e8d458d30507a47cb5",
+          "bytes": 107254
+        },
+        {
+          "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-build-r2\\scripts-suite.log",
+          "sha256": "ff8fb706547ae043896087849f0f81a25bbcd6fe3b0d6440177c9f7db71573b4",
+          "bytes": 14659
+        }
+      ]
+    },
+    "inheritedVerification": {
+      "inspectionPath": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-device-management-build-inspection.json",
+      "inspectionSha256": "2559f1221b730df5d423c44751b625c750304777b5c9dc538a39868d4ba9663a",
+      "releaseManifestSha256": "47b777d1a495e36c2f4bc54b6d19fc3a21b7bd9be3c30f690ff7745e218c5fd1",
+      "sourceManifestSha256": "a38f24554194e951c2d5ebaf94933a1e63486a318e189a5419b655d9759c1097",
+      "backend": {
+        "errors": 0,
+        "suites": 97,
+        "tests": 1022,
+        "skipped": 9,
+        "failures": 0,
+        "passed": 1013
+      },
+      "backendTestsRerun": false,
+      "otherProjectsRerun": false,
+      "unchangedSourceBytesVerified": true,
+      "identicalBackendJarVerified": true
+    },
+    "inheritedVerifiedProjects": [
+      {
+        "path": "apps/child",
+        "analysis": "passed",
+        "toolkit": "flutter",
+        "tests": "passed"
+      },
+      {
+        "path": "apps/parent",
+        "analysis": "passed",
+        "toolkit": "flutter",
+        "tests": "passed"
+      },
+      {
+        "path": "packages/device_access",
+        "analysis": "passed",
+        "toolkit": "dart",
+        "tests": "passed"
+      },
+      {
+        "path": "packages/device_cleanup",
+        "analysis": "passed",
+        "toolkit": "dart",
+        "tests": "passed"
+      },
+      {
+        "path": "packages/device_identity",
+        "analysis": "passed",
+        "toolkit": "dart",
+        "tests": "passed"
+      },
+      {
+        "path": "packages/device_observation",
+        "analysis": "passed",
+        "toolkit": "dart",
+        "tests": "passed"
+      },
+      {
+        "path": "packages/device_operations/example",
+        "analysis": "passed",
+        "toolkit": "flutter",
+        "tests": "passed"
+      },
+      {
+        "path": "packages/device_operations",
+        "analysis": "passed",
+        "toolkit": "flutter",
+        "tests": "passed"
+      },
+      {
+        "path": "packages/device_policy",
+        "analysis": "passed",
+        "toolkit": "dart",
+        "tests": "passed"
+      },
+      {
+        "path": "packages/device_reports",
+        "analysis": "passed",
+        "toolkit": "dart",
+        "tests": "passed"
+      },
+      {
+        "path": "packages/notification_client",
+        "analysis": "passed",
+        "toolkit": "dart",
+        "tests": "not-present"
+      },
+      {
+        "path": "packages/usage_report_ui",
+        "analysis": "passed",
+        "toolkit": "flutter",
+        "tests": "passed"
+      },
+      {
+        "path": "packages/usage_reporting",
+        "analysis": "passed",
+        "toolkit": "dart",
+        "tests": "passed"
+      }
+    ],
+    "backendTestsRerun": false,
+    "otherThirteenProjectsRerun": false
+  },
+  "regressionHistory": {
+    "oldActualBootstrapRed": {
+      "receipt": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-red-exit.json",
+        "sha256": "497e9f1b04f15552c497424de79b6171183b76a487264d3f1142eeaf22031c90"
+      },
+      "log": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-red.log",
+        "sha256": "2685da56d63a39934818b193334148e3dde84b41dfc93a9e5dbbd8363763ed17"
+      },
+      "actualArtifactCopy": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-baseline-bootstrap.js",
+        "sha256": "0a4c186b56c52b7ff746a633ca6699456a7547bb1e604d441f73086a869ff2a8"
+      },
+      "bootstrapSha256": "0a4c186b56c52b7ff746a633ca6699456a7547bb1e604d441f73086a869ff2a8",
+      "tests": 4,
+      "passed": 0,
+      "failed": 4,
+      "inputWasActualPriorArtifact": true
+    },
+    "r1BuildFailure": {
+      "receipt": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-build-exit.json",
+        "sha256": "b6026a2fff57952baab58795ee2afda797610d6208092dbde6046fcd2fad1eb8"
+      },
+      "log": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-build\\scripts-suite.log",
+        "sha256": "7dd1bcf06ba2eeb67696bfa0459a6c10c31a4340c1d026320e17f243e728630c"
+      },
+      "tests": 74,
+      "failed": 3,
+      "cause": "Fake Flutter command path derived a shared SDK root without flutter_tools.snapshot.",
+      "productionSnapshotGateRetained": true,
+      "fix": "Independent fake-sdk/bin/flutter.ps1 with a fixture cache/flutter_tools.snapshot; explicit parent/guardian tool bindings; failureInjected proves target analyze/test execution before stopping.",
+      "fixtureSnapshotWasNotExecutedAsRealSDK": true,
+      "priorFailurePreservationGreenDidNotAloneProveTargetFailureWasReached": true
+    }
+  },
+  "backup": {
+    "receipt": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-backup-20261015-111006-8585df6a.json",
+      "sha256": "b3f08a6b69bb0849af482994457617ead2fbfa5638260a08e9e5314c75187056"
+    },
+    "status": "BACKUP_AND_CURRENT_WRITER_RESTORATION_VERIFIED",
+    "files": 111,
+    "threeDumps": [
+      {
+        "path": "database/business.sql",
+        "bytes": 140941,
+        "sha256": "b172769e8b44a5c83aea836293e2554ce40cc5bf3ed58f6ffd378b7d5aae31e9"
+      },
+      {
+        "path": "database/identity.sql",
+        "bytes": 328610,
+        "sha256": "01869714a0c38351c744ab14ac328751d8ecc6253873fcf412b302993cb031b2"
+      },
+      {
+        "path": "ledger/ledger-preserve-separately.sql",
+        "bytes": 6058,
+        "sha256": "3a0a1af8cba4669efa14a65e0ed66db4f376749533d6ef6afae587611be77ce5"
+      }
+    ],
+    "writeWindowStart": "2026-10-15T03:11:39.9172615+00:00",
+    "writeWindowEnd": "2026-10-15T03:11:44.7231941+00:00",
+    "restorationStatus": "six-healthy-same-containers-images-volumes-artifacts-and-activation-metadata",
+    "restorationSucceeded": true,
+    "restoredDatabases": false,
+    "backupRestoreTested": false,
+    "externalAdministrativeWritersExcludedByOperator": false,
+    "containersOrVolumesDeleted": false,
+    "consistency": "All three dumps ran while the currently activated backend/edge/identity were stopped; all three DBs had zero enabled scheduled events and zero instrumented event-worker threads before any dump; internal network had no foreign containers at preflight.",
+    "ledger": "Preserve independently; never restore this ledger to a business backup timestamp.",
+    "limitation": "Writer restoration is not database restore validation; no full disaster-recovery restore was performed."
+  },
+  "activation": {
+    "receipt": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-activation-20261015-111737-beef7e1dbe21483f896dd46003217322.json",
+      "sha256": "38e8303760b6b5488ca2a2ceb59b825483cd39f338f758dd97106646d28791dd"
+    },
+    "state": "COMMITTED",
+    "project": "ai-manager-v1-enrollment-20261014",
+    "deploymentMode": "SAME_PROJECT_EDGE_ONLY",
+    "services": [
+      {
+        "service": "backend",
+        "imageReference": "ai-manager/backend:ai-manager-v1-enrollment-20261014",
+        "containerId": "a23c891ed2e18fe45be748e3ef75973fe5c04d7813ca776a53e2c79b9a1385e1",
+        "imageId": "sha256:da669f3d5679d156c7e67e199944533bb79aa119439fbd9390a2226bf852eb22"
+      },
+      {
+        "service": "database",
+        "imageReference": "mysql:8.4.11@sha256:6ea90827b1100f8f2ae306a539f86d2c264a26ed435a2a9f75551dd5c3aeb242",
+        "containerId": "df81395e6b1c16c976faf8827a3a92590654deab77698b4ab70e5f9e0fcf7a9a",
+        "imageId": "sha256:8d132912e9d3c985237567595ec2aeae04936044eb1f9336e8e4da2326238b84"
+      },
+      {
+        "service": "edge",
+        "imageReference": "ai-manager/edge:ai-manager-v1-enrollment-20261014",
+        "containerId": "3a3e68bbff421801bf03c6120f98618699a03c5713b8d2772de1f091c997d77c",
+        "imageId": "sha256:3caf260f9e54b4a8af1cf166e8684817a13c6eecf40b89e967123009b72bbb0d"
+      },
+      {
+        "service": "erasure-database",
+        "imageReference": "mysql:8.4.11@sha256:6ea90827b1100f8f2ae306a539f86d2c264a26ed435a2a9f75551dd5c3aeb242",
+        "containerId": "4a7a27f05ad69f23e4ab3e12f29c2d2fee8bb0eeadcc3a4e8e26ca18a6223d3d",
+        "imageId": "sha256:8d132912e9d3c985237567595ec2aeae04936044eb1f9336e8e4da2326238b84"
+      },
+      {
+        "service": "identity",
+        "imageReference": "ai-manager/identity:ai-manager-v1-enrollment-20261014",
+        "containerId": "46ca56bc761357ba6edb47b1453e2eae698aff3945b30c7dff23e501d3eb6e5d",
+        "imageId": "sha256:e5a7001c36fe77e95e6950e4e0949bbe8c00543c398b2f22e9abe40ed88f4051"
+      },
+      {
+        "service": "identity-database",
+        "imageReference": "mysql:8.4.11@sha256:6ea90827b1100f8f2ae306a539f86d2c264a26ed435a2a9f75551dd5c3aeb242",
+        "containerId": "d1449a9c44b29234e2251d77abbee824217d5718d7a4a2485537aab4728606ee",
+        "imageId": "sha256:8d132912e9d3c985237567595ec2aeae04936044eb1f9336e8e4da2326238b84"
+      }
+    ],
+    "unchangedServices": [
+      {
+        "service": "backend",
+        "containerId": "a23c891ed2e18fe45be748e3ef75973fe5c04d7813ca776a53e2c79b9a1385e1",
+        "imageId": "sha256:da669f3d5679d156c7e67e199944533bb79aa119439fbd9390a2226bf852eb22",
+        "imageReference": "ai-manager/backend:ai-manager-v1-enrollment-20261014",
+        "startedAt": "2026-10-15T03:12:30.642042033Z"
+      },
+      {
+        "service": "database",
+        "containerId": "df81395e6b1c16c976faf8827a3a92590654deab77698b4ab70e5f9e0fcf7a9a",
+        "imageId": "sha256:8d132912e9d3c985237567595ec2aeae04936044eb1f9336e8e4da2326238b84",
+        "imageReference": "mysql:8.4.11@sha256:6ea90827b1100f8f2ae306a539f86d2c264a26ed435a2a9f75551dd5c3aeb242",
+        "startedAt": "2026-10-15T01:55:00.647771488Z"
+      },
+      {
+        "service": "erasure-database",
+        "containerId": "4a7a27f05ad69f23e4ab3e12f29c2d2fee8bb0eeadcc3a4e8e26ca18a6223d3d",
+        "imageId": "sha256:8d132912e9d3c985237567595ec2aeae04936044eb1f9336e8e4da2326238b84",
+        "imageReference": "mysql:8.4.11@sha256:6ea90827b1100f8f2ae306a539f86d2c264a26ed435a2a9f75551dd5c3aeb242",
+        "startedAt": "2026-10-15T01:55:00.630030216Z"
+      },
+      {
+        "service": "identity",
+        "containerId": "46ca56bc761357ba6edb47b1453e2eae698aff3945b30c7dff23e501d3eb6e5d",
+        "imageId": "sha256:e5a7001c36fe77e95e6950e4e0949bbe8c00543c398b2f22e9abe40ed88f4051",
+        "imageReference": "ai-manager/identity:ai-manager-v1-enrollment-20261014",
+        "startedAt": "2026-10-15T03:12:14.91093821Z"
+      },
+      {
+        "service": "identity-database",
+        "containerId": "d1449a9c44b29234e2251d77abbee824217d5718d7a4a2485537aab4728606ee",
+        "imageId": "sha256:8d132912e9d3c985237567595ec2aeae04936044eb1f9336e8e4da2326238b84",
+        "imageReference": "mysql:8.4.11@sha256:6ea90827b1100f8f2ae306a539f86d2c264a26ed435a2a9f75551dd5c3aeb242",
+        "startedAt": "2026-10-15T01:55:00.667322817Z"
+      }
+    ],
+    "containersRecreated": [
+      {
+        "service": "edge",
+        "previousContainerId": "8feff52af8aed361c90e513f9bff2da990833c1662a1bf2d5bef39b2bfc84ff6",
+        "currentContainerId": "3a3e68bbff421801bf03c6120f98618699a03c5713b8d2772de1f091c997d77c"
+      }
+    ],
+    "sameThreeVolumesPreserved": true,
+    "volumes": [
+      {
+        "service": "database",
+        "name": "ai-manager-v1-enrollment-20261014_business-data",
+        "driver": "local",
+        "scope": "local",
+        "createdAt": "2026-10-14T08:11:56Z",
+        "labels": {
+          "com.docker.compose.config-hash": "3cd570a2fae2c6e2a2c5943e3a33bfea7005380d21faa42c6940df31855c1d44",
+          "com.docker.compose.project": "ai-manager-v1-enrollment-20261014",
+          "com.docker.compose.version": "5.5.1",
+          "com.docker.compose.volume": "business-data"
+        }
+      },
+      {
+        "service": "identity-database",
+        "name": "ai-manager-v1-enrollment-20261014_identity-data",
+        "driver": "local",
+        "scope": "local",
+        "createdAt": "2026-10-14T07:32:12Z",
+        "labels": {
+          "com.docker.compose.config-hash": "5f28f078f363edc269258b72f24ffb6091261128d59d1890861e19f2210f3b98",
+          "com.docker.compose.project": "ai-manager-v1-enrollment-20261014",
+          "com.docker.compose.version": "5.5.1",
+          "com.docker.compose.volume": "identity-data"
+        }
+      },
+      {
+        "service": "erasure-database",
+        "name": "ai-manager-v1-enrollment-20261014_erasure-data",
+        "driver": "local",
+        "scope": "local",
+        "createdAt": "2026-10-14T07:31:42Z",
+        "labels": {
+          "com.docker.compose.config-hash": "003f399bd3b8dac62eb0edc2f2bf002556392b007ab6033693153c3d8833e3fe",
+          "com.docker.compose.project": "ai-manager-v1-enrollment-20261014",
+          "com.docker.compose.version": "5.5.1",
+          "com.docker.compose.volume": "erasure-data"
+        }
+      }
+    ],
+    "databaseIdentitiesAndSchemas": [
+      {
+        "service": "database",
+        "database": "ai_manager",
+        "serverUuid": "ec5a64c5-c7a6-11f1-b06a-5a75e7ec3e5b",
+        "schemaColumnsSha256": "d627eea48e85c6be3db11fd8ae7fa50af8b8e848e1214dab430da628e371e28e",
+        "ledgerId": null,
+        "flywayHistorySha256": "53e10b0a013347f963964a0037021df56449ba53c86621056425b3bf04bf02d9"
+      },
+      {
+        "service": "identity-database",
+        "database": "keycloak",
+        "serverUuid": "67d1a187-c7a1-11f1-874c-de8178507296",
+        "schemaColumnsSha256": "d5edb7f8a53e6792e0b7e086b300ad9850b8fa1c2748713de9d482e2fe956a73",
+        "ledgerId": null,
+        "flywayHistorySha256": null
+      },
+      {
+        "service": "erasure-database",
+        "database": "erasure_ledger",
+        "serverUuid": "4eaff72c-c7a1-11f1-86f1-7e6bebc6a9a4",
+        "schemaColumnsSha256": "28a5e673f6943b0317c7bc7ec8f0e9c1fc5830985525c791bcd70da3a4081a21",
+        "ledgerId": "f194bf35-fdbf-4763-9db8-4627e22d229d",
+        "flywayHistorySha256": null
+      }
+    ],
+    "databaseAndFlywayBeforeAfterVerifiedByActivationReceipt": true,
+    "ledgerId": "f194bf35-fdbf-4763-9db8-4627e22d229d",
+    "ledgerReceiptSha256": "09efdb4f592873a6dcb7c3c24e8bb0a6b92a025783c3cb8733a892ac291c5dab",
+    "restoredDatabases": false,
+    "initializedDatabases": false,
+    "databaseVolumesDeleted": false,
+    "httpSmoke": {
+      "authenticatedJourney": "NOT_RUN",
+      "anonymousApi": "PASS",
+      "discovery": "PASS",
+      "servedMainSha256": "1f781ea3488dfd8f0d190c5c70a7922d81c04b18646ea7fcb031b27d9482a673",
+      "servedBootstrapSha256": "17b4f3a04ff9ce9d2f0fd292f79409d88bb356a74dc55d5c2ed29aa4e900efab",
+      "callbackFallback": "PASS",
+      "servedIndexSha256": "801f4676bef6e4eec47be58e8ff1ce811502c2d09ab64175ad2ecff1aa317218",
+      "frontend": "PASS",
+      "nativeDeviceExecution": "NOT_RUN"
+    },
+    "committedAt": "2026-10-15T03:23:25.2350415+00:00",
+    "pointer": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.local\\console-active.json",
+      "sha256": "b98f36ab59983fb2e458ba283d939fe9eacd7b95bc751a39a09a7689384e453b"
+    },
+    "intent": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.local\\console-activation-intent.json",
+      "sha256": "b98f36ab59983fb2e458ba283d939fe9eacd7b95bc751a39a09a7689384e453b"
+    },
+    "launcher": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.local\\console-launcher.json",
+      "sha256": "5aa941d58c02c5ecc26d9c9ed6527ff079ac84f4ac6a9ab3b956f5bf642cc029"
+    }
+  },
+  "leaseAndPrimaryStartup": {
+    "runtimeEvidence": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-live-check.json",
+      "sha256": "4552d499e3d3ef593927a0d5dfb7fdb88b10f0b9c787b21db0ccdd7734c2bafa"
+    },
+    "record": {
+      "schemaVersion": 1,
+      "status": "VERIFIED",
+      "publicUrl": "http://localhost:18101/",
+      "stage": "complete",
+      "startedAt": "2026-10-15T03:27:05.5083245+00:00",
+      "primaryCheckOnlyPassed": true,
+      "primaryNormalStartPassed": true,
+      "actualPostActivationLeaseAvailability": true,
+      "activationReceipt": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-activation-20261015-111737-beef7e1dbe21483f896dd46003217322.json",
+      "activationReceiptSha256": "38e8303760b6b5488ca2a2ceb59b825483cd39f338f758dd97106646d28791dd",
+      "check-onlyLog": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-primary-check-only.log",
+        "sha256": "b4e9aa51eeb48335e8eed42f26eafce455a5c6714d4f8265b9a1884ff046695c"
+      },
+      "normal-startLog": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-primary-normal-start.log",
+        "sha256": "b4e9aa51eeb48335e8eed42f26eafce455a5c6714d4f8265b9a1884ff046695c"
+      },
+      "servedBootstrap": {
+        "url": "http://localhost:18101/flutter_bootstrap.js",
+        "status": 200,
+        "bytes": 8026,
+        "sha256": "17b4f3a04ff9ce9d2f0fd292f79409d88bb356a74dc55d5c2ed29aa4e900efab"
+      },
+      "pointerSha256": "b98f36ab59983fb2e458ba283d939fe9eacd7b95bc751a39a09a7689384e453b",
+      "intentSha256": "b98f36ab59983fb2e458ba283d939fe9eacd7b95bc751a39a09a7689384e453b",
+      "launcherSha256": "5aa941d58c02c5ecc26d9c9ed6527ff079ac84f4ac6a9ab3b956f5bf642cc029",
+      "completedAt": "2026-10-15T03:27:26.6852659+00:00"
+    },
+    "leaseFiles": [
+      "console-runtime.lock",
+      "guardian-startup-backup.lock",
+      "guardian-startup-activation.lock"
+    ],
+    "independentReview": {
+      "criticalFindings": 0,
+      "importantFindings": 0,
+      "provenance": "Completed independent lease review result reported in the parent thread."
+    },
+    "actualAllThreeLeaseAvailabilityVerified": true,
+    "allExceptionalCloseFailuresInjected": false,
+    "limit": "Runtime probes and completed launcher failure-path fixtures do not prove injection of every possible Dispose exception."
+  },
+  "browser": {
+    "evidence": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-live-browser.json",
+      "sha256": "11dd1e91d3f7f537e673f025190458b991e7314a3cef8ff808a84092d2973ed0"
+    },
+    "record": {
+      "schemaVersion": 1,
+      "status": "VERIFIED",
+      "publicUrl": "http://localhost:18101/",
+      "recordedAt": "2026-10-15T03:40:22.153944+00:00",
+      "pageErrors": 0,
+      "serviceWorkerWarnings": 0,
+      "consoleWarnings": [],
+      "consoleErrors": [],
+      "flow": [
+        {
+          "action": "fresh-tab-first-open",
+          "result": "PASS",
+          "evidence": "Rendered login page; captured console warnings/errors zero"
+        },
+        {
+          "action": "unauthenticated-reload",
+          "result": "PASS"
+        },
+        {
+          "action": "same-origin-admin-login-and-callback",
+          "result": "PASS",
+          "finalPath": "/"
+        },
+        {
+          "action": "authenticated-reload",
+          "result": "PASS",
+          "view": "workspace-welcome"
+        }
+      ],
+      "servedBootstrap": {
+        "url": "http://localhost:18101/flutter_bootstrap.js",
+        "status": 200,
+        "bytes": 8026,
+        "sha256": "17b4f3a04ff9ce9d2f0fd292f79409d88bb356a74dc55d5c2ed29aa4e900efab",
+        "evidence": "CUA Network.responseReceived and Network.getResponseBody after unauthenticated reload"
+      },
+      "screenshots": [
+        {
+          "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-live-after-update.jpg",
+          "sha256": "b07a47175e03de3743d63fd82b2e6c9fae76b24b58af714e2f162f9557a4cbfa",
+          "bytes": 41545,
+          "width": 1280,
+          "height": 720,
+          "view": "Authenticated administrator workspace welcome after reload"
+        }
+      ],
+      "observations": [
+        "System administrator sign-in returned to the workspace welcome page.",
+        "The account currently has no workspace; create and invitation entry actions are visible.",
+        "Observed bootstrap HTTP 200 response bytes exactly match the activated artifact.",
+        "Runtime exception capture covered unauthenticated reload, login callback and authenticated reload.",
+        "Both event batches had no truncation or remaining page; page exception count was zero.",
+        "Initial and final captured console warning/error counts were zero.",
+        "Browser storage and existing workers were not cleared or unregistered.",
+        "Counts and observed resource hash were returned by CUA before this local recording script ran."
+      ],
+      "limits": [
+        "Initial first-open render was observed visually and with console logs; Runtime exception capture began after this initial render.",
+        "No service-worker registration inventory query succeeded or is used as evidence.",
+        "No fixed startup duration improvement was measured.",
+        "No workspace or business fixture was created.",
+        "MFA and real native-device workflows were not exercised.",
+        "Direct document navigation to the bootstrap resource was blocked by the browser; its successful script resource load was observed through Network events.",
+        "The first browser record save was interrupted by automatic approval review timeout; file absence was checked before this local save."
+      ]
+    },
+    "verifiedScreenshotBytes": [
+      {
+        "path": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\guardian-startup-live-after-update.jpg",
+        "sha256": "b07a47175e03de3743d63fd82b2e6c9fae76b24b58af714e2f162f9557a4cbfa",
+        "bytes": 41545
+      }
+    ]
+  },
+  "scopeLimitations": [
+    "The real administrator account has no workspace; this does not verify business journeys against populated workspace data.",
+    "No real MFA enrollment or native/managed device acceptance was performed in this stage.",
+    "Later peer contract/ownership mobile workflows and QR/scanner work were excluded from this six-file overlay and were not deployed by this stage.",
+    "Backend and thirteen other project results were inherited from unchanged frozen sources and the identical prior backend JAR, not rerun.",
+    "Browser startup observations do not establish a fixed four-second speedup on every machine or network.",
+    "Public erasure execution and the overall product goal remain unfinished; this stage does not mark the active goal complete.",
+    "The recording script executes no SDK, tests, Docker, browser or database operation and does not read environment files or secrets."
+  ]
+}

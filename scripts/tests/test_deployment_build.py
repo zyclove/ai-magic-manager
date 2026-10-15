@@ -32,6 +32,8 @@ PROPERTIES = {
     "usage.report.device.package": "packages/device_reports",
     "usage.report.guardian.package": "apps/guardian",
     "diagnostic.guardian.package": "apps/guardian",
+    "parent.package": "apps/parent",
+    "guardian.package": "apps/guardian",
 }
 
 
@@ -73,8 +75,9 @@ class DeploymentBuildTest(unittest.TestCase):
 $toolArgs = @($args)
 $toolName = [IO.Path]::GetFileNameWithoutExtension($MyInvocation.MyCommand.Path)
 $cwd = (Get-Location).Path
-@{tool=$toolName; cwd=$cwd; arguments=$toolArgs} | ConvertTo-Json -Compress -Depth 5 | Add-Content -LiteralPath $env:BUILD_TEST_CALLS
-if ($env:BUILD_TEST_FAIL -and $cwd.Replace('\','/').EndsWith($env:BUILD_TEST_FAIL) -and $toolArgs[0] -eq $env:BUILD_TEST_FAIL_ACTION) { exit 23 }
+$injectFailure = $env:BUILD_TEST_FAIL -and $cwd.Replace('\','/').EndsWith($env:BUILD_TEST_FAIL) -and $toolArgs[0] -eq $env:BUILD_TEST_FAIL_ACTION
+@{tool=$toolName; cwd=$cwd; arguments=$toolArgs; failureInjected=[bool]$injectFailure} | ConvertTo-Json -Compress -Depth 5 | Add-Content -LiteralPath $env:BUILD_TEST_CALLS
+if ($injectFailure) { exit 23 }
 if ($toolName -eq 'maven') {
     $index = [Array]::IndexOf($toolArgs, '-f')
     $target = Join-Path (Split-Path $toolArgs[$index + 1] -Parent) 'target'
@@ -88,8 +91,16 @@ if ($toolArgs[0] -eq 'build') {
 }
 exit 0
 ''', encoding="utf-8")
-        for name in ("maven", "flutter", "dart"):
+        for name in ("maven", "dart"):
             shutil.copyfile(self.tool, self.directory / f"{name}.ps1")
+        # The orchestrator derives the SDK root from bin/flutter. Keep its
+        # tools-snapshot check inside this fixture instead of an installed SDK.
+        self.flutter_command = self.directory / "fake-sdk/bin/flutter.ps1"
+        self.flutter_tools = self.directory / "fake-sdk/bin/cache/flutter_tools.snapshot"
+        self.flutter_tools.parent.mkdir(parents=True)
+        shutil.copyfile(self.tool, self.flutter_command)
+        # Fake Maven records the interop properties; it never executes this file.
+        self.flutter_tools.write_bytes(b"fixture snapshot: not executable SDK code")
 
     def tearDown(self):
         self.assertEqual(self.directory.resolve().parent, (ROOT / ".local").resolve())
@@ -103,12 +114,25 @@ exit 0
             PWSH, "-NoProfile", "-File", str(ROOT / "scripts/build-deployment.ps1"),
             "-Directory", str(self.deployment), "-SourceDirectory", str(self.source),
             "-MavenCommand", str(self.directory / "maven.ps1"),
-            "-FlutterCommand", str(self.directory / "flutter.ps1"),
+            "-FlutterCommand", str(self.flutter_command),
             "-DartCommand", str(self.directory / "dart.ps1"), *extra,
         ], cwd=ROOT, env=env, capture_output=True, text=True, encoding="utf-8", timeout=60)
 
     def read_calls(self):
         return [json.loads(line) for line in self.calls.read_text(encoding="utf-8-sig").splitlines()]
+
+    def assert_failed_action_was_reached(self, calls, project, sdk, action):
+        failures = [call for call in calls if call["failureInjected"]]
+        self.assertEqual(len(failures), 1, "Requested compiler failure was never reached")
+        failed = failures[0]
+        self.assertEqual(failed["tool"], sdk)
+        parts = tuple(project.split("/"))
+        self.assertEqual(Path(failed["cwd"]).parts[-len(parts):], parts)
+        self.assertEqual(failed["arguments"][0], action)
+        self.assertEqual(calls[-1], failed, "Verification continued after a compiler failure")
+        self.assertTrue(any(call["tool"] == "maven" for call in calls),
+                        "Failure occurred before backend and SDK preflight completed")
+        self.assertFalse(any(call["arguments"][0] == "build" for call in calls))
 
     def test_every_project_is_prepared_before_backend_and_verified_with_its_sdk(self):
         result = self.build()
@@ -131,7 +155,11 @@ exit 0
             value = next((arg.split("=", 1)[1] for arg in maven if arg.startswith(f"-D{prop}=")), None)
             self.assertIsNotNone(value, f"Missing interoperability property: {prop}")
             self.assertEqual(Path(value), snapshot / project)
-        self.assertIn(f"-Ddevice.flutter.command={self.directory / 'flutter.ps1'}", maven)
+        self.assertIn(f"-Ddevice.flutter.command={self.flutter_command}", maven)
+        self.assertIn(f"-Ddevice.dart.command={self.directory / 'dart.ps1'}", maven)
+        for client in ("parent", "guardian"):
+            self.assertIn(f"-D{client}.dart.command={self.directory / 'dart.ps1'}", maven)
+            self.assertIn(f"-D{client}.flutter.tool={self.flutter_tools}", maven)
         manifest = json.loads((self.deployment / "release-manifest.json").read_text(encoding="utf-8-sig"))
         coverage = {project["path"]: project for project in manifest["verifiedProjects"]}
         self.assertEqual(set(coverage), set(PROJECTS))
@@ -173,6 +201,27 @@ exit 0
         self.assertEqual(manifest.read_text(), '{"previous":"release"}')
         self.assertEqual((self.deployment / ".env").read_text(), self.old_env)
 
+    def test_missing_flutter_tools_snapshot_rejects_backend_and_preserves_release(self):
+        manifest = self.deployment / "release-manifest.json"
+        manifest.write_text('{"previous":"release"}', encoding="utf-8")
+        previous_manifest = manifest.read_bytes()
+        previous_environment = (self.deployment / ".env").read_bytes()
+        self.flutter_tools.unlink()
+        result = self.build()
+        self.assertNotEqual(result.returncode, 0, "Missing Flutter tools snapshot was accepted")
+        self.assertIn("Parent and guardian HTTP interoperability require the installed Flutter tools snapshot.",
+                      result.stderr)
+        calls = self.read_calls()
+        self.assertEqual(len(calls), len(PROJECTS), "SDK check did not follow dependency preparation")
+        self.assertTrue(all(call["arguments"][:2] == ["pub", "get"] for call in calls))
+        self.assertFalse(any(call["tool"] == "maven" for call in calls),
+                         "Missing tools snapshot invoked backend compilation")
+        self.assertFalse(any(call["arguments"][0] in ("analyze", "test", "build") for call in calls))
+        self.assertFalse(list(self.deployment.glob("source-*/backend/target/manager-backend.jar")))
+        self.assertFalse((self.deployment / "artifacts").exists(), "Unverified release artifacts were published")
+        self.assertEqual(manifest.read_bytes(), previous_manifest)
+        self.assertEqual((self.deployment / ".env").read_bytes(), previous_environment)
+
     def test_parent_analysis_failure_keeps_previous_release_selected(self):
         self.assert_parent_failure_preserves_release("analyze")
 
@@ -186,7 +235,9 @@ exit 0
         self.assertNotEqual(result.returncode, 0, f"Parent {action} failure was ignored")
         self.assertEqual(manifest.read_text(), '{"previous":"release"}')
         self.assertEqual((self.deployment / ".env").read_text(), self.old_env)
-        self.assertFalse(any(call["arguments"][0] == "build" for call in self.read_calls()))
+        calls = self.read_calls()
+        self.assert_failed_action_was_reached(calls, "apps/parent", "flutter", action)
+        self.assertFalse(any(call["arguments"][0] == "build" for call in calls))
 
     def test_parent_without_tests_is_recorded_without_native_release_claim(self):
         (self.source / "apps/parent/test/example_test.dart").unlink()
@@ -205,7 +256,9 @@ exit 0
         self.assertNotEqual(result.returncode, 0, "Failed client analysis was ignored")
         self.assertEqual(manifest.read_text(), '{"previous":"release"}')
         self.assertEqual((self.deployment / ".env").read_text(), self.old_env)
-        self.assertFalse(any(call["arguments"][0] == "build" for call in self.read_calls()))
+        calls = self.read_calls()
+        self.assert_failed_action_was_reached(calls, "packages/device_access", "dart", "analyze")
+        self.assertFalse(any(call["arguments"][0] == "build" for call in calls))
 
     def test_offline_applies_to_dependency_resolution_and_maven(self):
         result = self.build(extra=("-Offline",))
