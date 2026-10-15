@@ -119,6 +119,23 @@ class AuditExportService {
     return store.view(store.owned(tenant, id, actor.getSubject(), false), member, clock.millis());
   }
 
+  /**
+   * Recovery is a fresh read of the original creator's resource reference, even after replay TTL.
+   * It does not recreate a task, renew a key, extend retention or restore changed member rights.
+   */
+  @Transactional(timeout = 10)
+  public ExportStore.Job creationResult(String tenant, Jwt actor, String key, AuditSelection input) {
+    var member = store.authorize(tenant, actor.getSubject(), true);
+    var ref =
+        idempotency
+            .findCommitted(
+                tenant, actor.getSubject(), "AUDIT_EXPORT_CREATE", key, input.attributes(), Ref.class)
+            .orElseThrow(
+                () -> new DomainException(
+                    HttpStatus.NOT_FOUND, "EXPORT_CREATION_RESULT_UNAVAILABLE"));
+    return store.view(store.owned(tenant, ref.id(), actor.getSubject(), false), member, clock.millis());
+  }
+
   public ItemPage<ExportStore.Job> list(String tenant, Jwt actor, int limit, String cursor) {
     var member = store.authorize(tenant, actor.getSubject(), false);
     if (limit < 1 || limit > 50) throw DomainException.invalid("INVALID_PAGE_SIZE");

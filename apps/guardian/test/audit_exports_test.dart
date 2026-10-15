@@ -112,11 +112,11 @@ void main() {
       () {
     expect(
         () => AuditExportJob.parse({...job(state: 'READY'), 'byteCount': null}),
-        throwsA(isA<ApiFailure>()));
+        throwsA(isA<AuditProtocolException>()));
     expect(() => AuditExportJob.parse({...job(), 'to': now + 1}),
-        throwsA(isA<ApiFailure>()));
+        throwsA(isA<AuditProtocolException>()));
     expect(() => AuditExportJob.parse({...job(), 'state': 'UNVERIFIED'}),
-        throwsA(isA<ApiFailure>()));
+        throwsA(isA<AuditProtocolException>()));
   });
   test(
       'authenticated download preserves bytes and rejects a different job payload',

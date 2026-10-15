@@ -35,6 +35,7 @@
 | 商业账户 | 在“我的”显示已核验的设备名额和功能权益；按身份、机构与登录代次隔离，切换后丢弃旧响应；当前权益与设备系统能力分别呈现 | `GET /commercial-entitlements`；服务端限成人管理员/审计员 |
 | 机构合同 | 机构管理员查看合同、核对报价差异并确认已独立审核的合同；审计员只读，提供历史、当前权益与回复丢失后的状态查询 | 既有 `/contracts`、`/{id}/comparison`、`/{id}/history`、`/{id}/accept`；见[手机机构合同交付](parent-contract-delivery.md) |
 | 操作记录 | 最近时段快捷查询、日期和编号筛选、分页、详情与同对象/请求关联调查；后台清空、身份切换关闭，失败可重试原页 | 既有 `/audit-events/search`、`/{eventId}`；与管理台共享纯 Dart 协议，见[手机操作记录交付](parent-audit-delivery.md) |
+| 操作记录导出 | 沿用已应用查询范围生成，状态自动刷新；正常成功自动清除本机提醒，结果不明按原请求恢复；Android 系统选择位置后重新核对并保存，可取消在线任务 | 既有 `/audit-exports` 加原请求恢复查询；共享协议与系统文件保存适配，见[手机导出交付](parent-audit-export-delivery.md) |
 
 手机端复用现有 `/api/v1` 后端契约，采用独立 Flutter 工程，避免 Web 专有 `dart:html`、浏览器存储与 URL 回调渗入原生客户端。依赖锁定在 `apps/parent/pubspec.lock`：`flutter_appauth 9.0.1`、`flutter_secure_storage 10.0.0`，分别用于原生 OIDC 与安全存储；升级需按 Flutter 版本和 Android 兼容矩阵审查。Android 仅声明网络权限，不声明相机或无障碍权限。
 

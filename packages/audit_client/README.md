@@ -11,3 +11,10 @@ The query end is exclusive. UI calendar ranges must use local next-day midnight,
 not a fixed 24-hour addition across daylight-saving transitions. Results are
 live reads rather than transaction snapshots. An audit action records a server
 operation and does not certify successful device enforcement.
+
+`exports.dart` also owns export job/page projections and artifact validation:
+creator-bound metadata, exact selection and job/tenant identity, a maximum of
+10,000 events and 8 MiB, event ordering and no extra event fields. Transport,
+recent authentication, bounded byte streams, recovery and destination selection
+remain responsibilities of the consuming applications. Payload checks do not
+replace server authorization or certify device enforcement.

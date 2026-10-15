@@ -49,6 +49,21 @@ class AuditExportController {
     return exports.list(tenant, actor, limit, cursor);
   }
 
+  /** Read the creator's committed request reference without repeating creation or requiring MFA. */
+  @PostMapping("/creation-results/{requestId}/query")
+  ExportStore.Job creationResult(
+      @AuthenticationPrincipal Jwt actor,
+      @PathVariable String tenant,
+      @PathVariable String requestId,
+      @Valid @RequestBody Create input) {
+    return exports.creationResult(
+        tenant,
+        actor,
+        requestId,
+        new AuditSelection(
+            input.from(), input.to(), input.action(), input.resourceId(), input.correlationId()));
+  }
+
   @GetMapping("/{id}")
   ExportStore.Job get(
       @AuthenticationPrincipal Jwt actor, @PathVariable String tenant, @PathVariable String id) {

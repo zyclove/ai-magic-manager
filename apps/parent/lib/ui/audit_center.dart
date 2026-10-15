@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/audit.dart';
 import '../core/parent_api.dart';
 import '../core/parent_session.dart';
+import 'audit_exports_center.dart';
 
 /// Mobile audit investigation with bounded pages and explicit, applied filters.
 /// No event payload is persisted locally or treated as device execution proof.
@@ -325,6 +326,14 @@ class _AuditCenterState extends State<AuditCenter> with WidgetsBindingObserver {
                     label: const Text('筛选记录'),
                     avatar: const Icon(Icons.filter_list, size: 18),
                     onPressed: busy ? null : _filters),
+                ActionChip(
+                    label: const Text('导出与任务'),
+                    avatar: const Icon(Icons.file_download_outlined, size: 18),
+                    onPressed: busy
+                        ? null
+                        : () => Navigator.of(context).push(MaterialPageRoute(
+                            builder: (_) => AuditExportsCenter(
+                                session: session, query: query)))),
               ]),
               const SizedBox(height: 8),
               Text(

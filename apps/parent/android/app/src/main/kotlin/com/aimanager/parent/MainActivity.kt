@@ -11,11 +11,16 @@ import java.util.concurrent.Executors
 
 /** Small durability bridge for flutter_secure_storage 10.0.0 apply() writes. */
 class MainActivity: FlutterActivity() {
+    private var exportDocuments: AuditExportDocuments? = null
     private var storageExecutor = Executors.newSingleThreadExecutor()
     private val mainHandler = Handler(Looper.getMainLooper())
 
     override fun configureFlutterEngine(engine: FlutterEngine) {
         super.configureFlutterEngine(engine)
+        exportDocuments = AuditExportDocuments(this)
+        MethodChannel(engine.dartExecutor.binaryMessenger, "com.aimanager.parent/audit-export")
+            .setMethodCallHandler { call, result -> exportDocuments?.handle(call, result)
+                ?: result.error("SAVE_UNAVAILABLE", "文件保存不可用", null) }
         if (storageExecutor.isShutdown) storageExecutor = Executors.newSingleThreadExecutor()
         MethodChannel(engine.dartExecutor.binaryMessenger, "com.aimanager.parent/storage")
             .setMethodCallHandler { call, result ->
@@ -37,9 +42,20 @@ class MainActivity: FlutterActivity() {
     }
 
     override fun cleanUpFlutterEngine(engine: FlutterEngine) {
+        MethodChannel(engine.dartExecutor.binaryMessenger, "com.aimanager.parent/audit-export").setMethodCallHandler(null)
+        exportDocuments?.close()
+        exportDocuments = null
         MethodChannel(engine.dartExecutor.binaryMessenger, "com.aimanager.parent/storage")
             .setMethodCallHandler(null)
         storageExecutor.shutdown()
         super.cleanUpFlutterEngine(engine)
+    }
+
+    override fun onResume() { super.onResume(); exportDocuments?.onResume() }
+    override fun onPause() { exportDocuments?.onPause(); super.onPause() }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: android.content.Intent?) {
+        if (exportDocuments?.onActivityResult(requestCode, resultCode, data) != true) {
+            super.onActivityResult(requestCode, resultCode, data)
+        }
     }
 }
