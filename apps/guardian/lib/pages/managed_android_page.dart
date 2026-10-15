@@ -7,20 +7,8 @@ import '../core/managed_android.dart';
 import '../core/managed_android_repository.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
-
-String _readinessMessage(String reason) => switch (reason) {
-      'REGION_PROVIDER_UNAVAILABLE' =>
-        '中国大陆当前未开通 Google 企业受管方案。请由平台接入已审核的本地合作提供方。',
-      'PROVIDER_NOT_CONFIGURED' => '受管提供方尚未开通。可先提交企业绑定申请，暂不能发放注册资料。',
-      'BINDING_REQUIRED' => '请先提交机构企业资源绑定申请，并等待独立审核。',
-      'BINDING_REVIEW_PENDING' => '企业资源正在等待平台独立审核。',
-      'BINDING_REVOKED' => '企业资源绑定已撤销。需要平台复核后才能恢复注册。',
-      'PROVIDER_CHANGED' => '已审核的企业绑定属于另一提供方，请联系平台管理员处理迁移。',
-      'CONTRACT_REQUIRED' => '当前合同未授予有效的受管 Android 权益。',
-      'BOOTSTRAP_POLICY_REQUIRED' => '初始安全策略尚未完成配置，请联系平台管理员。',
-      'PROVISIONING_CONFIGURED' => '注册通道已配置。创建资料时仍会实时核对提供方与初始策略；设备管控须另看执行回执。',
-      _ => '受管注册状态未知，请刷新后联系平台管理员。'
-    };
+import '../ui/managed_enrollment_guide.dart';
+import '../ui/managed_enrollment_form.dart';
 
 /// Institution provisioning console. A provider receipt never changes local device capabilities.
 class ManagedAndroidPage extends StatefulWidget {
@@ -33,6 +21,7 @@ class ManagedAndroidPage extends StatefulWidget {
 
 class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
   late final String tenantId, actor, role;
+  late final int scopeGeneration;
   late final ManagedAndroidRepository repository;
   ManagedEnterpriseBinding? binding;
   ManagedProvisioningReadiness? readiness;
@@ -46,10 +35,12 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
   String? checkingIntentId;
   int generation = 0;
   ModalRoute<dynamic>? issuedRoute;
+  bool dialogOpen = false;
 
   bool get current =>
       mounted &&
       widget.session.authenticated &&
+      widget.session.scopeGeneration == scopeGeneration &&
       widget.session.tenant?['id'] == tenantId &&
       widget.session.profile?['subject'] == actor &&
       widget.session.role == role &&
@@ -65,6 +56,7 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
     tenantId = widget.session.tenant!['id'] as String;
     actor = widget.session.profile!['subject'] as String;
     role = widget.session.role;
+    scopeGeneration = widget.session.scopeGeneration;
     repository = ManagedAndroidRepository(
         api: widget.session.api, tenantId: tenantId, current: () => current);
     widget.session.addListener(_accessChanged);
@@ -109,6 +101,25 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
     });
   }
 
+  /// All enrollment dialogs belong to the originating workspace, including forms.
+  Future<T?> _prompt<T>(
+      {required WidgetBuilder builder, bool barrierDismissible = true}) async {
+    if (!current || dialogOpen) return null;
+    dialogOpen = true;
+    try {
+      return await showDialog<T>(
+          context: context,
+          barrierDismissible: barrierDismissible,
+          builder: (dialogContext) {
+            issuedRoute = ModalRoute.of(dialogContext);
+            return builder(dialogContext);
+          });
+    } finally {
+      issuedRoute = null;
+      dialogOpen = false;
+    }
+  }
+
   Future<void> _load() async {
     if (!current) return;
     final ticket = ++generation;
@@ -143,7 +154,7 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
 
   Future<void> _moreIntents() async {
     final cursor = nextCursor;
-    if (!current || cursor == null || busy) return;
+    if (!current || cursor == null || busy || loading || error != null) return;
     setState(() => busy = true);
     try {
       final page = await repository.intents(cursor: cursor);
@@ -163,7 +174,7 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
   }
 
   Future<void> _loadSubjects({bool more = false}) async {
-    if (!current || (more && (subjectCursor == null || moreSubjects))) return;
+    if (!current || moreSubjects || (more && subjectCursor == null)) return;
     setState(() => moreSubjects = true);
     try {
       final page = await widget.session.api.page('/tenants/$tenantId/subjects',
@@ -187,63 +198,45 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
   }
 
   Future<void> _propose() async {
-    final enterprise = TextEditingController();
-    final contract = TextEditingController();
+    if (!current || !writable || busy || loading || error != null) return;
+    final input = await _prompt<({String id, String contract})>(
+        builder: (_) => const ManagedEnrollmentForm(binding: true));
+    if (input == null || !current) return;
+    setState(() => busy = true);
     try {
-      final accepted = await showDialog<bool>(
-          context: context,
-          builder: (context) => AlertDialog(
-                title: const Text('申请绑定机构企业资源'),
-                content: SizedBox(
-                    width: 480,
-                    child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      const Notice('请填写已核对权属的企业资源 ID 和已生效机构合同编号。申请后仍需独立平台审核。'),
-                      const SizedBox(height: 16),
-                      TextField(
-                          controller: enterprise,
-                          maxLength: 128,
-                          decoration:
-                              const InputDecoration(labelText: '企业资源 ID')),
-                      TextField(
-                          controller: contract,
-                          maxLength: 200,
-                          decoration: const InputDecoration(labelText: '合同编号'))
-                    ])),
-                actions: [
-                  TextButton(
-                      onPressed: () => Navigator.pop(context, false),
-                      child: const Text('取消')),
-                  FilledButton(
-                      onPressed: () => Navigator.pop(context, true),
-                      child: const Text('提交审核'))
-                ],
-              ));
-      if (accepted != true || !current) return;
-      setState(() => busy = true);
-      try {
-        await repository.propose(enterprise.text.trim(), contract.text.trim());
-        await _load();
-      } catch (failure) {
-        if (current) setState(() => error = failure);
-      } finally {
-        if (current) setState(() => busy = false);
-      }
+      await repository.propose(input.id, input.contract);
+      await _load();
+    } catch (failure) {
+      if (current) setState(() => error = failure);
     } finally {
-      enterprise.dispose();
-      contract.dispose();
+      if (current) setState(() => busy = false);
     }
   }
 
   Future<void> _issue() async {
-    if (!canIssue) return;
+    if (!current ||
+        !writable ||
+        busy ||
+        loading ||
+        moreSubjects ||
+        dialogOpen ||
+        error != null ||
+        !canIssue) {
+      return;
+    }
     if (subjects.isEmpty) await _loadSubjects();
-    if (!mounted || !current || subjects.isEmpty) return;
+    if (!mounted || !current || error != null) return;
+    if (subjects.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('请先在“儿童 / 学生档案”中创建档案，再接入设备。')));
+      return;
+    }
     String? selected;
-    final subjectId = await showDialog<String>(
-        context: context,
+    final subjectId = await _prompt<String>(
         builder: (context) => StatefulBuilder(
             builder: (context, update) => AlertDialog(
-                  title: const Text('创建 5 分钟注册材料'),
+                  scrollable: true,
+                  title: const Text('选择要接入设备的学生'),
                   content: SizedBox(
                       width: 480,
                       child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -279,7 +272,7 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
                         onPressed: selected == null
                             ? null
                             : () => Navigator.pop(context, selected),
-                        child: const Text('创建'))
+                        child: const Text('生成一次性二维码'))
                   ],
                 )));
     if (subjectId == null || !current) return;
@@ -297,13 +290,15 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
   }
 
   Future<void> _showIssued(ManagedEnrollmentIssued issued) async {
-    await showDialog<void>(
-        context: context,
+    await _prompt<void>(
         barrierDismissible: false,
         builder: (context) {
-          issuedRoute = ModalRoute.of(context);
+          final qrSize = (MediaQuery.sizeOf(context).width - 128)
+              .clamp(120, 280)
+              .toDouble();
           return AlertDialog(
-            title: const Text('一次性注册资料'),
+            scrollable: true,
+            title: const Text('扫描二维码完成注册'),
             content: SizedBox(
                 width: 560,
                 child: Column(mainAxisSize: MainAxisSize.min, children: [
@@ -311,14 +306,17 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
                       '此窗口关闭后无法再次查看。二维码仅在本机生成，不上传至二维码服务。请在五分钟内用待注册设备扫描。'),
                   const SizedBox(height: 16),
                   Center(
-                      child: QrImageView(
-                          data: issued.qrCode,
-                          version: QrVersions.auto,
-                          size: 280,
-                          backgroundColor: Colors.white,
-                          errorStateBuilder: (context, error) => const Notice(
-                              '二维码载荷超出可显示范围。可复制注册数据，并使用机构批准的本地离线工具处理。',
-                              warning: true))),
+                      child: SizedBox.square(
+                          dimension: qrSize,
+                          child: QrImageView(
+                              data: issued.qrCode,
+                              version: QrVersions.auto,
+                              size: qrSize,
+                              backgroundColor: Colors.white,
+                              errorStateBuilder: (context, error) =>
+                                  const Notice(
+                                      '二维码载荷超出可显示范围。可复制注册数据，并使用机构批准的本地离线工具处理。',
+                                      warning: true)))),
                   const SizedBox(height: 12),
                   Text('到期：${dateLabel(issued.intent.expiresAt)}',
                       style: const TextStyle(color: muted))
@@ -331,7 +329,7 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
                   label: const Text('复制注册数据')),
               FilledButton(
                   onPressed: () => Navigator.pop(context),
-                  child: const Text('已保存，关闭'))
+                  child: const Text('关闭资料窗口'))
             ],
           );
         });
@@ -339,53 +337,26 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
   }
 
   Future<void> _verify(ManagedEnrollmentIntent intent) async {
-    final device = TextEditingController();
+    if (!current || !writable || busy || loading || error != null) return;
+    final input = await _prompt<({String id, String contract})>(
+        builder: (_) => const ManagedEnrollmentForm(binding: false));
+    if (input == null || !current) return;
+    setState(() => busy = true);
     try {
-      final id = await showDialog<String>(
-          context: context,
-          builder: (context) => AlertDialog(
-                title: const Text('核对提供方设备'),
-                content: SizedBox(
-                    width: 480,
-                    child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      const Notice(
-                          '仅核对 Android Enterprise 设备注册证据。此操作不会让本地儿童 App 自动获得系统级管控能力。'),
-                      const SizedBox(height: 16),
-                      TextField(
-                          controller: device,
-                          maxLength: 128,
-                          decoration:
-                              const InputDecoration(labelText: '提供方设备 ID'))
-                    ])),
-                actions: [
-                  TextButton(
-                      onPressed: () => Navigator.pop(context),
-                      child: const Text('取消')),
-                  FilledButton(
-                      onPressed: () =>
-                          Navigator.pop(context, device.text.trim()),
-                      child: const Text('核对'))
-                ],
-              ));
-      if (id == null || !current) return;
-      setState(() => busy = true);
-      try {
-        await repository.verify(intent, id);
-        await _load();
-      } catch (failure) {
-        if (current) setState(() => error = failure);
-      } finally {
-        if (current) setState(() => busy = false);
-      }
+      await repository.verify(intent, input.id);
+      await _load();
+    } catch (failure) {
+      if (current) setState(() => error = failure);
     } finally {
-      device.dispose();
+      if (current) setState(() => busy = false);
     }
   }
 
   Future<void> _cancel(ManagedEnrollmentIntent intent) async {
-    final confirmed = await showDialog<bool>(
-        context: context,
+    if (!current || !writable || busy || loading || error != null) return;
+    final confirmed = await _prompt<bool>(
         builder: (context) => AlertDialog(
+              scrollable: true,
               title: const Text('取消注册资料？'),
               content: const Text('提交后会撤销提供方注册令牌；若提供方暂时不可用，状态会显示“待清理”。'
                   '令牌已取消也不能证明没有设备在取消前完成注册，合同名额需另行核对。'),
@@ -411,7 +382,12 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
   }
 
   Future<void> _checkProvider(ManagedEnrollmentIntent intent) async {
-    if (!current || checkingIntentId != null || intent.state != 'VERIFIED') {
+    if (!current ||
+        busy ||
+        loading ||
+        error != null ||
+        checkingIntentId != null ||
+        intent.state != 'VERIFIED') {
       return;
     }
     final ticket = generation;
@@ -445,129 +421,126 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
                 onPressed: busy || loading || !current ? null : _load,
                 icon: const Icon(Icons.refresh),
                 label: const Text('刷新状态'))),
-        const Notice('企业绑定与注册核对不等于本地设备已受管。系统级应用限制仍需合规 EMM、真实设备绑定和策略执行回执。',
-            warning: true),
-        const SizedBox(height: 16),
         if (loading) const LinearProgressIndicator(),
-        if (readiness case final state?) ...[
-          Panel(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                Text('受管注册可用性', style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 8),
-                Text(
-                    '目标地区 ${state.targetCountryCode} · 提供方 ${label(state.provider)}',
-                    style: const TextStyle(color: muted)),
-                const SizedBox(height: 12),
-                Notice(_readinessMessage(state.reasonCode),
-                    warning: !state.canIssueEnrollment)
-              ])),
-          const SizedBox(height: 16)
-        ],
-        if (capacity case final seats?) ...[
-          Panel(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                Text('机构受管设备名额',
-                    style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 8),
-                Text(
-                    '合同名额 ${seats.paidCapacity} · 已核对 ${seats.verifiedDevices} · '
-                    '预留/待核对 ${seats.reservedIntents} · 可新增 ${seats.availableForNew}'),
-                const SizedBox(height: 12),
-                Text(
-                    '统计时间 ${dateLabel(seats.evaluatedAt)}。待处理注册资料会预留名额；'
-                    '离线、令牌到期、取消令牌或合同降级都不能单独证明设备已退管。',
-                    style: const TextStyle(color: muted)),
-                if (seats.expiredUnresolvedIntents > 0) ...[
-                  const SizedBox(height: 12),
-                  Notice(
-                      '有 ${seats.expiredUnresolvedIntents} 份已到期但未完成清理的注册资料，'
-                      '仍占用名额。请核对提供方并完成取消。',
-                      warning: true)
-                ],
-                if (seats.cancelledUnreconciledIntents > 0) ...[
-                  const SizedBox(height: 12),
-                  Notice(
-                      '有 ${seats.cancelledUnreconciledIntents} 份令牌已取消，'
-                      '仍需核对提供方没有关联设备，名额暂不释放。',
-                      warning: true)
-                ],
-                if (seats.overCapacity || seats.availableForNew == 0) ...[
-                  const SizedBox(height: 12),
-                  Notice(
-                      seats.overCapacity
-                          ? '当前占用超过有效合同名额，已暂停新增；现有儿童安全规则不会自动解除。'
-                          : '当前没有可新增名额。请先处理待清理注册资料或核对机构合同。',
-                      warning: true)
-                ]
-              ])),
-          const SizedBox(height: 16)
-        ],
         if (error != null) ...[
           FailureView(error!,
               retry: current ? _load : null,
               reauth: () => widget.session.login(stepUp: true)),
+          const SizedBox(height: 16),
+        ],
+        if (readiness != null && capacity != null) ...[
+          ManagedEnrollmentGuide(
+              binding: binding,
+              readiness: readiness!,
+              capacity: capacity!,
+              writable: writable,
+              enabled: current && !busy && !loading && error == null,
+              onPropose: _propose,
+              onIssue: _issue),
+          const SizedBox(height: 16),
+        ],
+        if (capacity case final seats?) ...[
+          Panel(
+              padding: EdgeInsets.zero,
+              child: ExpansionTile(
+                  title: Text(
+                      '可新增 ${seats.availableForNew} 台 · 合同名额 ${seats.paidCapacity} 台'),
+                  subtitle: Text(
+                      '已核对 ${seats.verifiedDevices} · 预留 / 待核对 ${seats.reservedIntents}'),
+                  initiallyExpanded: seats.overCapacity ||
+                      seats.availableForNew == 0 ||
+                      seats.expiredUnresolvedIntents > 0 ||
+                      seats.cancelledUnreconciledIntents > 0,
+                  childrenPadding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                  expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                        '合同名额 ${seats.paidCapacity} · 已核对 ${seats.verifiedDevices} · '
+                        '预留/待核对 ${seats.reservedIntents} · 可新增 ${seats.availableForNew}'),
+                    const SizedBox(height: 12),
+                    Text(
+                        '统计时间 ${dateLabel(seats.evaluatedAt)}。待处理注册资料会预留名额；'
+                        '离线、令牌到期、取消令牌或合同降级都不能单独证明设备已退管。',
+                        style: const TextStyle(color: muted)),
+                    if (seats.expiredUnresolvedIntents > 0) ...[
+                      const SizedBox(height: 12),
+                      Notice(
+                          '有 ${seats.expiredUnresolvedIntents} 份已到期但未完成清理的注册资料，'
+                          '仍占用名额。请核对提供方并完成取消。',
+                          warning: true)
+                    ],
+                    if (seats.cancelledUnreconciledIntents > 0) ...[
+                      const SizedBox(height: 12),
+                      Notice(
+                          '有 ${seats.cancelledUnreconciledIntents} 份令牌已取消，'
+                          '仍需核对提供方没有关联设备，名额暂不释放。',
+                          warning: true)
+                    ],
+                    if (seats.overCapacity || seats.availableForNew == 0) ...[
+                      const SizedBox(height: 12),
+                      Notice(
+                          seats.overCapacity
+                              ? '当前占用超过有效合同名额，已暂停新增；现有儿童安全规则不会自动解除。'
+                              : '当前没有可新增名额。请先处理待清理注册资料或核对机构合同。',
+                          warning: true)
+                    ]
+                  ])),
           const SizedBox(height: 16)
         ],
         Panel(
-            child:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('企业资源绑定', style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 12),
-          if (binding == null) ...[
-            const Text('尚未提交企业资源绑定申请。'),
-            if (writable) ...[
-              const SizedBox(height: 12),
-              FilledButton.icon(
-                  onPressed: busy || loading ? null : _propose,
-                  icon: const Icon(Icons.add),
-                  label: const Text('申请绑定'))
-            ]
-          ] else ...[
-            Wrap(spacing: 12, runSpacing: 8, children: [
-              Chip(
-                  label: Text(switch (binding!.state) {
-                    'PENDING' => '待平台审核',
-                    'ACTIVE' => '企业已审核',
-                    _ => '绑定已撤销'
-                  }),
-                  visualDensity: VisualDensity.compact),
-              Text(binding!.providerDisplayName ?? binding!.enterpriseId),
-              Text('合同 ${binding!.contractReference}')
-            ]),
-            const SizedBox(height: 8),
-            Text(
-                binding!.state == 'PENDING'
-                    ? '等待平台独立审核企业权属和机构合同。'
+            padding: EdgeInsets.zero,
+            child: ExpansionTile(
+                title: const Text('机构资格与接入详情'),
+                subtitle: Text(binding == null
+                    ? '尚未申请'
                     : binding!.state == 'ACTIVE'
-                        ? '企业资源已审核，可在合规提供方启用后创建短时注册资料。'
-                        : '企业绑定已撤销；已注册设备的退管需另行完成。',
-                style: const TextStyle(color: muted))
-          ]
-        ])),
+                        ? '机构已审核'
+                        : binding!.state == 'PENDING'
+                            ? '等待平台审核'
+                            : '绑定已撤销'),
+                childrenPadding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+                expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (readiness case final state?) ...[
+                    Text(
+                        '目标地区 ${state.targetCountryCode} · 提供方 ${label(state.provider)}'),
+                    const SizedBox(height: 8),
+                    Text(readinessExplanation(state.reasonCode)),
+                    const SizedBox(height: 12),
+                  ],
+                  if (binding == null) ...[
+                    const Text('尚未提交企业资源绑定申请。'),
+                  ] else ...[
+                    Wrap(spacing: 12, runSpacing: 8, children: [
+                      Chip(
+                          label: Text(switch (binding!.state) {
+                            'PENDING' => '待平台审核',
+                            'ACTIVE' => '企业已审核',
+                            _ => '绑定已撤销'
+                          }),
+                          visualDensity: VisualDensity.compact),
+                      Text(binding!.providerDisplayName ??
+                          binding!.enterpriseId),
+                      Text('合同 ${binding!.contractReference}')
+                    ]),
+                    const SizedBox(height: 8),
+                    Text(
+                        binding!.state == 'PENDING'
+                            ? '等待平台独立审核企业权属和机构合同。'
+                            : binding!.state == 'ACTIVE'
+                                ? '企业资源已审核，可在合规提供方启用后创建短时注册资料。'
+                                : '企业绑定已撤销；已注册设备的退管需另行完成。',
+                        style: const TextStyle(color: muted))
+                  ]
+                ])),
         const SizedBox(height: 16),
         Panel(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Wrap(
-              alignment: WrapAlignment.spaceBetween,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              spacing: 16,
-              runSpacing: 12,
-              children: [
-                Text('设备注册进度', style: Theme.of(context).textTheme.titleMedium),
-                if (writable && binding?.state == 'ACTIVE')
-                  FilledButton.icon(
-                      onPressed: busy || loading || !canIssue ? null : _issue,
-                      icon: const Icon(Icons.add),
-                      label: const Text('创建注册资料'))
-              ]),
+          Text('设备注册记录', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 16),
           if (!loading && intents.isEmpty)
-            const EmptyView('暂无受管注册记录', '完成机构企业绑定审核后可发放短时注册资料。'),
+            const EmptyView('还没有设备注册记录', '请先按上方“下一步”完成机构接入条件。'),
           for (final intent in intents) ...[
             const Divider(),
             Padding(
@@ -577,7 +550,10 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
                     runSpacing: 8,
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
-                      StatusTag(intent.state),
+                      Chip(
+                          label: Text(
+                              enrollmentInstruction(intent, DateTime.now())
+                                  .title)),
                       Text('档案 ${intent.subjectId}',
                           style: const TextStyle(fontSize: 13)),
                       Text('到期 ${dateLabel(intent.expiresAt)}',
@@ -586,20 +562,33 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
                         Text('提供方设备 ${intent.providerDeviceId}'),
                       if (writable && intent.canVerify)
                         TextButton(
-                            onPressed: busy ? null : () => _verify(intent),
+                            onPressed:
+                                busy || loading || !current || error != null
+                                    ? null
+                                    : () => _verify(intent),
                             child: const Text('核对设备')),
                       if (writable && intent.canCancel)
                         TextButton(
-                            onPressed: busy ? null : () => _cancel(intent),
+                            onPressed:
+                                busy || loading || !current || error != null
+                                    ? null
+                                    : () => _cancel(intent),
                             child: const Text('取消令牌')),
                       if (intent.state == 'VERIFIED')
                         TextButton.icon(
-                            onPressed: busy || checkingIntentId != null
+                            onPressed: busy ||
+                                    loading ||
+                                    !current ||
+                                    error != null ||
+                                    checkingIntentId != null
                                 ? null
                                 : () => _checkProvider(intent),
                             icon: const Icon(Icons.fact_check_outlined),
                             label: const Text('实时复核提供方'))
                     ])),
+            Text(enrollmentInstruction(intent, DateTime.now()).detail,
+                style: const TextStyle(color: muted)),
+            const SizedBox(height: 12),
             if (checkingIntentId == intent.id) const LinearProgressIndicator(),
             if (providerStatuses[intent.id] case final status?)
               Notice(
@@ -614,7 +603,9 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
           ],
           if (nextCursor != null)
             TextButton(
-                onPressed: busy ? null : _moreIntents,
+                onPressed: busy || loading || !current || error != null
+                    ? null
+                    : _moreIntents,
                 child: const Text('加载更多')),
           if (intents.isNotEmpty) ...[
             const SizedBox(height: 12),
