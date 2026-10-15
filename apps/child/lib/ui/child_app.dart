@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import '../core/session.dart';
 import 'design.dart';
+import 'tv_workspace.dart';
 import 'observation_section.dart';
 import 'access_section.dart';
 import 'submission_section.dart';
@@ -481,39 +482,14 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
         OutlinedButton(onPressed: _helpDialog, child: const Text('查看连接步骤'))
       ]);
 
-  /// A remote-first rail leaves the active page visible while focus moves.
-  Widget _tvNavigation() => NavigationRail(
-        extended: true,
-        minExtendedWidth: 220,
-        backgroundColor: childSoft,
-        selectedIndex: _tab,
-        onDestinationSelected: (index) => setState(() => _tab = index),
-        leading: const Padding(
-            padding: EdgeInsets.fromLTRB(20, 24, 20, 32),
-            child: Text('智能管家',
-                style: TextStyle(
-                    color: childNavy,
-                    fontSize: 22,
-                    fontWeight: FontWeight.w700))),
-        destinations: const [
-          NavigationRailDestination(
-              icon: Icon(Icons.phone_android), label: Text('设备')),
-          NavigationRailDestination(
-              icon: Icon(Icons.description_outlined), label: Text('规则')),
-          NavigationRailDestination(
-              icon: Icon(Icons.bar_chart_outlined), label: Text('使用')),
-          NavigationRailDestination(
-              icon: Icon(Icons.help_outline), label: Text('帮助'))
-        ],
-      );
-
-  Widget _contentPane(Widget content) => SafeArea(
+  Widget _contentPane(Widget content, {ScrollController? controller}) => SafeArea(
         child: LayoutBuilder(
           builder: (context, bounds) => Align(
             alignment: Alignment.topCenter,
             child: ConstrainedBox(
               constraints: BoxConstraints(maxWidth: app.tvMode ? 900 : 520),
               child: SingleChildScrollView(
+                controller: controller,
                 padding: EdgeInsets.symmetric(
                     horizontal: bounds.maxWidth < 380 ? 20 : 24, vertical: 32),
                 child: Column(
@@ -621,13 +597,12 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
             },
             child: FocusTraversalGroup(
                 child: Scaffold(
-                    body: Row(children: [
-                      if (connected && app.tvMode) ...[
-                        SafeArea(child: _tvNavigation()),
-                        const VerticalDivider(width: 1)
-                      ],
-                      Expanded(child: _contentPane(content))
-                    ]),
+                    body: connected && app.tvMode
+                        ? TvWorkspace(
+                            selectedIndex: _tab,
+                            onDestinationSelected: (index) => setState(() => _tab = index),
+                            contentBuilder: (controller) => _contentPane(content, controller: controller))
+                        : _contentPane(content),
                     bottomNavigationBar: connected && !app.tvMode
                         ? NavigationBar(
                             selectedIndex: _tab,
