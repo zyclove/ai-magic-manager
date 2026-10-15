@@ -1,0 +1,83 @@
+{
+  "schemaVersion": 1,
+  "applicationVersion": "1.0.0",
+  "status": "VERIFIED_FIXTURE_STAGE_WITH_RUNNER_CAVEAT",
+  "baseCommit": "487b596e230b646d0ec3657b816d4edc447282db",
+  "scope": "Only the inherited audit export test fixture limits in ParentAuditExportHttpInteropTest.",
+  "files": [
+    {
+      "path": "backend/src/test/java/com/aimanager/ParentAuditExportHttpInteropTest.java",
+      "bytes": 3823,
+      "sha256": "07a380000b7b6119e653f614ebf2701d76b4962106f45ce92a5a9a6c99ef03d3"
+    }
+  ],
+  "fixturePropertiesRestored": {
+    "manager.exports.max-rows": 3,
+    "manager.exports.max-bytes": 2048
+  },
+  "productionDefaultsChanged": false,
+  "testAssertionsChanged": false,
+  "red": {
+    "nativeSessionId": 96367,
+    "nativeTerminalExitCode": 1,
+    "backendSuites": 120,
+    "backendTests": 1156,
+    "passed": 1145,
+    "failed": 2,
+    "errors": 0,
+    "conditionalSkipped": 9,
+    "failedCases": [
+      "ParentAuditExportHttpInteropTest.byteBudgetAndCrossJobCiphertextBindingAreEnforced",
+      "ParentAuditExportHttpInteropTest.oversizedResultsFailWithoutPublishingPartialData"
+    ],
+    "originalSourceFilesUnchanged": 1415,
+    "addedGeneratedFile": "build/generated-spring-modulith/javadoc.json"
+  },
+  "green": {
+    "nativeSessionId": 64389,
+    "nativeTerminalExitCode": 0,
+    "suite": "ParentAuditExportHttpInteropTest",
+    "tests": 17,
+    "passed": 17,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "realParentDartHttpCasePassed": true,
+    "originalSourceFilesVerified": 1415
+  },
+  "evidence": {
+    "redTerminal": {
+      "path": ".local/runtime/usability-integration-full-build-20261015-r3/terminal.json",
+      "sha256": "e8392ae57855cd29050dbc319bf036a293ca98999120b6a28e57112b60770a01",
+      "bytes": 1229
+    },
+    "redDiagnosis": {
+      "path": ".local/runtime/usability-integration-outer-source-and-backend-terminal-diagnosis.json",
+      "sha256": "debe860361f2afa25d70362965fdfbfcd9540729e0339f54430785c1da08cb36",
+      "bytes": 124756
+    },
+    "greenTerminal": {
+      "path": ".local/runtime/audit-export-fixture-green-20261015-r1-run/terminal.json",
+      "sha256": "95d7a52fef7ed9c33d245ad84169026b782a446be8dea6d3a29c57378c74cd78",
+      "bytes": 1120
+    },
+    "greenInspection": {
+      "path": ".local/runtime/audit-export-fixture-green-20261015-r1-run/inspection.json",
+      "sha256": "2b2733c951358cc4e7e6bbed7a23953ec933ead4fbf9ebea1dc20d50f3467149",
+      "bytes": 4377
+    },
+    "runnerReview": {
+      "path": ".local/runtime/audit-export-fixture-runner-independent-review.json",
+      "sha256": "bcc8ef7b557b00829fb26ba5b266797e155f40f1515ff257addf45608dec32b9",
+      "bytes": 10262
+    }
+  },
+  "limitations": [
+    "The green result covers one full subclass (16 inherited tests and one real Dart HTTP flow), not a complete release gate.",
+    "The original private runner review has one Important environment-isolation gap: inherited ERASURE_* values are not removed. Root observed the relevant variables absent, but this does not attest the child process environment retrospectively; the recorded externalDatabaseOperations=false is not accepted as independent proof.",
+    "Before release, a newly reviewed full gate must clear external ledger and message-service environment overrides and run every suite again.",
+    "The full failed run also generated a Spring Modulith Javadoc file in the outer source because Maven inherited the outer working directory. A new private shim must execute Maven from the inner backend directory; the old generated file remains preserved.",
+    "No runtime deployment, service replacement, business-data migration, or full release acceptance is claimed by this stage record."
+  ],
+  "createdAt": "2026-10-15T15:37:40.989863+00:00"
+}
