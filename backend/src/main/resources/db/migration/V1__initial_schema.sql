@@ -1586,3 +1586,51 @@ CREATE INDEX ix_help_tenant_time ON child_help_requests(tenant_id, created_at, i
 CREATE INDEX ix_help_state_time ON child_help_requests(tenant_id, state, created_at, id);
 CREATE INDEX ix_help_device_rate ON child_help_requests
     (tenant_id, device_id, registration_id, created_at);
+
+-- A local registration proof is distinct from provider enrollment and system policy capability.
+CREATE TABLE managed_agent_bindings (
+    tenant_id VARCHAR(36) NOT NULL,
+    id VARCHAR(36) NOT NULL,
+    subject_id VARCHAR(36) NOT NULL,
+    enrollment_id VARCHAR(36) NOT NULL,
+    device_id VARCHAR(36) NOT NULL,
+    registration_id VARCHAR(36) NOT NULL,
+    key_thumbprint VARCHAR(64) NOT NULL,
+    provider VARCHAR(32) NOT NULL,
+    enterprise_id VARCHAR(128) NOT NULL,
+    enterprise_binding_version BIGINT NOT NULL,
+    provider_device_id VARCHAR(128) NOT NULL,
+    package_name VARCHAR(255) NOT NULL,
+    request_key VARCHAR(36) NOT NULL,
+    requested_by VARCHAR(255) NOT NULL,
+    nonce VARCHAR(43),
+    state VARCHAR(16) NOT NULL,
+    version BIGINT NOT NULL,
+    active_device_id VARCHAR(36),
+    active_enrollment_id VARCHAR(36),
+    created_at BIGINT NOT NULL,
+    expires_at BIGINT NOT NULL,
+    updated_at BIGINT NOT NULL,
+    next_verification_at BIGINT NOT NULL DEFAULT 0,
+    proof_sha256 VARCHAR(64),
+    proof_id VARCHAR(36),
+    feedback_at BIGINT,
+    reported_at BIGINT,
+    verified_at BIGINT,
+    revoked_at BIGINT,
+    PRIMARY KEY(tenant_id,id),
+    CONSTRAINT uq_managed_agent_id UNIQUE(id),
+    CONSTRAINT uq_managed_agent_request UNIQUE(tenant_id,request_key),
+    CONSTRAINT uq_managed_agent_device UNIQUE(tenant_id,active_device_id),
+    CONSTRAINT uq_managed_agent_enrollment UNIQUE(tenant_id,active_enrollment_id),
+    CONSTRAINT fk_managed_agent_enrollment FOREIGN KEY(tenant_id,enrollment_id)
+      REFERENCES managed_enrollment_intents(tenant_id,id),
+    CONSTRAINT fk_managed_agent_registration FOREIGN KEY(tenant_id,device_id,registration_id)
+      REFERENCES devices(tenant_id,id,registration_id),
+    CONSTRAINT fk_managed_agent_subject FOREIGN KEY(tenant_id,subject_id) REFERENCES subjects(tenant_id,id),
+    CONSTRAINT ck_managed_agent_state CHECK(state IN ('PENDING','VERIFIED','REVOKED','EXPIRED'))
+);
+CREATE INDEX ix_managed_agent_expiry ON managed_agent_bindings(state,expires_at,id);
+CREATE INDEX ix_managed_agent_history ON managed_agent_bindings(tenant_id,device_id,created_at);
+CREATE INDEX ix_managed_agent_subject ON managed_agent_bindings(tenant_id,subject_id,id);
+CREATE INDEX ix_managed_agent_pending ON managed_agent_bindings(tenant_id,state,expires_at);

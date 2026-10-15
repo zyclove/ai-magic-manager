@@ -308,6 +308,9 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
   }
 
   @Override
+  public boolean supportsAgentBindingEvidence() { return true; }
+
+  @Override
   public AssignmentReceipt assignPolicy(String enterpriseId, String deviceId, String policyId) {
     String device = deviceName(enterpriseId, deviceId);
     String policy = policyName(enterpriseId, policyId);

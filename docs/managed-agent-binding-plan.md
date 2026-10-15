@@ -19,6 +19,8 @@
 
 阶段 1 不能被计为整个绑定流程或系统执行已经完成。验签器无数据库重放账本；消费一次、注册有效性、租户权限及关联关系必须由阶段 2 的事务完成。
 
+阶段 2 的接口、状态、配置、事务与验证进度见 [受管儿童端绑定工作流](managed-agent-binding-workflow.md)。客户端自动提交证明与管理界面接入仍是后续交付项。
+
 ## 证明 v1 约束
 
 - 固定反馈键 `ai_manager.binding.v1`；固定 JWT audience `ai-manager:managed-agent-binding`。

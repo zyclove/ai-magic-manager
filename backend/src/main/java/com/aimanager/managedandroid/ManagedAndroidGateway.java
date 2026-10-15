@@ -14,6 +14,9 @@ public interface ManagedAndroidGateway {
 
   boolean available();
 
+  /** 合作方需显式声明可读取受信应用证据；可连接不等于已支持绑定核验。 */
+  default boolean supportsAgentBindingEvidence() { return false; }
+
   /**
    * Replaces the complete applications field of an exclusively owned policy. The Google adapter
    * requires that policy to exist with an explicit BLACKLIST Play Store mode; callers must not use

@@ -845,6 +845,42 @@
       "category": "AUTHORIZATION"
     },
     {
+      "table": "managed_agent_bindings",
+      "columns": [
+        "active_device_id",
+        "active_enrollment_id",
+        "created_at",
+        "device_id",
+        "enrollment_id",
+        "enterprise_binding_version",
+        "enterprise_id",
+        "expires_at",
+        "feedback_at",
+        "id",
+        "key_thumbprint",
+        "next_verification_at",
+        "nonce",
+        "package_name",
+        "proof_id",
+        "proof_sha256",
+        "provider",
+        "provider_device_id",
+        "registration_id",
+        "reported_at",
+        "request_key",
+        "requested_by",
+        "revoked_at",
+        "state",
+        "subject_id",
+        "tenant_id",
+        "updated_at",
+        "verified_at",
+        "version"
+      ],
+      "domain": "managedandroid",
+      "category": "DEVICE_DATA"
+    },
+    {
       "table": "managed_enrollment_intent_events",
       "columns": [
         "action", "actor_id", "correlation_id", "id", "intent_id", "occurred_at",
