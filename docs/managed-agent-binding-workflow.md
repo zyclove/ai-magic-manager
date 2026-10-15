@@ -20,6 +20,7 @@
 | `POST /` | `Idempotency-Key` 为规范 UUID；正文 `enrollmentId`、`deviceId`、`registrationId` | 201，原请求可恢复；管理员近期认证，无挑战值 |
 | `GET /` | `limit`、`cursor` | 分页元数据；管理员或审计员 |
 | `GET /{id}` | 无 | 当前记录与版本，无挑战值、签名正文或提供方秘密 |
+| `GET /context/{enrollmentId}` | `limit`、`cursor` | 接入条件、当前关联及同一学生的已激活设备候选；管理员或审计员 |
 | `POST /{id}/verify` | `If-Match` | 202 等待反馈 / 200 核验完成；重新认证与当前权限检查 |
 | `POST /{id}/revoke` | `If-Match` | 本地撤销，清除挑战值，保留审计 |
 | `GET /api/v1/device-api/managed-agent-challenge` | 当前设备 bearer 凭证，无调用者指定设备参数 | 200 当前挑战 / 204 无待领取挑战 |
@@ -56,7 +57,7 @@
 
 ## 尚需独立完成
 
-AndroidX 反馈发送、客户端签名与重试、管理员可视化绑定操作、真实 EMM 与设备验收、最终策略执行接入。正式准入与发布证书未提供时，不启用生产绑定通道。
+AndroidX 反馈发送、客户端签名与重试、真实 EMM 与设备验收、最终策略执行接入。管理员可视化操作已在后续阶段接入，详见 [儿童端关联操作流程](managed-agent-binding-experience.md)。正式准入与发布证书未提供时，不启用生产绑定通道。
 
 ## 验证记录
 

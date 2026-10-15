@@ -231,6 +231,17 @@ class FleetReads
     return new FleetPolicyAccess.Target(device, deriveCapabilities(tenant, device, lock));
   }
 
+  @Override
+  public com.aimanager.shared.ItemPage<Device> activeForSubject(
+      String tenant, String actor, String subject, int limit, String cursor) {
+    access.requireRole(tenant, actor, OWNER, ORG_ADMIN, AUDITOR);
+    com.aimanager.shared.ItemPage.validate(limit, cursor);
+    var rows = jdbc.query(
+        "SELECT * FROM devices WHERE tenant_id=? AND subject_id=? AND state='ACTIVE' AND id>? ORDER BY id LIMIT ?",
+        (r, n) -> map(r), tenant, subject, cursor == null ? "" : cursor, limit + 1);
+    return com.aimanager.shared.ItemPage.from(rows, limit, Device::id);
+  }
+
   /**
    * Internal consumers may expose inventory or initiate workflows; teacher status reads use
    * device() only.

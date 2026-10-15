@@ -5,10 +5,12 @@ import '../core/api.dart';
 import '../core/labels.dart';
 import '../core/managed_android.dart';
 import '../core/managed_android_repository.dart';
+import '../core/managed_agent_binding_repository.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
 import '../ui/managed_enrollment_guide.dart';
 import '../ui/managed_enrollment_form.dart';
+import '../ui/managed_agent_binding_dialog.dart';
 
 /// Institution provisioning console. A provider receipt never changes local device capabilities.
 class ManagedAndroidPage extends StatefulWidget {
@@ -413,6 +415,25 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
     }
   }
 
+  Future<void> _agentBinding(ManagedEnrollmentIntent intent) async {
+    if (!current ||
+        busy ||
+        loading ||
+        error != null ||
+        intent.state != 'VERIFIED') return;
+    await _prompt<void>(
+        barrierDismissible: false,
+        builder: (_) => ManagedAgentBindingDialog(
+            repository: ManagedAgentBindingRepository(
+                api: widget.session.api,
+                tenantId: tenantId,
+                enrollmentId: intent.id,
+                subjectId: intent.subjectId,
+                current: () => current),
+            writable: writable,
+            reauthenticate: () => widget.session.login(stepUp: true)));
+  }
+
   @override
   Widget build(BuildContext context) =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -576,6 +597,14 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
                             child: const Text('取消令牌')),
                       if (intent.state == 'VERIFIED')
                         TextButton.icon(
+                            onPressed:
+                                busy || loading || !current || error != null
+                                    ? null
+                                    : () => _agentBinding(intent),
+                            icon: const Icon(Icons.phonelink_setup),
+                            label: Text(writable ? '关联儿童端' : '查看儿童端关联')),
+                      if (intent.state == 'VERIFIED')
+                        TextButton.icon(
                             onPressed: busy ||
                                     loading ||
                                     !current ||
@@ -598,7 +627,7 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
                     'DRIFT' => '提供方策略已偏离初始版本',
                     'STALE' => '提供方报告已过期',
                     _ => '执行尚未确认'
-                  }}。读取时间 ${dateLabel(status.checkedAt)}；最近策略同步 ${dateLabel(status.lastPolicySyncAt)}。本地儿童 App 仍未建立受管身份绑定。',
+                  }}。读取时间 ${dateLabel(status.checkedAt)}；最近策略同步 ${dateLabel(status.lastPolicySyncAt)}。儿童端身份关联请单独查看关联记录；本项只复核提供方初始策略。',
                   warning: status.state != 'APPLIED')
           ],
           if (nextCursor != null)

@@ -17,18 +17,22 @@ const subject = '33333333-3333-4333-8333-333333333333';
 const intentId = '22222222-2222-4222-8222-222222222222';
 
 class EnrollmentSession extends Session {
-  EnrollmentSession({this.bound = false, String actorRole = 'ORG_ADMIN'}) {
+  EnrollmentSession(
+      {this.bound = false, String actorRole = 'ORG_ADMIN', this.extra}) {
     profile = {'subject': 'operator-1'};
     tenant = {'id': tenantId, 'kind': 'ORGANIZATION'};
     role = actorRole;
   }
   bool bound, refreshFails = false, emptySubjects = false;
+  final Future<http.Response?> Function(http.Request request)? extra;
   int epoch = 0, posts = 0;
   String? bindingState;
   List<Json> rows = [];
   final requests = <http.Request>[];
   late final transport = MockClient((request) async {
     requests.add(request);
+    final delegated = await extra?.call(request);
+    if (delegated != null) return delegated;
     final path = request.url.path;
     if (request.method == 'POST') {
       posts++;

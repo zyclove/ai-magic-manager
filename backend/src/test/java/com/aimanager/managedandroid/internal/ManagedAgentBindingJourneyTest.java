@@ -72,6 +72,88 @@ class ManagedAgentBindingJourneyTest {
   @Autowired CommercialCapacity capacity;
 
   @Test
+  void contextReturnsOnlyActiveDevicesForTheEnrollmentSubjectAndExplainsSetup() throws Exception {
+    var f = fixture();
+    var another = fixture();
+    String otherSubject = UUID.randomUUID().toString();
+    db.update(
+        "INSERT INTO subjects(tenant_id,id,nickname,age_band,created_at)"
+            + " VALUES(?,?,'另一学生','AGE_7_12',?)",
+        f.tenant(),
+        otherSubject,
+        System.currentTimeMillis());
+    cloneDevice(f, otherSubject, "ACTIVE");
+    cloneDevice(f, f.subject(), "REVOKED");
+    mvc.perform(get(f.root() + "/context/" + f.intent()).with(actor(f.actor())))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.enrollmentId").value(f.intent()))
+        .andExpect(jsonPath("$.subjectId").value(f.subject()))
+        .andExpect(jsonPath("$.reasonCode").value("READY"))
+        .andExpect(jsonPath("$.candidates.items.length()").value(1))
+        .andExpect(jsonPath("$.candidates.items[0].id").value(f.device()))
+        .andExpect(jsonPath("$.currentBinding").isEmpty());
+    when(gateway.supportsAgentBindingEvidence()).thenReturn(false);
+    mvc.perform(get(f.root() + "/context/" + f.intent()).with(actor(f.actor())))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.ready").value(false))
+        .andExpect(jsonPath("$.reasonCode").value("PROVIDER_EVIDENCE_UNSUPPORTED"));
+    mvc.perform(get(f.root() + "/context/" + f.intent()).with(actor(another.actor())))
+        .andExpect(status().isForbidden());
+  }
+
+  private String cloneDevice(Fixture f, String subject, String state) {
+    String device = UUID.randomUUID().toString();
+    db.update(
+        "INSERT INTO"
+            + " devices(tenant_id,id,subject_id,registration_id,display_name,platform,os_version,state,public_key_jwk,key_thumbprint,created_at)"
+            + " SELECT"
+            + " tenant_id,?,?,?,'候选平板',platform,os_version,?,public_key_jwk,key_thumbprint,created_at"
+            + " FROM devices WHERE tenant_id=? AND id=?",
+        device,
+        subject,
+        UUID.randomUUID().toString(),
+        state,
+        f.tenant(),
+        f.device());
+    return device;
+  }
+
+  @Test
+  void selectionContextPaginatesCandidatesAndShowsCurrentBindingWithoutNonce() throws Exception {
+    var f = fixture();
+    cloneDevice(f, f.subject(), "ACTIVE");
+    var binding = create(f, UUID.randomUUID().toString());
+    var first =
+        json.readTree(
+            mvc.perform(
+                    get(f.root() + "/context/" + f.intent() + "?limit=1").with(actor(f.actor())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.currentBinding.id").value(binding.get("id").asText()))
+                .andExpect(jsonPath("$.currentBinding.nonce").doesNotExist())
+                .andReturn()
+                .getResponse()
+                .getContentAsString());
+    String cursor = first.get("candidates").get("nextCursor").asText();
+    var second =
+        json.readTree(
+            mvc.perform(
+                    get(f.root() + "/context/" + f.intent() + "?limit=1&cursor=" + cursor)
+                        .with(actor(f.actor())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.candidates.items.length()").value(1))
+                .andExpect(jsonPath("$.candidates.nextCursor").isEmpty())
+                .andReturn()
+                .getResponse()
+                .getContentAsString());
+    assertThat(second.get("candidates").get("items").get(0).get("id").asText())
+        .isNotEqualTo(cursor);
+    db.update("UPDATE tenant_members SET role='AUDITOR' WHERE tenant_id=?", f.tenant());
+    mvc.perform(get(f.root() + "/context/" + f.intent()).with(actor(f.actor())))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.currentBinding.id").value(binding.get("id").asText()));
+  }
+
+  @Test
   void schemaIndexesCoverCurrentDeviceLookupAndPendingCounts() {
     var columns =
         db.execute(

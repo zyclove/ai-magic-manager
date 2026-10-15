@@ -77,6 +77,20 @@ class ManagedAgentBindingController {
     return response(store.get(tenantId, actor.getSubject(), id), 200);
   }
 
+  @GetMapping(ROOT + "/context/{enrollmentId}")
+  @Operation(summary = "读取绑定接入条件、当前关联及同一学生的已激活设备候选")
+  ResponseEntity<ManagedAgentBindingStore.ContextView> selectionContext(
+      @PathVariable String tenantId,
+      @PathVariable String enrollmentId,
+      @AuthenticationPrincipal Jwt actor,
+      @RequestParam(defaultValue = "50") int limit,
+      @RequestParam(required = false) String cursor) {
+    return ResponseEntity.ok()
+        .cacheControl(CacheControl.noStore())
+        .varyBy("Authorization")
+        .body(store.selectionContext(tenantId, actor.getSubject(), enrollmentId, limit, cursor));
+  }
+
   @PostMapping(ROOT + "/{id}/verify")
   @Operation(summary = "核验提供方证明并一次性消费挑战；202 表示等待反馈")
   ResponseEntity<ManagedAgentBindingStore.View> verify(

@@ -274,6 +274,51 @@ class ManagedAgentBindingStore {
     return ItemPage.from(rows, limit, View::id);
   }
 
+  /** 一次读取选择流程所需的非秘密资料；不做远端调用，也不代表写操作获得授权。 */
+  ContextView selectionContext(
+      String tenant, String actor, String enrollment, int limit, String cursor) {
+    access.requireRole(tenant, actor, OWNER, ORG_ADMIN, AUDITOR);
+    id(enrollment);
+    ItemPage.validate(limit, cursor);
+    var intent = enrollments.get(tenant, enrollment, actor);
+    String reason = "READY";
+    if (!"VERIFIED".equals(intent.state())) reason = "ENROLLMENT_NOT_VERIFIED";
+    else if (!subjects.active(tenant, intent.subjectId())) reason = "SUBJECT_INACTIVE";
+    else if (settings.packageName.isEmpty() || settings.certificates.isEmpty())
+      reason = "RELEASE_TRUST_REQUIRED";
+    else if (!gateway.available()) reason = "EMM_UNAVAILABLE";
+    else if (!gateway.supportsAgentBindingEvidence()) reason = "PROVIDER_EVIDENCE_UNSUPPORTED";
+    else {
+      try {
+        enrollments.forProviderStatus(tenant, enrollment, actor);
+      } catch (DomainException failure) {
+        if (!java.util.Set.of(
+                "ENTERPRISE_BINDING_NOT_ACTIVE",
+                "MANAGED_ANDROID_CONTRACT_REQUIRED",
+                "MANAGED_ENTERPRISE_CHANGED",
+                "EMM_PROVIDER_MISMATCH",
+                "EMM_UNAVAILABLE",
+                "ENTERPRISE_BINDING_NOT_FOUND")
+            .contains(failure.errorCode())) throw failure;
+        reason = failure.errorCode();
+      }
+    }
+    var current =
+        db.query(
+            "SELECT * FROM managed_agent_bindings WHERE tenant_id=? AND active_enrollment_id=?",
+            (r, n) -> view(row(r)),
+            tenant,
+            enrollment);
+    if (current.size() > 1) throw conflict("MANAGED_BINDING_AMBIGUOUS");
+    return new ContextView(
+        enrollment,
+        intent.subjectId(),
+        "READY".equals(reason),
+        reason,
+        current.isEmpty() ? null : current.get(0),
+        fleet.activeForSubject(tenant, actor, intent.subjectId(), limit, cursor));
+  }
+
   Optional<Challenge> challenge(DeviceContext identity) {
     credentials.requireActive(identity);
     if (!settings.enabled(gateway)) return Optional.empty();
@@ -458,6 +503,14 @@ class ManagedAgentBindingStore {
   }
 
   private record Context(ManagedEnrollmentStore.Intent intent, RegistrationKeys.Key key) {}
+
+  record ContextView(
+      String enrollmentId,
+      String subjectId,
+      boolean ready,
+      String reasonCode,
+      View currentBinding,
+      ItemPage<Device> candidates) {}
 
   record Row(
       String tenantId,

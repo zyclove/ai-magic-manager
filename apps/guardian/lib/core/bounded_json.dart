@@ -12,6 +12,7 @@ Future<dynamic> boundedJson(Api api, String method, String path,
     int? version,
     required void Function() ensureCurrent,
     int successStatus = 200,
+    Set<int> additionalSuccessStatuses = const {},
     int maxBytes = 2 * 1024 * 1024,
     int? expectedBytes}) async {
   StreamSubscription<List<int>>? subscription;
@@ -44,7 +45,9 @@ Future<dynamic> boundedJson(Api api, String method, String path,
             response.stream.listen(null).cancel().catchError((Object _) {}));
         rethrow;
       }
-      final limit = response.statusCode == successStatus ? maxBytes : 65536;
+      final accepted = response.statusCode == successStatus ||
+          additionalSuccessStatuses.contains(response.statusCode);
+      final limit = accepted ? maxBytes : 65536;
       if (response.contentLength != null && response.contentLength! > limit) {
         unawaited(
             response.stream.listen(null).cancel().catchError((Object _) {}));
@@ -75,7 +78,7 @@ Future<dynamic> boundedJson(Api api, String method, String path,
       } on FormatException {
         result = null;
       }
-      if (response.statusCode != successStatus) {
+      if (!accepted) {
         throw ApiFailure(
             response.statusCode,
             result is Json &&
