@@ -86,6 +86,21 @@ try {
                 }
             }
         }
+        $consoleLogDirectory = Join-Path $selection.deploymentDirectory 'logs'
+        $consoleLogAttributes = $null
+        try {
+            $consoleLogAttributes = [IO.File]::GetAttributes($consoleLogDirectory)
+        } catch [IO.FileNotFoundException] {
+        } catch [IO.DirectoryNotFoundException] {
+        }
+        if ($null -eq $consoleLogAttributes) {
+            New-Item -ItemType Directory -Path $consoleLogDirectory -ErrorAction Stop | Out-Null
+            $consoleLogAttributes = [IO.File]::GetAttributes($consoleLogDirectory)
+        }
+        if (($consoleLogAttributes -band [IO.FileAttributes]::ReparsePoint) -ne 0 -or
+            ($consoleLogAttributes -band [IO.FileAttributes]::Directory) -eq 0) {
+            throw 'The activated console log path must be a directory without links.'
+        }
         $global:LASTEXITCODE = 0
         & (Join-Path $selection.sourceDirectory 'scripts/start-deployment.ps1') -Directory '.local/deployment'
         if ($LASTEXITCODE -ne 0) { throw 'The activated console could not be started.' }

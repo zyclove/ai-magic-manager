@@ -9,6 +9,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import stat
 import subprocess
 import tempfile
 import unittest
@@ -31,6 +32,14 @@ Write-LauncherTestEvent @{
 switch ($env:PRIMARY_TEST_START_MODE) {
     'throw' { throw 'Synthetic start failure.' }
     'exit' { exit 17 }
+    'write-log' {
+        $source = [IO.Path]::GetFullPath((Split-Path $PSScriptRoot -Parent))
+        $deployment = [IO.Path]::GetFullPath((Join-Path $source $Directory))
+        # Deliberately do not create the parent: the actual primary launcher
+        # must prepare it before the selected release writes its start log.
+        [IO.File]::WriteAllText((Join-Path $deployment 'logs/compose-start.log'),
+            "Synthetic selected release started.`n", [Text.UTF8Encoding]::new($false))
+    }
 }
 """
 
@@ -221,6 +230,8 @@ class StartActiveConsoleTest(unittest.TestCase):
         self.source = self.local / "selected-release"
         self.deployment = self.source / ".local/deployment"
         self.deployment.mkdir(parents=True)
+        self.logs = self.deployment / "logs"
+        self.directory_links = []
         selected_scripts = self.source / "scripts"
         selected_scripts.mkdir()
         (selected_scripts / "start-deployment.ps1").write_text(FAKE_START, encoding="utf-8")
@@ -263,6 +274,17 @@ class StartActiveConsoleTest(unittest.TestCase):
         target = Path(self.temporary.name).resolve()
         self.assertEqual(target.parent, (ROOT / ".local").resolve())
         self.assertTrue(target.name.startswith("start-active-console-test-"))
+        # Remove only the link itself before recursive fixture cleanup. Both
+        # the link's lexical location and its real parent stay in this fixture.
+        for link in reversed(self.directory_links):
+            self.assertTrue(Path(os.path.abspath(link)).is_relative_to(target))
+            self.assertTrue(link.parent.resolve().is_relative_to(target))
+            if os.path.lexists(link):
+                self.assert_directory_link(link)
+                if os.name == "nt":
+                    os.rmdir(link)
+                else:
+                    link.unlink()
         self.temporary.cleanup()
 
     @staticmethod
@@ -273,6 +295,41 @@ class StartActiveConsoleTest(unittest.TestCase):
     def write_json(path, value):
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text(json.dumps(value), encoding="utf-8")
+
+    def assert_directory_link(self, path):
+        if os.name == "nt":
+            self.assertTrue(path.lstat().st_file_attributes & stat.FILE_ATTRIBUTE_REPARSE_POINT,
+                            "The Windows fixture must be a real reparse point")
+        else:
+            self.assertTrue(path.is_symlink(), "The fixture must be a real directory link")
+
+    def make_directory_link(self, link, target):
+        # Reuse the activation tests' native Junction fixture pattern, with
+        # stricter ownership checks for creation and explicit link cleanup.
+        fixture = Path(self.temporary.name).resolve()
+        self.assertTrue(Path(os.path.abspath(link)).is_relative_to(fixture))
+        self.assertTrue(link.parent.resolve().is_relative_to(fixture))
+        self.assertTrue(target.resolve().is_relative_to(fixture))
+        self.assertTrue(target.is_dir())
+        self.assertFalse(os.path.lexists(link))
+        self.directory_links.append(link)
+        if os.name != "nt":
+            os.symlink(target, link, target_is_directory=True)
+        else:
+            environment = os.environ.copy()
+            environment["PRIMARY_TEST_LINK"] = str(link)
+            environment["PRIMARY_TEST_LINK_TARGET"] = str(target)
+            environment["PATH"] = ""
+            result = subprocess.run(
+                [PWSH, "-NoProfile", "-NonInteractive", "-Command",
+                 "$ErrorActionPreference='Stop'; New-Item -ItemType Junction -Path "
+                 "$env:PRIMARY_TEST_LINK -Target $env:PRIMARY_TEST_LINK_TARGET | Out-Null"],
+                cwd=self.root, env=environment, capture_output=True, text=True,
+                encoding="utf-8", timeout=20,
+            )
+            self.assertEqual(result.returncode, 0, "Could not create the bounded Junction fixture")
+            self.assertEqual(result.stderr, "", "Junction fixture creation emitted diagnostics")
+        self.assert_directory_link(link)
 
     def invoke(self, *, host_project=HOST_PROJECT, health="unhealthy", check_only=False,
                foreign_edge="", start_mode="ok", verify_mode="ok", host_edge_port=None,
@@ -390,6 +447,152 @@ class StartActiveConsoleTest(unittest.TestCase):
         self.assertEqual(len(self.of_kind(events, "start")), 1)
         self.assertEqual(len(self.of_kind(events, "verify")), 1)
         self.assert_selected(events)
+
+    def test_missing_logs_directory_is_created_before_selected_release_writes_start_log(self):
+        self.assertFalse(self.logs.exists())
+        payload, events = self.invoke(start_mode="write-log", lease_probe=True,
+                                      host_edge_port="18112")
+        self.assertTrue(payload["ok"], "The selected release could not write its log with a missing parent")
+        self.assertTrue(payload["ready"])
+        self.assertTrue(self.logs.is_dir())
+        self.assertEqual((self.logs / "compose-start.log").read_bytes(),
+                         b"Synthetic selected release started.\n")
+        self.assertEqual([event["kind"] for event in events], ["compose", "edges", "start", "verify"])
+        self.assert_runtime_lease_held(events)
+        self.assert_runtime_lease_released(payload)
+        self.assert_selected(events)
+        self.assert_restored(payload, HOST_PROJECT)
+        self.assert_edge_port_restored(payload, "18112")
+
+    def test_existing_logs_directory_contents_survive_selected_release_start(self):
+        self.logs.mkdir()
+        old_log = self.logs / "earlier-start.log"
+        old_log.write_bytes(b"Keep the earlier runtime evidence.\n")
+        archived_log = self.logs / "archive/earlier-verification.log"
+        archived_log.parent.mkdir()
+        archived_log.write_bytes(b"Keep the nested verification evidence.\n")
+        payload, events = self.invoke(start_mode="write-log", lease_probe=True,
+                                      host_edge_port="18112")
+        self.assertTrue(payload["ok"])
+        self.assertTrue(payload["ready"])
+        self.assertEqual(old_log.read_bytes(), b"Keep the earlier runtime evidence.\n")
+        self.assertEqual(archived_log.read_bytes(), b"Keep the nested verification evidence.\n")
+        self.assertEqual((self.logs / "compose-start.log").read_bytes(),
+                         b"Synthetic selected release started.\n")
+        self.assertEqual([event["kind"] for event in events], ["compose", "edges", "start", "verify"])
+        self.assert_runtime_lease_held(events)
+        self.assert_runtime_lease_released(payload)
+        self.assert_selected(events)
+        self.assert_restored(payload, HOST_PROJECT)
+        self.assert_edge_port_restored(payload, "18112")
+
+    def test_check_only_never_creates_missing_logs_for_healthy_or_unhealthy_selection(self):
+        for health in ("healthy", "unhealthy"):
+            with self.subTest(health=health):
+                self.assertFalse(self.logs.exists())
+                payload, events = self.invoke(
+                    health=health, check_only=True, start_mode="write-log",
+                    lease_probe=True, host_edge_port="18112",
+                )
+                if health == "healthy":
+                    self.assertTrue(payload["ok"])
+                    self.assertTrue(payload["ready"])
+                    self.assertEqual([event["kind"] for event in events], ["compose", "verify"])
+                else:
+                    self.assert_rejected(payload)
+                    self.assertEqual([event["kind"] for event in events], ["compose"])
+                self.assertEqual(self.of_kind(events, "start"), [])
+                self.assertFalse(os.path.lexists(self.logs), "CheckOnly created a log directory")
+                self.assert_runtime_lease_held(events)
+                self.assert_runtime_lease_released(payload)
+                self.assert_selected(events)
+                self.assert_restored(payload, HOST_PROJECT)
+                self.assert_edge_port_restored(payload, "18112")
+
+    def test_healthy_normal_start_does_not_create_logs_without_starting_release(self):
+        payload, events = self.invoke(health="healthy", start_mode="write-log",
+                                      lease_probe=True, host_edge_port="18112")
+        self.assertTrue(payload["ok"])
+        self.assertTrue(payload["ready"])
+        self.assertEqual([event["kind"] for event in events], ["compose", "verify"])
+        self.assertFalse(os.path.lexists(self.logs), "An already healthy release created unused logs")
+        self.assert_runtime_lease_held(events)
+        self.assert_runtime_lease_released(payload)
+        self.assert_selected(events)
+        self.assert_restored(payload, HOST_PROJECT)
+        self.assert_edge_port_restored(payload, "18112")
+
+    def test_foreign_port_conflict_is_rejected_before_creating_missing_logs(self):
+        payload, events = self.invoke(
+            foreign_edge="another-running-project", foreign_edge_port="18101",
+            start_mode="write-log", lease_probe=True, host_edge_port="18112",
+        )
+        self.assert_rejected(payload)
+        self.assertEqual([event["kind"] for event in events], ["compose", "edges", "inspect"])
+        self.assert_no_release_start_or_verification(events)
+        self.assertFalse(os.path.lexists(self.logs), "A foreign listener conflict still created logs")
+        self.assert_runtime_lease_held(events)
+        self.assert_runtime_lease_released(payload)
+        self.assert_selected(events)
+        self.assert_restored(payload, HOST_PROJECT)
+        self.assert_edge_port_restored(payload, "18112")
+
+    def test_logs_leaf_file_is_rejected_before_start_or_verification(self):
+        marker = b"This existing file must never be replaced with a directory.\n"
+        self.logs.write_bytes(marker)
+        payload, events = self.invoke(start_mode="write-log", lease_probe=True,
+                                      host_edge_port="18112")
+        self.assert_rejected(payload)
+        self.assert_no_release_start_or_verification(events)
+        self.assertEqual(self.logs.read_bytes(), marker)
+        self.assertTrue(self.logs.is_file())
+        self.assert_runtime_lease_held(events)
+        self.assert_runtime_lease_released(payload)
+        self.assert_selected(events)
+        self.assert_restored(payload, HOST_PROJECT)
+        self.assert_edge_port_restored(payload, "18112")
+
+    def test_logs_junction_is_rejected_without_changing_its_unselected_target(self):
+        target = self.root / "unselected-log-target"
+        target.mkdir()
+        old_log = target / "compose-start.log"
+        old_log.write_bytes(b"Do not overwrite the unselected start log.\n")
+        marker = target / "untouched.txt"
+        marker.write_bytes(b"Do not change this unselected directory.\n")
+        self.make_directory_link(self.logs, target)
+        payload, events = self.invoke(start_mode="write-log", lease_probe=True,
+                                      host_edge_port="18112")
+        self.assert_rejected(payload)
+        self.assert_no_release_start_or_verification(events)
+        self.assert_directory_link(self.logs)
+        self.assertEqual(old_log.read_bytes(), b"Do not overwrite the unselected start log.\n")
+        self.assertEqual(marker.read_bytes(), b"Do not change this unselected directory.\n")
+        self.assertEqual({path.name for path in target.iterdir()}, {"compose-start.log", "untouched.txt"})
+        self.assert_runtime_lease_held(events)
+        self.assert_runtime_lease_released(payload)
+        self.assert_selected(events)
+        self.assert_restored(payload, HOST_PROJECT)
+        self.assert_edge_port_restored(payload, "18112")
+
+    def test_dangling_logs_junction_is_rejected_without_recreating_its_target(self):
+        target = self.root / "missing-log-target"
+        target.mkdir()
+        self.make_directory_link(self.logs, target)
+        # This is one known empty fixture directory, not a recursive removal.
+        self.assertTrue(target.resolve().is_relative_to(Path(self.temporary.name).resolve()))
+        target.rmdir()
+        self.assertFalse(target.exists())
+        payload, events = self.invoke(start_mode="write-log", lease_probe=True,
+                                      host_edge_port="18112")
+        self.assert_rejected(payload)
+        self.assert_no_release_start_or_verification(events)
+        self.assert_directory_link(self.logs)
+        self.assertFalse(target.exists(), "Startup followed the dangling link and recreated its target")
+        self.assert_runtime_lease_held(events)
+        self.assert_runtime_lease_released(payload)
+        self.assert_selected(events)
+        self.assert_restored(payload, HOST_PROJECT)
+        self.assert_edge_port_restored(payload, "18112")
 
     def test_host_edge_port_cannot_override_selected_release_on_success(self):
         for original in (None, "18112"):

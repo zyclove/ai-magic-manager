@@ -1,0 +1,160 @@
+{
+  "schemaVersion": 1,
+  "version": "1.0.0",
+  "stage": "Primary console launcher runtime log-directory recovery",
+  "status": "VERIFIED",
+  "overallGoalStatus": "ACTIVE",
+  "source": {
+    "manifest": {
+      "path": ".local/runtime/console-log-recovery-green-20261015-r1.json",
+      "sha256": "e21f3128dec46407dda73f855def9a0091695bddffda134e3e5a97e77e26eb49",
+      "bytes": 264037
+    },
+    "base": "3d1f459eb0ded43f53ae4be86d3942f2af62ea67",
+    "allFiles": 1401,
+    "ownedFiles": [
+      {
+        "path": "scripts/tests/test_start_active_console.py",
+        "bytes": 49364,
+        "sha256": "6e739d674658480bd65d0c43489bafeb289b4b8c31bf1fd7173a934f5d5df68a"
+      },
+      {
+        "path": "docs/superpowers/plans/2026-10-15-console-log-directory-recovery.md",
+        "bytes": 7029,
+        "sha256": "0fc319e903e8eec17fcc17e693ddad402321f8697ea4444bb50155bca699f216"
+      },
+      {
+        "path": "scripts/start-active-console.ps1",
+        "bytes": 7535,
+        "sha256": "a1a5eac9e1dd4c08ed6f2bbce83dd2beba84b2b784baea377beb5a377b3b9f1d"
+      }
+    ],
+    "ownedCount": 3,
+    "peerWipExcluded": true,
+    "frozenAndOwnedWorktreeBytesVerified": true
+  },
+  "behavior": [
+    "An unhealthy selected release creates its missing direct logs directory after foreign listener validation and before its real startup script can write compose-start.log.",
+    "Existing directory contents are preserved. A file, valid junction or dangling junction is refused before selected release start or verification.",
+    "CheckOnly and an already healthy normal invocation do not create logs. Existing selection, runtime lock, environment restoration and Docker recovery rules remain in force."
+  ],
+  "red": {
+    "receipt": {
+      "path": ".local/runtime/console-log-recovery-targeted-red-r1-exit.json",
+      "sha256": "a76fb6e77008f9f50301e577f533e25cbc82ddfa2e0137fff42520d57548cf33",
+      "bytes": 883
+    },
+    "log": {
+      "path": ".local/runtime/console-log-recovery-targeted-red-r1.log",
+      "sha256": "b4848294ad8dcc20a645a6ab44dee05900038328deaee01691a34d48143317ab",
+      "bytes": 12853
+    },
+    "sourceManifest": {
+      "path": ".local/runtime/console-log-recovery-red-20261015-r1.json",
+      "sha256": "fbf39c5f2dd7b5a8e88d55b6c5b41e3d78ae5e9a9a198c85796319cbd6651d5c",
+      "bytes": 263866
+    },
+    "tests": 38,
+    "failures": 4,
+    "errors": 0,
+    "skipped": 0,
+    "expectedFailureNames": [
+      "test_dangling_logs_junction_is_rejected_without_recreating_its_target",
+      "test_logs_junction_is_rejected_without_changing_its_unselected_target",
+      "test_logs_leaf_file_is_rejected_before_start_or_verification",
+      "test_missing_logs_directory_is_created_before_selected_release_writes_start_log"
+    ]
+  },
+  "targetedGreen": {
+    "receipt": {
+      "path": ".local/runtime/console-log-recovery-targeted-green-r1-exit.json",
+      "sha256": "e9021cb6fbe743b9781aa637f47e379cc43ca9963d912bdad5dbf46cf6cd5621",
+      "bytes": 889
+    },
+    "log": {
+      "path": ".local/runtime/console-log-recovery-targeted-green-r1.log",
+      "sha256": "176f778817cb815c3b6ef4c9c9f647540dd46659bc7f0d2715babde17532700a",
+      "bytes": 7232
+    },
+    "sourceManifest": {
+      "path": ".local/runtime/console-log-recovery-green-20261015-r1.json",
+      "sha256": "e21f3128dec46407dda73f855def9a0091695bddffda134e3e5a97e77e26eb49",
+      "bytes": 264037
+    },
+    "tests": 38,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "fullScripts": {
+    "receipt": {
+      "path": ".local/runtime/console-log-recovery-full-scripts-green-r2-exit.json",
+      "sha256": "44f843fce581cb548a9edc738012da7e5b11a92d272aaf905ecd05246f4bf7f7",
+      "bytes": 999
+    },
+    "log": {
+      "path": ".local/runtime/console-log-recovery-full-scripts-green-r2.log",
+      "sha256": "4c77bc27eb910240ac011691358185e8c53bd3bb44f9b85860795d0dbc9af37f",
+      "bytes": 16267
+    },
+    "sourceManifest": {
+      "path": ".local/runtime/console-log-recovery-green-20261015-r1.json",
+      "sha256": "e21f3128dec46407dda73f855def9a0091695bddffda134e3e5a97e77e26eb49",
+      "bytes": 264037
+    },
+    "tests": 91,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 91
+  },
+  "newBehaviorTests": 8,
+  "windowsJunctionFixtureSkipped": false,
+  "independentSourceReview": {
+    "path": ".local/runtime/console-log-recovery-source-review.json",
+    "sha256": "b5860437de5a92abef844198daa183a041f648d1c2f3acb48f57c4e632718b2f",
+    "bytes": 8424
+  },
+  "liveExistingHealthyReleaseChecks": {
+    "path": ".local/runtime/console-log-recovery-live-check.json",
+    "sha256": "fc65bd4bbe7110b0fb7d3868248f831887aab7dc3cffdb13e5492243f37b4417",
+    "bytes": 1699
+  },
+  "originalManualRuntimeRecovery": {
+    "path": ".local/runtime/guardian-startup-recovery-20261015-evening.json",
+    "sha256": "f7e64b2028a76751a5e048e8edad42245fc9ad6f4e86bc6cf120202ccbabfacc",
+    "bytes": 2654
+  },
+  "history": {
+    "firstFullRun": {
+      "path": ".local/runtime/console-log-recovery-full-scripts-green-r1-exit.json",
+      "sha256": "97d5d3a37ebb50360e4edb13ab5880d709b6f0b9b7f2080be7c017bb85ac8795",
+      "bytes": 874
+    },
+    "firstFullRunDiagnosis": {
+      "path": ".local/runtime/console-log-recovery-full-r1-config-failure.json",
+      "sha256": "42e1eb7334180fd2897d8451d65d07dcdadcf1fe3c73932a39338e053ed08c1f",
+      "bytes": 866
+    },
+    "firstFullRunWasPassing": false,
+    "firstFullRunFailure": "Six assertions across three Helm testcase methods failed because Helm was missing from runner PATH; the local chart was not rendered in those cases.",
+    "retry": "The first handle terminated with exit 1. The private runner added the existing local Helm tool to PATH; the identical e21f3128 frozen source was rerun under a fresh label with no product-source change.",
+    "planCheckboxesDescribeStateAtFreeze": true,
+    "taskCompletionRecordedHere": [
+      "38-case expected RED observed",
+      "38-case GREEN and independent source review",
+      "91-case complete script suite and two existing healthy-release invocation checks"
+    ],
+    "commitAndPushEvidence": "A later exact four-file commit/push receipt proves this source and record; this pre-commit record does not assert a commit hash."
+  },
+  "coverageBoundaries": [
+    "The script tests run actual PowerShell and filesystem behavior in owned temporary repositories. Docker, selected release start/verify, Maven and Flutter build boundaries are fixture commands.",
+    "Helm only renders and validates the frozen local chart; no Kubernetes cluster is contacted or deployed.",
+    "Live CheckOnly and NoBrowser verify the previously activated healthy release. The missing-directory startup branch is exercised by real filesystem fixtures, not by disrupting the live service.",
+    "No new frontend/backend artifact, database schema migration, business restore, identity setting or native device execution is delivered by this launcher fix.",
+    "The broader product goal remains active, including complete large-scope ownership, all domain writers, public erasure/control-plane and full frontend/native integration."
+  ],
+  "runtimeArtifactsChanged": false,
+  "databaseMigrationOrRestorePerformed": false,
+  "recordedAt": "2026-10-15T13:23:25.158445+00:00"
+}
