@@ -149,6 +149,7 @@
     {
       "table": "application_definitions",
       "columns": [
+        "created_at",
         "definition_json",
         "id",
         "identity_hash",

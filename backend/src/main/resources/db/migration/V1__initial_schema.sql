@@ -221,6 +221,7 @@ CREATE TABLE application_definitions (
     tenant_id VARCHAR(36) NOT NULL,
     id VARCHAR(36) NOT NULL,
     identity_hash VARCHAR(64) NOT NULL,
+    created_at BIGINT NULL,
     definition_json TEXT NOT NULL,
     PRIMARY KEY(tenant_id,id),
     CONSTRAINT uq_application_identity UNIQUE(tenant_id,identity_hash),

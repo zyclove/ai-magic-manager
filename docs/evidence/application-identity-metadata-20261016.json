@@ -1,0 +1,222 @@
+{
+  "stage": "Application declaration identity metadata",
+  "date": "2026-10-16",
+  "baseCommit": "cc79eb5701118107e6bcee358567e0cb892087d6",
+  "status": "TARGETED_CHECKS_PASSED_NOT_DEPLOYED",
+  "exactSuiteCounts": {
+    "com.aimanager.catalog.internal.ApplicationIdentityEvidenceTest": 26,
+    "com.aimanager.ApplicationCatalogRecoveryTest": 3,
+    "com.aimanager.retention.internal.ErasureManagedBindingProcessorTest": 24,
+    "com.aimanager.ModuleBoundariesTest": 1
+  },
+  "ownedSourceSha256": {
+    "backend/src/main/java/com/aimanager/catalog/ApplicationIdentity.java": "c68ff07110575d0c16cede71f77818c6c949ad5499850a062031578da7c6883f",
+    "backend/src/main/java/com/aimanager/catalog/ApplicationCatalog.java": "6b75d75ebda12489292b0834eb1ae96733dbbc5ab5e3d2bf2d1cac6dd698ca3a",
+    "backend/src/main/java/com/aimanager/catalog/internal/CatalogService.java": "1cf95a824a22ba86032df06d81d86d52d854d95688acc71251c81dabc0f80cd6",
+    "backend/src/test/java/com/aimanager/catalog/internal/ApplicationIdentityEvidenceTest.java": "f190a9dad4f95e697c3e53139bb6b5cf5f3b2f47caf0736acd6ff5f01876b7d9",
+    "backend/src/main/resources/db/migration/V1__initial_schema.sql": "1781197b67a4833e7ddc44df61b881e4603c8d385e126ae5b15871919f38772a",
+    "backend/src/main/resources/retention/subject-data-stores.json": "62910f29b52060c86a1205109500b064a3e664517e676b1c14df98943127740d"
+  },
+  "exactCountsAndXmlIndependentlyRechecked": true,
+  "attempts": {
+    "redR2": {
+      "result": {
+        "status": "EXPECTED_ASSERTION_FAILURE",
+        "phase": "red",
+        "baseCommit": "cc79eb5701118107e6bcee358567e0cb892087d6",
+        "scope": "Isolated H2/MySQL mode and MVC; no provider or deployed database",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=ApplicationIdentityEvidenceTest",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "ownedPid": 49320,
+        "mavenExitCode": 1,
+        "suites": {
+          "com.aimanager.catalog.internal.ApplicationIdentityEvidenceTest": {
+            "counts": {
+              "tests": 1,
+              "failures": 1,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "d3e14ab254e3e6d687ba4b0133ac9c9147be0bcdb65a582c3e5f227b110fe64f"
+          }
+        },
+        "totals": {
+          "tests": 1,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0
+        },
+        "seconds": 42.1,
+        "sourceUnchanged": true,
+        "runnerSha256": "8580cc46abc30534b20fd400e04a6e283a47fde8d2a2aa19802a3ba5637f8141"
+      },
+      "sourceManifestSha256": "1fd2089a6eb70d2a85c20e74d7a2601b1732adb6fe1fd1a6c0a02c4a0209f87d",
+      "resultSha256": "926b5d743d724a5618db722e013ec859de1ca96689e93bb838fd7b2c2f5f7b37",
+      "logSha256": "7eb1424bb294bfde348e07a6fd3da845a1f6e28f1c5cbdef3aa3dcf82ba726d6",
+      "sourcePins": 439
+    },
+    "greenR1": {
+      "result": {
+        "status": "VERIFICATION_FAILED",
+        "phase": "green",
+        "baseCommit": "cc79eb5701118107e6bcee358567e0cb892087d6",
+        "scope": "Isolated H2/MySQL mode and MVC; no provider or deployed database",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=ApplicationIdentityEvidenceTest,ApplicationCatalogRecoveryTest,ErasureManagedBindingProcessorTest,ModuleBoundariesTest",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "ownedPid": 38568,
+        "mavenExitCode": 1,
+        "suites": {
+          "com.aimanager.ApplicationCatalogRecoveryTest": {
+            "counts": {
+              "tests": 3,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "8baf9d9cb66bf0b017afa1bb9ac954ff8d222fc0d10fb6c79166699cebc8e92c"
+          },
+          "com.aimanager.catalog.internal.ApplicationIdentityEvidenceTest": {
+            "counts": {
+              "tests": 26,
+              "failures": 1,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "ddcc216d56a677b796f6d1849bb23726d7b1a19503ee42a6c71caf87eb063013"
+          },
+          "com.aimanager.ModuleBoundariesTest": {
+            "counts": {
+              "tests": 1,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "8c4374c80b9e5f6e66ade7df14db1b6ea7178892db467245a90ee5961fb9c10a"
+          },
+          "com.aimanager.retention.internal.ErasureManagedBindingProcessorTest": {
+            "counts": {
+              "tests": 24,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "6e2dedf89e0d572495ecd1b408fb6439dbbee82f0d26d0e6e01e0bb0f8e0d8d9"
+          }
+        },
+        "totals": {
+          "tests": 54,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0
+        },
+        "reason": "AssertionError: ",
+        "seconds": 70.7,
+        "sourceUnchanged": true,
+        "runnerSha256": "cafc059ceefdb4d12a1f430aa64eff5b5a8d8c6fca14a5ac0017eb35ff6a8a6f"
+      },
+      "sourceManifestSha256": "529188218c3c8e6ad49381e10b055ce8e26d5b9a87de281b9210f2029944203a",
+      "resultSha256": "bfa0cb2401e2f8f1b254e2374e6c8c5d6df40679a8b288a9680ec91ee8f87892",
+      "logSha256": "976706c952d5364cc4797db39877cd5763b0d0a49af522dd810aa865a2d3efa5",
+      "sourcePins": 440
+    },
+    "greenR2": {
+      "result": {
+        "status": "PASSED",
+        "phase": "green",
+        "baseCommit": "cc79eb5701118107e6bcee358567e0cb892087d6",
+        "scope": "Isolated H2/MySQL mode and MVC; no provider or deployed database",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=ApplicationIdentityEvidenceTest,ApplicationCatalogRecoveryTest,ErasureManagedBindingProcessorTest,ModuleBoundariesTest",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "ownedPid": 49240,
+        "mavenExitCode": 0,
+        "suites": {
+          "com.aimanager.ApplicationCatalogRecoveryTest": {
+            "counts": {
+              "tests": 3,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "47cb6fa55618e1539fc7b35caf68170ed119bc20ca1b33b54339e3d14c0dc2ed"
+          },
+          "com.aimanager.catalog.internal.ApplicationIdentityEvidenceTest": {
+            "counts": {
+              "tests": 26,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "d1b7ed66f726d7b8eb0111d665fc0e1e0b0ed11fe965d2808f21e78739dd8a21"
+          },
+          "com.aimanager.ModuleBoundariesTest": {
+            "counts": {
+              "tests": 1,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "27dcf4edb17baae36773dc16325aa5881590db6da700b4e5940018544cc7e069"
+          },
+          "com.aimanager.retention.internal.ErasureManagedBindingProcessorTest": {
+            "counts": {
+              "tests": 24,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "cd1fc5448d95ad5b29667c1197398048d00be72a0920ca68a279ce266e4dec25"
+          }
+        },
+        "totals": {
+          "tests": 54,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "seconds": 81.4,
+        "sourceUnchanged": true,
+        "runnerSha256": "1d09708cecfc91480d4152e1794caa48470de965a6ebf5277a40ecb23d668b38"
+      },
+      "sourceManifestSha256": "ff539ec4edcca57229ad5246d55361454c6afee57311cb8be083a3d4d740598e",
+      "resultSha256": "72976def59a2dfedb75ea8f55cf276fa8b35b37272076e79638d54b8810f7099",
+      "logSha256": "3cd86e5dd65292ea94dd8a8c09af7bfb0abe90d52e77f47ec18c226a53cdbe43",
+      "sourcePins": 440
+    }
+  },
+  "excluded": [
+    "Other uncommitted shared-workspace changes",
+    "MySQL/OceanBase runtime",
+    "Provider access",
+    "Android runtime and devices",
+    "Deployment",
+    "Full backend test suite"
+  ],
+  "limitations": [
+    "No device installation or profile claim",
+    "No durable per-device application evidence or policy execution integration",
+    "Nullable historical timestamps fail closed; no existing database was altered"
+  ],
+  "priorAttempts": [
+    "Red preparation r1 stopped before execution because a new destination package directory was absent; retained, helper corrected.",
+    "Green r1: unknown request fields correctly rejected with 400; one test incorrectly expected 201. Test corrected; production files unchanged for r2."
+  ],
+  "resourceStaging": "Only created_at for application_definitions and its retention catalog entry; other resource bytes preserved"
+}
