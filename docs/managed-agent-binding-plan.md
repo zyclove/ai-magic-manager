@@ -19,7 +19,9 @@
 
 阶段 1 不能被计为整个绑定流程或系统执行已经完成。验签器无数据库重放账本；消费一次、注册有效性、租户权限及关联关系必须由阶段 2 的事务完成。
 
-阶段 2 的接口、状态、配置、事务与验证进度见 [受管儿童端绑定工作流](managed-agent-binding-workflow.md)。阶段 3 已交付 [管理界面](managed-agent-binding-experience.md)、[设备挑战领取与原密钥签名](managed-agent-device-proof.md) 及 [AndroidX 自动反馈与生产会话调度](managed-agent-feedback-runtime.md)；正式开关默认关闭，完整 Android 构建、真实 EMM 与真机端到端验证仍需完成。
+阶段 2 的接口、状态、配置、事务与验证进度见 [受管儿童端绑定工作流](managed-agent-binding-workflow.md)。阶段 3 已交付 [管理界面](managed-agent-binding-experience.md)、[设备挑战领取与原密钥签名](managed-agent-device-proof.md) 及 [AndroidX 自动反馈与生产会话调度](managed-agent-feedback-runtime.md)。2026-10-16 已完成 [完整 Android Debug APK 构建与产物检查](managed-agent-feedback-apk-acceptance.md)，不再将该构建项列为未完成。
+
+正式开关仍默认关闭。本地 Android 原生验证场景已准备，尚无实际运行结果；真实 EMM 闭环、真机和电视兼容、正式签名与发行验收仍需完成。APK 中存在相关类和清单不能替代这些运行证据。阶段 4 的系统执行接入也尚未完成，不能因绑定或打包成功而开放全部系统管控。
 
 ## 证明 v1 约束
 
