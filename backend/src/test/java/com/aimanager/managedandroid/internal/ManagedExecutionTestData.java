@@ -2,6 +2,7 @@ package com.aimanager.managedandroid.internal;
 
 import com.aimanager.identity.ActorKeys;
 import java.util.UUID;
+import javax.sql.DataSource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -10,19 +11,36 @@ import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
 /** Shared SQL fixture only: simulated binding authority does not certify a real managed device. */
 public final class ManagedExecutionTestData implements AutoCloseable {
-  public final DriverManagerDataSource source =
-      new DriverManagerDataSource(
-          "jdbc:h2:mem:execution-"
-              + id()
-              + ";MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE;LOCK_TIMEOUT=10000",
-          "sa",
-          "");
-  public final JdbcTemplate db = new JdbcTemplate(source);
-  public final DataSourceTransactionManager transactions = new DataSourceTransactionManager(source);
+  public final DataSource source;
+  public final JdbcTemplate db;
+  public final DataSourceTransactionManager transactions;
+  private final boolean ownsDatabase;
 
   public ManagedExecutionTestData() {
-    new ResourceDatabasePopulator(new ClassPathResource("db/migration/V1__initial_schema.sql"))
-        .execute(source);
+    this(
+        new DriverManagerDataSource(
+            "jdbc:h2:mem:execution-"
+                + id()
+                + ";MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE;LOCK_TIMEOUT=10000",
+            "sa",
+            ""),
+        true);
+  }
+
+  /** Use an already initialized MVC test database; never shut down its shared connection pool. */
+  public ManagedExecutionTestData(DataSource source) {
+    this(source, false);
+  }
+
+  private ManagedExecutionTestData(DataSource source, boolean ownsDatabase) {
+    this.source = source;
+    this.ownsDatabase = ownsDatabase;
+    this.db = new JdbcTemplate(source);
+    this.transactions = new DataSourceTransactionManager(source);
+    if (ownsDatabase) {
+      new ResourceDatabasePopulator(new ClassPathResource("db/migration/V1__initial_schema.sql"))
+          .execute(source);
+    }
   }
 
   public static String id() {
@@ -182,6 +200,6 @@ public final class ManagedExecutionTestData implements AutoCloseable {
 
   @Override
   public void close() {
-    db.execute("SHUTDOWN");
+    if (ownsDatabase) db.execute("SHUTDOWN");
   }
 }

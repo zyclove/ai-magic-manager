@@ -6,6 +6,7 @@ import com.aimanager.audit.AuditService;
 import com.aimanager.managedandroid.ManagedAndroidGateway;
 import com.aimanager.managedandroid.ManagedExecutionPublicationAccess;
 import com.aimanager.shared.DomainException;
+import com.aimanager.shared.ResourceVersions;
 import com.aimanager.shared.SecretMaterial;
 import com.aimanager.tenant.TenantAccess;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -545,12 +546,15 @@ class ManagedPolicyExecutionJournal {
   /**
    * A caller-facing service must also require recent authentication before invoking cancellation.
    */
-  View cancel(String tenant, String actor, String id) {
+  View cancel(String tenant, String actor, String id, long expectedRevision) {
     canonicalId(id);
     return tx.execute(
         status -> {
           access.requireWriteRole(tenant, actor, OWNER, ORG_ADMIN);
           var current = required(tenant, id, true);
+          // Check under the same row lock, including already-cancelled tasks. Stale retries are not
+          // new consent.
+          ResourceVersions.check(expectedRevision, current.revision());
           if (current.cancelled() || current.state() == State.CANCELLED) return view(current);
           if (current.state() == State.APPLIED)
             throw conflict("EXECUTION_ALREADY_APPLIED_USE_NEW_POLICY");

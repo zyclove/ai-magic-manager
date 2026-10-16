@@ -1,0 +1,91 @@
+{
+  "scope": "Frozen committed backend plus six owned implementation/test files. H2 and real MVC/security/SQL; provider admission is a test fixture.",
+  "baseCommit": "06b87483ba03047bbdb69655945f04a986d2fc49",
+  "history": [
+    {
+      "run": "execution-console-red-20261016-r2",
+      "sourceManifestSha256": "6dfef63ad967d2e8ff302ff1acf980a65202b0c54cfefede34623c7afa22348a",
+      "compileResultSha256": "1b5db00e4fc82d461634fa4ffe8c7ce1f6978b3bca7e51f6d6257235d45d9794",
+      "resultSha256": "6a25b2b3d7c7226a6b79c72ea84c9afe1c8baec07e1c9117f84638f35702d058",
+      "sourceFiles": 476,
+      "compiledFiles": 1085,
+      "compileExit": 0,
+      "testExit": 1,
+      "runnerStatus": "VERIFICATION_FAILED",
+      "counts": {
+        "tests": 42,
+        "failures": 40,
+        "errors": 1,
+        "skipped": 0
+      },
+      "suites": 1,
+      "compileSeconds": 32.8,
+      "testSeconds": 49.9,
+      "treeTerminal": true,
+      "sourceUnchanged": true,
+      "compiledUnchanged": true
+    },
+    {
+      "run": "execution-console-red-20261016-r3",
+      "sourceManifestSha256": "447607d9863ca14039464f5103f337688b407b0e38a552fef36d5f95caa0c8b8",
+      "compileResultSha256": "91125243fde0f059b38088ff3449a67321ab8612c1d35555079bf94ef8fd1999",
+      "resultSha256": "0f90cafaa2e1c59b59c34233d0c99b58cc8b1d5f99a7f4d3715766d38a68c296",
+      "sourceFiles": 476,
+      "compiledFiles": 1085,
+      "compileExit": 0,
+      "testExit": 1,
+      "runnerStatus": "PASSED",
+      "counts": {
+        "tests": 42,
+        "failures": 41,
+        "errors": 0,
+        "skipped": 0
+      },
+      "suites": 1,
+      "compileSeconds": 26.8,
+      "testSeconds": 47.4,
+      "treeTerminal": true,
+      "sourceUnchanged": true,
+      "compiledUnchanged": true
+    },
+    {
+      "run": "execution-console-green-20261016-r1",
+      "sourceManifestSha256": "3268fe20ea97fdd253070c72b672161bdb5f8cd86b419cc2f0748228699bb32a",
+      "compileResultSha256": "32adbf1b4ff193ab9e0743bec28d2339eed4d0f7d0dd7cc78b8ae73eea1f74a8",
+      "resultSha256": "13e8b40500ff313fedc46ea3cd767a2bc772cc3852acdd4e24c7ae898ef9fb6d",
+      "sourceFiles": 478,
+      "compiledFiles": 1088,
+      "compileExit": 0,
+      "testExit": 0,
+      "runnerStatus": "PASSED",
+      "counts": {
+        "tests": 585,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "suites": 20,
+      "compileSeconds": 27.3,
+      "testSeconds": 74.3,
+      "treeTerminal": true,
+      "sourceUnchanged": true,
+      "compiledUnchanged": true
+    }
+  ],
+  "initialFailure": "RED r2 additionally contained one invalid integer write to a timestamp fixture column; corrected to CURRENT_TIMESTAMP. r3 verifies expected missing-route failures without fixture errors.",
+  "redToGreenTestChange": "GREEN also asserts creation time dominates UUID ordering; Vary checks require Authorization while allowing the existing CORS variance. Test count remains 42.",
+  "ownedSha256": {
+    "backend/src/test/java/com/aimanager/managedandroid/internal/ManagedExecutionTestData.java": "b3c2ac70be65afe851a0c83a5344457f73fe53f4d50e456049e0135933358468",
+    "backend/src/test/java/com/aimanager/managedandroid/internal/ManagedExecutionConsoleJourneyTest.java": "779c9d6455dcd46d6816729c3cbe3c57e761d01dd6da61f5981f9392964fcfc6",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/ManagedPolicyExecutionJournal.java": "a004f94a97fc23ad4fc036e40887bc0f140b694f91c3cd2e86d8512c5b53900f",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/ManagedExecutionQueries.java": "9e0a056fac9983b818767ff5e680dd270987c5c19568b5eb2b27fa0a6db4344e",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/ManagedExecutionController.java": "b15c869fddd33ddf63dc214f3509d19075628d3870eb36cedfb19e7ec6373b0b",
+    "backend/src/test/java/com/aimanager/managedandroid/internal/ManagedPolicyExecutionJournalTest.java": "f7c55f1ce42c4ef8443ae36f5ca4ed14ccae99ce0f7d9f6da3245264df3eb3c8"
+  },
+  "limitations": [
+    "Focused 20-suite regression, not full product acceptance.",
+    "No live EMM writes, Android/TV checks, frontend integration or deployment.",
+    "MySQL/OceanBase query plans and proposed fresh-initialization indexes remain unverified."
+  ],
+  "verified": true
+}

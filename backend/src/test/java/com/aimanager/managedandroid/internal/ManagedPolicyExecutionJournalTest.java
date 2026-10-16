@@ -298,7 +298,7 @@ class ManagedPolicyExecutionJournalTest {
       var task =
           journal.enqueue(
               f.tenant(), f.actor(), source.publication(), f.binding(), 2, DOCUMENT, deadline);
-      journal.cancel(f.tenant(), f.actor(), task.id());
+      journal.cancel(f.tenant(), f.actor(), task.id(), view(task).revision());
     }
     var source = data.publication(f, "ENFORCE");
     assertThatThrownBy(
@@ -393,7 +393,7 @@ class ManagedPolicyExecutionJournalTest {
       expire(assignment);
       read = claim();
     }
-    journal.cancel(f.tenant(), f.actor(), task.id());
+    journal.cancel(f.tenant(), f.actor(), task.id(), view(task).revision());
     assertThat(
             journal.assignmentAccepted(
                 assignment,
@@ -607,7 +607,7 @@ class ManagedPolicyExecutionJournalTest {
   void completeObservationCannotOverrideCancellation() {
     var task = enqueue();
     var read = uncertainPolicyRead();
-    journal.cancel(f.tenant(), f.actor(), task.id());
+    journal.cancel(f.tenant(), f.actor(), task.id(), view(task).revision());
     var cancelled = view(task);
     long events = count("managed_policy_execution_events");
     assertThat(
@@ -865,7 +865,8 @@ class ManagedPolicyExecutionJournalTest {
                 String.class,
                 task.id()))
         .isNull();
-    assertThatThrownBy(() -> journal.cancel(f.tenant(), f.actor(), task.id()))
+    assertThatThrownBy(
+            () -> journal.cancel(f.tenant(), f.actor(), task.id(), view(task).revision()))
         .isInstanceOf(DomainException.class)
         .hasMessageContaining("EXECUTION_ALREADY_APPLIED_USE_NEW_POLICY");
   }
@@ -950,10 +951,11 @@ class ManagedPolicyExecutionJournalTest {
   void cancellationBeforeWritePreventsDispatchAndReleasesSlot() {
     var task = enqueue();
     var claim = claim();
-    var cancelled = journal.cancel(f.tenant(), f.actor(), task.id());
+    var cancelled = journal.cancel(f.tenant(), f.actor(), task.id(), view(task).revision());
     assertThat(cancelled.state()).isEqualTo(ManagedPolicyExecutionJournal.State.CANCELLED);
     assertThat(journal.beforeWrite(claim)).isFalse();
-    assertThat(journal.cancel(f.tenant(), f.actor(), task.id())).isEqualTo(cancelled);
+    assertThat(journal.cancel(f.tenant(), f.actor(), task.id(), view(task).revision()))
+        .isEqualTo(cancelled);
     var other = data.publication(f, "ENFORCE");
     assertThat(
             journal
@@ -968,7 +970,7 @@ class ManagedPolicyExecutionJournalTest {
     var task = enqueue();
     var write = claim();
     journal.beforeWrite(write);
-    assertThat(journal.cancel(f.tenant(), f.actor(), task.id()).state())
+    assertThat(journal.cancel(f.tenant(), f.actor(), task.id(), view(task).revision()).state())
         .isEqualTo(ManagedPolicyExecutionJournal.State.NEEDS_REVIEW);
     assertThat(journal.policyWritten(write, receipt(write))).isFalse();
     assertThat(
@@ -1046,12 +1048,13 @@ class ManagedPolicyExecutionJournalTest {
     var foreign = data.fixture();
     assertThatThrownBy(() -> journal.get(foreign.tenant(), foreign.actor(), task.id()))
         .isInstanceOf(DomainException.class);
-    assertThatThrownBy(() -> journal.cancel(f.tenant(), foreign.actor(), task.id()))
+    assertThatThrownBy(
+            () -> journal.cancel(f.tenant(), foreign.actor(), task.id(), task.revision()))
         .isInstanceOf(DomainException.class);
     db.update("UPDATE tenant_members SET role='CHILD' WHERE tenant_id=?", f.tenant());
     assertThatThrownBy(() -> journal.get(f.tenant(), f.actor(), task.id()))
         .isInstanceOf(DomainException.class);
-    assertThatThrownBy(() -> journal.cancel(f.tenant(), f.actor(), task.id()))
+    assertThatThrownBy(() -> journal.cancel(f.tenant(), f.actor(), task.id(), task.revision()))
         .isInstanceOf(DomainException.class);
   }
 
