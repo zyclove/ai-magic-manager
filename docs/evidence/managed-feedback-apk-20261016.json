@@ -1,0 +1,33 @@
+{
+  "status": "VERIFIED_DEBUG_ARTIFACT",
+  "sourceRevision": "94f23cbe279b451c99688a1f744ed8405cfca451",
+  "apkSha256": "1f3e5bd02469191c8ca393dd57f2d2bdd11e37cfc3a7732cfbe12e9b931a2361",
+  "apkBytes": 164256153,
+  "minSdk": 24,
+  "targetSdk": 34,
+  "abis": [
+    "arm64-v8a",
+    "x86",
+    "x86_64"
+  ],
+  "classes": [
+    "androidx.enterprise.feedback.KeyedAppState",
+    "androidx.enterprise.feedback.KeyedAppStatesReporter",
+    "com.aimanager.child.ManagedBindingClaims",
+    "com.aimanager.child.ManagedFeedbackHost",
+    "com.aimanager.child.ManagedFeedbackProof"
+  ],
+  "checks": {
+    "signatureV2Verified": true,
+    "debugCertificate": true,
+    "applicationIdMatches": true,
+    "feedbackQueryMerged": true,
+    "tvLauncherDeclared": true,
+    "backupDisabled": true,
+    "hostConstructedInEngineSetup": true,
+    "hostClosedInEngineCleanup": true,
+    "sourceUnchanged": true,
+    "resourceOverrideRestored": true
+  },
+  "boundary": "Debug artifact only; no installation, runtime AndroidX delivery, physical TV, release signing or EMM verification"
+}

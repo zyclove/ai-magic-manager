@@ -80,11 +80,11 @@ sequenceDiagram
 
 复现：在独立副本的 `packages/device_identity` 执行 `dart test`、`dart analyze`；在 `apps/child` 执行 `flutter test --no-pub`、`dart analyze`。原生测试类为 `ManagedBindingClaimsTest` 与 `ManagedFeedbackProofTest`。本机独立编译检查和日志位于忽略的 `.local` 下。
 
-这些检查覆盖真实业务会话与 SDK 边界，平台回调和 HTTP 使用本地替身；未完成 APK 构建、真实 Android 服务投递、实际 EMM、真机或生产端到端验收。原生成功回调的业务含义依据官方契约，不能把替身结果当作设备管理效果。现有运行服务未升级，默认开关未开启。
+这些早期检查覆盖真实业务会话与 SDK 边界，平台回调和 HTTP 使用本地替身。当时未完成 APK 构建；2026-10-16 后续已补齐完整 Debug APK 构建、签名及产物集成检查，见 [APK 集成验收](managed-agent-feedback-apk-acceptance.md)。真实 Android 服务投递、实际 EMM、真机或生产端到端验收仍未完成。原生成功回调的业务含义依据官方契约，不能把替身结果当作设备管理效果。现有运行服务未升级，默认开关未开启。
 
 ## 后续验收
 
-1. 完整 Android 构建与设备端运行，验证 manifest 合并、SDK 依赖和引擎重建。
+1. 完整 Debug APK 构建、manifest 合并和 SDK 类打包已验证；仍需设备端运行及引擎重建，正式签名 release 构建另行验收。
 2. 合规提供方环境下验证真实反馈延迟、无接收者、配额、断网及进程重启。
 3. 设备注册签名 → AndroidX → 提供方读取 → 管理员绑定的端到端验收。
 4. 可信绑定之后再接入逐项系统策略、应用回执、失效恢复；当前仍不开放 ENFORCE，也不承诺普通应用无法保证的后台防强退。
