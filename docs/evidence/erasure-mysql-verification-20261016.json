@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-16",
+  "status": "SCOPED_MYSQL_VERIFICATION_PASSED",
+  "scope": "Seven existing MySQL-conditional erasure tests; original source, assertions and isolated URL guards preserved",
+  "sourceCommit": "55035fbcde3f758841ae215b3989c9f81ccb5f90",
+  "sourceManifestSha256": "75a16c1d457dfb79ea69d573d8ac0476260f20c9e7f87f272f9aaf19677436e0",
+  "backendSourceFiles": 417,
+  "sourceCopiesChecked": 3,
+  "sourceUnchanged": true,
+  "counts": {"tests": 7, "passed": 7, "failures": 0, "errors": 0, "skipped": 0},
+  "environment": {
+    "mysqlVersion": "8.4.11",
+    "mysqlImageId": "sha256:8d132912e9d3c985237567595ec2aeae04936044eb1f9336e8e4da2326238b84",
+    "mysqlOfficialDigest": "mysql@sha256:6ea90827b1100f8f2ae306a539f86d2c264a26ed435a2a9f75551dd5c3aeb242",
+    "connectorJVersion": "9.7.0",
+    "connectorJSha256": "0353648eaa1c91e0f4020c959abf756bc866ffd583df22ae6b6f6e0cbd43eb44",
+    "javaVersion": 17,
+    "sslMode": "VERIFY_CA",
+    "sslCipher": "TLS_AES_256_GCM_SHA384",
+    "freshSchemas": 4,
+    "schemaScopedOwners": 2,
+    "ownersLockedAfterTests": 2,
+    "schemasRetained": true,
+    "databaseDrops": 0,
+    "existingBusinessSchemasUsed": false
+  },
+  "suites": [
+    {
+      "class": "com.aimanager.retention.internal.ErasureAdmissionStoreTest",
+      "round": "a",
+      "methods": ["leastPrivilegeRuntimeCanDrainWorkButCannotRewriteAcceptedRecords"],
+      "xmlBytes": 50511,
+      "xmlSha256": "39abb87fa8440946e2939e79b4feeaf5c796301a1832e23605a02c89af79fe8e"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+      "round": "a",
+      "methods": ["nonTransactionalEngineIsRejectedBeforeAppending", "initializationPinsTransactionalEngineEvenWhenServerDefaultDiffers"],
+      "xmlBytes": 50656,
+      "xmlSha256": "12f727ed35ef4c28fcbdfec3b845c5d9b049a454cdbf38702be4159138a8e0fb"
+    },
+    {
+      "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+      "round": "b",
+      "methods": ["acceptedLedgerStopsAuthorizedBusinessRequestsWithoutDeletingTheirData", "mismatchedIdentityAndMissingLedgerAreReportedWithoutAutomaticRecreation", "realHttpRequestDrainsBeforeAcceptanceAndProbesRemainAvailable", "servletAsyncCannotEscapeTheRegisteredSynchronousPermit"],
+      "xmlBytes": 86072,
+      "xmlSha256": "4f93e6e53cafbea1121dd26ebad589668e4f3bccacd1421f0c29079af565acd6"
+    }
+  ],
+  "execution": {
+    "rootToolSession": 32666,
+    "rootExitCode": 0,
+    "nativeExitCodes": {"provision": 0, "maven-a": 0, "maven-b": 0, "verify": 0, "lock": 0},
+    "timeouts": 0,
+    "runnerSha256": "9f58a125beb312d39a8d3c4e6162557ed585b56c0d70682c444e021d42d30458",
+    "helperSha256": "9ba85b57e014e5392a31cf8cafeeba3cba6354c8674cb930f3c311f19d3fd4de",
+    "mavenChildSha256": "ec8e61de172f1fbd04e63de045049b12ac1ab719c3b688bf38b57ab54f4853ea",
+    "privateEvidenceDirectory": ".local/runtime/erasure-store-mysql-verification-20261016-r1",
+    "preparedSha256": "eb0577ebb56fc7e3f5cad4178b57bdf62cf6a21767707d83fbb3eb00125182ff",
+    "intentSha256": "724e694ec3079a558d8d785ac07dcf88befc7e1b6bc0d29d9d7ed395501ad196",
+    "provisionSha256": "d20ad12cfde165cb0095ed5f8e17c7d5dfb15b09f2979623a1348476113307d7",
+    "verifySha256": "bdaa349197f86e53befcf3c3ee15e8dee9541f6a53a1b75d3739fa99421ba6a7",
+    "lockSha256": "9cd42489ef645b9fb48dac1aa70a0c145db38579cce43dbaa60879f01abc09e6",
+    "terminalSha256": "6cfbc1af99e051bda70eb1e92f883b27abd30b753367315545ebfd11a0bcd990"
+  },
+  "independentAcceptance": {
+    "criticalFindings": 0,
+    "importantFindings": 0,
+    "privateReport": ".local/runtime/erasure-seven-mysql-independent-acceptance-20261016-r1.json",
+    "reportSha256": "e6e6a2666cf94a61efabd273c187a42ed94a92ac6edea6677d60b0db93c08a50",
+    "scope": "Actual source, XML, native records, receipt permissions, ownership, locked accounts and pinned evidence files; no independent Docker or SQL query"
+  },
+  "runtimeCheck": {
+    "evidenceLevel": "ROOT_OBSERVED_TOOL_RESULT",
+    "toolSession": 17637,
+    "exitCode": 0,
+    "url": "http://localhost:18101/",
+    "frontend": "PASS",
+    "callbackFallback": "PASS",
+    "discovery": "PASS",
+    "anonymousApi": "PASS",
+    "backendHealth": "PASS",
+    "authenticatedJourney": "NOT_RUN",
+    "nativeDeviceExecution": "NOT_RUN",
+    "serviceReplacement": false
+  },
+  "limitations": [
+    "This is a scoped seven-case run, not a new full backend regression; the original full-run counts and skips remain unchanged.",
+    "Earlier failed preparation and result-parser attempts were retained and excluded; their repeated three-case results are not added to this seven-case count.",
+    "Runtime tests use synthetic JWT fixtures, not real identity-provider MFA or device execution.",
+    "The two separate Android conditional tests remain outside this scope."
+  ]
+}
