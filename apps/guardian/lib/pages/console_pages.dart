@@ -27,6 +27,7 @@ import '../ui/workspace_welcome.dart';
 import '../ui/member_editor.dart';
 import '../ui/access_request_dialog.dart';
 import '../ui/policy_target_picker.dart';
+import '../ui/policy_preview_results.dart';
 import 'members_page.dart';
 import 'classes_page.dart';
 import 'device_groups_page.dart';
@@ -1049,30 +1050,25 @@ class ConsoleActions {
     }
     final p = validatedPreview!;
     final publicationKey = requestId();
-    await actionDetails(
-        ctx,
-        '发布前预览',
-        {
-          '有效期': dateLabel(p['expiresAt']),
-          '执行支持': p['enforceable'] == true ? '支持执行' : '设备能力不足或执行适配器未配置',
-          '选择来源': picked.groupId == null
-              ? '手动选择 ${picked.deviceIds.length} 台设备'
-              : '设备组“${picked.groupName}”第 ${picked.groupVersion} 版的 ${picked.deviceIds.length} 台有效设备快照',
-          '目标与检查': (p['targets'] as List).map((t) {
-            final name = picked.names[t['deviceId']] ?? shortId(t['deviceId']);
-            final rules = (t['rules'] as List)
-                .map((r) =>
-                    '${label(r['kind'])}：${label(r['status'])} · ${label(r['reasonCode'])}')
-                .join('\n');
-            return '$name · ${label(t['observationStatus'])}\n$rules';
-          }).join('\n\n'),
-          '发布说明': '本次目标为明确设备快照；组成员日后变化不会自动影响此版本。仅保存配置不会使系统策略生效，发布需近期多因素认证。'
-        },
+    void ensurePreviewFresh() {
+      if ((p['expiresAt'] as int) <= DateTime.now().millisecondsSinceEpoch) {
+        throw const ApiFailure(409, 'PREVIEW_EXPIRED');
+      }
+    }
+
+    await actionDetails(ctx, '发布前预览', const {},
+        extraContent: PolicyPreviewResults(
+            preview: p,
+            names: picked.names,
+            selectionSummary: picked.groupId == null
+                ? '手动选择 ${picked.deviceIds.length} 台设备'
+                : '设备组“${picked.groupName}”第 ${picked.groupVersion} 版 · ${picked.deviceIds.length} 台设备'),
         reauth: reauth,
         accessChanges: s,
         hasAccess: current,
         actions: [
           DetailAction('仅保存配置', (inner) async {
+            ensurePreviewFresh();
             if (!await confirmAction(
                 inner, '发布配置', '确认保存本次预览中的配置版本？当前不会执行设备系统管控。',
                 confirm: '发布配置')) {
@@ -1083,6 +1079,7 @@ class ConsoleActions {
               throw const ApiFailure(409, 'POLICY_GROUP_CHANGED');
             }
             if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+            ensurePreviewFresh();
             final result = await s.api.send(
                 'POST', '$root/policies/${draft['id']}/publications',
                 version: draft['revision'],

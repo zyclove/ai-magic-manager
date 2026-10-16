@@ -507,7 +507,8 @@ Future<void> actionDetails(
         {List<DetailAction> actions = const [],
         VoidCallback? reauth,
         Listenable? accessChanges,
-        bool Function()? hasAccess}) =>
+        bool Function()? hasAccess,
+        Widget? extraContent}) =>
     showDialog<void>(
         context: context,
         barrierDismissible: false,
@@ -521,7 +522,7 @@ Future<void> actionDetails(
                           onPressed: () => Navigator.pop(dialogContext),
                           child: const Text('关闭'))
                     ])
-              : _ActionDetails(title, values, actions, reauth);
+              : _ActionDetails(title, values, actions, reauth, extraContent);
           return accessChanges == null
               ? content()
               : AnimatedBuilder(
@@ -533,7 +534,9 @@ class _ActionDetails extends StatefulWidget {
   final Map<String, dynamic> values;
   final List<DetailAction> actions;
   final VoidCallback? reauth;
-  const _ActionDetails(this.title, this.values, this.actions, this.reauth);
+  final Widget? extraContent;
+  const _ActionDetails(
+      this.title, this.values, this.actions, this.reauth, this.extraContent);
   @override
   State<_ActionDetails> createState() => _ActionDetailsState();
 }
@@ -585,6 +588,7 @@ class _ActionDetailsState extends State<_ActionDetails> {
                                       style: const TextStyle(
                                           fontSize: 14, height: 1.6))
                                 ]))))),
+                    if (widget.extraContent != null) widget.extraContent!,
                     if (error != null)
                       FailureView(error!, reauth: widget.reauth)
                   ]))),

@@ -26,6 +26,7 @@ class ApiFailure implements Exception {
   final String? correlationId;
   const ApiFailure(this.status, this.code, [this.correlationId]);
   String get message => switch (code) {
+        'PREVIEW_EXPIRED' => '此预览已过期，请关闭窗口后重新预览。',
         'ERASURE_MAINTENANCE_REQUIRED' =>
           '系统正在暂停或恢复数据处理，暂时无法确认本次结果。请保留原操作内容，稍后重试。',
         'INVALID_REPORT_JOB_SELECTION' => '请选择 1–200 台设备、有效时区和不超过 32 天的时间范围。',

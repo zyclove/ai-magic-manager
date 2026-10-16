@@ -10,6 +10,7 @@ import 'package:guardian/pages/console_pages.dart';
 import 'package:guardian/ui/policy_target_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'fixtures/policy_preview_fixture_data.dart';
 import 'policy_target_picker_test.dart'
     show PickerSession, mount, settle, reply;
 
@@ -42,40 +43,8 @@ class PreviewSession extends PickerSession {
   Api get api => previewApi;
 }
 
-Json previewFor(http.Request request) {
-  final body = jsonDecode(request.body) as Json;
-  return {
-    'id': 'preview-a',
-    'policyId': 'policy-a',
-    'draftRevision': 7,
-    'phase': 'PREVIEW',
-    'hash': 'a' * 64,
-    'expiresAt': 1792137600000,
-    'enforceable': false,
-    'snapshot': {
-      if (body['groupId'] != null)
-        'groupSelection': {
-          'groupId': body['groupId'],
-          'groupVersion': body['groupVersion'],
-        },
-    },
-    'targets': [
-      for (final id in body['deviceIds'] as List)
-        {
-          'deviceId': id,
-          'registrationId': 'registration-$id',
-          'observationStatus': 'UNKNOWN',
-          'rules': [
-            {
-              'kind': 'APP_ACCESS',
-              'status': 'SUPPORTED_PENDING',
-              'reasonCode': 'APPLICATION_EVIDENCE_MISSING',
-            },
-          ],
-        },
-    ],
-  };
-}
+Json previewFor(http.Request request) =>
+    policyPreviewFixture(jsonDecode(request.body) as Json);
 
 Future<void> flush(WidgetTester tester) async {
   for (var i = 0; i < 8; i++) {

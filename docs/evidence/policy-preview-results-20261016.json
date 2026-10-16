@@ -1,0 +1,294 @@
+{
+  "schemaVersion": 1,
+  "releaseVersion": "1.0.0",
+  "stage": "policy-preview-usability",
+  "sourceBaseCommit": "d06cfb3b52cef0bf99f0dd7b4936ada2eeef82db",
+  "frontendBaselineAlsoMatches": "affee6c4c3779310ce321384a3f0a88764a08c98",
+  "backendEvidenceContractCommit": "9216123f0ccff093a95d2e0a3ea6c604e000aeb1",
+  "deployed": false,
+  "sourceScope": {
+    "productDartFiles": 8,
+    "allFrozenSourceFiles": 403,
+    "prototypeExcluded": "apps/guardian/tool/policy_preview_visual.dart",
+    "files": [
+      {
+        "path": "apps/guardian/lib/core/api.dart",
+        "bytes": 22077,
+        "sha256": "a0df55ea00d2f8957aa47dd10ad4c3c9094c1462249c5afd48df7928d1f423ba"
+      },
+      {
+        "path": "apps/guardian/lib/pages/console_pages.dart",
+        "bytes": 70709,
+        "sha256": "befe9a9153296ee47f911725282749cafeb0930641f617eeb57c5be4cce13554"
+      },
+      {
+        "path": "apps/guardian/lib/ui/design.dart",
+        "bytes": 24585,
+        "sha256": "52b4bb7f47860eaee42ae844d0c3b27849b284fbf39aaa3378464da650b591ad"
+      },
+      {
+        "path": "apps/guardian/lib/ui/policy_preview_results.dart",
+        "bytes": 18347,
+        "sha256": "98debc64a1f054455f968bf5529e6c471a0d30b4d0bba205d9a473f180070da5"
+      },
+      {
+        "path": "apps/guardian/test/fixtures/policy_preview_fixture_data.dart",
+        "bytes": 3590,
+        "sha256": "facff48a8b712462ec76fa6773f9fbb8676f49ab6688cc9aaa37328439900358"
+      },
+      {
+        "path": "apps/guardian/test/policy_preview_evidence_view_test.dart",
+        "bytes": 17053,
+        "sha256": "0da792104bdac1e7c464ef53f6cc11072a75b3ef4217dce98770670d14a2a814"
+      },
+      {
+        "path": "apps/guardian/test/policy_preview_flow_test.dart",
+        "bytes": 18708,
+        "sha256": "069a05702eba426bc60cf047df5257d9ef42881adedce90ae93de778e5c52b47"
+      },
+      {
+        "path": "apps/guardian/test/policy_preview_results_flow_test.dart",
+        "bytes": 10171,
+        "sha256": "f2e431844b4187c97a1dc0d135c46369a71e60d27b8d3ebfb919feba9068f984"
+      }
+    ]
+  },
+  "verification": [
+    {
+      "phase": "default",
+      "exitCode": 0,
+      "testsPassed": 598,
+      "startedUtc": "2026-10-16T08:45:43.9604889Z",
+      "completedUtc": "2026-10-16T08:47:47.6860670Z",
+      "sourceCount": 403,
+      "sourcesUnchanged": true,
+      "resultSha256": "19d1386ce09ec6b4d9c33fb5e76735a7cc38a82e7be25d0afea3cea0305d78b3",
+      "stdoutSha256": "46c4dd30386393bbee052813c61836a00dabf7cce255992b952a38104d752524",
+      "runnerSha256": "23c747d09246c77917ece70aea74e09b6a7453edfa8dae0b66f8dd37389503ea",
+      "sourceManifestSha256": "bda680ab5014a7bb88dd28c57efe7dc8a720946a1c99ce0f65123ebee9cca8fa",
+      "arguments": [
+        "test",
+        "--no-pub",
+        "--concurrency",
+        "1",
+        "--reporter",
+        "expanded"
+      ]
+    },
+    {
+      "phase": "green",
+      "exitCode": 0,
+      "testsPassed": 150,
+      "startedUtc": "2026-10-16T08:48:06.7880921Z",
+      "completedUtc": "2026-10-16T08:51:23.2351157Z",
+      "sourceCount": 403,
+      "sourcesUnchanged": true,
+      "resultSha256": "ae139ca777625871747288d9ab302e5c0a46df3fefbff7383f9cfdda0e630148",
+      "stdoutSha256": "a16b048b6e5dc008f8b56919074de6d2acd28d741dd38c7b320ca3faa7751898",
+      "runnerSha256": "23c747d09246c77917ece70aea74e09b6a7453edfa8dae0b66f8dd37389503ea",
+      "sourceManifestSha256": "bda680ab5014a7bb88dd28c57efe7dc8a720946a1c99ce0f65123ebee9cca8fa",
+      "arguments": [
+        "test",
+        "--no-pub",
+        "--concurrency",
+        "1",
+        "--platform",
+        "chrome",
+        "--web-renderer",
+        "html",
+        "--reporter",
+        "expanded",
+        "test/device_management_browser_test.dart",
+        "test/device_management_entry_test.dart",
+        "test/device_subflow_scope_test.dart",
+        "test/local_date_browser_test.dart",
+        "test/managed_agent_binding_page_test.dart",
+        "test/managed_android_review_recovery_test.dart",
+        "test/managed_enrollment_page_test.dart",
+        "test/policy_preview_evidence_view_test.dart",
+        "test/policy_preview_flow_test.dart",
+        "test/policy_preview_results_flow_test.dart",
+        "test/policy_target_dialog_test.dart",
+        "test/policy_target_picker_test.dart",
+        "test/policy_target_scope_test.dart",
+        "test/workspace_recovery_browser_test.dart"
+      ]
+    },
+    {
+      "phase": "analyze",
+      "exitCode": 0,
+      "testsPassed": null,
+      "startedUtc": "2026-10-16T08:51:33.9368930Z",
+      "completedUtc": "2026-10-16T08:51:44.0578217Z",
+      "sourceCount": 403,
+      "sourcesUnchanged": true,
+      "resultSha256": "522a123b19dc48e486cfe1bc0af3b177b58e534fa65b46f8ab80a13d03975777",
+      "stdoutSha256": "ec7f9ea7861ef0794f086df08fbe9d637ef4e2cf2086b172c3ba82beee57e640",
+      "runnerSha256": "23c747d09246c77917ece70aea74e09b6a7453edfa8dae0b66f8dd37389503ea",
+      "sourceManifestSha256": "bda680ab5014a7bb88dd28c57efe7dc8a720946a1c99ce0f65123ebee9cca8fa",
+      "arguments": [
+        "analyze",
+        "--no-pub"
+      ]
+    },
+    {
+      "phase": "demo",
+      "exitCode": 0,
+      "testsPassed": null,
+      "startedUtc": "2026-10-16T08:52:58.9570082Z",
+      "completedUtc": "2026-10-16T08:53:46.8324471Z",
+      "sourceCount": 403,
+      "sourcesUnchanged": true,
+      "resultSha256": "2628907bebfa2e022308f78e62fdff721eaac01c47e204e306d064b60b717cab",
+      "stdoutSha256": "cc02cdb5a4d3414b3e9c53ada177f6344900f73956fe288e932e03146a582fdc",
+      "runnerSha256": "23c747d09246c77917ece70aea74e09b6a7453edfa8dae0b66f8dd37389503ea",
+      "sourceManifestSha256": "bda680ab5014a7bb88dd28c57efe7dc8a720946a1c99ce0f65123ebee9cca8fa",
+      "arguments": [
+        "build",
+        "web",
+        "--no-pub",
+        "--web-renderer",
+        "html",
+        "--no-tree-shake-icons",
+        "--target",
+        "tool/policy_preview_visual.dart"
+      ]
+    },
+    {
+      "phase": "production",
+      "exitCode": 0,
+      "testsPassed": null,
+      "startedUtc": "2026-10-16T08:56:35.6755247Z",
+      "completedUtc": "2026-10-16T08:57:31.2139125Z",
+      "sourceCount": 403,
+      "sourcesUnchanged": true,
+      "resultSha256": "d01b198a29d3b65b4c8b0cd37225a5bc24ae0be267a59f0b6826e547c44f8293",
+      "stdoutSha256": "c7f1c6bd8c10e2406caba35c65e89a0310795c824ef7e1f32fddcd41ecebb060",
+      "runnerSha256": "a1f592bdec0f110525c825dbaec5ac4775d54c20012d87655549815c43981cd3",
+      "sourceManifestSha256": "bda680ab5014a7bb88dd28c57efe7dc8a720946a1c99ce0f65123ebee9cca8fa",
+      "arguments": [
+        "build",
+        "web",
+        "--release",
+        "--no-pub",
+        "--web-renderer",
+        "html",
+        "--pwa-strategy=none",
+        "--no-web-resources-cdn",
+        "--target",
+        "lib/main.dart",
+        "--output",
+        "build/production-web",
+        "--dart-define=API_URL=http://localhost:18101/api/v1",
+        "--dart-define=OIDC_ISSUER=http://localhost:18101/identity/realms/ai-manager",
+        "--dart-define=ALLOW_LOCAL_HTTP=true"
+      ]
+    }
+  ],
+  "expectedRedAssertions": [
+    {
+      "case": "device checks can be expanded separately",
+      "nativeExitCode": 1,
+      "resultSha256": "0441dae20eb5eeb34ebf06525281bc6ee170353f605caaee19c4e9a9b9881f7b",
+      "stdoutSha256": "adf8159b6002d7781c5f721939be85fd47275709b38231dc1fdce37951015ba4",
+      "sourceCount": 401,
+      "expectedAssertionFailure": true
+    },
+    {
+      "case": "expired previews cannot enter save confirmation",
+      "nativeExitCode": 1,
+      "resultSha256": "a9505ac373746f82a5d4d4e33e04d2c4efb31b852f89dc967277db3fb2a93d61",
+      "stdoutSha256": "5709e7c1dfb7bfc26716103e20597a41c4291e67e9816b45260eff0f182893e9",
+      "sourceCount": 403,
+      "expectedAssertionFailure": true
+    }
+  ],
+  "visualReview": {
+    "mode": "actual local fixture in-app browser",
+    "desktop": {
+      "width": 1280,
+      "height": 720
+    },
+    "mobile": {
+      "width": 390,
+      "height": 844,
+      "textScale": 2
+    },
+    "screenshots": [
+      {
+        "file": "after-desktop-collapsed.jpg",
+        "originalCaptureName": "after-desktop-collapsed.png",
+        "actualFormat": "JPEG",
+        "bytes": 42694,
+        "sha256": "a6b99496b0adfa0c0364dd7ead8525f5fc209565c493a629442539a1ab0de497"
+      },
+      {
+        "file": "after-desktop-details.jpg",
+        "originalCaptureName": "after-desktop-details.png",
+        "actualFormat": "JPEG",
+        "bytes": 37137,
+        "sha256": "3aa3b59cec4192d9efa7a7649accd6742ec6b61cb835fb7adecd40f52942aeb6"
+      },
+      {
+        "file": "after-mobile-2x-details.jpg",
+        "originalCaptureName": "after-mobile-2x-details.png",
+        "actualFormat": "JPEG",
+        "bytes": 46174,
+        "sha256": "12533aee704819f1d39c767ae8b4ef09f746d4e21be195619d3beba1386fdf0e"
+      },
+      {
+        "file": "after-mobile-2x-summary.jpg",
+        "originalCaptureName": "after-mobile-2x-summary.png",
+        "actualFormat": "JPEG",
+        "bytes": 47640,
+        "sha256": "08ef24b4dd5bc7d55501fc804ca555f454577fea61d4859694edb98029c84181"
+      },
+      {
+        "file": "baseline-desktop.jpg",
+        "originalCaptureName": "baseline-desktop.png",
+        "actualFormat": "JPEG",
+        "bytes": 50511,
+        "sha256": "59332d2309cf489579f81ac4cdc2c0e439561f2f7de864544c502c8afa1f2b7d"
+      }
+    ],
+    "viewportReset": true,
+    "liveDataOrNativeExecution": false
+  },
+  "independentReview": {
+    "sourceScope": {
+      "critical": 0,
+      "important": 0,
+      "checks": 19,
+      "sha256": "2c505cdd42db5ed62d91b9d9e4a657e980949ca319eb69173dcc22200c079c09"
+    },
+    "widgetStatic": {
+      "critical": 0,
+      "important": 0,
+      "sha256": "85cc8a1ad7693d4a73153ac7753d25addbbde2c578bded0fb147c77196124dd2"
+    }
+  },
+  "designWorkflow": {
+    "package": "@12ui/design 0.2.128",
+    "workflowNativeExit": 1,
+    "error": "EPERM fsync on local Windows directory handle",
+    "hostedDraftPickKitCompleted": false,
+    "fallback": "direct review of actual screenshots; existing Material 3 components",
+    "diagnosticReportSha256": "80150b287c2d6444282f979a7b3d57539255230ed86740f72160edac5b5d88a7"
+  },
+  "productionFrontendArtifact": {
+    "entry": "lib/main.dart",
+    "files": 32,
+    "bytes": 26812537,
+    "manifestSha256": "d6d2e3b437ff253226c586c113c2d2128990d798331a0ac9174e72146f4e44ff",
+    "mainJavaScriptSha256": "da793d7b3c0c946fc3293dbbc517943a6c096597c1462b3bf50c0666bf42750d",
+    "simulationEntry": false,
+    "activated": false
+  },
+  "boundaries": [
+    "UI fixtures do not prove real device control, real MFA, external provider access, or populated live tenant journeys.",
+    "Identity verification is shown separately from system control; unknown, stale, mismatched and duplicate evidence stays neutral.",
+    "Counts use per-device compiled checks; supported-pending never means executed.",
+    "Full repository integration, backend deployment and native Android validation are not claimed by this stage.",
+    "Shared console family work remains uncommitted and byte-preserved."
+  ]
+}
