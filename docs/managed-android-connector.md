@@ -96,6 +96,8 @@ manager.emm.bootstrap-policy-id=
 
 ## 本地验证
 
+SDK 写入回执的资源身份、精确版本及合规矛盾检查见 [策略回执契约](managed-policy-receipt-contract.md)。它把接口返回结果与设备执行证据分开，不自动重放结果不确定的写操作，也不开放 `ENFORCE`。
+
 受管儿童端可信绑定的前置证据读取与 ES256 验签见 [绑定证明阶段](managed-agent-proof-delivery.md)。这不代表已建立本地设备绑定，也不开放系统执行能力。
 
 机构控制台的接入指引、原位表单校验和小屏交互见 [接入流程简化阶段](managed-enrollment-experience.md)。该阶段不改变提供方准入与设备执行边界。

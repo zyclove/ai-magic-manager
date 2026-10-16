@@ -67,10 +67,18 @@ public interface ManagedAndroidGateway {
     throw new ManagedAndroidUnavailableException();
   }
 
-  /** Requests assignment; it does not prove the device has applied the policy. */
+  /**
+   * Requests assignment and verifies the returned device and requested policy identities.
+   * An absent or mismatched response is an uncertain write outcome, not an applied-device receipt;
+   * callers must reconcile the original target before considering another write.
+   */
   AssignmentReceipt assignPolicy(String enterpriseId, String deviceId, String policyId);
 
-  /** Reads independent device-side application and compliance evidence from the provider. */
+  /**
+   * Reads independent device-side application and compliance evidence from the provider.
+   * APPLIED requires the exact expected policy resource/version and affirmative, consistent
+   * compliance evidence. A newer mutable policy does not prove that the requested version applied.
+   */
   ManagedDeviceState readDeviceState(
       String enterpriseId, String deviceId, String expectedPolicyId, long expectedVersion);
 

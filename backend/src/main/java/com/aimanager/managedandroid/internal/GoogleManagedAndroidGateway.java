@@ -117,8 +117,12 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
               .patch(name, new Policy().setApplications(applications))
               .setUpdateMask("applications")
               .execute();
-      if (result == null || result.getVersion() == null || result.getVersion() < 1) {
-        throw new IllegalStateException("Android management policy response has no valid version");
+      if (result == null
+          || !name.equals(result.getName())
+          || result.getVersion() == null
+          || result.getVersion() < 1) {
+        throw new IllegalStateException(
+            "Android management policy response is incomplete or mismatched");
       }
       return new PolicyReceipt(name, result.getVersion());
     } catch (GoogleJsonResponseException error) {
@@ -315,12 +319,19 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
     String device = deviceName(enterpriseId, deviceId);
     String policy = policyName(enterpriseId, policyId);
     try {
-      client
-          .enterprises()
-          .devices()
-          .patch(device, new Device().setPolicyName(policy))
-          .setUpdateMask("policyName")
-          .execute();
+      Device result =
+          client
+              .enterprises()
+              .devices()
+              .patch(device, new Device().setPolicyName(policy))
+              .setUpdateMask("policyName")
+              .execute();
+      if (result == null
+          || !device.equals(result.getName())
+          || !policy.equals(result.getPolicyName())) {
+        throw new IllegalStateException(
+            "Android management assignment response is incomplete or mismatched");
+      }
       return new AssignmentReceipt(device, policy);
     } catch (IOException error) {
       throw providerFailure("device policy assignment", error);
@@ -341,15 +352,18 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
       }
       String requested = result.getPolicyName();
       String applied = result.getAppliedPolicyName();
+      boolean hasNonCompliance = result.getNonComplianceDetails() != null
+          && !result.getNonComplianceDetails().isEmpty();
       ApplyState state =
           !expectedPolicy.equals(requested)
                   || !expectedPolicy.equals(applied)
                   || !("DEVICE_OWNER".equals(result.getManagementMode())
                       || "PROFILE_OWNER".equals(result.getManagementMode()))
                   || result.getAppliedPolicyVersion() == null
-                  || result.getAppliedPolicyVersion() < expectedVersion
+                  // A newer mutable policy can contain different rules; it cannot prove this version.
+                  || result.getAppliedPolicyVersion() != expectedVersion
               ? ApplyState.PENDING
-              : Boolean.FALSE.equals(result.getPolicyCompliant())
+              : Boolean.FALSE.equals(result.getPolicyCompliant()) || hasNonCompliance
                   ? ApplyState.NON_COMPLIANT
                   : Boolean.TRUE.equals(result.getPolicyCompliant())
                       ? ApplyState.APPLIED
