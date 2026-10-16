@@ -53,3 +53,30 @@
 - [站内审批通知实施与验收](inapp-notifications-plan.md)：V21、并发/迁移/浏览器验证、备份及运行指纹。
 - [审计查询工作台](audit-explorer-contract.md)：时间倒序、条件查询、详情权限、错误恢复和当前功能边界。
 - [审计异步导出](audit-export-contract.md)：后台任务、加密文件、取消/下载、权限重验与有效期；[实施及验收记录](audit-export-plan.md)。
+
+## 受管 Android：实现导航与交付边界
+
+本节核对日期：2026-10-16；已提交代码基线 `3d7aac9`。这里的“内部实现”表示服务或连接器代码已经存在，不等于用户可以下发系统策略，也不等于运行环境已部署该版本。部署结果另以发布记录为准。
+
+| 工作环节 | 实现与证据入口 | 当前边界 |
+| --- | --- | --- |
+| 受管注册与管理员操作 | [受管注册体验](managed-enrollment-experience.md) | 需要提供方接入、有效机构权益及管理员授权；普通设备绑定不能代替受管注册 |
+| 管理代理绑定 | [绑定流程](managed-agent-binding-workflow.md)、[绑定体验](managed-agent-binding-experience.md)、[保留与删除](managed-agent-binding-retention.md) | 核验当前注册密钥与受信代理身份，不自动授予系统执行能力 |
+| 目标应用事实 | [报告契约](managed-application-report-contract.md)、[身份核验](managed-application-identity-verification.md)、[证据刷新](managed-application-evidence-workflow.md) | 安装签名证据与应用用户空间证明分开；不能将清单声明当作系统控制证明 |
+| 策略预览 | [预览证据](managed-policy-preview-evidence.md) | 展示当前证据及未核验原因；预览成功不是执行回执 |
+| 发布与文档编译 | [冻结发布输入](managed-publication-input.md)、[完整策略文档](managed-complete-policy-document.md) | 从服务端发布快照生成完整文档；不接受儿童端声明的执行权限 |
+| 提供方文档读写 | [完整策略传输](managed-complete-policy-transport.md)、[提供方回执](managed-policy-receipt-contract.md) | 官方 SDK 与本地 HTTP 验证；写入响应不能代替设备应用回执，资源独占仍需证明 |
+| 当前设备资料 | [设备资料与时效](managed-device-execution-profile.md) | 核对精确设备、管理模式、API、状态与时效；不是厂商兼容认证 |
+| 已发布策略准备 | [准备链路](managed-policy-preparation.md)、[阶段证据](evidence/managed-policy-preparation-20261016.json) | 两次短事务复核当前上下文；内部准备成功不开放入账、写入或分配权限 |
+| 执行持久化 | [执行账本](managed-policy-execution-journal.md)、[完整策略异常恢复](managed-complete-policy-recovery-plan.md) | 内部状态机、领取与完整观察回执转换已存在；公开执行入口、发送器和人工复核界面尚未接通 |
+
+### 联调时如何判断完成
+
+1. 先确认当前服务版本和实际设备模式，再检查对应接口、用户权限和提供方配置。
+2. 将配置保存、设备接收、提供方写入、策略分配和设备应用分别记录；任何前一步成功都不能替代后一步证据。
+3. 当前准备阶段的 521 项是冻结后端的定向回归，包含前面阶段的重叠用例，不能与各历史阶段数量相加作为独立覆盖总数。
+   完整策略恢复阶段为 543 项定向回归，新增 22 项；其 [阶段证据](evidence/managed-complete-policy-recovery-20261016.json) 保留了首轮失败和修正后的编译、测试结果。它同样不是全产品、真实提供方或真机验收。
+4. 本地 HTTP、H2 和模拟授权边界分别说明其验证范围；真实 MySQL/OceanBase、正式 EMM、Android/TV 真机和容量验证须查看各自证据。
+5. 中国大陆机构合同首发仍需可用合作方接入；Google 连接器的本地验证不改变中国大陆禁用和正式准入条件。没有合作方时保持明确不可用状态。
+
+应用用户空间证明、设备兼容认证、远端资源独占、执行入账及每次写前的完整授权、后台执行编排和真实设备验收仍未完成。上述文档用于复用已交付组件和定位剩余工作，不能作为“所有 APP 已能强制管控”的售前承诺。

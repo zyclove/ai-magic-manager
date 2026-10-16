@@ -437,6 +437,42 @@ class ManagedPolicyExecutionJournal {
         });
   }
 
+  /**
+   * Records a whole-document observation after an uncertain write. Even an exact match does not
+   * attribute that write to this task or prove exclusive policy ownership, so recovery stops for
+   * review. Observed versions never replace the missing write receipt.
+   */
+  boolean completePolicyObserved(
+      Claim claim, ManagedAndroidGateway.CompletePolicyInspection observation) {
+    workerBoundary();
+    return tx.execute(
+        status -> {
+          var current = required(claim.tenantId(), claim.taskId(), true);
+          if (!owns(current, claim)
+              || claim.action() != Action.READ_POLICY
+              || current.state() != State.POLICY_WRITE_UNKNOWN) return false;
+          if (observation == null
+              || !policyName(current).equals(observation.policyName())
+              || observation.state() == null)
+            throw new IllegalArgumentException("Invalid complete policy observation");
+          boolean validVersion =
+              switch (observation.state()) {
+                case NOT_FOUND -> observation.providerVersion() == null;
+                case MATCHED, CONTENT_MISMATCH, VERSION_MISMATCH ->
+                    observation.providerVersion() != null && observation.providerVersion() > 0;
+              };
+          if (!validVersion)
+            throw new IllegalArgumentException("Invalid complete policy observation");
+          finish(
+              current,
+              State.NEEDS_REVIEW,
+              current.providerVersion(),
+              Reason.RECONCILIATION_REQUIRES_REVIEW,
+              now());
+          return true;
+        });
+  }
+
   boolean deviceObserved(Claim claim, ManagedAndroidGateway.ManagedDeviceState observed) {
     workerBoundary();
     return tx.execute(

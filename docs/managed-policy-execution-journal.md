@@ -48,7 +48,7 @@ stateDiagram-v2
 5. 编排器在写入前再次完成完整业务授权，然后调用 `beforeWrite`；仅返回 true 且事务已提交后，才允许调用提供方。不能把领取本身当成外部操作授权。
 6. 每次提供方调用都位于数据库事务之外。策略写入/分配之前已保存 UNKNOWN，进程退出后接管者只获得 READ_POLICY/READ_DEVICE。不得因超时直接重试写入。
 7. 完成方法核对代次、令牌、租约、资源、文档和版本。迟到结果返回 false；调用者不能将其转成成功。
-8. `policyWritten` 接收已在适配器处校验完整内容的回执。`policyObserved` 的应用投影 MATCHED 仍不足以证明远端独占及本次写入归因，进入 NEEDS_REVIEW。
+8. `policyWritten` 接收已在适配器处校验完整内容的回执。`policyObserved` 的应用投影 MATCHED 仍不足以证明远端独占及本次写入归因，进入 NEEDS_REVIEW。新增的 `completePolicyObserved` 承接完整文档观察，核对资源与版本组合，同样只进入需复核，不将观察版本变成写入回执；[实现与验证记录](managed-complete-policy-recovery-plan.md)单独说明本阶段状态。
 9. 设备 APPLIED 必须同时满足：同一设备、DEVICE_OWNER、请求与实际策略均相同、精确提供方版本相同、状态 APPLIED、无不合规原因。
 10. 取消可能已发送的任务只记录待核对；不能撤回已在网络中的请求。当前领取不再能写入完成状态。已 APPLIED 的任务需新策略变更，不能直接反转为取消。
 

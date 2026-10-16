@@ -9,13 +9,29 @@ import com.aimanager.audit.AuditService;
 import com.aimanager.fleet.Device;
 import com.aimanager.managedandroid.ManagedAndroidGateway;
 import com.aimanager.managedandroid.ManagedExecutionPublicationAccess;
+import com.aimanager.managedandroid.ManagedPolicyWriteException;
+import com.aimanager.managedandroid.ManagedPolicyWriteException.Outcome;
 import com.aimanager.shared.DomainException;
 import com.aimanager.tenant.TenantAccess;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.api.client.googleapis.MethodOverride;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.services.androidmanagement.v1.AndroidManagement;
+import com.sun.net.httpserver.HttpServer;
+import java.net.InetSocketAddress;
+import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.zip.GZIPInputStream;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -118,7 +134,7 @@ class ManagedPolicyExecutionJournalTest {
 
   @Test
   void completeCompilerDocumentSurvivesDurableAdmissionAndClaim() {
-    var compiler = new GoogleCompletePolicyCompiler("com.aimanager.child", java.util.Set.of());
+    var compiler = new GoogleCompletePolicyCompiler("com.aimanager.child", Set.of());
     var compiled =
         compiler.compile(
             30,
@@ -441,6 +457,375 @@ class ManagedPolicyExecutionJournalTest {
         .isTrue();
     assertThat(view(task).state()).isEqualTo(ManagedPolicyExecutionJournal.State.NEEDS_REVIEW);
     assertThat(journal.claimDue("LOCAL_TEST", 25)).isEmpty();
+  }
+
+  @ParameterizedTest
+  @EnumSource(ManagedAndroidGateway.CompletePolicyState.class)
+  void completeObservationRequiresReviewWithoutInventingAWriteReceipt(
+      ManagedAndroidGateway.CompletePolicyState state) {
+    var task = enqueue();
+    var read = uncertainPolicyRead();
+    var before = view(task);
+    long events = count("managed_policy_execution_events");
+    Long version = state == ManagedAndroidGateway.CompletePolicyState.NOT_FOUND ? null : 7L;
+
+    assertThat(journal.completePolicyObserved(read, completeObservation(read, state, version)))
+        .as("complete policy observation must join durable recovery")
+        .isTrue();
+
+    var after = view(task);
+    assertThat(after.state()).isEqualTo(ManagedPolicyExecutionJournal.State.NEEDS_REVIEW);
+    assertThat(after.reason())
+        .isEqualTo(ManagedPolicyExecutionJournal.Reason.RECONCILIATION_REQUIRES_REVIEW);
+    assertThat(after.revision()).isEqualTo(before.revision() + 1);
+    assertThat(count("managed_policy_execution_events")).isEqualTo(events + 1);
+    var row =
+        db.queryForMap(
+            "SELECT provider_version,active_device_id,lease_token,lease_until,action"
+                + " FROM managed_policy_execution_tasks WHERE id=?",
+            task.id());
+    assertThat(row.get("provider_version")).isNull();
+    assertThat(row.get("active_device_id")).isEqualTo(f.device());
+    assertThat(row.get("lease_token")).isNull();
+    assertThat(row.get("lease_until")).isNull();
+    assertThat(row.get("action")).isNull();
+    assertThat(journal.claimDue("LOCAL_TEST", 25)).isEmpty();
+
+    assertThat(journal.completePolicyObserved(read, completeObservation(read, state, version)))
+        .isFalse();
+    assertThat(view(task)).isEqualTo(after);
+    assertThat(count("managed_policy_execution_events")).isEqualTo(events + 1);
+  }
+
+  @ParameterizedTest
+  @ValueSource(
+      strings = {
+        "null",
+        "state",
+        "enterprise",
+        "policy",
+        "missingVersion",
+        "zeroVersion",
+        "negativeVersion",
+        "notFoundVersion",
+        "mismatchMissingVersion",
+        "versionMismatchMissingVersion"
+      })
+  void malformedCompleteObservationRollsBackWithoutChangingLease(String scenario) {
+    var task = enqueue();
+    var read = uncertainPolicyRead();
+    var before =
+        db.queryForMap("SELECT * FROM managed_policy_execution_tasks WHERE id=?", task.id());
+    long events = count("managed_policy_execution_events");
+    var matched = ManagedAndroidGateway.CompletePolicyState.MATCHED;
+    var observation =
+        switch (scenario) {
+          case "null" -> null;
+          case "state" -> completeObservation(read, null, 7L);
+          case "enterprise" ->
+              new ManagedAndroidGateway.CompletePolicyInspection(
+                  "enterprises/other/policies/" + read.policyId(), 7L, matched);
+          case "policy" ->
+              new ManagedAndroidGateway.CompletePolicyInspection(
+                  "enterprises/" + read.enterpriseId() + "/policies/other", 7L, matched);
+          case "missingVersion" -> completeObservation(read, matched, null);
+          case "zeroVersion" -> completeObservation(read, matched, 0L);
+          case "negativeVersion" -> completeObservation(read, matched, -1L);
+          case "notFoundVersion" ->
+              completeObservation(read, ManagedAndroidGateway.CompletePolicyState.NOT_FOUND, 7L);
+          case "mismatchMissingVersion" ->
+              completeObservation(
+                  read, ManagedAndroidGateway.CompletePolicyState.CONTENT_MISMATCH, null);
+          case "versionMismatchMissingVersion" ->
+              completeObservation(
+                  read, ManagedAndroidGateway.CompletePolicyState.VERSION_MISMATCH, null);
+          default -> throw new AssertionError("Unknown test case");
+        };
+    assertThatThrownBy(() -> journal.completePolicyObserved(read, observation))
+        .isInstanceOf(IllegalArgumentException.class);
+    assertThat(db.queryForMap("SELECT * FROM managed_policy_execution_tasks WHERE id=?", task.id()))
+        .isEqualTo(before);
+    assertThat(count("managed_policy_execution_events")).isEqualTo(events);
+  }
+
+  @Test
+  void supersededCompleteObservationCannotOverrideCurrentLease() {
+    var task = enqueue();
+    var old = uncertainPolicyRead();
+    expire(old);
+    var current = claim();
+    var before = view(task);
+    long events = count("managed_policy_execution_events");
+    assertThat(
+            journal.completePolicyObserved(
+                old,
+                completeObservation(old, ManagedAndroidGateway.CompletePolicyState.MATCHED, 7L)))
+        .isFalse();
+    assertThat(view(task)).isEqualTo(before);
+    assertThat(count("managed_policy_execution_events")).isEqualTo(events);
+    assertThat(
+            journal.completePolicyObserved(
+                current,
+                completeObservation(
+                    current, ManagedAndroidGateway.CompletePolicyState.MATCHED, 7L)))
+        .isTrue();
+  }
+
+  @Test
+  void expiredCompleteObservationCannotChangeTheTask() {
+    var task = enqueue();
+    var read = uncertainPolicyRead();
+    expire(read);
+    var before = view(task);
+    long events = count("managed_policy_execution_events");
+    assertThat(
+            journal.completePolicyObserved(
+                read,
+                completeObservation(read, ManagedAndroidGateway.CompletePolicyState.MATCHED, 7L)))
+        .isFalse();
+    assertThat(view(task)).isEqualTo(before);
+    assertThat(count("managed_policy_execution_events")).isEqualTo(events);
+  }
+
+  @Test
+  void writeClaimCannotSubmitCompleteObservation() {
+    var task = enqueue();
+    var write = claim();
+    assertThat(journal.beforeWrite(write)).isTrue();
+    var before = view(task);
+    long events = count("managed_policy_execution_events");
+    assertThat(
+            journal.completePolicyObserved(
+                write,
+                completeObservation(write, ManagedAndroidGateway.CompletePolicyState.MATCHED, 7L)))
+        .isFalse();
+    assertThat(view(task)).isEqualTo(before);
+    assertThat(count("managed_policy_execution_events")).isEqualTo(events);
+  }
+
+  @Test
+  void completeObservationCannotOverrideCancellation() {
+    var task = enqueue();
+    var read = uncertainPolicyRead();
+    journal.cancel(f.tenant(), f.actor(), task.id());
+    var cancelled = view(task);
+    long events = count("managed_policy_execution_events");
+    assertThat(
+            journal.completePolicyObserved(
+                read,
+                completeObservation(read, ManagedAndroidGateway.CompletePolicyState.MATCHED, 7L)))
+        .isFalse();
+    assertThat(view(task)).isEqualTo(cancelled);
+    assertThat(count("managed_policy_execution_events")).isEqualTo(events);
+  }
+
+  @Test
+  void completeObservationRejectsOuterTransaction() {
+    enqueue();
+    var read = uncertainPolicyRead();
+    var outer = new TransactionTemplate(data.transactions);
+    assertThatThrownBy(
+            () ->
+                outer.execute(
+                    status ->
+                        journal.completePolicyObserved(
+                            read,
+                            completeObservation(
+                                read, ManagedAndroidGateway.CompletePolicyState.MATCHED, 7L))))
+        .isInstanceOf(IllegalStateException.class);
+  }
+
+  @Test
+  void completeObservationCannotSelectAnotherTenantsTask() {
+    var task = enqueue();
+    var read = uncertainPolicyRead();
+    var foreign = data.fixture();
+    var forged =
+        new ManagedPolicyExecutionJournal.Claim(
+            foreign.tenant(),
+            read.taskId(),
+            read.token(),
+            read.generation(),
+            read.action(),
+            read.leaseUntil(),
+            read.enterpriseId(),
+            read.deviceId(),
+            read.policyId(),
+            read.policyVersion(),
+            read.documentJson(),
+            read.documentSha256());
+    var before = view(task);
+    long events = count("managed_policy_execution_events");
+    assertThatThrownBy(
+            () ->
+                journal.completePolicyObserved(
+                    forged,
+                    completeObservation(
+                        read, ManagedAndroidGateway.CompletePolicyState.MATCHED, 7L)))
+        .isInstanceOf(DomainException.class);
+    assertThat(view(task)).isEqualTo(before);
+    assertThat(count("managed_policy_execution_events")).isEqualTo(events);
+  }
+
+  private ManagedPolicyExecutionJournal.Claim uncertainPolicyRead() {
+    var write = claim();
+    assertThat(journal.beforeWrite(write)).isTrue();
+    expire(write);
+    var read = claim();
+    assertThat(read.action()).isEqualTo(ManagedPolicyExecutionJournal.Action.READ_POLICY);
+    return read;
+  }
+
+  /**
+   * Real generated SDK and loopback HTTP; provider ownership and authority remain local fixtures.
+   */
+  @ParameterizedTest
+  @ValueSource(booleans = {false, true})
+  void lostCompleteWriteResponseIsReadBackWithoutRepeatingOrAssigning(boolean changePermission)
+      throws Exception {
+    var compiler = new GoogleCompletePolicyCompiler("com.aimanager.child", Set.of());
+    var compiled =
+        compiler.compile(
+            30,
+            "DEVICE_OWNER",
+            List.of(
+                new ManagedAndroidGateway.AppRestriction(
+                    "com.example.lesson", ManagedAndroidGateway.AppControl.BLOCK_LAUNCH)),
+            List.of(
+                new GoogleCompletePolicyCompiler.AppPermissions(
+                    "com.example.lesson",
+                    List.of(
+                        new ManagedAndroidGateway.RuntimePermissionDecision(
+                            "android.permission.CAMERA",
+                            ManagedAndroidGateway.PermissionDecision.DENY)))));
+    var task =
+        journal.enqueue(
+            f.tenant(),
+            f.actor(),
+            f.publication(),
+            f.binding(),
+            2,
+            compiled.documentJson(),
+            deadline);
+    var write = claim();
+    var json = new ObjectMapper();
+    var expectedBody = json.readTree(compiled.documentJson()).path("policy");
+    var saved = new AtomicReference<ObjectNode>();
+    var writes = new AtomicInteger();
+    var reads = new AtomicInteger();
+    var unexpected = new AtomicInteger();
+    var writeMethod = new AtomicReference<String>();
+    var writeOverride = new AtomicReference<String>();
+    var server = HttpServer.create(new InetSocketAddress("127.0.0.1", 0), 0);
+    server.createContext(
+        "/",
+        exchange -> {
+          try {
+            int status;
+            String body;
+            if (!exchange.getRequestURI().getPath().equals("/v1/" + policy(write))) {
+              unexpected.incrementAndGet();
+              status = 400;
+              body = "{}";
+            } else if ("GET".equals(exchange.getRequestMethod())) {
+              reads.incrementAndGet();
+              status = saved.get() == null ? 404 : 200;
+              body = saved.get() == null ? "{}" : json.writeValueAsString(saved.get());
+            } else if ("PATCH".equals(exchange.getRequestMethod())
+                || ("POST".equals(exchange.getRequestMethod())
+                    && "PATCH"
+                        .equals(exchange.getRequestHeaders().getFirst(MethodOverride.HEADER)))) {
+              writes.incrementAndGet();
+              // NetHttpTransport tunnels unsupported PATCH through the SDK's method override.
+              writeMethod.set(exchange.getRequestMethod());
+              writeOverride.set(exchange.getRequestHeaders().getFirst(MethodOverride.HEADER));
+              var input = exchange.getRequestBody();
+              if ("gzip"
+                  .equalsIgnoreCase(exchange.getRequestHeaders().getFirst("Content-Encoding")))
+                input = new GZIPInputStream(input);
+              var received = (ObjectNode) json.readTree(input);
+              if (!expectedBody.equals(received)) unexpected.incrementAndGet();
+              received.put("name", policy(write)).put("version", "7");
+              if (changePermission) {
+                for (var application : received.path("applications")) {
+                  if ("com.example.lesson".equals(application.path("packageName").asText())) {
+                    ((ObjectNode) application.path("permissionGrants").get(0))
+                        .put("policy", "PROMPT");
+                  }
+                }
+              }
+              saved.set(received);
+              // The simulated provider persisted the write but did not return a success receipt.
+              status = 503;
+              body = "{}";
+            } else {
+              unexpected.incrementAndGet();
+              status = 405;
+              body = "{}";
+            }
+            byte[] bytes = body.getBytes(StandardCharsets.UTF_8);
+            exchange.getResponseHeaders().set("Content-Type", "application/json");
+            exchange.sendResponseHeaders(status, bytes.length);
+            exchange.getResponseBody().write(bytes);
+          } finally {
+            exchange.close();
+          }
+        });
+    server.start();
+    try {
+      var client =
+          new AndroidManagement.Builder(
+                  new NetHttpTransport(), GsonFactory.getDefaultInstance(), null)
+              .setRootUrl("http://127.0.0.1:" + server.getAddress().getPort() + "/")
+              .setApplicationName("complete-recovery-local-contract")
+              .build();
+      var gateway = new GoogleManagedAndroidGateway(client);
+      var document =
+          new ManagedAndroidGateway.PolicyDocument(
+              write.documentJson(),
+              write.documentSha256(),
+              "com.aimanager.child",
+              30,
+              "DEVICE_OWNER");
+      assertThat(journal.beforeWrite(write)).isTrue();
+      assertThatThrownBy(
+              () -> gateway.writePolicyCandidate(write.enterpriseId(), write.policyId(), document))
+          .isInstanceOfSatisfying(
+              ManagedPolicyWriteException.class,
+              failure -> assertThat(failure.outcome()).isEqualTo(Outcome.OUTCOME_UNKNOWN));
+      assertThat(writes.get()).as("simulated provider persisted exactly one write").isEqualTo(1);
+      assertThat(saved.get()).as("simulated provider saved the complete policy").isNotNull();
+      assertThat(unexpected.get()).as("SDK request matches the local provider contract").isZero();
+      assertThat(writeMethod.get()).isEqualTo("POST");
+      assertThat(writeOverride.get()).isEqualTo("PATCH");
+      assertThat(journal.failed(write)).isTrue();
+      due(task.id());
+      var read = claim();
+      assertThat(read.action()).isEqualTo(ManagedPolicyExecutionJournal.Action.READ_POLICY);
+      var observation =
+          gateway.inspectCompletePolicy(
+              read.enterpriseId(), read.policyId(), document, read.policyVersion());
+      assertThat(observation.state())
+          .isEqualTo(
+              changePermission
+                  ? ManagedAndroidGateway.CompletePolicyState.CONTENT_MISMATCH
+                  : ManagedAndroidGateway.CompletePolicyState.MATCHED);
+      assertThat(journal.completePolicyObserved(read, observation)).isTrue();
+      assertThat(view(task).state()).isEqualTo(ManagedPolicyExecutionJournal.State.NEEDS_REVIEW);
+      assertThat(journal.claimDue("LOCAL_TEST", 25)).isEmpty();
+      assertThat(writes.get()).isEqualTo(1);
+      assertThat(reads.get()).isEqualTo(2);
+      assertThat(unexpected.get()).isZero();
+    } finally {
+      server.stop(0);
+    }
+  }
+
+  private ManagedAndroidGateway.CompletePolicyInspection completeObservation(
+      ManagedPolicyExecutionJournal.Claim claim,
+      ManagedAndroidGateway.CompletePolicyState state,
+      Long version) {
+    return new ManagedAndroidGateway.CompletePolicyInspection(policy(claim), version, state);
   }
 
   @Test
