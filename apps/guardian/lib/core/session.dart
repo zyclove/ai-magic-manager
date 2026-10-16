@@ -142,7 +142,8 @@ class Session extends ChangeNotifier {
               identifier: clientId,
               basicAuth: false,
               httpClient: ScopeGuardedClient(http.Client()),
-              onCredentialsRefreshed: (credentials) => _save(credentials, owner));
+              onCredentialsRefreshed: (credentials) =>
+                  _save(credentials, owner));
           if (!_installClient(next, owner)) return;
         }
       }
@@ -253,14 +254,19 @@ class Session extends ChangeNotifier {
         now: DateTime.now().millisecondsSinceEpoch);
   }
 
-  Future<void> loadTenants() async {
+  Future<void> loadTenants({String? preferredTenantId}) async {
     final activeClient = _client;
     if (activeClient == null) throw const ApiFailure(401, 'UNAUTHENTICATED');
     final nextTenants = await api.all('/tenants',
         isCurrent: () => identical(_client, activeClient));
     if (!identical(_client, activeClient)) return;
+    if (preferredTenantId != null &&
+        !nextTenants.any((value) => value['id'] == preferredTenantId)) {
+      throw const ApiFailure(409, 'WORKSPACE_NOT_VISIBLE');
+    }
     tenants = nextTenants;
-    final selected = html.window.localStorage['ai-manager.workspace'];
+    final selected =
+        preferredTenantId ?? html.window.localStorage['ai-manager.workspace'];
     if (tenants.isNotEmpty) {
       await selectTenant(tenants.firstWhere((t) => t['id'] == selected,
           orElse: () => tenants.first));
@@ -289,11 +295,14 @@ class Session extends ChangeNotifier {
               identical(_client, activeClient)) as Json;
     } on ApiFailure {
       if (!_selection.current(generation) ||
-          !identical(_client, activeClient)) return;
+          !identical(_client, activeClient)) {
+        return;
+      }
       rethrow;
     }
-    if (!_selection.current(generation) ||
-        !identical(_client, activeClient)) return;
+    if (!_selection.current(generation) || !identical(_client, activeClient)) {
+      return;
+    }
     tenant = next;
     role = membership['role'];
     html.window.localStorage['ai-manager.workspace'] = next['id'];

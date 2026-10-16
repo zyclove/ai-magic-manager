@@ -1,0 +1,338 @@
+{
+  "schemaVersion": 1,
+  "productVersion": "1.0.0",
+  "stage": "workspace-and-managed-review-ui-recovery",
+  "status": "VERIFIED_TARGETED_UI_STAGE",
+  "verifiedUtc": "2026-10-16T02:11:36.5413984Z",
+  "scope": {
+    "baseCommit": "0b6acf7890014a050bc8b2651736912171df7f50",
+    "codeAndTestFileCount": 8,
+    "productSourceFiles": 5,
+    "testFiles": 3,
+    "executionSourceFileCount": 1419,
+    "intendedCommitFileCountIncludingThisRecord": 9,
+    "runtimeChanged": false,
+    "databaseChanged": false,
+    "gitCommitCreatedByThisRecord": false,
+    "gitMergePerformedByThisRecord": false
+  },
+  "changes": [
+    "工作空间创建和接受邀请期间防止重复派发；写入成功后读取失败时保留完成事实，重试只读。",
+    "工作空间读取恢复保留原账号作用域；账号或会话变化后旧操作失效；恢复窗口只关闭自己。",
+    "受管 Android 审核区分未知、失败与成功空队列；分别重试原队列页或原工作空间查询。",
+    "审核及撤销后丢弃过时读取；会话变化和页面销毁使旧回调与对话框失效。"
+  ],
+  "codeAndTestFiles": [
+    {
+      "relativePath": "apps/guardian/lib/core/session.dart",
+      "sha256": "0fe86a3d698974083c5231b64d1bca1b501f1123309cc66a58f744ae9034092e",
+      "bytes": 12483
+    },
+    {
+      "relativePath": "apps/guardian/lib/core/workspace_read_recovery.dart",
+      "sha256": "cac9d629c3bb2ce1da800e470dd943c578604b5a7fa1f98cd9c4521fe72c0f97",
+      "bytes": 602
+    },
+    {
+      "relativePath": "apps/guardian/lib/pages/console_pages.dart",
+      "sha256": "56a74e920d0ea1e2e748f46beb380e4c7fc039cb6d0da782f93d2604deb5b176",
+      "bytes": 69011
+    },
+    {
+      "relativePath": "apps/guardian/lib/pages/managed_android_review_page.dart",
+      "sha256": "a6c782cb257153cfa8075d37120388e66682820fdcfa9b7cce76d97235fc6103",
+      "bytes": 21443
+    },
+    {
+      "relativePath": "apps/guardian/lib/ui/workspace_welcome.dart",
+      "sha256": "e0f08f577d54215080cdc86f803bf39852245bbf2647fb3bce94e8c6484fb14e",
+      "bytes": 11840
+    },
+    {
+      "relativePath": "apps/guardian/test/managed_android_review_recovery_test.dart",
+      "sha256": "14648237a5b1f12df66fdc517e8a33b9a597704b964c893b4e061eb3d3dc1139",
+      "bytes": 29892
+    },
+    {
+      "relativePath": "apps/guardian/test/workspace_recovery_browser_test.dart",
+      "sha256": "82a3f46133dd42c33decbaec58ab80cc9e513e00685e6dcc4db3bd4d238ca02f",
+      "bytes": 18690
+    },
+    {
+      "relativePath": "apps/guardian/test/workspace_welcome_test.dart",
+      "sha256": "476e0f5f07fef892e2ef28d4f5ae1eb76f73cc5e4d48034f6a2719b926e5f0bf",
+      "bytes": 11777
+    }
+  ],
+  "verification": {
+    "green": {
+      "nativeExit": 0,
+      "nativeSteps": 26,
+      "allNativeStepsZero": true,
+      "nativeProcessTimeouts": 0,
+      "visibleCases": 48,
+      "passed": 48,
+      "failed": 0,
+      "skipped": 0,
+      "hiddenLoadingSuccessesExcluded": 3,
+      "testsPassed": true,
+      "sourceAfterVerified": true,
+      "environmentRestored": true,
+      "environmentCheckCount": 10,
+      "allEnvironmentChecksRestored": true,
+      "errorCode": null,
+      "suites": [
+        {
+          "testFile": "apps/guardian/test/workspace_welcome_test.dart",
+          "platform": "vm",
+          "nativeExit": 0,
+          "visibleCases": 13,
+          "passed": 13,
+          "failed": 0,
+          "skipped": 0,
+          "hiddenLoadingSuccessesExcluded": 1,
+          "reporterComplete": true,
+          "result": {
+            "path": ".local/runtime/ui-recovery-targeted-20261016-r4-green/08-green-workspace-vm.result.json",
+            "sha256": "33c0f192e823dc11ac023ae0046b1496d13cc2e55e6ff4f6a2c0e3c493db29cb",
+            "bytes": 12141
+          },
+          "stdout": {
+            "path": ".local/runtime/ui-recovery-targeted-20261016-r4-green/08-green-workspace-vm.stdout.log",
+            "sha256": "3440d896965e6585d55f01d414cd58701417c46f0eea2330519c2b8839c5987b",
+            "bytes": 7794
+          }
+        },
+        {
+          "testFile": "apps/guardian/test/workspace_recovery_browser_test.dart",
+          "platform": "chrome-html",
+          "nativeExit": 0,
+          "visibleCases": 12,
+          "passed": 12,
+          "failed": 0,
+          "skipped": 0,
+          "hiddenLoadingSuccessesExcluded": 1,
+          "reporterComplete": true,
+          "result": {
+            "path": ".local/runtime/ui-recovery-targeted-20261016-r4-green/09-green-workspace-chrome.result.json",
+            "sha256": "7f1a8f260f0634f927b3ff487e55e3e1d1444715e71525c7e7c2fa1e4a899e5c",
+            "bytes": 10439
+          },
+          "stdout": {
+            "path": ".local/runtime/ui-recovery-targeted-20261016-r4-green/09-green-workspace-chrome.stdout.log",
+            "sha256": "cc1bbfcc14ef10407f912e583c1d2d3fd361874242d923b16c9d93fc5085f245",
+            "bytes": 6640
+          }
+        },
+        {
+          "testFile": "apps/guardian/test/managed_android_review_recovery_test.dart",
+          "platform": "chrome-html",
+          "nativeExit": 0,
+          "visibleCases": 23,
+          "passed": 23,
+          "failed": 0,
+          "skipped": 0,
+          "hiddenLoadingSuccessesExcluded": 1,
+          "reporterComplete": true,
+          "result": {
+            "path": ".local/runtime/ui-recovery-targeted-20261016-r4-green/10-green-managed-chrome.result.json",
+            "sha256": "c5fc1b22eed94313c00b6929bef9e759f81269310582777e3de3e6990f16cd93",
+            "bytes": 17707
+          },
+          "stdout": {
+            "path": ".local/runtime/ui-recovery-targeted-20261016-r4-green/10-green-managed-chrome.stdout.log",
+            "sha256": "c6b18ea4ee3f934cd5b2432c46403968888eca1cf23f951c6ea8c1e0ba4d61f5",
+            "bytes": 11678
+          }
+        }
+      ],
+      "terminal": {
+        "path": ".local/runtime/ui-recovery-targeted-20261016-r4-green/terminal.json",
+        "sha256": "2da530458ef94f7538d21d49e2ab68c2d211e6b65cea6edc9b1a9ebc482836b7",
+        "bytes": 79622
+      },
+      "inputManifest": {
+        "path": ".local/runtime/ui-recovery-targeted-input-20261016-r4.json",
+        "sha256": "7b3a12b673357ecec2634d4e9deafb506251950194e359eeeacbeb7cfe1bc125",
+        "bytes": 313767
+      },
+      "executionManifest": {
+        "path": ".local/runtime/ui-recovery-targeted-20261016-r4-green/execution-source.json",
+        "sha256": "de0c7660aa6d0daea30767420fbd3d49d02316d92496139c6674a183e29bfd03",
+        "bytes": 276866
+      },
+      "independentAcceptanceReview": {
+        "path": ".local/runtime/ui-recovery-targeted-green-independent-acceptance-20261016-r4.json",
+        "sha256": "707a5664f69be64b76323d792489ecfe4a3cd38415d9569e1d4447d413c20a87",
+        "bytes": 52262
+      }
+    },
+    "analyze": {
+      "nativeExit": 0,
+      "noIssuesFound": true,
+      "result": {
+        "path": ".local/runtime/ui-recovery-targeted-20261016-r4-green/07-green-analyze.result.json",
+        "sha256": "438c08c1f23ce8181f9205e2b26ce342bdea0cb2e26d7117e1f4ac365778b389",
+        "bytes": 970
+      },
+      "stdout": {
+        "path": ".local/runtime/ui-recovery-targeted-20261016-r4-green/07-green-analyze.stdout.log",
+        "sha256": "731062c117b20d7c76f4878c1b68199276e49a3a526987e8853e44bc5d002ade",
+        "bytes": 97
+      }
+    },
+    "format": {
+      "nativeFormatterRuns": 8,
+      "allNativeZero": true,
+      "byteIdenticalFiles": 5,
+      "whitespaceOnlyChangedFiles": 3,
+      "allNonWhitespaceTokenSequencesEqual": true,
+      "changesOutsideEightTargets": [],
+      "receipt": {
+        "path": ".local/runtime/ui-recovery-targeted-20261016-r4-green/format.json",
+        "sha256": "432b930c3a3210a7fdc4dfd4bdadeb911521efd331b7873cdc22bd7c0d50fa1d",
+        "bytes": 7972
+      },
+      "independentSemanticReview": {
+        "path": ".local/runtime/ui-recovery-targeted-green-format-independent-review-20261016-r4.json",
+        "sha256": "eeee5308e9197b520703de8549b99519b540656fe5027bdc5dfac914c49c6f65",
+        "bytes": 20379
+      }
+    },
+    "historicalRedBehaviorProof": {
+      "phase": "RED",
+      "nativeExit": 1,
+      "expectedBusinessAssertionFailures": 4,
+      "unexpectedBusinessFailures": 0,
+      "skippedBusinessCases": 0,
+      "hiddenLoadingSuccessesExcluded": 4,
+      "sourceAfterVerified": true,
+      "environmentRestored": true,
+      "acceptedAsExpectedRedEvidence": true,
+      "acceptedAsGreenPass": false,
+      "meaning": "四个原版行为断言确实失败；非零退出由独立报告核实，不能算作修复通过。",
+      "terminal": {
+        "path": ".local/runtime/ui-recovery-targeted-20261016-r3-red/terminal.json",
+        "sha256": "eb56a39b5c958205a7b8c7c52be50fbf37ced54a760324db0dbaac11cb013a69",
+        "bytes": 40566
+      },
+      "executionManifest": {
+        "path": ".local/runtime/ui-recovery-targeted-20261016-r3-red/execution-source.json",
+        "sha256": "5a3a752cfb3be9a18af017c8e64e87f8877c2979e7e1679dd03abaf4b189d8ca",
+        "bytes": 271875
+      },
+      "independentBehaviorReview": {
+        "path": ".local/runtime/ui-recovery-targeted-red-behavior-independent-review-20261016-r3.json",
+        "sha256": "8afa462520ade574a16a64a42d3915776cbec197692774bca487e2454cc216ba",
+        "bytes": 39267
+      }
+    }
+  },
+  "priorFailedAttempts": [
+    {
+      "stage": "targeted-r2-red",
+      "nativeExit": 1,
+      "sourceAfterVerified": true,
+      "environmentRestored": false,
+      "acceptedAsCompleteRun": false,
+      "terminal": {
+        "path": ".local/runtime/ui-recovery-targeted-20261016-r2-red/terminal.json",
+        "sha256": "6b0f69320ff67609821e9ca8ecdb19e1ba007dab000073d3c0c49a9a80a43ce3",
+        "bytes": 40575
+      },
+      "reason": "六个原不存在的环境变量恢复失败；旧终态保留原记录，未重标为成功。",
+      "correction": "r3使用显式原生删除恢复不存在变量；实际纯环境 canary、r3 RED 及 r4 GREEN 均重新验证恢复。",
+      "canary": {
+        "path": ".local/runtime/ui-recovery-r3-environment-canary.json",
+        "sha256": "7ff6e1d243f00d40f4c4aa556b19718a05fd9dafea7d2156f68d9f85f21ca61a",
+        "bytes": 1509
+      }
+    },
+    {
+      "stage": "targeted-r3-green",
+      "nativeExit": 1,
+      "sourceAfterVerified": true,
+      "environmentRestored": true,
+      "acceptedAsGreenPass": false,
+      "terminal": {
+        "path": ".local/runtime/ui-recovery-targeted-20261016-r3-green/terminal.json",
+        "sha256": "6af3b17f06858893d6f507002cfc08b29f897b8948e54646d7d486c421db6b72",
+        "bytes": 78835
+      },
+      "executionManifest": {
+        "path": ".local/runtime/ui-recovery-targeted-20261016-r3-green/execution-source.json",
+        "sha256": "cefc15fa5a785cd9dc290f000aee3b3ec23e27339dae7f8f9c95492e509ccaa2",
+        "bytes": 384541
+      },
+      "analyzeNativeExit": 1,
+      "analyzeInfoDiagnostics": 6,
+      "suiteResults": [
+        {
+          "step": "08-green-workspace-vm",
+          "nativeExit": 1,
+          "timedOut": false,
+          "cases": 13,
+          "passed": 12,
+          "failed": 1
+        },
+        {
+          "step": "09-green-workspace-chrome",
+          "nativeExit": 1,
+          "timedOut": false,
+          "cases": 12,
+          "passed": 3,
+          "failed": 9
+        },
+        {
+          "step": "10-green-managed-chrome",
+          "nativeExit": 0,
+          "timedOut": false,
+          "cases": 23,
+          "passed": 23,
+          "failed": 0
+        }
+      ],
+      "reason": "六项静态检查提示；VM 中带图标按钮的精确类型定位失败；浏览器九项在持续加载动画期间全局等待停止而超时。",
+      "correction": "补明确 mounted 检查和条件块；使用覆盖按钮子类型的定位；有界排空 HTTP/路由异步队列并断言表单可操作与关闭。保留全部原业务断言。",
+      "lintReview": {
+        "path": ".local/runtime/ui-recovery-followup-lint-independent-review-20261016-r1.json",
+        "sha256": "558730e69a9e4849dd51c250fdfc0a0620628f839fa451f14413ee288d9dbc16",
+        "bytes": 8672
+      },
+      "followupReview": {
+        "path": ".local/runtime/ui-recovery-followup-independent-review-20261016-r2.json",
+        "sha256": "0de52a83dfe52e166c6af8b2e47b04d54ff5211d3c54c9ff8a0b1444c6759016",
+        "bytes": 11092
+      }
+    }
+  ],
+  "provenance": {
+    "preparedInputIsNotExecutionSource": true,
+    "onlyFinalFormattedExecutionBytesAreCommitCandidates": true,
+    "priorAttemptsAndEvidencePreserved": true,
+    "toolReview": {
+      "path": ".local/runtime/ui-recovery-green-r4-tools-independent-review-20261016-r1.json",
+      "sha256": "e7169211f708615b53eb33e54e1d4edaddd4591dbe17c7de506f1f80a99b8029",
+      "bytes": 12616
+    },
+    "helper": {
+      "path": ".local/runtime/prepare-ui-recovery-stages-r4.py",
+      "sha256": "61a012cb005be20fb515ee7402b46ce6f6c39e9ed9c3a82d0c87c3520e963e4e",
+      "bytes": 27173
+    },
+    "runner": {
+      "path": ".local/runtime/run-ui-recovery-stage-r4.ps1",
+      "sha256": "c0b019c979d69df7728cb32caea8aaf029d52bca832ed2037e6b26f9854e487a",
+      "bytes": 19355
+    },
+    "evidencePaths": "证据路径相对仓库根目录；.local 中运行产物仅保存在验收工作区，不属于这九个提交文件。"
+  },
+  "limits": [
+    "这是定向 UI 阶段验收：VM/Chrome 场景使用受控 Session 与 HTTP 夹具；不代表实际身份服务、后端、数据库或设备的联调通过。",
+    "48 只统计可见业务测试体；3 个隐藏加载事件和历史 RED 的 4 个预期失败不计入通过数。",
+    "未完成该变更的全平台回归、完整后端构建或真实 Android/TV/EMM/硬件执行验收。",
+    "未部署本轮候选，未更改当前 18101 服务；本记录不宣称线上可用、发布或合并完成。",
+    "格式语义审查只确认格式化未改变既定源码含义；整体产品正确性限于已记录的测试和审查范围。",
+    "九文件独立内容审查、提交、合并与后续完整验证由独立流程确定；本记录不代替这些步骤。"
+  ]
+}
