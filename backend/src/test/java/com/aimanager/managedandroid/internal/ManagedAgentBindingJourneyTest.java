@@ -258,6 +258,7 @@ class ManagedAgentBindingJourneyTest {
     when(gateway.available()).thenReturn(true);
     when(capacity.currentForUpdate(anyString())).thenReturn(100L);
     when(gateway.supportsAgentBindingEvidence()).thenReturn(true);
+    when(gateway.applicationReportRevision()).thenReturn("fixture-application-report-v1");
   }
 
   RequestPostProcessor actor(String id) {
@@ -800,6 +801,646 @@ class ManagedAgentBindingJourneyTest {
     String id = create(f, UUID.randomUUID().toString()).get("id").asText();
     var identity = identity(f);
     return store.complete(f.tenant(), f.actor(), id, 1, identity, identity, proof(f, id));
+  }
+
+  @Test
+  void applicationEvidenceRefreshPersistsCurrentIdentityOutsideProviderTransactions()
+      throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    when(gateway.supportsApplicationReports()).thenReturn(true);
+    when(gateway.readEnrollmentIdentity(f.enterprise(), f.providerDevice()))
+        .thenAnswer(
+            call -> {
+              assertThat(
+                      org.springframework.transaction.support.TransactionSynchronizationManager
+                          .isActualTransactionActive())
+                  .isFalse();
+              return identity(f);
+            });
+    when(gateway.readApplicationReport(f.enterprise(), f.providerDevice(), "org.example.Reader"))
+        .thenAnswer(
+            call -> {
+              assertThat(
+                      org.springframework.transaction.support.TransactionSynchronizationManager
+                          .isActualTransactionActive())
+                  .isFalse();
+              return Optional.of(
+                  new com.aimanager.managedandroid.ManagedApplicationReport(
+                      identity(f).deviceName(),
+                      "DEVICE_OWNER",
+                      "org.example.Reader",
+                      "INSTALLED",
+                      List.of(CERT),
+                      Instant.now().toString()));
+            });
+    mvc.perform(
+            post(applicationEvidencePath(f, binding.id(), app) + "/refresh")
+                .with(actor(f.actor()))
+                .header("If-Match", "\"" + binding.version() + "\""))
+        .andExpect(status().isOk())
+        .andExpect(header().string("Cache-Control", "no-store"))
+        .andExpect(jsonPath("$.state").value("VERIFIED_IDENTITY"))
+        .andExpect(jsonPath("$.profileScope").value("UNKNOWN"))
+        .andExpect(jsonPath("$.systemControlAvailable").value(false));
+    assertThat(
+            db.queryForObject(
+                "SELECT state FROM managed_application_evidence WHERE tenant_id=? AND binding_id=?"
+                    + " AND application_id=?",
+                String.class,
+                f.tenant(),
+                binding.id(),
+                app))
+        .isEqualTo("VERIFIED");
+    verify(gateway, times(2)).readEnrollmentIdentity(f.enterprise(), f.providerDevice());
+    verify(gateway).readApplicationReport(f.enterprise(), f.providerDevice(), "org.example.Reader");
+  }
+
+  private String application(Fixture f, String platform) throws Exception {
+    return json.readTree(
+            mvc.perform(
+                    post("/api/v1/tenants/" + f.tenant() + "/applications")
+                        .with(actor(f.actor()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                            json.writeValueAsString(
+                                Map.of(
+                                    "displayName",
+                                    "学习应用",
+                                    "platform",
+                                    platform,
+                                    "profile",
+                                    "PRIMARY",
+                                    "packageName",
+                                    "org.example.Reader",
+                                    "signingDigests",
+                                    List.of(CERT)))))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString())
+        .get("id")
+        .asText();
+  }
+
+  private String applicationEvidencePath(Fixture f, String binding, String app) {
+    return f.root() + "/" + binding + "/applications/" + app + "/evidence";
+  }
+
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.ValueSource(
+      strings = {
+        "MISSING",
+        "SIGNER",
+        "STALE",
+        "MODE",
+        "NOT_INSTALLED",
+        "PROVENANCE",
+        "PROVENANCE_TIME"
+      })
+  void applicationEvidenceRejectsMissingOrUntrustedFactsWithoutRetainingSigners(String variant)
+      throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    applicationProvider(f);
+    if (variant.equals("MISSING"))
+      when(gateway.readApplicationReport(anyString(), anyString(), anyString()))
+          .thenReturn(Optional.empty());
+    else if (variant.startsWith("PROVENANCE")) {
+      var wrong =
+          new ManagedAndroidGateway.ManagedEnrollmentIdentity(
+              identity(f).deviceName(),
+              "DEVICE_OWNER",
+              variant.equals("PROVENANCE_TIME")
+                  ? Instant.parse(identity(f).enrollmentTime()).plusSeconds(1).toString()
+                  : identity(f).enrollmentTime(),
+              identity(f).enrollmentTokenName(),
+              variant.equals("PROVENANCE_TIME") ? f.enrollmentNonce() : "wrong-nonce");
+      when(gateway.readEnrollmentIdentity(f.enterprise(), f.providerDevice()))
+          .thenReturn(identity(f), wrong);
+    } else
+      when(gateway.readApplicationReport(anyString(), anyString(), anyString()))
+          .thenAnswer(
+              call ->
+                  Optional.of(
+                      new com.aimanager.managedandroid.ManagedApplicationReport(
+                          identity(f).deviceName(),
+                          variant.equals("MODE") ? "PROFILE_OWNER" : "DEVICE_OWNER",
+                          "org.example.Reader",
+                          variant.equals("NOT_INSTALLED") ? "REMOVED" : "INSTALLED",
+                          List.of(variant.equals("SIGNER") ? "b".repeat(64) : CERT),
+                          (variant.equals("STALE")
+                                  ? Instant.now().minusSeconds(3601)
+                                  : Instant.now())
+                              .toString())));
+    mvc.perform(
+            post(applicationEvidencePath(f, binding.id(), app) + "/refresh")
+                .with(actor(f.actor()))
+                .header("If-Match", "\"" + binding.version() + "\""))
+        .andExpect(status().isOk())
+        .andExpect(
+            jsonPath("$.state").value(variant.equals("MISSING") ? "WAITING_REPORT" : "REJECTED"))
+        .andExpect(jsonPath("$.systemControlAvailable").value(false));
+    var row =
+        db.queryForMap(
+            "SELECT signing_digests_json,reported_at,retrieved_at,expires_at FROM"
+                + " managed_application_evidence WHERE binding_id=?",
+            binding.id());
+    assertThat(row.values()).allMatch(java.util.Objects::isNull);
+  }
+
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.ValueSource(
+      strings = {"REVOKE", "ROLE", "AUTHORITY_VERSION", "CONTRACT", "DEVICE", "CATALOG"})
+  void applicationEvidenceRechecksCurrentAuthorityAfterNetworkRead(String mutation)
+      throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    applicationProvider(f);
+    when(gateway.readApplicationReport(anyString(), anyString(), anyString()))
+        .thenAnswer(
+            call -> {
+              assertThat(
+                      org.springframework.transaction.support.TransactionSynchronizationManager
+                          .isActualTransactionActive())
+                  .isFalse();
+              switch (mutation) {
+                case "REVOKE" ->
+                    store.revoke(f.tenant(), f.actor(), binding.id(), binding.version());
+                case "ROLE" ->
+                    db.update(
+                        "UPDATE tenant_members SET role='CHILD' WHERE tenant_id=?", f.tenant());
+                case "AUTHORITY_VERSION" ->
+                    db.update(
+                        "UPDATE tenant_members SET version=version+1 WHERE tenant_id=?",
+                        f.tenant());
+                case "CONTRACT" -> when(capacity.currentForUpdate(f.tenant())).thenReturn(0L);
+                case "DEVICE" ->
+                    db.update(
+                        "UPDATE devices SET state='REVOKED' WHERE tenant_id=? AND id=?",
+                        f.tenant(),
+                        f.device());
+                case "CATALOG" ->
+                    db.update(
+                        "UPDATE application_definitions SET created_at=NULL WHERE tenant_id=? AND"
+                            + " id=?",
+                        f.tenant(),
+                        app);
+                default -> throw new AssertionError();
+              }
+              return Optional.of(applicationReport(f));
+            });
+    mvc.perform(
+            post(applicationEvidencePath(f, binding.id(), app) + "/refresh")
+                .with(actor(f.actor()))
+                .header("If-Match", "\"" + binding.version() + "\""))
+        .andExpect(
+            status().is(mutation.equals("ROLE") ? 403 : mutation.equals("REVOKE") ? 412 : 409));
+    assertThat(
+            db.queryForObject(
+                "SELECT signing_digests_json FROM managed_application_evidence WHERE binding_id=?",
+                String.class,
+                binding.id()))
+        .isNull();
+  }
+
+  @Test
+  void applicationEvidenceReadDoesNotCallProviderOrExtendExpiryAndNewBindingCannotInheritIt()
+      throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    applicationProvider(f);
+    String path = applicationEvidencePath(f, binding.id(), app);
+    mvc.perform(post(path + "/refresh").with(actor(f.actor())).header("If-Match", "\"2\""))
+        .andExpect(status().isOk());
+    long expires =
+        db.queryForObject(
+            "SELECT expires_at FROM managed_application_evidence WHERE binding_id=?",
+            Long.class,
+            binding.id());
+    mvc.perform(get(path).with(actor(f.actor())).header("If-Match", "\"2\""))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.state").value("VERIFIED_IDENTITY"));
+    assertThat(
+            db.queryForObject(
+                "SELECT expires_at FROM managed_application_evidence WHERE binding_id=?",
+                Long.class,
+                binding.id()))
+        .isEqualTo(expires);
+    verify(gateway, times(1)).readApplicationReport(anyString(), anyString(), anyString());
+    db.update(
+        "UPDATE managed_application_evidence SET expires_at=0 WHERE binding_id=?", binding.id());
+    mvc.perform(get(path).with(actor(f.actor())).header("If-Match", "\"2\""))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.state").value("STALE"));
+    store.revoke(f.tenant(), f.actor(), binding.id(), 2);
+    var second = verifiedBinding(f);
+    mvc.perform(
+            get(applicationEvidencePath(f, second.id(), app))
+                .with(actor(f.actor()))
+                .header("If-Match", "\"2\""))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.state").value("ABSENT"));
+  }
+
+  @Test
+  void missingReportAfterRefreshInvalidatesPreviousVerifiedFact() throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    applicationProvider(f);
+    String path = applicationEvidencePath(f, binding.id(), app);
+    mvc.perform(post(path + "/refresh").with(actor(f.actor())).header("If-Match", "\"2\""))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.state").value("VERIFIED_IDENTITY"));
+    db.update(
+        "UPDATE managed_application_evidence SET next_attempt_at=0 WHERE binding_id=?",
+        binding.id());
+    when(gateway.readApplicationReport(anyString(), anyString(), anyString()))
+        .thenReturn(Optional.empty());
+    mvc.perform(post(path + "/refresh").with(actor(f.actor())).header("If-Match", "\"2\""))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.state").value("WAITING_REPORT"));
+    mvc.perform(get(path).with(actor(f.actor())).header("If-Match", "\"2\""))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.state").value("WAITING_REPORT"));
+  }
+
+  @Test
+  void recentProviderReportStillMustFollowApplicationIdentityDeclaration() throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    applicationProvider(f);
+    long declared =
+        db.queryForObject(
+            "SELECT created_at FROM application_definitions WHERE id=?", Long.class, app);
+    when(gateway.readApplicationReport(anyString(), anyString(), anyString()))
+        .thenReturn(
+            Optional.of(
+                new com.aimanager.managedandroid.ManagedApplicationReport(
+                    identity(f).deviceName(),
+                    "DEVICE_OWNER",
+                    "org.example.Reader",
+                    "INSTALLED",
+                    List.of(CERT),
+                    Instant.ofEpochMilli(declared - 1).toString())));
+    mvc.perform(
+            post(applicationEvidencePath(f, binding.id(), app) + "/refresh")
+                .with(actor(f.actor()))
+                .header("If-Match", "\"2\""))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.state").value("REJECTED"))
+        .andExpect(jsonPath("$.reasonCode").value("MANAGED_APPLICATION_REPORT_STALE"));
+  }
+
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.ValueSource(
+      strings = {"null", "[null]", "[\"private-invalid-signer\"]"})
+  void damagedPersistedSigningFactsAreNeverReused(String damaged) throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    applicationProvider(f);
+    String path = applicationEvidencePath(f, binding.id(), app);
+    mvc.perform(post(path + "/refresh").with(actor(f.actor())).header("If-Match", "\"2\""))
+        .andExpect(status().isOk());
+    db.update(
+        "UPDATE managed_application_evidence SET signing_digests_json=? WHERE binding_id=?",
+        damaged,
+        binding.id());
+    var response =
+        mvc.perform(get(path).with(actor(f.actor())).header("If-Match", "\"2\""))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.state").value("STALE"))
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    assertThat(response).doesNotContain("private-invalid-signer");
+  }
+
+  @Test
+  void unsupportedApplicationPlatformStopsBeforeProviderRead() throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID_TV");
+    applicationProvider(f);
+    mvc.perform(
+            post(applicationEvidencePath(f, binding.id(), app) + "/refresh")
+                .with(actor(f.actor()))
+                .header("If-Match", "\"2\""))
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.errorCode").value("MANAGED_APPLICATION_PLATFORM_MISMATCH"));
+    verify(gateway, never()).readApplicationReport(anyString(), anyString(), anyString());
+    assertThat(
+            db.queryForObject(
+                "SELECT COUNT(*) FROM managed_application_evidence WHERE tenant_id=?",
+                Long.class,
+                f.tenant()))
+        .isZero();
+  }
+
+  private void applicationProvider(Fixture f) {
+    when(gateway.supportsApplicationReports()).thenReturn(true);
+    when(gateway.readEnrollmentIdentity(f.enterprise(), f.providerDevice()))
+        .thenReturn(identity(f));
+    when(gateway.readApplicationReport(f.enterprise(), f.providerDevice(), "org.example.Reader"))
+        .thenAnswer(call -> Optional.of(applicationReport(f)));
+  }
+
+  @Test
+  void failedProviderReadIsSanitizedAndRefreshCooldownIsEnforced() throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    applicationProvider(f);
+    when(gateway.readApplicationReport(anyString(), anyString(), anyString()))
+        .thenThrow(new IllegalStateException("secret-upstream-response"));
+    String path = applicationEvidencePath(f, binding.id(), app);
+    var body =
+        mvc.perform(post(path + "/refresh").with(actor(f.actor())).header("If-Match", "\"2\""))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.state").value("FAILED"))
+            .andExpect(jsonPath("$.reasonCode").value("MANAGED_APPLICATION_PROVIDER_UNAVAILABLE"))
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    assertThat(body).doesNotContain("secret-upstream-response");
+    mvc.perform(post(path + "/refresh").with(actor(f.actor())).header("If-Match", "\"2\""))
+        .andExpect(status().isTooManyRequests());
+    verify(gateway, times(1)).readApplicationReport(anyString(), anyString(), anyString());
+  }
+
+  @Test
+  void anotherCurrentManagerWithDifferentAuthorityEpochCanReadTheSameDeviceFact() throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    applicationProvider(f);
+    String path = applicationEvidencePath(f, binding.id(), app);
+    mvc.perform(post(path + "/refresh").with(actor(f.actor())).header("If-Match", "\"2\""))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.state").value("VERIFIED_IDENTITY"));
+    String second = UUID.randomUUID().toString();
+    db.update(
+        "INSERT INTO tenant_members(tenant_id,actor_id,actor_key,role,version)"
+            + " VALUES(?,?,?,'ORG_ADMIN',19)",
+        f.tenant(),
+        second,
+        ActorKeys.key(second));
+    mvc.perform(get(path).with(actor(second)).header("If-Match", "\"2\""))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.state").value("VERIFIED_IDENTITY"));
+    verify(gateway, times(1)).readApplicationReport(anyString(), anyString(), anyString());
+  }
+
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.ValueSource(
+      strings = {"CHILD", "GUARDIAN", "AUDITOR", "TEACHER"})
+  void applicationEvidenceCannotBeReadOrRefreshedByNonInstitutionManagers(String role)
+      throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    applicationProvider(f);
+    db.update("UPDATE tenant_members SET role=? WHERE tenant_id=?", role, f.tenant());
+    String path = applicationEvidencePath(f, binding.id(), app);
+    mvc.perform(get(path).with(actor(f.actor())).header("If-Match", "\"2\""))
+        .andExpect(status().isForbidden());
+    mvc.perform(post(path + "/refresh").with(actor(f.actor())).header("If-Match", "\"2\""))
+        .andExpect(status().isForbidden());
+    verify(gateway, never()).readApplicationReport(anyString(), anyString(), anyString());
+  }
+
+  @Test
+  void applicationEvidenceRequiresBindingVersionRecentMfaAndTenantScope() throws Exception {
+    var f = fixture();
+    var other = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    applicationProvider(f);
+    String path = applicationEvidencePath(f, binding.id(), app);
+    mvc.perform(
+            post(path + "/refresh")
+                .with(jwt().jwt(t -> t.subject(f.actor())))
+                .header("If-Match", "\"2\""))
+        .andExpect(status().isUnauthorized());
+    mvc.perform(post(path + "/refresh").with(actor(other.actor())).header("If-Match", "\"2\""))
+        .andExpect(status().isForbidden());
+    mvc.perform(post(path + "/refresh").with(actor(f.actor())).header("If-Match", "\"1\""))
+        .andExpect(status().isPreconditionFailed());
+    mvc.perform(get(path).with(actor(f.actor()))).andExpect(status().isPreconditionRequired());
+    verify(gateway, never()).readApplicationReport(anyString(), anyString(), anyString());
+  }
+
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.ValueSource(booleans = {false, true})
+  void expiredSlowAttemptCannotOverwriteNewerEvidence(boolean lateFailure) throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    applicationProvider(f);
+    String path = applicationEvidencePath(f, binding.id(), app);
+    var entered = new java.util.concurrent.CountDownLatch(1);
+    var release = new java.util.concurrent.CountDownLatch(1);
+    var calls = new java.util.concurrent.atomic.AtomicInteger();
+    when(gateway.readApplicationReport(anyString(), anyString(), anyString()))
+        .thenAnswer(
+            call -> {
+              if (calls.incrementAndGet() == 1) {
+                entered.countDown();
+                if (!release.await(15, java.util.concurrent.TimeUnit.SECONDS))
+                  throw new AssertionError("Owned fixture deadline");
+                if (lateFailure) throw new IllegalStateException("old-provider-error");
+                return Optional.empty();
+              }
+              return Optional.of(applicationReport(f));
+            });
+    var pool = java.util.concurrent.Executors.newSingleThreadExecutor();
+    try {
+      var first =
+          pool.submit(
+              () ->
+                  mvc.perform(
+                      post(path + "/refresh").with(actor(f.actor())).header("If-Match", "\"2\"")));
+      assertThat(entered.await(10, java.util.concurrent.TimeUnit.SECONDS)).isTrue();
+      mvc.perform(post(path + "/refresh").with(actor(f.actor())).header("If-Match", "\"2\""))
+          .andExpect(status().isConflict());
+      db.update(
+          "UPDATE managed_application_evidence SET attempt_expires_at=0,next_attempt_at=0 WHERE"
+              + " binding_id=?",
+          binding.id());
+      mvc.perform(post(path + "/refresh").with(actor(f.actor())).header("If-Match", "\"2\""))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.state").value("VERIFIED_IDENTITY"));
+      release.countDown();
+      first.get(10, java.util.concurrent.TimeUnit.SECONDS).andExpect(status().isConflict());
+      mvc.perform(get(path).with(actor(f.actor())).header("If-Match", "\"2\""))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.state").value("VERIFIED_IDENTITY"));
+      assertThat(
+              db.queryForObject(
+                  "SELECT COUNT(*) FROM managed_application_evidence WHERE binding_id=?",
+                  Long.class,
+                  binding.id()))
+          .isEqualTo(1);
+    } finally {
+      release.countDown();
+      pool.shutdownNow();
+    }
+  }
+
+  @Test
+  void connectorRevisionChangesInvalidateStoredFactsAndMissingRevisionDisablesRefresh()
+      throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    applicationProvider(f);
+    String path = applicationEvidencePath(f, binding.id(), app);
+    mvc.perform(post(path + "/refresh").with(actor(f.actor())).header("If-Match", "\"2\""))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.state").value("VERIFIED_IDENTITY"));
+    when(gateway.applicationReportRevision()).thenReturn("fixture-application-report-v2");
+    mvc.perform(get(path).with(actor(f.actor())).header("If-Match", "\"2\""))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.state").value("STALE"));
+    when(gateway.applicationReportRevision()).thenReturn(null);
+    mvc.perform(post(path + "/refresh").with(actor(f.actor())).header("If-Match", "\"2\""))
+        .andExpect(status().isServiceUnavailable());
+    verify(gateway, times(1)).readApplicationReport(anyString(), anyString(), anyString());
+  }
+
+  @Test
+  void differentAppsCompeteForLastEvidenceSlotButExistingAppCanRefreshAtCapacity()
+      throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String firstApp = application(f, "ANDROID");
+    var secondBody =
+        Map.of(
+            "displayName",
+            "另一应用",
+            "platform",
+            "ANDROID",
+            "profile",
+            "PRIMARY",
+            "packageName",
+            "org.example.Other",
+            "signingDigests",
+            List.of(CERT));
+    String secondApp =
+        json.readTree(
+                mvc.perform(
+                        post("/api/v1/tenants/" + f.tenant() + "/applications")
+                            .with(actor(f.actor()))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(json.writeValueAsString(secondBody)))
+                    .andExpect(status().isCreated())
+                    .andReturn()
+                    .getResponse()
+                    .getContentAsString())
+            .get("id")
+            .asText();
+    for (int i = 0; i < 199; i++) {
+      String app = UUID.randomUUID().toString();
+      db.update(
+          "INSERT INTO application_definitions(tenant_id,id,identity_hash,definition_json)"
+              + " VALUES(?,?,?,'{}')",
+          f.tenant(),
+          app,
+          SecretMaterial.hash(app));
+      db.update(
+          "INSERT INTO"
+              + " managed_application_evidence(tenant_id,binding_id,application_id,id,context_revision,state,reason_code,version,attempt_expires_at,next_attempt_at,created_at,updated_at)"
+              + " VALUES(?,?,?,?,?,'WAITING_REPORT','MANAGED_APPLICATION_REPORT_MISSING',1,0,0,1,1)",
+          f.tenant(),
+          binding.id(),
+          app,
+          UUID.randomUUID().toString(),
+          "a".repeat(64));
+    }
+    applicationProvider(f);
+    when(gateway.readApplicationReport(anyString(), anyString(), anyString()))
+        .thenAnswer(
+            call ->
+                Optional.of(
+                    new com.aimanager.managedandroid.ManagedApplicationReport(
+                        identity(f).deviceName(),
+                        "DEVICE_OWNER",
+                        call.getArgument(2),
+                        "INSTALLED",
+                        List.of(CERT),
+                        Instant.now().toString())));
+    var start = new java.util.concurrent.CountDownLatch(1);
+    var pool = java.util.concurrent.Executors.newFixedThreadPool(2);
+    try {
+      var futures = new java.util.ArrayList<java.util.concurrent.Future<Integer>>();
+      for (String app : List.of(firstApp, secondApp))
+        futures.add(
+            pool.submit(
+                () -> {
+                  start.await();
+                  return mvc.perform(
+                          post(applicationEvidencePath(f, binding.id(), app) + "/refresh")
+                              .with(actor(f.actor()))
+                              .header("If-Match", "\"2\""))
+                      .andReturn()
+                      .getResponse()
+                      .getStatus();
+                }));
+      start.countDown();
+      assertThat(
+              List.of(
+                  futures.get(0).get(15, java.util.concurrent.TimeUnit.SECONDS),
+                  futures.get(1).get(15, java.util.concurrent.TimeUnit.SECONDS)))
+          .containsExactlyInAnyOrder(200, 409);
+      assertThat(
+              db.queryForObject(
+                  "SELECT COUNT(*) FROM managed_application_evidence WHERE binding_id=?",
+                  Long.class,
+                  binding.id()))
+          .isEqualTo(200);
+      String winner =
+          db.queryForObject(
+              "SELECT application_id FROM managed_application_evidence WHERE binding_id=? AND"
+                  + " state='VERIFIED'",
+              String.class,
+              binding.id());
+      db.update(
+          "UPDATE managed_application_evidence SET next_attempt_at=0 WHERE binding_id=? AND"
+              + " application_id=?",
+          binding.id(),
+          winner);
+      mvc.perform(
+              post(applicationEvidencePath(f, binding.id(), winner) + "/refresh")
+                  .with(actor(f.actor()))
+                  .header("If-Match", "\"2\""))
+          .andExpect(status().isOk())
+          .andExpect(jsonPath("$.state").value("VERIFIED_IDENTITY"));
+      assertThat(
+              db.queryForObject(
+                  "SELECT COUNT(*) FROM managed_application_evidence WHERE binding_id=?",
+                  Long.class,
+                  binding.id()))
+          .isEqualTo(200);
+    } finally {
+      pool.shutdownNow();
+    }
+  }
+
+  private com.aimanager.managedandroid.ManagedApplicationReport applicationReport(Fixture f) {
+    return new com.aimanager.managedandroid.ManagedApplicationReport(
+        identity(f).deviceName(),
+        "DEVICE_OWNER",
+        "org.example.Reader",
+        "INSTALLED",
+        List.of(CERT),
+        Instant.now().toString());
   }
 
   private void assertContextFailure(Fixture f, String binding, long version, String code) {

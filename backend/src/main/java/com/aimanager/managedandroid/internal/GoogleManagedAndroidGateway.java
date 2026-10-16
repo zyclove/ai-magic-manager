@@ -345,6 +345,9 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
   @Override
   public boolean supportsApplicationReports() { return true; }
 
+  @Override
+  public String applicationReportRevision() { return "google-application-report-v1"; }
+
   /** 读取普通应用事实，不要求其集成绑定反馈；此结果不代表应用身份或执行授权。 */
   @Override
   public Optional<ManagedApplicationReport> readApplicationReport(

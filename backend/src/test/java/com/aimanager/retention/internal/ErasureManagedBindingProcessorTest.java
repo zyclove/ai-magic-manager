@@ -173,6 +173,56 @@ class ErasureManagedBindingProcessorTest {
     assertEquals(result.batches(), processor.process(claim, 25).batches());
   }
 
+  @Test
+  void bindingCleanupCascadesOnlyItsApplicationEvidenceAndKeepsSharedCatalog() {
+    var target = fixture.device(subject);
+    String owned = binding(target, "REVOKED");
+    String peer = binding(fixture.device(fixture.peer), "VERIFIED");
+    applicationEvidence(owned);
+    applicationEvidence(peer);
+    var result = finish(fixture.accept(target), 25);
+    assertEquals(1, result.totalRows());
+    assertEquals(
+        List.of(peer),
+        db.queryForList(
+            "SELECT binding_id FROM managed_application_evidence WHERE tenant_id=?",
+            String.class,
+            tenant));
+    assertEquals(2, count("application_definitions"));
+  }
+
+  @Test
+  void unexpectedlyOversizedEvidenceSetStopsBeforeUnboundedCascade() {
+    var target = fixture.device(subject);
+    String owned = binding(target, "REVOKED");
+    for (int n = 0; n < 201; n++) applicationEvidence(owned);
+    fixture.data.failure(
+        "ERASURE_APPLICATION_EVIDENCE_LIMIT_EXCEEDED",
+        () -> processor.process(fixture.accept(target), 25));
+    assertEquals(201, count("managed_application_evidence"));
+    assertEquals(1, count("managed_agent_bindings"));
+    assertEquals(0, count("erasure_recovery_steps"));
+  }
+
+  private void applicationEvidence(String binding) {
+    String app = id();
+    db.update(
+        "INSERT INTO application_definitions(tenant_id,id,identity_hash,definition_json)"
+            + " VALUES(?,?,?,'{}')",
+        tenant,
+        app,
+        com.aimanager.shared.SecretMaterial.hash(app));
+    db.update(
+        "INSERT INTO"
+            + " managed_application_evidence(tenant_id,binding_id,application_id,id,context_revision,state,reason_code,version,attempt_expires_at,next_attempt_at,created_at,updated_at)"
+            + " VALUES(?,?,?,?,?,'WAITING_REPORT','MANAGED_APPLICATION_REPORT_MISSING',1,0,0,1,1)",
+        tenant,
+        binding,
+        app,
+        id(),
+        "a".repeat(64));
+  }
+
   @ParameterizedTest
   @ValueSource(strings = {"PENDING", "VERIFIED"})
   void activeAssociationBlocksEveryDeletion(String state) {

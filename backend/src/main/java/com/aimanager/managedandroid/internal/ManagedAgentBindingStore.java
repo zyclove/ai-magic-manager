@@ -290,6 +290,9 @@ class ManagedAgentBindingStore {
       throw conflict("MANAGED_BINDING_VERIFICATION_INVALID");
     if (!settings.trustRevision().equals(current.agentTrustRevision()))
       throw conflict("MANAGED_BINDING_RELEASE_TRUST_CHANGED");
+    long registeredAt = keys.createdAt(tenant, current.deviceId(), current.registrationId());
+    if (registeredAt < 0 || registeredAt > current.verifiedAt())
+      throw conflict("MANAGED_BINDING_VERIFICATION_INVALID");
     return new VerifiedBindingContext(
         tenant,
         actor,
@@ -309,7 +312,9 @@ class ManagedAgentBindingStore {
         intent.providerMode(),
         current.verifiedAt(),
         current.packageName(),
-        current.agentTrustRevision());
+        current.agentTrustRevision(),
+        context.platform(),
+        registeredAt);
   }
 
   ItemPage<View> list(String tenant, String actor, int limit, String cursor) {
@@ -464,7 +469,7 @@ class ManagedAgentBindingStore {
         || !intent.enterpriseId().equals(current.enterpriseId())
         || intent.bindingVersion() != current.bindingVersion())
       throw conflict("MANAGED_ENTERPRISE_CHANGED");
-    return new Context(intent, key);
+    return new Context(intent, key, target.platform());
   }
 
   private void match(Row row, Context context) {
@@ -556,7 +561,8 @@ class ManagedAgentBindingStore {
         r.getString("agent_trust_revision"));
   }
 
-  private record Context(ManagedEnrollmentStore.Intent intent, RegistrationKeys.Key key) {}
+  private record Context(
+      ManagedEnrollmentStore.Intent intent, RegistrationKeys.Key key, Device.Platform platform) {}
 
   /** 最小服务端快照；不携带挑战、证明、注册公钥或提供方注册令牌。 */
   record VerifiedBindingContext(
@@ -578,7 +584,9 @@ class ManagedAgentBindingStore {
       String managementMode,
       long bindingVerifiedAt,
       String agentPackageName,
-      String agentTrustRevision) {
+      String agentTrustRevision,
+      Device.Platform platform,
+      long registeredAt) {
     @Override
     public String toString() {
       return "VerifiedManagedBindingContext[REDACTED]";

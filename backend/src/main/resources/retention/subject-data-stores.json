@@ -846,6 +846,30 @@
       "category": "AUTHORIZATION"
     },
     {
+      "table": "managed_application_evidence",
+      "columns": [
+        "application_id",
+        "attempt_expires_at",
+        "attempt_id",
+        "binding_id",
+        "context_revision",
+        "created_at",
+        "expires_at",
+        "id",
+        "next_attempt_at",
+        "reason_code",
+        "reported_at",
+        "retrieved_at",
+        "signing_digests_json",
+        "state",
+        "tenant_id",
+        "updated_at",
+        "version"
+      ],
+      "domain": "managedandroid",
+      "category": "DERIVED_COPY"
+    },
+    {
       "table": "managed_agent_bindings",
       "columns": [
         "active_device_id",

@@ -98,6 +98,15 @@ class ErasureManagedBindingProcessor {
                   request.subjectId(),
                   limit);
           for (var key : keys) {
+            // Normal writes cap facts at 200 under this binding lock. Refuse corrupt/imported
+            // oversized sets before a cascade; progress counts remain parent binding rows.
+            if (db.queryForObject(
+                    "SELECT COUNT(*) FROM managed_application_evidence WHERE tenant_id=? AND"
+                        + " binding_id=?",
+                    Long.class,
+                    request.tenantId(),
+                    key.id())
+                > 200) throw failure("ERASURE_APPLICATION_EVIDENCE_LIMIT_EXCEEDED");
             exactlyOne(
                 db.update(
                     "DELETE FROM managed_agent_bindings WHERE tenant_id=? AND subject_id=? AND"

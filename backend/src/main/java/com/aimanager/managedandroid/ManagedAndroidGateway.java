@@ -21,6 +21,13 @@ public interface ManagedAndroidGateway {
   default boolean supportsApplicationReports() { return false; }
 
   /**
+   * Code/configuration revision of the application-report adapter, not the provider name.
+   * Partners must change it whenever report interpretation or provider trust configuration changes.
+   * Absence keeps persistent application evidence disabled. Never derives from a client request.
+   */
+  default String applicationReportRevision() { return null; }
+
+  /**
    * 读取指定设备和应用的原始报告。空值仅表示报告缺失，不能解释为未安装。
    * 不要求普通目标应用实现平台绑定反馈协议；报告仍需与当前租户、注册、绑定关联。
    * 默认实现保持不支持，合作方必须显式实现并声明读取能力。

@@ -271,6 +271,15 @@ class FleetReads
   }
 
   @Override
+  public long createdAt(String tenant, String device, String registration) {
+    var rows = jdbc.queryForList(
+        "SELECT created_at FROM devices WHERE tenant_id=? AND id=? AND registration_id=?",
+        Long.class, tenant, device, registration);
+    if (rows.isEmpty()) throw DomainException.denied();
+    return rows.get(0);
+  }
+
+  @Override
   public Device lockVisibleActive(String tenant, String actor, String deviceId) {
     var grant = access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN, CHILD);
     var device = rawDevice(tenant, deviceId, true);

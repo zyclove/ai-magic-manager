@@ -1636,3 +1636,33 @@ CREATE INDEX ix_managed_agent_expiry ON managed_agent_bindings(state,expires_at,
 CREATE INDEX ix_managed_agent_history ON managed_agent_bindings(tenant_id,device_id,created_at);
 CREATE INDEX ix_managed_agent_subject ON managed_agent_bindings(tenant_id,subject_id,id);
 CREATE INDEX ix_managed_agent_pending ON managed_agent_bindings(tenant_id,state,expires_at);
+-- Current, bounded per-binding application facts; deleting an erased binding removes its facts.
+CREATE TABLE managed_application_evidence (
+    tenant_id VARCHAR(36) NOT NULL,
+    binding_id VARCHAR(36) NOT NULL,
+    application_id VARCHAR(36) NOT NULL,
+    id VARCHAR(36) NOT NULL,
+    context_revision VARCHAR(64) NOT NULL,
+    state VARCHAR(24) NOT NULL,
+    reason_code VARCHAR(80) NOT NULL,
+    version BIGINT NOT NULL,
+    attempt_id VARCHAR(36),
+    attempt_expires_at BIGINT NOT NULL,
+    next_attempt_at BIGINT NOT NULL,
+    signing_digests_json VARCHAR(600),
+    reported_at BIGINT,
+    retrieved_at BIGINT,
+    expires_at BIGINT,
+    created_at BIGINT NOT NULL,
+    updated_at BIGINT NOT NULL,
+    PRIMARY KEY(tenant_id,binding_id,application_id),
+    CONSTRAINT uq_managed_application_evidence_id UNIQUE(id),
+    CONSTRAINT fk_managed_application_binding FOREIGN KEY(tenant_id,binding_id)
+      REFERENCES managed_agent_bindings(tenant_id,id) ON DELETE CASCADE,
+    CONSTRAINT fk_managed_application_definition FOREIGN KEY(tenant_id,application_id)
+      REFERENCES application_definitions(tenant_id,id),
+    CONSTRAINT ck_managed_application_evidence_state CHECK(state IN ('PENDING','VERIFIED','WAITING_REPORT','REJECTED','FAILED')),
+    CONSTRAINT ck_managed_application_evidence_version CHECK(version >= 1)
+);
+
+
