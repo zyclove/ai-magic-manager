@@ -917,7 +917,8 @@ class ConsoleActions {
                       version: r['revision'], key: copyKey, body: v) as Json);
             }),
           if (s.canWrite && r['kind'] == 'POLICY')
-            DetailAction('预览与发布', (ctx) => previewPolicy(ctx, r)),
+            DetailAction('预览与发布', (ctx) => previewPolicy(ctx, r),
+                closeOnSuccess: false),
           DetailAction('版本历史', (ctx) => versions(ctx, r))
         ]);
   }
@@ -944,11 +945,8 @@ class ConsoleActions {
           latest['version'] == target.groupVersion;
     }
 
-    final picked = await showDialog<PolicyTargetSelection>(
-        context: ctx,
-        barrierDismissible: false,
-        builder: (_) => PolicyTargetPicker(
-            session: s, root: root, actor: actor, role: role));
+    final picked = await showPolicyTargetPicker(
+        context: ctx, session: s, root: root, actor: actor, role: role);
     if (picked == null || !current()) return;
     if (picked.groupId != null && !await groupCurrent(picked)) {
       throw const ApiFailure(409, 'POLICY_GROUP_CHANGED');

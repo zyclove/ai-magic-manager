@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import '../core/api.dart';
 import '../core/device_group_summary.dart';
@@ -24,15 +26,47 @@ class PolicyTargetSelection {
         groupRegistrations = Map.unmodifiable(groupRegistrations);
 }
 
+/// Opens the picker and releases the caller when its workspace becomes stale.
+/// Older Flutter versions do not complete a removed, covered route's future.
+Future<PolicyTargetSelection?> showPolicyTargetPicker({
+  required BuildContext context,
+  required Session session,
+  required String root,
+  required String actor,
+  required String role,
+}) {
+  final scopeGeneration = session.scopeGeneration;
+  final invalidated = Completer<PolicyTargetSelection?>();
+  final dialog = showDialog<PolicyTargetSelection>(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => PolicyTargetPicker(
+      session: session,
+      root: root,
+      actor: actor,
+      role: role,
+      expectedScopeGeneration: scopeGeneration,
+      onInvalidated: () {
+        if (!invalidated.isCompleted) invalidated.complete(null);
+      },
+    ),
+  );
+  return Future.any([dialog, invalidated.future]);
+}
+
 class PolicyTargetPicker extends StatefulWidget {
   final Session session;
   final String root, actor, role;
+  final VoidCallback? onInvalidated;
+  final int? expectedScopeGeneration;
   const PolicyTargetPicker(
       {super.key,
       required this.session,
       required this.root,
       required this.actor,
-      required this.role});
+      required this.role,
+      this.expectedScopeGeneration,
+      this.onInvalidated});
 
   @override
   State<PolicyTargetPicker> createState() => _PolicyTargetPickerState();
@@ -42,6 +76,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
   final searchController = TextEditingController();
   String search = '';
   bool onlySelected = false;
+  bool closing = false;
   late final int scopeGeneration;
   final devices = <Json>[];
   final groups = <Json>[];
@@ -57,6 +92,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
 
   bool get current =>
       mounted &&
+      !closing &&
       widget.session.scopeGeneration == scopeGeneration &&
       widget.session.authenticated &&
       widget.session.tenant != null &&
@@ -69,20 +105,42 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
   @override
   void initState() {
     super.initState();
-    scopeGeneration = widget.session.scopeGeneration;
+    scopeGeneration =
+        widget.expectedScopeGeneration ?? widget.session.scopeGeneration;
     widget.session.addListener(accessChanged);
     loadDevices();
     if (canUseGroups) loadGroups();
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // A workspace change can precede the first frame and listener registration.
+    // Route dependencies are available here, including on the initial build.
+    accessChanged();
+  }
+
   void accessChanged() {
-    if (!current) {
-      generation++;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted && Navigator.canPop(context)) Navigator.pop(context);
-      });
-      WidgetsBinding.instance.scheduleFrame();
-    }
+    if (!mounted || closing || current) return;
+    // Latch before scheduling: repeated session events must not close a parent
+    // page while this dialog is still mounted during its exit animation.
+    closing = true;
+    generation++;
+    widget.onInvalidated?.call();
+    final route = ModalRoute.of(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || route == null || !route.isActive) return;
+      final navigator = route.navigator;
+      if (navigator == null) return;
+      if (route.isCurrent) {
+        navigator.pop();
+      } else {
+        // An unrelated dialog may cover us. Remove only our captured route;
+        // disposing the picker also disposes its owned dropdown route.
+        navigator.removeRoute(route);
+      }
+    });
+    WidgetsBinding.instance.scheduleFrame();
   }
 
   @override

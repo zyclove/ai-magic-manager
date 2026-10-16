@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-16",
+  "status": "PASSED_TARGETED_CHECKS",
+  "integrationBase": "b8b00e1c8fb7d4c1497ceb5c36b6d1e8a74ca518",
+  "scope": "Device-picker widget and opening-helper checks with simulated Session/HTTP; no real backend or EMM",
+  "currentFiles": {
+    "apps/guardian/lib/ui/policy_target_picker.dart": "af9c20bd304b3ab6c5e0a4b4f27c0bb6061c1495da31b37e5d6765597c831049",
+    "apps/guardian/test/policy_target_scope_test.dart": "0939c371a14da62a03873c57091b49fe02735618306a6daeaca2fb6430712e93",
+    "apps/guardian/test/policy_target_dialog_test.dart": "54d992c74783b9b7ce96ecdc343b55dee85aca30146cc4eba2a801b89de3a2bf",
+    "apps/guardian/lib/pages/console_pages.dart": "f8fb734ffec1b1ab751426a61abc7b3f7a0783d57fce2f8589db319b702f5f79"
+  },
+  "originalScopeRegression": {
+    "phase": "red",
+    "baseline": "4067cb15dc5ed849dcc9ac14b75e61fb859e13a4",
+    "sourceSha256": {
+      "lib/ui/policy_target_picker.dart": "18e249bebc62845a2e0976bd4d3b2a86dd2623d39f446fb45b72d3b4332b8651",
+      "test/policy_target_picker_test.dart": "48fca6de9a5f1f86030f3a91a01bb5960b7f1ec78006ff52aff427f453954621",
+      "test/policy_target_scope_test.dart": "50ba8aa4699a277bd947f21784ccc269591cbff463121d1141d4ea8cb077a21b"
+    },
+    "scope": "widget and HTTP fixture; no backend or EMM",
+    "exitCode": 1,
+    "seconds": 51.9,
+    "sourceUnchanged": true
+  },
+  "firstCandidate": {
+    "phase": "green",
+    "frameworkBaseline": "4067cb15dc5ed849dcc9ac14b75e61fb859e13a4",
+    "pickerParentCommit": "0681d35bdd6c452e55328ba0d2fb1b2c621ba0eb",
+    "sourceSha256": {
+      "lib/ui/policy_target_picker.dart": "49bb400847d59d69572436d27c0d447448b41f1cf6fde13b4b930905836dbf28",
+      "test/policy_target_picker_test.dart": "48fca6de9a5f1f86030f3a91a01bb5960b7f1ec78006ff52aff427f453954621",
+      "test/policy_target_scope_test.dart": "50ba8aa4699a277bd947f21784ccc269591cbff463121d1141d4ea8cb077a21b",
+      "test/policy_target_dialog_test.dart": "bd51720c17194828fd31d5b06db9e72eefe95fba5a5e5d96ae38ce87916d60e4"
+    },
+    "scope": "Actual picker and opening helper; simulated Session and HTTP; no backend or EMM",
+    "exitCode": 1,
+    "seconds": 52.8,
+    "sourceUnchanged": true
+  },
+  "firstCandidateCounts": {
+    "passed": 12,
+    "failed": 1
+  },
+  "remaining": "Actual OIDC/backend integration, native device enforcement and deployment are outside this fixture verification.",
+  "deployed": false,
+  "candidateStatus": "EXECUTED_PASSED",
+  "expectedFinalTests": 16,
+  "reviewFixes": [
+    "Capture invocation scope and check on first build",
+    "Keep policy details open after preview/cancellation; preserve unrelated covering dialog"
+  ],
+  "review": {
+    "status": "STATIC_REVIEW_PASSED",
+    "importantFindingsResolved": 2,
+    "runtimeVerified": false,
+    "scope": "Picker, helper, policy detail action and associated fixture tests; excludes parallel family-finance changes"
+  },
+  "preparedRunnerSha256": "7aad92b41adf7f130fba4d4913bb5279185aaeb245c949e3ab105233989482a5",
+  "runnerStatus": "EXECUTED_PASSED",
+  "finalCandidate": {
+    "baseCommit": "b8b00e1c8fb7d4c1497ceb5c36b6d1e8a74ca518",
+    "scope": "Committed guardian/packages plus own picker, helper, exact console call-site and fixture tests",
+    "steps": [
+      {
+        "name": "format",
+        "command": [
+          "D:/softwares/flutter/bin/cache/dart-sdk/bin/dart.exe",
+          "format",
+          "lib/ui/policy_target_picker.dart",
+          "lib/pages/console_pages.dart",
+          "test/policy_target_scope_test.dart",
+          "test/policy_target_dialog_test.dart"
+        ],
+        "exitCode": 0,
+        "seconds": 1.8
+      },
+      {
+        "name": "dependencies",
+        "command": [
+          "D:/softwares/flutter/bin/cache/dart-sdk/bin/dart.exe",
+          "D:/softwares/flutter/bin/cache/flutter_tools.snapshot",
+          "--no-version-check",
+          "--suppress-analytics",
+          "pub",
+          "get",
+          "--offline"
+        ],
+        "exitCode": 0,
+        "seconds": 7.1
+      },
+      {
+        "name": "analyze",
+        "command": [
+          "D:/softwares/flutter/bin/cache/dart-sdk/bin/dart.exe",
+          "analyze",
+          "lib/ui/policy_target_picker.dart",
+          "lib/pages/console_pages.dart",
+          "test/policy_target_scope_test.dart",
+          "test/policy_target_dialog_test.dart",
+          "test/policy_target_picker_test.dart"
+        ],
+        "exitCode": 0,
+        "seconds": 14.2
+      },
+      {
+        "name": "browser",
+        "command": [
+          "D:/softwares/flutter/bin/cache/dart-sdk/bin/dart.exe",
+          "D:/softwares/flutter/bin/cache/flutter_tools.snapshot",
+          "--no-version-check",
+          "--suppress-analytics",
+          "test",
+          "--no-pub",
+          "--platform=chrome",
+          "--web-renderer=html",
+          "--concurrency=1",
+          "--reporter=expanded",
+          "test/policy_target_scope_test.dart",
+          "test/policy_target_dialog_test.dart",
+          "test/policy_target_picker_test.dart"
+        ],
+        "exitCode": 0,
+        "seconds": 63.9
+      }
+    ],
+    "realBackend": false,
+    "realDevice": false,
+    "sharedWorkspaceMutated": false,
+    "status": "PASSED_TARGETED_CHECKS",
+    "sourceUnchanged": true,
+    "sourceSha256": {
+      "apps/guardian/test/policy_target_dialog_test.dart": "54d992c74783b9b7ce96ecdc343b55dee85aca30146cc4eba2a801b89de3a2bf",
+      "apps/guardian/test/policy_target_picker_test.dart": "48fca6de9a5f1f86030f3a91a01bb5960b7f1ec78006ff52aff427f453954621",
+      "apps/guardian/test/policy_target_scope_test.dart": "0939c371a14da62a03873c57091b49fe02735618306a6daeaca2fb6430712e93",
+      "apps/guardian/lib/pages/console_pages.dart": "f8fb734ffec1b1ab751426a61abc7b3f7a0783d57fce2f8589db319b702f5f79",
+      "apps/guardian/lib/ui/policy_target_picker.dart": "af9c20bd304b3ab6c5e0a4b4f27c0bb6061c1495da31b37e5d6765597c831049"
+    },
+    "actualOverlaySha256": {
+      "apps/guardian/lib/ui/policy_target_picker.dart": "af9c20bd304b3ab6c5e0a4b4f27c0bb6061c1495da31b37e5d6765597c831049",
+      "apps/guardian/test/policy_target_scope_test.dart": "0939c371a14da62a03873c57091b49fe02735618306a6daeaca2fb6430712e93",
+      "apps/guardian/test/policy_target_dialog_test.dart": "54d992c74783b9b7ce96ecdc343b55dee85aca30146cc4eba2a801b89de3a2bf",
+      "apps/guardian/lib/pages/console_pages.dart": "f8fb734ffec1b1ab751426a61abc7b3f7a0783d57fce2f8589db319b702f5f79"
+    }
+  },
+  "finalCounts": {
+    "passed": 16,
+    "failed": 0,
+    "skipped": 0
+  },
+  "finalLogsSha256": {
+    "format.log": "95e12cef59cd3e49c40f5d900878cae068f425e61642f558f192445634b7521b",
+    "dependencies.log": "0b29ac973742d98eda698a11625e217d3084e18118a1013702ffd7b8a514e2a2",
+    "analyze.log": "555593ec85770197b862bcc465b2b7cf6a3cf377cd605949a7106db899b165ad",
+    "browser.log": "431d5c72ff63b973247c53f8d181a1f49f84466d7deeb13c6814bda646b8f0c5",
+    "result.json": "f53de07d29931891975e08182aef347d75372438db11e7ab1927f1dec455c169"
+  }
+}
