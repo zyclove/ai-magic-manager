@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/api.dart';
 import '../core/device_group_summary.dart';
 import '../core/session.dart';
+import '../core/labels.dart';
 import 'design.dart';
 
 /// A one-time explicit device selection for the existing policy preview API.
@@ -38,6 +39,10 @@ class PolicyTargetPicker extends StatefulWidget {
 }
 
 class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
+  final searchController = TextEditingController();
+  String search = '';
+  bool onlySelected = false;
+  late final int scopeGeneration;
   final devices = <Json>[];
   final groups = <Json>[];
   final selected = <String>{};
@@ -52,6 +57,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
 
   bool get current =>
       mounted &&
+      widget.session.scopeGeneration == scopeGeneration &&
       widget.session.authenticated &&
       widget.session.tenant != null &&
       widget.session.root == widget.root &&
@@ -63,6 +69,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
   @override
   void initState() {
     super.initState();
+    scopeGeneration = widget.session.scopeGeneration;
     widget.session.addListener(accessChanged);
     loadDevices();
     if (canUseGroups) loadGroups();
@@ -74,12 +81,14 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && Navigator.canPop(context)) Navigator.pop(context);
       });
+      WidgetsBinding.instance.scheduleFrame();
     }
   }
 
   @override
   void dispose() {
     generation++;
+    searchController.dispose();
     widget.session.removeListener(accessChanged);
     super.dispose();
   }
@@ -168,12 +177,6 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
       loadingGroup = true;
       groupError = null;
       requestedGroupId = id;
-      selected.clear();
-      groupRegistrations.clear();
-      groupId = null;
-      groupName = null;
-      groupVersion = null;
-      excludedGroupDevices = 0;
     });
     try {
       final group = await widget.session.api
@@ -221,9 +224,12 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
         throw const ApiFailure(409, 'POLICY_GROUP_SELECTION_UNAVAILABLE');
       }
       setState(() {
+        // Replace only after the entire group snapshot has been validated.
+        // A failed request must not discard the administrator's existing work.
         selected
           ..clear()
           ..addAll(page.items.map((row) => row['deviceId'] as String));
+        groupRegistrations.clear();
         for (final row in page.items) {
           names[row['deviceId'] as String] = row['displayName'] as String;
           groupRegistrations[row['deviceId'] as String] =
@@ -246,7 +252,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
   }
 
   void toggle(Json row, bool checked) {
-    if (!current || row['state'] != 'ACTIVE') return;
+    if (!current || loadingGroup || row['state'] != 'ACTIVE') return;
     final id = row['id'] as String;
     if (checked && selected.length >= 50 && !selected.contains(id)) return;
     setState(() {
@@ -264,7 +270,9 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
   }
 
   void finish() {
-    if (!current || selected.isEmpty || selected.length > 50) return;
+    if (!current || loadingGroup || selected.isEmpty || selected.length > 50) {
+      return;
+    }
     Navigator.pop(
         context,
         PolicyTargetSelection(selected.toList()..sort(), names,
@@ -274,75 +282,131 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
             groupRegistrations: groupRegistrations));
   }
 
+  bool matches(String id, String name) =>
+      '$name $id'.toLowerCase().contains(search);
+
+  // Reviewing a group must include members outside the loaded device page.
+  // Removing a member switches to explicit device selection, just as toggle.
+  void removeSelection(String id) {
+    if (!current || loadingGroup) return;
+    setState(() {
+      selected.remove(id);
+      groupRegistrations.clear();
+      groupId = null;
+      groupName = null;
+      groupVersion = null;
+      excludedGroupDevices = 0;
+    });
+  }
+
   @override
   Widget build(BuildContext context) => AlertDialog(
           title: const Text('选择策略预览目标'),
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
           content: SizedBox(
               width: 700,
               height: 600,
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Notice(
-                        '此处只选择本次预览的明确设备快照，最多 50 台。设备组以后增减成员不会自动改变已发布配置。'),
-                    if (canUseGroups) ...[
-                      const SizedBox(height: 14),
-                      Row(children: [
-                        Expanded(
-                            child: DropdownButtonFormField<String>(
-                                isExpanded: true,
-                                value: groupId != null &&
-                                        groups.any((g) => g['id'] == groupId)
-                                    ? groupId
-                                    : null,
-                                decoration: const InputDecoration(
-                                    labelText: '从设备组选择（可选）'),
-                                items: groups
-                                    .map((group) => DropdownMenuItem<String>(
-                                        value: group['id'] as String,
-                                        child: Text(
-                                            '${group['name']} · ${group['deviceCount']} 台',
-                                            overflow: TextOverflow.ellipsis)))
-                                    .toList(),
-                                onChanged: loadingGroup || loadingGroups
-                                    ? null
-                                    : (id) {
-                                        if (id != null) chooseGroup(id);
-                                      })),
-                        if (groupCursor != null)
-                          TextButton(
-                              onPressed: loadingGroups
-                                  ? null
-                                  : () => loadGroups(more: true),
-                              child: const Text('更多组'))
-                      ]),
-                      if (loadingGroup || loadingGroups)
-                        const LinearProgressIndicator(),
-                      if (groupError != null)
-                        FailureView(groupError!,
-                            retry: groupError is ApiFailure &&
-                                    const {
-                                      'POLICY_GROUP_SELECTION_UNAVAILABLE',
-                                      'POLICY_GROUP_TOO_MANY_ELIGIBLE_DEVICES'
-                                    }.contains((groupError as ApiFailure).code)
+              child: ListView(children: [
+                const Text('选择设备，再预览规则对这些设备的影响。'),
+                const SizedBox(height: 12),
+                TextField(
+                    controller: searchController,
+                    decoration: InputDecoration(
+                        labelText: '搜索设备名称或编号',
+                        prefixIcon: const Icon(Icons.search),
+                        suffixIcon: searchController.text.isEmpty
+                            ? null
+                            : IconButton(
+                                tooltip: '清除搜索',
+                                onPressed: () => setState(() {
+                                      searchController.clear();
+                                      search = '';
+                                    }),
+                                icon: const Icon(Icons.close))),
+                    onChanged: (value) =>
+                        setState(() => search = value.trim().toLowerCase())),
+                const SizedBox(height: 8),
+                Text(
+                    onlySelected
+                        ? '正在核对已选设备，搜索不会取消选择。'
+                        : deviceCursor != null
+                            ? '仅搜索已加载设备；可在下方加载更多。'
+                            : '搜索当前已加载设备，搜索不会取消选择。',
+                    style: const TextStyle(color: muted)),
+                Align(
+                    alignment: Alignment.centerLeft,
+                    child: FilterChip(
+                        label: const Text('只看已选'),
+                        selected: onlySelected,
+                        onSelected: loadingGroup
+                            ? null
+                            : (value) => setState(() => onlySelected = value))),
+                if (canUseGroups) ...[
+                  const SizedBox(height: 14),
+                  Row(children: [
+                    Expanded(
+                        child: DropdownButtonFormField<String>(
+                            isExpanded: true,
+                            value: groupId != null &&
+                                    groups.any((g) => g['id'] == groupId)
+                                ? groupId
+                                : null,
+                            decoration: const InputDecoration(
+                                labelText: '用设备组替换选择（可选）'),
+                            items: groups
+                                .map((group) => DropdownMenuItem<String>(
+                                    value: group['id'] as String,
+                                    child: Text(
+                                        '${group['name']} · ${group['deviceCount']} 台',
+                                        overflow: TextOverflow.ellipsis)))
+                                .toList(),
+                            onChanged: loadingGroup || loadingGroups
                                 ? null
-                                : () => requestedGroupId == null
-                                    ? loadGroups()
-                                    : chooseGroup(requestedGroupId!),
-                            reauth: () => widget.session.login(stepUp: true)),
-                    ],
-                    const SizedBox(height: 10),
-                    Text(
-                        '已选 ${selected.length} / 50 台${groupName == null ? '' : ' · 来自“$groupName”第 $groupVersion 版'}'),
-                    if (groupId != null)
-                      Text(
-                          '选择来自当前设备组快照；发布前会再次核对组版本。${excludedGroupDevices > 0 ? '$excludedGroupDevices 台非活动或关联失效设备已排除。' : ''}',
-                          style: const TextStyle(color: muted)),
-                    if (selected.isNotEmpty)
-                      Align(
-                          alignment: Alignment.centerLeft,
-                          child: TextButton(
-                              onPressed: () => setState(() {
+                                : (id) {
+                                    if (id != null) chooseGroup(id);
+                                  })),
+                    if (groupCursor != null)
+                      TextButton(
+                          onPressed: loadingGroups
+                              ? null
+                              : () => loadGroups(more: true),
+                          child: const Text('更多组'))
+                  ]),
+                  if (loadingGroup || loadingGroups)
+                    const LinearProgressIndicator(),
+                  if (groupError != null)
+                    FailureView(groupError!,
+                        retry: groupError is ApiFailure &&
+                                const {
+                                  'POLICY_GROUP_SELECTION_UNAVAILABLE',
+                                  'POLICY_GROUP_TOO_MANY_ELIGIBLE_DEVICES'
+                                }.contains((groupError as ApiFailure).code)
+                            ? null
+                            : () => requestedGroupId == null
+                                ? loadGroups()
+                                : chooseGroup(requestedGroupId!),
+                        reauth: () => widget.session.login(stepUp: true)),
+                ],
+                const SizedBox(height: 10),
+                Semantics(
+                    liveRegion: true,
+                    child: Text('已选 ${selected.length} / 50 台',
+                        style: Theme.of(context).textTheme.titleMedium)),
+                if (groupId != null) Text('来自“$groupName”第 $groupVersion 版'),
+                if (selected.length >= 50)
+                  const Notice('已达到 50 台上限。请先移除设备，再添加其他设备。'),
+                if (groupId != null)
+                  Text(
+                      '选择来自当前设备组快照；发布前会再次核对组版本。${excludedGroupDevices > 0 ? '$excludedGroupDevices 台非活动或关联失效设备已排除。' : ''}',
+                      style: const TextStyle(color: muted)),
+                if (selected.isNotEmpty)
+                  Align(
+                      alignment: Alignment.centerLeft,
+                      child: TextButton(
+                          onPressed: loadingGroup || !current
+                              ? null
+                              : () => setState(() {
                                     selected.clear();
                                     groupRegistrations.clear();
                                     groupId = null;
@@ -350,40 +414,70 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
                                     groupVersion = null;
                                     excludedGroupDevices = 0;
                                   }),
-                              child: const Text('清空选择'))),
-                    const SizedBox(height: 8),
-                    Expanded(
-                        child: ListView(children: [
-                      if (devices.isEmpty && !loadingDevices)
-                        const EmptyView('尚无可选择设备', '请先在设备管理中完成激活，或检查当前列表。'),
-                      for (final row in devices)
-                        CheckboxListTile(
-                            value: selected.contains(row['id']),
-                            onChanged: row['state'] != 'ACTIVE' ||
-                                    loadingGroup ||
-                                    selected.length >= 50 &&
-                                        !selected.contains(row['id'])
-                                ? null
-                                : (checked) => toggle(row, checked == true),
-                            title: Text('${row['displayName']}'),
-                            subtitle: Text(
-                                '${row['platform']} · ${row['state']} · ${row['id']}'),
-                            controlAffinity: ListTileControlAffinity.leading),
-                      if (loadingDevices) const LinearProgressIndicator(),
-                      if (deviceError != null)
-                        FailureView(deviceError!,
-                            retry: () =>
-                                loadDevices(more: deviceCursor != null),
-                            reauth: () => widget.session.login(stepUp: true)),
-                      if (deviceCursor != null)
-                        TextButton.icon(
-                            onPressed: loadingDevices
-                                ? null
-                                : () => loadDevices(more: true),
-                            icon: const Icon(Icons.expand_more),
-                            label: const Text('加载更多设备'))
-                    ]))
-                  ])),
+                          child: const Text('清空选择'))),
+                const SizedBox(height: 8),
+                if (onlySelected) ...[
+                  if (!selected.any((id) => matches(id, names[id] ?? id)))
+                    EmptyView(
+                        selected.isEmpty ? '尚未选择设备' : '没有匹配的设备',
+                        selected.isEmpty
+                            ? '关闭“只看已选”，选择设备或设备组。'
+                            : '清除搜索可查看全部已选设备。'),
+                  for (final id
+                      in selected.where((id) => matches(id, names[id] ?? id)))
+                    CheckboxListTile(
+                        key: ValueKey('selected-$id'),
+                        value: true,
+                        onChanged:
+                            loadingGroup ? null : (_) => removeSelection(id),
+                        title: Text(names[id] ?? id),
+                        subtitle: Text('已选择 · $id'),
+                        controlAffinity: ListTileControlAffinity.leading),
+                ] else ...[
+                  if (devices.isEmpty && !loadingDevices && deviceError == null)
+                    const EmptyView('尚无可选择设备', '请先在设备管理中完成激活，或检查当前列表。'),
+                  if (devices.isNotEmpty &&
+                      !devices.any((row) => matches(
+                          row['id'] as String, row['displayName'] as String)))
+                    const EmptyView('没有匹配的设备', '请尝试其他名称或编号；已有选择仍保留。'),
+                  for (final row in devices.where((row) => matches(
+                      row['id'] as String, row['displayName'] as String)))
+                    CheckboxListTile(
+                        key: ValueKey(row['id']),
+                        value: selected.contains(row['id']),
+                        onChanged: row['state'] != 'ACTIVE' ||
+                                loadingGroup ||
+                                selected.length >= 50 &&
+                                    !selected.contains(row['id'])
+                            ? null
+                            : (checked) => toggle(row, checked == true),
+                        title: Text('${row['displayName']}'),
+                        subtitle: Text(
+                            '${label(row['platform'])} · ${label(row['state'])}'
+                            '${row['state'] == 'ACTIVE' ? '' : ' · 当前不可选择'}\n${row['id']}'),
+                        controlAffinity: ListTileControlAffinity.leading),
+                ],
+                if (loadingDevices) const LinearProgressIndicator(),
+                if (deviceError != null)
+                  FailureView(deviceError!,
+                      retry: () => loadDevices(more: deviceCursor != null),
+                      reauth: () => widget.session.login(stepUp: true)),
+                if (deviceCursor != null && !onlySelected)
+                  TextButton.icon(
+                      onPressed:
+                          loadingDevices ? null : () => loadDevices(more: true),
+                      icon: const Icon(Icons.expand_more),
+                      label: const Text('加载更多设备')),
+                const ExpansionTile(
+                    tilePadding: EdgeInsets.zero,
+                    title: Text('选择与发布说明'),
+                    children: [
+                      Padding(
+                          padding: EdgeInsets.only(bottom: 12),
+                          child: Text(
+                              '本次只选择明确的设备列表，最多 50 台。设备组以后增减成员不会自动改变已发布配置。预览后还需要明确发布，实际生效情况以设备回执为准。'))
+                    ]),
+              ])),
           actions: [
             TextButton(
                 onPressed: () => Navigator.pop(context),

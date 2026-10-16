@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-16",
+  "baseline": "4067cb15dc5ed849dcc9ac14b75e61fb859e13a4",
+  "scope": "Production Flutter widget and API parsing with simulated Session and HTTP; no real backend, device or EMM",
+  "sourceSha256": {
+    "lib/ui/policy_target_picker.dart": "18e249bebc62845a2e0976bd4d3b2a86dd2623d39f446fb45b72d3b4332b8651",
+    "test/policy_target_picker_test.dart": "48fca6de9a5f1f86030f3a91a01bb5960b7f1ec78006ff52aff427f453954621"
+  },
+  "browserTests": {
+    "renderer": "html",
+    "original": {
+      "passed": 0,
+      "failed": 8,
+      "exitCode": 1,
+      "seconds": 18.1
+    },
+    "candidate": {
+      "passed": 8,
+      "failed": 0,
+      "exitCode": 0,
+      "seconds": 19.2
+    },
+    "testSourceIdentical": true,
+    "sourceUnchangedDuringRuns": true
+  },
+  "visualBuild": {
+    "exitCode": 0,
+    "seconds": 38.8,
+    "scope": "Local fixture only, production widget; not deployment"
+  },
+  "visual": [
+    {
+      "name": "desktop",
+      "width": 1280,
+      "height": 900,
+      "scale": 1,
+      "states": 3,
+      "errors": [],
+      "geometry": {
+        "viewport": 1280,
+        "scrollWidth": 1280
+      },
+      "selectionRetained": true
+    },
+    {
+      "name": "mobile",
+      "width": 390,
+      "height": 844,
+      "scale": 1,
+      "states": 3,
+      "errors": [],
+      "geometry": {
+        "viewport": 390,
+        "scrollWidth": 390
+      },
+      "selectionRetained": true
+    },
+    {
+      "name": "mobile-large",
+      "width": 390,
+      "height": 844,
+      "scale": 2,
+      "states": 3,
+      "errors": [],
+      "geometry": {
+        "viewport": 390,
+        "scrollWidth": 390
+      },
+      "selectionRetained": true
+    }
+  ],
+  "screenshots": {
+    "desktop-selected.png": "ef13b1310a88f5a9668a23d4bd902b312e5dbbbd625a4a6f7b329544492dea28",
+    "mobile-search.png": "90ed1130d98438601260f14457e50700eb7f8c0446475af3f670f04120c069c1"
+  },
+  "notVerified": [
+    "Production identity/backend integration",
+    "Real device policy execution",
+    "Full platform regression"
+  ]
+}
