@@ -10,5 +10,9 @@ public interface ManagedExecutionPublicationAccess {
   Publication requireTarget(
       String tenant, String actor, String publication, String device, String registration);
 
+  /** Resolve all frozen source rules without granting execution authority. */
+  ManagedDesiredPolicy requireDesiredTarget(
+      String tenant, String actor, String publication, String device, String registration);
+
   record Publication(String versionId, String previewHash, long createdAt) {}
 }

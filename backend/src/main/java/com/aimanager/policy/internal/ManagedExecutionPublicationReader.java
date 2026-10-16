@@ -2,6 +2,7 @@ package com.aimanager.policy.internal;
 
 import static com.aimanager.tenant.TenantAccess.Role.*;
 
+import com.aimanager.managedandroid.ManagedDesiredPolicy;
 import com.aimanager.managedandroid.ManagedExecutionPublicationAccess;
 import com.aimanager.policy.PolicySnapshot;
 import com.aimanager.shared.DomainException;
@@ -22,13 +23,25 @@ class ManagedExecutionPublicationReader implements ManagedExecutionPublicationAc
 
   ManagedExecutionPublicationReader(JdbcTemplate db, ObjectMapper json, TenantAccess access) {
     this.db = db;
-    this.json = json;
+    this.json =
+        json.copy()
+            .disable(com.fasterxml.jackson.databind.MapperFeature.ALLOW_COERCION_OF_SCALARS)
+            .enable(com.fasterxml.jackson.core.JsonParser.Feature.STRICT_DUPLICATE_DETECTION)
+            .enable(
+                com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+            .enable(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_NUMBERS_FOR_ENUMS)
+            .enable(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_TRAILING_TOKENS);
     this.access = access;
   }
 
   @Override
   @Transactional(propagation = Propagation.MANDATORY, noRollbackFor = DomainException.class)
   public Publication requireTarget(
+      String tenant, String actor, String publication, String device, String registration) {
+    return load(tenant, actor, publication, device, registration).publication();
+  }
+
+  private Loaded load(
       String tenant, String actor, String publication, String device, String registration) {
     access.requireWriteRole(tenant, actor, OWNER, ORG_ADMIN);
     var rows =
@@ -47,6 +60,8 @@ class ManagedExecutionPublicationReader implements ManagedExecutionPublicationAc
       throw new DomainException(HttpStatus.CONFLICT, "EXECUTION_PUBLICATION_REQUIRED");
     final PolicySnapshot snapshot;
     try {
+      if (row.snapshot() == null || row.snapshot().length() > 4 * 1024 * 1024)
+        throw new IllegalStateException();
       snapshot = json.readValue(row.snapshot(), PolicySnapshot.class);
     } catch (Exception malformed) {
       throw new IllegalStateException("Invalid stored execution publication");
@@ -57,8 +72,21 @@ class ManagedExecutionPublicationReader implements ManagedExecutionPublicationAc
         snapshot.targets().stream().filter(t -> t != null && device.equals(t.deviceId())).toList();
     if (targets.size() != 1 || !registration.equals(targets.get(0).registrationId()))
       throw new DomainException(HttpStatus.CONFLICT, "EXECUTION_PUBLICATION_TARGET_MISMATCH");
-    return new Publication(row.id(), row.hash(), row.createdAt());
+    return new Loaded(
+        new Publication(row.id(), row.hash(), row.createdAt()), snapshot, targets.get(0));
   }
 
+  private record Loaded(
+      Publication publication, PolicySnapshot snapshot, PolicySnapshot.Target target) {}
+
   private record Row(String id, String mode, String hash, String snapshot, long createdAt) {}
+
+  @Override
+  @Transactional(propagation = Propagation.MANDATORY, noRollbackFor = DomainException.class)
+  public ManagedDesiredPolicy requireDesiredTarget(
+      String tenant, String actor, String publication, String device, String registration) {
+    var loaded = load(tenant, actor, publication, device, registration);
+    return new ManagedDesiredPolicyResolver()
+        .resolve(loaded.publication(), loaded.snapshot(), loaded.target());
+  }
 }

@@ -4,6 +4,7 @@ import com.aimanager.managedandroid.ManagedAndroidGateway.AppControl;
 import com.aimanager.managedandroid.ManagedAndroidGateway.AppRestriction;
 import com.aimanager.managedandroid.ManagedAndroidGateway.PermissionDecision;
 import com.aimanager.managedandroid.ManagedAndroidGateway.RuntimePermissionDecision;
+import com.aimanager.managedandroid.ManagedDesiredPolicy;
 import com.aimanager.shared.AndroidRuntimePermissions;
 import com.aimanager.shared.SafetyCriticalPackages;
 import com.aimanager.shared.SecretMaterial;
@@ -174,6 +175,26 @@ final class GoogleCompletePolicyCompiler {
     } catch (java.io.IOException malformed) {
       throw new IllegalStateException("Policy compilation failed");
     }
+  }
+
+  /**
+   * Consume the entire publication translation. API/mode must be independently verified; frozen
+   * readiness and catalog declarations are intentionally not promoted into execution authority.
+   */
+  Compiled compileDesired(int apiLevel, String verifiedMode, ManagedDesiredPolicy desired) {
+    if (desired == null) throw invalid();
+    var protections = new HashSet<>(protectedPackages);
+    protections.addAll(desired.protectedPackages());
+    var complete = new GoogleCompletePolicyCompiler(agentPackage, protections);
+    var controls = new ArrayList<AppRestriction>();
+    var permissions = new ArrayList<AppPermissions>();
+    for (var app : desired.applications()) {
+      if (!"PRIMARY".equals(app.profile())) throw invalid();
+      controls.add(new AppRestriction(app.packageName(), app.control()));
+      if (!app.permissions().isEmpty())
+        permissions.add(new AppPermissions(app.packageName(), app.permissions()));
+    }
+    return complete.compile(apiLevel, verifiedMode, controls, permissions);
   }
 
   /**

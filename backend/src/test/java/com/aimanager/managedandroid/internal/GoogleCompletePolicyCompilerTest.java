@@ -16,6 +16,57 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 class GoogleCompletePolicyCompilerTest {
   @Test
+  void desiredInputPreservesPublishedRecoveryPackages() {
+    var desired = desired("PRIMARY", List.of("com.example.lesson"));
+    assertThatThrownBy(() -> compiler.compileDesired(30, "DEVICE_OWNER", desired))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
+
+  @Test
+  void desiredInputCannotOverrideCurrentRecoveryPackages() {
+    var protectedCompiler =
+        new GoogleCompletePolicyCompiler("com.aimanager.child", Set.of("com.example.lesson"));
+    assertThatThrownBy(
+            () ->
+                protectedCompiler.compileDesired(30, "DEVICE_OWNER", desired("PRIMARY", List.of())))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
+
+  @Test
+  void desiredInputNeedsIndependentModeAndApiEvidence() {
+    var desired = desired("PRIMARY", List.of());
+    assertThatThrownBy(() -> compiler.compileDesired(29, "DEVICE_OWNER", desired))
+        .isInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(() -> compiler.compileDesired(30, "FULLY_MANAGED", desired))
+        .isInstanceOf(IllegalArgumentException.class);
+    assertThatThrownBy(
+            () -> compiler.compileDesired(30, "DEVICE_OWNER", desired("WORK", List.of())))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
+
+  private com.aimanager.managedandroid.ManagedDesiredPolicy desired(
+      String profile, List<String> protectedPackages) {
+    return new com.aimanager.managedandroid.ManagedDesiredPolicy(
+        new com.aimanager.managedandroid.ManagedExecutionPublicationAccess.Publication(
+            "version", "c".repeat(64), 1),
+        "device",
+        "registration",
+        List.of(
+            new com.aimanager.managedandroid.ManagedDesiredPolicy.ApplicationIntent(
+                "app",
+                "com.example.lesson",
+                profile,
+                List.of("a".repeat(64)),
+                AppControl.BLOCK_LAUNCH,
+                List.of(
+                    new RuntimePermissionDecision(
+                        "android.permission.CAMERA", PermissionDecision.DENY)),
+                List.of("launch", "camera"))),
+        List.of(),
+        protectedPackages);
+  }
+
+  @Test
   void combinesApplicationAndPermissionPolicyWithoutLosingTheManagementAgent() throws Exception {
     var compiler = new GoogleCompletePolicyCompiler("com.aimanager.child", Set.of());
     var result =

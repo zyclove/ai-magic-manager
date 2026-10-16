@@ -1,0 +1,208 @@
+{
+  "stage": "Immutable publication rules to complete desired policy and Google SDK document",
+  "date": "2026-10-16",
+  "baseCommit": "b9b0769e75919c386d66df6eb7670168a48293fd",
+  "status": "TARGETED_CHECKS_PASSED_NOT_DEPLOYED",
+  "ownedSourceSha256": {
+    "backend/src/main/java/com/aimanager/managedandroid/ManagedDesiredPolicy.java": "63bb55515e8a74bffcdd3f7ad439a52208a5097b55c395ea5f8142f6f7e4beaf",
+    "backend/src/main/java/com/aimanager/managedandroid/ManagedExecutionPublicationAccess.java": "104520cfaf120484a357ad75eaafa308d36ce8c7ff1da6942cf479b6acde020b",
+    "backend/src/main/java/com/aimanager/policy/internal/ManagedExecutionPublicationReader.java": "17b20982ba66fd3f6994a552cad2482d2a0d8dc56e6c72ec4a1a4cb94a38cf0f",
+    "backend/src/main/java/com/aimanager/policy/internal/ManagedDesiredPolicyResolver.java": "14f14401a31b7bb69f52ca7e4031409ece3d35a494e977a2e43ba111a7ac40e8",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/GoogleCompletePolicyCompiler.java": "889d412788e08d052916bc97159d659855e674e48d6ee08bad5faf426aec9f70",
+    "backend/src/test/java/com/aimanager/policy/internal/ManagedDesiredPolicyReaderTest.java": "978b1726819cc0f09a60deda8c1625688413c4f8d1d70064911dc2fe0f174f8c",
+    "backend/src/test/java/com/aimanager/managedandroid/internal/PublishedGooglePolicyDocumentTest.java": "93e36b831a2bb0d4263607bfb8c1494af9d2bb8e49a479d0dac5c28038843708",
+    "backend/src/test/java/com/aimanager/managedandroid/internal/GoogleCompletePolicyCompilerTest.java": "4c6ca48f4f6ffb67d39fba49d3919f55f624f428ef417338a3656de69ce2fc9f"
+  },
+  "attempts": {
+    "red": {
+      "result": {
+        "status": "EXPECTED_ASSERTION_FAILURE",
+        "phase": "red",
+        "baseCommit": "b9b0769e75919c386d66df6eb7670168a48293fd",
+        "scope": "Frozen backend plus published desired input contract; excludes shared WIP",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=ManagedDesiredPolicyReaderTest#resolvesEveryPublishedApplicationAndPermissionRule",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "ownedPid": 69760,
+        "mavenExitCode": 1,
+        "suites": {
+          "com.aimanager.policy.internal.ManagedDesiredPolicyReaderTest": {
+            "counts": {
+              "tests": 1,
+              "failures": 1,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "386a394da26f423bde72712d7fef3bea36b4c9f2fb01f417d097d293480bbb80"
+          }
+        },
+        "totals": {
+          "tests": 1,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0
+        },
+        "seconds": 36.8,
+        "sourceUnchanged": true,
+        "runnerSha256": "6dad797f60a568ba746646569efd8b8749b4075a51a4429fb07f094fee849d05"
+      },
+      "sourceManifestSha256": "e2967fb7a35c4c09a80024d23ed32a54b16c06aa0fd287658e743dead9bad3b4",
+      "resultSha256": "22c8e5c7526e208b4dc97d23afb650e89304907a6f17080bc22046282a9bd8f2",
+      "logSha256": "37948ef0be5ed655715a5d18cd603ae700824c07cf0d0a3b509cc824d786b0e1",
+      "sourcePins": 459
+    },
+    "green": {
+      "result": {
+        "status": "PASSED",
+        "phase": "green",
+        "baseCommit": "b9b0769e75919c386d66df6eb7670168a48293fd",
+        "scope": "Frozen backend plus published desired input resolver and SDK document integration; excludes shared WIP",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=ManagedDesiredPolicyReaderTest,PublishedGooglePolicyDocumentTest,GoogleCompletePolicyCompilerTest,ManagedPolicyExecutionJournalTest,ManagedExecutionPublicationReaderTest,ErasureManagedBindingProcessorTest,PolicyJourneyTest,GoogleManagedApplicationPolicyContentTest,GoogleManagedPolicyReceiptTest,GoogleRuntimePermissionContractTest,ManagedAndroidConfigurationTest,ModuleBoundariesTest",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "ownedPid": 73632,
+        "mavenExitCode": 0,
+        "suites": {
+          "com.aimanager.managedandroid.GoogleManagedApplicationPolicyContentTest": {
+            "counts": {
+              "tests": 65,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "6b277c16d4782ccb555fef1e7b80564a9c4ec1e458a487ddb07c7c80afaf7107"
+          },
+          "com.aimanager.managedandroid.GoogleManagedPolicyReceiptTest": {
+            "counts": {
+              "tests": 20,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "78d12e258313af7662c20fc5bd34e60826056754423fda33d9c4b985ccbbc315"
+          },
+          "com.aimanager.managedandroid.GoogleRuntimePermissionContractTest": {
+            "counts": {
+              "tests": 24,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "67e25151be159e6852011bee0ae82af1930d217377f4b8e34ca27ba0837d37c2"
+          },
+          "com.aimanager.managedandroid.internal.GoogleCompletePolicyCompilerTest": {
+            "counts": {
+              "tests": 53,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "b153444349abb41673f2b95923d635f4937313330e17fd0b627d1b31b8b148ad"
+          },
+          "com.aimanager.managedandroid.internal.ManagedAndroidConfigurationTest": {
+            "counts": {
+              "tests": 2,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "26254b32c3fa3f430870a4b5ad13c22d82ea3f21a1c1f3cb47acd711b73b8e9d"
+          },
+          "com.aimanager.managedandroid.internal.ManagedPolicyExecutionJournalTest": {
+            "counts": {
+              "tests": 40,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "cb0a3e6cfa5da08602e360dd98d6299b6033db8d7090211c43e8830989832b56"
+          },
+          "com.aimanager.managedandroid.internal.PublishedGooglePolicyDocumentTest": {
+            "counts": {
+              "tests": 1,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "465efb435d57495c50fdbefb6d8105b899a5715c178324299ef38bb750d6263c"
+          },
+          "com.aimanager.ModuleBoundariesTest": {
+            "counts": {
+              "tests": 1,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "4e86c7fc4d5885832049d0c940989ef19aa0d3e168696a491735fdc7335fd730"
+          },
+          "com.aimanager.policy.internal.ManagedDesiredPolicyReaderTest": {
+            "counts": {
+              "tests": 57,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "5b1ef95c49b3dbd8260c9faebc4155a8f79facc19384bf5d93cf3327b9469a4b"
+          },
+          "com.aimanager.policy.internal.ManagedExecutionPublicationReaderTest": {
+            "counts": {
+              "tests": 13,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "d9c0a33da68d71e2b87f8a45fc33322a421a65b968cd53bdab850a856e1f0685"
+          },
+          "com.aimanager.PolicyJourneyTest": {
+            "counts": {
+              "tests": 28,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "4030d4bc08cf3650ec5f1332ed360872b0b45941e00c873ea7a1dff38dd29f14"
+          },
+          "com.aimanager.retention.internal.ErasureManagedBindingProcessorTest": {
+            "counts": {
+              "tests": 33,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "8e521708bb6257be646fce2ce449213d6d6d9c2e3711831d3fd0c94c67da414a"
+          }
+        },
+        "totals": {
+          "tests": 337,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "seconds": 100.1,
+        "sourceUnchanged": true,
+        "runnerSha256": "824ccaa6653e23d9fa03121fc690e8efb003bbdd37304aaa7ec999abf393baea"
+      },
+      "sourceManifestSha256": "b8e8950b6638c52d65797891002a8403b19fb236f14d36b74981c90f0be29b9c",
+      "resultSha256": "76bc7a70059ae9d9bf9e8cd5d54b8fe28a3a7cdf68dab0b201f98d8e1fc1fc2d",
+      "logSha256": "5bb0deeac7a9aab3e5b040cd08fee7a825c5b6ba972c405f92f1613bbd0aae66",
+      "sourcePins": 461
+    }
+  },
+  "limitations": [
+    "Local H2 database and fixture ENFORCE publication, not a production publish or real provider authorization.",
+    "Source rule coverage and compilation do not certify current signing identity, profile, capability, contract, or remote resource ownership.",
+    "Production ENFORCE gate, mainland China provider restriction and external execution remain unchanged.",
+    "No Android, MySQL/OceanBase deployment, remote API or device execution verification in this stage.",
+    "A source rule effect dominated by a restrictive same-layer result remains represented by its source id; unresolved unsupported kinds/effects/combinations are rejected."
+  ]
+}
