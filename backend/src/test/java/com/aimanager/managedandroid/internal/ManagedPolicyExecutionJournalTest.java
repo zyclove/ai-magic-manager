@@ -117,6 +117,43 @@ class ManagedPolicyExecutionJournalTest {
   }
 
   @Test
+  void completeCompilerDocumentSurvivesDurableAdmissionAndClaim() {
+    var compiler = new GoogleCompletePolicyCompiler("com.aimanager.child", java.util.Set.of());
+    var compiled =
+        compiler.compile(
+            30,
+            "DEVICE_OWNER",
+            List.of(
+                new ManagedAndroidGateway.AppRestriction(
+                    "com.example.lesson", ManagedAndroidGateway.AppControl.BLOCK_LAUNCH)),
+            List.of(
+                new GoogleCompletePolicyCompiler.AppPermissions(
+                    "com.example.lesson",
+                    List.of(
+                        new ManagedAndroidGateway.RuntimePermissionDecision(
+                            "android.permission.CAMERA",
+                            ManagedAndroidGateway.PermissionDecision.DENY)))));
+    var task =
+        journal.enqueue(
+            f.tenant(),
+            f.actor(),
+            f.publication(),
+            f.binding(),
+            2,
+            compiled.documentJson(),
+            deadline);
+    var claim = claim();
+    assertThat(claim.taskId()).isEqualTo(task.id());
+    assertThat(claim.documentJson()).isEqualTo(compiled.documentJson());
+    assertThat(claim.documentSha256()).isEqualTo(compiled.sha256());
+    assertThat(
+            compiler
+                .restore(claim.documentJson(), claim.documentSha256(), 30, "DEVICE_OWNER")
+                .requestBody())
+        .isEqualTo(compiled.requestBody());
+  }
+
+  @Test
   void admissionIsImmutableAndIdempotent() {
     var task = enqueue();
     String equivalent =

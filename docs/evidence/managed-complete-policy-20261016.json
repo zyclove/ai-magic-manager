@@ -1,0 +1,187 @@
+{
+  "stage": "Complete Google application and permission policy document compiler and strict restoration",
+  "date": "2026-10-16",
+  "baseCommit": "fb63a8d3cc740c46905deac189793d8fa7e27166",
+  "status": "TARGETED_CHECKS_PASSED_NOT_DEPLOYED",
+  "ownedSourceSha256": {
+    "backend/src/main/java/com/aimanager/managedandroid/internal/GoogleCompletePolicyCompiler.java": "11ce10a4b8c9ec6ada343949cf42dbd6270ae28c8a816b16749a1ca632ffa84b",
+    "backend/src/test/java/com/aimanager/managedandroid/internal/GoogleCompletePolicyCompilerTest.java": "aa8d09f84d4bc4933b88acdf2533e9e64d0c952740502d8d91925d2f536a4be0",
+    "backend/src/test/java/com/aimanager/managedandroid/internal/ManagedPolicyExecutionJournalTest.java": "f1c790f3cd7ace9395cbcf4750560648af1f8d9e24f68e0650773d20ed170dfc"
+  },
+  "attempts": {
+    "red": {
+      "result": {
+        "status": "EXPECTED_ASSERTION_FAILURE",
+        "phase": "red",
+        "baseCommit": "fb63a8d3cc740c46905deac189793d8fa7e27166",
+        "scope": "Complete application-plus-permission document RED contract skeleton; no provider calls",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=GoogleCompletePolicyCompilerTest#combinesApplicationAndPermissionPolicyWithoutLosingTheManagementAgent",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "ownedPid": 75832,
+        "mavenExitCode": 1,
+        "suites": {
+          "com.aimanager.managedandroid.internal.GoogleCompletePolicyCompilerTest": {
+            "counts": {
+              "tests": 1,
+              "failures": 1,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "2987ffc0b3b59394fa95ecfb68a9e7f2a9e31552dd571ed5ceb157ab88e8db31"
+          }
+        },
+        "totals": {
+          "tests": 1,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0
+        },
+        "seconds": 32.1,
+        "sourceUnchanged": true,
+        "runnerSha256": "261a8826a707dd06bc2320ff792436852d92818aa9cc1b80ee90a9e4a6755dc5"
+      },
+      "sourceManifestSha256": "f671543ec29b3cf892b7b8dbc0bc04d2b310ffa58773213df379ed23831e05cf",
+      "resultSha256": "a07b492858707a7bf4303f39fab76e62aa5bc5a16f3e86af4875fb34ad3528fb",
+      "logSha256": "4b1177c40ccc777c3fa092ad33b992c90e2932d76a534784e2a0bd77bdbc0f4e",
+      "sourcePins": 457
+    },
+    "green": {
+      "result": {
+        "status": "PASSED",
+        "phase": "green",
+        "baseCommit": "fb63a8d3cc740c46905deac189793d8fa7e27166",
+        "scope": "HEAD backend plus complete policy compiler, compiler tests and journal round-trip test; excludes shared WIP",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=GoogleCompletePolicyCompilerTest,ManagedPolicyExecutionJournalTest,ManagedExecutionPublicationReaderTest,ErasureManagedBindingProcessorTest,PolicyJourneyTest,GoogleManagedApplicationPolicyContentTest,GoogleManagedPolicyReceiptTest,GoogleRuntimePermissionContractTest,ManagedAndroidConfigurationTest,ModuleBoundariesTest",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "ownedPid": 52316,
+        "mavenExitCode": 0,
+        "suites": {
+          "com.aimanager.managedandroid.GoogleManagedApplicationPolicyContentTest": {
+            "counts": {
+              "tests": 65,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "d50a1e9a45fdbafe3f3067963475523d9e145816b7771111978b2333eac00705"
+          },
+          "com.aimanager.managedandroid.GoogleManagedPolicyReceiptTest": {
+            "counts": {
+              "tests": 20,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "bbfbfab2e576cef3f397accfb935a9337d7c016d43e8b28772ac352526786d33"
+          },
+          "com.aimanager.managedandroid.GoogleRuntimePermissionContractTest": {
+            "counts": {
+              "tests": 24,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "57982c130f86d6596ba332b55a650a86da6b62c382679b0d82e4f60c44512039"
+          },
+          "com.aimanager.managedandroid.internal.GoogleCompletePolicyCompilerTest": {
+            "counts": {
+              "tests": 50,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "116a08a6f4fd43b8cfefe304e29be49e0d799f3e0fe46b656f5fae0e5512487a"
+          },
+          "com.aimanager.managedandroid.internal.ManagedAndroidConfigurationTest": {
+            "counts": {
+              "tests": 2,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "17db5c694491d791ea7c98ed3bcb8eca919233c6585588d0f2d2474922ad125f"
+          },
+          "com.aimanager.managedandroid.internal.ManagedPolicyExecutionJournalTest": {
+            "counts": {
+              "tests": 40,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "297e76a5e5386bed82ad810653ffd96e37de82dbf94dffc72d7e7533ffb43c5b"
+          },
+          "com.aimanager.ModuleBoundariesTest": {
+            "counts": {
+              "tests": 1,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "5cbc81ffb224704920df82fb770dc83934ceb97c7a9e35f63d5c18a33d65b066"
+          },
+          "com.aimanager.policy.internal.ManagedExecutionPublicationReaderTest": {
+            "counts": {
+              "tests": 13,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "049adfad8ce35f46542bc9e53a5dd187f9bff7d4a7af937edca2deb5cf29b144"
+          },
+          "com.aimanager.PolicyJourneyTest": {
+            "counts": {
+              "tests": 28,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "4c862b644bca56367d8a807bfbaf2e53525114f5f251566706dde15ad7371c22"
+          },
+          "com.aimanager.retention.internal.ErasureManagedBindingProcessorTest": {
+            "counts": {
+              "tests": 33,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "af3adcf363bdff5f059ec8f83eec768c469faaff9c0db9b5418e237c8c2589f7"
+          }
+        },
+        "totals": {
+          "tests": 276,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "seconds": 102.0,
+        "sourceUnchanged": true,
+        "runnerSha256": "47969e4d2275d3ed6c34876087b9326d4f50374bf21d297a9f780d172ce7269d"
+      },
+      "sourceManifestSha256": "f8fd21beb1a21017514596830def07ae5c6c8cf4ebf7bafdf6717c07d07b8622",
+      "resultSha256": "bd0af168b310e30359703632f9b1855653f1b384218e7366fe486105c4cb7fbc",
+      "logSha256": "a0397f335f694a3f5411625d7603081bcd17a0ea84257a2824d92499650c0769",
+      "sourcePins": 457
+    }
+  },
+  "limitations": [
+    "Pure compiler only: no remote policy write, ownership provisioning, scheduler, public execution endpoint or production activation.",
+    "The journal round-trip uses local H2 and mocked binding context. It proves byte-preserving persistence, not Google provider authorization or full device execution.",
+    "Service-side producer must include every resolved rule or explicitly refuse unsupported rule kinds; application and permission compilation alone does not certify all source rules.",
+    "Agent distribution, signing identity, user/profile scope and capability evidence require separate authorization and supported-device validation.",
+    "SHA-256 is content consistency, not authentication. Source-request consistency remains in the immutable publication and journal.",
+    "No Android builds, emulators, real devices, live EMM calls or MySQL/OceanBase production changes.",
+    "Mainland China Google provider and ENFORCE gates unchanged. Partner providers need their own policy implementation."
+  ]
+}
