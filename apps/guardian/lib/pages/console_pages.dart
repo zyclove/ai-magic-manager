@@ -925,75 +925,129 @@ class ConsoleActions {
 
   Future<void> previewPolicy(BuildContext ctx, Json draft) async {
     final actor = s.profile?['subject'] as String?, role = s.role;
+    final scopeGeneration = s.scopeGeneration;
     if (actor == null) return;
     bool current() =>
         ctx.mounted &&
+        s.scopeGeneration == scopeGeneration &&
         s.authenticated &&
         s.tenant != null &&
         s.root == root &&
         s.profile?['subject'] == actor &&
         s.role == role &&
         s.canOpen('policies');
-    Future<bool> groupCurrent(PolicyTargetSelection target) async {
-      if (target.groupId == null) return current();
-      if (!current() || !s.canOpen('device-groups')) return false;
-      final latest =
-          await s.api.send('GET', '$root/device-groups/${target.groupId}');
-      return current() &&
+    Future<bool> groupCurrent(PolicyTargetSelection target,
+        {bool Function()? isCurrent}) async {
+      final valid = isCurrent ?? current;
+      if (target.groupId == null) return valid();
+      if (!valid() || !s.canOpen('device-groups')) return false;
+      final latest = await s.api.send(
+          'GET', '$root/device-groups/${target.groupId}',
+          isCurrent: valid);
+      return valid() &&
           latest is Json &&
+          latest['id'] == target.groupId &&
           latest['state'] == 'ACTIVE' &&
           latest['version'] == target.groupVersion;
     }
 
+    Json? validatedPreview;
     final picked = await showPolicyTargetPicker(
-        context: ctx, session: s, root: root, actor: actor, role: role);
-    if (picked == null || !current()) return;
-    if (picked.groupId != null && !await groupCurrent(picked)) {
-      throw const ApiFailure(409, 'POLICY_GROUP_CHANGED');
+        context: ctx,
+        session: s,
+        root: root,
+        actor: actor,
+        role: role,
+        onPreview: (picked, isActive) async {
+          bool previewCurrent() => current() && isActive();
+          if (picked.groupId != null &&
+              !await groupCurrent(picked, isCurrent: previewCurrent)) {
+            throw const ApiFailure(409, 'POLICY_GROUP_CHANGED');
+          }
+          if (!previewCurrent()) {
+            throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+          }
+          final response = await s.api.send(
+              'POST', '$root/policies/${draft['id']}/previews',
+              version: draft['revision'],
+              isCurrent: previewCurrent,
+              body: {
+                'deviceIds': picked.deviceIds,
+                if (picked.groupId != null) 'groupId': picked.groupId,
+                if (picked.groupVersion != null)
+                  'groupVersion': picked.groupVersion
+              });
+          if (!previewCurrent()) {
+            throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+          }
+          if (response is! Json) {
+            throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+          }
+          final p = response;
+          if (p['id'] is! String ||
+              (p['id'] as String).isEmpty ||
+              p['policyId'] != draft['id'] ||
+              p['draftRevision'] != draft['revision'] ||
+              p['phase'] != 'PREVIEW' ||
+              p['hash'] is! String ||
+              !RegExp(r'^[a-f0-9]{64}$').hasMatch(p['hash'] as String) ||
+              p['expiresAt'] is! int ||
+              p['enforceable'] is! bool) {
+            throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+          }
+          if (picked.groupId != null &&
+              (p['snapshot'] is! Json ||
+                  (p['snapshot'] as Json)['groupSelection'] is! Json ||
+                  ((p['snapshot'] as Json)['groupSelection']
+                          as Json)['groupId'] !=
+                      picked.groupId ||
+                  ((p['snapshot'] as Json)['groupSelection']
+                          as Json)['groupVersion'] !=
+                      picked.groupVersion)) {
+            throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+          }
+          final targets = p['targets'];
+          if (targets is! List) {
+            throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+          }
+          final returnedRegistrations = <String, String>{};
+          for (final target in targets) {
+            if (target is! Json ||
+                target['deviceId'] is! String ||
+                target['registrationId'] is! String ||
+                target['observationStatus'] is! String ||
+                target['rules'] is! List ||
+                (target['rules'] as List).any((rule) =>
+                    rule is! Json ||
+                    rule['kind'] is! String ||
+                    rule['status'] is! String ||
+                    (rule['reasonCode'] != null &&
+                        rule['reasonCode'] is! String)) ||
+                returnedRegistrations.containsKey(target['deviceId'])) {
+              throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+            }
+            returnedRegistrations[target['deviceId'] as String] =
+                target['registrationId'] as String;
+          }
+          if (returnedRegistrations.length != picked.deviceIds.length ||
+              !returnedRegistrations.keys
+                  .toSet()
+                  .containsAll(picked.deviceIds)) {
+            throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+          }
+          if (picked.groupRegistrations.entries.any(
+              (entry) => returnedRegistrations[entry.key] != entry.value)) {
+            throw const ApiFailure(409, 'POLICY_GROUP_CHANGED');
+          }
+          validatedPreview = p;
+        });
+    if (!ctx.mounted ||
+        picked == null ||
+        !current() ||
+        validatedPreview == null) {
+      return;
     }
-    if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
-    final p = await s.api.send('POST', '$root/policies/${draft['id']}/previews',
-        version: draft['revision'],
-        body: {
-          'deviceIds': picked.deviceIds,
-          if (picked.groupId != null) 'groupId': picked.groupId,
-          if (picked.groupVersion != null) 'groupVersion': picked.groupVersion
-        }) as Json;
-    if (!current()) return;
-    if (picked.groupId != null &&
-        (p['snapshot'] is! Json ||
-            (p['snapshot'] as Json)['groupSelection'] is! Json ||
-            ((p['snapshot'] as Json)['groupSelection'] as Json)['groupId'] !=
-                picked.groupId ||
-            ((p['snapshot'] as Json)['groupSelection']
-                    as Json)['groupVersion'] !=
-                picked.groupVersion)) {
-      throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
-    }
-    final targets = p['targets'];
-    if (targets is! List) {
-      throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
-    }
-    final returnedRegistrations = <String, String>{};
-    for (final target in targets) {
-      if (target is! Json ||
-          target['deviceId'] is! String ||
-          target['registrationId'] is! String ||
-          returnedRegistrations.containsKey(target['deviceId'])) {
-        throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
-      }
-      returnedRegistrations[target['deviceId'] as String] =
-          target['registrationId'] as String;
-    }
-    if (returnedRegistrations.length != picked.deviceIds.length ||
-        !returnedRegistrations.keys.toSet().containsAll(picked.deviceIds)) {
-      throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
-    }
-    if (picked.groupRegistrations.entries
-        .any((entry) => returnedRegistrations[entry.key] != entry.value)) {
-      throw const ApiFailure(409, 'POLICY_GROUP_CHANGED');
-    }
-    if (!ctx.mounted) return;
+    final p = validatedPreview!;
     final publicationKey = requestId();
     await actionDetails(
         ctx,
@@ -1033,12 +1087,13 @@ class ConsoleActions {
                 'POST', '$root/policies/${draft['id']}/publications',
                 version: draft['revision'],
                 key: publicationKey,
+                isCurrent: current,
                 body: {
                   'previewId': p['id'],
                   'previewHash': p['hash'],
                   'mode': 'CONFIGURE_ONLY'
                 }) as Json;
-            if (inner.mounted) {
+            if (inner.mounted && current()) {
               await showDetails(inner, '发布结果', {
                 '状态': label(result['state']),
                 '发布方式': label(result['mode']),

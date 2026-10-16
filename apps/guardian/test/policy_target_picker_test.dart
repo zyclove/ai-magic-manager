@@ -203,8 +203,6 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('一年级 · 2 台').last);
     await settle(tester);
-    await tester.tap(find.text('只看已选'));
-    await tester.pump();
     expect(find.text('班级平板 group-1'), findsOneWidget);
     expect(find.text('班级平板 group-2'), findsOneWidget);
     expect(find.text('学习平板 A'), findsNothing);
@@ -225,8 +223,6 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('一年级 · 2 台').last);
     await settle(tester);
-    await tester.tap(find.text('只看已选'));
-    await tester.pump();
     await tester.ensureVisible(find.text('班级平板 group-1'));
     await tester.tap(find.text('班级平板 group-1'));
     await tester.pump();

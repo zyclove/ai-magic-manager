@@ -7,6 +7,9 @@ import '../core/session.dart';
 import '../core/labels.dart';
 import 'design.dart';
 
+typedef PolicyTargetPreview = Future<void> Function(
+    PolicyTargetSelection selection, bool Function() isCurrent);
+
 /// A one-time explicit device selection for the existing policy preview API.
 /// Group membership never becomes a hidden dynamic policy target here.
 class PolicyTargetSelection {
@@ -34,6 +37,7 @@ Future<PolicyTargetSelection?> showPolicyTargetPicker({
   required String root,
   required String actor,
   required String role,
+  PolicyTargetPreview? onPreview,
 }) {
   final scopeGeneration = session.scopeGeneration;
   final invalidated = Completer<PolicyTargetSelection?>();
@@ -45,7 +49,11 @@ Future<PolicyTargetSelection?> showPolicyTargetPicker({
       root: root,
       actor: actor,
       role: role,
+      onPreview: onPreview,
       expectedScopeGeneration: scopeGeneration,
+      onSelected: (selection) {
+        if (!invalidated.isCompleted) invalidated.complete(selection);
+      },
       onInvalidated: () {
         if (!invalidated.isCompleted) invalidated.complete(null);
       },
@@ -58,6 +66,8 @@ class PolicyTargetPicker extends StatefulWidget {
   final Session session;
   final String root, actor, role;
   final VoidCallback? onInvalidated;
+  final ValueChanged<PolicyTargetSelection>? onSelected;
+  final PolicyTargetPreview? onPreview;
   final int? expectedScopeGeneration;
   const PolicyTargetPicker(
       {super.key,
@@ -65,6 +75,8 @@ class PolicyTargetPicker extends StatefulWidget {
       required this.root,
       required this.actor,
       required this.role,
+      this.onPreview,
+      this.onSelected,
       this.expectedScopeGeneration,
       this.onInvalidated});
 
@@ -74,9 +86,12 @@ class PolicyTargetPicker extends StatefulWidget {
 
 class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
   final searchController = TextEditingController();
+  final scrollController = ScrollController();
   String search = '';
   bool onlySelected = false;
   bool closing = false;
+  bool previewing = false;
+  Object? previewError;
   late final int scopeGeneration;
   final devices = <Json>[];
   final groups = <Json>[];
@@ -147,6 +162,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
   void dispose() {
     generation++;
     searchController.dispose();
+    scrollController.dispose();
     widget.session.removeListener(accessChanged);
     super.dispose();
   }
@@ -229,7 +245,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
   }
 
   Future<void> chooseGroup(String id) async {
-    if (!current || !canUseGroups || loadingGroup) return;
+    if (!current || !canUseGroups || loadingGroup || previewing) return;
     final revision = generation;
     setState(() {
       loadingGroup = true;
@@ -297,6 +313,10 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
         groupName = group['name'] as String;
         groupVersion = group['version'] as int;
         excludedGroupDevices = health.excluded;
+        onlySelected = true;
+        searchController.clear();
+        search = '';
+        previewError = null;
       });
     } catch (failure) {
       if (current && revision == generation) {
@@ -310,7 +330,9 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
   }
 
   void toggle(Json row, bool checked) {
-    if (!current || loadingGroup || row['state'] != 'ACTIVE') return;
+    if (!current || loadingGroup || previewing || row['state'] != 'ACTIVE') {
+      return;
+    }
     final id = row['id'] as String;
     if (checked && selected.length >= 50 && !selected.contains(id)) return;
     setState(() {
@@ -324,29 +346,88 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
       groupName = null;
       groupVersion = null;
       excludedGroupDevices = 0;
+      previewError = null;
     });
   }
 
-  void finish() {
-    if (!current || loadingGroup || selected.isEmpty || selected.length > 50) {
+  Future<void> finish() async {
+    if (!current ||
+        loadingGroup ||
+        previewing ||
+        selected.isEmpty ||
+        selected.length > 50) {
       return;
     }
-    Navigator.pop(
-        context,
-        PolicyTargetSelection(selected.toList()..sort(), names,
-            groupId: groupId,
-            groupVersion: groupVersion,
-            groupName: groupName,
-            groupRegistrations: groupRegistrations));
+    final route = ModalRoute.of(context);
+    final revision = generation;
+    final selection = PolicyTargetSelection(selected.toList()..sort(), names,
+        groupId: groupId,
+        groupVersion: groupVersion,
+        groupName: groupName,
+        groupRegistrations: groupRegistrations);
+    FocusScope.of(context).unfocus();
+    setState(() {
+      previewing = true;
+      previewError = null;
+    });
+    try {
+      await widget.onPreview?.call(
+          selection,
+          () =>
+              current &&
+              revision == generation &&
+              route != null &&
+              route.isActive);
+      if (!current ||
+          revision != generation ||
+          route == null ||
+          !route.isActive) return;
+      final navigator = route.navigator;
+      if (navigator == null) return;
+      closing = true;
+      generation++;
+      // Complete explicitly: older Flutter does not resolve a covered route
+      // removed with removeRoute. Never pop an unrelated covering dialog.
+      widget.onSelected?.call(selection);
+      if (route.isCurrent) {
+        navigator.pop(selection);
+      } else {
+        navigator.removeRoute(route);
+      }
+    } catch (failure) {
+      if (!current || revision != generation) return;
+      setState(() => previewError = failure);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (current && scrollController.hasClients) scrollController.jumpTo(0);
+      });
+    } finally {
+      if (current && revision == generation) setState(() => previewing = false);
+    }
   }
 
   bool matches(String id, String name) =>
       '$name $id'.toLowerCase().contains(search);
 
+  void cancel() {
+    if (!mounted || closing) return;
+    final route = ModalRoute.of(context);
+    closing = true;
+    generation++;
+    widget.onInvalidated?.call();
+    if (route == null || !route.isActive) return;
+    final navigator = route.navigator;
+    if (navigator == null) return;
+    if (route.isCurrent) {
+      navigator.pop();
+    } else {
+      navigator.removeRoute(route);
+    }
+  }
+
   // Reviewing a group must include members outside the loaded device page.
   // Removing a member switches to explicit device selection, just as toggle.
   void removeSelection(String id) {
-    if (!current || loadingGroup) return;
+    if (!current || loadingGroup || previewing) return;
     setState(() {
       selected.remove(id);
       groupRegistrations.clear();
@@ -354,21 +435,41 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
       groupName = null;
       groupVersion = null;
       excludedGroupDevices = 0;
+      previewError = null;
     });
   }
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
+  Widget build(BuildContext context) => PopScope(
+      onPopInvoked: (didPop) {
+        if (!didPop || closing) return;
+        closing = true;
+        generation++;
+        widget.onInvalidated?.call();
+      },
+      child: AlertDialog(
           title: const Text('选择策略预览目标'),
           insetPadding:
               const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
           content: SizedBox(
               width: 700,
               height: 600,
-              child: ListView(children: [
+              child: ListView(controller: scrollController, children: [
                 const Text('选择设备，再预览规则对这些设备的影响。'),
+                if (previewing) ...[
+                  const SizedBox(height: 12),
+                  const LinearProgressIndicator(),
+                  Semantics(
+                      liveRegion: true, child: const Text('正在核对目标和规则，请稍候。')),
+                ],
+                if (previewError != null) ...[
+                  FailureView(previewError!,
+                      reauth: () => widget.session.login(stepUp: true)),
+                  const Text('已保留设备选择。可调整目标，或点击“重试预览”。'),
+                ],
                 const SizedBox(height: 12),
                 TextField(
+                    enabled: !previewing,
                     controller: searchController,
                     decoration: InputDecoration(
                         labelText: '搜索设备名称或编号',
@@ -397,7 +498,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
                     child: FilterChip(
                         label: const Text('只看已选'),
                         selected: onlySelected,
-                        onSelected: loadingGroup
+                        onSelected: loadingGroup || previewing
                             ? null
                             : (value) => setState(() => onlySelected = value))),
                 if (canUseGroups) ...[
@@ -419,14 +520,15 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
                                         '${group['name']} · ${group['deviceCount']} 台',
                                         overflow: TextOverflow.ellipsis)))
                                 .toList(),
-                            onChanged: loadingGroup || loadingGroups
-                                ? null
-                                : (id) {
-                                    if (id != null) chooseGroup(id);
-                                  })),
+                            onChanged:
+                                loadingGroup || loadingGroups || previewing
+                                    ? null
+                                    : (id) {
+                                        if (id != null) chooseGroup(id);
+                                      })),
                     if (groupCursor != null)
                       TextButton(
-                          onPressed: loadingGroups
+                          onPressed: loadingGroups || previewing
                               ? null
                               : () => loadGroups(more: true),
                           child: const Text('更多组'))
@@ -462,7 +564,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
                   Align(
                       alignment: Alignment.centerLeft,
                       child: TextButton(
-                          onPressed: loadingGroup || !current
+                          onPressed: loadingGroup || previewing || !current
                               ? null
                               : () => setState(() {
                                     selected.clear();
@@ -471,6 +573,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
                                     groupName = null;
                                     groupVersion = null;
                                     excludedGroupDevices = 0;
+                                    previewError = null;
                                   }),
                           child: const Text('清空选择'))),
                 const SizedBox(height: 8),
@@ -486,8 +589,9 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
                     CheckboxListTile(
                         key: ValueKey('selected-$id'),
                         value: true,
-                        onChanged:
-                            loadingGroup ? null : (_) => removeSelection(id),
+                        onChanged: loadingGroup || previewing
+                            ? null
+                            : (_) => removeSelection(id),
                         title: Text(names[id] ?? id),
                         subtitle: Text('已选择 · $id'),
                         controlAffinity: ListTileControlAffinity.leading),
@@ -505,6 +609,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
                         value: selected.contains(row['id']),
                         onChanged: row['state'] != 'ACTIVE' ||
                                 loadingGroup ||
+                                previewing ||
                                 selected.length >= 50 &&
                                     !selected.contains(row['id'])
                             ? null
@@ -522,8 +627,9 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
                       reauth: () => widget.session.login(stepUp: true)),
                 if (deviceCursor != null && !onlySelected)
                   TextButton.icon(
-                      onPressed:
-                          loadingDevices ? null : () => loadDevices(more: true),
+                      onPressed: loadingDevices || previewing
+                          ? null
+                          : () => loadDevices(more: true),
                       icon: const Icon(Icons.expand_more),
                       label: const Text('加载更多设备')),
                 const ExpansionTile(
@@ -537,13 +643,18 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
                     ]),
               ])),
           actions: [
-            TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: const Text('取消')),
+            TextButton(onPressed: cancel, child: const Text('取消')),
             FilledButton(
-                onPressed: current && selected.isNotEmpty && !loadingGroup
+                onPressed: current &&
+                        selected.isNotEmpty &&
+                        !loadingGroup &&
+                        !previewing
                     ? finish
                     : null,
-                child: const Text('预览这些设备'))
-          ]);
+                child: Text(previewing
+                    ? '正在预览…'
+                    : previewError == null
+                        ? '预览这些设备'
+                        : '重试预览'))
+          ]));
 }

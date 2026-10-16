@@ -1,0 +1,111 @@
+{
+  "schemaVersion": 1,
+  "recordedAt": "2026-10-16T07:29:00.614656+00:00",
+  "scope": "Policy target selection and preview usability",
+  "baseCommit": "22a2a9ba9900863bdf7fe6068c930a7b3a5c258c",
+  "changes": [
+    "Review all selected group members immediately and clear the old search",
+    "Keep selection while previewing and after a failed request; retry explicitly",
+    "Block duplicate submissions and target changes during preview",
+    "Cancel subsequent requests on dialog cancellation, system back or scope renewal",
+    "Validate preview identity, target set, registrations and rule shape before closing the picker"
+  ],
+  "browserRegression": {
+    "exitCode": 0,
+    "passed": 35,
+    "failed": 0,
+    "skipped": 0,
+    "newCases": 19,
+    "existingCases": 16,
+    "files": {
+      "test/policy_preview_flow_test.dart": 19,
+      "test/policy_target_picker_test.dart": 8,
+      "test/policy_target_dialog_test.dart": 5,
+      "test/policy_target_scope_test.dart": 3
+    },
+    "usesHttpFixtures": true,
+    "realLoginOrDeviceExecutionVerified": false,
+    "publicationRequestsSent": 0,
+    "result": {
+      "path": ".local/runtime/policy-flow-green-20261016-r7/result.json",
+      "sha256": "18a508364a17a35cd5b54544bb62a7a89e346ed1582511507521513e5fc4fdd0"
+    },
+    "stdout": {
+      "path": ".local/runtime/policy-flow-green-20261016-r7/stdout.log",
+      "sha256": "f419f5c3a70de57077afe87b54a9ac34bfa4c4eb7907d8f59efb83daaff02f29"
+    }
+  },
+  "staticAnalysis": {
+    "exitCode": 0,
+    "issues": 0,
+    "result": {
+      "path": ".local/runtime/policy-flow-analyze-20261016-r7/result.json",
+      "sha256": "f7f9df524144a3d54eb8b5a0758afe1a2f4a19bc7ef1f7120206e10596f6b679"
+    },
+    "stdout": {
+      "path": ".local/runtime/policy-flow-analyze-20261016-r7/stdout.log",
+      "sha256": "835915bfa1f6055390bac7c06c3c54f381be87efd7931cc49e10a34e4bb33080"
+    }
+  },
+  "baselineRegression": {
+    "exitCode": 1,
+    "expectedAssertionFailures": 1,
+    "behavior": "A failed preview closes the picker in the unchanged baseline",
+    "result": {
+      "path": ".local/runtime/policy-flow-red2-20261016-r2/result.json",
+      "sha256": "097890b3364d6dcc5ca3775433dc9842eb1e3282d51ee5874b362662577e8c14"
+    },
+    "stdout": {
+      "path": ".local/runtime/policy-flow-red2-20261016-r2/stdout.log",
+      "sha256": "c84fd964f8206166eb51c8d0ee19857fa321538997a0d08090eb2e2c68f819b4"
+    }
+  },
+  "sourceIntegrity": {
+    "frozenFiles": 398,
+    "unchangedDuringEachFinalRun": true,
+    "browserAndAnalysisInputsIdentical": true,
+    "pins": {
+      "path": ".local/runtime/policy-flow-green-20261016-r7/source-before.json",
+      "sha256": "d2ea1bd0b796c1e5912e6fad038387e368ff9dd1bad6eb22e082bf4363e87747"
+    },
+    "ownedFiles": [
+      {
+        "path": "apps/guardian/lib/pages/console_pages.dart",
+        "bytes": 71150,
+        "sha256": "27dad838f904c90de090252bdac58410d3f5afb06cc951be0f8c6d8d91505597"
+      },
+      {
+        "path": "apps/guardian/lib/ui/policy_target_picker.dart",
+        "bytes": 26302,
+        "sha256": "e14079c1643374bb45f524f2633877afe7562c2a0adaede65e4a2de0bf62b479"
+      },
+      {
+        "path": "apps/guardian/test/policy_preview_flow_test.dart",
+        "bytes": 19441,
+        "sha256": "9ddd2520cb6139f3632e413fde75cbf564b0fab4a48d95ec64e2c874fc0649b7"
+      },
+      {
+        "path": "apps/guardian/test/policy_target_picker_test.dart",
+        "bytes": 10690,
+        "sha256": "59759dc6a9b6e50106fb062e8b22cd8b99eb92b94e9c2cfa2e9996b9a3fa162b"
+      }
+    ]
+  },
+  "integration": {
+    "sharedUnownedConsoleBytesPreserved": true,
+    "applyReceipt": {
+      "path": ".local/runtime/policy-flow-apply-20261016-r1/receipt.json",
+      "sha256": "4a91b962fb82182f38edd952e6b0293ced2538205b71733af128ffe25ccbb5bc"
+    },
+    "databaseChanged": false,
+    "backendChanged": false,
+    "deployed": false,
+    "liveRelease": "55035fbcde3f758841ae215b3989c9f81ccb5f90"
+  },
+  "remaining": [
+    "Expandable per-device preview results and visual design alignment",
+    "Integration build and deployment of the current candidate",
+    "Real populated-workspace and native device acceptance"
+  ],
+  "priorAttemptsRetainedAndExcludedFromFinalCounts": true
+}
