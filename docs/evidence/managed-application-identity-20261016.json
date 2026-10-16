@@ -1,0 +1,185 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-16",
+  "status": "TARGETED_IDENTITY_AND_SDK_CONTRACT_PASSED",
+  "isolatedBaseCommit": "4e84ab3d357a14c920ce9b509461bda5fff14d27",
+  "scope": "Server-side current-context identity and freshness verification plus official SDK loopback; not database authorization or execution",
+  "sourceSha256": {
+    "backend/src/main/java/com/aimanager/managedandroid/ManagedApplicationIdentityVerifier.java": "0220177fe82ae620f897ae4bbd04a08107ea21a15b435cbaf917bd107a562ef3",
+    "backend/src/test/java/com/aimanager/managedandroid/ManagedApplicationIdentityVerifierTest.java": "89aae012933daa7cf6b5a74276b520a347c4a47d508e483042878eb5dae800db",
+    "backend/src/test/java/com/aimanager/managedandroid/ManagedApplicationIdentityBoundaryTest.java": "14d32b2efc2ae9b38cfaad27f8182f60a6ea3057b36e829997e13034bdb4fa41",
+    "backend/src/test/java/com/aimanager/managedandroid/ManagedApplicationIdentitySdkJourneyTest.java": "e261accb7700d0875e18778c6162c60b7196798ccb6bbb330abf3874d704c8d5"
+  },
+  "runs": {
+    "red": {
+      "candidate": "managed-application-identity-red-20261016-r2",
+      "result": {
+        "status": "EXPECTED_BEHAVIOR_FAILURE_REPRODUCED",
+        "baseCommit": "4e84ab3d357a14c920ce9b509461bda5fff14d27",
+        "scope": "Pure current application identity verification with fixed clock; no Spring, database, SDK or external services",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=ManagedApplicationIdentityVerifierTest",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "externalServices": false,
+        "realDevice": false,
+        "localHttpFixture": false,
+        "ownedProcessId": 2068,
+        "mavenExitCode": 1,
+        "counts": {
+          "tests": 2,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0
+        },
+        "failedCases": [
+          "currentBoundApplicationProducesExpiringIdentityWithoutInventingProfile"
+        ],
+        "surefireXmlSha256": "bec4987bab7ca32aaaab9d66b8bf6e9c0795d4ae559c9cc157624d52cecb6ea3",
+        "seconds": 33.8,
+        "sourceUnchanged": true,
+        "runnerSha256": "6e92ca0e07f7bc2c6009b58aa2ce48025a38387d4e9811e4aeaabe6cd23867f5"
+      },
+      "resultSha256": "0f885ca7a7944b93388dfd02ca1ce93c072d752cb5797732f2102d0f8867b3c7",
+      "logSha256": "7342a18ceb6816fbf7152d2e60b4f7b883ba5f592a57a027fb2e9472439f58a7",
+      "sourceManifestSha256": "24c63d22a2ac9ed212d0a30b33ddbf13ef89d92e10f0172afacc9f80abadeceb",
+      "sourcePinCount": 436,
+      "observedSuites": {
+        "com.aimanager.managedandroid.ManagedApplicationIdentityVerifierTest": {
+          "tests": 2,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0,
+          "xmlSha256": "bec4987bab7ca32aaaab9d66b8bf6e9c0795d4ae559c9cc157624d52cecb6ea3"
+        }
+      }
+    },
+    "green": {
+      "candidate": "managed-application-identity-green-20261016-r1",
+      "result": {
+        "status": "PASSED",
+        "baseCommit": "4e84ab3d357a14c920ce9b509461bda5fff14d27",
+        "scope": "Current application identity verification, official SDK loopback integration and previous report/binding regressions; no Spring or external services",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=ManagedApplicationIdentityVerifierTest,ManagedApplicationIdentityBoundaryTest,ManagedApplicationIdentitySdkJourneyTest,GoogleManagedApplicationReportTest,GoogleManagedApplicationReportBoundaryTest,GoogleManagedAgentEvidenceTest",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "externalServices": false,
+        "realDevice": false,
+        "localHttpFixture": true,
+        "ownedProcessId": 20596,
+        "mavenExitCode": 0,
+        "suites": {
+          "ManagedApplicationIdentityVerifierTest": {
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "xmlSha256": "97b0678e5eeff6814bb2bec7a5e3569734cc72d65c5fa751b5d1e129514e8fd7"
+          },
+          "ManagedApplicationIdentityBoundaryTest": {
+            "tests": 59,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "xmlSha256": "3aca2b652778512525214c65aa85ed07a1450171bbca519163fb43e0d00f1591"
+          },
+          "ManagedApplicationIdentitySdkJourneyTest": {
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "xmlSha256": "397534e70ddc3820a4a466d06f9d38f69311d5888d2c2587673439919418a5f6"
+          },
+          "GoogleManagedApplicationReportTest": {
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "xmlSha256": "58c440c29fdc04c2f4e9e05e6cc938e68b3992a5410f25dbfa6329dcbfff576e"
+          },
+          "GoogleManagedApplicationReportBoundaryTest": {
+            "tests": 33,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "xmlSha256": "12dd77382568cf226aa1b26763654998f5f103410f1da123553299a44ae5ca27"
+          },
+          "GoogleManagedAgentEvidenceTest": {
+            "tests": 18,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "xmlSha256": "a9821a8617c5fc8b2c883e0dfd32c35f3e5c5b2a96e64d5975e94f7fe47f9c1d"
+          }
+        },
+        "seconds": 28.3,
+        "sourceUnchanged": true,
+        "runnerSha256": "b24ea1ea83f2a5160c22845f60f7e17b81f60f6607eb312738c0aa177455d355"
+      },
+      "resultSha256": "1520f63f3b487c154180b97cdd821051386cc0b1d00f7442a508a26b10e7cfd8",
+      "logSha256": "5ad582223adc7cfcca4645fa5936fdba7207d29eb25ff91a48564b9a79759e0c",
+      "sourceManifestSha256": "ff173d01782b32f22da48d115dfdbe1683407d183708a61fe679cf6e08885fa4",
+      "sourcePinCount": 438,
+      "observedSuites": {
+        "com.aimanager.managedandroid.GoogleManagedAgentEvidenceTest": {
+          "tests": 18,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "xmlSha256": "a9821a8617c5fc8b2c883e0dfd32c35f3e5c5b2a96e64d5975e94f7fe47f9c1d"
+        },
+        "com.aimanager.managedandroid.GoogleManagedApplicationReportBoundaryTest": {
+          "tests": 33,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "xmlSha256": "12dd77382568cf226aa1b26763654998f5f103410f1da123553299a44ae5ca27"
+        },
+        "com.aimanager.managedandroid.GoogleManagedApplicationReportTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "xmlSha256": "58c440c29fdc04c2f4e9e05e6cc938e68b3992a5410f25dbfa6329dcbfff576e"
+        },
+        "com.aimanager.managedandroid.ManagedApplicationIdentityBoundaryTest": {
+          "tests": 59,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "xmlSha256": "3aca2b652778512525214c65aa85ed07a1450171bbca519163fb43e0d00f1591"
+        },
+        "com.aimanager.managedandroid.ManagedApplicationIdentitySdkJourneyTest": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "xmlSha256": "397534e70ddc3820a4a466d06f9d38f69311d5888d2c2587673439919418a5f6"
+        },
+        "com.aimanager.managedandroid.ManagedApplicationIdentityVerifierTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "xmlSha256": "97b0678e5eeff6814bb2bec7a5e3569734cc72d65c5fa751b5d1e129514e8fd7"
+        }
+      }
+    }
+  },
+  "limitations": [
+    "No real EMM or device",
+    "No Spring context or database authorization/storage workflow",
+    "No full backend suite",
+    "No deployment",
+    "Profile mapping, policy integration and durable execution remain pending"
+  ]
+}

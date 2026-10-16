@@ -31,6 +31,8 @@
 
 4A 读取子步骤（2026-10-16）：已实现不依赖绑定反馈的普通应用报告读取，官方 SDK 本地 HTTP 契约与原绑定回归共 53 项通过，见[应用报告契约与验收](managed-application-report-contract.md)。此结果只提供原始事实；租户、当前注册、绑定、目录签名、时效及 profile 核验与存储仍需接入，4A 整体及 4B–4E 尚未完成。
 
+4A 领域核验子步骤（2026-10-16）：已实现[当前应用身份核验器](managed-application-identity-verification.md)，比较服务端捕获和重新加载的当前上下文，校验签名与时效；62 项新检查及原 53 项回归共 115 项通过。实际数据库授权、上下文加载、证据存储和策略编译尚未接入，用户空间仍为 UNKNOWN，不能将此子步骤视为 4A 整体或系统执行交付。
+
 ### 先修正证据作用域，再开放执行
 
 `PolicyService.snapshot` 当前为所有目标复用同一份应用目录。修正前，`RuleCompiler.compile` 从 `ApplicationDefinition.evidenceStatus` 判断应用是否已验证；当前入口已拒绝采信该共用目录状态，仍待逐目标证据接入。目录定义是租户内声明，不能因为一台设备核验通过，就把目录记录改为 `INSTALLED_VERIFIED`，否则其他设备会继承不属于自己的安装事实。
