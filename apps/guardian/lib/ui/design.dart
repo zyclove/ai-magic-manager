@@ -313,6 +313,7 @@ class _EditDialogState extends State<EditDialog> {
   }
 
   Future<void> save() async {
+    if (busy) return;
     if (!form.currentState!.validate()) return;
     setState(() {
       busy = true;
@@ -545,6 +546,7 @@ class _ActionDetailsState extends State<_ActionDetails> {
   bool busy = false;
   Object? error;
   Future<void> perform(DetailAction action) async {
+    if (busy) return;
     setState(() {
       busy = true;
       error = null;

@@ -84,6 +84,7 @@ class _MemberEditorState extends State<MemberEditor> {
         }
       });
   Future<void> save() async {
+    if (busy) return;
     if (!form.currentState!.validate() || roles.isEmpty || !changed) return;
     final body = pending ??
         <String, dynamic>{

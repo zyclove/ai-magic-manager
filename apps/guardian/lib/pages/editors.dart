@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../core/api.dart';
 import '../core/labels.dart';
+import '../core/rule_parameter_labels.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
 
@@ -99,6 +100,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   }
 
   Future<void> save() async {
+    if (busy) return;
     if (!form.currentState!.validate()) return;
     if (windows.isEmpty) {
       setState(() => error = const ApiFailure(400, 'ADD_TIME_WINDOW'));
@@ -286,7 +288,8 @@ Future<void> policyEditor(BuildContext context, Session session,
     ]);
   } catch (failure) {
     if (context.mounted) {
-      toast(context, failure is ApiFailure ? failure.message : '无法加载权限目录，请稍后重试。');
+      toast(
+          context, failure is ApiFailure ? failure.message : '无法加载权限目录，请稍后重试。');
     }
     return;
   }
@@ -323,24 +326,16 @@ RuntimePermissionCatalog parseRuntimePermissionCatalog(dynamic raw) {
       effects[1] != 'DENY') {
     throw const ApiFailure(502, 'INVALID_PERMISSION_CATALOG_RESPONSE');
   }
-  const common = {
-    'CAMERA': '相机',
-    'RECORD_AUDIO': '麦克风',
-    'ACCESS_FINE_LOCATION': '精确位置',
-    'ACCESS_COARSE_LOCATION': '大致位置',
-    'ACCESS_BACKGROUND_LOCATION': '后台位置',
-    'READ_CONTACTS': '读取联系人',
-    'READ_CALENDAR': '读取日历',
-    'POST_NOTIFICATIONS': '发送通知'
-  };
   final result = <String, String>{};
   final pattern = RegExp(r'^android\.permission\.[A-Z][A-Z0-9_]{1,100}$');
   for (final value in rows) {
-    if (value is! String || !pattern.hasMatch(value) || result.containsKey(value)) {
+    if (value is! String ||
+        !pattern.hasMatch(value) ||
+        result.containsKey(value)) {
       throw const ApiFailure(502, 'INVALID_PERMISSION_CATALOG_RESPONSE');
     }
     final short = value.substring('android.permission.'.length);
-    result[value] = common[short] == null ? short : '${common[short]} · $short';
+    result[value] = runtimePermissionDisplayLabel(value) ?? short;
   }
   return RuntimePermissionCatalog(
       Map.unmodifiable(result), List.unmodifiable(effects.cast<String>()));
@@ -416,17 +411,17 @@ class _PolicyEditorState extends State<PolicyEditor> {
     if (type == 'RUNTIME_PERMISSION') {
       setState(() => loadingRule = true);
       try {
-        final raw = await widget.session.api.send(
-            'GET', '/policy-metadata/android-runtime-permissions');
-        if (!mounted || widget.session.tenant?['id'] != widget.root.substring(9)) return;
+        final raw = await widget.session.api
+            .send('GET', '/policy-metadata/android-runtime-permissions');
+        if (!mounted ||
+            widget.session.tenant?['id'] != widget.root.substring(9)) return;
         final catalog = parseRuntimePermissionCatalog(raw);
         runtimePermissions = catalog.permissions;
         runtimeEffects = catalog.editableEffects;
       } catch (failure) {
         if (mounted) {
-          toast(context, failure is ApiFailure
-              ? failure.message
-              : '无法加载权限目录，请稍后重试。');
+          toast(context,
+              failure is ApiFailure ? failure.message : '无法加载权限目录，请稍后重试。');
         }
         return;
       } finally {
@@ -463,24 +458,14 @@ class _PolicyEditorState extends State<PolicyEditor> {
         const FieldSpec('domain', '域名',
             hint: 'example.com（不含协议或路径）', maxLength: 253),
       if (type == 'RUNTIME_PERMISSION')
-        FieldSpec('permission', 'Android 运行时权限',
-            options: runtimePermissions),
+        FieldSpec('permission', 'Android 运行时权限', options: runtimePermissions),
       if (type == 'SPECIAL_ACCESS')
-        const FieldSpec('permission', '特殊访问权限', options: {
-          'USAGE_ACCESS': '使用情况访问',
-          'OVERLAY': '悬浮窗',
-          'NOTIFICATION_ACCESS': '通知读取',
-          'ACCESSIBILITY': '无障碍服务',
-          'VPN': 'VPN 连接'
-        }),
+        const FieldSpec('permission', '特殊访问权限', options: specialAccessNames),
       const FieldSpec('required', '执行要求',
           options: {'true': '必须支持', 'false': '可选执行'})
     ];
     final initial = index == null
-        ? <String, dynamic>{
-            'effect': editableEffects.first,
-            'required': 'true'
-          }
+        ? <String, dynamic>{'effect': editableEffects.first, 'required': 'true'}
         : {...rules[index], 'required': rules[index]['required'].toString()};
     final result = await formDialog(context,
         title: '${index == null ? '添加' : '编辑'}${label(type)}',
@@ -526,6 +511,7 @@ class _PolicyEditorState extends State<PolicyEditor> {
   }
 
   Future<void> save() async {
+    if (busy) return;
     if (!form.currentState!.validate()) return;
     setState(() {
       busy = true;
@@ -594,9 +580,10 @@ class _PolicyEditorState extends State<PolicyEditor> {
                                       fontWeight: FontWeight.w600)),
                               const Spacer(),
                               TextButton.icon(
-                                  onPressed: busy || loadingRule || rules.length >= 100
-                                      ? null
-                                      : () => editRule(),
+                                  onPressed:
+                                      busy || loadingRule || rules.length >= 100
+                                          ? null
+                                          : () => editRule(),
                                   icon: const Icon(Icons.add, size: 18),
                                   label: const Text('添加规则'))
                             ]),

@@ -1,0 +1,953 @@
+{
+  "schemaVersion": 1,
+  "releaseVersion": "1.0.0",
+  "stage": "policy-preview-rule-details-and-submit-integrity",
+  "generatedUtc": "2026-10-16T10:44:09.556121+00:00",
+  "sourceBaseCommit": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+  "integrationParent": "a74668c01ca4e6c893da7a37482eda12e925acd3",
+  "deployed": false,
+  "wholeGoalComplete": false,
+  "sourceScope": {
+    "frozenFiles": 408,
+    "productionDartFiles": 7,
+    "newTestDartFiles": 4,
+    "prototypeExcluded": "apps/guardian/tool/policy_preview_visual.dart",
+    "files": [
+      {
+        "path": "apps/guardian/lib/core/rule_parameter_labels.dart",
+        "bytes": 1026,
+        "sha256": "30b1c3cee64653f872aa79688c2e35f025658fad035732f67c10f4344920c70b"
+      },
+      {
+        "path": "apps/guardian/lib/pages/console_pages.dart",
+        "bytes": 70960,
+        "sha256": "81459c191595a77b9b439fcfa821fc14743cb79c8e333e2131aae235fb2223e9"
+      },
+      {
+        "path": "apps/guardian/lib/pages/editors.dart",
+        "bytes": 28272,
+        "sha256": "dd570a6dfaba9fbf621f60c884f1be44d1c2460f8dc186c4fcb556422627f872"
+      },
+      {
+        "path": "apps/guardian/lib/ui/design.dart",
+        "bytes": 24629,
+        "sha256": "23c9b61afe66489353c46e004a7776fa4a38fc8df83bbaf40ab4a41e77fdf9c5"
+      },
+      {
+        "path": "apps/guardian/lib/ui/policy_preview_results.dart",
+        "bytes": 23695,
+        "sha256": "6a273ae1a77330bf8ca1bd0c8612cfbda7e5b3accedd76cc1e4d34b3826d5649"
+      },
+      {
+        "path": "apps/guardian/lib/ui/member_editor.dart",
+        "bytes": 17439,
+        "sha256": "ffaa134dbffabd626c44d51b591bbe2e01b6424012305cc207e8ee3d795a4bdf"
+      },
+      {
+        "path": "apps/guardian/lib/ui/class_action_dialog.dart",
+        "bytes": 6677,
+        "sha256": "802def3a8e72e84fdde0c01fee7ed502b654960267d7396b69a67cf5d2443dc0"
+      },
+      {
+        "path": "apps/guardian/test/dialog_submit_guard_test.dart",
+        "bytes": 1385,
+        "sha256": "6a12fc99850d87b81da7404398b711c7956423724d9e7918eb0429d0fa898837"
+      },
+      {
+        "path": "apps/guardian/test/editor_submit_guard_test.dart",
+        "bytes": 9613,
+        "sha256": "ee21b5a8d04e7d6b825560c85bde3a09a81e6e81b45489a53d71c30edd55fde9"
+      },
+      {
+        "path": "apps/guardian/test/policy_preview_rule_details_test.dart",
+        "bytes": 20200,
+        "sha256": "d50f69adc5959a84f9f2ba1086ff57df761842f068c68abea2020a64291326b9"
+      },
+      {
+        "path": "apps/guardian/test/policy_preview_save_flow_test.dart",
+        "bytes": 5206,
+        "sha256": "6b5d03de55caa3f6bacd973e6b13f733902de88f03da00d18981755b12d9569c"
+      }
+    ]
+  },
+  "tests": {
+    "defaultPassed": 599,
+    "browserPassed": 197,
+    "uniqueTotal": 796,
+    "browserFiles": [
+      "test/editor_submit_guard_test.dart",
+      "test/device_management_browser_test.dart",
+      "test/device_management_entry_test.dart",
+      "test/device_subflow_scope_test.dart",
+      "test/local_date_browser_test.dart",
+      "test/managed_agent_binding_page_test.dart",
+      "test/managed_android_review_recovery_test.dart",
+      "test/managed_enrollment_page_test.dart",
+      "test/policy_preview_evidence_view_test.dart",
+      "test/policy_preview_flow_test.dart",
+      "test/policy_preview_results_flow_test.dart",
+      "test/policy_preview_rule_details_test.dart",
+      "test/policy_preview_save_flow_test.dart",
+      "test/policy_target_dialog_test.dart",
+      "test/policy_target_picker_test.dart",
+      "test/policy_target_scope_test.dart",
+      "test/workspace_recovery_browser_test.dart"
+    ],
+    "extraTargetedPassesNotAdded": 4
+  },
+  "verification": [
+    {
+      "phase": "targeted",
+      "base": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+      "startedUtc": "2026-10-16T10:18:34.1451716Z",
+      "completedUtc": "2026-10-16T10:19:25.9029946Z",
+      "exitCode": 0,
+      "timedOut": false,
+      "sourceCount": 408,
+      "sourcesUnchanged": true,
+      "arguments": [
+        "test",
+        "--no-pub",
+        "--platform",
+        "chrome",
+        "--web-renderer",
+        "html",
+        "--reporter",
+        "expanded",
+        "test/editor_submit_guard_test.dart"
+      ],
+      "runnerSha256": "6e2b9e0f3d17be1cfb22e6e0909dc7f1cb363bfed67ae4dabd6e782fd9dc6c32",
+      "testsPassed": 4,
+      "diagnosticDuplicateExcludedFromTotal": true,
+      "resultSha256": "d37fae76abddb6f5257e035916b0a6c7f21c94ec2a4309ccfa1b6a8ecf035867",
+      "stdoutSha256": "90cf5c3c6033c107943a46912ffddc2e370f1928fd551aa8bceb02bc83c6ede7",
+      "stderrSha256": "643ca00db20d5d5e516ab56f1a206d4f12359acd0366a351fc253923a09e2e5a",
+      "sourceManifestSha256": "4e06fa3f9068fdbd4104580469c0f5be6d146407c89457787cd3ccebdeede96d"
+    },
+    {
+      "phase": "greenA",
+      "base": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+      "startedUtc": "2026-10-16T10:20:15.3877170Z",
+      "completedUtc": "2026-10-16T10:22:12.4006972Z",
+      "exitCode": 0,
+      "timedOut": false,
+      "sourceCount": 408,
+      "sourcesUnchanged": true,
+      "arguments": [
+        "test",
+        "--no-pub",
+        "--platform",
+        "chrome",
+        "--web-renderer",
+        "html",
+        "--reporter",
+        "expanded",
+        "test/editor_submit_guard_test.dart",
+        "test/device_management_browser_test.dart",
+        "test/device_management_entry_test.dart",
+        "test/device_subflow_scope_test.dart",
+        "test/local_date_browser_test.dart",
+        "test/managed_agent_binding_page_test.dart",
+        "test/managed_android_review_recovery_test.dart",
+        "test/managed_enrollment_page_test.dart"
+      ],
+      "runnerSha256": "6e2b9e0f3d17be1cfb22e6e0909dc7f1cb363bfed67ae4dabd6e782fd9dc6c32",
+      "testsPassed": 72,
+      "diagnosticDuplicateExcludedFromTotal": false,
+      "resultSha256": "9781494c05bc6a2925d9689492692cb712ba07674e35fc8500e6ffa4272818fe",
+      "stdoutSha256": "06c7b2a09e5ae3bf4915c4e7bc9267e4108535a45a8c194ad5dbb5c900182447",
+      "stderrSha256": "643ca00db20d5d5e516ab56f1a206d4f12359acd0366a351fc253923a09e2e5a",
+      "sourceManifestSha256": "4e06fa3f9068fdbd4104580469c0f5be6d146407c89457787cd3ccebdeede96d"
+    },
+    {
+      "phase": "greenB1",
+      "base": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+      "startedUtc": "2026-10-16T10:22:13.2618165Z",
+      "completedUtc": "2026-10-16T10:23:37.5966699Z",
+      "exitCode": 0,
+      "timedOut": false,
+      "sourceCount": 408,
+      "sourcesUnchanged": true,
+      "arguments": [
+        "test",
+        "--no-pub",
+        "--platform",
+        "chrome",
+        "--web-renderer",
+        "html",
+        "--reporter",
+        "expanded",
+        "test/policy_preview_evidence_view_test.dart",
+        "test/policy_preview_flow_test.dart",
+        "test/policy_preview_results_flow_test.dart"
+      ],
+      "runnerSha256": "6e2b9e0f3d17be1cfb22e6e0909dc7f1cb363bfed67ae4dabd6e782fd9dc6c32",
+      "testsPassed": 54,
+      "diagnosticDuplicateExcludedFromTotal": false,
+      "resultSha256": "9fd4147a6aa55664b3ec3936c1e062c07c5253b411d8fb3906d5b744877c64ed",
+      "stdoutSha256": "3ed635bff93e714ef389c2c4c463539827d24507d752867933ce682661e197ed",
+      "stderrSha256": "643ca00db20d5d5e516ab56f1a206d4f12359acd0366a351fc253923a09e2e5a",
+      "sourceManifestSha256": "4e06fa3f9068fdbd4104580469c0f5be6d146407c89457787cd3ccebdeede96d"
+    },
+    {
+      "phase": "greenB2",
+      "base": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+      "startedUtc": "2026-10-16T10:23:38.3944301Z",
+      "completedUtc": "2026-10-16T10:24:19.5974204Z",
+      "exitCode": 0,
+      "timedOut": false,
+      "sourceCount": 408,
+      "sourcesUnchanged": true,
+      "arguments": [
+        "test",
+        "--no-pub",
+        "--platform",
+        "chrome",
+        "--web-renderer",
+        "html",
+        "--reporter",
+        "expanded",
+        "test/policy_preview_rule_details_test.dart",
+        "test/policy_preview_save_flow_test.dart"
+      ],
+      "runnerSha256": "6e2b9e0f3d17be1cfb22e6e0909dc7f1cb363bfed67ae4dabd6e782fd9dc6c32",
+      "testsPassed": 43,
+      "diagnosticDuplicateExcludedFromTotal": false,
+      "resultSha256": "223b9e5c11167be2a232ba8fbaa3c75ae076194b9c71f1c3ab373d7460182e97",
+      "stdoutSha256": "514208dad99189b8b464f29e037b0586b9fcca54893facaf813641442166a92c",
+      "stderrSha256": "643ca00db20d5d5e516ab56f1a206d4f12359acd0366a351fc253923a09e2e5a",
+      "sourceManifestSha256": "4e06fa3f9068fdbd4104580469c0f5be6d146407c89457787cd3ccebdeede96d"
+    },
+    {
+      "phase": "greenC",
+      "base": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+      "startedUtc": "2026-10-16T10:24:20.4406646Z",
+      "completedUtc": "2026-10-16T10:25:38.4943799Z",
+      "exitCode": 0,
+      "timedOut": false,
+      "sourceCount": 408,
+      "sourcesUnchanged": true,
+      "arguments": [
+        "test",
+        "--no-pub",
+        "--platform",
+        "chrome",
+        "--web-renderer",
+        "html",
+        "--reporter",
+        "expanded",
+        "test/policy_target_dialog_test.dart",
+        "test/policy_target_picker_test.dart",
+        "test/policy_target_scope_test.dart",
+        "test/workspace_recovery_browser_test.dart"
+      ],
+      "runnerSha256": "6e2b9e0f3d17be1cfb22e6e0909dc7f1cb363bfed67ae4dabd6e782fd9dc6c32",
+      "testsPassed": 28,
+      "diagnosticDuplicateExcludedFromTotal": false,
+      "resultSha256": "bbfc53376edcbbf17e4e619d9f1ec40e95b422f19ef06d7475c61c63b6ae5286",
+      "stdoutSha256": "374452be4e4c45322c0bc85fea75a09025d415dd38fab2c2b013740ea819c0e8",
+      "stderrSha256": "643ca00db20d5d5e516ab56f1a206d4f12359acd0366a351fc253923a09e2e5a",
+      "sourceManifestSha256": "4e06fa3f9068fdbd4104580469c0f5be6d146407c89457787cd3ccebdeede96d"
+    },
+    {
+      "phase": "default",
+      "base": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+      "startedUtc": "2026-10-16T10:25:40.7053632Z",
+      "completedUtc": "2026-10-16T10:28:57.5747479Z",
+      "exitCode": 0,
+      "timedOut": false,
+      "sourceCount": 408,
+      "sourcesUnchanged": true,
+      "arguments": [
+        "test",
+        "--no-pub",
+        "--concurrency",
+        "1",
+        "--reporter",
+        "expanded"
+      ],
+      "runnerSha256": "6e2b9e0f3d17be1cfb22e6e0909dc7f1cb363bfed67ae4dabd6e782fd9dc6c32",
+      "testsPassed": 599,
+      "diagnosticDuplicateExcludedFromTotal": false,
+      "resultSha256": "cb14f4a05665f0641cd4a3e55c9de827c0f05e1a59293be09323e1e355b33d1b",
+      "stdoutSha256": "81bd00cef287c12ee194af0b7120e3177f61f88149c8aa6a85600c033c68b4b6",
+      "stderrSha256": "643ca00db20d5d5e516ab56f1a206d4f12359acd0366a351fc253923a09e2e5a",
+      "sourceManifestSha256": "4e06fa3f9068fdbd4104580469c0f5be6d146407c89457787cd3ccebdeede96d"
+    },
+    {
+      "phase": "analyze",
+      "base": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+      "startedUtc": "2026-10-16T10:29:00.1606869Z",
+      "completedUtc": "2026-10-16T10:29:24.1098366Z",
+      "exitCode": 0,
+      "timedOut": false,
+      "sourceCount": 408,
+      "sourcesUnchanged": true,
+      "arguments": [
+        "analyze",
+        "--no-pub"
+      ],
+      "runnerSha256": "6e2b9e0f3d17be1cfb22e6e0909dc7f1cb363bfed67ae4dabd6e782fd9dc6c32",
+      "testsPassed": null,
+      "diagnosticDuplicateExcludedFromTotal": false,
+      "resultSha256": "f117c6b7e3ef02509488076730e9c73376d5d222e15540390a244a802130a173",
+      "stdoutSha256": "71e90cd4574b38b6125bb651bdfeb91bbfd45b2b60a8efd3af11fb899e6df85c",
+      "stderrSha256": "643ca00db20d5d5e516ab56f1a206d4f12359acd0366a351fc253923a09e2e5a",
+      "sourceManifestSha256": "4e06fa3f9068fdbd4104580469c0f5be6d146407c89457787cd3ccebdeede96d"
+    },
+    {
+      "phase": "demo",
+      "base": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+      "startedUtc": "2026-10-16T10:29:25.8355460Z",
+      "completedUtc": "2026-10-16T10:30:13.5813107Z",
+      "exitCode": 0,
+      "timedOut": false,
+      "sourceCount": 408,
+      "sourcesUnchanged": true,
+      "arguments": [
+        "build",
+        "web",
+        "--no-pub",
+        "--web-renderer",
+        "html",
+        "--no-tree-shake-icons",
+        "--target",
+        "tool/policy_preview_visual.dart"
+      ],
+      "runnerSha256": "6e2b9e0f3d17be1cfb22e6e0909dc7f1cb363bfed67ae4dabd6e782fd9dc6c32",
+      "testsPassed": null,
+      "diagnosticDuplicateExcludedFromTotal": false,
+      "resultSha256": "3f25e1e959885c8b8c59fc069a39773a527009ec7bc6b6b58a4d58769789df1b",
+      "stdoutSha256": "bf771eb1bf01bfc1330ce5de540ac58a0080df9e3a881b34b9195c0acaa3a5de",
+      "stderrSha256": "643ca00db20d5d5e516ab56f1a206d4f12359acd0366a351fc253923a09e2e5a",
+      "sourceManifestSha256": "4e06fa3f9068fdbd4104580469c0f5be6d146407c89457787cd3ccebdeede96d"
+    },
+    {
+      "phase": "production",
+      "base": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+      "startedUtc": "2026-10-16T10:30:14.4510774Z",
+      "completedUtc": "2026-10-16T10:31:20.3607079Z",
+      "exitCode": 0,
+      "timedOut": false,
+      "sourceCount": 408,
+      "sourcesUnchanged": true,
+      "arguments": [
+        "build",
+        "web",
+        "--release",
+        "--no-pub",
+        "--web-renderer",
+        "html",
+        "--pwa-strategy=none",
+        "--no-web-resources-cdn",
+        "--target",
+        "lib/main.dart",
+        "--output",
+        "build/production-web",
+        "--dart-define=API_URL=http://localhost:18101/api/v1",
+        "--dart-define=OIDC_ISSUER=http://localhost:18101/identity/realms/ai-manager",
+        "--dart-define=ALLOW_LOCAL_HTTP=true"
+      ],
+      "runnerSha256": "6e2b9e0f3d17be1cfb22e6e0909dc7f1cb363bfed67ae4dabd6e782fd9dc6c32",
+      "testsPassed": null,
+      "diagnosticDuplicateExcludedFromTotal": false,
+      "resultSha256": "e5609cdde86ce4e1553b44d1cc531c64c70629b568d6234fea3d8b73b9f9bd87",
+      "stdoutSha256": "a3e4a7affc7b80e90f16312e11da654cad93e80f1e59001c1b286fb7578e7cdd",
+      "stderrSha256": "643ca00db20d5d5e516ab56f1a206d4f12359acd0366a351fc253923a09e2e5a",
+      "sourceManifestSha256": "4e06fa3f9068fdbd4104580469c0f5be6d146407c89457787cd3ccebdeede96d"
+    }
+  ],
+  "failureHistoryPreserved": [
+    {
+      "kind": "invalid-red-compile",
+      "round": 1,
+      "phase": "red",
+      "base": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+      "startedUtc": "2026-10-16T09:25:32.2828188Z",
+      "completedUtc": "2026-10-16T09:25:54.8307083Z",
+      "exitCode": 1,
+      "timedOut": false,
+      "sourceCount": 404,
+      "sourcesUnchanged": true,
+      "arguments": [
+        "test",
+        "--no-pub",
+        "--concurrency",
+        "1",
+        "--platform",
+        "chrome",
+        "--web-renderer",
+        "html",
+        "--reporter",
+        "expanded",
+        "test/policy_preview_save_flow_test.dart",
+        "--plain-name",
+        "cancelling save keeps the expanded preview and its selection"
+      ],
+      "runnerSha256": "d461992e43dfe27fc5c305977485c47daefecf5f3d029c63f2ed9f384e5f44dd",
+      "resultSha256": "8439deb032595a668a34016ffb1de4297d92ba25479b8809efb57b9006e95d52",
+      "stdoutSha256": "6ecaf86981b2121c06fc29fab7230d9b2d3c71880ee942a83927d81e4f046d58"
+    },
+    {
+      "kind": "valid-red",
+      "round": 2,
+      "phase": "red",
+      "base": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+      "startedUtc": "2026-10-16T09:27:07.0886521Z",
+      "completedUtc": "2026-10-16T09:27:31.9866730Z",
+      "exitCode": 1,
+      "timedOut": false,
+      "sourceCount": 404,
+      "sourcesUnchanged": true,
+      "arguments": [
+        "test",
+        "--no-pub",
+        "--platform",
+        "chrome",
+        "--web-renderer",
+        "html",
+        "--reporter",
+        "expanded",
+        "test/policy_preview_save_flow_test.dart",
+        "--plain-name",
+        "cancelling save keeps the expanded preview and its selection"
+      ],
+      "runnerSha256": "766efb97d05f0e0ed88b0239449b8f3705473cf4adc8ded2b7578a60449731bd",
+      "resultSha256": "05568fbfb664e01a6006914d9a40bb2c302f0cb9c954276b9aa41a61035da4e2",
+      "stdoutSha256": "a5686960f143ba1a7a55a0e1a002007a4254831a3cd4872b4218210adc3ae0d5"
+    },
+    {
+      "kind": "valid-red",
+      "round": 3,
+      "phase": "red",
+      "base": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+      "startedUtc": "2026-10-16T09:28:29.8053895Z",
+      "completedUtc": "2026-10-16T09:28:48.7603144Z",
+      "exitCode": 1,
+      "timedOut": false,
+      "sourceCount": 404,
+      "sourcesUnchanged": true,
+      "arguments": [
+        "test",
+        "--no-pub",
+        "--platform",
+        "chrome",
+        "--web-renderer",
+        "html",
+        "--reporter",
+        "expanded",
+        "test/policy_preview_rule_details_test.dart",
+        "--plain-name",
+        "two runtime permissions identify their own proposed behavior"
+      ],
+      "runnerSha256": "da4855d8986db80e08bfa519e2035cddda24e9c81d6e8e1b0720622e42d134a6",
+      "resultSha256": "3405c8b079c7b3be0ec2c6f5a545daaec7a46ab8fe587660f214548f2f5a635e",
+      "stdoutSha256": "b51b09bc21008c634119fd17493f974540dca9c35345d20c90da87dae46f6999"
+    },
+    {
+      "kind": "valid-red",
+      "round": 4,
+      "phase": "red",
+      "base": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+      "startedUtc": "2026-10-16T09:34:20.7015542Z",
+      "completedUtc": "2026-10-16T09:34:42.4578408Z",
+      "exitCode": 1,
+      "timedOut": false,
+      "sourceCount": 406,
+      "sourcesUnchanged": true,
+      "arguments": [
+        "test",
+        "--no-pub",
+        "--platform",
+        "chrome",
+        "--web-renderer",
+        "html",
+        "--reporter",
+        "expanded",
+        "test/policy_preview_save_flow_test.dart",
+        "--plain-name",
+        "queued save callbacks open only one confirmation"
+      ],
+      "runnerSha256": "98bf78188e277abc0f0218bcff81003b75a420686ab346453488b6fa057636c7",
+      "resultSha256": "d4ac3eafae4454ebe5459fc58e7bc0eb3bdcaf3d7470e86b8b1da7bf48939974",
+      "stdoutSha256": "86970b353866e57a98e82213d421d7953c2236893c1024cdfeaebd95f7c57d0a"
+    },
+    {
+      "kind": "valid-red",
+      "round": 6,
+      "phase": "red",
+      "base": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+      "startedUtc": "2026-10-16T09:49:53.6771299Z",
+      "completedUtc": "2026-10-16T09:50:23.8576942Z",
+      "exitCode": 1,
+      "timedOut": false,
+      "sourceCount": 407,
+      "sourcesUnchanged": true,
+      "arguments": [
+        "test",
+        "--no-pub",
+        "--platform",
+        "chrome",
+        "--web-renderer",
+        "html",
+        "--reporter",
+        "expanded",
+        "test/policy_preview_rule_details_test.dart",
+        "--plain-name",
+        "clock 18:00:01 outside the HTTP schema stays incomplete"
+      ],
+      "runnerSha256": "bd205d537312c4ef44b740956cfe55d0578beae7e375865648042046ec78beb0",
+      "resultSha256": "5d7cd2e741bb3ecae93dd6810715c342667d23aaa5e89f556e76c0ba7d7ebb6e",
+      "stdoutSha256": "f073706f35608b98dbee6935ddc00827e23312261c5561a2376a9a76fd3e5c94"
+    },
+    {
+      "kind": "valid-red",
+      "round": 7,
+      "phase": "red",
+      "base": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+      "startedUtc": "2026-10-16T09:50:49.0764533Z",
+      "completedUtc": "2026-10-16T09:51:22.8321626Z",
+      "exitCode": 1,
+      "timedOut": false,
+      "sourceCount": 407,
+      "sourcesUnchanged": true,
+      "arguments": [
+        "test",
+        "--no-pub",
+        "--platform",
+        "chrome",
+        "--web-renderer",
+        "html",
+        "--reporter",
+        "expanded",
+        "test/policy_preview_rule_details_test.dart",
+        "--plain-name",
+        "zone Invalid/Zone is not presented as a complete time plan"
+      ],
+      "runnerSha256": "4922616133088f8ab872b8cf95ee5e17116d76f87a06ec5372892a097d9095be",
+      "resultSha256": "96df951f0691a62e782fa380072bf8b6c3ff83c4fb9f3f90f4abeee8d4fa2884",
+      "stdoutSha256": "ef305135b8aea11c9e2adf4f3cce9062223c5a657db1cef700922a3ea09e5348"
+    },
+    {
+      "kind": "valid-red",
+      "round": 8,
+      "phase": "red",
+      "base": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+      "startedUtc": "2026-10-16T09:51:40.7417267Z",
+      "completedUtc": "2026-10-16T09:51:51.3322479Z",
+      "exitCode": 1,
+      "timedOut": false,
+      "sourceCount": 407,
+      "sourcesUnchanged": true,
+      "arguments": [
+        "test",
+        "--no-pub",
+        "--concurrency",
+        "1",
+        "--reporter",
+        "expanded",
+        "test/dialog_submit_guard_test.dart"
+      ],
+      "runnerSha256": "8014538f569e9dc1a1fb6b1e1339289bd6078a579115d2d5f86a1e0dfc8a4776",
+      "resultSha256": "0c52f8b8c658a74a025213684515b2b40e5dab4fc6dd1259a455ecbcd084eb95",
+      "stdoutSha256": "74329499a9d8594c347c1ffcf3f2446c379019428ad59b9da6e8e527aedf2ca8"
+    },
+    {
+      "kind": "invalid-red-compile",
+      "round": 9,
+      "phase": "red",
+      "base": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+      "startedUtc": "2026-10-16T09:55:18.0416167Z",
+      "completedUtc": "2026-10-16T09:55:49.9254306Z",
+      "exitCode": 1,
+      "timedOut": false,
+      "sourceCount": 408,
+      "sourcesUnchanged": true,
+      "arguments": [
+        "test",
+        "--no-pub",
+        "--platform",
+        "chrome",
+        "--web-renderer",
+        "html",
+        "--reporter",
+        "expanded",
+        "test/editor_submit_guard_test.dart"
+      ],
+      "runnerSha256": "0109ccb887f930a3db5273a6dcfbf23e0e2998e16418182e67f16f88dcd8de73",
+      "resultSha256": "bebeb19b9e55b54a39afdb10a3953ffa13e92b0d80058fc3d6368310f1730545",
+      "stdoutSha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "kind": "valid-red-four-editors",
+      "round": 10,
+      "phase": "red",
+      "base": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+      "startedUtc": "2026-10-16T09:57:00.9841975Z",
+      "completedUtc": "2026-10-16T09:57:33.5199351Z",
+      "exitCode": 1,
+      "timedOut": false,
+      "sourceCount": 408,
+      "sourcesUnchanged": true,
+      "arguments": [
+        "test",
+        "--no-pub",
+        "--platform",
+        "chrome",
+        "--web-renderer",
+        "html",
+        "--reporter",
+        "expanded",
+        "test/editor_submit_guard_test.dart"
+      ],
+      "runnerSha256": "7f5f85f8051188b2072d92c35a9f3a37def18f09634e6e78fc44c2adfc155fae",
+      "resultSha256": "6737702c0df3c922918efeff6d36cc580b3a3b893260e9531f923515b7b88d1f",
+      "stdoutSha256": "dd55e2348ca2239105c2843c62d26ad872679f07c45dc6af1f80158c7457466b"
+    },
+    {
+      "kind": "timeout-and-test-cleanup-failures",
+      "round": 11,
+      "phase": "green",
+      "base": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+      "startedUtc": "2026-10-16T09:59:44.0169573Z",
+      "completedUtc": "2026-10-16T10:03:45.1684381Z",
+      "exitCode": -1,
+      "timedOut": true,
+      "sourceCount": 408,
+      "sourcesUnchanged": true,
+      "arguments": [
+        "test",
+        "--no-pub",
+        "--platform",
+        "chrome",
+        "--web-renderer",
+        "html",
+        "--reporter",
+        "expanded",
+        "test/editor_submit_guard_test.dart",
+        "test/device_management_browser_test.dart",
+        "test/device_management_entry_test.dart",
+        "test/device_subflow_scope_test.dart",
+        "test/local_date_browser_test.dart",
+        "test/managed_agent_binding_page_test.dart",
+        "test/managed_android_review_recovery_test.dart",
+        "test/managed_enrollment_page_test.dart",
+        "test/policy_preview_evidence_view_test.dart",
+        "test/policy_preview_flow_test.dart",
+        "test/policy_preview_results_flow_test.dart",
+        "test/policy_preview_rule_details_test.dart",
+        "test/policy_preview_save_flow_test.dart",
+        "test/policy_target_dialog_test.dart",
+        "test/policy_target_picker_test.dart",
+        "test/policy_target_scope_test.dart",
+        "test/workspace_recovery_browser_test.dart"
+      ],
+      "runnerSha256": "f6c31f2b88b8b50b093640331dd322c7a1897ee07393bfac76ae0cad56d7b14f",
+      "resultSha256": "40b1e7d91c66da1821afc52befa0dd6991784025d6fce1956deb0bd1e8cd4f3d",
+      "stdoutSha256": "d2da23004ce8879d84eb6ac2061a5114de9b72e3fc1b804fb20fa1405ba60753"
+    },
+    {
+      "kind": "timeout-in-repeated-fakeasync-cleanup-wait",
+      "round": 12,
+      "phase": "targeted",
+      "base": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+      "startedUtc": "2026-10-16T10:08:29.1733429Z",
+      "completedUtc": "2026-10-16T10:12:29.7866935Z",
+      "exitCode": -1,
+      "timedOut": true,
+      "sourceCount": 408,
+      "sourcesUnchanged": true,
+      "arguments": [
+        "test",
+        "--no-pub",
+        "--platform",
+        "chrome",
+        "--web-renderer",
+        "html",
+        "--reporter",
+        "expanded",
+        "test/editor_submit_guard_test.dart",
+        "test/policy_preview_rule_details_test.dart",
+        "test/policy_preview_save_flow_test.dart"
+      ],
+      "runnerSha256": "2b651d3eb65da657080e53a863ce046b6a2911147ba21795209cf154339ec50c",
+      "resultSha256": "688471176ecf12e1818535cb597728d181f2e58d99c1f4f48bd9535eea6be911",
+      "stdoutSha256": "f51afd066fc4b029f46b4925533daeea97ccb7162c537f5ed5be7fbc40b8a359"
+    }
+  ],
+  "independentReviews": [
+    {
+      "path": "policy-detail-source-scope-review-20261016-r2.json",
+      "sha256": "9179ec452412cd575117b03baa7962eb675ca698ce7f43692f85ffcf8c13135d"
+    },
+    {
+      "path": "policy-detail-final-review-20261016-r2.json",
+      "sha256": "713a196297c78ec51121e15516c57ff45c3eb1270fb8a2fe2ff9569e72822484"
+    }
+  ],
+  "sourceApplyReceiptSha256": "6f497cc2107aa1aa228963d0fdd670112c6bf098eba0244896b1ebb42429c0c0",
+  "unrelatedWorkingChangesPreserved": {
+    "consoleFamilyWipLines": 31,
+    "consoleFamilyWipBytes": 1293,
+    "consoleInversePatchByteExact": true,
+    "classActionOriginalCRLFPreserved": true
+  },
+  "visualReview": {
+    "captures": [
+      {
+        "file": "desktop-after-cancel.jpg",
+        "format": "JPEG",
+        "bytes": 45652,
+        "width": 1280,
+        "height": 720,
+        "sha256": "43271b9a1efff4e1ca43c211aec2d6aeaf1ab086a2612e0e917ab6b7e8a09722",
+        "textScale": 1,
+        "mockDataOnly": true
+      },
+      {
+        "file": "desktop-parameters.jpg",
+        "format": "JPEG",
+        "bytes": 45652,
+        "width": 1280,
+        "height": 720,
+        "sha256": "43271b9a1efff4e1ca43c211aec2d6aeaf1ab086a2612e0e917ab6b7e8a09722",
+        "textScale": 1,
+        "mockDataOnly": true
+      },
+      {
+        "file": "desktop-summary.jpg",
+        "format": "JPEG",
+        "bytes": 42767,
+        "width": 1280,
+        "height": 720,
+        "sha256": "0727c5cce89413fbcea8df40a24f842596748081d1ca4768279c3131b3205a49",
+        "textScale": 1,
+        "mockDataOnly": true
+      },
+      {
+        "file": "mobile-2x-exceptions.jpg",
+        "format": "JPEG",
+        "bytes": 44158,
+        "width": 390,
+        "height": 844,
+        "sha256": "7bb60de66d77fe70010163094f9a10020f0d2294ad371e7dd1903cb6fec42f59",
+        "textScale": 2,
+        "mockDataOnly": true
+      },
+      {
+        "file": "mobile-2x-permission.jpg",
+        "format": "JPEG",
+        "bytes": 42733,
+        "width": 390,
+        "height": 844,
+        "sha256": "af44da443d19ca2754835b62f44f79396e32c9c4c7a68fb1f3072b9e5c7fb22a",
+        "textScale": 2,
+        "mockDataOnly": true
+      },
+      {
+        "file": "mobile-2x-plan.jpg",
+        "format": "JPEG",
+        "bytes": 42283,
+        "width": 390,
+        "height": 844,
+        "sha256": "c61ecec60d1ed863e335f27d59128b1a4f68e8d4ae5d2814e46d12646bef7d9b",
+        "textScale": 2,
+        "mockDataOnly": true
+      },
+      {
+        "file": "mobile-2x-summary.jpg",
+        "format": "JPEG",
+        "bytes": 47830,
+        "width": 390,
+        "height": 844,
+        "sha256": "2560188da2d6a3df09e19af91c80987c8212193b8a009ef052f9c3dfc8ff1f13",
+        "textScale": 2,
+        "mockDataOnly": true
+      }
+    ],
+    "desktopCancelRetainsIdenticalDetailPixels": true,
+    "mockDataOnly": true,
+    "viewportReset": true,
+    "temporaryTabClosed": true,
+    "temporaryServerStopped": true
+  },
+  "productionArtifact": {
+    "entryPoint": "lib/main.dart",
+    "mainDartJsSha256": "981e7e6e5ccc8effb889eb0111d11cd1ac08bd3524adb97ecb55b9b85c25690d",
+    "mockMarkersAbsent": true,
+    "files": [
+      {
+        "path": ".last_build_id",
+        "bytes": 32,
+        "sha256": "693aca6f78125808e0d87700508592b62425bbef6a81a31cba63af4001598f08"
+      },
+      {
+        "path": "assets/AssetManifest.bin",
+        "bytes": 117,
+        "sha256": "00af55ad3d6f21898fe77e0ff092d1a1cda52c941b6860e9928d45c8af8c095d"
+      },
+      {
+        "path": "assets/AssetManifest.bin.json",
+        "bytes": 158,
+        "sha256": "8460b5f4299ca1ed677c5a54c8038ae9cf1f26f6e91966b1b767ca6cb6d2e5d2"
+      },
+      {
+        "path": "assets/AssetManifest.json",
+        "bytes": 109,
+        "sha256": "4a9b3de7eec9ba46b279bbccd132e32f52d6d555d79dda4aa7f3bcb4e9bd651f"
+      },
+      {
+        "path": "assets/FontManifest.json",
+        "bytes": 208,
+        "sha256": "cd7e03645bc44b2dd47b7cb626f51c4ecbf55a197ab77241628b47ac165fbe21"
+      },
+      {
+        "path": "assets/fonts/MaterialIcons-Regular.otf",
+        "bytes": 21056,
+        "sha256": "fa18bc8409e4861a42b9e0f359f6e58879cc1bae558d2425b51fe0a8a47dbb46"
+      },
+      {
+        "path": "assets/NOTICES",
+        "bytes": 1727671,
+        "sha256": "d4e98cabb707163d4d104585940ca8f3b62237c50fa51a69cf6c89b3c2e8eee4"
+      },
+      {
+        "path": "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf",
+        "bytes": 1172,
+        "sha256": "4464f5aa68311c023ff7bc5561a0b8164db76d26c197c8b0e12724a0137ff6fd"
+      },
+      {
+        "path": "assets/shaders/ink_sparkle.frag",
+        "bytes": 8867,
+        "sha256": "e01b61b394cf66a641bea87e3b4fe3787d372f636c8bc8a2a67438cdc29da6f6"
+      },
+      {
+        "path": "canvaskit/canvaskit.js",
+        "bytes": 93469,
+        "sha256": "2db1ce7bb6f13b2ebd2254ee24d577193a2f5ae84d62da0bd9a9b053cc98b748"
+      },
+      {
+        "path": "canvaskit/canvaskit.js.symbols",
+        "bytes": 1310224,
+        "sha256": "7629ce549d27e59d121852c3ed3c49c8332e6fdbcbf88a6be6fda1667fd295d3"
+      },
+      {
+        "path": "canvaskit/canvaskit.wasm",
+        "bytes": 6755439,
+        "sha256": "c5711063eb95ad3c1ca680ff2f1daea65ea10a228567d4e69c371f3f450e5cee"
+      },
+      {
+        "path": "canvaskit/chromium/canvaskit.js",
+        "bytes": 93105,
+        "sha256": "155cde139018d01b4ae16c67542595943ce4c118bde1e8799e01e03bfa1a4653"
+      },
+      {
+        "path": "canvaskit/chromium/canvaskit.js.symbols",
+        "bytes": 1231686,
+        "sha256": "09e839ba38f8d1e3b262df6a1fb9d745547cbfc03289b2b0f1b511aab71a4cc3"
+      },
+      {
+        "path": "canvaskit/chromium/canvaskit.wasm",
+        "bytes": 5348073,
+        "sha256": "086c9d3823481d35f2c929703519707ea220ea16082f70178ccf9ba2b662df35"
+      },
+      {
+        "path": "canvaskit/skwasm.js",
+        "bytes": 69687,
+        "sha256": "67d75e0eeabc548f69e45dc61dab21e25d07b8681afc3e76dae593033a1edcfa"
+      },
+      {
+        "path": "canvaskit/skwasm.js.symbols",
+        "bytes": 1437032,
+        "sha256": "364b03e4a7c2b4b5559410b6cb732a00ec363ecd64ac3b279cf7b7f5f2a5f3ff"
+      },
+      {
+        "path": "canvaskit/skwasm.wasm",
+        "bytes": 3208062,
+        "sha256": "56b54c56d79be77aab9180d779245757b2e517d2787dc43a96dbac9297c9be38"
+      },
+      {
+        "path": "canvaskit/skwasm.worker.js",
+        "bytes": 2916,
+        "sha256": "0ff2a95082525c9c79cc54cfd68fa042e3967f21d8c53614128c173e7fb654de"
+      },
+      {
+        "path": "favicon.png",
+        "bytes": 917,
+        "sha256": "7ab2525f4b86b65d3e4c70358a17e5a1aaf6f437f99cbcc046dad73d59bb9015"
+      },
+      {
+        "path": "flutter.js",
+        "bytes": 7778,
+        "sha256": "5e89bd8789a8f2ea7f00394fddb6c173e1661513e1c1c62fc31b6c4f89b7e74a"
+      },
+      {
+        "path": "flutter_bootstrap.js",
+        "bytes": 8026,
+        "sha256": "17b4f3a04ff9ce9d2f0fd292f79409d88bb356a74dc55d5c2ed29aa4e900efab"
+      },
+      {
+        "path": "flutter_service_worker.js",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "icons/Icon-192.png",
+        "bytes": 5292,
+        "sha256": "3dce99077602f70421c1c6b2a240bc9b83d64d86681d45f2154143310c980be3"
+      },
+      {
+        "path": "icons/Icon-512.png",
+        "bytes": 8252,
+        "sha256": "baccb205ae45f0b421be1657259b4943ac40c95094ab877f3bcbe12cd544dcbe"
+      },
+      {
+        "path": "icons/Icon-maskable-192.png",
+        "bytes": 5594,
+        "sha256": "d2c842e22a9f4ec9d996b23373a905c88d9a203b220c5c151885ad621f974b5c"
+      },
+      {
+        "path": "icons/Icon-maskable-512.png",
+        "bytes": 20998,
+        "sha256": "6aee06cdcab6b2aef74b1734c4778f4421d2da100b0ff9e52b21b55240202929"
+      },
+      {
+        "path": "icons/manager.svg",
+        "bytes": 327,
+        "sha256": "bd10bcc2ed647a9a11e4be51c85cb66e2dc5533e11697c46cf30ef43b540bd87"
+      },
+      {
+        "path": "index.html",
+        "bytes": 1268,
+        "sha256": "801f4676bef6e4eec47be58e8ff1ce811502c2d09ab64175ad2ecff1aa317218"
+      },
+      {
+        "path": "main.dart.js",
+        "bytes": 5448570,
+        "sha256": "981e7e6e5ccc8effb889eb0111d11cd1ac08bd3524adb97ecb55b9b85c25690d"
+      },
+      {
+        "path": "manifest.json",
+        "bytes": 447,
+        "sha256": "852117056aca3bf5d059b51c026b57d9caf74aba4f1b4e478c00fd1ea02367a2"
+      },
+      {
+        "path": "version.json",
+        "bytes": 86,
+        "sha256": "842ba1889303c52d440ae1a8f93d3d881e054ebe7708a4f2ab3087b8f7d7bb3b"
+      }
+    ]
+  },
+  "boundaries": {
+    "realMfaJourneyVerified": false,
+    "physicalDeviceExecutionVerified": false,
+    "externalProviderVerified": false,
+    "runningServiceReplaced": false,
+    "remainingExistingSubmitVariants": {
+      "count": 10,
+      "important": 9,
+      "minor": 1,
+      "reportSha256": "dd567995ca1468b15d494a3d67985db8a3ae35127f63d3b1fc4941078c6ccf07"
+    }
+  }
+}

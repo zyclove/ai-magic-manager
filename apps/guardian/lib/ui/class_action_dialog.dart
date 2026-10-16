@@ -48,6 +48,7 @@ class _ClassActionDialogState extends State<ClassActionDialog> {
   }
 
   Future<void> submit() async {
+    if (busy) return;
     if (!form.currentState!.validate()) return;
     final body = pending ??
         <String, dynamic>{

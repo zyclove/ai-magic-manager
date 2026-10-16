@@ -1068,6 +1068,7 @@ class ConsoleActions {
         hasAccess: current,
         actions: [
           DetailAction('仅保存配置', (inner) async {
+            final previewRoute = ModalRoute.of(inner);
             ensurePreviewFresh();
             if (!await confirmAction(
                 inner, '发布配置', '确认保存本次预览中的配置版本？当前不会执行设备系统管控。',
@@ -1098,8 +1099,13 @@ class ConsoleActions {
                 '发布时间': dateLabel(result['createdAt']),
                 '操作编号': result['id']
               });
+              if (inner.mounted &&
+                  current() &&
+                  previewRoute?.isCurrent == true) {
+                Navigator.pop(inner);
+              }
             }
-          })
+          }, closeOnSuccess: false)
         ]);
   }
 

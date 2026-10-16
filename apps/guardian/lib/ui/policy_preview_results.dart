@@ -1,7 +1,10 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:usage_reporting/usage_reporting.dart'
+    show UsageReportFailure, usageLocation;
 import '../core/api.dart';
 import '../core/labels.dart';
+import '../core/rule_parameter_labels.dart';
 import 'design.dart';
 
 /// A read-only view of one immutable preview. It grants no execution or refresh
@@ -83,6 +86,7 @@ class _PolicyPreviewResultsState extends State<PolicyPreviewResults> {
         if (app['id'] is String && app['displayName'] is String)
           app['id'] as String: app['displayName'] as String,
     };
+    final schedules = _objects(snapshot['schedules']);
     final expires = _timestamp(p['expiresAt']);
     final expired =
         expires == null || expires <= DateTime.now().millisecondsSinceEpoch;
@@ -116,6 +120,7 @@ class _PolicyPreviewResultsState extends State<PolicyPreviewResults> {
             target: target,
             name: widget.names[target['deviceId']] ?? '未命名设备',
             applications: applications,
+            schedules: schedules,
           ),
         ),
       const SizedBox(height: 4),
@@ -136,11 +141,13 @@ class _DeviceChecks extends StatefulWidget {
   final Json target;
   final String name;
   final Map<String, String> applications;
+  final List<Json> schedules;
   const _DeviceChecks(
       {super.key,
       required this.target,
       required this.name,
-      required this.applications});
+      required this.applications,
+      required this.schedules});
   @override
   State<_DeviceChecks> createState() => _DeviceChecksState();
 }
@@ -186,7 +193,9 @@ class _DeviceChecksState extends State<_DeviceChecks> {
                         if (rules.isEmpty) const Text('此设备没有检查项'),
                         for (final rule in rules)
                           _RuleCheck(
-                              rule: rule, applications: widget.applications),
+                              rule: rule,
+                              applications: widget.applications,
+                              schedules: widget.schedules),
                         if (apps.isNotEmpty) ...[
                           const SizedBox(height: 6),
                           const Text('此设备的应用核验',
@@ -207,7 +216,11 @@ class _DeviceChecksState extends State<_DeviceChecks> {
 class _RuleCheck extends StatelessWidget {
   final Json rule;
   final Map<String, String> applications;
-  const _RuleCheck({required this.rule, required this.applications});
+  final List<Json> schedules;
+  const _RuleCheck(
+      {required this.rule,
+      required this.applications,
+      required this.schedules});
   @override
   Widget build(BuildContext context) {
     final sourceIds = rule['sourceRuleIds'];
@@ -236,6 +249,14 @@ class _RuleCheck extends StatelessWidget {
         const SizedBox(height: 6),
         Text('拟配置：${_effect(rule['predictedEffect'])}',
             style: const TextStyle(color: muted)),
+        if (rule['kind'] == 'RUNTIME_PERMISSION' ||
+            rule['kind'] == 'SPECIAL_ACCESS')
+          Text(_permissionParameter(rule),
+              style: const TextStyle(color: muted)),
+        if (rule['kind'] == 'TIME_WINDOW')
+          for (final detail
+              in _scheduleParameters(rule['scheduleId'], schedules))
+            Text(detail, style: const TextStyle(color: muted)),
         if (rule['seconds'] is int && (rule['seconds'] as int) > 0)
           Text('时长：${rule['seconds']} 秒', style: const TextStyle(color: muted)),
         Text(_ruleStatus(rule['status']),
@@ -258,6 +279,138 @@ class _RuleCheck extends StatelessWidget {
       ]),
     );
   }
+}
+
+String _permissionParameter(Json rule) {
+  final permission = rule['permission'];
+  if (permission is! String || permission.trim().isEmpty) {
+    return '权限信息未提供';
+  }
+  final name = rule['kind'] == 'RUNTIME_PERMISSION'
+      ? runtimePermissionDisplayLabel(permission)
+      : specialAccessNames[permission];
+  return name == null ? '权限代码：$permission' : '权限：$name';
+}
+
+List<String> _scheduleParameters(dynamic scheduleId, List<Json> schedules) {
+  if (scheduleId is! String || scheduleId.trim().isEmpty) {
+    return const ['时间计划信息未提供'];
+  }
+  final matches =
+      schedules.where((entry) => entry['id'] == scheduleId).toList();
+  if (matches.isEmpty) return const ['时间计划信息未提供'];
+  if (matches.length != 1) return const ['时间计划信息不完整'];
+
+  final schedule = matches.single;
+  final name = schedule['name'];
+  if (name is! String || name.trim().isEmpty || name.length > 100) {
+    return const ['时间计划信息不完整'];
+  }
+  final heading = '时间计划：$name';
+  List<String> incomplete() => [heading, '时间计划信息不完整'];
+  final definition = schedule['definition'];
+  if (definition is! Json) return incomplete();
+  final zone = definition['timeZone'];
+  final weekly = definition['weekly'];
+  final exceptions = definition['exceptions'];
+  if (zone is! String ||
+      zone.trim().isEmpty ||
+      zone != zone.trim() ||
+      zone.length > 100 ||
+      weekly is! List ||
+      weekly.length > 56 ||
+      exceptions is! List ||
+      exceptions.length > 366) {
+    return incomplete();
+  }
+  try {
+    usageLocation(zone);
+  } on UsageReportFailure {
+    return incomplete();
+  }
+
+  // Read the immutable definition as a whole. A malformed row must not silently
+  // disappear and turn a partial plan into an apparently complete configuration.
+  const days = {
+    'MONDAY',
+    'TUESDAY',
+    'WEDNESDAY',
+    'THURSDAY',
+    'FRIDAY',
+    'SATURDAY',
+    'SUNDAY',
+  };
+  final details = <String>[heading, '时区：$zone'];
+  for (final window in weekly) {
+    if (window is! Json || !days.contains(window['day'])) return incomplete();
+    final times = _scheduleWindow(window);
+    if (times == null) return incomplete();
+    details.add('每周时段：${label(window['day'])} $times');
+  }
+  if (weekly.isEmpty) details.add('每周时段：未设置');
+
+  final dates = <String>{};
+  for (final exception in exceptions) {
+    if (exception is! Json) return incomplete();
+    final date = exception['date'];
+    final windows = exception['windows'];
+    if (!_scheduleDate(date) ||
+        windows is! List ||
+        windows.length > 8 ||
+        !dates.add(date as String)) {
+      return incomplete();
+    }
+    final times = <String>[];
+    for (final window in windows) {
+      final range = _scheduleWindow(window);
+      if (range == null) return incomplete();
+      times.add(range);
+    }
+    details.add('日期例外：$date ${times.isEmpty ? '全天关闭' : times.join('、')}');
+  }
+  if (exceptions.isEmpty) details.add('日期例外：未设置');
+  details.add('按计划时区计算，结束时刻不包含在允许时段内；日期例外覆盖当天计划。');
+  return details;
+}
+
+String? _scheduleWindow(dynamic window) {
+  if (window is! Json) return null;
+  final start = window['start'];
+  final end = window['end'];
+  final startValue = _scheduleClock(start);
+  final endValue = _scheduleClock(end);
+  if (startValue == null || endValue == null || startValue == endValue) {
+    return null;
+  }
+  return '$start–${endValue < startValue ? '次日 ' : ''}$end';
+}
+
+int? _scheduleClock(dynamic value) {
+  if (value is! String) return null;
+  // Match the HTTP schedule contract rather than Java LocalTime's wider syntax.
+  final match = RegExp(r'^([01][0-9]|2[0-3]):([0-5][0-9])$').firstMatch(value);
+  if (match == null) return null;
+  return int.parse(match[1]!) * 60 + int.parse(match[2]!);
+}
+
+bool _scheduleDate(dynamic value) {
+  if (value is! String ||
+      !RegExp(r'^[0-9]{4}-[0-9]{2}-[0-9]{2}$').hasMatch(value)) {
+    return false;
+  }
+  final year = int.parse(value.substring(0, 4));
+  final month = int.parse(value.substring(5, 7));
+  final day = int.parse(value.substring(8, 10));
+  if (year < 1900 ||
+      year > 2200 ||
+      month < 1 ||
+      month > 12 ||
+      day < 1 ||
+      day > 31) {
+    return false;
+  }
+  final date = DateTime.utc(year, month, day);
+  return date.year == year && date.month == month && date.day == day;
 }
 
 class _ApplicationEvidence extends StatelessWidget {
