@@ -46,6 +46,32 @@ public interface ManagedAndroidGateway {
       String enterpriseId, String policyId, List<AppRestriction> rules);
 
   /**
+   * Read-only reconciliation of the complete applications-field control projection. A match is an
+   * observation, not proof of write attribution, exclusive resource ownership or device
+   * application. A known expected version must match exactly; null requests content-only
+   * comparison.
+   */
+  default ApplicationPolicyInspection inspectApplicationPolicy(
+      String enterpriseId, String policyId, List<AppRestriction> expected, Long expectedVersion) {
+    throw new ManagedAndroidUnavailableException();
+  }
+
+  enum ApplicationPolicyState {
+    MATCHED,
+    CONTENT_MISMATCH,
+    VERSION_MISMATCH,
+    NOT_FOUND
+  }
+
+  record ApplicationPolicyInspection(
+      String policyName, Long providerVersion, ApplicationPolicyState state) {
+    @Override
+    public String toString() {
+      return "ApplicationPolicyInspection[REDACTED]";
+    }
+  }
+
+  /**
    * Replaces one existing app's runtime permission decisions without changing its installation
    * or other application policy fields. This is a provider request, not an applied-device receipt.
    * Auto-grant is deliberately excluded until device-mode-specific validation is available.

@@ -1,7 +1,7 @@
 package com.aimanager.managedandroid.internal;
 
-import com.aimanager.managedandroid.ManagedAndroidGateway;
 import com.aimanager.managedandroid.ManagedAgentEvidence;
+import com.aimanager.managedandroid.ManagedAndroidGateway;
 import com.aimanager.managedandroid.ManagedApplicationReport;
 import com.aimanager.shared.AndroidRuntimePermissions;
 import com.aimanager.shared.SafetyCriticalPackages;
@@ -36,7 +36,6 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
   private static final Pattern PACKAGE =
       Pattern.compile("[A-Za-z_][A-Za-z0-9_]*(\\.[A-Za-z_][A-Za-z0-9_]*)+");
   private static final Pattern ENROLLMENT_NONCE = Pattern.compile("[A-Za-z0-9_-]{32,128}");
-  private static final int MAX_APPLICATIONS = 3000;
   private final AndroidManagement client;
   private final Set<String> protectedPackages;
 
@@ -69,73 +68,60 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
   public PolicyReceipt putApplicationPolicy(
       String enterpriseId, String policyId, List<AppRestriction> rules) {
     String name = policyName(enterpriseId, policyId);
-    Objects.requireNonNull(rules, "rules");
-    if (rules.size() > MAX_APPLICATIONS)
-      throw new IllegalArgumentException("Too many application rules");
-    Set<String> seen = new HashSet<>();
-    List<ApplicationPolicy> applications =
-        rules.stream()
-            .map(
-                rule -> {
-                  Objects.requireNonNull(rule, "rule");
-                  String packageName = Objects.requireNonNull(rule.packageName(), "packageName");
-                  if (!PACKAGE.matcher(packageName).matches() || !seen.add(packageName)) {
-                    throw new IllegalArgumentException("Invalid or duplicate application package");
-                  }
-                  AppControl control = Objects.requireNonNull(rule.control(), "control");
-                  if (control != AppControl.ALLOW
-                      && protectedPackages.contains(packageName.toLowerCase(Locale.ROOT))) {
-                    throw new IllegalArgumentException(
-                        "A safety-critical application cannot be blocked");
-                  }
-                  ApplicationPolicy app = new ApplicationPolicy().setPackageName(packageName);
-                  return switch (control) {
-                    case ALLOW -> app.setInstallType("AVAILABLE").setDisabled(false);
-                    case BLOCK_LAUNCH -> app.setInstallType("AVAILABLE").setDisabled(true);
-                    case BLOCK_INSTALL -> app.setInstallType("BLOCKED");
-                  };
-                })
-            .toList();
+    var applications = GoogleApplicationPolicySupport.requested(rules, protectedPackages);
     try {
       // An unspecified Play Store mode defaults to WHITELIST: replacing applications could
       // uninstall every app omitted from this list. Only an explicitly provisioned, exclusively
       // owned BLACKLIST policy may be updated by this narrow adapter.
-      Policy existing = client.enterprises().policies().get(name).execute();
-      if (existing == null
-          || !name.equals(existing.getName())
-          || !"BLACKLIST".equals(existing.getPlayStoreMode())
-          || Boolean.TRUE.equals(existing.getInstallAppsDisabled())
-          || (existing.getApplications() != null && existing.getApplications().stream()
-              .anyMatch(app -> app.getPermissionGrants() != null
-                  && !app.getPermissionGrants().isEmpty()))) {
-        LOG.warn("Android management application policy preflight rejected: unsafe policy mode");
+      Policy existing =
+          GoogleApplicationPolicySupport.read(
+              client, client.enterprises().policies().get(name).buildHttpRequest(), name, false);
+      if (!GoogleApplicationPolicySupport.replaceable(existing))
         throw new IllegalStateException(
-            "Managed application policy is not explicitly provisioned for blocklist updates");
-      }
+            "Managed application policy has unsupported existing configuration");
       Policy result =
-          client
-              .enterprises()
-              .policies()
-              .patch(name, new Policy().setApplications(applications))
-              .setUpdateMask("applications")
-              .execute();
-      if (result == null
-          || !name.equals(result.getName())
-          || result.getVersion() == null
-          || result.getVersion() < 1) {
+          GoogleApplicationPolicySupport.read(
+              client,
+              client
+                  .enterprises()
+                  .policies()
+                  .patch(name, new Policy().setApplications(applications))
+                  .setUpdateMask("applications")
+                  .buildHttpRequest(),
+              name,
+              false);
+      if (!GoogleApplicationPolicySupport.matches(result, applications))
         throw new IllegalStateException(
-            "Android management policy response is incomplete or mismatched");
-      }
+            "Managed application policy response does not confirm requested content");
       return new PolicyReceipt(name, result.getVersion());
-    } catch (GoogleJsonResponseException error) {
-      if (error.getStatusCode() == 404) {
-        LOG.warn("Android management application policy preflight rejected: policy missing");
-        throw new IllegalStateException(
-            "Managed application policy must be provisioned before application updates");
-      }
-      throw providerFailure("policy patch", error);
     } catch (IOException error) {
       throw providerFailure("policy patch", error);
+    }
+  }
+
+  @Override
+  public ApplicationPolicyInspection inspectApplicationPolicy(
+      String enterpriseId, String policyId, List<AppRestriction> expected, Long expectedVersion) {
+    String name = policyName(enterpriseId, policyId);
+    if (expectedVersion != null && expectedVersion < 1)
+      throw new IllegalArgumentException("Invalid expected policy version");
+    var applications = GoogleApplicationPolicySupport.requested(expected, protectedPackages);
+    try {
+      Policy current =
+          GoogleApplicationPolicySupport.read(
+              client, client.enterprises().policies().get(name).buildHttpRequest(), name, true);
+      if (current == null)
+        return new ApplicationPolicyInspection(name, null, ApplicationPolicyState.NOT_FOUND);
+      boolean contentMatches = GoogleApplicationPolicySupport.matches(current, applications);
+      var state =
+          expectedVersion != null && !expectedVersion.equals(current.getVersion())
+              ? ApplicationPolicyState.VERSION_MISMATCH
+              : contentMatches
+                  ? ApplicationPolicyState.MATCHED
+                  : ApplicationPolicyState.CONTENT_MISMATCH;
+      return new ApplicationPolicyInspection(name, current.getVersion(), state);
+    } catch (IOException error) {
+      throw providerFailure("application policy inspection", error);
     }
   }
 
@@ -149,17 +135,26 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
     Objects.requireNonNull(decisions, "decisions");
     if (decisions.size() > 64) throw new IllegalArgumentException("Too many permission decisions");
     Set<String> seen = new HashSet<>();
-    List<PermissionGrant> grants = decisions.stream().map(decision -> {
-      Objects.requireNonNull(decision, "decision");
-      if (!AndroidRuntimePermissions.contains(decision.permission())
-          || !seen.add(decision.permission()))
-        throw new IllegalArgumentException("Invalid or duplicate runtime permission");
-      PermissionDecision value = Objects.requireNonNull(decision.decision(), "decision value");
-      if (value == PermissionDecision.DENY
-          && protectedPackages.contains(packageName.toLowerCase(Locale.ROOT)))
-        throw new IllegalArgumentException("A safety-critical application permission cannot be denied");
-      return new PermissionGrant().setPermission(decision.permission()).setPolicy(value.name());
-    }).sorted((left, right) -> left.getPermission().compareTo(right.getPermission())).toList();
+    List<PermissionGrant> grants =
+        decisions.stream()
+            .map(
+                decision -> {
+                  Objects.requireNonNull(decision, "decision");
+                  if (!AndroidRuntimePermissions.contains(decision.permission())
+                      || !seen.add(decision.permission()))
+                    throw new IllegalArgumentException("Invalid or duplicate runtime permission");
+                  PermissionDecision value =
+                      Objects.requireNonNull(decision.decision(), "decision value");
+                  if (value == PermissionDecision.DENY
+                      && protectedPackages.contains(packageName.toLowerCase(Locale.ROOT)))
+                    throw new IllegalArgumentException(
+                        "A safety-critical application permission cannot be denied");
+                  return new PermissionGrant()
+                      .setPermission(decision.permission())
+                      .setPolicy(value.name());
+                })
+            .sorted((left, right) -> left.getPermission().compareTo(right.getPermission()))
+            .toList();
     try {
       Policy existing = client.enterprises().policies().get(name).execute();
       if (existing == null || !name.equals(existing.getName())
@@ -169,7 +164,8 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
           || existing.getApplications().stream().filter(app -> packageName.equals(app.getPackageName()))
               .count() != 1) {
         LOG.warn("Android management runtime permission preflight rejected: unsafe policy or app");
-        throw new IllegalStateException("Managed application must already exist in an owned policy");
+        throw new IllegalStateException(
+            "Managed application must already exist in an owned policy");
       }
       var change = new ApplicationPolicyChange()
           .setApplication(new ApplicationPolicy().setPackageName(packageName).setPermissionGrants(grants))
@@ -243,10 +239,14 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
           || policy.getVersion() < 1
           || !"BLACKLIST".equals(policy.getPlayStoreMode())
           || (policy.getApplications() != null && !policy.getApplications().isEmpty())
-          || policy.keySet().stream().anyMatch(
-              field -> !Set.of("name", "version", "playStoreMode", "applications").contains(field))) {
+          || policy.keySet().stream()
+              .anyMatch(
+                  field ->
+                      !Set.of("name", "version", "playStoreMode", "applications")
+                          .contains(field))) {
         LOG.warn("Android management enrollment policy preflight rejected: non-minimal policy");
-        throw new IllegalStateException("Managed enrollment policy is not an empty safety baseline");
+        throw new IllegalStateException(
+            "Managed enrollment policy is not an empty safety baseline");
       }
       return new PolicyReceipt(name, policy.getVersion());
     } catch (IOException error) {
@@ -357,9 +357,12 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
       throw new IllegalArgumentException("Invalid managed application package");
     }
     try {
-      var device = GoogleApplicationReportReader.readDevice(client, name,
-          "name,managementMode,lastStatusReportTime,"
-              + "applicationReports(packageName,state,signingKeyCerts(signingKeyCertFingerprintSha256))");
+      var device =
+          GoogleApplicationReportReader.readDevice(
+              client,
+              name,
+              "name,managementMode,lastStatusReportTime,"
+                  + "applicationReports(packageName,state,signingKeyCerts(signingKeyCertFingerprintSha256))");
       var target = GoogleApplicationReportReader.findApplication(device, packageName);
       if (target == null) return Optional.empty();
       return Optional.of(new ManagedApplicationReport(name, device.getManagementMode(), packageName,

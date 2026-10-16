@@ -25,7 +25,8 @@ class GoogleManagedPolicyReceiptTest {
   private ManagedAndroidGateway gateway;
   private final AtomicInteger writes = new AtomicInteger();
   private final AtomicReference<String> policy =
-      new AtomicReference<>("{\"name\":\"enterprises/e1/policies/p1\",\"version\":\"7\"}");
+      new AtomicReference<>(
+          "{\"name\":\"enterprises/e1/policies/p1\",\"version\":\"7\",\"playStoreMode\":\"BLACKLIST\"}");
   private final AtomicReference<String> device =
       new AtomicReference<>(
           "{\"name\":\"enterprises/e1/devices/d1\",\"policyName\":\"enterprises/e1/policies/p1\"}");

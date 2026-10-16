@@ -1,0 +1,182 @@
+{
+  "stage": "Application policy content receipt and read-only inspection; prerequisite of durable executor",
+  "date": "2026-10-16",
+  "baseCommit": "9216123f0ccff093a95d2e0a3ea6c604e000aeb1",
+  "status": "TARGETED_CHECKS_PASSED_NOT_DEPLOYED",
+  "ownedSourceSha256": {
+    "backend/src/main/java/com/aimanager/managedandroid/ManagedAndroidGateway.java": "e77973a9b8dcf221876d0a8943d77609af5103db788bb34cb5e3a902de56bb57",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/GoogleManagedAndroidGateway.java": "5fc3edff472fb4e8505d1b933831654b0b270207b7a43cd51a2a6bf3cb4bc739",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/GoogleApplicationPolicySupport.java": "9156d68dc0607cb772730f45f89b70cbe5a475addee4f26e4b16246b20eb1996",
+    "backend/src/test/java/com/aimanager/managedandroid/GoogleManagedApplicationPolicyContentTest.java": "12a6a29578f7ef13342a1a2cedae72ad37a75b8aa79ab3be3f33a9df817171bd",
+    "backend/src/test/java/com/aimanager/managedandroid/GoogleManagedAndroidGatewayTest.java": "6744c549c7a0bb8d4a5cad0a1028e0032a1cc9010e83df62eac7cb8b3f830b33",
+    "backend/src/test/java/com/aimanager/managedandroid/GoogleManagedPolicyReceiptTest.java": "9ad38c63515dcccd74cfe78b0b0e850d91e48caa7abcbe6e591a6f8a40f86c4f"
+  },
+  "attempts": {
+    "red": {
+      "result": {
+        "status": "VERIFICATION_FAILED",
+        "phase": "red",
+        "baseCommit": "9216123f0ccff093a95d2e0a3ea6c604e000aeb1",
+        "scope": "Official generated SDK application policy response content mismatch; local HTTP only",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=GoogleManagedApplicationPolicyContentTest#matchingResourceAndVersionCannotCertifyWrongApplicationContents",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "ownedPid": 22088,
+        "mavenExitCode": 1,
+        "suites": {
+          "com.aimanager.managedandroid.GoogleManagedApplicationPolicyContentTest": {
+            "counts": {
+              "tests": 1,
+              "failures": 1,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "1d019f2c4ed1c0c8f785039689134ebf99b58e176a4d5a9fe440053f66e0507b"
+          }
+        },
+        "totals": {
+          "tests": 1,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0
+        },
+        "reason": "AssertionError: ",
+        "seconds": 26.0,
+        "sourceUnchanged": true,
+        "runnerSha256": "9b9bd78b1c1e26f6dd4685eb3754b02024ff740cdee526abfd2baabf07046e79"
+      },
+      "sourceManifestSha256": "90fe846142ddda10b12f13846de6889e3850df20a6fa825e2bedda91335639e6",
+      "resultSha256": "74e9dfc1bf093c6ee0d4c0412dd66a55e2e4420f4fc52a230d077500ccae5a15",
+      "logSha256": "b097db6342786a3fc8c75bcac6f99c951f7831658a4ef82b9b60259a66ab478d",
+      "sourcePins": 447
+    },
+    "green": {
+      "result": {
+        "status": "PASSED",
+        "phase": "green",
+        "baseCommit": "9216123f0ccff093a95d2e0a3ea6c604e000aeb1",
+        "scope": "Official generated SDK application-policy content receipt/read-only reconciliation. Local HTTP only; no live provider, device or shared backend WIP.",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=GoogleManagedApplicationPolicyContentTest,GoogleManagedAndroidGatewayTest,GoogleManagedPolicyReceiptTest,GoogleRuntimePermissionContractTest,ManagedAndroidConfigurationTest,ModuleBoundariesTest",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "ownedPid": 58956,
+        "mavenExitCode": 0,
+        "suites": {
+          "com.aimanager.managedandroid.GoogleManagedAndroidGatewayTest": {
+            "counts": {
+              "tests": 4,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "575539a262ef0462c63ef6260ab9440a3344dac094699d1deb4842e9f56eace4"
+          },
+          "com.aimanager.managedandroid.GoogleManagedApplicationPolicyContentTest": {
+            "counts": {
+              "tests": 65,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "93aae55a233d7bd4b2563a393178a38419172fb32bb9c40b84a2eb5e6c459fa8"
+          },
+          "com.aimanager.managedandroid.GoogleManagedPolicyReceiptTest": {
+            "counts": {
+              "tests": 20,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "f3317791a9bf2325df41be4e5f9f0c64672f403f05ab895e17fcbf88b3938aa9"
+          },
+          "com.aimanager.managedandroid.GoogleRuntimePermissionContractTest": {
+            "counts": {
+              "tests": 24,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "66b44e3752fe444f5db29759c2a2e9068240aa5d31260bddf57e8b50258e8758"
+          },
+          "com.aimanager.managedandroid.internal.ManagedAndroidConfigurationTest": {
+            "counts": {
+              "tests": 2,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "2fa7cf92631d4d0d44f6883e9693f74eb676a1be679f8d412ce2b6019e11d24e"
+          },
+          "com.aimanager.ModuleBoundariesTest": {
+            "counts": {
+              "tests": 1,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "8c752063f6556ceac13d54468a2326771d9ab2af0c4acb0328f469113660ddef"
+          }
+        },
+        "totals": {
+          "tests": 116,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "seconds": 37.4,
+        "sourceUnchanged": true,
+        "runnerSha256": "9f492e3627200d5ee3740818d8821a983c3c014520316b4b910a173398ef0f13"
+      },
+      "sourceManifestSha256": "29669e735674afff9811e4b4e1883c2f3f1b57d8b763db46105f67d4e357bdba",
+      "resultSha256": "04e53717973e101fd1a9060928727dc1923d0e921f6c9c02c64bedf8c4a369cf",
+      "logSha256": "fb63c1e22c341b15aec17ed2e941ea30c015d7679ac341e7f99de379c527be4c",
+      "sourcePins": 448
+    }
+  },
+  "redAssertionAudit": {
+    "status": "EXPECTED_APPLICATION_CONTENT_ASSERTION_FAILURE",
+    "runnerStatus": "VERIFICATION_FAILED",
+    "runnerMismatch": "AssertJ assertThatThrownBy fails before as-label is attached; wrapper expected that absent label",
+    "actualFailure": "\nExpecting code to raise a throwable.",
+    "xmlSha256": "1d019f2c4ed1c0c8f785039689134ebf99b58e176a4d5a9fe440053f66e0507b"
+  },
+  "redAuditNote": "Original RED wrapper failed its label expectation because AssertJ throws before as-label. XML independently confirms the intended content-rejection assertion failure; original result remains unmodified.",
+  "runtime": {
+    "preflight": {
+      "availableMemoryBytes": 1731559424,
+      "freeCBytes": 4646076416,
+      "freeDBytes": 20330622976
+    },
+    "preflightSha256": "907434d36555389800cb6d98392c235a2a0d399f8273eeb80758528466d9fb30",
+    "preStartAborts": [
+      "Initial formatter did not start below conservative 3GiB reserve.",
+      "After agreed 1.5GiB backend-only reserve, formatting passed. First Maven entry aborted before Popen below 1.5GiB; no target or result existed. Fresh entry passed and completed once."
+    ],
+    "heapPerJvmMiB": 256,
+    "metaspacePerJvmMiB": 192,
+    "configuredDeadlineSeconds": 180,
+    "actualSeconds": 37.4
+  },
+  "exclusions": [
+    "Shared family/backend workspace WIP",
+    "Full backend suite",
+    "MySQL/OceanBase live validation",
+    "Provider qualification or live EMM",
+    "Durable executor or exclusive remote policy ownership",
+    "Complete policy semantics beyond applications control projection",
+    "Device APPLIED state from content match",
+    "Android build/emulator/physical device",
+    "Flutter UI acceptance",
+    "Deployment"
+  ]
+}

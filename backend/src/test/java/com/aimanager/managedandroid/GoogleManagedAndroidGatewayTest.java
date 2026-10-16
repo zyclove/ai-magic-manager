@@ -154,7 +154,14 @@ class GoogleManagedAndroidGatewayTest {
       response =
           "{\"name\":\"enterprises/e1/policies/p1\",\"version\":\"6\",\"playStoreMode\":\"BLACKLIST\"}";
     } else {
-      response = "{\"name\":\"enterprises/e1/policies/p1\",\"version\":\"7\"}";
+      var applications =
+          new com.fasterxml.jackson.databind.ObjectMapper()
+              .readTree(body.get())
+              .get("applications");
+      response =
+          "{\"name\":\"enterprises/e1/policies/p1\",\"version\":\"7\",\"playStoreMode\":\"BLACKLIST\",\"applications\":"
+              + applications
+              + "}";
     }
     byte[] bytes = response.getBytes(StandardCharsets.UTF_8);
     exchange.getResponseHeaders().set("Content-Type", "application/json");
