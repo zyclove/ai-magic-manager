@@ -116,3 +116,7 @@ SDK 写入回执的资源身份、精确版本及合规矛盾检查见 [策略�
 - [Enrollment tokens](https://developers.google.com/android/management/reference/rest/v1/enterprises.enrollmentTokens)
 - [Enterprise 读取](https://developers.google.com/android/management/reference/rest/v1/enterprises/get)
 - [Device resource 与合规状态](https://developers.google.com/android/management/reference/rest/v1/enterprises.devices)
+
+## 运行时权限写入内容核对
+
+连接器已补充返回策略中目标应用及完整权限决定集合的精确核对；缺失、重复、额外或相反决定不会产生成功回执。空集合清除、字段掩码及不确定结果处理见 [权限提供方回执契约](runtime-permission-provider-contract.md)。此校验不开放管理员系统权限发布，也不代表设备已执行。

@@ -29,6 +29,9 @@ public interface ManagedAndroidGateway {
    * Replaces one existing app's runtime permission decisions without changing its installation
    * or other application policy fields. This is a provider request, not an applied-device receipt.
    * Auto-grant is deliberately excluded until device-mode-specific validation is available.
+   * A successful receipt must confirm the exact target app and complete requested decision set
+   * in the provider's returned policy. Missing or contradictory fields are an uncertain write
+   * outcome; reconcile the original policy before any subsequent write.
    */
   default PolicyReceipt putRuntimePermissionDecisions(
       String enterpriseId, String policyId, String packageName,

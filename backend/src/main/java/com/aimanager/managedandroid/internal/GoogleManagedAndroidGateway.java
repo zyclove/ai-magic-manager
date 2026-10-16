@@ -17,6 +17,7 @@ import com.google.api.services.androidmanagement.v1.model.PermissionGrant;
 import com.google.api.services.androidmanagement.v1.model.Policy;
 import java.io.IOException;
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -176,8 +177,10 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
           new ModifyPolicyApplicationsRequest().setChanges(List.of(change))).execute();
       Policy updated = response == null ? null : response.getPolicy();
       if (updated == null || !name.equals(updated.getName())
-          || updated.getVersion() == null || updated.getVersion() < 1)
-        throw new IllegalStateException("Android management permission policy response is incomplete");
+          || updated.getVersion() == null || updated.getVersion() < 1
+          || !permissionDecisionsMatch(updated, packageName, grants))
+        throw new IllegalStateException(
+            "Android management permission policy response is incomplete or mismatched");
       return new PolicyReceipt(name, updated.getVersion());
     } catch (GoogleJsonResponseException error) {
       if (error.getStatusCode() == 404) {
@@ -188,6 +191,30 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
     } catch (IOException error) {
       throw providerFailure("permission policy update", error);
     }
+  }
+
+  /**
+   * The provider returns the updated policy. Its resource/version alone cannot confirm which
+   * application's decisions were written. Ignore ordering, but reject missing, extra or duplicate
+   * decisions and duplicate target apps. Omitted grants represent an empty repeated field only.
+   * This confirms provider state, never device execution; mismatches must not trigger a write retry.
+   */
+  private static boolean permissionDecisionsMatch(
+      Policy policy, String packageName, List<PermissionGrant> expected) {
+    if (policy.getApplications() == null) return false;
+    var targets = policy.getApplications().stream()
+        .filter(app -> app != null && packageName.equals(app.getPackageName())).toList();
+    if (targets.size() != 1) return false;
+    var actual = targets.get(0).getPermissionGrants();
+    if (actual == null) return expected.isEmpty();
+    if (actual.size() != expected.size()) return false;
+    var remaining = new HashMap<String, String>();
+    expected.forEach(grant -> remaining.put(grant.getPermission(), grant.getPolicy()));
+    for (var grant : actual) {
+      if (grant == null || grant.getPolicy() == null
+          || !grant.getPolicy().equals(remaining.remove(grant.getPermission()))) return false;
+    }
+    return remaining.isEmpty();
   }
 
   @Override
