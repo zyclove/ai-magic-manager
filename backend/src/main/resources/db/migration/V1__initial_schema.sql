@@ -1612,6 +1612,7 @@ CREATE TABLE managed_agent_bindings (
     expires_at BIGINT NOT NULL,
     updated_at BIGINT NOT NULL,
     next_verification_at BIGINT NOT NULL DEFAULT 0,
+    agent_trust_revision VARCHAR(64),
     proof_sha256 VARCHAR(64),
     proof_id VARCHAR(36),
     feedback_at BIGINT,

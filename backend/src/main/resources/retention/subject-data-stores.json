@@ -849,6 +849,7 @@
       "columns": [
         "active_device_id",
         "active_enrollment_id",
+        "agent_trust_revision",
         "created_at",
         "device_id",
         "enrollment_id",

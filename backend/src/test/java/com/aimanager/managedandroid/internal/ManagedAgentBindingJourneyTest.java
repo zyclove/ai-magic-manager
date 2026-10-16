@@ -514,6 +514,304 @@ class ManagedAgentBindingJourneyTest {
   }
 
   @Test
+  void verifiedContextLoadsCurrentAuthorizedRegistrationWithoutReusingChallengeExpiry()
+      throws Exception {
+    var f = fixture();
+    String id = create(f, UUID.randomUUID().toString()).get("id").asText();
+    var identity = identity(f);
+    var verified = store.complete(f.tenant(), f.actor(), id, 1, identity, identity, proof(f, id));
+    // 挑战截止只限制一次性绑定；已验证绑定的当前有效性由当前授权和注册决定。
+    db.update("UPDATE managed_agent_bindings SET expires_at=1 WHERE id=?", id);
+    var context =
+        org.assertj.core.api.Assertions.catchThrowableOfType(
+            () -> store.requireVerifiedContext(f.tenant(), f.actor(), id, verified.version()),
+            DomainException.class);
+    assertThat(context).as("current verified binding must be available").isNull();
+    var current = store.requireVerifiedContext(f.tenant(), f.actor(), id, verified.version());
+    assertThat(current.tenantId()).isEqualTo(f.tenant());
+    assertThat(current.actorId()).isEqualTo(f.actor());
+    assertThat(current.authorityVersion()).isZero();
+    assertThat(current.subjectId()).isEqualTo(f.subject());
+    assertThat(current.deviceId()).isEqualTo(f.device());
+    assertThat(current.registrationId()).isEqualTo(f.registration());
+    assertThat(current.keyThumbprint()).isEqualTo(f.key().computeThumbprint().toString());
+    assertThat(current.bindingId()).isEqualTo(id);
+    assertThat(current.bindingVersion()).isEqualTo(2);
+    assertThat(current.enrollmentId()).isEqualTo(f.intent());
+    assertThat(current.enrollmentVersion()).isEqualTo(3);
+    assertThat(current.provider()).isEqualTo("LOCAL_TEST");
+    assertThat(current.enterpriseId()).isEqualTo(f.enterprise());
+    assertThat(current.enterpriseBindingVersion()).isEqualTo(1);
+    assertThat(current.providerDeviceId()).isEqualTo(f.providerDevice());
+    assertThat(current.managementMode()).isEqualTo("DEVICE_OWNER");
+    assertThat(current.bindingVerifiedAt()).isEqualTo(verified.verifiedAt());
+    assertThat(current.agentPackageName()).isEqualTo("com.aimanager.child");
+    assertThat(current.agentTrustRevision()).hasSize(64);
+    assertThat(
+            db.queryForObject(
+                "SELECT agent_trust_revision FROM managed_agent_bindings WHERE id=?",
+                String.class,
+                id))
+        .isEqualTo(current.agentTrustRevision());
+    assertThat(current.toString())
+        .doesNotContain(f.tenant(), f.device(), f.actor(), f.enterprise());
+    verify(gateway, never()).readEnrollmentIdentity(anyString(), anyString());
+    verify(gateway, never()).readAgentEvidence(anyString(), anyString(), anyString());
+    verify(gateway, never()).readApplicationReport(anyString(), anyString(), anyString());
+  }
+
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.ValueSource(
+      strings = {"GUARDIAN", "TEACHER", "CHILD", "AUDITOR"})
+  void currentVerifiedContextRejectsReadOnlyAndOutOfScopeRoles(String role) throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    db.update("UPDATE tenant_members SET role=? WHERE tenant_id=?", role, f.tenant());
+    var failure =
+        org.assertj.core.api.Assertions.catchThrowableOfType(
+            () ->
+                store.requireVerifiedContext(
+                    f.tenant(), f.actor(), binding.id(), binding.version()),
+            DomainException.class);
+    assertThat(failure).isNotNull();
+    assertThat(failure.status().value()).isEqualTo(403);
+  }
+
+  @Test
+  void currentVerifiedContextReloadsMembershipEpochAndAcceptsOrganizationAdministrator()
+      throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    var before =
+        store.requireVerifiedContext(f.tenant(), f.actor(), binding.id(), binding.version());
+    db.update(
+        "UPDATE tenant_members SET role='ORG_ADMIN',version=version+1 WHERE tenant_id=?",
+        f.tenant());
+    var after =
+        store.requireVerifiedContext(f.tenant(), f.actor(), binding.id(), binding.version());
+    assertThat(before.authorityVersion()).isZero();
+    assertThat(after.authorityVersion()).isEqualTo(1);
+    assertThat(after).isNotEqualTo(before);
+    db.update(
+        "UPDATE tenant_members SET revoked_at=? WHERE tenant_id=?",
+        java.sql.Timestamp.from(Instant.now()),
+        f.tenant());
+    var failure =
+        org.assertj.core.api.Assertions.catchThrowableOfType(
+            () ->
+                store.requireVerifiedContext(
+                    f.tenant(), f.actor(), binding.id(), binding.version()),
+            DomainException.class);
+    assertThat(failure).isNotNull();
+    assertThat(failure.status().value()).isEqualTo(403);
+  }
+
+  @Test
+  void currentVerifiedContextDoesNotExposeAnotherTenantsBinding() throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    var other = fixture();
+    var failure =
+        org.assertj.core.api.Assertions.catchThrowableOfType(
+            () ->
+                store.requireVerifiedContext(
+                    other.tenant(), other.actor(), binding.id(), binding.version()),
+            DomainException.class);
+    assertThat(failure).isNotNull();
+    assertThat(failure.errorCode()).isEqualTo("MANAGED_BINDING_NOT_FOUND");
+  }
+
+  @Test
+  void currentVerifiedContextRejectsPendingAndExplicitlyRevokedBindings() throws Exception {
+    var f = fixture();
+    String id = create(f, UUID.randomUUID().toString()).get("id").asText();
+    assertContextFailure(f, id, 1, "MANAGED_BINDING_NOT_VERIFIED");
+    var identity = identity(f);
+    store.complete(f.tenant(), f.actor(), id, 1, identity, identity, proof(f, id));
+    store.revoke(f.tenant(), f.actor(), id, 2);
+    assertContextFailure(f, id, 3, "MANAGED_BINDING_NOT_VERIFIED");
+  }
+
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.CsvSource({
+    "SUBJECT_ARCHIVED,MANAGED_BINDING_SUBJECT_INACTIVE",
+    "DEVICE_REVOKED,MANAGED_BINDING_DEVICE_MISMATCH",
+    "DEVICE_PENDING,MANAGED_BINDING_DEVICE_MISMATCH",
+    "KEY_CHANGED,MANAGED_BINDING_CONTEXT_CHANGED",
+    "PACKAGE_CHANGED,MANAGED_BINDING_CONTEXT_CHANGED",
+    "PROVIDER_CHANGED,MANAGED_BINDING_PROVIDER_CHANGED",
+    "ENTERPRISE_CHANGED,MANAGED_ENTERPRISE_CHANGED",
+    "ENROLLMENT_CANCELLED,MANAGED_ENROLLMENT_NOT_VERIFIED",
+    "ENROLLMENT_MODE_CHANGED,MANAGED_BINDING_MODE_UNSUPPORTED",
+    "PROVIDER_DEVICE_CHANGED,MANAGED_BINDING_CONTEXT_CHANGED",
+    "VERIFIED_AT_MISSING,MANAGED_BINDING_VERIFICATION_INVALID",
+    "VERIFIED_AT_FUTURE,MANAGED_BINDING_VERIFICATION_INVALID",
+    "VERIFIED_AT_BEFORE_REQUEST,MANAGED_BINDING_VERIFICATION_INVALID",
+    "DEVICE_SLOT_CLEARED,MANAGED_BINDING_VERIFICATION_INVALID",
+    "ENROLLMENT_SLOT_CLEARED,MANAGED_BINDING_VERIFICATION_INVALID",
+    "CHALLENGE_NOT_CONSUMED,MANAGED_BINDING_VERIFICATION_INVALID",
+    "TRUST_REVISION_MISSING,MANAGED_BINDING_RELEASE_TRUST_CHANGED",
+    "TRUST_REVISION_CHANGED,MANAGED_BINDING_RELEASE_TRUST_CHANGED",
+    "CONTRACT_REVOKED,MANAGED_ANDROID_CONTRACT_REQUIRED",
+    "PROVIDER_UNAVAILABLE,MANAGED_AGENT_BINDING_UNAVAILABLE",
+    "BINDING_EVIDENCE_UNSUPPORTED,MANAGED_AGENT_BINDING_UNAVAILABLE"
+  })
+  void currentVerifiedContextRejectsChangedAuthorityAndInvalidBindingFacts(
+      String mutation, String code) throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    switch (mutation) {
+      case "SUBJECT_ARCHIVED" ->
+          db.update(
+              "UPDATE subjects SET archived_at=1 WHERE tenant_id=? AND id=?",
+              f.tenant(),
+              f.subject());
+      case "DEVICE_REVOKED" ->
+          db.update("UPDATE devices SET state='REVOKED' WHERE id=?", f.device());
+      case "DEVICE_PENDING" ->
+          db.update("UPDATE devices SET state='AWAITING_CONFIRMATION' WHERE id=?", f.device());
+      case "KEY_CHANGED" ->
+          db.update("UPDATE devices SET key_thumbprint=? WHERE id=?", "b".repeat(43), f.device());
+      case "PACKAGE_CHANGED" ->
+          db.update(
+              "UPDATE managed_agent_bindings SET package_name='com.other.agent' WHERE id=?",
+              binding.id());
+      case "PROVIDER_CHANGED" -> when(gateway.providerCode()).thenReturn("ANOTHER_PROVIDER");
+      case "ENTERPRISE_CHANGED" ->
+          when(enterprises.requireActive(f.tenant()))
+              .thenReturn(
+                  new ManagedEnterpriseAuthority.EnterpriseAccess("LOCAL_TEST", f.enterprise(), 2));
+      case "ENROLLMENT_CANCELLED" ->
+          db.update(
+              "UPDATE managed_enrollment_intents SET state='CANCELLED' WHERE id=?", f.intent());
+      case "ENROLLMENT_MODE_CHANGED" ->
+          db.update(
+              "UPDATE managed_enrollment_intents SET provider_mode='PROFILE_OWNER' WHERE id=?",
+              f.intent());
+      case "PROVIDER_DEVICE_CHANGED" ->
+          db.update(
+              "UPDATE managed_enrollment_intents SET provider_device_id='replacement_device' WHERE"
+                  + " id=?",
+              f.intent());
+      case "VERIFIED_AT_MISSING" ->
+          db.update("UPDATE managed_agent_bindings SET verified_at=NULL WHERE id=?", binding.id());
+      case "VERIFIED_AT_FUTURE" ->
+          db.update(
+              "UPDATE managed_agent_bindings SET verified_at=? WHERE id=?",
+              System.currentTimeMillis() + 60_000,
+              binding.id());
+      case "VERIFIED_AT_BEFORE_REQUEST" ->
+          db.update(
+              "UPDATE managed_agent_bindings SET verified_at=created_at-1 WHERE id=?",
+              binding.id());
+      case "DEVICE_SLOT_CLEARED" ->
+          db.update(
+              "UPDATE managed_agent_bindings SET active_device_id=NULL WHERE id=?", binding.id());
+      case "ENROLLMENT_SLOT_CLEARED" ->
+          db.update(
+              "UPDATE managed_agent_bindings SET active_enrollment_id=NULL WHERE id=?",
+              binding.id());
+      case "CHALLENGE_NOT_CONSUMED" ->
+          db.update(
+              "UPDATE managed_agent_bindings SET nonce=? WHERE id=?",
+              SecretMaterial.token(),
+              binding.id());
+      case "TRUST_REVISION_MISSING" ->
+          db.update(
+              "UPDATE managed_agent_bindings SET agent_trust_revision=NULL WHERE id=?",
+              binding.id());
+      case "TRUST_REVISION_CHANGED" ->
+          db.update(
+              "UPDATE managed_agent_bindings SET agent_trust_revision=? WHERE id=?",
+              "b".repeat(64),
+              binding.id());
+      case "CONTRACT_REVOKED" -> when(capacity.currentForUpdate(f.tenant())).thenReturn(0L);
+      case "PROVIDER_UNAVAILABLE" -> when(gateway.available()).thenReturn(false);
+      case "BINDING_EVIDENCE_UNSUPPORTED" ->
+          when(gateway.supportsAgentBindingEvidence()).thenReturn(false);
+      default -> throw new AssertionError("Unknown authority mutation");
+    }
+    assertContextFailure(f, binding.id(), binding.version(), code);
+  }
+
+  @Test
+  void currentVerifiedContextRejectsAnOldBindingVersionAndKeepsItsLedgerUnchanged()
+      throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    assertContextFailure(f, binding.id(), 1, "RESOURCE_VERSION_CONFLICT");
+    var before = db.queryForMap("SELECT * FROM managed_agent_bindings WHERE id=?", binding.id());
+    store.requireVerifiedContext(f.tenant(), f.actor(), binding.id(), binding.version());
+    assertThat(db.queryForMap("SELECT * FROM managed_agent_bindings WHERE id=?", binding.id()))
+        .isEqualTo(before);
+  }
+
+  @Test
+  void currentVerifiedContextRequiresBindingAndEnrollmentToBelongToTheSameStudent()
+      throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String otherSubject = UUID.randomUUID().toString();
+    db.update(
+        "INSERT INTO subjects(tenant_id,id,nickname,age_band,created_at)"
+            + " VALUES(?,?,'同机构另一学生','AGE_7_12',?)",
+        f.tenant(),
+        otherSubject,
+        System.currentTimeMillis());
+    // 两个独立外键不能证明绑定和受管注册归属同一学生。
+    db.update(
+        "UPDATE managed_agent_bindings SET subject_id=? WHERE id=?", otherSubject, binding.id());
+    assertContextFailure(f, binding.id(), binding.version(), "MANAGED_BINDING_CONTEXT_CHANGED");
+  }
+
+  @Test
+  void currentVerifiedContextIncludesEnrollmentRevisionEvenWhenDeviceIdentityIsUnchanged()
+      throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    var before =
+        store.requireVerifiedContext(f.tenant(), f.actor(), binding.id(), binding.version());
+    db.update("UPDATE managed_enrollment_intents SET version=version+1 WHERE id=?", f.intent());
+    var after =
+        store.requireVerifiedContext(f.tenant(), f.actor(), binding.id(), binding.version());
+    assertThat(after.enrollmentVersion()).isEqualTo(4);
+    assertThat(after.deviceId()).isEqualTo(before.deviceId());
+    assertThat(after.registrationId()).isEqualTo(before.registrationId());
+    assertThat(after).isNotEqualTo(before);
+  }
+
+  @Test
+  void agentTrustRevisionChangesOnlyWithNormalizedReleaseIdentity() {
+    String otherCertificate = "b".repeat(64);
+    var first =
+        new ManagedAgentBindingSettings("com.aimanager.child", CERT + "," + otherCertificate);
+    var reordered =
+        new ManagedAgentBindingSettings(
+            " com.aimanager.child ", " " + otherCertificate + "," + CERT);
+    var revoked = new ManagedAgentBindingSettings("com.aimanager.child", otherCertificate);
+    var otherPackage =
+        new ManagedAgentBindingSettings("com.aimanager.other", CERT + "," + otherCertificate);
+    assertThat(first.trustRevision()).isEqualTo(reordered.trustRevision());
+    assertThat(first.trustRevision()).isNotEqualTo(revoked.trustRevision());
+    assertThat(first.trustRevision()).isNotEqualTo(otherPackage.trustRevision());
+  }
+
+  private ManagedAgentBindingStore.View verifiedBinding(Fixture f) throws Exception {
+    String id = create(f, UUID.randomUUID().toString()).get("id").asText();
+    var identity = identity(f);
+    return store.complete(f.tenant(), f.actor(), id, 1, identity, identity, proof(f, id));
+  }
+
+  private void assertContextFailure(Fixture f, String binding, long version, String code) {
+    var failure =
+        org.assertj.core.api.Assertions.catchThrowableOfType(
+            () -> store.requireVerifiedContext(f.tenant(), f.actor(), binding, version),
+            DomainException.class);
+    assertThat(failure).isNotNull();
+    assertThat(failure.errorCode()).isEqualTo(code);
+  }
+
+  @Test
   void pendingReportIsRetryableAndPollingIsBounded() throws Exception {
     var f = fixture();
     String id = create(f, UUID.randomUUID().toString()).get("id").asText();

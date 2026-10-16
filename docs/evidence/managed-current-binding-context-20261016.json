@@ -1,0 +1,220 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-16",
+  "baseCommit": "94079e751b45b2f16fa1acab2dd05e77868286c4",
+  "status": "TARGETED_VERIFICATION_PASSED",
+  "scope": "Current verified binding context and stored agent release trust revision; no application evidence persistence or enforcement endpoint",
+  "finalTotal": {
+    "tests": 75,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "sourceSha256": {
+    "backend/src/main/java/com/aimanager/managedandroid/internal/ManagedAgentBindingStore.java": "393d14e7cf995392f3c78c1dfb6151bd56f790e35dda8484e9cde79e118fbcb0",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/ManagedAgentBindingSettings.java": "adfb79917cac5d9f801cf072caedd240f61d126c61f87c5c42dc57a1f1c67f7d",
+    "backend/src/test/java/com/aimanager/managedandroid/internal/ManagedAgentBindingJourneyTest.java": "6276f5bbe6692dd73f256ff1d826765fbe3203e3cd82bc4f6e922dd1f595ce01",
+    "backend/src/main/resources/db/migration/V1__initial_schema.sql": "38df7af37bda56ba92d74be68cd052fc63210c0d512b2eac79c35f11e15f9972",
+    "backend/src/main/resources/retention/subject-data-stores.json": "af84de97b91edf62030626829e3026a7815178d0ed1ff74e42e0153adc434eed"
+  },
+  "resourceLineEndingEquivalence": {
+    "backend/src/main/resources/db/migration/V1__initial_schema.sql": {
+      "indexSha256": "330da5ee77a35a7ea1f9e73fc9782b258da6ea299de458f4d2bf68bfacea7c67",
+      "verifiedNormalizedTextSha256": "38df7af37bda56ba92d74be68cd052fc63210c0d512b2eac79c35f11e15f9972"
+    },
+    "backend/src/main/resources/retention/subject-data-stores.json": {
+      "indexSha256": "d2e2502ffb29f6becdc79f17f8cd55dc43b6a359d88ff2bf3503515c67b391cf",
+      "verifiedNormalizedTextSha256": "af84de97b91edf62030626829e3026a7815178d0ed1ff74e42e0153adc434eed"
+    }
+  },
+  "sharedResources": "Candidate and index patch include only agent_trust_revision column additions; unrelated worktree changes excluded",
+  "ownedResourcePatchSha256": "23ffb779604bd9b7c1880b1f1d4c27b92630f7ae8f66d6e16f7445a032d11ae3",
+  "attempts": [
+    {
+      "candidate": ".local/managed-current-binding-red-20261016-r1",
+      "sessionId": 40033,
+      "terminalExitCode": 0,
+      "sourceFileCount": 438,
+      "manifestSha256": "88e26fe109ca21151b78b965e4d8d9f11c57ede400e6c57ae112f182189ce219",
+      "logSha256": "96f4d46bad27d5ad25695bb1d4f8a7f4622ad3e5e59646f1fdba775181fe7072",
+      "resultSha256": "f1a5b8ff0cd653d7c4d64e5698bb9265365b924a1d68d9fba48e9943fd6e02ad",
+      "result": {
+        "status": "EXPECTED_BEHAVIOR_FAILURE_REPRODUCED",
+        "baseCommit": "94079e751b45b2f16fa1acab2dd05e77868286c4",
+        "scope": "Spring, H2 MySQL-mode transactions and MVC; real credentials and tenant authorization; fixture enterprise eligibility, contract capacity and provider; no external services or real devices",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=ManagedAgentBindingJourneyTest#verifiedContextLoadsCurrentAuthorizedRegistrationWithoutReusingChallengeExpiry",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "externalServices": false,
+        "realDevice": false,
+        "inProcessH2": true,
+        "localHttpFixture": false,
+        "ownedProcessId": 39144,
+        "mavenExitCode": 1,
+        "counts": {
+          "tests": 1,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0
+        },
+        "failedCases": [
+          "verifiedContextLoadsCurrentAuthorizedRegistrationWithoutReusingChallengeExpiry"
+        ],
+        "surefireXmlSha256": "92595ebaedcd18e3b52ef75158ea568f90ddfc4c0d8891d26fadc9a8b0044ad3",
+        "seconds": 49.6,
+        "sourceUnchanged": true,
+        "runnerSha256": "60fdbf8eb975ddb88ab5bfe34571d847e876f1d33382c74e74199f27ecf956be"
+      },
+      "suites": [
+        {
+          "name": "com.aimanager.managedandroid.internal.ManagedAgentBindingJourneyTest",
+          "tests": 1,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0,
+          "sha256": "92595ebaedcd18e3b52ef75158ea568f90ddfc4c0d8891d26fadc9a8b0044ad3"
+        }
+      ]
+    },
+    {
+      "candidate": ".local/managed-current-binding-green-20261016-r1",
+      "sessionId": 26525,
+      "terminalExitCode": 1,
+      "sourceFileCount": 438,
+      "manifestSha256": "9bb287a5008337d0710718e9203d1641fe344deae9aaa2d4860bdeacb8d553c9",
+      "logSha256": "e86e92f2c2bfbd882d52f2a5134b408b37a55e903c2b8be25757543448e2d231",
+      "resultSha256": "e89283d6641605260ec271dcf1dd6f018c1860f181fa32280cc279d4d6acefc9",
+      "result": {
+        "status": "VERIFICATION_FAILED",
+        "baseCommit": "94079e751b45b2f16fa1acab2dd05e77868286c4",
+        "scope": "Spring, H2 MySQL-mode transactions and MVC; real credentials and tenant authorization; fixture enterprise eligibility, contract capacity and provider; no external services or real devices",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=ManagedAgentBindingJourneyTest,ErasureManagedBindingProcessorTest",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "externalServices": false,
+        "realDevice": false,
+        "inProcessH2": true,
+        "localHttpFixture": false,
+        "ownedProcessId": 18844,
+        "mavenExitCode": 1,
+        "counts": {
+          "tests": 51,
+          "failures": 2,
+          "errors": 0,
+          "skipped": 0
+        },
+        "failedCases": [
+          "currentVerifiedContextReloadsMembershipEpochAndAcceptsOrganizationAdministrator",
+          "verifiedContextLoadsCurrentAuthorizedRegistrationWithoutReusingChallengeExpiry"
+        ],
+        "reason": "Unexpected verification results",
+        "seconds": 51.1,
+        "sourceUnchanged": true,
+        "runnerSha256": "3e4cda8bac55340f8433f75d7564b6d145ce209b37140a6e59028d8a0e36d3a6"
+      },
+      "suites": [
+        {
+          "name": "com.aimanager.managedandroid.internal.ManagedAgentBindingJourneyTest",
+          "tests": 51,
+          "failures": 2,
+          "errors": 0,
+          "skipped": 0,
+          "sha256": "1e92a145346ac78fafe8f7b05565656798ec6a9eb8054d0fe850b22bfe76c761"
+        },
+        {
+          "name": "com.aimanager.retention.internal.ErasureManagedBindingProcessorTest",
+          "tests": 24,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "sha256": "c9db7fe155d101ac95b425ca7c33b14b717c95ca8a1aebd3a7854686fbdae33b"
+        }
+      ]
+    },
+    {
+      "candidate": ".local/managed-current-binding-green-20261016-r2",
+      "sessionId": 72680,
+      "terminalExitCode": 0,
+      "sourceFileCount": 438,
+      "manifestSha256": "a5aa0b41495d8eed9c34216eb180c0165df0d3ea6418d2e5218ce44f083daa16",
+      "logSha256": "13c87199aa048eae7e58dcf04421c829c0361c0ea44a35b75eb32ac5de50b153",
+      "resultSha256": "4f87801f5ac12827e456c70f7953228d606034e982239ba5c2c516f9b4533f02",
+      "result": {
+        "status": "PASSED",
+        "baseCommit": "94079e751b45b2f16fa1acab2dd05e77868286c4",
+        "scope": "Spring, H2 MySQL-mode transactions and MVC; real credentials and tenant authorization; fixture enterprise eligibility, contract capacity and provider; no external services or real devices",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=ManagedAgentBindingJourneyTest,ErasureManagedBindingProcessorTest",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "externalServices": false,
+        "realDevice": false,
+        "inProcessH2": true,
+        "localHttpFixture": false,
+        "ownedProcessId": 8956,
+        "mavenExitCode": 0,
+        "counts": {
+          "tests": 51,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "failedCases": [],
+        "surefireXmlSha256": "40eef86c8e730dc701c8cb10fdb8c3deb41c104cf8934347c4829d9dda085916",
+        "retentionCounts": {
+          "tests": 24,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "retentionXmlSha256": "28425ba07367064a39b17190396a3424339d4c776f2ae8e6334864eb4267381c",
+        "seconds": 50.3,
+        "sourceUnchanged": true,
+        "runnerSha256": "625e31cf27ab7b660164bc1301bbf30efccde184ffd1b2aff70ada632938f57f"
+      },
+      "suites": [
+        {
+          "name": "com.aimanager.managedandroid.internal.ManagedAgentBindingJourneyTest",
+          "tests": 51,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "sha256": "40eef86c8e730dc701c8cb10fdb8c3deb41c104cf8934347c4829d9dda085916"
+        },
+        {
+          "name": "com.aimanager.retention.internal.ErasureManagedBindingProcessorTest",
+          "tests": 24,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "sha256": "28425ba07367064a39b17190396a3424339d4c776f2ae8e6334864eb4267381c"
+        }
+      ]
+    }
+  ],
+  "correction": "GREEN r1 used wrong test authority version initial value 1; actual DDL DEFAULT 0. Corrected expectations to 0 then 1 and used Timestamp for the timestamp-valued membership revocation fixture. Production behavior unchanged between GREEN attempts.",
+  "exclusions": [
+    "Full backend suite",
+    "Current shared uncommitted features",
+    "MySQL/OceanBase execution",
+    "Real provider/EMM admission",
+    "Real institution contract",
+    "Android/TV runtime",
+    "Application evidence store and policy enforcement",
+    "Live deployment"
+  ]
+}

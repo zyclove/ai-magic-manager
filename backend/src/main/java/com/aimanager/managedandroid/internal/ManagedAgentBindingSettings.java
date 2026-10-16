@@ -2,6 +2,7 @@ package com.aimanager.managedandroid.internal;
 
 import com.aimanager.managedandroid.ManagedAndroidGateway;
 import com.aimanager.shared.DomainException;
+import com.aimanager.shared.SecretMaterial;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,6 +38,12 @@ final class ManagedAgentBindingSettings {
         && !certificates.isEmpty()
         && gateway.available()
         && gateway.supportsAgentBindingEvidence();
+  }
+
+  /** 绑定成功时固定信任配置；排序消除配置排列差异，增删发布签名必须重新核验。 */
+  String trustRevision() {
+    return SecretMaterial.hash(
+        packageName + "\n" + String.join("\n", certificates.stream().sorted().toList()));
   }
 
   void requireEnabled(ManagedAndroidGateway gateway) {

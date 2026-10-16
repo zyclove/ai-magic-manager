@@ -225,8 +225,9 @@ class ManagedAgentBindingStore {
       throw conflict("MANAGED_BINDING_REGISTRATION_CHANGED");
     db.update(
         "UPDATE managed_agent_bindings SET"
-            + " state='VERIFIED',version=version+1,nonce=NULL,proof_sha256=?,proof_id=?,feedback_at=?,reported_at=?,verified_at=?,updated_at=?"
+            + " state='VERIFIED',version=version+1,nonce=NULL,agent_trust_revision=?,proof_sha256=?,proof_id=?,feedback_at=?,reported_at=?,verified_at=?,updated_at=?"
             + " WHERE tenant_id=? AND id=?",
+        settings.trustRevision(),
         verified.proofSha256(),
         verified.proofId(),
         verified.feedbackAt(),
@@ -259,6 +260,56 @@ class ManagedAgentBindingStore {
   View get(String tenant, String actor, String binding) {
     access.requireRole(tenant, actor, OWNER, ORG_ADMIN, AUDITOR);
     return view(required(tenant, binding, false));
+  }
+
+  /** 供应用证据工作流读取当前绑定；不是系统执行授权或面向客户端的 DTO。 */
+  VerifiedBindingContext requireVerifiedContext(
+      String tenant, String actor, String binding, long version) {
+    long authorityVersion = access.requireWriteVersion(tenant, actor, OWNER, ORG_ADMIN);
+    var before = required(tenant, binding, false);
+    var context =
+        context(tenant, actor, before.enrollmentId(), before.deviceId(), before.registrationId());
+    // 与创建/消费流程保持相同的领域锁顺序，不先锁绑定再等待企业或设备。
+    var current = required(tenant, binding, true);
+    ResourceVersions.check(version, current.version());
+    if (!"VERIFIED".equals(current.state())) throw conflict("MANAGED_BINDING_NOT_VERIFIED");
+    match(current, context);
+    var intent = context.intent();
+    if (!current.subjectId().equals(intent.subjectId()))
+      throw conflict("MANAGED_BINDING_CONTEXT_CHANGED");
+    if (!current.provider().equals(gateway.providerCode()))
+      throw conflict("MANAGED_BINDING_PROVIDER_CHANGED");
+    if (!"DEVICE_OWNER".equals(intent.providerMode()))
+      throw conflict("MANAGED_BINDING_MODE_UNSUPPORTED");
+    if (current.verifiedAt() == null
+        || current.verifiedAt() < current.createdAt()
+        || current.verifiedAt() > clock.millis()
+        || current.nonce() != null
+        || !current.deviceId().equals(current.activeDeviceId())
+        || !current.enrollmentId().equals(current.activeEnrollmentId()))
+      throw conflict("MANAGED_BINDING_VERIFICATION_INVALID");
+    if (!settings.trustRevision().equals(current.agentTrustRevision()))
+      throw conflict("MANAGED_BINDING_RELEASE_TRUST_CHANGED");
+    return new VerifiedBindingContext(
+        tenant,
+        actor,
+        authorityVersion,
+        current.subjectId(),
+        current.deviceId(),
+        current.registrationId(),
+        current.keyThumbprint(),
+        current.id(),
+        current.version(),
+        current.enrollmentId(),
+        intent.version(),
+        current.provider(),
+        current.enterpriseId(),
+        current.enterpriseVersion(),
+        current.providerDeviceId(),
+        intent.providerMode(),
+        current.verifiedAt(),
+        current.packageName(),
+        current.agentTrustRevision());
   }
 
   ItemPage<View> list(String tenant, String actor, int limit, String cursor) {
@@ -499,10 +550,40 @@ class ManagedAgentBindingStore {
         r.getLong("created_at"),
         r.getLong("expires_at"),
         r.getLong("next_verification_at"),
-        r.getObject("verified_at", Long.class));
+        r.getObject("verified_at", Long.class),
+        r.getString("active_device_id"),
+        r.getString("active_enrollment_id"),
+        r.getString("agent_trust_revision"));
   }
 
   private record Context(ManagedEnrollmentStore.Intent intent, RegistrationKeys.Key key) {}
+
+  /** 最小服务端快照；不携带挑战、证明、注册公钥或提供方注册令牌。 */
+  record VerifiedBindingContext(
+      String tenantId,
+      String actorId,
+      long authorityVersion,
+      String subjectId,
+      String deviceId,
+      String registrationId,
+      String keyThumbprint,
+      String bindingId,
+      long bindingVersion,
+      String enrollmentId,
+      long enrollmentVersion,
+      String provider,
+      String enterpriseId,
+      long enterpriseBindingVersion,
+      String providerDeviceId,
+      String managementMode,
+      long bindingVerifiedAt,
+      String agentPackageName,
+      String agentTrustRevision) {
+    @Override
+    public String toString() {
+      return "VerifiedManagedBindingContext[REDACTED]";
+    }
+  }
 
   record ContextView(
       String enrollmentId,
@@ -532,7 +613,10 @@ class ManagedAgentBindingStore {
       long createdAt,
       long expiresAt,
       long nextVerificationAt,
-      Long verifiedAt) {
+      Long verifiedAt,
+      String activeDeviceId,
+      String activeEnrollmentId,
+      String agentTrustRevision) {
     @Override
     public String toString() {
       return "ManagedAgentBinding[REDACTED]";
