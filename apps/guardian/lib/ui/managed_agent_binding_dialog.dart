@@ -33,6 +33,8 @@ class _ManagedAgentBindingDialogState extends State<ManagedAgentBindingDialog> {
   String? nextCursor;
   Object? error;
   bool loading = true, busy = false, confirmRevoke = false;
+  bool feedbackChecked = false;
+  final deviceSearch = TextEditingController();
   int generation = 0;
   DateTime? verifyAfter;
   Timer? clock;
@@ -55,6 +57,7 @@ class _ManagedAgentBindingDialogState extends State<ManagedAgentBindingDialog> {
   void dispose() {
     generation++;
     clock?.cancel();
+    deviceSearch.dispose();
     super.dispose();
   }
 
@@ -77,6 +80,7 @@ class _ManagedAgentBindingDialogState extends State<ManagedAgentBindingDialog> {
       setState(() {
         data = result;
         binding = result.currentBinding;
+        feedbackChecked = false;
         devices = List.unmodifiable(
             more ? [...devices, ...result.candidates] : result.candidates);
         nextCursor = result.nextCursor;
@@ -120,6 +124,7 @@ class _ManagedAgentBindingDialogState extends State<ManagedAgentBindingDialog> {
       if (!current) return;
       setState(() {
         binding = result;
+        feedbackChecked = false;
         pendingCreate = null;
         verifyAfter = now.add(const Duration(seconds: 5));
       });
@@ -152,7 +157,12 @@ class _ManagedAgentBindingDialogState extends State<ManagedAgentBindingDialog> {
     });
     try {
       final result = await widget.repository.verify(target);
-      if (current) setState(() => binding = result);
+      if (current) {
+        setState(() {
+          binding = result;
+          feedbackChecked = result.state == 'PENDING';
+        });
+      }
     } catch (failure) {
       if (current) setState(() => error = failure);
     } finally {
@@ -201,6 +211,55 @@ class _ManagedAgentBindingDialogState extends State<ManagedAgentBindingDialog> {
     return found.isEmpty ? '所选设备' : found.first.displayName;
   }
 
+  /// Search is local to loaded candidates; it never widens the authorized scope.
+  List<DeviceManagementRecord> get visibleDevices {
+    final query = deviceSearch.text.trim().toLowerCase();
+    if (query.isEmpty) return devices;
+    return devices
+        .where((device) => device.displayName.toLowerCase().contains(query))
+        .toList();
+  }
+
+  String get remainingTime {
+    final milliseconds = binding!.expiresAt - now.millisecondsSinceEpoch;
+    final seconds = milliseconds <= 0 ? 0 : (milliseconds / 1000).ceil();
+    return '剩余 ${seconds ~/ 60} 分 ${seconds % 60} 秒';
+  }
+
+  Widget _progress(BuildContext context) {
+    final complete = state == 'VERIFIED';
+    final submitted = state == 'PENDING' || complete;
+    return Wrap(spacing: 12, runSpacing: 8, children: [
+      for (final step in [
+        (number: 1, label: '选择设备', done: submitted, current: !submitted),
+        (number: 2, label: '接收反馈', done: complete, current: state == 'PENDING'),
+        (number: 3, label: '身份核验', done: complete, current: false),
+      ])
+        Semantics(
+            container: true,
+            label:
+                '第 ${step.number} 步，${step.label}，${step.done ? '已完成' : step.current ? '当前步骤' : '待完成'}',
+            excludeSemantics: true,
+            child: Row(mainAxisSize: MainAxisSize.min, children: [
+              Icon(
+                  step.done
+                      ? Icons.check_circle_outline
+                      : step.current
+                          ? Icons.radio_button_checked
+                          : Icons.radio_button_unchecked,
+                  size: 18,
+                  color: step.done
+                      ? const Color(0xff28734d)
+                      : step.current
+                          ? navy
+                          : muted),
+              const SizedBox(width: 6),
+              Text('${step.number} ${step.label}',
+                  style: Theme.of(context).textTheme.labelLarge),
+            ])),
+    ]);
+  }
+
   Widget _status(BuildContext context) => Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -228,9 +287,13 @@ class _ManagedAgentBindingDialogState extends State<ManagedAgentBindingDialog> {
         if (binding != null) ...[
           const SizedBox(height: 10),
           Text(deviceName, style: const TextStyle(fontWeight: FontWeight.w600)),
-          if (state == 'PENDING')
-            Text('有效至 ${dateLabel(binding!.expiresAt)}',
-                style: const TextStyle(color: muted)),
+          if (state == 'PENDING') ...[
+            const SizedBox(height: 6),
+            Text(remainingTime,
+                style: const TextStyle(fontWeight: FontWeight.w600)),
+            Text('到期后可重新发起；等待不会延长有效期。',
+                style: Theme.of(context).textTheme.bodySmall),
+          ],
           if (state == 'VERIFIED')
             Text('核验时间 ${dateLabel(binding!.verifiedAt)}',
                 style: const TextStyle(color: muted)),
@@ -252,8 +315,31 @@ class _ManagedAgentBindingDialogState extends State<ManagedAgentBindingDialog> {
                   children: [
                     if (loading) const LinearProgressIndicator(),
                     if (data != null) ...[
+                      _progress(context),
+                      const SizedBox(height: 16),
                       _status(context),
                       const SizedBox(height: 16),
+                      if (state == 'PENDING') ...[
+                        if (feedbackChecked)
+                          Semantics(
+                              liveRegion: true,
+                              child: const Notice(
+                                  '刚刚核验仍未收到有效反馈。请保持儿童端打开，稍后再核验，无需重新关联。')),
+                        const ExpansionTile(
+                            tilePadding: EdgeInsets.zero,
+                            title: Text('一直在等待？查看排查方法'),
+                            childrenPadding: EdgeInsets.only(bottom: 12),
+                            expandedCrossAxisAlignment:
+                                CrossAxisAlignment.start,
+                            children: [
+                              Text('1. 确认打开的是所选设备上的儿童端，且网络可用。'),
+                              SizedBox(height: 8),
+                              Text('2. 保持儿童端在前台，使用机构批准的版本。'),
+                              SizedBox(height: 8),
+                              Text(
+                                  '3. 若仍无反馈，请联系机构管理员检查受管接入与反馈配置。普通家庭设备可能不支持此功能。'),
+                            ]),
+                      ],
                       if (!data!.ready) ...[
                         Notice(managedBindingReason(data!.reasonCode),
                             warning: true),
@@ -264,7 +350,33 @@ class _ManagedAgentBindingDialogState extends State<ManagedAgentBindingDialog> {
                       if (!active && widget.writable) ...[
                         if (devices.isEmpty && !loading)
                           const Text('尚无可选择的儿童端。请先完成这位学生的儿童端配对与激活，再刷新。'),
-                        for (final device in devices)
+                        if (devices.length > 5 ||
+                            deviceSearch.text.isNotEmpty) ...[
+                          TextField(
+                              controller: deviceSearch,
+                              enabled: !busy && pendingCreate == null,
+                              onChanged: (_) => setState(() {}),
+                              decoration: InputDecoration(
+                                  labelText: '搜索已加载的设备',
+                                  helperText: '按设备名称查找；更多设备可在下方加载。',
+                                  helperMaxLines: 3,
+                                  prefixIcon: const Icon(Icons.search),
+                                  suffixIcon: deviceSearch.text.isEmpty
+                                      ? null
+                                      : IconButton(
+                                          tooltip: '清除搜索',
+                                          onPressed: () =>
+                                              setState(deviceSearch.clear),
+                                          icon: const Icon(Icons.close)))),
+                          const SizedBox(height: 8),
+                          if (visibleDevices.isEmpty)
+                            const Text('已加载的设备中没有匹配结果，请更换名称或加载更多。'),
+                          if (selected != null)
+                            Text('已选：${selected!.displayName}',
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w600)),
+                        ],
+                        for (final device in visibleDevices)
                           RadioListTile<String>(
                               key: ValueKey('binding-device-${device.id}'),
                               contentPadding: EdgeInsets.zero,
@@ -332,13 +444,19 @@ class _ManagedAgentBindingDialogState extends State<ManagedAgentBindingDialog> {
                           child: LinearProgressIndicator()),
                   ])),
           actions: [
-            TextButton(
-                onPressed: busy ? null : () => Navigator.of(context).pop(),
-                child: const Text('关闭')),
+            if (state != 'VERIFIED')
+              TextButton(
+                  onPressed: busy ? null : () => Navigator.of(context).pop(),
+                  child: const Text('关闭')),
             OutlinedButton.icon(
                 onPressed: busy || loading || !current ? null : () => _load(),
                 icon: const Icon(Icons.refresh),
                 label: Text(pendingCreate == null ? '刷新记录' : '查询当前结果')),
+            if (state == 'VERIFIED')
+              FilledButton.icon(
+                  onPressed: busy ? null : () => Navigator.of(context).pop(),
+                  icon: const Icon(Icons.check),
+                  label: const Text('完成')),
             if (widget.writable && !active)
               FilledButton(
                   onPressed: enabled && data?.ready == true && selected != null
