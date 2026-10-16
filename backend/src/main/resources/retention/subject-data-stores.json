@@ -909,8 +909,14 @@
     {
       "table": "managed_enrollment_intent_events",
       "columns": [
-        "action", "actor_id", "correlation_id", "id", "intent_id", "occurred_at",
-        "tenant_id", "version"
+        "action",
+        "actor_id",
+        "correlation_id",
+        "id",
+        "intent_id",
+        "occurred_at",
+        "tenant_id",
+        "version"
       ],
       "domain": "managedandroid",
       "category": "AUDIT_RETENTION"
@@ -918,11 +924,30 @@
     {
       "table": "managed_enrollment_intents",
       "columns": [
-        "binding_version", "cleanup_attempts", "cleanup_claim_id", "cleanup_lease_until",
-        "created_at", "enterprise_id", "expires_at", "id", "issued_at", "next_cleanup_at",
-        "nonce_hash", "policy_id", "policy_version", "provider", "provider_device_id",
-        "provider_mode", "requested_by", "state", "subject_id", "tenant_id", "token_name",
-        "updated_at", "verified_at", "version"
+        "binding_version",
+        "cleanup_attempts",
+        "cleanup_claim_id",
+        "cleanup_lease_until",
+        "created_at",
+        "enterprise_id",
+        "expires_at",
+        "id",
+        "issued_at",
+        "next_cleanup_at",
+        "nonce_hash",
+        "policy_id",
+        "policy_version",
+        "provider",
+        "provider_device_id",
+        "provider_mode",
+        "requested_by",
+        "state",
+        "subject_id",
+        "tenant_id",
+        "token_name",
+        "updated_at",
+        "verified_at",
+        "version"
       ],
       "domain": "managedandroid",
       "category": "SUBJECT_DATA"
@@ -930,8 +955,14 @@
     {
       "table": "managed_enterprise_binding_events",
       "columns": [
-        "action", "actor_id", "correlation_id", "id", "occurred_at", "reason",
-        "tenant_id", "version"
+        "action",
+        "actor_id",
+        "correlation_id",
+        "id",
+        "occurred_at",
+        "reason",
+        "tenant_id",
+        "version"
       ],
       "domain": "managedandroid",
       "category": "AUDIT_RETENTION"
@@ -939,9 +970,18 @@
     {
       "table": "managed_enterprise_bindings",
       "columns": [
-        "approved_by", "contract_reference", "created_at", "enterprise_id",
-        "ownership_evidence_ref", "provider", "provider_display_name", "requested_by",
-        "state", "tenant_id", "updated_at", "version"
+        "approved_by",
+        "contract_reference",
+        "created_at",
+        "enterprise_id",
+        "ownership_evidence_ref",
+        "provider",
+        "provider_display_name",
+        "requested_by",
+        "state",
+        "tenant_id",
+        "updated_at",
+        "version"
       ],
       "domain": "managedandroid",
       "category": "SHARED_CONFIGURATION"
@@ -1519,6 +1559,61 @@
         "usage_enabled"
       ],
       "domain": "reporting",
+      "category": "DERIVED_COPY"
+    },
+    {
+      "table": "managed_policy_execution_tasks",
+      "columns": [
+        "action",
+        "active_device_id",
+        "actor_id",
+        "attempts",
+        "authority_version",
+        "binding_id",
+        "binding_version",
+        "cancel_requested",
+        "context_sha256",
+        "created_at",
+        "device_id",
+        "document_json",
+        "document_sha256",
+        "enterprise_id",
+        "expires_at",
+        "generation",
+        "id",
+        "lease_token",
+        "lease_until",
+        "next_attempt_at",
+        "policy_version_id",
+        "provider",
+        "provider_device_id",
+        "provider_policy_id",
+        "provider_version",
+        "publication_id",
+        "reason_code",
+        "registration_id",
+        "revision",
+        "state",
+        "subject_id",
+        "tenant_id",
+        "updated_at"
+      ],
+      "domain": "managedandroid",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "managed_policy_execution_events",
+      "columns": [
+        "action",
+        "generation",
+        "occurred_at",
+        "reason_code",
+        "revision",
+        "state",
+        "task_id",
+        "tenant_id"
+      ],
+      "domain": "managedandroid",
       "category": "DERIVED_COPY"
     }
   ]

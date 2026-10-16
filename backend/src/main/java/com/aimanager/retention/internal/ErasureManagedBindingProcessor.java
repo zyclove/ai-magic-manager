@@ -18,7 +18,8 @@ class ErasureManagedBindingProcessor {
   private final JdbcTemplate db;
   private final SubjectDataCatalog catalog;
 
-  record Result(String phase, int deletedRows, long totalRows, long batches) {
+  record Result(
+      String phase, int deletedRows, long totalRows, long batches, int deletedExecutionTasks) {
     boolean complete() {
       return phase.equals("DONE");
     }
@@ -85,7 +86,7 @@ class ErasureManagedBindingProcessor {
           var step = step(request.requestId());
           if (step.phase().equals("DONE")) {
             if (hasData(request)) throw failure("ERASURE_STEP_RECHECK_REQUIRED");
-            return new Result("DONE", 0, step.rows(), step.batches());
+            return new Result("DONE", 0, step.rows(), step.batches(), 0);
           }
           if (step.rows() > Long.MAX_VALUE - limit || step.batches() == Long.MAX_VALUE)
             throw failure("ERASURE_STEP_CORRUPT");
@@ -97,7 +98,45 @@ class ErasureManagedBindingProcessor {
                   request.tenantId(),
                   request.subjectId(),
                   limit);
+          int budget = limit, deletedBindings = 0, deletedExecutions = 0;
           for (var key : keys) {
+            if (budget == 0) break;
+            // Spend the same row budget on execution tasks before deleting their parent binding.
+            // Each task's bounded event history cascades; unfinished writes never reach this step.
+            var tasks =
+                db.query(
+                    "SELECT id,revision FROM managed_policy_execution_tasks WHERE tenant_id=?"
+                        + " AND binding_id=? ORDER BY id LIMIT ? FOR UPDATE",
+                    (r, n) -> new Key(r.getString(1), r.getLong(2)),
+                    request.tenantId(),
+                    key.id(),
+                    budget);
+            for (var task : tasks) {
+              if (db.queryForObject(
+                      "SELECT COUNT(*) FROM managed_policy_execution_events WHERE tenant_id=?"
+                          + " AND task_id=?",
+                      Long.class,
+                      request.tenantId(),
+                      task.id())
+                  > 100) throw failure("ERASURE_EXECUTION_HISTORY_LIMIT_EXCEEDED");
+              exactlyOne(
+                  db.update(
+                      "DELETE FROM managed_policy_execution_tasks WHERE tenant_id=? AND id=? AND"
+                          + " revision=? AND state IN ('APPLIED','CANCELLED') AND lease_token IS"
+                          + " NULL AND lease_until IS NULL AND action IS NULL AND active_device_id"
+                          + " IS NULL",
+                      request.tenantId(),
+                      task.id(),
+                      task.version()));
+              budget--;
+              deletedExecutions++;
+            }
+            if (budget == 0
+                || exists(
+                    "SELECT 1 FROM managed_policy_execution_tasks WHERE tenant_id=?"
+                        + " AND binding_id=? LIMIT 1",
+                    request.tenantId(),
+                    key.id())) break;
             // Normal writes cap facts at 200 under this binding lock. Refuse corrupt/imported
             // oversized sets before a cascade; progress counts remain parent binding rows.
             if (db.queryForObject(
@@ -116,6 +155,8 @@ class ErasureManagedBindingProcessor {
                     request.subjectId(),
                     key.id(),
                     key.version()));
+            budget--;
+            deletedBindings++;
           }
           String phase = hasData(request) ? "DATA" : "DONE";
           exactlyOne(
@@ -123,12 +164,17 @@ class ErasureManagedBindingProcessor {
                   "UPDATE erasure_recovery_steps SET phase=?,rows_processed=?,batches_processed=?,"
                       + "updated_at=? WHERE request_id=? AND step_code=? AND handler_version=1",
                   phase,
-                  step.rows() + keys.size(),
+                  step.rows() + deletedBindings,
                   step.batches() + 1,
                   now(),
                   request.requestId(),
                   STEP));
-          return new Result(phase, keys.size(), step.rows() + keys.size(), step.batches() + 1);
+          return new Result(
+              phase,
+              deletedBindings,
+              step.rows() + deletedBindings,
+              step.batches() + 1,
+              deletedExecutions);
         });
   }
 
@@ -171,6 +217,20 @@ class ErasureManagedBindingProcessor {
   }
 
   private void verifyTerminated(ErasureLedger.Request request) {
+    if (exists(
+        "SELECT 1 FROM managed_policy_execution_tasks t JOIN managed_agent_bindings b ON"
+            + " b.tenant_id=t.tenant_id AND b.id=t.binding_id WHERE t.tenant_id=? AND"
+            + " (t.subject_id=? OR b.subject_id=?) AND (t.subject_id<>b.subject_id OR"
+            + " t.device_id<>b.device_id OR t.registration_id<>b.registration_id) LIMIT 1",
+        request.tenantId(),
+        request.subjectId(),
+        request.subjectId())) throw failure("ERASURE_EXECUTION_SCOPE_CORRUPT");
+    if (exists(
+        "SELECT 1 FROM managed_policy_execution_tasks WHERE tenant_id=? AND subject_id=? AND (state"
+            + " NOT IN ('APPLIED','CANCELLED') OR lease_token IS NOT NULL OR lease_until IS NOT"
+            + " NULL OR action IS NOT NULL OR active_device_id IS NOT NULL) LIMIT 1",
+        request.tenantId(),
+        request.subjectId())) throw failure("ERASURE_EXECUTION_RECONCILIATION_REQUIRED");
     if (exists(
         "SELECT 1 FROM managed_agent_bindings WHERE tenant_id=? AND subject_id=? AND state"
             + " NOT IN ('REVOKED','EXPIRED') LIMIT 1",

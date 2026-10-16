@@ -1,0 +1,186 @@
+{
+  "stage": "Durable internal managed policy execution journal; not an external executor",
+  "date": "2026-10-16",
+  "baseCommit": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+  "status": "TARGETED_CHECKS_PASSED_NOT_DEPLOYED",
+  "ownedSourceSha256": {
+    "backend/src/main/java/com/aimanager/managedandroid/ManagedExecutionPublicationAccess.java": "8114a9612cfb2ffe35f2b8ecf0eeffe5448beda32344b60b13669b534e2d46fe",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/ManagedPolicyExecutionJournal.java": "75970754c4930b19bc1b375dfe4d7f869d1c0f862deb36d7f4d5d8fe2bbdb0a4",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/ManagedPolicyExecutionSettings.java": "adb82a742fe04b34d53d2fa216e905c3cc032e82f77f27619cb99b373685391a",
+    "backend/src/main/java/com/aimanager/policy/internal/ManagedExecutionPublicationReader.java": "8288ceba84a5d535db64249e84f496c2b5d678702cdf5a9a7722fa567e02b606",
+    "backend/src/main/java/com/aimanager/retention/internal/ErasureManagedBindingProcessor.java": "fe2d803d2f657be528f6d3ca737f66dcadcfa3b4d112135a017b48086119ea68",
+    "backend/src/test/java/com/aimanager/managedandroid/internal/ManagedExecutionTestData.java": "f3be23d54d0d3e86569f9ab7302178e6459682f15dabd102b71eb030f6fae109",
+    "backend/src/test/java/com/aimanager/managedandroid/internal/ManagedPolicyExecutionJournalTest.java": "ce625b40f91f297e9e201ab1a02855e821f707add059d25827e8289ab6a3ae10",
+    "backend/src/test/java/com/aimanager/policy/internal/ManagedExecutionPublicationReaderTest.java": "4f1998443f2f55819350fa8ac6b33fb75757540f5075666552e8bee0812e2b29",
+    "backend/src/test/java/com/aimanager/retention/internal/ErasureManagedBindingProcessorTest.java": "fb9e367a7582c2cb5f4ac17bc84a5a0dd487c741da8b6655628dd31f143e740c",
+    "backend/src/main/resources/db/migration/V1__initial_schema.sql": "0206defc4f5936c52a15442e61e9cf8278ec38ecb77c5f884504217d00e24f16",
+    "backend/src/main/resources/retention/subject-data-stores.json": "25ad3eb4c4999af6a3d6971ae88cfd3d48ea416eda58e3ab89ca22b692f5de22"
+  },
+  "attempts": {
+    "red": {
+      "result": {
+        "status": "EXPECTED_ASSERTION_FAILURE",
+        "phase": "red",
+        "baseCommit": "affee6c4c3779310ce321384a3f0a88764a08c98",
+        "scope": "Fresh schema durable execution journal availability; isolated H2 only",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=ManagedPolicyExecutionJournalTest#freshBaselineIncludesDurableExecutionJournal",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "ownedPid": 69580,
+        "mavenExitCode": 1,
+        "suites": {
+          "com.aimanager.managedandroid.internal.ManagedPolicyExecutionJournalTest": {
+            "counts": {
+              "tests": 1,
+              "failures": 1,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "743aa661ca046c88c91f6f0a0fa986ce132e30cf67f8dfe170b60f647968fa56"
+          }
+        },
+        "totals": {
+          "tests": 1,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0
+        },
+        "seconds": 32.8,
+        "sourceUnchanged": true,
+        "runnerSha256": "052b9603ea2e55543ce83dffd59816fddd69f3f81e67d667bf6f8ed6fb190923"
+      },
+      "sourceManifestSha256": "7efc9b1f7fc6224a9d814b3d53a79dcebdebf51e7429311084d40583ded4990c",
+      "resultSha256": "33d5d755d870ca1b0b56d881cc47cbf2649d9439f62c859c012661d3fc5d3c5e",
+      "logSha256": "9b04ce3fb3f59d534929d8c64d03a4c6959198421e122b657f65675b61d8330d",
+      "sourcePins": 449
+    },
+    "green": {
+      "result": {
+        "status": "PASSED",
+        "phase": "green",
+        "baseCommit": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+        "scope": "HEAD backend plus 9 owned Java files and execution-only V1/catalog additions; excludes all family/shared WIP",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=ManagedPolicyExecutionJournalTest,ManagedExecutionPublicationReaderTest,ErasureManagedBindingProcessorTest,PolicyJourneyTest,GoogleManagedApplicationPolicyContentTest,GoogleManagedPolicyReceiptTest,GoogleRuntimePermissionContractTest,ManagedAndroidConfigurationTest,ModuleBoundariesTest",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "ownedPid": 70920,
+        "mavenExitCode": 0,
+        "suites": {
+          "com.aimanager.managedandroid.GoogleManagedApplicationPolicyContentTest": {
+            "counts": {
+              "tests": 65,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "4c05c9f7969cfbfd71d84019ec492e1d60d26511fd3f1de18448372e9cb473df"
+          },
+          "com.aimanager.managedandroid.GoogleManagedPolicyReceiptTest": {
+            "counts": {
+              "tests": 20,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "83a9d5f5351bfeed4456a3dcc3aab0563d5a112b6e0cb0e57d8d3a0986dedc08"
+          },
+          "com.aimanager.managedandroid.GoogleRuntimePermissionContractTest": {
+            "counts": {
+              "tests": 24,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "c64a55962650bd062c6a7e45f102288c7792ccbf1aeafb354ed5d1e48d15d0f4"
+          },
+          "com.aimanager.managedandroid.internal.ManagedAndroidConfigurationTest": {
+            "counts": {
+              "tests": 2,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "5d0ad964a16429eab6a0239d42041e56b2b5cf11539f6d373529568231163591"
+          },
+          "com.aimanager.managedandroid.internal.ManagedPolicyExecutionJournalTest": {
+            "counts": {
+              "tests": 39,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "8faafcda7d6c5c6df23ad0eaf36396ed1bd9f338004b90522f496f1503dfc95a"
+          },
+          "com.aimanager.ModuleBoundariesTest": {
+            "counts": {
+              "tests": 1,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "b1f52c145b0437a820707a3b41e064998748198bf50727dc21bcbcdf6796499b"
+          },
+          "com.aimanager.policy.internal.ManagedExecutionPublicationReaderTest": {
+            "counts": {
+              "tests": 13,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "ebe077897fbaf8af284121f6d7034dff150a3d99829624c201f708c83aa9192c"
+          },
+          "com.aimanager.PolicyJourneyTest": {
+            "counts": {
+              "tests": 28,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "485527d5d2a0868b20088b985e628d5941e91c25c80a578ea32e427a3567edb1"
+          },
+          "com.aimanager.retention.internal.ErasureManagedBindingProcessorTest": {
+            "counts": {
+              "tests": 33,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "4ee391d154045978a60691c558621362da7333a5869ae7e38b232e1dfebafe04"
+          }
+        },
+        "totals": {
+          "tests": 225,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "seconds": 67.8,
+        "sourceUnchanged": true,
+        "runnerSha256": "0492a3844382e2d40235bc2f81f6751f3d00130e9a2ee69e43761ef6f7880ed4"
+      },
+      "sourceManifestSha256": "31d11c815d513ac8e9def633bef227b7b1044188b4bbd61efb786560ba4c370a",
+      "resultSha256": "f4f06b689ee5a0aacc9e8cc6eada392f299aa2f108c1c4104e32d643949ead96",
+      "logSha256": "06dc07906c1e5ac6fa5e649cec3d0f481ba5ada3ac574dcbdb1e0fc610c77ecb",
+      "sourcePins": 455
+    }
+  },
+  "limitations": [
+    "No scheduler, public execution endpoint, complete provider policy compiler or remote resource ownership implemented in this stage.",
+    "Binding context is mocked in journal tests; real publication reader and tenant authorization are separately exercised. This is not end-to-end device authority certification.",
+    "Isolated H2 MySQL mode and local HTTP provider contracts only; no MySQL/OceanBase production database changes or live EMM calls.",
+    "Android build, emulator and real device validation deferred at user request.",
+    "No current ENFORCE capability gate enabled; China mainland Google provider remains disabled.",
+    "Fresh unreleased 1.0.0 V1 execution additions only; unrelated shared work excluded.",
+    "Per-binding history cap 100 and NEEDS_REVIEW resolution require production archival/operator workflows before external execution activation."
+  ]
+}

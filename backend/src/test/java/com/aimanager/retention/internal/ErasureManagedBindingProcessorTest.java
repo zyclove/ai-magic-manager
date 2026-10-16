@@ -223,6 +223,143 @@ class ErasureManagedBindingProcessorTest {
         "a".repeat(64));
   }
 
+  @Test
+  void executionHistoryUsesTheSharedBatchBudgetBeforeBindingErasure() {
+    var target = fixture.device(subject);
+    String owned = binding(target, "REVOKED");
+    for (int i = 0; i < 27; i++) executionTask(owned, "CANCELLED");
+    var claim = fixture.accept(target);
+    var first = processor.process(claim, 5);
+    assertEquals(5, first.deletedExecutionTasks());
+    assertEquals(0, first.deletedRows());
+    assertEquals("DATA", first.phase());
+    assertEquals(22, count("managed_policy_execution_tasks"));
+    assertEquals(1, count("managed_agent_bindings"));
+    var done = finish(claim, 5);
+    assertEquals(1, done.totalRows());
+    assertEquals(0, count("managed_policy_execution_tasks"));
+    assertEquals(0, count("managed_policy_execution_events"));
+    assertEquals(27, count("policy_publications"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"READY_TO_WRITE", "POLICY_WRITE_UNKNOWN", "NEEDS_REVIEW"})
+  void unresolvedExecutionCannotDisappearWithBindingErasure(String state) {
+    var target = fixture.device(subject);
+    executionTask(binding(target, "REVOKED"), state);
+    fixture.data.failure(
+        "ERASURE_EXECUTION_RECONCILIATION_REQUIRED",
+        () -> processor.process(fixture.accept(target), 25));
+    assertEquals(1, count("managed_policy_execution_tasks"));
+    assertEquals(1, count("managed_agent_bindings"));
+    assertEquals(0, count("erasure_recovery_steps"));
+  }
+
+  @Test
+  void oversizedExecutionEventsStopBeforeCascade() {
+    var target = fixture.device(subject);
+    String task = executionTask(binding(target, "REVOKED"), "CANCELLED");
+    for (int revision = 2; revision <= 101; revision++)
+      db.update(
+          "INSERT INTO"
+              + " managed_policy_execution_events(tenant_id,task_id,revision,generation,state,reason_code,occurred_at)"
+              + " VALUES(?,?,?,0,'CANCELLED','CANCELLED_BEFORE_ASSIGNMENT',1)",
+          tenant,
+          task,
+          revision);
+    fixture.data.failure(
+        "ERASURE_EXECUTION_HISTORY_LIMIT_EXCEEDED",
+        () -> processor.process(fixture.accept(target), 25));
+    assertEquals(101, count("managed_policy_execution_events"));
+    assertEquals(1, count("managed_policy_execution_tasks"));
+  }
+
+  @Test
+  void terminalTaskWithResidualLeaseCannotBeErased() {
+    var target = fixture.device(subject);
+    String task = executionTask(binding(target, "REVOKED"), "CANCELLED");
+    db.update(
+        "UPDATE managed_policy_execution_tasks SET"
+            + " lease_token=?,lease_until=100,action='READ_DEVICE' WHERE id=?",
+        id(),
+        task);
+    fixture.data.failure(
+        "ERASURE_EXECUTION_RECONCILIATION_REQUIRED",
+        () -> processor.process(fixture.accept(target), 25));
+    assertEquals(1, count("managed_policy_execution_tasks"));
+  }
+
+  @Test
+  void taskOwnedByAnotherSubjectCannotCascadeThroughBinding() {
+    var target = fixture.device(subject);
+    String task = executionTask(binding(target, "REVOKED"), "CANCELLED");
+    db.update(
+        "UPDATE managed_policy_execution_tasks SET subject_id=? WHERE id=?", fixture.peer, task);
+    fixture.data.failure(
+        "ERASURE_EXECUTION_SCOPE_CORRUPT", () -> processor.process(fixture.accept(target), 25));
+    assertEquals(1, count("managed_policy_execution_tasks"));
+    assertEquals(1, count("managed_agent_bindings"));
+  }
+
+  private String executionTask(String binding, String state) {
+    String draft = id(), preview = id(), version = id(), publication = id(), task = id();
+    db.update(
+        "INSERT INTO policy_drafts(tenant_id,id,name,kind,rules_json,created_at,updated_at)"
+            + " VALUES(?,?,'fixture','POLICY','[]',1,1)",
+        tenant,
+        draft);
+    db.update(
+        "INSERT INTO"
+            + " policy_previews(tenant_id,id,policy_id,draft_revision,hash,snapshot_json,created_at,expires_at)"
+            + " VALUES(?,?,?,0,?,'{}',1,600001)",
+        tenant,
+        preview,
+        draft,
+        "a".repeat(64));
+    db.update(
+        "INSERT INTO"
+            + " policy_versions(tenant_id,id,policy_id,draft_revision,sequence_number,preview_id,preview_hash,mode,snapshot_json,created_at)"
+            + " VALUES(?,?,?,0,1,?,?,'ENFORCE','{}',1)",
+        tenant,
+        version,
+        draft,
+        preview,
+        "a".repeat(64));
+    db.update(
+        "INSERT INTO policy_publications(tenant_id,id,version_id,state,created_at)"
+            + " VALUES(?,?,?,'QUEUED',1)",
+        tenant,
+        publication,
+        version);
+    db.update(
+        "INSERT INTO"
+            + " managed_policy_execution_tasks(tenant_id,id,publication_id,policy_version_id,subject_id,device_id,registration_id,"
+            + "binding_id,binding_version,actor_id,authority_version,context_sha256,document_json,document_sha256,provider,enterprise_id,"
+            + "provider_device_id,provider_policy_id,state,active_device_id,next_attempt_at,expires_at,reason_code,created_at,updated_at)"
+            + " SELECT"
+            + " tenant_id,?,?,?,subject_id,device_id,registration_id,id,version,'fixture',0,?,'{}',?,provider,enterprise_id,provider_device_id,?,?,CASE"
+            + " WHEN ?='CANCELLED' THEN NULL ELSE device_id END,1,600001,'QUEUED',1,1 FROM"
+            + " managed_agent_bindings WHERE tenant_id=? AND id=?",
+        task,
+        publication,
+        version,
+        "a".repeat(64),
+        "b".repeat(64),
+        "policy-" + task,
+        state,
+        state,
+        tenant,
+        binding);
+    db.update(
+        "INSERT INTO"
+            + " managed_policy_execution_events(tenant_id,task_id,revision,generation,state,reason_code,occurred_at)"
+            + " VALUES(?,?,1,0,?,'QUEUED',1)",
+        tenant,
+        task,
+        state);
+    return task;
+  }
+
   @ParameterizedTest
   @ValueSource(strings = {"PENDING", "VERIFIED"})
   void activeAssociationBlocksEveryDeletion(String state) {

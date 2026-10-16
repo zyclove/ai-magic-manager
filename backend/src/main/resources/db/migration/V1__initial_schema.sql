@@ -1665,4 +1665,90 @@ CREATE TABLE managed_application_evidence (
     CONSTRAINT ck_managed_application_evidence_version CHECK(version >= 1)
 );
 
+-- BEGIN managed-policy-execution-journal-v1 (unreleased 1.0.0 fresh database only)
+CREATE TABLE managed_policy_execution_tasks (
+    tenant_id VARCHAR(36) NOT NULL,
+    id VARCHAR(36) NOT NULL,
+    publication_id VARCHAR(36) NOT NULL,
+    policy_version_id VARCHAR(36) NOT NULL,
+    subject_id VARCHAR(36) NOT NULL,
+    device_id VARCHAR(36) NOT NULL,
+    registration_id VARCHAR(36) NOT NULL,
+    binding_id VARCHAR(36) NOT NULL,
+    binding_version BIGINT NOT NULL,
+    actor_id VARCHAR(255) NOT NULL,
+    authority_version BIGINT NOT NULL,
+    context_sha256 VARCHAR(64) NOT NULL,
+    document_json MEDIUMTEXT NOT NULL,
+    document_sha256 VARCHAR(64) NOT NULL,
+    provider VARCHAR(32) NOT NULL,
+    enterprise_id VARCHAR(128) NOT NULL,
+    provider_device_id VARCHAR(128) NOT NULL,
+    provider_policy_id VARCHAR(128) NOT NULL,
+    provider_version BIGINT NULL,
+    state VARCHAR(32) NOT NULL,
+    active_device_id VARCHAR(36) NULL,
+    generation BIGINT NOT NULL DEFAULT 0,
+    revision BIGINT NOT NULL DEFAULT 1,
+    lease_token VARCHAR(36) NULL,
+    lease_until BIGINT NULL,
+    action VARCHAR(24) NULL,
+    attempts INTEGER NOT NULL DEFAULT 0,
+    next_attempt_at BIGINT NOT NULL,
+    expires_at BIGINT NOT NULL,
+    cancel_requested BOOLEAN NOT NULL DEFAULT false,
+    reason_code VARCHAR(64) NOT NULL,
+    created_at BIGINT NOT NULL,
+    updated_at BIGINT NOT NULL,
+    PRIMARY KEY(tenant_id,id),
+    CONSTRAINT uq_managed_execution_publication_device UNIQUE(tenant_id,publication_id,device_id),
+    CONSTRAINT uq_managed_execution_active_device UNIQUE(tenant_id,active_device_id),
+    CONSTRAINT uq_managed_execution_resource UNIQUE(provider,enterprise_id,provider_policy_id),
+    CONSTRAINT fk_managed_execution_publication FOREIGN KEY(tenant_id,publication_id)
+        REFERENCES policy_publications(tenant_id,id),
+    CONSTRAINT fk_managed_execution_policy_version FOREIGN KEY(tenant_id,policy_version_id)
+        REFERENCES policy_versions(tenant_id,id),
+    CONSTRAINT fk_managed_execution_binding FOREIGN KEY(tenant_id,binding_id)
+        REFERENCES managed_agent_bindings(tenant_id,id) ON DELETE CASCADE,
+    CONSTRAINT fk_managed_execution_registration FOREIGN KEY(tenant_id,device_id,registration_id)
+        REFERENCES devices(tenant_id,id,registration_id),
+    CONSTRAINT fk_managed_execution_subject FOREIGN KEY(tenant_id,subject_id)
+        REFERENCES subjects(tenant_id,id),
+    CONSTRAINT ck_managed_execution_state CHECK(state IN
+        ('READY_TO_WRITE','POLICY_WRITE_UNKNOWN','READY_TO_ASSIGN','ASSIGNMENT_UNKNOWN',
+         'WAITING_DEVICE','APPLIED','NEEDS_REVIEW','CANCELLED')),
+    CONSTRAINT ck_managed_execution_counters CHECK(generation>=0 AND revision>=1 AND attempts>=0 AND attempts<=24),
+    CONSTRAINT ck_managed_execution_time CHECK(expires_at>created_at AND next_attempt_at>=created_at),
+    CONSTRAINT ck_managed_execution_version CHECK(provider_version IS NULL OR provider_version>0),
+    CONSTRAINT ck_managed_execution_required_version CHECK(
+        state NOT IN ('READY_TO_ASSIGN','ASSIGNMENT_UNKNOWN','WAITING_DEVICE','APPLIED') OR provider_version IS NOT NULL),
+    CONSTRAINT ck_managed_execution_slot CHECK(
+        (state IN ('APPLIED','CANCELLED') AND active_device_id IS NULL) OR
+        (state NOT IN ('APPLIED','CANCELLED') AND active_device_id IS NOT NULL AND active_device_id=device_id)),
+    CONSTRAINT ck_managed_execution_lease CHECK(
+        (lease_token IS NULL AND lease_until IS NULL AND action IS NULL) OR
+        (lease_token IS NOT NULL AND lease_until IS NOT NULL AND action IS NOT NULL AND action IN
+         ('WRITE_POLICY','ASSIGN_POLICY','READ_POLICY','READ_DEVICE')))
+);
+CREATE INDEX ix_managed_execution_due
+    ON managed_policy_execution_tasks(provider,state,next_attempt_at,id);
+CREATE INDEX ix_managed_execution_subject
+    ON managed_policy_execution_tasks(tenant_id,subject_id,state,id);
+CREATE INDEX ix_managed_execution_binding
+    ON managed_policy_execution_tasks(tenant_id,binding_id,id);
+
+CREATE TABLE managed_policy_execution_events (
+    tenant_id VARCHAR(36) NOT NULL,
+    task_id VARCHAR(36) NOT NULL,
+    revision BIGINT NOT NULL,
+    generation BIGINT NOT NULL,
+    state VARCHAR(32) NOT NULL,
+    action VARCHAR(24) NULL,
+    reason_code VARCHAR(64) NOT NULL,
+    occurred_at BIGINT NOT NULL,
+    PRIMARY KEY(tenant_id,task_id,revision),
+    CONSTRAINT fk_managed_execution_event FOREIGN KEY(tenant_id,task_id)
+        REFERENCES managed_policy_execution_tasks(tenant_id,id) ON DELETE CASCADE
+);
+-- END managed-policy-execution-journal-v1
 
