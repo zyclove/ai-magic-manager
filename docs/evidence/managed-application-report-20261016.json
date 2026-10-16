@@ -1,0 +1,214 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-16",
+  "status": "TARGETED_SDK_CONTRACT_PASSED",
+  "isolatedBaseCommit": "23e53020db3cdf3e2deafaba8af8ac9103bb26cd",
+  "scope": "Raw per-device application reports using official SDK; not target authorization or device execution",
+  "sourceSha256": {
+    "backend/src/main/java/com/aimanager/managedandroid/ManagedAndroidGateway.java": "b1af9e8fdfd134d72854846fb0f4c75df04defda2b3df9ea4306f23d5736ece1",
+    "backend/src/main/java/com/aimanager/managedandroid/ManagedApplicationReport.java": "282b93a93e72dbf30e7f5a9a1cbc1a17762bd5328853a4d141ae37516bdefdb0",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/GoogleApplicationReportReader.java": "ce7f9dac6c636044b98a254ec776af890bea212670166fb49b339004848cf517",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/GoogleManagedAgentEvidenceReader.java": "72ab390098794c3a9dc952029c0db0d87727406291b6eccc7726fceb7bc22008",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/GoogleManagedAndroidGateway.java": "1fe803249f09f14396089e7242bc530f2a0648b9e0556969e1088c91914015d2",
+    "backend/src/test/java/com/aimanager/managedandroid/GoogleManagedApplicationReportTest.java": "20312b2239d652f91b885fc1d450ef0802e442de9b77b7c5fd38878a5a072de5",
+    "backend/src/test/java/com/aimanager/managedandroid/GoogleManagedApplicationReportBoundaryTest.java": "f8fc09cbe3a66fe51d0f5a7a39bf8fb9c885e73d207a5326726c3c01caaa277c"
+  },
+  "runs": {
+    "red": {
+      "candidate": "managed-application-report-red-20261016-r1",
+      "result": {
+        "status": "EXPECTED_BEHAVIOR_FAILURE_REPRODUCED",
+        "baseCommit": "23e53020db3cdf3e2deafaba8af8ac9103bb26cd",
+        "scope": "Official SDK local HTTP application report contract: default unavailable implementation should fail one positive read; no Spring or commercial provider",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=GoogleManagedApplicationReportTest",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "externalServices": false,
+        "realDevice": false,
+        "localHttpFixture": true,
+        "ownedProcessId": 19960,
+        "mavenExitCode": 1,
+        "counts": {
+          "tests": 2,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0
+        },
+        "failedCases": [
+          "readsInstalledApplicationWithoutBindingFeedback"
+        ],
+        "surefireXmlSha256": "68cdd594b5dfa9eb22b3632a47420926fef372917b71f6fc9e398abe7aa46cfd",
+        "seconds": 32.9,
+        "sourceUnchanged": true,
+        "runnerSha256": "085e5e2aedfc4e86bd6d5185dd7bc72a92d893529c326e49607afd3ec5e5f221"
+      },
+      "resultSha256": "d01d2fcdce68046e7087f455b8fa2dfa9bdf0ba7edbe9758d9010ffbe21dab97",
+      "logSha256": "4e25a0b4ca23e7fcd0f90929888ce08868ce2743b14d1416d568797505168c1b",
+      "sourceManifestSha256": "baa4857f249116594788e4ae3fdb7ecd378fa030de289a42e61a4af3953179cc",
+      "sourcePinCount": 432,
+      "observedSuites": {
+        "com.aimanager.managedandroid.GoogleManagedApplicationReportTest": {
+          "tests": 2,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0,
+          "xmlSha256": "68cdd594b5dfa9eb22b3632a47420926fef372917b71f6fc9e398abe7aa46cfd"
+        }
+      }
+    },
+    "firstGreen": {
+      "candidate": "managed-application-report-green-20261016-r1",
+      "result": {
+        "status": "VERIFICATION_FAILED",
+        "baseCommit": "23e53020db3cdf3e2deafaba8af8ac9103bb26cd",
+        "scope": "Official Google SDK local HTTP: raw application reports and existing binding reader regression; no Spring or external provider",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=GoogleManagedApplicationReportTest,GoogleManagedApplicationReportBoundaryTest,GoogleManagedAgentEvidenceTest",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "externalServices": false,
+        "realDevice": false,
+        "localHttpFixture": true,
+        "ownedProcessId": 36548,
+        "mavenExitCode": 1,
+        "suites": {
+          "GoogleManagedApplicationReportTest": {
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "xmlSha256": "850ed3b4db4db7595927808fc6fd6e1bb0ec7be895fe5d32a8e958fcc6aa4675"
+          },
+          "GoogleManagedApplicationReportBoundaryTest": {
+            "tests": 33,
+            "failures": 1,
+            "errors": 0,
+            "skipped": 0,
+            "xmlSha256": "cf44e337eaab699835fa9d2050780e5333058a371010cba8dae653aa010f1474"
+          }
+        },
+        "reason": "Unexpected JUnit result for GoogleManagedApplicationReportBoundaryTest",
+        "seconds": 30.8,
+        "sourceUnchanged": true,
+        "runnerSha256": "628bbee686e8b87c596f918f2be4fffdae2348ecbd499c491c04dd434508db19"
+      },
+      "resultSha256": "e53ac20e456b96f7089920556277c382d26b29d7ebefb0101387efde835d198e",
+      "logSha256": "3dd16645fb4bc6013e2e83ee9a2689f39e535216d1117d0a5a4be88618cbc9b7",
+      "sourceManifestSha256": "09e8e52a79d30702987e2352ee95c631ca22c72d188777cb67a09deff8e9f285",
+      "sourcePinCount": 434,
+      "observedSuites": {
+        "com.aimanager.managedandroid.GoogleManagedAgentEvidenceTest": {
+          "tests": 18,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "xmlSha256": "4eeafc184837cc2a6e38657eecbd95123935eb93dfd27d13017a0987b0ff6bf6"
+        },
+        "com.aimanager.managedandroid.GoogleManagedApplicationReportBoundaryTest": {
+          "tests": 33,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0,
+          "xmlSha256": "cf44e337eaab699835fa9d2050780e5333058a371010cba8dae653aa010f1474"
+        },
+        "com.aimanager.managedandroid.GoogleManagedApplicationReportTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "xmlSha256": "850ed3b4db4db7595927808fc6fd6e1bb0ec7be895fe5d32a8e958fcc6aa4675"
+        }
+      }
+    },
+    "finalGreen": {
+      "candidate": "managed-application-report-green-20261016-r2",
+      "result": {
+        "status": "PASSED",
+        "baseCommit": "23e53020db3cdf3e2deafaba8af8ac9103bb26cd",
+        "scope": "Official Google SDK local HTTP: raw application reports and existing binding reader regression; no Spring or external provider",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=GoogleManagedApplicationReportTest,GoogleManagedApplicationReportBoundaryTest,GoogleManagedAgentEvidenceTest",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "externalServices": false,
+        "realDevice": false,
+        "localHttpFixture": true,
+        "ownedProcessId": 4472,
+        "mavenExitCode": 0,
+        "suites": {
+          "GoogleManagedApplicationReportTest": {
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "xmlSha256": "1fe88ec0eabedf5c1add962f6c93b014057c2abf10ddd5ca6923d95405776c33"
+          },
+          "GoogleManagedApplicationReportBoundaryTest": {
+            "tests": 33,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "xmlSha256": "7131957e8adb5fddeebc58e5720af9a1d9a6778a347f1e117dc53c293b778a0d"
+          },
+          "GoogleManagedAgentEvidenceTest": {
+            "tests": 18,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "xmlSha256": "826f3defa9a22ff51e306564d9fd149bc0ec5987aac36186002762a1fbe4a96a"
+          }
+        },
+        "seconds": 30.2,
+        "sourceUnchanged": true,
+        "runnerSha256": "bc6da62de89bb390b0479bc723d3988f70021797d5fe1bff687c2f75e734b90c"
+      },
+      "resultSha256": "7d4756aad6acb75eedf641600a5936f33c0c3b22b7fa27d742c4ed9b4269c620",
+      "logSha256": "2eef8e229bd64b219b1f73813f755d2f99727abbda2bc0d3ed9fc4138e387f4d",
+      "sourceManifestSha256": "fdacf3c9ac0740c8f41a4fc01dd5d09361ab8025f8b28d97898bd54043649889",
+      "sourcePinCount": 434,
+      "observedSuites": {
+        "com.aimanager.managedandroid.GoogleManagedAgentEvidenceTest": {
+          "tests": 18,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "xmlSha256": "826f3defa9a22ff51e306564d9fd149bc0ec5987aac36186002762a1fbe4a96a"
+        },
+        "com.aimanager.managedandroid.GoogleManagedApplicationReportBoundaryTest": {
+          "tests": 33,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "xmlSha256": "7131957e8adb5fddeebc58e5720af9a1d9a6778a347f1e117dc53c293b778a0d"
+        },
+        "com.aimanager.managedandroid.GoogleManagedApplicationReportTest": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0,
+          "xmlSha256": "1fe88ec0eabedf5c1add962f6c93b014057c2abf10ddd5ca6923d95405776c33"
+        }
+      }
+    }
+  },
+  "limitations": [
+    "No real EMM or device",
+    "No Spring context or database workflow",
+    "No full backend suite",
+    "No deployment",
+    "Tenant/registration/binding/profile/freshness verification and durable execution remain pending"
+  ]
+}

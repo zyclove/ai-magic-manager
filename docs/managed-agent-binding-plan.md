@@ -29,6 +29,8 @@
 
 阶段进展（2026-10-16）：现有编译入口采信共享目录 `INSTALLED_VERIFIED` 的问题已复现并修正，16 项定向检查通过；详见[目标应用身份校验记录](policy-target-identity-verification.md)。该入口现在等待逐设备证据，不再因目录声明显示应用规则可执行。下文正向证据、持久执行及真实提供方接入仍待完成。
 
+4A 读取子步骤（2026-10-16）：已实现不依赖绑定反馈的普通应用报告读取，官方 SDK 本地 HTTP 契约与原绑定回归共 53 项通过，见[应用报告契约与验收](managed-application-report-contract.md)。此结果只提供原始事实；租户、当前注册、绑定、目录签名、时效及 profile 核验与存储仍需接入，4A 整体及 4B–4E 尚未完成。
+
 ### 先修正证据作用域，再开放执行
 
 `PolicyService.snapshot` 当前为所有目标复用同一份应用目录。修正前，`RuleCompiler.compile` 从 `ApplicationDefinition.evidenceStatus` 判断应用是否已验证；当前入口已拒绝采信该共用目录状态，仍待逐目标证据接入。目录定义是租户内声明，不能因为一台设备核验通过，就把目录记录改为 `INSTALLED_VERIFIED`，否则其他设备会继承不属于自己的安装事实。

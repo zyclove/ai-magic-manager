@@ -17,6 +17,19 @@ public interface ManagedAndroidGateway {
   /** 合作方需显式声明可读取受信应用证据；可连接不等于已支持绑定核验。 */
   default boolean supportsAgentBindingEvidence() { return false; }
 
+  /** 是否具备目标应用事实读取接口；不表示报告已存在、身份已核验或设备可执行策略。 */
+  default boolean supportsApplicationReports() { return false; }
+
+  /**
+   * 读取指定设备和应用的原始报告。空值仅表示报告缺失，不能解释为未安装。
+   * 不要求普通目标应用实现平台绑定反馈协议；报告仍需与当前租户、注册、绑定关联。
+   * 默认实现保持不支持，合作方必须显式实现并声明读取能力。
+   */
+  default Optional<ManagedApplicationReport> readApplicationReport(
+      String enterpriseId, String deviceId, String packageName) {
+    throw new ManagedAndroidUnavailableException();
+  }
+
   /**
    * Replaces the complete applications field of an exclusively owned policy. The Google adapter
    * requires that policy to exist with an explicit BLACKLIST Play Store mode; callers must not use

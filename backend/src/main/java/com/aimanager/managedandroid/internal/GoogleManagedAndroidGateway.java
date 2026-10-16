@@ -2,6 +2,7 @@ package com.aimanager.managedandroid.internal;
 
 import com.aimanager.managedandroid.ManagedAndroidGateway;
 import com.aimanager.managedandroid.ManagedAgentEvidence;
+import com.aimanager.managedandroid.ManagedApplicationReport;
 import com.aimanager.shared.AndroidRuntimePermissions;
 import com.aimanager.shared.SafetyCriticalPackages;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
@@ -340,6 +341,33 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
 
   @Override
   public boolean supportsAgentBindingEvidence() { return true; }
+
+  @Override
+  public boolean supportsApplicationReports() { return true; }
+
+  /** 读取普通应用事实，不要求其集成绑定反馈；此结果不代表应用身份或执行授权。 */
+  @Override
+  public Optional<ManagedApplicationReport> readApplicationReport(
+      String enterpriseId, String deviceId, String packageName) {
+    String name = deviceName(enterpriseId, deviceId);
+    if (packageName == null || packageName.length() > 255 || !PACKAGE.matcher(packageName).matches()) {
+      throw new IllegalArgumentException("Invalid managed application package");
+    }
+    try {
+      var device = GoogleApplicationReportReader.readDevice(client, name,
+          "name,managementMode,lastStatusReportTime,"
+              + "applicationReports(packageName,state,signingKeyCerts(signingKeyCertFingerprintSha256))");
+      var target = GoogleApplicationReportReader.findApplication(device, packageName);
+      if (target == null) return Optional.empty();
+      return Optional.of(new ManagedApplicationReport(name, device.getManagementMode(), packageName,
+          target.getState(), GoogleApplicationReportReader.certificates(target),
+          device.getLastStatusReportTime()));
+    } catch (IOException error) {
+      throw providerFailure("application report read", error);
+    } catch (RuntimeException malformed) {
+      throw new IllegalStateException("Invalid managed application report response");
+    }
+  }
 
   @Override
   public AssignmentReceipt assignPolicy(String enterpriseId, String deviceId, String policyId) {
