@@ -141,7 +141,7 @@ class ManagedEnterpriseBindingService implements ManagedEnterpriseAuthority {
 
   /** Rechecks the current contract on every future managed write, not only at approval time. */
   @Override
-  @Transactional(readOnly = true, timeout = 10)
+  @Transactional(readOnly = true, timeout = 10, noRollbackFor = DomainException.class)
   public EnterpriseAccess requireActive(String tenantId) {
     Binding binding = required(tenantId, false);
     if (!"ACTIVE".equals(binding.state())) throw conflict("ENTERPRISE_BINDING_NOT_ACTIVE");

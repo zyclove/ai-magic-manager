@@ -225,7 +225,7 @@ class ManagedEnrollmentStore {
   }
 
   /** Read-only provider check still needs a currently approved enterprise and valid contract. */
-  @Transactional(readOnly = true, timeout = 10)
+  @Transactional(readOnly = true, timeout = 10, noRollbackFor = DomainException.class)
   Intent forProviderStatus(String tenant, String id, String actor) {
     access.requireRole(tenant, actor, Role.OWNER, Role.ORG_ADMIN, Role.AUDITOR);
     Intent intent = required(tenant, id, false);

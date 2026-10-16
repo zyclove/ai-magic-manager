@@ -1,0 +1,426 @@
+{
+  "stage": "Per-device application facts in policy preview and publication revalidation",
+  "date": "2026-10-16",
+  "baseCommit": "d06cfb3b52cef0bf99f0dd7b4936ada2eeef82db",
+  "status": "TARGETED_CHECKS_PASSED_NOT_DEPLOYED",
+  "ownedSourceSha256": {
+    "backend/src/main/java/com/aimanager/catalog/internal/CatalogService.java": "200047ac2a22550c91667532739e467bb967318b6b675df8f5b9b9f1a2d66981",
+    "backend/src/main/java/com/aimanager/managedandroid/ManagedPolicyEvidenceAccess.java": "e2be61c90611ecc61ea2fe3f41198eff156182943f36408a075bd2bdd9d4e7bc",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/ManagedPolicyEvidenceReader.java": "fc8b1491aee20233b1f648032a289c53786a4aa7fcfa0d089890590bfc07eea9",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/ManagedApplicationEvidenceStore.java": "b3052ae9ad820bde658b574c8ab04374cf6c38491d597a4f0c88c18dff964635",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/ManagedAgentBindingStore.java": "99ffd3558a3b7f036c130c68af6675b2dea5f82decb2acc9b5b2b526189d05e9",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/ManagedEnrollmentStore.java": "8bfe8459609d5ac675df96caa17bc2300c7c44c1f726d760810948df8b43e40b",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/ManagedEnterpriseBindingService.java": "6925bf6b81706f3c585fea25625832b72cf48e8a978e9a12ea180d96d2e3cadb",
+    "backend/src/main/java/com/aimanager/policy/PolicySnapshot.java": "385eee221fd9dbc2f688b718834947896cdba580914a5bb8b140f2ef2386f819",
+    "backend/src/main/java/com/aimanager/policy/internal/PolicyService.java": "536bf7d17697e8ac84c69d735329763d0a690095dbd333cc191e317c0cc6df11",
+    "backend/src/main/java/com/aimanager/policy/internal/RuleCompiler.java": "55b8101eed85adf2527a90f23a039339f15c2ce7e162ea3e7381e12951556f5f",
+    "backend/src/test/java/com/aimanager/managedandroid/internal/ManagedAgentBindingJourneyTest.java": "596bfd386a49dbf0bc5ae2993f1117297b153f667beb52a3d52559f116d9f5e9",
+    "backend/src/test/java/com/aimanager/policy/internal/RuleCompilerCapabilityBoundaryTest.java": "afc5d3f2e20a7b5badea74c2b230ee8ae0e5b882ed9d3238c0d6aa3ffc719465"
+  },
+  "attempts": {
+    "redR1": {
+      "result": {
+        "status": "EXPECTED_ASSERTION_FAILURE",
+        "phase": "red",
+        "baseCommit": "d06cfb3b52cef0bf99f0dd7b4936ada2eeef82db",
+        "scope": "Policy preview per-registration application evidence; real MVC/H2 with explicit local provider fixture; no live services",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=ManagedAgentBindingJourneyTest#policyPreviewIncludesApplicationFactsForEachCurrentRegistration",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "ownedPid": 50328,
+        "mavenExitCode": 1,
+        "suites": {
+          "com.aimanager.managedandroid.internal.ManagedAgentBindingJourneyTest": {
+            "counts": {
+              "tests": 1,
+              "failures": 1,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "b70e5948753e45e8972366f0e2fe6fa0a885de1cfe26ce0276a7b79ac6d1d725"
+          }
+        },
+        "totals": {
+          "tests": 1,
+          "failures": 1,
+          "errors": 0,
+          "skipped": 0
+        },
+        "seconds": 47.7,
+        "sourceUnchanged": true,
+        "runnerSha256": "808a7d77f4d421a70cd0ac0c64902d0d0e55b41b77d99943781023b4b3c75693"
+      },
+      "sourceManifestSha256": "082f5d938a3361a0a6cd68f1bc9debe3b5e15e25a38d7293b9b81b8a37cd56c2",
+      "resultSha256": "906b7ef8f28ab90e29eb5cb735f187f4b90063d78420b4c09841f09c58396218",
+      "logSha256": "23dc40c27e7d534371026098a6f748a769a1298cadb22008e73c299fe9012e31",
+      "sourcePins": 444,
+      "errors": []
+    },
+    "greenR1": {
+      "result": {
+        "status": "VERIFICATION_FAILED",
+        "phase": "green",
+        "baseCommit": "d06cfb3b52cef0bf99f0dd7b4936ada2eeef82db",
+        "scope": "Per-device policy application evidence, MVC/H2 transactions and local SDK regressions. No MySQL/OceanBase, live EMM, deployed service or Android validation.",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=ManagedAgentBindingJourneyTest,ApplicationIdentityEvidenceTest,ApplicationCatalogRecoveryTest,ErasureManagedBindingProcessorTest,ModuleBoundariesTest,ManagedApplicationIdentityVerifierTest,ManagedApplicationIdentityBoundaryTest,ManagedApplicationIdentitySdkJourneyTest,GoogleManagedApplicationReportTest,GoogleManagedApplicationReportBoundaryTest,GoogleManagedAgentEvidenceTest,PolicyJourneyTest,RuleCompilerCapabilityBoundaryTest,PolicyPreviewValidationTest",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "ownedPid": 56760,
+        "mavenExitCode": 1,
+        "suites": {
+          "com.aimanager.ApplicationCatalogRecoveryTest": {
+            "counts": {
+              "tests": 3,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "7384f3f5d3c99831f6db02a5c58f44f1ebb804db8227024076c075ffee3374ba"
+          },
+          "com.aimanager.catalog.internal.ApplicationIdentityEvidenceTest": {
+            "counts": {
+              "tests": 26,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "1ec50bdbb1ad477edfa12d8fd3db28fff6d73b2866759a5874a00e3f4b3c34c3"
+          },
+          "com.aimanager.managedandroid.GoogleManagedAgentEvidenceTest": {
+            "counts": {
+              "tests": 18,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "6d163f046430c88b8ee33440b219401c7fcc14b778c9ea940fb5735b12131a04"
+          },
+          "com.aimanager.managedandroid.GoogleManagedApplicationReportBoundaryTest": {
+            "counts": {
+              "tests": 33,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "68e15f3ab730b6a5a2e36af4f2afa9c85617508b9ed14480c1f5905ab789efd7"
+          },
+          "com.aimanager.managedandroid.GoogleManagedApplicationReportTest": {
+            "counts": {
+              "tests": 2,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "64c1dcaa2c4668a023a47f11fc8afc78d723634df008b3eac61f68c351b14a9d"
+          },
+          "com.aimanager.managedandroid.internal.ManagedAgentBindingJourneyTest": {
+            "counts": {
+              "tests": 105,
+              "failures": 0,
+              "errors": 3,
+              "skipped": 0
+            },
+            "sha256": "57d67b5a64eec67863e5f101ae727019ed9ae18a556643ef8beabf25fec07303"
+          },
+          "com.aimanager.managedandroid.ManagedApplicationIdentityBoundaryTest": {
+            "counts": {
+              "tests": 59,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "bc8c46001a2937a610d6a829877b6e37dec3318ca5850ef2cfffc438133095f0"
+          },
+          "com.aimanager.managedandroid.ManagedApplicationIdentitySdkJourneyTest": {
+            "counts": {
+              "tests": 1,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "e2b79c63d87bc42af7447c8d7c53f1d5b19c5cd547ced6ae05e3725fe850add6"
+          },
+          "com.aimanager.managedandroid.ManagedApplicationIdentityVerifierTest": {
+            "counts": {
+              "tests": 2,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "ddd023cb41e2dc2fea130a737674eaa7061058f7954f0873e94d3de7983efdd4"
+          },
+          "com.aimanager.ModuleBoundariesTest": {
+            "counts": {
+              "tests": 1,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "08d5ab4be3bf950b07c9712b9580dc19fab105ac964974c0782e6392023dcd76"
+          },
+          "com.aimanager.policy.internal.PolicyPreviewValidationTest": {
+            "counts": {
+              "tests": 10,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "63ce9eb0e50d6f9417f791b9af79cdf887756b95c34fcb5b8e3f2d8d1f85efa8"
+          },
+          "com.aimanager.policy.internal.RuleCompilerCapabilityBoundaryTest": {
+            "counts": {
+              "tests": 4,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "0554a86f6093f1900c5c96e2934412847096fa7073e9a834bef11db8c4163616"
+          },
+          "com.aimanager.PolicyJourneyTest": {
+            "counts": {
+              "tests": 28,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "dc3ce32405fe084ceeb439c22d7c5c90e49c7330d02b03f92c842384897a4fde"
+          },
+          "com.aimanager.retention.internal.ErasureManagedBindingProcessorTest": {
+            "counts": {
+              "tests": 26,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "e669eddcac195fde52742cabe202d3f678f15ac8277971bc138caaa60005bd0e"
+          }
+        },
+        "totals": {
+          "tests": 318,
+          "failures": 0,
+          "errors": 3,
+          "skipped": 0
+        },
+        "reason": "AssertionError: ",
+        "seconds": 87.7,
+        "sourceUnchanged": true,
+        "runnerSha256": "2daaac99fcf32ad65ea15a8aa6fcc976f23efb1af4667463fa6067c964f11df9"
+      },
+      "sourceManifestSha256": "f8b0dcdb7e4fc76cce85de0481ea451d98fcc5aeff0276dce340a038be6cdada",
+      "resultSha256": "83c8cc7e0a9303c98b7892449ba30d8caa2578f5adbeb815852dd0be6063aced",
+      "logSha256": "a0fb7f468ae9f62795bc6a543976580cf946fdd64d9ef27a175e568ee0ca1b70",
+      "sourcePins": 446,
+      "errors": [
+        {
+          "test": "changedApplicationFactsRequireAnotherPreviewBeforePublication(String)[4]",
+          "type": "org.springframework.dao.DataIntegrityViolationException"
+        },
+        {
+          "test": "unavailableApplicationEvidenceStillCommitsAnHonestPreview(String, String, String)[6]",
+          "type": "org.springframework.dao.DataIntegrityViolationException"
+        },
+        {
+          "test": "unavailableApplicationEvidenceStillCommitsAnHonestPreview(String, String, String)[8]",
+          "type": "org.springframework.dao.DataIntegrityViolationException"
+        }
+      ]
+    },
+    "greenR2": {
+      "result": {
+        "status": "PASSED",
+        "phase": "green",
+        "baseCommit": "d06cfb3b52cef0bf99f0dd7b4936ada2eeef82db",
+        "scope": "Per-device policy application evidence, MVC/H2 transactions and local SDK regressions. No MySQL/OceanBase, live EMM, deployed service or Android validation.",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=ManagedAgentBindingJourneyTest,ApplicationIdentityEvidenceTest,ApplicationCatalogRecoveryTest,ErasureManagedBindingProcessorTest,ModuleBoundariesTest,ManagedApplicationIdentityVerifierTest,ManagedApplicationIdentityBoundaryTest,ManagedApplicationIdentitySdkJourneyTest,GoogleManagedApplicationReportTest,GoogleManagedApplicationReportBoundaryTest,GoogleManagedAgentEvidenceTest,PolicyJourneyTest,RuleCompilerCapabilityBoundaryTest,PolicyPreviewValidationTest",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "ownedPid": 58468,
+        "mavenExitCode": 0,
+        "suites": {
+          "com.aimanager.ApplicationCatalogRecoveryTest": {
+            "counts": {
+              "tests": 3,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "038c6f0a3f372f55a679f5b508484ca11bfa388e577f201c28f30991a12cd907"
+          },
+          "com.aimanager.catalog.internal.ApplicationIdentityEvidenceTest": {
+            "counts": {
+              "tests": 26,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "5ba687c66d414f9d778e775b688ee1aeab64f1d2c7895a1b1fa7e08f71dbd82e"
+          },
+          "com.aimanager.managedandroid.GoogleManagedAgentEvidenceTest": {
+            "counts": {
+              "tests": 18,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "a451f875049c864649b303fceb4cfe2c42074c42881dcb83afc3aee863e122fc"
+          },
+          "com.aimanager.managedandroid.GoogleManagedApplicationReportBoundaryTest": {
+            "counts": {
+              "tests": 33,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "d589c346b76f359cec3e46582c4ce1191aeb581622425807b6493b0f4100ce17"
+          },
+          "com.aimanager.managedandroid.GoogleManagedApplicationReportTest": {
+            "counts": {
+              "tests": 2,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "b64cf7f28d1524138a2c93bc9528efae378948c86f066e52291c7266fbe3f6bd"
+          },
+          "com.aimanager.managedandroid.internal.ManagedAgentBindingJourneyTest": {
+            "counts": {
+              "tests": 105,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "c0e660373c350109d627854081a943bfa1d272363f9f119eb9821e4483d93b6d"
+          },
+          "com.aimanager.managedandroid.ManagedApplicationIdentityBoundaryTest": {
+            "counts": {
+              "tests": 59,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "491a1f54a8e227ac06f78b9a014b7485a71f7c320b69fd5d6d81e1ad62009ac9"
+          },
+          "com.aimanager.managedandroid.ManagedApplicationIdentitySdkJourneyTest": {
+            "counts": {
+              "tests": 1,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "1cf9520865c5690eec5f8c388b41c011dc55e57cfd9f8088fae9189b88d8dc10"
+          },
+          "com.aimanager.managedandroid.ManagedApplicationIdentityVerifierTest": {
+            "counts": {
+              "tests": 2,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "a2449b966c6f418727e64ee66d0acb97c03729193c9eb27e83be07053ac2eb5e"
+          },
+          "com.aimanager.ModuleBoundariesTest": {
+            "counts": {
+              "tests": 1,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "daae9dc4f339a11a8a86f5c553d2a9d4366c152563f23b0e5e9fff4ce9261b3c"
+          },
+          "com.aimanager.policy.internal.PolicyPreviewValidationTest": {
+            "counts": {
+              "tests": 10,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "dfded5c01e8e6ff8c6c35164015d0d010200692aec93ed106ac8ffcf652b929c"
+          },
+          "com.aimanager.policy.internal.RuleCompilerCapabilityBoundaryTest": {
+            "counts": {
+              "tests": 4,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "bc9d47f7d116714b7a7732d9aad2876b9b9354b8db14cbf860d9f3e994aedb3f"
+          },
+          "com.aimanager.PolicyJourneyTest": {
+            "counts": {
+              "tests": 28,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "a2df38d42b4b0e42e67a6cb97c5672351cb48ed7b75c63b4f92ed2c7d3eb54b8"
+          },
+          "com.aimanager.retention.internal.ErasureManagedBindingProcessorTest": {
+            "counts": {
+              "tests": 26,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "94e3c8f4729b7caea3bd4f9bc78a7042af5b2da238a46f08cf5db9d5b238090f"
+          }
+        },
+        "totals": {
+          "tests": 318,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "seconds": 276.9,
+        "sourceUnchanged": true,
+        "runnerSha256": "a6d5871c3b4a5a807c451b561092bd61cd7b26b18f70ff50b1e9f98f77624166"
+      },
+      "sourceManifestSha256": "4321fe9f3d11910b14f7676fffc9a8512d18a4ea4074d03c88e857e6176df944",
+      "resultSha256": "631ee140e85bdb58490332f92d92d0486b098b5942972ce2e1ef10f4d4884fcc",
+      "logSha256": "fb0983f0587c10a9fac9228819159764119a88cd4fe8099fc1225e59a36769a3",
+      "sourcePins": 446,
+      "errors": []
+    }
+  },
+  "firstGreenFailure": "Three fixture errors: two attempted foreign-key-protected registration mutations and one CHECK-invalid enrollment state. Production code unchanged; corrected to replacement device, actual device revoke HTTP and legal CANCELLED enrollment fixture.",
+  "excluded": [
+    "Shared workspace family changes, including two PolicyService recent-authentication lines",
+    "Full backend suite",
+    "Live MySQL/OceanBase locks or concurrency",
+    "Production capacity test",
+    "Live EMM calls or qualification",
+    "Flutter UI acceptance",
+    "Android build, emulator or physical device",
+    "Deployment"
+  ],
+  "runtimePreflightNote": {
+    "preStartMemoryCheck": "CIM query denied; execution wrapper continued despite nonzero preflight command",
+    "subsequentMemoryCheck": {
+      "api": "GlobalMemoryStatusEx",
+      "phase": "after Maven startup",
+      "freePhysicalBytes": 5865189376
+    },
+    "cDriveFreeMiB": 2414,
+    "dDriveFreeMiB": 19595,
+    "otherProgramsClosed": false
+  },
+  "limitations": [
+    "Android profile UNKNOWN; systemControlAvailable=false; ENFORCE not opened",
+    "H2 concurrency evidence does not establish MySQL/OceanBase or cross-group JOIN lock semantics",
+    "No database migration/schema change in this stage"
+  ]
+}

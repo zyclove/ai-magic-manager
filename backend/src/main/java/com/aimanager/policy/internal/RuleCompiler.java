@@ -1,147 +1,273 @@
 package com.aimanager.policy.internal;
 
+import static com.aimanager.policy.PolicyRule.Effect.*;
+import static com.aimanager.policy.PolicyRule.Kind.*;
+
 import com.aimanager.catalog.ApplicationDefinition;
 import com.aimanager.fleet.*;
+import com.aimanager.managedandroid.ManagedPolicyEvidenceAccess.ApplicationEvidence;
 import com.aimanager.policy.*;
-import com.aimanager.shared.DomainException;
 import com.aimanager.shared.AndroidRuntimePermissions;
+import com.aimanager.shared.DomainException;
 import com.aimanager.shared.SafetyCriticalPackages;
 import java.net.IDN;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import static com.aimanager.policy.PolicyRule.Kind.*;
-import static com.aimanager.policy.PolicyRule.Effect.*;
 
-/** Declarative validation and conflict explanation; actual OS execution belongs to certified adapters. */
+/**
+ * Declarative validation and conflict explanation; actual OS execution belongs to certified
+ * adapters.
+ */
 @Component
 class RuleCompiler {
-    private static final Set<String> SPECIAL = Set.of("USAGE_ACCESS", "OVERLAY", "NOTIFICATION_ACCESS", "ACCESSIBILITY", "VPN");
-    private final Set<String> protectedPackages;
-    RuleCompiler(@Value("${manager.policies.additional-protected-packages:}") String configured) {
-        this.protectedPackages = SafetyCriticalPackages.withAdditional(configured);
-    }
+  private static final Set<String> SPECIAL =
+      Set.of("USAGE_ACCESS", "OVERLAY", "NOTIFICATION_ACCESS", "ACCESSIBILITY", "VPN");
+  private final Set<String> protectedPackages;
 
-    void validate(List<PolicyRule> rules, Map<String, ApplicationDefinition> apps) {
-        if (rules.stream().map(PolicyRule::id).distinct().count() != rules.size()) throw DomainException.invalid("DUPLICATE_RULE_ID");
-        for (var rule : rules) {
-            var used = new HashSet<String>();
-            Set<PolicyRule.Effect> effects;
-            switch (rule.kind()) {
-                case APP_LAUNCH, APP_INSTALL -> { required(rule.applicationId()); used.add("applicationId"); effects = Set.of(ALLOW, DENY); }
-                case APP_UNINSTALL -> { required(rule.applicationId()); used.add("applicationId"); effects = Set.of(ALLOW, PROTECT); }
-                case RUNTIME_PERMISSION, SPECIAL_ACCESS -> {
-                    required(rule.applicationId()); required(rule.permission()); used.addAll(Set.of("applicationId", "permission"));
-                    effects = Set.of(GRANT, DENY, DEFAULT);
-                    if (rule.kind() == RUNTIME_PERMISSION && !AndroidRuntimePermissions.contains(rule.permission()))
-                        throw DomainException.invalid("NOT_RUNTIME_PERMISSION");
-                    if (rule.kind() == SPECIAL_ACCESS && !SPECIAL.contains(rule.permission())) throw DomainException.invalid("INVALID_SPECIAL_ACCESS");
-                }
-                case DAILY_QUOTA, USAGE_REMINDER -> {
-                    if (rule.seconds() == null) throw DomainException.invalid("RULE_FIELD_REQUIRED");
-                    used.addAll(Set.of("applicationId", "seconds")); effects = Set.of(rule.kind() == DAILY_QUOTA ? LIMIT : REMIND);
-                }
-                case TIME_WINDOW -> { required(rule.scheduleId()); used.addAll(Set.of("applicationId", "scheduleId")); effects = Set.of(ALLOW); }
-                case DOMAIN_ACCESS -> {
-                    required(rule.domain()); used.add("domain"); effects = Set.of(ALLOW, DENY);
-                    if (!canonicalDomain(rule.domain()).equals(rule.domain())) throw DomainException.invalid("DOMAIN_NOT_CANONICAL");
-                }
-                default -> throw DomainException.invalid("INVALID_RULE_KIND");
-            }
-            if (!effects.contains(rule.effect())) throw DomainException.invalid("INVALID_RULE_EFFECT");
-            var fields = new HashMap<String, Object>();
-            fields.put("applicationId", rule.applicationId()); fields.put("scheduleId", rule.scheduleId());
-            fields.put("seconds", rule.seconds()); fields.put("permission", rule.permission()); fields.put("domain", rule.domain());
-            if (fields.entrySet().stream().anyMatch(e -> e.getValue() != null && !used.contains(e.getKey())))
-                throw DomainException.invalid("UNUSED_RULE_FIELD");
-            if (rule.applicationId() != null) {
-                var app = apps.get(rule.applicationId());
-                if (protectedPackages.contains(app.packageName().toLowerCase(Locale.ROOT)) && restrictsSafety(rule))
-                    throw new DomainException(HttpStatus.UNPROCESSABLE_ENTITY, "SAFETY_BASELINE_PROTECTED");
-            }
-        }
-    }
-    private boolean restrictsSafety(PolicyRule r) {
-        return switch (r.kind()) {
-            case APP_LAUNCH, APP_INSTALL, RUNTIME_PERMISSION, SPECIAL_ACCESS -> r.effect() == DENY;
-            case DAILY_QUOTA, TIME_WINDOW -> true;
-            case APP_UNINSTALL -> r.effect() == ALLOW;
-            default -> false;
-        };
-    }
-    List<String> protectedPackageExemptions() { return protectedPackages.stream().sorted().toList(); }
-    private void required(String value) { if (value == null || value.isBlank()) throw DomainException.invalid("RULE_FIELD_REQUIRED"); }
-    private String canonicalDomain(String value) {
-        try {
-            String domain = IDN.toASCII(value, IDN.USE_STD3_ASCII_RULES).toLowerCase(Locale.ROOT);
-            if (domain.length() > 253 || !domain.contains(".") || domain.endsWith(".") || domain.matches("[0-9.]+")
-                || Arrays.stream(domain.split("\\.", -1)).anyMatch(label -> label.isEmpty() || label.length() > 63))
-                throw DomainException.invalid("INVALID_DOMAIN");
-            return domain;
-        } catch (IllegalArgumentException failure) { throw DomainException.invalid("INVALID_DOMAIN"); }
-    }
+  RuleCompiler(@Value("${manager.policies.additional-protected-packages:}") String configured) {
+    this.protectedPackages = SafetyCriticalPackages.withAdditional(configured);
+  }
 
-    List<PolicySnapshot.RuleEvaluation> compile(List<PolicyRule> rules, Map<String, ApplicationDefinition> apps, FleetPolicyAccess.Target target) {
-        var groups = new TreeMap<String, List<PolicyRule>>();
-        for (var rule : rules) {
-            // Two distinct time-window constraints remain intersections rather than collapsing to one allow rule.
-            String key = rule.kind() + "|" + rule.applicationId() + "|" + rule.scheduleId() + "|" + rule.permission() + "|" + rule.domain();
-            groups.computeIfAbsent(key, ignored -> new ArrayList<>()).add(rule);
+  void validate(List<PolicyRule> rules, Map<String, ApplicationDefinition> apps) {
+    if (rules.stream().map(PolicyRule::id).distinct().count() != rules.size())
+      throw DomainException.invalid("DUPLICATE_RULE_ID");
+    for (var rule : rules) {
+      var used = new HashSet<String>();
+      Set<PolicyRule.Effect> effects;
+      switch (rule.kind()) {
+        case APP_LAUNCH, APP_INSTALL -> {
+          required(rule.applicationId());
+          used.add("applicationId");
+          effects = Set.of(ALLOW, DENY);
         }
-        var result = new ArrayList<PolicySnapshot.RuleEvaluation>();
-        for (var group : groups.values()) {
-            group.sort(Comparator.comparing(PolicyRule::id));
-            var first = group.get(0);
-            var effects = group.stream().map(PolicyRule::effect).collect(java.util.stream.Collectors.toSet());
-            var predicted = effects.contains(DENY) ? DENY : effects.contains(PROTECT) ? PROTECT : effects.contains(GRANT) ? GRANT : first.effect();
-            // DEFAULT must not silently become GRANT; same-layer runtime conflicts choose the less privileged value.
-            if ((first.kind() == RUNTIME_PERMISSION || first.kind() == SPECIAL_ACCESS) && effects.contains(DEFAULT) && !effects.contains(DENY)) predicted = DEFAULT;
-            Long seconds = group.stream().map(PolicyRule::seconds).filter(Objects::nonNull).min(Long::compare).orElse(null);
-            String capability = switch (first.kind()) {
-                case APP_LAUNCH -> "app.launch_block";
-                case APP_INSTALL -> "app.install_policy";
-                case APP_UNINSTALL -> "managed.app_policy";
-                case RUNTIME_PERMISSION -> "permission.runtime";
-                case SPECIAL_ACCESS -> "permission.special_access";
-                case DAILY_QUOTA -> "usage.shared_quota_enforced";
-                case TIME_WINDOW -> "usage.schedule_enforced";
-                case DOMAIN_ACCESS -> "network.domain_filter";
-                case USAGE_REMINDER -> "usage.reminder";
-            };
-            var evidence = target.capabilities().stream().filter(c -> c.key().equals(capability)).findFirst().orElse(null);
-            String status = evidence == null ? "UNKNOWN" : evidence.status(), reason = evidence == null ? "CAPABILITY_NOT_VERIFIED" : evidence.limitationCode();
-            if (evidence != null && evidence.effectiveSupported()) { status = "SUPPORTED_PENDING"; reason = "AWAITING_EXECUTION"; }
-            // The shipped managed adapter deliberately maps only DENY and DEFAULT (PROMPT).
-            // A generic capability flag must never advertise an automatic grant as executable.
-            if (first.kind() == RUNTIME_PERMISSION && predicted == GRANT) {
-                status = "UNSUPPORTED"; reason = "AUTO_GRANT_NOT_AVAILABLE";
-            }
-            if (first.kind() == SPECIAL_ACCESS && predicted == GRANT) {
-                status = "UNSUPPORTED"; reason = "SYSTEM_USER_ACTION_REQUIRED";
-            }
-            // This entry point receives a tenant catalog, not evidence bound to the target's
-            // current registration. A catalog status must never certify another device.
-            // Keep application rules unverified until target-scoped evidence is integrated.
-            if ("SUPPORTED_PENDING".equals(status) && first.applicationId() != null) {
-                status = "UNVERIFIED"; reason = "APPLICATION_IDENTITY_NOT_VERIFIED";
-            }
-            if (target.device().state() != Device.State.ACTIVE) { status = "UNAVAILABLE"; reason = "DEVICE_NOT_ACTIVE"; }
-            if (first.applicationId() != null && apps.get(first.applicationId()).platform() != target.device().platform()) {
-                status = "UNSUPPORTED"; reason = "APPLICATION_PLATFORM_MISMATCH";
-            }
-            if (first.applicationId() != null && apps.get(first.applicationId()).profile() != ApplicationDefinition.Profile.PRIMARY) {
-                status = "UNSUPPORTED"; reason = "APPLICATION_PROFILE_NOT_VERIFIED";
-            }
-            var warnings = new ArrayList<String>();
-            if (effects.size() > 1) warnings.add("SAME_LAYER_CONFLICT_RESTRICTIVE_WINS");
-            if (first.kind() == DAILY_QUOTA && group.stream().map(PolicyRule::seconds).distinct().count() > 1) warnings.add("SMALLER_QUOTA_WINS");
-            if (first.kind() == APP_INSTALL && predicted == DENY) warnings.add("INSTALL_DENY_MAY_REMOVE_EXISTING_APP");
-            if (first.kind() == SPECIAL_ACCESS && predicted == GRANT) warnings.add("SYSTEM_USER_ACTION_REQUIRED");
-            result.add(new PolicySnapshot.RuleEvaluation(group.stream().map(PolicyRule::id).toList(), first.kind(), first.applicationId(),
-                first.scheduleId(), first.permission(), first.domain(), seconds, group.stream().anyMatch(PolicyRule::required), predicted, null,
-                status, reason, List.copyOf(warnings)));
+        case APP_UNINSTALL -> {
+          required(rule.applicationId());
+          used.add("applicationId");
+          effects = Set.of(ALLOW, PROTECT);
         }
-        return List.copyOf(result);
+        case RUNTIME_PERMISSION, SPECIAL_ACCESS -> {
+          required(rule.applicationId());
+          required(rule.permission());
+          used.addAll(Set.of("applicationId", "permission"));
+          effects = Set.of(GRANT, DENY, DEFAULT);
+          if (rule.kind() == RUNTIME_PERMISSION
+              && !AndroidRuntimePermissions.contains(rule.permission()))
+            throw DomainException.invalid("NOT_RUNTIME_PERMISSION");
+          if (rule.kind() == SPECIAL_ACCESS && !SPECIAL.contains(rule.permission()))
+            throw DomainException.invalid("INVALID_SPECIAL_ACCESS");
+        }
+        case DAILY_QUOTA, USAGE_REMINDER -> {
+          if (rule.seconds() == null) throw DomainException.invalid("RULE_FIELD_REQUIRED");
+          used.addAll(Set.of("applicationId", "seconds"));
+          effects = Set.of(rule.kind() == DAILY_QUOTA ? LIMIT : REMIND);
+        }
+        case TIME_WINDOW -> {
+          required(rule.scheduleId());
+          used.addAll(Set.of("applicationId", "scheduleId"));
+          effects = Set.of(ALLOW);
+        }
+        case DOMAIN_ACCESS -> {
+          required(rule.domain());
+          used.add("domain");
+          effects = Set.of(ALLOW, DENY);
+          if (!canonicalDomain(rule.domain()).equals(rule.domain()))
+            throw DomainException.invalid("DOMAIN_NOT_CANONICAL");
+        }
+        default -> throw DomainException.invalid("INVALID_RULE_KIND");
+      }
+      if (!effects.contains(rule.effect())) throw DomainException.invalid("INVALID_RULE_EFFECT");
+      var fields = new HashMap<String, Object>();
+      fields.put("applicationId", rule.applicationId());
+      fields.put("scheduleId", rule.scheduleId());
+      fields.put("seconds", rule.seconds());
+      fields.put("permission", rule.permission());
+      fields.put("domain", rule.domain());
+      if (fields.entrySet().stream()
+          .anyMatch(e -> e.getValue() != null && !used.contains(e.getKey())))
+        throw DomainException.invalid("UNUSED_RULE_FIELD");
+      if (rule.applicationId() != null) {
+        var app = apps.get(rule.applicationId());
+        if (protectedPackages.contains(app.packageName().toLowerCase(Locale.ROOT))
+            && restrictsSafety(rule))
+          throw new DomainException(HttpStatus.UNPROCESSABLE_ENTITY, "SAFETY_BASELINE_PROTECTED");
+      }
     }
+  }
+
+  private boolean restrictsSafety(PolicyRule r) {
+    return switch (r.kind()) {
+      case APP_LAUNCH, APP_INSTALL, RUNTIME_PERMISSION, SPECIAL_ACCESS -> r.effect() == DENY;
+      case DAILY_QUOTA, TIME_WINDOW -> true;
+      case APP_UNINSTALL -> r.effect() == ALLOW;
+      default -> false;
+    };
+  }
+
+  List<String> protectedPackageExemptions() {
+    return protectedPackages.stream().sorted().toList();
+  }
+
+  private void required(String value) {
+    if (value == null || value.isBlank()) throw DomainException.invalid("RULE_FIELD_REQUIRED");
+  }
+
+  private String canonicalDomain(String value) {
+    try {
+      String domain = IDN.toASCII(value, IDN.USE_STD3_ASCII_RULES).toLowerCase(Locale.ROOT);
+      if (domain.length() > 253
+          || !domain.contains(".")
+          || domain.endsWith(".")
+          || domain.matches("[0-9.]+")
+          || Arrays.stream(domain.split("\\.", -1))
+              .anyMatch(label -> label.isEmpty() || label.length() > 63))
+        throw DomainException.invalid("INVALID_DOMAIN");
+      return domain;
+    } catch (IllegalArgumentException failure) {
+      throw DomainException.invalid("INVALID_DOMAIN");
+    }
+  }
+
+  List<PolicySnapshot.RuleEvaluation> compile(
+      List<PolicyRule> rules,
+      Map<String, ApplicationDefinition> apps,
+      FleetPolicyAccess.Target target) {
+    return compile(rules, apps, target, List.of());
+  }
+
+  List<PolicySnapshot.RuleEvaluation> compile(
+      List<PolicyRule> rules,
+      Map<String, ApplicationDefinition> apps,
+      FleetPolicyAccess.Target target,
+      List<ApplicationEvidence> applicationEvidence) {
+    var groups = new TreeMap<String, List<PolicyRule>>();
+    for (var rule : rules) {
+      // Two distinct time-window constraints remain intersections rather than collapsing to one
+      // allow rule.
+      String key =
+          rule.kind()
+              + "|"
+              + rule.applicationId()
+              + "|"
+              + rule.scheduleId()
+              + "|"
+              + rule.permission()
+              + "|"
+              + rule.domain();
+      groups.computeIfAbsent(key, ignored -> new ArrayList<>()).add(rule);
+    }
+    var result = new ArrayList<PolicySnapshot.RuleEvaluation>();
+    for (var group : groups.values()) {
+      group.sort(Comparator.comparing(PolicyRule::id));
+      var first = group.get(0);
+      var effects =
+          group.stream().map(PolicyRule::effect).collect(java.util.stream.Collectors.toSet());
+      var predicted =
+          effects.contains(DENY)
+              ? DENY
+              : effects.contains(PROTECT)
+                  ? PROTECT
+                  : effects.contains(GRANT) ? GRANT : first.effect();
+      // DEFAULT must not silently become GRANT; same-layer runtime conflicts choose the less
+      // privileged value.
+      if ((first.kind() == RUNTIME_PERMISSION || first.kind() == SPECIAL_ACCESS)
+          && effects.contains(DEFAULT)
+          && !effects.contains(DENY)) predicted = DEFAULT;
+      Long seconds =
+          group.stream()
+              .map(PolicyRule::seconds)
+              .filter(Objects::nonNull)
+              .min(Long::compare)
+              .orElse(null);
+      String capability =
+          switch (first.kind()) {
+            case APP_LAUNCH -> "app.launch_block";
+            case APP_INSTALL -> "app.install_policy";
+            case APP_UNINSTALL -> "managed.app_policy";
+            case RUNTIME_PERMISSION -> "permission.runtime";
+            case SPECIAL_ACCESS -> "permission.special_access";
+            case DAILY_QUOTA -> "usage.shared_quota_enforced";
+            case TIME_WINDOW -> "usage.schedule_enforced";
+            case DOMAIN_ACCESS -> "network.domain_filter";
+            case USAGE_REMINDER -> "usage.reminder";
+          };
+      var evidence =
+          target.capabilities().stream()
+              .filter(c -> c.key().equals(capability))
+              .findFirst()
+              .orElse(null);
+      String status = evidence == null ? "UNKNOWN" : evidence.status(),
+          reason = evidence == null ? "CAPABILITY_NOT_VERIFIED" : evidence.limitationCode();
+      if (evidence != null && evidence.effectiveSupported()) {
+        status = "SUPPORTED_PENDING";
+        reason = "AWAITING_EXECUTION";
+      }
+      // The shipped managed adapter deliberately maps only DENY and DEFAULT (PROMPT).
+      // A generic capability flag must never advertise an automatic grant as executable.
+      if (first.kind() == RUNTIME_PERMISSION && predicted == GRANT) {
+        status = "UNSUPPORTED";
+        reason = "AUTO_GRANT_NOT_AVAILABLE";
+      }
+      if (first.kind() == SPECIAL_ACCESS && predicted == GRANT) {
+        status = "UNSUPPORTED";
+        reason = "SYSTEM_USER_ACTION_REQUIRED";
+      }
+      // Identity reports cannot establish Android profile scope or execution authority.
+      if ("SUPPORTED_PENDING".equals(status) && first.applicationId() != null) {
+        boolean identityVerified =
+            applicationEvidence.stream()
+                .anyMatch(
+                    f ->
+                        first.applicationId().equals(f.applicationId())
+                            && target.device().id().equals(f.deviceId())
+                            && target.device().registrationId().equals(f.registrationId())
+                            && "VERIFIED_IDENTITY".equals(f.state()));
+        status = "UNVERIFIED";
+        reason =
+            identityVerified
+                ? "APPLICATION_PROFILE_NOT_VERIFIED"
+                : "APPLICATION_IDENTITY_NOT_VERIFIED";
+      }
+      if (target.device().state() != Device.State.ACTIVE) {
+        status = "UNAVAILABLE";
+        reason = "DEVICE_NOT_ACTIVE";
+      }
+      if (first.applicationId() != null
+          && apps.get(first.applicationId()).platform() != target.device().platform()) {
+        status = "UNSUPPORTED";
+        reason = "APPLICATION_PLATFORM_MISMATCH";
+      }
+      if (first.applicationId() != null
+          && apps.get(first.applicationId()).profile() != ApplicationDefinition.Profile.PRIMARY) {
+        status = "UNSUPPORTED";
+        reason = "APPLICATION_PROFILE_NOT_VERIFIED";
+      }
+      var warnings = new ArrayList<String>();
+      if (effects.size() > 1) warnings.add("SAME_LAYER_CONFLICT_RESTRICTIVE_WINS");
+      if (first.kind() == DAILY_QUOTA
+          && group.stream().map(PolicyRule::seconds).distinct().count() > 1)
+        warnings.add("SMALLER_QUOTA_WINS");
+      if (first.kind() == APP_INSTALL && predicted == DENY)
+        warnings.add("INSTALL_DENY_MAY_REMOVE_EXISTING_APP");
+      if (first.kind() == SPECIAL_ACCESS && predicted == GRANT)
+        warnings.add("SYSTEM_USER_ACTION_REQUIRED");
+      result.add(
+          new PolicySnapshot.RuleEvaluation(
+              group.stream().map(PolicyRule::id).toList(),
+              first.kind(),
+              first.applicationId(),
+              first.scheduleId(),
+              first.permission(),
+              first.domain(),
+              seconds,
+              group.stream().anyMatch(PolicyRule::required),
+              predicted,
+              null,
+              status,
+              reason,
+              List.copyOf(warnings)));
+    }
+    return List.copyOf(result);
+  }
 }

@@ -9,11 +9,11 @@ import com.aimanager.fleet.AccessRequestDeviceScope;
 import com.aimanager.fleet.Device;
 import com.aimanager.fleet.DeviceAccess;
 import com.aimanager.fleet.DeviceGroupPolicyAccess;
-import com.aimanager.fleet.FleetPolicyAccess;
 import com.aimanager.idempotency.IdempotencyService;
 import com.aimanager.identity.ActorKeys;
 import com.aimanager.identity.RecentAuthentication;
 import com.aimanager.policy.*;
+import com.aimanager.managedandroid.ManagedPolicyEvidenceAccess;
 import com.aimanager.schedule.ScheduleCatalog;
 import com.aimanager.schedule.ScheduleEntry;
 import com.aimanager.shared.*;
@@ -32,6 +32,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -83,7 +84,7 @@ class PolicyService
   private final RecentAuthentication recent;
   private final ApplicationCatalog catalog;
   private final ScheduleCatalog schedules;
-  private final FleetPolicyAccess fleet;
+  private final ManagedPolicyEvidenceAccess managedEvidence;
   private final DeviceGroupPolicyAccess groups;
   private final DeviceAccess devices;
   private final AccessRequestDeviceScope requestDevices;
@@ -102,7 +103,7 @@ class PolicyService
       RecentAuthentication recent,
       ApplicationCatalog catalog,
       ScheduleCatalog schedules,
-      FleetPolicyAccess fleet,
+      ManagedPolicyEvidenceAccess managedEvidence,
       DeviceGroupPolicyAccess groups,
       DeviceAccess devices,
       AccessRequestDeviceScope requestDevices,
@@ -121,7 +122,7 @@ class PolicyService
     this.recent = recent;
     this.catalog = catalog;
     this.schedules = schedules;
-    this.fleet = fleet;
+    this.managedEvidence = managedEvidence;
     this.groups = groups;
     this.compiler = compiler;
     this.previewTtlMillis = previewTtl * 1000;
@@ -314,7 +315,7 @@ class PolicyService
         });
   }
 
-  @Transactional(timeout = 10)
+  @Transactional(isolation = Isolation.READ_COMMITTED, timeout = 10)
   public PolicyPreview preview(
       String tenant, String actor, String id, String ifMatch, PolicyController.Preview input) {
     access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
@@ -335,7 +336,10 @@ class PolicyService
     if (snapshot.targets().stream().anyMatch(t -> t.state() != Device.State.ACTIVE))
       throw new DomainException(HttpStatus.CONFLICT, "DEVICE_NOT_ACTIVE");
     String previewId = UUID.randomUUID().toString(), hash = fingerprint(tenant, draft, snapshot);
-    long expires = clock.millis() + previewTtlMillis;
+    long expires = snapshot.targets().stream().flatMap(t -> t.applicationEvidence().stream())
+        .map(ManagedPolicyEvidenceAccess.ApplicationEvidence::expiresAt).filter(Objects::nonNull)
+        .min(Long::compare).map(at -> Math.min(at, clock.millis() + previewTtlMillis))
+        .orElseGet(() -> clock.millis() + previewTtlMillis);
     jdbc.update(
         "INSERT INTO"
             + " policy_previews(tenant_id,id,policy_id,draft_revision,hash,snapshot_json,created_at,expires_at,creator_actor_key)"
@@ -366,7 +370,7 @@ class PolicyService
    * A signed/transport-ready ENFORCE path is intentionally unavailable until delivery adapters
    * exist.
    */
-  @Transactional(timeout = 10)
+  @Transactional(isolation = Isolation.READ_COMMITTED, timeout = 10)
   public PolicyPublication publish(
       String tenant,
       Jwt actor,
@@ -913,12 +917,12 @@ class PolicyService
       PolicySnapshot.GroupSelection groupSelection) {
     var inputs = resolve(tenant, actor, draft.rules());
     var targets = new ArrayList<PolicySnapshot.Target>();
-    for (var id : deviceIds.stream().sorted().toList()) {
-      var target = fleet.snapshot(tenant, actor, id, true);
+    for (var scoped : managedEvidence.snapshot(tenant, actor, deviceIds, inputs.apps().keySet())) {
+      var target = scoped.fleet();
       var device = target.device();
       targets.add(
           new PolicySnapshot.Target(
-              id,
+              device.id(),
               device.registrationId(),
               device.platform(),
               device.state(),
@@ -927,7 +931,8 @@ class PolicyService
               device.version(),
               device.observationStatus(),
               target.capabilities(),
-              compiler.compile(draft.rules(), inputs.apps(), target)));
+              compiler.compile(draft.rules(), inputs.apps(), target, scoped.applications()),
+              scoped.applications()));
     }
     return new PolicySnapshot(
         1,

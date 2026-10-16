@@ -263,6 +263,7 @@ class ManagedAgentBindingStore {
   }
 
   /** 供应用证据工作流读取当前绑定；不是系统执行授权或面向客户端的 DTO。 */
+  @Transactional(isolation = Isolation.READ_COMMITTED, timeout = 10, noRollbackFor = DomainException.class)
   VerifiedBindingContext requireVerifiedContext(
       String tenant, String actor, String binding, long version) {
     long authorityVersion = access.requireWriteVersion(tenant, actor, OWNER, ORG_ADMIN);

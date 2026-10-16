@@ -85,7 +85,7 @@ class CatalogService implements ApplicationCatalog {
     }
 
     @Override
-    @Transactional(propagation = Propagation.MANDATORY)
+    @Transactional(propagation = Propagation.MANDATORY, noRollbackFor = DomainException.class)
     public ApplicationIdentity requireEvidenceIdentity(String tenant, String actor, String id) {
         access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
         var rows = jdbc.query(

@@ -70,6 +70,443 @@ class ManagedAgentBindingJourneyTest {
   @MockitoBean JwtDecoder decoder;
   @Autowired ManagedEnterpriseAuthority enterprises;
   @Autowired CommercialCapacity capacity;
+  @Autowired ManagedEnterpriseBindingService realEnterpriseAuthority;
+
+  @Test
+  void policyPreviewIncludesApplicationFactsForEachCurrentRegistration() throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    applicationProvider(f);
+    mvc.perform(
+            post(applicationEvidencePath(f, binding.id(), app) + "/refresh")
+                .with(actor(f.actor()))
+                .header("If-Match", "\"2\""))
+        .andExpect(status().isOk());
+    String other = cloneDevice(f, f.subject(), "ACTIVE");
+    var draft =
+        json.readTree(
+            mvc.perform(
+                    post("/api/v1/tenants/" + f.tenant() + "/policies")
+                        .with(actor(f.actor()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                            json.writeValueAsString(
+                                Map.of(
+                                    "name",
+                                    "逐设备应用规则",
+                                    "kind",
+                                    "POLICY",
+                                    "rules",
+                                    List.of(
+                                        Map.of(
+                                            "id",
+                                            "reader",
+                                            "kind",
+                                            "APP_LAUNCH",
+                                            "effect",
+                                            "DENY",
+                                            "applicationId",
+                                            app,
+                                            "required",
+                                            true))))))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString());
+    when(capacity.currentForUpdate(f.tenant()))
+        .thenAnswer(
+            call -> {
+              assertThat(
+                      org.springframework.transaction.support.TransactionSynchronizationManager
+                          .getCurrentTransactionIsolationLevel())
+                  .isEqualTo(java.sql.Connection.TRANSACTION_READ_COMMITTED);
+              return 100L;
+            });
+    clearInvocations(gateway);
+    var preview =
+        json.readTree(
+            mvc.perform(
+                    post("/api/v1/tenants/"
+                            + f.tenant()
+                            + "/policies/"
+                            + draft.get("id").asText()
+                            + "/previews")
+                        .with(actor(f.actor()))
+                        .header("If-Match", "\"0\"")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                            json.writeValueAsString(
+                                Map.of("deviceIds", List.of(f.device(), other)))))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString());
+    for (var target : preview.get("targets")) {
+      assertThat(target.has("applicationEvidence"))
+          .as("preview must carry per-registration application facts")
+          .isTrue();
+      var fact = target.get("applicationEvidence").get(0);
+      assertThat(fact.get("applicationId").asText()).isEqualTo(app);
+      assertThat(fact.get("deviceId").asText()).isEqualTo(target.get("deviceId").asText());
+      assertThat(fact.get("registrationId").asText())
+          .isEqualTo(target.get("registrationId").asText());
+      assertThat(fact.get("state").asText())
+          .isEqualTo(
+              target.get("deviceId").asText().equals(f.device())
+                  ? "VERIFIED_IDENTITY"
+                  : "UNAVAILABLE");
+      assertThat(fact.get("systemControlAvailable").asBoolean()).isFalse();
+    }
+    assertThat(preview.get("enforceable").asBoolean()).isFalse();
+    verify(gateway, never()).readApplicationReport(anyString(), anyString(), anyString());
+    verify(gateway, never()).readEnrollmentIdentity(anyString(), anyString());
+  }
+
+  private String policyDraft(Fixture f, String app) throws Exception {
+    return json.readTree(
+            mvc.perform(
+                    post("/api/v1/tenants/" + f.tenant() + "/policies")
+                        .with(actor(f.actor()))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(
+                            json.writeValueAsString(
+                                Map.of(
+                                    "name",
+                                    "应用核验预览",
+                                    "kind",
+                                    "POLICY",
+                                    "rules",
+                                    List.of(
+                                        Map.of(
+                                            "id",
+                                            "reader",
+                                            "kind",
+                                            "APP_LAUNCH",
+                                            "effect",
+                                            "DENY",
+                                            "applicationId",
+                                            app,
+                                            "required",
+                                            true))))))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString())
+        .get("id")
+        .asText();
+  }
+
+  private org.springframework.test.web.servlet.ResultActions policyPreview(
+      Fixture f, String policy, List<String> devices) throws Exception {
+    return mvc.perform(
+        post("/api/v1/tenants/" + f.tenant() + "/policies/" + policy + "/previews")
+            .with(actor(f.actor()))
+            .header("If-Match", "\"0\"")
+            .contentType(MediaType.APPLICATION_JSON)
+            .content(json.writeValueAsString(Map.of("deviceIds", devices))));
+  }
+
+  private JsonNode policyPreviewBody(Fixture f, String policy) throws Exception {
+    return json.readTree(
+        policyPreview(f, policy, List.of(f.device()))
+            .andExpect(status().isCreated())
+            .andReturn()
+            .getResponse()
+            .getContentAsString());
+  }
+
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.CsvSource({
+    "absent,ABSENT,MANAGED_APPLICATION_EVIDENCE_REQUIRED",
+    "expired,STALE,MANAGED_APPLICATION_REPORT_STALE",
+    "connector,UNAVAILABLE,MANAGED_APPLICATION_CONNECTOR_UNSUPPORTED",
+    "capacity,UNAVAILABLE,MANAGED_ANDROID_CONTRACT_REQUIRED",
+    "enterprise,UNAVAILABLE,MANAGED_ANDROID_CONTRACT_REQUIRED",
+    "enrollment,UNAVAILABLE,MANAGED_ENROLLMENT_NOT_VERIFIED",
+    "revoked,UNAVAILABLE,MANAGED_BINDING_REQUIRED",
+    "replacement,UNAVAILABLE,MANAGED_BINDING_REQUIRED",
+    "guardian,UNAVAILABLE,MANAGED_APPLICATION_ADMIN_REQUIRED",
+    "metadata,UNAVAILABLE,APPLICATION_IDENTITY_METADATA_UNAVAILABLE",
+    "disabled,UNAVAILABLE,MANAGED_AGENT_BINDING_UNAVAILABLE"
+  })
+  void unavailableApplicationEvidenceStillCommitsAnHonestPreview(
+      String mutation, String state, String reason) throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    applicationProvider(f);
+    if (!mutation.equals("absent"))
+      mvc.perform(
+              post(applicationEvidencePath(f, binding.id(), app) + "/refresh")
+                  .with(actor(f.actor()))
+                  .header("If-Match", "\"2\""))
+          .andExpect(status().isOk());
+    String policy = policyDraft(f, app);
+    switch (mutation) {
+      case "expired" ->
+          db.update(
+              "UPDATE managed_application_evidence SET expires_at=0 WHERE binding_id=?",
+              binding.id());
+      case "connector" -> when(gateway.supportsApplicationReports()).thenReturn(false);
+      case "capacity" -> when(capacity.currentForUpdate(f.tenant())).thenReturn(0L);
+      case "enterprise" ->
+          when(enterprises.requireActive(f.tenant()))
+              .thenAnswer(call -> realEnterpriseAuthority.requireActive(f.tenant()));
+      case "enrollment" ->
+          db.update(
+              "UPDATE managed_enrollment_intents SET state='CANCELLED' WHERE tenant_id=?",
+              f.tenant());
+      case "revoked" -> store.revoke(f.tenant(), f.actor(), binding.id(), 2);
+
+      case "guardian" ->
+          db.update("UPDATE tenant_members SET role='GUARDIAN' WHERE tenant_id=?", f.tenant());
+      case "metadata" ->
+          db.update(
+              "UPDATE application_definitions SET identity_hash=? WHERE tenant_id=?",
+              "0".repeat(64),
+              f.tenant());
+      case "disabled" -> when(gateway.supportsAgentBindingEvidence()).thenReturn(false);
+      default -> {}
+    }
+    clearInvocations(gateway);
+    String targetId =
+        mutation.equals("replacement") ? cloneDevice(f, f.subject(), "ACTIVE") : f.device();
+    var preview =
+        json.readTree(
+            policyPreview(f, policy, List.of(targetId))
+                .andExpect(status().isCreated())
+                .andReturn()
+                .getResponse()
+                .getContentAsString());
+    var fact = preview.get("targets").get(0).get("applicationEvidence").get(0);
+    assertThat(fact.get("deviceId").asText()).isEqualTo(targetId);
+    if (mutation.equals("replacement"))
+      assertThat(fact.get("registrationId").asText()).isNotEqualTo(f.registration());
+    assertThat(fact.get("state").asText()).isEqualTo(state);
+    assertThat(fact.get("reasonCode").asText()).isEqualTo(reason);
+    assertThat(fact.get("systemControlAvailable").asBoolean()).isFalse();
+    assertThat(fact.get("profileScope").asText()).isEqualTo("UNKNOWN");
+    assertThat(
+            db.queryForObject(
+                "SELECT COUNT(*) FROM policy_previews WHERE tenant_id=?",
+                Integer.class,
+                f.tenant()))
+        .isEqualTo(1);
+    assertThat(preview.toString())
+        .doesNotContain(
+            f.credential(),
+            f.enrollmentNonce(),
+            f.providerDevice(),
+            "contextRevision",
+            "keyThumbprint");
+    // The enclosing snapshot contains administrator-declared signing digests; the fact DTO does
+    // not.
+    assertThat(fact.toString()).doesNotContain(CERT);
+    verify(gateway, never()).readApplicationReport(anyString(), anyString(), anyString());
+    verify(gateway, never()).readEnrollmentIdentity(anyString(), anyString());
+  }
+
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.ValueSource(
+      strings = {"refresh", "expiry", "revoke", "device-revoke", "connector", "contract"})
+  void changedApplicationFactsRequireAnotherPreviewBeforePublication(String mutation)
+      throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    applicationProvider(f);
+    String path = applicationEvidencePath(f, binding.id(), app);
+    mvc.perform(post(path + "/refresh").with(actor(f.actor())).header("If-Match", "\"2\""))
+        .andExpect(status().isOk());
+    String policy = policyDraft(f, app);
+    var preview = policyPreviewBody(f, policy);
+    assertThat(preview.get("expiresAt").asLong())
+        .isLessThanOrEqualTo(
+            preview
+                .get("targets")
+                .get(0)
+                .get("applicationEvidence")
+                .get(0)
+                .get("expiresAt")
+                .asLong());
+    switch (mutation) {
+      case "refresh" -> {
+        db.update(
+            "UPDATE managed_application_evidence SET next_attempt_at=0 WHERE binding_id=?",
+            binding.id());
+        mvc.perform(post(path + "/refresh").with(actor(f.actor())).header("If-Match", "\"2\""))
+            .andExpect(status().isOk());
+      }
+      case "expiry" ->
+          db.update(
+              "UPDATE managed_application_evidence SET expires_at=0 WHERE binding_id=?",
+              binding.id());
+      case "revoke" -> store.revoke(f.tenant(), f.actor(), binding.id(), 2);
+      case "device-revoke" ->
+          mvc.perform(
+                  post("/api/v1/tenants/" + f.tenant() + "/devices/" + f.device() + "/revoke")
+                      .with(actor(f.actor())))
+              .andExpect(status().isNoContent());
+      case "connector" ->
+          when(gateway.applicationReportRevision()).thenReturn("changed-report-revision");
+      case "contract" -> when(capacity.currentForUpdate(f.tenant())).thenReturn(0L);
+    }
+    mvc.perform(
+            post("/api/v1/tenants/" + f.tenant() + "/policies/" + policy + "/publications")
+                .with(actor(f.actor()))
+                .header("If-Match", "\"0\"")
+                .header("Idempotency-Key", UUID.randomUUID().toString())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    json.writeValueAsString(
+                        Map.of(
+                            "previewId",
+                            preview.get("id").asText(),
+                            "previewHash",
+                            preview.get("hash").asText(),
+                            "mode",
+                            "CONFIGURE_ONLY"))))
+        .andExpect(status().isConflict())
+        .andExpect(jsonPath("$.errorCode").value("PREVIEW_STALE"));
+    assertThat(
+            db.queryForObject(
+                "SELECT COUNT(*) FROM policy_versions WHERE tenant_id=?",
+                Integer.class,
+                f.tenant()))
+        .isZero();
+    assertThat(
+            db.queryForObject(
+                "SELECT COUNT(*) FROM idempotency_requests WHERE scope_id=? AND"
+                    + " operation='policy.publish'",
+                Integer.class,
+                f.tenant()))
+        .isZero();
+  }
+
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.ValueSource(booleans = {false, true})
+  void policyEvidenceNeverDowngradesAuthorityOrDatabaseFailures(boolean databaseFailure)
+      throws Exception {
+    var f = fixture();
+    verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    String policy = policyDraft(f, app);
+    if (databaseFailure)
+      when(capacity.currentForUpdate(f.tenant()))
+          .thenThrow(
+              new org.springframework.dao.TransientDataAccessResourceException(
+                  "fixture database failure"));
+    else when(enterprises.requireActive(f.tenant())).thenThrow(DomainException.denied());
+    policyPreview(f, policy, List.of(f.device()))
+        .andExpect(status().is(databaseFailure ? 500 : 403));
+    assertThat(
+            db.queryForObject(
+                "SELECT COUNT(*) FROM policy_previews WHERE tenant_id=?",
+                Integer.class,
+                f.tenant()))
+        .isZero();
+  }
+
+  @Test
+  void policyEvidenceRejectsAnotherTenantsDeviceBeforeSavingPreview() throws Exception {
+    var f = fixture();
+    var other = fixture();
+    String app = application(f, "ANDROID");
+    String policy = policyDraft(f, app);
+    policyPreview(f, policy, List.of(f.device(), other.device())).andExpect(status().isForbidden());
+    assertThat(
+            db.queryForObject(
+                "SELECT COUNT(*) FROM policy_previews WHERE tenant_id=?",
+                Integer.class,
+                f.tenant()))
+        .isZero();
+  }
+
+  @Test
+  void policyEvidenceWaiterReadsCommittedVersionAfterBindingLock() throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    applicationProvider(f);
+    mvc.perform(
+            post(applicationEvidencePath(f, binding.id(), app) + "/refresh")
+                .with(actor(f.actor()))
+                .header("If-Match", "\"2\""))
+        .andExpect(status().isOk());
+    String policy = policyDraft(f, app);
+    var locked = new java.util.concurrent.CountDownLatch(1);
+    var release = new java.util.concurrent.CountDownLatch(1);
+    var started = new java.util.concurrent.CountDownLatch(1);
+    when(capacity.currentForUpdate(f.tenant()))
+        .thenAnswer(
+            call -> {
+              assertThat(
+                      org.springframework.transaction.support.TransactionSynchronizationManager
+                          .getCurrentTransactionIsolationLevel())
+                  .isEqualTo(java.sql.Connection.TRANSACTION_READ_COMMITTED);
+              // The reader reached the authority chain immediately before taking the binding lock.
+              started.countDown();
+              return 100L;
+            });
+    var pool = java.util.concurrent.Executors.newFixedThreadPool(2);
+    try {
+      var writer =
+          pool.submit(
+              () ->
+                  new TransactionTemplate(transactions)
+                      .executeWithoutResult(
+                          s -> {
+                            db.queryForList(
+                                "SELECT id FROM managed_agent_bindings WHERE tenant_id=? AND id=?"
+                                    + " FOR UPDATE",
+                                f.tenant(),
+                                binding.id());
+                            db.update(
+                                "UPDATE managed_application_evidence SET version=version+1 WHERE"
+                                    + " binding_id=?",
+                                binding.id());
+                            locked.countDown();
+                            try {
+                              if (!release.await(10, java.util.concurrent.TimeUnit.SECONDS))
+                                throw new AssertionError("Writer deadline");
+                            } catch (InterruptedException interrupted) {
+                              Thread.currentThread().interrupt();
+                              throw new AssertionError(interrupted);
+                            }
+                          }));
+      assertThat(locked.await(5, java.util.concurrent.TimeUnit.SECONDS)).isTrue();
+      var reader =
+          pool.submit(
+              () -> {
+                return policyPreviewBody(f, policy);
+              });
+      assertThat(started.await(5, java.util.concurrent.TimeUnit.SECONDS)).isTrue();
+      org.assertj.core.api.Assertions.assertThatThrownBy(
+              () -> reader.get(200, java.util.concurrent.TimeUnit.MILLISECONDS))
+          .isInstanceOf(java.util.concurrent.TimeoutException.class);
+      release.countDown();
+      writer.get(10, java.util.concurrent.TimeUnit.SECONDS);
+      var preview = reader.get(10, java.util.concurrent.TimeUnit.SECONDS);
+      long version =
+          db.queryForObject(
+              "SELECT version FROM managed_application_evidence WHERE binding_id=?",
+              Long.class,
+              binding.id());
+      assertThat(
+              preview
+                  .get("targets")
+                  .get(0)
+                  .get("applicationEvidence")
+                  .get(0)
+                  .get("evidenceVersion")
+                  .asLong())
+          .isEqualTo(version);
+    } finally {
+      release.countDown();
+      pool.shutdownNow();
+    }
+  }
 
   @Test
   void contextReturnsOnlyActiveDevicesForTheEnrollmentSubjectAndExplainsSetup() throws Exception {

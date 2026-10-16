@@ -6,6 +6,7 @@ import com.aimanager.catalog.ApplicationIdentity;
 import com.aimanager.managedandroid.ManagedAndroidGateway;
 import com.aimanager.managedandroid.ManagedApplicationIdentityVerifier;
 import com.aimanager.managedandroid.ManagedApplicationReport;
+import com.aimanager.managedandroid.ManagedPolicyEvidenceAccess.ApplicationEvidence;
 import com.aimanager.shared.DomainException;
 import com.aimanager.shared.SecretMaterial;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -14,9 +15,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.Clock;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -210,6 +214,11 @@ class ManagedApplicationEvidenceStore {
       String tenant, String actor, String binding, long version, String application) {
     var current = bindings.requireVerifiedContext(tenant, actor, binding, version);
     var app = catalog.requireEvidenceIdentity(tenant, actor, application);
+    return current(current, app);
+  }
+
+  private Context current(
+      ManagedAgentBindingStore.VerifiedBindingContext current, ApplicationIdentity app) {
     if (current.platform() != app.platform())
       throw conflict("MANAGED_APPLICATION_PLATFORM_MISMATCH");
     String connector = gateway.applicationReportRevision();
@@ -224,11 +233,11 @@ class ManagedApplicationEvidenceStore {
             Math.max(current.bindingVerifiedAt(), app.establishedAt().toEpochMilli()));
     var scope =
         new ManagedApplicationIdentityVerifier.Scope(
-            tenant,
+            current.tenantId(),
             current.deviceId(),
             current.registrationId(),
             current.keyThumbprint(),
-            binding,
+            current.bindingId(),
             current.bindingVersion(),
             current.provider(),
             "enterprises/" + current.enterpriseId() + "/devices/" + current.providerDeviceId(),
@@ -262,6 +271,67 @@ class ManagedApplicationEvidenceStore {
                     current.registeredAt(),
                     settings.revision)));
     return new Context(current, app, identity, fingerprint);
+  }
+
+  /**
+   * One bounded local read per already locked binding; no provider call or repeated authority
+   * chain.
+   */
+  List<ApplicationEvidence> forPolicy(
+      ManagedAgentBindingStore.VerifiedBindingContext binding,
+      Map<String, ApplicationIdentity> identities) {
+    var stored = new TreeMap<String, Stored>();
+    var rows =
+        db.query(
+            "SELECT * FROM managed_application_evidence WHERE tenant_id=? AND binding_id=? LIMIT"
+                + " 201",
+            (r, n) -> Map.entry(r.getString("application_id"), row(r)),
+            binding.tenantId(),
+            binding.bindingId());
+    if (rows.size() > 200) throw conflict("MANAGED_APPLICATION_EVIDENCE_LIMIT_EXCEEDED");
+    for (var row : rows) stored.put(row.getKey(), row.getValue());
+    var result = new ArrayList<ApplicationEvidence>();
+    for (var app : new TreeMap<>(identities).values()) {
+      View fact;
+      try {
+        fact = view(current(binding, app), stored.get(app.applicationId()));
+      } catch (DomainException unavailable) {
+        if (!Set.of(
+                "MANAGED_APPLICATION_PLATFORM_MISMATCH",
+                "MANAGED_APPLICATION_CONNECTOR_UNSUPPORTED")
+            .contains(unavailable.errorCode())) throw unavailable;
+        fact =
+            new View(
+                binding.bindingId(),
+                app.applicationId(),
+                "UNAVAILABLE",
+                unavailable.errorCode(),
+                0,
+                "UNKNOWN",
+                false,
+                null,
+                null,
+                null,
+                null);
+      }
+      result.add(
+          new ApplicationEvidence(
+              binding.deviceId(),
+              binding.registrationId(),
+              app.applicationId(),
+              binding.bindingId(),
+              binding.bindingVersion(),
+              app.revision(),
+              fact.version(),
+              fact.state(),
+              fact.reasonCode(),
+              "UNKNOWN",
+              false,
+              fact.reportedAt(),
+              fact.retrievedAt(),
+              fact.expiresAt()));
+    }
+    return List.copyOf(result);
   }
 
   private Stored stored(Context context, boolean lock) {
