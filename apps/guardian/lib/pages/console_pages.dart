@@ -15,6 +15,8 @@ import '../core/labels.dart';
 import '../core/observation.dart' show canReadObservation;
 import '../core/overview_summary.dart';
 import '../core/session.dart';
+import '../core/workspace_read_recovery.dart';
+import 'device_subflow_scope.dart';
 import 'observation_page.dart';
 import '../ui/design.dart';
 import '../ui/device_observation_status.dart';
@@ -59,9 +61,14 @@ class ConsolePages extends StatelessWidget {
     final s = context.watch<Session>();
     final actions = ConsoleActions(context, s);
     if (section == 'support') {
-      return SupportWorkspacePage(s, key: ValueKey((s.profile?['subject'],
-          s.tenant?['id'], s.role, s.scopeGeneration,
-          s.profile?['canCreateTenant'] == true)));
+      return SupportWorkspacePage(s,
+          key: ValueKey((
+            s.profile?['subject'],
+            s.tenant?['id'],
+            s.role,
+            s.scopeGeneration,
+            s.profile?['canCreateTenant'] == true
+          )));
     }
     if (section == 'catalog') {
       return s.canOpen('catalog')
@@ -85,10 +92,27 @@ class ConsolePages extends StatelessWidget {
           : const Panel(child: EmptyView('没有企业绑定审核权限', '此功能仅向经过授权的独立平台审核员开放。'));
     }
     if (s.tenant == null) {
+      final authenticatedProfile = s.profile;
+      bool current() =>
+          context.mounted &&
+          s.authenticated &&
+          identical(s.profile, authenticatedProfile);
       return WorkspaceWelcome(
+          key: ValueKey(authenticatedProfile),
+          authenticationIdentity: authenticatedProfile,
+          isCurrent: current,
           onCreate: s.profile?['canCreateTenant'] == true
-              ? actions.createTenant : null,
-          onJoin: actions.acceptInvitation,
+              ? () => actions.createTenant(onReadFailure: (failure) async {
+                    throw failure;
+                  })
+              : null,
+          onJoin: () =>
+              actions.acceptInvitation(onReadFailure: (failure) async {
+                throw failure;
+              }),
+          onRefresh: s.loadTenants,
+          onSignOut: s.logout,
+          onReauthenticate: actions.reauth,
           platformTools: [
             if (s.canOpen('catalog'))
               OutlinedButton.icon(
@@ -198,35 +222,36 @@ class ConsolePages extends StatelessWidget {
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           enrollmentRecoveryNotice(s, actions),
           resource(
-            title: '设备管理',
-            subtitle: '查看设备注册、连接状态和实际管理能力。',
-            path: 'devices',
-            columns: [
-              ColumnSpec(
-                  '设备',
-                  (r) => _name(
-                      r['displayName'],
-                      r['platform'] == 'ANDROID_TV'
-                          ? Icons.tv_outlined
-                          : Icons.smartphone_outlined)),
-              ColumnSpec('平台', (r) => Text(label(r['platform']))),
-              ColumnSpec('注册状态', (r) => StatusTag(r['state'])),
-              ColumnSpec('心跳观察',
-                  (r) => DeviceObservationStatus(r['observationStatus'])),
-              ColumnSpec('最近心跳', (r) => Text(dateLabel(r['lastHeartbeatAt'])))
-            ],
-            create: s.canWrite ? actions.enrollment : null,
-            createLabel: '添加设备',
-            open: actions.deviceDetails,
-            notice: '心跳仅反映服务端近期能否观察设备。心跳过期需检查连接，不能据此判断规则已失效。策略执行仍以设备能力和执行回执为准。',
-            empty: '尚未连接设备',
-            description: '先创建儿童档案，再通过配对流程绑定 Android 或 TV 设备。',
-            toolbar: [
-              if (s.canWrite)
-                TextButton(
-                    onPressed: actions.findEnrollment,
-                    child: const Text('查询注册进度'))
-            ]),
+              title: '设备管理',
+              subtitle: '查看设备注册、连接状态和实际管理能力。',
+              path: 'devices',
+              columns: [
+                ColumnSpec(
+                    '设备',
+                    (r) => _name(
+                        r['displayName'],
+                        r['platform'] == 'ANDROID_TV'
+                            ? Icons.tv_outlined
+                            : Icons.smartphone_outlined)),
+                ColumnSpec('平台', (r) => Text(label(r['platform']))),
+                ColumnSpec('注册状态', (r) => StatusTag(r['state'])),
+                ColumnSpec('心跳观察',
+                    (r) => DeviceObservationStatus(r['observationStatus'])),
+                ColumnSpec('最近心跳', (r) => Text(dateLabel(r['lastHeartbeatAt'])))
+              ],
+              create: s.canWrite ? actions.enrollment : null,
+              createLabel: '添加设备',
+              open: actions.deviceDetails,
+              notice:
+                  '心跳仅反映服务端近期能否观察设备。心跳过期需检查连接，不能据此判断规则已失效。策略执行仍以设备能力和执行回执为准。',
+              empty: '尚未连接设备',
+              description: '先创建儿童档案，再通过配对流程绑定 Android 或 TV 设备。',
+              toolbar: [
+                if (s.canWrite)
+                  TextButton(
+                      onPressed: actions.findEnrollment,
+                      child: const Text('查询注册进度'))
+              ]),
         ]);
       case 'applications':
         return resource(
@@ -344,15 +369,27 @@ class ConsolePages extends StatelessWidget {
   }
 
   Widget enrollmentRecoveryNotice(Session s, ConsoleActions actions) {
-    if (!s.authenticated || s.tenant == null || !s.canWrite ||
+    if (!s.authenticated ||
+        s.tenant == null ||
+        !s.canWrite ||
         s.profile?['subject'] is! String) return const SizedBox.shrink();
-    final scope = EnrollmentScope(actorId: s.profile!['subject'] as String,
-        tenantId: s.tenant!['id'] as String, role: s.role);
+    final scope = EnrollmentScope(
+        actorId: s.profile!['subject'] as String,
+        tenantId: s.tenant!['id'] as String,
+        role: s.role);
     final generation = s.scopeGeneration;
-    return EnrollmentResumeNotice(key: ValueKey('enrollment-${scope.key}-$generation'),
-        journal: _enrollmentJournal, scope: scope, changes: _enrollmentChanges,
-        isCurrent: () => s.authenticated && s.canWrite && s.scopeGeneration == generation &&
-            s.profile?['subject'] == scope.actorId && s.tenant?['id'] == scope.tenantId && s.role == scope.role,
+    return EnrollmentResumeNotice(
+        key: ValueKey('enrollment-${scope.key}-$generation'),
+        journal: _enrollmentJournal,
+        scope: scope,
+        changes: _enrollmentChanges,
+        isCurrent: () =>
+            s.authenticated &&
+            s.canWrite &&
+            s.scopeGeneration == generation &&
+            s.profile?['subject'] == scope.actorId &&
+            s.tenant?['id'] == scope.tenantId &&
+            s.role == scope.role,
         onOpen: actions.enrollment);
   }
 
@@ -377,34 +414,102 @@ class ConsoleActions {
   final String root;
   ConsoleActions(this.context, this.s) : root = s.tenant == null ? '' : s.root;
   VoidCallback get reauth => () => s.login(stepUp: true);
-  Future<void> createTenant() async {
-    final key = requestId();
-    final result = await formDialog(context,
-        title: '创建工作空间',
-        fields: [
-          const FieldSpec('name', '工作空间名称'),
-          FieldSpec('kind', '类型', options: options(['FAMILY', 'ORGANIZATION'])),
-          const FieldSpec('timeZone', '时区', hint: 'Asia/Shanghai')
-        ],
-        initial: {'kind': 'FAMILY', 'timeZone': 'Asia/Shanghai'},
-        onSubmit: (v) async =>
-            await s.api.send('POST', '/tenants', body: v, key: key) as Json);
-    if (result != null) {
-      await s.loadTenants();
-      await s
-          .selectTenant(s.tenants.firstWhere((t) => t['id'] == result['id']));
+  Future<void> _readCompletedWorkspace(
+      Json authenticatedProfile, String completedMessage,
+      {String? preferredTenantId,
+      Future<void> Function(WorkspaceReadRecovery)? onReadFailure}) async {
+    bool current() =>
+        context.mounted &&
+        s.authenticated &&
+        identical(s.profile, authenticatedProfile);
+    Future<void> reload() async {
+      if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+      await s.loadTenants(preferredTenantId: preferredTenantId);
+      if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+    }
+
+    if (!current()) return;
+    try {
+      await reload();
+    } catch (failure) {
+      if (!current()) return;
+      final recovery = WorkspaceReadRecovery(
+          completedMessage: completedMessage,
+          error: failure,
+          reload: reload,
+          isCurrent: current);
+      if (onReadFailure != null) {
+        await onReadFailure(recovery);
+      } else {
+        if (!context.mounted) {
+          return;
+        }
+        await showWorkspaceReadRecoveryDialog(context, recovery,
+            accessChanges: s, onSignOut: s.logout, onReauthenticate: reauth);
+      }
     }
   }
 
-  Future<void> acceptInvitation() async {
-    final result = await formDialog(context,
-        title: '接受邀请',
-        description: '使用与你当前账户邮箱一致的邀请。成人加入可能需要近期多因素认证。',
-        fields: const [FieldSpec('token', '一次性邀请令牌', maxLength: 128)],
-        reauth: reauth,
-        onSubmit: (v) async =>
-            await s.api.send('POST', '/invitations/accept', body: v) as Json);
-    if (result != null) await s.loadTenants();
+  Future<void> createTenant(
+      {Future<void> Function(WorkspaceReadRecovery)? onReadFailure}) async {
+    final authenticatedProfile = s.profile;
+    if (!s.authenticated ||
+        authenticatedProfile == null ||
+        s.profile?['canCreateTenant'] != true) return;
+    final scope = DeviceSubflowScope(s,
+        permitted: () =>
+            context.mounted &&
+            identical(s.profile, authenticatedProfile) &&
+            s.profile?['canCreateTenant'] == true);
+    try {
+      if (!scope.current) return;
+      final key = requestId();
+      final result = await formDialog(context,
+          title: '创建工作空间',
+          fields: [
+            const FieldSpec('name', '工作空间名称'),
+            FieldSpec('kind', '类型',
+                options: options(['FAMILY', 'ORGANIZATION'])),
+            const FieldSpec('timeZone', '时区', hint: 'Asia/Shanghai')
+          ],
+          initial: {'kind': 'FAMILY', 'timeZone': 'Asia/Shanghai'},
+          onSubmit: (v) async => await scope.api
+              .send('POST', '/tenants', body: v, key: key) as Json);
+      if (result != null && scope.current) {
+        await _readCompletedWorkspace(
+            authenticatedProfile, '工作空间已创建，工作空间资料暂未加载。',
+            preferredTenantId: result['id'] as String,
+            onReadFailure: onReadFailure);
+      }
+    } finally {
+      scope.dispose();
+    }
+  }
+
+  Future<void> acceptInvitation(
+      {Future<void> Function(WorkspaceReadRecovery)? onReadFailure}) async {
+    final authenticatedProfile = s.profile;
+    if (!s.authenticated || authenticatedProfile == null) return;
+    final scope = DeviceSubflowScope(s,
+        permitted: () =>
+            context.mounted && identical(s.profile, authenticatedProfile));
+    try {
+      if (!scope.current) return;
+      final result = await formDialog(context,
+          title: '接受邀请',
+          description: '使用与你当前账户邮箱一致的邀请。成人加入可能需要近期多因素认证。',
+          fields: const [FieldSpec('token', '一次性邀请令牌', maxLength: 128)],
+          reauth: reauth,
+          onSubmit: (v) async => await scope.api
+              .send('POST', '/invitations/accept', body: v) as Json);
+      if (result != null && scope.current) {
+        await _readCompletedWorkspace(
+            authenticatedProfile, '已加入工作空间，工作空间资料暂未加载。',
+            onReadFailure: onReadFailure);
+      }
+    } finally {
+      scope.dispose();
+    }
   }
 
   Future<void> subject([Json? existing]) async {
@@ -550,13 +655,19 @@ class ConsoleActions {
         role: s.role);
     final generation = s.scopeGeneration;
     bool current() =>
-        context.mounted && s.authenticated && s.canWrite &&
+        context.mounted &&
+        s.authenticated &&
+        s.canWrite &&
         s.profile?['subject'] == scope.actorId &&
-        s.tenant?['id'] == scope.tenantId && s.role == scope.role &&
+        s.tenant?['id'] == scope.tenantId &&
+        s.role == scope.role &&
         s.scopeGeneration == generation;
-    if (!current() || root != s.root || !_openEnrollmentScopes.add(scope.key)) return;
+    if (!current() || root != s.root || !_openEnrollmentScopes.add(scope.key)) {
+      return;
+    }
     final gateway = lookupId == null
-        ? EnrollmentGateway(s.api) : EnrollmentGateway.lookup(s.api);
+        ? EnrollmentGateway(s.api)
+        : EnrollmentGateway.lookup(s.api);
     EnrollmentController? controller;
     ModalRoute<dynamic>? route;
     void accessChanged() {
@@ -569,6 +680,7 @@ class ConsoleActions {
         });
       }
     }
+
     s.addListener(accessChanged);
     try {
       EnrollmentJournal journal = _enrollmentJournal;
@@ -578,8 +690,11 @@ class ConsoleActions {
         if (!context.mounted || !current()) return;
         journal = EnrollmentLookupJournal(intent);
       }
-      final active = EnrollmentController(scope: scope, journal: journal,
-          gateway: gateway, isCurrent: current,
+      final active = EnrollmentController(
+          scope: scope,
+          journal: journal,
+          gateway: gateway,
+          isCurrent: current,
           newId: () => const Uuid().v4(),
           now: () => DateTime.now().millisecondsSinceEpoch);
       controller = active;
@@ -589,7 +704,8 @@ class ConsoleActions {
       final failure = active.error;
       final denied = failure is ApiFailure &&
           (failure.status == 401 || failure.status == 403);
-      if (lookupId == null && !denied &&
+      if (lookupId == null &&
+          !denied &&
           (active.pending != null || active.error == null)) {
         try {
           children = await s.api.all('$root/subjects', isCurrent: current);
@@ -604,28 +720,38 @@ class ConsoleActions {
         }
       }
       if (!context.mounted || !current()) return;
-      await showDialog<void>(context: context, barrierDismissible: false,
+      await showDialog<void>(
+          context: context,
+          barrierDismissible: false,
           builder: (dialogContext) {
-        route = ModalRoute.of(dialogContext);
-        return EnrollmentDialog(controller: active, subjects: children,
-            organization: s.tenant?['kind'] == 'ORGANIZATION',
-            onReauthenticate: () {
-              if (current()) {active.conceal();s.login(stepUp: true);}
-            },
-            onViewDevice: (id) {
-              if (!context.mounted || !current()) return;
-              Navigator.of(dialogContext).pop();
-              WidgetsBinding.instance.addPostFrameCallback((_) async {
-                if (!context.mounted || !current()) return;
-                try {
-                  await _enrollmentDeviceDetails(id, scope, current,
-                      subjectId: active.pending!.subjectId,
-                      platform: active.pending!.platform);
-                }
-                catch (failure) { if (context.mounted && current()) toast(context, failure.toString()); }
-              });
-            });
-      });
+            route = ModalRoute.of(dialogContext);
+            return EnrollmentDialog(
+                controller: active,
+                subjects: children,
+                organization: s.tenant?['kind'] == 'ORGANIZATION',
+                onReauthenticate: () {
+                  if (current()) {
+                    active.conceal();
+                    s.login(stepUp: true);
+                  }
+                },
+                onViewDevice: (id) {
+                  if (!context.mounted || !current()) return;
+                  Navigator.of(dialogContext).pop();
+                  WidgetsBinding.instance.addPostFrameCallback((_) async {
+                    if (!context.mounted || !current()) return;
+                    try {
+                      await _enrollmentDeviceDetails(id, scope, current,
+                          subjectId: active.pending!.subjectId,
+                          platform: active.pending!.platform);
+                    } catch (failure) {
+                      if (context.mounted && current()) {
+                        toast(context, failure.toString());
+                      }
+                    }
+                  });
+                });
+          });
     } catch (failure) {
       if (context.mounted && current()) toast(context, failure.toString());
     } finally {
@@ -646,82 +772,114 @@ class ConsoleActions {
         submit: '查询进度',
         fields: const [FieldSpec('id', '注册编号', maxLength: 36)],
         onSubmit: (values) async {
-          final id = (values['id'] as String).trim();
-          if (!RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$').hasMatch(id)) {
-            throw const ApiFailure(400, 'INVALID_ENROLLMENT_ID');
-          }
-          return {'id': id};
-        });
-    if (result == null || !context.mounted || !s.authenticated ||
-        s.scopeGeneration != generation || s.root != workspace) return;
+      final id = (values['id'] as String).trim();
+      if (!RegExp(
+              r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')
+          .hasMatch(id)) {
+        throw const ApiFailure(400, 'INVALID_ENROLLMENT_ID');
+      }
+      return {'id': id};
+    });
+    if (result == null ||
+        !context.mounted ||
+        !s.authenticated ||
+        s.scopeGeneration != generation ||
+        s.root != workspace) return;
     await _connectEnrollment(lookupId: result['id'] as String);
   }
 
-  Future<void> _enrollmentDeviceDetails(String id, EnrollmentScope scope,
-      bool Function() current,
+  Future<void> _enrollmentDeviceDetails(
+      String id, EnrollmentScope scope, bool Function() current,
       {required String subjectId, required String platform}) async {
     if (!context.mounted || !current()) return;
-    final value = await s.api.send('GET',
-        '/tenants/${scope.tenantId}/devices/$id', isCurrent: current);
+    final value = await s.api.send(
+        'GET', '/tenants/${scope.tenantId}/devices/$id',
+        isCurrent: current);
     if (!context.mounted || !current()) return;
-    if (value is! Json || value['id'] != id ||
-        value['subjectId'] != subjectId || value['platform'] != platform ||
+    if (value is! Json ||
+        value['id'] != id ||
+        value['subjectId'] != subjectId ||
+        value['platform'] != platform ||
         value['displayName'] is! String) {
       throw const ApiFailure(502, 'INVALID_ENROLLMENT_RESPONSE');
     }
-    await actionDetails(context, value['displayName'] as String, {
-      '平台': '${label(value['platform'])} · ${value['osVersion']}',
-      '注册状态': label(value['state']),
-      '管理模式': label(value['managementMode']),
-      '控制能力': label(value['controlLevel']),
-      '最近心跳': dateLabel(value['lastHeartbeatAt']),
-      '观察状态': label(value['observationStatus']),
-      '观察说明': DeviceObservationStatus.explanation(value['observationStatus']),
-      '设备编号': value['id'],
-    }, accessChanges: s, hasAccess: current);
+    await actionDetails(
+        context,
+        value['displayName'] as String,
+        {
+          '平台': '${label(value['platform'])} · ${value['osVersion']}',
+          '注册状态': label(value['state']),
+          '管理模式': label(value['managementMode']),
+          '控制能力': label(value['controlLevel']),
+          '最近心跳': dateLabel(value['lastHeartbeatAt']),
+          '观察状态': label(value['observationStatus']),
+          '观察说明':
+              DeviceObservationStatus.explanation(value['observationStatus']),
+          '设备编号': value['id'],
+        },
+        accessChanges: s,
+        hasAccess: current);
   }
 
   Future<void> deviceDetails(Json row) async {
-    if (!context.mounted || !s.authenticated || s.tenant == null ||
-        !s.canOpen('devices') || s.root != root) return;
+    if (!context.mounted ||
+        !s.authenticated ||
+        s.tenant == null ||
+        !s.canOpen('devices') ||
+        s.root != root) return;
     final actor = s.profile?['subject'], tenant = s.tenant!['id'];
     final openedRole = s.role, generation = s.scopeGeneration;
     final workspace = root;
     if (actor is! String || tenant is! String || row['id'] is! String) return;
     bool live = true;
-    bool current() => live && s.authenticated &&
-        s.profile?['subject'] == actor && s.tenant?['id'] == tenant &&
-        s.role == openedRole && s.scopeGeneration == generation &&
+    bool current() =>
+        live &&
+        s.authenticated &&
+        s.profile?['subject'] == actor &&
+        s.tenant?['id'] == tenant &&
+        s.role == openedRole &&
+        s.scopeGeneration == generation &&
         s.canOpen('devices');
     final controller = DeviceManagementController(
-        repository: DeviceManagementRepository(api: s.api, root: workspace,
-            deviceId: row['id'] as String, current: current),
-        canWrite: s.canWrite, canReadApplications: openedRole != 'TEACHER');
+        repository: DeviceManagementRepository(
+            api: s.api,
+            root: workspace,
+            deviceId: row['id'] as String,
+            current: current),
+        canWrite: s.canWrite,
+        canReadApplications: openedRole != 'TEACHER');
     Future<void> child(Future<void> Function() action) async {
       if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
       await action();
       if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
     }
+
     try {
-      await showDialog<void>(context: context, barrierDismissible: false,
+      await showDialog<void>(
+          context: context,
+          barrierDismissible: false,
           builder: (dialogContext) => DeviceManagementDialog(
-              controller: controller, accessChanges: s, onReauth: reauth,
+              controller: controller,
+              accessChanges: s,
+              onReauth: reauth,
               onClose: () => Navigator.of(dialogContext).pop(),
               onDiagnostic: canReadDiagnostics(openedRole)
-                  ? (device) => child(() => openDeviceDiagnostic(
-                      dialogContext, s, device.toJson())) : null,
+                  ? (device) => child(() =>
+                      openDeviceDiagnostic(dialogContext, s, device.toJson()))
+                  : null,
               onExport: s.canWrite
                   ? (device) => child(() => openDiagnosticPackages(
-                      dialogContext, s, device: device.toJson())) : null,
+                      dialogContext, s, device: device.toJson()))
+                  : null,
               onSupport: s.canWrite
-                  ? (device) => child(() => openSupportGrant(
-                      dialogContext, s, device.toJson())) : null,
+                  ? (device) => child(
+                      () => openSupportGrant(dialogContext, s, device.toJson()))
+                  : null,
               onPrivacy: canReadObservation(openedRole)
-                  ? (device) => child(() => openDeviceObservation(
-                      dialogContext, s, device.toJson())) : null,
-              onExit: s.canWrite
-                  ? (device) => child(() => openDeviceExit(
-                      dialogContext, s, device.toJson())) : null));
+                  ? (device) => child(
+                      () => openDeviceObservation(dialogContext, s, device.toJson()))
+                  : null,
+              onExit: s.canWrite ? (device) => child(() => openDeviceExit(dialogContext, s, device.toJson())) : null));
     } finally {
       live = false;
       controller.dispose();
