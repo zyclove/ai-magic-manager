@@ -166,6 +166,7 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
   }
 
   Future<void> save() async {
+    if (busy) return;
     if (!form.currentState!.validate() || calendar == null || subject == null) {
       return;
     }

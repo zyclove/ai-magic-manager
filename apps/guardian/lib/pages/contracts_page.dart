@@ -671,6 +671,7 @@ class _EvidenceDialogState extends State<_EvidenceDialog> {
   }
 
   Future<void> submit() async {
+    if (saving) return;
     final token = evidence.text.trim();
     if (token.isEmpty || token.length > 16384) {
       setState(
@@ -767,6 +768,7 @@ class _ContractActionDialogState extends State<_ContractActionDialog> {
   }
 
   Future<void> confirm() async {
+    if (saving) return;
     final text = reason.text.trim();
     if (widget.action != 'accept' &&
         (text.length < 5 ||

@@ -42,6 +42,7 @@ class _UsageReportJobsViewState extends State<UsageReportJobsView>
   final history = <String?>[];
   String category = 'ALL';
   bool busy = false, foreground = true;
+  bool cancelInFlight = false;
   int generation = 0;
   Timer? timer;
   ModalRoute<dynamic>? dialog;
@@ -320,41 +321,46 @@ class _UsageReportJobsViewState extends State<UsageReportJobsView>
   }
 
   Future<void> cancel(UsageReportJob job) async {
-    if (!current || busy) return;
-    final confirmed = await showDialog<bool>(
-        context: context,
-        builder: (context) {
-          dialog = ModalRoute.of(context);
-          return AlertDialog(
-              title: const Text('取消这份报表任务？'),
-              content: const Text('取消后将删除已生成的在线结果。需要时可重新选择范围生成。'),
-              actions: [
-                TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('保留任务')),
-                FilledButton(
-                    onPressed: () => Navigator.pop(context, true),
-                    child: const Text('确认取消'))
-              ]);
-        });
-    dialog = null;
-    if (confirmed != true || !current) return;
-    timer?.cancel();
-    final revision = ++generation;
-    setState(() {
-      busy = true;
-      error = null;
-      clearPrivate();
-    });
+    if (cancelInFlight || !current || busy) return;
+    cancelInFlight = true;
     try {
-      await widget.repository.cancel(job.id);
-    } catch (e) {
-      if (current && revision == generation) setState(() => error = e);
-    } finally {
-      if (mounted && revision == generation) {
-        setState(() => busy = false);
-        if (error == null && current) await load();
+      final confirmed = await showDialog<bool>(
+          context: context,
+          builder: (context) {
+            dialog = ModalRoute.of(context);
+            return AlertDialog(
+                title: const Text('取消这份报表任务？'),
+                content: const Text('取消后将删除已生成的在线结果。需要时可重新选择范围生成。'),
+                actions: [
+                  TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('保留任务')),
+                  FilledButton(
+                      onPressed: () => Navigator.pop(context, true),
+                      child: const Text('确认取消'))
+                ]);
+          });
+      dialog = null;
+      if (confirmed != true || !current) return;
+      timer?.cancel();
+      final revision = ++generation;
+      setState(() {
+        busy = true;
+        error = null;
+        clearPrivate();
+      });
+      try {
+        await widget.repository.cancel(job.id);
+      } catch (e) {
+        if (current && revision == generation) setState(() => error = e);
+      } finally {
+        if (mounted && revision == generation) {
+          setState(() => busy = false);
+          if (error == null && current) await load();
+        }
       }
+    } finally {
+      cancelInFlight = false;
     }
   }
 

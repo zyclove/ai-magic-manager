@@ -649,6 +649,7 @@ class _GroupConfirmDialogState extends State<_GroupConfirmDialog> {
   Object? error;
 
   Future<void> submit() async {
+    if (busy) return;
     setState(() {
       busy = true;
       error = null;

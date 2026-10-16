@@ -17,6 +17,7 @@ class _NotificationsViewState extends State<NotificationsView> {
   InboxSnapshot? snapshot;
   Object? error;
   bool busy = false, unreadOnly = false;
+  bool readInFlight = false;
   int generation = 0;
   final cursors = <String?>[null];
   Future<void> Function()? retry;
@@ -76,44 +77,50 @@ class _NotificationsViewState extends State<NotificationsView> {
   }
 
   Future<void> read(List<String> selected, {String? requestId}) async {
-    final ids = List<String>.unmodifiable(selected);
-    final request = ++generation;
-    final repository = widget.repository;
-    setState(() {
-      busy = true;
-      error = null;
-      retry = null;
-      confirmation = null;
-    });
+    if (readInFlight || busy) return;
+    readInFlight = true;
     try {
-      repository.ensureCurrent();
-      if (ids.isNotEmpty) await repository.markRead(ids);
-      if (!mounted || generation != request) return;
-      repository.ensureCurrent();
-      if (requestId != null) await widget.onOpen(requestId);
-      if (!mounted || generation != request) return;
-      repository.ensureCurrent();
-      confirmation =
-          requestId == null ? '已将 ${ids.length} 条通知标为已读，仅影响你的账号。' : null;
-      cursors
-        ..clear()
-        ..add(null);
-      await load();
-    } catch (failure) {
-      if (!mounted || generation != request) return;
+      final ids = List<String>.unmodifiable(selected);
+      final request = ++generation;
+      final repository = widget.repository;
       setState(() {
-        error = failure;
-        retry = () => read(ids, requestId: requestId);
-        if (failure is ApiFailure &&
-            (failure.status == 401 ||
-                failure.status == 403 ||
-                failure.code == 'WORKSPACE_CHANGED')) {
-          snapshot = null;
-          retry = load;
-        }
+        busy = true;
+        error = null;
+        retry = null;
+        confirmation = null;
       });
+      try {
+        repository.ensureCurrent();
+        if (ids.isNotEmpty) await repository.markRead(ids);
+        if (!mounted || generation != request) return;
+        repository.ensureCurrent();
+        if (requestId != null) await widget.onOpen(requestId);
+        if (!mounted || generation != request) return;
+        repository.ensureCurrent();
+        confirmation =
+            requestId == null ? '已将 ${ids.length} 条通知标为已读，仅影响你的账号。' : null;
+        cursors
+          ..clear()
+          ..add(null);
+        await load();
+      } catch (failure) {
+        if (!mounted || generation != request) return;
+        setState(() {
+          error = failure;
+          retry = () => read(ids, requestId: requestId);
+          if (failure is ApiFailure &&
+              (failure.status == 401 ||
+                  failure.status == 403 ||
+                  failure.code == 'WORKSPACE_CHANGED')) {
+            snapshot = null;
+            retry = load;
+          }
+        });
+      } finally {
+        if (mounted && generation == request) setState(() => busy = false);
+      }
     } finally {
-      if (mounted && generation == request) setState(() => busy = false);
+      readInFlight = false;
     }
   }
 

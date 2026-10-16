@@ -40,6 +40,7 @@ class _CommercialCatalogEditorState extends State<CommercialCatalogEditor> {
   CatalogDraft? retryDraft;
   Object? error;
   bool saving = false;
+  bool saveInFlight = false;
 
   Map<String, dynamic> get initial => widget.existing?.offer ?? const {};
 
@@ -136,33 +137,38 @@ class _CommercialCatalogEditorState extends State<CommercialCatalogEditor> {
   }
 
   Future<void> save() async {
-    if (saving) return;
-    final payload = retryDraft ?? draft();
-    if (payload == null) return;
-    if (retryDraft == null && !await review(payload)) return;
-    if (!mounted) return;
-    setState(() {
-      saving = true;
-      error = null;
-      retryDraft = payload;
-    });
+    if (saveInFlight || saving) return;
+    saveInFlight = true;
     try {
-      final result = widget.existing == null
-          ? await widget.repository.create(id, payload)
-          : await widget.repository.revise(widget.existing!, payload);
-      if (mounted) Navigator.of(context).pop(result);
-    } catch (failure) {
+      final payload = retryDraft ?? draft();
+      if (payload == null) return;
+      if (retryDraft == null && !await review(payload)) return;
       if (!mounted) return;
       setState(() {
-        error = failure;
-        saving = false;
-        // Keep exact payload only when the request could have reached the server.
-        if (failure is ApiFailure &&
-            failure.status >= 400 &&
-            failure.status < 500) {
-          retryDraft = null;
-        }
+        saving = true;
+        error = null;
+        retryDraft = payload;
       });
+      try {
+        final result = widget.existing == null
+            ? await widget.repository.create(id, payload)
+            : await widget.repository.revise(widget.existing!, payload);
+        if (mounted) Navigator.of(context).pop(result);
+      } catch (failure) {
+        if (!mounted) return;
+        setState(() {
+          error = failure;
+          saving = false;
+          // Keep exact payload only when the request could have reached the server.
+          if (failure is ApiFailure &&
+              failure.status >= 400 &&
+              failure.status < 500) {
+            retryDraft = null;
+          }
+        });
+      }
+    } finally {
+      saveInFlight = false;
     }
   }
 

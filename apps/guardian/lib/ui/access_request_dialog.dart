@@ -132,6 +132,7 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
   }
 
   Future<void> send() async {
+    if (busy) return;
     if (!form.currentState!.validate()) return;
     if (pending == null &&
         (selected == null ||

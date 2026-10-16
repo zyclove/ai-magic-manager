@@ -30,6 +30,7 @@ class _PermissionObservationPanelState
   String? selectedPackage;
   Object? error;
   bool busy = false;
+  bool changeInFlight = false;
   int generation = 0;
 
   @override
@@ -165,25 +166,30 @@ class _PermissionObservationPanelState
 
   Future<void> change() async {
     final before = settings;
-    if (busy || before == null || !widget.canEdit) return;
-    final enabled = !before.enabled;
-    final reason = await _reason(enabled);
-    if (reason == null || !mounted) return;
-    final key = requestId();
-    setState(() {
-      busy = true;
-      error = null;
-      settings = null;
-      result = null;
-      inventory = null;
-    });
+    if (changeInFlight || busy || before == null || !widget.canEdit) return;
+    changeInFlight = true;
     try {
-      await widget.repository.update(before, enabled, reason, key);
-      if (mounted) await load();
-    } catch (failure) {
-      if (mounted) setState(() => error = failure);
+      final enabled = !before.enabled;
+      final reason = await _reason(enabled);
+      if (reason == null || !mounted) return;
+      final key = requestId();
+      setState(() {
+        busy = true;
+        error = null;
+        settings = null;
+        result = null;
+        inventory = null;
+      });
+      try {
+        await widget.repository.update(before, enabled, reason, key);
+        if (mounted) await load();
+      } catch (failure) {
+        if (mounted) setState(() => error = failure);
+      } finally {
+        if (mounted) setState(() => busy = false);
+      }
     } finally {
-      if (mounted) setState(() => busy = false);
+      changeInFlight = false;
     }
   }
 

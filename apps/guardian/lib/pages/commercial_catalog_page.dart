@@ -501,6 +501,7 @@ class _CatalogActionDialogState extends State<_CatalogActionDialog> {
   }
 
   Future<void> confirm() async {
+    if (saving) return;
     final text = reason.text.trim();
     if (text.length < 5 ||
         text.length > 500 ||
