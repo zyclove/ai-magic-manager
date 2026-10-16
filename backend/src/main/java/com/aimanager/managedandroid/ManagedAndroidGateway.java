@@ -14,6 +14,17 @@ public interface ManagedAndroidGateway {
 
   boolean available();
 
+  /** Provider profile reading only; does not certify a model/OS compatibility matrix. */
+  default boolean supportsExecutionProfiles() {
+    return false;
+  }
+
+  /** Empty only for a provider-confirmed missing device. Other failures must remain failures. */
+  default Optional<ManagedDeviceExecutionProfile> readExecutionProfile(
+      String enterpriseId, String deviceId) {
+    throw new ManagedAndroidUnavailableException();
+  }
+
   /** A transport contract only; does not certify authority or enable execution scheduling. */
   default boolean supportsCompletePolicyDocuments() {
     return false;

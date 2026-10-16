@@ -3,6 +3,7 @@ package com.aimanager.managedandroid.internal;
 import com.aimanager.managedandroid.ManagedAgentEvidence;
 import com.aimanager.managedandroid.ManagedAndroidGateway;
 import com.aimanager.managedandroid.ManagedApplicationReport;
+import com.aimanager.managedandroid.ManagedDeviceExecutionProfile;
 import com.aimanager.shared.AndroidRuntimePermissions;
 import com.aimanager.shared.SafetyCriticalPackages;
 import com.google.api.client.googleapis.json.GoogleJsonResponseException;
@@ -74,6 +75,18 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
   @Override
   public boolean supportsCompletePolicyDocuments() {
     return true;
+  }
+
+  @Override
+  public boolean supportsExecutionProfiles() {
+    return true;
+  }
+
+  @Override
+  public Optional<ManagedDeviceExecutionProfile> readExecutionProfile(
+      String enterpriseId, String deviceId) {
+    return Optional.ofNullable(
+        GoogleManagedDeviceProfileReader.read(client, deviceName(enterpriseId, deviceId)));
   }
 
   @Override
