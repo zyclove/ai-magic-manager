@@ -21,6 +21,16 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.transaction.support.TransactionTemplate;
 
 class ManagedDesiredPolicyReaderTest {
+  @ParameterizedTest
+  @ValueSource(doubles = {1.0, 1.5})
+  void fractionalSchemaVersionIsNotVersionOne(double version) throws Exception {
+    store(List.of(rule("launch", PolicyRule.Kind.APP_LAUNCH, PolicyRule.Effect.ALLOW, null)));
+    mutate(n -> ((com.fasterxml.jackson.databind.node.ObjectNode) n).put("schemaVersion", version));
+    assertThatThrownBy(this::read)
+        .as("fractional schema versions must not be truncated")
+        .isInstanceOf(IllegalStateException.class);
+  }
+
   ManagedExecutionTestData data;
   ManagedExecutionTestData.Fixture f;
   ManagedExecutionPublicationReader reader;

@@ -1,0 +1,244 @@
+{
+  "stage": "Complete policy candidate transport and read-only reconciliation",
+  "date": "2026-10-16",
+  "baseCommit": "a74668c01ca4e6c893da7a37482eda12e925acd3",
+  "status": "TARGETED_CHECKS_PASSED_NOT_DEPLOYED",
+  "ownedSourceSha256": {
+    "backend/src/main/java/com/aimanager/managedandroid/ManagedAndroidGateway.java": "932b273314e99fc9493474f376b8d0bc8baf69966131923b78261d8e56a0ee39",
+    "backend/src/main/java/com/aimanager/managedandroid/ManagedPolicyWriteException.java": "52574cd1ac012315ba6a82d09172ec6617380b76e8c70253a39f297e2cb67206",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/GoogleManagedAndroidGateway.java": "ed3a2c97101fefd051a78454b6d9892c52911741313893a75d039d7f1881e29d",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/GoogleCompletePolicySupport.java": "86c2e893d080ad2200add700653090f17d57ee2ba5e6e5c92df7e167732809ea",
+    "backend/src/main/java/com/aimanager/policy/internal/ManagedExecutionPublicationReader.java": "80ab2187d6483a8aed6df58d7c718ffc21472a5881ffb7c317b2e55ba36cffd9",
+    "backend/src/test/java/com/aimanager/policy/internal/ManagedDesiredPolicyReaderTest.java": "a787d6bab9e1a6cc864ee83b1b048f63a8a8af9e84d6a2495e2ef8bda5cfd608",
+    "backend/src/test/java/com/aimanager/managedandroid/internal/GoogleCompletePolicyTransportTest.java": "271e5464e49a43374f12e7bffe56b913d3f0633ad24321f2f0de18a23e47dc28"
+  },
+  "attempts": {
+    "red": {
+      "result": {
+        "status": "VERIFICATION_FAILED",
+        "phase": "red",
+        "baseCommit": "a74668c01ca4e6c893da7a37482eda12e925acd3",
+        "scope": "Frozen backend plus complete transport contract and fractional schema regression; excludes shared WIP",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=GoogleCompletePolicyTransportTest#writesCompleteDocumentAndConfirmsBothControlsAndPermissions,ManagedDesiredPolicyReaderTest#fractionalSchemaVersionIsNotVersionOne",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "ownedPid": 53996,
+        "mavenExitCode": 1,
+        "suites": {
+          "com.aimanager.managedandroid.internal.GoogleCompletePolicyTransportTest": {
+            "counts": {
+              "tests": 1,
+              "failures": 1,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "b4a558e00d896e01e55c4c8864afab69441575a8a34870f351ff80ece6bbd5cc"
+          },
+          "com.aimanager.policy.internal.ManagedDesiredPolicyReaderTest": {
+            "counts": {
+              "tests": 1,
+              "failures": 1,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "29e497d447522f569045ea539d28c6645c81e7cd77d823e0e78c330297ec5255"
+          }
+        },
+        "totals": {
+          "tests": 2,
+          "failures": 2,
+          "errors": 0,
+          "skipped": 0
+        },
+        "reason": "AssertionError: ",
+        "seconds": 42.0,
+        "sourceUnchanged": true,
+        "runnerSha256": "9168695988fb9248f5e668e989c506d958c7d91d1f01e2aefb3a5a6ca9f69d86"
+      },
+      "sourceManifestSha256": "bee0e27e973aa98275316476a1f597ea01c743dd766a1cbcc037f90db3ddf03c",
+      "resultSha256": "fdd97f61b20e415734e5c4639e609e2efd60a5768426b31085a762d018959b0c",
+      "logSha256": "30dc91f72447ea43f163dc481cec3683b5866ecfce58207920fefa398fa14b4c",
+      "sourcePins": 462,
+      "independentAssertionAudit": {
+        "status": "EXPECTED_FAILURES_CONFIRMED_HARNESS_LABEL_MISMATCH",
+        "originalResultSha256": "fdd97f61b20e415734e5c4639e609e2efd60a5768426b31085a762d018959b0c",
+        "mavenExitCode": 1,
+        "runnerExitCode": 1,
+        "failures": {
+          "writesCompleteDocumentAndConfirmsBothControlsAndPermissions": "[complete document transport must confirm applications and permissions] \nExpecting actual not to be null",
+          "fractionalSchemaVersionIsNotVersionOne": "\nExpecting code to raise a throwable."
+        },
+        "sourcePins": 462,
+        "sourceUnchanged": true,
+        "explanation": "AssertJ assertThatThrownBy fails immediately when no exception is raised, before the chained as(description). Both intended assertion failures were independently confirmed; original runner/result preserved."
+      },
+      "auditSha256": "da0a420a0499dbd684fefed6f2de2fc5d28c78e451ee5127796a8350d2fabeab",
+      "runnerExitCode": 1
+    },
+    "green": {
+      "result": {
+        "status": "PASSED",
+        "phase": "green",
+        "baseCommit": "a74668c01ca4e6c893da7a37482eda12e925acd3",
+        "scope": "Frozen backend plus complete document transport and strict fractional input checks; excludes shared WIP",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=GoogleCompletePolicyTransportTest,ManagedDesiredPolicyReaderTest,PublishedGooglePolicyDocumentTest,GoogleCompletePolicyCompilerTest,ManagedPolicyExecutionJournalTest,ManagedExecutionPublicationReaderTest,ErasureManagedBindingProcessorTest,PolicyJourneyTest,GoogleManagedApplicationPolicyContentTest,GoogleManagedPolicyReceiptTest,GoogleRuntimePermissionContractTest,ManagedAndroidConfigurationTest,ModuleBoundariesTest",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "ownedPid": 82776,
+        "mavenExitCode": 0,
+        "suites": {
+          "com.aimanager.managedandroid.GoogleManagedApplicationPolicyContentTest": {
+            "counts": {
+              "tests": 65,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "19c6a3b8c192e9748183832a0a29894dfa8c8a24062b348185ed3d22661d795a"
+          },
+          "com.aimanager.managedandroid.GoogleManagedPolicyReceiptTest": {
+            "counts": {
+              "tests": 20,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "ef301067383846ef6e7d79a17dd65cb6b2f922ed6943208e78aef6357c38d609"
+          },
+          "com.aimanager.managedandroid.GoogleRuntimePermissionContractTest": {
+            "counts": {
+              "tests": 24,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "b2c5548690e566bc75293196f3162c4777a384bbd985d87eaed58bb32a9cf1a0"
+          },
+          "com.aimanager.managedandroid.internal.GoogleCompletePolicyCompilerTest": {
+            "counts": {
+              "tests": 53,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "99838e2f2c5df66208cc7b153cddfcb5b51fccbecc665db4155bb14e649f43f8"
+          },
+          "com.aimanager.managedandroid.internal.GoogleCompletePolicyTransportTest": {
+            "counts": {
+              "tests": 63,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "574341b89722b8695bf88c7a02f3b13f22c123dee2d0696f028f228029a0ca55"
+          },
+          "com.aimanager.managedandroid.internal.ManagedAndroidConfigurationTest": {
+            "counts": {
+              "tests": 2,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "8036de6015f374becbd2a17706f48b9192a5c6c9d554494dd7506355715dbb14"
+          },
+          "com.aimanager.managedandroid.internal.ManagedPolicyExecutionJournalTest": {
+            "counts": {
+              "tests": 40,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "be86f16fbb0397f02532b32b42140b3d629e103d78ea528233be1f405f69c821"
+          },
+          "com.aimanager.managedandroid.internal.PublishedGooglePolicyDocumentTest": {
+            "counts": {
+              "tests": 1,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "1c80ad5f91105ea35c1d83a903cbfc4126e6f26c03e9384826ecfc6d8a7eff0b"
+          },
+          "com.aimanager.ModuleBoundariesTest": {
+            "counts": {
+              "tests": 1,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "1d4dac64679cb427473969cda487d756dfb74f81f6224b84a89170b90f44003b"
+          },
+          "com.aimanager.policy.internal.ManagedDesiredPolicyReaderTest": {
+            "counts": {
+              "tests": 59,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "b947ac634b9592de1674e70a6175beac9d144a6eacb815d07ba2c6726bdeb4b3"
+          },
+          "com.aimanager.policy.internal.ManagedExecutionPublicationReaderTest": {
+            "counts": {
+              "tests": 13,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "01a567913d32784dd520dd36b30e637c9f090684ba9df557d1197acf4042feb5"
+          },
+          "com.aimanager.PolicyJourneyTest": {
+            "counts": {
+              "tests": 28,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "ce1414a39eda7ea5148ff0ff1d17db661731900f9446368b45e264b076a48959"
+          },
+          "com.aimanager.retention.internal.ErasureManagedBindingProcessorTest": {
+            "counts": {
+              "tests": 33,
+              "failures": 0,
+              "errors": 0,
+              "skipped": 0
+            },
+            "sha256": "59695169d9835224c6e68d84713f585ecdec8f08fce5179b272e94801745b552"
+          }
+        },
+        "totals": {
+          "tests": 402,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "seconds": 116.2,
+        "sourceUnchanged": true,
+        "runnerSha256": "e66b58d73f178774ef12d066a1a2dd2aa250d4967284368ee78fe3982f6bfd07"
+      },
+      "sourceManifestSha256": "42c945bd2474e79ef21cf73a79d3c7947dd93bfd82abe76d27062a72df06ec8b",
+      "resultSha256": "4d483e9919d55c1e61b2cc87e44669102b1f602a36867736b5a2f8dcd5929e5a",
+      "logSha256": "27ea0dca07b3740af00177b3f52c9eedb3172454b9e86d8ebc8b5e3eb8f4730c",
+      "sourcePins": 464,
+      "runnerExitCode": 0
+    }
+  },
+  "limitations": [
+    "Official Google SDK against loopback HTTP fixtures only; no real enterprise, device, credentials or external policy write.",
+    "GET 404 followed by PATCH is not atomic create-only and does not prove exclusive resource ownership.",
+    "Content matching is an observation, not write attribution, assignment authorization or device execution. Journal recovery remains NEEDS_REVIEW.",
+    "Production ENFORCE gate and mainland China provider restrictions remain closed; no scheduler or automatic assignment added.",
+    "Frozen committed backend plus seven owned Java files only; shared in-progress files excluded.",
+    "No Android, MySQL/OceanBase deployment, high-concurrency or live provider compatibility validation in this stage.",
+    "RED runner exited 1 due to an AssertJ message-label expectation in the harness; preserved XML independently confirms both intended assertion failures with no errors or skipped tests."
+  ]
+}

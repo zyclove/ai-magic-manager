@@ -65,6 +65,25 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
   }
 
   @Override
+  public PolicyReceipt writePolicyCandidate(
+      String enterpriseId, String policyId, PolicyDocument document) {
+    return new GoogleCompletePolicySupport(client, protectedPackages)
+        .write(policyName(enterpriseId, policyId), document);
+  }
+
+  @Override
+  public boolean supportsCompletePolicyDocuments() {
+    return true;
+  }
+
+  @Override
+  public CompletePolicyInspection inspectCompletePolicy(
+      String enterpriseId, String policyId, PolicyDocument expected, Long expectedVersion) {
+    return new GoogleCompletePolicySupport(client, protectedPackages)
+        .inspect(policyName(enterpriseId, policyId), expected, expectedVersion);
+  }
+
+  @Override
   public PolicyReceipt putApplicationPolicy(
       String enterpriseId, String policyId, List<AppRestriction> rules) {
     String name = policyName(enterpriseId, policyId);
@@ -127,10 +146,14 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
 
   @Override
   public PolicyReceipt putRuntimePermissionDecisions(
-      String enterpriseId, String policyId, String packageName,
+      String enterpriseId,
+      String policyId,
+      String packageName,
       List<RuntimePermissionDecision> decisions) {
     String name = policyName(enterpriseId, policyId);
-    if (packageName == null || packageName.length() > 255 || !PACKAGE.matcher(packageName).matches())
+    if (packageName == null
+        || packageName.length() > 255
+        || !PACKAGE.matcher(packageName).matches())
       throw new IllegalArgumentException("Invalid application package");
     Objects.requireNonNull(decisions, "decisions");
     if (decisions.size() > 64) throw new IllegalArgumentException("Too many permission decisions");
@@ -157,24 +180,36 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
             .toList();
     try {
       Policy existing = client.enterprises().policies().get(name).execute();
-      if (existing == null || !name.equals(existing.getName())
+      if (existing == null
+          || !name.equals(existing.getName())
           || !"BLACKLIST".equals(existing.getPlayStoreMode())
           || Boolean.TRUE.equals(existing.getInstallAppsDisabled())
           || existing.getApplications() == null
-          || existing.getApplications().stream().filter(app -> packageName.equals(app.getPackageName()))
-              .count() != 1) {
+          || existing.getApplications().stream()
+                  .filter(app -> packageName.equals(app.getPackageName()))
+                  .count()
+              != 1) {
         LOG.warn("Android management runtime permission preflight rejected: unsafe policy or app");
         throw new IllegalStateException(
             "Managed application must already exist in an owned policy");
       }
-      var change = new ApplicationPolicyChange()
-          .setApplication(new ApplicationPolicy().setPackageName(packageName).setPermissionGrants(grants))
-          .setUpdateMask("permissionGrants");
-      var response = client.enterprises().policies().modifyPolicyApplications(name,
-          new ModifyPolicyApplicationsRequest().setChanges(List.of(change))).execute();
+      var change =
+          new ApplicationPolicyChange()
+              .setApplication(
+                  new ApplicationPolicy().setPackageName(packageName).setPermissionGrants(grants))
+              .setUpdateMask("permissionGrants");
+      var response =
+          client
+              .enterprises()
+              .policies()
+              .modifyPolicyApplications(
+                  name, new ModifyPolicyApplicationsRequest().setChanges(List.of(change)))
+              .execute();
       Policy updated = response == null ? null : response.getPolicy();
-      if (updated == null || !name.equals(updated.getName())
-          || updated.getVersion() == null || updated.getVersion() < 1
+      if (updated == null
+          || !name.equals(updated.getName())
+          || updated.getVersion() == null
+          || updated.getVersion() < 1
           || !permissionDecisionsMatch(updated, packageName, grants))
         throw new IllegalStateException(
             "Android management permission policy response is incomplete or mismatched");
@@ -194,13 +229,16 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
    * The provider returns the updated policy. Its resource/version alone cannot confirm which
    * application's decisions were written. Ignore ordering, but reject missing, extra or duplicate
    * decisions and duplicate target apps. Omitted grants represent an empty repeated field only.
-   * This confirms provider state, never device execution; mismatches must not trigger a write retry.
+   * This confirms provider state, never device execution; mismatches must not trigger a write
+   * retry.
    */
   private static boolean permissionDecisionsMatch(
       Policy policy, String packageName, List<PermissionGrant> expected) {
     if (policy.getApplications() == null) return false;
-    var targets = policy.getApplications().stream()
-        .filter(app -> app != null && packageName.equals(app.getPackageName())).toList();
+    var targets =
+        policy.getApplications().stream()
+            .filter(app -> app != null && packageName.equals(app.getPackageName()))
+            .toList();
     if (targets.size() != 1) return false;
     var actual = targets.get(0).getPermissionGrants();
     if (actual == null) return expected.isEmpty();
@@ -208,7 +246,8 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
     var remaining = new HashMap<String, String>();
     expected.forEach(grant -> remaining.put(grant.getPermission(), grant.getPolicy()));
     for (var grant : actual) {
-      if (grant == null || grant.getPolicy() == null
+      if (grant == null
+          || grant.getPolicy() == null
           || !grant.getPolicy().equals(remaining.remove(grant.getPermission()))) return false;
     }
     return remaining.isEmpty();
@@ -290,7 +329,8 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
   @Override
   public void deleteEnrollmentToken(String enterpriseId, String tokenName) {
     String prefix = enterpriseName(enterpriseId) + "/enrollmentTokens/";
-    if (tokenName == null || !tokenName.startsWith(prefix)
+    if (tokenName == null
+        || !tokenName.startsWith(prefix)
         || !RESOURCE_ID.matcher(tokenName.substring(prefix.length())).matches()) {
       throw new IllegalArgumentException("Invalid provider enrollment token resource");
     }
@@ -327,7 +367,9 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
   public Optional<ManagedAgentEvidence> readAgentEvidence(
       String enterpriseId, String deviceId, String packageName) {
     String name = deviceName(enterpriseId, deviceId);
-    if (packageName == null || packageName.length() > 255 || !PACKAGE.matcher(packageName).matches()) {
+    if (packageName == null
+        || packageName.length() > 255
+        || !PACKAGE.matcher(packageName).matches()) {
       throw new IllegalArgumentException("Invalid managed application package");
     }
     try {
@@ -340,20 +382,28 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
   }
 
   @Override
-  public boolean supportsAgentBindingEvidence() { return true; }
+  public boolean supportsAgentBindingEvidence() {
+    return true;
+  }
 
   @Override
-  public boolean supportsApplicationReports() { return true; }
+  public boolean supportsApplicationReports() {
+    return true;
+  }
 
   @Override
-  public String applicationReportRevision() { return "google-application-report-v1"; }
+  public String applicationReportRevision() {
+    return "google-application-report-v1";
+  }
 
   /** 读取普通应用事实，不要求其集成绑定反馈；此结果不代表应用身份或执行授权。 */
   @Override
   public Optional<ManagedApplicationReport> readApplicationReport(
       String enterpriseId, String deviceId, String packageName) {
     String name = deviceName(enterpriseId, deviceId);
-    if (packageName == null || packageName.length() > 255 || !PACKAGE.matcher(packageName).matches()) {
+    if (packageName == null
+        || packageName.length() > 255
+        || !PACKAGE.matcher(packageName).matches()) {
       throw new IllegalArgumentException("Invalid managed application package");
     }
     try {
@@ -365,9 +415,14 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
                   + "applicationReports(packageName,state,signingKeyCerts(signingKeyCertFingerprintSha256))");
       var target = GoogleApplicationReportReader.findApplication(device, packageName);
       if (target == null) return Optional.empty();
-      return Optional.of(new ManagedApplicationReport(name, device.getManagementMode(), packageName,
-          target.getState(), GoogleApplicationReportReader.certificates(target),
-          device.getLastStatusReportTime()));
+      return Optional.of(
+          new ManagedApplicationReport(
+              name,
+              device.getManagementMode(),
+              packageName,
+              target.getState(),
+              GoogleApplicationReportReader.certificates(target),
+              device.getLastStatusReportTime()));
     } catch (IOException error) {
       throw providerFailure("application report read", error);
     } catch (RuntimeException malformed) {
@@ -413,15 +468,16 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
       }
       String requested = result.getPolicyName();
       String applied = result.getAppliedPolicyName();
-      boolean hasNonCompliance = result.getNonComplianceDetails() != null
-          && !result.getNonComplianceDetails().isEmpty();
+      boolean hasNonCompliance =
+          result.getNonComplianceDetails() != null && !result.getNonComplianceDetails().isEmpty();
       ApplyState state =
           !expectedPolicy.equals(requested)
                   || !expectedPolicy.equals(applied)
                   || !("DEVICE_OWNER".equals(result.getManagementMode())
                       || "PROFILE_OWNER".equals(result.getManagementMode()))
                   || result.getAppliedPolicyVersion() == null
-                  // A newer mutable policy can contain different rules; it cannot prove this version.
+                  // A newer mutable policy can contain different rules; it cannot prove this
+                  // version.
                   || result.getAppliedPolicyVersion() != expectedVersion
               ? ApplyState.PENDING
               : Boolean.FALSE.equals(result.getPolicyCompliant()) || hasNonCompliance
@@ -471,8 +527,7 @@ public final class GoogleManagedAndroidGateway implements ManagedAndroidGateway 
   private static IllegalStateException providerFailure(String operation, IOException error) {
     // Google error bodies may contain enrollment secrets or tenant identifiers; never propagate
     // them.
-    int status =
-        error instanceof HttpResponseException response ? response.getStatusCode() : 0;
+    int status = error instanceof HttpResponseException response ? response.getStatusCode() : 0;
     LOG.warn(
         "Android management operation failed: operation={}, status={}, errorType={}",
         operation,
