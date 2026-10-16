@@ -27,9 +27,11 @@
 
 以下为待实施的接入约束，依据 `b8b00e1` 对应代码及当前工作区只读核对。它们不表示已新增接口、数据表或执行能力。
 
+阶段进展（2026-10-16）：现有编译入口采信共享目录 `INSTALLED_VERIFIED` 的问题已复现并修正，16 项定向检查通过；详见[目标应用身份校验记录](policy-target-identity-verification.md)。该入口现在等待逐设备证据，不再因目录声明显示应用规则可执行。下文正向证据、持久执行及真实提供方接入仍待完成。
+
 ### 先修正证据作用域，再开放执行
 
-`PolicyService.snapshot` 当前为所有目标复用同一份应用目录；`RuleCompiler.compile` 从 `ApplicationDefinition.evidenceStatus` 判断应用是否已验证。目录定义是租户内声明，不能因为一台设备核验通过，就把目录记录改为 `INSTALLED_VERIFIED`。这会让其他设备继承不属于自己的安装事实。
+`PolicyService.snapshot` 当前为所有目标复用同一份应用目录。修正前，`RuleCompiler.compile` 从 `ApplicationDefinition.evidenceStatus` 判断应用是否已验证；当前入口已拒绝采信该共用目录状态，仍待逐目标证据接入。目录定义是租户内声明，不能因为一台设备核验通过，就把目录记录改为 `INSTALLED_VERIFIED`，否则其他设备会继承不属于自己的安装事实。
 
 | 数据 | 拥有者及用途 | 不得推导的结论 |
 | --- | --- | --- |

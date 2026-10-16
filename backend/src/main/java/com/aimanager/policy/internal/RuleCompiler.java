@@ -120,9 +120,10 @@ class RuleCompiler {
             if (first.kind() == SPECIAL_ACCESS && predicted == GRANT) {
                 status = "UNSUPPORTED"; reason = "SYSTEM_USER_ACTION_REQUIRED";
             }
-            // Capability alone does not prove a declared package/profile/signing identity matches installed software.
-            if ("SUPPORTED_PENDING".equals(status) && first.applicationId() != null
-                && !"INSTALLED_VERIFIED".equals(apps.get(first.applicationId()).evidenceStatus())) {
+            // This entry point receives a tenant catalog, not evidence bound to the target's
+            // current registration. A catalog status must never certify another device.
+            // Keep application rules unverified until target-scoped evidence is integrated.
+            if ("SUPPORTED_PENDING".equals(status) && first.applicationId() != null) {
                 status = "UNVERIFIED"; reason = "APPLICATION_IDENTITY_NOT_VERIFIED";
             }
             if (target.device().state() != Device.State.ACTIVE) { status = "UNAVAILABLE"; reason = "DEVICE_NOT_ACTIVE"; }

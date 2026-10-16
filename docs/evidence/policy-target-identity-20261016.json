@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-16",
+  "status": "TARGETED_AND_POLICY_JOURNEY_PASSED",
+  "isolatedBaseCommit": "e5044c9509eb2ba47e6fcfafdbd9327cab242ab9",
+  "workingHeadBeforeCommit": "3d1680d60cd3d1077e7f360877f1214be01a9ff6",
+  "scope": "Reject shared catalog installation claims in the existing policy compiler entry point; target-scoped positive evidence and system execution are not implemented by this patch",
+  "sourceSha256": {
+    "backend/src/main/java/com/aimanager/policy/internal/RuleCompiler.java": "baebd00592eec143bb5ed5961e1f6ede1f17d6f1d6016af28fc21d2308ecac80",
+    "backend/src/test/java/com/aimanager/policy/internal/TargetApplicationEvidenceTest.java": "e1fdda933d6b452459d777125b76534d3991e6eacb5d13da41721465e54537ea",
+    "backend/src/test/java/com/aimanager/policy/internal/RuleCompilerCapabilityBoundaryTest.java": "25250d75dfbf94ff8e37b66eb5f87c109dc24333642423e9fca1e1100bc6c71f"
+  },
+  "runs": {
+    "red": {
+      "result": {
+        "status": "EXPECTED_BEHAVIOR_FAILURE_REPRODUCED",
+        "baseCommit": "e5044c9509eb2ba47e6fcfafdbd9327cab242ab9",
+        "scope": "Pure RuleCompiler target identity regressions; no Spring context or external services",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=TargetApplicationEvidenceTest",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "externalServices": false,
+        "realDevice": false,
+        "ownedProcessId": 33844,
+        "mavenExitCode": 1,
+        "counts": {
+          "tests": 4,
+          "failures": 2,
+          "errors": 0,
+          "skipped": 0
+        },
+        "failedCases": [
+          "catalogVerificationCannotCertifyDifferentDevices",
+          "catalogVerificationCannotSurviveDeviceReregistration"
+        ],
+        "surefireXmlSha256": "9088c90a59aee38c287c73407a6be25d3c3f76d2d221238f8e4fc2b8c5b14952",
+        "seconds": 26.8,
+        "sourceUnchanged": true,
+        "runnerSha256": "8801212f0e7e1e867191b24362573271307770cc4877508b65329d3f3209aafd"
+      },
+      "resultSha256": "55b4614c80add9eb0e3a5a1d6c66312a7a72c98a8c94b51e3f4cb748960bac70",
+      "logSha256": "fbc34d44fb38eb03e8ec88ff5b23f11a6c999f286b9f34e7fd4655738e61976c",
+      "sourceManifestSha256": "fb1be72c9b4dbb851d46cb909fd9ceb6574868c99bb28cc64ad7a984a1ee1d9d"
+    },
+    "green": {
+      "result": {
+        "status": "PASSED",
+        "baseCommit": "e5044c9509eb2ba47e6fcfafdbd9327cab242ab9",
+        "scope": "Four target identity regressions, two capability preservation cases and ten HTTP DTO validations; no Spring context",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=TargetApplicationEvidenceTest,PolicyPreviewValidationTest,RuleCompilerCapabilityBoundaryTest",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "externalServices": false,
+        "realDevice": false,
+        "ownedProcessId": 15100,
+        "mavenExitCode": 0,
+        "suites": {
+          "TargetApplicationEvidenceTest": {
+            "tests": 4,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "xmlSha256": "2c9a7990d855f5266ae35f174c7a5d4d1505ae7e0e2c1b326559fdcd822aa70a"
+          },
+          "PolicyPreviewValidationTest": {
+            "tests": 10,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "xmlSha256": "fc801762b74ed46d773a35238e7a8b9a4ee914a19653f1aa460c643a2cfc4349"
+          },
+          "RuleCompilerCapabilityBoundaryTest": {
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "xmlSha256": "344a420b68b0b3f0fdaad663e4767788b44867938c6e88a4a276630134d38c92"
+          }
+        },
+        "seconds": 56.3,
+        "sourceUnchanged": true,
+        "runnerSha256": "b42e65a624c5d0588ef98d5b38f9d2892cbcba79e5a43249faf76a8e60126358"
+      },
+      "resultSha256": "6995d4bf2eba4c860a08d3ab0539762fb21969a294afa7bb49ecc3f361102db6",
+      "logSha256": "ca2c5ca9f6c8fb52ba4614dc62bc9f01a9205d7858a0faa6d02e8e7050a7d3c3",
+      "sourceManifestSha256": "68d131ee18b6ced54bcec750f019cba66069216f05f05e38315010eba6abd90d"
+    },
+    "policyJourney": {
+      "result": {
+        "status": "PASSED",
+        "baseCommit": "e5044c9509eb2ba47e6fcfafdbd9327cab242ab9",
+        "scope": "Existing PolicyJourneyTest: in-process Spring/MockMvc with private H2; no live service or device",
+        "command": [
+          "D:/systems/software/maven/bin/mvn.cmd",
+          "-o",
+          "-Dmaven.repo.local=D:/systems/repos",
+          "-Dtest=PolicyJourneyTest",
+          "-DfailIfNoTests=true",
+          "test"
+        ],
+        "externalServices": false,
+        "realDevice": false,
+        "springContext": true,
+        "database": "private in-memory H2",
+        "ownedProcessId": 2084,
+        "mavenExitCode": 0,
+        "suites": {
+          "PolicyJourneyTest": {
+            "tests": 28,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0,
+            "xmlSha256": "fe783853ef87914be110001a718078585cca62d8b15a8eaf07cce36edbf899a7"
+          }
+        },
+        "seconds": 64.7,
+        "sourceUnchanged": true,
+        "runnerSha256": "a79280fa87569d3c6461a2f739df29f84b4e807b9250cad05648618b5fe712f6"
+      },
+      "resultSha256": "dd9d06577871d46656fe7bb5ca4f67e68f7c494fa5d5043596a28c2164f2df25",
+      "logSha256": "ce44827f0c5eb35982ceb21b4ce6f17d78b53e12e7a55d002b6c20b6996389f2",
+      "sourceManifestSha256": "7678482e5826e316def7845dc58087315db9cb386739ee2a000e0462a1092368"
+    }
+  },
+  "notVerified": [
+    "Complete backend suite after this patch",
+    "Live deployment of this patch",
+    "Target-scoped positive provider evidence integration",
+    "Real EMM and native Android/TV execution"
+  ]
+}
