@@ -111,7 +111,10 @@ class ManagedExecutionResourceAuthorityTest {
 
   @Test
   void assignmentRequiresTheConfirmedExactVersion() {
-    assertThat(f.sql.journal.beforeWrite(f.f.claim)).isTrue();
+    assertThat(
+            f.sql.journal.beforeWrite(
+                f.sql.journal.writePreparationTarget(f.f.claim), f.f.claim.leaseUntil()))
+        .isTrue();
     var claim = f.f.claim;
     f.sql.journal.policyWritten(
         claim,

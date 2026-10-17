@@ -343,6 +343,7 @@ class ManagedPolicyExecutionJournalTest {
   void changedReturnedContextPreventsDispatch(String changed) {
     var task = enqueue();
     var lease = claim();
+    var leaseTarget = journal.writePreparationTarget(lease);
     var c = context;
     context =
         new ManagedAgentBindingStore.VerifiedBindingContext(
@@ -367,7 +368,7 @@ class ManagedPolicyExecutionJournalTest {
             changed.equals("trust") ? "d".repeat(64) : c.agentTrustRevision(),
             c.platform(),
             c.registeredAt());
-    assertThatThrownBy(() -> journal.beforeWrite(lease))
+    assertThatThrownBy(() -> journal.beforeWrite(leaseTarget, lease.leaseUntil()))
         .isInstanceOf(DomainException.class)
         .hasMessageContaining("EXECUTION_CONTEXT_CHANGED");
     assertThat(view(task).state()).isEqualTo(ManagedPolicyExecutionJournal.State.READY_TO_WRITE);
@@ -379,10 +380,10 @@ class ManagedPolicyExecutionJournalTest {
   void cancellationAfterAssignmentRejectsLateDeviceAndAssignmentEvidence(boolean accepted) {
     var task = enqueue();
     var write = claim();
-    journal.beforeWrite(write);
+    journal.beforeWrite(journal.writePreparationTarget(write), write.leaseUntil());
     journal.policyWritten(write, receipt(write));
     var assignment = claim();
-    journal.beforeWrite(assignment);
+    journal.beforeWrite(journal.writePreparationTarget(assignment), assignment.leaseUntil());
     ManagedPolicyExecutionJournal.Claim read;
     if (accepted) {
       journal.assignmentAccepted(
@@ -442,8 +443,9 @@ class ManagedPolicyExecutionJournalTest {
   void restartAfterWriteIntentCanOnlyReadAndLateSuccessCannotWin() {
     var task = enqueue();
     var original = claim();
-    assertThat(journal.beforeWrite(original)).isTrue();
-    assertThat(journal.beforeWrite(original)).isFalse();
+    var originalTarget = journal.writePreparationTarget(original);
+    assertThat(journal.beforeWrite(originalTarget, original.leaseUntil())).isTrue();
+    assertThat(journal.beforeWrite(originalTarget, original.leaseUntil())).isFalse();
     expire(original);
     var replacement = claim();
     assertThat(replacement.action()).isEqualTo(ManagedPolicyExecutionJournal.Action.READ_POLICY);
@@ -591,7 +593,8 @@ class ManagedPolicyExecutionJournalTest {
   void writeClaimCannotSubmitCompleteObservation() {
     var task = enqueue();
     var write = claim();
-    assertThat(journal.beforeWrite(write)).isTrue();
+    assertThat(journal.beforeWrite(journal.writePreparationTarget(write), write.leaseUntil()))
+        .isTrue();
     var before = view(task);
     long events = count("managed_policy_execution_events");
     assertThat(
@@ -669,7 +672,8 @@ class ManagedPolicyExecutionJournalTest {
 
   private ManagedPolicyExecutionJournal.Claim uncertainPolicyRead() {
     var write = claim();
-    assertThat(journal.beforeWrite(write)).isTrue();
+    assertThat(journal.beforeWrite(journal.writePreparationTarget(write), write.leaseUntil()))
+        .isTrue();
     expire(write);
     var read = claim();
     assertThat(read.action()).isEqualTo(ManagedPolicyExecutionJournal.Action.READ_POLICY);
@@ -787,7 +791,8 @@ class ManagedPolicyExecutionJournalTest {
               "com.aimanager.child",
               30,
               "DEVICE_OWNER");
-      assertThat(journal.beforeWrite(write)).isTrue();
+      assertThat(journal.beforeWrite(journal.writePreparationTarget(write), write.leaseUntil()))
+          .isTrue();
       assertThatThrownBy(
               () -> gateway.writePolicyCandidate(write.enterpriseId(), write.policyId(), document))
           .isInstanceOfSatisfying(
@@ -832,11 +837,13 @@ class ManagedPolicyExecutionJournalTest {
   void crashBeforeDispatchCanBeClaimedWithoutInventingAnExternalWrite() {
     enqueue();
     var old = claim();
+    var oldTarget = journal.writePreparationTarget(old);
     expire(old);
     var current = claim();
     assertThat(current.action()).isEqualTo(ManagedPolicyExecutionJournal.Action.WRITE_POLICY);
-    assertThat(journal.beforeWrite(old)).isFalse();
-    assertThat(journal.beforeWrite(current)).isTrue();
+    assertThat(journal.beforeWrite(oldTarget, old.leaseUntil())).isFalse();
+    assertThat(journal.beforeWrite(journal.writePreparationTarget(current), current.leaseUntil()))
+        .isTrue();
   }
 
   @Test
@@ -844,12 +851,14 @@ class ManagedPolicyExecutionJournalTest {
     var task = enqueue();
     var write = claim();
     assertThat(journal.policyWritten(write, receipt(write))).isFalse();
-    assertThat(journal.beforeWrite(write)).isTrue();
+    assertThat(journal.beforeWrite(journal.writePreparationTarget(write), write.leaseUntil()))
+        .isTrue();
     assertThat(journal.policyWritten(write, receipt(write))).isTrue();
     assertThat(view(task).state()).isEqualTo(ManagedPolicyExecutionJournal.State.READY_TO_ASSIGN);
     var assign = claim();
     assertThat(assign.action()).isEqualTo(ManagedPolicyExecutionJournal.Action.ASSIGN_POLICY);
-    assertThat(journal.beforeWrite(assign)).isTrue();
+    assertThat(journal.beforeWrite(journal.writePreparationTarget(assign), assign.leaseUntil()))
+        .isTrue();
     assertThat(
             journal.assignmentAccepted(
                 assign,
@@ -921,10 +930,10 @@ class ManagedPolicyExecutionJournalTest {
   void uncertainAssignmentIsReadWithoutSendingAgain() {
     var task = enqueue();
     var write = claim();
-    journal.beforeWrite(write);
+    journal.beforeWrite(journal.writePreparationTarget(write), write.leaseUntil());
     journal.policyWritten(write, receipt(write));
     var assign = claim();
-    journal.beforeWrite(assign);
+    journal.beforeWrite(journal.writePreparationTarget(assign), assign.leaseUntil());
     expire(assign);
     var poll = claim();
     assertThat(poll.action()).isEqualTo(ManagedPolicyExecutionJournal.Action.READ_DEVICE);
@@ -951,9 +960,10 @@ class ManagedPolicyExecutionJournalTest {
   void cancellationBeforeWritePreventsDispatchAndReleasesSlot() {
     var task = enqueue();
     var claim = claim();
+    var cancelTarget = journal.writePreparationTarget(claim);
     var cancelled = journal.cancel(f.tenant(), f.actor(), task.id(), view(task).revision());
     assertThat(cancelled.state()).isEqualTo(ManagedPolicyExecutionJournal.State.CANCELLED);
-    assertThat(journal.beforeWrite(claim)).isFalse();
+    assertThat(journal.beforeWrite(cancelTarget, claim.leaseUntil())).isFalse();
     assertThat(journal.cancel(f.tenant(), f.actor(), task.id(), view(task).revision()))
         .isEqualTo(cancelled);
     var other = data.publication(f, "ENFORCE");
@@ -969,7 +979,7 @@ class ManagedPolicyExecutionJournalTest {
   void cancellationAfterDispatchIsNotReportedAsRestoration() {
     var task = enqueue();
     var write = claim();
-    journal.beforeWrite(write);
+    journal.beforeWrite(journal.writePreparationTarget(write), write.leaseUntil());
     assertThat(journal.cancel(f.tenant(), f.actor(), task.id(), view(task).revision()).state())
         .isEqualTo(ManagedPolicyExecutionJournal.State.NEEDS_REVIEW);
     assertThat(journal.policyWritten(write, receipt(write))).isFalse();
@@ -985,9 +995,11 @@ class ManagedPolicyExecutionJournalTest {
   void changedAuthorityContextPreventsNetworkIntent() {
     var task = enqueue();
     var claim = claim();
+    var authorityTarget = journal.writePreparationTarget(claim);
     when(bindings.requireVerifiedContext(f.tenant(), f.actor(), f.binding(), 2))
         .thenThrow(DomainException.denied());
-    assertThatThrownBy(() -> journal.beforeWrite(claim)).isInstanceOf(DomainException.class);
+    assertThatThrownBy(() -> journal.beforeWrite(authorityTarget, claim.leaseUntil()))
+        .isInstanceOf(DomainException.class);
     assertThat(view(task).state()).isEqualTo(ManagedPolicyExecutionJournal.State.READY_TO_WRITE);
     assertThat(journal.failed(claim)).isTrue();
     assertThat(view(task).state()).isEqualTo(ManagedPolicyExecutionJournal.State.CANCELLED);
@@ -997,7 +1009,7 @@ class ManagedPolicyExecutionJournalTest {
   void retriesPreserveUnknownWriteAndUseBoundedBackoff() {
     var task = enqueue();
     var write = claim();
-    journal.beforeWrite(write);
+    journal.beforeWrite(journal.writePreparationTarget(write), write.leaseUntil());
     journal.failed(write);
     assertThat(view(task).state())
         .isEqualTo(ManagedPolicyExecutionJournal.State.POLICY_WRITE_UNKNOWN);
@@ -1026,7 +1038,7 @@ class ManagedPolicyExecutionJournalTest {
         journal.enqueue(
             f.tenant(), f.actor(), next.publication(), f.binding(), 2, DOCUMENT, deadline);
     var write = claim();
-    journal.beforeWrite(write);
+    journal.beforeWrite(journal.writePreparationTarget(write), write.leaseUntil());
     deadlinePassed(task.id());
     assertThat(journal.claimDue("LOCAL_TEST", 25)).isEmpty();
     assertThat(view(task).state()).isEqualTo(ManagedPolicyExecutionJournal.State.NEEDS_REVIEW);
@@ -1147,10 +1159,10 @@ class ManagedPolicyExecutionJournalTest {
 
   private ManagedPolicyExecutionJournal.Claim waiting() {
     var write = claim();
-    journal.beforeWrite(write);
+    journal.beforeWrite(journal.writePreparationTarget(write), write.leaseUntil());
     journal.policyWritten(write, receipt(write));
     var assign = claim();
-    journal.beforeWrite(assign);
+    journal.beforeWrite(journal.writePreparationTarget(assign), assign.leaseUntil());
     journal.assignmentAccepted(
         assign, new ManagedAndroidGateway.AssignmentReceipt(device(assign), policy(assign)));
     return claim();

@@ -378,6 +378,15 @@ class ManagedPolicyExecutionJournal {
    * transaction; the caller must obtain another target after those calls and compare the results.
    */
   WritePreparationTarget writePreparationTarget(Claim claim) {
+    return writeTarget(claim, false);
+  }
+
+  /** Revalidates authority after dispatch; UNKNOWN is not permission to dispatch a second time. */
+  WritePreparationTarget dispatchedTarget(Claim claim) {
+    return writeTarget(claim, true);
+  }
+
+  private WritePreparationTarget writeTarget(Claim claim, boolean dispatched) {
     workerBoundary();
     if (claim == null
         || (claim.action() != Action.WRITE_POLICY && claim.action() != Action.ASSIGN_POLICY))
@@ -401,7 +410,13 @@ class ManagedPolicyExecutionJournal {
               || !current.versionId().equals(publication.versionId()))
             throw conflict("EXECUTION_CONTEXT_CHANGED");
           State expected =
-              claim.action() == Action.WRITE_POLICY ? State.READY_TO_WRITE : State.READY_TO_ASSIGN;
+              dispatched
+                  ? (claim.action() == Action.WRITE_POLICY
+                      ? State.POLICY_WRITE_UNKNOWN
+                      : State.ASSIGNMENT_UNKNOWN)
+                  : (claim.action() == Action.WRITE_POLICY
+                      ? State.READY_TO_WRITE
+                      : State.READY_TO_ASSIGN);
           if (!owns(current, claim) || current.cancelled() || current.state() != expected)
             throw conflict("EXECUTION_PREPARATION_STALE");
           return new WritePreparationTarget(
@@ -410,12 +425,16 @@ class ManagedPolicyExecutionJournal {
   }
 
   /** Commit uncertainty BEFORE a network write. A claim alone never authorizes external I/O. */
-  boolean beforeWrite(Claim claim) {
+  boolean beforeWrite(WritePreparationTarget target, long evidenceDeadline) {
     workerBoundary();
+    if (target == null || target.claim() == null)
+      throw new IllegalArgumentException("Expected a complete write preparation target");
+    var claim = target.claim();
     if (claim.action() != Action.WRITE_POLICY && claim.action() != Action.ASSIGN_POLICY)
       throw new IllegalArgumentException("Expected a write claim");
     return tx.execute(
         status -> {
+          requireReadCommitted();
           // Authority locks precede the task lock, matching admission and cancellation lock order.
           var before = required(claim.tenantId(), claim.taskId(), false);
           var context =
@@ -436,6 +455,12 @@ class ManagedPolicyExecutionJournal {
           State expected =
               claim.action() == Action.WRITE_POLICY ? State.READY_TO_WRITE : State.READY_TO_ASSIGN;
           if (current.state() != expected) return false;
+          // Compare every prepared fact under authority/task locks. Database time matches leases
+          // across replicas; a longer caller deadline cannot extend the current lease.
+          var actual =
+              new WritePreparationTarget(
+                  claim(current), current.publication(), current.expiresAt(), context, publication);
+          if (!actual.equals(target) || now() >= evidenceDeadline) return false;
           State next =
               claim.action() == Action.WRITE_POLICY
                   ? State.POLICY_WRITE_UNKNOWN

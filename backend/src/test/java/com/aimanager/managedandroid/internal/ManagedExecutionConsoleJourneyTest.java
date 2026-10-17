@@ -320,7 +320,8 @@ class ManagedExecutionConsoleJourneyTest {
   @Test
   void eventsAreBoundedOrderedAndRedacted() throws Exception {
     var claim = claim();
-    assertThat(journal.beforeWrite(claim)).isTrue();
+    assertThat(journal.beforeWrite(journal.writePreparationTarget(claim), claim.leaseUntil()))
+        .isTrue();
     var first =
         body(
             mvc.perform(get(path() + "/events").param("limit", "1").with(actor(f.actor())))
@@ -433,7 +434,7 @@ class ManagedExecutionConsoleJourneyTest {
   @Test
   void unknownWriteCancellationRetainsReviewAndRejectsALateReceipt() throws Exception {
     var claim = claim();
-    journal.beforeWrite(claim);
+    journal.beforeWrite(journal.writePreparationTarget(claim), claim.leaseUntil());
     mvc.perform(post(path() + "/cancel").with(actor(f.actor())).header("If-Match", "\"3\""))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.state").value("NEEDS_REVIEW"))

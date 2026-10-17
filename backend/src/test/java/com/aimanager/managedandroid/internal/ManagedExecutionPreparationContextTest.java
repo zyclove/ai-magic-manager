@@ -178,7 +178,8 @@ class ManagedExecutionPreparationContextTest {
 
   @Test
   void uncertainWriteCannotBePreparedAsNewWrite() {
-    assertThat(f.journal.beforeWrite(claim)).isTrue();
+    assertThat(f.journal.beforeWrite(f.journal.writePreparationTarget(claim), claim.leaseUntil()))
+        .isTrue();
     assertThatThrownBy(() -> target(claim))
         .isInstanceOf(DomainException.class)
         .hasMessage("EXECUTION_PREPARATION_STALE");
@@ -186,7 +187,8 @@ class ManagedExecutionPreparationContextTest {
 
   @Test
   void assignmentUsesSameDurableCandidateAndConfirmedVersion() {
-    assertThat(f.journal.beforeWrite(claim)).isTrue();
+    assertThat(f.journal.beforeWrite(f.journal.writePreparationTarget(claim), claim.leaseUntil()))
+        .isTrue();
     f.journal.policyWritten(
         claim,
         new ManagedAndroidGateway.PolicyReceipt(

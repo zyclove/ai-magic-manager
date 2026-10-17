@@ -422,13 +422,15 @@ class ManagedExecutionRecoveryJobTest {
   ManagedPolicyExecutionJournal.View waiting() {
     var task = enqueue();
     var write = journal.claimDue("LOCAL_TEST", 1).get(0);
-    assertThat(journal.beforeWrite(write)).isTrue();
+    assertThat(journal.beforeWrite(journal.writePreparationTarget(write), write.leaseUntil()))
+        .isTrue();
     assertThat(
             journal.policyWritten(
                 write, new ManagedAndroidGateway.PolicyReceipt(policy(write.policyId()), 7L)))
         .isTrue();
     var assign = journal.claimDue("LOCAL_TEST", 1).get(0);
-    assertThat(journal.beforeWrite(assign)).isTrue();
+    assertThat(journal.beforeWrite(journal.writePreparationTarget(assign), assign.leaseUntil()))
+        .isTrue();
     assertThat(
             journal.assignmentAccepted(
                 assign,

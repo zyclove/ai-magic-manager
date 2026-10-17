@@ -1,0 +1,317 @@
+{
+  "status": "RED_VERIFIED_IMPLEMENTATION_PENDING_GREEN",
+  "baseCommit": "8faef4ee57bebe5b5bba0daaba6539afc919e231",
+  "red1": {
+    "compileExit": 0,
+    "testExit": 1,
+    "compileSeconds": 29.9,
+    "testSeconds": 14.0,
+    "totals": {
+      "tests": 59,
+      "failures": 59,
+      "errors": 0,
+      "skipped": 0
+    },
+    "missingBehavior": 23,
+    "fixtureFailures": 36,
+    "naturalTreeExit": true,
+    "compileResultSha256": "b9c9b179410cb7dbe57bcab17af75340a2536574f662d604622ad4c5643e3112",
+    "testResultSha256": "b4f6bfdec9024a4614db26d63d506a95f5ba72b0477edd764431f47842c1ef9e",
+    "xmlSha256": {
+      ".cache/execution-dispatch/red-r1/backend/target/surefire-reports/TEST-com.aimanager.managedandroid.internal.ManagedExecutionDispatchCheckpointTest.xml": "99eb6e25facba36c8708414b332041fa44650f51bd7e9916cfd9eb6f8bdda72c",
+      ".cache/execution-dispatch/red-r1/backend/target/surefire-reports/TEST-com.aimanager.managedandroid.internal.ManagedExecutionDispatchTest.xml": "f260e5e74019d9100e6f583b3252f1cf7c9b07262cabf2eab18db106f76b1256"
+    },
+    "cases": [
+      {
+        "name": "refusesSubstitutedPreparationFacts(String)[1]",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "refusesSubstitutedPreparationFacts(String)[2]",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "refusesSubstitutedPreparationFacts(String)[3]",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "refusesSubstitutedPreparationFacts(String)[4]",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "commitsUnknownAndReturnsSameAuthoritativeTarget",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "expiredEvidenceCannotCommit(long)[1]",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "expiredEvidenceCannotCommit(long)[2]",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "dispatchedTargetDoesNotAcceptCancellation",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "cancelledTaskCannotCommitPreviousPreparation",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "strictCheckpointRejectsOuterTransaction",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "dispatchedTargetDoesNotAcceptReadyState",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "reclaimedLeaseCannotCommitPreviousPreparation",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "currentPublicationMetadataIsRecheckedUnderCheckpointLocks",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "uncertainAssignmentIsNotAppliedOrRetried(String)[1]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "uncertainAssignmentIsNotAppliedOrRetried(String)[2]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "uncertainAssignmentIsNotAppliedOrRetried(String)[3]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "uncertainAssignmentIsNotAppliedOrRetried(String)[4]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "repeatsDoNotDispatchAgain(String)[1]",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "repeatsDoNotDispatchAgain(String)[2]",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "assignsOnlyAfterExactReadAndFreshPreparation",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "assignmentInspectionMustConfirmExactContentAndVersion(String)[1]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "assignmentInspectionMustConfirmExactContentAndVersion(String)[2]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "assignmentInspectionMustConfirmExactContentAndVersion(String)[3]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "assignmentInspectionMustConfirmExactContentAndVersion(String)[4]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "assignmentInspectionMustConfirmExactContentAndVersion(String)[5]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "assignmentInspectionMustConfirmExactContentAndVersion(String)[6]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "assignmentInspectionMustConfirmExactContentAndVersion(String)[7]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "changesDuringAssignmentInspectionPreventAssignment(String)[1]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "changesDuringAssignmentInspectionPreventAssignment(String)[2]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "changesDuringAssignmentInspectionPreventAssignment(String)[3]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "changesDuringAssignmentInspectionPreventAssignment(String)[4]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "changesDuringAssignmentInspectionPreventAssignment(String)[5]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "changesDuringAssignmentInspectionPreventAssignment(String)[6]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "changesDuringAssignmentInspectionPreventAssignment(String)[7]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "changesDuringWriteCannotAdvanceToAssignment(String)[1]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "changesDuringWriteCannotAdvanceToAssignment(String)[2]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "changesDuringWriteCannotAdvanceToAssignment(String)[3]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "changesDuringWriteCannotAdvanceToAssignment(String)[4]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "changesDuringWriteCannotAdvanceToAssignment(String)[5]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "changesDuringWriteCannotAdvanceToAssignment(String)[6]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "writeInspectionMustConfirmExactContentAndVersion(String)[1]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "writeInspectionMustConfirmExactContentAndVersion(String)[2]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "writeInspectionMustConfirmExactContentAndVersion(String)[3]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "writeInspectionMustConfirmExactContentAndVersion(String)[4]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "writeInspectionMustConfirmExactContentAndVersion(String)[5]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "writeInspectionMustConfirmExactContentAndVersion(String)[6]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "writeInspectionMustConfirmExactContentAndVersion(String)[7]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "writesThenInspectsExactVersionWithoutAssigning",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "rejectsOuterTransactionBeforeAnyGatewayCall",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "invalidPreflightNeverWrites(String)[1]",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "invalidPreflightNeverWrites(String)[2]",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "invalidPreflightNeverWrites(String)[3]",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "invalidPreflightNeverWrites(String)[4]",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "invalidPreflightNeverWrites(String)[5]",
+        "category": "MISSING_IMPLEMENTATION"
+      },
+      {
+        "name": "invalidWriteReceiptRemainsUnknownWithoutRetry(String)[1]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "invalidWriteReceiptRemainsUnknownWithoutRetry(String)[2]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "invalidWriteReceiptRemainsUnknownWithoutRetry(String)[3]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "invalidWriteReceiptRemainsUnknownWithoutRetry(String)[4]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      },
+      {
+        "name": "invalidWriteReceiptRemainsUnknownWithoutRetry(String)[5]",
+        "category": "RESTUBBING_EXECUTED_OLD_ANSWER"
+      }
+    ]
+  },
+  "snapshots": {
+    "red-r1": {
+      "manifestSha256": "ad211f9602b2e5e1f9958b1971a00446b4ed2d54c88c44b26fe8f53d6f0b15a8",
+      "sourceFiles": 503,
+      "ownedSourceSha256": {
+        "backend/src/main/java/com/aimanager/managedandroid/internal/ManagedPolicyExecutionJournal.java": "467425fb53f7db27d6a318c7cd0f914cb009896926bf34e9d1e9cbb2e8b0aa15",
+        "backend/src/main/java/com/aimanager/managedandroid/internal/ManagedExecutionDispatchService.java": "ffb668e44da5718003830f0fab75ad513b36fd30c179c83f18ea44c25ad663b8",
+        "backend/src/test/java/com/aimanager/managedandroid/internal/ManagedExecutionDispatchTest.java": "b0fd67ee8daa7579246d2e5ac3a48f01dd440c4a53b86f20f489db7dd37fcb6d",
+        "backend/src/test/java/com/aimanager/managedandroid/internal/ManagedExecutionDispatchCheckpointTest.java": "2bcd820835569bbe2732db154ab62bf3c09a12b7b602484b8e4e1e7ed803a5ba"
+      }
+    },
+    "red-r2": {
+      "manifestSha256": "76cc08de46c816573a6f476ff9bff69eee16500f095034c68fc0ec217404fe90",
+      "sourceFiles": 503,
+      "ownedSourceSha256": {
+        "backend/src/main/java/com/aimanager/managedandroid/internal/ManagedPolicyExecutionJournal.java": "467425fb53f7db27d6a318c7cd0f914cb009896926bf34e9d1e9cbb2e8b0aa15",
+        "backend/src/main/java/com/aimanager/managedandroid/internal/ManagedExecutionDispatchService.java": "ffb668e44da5718003830f0fab75ad513b36fd30c179c83f18ea44c25ad663b8",
+        "backend/src/test/java/com/aimanager/managedandroid/internal/ManagedExecutionDispatchTest.java": "49119d7c3a8063ba8ee125f2702245a2168486d00d6e660bb8f16e446aee0580",
+        "backend/src/test/java/com/aimanager/managedandroid/internal/ManagedExecutionDispatchCheckpointTest.java": "532b0338fddd8d47049630e064f5e93ffe6e967f9a9e533178e4f69c3c4b28f8"
+      }
+    }
+  },
+  "red2": {
+    "executed": true,
+    "plannedCases": 70,
+    "runnerSha256": "b0ab10ffdda93e72afbcd554cd48f184a6c8b9a5bb759e276f52752c4a80f9b0",
+    "totals": {
+      "tests": 70,
+      "failures": 70,
+      "errors": 0,
+      "skipped": 0
+    },
+    "stages": {
+      "compile": {
+        "nativeExitCode": 0,
+        "seconds": 34.4,
+        "sha256": "b52c41bca226232a3c399c46f4484dff428925d0d7ff4acc89163ee72865ad8b",
+        "naturalTreeExit": true
+      },
+      "test": {
+        "nativeExitCode": 1,
+        "seconds": 21.5,
+        "sha256": "c42b048066b3a2295cea70661899281b2c1d21e9f77ee80978afdf804e056bd9",
+        "naturalTreeExit": true
+      }
+    },
+    "sourceUnchanged": true
+  },
+  "limitations": [
+    "Implementation and test-call migration are not compiled or GREEN yet",
+    "No deployment, commit or push for this phase",
+    "No scheduler or public execution entry",
+    "No real provider/device acceptance"
+  ]
+}
