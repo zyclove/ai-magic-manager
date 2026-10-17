@@ -1,6 +1,7 @@
 package com.aimanager.managedandroid.internal;
 
 import com.aimanager.managedandroid.ManagedAndroidGateway;
+import com.aimanager.managedandroid.ManagedApplicationControlReport;
 import com.aimanager.managedandroid.ManagedApplicationReport;
 import java.time.Clock;
 import java.time.Instant;
@@ -31,23 +32,35 @@ class ManagedApplicationEvidenceService {
     var current = captured.context().binding();
     ManagedAndroidGateway.ManagedEnrollmentIdentity first = null, last = null;
     ManagedApplicationReport report = null;
+    ManagedApplicationControlReport controlReport = null;
     Instant retrievedAt = null;
     boolean failed = false;
     try {
       first = gateway.readEnrollmentIdentity(current.enterpriseId(), current.providerDeviceId());
-      report =
-          gateway
-              .readApplicationReport(
-                  current.enterpriseId(),
-                  current.providerDeviceId(),
-                  captured.context().application().packageName())
-              .orElse(null);
+      if (gateway.supportsApplicationControlReports()) {
+        controlReport =
+            gateway
+                .readApplicationControlReport(
+                    current.enterpriseId(),
+                    current.providerDeviceId(),
+                    captured.context().application().packageName())
+                .orElse(null);
+        report = controlReport == null ? null : controlReport.identity();
+      } else {
+        report =
+            gateway
+                .readApplicationReport(
+                    current.enterpriseId(),
+                    current.providerDeviceId(),
+                    captured.context().application().packageName())
+                .orElse(null);
+      }
       retrievedAt = Instant.ofEpochMilli(clock.millis());
       last = gateway.readEnrollmentIdentity(current.enterpriseId(), current.providerDeviceId());
     } catch (RuntimeException providerFailure) {
       // Provider exceptions may contain HTTP bodies or credentials. Persist only the fixed reason.
       failed = true;
     }
-    return store.finish(captured, first, last, report, retrievedAt, failed);
+    return store.finish(captured, first, last, report, controlReport, retrievedAt, failed);
   }
 }

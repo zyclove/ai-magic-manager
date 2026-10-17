@@ -4,8 +4,10 @@ import com.aimanager.audit.AuditService;
 import com.aimanager.catalog.ApplicationCatalog;
 import com.aimanager.catalog.ApplicationIdentity;
 import com.aimanager.managedandroid.ManagedAndroidGateway;
+import com.aimanager.managedandroid.ManagedApplicationControlReport;
 import com.aimanager.managedandroid.ManagedApplicationIdentityVerifier;
 import com.aimanager.managedandroid.ManagedApplicationReport;
+import com.aimanager.managedandroid.ManagedControlOperation;
 import com.aimanager.managedandroid.ManagedPolicyEvidenceAccess.ApplicationEvidence;
 import com.aimanager.shared.DomainException;
 import com.aimanager.shared.SecretMaterial;
@@ -29,7 +31,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * Short transactions only. Persisted facts never grant policy execution or Android profile scope.
+ * Short transactions only. Reviewed controls are revalidated on every read; facts never execute a
+ * policy.
  */
 @Service
 @Transactional(isolation = Isolation.READ_COMMITTED, timeout = 10)
@@ -39,6 +42,7 @@ class ManagedApplicationEvidenceStore {
   private final ApplicationCatalog catalog;
   private final ManagedAndroidGateway gateway;
   private final ManagedApplicationEvidenceSettings settings;
+  private final ManagedApplicationControlEvaluator controls;
   private final JdbcTemplate db;
   private final ObjectMapper json;
   private final Clock clock;
@@ -50,6 +54,7 @@ class ManagedApplicationEvidenceStore {
       ApplicationCatalog catalog,
       ManagedAndroidGateway gateway,
       ManagedApplicationEvidenceSettings settings,
+      ManagedApplicationControlEvaluator controls,
       JdbcTemplate db,
       ObjectMapper json,
       Clock clock,
@@ -59,6 +64,7 @@ class ManagedApplicationEvidenceStore {
     this.catalog = catalog;
     this.gateway = gateway;
     this.settings = settings;
+    this.controls = controls;
     this.db = db;
     this.json = json;
     this.clock = clock;
@@ -112,7 +118,7 @@ class ManagedApplicationEvidenceStore {
       exactlyOne(
           db.update(
               "UPDATE managed_application_evidence SET"
-                  + " context_revision=?,state='PENDING',reason_code='MANAGED_APPLICATION_REFRESH_PENDING',version=?,attempt_id=?,attempt_expires_at=?,next_attempt_at=?,signing_digests_json=NULL,reported_at=NULL,retrieved_at=NULL,expires_at=NULL,updated_at=?"
+                  + " context_revision=?,state='PENDING',reason_code='MANAGED_APPLICATION_REFRESH_PENDING',version=?,attempt_id=?,attempt_expires_at=?,next_attempt_at=?,signing_digests_json=NULL,control_evidence_json=NULL,reported_at=NULL,retrieved_at=NULL,expires_at=NULL,updated_at=?"
                   + " WHERE tenant_id=? AND binding_id=? AND application_id=? AND version=?",
               context.fingerprint(),
               version,
@@ -135,6 +141,7 @@ class ManagedApplicationEvidenceStore {
       ManagedAndroidGateway.ManagedEnrollmentIdentity first,
       ManagedAndroidGateway.ManagedEnrollmentIdentity last,
       ManagedApplicationReport report,
+      ManagedApplicationControlReport controlReport,
       Instant retrievedAt,
       boolean providerFailed) {
     var before = captured.context();
@@ -158,6 +165,7 @@ class ManagedApplicationEvidenceStore {
       throw conflict("MANAGED_APPLICATION_ATTEMPT_EXPIRED");
     String state = "FAILED", reason = "MANAGED_APPLICATION_PROVIDER_UNAVAILABLE";
     ManagedApplicationIdentityVerifier.Verified verified = null;
+    String controlDocument = null;
     if (!providerFailed) {
       try {
         var intent =
@@ -174,6 +182,16 @@ class ManagedApplicationEvidenceStore {
               settings.verifier.verify(before.identity(), context.identity(), report, retrievedAt);
           state = "VERIFIED";
           reason = "MANAGED_APPLICATION_PROFILE_UNVERIFIED";
+          if (controlReport != null) {
+            try {
+              var checked = controls.verify(gateway, verified, controlReport, retrievedAt);
+              controlDocument = controls.store(controlReport, retrievedAt, checked);
+              reason = "MANAGED_APPLICATION_CONTROL_VERIFIED";
+            } catch (DomainException unqualified) {
+              // A valid identity remains useful; rejected control facts grant no operation.
+              reason = unqualified.errorCode();
+            }
+          }
         }
       } catch (DomainException rejected) {
         state = "REJECTED";
@@ -183,7 +201,7 @@ class ManagedApplicationEvidenceStore {
     exactlyOne(
         db.update(
             "UPDATE managed_application_evidence SET"
-                + " state=?,reason_code=?,version=version+1,attempt_id=NULL,attempt_expires_at=0,signing_digests_json=?,reported_at=?,retrieved_at=?,expires_at=?,updated_at=?"
+                + " state=?,reason_code=?,version=version+1,attempt_id=NULL,attempt_expires_at=0,signing_digests_json=?,control_evidence_json=?,reported_at=?,retrieved_at=?,expires_at=?,updated_at=?"
                 + " WHERE tenant_id=? AND binding_id=? AND application_id=? AND version=? AND"
                 + " attempt_id=?",
             state,
@@ -191,6 +209,7 @@ class ManagedApplicationEvidenceStore {
             verified == null
                 ? null
                 : encode(verified.signingCertificates().stream().sorted().toList()),
+            controlDocument,
             verified == null ? null : verified.reportedAt().toEpochMilli(),
             verified == null ? null : verified.retrievedAt().toEpochMilli(),
             verified == null ? null : verified.expiresAt().toEpochMilli(),
@@ -269,7 +288,8 @@ class ManagedApplicationEvidenceStore {
                     current.agentPackageName(),
                     current.agentTrustRevision(),
                     current.registeredAt(),
-                    settings.revision)));
+                    settings.revision,
+                    controls.revision(gateway))));
     return new Context(current, app, identity, fingerprint);
   }
 
@@ -298,7 +318,8 @@ class ManagedApplicationEvidenceStore {
       } catch (DomainException unavailable) {
         if (!Set.of(
                 "MANAGED_APPLICATION_PLATFORM_MISMATCH",
-                "MANAGED_APPLICATION_CONNECTOR_UNSUPPORTED")
+                "MANAGED_APPLICATION_CONNECTOR_UNSUPPORTED",
+                "MANAGED_CONTROL_CONNECTOR_UNSUPPORTED")
             .contains(unavailable.errorCode())) throw unavailable;
         fact =
             new View(
@@ -312,7 +333,8 @@ class ManagedApplicationEvidenceStore {
                 null,
                 null,
                 null,
-                null);
+                null,
+                List.of());
       }
       result.add(
           new ApplicationEvidence(
@@ -325,11 +347,12 @@ class ManagedApplicationEvidenceStore {
               fact.version(),
               fact.state(),
               fact.reasonCode(),
-              "UNKNOWN",
-              false,
+              fact.profileScope(),
+              fact.systemControlAvailable(),
               fact.reportedAt(),
               fact.retrievedAt(),
-              fact.expiresAt()));
+              fact.expiresAt(),
+              fact.controlOperations()));
     }
     return List.copyOf(result);
   }
@@ -356,6 +379,7 @@ class ManagedApplicationEvidenceStore {
     if (!"VERIFIED".equals(row.state())) return view(context, row, row.state(), row.reason());
     if (row.expiresAt() == null || clock.millis() >= row.expiresAt())
       return view(context, row, "STALE", "MANAGED_APPLICATION_REPORT_STALE");
+    ManagedApplicationIdentityVerifier.Verified verified;
     try {
       if (row.reportedAt() == null
           || row.retrievedAt() == null
@@ -372,7 +396,7 @@ class ManagedApplicationEvidenceStore {
               "INSTALLED",
               Arrays.asList(signers),
               Instant.ofEpochMilli(row.reportedAt()).toString());
-      var verified =
+      verified =
           settings.verifier.verify(
               context.identity(),
               context.identity(),
@@ -383,7 +407,33 @@ class ManagedApplicationEvidenceStore {
     } catch (JsonProcessingException | IllegalArgumentException | DomainException invalid) {
       return view(context, row, "STALE", "MANAGED_APPLICATION_STORED_EVIDENCE_INVALID");
     }
-    return view(context, row, "VERIFIED_IDENTITY", "MANAGED_APPLICATION_PROFILE_UNVERIFIED");
+    if (row.controlDocument() != null) {
+      try {
+        var checked = controls.restore(gateway, verified, row.controlDocument());
+        return new View(
+            context.binding().bindingId(),
+            context.application().applicationId(),
+            "VERIFIED_IDENTITY",
+            "MANAGED_APPLICATION_CONTROL_VERIFIED",
+            row.version(),
+            "PRIMARY",
+            true,
+            row.reportedAt(),
+            row.retrievedAt(),
+            Math.min(row.expiresAt(), checked.expiresAt().toEpochMilli()),
+            row.nextAttemptAt(),
+            checked.operations());
+      } catch (DomainException invalid) {
+        return view(context, row, "VERIFIED_IDENTITY", invalid.errorCode());
+      }
+    }
+    return view(
+        context,
+        row,
+        "VERIFIED_IDENTITY",
+        "MANAGED_APPLICATION_CONTROL_VERIFIED".equals(row.reason())
+            ? "MANAGED_CONTROL_STORED_EVIDENCE_INVALID"
+            : row.reason());
   }
 
   private View view(Context context, Stored row, String state, String reason) {
@@ -399,7 +449,8 @@ class ManagedApplicationEvidenceStore {
         valid ? row.reportedAt() : null,
         valid ? row.retrievedAt() : null,
         valid ? row.expiresAt() : null,
-        row == null ? null : row.nextAttemptAt());
+        row == null ? null : row.nextAttemptAt(),
+        List.of());
   }
 
   private Stored row(ResultSet row) throws SQLException {
@@ -415,7 +466,8 @@ class ManagedApplicationEvidenceStore {
         row.getString("signing_digests_json"),
         row.getObject("reported_at", Long.class),
         row.getObject("retrieved_at", Long.class),
-        row.getObject("expires_at", Long.class));
+        row.getObject("expires_at", Long.class),
+        row.getString("control_evidence_json"));
   }
 
   private String encode(Object value) {
@@ -464,7 +516,8 @@ class ManagedApplicationEvidenceStore {
       String signers,
       Long reportedAt,
       Long retrievedAt,
-      Long expiresAt) {
+      Long expiresAt,
+      String controlDocument) {
     @Override
     public String toString() {
       return "ApplicationEvidenceRow[REDACTED]";
@@ -482,7 +535,12 @@ class ManagedApplicationEvidenceStore {
       Long reportedAt,
       Long retrievedAt,
       Long expiresAt,
-      Long nextRefreshAt) {
+      Long nextRefreshAt,
+      List<ManagedControlOperation> controlOperations) {
+    View {
+      controlOperations = List.copyOf(controlOperations);
+    }
+
     @Override
     public String toString() {
       return "ApplicationEvidenceView[REDACTED]";

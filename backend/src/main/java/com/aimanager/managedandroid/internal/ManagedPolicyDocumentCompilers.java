@@ -53,6 +53,18 @@ class ManagedPolicyDocumentCompilers {
     return provider != null && entries.containsKey(provider);
   }
 
+  /** Stable registered semantics for compatibility qualification and evidence invalidation. */
+  String revision(String provider) {
+    if (!supports(provider)) return null;
+    try {
+      var entry = entries.get(provider);
+      entry.requireStable();
+      return entry.revision();
+    } catch (RuntimeException invalid) {
+      throw new IllegalArgumentException("Invalid managed policy compiler configuration");
+    }
+  }
+
   PolicyDocument compile(
       String provider,
       String agentPackage,

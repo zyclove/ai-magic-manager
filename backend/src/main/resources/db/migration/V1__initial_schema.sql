@@ -1650,6 +1650,7 @@ CREATE TABLE managed_application_evidence (
     attempt_expires_at BIGINT NOT NULL,
     next_attempt_at BIGINT NOT NULL,
     signing_digests_json VARCHAR(600),
+    control_evidence_json TEXT,
     reported_at BIGINT,
     retrieved_at BIGINT,
     expires_at BIGINT,

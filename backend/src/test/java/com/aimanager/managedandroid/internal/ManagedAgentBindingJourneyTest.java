@@ -73,6 +73,218 @@ class ManagedAgentBindingJourneyTest {
   @Autowired ManagedEnterpriseBindingService realEnterpriseAuthority;
 
   @Test
+  void controlEvidenceRefreshKeepsReviewedOperations() throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    controlProvider(f);
+    String path = applicationEvidencePath(f, binding.id(), app);
+    mvc.perform(post(path + "/refresh").with(actor(f.actor())).header("If-Match", "\"2\""))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.state").value("VERIFIED_IDENTITY"))
+        .andExpect(jsonPath("$.profileScope").value("PRIMARY"))
+        .andExpect(jsonPath("$.systemControlAvailable").value(true))
+        .andExpect(jsonPath("$.controlOperations.length()").value(1))
+        .andExpect(jsonPath("$.controlOperations[0].kind").value("APP_LAUNCH"))
+        .andExpect(jsonPath("$.controlOperations[0].effect").value("DENY"));
+    clearInvocations(gateway);
+    mvc.perform(get(path).with(actor(f.actor())).header("If-Match", "\"2\""))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.systemControlAvailable").value(true));
+    verify(gateway, never()).readApplicationControlReport(anyString(), anyString(), anyString());
+    verify(gateway, never()).readApplicationReport(anyString(), anyString(), anyString());
+  }
+
+  @Test
+  void controlEvidenceEnablesOnlyReviewedPreviewOperation() throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    controlProvider(f);
+    mvc.perform(
+            post(applicationEvidencePath(f, binding.id(), app) + "/refresh")
+                .with(actor(f.actor()))
+                .header("If-Match", "\"2\""))
+        .andExpect(status().isOk());
+    String draft = policyDraft(f, app);
+    clearInvocations(gateway);
+    var preview = policyPreviewBody(f, draft);
+    var rule = preview.get("targets").get(0).get("rules").get(0);
+    assertThat(rule.get("status").asText()).isEqualTo("SUPPORTED_PENDING");
+    assertThat(rule.get("effectiveEffect").isNull()).isTrue();
+    assertThat(preview.get("enforceable").asBoolean()).isTrue();
+    verify(gateway, never()).readApplicationControlReport(anyString(), anyString(), anyString());
+    verify(gateway, never()).writePolicyCandidate(anyString(), anyString(), any());
+    verify(gateway, never()).assignPolicy(anyString(), anyString(), anyString());
+  }
+
+  private void controlProvider(Fixture f) {
+    applicationProvider(f);
+    when(gateway.supportsApplicationControlReports()).thenReturn(true);
+    when(gateway.applicationControlReportRevision()).thenReturn("fixture-control-v1");
+    when(gateway.readApplicationControlReport(
+            f.enterprise(), f.providerDevice(), "org.example.Reader"))
+        .thenAnswer(
+            call -> {
+              assertThat(
+                      org.springframework.transaction.support.TransactionSynchronizationManager
+                          .isActualTransactionActive())
+                  .isFalse();
+              return Optional.of(controlReport(f));
+            });
+  }
+
+  private com.aimanager.managedandroid.ManagedApplicationControlReport controlReport(Fixture f) {
+    var app = applicationReport(f);
+    return new com.aimanager.managedandroid.ManagedApplicationControlReport(
+        app,
+        new com.aimanager.managedandroid.ManagedDeviceExecutionProfile(
+            app.deviceName(), "DEVICE_OWNER", 30, "ACTIVE", "ACTIVE", app.deviceReportedAt()),
+        "PRIMARY",
+        "fixture-maker",
+        "fixture-model",
+        "fixture-build");
+  }
+
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.ValueSource(
+      strings = {"ROLE", "AUTHORITY_VERSION", "DEVICE", "REVOKE"})
+  void controlReportCannotSurviveAuthorityChangesDuringTheRead(String change) throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    controlProvider(f);
+    doAnswer(
+            call -> {
+              assertThat(
+                      org.springframework.transaction.support.TransactionSynchronizationManager
+                          .isActualTransactionActive())
+                  .isFalse();
+              switch (change) {
+                case "ROLE" ->
+                    db.update(
+                        "UPDATE tenant_members SET role='CHILD' WHERE tenant_id=?", f.tenant());
+                case "AUTHORITY_VERSION" ->
+                    db.update(
+                        "UPDATE tenant_members SET version=version+1 WHERE tenant_id=?",
+                        f.tenant());
+                case "DEVICE" ->
+                    db.update(
+                        "UPDATE devices SET state='REVOKED' WHERE tenant_id=? AND id=?",
+                        f.tenant(),
+                        f.device());
+                case "REVOKE" ->
+                    store.revoke(f.tenant(), f.actor(), binding.id(), binding.version());
+              }
+              return Optional.of(controlReport(f));
+            })
+        .when(gateway)
+        .readApplicationControlReport(anyString(), anyString(), anyString());
+    mvc.perform(
+            post(applicationEvidencePath(f, binding.id(), app) + "/refresh")
+                .with(actor(f.actor()))
+                .header("If-Match", "\"2\""))
+        .andExpect(status().is4xxClientError());
+    assertThat(
+            db.queryForObject(
+                "SELECT control_evidence_json FROM managed_application_evidence WHERE binding_id=?",
+                String.class,
+                binding.id()))
+        .isNull();
+  }
+
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.ValueSource(
+      strings = {"json", "missing", "expired", "qualification", "adapter", "registration_key"})
+  void persistedControlIsRecheckedBeforeAnotherPreview(String change) throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    controlProvider(f);
+    String path = applicationEvidencePath(f, binding.id(), app);
+    mvc.perform(post(path + "/refresh").with(actor(f.actor())).header("If-Match", "\"2\""))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.systemControlAvailable").value(true));
+    switch (change) {
+      case "json" ->
+          db.update(
+              "UPDATE managed_application_evidence SET control_evidence_json='{}' WHERE"
+                  + " binding_id=?",
+              binding.id());
+      case "missing" ->
+          db.update(
+              "UPDATE managed_application_evidence SET control_evidence_json=NULL WHERE"
+                  + " binding_id=?",
+              binding.id());
+      case "expired" ->
+          db.update(
+              "UPDATE managed_application_evidence SET expires_at=0 WHERE binding_id=?",
+              binding.id());
+      case "qualification" -> {
+        String stored =
+            db.queryForObject(
+                "SELECT control_evidence_json FROM managed_application_evidence WHERE binding_id=?",
+                String.class,
+                binding.id());
+        db.update(
+            "UPDATE managed_application_evidence SET control_evidence_json=? WHERE binding_id=?",
+            stored.replace("fixture-review-v1", "different-review"),
+            binding.id());
+      }
+      case "adapter" ->
+          when(gateway.applicationControlReportRevision()).thenReturn("changed-control-v2");
+      // Registration IDs are immutable FK targets. Rotate the registration's key evidence instead.
+      case "registration_key" ->
+          db.update(
+              "UPDATE devices SET key_thumbprint=? WHERE tenant_id=? AND id=?",
+              SecretMaterial.hash("replacement-registration-key"),
+              f.tenant(),
+              f.device());
+    }
+    String draft = policyDraft(f, app);
+    clearInvocations(gateway);
+    var preview = policyPreviewBody(f, draft);
+    assertThat(preview.get("enforceable").asBoolean()).isFalse();
+    var fact = preview.get("targets").get(0).get("applicationEvidence").get(0);
+    assertThat(fact.get("systemControlAvailable").asBoolean()).isFalse();
+    assertThat(fact.get("controlOperations").isEmpty()).isTrue();
+    verify(gateway, never()).readApplicationControlReport(anyString(), anyString(), anyString());
+  }
+
+  @Test
+  void failedControlRefreshClearsPreviouslyQualifiedOperations() throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    String app = application(f, "ANDROID");
+    controlProvider(f);
+    String path = applicationEvidencePath(f, binding.id(), app);
+    mvc.perform(post(path + "/refresh").with(actor(f.actor())).header("If-Match", "\"2\""))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.systemControlAvailable").value(true));
+    db.update(
+        "UPDATE managed_application_evidence SET next_attempt_at=0 WHERE binding_id=?",
+        binding.id());
+    doThrow(new IllegalStateException("secret-provider-body"))
+        .when(gateway)
+        .readApplicationControlReport(anyString(), anyString(), anyString());
+    String body =
+        mvc.perform(post(path + "/refresh").with(actor(f.actor())).header("If-Match", "\"2\""))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.state").value("FAILED"))
+            .andExpect(jsonPath("$.systemControlAvailable").value(false))
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+    assertThat(body).doesNotContain("secret-provider-body");
+    assertThat(
+            db.queryForObject(
+                "SELECT control_evidence_json FROM managed_application_evidence WHERE binding_id=?",
+                String.class,
+                binding.id()))
+        .isNull();
+  }
+
+  @Test
   void policyPreviewIncludesApplicationFactsForEachCurrentRegistration() throws Exception {
     var f = fixture();
     var binding = verifiedBinding(f);
@@ -649,6 +861,37 @@ class ManagedAgentBindingJourneyTest {
 
   @TestConfiguration
   static class Provider {
+    @Bean
+    com.aimanager.managedandroid.ManagedControlQualification fixtureControlQualification() {
+      return new com.aimanager.managedandroid.ManagedControlQualification(
+          "fixture-qualification",
+          "fixture-review-v1",
+          "LOCAL_TEST",
+          "fixture-control-v1",
+          "fixture-policy-v1",
+          "fixture-maker",
+          "fixture-model",
+          "fixture-build",
+          30,
+          "DEVICE_OWNER",
+          Instant.now().minusSeconds(3600),
+          Instant.now().plusSeconds(86400),
+          "local-test-only",
+          List.of(
+              new com.aimanager.managedandroid.ManagedControlOperation(
+                  com.aimanager.managedandroid.ManagedControlOperation.Kind.APP_LAUNCH,
+                  com.aimanager.managedandroid.ManagedControlOperation.Effect.DENY,
+                  null)));
+    }
+
+    @Bean
+    com.aimanager.managedandroid.ManagedPolicyDocumentCompiler fixtureControlCompiler() {
+      var compiler = mock(com.aimanager.managedandroid.ManagedPolicyDocumentCompiler.class);
+      when(compiler.providerCode()).thenReturn("LOCAL_TEST");
+      when(compiler.adapterRevision()).thenReturn("fixture-policy-v1");
+      return compiler;
+    }
+
     @Bean
     @Primary
     ManagedEnterpriseAuthority bindingTestAuthority() {

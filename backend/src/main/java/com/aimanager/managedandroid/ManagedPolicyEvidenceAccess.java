@@ -32,7 +32,46 @@ public interface ManagedPolicyEvidenceAccess {
       boolean systemControlAvailable,
       Long reportedAt,
       Long retrievedAt,
-      Long expiresAt) {
+      Long expiresAt,
+      List<ManagedControlOperation> controlOperations) {
+    public ApplicationEvidence {
+      controlOperations = controlOperations == null ? List.of() : List.copyOf(controlOperations);
+    }
+
+    /** Identity-only facts have no reviewed control operations, regardless of a catalog claim. */
+    public ApplicationEvidence(
+        String deviceId,
+        String registrationId,
+        String applicationId,
+        String bindingId,
+        long bindingVersion,
+        String definitionRevision,
+        long evidenceVersion,
+        String state,
+        String reasonCode,
+        String profileScope,
+        boolean systemControlAvailable,
+        Long reportedAt,
+        Long retrievedAt,
+        Long expiresAt) {
+      this(
+          deviceId,
+          registrationId,
+          applicationId,
+          bindingId,
+          bindingVersion,
+          definitionRevision,
+          evidenceVersion,
+          state,
+          reasonCode,
+          profileScope,
+          systemControlAvailable,
+          reportedAt,
+          retrievedAt,
+          expiresAt,
+          List.of());
+    }
+
     @Override
     public String toString() {
       return "ManagedPolicyApplicationEvidence[REDACTED]";

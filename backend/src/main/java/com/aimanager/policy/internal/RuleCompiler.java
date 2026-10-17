@@ -213,8 +213,22 @@ class RuleCompiler {
         status = "UNSUPPORTED";
         reason = "SYSTEM_USER_ACTION_REQUIRED";
       }
+      // Only current server-qualified per-operation facts may supersede agent capability claims.
+      var qualified = qualifiedFact(target, first.applicationId(), applicationEvidence);
+      boolean qualifiedOperation = qualified != null && supports(qualified, first, predicted);
+      if (qualifiedOperation) {
+        status = "SUPPORTED_PENDING";
+        reason = "AWAITING_EXECUTION";
+      } else if (qualified != null
+          && Set.of(APP_LAUNCH, APP_INSTALL, RUNTIME_PERMISSION).contains(first.kind())
+          && predicted != GRANT) {
+        status = "UNVERIFIED";
+        reason = "APPLICATION_CONTROL_OPERATION_NOT_VERIFIED";
+      }
       // Identity reports cannot establish Android profile scope or execution authority.
-      if ("SUPPORTED_PENDING".equals(status) && first.applicationId() != null) {
+      if ("SUPPORTED_PENDING".equals(status)
+          && first.applicationId() != null
+          && !qualifiedOperation) {
         boolean identityVerified =
             applicationEvidence.stream()
                 .anyMatch(
@@ -269,5 +283,49 @@ class RuleCompiler {
               List.copyOf(warnings)));
     }
     return List.copyOf(result);
+  }
+
+  private ApplicationEvidence qualifiedFact(
+      FleetPolicyAccess.Target target, String application, List<ApplicationEvidence> facts) {
+    if (application == null) return null;
+    var matches =
+        facts.stream()
+            .filter(
+                f ->
+                    f != null
+                        && application.equals(f.applicationId())
+                        && target.device().id().equals(f.deviceId())
+                        && target.device().registrationId().equals(f.registrationId()))
+            .toList();
+    if (matches.size() != 1) return null;
+    var f = matches.get(0);
+    return "VERIFIED_IDENTITY".equals(f.state())
+            && "PRIMARY".equals(f.profileScope())
+            && f.systemControlAvailable()
+            && f.bindingId() != null
+            && !f.bindingId().isBlank()
+            && f.bindingVersion() > 0
+            && f.evidenceVersion() > 0
+            && f.definitionRevision() != null
+            && f.definitionRevision().matches("[0-9a-f]{64}")
+            && f.reportedAt() != null
+            && f.retrievedAt() != null
+            && f.expiresAt() != null
+            && f.expiresAt() > f.retrievedAt()
+            && !f.controlOperations().isEmpty()
+        ? f
+        : null;
+  }
+
+  private boolean supports(
+      ApplicationEvidence evidence, PolicyRule rule, PolicyRule.Effect effect) {
+    return evidence.controlOperations().stream()
+        .anyMatch(
+            op ->
+                op.kind() != null
+                    && op.effect() != null
+                    && rule.kind().name().equals(op.kind().name())
+                    && effect.name().equals(op.effect().name())
+                    && Objects.equals(rule.permission(), op.permission()));
   }
 }

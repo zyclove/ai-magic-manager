@@ -853,6 +853,7 @@
         "attempt_id",
         "binding_id",
         "context_revision",
+        "control_evidence_json",
         "created_at",
         "expires_at",
         "id",

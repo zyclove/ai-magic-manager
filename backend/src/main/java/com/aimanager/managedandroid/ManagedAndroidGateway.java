@@ -97,6 +97,25 @@ public interface ManagedAndroidGateway {
     return null;
   }
 
+  /** Explicit coherent application/user-space/device report support; default grants no control. */
+  default boolean supportsApplicationControlReports() {
+    return false;
+  }
+
+  /** Stable interpretation revision for control reports, independent of identity-only reports. */
+  default String applicationControlReportRevision() {
+    return null;
+  }
+
+  /**
+   * Read one coherent provider observation. A missing report never means a supported user space. No
+   * device-submitted payload or locally declared hardware identity may supply these facts.
+   */
+  default Optional<ManagedApplicationControlReport> readApplicationControlReport(
+      String enterpriseId, String deviceId, String packageName) {
+    throw new ManagedAndroidUnavailableException();
+  }
+
   /**
    * 读取指定设备和应用的原始报告。空值仅表示报告缺失，不能解释为未安装。 不要求普通目标应用实现平台绑定反馈协议；报告仍需与当前租户、注册、绑定关联。
    * 默认实现保持不支持，合作方必须显式实现并声明读取能力。
