@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
  * must contain the whole resolved application/permission policy, not a partial UI edit.
  */
 final class GoogleCompletePolicyCompiler {
-  private static final String REVISION = "google-complete-policy-v1";
+  static final String REVISION = "google-complete-policy-v1";
   private static final int MAX_BYTES = 65536;
   private static final int MAX_APPS = 200;
   private static final Pattern PACKAGE =

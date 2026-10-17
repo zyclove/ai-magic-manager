@@ -55,7 +55,7 @@ class GooglePolicyPreparationServiceTest {
           now.minusSeconds(150).toEpochMilli(),
           now.toEpochMilli());
   final ManagedDesiredPolicy desired = desired("v1");
-  GooglePolicyPreparationService service;
+  ManagedPolicyPreparationService service;
 
   @BeforeEach
   void setup() {
@@ -107,11 +107,12 @@ class GooglePolicyPreparationServiceTest {
                       now.minusSeconds(10).toString()));
             });
     service =
-        new GooglePolicyPreparationService(
+        new ManagedPolicyPreparationService(
             bindings,
             enrollments,
             publications,
             gateway,
+            new ManagedPolicyDocumentCompilers(List.of(new GoogleManagedPolicyDocumentCompiler())),
             new ManagedDeviceProfileSettings(clock, 600, 120, 15),
             clock,
             transactions,
@@ -127,7 +128,7 @@ class GooglePolicyPreparationServiceTest {
     assertThat(result.binding()).isEqualTo(binding);
     assertThat(result.desired()).isEqualTo(desired);
     assertThat(result.profile().expiresAt()).isEqualTo(now.plusSeconds(120));
-    assertThat(result.document().requestBody().getApplications())
+    assertThat(googlePolicy(result.document()).getApplications())
         .anySatisfy(
             app -> {
               assertThat(app.getPackageName()).isEqualTo("com.example.lesson");
@@ -312,11 +313,12 @@ class GooglePolicyPreparationServiceTest {
     Clock progressing = mock(Clock.class);
     when(progressing.instant()).thenReturn(now, now.plusSeconds(120));
     service =
-        new GooglePolicyPreparationService(
+        new ManagedPolicyPreparationService(
             bindings,
             enrollments,
             publications,
             gateway,
+            new ManagedPolicyDocumentCompilers(List.of(new GoogleManagedPolicyDocumentCompiler())),
             new ManagedDeviceProfileSettings(progressing, 600, 120, 15),
             progressing,
             transactions,
@@ -327,11 +329,12 @@ class GooglePolicyPreparationServiceTest {
   @Test
   void newlyProtectedApplicationCannotBeBlockedByAnOlderPublication() {
     service =
-        new GooglePolicyPreparationService(
+        new ManagedPolicyPreparationService(
             bindings,
             enrollments,
             publications,
             gateway,
+            new ManagedPolicyDocumentCompilers(List.of(new GoogleManagedPolicyDocumentCompiler())),
             new ManagedDeviceProfileSettings(clock, 600, 120, 15),
             clock,
             transactions,
@@ -347,11 +350,12 @@ class GooglePolicyPreparationServiceTest {
     Clock progressing = mock(Clock.class);
     when(progressing.instant()).thenReturn(now, now.plusSeconds(119), now.plusSeconds(120));
     service =
-        new GooglePolicyPreparationService(
+        new ManagedPolicyPreparationService(
             bindings,
             enrollments,
             publications,
             gateway,
+            new ManagedPolicyDocumentCompilers(List.of(new GoogleManagedPolicyDocumentCompiler())),
             new ManagedDeviceProfileSettings(progressing, 600, 120, 15),
             progressing,
             transactions,
@@ -368,7 +372,7 @@ class GooglePolicyPreparationServiceTest {
         .hasMessageNotContaining("secret-provider-body");
   }
 
-  GooglePolicyPreparationService.Prepared prepare() {
+  ManagedPolicyPreparationService.Prepared prepare() {
     return service.prepare("tenant", "actor", "publication", "binding", 1);
   }
 
@@ -425,6 +429,17 @@ class GooglePolicyPreparationServiceTest {
         now.minusSeconds(180).toString(),
         "enterprises/e1/enrollmentTokens/t1",
         nonce);
+  }
+
+  static com.google.api.services.androidmanagement.v1.model.Policy googlePolicy(
+      ManagedAndroidGateway.PolicyDocument document) {
+    return new GoogleCompletePolicyCompiler(document.agentPackage(), Set.of())
+        .restore(
+            document.documentJson(),
+            document.sha256(),
+            document.apiLevel(),
+            document.managementMode())
+        .requestBody();
   }
 
   void insideTransaction() {

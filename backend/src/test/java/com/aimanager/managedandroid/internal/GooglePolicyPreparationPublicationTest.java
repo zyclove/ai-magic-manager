@@ -206,11 +206,13 @@ class GooglePolicyPreparationPublicationTest {
               context -> {
                 assertThat(context).hasNotFailed();
                 var service =
-                    new GooglePolicyPreparationService(
+                    new ManagedPolicyPreparationService(
                         bindings,
                         enrollments,
                         context.getBean(ManagedExecutionPublicationAccess.class),
                         gateway,
+                        new ManagedPolicyDocumentCompilers(
+                            List.of(new GoogleManagedPolicyDocumentCompiler())),
                         new ManagedDeviceProfileSettings(clock, 600, 120, 15),
                         clock,
                         data.transactions,
@@ -228,7 +230,9 @@ class GooglePolicyPreparationPublicationTest {
                   assertThat(prepared.desired().rules())
                       .singleElement()
                       .satisfies(rule -> assertThat(rule.status()).isEqualTo("UNVERIFIED"));
-                  assertThat(prepared.document().requestBody().getApplications())
+                  assertThat(
+                          GooglePolicyPreparationServiceTest.googlePolicy(prepared.document())
+                              .getApplications())
                       .anySatisfy(
                           a -> {
                             assertThat(a.getPackageName()).isEqualTo("com.example.lesson");

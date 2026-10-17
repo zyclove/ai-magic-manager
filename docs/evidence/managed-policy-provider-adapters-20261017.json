@@ -1,0 +1,338 @@
+{
+  "status": "FOCUSED_VALIDATION_PASSED",
+  "date": "2026-10-17",
+  "baseCommit": "2284c259507c69bf817c72dc110d949c78c5a824",
+  "scope": "Provider-neutral policy preparation, immutable compiler registry and Google adapter; no publication admission or remote write enabled",
+  "sourceManifest": {
+    "path": ".cache/execution-adapters/green-r2/source.json",
+    "sha256": "8a14262812da4147a4afaebc08e2742c76dce99640616d3867f164a2548d045f"
+  },
+  "pinnedSourceFiles": 485,
+  "sourceSha256": {
+    "backend/src/test/java/com/aimanager/managedandroid/internal/ManagedPolicyDocumentCompilersTest.java": "b5ade6ec07acfb635a47b7b55b6a300ecff68dbecc2e46dadf21494593093206",
+    "backend/src/main/java/com/aimanager/managedandroid/ManagedPolicyDocumentCompiler.java": "8799b612d15eebaa3d4a5d8faf4f7ef12fa99df482566265a46dc4b526be4c67",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/ManagedPolicyDocumentCompilers.java": "c846069a21f2ee4701b5815ba019abd8c9debc7dadacd897c2bb2f36a89a2cd2",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/GoogleManagedPolicyDocumentCompiler.java": "36796622a7469393788c6bd85fc4ee9aa25c47fca4ee1e80caf093b9c99c47b2",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/ManagedPolicyPreparationService.java": "f2a727181539e6539fac345e9545e414982c4ccf5a96901dedb3e9d8ae941a6c",
+    "backend/src/main/java/com/aimanager/managedandroid/internal/GoogleCompletePolicyCompiler.java": "65da544d515eed8435e94c206d2faad8f55b05f98e99e50a9bdf27f3681b84a6",
+    "backend/src/test/java/com/aimanager/managedandroid/internal/GooglePolicyPreparationServiceTest.java": "d4be8b526a26baa2a9f4e015e50d9fa04a1160736e50c14e682b7e50310bf2d5",
+    "backend/src/test/java/com/aimanager/managedandroid/internal/GooglePolicyPreparationPublicationTest.java": "a8e30f3daa9a8568c3f25c71a6475b814bc61a5e86c0b79f822ed675b002ef68",
+    "backend/src/test/java/com/aimanager/managedandroid/internal/ManagedPolicyPreparationPartnerTest.java": "9c53066579dde7760d666a0b0c23970538913abf246a84c4416534fe2114821a"
+  },
+  "removedFiles": [
+    "backend/src/main/java/com/aimanager/managedandroid/internal/GooglePolicyPreparationService.java"
+  ],
+  "green": {
+    "nativeExitCode": 0,
+    "totals": {
+      "tests": 661,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "suites": 23,
+    "compileSeconds": 53.8,
+    "testSeconds": 98.8,
+    "sourceUnchanged": true,
+    "naturalProcessTreeExit": true,
+    "result": {
+      "path": ".cache/execution-adapters/green-r2/result.json",
+      "sha256": "9c489b519c6e03aa3cd573dbfb2b7e6c9dc26ae138dbed58267a2c06710a964c"
+    },
+    "compileResult": {
+      "path": ".cache/execution-adapters/green-r2/compile-result.json",
+      "sha256": "71755bf8e95b89f9db84715143ed058a0b4b7d6e7a8aa2eeeacbbe69bb2f0333"
+    },
+    "log": {
+      "path": ".cache/execution-adapters/green-r2/maven.log",
+      "sha256": "783493fef49bfe3e1bffbd16afbc4508c250c256dc72bd14fa5c1a81c8470bc8"
+    },
+    "suitesByName": {
+      "com.aimanager.managedandroid.GoogleManagedApplicationPolicyContentTest": {
+        "counts": {
+          "tests": 65,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "ea0a00dcd8cd8fa6113bc88f23e647ea717a4e5b60de32bb3b8bcc5c3205b39e"
+      },
+      "com.aimanager.managedandroid.GoogleManagedPolicyReceiptTest": {
+        "counts": {
+          "tests": 20,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "cae807aa691253656362e3c60e0a5a98b299bb3de925bbc8444e04234de06484"
+      },
+      "com.aimanager.managedandroid.GoogleRuntimePermissionContractTest": {
+        "counts": {
+          "tests": 24,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "998230516492525639452219a2ddb5152fede7dfbf3e356d9cd09b57cb0c93b7"
+      },
+      "com.aimanager.managedandroid.internal.GoogleCompletePolicyCompilerTest": {
+        "counts": {
+          "tests": 53,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "d0bc0bd876de7670fba2582c16f37dc318a4e276600bf161dc893bfa05dd36a8"
+      },
+      "com.aimanager.managedandroid.internal.GoogleCompletePolicyTransportTest": {
+        "counts": {
+          "tests": 63,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "5f4d26e2e95d1018ad60c72bf306ce1c3134dc43473b96efbf5fd6102af290a1"
+      },
+      "com.aimanager.managedandroid.internal.GoogleManagedDeviceProfileBoundaryTest": {
+        "counts": {
+          "tests": 51,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "9193e7af0470723e697acae68ebe03cad9eb7709a51ce6e4630b685b9eb792ed"
+      },
+      "com.aimanager.managedandroid.internal.GoogleManagedDeviceProfileReaderTest": {
+        "counts": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "ec4ae2ec0fe19e6a30681dd896c9a6f489ac978da6144bc190c4e1b37f093922"
+      },
+      "com.aimanager.managedandroid.internal.GooglePolicyPreparationPublicationTest": {
+        "counts": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "aaf120b8baedd9f388a9111dd20c00d878634dbf9950d9cf960b00f49c9fec6d"
+      },
+      "com.aimanager.managedandroid.internal.GooglePolicyPreparationServiceTest": {
+        "counts": {
+          "tests": 24,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "e3986239916fd065c06dba96730112bb62f22d3ba6eb0384e5c39c9247c0f8cc"
+      },
+      "com.aimanager.managedandroid.internal.ManagedAndroidConfigurationTest": {
+        "counts": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "e035ddd8ae39ac74924e3d7d259ac7319e464f67824f22725c4e4514f11ccc43"
+      },
+      "com.aimanager.managedandroid.internal.ManagedDeviceProfileSettingsTest": {
+        "counts": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "a62085c6b8dad2d601bddf56b8ad9e4e98c0055eaf3896fd20476d24f8a5e4db"
+      },
+      "com.aimanager.managedandroid.internal.ManagedExecutionConsoleJourneyTest": {
+        "counts": {
+          "tests": 42,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "7709548aa1337273a9d7c9e82788c39a7352515d8cc4665fcd5893913c914749"
+      },
+      "com.aimanager.managedandroid.internal.ManagedExecutionRecoveryJobTest": {
+        "counts": {
+          "tests": 36,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "4d4db4395e7be7e1f9f4cc7b01f9b42af912da99135345c0940f38e9e0cd8662"
+      },
+      "com.aimanager.managedandroid.internal.ManagedPolicyDocumentCompilersTest": {
+        "counts": {
+          "tests": 33,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "90921ebaf7f0189335b43958ed67bb7e106fb7cb6861692292d0c23ab68c29f5"
+      },
+      "com.aimanager.managedandroid.internal.ManagedPolicyExecutionJournalTest": {
+        "counts": {
+          "tests": 62,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "c288c611a5fc1fc1e19066bf3ee1f20973216c8c39bedb3e006955246a6f0d01"
+      },
+      "com.aimanager.managedandroid.internal.ManagedPolicyPreparationPartnerTest": {
+        "counts": {
+          "tests": 7,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "296d5f3587d8f1027311f4b76d20ed43d0460073c48e251edac5d3abbc7f7413"
+      },
+      "com.aimanager.managedandroid.internal.PublishedGooglePolicyDocumentTest": {
+        "counts": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "feadb6274304144ab2141b9ff08a24bb97a222e4bd1d1fb6011c8d51575ca609"
+      },
+      "com.aimanager.managedandroid.ManagedDeviceExecutionVerifierTest": {
+        "counts": {
+          "tests": 39,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "2eb37750da8b31f5f203368ee7b4ff484f4dd2dd95bfc670ad363ffb4d9a37d7"
+      },
+      "com.aimanager.ModuleBoundariesTest": {
+        "counts": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "97bd930beac35782f38f79d097aa1f4c4a148c91205adfd27fb219e561c63a1c"
+      },
+      "com.aimanager.policy.internal.ManagedDesiredPolicyReaderTest": {
+        "counts": {
+          "tests": 59,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "d875b6f5366559c13663268844ebbabbadeb9a03678faf3232ed2f94c0121d54"
+      },
+      "com.aimanager.policy.internal.ManagedExecutionPublicationReaderTest": {
+        "counts": {
+          "tests": 13,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "d71daf59a18a4fd4b57b317888f5a7105e43cebca0be4c74b31fdd4cae3c275b"
+      },
+      "com.aimanager.PolicyJourneyTest": {
+        "counts": {
+          "tests": 28,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "9f41f65de8d095ec3419ecfcadaf4eae60389b30a256eb7d04bb8709514760f2"
+      },
+      "com.aimanager.retention.internal.ErasureManagedBindingProcessorTest": {
+        "counts": {
+          "tests": 33,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "sha256": "3cefae49f6b372b7459b231320529245c76ebe32cda03ac2a61ec31019f1816a"
+      }
+    }
+  },
+  "red": {
+    "meaning": "Two expected assertion failures before implementation; not passing product tests",
+    "nativeExitCode": 1,
+    "totals": {
+      "tests": 2,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0
+    },
+    "result": {
+      "path": ".cache/execution-adapters/red-r1/result.json",
+      "sha256": "a9d1c1885cc8ab506ed2fc22cd66db13f651fdd14c6b918b8bec675fe29dafd5"
+    },
+    "compileResult": {
+      "path": ".cache/execution-adapters/red-r1/compile-result.json",
+      "sha256": "73124bc4c7a8c2ebd5b7219476c0b8515fdb6c45d04b9c60f68580d2d15181bd"
+    },
+    "log": {
+      "path": ".cache/execution-adapters/red-r1/maven.log",
+      "sha256": "cf20561dccde34f62d352bddd055e3dd552a0fe70110ae46c3374b6622a43b14"
+    }
+  },
+  "intermediateFailure": {
+    "nativeExitCode": 1,
+    "totals": {
+      "tests": 661,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0
+    },
+    "reason": "Mockito when re-stubbing invoked the existing transactional assertion before the scenario; replaced with doAnswer retaining the transaction assertion and authority-change check",
+    "result": {
+      "path": ".cache/execution-adapters/green-r1/result.json",
+      "sha256": "9760250f9e96259ae599fcbb19b98916e8ae85a103e6d6c04e5ce3811965cec7"
+    },
+    "log": {
+      "path": ".cache/execution-adapters/green-r1/maven.log",
+      "sha256": "08df1294460effd8be84a4fcc9beeeafdac5e86fbe5705d4e4f9de2e1a8a0ed6"
+    }
+  },
+  "formatting": {
+    "nativeExitCode": 0,
+    "seconds": 3.7,
+    "naturalProcessTreeExit": true,
+    "result": {
+      "path": ".cache/execution-adapters/format-r2/out/result.json",
+      "sha256": "4ae182817da8a242e78c79c47ea24f509d74f738a1ac4882f391e41ab603465b"
+    }
+  },
+  "tooling": {
+    "runner": {
+      "path": ".cache/execution-adapters/run.py",
+      "sha256": "c3d4be70d70dcaf5606f17aaa3920a8001050ddcbfbb1f0752eec3f24afaa887"
+    },
+    "snapshotBuilder": {
+      "path": ".cache/execution-adapters/prepare.py",
+      "sha256": "d9d22bd2a6f9c713af869b16199348d15b9f788f2ce1eb9bf03c4758313c8477"
+    },
+    "ownedJobHelper": {
+      "path": ".local/complete_recovery_job.py",
+      "sha256": "3d1f4dda5e99e471d447c9f38145f40b9a32ec6e66e6dee8ce17d05d9eab5988"
+    },
+    "ownedJobProof": {
+      "path": ".local/complete-recovery-job-check-20261016-r2.json",
+      "sha256": "236c4873afd5bcf3586a8b7c8de1576a08520c63e3b4d23bb2acebb446faf644"
+    }
+  },
+  "review": {
+    "kind": "Independent static review",
+    "result": "No blocking findings",
+    "execution": "Reviewer did not run SDK or tests"
+  },
+  "limitations": [
+    "Frozen committed backend plus owned files; unrelated shared worktree changes excluded",
+    "Partner compiler exists only in tests; real EMM provider qualification and integration pending",
+    "ENFORCE publication admission, resource ownership and remote write orchestration remain pending",
+    "No deployment, Android/TV device acceptance, MySQL/OceanBase acceptance or capacity claim"
+  ]
+}

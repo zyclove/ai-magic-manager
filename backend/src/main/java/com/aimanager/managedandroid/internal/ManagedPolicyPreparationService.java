@@ -22,21 +22,23 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 /** Current-context preparation only; no queue admission, assignment or provider write. */
 @Service
-class GooglePolicyPreparationService {
+class ManagedPolicyPreparationService {
   private final ManagedAgentBindingStore bindings;
   private final ManagedEnrollmentStore enrollments;
   private final ManagedExecutionPublicationAccess publications;
   private final ManagedAndroidGateway gateway;
+  private final ManagedPolicyDocumentCompilers compilers;
   private final ManagedDeviceProfileSettings settings;
   private final Clock clock;
   private final TransactionTemplate tx;
   private final Set<String> protectedPackages;
 
-  GooglePolicyPreparationService(
+  ManagedPolicyPreparationService(
       ManagedAgentBindingStore bindings,
       ManagedEnrollmentStore enrollments,
       ManagedExecutionPublicationAccess publications,
       ManagedAndroidGateway gateway,
+      ManagedPolicyDocumentCompilers compilers,
       ManagedDeviceProfileSettings settings,
       Clock clock,
       PlatformTransactionManager transactions,
@@ -46,6 +48,7 @@ class GooglePolicyPreparationService {
     this.enrollments = enrollments;
     this.publications = publications;
     this.gateway = gateway;
+    this.compilers = compilers;
     this.settings = settings;
     this.clock = clock;
     this.protectedPackages = SafetyCriticalPackages.withAdditional(additionalProtectedPackages);
@@ -90,9 +93,12 @@ class GooglePolicyPreparationService {
               "enterprises/" + target.enterpriseId() + "/devices/" + target.providerDeviceId();
           var verified = settings.verifier.verify(deviceName, notBefore, profile, retrievedAt);
           var document =
-              new GoogleCompletePolicyCompiler(target.agentPackageName(), protectedPackages)
-                  .compileDesired(
-                      verified.apiLevel(), verified.managementMode(), current.desired());
+              compilers.compile(
+                  target.provider(),
+                  target.agentPackageName(),
+                  verified,
+                  current.desired(),
+                  protectedPackages);
           // A slow compilation may consume the remaining evidence lifetime; do not return an
           // expired result.
           verified = settings.verifier.verify(deviceName, notBefore, profile, retrievedAt);
@@ -104,7 +110,7 @@ class GooglePolicyPreparationService {
   private Snapshot capture(
       String tenant, String actor, String publication, String binding, long version) {
     if (!gateway.available()
-        || !"GOOGLE_AMAPI".equals(gateway.providerCode())
+        || !compilers.supports(gateway.providerCode())
         || !gateway.supportsExecutionProfiles()
         || !gateway.supportsCompletePolicyDocuments())
       throw new DomainException(
@@ -118,7 +124,7 @@ class GooglePolicyPreparationService {
         || !Objects.equals(actor, current.actorId())
         || !Objects.equals(binding, current.bindingId())
         || version != current.bindingVersion()
-        || !"GOOGLE_AMAPI".equals(current.provider())
+        || !Objects.equals(gateway.providerCode(), current.provider())
         || !Objects.equals(tenant, enrollment.tenantId())
         || !Objects.equals(current.enrollmentId(), enrollment.id())
         || current.enrollmentVersion() != enrollment.version()
@@ -167,7 +173,7 @@ class GooglePolicyPreparationService {
       ManagedAgentBindingStore.VerifiedBindingContext binding,
       ManagedDesiredPolicy desired,
       ManagedDeviceExecutionVerifier.Verified profile,
-      GoogleCompletePolicyCompiler.Compiled document) {
+      ManagedAndroidGateway.PolicyDocument document) {
     @Override
     public String toString() {
       return "PreparedManagedPolicy[REDACTED]";
