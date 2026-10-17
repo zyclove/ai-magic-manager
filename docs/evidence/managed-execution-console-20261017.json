@@ -1,0 +1,312 @@
+{
+  "status": "PASSED",
+  "scope": "Frozen guardian 1.0.0 offline UI regression",
+  "allTestFiles": 88,
+  "testedFileCount": 88,
+  "testsPassed": 959,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "groups": {
+    "vm-a": {
+      "tests": 368,
+      "files": [
+        "test/access_delivery_labels_test.dart",
+        "test/access_request_dialog_test.dart",
+        "test/access_test.dart",
+        "test/api_bound_scope_test.dart",
+        "test/api_scope_test.dart",
+        "test/api_test.dart",
+        "test/application_classification_dialog_test.dart",
+        "test/application_classification_test.dart",
+        "test/audit_exports_test.dart",
+        "test/audit_test.dart",
+        "test/bounded_json_test.dart",
+        "test/class_action_dialog_test.dart",
+        "test/commercial_account_view_test.dart",
+        "test/commercial_catalog_editor_test.dart",
+        "test/commercial_catalog_test.dart",
+        "test/commercial_entitlements_test.dart",
+        "test/console_navigation_test.dart",
+        "test/contract_action_resume_test.dart",
+        "test/contracts_test.dart",
+        "test/device_management_dialog_test.dart",
+        "test/device_management_test.dart",
+        "test/diagnostic_model_test.dart",
+        "test/diagnostic_package_model_test.dart",
+        "test/diagnostic_package_repository_test.dart",
+        "test/diagnostic_packages_view_test.dart",
+        "test/diagnostic_preview_view_test.dart",
+        "test/diagnostic_repository_test.dart",
+        "test/dialog_submit_guard_test.dart",
+        "test/enrollment_dialog_test.dart",
+        "test/enrollment_journal_test.dart",
+        "test/enrollment_recovery_test.dart",
+        "test/enrollment_ticket_test.dart",
+        "test/managed_agent_binding_dialog_test.dart",
+        "test/managed_agent_binding_test.dart",
+        "test/managed_binding_usability_test.dart"
+      ],
+      "nativeExitCode": 0,
+      "seconds": 154.4,
+      "resultSha256": "9aa9ceaab759e16cb97331e28b836bdc44ba4ecec3770f2d134c1647a347ec99",
+      "logSha256": "859368196a11874acc25295247e24d59dde35d35e7fb028760ebf78249cd4a71",
+      "treeExitedWithoutTermination": true,
+      "acceptedAttempt": "vm-a"
+    },
+    "vm-b": {
+      "tests": 377,
+      "files": [
+        "test/managed_enrollment_guide_test.dart",
+        "test/managed_execution_binding_entry_test.dart",
+        "test/managed_execution_controller_test.dart",
+        "test/managed_execution_dialog_test.dart",
+        "test/managed_execution_entry_test.dart",
+        "test/managed_execution_test.dart",
+        "test/member_editor_test.dart",
+        "test/notifications_test.dart",
+        "test/observation_editor_test.dart",
+        "test/observation_model_test.dart",
+        "test/observation_view_test.dart",
+        "test/ownership_test.dart",
+        "test/quota_balance_test.dart",
+        "test/quota_plan_editor_test.dart",
+        "test/report_configurations_test.dart",
+        "test/report_job_resume_test.dart",
+        "test/resource_page_resilience_test.dart",
+        "test/scope_binding_client_test.dart",
+        "test/scoped_http_client_test.dart",
+        "test/submit_confirmation_variant_test.dart",
+        "test/support_model_test.dart",
+        "test/support_repository_test.dart",
+        "test/support_views_test.dart",
+        "test/usage_report_device_picker_test.dart",
+        "test/usage_report_jobs_test.dart",
+        "test/usage_report_jobs_view_test.dart",
+        "test/usage_reports_lifecycle_test.dart",
+        "test/usage_reports_test.dart",
+        "test/usage_reports_view_test.dart",
+        "test/usage_trend_view_test.dart",
+        "test/usage_trends_test.dart",
+        "test/widget_test.dart",
+        "test/workbench_view_test.dart",
+        "test/workspace_welcome_test.dart"
+      ],
+      "nativeExitCode": 0,
+      "seconds": 106.0,
+      "resultSha256": "57fb65ea9bc5ab7874a43d13813cc7decd4a30b2f5de6f2f223fe40f4f9c231f",
+      "logSha256": "6b3461bbb589f996612d336d987772f7bc45d5cb90e517c9d0d0bef7b619b74c",
+      "treeExitedWithoutTermination": true,
+      "acceptedAttempt": "vm-b"
+    },
+    "browser-a": {
+      "tests": 72,
+      "files": [
+        "test/device_management_browser_test.dart",
+        "test/device_management_entry_test.dart",
+        "test/device_subflow_scope_test.dart",
+        "test/editor_submit_guard_test.dart",
+        "test/local_date_browser_test.dart",
+        "test/managed_agent_binding_page_test.dart",
+        "test/managed_android_review_recovery_test.dart",
+        "test/managed_enrollment_page_test.dart"
+      ],
+      "nativeExitCode": 0,
+      "seconds": 173.0,
+      "resultSha256": "97c70910e1d2fa1eeba03af063687fd0e79e624f976f9f2e0b274492dec0c051",
+      "logSha256": "ec0abbcec2625ea382ed03b87b2de193e40f06a63ced32c81d4ab6cc2ee918f2",
+      "treeExitedWithoutTermination": true,
+      "acceptedAttempt": "browser-a"
+    },
+    "browser-b1": {
+      "tests": 45,
+      "files": [
+        "test/policy_preview_evidence_view_test.dart",
+        "test/policy_preview_flow_test.dart"
+      ],
+      "nativeExitCode": 0,
+      "seconds": 75.0,
+      "resultSha256": "0ebe67d9498c75f88b5e597becfaf91f4189188594297531380dd43eb72278dc",
+      "logSha256": "11d3eceedff90872fd6a63af484b40ed5dddaaa352a225bfe83b3262ade93930",
+      "treeExitedWithoutTermination": true,
+      "acceptedAttempt": "browser-b1"
+    },
+    "browser-b2": {
+      "tests": 9,
+      "files": [
+        "test/policy_preview_results_flow_test.dart"
+      ],
+      "nativeExitCode": 0,
+      "seconds": 51.2,
+      "resultSha256": "37ed4ecf0e841123630c6e3e611ac11497c585d3a50557b0db21e6802edd448b",
+      "logSha256": "2059e8d529a50843d08475c1d8272de2efa9ad31181eaab6debe0575b4103e2f",
+      "treeExitedWithoutTermination": true,
+      "acceptedAttempt": "browser-b2"
+    },
+    "browser-b3": {
+      "tests": 43,
+      "files": [
+        "test/policy_preview_rule_details_test.dart",
+        "test/policy_preview_save_flow_test.dart"
+      ],
+      "nativeExitCode": 0,
+      "seconds": 73.5,
+      "resultSha256": "9b3836c5920bffc6664c541854e36ee3d2ed952a871ad3915d2c3866e2750190",
+      "logSha256": "f507f2d80f071e4eb27dcb651f54952d16481b50336bcba5a88dcabcea304c7a",
+      "treeExitedWithoutTermination": true,
+      "acceptedAttempt": "browser-b3-attempt2"
+    },
+    "browser-c": {
+      "tests": 45,
+      "files": [
+        "test/managed_execution_host_test.dart",
+        "test/policy_target_dialog_test.dart",
+        "test/policy_target_picker_test.dart",
+        "test/policy_target_scope_test.dart",
+        "test/submit_direct_variant_test.dart",
+        "test/workspace_recovery_browser_test.dart"
+      ],
+      "nativeExitCode": 0,
+      "seconds": 97.8,
+      "resultSha256": "30ea37e3f63a94e5b9e0b8073d24ef6e7fdc1102e5828059cc765cd460741697",
+      "logSha256": "09528967fd81183715e60e432855c3a037db7bb69a78fef72f4e4fea65fdc9b7",
+      "treeExitedWithoutTermination": true,
+      "acceptedAttempt": "browser-c"
+    }
+  },
+  "sourceManifestSha256": "a5bf91cc4fc751f38fa0ead36d67ab8a7561e22f147fe6093dc2741ffcee42b4",
+  "sourceUnchanged": true,
+  "wholeProductComplete": false,
+  "servicesUpdated": false,
+  "analyze": {
+    "nativeExitCode": 0,
+    "resultSha256": "87d0f76de893cf89fa1cf9755fdf6d508e97ee95913235925f158c20786c22d6",
+    "seconds": 28.3
+  },
+  "format-check": {
+    "nativeExitCode": 0,
+    "resultSha256": "a74a03eca52853088b77dd6f4d62b5818a915e7419009958cb683b7c7233aa09",
+    "seconds": 1.2
+  },
+  "production": {
+    "nativeExitCode": 0,
+    "resultSha256": "150ac693135ccab64f228df9b8e1aebc35505239509d020d3faa8f2abc18117d",
+    "seconds": 84.8
+  },
+  "version": "1.0.0",
+  "verifiedAgainstHead": "2acf8d824094831af17448963cbcc83eef4d6c9b",
+  "vmTests": 745,
+  "browserTests": 214,
+  "focusedExecutionTests": 59,
+  "validationSummarySha256": "cdf0482dc8fef76ab5b50169aa18507ddc38fad002fbe7ad1c009016f4f4fff1",
+  "visualCheck": {
+    "nativeExitCode": 0,
+    "driverTests": 1,
+    "screenshots": [
+      {
+        "path": "docs/artifacts/managed-execution-ui/desktop-list-synthetic.png",
+        "caption": "桌面：执行记录列表与状态筛选",
+        "width": 1280,
+        "height": 1100,
+        "sha256": "36ea39d99b03ad4ef959d7eed458b6675dfe079b76c4a406284a7215bcb0a55f",
+        "bytes": 46793,
+        "synthetic": true
+      },
+      {
+        "path": "docs/artifacts/managed-execution-ui/desktop-detail-timeline-synthetic.png",
+        "caption": "桌面：当前进展和版本时间线",
+        "width": 1280,
+        "height": 1100,
+        "sha256": "5f1b58baee09582f9fe1c8bf345ac6e90916d0dbabd30a1051d9d3b971e27fdd",
+        "bytes": 49268,
+        "synthetic": true
+      },
+      {
+        "path": "docs/artifacts/managed-execution-ui/desktop-unknown-synthetic.png",
+        "caption": "桌面：请求结果待核对，只允许读取结果",
+        "width": 1280,
+        "height": 1100,
+        "sha256": "1a7452442b6638ac96f2f2f2938afba5751770758630725cf3d47cdf93421ac9",
+        "bytes": 52670,
+        "synthetic": true
+      },
+      {
+        "path": "docs/artifacts/managed-execution-ui/narrow-list-2x-synthetic.png",
+        "caption": "320px、两倍字体：可滚动列表",
+        "width": 320,
+        "height": 760,
+        "sha256": "05bfad87d9885e82a9113da7dea94361f2e78717f3bc892449d61533bb9c5146",
+        "bytes": 43587,
+        "synthetic": true
+      },
+      {
+        "path": "docs/artifacts/managed-execution-ui/narrow-detail-timeline-2x-synthetic.png",
+        "caption": "320px、两倍字体：详情时间线",
+        "width": 320,
+        "height": 760,
+        "sha256": "27c1a5da3ebea6a1ac1c4327c873224dce4de228a7f86355c05a207b3ce02b9a",
+        "bytes": 38567,
+        "synthetic": true
+      },
+      {
+        "path": "docs/artifacts/managed-execution-ui/narrow-confirmation-2x-synthetic.png",
+        "caption": "320px、两倍字体：取消确认及操作限制",
+        "width": 320,
+        "height": 760,
+        "sha256": "3ee52f1316c81d51b98cfc8437c88682dac3bfa067f072d53cd31b4e2910a371",
+        "bytes": 47020,
+        "synthetic": true
+      },
+      {
+        "path": "docs/artifacts/managed-execution-ui/narrow-unknown-2x-synthetic.png",
+        "caption": "320px、两倍字体：结果待核对",
+        "width": 320,
+        "height": 760,
+        "sha256": "58d45d7a3332e7db9db7c55843c2c204cc4514cdb3426b99e9182eeefc8475a0",
+        "bytes": 44939,
+        "synthetic": true
+      }
+    ],
+    "receiptSha256": "b279909ad14cd3b705c23432a9aa46b4322382b64fef7125e9bec9675a294d8a",
+    "manuallyInspected": true,
+    "synthetic": true
+  },
+  "productionBuild": {
+    "nativeExitCode": 0,
+    "activated": false,
+    "fileCount": 32,
+    "inventorySha256": "66138f800cd517faa1fee928608dce0113269e0735bc099bbe998199d01d3d69",
+    "mainDartJsSha256": "c78ea0395a65392c5ae406361832d661972ee73338769e2d49b752980b36f106"
+  },
+  "preservedUnsuccessfulAttempts": [
+    {
+      "stage": "browser-b",
+      "classification": "180s owned-job timeout; partial cases excluded; later split into b1/b2/b3",
+      "nativeExitCode": null,
+      "timedOut": true,
+      "receiptSha256": "9ed238f69b9822d65a25929261eda80db85a193f3e0f30cafd0e2a523e730b80",
+      "sourceUnchanged": true
+    },
+    {
+      "stage": "browser-b3",
+      "classification": "Flutter existing cache lock permission failure; not a business assertion failure",
+      "nativeExitCode": 1,
+      "timedOut": false,
+      "receiptSha256": "9b18b690cfbe73b49f8582a62023b835d61edaca1a0d4ac1a03c3ba95a6bd8e9",
+      "sourceUnchanged": true
+    }
+  ],
+  "redEvidence": {
+    "initial": "Compilation failures from missing library/parameter; not behavior assertions",
+    "controller": "Three actual failed behavioral assertions preserved before repair",
+    "host": "Actual parent invalidation/restoration before first builder caused one unexpected GET; repaired with synchronous parent listener",
+    "flutterLoader": "Production entry filename renamed to avoid Flutter 3.22 host.dart.js substring collision; SDK unchanged"
+  },
+  "limitations": [
+    "Offline guardian regression and production build only",
+    "New UI not deployed in this phase",
+    "Fresh administrator login and MFA not rerun in this phase",
+    "External provider, physical Android, and database restore rehearsal not run",
+    "Concurrent family product changes excluded from frozen candidate"
+  ]
+}

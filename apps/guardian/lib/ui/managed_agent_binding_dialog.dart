@@ -12,12 +12,14 @@ class ManagedAgentBindingDialog extends StatefulWidget {
   final ManagedAgentBindingRepository repository;
   final bool writable;
   final VoidCallback reauthenticate;
+  final Future<void> Function(ManagedAgentBinding)? onExecutions;
   final DateTime Function()? now;
   const ManagedAgentBindingDialog(
       {super.key,
       required this.repository,
       required this.writable,
       required this.reauthenticate,
+      this.onExecutions,
       this.now});
   @override
   State<ManagedAgentBindingDialog> createState() =>
@@ -44,6 +46,32 @@ class _ManagedAgentBindingDialogState extends State<ManagedAgentBindingDialog> {
   bool get active => state == 'PENDING' || state == 'VERIFIED';
   bool get enabled =>
       current && widget.writable && !loading && !busy && error == null;
+
+  Future<void> _openExecutions(ManagedAgentBinding target) async {
+    if (!current ||
+        busy ||
+        loading ||
+        error != null ||
+        widget.onExecutions == null ||
+        binding?.id != target.id ||
+        binding?.deviceId != target.deviceId ||
+        binding?.registrationId != target.registrationId ||
+        binding?.version != target.version) {
+      return;
+    }
+    setState(() {
+      busy = true;
+      confirmRevoke = false;
+    });
+    try {
+      await widget.onExecutions!(target);
+    } catch (failure) {
+      if (current) setState(() => error = failure);
+    } finally {
+      if (mounted) setState(() => busy = false);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -303,6 +331,7 @@ class _ManagedAgentBindingDialogState extends State<ManagedAgentBindingDialog> {
   @override
   Widget build(BuildContext context) {
     final waiting = verifyAfter != null && now.isBefore(verifyAfter!);
+    final executionTarget = binding;
     return PopScope(
         canPop: !busy,
         child: AlertDialog(
@@ -444,6 +473,15 @@ class _ManagedAgentBindingDialogState extends State<ManagedAgentBindingDialog> {
                           child: LinearProgressIndicator()),
                   ])),
           actions: [
+            if (executionTarget != null && widget.onExecutions != null)
+              OutlinedButton.icon(
+                key: const Key('managed-binding-executions'),
+                onPressed: busy || loading || !current || error != null
+                    ? null
+                    : () => _openExecutions(executionTarget),
+                icon: const Icon(Icons.history_outlined),
+                label: const Text('执行记录'),
+              ),
             if (state != 'VERIFIED')
               TextButton(
                   onPressed: busy ? null : () => Navigator.of(context).pop(),

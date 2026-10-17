@@ -11,6 +11,7 @@ import '../ui/design.dart';
 import '../ui/managed_enrollment_guide.dart';
 import '../ui/managed_enrollment_form.dart';
 import '../ui/managed_agent_binding_dialog.dart';
+import 'managed_execution_dialog_entry.dart';
 
 /// Institution provisioning console. A provider receipt never changes local device capabilities.
 class ManagedAndroidPage extends StatefulWidget {
@@ -423,7 +424,7 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
         intent.state != 'VERIFIED') return;
     await _prompt<void>(
         barrierDismissible: false,
-        builder: (_) => ManagedAgentBindingDialog(
+        builder: (bindingContext) => ManagedAgentBindingDialog(
             repository: ManagedAgentBindingRepository(
                 api: widget.session.api,
                 tenantId: tenantId,
@@ -431,6 +432,13 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
                 subjectId: intent.subjectId,
                 current: () => current),
             writable: writable,
+            onExecutions: (association) => openManagedExecutions(
+                bindingContext, widget.session,
+                deviceId: association.deviceId,
+                registrationId: association.registrationId,
+                deviceName: '已关联的儿童端设备',
+                readOnly: true,
+                current: () => current && bindingContext.mounted),
             reauthenticate: () => widget.session.login(stepUp: true)));
   }
 

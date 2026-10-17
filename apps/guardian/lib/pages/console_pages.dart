@@ -7,6 +7,8 @@ import '../core/api.dart';
 import '../core/application_classification.dart';
 import '../core/enrollment_recovery.dart';
 import '../core/device_management.dart';
+import '../core/managed_execution.dart';
+import 'managed_execution_dialog_entry.dart';
 import '../ui/device_management_dialog.dart';
 import '../core/browser_enrollment_journal.dart';
 import '../ui/enrollment_dialog.dart';
@@ -864,6 +866,20 @@ class ConsoleActions {
               accessChanges: s,
               onReauth: reauth,
               onClose: () => Navigator.of(dialogContext).pop(),
+              onExecutions: canReadManagedExecutions(openedRole)
+                  ? (device) => child(() => openManagedExecutions(
+                      dialogContext, s,
+                      deviceId: device.id,
+                      registrationId: device.registrationId,
+                      deviceName: device.displayName,
+                      current: () =>
+                          current() &&
+                          controller.hasAccess &&
+                          controller.device?.id == device.id &&
+                          controller.device?.registrationId ==
+                              device.registrationId,
+                      targetChanges: controller))
+                  : null,
               onDiagnostic: canReadDiagnostics(openedRole)
                   ? (device) => child(() =>
                       openDeviceDiagnostic(dialogContext, s, device.toJson()))
