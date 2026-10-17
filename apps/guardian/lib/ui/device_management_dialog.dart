@@ -22,6 +22,9 @@ class DeviceManagementDialog extends StatefulWidget {
   final Future<void> Function(DeviceManagementRecord)? onPrivacy;
   final Future<void> Function(DeviceManagementRecord)? onExit;
 
+  /// Supplied only when the host grants execution-record access for this scope.
+  final Future<void> Function(DeviceManagementRecord)? onExecutions;
+
   const DeviceManagementDialog({
     super.key,
     required this.controller,
@@ -33,6 +36,7 @@ class DeviceManagementDialog extends StatefulWidget {
     this.onSupport,
     this.onPrivacy,
     this.onExit,
+    this.onExecutions,
   });
 
   @override
@@ -598,6 +602,9 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
       if (widget.onDiagnostic != null)
         actionButton('device-management-diagnostic', '设备诊断',
             Icons.health_and_safety_outlined, widget.onDiagnostic!),
+      if (widget.onExecutions != null)
+        actionButton('device-management-executions', '执行记录',
+            Icons.history_outlined, widget.onExecutions!),
     ];
     final additional = <Widget>[
       if (activeWrite && widget.onExport != null)

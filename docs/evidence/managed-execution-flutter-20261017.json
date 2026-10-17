@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-17",
+  "status": "FOCUSED_VALIDATION_PASSED",
+  "baseCommit": "b7547e268578ea7a1d1cdbd0997222a0158fa38a",
+  "testFirstStatus": "TEST_FIRST_NOT_EXECUTED",
+  "validationSequence": "Frozen preimplementation and pre-fix RED replayed after static implementation; final GREEN executed.",
+  "sourceSha256": {
+    "apps/guardian/test/managed_execution_test.dart": "d1ad5335ed84c3f059cca72e69af76b3934b87c77501e92907c4170eb3cedb46",
+    "apps/guardian/test/managed_execution_fixtures.dart": "6efd3ac9415bf35b18b33eb0c5b8f43922aa81b5562a9e7d9efcbb4201d26eb8",
+    "apps/guardian/test/managed_execution_entry_test.dart": "c1853d9ff77ae3b47e2125f0257f4fb9ae07e57055830aeb8f79cfa95f09c059",
+    "apps/guardian/lib/core/managed_execution.dart": "c8ae56c307d4f15f4305cadffe6258a5ca51af0e51625022377216f9036f7bea",
+    "apps/guardian/lib/core/managed_execution_repository.dart": "60676d015a400d8f09ebf28ae318079c382df5840825ca6870583e195810e67f",
+    "apps/guardian/lib/ui/device_management_dialog.dart": "28e3be992e5e3a2454fefa677dfb74748840fdea0dbd2a48e4d4ce50c94dd380",
+    "docs/managed-execution-flutter-contract.md": "77c964bacd06762b8cb401ce53132658d8d31158d76c7729879a2fa2cf15388b"
+  },
+  "frozenSourceFiles": 414,
+  "sourceManifest": {
+    "path": ".cache/execution-client/execution-flutter-green-20261017-r4/source.json",
+    "sha256": "8565af4a4f5c6078a91ce63781fac58a09d7801ed229ecbbaefeab613ab87788"
+  },
+  "functionalRed": {
+    "nativeExitCode": 1,
+    "expectedFailures": 4,
+    "compilerFailures": 0,
+    "originalCollectorStatus": "VERIFICATION_FAILED",
+    "classifications": [
+      {
+        "name": "parses a real-shaped execution and exposes readable labels",
+        "reporterResult": "failure",
+        "classification": "MODEL_ASSERTION"
+      },
+      {
+        "name": "lists only the fixed device and encodes selected filters",
+        "reporterResult": "error",
+        "classification": "EXPECTED_ASYNC_STUB_ERROR"
+      },
+      {
+        "name": "execution entry forwards the current device for writable=true",
+        "reporterResult": "error",
+        "classification": "WIDGET_ASSERTION"
+      },
+      {
+        "name": "execution entry forwards the current device for writable=false",
+        "reporterResult": "error",
+        "classification": "WIDGET_ASSERTION"
+      }
+    ],
+    "classificationReceipt": {
+      "path": ".cache/execution-client/execution-flutter-red-20261017-r2/red-classification.json",
+      "sha256": "8caca00378e058ef620d3fc257fed31e9a0e8a8e0c0a2273e7c7c7d84b19e9e7"
+    },
+    "result": {
+      "path": ".cache/execution-client/execution-flutter-red-20261017-r2/test-result.json",
+      "sha256": "8fadaad872271dd3d59d352999f8ec2d0644bcc95df458da93367aed3dde7384"
+    },
+    "log": {
+      "path": ".cache/execution-client/execution-flutter-red-20261017-r2/test.log",
+      "sha256": "f8ad9abe2406a8a05028b8b0653a778174530d4586f8c09df533a0111a7a188a"
+    }
+  },
+  "scopeRegressionRed": {
+    "nativeExitCode": 1,
+    "assertionFailures": 2,
+    "result": {
+      "path": ".cache/execution-client/execution-flutter-scope-red-20261017-r1/test-result.json",
+      "sha256": "594c8c6cbd1a93271c942e03428f51e71965a4a2ea4e6928ec3e50abd043c93b"
+    },
+    "log": {
+      "path": ".cache/execution-client/execution-flutter-scope-red-20261017-r1/test.log",
+      "sha256": "081785e04873e8d8fb300b093e47ec5f98e937fd86f75d2823f804758e4b4ee5"
+    }
+  },
+  "green": {
+    "tests": 157,
+    "failures": 0,
+    "skipped": 0,
+    "nativeExitCode": 0,
+    "testFiles": [
+      "test/managed_execution_test.dart",
+      "test/managed_execution_entry_test.dart",
+      "test/device_management_test.dart",
+      "test/device_management_dialog_test.dart",
+      "test/bounded_json_test.dart"
+    ],
+    "result": {
+      "path": ".cache/execution-client/execution-flutter-green-20261017-r4/test-result.json",
+      "sha256": "2958f403ebe8aafff2ecf26aa412ec1b7e9593f1e82f3267990870303579d981"
+    },
+    "log": {
+      "path": ".cache/execution-client/execution-flutter-green-20261017-r4/test.log",
+      "sha256": "09730f17e5f2f9934b5ab4ac39c22744afd9d688279e4d95453c545793a37247"
+    }
+  },
+  "analysis": {
+    "nativeExitCode": 0,
+    "issues": 0,
+    "result": {
+      "path": ".cache/execution-client/execution-flutter-green-20261017-r4/analyze-result.json",
+      "sha256": "f9b94507b23a56b509a5938ad934bf435d3f300ff81ac25b7c0001a7e79b2e7a"
+    },
+    "log": {
+      "path": ".cache/execution-client/execution-flutter-green-20261017-r4/analyze.log",
+      "sha256": "0b678b5d8a8b85f3eb95d579e0a2f369952c2ad06cf6c783e48a93a226fe268b"
+    }
+  },
+  "formatting": {
+    "nativeExitCode": 0,
+    "result": {
+      "path": ".cache/execution-client/format-r2/out/result.json",
+      "sha256": "c68089c3a68a3ed25d3c3b1169ab5abc15bc4441cca9e5c6eac27869ce411939"
+    }
+  },
+  "execution": {
+    "allFinalStagesNaturalExit": true,
+    "ownedProcessTreesEmpty": true,
+    "sourcesUnchanged": true,
+    "SDKReturnedToPeer": true
+  },
+  "history": {
+    "priorUnverifiedReceipt": {
+      "path": ".cache/execution-client/before-validation-evidence.json",
+      "sha256": "8893fbd30baaf306e9eda646b5d315bcf8c3d31bac05bcda87f5836b9488d1f5"
+    },
+    "originalPermissionTimeout": {
+      "path": ".local/execution-flutter-red-20261017-r1/pub-result.json",
+      "sha256": "d319ed7ed68825c7cd50d01af409aad4bb864dfad2cf33fa9dc920e71d336fe3"
+    },
+    "memoryPreflight": {
+      "path": ".cache/execution-client/execution-flutter-red-20261017-r1/pub-result.json",
+      "sha256": "5347e4980f7bee971f2ce9eb8425c75fb1694fa502a73fed6eaf6cf19525b626"
+    },
+    "styleFailure": {
+      "path": ".cache/execution-client/execution-flutter-green-20261017-r3/analyze-result.json",
+      "sha256": "11c3e20736b971f082febf3147587214fd124cb615aac05cb6d5eeaadc9c7ddb"
+    }
+  },
+  "staticReview": {
+    "critical": 0,
+    "importantFound": 1,
+    "finding": "OAuth refresh must preserve the scope guard through physical dispatch",
+    "status": "FIX_CONFIRMED_BY_STATIC_REVIEW_AND_TWO_RUNTIME_REGRESSIONS"
+  },
+  "limitations": [
+    "Focused client tests with local HTTP fixtures, not full product acceptance",
+    "Full execution UI and scoped host integration handled by the coordination peer",
+    "Real backend/browser, live EMM and Android/TV acceptance remain outstanding",
+    "This receipt does not deploy the code or prove database compatibility/capacity"
+  ],
+  "cleanup": {
+    "status": "PRESERVED_ACTIVE_INTEGRATION_EVIDENCE",
+    "policy": "New scratch directories remain in repository .cache; inventory and archive unique evidence before cleanup; never traverse directory links."
+  }
+}
