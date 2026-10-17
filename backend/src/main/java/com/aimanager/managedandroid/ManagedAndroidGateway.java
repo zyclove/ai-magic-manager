@@ -14,6 +14,29 @@ public interface ManagedAndroidGateway {
 
   boolean available();
 
+  /**
+   * Explicitly reviewed exclusive-namespace authority support; transport support is insufficient.
+   */
+  default boolean supportsPolicyResourceAuthority() {
+    return false;
+  }
+
+  /** Changes when authority interpretation, credentials or trust configuration changes. */
+  default String policyResourceAuthorityRevision() {
+    return null;
+  }
+
+  /**
+   * Read-only authority query using the connector's authenticated, bounded provider transport. Must
+   * prove independently audited exclusivity for every target field, never echo client facts. Empty
+   * means no qualifying authority; failures remain failures. No create, reserve, repair, policy
+   * write or assignment may occur. Defaults keep all existing adapters closed.
+   */
+  default Optional<ManagedPolicyResourceEvidence> readPolicyResourceAuthority(
+      ManagedPolicyResourceEvidence.Target target) {
+    throw new ManagedAndroidUnavailableException();
+  }
+
   /** Provider profile reading only; does not certify a model/OS compatibility matrix. */
   default boolean supportsExecutionProfiles() {
     return false;
