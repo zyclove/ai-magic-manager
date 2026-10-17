@@ -89,4 +89,62 @@ void main() {
         () async => MockClient((_) async => http.Response('bad gateway', 502)));
     await expectLater(failing.page('/tenants'), throwsA(isA<ApiFailure>()));
   });
+
+  final nonStringErrorValues = <String, Object>{
+    'number': 17,
+    'boolean': true,
+    'list': <Object>['unexpected'],
+    'map': <String, Object>{'unexpected': true},
+  };
+  for (final status in <int>[401, 403]) {
+    for (final field in <String>['errorCode', 'correlationId']) {
+      for (final entry in nonStringErrorValues.entries) {
+        test(
+            'HTTP $status with non-string $field (${entry.key}) preserves denial status',
+            () async {
+          var calls = 0;
+          final api = Api(() async => MockClient((request) async {
+                calls++;
+                return http.Response(
+                    jsonEncode(<String, Object>{
+                      'errorCode': 'ACCESS_DENIED',
+                      'correlationId': 'trace-auth-123',
+                      field: entry.value,
+                    }),
+                    status);
+              }));
+
+          await expectLater(
+              api.send('GET', '/tenants/t/devices'),
+              throwsA(isA<ApiFailure>()
+                  .having((error) => error.status, 'status', status)
+                  .having((error) => error.code, 'code',
+                      field == 'errorCode' ? 'REQUEST_FAILED' : 'ACCESS_DENIED')
+                  .having((error) => error.correlationId, 'correlationId',
+                      field == 'correlationId' ? null : 'trace-auth-123')));
+          expect(calls, 1);
+        });
+      }
+    }
+  }
+
+  test('HTTP 401 REAUTH_REQUIRED preserves explicit reauthentication code',
+      () async {
+    var calls = 0;
+    final api = Api(() async => MockClient((request) async {
+          calls++;
+          return http.Response(
+              '{"errorCode":"REAUTH_REQUIRED","correlationId":"trace-reauth-123"}',
+              401);
+        }));
+
+    await expectLater(
+        api.send('GET', '/tenants/t/devices'),
+        throwsA(isA<ApiFailure>()
+            .having((error) => error.status, 'status', 401)
+            .having((error) => error.code, 'code', 'REAUTH_REQUIRED')
+            .having((error) => error.correlationId, 'correlationId',
+                'trace-reauth-123')));
+    expect(calls, 1);
+  });
 }

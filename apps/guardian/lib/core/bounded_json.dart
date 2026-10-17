@@ -51,15 +51,18 @@ Future<dynamic> boundedJson(Api api, String method, String path,
       if (response.contentLength != null && response.contentLength! > limit) {
         unawaited(
             response.stream.listen(null).cancel().catchError((Object _) {}));
-        throw const ApiFailure(502, 'INVALID_REPORT_JOB_RESPONSE');
+        throw accepted
+            ? const ApiFailure(502, 'INVALID_REPORT_JOB_RESPONSE')
+            : ApiFailure(response.statusCode, 'REQUEST_FAILED');
       }
       final received = Completer<Uint8List>(),
           bytes = BytesBuilder(copy: false);
       subscription = response.stream.listen((chunk) {
         if (received.isCompleted) return;
         if (bytes.length + chunk.length > limit) {
-          received.completeError(
-              const ApiFailure(502, 'INVALID_REPORT_JOB_RESPONSE'));
+          received.completeError(accepted
+              ? const ApiFailure(502, 'INVALID_REPORT_JOB_RESPONSE')
+              : ApiFailure(response.statusCode, 'REQUEST_FAILED'));
           return;
         }
         bytes.add(chunk);

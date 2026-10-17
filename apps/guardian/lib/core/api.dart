@@ -292,12 +292,12 @@ class Api {
         }
       }
       if (response.statusCode >= 400) {
+        final errorCode = decoded is Map ? decoded['errorCode'] : null;
+        final correlationId = decoded is Map ? decoded['correlationId'] : null;
         throw ApiFailure(
             response.statusCode,
-            decoded is Map
-                ? decoded['errorCode'] ?? 'REQUEST_FAILED'
-                : 'REQUEST_FAILED',
-            decoded is Map ? decoded['correlationId'] : null);
+            errorCode is String ? errorCode : 'REQUEST_FAILED',
+            correlationId is String ? correlationId : null);
       }
       return decoded;
     } on ApiFailure {

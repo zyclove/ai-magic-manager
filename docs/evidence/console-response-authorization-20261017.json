@@ -1,0 +1,128 @@
+{
+  "status": "PASSED",
+  "sourcePins": 421,
+  "sourceManifestSha256": "d9fb92016736b560b02f51f64f59da8128a70b598ccdc950e8e59831edb3da85",
+  "ownedSourceSha256": {
+    "apps/guardian/test/api_test.dart": "989cde51db12c6573461b0e3d048088007c67c1cfe1a6325416255cc708575da",
+    "apps/guardian/test/bounded_json_test.dart": "86e323cb7ea3badd7a8d932173db02d08fd6019d9b67a09b38b88f8497591f2e",
+    "apps/guardian/test/managed_execution_controller_test.dart": "eb32b9ee323bf23e46a496b20eca3728e0dc20be0a7b5865937d323ef24ccf47",
+    "apps/guardian/lib/core/api.dart": "6ebe0e8c55f5e5aa03b15609f7692c1d77e80368863344ab22bd9990b79e31a7",
+    "apps/guardian/lib/core/bounded_json.dart": "25d939efe93d700f57e0e49c57e4799c90021b32982c967a7589a62d072f7ec5"
+  },
+  "guardian": {
+    "testFiles": 88,
+    "tests": 985,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "vmFiles": 69,
+    "vmTests": 771,
+    "browserFiles": 19,
+    "browserTests": 214,
+    "analyzer": "PASSED",
+    "productionBuild": "PASSED"
+  },
+  "red": {
+    "nativeExitCode": 1,
+    "expectedBehaviorFailures": 24,
+    "receiptSha256": "91eb6ed30c9d09bf8356fd6df0896d07375ce75002fa14106b5c31bdf18c776e"
+  },
+  "stageReceipts": {
+    "pub": {
+      "sha256": "10dc99ce375a40afbc1fa17b081a7566eac28d7302b7eced839913e6d62f06d5",
+      "seconds": 5.9,
+      "nativeExitCode": 0,
+      "naturalTreeExit": true,
+      "sourceUnchanged": true
+    },
+    "analyze": {
+      "sha256": "e096c6042b0a1118b042267fb8b717236542aa985c63c907aeaf83206a4c4eb6",
+      "seconds": 10.5,
+      "nativeExitCode": 0,
+      "naturalTreeExit": true,
+      "sourceUnchanged": true
+    },
+    "vm-a": {
+      "sha256": "c3b47ef439baf495a735634d55d85a8bfadc5a16098774f75fa1de729bc54042",
+      "seconds": 64.7,
+      "nativeExitCode": 0,
+      "naturalTreeExit": true,
+      "sourceUnchanged": true
+    },
+    "vm-b": {
+      "sha256": "3315e205971a2897c547642227d02629c46aca39196d06ef481d4b42458e27eb",
+      "seconds": 71.3,
+      "nativeExitCode": 0,
+      "naturalTreeExit": true,
+      "sourceUnchanged": true
+    },
+    "browser-a": {
+      "sha256": "f44f77f7ba276ecb5ccad32f2b8a862b670d41042fff56b668eb012aef3b7430",
+      "seconds": 117.0,
+      "nativeExitCode": 0,
+      "naturalTreeExit": true,
+      "sourceUnchanged": true
+    },
+    "browser-b": {
+      "sha256": "80bd0e4e7a462a51b353c93f6ca407e0b07acd723bd409bbb0d7b9bc374b8071",
+      "seconds": 97.2,
+      "nativeExitCode": 0,
+      "naturalTreeExit": true,
+      "sourceUnchanged": true
+    },
+    "browser-c": {
+      "sha256": "5faa7b0fd5d7bbea8bbf6a1e2d29752614ceaefcac9093aed46db565e3566d41",
+      "seconds": 65.7,
+      "nativeExitCode": 0,
+      "naturalTreeExit": true,
+      "sourceUnchanged": true
+    },
+    "production": {
+      "sha256": "e3222cceceb2d663741396e98eb6144b98abcfb36b8fb0f239ad820f3342be7e",
+      "seconds": 65.0,
+      "nativeExitCode": 0,
+      "naturalTreeExit": true,
+      "sourceUnchanged": true
+    }
+  },
+  "productionAssetsSha256": {
+    ".last_build_id": "693aca6f78125808e0d87700508592b62425bbef6a81a31cba63af4001598f08",
+    "favicon.png": "7ab2525f4b86b65d3e4c70358a17e5a1aaf6f437f99cbcc046dad73d59bb9015",
+    "flutter.js": "5e89bd8789a8f2ea7f00394fddb6c173e1661513e1c1c62fc31b6c4f89b7e74a",
+    "flutter_bootstrap.js": "17b4f3a04ff9ce9d2f0fd292f79409d88bb356a74dc55d5c2ed29aa4e900efab",
+    "flutter_service_worker.js": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "index.html": "801f4676bef6e4eec47be58e8ff1ce811502c2d09ab64175ad2ecff1aa317218",
+    "main.dart.js": "43569f4ceb9a1cdee39b99953c94e9d3e04c5fd7d847037d5a59ee9eb02b7ebc",
+    "manifest.json": "852117056aca3bf5d059b51c026b57d9caf74aba4f1b4e478c00fd1ea02367a2",
+    "version.json": "842ba1889303c52d440ae1a8f93d3d881e054ebe7708a4f2ab3087b8f7d7bb3b",
+    "assets/AssetManifest.bin": "00af55ad3d6f21898fe77e0ff092d1a1cda52c941b6860e9928d45c8af8c095d",
+    "assets/AssetManifest.bin.json": "8460b5f4299ca1ed677c5a54c8038ae9cf1f26f6e91966b1b767ca6cb6d2e5d2",
+    "assets/AssetManifest.json": "4a9b3de7eec9ba46b279bbccd132e32f52d6d555d79dda4aa7f3bcb4e9bd651f",
+    "assets/FontManifest.json": "cd7e03645bc44b2dd47b7cb626f51c4ecbf55a197ab77241628b47ac165fbe21",
+    "assets/NOTICES": "d4e98cabb707163d4d104585940ca8f3b62237c50fa51a69cf6c89b3c2e8eee4",
+    "canvaskit/canvaskit.js": "2db1ce7bb6f13b2ebd2254ee24d577193a2f5ae84d62da0bd9a9b053cc98b748",
+    "canvaskit/canvaskit.js.symbols": "7629ce549d27e59d121852c3ed3c49c8332e6fdbcbf88a6be6fda1667fd295d3",
+    "canvaskit/canvaskit.wasm": "c5711063eb95ad3c1ca680ff2f1daea65ea10a228567d4e69c371f3f450e5cee",
+    "canvaskit/skwasm.js": "67d75e0eeabc548f69e45dc61dab21e25d07b8681afc3e76dae593033a1edcfa",
+    "canvaskit/skwasm.js.symbols": "364b03e4a7c2b4b5559410b6cb732a00ec363ecd64ac3b279cf7b7f5f2a5f3ff",
+    "canvaskit/skwasm.wasm": "56b54c56d79be77aab9180d779245757b2e517d2787dc43a96dbac9297c9be38",
+    "canvaskit/skwasm.worker.js": "0ff2a95082525c9c79cc54cfd68fa042e3967f21d8c53614128c173e7fb654de",
+    "icons/Icon-192.png": "3dce99077602f70421c1c6b2a240bc9b83d64d86681d45f2154143310c980be3",
+    "icons/Icon-512.png": "baccb205ae45f0b421be1657259b4943ac40c95094ab877f3bcbe12cd544dcbe",
+    "icons/Icon-maskable-192.png": "d2c842e22a9f4ec9d996b23373a905c88d9a203b220c5c151885ad621f974b5c",
+    "icons/Icon-maskable-512.png": "6aee06cdcab6b2aef74b1734c4778f4421d2da100b0ff9e52b21b55240202929",
+    "icons/manager.svg": "bd10bcc2ed647a9a11e4be51c85cb66e2dc5533e11697c46cf30ef43b540bd87",
+    "canvaskit/chromium/canvaskit.js": "155cde139018d01b4ae16c67542595943ce4c118bde1e8799e01e03bfa1a4653",
+    "canvaskit/chromium/canvaskit.js.symbols": "09e839ba38f8d1e3b262df6a1fb9d745547cbfc03289b2b0f1b511aab71a4cc3",
+    "canvaskit/chromium/canvaskit.wasm": "086c9d3823481d35f2c929703519707ea220ea16082f70178ccf9ba2b662df35",
+    "assets/fonts/MaterialIcons-Regular.otf": "0fa1d0363f60046859aea85623a64e6df969e1027e12a85b4e806e6ded40629a",
+    "assets/shaders/ink_sparkle.frag": "e01b61b394cf66a641bea87e3b4fe3787d372f636c8bc8a2a67438cdc29da6f6",
+    "assets/packages/cupertino_icons/assets/CupertinoIcons.ttf": "4464f5aa68311c023ff7bc5561a0b8164db76d26c197c8b0e12724a0137ff6fd"
+  },
+  "wholeProductComplete": false,
+  "deployed": false,
+  "limitations": [
+    "Isolated Guardian snapshot excludes concurrent family and native work.",
+    "Device/provider execution and authenticated production journey are not proven by these tests."
+  ]
+}

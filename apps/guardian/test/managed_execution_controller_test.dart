@@ -1,8 +1,43 @@
 import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:guardian/core/api.dart';
+import 'package:guardian/core/managed_execution_repository.dart';
 import 'package:guardian/ui/managed_execution_controller.dart';
+import 'package:http/http.dart' as http;
 import 'managed_execution_fixtures.dart';
+
+class _OversizedDenialClient extends http.BaseClient {
+  final http.Client delegate;
+  final int status;
+  final bool declaredLength;
+  final bodies = <StreamController<List<int>>>[];
+  bool deny = false, cancelled = false;
+  int requests = 0;
+
+  _OversizedDenialClient(this.delegate,
+      {required this.status, required this.declaredLength});
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) async {
+    requests++;
+    if (!deny) return delegate.send(request);
+    final body = StreamController<List<int>>(onCancel: () {
+      cancelled = true;
+    });
+    bodies.add(body);
+    body.add(List.filled(65537, 32));
+    return http.StreamedResponse(body.stream, status,
+        contentLength: declaredLength ? 65537 : null,
+        headers: {'content-type': 'application/json'});
+  }
+
+  @override
+  void close() {
+    for (final body in bodies) {
+      unawaited(body.close());
+    }
+  }
+}
 
 void main() {
   late ExecutionFixture f;
@@ -446,6 +481,48 @@ void main() {
       expect(c.selected, isNull);
       expect(c.events, isEmpty);
     });
+  }
+
+  for (final status in [401, 403]) {
+    for (final declaredLength in [true, false]) {
+      test(
+          'oversized denial $status ${declaredLength ? 'header' : 'stream'} permanently redacts loaded records',
+          () async {
+        c.dispose();
+        final transport = _OversizedDenialClient(f.client,
+            status: status, declaredLength: declaredLength);
+        addTearDown(transport.close);
+        c = ManagedExecutionController(
+            repository: ManagedExecutionRepository(
+                api: Api(() async => transport,
+                    baseUrl: 'http://execution.invalid/api/v1'),
+                tenantId: executionTenant,
+                deviceId: executionDevice,
+                registrationId: executionRegistration,
+                writable: true,
+                current: () => f.current),
+            registrationId: executionRegistration);
+        await open();
+        expect(c.items, isNotEmpty);
+        expect(c.events, isNotEmpty);
+        transport.deny = true;
+        await c.refreshDetail();
+        await Future<void>.delayed(Duration.zero);
+        expect(c.hasAccess, isFalse);
+        expect(c.items, isEmpty);
+        expect(c.selected, isNull);
+        expect(c.events, isEmpty);
+        expect(c.canCancel, isFalse);
+        expect(transport.cancelled, isTrue);
+        final afterDenial = transport.requests;
+        await c.load();
+        await c.loadMore();
+        await c.refreshDetail();
+        await c.loadMoreEvents();
+        await c.cancel((_) async => true);
+        expect(transport.requests, afterDenial);
+      });
+    }
   }
 
   test('events newer than detail block stale cancellation until detail refresh',

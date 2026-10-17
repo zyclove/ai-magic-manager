@@ -1,0 +1,27 @@
+{
+  "status": "PASSED",
+  "publicUrl": "http://localhost:18101",
+  "project": "ai-manager-v1-refresh-20261016-r1",
+  "nativeExitCode": 0,
+  "checks": {
+    "publicUrl": "http://localhost:18101",
+    "frontend": "PASS",
+    "callbackFallback": "PASS",
+    "discovery": "PASS",
+    "anonymousApi": "PASS",
+    "backendHealth": "PASS",
+    "authenticatedJourney": "NOT_RUN",
+    "nativeDeviceExecution": "NOT_RUN"
+  },
+  "releaseManifestSha256": "B6DB21C77CB4ED5815931895F92158EC3473B0174E0CF5385B78157BDB773793",
+  "checkLogSha256": "B4E9AA51EEB48335E8EED42F26EAFCE455A5C6714D4F8265B9A1884FF046695C",
+  "retiredDatabaseContainersStopped": 3,
+  "retiredDataVolumesRetained": [
+    "ai-manager-v1-enrollment-20261014_business-data",
+    "ai-manager-v1-enrollment-20261014_identity-data",
+    "ai-manager-v1-enrollment-20261014_erasure-data"
+  ],
+  "retiredContainerStopReceiptSha256": "9FF60AC42C853A583D4B6EA10561D604B2211189CBDA4625523657923AE20E0C",
+  "newSourceDeployed": false,
+  "wholeProductComplete": false
+}
