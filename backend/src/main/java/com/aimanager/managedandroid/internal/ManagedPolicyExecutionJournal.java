@@ -139,6 +139,19 @@ class ManagedPolicyExecutionJournal {
     }
   }
 
+  /** Server-owned task facts for preparation; no ownership proof or remote-write permission. */
+  record WritePreparationTarget(
+      Claim claim,
+      String publicationId,
+      long expiresAt,
+      ManagedAgentBindingStore.VerifiedBindingContext binding,
+      ManagedExecutionPublicationAccess.Publication publication) {
+    @Override
+    public String toString() {
+      return "ManagedWritePreparationTarget[REDACTED]";
+    }
+  }
+
   private record Row(
       String tenant,
       String id,
@@ -357,6 +370,43 @@ class ManagedPolicyExecutionJournal {
 
   private boolean deviceObservationState(State state) {
     return state == State.ASSIGNMENT_UNKNOWN || state == State.WAITING_DEVICE;
+  }
+
+  /**
+   * Recover authoritative inputs from a current write lease without advancing it. Authority locks
+   * precede the task lock, matching admission and cancellation. Provider calls belong outside this
+   * transaction; the caller must obtain another target after those calls and compare the results.
+   */
+  WritePreparationTarget writePreparationTarget(Claim claim) {
+    workerBoundary();
+    if (claim == null
+        || (claim.action() != Action.WRITE_POLICY && claim.action() != Action.ASSIGN_POLICY))
+      throw new IllegalArgumentException("Expected a write preparation claim");
+    return tx.execute(
+        status -> {
+          requireReadCommitted();
+          var before = required(claim.tenantId(), claim.taskId(), false);
+          var context =
+              bindings.requireVerifiedContext(
+                  before.tenant(), before.actor(), before.binding(), before.bindingVersion());
+          var publication =
+              publications.requireTarget(
+                  before.tenant(),
+                  before.actor(),
+                  before.publication(),
+                  before.device(),
+                  before.registration());
+          var current = required(claim.tenantId(), claim.taskId(), true);
+          if (!current.contextHash().equals(contextHash(context))
+              || !current.versionId().equals(publication.versionId()))
+            throw conflict("EXECUTION_CONTEXT_CHANGED");
+          State expected =
+              claim.action() == Action.WRITE_POLICY ? State.READY_TO_WRITE : State.READY_TO_ASSIGN;
+          if (!owns(current, claim) || current.cancelled() || current.state() != expected)
+            throw conflict("EXECUTION_PREPARATION_STALE");
+          return new WritePreparationTarget(
+              claim(current), current.publication(), current.expiresAt(), context, publication);
+        });
   }
 
   /** Commit uncertainty BEFORE a network write. A claim alone never authorizes external I/O. */
