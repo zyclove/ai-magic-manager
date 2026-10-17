@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "status": "RED_CONFIRMED_IMPLEMENTATION_NOT_VERIFIED",
+  "baseCommit": "1de4f8641c0170d93ccf4c8c343791e1748584c9",
+  "scope": "30 immutable publication target-set admission checks; static placeholder, no production execution",
+  "sourceFileCount": 504,
+  "sourceReceiptSha256": "657e4a8cfcba45dec71841ada48a680d62fbe452c01e381e541237444591317e",
+  "runnerSha256": "503c7aabac7b540f08fa7dc2595d63858c774fecb445623829012ba04c9056c5",
+  "jobHelperSha256": "3d1f4dda5e99e471d447c9f38145f40b9a32ec6e66e6dee8ce17d05d9eab5988",
+  "compile": {
+    "exitCode": 0,
+    "seconds": 31.2,
+    "receiptSha256": "3f9aad9e340f316f4f82686110f973c3e4933a6b68f4d5f212485e266676c104"
+  },
+  "test": {
+    "exitCode": 1,
+    "seconds": 8.9,
+    "totals": {
+      "tests": 30,
+      "failures": 30,
+      "errors": 0,
+      "skipped": 0
+    },
+    "receiptSha256": "ca37ad58a1a57a7ff7a1d8f189195cb461b472babdf890d130c12270fccf7064"
+  },
+  "failureClassification": "Every failure includes MANAGED_PUBLICATION_TARGETS_NOT_IMPLEMENTED; no initialization errors or skipped tests",
+  "sourceUnchanged": true,
+  "naturalProcessTreeExit": true,
+  "activeAfterExit": 0,
+  "workingTreeProductionFilesModified": false,
+  "isolatedImplementation": "Frozen target reader implemented in draft after observed RED; not yet formatted, compiled or tested",
+  "productionExecutionEnabled": false,
+  "sharedFiles": [
+    "PolicyService",
+    "V1",
+    "retention catalogue",
+    "parent client"
+  ],
+  "sharedFileStatus": "Not modified; awaiting coordinated ownership",
+  "limitations": [
+    "No GREEN acceptance",
+    "No atomic publication/request integration",
+    "No deployment or real EMM/device validation",
+    "No new phase commit or push"
+  ]
+}

@@ -8,11 +8,16 @@ import com.aimanager.policy.PolicySnapshot;
 import com.aimanager.shared.DomainException;
 import com.aimanager.tenant.TenantAccess;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /** Reads immutable published inputs, never changes CONFIGURE_ONLY into an execution request. */
 @Service
@@ -42,8 +47,56 @@ class ManagedExecutionPublicationReader implements ManagedExecutionPublicationAc
     return load(tenant, actor, publication, device, registration).publication();
   }
 
+  /**
+   * Returns the entire immutable selection, never a live device search or a partial valid subset.
+   * Binding, current registration and provider eligibility are checked separately during admission.
+   */
+  @Override
+  @Transactional(propagation = Propagation.MANDATORY, noRollbackFor = DomainException.class)
+  public Targets requireTargets(String tenant, String actor, String publication) {
+    if (!TransactionSynchronizationManager.isActualTransactionActive())
+      throw new IllegalStateException("Execution publication snapshot requires a transaction");
+    var loaded = loadSnapshot(tenant, actor, publication);
+    var source = loaded.snapshot().targets();
+    if (source.isEmpty() || source.size() > 50) throw invalidPublication();
+    var devices = new HashSet<String>();
+    var targets = new ArrayList<Target>(source.size());
+    for (var target : source) {
+      if (target == null
+          || !canonicalId(target.deviceId())
+          || !canonicalId(target.registrationId())
+          || !devices.add(target.deviceId())) throw invalidPublication();
+      targets.add(new Target(target.deviceId(), target.registrationId()));
+    }
+    targets.sort(Comparator.comparing(Target::deviceId));
+    return new Targets(loaded.publication(), targets);
+  }
+
+  private static boolean canonicalId(String id) {
+    try {
+      return id != null && UUID.fromString(id).toString().equals(id);
+    } catch (IllegalArgumentException malformed) {
+      return false;
+    }
+  }
+
+  private static IllegalStateException invalidPublication() {
+    return new IllegalStateException("Invalid stored execution publication");
+  }
+
   private Loaded load(
       String tenant, String actor, String publication, String device, String registration) {
+    var loaded = loadSnapshot(tenant, actor, publication);
+    var targets =
+        loaded.snapshot().targets().stream()
+            .filter(t -> t != null && device.equals(t.deviceId()))
+            .toList();
+    if (targets.size() != 1 || !registration.equals(targets.get(0).registrationId()))
+      throw new DomainException(HttpStatus.CONFLICT, "EXECUTION_PUBLICATION_TARGET_MISMATCH");
+    return new Loaded(loaded.publication(), loaded.snapshot(), targets.get(0));
+  }
+
+  private Snapshot loadSnapshot(String tenant, String actor, String publication) {
     access.requireWriteRole(tenant, actor, OWNER, ORG_ADMIN);
     var rows =
         db.query(
@@ -69,13 +122,10 @@ class ManagedExecutionPublicationReader implements ManagedExecutionPublicationAc
     }
     if (snapshot == null || snapshot.schemaVersion() != 1 || snapshot.targets() == null)
       throw new IllegalStateException("Invalid stored execution publication");
-    var targets =
-        snapshot.targets().stream().filter(t -> t != null && device.equals(t.deviceId())).toList();
-    if (targets.size() != 1 || !registration.equals(targets.get(0).registrationId()))
-      throw new DomainException(HttpStatus.CONFLICT, "EXECUTION_PUBLICATION_TARGET_MISMATCH");
-    return new Loaded(
-        new Publication(row.id(), row.hash(), row.createdAt()), snapshot, targets.get(0));
+    return new Snapshot(new Publication(row.id(), row.hash(), row.createdAt()), snapshot);
   }
+
+  private record Snapshot(Publication publication, PolicySnapshot snapshot) {}
 
   private record Loaded(
       Publication publication, PolicySnapshot snapshot, PolicySnapshot.Target target) {}
