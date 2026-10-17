@@ -271,6 +271,15 @@ class ManagedPolicyExecutionJournal {
 
   /** Select at most 25 due tasks. All leases use database time shared by backend replicas. */
   List<Claim> claimDue(String provider, int limit) {
+    return claimDue(provider, limit, false);
+  }
+
+  /** Only device observations: never leases or consumes attempts for pending provider writes. */
+  List<Claim> claimDeviceObservations(String provider, int limit) {
+    return claimDue(provider, limit, true);
+  }
+
+  private List<Claim> claimDue(String provider, int limit, boolean deviceObservationsOnly) {
     workerBoundary();
     if (provider == null || !provider.matches("[A-Z][A-Z0-9_]{2,31}") || limit < 1 || limit > 25)
       throw new IllegalArgumentException("Invalid execution claim selection");
@@ -281,7 +290,9 @@ class ManagedPolicyExecutionJournal {
               db.query(
                   "SELECT * FROM managed_policy_execution_tasks WHERE provider=?"
                       + " AND state IN "
-                      + DUE_STATES
+                      + (deviceObservationsOnly
+                          ? "('ASSIGNMENT_UNKNOWN','WAITING_DEVICE')"
+                          : DUE_STATES)
                       + " AND next_attempt_at<=? AND (lease_until IS NULL OR lease_until<=?)"
                       + " ORDER BY next_attempt_at,id LIMIT ?",
                   this::row,
@@ -293,6 +304,8 @@ class ManagedPolicyExecutionJournal {
           for (var before : candidates) {
             var current = required(before.tenant(), before.id(), true);
             if (!due(current, now) || !current.provider().equals(provider)) continue;
+            // Recheck after locking: selection and ownership can race between replicas.
+            if (deviceObservationsOnly && !deviceObservationState(current.state())) continue;
             if (current.expiresAt() <= now || current.attempts() >= settings.maximumAttempts()) {
               finish(
                   current,
@@ -326,6 +339,24 @@ class ManagedPolicyExecutionJournal {
           }
           return List.copyOf(claims);
         });
+  }
+
+  /** Short preflight only; the eventual observation repeats ownership checks after remote I/O. */
+  boolean deviceObservationCurrent(Claim claim) {
+    workerBoundary();
+    if (claim.action() != Action.READ_DEVICE)
+      throw new IllegalArgumentException("Expected a device observation claim");
+    return tx.execute(
+        status -> {
+          var current = required(claim.tenantId(), claim.taskId(), false);
+          return owns(current, claim)
+              && !current.cancelled()
+              && deviceObservationState(current.state());
+        });
+  }
+
+  private boolean deviceObservationState(State state) {
+    return state == State.ASSIGNMENT_UNKNOWN || state == State.WAITING_DEVICE;
   }
 
   /** Commit uncertainty BEFORE a network write. A claim alone never authorizes external I/O. */
