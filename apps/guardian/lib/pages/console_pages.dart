@@ -19,6 +19,7 @@ import '../core/overview_summary.dart';
 import '../core/session.dart';
 import '../core/workspace_read_recovery.dart';
 import 'device_subflow_scope.dart';
+import 'policy_details_entry.dart';
 import 'observation_page.dart';
 import '../ui/design.dart';
 import '../ui/device_observation_status.dart';
@@ -903,48 +904,18 @@ class ConsoleActions {
     }
   }
 
-  Future<void> policyDetails(Json row) async {
-    final r = await s.api.send('GET', '$root/policies/${row['id']}') as Json;
-    if (!context.mounted) return;
-    await actionDetails(
-        context,
-        r['name'],
-        {
-          '类型': label(r['kind']),
-          '草稿版本': 'v${r['revision']}',
-          '规则': (r['rules'] as List)
-              .map((x) =>
-                  '${label(x['kind'])} · ${label(x['effect'])} · ${ruleSummary(Map<String, dynamic>.from(x), [], [])}')
-              .join('\n'),
-          '策略编号': r['id']
-        },
-        reauth: reauth,
-        actions: [
-          if (s.canWrite)
-            DetailAction('编辑草稿', (_) => policyEditor(context, s, draft: r)),
-          if (s.canWrite && r['kind'] == 'TEMPLATE')
-            DetailAction('从模板创建策略', (ctx) async {
-              final copyKey = requestId();
-              await formDialog(ctx,
-                  title: '复制为策略',
-                  fields: const [FieldSpec('name', '新策略名称')],
-                  initial: {'name': '${r['name']} · 副本'},
-                  onSubmit: (v) async => await s.api.send(
-                      'POST', '$root/policies/${r['id']}/copies',
-                      version: r['revision'], key: copyKey, body: v) as Json);
-            }),
-          if (s.canWrite && r['kind'] == 'POLICY')
-            DetailAction('预览与发布', (ctx) => previewPolicy(ctx, r),
-                closeOnSuccess: false),
-          DetailAction('版本历史', (ctx) => versions(ctx, r))
-        ]);
-  }
+  Future<void> policyDetails(Json row) => openPolicyDetails(context, s,
+      root: root, row: row, preview: previewPolicy);
 
   Future<void> previewPolicy(BuildContext ctx, Json draft) async {
     final actor = s.profile?['subject'] as String?, role = s.role;
     final scopeGeneration = s.scopeGeneration;
     if (actor == null) return;
+    var previewLive = true;
+    final previewRevoked = ValueNotifier<bool>(false);
     bool current() =>
+        previewLive &&
+        !previewRevoked.value &&
         ctx.mounted &&
         s.scopeGeneration == scopeGeneration &&
         s.authenticated &&
@@ -953,236 +924,206 @@ class ConsoleActions {
         s.profile?['subject'] == actor &&
         s.role == role &&
         s.canOpen('policies');
-    Future<bool> groupCurrent(PolicyTargetSelection target,
-        {bool Function()? isCurrent}) async {
-      final valid = isCurrent ?? current;
-      if (target.groupId == null) return valid();
-      if (!valid() || !s.canOpen('device-groups')) return false;
-      final latest = await s.api.send(
-          'GET', '$root/device-groups/${target.groupId}',
-          isCurrent: valid);
-      return valid() &&
-          latest is Json &&
-          latest['id'] == target.groupId &&
-          latest['state'] == 'ACTIVE' &&
-          latest['version'] == target.groupVersion;
-    }
-
-    Json? validatedPreview;
-    final picked = await showPolicyTargetPicker(
-        context: ctx,
-        session: s,
-        root: root,
-        actor: actor,
-        role: role,
-        onPreview: (picked, isActive) async {
-          bool previewCurrent() => current() && isActive();
-          if (picked.groupId != null &&
-              !await groupCurrent(picked, isCurrent: previewCurrent)) {
-            throw const ApiFailure(409, 'POLICY_GROUP_CHANGED');
-          }
-          if (!previewCurrent()) {
-            throw const ApiFailure(409, 'WORKSPACE_CHANGED');
-          }
-          final response = await s.api.send(
-              'POST', '$root/policies/${draft['id']}/previews',
-              version: draft['revision'],
-              isCurrent: previewCurrent,
-              body: {
-                'deviceIds': picked.deviceIds,
-                if (picked.groupId != null) 'groupId': picked.groupId,
-                if (picked.groupVersion != null)
-                  'groupVersion': picked.groupVersion
-              });
-          if (!previewCurrent()) {
-            throw const ApiFailure(409, 'WORKSPACE_CHANGED');
-          }
-          if (response is! Json) {
-            throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
-          }
-          final p = response;
-          if (p['id'] is! String ||
-              (p['id'] as String).isEmpty ||
-              p['policyId'] != draft['id'] ||
-              p['draftRevision'] != draft['revision'] ||
-              p['phase'] != 'PREVIEW' ||
-              p['hash'] is! String ||
-              !RegExp(r'^[a-f0-9]{64}$').hasMatch(p['hash'] as String) ||
-              p['expiresAt'] is! int ||
-              p['enforceable'] is! bool) {
-            throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
-          }
-          if (picked.groupId != null &&
-              (p['snapshot'] is! Json ||
-                  (p['snapshot'] as Json)['groupSelection'] is! Json ||
-                  ((p['snapshot'] as Json)['groupSelection']
-                          as Json)['groupId'] !=
-                      picked.groupId ||
-                  ((p['snapshot'] as Json)['groupSelection']
-                          as Json)['groupVersion'] !=
-                      picked.groupVersion)) {
-            throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
-          }
-          final targets = p['targets'];
-          if (targets is! List) {
-            throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
-          }
-          final returnedRegistrations = <String, String>{};
-          for (final target in targets) {
-            if (target is! Json ||
-                target['deviceId'] is! String ||
-                target['registrationId'] is! String ||
-                target['observationStatus'] is! String ||
-                target['rules'] is! List ||
-                (target['rules'] as List).any((rule) =>
-                    rule is! Json ||
-                    rule['kind'] is! String ||
-                    rule['status'] is! String ||
-                    (rule['reasonCode'] != null &&
-                        rule['reasonCode'] is! String)) ||
-                returnedRegistrations.containsKey(target['deviceId'])) {
-              throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
-            }
-            returnedRegistrations[target['deviceId'] as String] =
-                target['registrationId'] as String;
-          }
-          if (returnedRegistrations.length != picked.deviceIds.length ||
-              !returnedRegistrations.keys
-                  .toSet()
-                  .containsAll(picked.deviceIds)) {
-            throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
-          }
-          if (picked.groupRegistrations.entries.any(
-              (entry) => returnedRegistrations[entry.key] != entry.value)) {
-            throw const ApiFailure(409, 'POLICY_GROUP_CHANGED');
-          }
-          validatedPreview = p;
-        });
-    if (!ctx.mounted ||
-        picked == null ||
-        !current() ||
-        validatedPreview == null) {
-      return;
-    }
-    final p = validatedPreview!;
-    final publicationKey = requestId();
-    void ensurePreviewFresh() {
-      if ((p['expiresAt'] as int) <= DateTime.now().millisecondsSinceEpoch) {
-        throw const ApiFailure(409, 'PREVIEW_EXPIRED');
+    final previewApi = s.api.scoped(current);
+    void revokePrivateFailure(Object failure) {
+      if (previewLive &&
+          failure is ApiFailure &&
+          (failure.code == 'WORKSPACE_CHANGED' ||
+              failure.status == 403 ||
+              (failure.status == 401 && failure.code != 'REAUTH_REQUIRED'))) {
+        previewRevoked.value = true;
       }
     }
 
-    await actionDetails(ctx, '发布前预览', const {},
-        extraContent: PolicyPreviewResults(
-            preview: p,
-            names: picked.names,
-            selectionSummary: picked.groupId == null
-                ? '手动选择 ${picked.deviceIds.length} 台设备'
-                : '设备组“${picked.groupName}”第 ${picked.groupVersion} 版 · ${picked.deviceIds.length} 台设备'),
-        reauth: reauth,
-        accessChanges: s,
-        hasAccess: current,
-        actions: [
-          DetailAction('仅保存配置', (inner) async {
-            final previewRoute = ModalRoute.of(inner);
-            ensurePreviewFresh();
-            if (!await confirmAction(
-                inner, '发布配置', '确认保存本次预览中的配置版本？当前不会执行设备系统管控。',
-                confirm: '发布配置')) {
-              return;
-            }
-            if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
-            if (picked.groupId != null && !await groupCurrent(picked)) {
+    try {
+      Future<bool> groupCurrent(PolicyTargetSelection target,
+          {bool Function()? isCurrent}) async {
+        final valid = isCurrent ?? current;
+        if (target.groupId == null) return valid();
+        if (!valid() || !s.canOpen('device-groups')) return false;
+        final latest = await previewApi.send(
+            'GET', '$root/device-groups/${target.groupId}',
+            isCurrent: valid);
+        return valid() &&
+            latest is Json &&
+            latest['id'] == target.groupId &&
+            latest['state'] == 'ACTIVE' &&
+            latest['version'] == target.groupVersion;
+      }
+
+      Json? validatedPreview;
+      final picked = await showPolicyTargetPicker(
+          context: ctx,
+          session: s,
+          root: root,
+          actor: actor,
+          role: role,
+          onPreview: (picked, isActive) async {
+            bool previewCurrent() => current() && isActive();
+            if (picked.groupId != null &&
+                !await groupCurrent(picked, isCurrent: previewCurrent)) {
               throw const ApiFailure(409, 'POLICY_GROUP_CHANGED');
             }
-            if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
-            ensurePreviewFresh();
-            final result = await s.api.send(
-                'POST', '$root/policies/${draft['id']}/publications',
-                version: draft['revision'],
-                key: publicationKey,
-                isCurrent: current,
-                body: {
-                  'previewId': p['id'],
-                  'previewHash': p['hash'],
-                  'mode': 'CONFIGURE_ONLY'
-                }) as Json;
-            if (inner.mounted && current()) {
-              await showDetails(inner, '发布结果', {
-                '状态': label(result['state']),
-                '发布方式': label(result['mode']),
-                '版本': result['sequence'],
-                '发布时间': dateLabel(result['createdAt']),
-                '操作编号': result['id']
-              });
-              if (inner.mounted &&
-                  current() &&
-                  previewRoute?.isCurrent == true) {
-                Navigator.pop(inner);
-              }
+            if (!previewCurrent()) {
+              throw const ApiFailure(409, 'WORKSPACE_CHANGED');
             }
-          }, closeOnSuccess: false)
-        ]);
+            final response = await previewApi.send(
+                'POST', '$root/policies/${draft['id']}/previews',
+                version: draft['revision'],
+                isCurrent: previewCurrent,
+                body: {
+                  'deviceIds': picked.deviceIds,
+                  if (picked.groupId != null) 'groupId': picked.groupId,
+                  if (picked.groupVersion != null)
+                    'groupVersion': picked.groupVersion
+                });
+            if (!previewCurrent()) {
+              throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+            }
+            if (response is! Json) {
+              throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+            }
+            final p = response;
+            if (p['id'] is! String ||
+                (p['id'] as String).isEmpty ||
+                p['policyId'] != draft['id'] ||
+                p['draftRevision'] != draft['revision'] ||
+                p['phase'] != 'PREVIEW' ||
+                p['hash'] is! String ||
+                !RegExp(r'^[a-f0-9]{64}$').hasMatch(p['hash'] as String) ||
+                p['expiresAt'] is! int ||
+                p['enforceable'] is! bool) {
+              throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+            }
+            if (picked.groupId != null &&
+                (p['snapshot'] is! Json ||
+                    (p['snapshot'] as Json)['groupSelection'] is! Json ||
+                    ((p['snapshot'] as Json)['groupSelection']
+                            as Json)['groupId'] !=
+                        picked.groupId ||
+                    ((p['snapshot'] as Json)['groupSelection']
+                            as Json)['groupVersion'] !=
+                        picked.groupVersion)) {
+              throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+            }
+            final targets = p['targets'];
+            if (targets is! List) {
+              throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+            }
+            final returnedRegistrations = <String, String>{};
+            for (final target in targets) {
+              if (target is! Json ||
+                  target['deviceId'] is! String ||
+                  target['registrationId'] is! String ||
+                  target['observationStatus'] is! String ||
+                  target['rules'] is! List ||
+                  (target['rules'] as List).any((rule) =>
+                      rule is! Json ||
+                      rule['kind'] is! String ||
+                      rule['status'] is! String ||
+                      (rule['reasonCode'] != null &&
+                          rule['reasonCode'] is! String)) ||
+                  returnedRegistrations.containsKey(target['deviceId'])) {
+                throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+              }
+              returnedRegistrations[target['deviceId'] as String] =
+                  target['registrationId'] as String;
+            }
+            if (returnedRegistrations.length != picked.deviceIds.length ||
+                !returnedRegistrations.keys
+                    .toSet()
+                    .containsAll(picked.deviceIds)) {
+              throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+            }
+            if (picked.groupRegistrations.entries.any(
+                (entry) => returnedRegistrations[entry.key] != entry.value)) {
+              throw const ApiFailure(409, 'POLICY_GROUP_CHANGED');
+            }
+            validatedPreview = p;
+          });
+      if (!ctx.mounted ||
+          picked == null ||
+          !current() ||
+          validatedPreview == null) {
+        return;
+      }
+      final p = validatedPreview!;
+      final publicationKey = requestId();
+      void ensurePreviewFresh() {
+        if ((p['expiresAt'] as int) <= DateTime.now().millisecondsSinceEpoch) {
+          throw const ApiFailure(409, 'PREVIEW_EXPIRED');
+        }
+      }
+
+      await actionDetails(ctx, '发布前预览', const {},
+          extraContent: PolicyPreviewResults(
+              preview: p,
+              names: picked.names,
+              selectionSummary: picked.groupId == null
+                  ? '手动选择 ${picked.deviceIds.length} 台设备'
+                  : '设备组“${picked.groupName}”第 ${picked.groupVersion} 版 · ${picked.deviceIds.length} 台设备'),
+          reauth: reauth,
+          accessChanges: Listenable.merge([s, previewRevoked]),
+          hasAccess: current,
+          actions: [
+            DetailAction('仅保存配置', (inner) async {
+              if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+              try {
+                final previewRoute = ModalRoute.of(inner);
+                ensurePreviewFresh();
+                if (!await confirmAction(
+                    inner, '发布配置', '确认保存本次预览中的配置版本？当前不会执行设备系统管控。',
+                    confirm: '发布配置')) {
+                  return;
+                }
+                if (!current()) {
+                  throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+                }
+                if (picked.groupId != null && !await groupCurrent(picked)) {
+                  throw const ApiFailure(409, 'POLICY_GROUP_CHANGED');
+                }
+                if (!current()) {
+                  throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+                }
+                ensurePreviewFresh();
+                final result = await previewApi.send(
+                    'POST', '$root/policies/${draft['id']}/publications',
+                    version: draft['revision'],
+                    key: publicationKey,
+                    isCurrent: current,
+                    body: {
+                      'previewId': p['id'],
+                      'previewHash': p['hash'],
+                      'mode': 'CONFIGURE_ONLY'
+                    }) as Json;
+                if (inner.mounted && current()) {
+                  await showDetails(inner, '发布结果', {
+                    '状态': label(result['state']),
+                    '发布方式': label(result['mode']),
+                    '版本': result['sequence'],
+                    '发布时间': dateLabel(result['createdAt']),
+                    '操作编号': result['id']
+                  });
+                  if (inner.mounted &&
+                      current() &&
+                      previewRoute?.isCurrent == true) {
+                    Navigator.pop(inner);
+                  }
+                }
+              } catch (failure) {
+                revokePrivateFailure(failure);
+                rethrow;
+              }
+            }, closeOnSuccess: false)
+          ]);
+    } finally {
+      previewLive = false;
+      previewRevoked.dispose();
+    }
   }
 
-  Future<void> versions(BuildContext ctx, Json draft) async {
-    final rows = await s.api.all('$root/policies/${draft['id']}/versions');
-    if (!ctx.mounted) return;
-    await showDialog<void>(
-        context: ctx,
-        builder: (dialog) => AlertDialog(
-                title: const Text('版本历史'),
-                content: SizedBox(
-                    width: 620,
-                    child: SingleChildScrollView(
-                        child: Column(mainAxisSize: MainAxisSize.min, children: [
-                      if (rows.isEmpty)
-                        const EmptyView('还没有发布版本', '预览并发布后，可在这里查看历史。'),
-                      ...rows.map((r) => ListTile(
-                          title: Text(
-                              '版本 ${r['sequence'] ?? r['versionNumber'] ?? shortId(r['id'])}'),
-                          subtitle: Text(dateLabel(r['createdAt'])),
-                          trailing: const Icon(Icons.chevron_right),
-                          onTap: () async {
-                            final rollbackKey = requestId();
-                            await actionDetails(
-                                dialog,
-                                '历史版本',
-                                {
-                                  '版本': r['sequence'],
-                                  '发布方式': label(r['mode']),
-                                  '发布时间': dateLabel(r['createdAt']),
-                                  '规则数': (r['snapshot']['sourceRules'] as List)
-                                      .length,
-                                  '目标设备数':
-                                      (r['snapshot']['targets'] as List).length,
-                                  '版本编号': r['id']
-                                },
-                                reauth: reauth,
-                                actions: s.canWrite
-                                    ? [
-                                        DetailAction('回滚为草稿', (inner) async {
-                                          if (await confirmAction(
-                                              inner,
-                                              '回滚为草稿',
-                                              '将历史规则恢复到当前策略草稿。不会改变已经发布的版本，仍需重新预览并发布。')) {
-                                            await s.api.send('POST',
-                                                '$root/policies/${draft['id']}/versions/${r['id']}/rollback-drafts',
-                                                version: draft['revision'],
-                                                key: rollbackKey,
-                                                body: {'name': draft['name']});
-                                          }
-                                        })
-                                      ]
-                                    : []);
-                          }))
-                    ]))),
-                actions: [
-                  TextButton(
-                      onPressed: () => Navigator.pop(dialog),
-                      child: const Text('关闭'))
-                ]));
-  }
+  Future<void> versions(BuildContext ctx, Json draft) =>
+      openPolicyVersions(ctx, s, root: root, draft: draft);
 
   Future<void> createAccessRequest() async {
     final workspace = root, key = requestId();

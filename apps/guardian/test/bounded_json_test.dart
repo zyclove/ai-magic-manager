@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:guardian/core/api.dart';
 import 'package:guardian/core/bounded_json.dart';
+import 'package:guardian/core/scoped_http_client.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
@@ -111,6 +112,90 @@ void main() {
       expect(client.closed, isFalse,
           reason: 'The session still owns the authenticated client.');
       expect(client.sends, 1, reason: 'A hard denial must never retry itself.');
+    });
+  }
+  for (final status in [401, 403]) {
+    for (final interruption in ['client', 'timeout']) {
+      test('HTTP $status $interruption interrupted body preserves hard denial',
+          () async {
+        var cancelled = false;
+        late final StreamController<List<int>> stream;
+        stream = StreamController<List<int>>(
+            onListen: () {
+              stream.add([123]);
+              stream.addError(interruption == 'client'
+                  ? http.ClientException('interrupted error response')
+                  : TimeoutException('interrupted error response'));
+            },
+            onCancel: () => cancelled = true);
+        addTearDown(stream.close);
+        final client = StreamClient(http.StreamedResponse(stream.stream, status,
+            headers: {'content-type': 'application/json'}));
+        await expectLater(
+            boundedJson(Api(() async => client), 'GET', '/fixture',
+                ensureCurrent: () {}),
+            throwsA(isA<ApiFailure>()
+                .having((failure) => failure.status, 'status', status)
+                .having((failure) => failure.code, 'code', 'REQUEST_FAILED')));
+        await Future<void>.delayed(Duration.zero);
+        expect(cancelled, isTrue);
+        expect(client.closed, isFalse);
+        expect(client.sends, 1);
+      });
+    }
+    test('HTTP $status scope loss during denied body remains workspace changed',
+        () async {
+      var current = true, cancelled = false;
+      late final StreamController<List<int>> stream;
+      stream = StreamController<List<int>>(
+          onListen: () {
+            current = false;
+            stream.addError(const ScopeChangedException());
+          },
+          onCancel: () => cancelled = true);
+      addTearDown(stream.close);
+      final client = StreamClient(http.StreamedResponse(stream.stream, status,
+          headers: {'content-type': 'application/json'}));
+
+      await expectLater(
+          boundedJson(Api(() async => client), 'GET', '/fixture',
+              ensureCurrent: () {
+            if (!current) {
+              throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+            }
+          }),
+          throwsA(isA<ApiFailure>()
+              .having((failure) => failure.status, 'status', 409)
+              .having((failure) => failure.code, 'code', 'WORKSPACE_CHANGED')));
+      await Future<void>.delayed(Duration.zero);
+
+      expect(cancelled, isTrue);
+      expect(client.closed, isFalse);
+      expect(client.sends, 1);
+    });
+    testWidgets('HTTP $status unfinished body deadline preserves hard denial',
+        (tester) async {
+      var listened = false, cancelled = false;
+      final stream = StreamController<List<int>>(
+          onListen: () => listened = true, onCancel: () => cancelled = true);
+      addTearDown(stream.close);
+      final client = StreamClient(http.StreamedResponse(stream.stream, status,
+          headers: {'content-type': 'application/json'}));
+      final outcome = boundedJson(Api(() async => client), 'GET', '/fixture',
+              ensureCurrent: () {})
+          .then<Object?>((value) => value, onError: (Object error) => error);
+      await tester.pump();
+      expect(listened, isTrue);
+      await tester.pump(const Duration(seconds: 26));
+      expect(
+          await outcome,
+          isA<ApiFailure>()
+              .having((failure) => failure.status, 'status', status)
+              .having((failure) => failure.code, 'code', 'REQUEST_FAILED'));
+      await tester.pump();
+      expect(cancelled, isTrue);
+      expect(client.closed, isFalse);
+      expect(client.sends, 1);
     });
   }
   test('bounded HTTP 401 preserves explicit recent authentication recovery',

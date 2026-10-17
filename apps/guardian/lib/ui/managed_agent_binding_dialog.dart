@@ -13,6 +13,10 @@ class ManagedAgentBindingDialog extends StatefulWidget {
   final bool writable;
   final VoidCallback reauthenticate;
   final Future<void> Function(ManagedAgentBinding)? onExecutions;
+  final Future<void> Function(ManagedAgentBinding binding,
+      {required bool Function() parentCurrent,
+      required Listenable parentChanges,
+      required VoidCallback onParentRefresh})? onApplicationEvidence;
   final DateTime Function()? now;
   const ManagedAgentBindingDialog(
       {super.key,
@@ -20,10 +24,39 @@ class ManagedAgentBindingDialog extends StatefulWidget {
       required this.writable,
       required this.reauthenticate,
       this.onExecutions,
+      this.onApplicationEvidence,
       this.now});
   @override
   State<ManagedAgentBindingDialog> createState() =>
       _ManagedAgentBindingDialogState();
+}
+
+/// One child journey owns one immutable association snapshot. Once its parent
+/// is lost or the child finishes, observing the old scope again cannot revive it.
+class _ApplicationEvidenceLifetime extends ChangeNotifier {
+  final bool Function() parentCurrent;
+  bool _lost = false;
+
+  _ApplicationEvidenceLifetime(this.parentCurrent);
+
+  bool get current {
+    checkCurrent();
+    return !_lost;
+  }
+
+  void checkCurrent() {
+    if (!_lost && !parentCurrent()) {
+      invalidate();
+    }
+  }
+
+  void invalidate() {
+    if (_lost) {
+      return;
+    }
+    _lost = true;
+    notifyListeners();
+  }
 }
 
 class _ManagedAgentBindingDialogState extends State<ManagedAgentBindingDialog> {
@@ -40,12 +73,85 @@ class _ManagedAgentBindingDialogState extends State<ManagedAgentBindingDialog> {
   int generation = 0;
   DateTime? verifyAfter;
   Timer? clock;
+  _ApplicationEvidenceLifetime? applicationEvidence;
   DateTime get now => widget.now?.call() ?? DateTime.now();
   bool get current => mounted && widget.repository.current();
   String? get state => binding?.stateAt(now);
   bool get active => state == 'PENDING' || state == 'VERIFIED';
   bool get enabled =>
       current && widget.writable && !loading && !busy && error == null;
+
+  void _close() {
+    if (!mounted || busy) return;
+    final route = ModalRoute.of(context);
+    if (route?.isCurrent != true || route?.isActive != true) return;
+    Navigator.of(context).pop();
+  }
+
+  bool _applicationEvidenceTargetCurrent(ManagedAgentBinding target) =>
+      current &&
+      widget.writable &&
+      data?.ready == true &&
+      target.enrollmentId == widget.repository.enrollmentId &&
+      target.state == 'VERIFIED' &&
+      target.verifiedAt != null &&
+      binding?.id == target.id &&
+      binding?.deviceId == target.deviceId &&
+      binding?.registrationId == target.registrationId &&
+      binding?.version == target.version &&
+      binding?.state == 'VERIFIED' &&
+      binding?.verifiedAt != null;
+
+  Future<void> _openApplicationEvidence(ManagedAgentBinding target) async {
+    final open = widget.onApplicationEvidence;
+    if (!enabled ||
+        open == null ||
+        applicationEvidence != null ||
+        !_applicationEvidenceTargetCurrent(target)) {
+      return;
+    }
+    final repository = widget.repository;
+    final lifetime = _ApplicationEvidenceLifetime(() =>
+        identical(widget.repository, repository) &&
+        _applicationEvidenceTargetCurrent(target));
+    bool refreshRequested = false;
+    applicationEvidence = lifetime;
+    setState(() {
+      busy = true;
+      confirmRevoke = false;
+    });
+    try {
+      await open(target,
+          parentCurrent: () => lifetime.current,
+          parentChanges: lifetime,
+          onParentRefresh: () {
+            if (lifetime.current) {
+              refreshRequested = true;
+            }
+          });
+    } catch (failure) {
+      if (lifetime.current) {
+        setState(() => error = failure);
+      }
+    } finally {
+      final refresh = refreshRequested && lifetime.current;
+      lifetime.invalidate();
+      if (identical(applicationEvidence, lifetime)) {
+        applicationEvidence = null;
+      }
+      lifetime.dispose();
+      if (mounted) {
+        setState(() => busy = false);
+      }
+      // A return action requests a new GET only after the child has released
+      // its fixed version. Ordinary closing never refreshes implicitly.
+      if (refresh &&
+          identical(widget.repository, repository) &&
+          _applicationEvidenceTargetCurrent(target)) {
+        await _load();
+      }
+    }
+  }
 
   Future<void> _openExecutions(ManagedAgentBinding target) async {
     if (!current ||
@@ -77,12 +183,23 @@ class _ManagedAgentBindingDialogState extends State<ManagedAgentBindingDialog> {
     super.initState();
     _load();
     clock = Timer.periodic(const Duration(seconds: 1), (_) {
+      applicationEvidence?.checkCurrent();
       if (current && binding?.state == 'PENDING') setState(() {});
     });
   }
 
   @override
+  void didUpdateWidget(covariant ManagedAgentBindingDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.repository, widget.repository) ||
+        oldWidget.writable != widget.writable) {
+      applicationEvidence?.invalidate();
+    }
+  }
+
+  @override
   void dispose() {
+    applicationEvidence?.invalidate();
     generation++;
     clock?.cancel();
     deviceSearch.dispose();
@@ -332,6 +449,7 @@ class _ManagedAgentBindingDialogState extends State<ManagedAgentBindingDialog> {
   Widget build(BuildContext context) {
     final waiting = verifyAfter != null && now.isBefore(verifyAfter!);
     final executionTarget = binding;
+    final applicationTarget = binding;
     return PopScope(
         canPop: !busy,
         child: AlertDialog(
@@ -473,6 +591,17 @@ class _ManagedAgentBindingDialogState extends State<ManagedAgentBindingDialog> {
                           child: LinearProgressIndicator()),
                   ])),
           actions: [
+            if (applicationTarget != null &&
+                widget.onApplicationEvidence != null &&
+                _applicationEvidenceTargetCurrent(applicationTarget))
+              OutlinedButton.icon(
+                key: const Key('managed-binding-application-evidence'),
+                onPressed: enabled
+                    ? () => _openApplicationEvidence(applicationTarget)
+                    : null,
+                icon: const Icon(Icons.fact_check_outlined),
+                label: const Text('应用核验'),
+              ),
             if (executionTarget != null && widget.onExecutions != null)
               OutlinedButton.icon(
                 key: const Key('managed-binding-executions'),
@@ -484,15 +613,14 @@ class _ManagedAgentBindingDialogState extends State<ManagedAgentBindingDialog> {
               ),
             if (state != 'VERIFIED')
               TextButton(
-                  onPressed: busy ? null : () => Navigator.of(context).pop(),
-                  child: const Text('关闭')),
+                  onPressed: busy ? null : _close, child: const Text('关闭')),
             OutlinedButton.icon(
                 onPressed: busy || loading || !current ? null : () => _load(),
                 icon: const Icon(Icons.refresh),
                 label: Text(pendingCreate == null ? '刷新记录' : '查询当前结果')),
             if (state == 'VERIFIED')
               FilledButton.icon(
-                  onPressed: busy ? null : () => Navigator.of(context).pop(),
+                  onPressed: busy ? null : _close,
                   icon: const Icon(Icons.check),
                   label: const Text('完成')),
             if (widget.writable && !active)

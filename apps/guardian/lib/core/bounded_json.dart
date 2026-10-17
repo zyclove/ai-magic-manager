@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'api.dart';
+import 'scoped_http_client.dart';
 
 /// A bounded response reader for private task metadata and report results.
 /// The authenticated client belongs to Session; only this response is cancelled.
@@ -17,6 +18,7 @@ Future<dynamic> boundedJson(Api api, String method, String path,
     int? expectedBytes}) async {
   StreamSubscription<List<int>>? subscription;
   bool ended = false, aborted = false;
+  int? failedResponseStatus;
   ensureCurrent();
   try {
     return await (() async {
@@ -47,6 +49,7 @@ Future<dynamic> boundedJson(Api api, String method, String path,
       }
       final accepted = response.statusCode == successStatus ||
           additionalSuccessStatuses.contains(response.statusCode);
+      if (!accepted) failedResponseStatus = response.statusCode;
       final limit = accepted ? maxBytes : 65536;
       if (response.contentLength != null && response.contentLength! > limit) {
         unawaited(
@@ -68,7 +71,19 @@ Future<dynamic> boundedJson(Api api, String method, String path,
         bytes.add(chunk);
       }, onError: (Object error, StackTrace trace) {
         ended = true;
-        if (!received.isCompleted) received.completeError(error, trace);
+        if (!received.isCompleted) {
+          try {
+            ensureCurrent();
+          } catch (scopeFailure, scopeTrace) {
+            received.completeError(scopeFailure, scopeTrace);
+            return;
+          }
+          received.completeError(
+              accepted || error is ScopeChangedException
+                  ? error
+                  : ApiFailure(response.statusCode, 'REQUEST_FAILED'),
+              trace);
+        }
       }, onDone: () {
         ended = true;
         if (!received.isCompleted) received.complete(bytes.takeBytes());
@@ -107,10 +122,14 @@ Future<dynamic> boundedJson(Api api, String method, String path,
         .timeout(const Duration(seconds: 25));
   } on TimeoutException {
     ensureCurrent();
-    throw const ApiFailure(0, 'NETWORK_ERROR');
+    throw failedResponseStatus == null
+        ? const ApiFailure(0, 'NETWORK_ERROR')
+        : ApiFailure(failedResponseStatus!, 'REQUEST_FAILED');
   } on http.ClientException {
     ensureCurrent();
-    throw const ApiFailure(0, 'NETWORK_ERROR');
+    throw failedResponseStatus == null
+        ? const ApiFailure(0, 'NETWORK_ERROR')
+        : ApiFailure(failedResponseStatus!, 'REQUEST_FAILED');
   } finally {
     aborted = true;
     if (!ended && subscription != null) {

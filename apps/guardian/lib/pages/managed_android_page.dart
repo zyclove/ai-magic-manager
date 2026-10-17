@@ -12,6 +12,7 @@ import '../ui/managed_enrollment_guide.dart';
 import '../ui/managed_enrollment_form.dart';
 import '../ui/managed_agent_binding_dialog.dart';
 import 'managed_execution_dialog_entry.dart';
+import 'managed_application_evidence_entry.dart';
 
 /// Institution provisioning console. A provider receipt never changes local device capabilities.
 class ManagedAndroidPage extends StatefulWidget {
@@ -422,16 +423,31 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
         loading ||
         error != null ||
         intent.state != 'VERIFIED') return;
+    final associationRepository = ManagedAgentBindingRepository(
+        api: widget.session.api,
+        tenantId: tenantId,
+        enrollmentId: intent.id,
+        subjectId: intent.subjectId,
+        current: () => current);
     await _prompt<void>(
         barrierDismissible: false,
         builder: (bindingContext) => ManagedAgentBindingDialog(
-            repository: ManagedAgentBindingRepository(
-                api: widget.session.api,
-                tenantId: tenantId,
-                enrollmentId: intent.id,
-                subjectId: intent.subjectId,
-                current: () => current),
+            repository: associationRepository,
             writable: writable,
+            onApplicationEvidence: writable
+                ? (association,
+                        {required parentCurrent,
+                        required parentChanges,
+                        required onParentRefresh}) =>
+                    showManagedApplicationEvidence(
+                        bindingContext, widget.session, association,
+                        parentCurrent: () =>
+                            current &&
+                            bindingContext.mounted &&
+                            parentCurrent(),
+                        parentChanges: parentChanges,
+                        onParentRefresh: onParentRefresh)
+                : null,
             onExecutions: (association) => openManagedExecutions(
                 bindingContext, widget.session,
                 deviceId: association.deviceId,

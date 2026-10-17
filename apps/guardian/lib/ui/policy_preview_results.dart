@@ -6,6 +6,7 @@ import '../core/api.dart';
 import '../core/labels.dart';
 import '../core/rule_parameter_labels.dart';
 import 'design.dart';
+import '../core/managed_control_summary.dart';
 
 /// A read-only view of one immutable preview. It grants no execution or refresh
 /// authority; the existing guarded dialog owns every publication action.
@@ -66,8 +67,14 @@ class _PolicyPreviewResultsState extends State<PolicyPreviewResults> {
   @override
   Widget build(BuildContext context) {
     final p = widget.preview;
-    final targets = _objects(p['targets']);
-    final rules = targets.expand((target) => _objects(target['rules']));
+    final now = DateTime.now().millisecondsSinceEpoch;
+    final expires = _timestamp(p['expiresAt']);
+    final expired = expires == null || expires <= now;
+    final targets = [
+      for (final target in _objects(p['targets']))
+        _TargetChecks(target, previewCurrent: !expired, now: now),
+    ];
+    final rules = targets.expand((target) => target.rules);
     var supported = 0, limited = 0, unknown = 0;
     for (final rule in rules) {
       switch (_bucket(rule['status'])) {
@@ -87,9 +94,6 @@ class _PolicyPreviewResultsState extends State<PolicyPreviewResults> {
           app['id'] as String: app['displayName'] as String,
     };
     final schedules = _objects(snapshot['schedules']);
-    final expires = _timestamp(p['expiresAt']);
-    final expired =
-        expires == null || expires <= DateTime.now().millisecondsSinceEpoch;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       const Notice('这是发布前检查，尚未执行设备系统管控。'),
       const SizedBox(height: 16),
@@ -116,9 +120,9 @@ class _PolicyPreviewResultsState extends State<PolicyPreviewResults> {
           padding: const EdgeInsets.only(bottom: 10),
           child: _DeviceChecks(
             key: ValueKey(
-                '${p['id']}/${target['deviceId']}/${target['registrationId']}'),
-            target: target,
-            name: widget.names[target['deviceId']] ?? '未命名设备',
+                '${p['id']}/${target.target['deviceId']}/${target.target['registrationId']}'),
+            checks: target,
+            name: widget.names[target.target['deviceId']] ?? '未命名设备',
             applications: applications,
             schedules: schedules,
           ),
@@ -138,13 +142,13 @@ class _PolicyPreviewResultsState extends State<PolicyPreviewResults> {
 }
 
 class _DeviceChecks extends StatefulWidget {
-  final Json target;
+  final _TargetChecks checks;
   final String name;
   final Map<String, String> applications;
   final List<Json> schedules;
   const _DeviceChecks(
       {super.key,
-      required this.target,
+      required this.checks,
       required this.name,
       required this.applications,
       required this.schedules});
@@ -156,8 +160,8 @@ class _DeviceChecksState extends State<_DeviceChecks> {
   bool expanded = false;
   @override
   Widget build(BuildContext context) {
-    final target = widget.target;
-    final rules = _objects(target['rules']);
+    final target = widget.checks.target;
+    final rules = widget.checks.rules;
     final apps =
         rules.map((rule) => rule['applicationId']).whereType<String>().toSet();
     final limited = rules.where((rule) => _bucket(rule['status']) == 1).length;
@@ -203,8 +207,7 @@ class _DeviceChecksState extends State<_DeviceChecks> {
                           const SizedBox(height: 8),
                           for (final app in apps)
                             _ApplicationEvidence(
-                                target: target,
-                                applicationId: app,
+                                check: widget.checks.application(app),
                                 name: widget.applications[app] ?? '应用名称未提供'),
                         ],
                       ])),
@@ -413,13 +416,78 @@ bool _scheduleDate(dynamic value) {
   return date.year == year && date.month == month && date.day == day;
 }
 
-class _ApplicationEvidence extends StatelessWidget {
+// One display snapshot per rebuild. Rules and evidence presentation share the
+// same clock and each device/application is validated and parsed only once.
+class _TargetChecks {
   final Json target;
-  final String applicationId, name;
-  const _ApplicationEvidence(
-      {required this.target, required this.applicationId, required this.name});
-  @override
-  Widget build(BuildContext context) {
+  final bool previewCurrent;
+  final int now;
+  final _applications = <String, _ApplicationCheck>{};
+  _TargetChecks(this.target, {required this.previewCurrent, required this.now});
+
+  late final List<Json> rules =
+      List.unmodifiable(_objects(target['rules']).map(_effectiveRule));
+
+  _ApplicationCheck application(String id) => _applications.putIfAbsent(
+      id,
+      () => _ApplicationCheck(target, id,
+          previewCurrent: previewCurrent, now: now));
+
+  Json _effectiveRule(Json rule) {
+    if (rule['status'] != 'SUPPORTED_PENDING') return rule;
+    if (!previewCurrent) {
+      return {...rule, 'status': 'STALE', 'reasonCode': 'PREVIEW_EXPIRED'};
+    }
+    if (!const {'APP_LAUNCH', 'APP_INSTALL', 'RUNTIME_PERMISSION'}
+        .contains(rule['kind'])) {
+      return rule;
+    }
+    final id = rule['applicationId'];
+    final check = id is String ? application(id) : null;
+    if (check != null &&
+        check.matched &&
+        !check.conflicted &&
+        check.state == 'STALE') {
+      return {
+        ...rule,
+        'status': 'STALE',
+        'reasonCode': 'APPLICATION_REPORT_STALE',
+      };
+    }
+    final control = check?.control;
+    if (control == null ||
+        !control.operations.any((operation) =>
+            operation.kind == rule['kind'] &&
+            operation.effect == rule['predictedEffect'] &&
+            operation.permission == rule['permission'])) {
+      return {
+        ...rule,
+        'status': 'UNVERIFIED',
+        'reasonCode': 'APPLICATION_CONTROL_OPERATION_NOT_VERIFIED',
+      };
+    }
+    return rule;
+  }
+}
+
+class _ApplicationCheck {
+  final Json evidence;
+  final bool matched, conflicted;
+  final Object? state;
+  final int? reported, retrieved, expires;
+  final ManagedControlSummary? control;
+  const _ApplicationCheck._(
+      {required this.evidence,
+      required this.matched,
+      required this.conflicted,
+      required this.state,
+      required this.reported,
+      required this.retrieved,
+      required this.expires,
+      required this.control});
+
+  factory _ApplicationCheck(Json target, String applicationId,
+      {required bool previewCurrent, required int now}) {
     final records = _objects(target['applicationEvidence'])
         .where((e) => e['applicationId'] == applicationId)
         .toList();
@@ -427,35 +495,73 @@ class _ApplicationEvidence extends StatelessWidget {
     final matched = evidence.isEmpty ||
         (evidence['deviceId'] == target['deviceId'] &&
             evidence['registrationId'] == target['registrationId']);
-    final now = DateTime.now().millisecondsSinceEpoch;
     final reported = _timestamp(evidence['reportedAt']);
     final retrieved = _timestamp(evidence['retrievedAt']);
     final expires = _timestamp(evidence['expiresAt']);
     var state = evidence['state'];
     if (state == 'VERIFIED_IDENTITY') {
-      if (expires != null && expires <= now) {
-        state = 'STALE';
-      } else if (reported == null ||
+      if (reported == null ||
           retrieved == null ||
           expires == null ||
-          reported > retrieved ||
-          retrieved > now ||
+          reported > retrieved + 30000 ||
           expires <= retrieved) {
         state = 'UNKNOWN';
+      } else if (expires <= now) {
+        state = 'STALE';
       }
     }
     final reason = evidence['reasonCode'];
+    final control = matched &&
+            records.length == 1 &&
+            previewCurrent &&
+            target['state'] == 'ACTIVE' &&
+            target['managementMode'] == 'DEVICE_OWNER' &&
+            state == 'VERIFIED_IDENTITY' &&
+            reason == 'MANAGED_APPLICATION_CONTROL_VERIFIED' &&
+            evidence['profileScope'] == 'PRIMARY' &&
+            evidence['systemControlAvailable'] == true
+        ? ManagedControlSummary.parse(evidence['controlOperations'])
+        : null;
+    return _ApplicationCheck._(
+        evidence: evidence,
+        matched: matched,
+        conflicted: records.length > 1,
+        state: state,
+        reported: reported,
+        retrieved: retrieved,
+        expires: expires,
+        control: control);
+  }
+}
+
+class _ApplicationEvidence extends StatelessWidget {
+  final _ApplicationCheck check;
+  final String name;
+  const _ApplicationEvidence({required this.check, required this.name});
+  @override
+  Widget build(BuildContext context) {
+    final evidence = check.evidence;
+    final matched = check.matched;
+    final state = check.state;
+    final control = check.control;
+    final reason = evidence['reasonCode'];
     final (status, next) = !matched
         ? ('应用核验记录与当前设备不匹配', '请重新核验当前设备后预览。')
-        : records.length > 1
+        : check.conflicted
             ? ('应用核验状态待确认', '核验记录存在冲突，请重新核验。')
             : switch (state) {
-                'VERIFIED_IDENTITY' => ('应用身份已核验', '系统控制尚未确认'),
+                'VERIFIED_IDENTITY' => (
+                    '应用身份已核验',
+                    control == null ? '系统控制尚未确认' : '可执行范围待设备确认'
+                  ),
                 'PENDING' => ('正在核验', '请稍后重新预览。'),
                 'WAITING_REPORT' => ('等待设备报告', '请在设备报告更新后重新预览。'),
                 'STALE' => ('核验结果已过期或设备信息已变化', '请重新核验后预览。'),
                 'REJECTED' => ('应用信息未通过核验', '请检查应用声明与设备报告。'),
-                'FAILED' => ('暂时无法读取报告', '请到设备应用核验页面查看允许重试时间。'),
+                'FAILED' => (
+                    '暂时无法读取报告',
+                    '请在“机构受管 Android → 关联儿童端 → 应用核验”查看允许重试时间。'
+                  ),
                 'UNAVAILABLE' when reason == 'MANAGED_BINDING_REQUIRED' => (
                     '此设备尚未完成受管绑定',
                     '完成设备绑定后重新预览'
@@ -463,7 +569,10 @@ class _ApplicationEvidence extends StatelessWidget {
                 'UNAVAILABLE'
                     when reason == 'MANAGED_APPLICATION_ADMIN_REQUIRED' =>
                   ('需要机构管理员核验', '请联系机构管理员完成核验后重新预览'),
-                'UNAVAILABLE' => ('暂时无法核验此设备上的应用', '请到设备应用核验页面查看当前条件。'),
+                'UNAVAILABLE' => (
+                    '暂时无法核验此设备上的应用',
+                    '请在“机构受管 Android → 关联儿童端 → 应用核验”查看当前条件。'
+                  ),
                 'ABSENT' || null when evidence.isEmpty || state == 'ABSENT' => (
                     '尚未核验此设备上的应用',
                     '请先完成此设备的应用核验。'
@@ -476,14 +585,36 @@ class _ApplicationEvidence extends StatelessWidget {
         Text(name, style: const TextStyle(fontWeight: FontWeight.w500)),
         Text(status),
         Text(next, style: const TextStyle(color: muted, fontSize: 12)),
-        if (next != '系统控制尚未确认')
+        if (next != '系统控制尚未确认' && control == null)
           const Text('系统控制尚未确认', style: TextStyle(color: muted, fontSize: 12)),
+        if (control != null)
+          ExpansionTile(
+            key: ValueKey(
+                'control/${evidence['deviceId']}/${evidence['registrationId']}/${evidence['evidenceVersion']}'),
+            tilePadding: EdgeInsets.zero,
+            childrenPadding: const EdgeInsets.only(bottom: 12),
+            title: Text('查看 ${control.operations.length} 项可尝试操作',
+                style: const TextStyle(fontSize: 14)),
+            children: [
+              const Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text('操作范围通过核验，尚未执行；实际结果请查看执行记录。',
+                      style: TextStyle(color: muted, fontSize: 12))),
+              const SizedBox(height: 8),
+              for (final operation in control.operations)
+                Padding(
+                    padding: const EdgeInsets.only(bottom: 6),
+                    child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(operation.label))),
+            ],
+          ),
         if (matched && state == 'VERIFIED_IDENTITY') ...[
-          Text('报告时间 ${_date(reported)}',
+          Text('报告时间 ${_date(check.reported)}',
               style: const TextStyle(color: muted, fontSize: 12)),
-          Text('核验时间 ${_date(retrieved)}',
+          Text('核验时间 ${_date(check.retrieved)}',
               style: const TextStyle(color: muted, fontSize: 12)),
-          Text('核验有效至 ${_date(expires)}',
+          Text('核验有效至 ${_date(check.expires)}',
               style: const TextStyle(color: muted, fontSize: 12)),
         ],
       ]),
@@ -552,8 +683,12 @@ String _reason(dynamic reason) => switch (reason) {
       'AUTO_GRANT_NOT_AVAILABLE' => '当前不支持自动授予应用权限。',
       'SYSTEM_USER_ACTION_REQUIRED' => '需要设备用户在本机确认权限。',
       'AWAITING_EXECUTION' => '此结果只说明检查条件，尚无设备执行回执。',
+      'PREVIEW_EXPIRED' => '预览已过期，请重新预览后核对。',
+      'APPLICATION_REPORT_STALE' => '应用核验已过期或信息已变化，请重新核验后预览。',
       'APPLICATION_PLATFORM_MISMATCH' => '应用声明与设备平台不一致。',
       'APPLICATION_PROFILE_NOT_VERIFIED' => '尚未确认应用所在的设备空间。',
+      'APPLICATION_CONTROL_OPERATION_NOT_VERIFIED' =>
+        '此应用的该项操作尚未核验，请调整规则或更新应用核验。',
       'APPLICATION_IDENTITY_NOT_VERIFIED' => '尚未核验此设备上的应用身份。',
       'DEVICE_NOT_ACTIVE' => '此设备注册已失效，请核对当前设备注册。',
       'SAME_LAYER_CONFLICT_RESTRICTIVE_WINS' => '规则存在冲突，预览采用限制更严格的配置。',

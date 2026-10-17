@@ -10,6 +10,7 @@ import 'package:guardian/core/session.dart';
 import 'package:guardian/pages/editors.dart';
 import 'package:guardian/ui/class_action_dialog.dart';
 import 'package:guardian/ui/design.dart';
+import 'package:guardian/ui/owned_dialog_route.dart';
 import 'package:guardian/ui/member_editor.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -27,6 +28,9 @@ class _EditorSession extends Session {
 
   @override
   Api get api => editorApi;
+
+  @override
+  bool get authenticated => profile != null;
 }
 
 const _tenantId = fixture.tenant;
@@ -74,10 +78,12 @@ Future<void> _open(WidgetTester tester, Widget dialog) async {
     home: Scaffold(
       body: Builder(
         builder: (context) => TextButton(
-          onPressed: () => showDialog<void>(
-            context: context,
-            builder: (_) => dialog,
-          ),
+          onPressed: () => presentOwnedDialog<void>(
+              context,
+              OwnedDialogRoute<void>(
+                context: context,
+                builder: (_) => dialog,
+              )),
           child: const Text('打开编辑器'),
         ),
       ),

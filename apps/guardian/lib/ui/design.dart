@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/api.dart';
 import '../core/labels.dart';
+import 'owned_dialog_route.dart';
 import 'package:usage_reporting/usage_reporting.dart' show UsageReportFailure;
 
 const navy = Color(0xFF19335C);
@@ -252,17 +253,19 @@ Future<Json?> formDialog(BuildContext context,
         String submit = '保存',
         required Future<Json?> Function(Json) onSubmit,
         VoidCallback? reauth}) =>
-    showDialog<Json>(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => EditDialog(
-            title: title,
-            fields: fields,
-            initial: initial,
-            description: description,
-            submit: submit,
-            onSubmit: onSubmit,
-            reauth: reauth));
+    presentOwnedDialog<Json>(
+        context,
+        OwnedDialogRoute<Json>(
+            context: context,
+            barrierDismissible: false,
+            builder: (_) => EditDialog(
+                title: title,
+                fields: fields,
+                initial: initial,
+                description: description,
+                submit: submit,
+                onSubmit: onSubmit,
+                reauth: reauth)));
 
 class EditDialog extends StatefulWidget {
   final String title, submit;
@@ -291,6 +294,22 @@ class _EditDialogState extends State<EditDialog> {
   Json? pendingValues;
   bool busy = false;
   Object? error;
+  bool get current => mounted && ModalRoute.of(context)?.isCurrent == true;
+
+  void finish([Json? result]) {
+    if (!mounted) return;
+    final route = ModalRoute.of(context);
+    if (route is OwnedDialogRoute<Json>) {
+      route.finish(result);
+    } else if (route?.isCurrent == true) {
+      route!.navigator?.pop(result);
+    }
+  }
+
+  void cancel() {
+    if (current && !busy) finish();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -313,8 +332,7 @@ class _EditDialogState extends State<EditDialog> {
   }
 
   Future<void> save() async {
-    if (busy) return;
-    if (!form.currentState!.validate()) return;
+    if (!current || busy || form.currentState?.validate() != true) return;
     setState(() {
       busy = true;
       error = null;
@@ -330,7 +348,7 @@ class _EditDialogState extends State<EditDialog> {
       final submitted = pendingValues ?? values;
       pendingValues = submitted;
       final result = await widget.onSubmit(submitted);
-      if (mounted) Navigator.pop(context, result ?? values);
+      if (mounted) finish(result ?? submitted);
     } catch (e) {
       if (e is! ApiFailure || (e.status != 0 && e.status < 500)) {
         pendingValues = null;
@@ -382,8 +400,18 @@ class _EditDialogState extends State<EditDialog> {
                                             .toList(),
                                         onChanged: busy || pendingValues != null
                                             ? null
-                                            : (v) => setState(
-                                                () => selected[f.key] = v),
+                                            : (v) {
+                                                if (!current ||
+                                                    busy ||
+                                                    pendingValues != null ||
+                                                    (v != null &&
+                                                        !f.options!
+                                                            .containsKey(v))) {
+                                                  return;
+                                                }
+                                                setState(
+                                                    () => selected[f.key] = v);
+                                              },
                                         validator: (v) => f.required &&
                                                 (v == null || v.isEmpty)
                                             ? '请选择${f.label}'
@@ -420,12 +448,18 @@ class _EditDialogState extends State<EditDialog> {
                                           return null;
                                         }))),
                             if (error != null)
-                              FailureView(error!, reauth: widget.reauth)
+                              FailureView(error!,
+                                  reauth: widget.reauth == null
+                                      ? null
+                                      : () {
+                                          if (current && !busy) {
+                                            widget.reauth!();
+                                          }
+                                        })
                           ])))),
           actions: [
             TextButton(
-                onPressed: busy ? null : () => Navigator.pop(context),
-                child: const Text('取消')),
+                onPressed: busy ? null : cancel, child: const Text('取消')),
             FilledButton(
                 onPressed: busy ? null : save,
                 child: busy
@@ -438,61 +472,70 @@ class _EditDialogState extends State<EditDialog> {
 }
 
 Future<bool> confirmAction(BuildContext context, String title, String body,
-        {String confirm = '确认'}) async =>
-    await showDialog<bool>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-                title: Text(title),
-                content: SizedBox(
-                    width: 460,
-                    child: Text(body, style: const TextStyle(height: 1.8))),
-                actions: [
-                  TextButton(
-                      onPressed: () => Navigator.pop(ctx, false),
-                      child: const Text('取消')),
-                  FilledButton(
-                      onPressed: () => Navigator.pop(ctx, true),
-                      child: Text(confirm))
-                ])) ??
-    false;
+    {String confirm = '确认'}) async {
+  late final OwnedDialogRoute<bool> route;
+  void finish(bool value) {
+    if (route.available && route.isCurrent) route.finish(value);
+  }
+
+  route = OwnedDialogRoute<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+              title: Text(title),
+              content: SizedBox(
+                  width: 460,
+                  child: Text(body, style: const TextStyle(height: 1.8))),
+              actions: [
+                TextButton(
+                    onPressed: () => finish(false), child: const Text('取消')),
+                FilledButton(
+                    onPressed: () => finish(true), child: Text(confirm))
+              ]));
+  return await presentOwnedDialog(context, route) ?? false;
+}
 
 Future<void> showDetails(
-        BuildContext context, String title, Map<String, dynamic> values,
-        {List<Widget> actions = const []}) =>
-    showDialog<void>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-                title: Text(title),
-                content: SizedBox(
-                    width: 650,
-                    child: SingleChildScrollView(
-                        child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: values.entries
-                                .map((e) => Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 10),
-                                    child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(e.key,
-                                              style: const TextStyle(
-                                                  fontSize: 12, color: muted)),
-                                          const SizedBox(height: 4),
-                                          SelectableText(
-                                              e.value?.toString() ?? '—',
-                                              style: const TextStyle(
-                                                  fontSize: 14, height: 1.6))
-                                        ])))
-                                .toList()))),
-                actions: [
-                  ...actions,
-                  TextButton(
-                      onPressed: () => Navigator.pop(ctx),
-                      child: const Text('关闭'))
-                ]));
+    BuildContext context, String title, Map<String, dynamic> values,
+    {List<Widget> actions = const []}) {
+  late final OwnedDialogRoute<void> route;
+  void finish() {
+    if (route.available && route.isCurrent) route.finish();
+  }
+
+  route = OwnedDialogRoute<void>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+              title: Text(title),
+              content: SizedBox(
+                  width: 650,
+                  child: SingleChildScrollView(
+                      child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: values.entries
+                              .map((e) => Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 10),
+                                  child:
+                                      Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                        Text(e.key,
+                                            style: const TextStyle(
+                                                fontSize: 12, color: muted)),
+                                        const SizedBox(height: 4),
+                                        SelectableText(
+                                            e.value?.toString() ?? '—',
+                                            style: const TextStyle(
+                                                fontSize: 14, height: 1.6))
+                                      ])))
+                              .toList()))),
+              actions: [
+                ...actions,
+                TextButton(onPressed: finish, child: const Text('关闭'))
+              ]));
+  return presentOwnedDialog(context, route);
+}
 
 class DetailAction {
   final String label;
@@ -504,31 +547,62 @@ class DetailAction {
 }
 
 Future<void> actionDetails(
-        BuildContext context, String title, Map<String, dynamic> values,
-        {List<DetailAction> actions = const [],
-        VoidCallback? reauth,
-        Listenable? accessChanges,
-        bool Function()? hasAccess,
-        Widget? extraContent}) =>
-    showDialog<void>(
+    BuildContext context, String title, Map<String, dynamic> values,
+    {List<DetailAction> actions = const [],
+    VoidCallback? reauth,
+    Listenable? accessChanges,
+    bool Function()? hasAccess,
+    Widget? extraContent}) async {
+  var live = true, allowed = true;
+  bool permitted() {
+    if (!live) return false;
+    if (hasAccess != null && !hasAccess()) allowed = false;
+    return allowed;
+  }
+
+  void observeAccess() {
+    permitted();
+  }
+
+  accessChanges?.addListener(observeAccess);
+  late final OwnedDialogRoute<void> route;
+  void closeCurrent() {
+    if (route.available && route.isCurrent) route.finish();
+  }
+
+  try {
+    route = OwnedDialogRoute<void>(
         context: context,
         barrierDismissible: false,
         builder: (dialogContext) {
-          Widget content() => hasAccess != null && !hasAccess()
+          Widget content() => !permitted()
               ? AlertDialog(
                   title: const Text('工作空间或权限已变化'),
                   content: const Text('已隐藏原申请内容。请关闭窗口，在当前工作空间重新打开。'),
                   actions: [
                       TextButton(
-                          onPressed: () => Navigator.pop(dialogContext),
-                          child: const Text('关闭'))
+                          onPressed: closeCurrent, child: const Text('关闭'))
                     ])
-              : _ActionDetails(title, values, actions, reauth, extraContent);
+              : _ActionDetails(
+                  title,
+                  values,
+                  actions,
+                  reauth,
+                  extraContent,
+                  permitted,
+                  () => route.available && route.isCurrent,
+                  () => route.finish());
           return accessChanges == null
               ? content()
               : AnimatedBuilder(
                   animation: accessChanges, builder: (_, __) => content());
         });
+    await presentOwnedDialog(context, route);
+  } finally {
+    live = false;
+    accessChanges?.removeListener(observeAccess);
+  }
+}
 
 class _ActionDetails extends StatefulWidget {
   final String title;
@@ -536,8 +610,10 @@ class _ActionDetails extends StatefulWidget {
   final List<DetailAction> actions;
   final VoidCallback? reauth;
   final Widget? extraContent;
-  const _ActionDetails(
-      this.title, this.values, this.actions, this.reauth, this.extraContent);
+  final bool Function() permitted, onTop;
+  final VoidCallback finish;
+  const _ActionDetails(this.title, this.values, this.actions, this.reauth,
+      this.extraContent, this.permitted, this.onTop, this.finish);
   @override
   State<_ActionDetails> createState() => _ActionDetailsState();
 }
@@ -546,16 +622,18 @@ class _ActionDetailsState extends State<_ActionDetails> {
   bool busy = false;
   Object? error;
   Future<void> perform(DetailAction action) async {
-    if (busy) return;
+    if (!mounted || busy || !widget.permitted() || !widget.onTop()) return;
     setState(() {
       busy = true;
       error = null;
     });
     try {
       await action.run(context);
-      if (mounted && action.closeOnSuccess) Navigator.pop(context);
+      if (mounted && widget.permitted() && action.closeOnSuccess) {
+        widget.finish();
+      }
     } catch (e) {
-      if (mounted) setState(() => error = e);
+      if (mounted && widget.permitted()) setState(() => error = e);
     } finally {
       if (mounted) setState(() => busy = false);
     }
@@ -592,7 +670,14 @@ class _ActionDetailsState extends State<_ActionDetails> {
                                 ]))))),
                     if (widget.extraContent != null) widget.extraContent!,
                     if (error != null)
-                      FailureView(error!, reauth: widget.reauth)
+                      FailureView(error!,
+                          reauth: widget.reauth == null
+                              ? null
+                              : () {
+                                  if (mounted &&
+                                      widget.permitted() &&
+                                      widget.onTop()) widget.reauth!();
+                                })
                   ]))),
           actions: [
             ...widget.actions.map((a) => OutlinedButton(
@@ -603,7 +688,11 @@ class _ActionDetailsState extends State<_ActionDetails> {
                     : null,
                 child: Text(a.label))),
             TextButton(
-                onPressed: busy ? null : () => Navigator.pop(context),
+                onPressed: busy
+                    ? null
+                    : () {
+                        if (mounted && widget.onTop()) widget.finish();
+                      },
                 child: Text(busy ? '处理中…' : '关闭'))
           ]));
 }

@@ -1,11 +1,10 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import '../core/api.dart';
 import '../core/device_group_summary.dart';
 import '../core/session.dart';
 import '../core/labels.dart';
 import 'design.dart';
+import 'owned_dialog_route.dart';
 
 typedef PolicyTargetPreview = Future<void> Function(
     PolicyTargetSelection selection, bool Function() isCurrent);
@@ -29,8 +28,7 @@ class PolicyTargetSelection {
         groupRegistrations = Map.unmodifiable(groupRegistrations);
 }
 
-/// Opens the picker and releases the caller when its workspace becomes stale.
-/// Older Flutter versions do not complete a removed, covered route's future.
+/// Opens one owned picker route and waits for its result and removal.
 Future<PolicyTargetSelection?> showPolicyTargetPicker({
   required BuildContext context,
   required Session session,
@@ -40,8 +38,7 @@ Future<PolicyTargetSelection?> showPolicyTargetPicker({
   PolicyTargetPreview? onPreview,
 }) {
   final scopeGeneration = session.scopeGeneration;
-  final invalidated = Completer<PolicyTargetSelection?>();
-  final dialog = showDialog<PolicyTargetSelection>(
+  final route = OwnedDialogRoute<PolicyTargetSelection>(
     context: context,
     barrierDismissible: false,
     builder: (_) => PolicyTargetPicker(
@@ -51,22 +48,14 @@ Future<PolicyTargetSelection?> showPolicyTargetPicker({
       role: role,
       onPreview: onPreview,
       expectedScopeGeneration: scopeGeneration,
-      onSelected: (selection) {
-        if (!invalidated.isCompleted) invalidated.complete(selection);
-      },
-      onInvalidated: () {
-        if (!invalidated.isCompleted) invalidated.complete(null);
-      },
     ),
   );
-  return Future.any([dialog, invalidated.future]);
+  return presentOwnedDialog(context, route);
 }
 
 class PolicyTargetPicker extends StatefulWidget {
   final Session session;
   final String root, actor, role;
-  final VoidCallback? onInvalidated;
-  final ValueChanged<PolicyTargetSelection>? onSelected;
   final PolicyTargetPreview? onPreview;
   final int? expectedScopeGeneration;
   const PolicyTargetPicker(
@@ -76,9 +65,7 @@ class PolicyTargetPicker extends StatefulWidget {
       required this.actor,
       required this.role,
       this.onPreview,
-      this.onSelected,
-      this.expectedScopeGeneration,
-      this.onInvalidated});
+      this.expectedScopeGeneration});
 
   @override
   State<PolicyTargetPicker> createState() => _PolicyTargetPickerState();
@@ -93,6 +80,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
   bool previewing = false;
   Object? previewError;
   late final int scopeGeneration;
+  late final Api api;
   final devices = <Json>[];
   final groups = <Json>[];
   final selected = <String>{};
@@ -115,6 +103,18 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
       widget.session.profile?['subject'] == widget.actor &&
       widget.session.role == widget.role &&
       widget.session.canOpen('policies');
+  void reauthenticate() {
+    if (!current ||
+        previewing ||
+        loadingDevices ||
+        loadingGroups ||
+        loadingGroup ||
+        ModalRoute.of(context)?.isCurrent != true) {
+      return;
+    }
+    widget.session.login(stepUp: true);
+  }
+
   bool get canUseGroups => widget.session.canOpen('device-groups');
 
   @override
@@ -122,6 +122,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
     super.initState();
     scopeGeneration =
         widget.expectedScopeGeneration ?? widget.session.scopeGeneration;
+    api = widget.session.api.scoped(() => current);
     widget.session.addListener(accessChanged);
     loadDevices();
     if (canUseGroups) loadGroups();
@@ -137,23 +138,65 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
 
   void accessChanged() {
     if (!mounted || closing || current) return;
+    invalidate();
+  }
+
+  bool privateFailure(Object failure) {
+    if (failure is ApiFailure &&
+        (failure.code == 'WORKSPACE_CHANGED' ||
+            failure.status == 403 ||
+            (failure.status == 401 && failure.code != 'REAUTH_REQUIRED'))) {
+      invalidate();
+      return true;
+    }
+    return false;
+  }
+
+  bool routeAvailable(ModalRoute<dynamic>? route) =>
+      route is OwnedDialogRoute<PolicyTargetSelection>
+          ? route.available
+          : route?.isActive == true && route?.navigator != null;
+
+  void finishRoute(ModalRoute<dynamic>? route,
+      [PolicyTargetSelection? selection]) {
+    if (!routeAvailable(route)) return;
+    if (route is OwnedDialogRoute<PolicyTargetSelection>) {
+      route.finish(selection);
+      return;
+    }
+    final navigator = route!.navigator!;
+    if (route.isCurrent) {
+      navigator.pop(selection);
+    } else {
+      navigator.removeRoute(route);
+    }
+  }
+
+  void invalidate() {
+    if (!mounted || closing) return;
     // Latch before scheduling: repeated session events must not close a parent
     // page while this dialog is still mounted during its exit animation.
-    closing = true;
-    generation++;
-    widget.onInvalidated?.call();
+    setState(() {
+      closing = true;
+      generation++;
+      devices.clear();
+      groups.clear();
+      selected.clear();
+      names.clear();
+      groupRegistrations.clear();
+      deviceCursor =
+          groupCursor = groupId = groupName = requestedGroupId = null;
+      groupVersion = null;
+      excludedGroupDevices = 0;
+      onlySelected = false;
+      search = '';
+      searchController.clear();
+      deviceError = groupError = previewError = null;
+      loadingDevices = loadingGroups = loadingGroup = previewing = false;
+    });
     final route = ModalRoute.of(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted || route == null || !route.isActive) return;
-      final navigator = route.navigator;
-      if (navigator == null) return;
-      if (route.isCurrent) {
-        navigator.pop();
-      } else {
-        // An unrelated dialog may cover us. Remove only our captured route;
-        // disposing the picker also disposes its owned dropdown route.
-        navigator.removeRoute(route);
-      }
+      if (mounted) finishRoute(route);
     });
     WidgetsBinding.instance.scheduleFrame();
   }
@@ -176,8 +219,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
       deviceError = null;
     });
     try {
-      final page = await widget.session.api
-          .page('${widget.root}/devices', cursor: cursor);
+      final page = await api.page('${widget.root}/devices', cursor: cursor);
       if (!current || revision != generation) return;
       if (page.items.any((row) =>
           row['id'] is! String ||
@@ -195,7 +237,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
         deviceCursor = page.nextCursor;
       });
     } catch (failure) {
-      if (current && revision == generation) {
+      if (current && revision == generation && !privateFailure(failure)) {
         setState(() => deviceError = failure);
       }
     } finally {
@@ -217,8 +259,8 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
       groupError = null;
     });
     try {
-      final page = await widget.session.api
-          .page('${widget.root}/device-groups', cursor: cursor);
+      final page =
+          await api.page('${widget.root}/device-groups', cursor: cursor);
       if (!current || revision != generation) return;
       if (page.items.any((row) =>
           row['id'] is! String ||
@@ -234,7 +276,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
         groupCursor = page.nextCursor;
       });
     } catch (failure) {
-      if (current && revision == generation) {
+      if (current && revision == generation && !privateFailure(failure)) {
         setState(() => groupError = failure);
       }
     } finally {
@@ -253,8 +295,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
       requestedGroupId = id;
     });
     try {
-      final group = await widget.session.api
-          .send('GET', '${widget.root}/device-groups/$id');
+      final group = await api.send('GET', '${widget.root}/device-groups/$id');
       if (!current || revision != generation) return;
       if (group is! Json ||
           group['id'] != id ||
@@ -264,8 +305,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
         throw const ApiFailure(409, 'POLICY_GROUP_SELECTION_UNAVAILABLE');
       }
       final health = DeviceGroupSummary.read(
-          await widget.session.api
-              .send('GET', '${widget.root}/device-groups/$id/summary'),
+          await api.send('GET', '${widget.root}/device-groups/$id/summary'),
           group);
       if (!current || revision != generation) return;
       if (health.current == 0) {
@@ -274,11 +314,10 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
       if (health.current > 50) {
         throw const ApiFailure(409, 'POLICY_GROUP_TOO_MANY_ELIGIBLE_DEVICES');
       }
-      final page = await widget.session.api
+      final page = await api
           .page('${widget.root}/device-groups/$id/devices?status=CURRENT');
       if (!current || revision != generation) return;
-      final latest = await widget.session.api
-          .send('GET', '${widget.root}/device-groups/$id');
+      final latest = await api.send('GET', '${widget.root}/device-groups/$id');
       if (!current || revision != generation) return;
       if (latest is! Json ||
           latest['id'] != id ||
@@ -319,7 +358,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
         previewError = null;
       });
     } catch (failure) {
-      if (current && revision == generation) {
+      if (current && revision == generation && !privateFailure(failure)) {
         setState(() => groupError = failure);
       }
     } finally {
@@ -371,31 +410,15 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
       previewError = null;
     });
     try {
-      await widget.onPreview?.call(
-          selection,
-          () =>
-              current &&
-              revision == generation &&
-              route != null &&
-              route.isActive);
-      if (!current ||
-          revision != generation ||
-          route == null ||
-          !route.isActive) return;
-      final navigator = route.navigator;
-      if (navigator == null) return;
+      await widget.onPreview?.call(selection,
+          () => current && revision == generation && routeAvailable(route));
+      if (!current || revision != generation || !routeAvailable(route)) return;
       closing = true;
       generation++;
-      // Complete explicitly: older Flutter does not resolve a covered route
-      // removed with removeRoute. Never pop an unrelated covering dialog.
-      widget.onSelected?.call(selection);
-      if (route.isCurrent) {
-        navigator.pop(selection);
-      } else {
-        navigator.removeRoute(route);
-      }
+      finishRoute(route, selection);
     } catch (failure) {
       if (!current || revision != generation) return;
+      if (privateFailure(failure)) return;
       setState(() => previewError = failure);
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (current && scrollController.hasClients) scrollController.jumpTo(0);
@@ -413,15 +436,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
     final route = ModalRoute.of(context);
     closing = true;
     generation++;
-    widget.onInvalidated?.call();
-    if (route == null || !route.isActive) return;
-    final navigator = route.navigator;
-    if (navigator == null) return;
-    if (route.isCurrent) {
-      navigator.pop();
-    } else {
-      navigator.removeRoute(route);
-    }
+    finishRoute(route);
   }
 
   // Reviewing a group must include members outside the loaded device page.
@@ -445,7 +460,6 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
         if (!didPop || closing) return;
         closing = true;
         generation++;
-        widget.onInvalidated?.call();
       },
       child: AlertDialog(
           title: const Text('选择策略预览目标'),
@@ -463,8 +477,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
                       liveRegion: true, child: const Text('正在核对目标和规则，请稍候。')),
                 ],
                 if (previewError != null) ...[
-                  FailureView(previewError!,
-                      reauth: () => widget.session.login(stepUp: true)),
+                  FailureView(previewError!, reauth: reauthenticate),
                   const Text('已保留设备选择。可调整目标，或点击“重试预览”。'),
                 ],
                 const SizedBox(height: 12),
@@ -546,7 +559,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
                             : () => requestedGroupId == null
                                 ? loadGroups()
                                 : chooseGroup(requestedGroupId!),
-                        reauth: () => widget.session.login(stepUp: true)),
+                        reauth: reauthenticate),
                 ],
                 const SizedBox(height: 10),
                 Semantics(
@@ -624,7 +637,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
                 if (deviceError != null)
                   FailureView(deviceError!,
                       retry: () => loadDevices(more: deviceCursor != null),
-                      reauth: () => widget.session.login(stepUp: true)),
+                      reauth: reauthenticate),
                 if (deviceCursor != null && !onlySelected)
                   TextButton.icon(
                       onPressed: loadingDevices || previewing

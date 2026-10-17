@@ -217,6 +217,8 @@ void main() {
       }
     });
     await tester.tap(find.widgetWithText(FilledButton, '发布配置'));
+    // Route disposal starts the following GET; advance its real async turn.
+    await settle(tester);
     await settle(tester);
     expect(find.text('此预览已过期，请关闭窗口后重新预览。'), findsOneWidget);
     expect(session.publications, isEmpty);

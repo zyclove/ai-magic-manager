@@ -69,6 +69,8 @@ void main() {
     };
     final flow = await _openPreview(tester, session);
     await _confirmSave(tester);
+    // Route disposal starts the following GET; advance its real async turn.
+    await settle(tester);
     await settle(tester);
     expect(find.text('发布结果'), findsOneWidget);
     expect(session.publications, hasLength(1));

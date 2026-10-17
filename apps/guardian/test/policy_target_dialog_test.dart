@@ -68,7 +68,8 @@ void main() {
     await tester.tap(find.text('关闭通知'));
     await settle(tester);
     await notice;
-    expect(find.text('学习时间规则'), findsOneWidget);
+    expect(find.text('学习时间规则'), findsNothing);
+    expect(find.text('工作空间或权限已变化'), findsOneWidget);
     await tester.tap(find.text('关闭'));
     await settle(tester);
     await details;

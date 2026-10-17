@@ -1,9 +1,15 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import '../core/api.dart';
 import '../core/labels.dart';
 import '../core/rule_parameter_labels.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
+import '../ui/owned_dialog_route.dart';
+import 'device_subflow_scope.dart';
 
 const weekdays = [
   'MONDAY',
@@ -279,30 +285,65 @@ const ruleEffects = {
 };
 Future<void> policyEditor(BuildContext context, Session session,
     {Json? draft}) async {
-  final root = session.root;
-  late final List<List<Json>> data;
-  try {
-    data = await Future.wait<List<Json>>([
-      session.api.all('$root/applications'),
-      session.api.all('$root/schedules')
-    ]);
-  } catch (failure) {
-    if (context.mounted) {
-      toast(
-          context, failure is ApiFailure ? failure.message : '无法加载权限目录，请稍后重试。');
-    }
-    return;
+  if (!session.authenticated) {
+    throw const ApiFailure(401, 'UNAUTHENTICATED');
   }
-  if (!context.mounted || session.tenant?['id'] != root.substring(9)) return;
-  await showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => PolicyEditor(
-          session: session,
-          root: root,
-          applications: data[0],
-          schedules: data[1],
-          draft: draft));
+  if (!session.canWrite || !session.canOpen('policies')) {
+    throw const ApiFailure(403, 'ACCESS_DENIED');
+  }
+  if (!context.mounted || session.tenant == null) return;
+  final root = session.root;
+  var live = true;
+  final scope = DeviceSubflowScope(session,
+      permitted: () =>
+          live &&
+          context.mounted &&
+          session.canWrite &&
+          session.canOpen('policies'));
+  Future<List<Json>> directory(String path) async {
+    try {
+      return await scope.api.all(path);
+    } catch (failure) {
+      if (failure is ApiFailure &&
+          ((failure.status == 401 && failure.code != 'REAUTH_REQUIRED') ||
+              failure.status == 403 ||
+              failure.code == 'WORKSPACE_CHANGED')) {
+        // Revoke both reads before the other directory can follow a cursor.
+        live = false;
+      }
+      rethrow;
+    }
+  }
+
+  try {
+    late final List<List<Json>> data;
+    try {
+      data = await Future.wait<List<Json>>(
+          [directory('$root/applications'), directory('$root/schedules')],
+          eagerError: true);
+    } catch (failure) {
+      if (context.mounted && scope.current) {
+        toast(context,
+            failure is ApiFailure ? failure.message : '无法加载权限目录，请稍后重试。');
+      }
+      return;
+    }
+    if (!context.mounted || !scope.current) return;
+    final route = OwnedDialogRoute<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => PolicyEditor(
+            session: session,
+            root: root,
+            applications: data[0],
+            schedules: data[1],
+            draft: draft,
+            operationScope: scope));
+    await presentOwnedDialog(context, route);
+  } finally {
+    live = false;
+    scope.dispose();
+  }
 }
 
 class RuntimePermissionCatalog {
@@ -346,13 +387,15 @@ class PolicyEditor extends StatefulWidget {
   final String root;
   final List<Json> applications, schedules;
   final Json? draft;
+  final DeviceSubflowScope? operationScope;
   const PolicyEditor(
       {super.key,
       required this.session,
       required this.root,
       required this.applications,
       required this.schedules,
-      this.draft});
+      this.draft,
+      this.operationScope});
   @override
   State<PolicyEditor> createState() => _PolicyEditorState();
 }
@@ -366,29 +409,247 @@ class _PolicyEditorState extends State<PolicyEditor> {
   final form = GlobalKey<FormState>();
   bool busy = false;
   bool loadingRule = false;
+  bool ruleOpen = false;
+  bool resultUnknown = false,
+      revoked = false,
+      closing = false,
+      disposed = false;
+  bool saved = false, exitOpen = false;
   Object? error;
+  String? checkNotice;
+  Json? pendingBody;
+  late final DeviceSubflowScope scope;
+  late final bool ownsScope;
+  late final Api api;
+  final lifetime = _PolicyEditorLifetime();
+  final ruleRoutes = <OwnedDialogRoute<dynamic>>{};
   final key = requestId();
+  late final Object? policyId = widget.draft?['id'];
+  late final Object? revision = widget.draft?['revision'];
+
+  bool get current =>
+      !disposed &&
+      mounted &&
+      !closing &&
+      !revoked &&
+      lifetime.value &&
+      scope.current;
+  bool get interactive => current && ModalRoute.of(context)?.isCurrent == true;
+  bool get locked => busy || loadingRule || ruleOpen || resultUnknown;
+
+  @override
+  void initState() {
+    super.initState();
+    ownsScope = widget.operationScope == null;
+    scope = widget.operationScope ??
+        DeviceSubflowScope(widget.session,
+            permitted: () =>
+                !disposed &&
+                mounted &&
+                !closing &&
+                widget.session.root == widget.root &&
+                widget.session.canWrite &&
+                widget.session.canOpen('policies'));
+    api = scope.api.scoped(() => current);
+    scope.addListener(scopeChanged);
+    if (!scope.current) {
+      revoked = true;
+      name.clear();
+      rules = [];
+    }
+  }
+
+  void scopeChanged() {
+    if (!current) revoke();
+  }
+
+  @override
+  void didUpdateWidget(covariant PolicyEditor oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.session, widget.session) ||
+        oldWidget.root != widget.root ||
+        oldWidget.operationScope != widget.operationScope ||
+        oldWidget.draft?['id'] != widget.draft?['id'] ||
+        oldWidget.draft?['revision'] != widget.draft?['revision']) {
+      revoke();
+    }
+  }
+
+  void revoke() {
+    if (disposed || revoked) return;
+    revoked = true;
+    lifetime.value = false;
+    name.clear();
+    rules = [];
+    pendingBody = null;
+    error = null;
+    checkNotice = null;
+    resultUnknown = busy = loadingRule = ruleOpen = false;
+    if (mounted) setState(() {});
+  }
+
+  bool privateFailure(Object failure) =>
+      failure is ApiFailure &&
+      (failure.code == 'WORKSPACE_CHANGED' ||
+          failure.status == 403 ||
+          (failure.status == 401 && failure.code != 'REAUTH_REQUIRED'));
+
+  void finishOwnRoute() {
+    if (!current) return;
+    saved = true;
+    closeOwnRoute();
+  }
+
+  void closeOwnRoute() {
+    if (!mounted || disposed || closing) return;
+    final route = ModalRoute.of(context);
+    if (route is! OwnedDialogRoute<void>) return;
+    closing = true;
+    lifetime.value = false;
+    route.finish();
+  }
+
+  Future<void> requestClose() async {
+    if (!mounted || disposed || closing || busy || exitOpen) return;
+    if (!current) {
+      closeOwnRoute();
+      return;
+    }
+    if (!interactive) return;
+    if (!resultUnknown) {
+      closeOwnRoute();
+      return;
+    }
+    setState(() => exitOpen = true);
+    late final OwnedDialogRoute<bool> route;
+    bool canRespond() =>
+        current && !busy && resultUnknown && route.available && route.isCurrent;
+    final changes = Listenable.merge([scope, lifetime]);
+    route = OwnedDialogRoute<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => AnimatedBuilder(
+            animation: changes,
+            builder: (_, __) => current
+                ? AlertDialog(
+                    title: const Text('暂时关闭未确认的提交？'),
+                    content: const Text('服务器可能已保存本次内容。关闭后请先核对策略列表，'
+                        '确认结果后再创建或修改，避免重复提交。继续留在这里可按原内容恢复或读取核对。'),
+                    actions: [
+                        TextButton(
+                            key: const Key('policy-editor-keep-unknown'),
+                            onPressed: () {
+                              if (canRespond()) route.finish(false);
+                            },
+                            child: const Text('继续核对')),
+                        TextButton(
+                            key: const Key(
+                                'policy-editor-confirm-close-unknown'),
+                            onPressed: () {
+                              if (canRespond()) route.finish(true);
+                            },
+                            child: const Text('暂时关闭')),
+                      ])
+                : AlertDialog(
+                    title: const Text('工作空间或权限已变化'),
+                    content: const Text('原提交内容已隐藏。请关闭后重新打开策略。'),
+                    actions: [
+                        TextButton(
+                            onPressed: () {
+                              if (route.available && route.isCurrent) {
+                                route.finish();
+                              }
+                            },
+                            child: const Text('关闭'))
+                      ])));
+    ruleRoutes.add(route);
+    try {
+      final confirmed = await presentOwnedDialog(context, route);
+      if (confirmed == true && current && !busy && resultUnknown) {
+        closeOwnRoute();
+      }
+    } finally {
+      ruleRoutes.remove(route);
+      if (disposed && ruleRoutes.isEmpty) lifetime.dispose();
+      if (mounted && !disposed) setState(() => exitOpen = false);
+    }
+  }
+
+  Future<T?> ruleDialog<T>(Widget Function(BuildContext) builder,
+      {bool barrierDismissible = false}) async {
+    if (!current || resultUnknown || busy) return null;
+    final changes = Listenable.merge([scope, lifetime]);
+    final route = OwnedDialogRoute<T>(
+        context: context,
+        barrierDismissible: barrierDismissible,
+        builder: (inner) => AnimatedBuilder(
+            animation: changes,
+            builder: (_, __) => current
+                ? builder(inner)
+                : AlertDialog(
+                    title: const Text('工作空间或权限已变化'),
+                    content: const Text('原规则内容已隐藏。请关闭后重新打开策略。'),
+                    actions: [
+                        TextButton(
+                            onPressed: () {
+                              if (inner.mounted &&
+                                  ModalRoute.of(inner)?.isCurrent == true) {
+                                Navigator.of(inner).pop();
+                              }
+                            },
+                            child: const Text('关闭'))
+                      ])));
+    ruleRoutes.add(route);
+    try {
+      return await presentOwnedDialog(context, route);
+    } finally {
+      ruleRoutes.remove(route);
+      if (disposed && ruleRoutes.isEmpty) lifetime.dispose();
+    }
+  }
+
   @override
   void dispose() {
+    disposed = true;
+    lifetime.value = false;
+    scope.removeListener(scopeChanged);
+    if (ownsScope) scope.dispose();
+    if (ruleRoutes.isEmpty) lifetime.dispose();
     name.dispose();
     super.dispose();
   }
 
   Future<void> editRule([int? index]) async {
-    if (busy || loadingRule) return;
+    if (!interactive || locked) return;
+    setState(() => ruleOpen = true);
+    try {
+      await editRuleContents(index);
+    } finally {
+      if (mounted && !disposed) setState(() => ruleOpen = false);
+    }
+  }
+
+  Future<void> editRuleContents(int? index) async {
     String? type = index == null ? null : rules[index]['kind'];
-    type ??= await showDialog<String>(
-        context: context,
-        builder: (ctx) => SimpleDialog(
+    type ??= await ruleDialog<String>(
+        (ctx) => SimpleDialog(
             title: const Text('选择规则类型'),
             children: ruleEffects.keys
                 .map((t) => SimpleDialogOption(
-                    onPressed: () => Navigator.pop(ctx, t),
+                    onPressed: () {
+                      if (current &&
+                          ctx.mounted &&
+                          ModalRoute.of(ctx)?.isCurrent == true) {
+                        Navigator.pop(ctx, t);
+                      }
+                    },
                     padding: const EdgeInsets.symmetric(
                         horizontal: 24, vertical: 14),
                     child: Text(label(t))))
-                .toList()));
-    if (type == null || !mounted) return;
+                .toList()),
+        barrierDismissible: true);
+    if (!mounted) return;
+    if (type == null || !current) return;
     final selectedType = type;
     final requiresApp = [
       'APP_LAUNCH',
@@ -411,15 +672,16 @@ class _PolicyEditorState extends State<PolicyEditor> {
     if (type == 'RUNTIME_PERMISSION') {
       setState(() => loadingRule = true);
       try {
-        final raw = await widget.session.api
-            .send('GET', '/policy-metadata/android-runtime-permissions');
-        if (!mounted ||
-            widget.session.tenant?['id'] != widget.root.substring(9)) return;
+        final raw = await api.send(
+            'GET', '/policy-metadata/android-runtime-permissions');
+        if (!current) return;
         final catalog = parseRuntimePermissionCatalog(raw);
         runtimePermissions = catalog.permissions;
         runtimeEffects = catalog.editableEffects;
       } catch (failure) {
-        if (mounted) {
+        if (!current || privateFailure(failure)) {
+          revoke();
+        } else if (mounted) {
           toast(context,
               failure is ApiFailure ? failure.message : '无法加载权限目录，请稍后重试。');
         }
@@ -428,6 +690,7 @@ class _PolicyEditorState extends State<PolicyEditor> {
         if (mounted) setState(() => loadingRule = false);
       }
     }
+    if (!mounted || !current) return;
     if (index != null &&
         type == 'RUNTIME_PERMISSION' &&
         !runtimePermissions.containsKey(rules[index]['permission'])) {
@@ -467,7 +730,7 @@ class _PolicyEditorState extends State<PolicyEditor> {
     final initial = index == null
         ? <String, dynamic>{'effect': editableEffects.first, 'required': 'true'}
         : {...rules[index], 'required': rules[index]['required'].toString()};
-    final result = await formDialog(context,
+    final result = await ruleDialog<Json>((_) => EditDialog(
         title: '${index == null ? '添加' : '编辑'}${label(type)}',
         fields: fields,
         description: type == 'RUNTIME_PERMISSION'
@@ -475,31 +738,38 @@ class _PolicyEditorState extends State<PolicyEditor> {
             : type == 'SPECIAL_ACCESS'
                 ? '特殊访问通常需要设备本地用户或受管系统单独授权；保存规则不表示已经授予。'
                 : null,
-        initial: initial, onSubmit: (data) async {
-      if (data['seconds'] != null &&
-          (data['seconds'] < 1 || data['seconds'] > 86400)) {
-        throw const ApiFailure(400, 'INVALID_DURATION');
-      }
-      final r = <String, dynamic>{
-        'id': index == null
-            ? 'rule_${requestId().substring(0, 12)}'
-            : rules[index]['id'],
-        'kind': selectedType,
-        'effect': data['effect'],
-        'required': data['required'] == 'true'
-      };
-      for (final field in [
-        'applicationId',
-        'scheduleId',
-        'seconds',
-        'permission',
-        'domain'
-      ]) {
-        if (data[field] != null && data[field] != '') r[field] = data[field];
-      }
-      return r;
-    });
-    if (result != null && mounted) {
+        initial: initial,
+        submit: '保存',
+        onSubmit: (data) async {
+          if (!current || resultUnknown) {
+            throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+          }
+          if (data['seconds'] != null &&
+              (data['seconds'] < 1 || data['seconds'] > 86400)) {
+            throw const ApiFailure(400, 'INVALID_DURATION');
+          }
+          final r = <String, dynamic>{
+            'id': index == null
+                ? 'rule_${requestId().substring(0, 12)}'
+                : rules[index]['id'],
+            'kind': selectedType,
+            'effect': data['effect'],
+            'required': data['required'] == 'true'
+          };
+          for (final field in [
+            'applicationId',
+            'scheduleId',
+            'seconds',
+            'permission',
+            'domain'
+          ]) {
+            if (data[field] != null && data[field] != '') {
+              r[field] = data[field];
+            }
+          }
+          return r;
+        }));
+    if (result != null && current) {
       setState(() {
         if (index == null) {
           rules.add(result);
@@ -511,127 +781,354 @@ class _PolicyEditorState extends State<PolicyEditor> {
   }
 
   Future<void> save() async {
-    if (busy) return;
-    if (!form.currentState!.validate()) return;
+    if (!interactive || locked) return;
+    if (form.currentState?.validate() != true) return;
+    // Copy nested rules before any asynchronous wait.
+    // Every recovery uses this body, revision and request key unchanged.
+    pendingBody = jsonDecode(jsonEncode({
+      'name': name.text.trim(),
+      if (widget.draft == null) 'kind': kind,
+      'rules': rules,
+    })) as Json;
+    await submitOriginal();
+  }
+
+  Future<void> retryOriginal() async {
+    if (!interactive || busy || !resultUnknown || pendingBody == null) return;
+    await submitOriginal();
+  }
+
+  Future<void> submitOriginal() async {
+    if (!current || busy || pendingBody == null) return;
     setState(() {
       busy = true;
       error = null;
+      checkNotice = null;
     });
     try {
-      await widget.session.api.send(widget.draft == null ? 'POST' : 'PUT',
-          '${widget.root}/policies${widget.draft == null ? '' : '/${widget.draft!['id']}'}',
-          version: widget.draft?['revision'],
-          key: key,
-          body: {
-            'name': name.text.trim(),
-            if (widget.draft == null) 'kind': kind,
-            'rules': rules
-          });
-      if (mounted) Navigator.pop(context);
-    } catch (e) {
-      if (mounted) setState(() => error = e);
+      final value = await api.send(policyId == null ? 'POST' : 'PUT',
+          '${widget.root}/policies${policyId == null ? '' : '/$policyId'}',
+          version: revision as int?, key: key, body: pendingBody);
+      if (!current) return;
+      if (!matchesPendingDraft(value)) {
+        throw const ApiFailure(502, 'INVALID_POLICY_DRAFT_RESPONSE');
+      }
+      pendingBody = null;
+      resultUnknown = false;
+      finishOwnRoute();
+    } catch (failure) {
+      if (!current || privateFailure(failure)) {
+        revoke();
+        return;
+      }
+      setState(() {
+        error = failure;
+        resultUnknown = resultUnknown ||
+            failure is! ApiFailure ||
+            failure.status == 0 ||
+            failure.status >= 500 ||
+            failure.code == 'PENDING_OPERATION_UNCHANGED';
+        if (!resultUnknown) pendingBody = null;
+      });
     } finally {
-      if (mounted) setState(() => busy = false);
+      if (mounted && !disposed) setState(() => busy = false);
     }
   }
 
+  Future<void> checkResult() async {
+    if (!interactive ||
+        busy ||
+        !resultUnknown ||
+        policyId == null ||
+        pendingBody == null) return;
+    setState(() {
+      busy = true;
+      error = null;
+      checkNotice = null;
+    });
+    try {
+      final value = await api.send('GET', '${widget.root}/policies/$policyId');
+      if (!current) return;
+      if (matchesPendingDraft(value)) {
+        pendingBody = null;
+        resultUnknown = false;
+        finishOwnRoute();
+      } else {
+        setState(() => checkNotice = '读取到的草稿尚不能确认本次保存结果。请保留原内容恢复，或稍后再核对。');
+      }
+    } catch (failure) {
+      if (!current || privateFailure(failure)) {
+        revoke();
+      } else {
+        setState(() => error = failure);
+      }
+    } finally {
+      if (mounted && !disposed) setState(() => busy = false);
+    }
+  }
+
+  bool matchesPendingDraft(Object? value) {
+    final body = pendingBody;
+    if (body == null ||
+        value is! Json ||
+        value['id'] is! String ||
+        (value['id'] as String).isEmpty ||
+        value['revision'] is! int ||
+        value['revision'] < 0 ||
+        value['name'] != body['name'] ||
+        value['kind'] != (policyId == null ? body['kind'] : kind) ||
+        !_samePolicyRules(value['rules'], body['rules'])) return false;
+    if (policyId == null) return value['revision'] == 0;
+    return value['id'] == policyId &&
+        revision is int &&
+        (value['revision'] as int) > (revision as int);
+  }
+
+  void deleteRule(Object? id) {
+    if (!interactive || locked || id is! String) return;
+    final index = rules.indexWhere((rule) => rule['id'] == id);
+    if (index >= 0) setState(() => rules.removeAt(index));
+  }
+
   @override
-  Widget build(BuildContext context) => PopScope(
-      canPop: !busy,
-      child: AlertDialog(
-          title: Text(widget.draft == null ? '创建策略' : '编辑策略草稿'),
-          content: SizedBox(
-              width: 740,
-              child: SingleChildScrollView(
-                  child: Form(
-                      key: form,
-                      child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Notice(
-                                '先保存草稿，再选择设备预览。配置保存与设备实际执行分别显示，发布前会检查设备能力。'),
-                            const SizedBox(height: 20),
-                            TextFormField(
-                                controller: name,
-                                maxLength: 100,
-                                decoration: const InputDecoration(
-                                    labelText: '策略名称', hintText: '例如：学习日使用规则'),
-                                validator: (v) => v == null || v.trim().isEmpty
-                                    ? '请输入策略名称'
-                                    : null),
-                            if (widget.draft == null)
-                              DropdownButtonFormField<String>(
-                                  value: kind,
-                                  decoration:
-                                      const InputDecoration(labelText: '类型'),
-                                  items: options(['POLICY', 'TEMPLATE'])
-                                      .entries
-                                      .map((e) => DropdownMenuItem(
-                                          value: e.key, child: Text(e.value)))
-                                      .toList(),
-                                  onChanged: busy
-                                      ? null
-                                      : (v) => setState(() => kind = v!)),
-                            const SizedBox(height: 20),
-                            Row(children: [
-                              Text('规则 · ${rules.length}',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.w600)),
-                              const Spacer(),
-                              TextButton.icon(
-                                  onPressed:
-                                      busy || loadingRule || rules.length >= 100
-                                          ? null
-                                          : () => editRule(),
-                                  icon: const Icon(Icons.add, size: 18),
-                                  label: const Text('添加规则'))
-                            ]),
-                            if (loadingRule) const LinearProgressIndicator(),
-                            if (rules.isEmpty)
-                              const EmptyView('尚未添加规则', '可以先保存空草稿，稍后完善。'),
-                            ...rules.asMap().entries.map((e) => Container(
-                                margin: const EdgeInsets.only(bottom: 8),
-                                decoration: BoxDecoration(
-                                    border: Border.all(color: line),
-                                    borderRadius: BorderRadius.circular(8)),
-                                child: ListTile(
-                                    leading:
-                                        const Icon(Icons.rule, color: navy),
-                                    title: Text(
-                                        '${label(e.value['kind'])} · ${label(e.value['effect'])}'),
-                                    subtitle: Text(ruleSummary(e.value,
-                                        widget.applications, widget.schedules)),
-                                    trailing: Wrap(children: [
-                                      IconButton(
-                                          tooltip: '编辑规则',
-                                          onPressed: busy || loadingRule
-                                              ? null
-                                              : () => editRule(e.key),
-                                          icon: const Icon(Icons.edit_outlined,
-                                              size: 18)),
-                                      IconButton(
-                                          tooltip: '删除规则',
-                                          onPressed: busy || loadingRule
-                                              ? null
-                                              : () => setState(
-                                                  () => rules.removeAt(e.key)),
-                                          icon:
-                                              const Icon(Icons.close, size: 18))
-                                    ])))),
-                            if (error != null)
-                              FailureView(error!,
-                                  reauth: () =>
-                                      widget.session.login(stepUp: true))
-                          ])))),
+  Widget build(BuildContext context) {
+    if (!current) {
+      return AlertDialog(
+          title: Text(closing && saved ? '草稿已保存' : '工作空间或权限已变化'),
+          content: Text(
+              closing && saved ? '当前草稿已保存。' : '原策略和规则内容已隐藏。请关闭窗口，在当前工作空间重新打开。'),
           actions: [
             TextButton(
-                onPressed: busy ? null : () => Navigator.pop(context),
-                child: const Text('取消')),
-            FilledButton(
-                onPressed: busy || loadingRule ? null : save,
-                child: Text(busy ? '保存中…' : '保存草稿'))
-          ]));
+                onPressed: closing ? null : closeOwnRoute,
+                child: const Text('关闭'))
+          ]);
+    }
+    return PopScope(
+        canPop: !busy && !resultUnknown,
+        onPopInvoked: (didPop) {
+          if (!didPop && resultUnknown && !busy) unawaited(requestClose());
+        },
+        child: AlertDialog(
+            title: Text(widget.draft == null ? '创建策略' : '编辑策略草稿'),
+            content: SizedBox(
+                width: 740,
+                child: SingleChildScrollView(
+                    child: Form(
+                        key: form,
+                        child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Notice(
+                                  '先保存草稿，再选择设备预览。配置保存与设备实际执行分别显示，发布前会检查设备能力。'),
+                              const SizedBox(height: 20),
+                              TextFormField(
+                                  controller: name,
+                                  enabled: !locked,
+                                  maxLength: 100,
+                                  decoration: const InputDecoration(
+                                      labelText: '策略名称',
+                                      hintText: '例如：学习日使用规则'),
+                                  validator: (v) =>
+                                      v == null || v.trim().isEmpty
+                                          ? '请输入策略名称'
+                                          : null),
+                              if (widget.draft == null)
+                                DropdownButtonFormField<String>(
+                                    value: kind,
+                                    decoration:
+                                        const InputDecoration(labelText: '类型'),
+                                    items: options(['POLICY', 'TEMPLATE'])
+                                        .entries
+                                        .map((e) => DropdownMenuItem(
+                                            value: e.key, child: Text(e.value)))
+                                        .toList(),
+                                    onChanged: locked
+                                        ? null
+                                        : (v) {
+                                            if (interactive &&
+                                                !locked &&
+                                                (v == 'POLICY' ||
+                                                    v == 'TEMPLATE')) {
+                                              setState(() => kind = v!);
+                                            }
+                                          }),
+                              const SizedBox(height: 20),
+                              Row(children: [
+                                Text('规则 · ${rules.length}',
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w600)),
+                                const Spacer(),
+                                TextButton.icon(
+                                    onPressed: locked || rules.length >= 100
+                                        ? null
+                                        : () => editRule(),
+                                    icon: const Icon(Icons.add, size: 18),
+                                    label: const Text('添加规则'))
+                              ]),
+                              if (loadingRule) const LinearProgressIndicator(),
+                              if (rules.isEmpty)
+                                const EmptyView('尚未添加规则', '可以先保存空草稿，稍后完善。'),
+                              ...rules.asMap().entries.map((e) => Container(
+                                  margin: const EdgeInsets.only(bottom: 8),
+                                  decoration: BoxDecoration(
+                                      border: Border.all(color: line),
+                                      borderRadius: BorderRadius.circular(8)),
+                                  child: ListTile(
+                                      leading:
+                                          const Icon(Icons.rule, color: navy),
+                                      title: Text(
+                                          '${label(e.value['kind'])} · ${label(e.value['effect'])}'),
+                                      subtitle: Text(ruleSummary(
+                                          e.value,
+                                          widget.applications,
+                                          widget.schedules)),
+                                      trailing: Wrap(children: [
+                                        IconButton(
+                                            tooltip: '编辑规则',
+                                            onPressed: locked
+                                                ? null
+                                                : () => editRule(e.key),
+                                            icon: const Icon(
+                                                Icons.edit_outlined,
+                                                size: 18)),
+                                        IconButton(
+                                            tooltip: '删除规则',
+                                            onPressed: locked
+                                                ? null
+                                                : () =>
+                                                    deleteRule(e.value['id']),
+                                            icon: const Icon(Icons.close,
+                                                size: 18))
+                                      ])))),
+                              if (resultUnknown) ...[
+                                const Notice(
+                                    '尚不能确认保存结果。已保留本次提交的原内容；'
+                                    '请主动恢复原提交或读取核对，确认前暂不能编辑。',
+                                    warning: true),
+                                if (error != null) ...[
+                                  const SizedBox(height: 8),
+                                  const Notice('最近一次恢复或核对未完成。原提交仍保留，请稍后再试。',
+                                      warning: true),
+                                ],
+                                if (checkNotice != null) ...[
+                                  const SizedBox(height: 8),
+                                  Notice(checkNotice!, warning: true),
+                                ],
+                              ],
+                              if (error != null && !resultUnknown)
+                                FailureView(error!, reauth: () {
+                                  if (interactive && !locked) {
+                                    widget.session.login(stepUp: true);
+                                  }
+                                })
+                            ])))),
+            actions: [
+              TextButton(
+                  key: resultUnknown
+                      ? const Key('policy-editor-close-unknown')
+                      : null,
+                  onPressed: busy || exitOpen ? null : requestClose,
+                  child: Text(resultUnknown ? '暂时关闭' : '取消')),
+              if (resultUnknown) ...[
+                if (error is ApiFailure &&
+                    (error as ApiFailure).code == 'REAUTH_REQUIRED')
+                  TextButton(
+                      onPressed: busy
+                          ? null
+                          : () {
+                              if (interactive && !busy) {
+                                widget.session.login(stepUp: true);
+                              }
+                            },
+                      child: const Text('重新安全验证')),
+                if (policyId != null)
+                  TextButton(
+                      key: const Key('policy-editor-check-result'),
+                      onPressed: busy ? null : checkResult,
+                      child: const Text('读取核对')),
+                OutlinedButton(
+                    key: const Key('policy-editor-retry-original'),
+                    onPressed: busy ? null : retryOriginal,
+                    child: const Text('按原内容恢复')),
+              ] else
+                FilledButton(
+                    onPressed: locked ? null : save,
+                    child: Text(busy ? '保存中…' : '保存草稿'))
+            ]));
+  }
+}
+
+bool _samePolicyRules(Object? left, Object? right) {
+  if (left is! List || right is! List || left.length != right.length) {
+    return false;
+  }
+  const nullable = {
+    'applicationId',
+    'scheduleId',
+    'seconds',
+    'permission',
+    'domain'
+  };
+  for (var index = 0; index < left.length; index++) {
+    final actual = left[index];
+    final expected = right[index];
+    if (actual is! Map || expected is! Map) return false;
+    Map<Object?, Object?> normalized(Map value) => {
+          for (final entry in value.entries)
+            if (!(nullable.contains(entry.key) && entry.value == null))
+              entry.key: entry.value,
+        };
+    if (!_samePolicyValue(normalized(actual), normalized(expected))) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool _samePolicyValue(Object? left, Object? right) {
+  if (left is Map && right is Map) {
+    return left.length == right.length &&
+        left.keys.every((key) =>
+            right.containsKey(key) && _samePolicyValue(left[key], right[key]));
+  }
+  if (left is List && right is List) {
+    if (left.length != right.length) return false;
+    for (var index = 0; index < left.length; index++) {
+      if (!_samePolicyValue(left[index], right[index])) return false;
+    }
+    return true;
+  }
+  return left == right;
+}
+
+class _PolicyEditorLifetime extends ValueNotifier<bool> {
+  bool scheduled = false, disposed = false;
+  _PolicyEditorLifetime() : super(true);
+
+  @override
+  void notifyListeners() {
+    if (disposed) return;
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      if (!scheduled) {
+        scheduled = true;
+        SchedulerBinding.instance.addPostFrameCallback((_) {
+          scheduled = false;
+          if (!disposed) super.notifyListeners();
+        });
+      }
+      return;
+    }
+    super.notifyListeners();
+  }
+
+  @override
+  void dispose() {
+    if (disposed) return;
+    disposed = true;
+    super.dispose();
+  }
 }
 
 String ruleSummary(Json rule, List<Json> apps, List<Json> schedules) {
