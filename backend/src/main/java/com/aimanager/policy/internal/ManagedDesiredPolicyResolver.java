@@ -7,6 +7,7 @@ import com.aimanager.fleet.Device;
 import com.aimanager.managedandroid.ManagedAndroidGateway.AppControl;
 import com.aimanager.managedandroid.ManagedAndroidGateway.PermissionDecision;
 import com.aimanager.managedandroid.ManagedAndroidGateway.RuntimePermissionDecision;
+import com.aimanager.managedandroid.ManagedControlOperation;
 import com.aimanager.managedandroid.ManagedDesiredPolicy;
 import com.aimanager.managedandroid.ManagedExecutionPublicationAccess.Publication;
 import com.aimanager.policy.PolicyRule;
@@ -127,6 +128,7 @@ final class ManagedDesiredPolicyResolver {
       PolicyRule.Effect launch = null, install = null;
       var permissions = new TreeMap<String, RuntimePermissionDecision>();
       var ids = new TreeSet<String>();
+      var requiredOperations = new ArrayList<ManagedControlOperation>();
       for (var evaluation : entry.getValue()) {
         ids.addAll(evaluation.sourceRuleIds());
         switch (evaluation.kind()) {
@@ -145,6 +147,11 @@ final class ManagedDesiredPolicyResolver {
           }
           default -> throw reject("EXECUTION_RULE_KIND_UNSUPPORTED");
         }
+        requiredOperations.add(
+            new ManagedControlOperation(
+                ManagedControlOperation.Kind.valueOf(evaluation.kind().name()),
+                ManagedControlOperation.Effect.valueOf(evaluation.predictedEffect().name()),
+                evaluation.permission()));
       }
       if (install == DENY && (launch == ALLOW || !permissions.isEmpty()))
         throw reject("EXECUTION_RULE_COMBINATION_UNSUPPORTED");
@@ -160,7 +167,17 @@ final class ManagedDesiredPolicyResolver {
               app.signingDigests().stream().sorted().toList(),
               control,
               List.copyOf(permissions.values()),
-              List.copyOf(ids)));
+              List.copyOf(ids),
+              requiredOperations.stream()
+                  .sorted(
+                      Comparator.comparing(
+                          operation ->
+                              operation.kind().name()
+                                  + ":"
+                                  + operation.effect().name()
+                                  + ":"
+                                  + Objects.toString(operation.permission(), "")))
+                  .toList()));
     }
     result.sort(Comparator.comparing(ManagedDesiredPolicy.ApplicationIntent::packageName));
     return new ManagedDesiredPolicy(

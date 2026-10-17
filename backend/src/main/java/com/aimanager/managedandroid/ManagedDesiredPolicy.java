@@ -29,11 +29,13 @@ public record ManagedDesiredPolicy(
       List<String> signingDigests,
       ManagedAndroidGateway.AppControl control,
       List<ManagedAndroidGateway.RuntimePermissionDecision> permissions,
-      List<String> sourceRuleIds) {
+      List<String> sourceRuleIds,
+      List<ManagedControlOperation> requiredOperations) {
     public ApplicationIntent {
       signingDigests = List.copyOf(signingDigests);
       permissions = List.copyOf(permissions);
       sourceRuleIds = List.copyOf(sourceRuleIds);
+      requiredOperations = List.copyOf(requiredOperations);
     }
 
     @Override

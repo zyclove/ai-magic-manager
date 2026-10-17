@@ -113,6 +113,7 @@ class ManagedPolicyPreparationPartnerTest {
             gateway,
             new ManagedPolicyDocumentCompilers(List.of(new LocalCompiler())),
             new ManagedDeviceProfileSettings(clock, 600, 120, 15),
+            ManagedPreparationTestQualifications.allow(),
             clock,
             transactions,
             "com.example.safe");
@@ -150,6 +151,7 @@ class ManagedPolicyPreparationPartnerTest {
             gateway,
             new ManagedPolicyDocumentCompilers(List.of(new GoogleManagedPolicyDocumentCompiler())),
             new ManagedDeviceProfileSettings(clock, 600, 120, 15),
+            ManagedPreparationTestQualifications.allow(),
             clock,
             transactions,
             "");
@@ -343,7 +345,8 @@ class ManagedPolicyPreparationPartnerTest {
                     new ManagedAndroidGateway.RuntimePermissionDecision(
                         "android.permission.CAMERA",
                         ManagedAndroidGateway.PermissionDecision.DENY)),
-                List.of("launch", "camera"))),
+                List.of("launch", "camera"),
+                ManagedPreparationTestQualifications.launchAndCamera())),
         List.of(),
         List.of());
   }

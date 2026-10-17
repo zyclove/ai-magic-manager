@@ -214,6 +214,7 @@ class GooglePolicyPreparationPublicationTest {
                         new ManagedPolicyDocumentCompilers(
                             List.of(new GoogleManagedPolicyDocumentCompiler())),
                         new ManagedDeviceProfileSettings(clock, 600, 120, 15),
+                        ManagedPreparationTestQualifications.allow(),
                         clock,
                         data.transactions,
                         "");

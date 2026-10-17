@@ -61,7 +61,8 @@ class GoogleCompletePolicyCompilerTest {
                 List.of(
                     new RuntimePermissionDecision(
                         "android.permission.CAMERA", PermissionDecision.DENY)),
-                List.of("launch", "camera"))),
+                List.of("launch", "camera"),
+                ManagedPreparationTestQualifications.launchAndCamera())),
         List.of(),
         protectedPackages);
   }

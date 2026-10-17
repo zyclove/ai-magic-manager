@@ -22,6 +22,92 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 class ManagedDesiredPolicyReaderTest {
   @ParameterizedTest
+  @org.junit.jupiter.params.provider.CsvSource({
+    "APP_LAUNCH,ALLOW",
+    "APP_LAUNCH,DENY",
+    "APP_INSTALL,ALLOW",
+    "APP_INSTALL,DENY",
+    "RUNTIME_PERMISSION,DENY",
+    "RUNTIME_PERMISSION,DEFAULT"
+  })
+  void retainsExactRequestedOperationsBeforeProviderControlTranslation(String kind, String effect)
+      throws Exception {
+    String permission = kind.equals("RUNTIME_PERMISSION") ? "android.permission.CAMERA" : null;
+    store(
+        List.of(
+            rule(
+                "requested",
+                PolicyRule.Kind.valueOf(kind),
+                PolicyRule.Effect.valueOf(effect),
+                permission)));
+    var operations =
+        json.valueToTree(read()).path("applications").get(0).path("requiredOperations");
+    assertThat(operations.isArray())
+        .as("published application intent must retain exact required operations")
+        .isTrue();
+    assertThat(operations.size()).isEqualTo(1);
+    assertThat(operations.get(0).path("kind").asText()).isEqualTo(kind);
+    assertThat(operations.get(0).path("effect").asText()).isEqualTo(effect);
+    if (permission == null) assertThat(operations.get(0).path("permission").isNull()).isTrue();
+    else assertThat(operations.get(0).path("permission").asText()).isEqualTo(permission);
+  }
+
+  @Test
+  void retainsLaunchInstallAndPermissionAsSeparateRequirements() throws Exception {
+    store(
+        List.of(
+            rule("launch", PolicyRule.Kind.APP_LAUNCH, PolicyRule.Effect.DENY, null),
+            rule("install", PolicyRule.Kind.APP_INSTALL, PolicyRule.Effect.ALLOW, null),
+            rule(
+                "camera",
+                PolicyRule.Kind.RUNTIME_PERMISSION,
+                PolicyRule.Effect.DEFAULT,
+                "android.permission.CAMERA")));
+    var application = read().applications().get(0);
+    assertThat(application.control()).isEqualTo(AppControl.BLOCK_LAUNCH);
+    var operations = json.valueToTree(application).path("requiredOperations");
+    assertThat(operations.isArray())
+        .as("merged provider control must not discard requested operations")
+        .isTrue();
+    assertThat(operations.size()).isEqualTo(3);
+    assertThat(operations.get(0).path("kind").asText()).isEqualTo("APP_INSTALL");
+    assertThat(operations.get(0).path("effect").asText()).isEqualTo("ALLOW");
+    assertThat(operations.get(1).path("kind").asText()).isEqualTo("APP_LAUNCH");
+    assertThat(operations.get(1).path("effect").asText()).isEqualTo("DENY");
+    assertThat(operations.get(2).path("kind").asText()).isEqualTo("RUNTIME_PERMISSION");
+    assertThat(operations.get(2).path("effect").asText()).isEqualTo("DEFAULT");
+    assertThat(operations.get(2).path("permission").asText())
+        .isEqualTo("android.permission.CAMERA");
+  }
+
+  @Test
+  void requiredOperationsReflectDenyWinningWithoutDuplicatingSourceRules() throws Exception {
+    store(
+        List.of(
+            rule("allow", PolicyRule.Kind.APP_LAUNCH, PolicyRule.Effect.ALLOW, null),
+            rule("deny", PolicyRule.Kind.APP_LAUNCH, PolicyRule.Effect.DENY, null)));
+    mutate(
+        n -> {
+          var evaluations =
+              (com.fasterxml.jackson.databind.node.ArrayNode)
+                  n.path("targets").get(0).path("rules");
+          var merged = (com.fasterxml.jackson.databind.node.ObjectNode) evaluations.get(0);
+          merged.put("predictedEffect", "DENY");
+          merged.putArray("sourceRuleIds").add("allow").add("deny");
+          evaluations.remove(1);
+        });
+    var application = read().applications().get(0);
+    assertThat(application.sourceRuleIds()).containsExactly("allow", "deny");
+    var operations = json.valueToTree(application).path("requiredOperations");
+    assertThat(operations.isArray())
+        .as("resolved requirements must preserve conflict outcome")
+        .isTrue();
+    assertThat(operations.size()).isEqualTo(1);
+    assertThat(operations.get(0).path("kind").asText()).isEqualTo("APP_LAUNCH");
+    assertThat(operations.get(0).path("effect").asText()).isEqualTo("DENY");
+  }
+
+  @ParameterizedTest
   @ValueSource(doubles = {1.0, 1.5})
   void fractionalSchemaVersionIsNotVersionOne(double version) throws Exception {
     store(List.of(rule("launch", PolicyRule.Kind.APP_LAUNCH, PolicyRule.Effect.ALLOW, null)));
@@ -111,6 +197,8 @@ class ManagedDesiredPolicyReaderTest {
     assertThatThrownBy(() -> desired.applications().get(0).sourceRuleIds().clear())
         .isInstanceOf(UnsupportedOperationException.class);
     assertThatThrownBy(() -> desired.applications().get(0).signingDigests().clear())
+        .isInstanceOf(UnsupportedOperationException.class);
+    assertThatThrownBy(() -> desired.applications().get(0).requiredOperations().clear())
         .isInstanceOf(UnsupportedOperationException.class);
     assertThatThrownBy(() -> desired.rules().clear())
         .isInstanceOf(UnsupportedOperationException.class);

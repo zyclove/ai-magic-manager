@@ -29,6 +29,7 @@ class ManagedPolicyPreparationService {
   private final ManagedAndroidGateway gateway;
   private final ManagedPolicyDocumentCompilers compilers;
   private final ManagedDeviceProfileSettings settings;
+  private final ManagedPolicyControlAdmission controls;
   private final Clock clock;
   private final TransactionTemplate tx;
   private final Set<String> protectedPackages;
@@ -40,6 +41,7 @@ class ManagedPolicyPreparationService {
       ManagedAndroidGateway gateway,
       ManagedPolicyDocumentCompilers compilers,
       ManagedDeviceProfileSettings settings,
+      ManagedPolicyControlAdmission controls,
       Clock clock,
       PlatformTransactionManager transactions,
       @Value("${manager.policies.additional-protected-packages:}")
@@ -50,6 +52,7 @@ class ManagedPolicyPreparationService {
     this.gateway = gateway;
     this.compilers = compilers;
     this.settings = settings;
+    this.controls = controls;
     this.clock = clock;
     this.protectedPackages = SafetyCriticalPackages.withAdditional(additionalProtectedPackages);
     tx = new TransactionTemplate(transactions);
@@ -102,8 +105,14 @@ class ManagedPolicyPreparationService {
           // A slow compilation may consume the remaining evidence lifetime; do not return an
           // expired result.
           verified = settings.verifier.verify(deviceName, notBefore, profile, retrievedAt);
+          controls.requireFresh(current.controls());
           return new Prepared(
-              publication, current.binding(), current.desired(), verified, document);
+              publication,
+              current.binding(),
+              current.desired(),
+              verified,
+              document,
+              current.controls());
         });
   }
 
@@ -138,7 +147,7 @@ class ManagedPolicyPreparationService {
         || !"DEVICE_OWNER".equals(current.managementMode())
         || !Objects.equals(current.deviceId(), desired.deviceId())
         || !Objects.equals(current.registrationId(), desired.registrationId())) throw changed();
-    return new Snapshot(current, enrollment, desired);
+    return new Snapshot(current, enrollment, desired, controls.check(current, desired));
   }
 
   private <T> T read(Supplier<T> operation) {
@@ -160,7 +169,8 @@ class ManagedPolicyPreparationService {
   private record Snapshot(
       ManagedAgentBindingStore.VerifiedBindingContext binding,
       ManagedEnrollmentStore.Intent enrollment,
-      ManagedDesiredPolicy desired) {
+      ManagedDesiredPolicy desired,
+      ManagedPolicyControlAdmission.Checked controls) {
     @Override
     public String toString() {
       return "ManagedPreparationSnapshot[REDACTED]";
@@ -173,7 +183,8 @@ class ManagedPolicyPreparationService {
       ManagedAgentBindingStore.VerifiedBindingContext binding,
       ManagedDesiredPolicy desired,
       ManagedDeviceExecutionVerifier.Verified profile,
-      ManagedAndroidGateway.PolicyDocument document) {
+      ManagedAndroidGateway.PolicyDocument document,
+      ManagedPolicyControlAdmission.Checked controls) {
     @Override
     public String toString() {
       return "PreparedManagedPolicy[REDACTED]";

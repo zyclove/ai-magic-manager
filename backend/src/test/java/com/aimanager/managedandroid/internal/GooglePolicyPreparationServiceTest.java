@@ -114,6 +114,7 @@ class GooglePolicyPreparationServiceTest {
             gateway,
             new ManagedPolicyDocumentCompilers(List.of(new GoogleManagedPolicyDocumentCompiler())),
             new ManagedDeviceProfileSettings(clock, 600, 120, 15),
+            ManagedPreparationTestQualifications.allow(),
             clock,
             transactions,
             "");
@@ -320,6 +321,7 @@ class GooglePolicyPreparationServiceTest {
             gateway,
             new ManagedPolicyDocumentCompilers(List.of(new GoogleManagedPolicyDocumentCompiler())),
             new ManagedDeviceProfileSettings(progressing, 600, 120, 15),
+            ManagedPreparationTestQualifications.allow(),
             progressing,
             transactions,
             "");
@@ -336,6 +338,7 @@ class GooglePolicyPreparationServiceTest {
             gateway,
             new ManagedPolicyDocumentCompilers(List.of(new GoogleManagedPolicyDocumentCompiler())),
             new ManagedDeviceProfileSettings(clock, 600, 120, 15),
+            ManagedPreparationTestQualifications.allow(),
             clock,
             transactions,
             " com.example.lesson ");
@@ -357,6 +360,7 @@ class GooglePolicyPreparationServiceTest {
             gateway,
             new ManagedPolicyDocumentCompilers(List.of(new GoogleManagedPolicyDocumentCompiler())),
             new ManagedDeviceProfileSettings(progressing, 600, 120, 15),
+            ManagedPreparationTestQualifications.allow(),
             progressing,
             transactions,
             "");
@@ -417,7 +421,8 @@ class GooglePolicyPreparationServiceTest {
                     new ManagedAndroidGateway.RuntimePermissionDecision(
                         "android.permission.CAMERA",
                         ManagedAndroidGateway.PermissionDecision.DENY)),
-                List.of("launch", "camera"))),
+                List.of("launch", "camera"),
+                ManagedPreparationTestQualifications.launchAndCamera())),
         List.of(),
         List.of());
   }
