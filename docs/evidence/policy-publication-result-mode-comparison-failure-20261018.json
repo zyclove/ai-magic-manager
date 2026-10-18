@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "observedOn": "2026-10-18",
+  "status": "CANDIDATE_TEST_ASSERTION_FAILED",
+  "sourceReceiptSha256": "20d3dd517c9215bcc299c2ee8ecb6c71cbb266056fe029d407e5ca15a31255cb",
+  "compileReceiptSha256": "84d82e79d1e6e55872349d2eeb74f62ef7d1ec371b773f39201763182f70de65",
+  "resultReceiptSha256": "059ae2b55d6545fe36fe8f06f2b301d40adf461313d2bec2d52b552b6b246023",
+  "xmlSha256": "1b80c4ebff58ae5fe3af3194b88b0ee729d8f8d984a911278878d36a5f152508",
+  "totals": {
+    "tests": 36,
+    "failures": 1,
+    "errors": 0,
+    "skipped": 0
+  },
+  "compileSeconds": 31.3,
+  "testSeconds": 32.3,
+  "nativeTestExit": 1,
+  "naturalProcessTreeExit": true,
+  "remainingOwnedProcesses": 0,
+  "finding": "Historical ENFORCE query returned 200 and passed no-store, then ObjectNode equality failed: small JSON integers deserialize as IntNode while valueToTree of Java long uses LongNode. Serialized fields were identical.",
+  "correction": "Compare deserialized PolicyPublication records across all six fields; existing status, no-store, inverse-mode, authority, expiry and no-mutation assertions retained.",
+  "notClaimed": [
+    "No GREEN result for this candidate",
+    "green-r4 was not run",
+    "No shared-source integration or deployment"
+  ]
+}

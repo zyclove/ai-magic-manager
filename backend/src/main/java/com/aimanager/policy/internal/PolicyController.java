@@ -69,9 +69,10 @@ class PolicyController {
     @GetMapping("/policies/{policyId}/publication-results/{requestId}")
     ResponseEntity<PolicyPublication> publicationResult(@AuthenticationPrincipal Jwt actor,
             @PathVariable String tenantId, @PathVariable String policyId, @PathVariable String requestId,
-            @RequestParam long revision, @RequestParam String previewId, @RequestParam String previewHash) {
+            @RequestParam long revision, @RequestParam String previewId, @RequestParam String previewHash,
+            @RequestParam PolicyPublication.Mode mode) {
         var result = policies.publicationResult(tenantId, actor.getSubject(), policyId, requestId,
-                revision, previewId, previewHash);
+                revision, previewId, previewHash, mode);
         return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(result);
     }
     @GetMapping("/policies/{policyId}/versions")

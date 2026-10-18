@@ -33,6 +33,7 @@ class PolicyJourneyTest {
     @Autowired MockMvc mvc;
     @Autowired ObjectMapper mapper;
     @Autowired JdbcTemplate database;
+    @Autowired com.aimanager.idempotency.IdempotencyService idempotency;
     @MockitoBean JwtDecoder decoder;
 
     private RequestPostProcessor actor(String name) {
@@ -205,12 +206,12 @@ class PolicyJourneyTest {
         String target = path(s) + "/policies/" + d.get("id").asText() + "/publication-results/" + key;
         for (int attempt = 0; attempt < 2; attempt++) {
             var recovered = body(mvc.perform(get(target).with(actor(s.owner()))
-                .param("revision", "0").param("previewId", p.get("id").asText()).param("previewHash", p.get("hash").asText()))
+                .param("mode", "CONFIGURE_ONLY").param("revision", "0").param("previewId", p.get("id").asText()).param("previewHash", p.get("hash").asText()))
                 .andExpect(status().isOk()).andExpect(header().string("Cache-Control", "no-store"))
                 .andReturn().getResponse().getContentAsString());
             assertThat(recovered).isEqualTo(original);
         }
-        mvc.perform(get(target).with(actor(s.owner())).param("revision", "1")
+        mvc.perform(get(target).with(actor(s.owner())).param("mode", "CONFIGURE_ONLY").param("revision", "1")
             .param("previewId", p.get("id").asText()).param("previewHash", p.get("hash").asText()))
             .andExpect(status().isConflict()).andExpect(jsonPath("$.errorCode").value("IDEMPOTENCY_KEY_CONFLICT"));
         assertThat(database.queryForObject("SELECT COUNT(*) FROM policy_versions WHERE tenant_id=?", Integer.class, s.tenant())).isEqualTo(2);
@@ -225,20 +226,86 @@ class PolicyJourneyTest {
         database.update("INSERT INTO tenant_members(tenant_id,actor_id,actor_key,role) VALUES(?,?,?,'GUARDIAN')",
             s.tenant(), guardian, ActorKeys.key(guardian));
         String target = path(s) + "/policies/" + d.get("id").asText() + "/publication-results/";
-        mvc.perform(get(target + key).with(actor(guardian)).param("revision", "0")
+        mvc.perform(get(target + key).with(actor(guardian)).param("mode", "CONFIGURE_ONLY").param("revision", "0")
             .param("previewId", p.get("id").asText()).param("previewHash", p.get("hash").asText()))
             .andExpect(status().isNotFound()).andExpect(jsonPath("$.errorCode").value("POLICY_PUBLICATION_RESULT_UNAVAILABLE"));
-        mvc.perform(get(target + UUID.randomUUID()).with(actor(s.owner())).param("revision", "0")
+        mvc.perform(get(target + UUID.randomUUID()).with(actor(s.owner())).param("mode", "CONFIGURE_ONLY").param("revision", "0")
             .param("previewId", p.get("id").asText()).param("previewHash", p.get("hash").asText()))
             .andExpect(status().isNotFound());
-        mvc.perform(get(target + key).with(actor("outsider")).param("revision", "0")
+        mvc.perform(get(target + key).with(actor("outsider")).param("mode", "CONFIGURE_ONLY").param("revision", "0")
             .param("previewId", p.get("id").asText()).param("previewHash", p.get("hash").asText()))
             .andExpect(status().isForbidden());
         database.update("UPDATE tenant_members SET role='AUDITOR' WHERE tenant_id=? AND actor_key=?", s.tenant(), ActorKeys.key(s.owner()));
-        mvc.perform(get(target + key).with(actor(s.owner())).param("revision", "0")
+        mvc.perform(get(target + key).with(actor(s.owner())).param("mode", "CONFIGURE_ONLY").param("revision", "0")
             .param("previewId", p.get("id").asText()).param("previewHash", p.get("hash").asText()))
             .andExpect(status().isForbidden());
         assertThat(database.queryForObject("SELECT COUNT(*) FROM policy_versions WHERE tenant_id=?", Integer.class, s.tenant())).isEqualTo(1);
+    }
+
+
+    @org.junit.jupiter.params.ParameterizedTest
+    @org.junit.jupiter.params.provider.NullAndEmptySource
+    @org.junit.jupiter.params.provider.ValueSource(strings = {
+        "UNKNOWN", "configure_only", "ENFORCE_UNSUPPORTED", "CONFIGURE_ONLY,ENFORCE"
+    })
+    void publicationRecoveryRejectsMissingOrInvalidMode(String mode) throws Exception {
+        var s = scope(); var d = draft(s); var p = preview(s, d);
+        String key = UUID.randomUUID().toString(); configure(s, d, p, key);
+        var request = get(path(s) + "/policies/" + d.get("id").asText() + "/publication-results/" + key)
+            .with(actor(s.owner())).param("revision", "0")
+            .param("previewId", p.get("id").asText()).param("previewHash", p.get("hash").asText());
+        if (mode != null) request.param("mode", mode);
+        mvc.perform(request).andExpect(status().isBadRequest());
+        assertPublicationReadOnly(s);
+    }
+
+    @Test void publicationRecoveryModeMustMatchOriginalFingerprint() throws Exception {
+        var s = scope(); var d = draft(s); var p = preview(s, d);
+        String key = UUID.randomUUID().toString(); configure(s, d, p, key);
+        mvc.perform(get(path(s) + "/policies/" + d.get("id").asText() + "/publication-results/" + key)
+            .with(actor(s.owner())).param("mode", "ENFORCE").param("revision", "0")
+            .param("previewId", p.get("id").asText()).param("previewHash", p.get("hash").asText()))
+            .andExpect(status().isConflict()).andExpect(jsonPath("$.errorCode").value("IDEMPOTENCY_KEY_CONFLICT"));
+        assertPublicationReadOnly(s);
+    }
+
+    @Test void historicalEnforceResultRemainsReadableWithoutReexecution() throws Exception {
+        var s = scope(); var d = draft(s); var p = preview(s, d);
+        String key = UUID.randomUUID().toString();
+        // Seed a coherent historical journal; this does not enable or invoke ENFORCE POST.
+        var original = com.aimanager.policy.internal.HistoricalPublicationFixture.enforce(
+            database, idempotency, s.tenant(), s.owner(), s.subject(), d.get("id").asText(),
+            d.get("revision").asLong(), p.get("id").asText(), p.get("hash").asText(), key);
+        database.update("UPDATE idempotency_requests SET expires_at=0 WHERE scope_id=? AND operation='policy.publish'", s.tenant());
+        database.update("UPDATE policy_previews SET expires_at=0 WHERE tenant_id=? AND id=?", s.tenant(), p.get("id").asText());
+        String target = path(s) + "/policies/" + d.get("id").asText() + "/publication-results/" + key;
+        for (int attempt = 0; attempt < 2; attempt++) {
+            var recovered = body(mvc.perform(get(target).with(actor(s.owner()))
+                .param("mode", "ENFORCE").param("revision", "0")
+                .param("previewId", p.get("id").asText()).param("previewHash", p.get("hash").asText()))
+                .andExpect(status().isOk()).andExpect(header().string("Cache-Control", "no-store"))
+                .andReturn().getResponse().getContentAsString());
+            assertThat(mapper.treeToValue(recovered, com.aimanager.policy.PolicyPublication.class)).isEqualTo(original);
+        }
+        mvc.perform(get(target).with(actor(s.owner())).param("mode", "CONFIGURE_ONLY").param("revision", "0")
+            .param("previewId", p.get("id").asText()).param("previewHash", p.get("hash").asText()))
+            .andExpect(status().isConflict()).andExpect(jsonPath("$.errorCode").value("IDEMPOTENCY_KEY_CONFLICT"));
+        database.update("UPDATE tenant_members SET role='AUDITOR' WHERE tenant_id=? AND actor_key=?", s.tenant(), ActorKeys.key(s.owner()));
+        mvc.perform(get(target).with(actor(s.owner())).param("mode", "ENFORCE").param("revision", "0")
+            .param("previewId", p.get("id").asText()).param("previewHash", p.get("hash").asText()))
+            .andExpect(status().isForbidden());
+        assertThat(database.queryForObject("SELECT COUNT(*) FROM policy_versions WHERE tenant_id=?", Integer.class, s.tenant())).isEqualTo(1);
+        assertThat(database.queryForObject("SELECT COUNT(*) FROM policy_publications WHERE tenant_id=?", Integer.class, s.tenant())).isEqualTo(1);
+        assertThat(database.queryForObject("SELECT COUNT(*) FROM policy_outbox WHERE tenant_id=?", Integer.class, s.tenant())).isZero();
+        assertThat(database.queryForObject("SELECT MAX(expires_at) FROM idempotency_requests WHERE scope_id=? AND operation='policy.publish'", Long.class, s.tenant())).isZero();
+        assertThat(database.queryForObject("SELECT expires_at FROM policy_previews WHERE tenant_id=? AND id=?", Long.class, s.tenant(), p.get("id").asText())).isZero();
+        assertThat(database.queryForObject("SELECT role FROM tenant_members WHERE tenant_id=? AND actor_key=?", String.class, s.tenant(), ActorKeys.key(s.owner()))).isEqualTo("AUDITOR");
+    }
+
+    private void assertPublicationReadOnly(Scope s) {
+        assertThat(database.queryForObject("SELECT COUNT(*) FROM policy_versions WHERE tenant_id=?", Integer.class, s.tenant())).isEqualTo(1);
+        assertThat(database.queryForObject("SELECT COUNT(*) FROM policy_publications WHERE tenant_id=?", Integer.class, s.tenant())).isEqualTo(1);
+        assertThat(database.queryForObject("SELECT COUNT(*) FROM policy_outbox WHERE tenant_id=?", Integer.class, s.tenant())).isEqualTo(1);
     }
 
     @Test void emptyDraftRecoveryReturnsCurrentDraftWithoutRecreatingIt() throws Exception {

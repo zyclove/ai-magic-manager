@@ -438,8 +438,8 @@ class PolicyService
   }
 
   /**
-   * Creator-only lookup of a committed CONFIGURE_ONLY publication after a lost HTTP response.
-   * An absent/expired journal is inconclusive; this read never repeats the mutation.
+   * Creator-only lookup of a committed publication in its original mode after a lost HTTP response.
+   * An absent journal is inconclusive; replay expiry does not renew or repeat the mutation.
    */
   @Transactional(timeout = 10)
   public PolicyPublication publicationResult(
@@ -449,9 +449,11 @@ class PolicyService
       String requestId,
       long revision,
       String previewId,
-      String previewHash) {
+      String previewHash,
+      PolicyPublication.Mode mode) {
     access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
-    if (revision < 0
+    if (mode == null
+        || revision < 0
         || requestId == null
         || !requestId.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")
         || previewId == null
@@ -460,8 +462,8 @@ class PolicyService
         || !previewHash.matches("[0-9a-f]{64}"))
       throw DomainException.invalid("INVALID_PUBLICATION_RESULT_REFERENCE");
     readDraft(tenant, policyId, false);
-    var input = new PolicyController.Publish(
-        previewId, previewHash, PolicyPublication.Mode.CONFIGURE_ONLY);
+    // Query the exact original intent. A read cannot select a different publication mode.
+    var input = new PolicyController.Publish(previewId, previewHash, mode);
     var reference = idempotency.findCommitted(
         tenant,
         actor,
@@ -473,7 +475,7 @@ class PolicyService
     var version = readVersion(tenant, policyId, reference.versionId());
     if (version.draftRevision() != revision
         || !previewHash.equals(version.previewHash())
-        || version.mode() != PolicyPublication.Mode.CONFIGURE_ONLY)
+        || version.mode() != mode)
       throw new IllegalStateException("Publication journal does not match its version");
     return publication(tenant, actor, reference.id());
   }

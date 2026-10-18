@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "observedOn": "2026-10-18",
+  "status": "ISOLATED_CANDIDATE_PASSED",
+  "baseCommit": "268f7d96f63b29fb610c8ed5954c52140f5e280c",
+  "scope": "Required explicit result mode plus historical ENFORCE read, expiry and authorization regression; no ENFORCE activation",
+  "sourceKind": "Committed HEAD plus four owned files; unrelated shared changes excluded",
+  "sourceReceiptSha256": "a22076056b73f3a4f90f88a72f4e4485146cfec110d0efd396203405bb5b2bb4",
+  "compileReceiptSha256": "fbfae6f7c6aa76f3a8e16663b71653ffe17393aaf00c5b28081722dd6c894299",
+  "testReceiptSha256": "dfe017036d866e8e304b8ca595235916640328bc3b0296309f43bf86e5138e27",
+  "ownedSourceSha256": {
+    "backend/src/main/java/com/aimanager/policy/internal/PolicyController.java": "10be7459ae73f8c3843fb0cd935885690937331ef30895f3f02a120d14f1ff7c",
+    "backend/src/main/java/com/aimanager/policy/internal/PolicyService.java": "43c82c6df8adca36f4f1cc0e5226d51c250714e0213e6b626709be4fee497b2b",
+    "backend/src/test/java/com/aimanager/PolicyJourneyTest.java": "0745e8f1e7a29c6c368eab98c74130bcec8f8421d20c82bcd42ebc5b4830451e",
+    "backend/src/test/java/com/aimanager/policy/internal/HistoricalPublicationFixture.java": "b438932394b5f6650c560b275d63ddf57366d3c3ed72bf7fd9b9501964d03535"
+  },
+  "sourceFiles": 505,
+  "runnerSha256": "1fd2fe357d374e2e6341473c366a7e347f8cae35f677afba21cfc66536d60754",
+  "compileSeconds": 30.8,
+  "testSeconds": 32.6,
+  "suites": {
+    "com.aimanager.PolicyJourneyTest": {
+      "counts": {
+        "tests": 36,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "sha256": "9e321cf942c3ef3d1495f59c8faba866c9f5cc0d2381fdf66500ec7d7f0adf09"
+    }
+  },
+  "totals": {
+    "tests": 36,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "naturalProcessTreeExit": true,
+  "remainingOwnedProcesses": 0,
+  "sharedSourceIntegrated": false,
+  "activationEnabled": false,
+  "limitations": [
+    "36 PolicyJourney checks only; not a full backend or Family regression.",
+    "Mixed snapshot preserves shared WIP; commit snapshot includes HEAD plus owned files only. See sourceKind.",
+    "No live deployment, real identity provider, MySQL/OceanBase or Android device acceptance claimed."
+  ],
+  "redEvidenceSha256": "4a7af5955218178c9869f5f2881845393b31e738b3a47019a051e115aba4137e"
+}

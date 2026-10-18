@@ -1,0 +1,46 @@
+{
+  "schemaVersion": 1,
+  "observedOn": "2026-10-18",
+  "status": "EXPECTED_BEHAVIOR_RED",
+  "baseCommit": "268f7d96f63b29fb610c8ed5954c52140f5e280c",
+  "scope": "Current CONFIGURE_ONLY backend result lookup: required explicit mode and original request fingerprint; no ENFORCE activation",
+  "sourceKind": "current workspace snapshot, including unrelated preserved changes",
+  "sourceReceiptSha256": "8fae1ffbf8a0f0b26a0317194f80f8b26ff323cabd6a1c527f0f27c5d9390f58",
+  "compileReceiptSha256": "2df9a4c487f934099bd0f6268d36b8d3569ec581e6ed0fdaf13ca6d9bd12720d",
+  "testReceiptSha256": "abd92ded17f15ded09766753dc194f8366857fe35dfa1ad7968422d83302c944",
+  "ownedSourceSha256": {
+    "backend/src/main/java/com/aimanager/policy/internal/PolicyController.java": "5ff00fb5f30dc394d8b857a5f4eb3e0e8a8eae73b0eaf564e7f0ef431c612130",
+    "backend/src/main/java/com/aimanager/policy/internal/PolicyService.java": "a90263cccfbcd77e529fc71549386fbd0b6438620a26b0a144077b1721a14153",
+    "backend/src/test/java/com/aimanager/PolicyJourneyTest.java": "fec150e815e0f8466a8697a8f80527b122a90db46b9f84b33455216789f9161b"
+  },
+  "sourceFiles": 620,
+  "runnerSha256": "bc66edb45d839dd37154a180d960d5822f088d7791260050305bf2e774a3baf7",
+  "compileSeconds": 27.9,
+  "testSeconds": 29.7,
+  "suites": {
+    "com.aimanager.PolicyJourneyTest": {
+      "counts": {
+        "tests": 35,
+        "failures": 7,
+        "errors": 0,
+        "skipped": 0
+      },
+      "sha256": "a4fd95712889ce9a708c504f6f6930dc57a4366725981bcd5de6fd96d05a584a"
+    }
+  },
+  "totals": {
+    "tests": 35,
+    "failures": 7,
+    "errors": 0,
+    "skipped": 0
+  },
+  "naturalProcessTreeExit": true,
+  "remainingOwnedProcesses": 0,
+  "sharedSourceIntegrated": false,
+  "activationEnabled": false,
+  "limitations": [
+    "35 PolicyJourney checks only; not a full backend or Family regression.",
+    "Snapshot includes preserved uncommitted shared backend changes. Only the named mode-query files belong to this change.",
+    "No live deployment, real identity provider, MySQL/OceanBase or Android device acceptance claimed."
+  ]
+}

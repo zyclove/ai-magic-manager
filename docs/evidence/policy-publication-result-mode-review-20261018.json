@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "observedOn": "2026-10-18",
+  "status": "REVIEW_FINDINGS_RESOLVED_AND_VERIFIED",
+  "originalReviewer": "/root/publication_result_mode_review",
+  "reviewedCandidateSourceReceiptSha256": "eee8c560199ce83d2bc949a495ca0de26fbabefa59dfdc8ca2408b358289a8d7",
+  "originalVerdict": "Static review: no critical finding; one important missing ENFORCE success regression; two minor comment/EOL findings. GREEN required before integration.",
+  "resolutionAuthor": "Primary implementer; no second independent review claimed",
+  "blockingFindings": 0,
+  "intermediateFailureEvidenceSha256": "9ac941c69eaa1e8a3d50101a346b206326a98b190af9b939cbd30bcd93abd510",
+  "resolutions": [
+    {
+      "severity": "Important",
+      "finding": "Successful historical ENFORCE reads were unprotected",
+      "resolution": "Coherent historical fixture via real DTO and idempotency service; read twice, exact response/no-store, inverse mode conflict, current role refusal, no outbox creation or expiry renewal.",
+      "regressionProof": "Reverting only the final mode guard makes the new test fail 200 versus 500; all preceding 35 pass. Fixed mixed and exact commit candidates each pass 36."
+    },
+    {
+      "severity": "Minor",
+      "finding": "Comment incorrectly limited reads to CONFIGURE_ONLY",
+      "resolution": "Document original-mode lookup and replay expiry semantics."
+    },
+    {
+      "severity": "Minor",
+      "finding": "Unrelated CRLF rewrite",
+      "resolution": "All four owned files use LF; staged diff is limited to intended edits."
+    }
+  ],
+  "evidenceSha256": {
+    "red-r3": "cf5a7906f957e4d76466f22580a529543f7f3f4c3602b9091beaa8022cd32097",
+    "green-r5": "847e9471fc4938b20d44e71a05783bf60ae67858ba0a8b1446c5fee525b5bdfb",
+    "green-r6": "3c870a1c01a2f4a939b914644aaa9fe09afdaf3e8b1817427914a53085091827"
+  },
+  "finalCandidateSourceReceiptSha256": "a22076056b73f3a4f90f88a72f4e4485146cfec110d0efd396203405bb5b2bb4",
+  "scope": "Mode-query backend contract only; no ENFORCE activation, live deployment, Android or MySQL/OceanBase acceptance."
+}
