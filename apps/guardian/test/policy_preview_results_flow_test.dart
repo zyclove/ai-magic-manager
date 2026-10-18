@@ -4,6 +4,10 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:guardian/core/api.dart';
+import 'package:guardian/ui/owned_dialog_route.dart';
+import 'package:guardian/ui/policy_preview_results.dart';
+import 'package:guardian/ui/policy_publication_controller.dart';
+import 'package:guardian/ui/policy_publication_dialog.dart';
 import 'policy_target_picker_test.dart' show reply;
 import 'policy_preview_flow_test.dart'
     show PreviewSession, startFlow, selectGroup, closeResult, previewFor;
@@ -29,6 +33,37 @@ void main() {
     await tester.tap(second);
     await settle(tester);
     expect(find.text('域名访问'), findsNWidgets(2));
+    expect(session.publications, isEmpty);
+    final preview = find.byType(PolicyPreviewResults);
+    final previewElement = tester.element(preview);
+    final firstElement = tester.element(first);
+    final route =
+        ModalRoute.of(tester.element(find.byType(PolicyPublicationDialog)))!;
+    expect(route, isA<OwnedDialogRoute<void>>());
+    await tester.tap(find.widgetWithText(FilledButton, '仅保存配置'));
+    await settle(tester);
+    expect(find.byType(AlertDialog), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, '发布配置'), findsOneWidget);
+    expect(ModalRoute.of(tester.element(find.byType(PolicyPublicationDialog))),
+        same(route));
+    expect(route.isCurrent, isTrue);
+    expect(
+        tester.element(find.byType(PolicyPreviewResults, skipOffstage: false)),
+        same(previewElement));
+    expect(
+        tester.element(find.widgetWithText(ExpansionTile, '班级平板 group-1',
+            skipOffstage: false)),
+        same(firstElement));
+    expect(find.text('域名访问'), findsNothing);
+    await tester.tap(find.widgetWithText(TextButton, '取消'));
+    await settle(tester);
+    expect(tester.element(preview), same(previewElement));
+    expect(tester.element(first), same(firstElement));
+    expect(find.text('域名访问'), findsNWidgets(2));
+    expect(find.byType(AlertDialog), findsOneWidget);
+    expect(ModalRoute.of(tester.element(preview)), same(route));
+    expect(route.isCurrent, isTrue);
+    expect(session.previews, hasLength(1));
     expect(session.publications, isEmpty);
     await closeResult(tester, flow);
     expect(tester.takeException(), isNull);
@@ -184,10 +219,17 @@ void main() {
     await tester.tap(find.text('预览这些设备'));
     await settle(tester);
     expect(find.text('预览已过期，请关闭后重新预览。'), findsOneWidget);
-    await tester.tap(find.text('仅保存配置'));
-    await settle(tester);
-    expect(find.text('发布配置'), findsNothing);
-    expect(find.text('此预览已过期，请关闭窗口后重新预览。'), findsOneWidget);
+    final controller = tester
+        .widget<PolicyPublicationDialog>(find.byType(PolicyPublicationDialog))
+        .controller;
+    expect(controller.phase, PublicationViewPhase.previewInvalid);
+    expect(controller.canConfirm, isFalse);
+    expect(controller.canSubmit, isFalse);
+    expect(find.widgetWithText(FilledButton, '仅保存配置'), findsNothing);
+    expect(find.widgetWithText(FilledButton, '发布配置'), findsNothing);
+    expect(find.widgetWithText(FilledButton, '重新预览'), findsOneWidget);
+    expect(find.text('原预览已过期，不能继续保存。'), findsOneWidget);
+    expect(session.previews, hasLength(1));
     expect(session.publications, isEmpty);
     await closeResult(tester, flow);
     expect(tester.takeException(), isNull);
@@ -209,18 +251,36 @@ void main() {
     await settle(tester);
     await tester.tap(find.text('仅保存配置'));
     await settle(tester);
-    expect(find.text('发布配置'), findsNWidgets(2));
+    expect(find.byType(AlertDialog), findsOneWidget);
+    final primary = find.widgetWithText(FilledButton, '发布配置');
+    expect(primary, findsOneWidget);
+    final queuedPublish = tester.widget<FilledButton>(primary).onPressed!;
+    final route = ModalRoute.of(tester.element(primary))!;
+    expect(route, isA<OwnedDialogRoute<void>>());
     await tester.runAsync(() async {
       final remaining = deadline - DateTime.now().millisecondsSinceEpoch;
       if (remaining >= 0) {
         await Future<void>.delayed(Duration(milliseconds: remaining + 50));
       }
     });
-    await tester.tap(find.widgetWithText(FilledButton, '发布配置'));
-    // Route disposal starts the following GET; advance its real async turn.
+    expect(
+        DateTime.now().millisecondsSinceEpoch, greaterThanOrEqualTo(deadline));
+    // A callback captured before expiry must remain unable to POST, even when
+    // the expiry frame has already replaced the confirmation action.
+    queuedPublish();
     await settle(tester);
     await settle(tester);
-    expect(find.text('此预览已过期，请关闭窗口后重新预览。'), findsOneWidget);
+    final dialog = find.byType(PolicyPublicationDialog);
+    final controller =
+        tester.widget<PolicyPublicationDialog>(dialog).controller;
+    expect(controller.phase, PublicationViewPhase.previewInvalid);
+    expect(controller.canSubmit, isFalse);
+    expect(ModalRoute.of(tester.element(dialog)), same(route));
+    expect(route.isCurrent, isTrue);
+    expect(find.byType(AlertDialog), findsOneWidget);
+    expect(find.widgetWithText(FilledButton, '发布配置'), findsNothing);
+    expect(find.text('原预览已过期，不能继续保存。'), findsOneWidget);
+    expect(session.previews, hasLength(1));
     expect(session.publications, isEmpty);
     await closeResult(tester, flow);
     expect(tester.takeException(), isNull);

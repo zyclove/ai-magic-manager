@@ -25,6 +25,7 @@ dependencies:
   usage_report_ui:
     path: ../../packages/usage_report_ui
   http: ^1.2.1
+  idb_shim: 2.6.0+5
   oauth2: ^2.0.3
   crypto: ^3.0.3
   uuid: ^4.6.0

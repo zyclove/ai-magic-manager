@@ -1,4 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
+import '../core/browser_publication_journal.dart';
+import '../core/policy_publication.dart';
+import '../core/policy_publication_repository.dart';
+import '../core/publication_journal.dart';
+import 'policy_publication_entry.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
@@ -30,7 +36,6 @@ import '../ui/workspace_welcome.dart';
 import '../ui/member_editor.dart';
 import '../ui/access_request_dialog.dart';
 import '../ui/policy_target_picker.dart';
-import '../ui/policy_preview_results.dart';
 import 'members_page.dart';
 import 'classes_page.dart';
 import 'device_groups_page.dart';
@@ -907,218 +912,289 @@ class ConsoleActions {
   Future<void> policyDetails(Json row) => openPolicyDetails(context, s,
       root: root, row: row, preview: previewPolicy);
 
-  Future<void> previewPolicy(BuildContext ctx, Json draft) async {
-    final actor = s.profile?['subject'] as String?, role = s.role;
-    final scopeGeneration = s.scopeGeneration;
-    if (actor == null) return;
-    var previewLive = true;
-    final previewRevoked = ValueNotifier<bool>(false);
-    bool current() =>
-        previewLive &&
-        !previewRevoked.value &&
-        ctx.mounted &&
-        s.scopeGeneration == scopeGeneration &&
-        s.authenticated &&
-        s.tenant != null &&
-        s.root == root &&
-        s.profile?['subject'] == actor &&
-        s.role == role &&
-        s.canOpen('policies');
-    final previewApi = s.api.scoped(current);
+  Future<void> previewPolicy(BuildContext ctx, Json draft,
+      {PublicationJournal? journal}) async {
+    final policyValue = draft['id'], revisionValue = draft['revision'];
+    final actor = s.profile?['subject'], tenant = s.tenant?['id'];
+    final role = s.role, workspace = root;
+    final parentRoute = ModalRoute.of(ctx);
+    if (!ctx.mounted ||
+        parentRoute == null ||
+        !parentRoute.isActive ||
+        !parentRoute.isCurrent ||
+        !s.authenticated ||
+        !s.canWrite ||
+        !s.canOpen('policies') ||
+        actor is! String ||
+        tenant is! String ||
+        workspace != s.root) return;
+    if (!isPublicationOpaqueId(policyValue) ||
+        revisionValue is! int ||
+        revisionValue < 0 ||
+        revisionValue > publicationMaximumSafeInteger) {
+      throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+    }
+    final policyId = policyValue as String, revision = revisionValue;
+    var journeyLive = true;
+    final revoked = ValueNotifier<bool>(false);
+    // Capture and listen before the very first await, including local storage.
+    // An actor/tenant/role/generation ABA cannot establish a fresh scope later.
+    final scope = DeviceSubflowScope(s,
+        permitted: () =>
+            journeyLive &&
+            !revoked.value &&
+            ctx.mounted &&
+            parentRoute.isActive &&
+            s.tenant != null &&
+            s.root == workspace &&
+            s.canWrite &&
+            s.canOpen('policies'));
+    bool current() => journeyLive && scope.current;
+    void requireCurrent() {
+      if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+    }
+
     void revokePrivateFailure(Object failure) {
-      if (previewLive &&
+      if (journeyLive &&
           failure is ApiFailure &&
           (failure.code == 'WORKSPACE_CHANGED' ||
               failure.status == 403 ||
               (failure.status == 401 && failure.code != 'REAUTH_REQUIRED'))) {
-        previewRevoked.value = true;
+        revoked.value = true;
       }
     }
 
     try {
+      requireCurrent();
+      final owner = PublicationOwner(
+          actorId: actor,
+          tenantId: tenant,
+          apiBaseUrl: s.api.baseUrl,
+          issuer: Session.issuer);
+      final publicationJournal = journal ?? BrowserPublicationJournal();
+      final repository = PolicyPublicationRepository(
+          api: scope.api,
+          owner: owner,
+          policyId: policyId,
+          current: current,
+          onDenied: revokePrivateFailure);
+      final changes = Listenable.merge([scope, revoked]);
+
       Future<bool> groupCurrent(PolicyTargetSelection target,
           {bool Function()? isCurrent}) async {
         final valid = isCurrent ?? current;
         if (target.groupId == null) return valid();
         if (!valid() || !s.canOpen('device-groups')) return false;
-        final latest = await previewApi.send(
-            'GET', '$root/device-groups/${target.groupId}',
-            isCurrent: valid);
-        return valid() &&
-            latest is Json &&
-            latest['id'] == target.groupId &&
-            latest['state'] == 'ACTIVE' &&
-            latest['version'] == target.groupVersion;
+        try {
+          final latest = await scope.api.send('GET',
+              '$workspace/device-groups/${Uri.encodeComponent(target.groupId!)}',
+              isCurrent: valid);
+          return valid() &&
+              latest is Json &&
+              latest['id'] == target.groupId &&
+              latest['state'] == 'ACTIVE' &&
+              latest['version'] == target.groupVersion;
+        } catch (failure) {
+          revokePrivateFailure(failure);
+          rethrow;
+        }
       }
 
-      Json? validatedPreview;
-      final picked = await showPolicyTargetPicker(
-          context: ctx,
-          session: s,
-          root: root,
-          actor: actor,
-          role: role,
-          onPreview: (picked, isActive) async {
-            bool previewCurrent() => current() && isActive();
-            if (picked.groupId != null &&
-                !await groupCurrent(picked, isCurrent: previewCurrent)) {
-              throw const ApiFailure(409, 'POLICY_GROUP_CHANGED');
-            }
-            if (!previewCurrent()) {
-              throw const ApiFailure(409, 'WORKSPACE_CHANGED');
-            }
-            final response = await previewApi.send(
-                'POST', '$root/policies/${draft['id']}/previews',
-                version: draft['revision'],
-                isCurrent: previewCurrent,
-                body: {
-                  'deviceIds': picked.deviceIds,
-                  if (picked.groupId != null) 'groupId': picked.groupId,
-                  if (picked.groupVersion != null)
-                    'groupVersion': picked.groupVersion
-                });
-            if (!previewCurrent()) {
-              throw const ApiFailure(409, 'WORKSPACE_CHANGED');
-            }
-            if (response is! Json) {
-              throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
-            }
-            final p = response;
-            if (p['id'] is! String ||
-                (p['id'] as String).isEmpty ||
-                p['policyId'] != draft['id'] ||
-                p['draftRevision'] != draft['revision'] ||
-                p['phase'] != 'PREVIEW' ||
-                p['hash'] is! String ||
-                !RegExp(r'^[a-f0-9]{64}$').hasMatch(p['hash'] as String) ||
-                p['expiresAt'] is! int ||
-                p['enforceable'] is! bool) {
-              throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
-            }
-            if (picked.groupId != null &&
-                (p['snapshot'] is! Json ||
-                    (p['snapshot'] as Json)['groupSelection'] is! Json ||
-                    ((p['snapshot'] as Json)['groupSelection']
-                            as Json)['groupId'] !=
-                        picked.groupId ||
-                    ((p['snapshot'] as Json)['groupSelection']
-                            as Json)['groupVersion'] !=
-                        picked.groupVersion)) {
-              throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
-            }
-            final targets = p['targets'];
-            if (targets is! List) {
-              throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
-            }
-            final returnedRegistrations = <String, String>{};
-            for (final target in targets) {
-              if (target is! Json ||
-                  target['deviceId'] is! String ||
-                  target['registrationId'] is! String ||
-                  target['observationStatus'] is! String ||
-                  target['rules'] is! List ||
-                  (target['rules'] as List).any((rule) =>
-                      rule is! Json ||
-                      rule['kind'] is! String ||
-                      rule['status'] is! String ||
-                      (rule['reasonCode'] != null &&
-                          rule['reasonCode'] is! String)) ||
-                  returnedRegistrations.containsKey(target['deviceId'])) {
-                throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
-              }
-              returnedRegistrations[target['deviceId'] as String] =
-                  target['registrationId'] as String;
-            }
-            if (returnedRegistrations.length != picked.deviceIds.length ||
-                !returnedRegistrations.keys
-                    .toSet()
-                    .containsAll(picked.deviceIds)) {
-              throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
-            }
-            if (picked.groupRegistrations.entries.any(
-                (entry) => returnedRegistrations[entry.key] != entry.value)) {
-              throw const ApiFailure(409, 'POLICY_GROUP_CHANGED');
-            }
-            validatedPreview = p;
-          });
-      if (!ctx.mounted ||
-          picked == null ||
-          !current() ||
-          validatedPreview == null) {
-        return;
-      }
-      final p = validatedPreview!;
-      final publicationKey = requestId();
-      void ensurePreviewFresh() {
-        if ((p['expiresAt'] as int) <= DateTime.now().millisecondsSinceEpoch) {
+      Future<void> preflight(PublicationIntent original,
+          [PolicyTargetSelection? selection]) async {
+        requireCurrent();
+        if (original.previewExpiresAt <= DateTime.now().millisecondsSinceEpoch) {
+          throw const ApiFailure(409, 'PREVIEW_EXPIRED');
+        }
+        if (selection != null &&
+            selection.groupId != null &&
+            !await groupCurrent(selection)) {
+          throw const ApiFailure(409, 'POLICY_GROUP_CHANGED');
+        }
+        requireCurrent();
+        if (original.previewExpiresAt <= DateTime.now().millisecondsSinceEpoch) {
           throw const ApiFailure(409, 'PREVIEW_EXPIRED');
         }
       }
 
-      await actionDetails(ctx, '发布前预览', const {},
-          extraContent: PolicyPreviewResults(
-              preview: p,
-              names: picked.names,
-              selectionSummary: picked.groupId == null
-                  ? '手动选择 ${picked.deviceIds.length} 台设备'
-                  : '设备组“${picked.groupName}”第 ${picked.groupVersion} 版 · ${picked.deviceIds.length} 台设备'),
-          reauth: reauth,
-          accessChanges: Listenable.merge([s, previewRevoked]),
-          hasAccess: current,
-          actions: [
-            DetailAction('仅保存配置', (inner) async {
-              if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+      while (current() && parentRoute.isCurrent) {
+        PublicationPending? pending;
+        try {
+          pending = await publicationJournal.read(owner, policyId);
+          if (!current()) return;
+          if (pending != null &&
+              (pending.intent.owner != owner ||
+                  pending.intent.policyId != policyId)) {
+            throw const PublicationLocalRecoveryUnavailable();
+          }
+        } catch (_) {
+          if (!current()) return;
+          // Only this local read is normalized. Never turn a read failure into
+          // an empty journal and permit a new POST.
+          throw const PublicationLocalRecoveryUnavailable();
+        }
+        if (!ctx.mounted || !current() || !parentRoute.isCurrent) return;
+        if (pending != null) {
+          final original = pending.intent;
+          final again = await showPolicyPublication(ctx,
+              repository: repository,
+              journal: publicationJournal,
+              intent: original,
+              pending: pending,
+              parentCurrent: current,
+              accessChanges: changes,
+              // Recovery GET never invokes this preflight. A known not-sent
+              // retry checks only original TTL/current; the server rechecks its
+              // original snapshot without inventing another group selection.
+              preflight: () => preflight(original),
+              reauthenticate: reauth);
+          if (!again || !current() || !parentRoute.isCurrent) return;
+          continue;
+        }
+
+        Json? validatedPreview;
+        final picked = await showPolicyTargetPicker(
+            context: ctx,
+            session: s,
+            root: workspace,
+            actor: actor,
+            role: role,
+            onPreview: (selected, isActive) async {
+              bool previewCurrent() => current() && isActive();
               try {
-                final previewRoute = ModalRoute.of(inner);
-                ensurePreviewFresh();
-                if (!await confirmAction(
-                    inner, '发布配置', '确认保存本次预览中的配置版本？当前不会执行设备系统管控。',
-                    confirm: '发布配置')) {
-                  return;
-                }
-                if (!current()) {
-                  throw const ApiFailure(409, 'WORKSPACE_CHANGED');
-                }
-                if (picked.groupId != null && !await groupCurrent(picked)) {
+                if (selected.groupId != null &&
+                    !await groupCurrent(selected, isCurrent: previewCurrent)) {
                   throw const ApiFailure(409, 'POLICY_GROUP_CHANGED');
                 }
-                if (!current()) {
+                if (!previewCurrent()) {
                   throw const ApiFailure(409, 'WORKSPACE_CHANGED');
                 }
-                ensurePreviewFresh();
-                final result = await previewApi.send(
-                    'POST', '$root/policies/${draft['id']}/publications',
-                    version: draft['revision'],
-                    key: publicationKey,
-                    isCurrent: current,
+                final response = await scope.api.send('POST',
+                    '$workspace/policies/${Uri.encodeComponent(policyId)}/previews',
+                    version: revision,
+                    isCurrent: previewCurrent,
                     body: {
-                      'previewId': p['id'],
-                      'previewHash': p['hash'],
-                      'mode': 'CONFIGURE_ONLY'
-                    }) as Json;
-                if (inner.mounted && current()) {
-                  await showDetails(inner, '发布结果', {
-                    '状态': label(result['state']),
-                    '发布方式': label(result['mode']),
-                    '版本': result['sequence'],
-                    '发布时间': dateLabel(result['createdAt']),
-                    '操作编号': result['id']
-                  });
-                  if (inner.mounted &&
-                      current() &&
-                      previewRoute?.isCurrent == true) {
-                    Navigator.pop(inner);
-                  }
+                      'deviceIds': selected.deviceIds,
+                      if (selected.groupId != null) 'groupId': selected.groupId,
+                      if (selected.groupVersion != null)
+                        'groupVersion': selected.groupVersion
+                    });
+                if (!previewCurrent()) {
+                  throw const ApiFailure(409, 'WORKSPACE_CHANGED');
                 }
+                if (response is! Json) {
+                  throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+                }
+                final p = response;
+                if (p['id'] is! String ||
+                    (p['id'] as String).length != 36 ||
+                    !RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$')
+                        .hasMatch(p['id'] as String) ||
+                    p['policyId'] != policyId ||
+                    p['draftRevision'] is! int ||
+                    p['draftRevision'] != revision ||
+                    p['phase'] != 'PREVIEW' ||
+                    p['hash'] is! String ||
+                    (p['hash'] as String).length != 64 ||
+                    !RegExp(r'^[a-f0-9]{64}$').hasMatch(p['hash'] as String) ||
+                    p['expiresAt'] is! int ||
+                    (p['expiresAt'] as int) < 1 ||
+                    (p['expiresAt'] as int) > publicationMaximumTimestamp ||
+                    p['enforceable'] is! bool) {
+                  throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+                }
+                if (selected.groupId != null &&
+                    (p['snapshot'] is! Json ||
+                        (p['snapshot'] as Json)['groupSelection'] is! Json ||
+                        ((p['snapshot'] as Json)['groupSelection']
+                                as Json)['groupId'] !=
+                            selected.groupId ||
+                        ((p['snapshot'] as Json)['groupSelection']
+                                as Json)['groupVersion'] !=
+                            selected.groupVersion)) {
+                  throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+                }
+                final targets = p['targets'];
+                if (targets is! List) {
+                  throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+                }
+                final returnedRegistrations = <String, String>{};
+                for (final target in targets) {
+                  if (target is! Json ||
+                      target['deviceId'] is! String ||
+                      target['registrationId'] is! String ||
+                      target['observationStatus'] is! String ||
+                      target['rules'] is! List ||
+                      (target['rules'] as List).any((rule) =>
+                          rule is! Json ||
+                          rule['kind'] is! String ||
+                          rule['status'] is! String ||
+                          (rule['reasonCode'] != null &&
+                              rule['reasonCode'] is! String)) ||
+                      returnedRegistrations.containsKey(target['deviceId'])) {
+                    throw const ApiFailure(
+                        502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+                  }
+                  returnedRegistrations[target['deviceId'] as String] =
+                      target['registrationId'] as String;
+                }
+                if (returnedRegistrations.length != selected.deviceIds.length ||
+                    !returnedRegistrations.keys
+                        .toSet()
+                        .containsAll(selected.deviceIds)) {
+                  throw const ApiFailure(502, 'INVALID_POLICY_PREVIEW_RESPONSE');
+                }
+                if (selected.groupRegistrations.entries.any(
+                    (entry) => returnedRegistrations[entry.key] != entry.value)) {
+                  throw const ApiFailure(409, 'POLICY_GROUP_CHANGED');
+                }
+                // Detach the entire Json tree before the picker completes;
+                // later mutation/redaction of an outside map cannot change it.
+                validatedPreview = Map<String, dynamic>.unmodifiable(
+                    jsonDecode(jsonEncode(p)) as Json);
               } catch (failure) {
                 revokePrivateFailure(failure);
                 rethrow;
               }
-            }, closeOnSuccess: false)
-          ]);
+            });
+        if (!ctx.mounted ||
+            !current() ||
+            !parentRoute.isCurrent ||
+            picked == null ||
+            validatedPreview == null) return;
+        final p = validatedPreview!;
+        final names = Map<String, String>.unmodifiable(picked.names);
+        final selectionSummary = picked.groupId == null
+            ? '手动选择 ${picked.deviceIds.length} 台设备'
+            : '设备组“${picked.groupName}”第 ${picked.groupVersion} 版 · ${picked.deviceIds.length} 台设备';
+        final original = PublicationIntent(
+            owner: owner,
+            policyId: policyId,
+            revision: revision,
+            previewId: p['id'] as String,
+            previewHash: p['hash'] as String,
+            previewExpiresAt: p['expiresAt'] as int,
+            createdAt: DateTime.now().millisecondsSinceEpoch,
+            idempotencyKey: const Uuid().v4());
+        final again = await showPolicyPublication(ctx,
+            repository: repository,
+            journal: publicationJournal,
+            intent: original,
+            preview: p,
+            names: names,
+            selectionSummary: selectionSummary,
+            parentCurrent: current,
+            accessChanges: changes,
+            preflight: () => preflight(original, picked),
+            reauthenticate: reauth);
+        // True can only come from the user's explicit repreview action after
+        // exact not-submitted cancellation (or an unsubmitted invalid preview).
+        if (!again || !current() || !parentRoute.isCurrent) return;
+      }
     } finally {
-      previewLive = false;
-      previewRevoked.dispose();
+      journeyLive = false;
+      scope.dispose();
+      revoked.dispose();
     }
   }
 

@@ -162,6 +162,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "4.0.2"
+  idb_shim:
+    dependency: "direct main"
+    description:
+      name: idb_shim
+      sha256: "0ae356560abbd07d2bd38165c5f3d9bc4fe9d1e73cdb5ed22691052d63bfdd4b"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.6.0+5"
   intl:
     dependency: "direct main"
     description:
@@ -329,6 +337,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "4.1.0"
+  sembast:
+    dependency: transitive
+    description:
+      name: sembast
+      sha256: a49ce14fb0d81bee9f8941061a38f4b790d19c0ab01abe35a529c1fcef0512a1
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "3.7.2"
   shared_preferences:
     dependency: transitive
     description:
@@ -422,6 +438,14 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "1.2.0"
+  synchronized:
+    dependency: transitive
+    description:
+      name: synchronized
+      sha256: "539ef412b170d65ecdafd780f924e5be3f60032a1128df156adad6c5b373d558"
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "3.1.0+1"
   term_glyph:
     dependency: transitive
     description:

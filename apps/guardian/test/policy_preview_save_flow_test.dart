@@ -5,6 +5,7 @@ import 'dart:async';
 import 'package:flutter/material.dart' hide Flow;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:guardian/core/api.dart';
+import 'package:guardian/ui/owned_dialog_route.dart';
 import 'package:http/http.dart' as http;
 import 'policy_preview_flow_test.dart'
     show PreviewSession, Flow, startFlow, selectGroup, closeResult, flush;
@@ -33,11 +34,19 @@ Future<void> _confirmSave(WidgetTester tester) async {
   await tester.tap(find.widgetWithText(FilledButton, '发布配置'));
 }
 
+OwnedDialogRoute<void> _publicationRoute(WidgetTester tester) {
+  final route = ModalRoute.of(tester.element(
+      find.byKey(const Key('publication-close'), skipOffstage: false)));
+  expect(route, isA<OwnedDialogRoute<void>>());
+  return route! as OwnedDialogRoute<void>;
+}
+
 void main() {
   testWidgets('cancelling save keeps the expanded preview and its selection',
       (tester) async {
     final session = PreviewSession(groups: true);
     final flow = await _openPreview(tester, session);
+    final route = _publicationRoute(tester);
     await tester.ensureVisible(find.text('班级平板 group-1'));
     await tester.tap(find.text('班级平板 group-1'));
     await settle(tester);
@@ -50,6 +59,8 @@ void main() {
     expect(find.text('2 台设备'), findsOneWidget);
     expect(find.text('域名访问'), findsOneWidget);
     expect(flow.completed, isFalse);
+    expect(_publicationRoute(tester), same(route));
+    expect(route.isCurrent, isTrue);
     expect(session.previews, hasLength(1));
     expect(session.publications, isEmpty);
     await closeResult(tester, flow);
@@ -63,21 +74,26 @@ void main() {
       if (request.method == 'POST' &&
           request.url.path.endsWith('/publications')) {
         session.publications.add(request);
-        return reply(_publication());
+        return reply(_publication(), 201);
       }
       return null;
     };
     final flow = await _openPreview(tester, session);
+    final route = _publicationRoute(tester);
     await _confirmSave(tester);
-    // Route disposal starts the following GET; advance its real async turn.
+    // Advance the POST body and the per-session journal cleanup.
     await settle(tester);
     await settle(tester);
     expect(find.text('发布结果'), findsOneWidget);
+    expect(_publicationRoute(tester), same(route));
+    expect(route.isCurrent, isTrue);
+    expect(flow.completed, isFalse);
     expect(session.publications, hasLength(1));
-    await tester.tap(find.text('关闭').last);
+    await tester.tap(find.byKey(const Key('publication-close')));
     await settle(tester);
     expect(find.text('发布前预览'), findsNothing);
     expect(flow.completed, isTrue);
+    expect(session.publications, hasLength(1));
     await flow.done;
     expect(flow.failure, isNull);
     expect(tester.takeException(), isNull);
@@ -96,6 +112,7 @@ void main() {
       return null;
     };
     final flow = await _openPreview(tester, session);
+    final route = _publicationRoute(tester);
     await _confirmSave(tester);
     await flush(tester);
     expect(session.publications, hasLength(1));
@@ -111,18 +128,24 @@ void main() {
       ),
     );
     await settle(tester);
-    pending.complete(reply(_publication()));
-    await settle(tester);
-    expect(find.text('发布结果'), findsOneWidget);
-    await tester.tap(find.text('关闭').last);
+    final noticeRoute = ModalRoute.of(tester.element(find.text('另一条通知')))!;
+    pending.complete(reply(_publication(), 201));
     await settle(tester);
     expect(find.text('另一条通知'), findsOneWidget);
+    expect(noticeRoute.isCurrent, isTrue);
+    expect(route.isCurrent, isFalse);
+    expect(_publicationRoute(tester), same(route));
+    expect(find.text('发布结果', skipOffstage: false), findsOneWidget);
+    expect(session.publications, hasLength(1));
     expect(flow.completed, isFalse);
     await tester.tap(find.text('关闭通知'));
     await settle(tester);
     await notice;
-    expect(find.text('发布前预览'), findsOneWidget);
+    expect(find.text('发布结果'), findsOneWidget);
+    expect(_publicationRoute(tester), same(route));
+    expect(route.isCurrent, isTrue);
     await closeResult(tester, flow);
+    expect(session.publications, hasLength(1));
     expect(tester.takeException(), isNull);
   });
 
@@ -130,13 +153,16 @@ void main() {
       (tester) async {
     final session = PreviewSession(groups: true);
     final flow = await _openPreview(tester, session);
+    final route = _publicationRoute(tester);
     final button = tester
-        .widget<OutlinedButton>(find.widgetWithText(OutlinedButton, '仅保存配置'));
+        .widget<ButtonStyleButton>(find.widgetWithText(FilledButton, '仅保存配置'));
     // Two already queued callbacks can arrive before the disabled-button frame.
     button.onPressed!();
     button.onPressed!();
     await settle(tester);
     expect(find.text('发布配置'), findsNWidgets(2));
+    expect(_publicationRoute(tester), same(route));
+    expect(route.isCurrent, isTrue);
     await tester.tap(find.text('取消'));
     await settle(tester);
     expect(find.text('发布前预览'), findsOneWidget);

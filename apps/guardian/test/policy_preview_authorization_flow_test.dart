@@ -1,8 +1,12 @@
 @TestOn('browser')
 library;
 
+import 'dart:async';
+import 'dart:convert';
 import 'package:flutter/material.dart' hide Flow;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:guardian/core/policy_publication.dart';
+import 'package:guardian/ui/policy_publication_dialog.dart';
 import 'package:guardian/ui/policy_preview_results.dart';
 import 'package:guardian/ui/policy_target_picker.dart';
 import 'package:http/http.dart' as http;
@@ -17,9 +21,13 @@ class _AuthorizationSession extends PreviewSession {
   _AuthorizationSession() : super(groups: true);
 
   final loginSteps = <bool>[];
+  VoidCallback? beforeLogin;
 
   @override
-  void login({bool stepUp = false}) => loginSteps.add(stepUp);
+  void login({bool stepUp = false}) {
+    beforeLogin?.call();
+    loginSteps.add(stepUp);
+  }
 
   void awayAndBack(String dimension) {
     if (dimension == 'actor') {
@@ -79,10 +87,10 @@ Future<Flow> _openPreview(
 }
 
 Future<void> _save(WidgetTester tester) async {
-  await _tap(tester, find.widgetWithText(OutlinedButton, '仅保存配置'));
+  await _tap(tester, find.widgetWithText(FilledButton, '仅保存配置'));
   await _tap(tester, find.widgetWithText(FilledButton, '发布配置'));
-  // The owned confirmation completes after its reverse animation. Flush the
-  // subsequent HTTP turn before asserting the save response.
+  // Confirmation stays in this owned route. Flush the HTTP and journal turns
+  // before asserting the save response.
   await settle(tester);
 }
 
@@ -418,23 +426,107 @@ void main() {
   });
 
   testWidgets(
-      'save recent authentication keeps the preview and an explicit reauth action',
+      'save recent authentication preserves the original operation and defers login until route completion',
       (tester) async {
     final fixture = _AuthorizationFixture();
-    fixture.respond = (request) async =>
-        request.url.path.endsWith('/publications')
-            ? reply({'errorCode': 'REAUTH_REQUIRED'}, 401)
+    fixture.respond =
+        (request) async => request.url.path.endsWith('/publications')
+            ? http.Response(
+                jsonEncode({
+                  'type': 'about:blank',
+                  'title': 'Unauthorized',
+                  'status': 401,
+                  'instance': request.url.path,
+                  'errorCode': 'REAUTH_REQUIRED',
+                  'messageKey': 'error.reauth_required',
+                  'correlationId': 'synthetic-correlation',
+                }),
+                401,
+                headers: {'content-type': 'application/problem+json'})
             : null;
-    await _openPreview(tester, fixture);
+    final flow = await _openPreview(tester, fixture);
+    final dialog = tester
+        .widget<PolicyPublicationDialog>(find.byType(PolicyPublicationDialog));
+    final originalIntent = dialog.controller.intent;
+    final route =
+        ModalRoute.of(tester.element(find.byType(PolicyPublicationDialog)))!;
+    final parentRoute = ModalRoute.of(flow.context)!;
+    var routeCompleted = false;
+    unawaited(route.completed.then<void>((_) {
+      routeCompleted = true;
+    }));
+    final loginObservations =
+        <({bool routeCompleted, bool routeIsActive, bool parentIsCurrent})>[];
+    fixture.session.beforeLogin = () {
+      loginObservations.add((
+        routeCompleted: routeCompleted,
+        routeIsActive: route.isActive,
+        parentIsCurrent: parentRoute.isCurrent,
+      ));
+    };
     await _save(tester);
 
     _expectSameSession(fixture);
-    expect(find.byType(PolicyPreviewResults), findsOneWidget);
-    expect(find.text('班级平板 group-1'), findsOneWidget);
-    expect(find.text('学习应用'), findsWidgets);
-    final reauth = _button('重新安全验证');
+    expect(find.byType(PolicyPublicationDialog), findsOneWidget);
+    expect(
+        find.byType(PolicyPreviewResults, skipOffstage: false), findsNothing);
+    for (final name in [
+      '班级平板 group-1',
+      '班级平板 group-2',
+      '学习应用',
+      '域名访问',
+    ]) {
+      expect(find.text(name, skipOffstage: false), findsNothing,
+          reason: 'The recovery state disposes the private preview.');
+    }
+    final pending = await fixture.session.publicationJournal
+        .read(originalIntent.owner, originalIntent.policyId);
+    expect(pending, isNotNull);
+    expect(pending!.intent, originalIntent);
+    expect(pending.phase, PublicationPhase.reauthenticationRequired);
+    expect(pending.attempt, 1);
+    expect(fixture.writes, hasLength(1));
+    expect(jsonDecode(fixture.writes.single.body), originalIntent.body);
+    expect(fixture.writes.single.headers['if-match'],
+        '"${originalIntent.revision}"');
+    expect(fixture.writes.single.headers['idempotency-key'],
+        originalIntent.idempotencyKey);
+    final reauth = _button('完成安全验证');
     expect(reauth, findsOneWidget);
-    expect(tester.widget<ButtonStyleButton>(reauth).onPressed, isNotNull);
+    final authenticate = tester.widget<ButtonStyleButton>(reauth).onPressed;
+    expect(authenticate, isNotNull);
+    expect(fixture.session.loginSteps, isEmpty);
+    final afterDenial = fixture.requests.length;
+    await settle(tester);
+    expect(fixture.requests, hasLength(afterDenial));
+    expect(fixture.writes, hasLength(1));
+    authenticate!();
+    expect(routeCompleted, isFalse);
+    expect(fixture.session.loginSteps, isEmpty);
+    expect(fixture.requests, hasLength(afterDenial));
+    await settle(tester);
+    expect(routeCompleted, isTrue);
+    await tester.runAsync(() => flow.done.timeout(const Duration(seconds: 2)));
+    expect(flow.failure, isNull);
+    expect(loginObservations, hasLength(1));
+    expect(loginObservations.single.routeCompleted, isTrue,
+        reason: 'Login must wait for this owned route.completed.');
+    expect(loginObservations.single.routeIsActive, isFalse);
+    expect(loginObservations.single.parentIsCurrent, isTrue);
+    expect(fixture.session.loginSteps, [true]);
+    expect(flow.completed, isTrue);
+    await flow.done;
+    expect(flow.failure, isNull);
+    expect(fixture.requests, hasLength(afterDenial));
+    expect(fixture.writes, hasLength(1));
+    expect(
+        await fixture.session.publicationJournal
+            .read(originalIntent.owner, originalIntent.policyId),
+        pending);
+    authenticate();
+    await settle(tester);
+    expect(fixture.session.loginSteps, [true]);
+    expect(fixture.requests, hasLength(afterDenial));
     expect(fixture.writes, hasLength(1));
     expect(tester.takeException(), isNull);
   });

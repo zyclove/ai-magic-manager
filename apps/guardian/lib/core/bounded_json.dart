@@ -5,6 +5,13 @@ import 'package:http/http.dart' as http;
 import 'api.dart';
 import 'scoped_http_client.dart';
 
+/// A complete rejected HTTP response, tied to the actual thrown failure.
+/// Only the bounded reader can construct this evidence.
+class BoundedHttpErrorEvidence {
+  final ApiFailure failure;
+  const BoundedHttpErrorEvidence._(this.failure);
+}
+
 /// A bounded response reader for private task metadata and report results.
 /// The authenticated client belongs to Session; only this response is cancelled.
 Future<dynamic> boundedJson(Api api, String method, String path,
@@ -14,6 +21,7 @@ Future<dynamic> boundedJson(Api api, String method, String path,
     required void Function() ensureCurrent,
     int successStatus = 200,
     Set<int> additionalSuccessStatuses = const {},
+    void Function(BoundedHttpErrorEvidence)? onHttpError,
     int maxBytes = 2 * 1024 * 1024,
     int? expectedBytes}) async {
   StreamSubscription<List<int>>? subscription;
@@ -97,14 +105,31 @@ Future<dynamic> boundedJson(Api api, String method, String path,
         result = null;
       }
       if (!accepted) {
-        throw ApiFailure(
-            response.statusCode,
-            result is Json &&
-                    result['errorCode'] is String &&
-                    RegExp(r'^[A-Z][A-Z0-9_]{0,99}$')
-                        .hasMatch(result['errorCode'])
-                ? result['errorCode']
-                : 'REQUEST_FAILED');
+        final candidate = result is Json ? result['errorCode'] : null;
+        final codeMatch = candidate is String
+            ? RegExp(r'^[A-Z][A-Z0-9_]{0,99}$').firstMatch(candidate)
+            : null;
+        final validCode = candidate is String &&
+            codeMatch != null &&
+            codeMatch.end == candidate.length;
+        final failure = ApiFailure(
+            response.statusCode, validCode ? candidate : 'REQUEST_FAILED');
+        if (onHttpError != null &&
+            response.statusCode >= 400 &&
+            response.statusCode < 600 &&
+            validCode &&
+            const {'application/json', 'application/problem+json'}.contains(
+                response.headers['content-type']
+                    ?.split(';')
+                    .first
+                    .trim()
+                    .toLowerCase()) &&
+            (response.contentLength == null ||
+                response.contentLength == payload.length)) {
+          ensureCurrent();
+          onHttpError(BoundedHttpErrorEvidence._(failure));
+        }
+        throw failure;
       }
       if (response.headers['content-type']
                   ?.split(';')

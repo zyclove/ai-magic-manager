@@ -63,7 +63,7 @@ Json policyPreviewFixture(Json selection) {
       },
   ];
   return {
-    'id': 'preview-a',
+    'id': '11111111-1111-4111-8111-111111111111',
     'policyId': 'policy-a',
     'draftRevision': 7,
     'phase': 'PREVIEW',

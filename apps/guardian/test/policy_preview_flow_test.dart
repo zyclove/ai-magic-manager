@@ -11,11 +11,13 @@ import 'package:guardian/ui/policy_target_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'fixtures/policy_preview_fixture_data.dart';
+import 'publication_test_journal.dart';
 import 'policy_target_picker_test.dart'
     show PickerSession, mount, settle, reply;
 
 class PreviewSession extends PickerSession {
   PreviewSession({super.groups});
+  final publicationJournal = MemoryPublicationJournal();
   final previews = <http.Request>[];
   final publications = <http.Request>[];
   Future<http.Response> Function(http.Request)? respond;
@@ -70,10 +72,15 @@ Future<Flow> startFlow(WidgetTester tester, PreviewSession session,
   final context = tester.element(find.text('选择设备'));
   final completer = Completer<void>();
   final flow = Flow(context, completer.future);
-  ConsoleActions(context, session).previewPolicy(context, {
-    'id': 'policy-a',
-    'revision': 7,
-  }).then((_) {
+  ConsoleActions(context, session)
+      .previewPolicy(
+          context,
+          {
+            'id': 'policy-a',
+            'revision': 7,
+          },
+          journal: session.publicationJournal)
+      .then((_) {
     flow.completed = true;
     completer.complete();
   }, onError: (Object failure) {
@@ -311,6 +318,21 @@ void main() {
       session.respond = (_) => response.future;
       final flow = await startFlow(tester, session);
       await selectTablet(tester);
+      final queuedPreview = tester
+          .widget<FilledButton>(find.widgetWithText(FilledButton, '预览这些设备'))
+          .onPressed!;
+      final selectedContents = (tester
+              .widget<ListView>(find.descendant(
+                  of: find.byType(PolicyTargetPicker),
+                  matching: find.byType(ListView)))
+              .childrenDelegate as SliverChildListDelegate)
+          .children;
+      final queuedToggle = selectedContents
+          .whereType<CheckboxListTile>()
+          .singleWhere((item) =>
+              item.key is ValueKey &&
+              (item.key as ValueKey).value == 'tablet-a')
+          .onChanged!;
       await tester.tap(find.text('预览这些设备'));
       await flush(tester);
       final notice = showDialog<void>(
@@ -332,18 +354,50 @@ void main() {
       expect(session.previews, hasLength(1));
       expect(session.publications, isEmpty);
       if (succeeds) {
-        expect(
-            find.byType(PolicyTargetPicker, skipOffstage: false), findsNothing);
-        expect(find.text('发布前预览'), findsOneWidget);
-        await closeResult(tester, flow);
-        expect(find.text('独立通知'), findsOneWidget);
+        expect(find.byType(PolicyTargetPicker, skipOffstage: false),
+            findsOneWidget);
+        expect(find.text('发布前预览'), findsNothing);
+        expect(find.text('预览已就绪', skipOffstage: false), findsOneWidget);
+        expect(find.byType(LinearProgressIndicator, skipOffstage: false),
+            findsNothing);
+        expect(ModalRoute.of(tester.element(find.text('独立通知')))?.isCurrent,
+            isTrue);
+        expect(flow.completed, isFalse);
+        // A ready result is frozen while another route remains current. Even
+        // previously queued selection/preview callbacks cannot replace it.
+        queuedPreview();
+        queuedToggle(false);
+        await flush(tester);
+        expect(session.previews, hasLength(1));
+        expect(session.publications, isEmpty);
+        final readyContents = (tester
+                .widget<ListView>(find.descendant(
+                    of: find.byType(PolicyTargetPicker, skipOffstage: false),
+                    matching: find.byType(ListView, skipOffstage: false)))
+                .childrenDelegate as SliverChildListDelegate)
+            .children;
+        final readyTablet = readyContents
+            .whereType<CheckboxListTile>()
+            .singleWhere((item) =>
+                item.key is ValueKey &&
+                (item.key as ValueKey).value == 'tablet-a');
+        expect(readyTablet.value, isTrue);
+        expect(readyTablet.onChanged, isNull);
       } else {
         expect(flow.completed, isFalse);
       }
       await tester.tap(find.text('关闭通知'));
       await settle(tester);
       await notice;
-      if (!succeeds) {
+      if (succeeds) {
+        expect(
+            find.byType(PolicyTargetPicker, skipOffstage: false), findsNothing);
+        expect(find.text('发布前预览'), findsOneWidget);
+        expect(session.previews, hasLength(1));
+        expect(session.publications, isEmpty);
+        expect(flow.completed, isFalse);
+        await closeResult(tester, flow);
+      } else {
         expect(find.byType(PolicyTargetPicker), findsOneWidget);
         expect(find.text('已选 1 / 50 台'), findsOneWidget);
         expect(find.text('重试预览'), findsOneWidget);

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import '../core/api.dart';
 import '../core/device_group_summary.dart';
@@ -36,21 +37,35 @@ Future<PolicyTargetSelection?> showPolicyTargetPicker({
   required String actor,
   required String role,
   PolicyTargetPreview? onPreview,
-}) {
+}) async {
   final scopeGeneration = session.scopeGeneration;
+  final parentRoute = ModalRoute.of(context);
+  final pickerKey = GlobalKey<_PolicyTargetPickerState>();
+  var live = true;
+  if (parentRoute != null) {
+    unawaited(parentRoute.popped.then((_) {
+      if (live) pickerKey.currentState?.invalidate();
+    }));
+  }
   final route = OwnedDialogRoute<PolicyTargetSelection>(
     context: context,
     barrierDismissible: false,
     builder: (_) => PolicyTargetPicker(
+      key: pickerKey,
       session: session,
       root: root,
       actor: actor,
       role: role,
       onPreview: onPreview,
       expectedScopeGeneration: scopeGeneration,
+      parentCurrent: () => context.mounted && parentRoute?.isActive != false,
     ),
   );
-  return presentOwnedDialog(context, route);
+  try {
+    return await presentOwnedDialog(context, route);
+  } finally {
+    live = false;
+  }
 }
 
 class PolicyTargetPicker extends StatefulWidget {
@@ -58,6 +73,7 @@ class PolicyTargetPicker extends StatefulWidget {
   final String root, actor, role;
   final PolicyTargetPreview? onPreview;
   final int? expectedScopeGeneration;
+  final bool Function()? parentCurrent;
   const PolicyTargetPicker(
       {super.key,
       required this.session,
@@ -65,7 +81,8 @@ class PolicyTargetPicker extends StatefulWidget {
       required this.actor,
       required this.role,
       this.onPreview,
-      this.expectedScopeGeneration});
+      this.expectedScopeGeneration,
+      this.parentCurrent});
 
   @override
   State<PolicyTargetPicker> createState() => _PolicyTargetPickerState();
@@ -78,6 +95,8 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
   bool onlySelected = false;
   bool closing = false;
   bool previewing = false;
+  PolicyTargetSelection? readySelection;
+  bool completionScheduled = false;
   Object? previewError;
   late final int scopeGeneration;
   late final Api api;
@@ -96,6 +115,7 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
   bool get current =>
       mounted &&
       !closing &&
+      widget.parentCurrent?.call() != false &&
       widget.session.scopeGeneration == scopeGeneration &&
       widget.session.authenticated &&
       widget.session.tenant != null &&
@@ -134,6 +154,47 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
     // A workspace change can precede the first frame and listener registration.
     // Route dependencies are available here, including on the initial build.
     accessChanged();
+    completeReadyWhenCurrent();
+  }
+
+  void completeReadyWhenCurrent() {
+    if (!mounted || closing) return;
+    // Keep this route dependency even before a preview is ready. Closing an
+    // independent dialog then resumes this picker without polling its route.
+    final route = ModalRoute.of(context);
+    final ready = readySelection;
+    if (ready == null ||
+        !previewing ||
+        completionScheduled ||
+        !current ||
+        !routeAvailable(route) ||
+        route?.isCurrent != true) {
+      return;
+    }
+    completionScheduled = true;
+    final revision = generation;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      completionScheduled = false;
+      if (!mounted ||
+          closing ||
+          revision != generation ||
+          !identical(readySelection, ready) ||
+          !routeAvailable(route)) {
+        return;
+      }
+      if (!current) {
+        invalidate();
+        return;
+      }
+      // A new cover may have arrived after scheduling. Retain the same result
+      // until this picker becomes current again; never close the covering route.
+      if (route?.isCurrent != true) return;
+      readySelection = null;
+      closing = true;
+      generation++;
+      finishRoute(route, ready);
+    });
+    WidgetsBinding.instance.scheduleFrame();
   }
 
   void accessChanged() {
@@ -193,6 +254,8 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
       searchController.clear();
       deviceError = groupError = previewError = null;
       loadingDevices = loadingGroups = loadingGroup = previewing = false;
+      readySelection = null;
+      completionScheduled = false;
     });
     final route = ModalRoute.of(context);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -203,7 +266,10 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
 
   @override
   void dispose() {
+    closing = true;
     generation++;
+    readySelection = null;
+    completionScheduled = false;
     searchController.dispose();
     scrollController.dispose();
     widget.session.removeListener(accessChanged);
@@ -413,9 +479,8 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
       await widget.onPreview?.call(selection,
           () => current && revision == generation && routeAvailable(route));
       if (!current || revision != generation || !routeAvailable(route)) return;
-      closing = true;
-      generation++;
-      finishRoute(route, selection);
+      setState(() => readySelection = selection);
+      completeReadyWhenCurrent();
     } catch (failure) {
       if (!current || revision != generation) return;
       if (privateFailure(failure)) return;
@@ -424,7 +489,9 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
         if (current && scrollController.hasClients) scrollController.jumpTo(0);
       });
     } finally {
-      if (current && revision == generation) setState(() => previewing = false);
+      if (current && revision == generation && readySelection == null) {
+        setState(() => previewing = false);
+      }
     }
   }
 
@@ -436,6 +503,8 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
     final route = ModalRoute.of(context);
     closing = true;
     generation++;
+    readySelection = null;
+    completionScheduled = false;
     finishRoute(route);
   }
 
@@ -460,6 +529,8 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
         if (!didPop || closing) return;
         closing = true;
         generation++;
+        readySelection = null;
+        completionScheduled = false;
       },
       child: AlertDialog(
           title: const Text('选择策略预览目标'),
@@ -470,11 +541,17 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
               height: 600,
               child: ListView(controller: scrollController, children: [
                 const Text('选择设备，再预览规则对这些设备的影响。'),
-                if (previewing) ...[
+                if (previewing && readySelection == null) ...[
                   const SizedBox(height: 12),
                   const LinearProgressIndicator(),
                   Semantics(
                       liveRegion: true, child: const Text('正在核对目标和规则，请稍候。')),
+                ],
+                if (readySelection != null) ...[
+                  const SizedBox(height: 12),
+                  Semantics(
+                      liveRegion: true,
+                      child: const Text('预览已就绪。关闭上方窗口后，将继续查看本次预览。')),
                 ],
                 if (previewError != null) ...[
                   FailureView(previewError!, reauth: reauthenticate),
@@ -579,7 +656,11 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
                       child: TextButton(
                           onPressed: loadingGroup || previewing || !current
                               ? null
-                              : () => setState(() {
+                              : () {
+                                  if (!current || loadingGroup || previewing) {
+                                    return;
+                                  }
+                                  setState(() {
                                     selected.clear();
                                     groupRegistrations.clear();
                                     groupId = null;
@@ -587,7 +668,8 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
                                     groupVersion = null;
                                     excludedGroupDevices = 0;
                                     previewError = null;
-                                  }),
+                                  });
+                                },
                           child: const Text('清空选择'))),
                 const SizedBox(height: 8),
                 if (onlySelected) ...[
@@ -665,7 +747,9 @@ class _PolicyTargetPickerState extends State<PolicyTargetPicker> {
                     ? finish
                     : null,
                 child: Text(previewing
-                    ? '正在预览…'
+                    ? readySelection == null
+                        ? '正在预览…'
+                        : '预览已就绪'
                     : previewError == null
                         ? '预览这些设备'
                         : '重试预览'))
