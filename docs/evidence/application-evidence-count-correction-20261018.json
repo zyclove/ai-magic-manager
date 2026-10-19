@@ -1,0 +1,184 @@
+{
+  "schemaVersion": "1.0.0",
+  "status": "READ_ONLY_CORRECTION_CONFIRMED",
+  "reviewedBy": "primaryRootPriorReview",
+  "rootConfirmationReference": {
+    "kind": "primaryRootTaskInstruction",
+    "date": "2026-10-18",
+    "basis": "Primary Root explicitly confirmed its prior raw review in the delegated documentation task; this updater does not claim to be Root."
+  },
+  "observationSource": {
+    "path": ".cache/publication-recovery/full-execution-preparation-r1/prior-formal-count-correction-r1.json",
+    "sha256": "292e3211c467ab8f39f4eccb074d1356ecb0c47ce0cb955e1d07c13a8ebbbbd0",
+    "bytes": 5011
+  },
+  "observation": {
+    "status": "READ_ONLY_RAW_COUNT_CORRECTION_OBSERVED_ROOT_REVIEW_PENDING",
+    "oldRawAndResultsUnchanged": true,
+    "sourcesWritten": false,
+    "sdkInvoked": false,
+    "originalEvidence": [
+      {
+        "path": ".cache/application-evidence-release/green-r2/out/vm-a.log",
+        "sha256": "5f5c15c966d5179eb74fab7dd4608decfa3fb2795e22bb903784e94908733dbc",
+        "bytes": 255371
+      },
+      {
+        "path": ".cache/application-evidence-release/green-r2/out/vm-a-result.json",
+        "sha256": "105fffdcedc14a72e58928cfefac8bb6ebfe397eb3d67f8c5f2fd2dad30ba723",
+        "bytes": 77441
+      },
+      {
+        "path": ".cache/application-evidence-release/green-r2/out/vm-b.log",
+        "sha256": "ff642a3438460478871ea3e9e1e8d274216a5945287d384f77ad4615f90a03d9",
+        "bytes": 342769
+      },
+      {
+        "path": ".cache/application-evidence-release/green-r2/out/vm-b-result.json",
+        "sha256": "cf79b939769358b725355d40ad9d53d127191a28be25fec62983755417c9a328",
+        "bytes": 102304
+      },
+      {
+        "path": ".cache/application-evidence-release/green-r2/out/browser-a.log",
+        "sha256": "4e78f2f8d86a87ff0647a115dba09738b9a1cfb55a76b3793f1a56f61ee98a19",
+        "bytes": 22800
+      },
+      {
+        "path": ".cache/application-evidence-release/green-r2/out/browser-a-result.json",
+        "sha256": "9c2b9457efc1f0e9450a0fdab9bbd337a25072eb2970e0a874e0201260493fed",
+        "bytes": 8279
+      },
+      {
+        "path": ".cache/application-evidence-release/green-r2/out/browser-b.log",
+        "sha256": "2ed7e563335920ef509e310221a3458e3e6275d6b2b324614047f328d2852c5c",
+        "bytes": 37404
+      },
+      {
+        "path": ".cache/application-evidence-release/green-r2/out/browser-b-result.json",
+        "sha256": "ca0c5564624b475ef411eb3561d7f94c75a0940a6bcc032112ec3f5f74749f36",
+        "bytes": 12627
+      },
+      {
+        "path": ".cache/application-evidence-release/green-r2/out/browser-c.log",
+        "sha256": "d710f1eab8cfdd6ba4f6fa8c3dc208c4092c83dba6a516a8b1888edefe2e1deb",
+        "bytes": 65309
+      },
+      {
+        "path": ".cache/application-evidence-release/green-r2/out/browser-c-result.json",
+        "sha256": "5db2b9e3abafc82ea6fe78eab7f8acf0be7cb340945136050a5a5d4f85998b38",
+        "bytes": 20606
+      },
+      {
+        "path": ".cache/application-evidence-release/green-r2/out/browser-d.log",
+        "sha256": "c11915e78b546780cde0a69185e630d9113b614568c26a16aee3df9c3ada062a",
+        "bytes": 40605
+      },
+      {
+        "path": ".cache/application-evidence-release/green-r2/out/browser-d-result.json",
+        "sha256": "69f8d94e6958d9edf3546d6d31b34a69de8145d3929a0024519c9d337b05e0bf",
+        "bytes": 13409
+      },
+      {
+        "path": ".cache/application-evidence-release/green-r2/out/browser-e.log",
+        "sha256": "a9ef6f1c68da086f3f9da9a3d89210f84313fece3036ccacb5df6f033f771028",
+        "bytes": 17382
+      },
+      {
+        "path": ".cache/application-evidence-release/green-r2/out/browser-e-result.json",
+        "sha256": "59c0e142fd0fa9d9e805dd6720c019195087c11221c8cedba82c1f193956e052",
+        "bytes": 6684
+      }
+    ],
+    "affectedSuite": {
+      "id": 735,
+      "platform": "vm",
+      "path": "D:/codes/mobile/ai-manager/.cache/application-evidence-release/green-r2/src/apps/guardian/test/workbench_view_test.dart"
+    },
+    "testStart": {
+      "test": {
+        "id": 747,
+        "name": "loading and failures never show ready counts or connection claims",
+        "suiteID": 735,
+        "groupIDs": [
+          737
+        ],
+        "metadata": {
+          "skip": false,
+          "skipReason": null
+        },
+        "line": 165,
+        "column": 5,
+        "url": "package:flutter_test/src/widget_tester.dart",
+        "root_line": 163,
+        "root_column": 3,
+        "root_url": "file:///D:/codes/mobile/ai-manager/.cache/application-evidence-release/green-r2/src/apps/guardian/test/workbench_view_test.dart"
+      },
+      "type": "testStart",
+      "time": 90936
+    },
+    "testDone": {
+      "testID": 747,
+      "result": "success",
+      "skipped": false,
+      "hidden": false,
+      "type": "testDone",
+      "time": 91060
+    },
+    "originalResultOmittedCase": true,
+    "recordedOldFormalCount": 1457,
+    "actualRawHiddenFalseSuccessCount": 1458,
+    "perStage": {
+      "vm-a": {
+        "recordedCount": 463,
+        "rawHiddenFalseSuccessCount": 463
+      },
+      "vm-b": {
+        "recordedCount": 654,
+        "rawHiddenFalseSuccessCount": 655
+      },
+      "browser-a": {
+        "recordedCount": 39,
+        "rawHiddenFalseSuccessCount": 39
+      },
+      "browser-b": {
+        "recordedCount": 69,
+        "rawHiddenFalseSuccessCount": 69
+      },
+      "browser-c": {
+        "recordedCount": 127,
+        "rawHiddenFalseSuccessCount": 127
+      },
+      "browser-d": {
+        "recordedCount": 76,
+        "rawHiddenFalseSuccessCount": 76
+      },
+      "browser-e": {
+        "recordedCount": 29,
+        "rawHiddenFalseSuccessCount": 29
+      }
+    },
+    "classification": "REAL_BUSINESS_TEST_MISCLASSIFIED_BY_LOADING_NAME_PREFIX",
+    "rule": "Only hidden=true with exact suite source path loading event is synthetic; every hidden=false business test is counted.",
+    "wholeProductComplete": false,
+    "deployed": false
+  },
+  "confirmedCounts": {
+    "vm": 1118,
+    "chrome": 340,
+    "total": 1458,
+    "formalTestFiles": 99
+  },
+  "originalPublicEvidence": {
+    "path": "docs/evidence/application-evidence-console-20261018.json",
+    "sha256": "1e4b98500a8f0fc722d7c780dfe2f26b2f6839f4234ee064d92d3d94fb22d4ee",
+    "bytes": 360256
+  },
+  "originalObservationPayloadPreserved": true,
+  "originalRawResultsAndPublicEvidenceUnchanged": true,
+  "scope": "Count correction only for the earlier managed application evidence console campaign. No new publication feature acceptance.",
+  "sdkInvoked": false,
+  "testsInvoked": false,
+  "newPublicationFeatureAccepted": false,
+  "wholeProductComplete": false,
+  "deployed": false
+}
