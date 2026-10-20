@@ -1,0 +1,30 @@
+{
+  "status": "LOCAL_COMMIT_OBSERVED_NOT_RUNTIME_VERIFIED",
+  "observedUtc": "2026-10-20T12:33:52.105686+00:00",
+  "branch": "dev",
+  "commit": "07d0d9cf7e2acc955f1dfb9b9b8333a0eb1cca18",
+  "parent": "6dbfab90044facc2a01cb088380354db94eac84f",
+  "subject": "feat(guardian): improve scoped member and group workflows",
+  "pathsCommitted": 11,
+  "sourcePaths": 8,
+  "documentationPaths": 3,
+  "committedPathSetMatchesPreparedManifest": true,
+  "allCommittedGitBlobsMatchPreparedManifest": true,
+  "allWorkspaceBytesMatchPreparedManifest": true,
+  "indexEmptyAfterCommit": true,
+  "stagedWhitespaceCheck": {
+    "initialExitCode": 1,
+    "correction": "Removed one trailing blank line without changing the normalized source body.",
+    "finalExitCode": 0
+  },
+  "sourceManifest": "docs/evidence/guardian-membership-interaction-checkpoint-20261020.json",
+  "sdkInvoked": false,
+  "testsExecuted": false,
+  "formatterInvoked": false,
+  "analyzerInvoked": false,
+  "buildExecuted": false,
+  "serviceUpdated": false,
+  "databaseUpdated": false,
+  "remotePushed": false,
+  "wholeWorkspaceClean": false
+}

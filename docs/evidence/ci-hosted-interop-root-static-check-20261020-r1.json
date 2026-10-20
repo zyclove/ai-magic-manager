@@ -1,0 +1,29 @@
+{
+  "status": "STATIC_ACTIONLINT_OBSERVED_NOT_RUNTIME_VERIFIED",
+  "observedUtc": "2026-10-20T12:20:13.485261+00:00",
+  "baseCommit": "6dbfab90044facc2a01cb088380354db94eac84f",
+  "command": [
+    "D:\\codes\\mobile\\ai-manager\\.cache\\ci-workflow-static-20261020-r1\\actionlint.exe",
+    "-shellcheck=",
+    "-pyflakes=",
+    ".github/workflows/backend-verification.yml",
+    ".github/workflows/flutter-verification.yml"
+  ],
+  "nativeExitCode": 0,
+  "elapsedMonotonicSeconds": 0.019392500002140878,
+  "sourceSha256": {
+    ".github/workflows/backend-verification.yml": "91b3748ca179265396b2ae31c8637239d807cdd49ad2fe4cf739877767f6d1a3",
+    ".github/workflows/flutter-verification.yml": "827db7a798bed5fd0a8b88db9e6d5571c00569a6bbd6dffde5cecbbc54183556"
+  },
+  "binarySha256": "54ca21be3de4c7cfa26914aa8b61bd76bf573ef3caac5f80d110558cdf241718",
+  "stdout": "",
+  "stderr": "",
+  "shellcheckInvoked": false,
+  "pyflakesInvoked": false,
+  "sdkInvoked": false,
+  "testsExecuted": false,
+  "dependencyResolutionExecuted": false,
+  "hostedWorkflowTriggered": false,
+  "buildExecuted": false,
+  "deployed": false
+}

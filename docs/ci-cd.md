@@ -1,6 +1,8 @@
 # 自动化验证与交付边界
 
-日期：2026-10-20。状态：**本任务静态检查和独立审阅已完成，待共同任务复核、环境前提补齐及实际运行**。尚未在 GitHub 执行。后端当前缺少条件用例的专用环境；保留零 skip 门槛时，默认运行预期会失败，不能将本配置称为已经可通过的完整验证替代。本轮只新增两个工作流和本文；没有修改产品源码、数据库、Flutter 依赖或本机 SDK 排程，没有提交、推送或触发远程任务。
+日期：2026-10-20。当前是 **30 个源文件中的 hosted 互操作配置静态候选，静态检查与独立复核已完成，待共同任务接收及阶段提交，尚未执行**。基线工作流已本地提交于 `6dbfab90044facc2a01cb088380354db94eac84f`，其父提交 `3b6c4178f87fdbcac1c4f448a4ef2ae962cfd35e` 保存 Guardian 阶段改进；两次均未运行 SDK、测试或构建，也未推送。本版仅继续修改后端工作流和本文，尚未提交或触发任务。
+
+后端本版为三十个源文件中的现有 Dart/Flutter HTTPInterop/proof 与条件方法准备工具和参数；两类 Android、一类隔离 Keycloak 和三个专用 MySQL 测试文件的前提仍未提供。因此零 skip 门槛默认仍预期失败，不能将本配置称为已经通过或能够替代完整验收。
 
 ## 1. 目的与实施选择
 
@@ -12,7 +14,7 @@
 
 | 工作流 | 实际配置范围 | 通过条件 |
 | --- | --- | --- |
-| `Backend verification` | `backend`、`identity-extensions` 两个独立矩阵作业 | 全源编译、项目测试依赖清单、默认完整测试及打包；有实际 Surefire 报告，测试数大于零，failure/error/skip 均为零；源码、编译结果及编译前捕获的项目依赖未改变 |
+| `Backend verification` | `backend`、`identity-extensions` 两个独立矩阵作业；backend 准备三十个现有源文件中工具互操作所需的已锁 SDK/依赖/入口 | 全源编译、项目测试依赖清单、默认完整测试及打包；有实际 Surefire 报告，测试数大于零，failure/error/skip 均为零；源码、编译结果及编译前捕获的项目依赖未改变 |
 | `Flutter verification` | 三个 App、十二个共享包、`device_operations/example`，共十六个独立矩阵作业 | 格式、静态分析、各目标现有测试全部成功；guardian 另跑 Chrome 用例；两个已有 Web 目标可编译；所有已跟踪源码和锁文件未改变 |
 
 Flutter 的默认 VM 运行和 guardian Chrome 运行是两次真实命令。VM 跑默认完整集合，包含使用 `dart:io` 的现有测试；Chrome 按文件既有的 `@TestOn('browser')` 元数据选择全部浏览器专用文件，不维护缩短的手工清单。`@TestOn('vm')` 文件由 VM 覆盖。新增复杂 browser 平台表达式时明确报错，要求更新选择规则；不删注解、不改断言、不以一个平台的通过代替另一个平台。某步骤失败会使该作业失败，后续默认步骤可能不执行；需读取每个步骤的实际结果，不能把诊断上传成功当作测试成功。
@@ -25,20 +27,46 @@ Flutter 的默认 VM 运行和 guardian Chrome 运行是两次真实命令。VM 
 
 Web 构建只包含现有 guardian 和组件示例。parent/child 没有在这里新增 Web 平台。Android 编译、模拟器、真机和电视遥控器验证仍按既定计划单独安排。
 
-### 2.1 后端默认环境的确定缺口
+### 2.1 后端互操作准备与剩余缺口
 
-当前测试源存在下列显式条件。工作流没有填写这些 system properties/环境变量，因此默认 Surefire 会跳过对应类，最后的零 skip 检查应当失败。编译失败、网络失败也可能更早发生；这里是静态确认的环境缺口，不是实际运行结论。
+完整扫描简名和完整限定名的 JUnit 条件注解，当前共三十九处、分布于三十六个源文件。其中三十二处 hosted 条件分布于三十个文件：四个 Device HTTPInterop、一个 ManagedAgent Dart proof、四个 Guardian/Provider 工具 HTTP 类、十五个 Parent HTTPInterop，以及提交、诊断、支持和使用报表六个 Journey 文件。部分文件在方法级重复声明条件，不能把注解数、源文件数当成测试数量。工作流没有新增测试、删改断言或用合成响应代替既有实际回环 HTTP；它调用原有生产工具入口，并保留原测试对身份夹具、存储夹具、真实设备和供应商能力的说明。**写入配置不表示这些类或方法已经启用运行或通过。**
 
-| 条件 | 对应用例 | 仍需准备 |
+| 条件 | 对应用例 | 当前配置及边界 |
 | --- | --- | --- |
 | `device.android.runner` / `device.cleanup.android.runner` | `AndroidChildSubmissionJourneyTest` / `AndroidCleanupHttpsJourneyTest` | 独立 Android runner、其要求的归属/证书/设备与状态；不得复用未知真机或凭空填 runner |
-| `device.access.package` / `device.identity.package` / `device.dart.command` | DeviceAccess、DeviceIdentity、DeviceConfiguration、DeviceObservation HTTPInterop；ManagedAgent Dart proof | 对应已解析 Dart 包、现有生产工具入口和各测试要求的实际命令/工作目录，保持其合成身份与真实设备边界 |
-| `guardian.dart.command` / `guardian.release.dart.command` | GuardianDeviceManagement、EnrollmentRecovery、IdentityProviderGuardian、ProviderReleaseGuardian HTTP 测试 | guardian 生产工具入口、已锁依赖及回环 HTTP 配置；不能由独立 Flutter widget 测试代替 |
-| `parent.dart.command` | ParentAcceptance、Audit、Class、Help、Invitation、Member、Notification、Observation、Ownership、Permission、Quota、QuotaPlan、Subject HTTPInterop | parent 实际工具命令与各测试工作目录，保留服务端启动、实际 HTTP 和生产控制器调用 |
+| `device.access.package` / `device.identity.package` / `device.dart.command` | DeviceAccess、DeviceIdentity、DeviceConfiguration、DeviceObservation HTTPInterop；ManagedAgent Dart proof | 已配置固定 SDK 的命令、对应包的绝对目录及严格锁解析；DeviceAccess 内部 child-host 子流程也配置，不把纯 Dart 部分当作完整子流程 |
+| `device.access.package` / `device.child.package` | `DeviceAccessSubmissionJourneyTest` 的类级条件及两个方法级条件 | 同时准备 device_access 和 child 的原工具入口、命令与绝对目录，保留提交成功、冲突和重试的原始流程 |
+| `device.dart.command` | `DiagnosticPreviewJourneyTest`、`DiagnosticPackageJourneyTest`、`SupportGrantJourneyTest`、`UsageReportJourneyTest`、`UsageReportJobJourneyTest` 中的条件方法 | 准备 guardian、device_reports 与 child 工具及其独立锁解析；显式设置诊断与报表目录，不依赖相对默认路径或运行时隐式解析 |
+| `guardian.dart.command` / `guardian.release.dart.command` | GuardianDeviceManagement、EnrollmentRecovery、IdentityProviderGuardian、ProviderReleaseGuardian HTTP 测试 | 已配置生产工具入口所需的命令、Flutter snapshot 与绝对目录；调用原有服务端/工具流程，不能由独立 widget 测试代替 |
+| `parent.dart.command` | ParentAcceptance、Audit、AuditExport、Class、Contract、Help、Invitation、Member、Notification、Observation、Ownership、Permission、Quota、QuotaPlan、Subject HTTPInterop | 已配置实际 Flutter 工具 snapshot、命令与包目录，保留服务端启动、实际 HTTP 和生产控制器调用 |
 | `provider.runtime.boundary=true` | `ProviderRealRuntimeBoundaryTest` | 新隔离、已打包的 Keycloak runtime 及该用例的环境契约；不连接现有身份服务冒充隔离验收 |
-| `LEDGER_STORE_TEST_URL`（匹配 MySQL JDBC） | `ErasureLedgerRuntimeTest` | 专用 MySQL 及其配套业务/存储凭据、迁移、隔离与清理责任；不是 runner 预装但未配置的数据库 |
+| `LEDGER_STORE_TEST_URL`（匹配 MySQL JDBC） | `ErasureLedgerRuntimeTest` 及 `ErasureLedgerStoreTest` 的两个条件方法 | 专用 MySQL 及其配套业务/存储凭据、迁移、隔离与清理责任；不是 runner 预装但未配置的数据库 |
+| `NOTICE_IT_ROOT_PASSWORD` | `ErasureAdmissionStoreTest` 的条件方法 | 独立 MySQL 管理凭据及该用例要求的存储/授权环境；不填占位密码或复用现有数据库来消除跳过 |
 
-每次 CI 根据该提交测试源保存 `conditional-prerequisites.json`，在 Summary 列出条件名和测试源；实际 XML 中的跳过类、方法和原因另存于 `test-summary.json`。静态清单只是定位信息，不替代 JUnit 的实际条件判定。保持全套默认测试和 `skip=0`，不通过删除、排除条件测试、伪造前提或放宽门槛得到绿色状态。hosted runner 能完成的工具互操作可继续按其现有契约补齐；原生、隔离身份和专用数据库环境须分别实现并验收。
+剩余七处未配置条件分布于六个文件：两个 Android 文件、一个隔离身份文件和三个 MySQL 文件。相应类或方法仍因缺少前提而预期被 JUnit 跳过，最后的零 skip 检查应当失败。编译、依赖下载、工具准备或互操作自身失败也可能更早发生；这里是配置与剩余缺口，不是实际运行结论。
+
+每次 CI 根据该提交测试源保存 `conditional-prerequisites.json`，包括每处注解的源文件、行号、类型和条件名；同时识别简名与 `org.junit.jupiter.api.condition` 完整限定名。Summary 区分“hosted 准备已配置”和“未配置”，并分别报告注解数与源文件数。前者只描述工作流，不证明准备步骤成功，也不等同于 JUnit 实际执行范围。`test-summary.json` 另外记录准备步骤的实际 outcome、原始 XML 的跳过类/方法/原因和测试结果。保留全套默认测试及 `skip=0`，不通过排除、伪造前提或放宽门槛得到绿色状态。
+
+### 2.2 Hosted 互操作的具体连接方式
+
+backend 作业使用与 Flutter 工作流相同的固定发布提交，核对 tag、framework 与 Dart 版本；identity-extensions 作业不安装 Flutter。准备阶段严格解析八个现有锁：`device_access`、`device_identity`、`device_policy`、`device_observation`、`device_reports` 和 guardian/parent/child 三 App，保存各自依赖图与锁。App 对路径包的解析不会生成该包作为独立运行目录所需的配置，因此不能省略 `device_reports` 的单独准备。镜像来源保持 `pub.flutter-io.cn`，不改锁、不升级、不下载或调用本机 `.local` 脚本。
+
+十九个系统属性以单独 argv 传给原 `mvn verify`，没有 `-Dtest` 白名单或测试排除：
+
+| 属性组 | 实际值来源 |
+| --- | --- |
+| `device.dart.command`、`guardian.dart.command`、`guardian.release.dart.command`、`parent.dart.command` | 固定 SDK 的 `bin/dart`；它给纯 Dart 命令与 Flutter snapshot 调用提供同一 SDK 上下文 |
+| `device.flutter.command` | 同一 SDK 的 `bin/flutter`，供 DeviceAccess 内部 child-host 流程调用 |
+| `guardian.flutter.tool`、`parent.flutter.tool` | 已由 SDK 初始化产生且实际存在的 `bin/cache/flutter_tools.snapshot` |
+| `device.access.package`、`device.identity.package`、`device.policy.package` | 当前 checkout 内对应共享包的绝对目录 |
+| `device.child.package` | 当前 checkout 内 `apps/child` 的绝对目录 |
+| `observation.device.package`、`observation.guardian.package` | 对应 `packages/device_observation` 与 `apps/guardian`，包括原代码动态读取的属性名 |
+| `diagnostic.guardian.package`、`usage.report.guardian.package`、`usage.report.device.package` | 对应 `apps/guardian` 和 `packages/device_reports` 的绝对目录，供诊断、支持、报表原入口调用 |
+| `guardian.package`、`guardian.release.package`、`parent.package` | 当前 checkout 内对应 App 的绝对目录 |
+
+准备步骤检查三十六个原有工具文件并保存摘要，保存 `interop-system-properties.json`、逐参数 argv 文件、SDK 信息和 Pub 解析结果。参数文件只含工具/目录路径，没有身份 bearer 或私钥；临时夹具仍由原测试拥有，不能把含私有测试输出的整个 `target` 目录纳入上传。本配置仍只保存既定证据目录与 Surefire XML。
+
+发布前必须把这些原工具及依赖的产品源码纳入实际候选提交：本机存在不等于已提交。远程 checkout 缺少任一所需工具、锁或 snapshot 时明确失败，不创建替代脚本或假冒成功结果。Host 级准备成功也不能证明 Android 安全存储、真实 OTP/MFA 或外部 EMM 已验收。
 
 ## 3. 版本与来源
 
@@ -59,7 +87,7 @@ Web 构建只包含现有 guardian 和组件示例。parent/child 没有在这�
 ## 4. 源码、依赖与结果绑定
 
 1. checkout 固定到 `github.sha`，并核对 HEAD；保存仓库、完整提交、run ID、attempt、目标和所有已跟踪文件的 SHA-256。测试结束再次检查相同源码，包括已有锁文件。
-2. 后端先运行 `clean test-compile dependency:build-classpath`，保存真实解析的项目 JAR 路径/摘要和全部编译文件摘要，再执行 `verify`；之后检查依赖和编译文件未改变。所有原测试保留，不用历史测试总数代替本次结果。
+2. backend 作业先准备上述原工具互操作，记录实际 SDK/锁/路径，再运行 `clean test-compile dependency:build-classpath`，保存真实解析的项目 JAR 路径/摘要和全部编译文件摘要，最后给 `verify` 传入逐项系统属性；identity-extensions 保持原 Java 流程。之后检查依赖和编译文件未改变。所有原测试保留，不用历史测试总数代替本次结果。
 3. Surefire 原始 XML 与聚合数字同时保存。框架可能补充 JUnit launcher/provider：编译前项目依赖清单与 XML 中实际测试 classpath 分别记录，后者的 JAR 摘要明确标记为**测试后观察**，不冒充编译前绑定。
 4. Flutter 保存 SDK machine 信息、Dart/Chrome 版本、Pub 依赖图、实际锁文件、测试和构建日志；有 Web 构建时保存产物摘要。未提交锁的三个纯 Dart 包允许生成新锁，只能声明本次解析结果。
 5. runner、操作系统和 JDK 补丁不是全量不可变镜像。本配置可追溯源码和已观察依赖，不宣称完全可复现构建或供应链证明。
@@ -99,12 +127,17 @@ Web 构建只包含现有 guardian 和组件示例。parent/child 没有在这�
 
 已用发布摘要和官方 checksum 清单双重核对 `actionlint 1.7.12` 的 Windows 工具包（SHA-256 `6e7241b51e6817ea6a047693d8e6fed13b31819c9a0dd6c5a726e1592d22f6e9`）；工具仅位于项目忽略缓存，没有安装到系统。检查使用 `-shellcheck= -pyflakes=`，不调用缺失的辅助检查器；另用 Git Bash `-n` 和 Python AST 检查内联脚本语法。它们都是静态检查，不能证明命令、依赖下载、测试或构建已经运行。工具来源：[actionlint 官方发布](https://github.com/rhysd/actionlint/releases/tag/v1.7.12)。
 
-本轮真实静态终态：actionlint 退出码 0；十六段 Bash 语法、六段内联 Python AST 均通过；十六目标与当前工作树中的目标/测试/锁文件/平台标记一致，十三份锁与明确配置的 hosted 来源一致，当前三十二个 browser 注解文件均纳入选择。共同任务恢复源码后重新检查了矩阵，数字属于该工作树时点，不能转写为远程提交的实际运行结果。独立审阅发现的镜像来源 P2 已修正并复核，无剩余确认的 P1/P2；先前发现的 job-env 上下文问题也已修正后重新检查。
+上一版基线的真实静态终态：actionlint 退出码 0；十六段 Bash 语法、六段内联 Python AST 均通过；十六目标与当时工作树的目标/测试/锁文件/平台标记一致，十三份锁与 hosted 来源一致，当时三十二个 browser 注解文件均纳入选择。镜像来源 P2 已修正并复核；共同任务独立复核并将基线提交于 `6dbfab9`。原始静态记录及提交对象继续保留，不覆盖，不用于为本版新增配置签字。
+
+本版两工作流的真实静态结果：actionlint 退出码 0；十八段 Bash 语法和八段 Python AST 通过。只读清单核对三十九处注解/三十六个文件，其中 hosted 三十二处/三十个文件，剩余七处/六个文件；八份锁、三十六个工具路径和十九项属性均与当前源码匹配。独立初审提出完整限定注解遗漏及 `device_reports` 独立准备两项 P2，修正后复审确认可作静态交接，未发现新增 P1/P2。后端 YAML SHA-256 为 `91b3748ca179265396b2ae31c8637239d807cdd49ad2fe4cf739877767f6d1a3`；Flutter YAML 保持 `827db7a798bed5fd0a8b88db9e6d5571c00569a6bbd6dffde5cecbbc54183556`。这些结果仅证明所述静态检查，没有实际执行依赖解析、互操作、业务测试或构建。
 
 - [x] 查明本机无现有 `.github` 工作流；远程 API 当时返回零工作流、零 `dev` 运行，Actions 已启用。
 - [x] 核对当前 Maven/Flutter 版本、各包测试和锁文件、浏览器/VM 注解及动作官方提交。
 - [x] 编写两个手动工作流与本操作说明，保留原测试与权限边界。
-- [x] 完成本任务独立静态审阅及可用的标准 YAML/Actions 语法检查。
-- [ ] 由负责 Git 的任务审阅并提交选定文件，获得本轮运行授权。
+- [x] 完成上一版基线的独立静态审阅、标准语法检查及本地阶段提交。
+- [x] 只读映射三十个原有源文件中的互操作及子流程；修正初审发现的完整限定注解遗漏和 device_reports 独立准备缺口。
+- [x] 完成本版语法检查及独立静态复核。
+- [x] 共同任务接收本版静态交接，核对十九项属性、八份锁及三十六个工具；锁和工具均已跟踪且存在于基线提交。
+- [x] 共同任务核对本版选定文件和[新的 actionlint 实际记录](evidence/ci-hosted-interop-root-static-check-20261020-r1.json)，固定本地阶段提交输入；提交对象以 Git 历史为准，实际运行另行授权。
 - [ ] 实际远程构建、测试、报告审阅及失败修正。
 - [ ] 完成原产品全部独立验收门槛后再形成发布结论。

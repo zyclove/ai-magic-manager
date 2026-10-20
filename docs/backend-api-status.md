@@ -1,6 +1,6 @@
 # 后端接口与当前实现状态
 
-> 更新：2026-10-09。本文只列现有代码接口；规划功能见[完整实施计划](implementation-plan.md)。自动化结果见[实施记录](implementation-progress.md)。
+> 更新：2026-10-20。本轮仅同步设备组、站内通知和幂等清理的源码状态，未运行 SDK、测试、构建或服务。本文历史测试数及部署描述只对应原阶段，不能作为当前工作树的运行证明。规划功能见[完整实施计划](implementation-plan.md)，阶段证据见[实施记录](implementation-progress.md)。
 
 ## 1. 运行与认证
 
@@ -92,9 +92,24 @@ V18 成员资料、权限调整和历史见[成员权限合同](member-access-pl
 
 快速回归使用 H2 MySQL 模式和 MockMvc，真实控制器、事务、SQL、权限和审计链。多数旅程用测试 JWT 上下文；令牌校验回归另使用 Nimbus 真实 RSA 签名与同一生产 validator。两者都不能证明真实 IdP 发现/轮换已验收。
 
-租户资料维护、成员/邀请查询、所有者交接、成员权限调整、班级名册及已有功能的 Flutter Web 界面已实现，见[管理端交付记录](management-console-delivery.md)。教师有限申请已接入专项、真实 MySQL、表单和浏览器回归，具体版本与证据见[机构工作流](organization-workflow-plan.md)。未完成的基础管理包含独立设备组、课堂会话、归档恢复、通知、速率治理、过期幂等清理与保留治理。后续还需正式设备受管执行、策略继承/规则级回执、真实消息链路、Android/TV、网站、审批执行、商业、AI、部署与完整环境验收。
+租户资料维护、成员/邀请查询、所有者交接、成员权限调整、班级名册及已有功能的 Flutter Web 界面已有阶段记录，见[管理端交付记录](management-console-delivery.md)。教师有限申请的专项、真实 MySQL、表单和浏览器回归属于对应历史候选，具体版本与证据见[机构工作流](organization-workflow-plan.md)。
 
-本机真实 MySQL 已完成管理接口联调与额度专项并发验证；OceanBase、Broker、EMM、商店支付、电视与 Android 真机尚无成功证据，不能据此对外声明系统管控完整或百万设备容量已达到。
+### 2026-10-20 源码状态同步
+
+本轮以本地 `HEAD=6dbfab90044facc2a01cb088380354db94eac84f` 及其未提交工作树为只读检查对象；这不是新的冻结发布候选。下表的“已有”只表示读到实现入口与相应服务逻辑，本轮编译、接口调用、端到端测试和生产验证均为 **NOT_RUN**。
+
+| 范围 | 当前源码已有 | 本轮状态与后续边界 |
+| --- | --- | --- |
+| 机构设备组目录 | `/api/v1/tenants/{tenantId}/device-groups` 的列表、创建、详情、改名、归档、成员查询/增删/批次、摘要及原操作结果查询；服务限制机构类型与 OWNER/ORG_ADMIN，写入检查近期认证和相应版本/幂等前提 | **NOT_RUN**；不再笼统列为未实现。分组目录不是批量策略执行；归档不等于恢复、注销或解除设备管理，完整界面联调、权限/并发/恢复流程及生产环境仍待验收 |
+| 站内审批通知 | 收件箱、未读数量、单条/批量已读；服务按当前成员与主体范围查询，儿童和教师额外限定本人申请 | **NOT_RUN**；不再笼统列为未实现。已读不改变审批，站内通知源码和历史 V21 证据不能代替当前端到端结果，也不能证明外部推送或设备消息已送达 |
+| 站内通知保留 | `NotificationRetentionJob` 调用有界 `purgeExpired`，具备开关、周期及批量大小配置，删除前再次约束到期条件 | **NOT_RUN**；这是源码中的作业及默认配置，不证明当前部署已启用、清理成功或全平台保留治理完成 |
+| 通用过期幂等记录清理 | `IdempotencyService` 已检查 `expires_at`，重复使用过期键返回 `IDEMPOTENCY_KEY_EXPIRED` | **未完成**；本轮在后端生产源码/资源的静态检索未找到通用过期幂等清理作业。拒绝过期重放不等于记录已清理，不据此勾选完成 |
+
+源码入口：[设备组控制器](../backend/src/main/java/com/aimanager/fleet/internal/DeviceGroupController.java)、[设备组服务](../backend/src/main/java/com/aimanager/fleet/internal/DeviceGroupService.java)、[通知控制器](../backend/src/main/java/com/aimanager/notification/internal/NotificationController.java)、[通知服务](../backend/src/main/java/com/aimanager/notification/internal/NotificationService.java)、[通知保留作业](../backend/src/main/java/com/aimanager/notification/internal/NotificationRetentionJob.java)、[通用幂等服务](../backend/src/main/java/com/aimanager/idempotency/IdempotencyService.java)。接口边界继续按[设备组契约](device-groups-contract.md)和[站内通知契约](inapp-notifications-contract.md)实施。
+
+课堂会话、归档恢复、速率治理、通用过期幂等清理及全域保留治理仍保留待完成状态。设备组和站内通知已有的源码仍需对应端到端及生产验证；正式设备受管执行、策略继承/规则级回执、真实消息链路、Android/TV、网站、审批执行、商业、AI、部署与完整环境验收继续按各自完整规格推进。
+
+历史候选记录包含本机真实 MySQL 管理接口联调与额度专项并发验证；本轮未重新执行。OceanBase、Broker、EMM、商店支付、电视与 Android 真机的验收仍须各自的有效证据，不能由本文的源码同步对外声明系统管控完整或百万设备容量已达到。
 
 ## 5. 应用、时间与策略接口
 
@@ -160,4 +175,14 @@ V20 新增注册周期绑定的观察授权、系统聚合使用摘要批次和�
 
 ## 11. 站内审批通知
 
+以下 V21 测试数字和本机部署描述保留为历史阶段记录，不能证明 2026-10-20 当前工作树或运行服务已通过；本轮状态见第 4 节。
+
 V21 提供当前授权范围收件箱、未读数量、个人逐条已读及显式当前页批量已读。申请状态与最小通知同事务持久化，每申请版本唯一；儿童和教师仅可见本人申请，已读不会改变审批。接口、保留与故障语义见[站内通知契约](inapp-notifications-contract.md)，完整后端 269 项、MySQL 联动 24 项及非空完整迁移证据见[实施记录](inapp-notifications-plan.md)。本机 V21 已部署并通过真实管理员只读登录验收。
+
+## 2026-10-17 家庭账号验收与收费门禁
+
+2026-10-17 新增家庭账号验收准备聚合 `GET /api/v1/platform/identity-providers/acceptance-status`、最近五条登记 `GET /acceptance-runs`，新登记支持已确认发布操作和运行修订绑定、24 小时有效期及原编号恢复。独立平台权限、近期 MFA 和禁止缓存继续生效。生产微信支付增加独立服务端门禁，缺少真实验收时不能发起付款；查单、关单、退款、通知和日对账保留。真实验收仍为 0/12，详见 [验收入口与收费门禁](family-identity-acceptance-gate.md)。
+
+## 2026-10-16 家庭支付运营增量
+
+新增 `/api/v1/platform/family-subscription/refund-requests` 队列、详情、预览、带审核说明的 reviews 与原退款 verifications；独立售后 scope、近期 MFA、申请人不能自审。新增 `/api/v1/platform/family-subscription/reconciliation/tasks` 及任务详情、retries、differences、acknowledgements、verifications；独立财务 scope、近期 MFA、幂等短事务与永久审计。所有 verification 仅返回 `{queued:true,resourceId}`，不发起外层事务中的外部调用，不代表钱或账单已经处理完成。详见 [本轮交付说明](family-p0-commerce-operations.md)。

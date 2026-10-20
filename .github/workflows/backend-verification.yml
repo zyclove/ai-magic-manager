@@ -31,6 +31,8 @@ jobs:
       MAVEN_VERSION: '3.9.7'
       MAVEN_ARCHIVE_SHA512: f64913f89756264f2686e241f3f4486eca5d0dfdbb97077b0efc389cad376053824d58caa35c39648453ca58639f85335f9be9c8f217bfdb0c2d5ff2a9428fac
       MAVEN_OPTS: -Xmx1024m -Dfile.encoding=UTF-8
+      FLUTTER_REVISION: 761747bfc538b5af34aa0d3fac380f1bc331ec49
+      PUB_HOSTED_URL: https://pub.flutter-io.cn
     steps:
       - name: Check out the dispatched commit
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -51,21 +53,35 @@ jobs:
           import json, os, re
           from pathlib import Path
           rows = []
+          hosted = {'device.access.package', 'device.identity.package', 'device.dart.command', 'device.child.package',
+                    'guardian.dart.command', 'guardian.release.dart.command', 'parent.dart.command'}
           for path in sorted((Path(os.environ['CI_MODULE']) / 'src/test').rglob('*.java')):
               text = path.read_text(encoding='utf-8-sig')
-              pattern = r'@(EnabledIfSystemProperty|EnabledIfEnvironmentVariable)\(\s*named\s*=\s*"([^"]+)"'
+              pattern = (r'@(?:org\.junit\.jupiter\.api\.condition\.)?'
+                         r'(EnabledIfSystemProperty|EnabledIfEnvironmentVariable)\(\s*named\s*=\s*"([^"]+)"')
               for match in re.finditer(pattern, text):
-                  rows.append(dict(source=str(path), condition=match[1], name=match[2],
-                                   suppliedByThisWorkflow=False))
+                  rows.append(dict(source=str(path), line=text.count('\n', 0, match.start()) + 1,
+                                   condition=match[1], name=match[2],
+                                   hostedInteropPreparationPlanned=os.environ['CI_MODULE'] == 'backend'
+                                   and match[1] == 'EnabledIfSystemProperty' and match[2] in hosted))
           folder = Path(os.environ['RUNNER_TEMP']) / 'ci-evidence'
           (folder / 'conditional-prerequisites.json').write_text(json.dumps(rows, indent=2) + '\n')
           with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a') as out:
               out.write('### Conditional test prerequisites\n\n')
-              out.write('This workflow does not supply native runners, Dart interop commands, isolated Keycloak or MySQL credentials.\n\n')
-              if rows:
+              out.write('Source annotation inventory: ' + str(len(rows)) + ' annotations in '
+                        + str(len({row['source'] for row in rows})) + ' source files; not test totals.\n\n')
+              if os.environ['CI_MODULE'] == 'backend':
+                  out.write('Hosted Dart/Flutter interop preparation is configured; its steps and actual tests must still succeed.\n\n')
+                  out.write('Native Android runners, isolated Keycloak and MySQL credentials remain unconfigured.\n\n')
+              else:
+                  out.write('This module uses the Java toolchain without hosted Flutter interop preparation.\n\n')
+              if any(not row['hostedInteropPreparationPlanned'] for row in rows):
                   out.write('**Known incomplete environment: default skip=0 acceptance is expected to fail.**\n\n')
+              if rows:
                   for row in rows:
-                      out.write('- `' + row['name'] + '` — `' + row['source'] + '`\n')
+                      status = 'hosted preparation planned' if row['hostedInteropPreparationPlanned'] else 'not configured'
+                      out.write('- `' + row['name'] + '` — ' + status + ' — `'
+                                + row['source'] + ':' + str(row['line']) + '`\n')
               else:
                   out.write('No matching conditional annotation found in this module; inspect actual reports.\n')
           PY
@@ -94,6 +110,137 @@ jobs:
           java -version 2>&1 | tee "$RUNNER_TEMP/ci-evidence/java.txt"
           mvn --version | tee "$RUNNER_TEMP/ci-evidence/maven.txt"
 
+      - name: Check out the official Flutter SDK for backend interop
+        if: ${{ matrix.module == 'backend' }}
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: flutter/flutter
+          ref: 761747bfc538b5af34aa0d3fac380f1bc331ec49 # Flutter 3.22.2 / Dart 3.4.3
+          path: .cache/ci-sdk/flutter
+          persist-credentials: false
+
+      - name: Bind the backend interop SDK to the existing release
+        if: ${{ matrix.module == 'backend' }}
+        run: |
+          test "$(git -C .cache/ci-sdk/flutter rev-parse HEAD)" = "$FLUTTER_REVISION"
+          git -C .cache/ci-sdk/flutter fetch --depth=1 origin refs/tags/3.22.2:refs/tags/3.22.2
+          test "$(git -C .cache/ci-sdk/flutter rev-parse '3.22.2^{commit}')" = "$FLUTTER_REVISION"
+          printf '%s\n' "$GITHUB_WORKSPACE/.cache/ci-sdk/flutter/bin" >> "$GITHUB_PATH"
+          printf 'PUB_CACHE=%s\n' "$RUNNER_TEMP/ci-pub-cache" >> "$GITHUB_ENV"
+
+      - name: Prepare the existing hosted interop packages and commands
+        id: interop
+        if: ${{ matrix.module == 'backend' }}
+        run: |
+          flutter config --no-analytics
+          flutter --version --machine > "$RUNNER_TEMP/ci-evidence/interop-flutter-version.json"
+          dart --version 2>&1 | tee "$RUNNER_TEMP/ci-evidence/interop-dart-version.txt"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          data = json.loads((Path(os.environ['RUNNER_TEMP']) / 'ci-evidence/interop-flutter-version.json').read_text())
+          if data['frameworkRevision'] != os.environ['FLUTTER_REVISION'] or data['frameworkVersion'] != '3.22.2':
+              raise SystemExit('CI_INTEROP_FLUTTER_VERSION_CHANGED')
+          if not data['dartSdkVersion'].startswith('3.4.3'):
+              raise SystemExit('CI_INTEROP_DART_VERSION_CHANGED')
+          PY
+          folder="$RUNNER_TEMP/ci-evidence/interop-dependencies"
+          mkdir -p "$folder"
+          for package in packages/device_access packages/device_identity packages/device_policy \
+            packages/device_observation packages/device_reports apps/guardian apps/parent apps/child; do
+            (
+              cd "$GITHUB_WORKSPACE/$package"
+              test -f pubspec.lock
+              case "$package" in
+                apps/*) flutter pub get --enforce-lockfile ;;
+                *) dart pub get --enforce-lockfile ;;
+              esac
+              label="${package//\//-}"
+              dart pub deps --json > "$folder/$label.json"
+              cp pubspec.lock "$folder/$label.lock"
+            )
+          done
+          python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          root = Path(os.environ['GITHUB_WORKSPACE'])
+          sdk = root / '.cache/ci-sdk/flutter'
+          snapshot = sdk / 'bin/cache/flutter_tools.snapshot'
+          if not snapshot.is_file():
+              raise SystemExit('CI_INTEROP_FLUTTER_SNAPSHOT_MISSING')
+          paths = [
+              'packages/device_access/tool/verify_http_fixture.dart',
+              'packages/device_access/tool/verify_submission_http.dart',
+              'packages/device_identity/tool/verify_http_fixture.dart',
+              'packages/device_identity/tool/managed_binding_interop.dart',
+              'packages/device_policy/tool/verify_http_fixture.dart',
+              'packages/device_observation/tool/verify_http_fixture.dart',
+              'packages/device_reports/tool/verify_usage_report_http.dart',
+              'apps/child/tool/access_http_host_test.dart',
+              'apps/child/tool/submission_http_session_test.dart',
+              'apps/child/tool/report_http_session_test.dart',
+              'apps/guardian/tool/verify_device_management_http_test.dart',
+              'apps/guardian/tool/verify_diagnostic_http.dart',
+              'apps/guardian/tool/verify_diagnostic_package_http.dart',
+              'apps/guardian/tool/verify_enrollment_http_test.dart',
+              'apps/guardian/tool/verify_identity_provider_http.dart',
+              'apps/guardian/tool/verify_identity_provider_release_http.dart',
+              'apps/guardian/tool/verify_observation_fixture.dart',
+              'apps/guardian/tool/verify_support_http.dart',
+              'apps/guardian/tool/verify_usage_report_fixture.dart',
+              'apps/guardian/tool/verify_usage_report_jobs_http.dart',
+              'apps/parent/tool/verify_acceptance_http_test.dart',
+              'apps/parent/tool/verify_audit_export_http_test.dart',
+              'apps/parent/tool/verify_audit_http_test.dart',
+              'apps/parent/tool/verify_class_http_test.dart',
+              'apps/parent/tool/verify_contract_http_test.dart',
+              'apps/parent/tool/verify_help_http_test.dart',
+              'apps/parent/tool/verify_invitation_http_test.dart',
+              'apps/parent/tool/verify_member_http_test.dart',
+              'apps/parent/tool/verify_notification_http_test.dart',
+              'apps/parent/tool/verify_decision_http_test.dart',
+              'apps/parent/tool/verify_observation_http_test.dart',
+              'apps/parent/tool/verify_ownership_http_test.dart',
+              'apps/parent/tool/verify_permission_http_test.dart',
+              'apps/parent/tool/verify_quota_http_test.dart',
+              'apps/parent/tool/verify_quota_plan_http_test.dart',
+              'apps/parent/tool/verify_subject_http_test.dart',
+          ]
+          tools = []
+          for name in paths:
+              path = root / name
+              if not path.is_file():
+                  raise SystemExit('CI_INTEROP_SOURCE_TOOL_MISSING: ' + name)
+              with path.open('rb') as stream:
+                  tools.append(dict(path=name, sha256=hashlib.file_digest(stream, 'sha256').hexdigest()))
+          properties = {
+              'device.dart.command': str(sdk / 'bin/dart'),
+              'device.flutter.command': str(sdk / 'bin/flutter'),
+              'device.access.package': str(root / 'packages/device_access'),
+              'device.identity.package': str(root / 'packages/device_identity'),
+              'device.policy.package': str(root / 'packages/device_policy'),
+              'device.child.package': str(root / 'apps/child'),
+              'observation.device.package': str(root / 'packages/device_observation'),
+              'observation.guardian.package': str(root / 'apps/guardian'),
+              'diagnostic.guardian.package': str(root / 'apps/guardian'),
+              'usage.report.guardian.package': str(root / 'apps/guardian'),
+              'usage.report.device.package': str(root / 'packages/device_reports'),
+              'guardian.dart.command': str(sdk / 'bin/dart'),
+              'guardian.flutter.tool': str(snapshot),
+              'guardian.package': str(root / 'apps/guardian'),
+              'guardian.release.dart.command': str(sdk / 'bin/dart'),
+              'guardian.release.package': str(root / 'apps/guardian'),
+              'parent.dart.command': str(sdk / 'bin/dart'),
+              'parent.flutter.tool': str(snapshot),
+              'parent.package': str(root / 'apps/parent'),
+          }
+          folder = Path(os.environ['RUNNER_TEMP']) / 'ci-evidence'
+          (folder / 'interop-source-tools.json').write_text(json.dumps(tools, indent=2) + '\n')
+          (folder / 'interop-system-properties.json').write_text(json.dumps(properties, indent=2) + '\n')
+          (folder / 'interop-maven-args.txt').write_text(''.join('-D' + key + '=' + value + '\n'
+                                                            for key, value in properties.items()))
+          PY
+
       - name: Compile all sources and resolve the test classpath
         id: compile
         run: |
@@ -121,14 +268,21 @@ jobs:
       - name: Run the complete default test suite and package
         id: verify
         run: |
+          interop_args=()
+          if test "$CI_MODULE" = backend; then
+            test -s "$RUNNER_TEMP/ci-evidence/interop-maven-args.txt"
+            mapfile -t interop_args < "$RUNNER_TEMP/ci-evidence/interop-maven-args.txt"
+            test "${#interop_args[@]}" -eq 19
+          fi
           mvn --batch-mode --no-transfer-progress -f "$CI_MODULE/pom.xml" \
-            -DfailIfNoTests=true -Dstyle.color=never verify \
+            -DfailIfNoTests=true -Dstyle.color=never "${interop_args[@]}" verify \
             2>&1 | tee "$RUNNER_TEMP/ci-evidence/verify.log"
 
       - name: Check source, compiled outputs, dependencies and test totals
         if: ${{ always() && steps.source.outcome == 'success' }}
         env:
           CI_VERIFY_OUTCOME: ${{ steps.verify.outcome }}
+          CI_INTEROP_PREPARATION_OUTCOME: ${{ steps.interop.outcome }}
         run: |
           sha256sum --check --quiet "$RUNNER_TEMP/ci-evidence/source.sha256"
           if test -f "$RUNNER_TEMP/ci-evidence/compiled-before.sha256"; then
@@ -169,6 +323,7 @@ jobs:
                                   runtime_jars[str(path)] = hashlib.file_digest(stream, 'sha256').hexdigest()
           result = dict(commit=os.environ['GITHUB_SHA'], module=str(module), totals=totals,
                         reportFiles=len(reports), verifyOutcome=os.environ['CI_VERIFY_OUTCOME'],
+                        interopPreparationOutcome=os.environ['CI_INTEROP_PREPARATION_OUTCOME'],
                         skippedCases=skipped_cases,
                         runtimeJarHashesObservedAfterTests=runtime_jars,
                         realMysqlVerified=False, realDeviceVerified=False)
