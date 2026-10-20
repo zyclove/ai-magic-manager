@@ -1,0 +1,113 @@
+{
+  "schemaVersion": "1.0.0",
+  "status": "STATIC_REVIEW_COMPLETED_NOT_EXECUTION_ACCEPTANCE",
+  "createdAtUtc": "2026-10-20T13:37:18.762347+00:00",
+  "baseCommit": "db18daa275a1098f497527697f8ff0a0808d5778",
+  "sourceCount": 510,
+  "wholeDartFileCount": 437,
+  "projectCount": 14,
+  "testFileCount": 171,
+  "testFilePlatforms": {
+    "vm": 139,
+    "chrome": 32
+  },
+  "stageCounts": {
+    "pub": 11,
+    "analyze": 11,
+    "test": 32,
+    "production": 1
+  },
+  "windowsFormatArgvUtf16UnitsIncludingNul": 22024,
+  "originalBudgetsSeconds": {
+    "preparation": 180,
+    "format": 60,
+    "run": 180
+  },
+  "artifacts": [
+    {
+      "original": {
+        "path": ".cache/publication-recovery/frontend-shared-execution-preparation-r4/source-inventory-r4.json",
+        "sha256": "cd45876f5dcfa40d8a1121243f589de61665a98ccf95382733bcbc4106e603bc",
+        "bytes": 303835
+      },
+      "preserved": {
+        "path": "docs/evidence/frontend-shared-preparation-20261020-r4/source-inventory-r4.json",
+        "sha256": "cd45876f5dcfa40d8a1121243f589de61665a98ccf95382733bcbc4106e603bc",
+        "bytes": 303835
+      }
+    },
+    {
+      "original": {
+        "path": ".cache/publication-recovery/frontend-shared-execution-preparation-r4/execution-spec-r4.json",
+        "sha256": "ce761ca34712352c1f36cb124f3cfcc444ce891ca2caa54fa93062b85256f0c0",
+        "bytes": 353683
+      },
+      "preserved": {
+        "path": "docs/evidence/frontend-shared-preparation-20261020-r4/execution-spec-r4.json",
+        "sha256": "ce761ca34712352c1f36cb124f3cfcc444ce891ca2caa54fa93062b85256f0c0",
+        "bytes": 353683
+      }
+    },
+    {
+      "original": {
+        "path": ".cache/publication-recovery/frontend-shared-execution-preparation-r4/run-frontend-r4.py",
+        "sha256": "7be0d2cbd04b9ebbfcccea48d85cbe64d070ff918ba5212a910f5cbe0567f0bb",
+        "bytes": 57477
+      },
+      "preserved": {
+        "path": "docs/evidence/frontend-shared-preparation-20261020-r4/run-frontend-r4.py",
+        "sha256": "7be0d2cbd04b9ebbfcccea48d85cbe64d070ff918ba5212a910f5cbe0567f0bb",
+        "bytes": 57477
+      }
+    },
+    {
+      "original": {
+        "path": ".cache/publication-recovery/frontend-shared-execution-preparation-r4/root-static-check-r4.py",
+        "sha256": "93df1de1dc7470bae7c1cb1a1b6f597c9201699729fb4132f3557eb3950f8903",
+        "bytes": 12528
+      },
+      "preserved": {
+        "path": "docs/evidence/frontend-shared-preparation-20261020-r4/root-static-check-r4.py",
+        "sha256": "93df1de1dc7470bae7c1cb1a1b6f597c9201699729fb4132f3557eb3950f8903",
+        "bytes": 12528
+      }
+    }
+  ],
+  "designFiles": [
+    {
+      "path": "docs/idempotency-result-retention-design.md",
+      "sha256": "85d42d9fe355ec487ceaa7b34eca201d096a6e5c73b08790586548aeed7c1711",
+      "bytes": 27098
+    },
+    {
+      "path": "docs/guardian-result-expiry-interaction-design.md",
+      "sha256": "49bb0fea12c045daf39e9b00407ef437cc363bebac5cc9a0ca1f44814d42d11a",
+      "bytes": 12748
+    }
+  ],
+  "reviewedBy": [
+    "Root static source/spec/AST review",
+    "independent agent source inventory and design review",
+    "independent agent runner text review"
+  ],
+  "limitations": [
+    "Runner was not executed; AST parse does not validate Windows Job or process races",
+    "Four entry pins do not freeze complete SDK, engine, or dependency cache contents",
+    "Resolved dependency source-content pins are required before future execution acceptance",
+    "510 working-tree source bytes include 9 shared semantic WIP and 2 Guardian EOL differences",
+    "No production code implements the new 90-day retention design yet"
+  ],
+  "runnerExecuted": false,
+  "sdkStarted": false,
+  "testsAdded": false,
+  "testsRun": false,
+  "pubRun": false,
+  "formatRun": false,
+  "analyzeRun": false,
+  "buildRun": false,
+  "servicesUpdated": false,
+  "databaseUpdated": false,
+  "acceptedForExecution": false,
+  "wholeProductComplete": false,
+  "deployed": false
+}
