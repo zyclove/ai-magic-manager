@@ -8,6 +8,8 @@ import 'package:http/http.dart' as http;
 import 'package:uuid/uuid.dart';
 import 'parent_api.dart';
 import 'parent_durable_storage.dart';
+import 'operation_journal.dart';
+import 'operation_result_terminal.dart';
 export 'package:audit_client/exports.dart';
 
 Json exportSelection(AuditQuery q) => {
@@ -53,12 +55,14 @@ class ParentAuditExports {
   }
 
   Future<dynamic> send(String method, String suffix,
-      {Json? body, String? key, bool Function()? operation}) async {
+      {Json? body, String? key, bool Function()? operation,
+      Future<bool> Function()? beforeDispatch}) async {
     bool valid() => current() && (operation?.call() ?? true);
     ensure();
     if (!valid()) throw const ParentApiException(409, 'SCOPE_DENIED');
     final value = await api.send(method, '$path$suffix',
-        body: body, idempotencyKey: key, isCurrent: valid);
+        body: body, idempotencyKey: key, isCurrent: valid,
+        beforeDispatch: beforeDispatch);
     if (!valid()) throw const ParentApiException(409, 'SCOPE_DENIED');
     return value;
   }
@@ -76,22 +80,25 @@ class ParentAuditExports {
   }
 
   Future<AuditExportJob> create(AuditQuery q, String key,
-      {required bool Function() operation}) async {
+      {required bool Function() operation, Future<bool> Function()? beforeDispatch}) async {
     q.validate();
     return selected(
         await send('POST', '',
-            body: exportSelection(q), key: key, operation: operation),
+            body: exportSelection(q), key: key, operation: operation,
+            beforeDispatch: beforeDispatch),
         q);
   }
 
-  Future<AuditExportJob> recover(AuditQuery q, String key) async {
+  Future<AuditExportJob> recover(AuditQuery q, String key,
+      {bool Function()? operation, Future<bool> Function()? beforeDispatch}) async {
     q.validate();
     if (!auditUuid.hasMatch(key)) {
       throw const ParentApiException(400, 'INVALID_EXPORT_REQUEST');
     }
     return selected(
         await send('POST', '/creation-results/$key/query',
-            body: exportSelection(q)),
+            body: exportSelection(q), operation: operation,
+            beforeDispatch: beforeDispatch),
         q);
   }
 
@@ -109,11 +116,13 @@ class ParentAuditExports {
     }
   }
 
-  Future<AuditExportJob> get(String id) async {
+  Future<AuditExportJob> get(String id,
+      {bool Function()? operation, Future<bool> Function()? beforeDispatch}) async {
     if (!auditUuid.hasMatch(id)) {
       throw const ParentApiException(400, 'INVALID_EXPORT_REQUEST');
     }
-    final job = parse(await send('GET', '/$id'));
+    final job = parse(await send('GET', '/$id', operation: operation,
+        beforeDispatch: beforeDispatch));
     if (job.id != id) {
       throw const ParentApiException(502, 'INVALID_EXPORT_RESPONSE');
     }
@@ -121,11 +130,12 @@ class ParentAuditExports {
   }
 
   Future<AuditExportJob> cancel(String id,
-      {required bool Function() operation}) async {
+      {required bool Function() operation, Future<bool> Function()? beforeDispatch}) async {
     if (!auditUuid.hasMatch(id)) {
       throw const ParentApiException(400, 'INVALID_EXPORT_REQUEST');
     }
-    final job = parse(await send('POST', '/$id/cancel', operation: operation));
+    final job = parse(await send('POST', '/$id/cancel', operation: operation,
+        beforeDispatch: beforeDispatch));
     if (job.id != id || job.cancellable) {
       throw const ParentApiException(502, 'INVALID_EXPORT_RESPONSE');
     }
@@ -243,6 +253,7 @@ class ParentAuditExports {
 }
 
 class AuditExportStore {
+  late final ParentOperationJournal journal = ParentOperationJournal(storage);
   final ParentDurableStorage storage;
   AuditExportStore({ParentDurableStorage? storage})
       : storage = storage ?? ParentDurableStorage();
@@ -279,7 +290,7 @@ class AuditExportStore {
   }
 
   Future<Json?> load(String tenant, String actor) async {
-    final raw = await storage.read(key: key(tenant, actor));
+    final raw = await journal.read(key: key(tenant, actor));
     if (raw == null) return null;
     if (raw.length > 2048) throw const FormatException('导出恢复记录无效。');
     final v = jsonDecode(raw);
@@ -291,7 +302,7 @@ class AuditExportStore {
   Future<void> save(String tenant, String actor, Json row) async {
     validate(row);
     if (await load(tenant, actor) != null) throw StateError('请先核对上一次导出操作。');
-    await storage.write(key: key(tenant, actor), value: jsonEncode(row));
+    await journal.write(key: key(tenant, actor), value: jsonEncode(row));
   }
 
   Future<void> clear(String tenant, String actor, Json expected) async {
@@ -299,12 +310,29 @@ class AuditExportStore {
     if (old != null && jsonEncode(old) != jsonEncode(expected)) {
       throw StateError('恢复记录已变化。');
     }
-    await storage.delete(key: key(tenant, actor));
+    await journal.delete(key: key(tenant, actor));
   }
 }
 
 /// One durable write at a time. Unknown outcomes are queried, never auto-replayed.
-class AuditExportOperation extends ChangeNotifier {
+class AuditExportOperation extends ChangeNotifier with ParentTerminalOperation {
+  @override
+  ParentOperationJournal get operationJournal => store.journal;
+  @override
+  String get operationSlot => store.key(repository.tenant, actor);
+  @override
+  Json? get operationPayload => pending;
+  @override
+  bool get operationCurrent => active;
+  @override
+  bool get operationHasSuccessfulResult => pending?['kind'] == 'create' && result != null;
+  @override
+  void forgetOperationPayload() {
+    pending = null;
+    result = null;
+    queried = false;
+    loaded = false;
+  }
   final ParentAuditExports repository;
   final AuditExportStore store;
   final String actor;
@@ -350,6 +378,7 @@ class AuditExportOperation extends ChangeNotifier {
         loaded = true;
       }
     } catch (e) {
+      await captureResultTerminal(e);
       if (active) error = e;
     } finally {
       busy = false;
@@ -365,6 +394,7 @@ class AuditExportOperation extends ChangeNotifier {
   Future<void> cancel(String id) async =>
       _submit({'kind': 'cancel', 'jobId': id});
   Future<void> _submit(Json row) async {
+    if (operationBlocked) return;
     if (!active || busy || !loaded || pending != null) return;
     final ticket = epoch;
     bool valid() => active && ticket == epoch;
@@ -382,17 +412,21 @@ class AuditExportOperation extends ChangeNotifier {
       pending = row;
       final value = row['kind'] == 'create'
           ? await repository.create(exportQuery(row['query']), row['requestId'],
-              operation: valid)
-          : await repository.cancel(row['jobId'], operation: valid);
+              operation: valid, beforeDispatch: operationBeforeWrite)
+          : await repository.cancel(row['jobId'], operation: valid,
+              beforeDispatch: operationBeforeWrite);
       if (valid()) {
         result = value;
         queried = true;
+        if (operationHasSuccessfulResult ||
+            row['kind'] == 'cancel' && value.state == 'CANCELLED') await recordSuccessfulOperation();
         // A verified reply resolves the operation. Only uncertain outcomes or
         // a local cleanup failure need the administrator's recovery workflow.
         await store.clear(repository.tenant, actor, row);
         if (valid()) pending = null;
       }
     } catch (e) {
+      await captureResultTerminal(e);
       if (active) {
         error = e;
         if (pending == null) loaded = false;
@@ -404,6 +438,7 @@ class AuditExportOperation extends ChangeNotifier {
   }
 
   Future<void> recover() async {
+    if (operationBlocked) return;
     if (!active || busy || pending == null) return;
     final ticket = epoch;
     busy = true;
@@ -415,13 +450,19 @@ class AuditExportOperation extends ChangeNotifier {
       final row = pending!;
       final value = row['kind'] == 'create'
           ? await repository.recover(
-              exportQuery(row['query']), row['requestId'])
-          : await repository.get(row['jobId']);
+              exportQuery(row['query']), row['requestId'],
+              operation: () => active && ticket == epoch,
+              beforeDispatch: operationBeforeDispatch)
+          : await repository.get(row['jobId'],
+              operation: () => active && ticket == epoch,
+              beforeDispatch: operationBeforeDispatch);
       if (active && ticket == epoch) {
         result = value;
         queried = true;
+        if (operationHasSuccessfulResult) await recordSuccessfulOperation();
       }
     } catch (e) {
+      await captureResultTerminal(e);
       if (active && ticket == epoch) {
         error = e;
         queried = e is ParentApiException &&
@@ -434,6 +475,7 @@ class AuditExportOperation extends ChangeNotifier {
   }
 
   Future<bool> clear() async {
+    if (operationBlocked) return false;
     if (!active || busy || pending == null || !queried) return false;
     busy = true;
     error = null;
@@ -446,6 +488,7 @@ class AuditExportOperation extends ChangeNotifier {
       queried = false;
       return true;
     } catch (e) {
+      await captureResultTerminal(e);
       if (active) error = e;
       return false;
     } finally {

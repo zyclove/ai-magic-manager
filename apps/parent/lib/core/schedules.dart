@@ -4,6 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 import 'parent_api.dart';
 import 'parent_durable_storage.dart';
+import 'operation_journal.dart';
+import 'operation_result_terminal.dart';
 
 const scheduleDays = [
   'MONDAY',
@@ -111,13 +113,14 @@ void validateScheduleDecision(Json result, String zone, DateTime at) {
 }
 
 class ScheduleCreationStore {
+  late final ParentOperationJournal journal = ParentOperationJournal(storage);
   final ParentDurableStorage storage;
   ScheduleCreationStore({ParentDurableStorage? storage})
       : storage = storage ?? ParentDurableStorage();
   String _key(String tenant, String actor) =>
       'parent.pending.schedule_creation.$tenant.$actor';
   Future<Json?> load(String tenant, String actor) async {
-    final raw = await storage.read(key: _key(tenant, actor));
+    final raw = await journal.read(key: _key(tenant, actor));
     if (raw == null) return null;
     if (raw.length > 512 * 1024) {
       throw const FormatException('时间计划恢复记录过大，请联系管理员。');
@@ -142,19 +145,36 @@ class ScheduleCreationStore {
     if (await load(tenant, actor) != null) throw StateError('请先核对原时间计划创建。');
     final encoded = jsonEncode(value);
     if (encoded.length > 512 * 1024) throw const FormatException('时间计划过大。');
-    await storage.write(key: _key(tenant, actor), value: encoded);
+    await journal.write(key: _key(tenant, actor), value: encoded);
   }
 
   Future<void> remove(String tenant, String actor, String requestId) async {
     final item = await load(tenant, actor);
     if (item == null) return;
     if (item['requestId'] != requestId) throw StateError('恢复记录已变化，请重新读取。');
-    await storage.delete(key: _key(tenant, actor));
+    await journal.delete(key: _key(tenant, actor));
   }
 }
 
 /// Immutable schedule creation, with durable pre-send journaling and read-only recovery.
-class ScheduleCreationController extends ChangeNotifier {
+class ScheduleCreationController extends ChangeNotifier with ParentTerminalOperation {
+  @override
+  ParentOperationJournal get operationJournal => store.journal;
+  @override
+  String get operationSlot => store._key(tenant, actor);
+  @override
+  Json? get operationPayload => pending;
+  @override
+  bool get operationCurrent => current;
+  @override
+  bool get operationHasSuccessfulResult => result != null;
+  @override
+  void forgetOperationPayload() {
+    pending = null;
+    result = null;
+    queried = false;
+    loaded = false;
+  }
   final ParentApi api;
   final ScheduleCreationStore store;
   final String tenant, actor;
@@ -194,6 +214,7 @@ class ScheduleCreationController extends ChangeNotifier {
         loaded = true;
       }
     } catch (failure) {
+      await captureResultTerminal(failure);
       if (current) error = failure;
     } finally {
       busy = false;
@@ -202,6 +223,7 @@ class ScheduleCreationController extends ChangeNotifier {
   }
 
   Future<void> create(String name, Json definition) async {
+    if (operationBlocked) return;
     if (!current || busy || !loaded || pending != null) return;
     busy = true;
     error = null;
@@ -226,11 +248,13 @@ class ScheduleCreationController extends ChangeNotifier {
       final raw = await api.send('POST', '/tenants/$tenant/schedules',
           body: body,
           idempotencyKey: item['requestId'],
-          isCurrent: () => current);
+          isCurrent: () => current, beforeDispatch: operationBeforeWrite);
       if (!current) return;
       result = _originalResult(raw, body);
       queried = true;
+      if (operationHasSuccessfulResult) await recordSuccessfulOperation();
     } catch (failure) {
+      await captureResultTerminal(failure);
       if (current) {
         error = failure;
         if (pending == null) loaded = false;
@@ -242,6 +266,7 @@ class ScheduleCreationController extends ChangeNotifier {
   }
 
   Future<void> query() async {
+    if (operationBlocked) return;
     if (!current || busy || pending == null) return;
     busy = true;
     error = null;
@@ -251,11 +276,13 @@ class ScheduleCreationController extends ChangeNotifier {
     try {
       final raw = await api.send('POST',
           '/tenants/$tenant/schedules/creation-results/${pending!['requestId']}/query',
-          body: pending!['body'] as Json, isCurrent: () => current);
+          body: pending!['body'] as Json, isCurrent: () => current, beforeDispatch: operationBeforeDispatch);
       if (!current) return;
       result = _originalResult(raw, pending!['body'] as Json);
       queried = true;
+      if (operationHasSuccessfulResult) await recordSuccessfulOperation();
     } on ParentApiException catch (failure) {
+      await captureResultTerminal(failure);
       if (current) {
         if (failure.status == 404 &&
             failure.code == 'SCHEDULE_CREATION_RESULT_UNAVAILABLE') {
@@ -265,6 +292,7 @@ class ScheduleCreationController extends ChangeNotifier {
         }
       }
     } catch (failure) {
+      await captureResultTerminal(failure);
       if (current) error = failure;
     } finally {
       busy = false;
@@ -273,6 +301,7 @@ class ScheduleCreationController extends ChangeNotifier {
   }
 
   Future<bool> acknowledge() async {
+    if (operationBlocked) return false;
     if (!current || busy || pending == null || !queried) return false;
     busy = true;
     error = null;
@@ -284,6 +313,7 @@ class ScheduleCreationController extends ChangeNotifier {
       queried = false;
       return true;
     } catch (failure) {
+      await captureResultTerminal(failure);
       if (current) error = failure;
       return false;
     } finally {

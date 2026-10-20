@@ -1,3 +1,4 @@
+import 'operation_result_terminal_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:usage_reporting/usage_reporting.dart';
 import '../core/observation_settings.dart' show validConsentReason;
@@ -26,28 +27,39 @@ class _PermissionConsentPageState extends State<PermissionConsentPage>
   String? validation;
   bool get current =>
       mounted &&
-      widget.session.authenticated &&
+      !_operationOwnerLost &&
+      _operationIdentity.current &&
       widget.session.canDecide &&
       widget.session.tenant?['id'] == tenant &&
       widget.session.profile?['subject'] == actor &&
       widget.session.role == role;
+  bool _operationOwnerLost = false;
+  late final ParentOperationIdentity _operationIdentity;
+  @override
+  void deactivate() {
+    _operationOwnerLost = true;
+    _operationIdentity.revoke();
+    super.deactivate();
+  }
+
   @override
   void initState() {
     super.initState();
+    _operationIdentity = ParentOperationIdentity(widget.session, onRevoked: _changed);
     tenant = widget.session.tenant!['id'];
     actor = widget.session.profile!['subject'];
     role = widget.session.role;
     foreground = WidgetsBinding.instance.lifecycleState == null ||
         WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
     controller = ParentPermissionConsent(
-        api: widget.session.api,
+        api: _operationIdentity.scopedApi(widget.session.api),
         store: widget.store ?? PermissionChangeStore(),
         tenant: tenant,
         actor: actor,
         target: widget.target,
-        isCurrent: () => current,
+        isCurrent: () => current && _operationIdentity.dispatchable,
         foreground: () => foreground,
-        reauthenticate: widget.session.reauthenticate);
+        reauthenticate: _operationIdentity.reauthenticate);
     widget.session.addListener(_changed);
     WidgetsBinding.instance.addObserver(this);
     controller.load();
@@ -55,6 +67,7 @@ class _PermissionConsentPageState extends State<PermissionConsentPage>
 
   void _changed() {
     if (!mounted || current) return;
+    _operationOwnerLost = true;
     controller.hide();
     reason.clear();
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -101,7 +114,7 @@ class _PermissionConsentPageState extends State<PermissionConsentPage>
     if (!current || !foreground || controller.busy || widget.session.busy) {
       return;
     }
-    if (!await widget.session.reauthenticate() || !current || !foreground) {
+    if (!await _operationIdentity.reauthenticate() || !current || !foreground) {
       return;
     }
     if (controller.pending != null) {
@@ -113,6 +126,7 @@ class _PermissionConsentPageState extends State<PermissionConsentPage>
 
   @override
   void dispose() {
+    _operationIdentity.dispose();
     widget.session.removeListener(_changed);
     WidgetsBinding.instance.removeObserver(this);
     controller.dispose();
@@ -134,6 +148,13 @@ class _PermissionConsentPageState extends State<PermissionConsentPage>
   Widget build(BuildContext context) => AnimatedBuilder(
       animation: controller,
       builder: (context, _) {
+        if (controller.resultTerminal != null) {
+          return parentResultTerminalPage(context, title: '权限观察核对', operation: controller,
+              onViewCurrent: reload,
+              currentRecordBuilder: (_) => controller.settings == null
+                  ? const Text('当前授权暂时无法读取，请刷新或核对审计。')
+                  : card('当前权限观察授权', controller.settings!.enabled, controller.settings!.version));
+        }
         final now = controller.settings,
             original = controller.committed,
             pending = controller.pending;
@@ -191,7 +212,8 @@ class _PermissionConsentPageState extends State<PermissionConsentPage>
                                         label: const Text('重新安全验证并核对')),
                                   if (now != null)
                                     card('当前授权', now.enabled, now.version),
-                                  if (pending == null) ...[
+                                  ParentKnownOperationReceipt(operation: controller),
+                        if (pending == null) ...[
                                     if (now == null)
                                       OutlinedButton.icon(
                                           onPressed:

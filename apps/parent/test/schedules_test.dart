@@ -12,7 +12,11 @@ import 'package:parent/ui/schedule_editor.dart';
 import 'package:parent/ui/schedule_center.dart';
 import 'package:parent/ui/policy_editor.dart';
 
-class _Storage extends ParentDurableStorage {
+import 'support/parent_operation_journal_fixture.dart';
+
+class _Storage extends ParentDurableStorage with ParentAtomicJournalFixture {
+  @override
+  bool get fixtureWriteMayCommitBeforeFailure => true;
   final values = <String, String>{};
   bool failWrite = false;
   @override

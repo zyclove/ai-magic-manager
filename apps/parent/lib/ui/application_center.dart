@@ -1,3 +1,4 @@
+import 'operation_result_terminal_panel.dart';
 import 'package:flutter/material.dart';
 import '../core/application_catalog.dart';
 import '../core/paged_collection.dart';
@@ -9,14 +10,25 @@ mixin _CatalogScope<T extends StatefulWidget> on State<T> {
   late final String tenant, actor, role;
   bool get current =>
       mounted &&
-      session.authenticated &&
+      !_operationOwnerLost &&
+      _operationIdentity.current &&
       session.tenant?['id'] == tenant &&
       session.profile?['subject'] == actor &&
       session.role == role &&
       const {'OWNER', 'GUARDIAN', 'ORG_ADMIN', 'AUDITOR'}.contains(role);
+  bool _operationOwnerLost = false;
+  late final ParentOperationIdentity _operationIdentity;
+  @override
+  void deactivate() {
+    _operationOwnerLost = true;
+    _operationIdentity.revoke();
+    super.deactivate();
+  }
+
   @override
   void initState() {
     super.initState();
+    _operationIdentity = ParentOperationIdentity(session, onRevoked: _changed);
     tenant = session.tenant!['id'];
     actor = session.profile!['subject'];
     role = session.role;
@@ -25,6 +37,7 @@ mixin _CatalogScope<T extends StatefulWidget> on State<T> {
 
   void _changed() {
     if (!mounted || current) return;
+    _operationOwnerLost = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || current) return;
       final route = ModalRoute.of(context);
@@ -37,6 +50,7 @@ mixin _CatalogScope<T extends StatefulWidget> on State<T> {
 
   @override
   void dispose() {
+    _operationIdentity.dispose();
     session.removeListener(_changed);
     super.dispose();
   }
@@ -60,7 +74,7 @@ class _ApplicationCenterState extends State<ApplicationCenter>
   @override
   void initState() {
     super.initState();
-    apps = PagedCollection(session.api, '/tenants/$tenant/applications');
+    apps = PagedCollection(_operationIdentity.scopedApi(session.api), '/tenants/$tenant/applications');
   }
 
   @override
@@ -192,7 +206,7 @@ class _ApplicationDetailState extends State<_ApplicationDetail>
         id: widget.id);
     final category = await session.api.object(
         '/tenants/$tenant/applications/${widget.id}/classification',
-        isCurrent: () => current);
+        isCurrent: () => current && _operationIdentity.dispatchable);
     readClassification(category, app);
     return {'application': app, 'classification': category};
   }
@@ -311,11 +325,11 @@ class _CatalogOperationPageState extends State<CatalogOperationPage>
           .category;
     }
     controller = CatalogOperationController(
-        api: session.api,
+        api: _operationIdentity.scopedApi(session.api),
         store: widget.store ?? CatalogOperationStore(),
         tenant: tenant,
         actor: actor,
-        isCurrent: () => current && session.canDecide);
+        isCurrent: () => current && _operationIdentity.dispatchable && session.canDecide);
     controller.load();
   }
 
@@ -411,27 +425,19 @@ class _CatalogOperationPageState extends State<CatalogOperationPage>
   }
 
   Future<void> _acknowledge() async {
+    final owner = ModalRoute.of(context);
+    bool active() => current && owner?.isActive == true && owner?.isCurrent == true;
+    if (!active() || controller.busy) return;
     final result = controller.result;
-    if (result == null) {
-      final yes = await showDialog<bool>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-                  title: const Text('已核对应用目录及分类？'),
-                  content: const Text('无查询结果不能证明未提交。清除仅删除本机标记，不会撤销服务端登记或修改。'),
-                  actions: [
-                    TextButton(
-                        onPressed: () => Navigator.pop(ctx, false),
-                        child: const Text('保留记录')),
-                    FilledButton(
-                        onPressed: () => Navigator.pop(ctx, true),
-                        child: const Text('已核对，清除'))
-                  ]));
-      if (yes != true || !current) return;
-    }
-    if (await controller.acknowledge() && current) {
+    if (result == null && !await parentOperationConfirmation(context,
+        operation: controller, accessChanges: session, isCurrent: () => current,
+        title: '已核对应用目录及分类？', description: '无查询结果不能证明未提交。清除仅删除本机标记，不会撤销服务端登记或修改。',
+        cancelLabel: '保留记录', confirmLabel: '已核对，清除')) return;
+    if (!active()) return;
+    if (await controller.acknowledge() && active()) {
       setState(() => leaving = true);
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (current) Navigator.pop(context, result?['application']);
+        if (active()) owner!.navigator?.pop(result?['application']);
       });
     }
   }
@@ -459,6 +465,9 @@ class _CatalogOperationPageState extends State<CatalogOperationPage>
   Widget build(BuildContext context) => AnimatedBuilder(
       animation: controller,
       builder: (context, _) {
+        if (controller.resultTerminal != null) {
+          return parentResultTerminalPage(context, title: '应用目录核对', operation: controller);
+        }
         final pending = controller.pending;
         return PopScope(
             canPop: leaving ||
@@ -479,7 +488,8 @@ class _CatalogOperationPageState extends State<CatalogOperationPage>
                         onPressed: _leave,
                         icon: const Icon(Icons.arrow_back))),
                 body: ListView(padding: const EdgeInsets.all(20), children: [
-                  if (controller.busy) const LinearProgressIndicator(),
+                  ParentKnownOperationReceipt(operation: controller),
+              if (controller.busy) const LinearProgressIndicator(),
                   if (controller.error != null) Text('${controller.error}'),
                   if (!controller.loaded && !controller.busy)
                     OutlinedButton(

@@ -14,6 +14,8 @@ import 'package:parent/core/parent_session.dart';
 import 'package:parent/core/quotas.dart';
 import 'package:parent/ui/quota_center.dart';
 
+import 'support/parent_operation_journal_fixture.dart';
+
 const subject = '00000000-0000-4000-8000-000000000001';
 const planId = '00000000-0000-4000-8000-000000000002';
 Json input() => {
@@ -41,7 +43,7 @@ Json update({String state = 'PAUSED'}) => {
 http.Response response(Object data, [int status = 200]) =>
     http.Response.bytes(utf8.encode(jsonEncode(data)), status);
 
-class Storage extends ParentDurableStorage {
+class Storage extends ParentDurableStorage with ParentAtomicJournalFixture {
   final values = <String, String>{};
   @override
   Future<String?> read({required String key}) async => values[key];

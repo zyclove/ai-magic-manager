@@ -1,3 +1,4 @@
+import 'operation_result_terminal_panel.dart';
 import 'package:flutter/material.dart';
 import '../core/paged_collection.dart';
 import '../core/parent_api.dart';
@@ -14,16 +15,27 @@ mixin SubjectScope<T extends StatefulWidget> on State<T>
   bool foreground = true;
   bool get current =>
       mounted &&
-      session.authenticated &&
+      !_operationOwnerLost &&
+      _operationIdentity.current &&
       session.canDecide &&
       session.tenant?['id'] == tenant &&
       session.profile?['subject'] == actor &&
       session.role == role;
   bool get available => current && foreground;
   void hidePrivate();
+  bool _operationOwnerLost = false;
+  late final ParentOperationIdentity _operationIdentity;
+  @override
+  void deactivate() {
+    _operationOwnerLost = true;
+    _operationIdentity.revoke();
+    super.deactivate();
+  }
+
   @override
   void initState() {
     super.initState();
+    _operationIdentity = ParentOperationIdentity(session, onRevoked: _scopeChanged);
     tenant = session.tenant!['id'];
     actor = session.profile!['subject'];
     role = session.role;
@@ -35,6 +47,7 @@ mixin SubjectScope<T extends StatefulWidget> on State<T>
 
   void _scopeChanged() {
     if (!mounted || current) return;
+    _operationOwnerLost = true;
     hidePrivate();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || current) return;
@@ -55,6 +68,7 @@ mixin SubjectScope<T extends StatefulWidget> on State<T>
 
   @override
   void dispose() {
+    _operationIdentity.dispose();
     session.removeListener(_scopeChanged);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
@@ -83,7 +97,7 @@ class _SubjectCenterState extends State<SubjectCenter>
   }
 
   void _collection() {
-    items = PagedCollection(session.api,
+    items = PagedCollection(_operationIdentity.scopedApi(session.api),
         '/tenants/$tenant/subjects/management?includeArchived=$archived',
         isCurrent: () => available);
   }
@@ -352,13 +366,13 @@ class _SubjectEditorState extends State<SubjectEditor>
     super.initState();
     age = widget.input['ageBand'];
     controller = SubjectChangeController(
-        api: session.api,
+        api: _operationIdentity.scopedApi(session.api),
         store: widget.store ?? SubjectChangeStore(),
         tenant: tenant,
         actor: actor,
-        isCurrent: () => current,
+        isCurrent: () => current && _operationIdentity.dispatchable,
         foreground: () => foreground,
-        reauthenticate: session.reauthenticate);
+        reauthenticate: _operationIdentity.reauthenticate);
     controller.load();
   }
 
@@ -392,11 +406,14 @@ class _SubjectEditorState extends State<SubjectEditor>
   }
 
   Future<void> _done() async {
-    if (controller.result == null && !acknowledgeMissing) return;
-    if (await controller.acknowledge() && current) {
+    final owner = ModalRoute.of(context);
+    bool active() => current && owner?.isActive == true && owner?.isCurrent == true;
+    if (!active() || controller.busy ||
+        (controller.result == null && !acknowledgeMissing)) return;
+    if (await controller.acknowledge() && active()) {
       setState(() => leaving = true);
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (current) Navigator.pop(context);
+        if (active()) owner!.navigator?.pop();
       });
     }
   }
@@ -405,6 +422,9 @@ class _SubjectEditorState extends State<SubjectEditor>
   Widget build(BuildContext context) => AnimatedBuilder(
       animation: controller,
       builder: (context, _) {
+        if (controller.resultTerminal != null) {
+          return parentResultTerminalPage(context, title: '档案操作核对', operation: controller);
+        }
         final pending = controller.pending,
             result = controller.result,
             editable = controller.loaded && !controller.busy;
@@ -450,7 +470,8 @@ class _SubjectEditorState extends State<SubjectEditor>
                                           child: const Text('放弃并返回')),
                                     ])
                                   ]))),
-                        if (controller.busy) const LinearProgressIndicator(),
+                        ParentKnownOperationReceipt(operation: controller),
+              if (controller.busy) const LinearProgressIndicator(),
                         if (controller.error != null)
                           Padding(
                               padding: const EdgeInsets.symmetric(vertical: 12),

@@ -96,8 +96,10 @@ class _InvitationCenterState extends State<InvitationCenter>
     if (await operation.acknowledge()) await items.reload();
   }
 
-  Widget _recovery() =>
-      Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+  Widget _recovery() => operation.resultTerminal != null
+      ? ParentResultTerminalPanel(operation: operation, onViewCurrent: items.reload, onEnded: items.reload)
+      : Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        ParentKnownOperationReceipt(operation: operation),
         if (operation.error != null)
           Text(invitationFailure(operation.error!),
               style: TextStyle(color: Theme.of(context).colorScheme.error)),

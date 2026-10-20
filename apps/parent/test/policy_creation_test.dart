@@ -11,6 +11,8 @@ import 'package:parent/core/policy_creation.dart';
 import 'package:parent/core/parent_session.dart';
 import 'package:parent/ui/policy_creation_page.dart';
 
+import 'support/parent_operation_journal_fixture.dart';
+
 class _CreationSession extends ParentSession {
   final ParentApi fixture;
   _CreationSession(this.fixture) {
@@ -24,7 +26,9 @@ class _CreationSession extends ParentSession {
   bool get authenticated => true;
 }
 
-class MemoryDurableStorage extends ParentDurableStorage {
+class MemoryDurableStorage extends ParentDurableStorage with ParentAtomicJournalFixture {
+  @override
+  bool get fixtureWriteMayCommitBeforeFailure => true;
   final values = <String, String>{};
   bool failWrite = false, failDelete = false;
   Completer<void>? writeBarrier;

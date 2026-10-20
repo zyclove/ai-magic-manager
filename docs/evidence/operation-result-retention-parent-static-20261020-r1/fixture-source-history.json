@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "status": "FROZEN_STATIC_NOT_RUN",
+  "originalBeforeManifest": ".cache/operation-result-retention-20261020/parent/fake-before-manifest.json",
+  "originalBeforeManifestSha256": "b2be3061967f43f2f85a3c07fae8d06da0562fe311cfeeb0f3e6e30d1e4b50b2",
+  "handoffBeforeManifest": ".cache/operation-result-retention-20261020/workbench-review/parent-test-handoff-before/manifest.json",
+  "handoffBeforeManifestSha256": "abb458ee6fabfdbae68bcb38fd15d51eb8cc2268f9d09b1d3523bf4840f1ee9b",
+  "helperOriginalBeforeState": "Not present in original 18-file before snapshot; created by the prior implementation agent, then uniquely captured before this handoff adaptation.",
+  "helperHandoffBefore": {
+    "path": "apps/parent/test/support/parent_operation_journal_fixture.dart",
+    "sha256": "21237744d029ec359165a78e3b4e426bb1ad6ff32012b65cade11041301e32fd",
+    "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\workbench-review\\parent-test-handoff-before\\apps\\parent\\test\\support\\parent_operation_journal_fixture.dart"
+  },
+  "finalManifest": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/manifest.json",
+  "finalManifestSha256": "fdbe629f871ac443bd04557d06bbcc2557a82306e7f3606ff34986859fdbea1f",
+  "finalFreeze": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/freeze.json",
+  "finalFreezeSha256": "bad0b1242aeaf289978c317f132c36d3381cdaac90cb0293011f364cf64ec06a",
+  "priorCaptureNote": "r1 and r2 evidence remains immutable. r3 is final after only new-import placement cleanup and the shared invitation HEAD target excludes unrelated Family WIP."
+}

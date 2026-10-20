@@ -1,3 +1,4 @@
+import 'operation_result_terminal_panel.dart';
 import 'package:flutter/material.dart';
 import '../core/invitation_acceptance.dart';
 import '../core/member_access.dart';
@@ -60,7 +61,14 @@ class _InvitationAcceptancePageState extends State<InvitationAcceptancePage>
       session.authenticated &&
       session.profile?['subject'] == actor &&
       session.generation == generation;
-  bool get available => mounted && foreground && identityMatches;
+  bool get available => mounted && !_operationOwnerLost && foreground && identityMatches;
+  bool _operationOwnerLost = false;
+  @override
+  void deactivate() {
+    _operationOwnerLost = true;
+    super.deactivate();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -206,8 +214,13 @@ class _InvitationAcceptancePageState extends State<InvitationAcceptancePage>
           helperText: '仅输入 43 位邀请码，不要输入账号密码。',
           prefixIcon: const Icon(Icons.key_outlined)));
   Widget _result() {
+    if (operation.resultTerminal != null) {
+      return ParentResultTerminalPanel(operation: operation,
+          onViewCurrent: () => _refresh(), onEnded: () => _refresh());
+    }
     final result = operation.result, now = result?['current'] as Json?;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+      ParentKnownOperationReceipt(operation: operation),
       Text(operation.committed ? '原加入操作已确认' : '核对上一次加入操作',
           style: Theme.of(context).textTheme.titleLarge),
       if (result != null) ...[
@@ -227,7 +240,7 @@ class _InvitationAcceptancePageState extends State<InvitationAcceptancePage>
       OutlinedButton(
           onPressed: operation.busy ? null : () => operation.recover(),
           child: const Text('查询原加入结果')),
-      if (!operation.committed) ...[
+      if (!operation.committed && !operation.operationKnownSuccessful) ...[
         const SizedBox(height: 12),
         _tokenField(label: '重新输入原邀请码'),
         OutlinedButton(

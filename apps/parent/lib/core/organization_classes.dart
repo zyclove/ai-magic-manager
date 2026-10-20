@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 import 'parent_api.dart';
 import 'parent_durable_storage.dart';
+import 'operation_journal.dart';
+import 'operation_result_terminal.dart';
 
 const classOperations = {
   'CREATE',
@@ -87,13 +89,14 @@ void validateClassOperation(Json input, Json? before, Json? target) {
 }
 
 class ClassOperationStore {
+  late final ParentOperationJournal journal = ParentOperationJournal(storage);
   final ParentDurableStorage storage;
   ClassOperationStore({ParentDurableStorage? storage})
       : storage = storage ?? ParentDurableStorage();
   String _key(String tenant, String actor) =>
       'parent.pending.class.$tenant.$actor';
   Future<Json?> load(String tenant, String actor) async {
-    final value = await storage.read(key: _key(tenant, actor));
+    final value = await journal.read(key: _key(tenant, actor));
     if (value == null) return null;
     if (value.length > 16384) throw const FormatException('班级恢复记录过大。');
     final row = jsonDecode(value);
@@ -112,19 +115,37 @@ class ClassOperationStore {
     if (await load(tenant, actor) != null) throw StateError('请先核对上一次班级操作。');
     final encoded = jsonEncode(value);
     if (encoded.length > 16384) throw const FormatException('班级恢复记录过大。');
-    await storage.write(key: _key(tenant, actor), value: encoded);
+    await journal.write(key: _key(tenant, actor), value: encoded);
   }
 
   Future<void> clear(String tenant, String actor, String key) async {
     final row = await load(tenant, actor);
     if (row == null) return;
     if (row['requestId'] != key) throw StateError('恢复记录已变化，请重新读取。');
-    await storage.delete(key: _key(tenant, actor));
+    await journal.delete(key: _key(tenant, actor));
   }
 }
 
 /// Network uncertainty never generates a new request or drops the two transfer versions.
-class ClassOperationController extends ChangeNotifier {
+class ClassOperationController extends ChangeNotifier with ParentTerminalOperation {
+  @override
+  ParentOperationJournal get operationJournal => store.journal;
+  @override
+  String get operationSlot => store._key(tenant, actor);
+  @override
+  Json? get operationPayload => pending;
+  @override
+  bool get operationCurrent => current;
+  @override
+  bool get operationHasSuccessfulResult => committed != null;
+  @override
+  void forgetOperationPayload() {
+    pending = null;
+    committed = null;
+    latest = null;
+    queried = false;
+    loaded = false;
+  }
   final ParentApi api;
   final String tenant, actor;
   final ClassOperationStore store;
@@ -168,6 +189,7 @@ class ClassOperationController extends ChangeNotifier {
         loaded = true;
       }
     } catch (failure) {
+      await captureResultTerminal(failure);
       if (current) error = failure;
     } finally {
       busy = false;
@@ -176,6 +198,7 @@ class ClassOperationController extends ChangeNotifier {
   }
 
   Future<void> submit(Json input, {Json? before, Json? target}) async {
+    if (operationBlocked) return;
     if (!canSubmit) return;
     busy = true;
     error = null;
@@ -193,6 +216,7 @@ class ClassOperationController extends ChangeNotifier {
       pending = row;
       await _send();
     } catch (failure) {
+      await captureResultTerminal(failure);
       if (current) {
         error = failure;
         if (pending == null) loaded = false;
@@ -280,11 +304,12 @@ class ClassOperationController extends ChangeNotifier {
         body: body,
         version: input['version'],
         idempotencyKey: p['requestId'],
-        isCurrent: () => current);
+        isCurrent: () => current, beforeDispatch: operationBeforeWrite);
     if (!current) return;
     if (result is! Json) throw _invalid;
     committed = _validateCommitted(
         op == 'TRANSFER' ? [result['source'], result['target']] : [result]);
+    if (operationHasSuccessfulResult) await recordSuccessfulOperation();
     await _query();
   }
 
@@ -293,7 +318,7 @@ class ClassOperationController extends ChangeNotifier {
     try {
       final result = await api.send(
           'POST', '$path/operation-results/${p['requestId']}/query',
-          body: p['input'], isCurrent: () => current);
+          body: p['input'], isCurrent: () => current, beforeDispatch: operationBeforeDispatch);
       if (!current) return;
       if (result is! Json ||
           result['requestId'] != p['requestId'] ||
@@ -309,7 +334,9 @@ class ClassOperationController extends ChangeNotifier {
       committed = original;
       latest = now;
       queried = true;
+      if (operationHasSuccessfulResult) await recordSuccessfulOperation();
     } on ParentApiException catch (failure) {
+      await captureResultTerminal(failure);
       if (current &&
           failure.status == 404 &&
           failure.code == 'CLASS_RESULT_UNAVAILABLE') {
@@ -322,7 +349,8 @@ class ClassOperationController extends ChangeNotifier {
   }
 
   Future<void> recover({bool retry = false}) async {
-    if (!current || busy || pending == null || (retry && committed != null)) {
+    if (operationBlocked) return;
+    if (!current || busy || pending == null || (retry && (committed != null || operationKnownSuccessful))) {
       return;
     }
     busy = true;
@@ -333,9 +361,11 @@ class ClassOperationController extends ChangeNotifier {
       if (retry) {
         await _send();
       } else {
+        if (operationHasSuccessfulResult) await recordSuccessfulOperation();
         await _query();
       }
     } catch (failure) {
+      await captureResultTerminal(failure);
       if (current) error = failure;
     } finally {
       busy = false;
@@ -344,6 +374,7 @@ class ClassOperationController extends ChangeNotifier {
   }
 
   Future<bool> acknowledge() async {
+    if (operationBlocked) return false;
     if (!current || busy || pending == null || !queried) return false;
     busy = true;
     error = null;
@@ -357,6 +388,7 @@ class ClassOperationController extends ChangeNotifier {
       queried = false;
       return true;
     } catch (failure) {
+      await captureResultTerminal(failure);
       if (current) error = failure;
       return false;
     } finally {

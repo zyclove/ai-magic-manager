@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "status": "FROZEN_STATIC_NOT_RUN",
+  "manifest": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/manifest.json",
+  "manifestSha256": "fdbe629f871ac443bd04557d06bbcc2557a82306e7f3606ff34986859fdbea1f",
+  "sourcePins": [
+    {
+      "path": "apps/parent/test/application_catalog_test.dart",
+      "sha256": "3f821a3efb1e0d52839d848edfd47693f611e18d939e976143034f7412cc2f61"
+    },
+    {
+      "path": "apps/parent/test/audit_exports_test.dart",
+      "sha256": "df330c4dbcc2074e45fabb2f1a1aeaafbffa5c35db25bbaf3dd34469236f17fe"
+    },
+    {
+      "path": "apps/parent/test/device_groups_test.dart",
+      "sha256": "3e5c98e2e5a5b6538431c760604eca8d8211fc97319fec5e7b4bec5a14cab834"
+    },
+    {
+      "path": "apps/parent/test/invitation_acceptance_test.dart",
+      "sha256": "2a0529dfea03be93672af0dc8527ce2011c011e483ce2b78a049672b8be3058c"
+    },
+    {
+      "path": "apps/parent/test/invitations_test.dart",
+      "sha256": "5b18c663a17c8daf5abc3e447a4a86a942a4dda4e9bf75cc6eae705ea15d5e16"
+    },
+    {
+      "path": "apps/parent/test/member_access_test.dart",
+      "sha256": "54537bc229e23dada902df8e1ae7457d8ca9f250d78e2dc9220c3049480107a6"
+    },
+    {
+      "path": "apps/parent/test/observation_settings_test.dart",
+      "sha256": "bf1814b2bd1127d56420379163fab6a9fd6564daf4338f8abd4a860baae9da00"
+    },
+    {
+      "path": "apps/parent/test/permission_consent_test.dart",
+      "sha256": "6d87582bfc4eb26978f9f661fe90817ba4810143e39042d1725ecde31f2e91c8"
+    },
+    {
+      "path": "apps/parent/test/ownership_test.dart",
+      "sha256": "2e9a1ce629b82d8f3fa7bc106e22194c80fcffd8e28dbc8679ccea1658d90da7"
+    },
+    {
+      "path": "apps/parent/test/organization_classes_test.dart",
+      "sha256": "b65f97fc87998b8b3a3b1a794989777ac0eb2d3eee597142d7339f49dd8194f1"
+    },
+    {
+      "path": "apps/parent/test/quotas_test.dart",
+      "sha256": "4fa8aa036fc28f118b0eed7298fe7ad481c0da88cce997013ac4559474a4e630"
+    },
+    {
+      "path": "apps/parent/test/quota_plans_test.dart",
+      "sha256": "9248c0950619d2bb719b742b2119fdf1cd4e998948035ea2798ce746ece2b60a"
+    },
+    {
+      "path": "apps/parent/test/policy_creation_test.dart",
+      "sha256": "eb1b44b4211e3766bb2a5c1a7f422f0784a6215749f034218fc9e49c0d0238f4"
+    },
+    {
+      "path": "apps/parent/test/schedules_test.dart",
+      "sha256": "76f3b6169027531dde27f394816fefaaf095d383d0b3ab9509a4d5d5e87dafd2"
+    },
+    {
+      "path": "apps/parent/test/subjects_test.dart",
+      "sha256": "c23a1e2cf16ce827aea7ea6ea9adebc7ed19954189d9fb953d49b0a4d275a1e5"
+    },
+    {
+      "path": "apps/parent/test/schedule_presets_test.dart",
+      "sha256": "dc619808c00260672aba39643ecbebf9190adb64327b086438c75919f4e69288"
+    },
+    {
+      "path": "apps/parent/test/policy_publication_recovery_test.dart",
+      "sha256": "6fe66e4c2ad69b46368b80c7ca0217c00314637c9c6c0f7907522ba82dfa74c3"
+    },
+    {
+      "path": "apps/parent/test/policy_group_selection_test.dart",
+      "sha256": "0b554986c414dd869003dea13ac5ff0dc95ca5139a5d8735f9a1bd6a8f7053f0"
+    },
+    {
+      "path": "apps/parent/test/support/parent_operation_journal_fixture.dart",
+      "sha256": "7234ee691306fd83cdec5584526e2a7aae6b711312495e2c015193585f7023d4"
+    }
+  ],
+  "headTargets": [
+    {
+      "path": "apps/parent/test/invitation_acceptance_test.dart",
+      "headCommit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+      "headSha256": "66bbd4189d21ebccceab239361f555e89a0ec1baf42fdc9fd376764de07469c9",
+      "mainAfterSha256": "2a0529dfea03be93672af0dc8527ce2011c011e483ce2b78a049672b8be3058c",
+      "headAfterSha256": "4cf2e97ec8af6182f3c4ce0dfce0d11307af99cf1aeaa0d88fd76fcd5746c5fb",
+      "headAfterSnapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/head-after/apps/parent/test/invitation_acceptance_test.dart",
+      "headOnlyPatch": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/patches/invitation_acceptance_test.dart.head-only.patch",
+      "headOnlyPatchSha256": "5b3a59fc8ecbe48d33b0168a62e73dea8b935eb199b10feae8815d4779f152d9",
+      "headCounts": {
+        "test": 11,
+        "testWidgets": 4,
+        "expect": 64,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "targetCounts": {
+        "test": 11,
+        "testWidgets": 4,
+        "expect": 64,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "outsideFeatureHeadBytesPreserved": true
+    }
+  ],
+  "scopeNote": "18 existing workspace test files plus one new support helper; no new test declarations. Publication recovery was already in original workspace before snapshot but absent from HEAD, and is explicitly authorized for full inclusion. Invitation acceptance Main retains unrelated Family WIP; stage only the supplied HEAD target/patch for that path.",
+  "countsBefore": {
+    "test": 121,
+    "testWidgets": 63,
+    "expect": 809,
+    "expectLater": 10,
+    "assert": 0
+  },
+  "countsAfter": {
+    "test": 121,
+    "testWidgets": 63,
+    "expect": 809,
+    "expectLater": 10,
+    "assert": 0
+  },
+  "expectedAssertionProtocolChanges": 8,
+  "notRun": [
+    "SDK",
+    "tests",
+    "format",
+    "analyze",
+    "compile",
+    "build",
+    "browser",
+    "services"
+  ]
+}

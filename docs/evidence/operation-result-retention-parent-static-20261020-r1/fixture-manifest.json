@@ -1,0 +1,640 @@
+{
+  "phase": "Parent existing-test atomic journal and terminal-protocol adapters",
+  "status": "STATIC_NOT_RUN",
+  "beforeManifest": ".cache/operation-result-retention-20261020/parent/fake-before-manifest.json",
+  "beforeManifestSha256": "b2be3061967f43f2f85a3c07fae8d06da0562fe311cfeeb0f3e6e30d1e4b50b2",
+  "existingFileCount": 18,
+  "newHelper": {
+    "path": "apps/parent/test/support/parent_operation_journal_fixture.dart",
+    "sha256": "7234ee691306fd83cdec5584526e2a7aae6b711312495e2c015193585f7023d4",
+    "bytes": 11129,
+    "counts": {
+      "test": 0,
+      "testWidgets": 0,
+      "expect": 0,
+      "expectLater": 0,
+      "assert": 0
+    },
+    "snapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/after/apps/parent/test/support/parent_operation_journal_fixture.dart",
+    "featurePatch": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/patches/parent_operation_journal_fixture.dart.new.patch",
+    "featurePatchSha256": "8001acc76549b6c76df00c00ec6c62f534df173e1c6fccea0a0a7d39c15b4346"
+  },
+  "sources": [
+    {
+      "path": "apps/parent/test/application_catalog_test.dart",
+      "beforeSha256": "6c3a3df8e5b29e7a391a3440a379dc06a1b8a31f9d80b1c3c82eaeae650cbeb6",
+      "afterSha256": "3f821a3efb1e0d52839d848edfd47693f611e18d939e976143034f7412cc2f61",
+      "snapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/after/apps/parent/test/application_catalog_test.dart",
+      "bytes": 20369,
+      "countsBefore": {
+        "test": 7,
+        "testWidgets": 6,
+        "expect": 54,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "countsAfter": {
+        "test": 7,
+        "testWidgets": 6,
+        "expect": 54,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "featurePatch": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/patches/application_catalog_test.dart.feature.patch",
+      "featurePatchSha256": "74b236744d519e072800c4fa22d60e02876e382c25b29f3543c5f08fcbbfcba0",
+      "headCommit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+      "headExists": true,
+      "headSha256": "6c3a3df8e5b29e7a391a3440a379dc06a1b8a31f9d80b1c3c82eaeae650cbeb6",
+      "beforeMatchesHead": true,
+      "headSnapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/head/apps/parent/test/application_catalog_test.dart"
+    },
+    {
+      "path": "apps/parent/test/audit_exports_test.dart",
+      "beforeSha256": "9e849fdf322c494a74e5dd050da51732ddc1156c7bb1c5f2753e9819a973ea94",
+      "afterSha256": "df330c4dbcc2074e45fabb2f1a1aeaafbffa5c35db25bbaf3dd34469236f17fe",
+      "snapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/after/apps/parent/test/audit_exports_test.dart",
+      "bytes": 17446,
+      "countsBefore": {
+        "test": 8,
+        "testWidgets": 6,
+        "expect": 50,
+        "expectLater": 4,
+        "assert": 0
+      },
+      "countsAfter": {
+        "test": 8,
+        "testWidgets": 6,
+        "expect": 50,
+        "expectLater": 4,
+        "assert": 0
+      },
+      "featurePatch": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/patches/audit_exports_test.dart.feature.patch",
+      "featurePatchSha256": "1c742a3f70983153da61d3e25b0ae14ac1688dd094ce64c4f0877b6069ea4ebb",
+      "headCommit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+      "headExists": true,
+      "headSha256": "9e849fdf322c494a74e5dd050da51732ddc1156c7bb1c5f2753e9819a973ea94",
+      "beforeMatchesHead": true,
+      "headSnapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/head/apps/parent/test/audit_exports_test.dart"
+    },
+    {
+      "path": "apps/parent/test/device_groups_test.dart",
+      "beforeSha256": "a0c33186f2f2ba0c8ea8ff613c35780283ddadf47017dfd490666369ef187635",
+      "afterSha256": "3e5c98e2e5a5b6538431c760604eca8d8211fc97319fec5e7b4bec5a14cab834",
+      "snapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/after/apps/parent/test/device_groups_test.dart",
+      "bytes": 17388,
+      "countsBefore": {
+        "test": 7,
+        "testWidgets": 4,
+        "expect": 48,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "countsAfter": {
+        "test": 7,
+        "testWidgets": 4,
+        "expect": 48,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "featurePatch": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/patches/device_groups_test.dart.feature.patch",
+      "featurePatchSha256": "455c7369c8cd8d71a4cbae5d6d80c7cdffd2bba634c46df530e67f6f50ec1906",
+      "headCommit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+      "headExists": true,
+      "headSha256": "a0c33186f2f2ba0c8ea8ff613c35780283ddadf47017dfd490666369ef187635",
+      "beforeMatchesHead": true,
+      "headSnapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/head/apps/parent/test/device_groups_test.dart"
+    },
+    {
+      "path": "apps/parent/test/invitation_acceptance_test.dart",
+      "beforeSha256": "feb603703556aa4802a3b393b30dc8519382408c2f47f6c2431aac13af52a444",
+      "afterSha256": "2a0529dfea03be93672af0dc8527ce2011c011e483ce2b78a049672b8be3058c",
+      "snapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/after/apps/parent/test/invitation_acceptance_test.dart",
+      "bytes": 18943,
+      "countsBefore": {
+        "test": 11,
+        "testWidgets": 4,
+        "expect": 64,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "countsAfter": {
+        "test": 11,
+        "testWidgets": 4,
+        "expect": 64,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "featurePatch": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/patches/invitation_acceptance_test.dart.feature.patch",
+      "featurePatchSha256": "c5900fedde101b367c032bfbd443c1a48fa239b536898fa8e9b286b765d01801",
+      "headCommit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+      "headExists": true,
+      "headSha256": "66bbd4189d21ebccceab239361f555e89a0ec1baf42fdc9fd376764de07469c9",
+      "beforeMatchesHead": false,
+      "headSnapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/head/apps/parent/test/invitation_acceptance_test.dart"
+    },
+    {
+      "path": "apps/parent/test/invitations_test.dart",
+      "beforeSha256": "234f06d4f988d181ee0292d0c37793af9481901d70bb3723efa7bf8c2f5e4122",
+      "afterSha256": "5b18c663a17c8daf5abc3e447a4a86a942a4dda4e9bf75cc6eae705ea15d5e16",
+      "snapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/after/apps/parent/test/invitations_test.dart",
+      "bytes": 17088,
+      "countsBefore": {
+        "test": 9,
+        "testWidgets": 4,
+        "expect": 58,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "countsAfter": {
+        "test": 9,
+        "testWidgets": 4,
+        "expect": 58,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "featurePatch": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/patches/invitations_test.dart.feature.patch",
+      "featurePatchSha256": "a52067edae54eee728d8f25d5efea789dbfb16fc62fd63a16e2df31b843fa344",
+      "headCommit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+      "headExists": true,
+      "headSha256": "234f06d4f988d181ee0292d0c37793af9481901d70bb3723efa7bf8c2f5e4122",
+      "beforeMatchesHead": true,
+      "headSnapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/head/apps/parent/test/invitations_test.dart"
+    },
+    {
+      "path": "apps/parent/test/member_access_test.dart",
+      "beforeSha256": "1d71f3d9153b9a06033474bb329f87f425cceb0fdd18c29bb4f4ccffb70488cd",
+      "afterSha256": "54537bc229e23dada902df8e1ae7457d8ca9f250d78e2dc9220c3049480107a6",
+      "snapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/after/apps/parent/test/member_access_test.dart",
+      "bytes": 16735,
+      "countsBefore": {
+        "test": 7,
+        "testWidgets": 4,
+        "expect": 45,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "countsAfter": {
+        "test": 7,
+        "testWidgets": 4,
+        "expect": 45,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "featurePatch": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/patches/member_access_test.dart.feature.patch",
+      "featurePatchSha256": "556621149c98fabd6f2a6063ea2fe5ac390a7b3eb5c8c8139903cd3c69064a0e",
+      "headCommit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+      "headExists": true,
+      "headSha256": "1d71f3d9153b9a06033474bb329f87f425cceb0fdd18c29bb4f4ccffb70488cd",
+      "beforeMatchesHead": true,
+      "headSnapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/head/apps/parent/test/member_access_test.dart"
+    },
+    {
+      "path": "apps/parent/test/observation_settings_test.dart",
+      "beforeSha256": "8ff976ba8419cfe391c29e91e99c60d9fabb30b626a6d712594117a9dd02e6f0",
+      "afterSha256": "bf1814b2bd1127d56420379163fab6a9fd6564daf4338f8abd4a860baae9da00",
+      "snapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/after/apps/parent/test/observation_settings_test.dart",
+      "bytes": 17597,
+      "countsBefore": {
+        "test": 6,
+        "testWidgets": 3,
+        "expect": 53,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "countsAfter": {
+        "test": 6,
+        "testWidgets": 3,
+        "expect": 53,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "featurePatch": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/patches/observation_settings_test.dart.feature.patch",
+      "featurePatchSha256": "1e326d4b0183322f6a931dcf9be06fafde0b0daaaf81d7aa1f1b61263da26f8d",
+      "headCommit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+      "headExists": true,
+      "headSha256": "8ff976ba8419cfe391c29e91e99c60d9fabb30b626a6d712594117a9dd02e6f0",
+      "beforeMatchesHead": true,
+      "headSnapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/head/apps/parent/test/observation_settings_test.dart"
+    },
+    {
+      "path": "apps/parent/test/permission_consent_test.dart",
+      "beforeSha256": "908350e16bf21e7e42231bc0b26250f3a729954e6b7a2a53ddae7fdf7ffc4233",
+      "afterSha256": "6d87582bfc4eb26978f9f661fe90817ba4810143e39042d1725ecde31f2e91c8",
+      "snapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/after/apps/parent/test/permission_consent_test.dart",
+      "bytes": 9395,
+      "countsBefore": {
+        "test": 6,
+        "testWidgets": 0,
+        "expect": 34,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "countsAfter": {
+        "test": 6,
+        "testWidgets": 0,
+        "expect": 34,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "featurePatch": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/patches/permission_consent_test.dart.feature.patch",
+      "featurePatchSha256": "941abc9017405f60b877bd6052701777671216cbdeab217469a8bf48362fbc40",
+      "headCommit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+      "headExists": true,
+      "headSha256": "908350e16bf21e7e42231bc0b26250f3a729954e6b7a2a53ddae7fdf7ffc4233",
+      "beforeMatchesHead": true,
+      "headSnapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/head/apps/parent/test/permission_consent_test.dart"
+    },
+    {
+      "path": "apps/parent/test/ownership_test.dart",
+      "beforeSha256": "a1938dc2cca55d865f9e5bb999fe36ab02f2844ac09e9e6f71b9133e07c9599b",
+      "afterSha256": "2e9a1ce629b82d8f3fa7bc106e22194c80fcffd8e28dbc8679ccea1658d90da7",
+      "snapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/after/apps/parent/test/ownership_test.dart",
+      "bytes": 20124,
+      "countsBefore": {
+        "test": 9,
+        "testWidgets": 4,
+        "expect": 60,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "countsAfter": {
+        "test": 9,
+        "testWidgets": 4,
+        "expect": 60,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "featurePatch": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/patches/ownership_test.dart.feature.patch",
+      "featurePatchSha256": "95170c4fdf4b97603a78dc95273ce8a718b24e3f5d3fdb99f5faad0a3d414cb0",
+      "headCommit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+      "headExists": true,
+      "headSha256": "a1938dc2cca55d865f9e5bb999fe36ab02f2844ac09e9e6f71b9133e07c9599b",
+      "beforeMatchesHead": true,
+      "headSnapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/head/apps/parent/test/ownership_test.dart"
+    },
+    {
+      "path": "apps/parent/test/organization_classes_test.dart",
+      "beforeSha256": "0fb3e03fb289ac6058fd5e691bd8bfaa6c86dc8659213a88e4241d186e7e26c8",
+      "afterSha256": "b65f97fc87998b8b3a3b1a794989777ac0eb2d3eee597142d7339f49dd8194f1",
+      "snapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/after/apps/parent/test/organization_classes_test.dart",
+      "bytes": 14246,
+      "countsBefore": {
+        "test": 5,
+        "testWidgets": 3,
+        "expect": 38,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "countsAfter": {
+        "test": 5,
+        "testWidgets": 3,
+        "expect": 38,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "featurePatch": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/patches/organization_classes_test.dart.feature.patch",
+      "featurePatchSha256": "caf7017be27c63d22a29105af130936599d56ed722ecca4182096ce1432f251c",
+      "headCommit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+      "headExists": true,
+      "headSha256": "0fb3e03fb289ac6058fd5e691bd8bfaa6c86dc8659213a88e4241d186e7e26c8",
+      "beforeMatchesHead": true,
+      "headSnapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/head/apps/parent/test/organization_classes_test.dart"
+    },
+    {
+      "path": "apps/parent/test/quotas_test.dart",
+      "beforeSha256": "41d1531fd896461dcabd8200d334e024084dcc05011b091d45c2824d90320137",
+      "afterSha256": "4fa8aa036fc28f118b0eed7298fe7ad481c0da88cce997013ac4559474a4e630",
+      "snapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/after/apps/parent/test/quotas_test.dart",
+      "bytes": 16944,
+      "countsBefore": {
+        "test": 5,
+        "testWidgets": 4,
+        "expect": 49,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "countsAfter": {
+        "test": 5,
+        "testWidgets": 4,
+        "expect": 49,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "featurePatch": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/patches/quotas_test.dart.feature.patch",
+      "featurePatchSha256": "dc168475df3ccc9c4182360ea2440b5fcd3f07b61e4dad6566203b02212c7cd6",
+      "headCommit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+      "headExists": true,
+      "headSha256": "41d1531fd896461dcabd8200d334e024084dcc05011b091d45c2824d90320137",
+      "beforeMatchesHead": true,
+      "headSnapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/head/apps/parent/test/quotas_test.dart"
+    },
+    {
+      "path": "apps/parent/test/quota_plans_test.dart",
+      "beforeSha256": "15500b1e3b198ecdb934b89b26347aee4596dbbcbbd3a258aaa48b4524b07814",
+      "afterSha256": "9248c0950619d2bb719b742b2119fdf1cd4e998948035ea2798ce746ece2b60a",
+      "snapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/after/apps/parent/test/quota_plans_test.dart",
+      "bytes": 15032,
+      "countsBefore": {
+        "test": 7,
+        "testWidgets": 4,
+        "expect": 46,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "countsAfter": {
+        "test": 7,
+        "testWidgets": 4,
+        "expect": 46,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "featurePatch": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/patches/quota_plans_test.dart.feature.patch",
+      "featurePatchSha256": "b98301abbe51b94fcb9ed25000bd043f10daf9275003fbe95c10ef750a13e5a2",
+      "headCommit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+      "headExists": true,
+      "headSha256": "15500b1e3b198ecdb934b89b26347aee4596dbbcbbd3a258aaa48b4524b07814",
+      "beforeMatchesHead": true,
+      "headSnapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/head/apps/parent/test/quota_plans_test.dart"
+    },
+    {
+      "path": "apps/parent/test/policy_creation_test.dart",
+      "beforeSha256": "99258fabbcd00652e50081be0c0c5deb1b138385f1dfd3116b9997faae3aff6a",
+      "afterSha256": "eb1b44b4211e3766bb2a5c1a7f422f0784a6215749f034218fc9e49c0d0238f4",
+      "snapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/after/apps/parent/test/policy_creation_test.dart",
+      "bytes": 11833,
+      "countsBefore": {
+        "test": 9,
+        "testWidgets": 1,
+        "expect": 52,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "countsAfter": {
+        "test": 9,
+        "testWidgets": 1,
+        "expect": 52,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "featurePatch": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/patches/policy_creation_test.dart.feature.patch",
+      "featurePatchSha256": "daa0da9b31e5cd2d151206426774de05cabfb017675360bdfe369c82263b2ab1",
+      "headCommit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+      "headExists": true,
+      "headSha256": "99258fabbcd00652e50081be0c0c5deb1b138385f1dfd3116b9997faae3aff6a",
+      "beforeMatchesHead": true,
+      "headSnapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/head/apps/parent/test/policy_creation_test.dart"
+    },
+    {
+      "path": "apps/parent/test/schedules_test.dart",
+      "beforeSha256": "b157c898dafa2771be5214e46f5472411e65d80f11d09c8eb1e67becc5336bfb",
+      "afterSha256": "76f3b6169027531dde27f394816fefaaf095d383d0b3ab9509a4d5d5e87dafd2",
+      "snapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/after/apps/parent/test/schedules_test.dart",
+      "bytes": 16561,
+      "countsBefore": {
+        "test": 8,
+        "testWidgets": 4,
+        "expect": 51,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "countsAfter": {
+        "test": 8,
+        "testWidgets": 4,
+        "expect": 51,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "featurePatch": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/patches/schedules_test.dart.feature.patch",
+      "featurePatchSha256": "f375f6c0dc1d921ec8c0ba7d483e159ba68d2130cf64a105e0c0c2283331f6d2",
+      "headCommit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+      "headExists": true,
+      "headSha256": "b157c898dafa2771be5214e46f5472411e65d80f11d09c8eb1e67becc5336bfb",
+      "beforeMatchesHead": true,
+      "headSnapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/head/apps/parent/test/schedules_test.dart"
+    },
+    {
+      "path": "apps/parent/test/subjects_test.dart",
+      "beforeSha256": "1f1c44f4edb4fe908b05e2a05e27a82e00999cfa70ae6f109714b22d96888680",
+      "afterSha256": "c23a1e2cf16ce827aea7ea6ea9adebc7ed19954189d9fb953d49b0a4d275a1e5",
+      "snapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/after/apps/parent/test/subjects_test.dart",
+      "bytes": 15364,
+      "countsBefore": {
+        "test": 9,
+        "testWidgets": 3,
+        "expect": 45,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "countsAfter": {
+        "test": 9,
+        "testWidgets": 3,
+        "expect": 45,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "featurePatch": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/patches/subjects_test.dart.feature.patch",
+      "featurePatchSha256": "78f3896c9553d51cb5c36856d0709a72a1905ed6afe73682a4e80886e1c8dfc4",
+      "headCommit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+      "headExists": true,
+      "headSha256": "1f1c44f4edb4fe908b05e2a05e27a82e00999cfa70ae6f109714b22d96888680",
+      "beforeMatchesHead": true,
+      "headSnapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/head/apps/parent/test/subjects_test.dart"
+    },
+    {
+      "path": "apps/parent/test/schedule_presets_test.dart",
+      "beforeSha256": "b83c9b19d283feee2beb6137ae74db3e52ea9030f479efe01069a3bb533d3324",
+      "afterSha256": "dc619808c00260672aba39643ecbebf9190adb64327b086438c75919f4e69288",
+      "snapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/after/apps/parent/test/schedule_presets_test.dart",
+      "bytes": 11877,
+      "countsBefore": {
+        "test": 1,
+        "testWidgets": 6,
+        "expect": 37,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "countsAfter": {
+        "test": 1,
+        "testWidgets": 6,
+        "expect": 37,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "featurePatch": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/patches/schedule_presets_test.dart.feature.patch",
+      "featurePatchSha256": "2bd2442a13d43bb98d1c8aa71c9025a353f13d97df9d376d4a81542d725504c6",
+      "headCommit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+      "headExists": true,
+      "headSha256": "b83c9b19d283feee2beb6137ae74db3e52ea9030f479efe01069a3bb533d3324",
+      "beforeMatchesHead": true,
+      "headSnapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/head/apps/parent/test/schedule_presets_test.dart"
+    },
+    {
+      "path": "apps/parent/test/policy_publication_recovery_test.dart",
+      "beforeSha256": "b19240fbcabf9bbec80a71155905f7ae7ec1fef8e57ce9329bf29d725217d8f7",
+      "afterSha256": "6fe66e4c2ad69b46368b80c7ca0217c00314637c9c6c0f7907522ba82dfa74c3",
+      "snapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/after/apps/parent/test/policy_publication_recovery_test.dart",
+      "bytes": 5655,
+      "countsBefore": {
+        "test": 0,
+        "testWidgets": 1,
+        "expect": 8,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "countsAfter": {
+        "test": 0,
+        "testWidgets": 1,
+        "expect": 8,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "featurePatch": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/patches/policy_publication_recovery_test.dart.feature.patch",
+      "featurePatchSha256": "f0554268c886e1e0218ceff9314392955ab51db466dfdba6fab4da99a2d84a32",
+      "headCommit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+      "headExists": false,
+      "headSha256": null,
+      "beforeMatchesHead": false,
+      "headSnapshot": null
+    },
+    {
+      "path": "apps/parent/test/policy_group_selection_test.dart",
+      "beforeSha256": "51162f61fe097cf1be50c4eac27c2e4620b03ab24c65e9f5d6a1cbe229edbd91",
+      "afterSha256": "0b554986c414dd869003dea13ac5ff0dc95ca5139a5d8735f9a1bd6a8f7053f0",
+      "snapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/after/apps/parent/test/policy_group_selection_test.dart",
+      "bytes": 10671,
+      "countsBefore": {
+        "test": 7,
+        "testWidgets": 2,
+        "expect": 17,
+        "expectLater": 6,
+        "assert": 0
+      },
+      "countsAfter": {
+        "test": 7,
+        "testWidgets": 2,
+        "expect": 17,
+        "expectLater": 6,
+        "assert": 0
+      },
+      "featurePatch": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/patches/policy_group_selection_test.dart.feature.patch",
+      "featurePatchSha256": "36cd9727bcbc6a843df5eaf4fc3fff21f15707489980106d8a502c69a874c54b",
+      "headCommit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+      "headExists": true,
+      "headSha256": "51162f61fe097cf1be50c4eac27c2e4620b03ab24c65e9f5d6a1cbe229edbd91",
+      "beforeMatchesHead": true,
+      "headSnapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/head/apps/parent/test/policy_group_selection_test.dart"
+    }
+  ],
+  "headTargets": [
+    {
+      "path": "apps/parent/test/invitation_acceptance_test.dart",
+      "headCommit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+      "headSha256": "66bbd4189d21ebccceab239361f555e89a0ec1baf42fdc9fd376764de07469c9",
+      "mainAfterSha256": "2a0529dfea03be93672af0dc8527ce2011c011e483ce2b78a049672b8be3058c",
+      "headAfterSha256": "4cf2e97ec8af6182f3c4ce0dfce0d11307af99cf1aeaa0d88fd76fcd5746c5fb",
+      "headAfterSnapshot": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/head-after/apps/parent/test/invitation_acceptance_test.dart",
+      "headOnlyPatch": ".cache/operation-result-retention-20261020/workbench-review/parent-test-adapters-r3/patches/invitation_acceptance_test.dart.head-only.patch",
+      "headOnlyPatchSha256": "5b3a59fc8ecbe48d33b0168a62e73dea8b935eb199b10feae8815d4779f152d9",
+      "headCounts": {
+        "test": 11,
+        "testWidgets": 4,
+        "expect": 64,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "targetCounts": {
+        "test": 11,
+        "testWidgets": 4,
+        "expect": 64,
+        "expectLater": 0,
+        "assert": 0
+      },
+      "outsideFeatureHeadBytesPreserved": true
+    }
+  ],
+  "totalsBefore": {
+    "test": 121,
+    "testWidgets": 63,
+    "expect": 809,
+    "expectLater": 10,
+    "assert": 0
+  },
+  "totalsAfter": {
+    "test": 121,
+    "testWidgets": 63,
+    "expect": 809,
+    "expectLater": 10,
+    "assert": 0
+  },
+  "countMethod": "Dart lexical call-site scan masks comments/string literals; these are declarations and assertion calls, not expanded runtime case counts.",
+  "assertionProtocolChanges": [
+    {
+      "path": "apps/parent/test/invitation_acceptance_test.dart",
+      "kind": "expect",
+      "ordinal": 39,
+      "before": "expect(c.queried, isTrue)",
+      "after": "expect(c.queried, status == 404 ? isTrue : isFalse)"
+    },
+    {
+      "path": "apps/parent/test/invitation_acceptance_test.dart",
+      "kind": "expect",
+      "ordinal": 42,
+      "before": "expect(await c.acknowledge(), isTrue)",
+      "after": "expect(await (status == 404 ? c.acknowledge() : c.endLocalCheck()), isTrue)"
+    },
+    {
+      "path": "apps/parent/test/observation_settings_test.dart",
+      "kind": "expect",
+      "ordinal": 32,
+      "before": "expect(c.queried, isTrue)",
+      "after": "expect(c.queried, terminal.$1 == 404 ? isTrue : isFalse)"
+    },
+    {
+      "path": "apps/parent/test/permission_consent_test.dart",
+      "kind": "expect",
+      "ordinal": 20,
+      "before": "expect(c.queried, isTrue)",
+      "after": "expect(c.queried, terminal.$1 == 404 ? isTrue : isFalse)"
+    },
+    {
+      "path": "apps/parent/test/ownership_test.dart",
+      "kind": "expect",
+      "ordinal": 26,
+      "before": "expect(op.queried, true)",
+      "after": "expect(op.queried, code == 'OWNERSHIP_RESULT_UNAVAILABLE')"
+    },
+    {
+      "path": "apps/parent/test/ownership_test.dart",
+      "kind": "expect",
+      "ordinal": 29,
+      "before": "expect(await op.acknowledge(), true)",
+      "after": "expect(await (code == 'OWNERSHIP_RESULT_UNAVAILABLE'\n          ? op.acknowledge() : op.endLocalCheck()), true)"
+    },
+    {
+      "path": "apps/parent/test/subjects_test.dart",
+      "kind": "expect",
+      "ordinal": 27,
+      "before": "expect(c.queried, isTrue)",
+      "after": "expect(c.queried, code.startsWith('SUBJECT') ? isTrue : isFalse)"
+    },
+    {
+      "path": "apps/parent/test/policy_publication_recovery_test.dart",
+      "kind": "expect",
+      "ordinal": 7,
+      "before": "expect(storageMutations, 0)",
+      "after": "expect(storageMutations, available ? 1 : 0)"
+    }
+  ],
+  "protocolChanges": [
+    "Sixteen existing Storage fakes keep their original read/write/delete bodies and fault hooks; a shared serial transaction adapter adds native-equivalent CAS/terminal/marker behavior with explicit fixed API/issuer origin.",
+    "Seven existing after-write fault fakes retain possible committed writes on lost acknowledgement; before-write faults still block dispatch.",
+    "Five existing 410 branches now send complete application/problem+json with integer status=410; queried is false and explicit endLocalCheck replaces ordinary acknowledgement only for 410. 404 behavior is preserved.",
+    "Publication lookup injects a durable atomic fixture store; first successful known-success checkpoint counts one actual write; recreation does not repeat it. All HTTP GET-only checks are retained.",
+    "Original LF convention restored after handoff-only CRLF conversion; no formatter executed."
+  ],
+  "limitations": [
+    "No SDK, tests, formatter, analyzer, compiler, build, browser or services run.",
+    "Lexical and source review does not establish runtime passing behavior.",
+    "Feature patches are before-snapshot-to-after deltas; do not replace a whole shared file when beforeMatchesHead is false."
+  ]
+}

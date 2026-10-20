@@ -44,6 +44,7 @@ class ParentApiException implements Exception {
         'PERMISSION_BACKEND_UNAVAILABLE' => '当前服务尚未提供权限观察，请联系管理员启用并完成设备兼容验证。',
         'OBSERVATION_RESULT_UNAVAILABLE' => '未找到原操作结果，不代表从未提交。请核对当前授权和审计。',
         'IDEMPOTENCY_RESPONSE_ERASED' => '原操作结果已按删除流程清理。不会重放或自动重新创建授权。',
+        'IDEMPOTENCY_RESULT_EXPIRED' => '原操作结果已超过 90 天保留期，无法恢复。请查看当前记录。',
         'REGISTRATION_CHANGED' => '设备注册或所属档案已变化。请返回设备列表重新选择。',
         'DEVICE_NOT_ACTIVE' => '设备已不处于启用状态，不能继续修改授权。',
         'INVALID_TIME_ZONE' => '时区未被服务端识别，请检查拼写，例如 Asia/Shanghai。',
@@ -80,13 +81,38 @@ class ParentApiException implements Exception {
       correlationId == null ? message : '$message\n问题编号：$correlationId';
 }
 
+/// Only the transport can construct this evidence. A code string alone is not
+/// proof that a complete, correctly scoped HTTP 410 response was received.
+final class ParentResultTerminalFailure extends ParentApiException {
+  final String? _requestId;
+  final String _path;
+  const ParentResultTerminalFailure._(String code, String? correlationId,
+      this._requestId, this._path) : super(410, code, correlationId);
+  bool matchesRequest(dynamic requestId) => requestId is String &&
+      requestId.isNotEmpty && (_requestId == requestId ||
+          Uri.parse(_path).pathSegments.contains(requestId));
+}
+
 class ParentApi {
   final Future<String> Function() accessToken;
   final http.Client _http;
   final String baseUrl;
+  final bool _ownsClient;
+  final bool Function() Function()? _captureScope;
 
   ParentApi(this.accessToken, {http.Client? client, required this.baseUrl})
-      : _http = client ?? http.Client();
+      : _http = client ?? http.Client(), _ownsClient = true, _captureScope = null;
+
+  ParentApi._scoped(ParentApi source, bool Function() Function() capture)
+      : accessToken = source.accessToken, _http = source._http,
+        baseUrl = source.baseUrl, _ownsClient = false, _captureScope = (() {
+          final outer = source._captureScope?.call(), inner = capture();
+          return () => (outer?.call() ?? true) && inner();
+        });
+
+  /// A request captures its own scope before its first await. A later valid
+  /// step-up cannot revive an older request waiting for credentials or storage.
+  ParentApi scoped(bool Function() Function() capture) => ParentApi._scoped(this, capture);
 
   /// All sensitive reads are no-store. Writes use an explicit version and
   /// idempotency key when the endpoint supports one.
@@ -96,15 +122,23 @@ class ParentApi {
       String? idempotencyKey,
       String? clientRequestId,
       bool Function()? isCurrent,
+      Future<bool> Function()? beforeDispatch,
       int maxResponseBytes = 1024 * 1024}) async {
+    final captured = _captureScope?.call();
+    bool current() => (captured?.call() ?? true) && (isCurrent?.call() ?? true);
     if (maxResponseBytes < 1 || maxResponseBytes > 4 * 1024 * 1024) {
       throw const ParentApiException(400, 'INVALID_RESPONSE');
     }
     try {
+      if (!current()) throw const ParentApiException(409, 'SCOPE_DENIED');
       final token = await accessToken();
+      if (!current()) throw const ParentApiException(409, 'SCOPE_DENIED');
+      if (beforeDispatch != null && !await beforeDispatch()) {
+        throw const ParentApiException(409, 'SCOPE_DENIED');
+      }
       // A screen can lose its account or workspace while token refresh waits.
       // Check again immediately before constructing and dispatching the request.
-      if (isCurrent != null && !isCurrent()) {
+      if (!current()) {
         throw const ParentApiException(409, 'SCOPE_DENIED');
       }
       final request = http.Request(method, Uri.parse('$baseUrl$path'));
@@ -122,7 +156,7 @@ class ParentApi {
         request.headers['Content-Type'] = 'application/json';
         request.body = jsonEncode(body);
       }
-      final (status, bytes) = await (() async {
+      final (status, bytes, headers, contentLength) = await (() async {
         final streamed = await _http.send(request);
         final bytes = <int>[];
         await for (final chunk in streamed.stream) {
@@ -131,9 +165,15 @@ class ParentApi {
           }
           bytes.addAll(chunk);
         }
-        return (streamed.statusCode, bytes);
+        return (streamed.statusCode, bytes, streamed.headers, streamed.contentLength);
       })()
           .timeout(const Duration(seconds: 25));
+      if (!current()) {
+        throw const ParentApiException(409, 'SCOPE_DENIED');
+      }
+      if (contentLength != null && contentLength != bytes.length) {
+        throw const ParentApiException(502, 'INVALID_RESPONSE');
+      }
       if (status >= 300 && status < 400) {
         throw const ParentApiException(502, 'INVALID_RESPONSE');
       }
@@ -146,6 +186,24 @@ class ParentApi {
         }
       }
       if (status >= 400) {
+        final code = decoded is Map ? decoded['errorCode'] : null;
+        final media = headers['content-type']?.toLowerCase().split(';');
+        final contentType = media?.first.trim();
+        final utf8Media = media != null && media.skip(1).every((part) {
+          final parameter = part.trim();
+          return !parameter.startsWith('charset=') ||
+              const {'charset=utf-8', 'charset="utf-8"'}.contains(parameter);
+        });
+        if (status == 410 && decoded is Json &&
+            const {'IDEMPOTENCY_RESULT_EXPIRED', 'IDEMPOTENCY_RESPONSE_ERASED'}.contains(code) &&
+            utf8Media &&
+            (contentType == 'application/json' || contentType == 'application/problem+json') &&
+            decoded['status'] is int && decoded['status'] == 410 &&
+            (decoded['correlationId'] == null || decoded['correlationId'] is String)) {
+          throw ParentResultTerminalFailure._(code as String,
+              decoded['correlationId'] as String?,
+              idempotencyKey ?? clientRequestId, path);
+        }
         throw ParentApiException(
             status,
             decoded is Map && decoded['errorCode'] is String
@@ -165,8 +223,10 @@ class ParentApi {
     }
   }
 
-  Future<Json> object(String path, {bool Function()? isCurrent}) async {
-    final result = await send('GET', path, isCurrent: isCurrent);
+  Future<Json> object(String path, {bool Function()? isCurrent,
+      Future<bool> Function()? beforeDispatch}) async {
+    final result = await send('GET', path, isCurrent: isCurrent,
+        beforeDispatch: beforeDispatch);
     if (result is! Map<String, dynamic>) {
       throw const ParentApiException(502, 'INVALID_RESPONSE');
     }
@@ -217,5 +277,5 @@ class ParentApi {
     return items;
   }
 
-  void close() => _http.close();
+  void close() { if (_ownsClient) _http.close(); }
 }

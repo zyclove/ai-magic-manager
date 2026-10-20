@@ -1,3 +1,4 @@
+import 'operation_result_terminal_panel.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import '../core/parent_api.dart';
@@ -29,12 +30,20 @@ class _ScheduleEditorPageState extends State<ScheduleEditorPage> {
   Route<dynamic>? presetRoute;
   bool get current =>
       mounted &&
+      !_operationOwnerLost &&
       widget.session.authenticated &&
       widget.session.canDecide &&
       widget.session.generation == generation &&
       widget.session.tenant?['id'] == tenant &&
       widget.session.profile?['subject'] == actor &&
       widget.session.role == role;
+  bool _operationOwnerLost = false;
+  @override
+  void deactivate() {
+    _operationOwnerLost = true;
+    super.deactivate();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -282,38 +291,29 @@ class _ScheduleEditorPageState extends State<ScheduleEditorPage> {
   }
 
   Future<void> _acknowledge() async {
+    final owner = ModalRoute.of(context);
+    bool active() => current && owner?.isActive == true && owner?.isCurrent == true;
+    if (!active() || controller.busy) return;
     final result = controller.result;
-    if (result == null) {
-      final confirmed = await showDialog<bool>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-                  title: const Text('已核对原创建结果？'),
-                  content:
-                      const Text('查询不到不能证明未创建。请先在计划列表和管理台审计中核对。这里只清除本机提醒。'),
-                  actions: [
-                    TextButton(
-                        onPressed: () => Navigator.pop(ctx, false),
-                        child: const Text('返回')),
-                    FilledButton(
-                        onPressed: () => Navigator.pop(ctx, true),
-                        child: const Text('已核对，清除'))
-                  ]));
-      if (confirmed != true || !current) return;
-    }
-    if (await controller.acknowledge() && current) {
-      if (result != null) {
-        setState(() => allowExit = true);
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (current) Navigator.pop(context, result);
-        });
-      }
+    if (result == null && !await parentOperationConfirmation(context,
+        operation: controller, accessChanges: widget.session, isCurrent: () => current,
+        title: '已核对原创建结果？', description: '查询不到不能证明未创建。请先在计划列表和管理台审计中核对。这里只清除本机提醒。',
+        cancelLabel: '返回', confirmLabel: '已核对，清除')) return;
+    if (!active()) return;
+    if (await controller.acknowledge() && active() && result != null) {
+      setState(() => allowExit = true);
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (active()) owner!.navigator?.pop(result);
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
       animation: controller,
-      builder: (context, _) => PopScope(
+      builder: (context, _) => controller.resultTerminal != null
+          ? parentResultTerminalPage(context, title: '时间计划创建核对', operation: controller)
+          : PopScope(
           canPop: allowExit ||
               !controller.busy && (!dirty || controller.pending != null),
           onPopInvoked: (didPop) {
@@ -331,6 +331,7 @@ class _ScheduleEditorPageState extends State<ScheduleEditorPage> {
                   style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700)),
               const SizedBox(height: 8),
               const Text('开始时间包含在内，结束时间不包含。结束早于开始表示延续到次日；同一天的多个时段取并集。'),
+              ParentKnownOperationReceipt(operation: controller),
               if (controller.busy) const LinearProgressIndicator(),
               if (controller.error != null)
                 Text('${controller.error}',

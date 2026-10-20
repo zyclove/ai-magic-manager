@@ -5,6 +5,8 @@ import 'package:uuid/uuid.dart';
 
 import 'parent_api.dart';
 import 'parent_durable_storage.dart';
+import 'operation_journal.dart';
+import 'operation_result_terminal.dart';
 
 final _uuid =
     RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$');
@@ -69,13 +71,14 @@ class PendingPolicyCreation {
 
 /// One unresolved creation per local tenant/actor prevents accidental duplicates.
 class PolicyCreationStore {
+  late final ParentOperationJournal journal = ParentOperationJournal(storage);
   final ParentDurableStorage storage;
   PolicyCreationStore({ParentDurableStorage? storage})
       : storage = storage ?? ParentDurableStorage();
   String _key(String tenant, String actor) =>
       'parent.pending.policy_creation.$tenant.$actor';
   Future<PendingPolicyCreation?> load(String tenant, String actor) async {
-    final raw = await storage.read(key: _key(tenant, actor));
+    final raw = await journal.read(key: _key(tenant, actor));
     return raw == null ? null : PendingPolicyCreation.parse(jsonDecode(raw));
   }
 
@@ -83,7 +86,7 @@ class PolicyCreationStore {
       String tenant, String actor, PendingPolicyCreation item) async {
     if (await load(tenant, actor) != null) throw StateError('请先核对已有创建记录。');
     PendingPolicyCreation.parse(item.toJson());
-    await storage.write(
+    await journal.write(
         key: _key(tenant, actor), value: jsonEncode(item.toJson()));
   }
 
@@ -91,12 +94,30 @@ class PolicyCreationStore {
     final item = await load(tenant, actor);
     if (item == null) return;
     if (item.requestId != requestId) throw StateError('恢复记录已变化，请重新读取。');
-    await storage.delete(key: _key(tenant, actor));
+    await journal.delete(key: _key(tenant, actor));
   }
 }
 
 /// Shared creation/recovery state. Queries never invoke the original mutation.
-class PolicyCreationController extends ChangeNotifier {
+class PolicyCreationController extends ChangeNotifier with ParentTerminalOperation {
+  @override
+  ParentOperationJournal get operationJournal => store.journal;
+  @override
+  String get operationSlot => store._key(tenant, actor);
+  @override
+  Json? get operationPayload => pending?.toJson();
+  @override
+  bool get operationCurrent => _current;
+  @override
+  bool get operationHasSuccessfulResult => result != null;
+  @override
+  void forgetOperationPayload() {
+    pending = null;
+    result = null;
+    queried = false;
+    loaded = false;
+    sourceStale = false;
+  }
   final ParentApi api;
   final PolicyCreationStore store;
   final String tenant, actor;
@@ -137,6 +158,7 @@ class PolicyCreationController extends ChangeNotifier {
       queried = false;
       loaded = true;
     } catch (failure) {
+      await captureResultTerminal(failure);
       if (_current) error = failure;
     } finally {
       busy = false;
@@ -149,6 +171,7 @@ class PolicyCreationController extends ChangeNotifier {
       required String kind,
       String? templateId,
       int? templateRevision}) async {
+    if (operationBlocked) return;
     if (!_current || busy || !loaded || pending != null || sourceStale) return;
     busy = true;
     error = null;
@@ -177,12 +200,14 @@ class PolicyCreationController extends ChangeNotifier {
           isCurrent: () => _current,
           body: templateId == null
               ? {'name': item.name, 'kind': kind, 'rules': <Json>[]}
-              : {'name': item.name});
+              : {'name': item.name}, beforeDispatch: operationBeforeWrite);
       if (!_current) return;
       result = _draft(raw, item, newlyCreated: true);
       queried = true;
+      if (operationHasSuccessfulResult) await recordSuccessfulOperation();
       // Retain the journal until the user opens the result successfully.
     } catch (failure) {
+      await captureResultTerminal(failure);
       if (!_current) return;
       error = failure;
       sourceStale = failure is ParentApiException && failure.status == 412;
@@ -197,6 +222,7 @@ class PolicyCreationController extends ChangeNotifier {
   }
 
   Future<void> query() async {
+    if (operationBlocked) return;
     if (!_current || busy || pending == null) return;
     final item = pending!;
     busy = true;
@@ -207,11 +233,13 @@ class PolicyCreationController extends ChangeNotifier {
     try {
       final raw = await api.send('POST',
           '/tenants/$tenant/policy-draft-creation-results/${item.requestId}/query',
-          body: item.query, isCurrent: () => _current);
+          body: item.query, isCurrent: () => _current, beforeDispatch: operationBeforeDispatch);
       if (!_current) return;
       result = _draft(raw, item);
       queried = true;
+      if (operationHasSuccessfulResult) await recordSuccessfulOperation();
     } on ParentApiException catch (failure) {
+      await captureResultTerminal(failure);
       if (!_current) return;
       if (failure.status == 404 &&
           failure.code == 'POLICY_CREATION_RESULT_UNAVAILABLE') {
@@ -220,6 +248,7 @@ class PolicyCreationController extends ChangeNotifier {
         error = failure;
       }
     } catch (failure) {
+      await captureResultTerminal(failure);
       if (_current) error = failure;
     } finally {
       busy = false;
@@ -228,6 +257,7 @@ class PolicyCreationController extends ChangeNotifier {
   }
 
   Future<bool> acknowledge() async {
+    if (operationBlocked) return false;
     if (!_current || busy || pending == null || !queried) return false;
     busy = true;
     error = null;
@@ -239,6 +269,7 @@ class PolicyCreationController extends ChangeNotifier {
       queried = false;
       return true;
     } catch (failure) {
+      await captureResultTerminal(failure);
       if (_current) error = failure;
       return false;
     } finally {

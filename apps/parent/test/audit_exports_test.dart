@@ -18,6 +18,8 @@ import 'package:parent/core/parent_durable_storage.dart';
 import 'package:parent/ui/audit_exports_center.dart';
 import 'audit_export_fixture.dart';
 
+import 'support/parent_operation_journal_fixture.dart';
+
 http.Response reply(Object v, [int status = 200]) =>
     http.Response.bytes(utf8.encode(jsonEncode(v)), status,
         headers: {'content-type': 'application/json'});
@@ -34,7 +36,7 @@ ParentAuditExports repo(FutureOr<http.Response> Function(http.Request) handler,
         token: token ?? () async => 'fixture',
         client: MockClient((r) async => handler(r)));
 
-class Storage extends ParentDurableStorage {
+class Storage extends ParentDurableStorage with ParentAtomicJournalFixture {
   final values = <String, String>{};
   bool fail = false;
   Completer<void>? delayed;

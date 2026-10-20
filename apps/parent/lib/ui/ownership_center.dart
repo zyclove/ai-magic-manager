@@ -1,3 +1,4 @@
+import 'operation_result_terminal_panel.dart';
 import 'package:flutter/material.dart';
 import '../core/member_access.dart';
 import '../core/ownership.dart';
@@ -45,6 +46,7 @@ class _OwnershipCenterState extends State<OwnershipCenter>
   Route<dynamic>? dialog;
   bool get current =>
       mounted &&
+      !_operationOwnerLost &&
       session.authenticated &&
       session.tenant?['id'] == tenant &&
       session.profile?['subject'] == actor &&
@@ -60,6 +62,13 @@ class _OwnershipCenterState extends State<OwnershipCenter>
       operation.pending == null;
   String get path => '/tenants/$tenant/ownership-transfers';
   String get formerRole => kind == 'FAMILY' ? 'GUARDIAN' : 'ORG_ADMIN';
+  bool _operationOwnerLost = false;
+  @override
+  void deactivate() {
+    _operationOwnerLost = true;
+    super.deactivate();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -270,11 +279,14 @@ class _OwnershipCenterState extends State<OwnershipCenter>
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Text(ownershipError(failure),
           style: TextStyle(color: Theme.of(context).colorScheme.error)));
-  Widget _recovery() => Card(
+  Widget _recovery() => operation.resultTerminal != null
+      ? ParentResultTerminalPanel(operation: operation, onViewCurrent: transfers.reload, onEnded: transfers.reload)
+      : Card(
       child: Padding(
           padding: const EdgeInsets.all(16),
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            ParentKnownOperationReceipt(operation: operation),
             Text(operation.committed ? '原交接操作已有结果' : '核对上一次交接操作',
                 style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 8),
@@ -290,7 +302,7 @@ class _OwnershipCenterState extends State<OwnershipCenter>
             OutlinedButton(
                 onPressed: operation.busy ? null : () => operation.recover(),
                 child: const Text('查询原操作结果')),
-            if (!operation.committed)
+            if (!operation.committed && !operation.operationKnownSuccessful)
               OutlinedButton(
                   onPressed: operation.busy ? null : _retry,
                   child: const Text('重试原操作')),

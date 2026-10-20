@@ -1,3 +1,4 @@
+import 'operation_result_terminal_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../core/invitations.dart';
@@ -19,6 +20,7 @@ mixin _MemberScope<T extends StatefulWidget> on State<T>
   Route<dynamic>? dialog;
   bool get current =>
       mounted &&
+      !_operationOwnerLost &&
       session.authenticated &&
       session.tenant?['id'] == tenant &&
       session.profile?['subject'] == actor &&
@@ -27,6 +29,13 @@ mixin _MemberScope<T extends StatefulWidget> on State<T>
       const {'OWNER', 'ORG_ADMIN'}.contains(role);
   bool get available => current && foreground;
   String get root => '/tenants/$tenant';
+  bool _operationOwnerLost = false;
+  @override
+  void deactivate() {
+    _operationOwnerLost = true;
+    super.deactivate();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -237,14 +246,17 @@ class _MemberRecovery extends StatelessWidget {
   final MemberOperationController operation;
   final Future<bool> Function(String, String, String) confirm;
   final Future<void> Function() onCleared;
+  final Future<void> Function()? onViewCurrent;
   const _MemberRecovery(
       {required this.session,
       required this.operation,
       required this.confirm,
-      required this.onCleared});
+      required this.onCleared, this.onViewCurrent});
   @override
-  Widget build(BuildContext context) =>
-      Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+  Widget build(BuildContext context) => operation.resultTerminal != null
+      ? ParentResultTerminalPanel(operation: operation, onViewCurrent: onViewCurrent ?? onCleared, onEnded: onCleared)
+      : Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        ParentKnownOperationReceipt(operation: operation),
         if (operation.busy) const LinearProgressIndicator(),
         if (operation.error != null)
           Padding(
@@ -292,7 +304,7 @@ class _MemberRecovery extends StatelessWidget {
                                   ? null
                                   : () => operation.recover(),
                               child: const Text('核对原操作')),
-                          if (!operation.saved)
+                          if (!operation.saved && !operation.operationKnownSuccessful)
                             OutlinedButton(
                                 onPressed: operation.busy
                                     ? null
@@ -310,12 +322,19 @@ class _MemberRecovery extends StatelessWidget {
                                 onPressed: operation.busy
                                     ? null
                                     : () async {
+                                        final owner = ModalRoute.of(context);
+                                        bool active() => context.mounted && operation.operationCurrent &&
+                                            owner?.isActive == true && owner?.isCurrent == true;
+                                        if (!active()) return;
                                         if (!operation.saved &&
-                                            !await confirm(
-                                                '已核对成员和历史？',
-                                                '清除本机提醒不会撤销服务端操作。',
-                                                '清除提醒')) return;
-                                        if (await operation.acknowledge()) {
+                                            !await parentOperationConfirmation(context,
+                                                operation: operation, accessChanges: session,
+                                                isCurrent: () => operation.operationCurrent,
+                                                title: '已核对成员和历史？',
+                                                description: '清除本机提醒不会撤销服务端操作。',
+                                                confirmLabel: '清除提醒')) return;
+                                        if (!active()) return;
+                                        if (await operation.acknowledge() && active()) {
                                           await onCleared();
                                         }
                                       },
@@ -441,9 +460,15 @@ class _MemberDetailState extends State<_MemberDetail>
                         session: session,
                         operation: widget.operation,
                         confirm: confirm,
+                        onViewCurrent: () async {
+                          final route = ModalRoute.of(context);
+                          if (available && route?.isCurrent == true) Navigator.pop(context);
+                        },
                         onCleared: () async {
-                          if (available && widget.operation.pending == null) {
-                            Navigator.pop(context);
+                          final owner = ModalRoute.of(context);
+                          if (available && widget.operation.pending == null &&
+                              owner?.isActive == true && owner?.isCurrent == true) {
+                            owner!.navigator?.pop();
                           }
                         }),
                     Text(memberName(widget.row),
@@ -702,7 +727,10 @@ class _MemberEditorState extends State<_MemberEditor>
                         operation: widget.operation,
                         confirm: confirm,
                         onCleared: () async {
-                          if (available) Navigator.pop(context);
+                          final owner = ModalRoute.of(context);
+                          if (available && owner?.isActive == true && owner?.isCurrent == true) {
+                            owner!.navigator?.pop();
+                          }
                         }),
                     if (widget.operation.pending == null) ...[
                       Text(widget.name,

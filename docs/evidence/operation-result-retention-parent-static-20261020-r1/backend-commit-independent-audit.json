@@ -1,0 +1,571 @@
+{
+  "status": "INDEPENDENT_READ_ONLY_GIT_OBJECT_AUDIT_MATCHED",
+  "commit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+  "parent": "ff354c06310ef021dd5cf0a137141b6b94cd2067",
+  "branch": "dev",
+  "exactChangedPaths": 79,
+  "ownProductionTargetsMatched": 47,
+  "allGitObjectTargetsMatch": true,
+  "allPlanLiveSourceBytesPreserved": true,
+  "indexEmptyAtAudit": true,
+  "sdkRun": false,
+  "testsRun": false,
+  "sqlExecuted": false,
+  "gitWrites": false,
+  "deployment": "NOT_PERFORMED_BY_THIS_TASK",
+  "files": [
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/internal/ApprovalService.java",
+      "committedSha256": "5436a17e07269727aec7e649e595f2fd35c371a46a5d1e671bced79b4e47dbd2",
+      "liveSha256": "ca97ae50ce41557fdc5beb236c2bf3a4077bb33ad2805cc639bf61c058fd54b3",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/catalog/internal/CatalogService.java",
+      "committedSha256": "fefeaf35c34de3ba1346bae58382193db2f5b85f1a3a0bd2d66e3d78288688a3",
+      "liveSha256": "fefeaf35c34de3ba1346bae58382193db2f5b85f1a3a0bd2d66e3d78288688a3",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/catalog/internal/ClassificationService.java",
+      "committedSha256": "9a3a8b1fc6485a67f26940e8f4ebe8fccad07be5c3554843cef6c9ea4e94b0c9",
+      "liveSha256": "9a3a8b1fc6485a67f26940e8f4ebe8fccad07be5c3554843cef6c9ea4e94b0c9",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/fleet/internal/DeviceGroupService.java",
+      "committedSha256": "0b910fbc9e206c290eef7abfb0021b0746759ff96d936e00891111d516201aef",
+      "liveSha256": "0b910fbc9e206c290eef7abfb0021b0746759ff96d936e00891111d516201aef",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/observation/internal/ObservationSettingsService.java",
+      "committedSha256": "1cb3038dceed8ddb37171805d12247556949dd1d109ba1bcd949a8641a38c9d7",
+      "liveSha256": "37edcf8e76ebddd2e7e97004496594518c719c55a33c06fec2789c172b2db0aa",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/policy/internal/PolicyService.java",
+      "committedSha256": "a76f9f8268931be40f6bce13f4d08d3339be6a9bf30b0ad5e020d2798abec3b5",
+      "liveSha256": "cfe0ce02d81940a638f09c779d424f0b347456fa57b159ee13e9f8b8d7153fda",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaPlanService.java",
+      "committedSha256": "542f81d0ebc32200b8fd75d6b506bc2190fac1fd0cef031b0dd6e1c65494e5e5",
+      "liveSha256": "542f81d0ebc32200b8fd75d6b506bc2190fac1fd0cef031b0dd6e1c65494e5e5",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaService.java",
+      "committedSha256": "0d8627cd7858c0396e78d0b3a9f5ed5b37a2a446d54da26bc0e315f2fe2ae151",
+      "liveSha256": "0d8627cd7858c0396e78d0b3a9f5ed5b37a2a446d54da26bc0e315f2fe2ae151",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/reporting/internal/AuditExportService.java",
+      "committedSha256": "01510180bc4073d5f4cb76c07a1b67e6e57528329c0a95905c1edcb9072d915a",
+      "liveSha256": "01510180bc4073d5f4cb76c07a1b67e6e57528329c0a95905c1edcb9072d915a",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/schedule/internal/ScheduleService.java",
+      "committedSha256": "3e1c25a86804a231967be83f91bf826d7af78acf465c4d2f82a98afc277bc88d",
+      "liveSha256": "3e1c25a86804a231967be83f91bf826d7af78acf465c4d2f82a98afc277bc88d",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/subject/internal/SubjectManagementService.java",
+      "committedSha256": "29cfc481061b5d0fa2ec8f21936d4093b9e63e2451a39e8621cbcfbfa29df2ec",
+      "liveSha256": "923e43b8c670d9b16d3b545348f7b18059abedadfdab5e196d5590ea24979b59",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/InvitationAcceptanceService.java",
+      "committedSha256": "f28c76b66734527fcc6e186e5b1adf8567b8c85334053c679d711f5e3a0de376",
+      "liveSha256": "f28c76b66734527fcc6e186e5b1adf8567b8c85334053c679d711f5e3a0de376",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/InvitationWorkflowService.java",
+      "committedSha256": "9dff9f835195e3f18deb8fb5072fb9ea3508058a0b54e07ad681b0ca4494d16a",
+      "liveSha256": "9dff9f835195e3f18deb8fb5072fb9ea3508058a0b54e07ad681b0ca4494d16a",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/MembershipService.java",
+      "committedSha256": "d8de6903dc299427866ecdbac99d35a81993a09210b41d856989c4c46aab1200",
+      "liveSha256": "656e33c9794614b3eec5643105c5cd949245262a9b7e83158428ba604c6cd297",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/OrganizationService.java",
+      "committedSha256": "6a3109081dda1b18a209e73c4396b28ad1cb9a7214fa6b9d7a71c1470aa5fe58",
+      "liveSha256": "6a3109081dda1b18a209e73c4396b28ad1cb9a7214fa6b9d7a71c1470aa5fe58",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/OwnershipService.java",
+      "committedSha256": "edda4c8ae0ee47adf7b24878eb759c3db6271da6be06a33adcb5f636384c61ad",
+      "liveSha256": "edda4c8ae0ee47adf7b24878eb759c3db6271da6be06a33adcb5f636384c61ad",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/internal/DeviceAccessSubmissionService.java",
+      "committedSha256": "95a3f795359b0b9e071d460c37345050f1ba2941bf60078091cd1c3e9922386f",
+      "liveSha256": "95a3f795359b0b9e071d460c37345050f1ba2941bf60078091cd1c3e9922386f",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/internal/DeviceAccessSubmissionController.java",
+      "committedSha256": "272ef494e8102e29c54647c7287e446767a32822ada12bae4155f20bd8a0ce02",
+      "liveSha256": "272ef494e8102e29c54647c7287e446767a32822ada12bae4155f20bd8a0ce02",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/catalog/internal/CatalogController.java",
+      "committedSha256": "e6af0cb8efa282ff4fb8b511056168a9f6a3f70f6a506f01ad2adf9fc1f75409",
+      "liveSha256": "e6af0cb8efa282ff4fb8b511056168a9f6a3f70f6a506f01ad2adf9fc1f75409",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/catalog/internal/ClassificationController.java",
+      "committedSha256": "599ab6c8c660cc77ef04be1338a68df35ffc4d5ccf8e0c5ab2d5c4c6c868d28f",
+      "liveSha256": "599ab6c8c660cc77ef04be1338a68df35ffc4d5ccf8e0c5ab2d5c4c6c868d28f",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/fleet/internal/DeviceGroupController.java",
+      "committedSha256": "eb877ca2a48be75bb0bf3c707ad2c47a3036ab88b5acd5178bf0ee2b6d330353",
+      "liveSha256": "eb877ca2a48be75bb0bf3c707ad2c47a3036ab88b5acd5178bf0ee2b6d330353",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/observation/internal/ObservationController.java",
+      "committedSha256": "d423fc4307d8faa4d6b18f24e7cbc59de7f1e530d4a879585cbfdf522c539081",
+      "liveSha256": "d423fc4307d8faa4d6b18f24e7cbc59de7f1e530d4a879585cbfdf522c539081",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/observation/internal/PermissionObservationController.java",
+      "committedSha256": "e5d4692f67e03978397bcf3e1f2dd635859b54901f6a0dcc8be14cd118fa9c33",
+      "liveSha256": "e5d4692f67e03978397bcf3e1f2dd635859b54901f6a0dcc8be14cd118fa9c33",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/policy/internal/PolicyController.java",
+      "committedSha256": "292353c6f717686f7fedeac81283265b82fe56202b5c037739fed93d0b3aa204",
+      "liveSha256": "292353c6f717686f7fedeac81283265b82fe56202b5c037739fed93d0b3aa204",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaController.java",
+      "committedSha256": "e3e3ff9cad3e9779528016eb9f02d655eb752aac1a9cab2d07dedcf603b5193f",
+      "liveSha256": "e3e3ff9cad3e9779528016eb9f02d655eb752aac1a9cab2d07dedcf603b5193f",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaPlanController.java",
+      "committedSha256": "0c469f7d0b3c50dc26c7f708e8f9dbbabec77468abc1f04ec22af4c7e181b327",
+      "liveSha256": "0c469f7d0b3c50dc26c7f708e8f9dbbabec77468abc1f04ec22af4c7e181b327",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/reporting/internal/AuditExportController.java",
+      "committedSha256": "c415809b83c914167509d50e261c0f66b1c3018be04aa48973eb885365f64105",
+      "liveSha256": "c415809b83c914167509d50e261c0f66b1c3018be04aa48973eb885365f64105",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/schedule/internal/ScheduleController.java",
+      "committedSha256": "0f7239217d338d172fc711e988b130f01fb5fbd23c4598abed64202770996b7b",
+      "liveSha256": "0f7239217d338d172fc711e988b130f01fb5fbd23c4598abed64202770996b7b",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/subject/internal/SubjectManagementController.java",
+      "committedSha256": "7a128b294d674a594b5bd2e495a0dd0e93e43f2234e488b99961a9e179b9c17f",
+      "liveSha256": "7a128b294d674a594b5bd2e495a0dd0e93e43f2234e488b99961a9e179b9c17f",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/InvitationAcceptanceController.java",
+      "committedSha256": "80d6d2e347bf2ddbd98ac6816e84e8fd2d905050536e1e5321f21f9c67559171",
+      "liveSha256": "80d6d2e347bf2ddbd98ac6816e84e8fd2d905050536e1e5321f21f9c67559171",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/InvitationWorkflowController.java",
+      "committedSha256": "0b012ef695a7497f1c182558949082b067d0bf472185a6e5dc4df37f217e7c48",
+      "liveSha256": "0b012ef695a7497f1c182558949082b067d0bf472185a6e5dc4df37f217e7c48",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/MembershipController.java",
+      "committedSha256": "6bfb7628bfdb74234f3fc83bcc33ba365eeb660da76342c6b9436b2ab826e8cd",
+      "liveSha256": "6bfb7628bfdb74234f3fc83bcc33ba365eeb660da76342c6b9436b2ab826e8cd",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/OrganizationController.java",
+      "committedSha256": "bd3892ba1f9d1e2ebd15d61646f62af9f2726e6ca4d76ccaacb8428e52309dd3",
+      "liveSha256": "bd3892ba1f9d1e2ebd15d61646f62af9f2726e6ca4d76ccaacb8428e52309dd3",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/OwnershipController.java",
+      "committedSha256": "6b5981a6a179d688afbc9d3e3f909f876d21ad94c7d04650dd716026217b8725",
+      "liveSha256": "6b5981a6a179d688afbc9d3e3f909f876d21ad94c7d04650dd716026217b8725",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyService.java",
+      "committedSha256": "958941a543389ee705d9202519e34c72038cbfc74c2f525df9d1fdee66f22092",
+      "liveSha256": "958941a543389ee705d9202519e34c72038cbfc74c2f525df9d1fdee66f22092",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureIdempotencyProcessor.java",
+      "committedSha256": "c095cf0db88231fe42d8c247d780bc9d4ab2f1ba946b4629babc3f90647c73c8",
+      "liveSha256": "c095cf0db88231fe42d8c247d780bc9d4ab2f1ba946b4629babc3f90647c73c8",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V1__initial_schema.sql",
+      "committedSha256": "a76485b87552c87d0a546536cd4397997a63c96b07a18caf2d5b15af0508cbb4",
+      "liveSha256": "8ef6c86dde3fa24d9258395d25bf277170d6deadeae542cceb85a1a642078097",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/resources/retention/subject-data-stores.json",
+      "committedSha256": "1aae9db11b7d1e5672500bcb98ede718469a580d679e0ad2994345c90be986fc",
+      "liveSha256": "f8878efcdf3dc6a88321beb64e2ac055547bda3ec648153472fdb1dbe284d2a4",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/resources/application.yml",
+      "committedSha256": "ca7b8bfc3a083d6105886cdb5b0f4f1e309b9edf71c19b97b23ded52f28654a8",
+      "liveSha256": "110156327a7ecf654fe7e9071f44a1e6dd2e46853656dd7580c2ce33df25c52a",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyLookupOutcome.java",
+      "committedSha256": "0de39442d0f9d893fea4a8f5811fb8834dba01907dac93c8c7fd608ef6db180b",
+      "liveSha256": "0de39442d0f9d893fea4a8f5811fb8834dba01907dac93c8c7fd608ef6db180b",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyResultLifecycle.java",
+      "committedSha256": "0cb5a27e3c235cc6dd4a4ed85ab21cb6c1aefdd6981080e4dc98a9ed07fba4f3",
+      "liveSha256": "0cb5a27e3c235cc6dd4a4ed85ab21cb6c1aefdd6981080e4dc98a9ed07fba4f3",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyResultStorageState.java",
+      "committedSha256": "6333912c6c6968ce44239b467c0512ecbf5dbfe723b49d8bc583063df040b5f5",
+      "liveSha256": "6333912c6c6968ce44239b467c0512ecbf5dbfe723b49d8bc583063df040b5f5",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyResultTime.java",
+      "committedSha256": "fe47beaf511e3a686c4e1ee6f694e88360f72ad0131b2c9f2c6862d6a2e9a9fb",
+      "liveSha256": "fe47beaf511e3a686c4e1ee6f694e88360f72ad0131b2c9f2c6862d6a2e9a9fb",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyRetentionConfiguration.java",
+      "committedSha256": "ab90a9e8ce84669a5f7dee75c26d4f5670ac0deb85e51877246d305d5317d981",
+      "liveSha256": "ab90a9e8ce84669a5f7dee75c26d4f5670ac0deb85e51877246d305d5317d981",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyRetentionJob.java",
+      "committedSha256": "4d1c41051ce82e6625c1a374c8a3ac51ae30d5360e60f42092a90c04c6e27566",
+      "liveSha256": "4d1c41051ce82e6625c1a374c8a3ac51ae30d5360e60f42092a90c04c6e27566",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyRetentionService.java",
+      "committedSha256": "df7a98c3c195383c8a210b87e0d2a37f5bfcc031c85b674b4df1ca7f6e2cf74f",
+      "liveSha256": "df7a98c3c195383c8a210b87e0d2a37f5bfcc031c85b674b4df1ca7f6e2cf74f",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyRetentionSettings.java",
+      "committedSha256": "0345b6721753a09b7066b38d3fe455148d22fc147926d8325b2c06b2ba86e558",
+      "liveSha256": "0345b6721753a09b7066b38d3fe455148d22fc147926d8325b2c06b2ba86e558",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/idempotency/IdempotencyOwnershipTest.java",
+      "committedSha256": "217cfb64b3c1dc53b31d3d4f02263dc6f60a2b1a0d0bf9331bbbd9b3ef81cd9f",
+      "liveSha256": "217cfb64b3c1dc53b31d3d4f02263dc6f60a2b1a0d0bf9331bbbd9b3ef81cd9f",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureIdempotencyCardinalityTest.java",
+      "committedSha256": "769c208c8536705505d5414e594b92abe1f8c8d26e9918566fe2ffe01107226d",
+      "liveSha256": "769c208c8536705505d5414e594b92abe1f8c8d26e9918566fe2ffe01107226d",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureIdempotencyProcessorTest.java",
+      "committedSha256": "eb3bcec7303a80e1718f7a992770eb010a2225e51ef6d6a8053e4eaf31ce29b9",
+      "liveSha256": "eb3bcec7303a80e1718f7a992770eb010a2225e51ef6d6a8053e4eaf31ce29b9",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/AccessDeliveryJourneyTest.java",
+      "committedSha256": "d355534f8e085796bc1bd30b9929310c9ed9eb4cc263bde392edc8f520fa991e",
+      "liveSha256": "d355534f8e085796bc1bd30b9929310c9ed9eb4cc263bde392edc8f520fa991e",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/ApprovalIdempotencyAttributionJourneyTest.java",
+      "committedSha256": "2a1e0b095bbd2f6eb9b477340d45cd3fe65e62313024a08f1123772f446e849d",
+      "liveSha256": "2a1e0b095bbd2f6eb9b477340d45cd3fe65e62313024a08f1123772f446e849d",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/ApprovalJourneyTest.java",
+      "committedSha256": "347a452c5c5b56a4d75ab5ddf873e8ba782f4108d7bb9b8c60df70d9bd26c594",
+      "liveSha256": "347a452c5c5b56a4d75ab5ddf873e8ba782f4108d7bb9b8c60df70d9bd26c594",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/AuditExportJourneyTest.java",
+      "committedSha256": "dd23d7312af2b1a1b5fc178ebab8bf88d050070899bc67c60fc18d417984ca1f",
+      "liveSha256": "dd23d7312af2b1a1b5fc178ebab8bf88d050070899bc67c60fc18d417984ca1f",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeprovisionJourneyTest.java",
+      "committedSha256": "c443e66f1592a0d03fa4c40ed3a2d33b9512d88e3c2efa54c202ad8369fd7e83",
+      "liveSha256": "c443e66f1592a0d03fa4c40ed3a2d33b9512d88e3c2efa54c202ad8369fd7e83",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeviceAccessHttpInteropTest.java",
+      "committedSha256": "e65c13211c06d84e5194f3f65e5e2a076c26f30e40ab715f6d578a20b2752a87",
+      "liveSha256": "e65c13211c06d84e5194f3f65e5e2a076c26f30e40ab715f6d578a20b2752a87",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeviceObservationJourneyTest.java",
+      "committedSha256": "c3bdfaded96a352c145ceb98a37514b0eb469b7ffefb984433a6613eaa3de30b",
+      "liveSha256": "c3bdfaded96a352c145ceb98a37514b0eb469b7ffefb984433a6613eaa3de30b",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/NotificationJourneyTest.java",
+      "committedSha256": "627569fc1cb12f7e0e4096f12634b41795b15878dd29291f06ac32bc407e9143",
+      "liveSha256": "627569fc1cb12f7e0e4096f12634b41795b15878dd29291f06ac32bc407e9143",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/QuotaConcurrencyTest.java",
+      "committedSha256": "6703da6c87183b5cb7305040b3c2d29fbff4f04c58690052919fb34cedc961ea",
+      "liveSha256": "f9946f9544bcc085346959ee5e1e829d9656006bfff6e3f3057c655c28be3f9a",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/QuotaIdempotencyAttributionJourneyTest.java",
+      "committedSha256": "86a1a011805bdb51d4e9b218183eac7d4b3c5abc0c744319c518a2f4588a2e62",
+      "liveSha256": "86a1a011805bdb51d4e9b218183eac7d4b3c5abc0c744319c518a2f4588a2e62",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/QuotaJourneyTest.java",
+      "committedSha256": "67a8e25fe4e15e47b93e8515a108efd7fd01b94413b2248a2d541c3451ba7b7e",
+      "liveSha256": "7bfca032cd43924e55d79f66c705f4ae8d26f8578b2d3c3f99b00e48b5918652",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/QuotaPlanJourneyTest.java",
+      "committedSha256": "d8beb534c0c17b8001a694458b38ce3343cf13b45ac6ad89819bfcf1049928e9",
+      "liveSha256": "d8beb534c0c17b8001a694458b38ce3343cf13b45ac6ad89819bfcf1049928e9",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/TeacherAccessJourneyTest.java",
+      "committedSha256": "f5ab639b645c0cec6e7d92f05a5ed6b6bcf5a97b9faa6454097ee6fd1c2d28f6",
+      "liveSha256": "f5ab639b645c0cec6e7d92f05a5ed6b6bcf5a97b9faa6454097ee6fd1c2d28f6",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasurePreviewJourneyTest.java",
+      "committedSha256": "11df52e434b87abc8a1cb8358f36c8521e4cf0a5be93d6966d2c11e37d6600c7",
+      "liveSha256": "fec6d837d1f59cd7e266f6391e08f7d82ef497812829519e4e950f4651ea4efc",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/support/ControlledIdempotencyTimeConfiguration.java",
+      "committedSha256": "291a4e2957d74b5a52bbcf68fa221bc8e087b13790887f0ca8fd3b2583fbe56a",
+      "liveSha256": "291a4e2957d74b5a52bbcf68fa221bc8e087b13790887f0ca8fd3b2583fbe56a",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "docs/idempotency-result-retention-backend-implementation.md",
+      "committedSha256": "4e8ccc1432c112e1de153270219f89cf4967940959a9a9ae0c6d38f23355ec1e",
+      "liveSha256": "4e8ccc1432c112e1de153270219f89cf4967940959a9a9ae0c6d38f23355ec1e",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "docs/evidence/idempotency-result-retention-backend-20261020-r1.json",
+      "committedSha256": "144e50c45d874122c5e7a987666dfb093dee27bfdc1dfd005d22d20dc3df46c2",
+      "liveSha256": "144e50c45d874122c5e7a987666dfb093dee27bfdc1dfd005d22d20dc3df46c2",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "docs/evidence/operation-result-retention-implementation-20261020-r1.md",
+      "committedSha256": "209dd9f457d62dedafa23cff5c963096191133660158b628136135baf748be35",
+      "liveSha256": "209dd9f457d62dedafa23cff5c963096191133660158b628136135baf748be35",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "docs/evidence/operation-result-retention-backend-static-20261020-r1/existing-fixture-protocol-review.json",
+      "committedSha256": "77674462bba966c7715de043ddee71a98a1691dc2236d2dadc9bfe59823acf7a",
+      "liveSha256": "77674462bba966c7715de043ddee71a98a1691dc2236d2dadc9bfe59823acf7a",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "docs/evidence/operation-result-retention-backend-static-20261020-r1/five-java-head-targets.json",
+      "committedSha256": "722189cd11d1ec2a7ed3528ae860c02bc85bdf44b0b39c69bea480c8b7164be4",
+      "liveSha256": "722189cd11d1ec2a7ed3528ae860c02bc85bdf44b0b39c69bea480c8b7164be4",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "docs/evidence/operation-result-retention-backend-static-20261020-r1/independent-final-static-review.json",
+      "committedSha256": "a07a60f7a2abd19cd6a640093b499f60f89935fb6970c5fbfc91e885918a67ed",
+      "liveSha256": "a07a60f7a2abd19cd6a640093b499f60f89935fb6970c5fbfc91e885918a67ed",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "docs/evidence/operation-result-retention-backend-static-20261020-r1/independent-static-review.json",
+      "committedSha256": "f64a17a3d7759861181b85331673a6b5a892d494aed4a18361a2ba87a17bdc5c",
+      "liveSha256": "f64a17a3d7759861181b85331673a6b5a892d494aed4a18361a2ba87a17bdc5c",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "docs/evidence/operation-result-retention-backend-static-20261020-r1/journal-adapter-manifest.json",
+      "committedSha256": "0cec43aa6bbeeca34fe00f773681441206f070e12bafd0afcd2771ce2b23b655",
+      "liveSha256": "0cec43aa6bbeeca34fe00f773681441206f070e12bafd0afcd2771ce2b23b655",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "docs/evidence/operation-result-retention-backend-static-20261020-r1/production-main-manifest.json",
+      "committedSha256": "cbd97c05bb4d44e1bdd24c82baa89ca10a87a2c44275c6917ee8e84162df5268",
+      "liveSha256": "cbd97c05bb4d44e1bdd24c82baa89ca10a87a2c44275c6917ee8e84162df5268",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "docs/evidence/operation-result-retention-backend-static-20261020-r1/README.md",
+      "committedSha256": "28d416376e7371c13adbdf8b7eccc2eba5105bfc4e51fffbabda8b3da1e65909",
+      "liveSha256": "28d416376e7371c13adbdf8b7eccc2eba5105bfc4e51fffbabda8b3da1e65909",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "docs/evidence/operation-result-retention-backend-static-20261020-r1/recovery-http-routes.json",
+      "committedSha256": "94e0214b51ec6fdbc8dc937252ee10d2dfabb44b0d6a01995c1d6c1a72fb3ffe",
+      "liveSha256": "94e0214b51ec6fdbc8dc937252ee10d2dfabb44b0d6a01995c1d6c1a72fb3ffe",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "docs/evidence/operation-result-retention-backend-static-20261020-r1/root-stage-source-review.json",
+      "committedSha256": "f81050f621ff633edee0ad8c49ffcd72a2270eda935379e195ed0eca3a625598",
+      "liveSha256": "f81050f621ff633edee0ad8c49ffcd72a2270eda935379e195ed0eca3a625598",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "docs/evidence/operation-result-retention-backend-static-20261020-r1/shared-config-scope-proof.json",
+      "committedSha256": "f530c702e1c5b33ae6b1d082a139a9d0c2e8ea7a6b6305bc0066fa5cbdece5f5",
+      "liveSha256": "f530c702e1c5b33ae6b1d082a139a9d0c2e8ea7a6b6305bc0066fa5cbdece5f5",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    },
+    {
+      "path": "docs/evidence/operation-result-retention-backend-static-20261020-r1/spring-clock-adapter-manifest.json",
+      "committedSha256": "7cf7740c79b567c3b85b6cb2429b1557116858842b887ede6893b06ad52f9f75",
+      "liveSha256": "7cf7740c79b567c3b85b6cb2429b1557116858842b887ede6893b06ad52f9f75",
+      "plannedGitTargetMatches": true,
+      "preservedLiveBytesMatch": true
+    }
+  ]
+}

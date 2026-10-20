@@ -1,0 +1,31 @@
+{
+  "status": "TOP_CHECKPOINT_SOURCE_DOCUMENTATION_ONLY_NOT_RUNTIME_VERIFIED",
+  "baseCommit": "61b33a125847527d9f683e993b6da174a72a40b2",
+  "files": [
+    {
+      "path": "docs/implementation-progress.md",
+      "beforeSha256": "dce8ac44acae6e36beade4a5d3a19a6e2a23b3603f59a4a384e1e749ef1ae767",
+      "sha256": "f5e4713c2406337474dda82fd2d9f22e5d9d4eb2a3b42815115932df622c0574",
+      "headTargetSha256": "f5e4713c2406337474dda82fd2d9f22e5d9d4eb2a3b42815115932df622c0574",
+      "headTargetSnapshot": ".cache/retention-status-checkpoint-20261020-r1/head-after/docs/implementation-progress.md",
+      "headPatch": ".cache/retention-status-checkpoint-20261020-r1/patches/implementation-progress.md.head.patch",
+      "headPatchSha256": "17efbf804b00966df691be8504e88cda05ddcee392c1907ac4b3ce7dc9bbb0fa",
+      "outsideTopCheckpointPreserved": true,
+      "mainEqualsHeadTarget": true
+    },
+    {
+      "path": "docs/backend-api-status.md",
+      "beforeSha256": "a7c85fd6b0affeeb99dfa3f70371429d16f113fa9d72d95784e7c42268f21f45",
+      "sha256": "56360e8cfc6d1794bfbb7eae83b6945c85ffcce1a835820e6b74b5f5a2e3b855",
+      "headTargetSha256": "56360e8cfc6d1794bfbb7eae83b6945c85ffcce1a835820e6b74b5f5a2e3b855",
+      "headTargetSnapshot": ".cache/retention-status-checkpoint-20261020-r1/head-after/docs/backend-api-status.md",
+      "headPatch": ".cache/retention-status-checkpoint-20261020-r1/patches/backend-api-status.md.head.patch",
+      "headPatchSha256": "7ee402e33b2446c8492bac6c2c8c1a85f7d512f076f54be4c626613892ec7c48",
+      "outsideTopCheckpointPreserved": true,
+      "mainEqualsHeadTarget": true
+    }
+  ],
+  "sdkRun": false,
+  "testsRun": false,
+  "productionSourceChanged": false
+}

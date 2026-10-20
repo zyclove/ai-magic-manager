@@ -1,6 +1,6 @@
 # Guardian 操作结果到期与本机核对交互
 
-日期：2026-10-20。90 天产品选择已确认，生产源码正在接合。状态为 **STATIC_IMPLEMENTATION_IN_PROGRESS / NOT_RUN / NOT_DEPLOYED**；最终范围和静态复核见[本阶段实施记录](evidence/operation-result-retention-implementation-20261020-r1.md)。本文描述当前方案，不代表运行验收通过。
+日期：2026-10-20。90 天产品选择已确认，生产源码已静态接合。状态为 **STATIC_IMPLEMENTED_PENDING_VERIFICATION / NOT_RUN / NOT_DEPLOYED**；最终范围和静态复核见[本阶段实施记录](evidence/operation-result-retention-implementation-20261020-r1.md)。本文描述当前方案，不代表运行验收通过。
 
 ## 1. 时间和结果含义
 

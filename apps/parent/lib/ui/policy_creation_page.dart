@@ -1,3 +1,4 @@
+import 'operation_result_terminal_panel.dart';
 import 'package:flutter/material.dart';
 
 import '../core/parent_api.dart';
@@ -24,30 +25,42 @@ class _PolicyCreationPageState extends State<PolicyCreationPage> {
   bool dirty = false, allowExit = false;
   bool get current =>
       mounted &&
-      widget.session.authenticated &&
+      !_operationOwnerLost &&
+      _operationIdentity.current &&
       widget.session.canDecide &&
       widget.session.tenant?['id'] == tenant &&
       widget.session.profile?['subject'] == actor &&
       widget.session.role == role;
 
+  bool _operationOwnerLost = false;
+  late final ParentOperationIdentity _operationIdentity;
+  @override
+  void deactivate() {
+    _operationOwnerLost = true;
+    _operationIdentity.revoke();
+    super.deactivate();
+  }
+
   @override
   void initState() {
     super.initState();
+    _operationIdentity = ParentOperationIdentity(widget.session, onRevoked: _scopeChanged);
     tenant = widget.session.tenant!['id'];
     actor = widget.session.profile!['subject'];
     role = widget.session.role;
     controller = PolicyCreationController(
-        api: widget.session.api,
+        api: _operationIdentity.scopedApi(widget.session.api),
         store: widget.store ?? PolicyCreationStore(),
         tenant: tenant,
         actor: actor,
-        isCurrent: () => current && !widget.session.busy);
+        isCurrent: () => current && _operationIdentity.dispatchable && !widget.session.busy);
     widget.session.addListener(_scopeChanged);
     controller.load();
   }
 
   void _scopeChanged() {
     if (!mounted || current) return;
+    _operationOwnerLost = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || current) return;
       final route = ModalRoute.of(context);
@@ -59,6 +72,7 @@ class _PolicyCreationPageState extends State<PolicyCreationPage> {
 
   @override
   void dispose() {
+    _operationIdentity.dispose();
     widget.session.removeListener(_scopeChanged);
     controller.dispose();
     name.dispose();
@@ -98,35 +112,28 @@ class _PolicyCreationPageState extends State<PolicyCreationPage> {
   }
 
   Future<void> _open() async {
+    final owner = ModalRoute.of(context);
+    bool active() => current && owner?.isActive == true && owner?.isCurrent == true;
     final draft = controller.result;
-    if (draft == null || !current) return;
-    if (await controller.acknowledge() && current) {
+    if (draft == null || !active() || controller.busy) return;
+    if (await controller.acknowledge() && active()) {
       setState(() => allowExit = true);
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (current) Navigator.pop(context, draft);
+        if (active()) owner!.navigator?.pop(draft);
       });
     }
   }
 
   Future<void> _clear() async {
-    final confirmed = await showDialog<bool>(
-        context: context,
-        builder: (ctx) => AlertDialog(
-                title: const Text('已在策略中心核对原创建结果？'),
-                content: const Text(
-                    '查询不到不代表从未创建。请先核对列表和管理台审计记录，避免重复创建。这只清除本机提醒，不删除服务器草稿。'),
-                actions: [
-                  TextButton(
-                      onPressed: () => Navigator.pop(ctx, false),
-                      child: const Text('返回核对')),
-                  FilledButton(
-                      onPressed: () => Navigator.pop(ctx, true),
-                      child: const Text('已核对，清除提醒'))
-                ]));
-    if (confirmed == true &&
-        current &&
-        await controller.acknowledge() &&
-        mounted) {
+    final owner = ModalRoute.of(context);
+    bool active() => current && owner?.isActive == true && owner?.isCurrent == true;
+    if (!active() || controller.busy) return;
+    final confirmed = await parentOperationConfirmation(context,
+        operation: controller, accessChanges: widget.session, isCurrent: () => current,
+        title: '已在策略中心核对原创建结果？',
+        description: '查询不到不代表从未创建。请先核对列表和管理台审计记录，避免重复创建。这只清除本机提醒，不删除服务器草稿。',
+        cancelLabel: '返回核对', confirmLabel: '已核对，清除提醒');
+    if (confirmed && active() && await controller.acknowledge() && active()) {
       setState(() {
         dirty = false;
         name.clear();
@@ -137,7 +144,9 @@ class _PolicyCreationPageState extends State<PolicyCreationPage> {
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
       animation: controller,
-      builder: (context, _) => PopScope(
+      builder: (context, _) => controller.resultTerminal != null
+          ? parentResultTerminalPage(context, title: '策略创建核对', operation: controller)
+          : PopScope(
           canPop: allowExit ||
               (!controller.busy && (!dirty || controller.pending != null)),
           onPopInvoked: (didPop) {
@@ -156,6 +165,7 @@ class _PolicyCreationPageState extends State<PolicyCreationPage> {
               const SizedBox(height: 8),
               const Text('创建草稿不会改变设备设置。未确认的创建会保留本机恢复提醒，系统不会自动重发。'),
               const SizedBox(height: 20),
+              ParentKnownOperationReceipt(operation: controller),
               if (controller.busy) const LinearProgressIndicator(),
               if (controller.error != null)
                 Padding(

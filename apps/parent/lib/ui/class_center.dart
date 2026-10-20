@@ -1,3 +1,4 @@
+import 'operation_result_terminal_panel.dart';
 import 'package:flutter/material.dart';
 import '../core/organization_classes.dart';
 import '../core/paged_collection.dart';
@@ -13,6 +14,7 @@ mixin _ClassScope<T extends StatefulWidget> on State<T>
   Route<dynamic>? dialog;
   bool get current =>
       mounted &&
+      !_operationOwnerLost &&
       session.authenticated &&
       session.tenant?['id'] == tenant &&
       session.tenant?['kind'] == 'ORGANIZATION' &&
@@ -22,6 +24,13 @@ mixin _ClassScope<T extends StatefulWidget> on State<T>
       const {'OWNER', 'ORG_ADMIN'}.contains(role);
   bool get available => current && foreground;
   String get root => '/tenants/$tenant';
+  bool _operationOwnerLost = false;
+  @override
+  void deactivate() {
+    _operationOwnerLost = true;
+    super.deactivate();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -241,8 +250,10 @@ class _ClassRecovery extends StatelessWidget {
       required this.confirm,
       required this.onCleared});
   @override
-  Widget build(BuildContext context) =>
-      Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+  Widget build(BuildContext context) => operation.resultTerminal != null
+      ? ParentResultTerminalPanel(operation: operation, onViewCurrent: onCleared, onEnded: onCleared)
+      : Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        ParentKnownOperationReceipt(operation: operation),
         if (operation.busy) const LinearProgressIndicator(),
         if (operation.error != null)
           Padding(
@@ -287,7 +298,7 @@ class _ClassRecovery extends StatelessWidget {
                                   ? null
                                   : () => operation.recover(),
                               child: const Text('核对原操作')),
-                          if (operation.committed == null)
+                          if (operation.committed == null && !operation.operationKnownSuccessful)
                             OutlinedButton(
                                 onPressed: operation.busy
                                     ? null
@@ -305,12 +316,19 @@ class _ClassRecovery extends StatelessWidget {
                                 onPressed: operation.busy
                                     ? null
                                     : () async {
+                                        final owner = ModalRoute.of(context);
+                                        bool active() => context.mounted && operation.operationCurrent &&
+                                            owner?.isActive == true && owner?.isCurrent == true;
+                                        if (!active()) return;
                                         if (operation.committed == null &&
-                                            !await confirm(
-                                                '已核对班级和名册？',
-                                                '清除本机提醒不会撤销服务端操作。请确认已经检查班级和相关名册。',
-                                                '清除提醒')) return;
-                                        if (await operation.acknowledge()) {
+                                            !await parentOperationConfirmation(context,
+                                                operation: operation, accessChanges: session,
+                                                isCurrent: () => operation.operationCurrent,
+                                                title: '已核对班级和名册？',
+                                                description: '清除本机提醒不会撤销服务端操作。请确认已经检查班级和相关名册。',
+                                                confirmLabel: '清除提醒')) return;
+                                        if (!active()) return;
+                                        if (await operation.acknowledge() && active()) {
                                           await onCleared();
                                         }
                                       },
@@ -627,7 +645,10 @@ class _ClassActionState extends State<_ClassAction>
                         operation: widget.operation,
                         confirm: confirm,
                         onCleared: () async {
-                          if (available) Navigator.pop(context);
+                          final owner = ModalRoute.of(context);
+                          if (available && owner?.isActive == true && owner?.isCurrent == true) {
+                            owner!.navigator?.pop();
+                          }
                         }),
                     if (widget.operation.pending == null)
                       Form(

@@ -15,6 +15,8 @@ import 'package:parent/core/parent_session.dart';
 import 'package:parent/ui/application_center.dart';
 import 'package:parent/ui/policy_editor.dart';
 
+import 'support/parent_operation_journal_fixture.dart';
+
 const appId = '00000000-0000-4000-8000-000000000001';
 Json definition() => {
       'displayName': '学习应用',
@@ -43,7 +45,9 @@ Json classification(
 http.Response response(Json value, [int status = 200]) =>
     http.Response.bytes(utf8.encode(jsonEncode(value)), status);
 
-class _Storage extends ParentDurableStorage {
+class _Storage extends ParentDurableStorage with ParentAtomicJournalFixture {
+  @override
+  bool get fixtureWriteMayCommitBeforeFailure => true;
   final values = <String, String>{};
   bool failWrite = false;
   @override

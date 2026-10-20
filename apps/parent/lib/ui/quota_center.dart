@@ -1,3 +1,4 @@
+import 'operation_result_terminal_panel.dart';
 import 'package:flutter/material.dart';
 import '../core/paged_collection.dart';
 import '../core/parent_api.dart';
@@ -14,6 +15,7 @@ mixin _QuotaScope<T extends StatefulWidget> on State<T> {
   Route<dynamic>? dialog;
   bool get current =>
       mounted &&
+      !_operationOwnerLost &&
       session.authenticated &&
       session.tenant?['id'] == tenant &&
       session.profile?['subject'] == actor &&
@@ -21,6 +23,13 @@ mixin _QuotaScope<T extends StatefulWidget> on State<T> {
       session.generation == generation &&
       const {'OWNER', 'GUARDIAN', 'ORG_ADMIN', 'AUDITOR'}.contains(role);
   String get root => '/tenants/$tenant';
+  bool _operationOwnerLost = false;
+  @override
+  void deactivate() {
+    _operationOwnerLost = true;
+    super.deactivate();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -238,10 +247,14 @@ class _QuotaRecovery extends StatelessWidget {
       required this.onCleared});
   @override
   Widget build(BuildContext context) {
+    if (operation.resultTerminal != null) {
+      return ParentResultTerminalPanel(operation: operation, onViewCurrent: onCleared, onEnded: onCleared);
+    }
     final p = operation.pending,
         committed = operation.committed,
         latest = operation.latest;
     return Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        ParentKnownOperationReceipt(operation: operation),
       if (operation.busy) const LinearProgressIndicator(),
       if (operation.error != null)
         Padding(
@@ -287,7 +300,7 @@ class _QuotaRecovery extends StatelessWidget {
                         OutlinedButton(
                             onPressed: operation.busy ? null : operation.query,
                             child: const Text('核对原操作')),
-                        if (committed == null)
+                        if (committed == null && !operation.operationKnownSuccessful)
                           OutlinedButton(
                               onPressed: operation.busy
                                   ? null
@@ -303,12 +316,19 @@ class _QuotaRecovery extends StatelessWidget {
                               onPressed: operation.busy
                                   ? null
                                   : () async {
+                                      final owner = ModalRoute.of(context);
+                                      bool active() => context.mounted && operation.operationCurrent &&
+                                          owner?.isActive == true && owner?.isCurrent == true;
+                                      if (!active()) return;
                                       if (committed == null &&
-                                          !await confirm(
-                                              '已核对额度或计划？',
-                                              '这里只清除本机提醒，不会撤销服务端操作。请确认已检查每日额度、每周计划及历史记录。',
-                                              '已核对，清除提醒')) return;
-                                      if (await operation.acknowledge()) {
+                                          !await parentOperationConfirmation(context,
+                                              operation: operation, accessChanges: session,
+                                              isCurrent: () => operation.operationCurrent,
+                                              title: '已核对额度或计划？',
+                                              description: '这里只清除本机提醒，不会撤销服务端操作。请确认已检查每日额度、每周计划及历史记录。',
+                                              confirmLabel: '已核对，清除提醒')) return;
+                                      if (!active()) return;
+                                      if (await operation.acknowledge() && active()) {
                                         await onCleared();
                                       }
                                     },
@@ -608,7 +628,10 @@ class _QuotaEditorState extends State<_QuotaEditor> with _QuotaScope {
                         operation: widget.operation,
                         confirm: confirm,
                         onCleared: () async {
-                          if (current) Navigator.pop(context);
+                          final owner = ModalRoute.of(context);
+                          if (current && owner?.isActive == true && owner?.isCurrent == true) {
+                            owner!.navigator?.pop();
+                          }
                         }),
                     if (widget.operation.pending == null)
                       AbsorbPointer(

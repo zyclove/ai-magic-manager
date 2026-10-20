@@ -16,6 +16,8 @@ import 'package:parent/core/parent_session.dart';
 import 'package:parent/ui/invitation_acceptance.dart';
 import 'package:parent/main.dart';
 
+import 'support/parent_operation_journal_fixture.dart';
+
 const invitationId = '00000000-0000-4000-8000-000000000001',
     tenantId = '00000000-0000-4000-8000-000000000002',
     classId = '00000000-0000-4000-8000-000000000003';
@@ -58,7 +60,7 @@ ParentApi apiFor(Future<http.Response> Function(http.Request) handle) =>
     ParentApi(() async => 'token',
         baseUrl: 'https://fixture.invalid/api/v1', client: MockClient(handle));
 
-class Storage extends ParentDurableStorage {
+class Storage extends ParentDurableStorage with ParentAtomicJournalFixture {
   final values = <String, String>{};
   bool fail = false;
   Completer<void>? barrier;
@@ -314,20 +316,18 @@ void main() {
       final c = make(apiFor((r) async {
         if (r.url.path.endsWith('/preview')) return response(preview());
         if (r.method == 'POST') throw http.ClientException('lost');
-        return response({
-          'errorCode': status == 404
-              ? 'INVITATION_ACCEPTANCE_RESULT_UNAVAILABLE'
-              : 'IDEMPOTENCY_RESPONSE_ERASED'
-        }, status);
+        return status == 404
+            ? response({'errorCode': 'INVITATION_ACCEPTANCE_RESULT_UNAVAILABLE'}, status)
+            : parentJournalTerminalProblem('IDEMPOTENCY_RESPONSE_ERASED');
       }), Storage());
       await c.load();
       await c.inspect(secret);
       await c.accept();
       await c.recover();
-      expect(c.queried, isTrue);
+      expect(c.queried, status == 404 ? isTrue : isFalse);
       expect(c.committed, isFalse);
       expect(c.result, isNull);
-      expect(await c.acknowledge(), isTrue);
+      expect(await (status == 404 ? c.acknowledge() : c.endLocalCheck()), isTrue);
       c.dispose();
     });
   }

@@ -15,6 +15,8 @@ import 'package:parent/core/parent_durable_storage.dart';
 import 'package:parent/core/parent_session.dart';
 import 'package:parent/ui/ownership_center.dart';
 
+import 'support/parent_operation_journal_fixture.dart';
+
 const tenant = '00000000-0000-4000-8000-000000000001',
     transfer = '00000000-0000-4000-8000-000000000002';
 Json record({String state = 'PENDING', int version = 0}) => {
@@ -68,7 +70,7 @@ ParentApi api(Future<http.Response> Function(http.Request) handler) =>
     ParentApi(() async => 'fixture',
         baseUrl: 'https://fixture.invalid/api/v1', client: MockClient(handler));
 
-class Storage extends ParentDurableStorage {
+class Storage extends ParentDurableStorage with ParentAtomicJournalFixture {
   final values = <String, String>{};
   bool fail = false;
   Completer<void>? barrier;
@@ -243,22 +245,23 @@ void main() {
     test('$code does not fabricate a successful transfer', () async {
       final storage = Storage();
       final op = operation(
-          api((r) async => response(
-                  {
-                    'errorCode':
-                        r.url.path.endsWith('/query') ? code : 'REAUTH_REQUIRED'
-                  },
-                  r.url.path.endsWith('/query')
-                      ? (code == 'OWNERSHIP_RESULT_UNAVAILABLE' ? 404 : 410)
-                      : 401)),
+          api((r) async {
+            if (!r.url.path.endsWith('/query')) {
+              return response({'errorCode': 'REAUTH_REQUIRED'}, 401);
+            }
+            return code == 'OWNERSHIP_RESULT_UNAVAILABLE'
+                ? response({'errorCode': code}, 404)
+                : parentJournalTerminalProblem(code);
+          }),
           storage);
       await op.load();
       await op.submit(startInput);
       await op.recover();
-      expect(op.queried, true);
+      expect(op.queried, code == 'OWNERSHIP_RESULT_UNAVAILABLE');
       expect(op.committed, false);
       expect(op.current, isNull);
-      expect(await op.acknowledge(), true);
+      expect(await (code == 'OWNERSHIP_RESULT_UNAVAILABLE'
+          ? op.acknowledge() : op.endLocalCheck()), true);
       op.dispose();
     });
   }

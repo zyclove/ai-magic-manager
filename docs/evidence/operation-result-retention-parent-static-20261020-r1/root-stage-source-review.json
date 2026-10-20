@@ -1,0 +1,1201 @@
+{
+  "status": "STATIC_SOURCE_AND_EXACT_INDEX_REVIEW_ONLY",
+  "baseCommit": "61b33a125847527d9f683e993b6da174a72a40b2",
+  "sdkRun": false,
+  "testsRun": false,
+  "deployed": false,
+  "acceptedForExecution": false,
+  "productionCount": 38,
+  "existingFixtureCount": 18,
+  "newTestSupportCount": 1,
+  "fixtureLexicalCounts": {
+    "test": 121,
+    "testWidgets": 63,
+    "expect": 809,
+    "expectLater": 10,
+    "assert": 0
+  },
+  "assertionProtocolChanges": [
+    {
+      "path": "apps/parent/test/invitation_acceptance_test.dart",
+      "kind": "expect",
+      "ordinal": 39,
+      "before": "expect(c.queried, isTrue)",
+      "after": "expect(c.queried, status == 404 ? isTrue : isFalse)"
+    },
+    {
+      "path": "apps/parent/test/invitation_acceptance_test.dart",
+      "kind": "expect",
+      "ordinal": 42,
+      "before": "expect(await c.acknowledge(), isTrue)",
+      "after": "expect(await (status == 404 ? c.acknowledge() : c.endLocalCheck()), isTrue)"
+    },
+    {
+      "path": "apps/parent/test/observation_settings_test.dart",
+      "kind": "expect",
+      "ordinal": 32,
+      "before": "expect(c.queried, isTrue)",
+      "after": "expect(c.queried, terminal.$1 == 404 ? isTrue : isFalse)"
+    },
+    {
+      "path": "apps/parent/test/permission_consent_test.dart",
+      "kind": "expect",
+      "ordinal": 20,
+      "before": "expect(c.queried, isTrue)",
+      "after": "expect(c.queried, terminal.$1 == 404 ? isTrue : isFalse)"
+    },
+    {
+      "path": "apps/parent/test/ownership_test.dart",
+      "kind": "expect",
+      "ordinal": 26,
+      "before": "expect(op.queried, true)",
+      "after": "expect(op.queried, code == 'OWNERSHIP_RESULT_UNAVAILABLE')"
+    },
+    {
+      "path": "apps/parent/test/ownership_test.dart",
+      "kind": "expect",
+      "ordinal": 29,
+      "before": "expect(await op.acknowledge(), true)",
+      "after": "expect(await (code == 'OWNERSHIP_RESULT_UNAVAILABLE'\n          ? op.acknowledge() : op.endLocalCheck()), true)"
+    },
+    {
+      "path": "apps/parent/test/subjects_test.dart",
+      "kind": "expect",
+      "ordinal": 27,
+      "before": "expect(c.queried, isTrue)",
+      "after": "expect(c.queried, code.startsWith('SUBJECT') ? isTrue : isFalse)"
+    },
+    {
+      "path": "apps/parent/test/policy_publication_recovery_test.dart",
+      "kind": "expect",
+      "ordinal": 7,
+      "before": "expect(storageMutations, 0)",
+      "after": "expect(storageMutations, available ? 1 : 0)"
+    }
+  ],
+  "newTestDeclarationsAuthored": false,
+  "relativeImportClosure": [
+    {
+      "source": "apps/parent/lib/core/application_catalog.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/application_catalog.dart",
+      "dependency": "apps/parent/lib/core/parent_durable_storage.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/application_catalog.dart",
+      "dependency": "apps/parent/lib/core/operation_journal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/application_catalog.dart",
+      "dependency": "apps/parent/lib/core/operation_result_terminal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/audit_exports.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/audit_exports.dart",
+      "dependency": "apps/parent/lib/core/parent_durable_storage.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/audit_exports.dart",
+      "dependency": "apps/parent/lib/core/operation_journal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/audit_exports.dart",
+      "dependency": "apps/parent/lib/core/operation_result_terminal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/device_groups.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/device_groups.dart",
+      "dependency": "apps/parent/lib/core/parent_durable_storage.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/device_groups.dart",
+      "dependency": "apps/parent/lib/core/operation_journal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/device_groups.dart",
+      "dependency": "apps/parent/lib/core/operation_result_terminal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/invitation_acceptance.dart",
+      "dependency": "apps/parent/lib/core/member_access.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/invitation_acceptance.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/invitation_acceptance.dart",
+      "dependency": "apps/parent/lib/core/parent_durable_storage.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/invitation_acceptance.dart",
+      "dependency": "apps/parent/lib/core/operation_journal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/invitation_acceptance.dart",
+      "dependency": "apps/parent/lib/core/operation_result_terminal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/invitations.dart",
+      "dependency": "apps/parent/lib/core/member_access.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/invitations.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/invitations.dart",
+      "dependency": "apps/parent/lib/core/parent_durable_storage.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/invitations.dart",
+      "dependency": "apps/parent/lib/core/operation_journal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/invitations.dart",
+      "dependency": "apps/parent/lib/core/operation_result_terminal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/member_access.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/member_access.dart",
+      "dependency": "apps/parent/lib/core/parent_durable_storage.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/member_access.dart",
+      "dependency": "apps/parent/lib/core/operation_journal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/member_access.dart",
+      "dependency": "apps/parent/lib/core/operation_result_terminal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/observation_settings.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/observation_settings.dart",
+      "dependency": "apps/parent/lib/core/parent_durable_storage.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/observation_settings.dart",
+      "dependency": "apps/parent/lib/core/operation_journal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/observation_settings.dart",
+      "dependency": "apps/parent/lib/core/operation_result_terminal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/permission_consent.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/permission_consent.dart",
+      "dependency": "apps/parent/lib/core/parent_durable_storage.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/permission_consent.dart",
+      "dependency": "apps/parent/lib/core/operation_journal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/permission_consent.dart",
+      "dependency": "apps/parent/lib/core/operation_result_terminal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/permission_consent.dart",
+      "dependency": "apps/parent/lib/core/observation_settings.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/ownership.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/ownership.dart",
+      "dependency": "apps/parent/lib/core/parent_durable_storage.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/ownership.dart",
+      "dependency": "apps/parent/lib/core/operation_journal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/ownership.dart",
+      "dependency": "apps/parent/lib/core/operation_result_terminal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/organization_classes.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/organization_classes.dart",
+      "dependency": "apps/parent/lib/core/parent_durable_storage.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/organization_classes.dart",
+      "dependency": "apps/parent/lib/core/operation_journal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/organization_classes.dart",
+      "dependency": "apps/parent/lib/core/operation_result_terminal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/quotas.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/quotas.dart",
+      "dependency": "apps/parent/lib/core/parent_durable_storage.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/quotas.dart",
+      "dependency": "apps/parent/lib/core/operation_journal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/quotas.dart",
+      "dependency": "apps/parent/lib/core/operation_result_terminal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/quotas.dart",
+      "dependency": "apps/parent/lib/core/quota_plans.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/policy_creation.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/policy_creation.dart",
+      "dependency": "apps/parent/lib/core/parent_durable_storage.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/policy_creation.dart",
+      "dependency": "apps/parent/lib/core/operation_journal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/policy_creation.dart",
+      "dependency": "apps/parent/lib/core/operation_result_terminal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/schedules.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/schedules.dart",
+      "dependency": "apps/parent/lib/core/parent_durable_storage.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/schedules.dart",
+      "dependency": "apps/parent/lib/core/operation_journal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/schedules.dart",
+      "dependency": "apps/parent/lib/core/operation_result_terminal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/subjects.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/subjects.dart",
+      "dependency": "apps/parent/lib/core/parent_durable_storage.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/subjects.dart",
+      "dependency": "apps/parent/lib/core/operation_journal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/subjects.dart",
+      "dependency": "apps/parent/lib/core/operation_result_terminal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/parent_durable_storage.dart",
+      "dependency": "apps/parent/lib/core/parent_session.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/application_center.dart",
+      "dependency": "apps/parent/lib/ui/operation_result_terminal_panel.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/application_center.dart",
+      "dependency": "apps/parent/lib/core/application_catalog.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/application_center.dart",
+      "dependency": "apps/parent/lib/core/paged_collection.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/application_center.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/application_center.dart",
+      "dependency": "apps/parent/lib/core/parent_session.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/audit_exports_center.dart",
+      "dependency": "apps/parent/lib/ui/operation_result_terminal_panel.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/audit_exports_center.dart",
+      "dependency": "apps/parent/lib/core/audit.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/audit_exports_center.dart",
+      "dependency": "apps/parent/lib/core/audit_exports.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/audit_exports_center.dart",
+      "dependency": "apps/parent/lib/core/audit_export_destination.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/audit_exports_center.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/audit_exports_center.dart",
+      "dependency": "apps/parent/lib/core/parent_session.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/class_center.dart",
+      "dependency": "apps/parent/lib/ui/operation_result_terminal_panel.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/class_center.dart",
+      "dependency": "apps/parent/lib/core/organization_classes.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/class_center.dart",
+      "dependency": "apps/parent/lib/core/paged_collection.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/class_center.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/class_center.dart",
+      "dependency": "apps/parent/lib/core/parent_session.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/group_operation_page.dart",
+      "dependency": "apps/parent/lib/ui/operation_result_terminal_panel.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/group_operation_page.dart",
+      "dependency": "apps/parent/lib/core/device_groups.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/group_operation_page.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/group_operation_page.dart",
+      "dependency": "apps/parent/lib/core/parent_session.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/invitation_acceptance.dart",
+      "dependency": "apps/parent/lib/ui/operation_result_terminal_panel.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/invitation_acceptance.dart",
+      "dependency": "apps/parent/lib/core/invitation_acceptance.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/invitation_acceptance.dart",
+      "dependency": "apps/parent/lib/core/member_access.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/invitation_acceptance.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/invitation_acceptance.dart",
+      "dependency": "apps/parent/lib/core/parent_session.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/member_center.dart",
+      "dependency": "apps/parent/lib/ui/operation_result_terminal_panel.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/member_center.dart",
+      "dependency": "apps/parent/lib/core/invitations.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/member_center.dart",
+      "dependency": "apps/parent/lib/core/member_access.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/member_center.dart",
+      "dependency": "apps/parent/lib/core/organization_classes.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/member_center.dart",
+      "dependency": "apps/parent/lib/core/paged_collection.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/member_center.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/member_center.dart",
+      "dependency": "apps/parent/lib/core/parent_session.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/member_center.dart",
+      "dependency": "apps/parent/lib/ui/ownership_center.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/member_center.dart",
+      "dependency": "apps/parent/lib/ui/invitation_center.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/observation_settings_page.dart",
+      "dependency": "apps/parent/lib/ui/operation_result_terminal_panel.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/observation_settings_page.dart",
+      "dependency": "apps/parent/lib/core/observation_settings.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/observation_settings_page.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/observation_settings_page.dart",
+      "dependency": "apps/parent/lib/core/parent_session.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/ownership_center.dart",
+      "dependency": "apps/parent/lib/ui/operation_result_terminal_panel.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/ownership_center.dart",
+      "dependency": "apps/parent/lib/core/member_access.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/ownership_center.dart",
+      "dependency": "apps/parent/lib/core/ownership.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/ownership_center.dart",
+      "dependency": "apps/parent/lib/core/paged_collection.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/ownership_center.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/ownership_center.dart",
+      "dependency": "apps/parent/lib/core/parent_session.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/permission_consent_page.dart",
+      "dependency": "apps/parent/lib/ui/operation_result_terminal_panel.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/permission_consent_page.dart",
+      "dependency": "apps/parent/lib/core/observation_settings.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/permission_consent_page.dart",
+      "dependency": "apps/parent/lib/core/permission_consent.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/permission_consent_page.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/permission_consent_page.dart",
+      "dependency": "apps/parent/lib/core/parent_session.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/policy_creation_page.dart",
+      "dependency": "apps/parent/lib/ui/operation_result_terminal_panel.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/policy_creation_page.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/policy_creation_page.dart",
+      "dependency": "apps/parent/lib/core/parent_session.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/policy_creation_page.dart",
+      "dependency": "apps/parent/lib/core/policy_creation.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/quota_center.dart",
+      "dependency": "apps/parent/lib/ui/operation_result_terminal_panel.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/quota_center.dart",
+      "dependency": "apps/parent/lib/core/paged_collection.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/quota_center.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/quota_center.dart",
+      "dependency": "apps/parent/lib/core/parent_session.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/quota_center.dart",
+      "dependency": "apps/parent/lib/core/quotas.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/quota_center.dart",
+      "dependency": "apps/parent/lib/ui/quota_plan_pages.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/schedule_editor.dart",
+      "dependency": "apps/parent/lib/ui/operation_result_terminal_panel.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/schedule_editor.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/schedule_editor.dart",
+      "dependency": "apps/parent/lib/core/parent_session.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/schedule_editor.dart",
+      "dependency": "apps/parent/lib/core/schedules.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/schedule_editor.dart",
+      "dependency": "apps/parent/lib/core/schedule_presets.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/subject_center.dart",
+      "dependency": "apps/parent/lib/ui/operation_result_terminal_panel.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/subject_center.dart",
+      "dependency": "apps/parent/lib/core/paged_collection.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/subject_center.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/subject_center.dart",
+      "dependency": "apps/parent/lib/core/parent_session.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/subject_center.dart",
+      "dependency": "apps/parent/lib/core/subjects.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/subject_center.dart",
+      "dependency": "apps/parent/lib/ui/class_center.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/subject_center.dart",
+      "dependency": "apps/parent/lib/ui/member_center.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/pending_publications.dart",
+      "dependency": "apps/parent/lib/core/parent_durable_storage.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/pending_publications.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/pending_publications.dart",
+      "dependency": "apps/parent/lib/core/operation_journal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/pending_publications.dart",
+      "dependency": "apps/parent/lib/core/operation_result_terminal.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/policy_center.dart",
+      "dependency": "apps/parent/lib/ui/operation_result_terminal_panel.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/policy_center.dart",
+      "dependency": "apps/parent/lib/core/paged_collection.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/policy_center.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/policy_center.dart",
+      "dependency": "apps/parent/lib/core/parent_session.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/policy_center.dart",
+      "dependency": "apps/parent/lib/core/pending_publications.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/policy_center.dart",
+      "dependency": "apps/parent/lib/ui/policy_editor.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/policy_center.dart",
+      "dependency": "apps/parent/lib/ui/policy_creation_page.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/policy_center.dart",
+      "dependency": "apps/parent/lib/core/policy_group_selection.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/policy_center.dart",
+      "dependency": "apps/parent/lib/ui/policy_group_picker.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/policy_center.dart",
+      "dependency": "apps/parent/lib/ui/schedule_center.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/policy_center.dart",
+      "dependency": "apps/parent/lib/ui/quota_center.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/operation_result_terminal.dart",
+      "dependency": "apps/parent/lib/core/operation_journal.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/operation_result_terminal.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/operation_journal.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/lib/core/operation_journal.dart",
+      "dependency": "apps/parent/lib/core/parent_durable_storage.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/operation_result_terminal_panel.dart",
+      "dependency": "apps/parent/lib/core/operation_result_terminal.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/operation_result_terminal_panel.dart",
+      "dependency": "apps/parent/lib/core/parent_session.dart"
+    },
+    {
+      "source": "apps/parent/lib/ui/operation_result_terminal_panel.dart",
+      "dependency": "apps/parent/lib/core/parent_api.dart"
+    },
+    {
+      "source": "apps/parent/test/application_catalog_test.dart",
+      "dependency": "apps/parent/test/support/parent_operation_journal_fixture.dart"
+    },
+    {
+      "source": "apps/parent/test/audit_exports_test.dart",
+      "dependency": "apps/parent/test/audit_export_fixture.dart"
+    },
+    {
+      "source": "apps/parent/test/audit_exports_test.dart",
+      "dependency": "apps/parent/test/support/parent_operation_journal_fixture.dart"
+    },
+    {
+      "source": "apps/parent/test/device_groups_test.dart",
+      "dependency": "apps/parent/test/support/parent_operation_journal_fixture.dart"
+    },
+    {
+      "source": "apps/parent/test/invitation_acceptance_test.dart",
+      "dependency": "apps/parent/test/support/parent_operation_journal_fixture.dart"
+    },
+    {
+      "source": "apps/parent/test/invitations_test.dart",
+      "dependency": "apps/parent/test/support/parent_operation_journal_fixture.dart"
+    },
+    {
+      "source": "apps/parent/test/member_access_test.dart",
+      "dependency": "apps/parent/test/support/parent_operation_journal_fixture.dart"
+    },
+    {
+      "source": "apps/parent/test/observation_settings_test.dart",
+      "dependency": "apps/parent/test/support/parent_operation_journal_fixture.dart"
+    },
+    {
+      "source": "apps/parent/test/permission_consent_test.dart",
+      "dependency": "apps/parent/test/support/parent_operation_journal_fixture.dart"
+    },
+    {
+      "source": "apps/parent/test/ownership_test.dart",
+      "dependency": "apps/parent/test/support/parent_operation_journal_fixture.dart"
+    },
+    {
+      "source": "apps/parent/test/organization_classes_test.dart",
+      "dependency": "apps/parent/test/support/parent_operation_journal_fixture.dart"
+    },
+    {
+      "source": "apps/parent/test/quotas_test.dart",
+      "dependency": "apps/parent/test/support/parent_operation_journal_fixture.dart"
+    },
+    {
+      "source": "apps/parent/test/quota_plans_test.dart",
+      "dependency": "apps/parent/test/support/parent_operation_journal_fixture.dart"
+    },
+    {
+      "source": "apps/parent/test/policy_creation_test.dart",
+      "dependency": "apps/parent/test/support/parent_operation_journal_fixture.dart"
+    },
+    {
+      "source": "apps/parent/test/schedules_test.dart",
+      "dependency": "apps/parent/test/support/parent_operation_journal_fixture.dart"
+    },
+    {
+      "source": "apps/parent/test/subjects_test.dart",
+      "dependency": "apps/parent/test/support/parent_operation_journal_fixture.dart"
+    },
+    {
+      "source": "apps/parent/test/schedule_presets_test.dart",
+      "dependency": "apps/parent/test/support/parent_operation_journal_fixture.dart"
+    },
+    {
+      "source": "apps/parent/test/policy_publication_recovery_test.dart",
+      "dependency": "apps/parent/test/support/parent_operation_journal_fixture.dart"
+    },
+    {
+      "source": "apps/parent/test/policy_group_selection_test.dart",
+      "dependency": "apps/parent/test/support/parent_operation_journal_fixture.dart"
+    }
+  ],
+  "reviewNote": "R3 core review is historical; all R4 changed UI/helpers were rereviewed in the final R4 UI receipt.",
+  "files": [
+    {
+      "path": "apps/parent/lib/core/application_catalog.dart",
+      "sha256": "fb059574c21722ecf3d32da81c2ec4617f385ed35877659bdd25f68fafabf7ae",
+      "mainSha256": "ac93b0caf9f5207ccfdbb8e8105eb0acafceb571c5fd3977ff5105ac94b902f0",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/core/application_catalog.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/core/audit_exports.dart",
+      "sha256": "66004dd2f71189d01d659dd8afac7bf9d0f6c339e0aac49b9a2afc3190ac3800",
+      "mainSha256": "f624b711ff9e9053eb8e602d08be0123e06fd32f125a911cdca5803ab7dd872c",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/core/audit_exports.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/core/device_groups.dart",
+      "sha256": "fcfe6d4d75548120e9e2c86a0059446119abbdcb26c45850a5b070754773d437",
+      "mainSha256": "ef16ed57f861487ccf4f8d731edcb9468ca8873c4311c3e914b4d70fe6479e11",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/core/device_groups.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/core/invitation_acceptance.dart",
+      "sha256": "dce7d2eb8c2499b63f3caaebe312e6246be48ddb0d0c2e7309c340486758d6a8",
+      "mainSha256": "0b8defc9f69d6e8753abe64271274eac8e3face0f821cc13f0b3a49229feebc2",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/core/invitation_acceptance.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/core/invitations.dart",
+      "sha256": "1d462f87b5c84493ce7e86617432a3184417996496e48e246f90fa76f51e9be1",
+      "mainSha256": "8e01f31f6d12f558f2cae87a96cd93e0a5a3a49a2a8223a5aa0716b9aa729b55",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/core/invitations.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/core/member_access.dart",
+      "sha256": "b60a3c49ba176ea5a64331904d8c349473888d9f6aa62274bb0108b734b05c6b",
+      "mainSha256": "08d696df8b7fe268442490ff27bd290806f9465c5839cfd4b8fc163db2589768",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/core/member_access.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/core/observation_settings.dart",
+      "sha256": "5edd87ddb0cd7d7e2bb93b931ffa7ce4900741d0caf25656a48f4bf40b52ef02",
+      "mainSha256": "463ed16f7cba97fc08307790f0f86f154ca4707ba22c91a715a28a3605c9dfd7",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/core/observation_settings.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/core/permission_consent.dart",
+      "sha256": "c1e884f5dd5e11b093f0f138f72f2c0520a004ff616460ae328c97e1dec3108e",
+      "mainSha256": "e5808dc87edd3a203c65548644a5fd024ab033ab4008e258f9907be9e99bfb59",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/core/permission_consent.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/core/ownership.dart",
+      "sha256": "a0ed365afda0239b1cb0d046dc345533aa80c19c95a86609d5b85961f1e94d69",
+      "mainSha256": "23c83ff764c3cb8d191f36f59e79e1092317ad663b768493049da51f9df97ae4",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/core/ownership.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/core/organization_classes.dart",
+      "sha256": "5d05d17dd6d418da417a310bfbab427bab5296af5c17a27fcee0c2e6181bf9f9",
+      "mainSha256": "d615115c7ccfb8f4f1f005bbf8ec15ab4ca616595a7c9532a9c6d44699702251",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/core/organization_classes.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/core/quotas.dart",
+      "sha256": "69c33f531c13a51ed47caf5a6185ac65f83b65c912d0a4355a1375d30aa411f3",
+      "mainSha256": "ba1b76fa136b93a3fc2f9768238304f200faf866f6a5f6c412eada156c1ae2ed",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/core/quotas.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/core/policy_creation.dart",
+      "sha256": "26c007b38b4aacd29b0aa5509addc990331b70495f41f459e3e56bf1f8a33dca",
+      "mainSha256": "c0163c0307420d1326001cbaab4df42b0825e1467d5cf0524058d7640d6c6b31",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/core/policy_creation.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/core/schedules.dart",
+      "sha256": "aa8a25f922438e28df3623ed4a0d371750e6bdda393589a685d4ecf0f4007573",
+      "mainSha256": "5844a9cc79b2a25213ebe52f1f2fc55dcd3bf80c1e7a26a7c41346f113054595",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/core/schedules.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/core/subjects.dart",
+      "sha256": "31420de9d1013d552c8b1b0362d17de0ed8f32692e69d8708f26392ccf821c32",
+      "mainSha256": "e3391c3d7de6534f891fc5b1e551b76d3779d1aa91abd66af0536f7deb0cafeb",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/core/subjects.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/core/parent_api.dart",
+      "sha256": "b8bc9ccba4cab580aa2e37946ad2a0f4be446086f3f512688866b8d37de243dc",
+      "mainSha256": "0697dcc6d23364d8c95cf07152b352f51bb5947c9164274b6e685e5829f3ec1f",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/core/parent_api.dart",
+      "stageReason": "PREEXISTING_SEMANTIC_WIP"
+    },
+    {
+      "path": "apps/parent/lib/core/parent_durable_storage.dart",
+      "sha256": "712db2809e7af8386dbb944ce7db09e4dd0abb49aa8fd2fe7c59373bcd3fa771",
+      "mainSha256": "712db2809e7af8386dbb944ce7db09e4dd0abb49aa8fd2fe7c59373bcd3fa771",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/core/parent_durable_storage.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/ui/application_center.dart",
+      "sha256": "eb8a883b236efaf052cd7c37cc47fb8cb9fbc3ce1a857477d7c10d641b0f84b5",
+      "mainSha256": "34d996d69d6872e2f03305955d5feac45eede198543adae56867280804673ec7",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/ui/application_center.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/ui/audit_exports_center.dart",
+      "sha256": "f41fdda752f4e841a2497c46529ba0df4cb426c578b11fd19a5dce1c9d29d075",
+      "mainSha256": "f7b5aa10569b257d10f02ab6f2f4234fabcd5dc25b3ed6ce33b92cb11b890ee4",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/ui/audit_exports_center.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/ui/class_center.dart",
+      "sha256": "48f5d946ccefb2ffd546270d50c0aff836484ae64e4d3775d737cc8439cc7d77",
+      "mainSha256": "3acf0a8ee52a66594bc83aaf993e2cbc62257c5ac5e59bc45a87e84686687496",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/ui/class_center.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/ui/group_operation_page.dart",
+      "sha256": "f3b2331a3d01ef680adb93368954c6b15542fa9ab7071de24a522367fed8507d",
+      "mainSha256": "0e652697dbbd3ef6945579a37446beb87ad8e8d43684f861048c9e546626796e",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/ui/group_operation_page.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/ui/invitation_acceptance.dart",
+      "sha256": "496d8641579c8354713d7bd08c0cd59537cd0cf38a726568be3dbd60b9fb3b38",
+      "mainSha256": "d51679fa69c221be607ffc3b0bfbeddd347378c80ee52c5c2b2bf26ee0d3348d",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/ui/invitation_acceptance.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/ui/invitation_center.dart",
+      "sha256": "1a6da27768785a8b535bca592da3e52538c72b70ab611469d787d6d14f2caf4c",
+      "mainSha256": "d63c44376e0b1bf62b31cc82cad9d081df7f8986b9c02ea7c842574c8ecfcf1c",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/ui/invitation_center.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/ui/member_center.dart",
+      "sha256": "02b77c272e9f77d16fe1ee7df62eed91389c7a2da3daf5f473628560f86f8c6e",
+      "mainSha256": "6364c78c42afbdfd7b8013dcf5f6399975f06e6bcfbddefd493a1e093d2f48a1",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/ui/member_center.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/ui/observation_settings_page.dart",
+      "sha256": "fc3dbced78cac4aa533c3a5f6f6fa9dd014ddc85ac1d34d7ab6d316f8c6737ca",
+      "mainSha256": "5a0c8b0d7d2cadc84f64d3e0501cd3ff09fe084d204e718d4f1e9a3740a6d110",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/ui/observation_settings_page.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/ui/ownership_center.dart",
+      "sha256": "1a048bbd24f187972bd35a02f64c9bbe2adc916abe715c668df6d89c51592384",
+      "mainSha256": "994edb8ffc3f71477233d5f91f6b65c9c3225b5bef803362853b39810495e58f",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/ui/ownership_center.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/ui/permission_consent_page.dart",
+      "sha256": "6dbe94b89c065b77ac28d8b8bce002f5a70a8eba73226a4ef91eb404c1e34c71",
+      "mainSha256": "dca50f8dc1e8219a200ef753e22cf74798496af3c27a74cd764c69b6fe00ddfc",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/ui/permission_consent_page.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/ui/policy_creation_page.dart",
+      "sha256": "cb2fe5232ab47fc851063ad73d79ee9a27574de99b23769657ff861db64e63d5",
+      "mainSha256": "eb56dcdaf02e5a197f4bf224a31b565cbdbe6897a16925de59ed0792617eb799",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/ui/policy_creation_page.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/ui/quota_center.dart",
+      "sha256": "eed6594a497a086a693b91408fa6902c2dbb9d4e422d8f42f2b4faf4ee558cfd",
+      "mainSha256": "6c81f192583ec83c503e51f8eb19acc6e6956ced05dd76a998c48c3a27407377",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/ui/quota_center.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/ui/quota_plan_pages.dart",
+      "sha256": "2f6c3ba854fc88ed6227369d99ba9208e5cb01f8ede400318ef955afa6e1302a",
+      "mainSha256": "2f6c3ba854fc88ed6227369d99ba9208e5cb01f8ede400318ef955afa6e1302a",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/ui/quota_plan_pages.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/ui/schedule_editor.dart",
+      "sha256": "1731e89553995d2eb90fcbb0e6f6670e7b7f3e2ba7abd30d6b3ae56234f67a31",
+      "mainSha256": "3cea34536413c0ee026e48d77e56e342dde4f90b4c77cafcfbc7066fcf29126e",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/ui/schedule_editor.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/ui/subject_center.dart",
+      "sha256": "db1db3f71c83618d67b1f07cd57a8c84b54c3cdc8f8989812c40915f4f559c8c",
+      "mainSha256": "918b993a846beb6fb3d77643e3f8f42876a78bec687ec6e021feb0e8909d1fa8",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/ui/subject_center.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/kotlin/com/aimanager/parent/MainActivity.kt",
+      "sha256": "c863f07b997532401632e50d0348fec0a8f1a53929c19558f4914e56d71abe1c",
+      "mainSha256": "0f62dd7cd558b14fbc685c4ffab1311d481d7867627bdbef88fc9da35a7b7047",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/android/app/src/main/kotlin/com/aimanager/parent/MainActivity.kt",
+      "stageReason": "PREEXISTING_SEMANTIC_WIP"
+    },
+    {
+      "path": "apps/parent/lib/core/pending_publications.dart",
+      "sha256": "abd25b7485ff5d1c51ea1fdf909b50f3f691e974d6c2d0d82fb3b50b3e062f5f",
+      "mainSha256": "39311bbb4fe0fb8844fa43107545609022ef7a19e5939a93e9d466de65e4b0c2",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/core/pending_publications.dart",
+      "stageReason": "BEFORE_MATCHES_HEAD_BYTES"
+    },
+    {
+      "path": "apps/parent/lib/ui/policy_center.dart",
+      "sha256": "6d1a8281380081cb46e81ad0bc2b19e9427a3d7bad60b1f2c685b94626250ac9",
+      "mainSha256": "8afe358f65393d765f3730d0db4e8663bb355ee63cb8ca98aa2d1e78ad8a41a4",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/ui/policy_center.dart",
+      "stageReason": "PREEXISTING_SEMANTIC_WIP"
+    },
+    {
+      "path": "apps/parent/lib/core/operation_result_terminal.dart",
+      "sha256": "dec13a0c3e69ce12901f63a57ad25cf85552c02c77d458ff419fbbe6c1880201",
+      "mainSha256": "dec13a0c3e69ce12901f63a57ad25cf85552c02c77d458ff419fbbe6c1880201",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/core/operation_result_terminal.dart",
+      "stageReason": "NEW_THIS_PHASE"
+    },
+    {
+      "path": "apps/parent/lib/core/operation_journal.dart",
+      "sha256": "d0500c385ec59b19cb17d3096cfa10e5e8d81af49fc967943529cd8c68ee3b87",
+      "mainSha256": "d0500c385ec59b19cb17d3096cfa10e5e8d81af49fc967943529cd8c68ee3b87",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/core/operation_journal.dart",
+      "stageReason": "NEW_THIS_PHASE"
+    },
+    {
+      "path": "apps/parent/lib/ui/operation_result_terminal_panel.dart",
+      "sha256": "89da15fbf86551feb8a92ed5be95d64908f9414f2e5a3ed43c8e145f82df9bdb",
+      "mainSha256": "753afd55ca66d291f1b4f1c7968558a613bf23deee53fd57fe88098ded6baff3",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/lib/ui/operation_result_terminal_panel.dart",
+      "stageReason": "NEW_THIS_PHASE"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/kotlin/com/aimanager/parent/ParentOperationJournalStore.kt",
+      "sha256": "47360efc67f3b616eaaee75fdf612d3501acdeda57d384341b7a8563c585ddab",
+      "mainSha256": "47360efc67f3b616eaaee75fdf612d3501acdeda57d384341b7a8563c585ddab",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/android/app/src/main/kotlin/com/aimanager/parent/ParentOperationJournalStore.kt",
+      "stageReason": "NEW_THIS_PHASE"
+    },
+    {
+      "path": "apps/parent/test/application_catalog_test.dart",
+      "sha256": "3f821a3efb1e0d52839d848edfd47693f611e18d939e976143034f7412cc2f61",
+      "mainSha256": "3f821a3efb1e0d52839d848edfd47693f611e18d939e976143034f7412cc2f61",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/test/application_catalog_test.dart",
+      "stageReason": "Existing fixture protocol adaptation; original fault/assertion bodies retained"
+    },
+    {
+      "path": "apps/parent/test/audit_exports_test.dart",
+      "sha256": "df330c4dbcc2074e45fabb2f1a1aeaafbffa5c35db25bbaf3dd34469236f17fe",
+      "mainSha256": "df330c4dbcc2074e45fabb2f1a1aeaafbffa5c35db25bbaf3dd34469236f17fe",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/test/audit_exports_test.dart",
+      "stageReason": "Existing fixture protocol adaptation; original fault/assertion bodies retained"
+    },
+    {
+      "path": "apps/parent/test/device_groups_test.dart",
+      "sha256": "3e5c98e2e5a5b6538431c760604eca8d8211fc97319fec5e7b4bec5a14cab834",
+      "mainSha256": "3e5c98e2e5a5b6538431c760604eca8d8211fc97319fec5e7b4bec5a14cab834",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/test/device_groups_test.dart",
+      "stageReason": "Existing fixture protocol adaptation; original fault/assertion bodies retained"
+    },
+    {
+      "path": "apps/parent/test/invitation_acceptance_test.dart",
+      "sha256": "4cf2e97ec8af6182f3c4ce0dfce0d11307af99cf1aeaa0d88fd76fcd5746c5fb",
+      "mainSha256": "2a0529dfea03be93672af0dc8527ce2011c011e483ce2b78a049672b8be3058c",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/test/invitation_acceptance_test.dart",
+      "stageReason": "Only adapter on HEAD; Family invitation-entry WIP preserved in Main"
+    },
+    {
+      "path": "apps/parent/test/invitations_test.dart",
+      "sha256": "5b18c663a17c8daf5abc3e447a4a86a942a4dda4e9bf75cc6eae705ea15d5e16",
+      "mainSha256": "5b18c663a17c8daf5abc3e447a4a86a942a4dda4e9bf75cc6eae705ea15d5e16",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/test/invitations_test.dart",
+      "stageReason": "Existing fixture protocol adaptation; original fault/assertion bodies retained"
+    },
+    {
+      "path": "apps/parent/test/member_access_test.dart",
+      "sha256": "54537bc229e23dada902df8e1ae7457d8ca9f250d78e2dc9220c3049480107a6",
+      "mainSha256": "54537bc229e23dada902df8e1ae7457d8ca9f250d78e2dc9220c3049480107a6",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/test/member_access_test.dart",
+      "stageReason": "Existing fixture protocol adaptation; original fault/assertion bodies retained"
+    },
+    {
+      "path": "apps/parent/test/observation_settings_test.dart",
+      "sha256": "bf1814b2bd1127d56420379163fab6a9fd6564daf4338f8abd4a860baae9da00",
+      "mainSha256": "bf1814b2bd1127d56420379163fab6a9fd6564daf4338f8abd4a860baae9da00",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/test/observation_settings_test.dart",
+      "stageReason": "Existing fixture protocol adaptation; original fault/assertion bodies retained"
+    },
+    {
+      "path": "apps/parent/test/permission_consent_test.dart",
+      "sha256": "6d87582bfc4eb26978f9f661fe90817ba4810143e39042d1725ecde31f2e91c8",
+      "mainSha256": "6d87582bfc4eb26978f9f661fe90817ba4810143e39042d1725ecde31f2e91c8",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/test/permission_consent_test.dart",
+      "stageReason": "Existing fixture protocol adaptation; original fault/assertion bodies retained"
+    },
+    {
+      "path": "apps/parent/test/ownership_test.dart",
+      "sha256": "2e9a1ce629b82d8f3fa7bc106e22194c80fcffd8e28dbc8679ccea1658d90da7",
+      "mainSha256": "2e9a1ce629b82d8f3fa7bc106e22194c80fcffd8e28dbc8679ccea1658d90da7",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/test/ownership_test.dart",
+      "stageReason": "Existing fixture protocol adaptation; original fault/assertion bodies retained"
+    },
+    {
+      "path": "apps/parent/test/organization_classes_test.dart",
+      "sha256": "b65f97fc87998b8b3a3b1a794989777ac0eb2d3eee597142d7339f49dd8194f1",
+      "mainSha256": "b65f97fc87998b8b3a3b1a794989777ac0eb2d3eee597142d7339f49dd8194f1",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/test/organization_classes_test.dart",
+      "stageReason": "Existing fixture protocol adaptation; original fault/assertion bodies retained"
+    },
+    {
+      "path": "apps/parent/test/quotas_test.dart",
+      "sha256": "4fa8aa036fc28f118b0eed7298fe7ad481c0da88cce997013ac4559474a4e630",
+      "mainSha256": "4fa8aa036fc28f118b0eed7298fe7ad481c0da88cce997013ac4559474a4e630",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/test/quotas_test.dart",
+      "stageReason": "Existing fixture protocol adaptation; original fault/assertion bodies retained"
+    },
+    {
+      "path": "apps/parent/test/quota_plans_test.dart",
+      "sha256": "9248c0950619d2bb719b742b2119fdf1cd4e998948035ea2798ce746ece2b60a",
+      "mainSha256": "9248c0950619d2bb719b742b2119fdf1cd4e998948035ea2798ce746ece2b60a",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/test/quota_plans_test.dart",
+      "stageReason": "Existing fixture protocol adaptation; original fault/assertion bodies retained"
+    },
+    {
+      "path": "apps/parent/test/policy_creation_test.dart",
+      "sha256": "eb1b44b4211e3766bb2a5c1a7f422f0784a6215749f034218fc9e49c0d0238f4",
+      "mainSha256": "eb1b44b4211e3766bb2a5c1a7f422f0784a6215749f034218fc9e49c0d0238f4",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/test/policy_creation_test.dart",
+      "stageReason": "Existing fixture protocol adaptation; original fault/assertion bodies retained"
+    },
+    {
+      "path": "apps/parent/test/schedules_test.dart",
+      "sha256": "76f3b6169027531dde27f394816fefaaf095d383d0b3ab9509a4d5d5e87dafd2",
+      "mainSha256": "76f3b6169027531dde27f394816fefaaf095d383d0b3ab9509a4d5d5e87dafd2",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/test/schedules_test.dart",
+      "stageReason": "Existing fixture protocol adaptation; original fault/assertion bodies retained"
+    },
+    {
+      "path": "apps/parent/test/subjects_test.dart",
+      "sha256": "c23a1e2cf16ce827aea7ea6ea9adebc7ed19954189d9fb953d49b0a4d275a1e5",
+      "mainSha256": "c23a1e2cf16ce827aea7ea6ea9adebc7ed19954189d9fb953d49b0a4d275a1e5",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/test/subjects_test.dart",
+      "stageReason": "Existing fixture protocol adaptation; original fault/assertion bodies retained"
+    },
+    {
+      "path": "apps/parent/test/schedule_presets_test.dart",
+      "sha256": "dc619808c00260672aba39643ecbebf9190adb64327b086438c75919f4e69288",
+      "mainSha256": "dc619808c00260672aba39643ecbebf9190adb64327b086438c75919f4e69288",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/test/schedule_presets_test.dart",
+      "stageReason": "Existing fixture protocol adaptation; original fault/assertion bodies retained"
+    },
+    {
+      "path": "apps/parent/test/policy_publication_recovery_test.dart",
+      "sha256": "6fe66e4c2ad69b46368b80c7ca0217c00314637c9c6c0f7907522ba82dfa74c3",
+      "mainSha256": "6fe66e4c2ad69b46368b80c7ca0217c00314637c9c6c0f7907522ba82dfa74c3",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/test/policy_publication_recovery_test.dart",
+      "stageReason": "Preexisting worktree-only dedicated test; file coordination authorized inclusion, no new declarations"
+    },
+    {
+      "path": "apps/parent/test/policy_group_selection_test.dart",
+      "sha256": "0b554986c414dd869003dea13ac5ff0dc95ca5139a5d8735f9a1bd6a8f7053f0",
+      "mainSha256": "0b554986c414dd869003dea13ac5ff0dc95ca5139a5d8735f9a1bd6a8f7053f0",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/test/policy_group_selection_test.dart",
+      "stageReason": "Existing fixture protocol adaptation; original fault/assertion bodies retained"
+    },
+    {
+      "path": "apps/parent/test/support/parent_operation_journal_fixture.dart",
+      "sha256": "7234ee691306fd83cdec5584526e2a7aae6b711312495e2c015193585f7023d4",
+      "mainSha256": "7234ee691306fd83cdec5584526e2a7aae6b711312495e2c015193585f7023d4",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/test/support/parent_operation_journal_fixture.dart",
+      "stageReason": "New test support only, no test declarations"
+    },
+    {
+      "path": "apps/parent/pubspec.yaml",
+      "sha256": "fcc7df41c731504060010e4c79b7bf482ccbe7f5a9cc8d06585d21e5fe490a8f",
+      "mainSha256": "20a2bf8ee276d739d356cc2f21a1100ca84ee5718bc0abf693704aabf525e1ad",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/pubspec.yaml",
+      "stageReason": "Declare only already-locked crypto 3.0.7 dev ownership; no resolution or version change"
+    },
+    {
+      "path": "apps/parent/pubspec.lock",
+      "sha256": "fde5639ecd0f4d1429c5902412abcae996a912cac4f08f2e44f4ff00d557c2f4",
+      "mainSha256": "f1c4834fe90949a34d6240001fe3431c0fd4486090f10c05866d8ace517b7ea1",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/apps/parent/pubspec.lock",
+      "stageReason": "Declare only already-locked crypto 3.0.7 dev ownership; no resolution or version change"
+    },
+    {
+      "path": "docs/implementation-progress.md",
+      "sha256": "f5e4713c2406337474dda82fd2d9f22e5d9d4eb2a3b42815115932df622c0574",
+      "mainSha256": "f5e4713c2406337474dda82fd2d9f22e5d9d4eb2a3b42815115932df622c0574",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/docs/implementation-progress.md",
+      "stageReason": "Only latest source checkpoint prepended; unrelated historical/WIP bytes excluded"
+    },
+    {
+      "path": "docs/backend-api-status.md",
+      "sha256": "56360e8cfc6d1794bfbb7eae83b6945c85ffcce1a835820e6b74b5f5a2e3b855",
+      "mainSha256": "56360e8cfc6d1794bfbb7eae83b6945c85ffcce1a835820e6b74b5f5a2e3b855",
+      "stageSource": ".cache/operation-result-retention-20261020/root/parent-final-stage-images/docs/backend-api-status.md",
+      "stageReason": "Only latest source checkpoint prepended; unrelated historical/WIP bytes excluded"
+    }
+  ]
+}

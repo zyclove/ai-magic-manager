@@ -4,6 +4,8 @@ import 'package:uuid/uuid.dart';
 import 'member_access.dart';
 import 'parent_api.dart';
 import 'parent_durable_storage.dart';
+import 'operation_journal.dart';
+import 'operation_result_terminal.dart';
 
 bool _uuid(dynamic v) =>
     v is String &&
@@ -62,12 +64,13 @@ void validateAcceptanceReference(Json row) {
 }
 
 class InvitationAcceptanceStore {
+  late final ParentOperationJournal journal = ParentOperationJournal(storage);
   final ParentDurableStorage storage;
   InvitationAcceptanceStore({ParentDurableStorage? storage})
       : storage = storage ?? ParentDurableStorage();
   String key(String actor) => 'parent.pending.invitation-acceptance.$actor';
   Future<Json?> load(String actor) async {
-    final raw = await storage.read(key: key(actor));
+    final raw = await journal.read(key: key(actor));
     if (raw == null) return null;
     if (raw.length > 2048) throw const FormatException('加入恢复记录过大。');
     final row = jsonDecode(raw);
@@ -79,18 +82,39 @@ class InvitationAcceptanceStore {
   Future<void> save(String actor, Json row) async {
     validateAcceptanceReference(row);
     if (await load(actor) != null) throw StateError('请先核对上次加入操作。');
-    await storage.write(key: key(actor), value: jsonEncode(row));
+    await journal.write(key: key(actor), value: jsonEncode(row));
   }
 
   Future<void> clear(String actor, String id) async {
     final row = await load(actor);
     if (row != null && row['requestId'] != id) throw StateError('加入恢复记录已变化。');
-    await storage.delete(key: key(actor));
+    await journal.delete(key: key(actor));
   }
 }
 
 /// An actor may join before any workspace exists. No token is stored in the recovery descriptor.
-class InvitationAcceptanceController extends ChangeNotifier {
+class InvitationAcceptanceController extends ChangeNotifier with ParentTerminalOperation {
+  @override
+  ParentOperationJournal get operationJournal => store.journal;
+  @override
+  String get operationSlot => store.key(actor);
+  @override
+  Json? get operationPayload => pending;
+  @override
+  bool get operationCurrent => current;
+  @override
+  bool get operationHasSuccessfulResult => committed;
+  @override
+  void forgetOperationPayload() {
+    pending = null;
+    preview = null;
+    result = null;
+    _token = null;
+    queried = false;
+    loaded = false;
+    committed = false;
+    _secretEpoch++;
+  }
   final ParentApi api;
   final String actor;
   final InvitationAcceptanceStore store;
@@ -152,6 +176,7 @@ class InvitationAcceptanceController extends ChangeNotifier {
         loaded = true;
       }
     } catch (e) {
+      await captureResultTerminal(e);
       if (current) error = e;
     } finally {
       busy = false;
@@ -160,6 +185,7 @@ class InvitationAcceptanceController extends ChangeNotifier {
   }
 
   Future<void> inspect(String input) async {
+    if (operationBlocked) return;
     if (!canPreview) return;
     final token = input.trim();
     forgetSecret();
@@ -175,11 +201,12 @@ class InvitationAcceptanceController extends ChangeNotifier {
     try {
       final raw = await api.send('POST', '/invitations/preview',
           body: {'token': token},
-          isCurrent: () => current && epoch == _secretEpoch);
+          isCurrent: () => current && epoch == _secretEpoch, beforeDispatch: operationBeforeWrite);
       if (!current || epoch != _secretEpoch) return;
       preview = readInvitationPreview(raw);
       _token = token;
     } catch (e) {
+      await captureResultTerminal(e);
       if (current && epoch == _secretEpoch) error = e;
     } finally {
       busy = false;
@@ -188,6 +215,7 @@ class InvitationAcceptanceController extends ChangeNotifier {
   }
 
   Future<void> accept() async {
+    if (operationBlocked) return;
     if (canPreview &&
         preview != null &&
         preview!['expiresAt'] <= DateTime.now().millisecondsSinceEpoch) {
@@ -212,6 +240,7 @@ class InvitationAcceptanceController extends ChangeNotifier {
       pending = row;
       await _send(token);
     } catch (e) {
+      await captureResultTerminal(e);
       if (current) {
         error = e;
         if (pending == null) loaded = false;
@@ -251,18 +280,20 @@ class InvitationAcceptanceController extends ChangeNotifier {
     final raw = await api.send('POST', '/invitations/acceptances',
         body: {'invitationId': pending!['invitationId'], 'token': token},
         idempotencyKey: pending!['requestId'],
-        isCurrent: () => current && epoch == _secretEpoch);
+        isCurrent: () => current && epoch == _secretEpoch, beforeDispatch: operationBeforeWrite);
     if (!current) return;
     result = _readResult(raw);
     committed = true;
     queried = true;
+    if (operationHasSuccessfulResult) await recordSuccessfulOperation();
   }
 
   Future<void> recover({String? retryToken}) async {
+    if (operationBlocked) return;
     if (!current ||
         busy ||
         pending == null ||
-        (retryToken != null && committed)) return;
+        (retryToken != null && (committed || operationKnownSuccessful))) return;
     if (retryToken != null && !validInvitationToken(retryToken.trim())) {
       error = const FormatException('请重新输入原邀请的完整 43 位邀请码。');
       _notify();
@@ -277,18 +308,19 @@ class InvitationAcceptanceController extends ChangeNotifier {
       } else {
         final raw = await api.object(
             '/invitations/${pending!['invitationId']}/acceptance-results/${pending!['requestId']}',
-            isCurrent: () => current);
+            isCurrent: () => current, beforeDispatch: operationBeforeDispatch);
         if (!current) return;
         result = _readResult(raw);
         committed = true;
         queried = true;
+        if (operationHasSuccessfulResult) await recordSuccessfulOperation();
       }
     } on ParentApiException catch (e) {
+      await captureResultTerminal(e);
       if (current) {
         if (retryToken == null &&
             ((e.status == 404 &&
-                    e.code == 'INVITATION_ACCEPTANCE_RESULT_UNAVAILABLE') ||
-                (e.status == 410 && e.code == 'IDEMPOTENCY_RESPONSE_ERASED'))) {
+                    e.code == 'INVITATION_ACCEPTANCE_RESULT_UNAVAILABLE'))) {
           queried = true;
           error = e;
         } else {
@@ -296,6 +328,7 @@ class InvitationAcceptanceController extends ChangeNotifier {
         }
       }
     } catch (e) {
+      await captureResultTerminal(e);
       if (current) error = e;
     } finally {
       busy = false;
@@ -304,6 +337,7 @@ class InvitationAcceptanceController extends ChangeNotifier {
   }
 
   Future<bool> acknowledge() async {
+    if (operationBlocked) return false;
     if (!current || busy || pending == null || !queried) return false;
     busy = true;
     error = null;
@@ -317,6 +351,7 @@ class InvitationAcceptanceController extends ChangeNotifier {
       committed = false;
       return true;
     } catch (e) {
+      await captureResultTerminal(e);
       if (current) error = e;
       return false;
     } finally {

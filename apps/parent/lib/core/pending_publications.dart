@@ -1,6 +1,10 @@
 import 'dart:convert';
 
 import 'parent_durable_storage.dart';
+import 'parent_api.dart';
+import 'operation_journal.dart';
+import 'operation_result_terminal.dart';
+import 'package:flutter/foundation.dart';
 
 /// Minimal non-secret reference saved durably before a configuration POST.
 /// It permits an exact creator-only result lookup without replaying the POST.
@@ -61,65 +65,175 @@ class PendingPublication {
 /// of the same draft until the adult reconciles the original result.
 class PendingPublicationStore {
   final ParentDurableStorage storage;
+  late final ParentOperationJournal journal = ParentOperationJournal(storage);
   PendingPublicationStore({ParentDurableStorage? storage})
       : storage = storage ?? ParentDurableStorage();
 
-  String _key(String tenantId, String actorId) =>
+  String collection(String tenantId, String actorId) =>
       'parent.pending.publications.$tenantId.$actorId';
+  String slot(String tenantId, String actorId, String policyId) =>
+      '${collection(tenantId, actorId)}.$policyId';
 
   Future<List<PendingPublication>> load(String tenantId, String actorId) async {
-    final raw = await storage.read(key: _key(tenantId, actorId));
-    if (raw == null) return const [];
-    dynamic decoded;
-    try {
-      decoded = jsonDecode(raw);
-    } on FormatException {
-      throw const FormatException('待核对发布记录无法读取，请联系管理员处理。');
-    }
-    if (decoded is! List || decoded.length > 20) {
-      throw const FormatException('待核对发布记录格式异常，请联系管理员处理。');
-    }
+    final raw = await journal.readCollection(collection(tenantId, actorId), (payload) {
+      final marker = PendingPublication.fromJson(payload);
+      if (marker == null) throw const FormatException('待核对发布记录无效。');
+      return slot(tenantId, actorId, marker.policyId);
+    });
     final result = <PendingPublication>[];
-    final keys = <String>{};
-    final policies = <String>{};
-    for (final value in decoded) {
-      final item = PendingPublication.fromJson(value);
-      if (item == null ||
-          !keys.add(item.idempotencyKey) ||
-          !policies.add(item.policyId)) {
-        throw const FormatException('待核对发布记录格式异常，请联系管理员处理。');
+    final requests = <String>{};
+    for (final wire in raw) {
+      final item = PendingPublication.fromJson(jsonDecode(wire));
+      if (item == null || !requests.add(item.idempotencyKey)) {
+        throw const FormatException('待核对发布记录无法校验。');
       }
       result.add(item);
     }
+    result.sort((a, b) => b.createdAt.compareTo(a.createdAt));
     return result;
   }
 
-  Future<void> add(
-      String tenantId, String actorId, PendingPublication item) async {
-    final rows = await load(tenantId, actorId);
-    if (rows.length >= 20) {
-      throw const FormatException('待核对发布已达 20 条，请先核对已有记录。');
+  Future<void> add(String tenantId, String actorId, PendingPublication item) async {
+    if (PendingPublication.fromJson(item.toJson()) == null) {
+      throw const FormatException('待核对发布记录无效。');
     }
-    if (rows.any((row) =>
-        row.policyId == item.policyId ||
-        row.idempotencyKey == item.idempotencyKey)) {
-      throw const FormatException('该策略已有待核对发布，请先查询原结果。');
-    }
-    await storage.write(
-        key: _key(tenantId, actorId),
-        value: jsonEncode([...rows.map((row) => row.toJson()), item.toJson()]));
+    // The native transaction enforces both the 20-entry cap and one pending
+    // publication per policy. A list/read race cannot overwrite another tab.
+    await journal.write(key: slot(tenantId, actorId, item.policyId),
+        value: jsonEncode(item.toJson()), collection: collection(tenantId, actorId));
   }
 
   Future<void> remove(String tenantId, String actorId, String key) async {
     final rows = await load(tenantId, actorId);
-    final remaining = rows.where((row) => row.idempotencyKey != key).toList();
-    if (remaining.length == rows.length) return;
-    if (remaining.isEmpty) {
-      await storage.delete(key: _key(tenantId, actorId));
-    } else {
-      await storage.write(
-          key: _key(tenantId, actorId),
-          value: jsonEncode(remaining.map((row) => row.toJson()).toList()));
-    }
+    final matching = rows.where((row) => row.idempotencyKey == key);
+    if (matching.isEmpty) return;
+    await journal.delete(key: slot(tenantId, actorId, matching.single.policyId));
   }
+
+  Future<bool> beforeWrite(String tenantId, String actorId,
+      PendingPublication item, bool Function() current) async {
+    if (!current()) return false;
+    final key = slot(tenantId, actorId, item.policyId);
+    if (journal.snapshot(key)?['knownSuccessful'] == true) return false;
+    await journal.assertCurrent(key, Map<String, dynamic>.from(item.toJson()));
+    return current();
+  }
+
+  Future<void> confirmed(String tenantId, String actorId, PendingPublication item) =>
+      journal.confirmed(slot(tenantId, actorId, item.policyId));
+
+  Future<void> capture(String tenantId, String actorId,
+      PendingPublication item, Object failure) async {
+    if (failure is! ParentResultTerminalFailure ||
+        !failure.matchesRequest(item.idempotencyKey)) return;
+    await journal.terminal(slot(tenantId, actorId, item.policyId), item.idempotencyKey,
+        failure.code == 'IDEMPOTENCY_RESPONSE_ERASED' ? 'ERASED' : 'EXPIRED');
+  }
+}
+
+/// A publication result remains CONFIGURE_ONLY; a terminal check never changes
+/// publication mode, targets, draft rules or device enforcement.
+class PendingPublicationRecovery extends ChangeNotifier with ParentTerminalOperation {
+  final ParentApi api;
+  final PendingPublicationStore store;
+  final String tenant, actor;
+  final PendingPublication marker;
+  final bool Function() isCurrent;
+  PendingPublication? pending;
+  Json? result;
+  bool busy = false, loaded = true, queried = false, _disposed = false;
+  Object? error;
+  PendingPublicationRecovery({required this.api, required this.store,
+      required this.tenant, required this.actor, required this.marker,
+      required this.isCurrent}) : pending = marker;
+  @override
+  ParentOperationJournal get operationJournal => store.journal;
+  @override
+  String get operationSlot => store.slot(tenant, actor, marker.policyId);
+  @override
+  Json? get operationPayload => pending == null ? null :
+      Map<String, dynamic>.from(pending!.toJson());
+  @override
+  String? get operationRequestId => pending?.idempotencyKey;
+  @override
+  bool get operationCurrent => !_disposed && isCurrent();
+  @override
+  bool get operationHasSuccessfulResult => result != null;
+  @override
+  void forgetOperationPayload() {
+    pending = null;
+    result = null;
+    queried = false;
+    loaded = false;
+  }
+  void _notify() { if (!_disposed) notifyListeners(); }
+  @override
+  Future<void> load() async {
+    if (!operationCurrent || busy) return;
+    busy = true;
+    loaded = false;
+    error = null;
+    _notify();
+    try {
+      final rows = await store.load(tenant, actor);
+      if (!operationCurrent) return;
+      final matches = rows.where((row) => row.idempotencyKey == marker.idempotencyKey);
+      pending = matches.isEmpty ? null : matches.single;
+      result = null;
+      queried = false;
+      loaded = true;
+    } catch (failure) {
+      if (operationCurrent) error = failure;
+    } finally { busy = false; _notify(); }
+  }
+  Future<void> query() async {
+    if (!operationCurrent || busy || pending == null || operationBlocked) return;
+    busy = true;
+    queried = false;
+    error = null;
+    result = null;
+    _notify();
+    try {
+      final query = Uri(queryParameters: {
+        'mode': 'CONFIGURE_ONLY', 'revision': '${marker.revision}',
+        'previewId': marker.previewId, 'previewHash': marker.previewHash,
+      }).query;
+      final raw = await api.object(
+          '/tenants/$tenant/policies/${marker.policyId}/publication-results/${marker.idempotencyKey}?$query',
+          isCurrent: () => operationCurrent, beforeDispatch: operationBeforeDispatch);
+      if (!operationCurrent) return;
+      if (raw['id'] is! String || raw['versionId'] is! String ||
+          raw['sequence'] is! int || raw['mode'] != 'CONFIGURE_ONLY' ||
+          raw['state'] != 'CONFIGURED_NOT_ENFORCED') {
+        throw const ParentApiException(502, 'INVALID_RESPONSE');
+      }
+      result = raw;
+      await recordSuccessfulOperation();
+      queried = true;
+    } catch (failure) {
+      await captureResultTerminal(failure);
+      if (operationCurrent) {
+        error = failure;
+        queried = failure is ParentApiException && failure.status == 404 &&
+            failure.code == 'POLICY_PUBLICATION_RESULT_UNAVAILABLE';
+      }
+    } finally { busy = false; _notify(); }
+  }
+  Future<bool> acknowledge() async {
+    if (!operationCurrent || busy || !queried || pending == null || operationBlocked) return false;
+    busy = true;
+    error = null;
+    _notify();
+    try {
+      await store.remove(tenant, actor, marker.idempotencyKey);
+      if (!operationCurrent) return false;
+      forgetOperationPayload();
+      return true;
+    } catch (failure) {
+      if (operationCurrent) error = failure;
+      return false;
+    } finally { busy = false; _notify(); }
+  }
+  @override
+  void dispose() { _disposed = true; super.dispose(); }
 }

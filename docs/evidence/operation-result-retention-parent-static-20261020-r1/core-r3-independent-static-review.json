@@ -1,0 +1,263 @@
+{
+  "schemaVersion": 1,
+  "reviewer": "/root/workbench_finish_review",
+  "phase": "parent-r3-core",
+  "status": "NOT_RUN",
+  "sourceManifest": ".cache/operation-result-retention-20261020/parent/production-r3-manifest.json",
+  "sourceManifestSha256": "520948db72e6349368cf93117eedc81711b508137fe3e46082ce4988868d852e",
+  "supersedes": ".cache/operation-result-retention-20261020/workbench-review/parent-r2-core-independent-static-review.json",
+  "fullTextReviewedSources": [
+    {
+      "path": "apps/parent/lib/core/parent_api.dart",
+      "sha256": "0697dcc6d23364d8c95cf07152b352f51bb5947c9164274b6e685e5829f3ec1f"
+    },
+    {
+      "path": "apps/parent/lib/core/parent_durable_storage.dart",
+      "sha256": "712db2809e7af8386dbb944ce7db09e4dd0abb49aa8fd2fe7c59373bcd3fa771"
+    },
+    {
+      "path": "apps/parent/lib/core/operation_result_terminal.dart",
+      "sha256": "dec13a0c3e69ce12901f63a57ad25cf85552c02c77d458ff419fbbe6c1880201"
+    },
+    {
+      "path": "apps/parent/lib/core/operation_journal.dart",
+      "sha256": "d0500c385ec59b19cb17d3096cfa10e5e8d81af49fc967943529cd8c68ee3b87"
+    },
+    {
+      "path": "apps/parent/lib/ui/operation_result_terminal_panel.dart",
+      "sha256": "6023b304b253c21dac19872908dc1534c9013878c09d9fa9fc778439d551b299"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/kotlin/com/aimanager/parent/ParentOperationJournalStore.kt",
+      "sha256": "47360efc67f3b616eaaee75fdf612d3501acdeda57d384341b7a8563c585ddab"
+    }
+  ],
+  "allManifestByteChecks": [
+    {
+      "path": "apps/parent/lib/core/application_catalog.dart",
+      "sha256": "ac93b0caf9f5207ccfdbb8e8105eb0acafceb571c5fd3977ff5105ac94b902f0",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/core/audit_exports.dart",
+      "sha256": "f624b711ff9e9053eb8e602d08be0123e06fd32f125a911cdca5803ab7dd872c",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/core/device_groups.dart",
+      "sha256": "ef16ed57f861487ccf4f8d731edcb9468ca8873c4311c3e914b4d70fe6479e11",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/core/invitation_acceptance.dart",
+      "sha256": "0b8defc9f69d6e8753abe64271274eac8e3face0f821cc13f0b3a49229feebc2",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/core/invitations.dart",
+      "sha256": "8e01f31f6d12f558f2cae87a96cd93e0a5a3a49a2a8223a5aa0716b9aa729b55",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/core/member_access.dart",
+      "sha256": "08d696df8b7fe268442490ff27bd290806f9465c5839cfd4b8fc163db2589768",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/core/observation_settings.dart",
+      "sha256": "463ed16f7cba97fc08307790f0f86f154ca4707ba22c91a715a28a3605c9dfd7",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/core/permission_consent.dart",
+      "sha256": "e5808dc87edd3a203c65548644a5fd024ab033ab4008e258f9907be9e99bfb59",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/core/ownership.dart",
+      "sha256": "23c83ff764c3cb8d191f36f59e79e1092317ad663b768493049da51f9df97ae4",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/core/organization_classes.dart",
+      "sha256": "d615115c7ccfb8f4f1f005bbf8ec15ab4ca616595a7c9532a9c6d44699702251",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/core/quotas.dart",
+      "sha256": "ba1b76fa136b93a3fc2f9768238304f200faf866f6a5f6c412eada156c1ae2ed",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/core/policy_creation.dart",
+      "sha256": "c0163c0307420d1326001cbaab4df42b0825e1467d5cf0524058d7640d6c6b31",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/core/schedules.dart",
+      "sha256": "5844a9cc79b2a25213ebe52f1f2fc55dcd3bf80c1e7a26a7c41346f113054595",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/core/subjects.dart",
+      "sha256": "e3391c3d7de6534f891fc5b1e551b76d3779d1aa91abd66af0536f7deb0cafeb",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/core/parent_api.dart",
+      "sha256": "0697dcc6d23364d8c95cf07152b352f51bb5947c9164274b6e685e5829f3ec1f",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/core/parent_durable_storage.dart",
+      "sha256": "712db2809e7af8386dbb944ce7db09e4dd0abb49aa8fd2fe7c59373bcd3fa771",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/ui/application_center.dart",
+      "sha256": "566341de843ff4b9b02138c001ab2e7c0b4c34c13af5a27b371f4d5c0d09b0ed",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/ui/audit_exports_center.dart",
+      "sha256": "f7b5aa10569b257d10f02ab6f2f4234fabcd5dc25b3ed6ce33b92cb11b890ee4",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/ui/class_center.dart",
+      "sha256": "4dd965bdbf689dc10e2e04221a8bd57aaae461852f0b155d743e89838a2966c1",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/ui/group_operation_page.dart",
+      "sha256": "8aa828fd8496a42400caf0cb7536938c1c13432e4b9d991e5c6f2a6cf2ef7fe1",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/ui/invitation_acceptance.dart",
+      "sha256": "d51679fa69c221be607ffc3b0bfbeddd347378c80ee52c5c2b2bf26ee0d3348d",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/ui/invitation_center.dart",
+      "sha256": "d63c44376e0b1bf62b31cc82cad9d081df7f8986b9c02ea7c842574c8ecfcf1c",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/ui/member_center.dart",
+      "sha256": "53adbd3f6ba57457579b88198d662ad028121f4e2b2e01bfc8343c7b6ab04ab7",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/ui/observation_settings_page.dart",
+      "sha256": "5a0c8b0d7d2cadc84f64d3e0501cd3ff09fe084d204e718d4f1e9a3740a6d110",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/ui/ownership_center.dart",
+      "sha256": "994edb8ffc3f71477233d5f91f6b65c9c3225b5bef803362853b39810495e58f",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/ui/permission_consent_page.dart",
+      "sha256": "dca50f8dc1e8219a200ef753e22cf74798496af3c27a74cd764c69b6fe00ddfc",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/ui/policy_creation_page.dart",
+      "sha256": "e6b9f3f4a0fcb013e9530c70a3ae7c7decb6f1ed3923dc5ab8b106069a33f16f",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/ui/quota_center.dart",
+      "sha256": "f6572e199cbe75e7f83d01c33d004576434977dd3ecf5704f7f6ba72ef95740e",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/ui/schedule_editor.dart",
+      "sha256": "c6de589afd32674f01633a70c05a4b5be457df0eef4ca253d47bb786e6ca03f1",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/ui/subject_center.dart",
+      "sha256": "96e0f4e7246f2a7b776bccc4ced1330ccec80de307b4ca9275e5270e4c1a579c",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/android/app/src/main/kotlin/com/aimanager/parent/MainActivity.kt",
+      "sha256": "0f62dd7cd558b14fbc685c4ffab1311d481d7867627bdbef88fc9da35a7b7047",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/core/pending_publications.dart",
+      "sha256": "39311bbb4fe0fb8844fa43107545609022ef7a19e5939a93e9d466de65e4b0c2",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/ui/policy_center.dart",
+      "sha256": "8afe358f65393d765f3730d0db4e8663bb355ee63cb8ca98aa2d1e78ad8a41a4",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/core/operation_result_terminal.dart",
+      "sha256": "dec13a0c3e69ce12901f63a57ad25cf85552c02c77d458ff419fbbe6c1880201",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/core/operation_journal.dart",
+      "sha256": "d0500c385ec59b19cb17d3096cfa10e5e8d81af49fc967943529cd8c68ee3b87",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/lib/ui/operation_result_terminal_panel.dart",
+      "sha256": "6023b304b253c21dac19872908dc1534c9013878c09d9fa9fc778439d551b299",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/parent/android/app/src/main/kotlin/com/aimanager/parent/ParentOperationJournalStore.kt",
+      "sha256": "47360efc67f3b616eaaee75fdf612d3501acdeda57d384341b7a8563c585ddab",
+      "mainAndSnapshotMatch": true
+    }
+  ],
+  "dependencyExcerptsReviewed": [
+    {
+      "path": "apps/parent/lib/core/parent_session.dart",
+      "sha256": "4e223873af54ea9275cf84534de07332b635e6ce7f5b19b4c6f8081d3d3c44ab",
+      "scope": "Authentication/quarantine/identity publication and token await flow"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/kotlin/com/aimanager/parent/MainActivity.kt",
+      "sha256": "0f62dd7cd558b14fbc685c4ffab1311d481d7867627bdbef88fc9da35a7b7047",
+      "scope": "Native journal engine registration and cleanup"
+    }
+  ],
+  "reviewed": [
+    "Actual complete bounded HTTP 410 with integer ProblemDetail.status and exact codes; private final typed evidence bound to original key/path; redirects rejected",
+    "Parent API captures scoped epoch before first await and rechecks after token, persistence barrier and HTTP response; before-step-up requests cannot revive",
+    "Origin/issuer-bound physical slots, AES-GCM namespace/request AAD, non-deleting corruption handler and lost key/database initialization witness",
+    "Native transaction CAS enforces immutable request/payload, success false-to-true and EXPIRED-to-ERASED only; atomic finish writes minimal marker and deletes only the exact pending record",
+    "Finish receipt matches exact expected request digest, reason and known-success state; capacity/storage/crypto failures retain the pending fence",
+    "Confirmation owns its route, safely removes itself under cover, closes on owner pop/deactivate/access loss and rechecks positive callback; current-record reading does not require finishing local check"
+  ],
+  "closedFindings": [
+    {
+      "priority": "P2",
+      "issue": "Owned step-up transient identity quarantine previously permanently revoked same-identity participants",
+      "resolution": "R2 tolerates unauthenticated only for explicit authentication participants with identical original identity fields; group blocks all dispatch; successful adoption requires authenticated, while mismatches/disposal remain permanently lost and request epochs remain invalid",
+      "verification": "Read R2 helper and the eight R2 UI deltas; no runtime execution"
+    },
+    {
+      "priority": "P2",
+      "issue": "Ending a local check accepted owner.isActive under cover and could begin CAS before the owned confirmation finished its exit",
+      "reportedBy": "/root/dashboard_scope_phase",
+      "resolution": "R3 _end requires current owner at entry, waits both the owned confirmation result and dialog.completed, rechecks identical confirmation plus original operation/request and current owner before calling endLocalCheck; completion callback still checks original current operation and owner",
+      "verification": "Read final R3 panel SHA6023b304b253c21dac19872908dc1534c9013878c09d9fa9fc778439d551b299. R2-to-R3 has only this panel source delta; all 37 main/snapshot hashes match R3."
+    }
+  ],
+  "conclusion": "Both confirmed Parent helper/route P2 findings are statically closed at R3. No additional confirmed P1/P2 in this core/helper/native scope. Controller/UI business flows are separately reviewed; no execution acceptance is implied.",
+  "limitations": [
+    "No SDK, compiler, analyze, tests, format, build, browser, service or network executed",
+    "No Android keystore/SQLite/process-death/route/step-up behavior executed",
+    "Known existing fixture adapters are separately assigned; this review does not claim tests pass"
+  ]
+}

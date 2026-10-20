@@ -12,7 +12,7 @@
 
 ## 90 天恢复方案与 R4 静态准备
 
-用户已确认操作结果自服务端成功业务结果提交时起保留 **90 天**，之后引导核对当前记录，继续阻止旧请求重复执行。产品契约、事务边界和受影响消费范围见[恢复期限设计](../idempotency-result-retention-design.md)；管理端的到期提示、本机确认和当前记录入口见[恢复交互设计](../guardian-result-expiry-interaction-design.md)。已从设计进入实际生产源码接合，Guardian、Child 与 OpenAPI 的静态部分已冻结并准备阶段提交，Parent 和后端仍在收口；确切来源见[实施记录](operation-result-retention-implementation-20261020-r1.md)。所有运行验证仍为 **NOT_RUN**，运行配置、数据库和现有服务未更新。
+用户已确认操作结果自服务端成功业务结果提交时起保留 **90 天**，之后引导核对当前记录，继续阻止旧请求重复执行。产品契约、事务边界和受影响消费范围见[恢复期限设计](../idempotency-result-retention-design.md)；管理端的到期提示、本机确认和当前记录入口见[恢复交互设计](../guardian-result-expiry-interaction-design.md)。已从设计进入实际生产源码接合，Guardian、Child、Parent 与后端均已完成本轮源码接合及静态复核，并按精确范围分阶段提交；确切来源见[实施记录](operation-result-retention-implementation-20261020-r1.md)。所有运行验证仍为 **NOT_RUN**，运行配置、数据库和现有服务未更新。
 
 R4 在前一阶段清点当时的 Main：13 个输入根、14 个项目、510 个源文件、437 个 Dart 文件。常规测试入口 171 个（VM 139、浏览器 32），另有两个需要后端 fixture 的 HTTP 工具测试。这是文件和导入关系的静态清点，不是测试通过数量。来源基线为 `db18daa275a1098f497527697f8ff0a0808d5778`，其中仍包含九项共享包语义工作树改动和两项 Guardian 换行差异，不得声称这 510 份字节均已进入该提交。新恢复终态源码已经使 R4 的 Main 哈希过时；原准备材料保持不变，后续须另建当前来源候选。
 

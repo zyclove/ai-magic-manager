@@ -15,6 +15,8 @@ import 'package:parent/core/parent_session.dart';
 import 'package:parent/ui/observation_settings_page.dart';
 import 'package:usage_reporting/usage_reporting.dart';
 
+import 'support/parent_operation_journal_fixture.dart';
+
 const device = '00000000-0000-4000-8000-000000000001';
 const registration = '00000000-0000-4000-8000-000000000002';
 const subject = '00000000-0000-4000-8000-000000000003';
@@ -38,7 +40,9 @@ Json deviceJson() => {
 http.Response response(Json value, [int status = 200]) =>
     http.Response.bytes(utf8.encode(jsonEncode(value)), status);
 
-class Storage extends ParentDurableStorage {
+class Storage extends ParentDurableStorage with ParentAtomicJournalFixture {
+  @override
+  bool get fixtureWriteMayCommitBeforeFailure => true;
   final values = <String, String>{};
   bool failWrite = false;
   @override
@@ -365,7 +369,9 @@ void main() {
           throw http.ClientException('fixture');
         }
         if (r.url.path.endsWith('/query')) {
-          return response({'errorCode': terminal.$2}, terminal.$1);
+          return terminal.$1 == 410
+              ? parentJournalTerminalProblem(terminal.$2)
+              : response({'errorCode': terminal.$2}, terminal.$1);
         }
         return response(settings());
       }), storage);
@@ -373,13 +379,17 @@ void main() {
       await submit(c);
       final key = c.pending!['requestId'];
       await c.query();
-      expect(c.queried, isTrue);
+      expect(c.queried, terminal.$1 == 404 ? isTrue : isFalse);
       expect(c.pending!['requestId'], key);
       expect(c.committed, isNull);
       expect(c.settings, isNull);
       await submit(c);
       expect(writes, 1);
-      await c.acknowledge();
+      if (terminal.$1 == 410) {
+        await c.endLocalCheck();
+      } else {
+        await c.acknowledge();
+      }
       expect(c.pending, isNull);
       expect(writes, 1);
       c.dispose();

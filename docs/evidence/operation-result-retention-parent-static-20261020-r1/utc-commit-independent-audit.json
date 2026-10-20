@@ -1,0 +1,95 @@
+{
+  "status": "INDEPENDENT_READ_ONLY_GIT_OBJECT_AUDIT_MATCHED",
+  "commit": "61b33a125847527d9f683e993b6da174a72a40b2",
+  "parent": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+  "branch": "dev",
+  "exactChangedPaths": 11,
+  "threeOwnedHeadTargetsMatch": true,
+  "allGitObjectTargetsMatch": true,
+  "allMainSourceBytesPreserved": true,
+  "indexEmptyAtAudit": true,
+  "sdkRun": false,
+  "testsRun": false,
+  "sqlExecuted": false,
+  "gitWrites": false,
+  "deployed": false,
+  "files": [
+    {
+      "path": "backend/src/main/resources/application.yml",
+      "committedSha256": "9de3229548c9dec5694cbdb75a3744c4400ffd3469c607cd92375b6914170a18",
+      "liveSha256": "60e104cf6ae4b5a5b8bf170bcc89d3814da9a4dd6a25f8a94620f05fb1a25ec5",
+      "gitTargetMatches": true,
+      "liveBytesPreserved": true
+    },
+    {
+      "path": "deploy/compose/compose.yaml",
+      "committedSha256": "a49ce952e8cf0a3272a9f2f7ba70eb3b2ba98144eed1bbdef339cef9ec0b1d6e",
+      "liveSha256": "0f38266b3b540cf83756a7fdbf86b4ba7463314cf91c2735cd946a9808d4c2d4",
+      "gitTargetMatches": true,
+      "liveBytesPreserved": true
+    },
+    {
+      "path": "docs/kubernetes-deployment.md",
+      "committedSha256": "f829544365cb1652dcfd158b5e8ae482d4d73d1813bc90515c041dd32912adbf",
+      "liveSha256": "f829544365cb1652dcfd158b5e8ae482d4d73d1813bc90515c041dd32912adbf",
+      "gitTargetMatches": true,
+      "liveBytesPreserved": true
+    },
+    {
+      "path": "docs/mysql-utc-session-configuration.md",
+      "committedSha256": "9476f315c497d54e4ac8b3f45f940be847b37fe92e85c40062a1c3e2eb792e8e",
+      "liveSha256": "9476f315c497d54e4ac8b3f45f940be847b37fe92e85c40062a1c3e2eb792e8e",
+      "gitTargetMatches": true,
+      "liveBytesPreserved": true
+    },
+    {
+      "path": "docs/evidence/mysql-session-utc-static-20261020-r1.json",
+      "committedSha256": "ccad4d05fdd2cef69403ba1b829f01c9ee399e18c3290a4ab4ec85a621e1c97a",
+      "liveSha256": "ccad4d05fdd2cef69403ba1b829f01c9ee399e18c3290a4ab4ec85a621e1c97a",
+      "gitTargetMatches": true,
+      "liveBytesPreserved": true
+    },
+    {
+      "path": "docs/evidence/mysql-utc-session-configuration-static-20261020-r1/head-target-manifest.json",
+      "committedSha256": "77515547026b3823ed0e7cda96d21df8c9e61d34c6584109999611ba115eac79",
+      "liveSha256": "77515547026b3823ed0e7cda96d21df8c9e61d34c6584109999611ba115eac79",
+      "gitTargetMatches": true,
+      "liveBytesPreserved": true
+    },
+    {
+      "path": "docs/evidence/mysql-utc-session-configuration-static-20261020-r1/independent-review-summary.json",
+      "committedSha256": "038661fc0e61b7d1e8b65672c6d67371ccb81696a0d5e0552dea507ff2b77c7d",
+      "liveSha256": "038661fc0e61b7d1e8b65672c6d67371ccb81696a0d5e0552dea507ff2b77c7d",
+      "gitTargetMatches": true,
+      "liveBytesPreserved": true
+    },
+    {
+      "path": "docs/evidence/mysql-utc-session-configuration-static-20261020-r1/README.md",
+      "committedSha256": "dd3293e0313326aa4b036ff7433fa765e860e3893c250d6d7c00b77e8c4dd5e7",
+      "liveSha256": "dd3293e0313326aa4b036ff7433fa765e860e3893c250d6d7c00b77e8c4dd5e7",
+      "gitTargetMatches": true,
+      "liveBytesPreserved": true
+    },
+    {
+      "path": "docs/evidence/mysql-utc-session-configuration-static-20261020-r1/review-source-manifest.json",
+      "committedSha256": "57bc504121a2d504550b20325a9bee2f5beb2e690763f685e39217c672fd0b2d",
+      "liveSha256": "57bc504121a2d504550b20325a9bee2f5beb2e690763f685e39217c672fd0b2d",
+      "gitTargetMatches": true,
+      "liveBytesPreserved": true
+    },
+    {
+      "path": "docs/evidence/mysql-utc-session-configuration-static-20261020-r1/root-stage-source-review.json",
+      "committedSha256": "2455f3b9261aa1dc24b4c660115c607c3646b4690209bf9ed8c1746dcaea97b9",
+      "liveSha256": "2455f3b9261aa1dc24b4c660115c607c3646b4690209bf9ed8c1746dcaea97b9",
+      "gitTargetMatches": true,
+      "liveBytesPreserved": true
+    },
+    {
+      "path": "docs/evidence/mysql-utc-session-configuration-static-20261020-r1/static-uri-and-scope-inspection.json",
+      "committedSha256": "f8fbcc80dd508027e3cb0b104fec66a11b58f492860ed5466b526ec5adc2ff19",
+      "liveSha256": "f8fbcc80dd508027e3cb0b104fec66a11b58f492860ed5466b526ec5adc2ff19",
+      "gitTargetMatches": true,
+      "liveBytesPreserved": true
+    }
+  ]
+}

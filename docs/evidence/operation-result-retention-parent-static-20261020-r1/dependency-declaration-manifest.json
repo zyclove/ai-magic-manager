@@ -1,0 +1,25 @@
+{
+  "status": "STATIC_EXISTING_LOCKED_DEPENDENCY_DECLARATION",
+  "resolutionRun": false,
+  "sdkRun": false,
+  "testsRun": false,
+  "versionChanged": false,
+  "files": [
+    {
+      "path": "apps/parent/pubspec.yaml",
+      "beforeSha256": "045045a3fbcfae75eae68c4dbc029fea3d456e9636744b7aeeee9f745ed5efea",
+      "sha256": "20a2bf8ee276d739d356cc2f21a1100ca84ee5718bc0abf693704aabf525e1ad",
+      "headSha256": "dffbf0c95b86915516f448dea85bc477e591f6b54fd57ac45045c998ebc889e2",
+      "stageSha256": "fcc7df41c731504060010e4c79b7bf482ccbe7f5a9cc8d06585d21e5fe490a8f",
+      "stageSnapshot": ".cache/operation-result-retention-20261020/root/parent-test-dependency/head-after/apps/parent/pubspec.yaml"
+    },
+    {
+      "path": "apps/parent/pubspec.lock",
+      "beforeSha256": "3f24cec075c003cc02c4a18207c814dce09219609430f9ad07158af07036a99f",
+      "sha256": "f1c4834fe90949a34d6240001fe3431c0fd4486090f10c05866d8ace517b7ea1",
+      "headSha256": "d263f3c83a36cc23632a572b05e9410f3a5cbf25e0ba1177d802ed0f114bc97f",
+      "stageSha256": "fde5639ecd0f4d1429c5902412abcae996a912cac4f08f2e44f4ff00d557c2f4",
+      "stageSnapshot": ".cache/operation-result-retention-20261020/root/parent-test-dependency/head-after/apps/parent/pubspec.lock"
+    }
+  ]
+}

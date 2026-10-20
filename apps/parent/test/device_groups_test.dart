@@ -15,6 +15,8 @@ import 'package:parent/core/parent_session.dart';
 import 'package:parent/ui/device_group_center.dart';
 import 'package:parent/ui/group_operation_page.dart';
 
+import 'support/parent_operation_journal_fixture.dart';
+
 const groupId = '00000000-0000-4000-8000-000000000001';
 const deviceId = '00000000-0000-4000-8000-000000000002';
 const registrationId = '00000000-0000-4000-8000-000000000003';
@@ -40,7 +42,9 @@ Json input(String op) => {
 http.Response response(Json data, [int code = 200]) =>
     http.Response.bytes(utf8.encode(jsonEncode(data)), code);
 
-class _Storage extends ParentDurableStorage {
+class _Storage extends ParentDurableStorage with ParentAtomicJournalFixture {
+  @override
+  bool get fixtureWriteMayCommitBeforeFailure => true;
   final values = <String, String>{};
   bool failWrite = false;
   @override

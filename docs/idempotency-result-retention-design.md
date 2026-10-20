@@ -1,8 +1,8 @@
 # 幂等结果 90 天恢复与清理设计说明
 
-日期：2026-10-20。状态：**STATIC_IMPLEMENTATION_IN_PROGRESS / NOT_RUN / NOT_DEPLOYED**。
+日期：2026-10-20。状态：**STATIC_IMPLEMENTED_PENDING_VERIFICATION / NOT_RUN / NOT_DEPLOYED**。
 
-用户已于 2026-10-20 确认：**操作结果恢复记录自成功结果随业务事务提交时起保留 90 天，之后引导核对当前记录，并继续阻止旧请求重复执行**。本文保留产品契约、实现前的来源分析与设计约束。后端与三端生产源码正在实际接合，确切修改、快照及静态复核以[本阶段实施记录](evidence/operation-result-retention-implementation-20261020-r1.md)为准。没有运行 SDK、SQL、测试、构建、服务或物理清理。
+用户已于 2026-10-20 确认：**操作结果恢复记录自成功结果随业务事务提交时起保留 90 天，之后引导核对当前记录，并继续阻止旧请求重复执行**。本文保留产品契约、实现前的来源分析与设计约束。后端与三端生产源码已静态接合，确切修改、快照及静态复核以[本阶段实施记录](evidence/operation-result-retention-implementation-20261020-r1.md)为准。没有运行 SDK、SQL、测试、构建、服务或物理清理。
 
 ## 1. 设计基线与证据时点（实现前）
 
@@ -252,4 +252,4 @@ Guardian 策略发布的直接核对范围：
 | `device_access/src/submission_journal.dart` | `b32e935c5535d3bca8f0a0540b1e287c4e49f1ff8f9a86f5681b089abc563a63` |
 | `child/core/submission_receiver.dart` | `28863ce92019a1780247adf9f400b3816fa4d5e893b9b1b2e4758b50a9da5296` |
 
-本文已确定 90 天恢复方案，当前正在完成源码接合与静态复核，尚无本阶段运行验收结果；没有更新运行配置、数据库或现有服务。完整产品目标、正式设备执行与其他领域的验收仍按[完整实施计划](implementation-plan.md)推进。前一阶段冻结 R4 规格的 Main 哈希已因新源码变化而过时，保留历史证据，后续验证须另建当前来源候选。
+本文已确定 90 天恢复方案，生产源码已接合并完成静态复核，尚无本阶段运行验收结果；没有更新运行配置、数据库或现有服务。完整产品目标、正式设备执行与其他领域的验收仍按[完整实施计划](implementation-plan.md)推进。前一阶段冻结 R4 规格的 Main 哈希已因新源码变化而过时，保留历史证据，后续验证须另建当前来源候选。

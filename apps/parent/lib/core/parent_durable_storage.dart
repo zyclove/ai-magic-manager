@@ -1,18 +1,25 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'parent_session.dart' show ParentConfig;
 
 /// Android-only durability barrier for operation references saved before POST.
-/// Encryption remains owned by flutter_secure_storage; this class never reads
-/// or exposes the native keystore or other SharedPreferences values.
+/// Preferences retain plugin encryption; the operation journal uses its own
+/// native encrypted transaction store. Neither interface exposes key material.
 class ParentDurableStorage {
   final FlutterSecureStorage storage;
   final MethodChannel channel;
   final bool Function() available;
+  final MethodChannel journalChannel;
+  final String operationApiUrl, operationIssuer;
 
   ParentDurableStorage({
     FlutterSecureStorage? storage,
     this.channel = const MethodChannel('com.aimanager.parent/storage'),
+    this.journalChannel =
+        const MethodChannel('com.aimanager.parent/operation-journal'),
+    this.operationApiUrl = ParentConfig.apiUrl,
+    this.operationIssuer = ParentConfig.issuer,
     bool Function()? available,
   })  : storage = storage ?? const FlutterSecureStorage(),
         available = available ??
@@ -35,6 +42,12 @@ class ParentDurableStorage {
     _requireAvailable();
     await storage.delete(key: key);
     await _flush();
+  }
+
+  /// Atomic pending/terminal operations have no preferences or memory fallback.
+  Future<dynamic> operationJournal(String method, Map<String, dynamic> args) {
+    _requireAvailable();
+    return journalChannel.invokeMethod<dynamic>(method, args);
   }
 
   void _requireAvailable() {

@@ -2,6 +2,19 @@
 
 > 更新：2026-10-20。本轮仅同步设备组、站内通知和幂等清理的源码状态，未运行 SDK、测试、构建或服务。本文历史测试数及部署描述只对应原阶段，不能作为当前工作树的运行证明。规划功能见[完整实施计划](implementation-plan.md)，阶段证据见[实施记录](implementation-progress.md)。
 
+## 2026-10-20 最新源码检查点：恢复期限、清理与客户端接合
+
+状态为 **STATIC_IMPLEMENTED_PENDING_VERIFICATION / NOT_RUN / NOT_DEPLOYED**。此检查点补充后续实现来源；下方基于 `6dbfab9` 的扫描和历史运行数字保持原记录，不作为当前候选已通过的证明。
+
+- 后端本地提交 `7a5a8d06cdfc21db53bebfbbde467efce227243d` 已接合 23 个原结果查询调用、21 个领域恢复方法与 21 个 HTTP 适配。结果自成功业务事务内记录的提交时间起固定保留 90 天，与原键 24 小时重放期分开；到期事实随最外层事务提交后转换为 410 / `IDEMPOTENCY_RESULT_EXPIRED`，`IDEMPOTENCY_RESPONSE_ERASED` 继续优先。缺失或到期均不能证明业务未提交，也不授权自动换键或重复执行。
+- `IdempotencyRetentionService` 和 `IdempotencyRetentionJob` 已有有界清理源码，默认关闭并复用 WorkPermit。逻辑到期与物理清理分开，保留防重父键、请求摘要及必要归属；不将未分类响应伪装成非主体数据。不能继续把后续源码状态描述为“未找到清理作业”，也不能把源码存在解释为实际清理已完成。
+- 本地提交 `61b33a125847527d9f683e993b6da174a72a40b2` 补齐默认、Compose 和 Kubernetes 示例的 MySQL UTC 会话参数；主库时间、节点偏差及持久最后观察时间的约束保留。真实 MySQL、连接池/主库切换和 OceanBase 兼容认证仍未运行。
+- Guardian、Child/device_access 和 OpenAPI 的本地提交为 `ff354c06310ef021dd5cf0a137141b6b94cd2067`。Parent 最终 R4 已静态冻结 38 份生产源码，18 份既有测试文件及 1 份辅助存储已接合新协议；可直接查看当前记录，独立确认结束本机核对，原子保留最小防重状态，并检查安全验证与窗口归属。静态收口不等于完整交互、Android 存储/密钥或端到端链路已验收。
+
+具体来源见[后端实施说明](idempotency-result-retention-backend-implementation.md)、[UTC 配置说明](mysql-utc-session-configuration.md)与[Parent 操作核对检查点](parent-operation-recovery-checkpoint-20261020.md)。Parent 最终源清单 `production-r4-manifest.json` 的 SHA-256 为 `28eec7caad617967409130eff27790af4229d5ab0a0b55bde218c4b0205c2550`；Main 源码快照与排除其他工作树改动后的精确提交目标分别记录。
+
+本轮没有 SDK、格式化/分析、测试、浏览器、SQL、服务更新、推送或部署。后续按人类安排，在当前完整输入固定、资源及验证窗口恢复后运行验证；不能复用旧 R4 输入或旧资源样本。所有受支持客户端和后端协议验证完成前不部署新的读取截止逻辑，完整产品的其他能力与正式环境验收要求继续有效。
+
 ## 1. 运行与认证
 
 Java 17+、Maven 3.9+，使用 Spring Boot 3.5.16、Spring Modulith 1.4.0、Spring Security、Spring JDBC/Flyway；生产数据源默认 MySQL。外部连接通过环境变量配置，不能把真实密码写入本文或源码。

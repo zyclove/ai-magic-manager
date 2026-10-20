@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 import 'parent_api.dart';
 import 'parent_durable_storage.dart';
+import 'operation_journal.dart';
+import 'operation_result_terminal.dart';
 
 const ownershipStates = {
   'PENDING': '等待接收人确认',
@@ -67,13 +69,14 @@ void validateOwnershipInput(Json input) {
 
 /// Only references and the exact request are stored; display names and contact data stay in memory.
 class OwnershipStore {
+  late final ParentOperationJournal journal = ParentOperationJournal(storage);
   final ParentDurableStorage storage;
   OwnershipStore({ParentDurableStorage? storage})
       : storage = storage ?? ParentDurableStorage();
   String key(String tenant, String actor) =>
       'parent.pending.ownership.$tenant.$actor';
   Future<Json?> load(String tenant, String actor) async {
-    final value = await storage.read(key: key(tenant, actor));
+    final value = await journal.read(key: key(tenant, actor));
     if (value == null) return null;
     if (value.length > 4096) throw const FormatException('交接恢复记录过大。');
     final row = jsonDecode(value);
@@ -92,17 +95,37 @@ class OwnershipStore {
         !setEquals(row.keys.toSet(), {'requestId', 'input'})) {
       throw const FormatException('交接请求编号无效。');
     }
-    await storage.write(key: key(tenant, actor), value: jsonEncode(row));
+    await journal.write(key: key(tenant, actor), value: jsonEncode(row));
   }
 
   Future<void> clear(String tenant, String actor, String id) async {
     final row = await load(tenant, actor);
     if (row != null && row['requestId'] != id) throw StateError('交接恢复记录已变化。');
-    await storage.delete(key: key(tenant, actor));
+    await journal.delete(key: key(tenant, actor));
   }
 }
 
-class OwnershipOperation extends ChangeNotifier {
+class OwnershipOperation extends ChangeNotifier with ParentTerminalOperation {
+  @override
+  ParentOperationJournal get operationJournal => store.journal;
+  @override
+  String get operationSlot => store.key(tenant, actor);
+  @override
+  Json? get operationPayload => pending;
+  @override
+  bool get operationCurrent => active;
+  @override
+  bool get operationHasSuccessfulResult => committed;
+  @override
+  void forgetOperationPayload() {
+    pending = null;
+    original = null;
+    current = null;
+    currentRole = null;
+    queried = false;
+    loaded = false;
+    committed = false;
+  }
   final ParentApi api;
   final String tenant, actor;
   final OwnershipStore store;
@@ -158,6 +181,7 @@ class OwnershipOperation extends ChangeNotifier {
         loaded = true;
       }
     } catch (e) {
+      await captureResultTerminal(e);
       if (active) error = e;
     } finally {
       busy = false;
@@ -166,6 +190,7 @@ class OwnershipOperation extends ChangeNotifier {
   }
 
   Future<void> submit(Json input) async {
+    if (operationBlocked) return;
     if (!active || busy || !loaded || pending != null) return;
     busy = true;
     error = null;
@@ -185,6 +210,7 @@ class OwnershipOperation extends ChangeNotifier {
       pending = row;
       await _write(epoch);
     } catch (e) {
+      await captureResultTerminal(e);
       if (active) {
         error = e;
         // A storage implementation may fail after writing; reload before allowing another request.
@@ -231,20 +257,21 @@ class OwnershipOperation extends ChangeNotifier {
         body: start ? {'targetActorId': input['targetActorId']} : null,
         version: input['version'],
         idempotencyKey: pending!['requestId'],
-        isCurrent: () => active && epoch == _foregroundEpoch);
+        isCurrent: () => active && epoch == _foregroundEpoch, beforeDispatch: operationBeforeWrite);
     if (!active || epoch != _foregroundEpoch) return;
     final value = readOwnership(raw, tenant);
     _matches(value);
     original = value;
     committed = true;
     // A replay may contain a previous state. Read current state separately before displaying it.
+    if (operationHasSuccessfulResult) await recordSuccessfulOperation();
     await _query();
   }
 
   Future<void> _query() async {
     final raw = await api.send(
         'POST', '$path/operation-results/${pending!['requestId']}/query',
-        body: pending!['input'], isCurrent: () => active);
+        body: pending!['input'], isCurrent: () => active, beforeDispatch: operationBeforeDispatch);
     if (!active) return;
     if (raw is! Json ||
         raw['requestId'] != pending!['requestId'] ||
@@ -278,9 +305,11 @@ class OwnershipOperation extends ChangeNotifier {
     currentRole = raw['currentRole'];
     committed = true;
     queried = true;
+    if (operationHasSuccessfulResult) await recordSuccessfulOperation();
   }
 
   Future<void> recover({bool retry = false}) async {
+    if (operationBlocked) return;
     if (!active || busy || pending == null) return;
     busy = true;
     error = null;
@@ -289,16 +318,15 @@ class OwnershipOperation extends ChangeNotifier {
       if (retry) {
         await _write(_foregroundEpoch);
       } else {
+        if (operationHasSuccessfulResult) await recordSuccessfulOperation();
         await _query();
       }
     } catch (e) {
+      await captureResultTerminal(e);
       if (active) {
         error = e;
         if (e is ParentApiException &&
-            const {
-              'OWNERSHIP_RESULT_UNAVAILABLE',
-              'IDEMPOTENCY_RESPONSE_ERASED'
-            }.contains(e.code)) queried = true;
+            e.status == 404 && e.code == 'OWNERSHIP_RESULT_UNAVAILABLE') queried = true;
       }
     } finally {
       busy = false;
@@ -307,6 +335,7 @@ class OwnershipOperation extends ChangeNotifier {
   }
 
   Future<bool> acknowledge() async {
+    if (operationBlocked) return false;
     if (!active || busy || pending == null || !queried) return false;
     busy = true;
     error = null;
@@ -322,6 +351,7 @@ class OwnershipOperation extends ChangeNotifier {
       committed = false;
       return true;
     } catch (e) {
+      await captureResultTerminal(e);
       if (active) error = e;
       return false;
     } finally {

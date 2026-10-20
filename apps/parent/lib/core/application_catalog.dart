@@ -5,6 +5,8 @@ import 'package:usage_reporting/usage_reporting.dart';
 import 'package:uuid/uuid.dart';
 import 'parent_api.dart';
 import 'parent_durable_storage.dart';
+import 'operation_journal.dart';
+import 'operation_result_terminal.dart';
 export 'package:usage_reporting/usage_reporting.dart'
     show ApplicationClassification, applicationCategories;
 
@@ -78,13 +80,14 @@ void _validateOperation(Json value) {
 }
 
 class CatalogOperationStore {
+  late final ParentOperationJournal journal = ParentOperationJournal(storage);
   final ParentDurableStorage storage;
   CatalogOperationStore({ParentDurableStorage? storage})
       : storage = storage ?? ParentDurableStorage();
   String _key(String tenant, String actor) =>
       'parent.pending.catalog_operation.$tenant.$actor';
   Future<Json?> load(String tenant, String actor) async {
-    final raw = await storage.read(key: _key(tenant, actor));
+    final raw = await journal.read(key: _key(tenant, actor));
     if (raw == null) return null;
     if (raw.length > 16384) throw const FormatException('应用恢复记录过大。');
     final value = jsonDecode(raw);
@@ -101,7 +104,7 @@ class CatalogOperationStore {
 
   Future<void> save(String tenant, String actor, Json value) async {
     if (await load(tenant, actor) != null) throw StateError('请先核对原应用目录操作。');
-    await storage.write(key: _key(tenant, actor), value: jsonEncode(value));
+    await journal.write(key: _key(tenant, actor), value: jsonEncode(value));
   }
 
   Future<void> remove(String tenant, String actor, String requestId) async {
@@ -109,12 +112,29 @@ class CatalogOperationStore {
     if (previous != null && previous['requestId'] != requestId) {
       throw StateError('待核对记录已变化。');
     }
-    await storage.delete(key: _key(tenant, actor));
+    await journal.delete(key: _key(tenant, actor));
   }
 }
 
 /// Exact declaration/classification recovery. No automatic cross-session replay.
-class CatalogOperationController extends ChangeNotifier {
+class CatalogOperationController extends ChangeNotifier with ParentTerminalOperation {
+  @override
+  ParentOperationJournal get operationJournal => store.journal;
+  @override
+  String get operationSlot => store._key(tenant, actor);
+  @override
+  Json? get operationPayload => pending;
+  @override
+  bool get operationCurrent => current;
+  @override
+  bool get operationHasSuccessfulResult => result != null;
+  @override
+  void forgetOperationPayload() {
+    pending = null;
+    result = null;
+    queried = false;
+    loaded = false;
+  }
   final ParentApi api;
   final CatalogOperationStore store;
   final String tenant, actor;
@@ -154,6 +174,7 @@ class CatalogOperationController extends ChangeNotifier {
         loaded = true;
       }
     } catch (e) {
+      await captureResultTerminal(e);
       if (current) error = e;
     } finally {
       busy = false;
@@ -162,6 +183,7 @@ class CatalogOperationController extends ChangeNotifier {
   }
 
   Future<void> execute(Json input) async {
+    if (operationBlocked) return;
     if (!current || busy || !loaded || pending != null) return;
     busy = true;
     error = null;
@@ -186,12 +208,14 @@ class CatalogOperationController extends ChangeNotifier {
           body: declare ? body['definition'] : {'category': body['category']},
           version: declare ? null : body['version'],
           idempotencyKey: marker['requestId'],
-          isCurrent: () => current);
+          isCurrent: () => current, beforeDispatch: operationBeforeWrite);
       if (!current) return;
       result =
           _result(body, declare ? raw : {'committed': raw, 'current': raw});
       queried = true;
+      if (operationHasSuccessfulResult) await recordSuccessfulOperation();
     } catch (e) {
+      await captureResultTerminal(e);
       if (current) {
         error = e;
         if (pending == null) loaded = false;
@@ -236,6 +260,7 @@ class CatalogOperationController extends ChangeNotifier {
   }
 
   Future<void> query() async {
+    if (operationBlocked) return;
     if (!current || busy || pending == null) return;
     busy = true;
     queried = false;
@@ -255,12 +280,14 @@ class CatalogOperationController extends ChangeNotifier {
           body: declare
               ? body['definition']
               : {'version': body['version'], 'category': body['category']},
-          isCurrent: () => current);
+          isCurrent: () => current, beforeDispatch: operationBeforeDispatch);
       if (current) {
         result = _result(body, raw);
         queried = true;
+        if (operationHasSuccessfulResult) await recordSuccessfulOperation();
       }
     } on ParentApiException catch (e) {
+      await captureResultTerminal(e);
       if (current) {
         if (e.status == 404 &&
             e.code ==
@@ -273,6 +300,7 @@ class CatalogOperationController extends ChangeNotifier {
         }
       }
     } catch (e) {
+      await captureResultTerminal(e);
       if (current) error = e;
     } finally {
       busy = false;
@@ -281,6 +309,7 @@ class CatalogOperationController extends ChangeNotifier {
   }
 
   Future<bool> acknowledge() async {
+    if (operationBlocked) return false;
     if (!current || busy || pending == null || !queried) return false;
     busy = true;
     error = null;
@@ -292,6 +321,7 @@ class CatalogOperationController extends ChangeNotifier {
       queried = false;
       return true;
     } catch (e) {
+      await captureResultTerminal(e);
       if (current) error = e;
       return false;
     } finally {

@@ -6,9 +6,12 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:parent/core/parent_api.dart';
 import 'package:parent/core/parent_session.dart';
+import 'package:parent/core/pending_publications.dart';
 import 'package:parent/core/policy_group_selection.dart';
 import 'package:parent/ui/policy_group_picker.dart';
 import 'package:parent/ui/policy_center.dart';
+
+import 'support/parent_operation_journal_fixture.dart';
 
 const groupId = '00000000-0000-4000-8000-000000000001';
 const deviceId = '00000000-0000-4000-8000-000000000002';
@@ -223,7 +226,8 @@ void main() {
       throw StateError('Unexpected route: ${r.url.path}');
     });
     await tester.pumpWidget(
-        MaterialApp(home: PolicyCenter(session: _Session(transport))));
+        MaterialApp(home: PolicyCenter(session: _Session(transport),
+            publicationStore: PendingPublicationStore(storage: ParentJournalFixtureStorage()))));
     await tester.pumpAndSettle();
     await tester.tap(find.text('工作日学习'));
     await tester.pumpAndSettle();

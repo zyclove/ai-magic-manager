@@ -4,6 +4,8 @@ import 'package:uuid/uuid.dart';
 import 'member_access.dart';
 import 'parent_api.dart';
 import 'parent_durable_storage.dart';
+import 'operation_journal.dart';
+import 'operation_result_terminal.dart';
 
 const invitationStates = {
   'PENDING': '待接受',
@@ -50,13 +52,14 @@ void validateInvitationInput(Json input) {
 
 /// Only request descriptors are encrypted locally. Raw invitation tokens stay in memory.
 class InvitationOperationStore {
+  late final ParentOperationJournal journal = ParentOperationJournal(storage);
   final ParentDurableStorage storage;
   InvitationOperationStore({ParentDurableStorage? storage})
       : storage = storage ?? ParentDurableStorage();
   String key(String tenant, String actor) =>
       'parent.pending.invitation.$tenant.$actor';
   Future<Json?> load(String tenant, String actor) async {
-    final value = await storage.read(key: key(tenant, actor));
+    final value = await journal.read(key: key(tenant, actor));
     if (value == null) return null;
     if (value.length > 16384) throw const FormatException('邀请恢复记录过大。');
     final row = jsonDecode(value);
@@ -83,17 +86,37 @@ class InvitationOperationStore {
     if (await load(tenant, actor) != null) throw StateError('请先核对上次邀请操作。');
     final encoded = jsonEncode(row);
     if (encoded.length > 16384) throw const FormatException('邀请恢复记录过大。');
-    await storage.write(key: key(tenant, actor), value: encoded);
+    await journal.write(key: key(tenant, actor), value: encoded);
   }
 
   Future<void> clear(String tenant, String actor, String id) async {
     final row = await load(tenant, actor);
     if (row != null && row['requestId'] != id) throw StateError('邀请恢复记录已变化。');
-    await storage.delete(key: key(tenant, actor));
+    await journal.delete(key: key(tenant, actor));
   }
 }
 
-class InvitationOperationController extends ChangeNotifier {
+class InvitationOperationController extends ChangeNotifier with ParentTerminalOperation {
+  @override
+  ParentOperationJournal get operationJournal => store.journal;
+  @override
+  String get operationSlot => store.key(tenant, actor);
+  @override
+  Json? get operationPayload => pending;
+  @override
+  bool get operationCurrent => current;
+  @override
+  bool get operationHasSuccessfulResult => committed && pending?['operation'] == 'ISSUE';
+  @override
+  void forgetOperationPayload() {
+    pending = null;
+    latest = null;
+    _token = null;
+    queried = false;
+    loaded = false;
+    committed = false;
+    _secretEpoch++;
+  }
   final ParentApi api;
   final String tenant, actor;
   final InvitationOperationStore store;
@@ -155,6 +178,7 @@ class InvitationOperationController extends ChangeNotifier {
         loaded = true;
       }
     } catch (e) {
+      await captureResultTerminal(e);
       if (current) error = e;
     } finally {
       busy = false;
@@ -163,6 +187,7 @@ class InvitationOperationController extends ChangeNotifier {
   }
 
   Future<void> issue(Json input) async {
+    if (operationBlocked) return;
     if (!canSubmit) return;
     validateInvitationInput(input);
     await _submit(
@@ -170,6 +195,7 @@ class InvitationOperationController extends ChangeNotifier {
   }
 
   Future<void> cancel(Json before) async {
+    if (operationBlocked) return;
     if (!canSubmit) return;
     readInvitation(before);
     await _submit({
@@ -191,6 +217,7 @@ class InvitationOperationController extends ChangeNotifier {
       pending = copy;
       await _send();
     } catch (e) {
+      await captureResultTerminal(e);
       if (current) {
         error = e;
         if (pending == null) loaded = false;
@@ -228,18 +255,20 @@ class InvitationOperationController extends ChangeNotifier {
       final result = await api.send('POST', '$root/issuances',
           body: p['input'],
           idempotencyKey: p['requestId'],
-          isCurrent: () => current);
+          isCurrent: () => current, beforeDispatch: operationBeforeWrite);
       if (!current) return;
       final row = _checkIssued(result, query: false);
       latest = row;
       _token = secretEpoch == _secretEpoch ? result['token'] : null;
       committed = true;
       queried = true;
+      if (operationHasSuccessfulResult) await recordSuccessfulOperation();
     } else {
       await api.send('DELETE', '$root/${p['before']['id']}',
-          isCurrent: () => current);
+          isCurrent: () => current, beforeDispatch: operationBeforeWrite);
       if (!current) return;
       committed = true;
+      await recordSuccessfulOperation();
       await _query();
     }
   }
@@ -250,7 +279,7 @@ class InvitationOperationController extends ChangeNotifier {
       if (p['operation'] == 'ISSUE') {
         final result = await api.send(
             'POST', '$root/issuance-results/${p['requestId']}/query',
-            body: p['input'], isCurrent: () => current);
+            body: p['input'], isCurrent: () => current, beforeDispatch: operationBeforeDispatch);
         if (!current) return;
         latest = _checkIssued(result, query: true);
         committed = true;
@@ -266,8 +295,10 @@ class InvitationOperationController extends ChangeNotifier {
         committed = row['state'] == 'CANCELLED';
       }
       queried = true;
+      if (operationHasSuccessfulResult) await recordSuccessfulOperation();
       if (latest?['state'] != 'PENDING') _token = null;
     } on ParentApiException catch (e) {
+      await captureResultTerminal(e);
       if (current &&
           e.status == 404 &&
           e.code == 'INVITATION_RESULT_UNAVAILABLE') {
@@ -279,7 +310,8 @@ class InvitationOperationController extends ChangeNotifier {
   }
 
   Future<void> recover({bool retry = false}) async {
-    if (!current || busy || pending == null || (retry && committed)) return;
+    if (operationBlocked) return;
+    if (!current || busy || pending == null || (retry && (committed || operationKnownSuccessful))) return;
     busy = true;
     error = null;
     _notify();
@@ -287,9 +319,11 @@ class InvitationOperationController extends ChangeNotifier {
       if (retry) {
         await _send();
       } else {
+        if (operationHasSuccessfulResult) await recordSuccessfulOperation();
         await _query();
       }
     } catch (e) {
+      await captureResultTerminal(e);
       if (current) error = e;
     } finally {
       busy = false;
@@ -298,6 +332,7 @@ class InvitationOperationController extends ChangeNotifier {
   }
 
   Future<bool> acknowledge() async {
+    if (operationBlocked) return false;
     if (!current || busy || !queried || pending == null) return false;
     busy = true;
     error = null;
@@ -312,6 +347,7 @@ class InvitationOperationController extends ChangeNotifier {
       committed = false;
       return true;
     } catch (e) {
+      await captureResultTerminal(e);
       if (current) error = e;
       return false;
     } finally {

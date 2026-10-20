@@ -11,7 +11,9 @@ import 'package:parent/core/schedule_presets.dart';
 import 'package:parent/core/schedules.dart';
 import 'package:parent/ui/schedule_editor.dart';
 
-class _Storage extends ParentDurableStorage {
+import 'support/parent_operation_journal_fixture.dart';
+
+class _Storage extends ParentDurableStorage with ParentAtomicJournalFixture {
   final values = <String, String>{};
   @override
   Future<String?> read({required String key}) async => values[key];

@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 import 'parent_api.dart';
 import 'parent_durable_storage.dart';
+import 'operation_journal.dart';
+import 'operation_result_terminal.dart';
 
 const memberRoleLabels = {
   'OWNER': '所有者',
@@ -140,13 +142,14 @@ void validateMemberOperation(Json input, Json before) {
 }
 
 class MemberOperationStore {
+  late final ParentOperationJournal journal = ParentOperationJournal(storage);
   final ParentDurableStorage storage;
   MemberOperationStore({ParentDurableStorage? storage})
       : storage = storage ?? ParentDurableStorage();
   String _keyFor(String tenant, String actor) =>
       'parent.pending.member.$tenant.$actor';
   Future<Json?> load(String tenant, String actor) async {
-    final value = await storage.read(key: _keyFor(tenant, actor));
+    final value = await journal.read(key: _keyFor(tenant, actor));
     if (value == null) return null;
     if (value.length > 16384) throw const FormatException('成员恢复记录过大。');
     final row = jsonDecode(value);
@@ -162,18 +165,38 @@ class MemberOperationStore {
     if (await load(tenant, actor) != null) throw StateError('请先核对上次成员操作。');
     final encoded = jsonEncode(row);
     if (encoded.length > 16384) throw const FormatException('成员恢复记录过大。');
-    await storage.write(key: _keyFor(tenant, actor), value: encoded);
+    await journal.write(key: _keyFor(tenant, actor), value: encoded);
   }
 
   Future<void> clear(String tenant, String actor, String requestId) async {
     final row = await load(tenant, actor);
     if (row == null) return;
     if (row['requestId'] != requestId) throw StateError('恢复记录已变化。');
-    await storage.delete(key: _keyFor(tenant, actor));
+    await journal.delete(key: _keyFor(tenant, actor));
   }
 }
 
-class MemberOperationController extends ChangeNotifier {
+class MemberOperationController extends ChangeNotifier with ParentTerminalOperation {
+  @override
+  ParentOperationJournal get operationJournal => store.journal;
+  @override
+  String get operationSlot => store._keyFor(tenant, actor);
+  @override
+  Json? get operationPayload => pending;
+  @override
+  bool get operationCurrent => current;
+  @override
+  bool get operationHasSuccessfulResult => saved;
+  @override
+  void forgetOperationPayload() {
+    pending = null;
+    committed = null;
+    latest = null;
+    currentState = null;
+    queried = false;
+    loaded = false;
+    saved = false;
+  }
   final ParentApi api;
   final String tenant, actor;
   final MemberOperationStore store;
@@ -222,6 +245,7 @@ class MemberOperationController extends ChangeNotifier {
         loaded = true;
       }
     } catch (failure) {
+      await captureResultTerminal(failure);
       if (current) error = failure;
     } finally {
       busy = false;
@@ -230,6 +254,7 @@ class MemberOperationController extends ChangeNotifier {
   }
 
   Future<void> submit(Json input, Json before) async {
+    if (operationBlocked) return;
     if (!canSubmit) return;
     busy = true;
     error = null;
@@ -246,6 +271,7 @@ class MemberOperationController extends ChangeNotifier {
       pending = row;
       await _send();
     } catch (failure) {
+      await captureResultTerminal(failure);
       if (current) {
         error = failure;
         if (pending == null) loaded = false;
@@ -286,10 +312,11 @@ class MemberOperationController extends ChangeNotifier {
               },
         version: input['version'],
         idempotencyKey: pending!['requestId'],
-        isCurrent: () => current);
+        isCurrent: () => current, beforeDispatch: operationBeforeWrite);
     if (!current) return;
     if (!revoke) committed = _checkCommitted(result);
     saved = true;
+    if (operationHasSuccessfulResult) await recordSuccessfulOperation();
     await _query();
   }
 
@@ -301,7 +328,7 @@ class MemberOperationController extends ChangeNotifier {
     try {
       final result = await api.send(
           'POST', '$_path/access-results/${p['requestId']}/query',
-          body: input, isCurrent: () => current);
+          body: input, isCurrent: () => current, beforeDispatch: operationBeforeDispatch);
       if (!current) return;
       if (result is! Json ||
           result['requestId'] != p['requestId'] ||
@@ -323,7 +350,9 @@ class MemberOperationController extends ChangeNotifier {
       currentState = result['currentState'];
       saved = true;
       queried = true;
+      if (operationHasSuccessfulResult) await recordSuccessfulOperation();
     } on ParentApiException catch (failure) {
+      await captureResultTerminal(failure);
       if (current &&
           failure.status == 404 &&
           failure.code == 'MEMBER_RESULT_UNAVAILABLE') {
@@ -337,7 +366,8 @@ class MemberOperationController extends ChangeNotifier {
   }
 
   Future<void> recover({bool retry = false}) async {
-    if (!current || busy || pending == null || (retry && saved)) return;
+    if (operationBlocked) return;
+    if (!current || busy || pending == null || (retry && (saved || operationKnownSuccessful))) return;
     busy = true;
     error = null;
     latest = null;
@@ -347,9 +377,11 @@ class MemberOperationController extends ChangeNotifier {
       if (retry) {
         await _send();
       } else {
+        if (operationHasSuccessfulResult) await recordSuccessfulOperation();
         await _query();
       }
     } catch (failure) {
+      await captureResultTerminal(failure);
       if (current) error = failure;
     } finally {
       busy = false;
@@ -358,6 +390,7 @@ class MemberOperationController extends ChangeNotifier {
   }
 
   Future<bool> acknowledge() async {
+    if (operationBlocked) return false;
     if (!current || busy || pending == null || !queried) return false;
     busy = true;
     error = null;
@@ -373,6 +406,7 @@ class MemberOperationController extends ChangeNotifier {
       queried = false;
       return true;
     } catch (failure) {
+      await captureResultTerminal(failure);
       if (current) error = failure;
       return false;
     } finally {

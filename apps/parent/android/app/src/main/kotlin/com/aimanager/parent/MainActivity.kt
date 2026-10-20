@@ -14,9 +14,11 @@ class MainActivity: FlutterActivity() {
     private var exportDocuments: AuditExportDocuments? = null
     private var storageExecutor = Executors.newSingleThreadExecutor()
     private val mainHandler = Handler(Looper.getMainLooper())
+    private var operationJournal: ParentOperationJournalStore? = null
 
     override fun configureFlutterEngine(engine: FlutterEngine) {
         super.configureFlutterEngine(engine)
+        operationJournal = ParentOperationJournalStore(applicationContext, engine.dartExecutor.binaryMessenger)
         exportDocuments = AuditExportDocuments(this)
         MethodChannel(engine.dartExecutor.binaryMessenger, "com.aimanager.parent/audit-export")
             .setMethodCallHandler { call, result -> exportDocuments?.handle(call, result)
@@ -42,6 +44,8 @@ class MainActivity: FlutterActivity() {
     }
 
     override fun cleanUpFlutterEngine(engine: FlutterEngine) {
+        operationJournal?.close()
+        operationJournal = null
         MethodChannel(engine.dartExecutor.binaryMessenger, "com.aimanager.parent/audit-export").setMethodCallHandler(null)
         exportDocuments?.close()
         exportDocuments = null

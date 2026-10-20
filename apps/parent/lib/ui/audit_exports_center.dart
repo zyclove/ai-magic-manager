@@ -1,3 +1,4 @@
+import 'operation_result_terminal_panel.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -49,6 +50,7 @@ class _AuditExportsCenterState extends State<AuditExportsCenter>
   ParentSession get session => widget.session;
   bool get sameScope =>
       mounted &&
+      !_operationOwnerLost &&
       session.authenticated &&
       session.tenant?['id'] == tenant &&
       session.profile?['subject'] == actor &&
@@ -59,6 +61,13 @@ class _AuditExportsCenterState extends State<AuditExportsCenter>
       sameScope &&
       (authenticating || session.generation == generation);
   bool get available => current && foreground && !authenticating;
+
+  bool _operationOwnerLost = false;
+  @override
+  void deactivate() {
+    _operationOwnerLost = true;
+    super.deactivate();
+  }
 
   @override
   void initState() {
@@ -465,13 +474,18 @@ class _AuditExportsCenterState extends State<AuditExportsCenter>
                 : !foreground
                     ? const Center(child: Text('返回应用后继续核对。'))
                     : Column(children: [
+                        ParentKnownOperationReceipt(operation: operation),
                         if (busy || operation.busy)
                           const LinearProgressIndicator(),
                         Expanded(
                             child: ListView(
                                 padding: const EdgeInsets.all(16),
                                 children: [
-                              if (operation.pending != null)
+                              if (operation.resultTerminal != null)
+                                ParentResultTerminalPanel(operation: operation,
+                                    onViewCurrent: () => _load(reset: true),
+                                    onEnded: () => _load(reset: true))
+                              else if (operation.pending != null)
                                 Card(
                                     color: Theme.of(context)
                                         .colorScheme
@@ -506,7 +520,7 @@ class _AuditExportsCenterState extends State<AuditExportsCenter>
                                                       child: const Text('完成核对'))
                                               ]),
                                             ]))),
-                              if (error != null || operation.error != null)
+                              if (operation.resultTerminal == null && (error != null || operation.error != null))
                                 Card(
                                     child: Padding(
                                         padding: const EdgeInsets.all(16),

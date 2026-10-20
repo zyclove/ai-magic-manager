@@ -14,6 +14,8 @@ import 'package:parent/core/parent_session.dart';
 import 'package:parent/core/subjects.dart';
 import 'package:parent/ui/subject_center.dart';
 
+import 'support/parent_operation_journal_fixture.dart';
+
 const id = '11111111-1111-4111-8111-111111111111';
 Json subject({int version = 0, bool archived = false, String name = '小星'}) => {
       'id': id,
@@ -37,7 +39,9 @@ ParentApi api(Future<http.Response> Function(http.Request) handler,
     ParentApi(token ?? () async => 'fixture',
         baseUrl: 'https://fixture.invalid/api/v1', client: MockClient(handler));
 
-class Storage extends ParentDurableStorage {
+class Storage extends ParentDurableStorage with ParentAtomicJournalFixture {
+  @override
+  bool get fixtureWriteMayCommitBeforeFailure => true;
   final values = <String, String>{};
   bool fail = false;
   @override
@@ -248,18 +252,23 @@ void main() {
           writes++;
           throw http.ClientException('unknown');
         }
-        return response(
-            {'errorCode': code}, code.startsWith('SUBJECT') ? 404 : 410);
+        return code.startsWith('SUBJECT')
+            ? response({'errorCode': code}, 404)
+            : parentJournalTerminalProblem(code);
       }), storage);
       await c.load();
       await c.execute(input('CREATE'));
       await c.query();
-      expect(c.queried, isTrue);
+      expect(c.queried, code.startsWith('SUBJECT') ? isTrue : isFalse);
       expect(c.result, isNull);
       expect(c.pending, isNotNull);
       await c.execute(input('CREATE'));
       expect(writes, 1);
-      await c.acknowledge();
+      if (code.startsWith('SUBJECT')) {
+        await c.acknowledge();
+      } else {
+        await c.endLocalCheck();
+      }
       expect(storage.values, isEmpty);
       c.dispose();
     });

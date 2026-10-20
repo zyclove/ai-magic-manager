@@ -5,6 +5,8 @@ import 'package:usage_reporting/usage_reporting.dart';
 import 'package:uuid/uuid.dart';
 import 'parent_api.dart';
 import 'parent_durable_storage.dart';
+import 'operation_journal.dart';
+import 'operation_result_terminal.dart';
 
 bool validConsentReason(String value) =>
     value.trim().isNotEmpty &&
@@ -13,13 +15,14 @@ bool validConsentReason(String value) =>
 
 /// 单设备、原管理员、原租户的加密操作记录。查询从不重放授权变更。
 class ObservationChangeStore {
+  late final ParentOperationJournal journal = ParentOperationJournal(storage);
   final ParentDurableStorage storage;
   ObservationChangeStore({ParentDurableStorage? storage})
       : storage = storage ?? ParentDurableStorage();
   String _key(String tenant, String actor, String device) =>
       'parent.pending.observation.$tenant.$actor.$device';
   Future<Json?> load(String tenant, String actor, String device) async {
-    final raw = await storage.read(key: _key(tenant, actor, device));
+    final raw = await journal.read(key: _key(tenant, actor, device));
     if (raw == null) return null;
     if (raw.length > 8192) throw const FormatException('授权恢复记录过大。');
     final value = jsonDecode(raw);
@@ -41,7 +44,7 @@ class ObservationChangeStore {
     if (await load(tenant, actor, device) != null) {
       throw StateError('请先核对原授权操作。');
     }
-    await storage.write(
+    await journal.write(
         key: _key(tenant, actor, device), value: jsonEncode(value));
   }
 
@@ -51,7 +54,7 @@ class ObservationChangeStore {
     if (original != null && original['requestId'] != request) {
       throw StateError('原操作记录已变化。');
     }
-    await storage.delete(key: _key(tenant, actor, device));
+    await journal.delete(key: _key(tenant, actor, device));
   }
 }
 
@@ -72,7 +75,25 @@ void validateObservationChange(Json input) {
 
 /// MFA → 原注册和版本预检 → 安全落盘 → 单次提交 → 原结果只读查询。
 /// 网络结果不确定时保留原记录；不会在重新打开、恢复前台或查询时重发写入。
-class ParentObservationController extends ChangeNotifier {
+class ParentObservationController extends ChangeNotifier with ParentTerminalOperation {
+  @override
+  ParentOperationJournal get operationJournal => store.journal;
+  @override
+  String get operationSlot => store._key(tenant, actor, target.deviceId);
+  @override
+  Json? get operationPayload => pending;
+  @override
+  bool get operationCurrent => available;
+  @override
+  bool get operationHasSuccessfulResult => committed != null;
+  @override
+  void forgetOperationPayload() {
+    pending = null;
+    settings = null;
+    committed = null;
+    queried = false;
+    loaded = false;
+  }
   final ParentApi api;
   final ObservationChangeStore store;
   final String tenant, actor;
@@ -160,6 +181,7 @@ class ParentObservationController extends ChangeNotifier {
         loaded = true;
       }
     } catch (e) {
+      await captureResultTerminal(e);
       if (available && generation == _generation) error = e;
     } finally {
       busy = false;
@@ -171,6 +193,7 @@ class ParentObservationController extends ChangeNotifier {
       {required bool inventory,
       required bool usage,
       required String reason}) async {
+    if (operationBlocked) return;
     if (!available || busy || !loaded || pending != null || settings == null) {
       return;
     }
@@ -214,12 +237,14 @@ class ParentObservationController extends ChangeNotifier {
       final raw = await api.send('POST', '$path/changes',
           body: body,
           idempotencyKey: marker['requestId'],
-          isCurrent: () => available && generation == _generation);
+          isCurrent: () => available && generation == _generation, beforeDispatch: operationBeforeWrite);
       if (!available || generation != _generation) return;
-      _validateCommitted(raw, body);
+      committed = _validateCommitted(raw, body);
+      await recordSuccessfulOperation();
       // Even a successful write response can be a historical replay. Read both facts.
       await _recover(generation);
     } catch (e) {
+      await captureResultTerminal(e);
       if (available) {
         error = e;
         settings = null;
@@ -248,7 +273,7 @@ class ParentObservationController extends ChangeNotifier {
     final raw = await api.send(
         'POST', '$path/operation-results/${record['requestId']}/query',
         body: record['body'],
-        isCurrent: () => available && generation == _generation);
+        isCurrent: () => available && generation == _generation, beforeDispatch: operationBeforeDispatch);
     if (!available || generation != _generation) return;
     if (raw is! Json || raw.length != 2) {
       throw const ParentApiException(502, 'INVALID_OBSERVATION_RESPONSE');
@@ -262,9 +287,11 @@ class ParentObservationController extends ChangeNotifier {
     committed = original;
     settings = now;
     queried = true;
+    if (operationHasSuccessfulResult) await recordSuccessfulOperation();
   }
 
   Future<void> query() async {
+    if (operationBlocked) return;
     if (!available || busy || pending == null) return;
     final generation = ++_generation;
     busy = true;
@@ -276,17 +303,18 @@ class ParentObservationController extends ChangeNotifier {
     try {
       await _recover(generation);
     } on ParentApiException catch (e) {
+      await captureResultTerminal(e);
       if (available && generation == _generation) {
         error = e;
         // Terminal evidence still requires explicit local acknowledgement. Never replay a 410.
         queried =
             (e.status == 404 && e.code == 'OBSERVATION_RESULT_UNAVAILABLE') ||
-                (e.status == 410 && e.code == 'IDEMPOTENCY_RESPONSE_ERASED') ||
                 (e.status == 409 &&
                     const {'REGISTRATION_CHANGED', 'DEVICE_NOT_ACTIVE'}
                         .contains(e.code));
       }
     } catch (e) {
+      await captureResultTerminal(e);
       if (available && generation == _generation) error = e;
     } finally {
       busy = false;
@@ -295,6 +323,7 @@ class ParentObservationController extends ChangeNotifier {
   }
 
   Future<void> acknowledge() async {
+    if (operationBlocked) return;
     if (!available || busy || !queried || pending == null) return;
     busy = true;
     error = null;
@@ -308,6 +337,7 @@ class ParentObservationController extends ChangeNotifier {
       loaded = false;
       queried = false;
     } catch (e) {
+      await captureResultTerminal(e);
       if (available) error = e;
     } finally {
       busy = false;

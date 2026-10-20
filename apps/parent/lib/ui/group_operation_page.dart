@@ -1,3 +1,4 @@
+import 'operation_result_terminal_panel.dart';
 import 'package:flutter/material.dart';
 import '../core/device_groups.dart';
 import '../core/parent_api.dart';
@@ -9,15 +10,26 @@ mixin GroupScope<T extends StatefulWidget> on State<T> {
   late final String tenant, actor, role;
   bool get current =>
       mounted &&
-      session.authenticated &&
+      !_operationOwnerLost &&
+      _operationIdentity.current &&
       session.tenant?['id'] == tenant &&
       session.profile?['subject'] == actor &&
       session.role == role &&
       session.tenant?['kind'] == 'ORGANIZATION' &&
       const {'OWNER', 'ORG_ADMIN'}.contains(role);
+  bool _operationOwnerLost = false;
+  late final ParentOperationIdentity _operationIdentity;
+  @override
+  void deactivate() {
+    _operationOwnerLost = true;
+    _operationIdentity.revoke();
+    super.deactivate();
+  }
+
   @override
   void initState() {
     super.initState();
+    _operationIdentity = ParentOperationIdentity(session, onRevoked: _scopeChanged);
     tenant = session.tenant!['id'];
     actor = session.profile!['subject'];
     role = session.role;
@@ -26,6 +38,7 @@ mixin GroupScope<T extends StatefulWidget> on State<T> {
 
   void _scopeChanged() {
     if (!mounted || current) return;
+    _operationOwnerLost = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || current) return;
       final route = ModalRoute.of(context);
@@ -40,6 +53,7 @@ mixin GroupScope<T extends StatefulWidget> on State<T> {
 
   @override
   void dispose() {
+    _operationIdentity.dispose();
     session.removeListener(_scopeChanged);
     super.dispose();
   }
@@ -74,12 +88,12 @@ class _GroupOperationPageState extends State<GroupOperationPage>
   void initState() {
     super.initState();
     controller = GroupOperationController(
-        api: session.api,
+        api: _operationIdentity.scopedApi(session.api),
         store: widget.store ?? GroupOperationStore(),
         tenant: tenant,
         actor: actor,
-        isCurrent: () => current,
-        reauthenticate: session.reauthenticate);
+        isCurrent: () => current && _operationIdentity.dispatchable,
+        reauthenticate: _operationIdentity.reauthenticate);
     controller.load();
   }
 
@@ -100,28 +114,19 @@ class _GroupOperationPageState extends State<GroupOperationPage>
   }
 
   Future<void> _acknowledge() async {
+    final owner = ModalRoute.of(context);
+    bool active() => current && owner?.isActive == true && owner?.isCurrent == true;
+    if (!active() || controller.busy) return;
     final result = controller.result;
-    if (result == null) {
-      final ok = await showDialog<bool>(
-          context: context,
-          builder: (ctx) => AlertDialog(
-                  title: const Text('已核对设备组目录？'),
-                  content:
-                      const Text('查不到结果不证明没有提交。请先核对目录和审计；清除后不会撤销任何操作，也不会自动重试。'),
-                  actions: [
-                    TextButton(
-                        onPressed: () => Navigator.pop(ctx, false),
-                        child: const Text('继续保留')),
-                    FilledButton(
-                        onPressed: () => Navigator.pop(ctx, true),
-                        child: const Text('已核对，清除本机记录'))
-                  ]));
-      if (ok != true || !current) return;
-    }
-    if (await controller.acknowledge() && current) {
+    if (result == null && !await parentOperationConfirmation(context,
+        operation: controller, accessChanges: session, isCurrent: () => current,
+        title: '已核对设备组目录？', description: '查不到结果不证明没有提交。请先核对目录和审计；清除后不会撤销任何操作，也不会自动重试。',
+        cancelLabel: '继续保留', confirmLabel: '已核对，清除本机记录')) return;
+    if (!active()) return;
+    if (await controller.acknowledge() && active()) {
       setState(() => leaving = true);
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (current) Navigator.pop(context, result?['current']);
+        if (active()) owner!.navigator?.pop(result?['current']);
       });
     }
   }
@@ -130,6 +135,9 @@ class _GroupOperationPageState extends State<GroupOperationPage>
   Widget build(BuildContext context) => AnimatedBuilder(
       animation: controller,
       builder: (context, _) {
+        if (controller.resultTerminal != null) {
+          return parentResultTerminalPage(context, title: '设备组核对', operation: controller);
+        }
         final pending = controller.pending;
         final input = pending?['body'] as Json? ?? widget.input;
         final op = input['operation'];
@@ -170,7 +178,8 @@ class _GroupOperationPageState extends State<GroupOperationPage>
                                 '设备：${d['deviceId']}\n注册周期：${d['registrationId']}')),
                     ]),
                   ],
-                  if (controller.busy) const LinearProgressIndicator(),
+                  ParentKnownOperationReceipt(operation: controller),
+              if (controller.busy) const LinearProgressIndicator(),
                   if (controller.error != null)
                     Padding(
                         padding: const EdgeInsets.symmetric(vertical: 12),

@@ -14,6 +14,8 @@ import 'package:parent/core/parent_durable_storage.dart';
 import 'package:parent/core/parent_session.dart';
 import 'package:parent/ui/member_center.dart';
 
+import 'support/parent_operation_journal_fixture.dart';
+
 const id = '00000000-0000-4000-8000-000000000001',
     classId = '00000000-0000-4000-8000-000000000002';
 final secret = 'a' * 43;
@@ -44,7 +46,7 @@ ParentApi apiFor(Future<http.Response> Function(http.Request) handle) =>
     ParentApi(() async => 'token',
         baseUrl: 'https://fixture.invalid/api/v1', client: MockClient(handle));
 
-class Storage extends ParentDurableStorage {
+class Storage extends ParentDurableStorage with ParentAtomicJournalFixture {
   final values = <String, String>{};
   bool fail = false;
   @override

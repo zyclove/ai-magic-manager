@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 import 'parent_api.dart';
 import 'parent_durable_storage.dart';
+import 'operation_journal.dart';
+import 'operation_result_terminal.dart';
 
 const subjectAges = {
   'UNDER_7': '7 岁以下',
@@ -76,13 +78,14 @@ Json readSubject(dynamic value, {String? id}) {
 
 /// Per-adult/workspace encrypted journal. Persist before dispatch; never replay automatically.
 class SubjectChangeStore {
+  late final ParentOperationJournal journal = ParentOperationJournal(storage);
   final ParentDurableStorage storage;
   SubjectChangeStore({ParentDurableStorage? storage})
       : storage = storage ?? ParentDurableStorage();
   String _key(String tenant, String actor) =>
       'parent.pending.subject.$tenant.$actor';
   Future<Json?> load(String tenant, String actor) async {
-    final raw = await storage.read(key: _key(tenant, actor));
+    final raw = await journal.read(key: _key(tenant, actor));
     if (raw == null) return null;
     if (raw.length > 8192) throw const FormatException('档案恢复记录过大。');
     final v = jsonDecode(raw);
@@ -99,7 +102,7 @@ class SubjectChangeStore {
 
   Future<void> save(String tenant, String actor, Json marker) async {
     if (await load(tenant, actor) != null) throw StateError('请先核对原档案操作。');
-    await storage.write(key: _key(tenant, actor), value: jsonEncode(marker));
+    await journal.write(key: _key(tenant, actor), value: jsonEncode(marker));
   }
 
   Future<void> remove(String tenant, String actor, String request) async {
@@ -107,11 +110,28 @@ class SubjectChangeStore {
     if (saved != null && saved['requestId'] != request) {
       throw StateError('原操作记录已变化。');
     }
-    await storage.delete(key: _key(tenant, actor));
+    await journal.delete(key: _key(tenant, actor));
   }
 }
 
-class SubjectChangeController extends ChangeNotifier {
+class SubjectChangeController extends ChangeNotifier with ParentTerminalOperation {
+  @override
+  ParentOperationJournal get operationJournal => store.journal;
+  @override
+  String get operationSlot => store._key(tenant, actor);
+  @override
+  Json? get operationPayload => pending;
+  @override
+  bool get operationCurrent => available;
+  @override
+  bool get operationHasSuccessfulResult => result != null;
+  @override
+  void forgetOperationPayload() {
+    pending = null;
+    result = null;
+    queried = false;
+    loaded = false;
+  }
   final ParentApi api;
   final SubjectChangeStore store;
   final String tenant, actor;
@@ -152,6 +172,7 @@ class SubjectChangeController extends ChangeNotifier {
         loaded = true;
       }
     } catch (e) {
+      await captureResultTerminal(e);
       if (_valid(g)) error = e;
     } finally {
       busy = false;
@@ -174,6 +195,7 @@ class SubjectChangeController extends ChangeNotifier {
   }
 
   Future<void> execute(Json input) async {
+    if (operationBlocked) return;
     if (!available || busy || !loaded || pending != null) return;
     busy = true;
     error = null;
@@ -208,11 +230,13 @@ class SubjectChangeController extends ChangeNotifier {
       final raw = await api.send('POST', '$root/changes',
           body: body,
           idempotencyKey: marker['requestId'],
-          isCurrent: () => _valid(g));
+          isCurrent: () => _valid(g), beforeDispatch: operationBeforeWrite);
       if (!_valid(g)) return;
       _committed(raw, body);
+      await recordSuccessfulOperation();
       await _recover(g);
     } catch (e) {
+      await captureResultTerminal(e);
       if (available) {
         error = e;
         loaded = false;
@@ -227,7 +251,7 @@ class SubjectChangeController extends ChangeNotifier {
     final marker = pending!;
     final raw = await api.send(
         'POST', '$root/operation-results/${marker['requestId']}/query',
-        body: marker['body'], isCurrent: () => _valid(g));
+        body: marker['body'], isCurrent: () => _valid(g), beforeDispatch: operationBeforeDispatch);
     if (!_valid(g)) return;
     if (raw is! Json || raw['operation'] != marker['body']['operation']) {
       throw const ParentApiException(502, 'INVALID_RESPONSE');
@@ -247,9 +271,11 @@ class SubjectChangeController extends ChangeNotifier {
       'current': current
     };
     queried = true;
+    if (operationHasSuccessfulResult) await recordSuccessfulOperation();
   }
 
   Future<void> query() async {
+    if (operationBlocked) return;
     if (!available || busy || pending == null) return;
     final g = ++_generation;
     busy = true;
@@ -260,12 +286,13 @@ class SubjectChangeController extends ChangeNotifier {
     try {
       await _recover(g);
     } on ParentApiException catch (e) {
+      await captureResultTerminal(e);
       if (_valid(g)) {
         error = e;
-        queried = (e.status == 404 && e.code == 'SUBJECT_RESULT_UNAVAILABLE') ||
-            (e.status == 410 && e.code == 'IDEMPOTENCY_RESPONSE_ERASED');
+        queried = (e.status == 404 && e.code == 'SUBJECT_RESULT_UNAVAILABLE');
       }
     } catch (e) {
+      await captureResultTerminal(e);
       if (_valid(g)) error = e;
     } finally {
       busy = false;
@@ -274,6 +301,7 @@ class SubjectChangeController extends ChangeNotifier {
   }
 
   Future<bool> acknowledge() async {
+    if (operationBlocked) return false;
     if (!available || busy || !queried || pending == null) return false;
     busy = true;
     error = null;
@@ -287,6 +315,7 @@ class SubjectChangeController extends ChangeNotifier {
       loaded = false;
       return true;
     } catch (e) {
+      await captureResultTerminal(e);
       if (available) error = e;
       return false;
     } finally {

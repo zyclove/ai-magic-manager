@@ -557,7 +557,10 @@ class _QuotaPlanEditorState extends State<_QuotaPlanEditor> with _QuotaScope {
                         operation: widget.operation,
                         confirm: confirm,
                         onCleared: () async {
-                          if (current) Navigator.pop(context);
+                          final owner = ModalRoute.of(context);
+                          if (current && owner?.isActive == true && owner?.isCurrent == true) {
+                            owner!.navigator?.pop();
+                          }
                         }),
                     if (widget.operation.pending == null)
                       AbsorbPointer(

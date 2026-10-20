@@ -1,0 +1,84 @@
+{
+  "status": "STATIC_ONLY_NOT_EXECUTED",
+  "createdAtUtc": "2026-10-20T15:20:01.295628+00:00",
+  "productionSourceCount": 38,
+  "r3ToR4ChangedCount": 10,
+  "r3ToR4ChangedSources": [
+    {
+      "path": "apps/parent/lib/ui/application_center.dart",
+      "r3Sha256": "566341de843ff4b9b02138c001ab2e7c0b4c34c13af5a27b371f4d5c0d09b0ed",
+      "r4Sha256": "34d996d69d6872e2f03305955d5feac45eede198543adae56867280804673ec7",
+      "bytes": 27079
+    },
+    {
+      "path": "apps/parent/lib/ui/class_center.dart",
+      "r3Sha256": "4dd965bdbf689dc10e2e04221a8bd57aaae461852f0b155d743e89838a2966c1",
+      "r4Sha256": "3acf0a8ee52a66594bc83aaf993e2cbc62257c5ac5e59bc45a87e84686687496",
+      "bytes": 38545
+    },
+    {
+      "path": "apps/parent/lib/ui/group_operation_page.dart",
+      "r3Sha256": "8aa828fd8496a42400caf0cb7536938c1c13432e4b9d991e5c6f2a6cf2ef7fe1",
+      "r4Sha256": "0e652697dbbd3ef6945579a37446beb87ad8e8d43684f861048c9e546626796e",
+      "bytes": 11459
+    },
+    {
+      "path": "apps/parent/lib/ui/member_center.dart",
+      "r3Sha256": "53adbd3f6ba57457579b88198d662ad028121f4e2b2e01bfc8343c7b6ab04ab7",
+      "r4Sha256": "6364c78c42afbdfd7b8013dcf5f6399975f06e6bcfbddefd493a1e093d2f48a1",
+      "bytes": 44543
+    },
+    {
+      "path": "apps/parent/lib/ui/policy_creation_page.dart",
+      "r3Sha256": "e6b9f3f4a0fcb013e9530c70a3ae7c7decb6f1ed3923dc5ab8b106069a33f16f",
+      "r4Sha256": "eb56dcdaf02e5a197f4bf224a31b565cbdbe6897a16925de59ed0792617eb799",
+      "bytes": 13226
+    },
+    {
+      "path": "apps/parent/lib/ui/quota_center.dart",
+      "r3Sha256": "f6572e199cbe75e7f83d01c33d004576434977dd3ecf5704f7f6ba72ef95740e",
+      "r4Sha256": "6c81f192583ec83c503e51f8eb19acc6e6956ced05dd76a998c48c3a27407377",
+      "bytes": 42114
+    },
+    {
+      "path": "apps/parent/lib/ui/quota_plan_pages.dart",
+      "r3Sha256": null,
+      "r4Sha256": "2f6c3ba854fc88ed6227369d99ba9208e5cb01f8ede400318ef955afa6e1302a",
+      "bytes": 32419
+    },
+    {
+      "path": "apps/parent/lib/ui/schedule_editor.dart",
+      "r3Sha256": "c6de589afd32674f01633a70c05a4b5be457df0eef4ca253d47bb786e6ca03f1",
+      "r4Sha256": "3cea34536413c0ee026e48d77e56e342dde4f90b4c77cafcfbc7066fcf29126e",
+      "bytes": 34291
+    },
+    {
+      "path": "apps/parent/lib/ui/subject_center.dart",
+      "r3Sha256": "96e0f4e7246f2a7b776bccc4ced1330ccec80de307b4ca9275e5270e4c1a579c",
+      "r4Sha256": "918b993a846beb6fb3d77643e3f8f42876a78bec687ec6e021feb0e8909d1fa8",
+      "bytes": 32273
+    },
+    {
+      "path": "apps/parent/lib/ui/operation_result_terminal_panel.dart",
+      "r3Sha256": "6023b304b253c21dac19872908dc1534c9013878c09d9fa9fc778439d551b299",
+      "r4Sha256": "753afd55ca66d291f1b4f1c7968558a613bf23deee53fd57fe88098ded6baff3",
+      "bytes": 15877
+    }
+  ],
+  "mainMatchesFrozenR4": true,
+  "headPatchConflicts": [],
+  "closureRules": [
+    "Capture original route before any confirmation or native CAS await",
+    "Require original identity scope and original route active/current before dispatch and after native CAS",
+    "Repeat original route checks inside postframe callbacks",
+    "Normal recovery confirmations finish only their own route and await completed before accepting",
+    "Normal recovery confirmation binds original operation request; access loss finishes only that owned route"
+  ],
+  "scope": "Normal result recovery exit paths only; no unrelated business confirmations changed",
+  "SDKExecuted": false,
+  "testsExecuted": false,
+  "formatterExecuted": false,
+  "gitMutations": false,
+  "testSourcesModifiedInR4": false,
+  "reviewStatus": "Independent incremental reviewers notified; root owns final review and commit"
+}

@@ -1,3 +1,4 @@
+import 'operation_result_terminal_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -15,33 +16,6 @@ import 'quota_center.dart';
 const _ink = Color(0xFF17324B);
 const _muted = Color(0xFF315E86);
 
-/// Returns only the exact committed result for the current creator/key/body.
-/// A missing journal entry is inconclusive and must never trigger an auto POST.
-Future<Json?> _publicationResult(
-    ParentApi api, String tenantId, PendingPublication marker) async {
-  final query = Uri(queryParameters: {
-    'revision': '${marker.revision}',
-    'previewId': marker.previewId,
-    'previewHash': marker.previewHash,
-  }).query;
-  try {
-    final result = await api.object(
-        '/tenants/$tenantId/policies/${marker.policyId}/publication-results/${marker.idempotencyKey}?$query');
-    if (result['id'] is! String ||
-        result['versionId'] is! String ||
-        result['sequence'] is! int ||
-        result['mode'] != 'CONFIGURE_ONLY' ||
-        result['state'] != 'CONFIGURED_NOT_ENFORCED') {
-      throw const ParentApiException(502, 'INVALID_RESPONSE');
-    }
-    return result;
-  } on ParentApiException catch (failure) {
-    if (failure.status == 404 &&
-        failure.code == 'POLICY_PUBLICATION_RESULT_UNAVAILABLE') return null;
-    rethrow;
-  }
-}
-
 /// Mobile policy preview and CONFIGURE_ONLY publication. A preview never
 /// changes Android settings, and a saved configuration is not enforcement.
 Future<void> showPolicyCenter(BuildContext context, ParentSession session) {
@@ -52,7 +26,8 @@ Future<void> showPolicyCenter(BuildContext context, ParentSession session) {
 
 class PolicyCenter extends StatefulWidget {
   final ParentSession session;
-  const PolicyCenter({super.key, required this.session});
+  final PendingPublicationStore? publicationStore;
+  const PolicyCenter({super.key, required this.session, this.publicationStore});
 
   @override
   State<PolicyCenter> createState() => _PolicyCenterState();
@@ -62,35 +37,50 @@ class _PolicyCenterState extends State<PolicyCenter> {
   late final String tenantId;
   late final String actor;
   late final String role;
+  bool _operationOwnerLost = false;
+  late final ParentOperationIdentity _operationIdentity;
   late final PagedCollection policies;
-  final publicationStore = PendingPublicationStore();
+  late final PendingPublicationStore publicationStore;
   List<PendingPublication> recoveries = const [];
   final recoveryStatus = <String, String>{};
+  final recoveryOperations = <String, PendingPublicationRecovery>{};
   final checkedRecoveries = <String>{};
   bool recoveryBusy = false;
   Object? recoveryError;
 
   @override
+  void deactivate() {
+    _operationOwnerLost = true;
+    _operationIdentity.revoke();
+    super.deactivate();
+  }
+
+  @override
   void initState() {
     super.initState();
+    _operationIdentity = ParentOperationIdentity(widget.session, onRevoked: _closeIfScopeChanged);
+    publicationStore = widget.publicationStore ?? PendingPublicationStore();
     tenantId = widget.session.tenant!['id'] as String;
     actor = widget.session.profile!['subject'] as String;
     role = widget.session.role;
     policies =
-        PagedCollection(widget.session.api, '/tenants/$tenantId/policies');
+        PagedCollection(_operationIdentity.scopedApi(widget.session.api), '/tenants/$tenantId/policies',
+            isCurrent: () => _current && _operationIdentity.dispatchable);
     widget.session.addListener(_closeIfScopeChanged);
     _loadRecoveries();
   }
 
   bool get _current =>
       mounted &&
-      widget.session.authenticated &&
+      !_operationOwnerLost &&
+      _operationIdentity.current &&
       widget.session.tenant?['id'] == tenantId &&
       widget.session.profile?['subject'] == actor &&
       widget.session.role == role;
 
   void _closeIfScopeChanged() {
     if (!mounted || _current) return;
+    _operationOwnerLost = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || _current) return;
       final route = ModalRoute.of(context);
@@ -100,11 +90,28 @@ class _PolicyCenterState extends State<PolicyCenter> {
     });
   }
 
+  void _recoveryChanged() {
+    if (_current) setState(() {});
+  }
+
   Future<void> _loadRecoveries() async {
-    if (!widget.session.canDecide) return;
+    if (!_current || !widget.session.canDecide) return;
     try {
       final rows = await publicationStore.load(tenantId, actor);
       if (_current) {
+        final keys = rows.map((row) => row.idempotencyKey).toSet();
+        for (final key in recoveryOperations.keys.toList()) {
+          if (!keys.contains(key)) recoveryOperations.remove(key)!.dispose();
+        }
+        for (final marker in rows) {
+          recoveryOperations.putIfAbsent(marker.idempotencyKey, () {
+            final operation = PendingPublicationRecovery(api: _operationIdentity.scopedApi(widget.session.api),
+                store: publicationStore, tenant: tenantId, actor: actor,
+                marker: marker, isCurrent: () => _current && _operationIdentity.dispatchable);
+            operation.addListener(_recoveryChanged);
+            return operation;
+          });
+        }
         setState(() {
           recoveries = rows;
           recoveryError = null;
@@ -118,20 +125,27 @@ class _PolicyCenterState extends State<PolicyCenter> {
   }
 
   Future<void> _checkRecovery(PendingPublication marker) async {
-    if (!_current || recoveryBusy) return;
+    final operation = recoveryOperations[marker.idempotencyKey];
+    if (!_current || recoveryBusy || operation == null || operation.operationBlocked) return;
     setState(() => recoveryBusy = true);
     try {
-      final result =
-          await _publicationResult(widget.session.api, tenantId, marker);
+      await operation.query();
       if (!_current) return;
       setState(() {
-        checkedRecoveries.add(marker.idempotencyKey);
-        recoveryStatus[marker.idempotencyKey] = result == null
-            ? '未找到可读取的原提交结果。这不能证明配置没有保存；请到管理台核对版本后决定是否清除提醒。'
-            : '原提交已保存为配置版本 ${result['sequence']}，状态：仅配置、未执行。操作编号：${result['id']}。';
+        if (operation.resultTerminal != null) {
+          checkedRecoveries.remove(marker.idempotencyKey);
+          recoveryStatus.remove(marker.idempotencyKey);
+          recoveryError = null;
+        } else if (operation.queried) {
+          checkedRecoveries.add(marker.idempotencyKey);
+          final result = operation.result;
+          recoveryStatus[marker.idempotencyKey] = result == null
+              ? '未找到可读取的原提交结果。这不能证明配置没有保存；请核对当前版本或审计。'
+              : '原提交已保存为配置版本 ${result['sequence']}，状态：仅配置、未执行。操作编号：${result['id']}。';
+        } else {
+          recoveryError = operation.error;
+        }
       });
-    } catch (failure) {
-      if (_current) setState(() => recoveryError = failure);
     } finally {
       if (_current) setState(() => recoveryBusy = false);
     }
@@ -162,8 +176,8 @@ class _PolicyCenterState extends State<PolicyCenter> {
         !checkedRecoveries.contains(marker.idempotencyKey)) return;
     setState(() => recoveryBusy = true);
     try {
-      await publicationStore.remove(tenantId, actor, marker.idempotencyKey);
-      if (!_current) return;
+      final operation = recoveryOperations[marker.idempotencyKey];
+      if (operation == null || !await operation.acknowledge() || !_current) return;
       setState(() {
         recoveries = recoveries
             .where((row) => row.idempotencyKey != marker.idempotencyKey)
@@ -180,8 +194,11 @@ class _PolicyCenterState extends State<PolicyCenter> {
 
   @override
   void dispose() {
+    _operationIdentity.dispose();
     widget.session.removeListener(_closeIfScopeChanged);
     policies.dispose();
+    for (final operation in recoveryOperations.values) { operation.dispose(); }
+    recoveryOperations.clear();
     super.dispose();
   }
 
@@ -196,7 +213,8 @@ class _PolicyCenterState extends State<PolicyCenter> {
     if (mounted && result != null) {
       await Navigator.of(context).push(MaterialPageRoute<void>(
         builder: (_) => _PolicyDetail(
-            session: widget.session, policyId: result['id'] as String),
+            session: widget.session, policyId: result['id'] as String,
+            publicationStore: publicationStore),
       ));
     }
     if (_current) {
@@ -276,12 +294,18 @@ class _PolicyCenterState extends State<PolicyCenter> {
                         ),
                       ),
                     for (final marker in recoveries)
-                      Card(
+                      if (recoveryOperations[marker.idempotencyKey]?.resultTerminal != null)
+                        ParentResultTerminalPanel(
+                            operation: recoveryOperations[marker.idempotencyKey]!,
+                            onViewCurrent: policies.reload, onEnded: _loadRecoveries)
+                      else Card(
                         child: Padding(
                           padding: const EdgeInsets.all(16),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              if (recoveryOperations[marker.idempotencyKey] != null)
+                                ParentKnownOperationReceipt(operation: recoveryOperations[marker.idempotencyKey]!),
                               const Text('待核对的配置发布',
                                   style:
                                       TextStyle(fontWeight: FontWeight.w700)),
@@ -333,7 +357,8 @@ class _PolicyCenterState extends State<PolicyCenter> {
                                           .push(MaterialPageRoute<void>(
                                         builder: (_) => _PolicyDetail(
                                             session: widget.session,
-                                            policyId: row['id'] as String),
+                                            policyId: row['id'] as String,
+                                            publicationStore: publicationStore),
                                       ));
                                       if (_current) {
                                         await _loadRecoveries();
@@ -366,7 +391,8 @@ class _PolicyCenterState extends State<PolicyCenter> {
 class _PolicyDetail extends StatefulWidget {
   final ParentSession session;
   final String policyId;
-  const _PolicyDetail({required this.session, required this.policyId});
+  final PendingPublicationStore? publicationStore;
+  const _PolicyDetail({required this.session, required this.policyId, this.publicationStore});
 
   @override
   State<_PolicyDetail> createState() => _PolicyDetailState();
@@ -376,12 +402,14 @@ class _PolicyDetailState extends State<_PolicyDetail> {
   late final String tenantId;
   late final String actor;
   late final String role;
+  bool _operationOwnerLost = false;
+  late final ParentOperationIdentity _operationIdentity;
   PagedCollection? devices;
   late Future<Json> draft;
   final selected = <String, String>{};
   final selectedNames = <String, String>{};
   PolicyGroupSelection? selectedGroup;
-  final publicationStore = PendingPublicationStore();
+  late final PendingPublicationStore publicationStore;
   List<PendingPublication> markers = const [];
   bool journalLoaded = false;
   Json? preview;
@@ -390,14 +418,24 @@ class _PolicyDetailState extends State<_PolicyDetail> {
   Object? actionError;
 
   @override
+  void deactivate() {
+    _operationOwnerLost = true;
+    _operationIdentity.revoke();
+    super.deactivate();
+  }
+
+  @override
   void initState() {
     super.initState();
+    _operationIdentity = ParentOperationIdentity(widget.session, onRevoked: _closeIfScopeChanged);
+    publicationStore = widget.publicationStore ?? PendingPublicationStore();
     tenantId = widget.session.tenant!['id'] as String;
     actor = widget.session.profile!['subject'] as String;
     role = widget.session.role;
     if (widget.session.canDecide) {
       devices =
-          PagedCollection(widget.session.api, '/tenants/$tenantId/devices');
+          PagedCollection(_operationIdentity.scopedApi(widget.session.api), '/tenants/$tenantId/devices',
+              isCurrent: () => _current && _operationIdentity.dispatchable);
     }
     widget.session.addListener(_closeIfScopeChanged);
     draft = _readDraft();
@@ -406,7 +444,8 @@ class _PolicyDetailState extends State<_PolicyDetail> {
 
   bool get _current =>
       mounted &&
-      widget.session.authenticated &&
+      !_operationOwnerLost &&
+      _operationIdentity.current &&
       widget.session.tenant?['id'] == tenantId &&
       widget.session.profile?['subject'] == actor &&
       widget.session.role == role;
@@ -439,8 +478,9 @@ class _PolicyDetailState extends State<_PolicyDetail> {
   }
 
   Future<Json> _readDraft() async {
-    final result = await widget.session.api
-        .object('/tenants/$tenantId/policies/${widget.policyId}');
+    final result = await _operationIdentity.scopedApi(widget.session.api)
+        .object('/tenants/$tenantId/policies/${widget.policyId}',
+            isCurrent: () => _current && _operationIdentity.dispatchable);
     if (result['id'] != widget.policyId ||
         result['name'] is! String ||
         result['revision'] is! int ||
@@ -556,7 +596,8 @@ class _PolicyDetailState extends State<_PolicyDetail> {
     if (mounted && result != null) {
       await Navigator.of(context).push(MaterialPageRoute<void>(
         builder: (_) => _PolicyDetail(
-            session: widget.session, policyId: result['id'] as String),
+            session: widget.session, policyId: result['id'] as String,
+            publicationStore: publicationStore),
       ));
     }
   }
@@ -579,17 +620,17 @@ class _PolicyDetailState extends State<_PolicyDetail> {
     });
     try {
       if (group != null) {
-        await group.recheck(widget.session.api, tenantId, () => _current);
+        await group.recheck(_operationIdentity.scopedApi(widget.session.api), tenantId, () => _current);
       }
       if (!_current) return;
-      final raw = await widget.session.api.send(
+      final raw = await _operationIdentity.scopedApi(widget.session.api).send(
           'POST', '/tenants/$tenantId/policies/${widget.policyId}/previews',
           version: revision,
           body: {
             'deviceIds': expected.keys.toList(),
             if (group != null) ...group.reference
           },
-          isCurrent: () => _current && !widget.session.busy,
+          isCurrent: () => _current && _operationIdentity.dispatchable && !widget.session.busy,
           maxResponseBytes: 4 * 1024 * 1024);
       if (!_current) return;
       if (raw is! Json ||
@@ -691,12 +732,13 @@ class _PolicyDetailState extends State<_PolicyDetail> {
     );
     var recorded = false;
     var submitted = false;
+    var confirmedSaved = false;
     setState(() {
       busy = true;
       actionError = null;
     });
     try {
-      if (!await widget.session.reauthenticate()) {
+      if (!await _operationIdentity.reauthenticate()) {
         if (_current && widget.session.error != null) {
           setState(() => actionError = widget.session.error);
         }
@@ -704,7 +746,7 @@ class _PolicyDetailState extends State<_PolicyDetail> {
       }
       if (!_current) return;
       if (group != null) {
-        await group.recheck(widget.session.api, tenantId, () => _current);
+        await group.recheck(_operationIdentity.scopedApi(widget.session.api), tenantId, () => _current);
       }
       if (!_current) return;
       if ((reviewed['expiresAt'] as int) <=
@@ -716,11 +758,13 @@ class _PolicyDetailState extends State<_PolicyDetail> {
       if (!_current) return;
       setState(() => markers = [...markers, marker]);
       submitted = true;
-      final raw = await widget.session.api.send(
+      final raw = await _operationIdentity.scopedApi(widget.session.api).send(
           'POST', '/tenants/$tenantId/policies/${widget.policyId}/publications',
           version: marker.revision,
           idempotencyKey: marker.idempotencyKey,
-          isCurrent: () => _current && !widget.session.busy,
+          isCurrent: () => _current && _operationIdentity.dispatchable && !widget.session.busy,
+          beforeDispatch: () => publicationStore.beforeWrite(tenantId, actor,
+              marker, () => _current && !widget.session.busy),
           body: {
             'previewId': marker.previewId,
             'previewHash': marker.previewHash,
@@ -734,6 +778,11 @@ class _PolicyDetailState extends State<_PolicyDetail> {
           raw['state'] != 'CONFIGURED_NOT_ENFORCED') {
         throw const ParentApiException(502, 'INVALID_RESPONSE');
       }
+      if (!_current) return;
+      confirmedSaved = true;
+      setState(() { publication = raw; preview = null; });
+      await publicationStore.confirmed(tenantId, actor, marker);
+      if (!_current) return;
       await publicationStore.remove(tenantId, actor, marker.idempotencyKey);
       recorded = false;
       if (!_current) return;
@@ -746,36 +795,31 @@ class _PolicyDetailState extends State<_PolicyDetail> {
       });
     } catch (failure) {
       if (!_current) return;
-      if (submitted &&
-          (failure is! ParentApiException ||
-              failure.status == 0 ||
-              failure.status >= 500 ||
-              failure.code == 'REQUEST_IN_PROGRESS' ||
-              failure.code == 'IDEMPOTENCY_KEY_CONFLICT')) {
+      if (failure is ParentResultTerminalFailure &&
+          failure.matchesRequest(marker.idempotencyKey)) {
+        Object? storageFailure;
+        try {
+          await publicationStore.capture(tenantId, actor, marker, failure);
+        } catch (problem) { storageFailure = problem; }
+        if (!_current) return;
         setState(() {
-          actionError = '配置发布结果不明。本机已保留原请求，请返回策略中心查询；客户端不会自动重发。';
+          actionError = storageFailure == null
+              ? '${failure.message} 本机保留原操作保护，请返回策略中心查看当前记录或结束本机核对。'
+              : '原结果已不可恢复，本机终态尚未确认落盘。请保留原操作保护，返回策略中心继续核对。';
+          preview = null;
+        });
+      } else if (confirmedSaved) {
+        setState(() {
+          actionError = '已经确认配置保存成功，本机核对记录尚未清理。请返回策略中心继续核对，不要重复发布。';
+          preview = null;
+        });
+      } else if (submitted || recorded) {
+        setState(() {
+          actionError = '配置发布结果尚未确认。本机保留原请求，请返回策略中心查询；不会自动重发。';
           preview = null;
         });
       } else {
-        if (recorded) {
-          try {
-            await publicationStore.remove(
-                tenantId, actor, marker.idempotencyKey);
-            if (!_current) return;
-            setState(() => markers = markers
-                .where((row) => row.idempotencyKey != marker.idempotencyKey)
-                .toList());
-          } catch (_) {
-            if (_current) {
-              setState(() => actionError = '发布未完成，且本机待核对记录未能清理。请返回策略中心查询原结果。');
-            }
-            return;
-          }
-        }
-        setState(() {
-          actionError = failure;
-          preview = null;
-        });
+        setState(() { actionError = failure; preview = null; });
       }
     } finally {
       if (mounted) setState(() => busy = false);
@@ -784,6 +828,7 @@ class _PolicyDetailState extends State<_PolicyDetail> {
 
   @override
   void dispose() {
+    _operationIdentity.dispose();
     widget.session.removeListener(_closeIfScopeChanged);
     devices?.dispose();
     super.dispose();

@@ -1,0 +1,323 @@
+{
+  "status": "STATIC_SOURCE_REVIEW_COMPLETE_NOT_EXECUTED",
+  "reviewer": "/root/dashboard_scope_phase",
+  "createdAtUtc": "2026-10-20T15:22:16.7816044Z",
+  "manifest": {
+    "path": ".cache/operation-result-retention-20261020/parent/production-r4-manifest.json",
+    "sha256": "28eec7caad617967409130eff27790af4229d5ab0a0b55bde218c4b0205c2550",
+    "sourceCount": 38
+  },
+  "sourcePins": [
+    {
+      "path": "apps/parent/lib/core/application_catalog.dart",
+      "sha256": "ac93b0caf9f5207ccfdbb8e8105eb0acafceb571c5fd3977ff5105ac94b902f0",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/core/application_catalog.dart",
+      "bytes": 11410
+    },
+    {
+      "path": "apps/parent/lib/core/audit_exports.dart",
+      "sha256": "f624b711ff9e9053eb8e602d08be0123e06fd32f125a911cdca5803ab7dd872c",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/core/audit_exports.dart",
+      "bytes": 17960
+    },
+    {
+      "path": "apps/parent/lib/core/device_groups.dart",
+      "sha256": "ef16ed57f861487ccf4f8d731edcb9468ca8873c4311c3e914b4d70fe6479e11",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/core/device_groups.dart",
+      "bytes": 11093
+    },
+    {
+      "path": "apps/parent/lib/core/invitation_acceptance.dart",
+      "sha256": "0b8defc9f69d6e8753abe64271274eac8e3face0f821cc13f0b3a49229feebc2",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/core/invitation_acceptance.dart",
+      "bytes": 12709
+    },
+    {
+      "path": "apps/parent/lib/core/invitations.dart",
+      "sha256": "8e01f31f6d12f558f2cae87a96cd93e0a5a3a49a2a8223a5aa0716b9aa729b55",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/core/invitations.dart",
+      "bytes": 12278
+    },
+    {
+      "path": "apps/parent/lib/core/member_access.dart",
+      "sha256": "08d696df8b7fe268442490ff27bd290806f9465c5839cfd4b8fc163db2589768",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/core/member_access.dart",
+      "bytes": 15996
+    },
+    {
+      "path": "apps/parent/lib/core/observation_settings.dart",
+      "sha256": "463ed16f7cba97fc08307790f0f86f154ca4707ba22c91a715a28a3605c9dfd7",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/core/observation_settings.dart",
+      "bytes": 12521
+    },
+    {
+      "path": "apps/parent/lib/core/permission_consent.dart",
+      "sha256": "e5808dc87edd3a203c65548644a5fd024ab033ab4008e258f9907be9e99bfb59",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/core/permission_consent.dart",
+      "bytes": 12163
+    },
+    {
+      "path": "apps/parent/lib/core/ownership.dart",
+      "sha256": "23c83ff764c3cb8d191f36f59e79e1092317ad663b768493049da51f9df97ae4",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/core/ownership.dart",
+      "bytes": 13473
+    },
+    {
+      "path": "apps/parent/lib/core/organization_classes.dart",
+      "sha256": "d615115c7ccfb8f4f1f005bbf8ec15ab4ca616595a7c9532a9c6d44699702251",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/core/organization_classes.dart",
+      "bytes": 14474
+    },
+    {
+      "path": "apps/parent/lib/core/quotas.dart",
+      "sha256": "ba1b76fa136b93a3fc2f9768238304f200faf866f6a5f6c412eada156c1ae2ed",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/core/quotas.dart",
+      "bytes": 15720
+    },
+    {
+      "path": "apps/parent/lib/core/policy_creation.dart",
+      "sha256": "c0163c0307420d1326001cbaab4df42b0825e1467d5cf0524058d7640d6c6b31",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/core/policy_creation.dart",
+      "bytes": 10042
+    },
+    {
+      "path": "apps/parent/lib/core/schedules.dart",
+      "sha256": "5844a9cc79b2a25213ebe52f1f2fc55dcd3bf80c1e7a26a7c41346f113054595",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/core/schedules.dart",
+      "bytes": 11557
+    },
+    {
+      "path": "apps/parent/lib/core/subjects.dart",
+      "sha256": "e3391c3d7de6534f891fc5b1e551b76d3779d1aa91abd66af0536f7deb0cafeb",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/core/subjects.dart",
+      "bytes": 11102
+    },
+    {
+      "path": "apps/parent/lib/core/parent_api.dart",
+      "sha256": "0697dcc6d23364d8c95cf07152b352f51bb5947c9164274b6e685e5829f3ec1f",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/core/parent_api.dart",
+      "bytes": 17008
+    },
+    {
+      "path": "apps/parent/lib/core/parent_durable_storage.dart",
+      "sha256": "712db2809e7af8386dbb944ce7db09e4dd0abb49aa8fd2fe7c59373bcd3fa771",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/core/parent_durable_storage.dart",
+      "bytes": 2235
+    },
+    {
+      "path": "apps/parent/lib/ui/application_center.dart",
+      "sha256": "34d996d69d6872e2f03305955d5feac45eede198543adae56867280804673ec7",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/ui/application_center.dart",
+      "bytes": 27079
+    },
+    {
+      "path": "apps/parent/lib/ui/audit_exports_center.dart",
+      "sha256": "f7b5aa10569b257d10f02ab6f2f4234fabcd5dc25b3ed6ce33b92cb11b890ee4",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/ui/audit_exports_center.dart",
+      "bytes": 26962
+    },
+    {
+      "path": "apps/parent/lib/ui/class_center.dart",
+      "sha256": "3acf0a8ee52a66594bc83aaf993e2cbc62257c5ac5e59bc45a87e84686687496",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/ui/class_center.dart",
+      "bytes": 38545
+    },
+    {
+      "path": "apps/parent/lib/ui/group_operation_page.dart",
+      "sha256": "0e652697dbbd3ef6945579a37446beb87ad8e8d43684f861048c9e546626796e",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/ui/group_operation_page.dart",
+      "bytes": 11459
+    },
+    {
+      "path": "apps/parent/lib/ui/invitation_acceptance.dart",
+      "sha256": "d51679fa69c221be607ffc3b0bfbeddd347378c80ee52c5c2b2bf26ee0d3348d",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/ui/invitation_acceptance.dart",
+      "bytes": 17427
+    },
+    {
+      "path": "apps/parent/lib/ui/invitation_center.dart",
+      "sha256": "d63c44376e0b1bf62b31cc82cad9d081df7f8986b9c02ea7c842574c8ecfcf1c",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/ui/invitation_center.dart",
+      "bytes": 26068
+    },
+    {
+      "path": "apps/parent/lib/ui/member_center.dart",
+      "sha256": "6364c78c42afbdfd7b8013dcf5f6399975f06e6bcfbddefd493a1e093d2f48a1",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/ui/member_center.dart",
+      "bytes": 44543
+    },
+    {
+      "path": "apps/parent/lib/ui/observation_settings_page.dart",
+      "sha256": "5a0c8b0d7d2cadc84f64d3e0501cd3ff09fe084d204e718d4f1e9a3740a6d110",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/ui/observation_settings_page.dart",
+      "bytes": 17194
+    },
+    {
+      "path": "apps/parent/lib/ui/ownership_center.dart",
+      "sha256": "994edb8ffc3f71477233d5f91f6b65c9c3225b5bef803362853b39810495e58f",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/ui/ownership_center.dart",
+      "bytes": 22791
+    },
+    {
+      "path": "apps/parent/lib/ui/permission_consent_page.dart",
+      "sha256": "dca50f8dc1e8219a200ef753e22cf74798496af3c27a74cd764c69b6fe00ddfc",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/ui/permission_consent_page.dart",
+      "bytes": 16775
+    },
+    {
+      "path": "apps/parent/lib/ui/policy_creation_page.dart",
+      "sha256": "eb56dcdaf02e5a197f4bf224a31b565cbdbe6897a16925de59ed0792617eb799",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/ui/policy_creation_page.dart",
+      "bytes": 13226
+    },
+    {
+      "path": "apps/parent/lib/ui/quota_center.dart",
+      "sha256": "6c81f192583ec83c503e51f8eb19acc6e6956ced05dd76a998c48c3a27407377",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/ui/quota_center.dart",
+      "bytes": 42114
+    },
+    {
+      "path": "apps/parent/lib/ui/quota_plan_pages.dart",
+      "sha256": "2f6c3ba854fc88ed6227369d99ba9208e5cb01f8ede400318ef955afa6e1302a",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/ui/quota_plan_pages.dart",
+      "bytes": 32419
+    },
+    {
+      "path": "apps/parent/lib/ui/schedule_editor.dart",
+      "sha256": "3cea34536413c0ee026e48d77e56e342dde4f90b4c77cafcfbc7066fcf29126e",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/ui/schedule_editor.dart",
+      "bytes": 34291
+    },
+    {
+      "path": "apps/parent/lib/ui/subject_center.dart",
+      "sha256": "918b993a846beb6fb3d77643e3f8f42876a78bec687ec6e021feb0e8909d1fa8",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/ui/subject_center.dart",
+      "bytes": 32273
+    },
+    {
+      "path": "apps/parent/android/app/src/main/kotlin/com/aimanager/parent/MainActivity.kt",
+      "sha256": "0f62dd7cd558b14fbc685c4ffab1311d481d7867627bdbef88fc9da35a7b7047",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/android/app/src/main/kotlin/com/aimanager/parent/MainActivity.kt",
+      "bytes": 4981
+    },
+    {
+      "path": "apps/parent/lib/core/pending_publications.dart",
+      "sha256": "39311bbb4fe0fb8844fa43107545609022ef7a19e5939a93e9d466de65e4b0c2",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/core/pending_publications.dart",
+      "bytes": 9536
+    },
+    {
+      "path": "apps/parent/lib/ui/policy_center.dart",
+      "sha256": "8afe358f65393d765f3730d0db4e8663bb355ee63cb8ca98aa2d1e78ad8a41a4",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/ui/policy_center.dart",
+      "bytes": 50246
+    },
+    {
+      "path": "apps/parent/lib/core/operation_result_terminal.dart",
+      "sha256": "dec13a0c3e69ce12901f63a57ad25cf85552c02c77d458ff419fbbe6c1880201",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/core/operation_result_terminal.dart",
+      "bytes": 5147
+    },
+    {
+      "path": "apps/parent/lib/core/operation_journal.dart",
+      "sha256": "d0500c385ec59b19cb17d3096cfa10e5e8d81af49fc967943529cd8c68ee3b87",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/core/operation_journal.dart",
+      "bytes": 8990
+    },
+    {
+      "path": "apps/parent/lib/ui/operation_result_terminal_panel.dart",
+      "sha256": "753afd55ca66d291f1b4f1c7968558a613bf23deee53fd57fe88098ded6baff3",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/lib/ui/operation_result_terminal_panel.dart",
+      "bytes": 15877
+    },
+    {
+      "path": "apps/parent/android/app/src/main/kotlin/com/aimanager/parent/ParentOperationJournalStore.kt",
+      "sha256": "47360efc67f3b616eaaee75fdf612d3501acdeda57d384341b7a8563c585ddab",
+      "snapshot": ".cache/operation-result-retention-20261020/parent/after-r4/apps/parent/android/app/src/main/kotlin/com/aimanager/parent/ParentOperationJournalStore.kt",
+      "bytes": 14796
+    }
+  ],
+  "dependencyPins": [
+    {
+      "path": "apps/parent/lib/core/parent_session.dart",
+      "sha256": "4e223873af54ea9275cf84534de07332b635e6ce7f5b19b4c6f8081d3d3c44ab",
+      "scope": "owned step-up and session generation connecting context"
+    }
+  ],
+  "semanticScope": {
+    "controllerStoreChanges": [
+      "application_catalog",
+      "audit_exports",
+      "device_groups",
+      "invitation_acceptance",
+      "invitations",
+      "member_access",
+      "observation_settings",
+      "permission_consent",
+      "ownership",
+      "organization_classes",
+      "quotas",
+      "policy_creation",
+      "schedules",
+      "subjects"
+    ],
+    "controllerCoverage": "All 14 before-to-R2 changes plus connecting load/write/query/retry/acknowledge methods; production controller sources unchanged in R3/R4.",
+    "publicationCoverage": "pending_publications.dart full recovery/store implementation and policy_center.dart changed code with existing mode, target and group selection connecting context.",
+    "uiCoverage": "All 16 R1/R2 UI integration changes, owned identity and terminal panel full implementation; all 10 R3-to-R4 UI deltas, including quota_plan_pages.dart indirect recovery and editor exit.",
+    "sharedJournalCoverage": "Terminal evidence/capture and success-marking connection; shared publication store success binding received a second independent source-only review. API/native/CAS broad review belongs to workbench_finish_review."
+  },
+  "resolvedFindings": [
+    {
+      "id": "PARENT_OWNED_STEPUP_QUARANTINE",
+      "priority": "P2",
+      "reportedBy": "workbench_finish_review",
+      "fixedIn": "R2",
+      "resolution": "Only explicit same-identity authentication participants may survive temporary quarantine; dispatch remains blocked and pre-window captured requests lose epoch."
+    },
+    {
+      "id": "PARENT_TERMINAL_CONFIRM_COVERED_OWNER",
+      "priority": "P2",
+      "reportedBy": "/root/dashboard_scope_phase",
+      "fixedIn": "R3",
+      "resolution": "End-local-check entry requires original owner current; await own confirmation completion and transition, then recheck original owner, operation, request and scope before CAS."
+    },
+    {
+      "id": "PARENT_NORMAL_ACK_COVERED_OWNER",
+      "priority": "P2",
+      "reportedBy": "/root/dashboard_scope_phase",
+      "fixedIn": "R4",
+      "resolution": "Normal recovery callbacks capture original owner; check scope, active/current before and after native acknowledgement, again in post-frame exit and onCleared; generic cleanup confirmation owns its route, awaits completed and binds original request."
+    }
+  ],
+  "confirmedContracts": [
+    "The terminal capture path requires the dedicated trusted failure and matches the original request identifier; generic failures and ordinary 410 remain uncertain.",
+    "Existing key and payload remain fixed. Terminal paths do not enter ordinary acknowledgement or automatic replay/new-key creation.",
+    "Known successful outcome is retained before durable success marking; terminal handling does not redefine it as unsubmitted.",
+    "Direct current-record reads remain available before local cleanup. End-local-check requires explicit confirmation and leaves the native minimal anti-repeat marker.",
+    "Observed identity/generation loss and controller disposal prevent old completions from acting on a new scope; owned step-up uses a separate epoch.",
+    "Before-to-current publication changes preserve CONFIGURE_ONLY and existing target/group/draft selection structure; preexisting Family semantic WIP was reviewed as before-source, not replaced with HEAD.",
+    "R3-to-R4 changes are confined to the 10 declared UI files; the additional quota_plan_pages.dart pin is now included in the 38-source manifest."
+  ],
+  "independentNarrowReview": {
+    "reviewer": "/root/dashboard_scope_phase/parent_success_binding_read",
+    "scope": "recordSuccessfulOperation / journal.confirmed / terminal capture under the current shared publication store UI call graph",
+    "confirmedFindings": [],
+    "conclusion": "No reproducible cross-request success-write path confirmed: query recoveryBusy gates refresh/open/create; a load replacing the request disposes the previous recovery; durable-only replacement fails CAS; terminal persistence verifies requestId plus payload.",
+    "limitation": "This is bounded to the current production call graph and does not assert safety for arbitrary future shared-store callers."
+  },
+  "unresolvedConfirmedP1P2": [],
+  "SDKExecuted": false,
+  "formatterExecuted": false,
+  "analysisExecuted": false,
+  "testsExecuted": false,
+  "buildExecuted": false,
+  "browserOrServiceExecuted": false,
+  "productionFilesModifiedByReviewer": false,
+  "testFilesModifiedByReviewer": false,
+  "gitMutations": false,
+  "readOnlyGitUsed": [
+    "diff --no-index --no-ext-diff --no-textconv between explicit frozen UI sources and Main"
+  ],
+  "acceptedForExecution": false,
+  "limitation": "Static source review only. Runtime, compilation, platform and test acceptance remain NOT_RUN until the authorized resource/verification window returns. This is not a full audit of all historical UI behavior."
+}

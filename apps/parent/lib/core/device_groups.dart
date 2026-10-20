@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 import 'parent_api.dart';
 import 'parent_durable_storage.dart';
+import 'operation_journal.dart';
+import 'operation_result_terminal.dart';
 
 const groupOperations = {
   'CREATE': '创建设备组',
@@ -82,13 +84,14 @@ void validateGroupOperation(Json value) {
 }
 
 class GroupOperationStore {
+  late final ParentOperationJournal journal = ParentOperationJournal(storage);
   final ParentDurableStorage storage;
   GroupOperationStore({ParentDurableStorage? storage})
       : storage = storage ?? ParentDurableStorage();
   String _key(String tenant, String actor) =>
       'parent.pending.group_operation.$tenant.$actor';
   Future<Json?> load(String tenant, String actor) async {
-    final raw = await storage.read(key: _key(tenant, actor));
+    final raw = await journal.read(key: _key(tenant, actor));
     if (raw == null) return null;
     if (raw.length > 32768) throw const FormatException('设备组恢复记录过大。');
     final value = jsonDecode(raw);
@@ -105,7 +108,7 @@ class GroupOperationStore {
 
   Future<void> save(String tenant, String actor, Json marker) async {
     if (await load(tenant, actor) != null) throw StateError('请先核对原设备组操作。');
-    await storage.write(key: _key(tenant, actor), value: jsonEncode(marker));
+    await journal.write(key: _key(tenant, actor), value: jsonEncode(marker));
   }
 
   Future<void> remove(String tenant, String actor, String key) async {
@@ -113,12 +116,29 @@ class GroupOperationStore {
     if (value != null && value['requestId'] != key) {
       throw StateError('原操作记录已变化。');
     }
-    await storage.delete(key: _key(tenant, actor));
+    await journal.delete(key: _key(tenant, actor));
   }
 }
 
 /// A durable one-at-a-time command journal. Queries never replay a mutation.
-class GroupOperationController extends ChangeNotifier {
+class GroupOperationController extends ChangeNotifier with ParentTerminalOperation {
+  @override
+  ParentOperationJournal get operationJournal => store.journal;
+  @override
+  String get operationSlot => store._key(tenant, actor);
+  @override
+  Json? get operationPayload => pending;
+  @override
+  bool get operationCurrent => current;
+  @override
+  bool get operationHasSuccessfulResult => result != null;
+  @override
+  void forgetOperationPayload() {
+    pending = null;
+    result = null;
+    queried = false;
+    loaded = false;
+  }
   final ParentApi api;
   final GroupOperationStore store;
   final String tenant, actor;
@@ -160,6 +180,7 @@ class GroupOperationController extends ChangeNotifier {
         loaded = true;
       }
     } catch (e) {
+      await captureResultTerminal(e);
       if (current) error = e;
     } finally {
       busy = false;
@@ -168,6 +189,7 @@ class GroupOperationController extends ChangeNotifier {
   }
 
   Future<void> execute(Json input) async {
+    if (operationBlocked) return;
     if (!current || busy || !loaded || pending != null) return;
     busy = true;
     error = null;
@@ -204,12 +226,14 @@ class GroupOperationController extends ChangeNotifier {
           body: payload,
           version: body['version'],
           idempotencyKey: marker['requestId'],
-          isCurrent: () => current);
+          isCurrent: () => current, beforeDispatch: operationBeforeWrite);
       if (!current) return;
       final committed = _committed(raw, body);
       result = {'operation': op, 'committed': committed, 'current': committed};
       queried = true;
+      if (operationHasSuccessfulResult) await recordSuccessfulOperation();
     } catch (e) {
+      await captureResultTerminal(e);
       if (current) {
         error = e;
         if (pending == null) loaded = false;
@@ -234,6 +258,7 @@ class GroupOperationController extends ChangeNotifier {
   }
 
   Future<void> query() async {
+    if (operationBlocked) return;
     if (!current || busy || pending == null) return;
     busy = true;
     error = null;
@@ -243,7 +268,7 @@ class GroupOperationController extends ChangeNotifier {
     try {
       final value = await api.send('POST',
           '/tenants/$tenant/device-groups/operation-results/${pending!['requestId']}/query',
-          body: pending!['body'], isCurrent: () => current);
+          body: pending!['body'], isCurrent: () => current, beforeDispatch: operationBeforeDispatch);
       if (!current) return;
       if (value is! Json ||
           value['operation'] != pending!['body']['operation']) {
@@ -256,7 +281,9 @@ class GroupOperationController extends ChangeNotifier {
       }
       result = value;
       queried = true;
+      if (operationHasSuccessfulResult) await recordSuccessfulOperation();
     } on ParentApiException catch (e) {
+      await captureResultTerminal(e);
       if (current) {
         if (e.status == 404 && e.code == 'DEVICE_GROUP_RESULT_UNAVAILABLE') {
           queried = true;
@@ -265,6 +292,7 @@ class GroupOperationController extends ChangeNotifier {
         }
       }
     } catch (e) {
+      await captureResultTerminal(e);
       if (current) error = e;
     } finally {
       busy = false;
@@ -273,6 +301,7 @@ class GroupOperationController extends ChangeNotifier {
   }
 
   Future<bool> acknowledge() async {
+    if (operationBlocked) return false;
     if (!current || busy || pending == null || !queried) return false;
     busy = true;
     error = null;
@@ -284,6 +313,7 @@ class GroupOperationController extends ChangeNotifier {
       queried = false;
       return true;
     } catch (e) {
+      await captureResultTerminal(e);
       if (current) error = e;
       return false;
     } finally {
