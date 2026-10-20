@@ -1,0 +1,40 @@
+{
+  "status": "RECOVERY_COMPLETED",
+  "date": "2026-10-20",
+  "scope": "Local development memory recovery; not product acceptance",
+  "authorization": "Human requested self-service memory release: 自己释放",
+  "actions": [
+    {
+      "action": "Flush filesystem writes, reclaim Docker WSL file cache and compact free pages",
+      "exitCode": 0,
+      "receipt": ".cache/managed-memory-reclaim/docker-startup-reclaim-20261020-r1.json",
+      "receiptSha256": "f7bdab668917b95a63cb41cd5baad4d45395758c705de1d19fab4ae1e2fb87ec"
+    },
+    {
+      "action": "Trim background Chrome and WorkBuddy working sets with Windows EmptyWorkingSet; exclude foreground application",
+      "exitCode": 0,
+      "availableBeforeBytes": 1814626304,
+      "availableAfterBytes": 6110404608,
+      "receipt": ".cache/managed-memory-reclaim/background-working-set-trim-r5.json",
+      "receiptSha256": "af7f7c4cd355f714695fbe5617b0cd787c009954c1feea758df12bc8c2bef549"
+    }
+  ],
+  "sampling": {
+    "count": 6,
+    "intervalSeconds": 2,
+    "minimumAvailableBytes": 5509386240,
+    "maximumAvailableBytes": 5945675776,
+    "receipt": ".cache/managed-memory-reclaim/stable-4g-sample-20261020-r1.json",
+    "receiptSha256": "4058816a71f4ee9204251d7cfa9a5809d339ee6689fef78eab26def494eab5dd"
+  },
+  "terminatedProcesses": false,
+  "closedWindowsOrTabs": false,
+  "deletedUserData": false,
+  "changedPersistentConfiguration": false,
+  "changedContainersDuringTheseActions": false,
+  "limitations": [
+    "Working sets and caches can grow again; resource admission must be checked before each build stage",
+    "Shared backend candidate has not been compiled or tested at the time of this receipt",
+    "Local original receipts are retained in ignored scratch storage; this public summary contains no process paths, credentials or memory contents"
+  ]
+}

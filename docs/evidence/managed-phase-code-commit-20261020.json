@@ -1,0 +1,19 @@
+{
+  "status": "CODE_COMMIT_VERIFIED",
+  "branch": "dev",
+  "codeCommit": "5f28aba497d6a02f91abdee7964c29805f4f473e",
+  "parentCommit": "cf1d520a030818efce0da5fd7da239d703f9516f",
+  "changedFiles": 64,
+  "committedBackendSources": 548,
+  "committedNormalizedSourceTreeMatchesVerifiedCandidate": true,
+  "currentSharedRawSourceFiles": 664,
+  "currentSharedRawSourceTreeMatchesVerifiedCandidate": true,
+  "remainingSharedFamilyWorkPreserved": true,
+  "gitIndexEmpty": true,
+  "standaloneDomainSummarySha256": "5ffaeb54976c95ce0f908022ccf5bee6cf61b673cf407e5c1cabc15f42916b46",
+  "sharedDomainSummarySha256": "a2c5ce939bd9da5a0476e35c458d69d4eff419ba739a2b867901b5af072423ef",
+  "indexVerificationSha256": "a39c660c9f080a5bfa65ec845c390ca672c60b0754193463b4c7e714437058db",
+  "sourceApplicationSha256": "e6e5d250fc8e5933992b746975b41a1104e5cded68b552b2b986b95aa53a6c12",
+  "pushState": "Not pushed at the time of this code-commit receipt",
+  "deploymentState": "Not deployed; production execution remains disabled"
+}

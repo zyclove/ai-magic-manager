@@ -1,0 +1,65 @@
+{
+  "status": "SHARED_DOMAIN_PROGRESS_NOT_COMPLETE",
+  "date": "2026-10-20",
+  "sourceFiles": 664,
+  "sourceManifestSha256": "6a0a5ca5359b9a243ab3d3aebbd2203298813e8133ef3fa66d8396559647ce6b",
+  "compileResultSha256": "b28c6c7bf8fb1674d2b96310c50f15075fd937e7d49df3e71df54a849767fb7f",
+  "targetedResultSha256": "c29b4401ebb2ef6518a0846e9b0f86b3867bc1a66c5084c18fbcf02dfef575db",
+  "runnerSha256": "7526fa0655834ebd756324ec6e2f6e0134cb5f3f9c68fc06640c5efca1d751f0",
+  "batches": [
+    {
+      "batchId": "01-provider-contracts",
+      "attempt": 1,
+      "receipt": ".cache/managed-phase-integration/green-r2/domain-batches/01-provider-contracts/attempt-1/result.json",
+      "receiptSha256": "46f94da50259c5440315b89871cd32184c87bd27910ba4110a23cf308629548c",
+      "seconds": 46.0,
+      "tests": 468,
+      "suites": 15
+    },
+    {
+      "batchId": "02-authority-and-policy",
+      "attempt": 1,
+      "receipt": ".cache/managed-phase-integration/green-r2/domain-batches/02-authority-and-policy/attempt-1/result.json",
+      "receiptSha256": "200af1cf1c3255899eeea8485ca719957787c3c2d4d6c5ea081ef10f7c7af939",
+      "seconds": 102.38,
+      "tests": 330,
+      "suites": 9
+    },
+    {
+      "batchId": "03-preparation",
+      "attempt": 1,
+      "receipt": ".cache/managed-phase-integration/green-r2/domain-batches/03-preparation/attempt-1/result.json",
+      "receiptSha256": "fe682cae3669428eac503ac931adf29a7d217fded5b8830eb18ff3e073a4ca9c",
+      "seconds": 76.29,
+      "tests": 238,
+      "suites": 13
+    },
+    {
+      "batchId": "04-dispatch-and-observation",
+      "attempt": 1,
+      "receipt": ".cache/managed-phase-integration/green-r2/domain-batches/04-dispatch-and-observation/attempt-1/result.json",
+      "receiptSha256": "ed97964872d612b7631e956a9422bd84460c8f6b7be3bafa341836772fcb9417",
+      "seconds": 81.08,
+      "tests": 288,
+      "suites": 11
+    }
+  ],
+  "totals": {
+    "suites": 48,
+    "tests": 1324,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "actualInvocationNamesRechecked": true,
+  "sourceAndCompiledPinsRechecked": true,
+  "remainingBatches": [
+    "05-recovery-and-review",
+    "06-startup-and-erasure"
+  ],
+  "limitations": [
+    "Remaining shared 14 suites / 252 tests not accepted by this partial record",
+    "Targeted29 overlaps selected domains; do not add it to domain totals",
+    "No source integration, commit, deployment, real database, EMM, Android or whole-product acceptance"
+  ]
+}

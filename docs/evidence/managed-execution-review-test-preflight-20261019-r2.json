@@ -1,0 +1,26 @@
+{
+  "status": "PREFLIGHT_REJECTED_NO_SDK_STARTED",
+  "attempt": "red-r3 test / second granted attempt",
+  "reason": "Available physical memory below 2147483648 bytes at runner line53; exact gate-time value was not printed",
+  "wrapperExitCode": 1,
+  "requiredAvailableMemoryBytes": 2147483648,
+  "availableMemoryBytesAfterRejection": 2439729152,
+  "checkedAtUtc": "2026-10-19T08:20:04.367779+00:00",
+  "sdkStarted": false,
+  "testsExecuted": false,
+  "runtimeTestDirectoryExists": false,
+  "testResultExists": false,
+  "sourceUnchanged": true,
+  "compiledUnchanged": true,
+  "sourceManifestSha256": "102132f6b9d1b3d568c6d03726c206c18ec07bd2d6c32d3ceb41600a4d0a9334",
+  "compileReceiptSha256": "ff3095bf70da429dff711d50cdbd8229d69553b273056c5936b12e78ad115794",
+  "runnerSha256": "fc7cec29d2d7542787869d1dc77c2d242b0eea4b5d2061d2eefff301c13e5efe",
+  "sdkWindowReturned": true,
+  "cFreeBytes": 1779785728,
+  "dFreeBytes": 59267358720,
+  "originalReceiptSha256": "d04ab273abf4cd17c7f9cf8f7adde17eec2f60c964be5a585dfd7428a1a208cd",
+  "limitations": [
+    "This is a preflight rejection, not test execution or RED behavior evidence.",
+    "The physical-memory snapshot is after rejection, not the exact unprinted gate-time value."
+  ]
+}

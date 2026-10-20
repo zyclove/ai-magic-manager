@@ -1,0 +1,23 @@
+{
+  "status": "REGRESSION_SOURCE_COMPILED_TESTS_NOT_RUN",
+  "baseCommit": "cf1d520a030818efce0da5fd7da239d703f9516f",
+  "sourceFiles": 548,
+  "sourceManifestSha256": "102132f6b9d1b3d568c6d03726c206c18ec07bd2d6c32d3ceb41600a4d0a9334",
+  "compileReceiptSha256": "ff3095bf70da429dff711d50cdbd8229d69553b273056c5936b12e78ad115794",
+  "runnerSha256": "fc7cec29d2d7542787869d1dc77c2d242b0eea4b5d2061d2eefff301c13e5efe",
+  "nativeExitCode": 0,
+  "seconds": 38.5,
+  "wallSeconds": 38.5,
+  "sourceUnchanged": true,
+  "naturalProcessTreeExit": true,
+  "activeProcessesAtExit": 0,
+  "compiledFiles": 1211,
+  "testCasesPlanned": 29,
+  "testsExecuted": false,
+  "correctedProductionIncluded": false,
+  "notes": [
+    "Compile input contains reviewed production before the four corrections and the new regression tests.",
+    "The separate corrected production draft has not been compiled or accepted.",
+    "No real provider, Android, MySQL/OceanBase, shared worktree integration or new source commit is proved by this receipt."
+  ]
+}

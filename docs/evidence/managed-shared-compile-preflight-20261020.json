@@ -1,0 +1,20 @@
+{
+  "status": "NOT_STARTED_RESOURCE_GATE",
+  "date": "2026-10-20T02:50:39.934209+00:00",
+  "candidate": "green-r2",
+  "sourceFiles": 664,
+  "sourceSha256": "6a0a5ca5359b9a243ab3d3aebbd2203298813e8133ef3fa66d8396559647ce6b",
+  "entryAvailableMemoryBytes": 720035840,
+  "coordinationMinimumMemoryBytes": 4294967296,
+  "originalRunnerMinimumMemoryBytes": 2147483648,
+  "sdkStarted": false,
+  "runnerInvoked": false,
+  "wrapperExitCode": 1,
+  "currentObservedMemoryBytes": 781815808,
+  "targetExists": false,
+  "compileResultExists": false,
+  "testResultExists": false,
+  "laterStagesStarted": false,
+  "scope": "Shared merge compilation not started; resource gate rejected before runner/SDK. Not a code failure.",
+  "sourceReceiptSha256": "4f2fbf329a31626ca2b2f839e30e2e3c724ad248ac996a1bdaaee383674faadf"
+}

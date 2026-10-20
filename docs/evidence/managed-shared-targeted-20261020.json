@@ -1,0 +1,116 @@
+{
+  "status": "SHARED_TARGETED_REGRESSIONS_PASSED",
+  "date": "2026-10-20",
+  "baseCommit": "cf1d520a030818efce0da5fd7da239d703f9516f",
+  "sourceFiles": 664,
+  "sourceManifestSha256": "6a0a5ca5359b9a243ab3d3aebbd2203298813e8133ef3fa66d8396559647ce6b",
+  "currentSharedInputsMatchFrozenInventory": true,
+  "integrationInventorySha256": "eddc8c98f25d52caaf39510802a476f2d19bf617a9a5dc725136c647515094f2",
+  "compile": {
+    "receipt": ".cache/managed-phase-integration/green-r2/compile-result.json",
+    "receiptSha256": "b28c6c7bf8fb1674d2b96310c50f15075fd937e7d49df3e71df54a849767fb7f",
+    "seconds": 27.9,
+    "availableMemoryBytes": 5939253248,
+    "exitCode": 0
+  },
+  "targeted": {
+    "receipt": ".cache/managed-phase-integration/green-r2/result.json",
+    "receiptSha256": "c29b4401ebb2ef6518a0846e9b0f86b3867bc1a66c5084c18fbcf02dfef575db",
+    "seconds": 46.4,
+    "availableMemoryBytes": 5996380160,
+    "exitCode": 0,
+    "totals": {
+      "tests": 29,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "reports": [
+      {
+        "suite": "com.aimanager.managedandroid.internal.ManagedAgentBindingJourneyTest",
+        "counts": {
+          "tests": 18,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "xmlSha256": "333c3a3657a9dcf1aec34c3cd6056b7377045bca3fb6fac7c81e69fd1c133bc8",
+        "cases": [
+          "observationRechecksAuthorityAtEveryBoundary(String, String)[1]",
+          "observationRechecksAuthorityAtEveryBoundary(String, String)[2]",
+          "observationRechecksAuthorityAtEveryBoundary(String, String)[3]",
+          "observationRechecksAuthorityAtEveryBoundary(String, String)[4]",
+          "observationRechecksAuthorityAtEveryBoundary(String, String)[5]",
+          "observationRechecksAuthorityAtEveryBoundary(String, String)[6]",
+          "observationRechecksAuthorityAtEveryBoundary(String, String)[7]",
+          "observationRechecksAuthorityAtEveryBoundary(String, String)[8]",
+          "observationRechecksAuthorityAtEveryBoundary(String, String)[9]",
+          "observationRechecksAuthorityAtEveryBoundary(String, String)[10]",
+          "observationRechecksAuthorityAtEveryBoundary(String, String)[11]",
+          "observationRechecksAuthorityAtEveryBoundary(String, String)[12]",
+          "observationRechecksAuthorityAtEveryBoundary(String, String)[13]",
+          "observationRechecksAuthorityAtEveryBoundary(String, String)[14]",
+          "observationRechecksAuthorityAtEveryBoundary(String, String)[15]",
+          "observationRechecksAuthorityAtEveryBoundary(String, String)[16]",
+          "observationRechecksAuthorityAtEveryBoundary(String, String)[17]",
+          "observationRechecksAuthorityAtEveryBoundary(String, String)[18]"
+        ]
+      },
+      {
+        "suite": "com.aimanager.managedandroid.internal.ManagedExecutionPipelineConfigurationTest",
+        "counts": {
+          "tests": 8,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "xmlSha256": "3c5c9468c7aea848a6ce46f8fb747c0382c0508378ede0ef41a7162db39d1cbb",
+        "cases": [
+          "inactiveStagesDoNotBlockAnObservationOnlyHost",
+          "shortLeaseWithSmallerReservesIsValid",
+          "enabledStageNeedsPositiveProviderTime(String, String, int, int)[1]",
+          "enabledStageNeedsPositiveProviderTime(String, String, int, int)[2]",
+          "enabledStageNeedsPositiveProviderTime(String, String, int, int)[3]",
+          "enabledStageNeedsPositiveProviderTime(String, String, int, int)[4]",
+          "enabledStageNeedsPositiveProviderTime(String, String, int, int)[5]",
+          "enabledStageNeedsPositiveProviderTime(String, String, int, int)[6]"
+        ]
+      },
+      {
+        "suite": "com.aimanager.PolicyJourneyTest",
+        "counts": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "xmlSha256": "e584c7fbd4c940ce4f590c6bc2c0677eae8ed9a26b398ff568ec1c2aa24069cb",
+        "cases": [
+          "configurationUsesThePreviousConfigurationAcrossEnforcementHistory(boolean)[1]",
+          "configurationUsesThePreviousConfigurationAcrossEnforcementHistory(boolean)[2]"
+        ]
+      },
+      {
+        "suite": "com.aimanager.retention.internal.ErasureManagedBindingProcessorTest",
+        "counts": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "xmlSha256": "7e5a6766b0c1d72b700b83c375a94aa52c7535967ede6c8a0b233bb9599bbef6",
+        "cases": [
+          "oversizedTerminalHistoryProgressesWithinTheSharedBudget"
+        ]
+      }
+    ]
+  },
+  "originalRunnerSha256": "fc7cec29d2d7542787869d1dc77c2d242b0eea4b5d2061d2eefff301c13e5efe",
+  "sourceAndCompiledPinsUnchanged": true,
+  "naturalProcessExit": true,
+  "limitations": [
+    "Full shared managed-domain regressions remain to run",
+    "No shared source application, Git staging, commit or deployment",
+    "No MySQL/OceanBase, real EMM, Android or end-to-end product acceptance"
+  ]
+}

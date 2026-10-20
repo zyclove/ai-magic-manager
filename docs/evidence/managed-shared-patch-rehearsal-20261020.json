@@ -1,0 +1,25 @@
+{
+  "status": "SHARED_PATCH_REHEARSAL_PASSED_NOT_APPLIED",
+  "date": "2026-10-20",
+  "baseCommit": "cf1d520a030818efce0da5fd7da239d703f9516f",
+  "sourceManifestSha256": "6a0a5ca5359b9a243ab3d3aebbd2203298813e8133ef3fa66d8396559647ce6b",
+  "files": 64,
+  "added": 43,
+  "modified": 21,
+  "applicationPatch": ".cache/managed-phase-integration/shared-source-application-r1.patch",
+  "applicationPatchSha256": "e00470d3697010e8a608c352a7ca3c20e620e60ee18b47c92be08175b07b4d08",
+  "rehearsalReceipt": ".cache/managed-phase-integration/shared-source-application-r1.json",
+  "rehearsalReceiptSha256": "235a7df067db50a308d52083b6b2a7af2791c3e3a53a4d06835d214ccf6c6d28",
+  "gitApplyCheckExitCode": 0,
+  "gitApplyIsolatedExitCode": 0,
+  "lineEndingComparison": "CRLF normalized to LF",
+  "allSelectedResultFilesMatchCandidateAfterNormalization": true,
+  "all664CurrentSharedInputsRecheckedUnchanged": true,
+  "sharedHeadAndIndexUnchanged": true,
+  "limitations": [
+    "Patch applied only in isolated scratch; current checkout and Git index were not changed",
+    "This working-copy patch preserves unrelated Family content in three merged files; it must not be staged wholesale as the isolated phase commit",
+    "Actual shared integration requires remaining domain results and another current source/index check",
+    "Patch rehearsal is not compilation, database migration or product acceptance"
+  ]
+}

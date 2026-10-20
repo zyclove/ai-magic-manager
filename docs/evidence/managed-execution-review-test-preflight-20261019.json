@@ -1,0 +1,21 @@
+{
+  "status": "PREFLIGHT_REJECTED_NO_SDK_STARTED",
+  "attempt": "red-r3 test / first granted attempt",
+  "reason": "Available physical memory was below 2147483648 bytes at runner line53 before runtime directory or process creation",
+  "wrapperExitCode": 1,
+  "requiredAvailableMemoryBytes": 2147483648,
+  "availableMemoryBytesAfterRejection": 1227624448,
+  "checkedAtUtc": "2026-10-19T07:07:06.976144+00:00",
+  "sdkStarted": false,
+  "testsExecuted": false,
+  "runtimeTestDirectoryExists": false,
+  "testResultExists": false,
+  "sourceUnchanged": true,
+  "compiledUnchanged": true,
+  "sourceManifestSha256": "102132f6b9d1b3d568c6d03726c206c18ec07bd2d6c32d3ceb41600a4d0a9334",
+  "compileReceiptSha256": "ff3095bf70da429dff711d50cdbd8229d69553b273056c5936b12e78ad115794",
+  "runnerSha256": "fc7cec29d2d7542787869d1dc77c2d242b0eea4b5d2061d2eefff301c13e5efe",
+  "sdkWindowReturned": true,
+  "preflightReceiptSha256": "d2caa14afea63de95abe6ad33a513f4e9ed1d142383245b400f360ae461d15c6",
+  "measurementNote": "After-rejection snapshot; exact gate-time available memory was not printed. The gate rejection itself proves it was below the configured minimum."
+}

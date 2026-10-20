@@ -1,0 +1,42 @@
+{
+  "mavenExitCode": 1,
+  "seconds": 34.5,
+  "wallSeconds": 34.5,
+  "totals": {
+    "tests": 29,
+    "failures": 24,
+    "errors": 3,
+    "skipped": 0
+  },
+  "treeTerminal": true,
+  "treeExitedWithoutTermination": true,
+  "activeProcessesBeforeCleanup": 0,
+  "sourceUnchanged": true,
+  "status": "REGRESSION_EXECUTED_FIXTURE_ERRORS",
+  "correctedProductionIncluded": false,
+  "resultSha256": "be44c535c392bdad19f0b31267332edbeaf30c01a769b0820149bf04385d661c",
+  "sourceManifestSha256": "102132f6b9d1b3d568c6d03726c206c18ec07bd2d6c32d3ceb41600a4d0a9334",
+  "compileReceiptSha256": "ff3095bf70da429dff711d50cdbd8229d69553b273056c5936b12e78ad115794",
+  "cause": "Three ACTOR cases set TIMESTAMP tenant_members.revoked_at to integer1, causing H2 data conversion errors; these are not accepted RED evidence",
+  "nextCandidate": "red-r4",
+  "nextCandidateSourceSha256": "a4bba5da9bc625ac51f1fd77e0967140a854677cebd16c6c33fb783c31f8cd26",
+  "nextCandidateCompiled": false,
+  "suites": [
+    {
+      "name": "com.aimanager.managedandroid.internal.ManagedAgentBindingJourneyTest",
+      "sha256": "0160e330807b2502d52af99adda2915705e8970db43a300aa109fcc2b529cc97"
+    },
+    {
+      "name": "com.aimanager.managedandroid.internal.ManagedExecutionPipelineConfigurationTest",
+      "sha256": "f4c4199a138c5666a669a575a3c8bff14b1f435e9284b79582d516efa922e825"
+    },
+    {
+      "name": "com.aimanager.PolicyJourneyTest",
+      "sha256": "68b02484708933f128b33d3a09f209de2fff9828b05feb215ed5c7766674871b"
+    },
+    {
+      "name": "com.aimanager.retention.internal.ErasureManagedBindingProcessorTest",
+      "sha256": "e27e16799c3f7eb264163031b1640778a4c65ea4084f91df495bc82e39143aff"
+    }
+  ]
+}

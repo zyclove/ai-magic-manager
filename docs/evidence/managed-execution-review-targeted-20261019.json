@@ -1,0 +1,136 @@
+{
+  "status": "TARGETED_REGRESSIONS_PASSED",
+  "date": "2026-10-19",
+  "scope": "Four review corrections; isolated backend candidate using local H2 tests. Not shared merge, MySQL/OceanBase, provider, client or Android acceptance.",
+  "baseCommit": "cf1d520a030818efce0da5fd7da239d703f9516f",
+  "redCauseEvidenceSha256": "bfc5b769f2eab407e3a6e1ae01d9fbc7257bd1aee845f3c90e73d58e06f7ef4a",
+  "formatReceiptSha256": "67c16cadc8d6a099a40c4347bf1df6751f1a31c3e28b6b66eda95d469471ff3e",
+  "records": [
+    {
+      "candidate": "red-r4",
+      "sourceFiles": 548,
+      "sourceSha256": "a4bba5da9bc625ac51f1fd77e0967140a854677cebd16c6c33fb783c31f8cd26",
+      "compileReceiptSha256": "1cc86e21fc78785ad36d3a8d87f958cf28999bd9364ffdbe106ab8854d327be6",
+      "resultSha256": "29f83b96b8f50ab5d3fbe32dbdc7ce9f30fbb825b79ce9ac3537d95914a68868",
+      "compileSeconds": 37.4,
+      "testSeconds": 38.5,
+      "mavenExitCode": 1,
+      "naturalTreeExit": true,
+      "totals": {
+        "tests": 29,
+        "failures": 27,
+        "errors": 0,
+        "skipped": 0
+      },
+      "reports": [
+        {
+          "suite": "com.aimanager.managedandroid.internal.ManagedAgentBindingJourneyTest",
+          "sha256": "25c79158fa76aed6ada79c0f3c483f057f703bf54a8c1f756615b380c237ac8d",
+          "totals": {
+            "tests": 18,
+            "failures": 18,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "suite": "com.aimanager.managedandroid.internal.ManagedExecutionPipelineConfigurationTest",
+          "sha256": "d4137b24b9b4c7dd2ca03fb88df035e804b44ba4dba6262d6637d27d75c70450",
+          "totals": {
+            "tests": 8,
+            "failures": 6,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "suite": "com.aimanager.PolicyJourneyTest",
+          "sha256": "32c1063b6bc7bcd988f0775e5d585485062dafb24c76c0bf2035ad6ba4c653e5",
+          "totals": {
+            "tests": 2,
+            "failures": 2,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "suite": "com.aimanager.retention.internal.ErasureManagedBindingProcessorTest",
+          "sha256": "88594428370104b53aec566f2707710a3656727b83a52330e832a02bd8cf622a",
+          "totals": {
+            "tests": 1,
+            "failures": 1,
+            "errors": 0,
+            "skipped": 0
+          }
+        }
+      ]
+    },
+    {
+      "candidate": "green-r1",
+      "sourceFiles": 548,
+      "sourceSha256": "829bd161957668a21d799b848f4cf24a8d833e0cf1d213dd1fb89569ac815601",
+      "compileReceiptSha256": "b155162f5fed6419a275b13847a2fe929ea66dbed53fc0df849ece9f6881ae19",
+      "resultSha256": "d27788da831fd29035fde1fa21839d76cfda0bec5423cd1fe347db67e182877f",
+      "compileSeconds": 32.2,
+      "testSeconds": 35.0,
+      "mavenExitCode": 0,
+      "naturalTreeExit": true,
+      "totals": {
+        "tests": 29,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "reports": [
+        {
+          "suite": "com.aimanager.managedandroid.internal.ManagedAgentBindingJourneyTest",
+          "sha256": "faaf3b1485e5dc6f8a3245645ea02791701ebea05341837a3ef18e0352cdc24f",
+          "totals": {
+            "tests": 18,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "suite": "com.aimanager.managedandroid.internal.ManagedExecutionPipelineConfigurationTest",
+          "sha256": "f6e0a439bd6e8eefbf72ffd69c8e065cb80b2cafdd022659678cf6f1fb8b806c",
+          "totals": {
+            "tests": 8,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "suite": "com.aimanager.PolicyJourneyTest",
+          "sha256": "7232ade5601fbee0a0fd99ba2791745c4cec7787c3edab0451d6da8055141293",
+          "totals": {
+            "tests": 2,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        },
+        {
+          "suite": "com.aimanager.retention.internal.ErasureManagedBindingProcessorTest",
+          "sha256": "f29b20db61078b0b7b0b564d042dee04f08e4f6c39e8091b64d8baac017d3435",
+          "totals": {
+            "tests": 1,
+            "failures": 0,
+            "errors": 0,
+            "skipped": 0
+          }
+        }
+      ]
+    }
+  ],
+  "pending": [
+    "Six selected domain batches",
+    "Shared-source merge and verification",
+    "Client integration",
+    "MySQL/OceanBase and migration verification",
+    "Real provider and Android verification",
+    "Phase commit and push"
+  ]
+}
