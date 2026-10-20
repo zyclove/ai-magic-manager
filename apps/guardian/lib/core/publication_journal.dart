@@ -19,6 +19,17 @@ abstract interface class PublicationJournal {
   Future<PublicationPending> markReauthenticationRequired(
       PublicationPending expected);
 
+  /// Trusted terminal evidence, fenced by the complete original record.
+  Future<PublicationPending> markResultTerminalIfSame(
+      PublicationPending expected, PublicationTerminalReason reason,
+      {bool confirmedSuccess = false, bool Function()? isCurrent});
+
+  /// Explicit local acknowledgement only. In one transaction, retain a minimal
+  /// permanent fence and delete sensitive intent; verify both after commit.
+  Future<PublicationTerminalMarker> acknowledgeTerminalIfSame(
+      PublicationPending expected,
+      {required int acknowledgedAt, bool Function()? isCurrent});
+
   /// Strict successful receipt cleanup. Compare the complete record and attempt;
   /// mismatch/absence returns false and never deletes a newer record.
   Future<bool> removeIfSame(PublicationPending expected);

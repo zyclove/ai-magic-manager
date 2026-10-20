@@ -1,0 +1,121 @@
+{
+  "schemaVersion": 1,
+  "reviewer": "/root/workbench_finish_review",
+  "mode": "INDEPENDENT_STATIC_REVIEW",
+  "path": "backend/src/main/java/com/aimanager/shared/OpenApiConfiguration.java",
+  "sha256": "500f0925b70ae2afd1398fd2d03296a48295b8f97f7ed87dddc8e2e6ad8102ba",
+  "beforeSha256": "6ece34649f82586999831d1cdb5b28d97964bdc80b5a85962226ac57cffb09a5",
+  "conclusion": "No confirmed P1/P2 in the reviewed change; not compilation or execution acceptance.",
+  "recoveryRouteCount": 21,
+  "recoveryRoutes": [
+    {
+      "method": "POST",
+      "path": "/api/v1/device-api/access-submissions/recovery"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/device-api/access-submissions/{requestId}/cancel-recovery"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenants/{tenantId}/applications/creation-results/{requestId}/query"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenants/{tenantId}/applications/{applicationId}/classification/operation-results/{requestId}/query"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenants/{tenantId}/device-groups/operation-results/{requestId}/query"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenants/{tenantId}/devices/{deviceId}/observation-settings/operation-results/{requestId}/query"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenants/{tenantId}/devices/{deviceId}/permission-observation-settings/operation-results/{requestId}/query"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenants/{tenantId}/policy-draft-creation-results/{requestId}/query"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/tenants/{tenantId}/policies/{policyId}/publication-results/{requestId}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenants/{tenantId}/quota-pools/creation-results/{requestId}/query"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenants/{tenantId}/quota-pools/{poolId}/adjustment-results/{requestId}/query"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenants/{tenantId}/quota-plans/creation-results/{requestId}/query"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenants/{tenantId}/quota-plans/{planId}/update-results/{requestId}/query"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenants/{tenant}/audit-exports/creation-results/{requestId}/query"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenants/{tenantId}/schedules/creation-results/{requestId}/query"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenants/{tenantId}/subjects/operation-results/{requestId}/query"
+    },
+    {
+      "method": "GET",
+      "path": "/api/v1/invitations/{invitationId}/acceptance-results/{requestId}"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenants/{tenantId}/invitations/issuance-results/{requestId}/query"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenants/{tenantId}/members/{memberKey}/access-results/{requestId}/query"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenants/{tenantId}/classes/operation-results/{requestId}/query"
+    },
+    {
+      "method": "POST",
+      "path": "/api/v1/tenants/{tenantId}/ownership-transfers/operation-results/{requestId}/query"
+    }
+  ],
+  "sourceRouteManifest": ".cache/idempotency-retention-backend-20261020-r1/recovery-http-routes.json",
+  "exactRouteAndMethodMatch": true,
+  "reviewed": [
+    "Adds a 410 response only to existing implemented operations and preserves existing responses via putIfAbsent",
+    "Problem schema restricts status to 410 and errorCode to IDEMPOTENCY_RESULT_EXPIRED / IDEMPOTENCY_RESPONSE_ERASED",
+    "No new routes or success response/security changes; existing API-doc authentication and opt-in behavior unchanged"
+  ],
+  "localDependencyInspection": {
+    "method": "Earlier read-only local JAR class-member constant inspection; not javac or classloading",
+    "springdocVersion": "2.9.1",
+    "swaggerModelsJakartaVersion": "2.2.55",
+    "baseDirectory": ".local/m2",
+    "confirmedMembers": [
+      "org.springdoc.core.customizers.OpenApiCustomizer",
+      "io.swagger.v3.oas.models.media.Schema._enum(List)",
+      "io.swagger.v3.oas.models.media.Schema.$ref(String)",
+      "io.swagger.v3.oas.models.Components.addSchemas",
+      "io.swagger.v3.oas.models.PathItem.readOperationsMap"
+    ]
+  },
+  "limitations": [
+    "No SDK, tests, compiler, build, browser, services or network executed",
+    "Read-only source and dependency bytes do not establish runtime springdoc behavior"
+  ],
+  "status": "NOT_RUN"
+}

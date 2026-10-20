@@ -3,6 +3,7 @@ import '../core/api.dart';
 import '../core/labels.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
+import '../ui/dialog_access.dart';
 import '../ui/owned_dialog_route.dart';
 import 'device_subflow_scope.dart';
 import 'editors.dart';
@@ -233,21 +234,31 @@ class _PolicyDetailsScope extends ChangeNotifier {
   final BuildContext context;
   final Session session;
   final String root;
+  final bool readOnly;
   late final DeviceSubflowScope _scope;
+  late final DialogAccessBinding _parentAccess;
   bool _lost = false, _disposed = false;
 
-  _PolicyDetailsScope(this.context, this.session, this.root) {
+  _PolicyDetailsScope(this.context, this.session, this.root,
+      {bool Function()? parentCurrent, Listenable? accessChanges,
+        this.readOnly = false}) {
+    // Capture the original route before the first read. Independent route
+    // removal must revoke this entire details journey even without session I/O.
+    _parentAccess = DialogAccessBinding(context,
+        accessChanges: accessChanges, hasAccess: parentCurrent);
     _scope = DeviceSubflowScope(session,
         permitted: () =>
+            _parentAccess.permitted() &&
             context.mounted &&
             session.tenant != null &&
             session.root == root &&
             session.canOpen('policies'));
     _scope.addListener(_observe);
+    _parentAccess.changes.addListener(_observe);
   }
 
   bool get current => !_disposed && !_lost && context.mounted && _scope.current;
-  bool get writable => current && session.canWrite;
+  bool get writable => current && !readOnly && session.canWrite;
 
   void _observe() {
     if (!current) _revoke();
@@ -291,7 +302,9 @@ class _PolicyDetailsScope extends ChangeNotifier {
     if (_disposed) return;
     _disposed = true;
     _scope.removeListener(_observe);
+    _parentAccess.changes.removeListener(_observe);
     _scope.dispose();
+    _parentAccess.dispose();
     super.dispose();
   }
 }
@@ -299,8 +312,16 @@ class _PolicyDetailsScope extends ChangeNotifier {
 Future<void> openPolicyDetails(BuildContext context, Session session,
     {required String root,
     required Json row,
-    required Future<void> Function(BuildContext, Json) preview}) async {
-  final scope = _PolicyDetailsScope(context, session, root);
+    required Future<void> Function(BuildContext, Json) preview,
+    bool Function()? parentCurrent,
+    Listenable? accessChanges,
+    bool readOnly = false}) async {
+  if (!context.mounted || parentCurrent?.call() == false) {
+    throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+  }
+  final scope = _PolicyDetailsScope(context, session, root,
+      parentCurrent: parentCurrent, accessChanges: accessChanges,
+      readOnly: readOnly);
   try {
     final id = row['id'];
     if (!_nonemptyText(id)) throw const ApiFailure(502, 'INVALID_RESPONSE');
@@ -311,8 +332,9 @@ Future<void> openPolicyDetails(BuildContext context, Session session,
     final draft = _readPolicyDraft(value, expectedId: id as String);
     await actionDetails(
         context,
-        draft['name'],
+        readOnly ? '查看当前策略 · ${draft['name']}' : draft['name'],
         {
+          if (readOnly) '核对说明': '正在查看当前策略与版本记录，不会再次发布原操作。',
           '类型': label(draft['kind']),
           '草稿版本': 'v${draft['revision']}',
           '规则': (draft['rules'] as List)

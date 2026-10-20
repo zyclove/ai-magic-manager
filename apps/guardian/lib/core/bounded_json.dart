@@ -7,9 +7,10 @@ import 'scoped_http_client.dart';
 
 /// A complete rejected HTTP response, tied to the actual thrown failure.
 /// Only the bounded reader can construct this evidence.
-class BoundedHttpErrorEvidence {
+final class BoundedHttpErrorEvidence {
   final ApiFailure failure;
-  const BoundedHttpErrorEvidence._(this.failure);
+  final int? problemStatus;
+  const BoundedHttpErrorEvidence._(this.failure, this.problemStatus);
 }
 
 /// A bounded response reader for private task metadata and report results.
@@ -127,7 +128,8 @@ Future<dynamic> boundedJson(Api api, String method, String path,
             (response.contentLength == null ||
                 response.contentLength == payload.length)) {
           ensureCurrent();
-          onHttpError(BoundedHttpErrorEvidence._(failure));
+          onHttpError(BoundedHttpErrorEvidence._(failure,
+              result is Json && result['status'] is int ? result['status'] : null));
         }
         throw failure;
       }

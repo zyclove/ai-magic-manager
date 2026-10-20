@@ -1,0 +1,80 @@
+{
+  "schemaVersion": 1,
+  "reviewer": "/root/workbench_finish_review",
+  "phase": "child-r4",
+  "mode": "INDEPENDENT_STATIC_REVIEW",
+  "conclusion": "No additional confirmed P1/P2 in the listed source after the R4 fixes; not execution acceptance.",
+  "sourceManifest": ".cache/operation-result-retention-20261020/child/after-manifest-r4.json",
+  "files": [
+    {
+      "path": "packages/device_access/lib/src/transport.dart",
+      "sha256": "74cbd175b329fc426360814665ce80dc9ade2ac7b31e8d17fa77a9faf41933ee",
+      "snapshotSha256": "74cbd175b329fc426360814665ce80dc9ade2ac7b31e8d17fa77a9faf41933ee",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "packages/device_access/lib/src/submission_journal.dart",
+      "sha256": "06cbd9d249cb49ed67ea2e501a5ef4c1883d93eec2b4e7e2770f02c510312dcc",
+      "snapshotSha256": "06cbd9d249cb49ed67ea2e501a5ef4c1883d93eec2b4e7e2770f02c510312dcc",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/child/lib/core/submission_receiver.dart",
+      "sha256": "d40bc8bb51d05dbc9d9063cc0fe6e69776a3975c2bb5d5ed3d93ae20f5622723",
+      "snapshotSha256": "d40bc8bb51d05dbc9d9063cc0fe6e69776a3975c2bb5d5ed3d93ae20f5622723",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/child/lib/core/submissions.dart",
+      "sha256": "269f11530f553015992b97d6e4f6e216387e507abeccf7489414cccda7461fe6",
+      "snapshotSha256": "269f11530f553015992b97d6e4f6e216387e507abeccf7489414cccda7461fe6",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/child/lib/core/session.dart",
+      "sha256": "68dc78db93497f465376555435b9c0de70e35ff7ee4f8cf32ffd680c3b537bc4",
+      "snapshotSha256": "68dc78db93497f465376555435b9c0de70e35ff7ee4f8cf32ffd680c3b537bc4",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/child/lib/ui/submission_section.dart",
+      "sha256": "a674093448e4744825c69c9cb8bc6f58583a7805862973a5414b365587a928c6",
+      "snapshotSha256": "a674093448e4744825c69c9cb8bc6f58583a7805862973a5414b365587a928c6",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/child/lib/ui/submission_dialogs.dart",
+      "sha256": "067501142a0d3e8b73d73b546b1ed010da0ac7ce96a16e639ac2b5f0336a9de8",
+      "snapshotSha256": "067501142a0d3e8b73d73b546b1ed010da0ac7ce96a16e639ac2b5f0336a9de8",
+      "mainAndSnapshotMatch": true
+    },
+    {
+      "path": "apps/child/lib/ui/submission_display.dart",
+      "sha256": "fe3ccf2344a13be71b6c0f37b1092c4092a86f7301eed3fd82152c0a26c5d8d7",
+      "snapshotSha256": "fe3ccf2344a13be71b6c0f37b1092c4092a86f7301eed3fd82152c0a26c5d8d7",
+      "mainAndSnapshotMatch": true
+    }
+  ],
+  "reviewed": [
+    "Complete bounded HTTP 410 with actual integer ProblemDetail.status=410 and exact EXPIRED/RESPONSE_ERASED codes; trusted evidence bound to the original key, input and registration",
+    "Atomic terminal scrub and marker CAS, permanent no-resubmit fence, explicit local acknowledgement distinct from read-only current-record navigation",
+    "Generation captured before first await, stale receivers cannot install into a later scope, permanent revocation and owned-route availability"
+  ],
+  "closedFindings": [
+    {
+      "priority": "P2",
+      "issue": "Synchronous stale close/back could pop an overlaid route; replaced with current/owned route guards.",
+      "resolution": "Source inspected in R3 and R4."
+    },
+    {
+      "priority": "P2",
+      "issue": "Covered revoked dialog could remain blank, and request receiver creation captured generation after its first await.",
+      "resolution": "R4 uses private owned-route completion/removal and pre-await scope/identity capture with validation before installation."
+    }
+  ],
+  "limitations": [
+    "Text and hash review only; no Flutter/Dart/Android compiler or runtime",
+    "No SDK, test, format, analyze, build, browser, service, network or Git execution"
+  ],
+  "status": "NOT_RUN"
+}

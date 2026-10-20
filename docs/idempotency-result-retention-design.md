@@ -1,12 +1,12 @@
 # 幂等结果 90 天恢复与清理设计说明
 
-日期：2026-10-20。状态：**DESIGN_CONFIRMED_PENDING_IMPLEMENTATION**。
+日期：2026-10-20。状态：**STATIC_IMPLEMENTATION_IN_PROGRESS / NOT_RUN / NOT_DEPLOYED**。
 
-用户已于 2026-10-20 确认：**操作结果恢复记录自成功结果随业务事务提交时起保留 90 天，之后引导核对当前记录，并继续阻止旧请求重复执行**。本文将该确定方案整理为可实施设计；它还没有写入生产代码或配置，也没有实际执行清理。本轮只新增本文，不修改业务、API、客户端、初始化 SQL、测试、CI 或清理开关，不执行 SDK、SQL、测试、构建、服务操作或 Git 写入。
+用户已于 2026-10-20 确认：**操作结果恢复记录自成功结果随业务事务提交时起保留 90 天，之后引导核对当前记录，并继续阻止旧请求重复执行**。本文保留产品契约、实现前的来源分析与设计约束。后端与三端生产源码正在实际接合，确切修改、快照及静态复核以[本阶段实施记录](evidence/operation-result-retention-implementation-20261020-r1.md)为准。没有运行 SDK、SQL、测试、构建、服务或物理清理。
 
-## 1. 范围与证据时点
+## 1. 设计基线与证据时点（实现前）
 
-检查时本地 `dev` 的 HEAD 为 `db18daa275a1098f497527697f8ff0a0808d5778`。分析对象包含未提交工作树；HEAD 用于定位环境，不代表本文检查的所有源码已纳入该提交。以下是静态引用和实现逻辑，不代表运行结果。
+初版设计检查时本地 `dev` 的 HEAD 为 `db18daa275a1098f497527697f8ff0a0808d5778`。分析对象包含未提交工作树；HEAD 用于定位环境，不代表本文检查的所有源码已纳入该提交。以下表格和旧源码摘要只描述实现前基线，不是当前实现状态或运行结果。
 
 | 当前事实 | 源码依据 | 对后续设计的约束 |
 | --- | --- | --- |
@@ -99,11 +99,11 @@
 7. **时间不使终态复活。** 采用服务端持久时间元数据；首次向外确认结果已过期前，过期终态必须已可靠提交，重启、时钟回拨和修改配置不能恢复逻辑已过期或已清理/擦除的载荷。
 8. **恢复暂停有效。** 普通维护必须服从既有擦除 WorkPermit 和启动恢复门槛，不能在恢复旧备份或暂停期间私自启动另一套清理链路。
 
-## 5. 90 天恢复方案的实现设计（未实现）
+## 5. 90 天恢复方案的实现约束
 
 ### 5.1 数据模型与写入
 
-保留当前 `response_state` 的归属分类及 `ERASED`。另设独立的结果存储生命周期，例如 `result_storage_state=RETAINED/REDACTED`、`result_committed_at`、`result_expires_at`、`result_policy_revision`、`result_expired_at`、`result_redacted_at`；字段名为建议，尚未成为接口或表结构。`result_committed_at` 是成功结果的提交起点，`result_expired_at` 表示不可逆的逻辑过期事实，`result_redacted_at` 表示完整响应实际清理时间，三者不能互相冒充。
+保留 `response_state` 的归属分类及 `ERASED`。独立结果生命周期使用 `result_storage_state=RETAINED/REDACTED`、`result_committed_at`、`result_expires_at`、`result_policy_revision`、`result_expired_at`、`result_redacted_at`。这些字段正在首版 V1 定义和通用服务中接合，未执行数据库变更。`result_committed_at` 是成功结果的提交起点，`result_expired_at` 表示不可逆的逻辑过期事实，`result_redacted_at` 表示完整响应实际清理时间，三者不能互相冒充。
 
 创建结果时，在原业务事务内按 90 天初始策略冻结恢复截止时间与修订，恢复期不得短于原重放期。结果期限不能由儿童或调用请求自行填写。配置变化只影响新记录；已有截止时间的追溯调整须有明确操作语义，不能静默延长或复活终态。标记、摘要和归属继续保留必要的防重及删除证明；这不是清空整张幂等表。
 
@@ -129,7 +129,7 @@
 
 持久终态解决已经观测并提交的过期事实，不等于证明所有节点时钟正确。尚未标记记录仍依赖可信的服务端时间；节点偏差/明显回拨无法确认时应拒绝恢复并保留诊断，不用本地猜测重新开放。跨节点时钟偏差和首次过期事务失败都必须纳入验证。
 
-下图为待实现状态流，不是现有运行结果：
+下图描述目标状态流，不是运行验收结果：
 
 ```mermaid
 flowchart TD
@@ -156,15 +156,15 @@ flowchart TD
 
 不能只新增错误文案。控制器、持久待办、操作按钮和恢复解析必须认识“原结果已不可恢复”；它不是“业务未提交”“成功”或“仍在执行”。
 
-应禁用原操作重试和自动换键，提供“核对当前记录/联系管理员”的说明。移除不再需要的敏感本地载荷，只保留必要的不透明终态标记；明确确认只结束本地待办，不能撤销远端业务、重新创建旧操作或授予儿童权限。账号、工作空间及注册变化后仍须按现有规则失效。
+应禁用原操作重试和自动换键，直接提供“查看当前记录”等只读核对入口，不要求先清理本机待办。另有独立“结束本机核对”，明确确认后原子清除敏感本地详情并保留必要防重标记；该确认不能撤销远端业务、重新创建旧操作或授予儿童权限。设备端一旦得到可信不可恢复证据即清除不再需要的敏感提交载荷，待办只保留最小终态提示。账号、工作空间及注册变化后仍须按现有规则失效。
 
 设备端不得将新错误加入 `submissionDefinitiveRejections`，否则会错误显示“本次操作未提交”。已擦除结果也要有明确处理，不能把它转成普通网络错误后一直保留可重试的敏感意图。
 
 审计核对不能只跳到默认 `/audit`：当前 [audit_view.dart](../apps/guardian/lib/ui/audit_view.dart) 默认仅查询最近 7 天，可能漏掉 90 天前后需要核对的操作。应带明示的原操作附近日期与操作类型，并保留正确时区和授权范围；原操作时间仅来自本地待办时须说明其只是检索线索。策略配置事件 `POLICY_CONFIGURATION_RECORDED` 的资源是 `versionId`，不是 `policyId` 或幂等键，不能伪造精确资源匹配。按 action 与日期检索得到的审计及当前状态只辅助人工核对，不自动证明原操作成功或从未执行；儿童不得因此获得管理员审计入口。Guardian 的具体界面设计另行分工，本文不扩展该文件范围。
 
-## 6. 待实现文件范围
+## 6. 设计时的文件分工与接合范围
 
-以下是具体建议分工，**不是已修改文件清单**。90 天方案已确定；下一步需协调文件所有权并冻结实现输入，当前仍不触碰任何生产源码、测试或受 fresh RED15 条件限制的夹具。
+以下保留设计时的具体分工，**不是最终已修改文件清单**。生产接合已经开始；新增生命周期、配置和 HTTP 契约等实际范围见实施记录。受 fresh RED15 条件限制的两份后端夹具仍未解冻。
 
 ### 6.1 后端九个基础文件与恢复事务边界
 
@@ -198,7 +198,7 @@ flowchart TD
 - `observation_settings.dart`、`permission_consent.dart`、`ownership.dart`。
 - `organization_classes.dart`、`quotas.dart`、`policy_creation.dart`、`schedules.dart`、`subjects.dart`。
 
-这些控制器当前大多只对原来的特定 404 结果设置可确认状态；仅增加服务端 410 会留下不能结束的待办。可增设统一终态分类，仍须在各控制器明确接线，不按所有 410 或任意字符串一概处理。
+实现前这些控制器大多只对特定 404 结果设置可确认状态；仅增加服务端 410 会留下不能结束的待办。统一终态分类仍须在各控制器明确接线，不按所有 410 或任意字符串一概处理。Parent 还需接合 pending_publications 和 policy_center 的发布恢复路径及原子、加密的本机核对存储。
 
 直接界面引用位于 `apps/parent/lib/ui/` 的 15 个文件：`application_center.dart`、`audit_exports_center.dart`、`class_center.dart`、`group_operation_page.dart`、`invitation_acceptance.dart`、`invitation_center.dart`、`member_center.dart`、`observation_settings_page.dart`、`ownership_center.dart`、`permission_consent_page.dart`、`policy_creation_page.dart`、`quota_center.dart`、`quota_plan_pages.dart`、`schedule_editor.dart`、`subject_center.dart`。逐项核对按钮、隐私清理、焦点恢复与明确确认。
 
@@ -232,15 +232,15 @@ Guardian 策略发布的直接核对范围：
 | 备份恢复 | 旧备份、删除账本重放、暂停期间不得维护写入、恢复后不重现个人响应 | **NOT_RUN** |
 | 容量与运维 | 结果/标记增长、清理事务成本、积压与延迟、恢复时间、存储和日志保留 | **NOT_RUN** |
 
-文件分工和实现输入冻结后再新增对应测试。相关既有输入包括 `IdempotencyOwnershipTest`、`ErasureIdempotencyProcessorTest`、`ErasureIdempotencyCardinalityTest`、`ErasureWorkAdvisorTest`、`DatabaseInitializationTest` 以及各恢复旅程；直接 SQL 插入的夹具须显式满足新字段不变量，不能靠宽松默认值绕过校验。本轮未修改或运行这些用例。
+依用户当前安排，新增和执行测试均暂缓。相关既有输入包括 `IdempotencyOwnershipTest`、`ErasureIdempotencyProcessorTest`、`ErasureIdempotencyCardinalityTest`、`ErasureWorkAdvisorTest`、`DatabaseInitializationTest` 以及各恢复旅程；既有假实现和直接 SQL 夹具如因类型或结构变化需要接合，只做最小适配并保留原断言，不能靠宽松生产默认值绕过校验。实际适配范围见实施记录，尚无本阶段运行结果。
 
 新读取逻辑部署前，必须完成所有受支持消费者的终态接线与后端协议验证；即使维护开关关闭，新的逻辑截止也会改变恢复行为，不能提前部署。维护作业启用前还须确认开关、数据库目录、准入、指标和恢复手册一致；完整默认回归及零 skip 等既有门槛不变。H2、静态检查、单个 SDK 用例或基础组件自身的存在不能替代真实 MySQL、设备、恢复与整个产品验收。
 
 运维仅记录批次、处理数量、积压、延迟、失败类型和关联请求号，不记录请求键、原响应、令牌或儿童资料。逻辑拒绝、物理清理、主体擦除和业务执行必须分别展示，不能复用一个“已完成”状态。
 
-## 8. 关键源码摘要与本轮边界
+## 8. 初版设计源码摘要与当前边界
 
-以下 SHA-256 绑定本次读到的工作树字节，不是测试或发布签名：
+以下 SHA-256 绑定初版设计时读到的工作树字节，是历史基线，不描述当前实现，也不是测试或发布签名：
 
 | 文件 | SHA-256 |
 | --- | --- |
@@ -252,4 +252,4 @@ Guardian 策略发布的直接核对范围：
 | `device_access/src/submission_journal.dart` | `b32e935c5535d3bca8f0a0540b1e287c4e49f1ff8f9a86f5681b089abc563a63` |
 | `child/core/submission_receiver.dart` | `28863ce92019a1780247adf9f400b3816fa4d5e893b9b1b2e4758b50a9da5296` |
 
-本文已确定 90 天恢复方案，状态为 **DESIGN_CONFIRMED_PENDING_IMPLEMENTATION**。文档静态校对待最终复核；没有已实现清理、运行配置变更、数据库变更或新增运行验收结果。完整产品目标、正式设备执行与其他领域的验收仍按[完整实施计划](implementation-plan.md)推进。
+本文已确定 90 天恢复方案，当前正在完成源码接合与静态复核，尚无本阶段运行验收结果；没有更新运行配置、数据库或现有服务。完整产品目标、正式设备执行与其他领域的验收仍按[完整实施计划](implementation-plan.md)推进。前一阶段冻结 R4 规格的 Main 哈希已因新源码变化而过时，保留历史证据，后续验证须另建当前来源候选。

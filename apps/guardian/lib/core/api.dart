@@ -26,6 +26,12 @@ class ApiFailure implements Exception {
   final String? correlationId;
   const ApiFailure(this.status, this.code, [this.correlationId]);
   String get message => switch (code) {
+        'IDEMPOTENCY_RESULT_EXPIRED' =>
+          '原操作结果已超过 90 天保留期限，不能再恢复。请查看当前记录；不要重复提交原操作。',
+        'IDEMPOTENCY_RESPONSE_ERASED' =>
+          '原操作结果已清除，不能再恢复。清除结果不代表取消了已发生的操作。',
+        'PUBLICATION_RESULT_TERMINAL' =>
+          '原操作已结束结果恢复，不能再次提交。请查看当前策略或审计记录。',
         'PREVIEW_EXPIRED' => '此预览已过期，请关闭窗口后重新预览。',
         'ERASURE_MAINTENANCE_REQUIRED' =>
           '系统正在暂停或恢复数据处理，暂时无法确认本次结果。请保留原操作内容，稍后重试。',

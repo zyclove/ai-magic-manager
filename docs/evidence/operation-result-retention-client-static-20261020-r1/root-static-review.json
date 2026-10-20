@@ -1,0 +1,757 @@
+{
+  "status": "STATIC_SOURCE_AND_SCOPE_REVIEW_ONLY",
+  "createdAt": "2026-10-20T14:41:30.545107+00:00",
+  "baseCommit": "10a1df1a49fa9268bb646befb6db60d30a15c14a",
+  "sdkRun": false,
+  "testsRun": false,
+  "buildRun": false,
+  "browserRun": false,
+  "deployed": false,
+  "acceptedForExecution": false,
+  "productionFiles": 22,
+  "existingAdapterFiles": 5,
+  "copiedEvidence": [
+    {
+      "path": "docs/evidence/operation-result-retention-client-static-20261020-r1/guardian-production-manifest.json",
+      "sha256": "fb795a240534d6864d1caef850a4ffb4106bc62bd060bc9d2334ae3f369bb522",
+      "original": ".cache/operation-result-retention-20261020/guardian/after-production-r4-final.json"
+    },
+    {
+      "path": "docs/evidence/operation-result-retention-client-static-20261020-r1/guardian-adapter-manifest.json",
+      "sha256": "99900f5dbea983e97a1af170176b2d74431945938ef79049d59ae49d8e1dfc45",
+      "original": ".cache/operation-result-retention-20261020/guardian/after-test-adapters-r1.json"
+    },
+    {
+      "path": "docs/evidence/operation-result-retention-client-static-20261020-r1/guardian-independent-static-review.json",
+      "sha256": "7641560b5d4b52950efd74c35162657589c15ad913d77e6405f982910de5bcbd",
+      "original": ".cache/operation-result-retention-20261020/child/guardian-static-review-r4-final.json"
+    },
+    {
+      "path": "docs/evidence/operation-result-retention-client-static-20261020-r1/child-production-manifest.json",
+      "sha256": "436a6ad9db788c7fe86f0191eaa90a19508abd69b6b6a58c957b96316d088888",
+      "original": ".cache/operation-result-retention-20261020/child/after-manifest-r4.json"
+    },
+    {
+      "path": "docs/evidence/operation-result-retention-client-static-20261020-r1/child-independent-static-review.json",
+      "sha256": "4b3816a68d415ce13448aa2c17857ac5b4a72989c52fa749c34c7e3dedfce4eb",
+      "original": ".cache/operation-result-retention-20261020/workbench-review/child-r4-independent-static-review.json"
+    },
+    {
+      "path": "docs/evidence/operation-result-retention-client-static-20261020-r1/child-api-adapter-static-review.json",
+      "sha256": "175535c975aec1de18510bc67dd307a5c1a27392266cda75a650187eba7632de",
+      "original": ".cache/operation-result-retention-20261020/child/child-api-adapter-static-review.json"
+    },
+    {
+      "path": "docs/evidence/operation-result-retention-client-static-20261020-r1/openapi-independent-static-review.json",
+      "sha256": "76d31606368963b046006e123ace170bc910342a98447426a0ad854562e83da9",
+      "original": ".cache/operation-result-retention-20261020/workbench-review/openapi-result-retention-independent-static-review.json"
+    },
+    {
+      "path": "docs/evidence/operation-result-retention-client-static-20261020-r1/source-scope-inventory.json",
+      "sha256": "2570d2eb477de7b7224dbf177d231d2c922c9e48be31e894bdedd2d8f2cfb99e",
+      "original": ".cache/operation-result-retention-20261020/root/source-scope-inventory-r1.json"
+    }
+  ],
+  "fixtureLexicalCounts": [
+    {
+      "path": "apps/guardian/test/publication_test_journal.dart",
+      "declarationsBefore": 0,
+      "declarationsAfter": 0,
+      "expectCallsBefore": 0,
+      "expectCallsAfter": 0
+    },
+    {
+      "path": "apps/guardian/test/policy_publication_controller_fixtures.dart",
+      "declarationsBefore": 0,
+      "declarationsAfter": 0,
+      "expectCallsBefore": 0,
+      "expectCallsAfter": 0
+    },
+    {
+      "path": "apps/guardian/test/policy_publication_entry_test.dart",
+      "declarationsBefore": 6,
+      "declarationsAfter": 6,
+      "expectCallsBefore": 69,
+      "expectCallsAfter": 69
+    },
+    {
+      "path": "apps/guardian/test/policy_publication_test.dart",
+      "declarationsBefore": 19,
+      "declarationsAfter": 19,
+      "expectCallsBefore": 66,
+      "expectCallsAfter": 66
+    },
+    {
+      "path": "apps/child/test/support/submission_fixture.dart",
+      "declarationsBefore": 0,
+      "declarationsAfter": 0,
+      "expectCallsBefore": 0,
+      "expectCallsAfter": 0
+    }
+  ],
+  "fixtureCountLimit": "Lexical declaration and assertion counts only; no claim about executed or generated cases.",
+  "relativeImportClosure": [
+    {
+      "source": "apps/guardian/lib/core/policy_publication_repository.dart",
+      "dependency": "apps/guardian/lib/core/api.dart"
+    },
+    {
+      "source": "apps/guardian/lib/core/policy_publication_repository.dart",
+      "dependency": "apps/guardian/lib/core/bounded_json.dart"
+    },
+    {
+      "source": "apps/guardian/lib/core/policy_publication_repository.dart",
+      "dependency": "apps/guardian/lib/core/policy_publication.dart"
+    },
+    {
+      "source": "apps/guardian/lib/core/policy_publication_repository.dart",
+      "dependency": "apps/guardian/lib/core/scoped_http_client.dart"
+    },
+    {
+      "source": "apps/guardian/lib/core/publication_journal.dart",
+      "dependency": "apps/guardian/lib/core/policy_publication.dart"
+    },
+    {
+      "source": "apps/guardian/lib/core/browser_publication_journal.dart",
+      "dependency": "apps/guardian/lib/core/api.dart"
+    },
+    {
+      "source": "apps/guardian/lib/core/browser_publication_journal.dart",
+      "dependency": "apps/guardian/lib/core/policy_publication.dart"
+    },
+    {
+      "source": "apps/guardian/lib/core/browser_publication_journal.dart",
+      "dependency": "apps/guardian/lib/core/publication_journal.dart"
+    },
+    {
+      "source": "apps/guardian/lib/ui/policy_publication_controller.dart",
+      "dependency": "apps/guardian/lib/core/api.dart"
+    },
+    {
+      "source": "apps/guardian/lib/ui/policy_publication_controller.dart",
+      "dependency": "apps/guardian/lib/core/policy_publication.dart"
+    },
+    {
+      "source": "apps/guardian/lib/ui/policy_publication_controller.dart",
+      "dependency": "apps/guardian/lib/core/policy_publication_repository.dart"
+    },
+    {
+      "source": "apps/guardian/lib/ui/policy_publication_controller.dart",
+      "dependency": "apps/guardian/lib/core/publication_journal.dart"
+    },
+    {
+      "source": "apps/guardian/lib/ui/policy_publication_dialog.dart",
+      "dependency": "apps/guardian/lib/core/api.dart"
+    },
+    {
+      "source": "apps/guardian/lib/ui/policy_publication_dialog.dart",
+      "dependency": "apps/guardian/lib/core/labels.dart"
+    },
+    {
+      "source": "apps/guardian/lib/ui/policy_publication_dialog.dart",
+      "dependency": "apps/guardian/lib/core/policy_publication.dart"
+    },
+    {
+      "source": "apps/guardian/lib/ui/policy_publication_dialog.dart",
+      "dependency": "apps/guardian/lib/ui/design.dart"
+    },
+    {
+      "source": "apps/guardian/lib/ui/policy_publication_dialog.dart",
+      "dependency": "apps/guardian/lib/ui/policy_preview_results.dart"
+    },
+    {
+      "source": "apps/guardian/lib/ui/policy_publication_dialog.dart",
+      "dependency": "apps/guardian/lib/ui/policy_publication_controller.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/policy_publication_entry.dart",
+      "dependency": "apps/guardian/lib/core/api.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/policy_publication_entry.dart",
+      "dependency": "apps/guardian/lib/core/audit.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/policy_publication_entry.dart",
+      "dependency": "apps/guardian/lib/core/policy_publication.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/policy_publication_entry.dart",
+      "dependency": "apps/guardian/lib/core/policy_publication_repository.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/policy_publication_entry.dart",
+      "dependency": "apps/guardian/lib/core/publication_journal.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/policy_publication_entry.dart",
+      "dependency": "apps/guardian/lib/ui/owned_dialog_route.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/policy_publication_entry.dart",
+      "dependency": "apps/guardian/lib/ui/policy_publication_controller.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/policy_publication_entry.dart",
+      "dependency": "apps/guardian/lib/ui/policy_publication_dialog.dart"
+    },
+    {
+      "source": "apps/guardian/lib/core/policy_publication.dart",
+      "dependency": "apps/guardian/lib/core/api.dart"
+    },
+    {
+      "source": "apps/guardian/lib/core/api.dart",
+      "dependency": "apps/guardian/lib/core/scoped_http_client.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/core/browser_publication_journal.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/core/policy_publication.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/core/policy_publication_repository.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/core/publication_journal.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/policy_publication_entry.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/core/api.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/core/application_classification.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/core/enrollment_recovery.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/core/device_management.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/core/managed_execution.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/managed_execution_dialog_entry.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/ui/device_management_dialog.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/core/browser_enrollment_journal.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/ui/enrollment_dialog.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/core/labels.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/core/observation.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/core/overview_summary.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/core/session.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/core/workspace_read_recovery.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/device_subflow_scope.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/policy_details_entry.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/observation_page.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/ui/design.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/ui/dialog_access.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/ui/device_observation_status.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/ui/application_classification_dialog.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/ui/resource_page.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/ui/workbench_view.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/ui/workspace_welcome.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/ui/family_finance_page.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/ui/family_identity_page.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/ui/member_editor.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/ui/owned_dialog_route.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/ui/access_request_dialog.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/ui/policy_target_picker.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/members_page.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/classes_page.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/device_groups_page.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/managed_android_page.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/managed_android_review_page.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/audit_page.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/audit_exports_page.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/usage_reports_page.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/editors.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/device_exit_dialog.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/device_diagnostic_dialog.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/diagnostic_packages_dialog.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/quota_page.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/ownership_page.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/notifications_page.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/support_page.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/help_requests_page.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/scoped_overview_page.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/commercial_account_page.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/commercial_catalog_page.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/console_pages.dart",
+      "dependency": "apps/guardian/lib/pages/contracts_page.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/audit_page.dart",
+      "dependency": "apps/guardian/lib/core/audit.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/audit_page.dart",
+      "dependency": "apps/guardian/lib/core/audit_exports.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/audit_page.dart",
+      "dependency": "apps/guardian/lib/core/session.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/audit_page.dart",
+      "dependency": "apps/guardian/lib/ui/audit_view.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/audit_page.dart",
+      "dependency": "apps/guardian/lib/ui/design.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/audit_page.dart",
+      "dependency": "apps/guardian/lib/ui/export_create_dialog.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/audit_page.dart",
+      "dependency": "apps/guardian/lib/pages/device_subflow_scope.dart"
+    },
+    {
+      "source": "apps/guardian/lib/ui/audit_view.dart",
+      "dependency": "apps/guardian/lib/core/audit.dart"
+    },
+    {
+      "source": "apps/guardian/lib/ui/audit_view.dart",
+      "dependency": "apps/guardian/lib/core/api.dart"
+    },
+    {
+      "source": "apps/guardian/lib/ui/audit_view.dart",
+      "dependency": "apps/guardian/lib/core/labels.dart"
+    },
+    {
+      "source": "apps/guardian/lib/ui/audit_view.dart",
+      "dependency": "apps/guardian/lib/ui/design.dart"
+    },
+    {
+      "source": "apps/guardian/lib/core/bounded_json.dart",
+      "dependency": "apps/guardian/lib/core/api.dart"
+    },
+    {
+      "source": "apps/guardian/lib/core/bounded_json.dart",
+      "dependency": "apps/guardian/lib/core/scoped_http_client.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/policy_details_entry.dart",
+      "dependency": "apps/guardian/lib/core/api.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/policy_details_entry.dart",
+      "dependency": "apps/guardian/lib/core/labels.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/policy_details_entry.dart",
+      "dependency": "apps/guardian/lib/core/session.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/policy_details_entry.dart",
+      "dependency": "apps/guardian/lib/ui/design.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/policy_details_entry.dart",
+      "dependency": "apps/guardian/lib/ui/dialog_access.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/policy_details_entry.dart",
+      "dependency": "apps/guardian/lib/ui/owned_dialog_route.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/policy_details_entry.dart",
+      "dependency": "apps/guardian/lib/pages/device_subflow_scope.dart"
+    },
+    {
+      "source": "apps/guardian/lib/pages/policy_details_entry.dart",
+      "dependency": "apps/guardian/lib/pages/editors.dart"
+    },
+    {
+      "source": "apps/guardian/test/policy_publication_entry_test.dart",
+      "dependency": "apps/guardian/test/fixtures/policy_preview_fixture_data.dart"
+    },
+    {
+      "source": "apps/guardian/test/policy_publication_entry_test.dart",
+      "dependency": "apps/guardian/test/policy_publication_controller_fixtures.dart"
+    },
+    {
+      "source": "apps/guardian/test/policy_publication_test.dart",
+      "dependency": "apps/guardian/test/publication_test_journal.dart"
+    },
+    {
+      "source": "packages/device_access/lib/src/transport.dart",
+      "dependency": "packages/device_access/lib/src/page.dart"
+    },
+    {
+      "source": "packages/device_access/lib/src/transport.dart",
+      "dependency": "packages/device_access/lib/src/receipt.dart"
+    },
+    {
+      "source": "packages/device_access/lib/src/transport.dart",
+      "dependency": "packages/device_access/lib/src/models.dart"
+    },
+    {
+      "source": "packages/device_access/lib/src/transport.dart",
+      "dependency": "packages/device_access/lib/src/submission.dart"
+    },
+    {
+      "source": "packages/device_access/lib/src/submission_journal.dart",
+      "dependency": "packages/device_access/lib/src/models.dart"
+    },
+    {
+      "source": "packages/device_access/lib/src/submission_journal.dart",
+      "dependency": "packages/device_access/lib/src/submission.dart"
+    },
+    {
+      "source": "packages/device_access/lib/src/submission_journal.dart",
+      "dependency": "packages/device_access/lib/src/transport.dart"
+    },
+    {
+      "source": "apps/child/lib/core/submission_receiver.dart",
+      "dependency": "apps/child/lib/platform/access_database.dart"
+    },
+    {
+      "source": "apps/child/lib/core/submission_receiver.dart",
+      "dependency": "apps/child/lib/platform/secret_store.dart"
+    },
+    {
+      "source": "apps/child/lib/core/submission_receiver.dart",
+      "dependency": "apps/child/lib/core/access.dart"
+    },
+    {
+      "source": "apps/child/lib/core/submission_receiver.dart",
+      "dependency": "apps/child/lib/core/environment.dart"
+    },
+    {
+      "source": "apps/child/lib/core/submission_receiver.dart",
+      "dependency": "apps/child/lib/core/submissions.dart"
+    },
+    {
+      "source": "apps/child/lib/core/session.dart",
+      "dependency": "apps/child/lib/core/access.dart"
+    },
+    {
+      "source": "apps/child/lib/core/session.dart",
+      "dependency": "apps/child/lib/core/submissions.dart"
+    },
+    {
+      "source": "apps/child/lib/ui/submission_section.dart",
+      "dependency": "apps/child/lib/core/session.dart"
+    },
+    {
+      "source": "apps/child/lib/ui/submission_section.dart",
+      "dependency": "apps/child/lib/ui/design.dart"
+    },
+    {
+      "source": "apps/child/lib/ui/submission_section.dart",
+      "dependency": "apps/child/lib/ui/submission_dialogs.dart"
+    },
+    {
+      "source": "apps/child/lib/ui/submission_section.dart",
+      "dependency": "apps/child/lib/ui/submission_display.dart"
+    },
+    {
+      "source": "apps/child/lib/ui/submission_dialogs.dart",
+      "dependency": "apps/child/lib/core/session.dart"
+    },
+    {
+      "source": "apps/child/lib/ui/submission_dialogs.dart",
+      "dependency": "apps/child/lib/ui/design.dart"
+    },
+    {
+      "source": "apps/child/lib/ui/submission_dialogs.dart",
+      "dependency": "apps/child/lib/ui/submission_display.dart"
+    },
+    {
+      "source": "apps/child/test/support/submission_fixture.dart",
+      "dependency": "apps/child/test/support/identity_fixture.dart"
+    }
+  ],
+  "files": [
+    {
+      "path": "apps/child/lib/core/session.dart",
+      "sha256": "68dc78db93497f465376555435b9c0de70e35ff7ee4f8cf32ffd680c3b537bc4",
+      "bytes": 42154
+    },
+    {
+      "path": "apps/child/lib/core/submission_receiver.dart",
+      "sha256": "d40bc8bb51d05dbc9d9063cc0fe6e69776a3975c2bb5d5ed3d93ae20f5622723",
+      "bytes": 17035
+    },
+    {
+      "path": "apps/child/lib/core/submissions.dart",
+      "sha256": "269f11530f553015992b97d6e4f6e216387e507abeccf7489414cccda7461fe6",
+      "bytes": 1539
+    },
+    {
+      "path": "apps/child/lib/ui/submission_dialogs.dart",
+      "sha256": "067501142a0d3e8b73d73b546b1ed010da0ac7ce96a16e639ac2b5f0336a9de8",
+      "bytes": 31172
+    },
+    {
+      "path": "apps/child/lib/ui/submission_display.dart",
+      "sha256": "fe3ccf2344a13be71b6c0f37b1092c4092a86f7301eed3fd82152c0a26c5d8d7",
+      "bytes": 3862
+    },
+    {
+      "path": "apps/child/lib/ui/submission_section.dart",
+      "sha256": "a674093448e4744825c69c9cb8bc6f58583a7805862973a5414b365587a928c6",
+      "bytes": 8798
+    },
+    {
+      "path": "apps/child/test/support/submission_fixture.dart",
+      "sha256": "a0addca04fbe90d96f91efb86d494f848f4a11050a2de61097e94684f5d78cb2",
+      "bytes": 6143
+    },
+    {
+      "path": "apps/guardian/lib/core/api.dart",
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641",
+      "bytes": 22640
+    },
+    {
+      "path": "apps/guardian/lib/core/bounded_json.dart",
+      "sha256": "ca3bf7b46cc346bd003f9fcff712611d38cd55655bf492e975fc50e79bd1180b",
+      "bytes": 6327
+    },
+    {
+      "path": "apps/guardian/lib/core/browser_publication_journal.dart",
+      "sha256": "306a1b7b75d716e07def7b067e6b12859d444d2d8fcffeb45b2263c12305e885",
+      "bytes": 18885
+    },
+    {
+      "path": "apps/guardian/lib/core/policy_publication.dart",
+      "sha256": "918374d7a884917e0bf0b8e7d9dda63600031a018d25ac783fec0a2f2f4a6cd6",
+      "bytes": 14949
+    },
+    {
+      "path": "apps/guardian/lib/core/policy_publication_repository.dart",
+      "sha256": "29a99e6abf117e1e8053c4d4ee936b267644d4b684452468b2791f66094bcb85",
+      "bytes": 7015
+    },
+    {
+      "path": "apps/guardian/lib/core/publication_journal.dart",
+      "sha256": "d3fc867f57c30a7f66c13f79158b773c09aaac7b3399ca38a3b9310bb063b69d",
+      "bytes": 2119
+    },
+    {
+      "path": "apps/guardian/lib/pages/audit_page.dart",
+      "sha256": "c74c3870119945e1550b8d7ddaaa60b79630a3a7520249a2706ac7ff005f1e7a",
+      "bytes": 4008
+    },
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "sha256": "c33c96fac1c22adf0fadf51f1ac49f66d0d8d12927cfdc6850b3502a495273cb",
+      "bytes": 84143
+    },
+    {
+      "path": "apps/guardian/lib/pages/policy_details_entry.dart",
+      "sha256": "621f9aeb686a2cc89d571a6916ccc07b54afa33df555f339b783b8f5d00bca0a",
+      "bytes": 23683
+    },
+    {
+      "path": "apps/guardian/lib/pages/policy_publication_entry.dart",
+      "sha256": "2421071dadbcb6dc7ed39f98b9b68044819084a87b17d7ed4ee2f12679076a94",
+      "bytes": 8078
+    },
+    {
+      "path": "apps/guardian/lib/ui/audit_view.dart",
+      "sha256": "9c446b177a5bf9f3badb63b9f011d19a87c92eecd0303213d3bef34a5590ffc6",
+      "bytes": 14665
+    },
+    {
+      "path": "apps/guardian/lib/ui/policy_publication_controller.dart",
+      "sha256": "8f7d4892ce93f6ebe1b590893cc775a1d8584716ac66ab2ac1856cd17485438a",
+      "bytes": 22058
+    },
+    {
+      "path": "apps/guardian/lib/ui/policy_publication_dialog.dart",
+      "sha256": "6a746047e390e4cd20f9bba1ce14349f8d7587d7d325fa0f3e181725ba2fa6ab",
+      "bytes": 21029
+    },
+    {
+      "path": "apps/guardian/test/policy_publication_controller_fixtures.dart",
+      "sha256": "62cd66921acd74d479c2e9c4d4a89da19b2c35e687b9571aa0e1ddb73a321ede",
+      "bytes": 12357
+    },
+    {
+      "path": "apps/guardian/test/policy_publication_entry_test.dart",
+      "sha256": "d831fc95f0bab7e19a5d122e28adaec46f2a1f1393520ae967c29c9bfee6b96b",
+      "bytes": 13398
+    },
+    {
+      "path": "apps/guardian/test/policy_publication_test.dart",
+      "sha256": "d3cbc2c6d1bbba435557a59613033250457c1e7387613756a289a08ca5482781",
+      "bytes": 12931
+    },
+    {
+      "path": "apps/guardian/test/publication_test_journal.dart",
+      "sha256": "f4cc1ee665c63045190753417dbbed5a6d61b2c1b2a0461a0ab897a382867acf",
+      "bytes": 8673
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/shared/OpenApiConfiguration.java",
+      "sha256": "500f0925b70ae2afd1398fd2d03296a48295b8f97f7ed87dddc8e2e6ad8102ba",
+      "bytes": 6479
+    },
+    {
+      "path": "packages/device_access/lib/src/submission_journal.dart",
+      "sha256": "06cbd9d249cb49ed67ea2e501a5ef4c1883d93eec2b4e7e2770f02c510312dcc",
+      "bytes": 19219
+    },
+    {
+      "path": "packages/device_access/lib/src/transport.dart",
+      "sha256": "74cbd175b329fc426360814665ce80dc9ade2ac7b31e8d17fa77a9faf41933ee",
+      "bytes": 18456
+    }
+  ],
+  "limitations": [
+    "Backend and Parent implementation is still in progress.",
+    "Historical R4 input hashes do not represent these new sources.",
+    "Static reading is not compilation, transactional validation, or a passing test."
+  ]
+}

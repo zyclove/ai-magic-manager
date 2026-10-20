@@ -225,7 +225,12 @@ void main() {
       expect(restored.intent.previewExpiresAt, 2000);
       expect(restored.attempt, 3);
       expect(restored.toJson()['phase'],
-          phase == PublicationPhase.unknown ? 'UNKNOWN' : 'REAUTH_REQUIRED');
+          switch (phase) {
+            PublicationPhase.unknown => 'UNKNOWN',
+            PublicationPhase.reauthenticationRequired => 'REAUTH_REQUIRED',
+            PublicationPhase.resultExpired => 'RESULT_EXPIRED',
+            PublicationPhase.resultErased => 'RESULT_ERASED',
+          });
     }
   });
 

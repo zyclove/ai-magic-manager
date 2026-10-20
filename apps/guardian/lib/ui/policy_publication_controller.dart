@@ -22,6 +22,10 @@ enum PublicationViewPhase {
   loadingLocal,
   cancelling,
   previewInvalid,
+  resultExpired,
+  resultErased,
+  clearingTerminal,
+  terminalAcknowledged,
   revoked,
 }
 
@@ -39,10 +43,12 @@ class PolicyPublicationController extends ChangeNotifier {
   late final PublicationRequests _requests =
       repository.scoped(_requestCurrent, onDenied: _onDenied);
 
-  PublicationIntent _intent;
+  PublicationIntent? _intent;
   PublicationPending? _pending;
   PublicationReceipt? _receipt;
   Object? _error;
+  PublicationPending? _terminalOriginal;
+  bool _terminalDurable = false;
   late PublicationViewPhase _phase;
   bool _active = true, _disposed = false;
   int _generation = 0, _actionEpoch = 0;
@@ -67,12 +73,14 @@ class PolicyPublicationController extends ChangeNotifier {
     }
     _phase =
         pending == null ? PublicationViewPhase.fresh : _restoredPhase(pending);
+    _terminalDurable = pending?.phase.terminal == true;
     accessChanges?.addListener(_accessChanged);
     _accessCurrent();
     _scheduleExpiry();
   }
 
-  PublicationIntent get intent => _intent;
+  PublicationIntent get intent => _intent ??
+      (throw const ApiFailure(409, 'PUBLICATION_RESULT_TERMINAL'));
   PublicationPending? get pending => hasAccess ? _pending : null;
   PublicationReceipt? get receipt => hasAccess ? _receipt : null;
   Object? get error => _error;
@@ -85,7 +93,17 @@ class PolicyPublicationController extends ChangeNotifier {
 
   bool get hasAccess => _accessCurrent();
   bool get previewFresh =>
-      _intent.previewExpiresAt > clock().millisecondsSinceEpoch;
+      (_intent?.previewExpiresAt ?? 0) > clock().millisecondsSinceEpoch;
+  PublicationTerminalReason? get terminalReason => !hasAccess ? null :
+      switch (_pending?.phase) {
+        PublicationPhase.resultExpired => PublicationTerminalReason.expired,
+        PublicationPhase.resultErased => PublicationTerminalReason.erased,
+        _ => null,
+      };
+  bool get confirmedSuccess => hasAccess &&
+      (_receipt != null || _pending?.confirmedSuccess == true);
+  bool get canReviewTerminal => hasAccess && !busy && terminalReason != null;
+  bool get canAcknowledgeTerminal => canReviewTerminal;
   bool get busy =>
       hasAccess &&
       const {
@@ -93,11 +111,14 @@ class PolicyPublicationController extends ChangeNotifier {
         PublicationViewPhase.querying,
         PublicationViewPhase.loadingLocal,
         PublicationViewPhase.cancelling,
+        PublicationViewPhase.clearingTerminal,
       }.contains(_phase);
 
   bool get canConfirm =>
       hasAccess &&
       !busy &&
+      terminalReason == null &&
+      _phase != PublicationViewPhase.terminalAcknowledged &&
       previewFresh &&
       const {
         PublicationViewPhase.fresh,
@@ -138,13 +159,19 @@ class PolicyPublicationController extends ChangeNotifier {
   bool get canRepreview =>
       hasAccess &&
       !busy &&
+      terminalReason == null &&
+      _phase != PublicationViewPhase.terminalAcknowledged &&
       (_phase == PublicationViewPhase.previewInvalid || !previewFresh) &&
       (_pending == null || canCancelNotSubmitted);
 
   PublicationViewPhase _restoredPhase(PublicationPending value) =>
-      value.phase == PublicationPhase.reauthenticationRequired
-          ? PublicationViewPhase.retryableNotSubmitted
-          : PublicationViewPhase.unknown;
+      switch (value.phase) {
+        PublicationPhase.reauthenticationRequired =>
+          PublicationViewPhase.retryableNotSubmitted,
+        PublicationPhase.resultExpired => PublicationViewPhase.resultExpired,
+        PublicationPhase.resultErased => PublicationViewPhase.resultErased,
+        PublicationPhase.unknown => PublicationViewPhase.unknown,
+      };
 
   bool _accessCurrent() {
     if (_disposed || !_active) return false;
@@ -178,6 +205,7 @@ class PolicyPublicationController extends ChangeNotifier {
     _phase = PublicationViewPhase.revoked;
     _pending = null;
     _receipt = null;
+    _terminalOriginal = null;
     _error = const ApiFailure(409, 'WORKSPACE_CHANGED');
     _expiryTimer?.cancel();
     _expiryTimer = null;
@@ -240,12 +268,14 @@ class PolicyPublicationController extends ChangeNotifier {
     }
     _intent = record.intent;
     _pending = record;
+    _terminalDurable = record.phase.terminal;
+    if (_terminalDurable) _terminalOriginal = null;
   }
 
   Future<void> submit() async {
     if (!hasAccess || busy || _phase != PublicationViewPhase.confirming) return;
     final before = _pending;
-    final originalIntent = _intent;
+    final originalIntent = intent;
     final generation = _start(PublicationViewPhase.submitting);
     var reserving = false, publicationInvoked = false;
     try {
@@ -279,6 +309,14 @@ class PolicyPublicationController extends ChangeNotifier {
       final receipt = await _requests.publish(reservation.record);
       if (_canComplete(generation)) {
         await _acceptReceipt(generation, reservation.record, receipt);
+      }
+    } on PublicationResultTerminal catch (failure) {
+      if (_canComplete(generation)) {
+        if (!publicationInvoked || failure.record != _pending) {
+          _requestFailed(const ApiFailure(502, 'INVALID_POLICY_PUBLICATION_RESPONSE'));
+        } else {
+          await _acceptTerminal(generation, failure);
+        }
       }
     } on PublicationReauthenticationRequired catch (failure) {
       if (_canComplete(generation)) {
@@ -380,8 +418,118 @@ class PolicyPublicationController extends ChangeNotifier {
       } else {
         await _acceptReceipt(generation, original, receipt);
       }
+    } on PublicationResultTerminal catch (failure) {
+      if (_canComplete(generation)) {
+        if (failure.record != original) {
+          _requestFailed(const ApiFailure(502, 'INVALID_POLICY_PUBLICATION_RESPONSE'));
+        } else {
+          await _acceptTerminal(generation, failure);
+        }
+      }
     } catch (failure) {
       if (_canComplete(generation)) _requestFailed(failure);
+    }
+  }
+
+  Future<void> _acceptTerminal(int generation,
+      PublicationResultTerminal failure) async {
+    _requireCurrent(generation);
+    final original = failure.record;
+    _terminalOriginal = original;
+    _terminalDurable = false;
+    _pending = PublicationPending(intent: original.intent,
+        phase: failure.reason.phase, attempt: original.attempt,
+        confirmedSuccess: _receipt != null || original.confirmedSuccess);
+    _phase = PublicationViewPhase.clearingTerminal;
+    _emit();
+    try {
+      await _persistTerminal(generation);
+      if (!_canComplete(generation)) return;
+      _error = null;
+    } catch (failure) {
+      if (!_canComplete(generation)) return;
+      _error = failure;
+    }
+    _phase = _restoredPhase(_pending!);
+    _emit();
+  }
+
+  Future<void> _persistTerminal(int generation) async {
+    if (_terminalDurable) return;
+    final original = _terminalOriginal, terminal = _pending;
+    if (original == null || terminal == null || !terminal.phase.terminal) {
+      throw const ApiFailure(409, 'PUBLICATION_PENDING_CHANGED');
+    }
+    final persisted = await journal.markResultTerminalIfSame(original,
+        terminal.phase == PublicationPhase.resultExpired
+            ? PublicationTerminalReason.expired : PublicationTerminalReason.erased,
+        confirmedSuccess: terminal.confirmedSuccess,
+        isCurrent: () => _canComplete(generation));
+    _requireCurrent(generation);
+    if (persisted.intent != terminal.intent ||
+        !(persisted.phase == terminal.phase ||
+          (terminal.phase == PublicationPhase.resultExpired &&
+           persisted.phase == PublicationPhase.resultErased)) ||
+        persisted.attempt != terminal.attempt ||
+        (terminal.confirmedSuccess && !persisted.confirmedSuccess)) {
+      throw const ApiFailure(409, 'INVALID_POLICY_PUBLICATION_RECORD');
+    }
+    _adopt(persisted);
+    _terminalDurable = true;
+    _terminalOriginal = null;
+  }
+
+  /// User-confirmed local cleanup; never calls the network or creates a key.
+  Future<bool> acknowledgeTerminal() async {
+    if (!canAcknowledgeTerminal) return false;
+    final expectedBefore = _pending!;
+    final generation = _start(PublicationViewPhase.clearingTerminal);
+    try {
+      await _persistTerminal(generation);
+      _requireCurrent(generation);
+      final original = _pending!;
+      final marker = await journal.acknowledgeTerminalIfSame(original,
+          acknowledgedAt: clock().millisecondsSinceEpoch,
+          isCurrent: () => _canComplete(generation));
+      if (!_canComplete(generation)) return false;
+      if (marker.ownerKey != _owner.key || marker.policyId != _policyId ||
+          marker.requestDigest != publicationRequestDigest(original.intent) ||
+          marker.reason.phase != original.phase ||
+          (original.confirmedSuccess && !marker.confirmedSuccess)) {
+        throw const ApiFailure(409, 'INVALID_POLICY_PUBLICATION_RECORD');
+      }
+      _pending = null;
+      _intent = null;
+      _receipt = null;
+      _terminalOriginal = null;
+      _error = null;
+      _phase = PublicationViewPhase.terminalAcknowledged;
+      _emit();
+      return true;
+    } catch (failure) {
+      if (_canComplete(generation)) {
+        if (failure is ApiFailure && failure.code == 'PUBLICATION_PENDING_CHANGED') {
+          try {
+            final current = await journal.read(_owner, _policyId);
+            if (!_canComplete(generation)) return false;
+            if (current != null) {
+              if (current.intent != expectedBefore.intent) _receipt = null;
+              _adopt(current);
+            } else {
+              // Another tab may already have acknowledged this original. The
+              // next explicit local attempt must verify its minimal marker.
+              _terminalDurable = false;
+              _terminalOriginal = expectedBefore;
+            }
+          } catch (_) {
+            if (!_canComplete(generation)) return false;
+          }
+        }
+        _phase = _restoredPhase(_pending!);
+        _error = failure;
+        _emit();
+      }
+      return false;
     }
   }
 
@@ -416,6 +564,8 @@ class PolicyPublicationController extends ChangeNotifier {
       if (!_canComplete(generation)) return;
       _receipt = null;
       _pending = null;
+      _terminalOriginal = null;
+      _terminalDurable = record?.phase.terminal == true;
       if (record == null) {
         _phase = previewFresh
             ? PublicationViewPhase.fresh
@@ -486,7 +636,7 @@ class PolicyPublicationController extends ChangeNotifier {
           PublicationViewPhase.confirming,
           PublicationViewPhase.retryableNotSubmitted,
         }.contains(_phase)) return;
-    final remaining = _intent.previewExpiresAt - clock().millisecondsSinceEpoch;
+    final remaining = intent.previewExpiresAt - clock().millisecondsSinceEpoch;
     if (remaining <= 0) {
       _phase = PublicationViewPhase.previewInvalid;
       _error = const ApiFailure(409, 'PREVIEW_EXPIRED');
@@ -519,6 +669,8 @@ class PolicyPublicationController extends ChangeNotifier {
     accessChanges?.removeListener(_accessChanged);
     _pending = null;
     _receipt = null;
+    _terminalOriginal = null;
+    _intent = null;
     _error = null;
     super.dispose();
   }

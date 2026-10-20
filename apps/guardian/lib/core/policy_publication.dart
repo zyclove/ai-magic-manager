@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:crypto/crypto.dart';
 
 import 'api.dart';
 
@@ -246,11 +247,32 @@ final class PublicationReceipt {
 
 enum PublicationPhase {
   unknown('UNKNOWN'),
-  reauthenticationRequired('REAUTH_REQUIRED');
+  reauthenticationRequired('REAUTH_REQUIRED'),
+  resultExpired('RESULT_EXPIRED'),
+  resultErased('RESULT_ERASED');
 
   final String value;
   const PublicationPhase(this.value);
+
+  bool get terminal =>
+      this == resultExpired || this == resultErased;
 }
+
+enum PublicationTerminalReason {
+  expired,
+  erased;
+
+  PublicationPhase get phase => this == expired
+      ? PublicationPhase.resultExpired
+      : PublicationPhase.resultErased;
+}
+
+/// Opaque fingerprint of an original request, never a new replay credential.
+String publicationRequestDigest(PublicationIntent intent) => sha256
+    .convert(utf8.encode(jsonEncode([
+      intent.owner.key, intent.policyId, intent.idempotencyKey,
+    ])))
+    .toString();
 
 /// The durable phase and monotonic attempt fence are part of every CAS. A late
 /// 401 or successful-response cleanup must never change a later attempt.
@@ -258,11 +280,14 @@ final class PublicationPending {
   final PublicationIntent intent;
   final PublicationPhase phase;
   final int attempt;
+  final bool confirmedSuccess;
   PublicationPending(
       {required this.intent,
       this.phase = PublicationPhase.unknown,
-      this.attempt = 1}) {
-    if (!_integer(attempt, 1, publicationMaximumSafeInteger)) _invalidRecord();
+    this.attempt = 1,
+    this.confirmedSuccess = false}) {
+    if (!_integer(attempt, 1, publicationMaximumSafeInteger) ||
+        (confirmedSuccess && !phase.terminal)) _invalidRecord();
   }
 
   Map<String, Object> toJson() => Map.unmodifiable({
@@ -270,6 +295,7 @@ final class PublicationPending {
         'intent': intent.toJson(),
         'phase': phase.value,
         'attempt': attempt,
+        if (phase.terminal) 'confirmedSuccess': confirmedSuccess,
       });
 
   String encode() {
@@ -291,13 +317,19 @@ final class PublicationPending {
     }
     try {
       final raw = jsonDecode(text);
-      if (!_fields(raw, {'schema', 'intent', 'phase', 'attempt'})) {
+      final terminal = raw is Json &&
+          const {'RESULT_EXPIRED', 'RESULT_ERASED'}.contains(raw['phase']);
+      if (!_fields(raw, {
+        'schema', 'intent', 'phase', 'attempt',
+        if (terminal) 'confirmedSuccess',
+      })) {
         _invalidRecord();
       }
       final value = raw as Json;
       if (value['schema'] is! int ||
           value['schema'] != 1 ||
-          value['attempt'] is! int) {
+          value['attempt'] is! int ||
+          (terminal && value['confirmedSuccess'] is! bool)) {
         _invalidRecord();
       }
       final intent = PublicationIntent.parse(value['intent']);
@@ -308,7 +340,8 @@ final class PublicationPending {
           (entry) => entry.value == value['phase'],
           orElse: _invalidRecord);
       return PublicationPending(
-          intent: intent, phase: phase, attempt: value['attempt']);
+          intent: intent, phase: phase, attempt: value['attempt'],
+          confirmedSuccess: terminal && value['confirmedSuccess'] == true);
     } catch (_) {
       // Stored text is untrusted. Never attach payloads or parsing causes.
       _invalidRecord();
@@ -320,9 +353,77 @@ final class PublicationPending {
       other is PublicationPending &&
       intent == other.intent &&
       phase == other.phase &&
-      attempt == other.attempt;
+      attempt == other.attempt && confirmedSuccess == other.confirmedSuccess;
   @override
-  int get hashCode => Object.hash(intent, phase, attempt);
+  int get hashCode => Object.hash(intent, phase, attempt, confirmedSuccess);
+}
+
+/// Redacted durable fence. Contains no original key, preview, payload or receipt.
+final class PublicationTerminalMarker {
+  final String ownerKey, policyId, requestDigest;
+  final PublicationTerminalReason reason;
+  final int acknowledgedAt;
+  final bool confirmedSuccess;
+
+  PublicationTerminalMarker({required this.ownerKey, required this.policyId,
+    required this.requestDigest, required this.reason,
+    required this.acknowledgedAt, required this.confirmedSuccess}) {
+    if (ownerKey.isEmpty || ownerKey.length > 12000 ||
+        !RegExp(r'^[A-Za-z0-9_-]+$').hasMatch(ownerKey) ||
+        !isPublicationOpaqueId(policyId) || requestDigest.length != 64 ||
+        !_hash.hasMatch(requestDigest) ||
+        !_integer(acknowledgedAt, 1, publicationMaximumTimestamp)) {
+      _invalidRecord();
+    }
+  }
+
+  String encode() {
+    final value = jsonEncode({
+      'schema': 1, 'ownerKey': ownerKey, 'policyId': policyId,
+      'requestDigest': requestDigest, 'reason': reason.name,
+      'acknowledgedAt': acknowledgedAt, 'confirmedSuccess': confirmedSuccess,
+    });
+    if (utf8.encode(value).length > publicationMaximumRecordBytes) _invalidRecord();
+    return value;
+  }
+
+  static PublicationTerminalMarker decode(String text,
+      {required PublicationIntent intent}) {
+    if (text.isEmpty || utf8.encode(text).length > publicationMaximumRecordBytes) {
+      _invalidRecord();
+    }
+    try {
+      final raw = jsonDecode(text);
+      if (!_fields(raw, {'schema', 'ownerKey', 'policyId', 'requestDigest',
+          'reason', 'acknowledgedAt', 'confirmedSuccess'})) _invalidRecord();
+      final value = raw as Json;
+      if (value['schema'] != 1 || value['schema'] is! int ||
+          value['ownerKey'] != intent.owner.key ||
+          value['policyId'] != intent.policyId ||
+          value['requestDigest'] != publicationRequestDigest(intent) ||
+          value['acknowledgedAt'] is! int || value['confirmedSuccess'] is! bool) {
+        _invalidRecord();
+      }
+      return PublicationTerminalMarker(ownerKey: value['ownerKey'],
+          policyId: value['policyId'], requestDigest: value['requestDigest'],
+          reason: PublicationTerminalReason.values.firstWhere(
+              (entry) => entry.name == value['reason'], orElse: _invalidRecord),
+          acknowledgedAt: value['acknowledgedAt'],
+          confirmedSuccess: value['confirmedSuccess']);
+    } catch (_) {
+      _invalidRecord();
+    }
+  }
+
+  @override
+  bool operator ==(Object other) => other is PublicationTerminalMarker &&
+      ownerKey == other.ownerKey && policyId == other.policyId &&
+      requestDigest == other.requestDigest && reason == other.reason &&
+      acknowledgedAt == other.acknowledgedAt &&
+      confirmedSuccess == other.confirmedSuccess;
+  @override
+  int get hashCode => Object.hash(ownerKey, policyId, requestDigest, reason,
+      acknowledgedAt, confirmedSuccess);
 }
 
 final class PublicationReservation {

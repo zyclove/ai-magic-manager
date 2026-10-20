@@ -41,9 +41,9 @@ class _Harness {
   late OwnedDialogRoute<void> parent;
   PolicyPublicationController? controller;
   ModalRoute<dynamic>? publicationRoute;
-  Future<bool>? flow;
+  Future<PublicationDialogResult>? flow;
   bool completed = false, coverCompleted = false;
-  bool? result;
+  PublicationDialogResult? result;
   Object? failure;
   int authentications = 0;
   bool? parentCurrentAtAuthentication, publicationActiveAtAuthentication;
@@ -182,7 +182,7 @@ void main() {
         await tester.tap(find.text('关闭'));
         await _frames(tester);
         expect(harness.completed, isTrue);
-        expect(harness.result, isFalse);
+        expect(harness.result?.reason, PublicationExitReason.closed);
         expect(harness.failure, isNull);
         expect(tester.takeException(), isNull);
       } finally {
@@ -288,7 +288,7 @@ void main() {
       await _frames(tester, 2);
       expect(harness.authentications, 1);
       expect(harness.completed, isTrue);
-      expect(harness.result, isFalse);
+      expect(harness.result?.reason, PublicationExitReason.closed);
       expect(harness.failure, isNull);
       expect(tester.takeException(), isNull);
     } finally {
@@ -334,7 +334,7 @@ void main() {
       expect(harness.transport.posts, isEmpty);
       expect(harness.transport.lookups, isEmpty);
       expect(harness.completed, isTrue);
-      expect(harness.result, isTrue);
+      expect(harness.result?.reason, PublicationExitReason.repreview);
       expect(harness.parent.isCurrent, isTrue);
       expect(harness.failure, isNull);
       expect(tester.takeException(), isNull);

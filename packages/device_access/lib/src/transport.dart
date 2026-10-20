@@ -7,6 +7,20 @@ import 'receipt.dart';
 import 'models.dart';
 import 'submission.dart';
 
+/// Evidence from a complete authenticated submission response. Only this
+/// transport can construct it; a code string alone never ends an operation.
+final class AccessSubmissionResultUnavailable {
+  final String code, kind, idempotencyKey;
+  final AccessDeviceContext context;
+  final AccessSubmissionInput? input;
+  final String? requestId;
+  final int? version;
+  const AccessSubmissionResultUnavailable._(this.code, this.kind,
+      this.idempotencyKey, this.context, this.input, this.requestId, this.version);
+  @override
+  String toString() => 'AccessSubmissionResultUnavailable($code)';
+}
+
 /// No server copy, credentials, response bodies or transport causes.
 class AccessTransportFailure implements Exception {
   final String code;
@@ -14,12 +28,21 @@ class AccessTransportFailure implements Exception {
   final String? correlationId;
   final Duration? retryAfter;
   final bool retryable, outcomeUnknown;
+  final AccessSubmissionResultUnavailable? resultUnavailable;
   const AccessTransportFailure(this.code,
       {this.status,
       this.correlationId,
       this.retryAfter,
       this.retryable = false,
-      this.outcomeUnknown = false});
+      this.outcomeUnknown = false}) : resultUnavailable = null;
+  AccessTransportFailure._resultUnavailable(
+      AccessSubmissionResultUnavailable evidence, {this.correlationId})
+      : code = evidence.code,
+        status = 410,
+        retryAfter = null,
+        retryable = false,
+        outcomeUnknown = false,
+        resultUnavailable = evidence;
   @override
   String toString() => 'AccessTransportFailure($code)';
 }
@@ -75,7 +98,8 @@ class DeviceAccessTransport {
       String method, String path, T Function(Map<String, dynamic>) parse,
       {Map<String, String>? query,
       Map<String, dynamic>? body,
-      Map<String, String> headers = const {}}) async {
+      Map<String, String> headers = const {},
+      AccessSubmissionResultUnavailable Function(String)? unavailable}) async {
     if (_closed) {
       throw const AccessTransportFailure('CLIENT_CLOSED');
     }
@@ -143,11 +167,26 @@ class DeviceAccessTransport {
           value = json;
         }
       } on FormatException {/* Error handling does not trust response copy. */}
+      final contentType = response.headers['content-type']
+          ?.split(';')
+          .first
+          .trim()
+          .toLowerCase();
       if (response.statusCode < 200 || response.statusCode >= 300) {
         final status = response.statusCode;
         final raw = value?['errorCode'];
-        final code = _safeCodes.contains(raw) ? raw as String : 'HTTP_FAILURE';
         final correlation = value?['correlationId'];
+        final unavailableCode = raw == 'IDEMPOTENCY_RESULT_EXPIRED' ||
+            raw == 'IDEMPOTENCY_RESPONSE_ERASED';
+        if (unavailableCode && unavailable != null && status == 410 &&
+            value?['status'] is int && value?['status'] == 410 &&
+            {'application/json', 'application/problem+json'}.contains(contentType) &&
+            _completeLength(response.headers['content-length'], bytes.length)) {
+          throw AccessTransportFailure._resultUnavailable(unavailable(raw as String),
+              correlationId: accessId(correlation) ? correlation : null);
+        }
+        final code = !unavailableCode && _safeCodes.contains(raw)
+            ? raw as String : 'HTTP_FAILURE';
         throw AccessTransportFailure(code,
             status: status,
             correlationId: accessId(correlation) ? correlation : null,
@@ -155,11 +194,6 @@ class DeviceAccessTransport {
             retryAfter: _retryAfter(response.headers['retry-after']),
             outcomeUnknown: mutation && status >= 500);
       }
-      final contentType = response.headers['content-type']
-          ?.split(';')
-          .first
-          .trim()
-          .toLowerCase();
       if (value == null || contentType != 'application/json') {
         throw const FormatException('Invalid JSON response');
       }
@@ -311,7 +345,9 @@ class DeviceAccessTransport {
         throw const AccessFailure('TRANSPORT_MISMATCH');
       }
       return value;
-    }, body: input.toJson(), headers: {'Idempotency-Key': idempotencyKey});
+    }, body: input.toJson(), headers: {'Idempotency-Key': idempotencyKey},
+        unavailable: (code) => AccessSubmissionResultUnavailable._(
+            code, 'CREATE', idempotencyKey, context, input, null, null));
   }
 
   Future<AccessSubmission> cancelSubmission(String id,
@@ -327,7 +363,9 @@ class DeviceAccessTransport {
       value.requireContext(context);
       if (value.id != id) throw const AccessFailure('TRANSPORT_MISMATCH');
       return value;
-    }, headers: {'Idempotency-Key': idempotencyKey, 'If-Match': '"$version"'});
+    }, headers: {'Idempotency-Key': idempotencyKey, 'If-Match': '"$version"'},
+        unavailable: (code) => AccessSubmissionResultUnavailable._(
+            code, 'CANCEL', idempotencyKey, context, null, id, version));
   }
 
   /// Look up an existing original operation without creating or renewing it.
@@ -341,7 +379,9 @@ class DeviceAccessTransport {
         throw const AccessFailure('TRANSPORT_MISMATCH');
       }
       return value;
-    }, body: original.toJson(), headers: {'Idempotency-Key': idempotencyKey});
+    }, body: original.toJson(), headers: {'Idempotency-Key': idempotencyKey},
+        unavailable: (code) => AccessSubmissionResultUnavailable._(
+            code, 'CREATE', idempotencyKey, context, original, null, null));
   }
 
   Future<AccessSubmission> recoverCancellation(String id,
@@ -361,7 +401,9 @@ class DeviceAccessTransport {
         throw const AccessFailure('TRANSPORT_MISMATCH');
       }
       return value;
-    }, headers: {'Idempotency-Key': idempotencyKey, 'If-Match': '"$version"'});
+    }, headers: {'Idempotency-Key': idempotencyKey, 'If-Match': '"$version"'},
+        unavailable: (code) => AccessSubmissionResultUnavailable._(
+            code, 'CANCEL', idempotencyKey, context, null, id, version));
   }
 
   void _submissionPageInput(String? cursor, int limit) {
@@ -375,6 +417,10 @@ class DeviceAccessTransport {
       throw ArgumentError('Invalid idempotency key');
     }
   }
+
+  bool _completeLength(String? declared, int received) => declared == null ||
+      RegExp(r'^[0-9]+$').hasMatch(declared) &&
+          int.tryParse(declared) == received;
 
   void close() {
     if (_closed) {
@@ -444,6 +490,8 @@ const _safeCodes = {
   'IDEMPOTENCY_KEY_REQUIRED',
   'IDEMPOTENCY_KEY_CONFLICT',
   'IDEMPOTENCY_KEY_EXPIRED',
+  'IDEMPOTENCY_RESULT_EXPIRED',
+  'IDEMPOTENCY_RESPONSE_ERASED',
   'ACCESS_RECOVERY_UNAVAILABLE',
   'REQUEST_IN_PROGRESS',
   'VERSION_REQUIRED',

@@ -1,0 +1,134 @@
+{
+  "schema": "1.0.0",
+  "reviewer": "dashboard_scope_phase",
+  "createdAt": "2026-10-20T14:35:36.6441012Z",
+  "status": "STATIC_REVIEW_NO_CONFIRMED_REMAINING_P1_P2_IN_ASSIGNED_SCOPE",
+  "acceptedForExecution": false,
+  "sdkRun": false,
+  "testsRun": false,
+  "productionFilesWritten": false,
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\guardian\\after-production-r4-final.json",
+    "fileCount": 13,
+    "sha256": "fb795a240534d6864d1caef850a4ffb4106bc62bd060bc9d2334ae3f369bb522"
+  },
+  "adapterManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\guardian\\after-test-adapters-r1.json",
+    "fileCount": 4,
+    "sha256": "99900f5dbea983e97a1af170176b2d74431945938ef79049d59ae49d8e1dfc45"
+  },
+  "verifiedFiles": [
+    {
+      "path": "apps/guardian/lib/core/policy_publication_repository.dart",
+      "sha256": "29a99e6abf117e1e8053c4d4ee936b267644d4b684452468b2791f66094bcb85",
+      "mainMatchesSnapshot": true
+    },
+    {
+      "path": "apps/guardian/lib/core/publication_journal.dart",
+      "sha256": "d3fc867f57c30a7f66c13f79158b773c09aaac7b3399ca38a3b9310bb063b69d",
+      "mainMatchesSnapshot": true
+    },
+    {
+      "path": "apps/guardian/lib/core/browser_publication_journal.dart",
+      "sha256": "306a1b7b75d716e07def7b067e6b12859d444d2d8fcffeb45b2263c12305e885",
+      "mainMatchesSnapshot": true
+    },
+    {
+      "path": "apps/guardian/lib/ui/policy_publication_controller.dart",
+      "sha256": "8f7d4892ce93f6ebe1b590893cc775a1d8584716ac66ab2ac1856cd17485438a",
+      "mainMatchesSnapshot": true
+    },
+    {
+      "path": "apps/guardian/lib/ui/policy_publication_dialog.dart",
+      "sha256": "6a746047e390e4cd20f9bba1ce14349f8d7587d7d325fa0f3e181725ba2fa6ab",
+      "mainMatchesSnapshot": true
+    },
+    {
+      "path": "apps/guardian/lib/pages/policy_publication_entry.dart",
+      "sha256": "2421071dadbcb6dc7ed39f98b9b68044819084a87b17d7ed4ee2f12679076a94",
+      "mainMatchesSnapshot": true
+    },
+    {
+      "path": "apps/guardian/lib/core/policy_publication.dart",
+      "sha256": "918374d7a884917e0bf0b8e7d9dda63600031a018d25ac783fec0a2f2f4a6cd6",
+      "mainMatchesSnapshot": true
+    },
+    {
+      "path": "apps/guardian/lib/core/api.dart",
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641",
+      "mainMatchesSnapshot": true
+    },
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "sha256": "c33c96fac1c22adf0fadf51f1ac49f66d0d8d12927cfdc6850b3502a495273cb",
+      "mainMatchesSnapshot": true
+    },
+    {
+      "path": "apps/guardian/lib/pages/audit_page.dart",
+      "sha256": "c74c3870119945e1550b8d7ddaaa60b79630a3a7520249a2706ac7ff005f1e7a",
+      "mainMatchesSnapshot": true
+    },
+    {
+      "path": "apps/guardian/lib/ui/audit_view.dart",
+      "sha256": "9c446b177a5bf9f3badb63b9f011d19a87c92eecd0303213d3bef34a5590ffc6",
+      "mainMatchesSnapshot": true
+    },
+    {
+      "path": "apps/guardian/lib/core/bounded_json.dart",
+      "sha256": "ca3bf7b46cc346bd003f9fcff712611d38cd55655bf492e975fc50e79bd1180b",
+      "mainMatchesSnapshot": true
+    },
+    {
+      "path": "apps/guardian/lib/pages/policy_details_entry.dart",
+      "sha256": "621f9aeb686a2cc89d571a6916ccc07b54afa33df555f339b783b8f5d00bca0a",
+      "mainMatchesSnapshot": true
+    },
+    {
+      "path": "apps/guardian/test/publication_test_journal.dart",
+      "sha256": "f4cc1ee665c63045190753417dbbed5a6d61b2c1b2a0461a0ab897a382867acf",
+      "mainMatchesSnapshot": true
+    },
+    {
+      "path": "apps/guardian/test/policy_publication_controller_fixtures.dart",
+      "sha256": "62cd66921acd74d479c2e9c4d4a89da19b2c35e687b9571aa0e1ddb73a321ede",
+      "mainMatchesSnapshot": true
+    },
+    {
+      "path": "apps/guardian/test/policy_publication_entry_test.dart",
+      "sha256": "d831fc95f0bab7e19a5d122e28adaec46f2a1f1393520ae967c29c9bfee6b96b",
+      "mainMatchesSnapshot": true
+    },
+    {
+      "path": "apps/guardian/test/policy_publication_test.dart",
+      "sha256": "d3cbc2c6d1bbba435557a59613033250457c1e7387613756a289a08ca5482781",
+      "mainMatchesSnapshot": true
+    }
+  ],
+  "reviewedDependencies": [
+    {
+      "path": "apps/guardian/lib/ui/dialog_access.dart",
+      "sha256": "8fe7c3d9ee1b7a038dc08939ea5cd40572a411ced63a01ba6eb12a88e50145d5"
+    },
+    {
+      "path": "apps/guardian/lib/ui/owned_dialog_route.dart",
+      "sha256": "f4401bb72906eb9abdacbcc2a077a319223a04ae36eda6b74359d2868d731676"
+    }
+  ],
+  "resolvedFindings": [
+    "Audit page captures original actor, tenant, role, generation and authorization before init; invalid init never dereferences session.root.",
+    "Original parent route completion is permanently observed through DialogAccessBinding before the first await; safe notifications reach both review destinations.",
+    "Current-policy review carries the original journey guard and notifications, and readOnly suppresses edit, copy, preview and history rollback."
+  ],
+  "reviewedContracts": [
+    "Only complete bounded HTTP 410 with integer ProblemDetail.status=410 and the two explicit codes creates the repository terminal evidence.",
+    "Controller terminal phases prevent original POST and replacement keys, including when durable storage fails.",
+    "IndexedDB transactions fence full pending records and attempt numbers; scoped request digests retain terminal anti-replay markers without deleting a newer pending record.",
+    "Explicit terminal acknowledgement atomically retains a minimal marker and removes persisted sensitive intent; in-memory intent, pending and receipt are cleared.",
+    "Current-policy and audit review are independently available before acknowledgement; their exit does not automatically restart preview.",
+    "Audit selection preserves scoped authorization, action and approximate original-time range; exact resource matching uses only a trusted receipt versionId."
+  ],
+  "limitations": [
+    "Source review and hash inventory only. No SDK, formatter, analyzer, build, tests, browser, services or Git were run.",
+    "This receipt is not runtime acceptance, database concurrency proof, deployment authorization or complete dependency-source freezing."
+  ]
+}

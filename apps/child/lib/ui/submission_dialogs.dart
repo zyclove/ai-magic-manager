@@ -2,59 +2,152 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'package:device_access/device_access.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import '../core/session.dart';
 import 'design.dart';
 import 'submission_display.dart';
 
-Future<void> _show(BuildContext context, ChildSession session, Widget child) =>
-    showDialog<void>(
+/// Owns completion as well as removal on Flutter versions where removing a
+/// covered route does not complete the Future returned by Navigator.push.
+class _SubmissionDialogRoute<T> extends DialogRoute<T> {
+  bool _finished = false;
+  _SubmissionDialogRoute({required super.context, required super.builder})
+      : super(themes: InheritedTheme.capture(from: context,
+            to: Navigator.of(context, rootNavigator: true).context));
+  bool get available => !_finished && isActive && navigator != null;
+  void finish([T? result]) {
+    final owner = navigator;
+    if (!available || owner == null) return;
+    if (isCurrent) {
+      owner.pop<T>(result);
+    } else {
+      didComplete(result);
+      owner.removeRoute(this);
+    }
+  }
+  @override
+  void didComplete(T? result) {
+    if (_finished) return;
+    _finished = true;
+    super.didComplete(result);
+  }
+  @override
+  void dispose() {
+    if (!_finished) didComplete(null);
+    super.dispose();
+  }
+}
+
+bool _routeCurrent(ModalRoute<dynamic>? route) => route != null &&
+    route.isActive && route.isCurrent &&
+    (route is! _SubmissionDialogRoute<dynamic> || route.available);
+
+void _closeOwnCurrent(BuildContext context) {
+  if (!context.mounted) return;
+  final route = ModalRoute.of(context);
+  if (!_routeCurrent(route)) return;
+  if (route is _SubmissionDialogRoute<dynamic>) {
+    route.finish();
+  } else {
+    route!.navigator?.pop();
+  }
+}
+
+Future<void> _show(BuildContext context, ChildSession session, Widget child) async {
+  if (!context.mounted || !session.foreground || !session.credentialReady) {
+    return;
+  }
+  final generation = session.submissionGeneration;
+  late final _SubmissionDialogRoute<void> route;
+  route = _SubmissionDialogRoute<void>(
         context: context,
         builder: (_) => _PrivateRequestDialog(
             session: session,
-            generation: session.submissionGeneration,
+            generation: generation,
+            route: route,
             child: child));
+  await Navigator.of(context, rootNavigator: true).push<void>(route);
+  await route.completed;
+}
 Future<void> showSubmissionEditor(BuildContext context, ChildSession session) =>
     _show(context, session, _RequestEditor(session));
 Future<void> showSubmissionDetail(
         BuildContext context, ChildSession session, String id) =>
     _show(context, session, _RequestDetail(session, id));
 Future<void> showSubmissionRecovery(BuildContext context, ChildSession session,
-        {bool discard = false}) =>
-    _show(context, session, _OriginalOperation(session, discard));
+        {bool discard = false, required String key, required int generation}) {
+  if (generation != session.submissionGeneration ||
+      session.submissions.journal?.pending?.key != key) return Future.value();
+  return _show(context, session, _OriginalOperation(session,
+      discard ? _OriginalAction.discard : _OriginalAction.retry, key, generation));
+}
+Future<void> showSubmissionResultAcknowledgement(
+        BuildContext context, ChildSession session,
+        {required String key, required int generation}) {
+  if (generation != session.submissionGeneration ||
+      session.submissions.journal?.pending?.key != key ||
+      session.submissions.journal?.pending?.phase !=
+          SubmissionOperationPhase.resultUnavailable) return Future.value();
+  return _show(context, session,
+      _OriginalOperation(session, _OriginalAction.acknowledge, key, generation));
+}
 
 /// Remove both the private widget tree and its route on a lifecycle/scope change.
 class _PrivateRequestDialog extends StatefulWidget {
   final ChildSession session;
   final int generation;
+  final _SubmissionDialogRoute<void> route;
   final Widget child;
   const _PrivateRequestDialog(
-      {required this.session, required this.generation, required this.child});
+      {required this.session, required this.generation, required this.route,
+        required this.child});
   @override
   State<_PrivateRequestDialog> createState() => _PrivateRequestDialogState();
 }
 
 class _PrivateRequestDialogState extends State<_PrivateRequestDialog> {
-  bool get valid =>
-      widget.session.foreground &&
-      widget.session.credentialReady &&
-      widget.generation == widget.session.submissionGeneration;
+  bool _revoked = false, _frameScheduled = false;
+  bool get valid {
+    if (!widget.session.foreground || !widget.session.credentialReady ||
+        widget.generation != widget.session.submissionGeneration ||
+        !widget.route.available) _revoked = true;
+    return !_revoked;
+  }
   @override
   void initState() {
     super.initState();
     widget.session.addListener(_changed);
+    if (!valid) _scheduleFrame();
   }
 
   void _changed() {
     if (!mounted) return;
-    setState(() {});
-    if (!valid) {
-      scheduleMicrotask(() {
-        if (!mounted) return;
-        final route = ModalRoute.of(context);
-        if (route?.isCurrent == true) Navigator.of(context).pop();
-      });
+    final allowed = valid;
+    if (WidgetsBinding.instance.schedulerPhase == SchedulerPhase.persistentCallbacks) {
+      _scheduleFrame();
+    } else {
+      setState(() {});
+      if (!allowed) _scheduleFrame();
     }
+  }
+
+  void _scheduleFrame() {
+    if (_frameScheduled) return;
+    _frameScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _frameScheduled = false;
+      if (!valid) {
+        if (widget.route.available) {
+          setState(() {});
+          widget.route.finish();
+        }
+      } else {
+        setState(() {});
+      }
+    });
+    WidgetsBinding.instance.ensureVisualUpdate();
   }
 
   @override
@@ -64,8 +157,11 @@ class _PrivateRequestDialogState extends State<_PrivateRequestDialog> {
   }
 
   @override
-  Widget build(BuildContext context) =>
-      valid ? widget.child : const SizedBox.shrink();
+  Widget build(BuildContext context) {
+    if (valid) return widget.child;
+    _scheduleFrame();
+    return const SizedBox.shrink();
+  }
 }
 
 class _DialogFrame extends StatelessWidget {
@@ -149,6 +245,7 @@ class _RequestEditorState extends State<_RequestEditor> {
       _minutes = TextEditingController(text: '10');
   final _search = TextEditingController();
   late final List<_ApplicationChoice> _choices;
+  late final int _generation;
   _ApplicationChoice? _choice;
   final _selected = <String>{};
   bool _preview = false, _ruleError = false, _sent = false;
@@ -159,6 +256,7 @@ class _RequestEditorState extends State<_RequestEditor> {
   @override
   void initState() {
     super.initState();
+    _generation = session.submissionGeneration;
     _choices = [
       for (final option in session.submissions.options)
         for (final app in option.applications) _ApplicationChoice(option, app)
@@ -190,7 +288,11 @@ class _RequestEditorState extends State<_RequestEditor> {
   }
 
   Future<void> _submit() async {
-    if (_sent || session.busy || _choice == null) return;
+    if (!mounted || _sent || session.busy || _choice == null ||
+        !session.foreground || !session.credentialReady ||
+        session.submissionGeneration != _generation) return;
+    final route = ModalRoute.of(context);
+    if (!_routeCurrent(route)) return;
     setState(() => _sent = true);
     final choice = _choice!;
     await session.createSubmission(
@@ -202,7 +304,11 @@ class _RequestEditorState extends State<_RequestEditor> {
             requestedWindowSeconds: int.parse(_minutes.text) * 60,
             reason: _reason.text.trim().isEmpty ? null : _reason.text),
         applicationName: choice.application.displayName);
-    if (mounted) Navigator.of(context).pop();
+    if (mounted && _routeCurrent(route) &&
+        identical(ModalRoute.of(context), route) &&
+        session.submissionGeneration == _generation) {
+      _closeOwnCurrent(context);
+    }
   }
 
   @override
@@ -250,7 +356,7 @@ class _RequestEditorState extends State<_RequestEditor> {
                   ]),
               actions: [
                 TextButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => _closeOwnCurrent(context),
                     child: const Text('返回'))
               ]);
         }
@@ -364,7 +470,7 @@ class _RequestEditorState extends State<_RequestEditor> {
                     ])),
             actions: [
               TextButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => _closeOwnCurrent(context),
                   child: const Text('返回')),
               FilledButton(
                   onPressed: enabled ? _confirm : null,
@@ -391,11 +497,26 @@ class _RequestDetail extends StatefulWidget {
 
 class _RequestDetailState extends State<_RequestDetail> {
   AccessSubmission? _cancelling;
+  late final int _generation;
   ChildSession get session => widget.session;
+  @override
+  void initState() {
+    super.initState();
+    _generation = session.submissionGeneration;
+  }
+
   Future<void> _cancel(SubmissionCacheEntry entry) async {
+    if (!mounted || session.busy || !session.foreground ||
+        !session.credentialReady || session.submissionGeneration != _generation) return;
+    final route = ModalRoute.of(context);
+    if (!_routeCurrent(route)) return;
     await session.cancelSubmission(entry.value,
         applicationName: entry.applicationName);
-    if (mounted) Navigator.pop(context);
+    if (mounted && _routeCurrent(route) &&
+        identical(ModalRoute.of(context), route) &&
+        session.submissionGeneration == _generation) {
+      _closeOwnCurrent(context);
+    }
   }
 
   @override
@@ -408,7 +529,7 @@ class _RequestDetailState extends State<_RequestDetail> {
               body: const Text('请返回列表重新核对。'),
               actions: [
                 TextButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => _closeOwnCurrent(context),
                     child: const Text('返回'))
               ]);
         }
@@ -467,7 +588,7 @@ class _RequestDetailState extends State<_RequestDetail> {
             ]),
             actions: [
               TextButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: () => _closeOwnCurrent(context),
                   child: const Text('关闭')),
               if (value.state == 'PENDING')
                 OutlinedButton(
@@ -479,23 +600,54 @@ class _RequestDetailState extends State<_RequestDetail> {
       });
 }
 
+enum _OriginalAction { retry, discard, acknowledge }
+
 class _OriginalOperation extends StatefulWidget {
   final ChildSession session;
-  final bool discard;
-  const _OriginalOperation(this.session, this.discard);
+  final _OriginalAction action;
+  final String operationKey;
+  final int generation;
+  const _OriginalOperation(this.session, this.action, this.operationKey, this.generation);
   @override
   State<_OriginalOperation> createState() => _OriginalOperationState();
 }
 
 class _OriginalOperationState extends State<_OriginalOperation> {
-  late final String? _key = widget.session.submissions.journal?.pending?.key;
+  String get _key => widget.operationKey;
+  int get _generation => widget.generation;
+  bool _working = false;
+  bool _allowed(SubmissionOperation original) => switch (widget.action) {
+        _OriginalAction.retry => original.phase == SubmissionOperationPhase.prepared ||
+            original.phase == SubmissionOperationPhase.unknown,
+        _OriginalAction.discard => original.phase == SubmissionOperationPhase.prepared ||
+            original.phase == SubmissionOperationPhase.rejected,
+        _OriginalAction.acknowledge =>
+            original.phase == SubmissionOperationPhase.resultUnavailable
+      };
   Future<void> _apply() async {
-    if (widget.discard) {
-      await widget.session.discardSubmission();
-    } else {
-      await widget.session.retrySubmission();
+    final route = ModalRoute.of(context);
+    final original = widget.session.submissions.journal?.pending;
+    if (_working || widget.session.busy ||
+        !widget.session.foreground || !widget.session.credentialReady ||
+        widget.session.submissionGeneration != _generation ||
+        !_routeCurrent(route) || original == null ||
+        original.key != _key || !_allowed(original)) return;
+    setState(() => _working = true);
+    try {
+      final completed = switch (widget.action) {
+        _OriginalAction.discard => await widget.session.discardSubmission(),
+        _OriginalAction.retry => await widget.session.retrySubmission(),
+        _OriginalAction.acknowledge =>
+            await widget.session.acknowledgeSubmissionResult(original.key)
+      };
+      if (completed && mounted && _routeCurrent(route) &&
+          identical(ModalRoute.of(context), route) &&
+          widget.session.submissionGeneration == _generation) {
+        _closeOwnCurrent(context);
+      }
+    } finally {
+      if (mounted) setState(() => _working = false);
     }
-    if (mounted) Navigator.pop(context);
   }
 
   @override
@@ -503,24 +655,40 @@ class _OriginalOperationState extends State<_OriginalOperation> {
       animation: widget.session,
       builder: (context, _) {
         final original = widget.session.submissions.journal?.pending;
-        if (original == null || original.key != _key) {
+        if (!widget.session.foreground || !widget.session.credentialReady ||
+            widget.session.submissionGeneration != _generation ||
+            original == null || original.key != _key) {
           return _DialogFrame('原操作已更新',
               body: const Text('请返回列表查看当前状态。'),
               actions: [
                 TextButton(
-                    onPressed: () => Navigator.pop(context),
+                    onPressed: () => _closeOwnCurrent(context),
                     child: const Text('返回'))
               ]);
         }
-        final allowed = widget.discard
-            ? original.phase != SubmissionOperationPhase.unknown
-            : original.phase != SubmissionOperationPhase.rejected;
-        return _DialogFrame(widget.discard ? '放弃本次操作？' : '确认原操作',
+        final ending = widget.action == _OriginalAction.acknowledge;
+        final discarding = widget.action == _OriginalAction.discard;
+        final unavailable = original.phase == SubmissionOperationPhase.resultUnavailable;
+        final allowed = _allowed(original);
+        return _DialogFrame(ending ? '结束本机核对？' : unavailable
+            ? '原操作结果已不可恢复' :
+            discarding ? '放弃本次操作？' : '确认原操作',
             body:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-              _fact('应用', original.applicationName),
+              if (!unavailable) _fact('应用', original.applicationName),
               _fact('操作', original.kind == 'CREATE' ? '申请临时访问' : '取消原申请'),
-              if (original.input != null) ...[
+              if (unavailable) ...[
+                ChildNotice(submissionError(original.terminalCode), warning: true),
+                const SizedBox(height: 14),
+                _fact('本机原操作时间（仅供核对）',
+                    submissionTime(context, original.createdAt))
+              ],
+              if (!unavailable && widget.session.submissionErrorCode != null) ...[
+                ChildNotice(submissionError(widget.session.submissionErrorCode),
+                    warning: true),
+                const SizedBox(height: 14)
+              ],
+              if (!unavailable && original.input != null) ...[
                 _fact('原申请时长',
                     submissionDuration(original.input!.requestedWindowSeconds)),
                 _fact(
@@ -529,19 +697,24 @@ class _OriginalOperationState extends State<_OriginalOperation> {
                         ? original.input!.reason!
                         : '未填写')
               ],
-              Text(widget.discard
+              Text(ending
+                  ? '请先查看当前申请或联系监护人核对。确认后只清理这项本机待办和原申请内容，不会撤销远端申请或取消操作，也不会解锁应用。原操作不能重新提交。'
+                  : unavailable
+                  ? '请返回列表查看当前申请，或联系监护人核对。需要清理这项本机待办时，请选择“结束本机核对”。'
+                  : discarding
                   ? '仅放弃从未发送或已明确拒绝的本地操作，不删除服务端申请。结果未知的操作不能放弃。'
                   : '使用原内容确认结果，不创建另一份申请、不延长期限。恢复记录暂不可用时仍保留待确认状态。')
             ]),
             actions: [
               TextButton(
-                  onPressed: () => Navigator.pop(context),
+                  onPressed: !_working ? () => _closeOwnCurrent(context) : null,
                   child: const Text('返回')),
               FilledButton(
-                  onPressed: allowed && !widget.session.busy
+                  onPressed: allowed && !_working && !widget.session.busy
                       ? () => unawaited(_apply())
                       : null,
-                  child: Text(widget.discard ? '确认放弃' : '确认重试'))
+                  child: Text(_working ? '正在处理…' : ending
+                      ? '确认结束本机核对' : discarding ? '确认放弃' : '确认重试'))
             ]);
       });
 }

@@ -57,6 +57,7 @@ class PublicationTestAccess extends ChangeNotifier {
 
 class PublicationTestJournal implements PublicationJournal {
   PublicationPending? record;
+  final _terminal = <String, PublicationTerminalMarker>{};
   Object? readFailure, reserveFailure, markFailure;
   bool cleanupSucceeds = true;
   int reads = 0, reserves = 0, claims = 0, marks = 0, removals = 0, cancels = 0;
@@ -76,9 +77,18 @@ class PublicationTestJournal implements PublicationJournal {
   Future<PublicationReservation> reserve(PublicationIntent intent) async {
     reserves++;
     if (reserveFailure case final Object failure) throw failure;
+    final marker = _terminal[publicationRequestDigest(intent)];
     final stored = record;
     if (stored != null) {
+      if (marker != null && stored.intent.idempotencyKey == intent.idempotencyKey) {
+        throw const ApiFailure(409, 'INVALID_POLICY_PUBLICATION_RECORD');
+      }
       return PublicationReservation(record: stored, maySubmit: false);
+    }
+    if (marker != null) {
+      return PublicationReservation(record: PublicationPending(intent: intent,
+          phase: marker.reason.phase, confirmedSuccess: marker.confirmedSuccess),
+          maySubmit: false);
     }
     final created = PublicationPending(intent: intent);
     record = created;
@@ -88,7 +98,19 @@ class PublicationTestJournal implements PublicationJournal {
   @override
   Future<PublicationReservation> claimRetry(PublicationPending expected) async {
     claims++;
+    final marker = _terminal[publicationRequestDigest(expected.intent)];
     final stored = record;
+    if (marker != null) {
+      if (stored != null) {
+        if (stored.intent.idempotencyKey == expected.intent.idempotencyKey) {
+          throw const ApiFailure(409, 'INVALID_POLICY_PUBLICATION_RECORD');
+        }
+        return PublicationReservation(record: stored, maySubmit: false);
+      }
+      return PublicationReservation(record: PublicationPending(intent: expected.intent,
+          phase: marker.reason.phase, attempt: expected.attempt,
+          confirmedSuccess: marker.confirmedSuccess), maySubmit: false);
+    }
     if (stored == null) {
       throw const ApiFailure(409, 'PUBLICATION_PENDING_CHANGED');
     }
@@ -119,9 +141,115 @@ class PublicationTestJournal implements PublicationJournal {
   }
 
   @override
+  Future<PublicationPending> markResultTerminalIfSame(
+      PublicationPending expected, PublicationTerminalReason reason,
+      {bool confirmedSuccess = false, bool Function()? isCurrent}) async {
+    if (isCurrent?.call() == false) {
+      throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+    }
+    if (markFailure case final Object failure) throw failure;
+    var next = PublicationPending(
+        intent: expected.intent, phase: reason.phase, attempt: expected.attempt,
+        confirmedSuccess: confirmedSuccess || expected.confirmedSuccess);
+    final digest = publicationRequestDigest(expected.intent);
+    final marker = _terminal[digest];
+    if (marker != null) {
+      if (record != null) {
+        throw const ApiFailure(409, 'PUBLICATION_PENDING_CHANGED');
+      }
+      final mergedReason = marker.reason == PublicationTerminalReason.erased ||
+          reason == PublicationTerminalReason.erased
+          ? PublicationTerminalReason.erased : PublicationTerminalReason.expired;
+      next = PublicationPending(intent: expected.intent, phase: mergedReason.phase,
+          attempt: expected.attempt,
+          confirmedSuccess: marker.confirmedSuccess || next.confirmedSuccess);
+      if (marker.reason != mergedReason || marker.confirmedSuccess != next.confirmedSuccess) {
+        final strengthened = PublicationTerminalMarker(ownerKey: marker.ownerKey,
+            policyId: marker.policyId, requestDigest: marker.requestDigest,
+            reason: mergedReason, acknowledgedAt: marker.acknowledgedAt,
+            confirmedSuccess: next.confirmedSuccess);
+        strengthened.encode();
+        if (isCurrent?.call() == false) {
+          throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+        }
+        _terminal[digest] = strengthened;
+      }
+      return next;
+    }
+    if (record == next) return next;
+    final current = record;
+    if (current != null && current.phase.terminal &&
+        current.intent == expected.intent && current.attempt == expected.attempt) {
+      next = PublicationPending(intent: expected.intent,
+          phase: current.phase == PublicationPhase.resultErased ||
+              reason == PublicationTerminalReason.erased
+              ? PublicationPhase.resultErased : PublicationPhase.resultExpired,
+          attempt: expected.attempt,
+          confirmedSuccess: current.confirmedSuccess || next.confirmedSuccess);
+      next.encode();
+      if (isCurrent?.call() == false) {
+        throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+      }
+      record = next;
+      return next;
+    }
+    if (record != expected || expected.phase.terminal) {
+      throw const ApiFailure(409, 'PUBLICATION_PENDING_CHANGED');
+    }
+    next.encode();
+    if (isCurrent?.call() == false) {
+      throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+    }
+    record = next;
+    return next;
+  }
+
+  @override
+  Future<PublicationTerminalMarker> acknowledgeTerminalIfSame(
+      PublicationPending expected,
+      {required int acknowledgedAt, bool Function()? isCurrent}) async {
+    if (isCurrent?.call() == false) {
+      throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+    }
+    if (!cleanupSucceeds) {
+      throw const ApiFailure(503, 'PUBLICATION_STORAGE_UNAVAILABLE');
+    }
+    if (!expected.phase.terminal) {
+      throw const ApiFailure(409, 'PUBLICATION_PENDING_CHANGED');
+    }
+    final digest = publicationRequestDigest(expected.intent);
+    final reason = expected.phase == PublicationPhase.resultExpired
+        ? PublicationTerminalReason.expired : PublicationTerminalReason.erased;
+    final existing = _terminal[digest];
+    if (existing != null) {
+      if (record != null || existing.reason != reason ||
+          (expected.confirmedSuccess && !existing.confirmedSuccess)) {
+        throw const ApiFailure(409, 'PUBLICATION_PENDING_CHANGED');
+      }
+      return existing;
+    }
+    if (record != expected) {
+      throw const ApiFailure(409, 'PUBLICATION_PENDING_CHANGED');
+    }
+    final marker = PublicationTerminalMarker(
+        ownerKey: expected.intent.owner.key, policyId: expected.intent.policyId,
+        requestDigest: digest, reason: reason, acknowledgedAt: acknowledgedAt,
+        confirmedSuccess: expected.confirmedSuccess);
+    marker.encode();
+    if (isCurrent?.call() == false) {
+      throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+    }
+    _terminal[digest] = marker;
+    record = null;
+    return marker;
+  }
+
+  @override
   Future<bool> removeIfSame(PublicationPending expected) async {
     removals++;
-    if (!cleanupSucceeds || record != expected) return false;
+    if (!cleanupSucceeds || record != expected || expected.phase.terminal) {
+      return false;
+    }
     record = null;
     return true;
   }

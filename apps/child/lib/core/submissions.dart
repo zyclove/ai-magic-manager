@@ -31,6 +31,7 @@ abstract interface class ChildSubmissions {
       {required String applicationName, required String key});
   Future<ChildSubmissionSnapshot> retry();
   Future<ChildSubmissionSnapshot> discard();
+  Future<ChildSubmissionSnapshot> acknowledgeResultUnavailable(String key);
   void pause();
   void resume();
   Future<void> close();

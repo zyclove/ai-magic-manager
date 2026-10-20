@@ -1,0 +1,25 @@
+{
+  "schema": "1.0.0",
+  "reviewer": "dashboard_scope_phase",
+  "createdAt": "2026-10-20T14:35:36.6638902Z",
+  "status": "STATIC_ADAPTER_REVIEW_NO_ADDITIONAL_CONFIRMED_API_GAPS",
+  "sdkRun": false,
+  "testsRun": false,
+  "filesWritten": false,
+  "fixture": {
+    "signature": "Future<ChildSubmissionSnapshot> acknowledgeResultUnavailable(String key)",
+    "path": "apps/child/test/support/submission_fixture.dart",
+    "sha256": "a0addca04fbe90d96f91efb86d494f848f4a11050a2de61097e94684f5d78cb2"
+  },
+  "scope": "apps and packages Dart source, with focused reads of existing Child and device_access submission tests",
+  "findings": [
+    "Only ChildSubmissionReceiver and the existing SubmissionFixture implement ChildSubmissions.",
+    "The existing fixture override delegates to the real journal acknowledgement method.",
+    "No additional AccessSubmissionJournal, DeviceAccessTransport or AccessTransportFailure implementation/subclass fake was found.",
+    "No missed exhaustive enum switch or caller of the now-required recovery key/generation arguments was found.",
+    "The corrupt-persistent-union fixture derives its raw row from real prepare output and does not hard-code the old field count."
+  ],
+  "limitations": [
+    "No assertions or business test scopes changed. Static search is not compilation or a passing test result."
+  ]
+}

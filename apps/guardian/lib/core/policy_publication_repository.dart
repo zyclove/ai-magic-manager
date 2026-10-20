@@ -22,6 +22,14 @@ class PublicationReauthenticationRequired implements Exception {
   String toString() => const ApiFailure(401, 'REAUTH_REQUIRED').message;
 }
 
+/// Only this repository can classify complete bounded HTTP evidence. A generic
+/// client ApiFailure(410, ...) never grants a terminal storage transition.
+final class PublicationResultTerminal implements Exception {
+  final PublicationPending record;
+  final PublicationTerminalReason reason;
+  const PublicationResultTerminal._(this.record, this.reason);
+}
+
 class PolicyPublicationRepository implements PublicationRequests {
   final Api api;
   final PublicationOwner owner;
@@ -100,6 +108,9 @@ class PolicyPublicationRepository implements PublicationRequests {
   @override
   Future<PublicationReceipt?> lookup(PublicationPending record) async {
     _checkRecord(record);
+    if (record.phase.terminal) {
+      throw const ApiFailure(409, 'PUBLICATION_RESULT_TERMINAL');
+    }
     return _read(record, write: false);
   }
 
@@ -137,11 +148,7 @@ class PolicyPublicationRepository implements PublicationRequests {
           body: write ? intent.body : null,
           key: write ? intent.idempotencyKey : null,
           version: write ? intent.revision : null,
-          onHttpError: write
-              ? (evidence) {
-                  responseEvidence = evidence;
-                }
-              : null);
+          onHttpError: (evidence) { responseEvidence = evidence; });
       _ensureCurrent();
       return PublicationReceipt.parse(raw);
     } on ScopeChangedException {
@@ -152,6 +159,17 @@ class PolicyPublicationRepository implements PublicationRequests {
       _deny(failure);
       throw failure;
     } on ApiFailure catch (failure) {
+      _ensureCurrent();
+      if (responseEvidence != null &&
+          identical(responseEvidence!.failure, failure) && failure.status == 410 &&
+          responseEvidence!.problemStatus == 410) {
+        final reason = switch (failure.code) {
+          'IDEMPOTENCY_RESULT_EXPIRED' => PublicationTerminalReason.expired,
+          'IDEMPOTENCY_RESPONSE_ERASED' => PublicationTerminalReason.erased,
+          _ => null,
+        };
+        if (reason != null) throw PublicationResultTerminal._(record, reason);
+      }
       if (write &&
           failure.code == 'WORKSPACE_CHANGED' &&
           _isCurrent() &&

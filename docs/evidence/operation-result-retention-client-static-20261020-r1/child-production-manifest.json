@@ -1,0 +1,74 @@
+[
+  {
+    "path": "packages/device_access/lib/src/transport.dart",
+    "beforeSha256": "ff4fbbb702693de6d53a3968ef5a25bdf1aaec90a5ca01ab17f64aa76cb88dec",
+    "priorSha256": "74cbd175b329fc426360814665ce80dc9ade2ac7b31e8d17fa77a9faf41933ee",
+    "afterSha256": "74cbd175b329fc426360814665ce80dc9ade2ac7b31e8d17fa77a9faf41933ee",
+    "changedInR4": false,
+    "bytes": 18456,
+    "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\child\\after-r4\\packages\\device_access\\lib\\src\\transport.dart"
+  },
+  {
+    "path": "packages/device_access/lib/src/submission_journal.dart",
+    "beforeSha256": "b32e935c5535d3bca8f0a0540b1e287c4e49f1ff8f9a86f5681b089abc563a63",
+    "priorSha256": "06cbd9d249cb49ed67ea2e501a5ef4c1883d93eec2b4e7e2770f02c510312dcc",
+    "afterSha256": "06cbd9d249cb49ed67ea2e501a5ef4c1883d93eec2b4e7e2770f02c510312dcc",
+    "changedInR4": false,
+    "bytes": 19219,
+    "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\child\\after-r4\\packages\\device_access\\lib\\src\\submission_journal.dart"
+  },
+  {
+    "path": "apps/child/lib/core/submission_receiver.dart",
+    "beforeSha256": "28863ce92019a1780247adf9f400b3816fa4d5e893b9b1b2e4758b50a9da5296",
+    "priorSha256": "d40bc8bb51d05dbc9d9063cc0fe6e69776a3975c2bb5d5ed3d93ae20f5622723",
+    "afterSha256": "d40bc8bb51d05dbc9d9063cc0fe6e69776a3975c2bb5d5ed3d93ae20f5622723",
+    "changedInR4": false,
+    "bytes": 17035,
+    "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\child\\after-r4\\apps\\child\\lib\\core\\submission_receiver.dart"
+  },
+  {
+    "path": "apps/child/lib/core/submissions.dart",
+    "beforeSha256": "b0d97917b725bd890c4c04d4a0c2645f7d4d39f5e38db457703aac93f5614b14",
+    "priorSha256": "269f11530f553015992b97d6e4f6e216387e507abeccf7489414cccda7461fe6",
+    "afterSha256": "269f11530f553015992b97d6e4f6e216387e507abeccf7489414cccda7461fe6",
+    "changedInR4": false,
+    "bytes": 1539,
+    "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\child\\after-r4\\apps\\child\\lib\\core\\submissions.dart"
+  },
+  {
+    "path": "apps/child/lib/core/session.dart",
+    "beforeSha256": "166b25abda032b5ac64807345c572aff159b04c6646fa6dac43c0bcdb4ecd471",
+    "priorSha256": "bc1e6b2f10f6ca34f66520649e0a8cbcf5b8cdd1d5810d09551fd64587de95d8",
+    "afterSha256": "68dc78db93497f465376555435b9c0de70e35ff7ee4f8cf32ffd680c3b537bc4",
+    "changedInR4": true,
+    "bytes": 42154,
+    "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\child\\after-r4\\apps\\child\\lib\\core\\session.dart"
+  },
+  {
+    "path": "apps/child/lib/ui/submission_section.dart",
+    "beforeSha256": "e46865ed14e4874745b510cd7a486a02727a1c645b53cbc0757b451bb51c47e0",
+    "priorSha256": "a674093448e4744825c69c9cb8bc6f58583a7805862973a5414b365587a928c6",
+    "afterSha256": "a674093448e4744825c69c9cb8bc6f58583a7805862973a5414b365587a928c6",
+    "changedInR4": false,
+    "bytes": 8798,
+    "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\child\\after-r4\\apps\\child\\lib\\ui\\submission_section.dart"
+  },
+  {
+    "path": "apps/child/lib/ui/submission_dialogs.dart",
+    "beforeSha256": "1c2a6072d2d560d71d54e6fcf04d25934f13da131dffa306bc7ba9729949cc9f",
+    "priorSha256": "9662ad566ebceaa6cfdfe148334d5230fd822ab5fb32ddbd89b98630092681ae",
+    "afterSha256": "067501142a0d3e8b73d73b546b1ed010da0ac7ce96a16e639ac2b5f0336a9de8",
+    "changedInR4": true,
+    "bytes": 31172,
+    "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\child\\after-r4\\apps\\child\\lib\\ui\\submission_dialogs.dart"
+  },
+  {
+    "path": "apps/child/lib/ui/submission_display.dart",
+    "beforeSha256": "5fd3a0fbbbd09c11eb055d329777fd826bdbf7057767c93bedf8278dccac5fe7",
+    "priorSha256": "fe3ccf2344a13be71b6c0f37b1092c4092a86f7301eed3fd82152c0a26c5d8d7",
+    "afterSha256": "fe3ccf2344a13be71b6c0f37b1092c4092a86f7301eed3fd82152c0a26c5d8d7",
+    "changedInR4": false,
+    "bytes": 3862,
+    "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\child\\after-r4\\apps\\child\\lib\\ui\\submission_display.dart"
+  }
+]

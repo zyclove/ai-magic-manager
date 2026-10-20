@@ -20,6 +20,7 @@ class PolicyPublicationDialog extends StatefulWidget {
   final VoidCallback onClose;
   final VoidCallback reauthenticate;
   final VoidCallback? onRepreview;
+  final VoidCallback? onViewCurrent, onViewAudit, onAcknowledged;
 
   const PolicyPublicationDialog({
     super.key,
@@ -30,6 +31,9 @@ class PolicyPublicationDialog extends StatefulWidget {
     required this.onClose,
     required this.reauthenticate,
     this.onRepreview,
+    this.onViewCurrent,
+    this.onViewAudit,
+    this.onAcknowledged,
   });
 
   @override
@@ -139,8 +143,44 @@ class _PolicyPublicationDialogState extends State<PolicyPublicationDialog> {
       case PublicationViewPhase.loadingLocal:
       case PublicationViewPhase.cancelling:
       case PublicationViewPhase.revoked:
+      case PublicationViewPhase.resultExpired:
+      case PublicationViewPhase.resultErased:
+      case PublicationViewPhase.clearingTerminal:
+      case PublicationViewPhase.terminalAcknowledged:
         return;
     }
+  }
+
+  Future<void> acknowledgeTerminal() async {
+    if (!canAct || !c.canAcknowledgeTerminal || widget.onAcknowledged == null) return;
+    final owner = c, ticket = generation, epoch = c.actionEpoch;
+    setState(() => localBusy = true);
+    try {
+      final confirmed = await confirmAction(context, '结束本机核对？',
+          '将清理本机保存的恢复详情，并保留最小终态标记，防止原操作再次提交。'
+          '这不会重新发布、取消发布或删除当前策略与审计记录。',
+          confirm: '结束核对并清理');
+      if (!confirmed || !mounted || closing || generation != ticket ||
+          !identical(c, owner) || c.actionEpoch != epoch ||
+          !ownRouteCurrent || !owner.canAcknowledgeTerminal) return;
+      if (!await owner.acknowledgeTerminal()) return;
+      if (!mounted || closing || generation != ticket || !identical(c, owner) ||
+          !ownRouteCurrent || !owner.hasAccess ||
+          owner.phase != PublicationViewPhase.terminalAcknowledged) return;
+      setState(() { closing = true; generation++; });
+      widget.onAcknowledged!();
+    } finally {
+      if (mounted && !closing && generation == ticket && identical(c, owner)) {
+        setState(() => localBusy = false);
+      }
+    }
+  }
+
+  void reviewTerminal(VoidCallback? action) {
+    if (!canAct || !c.canReviewTerminal || action == null) return;
+    // The host rechecks the specific destination permission and owns closure.
+    // Do not freeze this view if a now-denied destination rejects the callback.
+    action();
   }
 
   Future<void> repreview() async {
@@ -171,6 +211,11 @@ class _PolicyPublicationDialogState extends State<PolicyPublicationDialog> {
 
   String get title {
     if (!c.hasAccess) return '工作空间或权限已变化';
+    if (c.terminalReason != null) {
+      return c.terminalReason == PublicationTerminalReason.expired
+          ? '原操作结果已到期' : '原操作结果已清除';
+    }
+    if (c.phase == PublicationViewPhase.terminalAcknowledged) return '本机核对已结束';
     if (c.receipt != null) return '发布结果';
     return switch (c.phase) {
       PublicationViewPhase.confirming => '发布配置',
@@ -205,6 +250,9 @@ class _PolicyPublicationDialogState extends State<PolicyPublicationDialog> {
         PublicationViewPhase.previewInvalid =>
           widget.onRepreview == null ? null : '重新预览',
         PublicationViewPhase.recorded || PublicationViewPhase.revoked => null,
+        PublicationViewPhase.resultExpired || PublicationViewPhase.resultErased ||
+        PublicationViewPhase.clearingTerminal ||
+        PublicationViewPhase.terminalAcknowledged => null,
       };
 
   bool get primaryEnabled {
@@ -256,6 +304,10 @@ class _PolicyPublicationDialogState extends State<PolicyPublicationDialog> {
   String? get failureMessage {
     final error = c.error;
     if (error == null) return null;
+    if (c.terminalReason != null) {
+      return '原结果不能再恢复。本机终态记录尚未完成核对或清理；'
+          '您可以查看当前记录，或再次选择“结束本机核对”。不会再次发布。';
+    }
     if (c.receipt != null) {
       return error is ApiFailure && error.code == 'REAUTH_REQUIRED'
           ? null
@@ -302,6 +354,35 @@ class _PolicyPublicationDialogState extends State<PolicyPublicationDialog> {
   Widget content() {
     if (!c.hasAccess) {
       return const Text('已隐藏原预览和发布内容。请关闭窗口，在当前工作空间重新打开。');
+    }
+    if (c.phase == PublicationViewPhase.terminalAcknowledged) {
+      return const Notice('已清理本机恢复详情并保留防重标记。当前策略与审计记录不受影响。');
+    }
+    if (c.terminalReason != null) {
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Notice(c.terminalReason == PublicationTerminalReason.expired
+            ? '该操作的原返回结果已超过自服务端成功提交起的 90 天保留期限，不能再恢复。'
+              '到期不代表操作未完成。请查看当前策略或相关审计记录。'
+            : '该操作的原返回结果已清除，不能再恢复。'
+              '清除结果不代表取消了已发生的操作。请查看当前有权访问的策略或审计记录。',
+            warning: true),
+        if (c.confirmedSuccess) ...[
+          const SizedBox(height: 12),
+          const Notice('此前已确认配置保存；结果到期或清除不会改变这一事实。'),
+        ],
+        const SizedBox(height: 12),
+        const Text('查看记录不会重新提交，也不会清理本机待办。'
+            '如无需继续本机核对，可单独选择结束核对。'),
+        if (c.busy) ...[
+          const SizedBox(height: 16),
+          const Row(children: [SizedBox(width: 18, height: 18,
+              child: CircularProgressIndicator(strokeWidth: 2)),
+            SizedBox(width: 10), Expanded(child: Text('正在核对本机终态记录…'))]),
+        ],
+        if (failureMessage != null) ...[
+          const SizedBox(height: 12), Notice(failureMessage!, warning: true),
+        ],
+      ]);
     }
     final phase = c.phase, receipt = c.receipt;
     final keepPreview = widget.preview != null &&
@@ -388,7 +469,22 @@ class _PolicyPublicationDialogState extends State<PolicyPublicationDialog> {
               TextButton(
                   key: const Key('publication-close'),
                   onPressed: c.busy || localBusy ? null : guarded(close),
-                  child: const Text('关闭')),
+                  child: Text(c.terminalReason != null ? '暂不处理，关闭' : '关闭')),
+              if (c.terminalReason != null && widget.onAcknowledged != null)
+                TextButton(
+                    onPressed: canAct && c.canAcknowledgeTerminal
+                        ? guarded(() => unawaited(acknowledgeTerminal())) : null,
+                    child: const Text('结束本机核对')),
+              if (c.terminalReason != null && widget.onViewAudit != null)
+                OutlinedButton(
+                    onPressed: canAct && c.canReviewTerminal
+                        ? guarded(() => reviewTerminal(widget.onViewAudit)) : null,
+                    child: const Text('查看审计记录')),
+              if (c.terminalReason != null && widget.onViewCurrent != null)
+                FilledButton(
+                    onPressed: canAct && c.canReviewTerminal
+                        ? guarded(() => reviewTerminal(widget.onViewCurrent)) : null,
+                    child: const Text('查看当前策略')),
               if (primaryText != null)
                 FilledButton(
                     key: const Key('publication-primary'),

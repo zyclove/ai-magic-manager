@@ -338,15 +338,21 @@ class ChildSession extends ChangeNotifier {
         }
       }
       if (submissionFactory != null && credentialReady) {
+        final generation = _submissionGeneration;
         try {
-          final generation = _submissionGeneration;
-          final restored = await (await _requests()).restore();
-          if (foreground && generation == _submissionGeneration) {
+          final receiver = await _requests(generation: generation);
+          if (!foreground || !credentialReady || generation != _submissionGeneration) {
+            throw const temporary.AccessFailure('SUBMISSION_PAUSED');
+          }
+          final restored = await receiver.restore();
+          if (foreground && credentialReady && generation == _submissionGeneration) {
             submissions = restored;
           }
         } catch (_) {
-          submissions = const ChildSubmissionSnapshot();
-          submissionErrorCode = 'SUBMISSION_RESTORE_FAILED';
+          if (foreground && credentialReady && generation == _submissionGeneration) {
+            submissions = const ChildSubmissionSnapshot();
+            submissionErrorCode = 'SUBMISSION_RESTORE_FAILED';
+          }
         }
       }
     });
@@ -819,24 +825,35 @@ class ChildSession extends ChangeNotifier {
     }
   }
 
-  Future<ChildSubmissions> _requests() async {
-    if (!foreground) throw const temporary.AccessFailure('SUBMISSION_PAUSED');
-    if (_submissionReceiver != null) return _submissionReceiver!;
-    if (submissionFactory == null || !credentialReady || _identityKey == null) {
+  Future<ChildSubmissions> _requests({required int generation}) async {
+    final scope = _identityKey, identity = identityView;
+    bool current() => foreground && credentialReady &&
+        generation == _submissionGeneration && scope != null &&
+        scope == _identityKey;
+    void requireOwner() {
+      if (!current()) throw const temporary.AccessFailure('SUBMISSION_PAUSED');
+    }
+    requireOwner();
+    if (_submissionReceiver != null) {
+      if (_submissionIdentityKey != scope) {
+        throw const temporary.AccessFailure('SUBMISSION_PAUSED');
+      }
+      return _submissionReceiver!;
+    }
+    if (submissionFactory == null || identity == null) {
       throw const temporary.AccessFailure('DEVICE_CREDENTIAL_UNAVAILABLE');
     }
-    if (_submissionsClosingCount > 0) await _submissionsClosing;
+    if (_submissionsClosingCount > 0) {
+      await _submissionsClosing;
+      requireOwner();
+    }
     if (_submissionsCloseFailed) {
       throw const temporary.AccessFailure('STORAGE_FAILURE');
     }
-    final scope = _submissionIdentityKey = _identityKey;
-    final generation = _submissionGeneration;
-    final receiver = await submissionFactory!(identityView!);
-    if (!foreground ||
-        !credentialReady ||
-        generation != _submissionGeneration ||
-        scope != _identityKey ||
-        scope != _submissionIdentityKey) {
+    requireOwner();
+    _submissionIdentityKey = scope;
+    final receiver = await submissionFactory!(identity);
+    if (!current() || scope != _submissionIdentityKey) {
       receiver.pause();
       try {
         await receiver.close();
@@ -849,21 +866,28 @@ class ChildSession extends ChangeNotifier {
   }
 
   Future<bool> _requestAction(
-          Future<ChildSubmissionSnapshot> Function(ChildSubmissions) action) =>
-      _run(() async {
+          Future<ChildSubmissionSnapshot> Function(ChildSubmissions) action) {
+    final generation = _submissionGeneration;
+    void checkOwner() {
+      if (!foreground || !credentialReady || generation != _submissionGeneration) {
+        throw const temporary.AccessFailure('SUBMISSION_PAUSED');
+      }
+    }
+    return _run(() async {
         if (!foreground) {
           throw const temporary.AccessFailure('SUBMISSION_PAUSED');
         }
         await _refresh();
-        final receiver = await _requests();
-        final generation = _submissionGeneration;
+        checkOwner();
+        final receiver = await _requests(generation: generation);
+        checkOwner();
         receiver.resume();
         try {
           final updated = await action(receiver);
-          if (foreground && generation == _submissionGeneration) {
-            submissions = updated;
-          }
+          checkOwner();
+          submissions = updated;
         } catch (error) {
+          checkOwner();
           submissions = const ChildSubmissionSnapshot();
           if (_fatalAccess(error)) {
             receiver.pause();
@@ -879,6 +903,7 @@ class ChildSession extends ChangeNotifier {
           rethrow;
         }
       }, submissionOperation: true);
+  }
 
   String _submissionKey() => base64UrlEncode(
           List<int>.generate(24, (_) => Random.secure().nextInt(256)))
@@ -899,6 +924,15 @@ class ChildSession extends ChangeNotifier {
           applicationName: applicationName, key: _submissionKey()));
   Future<bool> retrySubmission() => _requestAction((r) => r.retry());
   Future<bool> discardSubmission() => _requestAction((r) => r.discard());
+  Future<bool> acknowledgeSubmissionResult(String key) {
+    final generation = _submissionGeneration;
+    return _requestAction((r) {
+      if (generation != _submissionGeneration) {
+        throw const temporary.AccessFailure('SUBMISSION_PAUSED');
+      }
+      return r.acknowledgeResultUnavailable(key);
+    });
+  }
 
   void _drain() {
     if (!initialized || busy || !_foreground || _disposed || !credentialReady) {

@@ -1,9 +1,17 @@
+import 'dart:convert';
 import 'package:collection/collection.dart';
+import 'package:crypto/crypto.dart';
 import 'package:sembast/sembast.dart';
 import 'models.dart';
 import 'submission.dart';
+import 'transport.dart';
 
-enum SubmissionOperationPhase { prepared, unknown, rejected }
+enum SubmissionOperationPhase { prepared, unknown, rejected, resultUnavailable }
+
+const _unavailableResults = {
+  'IDEMPOTENCY_RESULT_EXPIRED',
+  'IDEMPOTENCY_RESPONSE_ERASED'
+};
 
 /// These domain responses prove this exact attempt was not committed. Expired
 /// idempotency keys, authentication failures and arbitrary HTTP text do not.
@@ -24,7 +32,7 @@ class SubmissionOperation {
   final int createdAt;
   final SubmissionOperationPhase phase;
   final AccessSubmissionInput? input;
-  final String? requestId, rejectionCode;
+  final String? requestId, rejectionCode, terminalCode;
   final int? version;
   const SubmissionOperation._(
       this.kind,
@@ -35,7 +43,7 @@ class SubmissionOperation {
       this.input,
       this.requestId,
       this.version,
-      this.rejectionCode);
+      this.rejectionCode, [this.terminalCode]);
   Map<String, dynamic> _json() => {
         'schemaVersion': 1,
         'kind': kind,
@@ -46,7 +54,8 @@ class SubmissionOperation {
         'input': input?.toJson(),
         'requestId': requestId,
         'version': version,
-        'rejectionCode': rejectionCode
+        'rejectionCode': rejectionCode,
+        'terminalCode': terminalCode
       };
   SubmissionOperation _with(SubmissionOperationPhase next, [String? code]) =>
       SubmissionOperation._(kind, key, applicationName, createdAt, next, input,
@@ -74,7 +83,7 @@ class AccessSubmissionJournal {
   final Database database;
   final DeviceAccessScope scope;
   final int maxEntries;
-  late final StoreRef<String, Map<String, Object?>> _operations, _facts;
+  late final StoreRef<String, Map<String, Object?>> _operations, _facts, _terminal;
   AccessSubmissionJournal(
       {required this.database, required this.scope, this.maxEntries = 100}) {
     if (scope.issuer.isEmpty ||
@@ -89,6 +98,8 @@ class AccessSubmissionJournal {
         .store('submissions-v1-${scope.storageKey}-operation');
     _facts =
         stringMapStoreFactory.store('submissions-v1-${scope.storageKey}-facts');
+    _terminal =
+        stringMapStoreFactory.store('submissions-v1-${scope.storageKey}-terminal');
   }
   void _scope(AccessSubmission value) {
     if (value.subjectId != scope.subjectId ||
@@ -114,7 +125,7 @@ class AccessSubmissionJournal {
 
   SubmissionOperation _decode(Map<String, Object?> row) {
     try {
-      if (row.length != 10 ||
+      if (row.length != 11 ||
           !{
             'schemaVersion',
             'kind',
@@ -125,7 +136,8 @@ class AccessSubmissionJournal {
             'input',
             'requestId',
             'version',
-            'rejectionCode'
+            'rejectionCode',
+            'terminalCode'
           }.every(row.containsKey) ||
           row['schemaVersion'] != 1 ||
           row['key'] is! String ||
@@ -138,9 +150,19 @@ class AccessSubmissionJournal {
       if (phase == SubmissionOperationPhase.rejected
           ? !submissionDefinitiveRejections.contains(rejection)
           : rejection != null) throw const FormatException();
+      final terminal = row['terminalCode'];
+      if (phase == SubmissionOperationPhase.resultUnavailable
+          ? !_unavailableResults.contains(terminal)
+          : terminal != null) throw const FormatException();
       AccessSubmissionInput? input;
       final kind = row['kind'];
-      if (kind == 'CREATE') {
+      if (phase == SubmissionOperationPhase.resultUnavailable) {
+        if (!{'CREATE', 'CANCEL'}.contains(kind) ||
+            row['input'] != null || row['requestId'] != null ||
+            row['version'] != null || row['applicationName'] != '原临时访问操作') {
+          throw const FormatException();
+        }
+      } else if (kind == 'CREATE') {
         final raw = Map<String, dynamic>.from(row['input'] as Map);
         if (raw.length != 6 ||
             row['requestId'] != null ||
@@ -170,7 +192,7 @@ class AccessSubmissionJournal {
           input,
           row['requestId'] as String?,
           row['version'] as int?,
-          rejection as String?);
+          rejection as String?, terminal as String?);
     } catch (_) {
       throw const AccessFailure('SUBMISSION_STORAGE_FAILED');
     }
@@ -178,7 +200,25 @@ class AccessSubmissionJournal {
 
   Future<SubmissionOperation?> _pending(DatabaseClient client) async {
     final row = await _operations.record('pending').get(client);
-    return row == null ? null : _decode(row);
+    if (row == null) return null;
+    final pending = _decode(row);
+    final terminal = await _terminalCode(client, pending.key);
+    if (pending.phase == SubmissionOperationPhase.resultUnavailable
+        ? terminal != pending.terminalCode : terminal != null) {
+      throw const AccessFailure('SUBMISSION_STORAGE_FAILED');
+    }
+    return pending;
+  }
+
+  String _markerKey(String key) => sha256.convert(utf8.encode(key)).toString();
+  Future<String?> _terminalCode(DatabaseClient client, String key) async {
+    final row = await _terminal.record(_markerKey(key)).get(client);
+    if (row == null) return null;
+    if (row.length != 2 || row['schemaVersion'] != 1 ||
+        !_unavailableResults.contains(row['code'])) {
+      throw const AccessFailure('SUBMISSION_STORAGE_FAILED');
+    }
+    return row['code'] as String;
   }
 
   Future<SubmissionOperation> _require(
@@ -257,15 +297,20 @@ class AccessSubmissionJournal {
       throw ArgumentError('Invalid bounded operation');
     }
     return _storage(() => database.transaction((txn) async {
+          if (await _terminalCode(txn, operation.key) != null) {
+            throw const AccessFailure('SUBMISSION_RESULT_UNAVAILABLE');
+          }
           final pending = await _pending(txn);
           if (pending != null) {
             final a = pending._json()
               ..remove('phase')
               ..remove('rejectionCode')
+              ..remove('terminalCode')
               ..remove('createdAt');
             final b = operation._json()
               ..remove('phase')
               ..remove('rejectionCode')
+              ..remove('terminalCode')
               ..remove('createdAt');
             if (!const DeepCollectionEquality().equals(a, b)) {
               throw const AccessFailure('SUBMISSION_OPERATION_PENDING');
@@ -288,6 +333,9 @@ class AccessSubmissionJournal {
   Future<SubmissionOperation> markSending(String key) =>
       _storage(() => database.transaction((txn) async {
             final current = await _require(txn, key);
+            if (current.phase == SubmissionOperationPhase.resultUnavailable) {
+              throw const AccessFailure('SUBMISSION_RESULT_UNAVAILABLE');
+            }
             if (current.phase == SubmissionOperationPhase.rejected) {
               throw const AccessFailure('SUBMISSION_OPERATION_REJECTED');
             }
@@ -301,6 +349,9 @@ class AccessSubmissionJournal {
     }
     return _storage(() => database.transaction((txn) async {
           final current = await _require(txn, key);
+          if (current.phase != SubmissionOperationPhase.unknown) {
+            throw const AccessFailure('SUBMISSION_OPERATION_CONFLICT');
+          }
           await _operations.record('pending').put(txn,
               current._with(SubmissionOperationPhase.rejected, code)._json());
         }));
@@ -309,8 +360,52 @@ class AccessSubmissionJournal {
   Future<void> discardUnsentOrRejected(String key) =>
       _storage(() => database.transaction((txn) async {
             final current = await _require(txn, key);
+            if (current.phase == SubmissionOperationPhase.resultUnavailable) {
+              throw const AccessFailure('SUBMISSION_RESULT_UNAVAILABLE');
+            }
             if (current.phase == SubmissionOperationPhase.unknown) {
               throw const AccessFailure('SUBMISSION_RESULT_UNKNOWN');
+            }
+            await _operations.record('pending').delete(txn);
+          }));
+
+  /// Server evidence is bound to the exact original operation and authenticated
+  /// registration. Redact the private intent as soon as recovery becomes final.
+  Future<void> markResultUnavailable(AccessSubmissionResultUnavailable evidence) =>
+      _storage(() => database.transaction((txn) async {
+            final current = await _require(txn, evidence.idempotencyKey);
+            final context = evidence.context;
+            if (current.phase != SubmissionOperationPhase.unknown ||
+                current.kind != evidence.kind ||
+                context.tenantId != scope.tenantId ||
+                context.subjectId != scope.subjectId ||
+                context.deviceId != scope.deviceId ||
+                context.registrationId != scope.registrationId ||
+                !_unavailableResults.contains(evidence.code) ||
+                (current.kind == 'CREATE'
+                    ? !const DeepCollectionEquality().equals(
+                        current.input?.toJson(), evidence.input?.toJson())
+                    : current.requestId != evidence.requestId ||
+                        current.version != evidence.version)) {
+              throw const AccessFailure('SUBMISSION_OPERATION_CONFLICT');
+            }
+            await _terminal.record(_markerKey(current.key)).put(txn,
+                {'schemaVersion': 1, 'code': evidence.code});
+            final redacted = SubmissionOperation._(current.kind, current.key,
+                '原临时访问操作', current.createdAt,
+                SubmissionOperationPhase.resultUnavailable, null, null, null,
+                null, evidence.code);
+            await _operations.record('pending').put(txn, redacted._json());
+          }));
+
+  /// Ends only this local notice. The scoped opaque marker remains forever:
+  /// clearing a notice cannot recreate, cancel or retry the remote operation.
+  Future<void> acknowledgeResultUnavailable(String key) =>
+      _storage(() => database.transaction((txn) async {
+            final current = await _require(txn, key);
+            if (current.phase != SubmissionOperationPhase.resultUnavailable ||
+                await _terminalCode(txn, key) != current.terminalCode) {
+              throw const AccessFailure('SUBMISSION_OPERATION_CONFLICT');
             }
             await _operations.record('pending').delete(txn);
           }));

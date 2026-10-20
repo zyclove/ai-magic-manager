@@ -150,6 +150,12 @@ class SubmissionFixture implements ChildSubmissions {
   }
 
   @override
+  Future<ChildSubmissionSnapshot> acknowledgeResultUnavailable(String key) async {
+    await journal.acknowledgeResultUnavailable(key);
+    return snapshot();
+  }
+
+  @override
   Future<ChildSubmissionSnapshot> detail(String id) async {
     currentFact ??= fact();
     await journal.record(currentFact!, applicationName: '阅读空间');

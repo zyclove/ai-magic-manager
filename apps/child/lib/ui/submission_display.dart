@@ -31,6 +31,12 @@ String submissionError(String? code) => switch (code) {
         '暂时无法连接。已保存的原操作会保留，请检查网络后按原操作确认结果。',
       'ACCESS_RECOVERY_UNAVAILABLE' =>
         '暂时找不到原操作的恢复记录，结果仍待确认。请联系监护人；不要重新申请或清空记录。',
+      'IDEMPOTENCY_RESULT_EXPIRED' =>
+        '原操作的完整结果已超过服务端 90 天保留期，无法再恢复。原申请或取消操作可能已经生效，请核对当前申请或联系监护人；不要重复提交原操作。',
+      'IDEMPOTENCY_RESPONSE_ERASED' =>
+        '原操作的完整结果已按隐私要求擦除，无法再恢复。原申请或取消操作可能已经生效，请核对当前申请或联系监护人；不要重复提交原操作。',
+      'SUBMISSION_RESULT_UNAVAILABLE' =>
+        '原操作的完整结果已不可恢复，已停止重试。请核对当前申请或联系监护人。结束本机核对只清理本地待办，不会撤销远端操作。',
       'IDEMPOTENCY_KEY_CONFLICT' ||
       'REQUEST_IN_PROGRESS' =>
         '原操作尚未核对完成，请保留记录并联系监护人。',

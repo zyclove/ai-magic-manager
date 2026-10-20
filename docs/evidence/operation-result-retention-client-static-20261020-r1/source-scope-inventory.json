@@ -1,0 +1,239 @@
+{
+  "status": "STATIC_STAGING_SCOPE_ONLY_NOT_RUN",
+  "sdkRun": false,
+  "testsRun": false,
+  "files": [
+    {
+      "group": "guardian",
+      "path": "apps/guardian/lib/core/policy_publication_repository.dart",
+      "sha256": "29a99e6abf117e1e8053c4d4ee936b267644d4b684452468b2791f66094bcb85",
+      "frozenSha256": "29a99e6abf117e1e8053c4d4ee936b267644d4b684452468b2791f66094bcb85",
+      "frozenMatches": true,
+      "beforeSha256": "3ed331e32eaa9332c940ee734fa6117fb7d508ec9d5bb9856f23dd64631bbf15",
+      "headSha256": "3ed331e32eaa9332c940ee734fa6117fb7d508ec9d5bb9856f23dd64631bbf15",
+      "beforeEqualsHead": true,
+      "onlyLineEndingsBeforeHead": false
+    },
+    {
+      "group": "guardian",
+      "path": "apps/guardian/lib/core/publication_journal.dart",
+      "sha256": "d3fc867f57c30a7f66c13f79158b773c09aaac7b3399ca38a3b9310bb063b69d",
+      "frozenSha256": "d3fc867f57c30a7f66c13f79158b773c09aaac7b3399ca38a3b9310bb063b69d",
+      "frozenMatches": true,
+      "beforeSha256": "f42cd65acc603389a881e4e61142c1b7063a5796a7c3b52a817ae7a353b2fc2d",
+      "headSha256": "f42cd65acc603389a881e4e61142c1b7063a5796a7c3b52a817ae7a353b2fc2d",
+      "beforeEqualsHead": true,
+      "onlyLineEndingsBeforeHead": false
+    },
+    {
+      "group": "guardian",
+      "path": "apps/guardian/lib/core/browser_publication_journal.dart",
+      "sha256": "306a1b7b75d716e07def7b067e6b12859d444d2d8fcffeb45b2263c12305e885",
+      "frozenSha256": "306a1b7b75d716e07def7b067e6b12859d444d2d8fcffeb45b2263c12305e885",
+      "frozenMatches": true,
+      "beforeSha256": "b0dfd15ff67668afd3bc7143e656615549d6cd76952353e079c47f574e30bbe2",
+      "headSha256": "b0dfd15ff67668afd3bc7143e656615549d6cd76952353e079c47f574e30bbe2",
+      "beforeEqualsHead": true,
+      "onlyLineEndingsBeforeHead": false
+    },
+    {
+      "group": "guardian",
+      "path": "apps/guardian/lib/ui/policy_publication_controller.dart",
+      "sha256": "8f7d4892ce93f6ebe1b590893cc775a1d8584716ac66ab2ac1856cd17485438a",
+      "frozenSha256": "8f7d4892ce93f6ebe1b590893cc775a1d8584716ac66ab2ac1856cd17485438a",
+      "frozenMatches": true,
+      "beforeSha256": "80ac1db01a74d98892038f11fbdb99b31d5b027fb965888f432137b54bec393b",
+      "headSha256": "80ac1db01a74d98892038f11fbdb99b31d5b027fb965888f432137b54bec393b",
+      "beforeEqualsHead": true,
+      "onlyLineEndingsBeforeHead": false
+    },
+    {
+      "group": "guardian",
+      "path": "apps/guardian/lib/ui/policy_publication_dialog.dart",
+      "sha256": "6a746047e390e4cd20f9bba1ce14349f8d7587d7d325fa0f3e181725ba2fa6ab",
+      "frozenSha256": "6a746047e390e4cd20f9bba1ce14349f8d7587d7d325fa0f3e181725ba2fa6ab",
+      "frozenMatches": true,
+      "beforeSha256": "0591139d184a14a9b778bf2a64c412ab3e83e40dc61387d8e044a024a691e32a",
+      "headSha256": "0591139d184a14a9b778bf2a64c412ab3e83e40dc61387d8e044a024a691e32a",
+      "beforeEqualsHead": true,
+      "onlyLineEndingsBeforeHead": false
+    },
+    {
+      "group": "guardian",
+      "path": "apps/guardian/lib/pages/policy_publication_entry.dart",
+      "sha256": "2421071dadbcb6dc7ed39f98b9b68044819084a87b17d7ed4ee2f12679076a94",
+      "frozenSha256": "2421071dadbcb6dc7ed39f98b9b68044819084a87b17d7ed4ee2f12679076a94",
+      "frozenMatches": true,
+      "beforeSha256": "736fd848ccad2a5a5c18855721f560004437017593e98dccdc2dbe6d0216b41c",
+      "headSha256": "736fd848ccad2a5a5c18855721f560004437017593e98dccdc2dbe6d0216b41c",
+      "beforeEqualsHead": true,
+      "onlyLineEndingsBeforeHead": false
+    },
+    {
+      "group": "guardian",
+      "path": "apps/guardian/lib/core/policy_publication.dart",
+      "sha256": "918374d7a884917e0bf0b8e7d9dda63600031a018d25ac783fec0a2f2f4a6cd6",
+      "frozenSha256": "918374d7a884917e0bf0b8e7d9dda63600031a018d25ac783fec0a2f2f4a6cd6",
+      "frozenMatches": true,
+      "beforeSha256": "2816ab4b89bc5940bf216617d8dab40c0b36ab0473beb620d95829f260dc6b92",
+      "headSha256": "2816ab4b89bc5940bf216617d8dab40c0b36ab0473beb620d95829f260dc6b92",
+      "beforeEqualsHead": true,
+      "onlyLineEndingsBeforeHead": false
+    },
+    {
+      "group": "guardian",
+      "path": "apps/guardian/lib/core/api.dart",
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641",
+      "frozenSha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641",
+      "frozenMatches": true,
+      "beforeSha256": "6ebe0e8c55f5e5aa03b15609f7692c1d77e80368863344ab22bd9990b79e31a7",
+      "headSha256": "6ebe0e8c55f5e5aa03b15609f7692c1d77e80368863344ab22bd9990b79e31a7",
+      "beforeEqualsHead": true,
+      "onlyLineEndingsBeforeHead": false
+    },
+    {
+      "group": "guardian",
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "sha256": "c33c96fac1c22adf0fadf51f1ac49f66d0d8d12927cfdc6850b3502a495273cb",
+      "frozenSha256": "c33c96fac1c22adf0fadf51f1ac49f66d0d8d12927cfdc6850b3502a495273cb",
+      "frozenMatches": true,
+      "beforeSha256": "c3a1449b063eac9cd31f4033493d44594d9147152af6592ed2f52f271050840b",
+      "headSha256": "c3a1449b063eac9cd31f4033493d44594d9147152af6592ed2f52f271050840b",
+      "beforeEqualsHead": true,
+      "onlyLineEndingsBeforeHead": false
+    },
+    {
+      "group": "guardian",
+      "path": "apps/guardian/lib/pages/audit_page.dart",
+      "sha256": "c74c3870119945e1550b8d7ddaaa60b79630a3a7520249a2706ac7ff005f1e7a",
+      "frozenSha256": "c74c3870119945e1550b8d7ddaaa60b79630a3a7520249a2706ac7ff005f1e7a",
+      "frozenMatches": true,
+      "beforeSha256": "c0d822718e139e3d04a31b6b1886a6958588609b2de400074e6dc20f4a6edb17",
+      "headSha256": "c0d822718e139e3d04a31b6b1886a6958588609b2de400074e6dc20f4a6edb17",
+      "beforeEqualsHead": true,
+      "onlyLineEndingsBeforeHead": false
+    },
+    {
+      "group": "guardian",
+      "path": "apps/guardian/lib/ui/audit_view.dart",
+      "sha256": "9c446b177a5bf9f3badb63b9f011d19a87c92eecd0303213d3bef34a5590ffc6",
+      "frozenSha256": "9c446b177a5bf9f3badb63b9f011d19a87c92eecd0303213d3bef34a5590ffc6",
+      "frozenMatches": true,
+      "beforeSha256": "de75674dbb9c1106a0ac770f36ff532c1641bee073191b7c30c60d4a21a5f3ae",
+      "headSha256": "de75674dbb9c1106a0ac770f36ff532c1641bee073191b7c30c60d4a21a5f3ae",
+      "beforeEqualsHead": true,
+      "onlyLineEndingsBeforeHead": false
+    },
+    {
+      "group": "guardian",
+      "path": "apps/guardian/lib/core/bounded_json.dart",
+      "sha256": "ca3bf7b46cc346bd003f9fcff712611d38cd55655bf492e975fc50e79bd1180b",
+      "frozenSha256": "ca3bf7b46cc346bd003f9fcff712611d38cd55655bf492e975fc50e79bd1180b",
+      "frozenMatches": true,
+      "beforeSha256": "88b650a4936918d989df4ecb78dd9b4e704d52130a8a7dcf17893f6f64113670",
+      "headSha256": "88b650a4936918d989df4ecb78dd9b4e704d52130a8a7dcf17893f6f64113670",
+      "beforeEqualsHead": true,
+      "onlyLineEndingsBeforeHead": false
+    },
+    {
+      "group": "guardian",
+      "path": "apps/guardian/lib/pages/policy_details_entry.dart",
+      "sha256": "621f9aeb686a2cc89d571a6916ccc07b54afa33df555f339b783b8f5d00bca0a",
+      "frozenSha256": "621f9aeb686a2cc89d571a6916ccc07b54afa33df555f339b783b8f5d00bca0a",
+      "frozenMatches": true,
+      "beforeSha256": "34c37087f1895e494073e2ac8ae855f2b0051571a3fc9fdceb10c82b4d69b474",
+      "headSha256": "34c37087f1895e494073e2ac8ae855f2b0051571a3fc9fdceb10c82b4d69b474",
+      "beforeEqualsHead": true,
+      "onlyLineEndingsBeforeHead": false
+    },
+    {
+      "group": "child",
+      "path": "packages/device_access/lib/src/transport.dart",
+      "sha256": "74cbd175b329fc426360814665ce80dc9ade2ac7b31e8d17fa77a9faf41933ee",
+      "frozenSha256": "74cbd175b329fc426360814665ce80dc9ade2ac7b31e8d17fa77a9faf41933ee",
+      "frozenMatches": true,
+      "beforeSha256": "ff4fbbb702693de6d53a3968ef5a25bdf1aaec90a5ca01ab17f64aa76cb88dec",
+      "headSha256": "ff4fbbb702693de6d53a3968ef5a25bdf1aaec90a5ca01ab17f64aa76cb88dec",
+      "beforeEqualsHead": true,
+      "onlyLineEndingsBeforeHead": false
+    },
+    {
+      "group": "child",
+      "path": "packages/device_access/lib/src/submission_journal.dart",
+      "sha256": "06cbd9d249cb49ed67ea2e501a5ef4c1883d93eec2b4e7e2770f02c510312dcc",
+      "frozenSha256": "06cbd9d249cb49ed67ea2e501a5ef4c1883d93eec2b4e7e2770f02c510312dcc",
+      "frozenMatches": true,
+      "beforeSha256": "b32e935c5535d3bca8f0a0540b1e287c4e49f1ff8f9a86f5681b089abc563a63",
+      "headSha256": "b32e935c5535d3bca8f0a0540b1e287c4e49f1ff8f9a86f5681b089abc563a63",
+      "beforeEqualsHead": true,
+      "onlyLineEndingsBeforeHead": false
+    },
+    {
+      "group": "child",
+      "path": "apps/child/lib/core/submission_receiver.dart",
+      "sha256": "d40bc8bb51d05dbc9d9063cc0fe6e69776a3975c2bb5d5ed3d93ae20f5622723",
+      "frozenSha256": "d40bc8bb51d05dbc9d9063cc0fe6e69776a3975c2bb5d5ed3d93ae20f5622723",
+      "frozenMatches": true,
+      "beforeSha256": "28863ce92019a1780247adf9f400b3816fa4d5e893b9b1b2e4758b50a9da5296",
+      "headSha256": "28863ce92019a1780247adf9f400b3816fa4d5e893b9b1b2e4758b50a9da5296",
+      "beforeEqualsHead": true,
+      "onlyLineEndingsBeforeHead": false
+    },
+    {
+      "group": "child",
+      "path": "apps/child/lib/core/submissions.dart",
+      "sha256": "269f11530f553015992b97d6e4f6e216387e507abeccf7489414cccda7461fe6",
+      "frozenSha256": "269f11530f553015992b97d6e4f6e216387e507abeccf7489414cccda7461fe6",
+      "frozenMatches": true,
+      "beforeSha256": "b0d97917b725bd890c4c04d4a0c2645f7d4d39f5e38db457703aac93f5614b14",
+      "headSha256": "b0d97917b725bd890c4c04d4a0c2645f7d4d39f5e38db457703aac93f5614b14",
+      "beforeEqualsHead": true,
+      "onlyLineEndingsBeforeHead": false
+    },
+    {
+      "group": "child",
+      "path": "apps/child/lib/core/session.dart",
+      "sha256": "68dc78db93497f465376555435b9c0de70e35ff7ee4f8cf32ffd680c3b537bc4",
+      "frozenSha256": "68dc78db93497f465376555435b9c0de70e35ff7ee4f8cf32ffd680c3b537bc4",
+      "frozenMatches": true,
+      "beforeSha256": "166b25abda032b5ac64807345c572aff159b04c6646fa6dac43c0bcdb4ecd471",
+      "headSha256": "166b25abda032b5ac64807345c572aff159b04c6646fa6dac43c0bcdb4ecd471",
+      "beforeEqualsHead": true,
+      "onlyLineEndingsBeforeHead": false
+    },
+    {
+      "group": "child",
+      "path": "apps/child/lib/ui/submission_section.dart",
+      "sha256": "a674093448e4744825c69c9cb8bc6f58583a7805862973a5414b365587a928c6",
+      "frozenSha256": "a674093448e4744825c69c9cb8bc6f58583a7805862973a5414b365587a928c6",
+      "frozenMatches": true,
+      "beforeSha256": "e46865ed14e4874745b510cd7a486a02727a1c645b53cbc0757b451bb51c47e0",
+      "headSha256": "e46865ed14e4874745b510cd7a486a02727a1c645b53cbc0757b451bb51c47e0",
+      "beforeEqualsHead": true,
+      "onlyLineEndingsBeforeHead": false
+    },
+    {
+      "group": "child",
+      "path": "apps/child/lib/ui/submission_dialogs.dart",
+      "sha256": "067501142a0d3e8b73d73b546b1ed010da0ac7ce96a16e639ac2b5f0336a9de8",
+      "frozenSha256": "067501142a0d3e8b73d73b546b1ed010da0ac7ce96a16e639ac2b5f0336a9de8",
+      "frozenMatches": true,
+      "beforeSha256": "1c2a6072d2d560d71d54e6fcf04d25934f13da131dffa306bc7ba9729949cc9f",
+      "headSha256": "1c2a6072d2d560d71d54e6fcf04d25934f13da131dffa306bc7ba9729949cc9f",
+      "beforeEqualsHead": true,
+      "onlyLineEndingsBeforeHead": false
+    },
+    {
+      "group": "child",
+      "path": "apps/child/lib/ui/submission_display.dart",
+      "sha256": "fe3ccf2344a13be71b6c0f37b1092c4092a86f7301eed3fd82152c0a26c5d8d7",
+      "frozenSha256": "fe3ccf2344a13be71b6c0f37b1092c4092a86f7301eed3fd82152c0a26c5d8d7",
+      "frozenMatches": true,
+      "beforeSha256": "5fd3a0fbbbd09c11eb055d329777fd826bdbf7057767c93bedf8278dccac5fe7",
+      "headSha256": "5fd3a0fbbbd09c11eb055d329777fd826bdbf7057767c93bedf8278dccac5fe7",
+      "beforeEqualsHead": true,
+      "onlyLineEndingsBeforeHead": false
+    }
+  ],
+  "allFrozenMatches": true
+}

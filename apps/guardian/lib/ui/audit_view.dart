@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import '../core/audit.dart';
+import '../core/api.dart';
 import '../core/labels.dart';
 import 'design.dart';
 
@@ -8,8 +9,11 @@ class AuditView extends StatefulWidget {
   final AuditRepository repository;
   final Listenable? accessChanges;
   final ValueChanged<AuditQuery>? onExport;
+  final AuditQuery? initialQuery;
+  final String? contextNotice;
   const AuditView(
-      {super.key, required this.repository, this.accessChanges, this.onExport});
+      {super.key, required this.repository, this.accessChanges, this.onExport,
+        this.initialQuery, this.contextNotice});
   @override
   State<AuditView> createState() => _AuditViewState();
 }
@@ -33,7 +37,25 @@ class _AuditViewState extends State<AuditView> {
   void initState() {
     super.initState();
     resetRange();
-    applied = query();
+    final initial = widget.initialQuery;
+    if (initial != null) {
+      // Validate before issuing any query; this is not an unbounded history mode.
+      try {
+        initial.validate();
+      } on AuditProtocolException {
+        applied = query();
+        error = const ApiFailure(400, 'INVALID_AUDIT_QUERY');
+        return;
+      }
+      range = DateTimeRange(
+          start: DateTime.fromMillisecondsSinceEpoch(initial.from),
+          end: DateTime.fromMillisecondsSinceEpoch(initial.to));
+      action.text = initial.action ?? '';
+      resource.text = initial.resourceId ?? '';
+      trace.text = initial.correlationId ?? '';
+      recent = false;
+    }
+    applied = initial ?? query();
     load();
   }
 
@@ -127,13 +149,16 @@ class _AuditViewState extends State<AuditView> {
 
   Future<void> dates() async {
     final now = DateTime.now();
+    final first = DateTime.fromMillisecondsSinceEpoch(0);
+    final selectedStart = range.start.isAfter(now) ? now : range.start;
+    final selectedEnd = range.end.subtract(const Duration(milliseconds: 1));
     final chosen = await showDateRangePicker(
         context: context,
-        firstDate: DateTime(2000),
+        firstDate: first,
         lastDate: now,
         initialDateRange: DateTimeRange(
-            start: range.start,
-            end: range.end.subtract(const Duration(milliseconds: 1))),
+            start: selectedStart,
+            end: selectedEnd.isAfter(now) ? now : selectedEnd),
         helpText: '选择审计日期范围',
         saveText: '确定');
     if (!mounted || chosen == null) return;
@@ -143,7 +168,8 @@ class _AuditViewState extends State<AuditView> {
       return;
     }
     setState(() {
-      range = DateTimeRange(start: chosen.start, end: end);
+      range = DateTimeRange(
+          start: chosen.start.isBefore(first) ? first : chosen.start, end: end);
       recent = false;
     });
   }
@@ -182,6 +208,10 @@ class _AuditViewState extends State<AuditView> {
                       if (form.currentState!.validate()) load(refresh: true);
                     },
               icon: const Icon(Icons.refresh))),
+      if (widget.contextNotice != null) ...[
+        Notice(widget.contextNotice!),
+        const SizedBox(height: 16),
+      ],
       Panel(
           child: Form(
               key: form,

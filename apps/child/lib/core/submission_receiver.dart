@@ -363,7 +363,10 @@ class ChildSubmissionReceiver implements ChildSubmissions {
       _check(epoch);
       _confirmed.add(value.id);
     } on AccessTransportFailure catch (error) {
-      if (!recovering &&
+      if (error.resultUnavailable != null &&
+          !_closed && !_paused && epoch == _epoch) {
+        await _journal!.markResultUnavailable(error.resultUnavailable!);
+      } else if (!recovering &&
           !_closed &&
           !_paused &&
           epoch == _epoch &&
@@ -412,6 +415,20 @@ class ChildSubmissionReceiver implements ChildSubmissions {
         if (pending != null) {
           await _journal!.discardUnsentOrRejected(pending.key);
         }
+        _check(epoch);
+        return _snapshot(binding, epoch);
+      });
+  @override
+  Future<ChildSubmissionSnapshot> acknowledgeResultUnavailable(String key) =>
+      _enqueue((epoch) async {
+        final binding = await _read();
+        _check(epoch);
+        if (binding?.phase != 'VALID' || binding?.context == null) {
+          throw const AccessFailure('SUBMISSION_CONTEXT_INVALID');
+        }
+        await _open(binding!.context!, epoch, existingDatabase: true);
+        _check(epoch);
+        await _journal!.acknowledgeResultUnavailable(key);
         _check(epoch);
         return _snapshot(binding, epoch);
       });

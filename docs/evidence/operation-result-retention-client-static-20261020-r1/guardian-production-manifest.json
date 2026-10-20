@@ -1,0 +1,88 @@
+{
+  "schema": "1.0.0",
+  "status": "STATIC_PRODUCTION_R4_FINAL_PENDING_INDEPENDENT_REVIEW",
+  "acceptedForExecution": false,
+  "sdkRun": false,
+  "testsRun": false,
+  "testAdaptersUnchanged": true,
+  "files": [
+    {
+      "path": "apps/guardian/lib/core/policy_publication_repository.dart",
+      "bytes": 7015,
+      "sha256": "29a99e6abf117e1e8053c4d4ee936b267644d4b684452468b2791f66094bcb85",
+      "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\guardian\\after-production-r4-final\\apps\\guardian\\lib\\core\\policy_publication_repository.dart"
+    },
+    {
+      "path": "apps/guardian/lib/core/publication_journal.dart",
+      "bytes": 2119,
+      "sha256": "d3fc867f57c30a7f66c13f79158b773c09aaac7b3399ca38a3b9310bb063b69d",
+      "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\guardian\\after-production-r4-final\\apps\\guardian\\lib\\core\\publication_journal.dart"
+    },
+    {
+      "path": "apps/guardian/lib/core/browser_publication_journal.dart",
+      "bytes": 18885,
+      "sha256": "306a1b7b75d716e07def7b067e6b12859d444d2d8fcffeb45b2263c12305e885",
+      "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\guardian\\after-production-r4-final\\apps\\guardian\\lib\\core\\browser_publication_journal.dart"
+    },
+    {
+      "path": "apps/guardian/lib/ui/policy_publication_controller.dart",
+      "bytes": 22058,
+      "sha256": "8f7d4892ce93f6ebe1b590893cc775a1d8584716ac66ab2ac1856cd17485438a",
+      "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\guardian\\after-production-r4-final\\apps\\guardian\\lib\\ui\\policy_publication_controller.dart"
+    },
+    {
+      "path": "apps/guardian/lib/ui/policy_publication_dialog.dart",
+      "bytes": 21029,
+      "sha256": "6a746047e390e4cd20f9bba1ce14349f8d7587d7d325fa0f3e181725ba2fa6ab",
+      "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\guardian\\after-production-r4-final\\apps\\guardian\\lib\\ui\\policy_publication_dialog.dart"
+    },
+    {
+      "path": "apps/guardian/lib/pages/policy_publication_entry.dart",
+      "bytes": 8078,
+      "sha256": "2421071dadbcb6dc7ed39f98b9b68044819084a87b17d7ed4ee2f12679076a94",
+      "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\guardian\\after-production-r4-final\\apps\\guardian\\lib\\pages\\policy_publication_entry.dart"
+    },
+    {
+      "path": "apps/guardian/lib/core/policy_publication.dart",
+      "bytes": 14949,
+      "sha256": "918374d7a884917e0bf0b8e7d9dda63600031a018d25ac783fec0a2f2f4a6cd6",
+      "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\guardian\\after-production-r4-final\\apps\\guardian\\lib\\core\\policy_publication.dart"
+    },
+    {
+      "path": "apps/guardian/lib/core/api.dart",
+      "bytes": 22640,
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641",
+      "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\guardian\\after-production-r4-final\\apps\\guardian\\lib\\core\\api.dart"
+    },
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "bytes": 84143,
+      "sha256": "c33c96fac1c22adf0fadf51f1ac49f66d0d8d12927cfdc6850b3502a495273cb",
+      "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\guardian\\after-production-r4-final\\apps\\guardian\\lib\\pages\\console_pages.dart"
+    },
+    {
+      "path": "apps/guardian/lib/pages/audit_page.dart",
+      "bytes": 4008,
+      "sha256": "c74c3870119945e1550b8d7ddaaa60b79630a3a7520249a2706ac7ff005f1e7a",
+      "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\guardian\\after-production-r4-final\\apps\\guardian\\lib\\pages\\audit_page.dart"
+    },
+    {
+      "path": "apps/guardian/lib/ui/audit_view.dart",
+      "bytes": 14665,
+      "sha256": "9c446b177a5bf9f3badb63b9f011d19a87c92eecd0303213d3bef34a5590ffc6",
+      "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\guardian\\after-production-r4-final\\apps\\guardian\\lib\\ui\\audit_view.dart"
+    },
+    {
+      "path": "apps/guardian/lib/core/bounded_json.dart",
+      "bytes": 6327,
+      "sha256": "ca3bf7b46cc346bd003f9fcff712611d38cd55655bf492e975fc50e79bd1180b",
+      "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\guardian\\after-production-r4-final\\apps\\guardian\\lib\\core\\bounded_json.dart"
+    },
+    {
+      "path": "apps/guardian/lib/pages/policy_details_entry.dart",
+      "bytes": 23683,
+      "sha256": "621f9aeb686a2cc89d571a6916ccc07b54afa33df555f339b783b8f5d00bca0a",
+      "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\guardian\\after-production-r4-final\\apps\\guardian\\lib\\pages\\policy_details_entry.dart"
+    }
+  ]
+}

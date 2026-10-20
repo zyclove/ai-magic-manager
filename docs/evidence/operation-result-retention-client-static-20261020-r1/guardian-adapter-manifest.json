@@ -1,0 +1,57 @@
+{
+  "schema": "1.0.0",
+  "status": "STATIC_TEST_ADAPTERS_R1_NOT_RUN",
+  "sdkRun": false,
+  "testsRun": false,
+  "testCallsBefore": 25.0,
+  "testCallsAfter": 25.0,
+  "expectCallsBefore": 135.0,
+  "expectCallsAfter": 135.0,
+  "productionSourceUnchanged": true,
+  "files": [
+    {
+      "path": "apps/guardian/test/publication_test_journal.dart",
+      "bytes": 8673,
+      "beforeSha256": "ace978f6e86f2bd33396979ae5fa8c36b5738a1d52f5b5496e3c38d56c54f06a",
+      "sha256": "f4cc1ee665c63045190753417dbbed5a6d61b2c1b2a0461a0ab897a382867acf",
+      "testCallsBefore": 0,
+      "testCallsAfter": 0,
+      "expectCallsBefore": 0,
+      "expectCallsAfter": 0,
+      "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\guardian\\after-test-adapters-r1\\apps\\guardian\\test\\publication_test_journal.dart"
+    },
+    {
+      "path": "apps/guardian/test/policy_publication_controller_fixtures.dart",
+      "bytes": 12357,
+      "beforeSha256": "551fdb1290c65238aa7ed6c89afb4fbc4ac79e33b14a60ca3dc69694bf877b71",
+      "sha256": "62cd66921acd74d479c2e9c4d4a89da19b2c35e687b9571aa0e1ddb73a321ede",
+      "testCallsBefore": 0,
+      "testCallsAfter": 0,
+      "expectCallsBefore": 0,
+      "expectCallsAfter": 0,
+      "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\guardian\\after-test-adapters-r1\\apps\\guardian\\test\\policy_publication_controller_fixtures.dart"
+    },
+    {
+      "path": "apps/guardian/test/policy_publication_entry_test.dart",
+      "bytes": 13398,
+      "beforeSha256": "d831fc95f0bab7e19a5d122e28adaec46f2a1f1393520ae967c29c9bfee6b96b",
+      "sha256": "d831fc95f0bab7e19a5d122e28adaec46f2a1f1393520ae967c29c9bfee6b96b",
+      "testCallsBefore": 6,
+      "testCallsAfter": 6,
+      "expectCallsBefore": 69,
+      "expectCallsAfter": 69,
+      "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\guardian\\after-test-adapters-r1\\apps\\guardian\\test\\policy_publication_entry_test.dart"
+    },
+    {
+      "path": "apps/guardian/test/policy_publication_test.dart",
+      "bytes": 12931,
+      "beforeSha256": "ee1576913d0b5139a9dd44f606aed5febf0fc5e815995f5a82889ed5aeb47a32",
+      "sha256": "d3cbc2c6d1bbba435557a59613033250457c1e7387613756a289a08ca5482781",
+      "testCallsBefore": 19,
+      "testCallsAfter": 19,
+      "expectCallsBefore": 66,
+      "expectCallsAfter": 66,
+      "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\guardian\\after-test-adapters-r1\\apps\\guardian\\test\\policy_publication_test.dart"
+    }
+  ]
+}

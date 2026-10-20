@@ -28,6 +28,26 @@ class BrowserPublicationJournal implements PublicationJournal {
   String _key(PublicationOwner owner, String policyId) =>
       '${owner.key}\u0000$policyId';
 
+  // The leading ! is outside base64url owner keys. Terminal fences share the
+  // same physical store/transaction, but never occupy pending capacity.
+  String _terminalKey(PublicationIntent intent) =>
+      '!terminal\u0000${_key(intent.owner, intent.policyId)}\u0000'
+      '${publicationRequestDigest(intent)}';
+
+  Future<PublicationTerminalMarker?> _getTerminal(
+      idb.ObjectStore store, PublicationIntent intent) async {
+    final key = _terminalKey(intent);
+    final raw = await store.getObject(key);
+    if (raw == null && await store.count(key) == 0) return null;
+    if (raw is! String) throw _invalidRecord;
+    return PublicationTerminalMarker.decode(raw, intent: intent);
+  }
+
+  PublicationPending _terminalRecord(PublicationIntent intent,
+      PublicationTerminalMarker marker, {int attempt = 1}) =>
+      PublicationPending(intent: intent, phase: marker.reason.phase,
+          attempt: attempt, confirmedSuccess: marker.confirmedSuccess);
+
   @override
   Future<PublicationPending?> read(PublicationOwner owner, String policyId) {
     if (!isPublicationOpaqueId(policyId)) {
@@ -44,9 +64,16 @@ class BrowserPublicationJournal implements PublicationJournal {
     return _withDatabase((database) async {
       final reservation =
           await _transaction(database, 'readwrite', (store) async {
+        final marker = await _getTerminal(store, intent);
         final current = await _get(store, intent.owner, intent.policyId);
         if (current != null) {
+          if (marker != null && current.intent.idempotencyKey == intent.idempotencyKey) {
+            throw _invalidRecord;
+          }
           return PublicationReservation(record: current, maySubmit: false);
+        }
+        if (marker != null) {
+          return PublicationReservation(record: _terminalRecord(intent, marker), maySubmit: false);
         }
         final count = await store.count(idb.KeyRange.bound(
             '${intent.owner.key}\u0000',
@@ -69,7 +96,16 @@ class BrowserPublicationJournal implements PublicationJournal {
         final intent = expected.intent;
         final reservation =
             await _transaction(database, 'readwrite', (store) async {
+          final marker = await _getTerminal(store, intent);
           final current = await _get(store, intent.owner, intent.policyId);
+          if (marker != null) {
+            if (current != null) {
+              if (current.intent.idempotencyKey == intent.idempotencyKey) throw _invalidRecord;
+              return PublicationReservation(record: current, maySubmit: false);
+            }
+            return PublicationReservation(record: _terminalRecord(intent, marker,
+                attempt: expected.attempt), maySubmit: false);
+          }
           if (current == null) throw _changed;
           if (current != expected ||
               expected.phase != PublicationPhase.reauthenticationRequired) {
@@ -111,6 +147,115 @@ class BrowserPublicationJournal implements PublicationJournal {
       });
 
   @override
+  Future<PublicationPending> markResultTerminalIfSame(
+      PublicationPending expected, PublicationTerminalReason reason,
+      {bool confirmedSuccess = false, bool Function()? isCurrent}) => _withDatabase((database) async {
+    void ensureCurrent() {
+      if (isCurrent?.call() == false) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+    }
+    ensureCurrent();
+    final intent = expected.intent;
+    var next = PublicationPending(intent: intent, phase: reason.phase,
+        attempt: expected.attempt,
+        confirmedSuccess: confirmedSuccess || expected.confirmedSuccess);
+    await _transaction(database, 'readwrite', (store) async {
+      final current = await _get(store, intent.owner, intent.policyId);
+      final marker = await _getTerminal(store, intent);
+      ensureCurrent();
+      if (marker != null) {
+        if (current != null) throw _changed;
+        final mergedReason = marker.reason == PublicationTerminalReason.erased ||
+            reason == PublicationTerminalReason.erased
+            ? PublicationTerminalReason.erased : PublicationTerminalReason.expired;
+        next = PublicationPending(intent: intent, phase: mergedReason.phase,
+            attempt: expected.attempt,
+            confirmedSuccess: marker.confirmedSuccess || next.confirmedSuccess);
+        if (marker.reason != mergedReason || marker.confirmedSuccess != next.confirmedSuccess) {
+          // A late trusted receipt can only strengthen the saved fact. It never
+          // restores any payload or reopens the acknowledged original request.
+          final strengthened = PublicationTerminalMarker(ownerKey: marker.ownerKey,
+              policyId: marker.policyId, requestDigest: marker.requestDigest,
+              reason: mergedReason, acknowledgedAt: marker.acknowledgedAt,
+              confirmedSuccess: next.confirmedSuccess);
+          await store.put(strengthened.encode(), _terminalKey(intent));
+          ensureCurrent();
+        }
+        return;
+      }
+      if (current == next) return;
+      if (current != null && current.phase.terminal &&
+          current.intent == expected.intent && current.attempt == expected.attempt) {
+        final phase = current.phase == PublicationPhase.resultErased ||
+            reason == PublicationTerminalReason.erased
+            ? PublicationPhase.resultErased : PublicationPhase.resultExpired;
+        next = PublicationPending(intent: intent, phase: phase,
+            attempt: expected.attempt,
+            confirmedSuccess: current.confirmedSuccess || next.confirmedSuccess);
+        await store.put(next.encode(), _key(intent.owner, intent.policyId));
+        ensureCurrent();
+        return;
+      }
+      if (current != expected || expected.phase.terminal) throw _changed;
+      await store.put(next.encode(), _key(intent.owner, intent.policyId));
+      ensureCurrent();
+    });
+    await _transaction(database, 'readonly', (store) async {
+      final current = await _get(store, intent.owner, intent.policyId);
+      final marker = await _getTerminal(store, intent);
+      ensureCurrent();
+      if (marker != null && current == null && marker.reason.phase == next.phase &&
+          (!next.confirmedSuccess || marker.confirmedSuccess)) return;
+      if (current != next || marker != null) throw _changed;
+    });
+    return next;
+  });
+
+  @override
+  Future<PublicationTerminalMarker> acknowledgeTerminalIfSame(
+      PublicationPending expected,
+      {required int acknowledgedAt, bool Function()? isCurrent}) =>
+      _withDatabase((database) async {
+    void ensureCurrent() {
+      if (isCurrent?.call() == false) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+    }
+    ensureCurrent();
+    if (!expected.phase.terminal) throw _changed;
+    final intent = expected.intent;
+    final reason = expected.phase == PublicationPhase.resultExpired
+        ? PublicationTerminalReason.expired : PublicationTerminalReason.erased;
+    final marker = await _transaction(database, 'readwrite', (store) async {
+      final current = await _get(store, intent.owner, intent.policyId);
+      final existing = await _getTerminal(store, intent);
+      ensureCurrent();
+      if (existing != null) {
+        if (current != null || existing.reason != reason ||
+            (expected.confirmedSuccess && !existing.confirmedSuccess)) throw _changed;
+        return existing;
+      }
+      if (current != expected) throw _changed;
+      final next = PublicationTerminalMarker(ownerKey: intent.owner.key,
+          policyId: intent.policyId,
+          requestDigest: publicationRequestDigest(intent), reason: reason,
+          acknowledgedAt: acknowledgedAt,
+          confirmedSuccess: expected.confirmedSuccess);
+      await store.add(next.encode(), _terminalKey(intent));
+      ensureCurrent();
+      await store.delete(_key(intent.owner, intent.policyId));
+      ensureCurrent();
+      return next;
+    });
+    // Read both sides in one transaction. Another tab's new pending must remain
+    // visible; an old acknowledgement cannot erase or claim it is an empty slot.
+    await _transaction(database, 'readonly', (store) async {
+      final pending = await _get(store, intent.owner, intent.policyId);
+      final committed = await _getTerminal(store, intent);
+      ensureCurrent();
+      if (pending != null || committed != marker) throw _changed;
+    });
+    return marker;
+  });
+
+  @override
   Future<bool> removeIfSame(PublicationPending expected) =>
       _remove(expected, false);
 
@@ -126,6 +271,7 @@ class BrowserPublicationJournal implements PublicationJournal {
             await _transaction(database, 'readwrite', (store) async {
           final current = await _get(store, intent.owner, intent.policyId);
           if (current != expected ||
+              expected.phase.terminal ||
               (requireReauthentication &&
                   expected.phase != PublicationPhase.reauthenticationRequired)) {
             return false;
@@ -142,6 +288,21 @@ class BrowserPublicationJournal implements PublicationJournal {
   Future<PublicationReservation> _verifyReservation(
       idb.Database database, PublicationReservation reservation) async {
     final intent = reservation.record.intent;
+    if (reservation.record.phase.terminal) {
+      return _transaction(database, 'readonly', (store) async {
+        final committed = await _get(store, intent.owner, intent.policyId);
+        final marker = await _getTerminal(store, intent);
+        if (committed != null) {
+          if (marker != null && committed.intent.idempotencyKey == intent.idempotencyKey) {
+            throw _invalidRecord;
+          }
+          return PublicationReservation(record: committed, maySubmit: false);
+        }
+        if (marker == null || marker.reason.phase != reservation.record.phase) throw _changed;
+        return PublicationReservation(record: _terminalRecord(intent, marker,
+            attempt: reservation.record.attempt), maySubmit: false);
+      });
+    }
     final committed = await _read(database, intent.owner, intent.policyId);
     if (committed == null) throw _changed;
     return PublicationReservation(

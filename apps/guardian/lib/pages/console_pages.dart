@@ -1035,14 +1035,19 @@ class ConsoleActions {
     final policyId = policyValue as String, revision = revisionValue;
     var journeyLive = true;
     final revoked = ValueNotifier<bool>(false);
+    // Capture the originating route before local storage or HTTP can await.
+    // Its permanent revocation is published safely to independently pushed pages.
+    final parentAccess = DialogAccessBinding(ctx);
     // Capture and listen before the very first await, including local storage.
     // An actor/tenant/role/generation ABA cannot establish a fresh scope later.
     final scope = DeviceSubflowScope(s,
         permitted: () =>
             journeyLive &&
+            parentAccess.permitted() &&
             !revoked.value &&
             ctx.mounted &&
             parentRoute.isActive &&
+            (parentRoute is! OwnedDialogRoute<dynamic> || parentRoute.available) &&
             s.tenant != null &&
             s.root == workspace &&
             s.canWrite &&
@@ -1076,7 +1081,41 @@ class ConsoleActions {
           policyId: policyId,
           current: current,
           onDenied: revokePrivateFailure);
-      final changes = Listenable.merge([scope, revoked]);
+      final changes = Listenable.merge([scope, revoked, parentAccess.changes]);
+
+      Future<bool> finishPublication(PublicationDialogResult result) async {
+        if (!ctx.mounted || !current() || !parentRoute.isCurrent) return false;
+        switch (result.reason) {
+          case PublicationExitReason.repreview:
+            return true;
+          case PublicationExitReason.currentPolicy:
+            if (!s.canOpen('policies')) return false;
+            await openPolicyDetails(ctx, s, root: workspace,
+                row: {'id': policyId}, preview: previewPolicy,
+                parentCurrent: current, accessChanges: changes, readOnly: true);
+            return false;
+          case PublicationExitReason.audit:
+            final query = result.auditQuery;
+            if (!s.canOpen('audit') || query == null) return false;
+            query.validate();
+            final auditRoute = MaterialPageRoute<void>(builder: (_) => Scaffold(
+                    appBar: AppBar(title: const Text('核对策略操作记录')),
+                    body: SingleChildScrollView(padding: const EdgeInsets.all(24),
+                        child: AuditExplorerPage(session: s, initialQuery: query,
+                            parentCurrent: current, accessChanges: changes,
+                            contextNotice: query.resourceId == null
+                                ? '已按配置保存操作和原操作附近日期筛选。'
+                                  '这些记录不代表与原操作精确关联；未查到记录也不代表原操作未执行。'
+                                : '已按此前确认的配置版本筛选。审计记录反映已记录的管理操作，不代表设备已执行。'))));
+            await Navigator.of(ctx, rootNavigator: true).push<void>(auditRoute);
+            // Keep the journey's notifiers alive through the pushed page's exit.
+            await auditRoute.completed;
+            return false;
+          case PublicationExitReason.closed:
+          case PublicationExitReason.acknowledged:
+            return false;
+        }
+      }
 
       Future<bool> groupCurrent(PolicyTargetSelection target,
           {bool Function()? isCurrent}) async {
@@ -1134,7 +1173,7 @@ class ConsoleActions {
         if (!ctx.mounted || !current() || !parentRoute.isCurrent) return;
         if (pending != null) {
           final original = pending.intent;
-          final again = await showPolicyPublication(ctx,
+          final result = await showPolicyPublication(ctx,
               repository: repository,
               journal: publicationJournal,
               intent: original,
@@ -1145,8 +1184,9 @@ class ConsoleActions {
               // retry checks only original TTL/current; the server rechecks its
               // original snapshot without inventing another group selection.
               preflight: () => preflight(original),
-              reauthenticate: reauth);
-          if (!again || !current() || !parentRoute.isCurrent) return;
+              reauthenticate: reauth,
+              canViewAudit: () => current() && s.canOpen('audit'));
+          if (!await finishPublication(result)) return;
           continue;
         }
 
@@ -1274,7 +1314,7 @@ class ConsoleActions {
             previewExpiresAt: p['expiresAt'] as int,
             createdAt: DateTime.now().millisecondsSinceEpoch,
             idempotencyKey: const Uuid().v4());
-        final again = await showPolicyPublication(ctx,
+        final result = await showPolicyPublication(ctx,
             repository: repository,
             journal: publicationJournal,
             intent: original,
@@ -1284,15 +1324,16 @@ class ConsoleActions {
             parentCurrent: current,
             accessChanges: changes,
             preflight: () => preflight(original, picked),
-            reauthenticate: reauth);
-        // True can only come from the user's explicit repreview action after
-        // exact not-submitted cancellation (or an unsubmitted invalid preview).
-        if (!again || !current() || !parentRoute.isCurrent) return;
+            reauthenticate: reauth,
+            canViewAudit: () => current() && s.canOpen('audit'));
+        // Only the independent explicit repreview exit can start another loop.
+        if (!await finishPublication(result)) return;
       }
     } finally {
       journeyLive = false;
       scope.dispose();
       revoked.dispose();
+      parentAccess.dispose();
     }
   }
 

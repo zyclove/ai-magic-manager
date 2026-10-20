@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../core/api.dart';
+import '../core/audit.dart';
 import '../core/policy_publication.dart';
 import '../core/policy_publication_repository.dart';
 import '../core/publication_journal.dart';
@@ -19,10 +20,18 @@ class PublicationLocalRecoveryUnavailable implements Exception {
   String toString() => '本地记录暂不能核对，保存已暂停。请重新打开后重试。';
 }
 
+enum PublicationExitReason { closed, repreview, currentPolicy, audit, acknowledged }
+
+final class PublicationDialogResult {
+  final PublicationExitReason reason;
+  final AuditQuery? auditQuery;
+  const PublicationDialogResult(this.reason, {this.auditQuery});
+}
+
 /// Owns one publication dialog and its closing animation. The parent owns the
 /// authority scope from before its first await; this entry never captures a new
 /// session scope or closes the borrowed HTTP client.
-Future<bool> showPolicyPublication(
+Future<PublicationDialogResult> showPolicyPublication(
   BuildContext context, {
   required PublicationRequests repository,
   required PublicationJournal journal,
@@ -35,6 +44,7 @@ Future<bool> showPolicyPublication(
   Listenable? accessChanges,
   Future<void> Function()? preflight,
   required VoidCallback reauthenticate,
+  bool Function()? canViewAudit,
 }) async {
   final parentRoute = ModalRoute.of(context);
   if (!context.mounted ||
@@ -45,16 +55,19 @@ Future<bool> showPolicyPublication(
   }
 
   var viewLive = true, finishing = false, routeInstalled = false;
-  var reauthRequested = false, repreviewRequested = false;
+  var reauthRequested = false;
+  var result = const PublicationDialogResult(PublicationExitReason.closed);
   late final OwnedDialogRoute<void> route;
 
   bool parentAuthorized() =>
-      context.mounted && parentRoute.isActive && parentCurrent();
+      context.mounted && parentRoute.isActive &&
+      (parentRoute is! OwnedDialogRoute<dynamic> || parentRoute.available) &&
+      parentCurrent();
   bool current() =>
       viewLive &&
       !finishing &&
       parentAuthorized() &&
-      (!routeInstalled || route.isActive);
+      (!routeInstalled || (route.available && route.isActive));
 
   // The constructor checks current synchronously. Before push there is no
   // installed child route, so routeInstalled must still be false here.
@@ -100,6 +113,31 @@ Future<bool> showPolicyPublication(
     route.finish();
   }
 
+  void review(PublicationExitReason reason) {
+    if (!ownRouteCurrent() || !parentAuthorized() ||
+        !controller.canReviewTerminal ||
+        (reason == PublicationExitReason.audit && canViewAudit?.call() != true)) return;
+    AuditQuery? query;
+    if (reason == PublicationExitReason.audit) {
+      final receipt = controller.receipt;
+      // Result UUID/version are only used when a trusted receipt actually
+      // supplied them. Otherwise show a clearly approximate original time range.
+      final now = DateTime.now().millisecondsSinceEpoch;
+      final instant = (receipt?.createdAt ?? controller.intent.createdAt)
+          .clamp(0, now).toInt();
+      const day = Duration.millisecondsPerDay;
+      query = AuditQuery(
+          from: (instant - day).clamp(0, now).toInt(),
+          to: (instant + day).clamp(1, now + 1).toInt(),
+          action: 'POLICY_CONFIGURATION_RECORDED',
+          resourceId: receipt != null && auditResourceId(receipt.versionId)
+              ? receipt.versionId : null);
+      query.validate();
+    }
+    result = PublicationDialogResult(reason, auditQuery: query);
+    close();
+  }
+
   try {
     route = OwnedDialogRoute<void>(
         context: context,
@@ -119,6 +157,15 @@ Future<bool> showPolicyPublication(
               reauthRequested = true;
               close();
             },
+            onViewCurrent: () => review(PublicationExitReason.currentPolicy),
+            onViewAudit: canViewAudit?.call() == true
+                ? () => review(PublicationExitReason.audit) : null,
+            onAcknowledged: () {
+              if (!ownRouteCurrent() || !parentAuthorized() || controller.busy ||
+                  controller.phase != PublicationViewPhase.terminalAcknowledged) return;
+              result = const PublicationDialogResult(PublicationExitReason.acknowledged);
+              close();
+            },
             onRepreview: () {
               // The dialog has already awaited exact not-submitted cancellation
               // when needed. Unknown pending records can never take this path.
@@ -128,7 +175,7 @@ Future<bool> showPolicyPublication(
                   !controller.hasAccess ||
                   controller.pending != null ||
                   !controller.canRepreview) return;
-              repreviewRequested = true;
+              result = const PublicationDialogResult(PublicationExitReason.repreview);
               close();
             }));
     unawaited(route.popped.then<void>((_) {
@@ -144,12 +191,17 @@ Future<bool> showPolicyPublication(
     viewLive = false;
     finishing = true;
     controller.invalidate();
-    if (!parentAuthorized() || !parentRoute.isCurrent) return false;
+    if (!parentAuthorized() || !parentRoute.isCurrent) {
+      return const PublicationDialogResult(PublicationExitReason.closed);
+    }
     if (reauthRequested) {
       reauthenticate();
-      return false;
+      return const PublicationDialogResult(PublicationExitReason.closed);
     }
-    return repreviewRequested;
+    if (result.reason == PublicationExitReason.audit && canViewAudit?.call() != true) {
+      return const PublicationDialogResult(PublicationExitReason.closed);
+    }
+    return result;
   } finally {
     viewLive = false;
     finishing = true;

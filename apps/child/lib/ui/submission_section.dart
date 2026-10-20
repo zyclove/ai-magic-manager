@@ -42,6 +42,7 @@ class _SubmissionSectionState extends State<SubmissionSection> {
       animation: session,
       builder: (context, _) {
         final view = session.submissions, pending = view.journal?.pending;
+        final generation = session.submissionGeneration;
         final entries = view.journal?.entries ?? const <SubmissionCacheEntry>[];
         final usable =
             widget.available && session.foreground && session.credentialReady;
@@ -71,9 +72,12 @@ class _SubmissionSectionState extends State<SubmissionSection> {
                 switch (pending.phase) {
                   SubmissionOperationPhase.prepared => '原操作尚未发送',
                   SubmissionOperationPhase.unknown => '结果待确认',
-                  SubmissionOperationPhase.rejected => '本次操作未提交'
+                  SubmissionOperationPhase.rejected => '本次操作未提交',
+                  SubmissionOperationPhase.resultUnavailable => '原操作结果已不可恢复'
                 },
-                detail: pending.phase == SubmissionOperationPhase.unknown
+                detail: pending.phase == SubmissionOperationPhase.resultUnavailable
+                    ? submissionError(pending.terminalCode)
+                    : pending.phase == SubmissionOperationPhase.unknown
                     ? '${pending.applicationName}：可能已送达监护人。请按原操作确认结果，不能重复申请。'
                     : pending.phase == SubmissionOperationPhase.rejected
                         ? submissionError(pending.rejectionCode)
@@ -81,22 +85,32 @@ class _SubmissionSectionState extends State<SubmissionSection> {
                 warning: true),
             const SizedBox(height: 12),
             Wrap(spacing: 12, runSpacing: 8, children: [
-              if (pending.phase != SubmissionOperationPhase.rejected)
+              if (pending.phase == SubmissionOperationPhase.prepared ||
+                  pending.phase == SubmissionOperationPhase.unknown)
                 OutlinedButton(
                     onPressed: ready
-                        ? () => showSubmissionRecovery(context, session)
+                        ? () => showSubmissionRecovery(context, session,
+                            key: pending.key, generation: generation)
                         : null,
                     child: Text(
                         pending.phase == SubmissionOperationPhase.prepared
                             ? '确认并发送原操作'
                             : '按原操作重试')),
-              if (pending.phase != SubmissionOperationPhase.unknown)
+              if (pending.phase == SubmissionOperationPhase.prepared ||
+                  pending.phase == SubmissionOperationPhase.rejected)
                 TextButton(
                     onPressed: ready
                         ? () => showSubmissionRecovery(context, session,
-                            discard: true)
+                            discard: true, key: pending.key, generation: generation)
                         : null,
-                    child: const Text('放弃本次操作'))
+                    child: const Text('放弃本次操作')),
+              if (pending.phase == SubmissionOperationPhase.resultUnavailable)
+                OutlinedButton(
+                    onPressed: ready
+                        ? () => showSubmissionResultAcknowledgement(context, session,
+                            key: pending.key, generation: generation)
+                        : null,
+                    child: const Text('结束本机核对'))
             ]),
             const SizedBox(height: 20)
           ],
