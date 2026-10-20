@@ -19,6 +19,7 @@ import 'package:http/testing.dart';
 import 'package:oauth2/oauth2.dart' as oauth;
 
 import 'managed_execution_fixtures.dart';
+import 'managed_execution_review_widget_fixtures.dart';
 
 const _actor = 'execution-host-owner';
 const _deviceName = '原工作空间学习平板';
@@ -120,7 +121,8 @@ _Attempt _open(BuildContext context, _Session session,
             deviceName: _deviceName,
             current: current ?? () => true,
             targetChanges: targetChanges,
-            readOnly: readOnly)
+            readOnly: readOnly,
+            journal: ReviewMemoryJournal())
         .then<void>((_) {
       attempt.completed = true;
     }, onError: (Object error, StackTrace _) {
@@ -169,6 +171,36 @@ Future<_Session> _session(WidgetTester tester, ExecutionFixture data,
   expect(session.profile?['subject'], _actor);
   expect(session.tenant?['id'], executionTenant);
   expect(session.role, role);
+  data.handler ??= (request) async {
+    if (request.url.path.endsWith('/review-eligibility')) {
+      final task = data.record();
+      return data.response({
+        for (final key in [
+          'id',
+          'publicationId',
+          'deviceId',
+          'registrationId',
+          'revision'
+        ])
+          key: task[key],
+        'allowed': false,
+        'reason': 'EXECUTION_RECHECK_REQUIRES_REVIEW',
+      });
+    }
+    if (request.url.path.endsWith('/events')) {
+      return data.response({
+        'items': [data.event()],
+        'nextCursor': null
+      });
+    }
+    if (request.url.path.endsWith('/$executionId')) {
+      return data.response(data.record());
+    }
+    return data.response({
+      'items': [data.record()],
+      'nextCursor': null
+    });
+  };
   session.transport = () async => data.client;
   addTearDown(() async {
     await tester.pumpWidget(const SizedBox.shrink());
@@ -187,6 +219,7 @@ Future<void> _press(WidgetTester tester, String key) async {
 
 Future<void> _openDetail(WidgetTester tester) async {
   await _press(tester, 'execution-open-$executionId');
+  await _press(tester, 'execution-refresh-timeline');
   expect(find.byKey(const Key('execution-event-1')), findsOneWidget);
   expect(find.byKey(const Key('execution-cancel')), findsOneWidget);
 }
@@ -255,6 +288,7 @@ void main() {
       expect(data.requests.single.url.queryParameters['limit'], '50');
 
       await _press(tester, 'execution-open-$executionId');
+      await _press(tester, 'execution-refresh-timeline');
 
       expect(find.byKey(const Key('execution-event-1')), findsOneWidget);
       expect(find.byKey(const Key('execution-cancel')),
@@ -298,7 +332,8 @@ void main() {
       await _flush(tester);
       await _openDetail(tester);
       final refresh = tester
-          .widget<TextButton>(find.byKey(const Key('execution-refresh-detail')))
+          .widget<OutlinedButton>(
+              find.byKey(const Key('execution-refresh-detail')))
           .onPressed!;
       final before = data.requests.length;
       final generation = session.scopeGeneration;
@@ -334,7 +369,8 @@ void main() {
     await _flush(tester);
     await _openDetail(tester);
     final refresh = tester
-        .widget<TextButton>(find.byKey(const Key('execution-refresh-detail')))
+        .widget<OutlinedButton>(
+            find.byKey(const Key('execution-refresh-detail')))
         .onPressed!;
     final before = data.requests.length;
     final generation = session.scopeGeneration;
@@ -369,7 +405,8 @@ void main() {
     await _flush(tester);
     await _openDetail(tester);
     final refresh = tester
-        .widget<TextButton>(find.byKey(const Key('execution-refresh-detail')))
+        .widget<OutlinedButton>(
+            find.byKey(const Key('execution-refresh-detail')))
         .onPressed!;
     final before = data.requests.length;
 

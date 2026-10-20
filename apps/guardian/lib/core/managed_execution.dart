@@ -95,6 +95,7 @@ class ManagedExecution {
     'POLICY_CONFIRMED': '已确认策略内容',
     'ASSIGNMENT_CONFIRMED': '已确认策略分配',
     'DEVICE_PENDING': '等待设备报告应用结果',
+    'MANUAL_DEVICE_RECHECK_REQUESTED': '已申请重新核实设备状态',
     'DEVICE_NON_COMPLIANT': '设备报告尚未满足策略要求',
     'DEVICE_APPLIED': '设备反馈与目标策略一致',
     'WRITE_OUTCOME_UNKNOWN': '暂不能确认策略写入结果',

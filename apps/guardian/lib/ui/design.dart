@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/scheduler.dart';
 import '../core/api.dart';
 import '../core/labels.dart';
 import 'owned_dialog_route.dart';
@@ -245,6 +246,14 @@ class FieldSpec {
       this.numeric = false});
 }
 
+/// Capture before an asynchronous action; completion cannot pop a later cover.
+VoidCallback captureDialogCompletion(BuildContext context) {
+  final owner = ModalRoute.of(context);
+  return () {
+    if (owner is OwnedDialogRoute<void>) owner.finish();
+  };
+}
+
 Future<Json?> formDialog(BuildContext context,
         {required String title,
         required List<FieldSpec> fields,
@@ -252,8 +261,24 @@ Future<Json?> formDialog(BuildContext context,
         String? description,
         String submit = '保存',
         required Future<Json?> Function(Json) onSubmit,
-        VoidCallback? reauth}) =>
-    presentOwnedDialog<Json>(
+        VoidCallback? reauth,
+        Listenable? accessChanges,
+        bool Function()? hasAccess}) async {
+  final parent = ModalRoute.of(context);
+  final parentClosed = ValueNotifier<bool>(false);
+  var live = true, allowed = true;
+  bool permitted() {
+    if (!live || !context.mounted || parentClosed.value ||
+        (parent != null && !parent.isActive) ||
+        (hasAccess != null && !hasAccess())) allowed = false;
+    return allowed;
+  }
+
+  parent?.popped.then<void>((_) {
+    if (live) parentClosed.value = true;
+  });
+  try {
+    return await presentOwnedDialog<Json>(
         context,
         OwnedDialogRoute<Json>(
             context: context,
@@ -264,8 +289,27 @@ Future<Json?> formDialog(BuildContext context,
                 initial: initial,
                 description: description,
                 submit: submit,
-                onSubmit: onSubmit,
+                accessChanges: Listenable.merge([
+                  parentClosed,
+                  if (accessChanges != null) accessChanges
+                ]),
+                hasAccess: permitted,
+                onSubmit: (values) async {
+                  if (!permitted()) {
+                    throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+                  }
+                  final result = await onSubmit(values);
+                  if (!permitted()) {
+                    throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+                  }
+                  return result;
+                },
                 reauth: reauth)));
+  } finally {
+    live = false;
+    parentClosed.dispose();
+  }
+}
 
 class EditDialog extends StatefulWidget {
   final String title, submit;
@@ -274,6 +318,8 @@ class EditDialog extends StatefulWidget {
   final Json initial;
   final Future<Json?> Function(Json) onSubmit;
   final VoidCallback? reauth;
+  final Listenable? accessChanges;
+  final bool Function()? hasAccess;
   const EditDialog(
       {super.key,
       required this.title,
@@ -282,7 +328,9 @@ class EditDialog extends StatefulWidget {
       this.description,
       required this.submit,
       required this.onSubmit,
-      this.reauth});
+      this.reauth,
+      this.accessChanges,
+      this.hasAccess});
   @override
   State<EditDialog> createState() => _EditDialogState();
 }
@@ -294,11 +342,42 @@ class _EditDialogState extends State<EditDialog> {
   Json? pendingValues;
   bool busy = false;
   Object? error;
-  bool get current => mounted && ModalRoute.of(context)?.isCurrent == true;
+  ModalRoute<dynamic>? _route;
+  bool _active = true, _revoked = false;
+  bool _rebuildPending = false;
+
+  void _observeAccess() {
+    if (!_revoked && widget.hasAccess?.call() == false) _revoked = true;
+  }
+
+  bool get permitted {
+    _observeAccess();
+    return !_revoked;
+  }
+
+  bool get current =>
+      mounted && _active && permitted && _route?.isCurrent == true;
+
+  void _accessChanged() {
+    final wasRevoked = _revoked;
+    _observeAccess();
+    if (wasRevoked || !_revoked || !mounted || !_active) return;
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      if (_rebuildPending) return;
+      _rebuildPending = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _rebuildPending = false;
+        if (mounted && _active) setState(() {});
+      });
+    } else {
+      setState(() {});
+    }
+  }
 
   void finish([Json? result]) {
-    if (!mounted) return;
-    final route = ModalRoute.of(context);
+    if (!mounted || !_active) return;
+    final route = _route;
     if (route is OwnedDialogRoute<Json>) {
       route.finish(result);
     } else if (route?.isCurrent == true) {
@@ -313,6 +392,8 @@ class _EditDialogState extends State<EditDialog> {
   @override
   void initState() {
     super.initState();
+    _observeAccess();
+    widget.accessChanges?.addListener(_accessChanged);
     for (final f in widget.fields) {
       if (f.options != null) {
         selected[f.key] = widget.initial[f.key]?.toString();
@@ -324,7 +405,41 @@ class _EditDialogState extends State<EditDialog> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final next = ModalRoute.of(context);
+    if (_route != null && !identical(_route, next)) _revoked = true;
+    _route = next;
+  }
+
+  @override
+  void didUpdateWidget(EditDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.accessChanges, widget.accessChanges)) {
+      oldWidget.accessChanges?.removeListener(_accessChanged);
+      widget.accessChanges?.addListener(_accessChanged);
+    }
+    _observeAccess();
+  }
+
+  @override
+  void deactivate() {
+    _active = false;
+    _revoked = true;
+    super.deactivate();
+  }
+
+  @override
+  void activate() {
+    super.activate();
+    _active = true;
+  }
+
+  @override
   void dispose() {
+    _active = false;
+    _revoked = true;
+    widget.accessChanges?.removeListener(_accessChanged);
     for (final c in controls.values) {
       c.dispose();
     }
@@ -347,20 +462,26 @@ class _EditDialogState extends State<EditDialog> {
       }
       final submitted = pendingValues ?? values;
       pendingValues = submitted;
+      if (!current) return;
       final result = await widget.onSubmit(submitted);
-      if (mounted) finish(result ?? submitted);
+      if (mounted && _active && permitted) finish(result ?? submitted);
     } catch (e) {
       if (e is! ApiFailure || (e.status != 0 && e.status < 500)) {
         pendingValues = null;
       }
-      if (mounted) setState(() => error = e);
+      if (mounted && _active && permitted) setState(() => error = e);
     } finally {
-      if (mounted) setState(() => busy = false);
+      if (mounted && _active) setState(() => busy = false);
     }
   }
 
   @override
-  Widget build(BuildContext context) => PopScope(
+  Widget build(BuildContext context) => !permitted
+      ? AlertDialog(
+          title: const Text('工作空间或权限已变化'),
+          content: const Text('已隐藏原表单内容。请在当前工作空间重新打开；提交过的操作请先刷新列表核对结果。'),
+          actions: [TextButton(onPressed: finish, child: const Text('关闭'))])
+      : PopScope(
       canPop: !busy,
       child: AlertDialog(
           title: Text(widget.title),

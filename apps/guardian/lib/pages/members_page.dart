@@ -111,12 +111,13 @@ class _MembersPageState extends State<MembersPage> {
           if (row['state'] == 'PENDING' &&
               (row['role'] != 'ORG_ADMIN' || s.role == 'OWNER'))
             DetailAction('取消邀请', (dialog) async {
+              final complete = captureDialogCompletion(dialog);
               if (!await confirmAction(dialog, '取消邀请', '取消后此邀请令牌将不再有效。')) {
                 return;
               }
               requireWorkspace(root);
               await s.api.send('DELETE', '$root/invitations/${row['id']}');
-              if (dialog.mounted) Navigator.pop(dialog);
+              complete();
             }, destructive: true, closeOnSuccess: false),
         ]);
   }
@@ -169,10 +170,12 @@ class _MembersPageState extends State<MembersPage> {
               closeOnSuccess: false),
           if (allowed.isNotEmpty) ...[
             DetailAction('调整权限', (dialog) async {
+              final complete = captureDialogCompletion(dialog);
               edit = true;
-              Navigator.pop(dialog);
+              complete();
             }, closeOnSuccess: false),
             DetailAction('撤销访问', (dialog) async {
+              final complete = captureDialogCompletion(dialog);
               if (!await confirmAction(dialog, '撤销成员访问',
                   '将撤销 ${memberName(current)} 的工作空间访问。相关未使用邀请、待确认配对、临时授权和预览会失效。')) {
                 return;
@@ -180,7 +183,7 @@ class _MembersPageState extends State<MembersPage> {
               requireWorkspace(root);
               await s.api.send('DELETE', path,
                   version: access['version'] as int, key: removalKey);
-              if (dialog.mounted) Navigator.pop(dialog);
+              complete();
               if (mounted) toast(context, '成员访问已撤销。');
             }, destructive: true, closeOnSuccess: false),
           ],

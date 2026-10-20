@@ -33,6 +33,8 @@ import '../ui/application_classification_dialog.dart';
 import '../ui/resource_page.dart';
 import '../ui/workbench_view.dart';
 import '../ui/workspace_welcome.dart';
+import '../ui/family_finance_page.dart';
+import '../ui/family_identity_page.dart';
 import '../ui/member_editor.dart';
 import '../ui/access_request_dialog.dart';
 import '../ui/policy_target_picker.dart';
@@ -69,6 +71,47 @@ class ConsolePages extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.watch<Session>();
     final actions = ConsoleActions(context, s);
+    if (section == 'identity-providers') {
+      if (!s.canOpen(section)) {
+        return const Panel(child:EmptyView('没有短信与微信配置权限','请使用已授权的平台管理员账号登录。'));
+      }
+      final actor=s.profile!['subject'] as String,generation=s.scopeGeneration;
+      final read=s.canReadIdentityProviders,manage=s.canManageIdentityProviders,test=s.canTestIdentityProviders;
+      final publish=s.canPublishIdentityProviders,rollback=s.canRollbackIdentityProviders;
+      return IdentityProvidersPage(key:ValueKey((actor,generation,read,manage,test,publish,rollback)),api:s.api,actor:actor,
+        canRead:read,canManage:manage,canTest:test,changes:s,storage:s.identityProviderOperationStorage,
+        canPublish:publish,canRollback:rollback,
+        isCurrent:()=>context.mounted && s.authenticated && s.profile?['subject'] == actor &&
+          s.scopeGeneration == generation && s.canReadIdentityProviders == read &&
+          s.canManageIdentityProviders == manage && s.canTestIdentityProviders == test &&
+          s.canPublishIdentityProviders == publish && s.canRollbackIdentityProviders == rollback,
+        reauthenticate:()=>s.login(stepUp:true));
+    }
+    if (section == 'family-finance') {
+      if (!s.canOpen(section)) {
+        return const Panel(child: EmptyView('没有家庭售后权限', '请使用已授权的售后或财务账号登录。'));
+      }
+      final actor = s.profile!['subject'] as String;
+      final generation = s.scopeGeneration;
+      final review = s.canReviewFamilyRefunds;
+      final finance = s.canManageFamilyFinance;
+      return FamilyFinancePage(
+        key: ValueKey((actor, generation, review, finance)),
+        api: s.api,
+        actor: actor,
+        canReviewRefunds: review,
+        canManageFinance: finance,
+        changes: s,
+        isCurrent: () =>
+            context.mounted &&
+            s.authenticated &&
+            s.profile?['subject'] == actor &&
+            s.scopeGeneration == generation &&
+            s.canReviewFamilyRefunds == review &&
+            s.canManageFamilyFinance == finance,
+        reauthenticate: () => s.login(stepUp: true),
+      );
+    }
     if (section == 'support') {
       return SupportWorkspacePage(s,
           key: ValueKey((
@@ -123,6 +166,14 @@ class ConsolePages extends StatelessWidget {
           onSignOut: s.logout,
           onReauthenticate: actions.reauth,
           platformTools: [
+            if (s.canOpen('identity-providers'))
+              OutlinedButton.icon(onPressed:()=>context.go('/identity-providers'),
+                icon:const Icon(Icons.verified_user_outlined,size:18),label:const Text('短信与微信')),
+            if (s.canOpen('family-finance'))
+              OutlinedButton.icon(
+                  onPressed: () => context.go('/family-finance'),
+                  icon: const Icon(Icons.payments_outlined, size: 18),
+                  label: const Text('家庭售后与对账')),
             if (s.canOpen('catalog'))
               OutlinedButton.icon(
                   onPressed: () => context.go('/catalog'),
@@ -423,6 +474,36 @@ class ConsoleActions {
   final String root;
   ConsoleActions(this.context, this.s) : root = s.tenant == null ? '' : s.root;
   VoidCallback get reauth => () => s.login(stepUp: true);
+  Future<Json?> _tenantForm(
+      {BuildContext? parent,
+      required String title,
+      required String section,
+      required List<FieldSpec> fields,
+      Json initial = const {},
+      String? description,
+      required Future<Json?> Function(Api, Json) onSubmit}) async {
+    final owner = parent ?? context;
+    final scope = DeviceSubflowScope(s,
+        permitted: () =>
+            context.mounted && owner.mounted &&
+            s.tenant != null && s.root == root &&
+            s.canWrite && s.canOpen(section));
+    try {
+      if (!scope.current) return null;
+      return await formDialog(owner,
+          title: title,
+          fields: fields,
+          initial: initial,
+          description: description,
+          accessChanges: scope,
+          hasAccess: () => scope.current,
+          reauth: reauth,
+          onSubmit: (values) => onSubmit(scope.api, values));
+    } finally {
+      scope.dispose();
+    }
+  }
+
   Future<void> _readCompletedWorkspace(
       Json authenticatedProfile, String completedMessage,
       {String? preferredTenantId,
@@ -475,6 +556,8 @@ class ConsoleActions {
       final key = requestId();
       final result = await formDialog(context,
           title: '创建工作空间',
+          accessChanges: scope,
+          hasAccess: () => scope.current,
           fields: [
             const FieldSpec('name', '工作空间名称'),
             FieldSpec('kind', '类型',
@@ -506,6 +589,8 @@ class ConsoleActions {
       if (!scope.current) return;
       final result = await formDialog(context,
           title: '接受邀请',
+          accessChanges: scope,
+          hasAccess: () => scope.current,
           description: '使用与你当前账户邮箱一致的邀请。成人加入可能需要近期多因素认证。',
           fields: const [FieldSpec('token', '一次性邀请令牌', maxLength: 128)],
           reauth: reauth,
@@ -523,16 +608,16 @@ class ConsoleActions {
 
   Future<void> subject([Json? existing]) async {
     final key = requestId();
-    await formDialog(context,
+    await _tenantForm(
         title: existing == null ? '添加儿童档案' : '编辑儿童档案',
+        section: 'subjects',
         fields: [
           const FieldSpec('nickname', '昵称', maxLength: 60),
           FieldSpec('ageBand', '年龄段',
               options: options(['UNDER_7', 'AGE_7_12', 'AGE_13_17']))
         ],
         initial: existing ?? {},
-        reauth: reauth,
-        onSubmit: (v) async => await s.api.send(
+        onSubmit: (api, v) async => await api.send(
             existing == null ? 'POST' : 'PATCH',
             '$root/subjects${existing == null ? '' : '/${existing['id']}'}',
             body: v,
@@ -571,8 +656,9 @@ class ConsoleActions {
 
   Future<void> application() async {
     final key = requestId();
-    await formDialog(context,
+    await _tenantForm(
         title: '登记应用',
+        section: 'applications',
         description: '填写准确的 Android 包名。签名摘要可选，使用小写 SHA-256，多个摘要用逗号分隔。',
         fields: [
           const FieldSpec('displayName', '应用名称'),
@@ -588,7 +674,7 @@ class ConsoleActions {
         initial: {
           'platform': 'ANDROID',
           'profile': 'PRIMARY'
-        }, onSubmit: (v) async {
+        }, onSubmit: (api, v) async {
       final data = Map<String, dynamic>.from(v);
       final raw = data.remove('digests') as String;
       data['signingDigests'] = raw
@@ -596,7 +682,7 @@ class ConsoleActions {
           .map((e) => e.trim())
           .where((e) => e.isNotEmpty)
           .toList();
-      return await s.api
+      return await api
           .send('POST', '$root/applications', body: data, key: key) as Json;
     });
   }
@@ -777,6 +863,10 @@ class ConsoleActions {
     final workspace = root;
     final result = await formDialog(context,
         title: '查询注册进度',
+        accessChanges: s,
+        hasAccess: () => context.mounted && s.authenticated &&
+            s.tenant != null && s.scopeGeneration == generation &&
+            s.root == workspace && s.canWrite,
         description: '输入原注册编号，在同一窗口核对进度、现场确认或取消。',
         submit: '查询进度',
         fields: const [FieldSpec('id', '注册编号', maxLength: 36)],
@@ -1226,18 +1316,17 @@ class ConsoleActions {
 
   Future<void> approvalDetails(Json row) async {
     final workspace = root;
-    final role = s.role;
-    bool current() =>
-        s.authenticated &&
-        s.tenant != null &&
-        s.root == workspace &&
-        s.role == role &&
-        s.canOpen('approvals');
+    final scope = DeviceSubflowScope(s,
+        permitted: () => context.mounted && s.tenant != null &&
+            s.root == workspace && s.canOpen('approvals'));
+    bool current() => scope.current;
+    try {
     if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+    final api = scope.api;
     final cancelKey = requestId();
-    final r = await s.api.send('GET', '$workspace/access-requests/${row['id']}')
+    final r = await api.send('GET', '$workspace/access-requests/${row['id']}')
         as Json;
-    final delivery = await s.api.send(
+    final delivery = await api.send(
         'GET', '$workspace/access-requests/${row['id']}/delivery') as Json;
     if (!context.mounted) return;
     if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
@@ -1272,20 +1361,21 @@ class ConsoleActions {
           '执行状态': label(r['executionState']),
           '回执说明': '当前尚未接入设备例外执行。接收或保存回执仅表示文档状态；下载与重试不会延长原批准截止时间。'
         },
-        accessChanges: s,
+        accessChanges: scope,
         hasAccess: current,
         reauth: reauth,
         actions: [
           if (['TEACHER', 'CHILD'].contains(s.role) && r['state'] == 'PENDING')
             DetailAction('取消我的申请', (ctx) async {
+              final finish = captureDialogCompletion(ctx);
               if (await confirmAction(ctx, '取消我的申请', '取消后管理员将无法批准此申请。')) {
-                if (s.root != workspace) {
+                if (!current()) {
                   throw const ApiFailure(409, 'WORKSPACE_CHANGED');
                 }
-                await s.api.send(
+                await api.send(
                     'POST', '$workspace/access-requests/${r['id']}/cancel',
                     version: r['version'], key: cancelKey);
-                if (ctx.mounted) Navigator.pop(ctx);
+                finish();
               }
             }, destructive: true, closeOnSuccess: false),
           DetailAction('交付历史', (ctx) => approvalDeliveryHistory(ctx, r['id']),
@@ -1293,16 +1383,17 @@ class ConsoleActions {
           if (s.canWrite && r['state'] == 'PENDING') ...[
             DetailAction('批准', (ctx) async {
               final key = requestId();
-              await formDialog(ctx,
+              await _tenantForm(
+                  parent: ctx,
                   title: '批准临时访问',
+                  section: 'approvals',
                   description: '批准只保存有期限的访问窗口，当前不会直接解锁设备。',
                   fields: const [
                     FieldSpec('seconds', '批准时长（秒，最多 3600）',
                         numeric: true, maxLength: 4)
                   ],
                   initial: {'seconds': r['requestedWindowSeconds']},
-                  reauth: reauth,
-                  onSubmit: (v) async => await s.api.send(
+                  onSubmit: (api, v) async => await api.send(
                           'POST', '$root/access-requests/${r['id']}/decisions',
                           version: r['version'],
                           key: key,
@@ -1313,8 +1404,10 @@ class ConsoleActions {
             }),
             DetailAction('拒绝', (ctx) async {
               final key = requestId();
-              await formDialog(ctx,
+              await _tenantForm(
+                  parent: ctx,
                   title: '拒绝申请',
+                  section: 'approvals',
                   fields: const [
                     FieldSpec('reasonCode', '原因', options: {
                       'NOT_NOW': '当前不合适',
@@ -1322,8 +1415,7 @@ class ConsoleActions {
                       'OTHER': '其他原因'
                     })
                   ],
-                  reauth: reauth,
-                  onSubmit: (v) async => await s.api.send(
+                  onSubmit: (api, v) async => await api.send(
                       'POST', '$root/access-requests/${r['id']}/decisions',
                       version: r['version'],
                       key: key,
@@ -1333,12 +1425,15 @@ class ConsoleActions {
           if (s.canWrite && r['state'] == 'APPROVED_PENDING_DELIVERY')
             DetailAction('撤销批准', (ctx) async {
               if (await confirmAction(ctx, '撤销批准', '撤销此访问窗口并记录审计。')) {
-                await s.api.send(
+                await api.send(
                     'POST', '$root/access-requests/${r['id']}/revoke',
                     version: r['version'], key: requestId());
               }
             }, destructive: true)
         ]);
+    } finally {
+      scope.dispose();
+    }
   }
 
   Future<void> approvalDeliveryHistory(BuildContext ctx, String id) =>
@@ -1515,16 +1610,26 @@ class SettingsPage extends StatelessWidget {
           if (s.canManage)
             OutlinedButton.icon(
                 onPressed: () async {
+                  final scope = DeviceSubflowScope(s,
+                      permitted: () => context.mounted && s.tenant != null &&
+                          s.root == root && s.canManage);
+                  try {
+                  if (!scope.current) return;
                   final result = await formDialog(context,
                       title: '编辑工作空间',
+                      accessChanges: scope,
+                      hasAccess: () => scope.current,
                       fields: const [
                         FieldSpec('name', '名称'),
                         FieldSpec('timeZone', '时区')
                       ],
                       initial: tenant,
-                      onSubmit: (v) async => await s.api.send('PATCH', root,
+                      onSubmit: (v) async => await scope.api.send('PATCH', root,
                           body: v, version: tenant['version']) as Json);
-                  if (result != null) await s.loadTenants();
+                  if (result != null && scope.current) await s.loadTenants();
+                  } finally {
+                    scope.dispose();
+                  }
                 },
                 icon: const Icon(Icons.edit_outlined, size: 18),
                 label: const Text('编辑资料')),
@@ -1590,10 +1695,13 @@ class _DashboardState extends State<Dashboard> {
   OverviewSummary? data;
   Object? error;
   DateTime? refreshedAt;
-  bool actionBusy = false;
+  DeviceSubflowScope? _scope;
+  Object? _scopeOwner;
+  Object? _actionOwner;
+  bool actionBusy = false, reading = false;
+  bool _active = true, _rebuildPending = false;
   int generation = 0;
-  String? sourceRoot;
-  String? sourceRole;
+
   @override
   void initState() {
     super.initState();
@@ -1603,36 +1711,105 @@ class _DashboardState extends State<Dashboard> {
   @override
   void didUpdateWidget(Dashboard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (sourceRoot != widget.session.root ||
-        sourceRole != widget.session.role) {
+    if (!current(_scope)) {
       load();
     }
   }
 
-  bool current(String root, String role) {
-    final s = widget.session;
-    return mounted &&
-        s.authenticated &&
-        s.tenant != null &&
-        s.canWrite &&
-        s.root == root &&
-        s.role == role;
+  bool current(DeviceSubflowScope? scope) =>
+      scope != null &&
+      mounted &&
+      _active &&
+      identical(_scope, scope) &&
+      identical(widget.session, scope.session) &&
+      scope.current;
+
+  void _requestBuild() {
+    if (!mounted || !_active || _rebuildPending) {
+      return;
+    }
+    _rebuildPending = true;
+    // Scope changes may arrive while the parent is rebuilding or disposing.
+    // Revoke synchronously; render only after the tree has become writable.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _rebuildPending = false;
+      if (mounted && _active) {
+        setState(() {});
+      }
+    });
+    WidgetsBinding.instance.ensureVisualUpdate();
   }
 
-  Future<void> load() async {
-    final epoch = ++generation;
+  void _clearScopeState() {
+    generation++;
+    _scopeOwner = null;
+    data = null;
+    error = null;
+    refreshedAt = null;
+    reading = false;
+    actionBusy = false;
+    _actionOwner = null;
+  }
+
+  void _scopeChanged() {
+    if (current(_scope)) {
+      return;
+    }
+    _clearScopeState();
+    _requestBuild();
+  }
+
+  void _releaseScope() {
+    final previous = _scope;
+    _scope = null;
+    previous?.removeListener(_scopeChanged);
+    previous?.dispose();
+  }
+
+  DeviceSubflowScope? _captureScope() {
+    if (current(_scope)) {
+      return _scope;
+    }
+    _releaseScope();
+    _clearScopeState();
     final s = widget.session;
-    if (!s.authenticated || s.tenant == null || !s.canWrite) return;
-    final root = sourceRoot = s.root;
-    final role = sourceRole = s.role;
-    setState(() {
-      error = null;
-      data = null;
-      refreshedAt = null;
-    });
+    if (!mounted || !_active || !s.authenticated ||
+        s.tenant == null || !s.canWrite) {
+      return null;
+    }
+    final root = s.root;
+    final owner = Object();
+    _scopeOwner = owner;
+    final next = DeviceSubflowScope(s,
+        permitted: () => mounted && _active &&
+            identical(_scopeOwner, owner) &&
+            identical(widget.session, s) && s.tenant != null &&
+            s.root == root && s.canWrite);
+    _scope = next;
+    next.addListener(_scopeChanged);
+    return next;
+  }
+
+  Future<void> load({bool refreshAfterAction = false}) async {
+    if (!mounted || !_active || (actionBusy && !refreshAfterAction)) {
+      return;
+    }
+    final scope = _captureScope();
+    if (scope == null) {
+      _requestBuild();
+      return;
+    }
+    if (reading && !refreshAfterAction) {
+      return;
+    }
+    final epoch = ++generation;
+    final root = scope.session.root;
+    reading = true;
+    error = null;
+    _requestBuild();
     try {
-      final result =
-          OverviewSummary.parse(await s.api.send('GET', '$root/overview'));
+      final result = OverviewSummary.parse(
+          await scope.api.send('GET', '$root/overview'));
       if (result.subjectCount == null ||
           result.activeDeviceCount == null ||
           result.connectionCheckCount == null ||
@@ -1640,47 +1817,85 @@ class _DashboardState extends State<Dashboard> {
           result.openHelpRequestCount == null) {
         throw const ApiFailure(502, 'INVALID_RESPONSE');
       }
-      if (epoch == generation && current(root, role)) {
-        setState(() {
-          data = result;
-          refreshedAt = DateTime.now();
-        });
+      if (epoch == generation && current(scope)) {
+        data = result;
+        refreshedAt = DateTime.now();
       }
     } catch (e) {
-      if (epoch == generation && current(root, role)) {
-        setState(() => error = e);
+      if (epoch == generation && current(scope)) {
+        error = e;
+      }
+    } finally {
+      if (epoch == generation && current(scope)) {
+        reading = false;
+        _requestBuild();
       }
     }
   }
 
-  Future<void> perform(Future<void> Function() action) async {
-    final s = widget.session;
-    if (actionBusy || s.tenant == null || !s.canWrite) return;
-    final root = s.root, role = s.role;
-    if (!current(root, role)) return;
-    setState(() {
-      actionBusy = true;
-      error = null;
-    });
+  Future<void> perform(DeviceSubflowScope? scope,
+      Future<void> Function() action) async {
+    if (actionBusy || !current(scope)) {
+      return;
+    }
+    final owner = Object();
+    // A previously started refresh must not overwrite this action's outcome.
+    generation++;
+    reading = false;
+    _actionOwner = owner;
+    actionBusy = true;
+    error = null;
+    _requestBuild();
     try {
       await action();
-      if (current(root, role)) await load();
+      if (current(scope) && identical(_actionOwner, owner)) {
+        // A read started before the action may finish afterwards. Supersede it
+        // with a fresh read rather than displaying its pre-action summary.
+        await load(refreshAfterAction: true);
+      }
     } catch (e) {
-      if (current(root, role)) setState(() => error = e);
+      if (current(scope) && identical(_actionOwner, owner)) {
+        error = e;
+      }
     } finally {
-      if (mounted) setState(() => actionBusy = false);
+      if (current(scope) && identical(_actionOwner, owner)) {
+        _actionOwner = null;
+        actionBusy = false;
+        _requestBuild();
+      }
     }
   }
 
-  void open(String section) {
-    final s = widget.session;
-    if (actionBusy ||
-        s.tenant == null ||
-        sourceRoot != s.root ||
-        sourceRole != s.role ||
-        !current(s.root, s.role) ||
-        !s.canOpen(section)) return;
+  void open(DeviceSubflowScope? scope, String section) {
+    if (actionBusy || !current(scope) ||
+        !widget.session.canOpen(section)) {
+      return;
+    }
     context.go('/$section');
+  }
+
+  @override
+  void deactivate() {
+    _active = false;
+    // Evaluating current also permanently revokes this capture before a
+    // possible reactivation; old requests and callbacks cannot be revived.
+    _scopeChanged();
+    super.deactivate();
+  }
+
+  @override
+  void activate() {
+    super.activate();
+    _active = true;
+    load();
+  }
+
+  @override
+  void dispose() {
+    _active = false;
+    _clearScopeState();
+    _releaseScope();
+    super.dispose();
   }
 
   @override
@@ -1689,7 +1904,10 @@ class _DashboardState extends State<Dashboard> {
     if (!s.authenticated || s.tenant == null || !s.canWrite) {
       return const Panel(child: EmptyView('工作空间或权限已变化', '请重新打开工作台。'));
     }
-    final visible = sourceRoot == s.root && sourceRole == s.role;
+    final scope = _scope;
+    final visible = current(scope);
+    bool canOpen(String section) =>
+        visible && current(scope) && s.canOpen(section);
     return WorkbenchView(
         workspaceName: s.tenant!['name'] as String,
         role: s.role,
@@ -1698,16 +1916,25 @@ class _DashboardState extends State<Dashboard> {
         error: visible ? error : null,
         refreshedAt: visible ? refreshedAt : null,
         busy: actionBusy,
-        canOpen: s.canOpen,
-        onOpen: open,
-        onAddSubject: s.canOpen('subjects')
-            ? () => perform(() => widget.actions.subject())
+        refreshing: reading,
+        canOpen: canOpen,
+        onOpen: (section) => open(scope, section),
+        onAddSubject: canOpen('subjects')
+            ? () => perform(scope, () => widget.actions.subject())
             : null,
-        onAddDevice: s.canOpen('devices')
-            ? () => perform(widget.actions.enrollment)
+        onAddDevice: canOpen('devices')
+            ? () => perform(scope, widget.actions.enrollment)
             : null,
-        onRefresh: load,
-        onReauth: () => s.login(stepUp: true));
+        onRefresh: () async {
+          if (current(scope)) {
+            await load();
+          }
+        },
+        onReauth: () {
+          if (current(scope)) {
+            s.login(stepUp: true);
+          }
+        });
   }
 }
 

@@ -9,6 +9,7 @@ import '../ui/resource_page.dart';
 import '../ui/quota_balance.dart';
 import 'editors.dart';
 import 'quota_plans_page.dart';
+import 'device_subflow_scope.dart';
 
 /// Every form captures its workspace and resource version before asynchronous work.
 class QuotaPage extends StatefulWidget {
@@ -94,18 +95,26 @@ class _QuotaPageState extends State<QuotaPage> {
   }
 
   Future<void> create(BuildContext context, String root) async {
-    final zone = session.tenant?['timeZone'] as String? ?? 'Asia/Shanghai';
-    final children = await session.api.all('$root/subjects');
-    if (!context.mounted) return;
+    final s = session;
+    final scope = DeviceSubflowScope(s,
+        permitted: () => mounted && context.mounted && identical(session, s) &&
+            s.tenant != null && s.root == root && s.canWrite);
+    try {
+    if (!scope.current) return;
+    final zone = s.tenant?['timeZone'] as String? ?? 'Asia/Shanghai';
+    final children = await scope.api.all('$root/subjects');
+    if (!scope.current) return;
     if (children.isEmpty) {
       toast(context, '请先添加儿童档案。');
       return;
     }
-    final apps = await session.api.all('$root/applications');
-    if (!context.mounted) return;
+    final apps = await scope.api.all('$root/applications');
+    if (!scope.current) return;
     final key = requestId();
     await formDialog(context,
         title: '创建每日额度',
+        accessChanges: scope,
+        hasAccess: () => scope.current,
         description:
             '每个日期、儿童和应用范围只能创建一份额度。日期按下方时区计算；同一儿童的额度时区保持一致，避免切换时区重置余额。保存需要近期多因素认证。',
         reauth: () => session.login(stepUp: true),
@@ -143,7 +152,7 @@ class _QuotaPageState extends State<QuotaPage> {
             throw const ApiFailure(400, 'INVALID_QUOTA_PERIOD');
           }
           final app = v['applicationId'] as String?;
-          return await session.api
+          return await scope.api
               .send('POST', '$root/quota-pools', key: key, body: {
             'name': v['name'],
             'subjectId': v['subjectId'],
@@ -154,6 +163,9 @@ class _QuotaPageState extends State<QuotaPage> {
             'limitSeconds': minutes * 60,
           }) as Json;
         });
+    } finally {
+      scope.dispose();
+    }
   }
 
   Future<void> details(BuildContext context, String root, String id) async {
@@ -209,9 +221,17 @@ class _QuotaPageState extends State<QuotaPage> {
   }
 
   Future<void> adjust(BuildContext context, String root, Json pool) async {
+    final s = session;
+    final scope = DeviceSubflowScope(s,
+        permitted: () => mounted && context.mounted && identical(session, s) &&
+            s.tenant != null && s.root == root && s.canWrite);
+    try {
+    if (!scope.current) return;
     final key = requestId();
     await formDialog(context,
         title: '调整当日额度',
+        accessChanges: scope,
+        hasAccess: () => scope.current,
         description: '增加时间与减少额度均记入账本。减少后的总额度不能低于已结算与待确认预留之和，需要近期多因素认证。',
         reauth: () => session.login(stepUp: true),
         fields: const [
@@ -226,7 +246,7 @@ class _QuotaPageState extends State<QuotaPage> {
             throw const ApiFailure(400, 'QUOTA_LIMIT_INVALID');
           }
           final add = v['direction'] == 'ADD';
-          return await session.api.send(
+          return await scope.api.send(
               'POST', '$root/quota-pools/${pool['id']}/adjustments',
               key: key,
               version: pool['version'],
@@ -235,6 +255,9 @@ class _QuotaPageState extends State<QuotaPage> {
                 'reason': add ? 'EXTRA_TIME' : 'CORRECTION',
               }) as Json;
         });
+    } finally {
+      scope.dispose();
+    }
   }
 
   Future<void> ledger(BuildContext context, String root, Json pool) =>

@@ -3,18 +3,27 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:guardian/core/api.dart';
+import 'package:guardian/core/managed_execution.dart';
+import 'package:guardian/core/managed_execution_review.dart';
+import 'package:guardian/core/managed_execution_review_repository.dart';
+import 'package:guardian/ui/managed_execution_review_controller.dart';
 import 'package:guardian/ui/design.dart';
 import 'package:guardian/ui/managed_execution_controller.dart';
 import 'package:guardian/ui/managed_execution_dialog.dart';
 import 'package:http/http.dart' as http;
 
 import 'managed_execution_fixtures.dart';
+import 'managed_execution_review_widget_fixtures.dart';
 
 const _deviceName = '学习平板';
 
 /// Exercise the real dialog, controller and repository; only HTTP is in memory.
 class _DialogFixture {
-  _DialogFixture({this.writable = true, this.deviceName = _deviceName});
+  _DialogFixture({this.writable = true, this.deviceName = _deviceName}) {
+    data.handler = (request) async => request.method == 'POST'
+        ? data.response(data.record(state: 'CANCELLED', reason: 'CANCELLED_BEFORE_ASSIGNMENT', revision: 2, cancelled: true))
+        : _readResponse(data, request);
+  }
 
   final bool writable;
   final String deviceName;
@@ -24,6 +33,22 @@ class _DialogFixture {
     repository: data.repository(writable: writable),
     registrationId: executionRegistration,
   );
+  final journal = ReviewMemoryJournal();
+  ManagedExecutionReviewController? operation;
+  int sequence = 0;
+  ManagedExecutionReviewController makeReview(ManagedExecution task,
+      bool Function() current, int Function() latestEventRevision) {
+    return operation = ManagedExecutionReviewController(
+      requests: ManagedExecutionReviewRepository(api: data.api,
+        owner: ExecutionOperationOwner(actorId: 'legacy-purpose-current-controller',
+          tenantId: executionTenant, apiBaseUrl: data.api.baseUrl,
+          issuer: 'https://identity.invalid/realms/test'),
+        deviceId: executionDevice, registrationId: executionRegistration,
+        writable: writable, current: () => data.current), journal: journal,
+      selected: task, viewCurrent: current, latestEventRevision: latestEventRevision,
+      operationId: () => 'aaaaaaaa-aaaa-4aaa-8aaa-${(++sequence).toRadixString(16).padLeft(12, '0')}',
+      now: () => 100, onProgress: (_) {});
+  }
   int closeCalls = 0;
   int reauthCalls = 0;
 
@@ -40,6 +65,7 @@ class _DialogFixture {
         home: Scaffold(
           body: ManagedExecutionDialog(
             controller: controller,
+            reviewFactory: writable ? makeReview : null,
             deviceName: deviceName,
             onClose: () => closeCalls++,
             accessChanges: accessChanges,
@@ -78,13 +104,23 @@ Future<void> _press(WidgetTester tester, String key) async {
   await _settleExecutionReads(tester);
 }
 
-Future<void> _open(WidgetTester tester) =>
-    _press(tester, 'execution-open-$executionId');
+Future<void> _open(WidgetTester tester) async {
+  await _press(tester, 'execution-open-$executionId');
+  // Timeline is now an explicit read, preserving the original coverage purpose.
+  await _press(tester, 'execution-refresh-timeline');
+}
 
 http.Response _readResponse(ExecutionFixture f, http.Request request,
     {Json? task, Json? event}) {
   if (request.method != 'GET') {
     throw StateError('This response fixture only accepts reads.');
+  }
+  if (request.url.path.endsWith('/review-eligibility')) {
+    final selected = task ?? f.record();
+    return f.response({
+      for (final key in ['id', 'publicationId', 'deviceId', 'registrationId', 'revision']) key: selected[key],
+      'allowed': false, 'reason': 'EXECUTION_RECHECK_REQUIRES_REVIEW',
+    });
   }
   if (request.url.path.endsWith('/events')) {
     return f.response({
@@ -276,7 +312,9 @@ void main() {
     expect(f.writes.length, 1);
     expect(f.writes.single.url.path.endsWith('/$executionId/cancel'), isTrue);
     expect(f.writes.single.headers['If-Match'], '"1"');
-    expect(f.controller.selected?.state, 'CANCELLED');
+    expect(f.operation?.selected?.state, 'CANCELLED');
+    expect(f.journal.record, isNull);
+    expect(f.journal.receipts, 1);
     expect(find.byKey(const Key('execution-cancel')), findsNothing);
     expect(find.byKey(const Key('execution-check-result')), findsNothing);
     expect(find.byKey(const Key('execution-back')), findsOneWidget);
@@ -320,7 +358,7 @@ void main() {
     await _press(tester, 'execution-cancel');
     await _press(tester, 'execution-confirm-cancel');
 
-    expect(find.textContaining('尚不能确认取消结果'), findsWidgets);
+    expect(find.textContaining('暂不能确认是否已受理'), findsWidgets);
     expect(find.byKey(const Key('execution-cancel')), findsNothing);
     expect(find.byKey(const Key('execution-check-result')), findsOneWidget);
     final beforeCheck = f.data.requests.length;

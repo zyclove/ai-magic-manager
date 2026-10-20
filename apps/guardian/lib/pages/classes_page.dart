@@ -189,11 +189,11 @@ class _ClassesPageState extends State<ClassesPage> {
           if (s.canManage && current['state'] == 'ACTIVE') ...[
             if (row['archived'] != true)
               DetailAction('转班', (dialog) async {
-                if (await transfer(row) && dialog.mounted) {
-                  Navigator.pop(dialog);
-                }
+                final complete = captureDialogCompletion(dialog);
+                if (await transfer(row)) complete();
               }, closeOnSuccess: false),
             DetailAction('移出班级', (dialog) async {
+              final complete = captureDialogCompletion(dialog);
               if (!await confirmAction(dialog, '移出班级',
                   '将 ${row['nickname']} 移出 ${current['name']}。学生档案和设备保留；仅依靠本班取得的教师访问权限将失效。')) {
                 return;
@@ -202,7 +202,7 @@ class _ClassesPageState extends State<ClassesPage> {
               await s.api.send('DELETE',
                   '$root/classes/${current['id']}/students/${row['id']}',
                   version: current['version'], key: key);
-              if (dialog.mounted) Navigator.pop(dialog);
+              complete();
             }, destructive: true, closeOnSuccess: false),
           ]
         ]);

@@ -23,8 +23,8 @@ void main() {
 
   test('every existing destination belongs to exactly one group', () {
     final grouped = navigationGroups.expand((g) => g.$3).toList();
-    expect(grouped, hasLength(25));
-    expect(grouped.toSet(), hasLength(25));
+    expect(grouped, hasLength(destinations.length));
+    expect(grouped.toSet(), hasLength(destinations.length));
     expect(grouped.toSet(), destinations.map((d) => d.$1).toSet());
     expect(navigationLabel('subjects', organization: true), '学生档案');
     expect(navigationLabel('help-requests', organization: true), '学生求助');

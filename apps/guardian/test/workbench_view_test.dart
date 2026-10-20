@@ -45,6 +45,10 @@ Widget host(Widget child, {double textScale = 1}) => MaterialApp(
             padding: const EdgeInsets.all(18), child: child)));
 
 void main() {
+  Finder shortcut(String text) => find.ancestor(
+      of: find.text(text),
+      matching: find.byWidgetPredicate((widget) => widget is OutlinedButton));
+
   final cases = <({String name, OverviewSummary value, String destination})>[
     (
       name: 'help takes priority over every other task',
@@ -101,6 +105,15 @@ void main() {
       expect(opened, [item.destination]);
       expect(find.text('连接第一台设备'), findsNothing);
       expect(find.text('系统连接'), findsNothing);
+      expect(
+          find.byKey(const Key('workbench-add-subject')),
+          item.destination == 'add-subject' ? findsNothing : findsOneWidget);
+      expect(find.byKey(const Key('workbench-add-device')),
+          item.destination == 'add-device' ? findsNothing : findsOneWidget);
+      expect(shortcut('设置使用规则'),
+          item.destination == 'policies' ? findsNothing : findsOneWidget);
+      expect(shortcut('查看使用报表'),
+          item.destination == 'reports' ? findsNothing : findsOneWidget);
       expect(tester.takeException(), isNull);
     });
   }
@@ -211,11 +224,14 @@ void main() {
                 find.byKey(const Key('workbench-next-action')))
             .onPressed,
         isNull);
-    await tester.ensureVisible(find.byKey(const Key('workbench-add-subject')));
+    expect(find.byKey(const Key('workbench-add-subject')), findsNothing);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.text('处理中…'), findsOneWidget);
+    await tester.ensureVisible(find.byKey(const Key('workbench-add-device')));
     expect(
         tester
             .widget<OutlinedButton>(
-                find.byKey(const Key('workbench-add-subject')))
+                find.byKey(const Key('workbench-add-device')))
             .onPressed,
         isNull);
     expect(starts, 0);

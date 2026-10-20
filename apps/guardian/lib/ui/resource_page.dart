@@ -38,8 +38,11 @@ class ResourcePage extends StatefulWidget {
 }
 
 class ResourcePageState extends State<ResourcePage> {
+  final search = TextEditingController();
+  final searchFocus = FocusNode(debugLabel: 'resource-search');
   List<Json> rows = [];
   String? cursor;
+  bool cursorExpired = false;
   String query = '';
   bool loading = true;
   bool more = false;
@@ -62,11 +65,27 @@ class ResourcePageState extends State<ResourcePage> {
       resourceGeneration++;
       rows = [];
       cursor = null;
+      cursorExpired = false;
       query = '';
+      search.clear();
       acting = false;
       actionError = null;
       load();
     }
+  }
+
+  @override
+  void dispose() {
+    searchFocus.dispose();
+    search.dispose();
+    super.dispose();
+  }
+
+  void clearSearch() {
+    if (!mounted) return;
+    search.clear();
+    setState(() => query = '');
+    searchFocus.requestFocus();
   }
 
   Future<void> load({bool append = false}) async {
@@ -93,6 +112,7 @@ class ResourcePageState extends State<ResourcePage> {
         setState(() {
           rows = append ? [...rows, ...result.items] : result.items;
           cursor = result.nextCursor;
+          cursorExpired = false;
         });
       }
     } catch (e) {
@@ -101,10 +121,15 @@ class ResourcePageState extends State<ResourcePage> {
           if (e is ApiFailure && (e.status == 401 || e.status == 403)) {
             rows = [];
             cursor = null;
+            cursorExpired = false;
             appendError = null;
             error = e;
           } else if (append) {
             appendError = e;
+            if (e is ApiFailure && e.code == 'INVALID_CURSOR') {
+              cursor = null;
+              cursorExpired = true;
+            }
           } else {
             error = e;
           }
@@ -176,10 +201,19 @@ class ResourcePageState extends State<ResourcePage> {
                           width: narrow ? 240 : 300,
                           child: TextField(
                               key: ValueKey(resourceGeneration),
-                              onChanged: (v) => setState(() => query = v),
-                              decoration: const InputDecoration(
+                              controller: search,
+                              focusNode: searchFocus,
+                              textInputAction: TextInputAction.search,
+                              onChanged: (v) => setState(() => query = v.trim()),
+                              decoration: InputDecoration(
                                   hintText: '搜索已加载记录',
-                                  prefixIcon: Icon(Icons.search, size: 20),
+                                  prefixIcon: const Icon(Icons.search, size: 20),
+                                  suffixIcon: search.text.isEmpty
+                                      ? null
+                                      : IconButton(
+                                          tooltip: '清除列表搜索',
+                                          onPressed: clearSearch,
+                                          icon: const Icon(Icons.close, size: 18)),
                                   isDense: true))),
                       IconButton(
                           tooltip: '刷新',
@@ -246,7 +280,11 @@ class ResourcePageState extends State<ResourcePage> {
                   '没有匹配记录',
                   cursor == null
                       ? '调整搜索关键词后再试。'
-                      : '搜索仅匹配已加载记录，可加载更多后继续查找。')
+                      : '搜索仅匹配已加载记录，可加载更多后继续查找。',
+                  action: TextButton.icon(
+                      onPressed: clearSearch,
+                      icon: const Icon(Icons.clear, size: 18),
+                      label: const Text('清除搜索')))
             else if (narrow)
               ...filtered.map((row) => InkWell(
                   onTap: widget.onOpen == null || !canAct
@@ -324,21 +362,32 @@ class ResourcePageState extends State<ResourcePage> {
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('后续记录未加载，已保留已加载记录',
-                            style: TextStyle(fontWeight: FontWeight.w600)),
+                        Text(cursorExpired
+                                ? '列表位置已失效，已保留当前记录'
+                                : '后续记录未加载，已保留已加载记录',
+                            style: const TextStyle(fontWeight: FontWeight.w600)),
                         const SizedBox(height: 8),
                         FailureView(appendError!, reauth: widget.reauth)
                       ])),
             if (!loading)
               Padding(
                   padding: const EdgeInsets.all(16),
-                  child: Row(children: [
-                    Expanded(
-                        child: Text(
+                  child: Wrap(
+                      alignment: WrapAlignment.spaceBetween,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 12,
+                      runSpacing: 10,
+                      children: [
+                    Text(
                             '已加载 ${rows.length} 条${query.isEmpty ? '' : ' · 匹配 ${filtered.length} 条'}',
                             style:
-                                const TextStyle(color: muted, fontSize: 12))),
-                    if (cursor != null)
+                                const TextStyle(color: muted, fontSize: 12)),
+                    if (cursorExpired)
+                      OutlinedButton.icon(
+                          onPressed: acting ? null : () => load(),
+                          icon: const Icon(Icons.refresh, size: 18),
+                          label: const Text('刷新列表后继续查看'))
+                    else if (cursor != null)
                       OutlinedButton(
                           onPressed:
                               more || acting ? null : () => load(append: true),

@@ -1,5 +1,21 @@
 /// Mirrors the server's persisted membership permissions; never grants API access.
+bool canOpenFamilyFinance(
+        {required bool authenticated,
+        required bool canReviewRefunds,
+        required bool canManageFinance}) =>
+    authenticated && (canReviewRefunds || canManageFinance);
+
+bool canOpenIdentityProviders(
+        {required bool authenticated,
+        required bool canRead,
+        required bool canManage,
+          required bool canTest,
+          bool canPublish = false,
+          bool canRollback = false}) =>
+      authenticated && (canRead || canManage || canTest || canPublish || canRollback);
+
 bool canOpenSection(String role, String section) {
+  if (section == 'identity-providers') return false;
   if (section == 'help-requests') {
     return ['OWNER', 'GUARDIAN', 'ORG_ADMIN', 'TEACHER'].contains(role);
   }
@@ -71,6 +87,8 @@ String trustedReturnPath(String? value) => const {
       '/commercial',
       '/catalog',
       '/contracts',
+      '/family-finance',
+      '/identity-providers',
       '/institution-contracts',
       '/settings',
       '/support'

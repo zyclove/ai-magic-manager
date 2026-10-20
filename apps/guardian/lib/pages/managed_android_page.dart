@@ -448,13 +448,19 @@ class _ManagedAndroidPageState extends State<ManagedAndroidPage> {
                         parentChanges: parentChanges,
                         onParentRefresh: onParentRefresh)
                 : null,
-            onExecutions: (association) => openManagedExecutions(
-                bindingContext, widget.session,
-                deviceId: association.deviceId,
-                registrationId: association.registrationId,
-                deviceName: '已关联的儿童端设备',
-                readOnly: true,
-                current: () => current && bindingContext.mounted),
+            onExecutions: (association,
+                    {required readOnly,
+                    required parentCurrent,
+                    required parentChanges}) =>
+                openManagedExecutions(
+                    bindingContext, widget.session,
+                    deviceId: association.deviceId,
+                    registrationId: association.registrationId,
+                    deviceName: '已关联的儿童端设备',
+                    readOnly: readOnly,
+                    current: () =>
+                        current && bindingContext.mounted && parentCurrent(),
+                    targetChanges: parentChanges),
             reauthenticate: () => widget.session.login(stepUp: true)));
   }
 

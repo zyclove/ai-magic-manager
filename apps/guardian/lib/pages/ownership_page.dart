@@ -5,6 +5,7 @@ import '../core/member_access.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
 import '../ui/resource_page.dart';
+import 'device_subflow_scope.dart';
 
 String ownershipState(dynamic state) => switch (state) {
       'PENDING' => '等待对方确认',
@@ -58,139 +59,187 @@ class OwnershipPage extends StatelessWidget {
 
   Future<void> propose(BuildContext context, String root) async {
     final s = session;
-    final tenantId = s.tenant!['id'];
-    final results = await Future.wait([
-      s.api.all('$root/members'),
-      s.api.all('/tenants'),
-    ]);
-    if (!context.mounted || s.root != root) return;
-    final tenant = results[1].firstWhere((t) => t['id'] == tenantId);
-    final formerRole = tenant['kind'] == 'FAMILY' ? 'GUARDIAN' : 'ORG_ADMIN';
-    final eligible = results[0]
-        .where((m) =>
-            m['subjectId'] == null &&
-            [formerRole, 'AUDITOR'].contains(m['role']))
-        .toList();
-    if (eligible.isEmpty) {
-      await showDetails(context, '先添加接收成员', {
-        '当前没有符合条件的接收人':
-            '请在“成员与邀请”中邀请成人${label(formerRole)}或审计员。对方接受邀请后，再发起所有者交接。'
-      });
-      return;
-    }
-    final selection = await formDialog(context,
-        title: '选择接收人',
-        description: '请选择已经核实身份的成人成员。下一步将显示完整账号标识和交接影响。',
-        fields: [
-          FieldSpec('targetActorId', '接收成员', options: {
-            for (final member in eligible)
-              member['actorId'] as String:
-                  '${memberName(member)} · ${member['verifiedEmail'] ?? shortId(member['actorId'])} · ${label(member['role'])}'
-          })
-        ],
-        submit: '查看交接内容',
-        onSubmit: (values) async => values);
-    if (selection == null || !context.mounted || s.root != root) return;
-    final target =
-        eligible.firstWhere((m) => m['actorId'] == selection['targetActorId']);
-    final key = requestId();
-    Json? created;
-    await actionDetails(
-        context,
-        '确认发起所有者交接',
-        {
-          '工作空间': tenant['name'],
-          '接收账号（请核对完整标识）': target['actorId'],
-          '接收人的权限变化': '${label(target['role'])} → 所有者',
-          '你的权限变化': '所有者 → ${label(formerRole)}',
-          '生效条件': '24 小时内由对方完成近期多因素认证并接受；发起后你的所有者权限暂时保留。',
-          '交接影响': ownershipConsequences,
-        },
-        reauth: () => s.login(stepUp: true),
-        actions: [
-          DetailAction('确认发起，等待对方接受', (dialog) async {
-            final result = await s.api.send('POST', '$root/ownership-transfers',
-                body: {'targetActorId': target['actorId']},
-                version: tenant['version'] as int,
-                key: key) as Json;
-            created = result;
-            if (dialog.mounted) Navigator.pop(dialog);
-          }, closeOnSuccess: false)
-        ]);
-    // Keep the page action alive through the follow-up dialog so its final
-    // refresh includes a cancellation or decision made immediately after creation.
-    if (created != null && context.mounted && s.root == root) {
-      toast(context, '交接申请已发起，请通知接收人前往“所有者交接”查看。');
-      await open(context, root, created!['id'] as String);
+    final scope = DeviceSubflowScope(s,
+        permitted: () =>
+            context.mounted &&
+            s.tenant != null &&
+            s.root == root &&
+            s.role == 'OWNER');
+    try {
+      if (!scope.current) return;
+      final tenantId = scope.tenantId;
+      final results = await Future.wait([
+        scope.api.all('$root/members'),
+        scope.api.all('/tenants'),
+      ]);
+      if (!scope.current) return;
+      final tenant = results[1].firstWhere((t) => t['id'] == tenantId);
+      final formerRole = tenant['kind'] == 'FAMILY' ? 'GUARDIAN' : 'ORG_ADMIN';
+      final eligible = results[0]
+          .where((m) =>
+              m['subjectId'] == null &&
+              [formerRole, 'AUDITOR'].contains(m['role']))
+          .toList();
+      if (eligible.isEmpty) {
+        await showDetails(context, '先添加接收成员', {
+          '当前没有符合条件的接收人':
+              '请在“成员与邀请”中邀请成人${label(formerRole)}或审计员。对方接受邀请后，再发起所有者交接。'
+        });
+        return;
+      }
+      final selection = await formDialog(context,
+          title: '选择接收人',
+          description: '请选择已经核实身份的成人成员。下一步将显示完整账号标识和交接影响。',
+          fields: [
+            FieldSpec('targetActorId', '接收成员', options: {
+              for (final member in eligible)
+                member['actorId'] as String:
+                    '${memberName(member)} · ${member['verifiedEmail'] ?? shortId(member['actorId'])} · ${label(member['role'])}'
+            })
+          ],
+          submit: '查看交接内容',
+          accessChanges: scope,
+          hasAccess: () => scope.current,
+          onSubmit: (values) async {
+            if (!scope.current) {
+              throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+            }
+            return values;
+          });
+      if (selection == null || !scope.current) return;
+      final target =
+          eligible.firstWhere((m) => m['actorId'] == selection['targetActorId']);
+      final key = requestId();
+      Json? created;
+      await actionDetails(
+          context,
+          '确认发起所有者交接',
+          {
+            '工作空间': tenant['name'],
+            '接收账号（请核对完整标识）': target['actorId'],
+            '接收人的权限变化': '${label(target['role'])} → 所有者',
+            '你的权限变化': '所有者 → ${label(formerRole)}',
+            '生效条件': '24 小时内由对方完成近期多因素认证并接受；发起后你的所有者权限暂时保留。',
+            '交接影响': ownershipConsequences,
+          },
+          reauth: () => s.login(stepUp: true),
+          accessChanges: scope,
+          hasAccess: () => scope.current,
+          actions: [
+            DetailAction('确认发起，等待对方接受', (dialog) async {
+              final complete = captureDialogCompletion(dialog);
+              final result =
+                  await scope.api.send('POST', '$root/ownership-transfers',
+                      body: {'targetActorId': target['actorId']},
+                      version: tenant['version'] as int,
+                      key: key) as Json;
+              created = result;
+              complete();
+            }, closeOnSuccess: false)
+          ]);
+      // Keep the page action alive through the follow-up dialog so its final
+      // refresh includes a cancellation or decision made immediately after creation.
+      if (created != null && scope.current) {
+        toast(context, '交接申请已发起，请通知接收人前往“所有者交接”查看。');
+        await open(context, root, created!['id'] as String);
+      }
+    } finally {
+      scope.dispose();
     }
   }
 
   Future<void> open(BuildContext context, String root, String id) async {
     final s = session;
-    final path = '$root/ownership-transfers/$id';
-    final r = await s.api.send('GET', path) as Json;
-    if (!context.mounted || s.root != root) return;
-    final actor = s.profile?['subject'];
-    final pending = r['state'] == 'PENDING';
-    final keys = {
-      for (final action in ['accept', 'decline', 'cancel']) action: requestId()
-    };
-    Future<void> act(BuildContext dialog, String action) async {
-      final title = switch (action) {
-        'accept' => '接受并成为所有者',
-        'decline' => '拒绝本次交接',
-        _ => '撤销本次交接',
+    final scope = DeviceSubflowScope(s,
+        permitted: () =>
+            context.mounted && s.tenant != null && s.root == root);
+    try {
+      if (!scope.current) return;
+      final path = '$root/ownership-transfers/$id';
+      final r = await scope.api.send('GET', path) as Json;
+      if (!scope.current) return;
+      final actor = scope.actorId;
+      final pending = r['state'] == 'PENDING';
+      final keys = {
+        for (final action in ['accept', 'decline', 'cancel']) action: requestId()
       };
-      if (!await confirmAction(
-          dialog,
-          title,
-          action == 'accept'
-              ? '你将成为当前工作空间唯一所有者，${r['sourceActorId']} 将变为${label(r['formerOwnerRole'])}。\n\n$ownershipConsequences'
-              : '此申请将结束，工作空间所有者保持不变。需要交接时可重新发起。',
-          confirm: title)) return;
-      final result = await s.api.send('POST', '$path/$action',
-          version: r['version'] as int, key: keys[action]) as Json;
-      // A successful HTTP response can carry a freshly expired or invalidated state.
-      final completed = result['state'] == 'ACCEPTED';
-      if (dialog.mounted) Navigator.pop(dialog);
-      if (context.mounted) {
-        toast(context,
-            completed ? '交接完成，正在刷新你的权限。' : ownershipState(result['state']));
+      bool canAct(String action) {
+        if (!scope.current || !pending) return false;
+        return switch (action) {
+          'accept' || 'decline' => actor == r['targetActorId'],
+          'cancel' => actor == r['sourceActorId'] && s.role == 'OWNER',
+          _ => false,
+        };
       }
-      await s.loadTenants();
-    }
+      Future<void> act(BuildContext dialog, String action) async {
+        final complete = captureDialogCompletion(dialog);
+        if (!canAct(action)) {
+          throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+        }
+        final title = switch (action) {
+          'accept' => '接受并成为所有者',
+          'decline' => '拒绝本次交接',
+          _ => '撤销本次交接',
+        };
+        if (!await confirmAction(
+            dialog,
+            title,
+            action == 'accept'
+                ? '你将成为当前工作空间唯一所有者，${r['sourceActorId']} 将变为${label(r['formerOwnerRole'])}。\n\n$ownershipConsequences'
+                : '此申请将结束，工作空间所有者保持不变。需要交接时可重新发起。',
+            confirm: title)) return;
+        final result = await scope.api.send('POST', '$path/$action',
+            version: r['version'] as int,
+            key: keys[action],
+            isCurrent: () => canAct(action)) as Json;
+        // A successful HTTP response can carry a freshly expired or invalidated state.
+        final completed = result['state'] == 'ACCEPTED';
+        complete();
+        if (context.mounted) {
+          toast(context,
+              completed ? '交接完成，正在刷新你的权限。' : ownershipState(result['state']));
+        }
+        // This refresh deliberately updates the role captured by the old scope.
+        // Do not require that scope to survive its own successful handover.
+        await s.loadTenants();
+      }
 
-    await actionDetails(
-        context,
-        '交接详情',
-        {
-          '状态': ownershipState(r['state']),
-          '发起账号': r['sourceActorId'],
-          '接收账号': r['targetActorId'],
-          '接收人权限': '${label(r['targetRole'])} → 所有者',
-          '原所有者权限': '所有者 → ${label(r['formerOwnerRole'])}',
-          '申请时间': dateLabel(r['createdAt']),
-          '确认截止时间': dateLabel(r['expiresAt']),
-          if (r['reason'] != null)
-            '结束原因': switch (r['reason']) {
-              'TENANT_CHANGED' => '工作空间已更新，请现任所有者重新发起。',
-              'MEMBERSHIP_CHANGED' => '双方成员或权限发生变化，请重新核对后发起。',
-              'TIME_EXPIRED' => '超过 24 小时确认期限。',
-              _ => '申请已不可用，请刷新后重新发起。',
-            },
-          '交接影响': ownershipConsequences,
-        },
-        reauth: () => s.login(stepUp: true),
-        actions: [
-          if (pending && actor == r['targetActorId']) ...[
-            DetailAction('接受并成为所有者', (d) => act(d, 'accept'),
-                closeOnSuccess: false),
-            DetailAction('拒绝交接', (d) => act(d, 'decline'),
-                destructive: true, closeOnSuccess: false),
-          ],
-          if (pending && actor == r['sourceActorId'] && s.role == 'OWNER')
-            DetailAction('撤销申请', (d) => act(d, 'cancel'),
-                destructive: true, closeOnSuccess: false),
-        ]);
+      await actionDetails(
+          context,
+          '交接详情',
+          {
+            '状态': ownershipState(r['state']),
+            '发起账号': r['sourceActorId'],
+            '接收账号': r['targetActorId'],
+            '接收人权限': '${label(r['targetRole'])} → 所有者',
+            '原所有者权限': '所有者 → ${label(r['formerOwnerRole'])}',
+            '申请时间': dateLabel(r['createdAt']),
+            '确认截止时间': dateLabel(r['expiresAt']),
+            if (r['reason'] != null)
+              '结束原因': switch (r['reason']) {
+                'TENANT_CHANGED' => '工作空间已更新，请现任所有者重新发起。',
+                'MEMBERSHIP_CHANGED' => '双方成员或权限发生变化，请重新核对后发起。',
+                'TIME_EXPIRED' => '超过 24 小时确认期限。',
+                _ => '申请已不可用，请刷新后重新发起。',
+              },
+            '交接影响': ownershipConsequences,
+          },
+          reauth: () => s.login(stepUp: true),
+          accessChanges: scope,
+          hasAccess: () => scope.current,
+          actions: [
+            if (canAct('accept')) ...[
+              DetailAction('接受并成为所有者', (d) => act(d, 'accept'),
+                  closeOnSuccess: false),
+              DetailAction('拒绝交接', (d) => act(d, 'decline'),
+                  destructive: true, closeOnSuccess: false),
+            ],
+            if (canAct('cancel'))
+              DetailAction('撤销申请', (d) => act(d, 'cancel'),
+                  destructive: true, closeOnSuccess: false),
+          ]);
+    } finally {
+      scope.dispose();
+    }
   }
 }

@@ -10,6 +10,7 @@ import 'access.dart';
 import 'scoped_http_client.dart';
 import 'report_job_resume.dart';
 import 'contract_action_resume.dart';
+import 'family_identity_controller.dart';
 
 class Session extends ChangeNotifier {
   static const issuer = String.fromEnvironment('OIDC_ISSUER',
@@ -37,7 +38,36 @@ class Session extends ChangeNotifier {
   bool get canApproveContracts => profile?['canApproveContracts'] == true;
   bool get canReviewManagedAndroid =>
       profile?['canReviewManagedAndroid'] == true;
+  bool get canReviewFamilyRefunds => profile?['canReviewFamilyRefunds'] == true;
+  bool get canManageFamilyFinance => profile?['canManageFamilyFinance'] == true;
+  bool get canReadIdentityProviders =>
+      profile?['canReadIdentityProviders'] == true;
+  bool get canManageIdentityProviders =>
+      profile?['canManageIdentityProviders'] == true;
+  bool get canTestIdentityProviders =>
+      profile?['canTestIdentityProviders'] == true;
+  bool get canPublishIdentityProviders =>
+      profile?['canPublishIdentityProviders'] == true;
+  bool get canRollbackIdentityProviders =>
+      profile?['canRollbackIdentityProviders'] == true;
+  IdentityProviderOperationStorage get identityProviderOperationStorage =>
+      const _IdentityProviderTabStorage();
   bool canOpen(String section) {
+    if (section == 'identity-providers') {
+      return canOpenIdentityProviders(
+          authenticated: authenticated,
+          canRead: canReadIdentityProviders,
+          canManage: canManageIdentityProviders,
+          canTest: canTestIdentityProviders,
+          canPublish: canPublishIdentityProviders,
+          canRollback: canRollbackIdentityProviders);
+    }
+    if (section == 'family-finance') {
+      return canOpenFamilyFinance(
+          authenticated: authenticated,
+          canReviewRefunds: canReviewFamilyRefunds,
+          canManageFinance: canManageFamilyFinance);
+    }
     if (section == 'managed-android-review') {
       return authenticated && canReviewManagedAndroid;
     }
@@ -338,4 +368,16 @@ class Session extends ChangeNotifier {
 
   void account() => html.window.open(
       '$issuer/account/#/account-security/signing-in', '_blank', 'noopener');
+}
+
+/// Only the core controller's UUID/type journal enters this tab-local adapter.
+class _IdentityProviderTabStorage implements IdentityProviderOperationStorage {
+  const _IdentityProviderTabStorage();
+  @override
+  String? read(String key) => html.window.sessionStorage[key];
+  @override
+  void write(String key, String value) =>
+      html.window.sessionStorage[key] = value;
+  @override
+  void remove(String key) => html.window.sessionStorage.remove(key);
 }

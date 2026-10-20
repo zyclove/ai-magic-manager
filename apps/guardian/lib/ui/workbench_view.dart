@@ -7,7 +7,7 @@ import 'design.dart';
 /// The host owns authentication, requests, mutations and refresh completion.
 class WorkbenchView extends StatelessWidget {
   final String workspaceName, role;
-  final bool organization, busy;
+  final bool organization, busy, refreshing;
   final OverviewSummary? summary;
   final Object? error;
   final DateTime? refreshedAt;
@@ -31,9 +31,14 @@ class WorkbenchView extends StatelessWidget {
     this.error,
     this.refreshedAt,
     this.busy = false,
+    this.refreshing = false,
   });
 
   String get subjectWord => organization ? '学生' : '儿童';
+
+  void _open(String section) {
+    if (canOpen(section)) onOpen(section);
+  }
 
   _WorkbenchAction? _nextAction(OverviewSummary value) {
     if ((value.openHelpRequestCount ?? 0) > 0 && canOpen('help-requests')) {
@@ -43,6 +48,7 @@ class WorkbenchView extends StatelessWidget {
           '查看求助',
           Icons.volunteer_activism_outlined,
           () => onOpen('help-requests'),
+          section: 'help-requests',
           urgent: true);
     }
     if (value.pendingRequestCount > 0 && canOpen('approvals')) {
@@ -51,7 +57,8 @@ class WorkbenchView extends StatelessWidget {
           '有 ${value.pendingRequestCount} 条申请等待处理。先查看申请理由，再决定是否允许临时访问。',
           '查看待处理审批',
           Icons.task_alt_outlined,
-          () => onOpen('approvals'));
+          () => onOpen('approvals'),
+          section: 'approvals');
     }
     if ((value.connectionCheckCount ?? 0) > 0 && canOpen('devices')) {
       return _WorkbenchAction(
@@ -59,7 +66,8 @@ class WorkbenchView extends StatelessWidget {
           '${value.connectionCheckCount} 台设备尚无近期心跳。请检查连接；心跳缺失不能证明设备规则已失效。',
           '查看设备连接',
           Icons.wifi_off_outlined,
-          () => onOpen('devices'));
+          () => onOpen('devices'),
+          section: 'devices');
     }
     if (value.subjectCount == 0 &&
         canOpen('subjects') &&
@@ -69,7 +77,9 @@ class WorkbenchView extends StatelessWidget {
           '填写昵称和年龄段即可，之后就能连接设备。无需填写完整生日。',
           '添加$subjectWord档案',
           Icons.person_add_alt_outlined,
-          onAddSubject!);
+          onAddSubject!,
+          section: 'subjects',
+          shortcut: 'add-subject');
     }
     if ((value.subjectCount ?? 0) > 0 &&
         value.activeDeviceCount == 0 &&
@@ -80,11 +90,14 @@ class WorkbenchView extends StatelessWidget {
           '档案已准备好。选择所属$subjectWord，再按设备端提示完成配对。',
           '连接设备',
           Icons.add_to_home_screen_outlined,
-          onAddDevice!);
+          onAddDevice!,
+          section: 'devices',
+          shortcut: 'add-device');
     }
     if (value.policyDraftCount == 0 && canOpen('policies')) {
       return _WorkbenchAction('设置使用规则', '到规则中心检查已有规则或添加新规则。配置保存与设备实际执行状态分别查看。',
-          '设置使用规则', Icons.shield_outlined, () => onOpen('policies'));
+          '设置使用规则', Icons.shield_outlined, () => onOpen('policies'),
+          section: 'policies', shortcut: 'policies');
     }
     if (canOpen('reports')) {
       return _WorkbenchAction(
@@ -92,11 +105,14 @@ class WorkbenchView extends StatelessWidget {
           '查看已授权设备的使用报表。未授权或缺失的数据会明确标记，不能当作零使用量。',
           '查看使用报表',
           Icons.bar_chart_outlined,
-          () => onOpen('reports'));
+          () => onOpen('reports'),
+          section: 'reports',
+          shortcut: 'reports');
     }
     if (canOpen('devices')) {
       return _WorkbenchAction('查看当前设备', '检查已注册设备的连接、能力和实际回执。', '查看设备',
-          Icons.devices_outlined, () => onOpen('devices'));
+          Icons.devices_outlined, () => onOpen('devices'),
+          section: 'devices');
     }
     return null;
   }
@@ -105,14 +121,22 @@ class WorkbenchView extends StatelessWidget {
   Widget build(BuildContext context) {
     final value = summary;
     final action = value == null ? null : _nextAction(value);
+    final commonActions =
+        value == null ? null : _commonActions(context, action?.shortcut);
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       PageHeading('工作台',
           '$workspaceName · ${organization ? '机构管理' : '家庭管理'} · ${label(role)}',
           action: TextButton.icon(
               onPressed:
-                  busy || (value == null && error == null) ? null : onRefresh,
-              icon: const Icon(Icons.refresh, size: 18),
-              label: const Text('刷新状态'))),
+                  busy || refreshing || (value == null && error == null)
+                      ? null
+                      : onRefresh,
+              icon: refreshing && value != null
+                  ? const SizedBox.square(
+                      dimension: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Icon(Icons.refresh, size: 18),
+              label: Text(refreshing ? '正在刷新…' : '刷新状态'))),
       if (error != null)
         Panel(child: FailureView(error!, retry: onRefresh, reauth: onReauth))
       else if (value == null)
@@ -127,8 +151,10 @@ class WorkbenchView extends StatelessWidget {
           const SizedBox(height: 20),
         ],
         _metrics(context, value),
-        const SizedBox(height: 20),
-        _commonActions(context),
+        if (commonActions != null) ...[
+          const SizedBox(height: 20),
+          commonActions,
+        ],
         if (canOpen('audit')) ...[
           const SizedBox(height: 20),
           _recentActivity(context, value),
@@ -149,11 +175,12 @@ class WorkbenchView extends StatelessWidget {
           Icon(action.icon,
               size: 24, color: action.urgent ? const Color(0xFFA7473C) : navy),
           const SizedBox(width: 10),
-          Text(action.urgent ? '需要优先关注' : '接下来可以做',
-              style: TextStyle(
-                  color: action.urgent ? const Color(0xFFA7473C) : muted,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600)),
+          Expanded(
+              child: Text(action.urgent ? '需要优先关注' : '接下来可以做',
+                  style: TextStyle(
+                      color: action.urgent ? const Color(0xFFA7473C) : muted,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600))),
         ]),
         const SizedBox(height: 16),
         Text(action.title, style: Theme.of(context).textTheme.titleLarge),
@@ -161,11 +188,26 @@ class WorkbenchView extends StatelessWidget {
         Text(action.description,
             style: const TextStyle(color: muted, height: 1.7)),
         const SizedBox(height: 18),
-        FilledButton.icon(
-            key: const Key('workbench-next-action'),
-            onPressed: busy ? null : action.run,
-            icon: const Icon(Icons.arrow_forward, size: 18),
-            label: Text(action.label)),
+        Semantics(
+            liveRegion: busy,
+            child: FilledButton.icon(
+                key: const Key('workbench-next-action'),
+                onPressed: busy
+                    ? null
+                    : () {
+                        if (canOpen(action.section)) action.run();
+                      },
+                icon: busy
+                    ? SizedBox.square(
+                        dimension: 18,
+                        child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurfaceVariant))
+                    : const Icon(Icons.arrow_forward, size: 18),
+                label: Text(busy ? '处理中…' : action.label,
+                    textAlign: TextAlign.center))),
       ]));
 
   Widget _metrics(BuildContext context, OverviewSummary value) {
@@ -250,7 +292,7 @@ class WorkbenchView extends StatelessWidget {
                   clipBehavior: Clip.antiAlias,
                   child: InkWell(
                       key: Key('workbench-metric-${entry.key}'),
-                      onTap: busy ? null : () => onOpen(entry.section),
+                      onTap: busy ? null : () => _open(entry.section),
                       child: Padding(
                           padding: const EdgeInsets.all(18),
                           child: Column(
@@ -280,32 +322,44 @@ class WorkbenchView extends StatelessWidget {
     });
   }
 
-  Widget _commonActions(BuildContext context) {
+  Widget? _commonActions(BuildContext context, String? primaryShortcut) {
     final actions = <Widget>[
-      if (canOpen('subjects') && onAddSubject != null)
+      if (primaryShortcut != 'add-subject' &&
+          canOpen('subjects') &&
+          onAddSubject != null)
         OutlinedButton.icon(
             key: const Key('workbench-add-subject'),
-            onPressed: busy ? null : onAddSubject,
+            onPressed: busy
+                ? null
+                : () {
+                    if (canOpen('subjects')) onAddSubject!();
+                  },
             icon: const Icon(Icons.person_add_alt_outlined, size: 18),
             label: Text('添加$subjectWord')),
-      if (canOpen('devices') && onAddDevice != null)
+      if (primaryShortcut != 'add-device' &&
+          canOpen('devices') &&
+          onAddDevice != null)
         OutlinedButton.icon(
             key: const Key('workbench-add-device'),
-            onPressed: busy ? null : onAddDevice,
+            onPressed: busy
+                ? null
+                : () {
+                    if (canOpen('devices')) onAddDevice!();
+                  },
             icon: const Icon(Icons.add_to_home_screen_outlined, size: 18),
             label: const Text('连接设备')),
-      if (canOpen('policies'))
+      if (primaryShortcut != 'policies' && canOpen('policies'))
         OutlinedButton.icon(
-            onPressed: busy ? null : () => onOpen('policies'),
+            onPressed: busy ? null : () => _open('policies'),
             icon: const Icon(Icons.shield_outlined, size: 18),
             label: const Text('设置使用规则')),
-      if (canOpen('reports'))
+      if (primaryShortcut != 'reports' && canOpen('reports'))
         OutlinedButton.icon(
-            onPressed: busy ? null : () => onOpen('reports'),
+            onPressed: busy ? null : () => _open('reports'),
             icon: const Icon(Icons.bar_chart_outlined, size: 18),
             label: const Text('查看使用报表')),
     ];
-    if (actions.isEmpty) return const SizedBox.shrink();
+    if (actions.isEmpty) return null;
     return Panel(
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text('常用操作', style: Theme.of(context).textTheme.titleMedium),
@@ -324,7 +378,7 @@ class WorkbenchView extends StatelessWidget {
             children: [
               Text('最近活动', style: Theme.of(context).textTheme.titleMedium),
               TextButton(
-                  onPressed: busy ? null : () => onOpen('audit'),
+                  onPressed: busy ? null : () => _open('audit'),
                   child: const Text('查看全部活动')),
             ]),
         const SizedBox(height: 8),
@@ -346,10 +400,13 @@ class WorkbenchView extends StatelessWidget {
 
 class _WorkbenchAction {
   final String title, description, label;
+  final String section;
+  // Only the same shortcut is redundant; a section may offer other actions.
+  final String? shortcut;
   final IconData icon;
   final VoidCallback run;
   final bool urgent;
   const _WorkbenchAction(
       this.title, this.description, this.label, this.icon, this.run,
-      {this.urgent = false});
+      {required this.section, this.shortcut, this.urgent = false});
 }
