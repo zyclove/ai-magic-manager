@@ -1,0 +1,80 @@
+{
+  "status": "SOURCE_LITERAL_INSPECTION_ONLY_NOT_RUNTIME_VERIFIED",
+  "nativePropertiesAtAllIntendedUrls": true,
+  "urlCount": 5,
+  "urls": [
+    {
+      "path": "backend/src/main/resources/application.yml",
+      "url": "jdbc:mysql://localhost:3306/ai_manager?preserveInstants=true&connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true",
+      "properties": {
+        "preserveInstants": "true",
+        "connectionTimeZone": "UTC",
+        "forceConnectionTimeZoneToSession": "true"
+      }
+    },
+    {
+      "path": "deploy/compose/compose.yaml",
+      "url": "jdbc:mysql://database:3306/ai_manager?preserveInstants=true&connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true",
+      "properties": {
+        "preserveInstants": "true",
+        "connectionTimeZone": "UTC",
+        "forceConnectionTimeZoneToSession": "true"
+      }
+    },
+    {
+      "path": "deploy/compose/compose.yaml",
+      "url": "jdbc:mysql://erasure-database:3306/erasure_ledger?preserveInstants=true&connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true&connectTimeout=5000&socketTimeout=10000",
+      "properties": {
+        "preserveInstants": "true",
+        "connectionTimeZone": "UTC",
+        "forceConnectionTimeZoneToSession": "true",
+        "connectTimeout": "5000",
+        "socketTimeout": "10000"
+      }
+    },
+    {
+      "path": "docs/kubernetes-deployment.md",
+      "url": "jdbc:mysql://mysql.example.internal:3306/ai_manager?preserveInstants=true&connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true",
+      "properties": {
+        "preserveInstants": "true",
+        "connectionTimeZone": "UTC",
+        "forceConnectionTimeZoneToSession": "true"
+      }
+    },
+    {
+      "path": "docs/kubernetes-deployment.md",
+      "url": "jdbc:mysql://erasure.example.internal:3306/erasure_ledger?preserveInstants=true&connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true",
+      "properties": {
+        "preserveInstants": "true",
+        "connectionTimeZone": "UTC",
+        "forceConnectionTimeZoneToSession": "true"
+      }
+    }
+  ],
+  "otherInventoriedInputs": [
+    {
+      "path": "docs/deployment-runbook.md",
+      "matchesBeforeSnapshot": true
+    },
+    {
+      "path": "deploy/helm/ai-manager/values.yaml",
+      "matchesBeforeSnapshot": true
+    },
+    {
+      "path": "deploy/helm/ai-manager/templates/_helpers.tpl",
+      "matchesBeforeSnapshot": true
+    },
+    {
+      "path": "scripts/tests/test_deployment.py",
+      "matchesBeforeSnapshot": true
+    },
+    {
+      "path": "scripts/tests/test_erasure_helm.py",
+      "matchesBeforeSnapshot": true
+    }
+  ],
+  "testsRun": false,
+  "templatesRendered": false,
+  "driverConnectionsOpened": false,
+  "sqlExecuted": false
+}

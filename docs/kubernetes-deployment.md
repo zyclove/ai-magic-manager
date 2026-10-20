@@ -23,11 +23,11 @@ images:
   backend: registry.example.com/ai-manager/backend@sha256:0000000000000000000000000000000000000000000000000000000000000000 # replace with verified digest
   edge: registry.example.com/ai-manager/edge@sha256:0000000000000000000000000000000000000000000000000000000000000000 # replace with verified digest
 database:
-  jdbcUrl: "jdbc:mysql://mysql.example.internal:3306/ai_manager?connectionTimeZone=UTC"
+  jdbcUrl: "jdbc:mysql://mysql.example.internal:3306/ai_manager?preserveInstants=true&connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true"
   username: ai_manager
   existingSecret: manager-db-password
 erasureLedger:
-  jdbcUrl: "jdbc:mysql://erasure.example.internal:3306/erasure_ledger?connectionTimeZone=UTC"
+  jdbcUrl: "jdbc:mysql://erasure.example.internal:3306/erasure_ledger?preserveInstants=true&connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true"
   username: erasure_runtime
   id: 11111111-2222-4333-8444-555555555555 # replace with the provisioned fixed identity
   existingSecret: manager-erasure-password
@@ -48,6 +48,8 @@ ingress:
   tlsSecretName: manager-tls
   className: nginx
 ```
+
+外部 `DATABASE_URL`、`ERASURE_LEDGER_URL`、`spring.datasource.url` 或 `manager.erasure-ledger.url` 会替换相应地址；Helm 的 `database.jdbcUrl` 与 `erasureLedger.jdbcUrl` 按提供值原样传入。覆盖时同样显式保留 `preserveInstants=true`、`connectionTimeZone=UTC` 与 `forceConnectionTimeZoneToSession=true`，并保留该环境已有 TLS、超时和认证参数；不要仅设置 JVM 时区或数据库默认时区。此变更只配置应用自有连接的会话，不执行数据迁移。配置含义及待运行的核对流程见 [MySQL UTC 会话说明](mysql-utc-session-configuration.md)。
 
 使用已固定版本的 Helm 在独立环境执行 `helm lint deploy/helm/ai-manager -f manager-values.yaml` 和 `helm template manager deploy/helm/ai-manager -f manager-values.yaml`；检查渲染结果没有私钥或密码，且所有容器镜像 digest 与发布清单一致。经变更审批后才执行 `helm upgrade --install manager deploy/helm/ai-manager -n <namespace> -f manager-values.yaml --atomic --wait`。仓库没有附带可直接部署的真实凭据或镜像地址。
 

@@ -1,0 +1,42 @@
+{
+  "status": "SOURCE_ONLY_HEAD_TARGETS_NOT_GIT_APPLIED",
+  "baseCommit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+  "files": [
+    {
+      "path": "backend/src/main/resources/application.yml",
+      "headSha256": "ca7b8bfc3a083d6105886cdb5b0f4f1e309b9edf71c19b97b23ded52f28654a8",
+      "headTargetSha256": "9de3229548c9dec5694cbdb75a3744c4400ffd3469c607cd92375b6914170a18",
+      "liveBeforeSha256": "110156327a7ecf654fe7e9071f44a1e6dd2e46853656dd7580c2ce33df25c52a",
+      "liveAfterSha256": "60e104cf6ae4b5a5b8bf170bcc89d3814da9a4dd6a25f8a94620f05fb1a25ec5",
+      "headTargetSnapshot": ".cache/mysql-session-utc-20261020-r1/head-after/backend/src/main/resources/application.yml",
+      "headPatch": ".cache/mysql-session-utc-20261020-r1/patches/application.yml.head.patch",
+      "headPatchSha256": "b5b6d8f9c9ce539b588ff22803eec2ecfdd9b72349c20e6c18258fb7b8406352",
+      "outsideOwnedHeadBytesPreserved": true,
+      "wholeLiveFileMatchesHeadTarget": false
+    },
+    {
+      "path": "deploy/compose/compose.yaml",
+      "headSha256": "544b8ab421cf4549aacf417f1f3186d5f61f310407f624ac9d4ed62581e8b269",
+      "headTargetSha256": "a49ce952e8cf0a3272a9f2f7ba70eb3b2ba98144eed1bbdef339cef9ec0b1d6e",
+      "liveBeforeSha256": "6346046aac8678ce2dace05f1dfe944194b763acec0887e2c69735590b43be04",
+      "liveAfterSha256": "0f38266b3b540cf83756a7fdbf86b4ba7463314cf91c2735cd946a9808d4c2d4",
+      "headTargetSnapshot": ".cache/mysql-session-utc-20261020-r1/head-after/deploy/compose/compose.yaml",
+      "headPatch": ".cache/mysql-session-utc-20261020-r1/patches/compose.yaml.head.patch",
+      "headPatchSha256": "7cae08cfba1f13ba1eda811868eec235452adb5a5eef272beb3a4e3f86eda475",
+      "outsideOwnedHeadBytesPreserved": true,
+      "wholeLiveFileMatchesHeadTarget": false
+    },
+    {
+      "path": "docs/kubernetes-deployment.md",
+      "headSha256": "8302666901eb075169438258d892d7e567f019fe7e0808f542c6dac55b360a75",
+      "headTargetSha256": "f829544365cb1652dcfd158b5e8ae482d4d73d1813bc90515c041dd32912adbf",
+      "liveBeforeSha256": "8302666901eb075169438258d892d7e567f019fe7e0808f542c6dac55b360a75",
+      "liveAfterSha256": "f829544365cb1652dcfd158b5e8ae482d4d73d1813bc90515c041dd32912adbf",
+      "headTargetSnapshot": ".cache/mysql-session-utc-20261020-r1/head-after/docs/kubernetes-deployment.md",
+      "headPatch": ".cache/mysql-session-utc-20261020-r1/patches/kubernetes-deployment.md.head.patch",
+      "headPatchSha256": "29fefe1f1a8285dc4b47582cba7b223cb6e823e32db93cd633467492e6b6aeca",
+      "outsideOwnedHeadBytesPreserved": true,
+      "wholeLiveFileMatchesHeadTarget": true
+    }
+  ]
+}

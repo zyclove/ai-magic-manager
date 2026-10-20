@@ -1,0 +1,25 @@
+{
+  "status": "SOURCE_CANDIDATE_PENDING_INDEPENDENT_STATIC_REVIEW",
+  "files": [
+    {
+      "path": "backend/src/main/resources/application.yml",
+      "sha256": "60e104cf6ae4b5a5b8bf170bcc89d3814da9a4dd6a25f8a94620f05fb1a25ec5",
+      "bytes": 7039
+    },
+    {
+      "path": "deploy/compose/compose.yaml",
+      "sha256": "0f38266b3b540cf83756a7fdbf86b4ba7463314cf91c2735cd946a9808d4c2d4",
+      "bytes": 8283
+    },
+    {
+      "path": "docs/kubernetes-deployment.md",
+      "sha256": "f829544365cb1652dcfd158b5e8ae482d4d73d1813bc90515c041dd32912adbf",
+      "bytes": 9608
+    },
+    {
+      "path": "docs/mysql-utc-session-configuration.md",
+      "sha256": "9476f315c497d54e4ac8b3f45f940be847b37fe92e85c40062a1c3e2eb792e8e",
+      "bytes": 5315
+    }
+  ]
+}

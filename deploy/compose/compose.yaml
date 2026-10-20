@@ -103,10 +103,10 @@ services:
     user: "${APP_UID:?Set APP_UID}:${APP_GID:?Set APP_GID}"
     environment:
       SPRING_CONFIG_IMPORT: configtree:/run/secrets/
-      DATABASE_URL: jdbc:mysql://database:3306/ai_manager?connectionTimeZone=UTC
+      DATABASE_URL: jdbc:mysql://database:3306/ai_manager?preserveInstants=true&connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true
       DATABASE_USERNAME: ai_manager
       ERASURE_RECOVERY_REQUIRED: "true"
-      ERASURE_LEDGER_URL: jdbc:mysql://erasure-database:3306/erasure_ledger?connectionTimeZone=UTC&connectTimeout=5000&socketTimeout=10000
+      ERASURE_LEDGER_URL: jdbc:mysql://erasure-database:3306/erasure_ledger?preserveInstants=true&connectionTimeZone=UTC&forceConnectionTimeZoneToSession=true&connectTimeout=5000&socketTimeout=10000
       ERASURE_LEDGER_USERNAME: erasure_app
       ERASURE_LEDGER_ID: ${ERASURE_LEDGER_ID:?Initialize a new ledger identity}
       OIDC_ISSUER_URI: ${PUBLIC_URL:?Set PUBLIC_URL}/identity/realms/ai-manager

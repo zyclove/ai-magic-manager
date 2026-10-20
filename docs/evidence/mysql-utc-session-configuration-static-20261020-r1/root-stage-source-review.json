@@ -1,0 +1,47 @@
+{
+  "status": "STATIC_ONLY_NOT_RUN",
+  "baseCommit": "7a5a8d06cdfc21db53bebfbbde467efce227243d",
+  "sdkRun": false,
+  "testsRun": false,
+  "deployed": false,
+  "officialSource": "https://dev.mysql.com/doc/connector-j/en/connector-j-connp-props-datetime-types-processing.html",
+  "exactPatchTargetsMatch": true,
+  "mainWorkingTreePreserved": true,
+  "files": [
+    {
+      "path": "backend/src/main/resources/application.yml",
+      "sha256": "9de3229548c9dec5694cbdb75a3744c4400ffd3469c607cd92375b6914170a18",
+      "mainSha256": "60e104cf6ae4b5a5b8bf170bcc89d3814da9a4dd6a25f8a94620f05fb1a25ec5",
+      "stageSource": ".cache/operation-result-retention-20261020/root/utc-stage-images/backend/src/main/resources/application.yml",
+      "stageReason": "Only authorized UTC URL/default or documentation notice on HEAD"
+    },
+    {
+      "path": "deploy/compose/compose.yaml",
+      "sha256": "a49ce952e8cf0a3272a9f2f7ba70eb3b2ba98144eed1bbdef339cef9ec0b1d6e",
+      "mainSha256": "0f38266b3b540cf83756a7fdbf86b4ba7463314cf91c2735cd946a9808d4c2d4",
+      "stageSource": ".cache/operation-result-retention-20261020/root/utc-stage-images/deploy/compose/compose.yaml",
+      "stageReason": "Only authorized UTC URL/default or documentation notice on HEAD"
+    },
+    {
+      "path": "docs/kubernetes-deployment.md",
+      "sha256": "f829544365cb1652dcfd158b5e8ae482d4d73d1813bc90515c041dd32912adbf",
+      "mainSha256": "f829544365cb1652dcfd158b5e8ae482d4d73d1813bc90515c041dd32912adbf",
+      "stageSource": ".cache/operation-result-retention-20261020/root/utc-stage-images/docs/kubernetes-deployment.md",
+      "stageReason": "Only authorized UTC URL/default or documentation notice on HEAD"
+    },
+    {
+      "path": "docs/mysql-utc-session-configuration.md",
+      "sha256": "9476f315c497d54e4ac8b3f45f940be847b37fe92e85c40062a1c3e2eb792e8e",
+      "mainSha256": "9476f315c497d54e4ac8b3f45f940be847b37fe92e85c40062a1c3e2eb792e8e",
+      "stageSource": ".cache/operation-result-retention-20261020/root/utc-stage-images/docs/mysql-utc-session-configuration.md",
+      "stageReason": "Independent source-only configuration documentation/evidence"
+    },
+    {
+      "path": "docs/evidence/mysql-session-utc-static-20261020-r1.json",
+      "sha256": "ccad4d05fdd2cef69403ba1b829f01c9ee399e18c3290a4ab4ec85a621e1c97a",
+      "mainSha256": "ccad4d05fdd2cef69403ba1b829f01c9ee399e18c3290a4ab4ec85a621e1c97a",
+      "stageSource": ".cache/operation-result-retention-20261020/root/utc-stage-images/docs/evidence/mysql-session-utc-static-20261020-r1.json",
+      "stageReason": "Independent source-only configuration documentation/evidence"
+    }
+  ]
+}
