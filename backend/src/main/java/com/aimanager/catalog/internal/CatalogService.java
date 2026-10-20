@@ -6,6 +6,7 @@ import com.aimanager.catalog.ApplicationDefinition;
 import com.aimanager.catalog.ApplicationIdentity;
 import com.aimanager.fleet.Device;
 import com.aimanager.idempotency.IdempotencyService;
+import com.aimanager.idempotency.IdempotencyLookupOutcome;
 import com.aimanager.shared.DomainException;
 import com.aimanager.shared.ItemPage;
 import com.aimanager.shared.SecretMaterial;
@@ -64,18 +65,20 @@ class CatalogService implements ApplicationCatalog {
         return requireKnownIdentity(tenant,id);
     }
     @Transactional(timeout = 10)
-    ApplicationDefinition creationResult(String tenant, String actor, String key, CatalogController.CreateApplication input) {
+    IdempotencyLookupOutcome<ApplicationDefinition> creationResult(String tenant, String actor, String key, CatalogController.CreateApplication input) {
         access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
         if (key == null || !key.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
             throw DomainException.invalid("INVALID_CREATION_RESULT_REFERENCE");
-        var result = idempotency.findCommitted(tenant, actor, "application.create", key,
+        return idempotency.findCommitted(tenant, actor, "application.create", key,
             Map.of("input", input), ApplicationDefinition.class)
-            .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "APPLICATION_CREATION_RESULT_UNAVAILABLE"));
-        var current = requireDeclared(tenant, actor, result.id());
-        var expected = new ApplicationDefinition(result.id(), input.displayName().strip(), input.platform(),
-            input.packageName(), input.profile(), input.signingDigests().stream().sorted().toList(), "ADMIN_DECLARED");
-        if (!current.equals(expected)) throw new IllegalStateException("Immutable application journal mismatch");
-        return current;
+            .requirePresent(() -> new DomainException(HttpStatus.NOT_FOUND, "APPLICATION_CREATION_RESULT_UNAVAILABLE"))
+            .map(result -> {
+            var current = requireDeclared(tenant, actor, result.id());
+            var expected = new ApplicationDefinition(result.id(), input.displayName().strip(), input.platform(),
+                input.packageName(), input.profile(), input.signingDigests().stream().sorted().toList(), "ADMIN_DECLARED");
+            if (!current.equals(expected)) throw new IllegalStateException("Immutable application journal mismatch");
+            return current;
+            });
     }
     @Override public ApplicationDefinition requireKnownIdentity(String tenant, String id) {
         var rows = jdbc.query("SELECT definition_json FROM application_definitions WHERE tenant_id=? AND id=?",

@@ -3,6 +3,7 @@ package com.aimanager.tenant.internal;
 import static com.aimanager.tenant.TenantAccess.Role.*;
 
 import com.aimanager.audit.AuditService;
+import com.aimanager.idempotency.IdempotencyLookupOutcome;
 import com.aimanager.identity.ActorKeys;
 import com.aimanager.identity.RecentAuthentication;
 import com.aimanager.shared.DomainException;
@@ -285,7 +286,7 @@ class MembershipService {
 
   /** Recover historical success without reapplying authority or assuming a revoked member stayed revoked. */
   @Transactional(timeout = 10)
-  public OperationResult accessResult(String tenant, String actor, String memberKey, String requestId,
+  public IdempotencyLookupOutcome<OperationResult> accessResult(String tenant, String actor, String memberKey, String requestId,
       MembershipController.ResultQuery input) {
     mutex.lock(tenant);
     access.requireRole(tenant, actor, OWNER, ORG_ADMIN);
@@ -297,25 +298,35 @@ class MembershipService {
     boolean revoke = input.operation() == MembershipController.Operation.REVOKE;
     if ((revoke && (input.role() != null || input.subjectId() != null || input.classIds() != null))
         || (!revoke && input.role() == null)) throw DomainException.invalid("INVALID_MEMBER_RESULT_QUERY");
-    MemberAccess committed = null;
+    java.util.function.Function<MemberAccess, OperationResult> finish = committed -> {
+      var current = readAccess(tenant, memberKey, true, true);
+      boolean active = jdbc.queryForObject(
+          "SELECT COUNT(*) FROM tenant_members WHERE tenant_id=? AND actor_key=? AND revoked_at IS NULL",
+          Integer.class, tenant, memberKey) == 1;
+      return new OperationResult(requestId, input.operation(), committed, revoke, current,
+          active ? "ACTIVE" : "REVOKED");
+    };
     if (revoke) {
-      var result = idempotency.findCommitted(tenant, actor, "membership.revoke", requestId,
+      return idempotency.findCommitted(tenant, actor, "membership.revoke", requestId,
           java.util.Map.of("memberKey", memberKey, "version", input.version()), Boolean.class)
-          .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "MEMBER_RESULT_UNAVAILABLE"));
-      if (!Boolean.TRUE.equals(result)) throw new IllegalStateException("Membership revocation journal invalid");
-    } else {
-      committed = idempotency.findCommitted(tenant, actor, "membership.access", requestId,
-          accessFingerprint(memberKey, input.role(), input.subjectId(), classScopes.normalize(input.classIds()), input.version()),
-          MemberAccess.class)
-          .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "MEMBER_RESULT_UNAVAILABLE"));
-      if (!committed.memberKey().equals(memberKey) || !committed.actorId().equals(target.actorId()))
-        throw new IllegalStateException("Membership journal scope mismatch");
+          .requirePresent(() -> new DomainException(HttpStatus.NOT_FOUND, "MEMBER_RESULT_UNAVAILABLE"))
+          .map(result -> {
+            if (!Boolean.TRUE.equals(result)) {
+              throw new IllegalStateException("Membership revocation journal invalid");
+            }
+            return finish.apply(null);
+          });
     }
-    var current = readAccess(tenant, memberKey, true, true);
-    boolean active = jdbc.queryForObject(
-        "SELECT COUNT(*) FROM tenant_members WHERE tenant_id=? AND actor_key=? AND revoked_at IS NULL",
-        Integer.class, tenant, memberKey) == 1;
-    return new OperationResult(requestId, input.operation(), committed, revoke, current, active ? "ACTIVE" : "REVOKED");
+    return idempotency.findCommitted(tenant, actor, "membership.access", requestId,
+        accessFingerprint(memberKey, input.role(), input.subjectId(), classScopes.normalize(input.classIds()), input.version()),
+        MemberAccess.class)
+        .requirePresent(() -> new DomainException(HttpStatus.NOT_FOUND, "MEMBER_RESULT_UNAVAILABLE"))
+        .map(committed -> {
+          if (!committed.memberKey().equals(memberKey) || !committed.actorId().equals(target.actorId())) {
+            throw new IllegalStateException("Membership journal scope mismatch");
+          }
+          return finish.apply(committed);
+        });
   }
 
   record OperationResult(String requestId, MembershipController.Operation operation,

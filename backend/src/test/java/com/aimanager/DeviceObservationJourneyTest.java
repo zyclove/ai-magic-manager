@@ -43,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "manager.observations.minimum-report-interval-seconds=1", "manager.observations.max-retained-batches=2"
 })
 @AutoConfigureMockMvc(print = MockMvcPrint.NONE)
-@Import(DeviceObservationJourneyTest.ClockConfiguration.class)
+@Import({DeviceObservationJourneyTest.ClockConfiguration.class, com.aimanager.support.ControlledIdempotencyTimeConfiguration.class})
 class DeviceObservationJourneyTest {
     @Autowired MockMvc mvc;
     @Autowired ObjectMapper mapper;

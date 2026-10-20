@@ -127,7 +127,7 @@ class OrganizationController {
       @AuthenticationPrincipal Jwt actor, @PathVariable String tenantId,
       @PathVariable String requestId, @Valid @RequestBody ResultQuery query) {
     return ResponseEntity.ok().cacheControl(CacheControl.noStore())
-        .body(classes.result(tenantId, actor.getSubject(), requestId, query));
+        .body(classes.result(tenantId, actor.getSubject(), requestId, query).toHttpResult());
   }
 
   enum Operation { CREATE, RENAME, ADD, REMOVE, TRANSFER, ARCHIVE }

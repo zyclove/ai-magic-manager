@@ -103,7 +103,7 @@ class MembershipController {
       @Valid @RequestBody ResultQuery input) {
     return org.springframework.http.ResponseEntity.ok()
         .cacheControl(org.springframework.http.CacheControl.noStore())
-        .body(members.accessResult(tenantId, actor.getSubject(), memberKey, requestId, input));
+        .body(members.accessResult(tenantId, actor.getSubject(), memberKey, requestId, input).toHttpResult());
   }
 
   enum Operation { UPDATE, REVOKE }

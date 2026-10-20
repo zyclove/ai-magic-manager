@@ -48,7 +48,7 @@ import org.springframework.transaction.support.TransactionTemplate;
       "manager.notifications.retention-job.enabled=false"
     })
 @AutoConfigureMockMvc
-@Import(NotificationJourneyTest.TimeConfiguration.class)
+@Import({NotificationJourneyTest.TimeConfiguration.class, com.aimanager.support.ControlledIdempotencyTimeConfiguration.class})
 class NotificationJourneyTest {
   @Autowired MockMvc mvc;
   @Autowired ObjectMapper json;

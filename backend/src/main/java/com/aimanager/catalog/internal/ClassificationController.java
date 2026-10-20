@@ -58,7 +58,7 @@ class ClassificationController {
       @Valid @RequestBody RecoveryQuery input) {
     return ResponseEntity.ok().header("Cache-Control", "no-store").header("Vary", "Authorization")
         .body(service.operationResult(tenantId, actor.getSubject(), applicationId, requestId,
-            input.version(), input.category()));
+            input.version(), input.category()).toHttpResult());
   }
 
   record RecoveryQuery(@NotNull @jakarta.validation.constraints.PositiveOrZero Long version, @NotNull Category category) {}

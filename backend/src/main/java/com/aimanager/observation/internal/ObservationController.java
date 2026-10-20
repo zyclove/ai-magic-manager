@@ -58,7 +58,7 @@ class ObservationController {
             @PathVariable String tenantId, @PathVariable String deviceId,
             @PathVariable String requestId, @Valid @RequestBody Change input) {
         return ResponseEntity.ok().header("Cache-Control", "no-store").header("Vary", "Authorization")
-            .body(settings.operationResult(tenantId, actor.getSubject(), deviceId, requestId, input));
+            .body(settings.operationResult(tenantId, actor.getSubject(), deviceId, requestId, input).toHttpResult());
     }
 
     record Change(@NotNull @Pattern(regexp = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}") String registrationId,

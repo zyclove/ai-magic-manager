@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     "manager.approval.expiry-job.enabled=false"
 })
 @AutoConfigureMockMvc
-@Import(ApprovalJourneyTest.TimeConfiguration.class)
+@Import({ApprovalJourneyTest.TimeConfiguration.class, com.aimanager.support.ControlledIdempotencyTimeConfiguration.class})
 class ApprovalJourneyTest {
     @Autowired MockMvc mvc;
     @Autowired ObjectMapper mapper;

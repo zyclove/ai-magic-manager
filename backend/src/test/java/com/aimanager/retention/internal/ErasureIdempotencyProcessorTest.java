@@ -2,6 +2,8 @@ package com.aimanager.retention.internal;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.aimanager.idempotency.IdempotencyResultLifecycle;
+import com.aimanager.idempotency.IdempotencyRetentionSettings;
 import com.aimanager.idempotency.ResponseOwnership;
 import com.aimanager.identity.ActorKeys;
 import com.aimanager.shared.SecretMaterial;
@@ -45,10 +47,12 @@ class ErasureIdempotencyProcessorTest {
     var cache =
         new Cache(scope, ActorKeys.key("private-actor"), SecretMaterial.hash(operation),
             SecretMaterial.hash(id()));
+    Long committedAt = body == null ? null : 1L;
     db.update(
         "INSERT INTO idempotency_requests(id,scope_id,actor_id,actor_key,operation,operation_key,"
-            + "key_hash,request_hash,response_body,expires_at,response_state)"
-            + " VALUES(?,?,'private-actor',?,?,?,?,?,?,1,?)",
+            + "key_hash,request_hash,response_body,expires_at,response_state,"
+            + "result_committed_at,result_expires_at,result_policy_revision,result_last_observed_at)"
+            + " VALUES(?,?,'private-actor',?,?,?,?,?,?,1,?,?,?,?,?)",
         id(),
         cache.scope(),
         cache.actor(),
@@ -57,7 +61,11 @@ class ErasureIdempotencyProcessorTest {
         cache.key(),
         SecretMaterial.hash("private-request"),
         body,
-        state);
+        state,
+        committedAt,
+        committedAt == null ? null : IdempotencyResultLifecycle.expirationAt(committedAt),
+        committedAt == null ? null : IdempotencyRetentionSettings.DEFAULT_POLICY_VERSION,
+        committedAt);
     for (String person : subjects) owner(cache, scope, person);
     return cache;
   }

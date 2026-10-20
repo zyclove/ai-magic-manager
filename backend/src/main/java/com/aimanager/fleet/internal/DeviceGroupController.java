@@ -69,7 +69,7 @@ class DeviceGroupController {
       @AuthenticationPrincipal Jwt actor, @PathVariable String tenantId,
       @PathVariable String requestId, @Valid @RequestBody Recovery body) {
     return ResponseEntity.ok().cacheControl(CacheControl.noStore())
-        .body(groups.operationResult(tenantId, actor.getSubject(), requestId, body));
+        .body(groups.operationResult(tenantId, actor.getSubject(), requestId, body).toHttpResult());
   }
 
   @PatchMapping("/{groupId}")

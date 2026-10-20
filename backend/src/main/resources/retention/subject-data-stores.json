@@ -816,6 +816,13 @@
         "request_hash",
         "response_body",
         "response_state",
+        "result_committed_at",
+        "result_expired_at",
+        "result_expires_at",
+        "result_last_observed_at",
+        "result_policy_revision",
+        "result_redacted_at",
+        "result_storage_state",
         "scope_id"
       ],
       "domain": "idempotency",

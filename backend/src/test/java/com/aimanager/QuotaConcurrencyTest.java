@@ -53,7 +53,7 @@ import org.springframework.transaction.support.TransactionTemplate;
       "manager.lifecycle.expiry-job.enabled=false"
     })
 @AutoConfigureMockMvc
-@Import(QuotaConcurrencyTest.TimeConfig.class)
+@Import({QuotaConcurrencyTest.TimeConfig.class, com.aimanager.support.ControlledIdempotencyTimeConfiguration.class})
 class QuotaConcurrencyTest {
   @Autowired DeviceAccess fleet;
   @Autowired PlatformTransactionManager transactions;

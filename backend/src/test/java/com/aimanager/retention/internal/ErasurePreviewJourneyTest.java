@@ -32,6 +32,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
       "manager.erasure-previews.cleanup.enabled=false"
     })
 @AutoConfigureMockMvc
+@org.springframework.context.annotation.Import(com.aimanager.support.ControlledIdempotencyTimeConfiguration.class)
 class ErasurePreviewJourneyTest {
   @Autowired MockMvc mvc;
   @Autowired JdbcTemplate db;

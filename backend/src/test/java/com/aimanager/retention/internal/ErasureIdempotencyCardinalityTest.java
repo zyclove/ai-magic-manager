@@ -2,6 +2,8 @@ package com.aimanager.retention.internal;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.aimanager.idempotency.IdempotencyResultTime;
+import com.aimanager.idempotency.IdempotencyRetentionSettings;
 import com.aimanager.idempotency.IdempotencyService;
 import com.aimanager.idempotency.ResponseOwnership;
 import com.aimanager.retention.ErasureLedger;
@@ -29,6 +31,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /** 真实事务和独立删除账本的边界验收；不表示普通 HTTP 在恢复暂停期间返回 410。 */
@@ -62,7 +65,18 @@ class ErasureIdempotencyCardinalityTest {
     tenant = fixture.tenant;
     tx = new TransactionTemplate(new DataSourceTransactionManager(fixture.data.business));
     tx.setTimeout(10);
-    journal = new IdempotencyService(db, fixture.json, CLOCK);
+    var retention = IdempotencyRetentionSettings.defaults();
+    var trustedTime = new IdempotencyResultTime(db, CLOCK, retention) {
+      @Override
+      public long now() {
+        if (!TransactionSynchronizationManager.isActualTransactionActive()) {
+          throw new IllegalStateException("Fixture result time requires an active transaction");
+        }
+        return CLOCK.millis();
+      }
+      // Inherit now(lifecycle): awaiting and durable last-observation checks remain real.
+    };
+    journal = new IdempotencyService(db, fixture.json, CLOCK, retention, trustedTime);
     processor = new ErasureIdempotencyProcessor(fixture.data.jobs, db, fixture.catalog);
   }
 
@@ -88,7 +102,7 @@ class ErasureIdempotencyCardinalityTest {
     var found = tx.execute(status -> journal.findCommitted(
         tenant, ACTOR, OPERATION, SHARED_KEY, ATTRIBUTES, SharedResponse.class));
     assertNotNull(found);
-    assertEquals(original, found.orElseThrow());
+    assertEquals(original, found.toHttpResult());
     assertOwners(SHARED_KEY, owners);
     assertEquals(1L, count("idempotency_requests"));
   }
@@ -120,7 +134,7 @@ class ErasureIdempotencyCardinalityTest {
     assertEquals(202L, fixture.count("subjects"));
     assertEquals(1L, processedRows());
     assertEquals(retainedResponse, tx.execute(status -> journal.findCommitted(
-        tenant, ACTOR, OPERATION, RETAINED_KEY, ATTRIBUTES, SharedResponse.class)).orElseThrow());
+        tenant, ACTOR, OPERATION, RETAINED_KEY, ATTRIBUTES, SharedResponse.class)).toHttpResult());
     assertPermanentGone(SHARED_KEY);
     assertEquals(ErasureLedger.WorkState.RECOVERY_REQUIRED, fixture.data.ledger.workState());
   }
@@ -254,7 +268,7 @@ class ErasureIdempotencyCardinalityTest {
       public int update(String sql, Object... arguments) {
         int changed = super.update(sql, arguments);
         if (sql.startsWith("UPDATE idempotency_requests SET response_body=NULL")) {
-          assertEquals(digest(validKey), arguments[3]);
+          assertEquals(digest(validKey), arguments[4]);
           actualRedactions.addAndGet(changed);
         }
         return changed;

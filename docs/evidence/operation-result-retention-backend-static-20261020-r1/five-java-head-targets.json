@@ -1,0 +1,90 @@
+{
+  "status": "HEAD_TARGET_SOURCE_ONLY_NOT_COMPILED_OR_GIT_APPLIED",
+  "fileCount": 5,
+  "conflicts": [],
+  "files": [
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/internal/ApprovalService.java",
+      "baseCommit": "ff354c06310ef021dd5cf0a137141b6b94cd2067",
+      "headSha256": "cdab791d069822999e487e564fc8f7d4146f9fe38fc3eccba72848f808746b00",
+      "workingTreeSha256": "ca97ae50ce41557fdc5beb236c2bf3a4077bb33ad2805cc639bf61c058fd54b3",
+      "headAfterSnapshot": ".cache/idempotency-retention-backend-20261020-r1/head-after/backend/src/main/java/com/aimanager/approval/internal/ApprovalService.java",
+      "headAfterSha256": "5436a17e07269727aec7e649e595f2fd35c371a46a5d1e671bced79b4e47dbd2",
+      "headPatch": ".cache/idempotency-retention-backend-20261020-r1/patches/ApprovalService.java.head.patch",
+      "headPatchSha256": "273197f617e019f4374603fc28a2ff81d07d4a6992429674eab3582fb4d97623",
+      "methods": [
+        "recoverDeviceCreate",
+        "recoverDeviceCancel"
+      ],
+      "headMethodsEqualBeforeMethods": true,
+      "outsideOwnedHeadBytesPreserved": true,
+      "mainProductionChanged": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/observation/internal/ObservationSettingsService.java",
+      "baseCommit": "ff354c06310ef021dd5cf0a137141b6b94cd2067",
+      "headSha256": "e195f4ca9c9e3ee90a85cf31812fb1b063bcafe18329ebb142b68e44043ef007",
+      "workingTreeSha256": "37edcf8e76ebddd2e7e97004496594518c719c55a33c06fec2789c172b2db0aa",
+      "headAfterSnapshot": ".cache/idempotency-retention-backend-20261020-r1/head-after/backend/src/main/java/com/aimanager/observation/internal/ObservationSettingsService.java",
+      "headAfterSha256": "1cb3038dceed8ddb37171805d12247556949dd1d109ba1bcd949a8641a38c9d7",
+      "headPatch": ".cache/idempotency-retention-backend-20261020-r1/patches/ObservationSettingsService.java.head.patch",
+      "headPatchSha256": "4af8f0fb8abfb6802cbec2a5d7631b89092e5af815ea60d6fc0fd85c94aa6bc3",
+      "methods": [
+        "permissionOperationResult",
+        "operationResult"
+      ],
+      "headMethodsEqualBeforeMethods": true,
+      "outsideOwnedHeadBytesPreserved": true,
+      "mainProductionChanged": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/policy/internal/PolicyService.java",
+      "baseCommit": "ff354c06310ef021dd5cf0a137141b6b94cd2067",
+      "headSha256": "2918e1e61bc6ee8c41a76e793cf5c9ff92c37e945f1bf91e1236c54ed29a2040",
+      "workingTreeSha256": "cfe0ce02d81940a638f09c779d424f0b347456fa57b159ee13e9f8b8d7153fda",
+      "headAfterSnapshot": ".cache/idempotency-retention-backend-20261020-r1/head-after/backend/src/main/java/com/aimanager/policy/internal/PolicyService.java",
+      "headAfterSha256": "a76f9f8268931be40f6bce13f4d08d3339be6a9bf30b0ad5e020d2798abec3b5",
+      "headPatch": ".cache/idempotency-retention-backend-20261020-r1/patches/PolicyService.java.head.patch",
+      "headPatchSha256": "8c5a8804c273c8261a749e1655491359619b1a7b5e505db43c67743a5368f20e",
+      "methods": [
+        "creationResult",
+        "publicationResult"
+      ],
+      "headMethodsEqualBeforeMethods": true,
+      "outsideOwnedHeadBytesPreserved": true,
+      "mainProductionChanged": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/subject/internal/SubjectManagementService.java",
+      "baseCommit": "ff354c06310ef021dd5cf0a137141b6b94cd2067",
+      "headSha256": "fad656db893906642e9f9c2cfbb05a6f343b8d97424145da5918dbb8d3eb6f3d",
+      "workingTreeSha256": "923e43b8c670d9b16d3b545348f7b18059abedadfdab5e196d5590ea24979b59",
+      "headAfterSnapshot": ".cache/idempotency-retention-backend-20261020-r1/head-after/backend/src/main/java/com/aimanager/subject/internal/SubjectManagementService.java",
+      "headAfterSha256": "29cfc481061b5d0fa2ec8f21936d4093b9e63e2451a39e8621cbcfbfa29df2ec",
+      "headPatch": ".cache/idempotency-retention-backend-20261020-r1/patches/SubjectManagementService.java.head.patch",
+      "headPatchSha256": "bb2826c38c9646d3239104543af807143a8f6ae05b88b2ebaf006077e90d2ead",
+      "methods": [
+        "query"
+      ],
+      "headMethodsEqualBeforeMethods": true,
+      "outsideOwnedHeadBytesPreserved": true,
+      "mainProductionChanged": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/MembershipService.java",
+      "baseCommit": "ff354c06310ef021dd5cf0a137141b6b94cd2067",
+      "headSha256": "f57842e1b369e56e5ad0c3535993dfb6f825b97805de77ad3215c690e487985d",
+      "workingTreeSha256": "656e33c9794614b3eec5643105c5cd949245262a9b7e83158428ba604c6cd297",
+      "headAfterSnapshot": ".cache/idempotency-retention-backend-20261020-r1/head-after/backend/src/main/java/com/aimanager/tenant/internal/MembershipService.java",
+      "headAfterSha256": "d8de6903dc299427866ecdbac99d35a81993a09210b41d856989c4c46aab1200",
+      "headPatch": ".cache/idempotency-retention-backend-20261020-r1/patches/MembershipService.java.head.patch",
+      "headPatchSha256": "d230b6ae7d989f8cd6183a8fc741aa1f95202e558bd41a6b1c3cd3729bdc8b22",
+      "methods": [
+        "accessResult"
+      ],
+      "headMethodsEqualBeforeMethods": true,
+      "outsideOwnedHeadBytesPreserved": true,
+      "mainProductionChanged": false
+    }
+  ]
+}

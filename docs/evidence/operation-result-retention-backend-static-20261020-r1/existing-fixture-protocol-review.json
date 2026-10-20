@@ -1,0 +1,33 @@
+{
+  "status": "READ_ONLY_FIXTURE_PROTOCOL_SOURCE_REVIEW_NO_ADDITIONAL_FINDING",
+  "scope": "Time helper plus three existing journal/erasure fixture adaptations; no source edits",
+  "checks": [
+    "Test-only @Primary component overrides no-argument now() and keeps active-transaction check; inherited now(lifecycle) retains last-observation rollback rejection.",
+    "Manual fixture five-argument constructor matches final production API; fixed time is explicitly a test simulation rather than a production fallback.",
+    "Outcome unwraps occur after TransactionTemplate returns; erased-key exceptions remain inside original call paths.",
+    "Direct cache INSERT placeholders and arguments include commit/deadline/policy/last-observation only for complete bodies; null-body corrupt/pending cases remain null.",
+    "Clean erased marker uses physical redaction metadata; original test names/assertion semantics are retained.",
+    "Cardinality redaction observer key argument moved from index 3 to 4 to match prepended physical-redaction timestamp."
+  ],
+  "runtimeVerification": "NOT_RUN",
+  "compiler": "NOT_RUN",
+  "productionTimeCrossCheckCoverage": "NOT_ESTABLISHED_BY_THESE_ADAPTERS",
+  "files": [
+    {
+      "path": "backend/src/test/java/com/aimanager/support/ControlledIdempotencyTimeConfiguration.java",
+      "sha256": "291a4e2957d74b5a52bbcf68fa221bc8e087b13790887f0ca8fd3b2583fbe56a"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/idempotency/IdempotencyOwnershipTest.java",
+      "sha256": "217cfb64b3c1dc53b31d3d4f02263dc6f60a2b1a0d0bf9331bbbd9b3ef81cd9f"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureIdempotencyCardinalityTest.java",
+      "sha256": "769c208c8536705505d5414e594b92abe1f8c8d26e9918566fe2ffe01107226d"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureIdempotencyProcessorTest.java",
+      "sha256": "eb3bcec7303a80e1718f7a992770eb010a2225e51ef6d6a8053e4eaf31ce29b9"
+    }
+  ]
+}

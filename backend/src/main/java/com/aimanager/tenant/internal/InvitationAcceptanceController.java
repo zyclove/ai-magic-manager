@@ -31,7 +31,7 @@ class InvitationAcceptanceController {
   @GetMapping("/{invitationId}/acceptance-results/{requestId}")
   ResponseEntity<InvitationAcceptanceService.Result> result(@AuthenticationPrincipal Jwt actor,
       @PathVariable String invitationId,@PathVariable String requestId) {
-    return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(service.result(actor.getSubject(),invitationId,requestId));
+    return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(service.result(actor.getSubject(),invitationId,requestId).toHttpResult());
   }
   private boolean adult(Authentication authentication) {
     return authentication.getAuthorities().stream().anyMatch(a->"SCOPE_tenant:create".equals(a.getAuthority()));

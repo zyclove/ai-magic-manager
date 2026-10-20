@@ -31,7 +31,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
       "spring.datasource.password="
     })
 @AutoConfigureMockMvc
-@Import(QuotaJourneyTest.TimeConfig.class)
+@Import({QuotaJourneyTest.TimeConfig.class, com.aimanager.support.ControlledIdempotencyTimeConfiguration.class})
 class QuotaJourneyTest {
   static final Clock TIME = Clock.fixed(Instant.parse("2026-10-09T02:00:00Z"), ZoneOffset.UTC);
 

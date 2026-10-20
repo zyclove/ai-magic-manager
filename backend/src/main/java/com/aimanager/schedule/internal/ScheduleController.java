@@ -31,7 +31,7 @@ class ScheduleController {
     ResponseEntity<ScheduleEntry> creationResult(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId,
             @PathVariable String requestId, @Valid @RequestBody CreateSchedule input) {
         return ResponseEntity.ok().cacheControl(CacheControl.noStore())
-            .body(schedules.creationResult(tenantId, actor.getSubject(), requestId, input));
+            .body(schedules.creationResult(tenantId, actor.getSubject(), requestId, input).toHttpResult());
     }
     @GetMapping("/{scheduleId}") ScheduleEntry get(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId, @PathVariable String scheduleId) {
         return schedules.requireDefinition(tenantId, actor.getSubject(), scheduleId);

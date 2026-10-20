@@ -62,7 +62,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
     "manager.observations.retention-delay-millis=86400000"
 })
 @AutoConfigureMockMvc(print = MockMvcPrint.NONE)
-@Import(ApprovalIdempotencyAttributionJourneyTest.TimeConfiguration.class)
+@Import({ApprovalIdempotencyAttributionJourneyTest.TimeConfiguration.class, com.aimanager.support.ControlledIdempotencyTimeConfiguration.class})
 class ApprovalIdempotencyAttributionJourneyTest {
   private static final Instant NOW = Instant.parse("2026-10-13T10:00:00Z");
   @Autowired MockMvc mvc;

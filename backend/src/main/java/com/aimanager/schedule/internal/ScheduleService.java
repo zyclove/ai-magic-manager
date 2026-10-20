@@ -2,6 +2,7 @@ package com.aimanager.schedule.internal;
 
 import com.aimanager.audit.AuditService;
 import com.aimanager.idempotency.IdempotencyService;
+import com.aimanager.idempotency.IdempotencyLookupOutcome;
 import com.aimanager.schedule.*;
 import com.aimanager.shared.DomainException;
 import com.aimanager.shared.ItemPage;
@@ -39,16 +40,18 @@ class ScheduleService implements ScheduleCatalog {
     }
     /** Match original payload/creator, reauthorize its reference, never repeat creation. */
     @Transactional(timeout = 10)
-    public ScheduleEntry creationResult(String tenant, String actor, String requestId, ScheduleController.CreateSchedule input) {
+    public IdempotencyLookupOutcome<ScheduleEntry> creationResult(String tenant, String actor, String requestId, ScheduleController.CreateSchedule input) {
         access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
         if (requestId == null || !requestId.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
             throw DomainException.invalid("INVALID_CREATION_RESULT_REFERENCE");
-        var reference = idempotency.findCommitted(tenant, actor, "schedule.create", requestId, Map.of("input", input), ScheduleEntry.class)
-            .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "SCHEDULE_CREATION_RESULT_UNAVAILABLE"));
-        var current = requireDefinition(tenant, actor, reference.id());
-        if (!current.name().equals(input.name().strip()) || !current.definition().equals(input.definition()))
-            throw new IllegalStateException("Creation journal does not match immutable schedule");
-        return current;
+        return idempotency.findCommitted(tenant, actor, "schedule.create", requestId, Map.of("input", input), ScheduleEntry.class)
+            .requirePresent(() -> new DomainException(HttpStatus.NOT_FOUND, "SCHEDULE_CREATION_RESULT_UNAVAILABLE"))
+            .map(reference -> {
+            var current = requireDefinition(tenant, actor, reference.id());
+            if (!current.name().equals(input.name().strip()) || !current.definition().equals(input.definition()))
+                throw new IllegalStateException("Creation journal does not match immutable schedule");
+            return current;
+            });
     }
     @Override public ScheduleEntry requireDefinition(String tenant, String actor, String id) {
         access.requireRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN, AUDITOR);

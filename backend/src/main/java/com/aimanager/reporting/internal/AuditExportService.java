@@ -2,6 +2,7 @@ package com.aimanager.reporting.internal;
 
 import com.aimanager.audit.*;
 import com.aimanager.idempotency.IdempotencyService;
+import com.aimanager.idempotency.IdempotencyLookupOutcome;
 import com.aimanager.identity.*;
 import com.aimanager.shared.*;
 import java.nio.charset.StandardCharsets;
@@ -124,16 +125,17 @@ class AuditExportService {
    * It does not recreate a task, renew a key, extend retention or restore changed member rights.
    */
   @Transactional(timeout = 10)
-  public ExportStore.Job creationResult(String tenant, Jwt actor, String key, AuditSelection input) {
+  public IdempotencyLookupOutcome<ExportStore.Job> creationResult(String tenant, Jwt actor, String key, AuditSelection input) {
     var member = store.authorize(tenant, actor.getSubject(), true);
-    var ref =
-        idempotency
+    return idempotency
             .findCommitted(
                 tenant, actor.getSubject(), "AUDIT_EXPORT_CREATE", key, input.attributes(), Ref.class)
-            .orElseThrow(
+            .requirePresent(
                 () -> new DomainException(
-                    HttpStatus.NOT_FOUND, "EXPORT_CREATION_RESULT_UNAVAILABLE"));
-    return store.view(store.owned(tenant, ref.id(), actor.getSubject(), false), member, clock.millis());
+                    HttpStatus.NOT_FOUND, "EXPORT_CREATION_RESULT_UNAVAILABLE"))
+      .map(ref -> {
+      return store.view(store.owned(tenant, ref.id(), actor.getSubject(), false), member, clock.millis());
+      });
   }
 
   public ItemPage<ExportStore.Job> list(String tenant, Jwt actor, int limit, String cursor) {

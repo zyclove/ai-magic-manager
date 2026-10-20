@@ -1,0 +1,401 @@
+{
+  "status": "SOURCE_CANDIDATE_PENDING_VERIFICATION",
+  "date": "2026-10-20",
+  "design": "docs/idempotency-result-retention-design.md",
+  "implementation": "docs/idempotency-result-retention-backend-implementation.md",
+  "implementationSha256": "4e8ccc1432c112e1de153270219f89cf4967940959a9a9ae0c6d38f23355ec1e",
+  "designBaseCommit": "10a1df1a49fa9268bb646befb6db60d30a15c14a",
+  "coordinationHeadCommit": "ff354c06310ef021dd5cf0a137141b6b94cd2067",
+  "interveningCommitHasNoProductionPathOverlap": true,
+  "productionFileCount": 47,
+  "modifiedExistingFiles": 39,
+  "newProductionFiles": 8,
+  "recoveryLookupCallCount": 23,
+  "domainRecoveryMethodCount": 21,
+  "httpAdapterFileCount": 17,
+  "httpRecoveryRouteCount": 21,
+  "metadataColumnCount": 7,
+  "maintenanceEnabledByDefault": false,
+  "compilation": "NOT_RUN",
+  "testsAdded": false,
+  "testsRun": false,
+  "sqlExecuted": false,
+  "servicesStarted": false,
+  "gitWritesByThisTask": false,
+  "deployment": "NOT_PERFORMED",
+  "independentReviews": [
+    {
+      "round": 1,
+      "mode": "INDEPENDENT_READ_ONLY_SOURCE_REVIEW",
+      "finding": "Local clock could permanently expire or redact results early; rollback after creation was accepted.",
+      "severity": "P2",
+      "status": "SOURCE_FIX_IMPLEMENTED"
+    },
+    {
+      "round": 2,
+      "mode": "INDEPENDENT_READ_ONLY_SOURCE_REVIEW",
+      "finding": "No additional production defect identified after database time, bounded node skew and persistent observation changes.",
+      "status": "NO_ADDITIONAL_STATIC_FINDING",
+      "limitation": "Not compilation, tests or real database verification."
+    }
+  ],
+  "sharedConfiguration": [
+    {
+      "path": "backend/src/main/resources/db/migration/V1__initial_schema.sql",
+      "beforeSha256": "316336699580e4463468b55c8106b7289027bc92de42cc42d5aba211f6f70caa",
+      "afterSha256": "8ef6c86dde3fa24d9258395d25bf277170d6deadeae542cceb85a1a642078097",
+      "headPatch": ".cache/idempotency-retention-backend-20261020-r1/patches/V1__initial_schema.sql.head.patch",
+      "headPatchSha256": "ceb89891b7143ffdeba9e2611d69e3c61b3f551211ca5428b4734d853eb987df",
+      "beforeCrLf": 0,
+      "afterCrLf": 0
+    },
+    {
+      "path": "backend/src/main/resources/retention/subject-data-stores.json",
+      "beforeSha256": "85ccc854ffb34ad37743bfd01fd732b6c00c2e02551961226ac9232ae8813521",
+      "afterSha256": "f8878efcdf3dc6a88321beb64e2ac055547bda3ec648153472fdb1dbe284d2a4",
+      "headPatch": ".cache/idempotency-retention-backend-20261020-r1/patches/subject-data-stores.json.head.patch",
+      "headPatchSha256": "808bc754de58dcc283e215317935c8cafc1c96bcf4d008dc49bb6f413fb248ac",
+      "beforeCrLf": 0,
+      "afterCrLf": 0
+    },
+    {
+      "path": "backend/src/main/resources/application.yml",
+      "beforeSha256": "3c3652df17068e3930e02081d6ae49f839dc4c70ee1c1a770519c93b69b7dd18",
+      "afterSha256": "110156327a7ecf654fe7e9071f44a1e6dd2e46853656dd7580c2ce33df25c52a",
+      "headPatch": ".cache/idempotency-retention-backend-20261020-r1/patches/application.yml.head.patch",
+      "headPatchSha256": "7eaa0b7b2b14cca77330fa96a66036ae6fbcd81cea0937428d71d6ac626e47e1",
+      "beforeCrLf": 0,
+      "afterCrLf": 0
+    }
+  ],
+  "productionFiles": [
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/internal/ApprovalService.java",
+      "kind": "modified",
+      "beforeSha256": "c7865158715e9fa404ff19fd1d56cb6bfb27f76c05c5760236cb057c7239ec3c",
+      "sha256": "ca97ae50ce41557fdc5beb236c2bf3a4077bb33ad2805cc639bf61c058fd54b3",
+      "bytes": 40228
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/catalog/internal/CatalogService.java",
+      "kind": "modified",
+      "beforeSha256": "200047ac2a22550c91667532739e467bb967318b6b675df8f5b9b9f1a2d66981",
+      "sha256": "fefeaf35c34de3ba1346bae58382193db2f5b85f1a3a0bd2d66e3d78288688a3",
+      "bytes": 8623
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/catalog/internal/ClassificationService.java",
+      "kind": "modified",
+      "beforeSha256": "5c08d3f6e1d5676fc61ba72b64185ac7cb84d1bb8c697571d343d255634c1e01",
+      "sha256": "9a3a8b1fc6485a67f26940e8f4ebe8fccad07be5c3554843cef6c9ea4e94b0c9",
+      "bytes": 8546
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/fleet/internal/DeviceGroupService.java",
+      "kind": "modified",
+      "beforeSha256": "34e3529ac9f15e7f6b8accaa960323bbf51514c6f5931394fce6f5ebf55742f7",
+      "sha256": "0b910fbc9e206c290eef7abfb0021b0746759ff96d936e00891111d516201aef",
+      "bytes": 27626
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/observation/internal/ObservationSettingsService.java",
+      "kind": "modified",
+      "beforeSha256": "d2ce3142dd588b773b61a6e23ad2582b624c79a973ad6c7517f9be7ee3b6f2dd",
+      "sha256": "37edcf8e76ebddd2e7e97004496594518c719c55a33c06fec2789c172b2db0aa",
+      "bytes": 17959
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/policy/internal/PolicyService.java",
+      "kind": "modified",
+      "beforeSha256": "202bbac4794199acf96300ee3aa1cb1cb1a1597dc2bdd1abb4a50dc4dc3f8caa",
+      "sha256": "cfe0ce02d81940a638f09c779d424f0b347456fa57b159ee13e9f8b8d7153fda",
+      "bytes": 44562
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaPlanService.java",
+      "kind": "modified",
+      "beforeSha256": "aadab793fb7f1a2afa0f0143e3da8f394a2d3f625cd5bdf069a12c7a2acbfe1a",
+      "sha256": "542f81d0ebc32200b8fd75d6b506bc2190fac1fd0cef031b0dd6e1c65494e5e5",
+      "bytes": 18463
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaService.java",
+      "kind": "modified",
+      "beforeSha256": "d7881633e3787a332e4dd7418c459ef986487eb5647cb05b752dec21d3735d2a",
+      "sha256": "0d8627cd7858c0396e78d0b3a9f5ed5b37a2a446d54da26bc0e315f2fe2ae151",
+      "bytes": 25731
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/reporting/internal/AuditExportService.java",
+      "kind": "modified",
+      "beforeSha256": "88e72af958adf17a9182c3e6f2539128f3ecaeb35d068a341219092e79ada6dc",
+      "sha256": "01510180bc4073d5f4cb76c07a1b67e6e57528329c0a95905c1edcb9072d915a",
+      "bytes": 9671
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/schedule/internal/ScheduleService.java",
+      "kind": "modified",
+      "beforeSha256": "85e8018b70f1e497513600f4e166c6e97aae35ed74833a89a2b6eba987758e6b",
+      "sha256": "3e1c25a86804a231967be83f91bf826d7af78acf465c4d2f82a98afc277bc88d",
+      "bytes": 4640
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/subject/internal/SubjectManagementService.java",
+      "kind": "modified",
+      "beforeSha256": "5dbd052c8b43faa9e85bb2386db90d1ac446c693e2bdb7bc1e23c97a43a97ba1",
+      "sha256": "923e43b8c670d9b16d3b545348f7b18059abedadfdab5e196d5590ea24979b59",
+      "bytes": 7268
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/InvitationAcceptanceService.java",
+      "kind": "modified",
+      "beforeSha256": "0ea091cd9c9533f2bc5dbfbe9a445ef7e9b87974f8df48a8de023ffd6abaac1d",
+      "sha256": "f28c76b66734527fcc6e186e5b1adf8567b8c85334053c679d711f5e3a0de376",
+      "bytes": 8840
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/InvitationWorkflowService.java",
+      "kind": "modified",
+      "beforeSha256": "12277d6e80350ec0d9f0a0f536bab91c4634850dc2a34c4f0791cf841e480467",
+      "sha256": "9dff9f835195e3f18deb8fb5072fb9ea3508058a0b54e07ad681b0ca4494d16a",
+      "bytes": 5150
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/MembershipService.java",
+      "kind": "modified",
+      "beforeSha256": "d480829d23ac5a75c3147e3dc0d0c49a9669c1739cf5ea8a900d7ee53c5d4901",
+      "sha256": "656e33c9794614b3eec5643105c5cd949245262a9b7e83158428ba604c6cd297",
+      "bytes": 25599
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/OrganizationService.java",
+      "kind": "modified",
+      "beforeSha256": "d45a7fcecef7c8d6a960a8dcd6cf4f6a9af35efd38e3d21c64a72800c79189e1",
+      "sha256": "6a3109081dda1b18a209e73c4396b28ad1cb9a7214fa6b9d7a71c1470aa5fe58",
+      "bytes": 20574
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/OwnershipService.java",
+      "kind": "modified",
+      "beforeSha256": "2f335ec19e0fd17d2398fc13bcb0d9536cb085bee9609397cbc34378636b634e",
+      "sha256": "edda4c8ae0ee47adf7b24878eb759c3db6271da6be06a33adcb5f636384c61ad",
+      "bytes": 16233
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/internal/DeviceAccessSubmissionService.java",
+      "kind": "modified",
+      "beforeSha256": "c55cdc8ee7cf9e10eb9cb2240e34e60e4a57a8185521fcde3ce4d6542cdf3740",
+      "sha256": "95a3f795359b0b9e071d460c37345050f1ba2941bf60078091cd1c3e9922386f",
+      "bytes": 3734
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/internal/DeviceAccessSubmissionController.java",
+      "kind": "modified",
+      "beforeSha256": "80e3ae86b869f636b5f9fbcdd07129046b9c92e91073ab2c17b7214d8423cb4c",
+      "sha256": "272ef494e8102e29c54647c7287e446767a32822ada12bae4155f20bd8a0ce02",
+      "bytes": 5087
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/catalog/internal/CatalogController.java",
+      "kind": "modified",
+      "beforeSha256": "166479b17415d9717a090f392d7b2cc78cf262679eea31bc59dc007ceff49338",
+      "sha256": "e6af0cb8efa282ff4fb8b511056168a9f6a3f70f6a506f01ad2adf9fc1f75409",
+      "bytes": 2834
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/catalog/internal/ClassificationController.java",
+      "kind": "modified",
+      "beforeSha256": "f4257774a9f6d2409294e2cd93984ffd1a0c1d66ac22f58946675275a61a71a2",
+      "sha256": "599ab6c8c660cc77ef04be1338a68df35ffc4d5ccf8e0c5ab2d5c4c6c868d28f",
+      "bytes": 2603
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/fleet/internal/DeviceGroupController.java",
+      "kind": "modified",
+      "beforeSha256": "afde44b84f3b0617c0dbdb6192e0c1dd1ae5ae0064ceb526dbbca94ddd75adde",
+      "sha256": "eb877ca2a48be75bb0bf3c707ad2c47a3036ab88b5acd5178bf0ee2b6d330353",
+      "bytes": 8462
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/observation/internal/ObservationController.java",
+      "kind": "modified",
+      "beforeSha256": "4bd194153e66108ea804f3ba568f177685c971ef57e020f039aeaf611b03b126",
+      "sha256": "d423fc4307d8faa4d6b18f24e7cbc59de7f1e530d4a879585cbfdf522c539081",
+      "bytes": 4391
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/observation/internal/PermissionObservationController.java",
+      "kind": "modified",
+      "beforeSha256": "966277450f7cd8c29c91bf53d9580969630ddb21b1aaa63de28ac25686d245ec",
+      "sha256": "e5d4692f67e03978397bcf3e1f2dd635859b54901f6a0dcc8be14cd118fa9c33",
+      "bytes": 5071
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/policy/internal/PolicyController.java",
+      "kind": "modified",
+      "beforeSha256": "10be7459ae73f8c3843fb0cd935885690937331ef30895f3f02a120d14f1ff7c",
+      "sha256": "292353c6f717686f7fedeac81283265b82fe56202b5c037739fed93d0b3aa204",
+      "bytes": 8531
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaController.java",
+      "kind": "modified",
+      "beforeSha256": "d5a211e76cfe7ee47e064b012c48b15d56e9a7e32d32406b0dcba2f12f1a2d61",
+      "sha256": "e3e3ff9cad3e9779528016eb9f02d655eb752aac1a9cab2d07dedcf603b5193f",
+      "bytes": 6342
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaPlanController.java",
+      "kind": "modified",
+      "beforeSha256": "1c1d8d81e3bd71d94cc1be882bb6c0143c354d297a18ad04bd729627209e9c83",
+      "sha256": "0c469f7d0b3c50dc26c7f708e8f9dbbabec77468abc1f04ec22af4c7e181b327",
+      "bytes": 5021
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/reporting/internal/AuditExportController.java",
+      "kind": "modified",
+      "beforeSha256": "f97c3f22a892a1b599831f8d871aa2ddcbeebf93414463a550bf045ba577c3f5",
+      "sha256": "c415809b83c914167509d50e261c0f66b1c3018be04aa48973eb885365f64105",
+      "bytes": 3149
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/schedule/internal/ScheduleController.java",
+      "kind": "modified",
+      "beforeSha256": "2b33fed81d9173052df1f1fbb8dcfd9ec8ca6c39cd33af24f43378daa72439db",
+      "sha256": "0f7239217d338d172fc711e988b130f01fb5fbd23c4598abed64202770996b7b",
+      "bytes": 2726
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/subject/internal/SubjectManagementController.java",
+      "kind": "modified",
+      "beforeSha256": "977b4d60cb93cf2bc9dd3e8d1a5d365ce3635c54dd5f48980045d0e04b1cb498",
+      "sha256": "7a128b294d674a594b5bd2e495a0dd0e93e43f2234e488b99961a9e179b9c17f",
+      "bytes": 2262
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/InvitationAcceptanceController.java",
+      "kind": "modified",
+      "beforeSha256": "7df9eeaa14b6b42b34456726b4f0a05c064b59afbb71c3ed3656c79d73146378",
+      "sha256": "80d6d2e347bf2ddbd98ac6816e84e8fd2d905050536e1e5321f21f9c67559171",
+      "bytes": 2454
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/InvitationWorkflowController.java",
+      "kind": "modified",
+      "beforeSha256": "aded263a9ba5488429e4684de33ab86ccb3a8fd3ac72c5060de040903218f84c",
+      "sha256": "0b012ef695a7497f1c182558949082b067d0bf472185a6e5dc4df37f217e7c48",
+      "bytes": 2262
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/MembershipController.java",
+      "kind": "modified",
+      "beforeSha256": "3467603f2b2f05d9eb773414c4cc0a453af2fcb10592e9de81577810bc3401f6",
+      "sha256": "6bfb7628bfdb74234f3fc83bcc33ba365eeb660da76342c6b9436b2ab826e8cd",
+      "bytes": 5686
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/OrganizationController.java",
+      "kind": "modified",
+      "beforeSha256": "0599c6846276a17dc5b28bf3e32a868ec51b0fd1841d231d513ffd7f3b7a1279",
+      "sha256": "bd3892ba1f9d1e2ebd15d61646f62af9f2726e6ca4d76ccaacb8428e52309dd3",
+      "bytes": 6315
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/OwnershipController.java",
+      "kind": "modified",
+      "beforeSha256": "d18f2fe15b0b8a2f75ef894b97402a41edfb1a598b334b28dbb7b243db60d101",
+      "sha256": "6b5981a6a179d688afbc9d3e3f909f876d21ad94c7d04650dd716026217b8725",
+      "bytes": 3562
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyService.java",
+      "kind": "modified",
+      "beforeSha256": "97ee110c1a9ac216bc0ce6f5df675546a1e46bf3090afb75bb864815171129b4",
+      "sha256": "958941a543389ee705d9202519e34c72038cbfc74c2f525df9d1fdee66f22092",
+      "bytes": 15600
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureIdempotencyProcessor.java",
+      "kind": "modified",
+      "beforeSha256": "747c7a445f39c949e538d50af86b3ba0f5134dd6370c01e8913675684623ddcb",
+      "sha256": "c095cf0db88231fe42d8c247d780bc9d4ab2f1ba946b4629babc3f90647c73c8",
+      "bytes": 18079
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V1__initial_schema.sql",
+      "kind": "modified",
+      "beforeSha256": "316336699580e4463468b55c8106b7289027bc92de42cc42d5aba211f6f70caa",
+      "sha256": "8ef6c86dde3fa24d9258395d25bf277170d6deadeae542cceb85a1a642078097",
+      "bytes": 100293
+    },
+    {
+      "path": "backend/src/main/resources/retention/subject-data-stores.json",
+      "kind": "modified",
+      "beforeSha256": "85ccc854ffb34ad37743bfd01fd732b6c00c2e02551961226ac9232ae8813521",
+      "sha256": "f8878efcdf3dc6a88321beb64e2ac055547bda3ec648153472fdb1dbe284d2a4",
+      "bytes": 49283
+    },
+    {
+      "path": "backend/src/main/resources/application.yml",
+      "kind": "modified",
+      "beforeSha256": "3c3652df17068e3930e02081d6ae49f839dc4c70ee1c1a770519c93b69b7dd18",
+      "sha256": "110156327a7ecf654fe7e9071f44a1e6dd2e46853656dd7580c2ce33df25c52a",
+      "bytes": 6979
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyLookupOutcome.java",
+      "kind": "new",
+      "sha256": "0de39442d0f9d893fea4a8f5811fb8834dba01907dac93c8c7fd608ef6db180b",
+      "bytes": 3727
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyResultLifecycle.java",
+      "kind": "new",
+      "sha256": "0cb5a27e3c235cc6dd4a4ed85ab21cb6c1aefdd6981080e4dc98a9ed07fba4f3",
+      "bytes": 5423
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyResultStorageState.java",
+      "kind": "new",
+      "sha256": "6333912c6c6968ce44239b467c0512ecbf5dbfe723b49d8bc583063df040b5f5",
+      "bytes": 366
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyResultTime.java",
+      "kind": "new",
+      "sha256": "fe47beaf511e3a686c4e1ee6f694e88360f72ad0131b2c9f2c6862d6a2e9a9fb",
+      "bytes": 2749
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyRetentionConfiguration.java",
+      "kind": "new",
+      "sha256": "ab90a9e8ce84669a5f7dee75c26d4f5670ac0deb85e51877246d305d5317d981",
+      "bytes": 433
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyRetentionJob.java",
+      "kind": "new",
+      "sha256": "4d1c41051ce82e6625c1a374c8a3ac51ae30d5360e60f42092a90c04c6e27566",
+      "bytes": 2451
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyRetentionService.java",
+      "kind": "new",
+      "sha256": "df7a98c3c195383c8a210b87e0d2a37f5bfcc031c85b674b4df1ca7f6e2cf74f",
+      "bytes": 6174
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyRetentionSettings.java",
+      "kind": "new",
+      "sha256": "0345b6721753a09b7066b38d3fe455148d22fc147926d8325b2c06b2ba86e558",
+      "bytes": 2646
+    }
+  ],
+  "knownRemainingWork": [
+    "Owner-led adaptation of existing Optional assertions, SQL fixtures and fixed-clock contexts.",
+    "Compile and authorized regression/protocol validation for all supported clients.",
+    "Real MySQL time/transaction/index/locking and recovery checks; separate OceanBase compatibility.",
+    "No deployment of recovery cutoff before client and backend protocol verification.",
+    "Independent UTC monitoring is required; matching incorrect database and node clocks cannot be proven correct by this application."
+  ]
+}

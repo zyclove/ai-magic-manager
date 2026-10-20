@@ -35,7 +35,7 @@ class PolicyController {
     ResponseEntity<PolicyDraft> creationResult(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId,
             @PathVariable String requestId, @Valid @RequestBody CreationQuery input) {
         return ResponseEntity.ok().cacheControl(CacheControl.noStore())
-            .body(policies.creationResult(tenantId, actor.getSubject(), requestId, input));
+            .body(policies.creationResult(tenantId, actor.getSubject(), requestId, input).toHttpResult());
     }
     @GetMapping("/policies/{policyId}")
     ResponseEntity<PolicyDraft> get(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId, @PathVariable String policyId) {
@@ -72,7 +72,7 @@ class PolicyController {
             @RequestParam long revision, @RequestParam String previewId, @RequestParam String previewHash,
             @RequestParam PolicyPublication.Mode mode) {
         var result = policies.publicationResult(tenantId, actor.getSubject(), policyId, requestId,
-                revision, previewId, previewHash, mode);
+                revision, previewId, previewHash, mode).toHttpResult();
         return ResponseEntity.ok().cacheControl(CacheControl.noStore()).body(result);
     }
     @GetMapping("/policies/{policyId}/versions")

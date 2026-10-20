@@ -1,0 +1,536 @@
+{
+  "status": "STATIC_INDEX_SOURCE_REVIEW_ONLY_NOT_RUN",
+  "baseCommit": "ff354c06310ef021dd5cf0a137141b6b94cd2067",
+  "createdAt": "2026-10-20T15:10:51.748493+00:00",
+  "sdkRun": false,
+  "testsRun": false,
+  "deployed": false,
+  "acceptedForExecution": false,
+  "productionSourceCount": 47,
+  "existingFixtureCount": 17,
+  "testSupportCount": 1,
+  "mainReviewPinsMatched": 50,
+  "note": "Main source hashes and proposed index hashes are distinct where unrelated worktree changes exist.",
+  "files": [
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/internal/ApprovalService.java",
+      "sha256": "5436a17e07269727aec7e649e595f2fd35c371a46a5d1e671bced79b4e47dbd2",
+      "mainSha256": "ca97ae50ce41557fdc5beb236c2bf3a4077bb33ad2805cc639bf61c058fd54b3",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/approval/internal/ApprovalService.java",
+      "stageReason": "Only recovery methods and new import applied to HEAD; unrelated WIP excluded",
+      "mainDiffersFromIndexImage": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/catalog/internal/CatalogService.java",
+      "sha256": "fefeaf35c34de3ba1346bae58382193db2f5b85f1a3a0bd2d66e3d78288688a3",
+      "mainSha256": "fefeaf35c34de3ba1346bae58382193db2f5b85f1a3a0bd2d66e3d78288688a3",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/catalog/internal/CatalogService.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/catalog/internal/ClassificationService.java",
+      "sha256": "9a3a8b1fc6485a67f26940e8f4ebe8fccad07be5c3554843cef6c9ea4e94b0c9",
+      "mainSha256": "9a3a8b1fc6485a67f26940e8f4ebe8fccad07be5c3554843cef6c9ea4e94b0c9",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/catalog/internal/ClassificationService.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/fleet/internal/DeviceGroupService.java",
+      "sha256": "0b910fbc9e206c290eef7abfb0021b0746759ff96d936e00891111d516201aef",
+      "mainSha256": "0b910fbc9e206c290eef7abfb0021b0746759ff96d936e00891111d516201aef",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/fleet/internal/DeviceGroupService.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/observation/internal/ObservationSettingsService.java",
+      "sha256": "1cb3038dceed8ddb37171805d12247556949dd1d109ba1bcd949a8641a38c9d7",
+      "mainSha256": "37edcf8e76ebddd2e7e97004496594518c719c55a33c06fec2789c172b2db0aa",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/observation/internal/ObservationSettingsService.java",
+      "stageReason": "Only recovery methods and new import applied to HEAD; unrelated WIP excluded",
+      "mainDiffersFromIndexImage": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/policy/internal/PolicyService.java",
+      "sha256": "a76f9f8268931be40f6bce13f4d08d3339be6a9bf30b0ad5e020d2798abec3b5",
+      "mainSha256": "cfe0ce02d81940a638f09c779d424f0b347456fa57b159ee13e9f8b8d7153fda",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/policy/internal/PolicyService.java",
+      "stageReason": "Only recovery methods and new import applied to HEAD; unrelated WIP excluded",
+      "mainDiffersFromIndexImage": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaPlanService.java",
+      "sha256": "542f81d0ebc32200b8fd75d6b506bc2190fac1fd0cef031b0dd6e1c65494e5e5",
+      "mainSha256": "542f81d0ebc32200b8fd75d6b506bc2190fac1fd0cef031b0dd6e1c65494e5e5",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/quota/internal/QuotaPlanService.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaService.java",
+      "sha256": "0d8627cd7858c0396e78d0b3a9f5ed5b37a2a446d54da26bc0e315f2fe2ae151",
+      "mainSha256": "0d8627cd7858c0396e78d0b3a9f5ed5b37a2a446d54da26bc0e315f2fe2ae151",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/quota/internal/QuotaService.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/reporting/internal/AuditExportService.java",
+      "sha256": "01510180bc4073d5f4cb76c07a1b67e6e57528329c0a95905c1edcb9072d915a",
+      "mainSha256": "01510180bc4073d5f4cb76c07a1b67e6e57528329c0a95905c1edcb9072d915a",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/reporting/internal/AuditExportService.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/schedule/internal/ScheduleService.java",
+      "sha256": "3e1c25a86804a231967be83f91bf826d7af78acf465c4d2f82a98afc277bc88d",
+      "mainSha256": "3e1c25a86804a231967be83f91bf826d7af78acf465c4d2f82a98afc277bc88d",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/schedule/internal/ScheduleService.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/subject/internal/SubjectManagementService.java",
+      "sha256": "29cfc481061b5d0fa2ec8f21936d4093b9e63e2451a39e8621cbcfbfa29df2ec",
+      "mainSha256": "923e43b8c670d9b16d3b545348f7b18059abedadfdab5e196d5590ea24979b59",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/subject/internal/SubjectManagementService.java",
+      "stageReason": "Only recovery methods and new import applied to HEAD; unrelated WIP excluded",
+      "mainDiffersFromIndexImage": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/InvitationAcceptanceService.java",
+      "sha256": "f28c76b66734527fcc6e186e5b1adf8567b8c85334053c679d711f5e3a0de376",
+      "mainSha256": "f28c76b66734527fcc6e186e5b1adf8567b8c85334053c679d711f5e3a0de376",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/tenant/internal/InvitationAcceptanceService.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/InvitationWorkflowService.java",
+      "sha256": "9dff9f835195e3f18deb8fb5072fb9ea3508058a0b54e07ad681b0ca4494d16a",
+      "mainSha256": "9dff9f835195e3f18deb8fb5072fb9ea3508058a0b54e07ad681b0ca4494d16a",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/tenant/internal/InvitationWorkflowService.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/MembershipService.java",
+      "sha256": "d8de6903dc299427866ecdbac99d35a81993a09210b41d856989c4c46aab1200",
+      "mainSha256": "656e33c9794614b3eec5643105c5cd949245262a9b7e83158428ba604c6cd297",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/tenant/internal/MembershipService.java",
+      "stageReason": "Only recovery methods and new import applied to HEAD; unrelated WIP excluded",
+      "mainDiffersFromIndexImage": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/OrganizationService.java",
+      "sha256": "6a3109081dda1b18a209e73c4396b28ad1cb9a7214fa6b9d7a71c1470aa5fe58",
+      "mainSha256": "6a3109081dda1b18a209e73c4396b28ad1cb9a7214fa6b9d7a71c1470aa5fe58",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/tenant/internal/OrganizationService.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/OwnershipService.java",
+      "sha256": "edda4c8ae0ee47adf7b24878eb759c3db6271da6be06a33adcb5f636384c61ad",
+      "mainSha256": "edda4c8ae0ee47adf7b24878eb759c3db6271da6be06a33adcb5f636384c61ad",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/tenant/internal/OwnershipService.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/internal/DeviceAccessSubmissionService.java",
+      "sha256": "95a3f795359b0b9e071d460c37345050f1ba2941bf60078091cd1c3e9922386f",
+      "mainSha256": "95a3f795359b0b9e071d460c37345050f1ba2941bf60078091cd1c3e9922386f",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/approval/internal/DeviceAccessSubmissionService.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/approval/internal/DeviceAccessSubmissionController.java",
+      "sha256": "272ef494e8102e29c54647c7287e446767a32822ada12bae4155f20bd8a0ce02",
+      "mainSha256": "272ef494e8102e29c54647c7287e446767a32822ada12bae4155f20bd8a0ce02",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/approval/internal/DeviceAccessSubmissionController.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/catalog/internal/CatalogController.java",
+      "sha256": "e6af0cb8efa282ff4fb8b511056168a9f6a3f70f6a506f01ad2adf9fc1f75409",
+      "mainSha256": "e6af0cb8efa282ff4fb8b511056168a9f6a3f70f6a506f01ad2adf9fc1f75409",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/catalog/internal/CatalogController.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/catalog/internal/ClassificationController.java",
+      "sha256": "599ab6c8c660cc77ef04be1338a68df35ffc4d5ccf8e0c5ab2d5c4c6c868d28f",
+      "mainSha256": "599ab6c8c660cc77ef04be1338a68df35ffc4d5ccf8e0c5ab2d5c4c6c868d28f",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/catalog/internal/ClassificationController.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/fleet/internal/DeviceGroupController.java",
+      "sha256": "eb877ca2a48be75bb0bf3c707ad2c47a3036ab88b5acd5178bf0ee2b6d330353",
+      "mainSha256": "eb877ca2a48be75bb0bf3c707ad2c47a3036ab88b5acd5178bf0ee2b6d330353",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/fleet/internal/DeviceGroupController.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/observation/internal/ObservationController.java",
+      "sha256": "d423fc4307d8faa4d6b18f24e7cbc59de7f1e530d4a879585cbfdf522c539081",
+      "mainSha256": "d423fc4307d8faa4d6b18f24e7cbc59de7f1e530d4a879585cbfdf522c539081",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/observation/internal/ObservationController.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/observation/internal/PermissionObservationController.java",
+      "sha256": "e5d4692f67e03978397bcf3e1f2dd635859b54901f6a0dcc8be14cd118fa9c33",
+      "mainSha256": "e5d4692f67e03978397bcf3e1f2dd635859b54901f6a0dcc8be14cd118fa9c33",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/observation/internal/PermissionObservationController.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/policy/internal/PolicyController.java",
+      "sha256": "292353c6f717686f7fedeac81283265b82fe56202b5c037739fed93d0b3aa204",
+      "mainSha256": "292353c6f717686f7fedeac81283265b82fe56202b5c037739fed93d0b3aa204",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/policy/internal/PolicyController.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaController.java",
+      "sha256": "e3e3ff9cad3e9779528016eb9f02d655eb752aac1a9cab2d07dedcf603b5193f",
+      "mainSha256": "e3e3ff9cad3e9779528016eb9f02d655eb752aac1a9cab2d07dedcf603b5193f",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/quota/internal/QuotaController.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/quota/internal/QuotaPlanController.java",
+      "sha256": "0c469f7d0b3c50dc26c7f708e8f9dbbabec77468abc1f04ec22af4c7e181b327",
+      "mainSha256": "0c469f7d0b3c50dc26c7f708e8f9dbbabec77468abc1f04ec22af4c7e181b327",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/quota/internal/QuotaPlanController.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/reporting/internal/AuditExportController.java",
+      "sha256": "c415809b83c914167509d50e261c0f66b1c3018be04aa48973eb885365f64105",
+      "mainSha256": "c415809b83c914167509d50e261c0f66b1c3018be04aa48973eb885365f64105",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/reporting/internal/AuditExportController.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/schedule/internal/ScheduleController.java",
+      "sha256": "0f7239217d338d172fc711e988b130f01fb5fbd23c4598abed64202770996b7b",
+      "mainSha256": "0f7239217d338d172fc711e988b130f01fb5fbd23c4598abed64202770996b7b",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/schedule/internal/ScheduleController.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/subject/internal/SubjectManagementController.java",
+      "sha256": "7a128b294d674a594b5bd2e495a0dd0e93e43f2234e488b99961a9e179b9c17f",
+      "mainSha256": "7a128b294d674a594b5bd2e495a0dd0e93e43f2234e488b99961a9e179b9c17f",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/subject/internal/SubjectManagementController.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/InvitationAcceptanceController.java",
+      "sha256": "80d6d2e347bf2ddbd98ac6816e84e8fd2d905050536e1e5321f21f9c67559171",
+      "mainSha256": "80d6d2e347bf2ddbd98ac6816e84e8fd2d905050536e1e5321f21f9c67559171",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/tenant/internal/InvitationAcceptanceController.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/InvitationWorkflowController.java",
+      "sha256": "0b012ef695a7497f1c182558949082b067d0bf472185a6e5dc4df37f217e7c48",
+      "mainSha256": "0b012ef695a7497f1c182558949082b067d0bf472185a6e5dc4df37f217e7c48",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/tenant/internal/InvitationWorkflowController.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/MembershipController.java",
+      "sha256": "6bfb7628bfdb74234f3fc83bcc33ba365eeb660da76342c6b9436b2ab826e8cd",
+      "mainSha256": "6bfb7628bfdb74234f3fc83bcc33ba365eeb660da76342c6b9436b2ab826e8cd",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/tenant/internal/MembershipController.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/OrganizationController.java",
+      "sha256": "bd3892ba1f9d1e2ebd15d61646f62af9f2726e6ca4d76ccaacb8428e52309dd3",
+      "mainSha256": "bd3892ba1f9d1e2ebd15d61646f62af9f2726e6ca4d76ccaacb8428e52309dd3",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/tenant/internal/OrganizationController.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/OwnershipController.java",
+      "sha256": "6b5981a6a179d688afbc9d3e3f909f876d21ad94c7d04650dd716026217b8725",
+      "mainSha256": "6b5981a6a179d688afbc9d3e3f909f876d21ad94c7d04650dd716026217b8725",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/tenant/internal/OwnershipController.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyService.java",
+      "sha256": "958941a543389ee705d9202519e34c72038cbfc74c2f525df9d1fdee66f22092",
+      "mainSha256": "958941a543389ee705d9202519e34c72038cbfc74c2f525df9d1fdee66f22092",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/idempotency/IdempotencyService.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/retention/internal/ErasureIdempotencyProcessor.java",
+      "sha256": "c095cf0db88231fe42d8c247d780bc9d4ab2f1ba946b4629babc3f90647c73c8",
+      "mainSha256": "c095cf0db88231fe42d8c247d780bc9d4ab2f1ba946b4629babc3f90647c73c8",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/retention/internal/ErasureIdempotencyProcessor.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V1__initial_schema.sql",
+      "sha256": "a76485b87552c87d0a546536cd4397997a63c96b07a18caf2d5b15af0508cbb4",
+      "mainSha256": "8ef6c86dde3fa24d9258395d25bf277170d6deadeae542cceb85a1a642078097",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/resources/db/migration/V1__initial_schema.sql",
+      "stageReason": "Only idempotency schema/catalog/configuration block applied to HEAD",
+      "mainDiffersFromIndexImage": true
+    },
+    {
+      "path": "backend/src/main/resources/retention/subject-data-stores.json",
+      "sha256": "1aae9db11b7d1e5672500bcb98ede718469a580d679e0ad2994345c90be986fc",
+      "mainSha256": "f8878efcdf3dc6a88321beb64e2ac055547bda3ec648153472fdb1dbe284d2a4",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/resources/retention/subject-data-stores.json",
+      "stageReason": "Only idempotency schema/catalog/configuration block applied to HEAD",
+      "mainDiffersFromIndexImage": true
+    },
+    {
+      "path": "backend/src/main/resources/application.yml",
+      "sha256": "ca7b8bfc3a083d6105886cdb5b0f4f1e309b9edf71c19b97b23ded52f28654a8",
+      "mainSha256": "110156327a7ecf654fe7e9071f44a1e6dd2e46853656dd7580c2ce33df25c52a",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/resources/application.yml",
+      "stageReason": "Only idempotency schema/catalog/configuration block applied to HEAD",
+      "mainDiffersFromIndexImage": true
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyLookupOutcome.java",
+      "sha256": "0de39442d0f9d893fea4a8f5811fb8834dba01907dac93c8c7fd608ef6db180b",
+      "mainSha256": "0de39442d0f9d893fea4a8f5811fb8834dba01907dac93c8c7fd608ef6db180b",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/idempotency/IdempotencyLookupOutcome.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyResultLifecycle.java",
+      "sha256": "0cb5a27e3c235cc6dd4a4ed85ab21cb6c1aefdd6981080e4dc98a9ed07fba4f3",
+      "mainSha256": "0cb5a27e3c235cc6dd4a4ed85ab21cb6c1aefdd6981080e4dc98a9ed07fba4f3",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/idempotency/IdempotencyResultLifecycle.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyResultStorageState.java",
+      "sha256": "6333912c6c6968ce44239b467c0512ecbf5dbfe723b49d8bc583063df040b5f5",
+      "mainSha256": "6333912c6c6968ce44239b467c0512ecbf5dbfe723b49d8bc583063df040b5f5",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/idempotency/IdempotencyResultStorageState.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyResultTime.java",
+      "sha256": "fe47beaf511e3a686c4e1ee6f694e88360f72ad0131b2c9f2c6862d6a2e9a9fb",
+      "mainSha256": "fe47beaf511e3a686c4e1ee6f694e88360f72ad0131b2c9f2c6862d6a2e9a9fb",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/idempotency/IdempotencyResultTime.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyRetentionConfiguration.java",
+      "sha256": "ab90a9e8ce84669a5f7dee75c26d4f5670ac0deb85e51877246d305d5317d981",
+      "mainSha256": "ab90a9e8ce84669a5f7dee75c26d4f5670ac0deb85e51877246d305d5317d981",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/idempotency/IdempotencyRetentionConfiguration.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyRetentionJob.java",
+      "sha256": "4d1c41051ce82e6625c1a374c8a3ac51ae30d5360e60f42092a90c04c6e27566",
+      "mainSha256": "4d1c41051ce82e6625c1a374c8a3ac51ae30d5360e60f42092a90c04c6e27566",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/idempotency/IdempotencyRetentionJob.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyRetentionService.java",
+      "sha256": "df7a98c3c195383c8a210b87e0d2a37f5bfcc031c85b674b4df1ca7f6e2cf74f",
+      "mainSha256": "df7a98c3c195383c8a210b87e0d2a37f5bfcc031c85b674b4df1ca7f6e2cf74f",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/idempotency/IdempotencyRetentionService.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/idempotency/IdempotencyRetentionSettings.java",
+      "sha256": "0345b6721753a09b7066b38d3fe455148d22fc147926d8325b2c06b2ba86e558",
+      "mainSha256": "0345b6721753a09b7066b38d3fe455148d22fc147926d8325b2c06b2ba86e558",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/main/java/com/aimanager/idempotency/IdempotencyRetentionSettings.java",
+      "stageReason": "Frozen full source; before equals HEAD or file new in this phase",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/idempotency/IdempotencyOwnershipTest.java",
+      "sha256": "217cfb64b3c1dc53b31d3d4f02263dc6f60a2b1a0d0bf9331bbbd9b3ef81cd9f",
+      "mainSha256": "217cfb64b3c1dc53b31d3d4f02263dc6f60a2b1a0d0bf9331bbbd9b3ef81cd9f",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/test/java/com/aimanager/idempotency/IdempotencyOwnershipTest.java",
+      "stageReason": "Existing direct fixture protocol adaptation, no new tests",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureIdempotencyCardinalityTest.java",
+      "sha256": "769c208c8536705505d5414e594b92abe1f8c8d26e9918566fe2ffe01107226d",
+      "mainSha256": "769c208c8536705505d5414e594b92abe1f8c8d26e9918566fe2ffe01107226d",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/test/java/com/aimanager/retention/internal/ErasureIdempotencyCardinalityTest.java",
+      "stageReason": "Existing direct fixture protocol adaptation, no new tests",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureIdempotencyProcessorTest.java",
+      "sha256": "eb3bcec7303a80e1718f7a992770eb010a2225e51ef6d6a8053e4eaf31ce29b9",
+      "mainSha256": "eb3bcec7303a80e1718f7a992770eb010a2225e51ef6d6a8053e4eaf31ce29b9",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/test/java/com/aimanager/retention/internal/ErasureIdempotencyProcessorTest.java",
+      "stageReason": "Existing direct fixture protocol adaptation, no new tests",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/AccessDeliveryJourneyTest.java",
+      "sha256": "d355534f8e085796bc1bd30b9929310c9ed9eb4cc263bde392edc8f520fa991e",
+      "mainSha256": "d355534f8e085796bc1bd30b9929310c9ed9eb4cc263bde392edc8f520fa991e",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/test/java/com/aimanager/AccessDeliveryJourneyTest.java",
+      "stageReason": "Only deterministic-clock test configuration import applied to HEAD",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/ApprovalIdempotencyAttributionJourneyTest.java",
+      "sha256": "2a1e0b095bbd2f6eb9b477340d45cd3fe65e62313024a08f1123772f446e849d",
+      "mainSha256": "2a1e0b095bbd2f6eb9b477340d45cd3fe65e62313024a08f1123772f446e849d",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/test/java/com/aimanager/ApprovalIdempotencyAttributionJourneyTest.java",
+      "stageReason": "Only deterministic-clock test configuration import applied to HEAD",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/ApprovalJourneyTest.java",
+      "sha256": "347a452c5c5b56a4d75ab5ddf873e8ba782f4108d7bb9b8c60df70d9bd26c594",
+      "mainSha256": "347a452c5c5b56a4d75ab5ddf873e8ba782f4108d7bb9b8c60df70d9bd26c594",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/test/java/com/aimanager/ApprovalJourneyTest.java",
+      "stageReason": "Only deterministic-clock test configuration import applied to HEAD",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/AuditExportJourneyTest.java",
+      "sha256": "dd23d7312af2b1a1b5fc178ebab8bf88d050070899bc67c60fc18d417984ca1f",
+      "mainSha256": "dd23d7312af2b1a1b5fc178ebab8bf88d050070899bc67c60fc18d417984ca1f",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/test/java/com/aimanager/AuditExportJourneyTest.java",
+      "stageReason": "Only deterministic-clock test configuration import applied to HEAD",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeprovisionJourneyTest.java",
+      "sha256": "c443e66f1592a0d03fa4c40ed3a2d33b9512d88e3c2efa54c202ad8369fd7e83",
+      "mainSha256": "c443e66f1592a0d03fa4c40ed3a2d33b9512d88e3c2efa54c202ad8369fd7e83",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/test/java/com/aimanager/DeprovisionJourneyTest.java",
+      "stageReason": "Only deterministic-clock test configuration import applied to HEAD",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeviceAccessHttpInteropTest.java",
+      "sha256": "e65c13211c06d84e5194f3f65e5e2a076c26f30e40ab715f6d578a20b2752a87",
+      "mainSha256": "e65c13211c06d84e5194f3f65e5e2a076c26f30e40ab715f6d578a20b2752a87",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/test/java/com/aimanager/DeviceAccessHttpInteropTest.java",
+      "stageReason": "Only deterministic-clock test configuration import applied to HEAD",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeviceObservationJourneyTest.java",
+      "sha256": "c3bdfaded96a352c145ceb98a37514b0eb469b7ffefb984433a6613eaa3de30b",
+      "mainSha256": "c3bdfaded96a352c145ceb98a37514b0eb469b7ffefb984433a6613eaa3de30b",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/test/java/com/aimanager/DeviceObservationJourneyTest.java",
+      "stageReason": "Only deterministic-clock test configuration import applied to HEAD",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/NotificationJourneyTest.java",
+      "sha256": "627569fc1cb12f7e0e4096f12634b41795b15878dd29291f06ac32bc407e9143",
+      "mainSha256": "627569fc1cb12f7e0e4096f12634b41795b15878dd29291f06ac32bc407e9143",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/test/java/com/aimanager/NotificationJourneyTest.java",
+      "stageReason": "Only deterministic-clock test configuration import applied to HEAD",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/QuotaConcurrencyTest.java",
+      "sha256": "6703da6c87183b5cb7305040b3c2d29fbff4f04c58690052919fb34cedc961ea",
+      "mainSha256": "f9946f9544bcc085346959ee5e1e829d9656006bfff6e3f3057c655c28be3f9a",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/test/java/com/aimanager/QuotaConcurrencyTest.java",
+      "stageReason": "Only deterministic-clock test configuration import applied to HEAD",
+      "mainDiffersFromIndexImage": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/QuotaIdempotencyAttributionJourneyTest.java",
+      "sha256": "86a1a011805bdb51d4e9b218183eac7d4b3c5abc0c744319c518a2f4588a2e62",
+      "mainSha256": "86a1a011805bdb51d4e9b218183eac7d4b3c5abc0c744319c518a2f4588a2e62",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/test/java/com/aimanager/QuotaIdempotencyAttributionJourneyTest.java",
+      "stageReason": "Only deterministic-clock test configuration import applied to HEAD",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/QuotaJourneyTest.java",
+      "sha256": "67a8e25fe4e15e47b93e8515a108efd7fd01b94413b2248a2d541c3451ba7b7e",
+      "mainSha256": "7bfca032cd43924e55d79f66c705f4ae8d26f8578b2d3c3f99b00e48b5918652",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/test/java/com/aimanager/QuotaJourneyTest.java",
+      "stageReason": "Only deterministic-clock test configuration import applied to HEAD",
+      "mainDiffersFromIndexImage": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/QuotaPlanJourneyTest.java",
+      "sha256": "d8beb534c0c17b8001a694458b38ce3343cf13b45ac6ad89819bfcf1049928e9",
+      "mainSha256": "d8beb534c0c17b8001a694458b38ce3343cf13b45ac6ad89819bfcf1049928e9",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/test/java/com/aimanager/QuotaPlanJourneyTest.java",
+      "stageReason": "Only deterministic-clock test configuration import applied to HEAD",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/TeacherAccessJourneyTest.java",
+      "sha256": "f5ab639b645c0cec6e7d92f05a5ed6b6bcf5a97b9faa6454097ee6fd1c2d28f6",
+      "mainSha256": "f5ab639b645c0cec6e7d92f05a5ed6b6bcf5a97b9faa6454097ee6fd1c2d28f6",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/test/java/com/aimanager/TeacherAccessJourneyTest.java",
+      "stageReason": "Only deterministic-clock test configuration import applied to HEAD",
+      "mainDiffersFromIndexImage": false
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasurePreviewJourneyTest.java",
+      "sha256": "11df52e434b87abc8a1cb8358f36c8521e4cf0a5be93d6966d2c11e37d6600c7",
+      "mainSha256": "fec6d837d1f59cd7e266f6391e08f7d82ef497812829519e4e950f4651ea4efc",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/test/java/com/aimanager/retention/internal/ErasurePreviewJourneyTest.java",
+      "stageReason": "Only deterministic-clock test configuration import applied to HEAD",
+      "mainDiffersFromIndexImage": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/support/ControlledIdempotencyTimeConfiguration.java",
+      "sha256": "291a4e2957d74b5a52bbcf68fa221bc8e087b13790887f0ca8fd3b2583fbe56a",
+      "mainSha256": "291a4e2957d74b5a52bbcf68fa221bc8e087b13790887f0ca8fd3b2583fbe56a",
+      "stageSource": ".cache/operation-result-retention-20261020/root/backend-stage-images/backend/src/test/java/com/aimanager/support/ControlledIdempotencyTimeConfiguration.java",
+      "stageReason": "New test support configuration; contains no test declaration",
+      "mainDiffersFromIndexImage": false
+    }
+  ]
+}

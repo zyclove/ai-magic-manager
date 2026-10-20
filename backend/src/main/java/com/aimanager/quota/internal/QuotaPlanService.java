@@ -5,6 +5,7 @@ import static com.aimanager.tenant.TenantAccess.Role.*;
 import com.aimanager.audit.AuditService;
 import com.aimanager.catalog.ApplicationCatalog;
 import com.aimanager.idempotency.IdempotencyService;
+import com.aimanager.idempotency.IdempotencyLookupOutcome;
 import com.aimanager.idempotency.ResponseOwnership;
 import com.aimanager.identity.RecentAuthentication;
 import com.aimanager.quota.*;
@@ -177,36 +178,40 @@ class QuotaPlanService {
   }
 
   @Transactional(timeout = 10)
-  public OperationResult creationResult(String tenant, String actor, String requestId,
+  public IdempotencyLookupOutcome<OperationResult> creationResult(String tenant, String actor, String requestId,
       QuotaPlanController.Create input) {
     access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
     subjects.lockActiveForScope(tenant, actor, input.subjectId());
     requireResultKey(requestId);
-    var committed = idempotency.findCommitted(tenant, actor, "quota.plan.create", requestId,
+    return idempotency.findCommitted(tenant, actor, "quota.plan.create", requestId,
         Map.of("input", input), QuotaPlan.class)
-        .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "QUOTA_RESULT_UNAVAILABLE"));
-    var current = read(tenant, committed.id(), true);
-    if (!committed.subjectId().equals(input.subjectId())
-        || !current.subjectId().equals(committed.subjectId()))
-      throw new IllegalStateException("Quota plan creation journal scope mismatch");
-    return new OperationResult(requestId, "PLAN_CREATE", committed, current);
+        .requirePresent(() -> new DomainException(HttpStatus.NOT_FOUND, "QUOTA_RESULT_UNAVAILABLE"))
+      .map(committed -> {
+      var current = read(tenant, committed.id(), true);
+      if (!committed.subjectId().equals(input.subjectId())
+          || !current.subjectId().equals(committed.subjectId()))
+        throw new IllegalStateException("Quota plan creation journal scope mismatch");
+      return new OperationResult(requestId, "PLAN_CREATE", committed, current);
+      });
   }
 
   @Transactional(timeout = 10)
-  public OperationResult updateResult(String tenant, String actor, String planId,
+  public IdempotencyLookupOutcome<OperationResult> updateResult(String tenant, String actor, String planId,
       String requestId, String etag, QuotaPlanController.Update input) {
     access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
     var target = read(tenant, planId, false);
     subjects.lockActiveForScope(tenant, actor, target.subjectId());
     requireResultKey(requestId);
     long version = ResourceVersions.require(etag);
-    var committed = idempotency.findCommitted(tenant, actor, "quota.plan.update", requestId,
+    return idempotency.findCommitted(tenant, actor, "quota.plan.update", requestId,
         Map.of("planId", planId, "version", version, "input", input), QuotaPlan.class)
-        .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "QUOTA_RESULT_UNAVAILABLE"));
-    var current = read(tenant, planId, true);
-    if (!committed.id().equals(planId) || !committed.subjectId().equals(current.subjectId()))
-      throw new IllegalStateException("Quota plan update journal scope mismatch");
-    return new OperationResult(requestId, "PLAN_UPDATE", committed, current);
+        .requirePresent(() -> new DomainException(HttpStatus.NOT_FOUND, "QUOTA_RESULT_UNAVAILABLE"))
+      .map(committed -> {
+      var current = read(tenant, planId, true);
+      if (!committed.id().equals(planId) || !committed.subjectId().equals(current.subjectId()))
+        throw new IllegalStateException("Quota plan update journal scope mismatch");
+      return new OperationResult(requestId, "PLAN_UPDATE", committed, current);
+      });
   }
 
   private void requireResultKey(String key) {

@@ -55,7 +55,7 @@ class OwnershipController {
       @PathVariable String tenantId, @PathVariable String requestId,
       @AuthenticationPrincipal Jwt actor, @Valid @RequestBody ResultInput input) {
     return ResponseEntity.ok().cacheControl(CacheControl.noStore())
-        .body(service.result(tenantId, actor.getSubject(), requestId, input));
+        .body(service.result(tenantId, actor.getSubject(), requestId, input).toHttpResult());
   }
 
   @PostMapping("/{id}/{action:accept|decline|cancel}")

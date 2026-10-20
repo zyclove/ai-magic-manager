@@ -4,6 +4,7 @@ import static com.aimanager.tenant.TenantAccess.Role.*;
 
 import com.aimanager.audit.AuditService;
 import com.aimanager.idempotency.IdempotencyService;
+import com.aimanager.idempotency.IdempotencyLookupOutcome;
 import com.aimanager.idempotency.ResponseOwnership;
 import com.aimanager.identity.ActorKeys;
 import com.aimanager.identity.RecentAuthentication;
@@ -178,7 +179,7 @@ class OwnershipService {
   }
 
   @Transactional(timeout = 10)
-  public OperationResult result(String tenant, String actor, String key, OwnershipController.ResultInput in) {
+  public IdempotencyLookupOutcome<OperationResult> result(String tenant, String actor, String key, OwnershipController.ResultInput in) {
     boolean start = "start".equals(in.operation());
     if (!java.util.Set.of("start", "accept", "decline", "cancel").contains(in.operation())
         || in.version() == null || in.version() < 0 || in.version() > 9007199254740991L
@@ -193,19 +194,21 @@ class OwnershipService {
     Map<String, ?> fingerprint = start
         ? Map.of("target", in.targetActorId(), "version", in.version())
         : Map.of("id", in.transferId(), "version", in.version());
-    var original = idempotency.findCommitted(tenant, actor, "ownership." + in.operation(), key,
-        fingerprint, Transfer.class).orElseThrow(() ->
-            new DomainException(HttpStatus.NOT_FOUND, "OWNERSHIP_RESULT_UNAVAILABLE"));
-    if (!tenant.equals(original.tenantId())
-        || (start ? !actor.equals(original.sourceActorId()) || !in.targetActorId().equals(original.targetActorId())
-            : !in.transferId().equals(original.id())
-                || !("cancel".equals(in.operation()) ? actor.equals(original.sourceActorId()) : actor.equals(original.targetActorId()))))
-      throw new IllegalStateException("Ownership journal scope mismatch");
-    lockActors(tenant, actor, null, original);
-    visible(grant, actor, original);
-    var current = row(tenant, original.id());
-    // Do not call get/reconcile: recovery must never change state or emit audit events.
-    return new OperationResult(key, actor, in.operation(), original, current, grant.role().name());
+    return idempotency.findCommitted(tenant, actor, "ownership." + in.operation(), key,
+        fingerprint, Transfer.class).requirePresent(() ->
+            new DomainException(HttpStatus.NOT_FOUND, "OWNERSHIP_RESULT_UNAVAILABLE"))
+      .map(original -> {
+      if (!tenant.equals(original.tenantId())
+          || (start ? !actor.equals(original.sourceActorId()) || !in.targetActorId().equals(original.targetActorId())
+              : !in.transferId().equals(original.id())
+                  || !("cancel".equals(in.operation()) ? actor.equals(original.sourceActorId()) : actor.equals(original.targetActorId()))))
+        throw new IllegalStateException("Ownership journal scope mismatch");
+      lockActors(tenant, actor, null, original);
+      visible(grant, actor, original);
+      var current = row(tenant, original.id());
+      // Do not call get/reconcile: recovery must never change state or emit audit events.
+      return new OperationResult(key, actor, in.operation(), original, current, grant.role().name());
+      });
   }
 
   private boolean canonicalUuid(String value) {

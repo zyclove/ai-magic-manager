@@ -54,7 +54,7 @@ import org.springframework.transaction.support.TransactionTemplate;
       "manager.lifecycle.expiry-job.enabled=false"
     })
 @AutoConfigureMockMvc
-@Import(DeviceAccessHttpInteropTest.TimeConfiguration.class)
+@Import({DeviceAccessHttpInteropTest.TimeConfiguration.class, com.aimanager.support.ControlledIdempotencyTimeConfiguration.class})
 class DeviceAccessHttpInteropTest {
   private static final Path DIRECTORY, KEY_FILE;
 

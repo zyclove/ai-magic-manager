@@ -78,7 +78,7 @@ class PermissionObservationController {
       @PathVariable String tenantId, @PathVariable String deviceId,
       @PathVariable String requestId, @Valid @RequestBody Change input) {
     return ResponseEntity.ok().cacheControl(CacheControl.noStore()).header("Vary", "Authorization")
-        .body(settings.permissionOperationResult(tenantId, actor.getSubject(), deviceId, requestId, input));
+        .body(settings.permissionOperationResult(tenantId, actor.getSubject(), deviceId, requestId, input).toHttpResult());
   }
 
   record Change(@NotNull @Pattern(regexp = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}") String registrationId,

@@ -1,0 +1,153 @@
+{
+  "status": "EXISTING_FIXTURE_PROTOCOL_ADAPTATION_ONLY_NOT_RUN",
+  "sdkRun": false,
+  "testsRun": false,
+  "note": "Only fixture configuration imports changed. The test helper simulates synchronized DB/node time; production time checks are unchanged.",
+  "files": [
+    {
+      "path": "backend/src/test/java/com/aimanager/AccessDeliveryJourneyTest.java",
+      "beforeSha256": "5f557c68dab9cf7f337d67dba83331cea975230b6c4b1f15c797cb72c40f2b28",
+      "sha256": "d355534f8e085796bc1bd30b9929310c9ed9eb4cc263bde392edc8f520fa991e",
+      "testAnnotationsBefore": 15,
+      "testAnnotationsAfter": 15,
+      "assertionCallsBefore": 38,
+      "assertionCallsAfter": 38,
+      "beforeEqualsHeadSemantically": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/ApprovalIdempotencyAttributionJourneyTest.java",
+      "beforeSha256": "29e42535b73675fb35341d8d7985167f0925c37dc346e86c328506e391fa48e4",
+      "sha256": "2a1e0b095bbd2f6eb9b477340d45cd3fe65e62313024a08f1123772f446e849d",
+      "testAnnotationsBefore": 6,
+      "testAnnotationsAfter": 6,
+      "assertionCallsBefore": 53,
+      "assertionCallsAfter": 53,
+      "beforeEqualsHeadSemantically": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/ApprovalJourneyTest.java",
+      "beforeSha256": "765ef63614a9a1b3441fe861b15d4cbaae357fe1b4c21ba14aa3e20e5a4142c3",
+      "sha256": "347a452c5c5b56a4d75ab5ddf873e8ba782f4108d7bb9b8c60df70d9bd26c594",
+      "testAnnotationsBefore": 16,
+      "testAnnotationsAfter": 16,
+      "assertionCallsBefore": 30,
+      "assertionCallsAfter": 30,
+      "beforeEqualsHeadSemantically": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/AuditExportJourneyTest.java",
+      "beforeSha256": "f8dd9bcf944242b6400e126dae61e17d912eb2ac8147905baae3a22a1fdbef14",
+      "sha256": "dd23d7312af2b1a1b5fc178ebab8bf88d050070899bc67c60fc18d417984ca1f",
+      "testAnnotationsBefore": 16,
+      "testAnnotationsAfter": 16,
+      "assertionCallsBefore": 40,
+      "assertionCallsAfter": 40,
+      "beforeEqualsHeadSemantically": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeprovisionJourneyTest.java",
+      "beforeSha256": "45f9800ebb78eb114581227a1cd1d26c65bf2e41bb0d18c0a5020e755d47e8ee",
+      "sha256": "c443e66f1592a0d03fa4c40ed3a2d33b9512d88e3c2efa54c202ad8369fd7e83",
+      "testAnnotationsBefore": 17,
+      "testAnnotationsAfter": 17,
+      "assertionCallsBefore": 48,
+      "assertionCallsAfter": 48,
+      "beforeEqualsHeadSemantically": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeviceAccessHttpInteropTest.java",
+      "beforeSha256": "ee56f901a444688a6c4751c074b6707db7b775665f7e2a8653c6cea77718d574",
+      "sha256": "e65c13211c06d84e5194f3f65e5e2a076c26f30e40ab715f6d578a20b2752a87",
+      "testAnnotationsBefore": 1,
+      "testAnnotationsAfter": 1,
+      "assertionCallsBefore": 11,
+      "assertionCallsAfter": 11,
+      "beforeEqualsHeadSemantically": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeviceObservationJourneyTest.java",
+      "beforeSha256": "90700964b9a7dc135f7e744457677562b547ee3b43846f416104dab00b46589d",
+      "sha256": "c3bdfaded96a352c145ceb98a37514b0eb469b7ffefb984433a6613eaa3de30b",
+      "testAnnotationsBefore": 7,
+      "testAnnotationsAfter": 7,
+      "assertionCallsBefore": 3,
+      "assertionCallsAfter": 3,
+      "beforeEqualsHeadSemantically": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/NotificationJourneyTest.java",
+      "beforeSha256": "3c9e2bac9a639d197fff09d59f998480286459bd80c6f86c76b442ea760d3cce",
+      "sha256": "627569fc1cb12f7e0e4096f12634b41795b15878dd29291f06ac32bc407e9143",
+      "testAnnotationsBefore": 13,
+      "testAnnotationsAfter": 13,
+      "assertionCallsBefore": 43,
+      "assertionCallsAfter": 43,
+      "beforeEqualsHeadSemantically": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/QuotaConcurrencyTest.java",
+      "beforeSha256": "26e9089b2565e0a128f0f3bdd306e1447fab1a0e9485b3393e5e11e2c42f2671",
+      "sha256": "f9946f9544bcc085346959ee5e1e829d9656006bfff6e3f3057c655c28be3f9a",
+      "testAnnotationsBefore": 10,
+      "testAnnotationsAfter": 10,
+      "assertionCallsBefore": 30,
+      "assertionCallsAfter": 30,
+      "beforeEqualsHeadSemantically": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/QuotaIdempotencyAttributionJourneyTest.java",
+      "beforeSha256": "aa252625fa4f50ea05a4b901674ae555f258a83a3ff27372b692971711f9406f",
+      "sha256": "86a1a011805bdb51d4e9b218183eac7d4b3c5abc0c744319c518a2f4588a2e62",
+      "testAnnotationsBefore": 6,
+      "testAnnotationsAfter": 6,
+      "assertionCallsBefore": 64,
+      "assertionCallsAfter": 64,
+      "beforeEqualsHeadSemantically": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/QuotaJourneyTest.java",
+      "beforeSha256": "41b83f093429b39155fef2eafc8b74cfd483d921d6f4bf2bf107429f47178ea0",
+      "sha256": "7bfca032cd43924e55d79f66c705f4ae8d26f8578b2d3c3f99b00e48b5918652",
+      "testAnnotationsBefore": 3,
+      "testAnnotationsAfter": 3,
+      "assertionCallsBefore": 5,
+      "assertionCallsAfter": 5,
+      "beforeEqualsHeadSemantically": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/QuotaPlanJourneyTest.java",
+      "beforeSha256": "d103ed62f3f4d1f62cd1840506f2c0efa1944f8438a7723aa8f76c7f7fe72696",
+      "sha256": "d8beb534c0c17b8001a694458b38ce3343cf13b45ac6ad89819bfcf1049928e9",
+      "testAnnotationsBefore": 9,
+      "testAnnotationsAfter": 9,
+      "assertionCallsBefore": 17,
+      "assertionCallsAfter": 17,
+      "beforeEqualsHeadSemantically": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/TeacherAccessJourneyTest.java",
+      "beforeSha256": "40f57d1ce135031526cc27f99b692f0931fb756f3225a1ba84cd04b34b989d7b",
+      "sha256": "f5ab639b645c0cec6e7d92f05a5ed6b6bcf5a97b9faa6454097ee6fd1c2d28f6",
+      "testAnnotationsBefore": 11,
+      "testAnnotationsAfter": 11,
+      "assertionCallsBefore": 31,
+      "assertionCallsAfter": 31,
+      "beforeEqualsHeadSemantically": true
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasurePreviewJourneyTest.java",
+      "beforeSha256": "2cf47acfec7f1660f2764bab320cda973c8dc7568a3e0e7f7cac609e2e1b4b99",
+      "sha256": "fec6d837d1f59cd7e266f6391e08f7d82ef497812829519e4e950f4651ea4efc",
+      "testAnnotationsBefore": 12,
+      "testAnnotationsAfter": 12,
+      "assertionCallsBefore": 25,
+      "assertionCallsAfter": 25,
+      "beforeEqualsHeadSemantically": false
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/support/ControlledIdempotencyTimeConfiguration.java",
+      "sha256": "291a4e2957d74b5a52bbcf68fa221bc8e087b13790887f0ca8fd3b2583fbe56a",
+      "newHelperOnly": true
+    }
+  ]
+}

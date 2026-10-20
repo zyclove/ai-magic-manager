@@ -83,6 +83,13 @@ CREATE TABLE idempotency_requests (
     request_hash VARCHAR(64) NOT NULL,
     response_body TEXT NULL,
     response_state VARCHAR(20) NOT NULL DEFAULT 'UNCLASSIFIED',
+    result_storage_state VARCHAR(20) NOT NULL DEFAULT 'RETAINED',
+    result_committed_at BIGINT NULL,
+    result_expires_at BIGINT NULL,
+    result_policy_revision BIGINT NULL,
+    result_last_observed_at BIGINT NULL,
+    result_expired_at BIGINT NULL,
+    result_redacted_at BIGINT NULL,
     expires_at BIGINT NOT NULL,
     PRIMARY KEY (scope_id, actor_key, operation_key, key_hash),
     CONSTRAINT uq_idempotency_id UNIQUE(id)
@@ -90,6 +97,7 @@ CREATE TABLE idempotency_requests (
 
 CREATE INDEX ix_idempotency_expiry ON idempotency_requests(expires_at);
 CREATE INDEX ix_idempotency_state ON idempotency_requests(response_state,id);
+CREATE INDEX ix_idempotency_result_due ON idempotency_requests(result_storage_state,result_expires_at,id);
 
 CREATE TABLE idempotency_subject_owners (
     id VARCHAR(36) NOT NULL,

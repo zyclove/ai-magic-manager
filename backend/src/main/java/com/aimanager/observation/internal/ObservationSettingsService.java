@@ -7,6 +7,7 @@ import com.aimanager.fleet.Device;
 import com.aimanager.fleet.DeviceAccess;
 import com.aimanager.fleet.DeviceRegistrationRevoked;
 import com.aimanager.idempotency.IdempotencyService;
+import com.aimanager.idempotency.IdempotencyLookupOutcome;
 import com.aimanager.idempotency.ResponseOwnership;
 import com.aimanager.identity.RecentAuthentication;
 import com.aimanager.observation.*;
@@ -94,24 +95,26 @@ class ObservationSettingsService implements ObservationAuthorization, Permission
 
     /** Current authority and original identity are checked even for historical receipts. */
     @Transactional(timeout = 10)
-    PermissionRecovery permissionOperationResult(String tenant, String actor, String deviceId,
+    IdempotencyLookupOutcome<PermissionRecovery> permissionOperationResult(String tenant, String actor, String deviceId,
             String key, PermissionObservationController.Change input) {
         access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
         var device = devices.lockVisibleActive(tenant, actor, deviceId);
         requireRegistration(device, input.registrationId());
         requirePermissionReference(key);
-        var committed = idempotency.findCommitted(tenant, actor, "permission.observation.update", key,
+        return idempotency.findCommitted(tenant, actor, "permission.observation.update", key,
             Map.of("deviceId", deviceId, "expectedVersion", input.version(), "input", input.update()),
-            PermissionObservationSettings.class).orElseThrow(() ->
-                new DomainException(HttpStatus.NOT_FOUND, "OBSERVATION_RESULT_UNAVAILABLE"));
-        if (!committed.deviceId().equals(deviceId)
-                || !committed.registrationId().equals(input.registrationId())
-                || committed.version() != input.version() + 1
-                || committed.enabled() != input.enabled()) {
-            throw new IllegalStateException("Permission observation journal mismatch");
-        }
-        return new PermissionRecovery(committed,
-            currentPermission(tenant, deviceId, input.registrationId(), true));
+            PermissionObservationSettings.class).requirePresent(() ->
+                new DomainException(HttpStatus.NOT_FOUND, "OBSERVATION_RESULT_UNAVAILABLE"))
+            .map(committed -> {
+            if (!committed.deviceId().equals(deviceId)
+                    || !committed.registrationId().equals(input.registrationId())
+                    || committed.version() != input.version() + 1
+                    || committed.enabled() != input.enabled()) {
+                throw new IllegalStateException("Permission observation journal mismatch");
+            }
+            return new PermissionRecovery(committed,
+                currentPermission(tenant, deviceId, input.registrationId(), true));
+            });
     }
 
     private void requirePermissionReference(String key) {
@@ -180,7 +183,7 @@ class ObservationSettingsService implements ObservationAuthorization, Permission
 
     /** 读取已提交结果不要求再次 MFA；当前成人写权限与原操作身份仍必须匹配。 */
     @Transactional(timeout = 10)
-    Recovery operationResult(String tenant, String actor, String deviceId, String key,
+    IdempotencyLookupOutcome<Recovery> operationResult(String tenant, String actor, String deviceId, String key,
             ObservationController.Change input) {
         access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
         var device = devices.lockVisibleActive(tenant, actor, deviceId);
@@ -188,18 +191,20 @@ class ObservationSettingsService implements ObservationAuthorization, Permission
         if (key == null || !key.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")) {
             throw DomainException.invalid("INVALID_OBSERVATION_RESULT_REFERENCE");
         }
-        var committed = idempotency.findCommitted(tenant, actor, "observation.update", key,
+        return idempotency.findCommitted(tenant, actor, "observation.update", key,
             Map.of("deviceId", deviceId, "expectedVersion", input.version(), "input", input.update()),
-            ObservationSettings.class).orElseThrow(() ->
-                new DomainException(HttpStatus.NOT_FOUND, "OBSERVATION_RESULT_UNAVAILABLE"));
-        if (!committed.deviceId().equals(deviceId)
-                || !committed.registrationId().equals(input.registrationId())
-                || committed.version() != input.version() + 1
-                || committed.inventoryEnabled() != input.inventoryEnabled()
-                || committed.usageEnabled() != input.usageEnabled()) {
-            throw new IllegalStateException("Observation journal mismatch");
-        }
-        return new Recovery(committed, current(tenant, deviceId, input.registrationId(), true));
+            ObservationSettings.class).requirePresent(() ->
+                new DomainException(HttpStatus.NOT_FOUND, "OBSERVATION_RESULT_UNAVAILABLE"))
+            .map(committed -> {
+            if (!committed.deviceId().equals(deviceId)
+                    || !committed.registrationId().equals(input.registrationId())
+                    || committed.version() != input.version() + 1
+                    || committed.inventoryEnabled() != input.inventoryEnabled()
+                    || committed.usageEnabled() != input.usageEnabled()) {
+                throw new IllegalStateException("Observation journal mismatch");
+            }
+            return new Recovery(committed, current(tenant, deviceId, input.registrationId(), true));
+            });
     }
 
     private void requireRegistration(Device device, String registration) {

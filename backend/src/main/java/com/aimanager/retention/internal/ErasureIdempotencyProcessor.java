@@ -1,10 +1,14 @@
 package com.aimanager.retention.internal;
 
 import com.aimanager.idempotency.ResponseOwnership;
+import com.aimanager.idempotency.IdempotencyResultLifecycle;
+import com.aimanager.idempotency.IdempotencyResultStorageState;
 import com.aimanager.identity.ActorKeys;
 import com.aimanager.retention.ErasureLedger;
 import com.aimanager.shared.SecretMaterial;
 import java.sql.Timestamp;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -66,7 +70,7 @@ class ErasureIdempotencyProcessor {
 
   private record Response(
       String id, Key key, String actor, String operation, String requestHash, String state,
-      boolean bodyAbsent) {}
+      boolean bodyAbsent, IdempotencyResultLifecycle lifecycle) {}
 
   private record Owner(String id, String tenant, String subject) {}
 
@@ -132,12 +136,17 @@ class ErasureIdempotencyProcessor {
                       && o.subject().equals(
                           ResponseOwnership.subjectKey(scope.tenantId(), scope.subjectId()))))
                 throw failure("ERASURE_STEP_CONCURRENT_CHANGE");
+              var redactionArguments = new ArrayList<Object>();
+              redactionArguments.add(now());
+              redactionArguments.addAll(java.util.Arrays.asList(key.arguments()));
               exactlyOne(
                   db.update(
                       "UPDATE idempotency_requests SET response_body=NULL,actor_id='',operation='',"
-                          + "request_hash='" + ZERO_HASH + "',response_state='ERASED' WHERE "
+                          + "request_hash='" + ZERO_HASH + "',response_state='ERASED',"
+                          + "result_storage_state='REDACTED',"
+                          + "result_redacted_at=COALESCE(result_redacted_at,?) WHERE "
                           + MATCH + " AND response_state='SCOPED'",
-                      key.arguments()));
+                      redactionArguments.toArray()));
               redacted++;
             }
             phase = hasTargetData(scope) ? "DATA" : "VERIFY";
@@ -201,10 +210,11 @@ class ErasureIdempotencyProcessor {
     var rows =
         db.query(
             "SELECT id,actor_id,operation,request_hash,response_state,"
-                + "CASE WHEN response_body IS NULL THEN TRUE ELSE FALSE END AS body_absent"
+                + "CASE WHEN response_body IS NULL THEN TRUE ELSE FALSE END AS body_absent,"
+                + IdempotencyResultLifecycle.COLUMNS
                 + " FROM idempotency_requests WHERE " + MATCH + " FOR UPDATE",
             (r, n) -> new Response(r.getString(1), key, r.getString(2), r.getString(3),
-                r.getString(4), r.getString(5), r.getBoolean(6)),
+                r.getString(4), r.getString(5), r.getBoolean(6), lifecycle(r)),
             key.arguments());
     if (rows.size() > 1) throw corrupt();
     return rows.isEmpty() ? null : rows.get(0);
@@ -230,8 +240,15 @@ class ErasureIdempotencyProcessor {
         || response.state() == null
         || !Set.of("SCOPED", "NON_SUBJECT", "UNCLASSIFIED", "ERASED").contains(response.state()))
       throw corrupt();
+    try {
+      response.lifecycle().requireConsistent(response.state(), response.bodyAbsent());
+    } catch (IllegalStateException invalid) {
+      throw corrupt();
+    }
     if (response.state().equals("ERASED")) {
       if (!cleanMarker(response)) throw corrupt();
+    } else if (response.lifecycle().storageState() == IdempotencyResultStorageState.REDACTED) {
+      if (!"".equals(response.actor()) || !"".equals(response.operation())) throw corrupt();
     } else {
       if (response.actor() == null || response.actor().isBlank()
           || response.operation() == null || response.operation().isBlank()
@@ -353,7 +370,18 @@ class ErasureIdempotencyProcessor {
 
   private static boolean cleanMarker(Response response) {
     return response.bodyAbsent() && "".equals(response.actor())
-        && "".equals(response.operation()) && ZERO_HASH.equals(response.requestHash());
+        && "".equals(response.operation()) && ZERO_HASH.equals(response.requestHash())
+        && !response.lifecycle().awaitingResult()
+        && response.lifecycle().storageState() == IdempotencyResultStorageState.REDACTED
+        && response.lifecycle().redactedAt() != null;
+  }
+
+  private static IdempotencyResultLifecycle lifecycle(ResultSet row) throws SQLException {
+    try {
+      return IdempotencyResultLifecycle.fromResultSet(row);
+    } catch (IllegalStateException invalid) {
+      throw corrupt();
+    }
   }
 
   private boolean exists(String sql, Object... arguments) {

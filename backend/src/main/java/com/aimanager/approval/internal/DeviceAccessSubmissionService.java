@@ -2,6 +2,7 @@ package com.aimanager.approval.internal;
 
 import com.aimanager.approval.AccessRequest;
 import com.aimanager.deviceidentity.*;
+import com.aimanager.idempotency.IdempotencyLookupOutcome;
 import com.aimanager.fleet.*;
 import com.aimanager.policy.*;
 import com.aimanager.shared.*;
@@ -67,7 +68,7 @@ class DeviceAccessSubmissionService {
   }
 
   @Transactional(timeout = 10)
-  public AccessRequest recoverCreate(
+  public IdempotencyLookupOutcome<AccessRequest> recoverCreate(
       DeviceContext identity, DeviceAccessSubmissionController.Create original, String key) {
     var target = authenticate(identity);
     return approvals.recoverDeviceCreate(
@@ -75,7 +76,7 @@ class DeviceAccessSubmissionService {
   }
 
   @Transactional(timeout = 10)
-  public AccessRequest recoverCancel(
+  public IdempotencyLookupOutcome<AccessRequest> recoverCancel(
       DeviceContext identity, String id, String originalTag, String key) {
     var target = authenticate(identity);
     return approvals.recoverDeviceCancel(identity, target.subjectId(), id, originalTag, key);

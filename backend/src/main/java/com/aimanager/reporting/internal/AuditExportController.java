@@ -61,7 +61,7 @@ class AuditExportController {
         actor,
         requestId,
         new AuditSelection(
-            input.from(), input.to(), input.action(), input.resourceId(), input.correlationId()));
+            input.from(), input.to(), input.action(), input.resourceId(), input.correlationId())).toHttpResult();
   }
 
   @GetMapping("/{id}")

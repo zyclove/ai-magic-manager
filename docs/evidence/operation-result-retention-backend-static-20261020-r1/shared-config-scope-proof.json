@@ -1,0 +1,20 @@
+[
+  {
+    "path": "backend/src/main/resources/db/migration/V1__initial_schema.sql",
+    "outsideAllocatedBlockPreserved": true,
+    "reconstructedBeforeSha256": "316336699580e4463468b55c8106b7289027bc92de42cc42d5aba211f6f70caa",
+    "headInverseMatchesBaseBytes": true
+  },
+  {
+    "path": "backend/src/main/resources/retention/subject-data-stores.json",
+    "outsideAllocatedBlockPreserved": true,
+    "reconstructedBeforeSha256": "85ccc854ffb34ad37743bfd01fd732b6c00c2e02551961226ac9232ae8813521",
+    "headInverseMatchesBaseBytes": true
+  },
+  {
+    "path": "backend/src/main/resources/application.yml",
+    "outsideAllocatedBlockPreserved": true,
+    "reconstructedBeforeSha256": "3c3652df17068e3930e02081d6ae49f839dc4c70ee1c1a770519c93b69b7dd18",
+    "headInverseMatchesBaseBytes": true
+  }
+]

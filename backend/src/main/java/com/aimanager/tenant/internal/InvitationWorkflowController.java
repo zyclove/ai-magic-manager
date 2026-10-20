@@ -29,7 +29,7 @@ class InvitationWorkflowController {
   ResponseEntity<InvitationWorkflowService.Issuance> query(@AuthenticationPrincipal Jwt actor,
       @PathVariable String tenantId, @PathVariable String requestId, @Valid @RequestBody Issue input) {
     return ResponseEntity.ok().cacheControl(org.springframework.http.CacheControl.noStore())
-        .body(workflow.result(tenantId, actor.getSubject(), requestId, input));
+        .body(workflow.result(tenantId, actor.getSubject(), requestId, input).toHttpResult());
   }
 
   @GetMapping("/{invitationId}")

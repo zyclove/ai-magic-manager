@@ -70,7 +70,7 @@ class DeviceAccessSubmissionController {
       @AuthenticationPrincipal OAuth2AuthenticatedPrincipal actor,
       @Valid @RequestBody Create original,
       @RequestHeader(value = "Idempotency-Key", required = false) String key) {
-    return view(service.recoverCreate(DeviceContext.from(actor), original, key), HttpStatus.OK);
+    return view(service.recoverCreate(DeviceContext.from(actor), original, key).toHttpResult(), HttpStatus.OK);
   }
 
   @PostMapping("/{requestId}/cancel-recovery")
@@ -80,7 +80,7 @@ class DeviceAccessSubmissionController {
       @RequestHeader(value = "If-Match", required = false) String originalTag,
       @RequestHeader(value = "Idempotency-Key", required = false) String key) {
     return view(
-        service.recoverCancel(DeviceContext.from(actor), requestId, originalTag, key),
+        service.recoverCancel(DeviceContext.from(actor), requestId, originalTag, key).toHttpResult(),
         HttpStatus.OK);
   }
 

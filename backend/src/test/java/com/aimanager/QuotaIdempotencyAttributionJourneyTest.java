@@ -53,7 +53,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
     "manager.lifecycle.expiry-job.enabled=false"
 })
 @AutoConfigureMockMvc(print = MockMvcPrint.NONE)
-@Import(QuotaIdempotencyAttributionJourneyTest.TimeConfig.class)
+@Import({QuotaIdempotencyAttributionJourneyTest.TimeConfig.class, com.aimanager.support.ControlledIdempotencyTimeConfiguration.class})
 class QuotaIdempotencyAttributionJourneyTest {
   private static final Clock TIME =
       Clock.fixed(Instant.parse("2026-10-09T02:00:00Z"), ZoneOffset.UTC);

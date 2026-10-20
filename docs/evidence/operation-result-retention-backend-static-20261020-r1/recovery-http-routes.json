@@ -1,0 +1,128 @@
+[
+  {
+    "method": "POST",
+    "path": "/api/v1/device-api/access-submissions/recovery",
+    "controller": "DeviceAccessSubmissionController.java",
+    "call": "DeviceAccessSubmissionService.recoverCreate"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/device-api/access-submissions/{requestId}/cancel-recovery",
+    "controller": "DeviceAccessSubmissionController.java",
+    "call": "DeviceAccessSubmissionService.recoverCancel"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/tenants/{tenantId}/applications/creation-results/{requestId}/query",
+    "controller": "CatalogController.java",
+    "call": "CatalogService.creationResult"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/tenants/{tenantId}/applications/{applicationId}/classification/operation-results/{requestId}/query",
+    "controller": "ClassificationController.java",
+    "call": "ClassificationService.operationResult"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/tenants/{tenantId}/device-groups/operation-results/{requestId}/query",
+    "controller": "DeviceGroupController.java",
+    "call": "DeviceGroupService.operationResult"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/tenants/{tenantId}/devices/{deviceId}/observation-settings/operation-results/{requestId}/query",
+    "controller": "ObservationController.java",
+    "call": "ObservationSettingsService.operationResult"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/tenants/{tenantId}/devices/{deviceId}/permission-observation-settings/operation-results/{requestId}/query",
+    "controller": "PermissionObservationController.java",
+    "call": "ObservationSettingsService.permissionOperationResult"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/tenants/{tenantId}/policy-draft-creation-results/{requestId}/query",
+    "controller": "PolicyController.java",
+    "call": "PolicyService.creationResult"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/tenants/{tenantId}/policies/{policyId}/publication-results/{requestId}",
+    "controller": "PolicyController.java",
+    "call": "PolicyService.publicationResult"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/tenants/{tenantId}/quota-pools/creation-results/{requestId}/query",
+    "controller": "QuotaController.java",
+    "call": "QuotaService.creationResult"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/tenants/{tenantId}/quota-pools/{poolId}/adjustment-results/{requestId}/query",
+    "controller": "QuotaController.java",
+    "call": "QuotaService.adjustmentResult"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/tenants/{tenantId}/quota-plans/creation-results/{requestId}/query",
+    "controller": "QuotaPlanController.java",
+    "call": "QuotaPlanService.creationResult"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/tenants/{tenantId}/quota-plans/{planId}/update-results/{requestId}/query",
+    "controller": "QuotaPlanController.java",
+    "call": "QuotaPlanService.updateResult"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/tenants/{tenant}/audit-exports/creation-results/{requestId}/query",
+    "controller": "AuditExportController.java",
+    "call": "AuditExportService.creationResult"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/tenants/{tenantId}/schedules/creation-results/{requestId}/query",
+    "controller": "ScheduleController.java",
+    "call": "ScheduleService.creationResult"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/tenants/{tenantId}/subjects/operation-results/{requestId}/query",
+    "controller": "SubjectManagementController.java",
+    "call": "SubjectManagementService.query"
+  },
+  {
+    "method": "GET",
+    "path": "/api/v1/invitations/{invitationId}/acceptance-results/{requestId}",
+    "controller": "InvitationAcceptanceController.java",
+    "call": "InvitationAcceptanceService.result"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/tenants/{tenantId}/invitations/issuance-results/{requestId}/query",
+    "controller": "InvitationWorkflowController.java",
+    "call": "InvitationWorkflowService.result"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/tenants/{tenantId}/members/{memberKey}/access-results/{requestId}/query",
+    "controller": "MembershipController.java",
+    "call": "MembershipService.accessResult"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/tenants/{tenantId}/classes/operation-results/{requestId}/query",
+    "controller": "OrganizationController.java",
+    "call": "OrganizationService.result"
+  },
+  {
+    "method": "POST",
+    "path": "/api/v1/tenants/{tenantId}/ownership-transfers/operation-results/{requestId}/query",
+    "controller": "OwnershipController.java",
+    "call": "OwnershipService.result"
+  }
+]

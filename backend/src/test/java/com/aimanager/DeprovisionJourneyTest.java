@@ -38,7 +38,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(properties = {"spring.datasource.url=jdbc:h2:mem:deprovision;MODE=MySQL;DB_CLOSE_DELAY=-1;DATABASE_TO_LOWER=TRUE",
     "spring.datasource.username=sa", "spring.datasource.password=", "spring.flyway.enabled=true", "manager.lifecycle.expiry-job.enabled=false"})
 @AutoConfigureMockMvc
-@Import(DeprovisionJourneyTest.TimeConfiguration.class)
+@Import({DeprovisionJourneyTest.TimeConfiguration.class, com.aimanager.support.ControlledIdempotencyTimeConfiguration.class})
 class DeprovisionJourneyTest {
     private static final ECKey SERVER_KEY;
     private static final Path KEY_FILE;

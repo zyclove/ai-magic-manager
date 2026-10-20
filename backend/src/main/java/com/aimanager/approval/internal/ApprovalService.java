@@ -12,6 +12,7 @@ import com.aimanager.fleet.AccessRequestDeviceScope;
 import com.aimanager.fleet.DeviceAccess;
 import com.aimanager.fleet.DeviceRegistrationRevoked;
 import com.aimanager.idempotency.IdempotencyService;
+import com.aimanager.idempotency.IdempotencyLookupOutcome;
 import com.aimanager.idempotency.ResponseOwnership;
 import com.aimanager.identity.ActorKeys;
 import com.aimanager.identity.RecentAuthentication;
@@ -277,11 +278,10 @@ class ApprovalService implements ApprovalMaintenance {
    * Current device authority is held by the entry transaction; old cached states are not returned.
    */
   @Transactional(propagation = Propagation.MANDATORY)
-  public AccessRequest recoverDeviceCreate(
+  public IdempotencyLookupOutcome<AccessRequest> recoverDeviceCreate(
       DeviceContext identity, String subject, ApprovalController.Create original, String key) {
     requiredKey(key);
-    var reference =
-        idempotency
+    return idempotency
             .findCommitted(
                 identity.tenantId(),
                 deviceActor(identity),
@@ -289,19 +289,20 @@ class ApprovalService implements ApprovalMaintenance {
                 key,
                 Map.of("input", original),
                 AccessRequest.class)
-            .orElseThrow(
-                () -> new DomainException(HttpStatus.NOT_FOUND, "ACCESS_RECOVERY_UNAVAILABLE"));
-    return reconcile(ownDeviceRequest(identity, subject, reference.id()));
+            .requirePresent(
+                () -> new DomainException(HttpStatus.NOT_FOUND, "ACCESS_RECOVERY_UNAVAILABLE"))
+      .map(reference -> {
+      return reconcile(ownDeviceRequest(identity, subject, reference.id()));
+      });
   }
 
   @Transactional(propagation = Propagation.MANDATORY)
-  public AccessRequest recoverDeviceCancel(
+  public IdempotencyLookupOutcome<AccessRequest> recoverDeviceCancel(
       DeviceContext identity, String subject, String id, String originalTag, String key) {
     long originalVersion = ResourceVersions.require(originalTag);
     requiredKey(key);
     ownDeviceRequest(identity, subject, id);
-    var reference =
-        idempotency
+    return idempotency
             .findCommitted(
                 identity.tenantId(),
                 deviceActor(identity),
@@ -309,11 +310,13 @@ class ApprovalService implements ApprovalMaintenance {
                 key,
                 Map.of("id", id, "version", originalVersion),
                 AccessRequest.class)
-            .orElseThrow(
-                () -> new DomainException(HttpStatus.NOT_FOUND, "ACCESS_RECOVERY_UNAVAILABLE"));
-    if (!id.equals(reference.id()))
-      throw new IllegalStateException("Cancellation reference mismatch");
-    return reconcile(ownDeviceRequest(identity, subject, id));
+            .requirePresent(
+                () -> new DomainException(HttpStatus.NOT_FOUND, "ACCESS_RECOVERY_UNAVAILABLE"))
+      .map(reference -> {
+      if (!id.equals(reference.id()))
+        throw new IllegalStateException("Cancellation reference mismatch");
+      return reconcile(ownDeviceRequest(identity, subject, id));
+      });
   }
 
   private String deviceActor(DeviceContext identity) {

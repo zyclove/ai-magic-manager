@@ -4,6 +4,7 @@ import static com.aimanager.tenant.TenantAccess.Role.*;
 
 import com.aimanager.audit.AuditService;
 import com.aimanager.idempotency.IdempotencyService;
+import com.aimanager.idempotency.IdempotencyLookupOutcome;
 import com.aimanager.identity.ActorKeys;
 import com.aimanager.identity.RecentAuthentication;
 import com.aimanager.shared.*;
@@ -437,7 +438,7 @@ class OrganizationService {
 
   /** Read only: current authorization, exact original fingerprint, and fresh classroom snapshots. */
   @Transactional(timeout = 10)
-  public OperationResult result(String tenant, String actor, String requestId,
+  public IdempotencyLookupOutcome<OperationResult> result(String tenant, String actor, String requestId,
       OrganizationController.ResultQuery in) {
     mutex.lock(tenant);
     mutex.actors(tenant, List.of(actor));
@@ -472,26 +473,35 @@ class OrganizationService {
       case TRANSFER -> Map.of("source", in.classId(), "target", in.targetClassId(), "subject", in.subjectId(),
           "sourceVersion", in.version(), "targetVersion", in.targetVersion());
     };
-    List<Classroom> committed;
+    IdempotencyLookupOutcome<List<Classroom>> history;
     if (transfer) {
-      var original = idempotency.findCommitted(tenant, actor, operation, requestId, attributes, Transfer.class)
-          .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "CLASS_RESULT_UNAVAILABLE"));
-      if (!original.source().id().equals(in.classId()) || !original.target().id().equals(in.targetClassId()))
-        throw new IllegalStateException("Class transfer journal scope mismatch");
-      committed = List.of(original.source(), original.target());
+      history = idempotency.findCommitted(tenant, actor, operation, requestId, attributes, Transfer.class)
+          .requirePresent(() -> new DomainException(HttpStatus.NOT_FOUND, "CLASS_RESULT_UNAVAILABLE"))
+          .map(original -> {
+            if (!original.source().id().equals(in.classId()) || !original.target().id().equals(in.targetClassId())) {
+              throw new IllegalStateException("Class transfer journal scope mismatch");
+            }
+            return List.of(original.source(), original.target());
+          });
     } else {
-      var original = idempotency.findCommitted(tenant, actor, operation, requestId, attributes, Classroom.class)
-          .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "CLASS_RESULT_UNAVAILABLE"));
-      if (!create && !original.id().equals(in.classId()))
-        throw new IllegalStateException("Class journal scope mismatch");
-      committed = List.of(original);
+      history = idempotency.findCommitted(tenant, actor, operation, requestId, attributes, Classroom.class)
+          .requirePresent(() -> new DomainException(HttpStatus.NOT_FOUND, "CLASS_RESULT_UNAVAILABLE"))
+          .map(original -> {
+            if (!create && !original.id().equals(in.classId())) {
+              throw new IllegalStateException("Class journal scope mismatch");
+            }
+            return List.of(original);
+          });
     }
-    var locked = new HashMap<String, Classroom>();
-    // Match the transfer write's lock order. Return source/target in request order.
-    for (String id : new TreeSet<>(committed.stream().map(Classroom::id).toList()))
-      locked.put(id, read(tenant, id, true));
-    return new OperationResult(requestId, in.operation(), committed,
-        committed.stream().map(c -> locked.get(c.id())).toList());
+    return history.map(committed -> {
+      var locked = new HashMap<String, Classroom>();
+      // 沿用原转班写入的锁顺序，并按请求顺序返回来源和目标。
+      for (String id : new TreeSet<>(committed.stream().map(Classroom::id).toList())) {
+        locked.put(id, read(tenant, id, true));
+      }
+      return new OperationResult(requestId, in.operation(), committed,
+          committed.stream().map(value -> locked.get(value.id())).toList());
+    });
   }
 
   record OperationResult(String requestId, OrganizationController.Operation operation,

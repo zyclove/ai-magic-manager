@@ -35,7 +35,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
       "manager.lifecycle.expiry-job.enabled=false"
     })
 @AutoConfigureMockMvc
-@Import(QuotaPlanJourneyTest.TimeConfig.class)
+@Import({QuotaPlanJourneyTest.TimeConfig.class, com.aimanager.support.ControlledIdempotencyTimeConfiguration.class})
 class QuotaPlanJourneyTest {
   @Autowired MockMvc mvc;
   @Autowired ObjectMapper mapper;

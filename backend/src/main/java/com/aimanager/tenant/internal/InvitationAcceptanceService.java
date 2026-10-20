@@ -2,6 +2,7 @@ package com.aimanager.tenant.internal;
 
 import static com.aimanager.tenant.TenantAccess.Role.*;
 import com.aimanager.idempotency.IdempotencyService;
+import com.aimanager.idempotency.IdempotencyLookupOutcome;
 import com.aimanager.idempotency.ResponseOwnership;
 import com.aimanager.identity.ActorKeys;
 import com.aimanager.identity.RecentAuthentication;
@@ -75,7 +76,7 @@ class InvitationAcceptanceService {
   }
 
   @Transactional(timeout=10)
-  public Result result(String actor,String invitationId,String key) {
+  public IdempotencyLookupOutcome<Result> result(String actor,String invitationId,String key) {
     requireUuid(invitationId);requireUuid(key);
     var lookup=db.queryForList("SELECT tenant_id FROM member_invitations WHERE id=?",String.class,invitationId);
     if(lookup.isEmpty()) throw unavailable();
@@ -85,9 +86,11 @@ class InvitationAcceptanceService {
     // never require or recreate tenant authority merely to report what happened.
     mutex.actors(tenant,List.of(actor));
     var invite=readById(invitationId);
-    var accepted=idempotency.findCommitted(tenant,actor,OPERATION,key,
-        Map.of("invitationId",invitationId),Accepted.class).orElseThrow(InvitationAcceptanceService::unavailable);
-    return compose(actor,key,invite,accepted);
+    return idempotency.findCommitted(tenant,actor,OPERATION,key,
+        Map.of("invitationId",invitationId),Accepted.class).requirePresent(InvitationAcceptanceService::unavailable)
+      .map(accepted -> {
+      return compose(actor,key,invite,accepted);
+      });
   }
 
   private Result compose(String actor,String key,Invite invite,Accepted accepted) {

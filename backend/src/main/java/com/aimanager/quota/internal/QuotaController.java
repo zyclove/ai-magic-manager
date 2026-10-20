@@ -45,7 +45,7 @@ class QuotaController {
       @AuthenticationPrincipal Jwt actor, @PathVariable String tenantId,
       @PathVariable String requestId, @Valid @RequestBody Create input) {
     return ResponseEntity.ok().cacheControl(CacheControl.noStore())
-        .body(quotas.creationResult(tenantId, actor.getSubject(), requestId, input));
+        .body(quotas.creationResult(tenantId, actor.getSubject(), requestId, input).toHttpResult());
   }
 
   @PostMapping("/tenants/{tenantId}/quota-pools/{poolId}/adjustment-results/{requestId}/query")
@@ -55,7 +55,7 @@ class QuotaController {
       @RequestHeader(name = "If-Match", required = false) String etag,
       @Valid @RequestBody Adjustment input) {
     return ResponseEntity.ok().cacheControl(CacheControl.noStore())
-        .body(quotas.adjustmentResult(tenantId, actor.getSubject(), poolId, requestId, etag, input));
+        .body(quotas.adjustmentResult(tenantId, actor.getSubject(), poolId, requestId, etag, input).toHttpResult());
   }
 
   @GetMapping("/tenants/{tenantId}/quota-pools/{poolId}")

@@ -2,6 +2,7 @@ package com.aimanager.tenant.internal;
 
 import static com.aimanager.tenant.TenantAccess.Role.*;
 import com.aimanager.idempotency.IdempotencyService;
+import com.aimanager.idempotency.IdempotencyLookupOutcome;
 import com.aimanager.idempotency.ResponseOwnership;
 import com.aimanager.identity.RecentAuthentication;
 import com.aimanager.shared.DomainException;
@@ -54,13 +55,15 @@ class InvitationWorkflowService {
   }
 
   @Transactional(timeout=10)
-  public Issuance result(String tenant, String actor, String key, InvitationWorkflowController.Issue input) {
+  public IdempotencyLookupOutcome<Issuance> result(String tenant, String actor, String key, InvitationWorkflowController.Issue input) {
     authorize(tenant, actor);
     requireUuid(key);
-    var reference = idempotency.findCommitted(tenant, actor, OPERATION, key,
+    return idempotency.findCommitted(tenant, actor, OPERATION, key,
         fingerprint(input, classes.normalize(input.classIds())), Reference.class)
-        .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "INVITATION_RESULT_UNAVAILABLE"));
-    return new Issuance(key, read(tenant, reference.id()), null);
+        .requirePresent(() -> new DomainException(HttpStatus.NOT_FOUND, "INVITATION_RESULT_UNAVAILABLE"))
+      .map(reference -> {
+      return new Issuance(key, read(tenant, reference.id()), null);
+      });
   }
 
   @Transactional(timeout=10)

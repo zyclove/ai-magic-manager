@@ -1,0 +1,245 @@
+{
+  "schema": "1.0.0",
+  "status": "STATIC_TEST_ADAPTERS_NOT_RUN",
+  "sdkRun": false,
+  "testsRun": false,
+  "productionFilesChanged": false,
+  "createdAt": "2026-10-20T14:46:09.8381189Z",
+  "files": [
+    {
+      "path": "backend/src/test/java/com/aimanager/idempotency/IdempotencyOwnershipTest.java",
+      "beforeSha256": "49b4fad93a23bff797dc8cc3f25330fddbe1858691b3724ec29cb33d4d783012",
+      "headSha256": "49b4fad93a23bff797dc8cc3f25330fddbe1858691b3724ec29cb33d4d783012",
+      "afterSha256": "217cfb64b3c1dc53b31d3d4f02263dc6f60a2b1a0d0bf9331bbbd9b3ef81cd9f",
+      "allHeadDeltaBelongsToThisTask": true,
+      "bytes": 24320,
+      "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\child\\backend-adapters\\after\\backend\\src\\test\\java\\com\\aimanager\\idempotency\\IdempotencyOwnershipTest.java",
+      "testDeclarationsUnchanged": true,
+      "assertionInvocationCountsUnchanged": true,
+      "beforeCounts": {
+        "testDeclarations": [
+          "newSubjectResponseCommitsItsActualOwnerWithTheMutation",
+          "ownerCollectionIsDeduplicatedAndFrozenBeforeCallerChangesIt",
+          "sharedResponseRetainsEachExplicitSubjectRatherThanOnlyTheFirst",
+          "oldSignatureRemainsUnclassifiedRatherThanPretendingPersonalDataIsShared",
+          "explicitNonSubjectResponseIsDistinguishedFromMissingAttribution",
+          "explicitUnclassifiedResponseCannotBePromotedToNonSubject",
+          "ownershipFailureRollsBackTheAlreadyPerformedBusinessMutation",
+          "anotherTenantsAttributionCannotAttachToThisScopesResponse",
+          "malformedTenantOwnershipRollsBackTheMutation",
+          "malformedSubjectOwnershipRollsBackTheMutation",
+          "scopedOwnershipCannotSilentlyAcceptAnEmptySet",
+          "oversizedOwnershipCannotCommitPartOfItsSubjectSet",
+          "maximumSharedResponseCommitsAndReplaysAllTwoHundredOwners",
+          "repeatedOwnersDoNotConsumeDistinctSubjectCapacity",
+          "replayAndRecoveryRejectTheTwoHundredFirstRestoredOwner",
+          "cachedResponseDoesNotRepeatMutationOrRecomputeItsHistoricalOwnership",
+          "erasedExecuteRefusesSameOrChangedRequestEvenAfterExpiry",
+          "erasedCommittedLookupIsGoneInsteadOfMissingConflictOrRecoverable",
+          "activeExpiredResponseStillRejectsReplayButRemainsAvailableForExplicitRecovery",
+          "differentPayloadOnAnActiveKeyStillConflictsWithoutAnotherMutation",
+          "absentKeyPerformsTheMutationWithoutCreatingAReplayableCopy",
+          "ownershipDigestDoesNotExposeSubjectIdsAndSeparatesTenants"
+        ],
+        "testDeclarationCount": 22,
+        "assertionInvocationCount": 79,
+        "assertionsByName": {
+          "assertDoesNotThrow": 3,
+          "assertThat": 64,
+          "assertThatThrownBy": 12
+        }
+      },
+      "afterCounts": {
+        "testDeclarations": [
+          "newSubjectResponseCommitsItsActualOwnerWithTheMutation",
+          "ownerCollectionIsDeduplicatedAndFrozenBeforeCallerChangesIt",
+          "sharedResponseRetainsEachExplicitSubjectRatherThanOnlyTheFirst",
+          "oldSignatureRemainsUnclassifiedRatherThanPretendingPersonalDataIsShared",
+          "explicitNonSubjectResponseIsDistinguishedFromMissingAttribution",
+          "explicitUnclassifiedResponseCannotBePromotedToNonSubject",
+          "ownershipFailureRollsBackTheAlreadyPerformedBusinessMutation",
+          "anotherTenantsAttributionCannotAttachToThisScopesResponse",
+          "malformedTenantOwnershipRollsBackTheMutation",
+          "malformedSubjectOwnershipRollsBackTheMutation",
+          "scopedOwnershipCannotSilentlyAcceptAnEmptySet",
+          "oversizedOwnershipCannotCommitPartOfItsSubjectSet",
+          "maximumSharedResponseCommitsAndReplaysAllTwoHundredOwners",
+          "repeatedOwnersDoNotConsumeDistinctSubjectCapacity",
+          "replayAndRecoveryRejectTheTwoHundredFirstRestoredOwner",
+          "cachedResponseDoesNotRepeatMutationOrRecomputeItsHistoricalOwnership",
+          "erasedExecuteRefusesSameOrChangedRequestEvenAfterExpiry",
+          "erasedCommittedLookupIsGoneInsteadOfMissingConflictOrRecoverable",
+          "activeExpiredResponseStillRejectsReplayButRemainsAvailableForExplicitRecovery",
+          "differentPayloadOnAnActiveKeyStillConflictsWithoutAnotherMutation",
+          "absentKeyPerformsTheMutationWithoutCreatingAReplayableCopy",
+          "ownershipDigestDoesNotExposeSubjectIdsAndSeparatesTenants"
+        ],
+        "testDeclarationCount": 22,
+        "assertionInvocationCount": 79,
+        "assertionsByName": {
+          "assertDoesNotThrow": 3,
+          "assertThat": 64,
+          "assertThatThrownBy": 12
+        }
+      }
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureIdempotencyCardinalityTest.java",
+      "beforeSha256": "a40bddee7f65add48a02a190f2750bc512331433aa60097c8ed55273d3e0cbaa",
+      "headSha256": "a40bddee7f65add48a02a190f2750bc512331433aa60097c8ed55273d3e0cbaa",
+      "afterSha256": "769c208c8536705505d5414e594b92abe1f8c8d26e9918566fe2ffe01107226d",
+      "allHeadDeltaBelongsToThisTask": true,
+      "bytes": 23015,
+      "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\child\\backend-adapters\\after\\backend\\src\\test\\java\\com\\aimanager\\retention\\internal\\ErasureIdempotencyCardinalityTest.java",
+      "testDeclarationsUnchanged": true,
+      "assertionInvocationCountsUnchanged": true,
+      "beforeCounts": {
+        "testDeclarations": [
+          "twoHundredDistinctOwnersCommitAndRemainReadableThroughBothJournalMethods",
+          "twoSubjectJobsInterleaveAndRedactTheSharedResponseOnceWithoutLosingOtherOwners",
+          "concurrentSubjectJobsAndReclaimedLeasesNeverDoubleCountTheSharedResponse",
+          "twoHundredAndOneStoredOwnersRollBackEarlierActualRedactionAndTheCheckpoint",
+          "twoHundredAndOneRequestedOwnersRollBackBusinessMutationAndJournalTogether"
+        ],
+        "testDeclarationCount": 5,
+        "assertionInvocationCount": 97,
+        "assertionsByName": {
+          "assertDoesNotThrow": 1,
+          "assertEquals": 77,
+          "assertFalse": 5,
+          "assertNotEquals": 2,
+          "assertNotNull": 4,
+          "assertNull": 1,
+          "assertThrows": 2,
+          "assertTrue": 4,
+          "fail": 1
+        }
+      },
+      "afterCounts": {
+        "testDeclarations": [
+          "twoHundredDistinctOwnersCommitAndRemainReadableThroughBothJournalMethods",
+          "twoSubjectJobsInterleaveAndRedactTheSharedResponseOnceWithoutLosingOtherOwners",
+          "concurrentSubjectJobsAndReclaimedLeasesNeverDoubleCountTheSharedResponse",
+          "twoHundredAndOneStoredOwnersRollBackEarlierActualRedactionAndTheCheckpoint",
+          "twoHundredAndOneRequestedOwnersRollBackBusinessMutationAndJournalTogether"
+        ],
+        "testDeclarationCount": 5,
+        "assertionInvocationCount": 97,
+        "assertionsByName": {
+          "assertDoesNotThrow": 1,
+          "assertEquals": 77,
+          "assertFalse": 5,
+          "assertNotEquals": 2,
+          "assertNotNull": 4,
+          "assertNull": 1,
+          "assertThrows": 2,
+          "assertTrue": 4,
+          "fail": 1
+        }
+      }
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureIdempotencyProcessorTest.java",
+      "beforeSha256": "18f1f4558e1c518d95add163c917e578edf8fe2c0ef598f0809d736c10130dd9",
+      "headSha256": "18f1f4558e1c518d95add163c917e578edf8fe2c0ef598f0809d736c10130dd9",
+      "afterSha256": "eb3bcec7303a80e1718f7a992770eb010a2225e51ef6d6a8053e4eaf31ce29b9",
+      "allHeadDeltaBelongsToThisTask": true,
+      "bytes": 24318,
+      "snapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\child\\backend-adapters\\after\\backend\\src\\test\\java\\com\\aimanager\\retention\\internal\\ErasureIdempotencyProcessorTest.java",
+      "testDeclarationsUnchanged": true,
+      "assertionInvocationCountsUnchanged": true,
+      "beforeCounts": {
+        "testDeclarations": [
+          "redactsTargetAndSharedResponseWhileKeepingOtherSubjectSourcesAndOpaqueTombstones",
+          "ignoresResponseTextAndRetainsOtherTenantWithSameRawSubjectId",
+          "explicitlyClassifiedNonSubjectResponseDoesNotBlockOrGetRedacted",
+          "boundedBatchAndReconstructedProcessorContinuePersistedProgress",
+          "globalVerificationIsBoundedAndLateUnknownBeforeRecoveredCursorStillBlocksCompletion",
+          "restoredOrphanOwnerBlocksCompletedAndFreshJobsInsteadOfDisappearingFromParentScan",
+          "ownerIntegrityVerificationIsBoundedAndResumesItsIndependentUuidCursor",
+          "unclassifiedGlobalResponseBlocksVerificationAfterCommittedTargetRedaction",
+          "unknownAfterDoneCannotBeHiddenByCompletedCheckpoint",
+          "newAttributedResponseAfterDoneRequiresRecheckAndPreservesNewSource",
+          "erasedLabelCannotConcealReappearingPayloadOrPersonalMetadata",
+          "scopedCacheWithoutOwnerIsCorruptInsteadOfSilentlyCompleted",
+          "committedScopedResponseCannotBeMissingItsBody",
+          "foreignTenantOwnerCannotAuthorizeRedactingThisScope",
+          "scopedGlobalRecordIsNotAValidSubjectAttribution",
+          "malformedSubjectDigestCannotHideAttributedPrivateCopy",
+          "originalActorAndOperationMustMatchTheirOpaqueDigestsBeforeRedaction",
+          "realRedactionThenStorageFailureRollsBackPayloadAndNewCheckpoint",
+          "leaseLossAfterRedactionRollsBackPayloadAndPersistedCheckpoint",
+          "lostFenceCannotRedactOrCreateCheckpoint",
+          "checkpointWriteFailureAfterActualRedactionRollsBackAllChanges",
+          "concurrentCallsUsingSameClaimNeverCountOneResponseTwice",
+          "unsupportedOrInvalidCheckpointCannotSkipPrivateResponses",
+          "invalidBatchSizesNeverCreateCheckpoint"
+        ],
+        "testDeclarationCount": 24,
+        "assertionInvocationCount": 94,
+        "assertionsByName": {
+          "assertDoesNotThrow": 2,
+          "assertEquals": 69,
+          "assertFalse": 9,
+          "assertNotNull": 2,
+          "assertNull": 1,
+          "assertThrows": 3,
+          "assertTrue": 7,
+          "fail": 1
+        }
+      },
+      "afterCounts": {
+        "testDeclarations": [
+          "redactsTargetAndSharedResponseWhileKeepingOtherSubjectSourcesAndOpaqueTombstones",
+          "ignoresResponseTextAndRetainsOtherTenantWithSameRawSubjectId",
+          "explicitlyClassifiedNonSubjectResponseDoesNotBlockOrGetRedacted",
+          "boundedBatchAndReconstructedProcessorContinuePersistedProgress",
+          "globalVerificationIsBoundedAndLateUnknownBeforeRecoveredCursorStillBlocksCompletion",
+          "restoredOrphanOwnerBlocksCompletedAndFreshJobsInsteadOfDisappearingFromParentScan",
+          "ownerIntegrityVerificationIsBoundedAndResumesItsIndependentUuidCursor",
+          "unclassifiedGlobalResponseBlocksVerificationAfterCommittedTargetRedaction",
+          "unknownAfterDoneCannotBeHiddenByCompletedCheckpoint",
+          "newAttributedResponseAfterDoneRequiresRecheckAndPreservesNewSource",
+          "erasedLabelCannotConcealReappearingPayloadOrPersonalMetadata",
+          "scopedCacheWithoutOwnerIsCorruptInsteadOfSilentlyCompleted",
+          "committedScopedResponseCannotBeMissingItsBody",
+          "foreignTenantOwnerCannotAuthorizeRedactingThisScope",
+          "scopedGlobalRecordIsNotAValidSubjectAttribution",
+          "malformedSubjectDigestCannotHideAttributedPrivateCopy",
+          "originalActorAndOperationMustMatchTheirOpaqueDigestsBeforeRedaction",
+          "realRedactionThenStorageFailureRollsBackPayloadAndNewCheckpoint",
+          "leaseLossAfterRedactionRollsBackPayloadAndPersistedCheckpoint",
+          "lostFenceCannotRedactOrCreateCheckpoint",
+          "checkpointWriteFailureAfterActualRedactionRollsBackAllChanges",
+          "concurrentCallsUsingSameClaimNeverCountOneResponseTwice",
+          "unsupportedOrInvalidCheckpointCannotSkipPrivateResponses",
+          "invalidBatchSizesNeverCreateCheckpoint"
+        ],
+        "testDeclarationCount": 24,
+        "assertionInvocationCount": 94,
+        "assertionsByName": {
+          "assertDoesNotThrow": 2,
+          "assertEquals": 69,
+          "assertFalse": 9,
+          "assertNotNull": 2,
+          "assertNull": 1,
+          "assertThrows": 3,
+          "assertTrue": 7,
+          "fail": 1
+        }
+      }
+    }
+  ],
+  "headPatch": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\operation-result-retention-20261020\\child\\backend-adapters\\head-to-after.patch",
+    "sha256": "514d3efd1eb05733a5a8c19430377ea5d80ae0e808180f399ca40179eb96a3d1"
+  },
+  "notes": [
+    "Only existing three tests were adapted. No test declaration, test name or assertion invocation count changed.",
+    "Manual service fixtures inject controlled ResultTime.now(); inherited now(lifecycle) keeps durable rollback and awaiting checks.",
+    "Complete cache rows gain commit/deadline/policy/last-observation metadata. Null rows keep their deliberate awaiting/corrupt semantics.",
+    "Only clean erased-marker fixture gains the redacted lifecycle state; deliberate corruption fixtures remain unchanged.",
+    "All three before snapshots equal raw HEAD blobs; all recorded HEAD differences belong to this adapter task.",
+    "No SDK, formatter, compiler, test, service or write-capable Git operation was run."
+  ]
+}

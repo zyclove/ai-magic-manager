@@ -26,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /** Exercises the real journal, fresh schema and transaction boundary, with no business mocks. */
@@ -72,7 +73,18 @@ class IdempotencyOwnershipTest {
     db.update("DELETE FROM tenants");
     tx = new TransactionTemplate(new DataSourceTransactionManager(source));
     tx.setTimeout(10);
-    journal = new IdempotencyService(db, new ObjectMapper(), CLOCK);
+    var retention = IdempotencyRetentionSettings.defaults();
+    var trustedTime = new IdempotencyResultTime(db, CLOCK, retention) {
+      @Override
+      public long now() {
+        if (!TransactionSynchronizationManager.isActualTransactionActive()) {
+          throw new IllegalStateException("Fixture result time requires an active transaction");
+        }
+        return CLOCK.millis();
+      }
+      // Inherit now(lifecycle): awaiting and durable last-observation checks remain real.
+    };
+    journal = new IdempotencyService(db, new ObjectMapper(), CLOCK, retention, trustedTime);
     for (String tenant : List.of(TENANT, OTHER_TENANT)) {
       db.update(
           "INSERT INTO tenants(id,name,kind,time_zone,created_at)"
@@ -277,7 +289,7 @@ class IdempotencyOwnershipTest {
     assertThat(replay).isEqualTo(original);
     var recovered = tx.execute(status -> journal.findCommitted(
         TENANT, ACTOR, "shared.report", KEY, input, SharedResponse.class));
-    assertThat(recovered).contains(original);
+    assertThat(recovered.toHttpResult()).isEqualTo(original);
     assertThat(ownerKeys()).hasSize(200);
     assertThat(db.queryForObject("SELECT COUNT(*) FROM idempotency_requests", Integer.class)).isEqualTo(1);
   }
@@ -433,7 +445,7 @@ class IdempotencyOwnershipTest {
         tx.execute(
             status ->
                 journal.findCommitted(TENANT, ACTOR, OPERATION, KEY, INPUT, Subject.class));
-    assertThat(recovery).contains(original);
+    assertThat(recovery.toHttpResult()).isEqualTo(original);
     assertThat(state()).isEqualTo("SCOPED");
     assertThat(ownerKeys()).containsExactly(ResponseOwnership.subjectKey(TENANT, SUBJECT));
   }
@@ -523,9 +535,11 @@ class IdempotencyOwnershipTest {
   private void eraseJournal(boolean expired) {
     db.update(
         "UPDATE idempotency_requests SET response_state='ERASED',response_body=NULL,"
-            + " actor_id='',operation='',request_hash=?,expires_at=?",
+            + " actor_id='',operation='',request_hash=?,expires_at=?,"
+            + " result_storage_state='REDACTED',result_redacted_at=?",
         "0".repeat(64),
-        expired ? CLOCK.millis() - 1 : CLOCK.millis() + 60000);
+        expired ? CLOCK.millis() - 1 : CLOCK.millis() + 60000,
+        CLOCK.millis());
   }
 
   private void assertErasedMarkerPreserved() {

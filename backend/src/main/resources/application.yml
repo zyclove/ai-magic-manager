@@ -71,6 +71,14 @@ management:
         liveness:
           include: livenessState
 manager:
+  idempotency:
+    result-retention-days: ${IDEMPOTENCY_RESULT_RETENTION_DAYS:90}
+    policy-version: ${IDEMPOTENCY_RESULT_POLICY_VERSION:1}
+    max-clock-skew-seconds: ${IDEMPOTENCY_MAX_CLOCK_SKEW_SECONDS:5}
+    maintenance:
+      enabled: ${IDEMPOTENCY_RETENTION_ENABLED:false}
+      batch-size: ${IDEMPOTENCY_RETENTION_BATCH_SIZE:100}
+      interval-seconds: ${IDEMPOTENCY_RETENTION_INTERVAL_SECONDS:300}
   contract:
     evidence-enabled: ${CONTRACT_EVIDENCE_ENABLED:false}
     active-submissions-enabled: ${CONTRACT_ACTIVE_SUBMISSIONS_ENABLED:false}

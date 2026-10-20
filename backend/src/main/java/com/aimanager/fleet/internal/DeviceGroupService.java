@@ -6,6 +6,7 @@ import static com.aimanager.tenant.TenantAccess.Role.OWNER;
 import com.aimanager.audit.AuditService;
 import com.aimanager.fleet.DeviceGroupPolicyAccess;
 import com.aimanager.idempotency.IdempotencyService;
+import com.aimanager.idempotency.IdempotencyLookupOutcome;
 import com.aimanager.identity.RecentAuthentication;
 import com.aimanager.shared.DomainException;
 import com.aimanager.shared.ItemPage;
@@ -104,7 +105,7 @@ class DeviceGroupService implements DeviceGroupPolicyAccess {
 
   /** Reauthorize original actor and payload, returning historical outcome separately from now. */
   @Transactional(timeout = 10)
-  RecoveryResult operationResult(String tenant, String actor, String key,
+  IdempotencyLookupOutcome<RecoveryResult> operationResult(String tenant, String actor, String key,
       DeviceGroupController.Recovery input) {
     access.requireWriteRole(tenant, actor, OWNER, ORG_ADMIN);
     organization(tenant);
@@ -146,11 +147,13 @@ class DeviceGroupService implements DeviceGroupPolicyAccess {
       }
       default -> throw DomainException.invalid("INVALID_DEVICE_GROUP_RECOVERY");
     }
-    var committed = idempotency.findCommitted(tenant, actor, operation, key, attributes, Group.class)
-        .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "DEVICE_GROUP_RESULT_UNAVAILABLE"));
-    if (!create && !committed.id().equals(input.groupId()))
-      throw new IllegalStateException("Group operation journal reference mismatch");
-    return new RecoveryResult(input.operation(), committed, read(tenant, committed.id(), false));
+    return idempotency.findCommitted(tenant, actor, operation, key, attributes, Group.class)
+        .requirePresent(() -> new DomainException(HttpStatus.NOT_FOUND, "DEVICE_GROUP_RESULT_UNAVAILABLE"))
+      .map(committed -> {
+      if (!create && !committed.id().equals(input.groupId()))
+        throw new IllegalStateException("Group operation journal reference mismatch");
+      return new RecoveryResult(input.operation(), committed, read(tenant, committed.id(), false));
+      });
   }
 
   @Transactional(timeout = 10)

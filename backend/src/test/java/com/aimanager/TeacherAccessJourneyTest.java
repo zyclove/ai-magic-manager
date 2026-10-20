@@ -45,7 +45,7 @@ import org.springframework.test.web.servlet.request.*;
       "manager.lifecycle.expiry-job.enabled=false"
     })
 @AutoConfigureMockMvc
-@Import(TeacherAccessJourneyTest.TimeConfiguration.class)
+@Import({TeacherAccessJourneyTest.TimeConfiguration.class, com.aimanager.support.ControlledIdempotencyTimeConfiguration.class})
 class TeacherAccessJourneyTest {
   @Autowired MockMvc mvc;
   @Autowired ObjectMapper json;

@@ -82,7 +82,7 @@ class QuotaPlanController {
       @AuthenticationPrincipal Jwt actor, @PathVariable String tenantId,
       @PathVariable String requestId, @Valid @RequestBody Create input) {
     return ResponseEntity.ok().cacheControl(CacheControl.noStore())
-        .body(plans.creationResult(tenantId, actor.getSubject(), requestId, input));
+        .body(plans.creationResult(tenantId, actor.getSubject(), requestId, input).toHttpResult());
   }
 
   @PostMapping("/{planId}/update-results/{requestId}/query")
@@ -92,7 +92,7 @@ class QuotaPlanController {
       @RequestHeader(name = "If-Match", required = false) String etag,
       @Valid @RequestBody Update input) {
     return ResponseEntity.ok().cacheControl(CacheControl.noStore())
-        .body(plans.updateResult(tenantId, actor.getSubject(), planId, requestId, etag, input));
+        .body(plans.updateResult(tenantId, actor.getSubject(), planId, requestId, etag, input).toHttpResult());
   }
 
   private ResponseEntity<QuotaPlan> response(QuotaPlan plan, HttpStatus status) {

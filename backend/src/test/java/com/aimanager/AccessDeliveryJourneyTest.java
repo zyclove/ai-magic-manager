@@ -42,7 +42,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
       "manager.lifecycle.expiry-job.enabled=false"
     })
 @AutoConfigureMockMvc
-@Import(AccessDeliveryJourneyTest.TimeConfiguration.class)
+@Import({AccessDeliveryJourneyTest.TimeConfiguration.class, com.aimanager.support.ControlledIdempotencyTimeConfiguration.class})
 class AccessDeliveryJourneyTest {
   @Test
   void aRetryCannotOutliveTheRemainingApprovedWindow() throws Exception {

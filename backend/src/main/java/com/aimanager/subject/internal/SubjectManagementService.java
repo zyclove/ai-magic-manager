@@ -3,6 +3,7 @@ package com.aimanager.subject.internal;
 import static com.aimanager.tenant.TenantAccess.Role.*;
 
 import com.aimanager.idempotency.IdempotencyService;
+import com.aimanager.idempotency.IdempotencyLookupOutcome;
 import com.aimanager.idempotency.ResponseOwnership;
 import com.aimanager.identity.RecentAuthentication;
 import com.aimanager.shared.DomainException;
@@ -85,12 +86,14 @@ class SubjectManagementService {
 
   /** 查询过期的原结果也不会延长幂等键；ERASED 由共享日志拒绝为 410。 */
   @Transactional(timeout = 10)
-  public Result query(String tenant, String actor, String key, Change input) {
+  public IdempotencyLookupOutcome<Result> query(String tenant, String actor, String key, Change input) {
     access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
     canonical(key);
-    var committed = journal.findCommitted(tenant, actor, "subject.manage", key, attributes(input), Snapshot.class)
-        .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "SUBJECT_RESULT_UNAVAILABLE"));
-    return new Result(input.operation(), committed, read(tenant, committed.id()));
+    return journal.findCommitted(tenant, actor, "subject.manage", key, attributes(input), Snapshot.class)
+        .requirePresent(() -> new DomainException(HttpStatus.NOT_FOUND, "SUBJECT_RESULT_UNAVAILABLE"))
+      .map(committed -> {
+      return new Result(input.operation(), committed, read(tenant, committed.id()));
+      });
   }
 
   private Snapshot read(String tenant, String id) {

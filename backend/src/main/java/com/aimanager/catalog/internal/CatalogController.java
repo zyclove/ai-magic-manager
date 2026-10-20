@@ -37,7 +37,7 @@ class CatalogController {
             @PathVariable String tenantId, @PathVariable String requestId,
             @Valid @RequestBody CreateApplication input) {
         return ResponseEntity.ok().header("Cache-Control", "no-store").header("Vary", "Authorization")
-            .body(catalog.creationResult(tenantId, actor.getSubject(), requestId, input));
+            .body(catalog.creationResult(tenantId, actor.getSubject(), requestId, input).toHttpResult());
     }
     record CreateApplication(@NotBlank @Size(max = 100) String displayName, @NotNull Device.Platform platform,
                              @NotBlank @Size(max = 255) @Pattern(regexp = "[A-Za-z][A-Za-z0-9_]*(\\.[A-Za-z][A-Za-z0-9_]*)+") String packageName,

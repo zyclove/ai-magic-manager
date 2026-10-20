@@ -49,7 +49,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
       "manager.notifications.retention-job.enabled=false"
     })
 @AutoConfigureMockMvc
-@Import(AuditExportJourneyTest.TimeConfiguration.class)
+@Import({AuditExportJourneyTest.TimeConfiguration.class, com.aimanager.support.ControlledIdempotencyTimeConfiguration.class})
 class AuditExportJourneyTest {
   @MockitoSpyBean AuditService audit;
 

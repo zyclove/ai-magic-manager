@@ -10,6 +10,7 @@ import com.aimanager.fleet.Device;
 import com.aimanager.fleet.DeviceAccess;
 import com.aimanager.fleet.DeviceGroupPolicyAccess;
 import com.aimanager.idempotency.IdempotencyService;
+import com.aimanager.idempotency.IdempotencyLookupOutcome;
 import com.aimanager.identity.ActorKeys;
 import com.aimanager.identity.RecentAuthentication;
 import com.aimanager.managedandroid.ManagedExecutionAdmission;
@@ -157,7 +158,7 @@ class PolicyService
    * entry is inconclusive, including after retention cleanup.
    */
   @Transactional(timeout = 10)
-  public PolicyDraft creationResult(
+  public IdempotencyLookupOutcome<PolicyDraft> creationResult(
       String tenant, String actor, String requestId, PolicyController.CreationQuery input) {
     access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
     if (requestId == null
@@ -191,17 +192,18 @@ class PolicyService
       }
       default -> throw DomainException.invalid("INVALID_CREATION_RESULT_REFERENCE");
     }
-    var reference =
-        idempotency
+    return idempotency
             .findCommitted(tenant, actor, operation, requestId, attributes, PolicyDraft.class)
-            .orElseThrow(
+            .requirePresent(
                 () ->
                     new DomainException(
-                        HttpStatus.NOT_FOUND, "POLICY_CREATION_RESULT_UNAVAILABLE"));
-    var current = readDraft(tenant, reference.id(), false);
-    if (current.kind() != input.kind())
-      throw new IllegalStateException("Creation journal does not match the draft kind");
-    return current;
+                        HttpStatus.NOT_FOUND, "POLICY_CREATION_RESULT_UNAVAILABLE"))
+      .map(reference -> {
+      var current = readDraft(tenant, reference.id(), false);
+      if (current.kind() != input.kind())
+        throw new IllegalStateException("Creation journal does not match the draft kind");
+      return current;
+      });
   }
 
   private PolicyDraft insertDraft(
@@ -466,7 +468,7 @@ class PolicyService
    * An absent journal is inconclusive; replay expiry does not renew or repeat the mutation.
    */
   @Transactional(timeout = 10)
-  public PolicyPublication publicationResult(
+  public IdempotencyLookupOutcome<PolicyPublication> publicationResult(
       String tenant,
       String actor,
       String policyId,
@@ -488,8 +490,7 @@ class PolicyService
     readDraft(tenant, policyId, false);
     // Query the exact original intent. A read cannot select a different publication mode.
     var input = new PolicyController.Publish(previewId, previewHash, mode);
-    var reference =
-        idempotency
+    return idempotency
             .findCommitted(
                 tenant,
                 actor,
@@ -497,16 +498,18 @@ class PolicyService
                 requestId,
                 Map.of("policyId", policyId, "revision", revision, "input", input),
                 PolicyPublication.class)
-            .orElseThrow(
+            .requirePresent(
                 () ->
                     new DomainException(
-                        HttpStatus.NOT_FOUND, "POLICY_PUBLICATION_RESULT_UNAVAILABLE"));
-    var version = readVersion(tenant, policyId, reference.versionId());
-    if (version.draftRevision() != revision
-        || !previewHash.equals(version.previewHash())
-        || version.mode() != mode)
-      throw new IllegalStateException("Publication journal does not match its version");
-    return publication(tenant, actor, reference.id());
+                        HttpStatus.NOT_FOUND, "POLICY_PUBLICATION_RESULT_UNAVAILABLE"))
+      .map(reference -> {
+      var version = readVersion(tenant, policyId, reference.versionId());
+      if (version.draftRevision() != revision
+          || !previewHash.equals(version.previewHash())
+          || version.mode() != mode)
+        throw new IllegalStateException("Publication journal does not match its version");
+      return publication(tenant, actor, reference.id());
+      });
   }
 
   /** Only immutable content and the publication row; callers choose mode-specific side effects. */

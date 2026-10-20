@@ -38,7 +38,7 @@ class SubjectManagementController {
   ResponseEntity<SubjectManagementService.Result> query(@AuthenticationPrincipal Jwt actor,
       @PathVariable String tenantId, @PathVariable String requestId,
       @RequestBody SubjectManagementService.Change input) {
-    return response(service.query(tenantId, actor.getSubject(), requestId, input));
+    return response(service.query(tenantId, actor.getSubject(), requestId, input).toHttpResult());
   }
 
   private <T> ResponseEntity<T> response(T body) {
