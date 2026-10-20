@@ -1,0 +1,227 @@
+name: Flutter verification
+run-name: Flutter verification · ${{ github.ref_name }} · ${{ github.sha }}
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: flutter-verification-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: ${{ matrix.id }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      max-parallel: 3
+      matrix:
+        include:
+          - {id: guardian, path: apps/guardian, kind: flutter, tests: true, browser: true, web: true, locked: true}
+          - {id: parent, path: apps/parent, kind: flutter, tests: true, browser: false, web: false, locked: true}
+          - {id: child, path: apps/child, kind: flutter, tests: true, browser: false, web: false, locked: true}
+          - {id: device-operations, path: packages/device_operations, kind: flutter, tests: true, browser: false, web: false, locked: true}
+          - {id: usage-report-ui, path: packages/usage_report_ui, kind: flutter, tests: true, browser: false, web: false, locked: true}
+          - {id: device-operations-example, path: packages/device_operations/example, kind: flutter, tests: true, browser: false, web: true, locked: true}
+          - {id: device-access, path: packages/device_access, kind: dart, tests: true, browser: false, web: false, locked: true}
+          - {id: device-cleanup, path: packages/device_cleanup, kind: dart, tests: true, browser: false, web: false, locked: true}
+          - {id: device-identity, path: packages/device_identity, kind: dart, tests: true, browser: false, web: false, locked: true}
+          - {id: device-observation, path: packages/device_observation, kind: dart, tests: true, browser: false, web: false, locked: true}
+          - {id: device-policy, path: packages/device_policy, kind: dart, tests: true, browser: false, web: false, locked: true}
+          - {id: device-reports, path: packages/device_reports, kind: dart, tests: true, browser: false, web: false, locked: true}
+          - {id: usage-reporting, path: packages/usage_reporting, kind: dart, tests: true, browser: false, web: false, locked: true}
+          # These three libraries have no standalone test suite or committed lockfile.
+          # Their consumers also exercise them under the apps' committed lockfiles.
+          - {id: audit-client, path: packages/audit_client, kind: dart, tests: false, browser: false, web: false, locked: false}
+          - {id: commerce-contracts, path: packages/commerce_contracts, kind: dart, tests: false, browser: false, web: false, locked: false}
+          - {id: notification-client, path: packages/notification_client, kind: dart, tests: false, browser: false, web: false, locked: false}
+    defaults:
+      run:
+        shell: bash
+    env:
+      CI: 'true'
+      TZ: UTC
+      CI_SCOPE: ${{ matrix.id }}
+      CI_PACKAGE: ${{ matrix.path }}
+      CI_KIND: ${{ matrix.kind }}
+      CI_LOCKED: ${{ matrix.locked }}
+      CI_EXPECT_TESTS: ${{ matrix.tests }}
+      CI_EXPECT_BROWSER: ${{ matrix.browser }}
+      FLUTTER_REVISION: 761747bfc538b5af34aa0d3fac380f1bc331ec49
+      # All thirteen existing locks use this source; strict resolution must match it.
+      PUB_HOSTED_URL: https://pub.flutter-io.cn
+    steps:
+      - name: Check out the dispatched commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Bind source identity
+        id: source
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          mkdir -p "$RUNNER_TEMP/ci-evidence"
+          git ls-files -z | sort -z | xargs -0 sha256sum > "$RUNNER_TEMP/ci-evidence/source.sha256"
+          printf 'repository=%s\ncommit=%s\nrun_id=%s\nattempt=%s\nscope=%s\n' \
+            "$GITHUB_REPOSITORY" "$GITHUB_SHA" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" "$CI_SCOPE" \
+            > "$RUNNER_TEMP/ci-evidence/source.txt"
+          python3 - <<'PY'
+          import os, re
+          from pathlib import Path
+          package = Path(os.environ['CI_PACKAGE'])
+          tests = list((package / 'test').rglob('*_test.dart'))
+          if bool(tests) != (os.environ['CI_EXPECT_TESTS'] == 'true'):
+              raise SystemExit('CI_TEST_MATRIX_REQUIRES_UPDATE')
+          if (package / 'pubspec.lock').is_file() != (os.environ['CI_LOCKED'] == 'true'):
+              raise SystemExit('CI_LOCK_MATRIX_REQUIRES_UPDATE')
+          browser = any(re.search(r'''@TestOn\(\s*(['"])([^'"]*browser[^'"]*)\1''',
+                                  path.read_text(encoding='utf-8-sig')) for path in tests)
+          if browser != (os.environ['CI_EXPECT_BROWSER'] == 'true'):
+              raise SystemExit('CI_BROWSER_MATRIX_REQUIRES_UPDATE')
+          PY
+
+      - name: Check out the current Flutter SDK from its official repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          repository: flutter/flutter
+          ref: 761747bfc538b5af34aa0d3fac380f1bc331ec49 # Flutter 3.22.2 / Dart 3.4.3
+          path: .cache/ci-sdk/flutter
+          persist-credentials: false
+
+      - name: Bind the SDK and add its tools to this job
+        run: |
+          test "$(git -C .cache/ci-sdk/flutter rev-parse HEAD)" = "$FLUTTER_REVISION"
+          # Flutter determines its release version from Git tags, even at a pinned commit.
+          git -C .cache/ci-sdk/flutter fetch --depth=1 origin refs/tags/3.22.2:refs/tags/3.22.2
+          test "$(git -C .cache/ci-sdk/flutter rev-parse '3.22.2^{commit}')" = "$FLUTTER_REVISION"
+          printf '%s\n' "$GITHUB_WORKSPACE/.cache/ci-sdk/flutter/bin" >> "$GITHUB_PATH"
+          printf 'PUB_CACHE=%s\n' "$RUNNER_TEMP/ci-pub-cache" >> "$GITHUB_ENV"
+
+      - name: Record actual SDK versions
+        run: |
+          flutter config --no-analytics
+          flutter --version --machine > "$RUNNER_TEMP/ci-evidence/flutter-version.json"
+          dart --version 2>&1 | tee "$RUNNER_TEMP/ci-evidence/dart-version.txt"
+          python3 - <<'PY'
+          import json, os
+          from pathlib import Path
+          data = json.loads((Path(os.environ['RUNNER_TEMP']) / 'ci-evidence/flutter-version.json').read_text())
+          if data['frameworkRevision'] != os.environ['FLUTTER_REVISION'] or data['frameworkVersion'] != '3.22.2':
+              raise SystemExit('CI_FLUTTER_VERSION_CHANGED')
+          if not data['dartSdkVersion'].startswith('3.4.3'):
+              raise SystemExit('CI_DART_VERSION_CHANGED')
+          PY
+
+      - name: Resolve dependencies without changing committed locks
+        working-directory: ${{ matrix.path }}
+        run: |
+          args=()
+          if test "$CI_LOCKED" = true; then
+            test -f pubspec.lock
+            args+=(--enforce-lockfile)
+          fi
+          if test "$CI_KIND" = flutter; then
+            flutter pub get "${args[@]}"
+          else
+            dart pub get "${args[@]}"
+          fi
+          dart pub deps --json > "$RUNNER_TEMP/ci-evidence/pub-dependencies.json"
+          cp pubspec.lock "$RUNNER_TEMP/ci-evidence/resolved-pubspec.lock"
+
+      - name: Check formatting
+        working-directory: ${{ matrix.path }}
+        run: |
+          dirs=()
+          for dir in lib test tool bin integration_test pigeons; do
+            if test -d "$dir"; then dirs+=("$dir"); fi
+          done
+          test "${#dirs[@]}" -gt 0
+          dart format --output=none --set-exit-if-changed "${dirs[@]}"
+
+      - name: Analyze all package sources
+        working-directory: ${{ matrix.path }}
+        run: |
+          if test "$CI_KIND" = flutter; then
+            flutter analyze --no-pub --fatal-infos 2>&1 | tee "$RUNNER_TEMP/ci-evidence/analyze.log"
+          else
+            dart analyze --fatal-infos 2>&1 | tee "$RUNNER_TEMP/ci-evidence/analyze.log"
+          fi
+
+      - name: Run every default VM test in this package
+        id: tests
+        if: ${{ matrix.tests }}
+        working-directory: ${{ matrix.path }}
+        run: |
+          if test "$CI_KIND" = flutter; then
+            flutter test --no-pub --reporter expanded 2>&1 | tee "$RUNNER_TEMP/ci-evidence/vm-tests.log"
+          else
+            dart test --reporter expanded 2>&1 | tee "$RUNNER_TEMP/ci-evidence/vm-tests.log"
+          fi
+
+      - name: Run every browser-only guardian test in Chrome
+        id: browser
+        if: ${{ matrix.browser }}
+        working-directory: ${{ matrix.path }}
+        run: |
+          export CHROME_EXECUTABLE="$(command -v google-chrome)"
+          test -n "$CHROME_EXECUTABLE"
+          "$CHROME_EXECUTABLE" --version > "$RUNNER_TEMP/ci-evidence/chrome-version.txt"
+          # VM already covers the default suite, including tests that use dart:io.
+          # Select by declared platform metadata, not a manually shortened file list.
+          python3 - <<'PY' > "$RUNNER_TEMP/ci-evidence/browser-tests.txt"
+          import re
+          from pathlib import Path
+          selected = []
+          for path in sorted(Path('test').rglob('*_test.dart')):
+              text = path.read_text(encoding='utf-8-sig')
+              match = re.search(r'''@TestOn\(\s*(['"])(.*?)\1\s*\)''', text)
+              if match and 'browser' in match[2]:
+                  if match[2] != 'browser':
+                      raise SystemExit('CI_BROWSER_EXPRESSION_REQUIRES_REVIEW: ' + str(path))
+                  selected.append(str(path))
+          if not selected:
+              raise SystemExit('CI_BROWSER_SUITE_MISSING')
+          print('\n'.join(selected))
+          PY
+          mapfile -t browser_tests < "$RUNNER_TEMP/ci-evidence/browser-tests.txt"
+          flutter test --no-pub --platform chrome --reporter expanded \
+            "${browser_tests[@]}" \
+            2>&1 | tee "$RUNNER_TEMP/ci-evidence/browser-tests.log"
+
+      - name: Build the existing web targets
+        id: web
+        if: ${{ matrix.web }}
+        working-directory: ${{ matrix.path }}
+        run: |
+          flutter build web --release --no-pub 2>&1 | tee "$RUNNER_TEMP/ci-evidence/web-build.log"
+          find build/web -type f -print0 | sort -z | xargs -0 sha256sum \
+            > "$RUNNER_TEMP/ci-evidence/web-output.sha256"
+
+      - name: Verify unchanged source and record coverage boundaries
+        if: ${{ always() && steps.source.outcome == 'success' }}
+        env:
+          CI_TEST_OUTCOME: ${{ steps.tests.outcome }}
+          CI_BROWSER_OUTCOME: ${{ steps.browser.outcome }}
+          CI_WEB_OUTCOME: ${{ steps.web.outcome }}
+        run: |
+          sha256sum --check --quiet "$RUNNER_TEMP/ci-evidence/source.sha256"
+          printf '### %s\n\nCommit: `%s`\n\nVM: %s; Chrome: %s; web build: %s.\n\n' \
+            "$CI_SCOPE" "$GITHUB_SHA" "$CI_TEST_OUTCOME" "$CI_BROWSER_OUTCOME" "$CI_WEB_OUTCOME" \
+            >> "$GITHUB_STEP_SUMMARY"
+          printf '%s\n' 'Source CI only; no Android/TV, real EMM, production API or database acceptance.' \
+            >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Preserve diagnostics for this exact commit
+        if: ${{ always() && steps.source.outcome == 'success' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: flutter-${{ matrix.id }}-${{ github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/ci-evidence/
+          if-no-files-found: error
+          retention-days: 14
+          include-hidden-files: false

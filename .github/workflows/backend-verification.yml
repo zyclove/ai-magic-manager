@@ -1,0 +1,197 @@
+name: Backend verification
+run-name: Backend verification · ${{ github.ref_name }} · ${{ github.sha }}
+
+# Manual during baseline recovery. Publishing this file does not run a build.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-verification-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  verify:
+    name: Java 17 / ${{ matrix.module }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        module: [backend, identity-extensions]
+    defaults:
+      run:
+        shell: bash
+    env:
+      CI_MODULE: ${{ matrix.module }}
+      CI: 'true'
+      TZ: UTC
+      MAVEN_VERSION: '3.9.7'
+      MAVEN_ARCHIVE_SHA512: f64913f89756264f2686e241f3f4486eca5d0dfdbb97077b0efc389cad376053824d58caa35c39648453ca58639f85335f9be9c8f217bfdb0c2d5ff2a9428fac
+      MAVEN_OPTS: -Xmx1024m -Dfile.encoding=UTF-8
+    steps:
+      - name: Check out the dispatched commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Bind source identity
+        id: source
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          mkdir -p "$RUNNER_TEMP/ci-evidence"
+          git ls-files -z | sort -z | xargs -0 sha256sum > "$RUNNER_TEMP/ci-evidence/source.sha256"
+          printf 'repository=%s\ncommit=%s\nrun_id=%s\nattempt=%s\nmodule=%s\n' \
+            "$GITHUB_REPOSITORY" "$GITHUB_SHA" "$GITHUB_RUN_ID" "$GITHUB_RUN_ATTEMPT" "$CI_MODULE" \
+            > "$RUNNER_TEMP/ci-evidence/source.txt"
+          python3 - <<'PY'
+          import json, os, re
+          from pathlib import Path
+          rows = []
+          for path in sorted((Path(os.environ['CI_MODULE']) / 'src/test').rglob('*.java')):
+              text = path.read_text(encoding='utf-8-sig')
+              pattern = r'@(EnabledIfSystemProperty|EnabledIfEnvironmentVariable)\(\s*named\s*=\s*"([^"]+)"'
+              for match in re.finditer(pattern, text):
+                  rows.append(dict(source=str(path), condition=match[1], name=match[2],
+                                   suppliedByThisWorkflow=False))
+          folder = Path(os.environ['RUNNER_TEMP']) / 'ci-evidence'
+          (folder / 'conditional-prerequisites.json').write_text(json.dumps(rows, indent=2) + '\n')
+          with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a') as out:
+              out.write('### Conditional test prerequisites\n\n')
+              out.write('This workflow does not supply native runners, Dart interop commands, isolated Keycloak or MySQL credentials.\n\n')
+              if rows:
+                  out.write('**Known incomplete environment: default skip=0 acceptance is expected to fail.**\n\n')
+                  for row in rows:
+                      out.write('- `' + row['name'] + '` — `' + row['source'] + '`\n')
+              else:
+                  out.write('No matching conditional annotation found in this module; inspect actual reports.\n')
+          PY
+
+      - name: Set up Java 17
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+          cache-dependency-path: ${{ matrix.module }}/pom.xml
+          overwrite-settings: false
+
+      - name: Set up the existing Maven version
+        run: |
+          archive="$RUNNER_TEMP/apache-maven-$MAVEN_VERSION-bin.tar.gz"
+          curl --fail --silent --show-error --location --retry 3 \
+            "https://archive.apache.org/dist/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz" \
+            --output "$archive"
+          printf '%s  %s\n' "$MAVEN_ARCHIVE_SHA512" "$archive" | sha512sum --check --strict -
+          tar --extract --gzip --file "$archive" --directory "$RUNNER_TEMP"
+          printf '%s\n' "$RUNNER_TEMP/apache-maven-$MAVEN_VERSION/bin" >> "$GITHUB_PATH"
+
+      - name: Record actual tools
+        run: |
+          java -version 2>&1 | tee "$RUNNER_TEMP/ci-evidence/java.txt"
+          mvn --version | tee "$RUNNER_TEMP/ci-evidence/maven.txt"
+
+      - name: Compile all sources and resolve the test classpath
+        id: compile
+        run: |
+          mvn --batch-mode --no-transfer-progress -f "$CI_MODULE/pom.xml" \
+            -DfailIfNoTests=true -Dstyle.color=never \
+            "-Dmdep.outputFile=$RUNNER_TEMP/ci-evidence/project-classpath.txt" \
+            clean test-compile org.apache.maven.plugins:maven-dependency-plugin:3.8.1:build-classpath \
+            2>&1 | tee "$RUNNER_TEMP/ci-evidence/compile.log"
+          find "$CI_MODULE/target/classes" "$CI_MODULE/target/test-classes" -type f -print0 \
+            | sort -z | xargs -0 sha256sum > "$RUNNER_TEMP/ci-evidence/compiled-before.sha256"
+          python3 - <<'PY'
+          import hashlib, json, os
+          from pathlib import Path
+          folder = Path(os.environ['RUNNER_TEMP']) / 'ci-evidence'
+          jars = [Path(p) for p in (folder / 'project-classpath.txt').read_text().strip().split(os.pathsep)]
+          if not jars or any(not p.is_file() or p.suffix != '.jar' for p in jars):
+              raise SystemExit('CI_PROJECT_CLASSPATH_INVALID')
+          rows = []
+          for path in jars:
+              with path.open('rb') as stream:
+                  rows.append(dict(path=str(path), sha256=hashlib.file_digest(stream, 'sha256').hexdigest()))
+          (folder / 'project-jars.json').write_text(json.dumps(rows, indent=2) + '\n')
+          PY
+
+      - name: Run the complete default test suite and package
+        id: verify
+        run: |
+          mvn --batch-mode --no-transfer-progress -f "$CI_MODULE/pom.xml" \
+            -DfailIfNoTests=true -Dstyle.color=never verify \
+            2>&1 | tee "$RUNNER_TEMP/ci-evidence/verify.log"
+
+      - name: Check source, compiled outputs, dependencies and test totals
+        if: ${{ always() && steps.source.outcome == 'success' }}
+        env:
+          CI_VERIFY_OUTCOME: ${{ steps.verify.outcome }}
+        run: |
+          sha256sum --check --quiet "$RUNNER_TEMP/ci-evidence/source.sha256"
+          if test -f "$RUNNER_TEMP/ci-evidence/compiled-before.sha256"; then
+            find "$CI_MODULE/target/classes" "$CI_MODULE/target/test-classes" -type f -print0 \
+              | sort -z | xargs -0 sha256sum > "$RUNNER_TEMP/ci-evidence/compiled-after.sha256"
+            cmp "$RUNNER_TEMP/ci-evidence/compiled-before.sha256" "$RUNNER_TEMP/ci-evidence/compiled-after.sha256"
+          fi
+          python3 - <<'PY'
+          import hashlib, json, os, xml.etree.ElementTree as ET
+          from pathlib import Path
+          folder = Path(os.environ['RUNNER_TEMP']) / 'ci-evidence'
+          module = Path(os.environ['CI_MODULE'])
+          pins = folder / 'project-jars.json'
+          if pins.exists():
+              for row in json.loads(pins.read_text()):
+                  with Path(row['path']).open('rb') as stream:
+                      if hashlib.file_digest(stream, 'sha256').hexdigest() != row['sha256']:
+                          raise SystemExit('CI_PROJECT_DEPENDENCY_CHANGED')
+          reports = sorted((module / 'target/surefire-reports').glob('TEST-*.xml'))
+          totals = dict(tests=0, failures=0, errors=0, skipped=0)
+          runtime_jars = {}
+          skipped_cases = []
+          for report in reports:
+              suite = ET.parse(report).getroot()
+              for key in totals:
+                  totals[key] += int(suite.attrib[key])
+              for case in suite.findall('testcase'):
+                  skipped = case.find('skipped')
+                  if skipped is not None:
+                      skipped_cases.append(dict(classname=case.get('classname'), name=case.get('name'),
+                                                reason=skipped.get('message', '')))
+              for prop in suite.findall('./properties/property'):
+                  if prop.get('name') == 'surefire.test.class.path':
+                      for item in prop.get('value', '').split(os.pathsep):
+                          path = Path(item)
+                          if item and path.suffix == '.jar' and path.is_file():
+                              with path.open('rb') as stream:
+                                  runtime_jars[str(path)] = hashlib.file_digest(stream, 'sha256').hexdigest()
+          result = dict(commit=os.environ['GITHUB_SHA'], module=str(module), totals=totals,
+                        reportFiles=len(reports), verifyOutcome=os.environ['CI_VERIFY_OUTCOME'],
+                        skippedCases=skipped_cases,
+                        runtimeJarHashesObservedAfterTests=runtime_jars,
+                        realMysqlVerified=False, realDeviceVerified=False)
+          (folder / 'test-summary.json').write_text(json.dumps(result, indent=2) + '\n')
+          with Path(os.environ['GITHUB_STEP_SUMMARY']).open('a') as out:
+              out.write('### ' + str(module) + '\n\nCommit: `' + os.environ['GITHUB_SHA'] + '`\n\n')
+              out.write('Observed totals: `' + json.dumps(totals) + '`\n\n')
+              for case in skipped_cases:
+                  out.write('- Skipped: `' + str(case['classname']) + '#' + str(case['name']) + '`\n')
+          if os.environ['CI_VERIFY_OUTCOME'] != 'success' or not reports or totals['tests'] == 0:
+              raise SystemExit('CI_TEST_RUN_NOT_SUCCESSFUL')
+          if any(totals[k] for k in ('failures', 'errors', 'skipped')):
+              raise SystemExit('CI_TEST_FAILURE_ERROR_OR_SKIP')
+          PY
+
+      - name: Preserve reports for this exact commit
+        if: ${{ always() && steps.source.outcome == 'success' }}
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: backend-${{ matrix.module }}-${{ github.sha }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/ci-evidence/
+            ${{ matrix.module }}/target/surefire-reports/TEST-*.xml
+          if-no-files-found: error
+          retention-days: 14
+          include-hidden-files: false

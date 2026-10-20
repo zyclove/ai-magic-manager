@@ -1,0 +1,30 @@
+{
+  "status": "LOCAL_GIT_COMMIT_OBSERVED_NOT_RUNTIME_VERIFIED",
+  "observedUtc": "2026-10-20T11:59:56.305710+00:00",
+  "branch": "dev",
+  "commit": "3b6c4178f87fdbcac1c4f448a4ef2ae962cfd35e",
+  "parent": "e420bfb9091b1c57c6aaa2d3b3456754e79cc269",
+  "subject": "feat(guardian): simplify workflows and preserve scoped interaction state",
+  "pathsCommitted": 78,
+  "sourcePaths": 73,
+  "documentationPaths": 5,
+  "allCommittedPathsMatchPreparedManifest": true,
+  "allCommittedGitBlobsMatchPreparedManifest": true,
+  "allWorkspaceBytesMatchPreparedManifest": true,
+  "indexEmptyAfterCommit": true,
+  "preCommitWhitespaceCheck": {
+    "exitCode": 0,
+    "processLocalWhitespace": "blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol"
+  },
+  "sourceManifest": "docs/evidence/guardian-interaction-checkpoint-20261020.json",
+  "sdkInvoked": false,
+  "formatterInvoked": false,
+  "analyzerInvoked": false,
+  "testsExecuted": false,
+  "buildExecuted": false,
+  "remotePushed": false,
+  "serviceUpdated": false,
+  "databaseUpdated": false,
+  "wholeWorkspaceClean": false,
+  "note": "Other development stages and CRLF-only worktree noise remain. This receipt verifies the local commit, not runtime behavior."
+}
