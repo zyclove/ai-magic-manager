@@ -97,7 +97,13 @@ class ManagedExecutionResourceAuthorityTest {
     assertThat(f.f.view()).isEqualTo(before);
     assertThat(f.f.events()).isEqualTo(events);
     verify(f.preparation, times(2))
-        .prepare(anyString(), anyString(), anyString(), anyString(), anyLong());
+        .prepare(
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyLong(),
+            any(ManagedProviderCalls.Budget.class));
     verify(gateway, never()).writePolicyCandidate(anyString(), anyString(), any());
     verify(gateway, never()).assignPolicy(anyString(), anyString(), anyString());
     assertThat(result.toString() + requested.get() + result.evidence())
@@ -151,7 +157,13 @@ class ManagedExecutionResourceAuthorityTest {
   @ParameterizedTest
   @ValueSource(strings = {"UNAVAILABLE", "UNSUPPORTED", "REVISION", "PROVIDER"})
   void neverQueriesAuthorityWhenConnectorChangesDuringInitialPreparation(String change) {
-    when(f.preparation.prepare(anyString(), anyString(), anyString(), anyString(), anyLong()))
+    when(f.preparation.prepare(
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyLong(),
+            any(ManagedProviderCalls.Budget.class)))
         .thenAnswer(
             call -> {
               switch (change) {
@@ -317,7 +329,13 @@ class ManagedExecutionResourceAuthorityTest {
   void revalidatesApplicationQualificationsAfterAuthorityRead() {
     observer =
         t -> {
-          when(f.preparation.prepare(anyString(), anyString(), anyString(), anyString(), anyLong()))
+          when(f.preparation.prepare(
+                  anyString(),
+                  anyString(),
+                  anyString(),
+                  anyString(),
+                  anyLong(),
+                  any(ManagedProviderCalls.Budget.class)))
               .thenThrow(
                   new DomainException(
                       HttpStatus.UNPROCESSABLE_ENTITY, "TEST_APPLICATION_QUALIFICATION_REVOKED"));
@@ -339,7 +357,13 @@ class ManagedExecutionResourceAuthorityTest {
                   p.namespaceReference(),
                   p.observedAt(),
                   Instant.ofEpochMilli(f.now.get() + 1000));
-          when(f.preparation.prepare(anyString(), anyString(), anyString(), anyString(), anyLong()))
+          when(f.preparation.prepare(
+                  anyString(),
+                  anyString(),
+                  anyString(),
+                  anyString(),
+                  anyLong(),
+                  any(ManagedProviderCalls.Budget.class)))
               .thenAnswer(
                   call -> {
                     f.now.addAndGet(1000);
@@ -433,13 +457,14 @@ class ManagedExecutionResourceAuthorityTest {
   private ManagedExecutionResourceAuthorityService create(long age, long reuse, long skew) {
     return new ManagedExecutionResourceAuthorityService(
         f.sql.journal,
-        new ManagedExecutionPreparationService(f.sql.journal, f.preparation, f.clock),
+        new ManagedExecutionPreparationService(f.sql.journal, f.preparation, f.clock, f.calls),
         gateway,
         mapper,
         f.clock,
         age,
         reuse,
-        skew);
+        skew,
+        f.calls);
   }
 
   private ManagedPolicyResourceEvidence valid(Target target) {

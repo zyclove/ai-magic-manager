@@ -8,6 +8,7 @@ import com.aimanager.managedandroid.ManagedExecutionPublicationAccess;
 import com.aimanager.shared.DomainException;
 import com.aimanager.shared.SafetyCriticalPackages;
 import java.time.Clock;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.Set;
@@ -33,6 +34,7 @@ class ManagedPolicyPreparationService {
   private final Clock clock;
   private final TransactionTemplate tx;
   private final Set<String> protectedPackages;
+  private final ManagedProviderCalls calls;
 
   ManagedPolicyPreparationService(
       ManagedAgentBindingStore bindings,
@@ -45,7 +47,8 @@ class ManagedPolicyPreparationService {
       Clock clock,
       PlatformTransactionManager transactions,
       @Value("${manager.policies.additional-protected-packages:}")
-          String additionalProtectedPackages) {
+          String additionalProtectedPackages,
+      ManagedProviderCalls calls) {
     this.bindings = bindings;
     this.enrollments = enrollments;
     this.publications = publications;
@@ -54,6 +57,7 @@ class ManagedPolicyPreparationService {
     this.settings = settings;
     this.controls = controls;
     this.clock = clock;
+    this.calls = Objects.requireNonNull(calls);
     this.protectedPackages = SafetyCriticalPackages.withAdditional(additionalProtectedPackages);
     tx = new TransactionTemplate(transactions);
     tx.setIsolationLevel(TransactionDefinition.ISOLATION_READ_COMMITTED);
@@ -61,17 +65,39 @@ class ManagedPolicyPreparationService {
   }
 
   Prepared prepare(String tenant, String actor, String publication, String binding, long version) {
+    ManagedProviderCalls.Budget budget;
+    try {
+      budget = calls.budget(Duration.ofSeconds(30));
+    } catch (RuntimeException unavailable) {
+      throw new DomainException(
+          HttpStatus.SERVICE_UNAVAILABLE, "MANAGED_PREPARATION_PROVIDER_UNAVAILABLE");
+    }
+    return prepare(tenant, actor, publication, binding, version, budget);
+  }
+
+  /** One caller-owned budget includes context reads, all provider reads and compilation. */
+  Prepared prepare(
+      String tenant,
+      String actor,
+      String publication,
+      String binding,
+      long version,
+      ManagedProviderCalls.Budget budget) {
     // Imperative guard also covers direct callers, where Spring method interception is absent.
     if (TransactionSynchronizationManager.isActualTransactionActive())
       throw new IllegalStateException("Policy preparation requires separate short transactions");
+    checkBudget(budget);
     var before = tx.execute(status -> capture(tenant, actor, publication, binding, version));
+    checkBudget(budget);
     var target = before.binding();
     var first =
         read(
+            budget,
             () -> gateway.readEnrollmentIdentity(target.enterpriseId(), target.providerDeviceId()));
     ManagedEnrollmentStore.requireProvenance(before.enrollment(), target.providerDeviceId(), first);
     ManagedDeviceExecutionProfile profile =
         read(
+            budget,
             () ->
                 gateway
                     .readExecutionProfile(target.enterpriseId(), target.providerDeviceId())
@@ -79,41 +105,48 @@ class ManagedPolicyPreparationService {
     Instant retrievedAt = clock.instant();
     var last =
         read(
+            budget,
             () -> gateway.readEnrollmentIdentity(target.enterpriseId(), target.providerDeviceId()));
     ManagedEnrollmentStore.requireProvenance(before.enrollment(), target.providerDeviceId(), last);
     if (!first.equals(last))
       throw new DomainException(HttpStatus.CONFLICT, "EMM_DEVICE_IDENTITY_CHANGED");
-    return tx.execute(
-        status -> {
-          var current = capture(tenant, actor, publication, binding, version);
-          if (!before.equals(current)) throw changed();
-          Instant notBefore =
-              Instant.ofEpochMilli(
-                  Math.max(
-                      current.enrollment().verifiedAt(),
-                      Math.max(target.registeredAt(), target.bindingVerifiedAt())));
-          String deviceName =
-              "enterprises/" + target.enterpriseId() + "/devices/" + target.providerDeviceId();
-          var verified = settings.verifier.verify(deviceName, notBefore, profile, retrievedAt);
-          var document =
-              compilers.compile(
-                  target.provider(),
-                  target.agentPackageName(),
-                  verified,
+    var prepared =
+        tx.execute(
+            status -> {
+              checkBudget(budget);
+              var current = capture(tenant, actor, publication, binding, version);
+              checkBudget(budget);
+              if (!before.equals(current)) throw changed();
+              Instant notBefore =
+                  Instant.ofEpochMilli(
+                      Math.max(
+                          current.enrollment().verifiedAt(),
+                          Math.max(target.registeredAt(), target.bindingVerifiedAt())));
+              String deviceName =
+                  "enterprises/" + target.enterpriseId() + "/devices/" + target.providerDeviceId();
+              var verified = settings.verifier.verify(deviceName, notBefore, profile, retrievedAt);
+              var document =
+                  compilers.compile(
+                      target.provider(),
+                      target.agentPackageName(),
+                      verified,
+                      current.desired(),
+                      protectedPackages);
+              // A slow compilation may consume the remaining evidence lifetime; do not return an
+              // expired result.
+              verified = settings.verifier.verify(deviceName, notBefore, profile, retrievedAt);
+              controls.requireFresh(current.controls());
+              checkBudget(budget);
+              return new Prepared(
+                  publication,
+                  current.binding(),
                   current.desired(),
-                  protectedPackages);
-          // A slow compilation may consume the remaining evidence lifetime; do not return an
-          // expired result.
-          verified = settings.verifier.verify(deviceName, notBefore, profile, retrievedAt);
-          controls.requireFresh(current.controls());
-          return new Prepared(
-              publication,
-              current.binding(),
-              current.desired(),
-              verified,
-              document,
-              current.controls());
-        });
+                  verified,
+                  document,
+                  current.controls());
+            });
+    checkBudget(budget);
+    return prepared;
   }
 
   private Snapshot capture(
@@ -150,13 +183,22 @@ class ManagedPolicyPreparationService {
     return new Snapshot(current, enrollment, desired, controls.check(current, desired));
   }
 
-  private <T> T read(Supplier<T> operation) {
+  private <T> T read(ManagedProviderCalls.Budget budget, Supplier<T> operation) {
     if (TransactionSynchronizationManager.isActualTransactionActive())
       throw new IllegalStateException("Provider reads cannot run inside a transaction");
     try {
-      return operation.get();
+      return calls.call(budget, operation::get);
     } catch (RuntimeException failure) {
       // Provider failures may contain secrets. Preserve no message, body or exception cause.
+      throw new DomainException(
+          HttpStatus.SERVICE_UNAVAILABLE, "MANAGED_PREPARATION_PROVIDER_UNAVAILABLE");
+    }
+  }
+
+  private void checkBudget(ManagedProviderCalls.Budget budget) {
+    try {
+      calls.check(budget);
+    } catch (RuntimeException unavailable) {
       throw new DomainException(
           HttpStatus.SERVICE_UNAVAILABLE, "MANAGED_PREPARATION_PROVIDER_UNAVAILABLE");
     }

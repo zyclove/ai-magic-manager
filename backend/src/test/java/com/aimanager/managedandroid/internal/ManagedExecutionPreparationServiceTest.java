@@ -31,6 +31,8 @@ class ManagedExecutionPreparationServiceTest {
   ManagedPolicyPreparationService.Prepared prepared;
   Clock clock;
   AtomicLong now;
+  final ManagedProviderCalls calls =
+      new ManagedProviderCalls(1, java.time.Duration.ofSeconds(20), System::nanoTime);
 
   @BeforeEach
   void setup() {
@@ -44,7 +46,13 @@ class ManagedExecutionPreparationServiceTest {
     when(clock.instant()).thenAnswer(call -> Instant.ofEpochMilli(now.get()));
     preparation = mock(ManagedPolicyPreparationService.class);
     prepared = prepared("VALID");
-    when(preparation.prepare(anyString(), anyString(), anyString(), anyString(), anyLong()))
+    when(preparation.prepare(
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyLong(),
+            any(ManagedProviderCalls.Budget.class)))
         .thenAnswer(
             call -> {
               assertThat(TransactionSynchronizationManager.isActualTransactionActive()).isFalse();
@@ -54,6 +62,7 @@ class ManagedExecutionPreparationServiceTest {
 
   @AfterEach
   void close() {
+    calls.close();
     f.close();
   }
 
@@ -69,7 +78,13 @@ class ManagedExecutionPreparationServiceTest {
     assertThat(ManagedExecutionPreparationContextTest.field(result, "expiresAt"))
         .isEqualTo(f.claim.leaseUntil());
     verify(preparation)
-        .prepare(device.tenant(), device.actor(), device.publication(), device.binding(), 2);
+        .prepare(
+            eq(device.tenant()),
+            eq(device.actor()),
+            eq(device.publication()),
+            eq(device.binding()),
+            eq(2L),
+            any(ManagedProviderCalls.Budget.class));
     assertThat(f.view()).isEqualTo(before);
     assertThat(f.events()).isEqualTo(events);
     assertThat(result.toString())
@@ -104,7 +119,13 @@ class ManagedExecutionPreparationServiceTest {
               return prepared;
             })
         .when(preparation)
-        .prepare(anyString(), anyString(), anyString(), anyString(), anyLong());
+        .prepare(
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyLong(),
+            any(ManagedProviderCalls.Budget.class));
     assertThatThrownBy(this::prepare)
         .isInstanceOf(DomainException.class)
         .hasMessage("EXECUTION_PREPARATION_STALE");
@@ -120,7 +141,13 @@ class ManagedExecutionPreparationServiceTest {
               return prepared;
             })
         .when(preparation)
-        .prepare(anyString(), anyString(), anyString(), anyString(), anyLong());
+        .prepare(
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyLong(),
+            any(ManagedProviderCalls.Budget.class));
     assertThatThrownBy(this::prepare)
         .isInstanceOf(DomainException.class)
         .hasMessage("TEST_AUTHORITY_REVOKED");
@@ -160,7 +187,13 @@ class ManagedExecutionPreparationServiceTest {
               return prepared;
             })
         .when(preparation)
-        .prepare(anyString(), anyString(), anyString(), anyString(), anyLong());
+        .prepare(
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyLong(),
+            any(ManagedProviderCalls.Budget.class));
     assertThatThrownBy(this::prepare)
         .isInstanceOf(DomainException.class)
         .hasMessage("EXECUTION_PREPARATION_STALE");
@@ -203,7 +236,13 @@ class ManagedExecutionPreparationServiceTest {
               return prepared;
             })
         .when(preparation)
-        .prepare(anyString(), anyString(), anyString(), anyString(), anyLong());
+        .prepare(
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyLong(),
+            any(ManagedProviderCalls.Budget.class));
     assertThatThrownBy(this::prepare)
         .isInstanceOf(DomainException.class)
         .hasMessage("EXECUTION_CONTEXT_CHANGED");
@@ -238,7 +277,13 @@ class ManagedExecutionPreparationServiceTest {
               return prepared;
             })
         .when(preparation)
-        .prepare(anyString(), anyString(), anyString(), anyString(), anyLong());
+        .prepare(
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyLong(),
+            any(ManagedProviderCalls.Budget.class));
     assertThatThrownBy(this::prepare)
         .isInstanceOf(DomainException.class)
         .hasMessage(versionChanged ? "EXECUTION_CONTEXT_CHANGED" : "EXECUTION_PREPARATION_CHANGED");
@@ -263,7 +308,13 @@ class ManagedExecutionPreparationServiceTest {
               return prepared;
             })
         .when(preparation)
-        .prepare(anyString(), anyString(), anyString(), anyString(), anyLong());
+        .prepare(
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyLong(),
+            any(ManagedProviderCalls.Budget.class));
     assertThatThrownBy(this::prepare)
         .isInstanceOf(DomainException.class)
         .hasMessage("EXECUTION_PREPARATION_EXPIRED");
@@ -276,7 +327,13 @@ class ManagedExecutionPreparationServiceTest {
             new DomainException(
                 HttpStatus.UNPROCESSABLE_ENTITY, "MANAGED_PREPARATION_APPLICATION_UNVERIFIED"))
         .when(preparation)
-        .prepare(anyString(), anyString(), anyString(), anyString(), anyLong());
+        .prepare(
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyLong(),
+            any(ManagedProviderCalls.Budget.class));
     assertThatThrownBy(this::prepare)
         .isInstanceOf(DomainException.class)
         .hasMessage("MANAGED_PREPARATION_APPLICATION_UNVERIFIED");
@@ -335,8 +392,9 @@ class ManagedExecutionPreparationServiceTest {
           type.getDeclaredConstructor(
               ManagedPolicyExecutionJournal.class,
               ManagedPolicyPreparationService.class,
-              Clock.class);
-      var service = constructor.newInstance(sql.journal, preparation, clock);
+              Clock.class,
+              ManagedProviderCalls.class);
+      var service = constructor.newInstance(sql.journal, preparation, clock, calls);
       return type.getDeclaredMethod("prepare", ManagedPolicyExecutionJournal.Claim.class)
           .invoke(service, f.claim);
     } catch (ClassNotFoundException missing) {

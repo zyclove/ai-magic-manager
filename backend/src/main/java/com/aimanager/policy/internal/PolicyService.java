@@ -12,8 +12,9 @@ import com.aimanager.fleet.DeviceGroupPolicyAccess;
 import com.aimanager.idempotency.IdempotencyService;
 import com.aimanager.identity.ActorKeys;
 import com.aimanager.identity.RecentAuthentication;
-import com.aimanager.policy.*;
+import com.aimanager.managedandroid.ManagedExecutionAdmission;
 import com.aimanager.managedandroid.ManagedPolicyEvidenceAccess;
+import com.aimanager.policy.*;
 import com.aimanager.schedule.ScheduleCatalog;
 import com.aimanager.schedule.ScheduleEntry;
 import com.aimanager.shared.*;
@@ -85,6 +86,7 @@ class PolicyService
   private final ApplicationCatalog catalog;
   private final ScheduleCatalog schedules;
   private final ManagedPolicyEvidenceAccess managedEvidence;
+  private final ManagedExecutionAdmission executionAdmission;
   private final DeviceGroupPolicyAccess groups;
   private final DeviceAccess devices;
   private final AccessRequestDeviceScope requestDevices;
@@ -104,6 +106,7 @@ class PolicyService
       ApplicationCatalog catalog,
       ScheduleCatalog schedules,
       ManagedPolicyEvidenceAccess managedEvidence,
+      ManagedExecutionAdmission executionAdmission,
       DeviceGroupPolicyAccess groups,
       DeviceAccess devices,
       AccessRequestDeviceScope requestDevices,
@@ -123,6 +126,7 @@ class PolicyService
     this.catalog = catalog;
     this.schedules = schedules;
     this.managedEvidence = managedEvidence;
+    this.executionAdmission = executionAdmission;
     this.groups = groups;
     this.compiler = compiler;
     this.previewTtlMillis = previewTtl * 1000;
@@ -148,16 +152,16 @@ class PolicyService
   }
 
   /**
-   * Recover a mobile empty-draft/template-copy result without replaying creation.
-   * Match the original creator, key and payload, then re-read the current scoped draft.
-   * A missing journal entry is inconclusive, including after retention cleanup.
+   * Recover a mobile empty-draft/template-copy result without replaying creation. Match the
+   * original creator, key and payload, then re-read the current scoped draft. A missing journal
+   * entry is inconclusive, including after retention cleanup.
    */
   @Transactional(timeout = 10)
-  public PolicyDraft creationResult(String tenant, String actor, String requestId,
-      PolicyController.CreationQuery input) {
+  public PolicyDraft creationResult(
+      String tenant, String actor, String requestId, PolicyController.CreationQuery input) {
     access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
-    if (requestId == null || !requestId.matches(
-        "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
+    if (requestId == null
+        || !requestId.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"))
       throw DomainException.invalid("INVALID_CREATION_RESULT_REFERENCE");
     String operation;
     Map<String, ?> attributes;
@@ -166,18 +170,34 @@ class PolicyService
         if (input.templateId() != null || input.templateRevision() != null)
           throw DomainException.invalid("INVALID_CREATION_RESULT_REFERENCE");
         operation = "policy.create";
-        attributes = Map.of("input", new PolicyController.CreateDraft(input.name(), input.kind(), List.of()));
+        attributes =
+            Map.of(
+                "input", new PolicyController.CreateDraft(input.name(), input.kind(), List.of()));
       }
       case TEMPLATE_COPY -> {
-        if (input.templateId() == null || input.templateRevision() == null || input.kind() != PolicyDraft.Kind.POLICY)
+        if (input.templateId() == null
+            || input.templateRevision() == null
+            || input.kind() != PolicyDraft.Kind.POLICY)
           throw DomainException.invalid("INVALID_CREATION_RESULT_REFERENCE");
         operation = "policy.template.copy";
-        attributes = Map.of("id", input.templateId(), "name", input.name(), "revision", input.templateRevision());
+        attributes =
+            Map.of(
+                "id",
+                input.templateId(),
+                "name",
+                input.name(),
+                "revision",
+                input.templateRevision());
       }
       default -> throw DomainException.invalid("INVALID_CREATION_RESULT_REFERENCE");
     }
-    var reference = idempotency.findCommitted(tenant, actor, operation, requestId, attributes, PolicyDraft.class)
-        .orElseThrow(() -> new DomainException(HttpStatus.NOT_FOUND, "POLICY_CREATION_RESULT_UNAVAILABLE"));
+    var reference =
+        idempotency
+            .findCommitted(tenant, actor, operation, requestId, attributes, PolicyDraft.class)
+            .orElseThrow(
+                () ->
+                    new DomainException(
+                        HttpStatus.NOT_FOUND, "POLICY_CREATION_RESULT_UNAVAILABLE"));
     var current = readDraft(tenant, reference.id(), false);
     if (current.kind() != input.kind())
       throw new IllegalStateException("Creation journal does not match the draft kind");
@@ -328,18 +348,24 @@ class PolicyService
     ResourceVersions.check(ResourceVersions.require(ifMatch), draft.revision());
     if (draft.kind() == PolicyDraft.Kind.TEMPLATE)
       throw DomainException.invalid("TEMPLATE_REQUIRES_COPY");
-    var source = input.groupId() == null
-        ? null : new PolicySnapshot.GroupSelection(input.groupId(), input.groupVersion());
+    var source =
+        input.groupId() == null
+            ? null
+            : new PolicySnapshot.GroupSelection(input.groupId(), input.groupVersion());
     var registrations = resolveGroup(tenant, actor, source, deviceIds);
     var snapshot = snapshot(tenant, actor, draft, deviceIds, source);
     checkGroupRegistrations(snapshot, registrations);
     if (snapshot.targets().stream().anyMatch(t -> t.state() != Device.State.ACTIVE))
       throw new DomainException(HttpStatus.CONFLICT, "DEVICE_NOT_ACTIVE");
     String previewId = UUID.randomUUID().toString(), hash = fingerprint(tenant, draft, snapshot);
-    long expires = snapshot.targets().stream().flatMap(t -> t.applicationEvidence().stream())
-        .map(ManagedPolicyEvidenceAccess.ApplicationEvidence::expiresAt).filter(Objects::nonNull)
-        .min(Long::compare).map(at -> Math.min(at, clock.millis() + previewTtlMillis))
-        .orElseGet(() -> clock.millis() + previewTtlMillis);
+    long expires =
+        snapshot.targets().stream()
+            .flatMap(t -> t.applicationEvidence().stream())
+            .map(ManagedPolicyEvidenceAccess.ApplicationEvidence::expiresAt)
+            .filter(Objects::nonNull)
+            .min(Long::compare)
+            .map(at -> Math.min(at, clock.millis() + previewTtlMillis))
+            .orElseGet(() -> clock.millis() + previewTtlMillis);
     jdbc.update(
         "INSERT INTO"
             + " policy_previews(tenant_id,id,policy_id,draft_revision,hash,snapshot_json,created_at,expires_at,creator_actor_key)"
@@ -367,8 +393,7 @@ class PolicyService
   }
 
   /**
-   * A signed/transport-ready ENFORCE path is intentionally unavailable until delivery adapters
-   * exist.
+   * Configuration delivery and execution admission share atomic versioning, not delivery events.
    */
   @Transactional(isolation = Isolation.READ_COMMITTED, timeout = 10)
   public PolicyPublication publish(
@@ -412,17 +437,11 @@ class PolicyService
               || reviewed.expiresAt() <= clock.millis()
               || !reviewed.hash().equals(input.previewHash()))
             throw new DomainException(HttpStatus.CONFLICT, "PREVIEW_STALE");
-          var targetIds = reviewed.snapshot().targets().stream()
-              .map(PolicySnapshot.Target::deviceId).toList();
+          var targetIds =
+              reviewed.snapshot().targets().stream().map(PolicySnapshot.Target::deviceId).toList();
           var source = reviewed.snapshot().groupSelection();
           var registrations = resolveGroup(tenant, actor.getSubject(), source, targetIds);
-          var current =
-              snapshot(
-                  tenant,
-                  actor.getSubject(),
-                  draft,
-                  targetIds,
-                  source);
+          var current = snapshot(tenant, actor.getSubject(), draft, targetIds, source);
           checkGroupRegistrations(current, registrations);
           if (!reviewed.hash().equals(fingerprint(tenant, draft, current)))
             throw new DomainException(HttpStatus.CONFLICT, "PREVIEW_STALE");
@@ -430,8 +449,13 @@ class PolicyService
             if (!enforceable(current))
               throw new DomainException(
                   HttpStatus.UNPROCESSABLE_ENTITY, "REQUIRED_RULE_UNSUPPORTED");
-            throw new DomainException(
-                HttpStatus.SERVICE_UNAVAILABLE, "DELIVERY_ADAPTER_NOT_CONFIGURED");
+            // Admission is local-only and joins this transaction. Its default-closed capability
+            // gate and current device authority are rechecked before anything can commit.
+            var result =
+                recordPublication(tenant, draft, input, reviewed.snapshot(), "PENDING_EXECUTION");
+            executionAdmission.accept(tenant, actor.getSubject(), result.id());
+            audit.record(tenant, actor.getSubject(), "POLICY_EXECUTION_REQUESTED", result.id());
+            return result;
           }
           return recordConfiguration(tenant, actor.getSubject(), draft, input, reviewed.snapshot());
         });
@@ -464,14 +488,19 @@ class PolicyService
     readDraft(tenant, policyId, false);
     // Query the exact original intent. A read cannot select a different publication mode.
     var input = new PolicyController.Publish(previewId, previewHash, mode);
-    var reference = idempotency.findCommitted(
-        tenant,
-        actor,
-        "policy.publish",
-        requestId,
-        Map.of("policyId", policyId, "revision", revision, "input", input),
-        PolicyPublication.class).orElseThrow(
-            () -> new DomainException(HttpStatus.NOT_FOUND, "POLICY_PUBLICATION_RESULT_UNAVAILABLE"));
+    var reference =
+        idempotency
+            .findCommitted(
+                tenant,
+                actor,
+                "policy.publish",
+                requestId,
+                Map.of("policyId", policyId, "revision", revision, "input", input),
+                PolicyPublication.class)
+            .orElseThrow(
+                () ->
+                    new DomainException(
+                        HttpStatus.NOT_FOUND, "POLICY_PUBLICATION_RESULT_UNAVAILABLE"));
     var version = readVersion(tenant, policyId, reference.versionId());
     if (version.draftRevision() != revision
         || !previewHash.equals(version.previewHash())
@@ -480,12 +509,13 @@ class PolicyService
     return publication(tenant, actor, reference.id());
   }
 
-  private PolicyPublication recordConfiguration(
+  /** Only immutable content and the publication row; callers choose mode-specific side effects. */
+  private PolicyPublication recordPublication(
       String tenant,
-      String actor,
       PolicyDraft draft,
       PolicyController.Publish input,
-      PolicySnapshot snapshot) {
+      PolicySnapshot snapshot,
+      String state) {
     // The locked draft serializes sequence allocation, even when multiple replicas publish
     // concurrently.
     long sequence =
@@ -517,9 +547,7 @@ class PolicyService
         json(snapshot),
         draft.sourceVersionId(),
         now);
-    var result =
-        new PolicyPublication(
-            operation, version, sequence, input.mode(), "CONFIGURED_NOT_ENFORCED", now);
+    var result = new PolicyPublication(operation, version, sequence, input.mode(), state, now);
     jdbc.update(
         "INSERT INTO policy_publications(tenant_id,id,version_id,state,created_at)"
             + " VALUES(?,?,?,?,?)",
@@ -528,6 +556,18 @@ class PolicyService
         version,
         result.state(),
         now);
+    return result;
+  }
+
+  private PolicyPublication recordConfiguration(
+      String tenant,
+      String actor,
+      PolicyDraft draft,
+      PolicyController.Publish input,
+      PolicySnapshot snapshot) {
+    var result = recordPublication(tenant, draft, input, snapshot, "CONFIGURED_NOT_ENFORCED");
+    String version = result.versionId(), operation = result.id();
+    long sequence = result.sequence(), now = result.createdAt();
     jdbc.update(
         "INSERT INTO policy_outbox(tenant_id,id,publication_id,event_type,payload_json,created_at)"
             + " VALUES(?,?,?,?,?,?)",
@@ -538,17 +578,21 @@ class PolicyService
         json(Map.of("publicationId", operation, "versionId", version)),
         now);
     audit.record(tenant, actor, "POLICY_CONFIGURATION_RECORDED", version);
+    // ENFORCE versions share the sequence but emit no configuration projection. The last
+    // CONFIGURE_ONLY version owns the targets that may need an explicit removal notice.
     var previous =
-        sequence == 1
-            ? List.<PolicySnapshot.Target>of()
-            : jdbc.query(
-                    "SELECT snapshot_json FROM policy_versions WHERE tenant_id=? AND policy_id=?"
-                        + " AND sequence_number=? FOR UPDATE",
-                    (row, index) -> read(row.getString(1), PolicySnapshot.class).targets(),
-                    tenant,
-                    draft.id(),
-                    sequence - 1)
-                .get(0);
+        jdbc
+            .query(
+                "SELECT snapshot_json FROM policy_versions WHERE tenant_id=? AND policy_id=?"
+                    + " AND mode='CONFIGURE_ONLY' AND sequence_number<?"
+                    + " ORDER BY sequence_number DESC LIMIT 1 FOR UPDATE",
+                (row, index) -> read(row.getString(1), PolicySnapshot.class).targets(),
+                tenant,
+                draft.id(),
+                sequence)
+            .stream()
+            .findFirst()
+            .orElseGet(List::of);
     events.publishEvent(
         new PolicyConfigurationRecorded(
             tenant,
@@ -915,7 +959,10 @@ class PolicyService
   }
 
   private PolicySnapshot snapshot(
-      String tenant, String actor, PolicyDraft draft, List<String> deviceIds,
+      String tenant,
+      String actor,
+      PolicyDraft draft,
+      List<String> deviceIds,
       PolicySnapshot.GroupSelection groupSelection) {
     var inputs = resolve(tenant, actor, draft.rules());
     var targets = new ArrayList<PolicySnapshot.Target>();
@@ -959,11 +1006,11 @@ class PolicyService
     return selection.registrations();
   }
 
-  private void checkGroupRegistrations(
-      PolicySnapshot snapshot, Map<String, String> registrations) {
+  private void checkGroupRegistrations(PolicySnapshot snapshot, Map<String, String> registrations) {
     if (registrations == null) return;
-    if (snapshot.targets().stream().anyMatch(target ->
-        !target.registrationId().equals(registrations.get(target.deviceId())))) {
+    if (snapshot.targets().stream()
+        .anyMatch(
+            target -> !target.registrationId().equals(registrations.get(target.deviceId())))) {
       throw new DomainException(HttpStatus.CONFLICT, "POLICY_GROUP_CHANGED");
     }
   }

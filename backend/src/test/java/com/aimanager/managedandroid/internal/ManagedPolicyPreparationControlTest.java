@@ -297,11 +297,17 @@ class ManagedPolicyPreparationControlTest {
         .withBean(PlatformTransactionManager.class, () -> f.transactions)
         .withBean(ApplicationCatalog.class, () -> catalog)
         .withBean(ManagedApplicationEvidenceStore.class, () -> evidence)
+        .withBean(ManagedProviderCalls.class, () -> f.calls)
         .withBean(ManagedPolicyPreparationService.class)
         .run(
             context -> {
               assertThat(context).hasNotFailed();
               assertion.accept(context.getBean(ManagedPolicyPreparationService.class));
             });
+  }
+
+  @org.junit.jupiter.api.AfterEach
+  void closeProviderCalls() {
+    f.closeProviderCalls();
   }
 }

@@ -60,7 +60,9 @@ class ManagedExecutionDispatchTest {
             })
         .when(gateway)
         .assignPolicy(anyString(), anyString(), anyString());
-    service = new ManagedExecutionDispatchService(journal, f.service, gateway, f.f.clock);
+    service =
+        new ManagedExecutionDispatchService(
+            journal, f.service, gateway, f.f.clock, f.f.calls, 10000);
   }
 
   @AfterEach
@@ -90,7 +92,13 @@ class ManagedExecutionDispatchTest {
     assertThat(execute()).isTrue();
     assertThat(view().state()).isEqualTo(ManagedPolicyExecutionJournal.State.WAITING_DEVICE);
     verify(f.f.preparation, times(4))
-        .prepare(anyString(), anyString(), anyString(), anyString(), anyLong());
+        .prepare(
+            anyString(),
+            anyString(),
+            anyString(),
+            anyString(),
+            anyLong(),
+            any(ManagedProviderCalls.Budget.class));
     var ordered = inOrder(gateway);
     ordered
         .verify(gateway)
@@ -258,7 +266,12 @@ class ManagedExecutionDispatchTest {
       }
       case "QUALIFICATION" ->
           when(f.f.preparation.prepare(
-                  anyString(), anyString(), anyString(), anyString(), anyLong()))
+                  anyString(),
+                  anyString(),
+                  anyString(),
+                  anyString(),
+                  anyLong(),
+                  any(ManagedProviderCalls.Budget.class)))
               .thenThrow(new DomainException(HttpStatus.CONFLICT, "TEST_QUALIFICATION_REVOKED"));
     }
   }
@@ -287,7 +300,9 @@ class ManagedExecutionDispatchTest {
             })
         .when(observedJournal)
         .beforeWrite(any(ManagedPolicyExecutionJournal.WritePreparationTarget.class), anyLong());
-    service = new ManagedExecutionDispatchService(observedJournal, f.service, gateway, f.f.clock);
+    service =
+        new ManagedExecutionDispatchService(
+            observedJournal, f.service, gateway, f.f.clock, f.f.calls, 10000);
     assertThat(execute()).isFalse();
     verify(gateway, never()).writePolicyCandidate(anyString(), anyString(), any());
     verify(gateway, never()).assignPolicy(anyString(), anyString(), anyString());

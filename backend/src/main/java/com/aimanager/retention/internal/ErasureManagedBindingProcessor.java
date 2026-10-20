@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 class ErasureManagedBindingProcessor {
   private static final String STEP = "MANAGED_AGENT_BINDINGS";
+  private static final int EVENT_DELETE_BATCH = 100;
   private final ErasureRecoveryJobs jobs;
   private final JdbcTemplate db;
   private final SubjectDataCatalog catalog;
@@ -101,8 +102,18 @@ class ErasureManagedBindingProcessor {
           int budget = limit, deletedBindings = 0, deletedExecutions = 0;
           for (var key : keys) {
             if (budget == 0) break;
+            // Requests reference both the binding and a possible admitted task. Spend the same
+            // budget on these rows first, so task deletion cannot leave a dangling request.
+            budget -= erasePreparationRequests(request.tenantId(), key.id(), budget);
+            if (budget == 0
+                || exists(
+                    "SELECT 1 FROM managed_policy_preparation_requests WHERE tenant_id=?"
+                        + " AND binding_id=? LIMIT 1",
+                    request.tenantId(),
+                    key.id())) break;
             // Spend the same row budget on execution tasks before deleting their parent binding.
-            // Each task's bounded event history cascades; unfinished writes never reach this step.
+            // Small histories cascade; longer terminal histories advance in bounded chunks.
+            // Each chunk consumes one shared work unit, as does each task or binding deletion.
             var tasks =
                 db.query(
                     "SELECT id,revision FROM managed_policy_execution_tasks WHERE tenant_id=?"
@@ -112,13 +123,28 @@ class ErasureManagedBindingProcessor {
                     key.id(),
                     budget);
             for (var task : tasks) {
-              if (db.queryForObject(
-                      "SELECT COUNT(*) FROM managed_policy_execution_events WHERE tenant_id=?"
-                          + " AND task_id=?",
+              var revisions =
+                  db.queryForList(
+                      "SELECT revision FROM managed_policy_execution_events WHERE tenant_id=?"
+                          + " AND task_id=? ORDER BY revision LIMIT ? FOR UPDATE",
                       Long.class,
                       request.tenantId(),
-                      task.id())
-                  > 100) throw failure("ERASURE_EXECUTION_HISTORY_LIMIT_EXCEEDED");
+                      task.id(),
+                      EVENT_DELETE_BATCH + 1);
+              if (revisions.size() > EVENT_DELETE_BATCH) {
+                // The parent task is already locked and globally proven terminal. Retain it until
+                // all remaining events fit the bounded cascade; repeated review is not corruption.
+                int erased =
+                    db.update(
+                        "DELETE FROM managed_policy_execution_events WHERE tenant_id=? AND"
+                            + " task_id=? AND revision<=?",
+                        request.tenantId(),
+                        task.id(),
+                        revisions.get(EVENT_DELETE_BATCH - 1));
+                if (erased != EVENT_DELETE_BATCH) throw failure("ERASURE_STEP_CONCURRENT_CHANGE");
+                budget--;
+                break;
+              }
               exactlyOne(
                   db.update(
                       "DELETE FROM managed_policy_execution_tasks WHERE tenant_id=? AND id=? AND"
@@ -217,6 +243,7 @@ class ErasureManagedBindingProcessor {
   }
 
   private void verifyTerminated(ErasureLedger.Request request) {
+    verifyPreparationScope(request);
     if (exists(
         "SELECT 1 FROM managed_policy_execution_tasks t JOIN managed_agent_bindings b ON"
             + " b.tenant_id=t.tenant_id AND b.id=t.binding_id WHERE t.tenant_id=? AND"
@@ -232,6 +259,12 @@ class ErasureManagedBindingProcessor {
         request.tenantId(),
         request.subjectId())) throw failure("ERASURE_EXECUTION_RECONCILIATION_REQUIRED");
     if (exists(
+        "SELECT 1 FROM managed_policy_preparation_requests WHERE tenant_id=? AND subject_id=?"
+            + " AND (state NOT IN ('ADMITTED','REJECTED','CANCELLED') OR lease_token IS NOT NULL"
+            + " OR lease_until IS NOT NULL OR active_device_id IS NOT NULL) LIMIT 1",
+        request.tenantId(),
+        request.subjectId())) throw failure("ERASURE_PREPARATION_TERMINATION_REQUIRED");
+    if (exists(
         "SELECT 1 FROM managed_agent_bindings WHERE tenant_id=? AND subject_id=? AND state"
             + " NOT IN ('REVOKED','EXPIRED') LIMIT 1",
         request.tenantId(),
@@ -242,6 +275,56 @@ class ErasureManagedBindingProcessor {
             + " version<1) LIMIT 1",
         request.tenantId(),
         request.subjectId())) throw failure("ERASURE_MANAGED_BINDING_STATE_CORRUPT");
+  }
+
+  /**
+   * Foreign keys prove existence, not that a request, binding and task describe the same device.
+   */
+  private void verifyPreparationScope(ErasureLedger.Request request) {
+    if (exists(
+        "SELECT 1 FROM managed_policy_preparation_requests r LEFT JOIN managed_agent_bindings b"
+            + " ON b.tenant_id=r.tenant_id AND b.id=r.binding_id WHERE r.tenant_id=?"
+            + " AND (r.subject_id=? OR b.subject_id=?) AND (b.id IS NULL OR"
+            + " r.subject_id<>b.subject_id OR r.device_id<>b.device_id OR"
+            + " r.registration_id<>b.registration_id) LIMIT 1",
+        request.tenantId(),
+        request.subjectId(),
+        request.subjectId())) throw failure("ERASURE_PREPARATION_SCOPE_CORRUPT");
+    if (exists(
+        "SELECT 1 FROM managed_policy_preparation_requests r LEFT JOIN"
+            + " managed_policy_execution_tasks t ON t.tenant_id=r.tenant_id AND"
+            + " t.id=r.execution_task_id WHERE r.tenant_id=? AND (r.subject_id=? OR t.subject_id=?)"
+            + " AND r.state='ADMITTED' AND (t.id IS NULL OR r.subject_id<>t.subject_id OR"
+            + " r.device_id<>t.device_id OR r.registration_id<>t.registration_id OR"
+            + " r.binding_id<>t.binding_id OR r.binding_version<>t.binding_version OR"
+            + " r.publication_id<>t.publication_id OR r.policy_version_id<>t.policy_version_id OR"
+            + " r.actor_id<>t.actor_id OR r.authority_version<>t.authority_version OR"
+            + " r.context_sha256<>t.context_sha256) LIMIT 1",
+        request.tenantId(),
+        request.subjectId(),
+        request.subjectId())) throw failure("ERASURE_PREPARATION_SCOPE_CORRUPT");
+  }
+
+  private int erasePreparationRequests(String tenant, String binding, int limit) {
+    var requests =
+        db.query(
+            "SELECT id,revision FROM managed_policy_preparation_requests WHERE tenant_id=?"
+                + " AND binding_id=? ORDER BY id LIMIT ? FOR UPDATE",
+            (row, index) -> new Key(row.getString(1), row.getLong(2)),
+            tenant,
+            binding,
+            limit);
+    for (var request : requests) {
+      exactlyOne(
+          db.update(
+              "DELETE FROM managed_policy_preparation_requests WHERE tenant_id=? AND id=? AND"
+                  + " revision=? AND state IN ('ADMITTED','REJECTED','CANCELLED') AND lease_token"
+                  + " IS NULL AND lease_until IS NULL AND active_device_id IS NULL",
+              tenant,
+              request.id(),
+              request.version()));
+    }
+    return requests.size();
   }
 
   private Step step(String request) {
@@ -273,9 +356,14 @@ class ErasureManagedBindingProcessor {
 
   private boolean hasData(ErasureLedger.Request request) {
     return exists(
-        "SELECT 1 FROM managed_agent_bindings WHERE tenant_id=? AND subject_id=? LIMIT 1",
-        request.tenantId(),
-        request.subjectId());
+            "SELECT 1 FROM managed_agent_bindings WHERE tenant_id=? AND subject_id=? LIMIT 1",
+            request.tenantId(),
+            request.subjectId())
+        || exists(
+            "SELECT 1 FROM managed_policy_preparation_requests WHERE tenant_id=? AND subject_id=?"
+                + " LIMIT 1",
+            request.tenantId(),
+            request.subjectId());
   }
 
   private boolean exists(String sql, Object... args) {

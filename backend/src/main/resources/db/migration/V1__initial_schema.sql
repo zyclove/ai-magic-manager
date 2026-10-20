@@ -1733,6 +1733,12 @@ CREATE TABLE managed_policy_execution_tasks (
 );
 CREATE INDEX ix_managed_execution_due
     ON managed_policy_execution_tasks(provider,state,next_attempt_at,id);
+CREATE INDEX ix_managed_execution_expiry
+    ON managed_policy_execution_tasks(state,expires_at,id,tenant_id);
+CREATE INDEX ix_managed_execution_attempts
+    ON managed_policy_execution_tasks(state,attempts,id,tenant_id);
+CREATE INDEX ix_managed_execution_unknown
+    ON managed_policy_execution_tasks(state,lease_until,id,tenant_id);
 CREATE INDEX ix_managed_execution_subject
     ON managed_policy_execution_tasks(tenant_id,subject_id,state,id);
 CREATE INDEX ix_managed_execution_binding
@@ -1752,4 +1758,76 @@ CREATE TABLE managed_policy_execution_events (
         REFERENCES managed_policy_execution_tasks(tenant_id,id) ON DELETE CASCADE
 );
 -- END managed-policy-execution-journal-v1
+
+-- BEGIN managed-policy-preparation-requests-v1
+CREATE TABLE managed_policy_preparation_requests (
+    tenant_id VARCHAR(36) NOT NULL,
+    id VARCHAR(36) NOT NULL,
+    publication_id VARCHAR(36) NOT NULL,
+    policy_version_id VARCHAR(36) NOT NULL,
+    subject_id VARCHAR(36) NOT NULL,
+    device_id VARCHAR(36) NOT NULL,
+    registration_id VARCHAR(36) NOT NULL,
+    binding_id VARCHAR(36) NOT NULL,
+    binding_version BIGINT NOT NULL,
+    actor_id VARCHAR(255) NOT NULL,
+    authority_version BIGINT NOT NULL,
+    context_sha256 VARCHAR(64) NOT NULL,
+    state VARCHAR(24) NOT NULL,
+    revision BIGINT NOT NULL DEFAULT 1,
+    reason_code VARCHAR(64) NOT NULL,
+    active_device_id VARCHAR(36) NULL,
+    execution_task_id VARCHAR(36) NULL,
+    generation BIGINT NOT NULL DEFAULT 0,
+    lease_token VARCHAR(36) NULL,
+    lease_until BIGINT NULL,
+    attempts INTEGER NOT NULL DEFAULT 0,
+    next_attempt_at BIGINT NOT NULL,
+    expires_at BIGINT NOT NULL,
+    created_at BIGINT NOT NULL,
+    updated_at BIGINT NOT NULL,
+    PRIMARY KEY(tenant_id,id),
+    CONSTRAINT uq_managed_preparation_publication_device UNIQUE(tenant_id,publication_id,device_id),
+    CONSTRAINT uq_managed_preparation_active_device UNIQUE(tenant_id,active_device_id),
+    CONSTRAINT uq_managed_preparation_execution UNIQUE(tenant_id,execution_task_id),
+    CONSTRAINT fk_managed_preparation_publication FOREIGN KEY(tenant_id,publication_id)
+        REFERENCES policy_publications(tenant_id,id),
+    CONSTRAINT fk_managed_preparation_version FOREIGN KEY(tenant_id,policy_version_id)
+        REFERENCES policy_versions(tenant_id,id),
+    CONSTRAINT fk_managed_preparation_subject FOREIGN KEY(tenant_id,subject_id)
+        REFERENCES subjects(tenant_id,id),
+    CONSTRAINT fk_managed_preparation_registration FOREIGN KEY(tenant_id,device_id,registration_id)
+        REFERENCES devices(tenant_id,id,registration_id),
+    CONSTRAINT fk_managed_preparation_binding FOREIGN KEY(tenant_id,binding_id)
+        REFERENCES managed_agent_bindings(tenant_id,id),
+    CONSTRAINT fk_managed_preparation_execution FOREIGN KEY(tenant_id,execution_task_id)
+        REFERENCES managed_policy_execution_tasks(tenant_id,id),
+    CONSTRAINT ck_managed_preparation_state CHECK(state IN ('PENDING','ADMITTED','REJECTED','CANCELLED')),
+    CONSTRAINT ck_managed_preparation_numbers CHECK(
+        binding_version>=1 AND authority_version>=0 AND revision>=1 AND generation>=0 AND attempts>=0 AND attempts<=24),
+    CONSTRAINT ck_managed_preparation_time CHECK(
+        created_at>=0 AND expires_at>created_at AND updated_at>=created_at AND next_attempt_at>=created_at),
+    CONSTRAINT ck_managed_preparation_slot CHECK(
+        (state='PENDING' AND active_device_id IS NOT NULL AND active_device_id=device_id) OR
+        (state<>'PENDING' AND active_device_id IS NULL)),
+    CONSTRAINT ck_managed_preparation_execution CHECK(
+        (state='ADMITTED' AND execution_task_id IS NOT NULL) OR
+        (state<>'ADMITTED' AND execution_task_id IS NULL)),
+    CONSTRAINT ck_managed_preparation_lease CHECK(
+        (lease_token IS NULL AND lease_until IS NULL) OR
+        (state='PENDING' AND lease_token IS NOT NULL AND lease_until IS NOT NULL
+         AND generation>0 AND attempts>0 AND lease_until>created_at AND lease_until<=expires_at))
+);
+CREATE INDEX ix_managed_preparation_due
+    ON managed_policy_preparation_requests(state,next_attempt_at,id);
+CREATE INDEX ix_managed_preparation_expiry
+    ON managed_policy_preparation_requests(state,expires_at,id,tenant_id);
+CREATE INDEX ix_managed_preparation_publication
+    ON managed_policy_preparation_requests(tenant_id,publication_id,id);
+CREATE INDEX ix_managed_preparation_binding
+    ON managed_policy_preparation_requests(tenant_id,binding_id,id);
+CREATE INDEX ix_managed_preparation_subject
+    ON managed_policy_preparation_requests(tenant_id,subject_id,state,id);
+
+-- END managed-policy-preparation-requests-v1
 

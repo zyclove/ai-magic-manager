@@ -27,9 +27,11 @@ class ManagedExecutionRecoveryJobTest {
   ManagedExecutionTestData.Fixture f;
   ManagedPolicyExecutionJournal journal;
   ManagedAndroidGateway gateway;
+  ManagedProviderCalls calls;
 
   @BeforeEach
   void setup() {
+    calls = new ManagedProviderCalls(1, java.time.Duration.ofSeconds(20), System::nanoTime);
     data = new ManagedExecutionTestData();
     f = data.fixture();
     journal = journalFor(f);
@@ -82,6 +84,7 @@ class ManagedExecutionRecoveryJobTest {
 
   @AfterEach
   void close() {
+    calls.close();
     data.close();
   }
 
@@ -332,11 +335,12 @@ class ManagedExecutionRecoveryJobTest {
     when(store.deviceObservationCurrent(claim)).thenReturn(true);
     when(gateway.readDeviceState(anyString(), anyString(), anyString(), anyLong()))
         .thenReturn(applied(claim.policyId(), 7L));
-    new ManagedExecutionRecoveryJob(store, gateway, 2, 30).recover();
+    new ManagedExecutionRecoveryJob(store, gateway, 2, 30, calls, Clock.systemUTC(), 10000)
+        .recover();
     var order = inOrder(store, gateway);
     for (int i = 0; i < 2; i++) {
       order.verify(store).claimDeviceObservations("LOCAL_TEST", 1);
-      order.verify(store).deviceObservationCurrent(claim);
+      order.verify(store, times(2)).deviceObservationCurrent(claim);
       order
           .verify(gateway)
           .readDeviceState(f.enterprise(), f.providerDevice(), claim.policyId(), 7L);
@@ -356,7 +360,8 @@ class ManagedExecutionRecoveryJobTest {
         .thenThrow(new IllegalStateException("private-provider-payload"))
         .thenReturn(applied(claim.policyId(), 7L));
     when(store.failed(claim)).thenThrow(new IllegalStateException("private-database-payload"));
-    new ManagedExecutionRecoveryJob(store, gateway, 2, 30).recover();
+    new ManagedExecutionRecoveryJob(store, gateway, 2, 30, calls, Clock.systemUTC(), 10000)
+        .recover();
     verify(store).failed(claim);
     verify(store).deviceObserved(eq(claim), any());
   }
@@ -368,21 +373,28 @@ class ManagedExecutionRecoveryJobTest {
     var store = mock(ManagedPolicyExecutionJournal.class);
     when(store.claimDeviceObservations("LOCAL_TEST", 1)).thenReturn(List.of(claim));
     when(store.deviceObservationCurrent(claim)).thenReturn(false);
-    new ManagedExecutionRecoveryJob(store, gateway, 1, 30).recover();
+    new ManagedExecutionRecoveryJob(store, gateway, 1, 30, calls, Clock.systemUTC(), 10000)
+        .recover();
     verify(gateway, never()).readDeviceState(anyString(), anyString(), anyString(), anyLong());
   }
 
   @ParameterizedTest
   @ValueSource(ints = {-1, 0, 26, 100})
   void invalidBatchIsRejected(int batch) {
-    assertThatThrownBy(() -> new ManagedExecutionRecoveryJob(journal, gateway, batch, 30))
+    assertThatThrownBy(
+            () ->
+                new ManagedExecutionRecoveryJob(
+                    journal, gateway, batch, 30, calls, Clock.systemUTC(), 10000))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
   @ParameterizedTest
   @ValueSource(longs = {-1, 0, 4, 3601, Long.MAX_VALUE})
   void invalidIntervalIsRejected(long interval) {
-    assertThatThrownBy(() -> new ManagedExecutionRecoveryJob(journal, gateway, 1, interval))
+    assertThatThrownBy(
+            () ->
+                new ManagedExecutionRecoveryJob(
+                    journal, gateway, 1, interval, calls, Clock.systemUTC(), 10000))
         .isInstanceOf(IllegalArgumentException.class);
   }
 
@@ -392,7 +404,9 @@ class ManagedExecutionRecoveryJobTest {
         new ApplicationContextRunner()
             .withUserConfiguration(ManagedExecutionRecoveryJob.class)
             .withBean(ManagedPolicyExecutionJournal.class, () -> journal)
-            .withBean(ManagedAndroidGateway.class, () -> gateway);
+            .withBean(ManagedAndroidGateway.class, () -> gateway)
+            .withBean(ManagedProviderCalls.class, () -> calls)
+            .withBean(Clock.class, Clock::systemUTC);
     runner.run(context -> assertThat(context).doesNotHaveBean(ManagedExecutionRecoveryJob.class));
     runner
         .withPropertyValues("manager.emm.execution.device-recovery.enabled=true")
@@ -405,7 +419,8 @@ class ManagedExecutionRecoveryJobTest {
   }
 
   void runRecovery() {
-    new ManagedExecutionRecoveryJob(journal, gateway, 5, 30L).recover();
+    new ManagedExecutionRecoveryJob(journal, gateway, 5, 30L, calls, Clock.systemUTC(), 10000)
+        .recover();
   }
 
   ManagedPolicyExecutionJournal.View enqueue() {

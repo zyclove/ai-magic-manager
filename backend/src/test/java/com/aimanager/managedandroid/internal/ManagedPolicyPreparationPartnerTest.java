@@ -18,6 +18,9 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.transaction.support.TransactionTemplate;
 
 class ManagedPolicyPreparationPartnerTest {
+  final ManagedProviderCalls calls =
+      new ManagedProviderCalls(1, java.time.Duration.ofSeconds(20), System::nanoTime);
+
   int compilations;
   final Instant now = Instant.parse("2026-10-16T12:00:00Z");
   final Clock clock = Clock.fixed(now, ZoneOffset.UTC);
@@ -116,7 +119,8 @@ class ManagedPolicyPreparationPartnerTest {
             ManagedPreparationTestQualifications.allow(),
             clock,
             transactions,
-            "com.example.safe");
+            "com.example.safe",
+            calls);
   }
 
   @Test
@@ -154,7 +158,8 @@ class ManagedPolicyPreparationPartnerTest {
             ManagedPreparationTestQualifications.allow(),
             clock,
             transactions,
-            "");
+            "",
+            calls);
     assertThatThrownBy(this::prepare)
         .isInstanceOfSatisfying(
             DomainException.class,
@@ -237,6 +242,7 @@ class ManagedPolicyPreparationPartnerTest {
 
   @AfterEach
   void preparationNeverWritesToTheProvider() {
+    calls.close();
     verify(gateway, never()).writePolicyCandidate(anyString(), anyString(), any());
     verify(gateway, never()).assignPolicy(anyString(), anyString(), anyString());
   }

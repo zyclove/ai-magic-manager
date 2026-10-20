@@ -8,6 +8,7 @@ import com.aimanager.shared.SecretMaterial;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.time.Clock;
+import java.time.Duration;
 import java.util.Objects;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,6 +28,7 @@ class ManagedExecutionResourceAuthorityService {
   private final ManagedAndroidGateway gateway;
   private final ObjectMapper mapper;
   private final Clock clock;
+  private final ManagedProviderCalls calls;
   private final long maxAgeMillis;
   private final long reuseMillis;
   private final long skewMillis;
@@ -40,7 +42,8 @@ class ManagedExecutionResourceAuthorityService {
       @Value("${manager.emm.policy-resource-authority.max-report-age-seconds:120}")
           long maxAgeSeconds,
       @Value("${manager.emm.policy-resource-authority.max-reuse-age-seconds:30}") long reuseSeconds,
-      @Value("${manager.emm.policy-resource-authority.clock-skew-seconds:5}") long skewSeconds) {
+      @Value("${manager.emm.policy-resource-authority.clock-skew-seconds:5}") long skewSeconds,
+      ManagedProviderCalls calls) {
     if (maxAgeSeconds < 1
         || maxAgeSeconds > 600
         || reuseSeconds < 1
@@ -53,35 +56,54 @@ class ManagedExecutionResourceAuthorityService {
     this.gateway = gateway;
     this.mapper = mapper;
     this.clock = clock;
+    this.calls = Objects.requireNonNull(calls);
     this.maxAgeMillis = maxAgeSeconds * 1000;
     this.reuseMillis = reuseSeconds * 1000;
     this.skewMillis = skewSeconds * 1000;
   }
 
   VerifiedExecution verify(ManagedPolicyExecutionJournal.Claim claim) {
-    if (TransactionSynchronizationManager.isActualTransactionActive())
-      throw new IllegalStateException("Resource authority requires separate short transactions");
+    requireOutsideTransaction();
+    Objects.requireNonNull(claim);
+    ManagedProviderCalls.Budget budget;
+    try {
+      budget =
+          calls.budget(Duration.ofMillis(Math.subtractExact(claim.leaseUntil(), clock.millis())));
+    } catch (RuntimeException unavailable) {
+      throw providerUnavailable();
+    }
+    return verify(claim, budget);
+  }
+
+  /** Both complete preparations and the resource read consume the original caller budget. */
+  VerifiedExecution verify(
+      ManagedPolicyExecutionJournal.Claim claim, ManagedProviderCalls.Budget budget) {
+    requireOutsideTransaction();
+    checkBudget(budget);
     var connector = connector();
-    var before = preparation.prepare(claim);
+    var before = preparation.prepare(claim, budget);
+    checkBudget(budget);
     if (!connector.provider().equals(before.target().binding().provider())) throw unavailable();
     // Initial preparation performs provider I/O too; do not query a connector revoked meanwhile.
     requireCurrent(before.target(), connector, claim);
     var target = target(before.target(), connector);
     Optional<ManagedPolicyResourceEvidence> response;
     try {
-      response = gateway.readPolicyResourceAuthority(target);
+      response = calls.call(budget, () -> gateway.readPolicyResourceAuthority(target));
     } catch (RuntimeException failure) {
       throw providerUnavailable();
     }
     long retrievedAt = clock.millis();
     // Reject cancellation, ownership changes and adapter changes before doing more provider I/O.
     requireCurrent(before.target(), connector, claim);
+    checkBudget(budget);
     var evidence = response == null ? null : response.orElse(null);
     evidenceDeadline(target, evidence, retrievedAt);
 
     // Resource lookup can outlive a catalog/qualification change. Reuse the complete existing
     // preparation chain instead of inventing a weaker subset of its authorization checks.
-    var after = preparation.prepare(claim);
+    var after = preparation.prepare(claim, budget);
+    checkBudget(budget);
     if (!before.target().equals(after.target())) throw changed();
     requireCurrent(after.target(), connector, claim);
     long deadline =
@@ -89,7 +111,21 @@ class ManagedExecutionResourceAuthorityService {
             Math.min(before.expiresAt(), after.expiresAt()),
             evidenceDeadline(target, evidence, retrievedAt));
     if (clock.millis() >= deadline) throw invalidEvidence();
+    checkBudget(budget);
     return new VerifiedExecution(after, evidence, deadline);
+  }
+
+  private static void requireOutsideTransaction() {
+    if (TransactionSynchronizationManager.isActualTransactionActive())
+      throw new IllegalStateException("Resource authority requires separate short transactions");
+  }
+
+  private void checkBudget(ManagedProviderCalls.Budget budget) {
+    try {
+      calls.check(budget);
+    } catch (RuntimeException unavailable) {
+      throw providerUnavailable();
+    }
   }
 
   private void requireCurrent(

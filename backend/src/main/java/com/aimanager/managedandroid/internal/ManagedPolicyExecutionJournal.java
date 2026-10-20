@@ -96,6 +96,7 @@ class ManagedPolicyExecutionJournal {
     DEVICE_PENDING,
     DEVICE_NON_COMPLIANT,
     DEVICE_APPLIED,
+    MANUAL_DEVICE_RECHECK_REQUESTED,
     WRITE_OUTCOME_UNKNOWN,
     ASSIGNMENT_OUTCOME_UNKNOWN,
     READ_FAILED,
@@ -198,6 +199,49 @@ class ManagedPolicyExecutionJournal {
       long bindingVersion,
       String desiredDocument,
       long expiresAt) {
+    return enqueue(
+        tenant, actor, publication, binding, bindingVersion, desiredDocument, expiresAt, null);
+  }
+
+  /** Joins the handoff transaction: task, request association and both audits commit together. */
+  View enqueuePrepared(
+      ManagedPreparationRequestJournal.Claim claim,
+      ManagedAndroidGateway.PolicyDocument document,
+      long expiresAt) {
+    requireReadCommitted();
+    if (!TransactionSynchronizationManager.isActualTransactionActive()
+        || claim == null
+        || claim.binding() == null
+        || document == null) throw conflict("PREPARATION_HANDOFF_STALE");
+    var binding = claim.binding();
+    if (!Objects.equals(claim.tenantId(), binding.tenantId())
+        || !Objects.equals(document.agentPackage(), binding.agentPackageName())
+        || !Objects.equals(document.managementMode(), binding.managementMode())
+        || document.apiLevel() < 30
+        || document.documentJson() == null
+        || !Objects.equals(document.sha256(), SecretMaterial.hash(document.documentJson())))
+      throw conflict("PREPARATION_RESULT_CHANGED");
+    canonicalId(claim.requestId());
+    return enqueue(
+        binding.tenantId(),
+        binding.actorId(),
+        claim.publicationId(),
+        binding.bindingId(),
+        binding.bindingVersion(),
+        document.documentJson(),
+        expiresAt,
+        claim);
+  }
+
+  private View enqueue(
+      String tenant,
+      String actor,
+      String publication,
+      String binding,
+      long bindingVersion,
+      String desiredDocument,
+      long expiresAt,
+      ManagedPreparationRequestJournal.Claim preparation) {
     canonicalId(publication);
     canonicalId(binding);
     String document = canonicalDocument(desiredDocument);
@@ -209,6 +253,8 @@ class ManagedPolicyExecutionJournal {
               publications.requireTarget(
                   tenant, actor, publication, context.deviceId(), context.registrationId());
           String hash = SecretMaterial.hash(document), contextHash = contextHash(context);
+          if (preparation != null)
+            requirePreparation(preparation, context, source.versionId(), contextHash, expiresAt);
           var previous =
               db.query(
                   "SELECT * FROM managed_policy_execution_tasks WHERE tenant_id=?"
@@ -218,6 +264,7 @@ class ManagedPolicyExecutionJournal {
                   publication,
                   context.deviceId());
           if (!previous.isEmpty()) {
+            if (preparation != null) throw conflict("PREPARATION_HANDOFF_STALE");
             var old = previous.get(0);
             if (!old.documentHash().equals(hash)
                 || !old.document().equals(document)
@@ -229,6 +276,15 @@ class ManagedPolicyExecutionJournal {
           long now = now();
           if (expiresAt <= now || expiresAt > now + 86_400_000L)
             throw DomainException.invalid("INVALID_EXECUTION_DEADLINE");
+          // Preparation and execution share the device slot under the binding/domain locks. A
+          // Only the validated lease owner may transfer its own preparation slot.
+          if (preparation == null
+              && !db.queryForList(
+                      "SELECT id FROM managed_policy_preparation_requests WHERE tenant_id=?"
+                          + " AND active_device_id=? FOR UPDATE",
+                      tenant,
+                      context.deviceId())
+                  .isEmpty()) throw conflict("EXECUTION_DEVICE_BUSY");
           if (!db.queryForList(
                   "SELECT id FROM managed_policy_execution_tasks WHERE tenant_id=?"
                       + " AND active_device_id=? FOR UPDATE",
@@ -278,21 +334,204 @@ class ManagedPolicyExecutionJournal {
               now);
           var added = required(tenant, id, false);
           event(added, null, actor);
+          if (preparation != null) {
+            long admittedAt = now();
+            exactlyOne(
+                db.update(
+                    "UPDATE managed_policy_preparation_requests SET state='ADMITTED',"
+                        + "reason_code='EXECUTION_ADMITTED',execution_task_id=?,revision=revision+1,"
+                        + "lease_token=NULL,lease_until=NULL,active_device_id=NULL,updated_at=?"
+                        + " WHERE tenant_id=? AND id=? AND state='PENDING' AND revision=? AND"
+                        + " generation=? AND lease_token=? AND lease_until=? AND lease_until>? AND"
+                        + " expires_at>?",
+                    id,
+                    admittedAt,
+                    tenant,
+                    preparation.requestId(),
+                    preparation.revision(),
+                    preparation.generation(),
+                    preparation.token(),
+                    preparation.leaseUntil(),
+                    admittedAt,
+                    admittedAt));
+            if (expiresAt <= now()) throw conflict("PREPARATION_HANDOFF_EXPIRED");
+            audit.record(tenant, actor, "PREPARATION_ADMITTED", preparation.requestId());
+          }
           return view(added);
         });
   }
 
+  /** Domain locks precede this request lock; the execution slot is locked only afterwards. */
+  private void requirePreparation(
+      ManagedPreparationRequestJournal.Claim claim,
+      ManagedAgentBindingStore.VerifiedBindingContext context,
+      String version,
+      String contextHash,
+      long expiresAt) {
+    if (!context.equals(claim.binding()) || claim.revision() >= MAX_REVISION)
+      throw conflict("PREPARATION_HANDOFF_STALE");
+    long observedAt = now();
+    var matches =
+        db.queryForList(
+            "SELECT id FROM managed_policy_preparation_requests WHERE tenant_id=? AND id=?"
+                + " AND publication_id=? AND policy_version_id=? AND subject_id=? AND device_id=?"
+                + " AND registration_id=? AND binding_id=? AND binding_version=? AND actor_id=?"
+                + " AND authority_version=? AND context_sha256=? AND state='PENDING'"
+                + " AND active_device_id=? AND execution_task_id IS NULL AND revision=?"
+                + " AND generation=? AND lease_token=? AND lease_until=? AND lease_until>?"
+                + " AND expires_at>? AND expires_at>=? FOR UPDATE",
+            claim.tenantId(),
+            claim.requestId(),
+            claim.publicationId(),
+            version,
+            context.subjectId(),
+            context.deviceId(),
+            context.registrationId(),
+            context.bindingId(),
+            context.bindingVersion(),
+            context.actorId(),
+            context.authorityVersion(),
+            contextHash,
+            context.deviceId(),
+            claim.revision(),
+            claim.generation(),
+            claim.token(),
+            claim.leaseUntil(),
+            observedAt,
+            observedAt,
+            expiresAt);
+    if (matches.size() != 1) throw conflict("PREPARATION_HANDOFF_STALE");
+  }
+
+  /** Only dispatchable writes: observation workers retain their own lease/attempt budgets. */
+  List<Claim> claimWriteActions(String provider, int limit) {
+    return claimDue(provider, limit, ClaimSelection.WRITES);
+  }
+
+  /**
+   * Local terminal convergence, independent of provider availability. Expiry takes priority over
+   * attempt exhaustion, followed by an uncertain policy write whose live lease has ended. Such a
+   * write requires review: it never becomes another runnable write, a fabricated receipt, or an
+   * automatically released device slot. This method performs no provider I/O.
+   */
+  int settleUnrunnableTasks(int limit) {
+    workerBoundary();
+    if (limit < 1 || limit > 25)
+      throw new IllegalArgumentException("Invalid execution settlement limit");
+    return tx.execute(
+        status -> {
+          requireReadCommitted();
+          long observedAt = now();
+          var selected =
+              new ArrayList<>(
+                  db.query(
+                      "SELECT tenant_id,id FROM managed_policy_execution_tasks WHERE state IN "
+                          + DUE_STATES
+                          + " AND expires_at<=? ORDER BY expires_at,id,tenant_id LIMIT ?",
+                      (row, index) -> new TaskReference(row.getString(1), row.getString(2)),
+                      observedAt,
+                      limit));
+          int remaining = limit - selected.size();
+          if (remaining > 0)
+            selected.addAll(
+                db.query(
+                    "SELECT tenant_id,id FROM managed_policy_execution_tasks WHERE state IN "
+                        + DUE_STATES
+                        + " AND expires_at>? AND attempts>=? AND (lease_until IS NULL OR"
+                        + " lease_until<=?) ORDER BY attempts,id,tenant_id LIMIT ?",
+                    (row, index) -> new TaskReference(row.getString(1), row.getString(2)),
+                    observedAt,
+                    settings.maximumAttempts(),
+                    observedAt,
+                    remaining));
+          remaining = limit - selected.size();
+          if (remaining > 0)
+            selected.addAll(
+                db.query(
+                    "SELECT tenant_id,id FROM managed_policy_execution_tasks WHERE"
+                        + " state='POLICY_WRITE_UNKNOWN' AND expires_at>? AND attempts<? AND"
+                        + " (lease_until IS NULL OR lease_until<=?) ORDER BY"
+                        + " lease_until,id,tenant_id LIMIT ?",
+                    (row, index) -> new TaskReference(row.getString(1), row.getString(2)),
+                    observedAt,
+                    settings.maximumAttempts(),
+                    observedAt,
+                    remaining));
+          // Priority chooses the bounded set; a common lock order reduces cross-replica deadlocks.
+          selected.sort(
+              Comparator.comparing(TaskReference::tenant).thenComparing(TaskReference::id));
+          int settled = 0;
+          for (var reference : selected) {
+            var locked =
+                db.query(
+                    "SELECT * FROM managed_policy_execution_tasks WHERE tenant_id=? AND id=? FOR"
+                        + " UPDATE",
+                    this::row,
+                    reference.tenant(),
+                    reference.id());
+            // A concurrent terminal transition and retention pass may remove a previously selected
+            // row.
+            if (locked.isEmpty()) continue;
+            var current = locked.get(0);
+            long checkedAt = now();
+            Reason reason = settlementReason(current, checkedAt);
+            if (reason == null) continue;
+            finish(
+                current,
+                neverAssigned(current) ? State.CANCELLED : State.NEEDS_REVIEW,
+                current.providerVersion(),
+                reason,
+                checkedAt);
+            settled++;
+          }
+          return settled;
+        });
+  }
+
+  private record TaskReference(String tenant, String id) {}
+
+  private Reason settlementReason(Row current, long observedAt) {
+    if (current.state() == State.APPLIED
+        || current.state() == State.CANCELLED
+        || current.state() == State.NEEDS_REVIEW) return null;
+    if (current.expiresAt() <= observedAt) return Reason.DEADLINE_EXCEEDED;
+    if (current.leaseUntil() != null && current.leaseUntil() > observedAt) return null;
+    if (current.attempts() >= settings.maximumAttempts()) return Reason.ATTEMPTS_EXHAUSTED;
+    return current.state() == State.POLICY_WRITE_UNKNOWN ? Reason.WRITE_OUTCOME_UNKNOWN : null;
+  }
+
   /** Select at most 25 due tasks. All leases use database time shared by backend replicas. */
   List<Claim> claimDue(String provider, int limit) {
-    return claimDue(provider, limit, false);
+    return claimDue(provider, limit, ClaimSelection.ALL);
   }
 
   /** Only device observations: never leases or consumes attempts for pending provider writes. */
   List<Claim> claimDeviceObservations(String provider, int limit) {
-    return claimDue(provider, limit, true);
+    return claimDue(provider, limit, ClaimSelection.DEVICE_OBSERVATIONS);
   }
 
-  private List<Claim> claimDue(String provider, int limit, boolean deviceObservationsOnly) {
+  private enum ClaimSelection {
+    ALL(DUE_STATES),
+    WRITES("('READY_TO_WRITE','READY_TO_ASSIGN')"),
+    DEVICE_OBSERVATIONS("('ASSIGNMENT_UNKNOWN','WAITING_DEVICE')");
+
+    private final String sqlStates;
+
+    ClaimSelection(String sqlStates) {
+      this.sqlStates = sqlStates;
+    }
+
+    boolean accepts(State state) {
+      return switch (this) {
+        case ALL -> true;
+        case WRITES -> state == State.READY_TO_WRITE || state == State.READY_TO_ASSIGN;
+        case DEVICE_OBSERVATIONS ->
+            state == State.ASSIGNMENT_UNKNOWN || state == State.WAITING_DEVICE;
+      };
+    }
+  }
+
+  private List<Claim> claimDue(String provider, int limit, ClaimSelection selection) {
     workerBoundary();
     if (provider == null || !provider.matches("[A-Z][A-Z0-9_]{2,31}") || limit < 1 || limit > 25)
       throw new IllegalArgumentException("Invalid execution claim selection");
@@ -303,9 +542,7 @@ class ManagedPolicyExecutionJournal {
               db.query(
                   "SELECT * FROM managed_policy_execution_tasks WHERE provider=?"
                       + " AND state IN "
-                      + (deviceObservationsOnly
-                          ? "('ASSIGNMENT_UNKNOWN','WAITING_DEVICE')"
-                          : DUE_STATES)
+                      + selection.sqlStates
                       + " AND next_attempt_at<=? AND (lease_until IS NULL OR lease_until<=?)"
                       + " ORDER BY next_attempt_at,id LIMIT ?",
                   this::row,
@@ -318,7 +555,7 @@ class ManagedPolicyExecutionJournal {
             var current = required(before.tenant(), before.id(), true);
             if (!due(current, now) || !current.provider().equals(provider)) continue;
             // Recheck after locking: selection and ownership can race between replicas.
-            if (deviceObservationsOnly && !deviceObservationState(current.state())) continue;
+            if (!selection.accepts(current.state())) continue;
             if (current.expiresAt() <= now || current.attempts() >= settings.maximumAttempts()) {
               finish(
                   current,
@@ -359,13 +596,64 @@ class ManagedPolicyExecutionJournal {
     workerBoundary();
     if (claim.action() != Action.READ_DEVICE)
       throw new IllegalArgumentException("Expected a device observation claim");
-    return tx.execute(
-        status -> {
-          var current = required(claim.tenantId(), claim.taskId(), false);
-          return owns(current, claim)
-              && !current.cancelled()
-              && deviceObservationState(current.state());
-        });
+    return withDeviceObservationAuthority(claim, current -> true);
+  }
+
+  /**
+   * Recheck authority both before remote reads (including after queueing) and before accepting a
+   * receipt. Binding/publication locks precede the task lock, matching admission and write
+   * dispatch. Domain rejection rolls back the entire validation transaction before a separate
+   * lease-fenced checkpoint parks the uncertain assignment for review. In particular, a nested
+   * MANDATORY rejection must not turn this checkpoint into an UnexpectedRollbackException.
+   */
+  private boolean withDeviceObservationAuthority(
+      Claim claim, java.util.function.Function<Row, Boolean> accepted) {
+    try {
+      return tx.execute(
+          status -> {
+            requireReadCommitted();
+            var before = required(claim.tenantId(), claim.taskId(), false);
+            if (!currentDeviceObservation(before, claim)) return false;
+            var context =
+                bindings.requireVerifiedContext(
+                    before.tenant(), before.actor(), before.binding(), before.bindingVersion());
+            var publication =
+                publications.requireTarget(
+                    before.tenant(),
+                    before.actor(),
+                    before.publication(),
+                    before.device(),
+                    before.registration());
+            var current = required(claim.tenantId(), claim.taskId(), true);
+            if (!currentDeviceObservation(current, claim)) return false;
+            if (!current.contextHash().equals(contextHash(context))
+                || !current.versionId().equals(publication.versionId()))
+              throw conflict("EXECUTION_CONTEXT_CHANGED");
+            return accepted.apply(current);
+          });
+    } catch (DomainException rejected) {
+      // A restored permission cannot revive this read. Keep the device slot until explicit review;
+      // a cancelled, expired or superseded lease must never overwrite a newer worker's outcome.
+      return tx.execute(
+          status -> {
+            var current = required(claim.tenantId(), claim.taskId(), true);
+            if (currentDeviceObservation(current, claim))
+              finish(
+                  current,
+                  State.NEEDS_REVIEW,
+                  current.providerVersion(),
+                  Reason.CONTEXT_CHANGED,
+                  now());
+            return false;
+          });
+    }
+  }
+
+  private boolean currentDeviceObservation(Row current, Claim claim) {
+    return claim.action() == Action.READ_DEVICE
+        && owns(current, claim)
+        && !current.cancelled()
+        && deviceObservationState(current.state());
   }
 
   private boolean deviceObservationState(State state) {
@@ -582,13 +870,9 @@ class ManagedPolicyExecutionJournal {
 
   boolean deviceObserved(Claim claim, ManagedAndroidGateway.ManagedDeviceState observed) {
     workerBoundary();
-    return tx.execute(
-        status -> {
-          var current = required(claim.tenantId(), claim.taskId(), true);
-          if (!owns(current, claim)
-              || claim.action() != Action.READ_DEVICE
-              || !Set.of(State.ASSIGNMENT_UNKNOWN, State.WAITING_DEVICE).contains(current.state()))
-            return false;
+    return withDeviceObservationAuthority(
+        claim,
+        current -> {
           if (observed == null
               || !deviceName(current).equals(observed.deviceName())
               || observed.state() == null
@@ -678,6 +962,176 @@ class ManagedPolicyExecutionJournal {
           audit.record(tenant, actor, "MANAGED_EXECUTION_CANCEL_REQUESTED", id);
           return view(required(tenant, id, false));
         });
+  }
+
+  enum ReviewReason {
+    ELIGIBLE,
+    ADMINISTRATOR_REQUIRED,
+    EXECUTION_RECHECK_REQUIRES_REVIEW,
+    EXECUTION_RECHECK_CANCELLED,
+    EXECUTION_RECHECK_REQUIRES_POLICY_RECEIPT,
+    EXECUTION_RECHECK_UNAVAILABLE,
+    EXECUTION_CONTEXT_CHANGED,
+    EXECUTION_RECHECK_LEASE_ACTIVE,
+    EXECUTION_RECHECK_WINDOW_CLOSED,
+    EXECUTION_VERSION_EXHAUSTED
+  }
+
+  /** Deliberately excludes provider versions, remote resource names and original actor details. */
+  record ReviewEligibility(
+      String id,
+      String publicationId,
+      String deviceId,
+      String registrationId,
+      long revision,
+      boolean allowed,
+      ReviewReason reason) {}
+
+  private record ReviewCandidate(Row row, DomainException contextFailure) {}
+
+  /** Read-only permission preflight. The eventual write repeats authorization under locks. */
+  void requireReviewAdministrator(String tenant, String actor, String id) {
+    canonicalId(id);
+    access.requireRole(tenant, actor, OWNER, ORG_ADMIN);
+    required(tenant, id, false);
+  }
+
+  /**
+   * A current, non-cached explanation rather than an authorization token. This method takes short
+   * authority/task locks but does not alter counters, leases, audit rows or task events.
+   */
+  ReviewEligibility reviewEligibility(
+      String tenant, String actor, String id, boolean available, String provider) {
+    canonicalId(id);
+    return tx.execute(
+        status -> {
+          requireReadCommitted();
+          var grant = access.requireRole(tenant, actor, OWNER, ORG_ADMIN, AUDITOR);
+          var current = required(tenant, id, false);
+          if (grant.role() == AUDITOR)
+            return eligibility(current, ReviewReason.ADMINISTRATOR_REQUIRED);
+          if (!available) return eligibility(current, ReviewReason.EXECUTION_RECHECK_UNAVAILABLE);
+          try {
+            var candidate = reviewCandidate(tenant, actor, id);
+            // A nested Spring domain read may have marked the transaction rollback-only. This
+            // projection writes nothing: explicitly roll back the rejected read instead of
+            // attempting
+            // a successful commit and turning the expected denial into UnexpectedRollbackException.
+            if (candidate.contextFailure() != null) status.setRollbackOnly();
+            return eligibility(candidate.row(), reviewReason(candidate, provider, now()));
+          } catch (DomainException authorityFailure) {
+            // The original publisher may have lost authority. Recheck the requesting administrator
+            // under a write lock: their own revocation must still be a 403, not a successful
+            // projection.
+            access.requireWriteRole(tenant, actor, OWNER, ORG_ADMIN);
+            status.setRollbackOnly();
+            return eligibility(required(tenant, id, true), ReviewReason.EXECUTION_CONTEXT_CHANGED);
+          }
+        });
+  }
+
+  /**
+   * Starts another read-only observation round under fresh administrative consent. The original
+   * task expiry and policy receipt are immutable here; unresolved/cancelled writes cannot be
+   * retried. A caller-facing service must require recent authentication and an available read
+   * consumer.
+   */
+  View requestDeviceRecheck(
+      String tenant, String actor, String id, long expectedRevision, String provider) {
+    canonicalId(id);
+    return tx.execute(
+        status -> {
+          requireReadCommitted();
+          access.requireRole(tenant, actor, OWNER, ORG_ADMIN);
+          var candidate = reviewCandidate(tenant, actor, id);
+          var current = candidate.row();
+          ResourceVersions.check(expectedRevision, current.revision());
+          long observedAt = now();
+          var reason = reviewReason(candidate, provider, observedAt);
+          if (reason != ReviewReason.ELIGIBLE) {
+            // Preserve meaningful write-side authority failures while the projection only exposes a
+            // stable context-change reason. Both paths still use the same eligibility decision.
+            if (reason == ReviewReason.EXECUTION_CONTEXT_CHANGED
+                && candidate.contextFailure() != null) throw candidate.contextFailure();
+            throw conflict(reason.name());
+          }
+          // A new claim gets a fresh generation/token. Reset and state/audit/event changes are
+          // atomic.
+          exactlyOne(
+              db.update(
+                  "UPDATE managed_policy_execution_tasks SET attempts=0 WHERE tenant_id=? AND id=?"
+                      + " AND revision=?",
+                  tenant,
+                  id,
+                  current.revision()));
+          update(
+              current,
+              State.WAITING_DEVICE,
+              current.providerVersion(),
+              Reason.MANUAL_DEVICE_RECHECK_REQUESTED,
+              observedAt,
+              true,
+              false);
+          audit.record(tenant, actor, "MANAGED_EXECUTION_DEVICE_RECHECK_REQUESTED", id);
+          return view(required(tenant, id, false));
+        });
+  }
+
+  /** Stable membership order precedes the existing binding/publication -> task lock order. */
+  private ReviewCandidate reviewCandidate(String tenant, String actor, String id) {
+    var before = required(tenant, id, false);
+    access.requireWriteRoles(tenant, List.of(actor, before.actor()), OWNER, ORG_ADMIN);
+    ManagedAgentBindingStore.VerifiedBindingContext context = null;
+    ManagedExecutionPublicationAccess.Publication publication = null;
+    DomainException contextFailure = null;
+    try {
+      context =
+          bindings.requireVerifiedContext(
+              tenant, before.actor(), before.binding(), before.bindingVersion());
+      publication =
+          publications.requireTarget(
+              tenant, before.actor(), before.publication(), before.device(), before.registration());
+    } catch (DomainException changed) {
+      // Only expected domain rejections are converted. Infrastructure errors must remain failures.
+      contextFailure = changed;
+    }
+    var current = required(tenant, id, true);
+    if (contextFailure == null
+        && (!current.contextHash().equals(contextHash(context))
+            || !current.versionId().equals(publication.versionId())))
+      contextFailure = conflict("EXECUTION_CONTEXT_CHANGED");
+    return new ReviewCandidate(current, contextFailure);
+  }
+
+  /** One ordered predicate shared by the explanation and the atomic write-side recheck. */
+  private ReviewReason reviewReason(ReviewCandidate candidate, String provider, long observedAt) {
+    var current = candidate.row();
+    if (current.state() != State.NEEDS_REVIEW)
+      return ReviewReason.EXECUTION_RECHECK_REQUIRES_REVIEW;
+    if (current.cancelled()) return ReviewReason.EXECUTION_RECHECK_CANCELLED;
+    if (current.providerVersion() == null || current.providerVersion() < 1)
+      return ReviewReason.EXECUTION_RECHECK_REQUIRES_POLICY_RECEIPT;
+    if (!Objects.equals(provider, current.provider()))
+      return ReviewReason.EXECUTION_RECHECK_UNAVAILABLE;
+    if (candidate.contextFailure() != null) return ReviewReason.EXECUTION_CONTEXT_CHANGED;
+    if (current.leaseUntil() != null && current.leaseUntil() > observedAt)
+      return ReviewReason.EXECUTION_RECHECK_LEASE_ACTIVE;
+    if (current.expiresAt() - observedAt < settings.leaseMillis())
+      return ReviewReason.EXECUTION_RECHECK_WINDOW_CLOSED;
+    if (current.generation() >= MAX_REVISION || current.revision() >= MAX_REVISION)
+      return ReviewReason.EXECUTION_VERSION_EXHAUSTED;
+    return ReviewReason.ELIGIBLE;
+  }
+
+  private ReviewEligibility eligibility(Row current, ReviewReason reason) {
+    return new ReviewEligibility(
+        current.id(),
+        current.publication(),
+        current.device(),
+        current.registration(),
+        current.revision(),
+        reason == ReviewReason.ELIGIBLE,
+        reason);
   }
 
   View get(String tenant, String actor, String id) {

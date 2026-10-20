@@ -1616,6 +1616,38 @@
       ],
       "domain": "managedandroid",
       "category": "DERIVED_COPY"
+    },
+    {
+      "table": "managed_policy_preparation_requests",
+      "columns": [
+        "active_device_id",
+        "actor_id",
+        "attempts",
+        "authority_version",
+        "binding_id",
+        "binding_version",
+        "context_sha256",
+        "created_at",
+        "device_id",
+        "execution_task_id",
+        "expires_at",
+        "generation",
+        "id",
+        "lease_token",
+        "lease_until",
+        "next_attempt_at",
+        "policy_version_id",
+        "publication_id",
+        "reason_code",
+        "registration_id",
+        "revision",
+        "state",
+        "subject_id",
+        "tenant_id",
+        "updated_at"
+      ],
+      "domain": "managedandroid",
+      "category": "DEVICE_DATA"
     }
   ]
 }

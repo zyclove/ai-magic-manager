@@ -20,6 +20,9 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.transaction.support.TransactionTemplate;
 
 class GooglePolicyPreparationServiceTest {
+  final ManagedProviderCalls calls =
+      new ManagedProviderCalls(1, java.time.Duration.ofSeconds(20), System::nanoTime);
+
   final Instant now = Instant.parse("2026-10-16T12:00:00Z");
   final Clock clock = Clock.fixed(now, ZoneOffset.UTC);
   final ManagedAgentBindingStore bindings = mock(ManagedAgentBindingStore.class);
@@ -117,7 +120,8 @@ class GooglePolicyPreparationServiceTest {
             ManagedPreparationTestQualifications.allow(),
             clock,
             transactions,
-            "");
+            "",
+            calls);
   }
 
   @Test
@@ -324,7 +328,8 @@ class GooglePolicyPreparationServiceTest {
             ManagedPreparationTestQualifications.allow(),
             progressing,
             transactions,
-            "");
+            "",
+            calls);
     rejects("MANAGED_DEVICE_PROFILE_STALE");
   }
 
@@ -341,7 +346,8 @@ class GooglePolicyPreparationServiceTest {
             ManagedPreparationTestQualifications.allow(),
             clock,
             transactions,
-            " com.example.lesson ");
+            " com.example.lesson ",
+            calls);
     Throwable failure = catchThrowable(this::prepare);
     assertThat(failure)
         .as("current protected packages must participate in preparation")
@@ -363,7 +369,8 @@ class GooglePolicyPreparationServiceTest {
             ManagedPreparationTestQualifications.allow(),
             progressing,
             transactions,
-            "");
+            "",
+            calls);
     rejects("MANAGED_DEVICE_PROFILE_STALE");
     verify(progressing, times(3)).instant();
   }
@@ -455,5 +462,10 @@ class GooglePolicyPreparationServiceTest {
 
   void outsideTransaction() {
     assertThat(TransactionSynchronizationManager.isActualTransactionActive()).isFalse();
+  }
+
+  @org.junit.jupiter.api.AfterEach
+  void closeProviderCalls() {
+    calls.close();
   }
 }

@@ -3,6 +3,7 @@ package com.aimanager.managedandroid.internal;
 import com.aimanager.shared.DomainException;
 import com.aimanager.shared.SecretMaterial;
 import java.time.Clock;
+import java.time.Duration;
 import java.util.Objects;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,20 +19,39 @@ class ManagedExecutionPreparationService {
   private final ManagedPolicyExecutionJournal journal;
   private final ManagedPolicyPreparationService preparation;
   private final Clock clock;
+  private final ManagedProviderCalls calls;
 
   ManagedExecutionPreparationService(
       ManagedPolicyExecutionJournal journal,
       ManagedPolicyPreparationService preparation,
-      Clock clock) {
+      Clock clock,
+      ManagedProviderCalls calls) {
     this.journal = journal;
     this.preparation = preparation;
     this.clock = clock;
+    this.calls = Objects.requireNonNull(calls);
   }
 
   PreparedExecution prepare(ManagedPolicyExecutionJournal.Claim claim) {
-    if (TransactionSynchronizationManager.isActualTransactionActive())
-      throw new IllegalStateException("Execution preparation requires separate short transactions");
+    requireOutsideTransaction();
+    Objects.requireNonNull(claim);
+    ManagedProviderCalls.Budget budget;
+    try {
+      budget =
+          calls.budget(Duration.ofMillis(Math.subtractExact(claim.leaseUntil(), clock.millis())));
+    } catch (RuntimeException unavailable) {
+      throw budgetUnavailable();
+    }
+    return prepare(claim, budget);
+  }
+
+  /** Nested callers supply their original action budget, including prior reads and queue time. */
+  PreparedExecution prepare(
+      ManagedPolicyExecutionJournal.Claim claim, ManagedProviderCalls.Budget budget) {
+    requireOutsideTransaction();
+    checkBudget(budget);
     var before = journal.writePreparationTarget(claim);
+    checkBudget(budget);
     var binding = before.binding();
     // Only persisted task authority selects these inputs, never caller-supplied publication IDs.
     var prepared =
@@ -40,8 +60,11 @@ class ManagedExecutionPreparationService {
             binding.actorId(),
             before.publicationId(),
             binding.bindingId(),
-            binding.bindingVersion());
+            binding.bindingVersion(),
+            budget);
+    checkBudget(budget);
     var current = journal.writePreparationTarget(claim);
+    checkBudget(budget);
     if (!before.equals(current)
         || prepared == null
         || !Objects.equals(current.publicationId(), prepared.publicationId())
@@ -70,7 +93,26 @@ class ManagedExecutionPreparationService {
       throw rejected("EXECUTION_PREPARATION_CHANGED");
     }
     if (clock.millis() >= expiresAt) throw rejected("EXECUTION_PREPARATION_EXPIRED");
+    checkBudget(budget);
     return new PreparedExecution(current, prepared, expiresAt);
+  }
+
+  private static void requireOutsideTransaction() {
+    if (TransactionSynchronizationManager.isActualTransactionActive())
+      throw new IllegalStateException("Execution preparation requires separate short transactions");
+  }
+
+  private void checkBudget(ManagedProviderCalls.Budget budget) {
+    try {
+      calls.check(budget);
+    } catch (RuntimeException unavailable) {
+      throw budgetUnavailable();
+    }
+  }
+
+  private static DomainException budgetUnavailable() {
+    return new DomainException(
+        HttpStatus.SERVICE_UNAVAILABLE, "EXECUTION_PREPARATION_PROVIDER_UNAVAILABLE");
   }
 
   private static DomainException rejected(String reason) {

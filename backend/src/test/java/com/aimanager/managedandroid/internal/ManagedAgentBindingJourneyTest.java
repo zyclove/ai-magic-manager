@@ -67,10 +67,126 @@ class ManagedAgentBindingJourneyTest {
   @Autowired PlatformTransactionManager transactions;
   @Autowired ManagedAndroidGateway gateway;
   @Autowired ManagedAgentBindingStore store;
+  @Autowired ManagedPolicyExecutionJournal executionJournal;
+  @Autowired javax.sql.DataSource executionDataSource;
   @MockitoBean JwtDecoder decoder;
   @Autowired ManagedEnterpriseAuthority enterprises;
   @Autowired CommercialCapacity capacity;
   @Autowired ManagedEnterpriseBindingService realEnterpriseAuthority;
+
+  /**
+   * Real binding/publication/authority transactions; only external provider/contract are fixtures.
+   */
+  @org.junit.jupiter.params.ParameterizedTest
+  @org.junit.jupiter.params.provider.CsvSource({
+    "ACTOR,before", "ACTOR,queued", "ACTOR,commit",
+    "BINDING,before", "BINDING,queued", "BINDING,commit",
+    "DEVICE,before", "DEVICE,queued", "DEVICE,commit",
+    "REGISTRATION_KEY,before", "REGISTRATION_KEY,queued", "REGISTRATION_KEY,commit",
+    "SUBJECT,before", "SUBJECT,queued", "SUBJECT,commit",
+    "AUTHORITY_EPOCH,before", "AUTHORITY_EPOCH,queued", "AUTHORITY_EPOCH,commit"
+  })
+  void observationRechecksAuthorityAtEveryBoundary(String mutation, String boundary)
+      throws Exception {
+    var f = fixture();
+    var binding = verifiedBinding(f);
+    var data = new ManagedExecutionTestData(executionDataSource);
+    var publication =
+        data.publication(
+            new ManagedExecutionTestData.Fixture(
+                f.tenant(),
+                f.actor(),
+                f.subject(),
+                f.device(),
+                f.registration(),
+                binding.id(),
+                f.intent(),
+                f.enterprise(),
+                f.providerDevice(),
+                null,
+                null),
+            "ENFORCE");
+    var task =
+        executionJournal.enqueue(
+            f.tenant(),
+            f.actor(),
+            publication.publication(),
+            binding.id(),
+            binding.version(),
+            ManagedPolicyExecutionJournalTest.DOCUMENT,
+            System.currentTimeMillis() + 600000);
+    try {
+      // A confirmed write receipt is a prerequisite; this fixture represents an already assigned
+      // task.
+      db.update(
+          "UPDATE managed_policy_execution_tasks SET state='WAITING_DEVICE',provider_version=7"
+              + " WHERE id=?",
+          task.id());
+      var claim =
+          executionJournal.claimDeviceObservations("LOCAL_TEST", 25).stream()
+              .filter(c -> c.taskId().equals(task.id()))
+              .findFirst()
+              .orElseThrow();
+      if (!boundary.equals("before"))
+        assertThat(executionJournal.deviceObservationCurrent(claim)).isTrue();
+      switch (mutation) {
+        case "ACTOR" ->
+            db.update(
+                "UPDATE tenant_members SET revoked_at=CURRENT_TIMESTAMP,version=version+1 WHERE"
+                    + " tenant_id=?",
+                f.tenant());
+        case "BINDING" -> store.revoke(f.tenant(), f.actor(), binding.id(), binding.version());
+        case "DEVICE" -> db.update("UPDATE devices SET state='REVOKED' WHERE id=?", f.device());
+        case "REGISTRATION_KEY" ->
+            db.update("UPDATE devices SET key_thumbprint=? WHERE id=?", "b".repeat(43), f.device());
+        case "SUBJECT" ->
+            db.update(
+                "UPDATE subjects SET archived_at=1 WHERE tenant_id=? AND id=?",
+                f.tenant(),
+                f.subject());
+        case "AUTHORITY_EPOCH" ->
+            db.update("UPDATE tenant_members SET version=version+1 WHERE tenant_id=?", f.tenant());
+        default -> throw new AssertionError(mutation);
+      }
+      if (boundary.equals("commit")) {
+        String policy = "enterprises/" + f.enterprise() + "/policies/" + claim.policyId();
+        assertThat(
+                executionJournal.deviceObserved(
+                    claim,
+                    new ManagedAndroidGateway.ManagedDeviceState(
+                        "enterprises/" + f.enterprise() + "/devices/" + f.providerDevice(),
+                        "DEVICE_OWNER",
+                        policy,
+                        policy,
+                        7L,
+                        ManagedAndroidGateway.ApplyState.APPLIED,
+                        List.of(),
+                        null)))
+            .isFalse();
+      } else assertThat(executionJournal.deviceObservationCurrent(claim)).isFalse();
+      var row =
+          db.queryForMap(
+              "SELECT state,reason_code,active_device_id,lease_token FROM"
+                  + " managed_policy_execution_tasks WHERE id=?",
+              task.id());
+      assertThat(row.get("state")).isEqualTo("NEEDS_REVIEW");
+      assertThat(row.get("reason_code")).isEqualTo("CONTEXT_CHANGED");
+      assertThat(row.get("active_device_id")).isEqualTo(f.device());
+      assertThat(row.get("lease_token")).isNull();
+      assertThat(
+              db.queryForObject(
+                  "SELECT COUNT(*) FROM managed_policy_execution_events WHERE task_id=? AND"
+                      + " state='APPLIED'",
+                  Long.class,
+                  task.id()))
+          .isZero();
+    } finally {
+      db.update(
+          "DELETE FROM managed_policy_execution_tasks WHERE tenant_id=? AND id=?",
+          f.tenant(),
+          task.id());
+    }
+  }
 
   @Test
   void controlEvidenceRefreshKeepsReviewedOperations() throws Exception {

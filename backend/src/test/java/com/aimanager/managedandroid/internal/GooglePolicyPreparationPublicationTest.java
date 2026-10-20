@@ -27,6 +27,9 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
  * Real publication SQL and tenant authorization; device binding/provider remain explicit fixtures.
  */
 class GooglePolicyPreparationPublicationTest {
+  final ManagedProviderCalls calls =
+      new ManagedProviderCalls(1, java.time.Duration.ofSeconds(20), System::nanoTime);
+
   @Configuration(proxyBeanMethods = false)
   @EnableTransactionManagement
   @ComponentScan(
@@ -217,7 +220,8 @@ class GooglePolicyPreparationPublicationTest {
                         ManagedPreparationTestQualifications.allow(),
                         clock,
                         data.transactions,
-                        "");
+                        "",
+                        calls);
                 if (revokeDuringRead) {
                   assertThatThrownBy(
                           () ->
@@ -245,5 +249,10 @@ class GooglePolicyPreparationPublicationTest {
                 verify(gateway, never()).assignPolicy(anyString(), anyString(), anyString());
               });
     }
+  }
+
+  @org.junit.jupiter.api.AfterEach
+  void closeProviderCalls() {
+    calls.close();
   }
 }

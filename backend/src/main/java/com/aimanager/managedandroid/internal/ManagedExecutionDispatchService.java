@@ -5,16 +5,18 @@ import com.aimanager.managedandroid.ManagedAndroidGateway.CompletePolicyState;
 import com.aimanager.managedandroid.ManagedAndroidGateway.PolicyReceipt;
 import com.aimanager.managedandroid.internal.ManagedExecutionResourceAuthorityService.VerifiedExecution;
 import java.time.Clock;
+import java.time.Duration;
 import java.util.Objects;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 /**
  * Executes one leased write action, never retries it. The journal commits uncertainty before
  * provider I/O. A confirmed assignment still awaits independent device compliance evidence. No
- * scheduler or HTTP entry enables this service until publication admission is connected.
+ * default configuration enables provider writes; admission and consumer gates remain required.
  */
 @Service
 class ManagedExecutionDispatchService {
@@ -23,16 +25,25 @@ class ManagedExecutionDispatchService {
   private final ManagedExecutionResourceAuthorityService authority;
   private final ManagedAndroidGateway gateway;
   private final Clock clock;
+  private final ManagedProviderCalls calls;
+  private final long commitReserveMillis;
 
   ManagedExecutionDispatchService(
       ManagedPolicyExecutionJournal journal,
       ManagedExecutionResourceAuthorityService authority,
       ManagedAndroidGateway gateway,
-      Clock clock) {
+      Clock clock,
+      ManagedProviderCalls calls,
+      @Value("${manager.emm.execution.dispatch.commit-reserve-millis:10000}")
+          long commitReserveMillis) {
+    if (commitReserveMillis < 1 || commitReserveMillis > 10000)
+      throw new IllegalArgumentException("Invalid dispatch commit reserve");
     this.journal = journal;
     this.authority = authority;
     this.gateway = gateway;
     this.clock = clock;
+    this.calls = Objects.requireNonNull(calls);
+    this.commitReserveMillis = commitReserveMillis;
   }
 
   boolean execute(ManagedPolicyExecutionJournal.Claim claim) {
@@ -44,16 +55,22 @@ class ManagedExecutionDispatchService {
       throw new IllegalArgumentException("Dispatch requires a write or assignment claim");
     String stage = "prepare";
     try {
-      var verified = authority.verify(claim);
-      current(verified, claim, false);
+      // Keep room for the final local receipt transaction; never renew task or evidence expiry.
+      long remaining =
+          Math.subtractExact(
+              Math.subtractExact(claim.leaseUntil(), clock.millis()), commitReserveMillis);
+      var budget = calls.budget(Duration.ofMillis(remaining));
+      calls.check(budget);
+      var verified = authority.verify(claim, budget);
+      current(verified, claim, false, budget);
       if (claim.action() == ManagedPolicyExecutionJournal.Action.ASSIGN_POLICY) {
         stage = "inspect-before-assignment";
-        inspect(verified, claim, claim.policyVersion());
-        current(verified, claim, false);
+        inspect(verified, claim, claim.policyVersion(), budget);
+        current(verified, claim, false, budget);
         // Inspection is network I/O: recheck application/device qualification afterward.
-        var fresh = authority.verify(claim);
-        current(verified, claim, false);
-        current(fresh, claim, false);
+        var fresh = authority.verify(claim, budget);
+        current(verified, claim, false, budget);
+        current(fresh, claim, false, budget);
         if (!verified.evidence().target().equals(fresh.evidence().target())) throw changed();
         verified =
             new VerifiedExecution(
@@ -62,25 +79,41 @@ class ManagedExecutionDispatchService {
                 Math.min(verified.expiresAt(), fresh.expiresAt()));
       }
       stage = "checkpoint";
+      // Capture the final authority snapshot for worker-side checks after a possible queue wait.
+      var execution = verified;
+      calls.check(budget);
       if (!journal.beforeWrite(verified.prepared().target(), verified.expiresAt())) throw changed();
-      current(verified, claim, true);
+      current(verified, claim, true, budget);
       if (claim.action() == ManagedPolicyExecutionJournal.Action.WRITE_POLICY) {
         stage = "write";
+        var document = verified.prepared().preparation().document();
         var receipt =
-            gateway.writePolicyCandidate(
-                claim.enterpriseId(),
-                claim.policyId(),
-                verified.prepared().preparation().document());
+            calls.call(
+                budget,
+                () -> {
+                  // Queue admission is not authorization at the time the worker actually starts.
+                  current(execution, claim, true, budget);
+                  return gateway.writePolicyCandidate(
+                      claim.enterpriseId(), claim.policyId(), document);
+                });
         validReceipt(claim, receipt);
-        current(verified, claim, true);
+        current(verified, claim, true, budget);
         stage = "inspect-written-policy";
-        inspect(verified, claim, receipt.providerVersion());
-        current(verified, claim, true);
+        inspect(verified, claim, receipt.providerVersion(), budget);
+        current(verified, claim, true, budget);
+        // The remaining local commit reserve is still bounded by the journal's lease and timeout.
         return journal.policyWritten(claim, receipt);
       }
       stage = "assign";
-      var receipt = gateway.assignPolicy(claim.enterpriseId(), claim.deviceId(), claim.policyId());
-      current(verified, claim, true);
+      var receipt =
+          calls.call(
+              budget,
+              () -> {
+                current(execution, claim, true, budget);
+                return gateway.assignPolicy(
+                    claim.enterpriseId(), claim.deviceId(), claim.policyId());
+              });
+      current(verified, claim, true, budget);
       return journal.assignmentAccepted(claim, receipt);
     } catch (RuntimeException failure) {
       log(stage, claim, failure);
@@ -96,7 +129,11 @@ class ManagedExecutionDispatchService {
   }
 
   private void current(
-      VerifiedExecution verified, ManagedPolicyExecutionJournal.Claim claim, boolean dispatched) {
+      VerifiedExecution verified,
+      ManagedPolicyExecutionJournal.Claim claim,
+      boolean dispatched,
+      ManagedProviderCalls.Budget budget) {
+    calls.check(budget);
     if (verified == null
         || verified.prepared() == null
         || verified.evidence() == null
@@ -113,17 +150,24 @@ class ManagedExecutionDispatchService {
         || !Objects.equals(gateway.policyResourceAuthorityRevision(), target.adapterRevision())
         || Thread.currentThread().isInterrupted()
         || clock.millis() >= verified.expiresAt()) throw changed();
+    calls.check(budget);
   }
 
   private void inspect(
-      VerifiedExecution verified, ManagedPolicyExecutionJournal.Claim claim, Long version) {
+      VerifiedExecution verified,
+      ManagedPolicyExecutionJournal.Claim claim,
+      Long version,
+      ManagedProviderCalls.Budget budget) {
     if (version == null || version < 1) throw changed();
     var observed =
-        gateway.inspectCompletePolicy(
-            claim.enterpriseId(),
-            claim.policyId(),
-            verified.prepared().preparation().document(),
-            version);
+        calls.call(
+            budget,
+            () ->
+                gateway.inspectCompletePolicy(
+                    claim.enterpriseId(),
+                    claim.policyId(),
+                    verified.prepared().preparation().document(),
+                    version));
     if (observed == null
         || observed.state() != CompletePolicyState.MATCHED
         || !policyName(claim).equals(observed.policyName())

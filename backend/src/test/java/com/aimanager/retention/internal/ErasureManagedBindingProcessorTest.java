@@ -256,7 +256,7 @@ class ErasureManagedBindingProcessorTest {
   }
 
   @Test
-  void oversizedExecutionEventsStopBeforeCascade() {
+  void oversizedTerminalHistoryProgressesWithinTheSharedBudget() {
     var target = fixture.device(subject);
     String task = executionTask(binding(target, "REVOKED"), "CANCELLED");
     for (int revision = 2; revision <= 101; revision++)
@@ -267,11 +267,19 @@ class ErasureManagedBindingProcessorTest {
           tenant,
           task,
           revision);
-    fixture.data.failure(
-        "ERASURE_EXECUTION_HISTORY_LIMIT_EXCEEDED",
-        () -> processor.process(fixture.accept(target), 25));
-    assertEquals(101, count("managed_policy_execution_events"));
+    var claim = fixture.accept(target);
+    var first = assertDoesNotThrow(() -> processor.process(claim, 1));
+    assertFalse(first.complete());
+    assertEquals(0, first.deletedExecutionTasks());
+    assertEquals(0, first.deletedRows());
+    assertEquals(1, count("managed_policy_execution_events"));
     assertEquals(1, count("managed_policy_execution_tasks"));
+    assertEquals(1, count("managed_agent_bindings"));
+    var second = processor.process(claim, 1);
+    assertEquals(1, second.deletedExecutionTasks());
+    assertEquals(0, count("managed_policy_execution_events"));
+    assertEquals(0, count("managed_policy_execution_tasks"));
+    assertTrue(processor.process(claim, 1).complete());
   }
 
   @Test
