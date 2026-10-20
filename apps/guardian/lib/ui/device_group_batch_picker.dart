@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 import '../core/api.dart';
 import '../core/labels.dart';
 import 'design.dart';
+import 'owned_dialog_route.dart';
 
 /// Explicit device registration selection for one atomic group-membership request.
 class DeviceGroupBatchPicker extends StatefulWidget {
@@ -10,13 +12,15 @@ class DeviceGroupBatchPicker extends StatefulWidget {
   final String root;
   final String? groupId;
   final bool Function() current;
+  final Listenable? accessChanges;
 
   const DeviceGroupBatchPicker(
       {super.key,
       required this.api,
       required this.root,
       this.groupId,
-      required this.current});
+      required this.current,
+      this.accessChanges});
 
   @override
   State<DeviceGroupBatchPicker> createState() => _DeviceGroupBatchPickerState();
@@ -28,20 +32,120 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
   String? cursor;
   Object? error;
   bool loading = false;
+  ModalRoute<dynamic>? _route;
+  bool _active = true, _revoked = false, _rebuildPending = false;
+  int generation = 0;
+
+  void _observeAccess() {
+    if (!_revoked && !widget.current()) _revoked = true;
+  }
+
+  bool get permitted {
+    _observeAccess();
+    return !_revoked;
+  }
+
+  bool get current =>
+      mounted && _active && permitted && _route?.isCurrent == true &&
+      (_route is! OwnedDialogRoute<dynamic> ||
+          (_route as OwnedDialogRoute<dynamic>).available);
+
+  void _accessChanged() {
+    final wasRevoked = _revoked;
+    _observeAccess();
+    if (wasRevoked || !_revoked || !mounted || !_active) return;
+    generation++;
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      if (_rebuildPending) return;
+      _rebuildPending = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _rebuildPending = false;
+        if (mounted && _active) setState(() {});
+      });
+    } else {
+      setState(() {});
+    }
+  }
+
+  void finish([List<Json>? result]) {
+    if (!mounted || !_active) return;
+    final route = _route;
+    if (route is OwnedDialogRoute<List<Json>>) {
+      route.finish(result);
+    } else if (route?.isCurrent == true) {
+      route!.navigator?.pop(result);
+    }
+  }
+
+  void close() {
+    if (current) finish();
+  }
+
+  void confirm() {
+    if (!current || selected.isEmpty) return;
+    finish(List<Json>.unmodifiable(selected.values));
+  }
   bool get removing => widget.groupId != null;
   String idOf(Json row) => row[removing ? 'deviceId' : 'id'] as String;
 
   @override
   void initState() {
     super.initState();
+    _observeAccess();
+    widget.accessChanges?.addListener(_accessChanged);
     WidgetsBinding.instance.addPostFrameCallback((_) => load());
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final next = ModalRoute.of(context);
+    if (_route != null && !identical(_route, next)) _revoked = true;
+    _route = next;
+  }
+
+  @override
+  void didUpdateWidget(DeviceGroupBatchPicker oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.accessChanges, widget.accessChanges)) {
+      oldWidget.accessChanges?.removeListener(_accessChanged);
+      widget.accessChanges?.addListener(_accessChanged);
+    }
+    if (oldWidget.root != widget.root || oldWidget.groupId != widget.groupId ||
+        !identical(oldWidget.api, widget.api)) _revoked = true;
+    _observeAccess();
+  }
+
+  @override
+  void deactivate() {
+    _active = false;
+    _revoked = true;
+    generation++;
+    super.deactivate();
+  }
+
+  @override
+  void activate() {
+    super.activate();
+    _active = true;
+  }
+
+  @override
+  void dispose() {
+    _active = false;
+    _revoked = true;
+    generation++;
+    widget.accessChanges?.removeListener(_accessChanged);
+    super.dispose();
+  }
+
   Future<void> load({bool more = false}) async {
-    if (!mounted || !widget.current() || loading || (more && cursor == null)) {
+    if (!current || loading || (more && cursor == null)) {
       return;
     }
     final requestedCursor = more ? cursor : null;
+    final requested = ++generation;
     setState(() {
       loading = true;
       error = null;
@@ -50,8 +154,10 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
       final path = removing
           ? '${widget.root}/device-groups/${widget.groupId}/devices'
           : '${widget.root}/devices';
-      final page = await widget.api.page(path, cursor: requestedCursor);
-      if (!mounted || !widget.current()) return;
+      final page = await widget.api.page(path, cursor: requestedCursor,
+          isCurrent: () => mounted && _active && permitted &&
+              generation == requested);
+      if (!mounted || !_active || !permitted || generation != requested) return;
       final seen = more ? devices.map(idOf).toSet() : <String>{};
       for (final row in page.items) {
         if (row[removing ? 'deviceId' : 'id'] is! String ||
@@ -70,14 +176,21 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
         cursor = page.nextCursor;
       });
     } catch (failure) {
-      if (mounted && widget.current()) setState(() => error = failure);
+      if (mounted && _active && permitted && generation == requested) {
+        setState(() => error = failure);
+      }
     } finally {
-      if (mounted && widget.current()) setState(() => loading = false);
+      if (mounted && _active && permitted && generation == requested) {
+        setState(() => loading = false);
+      }
     }
   }
 
   void toggle(Json row) {
+    if (!current || (!removing && row['state'] != 'ACTIVE')) return;
     final id = idOf(row);
+    if (!devices.any((item) => idOf(item) == id &&
+        item['registrationId'] == row['registrationId'])) return;
     setState(() {
       if (selected.containsKey(id)) {
         selected.remove(id);
@@ -88,7 +201,14 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
   }
 
   @override
-  Widget build(BuildContext context) => Dialog(
+  Widget build(BuildContext context) => !permitted
+      ? AlertDialog(
+          title: const Text('工作空间或权限已变化'),
+          content: const Text('已隐藏原设备选择。请关闭窗口，在当前工作空间重新打开。'),
+          actions: [TextButton(onPressed: () {
+            if (_route?.isCurrent == true) finish();
+          }, child: const Text('关闭'))])
+      : Dialog(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 680, maxHeight: 720),
           child: Padding(
@@ -150,13 +270,10 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
                   spacing: 8,
                   children: [
                     TextButton(
-                        onPressed: () => Navigator.of(context).pop(),
+                        onPressed: close,
                         child: const Text('取消')),
                     FilledButton(
-                        onPressed: selected.isEmpty || !widget.current()
-                            ? null
-                            : () => Navigator.of(context)
-                                .pop(List<Json>.unmodifiable(selected.values)),
+                        onPressed: selected.isEmpty ? null : confirm,
                         child: Text(
                             '核对并${removing ? '移出' : '加入'} ${selected.length} 台')),
                   ],

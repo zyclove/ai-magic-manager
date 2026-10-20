@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import '../core/api.dart';
 import 'design.dart';
+import 'owned_dialog_route.dart';
 
 /// Short focused mutations preserve their payload when the server result is unknown.
 class ClassActionDialog extends StatefulWidget {
@@ -9,6 +11,8 @@ class ClassActionDialog extends StatefulWidget {
   final Map<String, String>? options;
   final Future<Json> Function(Json) onSubmit;
   final VoidCallback? reauth;
+  final Listenable? accessChanges;
+  final bool Function()? hasAccess;
   const ClassActionDialog(
       {super.key,
       required this.title,
@@ -19,7 +23,9 @@ class ClassActionDialog extends StatefulWidget {
       required this.onSubmit,
       this.initialName,
       this.options,
-      this.reauth});
+      this.reauth,
+      this.accessChanges,
+      this.hasAccess});
   @override
   State<ClassActionDialog> createState() => _ClassActionDialogState();
 }
@@ -31,7 +37,62 @@ class _ClassActionDialogState extends State<ClassActionDialog> {
   bool busy = false;
   Object? error;
   Json? pending;
+  ModalRoute<dynamic>? _route;
+  bool _active = true, _revoked = false, _rebuildPending = false;
   bool get locked => busy || pending != null;
+  bool get versionConflict =>
+      error is ApiFailure && (error as ApiFailure).status == 412;
+
+  void _observeAccess() {
+    if (!_revoked && widget.hasAccess?.call() == false) _revoked = true;
+  }
+
+  bool get permitted {
+    _observeAccess();
+    return !_revoked;
+  }
+
+  bool get current =>
+      mounted && _active && permitted && _route?.isCurrent == true &&
+      (_route is! OwnedDialogRoute<dynamic> ||
+          (_route as OwnedDialogRoute<dynamic>).available);
+
+  void _accessChanged() {
+    final wasRevoked = _revoked;
+    _observeAccess();
+    if (wasRevoked || !_revoked || !mounted || !_active) return;
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      if (_rebuildPending) return;
+      _rebuildPending = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _rebuildPending = false;
+        if (mounted && _active) setState(() {});
+      });
+    } else {
+      setState(() {});
+    }
+  }
+
+  void finish([Json? result]) {
+    if (!mounted || !_active) return;
+    final route = _route;
+    if (route is OwnedDialogRoute<Json>) {
+      route.finish(result);
+    } else if (route?.isCurrent == true) {
+      route!.navigator?.pop(result);
+    }
+  }
+
+  void close() {
+    if (current && !busy) {
+      finish(refreshRequired ? <String, dynamic>{'refresh': true} : null);
+    }
+  }
+
+  void reauthenticate() {
+    if (current && !busy) widget.reauth?.call();
+  }
   bool get refreshRequired =>
       pending != null ||
       error is ApiFailure && (error as ApiFailure).status == 412;
@@ -39,17 +100,53 @@ class _ClassActionDialogState extends State<ClassActionDialog> {
   void initState() {
     super.initState();
     name = TextEditingController(text: widget.initialName);
+    _observeAccess();
+    widget.accessChanges?.addListener(_accessChanged);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final next = ModalRoute.of(context);
+    if (_route != null && !identical(_route, next)) _revoked = true;
+    _route = next;
+  }
+
+  @override
+  void didUpdateWidget(ClassActionDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.accessChanges, widget.accessChanges)) {
+      oldWidget.accessChanges?.removeListener(_accessChanged);
+      widget.accessChanges?.addListener(_accessChanged);
+    }
+    _observeAccess();
+  }
+
+  @override
+  void deactivate() {
+    _active = false;
+    _revoked = true;
+    super.deactivate();
+  }
+
+  @override
+  void activate() {
+    super.activate();
+    _active = true;
   }
 
   @override
   void dispose() {
+    _active = false;
+    _revoked = true;
+    widget.accessChanges?.removeListener(_accessChanged);
     name.dispose();
     super.dispose();
   }
 
   Future<void> submit() async {
-    if (busy) return;
-    if (!form.currentState!.validate()) return;
+    if (!current || busy || versionConflict) return;
+    if (form.currentState?.validate() != true) return;
     final body = pending ??
         <String, dynamic>{
           widget.field: widget.options == null ? name.text.trim() : choice
@@ -60,23 +157,34 @@ class _ClassActionDialogState extends State<ClassActionDialog> {
     });
     try {
       final result = await widget.onSubmit(body);
-      if (mounted) Navigator.pop(context, result);
+      if (mounted && _active && permitted) finish(result);
     } catch (e) {
-      if (mounted) {
+      if (mounted && _active && permitted) {
         setState(() {
           error = e;
-          pending = e is ApiFailure && (e.status == 0 || e.status >= 500)
+          pending = e is! ApiFailure || e.status == 0 || e.status >= 500
               ? Map.unmodifiable(body)
               : null;
         });
       }
     } finally {
-      if (mounted) setState(() => busy = false);
+      if (mounted && _active) setState(() => busy = false);
     }
   }
 
   @override
-  Widget build(BuildContext context) => PopScope(
+  Widget build(BuildContext context) => !permitted
+      ? AlertDialog(
+          title: const Text('工作空间或权限已变化'),
+          content: const Text('已隐藏原表单内容。请在当前工作空间重新打开；提交过的操作请先刷新列表核对结果。'),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  if (_route?.isCurrent == true) finish();
+                },
+                child: const Text('关闭'))
+          ])
+      : PopScope(
       canPop: !busy,
       child: AlertDialog(
           title: Text(widget.title),
@@ -121,7 +229,13 @@ class _ClassActionDialogState extends State<ClassActionDialog> {
                                       .toList(),
                                   onChanged: locked
                                       ? null
-                                      : (v) => setState(() => choice = v),
+                                      : (v) {
+                                          if (!current || locked ||
+                                              !widget.options!.containsKey(v)) {
+                                            return;
+                                          }
+                                          setState(() => choice = v);
+                                        },
                                   validator: (v) => v == null
                                       ? '请选择${widget.fieldLabel}'
                                       : null),
@@ -133,7 +247,9 @@ class _ClassActionDialogState extends State<ClassActionDialog> {
                               Padding(
                                   padding: const EdgeInsets.only(top: 16),
                                   child: FailureView(error!,
-                                      reauth: widget.reauth)),
+                                      reauth: widget.reauth == null
+                                          ? null
+                                          : reauthenticate)),
                             if (pending != null)
                               const Padding(
                                   padding: EdgeInsets.only(top: 12),
@@ -143,19 +259,12 @@ class _ClassActionDialogState extends State<ClassActionDialog> {
                           ])))),
           actions: [
             TextButton(
-                onPressed: busy
-                    ? null
-                    : () => Navigator.pop(
-                        context,
-                        refreshRequired
-                            ? <String, dynamic>{'refresh': true}
-                            : null),
+                onPressed: busy ? null : close,
                 child: Text(refreshRequired ? '关闭并刷新' : '关闭')),
             FilledButton(
                 onPressed: busy ||
                         widget.options?.isEmpty == true ||
-                        error is ApiFailure &&
-                            (error as ApiFailure).status == 412
+                        versionConflict
                     ? null
                     : submit,
                 child: Text(busy

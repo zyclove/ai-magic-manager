@@ -1,9 +1,60 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/scheduler.dart';
 import '../core/api.dart';
 import '../core/labels.dart';
 import '../core/member_access.dart';
 import 'design.dart';
+import 'dialog_access.dart';
+import 'owned_dialog_route.dart';
+
+Future<Json?> memberEditorDialog(BuildContext context,
+    {required String kind,
+    required String operatorRole,
+    required Map<String, String> subjects,
+    Map<String, String> classes = const {},
+    Json? member,
+    required Future<Json> Function(Json, bool Function()) onSubmit,
+    VoidCallback? reauth,
+    bool retryUncertain = true,
+    Listenable? accessChanges,
+    bool Function()? hasAccess}) async {
+  if (!context.mounted || hasAccess?.call() == false) return null;
+  final access = DialogAccessBinding(context,
+      accessChanges: accessChanges, hasAccess: hasAccess);
+  late final OwnedDialogRoute<Json> route;
+  bool accepted() =>
+      route.available && route.isActive && access.permitted();
+  try {
+    if (!access.permitted()) return null;
+    route = OwnedDialogRoute<Json>(
+            context: context,
+            barrierDismissible: false,
+            builder: (_) => MemberEditor(
+                kind: kind,
+                operatorRole: operatorRole,
+                subjects: subjects,
+                classes: classes,
+                member: member,
+                retryUncertain: retryUncertain,
+                accessChanges: access.changes,
+                hasAccess: accepted,
+                onSubmit: (body) async {
+                  if (!accepted()) {
+                    throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+                  }
+                  final result = await onSubmit(body, accepted);
+                  if (!accepted()) {
+                    throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+                  }
+                  return result;
+                },
+                reauth: reauth));
+    return await presentOwnedDialog<Json>(context, route);
+  } finally {
+    access.dispose();
+  }
+}
 
 /// The caller captures tenant, access version and retry key before opening.
 class MemberEditor extends StatefulWidget {
@@ -13,6 +64,8 @@ class MemberEditor extends StatefulWidget {
   final Json? member;
   final Future<Json> Function(Json) onSubmit;
   final VoidCallback? reauth;
+  final Listenable? accessChanges;
+  final bool Function()? hasAccess;
   final bool retryUncertain;
   const MemberEditor(
       {super.key,
@@ -23,6 +76,8 @@ class MemberEditor extends StatefulWidget {
       required this.onSubmit,
       this.member,
       this.reauth,
+      this.accessChanges,
+      this.hasAccess,
       this.retryUncertain = true});
   @override
   State<MemberEditor> createState() => _MemberEditorState();
@@ -39,8 +94,68 @@ class _MemberEditorState extends State<MemberEditor> {
   bool busy = false;
   Json? pending;
   Object? error;
+  ModalRoute<dynamic>? _route;
+  bool _active = true, _revoked = false;
+  bool _rebuildPending = false;
   bool get editing => widget.member != null;
-  bool get locked => busy || pending != null;
+  bool get versionConflict =>
+      error is ApiFailure && (error as ApiFailure).status == 412;
+  bool get locked => busy || pending != null || versionConflict;
+
+  void _observeAccess() {
+    if (!_revoked && widget.hasAccess?.call() == false) _revoked = true;
+  }
+
+  bool get permitted {
+    _observeAccess();
+    return !_revoked;
+  }
+
+  bool get current =>
+      mounted && _active && permitted && _route?.isCurrent == true &&
+      (_route is! OwnedDialogRoute<dynamic> ||
+          (_route as OwnedDialogRoute<dynamic>).available);
+
+  void _accessChanged() {
+    final wasRevoked = _revoked;
+    _observeAccess();
+    if (wasRevoked || !_revoked || !mounted || !_active) return;
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      if (_rebuildPending) return;
+      _rebuildPending = true;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _rebuildPending = false;
+        if (mounted && _active) setState(() {});
+      });
+    } else {
+      setState(() {});
+    }
+  }
+
+  void finish([Json? result]) {
+    if (!mounted || !_active) return;
+    final route = _route;
+    if (route is OwnedDialogRoute<Json>) {
+      route.finish(result);
+    } else if (route?.isCurrent == true) {
+      route!.navigator?.pop(result);
+    }
+  }
+
+  void cancel() {
+    if (!current || busy) return;
+    finish(versionConflict
+        ? <String, dynamic>{'refresh': true}
+        : pending != null && !widget.retryUncertain
+            ? <String, dynamic>{'reviewInvitations': true}
+            : null);
+  }
+
+  void closeRevoked() {
+    if (mounted && _active && _route?.isCurrent == true) finish();
+  }
+
   bool get changed =>
       !editing ||
       role != widget.member!['role'] ||
@@ -53,6 +168,8 @@ class _MemberEditorState extends State<MemberEditor> {
   @override
   void initState() {
     super.initState();
+    _observeAccess();
+    widget.accessChanges?.addListener(_accessChanged);
     roles = memberRoles(widget.kind, widget.operatorRole,
         currentRole: widget.member?['role']);
     role = widget.member?['role'] as String? ??
@@ -69,23 +186,65 @@ class _MemberEditorState extends State<MemberEditor> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final next = ModalRoute.of(context);
+    if (_route != null && !identical(_route, next)) _revoked = true;
+    _route = next;
+  }
+
+  @override
+  void didUpdateWidget(MemberEditor oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.accessChanges, widget.accessChanges)) {
+      oldWidget.accessChanges?.removeListener(_accessChanged);
+      widget.accessChanges?.addListener(_accessChanged);
+    }
+    _observeAccess();
+  }
+
+  @override
+  void deactivate() {
+    _active = false;
+    _revoked = true;
+    super.deactivate();
+  }
+
+  @override
+  void activate() {
+    super.activate();
+    _active = true;
+  }
+
+  @override
   void dispose() {
+    _active = false;
+    _revoked = true;
+    widget.accessChanges?.removeListener(_accessChanged);
     email.dispose();
     super.dispose();
   }
 
-  void revealError() => WidgetsBinding.instance.addPostFrameCallback((_) {
-        final target = errorAnchor.currentContext;
-        if (mounted && target != null) {
-          Scrollable.ensureVisible(target,
-              alignment: 1,
-              duration: const Duration(milliseconds: 200),
-              curve: Curves.easeOut);
-        }
-      });
+  void revealError() {
+    if (!current) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!current) return;
+      final target = errorAnchor.currentContext;
+      if (target != null) {
+        Scrollable.ensureVisible(target,
+            alignment: 1,
+            duration: const Duration(milliseconds: 200),
+            curve: Curves.easeOut);
+      }
+    });
+  }
+
   Future<void> save() async {
-    if (busy) return;
-    if (!form.currentState!.validate() || roles.isEmpty || !changed) return;
+    if (!current ||
+        busy ||
+        versionConflict ||
+        (pending != null && !widget.retryUncertain)) return;
+    if (form.currentState?.validate() != true || roles.isEmpty || !changed) return;
     final body = pending ??
         <String, dynamic>{
           if (!editing) 'recipientEmail': email.text.trim(),
@@ -100,13 +259,14 @@ class _MemberEditorState extends State<MemberEditor> {
       error = null;
     });
     try {
+      if (!current) return;
       final result = await widget.onSubmit(body);
-      if (mounted) Navigator.pop(context, result);
+      if (mounted && _active && permitted) finish(result);
     } catch (e) {
-      if (mounted) {
+      if (mounted && _active && permitted) {
         setState(() {
           error = e;
-          if (e is ApiFailure && (e.status == 0 || e.status >= 500)) {
+          if (e is! ApiFailure || e.status == 0 || e.status >= 500) {
             pending = Map.unmodifiable(body);
           } else {
             pending = null;
@@ -115,12 +275,17 @@ class _MemberEditorState extends State<MemberEditor> {
         revealError();
       }
     } finally {
-      if (mounted) setState(() => busy = false);
+      if (mounted && _active && permitted) setState(() => busy = false);
     }
   }
 
   @override
-  Widget build(BuildContext context) => PopScope(
+  Widget build(BuildContext context) => !permitted
+      ? AlertDialog(
+          title: const Text('工作空间或权限已变化'),
+          content: const Text('已隐藏原表单内容。请在当前工作空间重新打开；提交过的操作请先刷新列表核对结果。'),
+          actions: [TextButton(onPressed: closeRevoked, child: const Text('关闭'))])
+      : PopScope(
       canPop: !busy,
       child: AlertDialog(
         title: Text(editing ? '调整成员权限' : '邀请成员'),
@@ -177,7 +342,13 @@ class _MemberEditorState extends State<MemberEditor> {
                                   .toList(),
                               onChanged: locked
                                   ? null
-                                  : (v) => setState(() => role = v!),
+                                  : (v) {
+                                      if (!current ||
+                                          locked ||
+                                          v == null ||
+                                          !roles.contains(v)) return;
+                                      setState(() => role = v);
+                                    },
                               validator: (v) =>
                                   v == null ? '当前成员不可调整角色' : null),
                           const SizedBox(height: 10),
@@ -199,7 +370,10 @@ class _MemberEditorState extends State<MemberEditor> {
                               ],
                               onChanged: locked
                                   ? null
-                                  : (v) => setState(() => classMode = v!),
+                                  : (v) {
+                                      if (!current || locked || v == null) return;
+                                      setState(() => classMode = v);
+                                    },
                             ),
                             if (classMode) ...[
                               const SizedBox(height: 14),
@@ -246,6 +420,11 @@ class _MemberEditorState extends State<MemberEditor> {
                                                 onChanged: locked
                                                     ? null
                                                     : (v) {
+                                                        if (!current ||
+                                                            locked ||
+                                                            (v == true &&
+                                                                !widget.classes
+                                                                    .containsKey(id))) return;
                                                         setState(() {
                                                           if (v == true) {
                                                             selectedClasses
@@ -290,7 +469,13 @@ class _MemberEditorState extends State<MemberEditor> {
                                     .toList(),
                                 onChanged: locked
                                     ? null
-                                    : (v) => setState(() => subject = v),
+                                    : (v) {
+                                        if (!current ||
+                                            locked ||
+                                            (v != null &&
+                                                !widget.subjects.containsKey(v))) return;
+                                        setState(() => subject = v);
+                                      },
                                 validator: (v) => v == null ? '请选择关联档案' : null),
                             if (widget.subjects.isEmpty)
                               const Padding(
@@ -311,7 +496,21 @@ class _MemberEditorState extends State<MemberEditor> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       FailureView(error!,
-                                          reauth: widget.reauth),
+                                          reauth: widget.reauth == null
+                                              ? null
+                                              : () {
+                                                  if (current &&
+                                                      !busy &&
+                                                      !versionConflict) {
+                                                    widget.reauth!();
+                                                  }
+                                                }),
+                                      if (versionConflict)
+                                        const Padding(
+                                            padding: EdgeInsets.only(top: 10),
+                                            child: Text(
+                                                '成员权限已更新。请关闭并刷新，核对最新权限后再调整。',
+                                                style: TextStyle(height: 1.6))),
                                       if (pending != null)
                                         Padding(
                                             padding:
@@ -326,21 +525,23 @@ class _MemberEditorState extends State<MemberEditor> {
                         ])))),
         actions: [
           TextButton(
-              onPressed: busy
-                  ? null
-                  : () => Navigator.pop(
-                      context,
-                      pending != null && !widget.retryUncertain
-                          ? <String, dynamic>{'reviewInvitations': true}
-                          : null),
-              child: Text(
-                  pending != null && !widget.retryUncertain ? '查看邀请记录' : '取消')),
-          if (pending == null || widget.retryUncertain)
+              onPressed: busy ? null : cancel,
+              child: Text(versionConflict
+                  ? '关闭并刷新'
+                  : pending != null && !widget.retryUncertain
+                      ? '查看邀请记录'
+                      : '取消')),
+          if (!versionConflict && (pending == null || widget.retryUncertain))
             FilledButton(
                 onPressed: busy || roles.isEmpty || !changed ? null : save,
-                child: Text(busy
-                    ? '提交中…'
-                    : pending != null
+                child: busy
+                    ? const Row(mainAxisSize: MainAxisSize.min, children: [
+                        SizedBox(width: 16, height: 16,
+                            child: CircularProgressIndicator(strokeWidth: 2)),
+                        SizedBox(width: 8),
+                        Text('提交中…')
+                      ])
+                    : Text(pending != null
                         ? '重试原提交'
                         : editing
                             ? '保存权限'

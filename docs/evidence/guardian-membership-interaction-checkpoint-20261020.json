@@ -1,0 +1,88 @@
+{
+  "status": "STATIC_DEVELOPMENT_CHECKPOINT_NOT_RUNTIME_VERIFIED",
+  "observedUtc": "2026-10-20T12:31:21.850614+00:00",
+  "baseCommit": "6dbfab90044facc2a01cb088380354db94eac84f",
+  "branch": "dev",
+  "sourceCount": 8,
+  "sources": [
+    {
+      "path": "apps/guardian/lib/pages/classes_page.dart",
+      "bytes": 19743,
+      "sha256": "b4022c783810de79cbb2b376c7fd96b000a62bf5d27d0bdd350fed7e4875d1e2"
+    },
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "bytes": 81716,
+      "sha256": "c3a1449b063eac9cd31f4033493d44594d9147152af6592ed2f52f271050840b"
+    },
+    {
+      "path": "apps/guardian/lib/pages/device_groups_page.dart",
+      "bytes": 34590,
+      "sha256": "749ce2d4666bd5cbf1923621b1c7f6e31d4d85df391fe4b18e10e9a09d2bb486"
+    },
+    {
+      "path": "apps/guardian/lib/pages/members_page.dart",
+      "bytes": 17627,
+      "sha256": "30e5e78417fe41da248de91d9b795ee29083e2878f5aca373ea7a9ece14f98a5"
+    },
+    {
+      "path": "apps/guardian/lib/ui/class_action_dialog.dart",
+      "bytes": 10284,
+      "sha256": "76924ad78dcf7aaba92eebc4c50e319f7a90d5252331ed8a0e20c5192c72dfb6"
+    },
+    {
+      "path": "apps/guardian/lib/ui/device_group_batch_picker.dart",
+      "bytes": 10193,
+      "sha256": "a428576fdda28c1b531a513b2105c316e6f9aa3e69ed44675df4e7d63e7c5c8c"
+    },
+    {
+      "path": "apps/guardian/lib/ui/dialog_access.dart",
+      "bytes": 2748,
+      "sha256": "8fe7c3d9ee1b7a038dc08939ea5cd40572a411ced63a01ba6eb12a88e50145d5"
+    },
+    {
+      "path": "apps/guardian/lib/ui/member_editor.dart",
+      "bytes": 24912,
+      "sha256": "d7a60dbd2f3197d4a9ce0a92485a4415dfd67ae40b2cd135b81d6d81f90ca838"
+    }
+  ],
+  "localRelativeDartClosure": {
+    "files": 151,
+    "missingPaths": [],
+    "includesConditionalUris": true,
+    "packageResolutionVerified": false,
+    "compilerInvoked": false
+  },
+  "staticReviewScope": [
+    "type/interface integration",
+    "account/tenant/role/session generation isolation",
+    "physical HTTP dispatch guards",
+    "route ownership and parent disappearance",
+    "page deactivate/dispose and scoped notification relay",
+    "expired edit version and unknown writes",
+    "history search/pagination retention",
+    "batch selection original 50 limit"
+  ],
+  "independentStaticReview": {
+    "status": "COMPLETED_FOR_EXACT_RECORDED_SOURCE",
+    "unresolvedConfirmedP1P2": 0,
+    "runtimeBehaviorVerified": false
+  },
+  "testSourceModified": false,
+  "sdkInvoked": false,
+  "formatterInvoked": false,
+  "analyzerInvoked": false,
+  "testsExecuted": false,
+  "buildExecuted": false,
+  "serviceUpdated": false,
+  "databaseUpdated": false,
+  "remotePushed": false,
+  "runtimeAcceptance": "PENDING_MEMORY_AND_SHARED_VERIFICATION_WINDOW_AND_NEW_SOURCE_FREEZE",
+  "sourceHashMeaning": "Workspace bytes; committed Git objects may normalize line endings.",
+  "postReviewWhitespaceCorrection": {
+    "path": "apps/guardian/lib/ui/dialog_access.dart",
+    "removedTrailingBlankLine": true,
+    "normalizedBodyUnchanged": true,
+    "initialStagedWhitespaceExitCode": 1
+  }
+}

@@ -28,6 +28,7 @@ import 'device_subflow_scope.dart';
 import 'policy_details_entry.dart';
 import 'observation_page.dart';
 import '../ui/design.dart';
+import '../ui/dialog_access.dart';
 import '../ui/device_observation_status.dart';
 import '../ui/application_classification_dialog.dart';
 import '../ui/resource_page.dart';
@@ -36,6 +37,7 @@ import '../ui/workspace_welcome.dart';
 import '../ui/family_finance_page.dart';
 import '../ui/family_identity_page.dart';
 import '../ui/member_editor.dart';
+import '../ui/owned_dialog_route.dart';
 import '../ui/access_request_dialog.dart';
 import '../ui/policy_target_picker.dart';
 import 'members_page.dart';
@@ -202,9 +204,13 @@ class ConsolePages extends StatelessWidget {
       return ScopedOverviewPage(
           key: ValueKey('${s.root}/${s.role}'), session: s);
     }
-    if (section == 'classes') return ClassesPage(session: s);
+    if (section == 'classes') {
+      return ClassesPage(key: ValueKey((s.profile?['subject'],
+          s.tenant?['id'], s.role, s.scopeGeneration)), session: s);
+    }
     if (section == 'device-groups') {
-      return DeviceGroupsPage(key: ValueKey('${s.root}-${s.role}'), session: s);
+      return DeviceGroupsPage(key: ValueKey((s.profile?['subject'],
+          s.tenant?['id'], s.role, s.scopeGeneration)), session: s);
     }
     if (section == 'managed-android') {
       return ManagedAndroidPage(
@@ -409,7 +415,9 @@ class ConsolePages extends StatelessWidget {
                 : '儿童或教师提交申请后，将在这里显示。',
             notice: '批准后设备可获取带固定截止时间的签名文档。接收与保存回执单独记录；当前尚未接入设备例外执行。');
       case 'members':
-        return MembersPage(session: s, invite: actions.invite);
+        return MembersPage(key: ValueKey((s.profile?['subject'],
+            s.tenant?['id'], s.role, s.scopeGeneration)),
+            session: s, invite: actions.invite);
       case 'ownership':
         return OwnershipPage(session: s);
       case 'audit':
@@ -1529,58 +1537,88 @@ class ConsoleActions {
                                 child: const Text('关闭')))
                       ])))));
 
-  Future<bool> invite() async {
+  Future<bool> invite({Listenable? accessChanges,
+      bool Function()? hasAccess}) async {
+    if (!s.authenticated || s.tenant == null || !s.canManage ||
+        hasAccess?.call() == false) return false;
     final capturedRoot = root;
-    final children = await s.api.all('$capturedRoot/subjects');
-    final classes = s.tenant!['kind'] == 'ORGANIZATION'
-        ? await s.api.all('$capturedRoot/classes')
-        : <Json>[];
-    if (!context.mounted || s.root != capturedRoot) return false;
-    final result = await showDialog<Json>(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => MemberEditor(
-              kind: s.tenant!['kind'] as String,
-              operatorRole: s.role,
-              subjects: {
-                for (final child in children)
-                  if (child['archived'] != true && child['archivedAt'] == null)
-                    child['id'] as String: child['nickname'] as String
-              },
-              classes: {
-                for (final c in classes) c['id'] as String: c['name'] as String
-              },
-              reauth: reauth,
-              retryUncertain: false,
-              onSubmit: (body) async {
-                if (s.root != capturedRoot) {
-                  throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+    final kind = s.tenant!['kind'] as String, operatorRole = s.role;
+    final parent = ModalRoute.of(context);
+    final scope = DeviceSubflowScope(s,
+        permitted: () => context.mounted && s.tenant != null &&
+            hasAccess?.call() != false &&
+            (parent == null || parent.isActive) &&
+            s.root == capturedRoot && s.canManage && s.canOpen('members'));
+    final changes = Listenable.merge([
+      scope,
+      if (accessChanges != null) accessChanges
+    ]);
+    try {
+      if (!scope.current) return false;
+      final children = await scope.api.all('$capturedRoot/subjects');
+      final classes = kind == 'ORGANIZATION'
+          ? await scope.api.all('$capturedRoot/classes')
+          : <Json>[];
+      if (!scope.current) return false;
+      final result = await memberEditorDialog(context,
+                kind: kind,
+                operatorRole: operatorRole,
+                accessChanges: changes,
+                hasAccess: () => scope.current,
+                subjects: {
+                  for (final child in children)
+                    if (child['archived'] != true && child['archivedAt'] == null)
+                      child['id'] as String: child['nickname'] as String
+                },
+                classes: {
+                  for (final c in classes) c['id'] as String: c['name'] as String
+                },
+                reauth: reauth,
+                retryUncertain: false,
+                onSubmit: (body, permitted) async {
+                  final issued = await scope.api.send('POST', '$capturedRoot/invitations',
+                      body: body, isCurrent: permitted) as Json;
+                  final token = issued['token'];
+                  if (token is! String || token.isEmpty) {
+                    throw const ApiFailure(502, 'INVALID_RESPONSE');
+                  }
+                  return issued;
+                },
+              );
+      if (!scope.current) return false;
+      if (result?['reviewInvitations'] == true || result?['refresh'] == true) {
+        return true;
+      }
+      if (result != null) {
+        final token = result['token'];
+        if (token is! String || token.isEmpty) {
+          throw const ApiFailure(502, 'INVALID_RESPONSE');
+        }
+        await scopedDetailsDialog(context, '邀请已创建', {
+          '说明': '请将以下一次性令牌安全传递给收件人。系统尚未发送邮件。',
+          '邀请令牌': token,
+          '过期时间': dateLabel(result['expiresAt'])
+        }, accessChanges: changes, hasAccess: () => scope.current,
+          reauth: reauth, actions: [
+          DetailAction('复制令牌', (dialog) async {
+                final route = ModalRoute.of(dialog);
+                bool current() => scope.current && dialog.mounted &&
+                    route?.isActive == true &&
+                    (route is! OwnedDialogRoute<dynamic> || route.available);
+                if (!current()) return;
+                try {
+                  await Clipboard.setData(ClipboardData(text: token));
+                  if (current()) toast(context, '邀请令牌已复制。');
+                } catch (_) {
+                  if (current()) toast(context, '复制失败，请选中令牌手动复制。');
                 }
-                return await s.api.send('POST', '$capturedRoot/invitations',
-                    body: body) as Json;
-              },
-            ));
-    if (result?['reviewInvitations'] == true) return true;
-    if (result != null && context.mounted) {
-      await showDetails(context, '邀请已创建', {
-        '说明': '请将以下一次性令牌安全传递给收件人。系统尚未发送邮件。',
-        '邀请令牌': result['token'],
-        '过期时间': dateLabel(result['expiresAt'])
-      }, actions: [
-        TextButton.icon(
-            onPressed: () async {
-              try {
-                await Clipboard.setData(ClipboardData(text: result['token']));
-                if (context.mounted) toast(context, '邀请令牌已复制。');
-              } catch (_) {
-                if (context.mounted) toast(context, '复制失败，请选中令牌手动复制。');
-              }
-            },
-            icon: const Icon(Icons.copy, size: 18),
-            label: const Text('复制令牌'))
-      ]);
+              }, closeOnSuccess: false)
+        ]);
+      }
+      return result != null;
+    } finally {
+      scope.dispose();
     }
-    return result != null;
   }
 }
 
