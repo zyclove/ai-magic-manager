@@ -1,0 +1,16 @@
+{
+  "utc": "2026-10-21T04:42:52.343760+00:00",
+  "executable": "C:\\Windows\\System32\\cmd.exe",
+  "arguments": [
+    "/d",
+    "/v:off",
+    "/s",
+    "/c",
+    "D:\\systems\\software\\maven\\bin\\mvn.cmd -V -o -B -ntp -s D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\offline-settings.xml -f D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\pom.xml -Dmaven.repo.local=D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\m2 -DskipTests=true test-compile"
+  ],
+  "workingDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions",
+  "completeBudgetSeconds": 180,
+  "preflightSeconds": 18.889439499995206,
+  "testsRun": false,
+  "pid": 107044
+}

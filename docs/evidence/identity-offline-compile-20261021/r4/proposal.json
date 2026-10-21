@@ -1,0 +1,66 @@
+{
+  "status": "PASSIVE_DUAL_ORIGIN_CANDIDATE_ONLY",
+  "sourceCommit": "3b9117b000a10d082a8f7849c41de5f69c0baa62",
+  "sourceFiles": 32,
+  "mainJava": 13,
+  "testJava": 12,
+  "baselineRunnerSha256": "c8ad1ace4aa3d5556bfc09abd7850f094a83cb519c87c3fbc21016ffe1bd95bf",
+  "taskSettingsSha256": "4925e1bcc0d37d71a3f2f751737aceb3d89d2c58346a0ac8ce8710778ee5f5e4",
+  "runnerSha256": "60b0a75d3e6d992757e69661a75893425c8dd2d509e35385606786068630fdde",
+  "repositories": [
+    {
+      "id": "central",
+      "url": "https://repo.maven.apache.org/maven2"
+    },
+    {
+      "id": "aliyun-central",
+      "url": "https://maven.aliyun.com/repository/central"
+    }
+  ],
+  "repositoriesAndPluginRepositoriesIdentical": true,
+  "offlineInSettingsAndCommand": true,
+  "mirrorsAdded": false,
+  "artifactOriginPins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r3\\m2\\com\\fasterxml\\jackson\\datatype\\jackson-datatype-jdk8\\2.21.4\\_remote.repositories",
+      "sha256": "a87bb161e6f8e065025fb44b89a4a1670d572c9ca39653ac098c4454d299538d",
+      "jarAndPomOrigin": "central"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r3\\m2\\com\\fasterxml\\jackson\\datatype\\jackson-datatype-jsr310\\2.21.4\\_remote.repositories",
+      "sha256": "81a9525f893e1854cfaa24a52b96f742870ba60d3949aa716f11fd679d3d21bf",
+      "jarAndPomOrigin": "central"
+    }
+  ],
+  "minimalChanges": [
+    "Pin separate task settings file",
+    "Verify its hash before launch",
+    "Select it with existing -s",
+    "Record it in input manifest"
+  ],
+  "unchanged": [
+    "POM and 32 source inputs",
+    "3788 copied cache files and source pins",
+    "JDK17/Maven tool pins",
+    "all existing gate conditions",
+    "2GiB RAM/disk and 60/180 second budgets",
+    "13 main + 12 test compiler coverage",
+    "-o -DskipTests=true test-compile",
+    "subprocess launch and lifetime handling"
+  ],
+  "staticXmlAndAstVerified": true,
+  "sdkCalls": 0,
+  "executionApproved": false,
+  "testsRun": false,
+  "servicesStarted": false,
+  "originalSettingsChanged": false,
+  "sharedCacheWrites": false,
+  "metadataRewritten": false,
+  "networkDownloads": false,
+  "executionTreeExists": false,
+  "officialSources": [
+    "https://maven.apache.org/settings.html",
+    "https://maven.apache.org/resolver/local-repository.html#enhanced-lrm",
+    "https://maven.apache.org/guides/mini/guide-mirror-settings.html"
+  ]
+}

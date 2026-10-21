@@ -1,0 +1,2 @@
+# Preserve original audit bytes across Git add/checkout.
+r4/** -text -filter -working-tree-encoding

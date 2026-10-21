@@ -1,0 +1,36 @@
+{
+  "status": "TEST_COMPILE_PASSED_TESTS_NOT_RUN",
+  "pid": 107044,
+  "exitCode": 0,
+  "elapsedCompleteSeconds": 26.91434789999039,
+  "withinBudget": true,
+  "compilerScope": {
+    "main": {
+      "expected": 13,
+      "actual": 13,
+      "exactSourceSet": true
+    },
+    "test": {
+      "expected": 12,
+      "actual": 12,
+      "exactSourceSet": true
+    }
+  },
+  "sourceInputsUnchanged": true,
+  "javaProcessesAfter": [],
+  "logSha256": "358bcefacd54687ba514b4156a8ebd4893976aff51afcb336333bf9983a459a0",
+  "resourceAfter": {
+    "utc": "2026-10-21T04:43:00.425394+00:00",
+    "availablePhysicalBytes": 3349061632,
+    "diskFreeBytes": {
+      "C:/": 15172632576,
+      "D:/": 38965731328
+    },
+    "sdkProcesses": []
+  },
+  "sdkCalls": 1,
+  "testsRun": false,
+  "servicesStarted": false,
+  "mainOrSharedCacheWrites": false,
+  "forcedTermination": false
+}

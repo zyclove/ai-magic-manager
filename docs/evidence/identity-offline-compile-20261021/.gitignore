@@ -1,0 +1,2 @@
+# Keep only this reviewed public compilation log despite the root *.log rule.
+!r4/out/maven.log

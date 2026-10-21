@@ -1,0 +1,435 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUtc": "2026-10-21T04:53:11.984947+00:00",
+  "scope": "identity-extensions complete offline test-compile only",
+  "acceptance": "COMPILE_PASSED_TESTS_AND_RUNTIME_NOT_VERIFIED",
+  "sourceCommit": "3b9117b000a10d082a8f7849c41de5f69c0baa62",
+  "canonicalModuleTreeSha1": "098c8e75a7107876bdf31aba106882ff65b7d2b3",
+  "postflightSourceObservation": {
+    "observedAtUtc": "2026-10-21T04:45:51.023482+00:00",
+    "head": "e0ac83aa5082fd6271505c1e3b4a5f875e3a1d5f",
+    "fixedCommit": "3b9117b000a10d082a8f7849c41de5f69c0baa62",
+    "headModuleTree": "098c8e75a7107876bdf31aba106882ff65b7d2b3",
+    "fixedModuleTree": "098c8e75a7107876bdf31aba106882ff65b7d2b3",
+    "committedModuleBytesExact": true,
+    "moduleGitStatus": "",
+    "rawWorkspacePomSha256": "73c7fe28469d1a06e4278ec6e63317d8ae9bdb6ba070bb9b1fdc41a38f680722",
+    "compiledPomSha256": "28f16e1bf4f68048034dbcc585696c85a2699f04b07c02b98326463ea8032a2c",
+    "rawDifferenceIsOnlyCrLfCheckoutNormalization": true,
+    "originalPostflightMismatchPreserved": true,
+    "workspaceWrites": false
+  },
+  "toolchain": {
+    "java": "17.0.14",
+    "maven": "3.9.7",
+    "keycloakProvidedDependencies": "26.8.0"
+  },
+  "actualInvocation": {
+    "utc": "2026-10-21T04:42:52.343760+00:00",
+    "executable": "C:\\Windows\\System32\\cmd.exe",
+    "arguments": [
+      "/d",
+      "/v:off",
+      "/s",
+      "/c",
+      "D:\\systems\\software\\maven\\bin\\mvn.cmd -V -o -B -ntp -s D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\offline-settings.xml -f D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\pom.xml -Dmaven.repo.local=D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\m2 -DskipTests=true test-compile"
+    ],
+    "workingDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions",
+    "completeBudgetSeconds": 180,
+    "preflightSeconds": 18.889439499995206,
+    "testsRun": false,
+    "pid": 107044
+  },
+  "result": {
+    "status": "TEST_COMPILE_PASSED_TESTS_NOT_RUN",
+    "pid": 107044,
+    "exitCode": 0,
+    "elapsedCompleteSeconds": 26.91434789999039,
+    "withinBudget": true,
+    "compilerScope": {
+      "main": {
+        "expected": 13,
+        "actual": 13,
+        "exactSourceSet": true
+      },
+      "test": {
+        "expected": 12,
+        "actual": 12,
+        "exactSourceSet": true
+      }
+    },
+    "sourceInputsUnchanged": true,
+    "javaProcessesAfter": [],
+    "logSha256": "358bcefacd54687ba514b4156a8ebd4893976aff51afcb336333bf9983a459a0",
+    "resourceAfter": {
+      "utc": "2026-10-21T04:43:00.425394+00:00",
+      "availablePhysicalBytes": 3349061632,
+      "diskFreeBytes": {
+        "C:/": 15172632576,
+        "D:/": 38965731328
+      },
+      "sdkProcesses": []
+    },
+    "sdkCalls": 1,
+    "testsRun": false,
+    "servicesStarted": false,
+    "mainOrSharedCacheWrites": false,
+    "forcedTermination": false
+  },
+  "resourceGates": {
+    "initial": {
+      "stage": "initial",
+      "resource": {
+        "utc": "2026-10-21T04:42:40.101050+00:00",
+        "availablePhysicalBytes": 3730300928,
+        "diskFreeBytes": {
+          "C:/": 15173341184,
+          "D:/": 39155998720
+        },
+        "sdkProcesses": []
+      },
+      "elapsedCompleteSeconds": 6.647016599992639,
+      "thresholds": {
+        "minimumAvailablePhysicalBytes": 2147483648,
+        "minimumFreeBytesEachDisk": 2147483648,
+        "maximumPreflightSeconds": 60,
+        "completeOuterBudgetSeconds": 180
+      },
+      "conditions": {
+        "observedSdkNamesEmpty": true,
+        "ramAtLeastThreshold": true,
+        "eachDiskAtLeastThreshold": true,
+        "elapsedWithinPreflightBudget": true,
+        "completeSourceToolConfigurationAndCachePinsVerified": false
+      },
+      "diskConditions": {
+        "C:/": true,
+        "D:/": true
+      },
+      "resourceGatePassed": true,
+      "enforcedAtResourceGate": [
+        "observedSdkNamesEmpty",
+        "ramAtLeastThreshold",
+        "eachDiskAtLeastThreshold"
+      ],
+      "pinsState": "NOT_YET_CHECKED",
+      "pinsStateFromControlFlow": true,
+      "elapsedAndPinsAreRecordedHereNotAddedToInitialResourceGate": true,
+      "machineOrUserEnvironmentValuesRecorded": false
+    },
+    "launch": {
+      "stage": "launch",
+      "resource": {
+        "utc": "2026-10-21T04:42:52.310344+00:00",
+        "availablePhysicalBytes": 3294920704,
+        "diskFreeBytes": {
+          "C:/": 15173115904,
+          "D:/": 38970220544
+        },
+        "sdkProcesses": []
+      },
+      "elapsedCompleteSeconds": 18.856510799989337,
+      "thresholds": {
+        "minimumAvailablePhysicalBytes": 2147483648,
+        "minimumFreeBytesEachDisk": 2147483648,
+        "maximumPreflightSeconds": 60,
+        "completeOuterBudgetSeconds": 180
+      },
+      "conditions": {
+        "observedSdkNamesEmpty": true,
+        "ramAtLeastThreshold": true,
+        "eachDiskAtLeastThreshold": true,
+        "elapsedWithinPreflightBudget": true,
+        "completeSourceToolConfigurationAndCachePinsVerified": true
+      },
+      "diskConditions": {
+        "C:/": true,
+        "D:/": true
+      },
+      "resourceGatePassed": true,
+      "enforcedAtResourceGate": [
+        "observedSdkNamesEmpty",
+        "ramAtLeastThreshold",
+        "eachDiskAtLeastThreshold"
+      ],
+      "pinsState": "VERIFIED",
+      "pinsStateFromControlFlow": true,
+      "elapsedAndPinsAreRecordedHereNotAddedToInitialResourceGate": true,
+      "machineOrUserEnvironmentValuesRecorded": false
+    }
+  },
+  "cachePostflight": {
+    "originalFrozenCache": {
+      "expectedFiles": 3788,
+      "actualFiles": 3788,
+      "fileSetExact": true,
+      "mismatchCount": 0,
+      "mismatches": [],
+      "added": [],
+      "missing": []
+    },
+    "isolatedExecutionCache": {
+      "expectedFiles": 3788,
+      "actualFiles": 3788,
+      "fileSetExact": true,
+      "mismatchCount": 0,
+      "mismatches": [],
+      "added": [],
+      "missing": []
+    }
+  },
+  "compiledArtifacts": {
+    "totalFiles": 55,
+    "mainClasses": 32,
+    "testClasses": 19
+  },
+  "staticTestInventory": {
+    "executed": false,
+    "sourceFiles": 12,
+    "declaredTestAnnotations": 71,
+    "suites": [
+      {
+        "suite": "com.aimanager.identity.AliyunSmsTest",
+        "declaredTestAnnotations": 2
+      },
+      {
+        "suite": "com.aimanager.identity.ConsumerAccountFlowTest",
+        "declaredTestAnnotations": 17
+      },
+      {
+        "suite": "com.aimanager.identity.ConsumerAccountSpiPackagingTest",
+        "declaredTestAnnotations": 1
+      },
+      {
+        "suite": "com.aimanager.identity.ConsumerAccountStatusTest",
+        "declaredTestAnnotations": 6
+      },
+      {
+        "suite": "com.aimanager.identity.ConsumerAuthenticatorTest",
+        "declaredTestAnnotations": 8
+      },
+      {
+        "suite": "com.aimanager.identity.ConsumerClaimsSerializationTest",
+        "declaredTestAnnotations": 5
+      },
+      {
+        "suite": "com.aimanager.identity.ConsumerConfigurationTest",
+        "declaredTestAnnotations": 3
+      },
+      {
+        "suite": "com.aimanager.identity.ConsumerIdentityTest",
+        "declaredTestAnnotations": 5
+      },
+      {
+        "suite": "com.aimanager.identity.ConsumerIdentityTransactionsTest",
+        "declaredTestAnnotations": 13
+      },
+      {
+        "suite": "com.aimanager.identity.ConsumerProviderRuntimeTest",
+        "declaredTestAnnotations": 4
+      },
+      {
+        "suite": "com.aimanager.identity.ConsumerRuntimeSnapshotTest",
+        "declaredTestAnnotations": 1
+      },
+      {
+        "suite": "com.aimanager.identity.PhoneOtpTest",
+        "declaredTestAnnotations": 6
+      }
+    ]
+  },
+  "attemptHistory": [
+    {
+      "attempt": "r1",
+      "evidence": {
+        "path": ".cache/id17-20261021-r1/receipt.json",
+        "bytes": 874,
+        "sha256": "19723768bb8bed911d772b61fe7179208147e2254dedd927d1d6ae6372bbfbfc"
+      },
+      "status": "NOT_ACCEPTED",
+      "sdkCalls": 1,
+      "elapsedCompleteSeconds": 27.74147300000186,
+      "testsRun": false,
+      "exitCode": 1,
+      "compilerScope": {
+        "main": {
+          "expected": 13,
+          "actual": 0,
+          "exactSourceSet": false
+        },
+        "test": {
+          "expected": 12,
+          "actual": 0,
+          "exactSourceSet": false
+        }
+      },
+      "mavenLogCreated": true,
+      "mavenLogEvidence": {
+        "path": ".cache/id17-20261021-r1/out/maven.log",
+        "bytes": 2579,
+        "sha256": "3b85d25206a4cd7aeee2f5973057111db2208ed4171374b50db332b43014eb5d"
+      }
+    },
+    {
+      "attempt": "r2",
+      "evidence": {
+        "path": ".cache/id17-20261021-r2/failure.json",
+        "bytes": 180,
+        "sha256": "06580936a863933099c853a4551e614abcaab7a54cf0aeedac82887c381ad4fa"
+      },
+      "status": "PREFLIGHT_NOT_STARTED",
+      "sdkCalls": 0,
+      "elapsedCompleteSeconds": 19.334946300004958,
+      "testsRun": false,
+      "reason": "Launch-time gate failed",
+      "historicalGateSampleUnavailable": true,
+      "mavenLogCreated": false
+    },
+    {
+      "attempt": "r3",
+      "evidence": {
+        "path": ".cache/id17-20261021-r3/receipt.json",
+        "bytes": 875,
+        "sha256": "4712feda9306a4b037587fda40df7324b77fc0b293c0c0eb60147d3601949db5"
+      },
+      "status": "NOT_ACCEPTED",
+      "sdkCalls": 1,
+      "elapsedCompleteSeconds": 23.932128799991915,
+      "testsRun": false,
+      "exitCode": 1,
+      "compilerScope": {
+        "main": {
+          "expected": 13,
+          "actual": 0,
+          "exactSourceSet": false
+        },
+        "test": {
+          "expected": 12,
+          "actual": 0,
+          "exactSourceSet": false
+        }
+      },
+      "mavenLogCreated": true,
+      "mavenLogEvidence": {
+        "path": ".cache/id17-20261021-r3/out/maven.log",
+        "bytes": 3558,
+        "sha256": "4b397f2fc771d9477f355174906d5cf488dc401f044e905c807889172fe4b1f4"
+      }
+    },
+    {
+      "attempt": "r4",
+      "evidence": {
+        "path": ".cache/id17-20261021-r4/receipt.json",
+        "bytes": 895,
+        "sha256": "657dcbd910be10a85fa8ee95fc43f21db99f82d2fab7f13a4dbd6be037cecb94"
+      },
+      "status": "TEST_COMPILE_PASSED_TESTS_NOT_RUN",
+      "sdkCalls": 1,
+      "elapsedCompleteSeconds": 26.91434789999039,
+      "testsRun": false,
+      "exitCode": 0,
+      "compilerScope": {
+        "main": {
+          "expected": 13,
+          "actual": 13,
+          "exactSourceSet": true
+        },
+        "test": {
+          "expected": 12,
+          "actual": 12,
+          "exactSourceSet": true
+        }
+      },
+      "mavenLogCreated": true,
+      "mavenLogEvidence": {
+        "path": ".cache/id17-20261021-r4/out/maven.log",
+        "bytes": 3459,
+        "sha256": "358bcefacd54687ba514b4156a8ebd4893976aff51afcb336333bf9983a459a0"
+      }
+    }
+  ],
+  "evidenceFiles": [
+    {
+      "path": ".cache/id17-20261021-r4/run.py",
+      "bytes": 13255,
+      "sha256": "60b0a75d3e6d992757e69661a75893425c8dd2d509e35385606786068630fdde"
+    },
+    {
+      "path": ".cache/id17-20261021-r4/proposal.json",
+      "bytes": 2423,
+      "sha256": "3625e9a88d49ea630f499a6c0200138bca1379cb02d747ac282ef5c9f5152a63"
+    },
+    {
+      "path": ".cache/id17-20261021-r4/offline-settings.xml",
+      "bytes": 1677,
+      "sha256": "4925e1bcc0d37d71a3f2f751737aceb3d89d2c58346a0ac8ce8710778ee5f5e4"
+    },
+    {
+      "path": ".cache/id17-20261021-r4/receipt.json",
+      "bytes": 895,
+      "sha256": "657dcbd910be10a85fa8ee95fc43f21db99f82d2fab7f13a4dbd6be037cecb94"
+    },
+    {
+      "path": ".cache/id17-20261021-r4/initial-gate.json",
+      "bytes": 1152,
+      "sha256": "3454dc73b18fb422ebfccd275a778e1a12897f257c7e4c17e331c0b37d224f66"
+    },
+    {
+      "path": ".cache/id17-20261021-r4/launch-gate.json",
+      "bytes": 1144,
+      "sha256": "cc7929ea24e8dc92c9b561135a6ef5edaa59dab2eb7a5f638ef94f91df1ee4e7"
+    },
+    {
+      "path": ".cache/id17-20261021-r4/launch.json",
+      "bytes": 744,
+      "sha256": "ae96f97e6b2c54a1c29b3b37710443019acb33f2b0ab1fe3c8b2ea7b65c2672f"
+    },
+    {
+      "path": ".cache/id17-20261021-r4/input-manifest.json",
+      "bytes": 806269,
+      "sha256": "a0042d42f84d6660b6e7f543c821e7fcb32579c1dc63766656d47c78f3c1bfcc"
+    },
+    {
+      "path": ".cache/id17-20261021-r4/out/maven.log",
+      "bytes": 3459,
+      "sha256": "358bcefacd54687ba514b4156a8ebd4893976aff51afcb336333bf9983a459a0"
+    },
+    {
+      "path": ".cache/id17-20261021-r4/out/compiled-artifact-manifest.json",
+      "bytes": 13928,
+      "sha256": "429b9767d0cab2a74e9ddaa21cd9e7d8f68070f2168ef18970bc6ca7cf1fd4ca"
+    },
+    {
+      "path": ".cache/id17-20261021-r4/out/postflight-source-observation.json",
+      "bytes": 693,
+      "sha256": "dc2281f302724ece56b3936389e68516af068c821435c69593f17a9bd919a806"
+    }
+  ],
+  "observedCompilerWarnings": [
+    "Missing provided Hibernate annotation enum type org.hibernate.annotations.FetchMode.SELECT",
+    "Keycloak AuthResult.getToken()/getUser() are deprecated for removal"
+  ],
+  "notVerified": [
+    "JUnit test execution",
+    "provider JAR packaging",
+    "Keycloak augmentation and realm resource requests",
+    "complete OIDC login refresh logout and session revocation",
+    "real MySQL transactional locking rollback and multi-node cache semantics",
+    "approved production SMS/WeChat delivery and native authorization",
+    "whole-platform end-to-end acceptance"
+  ],
+  "restrictions": {
+    "servicesStarted": false,
+    "supplierRequestsSent": false,
+    "networkDependencyDownloads": false,
+    "productionSourceWrites": false,
+    "sharedCacheWrites": false,
+    "gitWrites": false,
+    "automaticRetry": false
+  },
+  "officialReferences": [
+    "https://maven.apache.org/settings.html",
+    "https://maven.apache.org/resolver/local-repository.html#enhanced-lrm",
+    "https://maven.apache.org/guides/mini/guide-mirror-settings.html"
+  ]
+}

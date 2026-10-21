@@ -1,0 +1,115 @@
+{
+  "schemaVersion": 1,
+  "createdAtUtc": "2026-10-21T05:12:24.256704+00:00",
+  "scope": "11 public raw records of identity offline compilation r4",
+  "sourceReport": {
+    "path": "docs/evidence/identity-extensions-offline-compile-20261021.json",
+    "sha256": "3594709820afafdd40896a3bc18b0551fb979320e2b42b1600cf39a289d68574"
+  },
+  "files": [
+    {
+      "originalPath": ".cache/id17-20261021-r4/initial-gate.json",
+      "archiveRelativePath": "r4/initial-gate.json",
+      "archivePath": "docs/evidence/identity-offline-compile-20261021/r4/initial-gate.json",
+      "bytes": 1152,
+      "sha256": "3454dc73b18fb422ebfccd275a778e1a12897f257c7e4c17e331c0b37d224f66"
+    },
+    {
+      "originalPath": ".cache/id17-20261021-r4/input-manifest.json",
+      "archiveRelativePath": "r4/input-manifest.json",
+      "archivePath": "docs/evidence/identity-offline-compile-20261021/r4/input-manifest.json",
+      "bytes": 806269,
+      "sha256": "a0042d42f84d6660b6e7f543c821e7fcb32579c1dc63766656d47c78f3c1bfcc"
+    },
+    {
+      "originalPath": ".cache/id17-20261021-r4/launch-gate.json",
+      "archiveRelativePath": "r4/launch-gate.json",
+      "archivePath": "docs/evidence/identity-offline-compile-20261021/r4/launch-gate.json",
+      "bytes": 1144,
+      "sha256": "cc7929ea24e8dc92c9b561135a6ef5edaa59dab2eb7a5f638ef94f91df1ee4e7"
+    },
+    {
+      "originalPath": ".cache/id17-20261021-r4/launch.json",
+      "archiveRelativePath": "r4/launch.json",
+      "archivePath": "docs/evidence/identity-offline-compile-20261021/r4/launch.json",
+      "bytes": 744,
+      "sha256": "ae96f97e6b2c54a1c29b3b37710443019acb33f2b0ab1fe3c8b2ea7b65c2672f"
+    },
+    {
+      "originalPath": ".cache/id17-20261021-r4/offline-settings.xml",
+      "archiveRelativePath": "r4/offline-settings.xml",
+      "archivePath": "docs/evidence/identity-offline-compile-20261021/r4/offline-settings.xml",
+      "bytes": 1677,
+      "sha256": "4925e1bcc0d37d71a3f2f751737aceb3d89d2c58346a0ac8ce8710778ee5f5e4"
+    },
+    {
+      "originalPath": ".cache/id17-20261021-r4/out/compiled-artifact-manifest.json",
+      "archiveRelativePath": "r4/out/compiled-artifact-manifest.json",
+      "archivePath": "docs/evidence/identity-offline-compile-20261021/r4/out/compiled-artifact-manifest.json",
+      "bytes": 13928,
+      "sha256": "429b9767d0cab2a74e9ddaa21cd9e7d8f68070f2168ef18970bc6ca7cf1fd4ca"
+    },
+    {
+      "originalPath": ".cache/id17-20261021-r4/out/maven.log",
+      "archiveRelativePath": "r4/out/maven.log",
+      "archivePath": "docs/evidence/identity-offline-compile-20261021/r4/out/maven.log",
+      "bytes": 3459,
+      "sha256": "358bcefacd54687ba514b4156a8ebd4893976aff51afcb336333bf9983a459a0"
+    },
+    {
+      "originalPath": ".cache/id17-20261021-r4/out/postflight-source-observation.json",
+      "archiveRelativePath": "r4/out/postflight-source-observation.json",
+      "archivePath": "docs/evidence/identity-offline-compile-20261021/r4/out/postflight-source-observation.json",
+      "bytes": 693,
+      "sha256": "dc2281f302724ece56b3936389e68516af068c821435c69593f17a9bd919a806"
+    },
+    {
+      "originalPath": ".cache/id17-20261021-r4/proposal.json",
+      "archiveRelativePath": "r4/proposal.json",
+      "archivePath": "docs/evidence/identity-offline-compile-20261021/r4/proposal.json",
+      "bytes": 2423,
+      "sha256": "3625e9a88d49ea630f499a6c0200138bca1379cb02d747ac282ef5c9f5152a63"
+    },
+    {
+      "originalPath": ".cache/id17-20261021-r4/receipt.json",
+      "archiveRelativePath": "r4/receipt.json",
+      "archivePath": "docs/evidence/identity-offline-compile-20261021/r4/receipt.json",
+      "bytes": 895,
+      "sha256": "657dcbd910be10a85fa8ee95fc43f21db99f82d2fab7f13a4dbd6be037cecb94"
+    },
+    {
+      "originalPath": ".cache/id17-20261021-r4/run.py",
+      "archiveRelativePath": "r4/run.py",
+      "archivePath": "docs/evidence/identity-offline-compile-20261021/r4/run.py",
+      "bytes": 13255,
+      "sha256": "60b0a75d3e6d992757e69661a75893425c8dd2d509e35385606786068630fdde"
+    }
+  ],
+  "publicTextReview": {
+    "filesReviewed": 11,
+    "actualSecretFindings": [],
+    "binaryPayloadsCopied": false,
+    "privateConfigurationBodiesCopied": false,
+    "logReviewMode": "Known offline compilation output; ASCII credential markers inspected without normalizing mixed diagnostic encodings",
+    "note": "Allowlisted runner, public offline settings, metadata, receipts and compile log only; environment variable names, public URLs and artifact digests are technical metadata, not configuration values."
+  },
+  "rawBytePreservation": {
+    "sourceAndArchiveSha256Compared": true,
+    "transformations": false,
+    "gitAttributesPath": "docs/evidence/identity-offline-compile-20261021/.gitattributes",
+    "gitRawPayloadRule": "r4/** -text -filter -working-tree-encoding",
+    "gitIgnoreExceptionPath": "docs/evidence/identity-offline-compile-20261021/.gitignore",
+    "gitIgnoreException": "!r4/out/maven.log"
+  },
+  "originalMarkdownAppend": {
+    "path": "docs/evidence/identity-extensions-offline-compile-20261021.md",
+    "bytesBefore": 6092,
+    "sha256Before": "4e4f25c706f0bfc29913370e072f4105ea3abd74add202bc2da1047bd4b254cd",
+    "sha256After": "0b9811b886bf5be96169ffededc5a0b3ffc69d0a07424c304888dd9209272802",
+    "originalBytesPreservedAsPrefix": true
+  },
+  "sourceCacheTreeCopied": false,
+  "jarOrClassPayloadCopied": false,
+  "sdkCalls": 0,
+  "testsRun": false
+}

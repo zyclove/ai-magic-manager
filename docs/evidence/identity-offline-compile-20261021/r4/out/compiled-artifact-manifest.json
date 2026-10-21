@@ -1,0 +1,377 @@
+{
+  "testsRun": false,
+  "files": [
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/AliyunSms$Request.class",
+      "bytes": 2162,
+      "sha256": "8188a6779ac03ce85772167fe875a40628f492401d952251cb0326f6704b1f97"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/AliyunSms$Response.class",
+      "bytes": 1656,
+      "sha256": "30dfee71a5e5301215dd1460b418764a605dd241960471245e8e08c7ea4c8734"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/AliyunSms$Transport.class",
+      "bytes": 515,
+      "sha256": "1512ed64ac1e847eddba9ee6b5fbada7afae184eccaaec55a8518e3cbbe3da6a"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/AliyunSms.class",
+      "bytes": 13048,
+      "sha256": "06e12a1a6982ab76139529adba2202deb824a955a55e7e9c35cbbf7ea0a18584"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerAccountFlow$Rejected.class",
+      "bytes": 465,
+      "sha256": "3bdc9e984dacf6d6d5b918a0c7b289450675088e712671999f9ac69a2132f61e"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerAccountFlow.class",
+      "bytes": 19992,
+      "sha256": "d9bcc759fe62d1488b77439e851127cc392b8aca70d0a457ac062d7b9c492cac"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerAccountResource$Stale.class",
+      "bytes": 472,
+      "sha256": "25c2ae1f823ae2b258037bbbe186285d972c1c78633614da591c05de4a508c60"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerAccountResource$Status.class",
+      "bytes": 3639,
+      "sha256": "f8d868ae749e7f49fdfe7b9161cf7418010f2561dfab2e7ca112d403376a9c36"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerAccountResource$Unavailable.class",
+      "bytes": 490,
+      "sha256": "725ec054735641665764421dc9d3423458a0f82241fbab8366253bd864dc28af"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerAccountResource.class",
+      "bytes": 10871,
+      "sha256": "3b460874f55118eb2beca771b36998aa3309e6b5a75de97619873691274fa68c"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerAccountResourceFactory$1.class",
+      "bytes": 1434,
+      "sha256": "8a7a57b5a07190a796abd6ecaa6c1580aad8f9a3de5930147997c84ab438d115"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerAccountResourceFactory.class",
+      "bytes": 1738,
+      "sha256": "c0d97835e165469d358c198d7142585b5984a940bd219cd11bdbfda918f57a37"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerAuthenticator.class",
+      "bytes": 16030,
+      "sha256": "2987c4d6024cdc6df144071ee4f1ca7011f287c58ea1be3175c7cf3d36201301"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerAuthenticatorFactory.class",
+      "bytes": 2929,
+      "sha256": "c149a8a691cc933a12b232539de46ae284232b01821964a66fec88a9fd25907e"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerClaimsMapper.class",
+      "bytes": 5458,
+      "sha256": "fcea56e14e4465acc1ed17b748199e1624c9dd89eb072739cf90f6bce118a32f"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerConfiguration.class",
+      "bytes": 5211,
+      "sha256": "8c96ce3350bff2ca3c1e052f26048b7e5bd0be185aa22ea789daddbd61ce8189"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerIdentity$LinkConflict.class",
+      "bytes": 465,
+      "sha256": "5fafc0fd1103b8b7f677ab69f6d2372fd3332433dee678b5db59e496c060070a"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerIdentity.class",
+      "bytes": 7321,
+      "sha256": "67266e8926700620a8f970bd44087fc51ab76cfc3cef7fc18a57f7840566d2ed"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerIdentityTransactions$CurrentUser.class",
+      "bytes": 3710,
+      "sha256": "56b3602c471a032fb715041a06fbb17cd681fc00b13cddef8be7076d80aeb8e7"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerIdentityTransactions$CurrentWechat.class",
+      "bytes": 2274,
+      "sha256": "cc56990119818ef1dc4edd6fb13777537aa088ada23f33394e2736a9fadb2ad1"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerIdentityTransactions.class",
+      "bytes": 13606,
+      "sha256": "5ac1f3bf9e7114d23dabce812f79d935808a8abf895ac7cc47f418c5f8c8e734"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerProviderRuntime$Denied.class",
+      "bytes": 475,
+      "sha256": "8c801ceb9da2c09de7b74a697fec312ca85b30f7e95d1fa50c167f23d1d3ef9d"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerProviderRuntime$Holder.class",
+      "bytes": 855,
+      "sha256": "e44ccf15bc103cc667679883bb93ee6f58c2e669ee33aa902a21f4a47a9a18ea"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerProviderRuntime$Observation.class",
+      "bytes": 3446,
+      "sha256": "2d444e765d9a3fba3ef959394b3a2923c4e16a9b485b91b08930ec1fcc609aa7"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerProviderRuntime$Request.class",
+      "bytes": 2261,
+      "sha256": "ca2b75792a818f872833e4ef6df5a3494e96d7dc1fcfdfe8a63e3d8f01c09749"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerProviderRuntime$Unavailable.class",
+      "bytes": 490,
+      "sha256": "2d5c8434e109be169abc809cdd8617c7d230f4d13fd7123b0a731a08efc6dd3b"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/ConsumerProviderRuntime.class",
+      "bytes": 10122,
+      "sha256": "80f7acebe4af05492cbd50d20b01724dad7a0401626709b05126916c49c63aec"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/PhoneOtp$RateLimited.class",
+      "bytes": 430,
+      "sha256": "868312d8bfa4b3c58e28ae7364f6eb9021d94b48ff904ad9b1e120dd8799f51a"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/PhoneOtp$Sender.class",
+      "bytes": 328,
+      "sha256": "21e6c292155cd33e121b82bd2c65fbd7686087de68d608f6a3e75cbfe0bcfae5"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/PhoneOtp.class",
+      "bytes": 6992,
+      "sha256": "c6f5b6c28c3de09ea6dde6b7387abe0ebbd54b6cfe4ef83da5336e19dc23269a"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/WechatNative$Transport.class",
+      "bytes": 470,
+      "sha256": "77c7b489f5b9a16037a101d08657e3058552b6b2374988eb29020dfebf663e30"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/com/aimanager/identity/WechatNative.class",
+      "bytes": 5737,
+      "sha256": "2c8ad04bdec426b475edc7eb5e141e485931edf42695a4fb3da038ce9f7d082f"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/META-INF/beans.xml",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/META-INF/services/org.keycloak.authentication.AuthenticatorFactory",
+      "bytes": 52,
+      "sha256": "6af9d79ca04029ff9ffdccf9f73d6bf50f8d29e6507686eb04a5209a50b1a381"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/META-INF/services/org.keycloak.protocol.ProtocolMapper",
+      "bytes": 44,
+      "sha256": "280e403e28ec793e67ba5aa06d0a9aeca80f8b3489746c1173a4932b17dd579b"
+    },
+    {
+      "kind": "main",
+      "path": "target/classes/META-INF/services/org.keycloak.services.resource.RealmResourceProviderFactory",
+      "bytes": 54,
+      "sha256": "c75e601769eb0cc24c186350709a88475eca0842d46d49287b52300dd79107f5"
+    },
+    {
+      "kind": "test",
+      "path": "target/test-classes/com/aimanager/identity/AliyunSmsTest.class",
+      "bytes": 6200,
+      "sha256": "c400b3bf5e8794bb9152adf917089fef123cc4eae0cee8867b329557eb5eac8c"
+    },
+    {
+      "kind": "test",
+      "path": "target/test-classes/com/aimanager/identity/ConsumerAccountFlowTest$Fixture.class",
+      "bytes": 20524,
+      "sha256": "2ce11c03e9f66efb90f6d29314d3a8003986570fa09b256e388bd001b9f1053b"
+    },
+    {
+      "kind": "test",
+      "path": "target/test-classes/com/aimanager/identity/ConsumerAccountFlowTest$TestTransactions.class",
+      "bytes": 2787,
+      "sha256": "5e33218b9108605c73d1977b448e9877a3932e5dc1e253b7a07029b4e73f0524"
+    },
+    {
+      "kind": "test",
+      "path": "target/test-classes/com/aimanager/identity/ConsumerAccountFlowTest.class",
+      "bytes": 17905,
+      "sha256": "bafd837b9e18e3d4d0a5c851bb97e98422625c4d8cd309537cec00c8cb18ecda"
+    },
+    {
+      "kind": "test",
+      "path": "target/test-classes/com/aimanager/identity/ConsumerAccountSpiPackagingTest.class",
+      "bytes": 2435,
+      "sha256": "d1f20296418a57fb0360602f904a9142f61e03c6c8bba10497ab5a945172899b"
+    },
+    {
+      "kind": "test",
+      "path": "target/test-classes/com/aimanager/identity/ConsumerAccountStatusTest.class",
+      "bytes": 8933,
+      "sha256": "8819d030d3c42b1cfaf3392f8b9e02831274f0f65a1a857e87a4b4c1d6fad2e8"
+    },
+    {
+      "kind": "test",
+      "path": "target/test-classes/com/aimanager/identity/ConsumerAuthenticatorTest.class",
+      "bytes": 18282,
+      "sha256": "009396828c8014887491455742121a66659d7e11e0b5e7a6860daa28d78e8773"
+    },
+    {
+      "kind": "test",
+      "path": "target/test-classes/com/aimanager/identity/ConsumerClaimsSerializationTest$Fixture.class",
+      "bytes": 2715,
+      "sha256": "088a7643ea4b6776d7bd87ed152e2a8c356ebf273dcfe5982d1f6f002aecabd9"
+    },
+    {
+      "kind": "test",
+      "path": "target/test-classes/com/aimanager/identity/ConsumerClaimsSerializationTest.class",
+      "bytes": 9341,
+      "sha256": "b101947a7f74f75cd1f0fee6934f7117e2e277d5cf5f3b6e3188964c88bd4ff3"
+    },
+    {
+      "kind": "test",
+      "path": "target/test-classes/com/aimanager/identity/ConsumerConfigurationTest.class",
+      "bytes": 3717,
+      "sha256": "bb7992b2b0b19282ef98064c71c48e294b385c9699a6348d2806c966c24aa3f0"
+    },
+    {
+      "kind": "test",
+      "path": "target/test-classes/com/aimanager/identity/ConsumerIdentityTest.class",
+      "bytes": 9660,
+      "sha256": "ba509652d17c3d0607279d8cef4abff6d64f28f5474b447cf5c6e58b4d0935ba"
+    },
+    {
+      "kind": "test",
+      "path": "target/test-classes/com/aimanager/identity/ConsumerIdentityTransactionsTest$Fixture.class",
+      "bytes": 11491,
+      "sha256": "ec11eda92a70629d461121f5c39debae7f4d23249f1193873f485d05503dffcf"
+    },
+    {
+      "kind": "test",
+      "path": "target/test-classes/com/aimanager/identity/ConsumerIdentityTransactionsTest$WechatFixture.class",
+      "bytes": 6104,
+      "sha256": "f4fd40a3fcf5abceec46d2e3f4b12527c3e45a4c4256873d01be445ad03039f8"
+    },
+    {
+      "kind": "test",
+      "path": "target/test-classes/com/aimanager/identity/ConsumerIdentityTransactionsTest.class",
+      "bytes": 12623,
+      "sha256": "e1979965f1a1db99da6368e29eb877f9c17cbcd7ff35b9ab55c4e0b80f5b9e0e"
+    },
+    {
+      "kind": "test",
+      "path": "target/test-classes/com/aimanager/identity/ConsumerProviderRuntimeTest.class",
+      "bytes": 11881,
+      "sha256": "78e57401047db85a04d3cd965a11bccb9bf6c7cc80a3a32b836e00e012d67e97"
+    },
+    {
+      "kind": "test",
+      "path": "target/test-classes/com/aimanager/identity/ConsumerRuntimeSnapshotTest$Probe.class",
+      "bytes": 2267,
+      "sha256": "74548f00d8d162cb687d5f43d6c0e6be54820c3c6836bdf2343e582fe5b60e34"
+    },
+    {
+      "kind": "test",
+      "path": "target/test-classes/com/aimanager/identity/ConsumerRuntimeSnapshotTest.class",
+      "bytes": 2602,
+      "sha256": "456a7ed034a8021c132ef7754c0a2f046e947a8cdd249cfb72800031c3c53e47"
+    },
+    {
+      "kind": "test",
+      "path": "target/test-classes/com/aimanager/identity/PhoneOtpTest$Store.class",
+      "bytes": 2343,
+      "sha256": "fd450fd100c916c166c02268483dc99cf465957a898839e3f678a1bf9847ac04"
+    },
+    {
+      "kind": "test",
+      "path": "target/test-classes/com/aimanager/identity/PhoneOtpTest.class",
+      "bytes": 11949,
+      "sha256": "8aaabab35606f2974c6829d430aceab8b30f6f31fa8fde80915f2e75e9424e03"
+    }
+  ],
+  "postflight": {
+    "originalFrozenCache": {
+      "expectedFiles": 3788,
+      "actualFiles": 3788,
+      "fileSetExact": true,
+      "mismatchCount": 0,
+      "mismatches": [],
+      "added": [],
+      "missing": []
+    },
+    "isolatedExecutionCache": {
+      "expectedFiles": 3788,
+      "actualFiles": 3788,
+      "fileSetExact": true,
+      "mismatchCount": 0,
+      "mismatches": [],
+      "added": [],
+      "missing": []
+    },
+    "currentWorkspaceModule": {
+      "files": 32,
+      "mismatches": [
+        "identity-extensions/pom.xml"
+      ]
+    },
+    "materializedModule": {
+      "files": 32,
+      "mismatches": []
+    },
+    "artifacts": {
+      "totalFiles": 55,
+      "mainClasses": 32,
+      "testClasses": 19
+    },
+    "launchedChild": {
+      "pid": 107044,
+      "present": false
+    },
+    "observedAtUtc": "2026-10-21T04:44:51.173080+00:00",
+    "sdkProcesses": [],
+    "availableRamBytes": 4211757056
+  }
+}
