@@ -1,0 +1,239 @@
+{
+  "schemaVersion": 1,
+  "createdAtUtc": "2026-10-21T05:41:55.483958+00:00",
+  "status": "SOURCE_INTEGRATED_STATIC_REVIEW_ONLY_NOT_COMPILED_NOT_TESTED_NOT_DEPLOYED",
+  "baseCommit": "fc656e035b56e28d9fe0df79a5739bd0641b1f81",
+  "sourceFilesBefore": 32,
+  "sourceFilesAfter": 33,
+  "staticTestDeclarations": 76,
+  "runtimeDiscoveredTests": null,
+  "sdkStarted": false,
+  "compilePassed": null,
+  "testPassed": null,
+  "servicesUpdated": false,
+  "dependenciesChanged": false,
+  "baseline": {
+    "source": ".cache/id17-20261021-r4/src",
+    "moduleGitTree": "098c8e75a7107876bdf31aba106882ff65b7d2b3",
+    "all32PinsMatchedBeforeIntegration": true,
+    "resultsCannotProveNew33Source": true
+  },
+  "changes": [
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerAuthenticatorFactory.java",
+      "bytes": 2659,
+      "sha256": "a07e20a2a9c22f4eec75540380383d7f4c8ae870a519c9d3b21cf26099247a25",
+      "beforeSha256": "a37af315a5c9c1b1e2080fb44268240f770438fcc62ed824d4c9c864d0c778c2"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerAuthenticator.java",
+      "bytes": 9401,
+      "sha256": "f16a33f78800b1178a7c6d503bd24023a339f0210b1aee62019e0995e8251f92",
+      "beforeSha256": "29e614039818107066c6a2c81da9fb6d7ff09a49c4a07547091a041d00a11d75"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/AliyunSms.java",
+      "bytes": 4778,
+      "sha256": "6dcf7f9b7182f1800a81b407d9a373c0b6dfaaa8043d1d12e694dad32fb8da8b",
+      "beforeSha256": "c806afd508fa052d8acfec6c8eff1aabd8ff414094f99f087827400fb6421d5d"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/WechatNative.java",
+      "bytes": 1987,
+      "sha256": "459d446dc9c4a911f56b68b637aa6f9b6e5cda5c5a9cbec2635b885cc4541535",
+      "beforeSha256": "b3b4d5ca96284efb2e12584acfb5b0e18a0699bdd0d62072295b75000208ec1e"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerAuthenticatorTest.java",
+      "bytes": 11343,
+      "sha256": "c617a1e1b6fb5ec58b19bcba5ec29469f5aa73c846a9c4f23a9cc729b6f5826d",
+      "beforeSha256": "3fa6852e536319d20d51771501f2ce0fd9a95da7b54cf315c62c283806dd47b0"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerHttpClientReuseTest.java",
+      "bytes": 5747,
+      "sha256": "3128eb0abaf10cc5123c64684f3e7cb27a7f5cc872ba64312f6d5acd422b5d54",
+      "beforeSha256": null
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerRuntimeSnapshotTest.java",
+      "bytes": 7169,
+      "sha256": "aecea8583cd1aeb7fc297710230149e0a8aa26501d71fa817f19d2d9396e6e3b",
+      "beforeSha256": "908aeabe766666f759b84a66ea002e1aabe7abd8ee1c78bdc412b74475216fcb"
+    }
+  ],
+  "moduleSourceFiles": [
+    {
+      "path": "identity-extensions/maven-settings.xml",
+      "bytes": 376,
+      "sha256": "906221a94b3fbc7d7fda3eb5b5ae53b5ee405f5e7ab1baa66f4c86e065677a4a"
+    },
+    {
+      "path": "identity-extensions/pom.xml",
+      "bytes": 4713,
+      "sha256": "73c7fe28469d1a06e4278ec6e63317d8ae9bdb6ba070bb9b1fdc41a38f680722"
+    },
+    {
+      "path": "identity-extensions/README.md",
+      "bytes": 16206,
+      "sha256": "5510acccbebc58c710946b2b788e21063f0107dc892e0de56561aba274684e32"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/AliyunSms.java",
+      "bytes": 4778,
+      "sha256": "6dcf7f9b7182f1800a81b407d9a373c0b6dfaaa8043d1d12e694dad32fb8da8b"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerAccountFlow.java",
+      "bytes": 14498,
+      "sha256": "bebef13e2daf8bf8182a318febfc4c3cb38bfc916fd4def590af0cd9e4cb1896"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerAccountResource.java",
+      "bytes": 5691,
+      "sha256": "f13e6cf8b2d48059b82a3691710420838e1b3b6a987732b4a5b2ca50718db2cd"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerAccountResourceFactory.java",
+      "bytes": 770,
+      "sha256": "7e039347cae9059afa2b08dd229e09e299357b39e05fc0a98fee849ab11ee0d2"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerAuthenticator.java",
+      "bytes": 9401,
+      "sha256": "f16a33f78800b1178a7c6d503bd24023a339f0210b1aee62019e0995e8251f92"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerAuthenticatorFactory.java",
+      "bytes": 2659,
+      "sha256": "a07e20a2a9c22f4eec75540380383d7f4c8ae870a519c9d3b21cf26099247a25"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerClaimsMapper.java",
+      "bytes": 2699,
+      "sha256": "ab105651a4fe9a6cee8baf91c9e6bbc30d9186e54d5efebe73e0d12a31472be9"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerConfiguration.java",
+      "bytes": 2679,
+      "sha256": "e4a903cda0de55bec76c336bb23abc52ce6b2daf27df0efaa08883f3b3fe4935"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerIdentity.java",
+      "bytes": 3891,
+      "sha256": "9f2517ebaa1d967a207391b130a0c42f247cae79af418ba26fd642c302860eb0"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerIdentityTransactions.java",
+      "bytes": 10707,
+      "sha256": "26b3791e1ebdcf6d12bac7edbf29407886e4209f55f885eedd6718cdcb170fb4"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerProviderRuntime.java",
+      "bytes": 6515,
+      "sha256": "0fcb443f6c6556314816d4db5749af9d2112e4537d7a60d59d81e86677ff1e80"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/PhoneOtp.java",
+      "bytes": 3990,
+      "sha256": "29edc057c9d8f5f08cdc38d965982efc91eda2d4b895fe5d0c94a79533fbd974"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/WechatNative.java",
+      "bytes": 1987,
+      "sha256": "459d446dc9c4a911f56b68b637aa6f9b6e5cda5c5a9cbec2635b885cc4541535"
+    },
+    {
+      "path": "identity-extensions/src/main/resources/META-INF/beans.xml",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "identity-extensions/src/main/resources/META-INF/services/org.keycloak.authentication.AuthenticatorFactory",
+      "bytes": 52,
+      "sha256": "6af9d79ca04029ff9ffdccf9f73d6bf50f8d29e6507686eb04a5209a50b1a381"
+    },
+    {
+      "path": "identity-extensions/src/main/resources/META-INF/services/org.keycloak.protocol.ProtocolMapper",
+      "bytes": 44,
+      "sha256": "280e403e28ec793e67ba5aa06d0a9aeca80f8b3489746c1173a4932b17dd579b"
+    },
+    {
+      "path": "identity-extensions/src/main/resources/META-INF/services/org.keycloak.services.resource.RealmResourceProviderFactory",
+      "bytes": 54,
+      "sha256": "c75e601769eb0cc24c186350709a88475eca0842d46d49287b52300dd79107f5"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/AliyunSmsTest.java",
+      "bytes": 2371,
+      "sha256": "a65c35ddf6fb308e962bc97fd817d5e6a7ea78a54248c0244285b93a0ee64cee"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerAccountFlowTest.java",
+      "bytes": 21068,
+      "sha256": "68199345baa017244fe8e348d53d189ae2074e7f8df5aaef78a1ae8d17a0d54b"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerAccountSpiPackagingTest.java",
+      "bytes": 970,
+      "sha256": "f7256066b80683879de946f7f133a77eb9e01297da949d0d846233706830385d"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerAccountStatusTest.java",
+      "bytes": 4628,
+      "sha256": "092b9f91eb4ead12af665cd984e1479d951f9e309d50daea97e547fbcdaea838"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerAuthenticatorTest.java",
+      "bytes": 11343,
+      "sha256": "c617a1e1b6fb5ec58b19bcba5ec29469f5aa73c846a9c4f23a9cc729b6f5826d"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerClaimsSerializationTest.java",
+      "bytes": 5947,
+      "sha256": "4edf8b0bc5b25492552183c6defcd85f046316bdee75542b47c6a036091362b1"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerConfigurationTest.java",
+      "bytes": 1919,
+      "sha256": "603b0d4e02364201e6c3b49fa4d6c84d69330d32174ebd15e73596ac5c58632c"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerHttpClientReuseTest.java",
+      "bytes": 5747,
+      "sha256": "3128eb0abaf10cc5123c64684f3e7cb27a7f5cc872ba64312f6d5acd422b5d54"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerIdentityTest.java",
+      "bytes": 3983,
+      "sha256": "65b5009508dbfa5cf49d535d5a88b8a5d809aee9059560267d693b6219f0549b"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerIdentityTransactionsTest.java",
+      "bytes": 15536,
+      "sha256": "a8436e531a89c4fbb17a59d1b25d054c800f7a618cf0afdbbe52d1290ab282a5"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerProviderRuntimeTest.java",
+      "bytes": 6029,
+      "sha256": "1858e304e4ca2f47bf420478e3837d1d22f250916e9efc13e4e6cec671522410"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerRuntimeSnapshotTest.java",
+      "bytes": 7169,
+      "sha256": "aecea8583cd1aeb7fc297710230149e0a8aa26501d71fa817f19d2d9396e6e3b"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/PhoneOtpTest.java",
+      "bytes": 5858,
+      "sha256": "165f7919e9df974e54e26e89b4831c03122c9fc923dd1991ec307edeef87704c"
+    }
+  ],
+  "staticChecks": {
+    "independentReviews": "Root and identity_lifecycle_final_static_review: no blocking or Important findings",
+    "diffCheckExitCode": 0,
+    "testJavaSourceFiles": 13,
+    "actualCompilationOrTestsExecuted": false
+  },
+  "userInstruction": "Code and design first; execute tests when memory and verification window recover; phase commit required"
+}

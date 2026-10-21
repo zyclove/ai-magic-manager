@@ -64,7 +64,7 @@ class ConsumerAuthenticatorTest {
         for(String name:List.of("consumer_phone_number","consumer_phone_verified","consumer_identity_revision","consumer_last_operation_id","consumer_last_operation_action","consumer_last_operation_at"))up.addOrReplaceAttribute(new UPAttribute(name,new UPAttributePermissions(Set.of("admin"),Set.of("admin"))));
         when(profile.getConfiguration()).thenReturn(up);when(users.addUser(eq(realm),eq("cn-phone-+8613800138000"))).thenReturn(user);
         String[] code={null};
-        var authenticator=new ConsumerAuthenticator(Map.of("CONSUMER_PHONE_ENABLED","true","CONSUMER_OTP_HMAC_KEY",PhoneOtpTest.SECRET,"ALIYUN_SMS_ACCESS_KEY_ID","not-real","ALIYUN_SMS_ACCESS_KEY_SECRET","not-real","ALIYUN_SMS_SIGN_NAME","not-real","ALIYUN_SMS_TEMPLATE_CODE","not-real"),(p,c)->code[0]=c);
+        var authenticator=new ConsumerAuthenticator(Map.of("CONSUMER_PHONE_ENABLED","true","CONSUMER_OTP_HMAC_KEY",PhoneOtpTest.SECRET,"ALIYUN_SMS_ACCESS_KEY_ID","not-real","ALIYUN_SMS_ACCESS_KEY_SECRET","not-real","ALIYUN_SMS_SIGN_NAME","not-real","ALIYUN_SMS_TEMPLATE_CODE","not-real"),(p,c)->code[0]=c,uri->{throw new AssertionError("Unexpected WeChat request");});
         var send=new MultivaluedHashMap<String,String>();send.putSingle("action","send");send.putSingle("phone","13800138000");when(request.getDecodedFormParameters()).thenReturn(send);
         authenticator.action(context);
         assertNotNull(code[0],"SMS dispatch is missing");verify(users,never()).addUser(any(),anyString());
@@ -81,7 +81,7 @@ class ConsumerAuthenticatorTest {
         AuthenticationFlowContext context=mock(AuthenticationFlowContext.class);
         KeycloakSession session=mock(KeycloakSession.class);when(context.getSession()).thenReturn(session);
         LoginFormsProvider form=mock(LoginFormsProvider.class,RETURNS_SELF);when(context.form()).thenReturn(form);
-        new ConsumerAuthenticator(Map.of()).authenticate(context);
+        new ConsumerAuthenticator(Map.of(),(phone,code)->{throw new AssertionError("Unexpected SMS request");},uri->{throw new AssertionError("Unexpected WeChat request");}).authenticate(context);
         verify(context,never()).success();verify(context,never()).setUser(any());verify(context).challenge(any());
     }
     @Test void verifiedPhoneSetsTrustedNotesAndDoesNotClaimMfa(){

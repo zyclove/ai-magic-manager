@@ -12,9 +12,9 @@ public final class ConsumerAuthenticator implements Authenticator {
   private final PhoneOtp.Sender sender;
   private final WechatNative.Transport wechatTransport;
   private static final String PHONE="consumer.pending.phone",CHALLENGE="consumer.pending.challenge",OPENID="consumer.pending.wechat";
-  public ConsumerAuthenticator(Map<String,String> config){this(config,null);}
-  ConsumerAuthenticator(Map<String,String> config,PhoneOtp.Sender sender){this(config,sender,WechatNative.httpTransport());}
-  ConsumerAuthenticator(Map<String,String> config,PhoneOtp.Sender sender,WechatNative.Transport wechatTransport){this.config=Map.copyOf(config);this.sender=sender;this.wechatTransport=wechatTransport;}
+  ConsumerAuthenticator(Map<String,String> config,PhoneOtp.Sender sender,WechatNative.Transport wechatTransport){
+    this.config=Map.copyOf(config);this.sender=java.util.Objects.requireNonNull(sender);this.wechatTransport=java.util.Objects.requireNonNull(wechatTransport);
+  }
   private boolean enabled(){return ConsumerConfiguration.phoneAvailable(config);}
   private boolean present(String...keys){for(String key:keys)if(config.get(key)==null||config.get(key).isBlank())return false;return true;}
   private boolean allowed(AuthenticationFlowContext context){
@@ -50,8 +50,7 @@ public final class ConsumerAuthenticator implements Authenticator {
     form(context,null);
   }
   private PhoneOtp otp(AuthenticationFlowContext context){
-    var sms=new AliyunSms(config.get("ALIYUN_SMS_ACCESS_KEY_ID"),config.get("ALIYUN_SMS_ACCESS_KEY_SECRET"),config.get("ALIYUN_SMS_SIGN_NAME"),config.get("ALIYUN_SMS_TEMPLATE_CODE"),config.get("ALIYUN_SMS_SECURITY_TOKEN"),AliyunSms.httpTransport());
-    return new PhoneOtp(context.getSession().singleUseObjects(),config.get("CONSUMER_OTP_HMAC_KEY"),Clock.systemUTC(),sender==null?sms:sender);
+    return new PhoneOtp(context.getSession().singleUseObjects(),config.get("CONSUMER_OTP_HMAC_KEY"),Clock.systemUTC(),sender);
   }
   private String binding(AuthenticationFlowContext context){var auth=context.getAuthenticationSession();return "login:"+context.getRealm().getId()+":"+auth.getParentSession().getId()+":"+auth.getTabId();}
   public void action(AuthenticationFlowContext context){

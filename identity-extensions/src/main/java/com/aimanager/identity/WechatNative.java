@@ -22,8 +22,8 @@ public final class WechatNative {
     if(json.has("errcode")||!openId.matches("[A-Za-z0-9_-]{1,128}")||json.path("access_token").asText().isBlank())throw new IOException("WeChat code exchange rejected");
     return openId;
   }
-  public static Transport httpTransport(){
-    var client=HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(3)).followRedirects(HttpClient.Redirect.NEVER).build();
+  public static Transport httpTransport(HttpClient client){
+    java.util.Objects.requireNonNull(client);
     return uri->{try{var response=client.send(HttpRequest.newBuilder(uri).timeout(Duration.ofSeconds(5)).GET().build(),HttpResponse.BodyHandlers.ofString());return new AliyunSms.Response(response.statusCode(),response.body());}
       catch(InterruptedException e){Thread.currentThread().interrupt();throw new IOException("WeChat request interrupted");}};
   }

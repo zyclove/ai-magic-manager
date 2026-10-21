@@ -44,8 +44,8 @@ public final class AliyunSms implements PhoneOtp.Sender {
   static String sha256(String value){try{return HexFormat.of().formatHex(MessageDigest.getInstance("SHA-256").digest(value.getBytes(StandardCharsets.UTF_8)));}catch(java.security.GeneralSecurityException e){throw new IllegalStateException(e);}}
   static String encode(String value){return java.net.URLEncoder.encode(value,StandardCharsets.UTF_8).replace("+","%20").replace("*","%2A").replace("%7E","~");}
   static String form(Map<String,String> values){return values.entrySet().stream().map(entry->encode(entry.getKey())+"="+encode(entry.getValue())).collect(java.util.stream.Collectors.joining("&"));}
-  public static Transport httpTransport(){
-    HttpClient client=HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(3)).followRedirects(HttpClient.Redirect.NEVER).build();
+  public static Transport httpTransport(HttpClient client){
+    java.util.Objects.requireNonNull(client);
     return request->{
       HttpRequest.Builder builder=HttpRequest.newBuilder(request.uri()).timeout(Duration.ofSeconds(5)).POST(HttpRequest.BodyPublishers.ofString(request.body(),StandardCharsets.UTF_8));
       request.headers().forEach((key,value)->{if(!key.equalsIgnoreCase("host"))builder.header(key,value);});
