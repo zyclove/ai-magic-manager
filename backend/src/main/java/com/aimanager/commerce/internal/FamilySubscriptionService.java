@@ -562,8 +562,13 @@ class FamilySubscriptionService {
 
   private PaymentAttempt attempt(ResultSet r) throws SQLException {
     try {
-      var parameters = json.readValue(r.getString("provider_payload"), new com.fasterxml.jackson.core.type.TypeReference<Map<String,String>>() {});
-      return new PaymentAttempt(r.getString("id"), r.getString("order_id"), r.getString("status"), parameters, r.getLong("created_at"));
+      String status = r.getString("status");
+      Map<String,String> parameters = Map.of();
+      // Only a ready attempt may expose parameters that launch the payment SDK.
+      if ("READY".equals(status)) {
+        parameters = json.readValue(r.getString("provider_payload"), new com.fasterxml.jackson.core.type.TypeReference<Map<String,String>>() {});
+      }
+      return new PaymentAttempt(r.getString("id"), r.getString("order_id"), status, parameters, r.getLong("created_at"));
     } catch (JsonProcessingException invalid) { throw new IllegalStateException("Invalid stored provider parameters", invalid); }
   }
 
