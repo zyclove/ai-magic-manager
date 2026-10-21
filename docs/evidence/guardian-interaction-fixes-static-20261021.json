@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "createdAtUtc": "2026-10-21T06:03:33.709330+00:00",
+  "baseCommit": "df342e29e04272465032cb22845f809fa7d22635",
+  "status": "SOURCE_INTEGRATED_STATIC_REVIEW_ONLY_NOT_COMPILED_NOT_TESTED_NOT_RENDERED_NOT_DEPLOYED",
+  "changes": [
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "bytes": 84704,
+      "sha256": "388568620c37721bb8d428fb58699b69dad319f7286095a04a3a008067d35dbe",
+      "beforeGitBlob": "d009449abcc034717350619d28eb955d84c8ce8b",
+      "beforeGitBlobSha256": "c33c96fac1c22adf0fadf51f1ac49f66d0d8d12927cfdc6850b3502a495273cb"
+    },
+    {
+      "path": "apps/guardian/lib/ui/export_create_dialog.dart",
+      "bytes": 5757,
+      "sha256": "823e93225cfbccfe87c95217e77836ab1dd83c4d833a59df2cb1f40910e76645",
+      "beforeGitBlob": "a8335f831acaaf93f00f220f83e750dd3742b3ae",
+      "beforeGitBlobSha256": "e4808a55f80fea2dfe570f1f5c570f2ce9de2d208d07a8674844d162c0f145ab"
+    },
+    {
+      "path": "apps/guardian/lib/ui/resource_page.dart",
+      "bytes": 17324,
+      "sha256": "c742e801e36910b278525c29228b33b8eb7a69606b53a9d210b535db0e4c35e3",
+      "beforeGitBlob": "8f8e4c37b2f251bdf47ebd4bf126fee173e36fed",
+      "beforeGitBlobSha256": "073297c6ad8235fc6e3caf9d349c86dc2c94fb077896e704b379eda0ff6cf990"
+    },
+    {
+      "path": "apps/guardian/lib/ui/shell.dart",
+      "bytes": 8526,
+      "sha256": "89b0a71ee8ce9906a4e540cb430b7570cb54dd01694049f7cc0a94eb2040bf0a",
+      "beforeGitBlob": "2c5dd6de8bb16517aec9bfb040e51055dde42c71",
+      "beforeGitBlobSha256": "ceb1cba3efa9b006aee97e40977e7dd7807dbc31d47a180e881a10ec8404a3bf"
+    },
+    {
+      "path": "apps/guardian/test/export_create_dialog_scope_test.dart",
+      "bytes": 7405,
+      "sha256": "039914946a35b9e5c624bcf7d036d438248f3133a581b4cded83151660fe1649",
+      "beforeGitBlob": null,
+      "beforeGitBlobSha256": null
+    },
+    {
+      "path": "apps/guardian/test/resource_page_resilience_test.dart",
+      "bytes": 22170,
+      "sha256": "a003a75c83ef01e6347bfea7ee08801302267f0e97012534e455c57bbc7575f2",
+      "beforeGitBlob": "0125b6e4c027320834b4db125bef5958d6dc14e2",
+      "beforeGitBlobSha256": "b1b9936751dcb1728e8ce5080bcec53e0abcd559bf1e2220ed524d8efdc5f6fd"
+    }
+  ],
+  "productionFiles": 4,
+  "testFiles": 2,
+  "addedWidgetTestDeclarations": 8,
+  "actualTestDiscovery": null,
+  "compilePassed": null,
+  "testsPassed": null,
+  "sdkStarted": false,
+  "browserStarted": false,
+  "dependenciesChanged": false,
+  "servicesUpdated": false,
+  "staticChecks": {
+    "diffCheckExitCode": 0,
+    "sourceReview": "Root and independent list/header and export reviews",
+    "knownExactTypeFinderCorrected": true
+  },
+  "verificationScope": "Complete new Guardian inputs required; no previous Parent or baseline identity results apply"
+}

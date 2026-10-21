@@ -31,7 +31,8 @@ Widget host(Api api,
         {Key? resourceKey,
         String path = '/records',
         Future<void> Function(Json)? onOpen,
-        Future<void> Function()? create}) =>
+        Future<void> Function()? create,
+        bool Function()? isCurrent}) =>
     MaterialApp(
         theme: consoleTheme(),
         home: Scaffold(
@@ -46,7 +47,8 @@ Widget host(Api api,
                       ColumnSpec('名称', (row) => Text(row['name'] as String))
                     ],
                     onOpen: onOpen,
-                    create: create))));
+                    create: create,
+                    isCurrent: isCurrent))));
 
 Future<void> tap(WidgetTester tester, String label) async {
   final target = find.text(label);
@@ -56,6 +58,93 @@ Future<void> tap(WidgetTester tester, String label) async {
 }
 
 void main() {
+  testWidgets('revoked list scope blocks a GET waiting for authentication',
+      (tester) async {
+    var generation = 1, sends = 0;
+    final authenticated = Completer<http.Client>();
+    final api = Api(() => authenticated.future);
+    await tester.pumpWidget(host(api, isCurrent: () => generation == 1));
+    await tester.pump();
+    generation = 2;
+    authenticated.complete(MockClient((_) async {
+      sends++;
+      return page(['private-old']);
+    }));
+    await tester.pumpAndSettle();
+    expect(sends, 0);
+    expect(find.text('private-old'), findsNothing);
+    expect(find.text('工作空间或权限已变化'), findsOneWidget);
+  });
+
+  testWidgets('same path and API reload after scope change and ignore old rows',
+      (tester) async {
+    var generation = 1, reads = 0;
+    final lateRefresh = Completer<http.Response>();
+    final api = apiFor((_) {
+      reads++;
+      if (reads == 1) return page(['old-admin-record'], cursor: 'old-next');
+      if (reads == 2) return lateRefresh.future;
+      return page(['current-teacher-record']);
+    });
+    Widget scopedHost(int captured) => host(api,
+        resourceKey: ValueKey(('same-actor', '/same-tenant', captured)),
+        isCurrent: () => generation == captured);
+    await tester.pumpWidget(scopedHost(1));
+    await tester.pumpAndSettle();
+    expect(find.text('old-admin-record'), findsOneWidget);
+    await tester.tap(find.byTooltip('刷新'));
+    await tester.pump();
+    generation = 2;
+    await tester.pumpWidget(scopedHost(2));
+    await tester.pumpAndSettle();
+    expect(find.text('current-teacher-record'), findsOneWidget);
+    expect(find.text('old-admin-record'), findsNothing);
+    lateRefresh.complete(page(['late-private-record'], cursor: 'late-private'));
+    await tester.pumpAndSettle();
+    expect(find.text('current-teacher-record'), findsOneWidget);
+    expect(find.text('late-private-record'), findsNothing);
+    expect(find.text('加载更多'), findsNothing);
+    expect(reads, 3);
+  });
+
+  testWidgets('an old create callback cannot act after list scope revocation',
+      (tester) async {
+    var generation = 1, creates = 0;
+    final api = apiFor((_) => page(['private-old']));
+    await tester.pumpWidget(host(api,
+        isCurrent: () => generation == 1,
+        create: () async {
+          creates++;
+        }));
+    await tester.pumpAndSettle();
+    final button = tester.widget<FilledButton>(find.ancestor(
+        of: find.text('新建'),
+        matching: find.byWidgetPredicate((widget) => widget is FilledButton)));
+    generation = 2;
+    button.onPressed!();
+    await tester.pumpWidget(host(api, isCurrent: () => generation == 1));
+    await tester.pumpAndSettle();
+    expect(creates, 0);
+    expect(find.text('private-old'), findsNothing);
+    expect(find.text('工作空间或权限已变化'), findsOneWidget);
+  });
+
+  testWidgets('workspace changed response removes private rows and cursor',
+      (tester) async {
+    var reads = 0;
+    final api = apiFor((_) => ++reads == 1
+        ? page(['private-old'], cursor: 'private-next')
+        : http.Response('{"errorCode":"WORKSPACE_CHANGED"}', 409));
+    await tester.pumpWidget(host(api));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('刷新'));
+    await tester.pumpAndSettle();
+    expect(find.text('private-old'), findsNothing);
+    expect(find.byType(DataTable), findsNothing);
+    expect(find.text('加载更多'), findsNothing);
+    expect(find.byType(FailureView), findsOneWidget);
+  });
+
   testWidgets('initial failure retries the first page', (tester) async {
     final cursors = <String?>[];
     final api = apiFor((request) {

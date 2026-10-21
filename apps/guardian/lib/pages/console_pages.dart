@@ -235,6 +235,18 @@ class ConsolePages extends StatelessWidget {
           session: s,
           onOpen: (id) => actions.approvalDetails({'id': id}));
     }
+    final resourceActor = s.profile?['subject'];
+    final resourceRoot = s.root, resourceRole = s.role;
+    final resourceGeneration = s.scopeGeneration;
+    bool resourceCurrent() =>
+        context.mounted &&
+        s.authenticated &&
+        s.tenant != null &&
+        s.profile?['subject'] == resourceActor &&
+        s.root == resourceRoot &&
+        s.role == resourceRole &&
+        s.scopeGeneration == resourceGeneration &&
+        s.canOpen(section);
     ResourcePage resource(
             {required String title,
             required String subtitle,
@@ -248,11 +260,13 @@ class ConsolePages extends StatelessWidget {
             String description = '创建第一条记录，开始管理。',
             List<Widget> toolbar = const []}) =>
         ResourcePage(
-            key: ValueKey('$path-${s.tenant!['id']}'),
+            key: ValueKey((path, resourceActor, resourceRoot, resourceRole,
+              resourceGeneration)),
             title: title,
             subtitle: subtitle,
             path: '${s.root}/$path',
             api: s.api,
+            isCurrent: resourceCurrent,
             columns: columns,
             create: create,
             createLabel: createLabel,

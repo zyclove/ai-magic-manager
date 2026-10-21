@@ -24,54 +24,73 @@ class ExportCreateDialog extends StatefulWidget {
 
 class _ExportCreateDialogState extends State<ExportCreateDialog> {
   final key = requestId();
-  bool busy = false, done = false, attempted = false;
+  late final AuditExportRepository repository = widget.repository;
+  late final AuditQuery query = widget.query;
+  late final Listenable? accessChanges = widget.accessChanges;
+  bool busy = false, done = false, attempted = false, invalidated = false;
   Object? error;
+  bool get current {
+    if (!mounted || invalidated) return false;
+    // Scope loss is terminal even if the same access closure later returns true.
+    if (!repository.current()) invalidated = true;
+    return !invalidated;
+  }
+
   @override
   void initState() {
     super.initState();
-    widget.accessChanges?.addListener(changed);
+    invalidated = !repository.current();
+    accessChanges?.addListener(changed);
   }
 
   void changed() {
-    if (mounted) setState(() {});
+    if (!mounted) return;
+    if (!repository.current()) invalidated = true;
+    setState(() {});
   }
 
   @override
   void dispose() {
-    widget.accessChanges?.removeListener(changed);
+    accessChanges?.removeListener(changed);
     super.dispose();
   }
 
+  void reauthenticate() {
+    if (busy || done || !current) return;
+    widget.onReauth();
+  }
+
   Future<void> submit() async {
-    if (busy || done || !widget.repository.current()) return;
+    if (busy || done || !current) return;
     setState(() {
       busy = true;
       attempted = true;
       error = null;
     });
     try {
-      final job = await widget.repository.create(widget.query, key);
-      if (!mounted) return;
+      final job = await repository.create(query, key);
+      if (!current) return;
       setState(() {
         busy = false;
         done = true;
       });
       widget.onCreated(job);
     } catch (e) {
-      if (mounted) {
+      if (current) {
         setState(() {
-          busy = false;
           error = e;
         });
       }
+    } finally {
+      if (mounted) setState(() => busy = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final current = widget.repository.current(), q = widget.query;
+    final current = this.current, q = query;
     return PopScope(
-        canPop: !busy,
+        canPop: !busy || !current,
         child: AlertDialog(
             title: const Text('导出审计日志'),
             content: SizedBox(
@@ -108,7 +127,7 @@ class _ExportCreateDialogState extends State<ExportCreateDialog> {
                                 if (error != null) ...[
                                   const SizedBox(height: 16),
                                   FailureView(error!,
-                                      reauth: busy ? null : widget.onReauth)
+                                      reauth: busy ? null : reauthenticate)
                                 ],
                                 if (done) const Notice('导出任务已创建。'),
                               ])
@@ -116,7 +135,9 @@ class _ExportCreateDialogState extends State<ExportCreateDialog> {
                             warning: true))),
             actions: [
               TextButton(
-                  onPressed: busy ? null : () => Navigator.of(context).pop(),
+                  onPressed: busy && current
+                      ? null
+                      : () => Navigator.of(context).pop(),
                   child: const Text('关闭')),
               if (current && !done)
                 FilledButton(

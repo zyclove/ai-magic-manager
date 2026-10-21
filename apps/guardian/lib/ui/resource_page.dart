@@ -18,6 +18,8 @@ class ResourcePage extends StatefulWidget {
   final List<Widget> toolbar;
   final String? notice;
   final VoidCallback? reauth;
+  /// Captures this list's owner; its page key must change with the owner scope.
+  final bool Function()? isCurrent;
   const ResourcePage(
       {super.key,
       required this.title,
@@ -32,7 +34,8 @@ class ResourcePage extends StatefulWidget {
       this.emptyDescription = '创建第一条记录，开始管理。',
       this.toolbar = const [],
       this.notice,
-      this.reauth});
+      this.reauth,
+      this.isCurrent});
   @override
   State<ResourcePage> createState() => ResourcePageState();
 }
@@ -93,6 +96,10 @@ class ResourcePageState extends State<ResourcePage> {
     final epoch = ++generation;
     final api = widget.api;
     final path = widget.path;
+    final scope = resourceGeneration;
+    final permitted = widget.isCurrent;
+    bool current() =>
+        mounted && resourceGeneration == scope && permitted?.call() != false;
     final requestCursor = append ? cursor : null;
     setState(() {
       if (append) {
@@ -107,8 +114,9 @@ class ResourcePageState extends State<ResourcePage> {
       }
     });
     try {
-      final result = await api.page(path, cursor: requestCursor);
-      if (mounted && generation == epoch) {
+      final result =
+          await api.page(path, cursor: requestCursor, isCurrent: current);
+      if (current() && generation == epoch) {
         setState(() {
           rows = append ? [...rows, ...result.items] : result.items;
           cursor = result.nextCursor;
@@ -118,7 +126,10 @@ class ResourcePageState extends State<ResourcePage> {
     } catch (e) {
       if (mounted && generation == epoch) {
         setState(() {
-          if (e is ApiFailure && (e.status == 401 || e.status == 403)) {
+          if (e is ApiFailure &&
+              (e.status == 401 ||
+                  e.status == 403 ||
+                  e.code == 'WORKSPACE_CHANGED')) {
             rows = [];
             cursor = null;
             cursorExpired = false;
@@ -146,21 +157,24 @@ class ResourcePageState extends State<ResourcePage> {
   }
 
   Future<void> action(Future<void> Function() callback) async {
-    if (acting || loading) return;
+    if (acting || loading || widget.isCurrent?.call() == false) return;
     final scope = resourceGeneration;
+    final permitted = widget.isCurrent;
+    bool current() =>
+        mounted && resourceGeneration == scope && permitted?.call() != false;
     setState(() {
       acting = true;
       actionError = null;
     });
     try {
       await callback();
-      if (mounted && resourceGeneration == scope) await load();
+      if (current()) await load();
     } catch (e) {
-      if (mounted && resourceGeneration == scope) {
+      if (current()) {
         setState(() => actionError = e);
       }
     } finally {
-      if (mounted && resourceGeneration == scope) {
+      if (current()) {
         setState(() => acting = false);
       }
     }
@@ -168,6 +182,10 @@ class ResourcePageState extends State<ResourcePage> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.isCurrent?.call() == false) {
+      return const Panel(
+          child: EmptyView('工作空间或权限已变化', '已隐藏旧记录，请重新打开当前工作空间的页面。'));
+    }
     final filtered = rows
         .where((r) => r.values.any(
             (v) => v.toString().toLowerCase().contains(query.toLowerCase())))

@@ -87,6 +87,35 @@ class ConsoleShell extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = context.watch<Session>();
     final wide = MediaQuery.sizeOf(context).width >= 1000;
+    final workspacePicker = s.tenant == null
+        ? null
+        : ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 280),
+            child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                    value: s.tenant!['id'],
+                    isExpanded: true,
+                    icon: const Icon(Icons.expand_more, size: 19),
+                    items: s.tenants
+                        .map((t) => DropdownMenuItem<String>(
+                            value: t['id'],
+                            child: Text(t['name'],
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(fontSize: 13))))
+                        .toList(),
+                    onChanged: (id) async {
+                      if (id == null) return;
+                      try {
+                        await s.selectTenant(
+                            s.tenants.firstWhere((t) => t['id'] == id));
+                        if (context.mounted) context.go('/');
+                      } catch (e) {
+                        if (context.mounted) {
+                          toast(context, e.toString());
+                        }
+                      }
+                    })));
     return Scaffold(
         drawer: wide ? null : Drawer(child: navigation(context, s, true)),
         body: SafeArea(
@@ -114,40 +143,12 @@ class ConsoleShell extends StatelessWidget {
                             style:
                                 const TextStyle(color: muted, fontSize: 13))),
                   if (!wide) const SizedBox(width: 8),
-                  if (s.tenant != null)
-                    ConstrainedBox(
-                        constraints: BoxConstraints(
-                            maxWidth: wide
-                                ? 280
-                                : (MediaQuery.sizeOf(context).width - 204)
-                                    .clamp(100, 280)
-                                    .toDouble()),
-                        child: DropdownButtonHideUnderline(
-                            child: DropdownButton<String>(
-                                value: s.tenant!['id'],
-                                isExpanded: true,
-                                icon: const Icon(Icons.expand_more, size: 19),
-                                items: s.tenants
-                                    .map((t) => DropdownMenuItem<String>(
-                                        value: t['id'],
-                                        child: Text(t['name'],
-                                            overflow: TextOverflow.ellipsis,
-                                            style:
-                                                const TextStyle(fontSize: 13))))
-                                    .toList(),
-                                onChanged: (id) async {
-                                  if (id == null) return;
-                                  try {
-                                    await s.selectTenant(s.tenants
-                                        .firstWhere((t) => t['id'] == id));
-                                    if (context.mounted) context.go('/');
-                                  } catch (e) {
-                                    if (context.mounted) {
-                                      toast(context, e.toString());
-                                    }
-                                  }
-                                }))),
-                  if (!wide) const Spacer(),
+                  if (wide && workspacePicker != null) workspacePicker,
+                  if (!wide)
+                    Expanded(
+                        child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: workspacePicker)),
                   if (s.tenant != null && s.canOpen('notifications'))
                     NotificationShortcut(
                         key: ValueKey('notifications-${s.root}-${s.role}'),
