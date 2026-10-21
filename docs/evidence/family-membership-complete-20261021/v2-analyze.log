@@ -1,0 +1,6 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+Analyzing 5 items...                                            
+
+   info - The import of 'package:flutter/foundation.dart' is unnecessary because all of the used elements are also provided by the import of 'package:flutter/material.dart' - test\family_membership_test.dart:2:8 - unnecessary_import
+
+1 issue found. (ran in 4.1s)

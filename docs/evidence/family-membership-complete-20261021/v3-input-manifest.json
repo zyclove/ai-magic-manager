@@ -1,0 +1,2920 @@
+{
+  "status": "FROZEN_POST_FIX_V3_INPUTS",
+  "frozenAtUtc": "2026-10-21T05:03:05.231735+00:00",
+  "sourceCommit": "3b9117b000a10d082a8f7849c41de5f69c0baa62",
+  "initialPostFixManifestSha256": "fac975bb33e97e63dc20f80704b7462a1658d6404a015ef15d622699f93a21f4",
+  "materializedSourceFiles": 400,
+  "materializedSourceBytes": 6394860,
+  "sourceTreeSha256": "e551af2d9b0bd35d96277cbd4fadfd90467138df2fcad79a8441e695d88655c6",
+  "sourceTreeDigestEncoding": "sorted path + NUL + bytes + NUL + sha256 + LF; package_config recorded separately",
+  "sourceFiles": [
+    {
+      "path": "apps/parent/.gitignore",
+      "bytes": 691,
+      "sha256": "f483baf491cd16f961f613a7b83dc6290cf5e3438fcbd546dce497c6800eff93",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "29a3a5017f048d6d8e6a450eef64435ddee44fb7"
+    },
+    {
+      "path": "apps/parent/.metadata",
+      "bytes": 968,
+      "sha256": "ac3b0021b378d9d2c06dacb1c3ef89553ba032aca995f72b970d09ad99e85833",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "8973d6caadb7ddace31bea5589a2f0f096ca5364"
+    },
+    {
+      "path": "apps/parent/README.md",
+      "bytes": 3415,
+      "sha256": "4c033642803d7b53babc2527431395797cba00de74c330c9d8de6c1b9f4dffa3",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "13620840d30ea841647062f515a64bc25cf5f423"
+    },
+    {
+      "path": "apps/parent/analysis_options.yaml",
+      "bytes": 1420,
+      "sha256": "e0ea485cfdbc3e12b93efb8679a5ea73ebfe20ea4ca0c473dc594fc2fb274ed5",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "0d2902135caece481a035652d88970c80e29cc7e"
+    },
+    {
+      "path": "apps/parent/android/.gitignore",
+      "bytes": 244,
+      "sha256": "9b5d9b8044bf2322229102a9a1c7cb2402ff1a3b23eb09f7ef0209ce24e86c86",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "7760dbbdfce914714768cd43110e7e86dd0268c4"
+    },
+    {
+      "path": "apps/parent/android/app/build.gradle",
+      "bytes": 4227,
+      "sha256": "53185d09eb31f0f9f6a339736c9c43902ca0afe9c2cb5db57f88d7129ca3507f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "b14c943a376c07779173332bd3b2721f4a87131f"
+    },
+    {
+      "path": "apps/parent/android/app/src/debug/AndroidManifest.xml",
+      "bytes": 378,
+      "sha256": "30b0832ed8b92dfbd6ae2abfa939ccf26333d37600056b1572bd4a397a18a74b",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "399f6981d5d35475eb18e6068ae67cdd7c731978"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/AndroidManifest.xml",
+      "bytes": 4001,
+      "sha256": "7258a0221d2d1ec886588816489a0ff4ca097a59358af69dab631b93378ee72b",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "5603040160b682721601734736ad9a0f4742fd5f"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/java/com/aimanager/parent/ConsumerAuthState.java",
+      "bytes": 990,
+      "sha256": "c4cfb76ecf24f0f0de51d6074aea35cb9dc4abf0e8f22d61eccbad829010bbd3",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "47fee59d042d9a9f6502fb5329826a54909d4469"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/kotlin/com/aimanager/parent/AuditExportDocuments.kt",
+      "bytes": 7197,
+      "sha256": "21913eeb68eef814fbe64279be1fa678cb6377e9fd7af2a3a41bc0ad53feddf6",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "a6eed404c8a2fec023f030c91a60ad8612aa3ca8"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/kotlin/com/aimanager/parent/ConsumerWeChatAuthBridge.kt",
+      "bytes": 3990,
+      "sha256": "703c316a70fa3e3dd9282b09bd6bb1e9859eb1a1d27f307722abee7961abdc28",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "0cccf7de4b6e3a90ef5a518ac386224168c22728"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/kotlin/com/aimanager/parent/FamilyInvitationLinkHost.kt",
+      "bytes": 1089,
+      "sha256": "1b8c89f6eb861e97e343d3e13d24e0b5dca8c97e60421b89afeddea58a150a72",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "2335a0214654dba4f8061e8c2deea4e88101b775"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/kotlin/com/aimanager/parent/FamilyInvitationLinkProtocol.kt",
+      "bytes": 776,
+      "sha256": "e57e56960fef1d1d1c422e73d35502a19f12fcfbc378b873c9e5542e426c7f77",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "3a733140bc42a282faf7099008baf3378cda9ece"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/kotlin/com/aimanager/parent/FamilyPayBridge.kt",
+      "bytes": 4373,
+      "sha256": "fa0f961f07f025146f859e3f5eb3efe6bfe09725a3e4268006404148be91059b",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "048cbff600b7c5082e6d75ec82e2b52062e9e50e"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/kotlin/com/aimanager/parent/FamilyPayParameters.kt",
+      "bytes": 1375,
+      "sha256": "4194b6b3add2cf05c0fde601969fd7364e1d5a0e28daded1f90e5c0562ab49ad",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "ae97d5a1e154fcb6f47073f4c696fa575b50249e"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/kotlin/com/aimanager/parent/FamilyPushConsentGate.kt",
+      "bytes": 832,
+      "sha256": "6581f56755902efade9658ec228fa59d205430dc625204ca9105f6706a80910b",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "6728db5178d8613b0c2cae43de53132eb23f1e94"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/kotlin/com/aimanager/parent/FamilyPushNative.kt",
+      "bytes": 15697,
+      "sha256": "c6b8a0d496c6b9c607d844e204833e0a8f43becfe72648b4ed55836cd5defb72",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "367b1ccf5485c692761badb93b68905b2207f7b7"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/kotlin/com/aimanager/parent/FamilyPushProtocol.kt",
+      "bytes": 1825,
+      "sha256": "99e5adf419948417bc21c9b8417d7f08865648ddf7f76f9922630006db2875f6",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "5b23fd8befe19ac50ff2a6c65d038371197503dd"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/kotlin/com/aimanager/parent/MainActivity.kt",
+      "bytes": 4981,
+      "sha256": "0f62dd7cd558b14fbc685c4ffab1311d481d7867627bdbef88fc9da35a7b7047",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "2830b55a8437519ebd5e8d4313facf452150e428"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/kotlin/com/aimanager/parent/ParentOperationJournalStore.kt",
+      "bytes": 14796,
+      "sha256": "47360efc67f3b616eaaee75fdf612d3501acdeda57d384341b7a8563c585ddab",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "30e0bd7f7be4e741f67b202a6743b7018c84701e"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/kotlin/com/aimanager/parent/wxapi/WXEntryActivity.kt",
+      "bytes": 1287,
+      "sha256": "9d10489a8b829dbd75bd05dfe67f161d0eef8c7cd1ef71419ffbcc56bbd7bbec",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "b065f4c96384fb251e9da1bcdfa678d91a45d74b"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/kotlin/com/aimanager/parent/wxapi/WXPayEntryActivity.kt",
+      "bytes": 1982,
+      "sha256": "18cc0b459619ba858d18d1735be1cb30c8eda387c0ba108f8e51f0be8eda8639",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "54bef32fbd1d6010796ee2c569385175d542135e"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/res/drawable-v21/launch_background.xml",
+      "bytes": 256,
+      "sha256": "05af6e4d12894b09a814131594c051b4ddb5a30b517558520fd5427db380d073",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "ac63550ca33591c915a5d47b2ebfc4c79329ac2f"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/res/drawable/ic_manager.xml",
+      "bytes": 537,
+      "sha256": "5eca85ce930974c271dad37e60b8cc6c4c17e30786089c34392453d7b5cf5527",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "30b5905ddbe09ab9a32385adb831c9c5dd5201c2"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/res/drawable/launch_background.xml",
+      "bytes": 256,
+      "sha256": "05af6e4d12894b09a814131594c051b4ddb5a30b517558520fd5427db380d073",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "ac63550ca33591c915a5d47b2ebfc4c79329ac2f"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/res/mipmap-hdpi/ic_launcher.png",
+      "bytes": 544,
+      "sha256": "6a7c8f0d703e3682108f9662f813302236240d3f8f638bb391e32bfb96055fef",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "db77bb4b7b0906d62b1847e87f15cdcacf6a4f29"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/res/mipmap-mdpi/ic_launcher.png",
+      "bytes": 442,
+      "sha256": "c7c0c0189145e4e32a401c61c9bdc615754b0264e7afae24e834bb81049eaf81",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "17987b79bb8a35cc66c3c1fd44f5a5526c1b78be"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/res/mipmap-xhdpi/ic_launcher.png",
+      "bytes": 721,
+      "sha256": "e14aa40904929bf313fded22cf7e7ffcbf1d1aac4263b5ef1be8bfce650397aa",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "09d4391482be68e9e4a07fab769b5de337d16eb1"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/res/mipmap-xxhdpi/ic_launcher.png",
+      "bytes": 1031,
+      "sha256": "4d470bf22d5c17d84edc5f82516d1ba8a1c09559cd761cefb792f86d9f52b540",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "d5f1c8d34e7a88e3f88bea192c3a370d44689c3c"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png",
+      "bytes": 1443,
+      "sha256": "3c34e1f298d0c9ea3455d46db6b7759c8211a49e9ec6e44b635fc5c87dfb4180",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "4d6372eebdb28e45604e46eeda8dd24651419bc0"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/res/values-night/styles.xml",
+      "bytes": 995,
+      "sha256": "8c5bad5152f217e837519f9c15211d19f39bd45f5f67faf6dd81cb4b299e518f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "06952be745f9fa6fa75196e830d9578eb2ee631d"
+    },
+    {
+      "path": "apps/parent/android/app/src/main/res/values/styles.xml",
+      "bytes": 996,
+      "sha256": "937d7c82f539c72eb94fd3a3773f29b3d3fef1997213c92cb632298cedf4bda9",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "cb1ef88056edd1caf99a935e434e7ff6943a0ef6"
+    },
+    {
+      "path": "apps/parent/android/app/src/profile/AndroidManifest.xml",
+      "bytes": 378,
+      "sha256": "30b0832ed8b92dfbd6ae2abfa939ccf26333d37600056b1572bd4a397a18a74b",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "399f6981d5d35475eb18e6068ae67cdd7c731978"
+    },
+    {
+      "path": "apps/parent/android/app/src/test/kotlin/com/aimanager/parent/FamilyPayParametersTest.kt",
+      "bytes": 1235,
+      "sha256": "33681e72df38f91b5d7bd6db9ef4fe9c3426c66c54aa1c0e6c24625a1b34a46c",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "17961aa9d4b32bb1b898e430ebea708d9dcd6292"
+    },
+    {
+      "path": "apps/parent/android/app/src/test/kotlin/com/aimanager/parent/FamilyPushConsentGateTest.kt",
+      "bytes": 2016,
+      "sha256": "8ab24bb87bd4ece73126767243864c912b96efa6ac363431ca10bd3b3515cead",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "9422a45ed090f157d0d0d238d048eefc9334b6ee"
+    },
+    {
+      "path": "apps/parent/android/app/src/test/kotlin/com/aimanager/parent/FamilyPushProtocolTest.kt",
+      "bytes": 2752,
+      "sha256": "68c969d0ef7987d406794a90dc0039c89a3f50250237af7edc6a9e1778e9edfd",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "86ec469fb6bc075205cae39935d34277ad476456"
+    },
+    {
+      "path": "apps/parent/android/build.gradle",
+      "bytes": 408,
+      "sha256": "7fa085d891cb810790b80d21a0df2ef2799e711a65c0559fe09c4727833beae4",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "48906a5ab792e119ebc54690676600bde1bc7009"
+    },
+    {
+      "path": "apps/parent/android/gradle.properties",
+      "bytes": 267,
+      "sha256": "2f7574b7176733703edc53e278290877be4371253bfeaee69b9a3f80cb9980cf",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "13bd28ddc42886acf20b5d964ef7130cdc101d62"
+    },
+    {
+      "path": "apps/parent/android/gradle/wrapper/gradle-wrapper.jar",
+      "bytes": 53636,
+      "sha256": "16caeaf66d57a0d1d2087fef6a97efa62de8da69afa5b908f40db35afc4342da",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "13372aef5e24af05341d49695ee84e5f9b594659"
+    },
+    {
+      "path": "apps/parent/android/gradle/wrapper/gradle-wrapper.properties",
+      "bytes": 339,
+      "sha256": "f86a5dece14f54009fd7b6a86e642e59a8fa848349c1c08c2ee23fb5a12dae72",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "94116139c55658a056554c90dec0e02bed32faec"
+    },
+    {
+      "path": "apps/parent/android/gradlew",
+      "bytes": 4971,
+      "sha256": "ec56c02543666d92d9ac5ae7fcc48f88ce4de0deb8b7f9b39928ca46f68c1b2b",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "9d82f78915133e1c35a6ea51252590fb38efac2f"
+    },
+    {
+      "path": "apps/parent/android/gradlew.bat",
+      "bytes": 2314,
+      "sha256": "f4f428c5626b3d90cef3bd4e7fd3ad3ea5760442db8c09d586b5bfe031dbe5e3",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "8a0b282aa6885fb573c106b3551f7275c5f17e8e"
+    },
+    {
+      "path": "apps/parent/android/settings.gradle",
+      "bytes": 727,
+      "sha256": "fa8909bedcb652dd2c18fb1610da5f2322c26b767b2696828b35f578e86afa59",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "b340351264947576d73185ecd9a6f59be3658624"
+    },
+    {
+      "path": "apps/parent/assets/family/horizon.png",
+      "bytes": 2845985,
+      "sha256": "59b173c9dc7a778a0ae0ba9ab22e567188dff1c3ca1f08d36d2d4263fa36b6cc",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "d786d080211b0ae3a5944e75ae937f30409f5ea0"
+    },
+    {
+      "path": "apps/parent/assets/family/usage-empty.png",
+      "bytes": 73522,
+      "sha256": "b6f1b5f36ff452436927b06f18085dea1698142988231c41821dc3ff8c215fdf",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "8730c89df15d665e3f3c2b9aa7c08579f14b1169"
+    },
+    {
+      "path": "apps/parent/lib/core/access_decision.dart",
+      "bytes": 7953,
+      "sha256": "ecd03ec8536030655d2bf571f1de6f5c6606daac09e9661cb1e3d78adba03964",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "f636ca59e041598dc7d5267cc248c31603917e1b"
+    },
+    {
+      "path": "apps/parent/lib/core/application_catalog.dart",
+      "bytes": 11078,
+      "sha256": "fb059574c21722ecf3d32da81c2ec4617f385ed35877659bdd25f68fafabf7ae",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "5dd7d8a133413200132f924b0351028a19b482c8"
+    },
+    {
+      "path": "apps/parent/lib/core/audit.dart",
+      "bytes": 4106,
+      "sha256": "aed7d8178f4b69de3f2fc7f9080654ce0dac99be50e53995a89a508afeb997a8",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "3bf6c229ce2bc806251d09e2c6c834d201f459a3"
+    },
+    {
+      "path": "apps/parent/lib/core/audit_export_destination.dart",
+      "bytes": 1028,
+      "sha256": "96753f1a93730a33d55cdbd845ad47ca18977a432f53b025203acad4cb023132",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "e798809dec9a9e7fe187a4fd6c81c1e781f3f18e"
+    },
+    {
+      "path": "apps/parent/lib/core/audit_exports.dart",
+      "bytes": 17447,
+      "sha256": "66004dd2f71189d01d659dd8afac7bf9d0f6c339e0aac49b9a2afc3190ac3800",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "12150545567306ea94076b54cb41832218a107e0"
+    },
+    {
+      "path": "apps/parent/lib/core/commercial_entitlements.dart",
+      "bytes": 2522,
+      "sha256": "4f501f42908bc72919c042af5a7b25dfc6722f1b1aa316262b712b4c565683a3",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "3cc8dc0f133068e7d2b31a7de231e972996d0b61"
+    },
+    {
+      "path": "apps/parent/lib/core/contracts.dart",
+      "bytes": 9831,
+      "sha256": "28a977622085ced9cbd1a9101589ad88e906582ec71cffd3b9e0eae58f5eefac",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "ba7eba9255343a230e61fb45338b9f7c8b5a786c"
+    },
+    {
+      "path": "apps/parent/lib/core/device_groups.dart",
+      "bytes": 10769,
+      "sha256": "fcfe6d4d75548120e9e2c86a0059446119abbdcb26c45850a5b070754773d437",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "6ca884eb48b6462aaa00baddf2367161c08d9cee"
+    },
+    {
+      "path": "apps/parent/lib/core/family.dart",
+      "bytes": 11454,
+      "sha256": "45d307f89f48a438740cce601715a5f8482a92c33106623c46cead9c2f2448a2",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "40e3b15b209c7a8834e26410939cf63db1b3d917"
+    },
+    {
+      "path": "apps/parent/lib/core/family_account_security.dart",
+      "bytes": 21181,
+      "sha256": "690546ed717231f696429e7d5c768317e252362cfb1f09b084ec5382c4a6e7be",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "a3ebff62c11607d433b77278ad0df523c2436b16"
+    },
+    {
+      "path": "apps/parent/lib/core/family_after_sales.dart",
+      "bytes": 5890,
+      "sha256": "d946ab2d6e4e012282c7e9c1df56397501cb8bdda5a12b972e34bbbe009c6bd4",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "362c9389ecc3b2c95b3f6b2d78c5fbef32bf78c1"
+    },
+    {
+      "path": "apps/parent/lib/core/family_collaboration.dart",
+      "bytes": 22084,
+      "sha256": "7e5aac616b416736b8524bfe5d7b25a47d7915aaf6d8c46a5e57fcc574569efc",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "8465f57c7d5b1c3baf119789841673d2f986315f"
+    },
+    {
+      "path": "apps/parent/lib/core/family_device_access.dart",
+      "bytes": 8846,
+      "sha256": "79e65291627fc354aa4f7e1648139586b0ad632f32f81a6111d16349faa6725a",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "c2ffad1cd7a34fde27f47ebee01d6441d34dd0d2"
+    },
+    {
+      "path": "apps/parent/lib/core/family_notifications.dart",
+      "bytes": 14777,
+      "sha256": "724929a7b2e94bc54d3d5f66230944844093afa8d18ee05f9e4cdc013278ca8b",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "ab822783067ae7b686b05515097c68c3b5c26755"
+    },
+    {
+      "path": "apps/parent/lib/core/family_payment.dart",
+      "bytes": 9482,
+      "sha256": "7892e4399853af4cdbd31e9904110d29dc729623ca30aa7c12f2afebee787093",
+      "origin": "EXPLICIT_MAIN_OVERLAY_AFTER_OFFICIAL_FORMAT",
+      "gitObject": "e83518e9dd66c81c7df005445fd051311f2ad275"
+    },
+    {
+      "path": "apps/parent/lib/core/family_requests.dart",
+      "bytes": 4790,
+      "sha256": "68064c27ee06c3d1ab09416c0ca293eb0d7e5c7b7a8d20a19b46168fbce31e10",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "a40fd95d617d995280ef96c0467567b6295903d1"
+    },
+    {
+      "path": "apps/parent/lib/core/family_suggestion.dart",
+      "bytes": 3538,
+      "sha256": "9bfc536e4624f770d571b6db20dd66b6e9a756bcad1a48874f070e8aa4e4c144",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "5e51e1f444287236b95529473ab9e2b4f711b77c"
+    },
+    {
+      "path": "apps/parent/lib/core/help_attention.dart",
+      "bytes": 7692,
+      "sha256": "5393b97440541c6f3e31b04fc122d6ede834e63b4ee4651e6f472dc1f452014b",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "c98d01673684d3b3f1f3bc3d255e2e0f86ddc490"
+    },
+    {
+      "path": "apps/parent/lib/core/invitation_acceptance.dart",
+      "bytes": 12334,
+      "sha256": "dce7d2eb8c2499b63f3caaebe312e6246be48ddb0d0c2e7309c340486758d6a8",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "5720ab6bc802cef5cbcf9a314001a2f6be0164b6"
+    },
+    {
+      "path": "apps/parent/lib/core/invitations.dart",
+      "bytes": 11910,
+      "sha256": "1d462f87b5c84493ce7e86617432a3184417996496e48e246f90fa76f51e9be1",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "514f1bed91dc53f19103925793e8e041c662c21a"
+    },
+    {
+      "path": "apps/parent/lib/core/member_access.dart",
+      "bytes": 15565,
+      "sha256": "b60a3c49ba176ea5a64331904d8c349473888d9f6aa62274bb0108b734b05c6b",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "f575f0d4659f4f738a0916a2f904ff3b1619fcd4"
+    },
+    {
+      "path": "apps/parent/lib/core/notifications.dart",
+      "bytes": 4378,
+      "sha256": "1a54c155673fec3729a906643c78e1b2ce0f195ef8f38c9f65f1dc87c2ee4552",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "1af69907423901b0fbcef8f73fe461faba8ebe97"
+    },
+    {
+      "path": "apps/parent/lib/core/observation_settings.dart",
+      "bytes": 12157,
+      "sha256": "5edd87ddb0cd7d7e2bb93b931ffa7ce4900741d0caf25656a48f4bf40b52ef02",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "0c2645c9acf6ff33186a12b570429335e29ced65"
+    },
+    {
+      "path": "apps/parent/lib/core/operation_journal.dart",
+      "bytes": 8990,
+      "sha256": "d0500c385ec59b19cb17d3096cfa10e5e8d81af49fc967943529cd8c68ee3b87",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "6233e255cf8242b7beb132ea2697d472ca80a997"
+    },
+    {
+      "path": "apps/parent/lib/core/operation_result_terminal.dart",
+      "bytes": 5147,
+      "sha256": "dec13a0c3e69ce12901f63a57ad25cf85552c02c77d458ff419fbbe6c1880201",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "03235765a3de2e65d7aefdd13149f710af6cc829"
+    },
+    {
+      "path": "apps/parent/lib/core/organization_classes.dart",
+      "bytes": 14064,
+      "sha256": "5d05d17dd6d418da417a310bfbab427bab5296af5c17a27fcee0c2e6181bf9f9",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "1cf75b52d523352f878b55599a238e6bbc51542d"
+    },
+    {
+      "path": "apps/parent/lib/core/ownership.dart",
+      "bytes": 13094,
+      "sha256": "a0ed365afda0239b1cb0d046dc345533aa80c19c95a86609d5b85961f1e94d69",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "8822f52d118ea67ef352de7d5defa2beb744fd24"
+    },
+    {
+      "path": "apps/parent/lib/core/paged_collection.dart",
+      "bytes": 3951,
+      "sha256": "debb79aba3587edc3994b89930566c957c0dd3d2f0e4863bb2644b545f61ffdc",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "ded99c0fe541a33fc27326114cd66d8f23d9ab65"
+    },
+    {
+      "path": "apps/parent/lib/core/parent_api.dart",
+      "bytes": 17008,
+      "sha256": "0697dcc6d23364d8c95cf07152b352f51bb5947c9164274b6e685e5829f3ec1f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "fe93a0c2e3043ebba7576f509e68d01066162a11"
+    },
+    {
+      "path": "apps/parent/lib/core/parent_durable_storage.dart",
+      "bytes": 2235,
+      "sha256": "712db2809e7af8386dbb944ce7db09e4dd0abb49aa8fd2fe7c59373bcd3fa771",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "c81f8c62e98c103defc31786397496c78c0c786b"
+    },
+    {
+      "path": "apps/parent/lib/core/parent_session.dart",
+      "bytes": 23089,
+      "sha256": "4e223873af54ea9275cf84534de07332b635e6ce7f5b19b4c6f8081d3d3c44ab",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "538794496c579ef9c2a35fa8dc50e656c1f8304a"
+    },
+    {
+      "path": "apps/parent/lib/core/pending_decisions.dart",
+      "bytes": 4834,
+      "sha256": "6a1b055e67f7a00b04005708513a568d7eb5b0317780a25aef1a3c12703d1ba0",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "2dafca181f2ef80b2f0457ec26a13fcd663be46b"
+    },
+    {
+      "path": "apps/parent/lib/core/pending_publications.dart",
+      "bytes": 9297,
+      "sha256": "abd25b7485ff5d1c51ea1fdf909b50f3f691e974d6c2d0d82fb3b50b3e062f5f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "6ff0808363ee5dd4258c6cf55f9ae767bc32f801"
+    },
+    {
+      "path": "apps/parent/lib/core/permission_consent.dart",
+      "bytes": 11809,
+      "sha256": "c1e884f5dd5e11b093f0f138f72f2c0520a004ff616460ae328c97e1dec3108e",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "29c618cf122fbba84dfc1c322472f612e098102f"
+    },
+    {
+      "path": "apps/parent/lib/core/permission_observation.dart",
+      "bytes": 6380,
+      "sha256": "89ade54fca5c97ec708ecb19b5d518c36f7fc4f875c2762a2e3e010178e92905",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "9986bfbc4675b911f7d661e8baf5e15a1e535d71"
+    },
+    {
+      "path": "apps/parent/lib/core/policy_creation.dart",
+      "bytes": 9746,
+      "sha256": "26c007b38b4aacd29b0aa5509addc990331b70495f41f459e3e56bf1f8a33dca",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "94554422cfa6cfa22726e7646b57b30f992b586d"
+    },
+    {
+      "path": "apps/parent/lib/core/policy_group_selection.dart",
+      "bytes": 4437,
+      "sha256": "9276d8a5c2031f00e844bdda9d4440626bba76f93e2daec013f1f4c0d7461227",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "322575f789378aca9ea9ec33bf52c08203fe133d"
+    },
+    {
+      "path": "apps/parent/lib/core/quota_plans.dart",
+      "bytes": 5565,
+      "sha256": "7d83fbfd02e1d1a1825ddd14c22da3a0ecc38bdfe98c14297c0e254f690af8a5",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "45c144e84dfe2cc53520dbd66b0ba2d9d40f4bfa"
+    },
+    {
+      "path": "apps/parent/lib/core/quotas.dart",
+      "bytes": 15279,
+      "sha256": "69c33f531c13a51ed47caf5a6185ac65f83b65c912d0a4355a1375d30aa411f3",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "ed65fbd23864db40c711c1585cb863f4c853a93a"
+    },
+    {
+      "path": "apps/parent/lib/core/report_selection.dart",
+      "bytes": 1804,
+      "sha256": "acb1beb9e3d5267fc5ed1e50650a86fd2437185b6000c365f11bbc3677a42a23",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "d6ebf24d1b60c9d0b964a45ac94e4689f2bc4604"
+    },
+    {
+      "path": "apps/parent/lib/core/schedule_presets.dart",
+      "bytes": 2041,
+      "sha256": "60ec0233668c6a2836a3ce50ba3e11572360d930193c8ed476c74c43a3fffcee",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "7d6cd96162de3a9ea267b5a8fe6f5ebd4f627d22"
+    },
+    {
+      "path": "apps/parent/lib/core/schedules.dart",
+      "bytes": 11223,
+      "sha256": "aa8a25f922438e28df3623ed4a0d371750e6bdda393589a685d4ecf0f4007573",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "323c0ce5e4f91d0260d67d04c4a5e7e15b3e6898"
+    },
+    {
+      "path": "apps/parent/lib/core/subjects.dart",
+      "bytes": 10760,
+      "sha256": "31420de9d1013d552c8b1b0362d17de0ed8f32692e69d8708f26392ccf821c32",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "73ff4d59c0d2fa75f4fb008d66aa51da15f561c2"
+    },
+    {
+      "path": "apps/parent/lib/core/usage_reports.dart",
+      "bytes": 5858,
+      "sha256": "98d59f4c0dce5455b9204ec2c391d753f77d1f210507ad7850629aa073b7a4d1",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "ac63644b9d2637fc62648147d623239e9da12343"
+    },
+    {
+      "path": "apps/parent/lib/main.dart",
+      "bytes": 50443,
+      "sha256": "46a91d2b1260ab9b258282f281f2bb5282533d940d175ca56c96829aac7ba506",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "66894087499ae888641ed9d9a4ab2369fe2a37ee"
+    },
+    {
+      "path": "apps/parent/lib/platform/family_push_platform.dart",
+      "bytes": 3601,
+      "sha256": "9999f5912973536152cf643a535805fbe71d1ecfc9e487b403d79581b5ab50ec",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "35a664c78028ce1f0a3ff638c98fefc3e19a2a9e"
+    },
+    {
+      "path": "apps/parent/lib/ui/access_decision_page.dart",
+      "bytes": 13806,
+      "sha256": "7fa234b76270d37c7de7a26cd3178d1a2eb881811f2989f82cd92eebd125ed7a",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "b1ebb712be6a251775e730186a73629aac3c1ca9"
+    },
+    {
+      "path": "apps/parent/lib/ui/access_history.dart",
+      "bytes": 25147,
+      "sha256": "c76999d5852603c86277afcefbae605996b40d752e8318e203822e4c0258a680",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "73eac4b200789eea114ff324f389279117aafdc1"
+    },
+    {
+      "path": "apps/parent/lib/ui/application_center.dart",
+      "bytes": 26475,
+      "sha256": "eb8a883b236efaf052cd7c37cc47fb8cb9fbc3ce1a857477d7c10d641b0f84b5",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "901fcd116cb68c05c5a031508581aa8827216a99"
+    },
+    {
+      "path": "apps/parent/lib/ui/audit_center.dart",
+      "bytes": 22666,
+      "sha256": "f686aac45edc96ab3f0e547657bfb1a028f78d8f677c6d08dc3c29749f823e3d",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "0ded83dd2564b38b2ce867add1557cc6db9bc846"
+    },
+    {
+      "path": "apps/parent/lib/ui/audit_exports_center.dart",
+      "bytes": 26287,
+      "sha256": "f41fdda752f4e841a2497c46529ba0df4cb426c578b11fd19a5dce1c9d29d075",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "451af6b32789a8da3730e5458f5327ea18510ec6"
+    },
+    {
+      "path": "apps/parent/lib/ui/class_center.dart",
+      "bytes": 37711,
+      "sha256": "48f5d946ccefb2ffd546270d50c0aff836484ae64e4d3775d737cc8439cc7d77",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "f1e946218102eba926f654e2c99366cfb931fbed"
+    },
+    {
+      "path": "apps/parent/lib/ui/commercial_account.dart",
+      "bytes": 7396,
+      "sha256": "5e11a724c250295d082d6402b32ae6cd29c3a72246202788652525cf9f33b9c6",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "ce2a8d5d348d136039cf649744da3ddd017507ef"
+    },
+    {
+      "path": "apps/parent/lib/ui/contracts_center.dart",
+      "bytes": 20388,
+      "sha256": "e0e838d7d3798d8f53c93cb0850d30f7c14067a45005f7e1471e82eaf59958a4",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "d361ddf3574012b98ad91633d0b27e0bb3346f3e"
+    },
+    {
+      "path": "apps/parent/lib/ui/device_capabilities.dart",
+      "bytes": 17910,
+      "sha256": "fa12fff45171621cd582ad21aa6fcbeb763dcc40ab1749819c8607343821a7c6",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "e5d25cb6b1c80e5f9d4239e91117d6e4e3dc1a2f"
+    },
+    {
+      "path": "apps/parent/lib/ui/device_exit.dart",
+      "bytes": 4221,
+      "sha256": "4e2a21a7841e1a812aaaf2df3ac0124afc198296a06befc1008398e67c12b839",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "322d5e9461ef6c89b5fbd567283c788447bf671b"
+    },
+    {
+      "path": "apps/parent/lib/ui/device_group_center.dart",
+      "bytes": 15797,
+      "sha256": "143f2cc1e2bc3ddc157af4e443931dd167719a0dee525c29635b9b193f349129",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "717cbfbfc6dab7c0c634d528639c19379fe2055b"
+    },
+    {
+      "path": "apps/parent/lib/ui/enrollment_flow.dart",
+      "bytes": 27103,
+      "sha256": "428bdd07956ae4175f8fb5ad10bfc82b7f2c9f9bf8b90f4a13a4410f10f904e3",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "a729af7d3a39174aa21769399d9bd7c387a22066"
+    },
+    {
+      "path": "apps/parent/lib/ui/family_account_security_page.dart",
+      "bytes": 16731,
+      "sha256": "48f4208ee252c7e1e00ba2b8bb1cd179ca5f20d4f3a5f9918adf4b446d56e4db",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "69bf86e871e6eb4a00a379190779dcaf2cd4bd50"
+    },
+    {
+      "path": "apps/parent/lib/ui/family_app_host.dart",
+      "bytes": 5659,
+      "sha256": "6741c61c6c083aa1025db498bafc705163c0b43fd78899b55839e9a79e965335",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "f6a9a3ff462e2f6bcbd24e9bfbecda0581057f8e"
+    },
+    {
+      "path": "apps/parent/lib/ui/family_assistant.dart",
+      "bytes": 10985,
+      "sha256": "2eb658f1102cd0db10739ceb44f118ea7ad411ea8d9bc4ef7cdad5167d81fed2",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "afcf98048fb6b54e86a049d062155ae840593744"
+    },
+    {
+      "path": "apps/parent/lib/ui/family_device_access_page.dart",
+      "bytes": 19737,
+      "sha256": "7fd0398858c91d569acc23b0408b0806978815d57f595e46a85f0812bccaa4e6",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "59000bbef5dae9556ce1f1f591b0bb1f244e3285"
+    },
+    {
+      "path": "apps/parent/lib/ui/family_inbox_page.dart",
+      "bytes": 13130,
+      "sha256": "5f856736aecc866b599d7b1249f0dcc4a96824a274d6989df92f6221d07c8165",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "ee0939f3abd4193f7e3f0763ade40f98bc79e325"
+    },
+    {
+      "path": "apps/parent/lib/ui/family_invitation_page.dart",
+      "bytes": 20076,
+      "sha256": "9af022a19e1d944e1f6ce63c4aea1ca16bcaaa2154e5c7111786b0ef3e7d7a84",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "599ce25a3f04d6c622bcbb695cd5ed6584c716be"
+    },
+    {
+      "path": "apps/parent/lib/ui/family_members_page.dart",
+      "bytes": 25418,
+      "sha256": "40f7e8d0432af12d8fb44ae00e2273ba01c4c8eb68e23479f144388a9993b3d4",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "c547e55514ed2cfd92668f3daa78309cc10cbe42"
+    },
+    {
+      "path": "apps/parent/lib/ui/family_membership.dart",
+      "bytes": 21107,
+      "sha256": "9db8f05e00a909e2693d17bd79fbb1baf1cff1f986e812f84151c676db28fb5c",
+      "origin": "EXPLICIT_MAIN_OVERLAY_AFTER_OFFICIAL_FORMAT",
+      "gitObject": "ffd56675c8bea84ffa34a94d9e0a6f221ecd52fb"
+    },
+    {
+      "path": "apps/parent/lib/ui/family_notification_page.dart",
+      "bytes": 10661,
+      "sha256": "fc86b72b6f8574976137a867b89de1f1e31c8b045d7608ed0d0a1d5eae34687d",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "65e1dc88e9f2a825b577b0b4d36afc84aed491cd"
+    },
+    {
+      "path": "apps/parent/lib/ui/family_order_page.dart",
+      "bytes": 24070,
+      "sha256": "62744b8d3967e5b63ec3963758dbe672a59866a20fab9550a766faf6b417352f",
+      "origin": "EXPLICIT_MAIN_OVERLAY_AFTER_OFFICIAL_FORMAT",
+      "gitObject": "22401cc926d4f519af4e726d71d0f148bf9f90dc"
+    },
+    {
+      "path": "apps/parent/lib/ui/family_requests_page.dart",
+      "bytes": 12037,
+      "sha256": "22c6752e6251e0a23f28eb53546985594758a174cb48357638624428bb99156f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "6c00b16a726b9f10164e32c870966724429cc652"
+    },
+    {
+      "path": "apps/parent/lib/ui/family_rules_page.dart",
+      "bytes": 21907,
+      "sha256": "f0acdb0a17720e5e16fe4477e7f96fb1a45daceb5361c3ec336c34ea82d30233",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "ee1358a8510b4f2c34460e0ad31fe321c449abe9"
+    },
+    {
+      "path": "apps/parent/lib/ui/family_workspace.dart",
+      "bytes": 25207,
+      "sha256": "326fa3672e733cb6de7c2ebe96954b808fee6c36508d9f51baad4dfa240acfe6",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "a194ff5a02c01b10df83e29e2cf1027538d15ef5"
+    },
+    {
+      "path": "apps/parent/lib/ui/first_use.dart",
+      "bytes": 15340,
+      "sha256": "e3cda76b36e99de10ffd0a56bc56c13664bbb383e0b1e6064c555b52da1d9544",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "da282cf715911fadff33a8a20467f83bbe0d726f"
+    },
+    {
+      "path": "apps/parent/lib/ui/group_operation_page.dart",
+      "bytes": 11212,
+      "sha256": "f3b2331a3d01ef680adb93368954c6b15542fa9ab7071de24a522367fed8507d",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "935b765b5d9958225fb054974ed29a0931eb958a"
+    },
+    {
+      "path": "apps/parent/lib/ui/help_center.dart",
+      "bytes": 21749,
+      "sha256": "12fa9910efa90e4cbf342272aa6bb150aeb06972ae79ad5795e842c26b62a6d6",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "5091e9131f8e23564b36d53092082453a2ccb4c7"
+    },
+    {
+      "path": "apps/parent/lib/ui/invitation_acceptance.dart",
+      "bytes": 17037,
+      "sha256": "496d8641579c8354713d7bd08c0cd59537cd0cf38a726568be3dbd60b9fb3b38",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "3d917c0b3c0e13f49541e112943076725473f47e"
+    },
+    {
+      "path": "apps/parent/lib/ui/invitation_center.dart",
+      "bytes": 25556,
+      "sha256": "1a6da27768785a8b535bca592da3e52538c72b70ab611469d787d6d14f2caf4c",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "0d9b264f512fe3d0caf342a8d9fe9248ed6c4524"
+    },
+    {
+      "path": "apps/parent/lib/ui/member_center.dart",
+      "bytes": 43562,
+      "sha256": "02b77c272e9f77d16fe1ee7df62eed91389c7a2da3daf5f473628560f86f8c6e",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "80c363876d9d7f50644a3023cbd0f49348694568"
+    },
+    {
+      "path": "apps/parent/lib/ui/multi_device_reports.dart",
+      "bytes": 23756,
+      "sha256": "88c2e9efebdadc51415f2ac3b7b23a4737c725e736e3f710b2d34a22d04d97ca",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "449e9021241605aab810929d077c94b088d40535"
+    },
+    {
+      "path": "apps/parent/lib/ui/notification_center.dart",
+      "bytes": 16299,
+      "sha256": "614f2f0feda221ab1be8b7262400e51b43dfe4f1a9292787f7b83b06ac173c35",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "be20c6dde7c28415ea8ed0bac14797c64ad2a14a"
+    },
+    {
+      "path": "apps/parent/lib/ui/observation_settings_page.dart",
+      "bytes": 16848,
+      "sha256": "fc3dbced78cac4aa533c3a5f6f6fa9dd014ddc85ac1d34d7ab6d316f8c6737ca",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "83d302477858da58f96f20522045df4fec8f4aec"
+    },
+    {
+      "path": "apps/parent/lib/ui/operation_result_terminal_panel.dart",
+      "bytes": 15483,
+      "sha256": "515b7aae8fa40d54fdc68f5aa70b931704452ca851d6bd197b52f839971f7076",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "318ea566be67053cdad40e034886ceafb3a5da70"
+    },
+    {
+      "path": "apps/parent/lib/ui/ownership_center.dart",
+      "bytes": 22258,
+      "sha256": "1a048bbd24f187972bd35a02f64c9bbe2adc916abe715c668df6d89c51592384",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "c9f119d7e2d9993710b7b7f7cefd846406908699"
+    },
+    {
+      "path": "apps/parent/lib/ui/pairing_qr.dart",
+      "bytes": 2175,
+      "sha256": "041bf957f7827cba8ca7b1b32386cc36698c4cfdbd4462b53e065f3ffdeca539",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "fc08013cbdb89e9d414882da7df7c8456247badf"
+    },
+    {
+      "path": "apps/parent/lib/ui/pairing_scanner.dart",
+      "bytes": 3844,
+      "sha256": "18c386e1134561aabd3f0bdd6442e571c001563038c264d7c19d60616ff0afb8",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "0bb207a4222c37cbda6f12c168e019e239c2f7b6"
+    },
+    {
+      "path": "apps/parent/lib/ui/permission_consent_page.dart",
+      "bytes": 16447,
+      "sha256": "6dbe94b89c065b77ac28d8b8bce002f5a70a8eba73226a4ef91eb404c1e34c71",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "1a8214c7386b4e71fe6b7a520d334ae3f3deb3c8"
+    },
+    {
+      "path": "apps/parent/lib/ui/permission_observation_page.dart",
+      "bytes": 18914,
+      "sha256": "cbf65a0fbdb9deccf9dbd5f5f9230f7aeaeae0e13ef73f0f7559e5cd3e9ad6ee",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "7a76f5bc6fc38890f3595cee6fb83256d37212e0"
+    },
+    {
+      "path": "apps/parent/lib/ui/policy_center.dart",
+      "bytes": 49059,
+      "sha256": "6d1a8281380081cb46e81ad0bc2b19e9427a3d7bad60b1f2c685b94626250ac9",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "631b465e2193aa40d8fe79f02edc559b961d3845"
+    },
+    {
+      "path": "apps/parent/lib/ui/policy_creation_page.dart",
+      "bytes": 12944,
+      "sha256": "cb2fe5232ab47fc851063ad73d79ee9a27574de99b23769657ff861db64e63d5",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "53e27a6e903daee1b5cf96917843782d5ccd49ae"
+    },
+    {
+      "path": "apps/parent/lib/ui/policy_editor.dart",
+      "bytes": 26162,
+      "sha256": "d7313fb70650237bd91acb58c97550c7ff9ad1188dbf14a7fde4709911a6369a",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "43247fca6ec1d99aa49cf2a7676c9118f1018355"
+    },
+    {
+      "path": "apps/parent/lib/ui/policy_group_picker.dart",
+      "bytes": 6370,
+      "sha256": "58ba20bae43249a1d13e830efd82934df63db5fda903a77efb4181e41e76006f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "b7ac3cf1714fa7b113daad9d8458acbeea913afb"
+    },
+    {
+      "path": "apps/parent/lib/ui/quota_center.dart",
+      "bytes": 41235,
+      "sha256": "eed6594a497a086a693b91408fa6902c2dbb9d4e422d8f42f2b4faf4ee558cfd",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "1d72115a736556834198d8a8981b0a5411860489"
+    },
+    {
+      "path": "apps/parent/lib/ui/quota_plan_pages.dart",
+      "bytes": 32419,
+      "sha256": "2f6c3ba854fc88ed6227369d99ba9208e5cb01f8ede400318ef955afa6e1302a",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "e3f5a9826129b964c5a2e6080f47efbbc4b2e52e"
+    },
+    {
+      "path": "apps/parent/lib/ui/schedule_center.dart",
+      "bytes": 15020,
+      "sha256": "4ed9b8a6428ddb2634ee35e1196ba9f5c4fa1d8f0987e4b173e77f9885a721fd",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "74e31014a8e087051bc7d4416bb5fe8c1faff184"
+    },
+    {
+      "path": "apps/parent/lib/ui/schedule_editor.dart",
+      "bytes": 33553,
+      "sha256": "1731e89553995d2eb90fcbb0e6f6670e7b7f3e2ba7abd30d6b3ae56234f67a31",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "c5761bb21f60a835534234171e6f64ea4b5f2860"
+    },
+    {
+      "path": "apps/parent/lib/ui/subject_center.dart",
+      "bytes": 31639,
+      "sha256": "db1db3f71c83618d67b1f07cd57a8c84b54c3cdc8f8989812c40915f4f559c8c",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "97c27973e7e3004fad10874898f47098fcb268d8"
+    },
+    {
+      "path": "apps/parent/lib/ui/usage_report_center.dart",
+      "bytes": 5140,
+      "sha256": "44a9de9941efdec094a4bd92cd8d9ece3303203035777da80eeb03ae5ffea2be",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "c003ab63f4fbb400299fc781618527c064b1f374"
+    },
+    {
+      "path": "apps/parent/pubspec.lock",
+      "bytes": 22775,
+      "sha256": "f1c4834fe90949a34d6240001fe3431c0fd4486090f10c05866d8ace517b7ea1",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "b7e45088dc925d6998d489187acfbca2c2e1632f"
+    },
+    {
+      "path": "apps/parent/pubspec.yaml",
+      "bytes": 4636,
+      "sha256": "2b160bb574f420899d6160bd3ea181295c484e7046f25fcf7140657397444857",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "e409ed3da4c99e621878007124d5a2cfd2fa68cc"
+    },
+    {
+      "path": "apps/parent/test/access_decision_test.dart",
+      "bytes": 16739,
+      "sha256": "3f136fb2bacb2f7d108651edd186d056eb52da31d50329f7177044cdb7c990dc",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "13bb64b225fa6c8e8831e70202a204788bf4640d"
+    },
+    {
+      "path": "apps/parent/test/application_catalog_test.dart",
+      "bytes": 20369,
+      "sha256": "3f821a3efb1e0d52839d848edfd47693f611e18d939e976143034f7412cc2f61",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "cff7a702ed6a1fe9cae723f899be2b27f5f9111e"
+    },
+    {
+      "path": "apps/parent/test/audit_export_fixture.dart",
+      "bytes": 1779,
+      "sha256": "8eb1f862e217152f935984cacbc4bbbf11d147dde74840f239e2052be9c29f19",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "502884ca1940517c20ae4126980a4077970dac1b"
+    },
+    {
+      "path": "apps/parent/test/audit_exports_test.dart",
+      "bytes": 17446,
+      "sha256": "df330c4dbcc2074e45fabb2f1a1aeaafbffa5c35db25bbaf3dd34469236f17fe",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "f2347c069a527f75a33d0a2d9d1b5d6023b5268c"
+    },
+    {
+      "path": "apps/parent/test/audit_test.dart",
+      "bytes": 17053,
+      "sha256": "da554dd1413fc1c508dcdfacf02892386696ff1dfb6a561bd2e387384ce05656",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "658763607132909ef5bfc34b1daf940941097f68"
+    },
+    {
+      "path": "apps/parent/test/contract_fixture.dart",
+      "bytes": 1912,
+      "sha256": "1c51f2779146e93f9c357c27ebd2bee3bb489aca767a6c141e2f4270230ad029",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "e14b71de1798bb28cec00dbf3c483f0b61822d0c"
+    },
+    {
+      "path": "apps/parent/test/contracts_test.dart",
+      "bytes": 19245,
+      "sha256": "3a7f010be0845688ac3cc79cc098ea5e73d8e39856f1e663f7fc874ecfa38406",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "e14a384f9c3ab3107006cb682cfd92648ab04a80"
+    },
+    {
+      "path": "apps/parent/test/device_capabilities_test.dart",
+      "bytes": 12433,
+      "sha256": "40a627fefbc1af44146652b0417e8b8543bbd6bd729425fc885190fc252805af",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "373c0fbf866dbba842d8679deaf212087b81c131"
+    },
+    {
+      "path": "apps/parent/test/device_groups_test.dart",
+      "bytes": 17388,
+      "sha256": "3e5c98e2e5a5b6538431c760604eca8d8211fc97319fec5e7b4bec5a14cab834",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "ce580223992096eaf85aee879b445604af9158f2"
+    },
+    {
+      "path": "apps/parent/test/enrollment_qr_flow_test.dart",
+      "bytes": 6967,
+      "sha256": "6bb18ddca7da75bc6578ef57b3b4a0be2f2a469b15ad0b8dda6699cafb8f5d22",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "913bf7e68e71d8fbfd90d8a26e9c0f1960a05501"
+    },
+    {
+      "path": "apps/parent/test/family_account_security_page_test.dart",
+      "bytes": 13000,
+      "sha256": "a6e203e3e8587493bf7dd418fb27ee9f844b0d9a0fbc992f46889e64386b69e1",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "d445c24e22460fd61607c5034a97dbcb8b20e2f4"
+    },
+    {
+      "path": "apps/parent/test/family_account_security_test.dart",
+      "bytes": 23547,
+      "sha256": "3d1da9d1740267de7a2999ad758575c188a979522d12aca77bf6d40ad9d9b205",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "83507403b1ed311b1b902f8d2ed40499456a7534"
+    },
+    {
+      "path": "apps/parent/test/family_after_sales_page_test.dart",
+      "bytes": 10919,
+      "sha256": "a7a2503b4ae2097a2b7fbec314c7c73e4b7ab821546dcda7c2e583f5669c6ee3",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "857570e86c7ef6e7a52a9aa585261e58452f042f"
+    },
+    {
+      "path": "apps/parent/test/family_after_sales_test.dart",
+      "bytes": 8378,
+      "sha256": "e1118ef17191dec70ce8b9465628fdc77fe8edc31f803645ef2f33ac5d665b17",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "974102167dd67313e8eb50c1aade0e32ec954be2"
+    },
+    {
+      "path": "apps/parent/test/family_app_host_test.dart",
+      "bytes": 7099,
+      "sha256": "13d2df2db2f52a9c9bd2e5df12b36c36b3a50575cdc3e258685c8bdd46969b1c",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "b10a82cb11ce6892440d17a22bf98a8111abb568"
+    },
+    {
+      "path": "apps/parent/test/family_assistant_test.dart",
+      "bytes": 2555,
+      "sha256": "03f6b1830bea9795d3302818308ce5737d9d64356a04f0b878b96718b00d94ad",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "ea8dcbf67cb8b0ae1925ea00caa27934fe5c70fa"
+    },
+    {
+      "path": "apps/parent/test/family_collaboration_page_test.dart",
+      "bytes": 28515,
+      "sha256": "d53f254ded40afb54c1416b157551bf1bbc04557fa203f544d35d3e3e95b5af4",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "f4ae7edd9a651f25807d40676d07e424b198c0a0"
+    },
+    {
+      "path": "apps/parent/test/family_collaboration_test.dart",
+      "bytes": 10272,
+      "sha256": "083b4a912241c19bf5863607a5a0b7b68cf3cf7dbd01a625f217269ec1ab7078",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "d20f4ef49266a71a28c44a27745a08527841429a"
+    },
+    {
+      "path": "apps/parent/test/family_device_access_page_test.dart",
+      "bytes": 17601,
+      "sha256": "946b5fe1d885897c928cb19c8bc711f1f6377825268f18ac5f4703d1c7d073b9",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "4bd41deb94b60d8f4815c12b090abc1b25b2db6d"
+    },
+    {
+      "path": "apps/parent/test/family_device_access_test.dart",
+      "bytes": 8617,
+      "sha256": "9c91210b2c190444f8ef70280dac5dbfd7d70c640a477648dc69a44d0d3c371c",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "503f8ab94048dc2aa0301427ef6f1b8158029d6c"
+    },
+    {
+      "path": "apps/parent/test/family_inbox_page_test.dart",
+      "bytes": 8924,
+      "sha256": "512533fa83227baa58099da798a0d0a10b4808956ed1ce69154efac31a4e839e",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "285283c513dfa0003b7097bbce88b5497cccc385"
+    },
+    {
+      "path": "apps/parent/test/family_launch_regression_test.dart",
+      "bytes": 8818,
+      "sha256": "4621696e0a0edafe5b030eb5ef225142709c0cb072d18965bcedeff092880fe4",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "d3f2119b5f4660510c3aa3dc41c8c6334d9d52ca"
+    },
+    {
+      "path": "apps/parent/test/family_membership_test.dart",
+      "bytes": 20216,
+      "sha256": "d4a2a11c61c6cbb981166e1b3b8e422a01a1f8c92543c27c0f18708d93188d29",
+      "origin": "EXPLICIT_MAIN_TEST_OVERLAY_WITH_UNUSED_IMPORT_REMOVED",
+      "gitObject": "9d2b27d0f06f581cac397f7ed6be338ded2e9fa6",
+      "previousSnapshotSha256": "56fdc89bcfdafb31ad144196a862e2e00b2c9c97c412548d88fc22c73e33465d"
+    },
+    {
+      "path": "apps/parent/test/family_notification_page_test.dart",
+      "bytes": 4339,
+      "sha256": "ad23ed6e194c1ee29f0a09b94c2f488577863b0443e59a0cb09088353dabbaf9",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "d52dfde7f4eb1e2cfaef6ea1cb4ad9e78f91ac6b"
+    },
+    {
+      "path": "apps/parent/test/family_notifications_test.dart",
+      "bytes": 18638,
+      "sha256": "681131a4b478a3cce6aa4822d950cd97f9f31a52238e5dfb2c8df50290229d05",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "69db0afa627760fb573ab956232c601a40aaed52"
+    },
+    {
+      "path": "apps/parent/test/family_payment_recovery_guard_test.dart",
+      "bytes": 7049,
+      "sha256": "c480f252b0dbd5e8ef76a76569cce18205af080c5269bf2a93314647510971e5",
+      "origin": "EXPLICIT_MAIN_OVERLAY_AFTER_OFFICIAL_FORMAT",
+      "gitObject": null
+    },
+    {
+      "path": "apps/parent/test/family_payment_test.dart",
+      "bytes": 15971,
+      "sha256": "ff226c039efdf7d5d65edd9ad17fea922e1923df018822248563115a1c0f96cd",
+      "origin": "EXPLICIT_FAMILY_OWNED_WIP_OVERLAY",
+      "gitObject": "760449d3f3883e80a9f53cc97dabde197ebb8204"
+    },
+    {
+      "path": "apps/parent/test/family_push_platform_test.dart",
+      "bytes": 2977,
+      "sha256": "732e964fac2c7ed9ce32f20636005a1c1b80fe3096983bc7b4f42136f226fc80",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "554735f2942987b0632cc7e6977e19625dee0411"
+    },
+    {
+      "path": "apps/parent/test/family_requests_test.dart",
+      "bytes": 4792,
+      "sha256": "6e075d373508fa62632b7b8aeb517067e9409c2dcf816620520031ab276a7f73",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "2a097ce5b23a6814f05c94b700f99df35d0bc40d"
+    },
+    {
+      "path": "apps/parent/test/family_service_test.dart",
+      "bytes": 5408,
+      "sha256": "3ff5e6b05b81d78a36fc29cc6ccc277bd7d6b1842fa1e3f92667fac08e1831db",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "7170bd8a8d0ac6cc412b1d90c465f851c0331d37"
+    },
+    {
+      "path": "apps/parent/test/family_suggestion_test.dart",
+      "bytes": 2684,
+      "sha256": "29a02c1a77e4c68b7ff6cb8a145a19ea0c80a0c62adc3acc05c83df74a78bc65",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "e3b91fdc083619ef87671bc6891aace4e380e6b8"
+    },
+    {
+      "path": "apps/parent/test/family_workspace_test.dart",
+      "bytes": 9993,
+      "sha256": "1c0eb257ba734c5f1291810766c5f85c779477644dfbd8427ae1921357e7062b",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "ee9fe7c631f3a298f4dc3aa272a565670650ea11"
+    },
+    {
+      "path": "apps/parent/test/first_use_test.dart",
+      "bytes": 6458,
+      "sha256": "3a8868bc979ec68488a606cafe257e004376346f9699a73d3b8e25148a8c9765",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "0faea86bda83d3d6d0e28cf9612a1173838df240"
+    },
+    {
+      "path": "apps/parent/test/help_attention_test.dart",
+      "bytes": 16760,
+      "sha256": "f202d84ce01403558e92e372f2ea43d7911cbd61bba55a5bf68eb4207d546556",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "02bd6f56bc4b50917040e74ff2faa1b886558074"
+    },
+    {
+      "path": "apps/parent/test/invitation_acceptance_test.dart",
+      "bytes": 18943,
+      "sha256": "2a0529dfea03be93672af0dc8527ce2011c011e483ce2b78a049672b8be3058c",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "5bf40e88ad2e82ceb302e523f6b624f902be75de"
+    },
+    {
+      "path": "apps/parent/test/invitations_test.dart",
+      "bytes": 17088,
+      "sha256": "5b18c663a17c8daf5abc3e447a4a86a942a4dda4e9bf75cc6eae705ea15d5e16",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "17edbc2064339e70f31df1a36662b4b8c9dcfea5"
+    },
+    {
+      "path": "apps/parent/test/member_access_test.dart",
+      "bytes": 16735,
+      "sha256": "54537bc229e23dada902df8e1ae7457d8ca9f250d78e2dc9220c3049480107a6",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "7cd3635c6778b957a8ffa3a8b92aebd4f3ca88e3"
+    },
+    {
+      "path": "apps/parent/test/multi_device_reports_test.dart",
+      "bytes": 15657,
+      "sha256": "5bb1053333d8a7f9598309454811815a8432c1e97b0832e1c3fead5a19f38ca6",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "1828ded259d35c05135dd06d55dfa8728f30ccab"
+    },
+    {
+      "path": "apps/parent/test/notifications_test.dart",
+      "bytes": 12103,
+      "sha256": "3a3b8e2794c673ca681996db8effdac1017fcad9c2b9b53c1628ea25b4d2567a",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "64a7edc953c872716639efa1dd6a5f67b9844bb9"
+    },
+    {
+      "path": "apps/parent/test/observation_settings_test.dart",
+      "bytes": 17597,
+      "sha256": "bf1814b2bd1127d56420379163fab6a9fd6564daf4338f8abd4a860baae9da00",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "4799275d01c88413933cc5893d683e3eae838872"
+    },
+    {
+      "path": "apps/parent/test/organization_classes_test.dart",
+      "bytes": 14246,
+      "sha256": "b65f97fc87998b8b3a3b1a794989777ac0eb2d3eee597142d7339f49dd8194f1",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "1a80747ddd135ebb3ac9da9e19c9dfcdd72ecd96"
+    },
+    {
+      "path": "apps/parent/test/ownership_test.dart",
+      "bytes": 20124,
+      "sha256": "2e9a1ce629b82d8f3fa7bc106e22194c80fcffd8e28dbc8679ccea1658d90da7",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "a035242f7e0666a837c58958131b6cc26d27f5cb"
+    },
+    {
+      "path": "apps/parent/test/pairing_authentication_test.dart",
+      "bytes": 3014,
+      "sha256": "381f6b1971ed2d731ee307360987e2abd2dc162e422efe4b8f2cee8769472279",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "026af62755550721013a2105ede10be5c248fe23"
+    },
+    {
+      "path": "apps/parent/test/pairing_confirmation_test.dart",
+      "bytes": 953,
+      "sha256": "e37e7d0fbd612466467cba6b6d4e99cff706306b1f75fd02728de435f1c145c7",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "b5b6c6a4a6fd6f15aa472083d4fa0ca985835ed7"
+    },
+    {
+      "path": "apps/parent/test/parent_account_action_test.dart",
+      "bytes": 8755,
+      "sha256": "97c07745a7ddc7ee0e75ed9cfa6b7db6a10aad1533ff671d84d4a25b326aef9a",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "411be820696d808096edcc9ccf9ff12b5301cfd2"
+    },
+    {
+      "path": "apps/parent/test/parent_api_status_test.dart",
+      "bytes": 1734,
+      "sha256": "d739efb2d7b0bd0e5fe347b164bc3815d0dae8cc9e0d4e715c538381800b325b",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "813482b8e1446dfc80d6ff0568e7a29101e41881"
+    },
+    {
+      "path": "apps/parent/test/parent_identity_guard_test.dart",
+      "bytes": 5495,
+      "sha256": "154e72702d9fdabbe41bfb36faf618b2b71835db7053d3ad200aeb4e45a61a32",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "d00bbaddabfd3df349ce0ae1c3164fc4d6bb5cfe"
+    },
+    {
+      "path": "apps/parent/test/permission_consent_test.dart",
+      "bytes": 9395,
+      "sha256": "6d87582bfc4eb26978f9f661fe90817ba4810143e39042d1725ecde31f2e91c8",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "1363d40758d3fb0c72405519d9242dabcad351a4"
+    },
+    {
+      "path": "apps/parent/test/permission_observation_test.dart",
+      "bytes": 18500,
+      "sha256": "5c0017b98137cd1b4af196f4deeec54160173a4600ba2f54290bf0d16ded0d75",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "f1a13415340d3fffd73ff303038a28fd678979c1"
+    },
+    {
+      "path": "apps/parent/test/policy_creation_test.dart",
+      "bytes": 11833,
+      "sha256": "eb1b44b4211e3766bb2a5c1a7f422f0784a6215749f034218fc9e49c0d0238f4",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "5fe8f5ed5b5c7e126c69040db20544365980355b"
+    },
+    {
+      "path": "apps/parent/test/policy_editor_test.dart",
+      "bytes": 8123,
+      "sha256": "ec8a93b4809136625c8da73986b754c55417fac304afdd16dc04dd1f8c29b55c",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "a1ae16a092fd7cb95dafd7ace2fde8b1151a7617"
+    },
+    {
+      "path": "apps/parent/test/policy_group_selection_test.dart",
+      "bytes": 10671,
+      "sha256": "0b554986c414dd869003dea13ac5ff0dc95ca5139a5d8735f9a1bd6a8f7053f0",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "47f8c26b34cb21d1a23f5463d5cfa317d5e051b0"
+    },
+    {
+      "path": "apps/parent/test/policy_publication_recovery_test.dart",
+      "bytes": 5655,
+      "sha256": "6fe66e4c2ad69b46368b80c7ca0217c00314637c9c6c0f7907522ba82dfa74c3",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "62f3b9ce2ae08af5c1bf25395f812b2320af11b9"
+    },
+    {
+      "path": "apps/parent/test/quota_plans_test.dart",
+      "bytes": 15032,
+      "sha256": "9248c0950619d2bb719b742b2119fdf1cd4e998948035ea2798ce746ece2b60a",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "4bd21dadcd0069a501bc27e4f5470b3cbf778ae3"
+    },
+    {
+      "path": "apps/parent/test/quotas_test.dart",
+      "bytes": 16944,
+      "sha256": "4fa8aa036fc28f118b0eed7298fe7ad481c0da88cce997013ac4559474a4e630",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "44576fd50c39945cbfb7291b60e109c0266d60fd"
+    },
+    {
+      "path": "apps/parent/test/report_flow_simplification_test.dart",
+      "bytes": 3752,
+      "sha256": "beca93b91921ebc18b474a24ae8dbf1574b94a086d7c1087be3bb3b84fc3aa0f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "04f1b090b89a4c8a3e53438975f1272c82e23714"
+    },
+    {
+      "path": "apps/parent/test/schedule_presets_test.dart",
+      "bytes": 11877,
+      "sha256": "dc619808c00260672aba39643ecbebf9190adb64327b086438c75919f4e69288",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "45c192bfdf49561033b64660e79e626496b0fe1b"
+    },
+    {
+      "path": "apps/parent/test/schedules_test.dart",
+      "bytes": 16561,
+      "sha256": "76f3b6169027531dde27f394816fefaaf095d383d0b3ab9509a4d5d5e87dafd2",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "179b8fbbc01cd0f967ea775f16b63d3efabf0a6c"
+    },
+    {
+      "path": "apps/parent/test/subjects_test.dart",
+      "bytes": 15364,
+      "sha256": "c23a1e2cf16ce827aea7ea6ea9adebc7ed19954189d9fb953d49b0a4d275a1e5",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "5a6af0734f22d81d84482ff06a26dd2689e5b1f8"
+    },
+    {
+      "path": "apps/parent/test/support/parent_operation_journal_fixture.dart",
+      "bytes": 11129,
+      "sha256": "7234ee691306fd83cdec5584526e2a7aae6b711312495e2c015193585f7023d4",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "c238ede332f7a533963c3d5600c9808b42a3172e"
+    },
+    {
+      "path": "apps/parent/test/usage_reports_test.dart",
+      "bytes": 8765,
+      "sha256": "a14cc1ab63117f8c56bf4a15d3c8b846258994bb4b585a968e1559c8f08d8390",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "34506b58685dc1a1a5d54b04f6f1c28805c1cfe3"
+    },
+    {
+      "path": "apps/parent/tool/WeChatAuthStateTest.java",
+      "bytes": 985,
+      "sha256": "8524c5bef15d3356bc4e474b24d0639d5cbdec92e1b48bc136e5dbc776e31edd",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "7432b770358286cfb9955f107a87de0945878eb5"
+    },
+    {
+      "path": "apps/parent/tool/verify_acceptance_http_test.dart",
+      "bytes": 4963,
+      "sha256": "e614b9f22000e1ecc2d4a3910d09470ce93fc1105539100d5a3feee8ab5932f2",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "ce3379782d23d5e7ab3802a518c994c007c94d00"
+    },
+    {
+      "path": "apps/parent/tool/verify_audit_export_http_test.dart",
+      "bytes": 4112,
+      "sha256": "d2a55a0c9864036e70445c43770075f3ee2f59651f1f579538bed8a92174d405",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "ad12997931ab567647e3c86964399073e8504e92"
+    },
+    {
+      "path": "apps/parent/tool/verify_audit_http_test.dart",
+      "bytes": 3074,
+      "sha256": "e5832d5b1bfb375f7c324aea6c374a80ad5127bf69f3d505171bec74b131fe1a",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "d17db1f765e09e551bd13444840875cd8a213fcb"
+    },
+    {
+      "path": "apps/parent/tool/verify_class_http_test.dart",
+      "bytes": 5688,
+      "sha256": "d7c990ebc4e1886eafd92a96e6033c8f63d2af1e24201bc228029831688982ba",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "1f0efc7a99d3ce57f4e785d9067ca713fdccbd16"
+    },
+    {
+      "path": "apps/parent/tool/verify_contract_http_test.dart",
+      "bytes": 4568,
+      "sha256": "910f5b9baa0f466d5702d48f914f969689b487b81e9e016047b560de6aa29e99",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "a929edacce274f253ad9b19f08a11b5ca340d329"
+    },
+    {
+      "path": "apps/parent/tool/verify_decision_http_test.dart",
+      "bytes": 3477,
+      "sha256": "e1976d4d4098aed1762c0f889d60693b1a04447d9fc618aca84d29377b82d44f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "8ebbc71443ea04ed41a7e0e46c49f536f383c40b"
+    },
+    {
+      "path": "apps/parent/tool/verify_help_http_test.dart",
+      "bytes": 4185,
+      "sha256": "df23bb3ab58a5a5b8b868f267f3200de771c68bb76ae8d821524cb23ec768022",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "c9dc82fc70a4aaf08be7dc20f53ba938570c0457"
+    },
+    {
+      "path": "apps/parent/tool/verify_invitation_http_test.dart",
+      "bytes": 5036,
+      "sha256": "66602c0f9fda37fb454feaba6fc2290c941ea3e2dd8449b2f298c724867ab40f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "d2fe31e5bb1f5a412abc0297231e27174585a78f"
+    },
+    {
+      "path": "apps/parent/tool/verify_member_http_test.dart",
+      "bytes": 4794,
+      "sha256": "9ca60b66a07528010f423a79479a4e98c8c0a967b4ccfe6c428b2fc1a27473ac",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "944d04f473ed407200148ed2fd2cddc6ff2ddbc7"
+    },
+    {
+      "path": "apps/parent/tool/verify_notification_http_test.dart",
+      "bytes": 3250,
+      "sha256": "cbd4dadf3bd39027b8fa7110f9df2d036d22efe64f70328a1d61a778ec5eb2d6",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "8cef2667168a7be8d9496610f14e25e12ef6c73a"
+    },
+    {
+      "path": "apps/parent/tool/verify_observation_http_test.dart",
+      "bytes": 4809,
+      "sha256": "e72f2b5a8df68bf31f2cc3f01f344b44517223da1f87dc67b05152cd1e73c622",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "3102af7c46d5af8fb9d1cc8c09c9a5e894e90e61"
+    },
+    {
+      "path": "apps/parent/tool/verify_ownership_http_test.dart",
+      "bytes": 6419,
+      "sha256": "8b882085960671371df47b963c0c357364878f0f12bf1fa7f35a3ae326c2bb73",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "b1ad09e473a1730a2642e5812a5eaae6ed2cdbeb"
+    },
+    {
+      "path": "apps/parent/tool/verify_permission_http_test.dart",
+      "bytes": 7902,
+      "sha256": "a26bee7373dd7096121a38b99b333734fe23fefbee68db351bb3d08539a5812c",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "a8621a5a226ab34e178808b0be9752514a5d5676"
+    },
+    {
+      "path": "apps/parent/tool/verify_quota_http_test.dart",
+      "bytes": 5197,
+      "sha256": "f81f4f8f82638a9d2acf56ed1d9d3ae0823fec387b2e889b5f4e6f604e09569b",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "26bfff05b7d2a3b1265a50890272174e9f840703"
+    },
+    {
+      "path": "apps/parent/tool/verify_quota_plan_http_test.dart",
+      "bytes": 5530,
+      "sha256": "7e9e80b65501fe0202a05a00771c6006332e32433a0dc7196d12a008d05ab949",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "4d228bf9bfda97eaab5c38f2c684a522cfa0efaa"
+    },
+    {
+      "path": "apps/parent/tool/verify_subject_http_test.dart",
+      "bytes": 4336,
+      "sha256": "8fa16d085ea81315e784ccd21c6fb18b256c888dbd4f5c472f8a5aba109876c8",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "50c5d12e385f74cf71ad57527616abddb77c0dcc"
+    },
+    {
+      "path": "packages/audit_client/README.md",
+      "bytes": 1260,
+      "sha256": "ccd4826476e08b40a0464874fcd622d791f5edea750f29c64f09cc1363c28b9f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "361b9d27b881614dd1bbd8e2ae5f2f65b06df9ce"
+    },
+    {
+      "path": "packages/audit_client/lib/audit_client.dart",
+      "bytes": 4125,
+      "sha256": "24d81bb99d9ec6c43b454076925cc5f8fbf2c915cfb885f1917e8a0bef33f87f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "3a0c35407b4e702fd49f78dd3b0f7ff48ae8f4f9"
+    },
+    {
+      "path": "packages/audit_client/lib/exports.dart",
+      "bytes": 7507,
+      "sha256": "07c51f0fd45bad6a9071085becd51257520a750f80d7ae1b27417fa556238451",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "1f787354d266e2e9d9b7a8a0785d0e71c4867fab"
+    },
+    {
+      "path": "packages/audit_client/pubspec.yaml",
+      "bytes": 162,
+      "sha256": "4308293af1f06d9a5401ebab05f11a8f36bbbcba59bf37b9468007eb46ea4085",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "c0505b2e7f33545898035dcb26c48e261d8fee37"
+    },
+    {
+      "path": "packages/commerce_contracts/README.md",
+      "bytes": 1077,
+      "sha256": "d0442a09a7d9ff11e2c67275f364552ed6db2a3d13e4fa6158f8fbe499380e59",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "969d7a3b5db98a297201659b6b58fe473a1ba057"
+    },
+    {
+      "path": "packages/commerce_contracts/lib/commerce_contracts.dart",
+      "bytes": 62,
+      "sha256": "d4e957aa02cebd36f13659354a5d2f19d5eef6604972f19a5b45224ec545b1e9",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "240b1b017ec0d02a7a09c3766edd6071533d7579"
+    },
+    {
+      "path": "packages/commerce_contracts/lib/src/models.dart",
+      "bytes": 15089,
+      "sha256": "721f94bc1636eb135c30f1ad53c27f852c57d2ca9ef881f58bec82b65d754eb3",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "3673022a7858335b59c437dfe476bd8b8097d805"
+    },
+    {
+      "path": "packages/commerce_contracts/lib/vocabulary.dart",
+      "bytes": 2446,
+      "sha256": "52b6556d3d408e8c62758f09c5088ea4c1a0899beaeb6caf12e03e70ed9eda60",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "6579c6915ed5800fa7978e7c388f86eb3c0b3168"
+    },
+    {
+      "path": "packages/commerce_contracts/pubspec.yaml",
+      "bytes": 171,
+      "sha256": "e4ec1940fc2bf024dcdde0296557eddfe22876aa7410290f07586b676dfc0ba0",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "a73aee475e58a4ec9fa35b8759285b0263b5a047"
+    },
+    {
+      "path": "packages/device_access/README.md",
+      "bytes": 10797,
+      "sha256": "8829ca55e54d1b23f9c469fb1ad8efb7819a34ccab91659bca307dd3948b0a33",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "8fbe5507fb8e5df2e53f1eaa788c1e2a2acf26ea"
+    },
+    {
+      "path": "packages/device_access/analysis_options.yaml",
+      "bytes": 40,
+      "sha256": "69d5fc7c4dc082613882215d52d18b02b1688b833d674ce9b281f45821626b7d",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "572dd239d0976799433e2a9c56e7e02be86d61b1"
+    },
+    {
+      "path": "packages/device_access/lib/device_access.dart",
+      "bytes": 286,
+      "sha256": "2cbf4c8df8fcdfa945e3e026285f98bc564d0c7648cc11d607a4229a1f94bb19",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "aff618a31ee6152e3d0c0f60b5ae590e8e30a726"
+    },
+    {
+      "path": "packages/device_access/lib/src/journal.dart",
+      "bytes": 18647,
+      "sha256": "22f9b0509253ddbf41d3b0b87c80f2531b9f6ab59d0031ab1db1cf33f7a0eb00",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "95881b17e6089613850c6af6a092f383c8218ebc"
+    },
+    {
+      "path": "packages/device_access/lib/src/models.dart",
+      "bytes": 7287,
+      "sha256": "78c88916b759727ef7b8297fdb514302a561dca3d8d5aa0a1af9a4a0e9e5ac12",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "83da2f13b22a4831fb0742b10a87d826ac18cb09"
+    },
+    {
+      "path": "packages/device_access/lib/src/page.dart",
+      "bytes": 3493,
+      "sha256": "2f9df7197a7c489d61c0e5e7f79fc2d7b00015bca9bba2674fc60f6536dcc94a",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "8f77182e6cb68df15778eb733f4459fbc4517831"
+    },
+    {
+      "path": "packages/device_access/lib/src/receipt.dart",
+      "bytes": 2188,
+      "sha256": "a12361cb39272c409b51066b7b4fbba04ce7d5c8ed643b4bb45b27966334f3c8",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "0d557e371076f924fc9fb859d627b8e0f7a2d76f"
+    },
+    {
+      "path": "packages/device_access/lib/src/submission.dart",
+      "bytes": 11601,
+      "sha256": "f03060ec6b53ca5518353dfa763da6685258a82bece45ee5bcab1f9fa1cc262f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "0a2d3324669772a3a2791d2e36209c27f2fbcc3e"
+    },
+    {
+      "path": "packages/device_access/lib/src/submission_journal.dart",
+      "bytes": 19219,
+      "sha256": "06cbd9d249cb49ed67ea2e501a5ef4c1883d93eec2b4e7e2770f02c510312dcc",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "c6e829b218e5f43b33056d1a248c1b9b1e1a622f"
+    },
+    {
+      "path": "packages/device_access/lib/src/synchronizer.dart",
+      "bytes": 7988,
+      "sha256": "24cea3c3faf9a6587d1218753dd0e9c717b9cedf94731fc25e636f3dcde6898c",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "d58268759f441ff5ad8a56737e776c6397059e26"
+    },
+    {
+      "path": "packages/device_access/lib/src/transport.dart",
+      "bytes": 18456,
+      "sha256": "74cbd175b329fc426360814665ce80dc9ade2ac7b31e8d17fa77a9faf41933ee",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "1fe5c1311cce5c0f2d071a88e22b484ca2f8dfaf"
+    },
+    {
+      "path": "packages/device_access/lib/src/verifier.dart",
+      "bytes": 5291,
+      "sha256": "41025927c24198537d7d7241dd61467eea97c4a4dfde1e8c8206ac7fbae95cb1",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "d86f070a3610940981529d668f48691691da5ff4"
+    },
+    {
+      "path": "packages/device_access/pubspec.lock",
+      "bytes": 15284,
+      "sha256": "5e3dab5a123060832d7230234045435171cb87531737ca9eff8d3025c6c9c16e",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "2b0af41d54e65d3ec9d7564a777edf9357c71012"
+    },
+    {
+      "path": "packages/device_access/pubspec.yaml",
+      "bytes": 367,
+      "sha256": "2da9e9b8daae8c74b9be98d34e420bc1bdf7f85bb028e53e6d0dba731a05cdcc",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "5182b7e99c3c68db034b959596aff217af62593c"
+    },
+    {
+      "path": "packages/device_access/test/context_test.dart",
+      "bytes": 2486,
+      "sha256": "26c92a5cbb8b7da81639176ad25f63d28e811385405c88d84e83f1fdadbad900",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "e3b7b7b6c584eb3c50322bcd3162adcdc3c0a225"
+    },
+    {
+      "path": "packages/device_access/test/fixtures.dart",
+      "bytes": 2988,
+      "sha256": "19481a4fe3d318a3ec03a529b5ee64989d6b7850c5016dade0fd1c036bb46e38",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "29133a3b4486f735e62a8adc46b49299b9cdd66a"
+    },
+    {
+      "path": "packages/device_access/test/journal_portable_test.dart",
+      "bytes": 5359,
+      "sha256": "30af0df1a47ba033139e3032d97350307c645b18991f82a944afab6487882519",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "3ccb1a4114b7718cba1f4c9f55a03d9e9755812c"
+    },
+    {
+      "path": "packages/device_access/test/journal_test.dart",
+      "bytes": 13284,
+      "sha256": "61f98f59fa942ed7d17f968296d7df7d550d11cc00f1023d7e53de9c759a1d92",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "4499be49e6bf3fd96e9041982bce4c9b7aac4ec6"
+    },
+    {
+      "path": "packages/device_access/test/journal_view_test.dart",
+      "bytes": 2680,
+      "sha256": "20e4e0cabf58d2e523ebde4e87c9eccd7cc44bfe0b0fed7d8f90c5bfda925a48",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "70c6ee9bf3d24f93b13273bea7ae594b3142b18f"
+    },
+    {
+      "path": "packages/device_access/test/page_test.dart",
+      "bytes": 3267,
+      "sha256": "9a6022fc02735daa65c859999da2104e0d960d39240846f4ed8fab78a6797ab8",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "8fd64815c3fe20a25c07bbb4259cb2e61ad0ae1e"
+    },
+    {
+      "path": "packages/device_access/test/submission_journal_test.dart",
+      "bytes": 10276,
+      "sha256": "9517abc41556be69fe854793e8951f2e6f8c95fd701b577b9b73673d5627b37d",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "e456588213ecb558b5d78ea425c02d2ca5d643d6"
+    },
+    {
+      "path": "packages/device_access/test/submission_recovery_test.dart",
+      "bytes": 4691,
+      "sha256": "33013d6554c17e84163e7053dff63cbbdc239781c50f0a22b120355fa4969ef9",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "7d37ea805a7cb0d10b66e01f179b37297a20e33e"
+    },
+    {
+      "path": "packages/device_access/test/submission_test.dart",
+      "bytes": 11027,
+      "sha256": "fb7ddfcca41d694edcab347f7c4948f83e099992a5072a780bb0a1eb83e48eeb",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "b76f0d1928dc005344923349eb5ffaee5e13482c"
+    },
+    {
+      "path": "packages/device_access/test/support/submission_fixture.dart",
+      "bytes": 1210,
+      "sha256": "c52dc08e5add6cd2d4fe52547a793e426284d7108a70b40e1e6b073b16188762",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "89aaf66f477277877e8610e259ccaa8ec7a74912"
+    },
+    {
+      "path": "packages/device_access/test/synchronizer_test.dart",
+      "bytes": 16198,
+      "sha256": "ecbacaae70286a348fcfe4d09ef4e3029b153dbdc1d12a0efcb5d1f88240f0bb",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "de370b0460a7afab6eea4794090cc31a5019380b"
+    },
+    {
+      "path": "packages/device_access/test/transport_test.dart",
+      "bytes": 8993,
+      "sha256": "6eccf5ff3cd44ca1d8853ae1a9cb57d9ff70cff5b70cdd83c8b26990ad46e560",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "bfba0fdad19113ff2bfab70bae8bdf7984caf59a"
+    },
+    {
+      "path": "packages/device_access/test/verifier_test.dart",
+      "bytes": 4906,
+      "sha256": "e6d719ed04a3c901c294afdac7d1fc38ca0f44de108a371a9a69b48fc0b5416e",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "4975921f5ae979bb18eed0829e71469b8989358f"
+    },
+    {
+      "path": "packages/device_access/tool/NimbusAccessFixture.java",
+      "bytes": 6100,
+      "sha256": "e4c74ae65916464aab97bbe8eefaaa9ead67e931cd2e0ef731a1cc185251318e",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "a86f994cd30762b7380fe6d0504ce0c6874b8e57"
+    },
+    {
+      "path": "packages/device_access/tool/verify-nimbus.ps1",
+      "bytes": 2913,
+      "sha256": "c212f579b6eb32e568963acc1ec626b00f78da64aee4a1259001c1d2c9a8a33c",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "9dd3d4ff35e512dc9ada3d67aa4c3479e446ac96"
+    },
+    {
+      "path": "packages/device_access/tool/verify_http_fixture.dart",
+      "bytes": 6191,
+      "sha256": "08234a4f8f8cac934adfd80f2460cde965a57c7cb1ddc894246b5a463afe8388",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "db7c57e7461dc771d011c531ea5e16e6d4a6dc18"
+    },
+    {
+      "path": "packages/device_access/tool/verify_nimbus_fixture.dart",
+      "bytes": 2850,
+      "sha256": "1386cecb1269a1846b54186a51458dd72ae7df0c08259a8f7fbc99e628532ddd",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "05b579da6daa0662024dcc8e3fdaf89fad45d791"
+    },
+    {
+      "path": "packages/device_access/tool/verify_submission_http.dart",
+      "bytes": 6211,
+      "sha256": "e4b0fe1e8676388299e3e59437260c6d4aeba89455d955f5080deb8d52a43c18",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "84251deb0acbf4f4387a6ffbd541b0bafdbfcf26"
+    },
+    {
+      "path": "packages/device_cleanup/README.md",
+      "bytes": 6117,
+      "sha256": "5d9927ac27245dd112db103a382f684bf18d568ac1093fb4eb5d9f425327a48e",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "442cde13006d5ce0e87873e278ca4adca9cdfb0c"
+    },
+    {
+      "path": "packages/device_cleanup/analysis_options.yaml",
+      "bytes": 40,
+      "sha256": "69d5fc7c4dc082613882215d52d18b02b1688b833d674ce9b281f45821626b7d",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "572dd239d0976799433e2a9c56e7e02be86d61b1"
+    },
+    {
+      "path": "packages/device_cleanup/lib/device_cleanup.dart",
+      "bytes": 193,
+      "sha256": "8511fbeaad4108f2f0c1885910dca9fe29943ced02e0d703885582b6117d993c",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "a56fdeb61928252ed90f11becce49c721ec2bdb2"
+    },
+    {
+      "path": "packages/device_cleanup/lib/src/coordinator.dart",
+      "bytes": 5129,
+      "sha256": "04f49f311ee31834df980cf1e5491d48157b02aae8ad5ea57b0e574ec1c16375",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "a4a3e7b6d9996a0c761ac8975acc9a953c7e22f2"
+    },
+    {
+      "path": "packages/device_cleanup/lib/src/journal.dart",
+      "bytes": 15297,
+      "sha256": "4981061b33b58ad546c72472518aaaa8d6807d78ad5229e88ef635f5f65cb4de",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "0ca85593b2d2b8b74f7ec55f4e29148c77bd57db"
+    },
+    {
+      "path": "packages/device_cleanup/lib/src/models.dart",
+      "bytes": 861,
+      "sha256": "80b36f4d3179ba46568262a495685e8bfa57cadbf9eaa252c75c753b6460031b",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "fb862a5b3508fea6047913028a748e57e6c65d61"
+    },
+    {
+      "path": "packages/device_cleanup/lib/src/receipt.dart",
+      "bytes": 4044,
+      "sha256": "0452529fb489780ffde8d06b43180366715c68ea858fedd293028749645c5504",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "cd75997cdb8052602ee61ac511187b20d0ca43a7"
+    },
+    {
+      "path": "packages/device_cleanup/lib/src/transport.dart",
+      "bytes": 8031,
+      "sha256": "40d3258b768f004b95a624f198ab33c1b97d73cc34a2728a47ac1d84de400181",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "9b221d5c46c9cb22bea884295effae32389ed454"
+    },
+    {
+      "path": "packages/device_cleanup/lib/src/verifier.dart",
+      "bytes": 6037,
+      "sha256": "f2970b30bb7dd3e580401ca009b3e664ef663eee91e1db52fcbed34dd71fab6e",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "000844dd8c469d6218b0c0841f0baa6fcdd56ced"
+    },
+    {
+      "path": "packages/device_cleanup/pubspec.lock",
+      "bytes": 15182,
+      "sha256": "dd48ab882c0bef5725a4892c865d6892963aacbc967a4fd97e72cb2d3b13c52d",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "8c117a75f8301441fc5545dad9719a82b6140b43"
+    },
+    {
+      "path": "packages/device_cleanup/pubspec.yaml",
+      "bytes": 338,
+      "sha256": "e9eb96c79691b6daa96700fffdac37822fc59a9be7f93905e3c60cce41cfda66",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "27d0ff4da305c6ada24daaaaddfe57e83358df12"
+    },
+    {
+      "path": "packages/device_cleanup/test/coordinator_test.dart",
+      "bytes": 7011,
+      "sha256": "9149b00e7a861dcd1f6d9eb9cbd2fe9d4a7cbe7d1185c96cb9df30191b66d0ba",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "914a3f5e7401ff2f286f126636b0e322c2010abf"
+    },
+    {
+      "path": "packages/device_cleanup/test/fixtures.dart",
+      "bytes": 6931,
+      "sha256": "0e5e967fc88d6e979122eafecdd15be46889b60c2540e662d4f5af72fffc1382",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "e9a7e49ae27071f707766bd70593096ca98aab88"
+    },
+    {
+      "path": "packages/device_cleanup/test/journal_test.dart",
+      "bytes": 5129,
+      "sha256": "ab361064e4efaae8feb52a1df3991f9bf6c0beef752623c3bb161f18b4fa9036",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "0aaadf8361c680769c3f18165434cc667ae2c9fe"
+    },
+    {
+      "path": "packages/device_cleanup/test/protocol_test.dart",
+      "bytes": 4265,
+      "sha256": "dd3a589e52bc345f9e41c4e3519084ddfbd78786ac65356714bbe5cfc468a902",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "30297d80c79573fd54efbe35e41ce71183a83c37"
+    },
+    {
+      "path": "packages/device_cleanup/test/transport_test.dart",
+      "bytes": 4133,
+      "sha256": "4a376f1103134fc1600f45a14246a500b381dd47768f61018d1c2857a05b5869",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "97fe29aa8ed8dcdd5e7724d750f2ed46068c18e7"
+    },
+    {
+      "path": "packages/device_identity/README.md",
+      "bytes": 6849,
+      "sha256": "c341ac971d49d5998d543d8d60b1b87a32f519eba6354a8beb72437ab2e79fc4",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "4c86bade871f7cfa869ed96f4669fe3f4590ea47"
+    },
+    {
+      "path": "packages/device_identity/analysis_options.yaml",
+      "bytes": 40,
+      "sha256": "69d5fc7c4dc082613882215d52d18b02b1688b833d674ce9b281f45821626b7d",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "572dd239d0976799433e2a9c56e7e02be86d61b1"
+    },
+    {
+      "path": "packages/device_identity/lib/device_identity.dart",
+      "bytes": 197,
+      "sha256": "900f6b2b15353c09e5032367ae9a9666bfdf7678ec21364fe1e9c9ab6c14a3af",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "e64bbccc4f932c0be7ff0adad19cba41b551b6db"
+    },
+    {
+      "path": "packages/device_identity/lib/src/api.dart",
+      "bytes": 6907,
+      "sha256": "0bfc8c886b6a94ecb0c11137c29be80c601e5898e981665920682e4eb7b24cd5",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "d0ecab99529f389fa862117d345ee192f67fe158"
+    },
+    {
+      "path": "packages/device_identity/lib/src/keys.dart",
+      "bytes": 9845,
+      "sha256": "e7271763eeb59b8e7556f91b059f981c5f72ebc37d6331917c53b479261809ca",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "2480e975a6a855c27db78e15fdf51964986c1d96"
+    },
+    {
+      "path": "packages/device_identity/lib/src/managed_binding.dart",
+      "bytes": 6710,
+      "sha256": "d292aae1422505c3d21d72d565bb8e021ec509dfd225d2c1a21b56617f6d33a1",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "d07fda349a5ed7cb583959c4cbc1ac441db196a7"
+    },
+    {
+      "path": "packages/device_identity/lib/src/managed_feedback.dart",
+      "bytes": 3837,
+      "sha256": "2f637b3737e7dbf492367d8612b22a061b586436eaab898186390f4d4132203a",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "1caa33e89869eabecde6e10c349f8e11eeac746f"
+    },
+    {
+      "path": "packages/device_identity/lib/src/manager.dart",
+      "bytes": 28962,
+      "sha256": "ca50f72fc41a4271539f69f86fcb87f9fbf2fa2aa30e12ac0c34894e5ca0c0f6",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "a2c4fc3942ed743aa912eece99a7deed93f18a8e"
+    },
+    {
+      "path": "packages/device_identity/lib/src/models.dart",
+      "bytes": 4492,
+      "sha256": "3456bf4765942ab379b5724d3f5b299c4e438d8ac85ba5a4549e609ba8fb503b",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "a18235a45c537dbb891186905cbc2ddad01224a3"
+    },
+    {
+      "path": "packages/device_identity/pubspec.lock",
+      "bytes": 15024,
+      "sha256": "224542b88b6c75bfbec1cab71ae9fb4481277f1a53c5467ab96d4dcf7522e702",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "8a45f5bbb2b0bdb0ee9bcde62789c092254863d9"
+    },
+    {
+      "path": "packages/device_identity/pubspec.yaml",
+      "bytes": 299,
+      "sha256": "ae85b0fd1a0f16e58e4c60bb27974e4b3a3083d52d1a7cc2752c01000a2aae2f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "0c83a32285cec5b88d2b3e5b210a8d4770864089"
+    },
+    {
+      "path": "packages/device_identity/test/api_test.dart",
+      "bytes": 6428,
+      "sha256": "7393581ba1a0448e722b75b20da652c966d494615de3ecbcb0234601bd14fd10",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "bc4883f7ec672e7608267674b6cd20303ecba7aa"
+    },
+    {
+      "path": "packages/device_identity/test/identity_test.dart",
+      "bytes": 27522,
+      "sha256": "1cd23ae748458238bd361f869dec11020795e0137309b714f85a7390c968de0f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "b752c6d58586a010769009315d403fafdfb7d716"
+    },
+    {
+      "path": "packages/device_identity/test/keys_test.dart",
+      "bytes": 3763,
+      "sha256": "16ef1b4b0bc5c13cfe52703877d1aac33a872b9388eccb1c4ca72ef472fb0588",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "03e3ec79a4b135e58be37715545d39dc77eb9308"
+    },
+    {
+      "path": "packages/device_identity/test/managed_binding_test.dart",
+      "bytes": 16469,
+      "sha256": "970acf8b70f6222ac2f7896eaf3bbf2c2650802e6e6912b1e1a1539bd022a349",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "ad551f6ae8da0229bca3772a172fbb4ed1a2a731"
+    },
+    {
+      "path": "packages/device_identity/tool/managed_binding_interop.dart",
+      "bytes": 1006,
+      "sha256": "5c2c37f2e2db438fa2ba2c1cad39f15909362427f871c765027491ecf73065e3",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "8f176f24a162b4a19b76665947aba67114a01684"
+    },
+    {
+      "path": "packages/device_identity/tool/verify_http_fixture.dart",
+      "bytes": 4680,
+      "sha256": "277ad8ab5eb0026ea6b20cd9be967c920e882a6be1dbad31058a7ee1f8885b6f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "c439cb33df3fa5cc79c29b7580f206b1c04d847b"
+    },
+    {
+      "path": "packages/device_observation/.gitignore",
+      "bytes": 39,
+      "sha256": "68ace1a8098ef2062d4a6555b9f9c83e0a4e43a98b6a32d57bed980e09848e1a",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "5cf40b690247eac8f03c3dfec59477683720dec2"
+    },
+    {
+      "path": "packages/device_observation/README.md",
+      "bytes": 2274,
+      "sha256": "ee768fd7e66726b321cf8b86beb8b9198fa8d66862f184053da74db598f24a16",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "7546f25e401ca74c01881fa4e3355a8ea203b334"
+    },
+    {
+      "path": "packages/device_observation/analysis_options.yaml",
+      "bytes": 40,
+      "sha256": "69d5fc7c4dc082613882215d52d18b02b1688b833d674ce9b281f45821626b7d",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "572dd239d0976799433e2a9c56e7e02be86d61b1"
+    },
+    {
+      "path": "packages/device_observation/lib/device_observation.dart",
+      "bytes": 147,
+      "sha256": "37427ca255e9a6ca62a51c9e6f4f21f4e431e675b6c361240cc67a65cb9d248c",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "da42d402190a88e4c47779c90dbece0631222150"
+    },
+    {
+      "path": "packages/device_observation/lib/src/agent.dart",
+      "bytes": 18568,
+      "sha256": "b89041ee63a66b7a5bb7499cd8241ab06b643599779877b4fc8536efc770e2aa",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "5a95cdb7fc7a108314733e68f1b8e3d70160c984"
+    },
+    {
+      "path": "packages/device_observation/lib/src/http_api.dart",
+      "bytes": 1179,
+      "sha256": "6595ba18e02e13265e21d141917c12712d0ca3d2c1bdd38affeec4f841ff310b",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "c2c0d9885e3bf580f775994f93e75a2986494e48"
+    },
+    {
+      "path": "packages/device_observation/lib/src/journal.dart",
+      "bytes": 10296,
+      "sha256": "0098e3805e9c0d68045213e1e4bff3b67d31d767acacb316fd186d262b0f8644",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "5f961378c00c3ba892c38120d1748bb963b96df3"
+    },
+    {
+      "path": "packages/device_observation/lib/src/models.dart",
+      "bytes": 6953,
+      "sha256": "92604d8df24c608d2d072dce5df4f64e26c378280c1d60988a22cc11efdab271",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "a17c4332fa124ddd69f117ad53d30e55a25b834e"
+    },
+    {
+      "path": "packages/device_observation/lib/src/payloads.dart",
+      "bytes": 4407,
+      "sha256": "369e37f51155b2200c3913416223f31df930a44ae6e4e6d728503f1f1a4da7ad",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "271c8a8dd9de6cc96ed604b92712b376b8c144cf"
+    },
+    {
+      "path": "packages/device_observation/lib/src/permission_snapshot.dart",
+      "bytes": 4668,
+      "sha256": "6e9c81a1991ce4ef8fd8ba2ce8e2e8042c37f86a027735f5fe9d90e8370841c4",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "4023ccf4a9193f353a0da42be257831ddf320efd"
+    },
+    {
+      "path": "packages/device_observation/pubspec.lock",
+      "bytes": 15880,
+      "sha256": "7b1d41839dba54851fdace2b01b6192de637b9d938d48ad5896c6b1ff5d9cbf3",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "8413bae110e3b4f894d12983dc645a196cc641d8"
+    },
+    {
+      "path": "packages/device_observation/pubspec.yaml",
+      "bytes": 308,
+      "sha256": "b7d3466203faf9d44bcf0cf46c22dac73d855154d71b268b7036dd1e7dea5f25",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "4a2e8bf4c4cc0cdcf83c48a60ef1c4d8ce522abd"
+    },
+    {
+      "path": "packages/device_observation/test/agent_test.dart",
+      "bytes": 11176,
+      "sha256": "f2822103814848555cc7981424327c5e2ffe9eb129c1b682d46b876a1583f9f4",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "efe81f1c26357f0e842f2d28f80212b5151ba4cd"
+    },
+    {
+      "path": "packages/device_observation/test/journal_cas_test.dart",
+      "bytes": 4070,
+      "sha256": "d674152b699709673682c1bc06276c9232d96baedb98c9d6e8e8a49aebc16f60",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "18f349e43f0918e3b1b9789a122d3d8835d27229"
+    },
+    {
+      "path": "packages/device_observation/tool/verify_http_fixture.dart",
+      "bytes": 5302,
+      "sha256": "e218a548357cac159a89c7bd57e2baa2b4983b6b5fa8796b7862a17316546b44",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "6c1e60bc0926c8d226b6b9b3911615d13343c6ae"
+    },
+    {
+      "path": "packages/device_operations/README.md",
+      "bytes": 1991,
+      "sha256": "8bb42ff37af60f886ce06d24a6ea69ab3346cd91c3e9372b07d46ab453d61f3a",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "cebbbf322e9e883f612cb1d79d4fe079d693af04"
+    },
+    {
+      "path": "packages/device_operations/analysis_options.yaml",
+      "bytes": 44,
+      "sha256": "c1e9534c05acb3643e72a82ad3d92d56d2ba9b0df2add014c18f7e1d462f24e4",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "f9b303465f19b5fbf5ec669cd083c9cc38ecda9a"
+    },
+    {
+      "path": "packages/device_operations/example/.gitignore",
+      "bytes": 734,
+      "sha256": "a36ca275533062651096c69c910d5c78aa0a8e572d431bf0de5b2b506161633d",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "6503b5e5b4a9928b69bd4b35ed4afd8960b94bf8"
+    },
+    {
+      "path": "packages/device_operations/example/.metadata",
+      "bytes": 964,
+      "sha256": "5c7a89dc1a45b54d84f36a0a62d4546b2061e0fecca46a06dbd2770ac8c2f37e",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "68b331fb19194a35363bf8c10f897829e5d8186a"
+    },
+    {
+      "path": "packages/device_operations/example/README.md",
+      "bytes": 664,
+      "sha256": "60be23a2f6d0475b0615784990bda286fe47647517eeeb7c2cdf669f43adffc0",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "82d470cc2f9b3bfe996ea24c98fadc0f1c6bc2fd"
+    },
+    {
+      "path": "packages/device_operations/example/analysis_options.yaml",
+      "bytes": 1448,
+      "sha256": "b63207cf529949ec4727b68c23dbb38ce255b6f6f4ae1effcb5c1dcf2852d238",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "d4e0f0c8bff70b511095207bf2c5fc9d696075f0"
+    },
+    {
+      "path": "packages/device_operations/example/lib/fixtures.dart",
+      "bytes": 3975,
+      "sha256": "ca9cf941fdacb82dfa4798464add67d189f843b1cf608809306d8a413747bac0",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "2a242c926f32c13317e33577be318af851facb05"
+    },
+    {
+      "path": "packages/device_operations/example/lib/main.dart",
+      "bytes": 5571,
+      "sha256": "417253a36221b83393c74f44e63bc14cf3c55d15dd4733ce78e30e41df32bb53",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "76a34412cadf088dadde8c6e3db89504fbd40b9d"
+    },
+    {
+      "path": "packages/device_operations/example/pubspec.lock",
+      "bytes": 12114,
+      "sha256": "c86313dd835c653340a5085aee0f09dc275282a04e745d86da1cc5e867cd1840",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "50b9b3bb1bfe520bc9132e7cbbd0bd9d738971f9"
+    },
+    {
+      "path": "packages/device_operations/example/pubspec.yaml",
+      "bytes": 370,
+      "sha256": "b9f2196aa65c14103e05a3e2b4baeb541f4e95135fb09f43051ed66d2c7abe98",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "20c059696feaf42d41d4e8807e5e4875ed527f1a"
+    },
+    {
+      "path": "packages/device_operations/example/test/widget_test.dart",
+      "bytes": 518,
+      "sha256": "0dee699bc7ce0de64a718dbd3a49e2d822ed74c7450e214ec0af117a7c9bcc35",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "6e9169f10cb8655872b835c5690c5449d836be86"
+    },
+    {
+      "path": "packages/device_operations/example/web/favicon.png",
+      "bytes": 917,
+      "sha256": "7ab2525f4b86b65d3e4c70358a17e5a1aaf6f437f99cbcc046dad73d59bb9015",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "8aaa46ac1ae21512746f852a42ba87e4165dfdd1"
+    },
+    {
+      "path": "packages/device_operations/example/web/icons/Icon-192.png",
+      "bytes": 5292,
+      "sha256": "3dce99077602f70421c1c6b2a240bc9b83d64d86681d45f2154143310c980be3",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "b749bfef07473333cf1dd31e9eed89862a5d52aa"
+    },
+    {
+      "path": "packages/device_operations/example/web/icons/Icon-512.png",
+      "bytes": 8252,
+      "sha256": "baccb205ae45f0b421be1657259b4943ac40c95094ab877f3bcbe12cd544dcbe",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "88cfd48dff1169879ba46840804b412fe02fefd6"
+    },
+    {
+      "path": "packages/device_operations/example/web/icons/Icon-maskable-192.png",
+      "bytes": 5594,
+      "sha256": "d2c842e22a9f4ec9d996b23373a905c88d9a203b220c5c151885ad621f974b5c",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "eb9b4d76e525556d5d89141648c724331630325d"
+    },
+    {
+      "path": "packages/device_operations/example/web/icons/Icon-maskable-512.png",
+      "bytes": 20998,
+      "sha256": "6aee06cdcab6b2aef74b1734c4778f4421d2da100b0ff9e52b21b55240202929",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "d69c56691fbdb0b7efa65097c7cc1edac12a6d3e"
+    },
+    {
+      "path": "packages/device_operations/example/web/index.html",
+      "bytes": 1343,
+      "sha256": "06062533207fe8cfe4a67d50a109f01caba505f22b02a618f366f67859675f49",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "d92f3132ed92a5488e4f9949691f1edd747fffa1"
+    },
+    {
+      "path": "packages/device_operations/example/web/manifest.json",
+      "bytes": 983,
+      "sha256": "e53d75028b366dc73dea6b546bbec32d54222f129e695793636ee289b396df55",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "3e9329e258aa9bf1079b8e6111125268b0c9988e"
+    },
+    {
+      "path": "packages/device_operations/lib/device_operations.dart",
+      "bytes": 227,
+      "sha256": "d264a20cb7874ebebc4d0f2859699bc9301e66437c4c5e8b4ce65a5e075d0d1b",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "96918b78df6885b593c16dc84eb8b1ab47aefe41"
+    },
+    {
+      "path": "packages/device_operations/lib/permission_observation_view.dart",
+      "bytes": 6888,
+      "sha256": "ee4f3b6c04bb31702e1d9583651dde26ade9a4bc71ef5b900c3a42e802c4fcec",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "992e9c4c7d0d92e0e3660fb1cb4a48af7ccd826b"
+    },
+    {
+      "path": "packages/device_operations/lib/src/client.dart",
+      "bytes": 11297,
+      "sha256": "074d16dd33ef85e6591de8c9180e61d57384dcae7d6d7e6df6b7cafaa900a013",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "59a6afa7d4e08661bfac2884fc2ecb341592c345"
+    },
+    {
+      "path": "packages/device_operations/lib/src/controller.dart",
+      "bytes": 9661,
+      "sha256": "75479329862992eeda308617a833833c884ed687aa1448642e9031bc8b55ba29",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "e9ee8056dd136dee423be18e5af8b5bed46ccdeb"
+    },
+    {
+      "path": "packages/device_operations/lib/src/journal.dart",
+      "bytes": 4491,
+      "sha256": "d327414986309097c42bc3bc1ecb265590affe7fe7573246b9a900d66c7838f4",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "3d4e15c047c57caa6f2dcb0daaacd33548dc3504"
+    },
+    {
+      "path": "packages/device_operations/lib/src/models.dart",
+      "bytes": 7494,
+      "sha256": "c478683d7c5b50a3028240f67ef9c9d5ac5edb3e11964020a3eef77c476d3767",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "a561e7f7337ad222925a23eb5ce03d7454d2d9d4"
+    },
+    {
+      "path": "packages/device_operations/lib/src/panel.dart",
+      "bytes": 17514,
+      "sha256": "27aa87e529d86e59debd59b875f35b9a229241afa095b29fc03e9eb1d852585f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "2c99a0de4d49484c5e312de321cc4d0cabbb5bac"
+    },
+    {
+      "path": "packages/device_operations/pubspec.lock",
+      "bytes": 11987,
+      "sha256": "79d3985b78802d045f76c735f9b6dd6faaa84fe39b7021b7315d409dae8f3c2e",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "003b3abd00f84c4a9ffa47265b931affde47b82b"
+    },
+    {
+      "path": "packages/device_operations/pubspec.yaml",
+      "bytes": 459,
+      "sha256": "c6fd0fdbb4a2210ded4e010b6560f95e7ee2fa4f1e7217481f6f63a2f569f0fd",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "9fe1260d9e5b8c94977a8e339a7afa2df6aa15e3"
+    },
+    {
+      "path": "packages/device_operations/test/client_test.dart",
+      "bytes": 6886,
+      "sha256": "514bc87c0d2d2e4b894fecd590d5d778cb47c1d6022a24757bf62e120793fb48",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "111f25b336a0ee3e7ed9e2a0d45bfb2afa345844"
+    },
+    {
+      "path": "packages/device_operations/test/controller_test.dart",
+      "bytes": 9787,
+      "sha256": "978e3b16bdd4bc1561e9bc8e7d9b6ab8b78183854fe27c0a87d43c17baea35fd",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "8202ff6183c78f5f477d167d6049f6a5762ff097"
+    },
+    {
+      "path": "packages/device_operations/test/fixtures.dart",
+      "bytes": 2142,
+      "sha256": "d3e3e153b0e4088e870ec52fe0d0710274890229fd87d83bf8f6d037ac46635d",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "2832f1e63bd396abba32f7db2407f6a93319031b"
+    },
+    {
+      "path": "packages/device_operations/test/journal_test.dart",
+      "bytes": 3319,
+      "sha256": "fa578d31822248d6368eee2fbbe63e6ea78cdfbc88f06105fcc3eccc1345171f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "269b54bf61fe557eaf392f80d742f95ff7a9f011"
+    },
+    {
+      "path": "packages/device_operations/test/models_test.dart",
+      "bytes": 1629,
+      "sha256": "58860cd465c4dbc11f4230ac326aada975cc7865f0f6bf33db4fb03fff941f7f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "208924aa2abd3fc38179d98798403a5fee232e2e"
+    },
+    {
+      "path": "packages/device_operations/test/panel_test.dart",
+      "bytes": 4623,
+      "sha256": "b4d2017c9fb2560ea1a5e4f98d3ff09a7b0a771a47ce93f21871432354e77e30",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "af83d94a910c282fe826c5a220c5018f1b566fdb"
+    },
+    {
+      "path": "packages/device_policy/README.md",
+      "bytes": 4313,
+      "sha256": "a440d7eee4aa7b5b2d3b523f869680cdb226959547b5101d33dfb0e2adcb57cb",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "63995b51ac91d9caa8ee98c2f620056483fbb32a"
+    },
+    {
+      "path": "packages/device_policy/analysis_options.yaml",
+      "bytes": 40,
+      "sha256": "69d5fc7c4dc082613882215d52d18b02b1688b833d674ce9b281f45821626b7d",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "572dd239d0976799433e2a9c56e7e02be86d61b1"
+    },
+    {
+      "path": "packages/device_policy/lib/device_policy.dart",
+      "bytes": 190,
+      "sha256": "6f4c4e55f67ce16291d2d11f1f0fe9d0b1c9539896ee266985f378e6e989649b",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "a280a9131f7f3c0e1f6b26e55df2985254e201d8"
+    },
+    {
+      "path": "packages/device_policy/lib/src/journal.dart",
+      "bytes": 10756,
+      "sha256": "e14d8ecabcf15f2d4db7b90699a4b25ee94f6fec6b9797990674edcb644f7a38",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "47f40660034fbcc2ea301e985a67aa4f75f88980"
+    },
+    {
+      "path": "packages/device_policy/lib/src/models.dart",
+      "bytes": 2397,
+      "sha256": "1ea970eec8e3d55d3497b231af430cd98cb8c2d3b18e4b7026c15a1c983737a1",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "476b86a8d6892ee2ebd6f9ba8aa8853e9232ab75"
+    },
+    {
+      "path": "packages/device_policy/lib/src/page.dart",
+      "bytes": 3602,
+      "sha256": "52edf9c4f2c3c0ffcd47869355be7141ba5f9731e0cf2c2c40583373176d543d",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "f7abb9a526274c65bc631a3745190b09d5028dd1"
+    },
+    {
+      "path": "packages/device_policy/lib/src/synchronizer.dart",
+      "bytes": 3504,
+      "sha256": "e269ad4bea830c633f2a7791fa9eaa1c779fcd6988d0015786c54ac2504f3a30",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "67347e1cdf305e7d0f7d045b19cd1a3987e07ba0"
+    },
+    {
+      "path": "packages/device_policy/lib/src/transport.dart",
+      "bytes": 12062,
+      "sha256": "4f68e1c55dabd95b965e10519330a121f292d60e44d751e7e62d0158ffcf7bbb",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "2f440804a1748d3542443b9e80fd049c4be32bd1"
+    },
+    {
+      "path": "packages/device_policy/lib/src/verifier.dart",
+      "bytes": 5108,
+      "sha256": "49a6671c9e5db39f10c62e7f0c7658fd05bec589b74833edd9a4e5bb9544ff53",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "363ac80c616faab9455cec358f2e54449d370b87"
+    },
+    {
+      "path": "packages/device_policy/pubspec.lock",
+      "bytes": 15747,
+      "sha256": "9b0113887ff19587a1ef2f2689f90451efe7991876a157cb08073fe79cfe035c",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "c4e5212fadf354f1573d6a6ccb61770d75ac4ef0"
+    },
+    {
+      "path": "packages/device_policy/pubspec.yaml",
+      "bytes": 386,
+      "sha256": "db6c90e23639f9974a680677eb28b6b2caba82f5fc25068fd7f958419fc43af9",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "8994b825659bd4ae3aa20ab6a7011d04047def3a"
+    },
+    {
+      "path": "packages/device_policy/test/fixtures.dart",
+      "bytes": 2262,
+      "sha256": "b8794bb2bf1d3e94e69a994a79b7a1ed4aa08575f77b947bb0850af33db61a05",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "18cf587cf347e3cb21c6e08a325554ada68d672d"
+    },
+    {
+      "path": "packages/device_policy/test/journal_test.dart",
+      "bytes": 8367,
+      "sha256": "fec4ab6787fe2e2d9d050f0f5c07206376dc428e2af241be66f82239389ff8fc",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "051516caee77495d3f9fb5d3b6edada2eb7512e3"
+    },
+    {
+      "path": "packages/device_policy/test/observation_transport_test.dart",
+      "bytes": 2290,
+      "sha256": "bc7d9187fdf76f65ace5947d87e3a22d6773b7a91b4713f51e5097999fd065a0",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "d8aeac2bd2be08e8016a10c3ef0150b452dd365e"
+    },
+    {
+      "path": "packages/device_policy/test/page_test.dart",
+      "bytes": 5905,
+      "sha256": "a6384f8d3056b1d46515eb2c1a8dd13aa471ffa13cd7987ea99992a8aac8cf91",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "0f0521075df695c3af3076b7b3780a0818543c59"
+    },
+    {
+      "path": "packages/device_policy/test/synchronizer_test.dart",
+      "bytes": 9267,
+      "sha256": "68e1217b37f085c053230b47fb3b274fbdcf52a43c49a30a5c5f5855a6e31d58",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "3cc83b5cc825c1b3e8945b8276a68e8c09dc3ede"
+    },
+    {
+      "path": "packages/device_policy/test/transport_test.dart",
+      "bytes": 11320,
+      "sha256": "96ea588a878fbbb0e45d1461162d64ae6c2b0d55ad7e6827ef4e6f52a52f94f7",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "469151a649066ea92ad54fa232a092407c83b8b5"
+    },
+    {
+      "path": "packages/device_policy/test/verifier_test.dart",
+      "bytes": 6154,
+      "sha256": "cba2fe286cc13bbe05170d619e23103f8f5e1c68d5717667054a7842b859f2bf",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "c72d59b4a050373e5a089b38869270853996b783"
+    },
+    {
+      "path": "packages/device_policy/tool/NimbusConfigurationFixture.java",
+      "bytes": 2163,
+      "sha256": "79c946b5ed1b16920fd52d6fbc50b3770623ef2196bbca67867de16998298bbc",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "7404b7119bdf39722fd845513883c77f3347eb8f"
+    },
+    {
+      "path": "packages/device_policy/tool/verify-nimbus.ps1",
+      "bytes": 2906,
+      "sha256": "ca3c38f77e9c521af5a1136eaf9794af2531ded097067624515d3ac1a0b33e83",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "036d3c352714d97cbef69d35b939e2d4f36885d8"
+    },
+    {
+      "path": "packages/device_policy/tool/verify_http_fixture.dart",
+      "bytes": 2785,
+      "sha256": "7f630730e18ee080e85e7500f7ae74bbf50510cd0928af100129d587116753a0",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "350f461c92ce6f503111af3a2fd42a086cf2ee60"
+    },
+    {
+      "path": "packages/device_policy/tool/verify_nimbus_fixture.dart",
+      "bytes": 1285,
+      "sha256": "03a6c8086598fd3918f9f5f57bd9eba2e65e3ce12db7d1d0ad78147ca9f8def0",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "3229cb94a296a303cc1cd3bda0f27a48f4cc2c7c"
+    },
+    {
+      "path": "packages/device_reports/README.md",
+      "bytes": 1721,
+      "sha256": "8bcfafb3422004cb142f4e89647c82e985e9e9e2df1ffdae4421b38964703835",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "c254724a31afade3e977e36949034ac142d6cd8f"
+    },
+    {
+      "path": "packages/device_reports/lib/device_reports.dart",
+      "bytes": 1825,
+      "sha256": "f0f9034c97d5dda0a3c477bab5191f8845a665237bbc3f1307fe60d892eaf9e1",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "7351e2ba2d701ba43d702b292243eab31d2c8304"
+    },
+    {
+      "path": "packages/device_reports/pubspec.lock",
+      "bytes": 16731,
+      "sha256": "7172bb6f021f4cba5b15d71660c7a3c83b9588d00d0b2cbe5a9706cc7d7a9cd6",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "2838d4b867cd37311e0f1a059bc80a9f56f4121b"
+    },
+    {
+      "path": "packages/device_reports/pubspec.yaml",
+      "bytes": 347,
+      "sha256": "59409fadfcdb836c530b36e4073ce80526f9e1c456cb534f4cc658d2be4847eb",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "6ce8a20962f8d89a96107eff2f4fdae7706c6c8b"
+    },
+    {
+      "path": "packages/device_reports/test/client_test.dart",
+      "bytes": 3851,
+      "sha256": "68a5b624574c310b7d3e5b42c04f6e2e58c8fe92a623b2a3733acd607281a29a",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "a350697079168a5189aaa020de160d2ecfe1898f"
+    },
+    {
+      "path": "packages/device_reports/test/fixture.dart",
+      "bytes": 2562,
+      "sha256": "6125ed20f281ec7c26ce74610725f42da56c755b6f50d9113afa0c1e7b37689f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "e0058504f1a8ac38b4e5168860e535b6556a559e"
+    },
+    {
+      "path": "packages/device_reports/tool/verify_usage_report_http.dart",
+      "bytes": 2584,
+      "sha256": "71a4ce097b22dd0cb3828e0a4a9937df6acd70e20810a87346c0bebd667c1fc7",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "b83e20bcc08a5403fc42794fd08d037257e0f59b"
+    },
+    {
+      "path": "packages/notification_client/README.md",
+      "bytes": 814,
+      "sha256": "b4d7b012d4aa9dfefc0701ca6fe81f6612710e273045c3024fdebaa0ad3ffa7a",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "45b3d805a185bb8cb42cd7810b26e5ff8167d736"
+    },
+    {
+      "path": "packages/notification_client/lib/help_attention.dart",
+      "bytes": 2588,
+      "sha256": "a120610d2e6ec1ea9d89568217404433ddfa43fa2143b3730221ee74585133dc",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "4c4145d2990f611ed3e88456b475cb64a73dd1ec"
+    },
+    {
+      "path": "packages/notification_client/lib/notification_client.dart",
+      "bytes": 7526,
+      "sha256": "1d5f73960125f837481be5ab6f35a155b12995b964c2c98359125a14249e9e08",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "7906d5f80892a8da8664ed56b527f2f9f3db0b96"
+    },
+    {
+      "path": "packages/notification_client/pubspec.yaml",
+      "bytes": 168,
+      "sha256": "e9175499f37e955de2a6f760d4d4eb4e9b5caff86e7bc83493e5f8ba3a2eef7c",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "e3cfb265a1254c022e57971671fab671715b244c"
+    },
+    {
+      "path": "packages/usage_report_ui/README.md",
+      "bytes": 1162,
+      "sha256": "d5aa892f1643ef567bc7cb6ed1a7a52950894f2de860f17f0144cf9d92226a32",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "57b45159f2432f0ce48808a00408189a417f2e25"
+    },
+    {
+      "path": "packages/usage_report_ui/analysis_options.yaml",
+      "bytes": 44,
+      "sha256": "c1e9534c05acb3643e72a82ad3d92d56d2ba9b0df2add014c18f7e1d462f24e4",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "f9b303465f19b5fbf5ec669cd083c9cc38ecda9a"
+    },
+    {
+      "path": "packages/usage_report_ui/lib/src/design.dart",
+      "bytes": 884,
+      "sha256": "cb9f25c34b8126bfa52d9e1a9f365ee03f18dbeda0298ee2d442a04be21ef55e",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "881a0a54d3120eee580ec13545f4a6adef1fa5fa"
+    },
+    {
+      "path": "packages/usage_report_ui/lib/src/device_view.dart",
+      "bytes": 31606,
+      "sha256": "01b81009ea1ff06d1a02a760c0d8ba13e0cb0232959531047598f06aa5b2560d",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "cc29f6c8ab45a7969814955ffd52bd4499ce7b9b"
+    },
+    {
+      "path": "packages/usage_report_ui/lib/src/report_configurations_view.dart",
+      "bytes": 5544,
+      "sha256": "4429acd49412ede60ebd7db85054222fff57fd0bf9eeec310ae4dba0929d258b",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "8e2d94399940b612bd5db343fe4e605ea312d5dd"
+    },
+    {
+      "path": "packages/usage_report_ui/lib/src/usage_trend_view.dart",
+      "bytes": 12123,
+      "sha256": "4e4580051a9e9637a7f7ed220ad08f78d7fd0792b59e942759cd91f1769bf1cc",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "fc58d4ba811255b5e5c32601790df62a0e1b24a1"
+    },
+    {
+      "path": "packages/usage_report_ui/lib/usage_report_ui.dart",
+      "bytes": 139,
+      "sha256": "2dc214bd8d026e71697e9e32979d475220d2c2b8305ad43c72fdae6d5dbb328f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "7fd549fa760a206125cc6523c525036ff44389d5"
+    },
+    {
+      "path": "packages/usage_report_ui/pubspec.lock",
+      "bytes": 6809,
+      "sha256": "becf8be73b7d0eafa3fe133bda65477cfe85f1434cd3e10a654a43cae7916469",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "35cfa0b8d07781cf8b26d0b8defc35ce92d98a37"
+    },
+    {
+      "path": "packages/usage_report_ui/pubspec.yaml",
+      "bytes": 392,
+      "sha256": "8e7dca93c1d7a29b186afdf932f03e815796d90b7078f316ad8eb448853572bc",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "cce2404cd831d5146a6cb5ecc7b8e5f7279a985e"
+    },
+    {
+      "path": "packages/usage_report_ui/test/device_view_test.dart",
+      "bytes": 10006,
+      "sha256": "caf805981e3f1fe87283c7c139fb35ac7baf2f04c6de9693abd23e6404e19c2f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "2e58b7374af6430209f3471532a50e17cf42ab53"
+    },
+    {
+      "path": "packages/usage_report_ui/test/fixture.dart",
+      "bytes": 2562,
+      "sha256": "6125ed20f281ec7c26ce74610725f42da56c755b6f50d9113afa0c1e7b37689f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "e0058504f1a8ac38b4e5168860e535b6556a559e"
+    },
+    {
+      "path": "packages/usage_report_ui/test/multi_device_view_test.dart",
+      "bytes": 11437,
+      "sha256": "35823692c9a9765456335b586647b0c52c0cf968ffe145a398293fb61cf91b39",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "931b8df4879b77741e7dc620362256ab5729f476"
+    },
+    {
+      "path": "packages/usage_reporting/README.md",
+      "bytes": 788,
+      "sha256": "68f70717c23ce021baae61b48f31bafedbe800bfababac239f1c1058f750c2cf",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "bb05cde372dfbea00e32089a9ad576e3df5d77a0"
+    },
+    {
+      "path": "packages/usage_reporting/lib/src/application_classification.dart",
+      "bytes": 2458,
+      "sha256": "653a7b0decb2f72e8139f686206950bcb54a0dbdaf45ba3cd83b02dd3349540f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "93f5e4da035ccf365d0fceec9ca1460ec89e66f2"
+    },
+    {
+      "path": "packages/usage_reporting/lib/src/failure.dart",
+      "bytes": 323,
+      "sha256": "19bc3add8894a5fffc96992e5cb08889e20aea540e1aaab1ea53af2dc771373c",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "4770f61b44f508cc18f2d2e8a448f78ef96c346d"
+    },
+    {
+      "path": "packages/usage_reporting/lib/src/report_configurations.dart",
+      "bytes": 9029,
+      "sha256": "142f5eed318870a05b782777d8a4710f292d1b548e0dc881f3eac5457436c296",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "754530300b4517b95aed0c50b7f993563015fc62"
+    },
+    {
+      "path": "packages/usage_reporting/lib/src/usage_insights.dart",
+      "bytes": 1233,
+      "sha256": "24706887bd16882d9b5597b07b0e7088afa7ca89b31631538727943cdda67da3",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "3b01ce820ad5e840ea3ce5e404c018d367e27900"
+    },
+    {
+      "path": "packages/usage_reporting/lib/src/usage_reports.dart",
+      "bytes": 16268,
+      "sha256": "7b511cbe34579b25d8eae2213d7c9434f26303d5fc28db27649275ade6dc7636",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "1fe905382d2489acc965ffb50215eecfcd65e043"
+    },
+    {
+      "path": "packages/usage_reporting/lib/src/usage_trends.dart",
+      "bytes": 3189,
+      "sha256": "20ad55adc83b6bdf3511f553e6eeef4e333a81fc376c722136cf6d462bcbdaca",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "385332e6cc415d3155d49f0ae80dd5ebb31590c4"
+    },
+    {
+      "path": "packages/usage_reporting/lib/usage_reporting.dart",
+      "bytes": 239,
+      "sha256": "cfbe96e836518e07f3dbcdcc6025269dff31bd5d9516fac8a8b72366718eb832",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "22268d49d2545f2aca7480565f71a45c46c13280"
+    },
+    {
+      "path": "packages/usage_reporting/pubspec.lock",
+      "bytes": 12920,
+      "sha256": "c2f574c618136320d45533b12d7c658a1df1f0e26405d366fc4c4f98520fa9f3",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "62e520688f5c79a0e85ffb3f8c924f8987767ac4"
+    },
+    {
+      "path": "packages/usage_reporting/pubspec.yaml",
+      "bytes": 279,
+      "sha256": "5d17164defb43bdfc7f3b6471e845ae3371d91adb78ff24971800341ea64c486",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "d684915ce10a2da3c19a49ea5a997446de119a76"
+    },
+    {
+      "path": "packages/usage_reporting/test/fixture.dart",
+      "bytes": 2562,
+      "sha256": "6125ed20f281ec7c26ce74610725f42da56c755b6f50d9113afa0c1e7b37689f",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "e0058504f1a8ac38b4e5168860e535b6556a559e"
+    },
+    {
+      "path": "packages/usage_reporting/test/shared_models_test.dart",
+      "bytes": 1547,
+      "sha256": "daff02af560e2041060053c42a2e72c2cd120c60347b1bc016817ea431b2317b",
+      "origin": "FIXED_GIT_BLOB",
+      "gitObject": "8e20bd8b23c33ceb775e6e17062e9f82f3671634"
+    }
+  ],
+  "explicitOverlays": [
+    {
+      "path": "apps/parent/lib/core/family_payment.dart",
+      "preFormatSha256": "7892e4399853af4cdbd31e9904110d29dc729623ca30aa7c12f2afebee787093",
+      "sha256": "7892e4399853af4cdbd31e9904110d29dc729623ca30aa7c12f2afebee787093",
+      "bytes": 9482,
+      "owner": "Root"
+    },
+    {
+      "path": "apps/parent/lib/ui/family_membership.dart",
+      "preFormatSha256": "56c66ec273ae05e4737a7dfeb185dd557f658536e4358d5d4ef4d8372674c553",
+      "sha256": "9db8f05e00a909e2693d17bd79fbb1baf1cff1f986e812f84151c676db28fb5c",
+      "bytes": 21107,
+      "owner": "Root"
+    },
+    {
+      "path": "apps/parent/lib/ui/family_order_page.dart",
+      "preFormatSha256": "62744b8d3967e5b63ec3963758dbe672a59866a20fab9550a766faf6b417352f",
+      "sha256": "62744b8d3967e5b63ec3963758dbe672a59866a20fab9550a766faf6b417352f",
+      "bytes": 24070,
+      "owner": "Root"
+    },
+    {
+      "path": "apps/parent/test/family_membership_test.dart",
+      "preFormatSha256": "56fdc89bcfdafb31ad144196a862e2e00b2c9c97c412548d88fc22c73e33465d",
+      "sha256": "d4a2a11c61c6cbb981166e1b3b8e422a01a1f8c92543c27c0f18708d93188d29",
+      "bytes": 20216,
+      "owner": "Root",
+      "previousSnapshotSha256": "56fdc89bcfdafb31ad144196a862e2e00b2c9c97c412548d88fc22c73e33465d"
+    },
+    {
+      "path": "apps/parent/test/family_payment_recovery_guard_test.dart",
+      "preFormatSha256": "5f1259b6d70acd310a369e059f982841ae0461a4b951e1b24198dfb887585cb0",
+      "sha256": "c480f252b0dbd5e8ef76a76569cce18205af080c5269bf2a93314647510971e5",
+      "bytes": 7049,
+      "owner": "Root"
+    },
+    {
+      "path": "apps/parent/test/family_payment_test.dart",
+      "preFormatSha256": "ff226c039efdf7d5d65edd9ad17fea922e1923df018822248563115a1c0f96cd",
+      "sha256": "ff226c039efdf7d5d65edd9ad17fea922e1923df018822248563115a1c0f96cd",
+      "bytes": 15971,
+      "owner": "Family"
+    }
+  ],
+  "onlyDifferenceFromInitialPostFix": "apps/parent/test/family_membership_test.dart",
+  "productionUnchanged": true,
+  "counterfactualLimitation": "Not rerun: Finder-only change occurs after the prior failing fixed-notice assertion; all product assertions retained.",
+  "packageConfig": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v3\\src\\apps\\parent\\.dart_tool\\package_config.json",
+    "sha256": "ca11683c64baa4cb443f776aaa870d3067367f5208d5f3e142a3740570abcdd0",
+    "bytes": 22150,
+    "packages": 97,
+    "remappedRepositoryPackages": [
+      {
+        "name": "audit_client",
+        "root": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v3\\src\\packages\\audit_client",
+        "packageUri": "lib/"
+      },
+      {
+        "name": "commerce_contracts",
+        "root": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v3\\src\\packages\\commerce_contracts",
+        "packageUri": "lib/"
+      },
+      {
+        "name": "device_observation",
+        "root": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v3\\src\\packages\\device_observation",
+        "packageUri": "lib/"
+      },
+      {
+        "name": "device_operations",
+        "root": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v3\\src\\packages\\device_operations",
+        "packageUri": "lib/"
+      },
+      {
+        "name": "device_policy",
+        "root": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v3\\src\\packages\\device_policy",
+        "packageUri": "lib/"
+      },
+      {
+        "name": "notification_client",
+        "root": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v3\\src\\packages\\notification_client",
+        "packageUri": "lib/"
+      },
+      {
+        "name": "usage_report_ui",
+        "root": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v3\\src\\packages\\usage_report_ui",
+        "packageUri": "lib/"
+      },
+      {
+        "name": "usage_reporting",
+        "root": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v3\\src\\packages\\usage_reporting",
+        "packageUri": "lib/"
+      },
+      {
+        "name": "parent",
+        "root": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v3\\src\\apps\\parent",
+        "packageUri": "lib/"
+      }
+    ],
+    "externalRootsPreserved": true
+  },
+  "familyWipSha256": "ff226c039efdf7d5d65edd9ad17fea922e1923df018822248563115a1c0f96cd",
+  "previousFrozenInputsModified": false,
+  "parentPostFixV2ManifestSha256": "285b46962dc0ffdd7892148f761e44c08021faf7c0026b7987cfe93c03853e06",
+  "onlyDifferenceFromPostFixV2": "apps/parent/test/family_membership_test.dart",
+  "importOnlyChange": "Removed exactly line 2: import 'package:flutter/foundation.dart';"
+}

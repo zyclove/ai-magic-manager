@@ -1,6 +1,8 @@
 # 家庭会员订单恢复验证记录
 
-本记录保存本阶段已结束的原始证据。当前状态为 **TARGETED_8_PASSED / FULL_PARENT_INCOMPLETE_TIMEOUT / ANALYSIS_NOT_RUN / NOT_DEPLOYED**。本次仅确认 8 项定向测试通过，不作为 Parent 全量或产品全功能验收。
+本记录保存该历史阶段已结束的原始证据。当时状态为 **TARGETED_8_PASSED / FULL_PARENT_INCOMPLETE_TIMEOUT / ANALYSIS_NOT_RUN / NOT_DEPLOYED**。该阶段仅确认 8 项定向测试通过，不作为 Parent 全量或产品全功能验收。
+
+后续已对最终固定版本完成 **530 项完整测试和 5 份文件代码分析**，见[完整回归记录](../family-membership-complete-20261021/README.md)。本页保留早期失败和超时原件，不替换历史结论。
 
 ## 产品修复范围
 

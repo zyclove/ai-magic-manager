@@ -1,0 +1,26 @@
+{
+  "status": "PARENT_FULL_530_PASSED_SCOPED_ANALYSIS_CLEAN",
+  "sourceChange": "Remove unnecessary Flutter foundation import from membership test only",
+  "productionCodeChanged": false,
+  "testAssertionsChanged": false,
+  "sourceFiles": 400,
+  "mainProtectedFiles": 297,
+  "testFiles": 58,
+  "testsPassed": 530,
+  "analysisFiles": 5,
+  "analysisIssues": 0,
+  "priorRun": {
+    "status": "FAILED",
+    "testsPassed": 530,
+    "analysisIssues": 1,
+    "problem": "unnecessary_import"
+  },
+  "finalRun": {
+    "status": "COMPLETE",
+    "elapsedSeconds": 140.93963420001091,
+    "ownedTreeTerminalConfirmed": true,
+    "watchdogExpired": false
+  },
+  "nativeDeviceOrProviderRuntimeVerified": false,
+  "deployed": false
+}

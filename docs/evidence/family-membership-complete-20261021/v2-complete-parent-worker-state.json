@@ -1,0 +1,141 @@
+{
+  "status": "FAILED",
+  "runTag": "complete-parent-20261021T045735206660Z",
+  "observations": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v2\\out\\complete-parent-20261021T045735206660Z-before-full.json",
+      "sha256": "6f00211c51455b8b792bec1dfc3f0670b36b82f034c500ce22c070df4ba55fc1",
+      "passed": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v2\\out\\complete-parent-20261021T045735206660Z-before-analyze.json",
+      "sha256": "4e7f8d426a91899f2443bd1a5c69629777ac31a3b338bc853efceb9c5c89f6aa",
+      "passed": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v2\\out\\complete-parent-20261021T045735206660Z-failed-release.json",
+      "sha256": "403b3eb7dc90789362eba30b1a5c29d52c838e0bd7a3ec0ec115d6d000e1ffe4",
+      "passed": true
+    }
+  ],
+  "stages": [
+    {
+      "label": "full",
+      "argv": [
+        "D:\\softwares\\flutter\\bin\\flutter.bat",
+        "--no-version-check",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded"
+      ],
+      "startedAtUtc": "2026-10-21T04:57:36.385970+00:00",
+      "budgetSeconds": 240,
+      "log": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v2\\out\\complete-parent-20261021T045735206660Z-full.log",
+      "workingDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v2\\src\\apps\\parent",
+      "processLocalTemp": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v2\\tmp",
+      "childDownloadEndpoints": {
+        "PUB_HOSTED_URL": "http://127.0.0.1:9",
+        "FLUTTER_STORAGE_BASE_URL": "http://127.0.0.1:9"
+      },
+      "pid": 95164,
+      "exitCode": 0,
+      "naturalExit": true,
+      "endedAtUtc": "2026-10-21T04:59:40.129486+00:00",
+      "logSha256": "8c1b2c3126a958fe16297e79adc7ca7da3b239f562814d08551e70eafae052a3",
+      "actualPassedCount": 530
+    },
+    {
+      "label": "analyze",
+      "argv": [
+        "D:\\softwares\\flutter\\bin\\flutter.bat",
+        "--no-version-check",
+        "--suppress-analytics",
+        "analyze",
+        "--no-pub",
+        "lib\\core\\family_payment.dart",
+        "lib\\ui\\family_membership.dart",
+        "lib\\ui\\family_order_page.dart",
+        "test\\family_membership_test.dart",
+        "test\\family_payment_recovery_guard_test.dart"
+      ],
+      "startedAtUtc": "2026-10-21T04:59:41.114485+00:00",
+      "budgetSeconds": 60,
+      "log": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v2\\out\\complete-parent-20261021T045735206660Z-analyze.log",
+      "workingDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v2\\src\\apps\\parent",
+      "processLocalTemp": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v2\\tmp",
+      "childDownloadEndpoints": {
+        "PUB_HOSTED_URL": "http://127.0.0.1:9",
+        "FLUTTER_STORAGE_BASE_URL": "http://127.0.0.1:9"
+      },
+      "pid": 47784,
+      "exitCode": 1,
+      "naturalExit": true,
+      "endedAtUtc": "2026-10-21T04:59:46.039310+00:00",
+      "logSha256": "ef5da00e32223ecb8531ece0f52197bd852e240a657ca9f42538cf8fff91c29e"
+    }
+  ],
+  "testFiles": [
+    "apps/parent/test/access_decision_test.dart",
+    "apps/parent/test/application_catalog_test.dart",
+    "apps/parent/test/audit_exports_test.dart",
+    "apps/parent/test/audit_test.dart",
+    "apps/parent/test/contracts_test.dart",
+    "apps/parent/test/device_capabilities_test.dart",
+    "apps/parent/test/device_groups_test.dart",
+    "apps/parent/test/enrollment_qr_flow_test.dart",
+    "apps/parent/test/family_account_security_page_test.dart",
+    "apps/parent/test/family_account_security_test.dart",
+    "apps/parent/test/family_after_sales_page_test.dart",
+    "apps/parent/test/family_after_sales_test.dart",
+    "apps/parent/test/family_app_host_test.dart",
+    "apps/parent/test/family_assistant_test.dart",
+    "apps/parent/test/family_collaboration_page_test.dart",
+    "apps/parent/test/family_collaboration_test.dart",
+    "apps/parent/test/family_device_access_page_test.dart",
+    "apps/parent/test/family_device_access_test.dart",
+    "apps/parent/test/family_inbox_page_test.dart",
+    "apps/parent/test/family_launch_regression_test.dart",
+    "apps/parent/test/family_membership_test.dart",
+    "apps/parent/test/family_notification_page_test.dart",
+    "apps/parent/test/family_notifications_test.dart",
+    "apps/parent/test/family_payment_recovery_guard_test.dart",
+    "apps/parent/test/family_payment_test.dart",
+    "apps/parent/test/family_push_platform_test.dart",
+    "apps/parent/test/family_requests_test.dart",
+    "apps/parent/test/family_service_test.dart",
+    "apps/parent/test/family_suggestion_test.dart",
+    "apps/parent/test/family_workspace_test.dart",
+    "apps/parent/test/first_use_test.dart",
+    "apps/parent/test/help_attention_test.dart",
+    "apps/parent/test/invitation_acceptance_test.dart",
+    "apps/parent/test/invitations_test.dart",
+    "apps/parent/test/member_access_test.dart",
+    "apps/parent/test/multi_device_reports_test.dart",
+    "apps/parent/test/notifications_test.dart",
+    "apps/parent/test/observation_settings_test.dart",
+    "apps/parent/test/organization_classes_test.dart",
+    "apps/parent/test/ownership_test.dart",
+    "apps/parent/test/pairing_authentication_test.dart",
+    "apps/parent/test/pairing_confirmation_test.dart",
+    "apps/parent/test/parent_account_action_test.dart",
+    "apps/parent/test/parent_api_status_test.dart",
+    "apps/parent/test/parent_identity_guard_test.dart",
+    "apps/parent/test/permission_consent_test.dart",
+    "apps/parent/test/permission_observation_test.dart",
+    "apps/parent/test/policy_creation_test.dart",
+    "apps/parent/test/policy_editor_test.dart",
+    "apps/parent/test/policy_group_selection_test.dart",
+    "apps/parent/test/policy_publication_recovery_test.dart",
+    "apps/parent/test/quota_plans_test.dart",
+    "apps/parent/test/quotas_test.dart",
+    "apps/parent/test/report_flow_simplification_test.dart",
+    "apps/parent/test/schedule_presets_test.dart",
+    "apps/parent/test/schedules_test.dart",
+    "apps/parent/test/subjects_test.dart",
+    "apps/parent/test/usage_reports_test.dart"
+  ],
+  "error": "RuntimeError: analyze returned nonzero",
+  "finishedAtUtc": "2026-10-21T04:59:47.065561+00:00"
+}
