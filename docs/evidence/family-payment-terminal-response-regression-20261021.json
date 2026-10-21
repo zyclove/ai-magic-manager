@@ -1,0 +1,316 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-21",
+  "scope": "Regression tests for terminal payment parameter redaction, original-key recovery, sales gates, payment verification and refund/reconciliation",
+  "baselineCommit": "48644fe41036d9eacd7e8ade6b89fc562f499be5",
+  "productionOrUiChangedByThisStage": false,
+  "newCases": {
+    "backend": 6,
+    "parent": 3
+  },
+  "sourcePins": [
+    {
+      "path": "backend/src/main/java/com/aimanager/commerce/internal/FamilySubscriptionService.java",
+      "bytes": 42378,
+      "sha256": "30e3dd0d025fa2e2f6d952516fc770656227cce36baa61f9b91f7f528c6d7696"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/commerce/internal/FamilySubscriptionPaymentJourneyTest.java",
+      "bytes": 58838,
+      "sha256": "a51e5fe908ffe3c0dd4088ba5011b532b8d71661ffa037a941079cc023033516"
+    },
+    {
+      "path": "apps/parent/test/family_payment_test.dart",
+      "bytes": 15971,
+      "sha256": "ff226c039efdf7d5d65edd9ad17fea922e1923df018822248563115a1c0f96cd"
+    },
+    {
+      "path": ".cache/family-payment-terminal-20261021/backend/out/source-pins.json",
+      "bytes": 141529,
+      "sha256": "3c9d6003ff7d4fa68c7e179d0cecf76ea3ad138123ebf9106d71e99eb787bbab"
+    }
+  ],
+  "frozenBackendFiles": 674,
+  "counterfactual": {
+    "source": "a77d28e exact FamilySubscriptionService mapper in an isolated copy",
+    "tests": 2,
+    "assertionFailures": 2,
+    "errors": 0,
+    "skipped": 0,
+    "exitCode": 1,
+    "cases": [
+      "PAID",
+      "CLOSED"
+    ],
+    "failure": "parameters.isEmpty expected true, actual false",
+    "productionWorkspaceReverted": false,
+    "qualifiesCurrentProductionAsFailed": false,
+    "mutantServiceSha256": "5744b163027b776a3b3594042ba8b414c17f74d74aecbb7c79257bb0f0a119d1"
+  },
+  "targetedBackend": {
+    "exitCode": 0,
+    "tests": 82,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "passed": 82,
+    "classes": [
+      {
+        "name": "com.aimanager.commerce.internal.FamilyAfterSalesOperatorJourneyTest",
+        "tests": 12,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.aimanager.commerce.internal.FamilyBillReconciliationServiceTest",
+        "tests": 25,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.aimanager.commerce.internal.FamilyBillRefundIntegrationTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.aimanager.commerce.internal.FamilySalesGateTest",
+        "tests": 3,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      {
+        "name": "com.aimanager.commerce.internal.FamilySubscriptionPaymentJourneyTest",
+        "tests": 39,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      }
+    ]
+  },
+  "fullBackend": {
+    "status": "FAILED_RESOURCE_EXHAUSTION",
+    "accepted": false,
+    "counts": null,
+    "partialXmlTotals": {
+      "tests": 2582,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 69,
+      "passed": 2513
+    },
+    "mavenExitCode": 1,
+    "wholePlanCompleted": false,
+    "previousFullAttempt": "ABORTED_RESOURCE_EXHAUSTION",
+    "freshBoundedTargetUnchanged": true
+  },
+  "fullInitialAttempt": {
+    "observedAtUtc": "2026-10-21T03:13:39.234191+00:00",
+    "status": "ABORTED_RESOURCE_EXHAUSTION",
+    "budgetSeconds": 600,
+    "budgetExceeded": true,
+    "outerSession": 25826,
+    "outerSessionExitCode": 1,
+    "cancelMethod": "soft Ctrl-C to owned exec session",
+    "forceStopRequested": false,
+    "mavenOwnExitCode": null,
+    "mavenOwnExitCodeNotCaptured": true,
+    "normalMavenResultReceiptExists": false,
+    "ownedPidsCheckedAbsent": [
+      102840,
+      71124,
+      50636
+    ],
+    "fullResultAccepted": false,
+    "automaticRetryStarted": false
+  },
+  "fullInitialPartialSummary": {
+    "status": "PARTIAL_ONLY_ABORTED_NOT_FULL_ACCEPTANCE",
+    "freshXml": 133,
+    "staleXmlExcluded": [],
+    "partialTotals": {
+      "tests": 2149,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 17
+    },
+    "failedCases": []
+  },
+  "boundedMemoryFailure": {
+    "status": "FAILED_RESOURCE_EXHAUSTION",
+    "complete": false,
+    "wholeBackendAccepted": false,
+    "outerSession": 23658,
+    "outerExitCode": 1,
+    "mavenOwnExitCode": 1,
+    "naturalTerminal": true,
+    "cancelRequested": false,
+    "rawMavenDuration": "06:44",
+    "reportedMavenFinished": "2026-10-21T12:21:55+08:00",
+    "xmlPartialTotals": {
+      "tests": 2582,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 69,
+      "passed": 2513
+    },
+    "xmlFiles": 181,
+    "allReportedCacheMaxSize": 4,
+    "failureEvidence": "Surefire fork OutOfMemoryError: Java heap space",
+    "sourceOrPomOrHeapAlteredDuringRun": false,
+    "automaticRetryStarted": false,
+    "windowReturned": true
+  },
+  "boundedFirstResourceGate": {
+    "status": "NOT_STARTED_RESOURCE_GATE",
+    "attempt": 1,
+    "resource": {
+      "observedAtUtc": "2026-10-21T04:02:06.787383+00:00",
+      "availableRamBytes": 1551765504,
+      "sdkCandidates": [],
+      "diskFree": {
+        "C": 15510323200,
+        "D": 41911681024
+      },
+      "coordinatorHandoffRequiredSeparately": true,
+      "resourceReady": false
+    },
+    "minimumRamBytes": 2147483648,
+    "sdkStarted": false,
+    "activeExecSession": false,
+    "sourceAndToolFreshChecksReached": false,
+    "frozenCandidateUnchanged": true,
+    "automaticRetryStarted": false,
+    "windowReturned": true
+  },
+  "boundedStartAttempt": {
+    "attempt": 2,
+    "status": "PREFLIGHT_PASSED",
+    "resourceFile": "resource-full-bounded-r2.json",
+    "sourceFiles": 674,
+    "toolAndCachePaths": 188,
+    "emptyTargetConfirmed": true,
+    "head": "177766874a1cd11d177a51717aab3b6dbb9ca664",
+    "actualExecSession": 23658,
+    "initialToolYieldConfirmedRunning": true
+  },
+  "parentPaymentTestCommit": {
+    "committedAtUtc": "2026-10-21T04:05:28.471048+00:00",
+    "commit": "665befb1f0d68690a094b2c44f5d893594e139c3",
+    "paths": [
+      "apps/parent/test/family_payment_test.dart"
+    ],
+    "rawSourceSha256": "ff226c039efdf7d5d65edd9ad17fea922e1923df018822248563115a1c0f96cd",
+    "sourceWorktreeBytesUnchanged": true,
+    "sharedIndexEmpty": true,
+    "otherReviewedParentWipUnchanged": true,
+    "pushed": false,
+    "parentFullNotClaimed": true
+  },
+  "parentPostFixPaymentScope": {
+    "recordedAtUtc": "2026-10-21T04:04:13.712758+00:00",
+    "scope": "apps/parent/test/family_payment_test.dart",
+    "completedPassingCases": 10,
+    "sourceSha256": "ff226c039efdf7d5d65edd9ad17fea922e1923df018822248563115a1c0f96cd",
+    "sourceManifestSha256": "285b46962dc0ffdd7892148f761e44c08021faf7c0026b7987cfe93c03853e06",
+    "sourceManifestFiles": 400,
+    "proof": "Single concurrency expanded reporter: 10 sequential cases +225 through +234 followed by +235 loading the next file; none failed or skipped.",
+    "testEvents": [
+      "00:51 +225: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix-v2/src/apps/parent/test/family_payment_test.dart: PAID attempt without SDK parameters keeps original recovery until an authoritative order GET",
+      "00:51 +226: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix-v2/src/apps/parent/test/family_payment_test.dart: CLOSED attempt without SDK parameters keeps original recovery until an authoritative order GET",
+      "00:51 +227: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix-v2/src/apps/parent/test/family_payment_test.dart: INITIATED attempt without SDK parameters keeps original recovery until an authoritative order GET",
+      "00:51 +228: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix-v2/src/apps/parent/test/family_payment_test.dart: a closed sales gate blocks native payment and preserves the original order for recovery",
+      "00:51 +229: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix-v2/src/apps/parent/test/family_payment_test.dart: backgrounding during SDK reservation cannot launch WeChat",
+      "00:51 +230: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix-v2/src/apps/parent/test/family_payment_test.dart: authoritative GET terminal fact clears original payment without a verification POST",
+      "00:51 +231: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix-v2/src/apps/parent/test/family_payment_test.dart: a definite changed quote clears the rejected draft so fresh terms can be confirmed",
+      "00:51 +232: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix-v2/src/apps/parent/test/family_payment_test.dart: an unknown order retries the durable original offer version after a quote changes",
+      "00:51 +233: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix-v2/src/apps/parent/test/family_payment_test.dart: native dispatch is not payment and pending order survives to authoritative recovery",
+      "00:51 +234: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix-v2/src/apps/parent/test/family_payment_test.dart: native rejects malformed provider parameters before dispatch"
+    ],
+    "nextFileEvent": "00:51 +235: loading D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix-v2/src/apps/parent/test/family_push_platform_test.dart",
+    "wholeParentRunComplete": false,
+    "wholeParentRunAccepted": false,
+    "wholeParentStopReason": "RuntimeError: Command deadline exceeded: 04-full-parent",
+    "wholeParentExitCode": 124,
+    "currentReviewedProductionPinsMatch": true,
+    "productionPins": {
+      "apps/parent/lib/core/family_payment.dart": "7892e4399853af4cdbd31e9904110d29dc729623ca30aa7c12f2afebee787093",
+      "apps/parent/lib/ui/family_membership.dart": "9db8f05e00a909e2693d17bd79fbb1baf1cff1f986e812f84151c676db28fb5c",
+      "apps/parent/lib/ui/family_order_page.dart": "62744b8d3967e5b63ec3963758dbe672a59866a20fab9550a766faf6b417352f",
+      "apps/parent/test/family_membership_test.dart": "56fdc89bcfdafb31ad144196a862e2e00b2c9c97c412548d88fc22c73e33465d",
+      "apps/parent/test/family_payment_recovery_guard_test.dart": "c480f252b0dbd5e8ef76a76569cce18205af080c5269bf2a93314647510971e5"
+    },
+    "rawLogSha256": "6411bd7b798b967f696485b6428922cfe5ca13ff8a4276816c44575dbe508c8a",
+    "receiptSha256": "0423014f6cde036fb9ae234191576149afe0f8c1ddec2dd74c10458a82579d82",
+    "realNativeOrProviderAccepted": false
+  },
+  "parent": {
+    "verification": {
+      "targeted": {
+        "passed": 10,
+        "failed": 0,
+        "exitCode": 0
+      },
+      "parentFull": {
+        "passed": 524,
+        "failed": 0,
+        "exitCode": 0
+      },
+      "scopedAnalysis": {
+        "issues": 0,
+        "exitCode": 0
+      }
+    },
+    "sourceScope": "48644fe Parent production with the three new payment tests at execution time; does not certify later 3b9117b membership UI or other subsequent files",
+    "realNativeStorageOrAndroidProcessDeath": false
+  },
+  "independentReview": {
+    "blockingFindings": 0,
+    "sdkOrServiceOperations": false,
+    "responsePathsReviewed": true,
+    "boundedCandidateReadinessVerified": true
+  },
+  "backendRuntimePins": {
+    "paths": 188,
+    "manifestSha256": "443b7bbd32fe1124612d99d8a48a5675d39cc6a2f156049994c0606146726342"
+  },
+  "releaseBoundaries": {
+    "salesOpen": false,
+    "realWechatPaymentOrRefundAccepted": false,
+    "realSmsOrWechatIdentityAccepted": false,
+    "targetMysqlAccepted": false,
+    "androidDeviceAccepted": false,
+    "deployed": false,
+    "servicesChanged": false,
+    "pushedByThisStage": false,
+    "backendDatabase": "isolated H2; external payment gateway test double"
+  },
+  "artifacts": ".local/family-payment-terminal-20261021/artifacts/",
+  "skippedTests": "Conditional cases listed in preserved full Surefire XML; skipped is not counted as passed.",
+  "logs": [
+    {
+      "path": ".cache/family-payment-terminal-20261021/backend/out/mutant.log",
+      "bytes": 36349,
+      "sha256": "e06208ec8f5d182577afe1407727f18eaa252ec0934ea74586a6486095f3866b"
+    },
+    {
+      "path": ".cache/family-payment-terminal-20261021/backend/out/targeted.log",
+      "bytes": 80745,
+      "sha256": "1adbe8e0d992a16d9681524929e4172682d9137ba0057cdc7dcd769ff24ec9aa"
+    },
+    {
+      "path": ".cache/family-payment-terminal-20261021/backend/out/full.log",
+      "bytes": 1346332,
+      "sha256": "24f033eb64626bb05651c72942577982e833199735e503180c3c341fc469f3e3"
+    },
+    {
+      "path": ".cache/family-payment-terminal-20261021/backend/out/full-bounded.log",
+      "bytes": 1772291,
+      "sha256": "a4af925f4b38747d511becab5eaeef0ff69681cbfabb02a18b120b9a2f35963c"
+    }
+  ]
+}

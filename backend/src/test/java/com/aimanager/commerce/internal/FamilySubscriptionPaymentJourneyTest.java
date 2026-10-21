@@ -28,6 +28,8 @@ import java.util.Map;
 import java.util.UUID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -85,6 +87,148 @@ class FamilySubscriptionPaymentJourneyTest {
         .andExpect(status().isCreated()).andReturn();
     tenant = json.readTree(result.getResponse().getContentAsString()).path("id").asText();
     verifiedDevice = activeDevice(tenant);
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"PAID", "CLOSED"})
+  void terminalAttemptRecoveryRedactsParametersAndPreservesOriginalFacts(String terminal) throws Exception {
+    String id = order("FAMILY_MONTH").path("id").asText();
+    JsonNode original = paymentAttemptResponse(id);
+    assertThat(original.path("parameters").path("prepayid").asText()).isEqualTo("test-external-prepay");
+    when(gateway.queryPayment(FamilySubscriptionService.merchantId(id)))
+        .thenReturn(terminalEvidence(id, terminal));
+    verifyPayment(id, 200);
+
+    assertTerminalRecovery(id, original, terminal, terminal);
+    verify(gateway, times(1)).createAppPayment(any());
+    verify(gateway, times(1)).queryPayment(FamilySubscriptionService.merchantId(id));
+    assertThat(jdbc.queryForObject("SELECT provider_payload FROM family_payment_attempts WHERE order_id=?", String.class, id))
+        .contains("test-external-prepay");
+    assertThat(ledger.read(tenant, owner).paidDeviceCapacity()).isEqualTo("PAID".equals(terminal) ? 3 : 0);
+  }
+
+  @Test
+  void readyAttemptRecoveryStillReturnsOriginalParametersWithoutCreatingAnotherPayment() throws Exception {
+    String id = order("FAMILY_MONTH").path("id").asText();
+    JsonNode original = paymentAttemptResponse(id);
+    var row = jdbc.queryForMap("SELECT * FROM family_payment_attempts WHERE order_id=?", id);
+    assertThat(original.path("parameters").path("prepayid").asText()).isEqualTo("test-external-prepay");
+
+    assertThat(paymentAttemptResponse(id)).isEqualTo(original);
+    JsonNode listed = body(mvc.perform(get(base()+"/orders/"+id+"/payment-attempts").with(actor(owner)))
+        .andExpect(status().isOk()).andReturn()).path("items").get(0);
+    assertThat(listed).isEqualTo(original);
+    assertThat(jdbc.queryForMap("SELECT * FROM family_payment_attempts WHERE order_id=?", id)).isEqualTo(row);
+    verify(gateway, times(1)).createAppPayment(any());
+    verify(gateway, never()).queryPayment(anyString());
+    assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM commercial_source_events WHERE tenant_id=?", Integer.class, tenant)).isZero();
+  }
+
+  @ParameterizedTest
+  @ValueSource(strings = {"PAID", "CLOSED"})
+  void verifiedTerminalDuringProviderResponseCannotBeReopenedByLateParameters(String terminal) throws Exception {
+    String id = order("FAMILY_MONTH").path("id").asText();
+    var original = new java.util.concurrent.atomic.AtomicReference<JsonNode>();
+    when(gateway.queryPayment(FamilySubscriptionService.merchantId(id)))
+        .thenReturn(terminalEvidence(id, terminal));
+    when(gateway.createAppPayment(any())).thenAnswer(call -> {
+      assertThat(org.springframework.transaction.support.TransactionSynchronizationManager.isActualTransactionActive()).isFalse();
+      JsonNode initiated = body(mvc.perform(get(base()+"/orders/"+id+"/payment-attempts").with(actor(owner)))
+          .andExpect(status().isOk()).andReturn()).path("items").get(0);
+      assertThat(initiated.path("status").asText()).isEqualTo("INITIATED");
+      assertEmptyPaymentParameters(initiated);
+      original.set(initiated);
+      // The provider boundary is outside the local transaction. A verified
+      // query can commit a terminal fact before this late SDK response returns.
+      verifyPayment(id, 200);
+      return new FamilyPaymentGateway.AppPayment(Map.of("prepayid", "late-sdk-parameters"));
+    });
+
+    JsonNode returned = paymentAttemptResponse(id);
+    assertAttemptIdentity(returned, original.get(), terminal);
+    assertEmptyPaymentParameters(returned);
+    assertThat(jdbc.queryForObject("SELECT provider_payload FROM family_payment_attempts WHERE order_id=?", String.class, id)).isEqualTo("{}");
+    assertTerminalRecovery(id, original.get(), terminal, terminal);
+    verify(gateway, times(1)).createAppPayment(any());
+    assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM family_payment_attempts WHERE order_id=?", Integer.class, id)).isEqualTo(1);
+    assertThat(ledger.read(tenant, owner).paidDeviceCapacity()).isEqualTo("PAID".equals(terminal) ? 3 : 0);
+  }
+
+  @Test
+  void closedSalesStillAllowReviewedRefundAndRedactedOriginalAttemptRecovery() throws Exception {
+    String id = order("FAMILY_MONTH").path("id").asText();
+    JsonNode original = paymentAttemptResponse(id);
+    when(gateway.queryPayment(FamilySubscriptionService.merchantId(id))).thenReturn(payment(id, 1900, "tx-"+id));
+    verifyPayment(id, 200);
+    when(gateway.available()).thenReturn(false);
+    String refundId = refund(id, "closed-sales-refund").path("id").asText();
+    var reviewer = jwt().jwt(j -> j.subject("reviewer-"+UUID.randomUUID())
+        .claim("auth_time", now/1000).claim("amr", java.util.List.of("pwd", "otp")))
+        .authorities(new SimpleGrantedAuthority("SCOPE_family-refunds:review"));
+    String path = "/api/v1/platform/family-subscription/refund-requests/"+refundId;
+    JsonNode preview = body(mvc.perform(get(path+"/preview").with(reviewer)).andExpect(status().isOk()).andReturn());
+    mvc.perform(post(path+"/reviews").with(reviewer).header("Idempotency-Key", "approve-"+refundId)
+        .contentType(MediaType.APPLICATION_JSON).content(json.writeValueAsString(Map.of("decision", "APPROVE", "previewHash", preview.path("previewHash").asText()))))
+        .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("REQUESTED"));
+    mvc.perform(post(base()+"/refund-requests/"+refundId+"/submissions").with(actor(owner))
+        .contentType(MediaType.APPLICATION_JSON).content("{}"))
+        .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("PROCESSING"));
+    when(gateway.queryRefund(FamilySubscriptionService.merchantId(refundId))).thenReturn(new FamilyPaymentGateway.RefundEvidence(
+        FamilySubscriptionService.merchantId(refundId), FamilySubscriptionService.merchantId(id), "rf-"+id, "tx-"+id,
+        1900, "CNY", "SUCCESS", now, "c".repeat(64)));
+    mvc.perform(post(base()+"/refund-requests/"+refundId+"/verifications").with(actor(owner))
+        .contentType(MediaType.APPLICATION_JSON).content("{}"))
+        .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("REFUNDED"));
+
+    assertThat(ledger.read(tenant, owner).paidDeviceCapacity()).isZero();
+    assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM commercial_source_events WHERE tenant_id=?", Integer.class, tenant)).isEqualTo(2);
+    assertTerminalRecovery(id, original, "PAID", "REFUNDED");
+    verify(gateway, times(1)).submitRefund(any());
+    verify(gateway, times(1)).createAppPayment(any());
+  }
+
+  private JsonNode paymentAttemptResponse(String id) throws Exception {
+    return body(mvc.perform(post(base()+"/orders/"+id+"/payment-attempts").with(actor(owner))
+        .header("Idempotency-Key", "attempt-"+id).contentType(MediaType.APPLICATION_JSON).content("{}"))
+        .andExpect(status().isOk()).andReturn());
+  }
+
+  private FamilyPaymentGateway.PaymentEvidence terminalEvidence(String id, String terminal) {
+    return "PAID".equals(terminal) ? payment(id, 1900, "tx-"+id)
+        : new FamilyPaymentGateway.PaymentEvidence(FamilySubscriptionService.merchantId(id), null, 1900, "CNY", "CLOSED", 0, "c".repeat(64));
+  }
+
+  private void assertEmptyPaymentParameters(JsonNode attempt) {
+    assertThat(attempt.path("parameters").isObject()).isTrue();
+    assertThat(attempt.path("parameters").isEmpty()).isTrue();
+  }
+
+  private void assertAttemptIdentity(JsonNode response, JsonNode original, String expectedStatus) {
+    assertThat(response.path("id")).isEqualTo(original.path("id"));
+    assertThat(response.path("orderId")).isEqualTo(original.path("orderId"));
+    assertThat(response.path("createdAt")).isEqualTo(original.path("createdAt"));
+    assertThat(response.path("status").asText()).isEqualTo(expectedStatus);
+  }
+
+  private void assertTerminalRecovery(String id, JsonNode original, String attemptStatus, String orderStatus) throws Exception {
+    var attempt = jdbc.queryForMap("SELECT * FROM family_payment_attempts WHERE order_id=?", id);
+    var order = jdbc.queryForMap("SELECT * FROM family_orders WHERE id=?", id);
+    int ledgerEvents = jdbc.queryForObject("SELECT COUNT(*) FROM commercial_source_events WHERE tenant_id=?", Integer.class, tenant);
+    for (boolean salesOpen : new boolean[] {true, false}) {
+      when(gateway.available()).thenReturn(salesOpen);
+      JsonNode restored = paymentAttemptResponse(id);
+      assertAttemptIdentity(restored, original, attemptStatus);
+      assertEmptyPaymentParameters(restored);
+      JsonNode listed = body(mvc.perform(get(base()+"/orders/"+id+"/payment-attempts").with(actor(owner)))
+          .andExpect(status().isOk()).andReturn()).path("items").get(0);
+      assertAttemptIdentity(listed, original, attemptStatus);
+      assertEmptyPaymentParameters(listed);
+      mvc.perform(get(base()+"/orders/"+id).with(actor(owner))).andExpect(status().isOk())
+          .andExpect(jsonPath("$.status").value(orderStatus));
+    }
+    assertThat(jdbc.queryForMap("SELECT * FROM family_payment_attempts WHERE order_id=?", id)).isEqualTo(attempt);
+    assertThat(jdbc.queryForMap("SELECT * FROM family_orders WHERE id=?", id)).isEqualTo(order);
+    assertThat(jdbc.queryForObject("SELECT COUNT(*) FROM commercial_source_events WHERE tenant_id=?", Integer.class, tenant)).isEqualTo(ledgerEvents);
   }
 
   @Test
