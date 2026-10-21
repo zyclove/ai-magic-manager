@@ -1,0 +1,3 @@
+# Admit only this archive's original logs under the repository-wide *.log rule.
+!r3/attempt/worker-console.log
+!r3/attempt/out/maven.log

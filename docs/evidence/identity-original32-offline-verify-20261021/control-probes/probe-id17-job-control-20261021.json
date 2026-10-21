@@ -1,0 +1,11 @@
+{
+  "startedAtUtc": "2026-10-21T06:21:19.926921+00:00",
+  "scope": "one self-created Python stdin-barrier worker; no SDK, source or cache copies",
+  "sdkStarted": false,
+  "accepted": false,
+  "workerPid": 125680,
+  "exitCode": 0,
+  "ownedJobActiveProcesses": 1,
+  "elapsedSeconds": 0.057325999994645827,
+  "finishedAtUtc": "2026-10-21T06:21:19.984247+00:00"
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "accepted": true,
+  "observedAtUtc": "2026-10-21T06:32:23.596359+00:00",
+  "scope": "original32-baseline-only; not current33 or real provider runtime",
+  "actualExecSession": 9114,
+  "initialChunk": "c23149",
+  "finalChunk": "2445cd",
+  "actualOuterExitCode": 0,
+  "actualOuterNaturallyTerminal": true,
+  "elapsedCompleteSeconds": 37.592368099998566,
+  "workerPid": 129512,
+  "mavenCommandPid": 128308,
+  "knownOwnedPidsAbsent": true,
+  "sdkProcesses": [],
+  "unknownProcessNames": [],
+  "availableBytes": 2503548928,
+  "independentXmlSuites": 12,
+  "independentXmlTotals": {
+    "tests": 71,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "jarSha256": "19c3d692661077979239fed82ea1c0f43519d43505584913eb5b9d2ee73e8b4b",
+  "all12ControlMetadataPinsMatched": true,
+  "resultSha256": "de098d2fb4a90a8b0611284f8976ad64b6ff4e897cee72b651d48a187ecf3d69",
+  "forcedTermination": false,
+  "servicesUpdated": false
+}

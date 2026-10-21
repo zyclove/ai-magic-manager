@@ -1,0 +1,151 @@
+{
+  "schemaVersion": 1,
+  "status": "STATIC_CANDIDATE_ONLY",
+  "executionApproved": false,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "sourceCommit": "3b9117b000a10d082a8f7849c41de5f69c0baa62",
+  "moduleTree": "098c8e75a7107876bdf31aba106882ff65b7d2b3",
+  "baselineSource": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions",
+  "baselineManifest": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\input-manifest.json",
+  "baselineManifestSha256": "a0042d42f84d6660b6e7f543c821e7fcb32579c1dc63766656d47c78f3c1bfcc",
+  "mainWorkspaceUsed": false,
+  "sourceFiles": 32,
+  "mainJava": 13,
+  "testJava": 12,
+  "expectedSuites": 12,
+  "expectedTests": 71,
+  "outerBudgetSeconds": 180,
+  "terminationReserveSeconds": 6,
+  "minimumRamBytes": 2147483648,
+  "minimumEachDiskBytes": 2147483648,
+  "settingsSha256": "4925e1bcc0d37d71a3f2f751737aceb3d89d2c58346a0ac8ce8710778ee5f5e4",
+  "removedEnvironmentNames": [
+    "ALIYUN_SMS_ACCESS_KEY_ID",
+    "ALIYUN_SMS_ACCESS_KEY_ID_FILE",
+    "ALIYUN_SMS_ACCESS_KEY_SECRET",
+    "ALIYUN_SMS_ACCESS_KEY_SECRET_FILE",
+    "ALIYUN_SMS_SECURITY_TOKEN",
+    "ALIYUN_SMS_SECURITY_TOKEN_FILE",
+    "ALIYUN_SMS_SIGN_NAME",
+    "ALIYUN_SMS_TEMPLATE_CODE",
+    "CONSUMER_ACCOUNT_SECURITY_ENABLED",
+    "CONSUMER_OTP_HMAC_KEY",
+    "CONSUMER_OTP_HMAC_KEY_FILE",
+    "CONSUMER_PHONE_ENABLED",
+    "CONSUMER_WECHAT_ENABLED",
+    "IDENTITY_PROVIDER_ENVIRONMENT_ID",
+    "IDENTITY_PROVIDER_INSTANCE_ID",
+    "IDENTITY_PROVIDER_OBSERVATION_KEY_FILE",
+    "IDENTITY_PROVIDER_OPERATION_ID",
+    "IDENTITY_PROVIDER_VERSION_ID",
+    "WECHAT_NATIVE_APP_ID",
+    "WECHAT_NATIVE_APP_SECRET",
+    "WECHAT_NATIVE_APP_SECRET_FILE"
+  ],
+  "javaToolOptions": "-Xmx512m -Dfile.encoding=UTF-8 -Djava.io.tmpdir=<attempt>/tmp",
+  "candidateFiles": [
+    {
+      "path": "controller.py",
+      "bytes": 8002,
+      "sha256": "6f1d3148df72c5caa8ec01b7a1f50261663946e0d969d0b340e58e42f0947e83"
+    },
+    {
+      "path": "worker.py",
+      "bytes": 22587,
+      "sha256": "40969d17221395de9f85eeceee32bfd2e9102d31e8b7b78058f6c234c02c5f08"
+    },
+    {
+      "path": "offline-settings.xml",
+      "bytes": 1677,
+      "sha256": "4925e1bcc0d37d71a3f2f751737aceb3d89d2c58346a0ac8ce8710778ee5f5e4"
+    },
+    {
+      "path": "expected-tests.json",
+      "bytes": 6371,
+      "sha256": "21e28a9ca067717daea97b7be695f8c190f61b226d6cdc2aeb9088ed76d57b68"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3674,
+      "sha256": "fd655e52f229361efa7be9166949aa388589763c77955d187683dce58a3d13a4"
+    }
+  ],
+  "controlRuntimeFiles": [
+    {
+      "path": "C:\\Python313\\python.exe",
+      "absolute": true,
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125"
+    },
+    {
+      "path": "C:\\Python313\\python313.dll",
+      "absolute": true,
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\win32\\win32job.pyd",
+      "absolute": true,
+      "bytes": 28672,
+      "sha256": "8f2a15f090e4fa75fd7179de0aa41108e9c6fe95786f736f373f5a7501e7e769"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\pywin32_system32\\pywintypes313.dll",
+      "absolute": true,
+      "bytes": 136192,
+      "sha256": "90ba935a0145ee9ae56267a365cc0088d34fa506b7afeb2bd1bd78cd33359605"
+    }
+  ],
+  "sdkNames": [
+    "java.exe",
+    "javaw.exe",
+    "javac.exe",
+    "dart.exe",
+    "dartaotruntime.exe",
+    "go.exe",
+    "gofmt.exe",
+    "flutter.exe",
+    "flutter_tester.exe",
+    "gen_snapshot.exe",
+    "aapt2.exe",
+    "qemu-system-x86_64.exe",
+    "compile.exe",
+    "link.exe",
+    "asm.exe",
+    "cgo.exe"
+  ],
+  "expectedCommandSuffix": "-DskipTests=false -Dmaven.test.skip=false verify",
+  "noSelectors": true,
+  "noDependenciesDownloaded": true,
+  "noSourceOrCacheCopiesPrepared": true,
+  "staticAstChecked": true,
+  "runtimeWatchdogVerified": false,
+  "baselineRunnerSha256": "60b0a75d3e6d992757e69661a75893425c8dd2d509e35385606786068630fdde",
+  "postflightToolAndConfigurationPins": true,
+  "unknownProcessNamesFailClosed": true,
+  "historicalMetadataFiles": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\committed-validation-20261021-r1\\tool-and-cache-input-observations.json",
+      "absolute": true,
+      "bytes": 94817,
+      "sha256": "0302aa5873bf0965a78a45446d0835cde829c3d24a098308f04db48bf589fbcc"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\committed-validation-20261021-r1\\existing-project-maven-cache-pins.json",
+      "absolute": true,
+      "bytes": 794045,
+      "sha256": "1ccbf25d1793fb7c76f91e4f1fb5c76edbb6f66c8877fd5d137664d06fb057b7"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\committed-validation-20261021-r1\\launch-source-observation-r1.json",
+      "absolute": true,
+      "bytes": 2448,
+      "sha256": "824459476795e6ac2813adc19258d3a085cad99b4567ac8fe41854d36f7ee055"
+    }
+  ],
+  "historicalMetadataAnchoredToR4": true,
+  "hardWatchdogCoversDirectProcessExit": true,
+  "naturalJobAccountingDrainSeconds": 1.0,
+  "naturalDrainBoundedByExistingCutoff": true
+}

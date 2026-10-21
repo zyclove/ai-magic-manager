@@ -1,0 +1,39 @@
+{
+  "utc": "2026-10-21T06:28:23.018069+00:00",
+  "executable": "C:\\Windows\\System32\\cmd.exe",
+  "arguments": [
+    "/d",
+    "/v:off",
+    "/s",
+    "/c",
+    "D:\\systems\\software\\maven\\bin\\mvn.cmd -V -o -B -ntp -s D:\\codes\\mobile\\ai-manager\\.cache\\id17-verify-20261021-r3-root\\offline-settings.xml -f D:\\codes\\mobile\\ai-manager\\.cache\\id17-verify-20261021-r3-root\\attempt\\src\\identity-extensions\\pom.xml -Dmaven.repo.local=D:\\codes\\mobile\\ai-manager\\.cache\\id17-verify-20261021-r3-root\\attempt\\m2 -DskipTests=false -Dmaven.test.skip=false verify"
+  ],
+  "workingDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-verify-20261021-r3-root\\attempt\\src\\identity-extensions",
+  "completeBudgetSeconds": 180,
+  "preflightSeconds": 15.294110599992564,
+  "testsRequested": true,
+  "applicationEnvironmentNamesRemoved": [
+    "ALIYUN_SMS_ACCESS_KEY_ID",
+    "ALIYUN_SMS_ACCESS_KEY_ID_FILE",
+    "ALIYUN_SMS_ACCESS_KEY_SECRET",
+    "ALIYUN_SMS_ACCESS_KEY_SECRET_FILE",
+    "ALIYUN_SMS_SECURITY_TOKEN",
+    "ALIYUN_SMS_SECURITY_TOKEN_FILE",
+    "ALIYUN_SMS_SIGN_NAME",
+    "ALIYUN_SMS_TEMPLATE_CODE",
+    "CONSUMER_ACCOUNT_SECURITY_ENABLED",
+    "CONSUMER_OTP_HMAC_KEY",
+    "CONSUMER_OTP_HMAC_KEY_FILE",
+    "CONSUMER_PHONE_ENABLED",
+    "CONSUMER_WECHAT_ENABLED",
+    "IDENTITY_PROVIDER_ENVIRONMENT_ID",
+    "IDENTITY_PROVIDER_INSTANCE_ID",
+    "IDENTITY_PROVIDER_OBSERVATION_KEY_FILE",
+    "IDENTITY_PROVIDER_OPERATION_ID",
+    "IDENTITY_PROVIDER_VERSION_ID",
+    "WECHAT_NATIVE_APP_ID",
+    "WECHAT_NATIVE_APP_SECRET",
+    "WECHAT_NATIVE_APP_SECRET_FILE"
+  ],
+  "pid": 128308
+}

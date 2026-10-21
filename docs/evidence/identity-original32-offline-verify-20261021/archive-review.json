@@ -1,0 +1,197 @@
+{
+  "schemaVersion": 1,
+  "operation": "file-only archive of an already completed verification; no SDK/test/service/network execution",
+  "scope": "original32-baseline-only",
+  "sourceCommit": "3b9117b000a10d082a8f7849c41de5f69c0baa62",
+  "moduleTree": "098c8e75a7107876bdf31aba106882ff65b7d2b3",
+  "rawFiles": 44,
+  "rawBytes": 1170343.0,
+  "allSourceAndDestinationBytesSha256AndGitBlobsMatched": true,
+  "sourceInventoryTakenBeforeCopies": true,
+  "sourceFilesRecheckedAfterEachCopy": true,
+  "rawOriginalsModifiedOrRedacted": false,
+  "copyMismatches": [],
+  "acceptedResultSha256MatchedRootRecord": true,
+  "approvedProposalSha256Matched": true,
+  "embeddedReceiptMatched": true,
+  "candidateFilePinsMatched": true,
+  "resultConsoleAndMavenLogPinsMatched": true,
+  "junit": [
+    {
+      "file": "TEST-com.aimanager.identity.AliyunSmsTest.xml",
+      "suite": "com.aimanager.identity.AliyunSmsTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 2,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.ConsumerAccountFlowTest.xml",
+      "suite": "com.aimanager.identity.ConsumerAccountFlowTest",
+      "tests": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 17,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.ConsumerAccountSpiPackagingTest.xml",
+      "suite": "com.aimanager.identity.ConsumerAccountSpiPackagingTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 1,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.ConsumerAccountStatusTest.xml",
+      "suite": "com.aimanager.identity.ConsumerAccountStatusTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 6,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.ConsumerAuthenticatorTest.xml",
+      "suite": "com.aimanager.identity.ConsumerAuthenticatorTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 8,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.ConsumerClaimsSerializationTest.xml",
+      "suite": "com.aimanager.identity.ConsumerClaimsSerializationTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 5,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.ConsumerConfigurationTest.xml",
+      "suite": "com.aimanager.identity.ConsumerConfigurationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 3,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.ConsumerIdentityTest.xml",
+      "suite": "com.aimanager.identity.ConsumerIdentityTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 5,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.ConsumerIdentityTransactionsTest.xml",
+      "suite": "com.aimanager.identity.ConsumerIdentityTransactionsTest",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 13,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.ConsumerProviderRuntimeTest.xml",
+      "suite": "com.aimanager.identity.ConsumerProviderRuntimeTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 4,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.ConsumerRuntimeSnapshotTest.xml",
+      "suite": "com.aimanager.identity.ConsumerRuntimeSnapshotTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 1,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.PhoneOtpTest.xml",
+      "suite": "com.aimanager.identity.PhoneOtpTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 6,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    }
+  ],
+  "junitTotals": {
+    "suites": 12,
+    "tests": 71.0,
+    "failures": 0.0,
+    "errors": 0.0,
+    "skipped": 0.0
+  },
+  "compilerInputs": [
+    {
+      "scope": "main",
+      "inputCount": 13,
+      "exactManifestSourceSet": true
+    },
+    {
+      "scope": "test",
+      "inputCount": 12,
+      "exactManifestSourceSet": true
+    }
+  ],
+  "logs": [
+    {
+      "source": ".cache/id17-verify-20261021-r3-root/attempt/worker-console.log",
+      "sensitiveAssignmentNames": [],
+      "sensitiveAssignmentCount": 0
+    },
+    {
+      "source": ".cache/id17-verify-20261021-r3-root/attempt/out/maven.log",
+      "sensitiveAssignmentNames": [],
+      "sensitiveAssignmentCount": 0
+    }
+  ],
+  "runtimeClaimsTakenFrom": "r3/attempt/external-acceptance-root.json, result.json, receipt.json; not reobserved during archival",
+  "excluded": [
+    "source trees",
+    "Maven dependency caches",
+    "temporary files",
+    "class files",
+    "JAR binaries",
+    "private .local/runtime/credentials.json",
+    ".env files"
+  ],
+  "gitIndexModified": false,
+  "commitCreated": false,
+  "cleanupPerformed": false
+}

@@ -1,0 +1,40 @@
+{
+  "stage": "initial",
+  "resource": {
+    "utc": "2026-10-21T06:28:07.782609+00:00",
+    "availablePhysicalBytes": 3246321664,
+    "diskFreeBytes": {
+      "C:/": 12352069632,
+      "D:/": 36330536960
+    },
+    "sdkProcesses": []
+  },
+  "elapsedCompleteSeconds": 0.05883949999406468,
+  "thresholds": {
+    "minimumAvailablePhysicalBytes": 2147483648,
+    "minimumFreeBytesEachDisk": 2147483648,
+    "maximumPreflightSeconds": 60,
+    "completeOuterBudgetSeconds": 180
+  },
+  "conditions": {
+    "observedSdkNamesEmpty": true,
+    "ramAtLeastThreshold": true,
+    "eachDiskAtLeastThreshold": true,
+    "elapsedWithinPreflightBudget": true,
+    "completeSourceToolConfigurationAndCachePinsVerified": false
+  },
+  "diskConditions": {
+    "C:/": true,
+    "D:/": true
+  },
+  "resourceGatePassed": true,
+  "enforcedAtResourceGate": [
+    "observedSdkNamesEmpty",
+    "ramAtLeastThreshold",
+    "eachDiskAtLeastThreshold"
+  ],
+  "pinsState": "NOT_YET_CHECKED",
+  "pinsStateFromControlFlow": true,
+  "elapsedAndPinsAreRecordedHereNotAddedToInitialResourceGate": true,
+  "machineOrUserEnvironmentValuesRecorded": false
+}

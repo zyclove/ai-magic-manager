@@ -1,0 +1,12 @@
+{
+  "status": "NOT_ACCEPTED",
+  "outerBudgetSeconds": 180,
+  "terminationReserveSeconds": 6,
+  "startedAtUtc": "2026-10-21T06:18:33.178909+00:00",
+  "workerPid": null,
+  "testsScope": "original32-baseline-only",
+  "errorType": "TypeError",
+  "reason": "None is not a valid string in this context",
+  "finishedAtUtc": "2026-10-21T06:18:33.195939+00:00",
+  "elapsedCompleteSeconds": 0.06098989999736659
+}
