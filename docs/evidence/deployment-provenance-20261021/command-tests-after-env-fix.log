@@ -1,0 +1,9 @@
+test_failed_config_or_start_restores_existing_and_absent_environment (test_deployment_provenance_commands.DeploymentProvenanceCommandsTest.test_failed_config_or_start_restores_existing_and_absent_environment) ... ok
+test_invalid_manifest_rejects_before_any_docker_or_http_boundary (test_deployment_provenance_commands.DeploymentProvenanceCommandsTest.test_invalid_manifest_rejects_before_any_docker_or_http_boundary) ... ok
+test_start_writes_separate_actual_image_receipt_without_changing_manifest (test_deployment_provenance_commands.DeploymentProvenanceCommandsTest.test_start_writes_separate_actual_image_receipt_without_changing_manifest) ... ok
+test_verify_rejects_manifest_or_image_replacement_during_http_checks (test_deployment_provenance_commands.DeploymentProvenanceCommandsTest.test_verify_rejects_manifest_or_image_replacement_during_http_checks) ... ok
+
+----------------------------------------------------------------------
+Ran 4 tests in 8.463s
+
+OK

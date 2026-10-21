@@ -4,14 +4,10 @@
 param([string]$Directory = '.local/deployment')
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'deployment-common.ps1')
+. (Join-Path $PSScriptRoot 'deployment-provenance.ps1')
 $context = Get-DeploymentContext $Directory
-$manifestPath = Join-Path $context.Root 'release-manifest.json'
-if (-not (Test-Path -LiteralPath $manifestPath)) { throw 'Verified build contexts are missing; run build-deployment.ps1 first.' }
-$manifest = Get-Content -LiteralPath $manifestPath -Raw | ConvertFrom-Json
-if ($manifest.schemaVersion -ne 1 -or $manifest.publicUrl -ne $context.Settings.publicUrl -or $manifest.artifactRoot -notmatch '^artifacts/release-[0-9a-f]{32}$') { throw 'Invalid release manifest.' }
-$artifactRoot = Join-Path $context.Root $manifest.artifactRoot
-$jar = Join-Path $artifactRoot 'backend/manager-backend.jar'
-if (-not (Test-Path -LiteralPath $jar) -or (Get-FileHash -LiteralPath $jar).Hash.ToLowerInvariant() -ne $manifest.backendSha256) { throw 'Build artifact changed since verification.' }
+$provenance = Read-DeploymentProvenance -Context $context
+$artifactRoot = $provenance.ArtifactRoot
 $arguments = @('compose', '--env-file', $context.Environment, '-f', $context.Compose)
 $configurationJson = & docker @arguments config --format json
 if ($LASTEXITCODE -ne 0) { throw 'Compose configuration validation failed.' }

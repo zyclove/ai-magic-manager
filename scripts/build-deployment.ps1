@@ -19,6 +19,7 @@ param(
 )
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'deployment-common.ps1')
+. (Join-Path $PSScriptRoot 'deployment-provenance.ps1')
 $context = Get-DeploymentContext $Directory
 if (($context.Settings.consumerIdentity -eq $true) -ne $ConsumerIdentity.IsPresent) {
     throw 'ConsumerIdentity must match the initialized deployment.'
@@ -75,6 +76,15 @@ if ($ConsumerIdentity) {
     foreach ($name in @('identity-extensions', 'deploy/keycloak', 'deploy/containers')) {
         CopySourceTree (Join-Path $source $name) (Join-Path $snapshot $name)
     }
+}
+# These are the exact bytes given to verification, including frozen source
+# directories that have no Git metadata. Never label such a copy with an
+# ancestor checkout's HEAD. Generated SDK output is excluded on both reads.
+$sourceDigests = @(Get-DeploymentFileInventory -Root $snapshot -ExcludeGenerated)
+$sourceTreeSha256 = Get-DeploymentTreeSha256 -Files $sourceDigests
+$recipeDigests = @(Get-DeploymentRecipeInventory -Repository $context.Repository)
+$recipeTreeSha256 = Get-DeploymentTreeSha256 -Files $recipeDigests
+if ($ConsumerIdentity) {
     $identityArgs = @('-B', '-f', (Join-Path $snapshot 'identity-extensions/pom.xml'),
         '-s', (Join-Path $snapshot 'identity-extensions/maven-settings.xml'), 'verify', '-DfailIfNoTests=true')
     if ($Offline) { $identityArgs += '-o' }
@@ -175,12 +185,16 @@ if ($ConsumerIdentity) {
     Copy-Item -LiteralPath (Join-Path $snapshot 'identity-extensions/target/consumer-identity-1.0.0.jar') -Destination $provider
     $identityProviderHash = (Get-FileHash -LiteralPath $provider -Algorithm SHA256).Hash.ToLowerInvariant()
 }
-$files = Get-ChildItem -LiteralPath $snapshot -Recurse -File | Where-Object {
-    $relative = [IO.Path]::GetRelativePath($snapshot, $_.FullName)
-    $relative -notmatch '(^|[\\/])(target|build|\.dart_tool|\.local)[\\/]' -and $_.Name -notlike '.flutter-plugins*'
+try { Assert-DeploymentInventory -Root $snapshot -Files $sourceDigests -ExcludeGenerated }
+catch { throw 'Verification source inputs changed during the build; rebuild from a stable source.' }
+if ((Get-DeploymentTreeSha256 -Files @(Get-DeploymentRecipeInventory -Repository $context.Repository)) -cne $recipeTreeSha256) {
+    throw 'Deployment recipes changed during verification; rebuild from a stable source.'
 }
-$sourceDigests = @($files | Sort-Object FullName | ForEach-Object { @{path=[IO.Path]::GetRelativePath($snapshot, $_.FullName).Replace('\','/'); sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()} })
+$artifactDigests = @(Get-DeploymentFileInventory -Root $releaseRoot)
 $manifest = @{schemaVersion=1; applicationVersion='1.0.0'; builtAt=[DateTimeOffset]::UtcNow.ToString('O'); publicUrl=$origin; sourceFiles=$sourceDigests;
+    provenanceVersion=1; source=@{kind='content-snapshot'; revision="sha256:$sourceTreeSha256"}; sourceTreeSha256=$sourceTreeSha256;
+    artifactFiles=$artifactDigests; artifactTreeSha256=(Get-DeploymentTreeSha256 -Files $artifactDigests);
+    recipeFiles=$recipeDigests; recipeTreeSha256=$recipeTreeSha256;
     consumerIdentity=$ConsumerIdentity.IsPresent; identityProviderSha256=$identityProviderHash;
     verifiedProjects=$verifiedProjects; interoperabilityProperties=@($interopPaths.Keys) + @(
         'device.dart.command', 'device.flutter.command', 'parent.dart.command', 'parent.flutter.tool',

@@ -12,6 +12,8 @@ import subprocess
 import unittest
 import uuid
 
+from deployment_provenance_fixture import write_release_manifest
+
 ROOT = Path(__file__).resolve().parents[2]
 PWSH = shutil.which("pwsh")
 
@@ -198,11 +200,7 @@ class DeploymentInitializationTest(unittest.TestCase):
         jar.write_bytes(b"fixture backend")
         bundle.write_bytes(b"fixture web")
         (release / "guardian/index.html").write_text("fixture")
-        (self.directory / "release-manifest.json").write_text(json.dumps({
-            "schemaVersion": 1, "publicUrl": origin, "artifactRoot": release.relative_to(self.directory).as_posix(),
-            "backendSha256": hashlib.sha256(jar.read_bytes()).hexdigest(),
-            "guardianSha256": hashlib.sha256(bundle.read_bytes()).hexdigest(),
-        }))
+        write_release_manifest(self.directory, release, ROOT, origin)
         env_path = self.directory / ".env"
         env_path.write_text(env_path.read_text().replace("EDGE_BIND_ADDRESS='127.0.0.1'", "EDGE_BIND_ADDRESS='0.0.0.0'"))
         result = subprocess.run([PWSH, "-NoProfile", "-File", str(ROOT / "scripts/start-deployment.ps1"),
@@ -242,12 +240,7 @@ class DeploymentInitializationTest(unittest.TestCase):
         jar.write_bytes(b"build fixture")
         bundle.write_bytes(b"original bundle fixture")
         (release / "guardian/index.html").write_text("fixture")
-        (self.directory / "release-manifest.json").write_text(json.dumps({
-            "schemaVersion": 1, "publicUrl": "http://localhost:18090",
-            "artifactRoot": release.relative_to(self.directory).as_posix(),
-            "backendSha256": hashlib.sha256(jar.read_bytes()).hexdigest(),
-            "guardianSha256": hashlib.sha256(bundle.read_bytes()).hexdigest(),
-        }))
+        write_release_manifest(self.directory, release, ROOT, "http://localhost:18090")
         bundle.write_bytes(b"modified fixture")
         result = subprocess.run([PWSH, "-NoProfile", "-File", str(ROOT / "scripts/start-deployment.ps1"),
                                  "-Directory", str(self.directory)], cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=30)

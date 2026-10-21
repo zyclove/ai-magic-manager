@@ -1,0 +1,124 @@
+{
+  "startedAtUtc": "2026-10-21T04:46:40.503312+00:00",
+  "sourceFiles": [
+    {
+      "path": "scripts/build-deployment.ps1",
+      "bytes": 14829,
+      "sha256": "6969470c338fc6b8d4665ad6847b7caa763e7e31d555c343a4383e600b492604"
+    },
+    {
+      "path": "scripts/start-deployment.ps1",
+      "bytes": 8944,
+      "sha256": "034e8398c32478183af529496e399041ba335921178c885287c42c0523af47fa"
+    },
+    {
+      "path": "scripts/verify-deployment.ps1",
+      "bytes": 4043,
+      "sha256": "883e55f1a788b7dc73eccda8346a670b6c48a8292864b4e3a2b427781181977e"
+    },
+    {
+      "path": "scripts/initialize-erasure-ledger.ps1",
+      "bytes": 3668,
+      "sha256": "135a72800c5e5e98bbab7602a88790aedba272abf33c913bb2cec23e7dd26c15"
+    },
+    {
+      "path": "scripts/deployment-provenance.ps1",
+      "bytes": 20122,
+      "sha256": "cb45013224110568c6362f37b2c8b59033025b9fa08962d0e1473689e3e47f7b"
+    },
+    {
+      "path": "scripts/deployment-runtime-provenance.ps1",
+      "bytes": 23455,
+      "sha256": "d0401e9a01d3f4290c60bc00aaf6fc256a07d7f5e0a647a822050bc183686673"
+    },
+    {
+      "path": "deploy/compose/compose.yaml",
+      "bytes": 8875,
+      "sha256": "19db9c797c1b86c568ef2d46d52144e2e2f28fe92c973e8873dd5b5d633c5b02"
+    },
+    {
+      "path": "deploy/containers/backend.Dockerfile",
+      "bytes": 969,
+      "sha256": "bf9daab0cacc69a3c9bf3a78f228579bc27763335df3d7aa1f5b36532c09c4ae"
+    },
+    {
+      "path": "deploy/containers/edge.Dockerfile",
+      "bytes": 931,
+      "sha256": "08cd1eaf0926ef6c742e395376e352f37a1662b3e19c42f8bfc041f9e09e590e"
+    },
+    {
+      "path": "docs/deployment-provenance.md",
+      "bytes": 2966,
+      "sha256": "6811720b2447cc7621ad7fbc186cc56ff9cae25ee444dd18f7e1f329e290166c"
+    },
+    {
+      "path": "scripts/tests/test_deployment.py",
+      "bytes": 15149,
+      "sha256": "bf0d5a3ebf6aae7fd063f961ae53aa1d1ce5c477d2adf2bcbfe6ce9589fd236a"
+    },
+    {
+      "path": "scripts/tests/test_deployment_build.py",
+      "bytes": 18815,
+      "sha256": "3f8cb5f99bdf0a4d2bdc7aac76a4dc3ce181d77e553a0e92a20645a704565175"
+    },
+    {
+      "path": "scripts/tests/test_consumer_deployment.py",
+      "bytes": 10238,
+      "sha256": "4cca568535e94d8a90246f9d001204ea07ef6ae5ad6c61239e3d18227932e9a1"
+    },
+    {
+      "path": "scripts/tests/deployment_provenance_fixture.py",
+      "bytes": 2873,
+      "sha256": "fe69b3b565b154154c5d64db7e87e7cabc068d937743a13a33a0edeaafdb16c5"
+    },
+    {
+      "path": "scripts/tests/test_deployment_provenance.py",
+      "bytes": 23602,
+      "sha256": "40db1956d4f5893b44bf1bf3f8b54548cf7edb6d6b269bd12908bed9c400dcb1"
+    },
+    {
+      "path": "scripts/tests/test_deployment_runtime_provenance.py",
+      "bytes": 19780,
+      "sha256": "57f102265ee0cc739ff9b294832502ada6fdf2f131930fb2aadb3f2a00a86871"
+    },
+    {
+      "path": "scripts/tests/test_deployment_provenance_commands.py",
+      "bytes": 16292,
+      "sha256": "be865ef087c8bdf69bd1ad438ba9b8906433b5106022800403df8f99dbcfbf2d"
+    }
+  ],
+  "modules": [
+    "test_deployment",
+    "test_deployment_build",
+    "test_consumer_deployment",
+    "test_deployment_provenance",
+    "test_deployment_runtime_provenance",
+    "test_deployment_provenance_commands"
+  ],
+  "sdkBuildsRun": false,
+  "servicesStartedOrChanged": false,
+  "realDockerBoundary": "compose config only, synthetic fixture .env",
+  "secretBoundary": "synthetic fixtures only; no existing credentials or runtime .env read",
+  "endedAtUtc": "2026-10-21T04:49:30.897003+00:00",
+  "elapsedSeconds": 170.39594729999953,
+  "testsRun": 75,
+  "failures": 0,
+  "errors": 0,
+  "skipped": [
+    {
+      "test": "test_generated_directory_reparse_point_is_rejected_before_exclusion (test_deployment_provenance.DeploymentProvenanceTest.test_generated_directory_reparse_point_is_rejected_before_exclusion)",
+      "reason": "This host cannot create the reparse fixture: OSError"
+    },
+    {
+      "test": "test_inventory_rejects_file_reparse_points (test_deployment_provenance.DeploymentProvenanceTest.test_inventory_rejects_file_reparse_points)",
+      "reason": "This host cannot create the reparse fixture: OSError"
+    },
+    {
+      "test": "test_release_artifact_reparse_is_rejected_even_when_bytes_match (test_deployment_provenance.DeploymentProvenanceTest.test_release_artifact_reparse_is_rejected_even_when_bytes_match)",
+      "reason": "This host cannot create the reparse fixture: OSError"
+    }
+  ],
+  "sourceUnchanged": true,
+  "logSha256": "b77f57b54e80869775a84cf1d0c65c372054da10fb510e27e26014ed36f5c008",
+  "passed": true
+}

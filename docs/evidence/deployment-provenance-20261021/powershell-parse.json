@@ -1,0 +1,35 @@
+{
+  "results": [
+    {
+      "path": "scripts/build-deployment.ps1",
+      "sha256": "6969470c338fc6b8d4665ad6847b7caa763e7e31d555c343a4383e600b492604",
+      "errors": []
+    },
+    {
+      "path": "scripts/start-deployment.ps1",
+      "sha256": "034e8398c32478183af529496e399041ba335921178c885287c42c0523af47fa",
+      "errors": []
+    },
+    {
+      "path": "scripts/verify-deployment.ps1",
+      "sha256": "883e55f1a788b7dc73eccda8346a670b6c48a8292864b4e3a2b427781181977e",
+      "errors": []
+    },
+    {
+      "path": "scripts/initialize-erasure-ledger.ps1",
+      "sha256": "135a72800c5e5e98bbab7602a88790aedba272abf33c913bb2cec23e7dd26c15",
+      "errors": []
+    },
+    {
+      "path": "scripts/deployment-provenance.ps1",
+      "sha256": "cb45013224110568c6362f37b2c8b59033025b9fa08962d0e1473689e3e47f7b",
+      "errors": []
+    },
+    {
+      "path": "scripts/deployment-runtime-provenance.ps1",
+      "sha256": "d0401e9a01d3f4290c60bc00aaf6fc256a07d7f5e0a647a822050bc183686673",
+      "errors": []
+    }
+  ],
+  "powerShellVersion": "7.6.5"
+}

@@ -1,0 +1,16 @@
+test_client_analysis_failure_keeps_previous_release_selected (test_deployment_build.DeploymentBuildTest.test_client_analysis_failure_keeps_previous_release_selected) ... ok
+test_every_project_is_prepared_before_backend_and_verified_with_its_sdk (test_deployment_build.DeploymentBuildTest.test_every_project_is_prepared_before_backend_and_verified_with_its_sdk) ... ok
+test_missing_child_fails_before_any_compiler_runs (test_deployment_build.DeploymentBuildTest.test_missing_child_fails_before_any_compiler_runs) ... ok
+test_missing_flutter_tools_snapshot_rejects_backend_and_preserves_release (test_deployment_build.DeploymentBuildTest.test_missing_flutter_tools_snapshot_rejects_backend_and_preserves_release) ... ok
+test_missing_parent_fails_before_any_compiler_runs (test_deployment_build.DeploymentBuildTest.test_missing_parent_fails_before_any_compiler_runs) ... ok
+test_offline_applies_to_dependency_resolution_and_maven (test_deployment_build.DeploymentBuildTest.test_offline_applies_to_dependency_resolution_and_maven) ... ok
+test_parent_analysis_failure_keeps_previous_release_selected (test_deployment_build.DeploymentBuildTest.test_parent_analysis_failure_keeps_previous_release_selected) ... ok
+test_parent_manifest_directory_fails_before_any_compiler_runs (test_deployment_build.DeploymentBuildTest.test_parent_manifest_directory_fails_before_any_compiler_runs) ... ok
+test_parent_test_failure_keeps_previous_release_selected (test_deployment_build.DeploymentBuildTest.test_parent_test_failure_keeps_previous_release_selected) ... ok
+test_parent_without_tests_is_recorded_without_native_release_claim (test_deployment_build.DeploymentBuildTest.test_parent_without_tests_is_recorded_without_native_release_claim) ... ok
+test_source_changed_during_build_cannot_replace_verified_release (test_deployment_build.DeploymentBuildTest.test_source_changed_during_build_cannot_replace_verified_release) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 19.099s
+
+OK

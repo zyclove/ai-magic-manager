@@ -1,0 +1,197 @@
+test_failed_config_or_start_restores_existing_and_absent_environment (test_deployment_provenance_commands.DeploymentProvenanceCommandsTest.test_failed_config_or_start_restores_existing_and_absent_environment) ... 
+  test_failed_config_or_start_restores_existing_and_absent_environment (test_deployment_provenance_commands.DeploymentProvenanceCommandsTest.test_failed_config_or_start_restores_existing_and_absent_environment) (mode='config-fail') ... FAIL
+  test_failed_config_or_start_restores_existing_and_absent_environment (test_deployment_provenance_commands.DeploymentProvenanceCommandsTest.test_failed_config_or_start_restores_existing_and_absent_environment) (mode='up-fail') ... FAIL
+test_invalid_manifest_rejects_before_any_docker_or_http_boundary (test_deployment_provenance_commands.DeploymentProvenanceCommandsTest.test_invalid_manifest_rejects_before_any_docker_or_http_boundary) ... 
+  test_invalid_manifest_rejects_before_any_docker_or_http_boundary (test_deployment_provenance_commands.DeploymentProvenanceCommandsTest.test_invalid_manifest_rejects_before_any_docker_or_http_boundary) (action='start') ... FAIL
+  test_invalid_manifest_rejects_before_any_docker_or_http_boundary (test_deployment_provenance_commands.DeploymentProvenanceCommandsTest.test_invalid_manifest_rejects_before_any_docker_or_http_boundary) (action='verify') ... FAIL
+test_start_writes_separate_actual_image_receipt_without_changing_manifest (test_deployment_provenance_commands.DeploymentProvenanceCommandsTest.test_start_writes_separate_actual_image_receipt_without_changing_manifest) ... FAIL
+test_verify_rejects_manifest_or_image_replacement_during_http_checks (test_deployment_provenance_commands.DeploymentProvenanceCommandsTest.test_verify_rejects_manifest_or_image_replacement_during_http_checks) ... 
+  test_verify_rejects_manifest_or_image_replacement_during_http_checks (test_deployment_provenance_commands.DeploymentProvenanceCommandsTest.test_verify_rejects_manifest_or_image_replacement_during_http_checks) (mode='manifest-switch') ... FAIL
+  test_verify_rejects_manifest_or_image_replacement_during_http_checks (test_deployment_provenance_commands.DeploymentProvenanceCommandsTest.test_verify_rejects_manifest_or_image_replacement_during_http_checks) (mode='image-switch') ... FAIL
+
+======================================================================
+FAIL: test_failed_config_or_start_restores_existing_and_absent_environment (test_deployment_provenance_commands.DeploymentProvenanceCommandsTest.test_failed_config_or_start_restores_existing_and_absent_environment) (mode='config-fail')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\codes\mobile\ai-manager\scripts\tests\test_deployment_provenance_commands.py", line 267, in test_failed_config_or_start_restores_existing_and_absent_environment
+    payload = self.invoke("start", mode=mode, success=False)
+  File "D:\codes\mobile\ai-manager\scripts\tests\test_deployment_provenance_commands.py", line 251, in invoke
+    self.assertEqual(payload["environmentAfter"], RELEASE_ENV)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'RELEASE_SOURCE_TREE_SHA256': '', 'RELEASE_MANIFES[134 chars]: ''} != {'RELEASE_REVISION': 'prior-revision', 'RELEASE_VER[138 chars]act'}
+  {'RELEASE_ARTIFACT_TREE_SHA256': 'prior-artifact',
+   'RELEASE_MANIFEST_SHA256': 'prior-manifest',
+   'RELEASE_REVISION': 'prior-revision',
+-  'RELEASE_SOURCE_TREE_SHA256': '',
+?                                ^^
+
++  'RELEASE_SOURCE_TREE_SHA256': None,
+?                                ^^^^
+
+-  'RELEASE_VERSION': ''}
+?                     ^^
+
++  'RELEASE_VERSION': None}
+?                     ^^^^
+
+
+======================================================================
+FAIL: test_failed_config_or_start_restores_existing_and_absent_environment (test_deployment_provenance_commands.DeploymentProvenanceCommandsTest.test_failed_config_or_start_restores_existing_and_absent_environment) (mode='up-fail')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\codes\mobile\ai-manager\scripts\tests\test_deployment_provenance_commands.py", line 267, in test_failed_config_or_start_restores_existing_and_absent_environment
+    payload = self.invoke("start", mode=mode, success=False)
+  File "D:\codes\mobile\ai-manager\scripts\tests\test_deployment_provenance_commands.py", line 251, in invoke
+    self.assertEqual(payload["environmentAfter"], RELEASE_ENV)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'RELEASE_VERSION': '', 'RELEASE_REVISION': 'prior-[134 chars]: ''} != {'RELEASE_REVISION': 'prior-revision', 'RELEASE_VER[138 chars]act'}
+  {'RELEASE_ARTIFACT_TREE_SHA256': 'prior-artifact',
+   'RELEASE_MANIFEST_SHA256': 'prior-manifest',
+   'RELEASE_REVISION': 'prior-revision',
+-  'RELEASE_SOURCE_TREE_SHA256': '',
+?                                ^^
+
++  'RELEASE_SOURCE_TREE_SHA256': None,
+?                                ^^^^
+
+-  'RELEASE_VERSION': ''}
+?                     ^^
+
++  'RELEASE_VERSION': None}
+?                     ^^^^
+
+
+======================================================================
+FAIL: test_invalid_manifest_rejects_before_any_docker_or_http_boundary (test_deployment_provenance_commands.DeploymentProvenanceCommandsTest.test_invalid_manifest_rejects_before_any_docker_or_http_boundary) (action='start')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\codes\mobile\ai-manager\scripts\tests\test_deployment_provenance_commands.py", line 293, in test_invalid_manifest_rejects_before_any_docker_or_http_boundary
+    payload = self.invoke(action, success=False)
+  File "D:\codes\mobile\ai-manager\scripts\tests\test_deployment_provenance_commands.py", line 251, in invoke
+    self.assertEqual(payload["environmentAfter"], RELEASE_ENV)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'RELEASE_MANIFEST_SHA256': 'prior-manifest', 'RELE[134 chars]: ''} != {'RELEASE_REVISION': 'prior-revision', 'RELEASE_VER[138 chars]act'}
+  {'RELEASE_ARTIFACT_TREE_SHA256': 'prior-artifact',
+   'RELEASE_MANIFEST_SHA256': 'prior-manifest',
+   'RELEASE_REVISION': 'prior-revision',
+-  'RELEASE_SOURCE_TREE_SHA256': '',
+?                                ^^
+
++  'RELEASE_SOURCE_TREE_SHA256': None,
+?                                ^^^^
+
+-  'RELEASE_VERSION': ''}
+?                     ^^
+
++  'RELEASE_VERSION': None}
+?                     ^^^^
+
+
+======================================================================
+FAIL: test_invalid_manifest_rejects_before_any_docker_or_http_boundary (test_deployment_provenance_commands.DeploymentProvenanceCommandsTest.test_invalid_manifest_rejects_before_any_docker_or_http_boundary) (action='verify')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\codes\mobile\ai-manager\scripts\tests\test_deployment_provenance_commands.py", line 293, in test_invalid_manifest_rejects_before_any_docker_or_http_boundary
+    payload = self.invoke(action, success=False)
+  File "D:\codes\mobile\ai-manager\scripts\tests\test_deployment_provenance_commands.py", line 251, in invoke
+    self.assertEqual(payload["environmentAfter"], RELEASE_ENV)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'RELEASE_MANIFEST_SHA256': 'prior-manifest', 'RELE[134 chars]: ''} != {'RELEASE_REVISION': 'prior-revision', 'RELEASE_VER[138 chars]act'}
+  {'RELEASE_ARTIFACT_TREE_SHA256': 'prior-artifact',
+   'RELEASE_MANIFEST_SHA256': 'prior-manifest',
+   'RELEASE_REVISION': 'prior-revision',
+-  'RELEASE_SOURCE_TREE_SHA256': '',
+?                                ^^
+
++  'RELEASE_SOURCE_TREE_SHA256': None,
+?                                ^^^^
+
+-  'RELEASE_VERSION': ''}
+?                     ^^
+
++  'RELEASE_VERSION': None}
+?                     ^^^^
+
+
+======================================================================
+FAIL: test_start_writes_separate_actual_image_receipt_without_changing_manifest (test_deployment_provenance_commands.DeploymentProvenanceCommandsTest.test_start_writes_separate_actual_image_receipt_without_changing_manifest)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\codes\mobile\ai-manager\scripts\tests\test_deployment_provenance_commands.py", line 255, in test_start_writes_separate_actual_image_receipt_without_changing_manifest
+    payload = self.invoke("start")
+  File "D:\codes\mobile\ai-manager\scripts\tests\test_deployment_provenance_commands.py", line 251, in invoke
+    self.assertEqual(payload["environmentAfter"], RELEASE_ENV)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'RELEASE_ARTIFACT_TREE_SHA256': 'prior-artifact', [134 chars]: ''} != {'RELEASE_REVISION': 'prior-revision', 'RELEASE_VER[138 chars]act'}
+  {'RELEASE_ARTIFACT_TREE_SHA256': 'prior-artifact',
+   'RELEASE_MANIFEST_SHA256': 'prior-manifest',
+   'RELEASE_REVISION': 'prior-revision',
+-  'RELEASE_SOURCE_TREE_SHA256': '',
+?                                ^^
+
++  'RELEASE_SOURCE_TREE_SHA256': None,
+?                                ^^^^
+
+-  'RELEASE_VERSION': ''}
+?                     ^^
+
++  'RELEASE_VERSION': None}
+?                     ^^^^
+
+
+======================================================================
+FAIL: test_verify_rejects_manifest_or_image_replacement_during_http_checks (test_deployment_provenance_commands.DeploymentProvenanceCommandsTest.test_verify_rejects_manifest_or_image_replacement_during_http_checks) (mode='manifest-switch')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\codes\mobile\ai-manager\scripts\tests\test_deployment_provenance_commands.py", line 280, in test_verify_rejects_manifest_or_image_replacement_during_http_checks
+    payload = self.invoke("verify", mode=mode, success=False)
+  File "D:\codes\mobile\ai-manager\scripts\tests\test_deployment_provenance_commands.py", line 251, in invoke
+    self.assertEqual(payload["environmentAfter"], RELEASE_ENV)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'RELEASE_MANIFEST_SHA256': 'prior-manifest', 'RELE[134 chars]: ''} != {'RELEASE_REVISION': 'prior-revision', 'RELEASE_VER[138 chars]act'}
+  {'RELEASE_ARTIFACT_TREE_SHA256': 'prior-artifact',
+   'RELEASE_MANIFEST_SHA256': 'prior-manifest',
+   'RELEASE_REVISION': 'prior-revision',
+-  'RELEASE_SOURCE_TREE_SHA256': '',
+?                                ^^
+
++  'RELEASE_SOURCE_TREE_SHA256': None,
+?                                ^^^^
+
+-  'RELEASE_VERSION': ''}
+?                     ^^
+
++  'RELEASE_VERSION': None}
+?                     ^^^^
+
+
+======================================================================
+FAIL: test_verify_rejects_manifest_or_image_replacement_during_http_checks (test_deployment_provenance_commands.DeploymentProvenanceCommandsTest.test_verify_rejects_manifest_or_image_replacement_during_http_checks) (mode='image-switch')
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\codes\mobile\ai-manager\scripts\tests\test_deployment_provenance_commands.py", line 280, in test_verify_rejects_manifest_or_image_replacement_during_http_checks
+    payload = self.invoke("verify", mode=mode, success=False)
+  File "D:\codes\mobile\ai-manager\scripts\tests\test_deployment_provenance_commands.py", line 251, in invoke
+    self.assertEqual(payload["environmentAfter"], RELEASE_ENV)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: {'RELEASE_VERSION': '', 'RELEASE_SOURCE_TREE_SHA256[134 chars]ion'} != {'RELEASE_REVISION': 'prior-revision', 'RELEASE_VER[138 chars]act'}
+  {'RELEASE_ARTIFACT_TREE_SHA256': 'prior-artifact',
+   'RELEASE_MANIFEST_SHA256': 'prior-manifest',
+   'RELEASE_REVISION': 'prior-revision',
+-  'RELEASE_SOURCE_TREE_SHA256': '',
+?                                ^^
+
++  'RELEASE_SOURCE_TREE_SHA256': None,
+?                                ^^^^
+
+-  'RELEASE_VERSION': ''}
+?                     ^^
+
++  'RELEASE_VERSION': None}
+?                     ^^^^
+
+
+----------------------------------------------------------------------
+Ran 4 tests in 8.698s
+
+FAILED (failures=7)

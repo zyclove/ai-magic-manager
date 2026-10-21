@@ -1,0 +1,10 @@
+test_consumer_build_requires_consistent_initialization_mode (test_consumer_deployment.ConsumerDeploymentTest.test_consumer_build_requires_consistent_initialization_mode) ... ok
+test_consumer_build_stages_verified_provider_and_start_rejects_tampering (test_consumer_deployment.ConsumerDeploymentTest.test_consumer_build_stages_verified_provider_and_start_rejects_tampering) ... ok
+test_consumer_initialization_creates_offline_realm_and_disabled_file_backed_services (test_consumer_deployment.ConsumerDeploymentTest.test_consumer_initialization_creates_offline_realm_and_disabled_file_backed_services) ... ok
+test_consumer_spi_verification_failure_does_not_publish_release (test_consumer_deployment.ConsumerDeploymentTest.test_consumer_spi_verification_failure_does_not_publish_release) ... ok
+test_management_initialization_and_build_do_not_require_consumer_spi (test_consumer_deployment.ConsumerDeploymentTest.test_management_initialization_and_build_do_not_require_consumer_spi) ... ok
+
+----------------------------------------------------------------------
+Ran 5 tests in 19.226s
+
+OK

@@ -3,6 +3,7 @@
 The doubles replace costly SDK builds, not snapshot, manifest or publication
 logic. Full SDK verification remains a separate release gate.
 """
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -88,6 +89,11 @@ if ($toolArgs[0] -eq 'build') {
     $null = New-Item -ItemType Directory -Path 'build/web' -Force
     [IO.File]::WriteAllText((Join-Path $cwd 'build/web/index.html'), '<html>fixture</html>')
     [IO.File]::WriteAllText((Join-Path $cwd 'build/web/main.dart.js'), 'fixture artifact')
+    $null = New-Item -ItemType Directory -Path 'build/web/assets' -Force
+    [IO.File]::WriteAllText((Join-Path $cwd 'build/web/assets/app.json'), '{"fixture":true}')
+    if ($env:BUILD_TEST_MUTATE_SOURCE -eq 'true') {
+        [IO.File]::AppendAllText((Join-Path $cwd 'pubspec.yaml'), "`n# changed during build")
+    }
 }
 exit 0
 ''', encoding="utf-8")
@@ -106,10 +112,11 @@ exit 0
         self.assertEqual(self.directory.resolve().parent, (ROOT / ".local").resolve())
         shutil.rmtree(self.directory)
 
-    def build(self, fail="", extra=(), fail_action="analyze"):
+    def build(self, fail="", extra=(), fail_action="analyze", mutate_source=False):
         env = os.environ.copy()
         env.update(BUILD_TEST_CALLS=str(self.calls), BUILD_TEST_FAIL=fail,
-                   BUILD_TEST_FAIL_ACTION=fail_action)
+                   BUILD_TEST_FAIL_ACTION=fail_action,
+                   BUILD_TEST_MUTATE_SOURCE=str(mutate_source).lower())
         return subprocess.run([
             PWSH, "-NoProfile", "-File", str(ROOT / "scripts/build-deployment.ps1"),
             "-Directory", str(self.deployment), "-SourceDirectory", str(self.source),
@@ -173,8 +180,43 @@ exit 0
         self.assertEqual(Path(release_calls[0]["cwd"]), snapshot / "apps/guardian")
         self.assertEqual(release_calls[0]["arguments"][:2], ["build", "web"])
         self.assertEqual(manifest["applicationVersion"], "1.0.0")
+        self.assertEqual(manifest["provenanceVersion"], 1)
+        self.assertEqual(manifest["source"], {
+            "kind": "content-snapshot",
+            "revision": "sha256:" + manifest["sourceTreeSha256"],
+        }, "A frozen non-Git input must not inherit the enclosing repository HEAD")
+        def tree_hash(rows):
+            return hashlib.sha256("".join(
+                f"{row['path']}\0{row['bytes']}\0{row['sha256']}\n"
+                for row in sorted(rows, key=lambda row: row["path"])
+            ).encode("utf-8")).hexdigest()
+        for prefix in ("source", "artifact", "recipe"):
+            self.assertEqual(tree_hash(manifest[prefix + "Files"]), manifest[prefix + "TreeSha256"])
+        release = self.deployment / manifest["artifactRoot"]
+        actual_artifacts = {
+            path.relative_to(release).as_posix(): {
+                "bytes": path.stat().st_size,
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            }
+            for path in release.rglob("*") if path.is_file() and path.name != "release-manifest.json"
+        }
+        self.assertEqual({row["path"]: {"bytes": row["bytes"], "sha256": row["sha256"]}
+                          for row in manifest["artifactFiles"]}, actual_artifacts)
+        self.assertIn("guardian/assets/app.json", actual_artifacts)
+        self.assertEqual((release / "release-manifest.json").read_bytes(),
+                         (self.deployment / "release-manifest.json").read_bytes())
         self.assertFalse(any("stale.marker" in entry["path"] for entry in manifest["sourceFiles"]))
         self.assertFalse((self.source / "backend/target").exists(), "Build polluted input source")
+
+    def test_source_changed_during_build_cannot_replace_verified_release(self):
+        previous = b'{"previous":"verified release"}'
+        manifest = self.deployment / "release-manifest.json"
+        manifest.write_bytes(previous)
+        result = self.build(mutate_source=True)
+        self.assertNotEqual(result.returncode, 0, "Mutated verification inputs were published")
+        self.assertIn("changed", result.stderr.lower())
+        self.assertEqual(manifest.read_bytes(), previous)
+        self.assertEqual((self.deployment / ".env").read_text(), self.old_env)
 
     def test_missing_child_fails_before_any_compiler_runs(self):
         (self.source / "apps/child/pubspec.yaml").unlink()
