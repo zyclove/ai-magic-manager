@@ -1,0 +1,114 @@
+{
+  "observedUtc": "2026-10-21T07:09:40.355666+00:00",
+  "status": "RED_OBSERVED",
+  "counterfactualObserved": true,
+  "fullVerifyAccepted": false,
+  "normalResultStatus": "NOT_ACCEPTED",
+  "sourceCommit": null,
+  "baseCommit": "3b9117b000a10d082a8f7849c41de5f69c0baa62",
+  "overlayCommit": "984ae0f9ab4354b16ba6834a836c55ca2351db27",
+  "overlaySha256": "3128eb0abaf10cc5123c64684f3e7cb27a7f5cc872ba64312f6d5acd422b5d54",
+  "actualExecSession": 86358,
+  "actualInitialChunk": "e9623a",
+  "actualFinalChunk": "8d49f5",
+  "actualOuterExitCode": 1,
+  "actualOuterNaturallyTerminal": true,
+  "workerExitCode": 0,
+  "mavenExitCode": 1,
+  "elapsedSeconds": 71.5325346999889,
+  "forcedCleanup": false,
+  "finalOwnedJobProcesses": 0,
+  "knownPidsAbsent": [
+    129300,
+    126188
+  ],
+  "independentXmlSuites": 13,
+  "independentXmlTotals": {
+    "tests": 75,
+    "failures": 3,
+    "errors": 0,
+    "skipped": 0
+  },
+  "original71AndDisabledGuardPassed": 72,
+  "methodSpecificFailures": {
+    "factoryReusesOneClientAcrossDistinctAuthenticatorInstances": {
+      "type": "org.mockito.exceptions.verification.TooManyActualInvocations",
+      "oldObservedClientCreations": 2,
+      "newExpectedClientCreations": 1
+    },
+    "factoryUsesTheSameClientForWechatSmsAndOtpVerification": {
+      "type": "org.mockito.exceptions.verification.TooManyActualInvocations",
+      "oldObservedClientCreations": 4,
+      "newExpectedClientCreations": 1
+    },
+    "injectedProvidersDoNotCreateClientsDuringPhoneChangeAndOtpVerification": {
+      "type": "org.mockito.exceptions.verification.NeverWantedButInvoked",
+      "oldObservedClientCreations": 5,
+      "newExpectedClientCreations": 0
+    }
+  },
+  "xml": [
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.AliyunSmsTest.xml",
+      "sha256": "92d51021c898ba51b0d1522493ef49bab2e7d2cdabc2ab6e7da62404508437f9"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerAccountFlowTest.xml",
+      "sha256": "ad6b0476e8ab634d52a621908f95754bc491d232b14a365b20273f4bc26cdd7e"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerAccountSpiPackagingTest.xml",
+      "sha256": "c6c005d79a4eb761f5fc20e812bb526e0462fa12c24b90dab48d553deef7cecc"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerAccountStatusTest.xml",
+      "sha256": "ee4f8905b4bbf65ab9d684dd939e47da3d78de3861cc96ab9a029e69b90eecea"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerAuthenticatorTest.xml",
+      "sha256": "3ce5f343d475a9803f757e2b2563fc49d275f9f3aca2a37f801f4eb98b7e73c2"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerClaimsSerializationTest.xml",
+      "sha256": "aebf0ac81bf7c69eb947fa65dfa03213487215d5c4825a45321299d78ff5242a"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerConfigurationTest.xml",
+      "sha256": "74766bb6f5553ff1190de8ddc6afcd17e7d1aa9596843bbc7434157d5c427772"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerHttpClientReuseTest.xml",
+      "sha256": "2eb7bf6cb272bb7404750719c1b1333668ab335b2d7324e6db9c6b81d2766b3f"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerIdentityTest.xml",
+      "sha256": "41fff599bd6003d05f29210e6f8c0c8c9fefde445c85cdb7abe3e334f5c9f968"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerIdentityTransactionsTest.xml",
+      "sha256": "ff1f219bfaa322b12381fe8136c9877a73ca1317d0e0e10a2237fe467770caad"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerProviderRuntimeTest.xml",
+      "sha256": "ab04a56d5b7ead3967368ac938263591ede0cfce306153cf2e82d2d992b741f0"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerRuntimeSnapshotTest.xml",
+      "sha256": "872f4549b2d60c690e365011f654959d8dda484225d39dac3f7cd225a26b6f49"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.PhoneOtpTest.xml",
+      "sha256": "34a805fd3b120cfe28c58bfaa18dffa0a03a38ccca6431025eab039129c33fc5"
+    }
+  ],
+  "pinsRechecked": 54,
+  "originalAndExecutionCachesUnchanged": true,
+  "original32AndEffective33SourcesUnchanged": true,
+  "resultSha256": "1438bc0dbbfa09cc7b029327d6e6bedbb3b7fd04ee0574668da30ae039c9b704",
+  "receiptSha256": "8728987b5b636338e6fad7799e2133fe5917630f3a43e4a517e6977d0fada490",
+  "sdkProcesses": [],
+  "unknownProcessNames": [],
+  "availableRamBytes": 5043073024,
+  "jarRequiredForRedClassification": false,
+  "scope": "Only proves three regression tests detect excess client construction in the original implementation; not a full-verify pass or real provider acceptance."
+}

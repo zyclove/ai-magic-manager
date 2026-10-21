@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "status": "STATIC_REBINDING_REVIEW_ONLY",
+  "sourceCommit": null,
+  "moduleTree": null,
+  "baseCommit": "3b9117b000a10d082a8f7849c41de5f69c0baa62",
+  "baseModuleTree": "098c8e75a7107876bdf31aba106882ff65b7d2b3",
+  "overlay": {
+    "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerHttpClientReuseTest.java",
+    "sourceCommit": "984ae0f9ab4354b16ba6834a836c55ca2351db27",
+    "gitObject": "875878539c3939d923aed709f39f532b30c5da01",
+    "sha256": "3128eb0abaf10cc5123c64684f3e7cb27a7f5cc872ba64312f6d5acd422b5d54",
+    "bytes": 5747,
+    "mode": "100644",
+    "kind": "blob",
+    "archiveState": "RAW_GIT_BLOB",
+    "role": "EXPLICIT_SINGLE_TEST_OVERLAY"
+  },
+  "basis": {
+    "proposalSha256": "bb9be297fd4e4009d1b423d68ee0f20d33bebc089adb7a572455b0094e9f4e76",
+    "controllerSha256": "6f1d3148df72c5caa8ec01b7a1f50261663946e0d969d0b340e58e42f0947e83",
+    "workerSha256": "40969d17221395de9f85eeceee32bfd2e9102d31e8b7b78058f6c234c02c5f08"
+  },
+  "controllerRebindings": [
+    {
+      "before": "'testsScope':'original32-baseline-only'",
+      "after": "'testsScope':'COUNTERFACTUAL_ORIGINAL32_PLUS_REUSE_TEST75'",
+      "occurrences": 1
+    }
+  ],
+  "workerRebindings": [
+    {
+      "before": "BASELINE = REPO / '.cache/id17-20261021-r4'",
+      "after": "BASELINE = CANDIDATE / 'frozen'\nORIGINAL_BASELINE = REPO / '.cache/id17-20261021-r4'",
+      "occurrences": 1
+    },
+    {
+      "before": "COMMIT = '3b9117b000a10d082a8f7849c41de5f69c0baa62'",
+      "after": "COMMIT = '3b9117b000a10d082a8f7849c41de5f69c0baa62'\nOVERLAY_COMMIT = '984ae0f9ab4354b16ba6834a836c55ca2351db27'\nOVERLAY_PATH = 'identity-extensions/src/test/java/com/aimanager/identity/ConsumerHttpClientReuseTest.java'\nOVERLAY_GIT_OBJECT = '875878539c3939d923aed709f39f532b30c5da01'\nOVERLAY_SHA256 = '3128eb0abaf10cc5123c64684f3e7cb27a7f5cc872ba64312f6d5acd422b5d54'\nORIGINAL_MANIFEST_SHA256 = 'a0042d42f84d6660b6e7f543c821e7fcb32579c1dc63766656d47c78f3c1bfcc'",
+      "occurrences": 1
+    },
+    {
+      "before": "EXPECTED_TESTS_SHA256 = '21e28a9ca067717daea97b7be695f8c190f61b226d6cdc2aeb9088ed76d57b68'",
+      "after": "EXPECTED_TESTS_SHA256 = 'c009dd0731d1ac0180e5b34e3466abfeb511d2f6afc2a79f8ab5200e7870c2fc'",
+      "occurrences": 1
+    },
+    {
+      "before": "FROZEN_MANIFEST_SHA256 = 'a0042d42f84d6660b6e7f543c821e7fcb32579c1dc63766656d47c78f3c1bfcc'",
+      "after": "FROZEN_MANIFEST_SHA256 = '3367c41f7304d2eb88447f5a468bef0fd8b141c69cd057a77551876e273e1539'",
+      "occurrences": 1
+    },
+    {
+      "before": "totals == dict(tests=71, failures=0, errors=0, skipped=0) and len(reports)==12",
+      "after": "totals == dict(tests=75, failures=0, errors=0, skipped=0) and len(reports)==13",
+      "occurrences": 1
+    },
+    {
+      "before": "'expectedSuites':12,'expectedCases':71",
+      "after": "'expectedSuites':13,'expectedCases':75",
+      "occurrences": 1
+    },
+    {
+      "before": "raise RuntimeError('Frozen r4 manifest changed')",
+      "after": "raise RuntimeError('Frozen counterfactual manifest changed')",
+      "occurrences": 1
+    },
+    {
+      "before": "    if len(source_entries) != 32:\n        raise RuntimeError('Unexpected complete module source boundary')\n    paths = git('ls-tree','-r','--name-only',COMMIT,'--','identity-extensions/').decode().splitlines()\n    if set(paths) != {entry['path'] for entry in source_entries}:\n        raise RuntimeError('Module file set changed')\n",
+      "after": "    safe(ORIGINAL_BASELINE,REPO)\n    if sha(ORIGINAL_BASELINE/'input-manifest.json') != ORIGINAL_MANIFEST_SHA256:\n        raise RuntimeError('Original32 manifest changed')\n    original_input = json.loads((ORIGINAL_BASELINE/'input-manifest.json').read_text('utf-8'))\n    base_entries = [entry for entry in source_entries if entry['path'] != OVERLAY_PATH]\n    overlays = [entry for entry in source_entries if entry['path'] == OVERLAY_PATH]\n    if len(source_entries) != 33 or len(base_entries) != 32 or len(overlays) != 1 or base_entries != original_input['source']:\n        raise RuntimeError('Unexpected original32 plus one overlay boundary')\n    paths = git('ls-tree','-r','--name-only',COMMIT,'--','identity-extensions/').decode().splitlines()\n    if set(paths) != {entry['path'] for entry in base_entries}:\n        raise RuntimeError('Original32 Git module file set changed')\n    overlay = overlays[0]\n    if overlay['gitObject'] != OVERLAY_GIT_OBJECT or overlay['sha256'] != OVERLAY_SHA256 or git('rev-parse',OVERLAY_COMMIT+':'+OVERLAY_PATH).decode().strip() != OVERLAY_GIT_OBJECT:\n        raise RuntimeError('Independent overlay Git object pin changed')\n    if frozen_input.get('commit') is not None or frozen_input.get('sourceCommit') is not None or frozen_input.get('baseCommit') != COMMIT or frozen_input.get('baseModuleTree') != '098c8e75a7107876bdf31aba106882ff65b7d2b3':\n        raise RuntimeError('Counterfactual provenance changed')\n",
+      "occurrences": 1
+    },
+    {
+      "before": "        if len(content) != entry['bytes'] or hashlib.sha256(content).hexdigest() != entry['sha256']:\n            raise RuntimeError('Fixed module bytes changed')\n",
+      "after": "        if len(content) != entry['bytes'] or hashlib.sha256(content).hexdigest() != entry['sha256']:\n            raise RuntimeError('Fixed module bytes changed')\n        origin_commit = OVERLAY_COMMIT if entry['path'] == OVERLAY_PATH else COMMIT\n        if git('rev-parse',origin_commit+':'+entry['path']).decode().strip() != entry['gitObject'] or content != git('cat-file','blob',entry['gitObject']):\n            raise RuntimeError('Source differs from independently pinned raw Git blob')\n        if entry['path'] != OVERLAY_PATH:\n            original_base = ORIGINAL_BASELINE/'src'/entry['path']; safe(original_base,ORIGINAL_BASELINE/'src')\n            if original_base.read_bytes() != content:\n                raise RuntimeError('Original32 snapshot differs from frozen base')\n",
+      "occurrences": 1
+    },
+    {
+      "before": "save('input-manifest.json',{'commit':COMMIT,'source':source_entries,'cacheEntries':cache['entries'],",
+      "after": "save('input-manifest.json',{'commit':None,'sourceCommit':None,'baseCommit':COMMIT,'baseModuleTree':'098c8e75a7107876bdf31aba106882ff65b7d2b3','overlays':frozen_input['overlays'],'source':source_entries,'cacheEntries':cache['entries'],",
+      "occurrences": 1
+    },
+    {
+      "before": "    frozen_source_same=all(sha(BASELINE/'src'/entry['path'])==entry['sha256'] for entry in source_entries)",
+      "after": "    original_base_source_same=all(sha(ORIGINAL_BASELINE/'src'/entry['path'])==entry['sha256'] for entry in base_entries)\n    frozen_source_same=all(sha(BASELINE/'src'/entry['path'])==entry['sha256'] for entry in source_entries) and original_base_source_same",
+      "occurrences": 1
+    },
+    {
+      "before": "and sha(BASELINE/'input-manifest.json')==FROZEN_MANIFEST_SHA256)",
+      "after": "and sha(BASELINE/'input-manifest.json')==FROZEN_MANIFEST_SHA256 and sha(ORIGINAL_BASELINE/'input-manifest.json')==ORIGINAL_MANIFEST_SHA256)",
+      "occurrences": 1
+    },
+    {
+      "before": "'frozenBaselineSourceUnchanged':frozen_source_same,",
+      "after": "'frozenBaselineSourceUnchanged':frozen_source_same,'original32BaselineSourceUnchanged':original_base_source_same,",
+      "occurrences": 1
+    }
+  ],
+  "astParsedWithoutImportOrExecution": [
+    "controller.py",
+    "worker.py"
+  ],
+  "controllerAstEqualAfterScopeLabelNormalization": true,
+  "workerTopLevelFunctionSetUnchanged": true,
+  "workerUnchangedAstDefinitions": [
+    "sha",
+    "save",
+    "git",
+    "safe",
+    "Memory",
+    "resources",
+    "gate_snapshot",
+    "cache_postflight"
+  ],
+  "verifyTestsAndJarAstEqualAfterOnly75To71And13To12Normalization": true,
+  "workerPassedAcceptanceAssignmentsAstUnchanged": true,
+  "fullVerifyStillRequiresZeroFailuresErrorsSkips": true,
+  "fullVerifyStillRequiresJar": true,
+  "jarStillRequiresOriginal32MainClassesAnd4Resources": true,
+  "original32SourceRawGitAndSnapshotVerified": true,
+  "singleOverlayRawGitObjectAndShaVerified": true,
+  "sourceFiles": 33,
+  "mainJava": 13,
+  "testJava": 13,
+  "suites": 13,
+  "methods": 75,
+  "original71MethodInventoryUnchanged": true,
+  "originalAndCurrentInputPinsUnchanged": true,
+  "candidateImportedOrExecuted": false,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "sdkOrMavenCacheBytesCopied": 0,
+  "attemptExists": false,
+  "dynamicWatchdogOrMavenVerified": false,
+  "predictedRedFailureCount": 3,
+  "redObserved": false,
+  "acceptanceLogicModifiedToAcceptFailure": false
+}

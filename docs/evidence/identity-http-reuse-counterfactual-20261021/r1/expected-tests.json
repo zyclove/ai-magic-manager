@@ -1,0 +1,164 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": null,
+  "moduleTree": null,
+  "total": 75,
+  "suites": [
+    {
+      "className": "com.aimanager.identity.AliyunSmsTest",
+      "methods": [
+        "signatureMatchesOfficialV3KnownAnswer",
+        "sendsOnlyToPinnedChinaEndpointUsesOfficialQueryMetadataAndRejectsProviderFailure"
+      ]
+    },
+    {
+      "className": "com.aimanager.identity.ConsumerAccountFlowTest",
+      "methods": [
+        "missingActionCannotFallThroughToNormalRegistration",
+        "changingPhoneProvesBothNumbersAndKeepsOriginalSubject",
+        "recoveryRequiresExistingWechatAndUpdatesItsOriginalAccount",
+        "unlinkedWechatCannotCreateAnAccountThroughRecovery",
+        "bindingThenUnbindingKeepsPhoneAndRejectsAnotherAccountsWechat",
+        "staleRevisionAndOccupiedTargetNeverChangeIdentity",
+        "repeatedOperationDoesNotTurnConsumedOtpIntoNewAuthentication",
+        "disablingAccountSecurityLeavesIdentityUntouched",
+        "recoveryRejectsDifferentExpectedActorBeforeSendingNewNumberSms",
+        "thirtyMinuteDeadlineDoesNotExtendWhenAuthenticationIsRenderedAgain",
+        "oldPhoneProofExpiresBeforeNewPhoneCanBeCommitted",
+        "unableToAcquireDatabaseFenceCannotChangeTheUser",
+        "wrongAndExhaustedOtpNeverAcquireTheGlobalDatabaseFence",
+        "anotherAccountsWechatIsNeverReassigned",
+        "aLoginOtpCannotApproveAnAccountSecurityOperation",
+        "changingTheNewNumberDoesNotReuseThePreviousNumbersProof",
+        "concurrentIdentityChangeInvalidatesTheInFlightOperation"
+      ]
+    },
+    {
+      "className": "com.aimanager.identity.ConsumerAccountSpiPackagingTest",
+      "methods": [
+        "restSpiRegistrationAndProviderMarkerArePackaged"
+      ]
+    },
+    {
+      "className": "com.aimanager.identity.ConsumerAccountStatusTest",
+      "methods": [
+        "cdiCanConstructAnUnconfiguredProviderWithoutInjectingSecrets",
+        "malformedReceiptFailsClosedWithoutAnInternalError",
+        "currentStatusExposesOnlyMaskedPhoneAndRealBindingCapabilities",
+        "oldPhoneOldRevisionAndOtherClientsAreRejected",
+        "legacyTokenWorksOnlyWhileCurrentUserStillHasRevisionOne",
+        "disabledUserAndDisabledProviderCannotReturnCurrentEvidence"
+      ]
+    },
+    {
+      "className": "com.aimanager.identity.ConsumerAuthenticatorTest",
+      "methods": [
+        "incompleteConsumerMethodCannotDowngradeIntoAnUnmarkedInstitutionToken",
+        "currentRawRevisionCannotBeResetByAnOlderCacheAwareUser",
+        "changedPhoneCannotBeResignedFromAnOlderRefreshSession",
+        "newPhoneAccountIsCreatedOnlyAfterRealOtpVerificationAndEmitsSmsClaims",
+        "missingProviderConfigCannotAuthenticateOrCreateUser",
+        "verifiedPhoneSetsTrustedNotesAndDoesNotClaimMfa",
+        "tokenClaimsComeOnlyFromTrustedSessionNotesWithAccurateWechatAmr",
+        "incompleteTrustedSessionCannotEmitVerifiedClaimsOrCrashTokenIssuance"
+      ]
+    },
+    {
+      "className": "com.aimanager.identity.ConsumerClaimsSerializationTest",
+      "methods": [
+        "accessTokenStandardClaimsReplaceEarlierValuesWithoutDuplicateJsonFields",
+        "idTokenStandardClaimsReplaceEarlierValuesWithoutDuplicateJsonFields",
+        "accountEvidenceAcceptsTheActualKeycloakSerializedToken",
+        "otherClaimsCannotSubstituteForMissingStandardPhoneFields",
+        "otherClaimsCannotOverrideConflictingStandardPhoneFields"
+      ]
+    },
+    {
+      "className": "com.aimanager.identity.ConsumerConfigurationTest",
+      "methods": [
+        "bothFactoriesCanLoadOnlyKnownBoundedFileBackedSecrets",
+        "malformedMissingAndOversizedFileDisableAllConsumerEntrypoints",
+        "shortHmacCannotAdvertiseUsablePhoneService"
+      ]
+    },
+    {
+      "className": "com.aimanager.identity.ConsumerHttpClientReuseTest",
+      "methods": [
+        "factoryReusesOneClientAcrossDistinctAuthenticatorInstances",
+        "injectedProvidersDoNotCreateClientsDuringPhoneChangeAndOtpVerification",
+        "factoryUsesTheSameClientForWechatSmsAndOtpVerification",
+        "disabledOrIncompleteProviderConfigurationDoesNotFailFactoryInitialization"
+      ]
+    },
+    {
+      "className": "com.aimanager.identity.ConsumerIdentityTest",
+      "methods": [
+        "refusesWritableOrMissingServerPhoneAttributes",
+        "refusesWechatIdentityAlreadyLinkedToAnotherPhoneAccount",
+        "linksOnlyExactAppIdOpenIdAndNeverUnionId",
+        "rejectsMissingOrUnverifiedStoredPhoneForWechatLogin",
+        "wechatExchangePinsNativeAppAndRejectsErrorsOrMissingOpenId"
+      ]
+    },
+    {
+      "className": "com.aimanager.identity.ConsumerIdentityTransactionsTest",
+      "methods": [
+        "deletedSnapshotAttributeIsNotRefreshedAndNewCurrentAttributeIsVisible",
+        "refreshPreservesTheManagedCollectionAndExistingUserAdapter",
+        "pendingAttributeAndUnrelatedEntityChangesAreFlushedBeforeReload",
+        "missingLockedAttributeFailsClosedInsteadOfSilentlyDiscardingIt",
+        "alreadyLockedUserUsesAllCurrentScalarsWithoutDetachingExistingAdapters",
+        "nullableEmailAndTimestampsPreserveTheExactCurrentConstraint",
+        "invalidCurrentScalarTypesFailClosedWithoutCoercingThem",
+        "currentUserProjectionCannotChangeTheActorOrRealm",
+        "wechatOwnerUsesCurrentLockedFactsWithoutRefreshingAnInvisibleSnapshotEntity",
+        "wechatForUserUsesCurrentLockedFactsAfterTheSnapshotPredatesTheLink",
+        "removedWechatLinkDoesNotReappearFromTheFirstLevelSnapshot",
+        "duplicateCurrentWechatLinksFailClosed",
+        "currentWechatProjectionMustMatchItsLookupScope"
+      ]
+    },
+    {
+      "className": "com.aimanager.identity.ConsumerProviderRuntimeTest",
+      "methods": [
+        "proofBindsActualSnapshotAndNeverReturnsSecretsOrStableSecretDigests",
+        "authenticatedRequestsRejectWrongEnvironmentOperationProofExpiredAndMalformedNonce",
+        "missingObservationKeyOrJarClosesOnlyObservationAndDoesNotInventFacts",
+        "changedFileDoesNotChangeExistingProofButRestartChangesBootAndLoadedSecrets"
+      ]
+    },
+    {
+      "className": "com.aimanager.identity.ConsumerRuntimeSnapshotTest",
+      "methods": [
+        "runningFactoriesKeepTheSameLoadedSecretsUntilProcessRestart"
+      ]
+    },
+    {
+      "className": "com.aimanager.identity.PhoneOtpTest",
+      "methods": [
+        "canonicalizesMainlandNumbersAndRejectsOtherCountriesAndMalformedInput",
+        "codeIsSecretBoundToSessionAndPhoneExpiresAndConsumesOnce",
+        "fifthFailedAttemptPermanentlyExhaustsChallenge",
+        "throttlesPhoneAcrossSessionsAndDoesNotCreateChallengeWhenProviderFails",
+        "concurrentVerificationOnlyAuthenticatesOneRequest",
+        "dailyPhoneAndHourlyIpBudgetsStopFurtherSmsDispatch"
+      ]
+    }
+  ],
+  "baseCommit": "3b9117b000a10d082a8f7849c41de5f69c0baa62",
+  "baseModuleTree": "098c8e75a7107876bdf31aba106882ff65b7d2b3",
+  "overlays": [
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerHttpClientReuseTest.java",
+      "sourceCommit": "984ae0f9ab4354b16ba6834a836c55ca2351db27",
+      "gitObject": "875878539c3939d923aed709f39f532b30c5da01",
+      "sha256": "3128eb0abaf10cc5123c64684f3e7cb27a7f5cc872ba64312f6d5acd422b5d54",
+      "bytes": 5747,
+      "mode": "100644",
+      "kind": "blob",
+      "archiveState": "RAW_GIT_BLOB",
+      "role": "EXPLICIT_SINGLE_TEST_OVERLAY"
+    }
+  ],
+  "testsScope": "COUNTERFACTUAL_ORIGINAL32_PLUS_REUSE_TEST75"
+}

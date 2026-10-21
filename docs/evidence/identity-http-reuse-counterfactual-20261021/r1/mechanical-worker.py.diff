@@ -1,0 +1,126 @@
+--- r3/worker.py
++++ red75/worker.py
+@@ -19,13 +19,19 @@
+ CANDIDATE = Path(__file__).absolute().parent
+ TASK = CANDIDATE / 'attempt'
+ REPO = CANDIDATE.parents[1]
+-BASELINE = REPO / '.cache/id17-20261021-r4'
++BASELINE = CANDIDATE / 'frozen'
++ORIGINAL_BASELINE = REPO / '.cache/id17-20261021-r4'
+ OLD = REPO / '.cache/committed-validation-20261021-r1'
+ COMMIT = '3b9117b000a10d082a8f7849c41de5f69c0baa62'
++OVERLAY_COMMIT = '984ae0f9ab4354b16ba6834a836c55ca2351db27'
++OVERLAY_PATH = 'identity-extensions/src/test/java/com/aimanager/identity/ConsumerHttpClientReuseTest.java'
++OVERLAY_GIT_OBJECT = '875878539c3939d923aed709f39f532b30c5da01'
++OVERLAY_SHA256 = '3128eb0abaf10cc5123c64684f3e7cb27a7f5cc872ba64312f6d5acd422b5d54'
++ORIGINAL_MANIFEST_SHA256 = 'a0042d42f84d6660b6e7f543c821e7fcb32579c1dc63766656d47c78f3c1bfcc'
+ START = time.monotonic()
+ TASK_SETTINGS = CANDIDATE / 'offline-settings.xml'
+-EXPECTED_TESTS_SHA256 = '21e28a9ca067717daea97b7be695f8c190f61b226d6cdc2aeb9088ed76d57b68'
+-FROZEN_MANIFEST_SHA256 = 'a0042d42f84d6660b6e7f543c821e7fcb32579c1dc63766656d47c78f3c1bfcc'
++EXPECTED_TESTS_SHA256 = 'c009dd0731d1ac0180e5b34e3466abfeb511d2f6afc2a79f8ab5200e7870c2fc'
++FROZEN_MANIFEST_SHA256 = '3367c41f7304d2eb88447f5a468bef0fd8b141c69cd057a77551876e273e1539'
+ APP_ENV_NAMES = ['ALIYUN_SMS_ACCESS_KEY_ID', 'ALIYUN_SMS_ACCESS_KEY_ID_FILE', 'ALIYUN_SMS_ACCESS_KEY_SECRET', 'ALIYUN_SMS_ACCESS_KEY_SECRET_FILE', 'ALIYUN_SMS_SECURITY_TOKEN', 'ALIYUN_SMS_SECURITY_TOKEN_FILE', 'ALIYUN_SMS_SIGN_NAME', 'ALIYUN_SMS_TEMPLATE_CODE', 'CONSUMER_ACCOUNT_SECURITY_ENABLED', 'CONSUMER_OTP_HMAC_KEY', 'CONSUMER_OTP_HMAC_KEY_FILE', 'CONSUMER_PHONE_ENABLED', 'CONSUMER_WECHAT_ENABLED', 'IDENTITY_PROVIDER_ENVIRONMENT_ID', 'IDENTITY_PROVIDER_INSTANCE_ID', 'IDENTITY_PROVIDER_OBSERVATION_KEY_FILE', 'IDENTITY_PROVIDER_OPERATION_ID', 'IDENTITY_PROVIDER_VERSION_ID', 'WECHAT_NATIVE_APP_ID', 'WECHAT_NATIVE_APP_SECRET', 'WECHAT_NATIVE_APP_SECRET_FILE']
+ TASK_SETTINGS_SHA256 = '4925e1bcc0d37d71a3f2f751737aceb3d89d2c58346a0ac8ce8710778ee5f5e4'
+ 
+@@ -112,7 +118,7 @@
+             reports.append({'path':str(path),'sha256':sha(path),'suite':name,'counts':counts,'methods':names})
+         except Exception as error:
+             issues.append('Invalid XML '+path.name+': '+type(error).__name__)
+-    tests_ok = seen == wanted and totals == dict(tests=71, failures=0, errors=0, skipped=0) and len(reports)==12 and not issues
++    tests_ok = seen == wanted and totals == dict(tests=75, failures=0, errors=0, skipped=0) and len(reports)==13 and not issues
+     jar = module/'target/consumer-identity-1.0.0.jar'
+     jar_info = {'path':str(jar),'produced':jar.is_file(),'accepted':False}
+     if jar.is_file():
+@@ -133,7 +139,7 @@
+                 jar_info['accepted']=unique and complete and byte_matches and class_headers and only_module and len(classes)==32 and len(resource_entries)==4
+         except Exception as error:
+             jar_info['errorType']=type(error).__name__
+-    return {'accepted':tests_ok and jar_info['accepted'],'testsAccepted':tests_ok,'actualTotals':totals,'expectedSuites':12,'expectedCases':71,'reports':reports,'issues':issues,'jar':jar_info}
++    return {'accepted':tests_ok and jar_info['accepted'],'testsAccepted':tests_ok,'actualTotals':totals,'expectedSuites':13,'expectedCases':75,'reports':reports,'issues':issues,'jar':jar_info}
+ 
+ def cache_postflight(base, entries):
+     expected={e['path'] for e in entries};actual=set()
+@@ -160,18 +166,29 @@
+     cache = json.loads((OLD/'existing-project-maven-cache-pins.json').read_text('utf-8'))
+     safe(BASELINE,REPO)
+     if sha(BASELINE/'input-manifest.json') != FROZEN_MANIFEST_SHA256:
+-        raise RuntimeError('Frozen r4 manifest changed')
++        raise RuntimeError('Frozen counterfactual manifest changed')
+     frozen_input = json.loads((BASELINE/'input-manifest.json').read_text('utf-8'))
+     source_entries = frozen_input['source']
+     if sha(OLD/'tool-and-cache-input-observations.json') != frozen_input['toolPinsSha256']:raise RuntimeError('Tool observations differ from r4 anchor')
+     if len(cache['entries'])!=3788 or cache['entries']!=frozen_input['cacheEntries']:raise RuntimeError('Cache inventory differs from r4 frozen3788')
+     if git('rev-parse',COMMIT+':identity-extensions').decode().strip() != '098c8e75a7107876bdf31aba106882ff65b7d2b3':
+         raise RuntimeError('Fixed Git module tree changed')
+-    if len(source_entries) != 32:
+-        raise RuntimeError('Unexpected complete module source boundary')
++    safe(ORIGINAL_BASELINE,REPO)
++    if sha(ORIGINAL_BASELINE/'input-manifest.json') != ORIGINAL_MANIFEST_SHA256:
++        raise RuntimeError('Original32 manifest changed')
++    original_input = json.loads((ORIGINAL_BASELINE/'input-manifest.json').read_text('utf-8'))
++    base_entries = [entry for entry in source_entries if entry['path'] != OVERLAY_PATH]
++    overlays = [entry for entry in source_entries if entry['path'] == OVERLAY_PATH]
++    if len(source_entries) != 33 or len(base_entries) != 32 or len(overlays) != 1 or base_entries != original_input['source']:
++        raise RuntimeError('Unexpected original32 plus one overlay boundary')
+     paths = git('ls-tree','-r','--name-only',COMMIT,'--','identity-extensions/').decode().splitlines()
+-    if set(paths) != {entry['path'] for entry in source_entries}:
+-        raise RuntimeError('Module file set changed')
++    if set(paths) != {entry['path'] for entry in base_entries}:
++        raise RuntimeError('Original32 Git module file set changed')
++    overlay = overlays[0]
++    if overlay['gitObject'] != OVERLAY_GIT_OBJECT or overlay['sha256'] != OVERLAY_SHA256 or git('rev-parse',OVERLAY_COMMIT+':'+OVERLAY_PATH).decode().strip() != OVERLAY_GIT_OBJECT:
++        raise RuntimeError('Independent overlay Git object pin changed')
++    if frozen_input.get('commit') is not None or frozen_input.get('sourceCommit') is not None or frozen_input.get('baseCommit') != COMMIT or frozen_input.get('baseModuleTree') != '098c8e75a7107876bdf31aba106882ff65b7d2b3':
++        raise RuntimeError('Counterfactual provenance changed')
+     for label in ('java','maven'):
+         installation = Path(pins[label]['root'])
+         actual = set()
+@@ -203,6 +220,13 @@
+         content = original.read_bytes()
+         if len(content) != entry['bytes'] or hashlib.sha256(content).hexdigest() != entry['sha256']:
+             raise RuntimeError('Fixed module bytes changed')
++        origin_commit = OVERLAY_COMMIT if entry['path'] == OVERLAY_PATH else COMMIT
++        if git('rev-parse',origin_commit+':'+entry['path']).decode().strip() != entry['gitObject'] or content != git('cat-file','blob',entry['gitObject']):
++            raise RuntimeError('Source differs from independently pinned raw Git blob')
++        if entry['path'] != OVERLAY_PATH:
++            original_base = ORIGINAL_BASELINE/'src'/entry['path']; safe(original_base,ORIGINAL_BASELINE/'src')
++            if original_base.read_bytes() != content:
++                raise RuntimeError('Original32 snapshot differs from frozen base')
+         target = TASK/'src'/entry['path']; target.parent.mkdir(parents=True,exist_ok=True)
+         with target.open('xb') as stream: stream.write(content)
+     module = TASK/'src/identity-extensions'
+@@ -249,7 +273,7 @@
+     executable = str(Path(pins['maven']['root'])/'bin/mvn.cmd')
+     tail = executable+' -V -o -B -ntp -s '+str(TASK_SETTINGS)+' -f '+str(module/'pom.xml')+' -Dmaven.repo.local='+str(TASK/'m2')+' -DskipTests=false -Dmaven.test.skip=false verify'
+     if any(c in tail for c in '&|<>^%!"\r\n'): raise RuntimeError('Unsafe command characters')
+-    save('input-manifest.json',{'commit':COMMIT,'source':source_entries,'cacheEntries':cache['entries'],
++    save('input-manifest.json',{'commit':None,'sourceCommit':None,'baseCommit':COMMIT,'baseModuleTree':'098c8e75a7107876bdf31aba106882ff65b7d2b3','overlays':frozen_input['overlays'],'source':source_entries,'cacheEntries':cache['entries'],
+                               'toolPinsSha256':sha(OLD/'tool-and-cache-input-observations.json'),'taskSettings':{'path':str(TASK_SETTINGS),'sha256':TASK_SETTINGS_SHA256},'resourceBefore':before,'resourceAtLaunch':ready})
+     launch={'utc':dt.datetime.now(dt.timezone.utc).isoformat(),'executable':str(cmd),'arguments':['/d','/v:off','/s','/c',tail],
+             'workingDirectory':str(module),'completeBudgetSeconds':180,'preflightSeconds':time.monotonic()-START,'testsRequested':True,'applicationEnvironmentNamesRemoved':APP_ENV_NAMES}
+@@ -277,7 +301,8 @@
+     validation=verify_tests_and_jar(module)
+     original_cache=cache_postflight(cache_source,cache['entries'])
+     execution_cache=cache_postflight(TASK/'m2',cache['entries'])
+-    frozen_source_same=all(sha(BASELINE/'src'/entry['path'])==entry['sha256'] for entry in source_entries)
++    original_base_source_same=all(sha(ORIGINAL_BASELINE/'src'/entry['path'])==entry['sha256'] for entry in base_entries)
++    frozen_source_same=all(sha(BASELINE/'src'/entry['path'])==entry['sha256'] for entry in source_entries) and original_base_source_same
+     post_tool_mismatches=[]
+     for label in ('java','maven'):
+         root=Path(pins[label]['root'])
+@@ -289,12 +314,12 @@
+         for entry in pins[label]['entries']:
+             path=root/entry['path']
+             if not path.is_file() or path.stat().st_size!=entry['bytes'] or sha(path)!=entry['sha256']:post_tool_mismatches.append(label+':'+entry['path'])
+-    post_configuration_unchanged=(sha(TASK_SETTINGS)==TASK_SETTINGS_SHA256 and sha(CANDIDATE/'expected-tests.json')==EXPECTED_TESTS_SHA256 and sha(BASELINE/'input-manifest.json')==FROZEN_MANIFEST_SHA256) and all(sha(OLD/name)==digest for name,digest in HISTORICAL_METADATA_SHA256.items())
++    post_configuration_unchanged=(sha(TASK_SETTINGS)==TASK_SETTINGS_SHA256 and sha(CANDIDATE/'expected-tests.json')==EXPECTED_TESTS_SHA256 and sha(BASELINE/'input-manifest.json')==FROZEN_MANIFEST_SHA256 and sha(ORIGINAL_BASELINE/'input-manifest.json')==ORIGINAL_MANIFEST_SHA256) and all(sha(OLD/name)==digest for name,digest in HISTORICAL_METADATA_SHA256.items())
+     elapsed=time.monotonic()-START
+     passed=child.returncode==0 and elapsed<=180 and source_same and frozen_source_same and all(part['exactSourceSet'] for part in scope.values()) and not descendants and validation['accepted'] and original_cache['unchanged'] and execution_cache['unchanged'] and not post_tool_mismatches and post_configuration_unchanged
+     receipt={'status':'FULL_VERIFY_WORKER_PASSED' if passed else 'NOT_ACCEPTED','pid':child.pid,'exitCode':child.returncode,
+              'elapsedCompleteSeconds':elapsed,'withinBudget':elapsed<=180,'compilerScope':scope,'sourceInputsUnchanged':source_same,
+-             'javaProcessesAfter':descendants,'logSha256':sha(TASK/'out/maven.log'),'resourceAfter':resources(),'sdkCalls':1,'testsRequested':True,'testsRun':validation['actualTotals']['tests']>0,'testAndJarValidation':validation,'originalCacheAfter':original_cache,'executionCacheAfter':execution_cache,'frozenBaselineSourceUnchanged':frozen_source_same,'postToolMismatches':post_tool_mismatches,'postConfigurationUnchanged':post_configuration_unchanged,
++             'javaProcessesAfter':descendants,'logSha256':sha(TASK/'out/maven.log'),'resourceAfter':resources(),'sdkCalls':1,'testsRequested':True,'testsRun':validation['actualTotals']['tests']>0,'testAndJarValidation':validation,'originalCacheAfter':original_cache,'executionCacheAfter':execution_cache,'frozenBaselineSourceUnchanged':frozen_source_same,'original32BaselineSourceUnchanged':original_base_source_same,'postToolMismatches':post_tool_mismatches,'postConfigurationUnchanged':post_configuration_unchanged,
+              'servicesStarted':False,'mainOrSharedCacheWrites':False,'forcedTermination':False}
+     save('receipt.json',receipt); print(json.dumps(receipt),flush=True)
+ except Exception as error:

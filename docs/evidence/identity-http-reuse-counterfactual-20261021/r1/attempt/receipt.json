@@ -1,0 +1,321 @@
+{
+  "status": "NOT_ACCEPTED",
+  "pid": 126188,
+  "exitCode": 1,
+  "elapsedCompleteSeconds": 60.01256379998813,
+  "withinBudget": true,
+  "compilerScope": {
+    "main": {
+      "expected": 13,
+      "actual": 13,
+      "exactSourceSet": true
+    },
+    "test": {
+      "expected": 13,
+      "actual": 13,
+      "exactSourceSet": true
+    }
+  },
+  "sourceInputsUnchanged": true,
+  "javaProcessesAfter": [],
+  "logSha256": "7019755befc18db4f9cc1518bea5ef85b0c70d4619d6f540ba2bab995f2e9b9a",
+  "resourceAfter": {
+    "utc": "2026-10-21T07:08:10.673694+00:00",
+    "availablePhysicalBytes": 4888641536,
+    "diskFreeBytes": {
+      "C:/": 11721891840,
+      "D:/": 33741705216
+    },
+    "sdkProcesses": []
+  },
+  "sdkCalls": 1,
+  "testsRequested": true,
+  "testsRun": true,
+  "testAndJarValidation": {
+    "accepted": false,
+    "testsAccepted": false,
+    "actualTotals": {
+      "tests": 75,
+      "failures": 3,
+      "errors": 0,
+      "skipped": 0
+    },
+    "expectedSuites": 13,
+    "expectedCases": 75,
+    "reports": [
+      {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-red75-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.AliyunSmsTest.xml",
+        "sha256": "92d51021c898ba51b0d1522493ef49bab2e7d2cdabc2ab6e7da62404508437f9",
+        "suite": "com.aimanager.identity.AliyunSmsTest",
+        "counts": {
+          "tests": 2,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "methods": [
+          "sendsOnlyToPinnedChinaEndpointUsesOfficialQueryMetadataAndRejectsProviderFailure",
+          "signatureMatchesOfficialV3KnownAnswer"
+        ]
+      },
+      {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-red75-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.ConsumerAccountFlowTest.xml",
+        "sha256": "ad6b0476e8ab634d52a621908f95754bc491d232b14a365b20273f4bc26cdd7e",
+        "suite": "com.aimanager.identity.ConsumerAccountFlowTest",
+        "counts": {
+          "tests": 17,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "methods": [
+          "anotherAccountsWechatIsNeverReassigned",
+          "disablingAccountSecurityLeavesIdentityUntouched",
+          "wrongAndExhaustedOtpNeverAcquireTheGlobalDatabaseFence",
+          "staleRevisionAndOccupiedTargetNeverChangeIdentity",
+          "aLoginOtpCannotApproveAnAccountSecurityOperation",
+          "recoveryRequiresExistingWechatAndUpdatesItsOriginalAccount",
+          "unableToAcquireDatabaseFenceCannotChangeTheUser",
+          "changingPhoneProvesBothNumbersAndKeepsOriginalSubject",
+          "changingTheNewNumberDoesNotReuseThePreviousNumbersProof",
+          "unlinkedWechatCannotCreateAnAccountThroughRecovery",
+          "bindingThenUnbindingKeepsPhoneAndRejectsAnotherAccountsWechat",
+          "oldPhoneProofExpiresBeforeNewPhoneCanBeCommitted",
+          "repeatedOperationDoesNotTurnConsumedOtpIntoNewAuthentication",
+          "thirtyMinuteDeadlineDoesNotExtendWhenAuthenticationIsRenderedAgain",
+          "missingActionCannotFallThroughToNormalRegistration",
+          "recoveryRejectsDifferentExpectedActorBeforeSendingNewNumberSms",
+          "concurrentIdentityChangeInvalidatesTheInFlightOperation"
+        ]
+      },
+      {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-red75-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.ConsumerAccountSpiPackagingTest.xml",
+        "sha256": "c6c005d79a4eb761f5fc20e812bb526e0462fa12c24b90dab48d553deef7cecc",
+        "suite": "com.aimanager.identity.ConsumerAccountSpiPackagingTest",
+        "counts": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "methods": [
+          "restSpiRegistrationAndProviderMarkerArePackaged"
+        ]
+      },
+      {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-red75-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.ConsumerAccountStatusTest.xml",
+        "sha256": "ee4f8905b4bbf65ab9d684dd939e47da3d78de3861cc96ab9a029e69b90eecea",
+        "suite": "com.aimanager.identity.ConsumerAccountStatusTest",
+        "counts": {
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "methods": [
+          "oldPhoneOldRevisionAndOtherClientsAreRejected",
+          "malformedReceiptFailsClosedWithoutAnInternalError",
+          "currentStatusExposesOnlyMaskedPhoneAndRealBindingCapabilities",
+          "cdiCanConstructAnUnconfiguredProviderWithoutInjectingSecrets",
+          "legacyTokenWorksOnlyWhileCurrentUserStillHasRevisionOne",
+          "disabledUserAndDisabledProviderCannotReturnCurrentEvidence"
+        ]
+      },
+      {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-red75-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.ConsumerAuthenticatorTest.xml",
+        "sha256": "3ce5f343d475a9803f757e2b2563fc49d275f9f3aca2a37f801f4eb98b7e73c2",
+        "suite": "com.aimanager.identity.ConsumerAuthenticatorTest",
+        "counts": {
+          "tests": 8,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "methods": [
+          "currentRawRevisionCannotBeResetByAnOlderCacheAwareUser",
+          "missingProviderConfigCannotAuthenticateOrCreateUser",
+          "verifiedPhoneSetsTrustedNotesAndDoesNotClaimMfa",
+          "tokenClaimsComeOnlyFromTrustedSessionNotesWithAccurateWechatAmr",
+          "changedPhoneCannotBeResignedFromAnOlderRefreshSession",
+          "incompleteTrustedSessionCannotEmitVerifiedClaimsOrCrashTokenIssuance",
+          "newPhoneAccountIsCreatedOnlyAfterRealOtpVerificationAndEmitsSmsClaims",
+          "incompleteConsumerMethodCannotDowngradeIntoAnUnmarkedInstitutionToken"
+        ]
+      },
+      {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-red75-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.ConsumerClaimsSerializationTest.xml",
+        "sha256": "aebf0ac81bf7c69eb947fa65dfa03213487215d5c4825a45321299d78ff5242a",
+        "suite": "com.aimanager.identity.ConsumerClaimsSerializationTest",
+        "counts": {
+          "tests": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "methods": [
+          "otherClaimsCannotSubstituteForMissingStandardPhoneFields",
+          "accessTokenStandardClaimsReplaceEarlierValuesWithoutDuplicateJsonFields",
+          "otherClaimsCannotOverrideConflictingStandardPhoneFields",
+          "idTokenStandardClaimsReplaceEarlierValuesWithoutDuplicateJsonFields",
+          "accountEvidenceAcceptsTheActualKeycloakSerializedToken"
+        ]
+      },
+      {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-red75-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.ConsumerConfigurationTest.xml",
+        "sha256": "74766bb6f5553ff1190de8ddc6afcd17e7d1aa9596843bbc7434157d5c427772",
+        "suite": "com.aimanager.identity.ConsumerConfigurationTest",
+        "counts": {
+          "tests": 3,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "methods": [
+          "malformedMissingAndOversizedFileDisableAllConsumerEntrypoints",
+          "shortHmacCannotAdvertiseUsablePhoneService",
+          "bothFactoriesCanLoadOnlyKnownBoundedFileBackedSecrets"
+        ]
+      },
+      {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-red75-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.ConsumerHttpClientReuseTest.xml",
+        "sha256": "2eb7bf6cb272bb7404750719c1b1333668ab335b2d7324e6db9c6b81d2766b3f",
+        "suite": "com.aimanager.identity.ConsumerHttpClientReuseTest",
+        "counts": {
+          "tests": 4,
+          "failures": 3,
+          "errors": 0,
+          "skipped": 0
+        },
+        "methods": [
+          "factoryUsesTheSameClientForWechatSmsAndOtpVerification",
+          "injectedProvidersDoNotCreateClientsDuringPhoneChangeAndOtpVerification",
+          "factoryReusesOneClientAcrossDistinctAuthenticatorInstances",
+          "disabledOrIncompleteProviderConfigurationDoesNotFailFactoryInitialization"
+        ]
+      },
+      {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-red75-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.ConsumerIdentityTest.xml",
+        "sha256": "41fff599bd6003d05f29210e6f8c0c8c9fefde445c85cdb7abe3e334f5c9f968",
+        "suite": "com.aimanager.identity.ConsumerIdentityTest",
+        "counts": {
+          "tests": 5,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "methods": [
+          "rejectsMissingOrUnverifiedStoredPhoneForWechatLogin",
+          "linksOnlyExactAppIdOpenIdAndNeverUnionId",
+          "wechatExchangePinsNativeAppAndRejectsErrorsOrMissingOpenId",
+          "refusesWechatIdentityAlreadyLinkedToAnotherPhoneAccount",
+          "refusesWritableOrMissingServerPhoneAttributes"
+        ]
+      },
+      {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-red75-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.ConsumerIdentityTransactionsTest.xml",
+        "sha256": "ff1f219bfaa322b12381fe8136c9877a73ca1317d0e0e10a2237fe467770caad",
+        "suite": "com.aimanager.identity.ConsumerIdentityTransactionsTest",
+        "counts": {
+          "tests": 13,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "methods": [
+          "alreadyLockedUserUsesAllCurrentScalarsWithoutDetachingExistingAdapters",
+          "duplicateCurrentWechatLinksFailClosed",
+          "refreshPreservesTheManagedCollectionAndExistingUserAdapter",
+          "removedWechatLinkDoesNotReappearFromTheFirstLevelSnapshot",
+          "pendingAttributeAndUnrelatedEntityChangesAreFlushedBeforeReload",
+          "deletedSnapshotAttributeIsNotRefreshedAndNewCurrentAttributeIsVisible",
+          "invalidCurrentScalarTypesFailClosedWithoutCoercingThem",
+          "currentWechatProjectionMustMatchItsLookupScope",
+          "missingLockedAttributeFailsClosedInsteadOfSilentlyDiscardingIt",
+          "wechatForUserUsesCurrentLockedFactsAfterTheSnapshotPredatesTheLink",
+          "nullableEmailAndTimestampsPreserveTheExactCurrentConstraint",
+          "currentUserProjectionCannotChangeTheActorOrRealm",
+          "wechatOwnerUsesCurrentLockedFactsWithoutRefreshingAnInvisibleSnapshotEntity"
+        ]
+      },
+      {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-red75-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.ConsumerProviderRuntimeTest.xml",
+        "sha256": "ab04a56d5b7ead3967368ac938263591ede0cfce306153cf2e82d2d992b741f0",
+        "suite": "com.aimanager.identity.ConsumerProviderRuntimeTest",
+        "counts": {
+          "tests": 4,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "methods": [
+          "proofBindsActualSnapshotAndNeverReturnsSecretsOrStableSecretDigests",
+          "authenticatedRequestsRejectWrongEnvironmentOperationProofExpiredAndMalformedNonce",
+          "changedFileDoesNotChangeExistingProofButRestartChangesBootAndLoadedSecrets",
+          "missingObservationKeyOrJarClosesOnlyObservationAndDoesNotInventFacts"
+        ]
+      },
+      {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-red75-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.ConsumerRuntimeSnapshotTest.xml",
+        "sha256": "872f4549b2d60c690e365011f654959d8dda484225d39dac3f7cd225a26b6f49",
+        "suite": "com.aimanager.identity.ConsumerRuntimeSnapshotTest",
+        "counts": {
+          "tests": 1,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "methods": [
+          "runningFactoriesKeepTheSameLoadedSecretsUntilProcessRestart"
+        ]
+      },
+      {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-red75-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.PhoneOtpTest.xml",
+        "sha256": "34a805fd3b120cfe28c58bfaa18dffa0a03a38ccca6431025eab039129c33fc5",
+        "suite": "com.aimanager.identity.PhoneOtpTest",
+        "counts": {
+          "tests": 6,
+          "failures": 0,
+          "errors": 0,
+          "skipped": 0
+        },
+        "methods": [
+          "throttlesPhoneAcrossSessionsAndDoesNotCreateChallengeWhenProviderFails",
+          "codeIsSecretBoundToSessionAndPhoneExpiresAndConsumesOnce",
+          "fifthFailedAttemptPermanentlyExhaustsChallenge",
+          "canonicalizesMainlandNumbersAndRejectsOtherCountriesAndMalformedInput",
+          "dailyPhoneAndHourlyIpBudgetsStopFurtherSmsDispatch",
+          "concurrentVerificationOnlyAuthenticatesOneRequest"
+        ]
+      }
+    ],
+    "issues": [
+      "Case failed, skipped or unexpected class: com.aimanager.identity.ConsumerHttpClientReuseTest.factoryUsesTheSameClientForWechatSmsAndOtpVerification",
+      "Case failed, skipped or unexpected class: com.aimanager.identity.ConsumerHttpClientReuseTest.injectedProvidersDoNotCreateClientsDuringPhoneChangeAndOtpVerification",
+      "Case failed, skipped or unexpected class: com.aimanager.identity.ConsumerHttpClientReuseTest.factoryReusesOneClientAcrossDistinctAuthenticatorInstances"
+    ],
+    "jar": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-red75-20261021-r1\\attempt\\src\\identity-extensions\\target\\consumer-identity-1.0.0.jar",
+      "produced": false,
+      "accepted": false
+    }
+  },
+  "originalCacheAfter": {
+    "files": 3788,
+    "fileSetExact": true,
+    "mismatches": [],
+    "unchanged": true
+  },
+  "executionCacheAfter": {
+    "files": 3788,
+    "fileSetExact": true,
+    "mismatches": [],
+    "unchanged": true
+  },
+  "frozenBaselineSourceUnchanged": true,
+  "original32BaselineSourceUnchanged": true,
+  "postToolMismatches": [],
+  "postConfigurationUnchanged": true,
+  "servicesStarted": false,
+  "mainOrSharedCacheWrites": false,
+  "forcedTermination": false
+}

@@ -1,0 +1,15 @@
+# Counterfactual identity RED75 static candidate
+
+This is an explicit combination of ORIGINAL32 Git 3b9117b000a10d082a8f7849c41de5f69c0baa62 (module tree 098c8e75a7107876bdf31aba106882ff65b7d2b3) and exactly one test overlay from Git 984ae0f9ab4354b16ba6834a836c55ca2351db27. It is not a Git commit or tree. sourceCommit and moduleTree are null. The sole overlay is `identity-extensions/src/test/java/com/aimanager/identity/ConsumerHttpClientReuseTest.java`, raw blob 875878539c3939d923aed709f39f532b30c5da01, SHA-256 3128eb0abaf10cc5123c64684f3e7cb27a7f5cc872ba64312f6d5acd422b5d54.
+
+The frozen source capsule contains exactly 33 files: unchanged original32 plus that raw test blob. Compiler scope is 13 main Java and 13 test Java inputs. The exact expected inventory is 13 suites and 75 methods: the original 71 methods plus the four overlay methods. Every base file is checked against its fixed Git object and the original r4 snapshot; the overlay is checked independently against its origin commit, raw object and SHA-256. No source is taken from Main/WIP.
+
+Static preparation only. The candidate has not been imported or executed, no SDK/Maven/test/format/browser/network/download was invoked, and no SDK or Maven cache bytes were copied. Preparing a 33-file source capsule and metadata is the only source copy. The original32 runner and CURRENT33 candidate are read-only inputs.
+
+The r3 supervisor is mechanically unchanged except its scope label. Its 180-second outer budget, 174-second cutoff plus 6-second reserve, private kill-on-close Job, blocked-worker handshake, bounded one-second natural accounting drain, CreateNew/single-use attempt, 2 GiB RAM and each-disk gates, 21 removed environment names, process-local TEMP/TMP/java.io.tmpdir/512 MiB, full offline verify, all tool/configuration pins, both 3788-file cache checks, and postflight pins remain in force.
+
+The worker retains normal full-verify acceptance: exactly 75 methods, zero failures/errors/skips, and the original32-class/four-resource JAR. The predicted three assertion failures therefore remain NOT_ACCEPTED, with controller exit 1. No failing Maven run is accepted and the runner does not classify RED_OBSERVED. A JAR is not required for Root's separate counterfactual observation because Maven naturally stops at test failure.
+
+`expected-counterfactual.json` records the predicted three failures only: old client counts 2/5/4 versus reuse expectations 1/0/1. The disabled/incomplete configuration method and original71 are expected to pass. Root may independently classify RED_OBSERVED only from actual evidence of the exact 75 method set, exactly the three named assertion failures, zero errors/skips, intact source/tool/configuration/cache pins, natural terminal worker and Job, fresh SDK zero, and no timeout or forced cleanup. Predictions are not observed results.
+
+A separately authorized exclusive runtime grant and the exact proposal digest are required before a first attempt. Do not reuse an existing attempt. Review `mechanical-*.diff`, `static-review.json`, manifests and delivery inventory before authorizing runtime.

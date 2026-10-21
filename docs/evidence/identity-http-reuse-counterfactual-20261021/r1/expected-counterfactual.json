@@ -1,0 +1,52 @@
+{
+  "schemaVersion": 1,
+  "status": "PREDICTED_COUNTERFACTUAL_ONLY_NOT_OBSERVED",
+  "classificationOwner": "Independent Root review of actual terminal evidence",
+  "expectedTotalMethods": 75,
+  "expectedSuites": 13,
+  "expectedFailures": 3,
+  "expectedErrors": 0,
+  "expectedSkipped": 0,
+  "expectedAssertionFailures": [
+    {
+      "className": "com.aimanager.identity.ConsumerHttpClientReuseTest",
+      "method": "factoryReusesOneClientAcrossDistinctAuthenticatorInstances",
+      "type": "org.mockito.exceptions.verification.TooManyActualInvocations",
+      "actualOldClientCount": 2,
+      "expectedReuseCount": 1,
+      "invocation": "HttpClient.Builder.build"
+    },
+    {
+      "className": "com.aimanager.identity.ConsumerHttpClientReuseTest",
+      "method": "injectedProvidersDoNotCreateClientsDuringPhoneChangeAndOtpVerification",
+      "type": "org.mockito.exceptions.verification.NeverWantedButInvoked",
+      "actualOldClientCount": 5,
+      "expectedReuseCount": 0,
+      "invocation": "HttpClient.newBuilder"
+    },
+    {
+      "className": "com.aimanager.identity.ConsumerHttpClientReuseTest",
+      "method": "factoryUsesTheSameClientForWechatSmsAndOtpVerification",
+      "type": "org.mockito.exceptions.verification.TooManyActualInvocations",
+      "actualOldClientCount": 4,
+      "expectedReuseCount": 1,
+      "invocation": "HttpClient.Builder.build"
+    }
+  ],
+  "newClassPassingMethod": "disabledOrIncompleteProviderConfigurationDoesNotFailFactoryInitialization",
+  "original71ExpectedUnchanged": true,
+  "normalFullVerifyAccepted": false,
+  "expectedControllerExitCode": 1,
+  "jarRequiredForCounterfactualObservation": false,
+  "classifyRedInsideRunner": false,
+  "requiredIndependentConditions": [
+    "Exact 13 suites and exact 75 method inventory",
+    "Exactly the 3 named expected assertion failures, no other failures",
+    "Zero errors and skips",
+    "Original32 Git base and sole overlay pins intact",
+    "Both 3788-file caches and tool/configuration/source pins unchanged",
+    "Natural worker and Job termination, zero active SDK processes, no unknown process names",
+    "No timeout or forced cleanup",
+    "Controller actual exit 1 with NOT_ACCEPTED; normal full verify acceptance remains false"
+  ]
+}

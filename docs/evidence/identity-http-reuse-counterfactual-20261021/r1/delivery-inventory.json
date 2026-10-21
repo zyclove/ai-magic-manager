@@ -1,0 +1,269 @@
+{
+  "schemaVersion": 1,
+  "status": "STATIC_CANDIDATE_INVENTORY",
+  "sourceCommit": null,
+  "baseCommit": "3b9117b000a10d082a8f7849c41de5f69c0baa62",
+  "baseModuleTree": "098c8e75a7107876bdf31aba106882ff65b7d2b3",
+  "overlay": {
+    "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerHttpClientReuseTest.java",
+    "sourceCommit": "984ae0f9ab4354b16ba6834a836c55ca2351db27",
+    "gitObject": "875878539c3939d923aed709f39f532b30c5da01",
+    "sha256": "3128eb0abaf10cc5123c64684f3e7cb27a7f5cc872ba64312f6d5acd422b5d54",
+    "bytes": 5747,
+    "mode": "100644",
+    "kind": "blob",
+    "archiveState": "RAW_GIT_BLOB",
+    "role": "EXPLICIT_SINGLE_TEST_OVERLAY"
+  },
+  "files": [
+    {
+      "path": "controller.py",
+      "bytes": 8021,
+      "sha256": "74686827b601b8d7cb9a79f488fceca8d686a8e8b86ff7e5ef5838e9f4d1bf97"
+    },
+    {
+      "path": "expected-counterfactual.json",
+      "bytes": 2243,
+      "sha256": "b00ef0fa0c6c31861d75546e26c90afe1f6b006cebb8887303f6231a0ad629c6"
+    },
+    {
+      "path": "expected-tests.json",
+      "bytes": 7400,
+      "sha256": "c009dd0731d1ac0180e5b34e3466abfeb511d2f6afc2a79f8ab5200e7870c2fc"
+    },
+    {
+      "path": "frozen/input-manifest.json",
+      "bytes": 787752,
+      "sha256": "3367c41f7304d2eb88447f5a468bef0fd8b141c69cd057a77551876e273e1539"
+    },
+    {
+      "path": "frozen/source-manifest.json",
+      "bytes": 13068,
+      "sha256": "e7ef827cd453c058249552198a6917e8fc04980b4efb1e096ecf3e44a8f82981"
+    },
+    {
+      "path": "frozen/src/identity-extensions/maven-settings.xml",
+      "bytes": 376,
+      "sha256": "906221a94b3fbc7d7fda3eb5b5ae53b5ee405f5e7ab1baa66f4c86e065677a4a"
+    },
+    {
+      "path": "frozen/src/identity-extensions/pom.xml",
+      "bytes": 4607,
+      "sha256": "28f16e1bf4f68048034dbcc585696c85a2699f04b07c02b98326463ea8032a2c"
+    },
+    {
+      "path": "frozen/src/identity-extensions/README.md",
+      "bytes": 16206,
+      "sha256": "5510acccbebc58c710946b2b788e21063f0107dc892e0de56561aba274684e32"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/main/java/com/aimanager/identity/AliyunSms.java",
+      "bytes": 4851,
+      "sha256": "c806afd508fa052d8acfec6c8eff1aabd8ff414094f99f087827400fb6421d5d"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/main/java/com/aimanager/identity/ConsumerAccountFlow.java",
+      "bytes": 14498,
+      "sha256": "bebef13e2daf8bf8182a318febfc4c3cb38bfc916fd4def590af0cd9e4cb1896"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/main/java/com/aimanager/identity/ConsumerAccountResource.java",
+      "bytes": 5691,
+      "sha256": "f13e6cf8b2d48059b82a3691710420838e1b3b6a987732b4a5b2ca50718db2cd"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/main/java/com/aimanager/identity/ConsumerAccountResourceFactory.java",
+      "bytes": 770,
+      "sha256": "7e039347cae9059afa2b08dd229e09e299357b39e05fc0a98fee849ab11ee0d2"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/main/java/com/aimanager/identity/ConsumerAuthenticator.java",
+      "bytes": 9795,
+      "sha256": "29e614039818107066c6a2c81da9fb6d7ff09a49c4a07547091a041d00a11d75"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/main/java/com/aimanager/identity/ConsumerAuthenticatorFactory.java",
+      "bytes": 1409,
+      "sha256": "a37af315a5c9c1b1e2080fb44268240f770438fcc62ed824d4c9c864d0c778c2"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/main/java/com/aimanager/identity/ConsumerClaimsMapper.java",
+      "bytes": 2699,
+      "sha256": "ab105651a4fe9a6cee8baf91c9e6bbc30d9186e54d5efebe73e0d12a31472be9"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/main/java/com/aimanager/identity/ConsumerConfiguration.java",
+      "bytes": 2679,
+      "sha256": "e4a903cda0de55bec76c336bb23abc52ce6b2daf27df0efaa08883f3b3fe4935"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/main/java/com/aimanager/identity/ConsumerIdentity.java",
+      "bytes": 3891,
+      "sha256": "9f2517ebaa1d967a207391b130a0c42f247cae79af418ba26fd642c302860eb0"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/main/java/com/aimanager/identity/ConsumerIdentityTransactions.java",
+      "bytes": 10707,
+      "sha256": "26b3791e1ebdcf6d12bac7edbf29407886e4209f55f885eedd6718cdcb170fb4"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/main/java/com/aimanager/identity/ConsumerProviderRuntime.java",
+      "bytes": 6515,
+      "sha256": "0fcb443f6c6556314816d4db5749af9d2112e4537d7a60d59d81e86677ff1e80"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/main/java/com/aimanager/identity/PhoneOtp.java",
+      "bytes": 3990,
+      "sha256": "29edc057c9d8f5f08cdc38d965982efc91eda2d4b895fe5d0c94a79533fbd974"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/main/java/com/aimanager/identity/WechatNative.java",
+      "bytes": 2053,
+      "sha256": "b3b4d5ca96284efb2e12584acfb5b0e18a0699bdd0d62072295b75000208ec1e"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/main/resources/META-INF/beans.xml",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/main/resources/META-INF/services/org.keycloak.authentication.AuthenticatorFactory",
+      "bytes": 52,
+      "sha256": "6af9d79ca04029ff9ffdccf9f73d6bf50f8d29e6507686eb04a5209a50b1a381"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/main/resources/META-INF/services/org.keycloak.protocol.ProtocolMapper",
+      "bytes": 44,
+      "sha256": "280e403e28ec793e67ba5aa06d0a9aeca80f8b3489746c1173a4932b17dd579b"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/main/resources/META-INF/services/org.keycloak.services.resource.RealmResourceProviderFactory",
+      "bytes": 54,
+      "sha256": "c75e601769eb0cc24c186350709a88475eca0842d46d49287b52300dd79107f5"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/test/java/com/aimanager/identity/AliyunSmsTest.java",
+      "bytes": 2371,
+      "sha256": "a65c35ddf6fb308e962bc97fd817d5e6a7ea78a54248c0244285b93a0ee64cee"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerAccountFlowTest.java",
+      "bytes": 21068,
+      "sha256": "68199345baa017244fe8e348d53d189ae2074e7f8df5aaef78a1ae8d17a0d54b"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerAccountSpiPackagingTest.java",
+      "bytes": 970,
+      "sha256": "f7256066b80683879de946f7f133a77eb9e01297da949d0d846233706830385d"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerAccountStatusTest.java",
+      "bytes": 4628,
+      "sha256": "092b9f91eb4ead12af665cd984e1479d951f9e309d50daea97e547fbcdaea838"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerAuthenticatorTest.java",
+      "bytes": 11151,
+      "sha256": "3fa6852e536319d20d51771501f2ce0fd9a95da7b54cf315c62c283806dd47b0"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerClaimsSerializationTest.java",
+      "bytes": 5947,
+      "sha256": "4edf8b0bc5b25492552183c6defcd85f046316bdee75542b47c6a036091362b1"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerConfigurationTest.java",
+      "bytes": 1919,
+      "sha256": "603b0d4e02364201e6c3b49fa4d6c84d69330d32174ebd15e73596ac5c58632c"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerHttpClientReuseTest.java",
+      "bytes": 5747,
+      "sha256": "3128eb0abaf10cc5123c64684f3e7cb27a7f5cc872ba64312f6d5acd422b5d54"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerIdentityTest.java",
+      "bytes": 3983,
+      "sha256": "65b5009508dbfa5cf49d535d5a88b8a5d809aee9059560267d693b6219f0549b"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerIdentityTransactionsTest.java",
+      "bytes": 15536,
+      "sha256": "a8436e531a89c4fbb17a59d1b25d054c800f7a618cf0afdbbe52d1290ab282a5"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerProviderRuntimeTest.java",
+      "bytes": 6029,
+      "sha256": "1858e304e4ca2f47bf420478e3837d1d22f250916e9efc13e4e6cec671522410"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerRuntimeSnapshotTest.java",
+      "bytes": 1713,
+      "sha256": "908aeabe766666f759b84a66ea002e1aabe7abd8ee1c78bdc412b74475216fcb"
+    },
+    {
+      "path": "frozen/src/identity-extensions/src/test/java/com/aimanager/identity/PhoneOtpTest.java",
+      "bytes": 5858,
+      "sha256": "165f7919e9df974e54e26e89b4831c03122c9fc923dd1991ec307edeef87704c"
+    },
+    {
+      "path": "mechanical-controller.py.diff",
+      "bytes": 835,
+      "sha256": "ba4f0c5c7af874c3a8dd479bbc0b46e7e5f536b2091180208032e7123b9c1e49"
+    },
+    {
+      "path": "mechanical-worker.py.diff",
+      "bytes": 11878,
+      "sha256": "0c0c34644342455c995ddf3b10082c9ba07c735595e043ef31d3c332b5b9f53a"
+    },
+    {
+      "path": "meta-after.json",
+      "bytes": 12360,
+      "sha256": "ca026e31628c71d02c536e57fb066848df2597b1fd274beac7faa1185dd94fb2"
+    },
+    {
+      "path": "meta-before.json",
+      "bytes": 12361,
+      "sha256": "e562589309ece0358c93f9d4d3c7f92777f6bcf8075a4f7ca13213b68792d061"
+    },
+    {
+      "path": "offline-settings.xml",
+      "bytes": 1677,
+      "sha256": "4925e1bcc0d37d71a3f2f751737aceb3d89d2c58346a0ac8ce8710778ee5f5e4"
+    },
+    {
+      "path": "proposal.json",
+      "bytes": 15885,
+      "sha256": "c0e5677ceafa1aa406c36827cd29ea3c1b832512b2c2da6ac3f946bbeba7efc3"
+    },
+    {
+      "path": "README.md",
+      "bytes": 3112,
+      "sha256": "f95faf2f4a4a7fe9169fbfd18557419027d4516ecedae3bb913486e1c9734f6e"
+    },
+    {
+      "path": "static-review.json",
+      "bytes": 8583,
+      "sha256": "5eeb65fce0cb17577f89e5ebd12d7e04a3e1d6711b33436d978e1941dda88452"
+    },
+    {
+      "path": "test-extraction.json",
+      "bytes": 10346,
+      "sha256": "eaa9b3b12f63d1cfd9eb3443b4041b0ea1bd2cc0375108f5488d8ea52f3f0eb9"
+    },
+    {
+      "path": "worker.py",
+      "bytes": 25205,
+      "sha256": "e0dba45de83bdab5e72f74e0adecaefe0cac338f1b0c97862b6884ea7f3527d1"
+    }
+  ],
+  "excludedForAcyclicInventory": [
+    "delivery-inventory.json"
+  ],
+  "sdkCalls": 0,
+  "testsRun": false,
+  "candidateImportedOrExecuted": false,
+  "sdkOrMavenCacheBytesCopied": 0,
+  "attemptExists": false,
+  "readOnlyInputsUnchanged": true
+}

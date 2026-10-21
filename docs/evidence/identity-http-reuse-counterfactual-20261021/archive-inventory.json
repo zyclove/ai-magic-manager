@@ -1,0 +1,346 @@
+{
+  "schemaVersion": 1,
+  "archiveRelativePath": "docs/evidence/identity-http-reuse-counterfactual-20261021",
+  "archiveAbsolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021",
+  "selfExcluded": "archive-inventory.json; self digest delivered separately to coordinator",
+  "files": [
+    {
+      "path": ".gitattributes",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\.gitattributes",
+      "bytes": 73,
+      "sha256": "bc8fb077c218acfdebe7f274cf75c0c9528eabfb518bcc46d8bdd14b925ae3a9",
+      "gitRawBlobSha1": "817a40eff9546739f297910f3b7bed336cc2e5a0"
+    },
+    {
+      "path": ".gitignore",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\.gitignore",
+      "bytes": 137,
+      "sha256": "0792a311128eaa34b1fc7babcdb7b09cc7878c24fb303c15b8d001d820a7f745",
+      "gitRawBlobSha1": "7459a224f44be16ba260016212dc5caaa9b7d48f"
+    },
+    {
+      "path": "archive-review.json",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\archive-review.json",
+      "bytes": 10305,
+      "sha256": "d0ccdb6917cd3e223bed38e2bcd2c7348bfc310d93fc30fef84cd9b73b2d4f73",
+      "gitRawBlobSha1": "79dded329796e5a50e63f38c74fdc1935b12732b"
+    },
+    {
+      "path": "r1/attempt/compiler-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\compiler-status\\maven-compiler-plugin\\compile\\default-compile\\createdFiles.lst",
+      "bytes": 1755,
+      "sha256": "98f498b0a7b076d82abb1fae9eb0cc64b1f39e7a935ef7d611b2f2def23751cc",
+      "gitRawBlobSha1": "b57aa13be60a6bea44103a3858fb69ec7f469297"
+    },
+    {
+      "path": "r1/attempt/compiler-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\compiler-status\\maven-compiler-plugin\\compile\\default-compile\\inputFiles.lst",
+      "bytes": 1987,
+      "sha256": "52e7838ca0b8448603098100aa74ab3bd74bc6f14a6bad781c2a31bd50da2b2d",
+      "gitRawBlobSha1": "de5cffb837b777d4d4f6333129ea8d15eb29900a"
+    },
+    {
+      "path": "r1/attempt/compiler-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\compiler-status\\maven-compiler-plugin\\testCompile\\default-testCompile\\createdFiles.lst",
+      "bytes": 1165,
+      "sha256": "144a09475f0848680ac555d09b45d45e6c6edbe0a82e42b27b1c7a8433b2b4f8",
+      "gitRawBlobSha1": "57dab10e0dd58ba1c305bdaabf9357df10ba9f24"
+    },
+    {
+      "path": "r1/attempt/compiler-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\compiler-status\\maven-compiler-plugin\\testCompile\\default-testCompile\\inputFiles.lst",
+      "bytes": 2047,
+      "sha256": "2cda1b19fa62b55969dbb3a4407948a6a5b747e24fe988dc629a22a3564eb970",
+      "gitRawBlobSha1": "70ce21caac3753adcb509294fe997acf73083cfe"
+    },
+    {
+      "path": "r1/attempt/external-red-observation-root.json",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\external-red-observation-root.json",
+      "bytes": 5128,
+      "sha256": "456895a351d509ed41bb47144b606401c181db11565baae2d680f57af8af97e0",
+      "gitRawBlobSha1": "9abb2bc83276d92ec2d808f14a17c496d69e7b44"
+    },
+    {
+      "path": "r1/attempt/initial-gate.json",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\initial-gate.json",
+      "bytes": 1153,
+      "sha256": "f713d8ea196c648d7f7fd837baeba327a3855a68172c300ba662ad382b81c1ba",
+      "gitRawBlobSha1": "0840ea9798fa424e511ec2971bc394abaa8d52db"
+    },
+    {
+      "path": "r1/attempt/input-manifest.json",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\input-manifest.json",
+      "bytes": 807284,
+      "sha256": "9494b3f75b2b022e6931ffe8e3ba9ef897332f8edb3eba3fce84a70c7f801cec",
+      "gitRawBlobSha1": "81e5ad8998f923fda67ba9938df1cfbbdc946aba"
+    },
+    {
+      "path": "r1/attempt/junit-xml/TEST-com.aimanager.identity.AliyunSmsTest.xml",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\junit-xml\\TEST-com.aimanager.identity.AliyunSmsTest.xml",
+      "bytes": 16019,
+      "sha256": "92d51021c898ba51b0d1522493ef49bab2e7d2cdabc2ab6e7da62404508437f9",
+      "gitRawBlobSha1": "267e0f1b9976ead579520a00c7af3e1aaf3cf2ef"
+    },
+    {
+      "path": "r1/attempt/junit-xml/TEST-com.aimanager.identity.ConsumerAccountFlowTest.xml",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\junit-xml\\TEST-com.aimanager.identity.ConsumerAccountFlowTest.xml",
+      "bytes": 18244,
+      "sha256": "ad6b0476e8ab634d52a621908f95754bc491d232b14a365b20273f4bc26cdd7e",
+      "gitRawBlobSha1": "a7e56f44ac9630b3bc23a6162d291e62edfd06bb"
+    },
+    {
+      "path": "r1/attempt/junit-xml/TEST-com.aimanager.identity.ConsumerAccountSpiPackagingTest.xml",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\junit-xml\\TEST-com.aimanager.identity.ConsumerAccountSpiPackagingTest.xml",
+      "bytes": 15903,
+      "sha256": "c6c005d79a4eb761f5fc20e812bb526e0462fa12c24b90dab48d553deef7cecc",
+      "gitRawBlobSha1": "bbe0c7704ee2876edf8d07b0db79392a46ad6255"
+    },
+    {
+      "path": "r1/attempt/junit-xml/TEST-com.aimanager.identity.ConsumerAccountStatusTest.xml",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\junit-xml\\TEST-com.aimanager.identity.ConsumerAccountStatusTest.xml",
+      "bytes": 16650,
+      "sha256": "ee4f8905b4bbf65ab9d684dd939e47da3d78de3861cc96ab9a029e69b90eecea",
+      "gitRawBlobSha1": "0bbf32f38f8b07a36a1fdac15cd7ce891163d209"
+    },
+    {
+      "path": "r1/attempt/junit-xml/TEST-com.aimanager.identity.ConsumerAuthenticatorTest.xml",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\junit-xml\\TEST-com.aimanager.identity.ConsumerAuthenticatorTest.xml",
+      "bytes": 16989,
+      "sha256": "3ce5f343d475a9803f757e2b2563fc49d275f9f3aca2a37f801f4eb98b7e73c2",
+      "gitRawBlobSha1": "51e8daaa6b19996c9e1667e5a5ab912838386b0d"
+    },
+    {
+      "path": "r1/attempt/junit-xml/TEST-com.aimanager.identity.ConsumerClaimsSerializationTest.xml",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\junit-xml\\TEST-com.aimanager.identity.ConsumerClaimsSerializationTest.xml",
+      "bytes": 16566,
+      "sha256": "aebf0ac81bf7c69eb947fa65dfa03213487215d5c4825a45321299d78ff5242a",
+      "gitRawBlobSha1": "fa3c75bbe558daadc575c475498b21aa40829eb1"
+    },
+    {
+      "path": "r1/attempt/junit-xml/TEST-com.aimanager.identity.ConsumerConfigurationTest.xml",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\junit-xml\\TEST-com.aimanager.identity.ConsumerConfigurationTest.xml",
+      "bytes": 16192,
+      "sha256": "74766bb6f5553ff1190de8ddc6afcd17e7d1aa9596843bbc7434157d5c427772",
+      "gitRawBlobSha1": "c34b59ea75288ed3a231e3ba79291dc4bfcf7baa"
+    },
+    {
+      "path": "r1/attempt/junit-xml/TEST-com.aimanager.identity.ConsumerHttpClientReuseTest.xml",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\junit-xml\\TEST-com.aimanager.identity.ConsumerHttpClientReuseTest.xml",
+      "bytes": 21150,
+      "sha256": "2eb7bf6cb272bb7404750719c1b1333668ab335b2d7324e6db9c6b81d2766b3f",
+      "gitRawBlobSha1": "4afcdcb460fddcd5c2fa8ff176f62284ff581b91"
+    },
+    {
+      "path": "r1/attempt/junit-xml/TEST-com.aimanager.identity.ConsumerIdentityTest.xml",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\junit-xml\\TEST-com.aimanager.identity.ConsumerIdentityTest.xml",
+      "bytes": 16445,
+      "sha256": "41fff599bd6003d05f29210e6f8c0c8c9fefde445c85cdb7abe3e334f5c9f968",
+      "gitRawBlobSha1": "cd3fc823ad1c7f157b7ae55c4f4a85d22fe8ab78"
+    },
+    {
+      "path": "r1/attempt/junit-xml/TEST-com.aimanager.identity.ConsumerIdentityTransactionsTest.xml",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\junit-xml\\TEST-com.aimanager.identity.ConsumerIdentityTransactionsTest.xml",
+      "bytes": 17859,
+      "sha256": "ff1f219bfaa322b12381fe8136c9877a73ca1317d0e0e10a2237fe467770caad",
+      "gitRawBlobSha1": "e85e76569e1c4479d91c6807adaaef3bf29f43e8"
+    },
+    {
+      "path": "r1/attempt/junit-xml/TEST-com.aimanager.identity.ConsumerProviderRuntimeTest.xml",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\junit-xml\\TEST-com.aimanager.identity.ConsumerProviderRuntimeTest.xml",
+      "bytes": 16432,
+      "sha256": "ab04a56d5b7ead3967368ac938263591ede0cfce306153cf2e82d2d992b741f0",
+      "gitRawBlobSha1": "a75bf083489f79ed515a7c9c578c2a375b95c917"
+    },
+    {
+      "path": "r1/attempt/junit-xml/TEST-com.aimanager.identity.ConsumerRuntimeSnapshotTest.xml",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\junit-xml\\TEST-com.aimanager.identity.ConsumerRuntimeSnapshotTest.xml",
+      "bytes": 15906,
+      "sha256": "872f4549b2d60c690e365011f654959d8dda484225d39dac3f7cd225a26b6f49",
+      "gitRawBlobSha1": "4eae22511db7a0adb3999a7c43e4ae451019f818"
+    },
+    {
+      "path": "r1/attempt/junit-xml/TEST-com.aimanager.identity.PhoneOtpTest.xml",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\junit-xml\\TEST-com.aimanager.identity.PhoneOtpTest.xml",
+      "bytes": 16571,
+      "sha256": "34a805fd3b120cfe28c58bfaa18dffa0a03a38ccca6431025eab039129c33fc5",
+      "gitRawBlobSha1": "5af07e3a6322ca64946da373a935d977fb91678c"
+    },
+    {
+      "path": "r1/attempt/launch-gate.json",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\launch-gate.json",
+      "bytes": 1143,
+      "sha256": "c6f639d728ea65491920b84e18be04e219b09577585bdc1aaf17bde1e2e58dd7",
+      "gitRawBlobSha1": "b147b855cbd001df3b12188bf8789fb3393806ce"
+    },
+    {
+      "path": "r1/attempt/launch.json",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\launch.json",
+      "bytes": 1624,
+      "sha256": "ece852e584a02bb400a6051b6cc3d18095e54a925d719e76c486cfe68399e759",
+      "gitRawBlobSha1": "fdbbf8e07655ad8d50fcb2b46a39b7122a036817"
+    },
+    {
+      "path": "r1/attempt/out/maven.log",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\out\\maven.log",
+      "bytes": 12887,
+      "sha256": "7019755befc18db4f9cc1518bea5ef85b0c70d4619d6f540ba2bab995f2e9b9a",
+      "gitRawBlobSha1": "1773743aed2b10a4efa8de6acb0d677dc66e5f74"
+    },
+    {
+      "path": "r1/attempt/receipt.json",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\receipt.json",
+      "bytes": 14746,
+      "sha256": "8728987b5b636338e6fad7799e2133fe5917630f3a43e4a517e6977d0fada490",
+      "gitRawBlobSha1": "385d313f59404f00591e110dd7ce2e46713e0098"
+    },
+    {
+      "path": "r1/attempt/request.json",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\request.json",
+      "bytes": 182,
+      "sha256": "a98fa9a2d798b3610d42348c87aa6122d3f5e81ebed299502916d4b4d5bc40e7",
+      "gitRawBlobSha1": "55a82cbe6c69d7d125a1d3320f5f09ed4cd9d3fd"
+    },
+    {
+      "path": "r1/attempt/result.json",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\result.json",
+      "bytes": 15815,
+      "sha256": "1438bc0dbbfa09cc7b029327d6e6bedbb3b7fd04ee0574668da30ae039c9b704",
+      "gitRawBlobSha1": "529a5c48c2e897f571cfc4301612c9e7a3d95d93"
+    },
+    {
+      "path": "r1/attempt/worker-console.log",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\attempt\\worker-console.log",
+      "bytes": 13382,
+      "sha256": "99bd8ece9758030e3e0cae2dc1cb51b899b38d34b30a2bf0a226122ff392381f",
+      "gitRawBlobSha1": "697dc71d9838b6c318db6f77305475e4b4066ef7"
+    },
+    {
+      "path": "r1/controller.py",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\controller.py",
+      "bytes": 8021,
+      "sha256": "74686827b601b8d7cb9a79f488fceca8d686a8e8b86ff7e5ef5838e9f4d1bf97",
+      "gitRawBlobSha1": "06eb016c8204f30ffb6ae183ad23c748a2477f20"
+    },
+    {
+      "path": "r1/delivery-inventory.json",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\delivery-inventory.json",
+      "bytes": 10733,
+      "sha256": "98da7cbacb46a58661ec08711485dd9571da76ec92d80b3696801ddaf61c05bb",
+      "gitRawBlobSha1": "b91094544c74607fc1202de1f4d3b91595a22f11"
+    },
+    {
+      "path": "r1/expected-counterfactual.json",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\expected-counterfactual.json",
+      "bytes": 2243,
+      "sha256": "b00ef0fa0c6c31861d75546e26c90afe1f6b006cebb8887303f6231a0ad629c6",
+      "gitRawBlobSha1": "61f83544936536abd12e63cd074528627cde33e3"
+    },
+    {
+      "path": "r1/expected-tests.json",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\expected-tests.json",
+      "bytes": 7400,
+      "sha256": "c009dd0731d1ac0180e5b34e3466abfeb511d2f6afc2a79f8ab5200e7870c2fc",
+      "gitRawBlobSha1": "d4f0077c3ce8e141ee3a7f10b9037939ee7a8ab8"
+    },
+    {
+      "path": "r1/frozen/input-manifest.json",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\frozen\\input-manifest.json",
+      "bytes": 787752,
+      "sha256": "3367c41f7304d2eb88447f5a468bef0fd8b141c69cd057a77551876e273e1539",
+      "gitRawBlobSha1": "a964810e2cc234243b8b575d691a104daea26f5a"
+    },
+    {
+      "path": "r1/frozen/source-manifest.json",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\frozen\\source-manifest.json",
+      "bytes": 13068,
+      "sha256": "e7ef827cd453c058249552198a6917e8fc04980b4efb1e096ecf3e44a8f82981",
+      "gitRawBlobSha1": "912289679bc9795f851d11561b683cf4aaad5571"
+    },
+    {
+      "path": "r1/mechanical-controller.py.diff",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\mechanical-controller.py.diff",
+      "bytes": 835,
+      "sha256": "ba4f0c5c7af874c3a8dd479bbc0b46e7e5f536b2091180208032e7123b9c1e49",
+      "gitRawBlobSha1": "7dccd37ffa902d0e78f9c27327f2eece81602ef6"
+    },
+    {
+      "path": "r1/mechanical-worker.py.diff",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\mechanical-worker.py.diff",
+      "bytes": 11878,
+      "sha256": "0c0c34644342455c995ddf3b10082c9ba07c735595e043ef31d3c332b5b9f53a",
+      "gitRawBlobSha1": "d6bca3c7e6c5e71bb6adf5fbd9ce246a9018c21c"
+    },
+    {
+      "path": "r1/meta-after.json",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\meta-after.json",
+      "bytes": 12360,
+      "sha256": "ca026e31628c71d02c536e57fb066848df2597b1fd274beac7faa1185dd94fb2",
+      "gitRawBlobSha1": "cce9506db476e371258f95fda16cf98b9acb2ae0"
+    },
+    {
+      "path": "r1/meta-before.json",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\meta-before.json",
+      "bytes": 12361,
+      "sha256": "e562589309ece0358c93f9d4d3c7f92777f6bcf8075a4f7ca13213b68792d061",
+      "gitRawBlobSha1": "536723c365ce0d339435317dfaac4d05e02e50a8"
+    },
+    {
+      "path": "r1/offline-settings.xml",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\offline-settings.xml",
+      "bytes": 1677,
+      "sha256": "4925e1bcc0d37d71a3f2f751737aceb3d89d2c58346a0ac8ce8710778ee5f5e4",
+      "gitRawBlobSha1": "0d4f94ab80b741678f54f45a3ddfb218103b7c9f"
+    },
+    {
+      "path": "r1/proposal.json",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\proposal.json",
+      "bytes": 15885,
+      "sha256": "c0e5677ceafa1aa406c36827cd29ea3c1b832512b2c2da6ac3f946bbeba7efc3",
+      "gitRawBlobSha1": "d2d05229e803483a94d49b4ce217e0339645199c"
+    },
+    {
+      "path": "r1/README.md",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\README.md",
+      "bytes": 3112,
+      "sha256": "f95faf2f4a4a7fe9169fbfd18557419027d4516ecedae3bb913486e1c9734f6e",
+      "gitRawBlobSha1": "12f517b8585adf9c172d68e72718bc0bd3ffa023"
+    },
+    {
+      "path": "r1/static-review.json",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\static-review.json",
+      "bytes": 8583,
+      "sha256": "5eeb65fce0cb17577f89e5ebd12d7e04a3e1d6711b33436d978e1941dda88452",
+      "gitRawBlobSha1": "801078661ab5030c10a15bf448867d362e98500e"
+    },
+    {
+      "path": "r1/test-extraction.json",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\test-extraction.json",
+      "bytes": 10346,
+      "sha256": "eaa9b3b12f63d1cfd9eb3443b4041b0ea1bd2cc0375108f5488d8ea52f3f0eb9",
+      "gitRawBlobSha1": "bbea0501d1a980855015a71807f047f402a4eb99"
+    },
+    {
+      "path": "r1/worker.py",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\r1\\worker.py",
+      "bytes": 25205,
+      "sha256": "e0dba45de83bdab5e72f74e0adecaefe0cac338f1b0c97862b6884ea7f3527d1",
+      "gitRawBlobSha1": "f50577d59a4fd2a96db32d3783ff966981b68827"
+    },
+    {
+      "path": "README.md",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\README.md",
+      "bytes": 6329,
+      "sha256": "60cb0845a6803a021f3756991dae288a834fa77e97f58243fce0f0a5095083e3",
+      "gitRawBlobSha1": "35c3ef82a181c3dd3218048bcf71032a4eab7acd"
+    },
+    {
+      "path": "source-inventory.json",
+      "absolutePath": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\identity-http-reuse-counterfactual-20261021\\source-inventory.json",
+      "bytes": 23872,
+      "sha256": "73c0884649372d0633fe7853dee51548bc1180b0222ccae7087d870f7a52247c",
+      "gitRawBlobSha1": "3dbf2672c1e2cad539dfa3f5e137d7d1373b1d49"
+    }
+  ],
+  "listedFiles": 48,
+  "listedBytes": 2073399.0
+}

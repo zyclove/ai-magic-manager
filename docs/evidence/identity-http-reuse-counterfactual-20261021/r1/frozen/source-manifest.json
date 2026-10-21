@@ -1,0 +1,328 @@
+{
+  "schemaVersion": 1,
+  "status": "STATIC_COUNTERFACTUAL_SOURCE_CAPSULE",
+  "sourceCommit": null,
+  "moduleTree": null,
+  "baseCommit": "3b9117b000a10d082a8f7849c41de5f69c0baa62",
+  "baseModuleTree": "098c8e75a7107876bdf31aba106882ff65b7d2b3",
+  "baseSourceFiles": 32,
+  "baseInputManifest": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\input-manifest.json",
+  "baseInputManifestSha256": "a0042d42f84d6660b6e7f543c821e7fcb32579c1dc63766656d47c78f3c1bfcc",
+  "overlays": [
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerHttpClientReuseTest.java",
+      "sourceCommit": "984ae0f9ab4354b16ba6834a836c55ca2351db27",
+      "gitObject": "875878539c3939d923aed709f39f532b30c5da01",
+      "sha256": "3128eb0abaf10cc5123c64684f3e7cb27a7f5cc872ba64312f6d5acd422b5d54",
+      "bytes": 5747,
+      "mode": "100644",
+      "kind": "blob",
+      "archiveState": "RAW_GIT_BLOB",
+      "role": "EXPLICIT_SINGLE_TEST_OVERLAY"
+    }
+  ],
+  "sourceFiles": 33,
+  "mainJava": 13,
+  "testJava": 13,
+  "source": [
+    {
+      "path": "identity-extensions/README.md",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "fe1bcfb1fc394105157247dc75022abe8f718714",
+      "bytes": 16206,
+      "sha256": "5510acccbebc58c710946b2b788e21063f0107dc892e0de56561aba274684e32",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/maven-settings.xml",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "41ad7bcbc48175509bfc4e115b56c36a53801a98",
+      "bytes": 376,
+      "sha256": "906221a94b3fbc7d7fda3eb5b5ae53b5ee405f5e7ab1baa66f4c86e065677a4a",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/pom.xml",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "3c5f05020efd59c617c255b1f5d9107355cd8487",
+      "bytes": 4607,
+      "sha256": "28f16e1bf4f68048034dbcc585696c85a2699f04b07c02b98326463ea8032a2c",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/AliyunSms.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "cfff77c08063d6be7807f60cca424bd0d2e1680d",
+      "bytes": 4851,
+      "sha256": "c806afd508fa052d8acfec6c8eff1aabd8ff414094f99f087827400fb6421d5d",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerAccountFlow.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "ec3165d9be1bc386b65781c615cc742b4876df83",
+      "bytes": 14498,
+      "sha256": "bebef13e2daf8bf8182a318febfc4c3cb38bfc916fd4def590af0cd9e4cb1896",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerAccountResource.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "33a1a2dc909b7380ae5a9da2cd5f90f2a31972ff",
+      "bytes": 5691,
+      "sha256": "f13e6cf8b2d48059b82a3691710420838e1b3b6a987732b4a5b2ca50718db2cd",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerAccountResourceFactory.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "15b78fd0a026ef2e20a72bba2e891ce714df4010",
+      "bytes": 770,
+      "sha256": "7e039347cae9059afa2b08dd229e09e299357b39e05fc0a98fee849ab11ee0d2",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerAuthenticator.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "0406df2f8e42d68224c581aa21f7700ef90d112a",
+      "bytes": 9795,
+      "sha256": "29e614039818107066c6a2c81da9fb6d7ff09a49c4a07547091a041d00a11d75",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerAuthenticatorFactory.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "87859f3a0be4b6fe47e969d7267db8e0dd0e6974",
+      "bytes": 1409,
+      "sha256": "a37af315a5c9c1b1e2080fb44268240f770438fcc62ed824d4c9c864d0c778c2",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerClaimsMapper.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "57363a1d8bf1cdd626833f6fd935e56b909a5b1c",
+      "bytes": 2699,
+      "sha256": "ab105651a4fe9a6cee8baf91c9e6bbc30d9186e54d5efebe73e0d12a31472be9",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerConfiguration.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "f2edbb66aca209a96f3aae9cc958a4d6a90f9ae3",
+      "bytes": 2679,
+      "sha256": "e4a903cda0de55bec76c336bb23abc52ce6b2daf27df0efaa08883f3b3fe4935",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerIdentity.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "04085894adbc57bb41ce062c39dd6ec3b0b8249b",
+      "bytes": 3891,
+      "sha256": "9f2517ebaa1d967a207391b130a0c42f247cae79af418ba26fd642c302860eb0",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerIdentityTransactions.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "4aac43411ac225e1de23a49fafdb68d3e3947820",
+      "bytes": 10707,
+      "sha256": "26b3791e1ebdcf6d12bac7edbf29407886e4209f55f885eedd6718cdcb170fb4",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerProviderRuntime.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "18f22c47e3693676026bbcf26401e9ce9643edac",
+      "bytes": 6515,
+      "sha256": "0fcb443f6c6556314816d4db5749af9d2112e4537d7a60d59d81e86677ff1e80",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/PhoneOtp.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "04f3aaf3da0527ca5be1e7fe451b23f0a6a8d023",
+      "bytes": 3990,
+      "sha256": "29edc057c9d8f5f08cdc38d965982efc91eda2d4b895fe5d0c94a79533fbd974",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/WechatNative.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "7e8a8e4d8535cc2734da766822e6e1583b68576d",
+      "bytes": 2053,
+      "sha256": "b3b4d5ca96284efb2e12584acfb5b0e18a0699bdd0d62072295b75000208ec1e",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/main/resources/META-INF/beans.xml",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/main/resources/META-INF/services/org.keycloak.authentication.AuthenticatorFactory",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "42e2e2e654abd9b79eade309eeb465e4b16d970f",
+      "bytes": 52,
+      "sha256": "6af9d79ca04029ff9ffdccf9f73d6bf50f8d29e6507686eb04a5209a50b1a381",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/main/resources/META-INF/services/org.keycloak.protocol.ProtocolMapper",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "7f88bd3f1f3e198ef0a22c93111091f634b18ca9",
+      "bytes": 44,
+      "sha256": "280e403e28ec793e67ba5aa06d0a9aeca80f8b3489746c1173a4932b17dd579b",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/main/resources/META-INF/services/org.keycloak.services.resource.RealmResourceProviderFactory",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "4f49647997d2994cf413e089561b406a859a4ece",
+      "bytes": 54,
+      "sha256": "c75e601769eb0cc24c186350709a88475eca0842d46d49287b52300dd79107f5",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/AliyunSmsTest.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "94be2fe106338aa38a6d4238955a85ff23cdd8ca",
+      "bytes": 2371,
+      "sha256": "a65c35ddf6fb308e962bc97fd817d5e6a7ea78a54248c0244285b93a0ee64cee",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerAccountFlowTest.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "871479e9bbb4b1c015701fd3d4b0b390e73c698e",
+      "bytes": 21068,
+      "sha256": "68199345baa017244fe8e348d53d189ae2074e7f8df5aaef78a1ae8d17a0d54b",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerAccountSpiPackagingTest.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "ef4aaff74bd9327b4330b2391b75b54b8a66c9c4",
+      "bytes": 970,
+      "sha256": "f7256066b80683879de946f7f133a77eb9e01297da949d0d846233706830385d",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerAccountStatusTest.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "5834d81d2ef2cd4881c663a22e1d3b5dc7608551",
+      "bytes": 4628,
+      "sha256": "092b9f91eb4ead12af665cd984e1479d951f9e309d50daea97e547fbcdaea838",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerAuthenticatorTest.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "8083661d3e3cdf96c876bbf92fb96eee9a5bd236",
+      "bytes": 11151,
+      "sha256": "3fa6852e536319d20d51771501f2ce0fd9a95da7b54cf315c62c283806dd47b0",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerClaimsSerializationTest.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "db95cb489448e2b53e7f70f42f8429b565c8b9d8",
+      "bytes": 5947,
+      "sha256": "4edf8b0bc5b25492552183c6defcd85f046316bdee75542b47c6a036091362b1",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerConfigurationTest.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "c0a9cb83b57b7ecf052c59f0668a9eb660120611",
+      "bytes": 1919,
+      "sha256": "603b0d4e02364201e6c3b49fa4d6c84d69330d32174ebd15e73596ac5c58632c",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerHttpClientReuseTest.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "875878539c3939d923aed709f39f532b30c5da01",
+      "bytes": 5747,
+      "sha256": "3128eb0abaf10cc5123c64684f3e7cb27a7f5cc872ba64312f6d5acd422b5d54",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerIdentityTest.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "f7eb3db48606c5f4765c979572a9486defa97757",
+      "bytes": 3983,
+      "sha256": "65b5009508dbfa5cf49d535d5a88b8a5d809aee9059560267d693b6219f0549b",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerIdentityTransactionsTest.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "277e44bfa7ffdf13378131ac46eee2c9eb1a6364",
+      "bytes": 15536,
+      "sha256": "a8436e531a89c4fbb17a59d1b25d054c800f7a618cf0afdbbe52d1290ab282a5",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerProviderRuntimeTest.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "0a2adf7400b82dfdee47ad0618f8453ad56d6751",
+      "bytes": 6029,
+      "sha256": "1858e304e4ca2f47bf420478e3837d1d22f250916e9efc13e4e6cec671522410",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerRuntimeSnapshotTest.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "6d95f308f92d43e151bc71f43fc9c482f5ae2dc6",
+      "bytes": 1713,
+      "sha256": "908aeabe766666f759b84a66ea002e1aabe7abd8ee1c78bdc412b74475216fcb",
+      "archiveState": "RAW_GIT_BLOB"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/PhoneOtpTest.java",
+      "mode": "100644",
+      "kind": "blob",
+      "gitObject": "491049f6957d2919e3a8142c70f6d8ab96fe33f1",
+      "bytes": 5858,
+      "sha256": "165f7919e9df974e54e26e89b4831c03122c9fc923dd1991ec307edeef87704c",
+      "archiveState": "RAW_GIT_BLOB"
+    }
+  ],
+  "singleCommitClaimsMade": false,
+  "mainWorkspaceUsed": false
+}

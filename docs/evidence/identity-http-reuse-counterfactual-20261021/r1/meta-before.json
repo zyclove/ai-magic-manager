@@ -1,0 +1,236 @@
+{
+  "schemaVersion": 1,
+  "scope": "Important read-only original32/current33 runner, source and manifest inputs",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-verify-20261021-r3-root\\proposal.json",
+      "bytes": 5162,
+      "sha256": "bb9be297fd4e4009d1b423d68ee0f20d33bebc089adb7a572455b0094e9f4e76"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-verify-20261021-r3-root\\controller.py",
+      "bytes": 8002,
+      "sha256": "6f1d3148df72c5caa8ec01b7a1f50261663946e0d969d0b340e58e42f0947e83"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-verify-20261021-r3-root\\worker.py",
+      "bytes": 22587,
+      "sha256": "40969d17221395de9f85eeceee32bfd2e9102d31e8b7b78058f6c234c02c5f08"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-verify-20261021-r3-root\\expected-tests.json",
+      "bytes": 6371,
+      "sha256": "21e28a9ca067717daea97b7be695f8c190f61b226d6cdc2aeb9088ed76d57b68"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-verify-20261021-r3-root\\offline-settings.xml",
+      "bytes": 1677,
+      "sha256": "4925e1bcc0d37d71a3f2f751737aceb3d89d2c58346a0ac8ce8710778ee5f5e4"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\proposal.json",
+      "bytes": 7473,
+      "sha256": "b56c77f5525e151f7194c4f8b42a7ebaaf27b24f8be747f93c5edc3cfa356c23"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\controller.py",
+      "bytes": 8009,
+      "sha256": "7084a93b4073b946b389812ff8faa155e5623f40661729f5ae72482c261ec0ba"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\worker.py",
+      "bytes": 22582,
+      "sha256": "b07c9dcd0ca0d709b3fa85bccbe1226f7f018c92ab11b700ef1b693c5beb499a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\expected-tests.json",
+      "bytes": 6857,
+      "sha256": "5f9418212f6f876085befea8bd2c8186894dae87a8c63b5c63fedc0f146c1dff"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\offline-settings.xml",
+      "bytes": 1677,
+      "sha256": "4925e1bcc0d37d71a3f2f751737aceb3d89d2c58346a0ac8ce8710778ee5f5e4"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\frozen\\input-manifest.json",
+      "bytes": 787518,
+      "sha256": "d767966a7c875e1fedfe304e8de2ffd91758574ad2fed182a26f90c0ef6d5d58"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\frozen\\source-manifest.json",
+      "bytes": 12340,
+      "sha256": "6fa85291672e699eaaad1e65cf1a1f04186f6f058104a67485ee82585f1de9b1"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\input-manifest.json",
+      "bytes": 806269,
+      "sha256": "a0042d42f84d6660b6e7f543c821e7fcb32579c1dc63766656d47c78f3c1bfcc"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\README.md",
+      "bytes": 16206,
+      "sha256": "5510acccbebc58c710946b2b788e21063f0107dc892e0de56561aba274684e32"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\maven-settings.xml",
+      "bytes": 376,
+      "sha256": "906221a94b3fbc7d7fda3eb5b5ae53b5ee405f5e7ab1baa66f4c86e065677a4a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\pom.xml",
+      "bytes": 4607,
+      "sha256": "28f16e1bf4f68048034dbcc585696c85a2699f04b07c02b98326463ea8032a2c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\main\\java\\com\\aimanager\\identity\\AliyunSms.java",
+      "bytes": 4851,
+      "sha256": "c806afd508fa052d8acfec6c8eff1aabd8ff414094f99f087827400fb6421d5d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\main\\java\\com\\aimanager\\identity\\ConsumerAccountFlow.java",
+      "bytes": 14498,
+      "sha256": "bebef13e2daf8bf8182a318febfc4c3cb38bfc916fd4def590af0cd9e4cb1896"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\main\\java\\com\\aimanager\\identity\\ConsumerAccountResource.java",
+      "bytes": 5691,
+      "sha256": "f13e6cf8b2d48059b82a3691710420838e1b3b6a987732b4a5b2ca50718db2cd"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\main\\java\\com\\aimanager\\identity\\ConsumerAccountResourceFactory.java",
+      "bytes": 770,
+      "sha256": "7e039347cae9059afa2b08dd229e09e299357b39e05fc0a98fee849ab11ee0d2"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\main\\java\\com\\aimanager\\identity\\ConsumerAuthenticator.java",
+      "bytes": 9795,
+      "sha256": "29e614039818107066c6a2c81da9fb6d7ff09a49c4a07547091a041d00a11d75"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\main\\java\\com\\aimanager\\identity\\ConsumerAuthenticatorFactory.java",
+      "bytes": 1409,
+      "sha256": "a37af315a5c9c1b1e2080fb44268240f770438fcc62ed824d4c9c864d0c778c2"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\main\\java\\com\\aimanager\\identity\\ConsumerClaimsMapper.java",
+      "bytes": 2699,
+      "sha256": "ab105651a4fe9a6cee8baf91c9e6bbc30d9186e54d5efebe73e0d12a31472be9"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\main\\java\\com\\aimanager\\identity\\ConsumerConfiguration.java",
+      "bytes": 2679,
+      "sha256": "e4a903cda0de55bec76c336bb23abc52ce6b2daf27df0efaa08883f3b3fe4935"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\main\\java\\com\\aimanager\\identity\\ConsumerIdentity.java",
+      "bytes": 3891,
+      "sha256": "9f2517ebaa1d967a207391b130a0c42f247cae79af418ba26fd642c302860eb0"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\main\\java\\com\\aimanager\\identity\\ConsumerIdentityTransactions.java",
+      "bytes": 10707,
+      "sha256": "26b3791e1ebdcf6d12bac7edbf29407886e4209f55f885eedd6718cdcb170fb4"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\main\\java\\com\\aimanager\\identity\\ConsumerProviderRuntime.java",
+      "bytes": 6515,
+      "sha256": "0fcb443f6c6556314816d4db5749af9d2112e4537d7a60d59d81e86677ff1e80"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\main\\java\\com\\aimanager\\identity\\PhoneOtp.java",
+      "bytes": 3990,
+      "sha256": "29edc057c9d8f5f08cdc38d965982efc91eda2d4b895fe5d0c94a79533fbd974"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\main\\java\\com\\aimanager\\identity\\WechatNative.java",
+      "bytes": 2053,
+      "sha256": "b3b4d5ca96284efb2e12584acfb5b0e18a0699bdd0d62072295b75000208ec1e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\main\\resources\\META-INF\\beans.xml",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\main\\resources\\META-INF\\services\\org.keycloak.authentication.AuthenticatorFactory",
+      "bytes": 52,
+      "sha256": "6af9d79ca04029ff9ffdccf9f73d6bf50f8d29e6507686eb04a5209a50b1a381"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\main\\resources\\META-INF\\services\\org.keycloak.protocol.ProtocolMapper",
+      "bytes": 44,
+      "sha256": "280e403e28ec793e67ba5aa06d0a9aeca80f8b3489746c1173a4932b17dd579b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\main\\resources\\META-INF\\services\\org.keycloak.services.resource.RealmResourceProviderFactory",
+      "bytes": 54,
+      "sha256": "c75e601769eb0cc24c186350709a88475eca0842d46d49287b52300dd79107f5"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\test\\java\\com\\aimanager\\identity\\AliyunSmsTest.java",
+      "bytes": 2371,
+      "sha256": "a65c35ddf6fb308e962bc97fd817d5e6a7ea78a54248c0244285b93a0ee64cee"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\test\\java\\com\\aimanager\\identity\\ConsumerAccountFlowTest.java",
+      "bytes": 21068,
+      "sha256": "68199345baa017244fe8e348d53d189ae2074e7f8df5aaef78a1ae8d17a0d54b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\test\\java\\com\\aimanager\\identity\\ConsumerAccountSpiPackagingTest.java",
+      "bytes": 970,
+      "sha256": "f7256066b80683879de946f7f133a77eb9e01297da949d0d846233706830385d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\test\\java\\com\\aimanager\\identity\\ConsumerAccountStatusTest.java",
+      "bytes": 4628,
+      "sha256": "092b9f91eb4ead12af665cd984e1479d951f9e309d50daea97e547fbcdaea838"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\test\\java\\com\\aimanager\\identity\\ConsumerAuthenticatorTest.java",
+      "bytes": 11151,
+      "sha256": "3fa6852e536319d20d51771501f2ce0fd9a95da7b54cf315c62c283806dd47b0"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\test\\java\\com\\aimanager\\identity\\ConsumerClaimsSerializationTest.java",
+      "bytes": 5947,
+      "sha256": "4edf8b0bc5b25492552183c6defcd85f046316bdee75542b47c6a036091362b1"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\test\\java\\com\\aimanager\\identity\\ConsumerConfigurationTest.java",
+      "bytes": 1919,
+      "sha256": "603b0d4e02364201e6c3b49fa4d6c84d69330d32174ebd15e73596ac5c58632c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\test\\java\\com\\aimanager\\identity\\ConsumerIdentityTest.java",
+      "bytes": 3983,
+      "sha256": "65b5009508dbfa5cf49d535d5a88b8a5d809aee9059560267d693b6219f0549b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\test\\java\\com\\aimanager\\identity\\ConsumerIdentityTransactionsTest.java",
+      "bytes": 15536,
+      "sha256": "a8436e531a89c4fbb17a59d1b25d054c800f7a618cf0afdbbe52d1290ab282a5"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\test\\java\\com\\aimanager\\identity\\ConsumerProviderRuntimeTest.java",
+      "bytes": 6029,
+      "sha256": "1858e304e4ca2f47bf420478e3837d1d22f250916e9efc13e4e6cec671522410"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\test\\java\\com\\aimanager\\identity\\ConsumerRuntimeSnapshotTest.java",
+      "bytes": 1713,
+      "sha256": "908aeabe766666f759b84a66ea002e1aabe7abd8ee1c78bdc412b74475216fcb"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\src\\identity-extensions\\src\\test\\java\\com\\aimanager\\identity\\PhoneOtpTest.java",
+      "bytes": 5858,
+      "sha256": "165f7919e9df974e54e26e89b4831c03122c9fc923dd1991ec307edeef87704c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\frozen\\src\\identity-extensions\\src\\test\\java\\com\\aimanager\\identity\\ConsumerHttpClientReuseTest.java",
+      "bytes": 5747,
+      "sha256": "3128eb0abaf10cc5123c64684f3e7cb27a7f5cc872ba64312f6d5acd422b5d54"
+    }
+  ]
+}
