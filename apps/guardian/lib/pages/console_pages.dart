@@ -214,7 +214,8 @@ class ConsolePages extends StatelessWidget {
     }
     if (section == 'managed-android') {
       return ManagedAndroidPage(
-          key: ValueKey('${s.root}-${s.role}'), session: s);
+          key: ValueKey((s.profile?['subject'], s.tenant?['id'], s.role,
+              s.scopeGeneration)), session: s);
     }
     if (section == 'reports') {
       return UsageReportsPage(key: ValueKey('${s.root}-${s.role}'), session: s);
@@ -436,10 +437,12 @@ class ConsolePages extends StatelessWidget {
         return OwnershipPage(session: s);
       case 'audit':
         return AuditExplorerPage(
-            key: ValueKey('audit-${s.root}-${s.role}'), session: s);
+            key: ValueKey((s.profile?['subject'], s.tenant?['id'], s.role,
+                s.scopeGeneration)), session: s);
       case 'exports':
         return AuditExportsPage(
-            key: ValueKey('exports-${s.root}-${s.role}'), session: s);
+            key: ValueKey((s.profile?['subject'], s.tenant?['id'], s.role,
+                s.scopeGeneration)), session: s);
       case 'settings':
         return SettingsPage(session: s, actions: actions);
       default:
@@ -1614,7 +1617,7 @@ class ConsoleActions {
       final classes = kind == 'ORGANIZATION'
           ? await scope.api.all('$capturedRoot/classes')
           : <Json>[];
-      if (!scope.current) return false;
+      if (!context.mounted || !scope.current) return false;
       final result = await memberEditorDialog(context,
                 kind: kind,
                 operatorRole: operatorRole,
@@ -1640,7 +1643,7 @@ class ConsoleActions {
                   return issued;
                 },
               );
-      if (!scope.current) return false;
+      if (!context.mounted || !scope.current) return false;
       if (result?['reviewInvitations'] == true || result?['refresh'] == true) {
         return true;
       }
@@ -1663,9 +1666,13 @@ class ConsoleActions {
                 if (!current()) return;
                 try {
                   await Clipboard.setData(ClipboardData(text: token));
-                  if (current()) toast(context, '邀请令牌已复制。');
+                  if (context.mounted && current()) {
+                    toast(context, '邀请令牌已复制。');
+                  }
                 } catch (_) {
-                  if (current()) toast(context, '复制失败，请选中令牌手动复制。');
+                  if (context.mounted && current()) {
+                    toast(context, '复制失败，请选中令牌手动复制。');
+                  }
                 }
               }, closeOnSuccess: false)
         ]);

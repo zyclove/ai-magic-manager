@@ -105,13 +105,29 @@ class ConsoleShell extends StatelessWidget {
                                 style: const TextStyle(fontSize: 13))))
                         .toList(),
                     onChanged: (id) async {
-                      if (id == null) return;
+                      if (id == null || id == s.tenant?['id']) return;
+                      final parentRoute = ModalRoute.of(context);
+                      final actor = s.profile?['subject'];
+                      var generation = s.scopeGeneration;
+                      bool currentSelection() =>
+                          context.mounted &&
+                          parentRoute?.isCurrent == true &&
+                          identical(context.read<Session>(), s) &&
+                          s.authenticated &&
+                          s.profile?['subject'] == actor &&
+                          s.scopeGeneration == generation;
                       try {
-                        await s.selectTenant(
+                        final selection = s.selectTenant(
                             s.tenants.firstWhere((t) => t['id'] == id));
-                        if (context.mounted) context.go('/');
+                        // selectTenant invalidates old scopes synchronously.
+                        generation = s.scopeGeneration;
+                        await selection;
+                        if (context.mounted &&
+                            currentSelection() && s.tenant?['id'] == id) {
+                          context.go('/');
+                        }
                       } catch (e) {
-                        if (context.mounted) {
+                        if (context.mounted && currentSelection()) {
                           toast(context, e.toString());
                         }
                       }

@@ -229,7 +229,7 @@ class _MembersPageState extends State<MembersPage> {
         if (kind == 'ORGANIZATION')
           scope.api.all('$root/classes?includeArchived=true')
       ]);
-      if (!current(scope)) return;
+      if (!mounted || !current(scope)) return;
       final access = sources[0] as Json;
       final classNames = {
         if (sources.length > 1)
@@ -286,7 +286,7 @@ class _MembersPageState extends State<MembersPage> {
                 await api.send('DELETE', path,
                     version: access['version'] as int, key: removalKey);
                 complete();
-                if (current(scope)) toast(context, '成员访问已撤销。');
+                if (mounted && current(scope)) toast(context, '成员访问已撤销。');
               }, destructive: true, closeOnSuccess: false),
             ],
           ]);
@@ -297,7 +297,7 @@ class _MembersPageState extends State<MembersPage> {
           scope.api.all('$root/subjects'),
           if (kind == 'ORGANIZATION') scope.api.all('$root/classes')
         ]);
-        if (!current(scope)) return;
+        if (!mounted || !current(scope)) return;
         final latest = results[0] as Json;
         final children = results[1] as List<Json>;
         final key = requestId();
@@ -339,7 +339,8 @@ class _MembersPageState extends State<MembersPage> {
                     return updated;
                   },
                 );
-        if (result != null && result['refresh'] != true && current(scope)) {
+        if (mounted && result != null && result['refresh'] != true &&
+            current(scope)) {
           toast(context, '成员权限已更新。');
         }
       }

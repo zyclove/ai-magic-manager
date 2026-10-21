@@ -103,13 +103,13 @@ class _QuotaPageState extends State<QuotaPage> {
     if (!scope.current) return;
     final zone = s.tenant?['timeZone'] as String? ?? 'Asia/Shanghai';
     final children = await scope.api.all('$root/subjects');
-    if (!scope.current) return;
+    if (!context.mounted || !scope.current) return;
     if (children.isEmpty) {
       toast(context, '请先添加儿童档案。');
       return;
     }
     final apps = await scope.api.all('$root/applications');
-    if (!scope.current) return;
+    if (!context.mounted || !scope.current) return;
     final key = requestId();
     await formDialog(context,
         title: '创建每日额度',

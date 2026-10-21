@@ -283,7 +283,9 @@ class _ClassesPageState extends State<ClassesPage> {
     try {
       final api = scope.api.scoped(parentActive);
       final classes = await api.all('$root/classes');
-      if (!current || !scope.current || !parentActive()) return false;
+      if (!parent.mounted || !current || !scope.current || !parentActive()) {
+        return false;
+      }
       final targets = {
         for (final item in classes)
           if (item['id'] != selectedClass['id'] && item['state'] == 'ACTIVE')

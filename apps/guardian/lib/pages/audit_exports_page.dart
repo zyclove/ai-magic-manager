@@ -7,6 +7,7 @@ import '../core/audit.dart';
 import '../core/audit_exports.dart';
 import '../core/session.dart';
 import '../ui/audit_exports_view.dart';
+import 'device_subflow_scope.dart';
 import '../ui/design.dart';
 
 class AuditExportsPage extends StatefulWidget {
@@ -17,21 +18,31 @@ class AuditExportsPage extends StatefulWidget {
 }
 
 class _AuditExportsPageState extends State<AuditExportsPage> {
-  late final String root, role;
+  late final Session sessionOwner;
+  late final String root;
+  late final DeviceSubflowScope scope;
   late final AuditExportRepository repository;
-  bool current() =>
-      widget.session.authenticated &&
-      widget.session.tenant != null &&
-      widget.session.root == root &&
-      widget.session.role == role &&
-      auditRoles.contains(role);
+  bool permitted() =>
+      mounted &&
+      identical(widget.session, sessionOwner) &&
+      sessionOwner.tenant != null &&
+      sessionOwner.canOpen('exports') &&
+      auditRoles.contains(sessionOwner.role);
+  bool current() => mounted && scope.current;
   @override
   void initState() {
     super.initState();
-    root = widget.session.root;
-    role = widget.session.role;
+    sessionOwner = widget.session;
+    root = sessionOwner.root;
+    scope = DeviceSubflowScope(sessionOwner, permitted: permitted);
     repository = AuditExportRepository(
-        api: widget.session.api, root: root, current: current);
+        api: scope.api, root: root, current: current);
+  }
+
+  @override
+  void dispose() {
+    scope.dispose();
+    super.dispose();
   }
 
   Future<void> save(Uint8List bytes, String name) async {
@@ -53,13 +64,17 @@ class _AuditExportsPageState extends State<AuditExportsPage> {
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
-      animation: widget.session,
+      animation: scope,
       builder: (_, __) => current()
           ? AuditExportsView(
               repository: repository,
               saveFile: save,
-              onReauth: () => widget.session.login(stepUp: true),
-              onAudit: () => context.go('/audit'),
-              accessChanges: widget.session)
+              onReauth: () {
+                if (current()) sessionOwner.login(stepUp: true);
+              },
+              onAudit: () {
+                if (current()) context.go('/audit');
+              },
+              accessChanges: scope)
           : const Panel(child: EmptyView('工作空间或权限已变化', '已隐藏旧任务，请重新打开导出任务。')));
 }

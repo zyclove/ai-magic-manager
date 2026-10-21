@@ -72,7 +72,7 @@ class OwnershipPage extends StatelessWidget {
         scope.api.all('$root/members'),
         scope.api.all('/tenants'),
       ]);
-      if (!scope.current) return;
+      if (!context.mounted || !scope.current) return;
       final tenant = results[1].firstWhere((t) => t['id'] == tenantId);
       final formerRole = tenant['kind'] == 'FAMILY' ? 'GUARDIAN' : 'ORG_ADMIN';
       final eligible = results[0]
@@ -106,7 +106,7 @@ class OwnershipPage extends StatelessWidget {
             }
             return values;
           });
-      if (selection == null || !scope.current) return;
+      if (!context.mounted || selection == null || !scope.current) return;
       final target =
           eligible.firstWhere((m) => m['actorId'] == selection['targetActorId']);
       final key = requestId();
@@ -139,7 +139,7 @@ class OwnershipPage extends StatelessWidget {
           ]);
       // Keep the page action alive through the follow-up dialog so its final
       // refresh includes a cancellation or decision made immediately after creation.
-      if (created != null && scope.current) {
+      if (context.mounted && created != null && scope.current) {
         toast(context, '交接申请已发起，请通知接收人前往“所有者交接”查看。');
         await open(context, root, created!['id'] as String);
       }
@@ -157,7 +157,7 @@ class OwnershipPage extends StatelessWidget {
       if (!scope.current) return;
       final path = '$root/ownership-transfers/$id';
       final r = await scope.api.send('GET', path) as Json;
-      if (!scope.current) return;
+      if (!context.mounted || !scope.current) return;
       final actor = scope.actorId;
       final pending = r['state'] == 'PENDING';
       final keys = {

@@ -1,0 +1,65 @@
+{
+  "status": "STATIC_IMPLEMENTED_NEW_SOURCE_ANALYSIS_AND_BROWSER_TESTS_UNRUN",
+  "utc": "2026-10-21T08:56:55.887149+00:00",
+  "files": [
+    {
+      "path": "apps/guardian/lib/pages/audit_exports_page.dart",
+      "bytes": 2574,
+      "sha256": "fad07fd2d90eda7e2413a9778500aca113d22f6b34c05b72411aa30acaa3d932"
+    },
+    {
+      "path": "apps/guardian/lib/pages/classes_page.dart",
+      "bytes": 19780,
+      "sha256": "0b608bf9b96e0e7f9c66433c55b503e6413e72a61741e57970094e3aedcfa856"
+    },
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "bytes": 85036,
+      "sha256": "de4a6d0cb768049dab79fd4d3460bc9ab934941570b4f8e5f0b210d3109c18bd"
+    },
+    {
+      "path": "apps/guardian/lib/pages/members_page.dart",
+      "bytes": 17685,
+      "sha256": "e11751c5ab7361182fb3e03851ee043ec50bc9d0ba791b427236f0be316034ed"
+    },
+    {
+      "path": "apps/guardian/lib/pages/ownership_page.dart",
+      "bytes": 10789,
+      "sha256": "8387b2e64fdd52678350689c76dcef8d958ca0764bef9ee7107647678b014907"
+    },
+    {
+      "path": "apps/guardian/lib/pages/quota_page.dart",
+      "bytes": 13956,
+      "sha256": "158c68288b889d35229ee6b2c4212c328e531cb3efc2eed4e0c6c6a0860e7801"
+    },
+    {
+      "path": "apps/guardian/lib/ui/shell.dart",
+      "bytes": 9457,
+      "sha256": "2a3ae193625f11a9c027aa5a234ced368a0e6861f32daa9c2fd22feea0ed7954"
+    },
+    {
+      "path": "apps/guardian/test/workspace_flow_entry_browser_test.dart",
+      "bytes": 11402,
+      "sha256": "0fd0927063b66f1b52a44f2e7b868019a8818105e8ce15096090ecf5c0de676c"
+    }
+  ],
+  "browserExpandedCases": 8,
+  "analyzerSitesStaticallyAddressed": 17,
+  "historicalAnalysis": {
+    "sourceCommit": "08a335a634b00e67e4163aa4f07bfa2aa010d4b1",
+    "actualSession": 63918,
+    "naturalExit": 1,
+    "errors": 0,
+    "warnings": 0,
+    "infos": 17,
+    "accepted": false,
+    "archiveCommit": "05decdf6fde6588ffc9963c1f30dcbf886b92df4"
+  },
+  "diffCheck": "git -c core.whitespace=cr-at-eol diff --check on specified production files; exit 0",
+  "runtimeAssertionsAddedButUnrun": true,
+  "newSourceAnalyzed": false,
+  "testsRun": false,
+  "sdkOrDependenciesUpgraded": false,
+  "realProvidersCalled": false,
+  "deployed": false
+}
