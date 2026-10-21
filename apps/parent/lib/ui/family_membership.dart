@@ -52,6 +52,20 @@ class _FamilyMembershipPageState extends State<FamilyMembershipPage>
   late final FamilyService commerce;
   Object? recoveryError;
   String? get pendingPlan => payment.pendingPlanKey;
+
+  bool canRequestOrder(Json offer) {
+    if (!active ||
+        !owner ||
+        busy ||
+        payment.busy ||
+        !payment.loaded ||
+        payment.pendingOrderId != null) return false;
+    final originalPlan = pendingPlan;
+    if (originalPlan != null) return originalPlan == offer['planKey'];
+    return subscription?['paymentAvailable'] == true &&
+        offer['paymentAvailable'] == true;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -222,13 +236,7 @@ class _FamilyMembershipPageState extends State<FamilyMembershipPage>
   }
 
   Future<void> create(Json offer) async {
-    if (!active ||
-        !owner ||
-        busy ||
-        !payment.loaded ||
-        subscription?['paymentAvailable'] != true ||
-        offer['paymentAvailable'] != true) return;
-    if (pendingPlan != null && pendingPlan != offer['planKey']) return;
+    if (!canRequestOrder(offer)) return;
     final epoch = confirmationEpoch;
     setState(() {
       busy = true;
@@ -390,20 +398,9 @@ class _FamilyMembershipPageState extends State<FamilyMembershipPage>
                                       const SizedBox(height: 14),
                                       if (owner)
                                         OutlinedButton(
-                                            onPressed: busy ||
-                                                    !payment.loaded ||
-                                                    payment.pendingOrderId !=
-                                                        null ||
-                                                    subscription![
-                                                            'paymentAvailable'] !=
-                                                        true ||
-                                                    offer['paymentAvailable'] !=
-                                                        true ||
-                                                    pendingPlan != null &&
-                                                        pendingPlan !=
-                                                            offer['planKey']
-                                                ? null
-                                                : () => create(offer),
+                                            onPressed: canRequestOrder(offer)
+                                                ? () => create(offer)
+                                                : null,
                                             child: Text(
                                                 pendingPlan == offer['planKey']
                                                     ? '核对原订单请求'
@@ -433,7 +430,9 @@ class _FamilyMembershipPageState extends State<FamilyMembershipPage>
                                                                 session:
                                                                     session,
                                                                 orderId: order[
-                                                                    'id'])));
+                                                                    'id'],
+                                                                payment:
+                                                                    payment)));
                                                 if (current) await load();
                                               })),
                               if (orderCursor != null)
