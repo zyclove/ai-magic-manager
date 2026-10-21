@@ -1,0 +1,452 @@
+{
+  "schemaVersion": 1,
+  "status": "STATIC_TEST_INVENTORY_ONLY",
+  "sourceCommit": "984ae0f9ab4354b16ba6834a836c55ca2351db27",
+  "moduleTree": "7796f5aaf6a38ff87b8a2ca77113bb8ef5ded321",
+  "extractionMethod": "All raw Git test blobs; comments and literals masked, every Test annotation matched to a void method; reject unsupported parameterized/disabled/dynamic annotations",
+  "totalSuites": 13,
+  "totalMethods": 76,
+  "suites": [
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/AliyunSmsTest.java",
+      "gitObject": "94be2fe106338aa38a6d4238955a85ff23cdd8ca",
+      "sha256": "a65c35ddf6fb308e962bc97fd817d5e6a7ea78a54248c0244285b93a0ee64cee",
+      "testAnnotationCount": 2,
+      "methodCount": 2,
+      "methods": [
+        {
+          "method": "signatureMatchesOfficialV3KnownAnswer",
+          "annotationLine": 10
+        },
+        {
+          "method": "sendsOnlyToPinnedChinaEndpointUsesOfficialQueryMetadataAndRejectsProviderFailure",
+          "annotationLine": 15
+        }
+      ]
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerAccountFlowTest.java",
+      "gitObject": "871479e9bbb4b1c015701fd3d4b0b390e73c698e",
+      "sha256": "68199345baa017244fe8e348d53d189ae2074e7f8df5aaef78a1ae8d17a0d54b",
+      "testAnnotationCount": 17,
+      "methodCount": 17,
+      "methods": [
+        {
+          "method": "missingActionCannotFallThroughToNormalRegistration",
+          "annotationLine": 22
+        },
+        {
+          "method": "changingPhoneProvesBothNumbersAndKeepsOriginalSubject",
+          "annotationLine": 25
+        },
+        {
+          "method": "recoveryRequiresExistingWechatAndUpdatesItsOriginalAccount",
+          "annotationLine": 41
+        },
+        {
+          "method": "unlinkedWechatCannotCreateAnAccountThroughRecovery",
+          "annotationLine": 47
+        },
+        {
+          "method": "bindingThenUnbindingKeepsPhoneAndRejectsAnotherAccountsWechat",
+          "annotationLine": 51
+        },
+        {
+          "method": "staleRevisionAndOccupiedTargetNeverChangeIdentity",
+          "annotationLine": 59
+        },
+        {
+          "method": "repeatedOperationDoesNotTurnConsumedOtpIntoNewAuthentication",
+          "annotationLine": 66
+        },
+        {
+          "method": "disablingAccountSecurityLeavesIdentityUntouched",
+          "annotationLine": 73
+        },
+        {
+          "method": "recoveryRejectsDifferentExpectedActorBeforeSendingNewNumberSms",
+          "annotationLine": 78
+        },
+        {
+          "method": "thirtyMinuteDeadlineDoesNotExtendWhenAuthenticationIsRenderedAgain",
+          "annotationLine": 83
+        },
+        {
+          "method": "oldPhoneProofExpiresBeforeNewPhoneCanBeCommitted",
+          "annotationLine": 89
+        },
+        {
+          "method": "unableToAcquireDatabaseFenceCannotChangeTheUser",
+          "annotationLine": 94
+        },
+        {
+          "method": "wrongAndExhaustedOtpNeverAcquireTheGlobalDatabaseFence",
+          "annotationLine": 99
+        },
+        {
+          "method": "anotherAccountsWechatIsNeverReassigned",
+          "annotationLine": 106
+        },
+        {
+          "method": "aLoginOtpCannotApproveAnAccountSecurityOperation",
+          "annotationLine": 111
+        },
+        {
+          "method": "changingTheNewNumberDoesNotReuseThePreviousNumbersProof",
+          "annotationLine": 116
+        },
+        {
+          "method": "concurrentIdentityChangeInvalidatesTheInFlightOperation",
+          "annotationLine": 121
+        }
+      ]
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerAccountSpiPackagingTest.java",
+      "gitObject": "ef4aaff74bd9327b4330b2391b75b54b8a66c9c4",
+      "sha256": "f7256066b80683879de946f7f133a77eb9e01297da949d0d846233706830385d",
+      "testAnnotationCount": 1,
+      "methodCount": 1,
+      "methods": [
+        {
+          "method": "restSpiRegistrationAndProviderMarkerArePackaged",
+          "annotationLine": 8
+        }
+      ]
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerAccountStatusTest.java",
+      "gitObject": "5834d81d2ef2cd4881c663a22e1d3b5dc7608551",
+      "sha256": "092b9f91eb4ead12af665cd984e1479d951f9e309d50daea97e547fbcdaea838",
+      "testAnnotationCount": 6,
+      "methodCount": 6,
+      "methods": [
+        {
+          "method": "cdiCanConstructAnUnconfiguredProviderWithoutInjectingSecrets",
+          "annotationLine": 11
+        },
+        {
+          "method": "malformedReceiptFailsClosedWithoutAnInternalError",
+          "annotationLine": 15
+        },
+        {
+          "method": "currentStatusExposesOnlyMaskedPhoneAndRealBindingCapabilities",
+          "annotationLine": 19
+        },
+        {
+          "method": "oldPhoneOldRevisionAndOtherClientsAreRejected",
+          "annotationLine": 25
+        },
+        {
+          "method": "legacyTokenWorksOnlyWhileCurrentUserStillHasRevisionOne",
+          "annotationLine": 31
+        },
+        {
+          "method": "disabledUserAndDisabledProviderCannotReturnCurrentEvidence",
+          "annotationLine": 37
+        }
+      ]
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerAuthenticatorTest.java",
+      "gitObject": "56d5b6d4d251d88a91df2c40a6e55698dfbda7af",
+      "sha256": "c617a1e1b6fb5ec58b19bcba5ec29469f5aa73c846a9c4f23a9cc729b6f5826d",
+      "testAnnotationCount": 8,
+      "methodCount": 8,
+      "methods": [
+        {
+          "method": "incompleteConsumerMethodCannotDowngradeIntoAnUnmarkedInstitutionToken",
+          "annotationLine": 16
+        },
+        {
+          "method": "currentRawRevisionCannotBeResetByAnOlderCacheAwareUser",
+          "annotationLine": 21
+        },
+        {
+          "method": "changedPhoneCannotBeResignedFromAnOlderRefreshSession",
+          "annotationLine": 30
+        },
+        {
+          "method": "newPhoneAccountIsCreatedOnlyAfterRealOtpVerificationAndEmitsSmsClaims",
+          "annotationLine": 45
+        },
+        {
+          "method": "missingProviderConfigCannotAuthenticateOrCreateUser",
+          "annotationLine": 80
+        },
+        {
+          "method": "verifiedPhoneSetsTrustedNotesAndDoesNotClaimMfa",
+          "annotationLine": 87
+        },
+        {
+          "method": "tokenClaimsComeOnlyFromTrustedSessionNotesWithAccurateWechatAmr",
+          "annotationLine": 95
+        },
+        {
+          "method": "incompleteTrustedSessionCannotEmitVerifiedClaimsOrCrashTokenIssuance",
+          "annotationLine": 112
+        }
+      ]
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerClaimsSerializationTest.java",
+      "gitObject": "db95cb489448e2b53e7f70f42f8429b565c8b9d8",
+      "sha256": "4edf8b0bc5b25492552183c6defcd85f046316bdee75542b47c6a036091362b1",
+      "testAnnotationCount": 5,
+      "methodCount": 5,
+      "methods": [
+        {
+          "method": "accessTokenStandardClaimsReplaceEarlierValuesWithoutDuplicateJsonFields",
+          "annotationLine": 23
+        },
+        {
+          "method": "idTokenStandardClaimsReplaceEarlierValuesWithoutDuplicateJsonFields",
+          "annotationLine": 41
+        },
+        {
+          "method": "accountEvidenceAcceptsTheActualKeycloakSerializedToken",
+          "annotationLine": 55
+        },
+        {
+          "method": "otherClaimsCannotSubstituteForMissingStandardPhoneFields",
+          "annotationLine": 66
+        },
+        {
+          "method": "otherClaimsCannotOverrideConflictingStandardPhoneFields",
+          "annotationLine": 75
+        }
+      ]
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerConfigurationTest.java",
+      "gitObject": "c0a9cb83b57b7ecf052c59f0668a9eb660120611",
+      "sha256": "603b0d4e02364201e6c3b49fa4d6c84d69330d32174ebd15e73596ac5c58632c",
+      "testAnnotationCount": 3,
+      "methodCount": 3,
+      "methods": [
+        {
+          "method": "bothFactoriesCanLoadOnlyKnownBoundedFileBackedSecrets",
+          "annotationLine": 11
+        },
+        {
+          "method": "malformedMissingAndOversizedFileDisableAllConsumerEntrypoints",
+          "annotationLine": 16
+        },
+        {
+          "method": "shortHmacCannotAdvertiseUsablePhoneService",
+          "annotationLine": 20
+        }
+      ]
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerHttpClientReuseTest.java",
+      "gitObject": "875878539c3939d923aed709f39f532b30c5da01",
+      "sha256": "3128eb0abaf10cc5123c64684f3e7cb27a7f5cc872ba64312f6d5acd422b5d54",
+      "testAnnotationCount": 4,
+      "methodCount": 4,
+      "methods": [
+        {
+          "method": "factoryReusesOneClientAcrossDistinctAuthenticatorInstances",
+          "annotationLine": 15
+        },
+        {
+          "method": "injectedProvidersDoNotCreateClientsDuringPhoneChangeAndOtpVerification",
+          "annotationLine": 38
+        },
+        {
+          "method": "factoryUsesTheSameClientForWechatSmsAndOtpVerification",
+          "annotationLine": 58
+        },
+        {
+          "method": "disabledOrIncompleteProviderConfigurationDoesNotFailFactoryInitialization",
+          "annotationLine": 94
+        }
+      ]
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerIdentityTest.java",
+      "gitObject": "f7eb3db48606c5f4765c979572a9486defa97757",
+      "sha256": "65b5009508dbfa5cf49d535d5a88b8a5d809aee9059560267d693b6219f0549b",
+      "testAnnotationCount": 5,
+      "methodCount": 5,
+      "methods": [
+        {
+          "method": "refusesWritableOrMissingServerPhoneAttributes",
+          "annotationLine": 11
+        },
+        {
+          "method": "refusesWechatIdentityAlreadyLinkedToAnotherPhoneAccount",
+          "annotationLine": 20
+        },
+        {
+          "method": "linksOnlyExactAppIdOpenIdAndNeverUnionId",
+          "annotationLine": 28
+        },
+        {
+          "method": "rejectsMissingOrUnverifiedStoredPhoneForWechatLogin",
+          "annotationLine": 36
+        },
+        {
+          "method": "wechatExchangePinsNativeAppAndRejectsErrorsOrMissingOpenId",
+          "annotationLine": 45
+        }
+      ]
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerIdentityTransactionsTest.java",
+      "gitObject": "277e44bfa7ffdf13378131ac46eee2c9eb1a6364",
+      "sha256": "a8436e531a89c4fbb17a59d1b25d054c800f7a618cf0afdbbe52d1290ab282a5",
+      "testAnnotationCount": 13,
+      "methodCount": 13,
+      "methods": [
+        {
+          "method": "deletedSnapshotAttributeIsNotRefreshedAndNewCurrentAttributeIsVisible",
+          "annotationLine": 27
+        },
+        {
+          "method": "refreshPreservesTheManagedCollectionAndExistingUserAdapter",
+          "annotationLine": 37
+        },
+        {
+          "method": "pendingAttributeAndUnrelatedEntityChangesAreFlushedBeforeReload",
+          "annotationLine": 47
+        },
+        {
+          "method": "missingLockedAttributeFailsClosedInsteadOfSilentlyDiscardingIt",
+          "annotationLine": 59
+        },
+        {
+          "method": "alreadyLockedUserUsesAllCurrentScalarsWithoutDetachingExistingAdapters",
+          "annotationLine": 65
+        },
+        {
+          "method": "nullableEmailAndTimestampsPreserveTheExactCurrentConstraint",
+          "annotationLine": 88
+        },
+        {
+          "method": "invalidCurrentScalarTypesFailClosedWithoutCoercingThem",
+          "annotationLine": 101
+        },
+        {
+          "method": "currentUserProjectionCannotChangeTheActorOrRealm",
+          "annotationLine": 112
+        },
+        {
+          "method": "wechatOwnerUsesCurrentLockedFactsWithoutRefreshingAnInvisibleSnapshotEntity",
+          "annotationLine": 121
+        },
+        {
+          "method": "wechatForUserUsesCurrentLockedFactsAfterTheSnapshotPredatesTheLink",
+          "annotationLine": 129
+        },
+        {
+          "method": "removedWechatLinkDoesNotReappearFromTheFirstLevelSnapshot",
+          "annotationLine": 140
+        },
+        {
+          "method": "duplicateCurrentWechatLinksFailClosed",
+          "annotationLine": 150
+        },
+        {
+          "method": "currentWechatProjectionMustMatchItsLookupScope",
+          "annotationLine": 159
+        }
+      ]
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerProviderRuntimeTest.java",
+      "gitObject": "0a2adf7400b82dfdee47ad0618f8453ad56d6751",
+      "sha256": "1858e304e4ca2f47bf420478e3837d1d22f250916e9efc13e4e6cec671522410",
+      "testAnnotationCount": 4,
+      "methodCount": 4,
+      "methods": [
+        {
+          "method": "proofBindsActualSnapshotAndNeverReturnsSecretsOrStableSecretDigests",
+          "annotationLine": 32
+        },
+        {
+          "method": "authenticatedRequestsRejectWrongEnvironmentOperationProofExpiredAndMalformedNonce",
+          "annotationLine": 40
+        },
+        {
+          "method": "missingObservationKeyOrJarClosesOnlyObservationAndDoesNotInventFacts",
+          "annotationLine": 44
+        },
+        {
+          "method": "changedFileDoesNotChangeExistingProofButRestartChangesBootAndLoadedSecrets",
+          "annotationLine": 49
+        }
+      ]
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerRuntimeSnapshotTest.java",
+      "gitObject": "b388b0722ed5b0d91c7868e9b7d05dca1869c069",
+      "sha256": "aecea8583cd1aeb7fc297710230149e0a8aa26501d71fa817f19d2d9396e6e3b",
+      "testAnnotationCount": 2,
+      "methodCount": 2,
+      "methods": [
+        {
+          "method": "runningFactoriesKeepTheSameLoadedSecretsUntilProcessRestart",
+          "annotationLine": 37
+        },
+        {
+          "method": "failedProbesCloseStreamsAndOnlyTerminateTheirOwnLiveProcess",
+          "annotationLine": 48
+        }
+      ]
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/PhoneOtpTest.java",
+      "gitObject": "491049f6957d2919e3a8142c70f6d8ab96fe33f1",
+      "sha256": "165f7919e9df974e54e26e89b4831c03122c9fc923dd1991ec307edeef87704c",
+      "testAnnotationCount": 6,
+      "methodCount": 6,
+      "methods": [
+        {
+          "method": "canonicalizesMainlandNumbersAndRejectsOtherCountriesAndMalformedInput",
+          "annotationLine": 25
+        },
+        {
+          "method": "codeIsSecretBoundToSessionAndPhoneExpiresAndConsumesOnce",
+          "annotationLine": 31
+        },
+        {
+          "method": "fifthFailedAttemptPermanentlyExhaustsChallenge",
+          "annotationLine": 46
+        },
+        {
+          "method": "throttlesPhoneAcrossSessionsAndDoesNotCreateChallengeWhenProviderFails",
+          "annotationLine": 54
+        },
+        {
+          "method": "concurrentVerificationOnlyAuthenticatesOneRequest",
+          "annotationLine": 61
+        },
+        {
+          "method": "dailyPhoneAndHourlyIpBudgetsStopFurtherSmsDispatch",
+          "annotationLine": 70
+        }
+      ]
+    }
+  ],
+  "deltaFromR3ExpectedTests": [
+    {
+      "className": "com.aimanager.identity.ConsumerHttpClientReuseTest",
+      "added": [
+        "disabledOrIncompleteProviderConfigurationDoesNotFailFactoryInitialization",
+        "factoryReusesOneClientAcrossDistinctAuthenticatorInstances",
+        "factoryUsesTheSameClientForWechatSmsAndOtpVerification",
+        "injectedProvidersDoNotCreateClientsDuringPhoneChangeAndOtpVerification"
+      ],
+      "removed": []
+    },
+    {
+      "className": "com.aimanager.identity.ConsumerRuntimeSnapshotTest",
+      "added": [
+        "failedProbesCloseStreamsAndOnlyTerminateTheirOwnLiveProcess"
+      ],
+      "removed": []
+    }
+  ],
+  "testsRun": false
+}

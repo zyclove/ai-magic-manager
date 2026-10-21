@@ -1,0 +1,362 @@
+{
+  "schemaVersion": 1,
+  "scope": "CURRENT_COMMITTED33_FULL_VERIFY",
+  "rawFileCount": 44,
+  "rawBytes": 2012105.0,
+  "inventoryTakenBeforeCopy": true,
+  "gitBlobAlgorithm": "SHA-1 over ASCII blob header, NUL, and unmodified file bytes; no Git filters",
+  "files": [
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/src/identity-extensions/target/maven-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\src\\identity-extensions\\target\\maven-status\\maven-compiler-plugin\\compile\\default-compile\\createdFiles.lst",
+      "archiveRelativePath": "r1/attempt/compiler-status/maven-compiler-plugin/compile/default-compile/createdFiles.lst",
+      "bytes": 1823,
+      "sha256": "cdb67d765f7d0b25bc9d95614589cea3607f76c3a6c6b55109a2b6c384741767",
+      "gitRawBlobSha1": "5a6ea35f94807057a3d7beda4b43f3720561557e"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/src/identity-extensions/target/maven-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\src\\identity-extensions\\target\\maven-status\\maven-compiler-plugin\\compile\\default-compile\\inputFiles.lst",
+      "archiveRelativePath": "r1/attempt/compiler-status/maven-compiler-plugin/compile/default-compile/inputFiles.lst",
+      "bytes": 2039,
+      "sha256": "44e0a5623ce553cfba335bb6503023822d5b506e06340cd9e7033dfed6b6d885",
+      "gitRawBlobSha1": "6872dc7ca82f0301abe339d00b6d6fec1c7f2be7"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/src/identity-extensions/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\src\\identity-extensions\\target\\maven-status\\maven-compiler-plugin\\testCompile\\default-testCompile\\createdFiles.lst",
+      "archiveRelativePath": "r1/attempt/compiler-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst",
+      "bytes": 1165,
+      "sha256": "144a09475f0848680ac555d09b45d45e6c6edbe0a82e42b27b1c7a8433b2b4f8",
+      "gitRawBlobSha1": "57dab10e0dd58ba1c305bdaabf9357df10ba9f24"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/src/identity-extensions/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\src\\identity-extensions\\target\\maven-status\\maven-compiler-plugin\\testCompile\\default-testCompile\\inputFiles.lst",
+      "archiveRelativePath": "r1/attempt/compiler-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst",
+      "bytes": 2099,
+      "sha256": "ab47b95803f34c2e22da512f84d0143cf372b28399fa3c0e08ee4314b47493d8",
+      "gitRawBlobSha1": "4c48bcca437995547f3b5100b0c5da239f0366f8"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/external-acceptance-root.json",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\external-acceptance-root.json",
+      "archiveRelativePath": "r1/attempt/external-acceptance-root.json",
+      "bytes": 4062,
+      "sha256": "755853d6da8663deffc119387fb0119c98eb2ae05ea3293862494ab17557a986",
+      "gitRawBlobSha1": "2e224c4732905874e666468dee0aa075bcc13805"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/initial-gate.json",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\initial-gate.json",
+      "archiveRelativePath": "r1/attempt/initial-gate.json",
+      "bytes": 1152,
+      "sha256": "748c201040eabb1a558cba70d9069f176eb0d38e096f67b9ab15b702f5e79c26",
+      "gitRawBlobSha1": "f41b8d31438acb7e5dfe0f191ae618f5d1f25c5b"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/input-manifest.json",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\input-manifest.json",
+      "archiveRelativePath": "r1/attempt/input-manifest.json",
+      "bytes": 806659,
+      "sha256": "f085b4384b6cf0b15fd8f3313b4cb1dc2a69ba71fcc69ce11268ea07a14e9086",
+      "gitRawBlobSha1": "d486e68a2c7adfca42ee3d529dec86dfb69e34b4"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.AliyunSmsTest.xml",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.AliyunSmsTest.xml",
+      "archiveRelativePath": "r1/attempt/junit-xml/TEST-com.aimanager.identity.AliyunSmsTest.xml",
+      "bytes": 16282,
+      "sha256": "c0a1ba77dc65c63d4236ce066e005b093f9d9e853b78b6ba49e71517cf32c182",
+      "gitRawBlobSha1": "7010d4e3d49020b84ff5b24df54a3ce5a9117552"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerAccountFlowTest.xml",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.ConsumerAccountFlowTest.xml",
+      "archiveRelativePath": "r1/attempt/junit-xml/TEST-com.aimanager.identity.ConsumerAccountFlowTest.xml",
+      "bytes": 18507,
+      "sha256": "797b686d6cca1bda77f87336f4eea1a141ff076a88873a161515c62418d4c657",
+      "gitRawBlobSha1": "a299205d1e256e1af88b29065c6fe5459a74b4c3"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerAccountSpiPackagingTest.xml",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.ConsumerAccountSpiPackagingTest.xml",
+      "archiveRelativePath": "r1/attempt/junit-xml/TEST-com.aimanager.identity.ConsumerAccountSpiPackagingTest.xml",
+      "bytes": 16164,
+      "sha256": "ca4607c5beaa51554f29bd8d1888a879ef1555ed3e4ccdae0042254987bc9615",
+      "gitRawBlobSha1": "9ee5ddc698fa4ad958d8caadab6bd21b6c82850f"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerAccountStatusTest.xml",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.ConsumerAccountStatusTest.xml",
+      "archiveRelativePath": "r1/attempt/junit-xml/TEST-com.aimanager.identity.ConsumerAccountStatusTest.xml",
+      "bytes": 16913,
+      "sha256": "475db737b61425ac90d8f7a3f09390f829bc34f19e4520ea94c9cdac2908797d",
+      "gitRawBlobSha1": "08241d6cb76649c9887149b1b984c2fb611c17ec"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerAuthenticatorTest.xml",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.ConsumerAuthenticatorTest.xml",
+      "archiveRelativePath": "r1/attempt/junit-xml/TEST-com.aimanager.identity.ConsumerAuthenticatorTest.xml",
+      "bytes": 17248,
+      "sha256": "cf49c416c9a243eb2f1972ca217d4fdf205f984d2e3655b1078e193c3d1ff322",
+      "gitRawBlobSha1": "20118d8dbb1fdc62d1c89e4e0372998e5389e6f8"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerClaimsSerializationTest.xml",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.ConsumerClaimsSerializationTest.xml",
+      "archiveRelativePath": "r1/attempt/junit-xml/TEST-com.aimanager.identity.ConsumerClaimsSerializationTest.xml",
+      "bytes": 16827,
+      "sha256": "9456c9a2a0ab79aa65631192dab4aaf7eecb6728334c97539b68b19fce015c9b",
+      "gitRawBlobSha1": "7353b02473b818e1dc2b0f5922f60c2aff29b902"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerConfigurationTest.xml",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.ConsumerConfigurationTest.xml",
+      "archiveRelativePath": "r1/attempt/junit-xml/TEST-com.aimanager.identity.ConsumerConfigurationTest.xml",
+      "bytes": 16453,
+      "sha256": "83e4ec0c788032922b7fb1ffd61d560216b04e72fac6b3739371dd4fa95361b2",
+      "gitRawBlobSha1": "436a60b538a95e4e61e0d91910a69a9e52ccb943"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerHttpClientReuseTest.xml",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.ConsumerHttpClientReuseTest.xml",
+      "archiveRelativePath": "r1/attempt/junit-xml/TEST-com.aimanager.identity.ConsumerHttpClientReuseTest.xml",
+      "bytes": 16658,
+      "sha256": "cf469b0e80ccdd20a836c3146d38a0fb0d2b0c274111cef46a8f6c0725f096c7",
+      "gitRawBlobSha1": "e847c1782189ea9ae2a38d97e91d1eaafbd2b774"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerIdentityTest.xml",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.ConsumerIdentityTest.xml",
+      "archiveRelativePath": "r1/attempt/junit-xml/TEST-com.aimanager.identity.ConsumerIdentityTest.xml",
+      "bytes": 16708,
+      "sha256": "b7df82d16818c277bc72669b02b8856f57833b6fb1af990fa2812b7734f22f7a",
+      "gitRawBlobSha1": "f65abae4c90613846a2d25e5759580ae3016cd52"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerIdentityTransactionsTest.xml",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.ConsumerIdentityTransactionsTest.xml",
+      "archiveRelativePath": "r1/attempt/junit-xml/TEST-com.aimanager.identity.ConsumerIdentityTransactionsTest.xml",
+      "bytes": 18118,
+      "sha256": "faaa25e01bdb9f5c3f1a6c5b753d788735e866b05c5a8e52afd5adc52c840e51",
+      "gitRawBlobSha1": "08fa00b281b61fccbb55c75d0ea24c5c6025ed57"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerProviderRuntimeTest.xml",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.ConsumerProviderRuntimeTest.xml",
+      "archiveRelativePath": "r1/attempt/junit-xml/TEST-com.aimanager.identity.ConsumerProviderRuntimeTest.xml",
+      "bytes": 16693,
+      "sha256": "b11642de677212752fa6f80e095c1139b0f6d84e882bd6d86f395405ec38160e",
+      "gitRawBlobSha1": "b544faabcc407d9986e0c8ea702c29575842f30c"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerRuntimeSnapshotTest.xml",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.ConsumerRuntimeSnapshotTest.xml",
+      "archiveRelativePath": "r1/attempt/junit-xml/TEST-com.aimanager.identity.ConsumerRuntimeSnapshotTest.xml",
+      "bytes": 16325,
+      "sha256": "57001f3de72cea4338f60d056a3c691eceaa5eb12a4b783019e69e486e218c40",
+      "gitRawBlobSha1": "e9694271af1d5fd50a2f5d8acc3b7526a903a376"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.PhoneOtpTest.xml",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\src\\identity-extensions\\target\\surefire-reports\\TEST-com.aimanager.identity.PhoneOtpTest.xml",
+      "archiveRelativePath": "r1/attempt/junit-xml/TEST-com.aimanager.identity.PhoneOtpTest.xml",
+      "bytes": 16834,
+      "sha256": "edfedba66dcfab1354009e28ee7896ff2cbee6a69f0b601853f23b5b9e165ed4",
+      "gitRawBlobSha1": "42176ced9114e054b7ced0a08d6eb0566a8abb47"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/launch-gate.json",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\launch-gate.json",
+      "archiveRelativePath": "r1/attempt/launch-gate.json",
+      "bytes": 1144,
+      "sha256": "f7ea50f4a4f42319a7ec29993a4a4297103c6586b382dfcd8d1f500773e21581",
+      "gitRawBlobSha1": "f648cf0418da6dcd64a7b9f74e3028f65a67ab74"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/launch.json",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\launch.json",
+      "archiveRelativePath": "r1/attempt/launch.json",
+      "bytes": 1638,
+      "sha256": "8d3f279cdc788744671a0137a6438751496e27ffd71ff507a3c1009f35927b30",
+      "gitRawBlobSha1": "03f96232c22c0e5f9b844efe86e50d293757f1c1"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/out/maven.log",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\out\\maven.log",
+      "archiveRelativePath": "r1/attempt/out/maven.log",
+      "bytes": 7254,
+      "sha256": "9989f5b4d7808a1435a7e75f6d357e5b18cda84e910203a94934a893a2d72ed0",
+      "gitRawBlobSha1": "d5f543945b83e843245e096316c2c09a7abe8e8e"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/receipt.json",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\receipt.json",
+      "archiveRelativePath": "r1/attempt/receipt.json",
+      "bytes": 14696,
+      "sha256": "97d0c8ca9210e504b313fd600efa4427bb5aa2a760cab1baa52bf78491b3e359",
+      "gitRawBlobSha1": "fdf0af7a1c5f9e66255d86f77a93ecaa59538621"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/request.json",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\request.json",
+      "archiveRelativePath": "r1/attempt/request.json",
+      "bytes": 182,
+      "sha256": "2f9f518c876296376ba348e7f50688c8b4ac51ee05864c21eb7d970f6b575459",
+      "gitRawBlobSha1": "2d3880c0c6d91610e007fd001f67cb3814f9e0a7"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/result.json",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\result.json",
+      "archiveRelativePath": "r1/attempt/result.json",
+      "bytes": 15767,
+      "sha256": "a9b3b9e2b6529589698da516ba4b521a71d05b7b604e23e40878af8fbb4c652d",
+      "gitRawBlobSha1": "69d9bb30cc0691a277d0e2897fcbebb7bcab388c"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/attempt/worker-console.log",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\attempt\\worker-console.log",
+      "archiveRelativePath": "r1/attempt/worker-console.log",
+      "bytes": 13296,
+      "sha256": "c1da133fe8d62bc6ce1780a77e9fc916d9fd217858e42d20f0866a984adeddba",
+      "gitRawBlobSha1": "efd5d6d61ad8084893f9872f56a76dc24f3e3c24"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/controller.py",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\controller.py",
+      "archiveRelativePath": "r1/controller.py",
+      "bytes": 8009,
+      "sha256": "7084a93b4073b946b389812ff8faa155e5623f40661729f5ae72482c261ec0ba",
+      "gitRawBlobSha1": "f5bd42ce8d0ce2ba2004c9a2164acc9bb6f831e9"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/delivery-inventory.json",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\delivery-inventory.json",
+      "archiveRelativePath": "r1/delivery-inventory.json",
+      "bytes": 10230,
+      "sha256": "2648c47ca1a934f8280991286138c39adf59e2f9e9711659cfa4cc46a4ad89e1",
+      "gitRawBlobSha1": "a21f2182cee91f38464772c7db05a30f389b9529"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/expected-tests.json",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\expected-tests.json",
+      "archiveRelativePath": "r1/expected-tests.json",
+      "bytes": 6857,
+      "sha256": "5f9418212f6f876085befea8bd2c8186894dae87a8c63b5c63fedc0f146c1dff",
+      "gitRawBlobSha1": "d5b69b82ee5f1f4610852ad15b4b276a6599c354"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/frozen/input-manifest.json",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\frozen\\input-manifest.json",
+      "archiveRelativePath": "r1/frozen/input-manifest.json",
+      "bytes": 787518,
+      "sha256": "d767966a7c875e1fedfe304e8de2ffd91758574ad2fed182a26f90c0ef6d5d58",
+      "gitRawBlobSha1": "ef593c6933687aa5db5a528bb35d9e3b8dd1b6f0"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/frozen/source-manifest.json",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\frozen\\source-manifest.json",
+      "archiveRelativePath": "r1/frozen/source-manifest.json",
+      "bytes": 12340,
+      "sha256": "6fa85291672e699eaaad1e65cf1a1f04186f6f058104a67485ee82585f1de9b1",
+      "gitRawBlobSha1": "c1bbbe79472a481554f0970bac722bf972b86049"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/mechanical-controller.py.diff",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\mechanical-controller.py.diff",
+      "archiveRelativePath": "r1/mechanical-controller.py.diff",
+      "bytes": 827,
+      "sha256": "221ba9d78d43ef49299c975a538486d937ed37d9f410517ab9bae190614635ae",
+      "gitRawBlobSha1": "076536443a9a4feeee8437f0f224c446431ba4ed"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/mechanical-worker.py.diff",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\mechanical-worker.py.diff",
+      "archiveRelativePath": "r1/mechanical-worker.py.diff",
+      "bytes": 5067,
+      "sha256": "bac0262b56b67a7ccfffcf9a02610ee7e1455db8d7e0f7aa38568208c104e492",
+      "gitRawBlobSha1": "6fd3beac3145f4e87eae84e6c2810ca204fb708b"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/meta-after.json",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\meta-after.json",
+      "archiveRelativePath": "r1/meta-after.json",
+      "bytes": 9958,
+      "sha256": "ad3733f860a7215e6b5e035f5ee6fb1b96fa16a5ca5d4a14165fa046692266ef",
+      "gitRawBlobSha1": "cf6ec574a71c7bf59e85801d9298d1a0f79081db"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/meta-before.json",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\meta-before.json",
+      "archiveRelativePath": "r1/meta-before.json",
+      "bytes": 5140,
+      "sha256": "4f644228bdc98c3454a22059efd3605d683f709c00080f13a6946201c0c2ab02",
+      "gitRawBlobSha1": "593a31ee3df12332e1a3deb9c05552bfe3a1b132"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/offline-settings.xml",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\offline-settings.xml",
+      "archiveRelativePath": "r1/offline-settings.xml",
+      "bytes": 1677,
+      "sha256": "4925e1bcc0d37d71a3f2f751737aceb3d89d2c58346a0ac8ce8710778ee5f5e4",
+      "gitRawBlobSha1": "0d4f94ab80b741678f54f45a3ddfb218103b7c9f"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/proposal.json",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\proposal.json",
+      "archiveRelativePath": "r1/proposal.json",
+      "bytes": 7473,
+      "sha256": "b56c77f5525e151f7194c4f8b42a7ebaaf27b24f8be747f93c5edc3cfa356c23",
+      "gitRawBlobSha1": "166a7f8d60904baa2e638c12277ba59f07579aa0"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/README.md",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\README.md",
+      "archiveRelativePath": "r1/README.md",
+      "bytes": 2859,
+      "sha256": "286b3eea7bc1aa592c8e9b987a4c7c4c1ddde0e92ee743e03d04d3beb1556d36",
+      "gitRawBlobSha1": "922b4097fde05b9d7d1f40060ed914cca3a2cfe9"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/static-review.json",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\static-review.json",
+      "archiveRelativePath": "r1/static-review.json",
+      "bytes": 5080,
+      "sha256": "5128dd76d35f1c8e42dc5afb8f9eaab9439ef570280356eff59b96228080e846",
+      "gitRawBlobSha1": "a53cf21be7b54fdbb23bb65390d2481c7a03d058"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/test-extraction.json",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\test-extraction.json",
+      "archiveRelativePath": "r1/test-extraction.json",
+      "bytes": 15769,
+      "sha256": "f4054bf995a46cf4eb6c1ec9dce0e65e4820b992136007c200419714fc7023e5",
+      "gitRawBlobSha1": "ecc1e61746eac147e10cf2fd7fb62c1d74d5efcb"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/worker.py",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\worker.py",
+      "archiveRelativePath": "r1/worker.py",
+      "bytes": 22582,
+      "sha256": "b07c9dcd0ca0d709b3fa85bccbe1226f7f018c92ab11b700ef1b693c5beb499a",
+      "gitRawBlobSha1": "e1a1b2116ba9282470f1b009727ba623fb4fd82d"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1/workspace-source-observation.json",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1\\workspace-source-observation.json",
+      "archiveRelativePath": "r1/workspace-source-observation.json",
+      "bytes": 17579,
+      "sha256": "a713cbfe6d7c94270d3d840f62821e60c88551ced58d8f787de6472dd6e5e346",
+      "gitRawBlobSha1": "c1bf1e4bbce40a3279d321dacf206652f7122890"
+    },
+    {
+      "sourceRelativePath": ".cache/id17-current33-20261021-r1-root-review.json",
+      "sourceAbsolutePath": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1-root-review.json",
+      "archiveRelativePath": "root-static-review.json",
+      "bytes": 434,
+      "sha256": "78879517b2ba3031f5cec81ab9ef299ab79e41967aa62f9b70dadf6c9935fb61",
+      "gitRawBlobSha1": "004a0a26d7c36abf4195ace4fe1ab72c4cafc4b7"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "observedUtc": "2026-10-21T07:02:39.582639+00:00",
+  "accepted": true,
+  "scope": "CURRENT_COMMITTED33_FULL_VERIFY; no real provider/Keycloak runtime acceptance",
+  "sourceCommit": "984ae0f9ab4354b16ba6834a836c55ca2351db27",
+  "moduleTree": "7796f5aaf6a38ff87b8a2ca77113bb8ef5ded321",
+  "actualExecSession": 6447,
+  "actualInitialChunk": "37598e",
+  "actualFinalChunk": "596de8",
+  "actualOuterExitCode": 0,
+  "actualOuterNaturallyTerminal": true,
+  "elapsedSeconds": 62.215007100006915,
+  "forcedCleanup": false,
+  "finalOwnedJobProcesses": 0,
+  "knownPidsAbsent": [
+    133824,
+    15000
+  ],
+  "pinsRechecked": 21,
+  "frozenSourcesRechecked": 33,
+  "independentXmlSuites": 13,
+  "independentXmlTotals": {
+    "tests": 76,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "xml": [
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.AliyunSmsTest.xml",
+      "sha256": "c0a1ba77dc65c63d4236ce066e005b093f9d9e853b78b6ba49e71517cf32c182"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerAccountFlowTest.xml",
+      "sha256": "797b686d6cca1bda77f87336f4eea1a141ff076a88873a161515c62418d4c657"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerAccountSpiPackagingTest.xml",
+      "sha256": "ca4607c5beaa51554f29bd8d1888a879ef1555ed3e4ccdae0042254987bc9615"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerAccountStatusTest.xml",
+      "sha256": "475db737b61425ac90d8f7a3f09390f829bc34f19e4520ea94c9cdac2908797d"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerAuthenticatorTest.xml",
+      "sha256": "cf49c416c9a243eb2f1972ca217d4fdf205f984d2e3655b1078e193c3d1ff322"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerClaimsSerializationTest.xml",
+      "sha256": "9456c9a2a0ab79aa65631192dab4aaf7eecb6728334c97539b68b19fce015c9b"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerConfigurationTest.xml",
+      "sha256": "83e4ec0c788032922b7fb1ffd61d560216b04e72fac6b3739371dd4fa95361b2"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerHttpClientReuseTest.xml",
+      "sha256": "cf469b0e80ccdd20a836c3146d38a0fb0d2b0c274111cef46a8f6c0725f096c7"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerIdentityTest.xml",
+      "sha256": "b7df82d16818c277bc72669b02b8856f57833b6fb1af990fa2812b7734f22f7a"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerIdentityTransactionsTest.xml",
+      "sha256": "faaa25e01bdb9f5c3f1a6c5b753d788735e866b05c5a8e52afd5adc52c840e51"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerProviderRuntimeTest.xml",
+      "sha256": "b11642de677212752fa6f80e095c1139b0f6d84e882bd6d86f395405ec38160e"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.ConsumerRuntimeSnapshotTest.xml",
+      "sha256": "57001f3de72cea4338f60d056a3c691eceaa5eb12a4b783019e69e486e218c40"
+    },
+    {
+      "path": "src/identity-extensions/target/surefire-reports/TEST-com.aimanager.identity.PhoneOtpTest.xml",
+      "sha256": "edfedba66dcfab1354009e28ee7896ff2cbee6a69f0b601853f23b5b9e165ed4"
+    }
+  ],
+  "independentJarSha256": "7ce16dc23fb052085d7c55b95dda19fc7cbbbab100a4f199e37797bc36bdcff2",
+  "independentJarBytes": 72543,
+  "independentJarMainClasses": 33,
+  "resultSha256": "a9b3b9e2b6529589698da516ba4b521a71d05b7b604e23e40878af8fbb4c652d",
+  "receiptSha256": "97d0c8ca9210e504b313fd600efa4427bb5aa2a760cab1baa52bf78491b3e359",
+  "sdkProcesses": [],
+  "unknownProcessNames": [],
+  "availableRamBytes": 5301153792
+}

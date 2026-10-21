@@ -1,0 +1,134 @@
+{
+  "schemaVersion": 1,
+  "status": "STATIC_PREPARATION_INPUTS",
+  "observedAtUtc": "2026-10-21T06:41:41.550305+00:00",
+  "sourceCommit": "984ae0f9ab4354b16ba6834a836c55ca2351db27",
+  "moduleTree": "7796f5aaf6a38ff87b8a2ca77113bb8ef5ded321",
+  "sdkCalls": 0,
+  "testsRun": false,
+  "candidateImportedOrExecuted": false,
+  "inputFiles": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-verify-20261021-r3-root\\proposal.json",
+      "bytes": 5162,
+      "sha256": "bb9be297fd4e4009d1b423d68ee0f20d33bebc089adb7a572455b0094e9f4e76",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-verify-20261021-r3-root\\controller.py",
+      "bytes": 8002,
+      "sha256": "6f1d3148df72c5caa8ec01b7a1f50261663946e0d969d0b340e58e42f0947e83",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-verify-20261021-r3-root\\worker.py",
+      "bytes": 22587,
+      "sha256": "40969d17221395de9f85eeceee32bfd2e9102d31e8b7b78058f6c234c02c5f08",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-verify-20261021-r3-root\\offline-settings.xml",
+      "bytes": 1677,
+      "sha256": "4925e1bcc0d37d71a3f2f751737aceb3d89d2c58346a0ac8ce8710778ee5f5e4",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-verify-20261021-r3-root\\expected-tests.json",
+      "bytes": 6371,
+      "sha256": "21e28a9ca067717daea97b7be695f8c190f61b226d6cdc2aeb9088ed76d57b68",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-verify-20261021-r3-root\\README.md",
+      "bytes": 3674,
+      "sha256": "fd655e52f229361efa7be9166949aa388589763c77955d187683dce58a3d13a4",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-20261021-r4\\input-manifest.json",
+      "bytes": 806269,
+      "sha256": "a0042d42f84d6660b6e7f543c821e7fcb32579c1dc63766656d47c78f3c1bfcc",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current33-20261021-r1-prepare.py",
+      "bytes": 24517,
+      "sha256": "d1f6d1f2fa88fe0ba3000adbbe8d562f34830cc479ec3cd83801da72191956c6",
+      "absolute": true
+    }
+  ],
+  "r3OriginalTwelvePins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-verify-20261021-r3-root\\controller.py",
+      "bytes": 8002,
+      "sha256": "6f1d3148df72c5caa8ec01b7a1f50261663946e0d969d0b340e58e42f0947e83",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-verify-20261021-r3-root\\worker.py",
+      "bytes": 22587,
+      "sha256": "40969d17221395de9f85eeceee32bfd2e9102d31e8b7b78058f6c234c02c5f08",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-verify-20261021-r3-root\\offline-settings.xml",
+      "bytes": 1677,
+      "sha256": "4925e1bcc0d37d71a3f2f751737aceb3d89d2c58346a0ac8ce8710778ee5f5e4",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-verify-20261021-r3-root\\expected-tests.json",
+      "bytes": 6371,
+      "sha256": "21e28a9ca067717daea97b7be695f8c190f61b226d6cdc2aeb9088ed76d57b68",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-verify-20261021-r3-root\\README.md",
+      "bytes": 3674,
+      "sha256": "fd655e52f229361efa7be9166949aa388589763c77955d187683dce58a3d13a4",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\python.exe",
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\python313.dll",
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\win32\\win32job.pyd",
+      "bytes": 28672,
+      "sha256": "8f2a15f090e4fa75fd7179de0aa41108e9c6fe95786f736f373f5a7501e7e769",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\pywin32_system32\\pywintypes313.dll",
+      "bytes": 136192,
+      "sha256": "90ba935a0145ee9ae56267a365cc0088d34fa506b7afeb2bd1bd78cd33359605",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\committed-validation-20261021-r1\\tool-and-cache-input-observations.json",
+      "bytes": 94817,
+      "sha256": "0302aa5873bf0965a78a45446d0835cde829c3d24a098308f04db48bf589fbcc",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\committed-validation-20261021-r1\\existing-project-maven-cache-pins.json",
+      "bytes": 794045,
+      "sha256": "1ccbf25d1793fb7c76f91e4f1fb5c76edbb6f66c8877fd5d137664d06fb057b7",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\committed-validation-20261021-r1\\launch-source-observation-r1.json",
+      "bytes": 2448,
+      "sha256": "824459476795e6ac2813adc19258d3a085cad99b4567ac8fe41854d36f7ee055",
+      "absolute": true
+    }
+  ]
+}

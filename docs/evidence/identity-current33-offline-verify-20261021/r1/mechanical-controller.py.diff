@@ -1,0 +1,11 @@
+--- r3/controller.py
++++ current33/controller.py
+@@ -20,7 +20,7 @@
+ def hard_stop():
+     os._exit(124)  # OS closes the private kill-on-close Job handle.
+ hard_timer=threading.Timer(max(0,HARD-monotonic()),hard_stop);hard_timer.daemon=True;hard_timer.start()
+-result={'status':'NOT_ACCEPTED','outerBudgetSeconds':180,'terminationReserveSeconds':6,'startedAtUtc':utc(),'workerPid':None,'testsScope':'original32-baseline-only'}
++result={'status':'NOT_ACCEPTED','outerBudgetSeconds':180,'terminationReserveSeconds':6,'startedAtUtc':utc(),'workerPid':None,'testsScope':'CURRENT_COMMITTED33_FULL_VERIFY'}
+ code=1;assigned=False;cleanup=False;console=None;soft_timer=None;attempt_created=False
+ try:
+     if len(sys.argv)!=2 or not re.fullmatch('[0-9a-f]{64}',sys.argv[1]):raise RuntimeError('Exact approved proposal SHA required')

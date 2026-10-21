@@ -1,0 +1,60 @@
+--- r3/worker.py
++++ current33/worker.py
+@@ -19,13 +19,13 @@
+ CANDIDATE = Path(__file__).absolute().parent
+ TASK = CANDIDATE / 'attempt'
+ REPO = CANDIDATE.parents[1]
+-BASELINE = REPO / '.cache/id17-20261021-r4'
++BASELINE = CANDIDATE / 'frozen'
+ OLD = REPO / '.cache/committed-validation-20261021-r1'
+-COMMIT = '3b9117b000a10d082a8f7849c41de5f69c0baa62'
++COMMIT = '984ae0f9ab4354b16ba6834a836c55ca2351db27'
+ START = time.monotonic()
+ TASK_SETTINGS = CANDIDATE / 'offline-settings.xml'
+-EXPECTED_TESTS_SHA256 = '21e28a9ca067717daea97b7be695f8c190f61b226d6cdc2aeb9088ed76d57b68'
+-FROZEN_MANIFEST_SHA256 = 'a0042d42f84d6660b6e7f543c821e7fcb32579c1dc63766656d47c78f3c1bfcc'
++EXPECTED_TESTS_SHA256 = '5f9418212f6f876085befea8bd2c8186894dae87a8c63b5c63fedc0f146c1dff'
++FROZEN_MANIFEST_SHA256 = 'd767966a7c875e1fedfe304e8de2ffd91758574ad2fed182a26f90c0ef6d5d58'
+ APP_ENV_NAMES = ['ALIYUN_SMS_ACCESS_KEY_ID', 'ALIYUN_SMS_ACCESS_KEY_ID_FILE', 'ALIYUN_SMS_ACCESS_KEY_SECRET', 'ALIYUN_SMS_ACCESS_KEY_SECRET_FILE', 'ALIYUN_SMS_SECURITY_TOKEN', 'ALIYUN_SMS_SECURITY_TOKEN_FILE', 'ALIYUN_SMS_SIGN_NAME', 'ALIYUN_SMS_TEMPLATE_CODE', 'CONSUMER_ACCOUNT_SECURITY_ENABLED', 'CONSUMER_OTP_HMAC_KEY', 'CONSUMER_OTP_HMAC_KEY_FILE', 'CONSUMER_PHONE_ENABLED', 'CONSUMER_WECHAT_ENABLED', 'IDENTITY_PROVIDER_ENVIRONMENT_ID', 'IDENTITY_PROVIDER_INSTANCE_ID', 'IDENTITY_PROVIDER_OBSERVATION_KEY_FILE', 'IDENTITY_PROVIDER_OPERATION_ID', 'IDENTITY_PROVIDER_VERSION_ID', 'WECHAT_NATIVE_APP_ID', 'WECHAT_NATIVE_APP_SECRET', 'WECHAT_NATIVE_APP_SECRET_FILE']
+ TASK_SETTINGS_SHA256 = '4925e1bcc0d37d71a3f2f751737aceb3d89d2c58346a0ac8ce8710778ee5f5e4'
+ 
+@@ -112,7 +112,7 @@
+             reports.append({'path':str(path),'sha256':sha(path),'suite':name,'counts':counts,'methods':names})
+         except Exception as error:
+             issues.append('Invalid XML '+path.name+': '+type(error).__name__)
+-    tests_ok = seen == wanted and totals == dict(tests=71, failures=0, errors=0, skipped=0) and len(reports)==12 and not issues
++    tests_ok = seen == wanted and totals == dict(tests=76, failures=0, errors=0, skipped=0) and len(reports)==13 and not issues
+     jar = module/'target/consumer-identity-1.0.0.jar'
+     jar_info = {'path':str(jar),'produced':jar.is_file(),'accepted':False}
+     if jar.is_file():
+@@ -130,10 +130,10 @@
+                 # All shipped module classes and all four SPI/CDI resources must be present.
+                 only_module=all(name.startswith('com/aimanager/identity/') for name in classes)
+                 jar_info.update(sha256=sha(jar),bytes=jar.stat().st_size,files=len(names),mainClasses=len(classes),resources=len(resource_entries),uniqueEntries=unique,exactMainPayload=complete,mainPayloadBytesMatch=byte_matches,classHeadersCompatibleWith17=class_headers,onlyModuleClasses=only_module)
+-                jar_info['accepted']=unique and complete and byte_matches and class_headers and only_module and len(classes)==32 and len(resource_entries)==4
++                jar_info['accepted']=unique and complete and byte_matches and class_headers and only_module and len(classes)==33 and len(resource_entries)==4
+         except Exception as error:
+             jar_info['errorType']=type(error).__name__
+-    return {'accepted':tests_ok and jar_info['accepted'],'testsAccepted':tests_ok,'actualTotals':totals,'expectedSuites':12,'expectedCases':71,'reports':reports,'issues':issues,'jar':jar_info}
++    return {'accepted':tests_ok and jar_info['accepted'],'testsAccepted':tests_ok,'actualTotals':totals,'expectedSuites':13,'expectedCases':76,'reports':reports,'issues':issues,'jar':jar_info}
+ 
+ def cache_postflight(base, entries):
+     expected={e['path'] for e in entries};actual=set()
+@@ -160,14 +160,14 @@
+     cache = json.loads((OLD/'existing-project-maven-cache-pins.json').read_text('utf-8'))
+     safe(BASELINE,REPO)
+     if sha(BASELINE/'input-manifest.json') != FROZEN_MANIFEST_SHA256:
+-        raise RuntimeError('Frozen r4 manifest changed')
++        raise RuntimeError('Frozen current33 manifest changed')
+     frozen_input = json.loads((BASELINE/'input-manifest.json').read_text('utf-8'))
+     source_entries = frozen_input['source']
+     if sha(OLD/'tool-and-cache-input-observations.json') != frozen_input['toolPinsSha256']:raise RuntimeError('Tool observations differ from r4 anchor')
+     if len(cache['entries'])!=3788 or cache['entries']!=frozen_input['cacheEntries']:raise RuntimeError('Cache inventory differs from r4 frozen3788')
+-    if git('rev-parse',COMMIT+':identity-extensions').decode().strip() != '098c8e75a7107876bdf31aba106882ff65b7d2b3':
++    if git('rev-parse',COMMIT+':identity-extensions').decode().strip() != '7796f5aaf6a38ff87b8a2ca77113bb8ef5ded321':
+         raise RuntimeError('Fixed Git module tree changed')
+-    if len(source_entries) != 32:
++    if len(source_entries) != 33:
+         raise RuntimeError('Unexpected complete module source boundary')
+     paths = git('ls-tree','-r','--name-only',COMMIT,'--','identity-extensions/').decode().splitlines()
+     if set(paths) != {entry['path'] for entry in source_entries}:

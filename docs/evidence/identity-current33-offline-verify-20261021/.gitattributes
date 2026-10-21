@@ -1,0 +1,2 @@
+# Preserve original evidence bytes in Git, including CRLF and log whitespace.
+* -text

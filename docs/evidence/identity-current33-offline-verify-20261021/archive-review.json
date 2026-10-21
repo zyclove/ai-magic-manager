@@ -1,0 +1,218 @@
+{
+  "schemaVersion": 1,
+  "operation": "file-only archive of already completed current33 verification; no SDK/test/service/network execution",
+  "scope": "CURRENT_COMMITTED33_FULL_VERIFY",
+  "sourceCommit": "984ae0f9ab4354b16ba6834a836c55ca2351db27",
+  "moduleTree": "7796f5aaf6a38ff87b8a2ca77113bb8ef5ded321",
+  "rawFiles": 44,
+  "rawBytes": 2012105.0,
+  "allSourceAndDestinationBytesSha256AndGitBlobsMatched": true,
+  "sourceInventoryTakenBeforeCopies": true,
+  "sourceFilesRecheckedAfterEachCopy": true,
+  "rawOriginalsModifiedOrRedacted": false,
+  "copyMismatches": [],
+  "crlfAndLogWhitespacePreserved": true,
+  "acceptedResultAndReceiptSha256MatchedRootRecord": true,
+  "approvedProposalSha256MatchedRootAndRequest": true,
+  "embeddedReceiptMatched": true,
+  "candidateFilePinsMatched": true,
+  "resultConsoleAndMavenLogPinsMatched": true,
+  "frozenExecutionAndSourceManifest33PinsMatched": true,
+  "frozenAndExecution3788CacheMetadataPinsMatched": true,
+  "jarRecordMatchedRoot": true,
+  "metadataJsonFilesInspected": 19,
+  "sensitiveNonemptyJsonPropertyNames": [],
+  "sensitiveFilenameMatches": [],
+  "junit": [
+    {
+      "file": "TEST-com.aimanager.identity.AliyunSmsTest.xml",
+      "suite": "com.aimanager.identity.AliyunSmsTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 2,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.ConsumerAccountFlowTest.xml",
+      "suite": "com.aimanager.identity.ConsumerAccountFlowTest",
+      "tests": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 17,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.ConsumerAccountSpiPackagingTest.xml",
+      "suite": "com.aimanager.identity.ConsumerAccountSpiPackagingTest",
+      "tests": 1,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 1,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.ConsumerAccountStatusTest.xml",
+      "suite": "com.aimanager.identity.ConsumerAccountStatusTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 6,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.ConsumerAuthenticatorTest.xml",
+      "suite": "com.aimanager.identity.ConsumerAuthenticatorTest",
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 8,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.ConsumerClaimsSerializationTest.xml",
+      "suite": "com.aimanager.identity.ConsumerClaimsSerializationTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 5,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.ConsumerConfigurationTest.xml",
+      "suite": "com.aimanager.identity.ConsumerConfigurationTest",
+      "tests": 3,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 3,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.ConsumerHttpClientReuseTest.xml",
+      "suite": "com.aimanager.identity.ConsumerHttpClientReuseTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 4,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.ConsumerIdentityTest.xml",
+      "suite": "com.aimanager.identity.ConsumerIdentityTest",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 5,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.ConsumerIdentityTransactionsTest.xml",
+      "suite": "com.aimanager.identity.ConsumerIdentityTransactionsTest",
+      "tests": 13,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 13,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.ConsumerProviderRuntimeTest.xml",
+      "suite": "com.aimanager.identity.ConsumerProviderRuntimeTest",
+      "tests": 4,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 4,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.ConsumerRuntimeSnapshotTest.xml",
+      "suite": "com.aimanager.identity.ConsumerRuntimeSnapshotTest",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 2,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    },
+    {
+      "file": "TEST-com.aimanager.identity.PhoneOtpTest.xml",
+      "suite": "com.aimanager.identity.PhoneOtpTest",
+      "tests": 6,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "testcaseCount": 6,
+      "propertyCount": 58,
+      "sensitivePropertyNames": []
+    }
+  ],
+  "junitTotals": {
+    "suites": 13,
+    "tests": 76.0,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  },
+  "compilerInputs": [
+    {
+      "scope": "main",
+      "inputCount": 13,
+      "exactManifestSourceSet": true
+    },
+    {
+      "scope": "test",
+      "inputCount": 13,
+      "exactManifestSourceSet": true
+    }
+  ],
+  "logs": [
+    {
+      "source": ".cache/id17-current33-20261021-r1/attempt/worker-console.log",
+      "sensitiveAssignmentNames": [],
+      "sensitiveAssignmentCount": 0,
+      "whitespacePreservedByByteCopy": true
+    },
+    {
+      "source": ".cache/id17-current33-20261021-r1/attempt/out/maven.log",
+      "sensitiveAssignmentNames": [],
+      "sensitiveAssignmentCount": 0,
+      "whitespacePreservedByByteCopy": true
+    }
+  ],
+  "runtimeClaimsTakenFrom": "r1/attempt/external-acceptance-root.json, result.json, receipt.json; not reobserved during archival",
+  "excluded": [
+    "source trees",
+    "Maven dependency caches",
+    "temporary files",
+    "class files",
+    "JAR binaries",
+    "private .local/runtime/credentials.json",
+    ".env files"
+  ],
+  "gitIndexModified": false,
+  "commitCreated": false,
+  "cleanupPerformed": false,
+  "original32ArchiveModified": false
+}

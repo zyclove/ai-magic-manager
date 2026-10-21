@@ -1,0 +1,15 @@
+{
+  "utc": "2026-10-21T06:48:09.173070+00:00",
+  "status": "ROOT_STATIC_REVIEW_NO_BLOCKER",
+  "proposalSha256": "b56c77f5525e151f7194c4f8b42a7ebaaf27b24f8be747f93c5edc3cfa356c23",
+  "pins": 21,
+  "rawGitSources": 33,
+  "mechanicalReverseExact": true,
+  "original71MethodsRetained": true,
+  "expectedSuites": 13,
+  "expectedTests": 76,
+  "expectedMainClasses": 33,
+  "testsRun": false,
+  "sdkStarted": false,
+  "attemptExists": false
+}
