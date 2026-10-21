@@ -6,6 +6,7 @@ import '../core/session.dart';
 import '../ui/audit_view.dart';
 import '../ui/design.dart';
 import '../ui/export_create_dialog.dart';
+import '../ui/owned_dialog_route.dart';
 import 'device_subflow_scope.dart';
 
 class AuditExplorerPage extends StatefulWidget {
@@ -74,10 +75,13 @@ class _AuditExplorerPageState extends State<AuditExplorerPage> {
               initialQuery: widget.initialQuery,
               contextNotice: widget.contextNotice,
               onExport: (query) async {
-                final job = await showDialog<AuditExportJob>(
+                final parentRoute = ModalRoute.of(context);
+                var completedInFront = false;
+                late final OwnedDialogRoute<AuditExportJob> route;
+                route = OwnedDialogRoute<AuditExportJob>(
                     context: context,
                     barrierDismissible: false,
-                    builder: (dialogContext) => ExportCreateDialog(
+                    builder: (_) => ExportCreateDialog(
                         repository: AuditExportRepository(
                             api: scope!.api,
                             root: root!,
@@ -85,9 +89,14 @@ class _AuditExplorerPageState extends State<AuditExplorerPage> {
                         query: query,
                         accessChanges: changes,
                         onReauth: () => widget.session.login(stepUp: true),
-                        onCreated: (job) =>
-                            Navigator.of(dialogContext).pop(job)));
-                if (job != null && context.mounted && current()) {
+                        onCreated: (job) {
+                          completedInFront = route.isCurrent;
+                          route.finish(job);
+                        }));
+                final job = await presentOwnedDialog(context, route);
+                if (job != null && completedInFront &&
+                    context.mounted && current() &&
+                    parentRoute?.isCurrent == true) {
                   context.go('/exports');
                 }
               })

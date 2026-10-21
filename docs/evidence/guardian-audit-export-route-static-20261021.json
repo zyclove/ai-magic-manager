@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-21",
+  "status": "STATIC_REVIEWED_RUNTIME_UNRUN",
+  "sourceFiles": [
+    {
+      "path": "apps/guardian/lib/pages/audit_page.dart",
+      "bytes": 4436,
+      "sha256": "cc0cde463bf0b2fb6f90ba655938d6bd8fcb5e92612a6aa5490a103e357e9358",
+      "gitRawBlobSha1": "2f71facd3d42c838058e6bda07928a782aa0a828"
+    },
+    {
+      "path": "apps/guardian/test/audit_export_route_test.dart",
+      "bytes": 6429,
+      "sha256": "beff27499cbf2a10eeb469c930027218a56c8094a803f2e471fdb76f16659d20",
+      "gitRawBlobSha1": "696c38a6050769228855acad05b0c62c5160e891"
+    }
+  ],
+  "unchangedFiles": [
+    {
+      "path": "apps/guardian/lib/ui/export_create_dialog.dart",
+      "bytes": 5757,
+      "sha256": "823e93225cfbccfe87c95217e77836ab1dd83c4d833a59df2cb1f40910e76645",
+      "gitRawBlobSha1": "d96fe1e7eb7e89f7dcd45501b68f25267fa07efa"
+    },
+    {
+      "path": "apps/guardian/lib/ui/owned_dialog_route.dart",
+      "bytes": 1387,
+      "sha256": "f4401bb72906eb9abdacbcc2a077a319223a04ae36eda6b74359d2868d731676",
+      "gitRawBlobSha1": "289d0f1defa3536e20fec8c38c7fc182b7ee73e3"
+    },
+    {
+      "path": "apps/guardian/test/export_create_dialog_scope_test.dart",
+      "bytes": 7405,
+      "sha256": "039914946a35b9e5c624bcf7d036d438248f3133a581b4cded83151660fe1649",
+      "gitRawBlobSha1": "4cf578b8937d44a4dc33480b6ce57034173636e6"
+    }
+  ],
+  "newBrowserWidgetTestDeclarations": 4,
+  "independentSourceReviews": [
+    "Independent subagent review reported by /root/audit_export_route_review",
+    "Root independent source review"
+  ],
+  "rootSourceReview": true,
+  "formatRun": false,
+  "analysisRun": false,
+  "testsRun": false,
+  "browserRun": false,
+  "buildRun": false,
+  "deployed": false,
+  "servicesChanged": false,
+  "knownLimitations": [
+    "New browser widget cases and full Guardian suite unrun",
+    "Current33 identity offline verification does not validate this UI patch"
+  ]
+}
