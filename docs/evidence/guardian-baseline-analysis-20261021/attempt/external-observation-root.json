@@ -1,0 +1,41 @@
+{
+  "status": "ANALYSIS_DIAGNOSTICS_OBSERVED_NOT_ACCEPTED",
+  "utc": "2026-10-21T08:44:48.434518+00:00",
+  "actualToolSession": 63918,
+  "initialToolChunk": "a744af",
+  "finalToolChunk": "bbd415",
+  "actualNaturalExitCode": 1,
+  "outerElapsedSeconds": 62.83000679999532,
+  "ownedJobActiveProcesses": 0,
+  "knownOwnedPidsAbsent": [
+    129640,
+    140272
+  ],
+  "sdkProcesses": [],
+  "unknownProcessNames": [],
+  "availableRamBytes": 3051794432,
+  "fullAnalysisAccepted": false,
+  "scope": "08a335a seven-root 403-file Guardian snapshot; entire Guardian analysis, no tests",
+  "diagnostics": {
+    "errors": 0,
+    "warnings": 0,
+    "infos": 17,
+    "rule": "use_build_context_synchronously"
+  },
+  "candidateAndRuntimeMetadataPinsMatched": 26,
+  "preAndPost": {
+    "complete": true,
+    "sourceFiles": 403,
+    "cacheFiles": 3537,
+    "cacheBytes": 638417631,
+    "packageRows": 70
+  },
+  "rawLogSha256": "9f1f890907685fbad9112f2798c4d773d420d63711ef7660642f3c3662d25ec0",
+  "forcedTermination": false,
+  "pubRun": false,
+  "downloadsAllowed": false,
+  "testsRun": false,
+  "mainOrFrozenSourceChangedByRunner": false,
+  "servicesUpdated": false,
+  "note": "The 17 analyzer infos made fatal-infos return 1; later source fixes require new validation."
+}

@@ -1,0 +1,1071 @@
+{
+  "status": "STATIC_DECLARATIONS_NOT_RUNTIME_DISCOVERY",
+  "testFiles": [
+    {
+      "path": "apps/guardian/test/access_delivery_labels_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 3,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/access_request_dialog_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 7,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/access_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 6,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/action_details_route_ownership_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 14,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/api_bound_scope_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 15,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/api_scope_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 11,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/api_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 6,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/application_classification_dialog_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 3,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/application_classification_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 3,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/audit_export_route_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 4,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/audit_exports_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 8,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/audit_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 7,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/bounded_json_http_error_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 8,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/bounded_json_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 9,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/browser_execution_operation_journal_additional_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 15,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/browser_execution_operation_journal_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 7,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/browser_publication_journal_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 13,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/class_action_dialog_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 3,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/commercial_account_view_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 2,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/commercial_catalog_editor_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 1,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/commercial_catalog_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 3,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/commercial_entitlements_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 5,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/console_navigation_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 6,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/contract_action_resume_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 2,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/contracts_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 6,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/device_management_browser_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 3,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/device_management_dialog_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 25,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/device_management_entry_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 4,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/device_management_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 26,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/device_subflow_scope_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 7,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/diagnostic_model_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 10,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/diagnostic_package_model_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 6,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/diagnostic_package_repository_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 7,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/diagnostic_packages_view_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 13,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/diagnostic_preview_view_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 9,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/diagnostic_repository_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 8,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/dialog_submit_guard_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 1,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/editor_submit_guard_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 4,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/enrollment_dialog_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 16,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/enrollment_journal_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 24,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/enrollment_recovery_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 40,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/enrollment_ticket_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 1,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/export_create_dialog_scope_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 4,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/family_finance_access_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 2,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/family_finance_entry_browser_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 3,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/family_finance_page_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 13,
+      "importsDartIo": true
+    },
+    {
+      "path": "apps/guardian/test/family_finance_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 17,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/family_identity_acceptance_refresh_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 1,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/family_identity_acceptance_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 9,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/family_identity_access_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 4,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/family_identity_configuration_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 5,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/family_identity_controller_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 6,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/family_identity_editor_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 2,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/family_identity_entry_browser_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 3,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/family_identity_page_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 4,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/family_identity_release_panel_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 6,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/family_identity_release_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 14,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/family_identity_repository_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 5,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/local_date_browser_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 1,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_agent_binding_dialog_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 8,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_agent_binding_page_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 4,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_agent_binding_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 8,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_android_review_recovery_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 23,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_application_evidence_binding_entry_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 12,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_application_evidence_controller_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 17,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_application_evidence_dialog_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 22,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_application_evidence_entry_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 15,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_application_evidence_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 51,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_binding_usability_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 6,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_control_summary_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 4,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_enrollment_guide_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 12,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_enrollment_page_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 7,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_execution_binding_entry_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 4,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_execution_binding_lifetime_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 6,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_execution_controller_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 28,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_execution_dialog_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 16,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_execution_entry_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 4,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_execution_host_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 7,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_execution_review_controller_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 21,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_execution_review_dialog_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 20,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_execution_review_host_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 5,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_execution_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 27,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/managed_institution_execution_entry_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 5,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/manual_recheck_cancel_receipt_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 2,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/manual_recheck_eligibility_boundary_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 2,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/manual_recheck_eligibility_contract_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 6,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/manual_recheck_http_contract_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 12,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/manual_recheck_reason_red_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 6,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/member_editor_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 7,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/notifications_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 10,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/observation_editor_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 5,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/observation_model_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 7,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/observation_view_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 5,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/ownership_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 3,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/policy_details_scope_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 10,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/policy_editor_lifecycle_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 22,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_authorization_flow_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 8,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_control_scope_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 10,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_evidence_view_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 16,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_flow_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 11,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_results_flow_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 9,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_rule_details_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 14,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_save_flow_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 4,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/policy_publication_controller_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 17,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/policy_publication_dialog_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 6,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/policy_publication_entry_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 6,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/policy_publication_recovery_flow_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 6,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/policy_publication_repository_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 11,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/policy_publication_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 19,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/policy_target_dialog_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 4,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/policy_target_picker_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 8,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/policy_target_scope_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 3,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/quota_balance_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 2,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/quota_plan_editor_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 5,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/report_configurations_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 4,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/report_job_resume_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 1,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/resource_page_resilience_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 21,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/scope_binding_client_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 20,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/scoped_http_client_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 8,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/submit_confirmation_variant_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 6,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/submit_direct_variant_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 6,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/support_model_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 6,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/support_repository_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 6,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/support_views_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 11,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/usage_report_device_picker_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 2,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/usage_report_jobs_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 8,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/usage_report_jobs_view_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 12,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/usage_reports_lifecycle_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 4,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/usage_reports_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 12,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/usage_reports_view_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 9,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/usage_trend_view_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 1,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/usage_trends_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 6,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/widget_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 4,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/workbench_view_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 6,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/workspace_recovery_browser_test.dart",
+      "platform": "browser",
+      "annotation": "'browser'",
+      "staticDeclarations": 11,
+      "importsDartIo": false
+    },
+    {
+      "path": "apps/guardian/test/workspace_welcome_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 12,
+      "importsDartIo": false
+    },
+    {
+      "path": "packages/device_operations/example/test/widget_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 1,
+      "importsDartIo": false
+    },
+    {
+      "path": "packages/device_operations/test/client_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 12,
+      "importsDartIo": false
+    },
+    {
+      "path": "packages/device_operations/test/controller_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 15,
+      "importsDartIo": false
+    },
+    {
+      "path": "packages/device_operations/test/journal_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 5,
+      "importsDartIo": false
+    },
+    {
+      "path": "packages/device_operations/test/models_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 4,
+      "importsDartIo": false
+    },
+    {
+      "path": "packages/device_operations/test/panel_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 6,
+      "importsDartIo": false
+    },
+    {
+      "path": "packages/usage_report_ui/test/device_view_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 8,
+      "importsDartIo": false
+    },
+    {
+      "path": "packages/usage_report_ui/test/multi_device_view_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 9,
+      "importsDartIo": true
+    },
+    {
+      "path": "packages/usage_reporting/test/shared_models_test.dart",
+      "platform": "vm-default",
+      "annotation": null,
+      "staticDeclarations": 2,
+      "importsDartIo": false
+    }
+  ],
+  "projects": [
+    {
+      "root": "apps/guardian",
+      "testFiles": 136,
+      "vmDefaultFiles": 103,
+      "browserFiles": 33,
+      "staticDeclarations": 1234
+    },
+    {
+      "root": "packages/audit_client",
+      "testFiles": 0,
+      "vmDefaultFiles": 0,
+      "browserFiles": 0,
+      "staticDeclarations": 0
+    },
+    {
+      "root": "packages/commerce_contracts",
+      "testFiles": 0,
+      "vmDefaultFiles": 0,
+      "browserFiles": 0,
+      "staticDeclarations": 0
+    },
+    {
+      "root": "packages/notification_client",
+      "testFiles": 0,
+      "vmDefaultFiles": 0,
+      "browserFiles": 0,
+      "staticDeclarations": 0
+    },
+    {
+      "root": "packages/device_operations",
+      "testFiles": 6,
+      "vmDefaultFiles": 6,
+      "browserFiles": 0,
+      "staticDeclarations": 43
+    },
+    {
+      "root": "packages/usage_reporting",
+      "testFiles": 1,
+      "vmDefaultFiles": 1,
+      "browserFiles": 0,
+      "staticDeclarations": 2
+    },
+    {
+      "root": "packages/usage_report_ui",
+      "testFiles": 2,
+      "vmDefaultFiles": 2,
+      "browserFiles": 0,
+      "staticDeclarations": 17
+    }
+  ]
+}

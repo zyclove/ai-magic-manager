@@ -1,0 +1,22 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+Analyzing guardian...                                           
+
+   info - Don't use 'BuildContext's across async gaps - lib\pages\classes_page.dart:294:11 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\pages\console_pages.dart:1618:47 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\pages\console_pages.dart:1652:35 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\pages\console_pages.dart:1666:40 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\pages\console_pages.dart:1668:40 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\pages\members_page.dart:249:11 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\pages\members_page.dart:289:43 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\pages\members_page.dart:304:49 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\pages\members_page.dart:343:17 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\pages\ownership_page.dart:84:27 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\pages\ownership_page.dart:90:42 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\pages\ownership_page.dart:115:11 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\pages\ownership_page.dart:143:15 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\pages\ownership_page.dart:144:20 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\pages\ownership_page.dart:208:11 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\pages\quota_page.dart:108:13 - use_build_context_synchronously
+   info - Don't use 'BuildContext's across async gaps - lib\pages\quota_page.dart:114:22 - use_build_context_synchronously
+
+17 issues found. (ran in 11.6s)

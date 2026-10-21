@@ -1,0 +1,247 @@
+{
+  "schemaVersion": 1,
+  "status": "STATIC_CANDIDATE_ONLY_ROOT_REVIEW_REQUIRED",
+  "executionApproved": false,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "phase": "analyze-all-guardian",
+  "phaseScope": "FULL_GUARDIAN_ANALYZE",
+  "sourceCommit": "08a335a634b00e67e4163aa4f07bfa2aa010d4b1",
+  "sourceFiles": 403,
+  "sourceRoots": [
+    "apps/guardian",
+    "packages/audit_client",
+    "packages/commerce_contracts",
+    "packages/notification_client",
+    "packages/device_operations",
+    "packages/usage_reporting",
+    "packages/usage_report_ui"
+  ],
+  "sevenRootGitTrees": {
+    "apps/guardian": "3fbd5c96919e479381919868a4e10ce3be287e1e",
+    "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+    "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+    "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+    "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+    "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+    "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+  },
+  "analysisInputs": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261021-r1\\out\\analysis-inputs-root.json",
+    "bytes": 6617,
+    "sha256": "effa9742b264f85dac08217eca4a28517ce2b8bfb9782f902c2034a0e0e94cf9",
+    "absolute": true
+  },
+  "candidateFiles": [
+    {
+      "path": "controller.py",
+      "bytes": 8048,
+      "sha256": "9baa2f090040bcedb721bb344c7c12a1940bfc278d55361ff4c7f4711107b3ee"
+    },
+    {
+      "path": "worker.py",
+      "bytes": 22939,
+      "sha256": "72aa7b1ad0bb1be971b801ad7184b8ab06ac33ad3e7e1e912b3a25b9c098b34c"
+    },
+    {
+      "path": "heap1536_windows_job.py",
+      "bytes": 9292,
+      "sha256": "4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12"
+    },
+    {
+      "path": "README.md",
+      "bytes": 4256,
+      "sha256": "230f50193474deaec6226f23826398551e9f130ea550a1fdc78d1290d83e77ee"
+    },
+    {
+      "path": "expected-root-input-schema.json",
+      "bytes": 1878,
+      "sha256": "38bd8302c341d6675f16602a40a9d20fa9bc5be7b4657087f6eec1557001adb3"
+    },
+    {
+      "path": "mechanical-controller.py.diff",
+      "bytes": 5757,
+      "sha256": "5f01a37ee543a0f10e67c74ec4661c8bc1af5c14cb4c3c96971c0566f4b78b34"
+    },
+    {
+      "path": "mechanical-worker.py.diff",
+      "bytes": 23515,
+      "sha256": "d23bf66574c72275b27d25ec3d479e7df9aa8a3e3f6f6508fb486e167277cd24"
+    },
+    {
+      "path": "static-review.json",
+      "bytes": 2785,
+      "sha256": "a8540da99f6be5a38f483ef2df3cef9a9549b00b72b24695b7e6dd384d17e720"
+    }
+  ],
+  "controlRuntimeFiles": [
+    {
+      "path": "C:\\Python313\\python.exe",
+      "absolute": true,
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125"
+    },
+    {
+      "path": "C:\\Python313\\python313.dll",
+      "absolute": true,
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\win32\\win32job.pyd",
+      "absolute": true,
+      "bytes": 28672,
+      "sha256": "8f2a15f090e4fa75fd7179de0aa41108e9c6fe95786f736f373f5a7501e7e769"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\pywin32_system32\\pywintypes313.dll",
+      "absolute": true,
+      "bytes": 136192,
+      "sha256": "90ba935a0145ee9ae56267a365cc0088d34fa506b7afeb2bd1bd78cd33359605"
+    },
+    {
+      "path": "C:\\Program Files\\Git\\cmd\\git.exe",
+      "bytes": 45032,
+      "sha256": "4ab2b391de7fb5eb3afb34b5bd19ee7f71d0450bf7e4c207b201a0392e3825ae",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Windows\\System32\\cmd.exe",
+      "bytes": 327680,
+      "sha256": "a6e3b3b22b7fe8ce2c9245816126723eaa13f43b9f591883e59959a2d409426a",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Windows\\System32\\where.exe",
+      "bytes": 61440,
+      "sha256": "ade557dd65848c5cf6565913cf6e01cf5c9a8033f0d784c4d6932394958d743e",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\internal\\exit_with_errorlevel.bat",
+      "bytes": 562,
+      "sha256": "f4014bd05cc24391ff28f7bd5b22949cc80f0bb66ab9eda512c9c3997f0283e0",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.yaml",
+      "bytes": 6215,
+      "sha256": "d703ed2f5467e37193640b26522839137430af10b631f36c0d89a54f3236172f",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.lock",
+      "bytes": 22135,
+      "sha256": "097571421b53ac57c9b72523ee5d2ae584c3d6ba58412f8cbe3af35c55c5593a",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\.dart_tool\\package_config.json",
+      "bytes": 20035,
+      "sha256": "49d0a9ce1c70ca6edd29537570cfe7ea6539843da50c6a85a107d829330150e8",
+      "absolute": true
+    }
+  ],
+  "historicalMetadataFiles": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261021-r1\\out\\analysis-inputs-root.json",
+      "bytes": 6617,
+      "sha256": "effa9742b264f85dac08217eca4a28517ce2b8bfb9782f902c2034a0e0e94cf9",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261021-r1\\out\\source-manifest.json",
+      "bytes": 225877,
+      "sha256": "3c39b7e5b6121db75fa32e98028af4f6269d5f5ae98c8135af25744aba4795b8",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261021-r1\\out\\dependency-library-pins.json",
+      "bytes": 360061,
+      "sha256": "e7b577c7790a24721ab81280948ec0118c1b9e3a096350bbfe81fe98b49f0d7f",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261021-r1\\out\\cache-content-20261021-r1.json",
+      "bytes": 725122,
+      "sha256": "0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\.dart_tool\\package_config.json",
+      "bytes": 15171,
+      "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261021-r1\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+      "bytes": 15652,
+      "sha256": "64b3842ab60f46752246af0ea2487b9c9844bf361c9c33e152ec44549cd5f193",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261021-r1\\generated\\guardian-package_config.json",
+      "bytes": 15652,
+      "sha256": "64b3842ab60f46752246af0ea2487b9c9844bf361c9c33e152ec44549cd5f193",
+      "absolute": true
+    }
+  ],
+  "outerMetadataFieldRetainedFromController": true,
+  "outerBudgetSeconds": 210,
+  "terminationReserveSeconds": 6,
+  "outerSoftCutoffSeconds": 204,
+  "workerBudgetSeconds": 195,
+  "commandCapSeconds": 180,
+  "commandCleanupReserveSeconds": 5,
+  "minimumPostflightReserveSeconds": 25,
+  "minimumRamBytes": 2147483648,
+  "minimumEachDiskBytes": 2147483648,
+  "sdkNames": [
+    "aapt2.exe",
+    "asm.exe",
+    "cgo.exe",
+    "compile.exe",
+    "dart.exe",
+    "dartaotruntime.exe",
+    "flutter.exe",
+    "flutter_tester.exe",
+    "gen_snapshot.exe",
+    "go.exe",
+    "gofmt.exe",
+    "java.exe",
+    "javac.exe",
+    "javaw.exe",
+    "link.exe",
+    "qemu-system-x86_64.exe"
+  ],
+  "command": [
+    "C:/Windows/System32/cmd.exe",
+    "/d",
+    "/v:off",
+    "/c",
+    "D:/softwares/flutter/bin/flutter.bat --no-version-check --suppress-analytics analyze --no-pub --fatal-infos --fatal-warnings"
+  ],
+  "workingDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261021-r1\\src\\apps\\guardian",
+  "attemptDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261021-r1\\attempt",
+  "attemptSingleUse": true,
+  "noSelectors": true,
+  "noPub": true,
+  "noCacheCopy": true,
+  "cacheManifestSha256": "0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2",
+  "cacheTrees": 70,
+  "fixedRuntimeFiles": 33,
+  "cacheFiles": 3537,
+  "fullPreflightAndPostflightRequired": true,
+  "nativeProcessHandleRetained": true,
+  "nativeNestedJobHelperByteIdentical": true,
+  "anyTimeoutOrForcedTerminationIsNotAccepted": true,
+  "naturalZeroAndNoIssuesLogRequired": true,
+  "runtimeWatchdogVerifiedForThisCandidate": false,
+  "rootActualExternalObservationRequired": true,
+  "sourceAndMainWrittenDuringPreparation": false,
+  "processLocalEnvironmentOnly": true,
+  "entireSdkOrBrowserInstallationPinned": false,
+  "snapshotMtimeComparedToPubspec": false,
+  "snapshotContentPinned": true,
+  "sdkToolPubspecNotNewerThanLockRequired": true
+}
