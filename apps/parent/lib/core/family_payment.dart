@@ -85,6 +85,8 @@ class FamilyPaymentCoordinator {
   String get key => 'parent.family.payment.${service.tenantId}.$actor';
   String? get pendingOrderId => pending?['orderId'] as String?;
   String? get pendingPlanKey => pending?['planKey'] as String?;
+  bool canLaunchOrder(String orderId) =>
+      loaded && !busy && (pending == null || pendingOrderId == orderId);
   Future<void> restore() async {
     service.check();
     final raw = await storage.read(key: key);
@@ -169,7 +171,7 @@ class FamilyPaymentCoordinator {
 
     checkLaunch();
     if (!loaded || busy) throw StateError('请先核对原支付进度。');
-    if (pendingOrderId != null && pendingOrderId != orderId) {
+    if (!canLaunchOrder(orderId)) {
       throw StateError('请先核对原订单，避免重复支付。');
     }
     busy = true;

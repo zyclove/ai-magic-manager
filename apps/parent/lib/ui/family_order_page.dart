@@ -164,6 +164,7 @@ class _FamilyOrderPageState extends State<FamilyOrderPage>
           paymentAvailable = sub['paymentAvailable'];
         });
       }
+      if (owner && payment.loaded) await payment.reconcile(value);
       final refundResult = refund == null
           ? await commerce.object(
               '/orders/${Uri.encodeComponent(widget.orderId)}/refund-requests')
@@ -187,7 +188,6 @@ class _FamilyOrderPageState extends State<FamilyOrderPage>
       if (restored != null && restored['priceMinor'] != value['priceMinor']) {
         throw const ParentApiException(502, 'INVALID_RESPONSE');
       }
-      if (owner && payment.loaded) await payment.reconcile(value);
       if (active) {
         setState(() {
           order = value;
@@ -230,7 +230,7 @@ class _FamilyOrderPageState extends State<FamilyOrderPage>
         !awaitingPayment ||
         expired ||
         !paymentAvailable ||
-        !payment.loaded) return;
+        !payment.canLaunchOrder(widget.orderId)) return;
     setState(() {
       busy = true;
       error = null;
@@ -416,9 +416,17 @@ class _FamilyOrderPageState extends State<FamilyOrderPage>
                                   if (!paymentAvailable)
                                     const FamilyNotice(
                                         '微信支付尚未开放。待支付订单不会自动激活会员。'),
+                                  if (paymentAvailable &&
+                                      payment.loaded &&
+                                      !payment.busy &&
+                                      !payment.canLaunchOrder(widget.orderId))
+                                    const FamilyNotice(
+                                        '请先返回会员页核对原订单请求，确认结果后再支付其他订单。'),
                                   if (paymentAvailable)
                                     FilledButton.icon(
-                                        onPressed: busy || !payment.loaded
+                                        onPressed: busy ||
+                                                !payment.canLaunchOrder(
+                                                    widget.orderId)
                                             ? null
                                             : launchPayment,
                                         icon: const Icon(Icons.payment),

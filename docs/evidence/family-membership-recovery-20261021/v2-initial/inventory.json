@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUtc": "2026-10-21T03:53:59.7914898+00:00",
+  "classification": "TERMINAL_V2_INITIAL_ATTEMPTS_NOT_FINAL_ACCEPTANCE",
+  "acceptancePassed": false,
+  "deadline": "2026-10-21T11:50:52.806558+08:00",
+  "runnerIssue": "Initial expanded-log parser stopped the asynchronous error block at [E], misclassified a product failure, and stopped the runner. The failed receipt is preserved. Continuation used the existing stage 01 log and the original deadline; stage 01 was not rerun.",
+  "latestBatchStatus": "PENDING",
+  "stages": [
+    {
+      "label": "01-old-ui-v2",
+      "passed": 3,
+      "failed": 5,
+      "productFailures": 5,
+      "fixtureFailures": 0,
+      "acceptancePassed": false
+    },
+    {
+      "label": "02-pre-fix-v2",
+      "passed": 5,
+      "failed": 3,
+      "productFailures": 3,
+      "fixtureFailures": 0,
+      "acceptancePassed": false
+    },
+    {
+      "label": "03-format-main-five",
+      "files": 5,
+      "changed": 3,
+      "exitCode": 0,
+      "kind": "formatting-only"
+    },
+    {
+      "label": "05-post-fix-targeted",
+      "passed": 7,
+      "failed": 1,
+      "productFailures": 0,
+      "fixtureFailures": 1,
+      "acceptancePassed": false,
+      "failure": "The payment-button Finder uses exact runtimeType matching and misses _FilledButtonWithIcon. Preserve the production button and correct the test Finder."
+    }
+  ],
+  "postFixFrozenSummary": {
+    "inputManifestSha256": "fac975bb33e97e63dc20f80704b7462a1658d6404a015ef15d622699f93a21f4",
+    "sourceTreeSha256": "50ec6f1c2881fba55ad0fc9b0acb5dadb3188f8f227a8d33248a04c4a093a52a",
+    "packageConfigSha256": "ecbe3dbc1a660a7241ddab522c3dd92107431f0aea6002388e17242bdf7fb252",
+    "mainOverlaySha256": {
+      "apps/parent/lib/core/family_payment.dart": "7892e4399853af4cdbd31e9904110d29dc729623ca30aa7c12f2afebee787093",
+      "apps/parent/lib/ui/family_order_page.dart": "62744b8d3967e5b63ec3963758dbe672a59866a20fab9550a766faf6b417352f",
+      "apps/parent/lib/ui/family_membership.dart": "9db8f05e00a909e2693d17bd79fbb1baf1cff1f986e812f84151c676db28fb5c",
+      "apps/parent/test/family_membership_test.dart": "83c4339676309dc79f1cf68616ca3b92d6e419dbf5ba0e4f29174a65c1ba2e99",
+      "apps/parent/test/family_payment_recovery_guard_test.dart": "c480f252b0dbd5e8ef76a76569cce18205af080c5269bf2a93314647510971e5"
+    }
+  },
+  "files": [
+    {
+      "source": ".cache/family-membership-recovery-20261021/final-batch-receipt.json",
+      "path": "final-batch-receipt.json",
+      "bytes": 2306,
+      "sha256": "24fc209b9dfeef6f7abbcd1edca3d062ae1942d79c37f601ca0f591a28e42a1a"
+    },
+    {
+      "source": ".cache/family-membership-recovery-20261021/continuation-receipt.json",
+      "path": "continuation-receipt.json",
+      "bytes": 10185,
+      "sha256": "ab2ea9ab9fc82918c9a2697e014040d4857c3939f6ead5a38d4ba68f9b1b0b61"
+    },
+    {
+      "source": ".cache/family-membership-recovery-20261021/old-ui-v2/out/01-old-ui-v2.log",
+      "path": "old-ui-v2/out/01-old-ui-v2.log",
+      "bytes": 11459,
+      "sha256": "ce4cb93febd17b76dbbf77c0219ffbedc30824ccdb93da266c08106547126443"
+    },
+    {
+      "source": ".cache/family-membership-recovery-20261021/old-ui-v2/out/batch-stopped-release.json",
+      "path": "old-ui-v2/out/batch-stopped-release.json",
+      "bytes": 407,
+      "sha256": "d6d1377c9a82a3135a4d592d4a3ef01bde7583407a5f9621d85cc7426bae2d7e"
+    },
+    {
+      "source": ".cache/family-membership-recovery-20261021/pre-fix-v2/out/02-pre-fix-v2.log",
+      "path": "pre-fix-v2/out/02-pre-fix-v2.log",
+      "bytes": 7353,
+      "sha256": "fb6836b2b502624ffefb572e1f27ca43155108d04fef05a2938ee433ac7484e5"
+    },
+    {
+      "source": ".cache/family-membership-recovery-20261021/pre-fix-v2/out/03-format-main-five.log",
+      "path": "pre-fix-v2/out/03-format-main-five.log",
+      "bytes": 221,
+      "sha256": "7d28b2caba0de092c05cfed558034c5bece03bdf38cd8c57b30cb06557cfa7f7"
+    },
+    {
+      "source": ".cache/family-membership-recovery-20261021/post-fix/out/05-post-fix-targeted.log",
+      "path": "post-fix/out/05-post-fix-targeted.log",
+      "bytes": 4579,
+      "sha256": "6d323e8ac406c23cfd187f66c18c9a6aaaabe9627caa6500cc287ef883bc229a"
+    },
+    {
+      "source": ".cache/family-membership-recovery-20261021/post-fix/out/stopped-release.json",
+      "path": "post-fix/out/stopped-release.json",
+      "bytes": 802,
+      "sha256": "b5c87726240db13dcfd6e0d7495f28e1e4e8d2fa326812396d7c7af4707a621b"
+    }
+  ]
+}

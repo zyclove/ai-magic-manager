@@ -1,0 +1,58 @@
+Flutter assets will be downloaded from https://storage.flutter-io.cn. Make sure you trust this source!
+00:00 +0: loading D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/old-ui/src/apps/parent/test/family_membership_test.dart
+00:00 +0: guardian membership is read only even when payment is available
+00:00 +1: unavailable payment shows real offers but cannot create a paid order
+00:01 +2: closed sales can recover the original order request and quote
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: not null
+  Actual: <null>
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/old-ui/src/apps/parent/test/family_membership_test.dart:274:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/old-ui/src/apps/parent/test/family_membership_test.dart line 274
+The test description was:
+  closed sales can recover the original order request and quote
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:01 +2 -1: closed sales can recover the original order request and quote [E]
+  Test failed. See exception logs above.
+  The test description was: closed sales can recover the original order request and quote
+  
+00:01 +2 -1: returning from a paid order clears membership recovery
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following TestFailure was thrown running a test:
+Expected: no matching candidates
+  Actual: _TextWidgetFinder:<Found 1 widget with text "有一笔订单需要核对": [
+            Text("有一笔订单需要核对", dependencies: [DefaultSelectionStyle, DefaultTextStyle, MediaQuery]),
+          ]>
+   Which: means one was found but none were expected
+
+When the exception was thrown, this was the stack:
+#4      main.<anonymous closure> (file:///D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/old-ui/src/apps/parent/test/family_membership_test.dart:345:5)
+<asynchronous suspension>
+#5      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#6      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+This was caught by the test expectation on the following line:
+  file:///D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/old-ui/src/apps/parent/test/family_membership_test.dart line 345
+The test description was:
+  returning from a paid order clears membership recovery
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +2 -2: returning from a paid order clears membership recovery [E]
+  Test failed. See exception logs above.
+  The test description was: returning from a paid order clears membership recovery
+  
+00:02 +2 -2: Some tests failed.

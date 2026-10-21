@@ -1,0 +1,20 @@
+{
+  "atUtc": "2026-10-21T03:49:34.927501+00:00",
+  "sourceMatched": true,
+  "sourceTreeSha256": "50ec6f1c2881fba55ad0fc9b0acb5dadb3188f8f227a8d33248a04c4a093a52a",
+  "packageConfigSha256": "ecbe3dbc1a660a7241ddab522c3dd92107431f0aea6002388e17242bdf7fb252",
+  "mainBytesMatchFrozenOverlays": {
+    "apps/parent/lib/core/family_payment.dart": true,
+    "apps/parent/lib/ui/family_membership.dart": true,
+    "apps/parent/lib/ui/family_order_page.dart": true,
+    "apps/parent/test/family_membership_test.dart": true,
+    "apps/parent/test/family_payment_recovery_guard_test.dart": true,
+    "apps/parent/test/family_payment_test.dart": true
+  },
+  "sdkProcesses": [],
+  "availablePhysicalBytes": 3007643648,
+  "diskFreeBytes": {
+    "C:\\": 15529160704,
+    "D:\\": 42166824960
+  }
+}

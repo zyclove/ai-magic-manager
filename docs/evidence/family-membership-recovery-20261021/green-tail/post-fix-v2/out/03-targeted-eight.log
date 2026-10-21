@@ -1,0 +1,12 @@
+Flutter assets will be downloaded from https://storage.flutter-io.cn. Make sure you trust this source!
+00:00 +0: loading D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix-v2/src/apps/parent/test/family_membership_test.dart
+00:00 +0: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix-v2/src/apps/parent/test/family_membership_test.dart: guardian membership is read only even when payment is available
+00:00 +1: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix-v2/src/apps/parent/test/family_membership_test.dart: unavailable payment shows real offers but cannot create a paid order
+00:00 +2: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix-v2/src/apps/parent/test/family_membership_test.dart: closed sales can recover the original order request and quote (variant: TargetPlatform.android)
+00:01 +3: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix-v2/src/apps/parent/test/family_membership_test.dart: returning from a paid order clears membership recovery (variant: TargetPlatform.android)
+00:01 +4: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix-v2/src/apps/parent/test/family_membership_test.dart: paid order clears recovery when refund progress is unavailable (variant: TargetPlatform.android)
+00:01 +5: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix-v2/src/apps/parent/test/family_membership_test.dart: unresolved order request blocks paying a listed order (variant: TargetPlatform.android)
+00:02 +6: loading D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix-v2/src/apps/parent/test/family_payment_recovery_guard_test.dart
+00:02 +6: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix-v2/src/apps/parent/test/family_payment_recovery_guard_test.dart: an unresolved order request blocks another payment before side effects
+00:02 +7: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix-v2/src/apps/parent/test/family_payment_recovery_guard_test.dart: a recovered order can launch its own saved payment attempt
+00:03 +8: All tests passed!

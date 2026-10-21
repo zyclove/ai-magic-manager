@@ -1,0 +1,24 @@
+{
+  "atUtc": "2026-10-21T03:56:46.462041+00:00",
+  "manifestSha256": "285b46962dc0ffdd7892148f761e44c08021faf7c0026b7987cfe93c03853e06",
+  "sourceFiles": 400,
+  "sourceMatched": true,
+  "sourceTreeSha256": "4b96075582be2a1819e9287543188b34c2676cf333196c4e83f3ac78d6e3bdbe",
+  "packageConfigSha256": "efc2519c736893447b585cc6c94d28597984f4847bde411fb28780202e410f2b",
+  "mainBytesMatchFrozenOverlays": {
+    "apps/parent/lib/core/family_payment.dart": true,
+    "apps/parent/lib/ui/family_membership.dart": true,
+    "apps/parent/lib/ui/family_order_page.dart": true,
+    "apps/parent/test/family_membership_test.dart": true,
+    "apps/parent/test/family_payment_recovery_guard_test.dart": true,
+    "apps/parent/test/family_payment_test.dart": true
+  },
+  "priorPostFixSourceUnchanged": true,
+  "priorPostFixManifestSha256": "fac975bb33e97e63dc20f80704b7462a1658d6404a015ef15d622699f93a21f4",
+  "sdkProcesses": [],
+  "availablePhysicalBytes": 2603511808,
+  "diskFreeBytes": {
+    "C:\\": 15528620032,
+    "D:\\": 41972781056
+  }
+}

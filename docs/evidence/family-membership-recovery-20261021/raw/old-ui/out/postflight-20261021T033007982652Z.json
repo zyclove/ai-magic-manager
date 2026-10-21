@@ -1,0 +1,86 @@
+{
+  "startedAtUtc": "2026-10-21T03:30:06.599775+00:00",
+  "finishedAtUtc": "2026-10-21T03:30:07.981892+00:00",
+  "variant": "old-ui",
+  "phase": "post",
+  "samplerSha256": "c2345679d9ad4a7b9c2036ce7e6bb6179d73a8597d8aa4c3d6d61ab05f46eb84",
+  "manifestPath": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\preparation-manifest.json",
+  "manifestSha256": "7ab1b70d598b7e18ab18d82b70d12a6571d879ada25d113e0d787a63c544cedc",
+  "source": {
+    "files": 399,
+    "bytes": 6382095,
+    "sha256": "ef706a537c833fa9083438b00722795c2c791558feaafdec3bcd1bd6b63f8c73",
+    "expectedSha256": "ef706a537c833fa9083438b00722795c2c791558feaafdec3bcd1bd6b63f8c73",
+    "matched": true,
+    "mismatches": [],
+    "unexpectedPreflightFiles": []
+  },
+  "packageConfigSha256": "ca459e74133f502149d889b27edf692eb9748e614ed9cadeb95e80a388cb0698",
+  "launcherFileSha256": {
+    "bin/flutter.bat": "d894977f1eedfe55530d7aa3dc78f0cc70e18f84a73328b8efc8927e16e73baa",
+    "bin/internal/shared.bat": "e7de0e67a7fe4b3df539e6197c72f4bfd24f3912608cdd1a9bc5d036e9aa3f12",
+    "bin/cache/flutter_tools.snapshot": "416dc26a08c049b21aebd6cf227367ac207396726f7798a02fb75535096b35e7",
+    "bin/cache/flutter_tools.stamp": "bd00b41c5952f6f8e81707b707c402c5e6ea8e5bcb48825f7da9dc78b7bf26f2",
+    "bin/internal/engine.version": "4a1ee9bf6e34c4c562b2b7e0b81a9b196c6dd77e6122b1141a87e8b78deca384",
+    "bin/cache/engine-dart-sdk.stamp": "4a1ee9bf6e34c4c562b2b7e0b81a9b196c6dd77e6122b1141a87e8b78deca384"
+  },
+  "sdkGitRevision": "761747bfc538b5af34aa0d3fac380f1bc331ec49",
+  "environment": {
+    "FLUTTER_TOOL_ARGS": {
+      "empty": true
+    }
+  },
+  "launcherLockMetadata": [
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\flutter.bat.lock",
+      "exists": true,
+      "bytes": 0,
+      "lastWriteUtc": "2026-10-21T03:29:17.364542+00:00"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\lockfile",
+      "exists": true,
+      "bytes": 0,
+      "lastWriteUtc": "2026-10-21T03:29:17.857554+00:00"
+    }
+  ],
+  "lockAcquisitionAttempted": false,
+  "sdkProcessNamesChecked": [
+    "dart.exe",
+    "dartaotruntime.exe",
+    "flutter.exe",
+    "flutter_tester.exe",
+    "gen_snapshot.exe",
+    "java.exe",
+    "javaw.exe",
+    "go.exe",
+    "gofmt.exe",
+    "compile.exe",
+    "link.exe",
+    "asm.exe",
+    "cgo.exe"
+  ],
+  "sdkProcesses": [],
+  "availablePhysicalBytes": 3458445312,
+  "totalPhysicalBytes": 29867384832,
+  "disk": {
+    "C:\\": {
+      "totalBytes": 214749409280,
+      "freeBytes": 15609548800
+    },
+    "D:\\": {
+      "totalBytes": 322123591680,
+      "freeBytes": 42802012160
+    }
+  },
+  "checks": {
+    "sourcePinsMatched": true,
+    "packageConfigMatched": true,
+    "launcherExistingSnapshotExpected": true,
+    "sdkProcessCountZero": true,
+    "availablePhysicalRamAtLeast2GiB": true
+  },
+  "allChecksPassed": true,
+  "executionAuthorizedByThisObservation": false,
+  "sdkOrTestsStartedBySampler": false
+}

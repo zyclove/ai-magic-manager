@@ -1,0 +1,58 @@
+{
+  "startedAtUtc": "2026-10-21T03:45:52.806558+00:00",
+  "deadlineUtc": "2026-10-21T03:50:52.806558+00:00",
+  "outerBudgetSeconds": 300,
+  "stages": [
+    {
+      "label": "01-old-ui-v2",
+      "startedAtUtc": "2026-10-21T03:45:54.528987+00:00",
+      "command": [
+        "D:\\softwares\\flutter\\bin\\flutter.bat",
+        "--no-version-check",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/family_membership_test.dart",
+        "test/family_payment_recovery_guard_test.dart"
+      ],
+      "workingDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\old-ui-v2\\src\\apps\\parent",
+      "log": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\old-ui-v2\\out\\01-old-ui-v2.log",
+      "processLocalTemp": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\old-ui-v2\\tmp",
+      "pid": 104012,
+      "naturalExit": true,
+      "exitCode": 1,
+      "endedAtUtc": "2026-10-21T03:46:08.599914+00:00",
+      "elapsedSeconds": 14.070950399996946,
+      "logSha256": "ce4cb93febd17b76dbbf77c0219ffbedc30824ccdb93da266c08106547126443"
+    }
+  ],
+  "observations": [
+    {
+      "label": "before-01-old-ui-v2",
+      "atUtc": "2026-10-21T03:45:54.528338+00:00",
+      "source": {
+        "files": 400,
+        "bytes": 6394570,
+        "sha256": "e67dea82f4b2d49b44e780e75e3e7e7bbb3d61cf71e4d799a690174149998d24",
+        "expectedSha256": "e67dea82f4b2d49b44e780e75e3e7e7bbb3d61cf71e4d799a690174149998d24",
+        "matched": true,
+        "mismatches": [],
+        "unexpectedPreflightFiles": []
+      },
+      "packageConfigSha256": "9fcb0e298c4f00e5d6edda65d536762778a9730d1ead60c75bab5b0987d1587a",
+      "launcherPinsMatched": true,
+      "sdkProcesses": [],
+      "availablePhysicalBytes": 3855249408,
+      "diskFreeBytes": {
+        "C:\\": 15604576256,
+        "D:\\": 42415480832
+      }
+    }
+  ],
+  "complete": false,
+  "stoppedReason": "RuntimeError: Unexpected assertion/fixture failure: an unresolved order request blocks another payment before side effects",
+  "endedAtUtc": "2026-10-21T03:46:08.601446+00:00",
+  "elapsedSeconds": 15.79490189999342
+}

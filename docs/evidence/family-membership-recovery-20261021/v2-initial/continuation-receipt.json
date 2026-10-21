@@ -1,0 +1,226 @@
+{
+  "startedAtUtc": "2026-10-21T03:45:52.806558+00:00",
+  "deadlineUtc": "2026-10-21T03:50:52.806558+00:00",
+  "outerBudgetSeconds": 300,
+  "stages": [
+    {
+      "label": "01-old-ui-v2",
+      "startedAtUtc": "2026-10-21T03:45:54.528987+00:00",
+      "command": [
+        "D:\\softwares\\flutter\\bin\\flutter.bat",
+        "--no-version-check",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/family_membership_test.dart",
+        "test/family_payment_recovery_guard_test.dart"
+      ],
+      "workingDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\old-ui-v2\\src\\apps\\parent",
+      "log": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\old-ui-v2\\out\\01-old-ui-v2.log",
+      "processLocalTemp": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\old-ui-v2\\tmp",
+      "pid": 104012,
+      "naturalExit": true,
+      "exitCode": 1,
+      "endedAtUtc": "2026-10-21T03:46:08.599914+00:00",
+      "elapsedSeconds": 14.070950399996946,
+      "logSha256": "ce4cb93febd17b76dbbf77c0219ffbedc30824ccdb93da266c08106547126443",
+      "expectedProductFailuresConfirmed": [
+        "closed sales can recover the original order request and quote",
+        "returning from a paid order clears membership recovery",
+        "paid order clears recovery when refund progress is unavailable",
+        "unresolved order request blocks paying a listed order",
+        "an unresolved order request blocks another payment before side effects"
+      ],
+      "validatedFromExistingLogAfterParserCorrection": true
+    },
+    {
+      "label": "02-pre-fix-v2",
+      "startedAtUtc": "2026-10-21T03:48:31.240623+00:00",
+      "command": [
+        "D:\\softwares\\flutter\\bin\\flutter.bat",
+        "--no-version-check",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/family_membership_test.dart",
+        "test/family_payment_recovery_guard_test.dart"
+      ],
+      "workingDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\pre-fix-v2\\src\\apps\\parent",
+      "log": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\pre-fix-v2\\out\\02-pre-fix-v2.log",
+      "processLocalTemp": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\pre-fix-v2\\tmp",
+      "pid": 100436,
+      "naturalExit": true,
+      "exitCode": 1,
+      "endedAtUtc": "2026-10-21T03:48:45.643709+00:00",
+      "elapsedSeconds": 14.403116700006649,
+      "logSha256": "fb6836b2b502624ffefb572e1f27ca43155108d04fef05a2938ee433ac7484e5",
+      "expectedProductFailuresConfirmed": [
+        "paid order clears recovery when refund progress is unavailable",
+        "unresolved order request blocks paying a listed order",
+        "an unresolved order request blocks another payment before side effects"
+      ]
+    },
+    {
+      "label": "03-format-main-five",
+      "startedAtUtc": "2026-10-21T03:48:48.081686+00:00",
+      "command": [
+        "D:\\softwares\\flutter\\bin\\dart.bat",
+        "format",
+        "apps/parent/lib/core/family_payment.dart",
+        "apps/parent/lib/ui/family_order_page.dart",
+        "apps/parent/lib/ui/family_membership.dart",
+        "apps/parent/test/family_membership_test.dart",
+        "apps/parent/test/family_payment_recovery_guard_test.dart"
+      ],
+      "workingDirectory": "D:\\codes\\mobile\\ai-manager",
+      "log": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\pre-fix-v2\\out\\03-format-main-five.log",
+      "processLocalTemp": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\pre-fix-v2\\tmp",
+      "pid": 106580,
+      "naturalExit": true,
+      "exitCode": 0,
+      "endedAtUtc": "2026-10-21T03:48:48.867964+00:00",
+      "elapsedSeconds": 0.7863030000007711,
+      "logSha256": "7d28b2caba0de092c05cfed558034c5bece03bdf38cd8c57b30cb06557cfa7f7"
+    },
+    {
+      "label": "05-post-fix-targeted",
+      "startedAtUtc": "2026-10-21T03:48:51.633403+00:00",
+      "command": [
+        "D:\\softwares\\flutter\\bin\\flutter.bat",
+        "--no-version-check",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/family_membership_test.dart",
+        "test/family_payment_recovery_guard_test.dart"
+      ],
+      "workingDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix\\src\\apps\\parent",
+      "log": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix\\out\\05-post-fix-targeted.log",
+      "processLocalTemp": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix\\tmp",
+      "pid": 106832,
+      "naturalExit": true,
+      "exitCode": 1,
+      "endedAtUtc": "2026-10-21T03:49:07.220381+00:00",
+      "elapsedSeconds": 15.587004300003173,
+      "logSha256": "6d323e8ac406c23cfd187f66c18c9a6aaaabe9627caa6500cc287ef883bc229a"
+    }
+  ],
+  "observations": [
+    {
+      "label": "before-01-old-ui-v2",
+      "atUtc": "2026-10-21T03:45:54.528338+00:00",
+      "source": {
+        "files": 400,
+        "bytes": 6394570,
+        "sha256": "e67dea82f4b2d49b44e780e75e3e7e7bbb3d61cf71e4d799a690174149998d24",
+        "expectedSha256": "e67dea82f4b2d49b44e780e75e3e7e7bbb3d61cf71e4d799a690174149998d24",
+        "matched": true,
+        "mismatches": [],
+        "unexpectedPreflightFiles": []
+      },
+      "packageConfigSha256": "9fcb0e298c4f00e5d6edda65d536762778a9730d1ead60c75bab5b0987d1587a",
+      "launcherPinsMatched": true,
+      "sdkProcesses": [],
+      "availablePhysicalBytes": 3855249408,
+      "diskFreeBytes": {
+        "C:\\": 15604576256,
+        "D:\\": 42415480832
+      }
+    },
+    {
+      "label": "before-02-pre-fix-v2",
+      "atUtc": "2026-10-21T03:48:31.239962+00:00",
+      "source": {
+        "files": 400,
+        "bytes": 6394134,
+        "sha256": "a5727929a042b06faecd9a4ca89b1536f0253a770f948bcbde9112782254856e",
+        "expectedSha256": "a5727929a042b06faecd9a4ca89b1536f0253a770f948bcbde9112782254856e",
+        "matched": true,
+        "mismatches": [],
+        "unexpectedPreflightFiles": []
+      },
+      "packageConfigSha256": "68661f9c280a5166805e874d4c7e6bb11e0b1ee6935be1a29c6ac5e7ae9e1b97",
+      "launcherPinsMatched": true,
+      "sdkProcesses": [],
+      "availablePhysicalBytes": 3600605184,
+      "diskFreeBytes": {
+        "C:\\": 15530102784,
+        "D:\\": 42350317568
+      }
+    },
+    {
+      "label": "before-03-format-main-five",
+      "atUtc": "2026-10-21T03:48:48.080531+00:00",
+      "source": {
+        "files": 400,
+        "bytes": 6394134,
+        "sha256": "a5727929a042b06faecd9a4ca89b1536f0253a770f948bcbde9112782254856e",
+        "expectedSha256": "a5727929a042b06faecd9a4ca89b1536f0253a770f948bcbde9112782254856e",
+        "matched": true,
+        "mismatches": [],
+        "unexpectedPreflightFiles": []
+      },
+      "packageConfigSha256": "68661f9c280a5166805e874d4c7e6bb11e0b1ee6935be1a29c6ac5e7ae9e1b97",
+      "launcherPinsMatched": true,
+      "sdkProcesses": [],
+      "availablePhysicalBytes": 3321589760,
+      "diskFreeBytes": {
+        "C:\\": 15532142592,
+        "D:\\": 42285641728
+      }
+    },
+    {
+      "label": "before-05-post-fix-targeted",
+      "atUtc": "2026-10-21T03:48:51.632586+00:00",
+      "source": {
+        "files": 400,
+        "bytes": 6394820,
+        "sha256": "50ec6f1c2881fba55ad0fc9b0acb5dadb3188f8f227a8d33248a04c4a093a52a",
+        "expectedSha256": "50ec6f1c2881fba55ad0fc9b0acb5dadb3188f8f227a8d33248a04c4a093a52a",
+        "matched": true,
+        "mismatches": [],
+        "unexpectedPreflightFiles": []
+      },
+      "packageConfigSha256": "ecbe3dbc1a660a7241ddab522c3dd92107431f0aea6002388e17242bdf7fb252",
+      "launcherPinsMatched": true,
+      "sdkProcesses": [],
+      "availablePhysicalBytes": 2974670848,
+      "diskFreeBytes": {
+        "C:\\": 15531593728,
+        "D:\\": 42278146048
+      }
+    }
+  ],
+  "complete": false,
+  "elapsedSeconds": 194.4151618000178,
+  "priorParserStop": {
+    "reason": "RuntimeError: Unexpected assertion/fixture failure: an unresolved order request blocks another payment before side effects",
+    "receiptSha256": "24fc209b9dfeef6f7abbcd1edca3d062ae1942d79c37f601ca0f591a28e42a1a",
+    "endedAtUtc": "2026-10-21T03:46:08.601446+00:00"
+  },
+  "initialReceipt": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\final-batch-receipt.json",
+    "sha256": "24fc209b9dfeef6f7abbcd1edca3d062ae1942d79c37f601ca0f591a28e42a1a"
+  },
+  "postFix": {
+    "manifest": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix\\input-manifest.json",
+    "sha256": "fac975bb33e97e63dc20f80704b7462a1658d6404a015ef15d622699f93a21f4",
+    "sourceTreeSha256": "50ec6f1c2881fba55ad0fc9b0acb5dadb3188f8f227a8d33248a04c4a093a52a",
+    "packageConfigSha256": "ecbe3dbc1a660a7241ddab522c3dd92107431f0aea6002388e17242bdf7fb252",
+    "formattedMainSha256": {
+      "apps/parent/lib/core/family_payment.dart": "7892e4399853af4cdbd31e9904110d29dc729623ca30aa7c12f2afebee787093",
+      "apps/parent/lib/ui/family_order_page.dart": "62744b8d3967e5b63ec3963758dbe672a59866a20fab9550a766faf6b417352f",
+      "apps/parent/lib/ui/family_membership.dart": "9db8f05e00a909e2693d17bd79fbb1baf1cff1f986e812f84151c676db28fb5c",
+      "apps/parent/test/family_membership_test.dart": "83c4339676309dc79f1cf68616ca3b92d6e419dbf5ba0e4f29174a65c1ba2e99",
+      "apps/parent/test/family_payment_recovery_guard_test.dart": "c480f252b0dbd5e8ef76a76569cce18205af080c5269bf2a93314647510971e5"
+    }
+  },
+  "stoppedReason": "RuntimeError: Post-fix targeted tests not green",
+  "endedAtUtc": "2026-10-21T03:49:07.221714+00:00"
+}

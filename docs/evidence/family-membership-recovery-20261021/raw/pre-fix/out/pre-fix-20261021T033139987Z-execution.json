@@ -1,0 +1,18 @@
+{
+  "stage": "pre-fix",
+  "startedAtUtc": "2026-10-21T03:31:39.9944652Z",
+  "endedAtUtc": "2026-10-21T03:31:53.8732776Z",
+  "wrapperPid": 103636,
+  "wrapperStartedAtUtc": "2026-10-21T03:31:40.0812795Z",
+  "exitCode": 1,
+  "naturalExit": true,
+  "timedOut": false,
+  "elapsedMilliseconds": 13876,
+  "outerBudgetSeconds": 120,
+  "command": "flutter.bat --no-version-check --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded test/family_membership_test.dart test/family_payment_recovery_guard_test.dart",
+  "workingDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\pre-fix\\src\\apps\\parent",
+  "processLocalTemp": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\pre-fix\\tmp",
+  "processLocalTmp": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\pre-fix\\tmp",
+  "log": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\pre-fix\\out\\pre-fix-20261021T033139987Z.log",
+  "subsequentBatchStarted": false
+}

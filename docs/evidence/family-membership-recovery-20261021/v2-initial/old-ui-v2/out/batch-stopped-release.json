@@ -1,0 +1,12 @@
+{
+  "atUtc": "2026-10-21T03:46:47.002569+00:00",
+  "sourceMatched": true,
+  "sourceTreeSha256": "e67dea82f4b2d49b44e780e75e3e7e7bbb3d61cf71e4d799a690174149998d24",
+  "packageConfigSha256": "9fcb0e298c4f00e5d6edda65d536762778a9730d1ead60c75bab5b0987d1587a",
+  "sdkProcesses": [],
+  "availablePhysicalBytes": 3853934592,
+  "diskFreeBytes": {
+    "C:\\": 15601516544,
+    "D:\\": 42350407680
+  }
+}

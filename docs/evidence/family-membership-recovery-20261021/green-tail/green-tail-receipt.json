@@ -1,0 +1,152 @@
+{
+  "startedAtUtc": "2026-10-21T03:53:45.786284+00:00",
+  "deadlineUtc": "2026-10-21T03:56:45.786284+00:00",
+  "outerBudgetSeconds": 180,
+  "stages": [
+    {
+      "label": "01-green-tail-format-member",
+      "startedAtUtc": "2026-10-21T03:53:47.545406+00:00",
+      "command": [
+        "D:\\softwares\\flutter\\bin\\dart.bat",
+        "format",
+        "apps/parent/test/family_membership_test.dart"
+      ],
+      "workingDirectory": "D:\\codes\\mobile\\ai-manager",
+      "log": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix\\out\\01-green-tail-format-member.log",
+      "processLocalTemp": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix\\tmp",
+      "pid": 106172,
+      "naturalExit": true,
+      "exitCode": 0,
+      "endedAtUtc": "2026-10-21T03:53:48.074987+00:00",
+      "elapsedSeconds": 0.5296117999969283,
+      "logSha256": "a019e1ccb6c719d462c3ebd6b122ae510f1461fac1b57d512676bf79c8cf3b00"
+    },
+    {
+      "label": "03-targeted-eight",
+      "startedAtUtc": "2026-10-21T03:53:49.894360+00:00",
+      "command": [
+        "D:\\softwares\\flutter\\bin\\flutter.bat",
+        "--no-version-check",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded",
+        "test/family_membership_test.dart",
+        "test/family_payment_recovery_guard_test.dart"
+      ],
+      "workingDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v2\\src\\apps\\parent",
+      "log": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v2\\out\\03-targeted-eight.log",
+      "processLocalTemp": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v2\\tmp",
+      "pid": 107732,
+      "naturalExit": true,
+      "exitCode": 0,
+      "endedAtUtc": "2026-10-21T03:54:04.044954+00:00",
+      "elapsedSeconds": 14.150617199993576,
+      "logSha256": "28b44480db5cabbd68e9cad89e4d80d88b4643ec7a96db61ef74a65bde561582"
+    },
+    {
+      "label": "04-full-parent",
+      "startedAtUtc": "2026-10-21T03:54:05.661913+00:00",
+      "command": [
+        "D:\\softwares\\flutter\\bin\\flutter.bat",
+        "--no-version-check",
+        "--suppress-analytics",
+        "test",
+        "--no-pub",
+        "--concurrency=1",
+        "--reporter=expanded"
+      ],
+      "workingDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v2\\src\\apps\\parent",
+      "log": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v2\\out\\04-full-parent.log",
+      "processLocalTemp": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\post-fix-v2\\tmp",
+      "pid": 107236,
+      "naturalExit": false,
+      "exitCode": 124,
+      "endedAtUtc": "2026-10-21T03:56:06.436834+00:00",
+      "elapsedSeconds": 120.77494050000678,
+      "logSha256": "6411bd7b798b967f696485b6428922cfe5ca13ff8a4276816c44575dbe508c8a"
+    }
+  ],
+  "observations": [
+    {
+      "label": "before-01-green-tail-format-member",
+      "atUtc": "2026-10-21T03:53:47.544714+00:00",
+      "source": {
+        "files": 400,
+        "bytes": 6394820,
+        "sha256": "50ec6f1c2881fba55ad0fc9b0acb5dadb3188f8f227a8d33248a04c4a093a52a",
+        "expectedSha256": "50ec6f1c2881fba55ad0fc9b0acb5dadb3188f8f227a8d33248a04c4a093a52a",
+        "matched": true,
+        "mismatches": [],
+        "unexpectedPreflightFiles": []
+      },
+      "packageConfigSha256": "ecbe3dbc1a660a7241ddab522c3dd92107431f0aea6002388e17242bdf7fb252",
+      "launcherPinsMatched": true,
+      "sdkProcesses": [],
+      "availablePhysicalBytes": 2555961344,
+      "diskFreeBytes": {
+        "C:\\": 15538225152,
+        "D:\\": 42164224000
+      }
+    },
+    {
+      "label": "before-03-targeted-eight",
+      "atUtc": "2026-10-21T03:53:49.893725+00:00",
+      "source": {
+        "files": 400,
+        "bytes": 6394902,
+        "sha256": "4b96075582be2a1819e9287543188b34c2676cf333196c4e83f3ac78d6e3bdbe",
+        "expectedSha256": "4b96075582be2a1819e9287543188b34c2676cf333196c4e83f3ac78d6e3bdbe",
+        "matched": true,
+        "mismatches": [],
+        "unexpectedPreflightFiles": []
+      },
+      "packageConfigSha256": "efc2519c736893447b585cc6c94d28597984f4847bde411fb28780202e410f2b",
+      "launcherPinsMatched": true,
+      "sdkProcesses": [],
+      "availablePhysicalBytes": 2615296000,
+      "diskFreeBytes": {
+        "C:\\": 15537524736,
+        "D:\\": 42156195840
+      }
+    },
+    {
+      "label": "before-04-full-parent",
+      "atUtc": "2026-10-21T03:54:05.661189+00:00",
+      "source": {
+        "files": 400,
+        "bytes": 6394902,
+        "sha256": "4b96075582be2a1819e9287543188b34c2676cf333196c4e83f3ac78d6e3bdbe",
+        "expectedSha256": "4b96075582be2a1819e9287543188b34c2676cf333196c4e83f3ac78d6e3bdbe",
+        "matched": true,
+        "mismatches": [],
+        "unexpectedPreflightFiles": []
+      },
+      "packageConfigSha256": "efc2519c736893447b585cc6c94d28597984f4847bde411fb28780202e410f2b",
+      "launcherPinsMatched": true,
+      "sdkProcesses": [],
+      "availablePhysicalBytes": 2651779072,
+      "diskFreeBytes": {
+        "C:\\": 15537393664,
+        "D:\\": 42091999232
+      }
+    }
+  ],
+  "complete": false,
+  "postFixV2": {
+    "manifestSha256": "285b46962dc0ffdd7892148f761e44c08021faf7c0026b7987cfe93c03853e06",
+    "sourceTreeSha256": "4b96075582be2a1819e9287543188b34c2676cf333196c4e83f3ac78d6e3bdbe",
+    "packageConfigSha256": "efc2519c736893447b585cc6c94d28597984f4847bde411fb28780202e410f2b",
+    "mainPins": {
+      "apps/parent/lib/core/family_payment.dart": "7892e4399853af4cdbd31e9904110d29dc729623ca30aa7c12f2afebee787093",
+      "apps/parent/lib/ui/family_membership.dart": "9db8f05e00a909e2693d17bd79fbb1baf1cff1f986e812f84151c676db28fb5c",
+      "apps/parent/lib/ui/family_order_page.dart": "62744b8d3967e5b63ec3963758dbe672a59866a20fab9550a766faf6b417352f",
+      "apps/parent/test/family_membership_test.dart": "56fdc89bcfdafb31ad144196a862e2e00b2c9c97c412548d88fc22c73e33465d",
+      "apps/parent/test/family_payment_recovery_guard_test.dart": "c480f252b0dbd5e8ef76a76569cce18205af080c5269bf2a93314647510971e5"
+    }
+  },
+  "stoppedReason": "RuntimeError: Command deadline exceeded: 04-full-parent",
+  "endedAtUtc": "2026-10-21T03:56:06.445069+00:00",
+  "elapsedSeconds": 140.65881049999734
+}

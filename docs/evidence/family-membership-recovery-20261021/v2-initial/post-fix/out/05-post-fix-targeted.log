@@ -1,0 +1,43 @@
+Flutter assets will be downloaded from https://storage.flutter-io.cn. Make sure you trust this source!
+00:00 +0: loading D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix/src/apps/parent/test/family_membership_test.dart
+00:00 +0: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix/src/apps/parent/test/family_membership_test.dart: guardian membership is read only even when payment is available
+00:00 +1: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix/src/apps/parent/test/family_membership_test.dart: unavailable payment shows real offers but cannot create a paid order
+00:00 +2: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix/src/apps/parent/test/family_membership_test.dart: closed sales can recover the original order request and quote (variant: TargetPlatform.android)
+00:01 +3: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix/src/apps/parent/test/family_membership_test.dart: returning from a paid order clears membership recovery (variant: TargetPlatform.android)
+00:01 +4: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix/src/apps/parent/test/family_membership_test.dart: paid order clears recovery when refund progress is unavailable (variant: TargetPlatform.android)
+00:01 +5: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix/src/apps/parent/test/family_membership_test.dart: unresolved order request blocks paying a listed order (variant: TargetPlatform.android)
+══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════
+The following StateError was thrown running a test:
+Bad state: No element
+
+When the exception was thrown, this was the stack:
+#0      Iterable.single (dart:core/iterable.dart:674:25)
+#1      WidgetController.element (package:flutter_test/src/controller.dart:861:30)
+#2      WidgetController.dragUntilVisible.<anonymous closure> (package:flutter_test/src/controller.dart:2220:38)
+<asynchronous suspension>
+#3      TestAsyncUtils.guard.<anonymous closure> (package:flutter_test/src/test_async_utils.dart:117:7)
+<asynchronous suspension>
+#4      WidgetController.scrollUntilVisible.<anonymous closure> (package:flutter_test/src/controller.dart:2186:7)
+<asynchronous suspension>
+#5      TestAsyncUtils.guard.<anonymous closure> (package:flutter_test/src/test_async_utils.dart:117:7)
+<asynchronous suspension>
+#6      main.<anonymous closure> (file:///D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix/src/apps/parent/test/family_membership_test.dart:458:5)
+<asynchronous suspension>
+#7      testWidgets.<anonymous closure>.<anonymous closure> (package:flutter_test/src/widget_tester.dart:183:15)
+<asynchronous suspension>
+#8      TestWidgetsFlutterBinding._runTestBody (package:flutter_test/src/binding.dart:1017:5)
+<asynchronous suspension>
+<asynchronous suspension>
+(elided one frame from package:stack_trace)
+
+The test description was:
+  unresolved order request blocks paying a listed order (variant: TargetPlatform.android)
+════════════════════════════════════════════════════════════════════════════════════════════════════
+00:02 +5 -1: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix/src/apps/parent/test/family_membership_test.dart: unresolved order request blocks paying a listed order (variant: TargetPlatform.android) [E]
+  Test failed. See exception logs above.
+  The test description was: unresolved order request blocks paying a listed order (variant: TargetPlatform.android)
+  
+00:02 +5 -1: loading D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix/src/apps/parent/test/family_payment_recovery_guard_test.dart
+00:03 +5 -1: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix/src/apps/parent/test/family_payment_recovery_guard_test.dart: an unresolved order request blocks another payment before side effects
+00:03 +6 -1: D:/codes/mobile/ai-manager/.cache/family-membership-recovery-20261021/post-fix/src/apps/parent/test/family_payment_recovery_guard_test.dart: a recovered order can launch its own saved payment attempt
+00:03 +7 -1: Some tests failed.

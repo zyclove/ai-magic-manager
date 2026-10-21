@@ -2,7 +2,9 @@
 
 日期：2026-10-21。来源基线：`48644fe41036d9eacd7e8ade6b89fc562f499be5`。
 
-状态：**STATIC_IMPLEMENTED / ANALYSIS_NOT_RUN / TESTS_NOT_RUN / NOT_DEPLOYED**。
+初次静态提交时状态：**STATIC_IMPLEMENTED / ANALYSIS_NOT_RUN / TESTS_NOT_RUN / NOT_DEPLOYED**。
+
+本页保留初次提交的范围与验证边界。后续补充的付款恢复修复、回归结果与原始记录见[会员与订单恢复验证记录](family-membership-recovery-20261021/README.md)。
 
 ## 问题和修改
 

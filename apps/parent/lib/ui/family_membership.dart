@@ -429,8 +429,8 @@ class _FamilyMembershipPageState extends State<FamilyMembershipPage>
                                                             FamilyOrderPage(
                                                                 session:
                                                                     session,
-                                                                orderId: order[
-                                                                    'id'],
+                                                                orderId:
+                                                                    order['id'],
                                                                 payment:
                                                                     payment)));
                                                 if (current) await load();

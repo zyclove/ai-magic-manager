@@ -1,0 +1,127 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUtc": "2026-10-21T03:44:52.9439925+00:00",
+  "scope": "Preserved complete raw logs, execution receipts, preflight and postflight samples for two terminal initial historical attempts only. No final acceptance conclusion.",
+  "acceptancePassed": false,
+  "sourceSnapshotsCopied": false,
+  "runs": [
+    {
+      "stage": "old-ui",
+      "classification": "INITIAL_HISTORICAL_ATTEMPT",
+      "acceptancePassed": false,
+      "startedAtUtc": "2026-10-21T03:29:17.1719157Z",
+      "endedAtUtc": "2026-10-21T03:29:33.1901666Z",
+      "exitCode": 1,
+      "naturalExit": true,
+      "timedOut": false,
+      "outcome": {
+        "passed": 2,
+        "failed": 2,
+        "observedProductFailures": 2,
+        "observedFixtureFailures": 0,
+        "caveat": "Initial historical attempt only. Product assertions failed before the successful payment-path fixture invariant could be fully exercised; the later-discovered fixture defect was not ruled out. Not a green acceptance result.",
+        "failedCases": [
+          {
+            "name": "closed sales can recover the original order request and quote",
+            "classification": "product"
+          },
+          {
+            "name": "returning from a paid order clears membership recovery",
+            "classification": "product"
+          }
+        ]
+      },
+      "files": [
+        {
+          "source": ".cache/family-membership-recovery-20261021/old-ui/out/old-ui-20261021T032917002Z-execution.json",
+          "path": "raw/old-ui/out/old-ui-20261021T032917002Z-execution.json",
+          "bytes": 1004,
+          "sha256": "97a558837ab1b5e0c08bdcbb3e01493dcf49a075fca36764509ac37c379389bc"
+        },
+        {
+          "source": ".cache/family-membership-recovery-20261021/old-ui/out/old-ui-20261021T032917002Z.log",
+          "path": "raw/old-ui/out/old-ui-20261021T032917002Z.log",
+          "bytes": 4213,
+          "sha256": "49628c1fd1987bed2955e274474fe3633c6d1d30117c2dd10d84d6db7b9ab4ba"
+        },
+        {
+          "source": ".cache/family-membership-recovery-20261021/old-ui/out/postflight-20261021T033007982652Z.json",
+          "path": "raw/old-ui/out/postflight-20261021T033007982652Z.json",
+          "bytes": 2942,
+          "sha256": "2e988603080e5f43cc385256b854485d1254ac844014d5d7e08a51d29cf340de"
+        },
+        {
+          "source": ".cache/family-membership-recovery-20261021/old-ui/out/preflight-20261021T032822215117Z.json",
+          "path": "raw/old-ui/out/preflight-20261021T032822215117Z.json",
+          "bytes": 2941,
+          "sha256": "e71d7d3af5df53a5ce5e213f776452f279d2363d5ee3c7ef4856aa981d153f3d"
+        }
+      ]
+    },
+    {
+      "stage": "pre-fix",
+      "classification": "INITIAL_HISTORICAL_ATTEMPT",
+      "acceptancePassed": false,
+      "startedAtUtc": "2026-10-21T03:31:39.9944652Z",
+      "endedAtUtc": "2026-10-21T03:31:53.8732776Z",
+      "exitCode": 1,
+      "naturalExit": true,
+      "timedOut": false,
+      "outcome": {
+        "passed": 3,
+        "failed": 5,
+        "observedProductFailures": 3,
+        "observedFixtureFailures": 2,
+        "caveat": "Initial historical attempt only. Three product failures and two platform-fixture invariant failures are mixed in this run. Not a green acceptance result.",
+        "failedCases": [
+          {
+            "name": "closed sales can recover the original order request and quote",
+            "classification": "fixture"
+          },
+          {
+            "name": "returning from a paid order clears membership recovery",
+            "classification": "fixture"
+          },
+          {
+            "name": "paid order clears recovery when refund progress is unavailable",
+            "classification": "product"
+          },
+          {
+            "name": "unresolved order request blocks paying a listed order",
+            "classification": "product"
+          },
+          {
+            "name": "an unresolved order request blocks another payment before side effects",
+            "classification": "product"
+          }
+        ]
+      },
+      "files": [
+        {
+          "source": ".cache/family-membership-recovery-20261021/pre-fix/out/postflight-20261021T033215272216Z.json",
+          "path": "raw/pre-fix/out/postflight-20261021T033215272216Z.json",
+          "bytes": 2946,
+          "sha256": "702650be37f2c101832e16f9ce2b359f50ac17b593d8288241f6f58e3eeeb1dd"
+        },
+        {
+          "source": ".cache/family-membership-recovery-20261021/pre-fix/out/pre-fix-20261021T033139987Z-execution.json",
+          "path": "raw/pre-fix/out/pre-fix-20261021T033139987Z-execution.json",
+          "bytes": 1064,
+          "sha256": "11a4813ec83ab702c39af7e70e7935d82e1e3602c007a4b911dc5c23b91d9d30"
+        },
+        {
+          "source": ".cache/family-membership-recovery-20261021/pre-fix/out/pre-fix-20261021T033139987Z.log",
+          "path": "raw/pre-fix/out/pre-fix-20261021T033139987Z.log",
+          "bytes": 10379,
+          "sha256": "df6a455672ebe9f9e4539265284204392104b348e44c74215ca4204a61195669"
+        },
+        {
+          "source": ".cache/family-membership-recovery-20261021/pre-fix/out/preflight-20261021T033139969616Z.json",
+          "path": "raw/pre-fix/out/preflight-20261021T033139969616Z.json",
+          "bytes": 2945,
+          "sha256": "adc923c5391515d383c8bfe08f70381315a92e76a205117f1ef5b28c4353a93d"
+        }
+      ]
+    }
+  ]
+}

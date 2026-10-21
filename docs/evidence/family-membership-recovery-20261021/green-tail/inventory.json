@@ -1,0 +1,106 @@
+{
+  "schemaVersion": 1,
+  "recordedAtUtc": "2026-10-21T04:01:34.2620666+00:00",
+  "classification": "TERMINAL_TARGETED_PASS_WITH_FULL_PARENT_TIMEOUT",
+  "overallAcceptancePassed": false,
+  "status": [
+    "TARGETED_8_PASSED",
+    "FULL_PARENT_INCOMPLETE_TIMEOUT",
+    "ANALYSIS_NOT_RUN",
+    "NOT_DEPLOYED"
+  ],
+  "supervisorTerminal": {
+    "sessionId": 92869,
+    "exitCode": 1,
+    "source": "Root terminal handoff"
+  },
+  "format": {
+    "exitCode": 0,
+    "files": 1,
+    "changed": 0,
+    "membershipTestSha256": "56fdc89bcfdafb31ad144196a862e2e00b2c9c97c412548d88fc22c73e33465d"
+  },
+  "targeted": {
+    "passed": 8,
+    "failed": 0,
+    "exitCode": 0,
+    "naturalExit": true
+  },
+  "fullParent": {
+    "completed": false,
+    "exitCode": 124,
+    "naturalExit": false,
+    "commandHardLimitSeconds": 120,
+    "lastObservedProgress": 501,
+    "observedFailureMarkers": 0,
+    "notAnAcceptancePass": true,
+    "cancellationScope": "owned command process subtree, controlled cancellation as reported by Root"
+  },
+  "analysis": {
+    "ran": false
+  },
+  "deployment": {
+    "performed": false
+  },
+  "frozenInputs": {
+    "manifestSha256": "285b46962dc0ffdd7892148f761e44c08021faf7c0026b7987cfe93c03853e06",
+    "sourceCommit": "3b9117b000a10d082a8f7849c41de5f69c0baa62",
+    "sourceFiles": 400,
+    "sourceTreeSha256": "4b96075582be2a1819e9287543188b34c2676cf333196c4e83f3ac78d6e3bdbe",
+    "packageConfigSha256": "efc2519c736893447b585cc6c94d28597984f4847bde411fb28780202e410f2b",
+    "productionUnchangedFromPriorPostFix": true,
+    "previousFrozenInputsModified": false,
+    "mainOverlayHashesMatched": true,
+    "familyOwnedUncommittedOverlay": {
+      "path": "apps/parent/test/family_payment_test.dart",
+      "sha256": "ff226c039efdf7d5d65edd9ad17fea922e1923df018822248563115a1c0f96cd",
+      "includedInTestedInputs": true,
+      "includedInRootStageCommit": false,
+      "commitOwner": "Family"
+    }
+  },
+  "release": {
+    "atUtc": "2026-10-21T11:56:46.462041+08:00",
+    "sdkProcessCount": 0,
+    "availablePhysicalBytes": 2603511808,
+    "sourceMatched": true
+  },
+  "files": [
+    {
+      "source": ".cache/family-membership-recovery-20261021/green-tail-receipt.json",
+      "path": "green-tail-receipt.json",
+      "bytes": 6607,
+      "sha256": "0423014f6cde036fb9ae234191576149afe0f8c1ddec2dd74c10458a82579d82"
+    },
+    {
+      "source": ".cache/family-membership-recovery-20261021/post-fix/out/01-green-tail-format-member.log",
+      "path": "post-fix/out/01-green-tail-format-member.log",
+      "bytes": 46,
+      "sha256": "a019e1ccb6c719d462c3ebd6b122ae510f1461fac1b57d512676bf79c8cf3b00"
+    },
+    {
+      "source": ".cache/family-membership-recovery-20261021/post-fix-v2/input-manifest.json",
+      "path": "post-fix-v2/input-manifest.json",
+      "bytes": 119661,
+      "sha256": "285b46962dc0ffdd7892148f761e44c08021faf7c0026b7987cfe93c03853e06"
+    },
+    {
+      "source": ".cache/family-membership-recovery-20261021/post-fix-v2/out/03-targeted-eight.log",
+      "path": "post-fix-v2/out/03-targeted-eight.log",
+      "bytes": 2234,
+      "sha256": "28b44480db5cabbd68e9cad89e4d80d88b4643ec7a96db61ef74a65bde561582"
+    },
+    {
+      "source": ".cache/family-membership-recovery-20261021/post-fix-v2/out/04-full-parent.log",
+      "path": "post-fix-v2/out/04-full-parent.log",
+      "bytes": 114487,
+      "sha256": "6411bd7b798b967f696485b6428922cfe5ca13ff8a4276816c44575dbe508c8a"
+    },
+    {
+      "source": ".cache/family-membership-recovery-20261021/post-fix-v2/out/timeout-release.json",
+      "path": "post-fix-v2/out/timeout-release.json",
+      "bytes": 1055,
+      "sha256": "bb32b78689181c47b1a909c913437eb5bc8539d04c8e8795903269a7a4adf330"
+    }
+  ]
+}

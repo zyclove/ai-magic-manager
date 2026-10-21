@@ -1,0 +1,18 @@
+{
+  "stage": "old-ui",
+  "startedAtUtc": "2026-10-21T03:29:17.1719157Z",
+  "endedAtUtc": "2026-10-21T03:29:33.1901666Z",
+  "wrapperPid": 102132,
+  "wrapperStartedAtUtc": "2026-10-21T03:29:17.2682473Z",
+  "exitCode": 1,
+  "naturalExit": true,
+  "timedOut": false,
+  "elapsedMilliseconds": 16016,
+  "outerBudgetSeconds": 120,
+  "command": "flutter.bat --no-version-check --suppress-analytics test --no-pub --concurrency=1 --reporter=expanded test/family_membership_test.dart",
+  "workingDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\old-ui\\src\\apps\\parent",
+  "processLocalTemp": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\old-ui\\tmp",
+  "processLocalTmp": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\old-ui\\tmp",
+  "log": "D:\\codes\\mobile\\ai-manager\\.cache\\family-membership-recovery-20261021\\old-ui\\out\\old-ui-20261021T032917002Z.log",
+  "preFixStarted": false
+}
