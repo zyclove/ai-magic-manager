@@ -34,6 +34,103 @@ Map<String, dynamic> parameters() => {
     };
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  for (final state in ['PAID', 'CLOSED', 'INITIATED']) {
+    test(
+        '$state attempt without SDK parameters keeps original recovery until an authoritative order GET',
+        () async {
+      const channel = MethodChannel('fixture/wechat-pay-redacted-attempt');
+      final nativeMethods = <String>[];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, (call) async {
+        nativeMethods.add(call.method);
+        if (call.method == 'clear') return true;
+        if (call.method == 'launch') return {'status': 'DISPATCHED'};
+        fail('Unexpected native method ${call.method}');
+      });
+      addTearDown(() => TestDefaultBinaryMessengerBinding
+          .instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(channel, null));
+      final original = {
+        'createdAt': 1792051200000,
+        'orderId': 'original-order',
+        'attemptKey': 'original-attempt-key',
+        'attemptId': 'original-attempt'
+      };
+      final store = _Store();
+      store.values['parent.family.payment.family.adult'] =
+          jsonEncode(original);
+      final requests = <http.Request>[];
+      final api = ParentApi(() async => 'fixture',
+          baseUrl: 'https://fixture.invalid',
+          client: MockClient((request) async {
+        requests.add(request);
+        if (request.method == 'POST' &&
+            request.url.path.endsWith(
+                '/orders/original-order/payment-attempts')) {
+          return http.Response(
+              jsonEncode({
+                'id': 'original-attempt',
+                'orderId': 'original-order',
+                'status': state,
+                'parameters': <String, dynamic>{},
+                'createdAt': 1792051200000
+              }),
+              200);
+        }
+        if (request.method == 'GET' &&
+            request.url.path.endsWith('/orders/original-order')) {
+          return http.Response(
+              jsonEncode({
+                'id': 'original-order',
+                'tenantId': 'family',
+                'status': state == 'INITIATED' ? 'PAYMENT_PENDING' : state
+              }),
+              200);
+        }
+        fail('Unexpected request ${request.method} ${request.url.path}');
+      }));
+      addTearDown(api.close);
+      final service =
+          FamilyService(api: api, tenantId: 'family', available: () => true);
+      FamilyPaymentCoordinator coordinator() => FamilyPaymentCoordinator(
+          service: service,
+          actor: 'adult',
+          storage: store,
+          native: NativeFamilyPay(channel: channel, available: () => true));
+
+      final first = coordinator();
+      await first.restore();
+      await expectLater(
+          first.launch('original-order'),
+          throwsA(isA<ParentApiException>().having((error) => error.code,
+              'code', 'INVALID_PAYMENT_PARAMETERS')));
+      expect(first.pendingOrderId, 'original-order');
+      expect(jsonDecode(store.values.values.single), original);
+      expect(nativeMethods, isEmpty);
+
+      final restored = coordinator();
+      await restored.restore();
+      await expectLater(restored.launch('original-order'),
+          throwsA(isA<ParentApiException>()));
+      expect(restored.pendingOrderId, 'original-order');
+      expect(jsonDecode(store.values.values.single), original);
+      expect(nativeMethods, isEmpty);
+      final order = await service.object('/orders/original-order');
+      await restored.reconcile(order);
+      if (state == 'INITIATED') {
+        expect(restored.pendingOrderId, 'original-order');
+        expect(jsonDecode(store.values.values.single), original);
+        expect(nativeMethods, isEmpty);
+      } else {
+        expect(restored.pendingOrderId, isNull);
+        expect(store.values, isEmpty);
+        expect(nativeMethods, ['clear']);
+      }
+      expect(requests.map((request) => request.method), ['POST', 'POST', 'GET']);
+      expect(requests.take(2).map((request) => request.headers['Idempotency-Key']),
+          ['original-attempt-key', 'original-attempt-key']);
+    });
+  }
   test(
       'a closed sales gate blocks native payment and preserves the original order for recovery',
       () async {
