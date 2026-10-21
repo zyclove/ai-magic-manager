@@ -27,7 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 /** Owns configuration transport only. Receipt stages never mutate policy enforcement or fleet capability facts. */
 @Service
-class ConfigurationDeliveryService {
+class ConfigurationDeliveryService implements FamilyConfigurationPublisher {
     private static final long MAX_CURSOR = 9007199254740991L;
     private final JdbcTemplate jdbc;
     private final ObjectMapper mapper;
@@ -81,6 +81,76 @@ class ConfigurationDeliveryService {
         for (var rule : target.rules()) { if (rule.applicationId() != null) appIds.add(rule.applicationId()); if (rule.scheduleId() != null) scheduleIds.add(rule.scheduleId()); }
         return new ConfigurationDocument(snapshot.name(), target.rules(), snapshot.applications().stream().filter(a -> appIds.contains(a.id())).toList(),
             snapshot.schedules().stream().filter(s -> scheduleIds.contains(s.id())).toList(), snapshot.protectedPackageExemptions());
+    }
+    @Override
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void publish(String tenant,String actor,List<String> deviceIds,String policy,long version,FamilyAssistanceDocument rules) {
+        publishRetainingExisting(tenant,actor,deviceIds,policy,version,rules,deviceIds);
+    }
+    @Override
+    @Transactional(propagation = Propagation.MANDATORY)
+    public void publishRetainingExisting(String tenant,String actor,List<String> deviceIds,String policy,long version,
+            FamilyAssistanceDocument rules,List<String> allowedDeviceIds,boolean allowRelaxation) {
+        if (!new HashSet<>(deviceIds).containsAll(allowedDeviceIds)) throw new IllegalArgumentException("Unknown family renewal target");
+        var allowed=new HashSet<>(allowedDeviceIds);
+        var previous=new HashMap<String,Delivery>();
+        var contents=new HashMap<String,FamilyAssistanceDocument>();
+        var targets=new ArrayList<PolicySnapshot.Target>();
+        for(String id:deviceIds.stream().sorted().toList()){
+            var device=devices.lockVisibleActive(tenant,actor,id);
+            if(device.platform()!=com.aimanager.fleet.Device.Platform.ANDROID || !"BYOD".equals(device.managementMode()))throw DomainException.invalid("FAMILY_DEVICE_UNSUPPORTED");
+            lockHead(tenant,device.registrationId(),id);
+            var old=currentDelivery(tenant,device.registrationId(),policy);
+            var existing=old==null || old.document()==null?null:old.document().familyAssistance();
+            var content=allowed.contains(id) || allowRelaxation && existing!=null && relaxes(existing,rules)?rules:existing;
+            // A device without prior family authority must never gain a new restriction by renewal.
+            if(content==null)continue;
+            if(old!=null)previous.put(id,old);
+            contents.put(id,content);
+            targets.add(new PolicySnapshot.Target(id,device.registrationId(),device.platform(),device.state(),device.managementMode(),device.osVersion(),device.version(),device.observationStatus(),List.of(),List.of()));
+        }
+        if(targets.isEmpty())return;
+        long now=clock.millis();
+        var exemptions=List.copyOf(SafetyCriticalPackages.withAdditional(""));
+        var snapshot=new PolicySnapshot(1,"家庭辅助规则",List.of(),List.of(),List.of(),exemptions,List.copyOf(targets),null);
+        String encoded=json(snapshot),hash=SecretMaterial.hash(encoded),preview=UUID.randomUUID().toString(),versionId=UUID.randomUUID().toString(),publication=UUID.randomUUID().toString();
+        jdbc.update("INSERT INTO policy_drafts(tenant_id,id,name,kind,revision,next_sequence,rules_json,created_at,updated_at) VALUES(?,?,'家庭辅助规则','POLICY',?,?,'[]',?,?) ON DUPLICATE KEY UPDATE revision=VALUES(revision),next_sequence=VALUES(next_sequence),updated_at=VALUES(updated_at)",tenant,policy,version,version,now,now);
+        jdbc.update("INSERT INTO policy_previews(tenant_id,id,policy_id,draft_revision,hash,snapshot_json,created_at,expires_at,creator_actor_key) VALUES(?,?,?,?,?,?,?,?,?)",tenant,preview,policy,version,hash,encoded,now,now+86400000,com.aimanager.identity.ActorKeys.key(actor));
+        jdbc.update("INSERT INTO policy_versions(tenant_id,id,policy_id,draft_revision,sequence_number,preview_id,preview_hash,mode,snapshot_json,created_at) VALUES(?,?,?,?,?,?,?,'CONFIGURE_ONLY',?,?)",tenant,versionId,policy,version,version,preview,hash,encoded,now);
+        jdbc.update("INSERT INTO policy_publications(tenant_id,id,version_id,state,created_at) VALUES(?,?,?,'CONFIGURED_NOT_ENFORCED',?)",tenant,publication,versionId,now);
+        for(var device:targets){
+            var old=previous.get(device.deviceId());
+            if(old!=null)jdbc.update("UPDATE configuration_deliveries SET state='SUPERSEDED' WHERE tenant_id=? AND id=?",tenant,old.id());
+            long cursor=nextCursor(tenant,device.registrationId());
+            var grants=jdbc.queryForList("SELECT not_after FROM family_temporary_grants WHERE tenant_id=? AND device_id=? AND registration_id=? AND not_after>? FOR UPDATE",Long.class,tenant,device.deviceId(),device.registrationId(),now);
+            Long exception=grants.isEmpty()?null:grants.get(0);
+            var content=contents.get(device.deviceId());
+            var assistance=new FamilyAssistanceDocument(1,"FAMILY_ASSISTED",content.enabled(),content.dailyAllowanceSeconds(),content.timeZoneId(),content.meteredPackages(),content.allowedWindows(),now+7L*86400000,exception);
+            var document=new ConfigurationDocument("家庭使用规则",List.of(),List.of(),List.of(),exemptions,assistance);
+            String id=insert(tenant,device.deviceId(),device.registrationId(),publication,versionId,policy,version,cursor,"UPSERT_CONFIGURATION",document);
+            setStream(tenant,device.registrationId(),policy,id,old==null);
+        }
+    }
+    /** 每台设备独立比较，不能把“比孩子最新草稿宽松”当成“比所有设备旧规则宽松”。 */
+    private boolean relaxes(FamilyAssistanceDocument previous,FamilyAssistanceDocument next) {
+        if(!next.enabled())return true;
+        if(!previous.enabled() || !previous.timeZoneId().equals(next.timeZoneId())
+            || next.dailyAllowanceSeconds()<previous.dailyAllowanceSeconds()
+            || !previous.meteredPackages().containsAll(next.meteredPackages()))return false;
+        var before=allowedMinutes(previous.allowedWindows());
+        before.andNot(allowedMinutes(next.allowedWindows()));
+        return before.isEmpty();
+    }
+    private BitSet allowedMinutes(List<FamilyAssistanceDocument.Window> windows) {
+        final int minutesPerDay=1440,minutesPerWeek=7*minutesPerDay;
+        var result=new BitSet(minutesPerWeek);
+        if(windows.isEmpty()){result.set(0,minutesPerWeek);return result;}
+        for(var window:windows)for(int day:window.daysOfWeek()) {
+            int start=(day-1)*minutesPerDay+window.startMinute();
+            int duration=Math.floorMod(window.endMinute()-window.startMinute(),minutesPerDay);
+            for(int i=0;i<duration;i++)result.set((start+i)%minutesPerWeek);
+        }
+        return result;
     }
     private void lockHead(String tenant, String registration, String device) {
         try { jdbc.update("INSERT INTO configuration_device_heads(tenant_id,registration_id,device_id) VALUES(?,?,?)", tenant, registration, device); }

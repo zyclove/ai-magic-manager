@@ -17,6 +17,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
@@ -32,6 +34,8 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
 @AutoConfigureMockMvc(
     print = org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrint.NONE)
 class SupportPairingJourneyTest {
+  @MockitoBean JwtDecoder jwtDecoder;
+
   @RepeatedTest(5)
   void concurrentCreatesRespectCapacityAndDuplicateKeysReturnOneCode() throws Exception {
     var workers = java.util.concurrent.Executors.newFixedThreadPool(3);

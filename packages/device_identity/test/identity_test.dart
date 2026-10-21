@@ -29,6 +29,45 @@ class TestSecrets implements DeviceSecretStore {
   }
 }
 
+class TestCasSecrets extends TestSecrets
+    implements DeviceSecretDeletion, DeviceSecretCompareAndSet {
+  int comparisons = 0, reads = 0;
+  @override
+  Future<String?> read() async {
+    reads++;
+    return super.read();
+  }
+
+  @override
+  Future<bool> compareAndSet(
+      {required String? expected, required String? value}) async {
+    comparisons++;
+    if (this.value != expected) return false;
+    if (value == null) {
+      this.value = null;
+    } else {
+      await write(value);
+    }
+    return true;
+  }
+
+  @override
+  Future<void> deleteIdentity() async => value = null;
+}
+
+class CallbackKeys extends JoseDeviceEnrollmentKeys {
+  final Future<void> Function()? generating, deleting;
+  const CallbackKeys({this.generating, this.deleting});
+  @override
+  Future<String> generateHandle() async {
+    await generating?.call();
+    return super.generateHandle();
+  }
+
+  @override
+  Future<void> deleteOriginalHandle(String handle) async => deleting?.call();
+}
+
 Matcher failure(String code) =>
     isA<DeviceIdentityFailure>().having((e) => e.code, 'code', code);
 
@@ -595,5 +634,117 @@ void main() {
     release.complete();
     await first;
     expect(requests, hasLength(1));
+  });
+
+  for (final refused in [false, true]) {
+    test(
+        'late ${refused ? 'refusal' : 'heartbeat ACK'} cannot replace native rotation after a view read',
+        () async {
+      final atomic = TestCasSecrets();
+      secrets = atomic;
+      manager = recreated();
+      await activate();
+      final arrived = Completer<void>(), release = Completer<void>();
+      respond = (request) async {
+        arrived.complete();
+        await release.future;
+        if (refused) {
+          await json(request, {}, 401);
+        } else {
+          await normal(request);
+        }
+      };
+      final calls = requests.length;
+      final sending =
+          manager.heartbeat(agentVersion: 'old-request', capabilities: []);
+      await arrived.future;
+      final current = Map<String, dynamic>.from(jsonDecode(atomic.value!))
+        ..['credential'] = nextToken
+        ..['credentialExpiresAt'] = time + 7200000
+        ..['heartbeatSequence'] = 10
+        ..remove('pendingHeartbeat');
+      atomic.value = jsonEncode(current);
+      final rotated = atomic.value;
+      expect((await manager.view()).heartbeatSequence, 10);
+      final reads = atomic.reads;
+      final outcome =
+          expectLater(sending, throwsA(failure('IDENTITY_STATE_CONFLICT')));
+      release.complete();
+      await outcome;
+      expect(atomic.value == rotated, isTrue,
+          reason:
+              'A response using the old bearer cannot overwrite native state.');
+      expect(atomic.reads, greaterThan(reads),
+          reason:
+              'A conflict rereads the durable record without retrying HTTP.');
+      expect(await manager.activeCredential() == nextToken, isTrue);
+      expect(requests.length, calls + (refused ? 0 : 1));
+    });
+  }
+
+  test(
+      'claim creation cannot overwrite identity installed while a key was generated',
+      () async {
+    final atomic = TestCasSecrets();
+    secrets = atomic;
+    manager = recreated();
+    await activate();
+    final installed = atomic.value;
+    atomic.value = null;
+    final arrived = Completer<void>(), release = Completer<void>();
+    manager = DeviceIdentityManager(
+        api: api,
+        secrets: atomic,
+        nowMillis: () => now,
+        keys: CallbackKeys(generating: () async {
+          arrived.complete();
+          await release.future;
+        }));
+    final calls = requests.length;
+    final claiming = begin();
+    await arrived.future;
+    atomic.value = installed;
+    final outcome =
+        expectLater(claiming, throwsA(failure('IDENTITY_STATE_CONFLICT')));
+    release.complete();
+    await outcome;
+    expect(atomic.value == installed, isTrue);
+    expect(requests.length, calls);
+  });
+
+  test(
+      'cleanup deletion compares the exact record and preserves a replacement registration',
+      () async {
+    final atomic = TestCasSecrets();
+    secrets = atomic;
+    manager = recreated();
+    await activate();
+    final replacement = Map<String, dynamic>.from(jsonDecode(atomic.value!))
+      ..['registrationId'] = enrollment
+      ..['credential'] = nextToken;
+    final proof = await manager.cleanupProof(action: 'READ');
+    final commandHash = 'a' * 64;
+    await manager.beginAgentCleanup(
+        tenantId: tenant,
+        deviceId: device,
+        registrationId: registration,
+        keyThumbprint: proof.keyThumbprint,
+        commandHash: commandHash);
+    final installed = jsonEncode(replacement);
+    final deleting = DeviceIdentityManager(
+        api: api,
+        secrets: atomic,
+        nowMillis: () => now,
+        keys: CallbackKeys(deleting: () async => atomic.value = installed));
+    await expectLater(
+        deleting.finishAgentCleanup(
+            tenantId: tenant,
+            deviceId: device,
+            registrationId: registration,
+            keyThumbprint: proof.keyThumbprint,
+            commandHash: commandHash),
+        throwsA(failure('IDENTITY_STATE_CONFLICT')));
+    expect(atomic.value == installed, isTrue);
+    expect((await deleting.view()).registrationId, enrollment);
   });
 }

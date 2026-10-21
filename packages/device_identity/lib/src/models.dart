@@ -11,10 +11,21 @@ class DeviceIdentityFailure implements Exception {
 
 /// Host must implement ONE atomic, durable encrypted application-private record.
 /// No plaintext fallback, shared backup or generic preference store is allowed.
-/// One manager owns the record; multi-process access requires a native lock.
+/// Multi-process access requires a native lock and the optional compare-and-set
+/// capability below; a plain read/write adapter must have one owner.
 abstract interface class DeviceSecretStore {
   Future<String?> read();
   Future<void> write(String record);
+}
+
+/// Optional atomic mutation shared with native/background identity owners.
+/// Compare the exact encrypted record's plaintext serialization under the same
+/// native lock used by every writer. Null expected means absent, and null value
+/// deletes the record. True confirms the mutation and durability barrier; false
+/// leaves the current record unchanged. Never retry a rejected mutation blindly.
+abstract interface class DeviceSecretCompareAndSet {
+  Future<bool> compareAndSet(
+      {required String? expected, required String? value});
 }
 
 /// Optional destructive capability used only after an acknowledged cleanup.

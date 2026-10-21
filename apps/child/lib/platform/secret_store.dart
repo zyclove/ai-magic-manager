@@ -15,7 +15,11 @@ import '../core/help_requests.dart' show ChildHelpStore, ChildHelpFailure;
 /// One encrypted record, no readAll/reset surface. Explicit deletion is used
 /// only after an acknowledged agent cleanup. Android only until each additional
 /// native storage implementation is separately certified.
-class AndroidIdentityStore implements DeviceSecretStore, DeviceSecretDeletion {
+class AndroidIdentityStore
+    implements
+        DeviceSecretStore,
+        DeviceSecretDeletion,
+        DeviceSecretCompareAndSet {
   static const options = AndroidOptions(
       resetOnError: false,
       // v10 treats missing algorithm markers as legacy storage, including on
@@ -26,11 +30,14 @@ class AndroidIdentityStore implements DeviceSecretStore, DeviceSecretDeletion {
   final FlutterSecureStorage storage;
   final MethodChannel channel;
   final bool Function() available;
+  final bool _injectedStorage;
+  static Future<void> _injectedTail = Future.value();
   AndroidIdentityStore(
       {FlutterSecureStorage? storage,
       this.channel = const MethodChannel('com.aimanager.child/runtime'),
       bool Function()? available})
-      : storage = storage ?? const FlutterSecureStorage(aOptions: options),
+      : _injectedStorage = storage != null,
+        storage = storage ?? const FlutterSecureStorage(aOptions: options),
         available = available ??
             (() => !kIsWeb && defaultTargetPlatform == TargetPlatform.android);
   void _requireAvailable() {
@@ -43,6 +50,9 @@ class AndroidIdentityStore implements DeviceSecretStore, DeviceSecretDeletion {
   Future<String?> read() async {
     _requireAvailable();
     try {
+      if (!_injectedStorage) {
+        return await channel.invokeMethod<String>('identityRead');
+      }
       final record = await storage.read(key: 'identity_record');
       // SDK initialization/migration can itself write wrapping keys/config.
       // A restored credential must not be used before that work is durable.
@@ -59,6 +69,13 @@ class AndroidIdentityStore implements DeviceSecretStore, DeviceSecretDeletion {
     if (record.length > 65536) {
       throw const DeviceIdentityFailure('IDENTITY_STATE_INVALID');
     }
+    if (!_injectedStorage) {
+      final expected = await read();
+      if (!await compareAndSet(expected: expected, value: record)) {
+        throw const DeviceIdentityFailure('IDENTITY_STATE_CONFLICT');
+      }
+      return;
+    }
     try {
       await storage.write(key: 'identity_record', value: record);
       // Plugin v10 uses SharedPreferences.apply(). Wait for native commit of
@@ -72,6 +89,13 @@ class AndroidIdentityStore implements DeviceSecretStore, DeviceSecretDeletion {
   @override
   Future<void> deleteIdentity() async {
     _requireAvailable();
+    if (!_injectedStorage) {
+      final expected = await read();
+      if (!await compareAndSet(expected: expected, value: null)) {
+        throw const DeviceIdentityFailure('IDENTITY_STATE_CONFLICT');
+      }
+      return;
+    }
     try {
       await storage.delete(key: 'identity_record');
       await _flush();
@@ -81,6 +105,45 @@ class AndroidIdentityStore implements DeviceSecretStore, DeviceSecretDeletion {
       await _flush();
     } catch (_) {
       throw const DeviceIdentityFailure('SECURE_STORAGE_FAILED');
+    }
+  }
+
+  @override
+  Future<bool> compareAndSet(
+      {required String? expected, required String? value}) async {
+    _requireAvailable();
+    if ((expected?.length ?? 0) > 65536 || (value?.length ?? 0) > 65536) {
+      throw const DeviceIdentityFailure('IDENTITY_STATE_INVALID');
+    }
+    if (!_injectedStorage) {
+      try {
+        final applied = await channel.invokeMethod<bool>(
+            value == null ? 'identityDelete' : 'identityCompareAndSet',
+            {'expected': expected, if (value != null) 'value': value});
+        if (applied == null) {
+          throw const DeviceIdentityFailure('SECURE_STORAGE_FAILED');
+        }
+        return applied;
+      } catch (_) {
+        throw const DeviceIdentityFailure('SECURE_STORAGE_FAILED');
+      }
+    }
+    // Explicit SDK injection retains the host-test adapter and every flush.
+    // Production identity owners use the native lock above, across engines.
+    final previous = _injectedTail;
+    final done = Completer<void>();
+    _injectedTail = done.future;
+    await previous;
+    try {
+      if (await read() != expected) return false;
+      if (value == null) {
+        await deleteIdentity();
+      } else {
+        await write(value);
+      }
+      return true;
+    } finally {
+      done.complete();
     }
   }
 
@@ -114,8 +177,11 @@ class AndroidIdentityStore implements DeviceSecretStore, DeviceSecretDeletion {
 }
 
 /// 复用已配置的成熟加密 SDK 与持久屏障，单独固定键，不改动设备身份记录。
-class AndroidObservationStore implements ObservationStore {
+class AndroidObservationStore
+    implements ObservationStore, ObservationCompareAndSet {
   final AndroidIdentityStore backend;
+  static Future<void> _injectedTail = Future.value();
+  AndroidObservationStore.fromIdentityStore(this.backend);
   AndroidObservationStore(
       {FlutterSecureStorage? storage,
       MethodChannel channel =
@@ -133,8 +199,13 @@ class AndroidObservationStore implements ObservationStore {
   Future<String?> read() async {
     _available();
     try {
-      final record = await backend.storage.read(key: 'observation_record');
-      await backend._flush();
+      final String? record;
+      if (backend._injectedStorage) {
+        record = await backend.storage.read(key: 'observation_record');
+        await backend._flush();
+      } else {
+        record = await backend.channel.invokeMethod<String>('observationRead');
+      }
       if (record != null && utf8.encode(record).length > 1048576) {
         throw const FormatException();
       }
@@ -150,11 +221,49 @@ class AndroidObservationStore implements ObservationStore {
     if (utf8.encode(value).length > 1048576) {
       throw const ObservationFailure('OBSERVATION_STORAGE_FAILED');
     }
+    final expected = await read();
+    if (!await compareAndSet(expected: expected, replacement: value)) {
+      throw const ObservationFailure('OBSERVATION_STATE_CONFLICT');
+    }
+  }
+
+  @override
+  Future<bool> compareAndSet(
+      {required String? expected, required String? replacement}) async {
+    _available();
+    if (utf8.encode(expected ?? '').length > 1048576 ||
+        utf8.encode(replacement ?? '').length > 1048576) {
+      throw const ObservationFailure('OBSERVATION_STORAGE_FAILED');
+    }
+    if (!backend._injectedStorage) {
+      try {
+        final applied = await backend.channel.invokeMethod<bool>(
+            'observationCompareAndSet',
+            {'expected': expected, 'replacement': replacement});
+        if (applied == null) throw const FormatException();
+        return applied;
+      } catch (_) {
+        throw const ObservationFailure('OBSERVATION_STORAGE_FAILED');
+      }
+    }
+    final previous = _injectedTail, done = Completer<void>();
+    _injectedTail = done.future;
+    await previous;
     try {
-      await backend.storage.write(key: 'observation_record', value: value);
+      if (await read() != expected) return false;
+      if (replacement == null) {
+        await backend.storage.delete(key: 'observation_record');
+      } else {
+        await backend.storage
+            .write(key: 'observation_record', value: replacement);
+      }
       await backend._flush();
+      if (await read() != replacement) throw const FormatException();
+      return true;
     } catch (_) {
       throw const ObservationFailure('OBSERVATION_STORAGE_FAILED');
+    } finally {
+      done.complete();
     }
   }
 }

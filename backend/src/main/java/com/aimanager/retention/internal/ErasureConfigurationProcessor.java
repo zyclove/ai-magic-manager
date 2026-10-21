@@ -49,9 +49,31 @@ class ErasureConfigurationProcessor {
 
   /** Only constant, reviewed table and column names enter these statements. */
   private record Store(
-      String table, String alias, List<String> keys, String from, String where, boolean tenantKey) {
+      String table, String alias, List<String> keys, String from, String where, boolean tenantKey,
+      List<Object> directArgs) {
+    Store(String table,String alias,List<String> keys,String from,String where,boolean tenantKey){
+      this(table,alias,keys,from,where,tenantKey,null);
+    }
+    Object[] arguments(Scope scope,Object... tail){
+      if(directArgs==null)return scope.args(tail);
+      var values=new ArrayList<Object>(directArgs);values.addAll(Arrays.asList(tail));return values.toArray();
+    }
     String selection() {
       return String.join(",", keys.stream().map(k -> alias + "." + k).toList());
+    }
+    String mutation(String predicate) {
+      if (table.equals("family_notification_scan_cursors"))
+        return "UPDATE family_notification_scan_cursors SET last_tenant_id='',last_entity_id='' WHERE "
+            + predicate;
+      // The account and trial claim remain consumed; only the erased child's device link is cleared.
+      if (table.equals("family_subscription_accounts"))
+        return "UPDATE family_subscription_accounts SET trial_device_id=NULL,version=version+1 WHERE "
+            + predicate;
+      // 保留到期锚点，避免删除儿童档案后重新获得七天窗口。
+      if (table.equals("family_device_access_accounts"))
+        return "UPDATE family_device_access_accounts SET selected_device_id=NULL,selected_registration_id=NULL,"
+            + "projection_hash=NULL,version=version+1 WHERE " + predicate;
+      return "DELETE FROM " + table + " WHERE " + predicate;
     }
   }
 
@@ -107,13 +129,13 @@ class ErasureConfigurationProcessor {
                       for (int n = 1; n <= store.keys().size(); n++) key.add(row.getString(n));
                       return key;
                     },
-                    scope.args(remaining));
+                    store.arguments(scope,remaining));
             String predicate =
                 (store.tenantKey() ? "tenant_id=? AND " : "")
                     + String.join(" AND ", store.keys().stream().map(k -> k + "=?").toList());
             for (var key : keys) {
               exactlyOne(
-                  db.update("DELETE FROM " + store.table() + " WHERE " + predicate, key.toArray()));
+                  db.update(store.mutation(predicate), key.toArray()));
               deleted++;
             }
           }
@@ -136,7 +158,37 @@ class ErasureConfigurationProcessor {
     String join =
         " JOIN configuration_device_heads h ON h.tenant_id=c.tenant_id"
             + " AND h.registration_id=c.registration_id";
+    var trialDevices = scope.request().registrations().stream()
+        .map(ErasureLedger.Registration::deviceId).distinct().toList();
+    String trialDeviceMatch = trialDevices.isEmpty() ? "1=0"
+        : "c.trial_device_id IN (" + String.join(",", Collections.nCopies(trialDevices.size(), "?")) + ")";
+    var trialArgs = new ArrayList<Object>();
+    trialArgs.add(scope.request().tenantId());
+    trialArgs.addAll(trialDevices);
+    var cursorArgs = new ArrayList<Object>();
+    cursorArgs.add(scope.request().tenantId());
+    cursorArgs.addAll(trialDevices);
+    String cursorDeviceMatch = trialDevices.isEmpty() ? "1=0"
+        : "c.last_entity_id IN (" + String.join(",", Collections.nCopies(trialDevices.size(), "?")) + ")";
     return List.of(
+        new Store("family_notification_scan_cursors", "c", List.of("scope_key"),
+            "family_notification_scan_cursors c",
+            "c.scope_key='DEVICES' AND c.last_tenant_id=? AND " + cursorDeviceMatch,
+            false, List.copyOf(cursorArgs)),
+        new Store("family_notification_device_states", "c", List.of("device_id"),
+            "family_notification_device_states c", scope.where("c", "device_id"), true),
+        new Store("family_device_access_accounts","c",List.of("tenant_id"),"family_device_access_accounts c",
+            "c.tenant_id=? AND " + scope.matches("c","selected_device_id").replace(".registration_id",".selected_registration_id"),false),
+        new Store("family_access_requests","c",List.of("id"),"family_access_requests c",
+            "c.tenant_id=? AND c.subject_id=?",true,List.of(scope.request().tenantId(),scope.request().subjectId())),
+        new Store("family_ai_suggestions","c",List.of("id"),"family_ai_suggestions c",
+            "c.tenant_id=? AND c.subject_id=?",true,List.of(scope.request().tenantId(),scope.request().subjectId())),
+        new Store("family_temporary_grants","c",List.of("device_id"),"family_temporary_grants c",
+            "c.tenant_id=? AND c.subject_id=?",true,List.of(scope.request().tenantId(),scope.request().subjectId())),
+        new Store("family_runtime_reports","c",List.of("device_id"),"family_runtime_reports c",
+            scope.where("c","device_id"),true),
+        new Store("family_rules","c",List.of("subject_id"),"family_rules c",
+            "c.tenant_id=? AND c.subject_id=?",true,List.of(scope.request().tenantId(),scope.request().subjectId())),
         new Store(
             "configuration_receipts",
             "c",
@@ -164,7 +216,10 @@ class ErasureConfigurationProcessor {
             List.of("registration_id"),
             "configuration_device_heads h",
             scope.where("h", "device_id"),
-            true));
+            true),
+        new Store("family_subscription_accounts", "c", List.of("tenant_id"),
+            "family_subscription_accounts c", "c.tenant_id=? AND " + trialDeviceMatch,
+            false, List.copyOf(trialArgs)));
   }
 
   private void verifyScope(Scope scope) {
@@ -308,7 +363,7 @@ class ErasureConfigurationProcessor {
   private boolean hasData(Scope scope, List<Store> stores) {
     for (var store : stores)
       if (exists(
-          "SELECT 1 FROM " + store.from() + " WHERE " + store.where() + " LIMIT 1", scope.args()))
+          "SELECT 1 FROM " + store.from() + " WHERE " + store.where() + " LIMIT 1", store.arguments(scope)))
         return true;
     return false;
   }

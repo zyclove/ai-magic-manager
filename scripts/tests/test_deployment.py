@@ -156,6 +156,61 @@ class DeploymentInitializationTest(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertFalse(self.directory.exists())
 
+    def test_external_tls_proxy_keeps_http_edge_on_loopback(self):
+        result = self.initialize("-PublicUrl", "https://mobile.example.com", "-EdgePort", "18102", "-ExternalTlsProxy")
+        self.assertEqual(result.returncode, 0, "External TLS proxy initialization failed")
+        settings = json.loads((self.directory / "deployment.json").read_text())
+        self.assertTrue(settings["externalTlsProxy"])
+        self.assertEqual(settings["publicUrl"], "https://mobile.example.com")
+        configured = subprocess.run(
+            ["docker", "compose", "--env-file", str(self.directory / ".env"),
+             "-f", str(ROOT / "deploy/compose/compose.yaml"),
+             "-f", str(ROOT / "deploy/compose/compose.external-tls.yaml"), "config", "--format", "json"],
+            cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=60)
+        self.assertEqual(configured.returncode, 0)
+        services = json.loads(configured.stdout)["services"]
+        ports = services["edge"]["ports"]
+        self.assertEqual(len(ports), 1)
+        self.assertEqual((ports[0]["host_ip"], str(ports[0]["published"]), ports[0]["target"]),
+                         ("127.0.0.1", "18102", 8080))
+        routes = [v for v in services["edge"]["volumes"] if v["target"] == "/etc/nginx/includes/routes.conf"]
+        self.assertEqual(len(routes), 1)
+        self.assertTrue(routes[0]["source"].endswith("/deploy/edge/routes.external-tls.conf"))
+        self.assertTrue(routes[0]["read_only"])
+        self.assertEqual(services["backend"]["environment"]["OIDC_ISSUER_URI"],
+                         "https://mobile.example.com/identity/realms/ai-manager")
+
+    def test_external_tls_proxy_requires_standard_https(self):
+        for origin in ("http://localhost:18090", "https://mobile.example.com:8443"):
+            with self.subTest(origin=origin):
+                result = self.initialize("-PublicUrl", origin, "-ExternalTlsProxy")
+                self.assertNotEqual(result.returncode, 0)
+                self.assertFalse(self.directory.exists())
+
+    def test_external_tls_proxy_rejects_public_http_binding_before_start(self):
+        origin = "https://mobile.example.com"
+        self.assertEqual(self.initialize("-PublicUrl", origin, "-EdgePort", "18102", "-ExternalTlsProxy").returncode, 0)
+        release = self.directory / "artifacts" / ("release-" + uuid.uuid4().hex)
+        (release / "backend").mkdir(parents=True)
+        (release / "guardian").mkdir()
+        jar = release / "backend/manager-backend.jar"
+        bundle = release / "guardian/main.dart.js"
+        jar.write_bytes(b"fixture backend")
+        bundle.write_bytes(b"fixture web")
+        (release / "guardian/index.html").write_text("fixture")
+        (self.directory / "release-manifest.json").write_text(json.dumps({
+            "schemaVersion": 1, "publicUrl": origin, "artifactRoot": release.relative_to(self.directory).as_posix(),
+            "backendSha256": hashlib.sha256(jar.read_bytes()).hexdigest(),
+            "guardianSha256": hashlib.sha256(bundle.read_bytes()).hexdigest(),
+        }))
+        env_path = self.directory / ".env"
+        env_path.write_text(env_path.read_text().replace("EDGE_BIND_ADDRESS='127.0.0.1'", "EDGE_BIND_ADDRESS='0.0.0.0'"))
+        result = subprocess.run([PWSH, "-NoProfile", "-File", str(ROOT / "scripts/start-deployment.ps1"),
+                                 "-Directory", str(self.directory), "-ExternalTlsProxy"],
+                                cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=60)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("must publish only the configured loopback HTTP port", result.stderr)
+
     def test_invalid_origin_has_no_filesystem_side_effect(self):
         for value in ("https://example.com/subpath", "https://user@example.com", "https://example.com?token=x"):
             with self.subTest(origin=value):

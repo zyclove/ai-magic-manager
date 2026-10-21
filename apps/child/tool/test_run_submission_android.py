@@ -43,6 +43,10 @@ class PreservingInstallTest(unittest.TestCase):
 
 
 class HostPreflightTest(unittest.TestCase):
+    def test_permission_phases_use_the_production_native_composition(self):
+        self.assertTrue({'permission', 'permission-revoked'} <= host.PRODUCTION_PHASES)
+        self.assertTrue(host.PRODUCTION_PHASES <= host.PHASES)
+
     def setUp(self):
         self.runner = Path(__file__).with_name('run_submission_android.py')
         self.private_root = self.runner.resolve().parents[3] / '.local'

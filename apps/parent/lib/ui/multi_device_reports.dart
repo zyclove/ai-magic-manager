@@ -53,10 +53,12 @@ class ParentReportDevicePicker extends StatefulWidget {
 
   /// Start with tap-to-view; dedicated selection callers retain multi-select.
   final bool browseFirst;
+  final String? subjectId;
   final Future<void> Function(List<UsageReportTarget>)? onSelected;
   const ParentReportDevicePicker(
       {super.key,
       required this.session,
+      this.subjectId,
       this.onSelected,
       this.browseFirst = false});
   @override
@@ -202,6 +204,9 @@ class _ParentReportDevicePickerState extends State<ParentReportDevicePicker>
                     final collection = devices!;
                     final filter = search.text.trim().toLowerCase();
                     final visible = collection.items
+                        .where((d) =>
+                            widget.subjectId == null ||
+                            d['subjectId'] == widget.subjectId)
                         .where((d) =>
                             '${d['displayName']} ${d['id']} ${d['subjectId']}'
                                 .toLowerCase()

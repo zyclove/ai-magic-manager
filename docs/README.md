@@ -12,6 +12,8 @@
 | [完整产品交付与商业运营模型](parental-control-product-operating-model.md) | 全功能工作包、状态机、审批/批量流程、跨端交互、边缘场景、售卖计量、成本及上线责任 | 产品、设计、研发、QA、商务、支持与 SRE |
 | [数据库实施与认证规格](database-implementation-and-certification.md) | MySQL/OceanBase 决策、数据域、索引/事务、容量、真实数据库认证及迁移回退 | 后端、DBA、SRE、QA 与私有化交付 |
 | [当前后端接口](backend-api-status.md) | 实际路由、认证、版本/幂等、配置及未完成项 | 开发与联调 |
+| [家庭账号验收入口与收费门禁](family-identity-acceptance-gate.md) | 短信微信验收准备、当前版本绑定、登记过期及付款保护 | 平台管理员、交付与 QA |
+| [安卓正式包与设备准备核对](family-android-acceptance-preflight.md) | 只读核对实际 APK、正式证书与本机设备连接 | Android、交付与 QA |
 | [监护人 Android 客户端交付契约](parent-android-delivery.md) | 原生 OIDC、今日概览、访问申请、求助、设备列表及生产准入 | 产品、Flutter、身份、安全与 QA |
 | [所有者交接合同与实施](ownership-transfer-plan.md) | 双方确认、权限差异、成员版本、敏感待办失效与真实 MySQL 并发验证 | 产品、前后端与 QA |
 | [成员资料与权限调整](member-access-plan.md) | 可识别身份、角色/档案范围、强版本撤销、变更历史与旧待办失效 | 产品、前后端与 QA |

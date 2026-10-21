@@ -23,10 +23,22 @@ if (flutterVersionName == null) {
     flutterVersionName = "1.0"
 }
 
+// Public configuration trust belongs to this installation, never to a channel
+// call or a received policy. Reuse exactly the Flutter deployment build inputs.
+def assistedDefines = [:]
+if (project.hasProperty('dart-defines')) {
+    project.property('dart-defines').split(',').each { encoded ->
+        def decoded = new String(encoded.decodeBase64(), 'UTF-8')
+        def split = decoded.indexOf('=')
+        if (split > 0) assistedDefines[decoded.substring(0, split)] = decoded.substring(split + 1)
+    }
+}
+
 android {
     namespace = "com.aimanager.child"
     compileSdk = 36
     ndkVersion = "27.0.12077973"
+    buildFeatures { buildConfig = true }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
@@ -41,6 +53,9 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
+        buildConfigField 'String', 'CONFIGURATION_ISSUER', groovy.json.JsonOutput.toJson(assistedDefines['CONFIGURATION_ISSUER'] ?: '')
+        buildConfigField 'String', 'CONFIGURATION_JWKS', groovy.json.JsonOutput.toJson(assistedDefines['CONFIGURATION_JWKS'] ?: '')
+        buildConfigField 'String', 'CHILD_API_ROOT', groovy.json.JsonOutput.toJson(assistedDefines['CHILD_API_ROOT'] ?: '')
     }
 
     // Release credentials are deployment inputs, never checked into Git. A
@@ -79,4 +94,5 @@ dependencies {
     // the non-exportable private-key operation through JCA.
     implementation 'com.nimbusds:nimbus-jose-jwt:9.37.4'
     implementation 'androidx.enterprise:enterprise-feedback:1.1.0'
+    testImplementation 'junit:junit:4.12'
 }

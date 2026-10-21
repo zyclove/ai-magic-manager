@@ -1,10 +1,12 @@
 import 'dart:async';
 import 'package:child/core/environment.dart';
+import 'package:child/core/assisted_runtime.dart';
 import 'package:child/core/rule_receiver.dart';
 import 'package:child/core/session.dart';
 import 'package:device_identity/device_identity.dart';
 import 'package:device_policy/device_policy.dart' as policy;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:sembast/sembast_memory.dart';
@@ -15,6 +17,8 @@ import 'support/session_idle.dart';
 /// Real signature verifier, journal, transport and identity manager. Only the
 /// HTTP server response and platform database are controlled unit boundaries.
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+  const native = MethodChannel('test/assisted-rule-auth');
   for (final status in [401, 403]) {
     test(
         'real signed receiver persists $status before exposing any cached rule',
@@ -22,6 +26,15 @@ void main() {
       final fixture = IdentityFixture();
       addTearDown(fixture.close);
       await fixture.activate();
+      final nativeCalls = <String>[];
+      TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(native, (call) async {
+        nativeCalls.add(call.method);
+        return null;
+      });
+      addTearDown(() => TestDefaultBinaryMessengerBinding
+          .instance.defaultBinaryMessenger
+          .setMockMethodCallHandler(native, null));
       final key = signatures.newKey();
       final environment = ChildEnvironment(
           apiRoot: Uri.parse('https://service.example/api/v1'),
@@ -64,6 +77,7 @@ void main() {
               environment, fixture.identity, view, () => fixture.clock,
               databaseOpener: () =>
                   databaseFactoryMemory.openDatabase(filename),
+              assistance: AndroidAssistedRuntime(channel: native),
               client: client));
       addTearDown(session.dispose);
       await session.initialize();
@@ -72,6 +86,8 @@ void main() {
       expect(attempts, 1);
       expect(session.rules.configurations, isEmpty);
       expect(session.credentialReady, isFalse);
+      expect(nativeCalls, contains('clear'),
+          reason: 'Revoked registration cannot retain native assistance.');
       final recreated = DeviceIdentityManager(
           api: fixture.identity.api,
           secrets: fixture.secrets,

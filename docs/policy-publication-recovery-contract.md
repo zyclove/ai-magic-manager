@@ -13,7 +13,9 @@
 
 ## 精确结果查询
 
-`GET /api/v1/tenants/{tenantId}/policies/{policyId}/publication-results/{requestId}?revision=…&previewId=…&previewHash=…`
+`GET /api/v1/tenants/{tenantId}/policies/{policyId}/publication-results/{requestId}?mode=CONFIGURE_ONLY&revision=…&previewId=…&previewHash=…`
+
+2026-10-18 客户端接合：结果查询显式携带与原发布相同的 `mode=CONFIGURE_ONLY`。后端候选的必填模式合同仍需联合验证与接合；此字段不会触发新发布或开放 `ENFORCE`。
 
 - `requestId` 是原发布的 UUID 幂等键。查询要求当前成人写权限，且只能读取同一租户、同一操作者、同一操作名和同一原请求正文对应的已提交结果。
 - 服务端使用现有幂等事务日志 `findCommitted` 查找原 `policy.publish` 响应，再核对版本确实属于该策略、草稿修订、预览哈希和 `CONFIGURE_ONLY` 模式，最后读取当前发布状态。查询不创建新版本、不续期幂等键、不触发发布。

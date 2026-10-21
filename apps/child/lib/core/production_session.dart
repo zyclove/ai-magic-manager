@@ -16,6 +16,8 @@ import 'environment.dart';
 import 'rule_receiver.dart';
 import 'session.dart';
 import 'submission_receiver.dart';
+import 'assisted_runtime.dart';
+import 'assisted_reporter.dart';
 
 /// Platform ports only: replacing a store/source cannot disable a business
 /// factory or substitute a rule, approval, authentication or observation agent.
@@ -59,7 +61,9 @@ class ChildPlatformServices {
 class ProductionChildRuntime {
   final ChildSession session;
   final observation.ObservationSource observationSource;
-  ProductionChildRuntime._(this.session, this.observationSource);
+  final AndroidAssistedRuntime? assistance;
+  ProductionChildRuntime._(
+      this.session, this.observationSource, this.assistance);
 
   factory ProductionChildRuntime.create(
       {required ChildEnvironment environment,
@@ -79,6 +83,21 @@ class ProductionChildRuntime {
         secrets: services.identityStore,
         keys: services.enrollmentKeys ?? const JoseDeviceEnrollmentKeys(),
         nowMillis: clock);
+    AndroidAssistedRuntime? assistance;
+    final reporter = AssistedExecutionReporter(
+        identity: identity,
+        apiRoot: environment.apiRoot,
+        nowMillis: clock,
+        onCredentialRejected: () async {
+          await assistance?.clear();
+        });
+    if (nativeAvailable) {
+      assistance = AndroidAssistedRuntime(
+          nowMillis: clock,
+          report: (snapshot) async {
+            await reporter.upload(snapshot);
+          });
+    }
     var cleanupWindow = false;
     final session = ChildSession(
         identity: identity,
@@ -106,7 +125,8 @@ class ProductionChildRuntime {
         ruleReceiverFactory: nativeAvailable
             ? (view) => SignedRuleReceiver.open(
                 environment, identity, view, clock,
-                databaseOpener: services.openConfigurations)
+                databaseOpener: services.openConfigurations,
+                assistance: assistance)
             : null,
         submissionFactory: nativeAvailable
             ? (view) async => ChildSubmissionReceiver(
@@ -169,6 +189,7 @@ class ProductionChildRuntime {
                     api: api);
               }
             : null);
-    return ProductionChildRuntime._(session, services.observationSource);
+    return ProductionChildRuntime._(
+        session, services.observationSource, assistance);
   }
 }

@@ -4,6 +4,13 @@ import 'package:url_launcher/url_launcher.dart';
 
 import 'core/parent_api.dart';
 import 'core/parent_session.dart';
+import 'core/family_notifications.dart';
+import 'ui/family_app_host.dart';
+import 'ui/family_inbox_page.dart';
+import 'ui/family_notification_page.dart';
+import 'ui/family_members_page.dart';
+import 'ui/family_account_security_page.dart';
+import 'ui/family_invitation_page.dart';
 import 'core/paged_collection.dart';
 import 'core/pending_decisions.dart';
 import 'ui/access_history.dart';
@@ -12,6 +19,7 @@ import 'ui/commercial_account.dart';
 import 'ui/device_capabilities.dart';
 import 'ui/device_exit.dart';
 import 'ui/enrollment_flow.dart';
+import 'ui/first_use.dart';
 import 'ui/policy_center.dart';
 import 'ui/device_group_center.dart';
 import 'ui/application_center.dart';
@@ -25,10 +33,12 @@ import 'ui/help_center.dart';
 import 'ui/invitation_acceptance.dart';
 import 'ui/ownership_center.dart';
 import 'ui/audit_center.dart';
+import 'ui/family_workspace.dart';
+import 'ui/family_membership.dart';
+import 'ui/family_requests_page.dart';
 
 const _navy = Color(0xFF17324B);
 const _blue = Color(0xFF315E86);
-const _paper = Color(0xFFF5F7F7);
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,39 +52,33 @@ class ParentApp extends StatelessWidget {
   const ParentApp({super.key, required this.session});
 
   @override
-  Widget build(BuildContext context) => MaterialApp(
-        title: '智能管家 · 监护人端',
-        debugShowCheckedModeBanner: false,
-        locale: const Locale('zh', 'CN'),
-        supportedLocales: const [Locale('zh', 'CN'), Locale('en')],
-        localizationsDelegates: GlobalMaterialLocalizations.delegates,
-        theme: ThemeData(
-          useMaterial3: true,
-          colorScheme: ColorScheme.fromSeed(seedColor: _blue),
-          scaffoldBackgroundColor: _paper,
-          appBarTheme: const AppBarTheme(
-              backgroundColor: _paper, foregroundColor: _navy),
-          cardTheme: const CardTheme(
-              color: Colors.white,
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(18)))),
-        ),
-        home: AnimatedBuilder(
-          animation: session,
-          builder: (_, __) {
-            if (!session.ready) {
-              return const Scaffold(
-                  body: Center(child: CircularProgressIndicator()));
-            }
-            if (!session.authenticated) return _Login(session: session);
-            return _Workspace(
-                key: ValueKey(
-                    '${session.profile?['subject']}:${session.tenant?['id']}:${session.role}'),
-                session: session);
-          },
-        ),
-      );
+  Widget build(BuildContext context) => FamilyAppHost(
+      key: ObjectKey(session),
+      session: session,
+      builder: (navigator, notifications) => MaterialApp(
+            navigatorKey: navigator,
+            title: '智能管家 · 监护人端',
+            debugShowCheckedModeBanner: false,
+            locale: const Locale('zh', 'CN'),
+            supportedLocales: const [Locale('zh', 'CN'), Locale('en')],
+            localizationsDelegates: GlobalMaterialLocalizations.delegates,
+            theme: familyTheme(),
+            home: AnimatedBuilder(
+              animation: session,
+              builder: (_, __) {
+                if (!session.ready) {
+                  return const Scaffold(
+                      body: Center(child: CircularProgressIndicator()));
+                }
+                if (!session.authenticated) return _Login(session: session);
+                return _Workspace(
+                    key: ValueKey(
+                        '${session.profile?['subject']}:${session.tenant?['id']}:${session.role}:${session.generation}'),
+                    session: session,
+                    notifications: notifications);
+              },
+            ),
+          ));
 }
 
 class _Login extends StatelessWidget {
@@ -100,7 +104,7 @@ class _Login extends StatelessWidget {
                             fontWeight: FontWeight.w700,
                             color: _navy)),
                     const SizedBox(height: 12),
-                    const Text('查看孩子的设备状态、处理临时访问和求助。',
+                    const Text('连接孩子的设备，一起约定使用节奏。',
                         style: TextStyle(fontSize: 16, color: _blue)),
                     const SizedBox(height: 40),
                     if (!ParentConfig.valid)
@@ -114,11 +118,36 @@ class _Login extends StatelessWidget {
                       child: FilledButton.icon(
                         onPressed: session.busy || !ParentConfig.valid
                             ? null
-                            : () => session.signIn(),
-                        icon: const Icon(Icons.login),
-                        label: Text(session.busy ? '正在打开安全登录…' : '使用管理员账号登录'),
+                            : () => session.signInWithProvider('wechat'),
+                        icon: const Icon(Icons.chat_bubble_outline),
+                        label: Text(session.busy ? '正在打开安全登录…' : '微信登录 / 注册'),
                       ),
                     ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                        width: double.infinity,
+                        child: OutlinedButton.icon(
+                            onPressed: session.busy || !ParentConfig.valid
+                                ? null
+                                : () => session.signInWithProvider('phone'),
+                            icon: const Icon(Icons.phone_android_outlined),
+                            label: const Text('手机号登录 / 注册'))),
+                    const SizedBox(height: 12),
+                    if (session.accountSecurityEnabled)
+                      TextButton.icon(
+                          onPressed: session.busy || !session.configured
+                              ? null
+                              : () => Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                      builder: (_) => FamilyAccountRecoveryPage(
+                                          session: session))),
+                          icon: const Icon(Icons.lock_reset_outlined),
+                          label: const Text('找回账号')),
+                    TextButton(
+                        onPressed: session.busy || !ParentConfig.valid
+                            ? null
+                            : () => session.signIn(),
+                        child: const Text('机构管理员登录')),
                     const SizedBox(height: 24),
                     const Text('身份验证在系统浏览器中完成；此应用不接触你的密码。',
                         style: TextStyle(color: _blue)),
@@ -133,7 +162,9 @@ class _Login extends StatelessWidget {
 
 class _Workspace extends StatefulWidget {
   final ParentSession session;
-  const _Workspace({super.key, required this.session});
+  final FamilyNotificationCoordinator notifications;
+  const _Workspace(
+      {super.key, required this.session, required this.notifications});
 
   @override
   State<_Workspace> createState() => _WorkspaceState();
@@ -145,9 +176,33 @@ class _WorkspaceState extends State<_Workspace> {
   @override
   Widget build(BuildContext context) {
     final session = widget.session;
+    if (session.tenant == null || session.tenant?['kind'] == 'FAMILY') {
+      void open(String title, Widget child) =>
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (_) =>
+                  Scaffold(appBar: AppBar(title: Text(title)), body: child)));
+      return FamilyWorkspace(
+        session: session,
+        account:
+            _Account(session: session, notifications: widget.notifications),
+        firstUse: ListView(padding: const EdgeInsets.all(20), children: [
+          FamilyInvitationEntry(session: session),
+          FamilySetup(session: session),
+        ]),
+        onApprovals: () => open('临时访问申请', FamilyRequestsPage(session: session)),
+        onHelp: () => open('孩子的求助', _HelpInbox(session: session)),
+        onDevices: () => open('孩子的设备', _DeviceList(session: session)),
+        notificationShortcut: session.tenant != null && session.canDecide
+            ? FamilyInboxShortcut(session: session)
+            : null,
+      );
+    }
     return Scaffold(
       appBar: AppBar(
-        actions: [if (session.tenant != null && session.canDecide) ParentNotificationShortcut(session: session)],
+        actions: [
+          if (session.tenant != null && session.canDecide)
+            ParentNotificationShortcut(session: session)
+        ],
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -158,11 +213,10 @@ class _WorkspaceState extends State<_Workspace> {
         ),
       ),
       body: tab == 4
-          ? _Account(session: session)
+          ? _Account(session: session, notifications: widget.notifications)
           : session.tenant == null
               ? InvitationJoinLanding(
-                  session: session,
-                  child: const _Empty('尚无工作空间', '请先由管理员创建家庭或机构，或使用邀请码加入。'))
+                  session: session, child: FamilySetup(session: session))
               : !session.canSeeHelp
                   ? const _Empty('当前角色无监护权限', '请切换到具有监护或机构管理权限的工作空间。')
                   : IndexedStack(index: tab, children: [
@@ -235,6 +289,19 @@ class _OverviewState extends State<_Overview> {
               padding: const EdgeInsets.all(20),
               children: [
                 const _SectionTitle('今日概览', '掌握设备和待关注事项'),
+                if (widget.session.canDecide) ...[
+                  const SizedBox(height: 16),
+                  FilledButton.icon(
+                      onPressed: () async {
+                        await showDialog<bool>(
+                            context: context,
+                            builder: (_) =>
+                                EnrollmentFlow(session: widget.session));
+                        if (mounted) reload();
+                      },
+                      icon: const Icon(Icons.add_circle_outline),
+                      label: const Text('添加设备')),
+                ],
                 const SizedBox(height: 14),
                 _Metric(
                     icon: Icons.child_care_outlined,
@@ -263,7 +330,7 @@ class _OverviewState extends State<_Overview> {
                 const _SectionTitle('最近的孩子档案', '规则与使用情况请在管理工作台查看'),
                 const SizedBox(height: 12),
                 if (subjects.isEmpty)
-                  const _Empty('暂无儿童档案', '请先在管理台添加儿童并完成设备配对。'),
+                  const _Empty('还没有添加孩子', '点击“添加设备”，即可创建儿童档案并扫码连接。'),
                 for (final subject in subjects)
                   Card(
                     child: ListTile(
@@ -360,18 +427,34 @@ class _ApprovalInboxState extends State<_ApprovalInbox> {
     final actor = widget.session.profile?['subject'];
     final tenantId = widget.session.tenant?['id'];
     final requestId = item['id'];
-    if (sending || _recoveryBusy || !_recoveriesLoaded || actor is! String ||
-        tenantId is! String || requestId is! String || !_sameDecisionScope(actor, tenantId)) return;
-    setState(() { sending = true; actionError = null; });
+    if (sending ||
+        _recoveryBusy ||
+        !_recoveriesLoaded ||
+        actor is! String ||
+        tenantId is! String ||
+        requestId is! String ||
+        !_sameDecisionScope(actor, tenantId)) return;
+    setState(() {
+      sending = true;
+      actionError = null;
+    });
     try {
-      final result = await showAccessDecision(context, widget.session, requestId, approve: approve);
+      final result = await showAccessDecision(
+          context, widget.session, requestId,
+          approve: approve);
       if (!_sameDecisionScope(actor, tenantId)) return;
       if (result != null) {
-        setState(() { _lastDecisionId = requestId; _lastDecisionApproved = result == 'APPROVE'; });
+        setState(() {
+          _lastDecisionId = requestId;
+          _lastDecisionApproved = result == 'APPROVE';
+        });
       }
       await reload(afterDecision: true);
-    } finally { if (mounted) setState(() => sending = false); }
+    } finally {
+      if (mounted) setState(() => sending = false);
+    }
   }
+
   bool _sameDecisionScope(String actor, String tenantId) =>
       mounted &&
       widget.session.profile?['subject'] == actor &&
@@ -661,6 +744,7 @@ class _HelpInbox extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ParentHelpCenter(session: session);
 }
+
 class _DeviceList extends StatefulWidget {
   final ParentSession session;
   const _DeviceList({required this.session});
@@ -790,7 +874,8 @@ class _DeviceListState extends State<_DeviceList> {
 
 class _Account extends StatelessWidget {
   final ParentSession session;
-  const _Account({required this.session});
+  final FamilyNotificationCoordinator notifications;
+  const _Account({required this.session, required this.notifications});
 
   @override
   Widget build(BuildContext context) => ListView(
@@ -798,7 +883,47 @@ class _Account extends StatelessWidget {
         children: [
           _SectionTitle('我的账号', session.displayName),
           const SizedBox(height: 12),
-          InvitationAcceptanceEntry(session: session),
+          if (session.profile?['canCreateFamily'] == true ||
+              session.tenant?['kind'] == 'FAMILY')
+            FamilyAccountSecurityEntry(session: session),
+          if (session.tenant?['kind'] == 'FAMILY' && session.canDecide) ...[
+            FamilyMembershipEntry(session: session),
+            FamilyMembersEntry(session: session),
+            FamilyNotificationEntry(
+                session: session, coordinator: notifications),
+            Card(
+                child: ListTile(
+                    leading: const Icon(Icons.devices_outlined),
+                    title: const Text('孩子的设备'),
+                    subtitle: const Text('扫码连接、核对运行权限与退出管理'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => Scaffold(
+                            appBar: AppBar(title: const Text('孩子的设备')),
+                            body: _DeviceList(session: session)))))),
+            Card(
+                child: ListTile(
+                    leading: const Icon(Icons.fact_check_outlined),
+                    title: const Text('临时访问申请'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => Scaffold(
+                            appBar: AppBar(title: const Text('临时访问申请')),
+                            body: _ApprovalInbox(session: session)))))),
+            Card(
+                child: ListTile(
+                    leading: const Icon(Icons.favorite_border),
+                    title: const Text('孩子的求助'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                        builder: (_) => Scaffold(
+                            appBar: AppBar(title: const Text('孩子的求助')),
+                            body: _HelpInbox(session: session)))))),
+          ],
+          if (session.tenant == null || session.tenant?['kind'] == 'FAMILY')
+            FamilyInvitationEntry(session: session)
+          else
+            InvitationAcceptanceEntry(session: session),
           OwnershipEntry(session: session),
           const SizedBox(height: 12),
           Card(
@@ -827,8 +952,10 @@ class _Account extends StatelessWidget {
               const {'OWNER', 'GUARDIAN', 'ORG_ADMIN', 'AUDITOR'}
                   .contains(session.role)) ...[
             const SizedBox(height: 24),
-            CommercialAccount(session: session),
-            Card(child: ListTile(
+            if (session.tenant?['kind'] == 'ORGANIZATION')
+              CommercialAccount(session: session),
+            Card(
+                child: ListTile(
               leading: const Icon(Icons.history_outlined, color: _blue),
               title: const Text('操作记录'),
               subtitle: const Text('查找管理变更、操作对象与关联请求'),
@@ -837,13 +964,14 @@ class _Account extends StatelessWidget {
                   builder: (_) => AuditCenter(session: session))),
             )),
             if (session.canDecide)
-              Card(child: ListTile(
-                leading: const Icon(Icons.face_outlined, color: _blue),
-                title: const Text('儿童与学生档案'),
-                subtitle: const Text('添加昵称、修改年龄段与归档管理'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => Navigator.of(context).push(MaterialPageRoute(
-                    builder: (_) => SubjectCenter(session: session))))),
+              Card(
+                  child: ListTile(
+                      leading: const Icon(Icons.face_outlined, color: _blue),
+                      title: const Text('儿童与学生档案'),
+                      subtitle: const Text('添加昵称、修改年龄段与归档管理'),
+                      trailing: const Icon(Icons.chevron_right),
+                      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+                          builder: (_) => SubjectCenter(session: session))))),
             if (session.canDecide)
               Card(
                   child: ListTile(
@@ -914,13 +1042,25 @@ class _Account extends StatelessWidget {
           ],
           const SizedBox(height: 20),
           OutlinedButton.icon(
-              onPressed: session.signOut,
+              onPressed: () async {
+                try {
+                  await session.signOut();
+                } catch (_) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('暂时无法关闭此手机提醒，请重试退出。')));
+                  }
+                }
+              },
               icon: const Icon(Icons.logout),
               label: const Text('退出登录')),
           const SizedBox(height: 18),
-          const Text('版本 1.0 · 中国大陆机构合同试点阶段',
+          Text(
+              session.tenant?['kind'] == 'ORGANIZATION'
+                  ? '版本 1.0 · 中国大陆机构合同试点阶段'
+                  : '版本 1.0 · 中国大陆家庭辅助管理',
               textAlign: TextAlign.center,
-              style: TextStyle(color: _blue, fontSize: 12)),
+              style: const TextStyle(color: _blue, fontSize: 12)),
         ],
       );
 }

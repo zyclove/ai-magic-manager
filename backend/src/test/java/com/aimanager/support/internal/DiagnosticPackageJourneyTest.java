@@ -36,6 +36,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
     })
 @AutoConfigureMockMvc(
     print = org.springframework.boot.test.autoconfigure.web.servlet.MockMvcPrint.NONE)
+@org.springframework.context.annotation.Import(com.aimanager.support.ControlledIdempotencyTimeConfiguration.class)
 class DiagnosticPackageJourneyTest {
   @Autowired MockMvc mvc;
   @Autowired JdbcTemplate db;

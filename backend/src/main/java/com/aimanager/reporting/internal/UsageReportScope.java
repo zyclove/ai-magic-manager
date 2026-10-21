@@ -19,16 +19,18 @@ class UsageReportScope {
   private final DeviceAccess devices;
   private final SubjectAccess subjects;
   private final OrganizationRoster roster;
+  private final com.aimanager.commerce.FamilyHistoryAccess history;
 
   UsageReportScope(
       TenantAccess access,
       DeviceAccess devices,
       SubjectAccess subjects,
-      OrganizationRoster roster) {
+      OrganizationRoster roster,com.aimanager.commerce.FamilyHistoryAccess history) {
     this.access = access;
     this.devices = devices;
     this.subjects = subjects;
     this.roster = roster;
+    this.history = history;
   }
 
   record Selection(String kind, String id, Long version) {
@@ -47,7 +49,13 @@ class UsageReportScope {
 
   Map<String, String> prepare(
       String tenant, String actor, List<String> deviceIds, Selection selection) {
+    return prepareHistory(tenant,actor,deviceIds,selection,null);
+  }
+
+  Map<String,String> prepareHistory(String tenant,String actor,List<String> deviceIds,Selection selection,Long from) {
     access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN, CHILD);
+    history.lock(tenant);
+    if(from!=null)history.requireRange(tenant,from);
     Set<String> allowed =
         selection.kind().equals("DEVICES")
             ? null

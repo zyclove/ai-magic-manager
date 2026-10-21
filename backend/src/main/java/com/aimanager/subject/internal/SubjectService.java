@@ -160,7 +160,7 @@ class SubjectService implements SubjectAccess {
   @Transactional(timeout = 10)
   public void archive(String tenantId, Jwt actor, String subjectId, String ifMatch) {
     access.requireWriteRole(tenantId, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN);
-    recent.require(actor);
+    recent.requireForTenant(actor,tenantId,jdbc);
     long expected = ResourceVersions.require(ifMatch);
     var existing = read(tenantId, subjectId, true);
     ResourceVersions.check(expected, existing.version());

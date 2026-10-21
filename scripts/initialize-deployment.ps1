@@ -12,7 +12,9 @@ param(
     [string]$Directory = '.local/deployment',
     [string]$PublicUrl = 'http://localhost:18090',
     [ValidateRange(1, 65535)][int]$EdgePort = 18090,
-    [ValidatePattern('^[a-z][a-z0-9-]{2,40}$')][string]$ProjectName = 'ai-manager-repro'
+    [ValidatePattern('^[a-z][a-z0-9-]{2,40}$')][string]$ProjectName = 'ai-manager-repro',
+    [switch]$ExternalTlsProxy,
+    [switch]$ConsumerIdentity
 )
 $ErrorActionPreference = 'Stop'
 $repository = [IO.Path]::GetFullPath((Split-Path $PSScriptRoot -Parent))
@@ -31,7 +33,13 @@ if (-not [Uri]::TryCreate($PublicUrl, [UriKind]::Absolute, [ref]$uri) -or
 if ($uri.Scheme -eq 'http' -and ($uri.Host -notin @('localhost', '127.0.0.1', '[::1]') -or $uri.Port -ne $EdgePort)) {
     throw 'HTTP is limited to a loopback origin whose port matches EdgePort.'
 }
-if ($uri.Port -ne $EdgePort) { throw 'PublicUrl port must match EdgePort (including HTTPS).' }
+if ($ExternalTlsProxy) {
+    if ($uri.Scheme -ne 'https' -or $uri.Port -ne 443) {
+        throw 'ExternalTlsProxy requires a standard HTTPS public origin.'
+    }
+} elseif ($uri.Port -ne $EdgePort) {
+    throw 'PublicUrl port must match EdgePort (including HTTPS).'
+}
 if (Test-Path -LiteralPath $destination) { throw 'Deployment directory already exists; preserve it and use a new directory.' }
 $origin = $uri.GetLeftPart([UriPartial]::Authority)
 $utf8 = [Text.UTF8Encoding]::new($false)
@@ -88,7 +96,21 @@ $client.redirectUris = @("$origin/auth/callback")
 $client.webOrigins = @($origin)
 $client.attributes.'post.logout.redirect.uris' = "$origin/"
 if ($uri.Scheme -eq 'http') { $realm.sslRequired = 'none' } # Only the already-validated loopback deployment.
-WriteNewFile (Join-Path $destination 'realm.json') ($realm | ConvertTo-Json -Depth 40)
+if ($ConsumerIdentity) {
+    # Generate a new import for this empty deployment only; never use an Admin API or running realm.
+    $managementRealm = Join-Path $destination 'realm-management.json'
+    WriteNewFile $managementRealm ($realm | ConvertTo-Json -Depth 40)
+    & (Join-Path $repository 'deploy/keycloak/merge-consumer-realm.ps1') -InputPath $managementRealm -OutputPath (Join-Path $destination 'realm.json')
+    WriteNewFile (Join-Path $secrets 'consumer_otp_hmac_key') (RandomSecret)
+    foreach ($name in @('consumer_sms_access_key_id', 'consumer_sms_access_key_secret', 'consumer_sms_security_token',
+        'consumer_wechat_app_secret', 'family_ai_key', 'family_wechat_merchant_key', 'family_wechat_platform_key', 'family_wechat_api_v3_key')) {
+        WriteNewFile (Join-Path $secrets $name) ''
+    }
+    WriteNewFile (Join-Path $secrets 'family_push_credentials.json') '{}'
+    WriteNewFile (Join-Path $secrets 'family_accepted_models.json') '[]'
+} else {
+    WriteNewFile (Join-Path $destination 'realm.json') ($realm | ConvertTo-Json -Depth 40)
+}
 $artifactRoot = Join-Path $destination 'artifacts'
 $null = New-Item -ItemType Directory -Path (Join-Path $artifactRoot 'backend'), (Join-Path $artifactRoot 'guardian')
 $environment = [ordered]@{
@@ -97,6 +119,7 @@ $environment = [ordered]@{
     CONTRACT_EVIDENCE_ISSUER=''; CONTRACT_EVIDENCE_AUDIENCE=''; CONTRACT_EVIDENCE_JWK_SET_URI=''
     COMPOSE_PROJECT_NAME=$ProjectName; REPOSITORY_ROOT=$repository; DEPLOYMENT_ROOT=$destination
     BACKEND_BUILD_CONTEXT=(Join-Path $artifactRoot 'backend'); GUARDIAN_BUILD_CONTEXT=(Join-Path $artifactRoot 'guardian')
+    KEYCLOAK_BUILD_CONTEXT=(Join-Path $repository 'deploy')
     PUBLIC_URL=$origin; EDGE_PORT="$EdgePort"; EDGE_BIND_ADDRESS='127.0.0.1'; APP_UID=$appUid; APP_GID=$appGid
     MYSQL_IMAGE='mysql:8.4.11@sha256:6ea90827b1100f8f2ae306a539f86d2c264a26ed435a2a9f75551dd5c3aeb242'
     KEYCLOAK_BASE_IMAGE='quay.io/keycloak/keycloak:26.8.0@sha256:b0f60d489d51c5d113390bdf5461d4c06e6051be026c05549f2e1e10ec352bcc'
@@ -104,8 +127,20 @@ $environment = [ordered]@{
     EDGE_BASE_IMAGE='nginx:1.28-alpine@sha256:a8b39bd9cf0f83869a2162827a0caf6137ddf759d50a171451b335cecc87d236'
     BACKEND_IMAGE="ai-manager/backend:$ProjectName"; IDENTITY_IMAGE="ai-manager/identity:$ProjectName"; EDGE_IMAGE="ai-manager/edge:$ProjectName"
 }
+if ($ConsumerIdentity) {
+    foreach ($name in @('CONSUMER_PHONE_ENABLED', 'CONSUMER_WECHAT_ENABLED', 'FAMILY_ACCOUNT_SECURITY_ENABLED', 'FAMILY_AI_ENABLED',
+        'FAMILY_PUSH_ENABLED', 'FAMILY_PUSH_WORKER_ENABLED', 'FAMILY_WECHAT_ENABLED', 'FAMILY_SALES_ENABLED', 'FAMILY_ACCEPTANCE_ENABLED',
+        'FAMILY_COMMERCE_WORKER_ENABLED', 'FAMILY_BILLS_WORKER_ENABLED')) {
+        $environment[$name] = 'false'
+    }
+    foreach ($name in @('ALIYUN_SMS_SIGN_NAME', 'ALIYUN_SMS_TEMPLATE_CODE', 'WECHAT_NATIVE_APP_ID',
+        'FAMILY_AI_MODEL', 'FAMILY_WECHAT_APP_ID', 'FAMILY_WECHAT_MERCHANT_ID', 'FAMILY_WECHAT_MERCHANT_SERIAL',
+        'FAMILY_WECHAT_PLATFORM_KEY_ID', 'FAMILY_WECHAT_NOTIFY_URL')) {
+        $environment[$name] = ''
+    }
+}
 WriteNewFile (Join-Path $destination '.env') (($environment.GetEnumerator() | ForEach-Object { "$($_.Key)=$(EnvValue $_.Value)" }) -join "`n")
-WriteNewFile (Join-Path $destination 'deployment.json') (@{publicUrl=$origin; edgePort=$EdgePort; projectName=$ProjectName; schemaVersion=1; applicationVersion='1.0.0'} | ConvertTo-Json)
+WriteNewFile (Join-Path $destination 'deployment.json') (@{publicUrl=$origin; edgePort=$EdgePort; projectName=$ProjectName; schemaVersion=1; applicationVersion='1.0.0'; externalTlsProxy=$ExternalTlsProxy.IsPresent; consumerIdentity=$ConsumerIdentity.IsPresent} | ConvertTo-Json)
 if (-not $IsWindows) {
     & chmod -R go-rwx -- $destination
     if ($LASTEXITCODE -ne 0) { throw 'Failed to restrict deployment file permissions.' }

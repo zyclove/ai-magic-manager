@@ -406,7 +406,7 @@ class PolicyService
       String ifMatch,
       String key) {
     access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN);
-    recent.require(actor);
+    recent.requireForTenant(actor, tenant, jdbc);
     long expected = ResourceVersions.require(ifMatch);
     if (key == null) throw DomainException.invalid("IDEMPOTENCY_KEY_REQUIRED");
     return idempotency.execute(
@@ -910,7 +910,7 @@ class PolicyService
       String ifMatch,
       String key) {
     access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN);
-    recent.require(actor);
+    recent.requireForTenant(actor, tenant, jdbc);
     long expected = ResourceVersions.require(ifMatch);
     return idempotency.execute(
         tenant,

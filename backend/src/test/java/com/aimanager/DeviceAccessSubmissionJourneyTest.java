@@ -1104,14 +1104,28 @@ class DeviceAccessSubmissionJourneyTest {
       throws Exception {
     var s = scope();
     submit(s, "original");
-    expireOperation(s, "access.device.request");
-    db.update(
-        "UPDATE idempotency_requests SET response_body=NULL WHERE scope_id=? AND"
-            + " operation='access.device.request'",
-        s.tenant());
-    recoverCreate(s, "original", input(s))
-        .andExpect(status().isConflict())
-        .andExpect(jsonPath("$.errorCode").value("REQUEST_IN_PROGRESS"));
+    String requestHash=db.queryForObject("SELECT request_hash FROM idempotency_requests WHERE scope_id=? AND operation='access.device.request'",
+        String.class,s.tenant());
+    String pendingKey=SecretMaterial.hash("in-progress");
+    // A real in-flight placeholder has never committed a response or lifecycle.
+    // Keep it inside an explicit transaction and roll it back after observation;
+    // do not corrupt a committed result by only deleting its response body.
+    var pending=new org.springframework.transaction.support.TransactionTemplate(transactions);
+    pending.executeWithoutResult(transaction->{
+      db.update("INSERT INTO idempotency_requests(id,scope_id,actor_id,actor_key,operation,operation_key,key_hash,request_hash,expires_at) VALUES(?,?,?,?,?,?,?,?,?)",
+          UUID.randomUUID().toString(),s.tenant(),"device:"+s.registration(),ActorKeys.key("device:"+s.registration()),
+          "access.device.request",SecretMaterial.hash("access.device.request"),pendingKey,requestHash,clock.millis()+86400000);
+      var before=db.queryForMap("SELECT * FROM idempotency_requests WHERE scope_id=? AND key_hash=?",s.tenant(),pendingKey);
+      try {
+        recoverCreate(s, "in-progress", input(s))
+            .andExpect(status().isConflict())
+            .andExpect(jsonPath("$.errorCode").value("REQUEST_IN_PROGRESS"));
+        assertThat(db.queryForMap("SELECT * FROM idempotency_requests WHERE scope_id=? AND key_hash=?",s.tenant(),pendingKey))
+            .isEqualTo(before);
+      }catch(Exception failure){throw new IllegalStateException(failure);}
+      finally{transaction.setRollbackOnly();}
+    });
+    assertThat(db.queryForObject("SELECT COUNT(*) FROM idempotency_requests WHERE scope_id=? AND key_hash=?",Integer.class,s.tenant(),pendingKey)).isZero();
     mvc.perform(
             post(ROUTE + "/recovery")
                 .header("Authorization", "Bearer " + s.token())

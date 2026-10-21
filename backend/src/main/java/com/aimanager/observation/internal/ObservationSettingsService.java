@@ -69,7 +69,7 @@ class ObservationSettingsService implements ObservationAuthorization, Permission
     PermissionObservationSettings updatePermission(String tenant, Jwt actor, String deviceId,
             long expected, String key, PermissionObservationController.Update input) {
         access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN);
-        recent.require(actor);
+        recent.requireForTenant(actor, tenant, jdbc);
         var device = devices.lockVisibleActive(tenant, actor.getSubject(), deviceId);
         return idempotency.execute(tenant, actor.getSubject(), "permission.observation.update", key,
             Map.of("deviceId", deviceId, "expectedVersion", expected, "input", input),
@@ -82,7 +82,7 @@ class ObservationSettingsService implements ObservationAuthorization, Permission
     PermissionObservationSettings changePermissionBound(String tenant, Jwt actor, String deviceId,
             String key, PermissionObservationController.Change input) {
         access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN);
-        recent.require(actor);
+        recent.requireForTenant(actor, tenant, jdbc);
         requirePermissionReference(key);
         var device = devices.lockVisibleActive(tenant, actor.getSubject(), deviceId);
         requireRegistration(device, input.registrationId());
@@ -160,7 +160,7 @@ class ObservationSettingsService implements ObservationAuthorization, Permission
     public ObservationSettings update(String tenant, Jwt actor, String deviceId, long expected,
             String key, ObservationController.Update input) {
         access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN);
-        recent.require(actor);
+        recent.requireForTenant(actor, tenant, jdbc);
         var device = devices.lockVisibleActive(tenant, actor.getSubject(), deviceId);
         return idempotency.execute(tenant, actor.getSubject(), "observation.update", key,
             Map.of("deviceId", deviceId, "expectedVersion", expected, "input", input),
@@ -172,7 +172,7 @@ class ObservationSettingsService implements ObservationAuthorization, Permission
     ObservationSettings changeBound(String tenant, Jwt actor, String deviceId, String key,
             ObservationController.Change input) {
         access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN);
-        recent.require(actor);
+        recent.requireForTenant(actor, tenant, jdbc);
         if (key == null || !key.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")) {
             throw DomainException.invalid("INVALID_IDEMPOTENCY_KEY");
         }

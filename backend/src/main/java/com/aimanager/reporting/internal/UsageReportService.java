@@ -22,6 +22,7 @@ class UsageReportService {
   private final UsageReportScope scopes;
   private final ApplicationCategories categories;
   private final ReportConfigurationSource configurations;
+  private final com.aimanager.commerce.FamilyHistoryAccess history;
 
   UsageReportService(
       UsageReportSource source,
@@ -29,13 +30,14 @@ class UsageReportService {
       Clock clock,
       UsageReportScope scopes,
       ApplicationCategories categories,
-      ReportConfigurationSource configurations) {
+      ReportConfigurationSource configurations,com.aimanager.commerce.FamilyHistoryAccess history) {
     this.source = source;
     this.json = json;
     this.clock = clock;
     this.scopes = scopes;
     this.categories = categories;
     this.configurations = configurations;
+    this.history = history;
   }
 
   @Transactional(timeout = 10)
@@ -60,7 +62,7 @@ class UsageReportService {
                             "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")))
       throw DomainException.invalid("INVALID_REPORT_SELECTION");
     validateQuery(from, requestedTo, zone, period);
-    var bindings = scopes.prepare(tenant, actor, ids, scope);
+    var bindings = scopes.prepareHistory(tenant, actor, ids, scope,from);
     var snapshot = source.read(tenant, actor, ids, from);
     scopes.verify(bindings, snapshot);
     return aggregate(tenant, snapshot, from, requestedTo, zone, period, scope);
@@ -70,6 +72,7 @@ class UsageReportService {
   public Report queryDevice(
       DeviceContext identity, long from, long requestedTo, String zone, String period) {
     validateQuery(from, requestedTo, zone, period);
+    history.requireRange(identity.tenantId(),from);
     var snapshot = source.readDevice(identity, from);
     return aggregate(
         identity.tenantId(),
@@ -93,6 +96,9 @@ class UsageReportService {
       throw DomainException.invalid("INVALID_USAGE_REPORT_QUERY");
     }
   }
+
+  void lockFamily(String tenant){history.lock(tenant);}
+  void requireHistory(String tenant,long from){history.requireRange(tenant,from);}
 
   private Report aggregate(
       String tenant,

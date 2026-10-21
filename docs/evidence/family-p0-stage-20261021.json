@@ -1,0 +1,126 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-21",
+  "kind": "family-p0-local-regression-and-acceptance-gate-stage",
+  "startingRevision": "149692d8b8cec9537f1747b9fc59897a989849c0",
+  "implementation": [
+    "Child native observation timeout and stale/disposed callback guards",
+    "Parent recovery widget SDK compatibility and closed-sales payment recovery regression",
+    "Backend READY replay, result-return and attempt-query payment gates; existing after-sales retained",
+    "Explicit signed FamilyAcceptance build profile, registered certificate check and source revision drift rejection",
+    "Existing Family runtime dependencies preserved and included in stage source selection"
+  ],
+  "verification": {
+    "parent": {
+      "passed": 521,
+      "failures": 0,
+      "scopedAnalysisIssues": 0
+    },
+    "child": {
+      "passed": 235,
+      "failures": 0,
+      "scopedAnalysisIssues": 0
+    },
+    "backend": {
+      "tests": 3132,
+      "passed": 3053,
+      "failures": 0,
+      "errors": 0,
+      "conditionalSkips": 79
+    },
+    "identityExtensions": {
+      "passed": 71,
+      "failures": 0,
+      "originalPomUnchanged": true,
+      "offlineAttempt": "missing declared compiler plugin 3.13.0; tests not started",
+      "finalAttempt": "original POM, existing HTTPS Maven Central, declared dependency resolution; no source or version change"
+    },
+    "scripts": {
+      "passed": 230,
+      "failures": 0
+    },
+    "finalBuildFlow": {
+      "passed": 7,
+      "failures": 0,
+      "externalBuildToolsAreFixtures": true,
+      "note": "Overlaps six cases loaded by the full script suite; not an additive coverage total."
+    },
+    "childNativeJvm": {
+      "passed": 80,
+      "failures": 0
+    },
+    "parentNativeWechatState": {
+      "checksPassed": 5,
+      "failures": 0,
+      "realWechatCalled": false
+    },
+    "deviceIdentity": {
+      "passed": 83,
+      "failures": 0
+    },
+    "deviceObservation": {
+      "passed": 19,
+      "failures": 0
+    },
+    "usageReportUi": {
+      "passed": 18,
+      "failures": 0
+    },
+    "guardianFamilyVm": {
+      "passed": 88,
+      "failures": 0
+    },
+    "guardianFamilyChromeHtml": {
+      "passed": 6,
+      "failures": 0,
+      "authenticationIsSynthetic": true
+    },
+    "commerceContracts": "No existing test directory; library consumed by verified apps.",
+    "initialBackendFull": {
+      "tests": 3126,
+      "failures": 12,
+      "errors": 0,
+      "conditionalSkips": 79,
+      "resolution": "Corrected four journey fixtures to model current database time and valid uncommitted lifecycle; retained attribution, audit, expiry and ciphertext assertions. No production time gate weakened."
+    },
+    "productionDatabaseTimeGuard": {
+      "passed": 6,
+      "note": "Real isolated H2 transactions exercise the production guard separately from controlled-time journey fixtures; included in final backend total."
+    },
+    "parentFullAnalysis": {
+      "remainingExistingInfos": 60,
+      "ruleSuppressionAdded": false,
+      "note": "Initial run had one additional warning; warning repaired, final changed-file analysis clean. Full-project analysis not claimed clean."
+    },
+    "allProjectChecksPassed": false,
+    "localRunnableRegressionPassed": true,
+    "totalCountsMayOverlap": true
+  },
+  "sourceAudit": {
+    "backendFrozenFiles": 674,
+    "backendManifestSha256": "027fa243676e949e1264a8f19dd0353e7e41b361210024710615674fa9f24cdc",
+    "checkedParentDeltaFiles": 3,
+    "checkedChildDeltaFiles": 2,
+    "currentDrift": [],
+    "reviewSha256": "18c14a36a6625c4054903a8630cb036e29053a4c7da55eb34e37b89f9f025c06"
+  },
+  "releaseBoundary": {
+    "realIdentityCasesPassed": 0,
+    "realIdentityCasesRequired": 12,
+    "realSmsOrWechatRequestsPerformed": false,
+    "realAndroidDeviceAccepted": false,
+    "releaseSignedApkBuilt": false,
+    "mysql84JointAcceptance": false,
+    "realPaymentRefundAcceptance": false,
+    "existingDeploymentChanged": false,
+    "existingDatabaseChanged": false,
+    "salesAllowed": false,
+    "formalReleaseReady": false
+  },
+  "artifactsDirectory": ".local/family-p0-20261021/artifacts",
+  "sourcePreservationRecord": ".local/family-p0-20261021/artifacts/preservation.json",
+  "nextSteps": [
+    "Run controlled real identity and device acceptance on the actual signed build",
+    "Complete target MySQL 8.4, payment/refund and distribution readiness before a separate controlled sales opening"
+  ]
+}

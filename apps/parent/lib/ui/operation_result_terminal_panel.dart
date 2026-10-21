@@ -285,7 +285,7 @@ class _TerminalPanelState extends State<ParentResultTerminalPanel> {
         const SizedBox(height: 16),
         Wrap(spacing: 8, runSpacing: 8, children: [
           FilledButton.icon(onPressed: enabled ? _viewCurrent : null,
-              icon: const Icon(Icons.manage_search_outlined), child: const Text('查看当前记录')),
+              icon: const Icon(Icons.manage_search_outlined), label: const Text('查看当前记录')),
           OutlinedButton(onPressed: enabled ? _end : null, child: const Text('结束本机核对')),
         ]),
         if (_viewing && widget.currentRecordBuilder != null) ...[
@@ -342,7 +342,7 @@ Future<bool> parentOperationConfirmation(BuildContext context, {
     navigator.push(dialog);
     final accepted = await dialog.completion.future;
     await dialog.completed;
-    return accepted && current() && owner!.isCurrent;
+    return accepted && current() && owner.isCurrent;
   } finally {
     disposed = true;
     changes.removeListener(changed);

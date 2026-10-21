@@ -7,6 +7,7 @@ import 'support/identity_fixture.dart';
 void main() {
   testWidgets('pending credential rotation is visible and can be completed',
       (tester) async {
+    addTearDown(() => tester.pumpWidget(const SizedBox.shrink()));
     final fixture = IdentityFixture();
     addTearDown(fixture.close);
     await fixture.activate();
@@ -24,6 +25,7 @@ void main() {
   });
   testWidgets('expired credential is not shown as a healthy connection',
       (tester) async {
+    addTearDown(() => tester.pumpWidget(const SizedBox.shrink()));
     final fixture = IdentityFixture();
     addTearDown(fixture.close);
     await fixture.activate();
@@ -37,6 +39,7 @@ void main() {
   });
   testWidgets('failed storage read offers retry instead of fresh registration',
       (tester) async {
+    addTearDown(() => tester.pumpWidget(const SizedBox.shrink()));
     final fixture = IdentityFixture();
     addTearDown(fixture.close);
     fixture.secrets.failRead = true;
@@ -49,11 +52,12 @@ void main() {
     await tester.ensureVisible(find.text('重新读取状态'));
     await tester.tap(find.text('重新读取状态'));
     await tester.pumpAndSettle();
-    expect(find.text('安全连接'), findsOneWidget);
+    expect(find.text('扫描家长端二维码'), findsOneWidget);
     expect(fixture.calls, 0);
   });
   testWidgets('unconfigured installation explains the boundary and help opens',
       (tester) async {
+    addTearDown(() => tester.pumpWidget(const SizedBox.shrink()));
     await tester.pumpWidget(const ChildApp());
     expect(find.text('设备端尚未配置'), findsOneWidget);
     await tester.tap(find.text('查看连接帮助'));
@@ -66,6 +70,7 @@ void main() {
   });
   testWidgets('narrow layout supports increased text and keyboard focus',
       (tester) async {
+    addTearDown(() => tester.pumpWidget(const SizedBox.shrink()));
     tester.view.physicalSize = const Size(320, 740);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -79,12 +84,15 @@ void main() {
   testWidgets(
       'form validates locally then actual identity component shows physical pairing',
       (tester) async {
+    addTearDown(() => tester.pumpWidget(const SizedBox.shrink()));
     final fixture = IdentityFixture();
     addTearDown(fixture.close);
     await tester.pumpWidget(ChildApp(
         session: fixture.session(),
         nativeAvailable: true,
         serviceLabel: 'https://service.example/api/v1'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('无法扫码？手动连接'));
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('安全连接'));
     await tester.tap(find.text('安全连接'));
@@ -105,6 +113,7 @@ void main() {
   testWidgets(
       'guardian confirmation becomes connected; rule and help routes remain honest',
       (tester) async {
+    addTearDown(() => tester.pumpWidget(const SizedBox.shrink()));
     final fixture = IdentityFixture();
     addTearDown(fixture.close);
     await fixture.pair();
@@ -132,6 +141,7 @@ void main() {
   testWidgets(
       'unknown claim result offers original-key recovery, never another registration',
       (tester) async {
+    addTearDown(() => tester.pumpWidget(const SizedBox.shrink()));
     final fixture = IdentityFixture()..loseClaim = true;
     addTearDown(fixture.close);
     final session = fixture.session();
@@ -151,6 +161,7 @@ void main() {
   testWidgets(
       'active authentication rejection is not displayed as a healthy connection',
       (tester) async {
+    addTearDown(() => tester.pumpWidget(const SizedBox.shrink()));
     final fixture = IdentityFixture();
     addTearDown(fixture.close);
     await fixture.activate();
@@ -167,6 +178,7 @@ void main() {
   testWidgets(
       'remote select activates the focused help action on a wide display',
       (tester) async {
+    addTearDown(() => tester.pumpWidget(const SizedBox.shrink()));
     tester.view.physicalSize = const Size(1280, 720);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -182,6 +194,7 @@ void main() {
   });
   testWidgets('television uses remote rail and keeps rules visible',
       (tester) async {
+    addTearDown(() => tester.pumpWidget(const SizedBox.shrink()));
     tester.view.physicalSize = const Size(1280, 720);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);
@@ -206,6 +219,7 @@ void main() {
   testWidgets(
       'television pairing gives keyboard guidance without control claim',
       (tester) async {
+    addTearDown(() => tester.pumpWidget(const SizedBox.shrink()));
     tester.view.physicalSize = const Size(1280, 720);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.resetPhysicalSize);

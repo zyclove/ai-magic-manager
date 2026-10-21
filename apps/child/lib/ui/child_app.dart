@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:device_identity/device_identity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -14,6 +15,12 @@ import 'rule_explanations.dart';
 import '../core/report_loader.dart';
 import '../core/help_requests.dart';
 import 'help_request_section.dart';
+import 'pairing_qr.dart';
+import 'pairing_scanner.dart';
+import '../core/assisted_runtime.dart';
+import 'assisted_section.dart';
+import '../core/family_access.dart';
+import 'family_access_page.dart';
 
 class ChildApp extends StatelessWidget {
   final ChildSession? session;
@@ -24,6 +31,9 @@ class ChildApp extends StatelessWidget {
   final bool deploymentInvalid;
   final ChildReportFactory? reportFactory;
   final ChildHelpFactory? helpFactory;
+  final Future<String?> Function(BuildContext)? pairingScanner;
+  final AndroidAssistedRuntime? assistedRuntime;
+  final FamilyAccessFactory? familyAccessFactory;
   const ChildApp(
       {super.key,
       this.session,
@@ -33,6 +43,9 @@ class ChildApp extends StatelessWidget {
       this.tvMode = false,
       this.reportFactory,
       this.helpFactory,
+      this.pairingScanner,
+      this.assistedRuntime,
+      this.familyAccessFactory,
       this.deploymentInvalid = false});
   @override
   Widget build(BuildContext context) => MaterialApp(
@@ -58,6 +71,7 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
   final _name = TextEditingController();
   final _ticket = TextEditingController();
   var _tab = 0;
+  Timer? _pairingPoll;
   ChildSession? get session => app.session;
   @override
   void initState() {
@@ -68,6 +82,22 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
   }
 
   void _changed() {
+    final waiting = session?.foreground == true &&
+        session?.identityView?.phase == IdentityPhase.awaitingConfirmation;
+    if (!waiting) {
+      _pairingPoll?.cancel();
+      _pairingPoll = null;
+    } else {
+      _pairingPoll ??= Timer.periodic(const Duration(seconds: 3), (_) {
+        if (mounted &&
+            session?.foreground == true &&
+            session?.busy == false &&
+            session?.identityView?.phase ==
+                IdentityPhase.awaitingConfirmation) {
+          unawaited(session!.checkConnection());
+        }
+      });
+    }
     if (mounted) setState(() {});
   }
 
@@ -80,6 +110,7 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
 
   @override
   void dispose() {
+    _pairingPoll?.cancel();
     WidgetsBinding.instance.removeObserver(this);
     session?.removeListener(_changed);
     session?.dispose();
@@ -94,6 +125,44 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
     final input = _ticket.text;
     await session!
         .pair(input, displayName: _name.text.trim(), osVersion: app.osVersion);
+    if (session!.identityView != null) _ticket.clear();
+  }
+
+  Future<void> _scanAndConnect() async {
+    if (session == null || session!.busy || session!.identityView != null) {
+      return;
+    }
+    final payload = await (app.pairingScanner?.call(context) ??
+        Navigator.of(context).push<String>(
+          MaterialPageRoute(
+              builder: (_) => PairingScannerPage(
+                  title: '扫描家长端二维码',
+                  instruction: '在家长端点击“添加设备”，将连接二维码放入框内。',
+                  accepts: (value) {
+                    try {
+                      parseRegistrationTicket(value);
+                      return true;
+                    } catch (_) {
+                      return false;
+                    }
+                  })),
+        ));
+    if (!mounted ||
+        payload == null ||
+        session!.busy ||
+        session!.identityView != null) return;
+    try {
+      parseRegistrationTicket(payload);
+    } catch (_) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('请扫描家长端显示的配对二维码。')));
+      return;
+    }
+    if (_name.text.trim().isEmpty) _name.text = app.tvMode ? '我的电视' : '我的设备';
+    // Scan validates the same strict, origin-free ticket as manual entry.
+    // It never follows URLs or changes the deployment's service/trust settings.
+    await session!.pair(payload,
+        displayName: _name.text.trim(), osVersion: app.osVersion);
     if (session!.identityView != null) _ticket.clear();
   }
 
@@ -151,8 +220,8 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
               title: const Text('连接设备需要监护人'),
               content: const SingleChildScrollView(
                   child: Text('1. 监护人在管理端创建儿童档案并添加设备。\n\n'
-                      '2. 复制完整注册凭据，在这台设备粘贴并连接。\n\n'
-                      '3. 将设备显示的八位配对码告诉监护人，由其重新认证并完成确认。\n\n'
+                      '2. 在儿童端点击“扫描家长端二维码”，扫码连接。无法扫码时可展开手动连接。\n\n'
+                      '3. 家长扫描儿童端确认码，核对后点击“确认连接”。验证仍有效时无需重复登录。\n\n'
                       '4. 返回设备检查连接，再同步规则。收到规则不代表系统限制已经生效。\n\n'
                       '凭据过期、身份损坏或设备需要解绑时，请监护人处理；儿童端不能修改管理规则或重置身份。')),
               actions: [
@@ -163,64 +232,98 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
   Widget _pair() => Form(
       key: _form,
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        _heading('连接我的设备', '请监护人在管理端生成注册凭据，并在下方填写完成设备连接。'),
-        ChildNotice('服务地址由部署预设', detail: app.serviceLabel),
-        if (app.tvMode) ...[
+        _heading('连接我的设备', '家长添加设备后，扫描家长端的连接二维码即可。'),
+        if (!app.tvMode) ...[
+          SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                  onPressed:
+                      !app.nativeAvailable || session == null || session!.busy
+                          ? null
+                          : _scanAndConnect,
+                  icon: const Icon(Icons.qr_code_scanner),
+                  label: const Text('扫描家长端二维码'))),
           const SizedBox(height: 16),
-          const ChildNotice('电视输入提示',
-              detail: '可使用电视系统键盘或外接键盘输入监护人提供的凭据；配对码仍需由监护人在管理端确认。')
+          const Text('扫码后等待家长确认。连接信息已配置，无需填写服务地址。'),
+          const SizedBox(height: 24),
         ],
-        const SizedBox(height: 24),
-        Text('设备名称', style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 8),
-        TextFormField(
-            controller: _name,
-            maxLength: 100,
-            enabled: app.nativeAvailable && session?.busy != true,
-            decoration:
-                const InputDecoration(hintText: '例如：我的手机', counterText: ''),
-            textInputAction: TextInputAction.next,
-            validator: (s) => s == null || s.trim().isEmpty ? '请输入设备名称' : null),
-        const SizedBox(height: 24),
-        Text('完整注册凭据', style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: 8),
-        TextFormField(
-            controller: _ticket,
-            minLines: 4,
-            maxLines: 6,
-            maxLength: 8192,
-            enabled: app.nativeAvailable && session?.busy != true,
-            autocorrect: false,
-            enableSuggestions: false,
-            enableIMEPersonalizedLearning: false,
-            decoration: const InputDecoration(
-                hintText: '粘贴监护人复制的完整凭据', counterText: ''),
-            validator: (s) {
-              try {
-                parseRegistrationTicket(s ?? '');
-                return null;
-              } catch (_) {
-                return '请粘贴完整注册凭据';
-              }
-            }),
-        const SizedBox(height: 16),
-        const Text('凭据仅用于此次配对，请勿分享给其他人。'),
-        const SizedBox(height: 28),
-        SizedBox(
-            width: double.infinity,
-            child: FilledButton(
-                onPressed:
-                    session == null || session!.busy || !app.nativeAvailable
-                        ? null
-                        : _connect,
-                child: const Text('安全连接',
-                    style:
-                        TextStyle(fontSize: 16, fontWeight: FontWeight.w600)))),
-        _helpLink('如何获取注册凭据')
+        ExpansionTile(
+            initiallyExpanded: app.tvMode,
+            tilePadding: EdgeInsets.zero,
+            title: const Text('无法扫码？手动连接'),
+            children: [
+              ChildNotice('连接服务', detail: app.serviceLabel),
+              if (app.tvMode) ...[
+                const SizedBox(height: 16),
+                const ChildNotice('电视输入提示',
+                    detail: '可使用电视系统键盘或外接键盘输入监护人提供的凭据；配对码仍需由监护人在管理端确认。')
+              ],
+              const SizedBox(height: 24),
+              Text('设备名称', style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 8),
+              TextFormField(
+                  controller: _name,
+                  maxLength: 100,
+                  enabled: app.nativeAvailable && session?.busy != true,
+                  decoration: const InputDecoration(
+                      hintText: '例如：我的手机', counterText: ''),
+                  textInputAction: TextInputAction.next,
+                  validator: (s) =>
+                      s == null || s.trim().isEmpty ? '请输入设备名称' : null),
+              const SizedBox(height: 24),
+              Text('完整注册凭据', style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 8),
+              TextFormField(
+                  controller: _ticket,
+                  minLines: 4,
+                  maxLines: 6,
+                  maxLength: 8192,
+                  enabled: app.nativeAvailable && session?.busy != true,
+                  autocorrect: false,
+                  enableSuggestions: false,
+                  enableIMEPersonalizedLearning: false,
+                  decoration: const InputDecoration(
+                      hintText: '粘贴监护人复制的完整凭据', counterText: ''),
+                  validator: (s) {
+                    try {
+                      parseRegistrationTicket(s ?? '');
+                      return null;
+                    } catch (_) {
+                      return '请粘贴完整注册凭据';
+                    }
+                  }),
+              const SizedBox(height: 16),
+              const Text('凭据仅用于此次配对，请勿分享给其他人。'),
+              const SizedBox(height: 28),
+              SizedBox(
+                  width: double.infinity,
+                  child: FilledButton(
+                      onPressed: session == null ||
+                              session!.busy ||
+                              !app.nativeAvailable
+                          ? null
+                          : _connect,
+                      child: const Text('安全连接',
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.w600)))),
+              _helpLink('如何获取注册凭据')
+            ]),
       ]));
   Widget _waiting() =>
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        _heading('等待监护人确认', '请将下方配对码告诉监护人，并在监护人确认后返回此页面检查状态。'),
+        _heading('等待监护人确认', '请家长扫描下方确认二维码，并在家长端点击“确认连接”。'),
+        if (session!.pairingCode != null &&
+            session!.identityView?.deviceId != null) ...[
+          PairingQr(
+              data: jsonEncode({
+                'type': 'ai-manager-pairing-confirmation',
+                'tenantId': session!.identityView!.tenantId,
+                'deviceId': session!.identityView!.deviceId,
+                'pairingCode': session!.pairingCode,
+              }),
+              label: '儿童设备确认二维码，请由家长端扫描'),
+          const SizedBox(height: 16),
+        ],
         Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 12),
@@ -388,6 +491,15 @@ class _ChildAppState extends State<_ChildHome> with WidgetsBindingObserver {
         const SizedBox(height: 12)
       ],
       _ruleSection(),
+      if (app.assistedRuntime != null) ...[
+        const Divider(),
+        ChildAssistedSection(runtime: app.assistedRuntime!,
+            available: app.nativeAvailable,
+            onRequest: app.familyAccessFactory == null || !session!.credentialReady
+                ? null : () => unawaited(Navigator.of(context).push<void>(MaterialPageRoute(
+                    builder: (_) => FamilyAccessPage(session: session!,
+                        factory: app.familyAccessFactory!, runtime: app.assistedRuntime))))),
+      ],
       if (session!.observationFactory != null) ...[
         const Divider(),
         ObservationSection(

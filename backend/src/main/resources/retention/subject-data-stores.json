@@ -804,6 +804,496 @@
       "category": "DERIVED_COPY"
     },
     {
+      "table": "family_access_requests",
+      "columns": [
+        "base_rule_version",
+        "created_at",
+        "device_id",
+        "expires_at",
+        "granted_seconds",
+        "id",
+        "not_after",
+        "reason",
+        "registration_id",
+        "requested_seconds",
+        "state",
+        "subject_id",
+        "tenant_id",
+        "version"
+      ],
+      "domain": "family",
+      "category": "SUBJECT_DATA"
+    },
+    {
+      "table": "family_ai_months",
+      "columns": [
+        "completed",
+        "month_key",
+        "tenant_id"
+      ],
+      "domain": "family",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "family_ai_suggestions",
+      "columns": [
+        "actor_key",
+        "created_at",
+        "expires_at",
+        "id",
+        "request_hash",
+        "result_json",
+        "rule_version",
+        "subject_id",
+        "task",
+        "tenant_id"
+      ],
+      "domain": "family",
+      "category": "DERIVED_COPY"
+    },
+    {
+      "table": "family_bill_attempts",
+      "columns": [
+        "attempt_number",
+        "bill_hash",
+        "completed_at",
+        "created_at",
+        "difference_count",
+        "error_code",
+        "id",
+        "ignored_count",
+        "matched_count",
+        "row_count",
+        "status",
+        "task_id"
+      ],
+      "domain": "billing",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "family_bill_audit_events",
+      "columns": [
+        "action",
+        "actor_key",
+        "difference_id",
+        "evidence_hash",
+        "id",
+        "occurred_at",
+        "task_id"
+      ],
+      "domain": "billing",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "family_bill_cursors",
+      "columns": [
+        "last_scheduled_date",
+        "merchant_key",
+        "updated_at"
+      ],
+      "domain": "billing",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "family_bill_differences",
+      "columns": [
+        "acknowledged_at",
+        "acknowledged_by",
+        "actual_minor",
+        "attempt_id",
+        "created_at",
+        "expected_minor",
+        "id",
+        "kind",
+        "note",
+        "order_id",
+        "provider_reference",
+        "refund_id",
+        "row_hash",
+        "state",
+        "task_id",
+        "tenant_id"
+      ],
+      "domain": "billing",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "family_bill_tasks",
+      "columns": [
+        "attempt_count",
+        "bill_date",
+        "created_at",
+        "id",
+        "latest_attempt_id",
+        "lease_token",
+        "lease_until",
+        "merchant_key",
+        "next_attempt_at",
+        "status",
+        "updated_at"
+      ],
+      "domain": "billing",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "family_commerce_work",
+      "columns": [
+        "attempts",
+        "entity_id",
+        "generation",
+        "job_key",
+        "kind",
+        "last_code",
+        "lease_until",
+        "next_attempt_at",
+        "state",
+        "tenant_id",
+        "updated_at"
+      ],
+      "domain": "billing",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "family_device_access_accounts",
+      "columns": [
+        "projection_hash",
+        "selected_device_id",
+        "selected_registration_id",
+        "selection_anchor",
+        "tenant_id",
+        "version"
+      ],
+      "domain": "commerce",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "family_guardian_declarations",
+      "columns": [
+        "actor_key",
+        "declaration_version",
+        "declared_at",
+        "phone_hash",
+        "tenant_id"
+      ],
+      "domain": "family",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "family_invitation_attempts",
+      "columns": [
+        "actor_key",
+        "attempts",
+        "window_start"
+      ],
+      "domain": "tenant",
+      "category": "OPERATIONAL_METADATA"
+    },
+    {
+      "table": "family_notification_device_states",
+      "columns": [
+        "condition_anchor",
+        "condition_code",
+        "device_id",
+        "episode",
+        "event_id",
+        "registration_id",
+        "tenant_id",
+        "updated_at",
+        "was_healthy"
+      ],
+      "domain": "notification",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "family_notification_preferences",
+      "columns": [
+        "actor_key",
+        "device_attention_enabled",
+        "enabled",
+        "requests_enabled",
+        "rule_expiry_enabled",
+        "tenant_id",
+        "updated_at"
+      ],
+      "domain": "notification",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "family_notification_scan_cursors",
+      "columns": [
+        "last_entity_id",
+        "last_tenant_id",
+        "scope_key",
+        "updated_at"
+      ],
+      "domain": "notification",
+      "category": "OPERATIONAL_METADATA"
+    },
+    {
+      "table": "family_notification_subscription_states",
+      "columns": [
+        "boundary_key",
+        "created_at",
+        "event_id",
+        "event_kind",
+        "period_end",
+        "tenant_id",
+        "trigger_at"
+      ],
+      "domain": "notification",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "family_orders",
+      "columns": [
+        "actor_key",
+        "created_at",
+        "currency",
+        "expires_at",
+        "id",
+        "key_hash",
+        "offer_version",
+        "paid_at",
+        "period_end",
+        "period_start",
+        "plan_key",
+        "price_minor",
+        "provider_transaction_id",
+        "request_hash",
+        "status",
+        "tenant_id"
+      ],
+      "domain": "billing",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "family_payment_attempts",
+      "columns": [
+        "actor_key",
+        "created_at",
+        "id",
+        "key_hash",
+        "order_id",
+        "provider_payload",
+        "status",
+        "tenant_id"
+      ],
+      "domain": "billing",
+      "category": "OPERATIONAL_METADATA"
+    },
+    {
+      "table": "family_payment_inbox",
+      "columns": [
+        "accepted_at",
+        "event_id",
+        "event_type",
+        "evidence_hash",
+        "order_id"
+      ],
+      "domain": "billing",
+      "category": "AUDIT_RETENTION"
+    },
+    {
+      "table": "family_phone_invitations",
+      "columns": [
+        "accepted_member_version",
+        "consumed_at",
+        "consumed_by_actor_key",
+        "created_at",
+        "expires_at",
+        "id",
+        "inviter_actor_id",
+        "recipient_phone_hash",
+        "recipient_phone_masked",
+        "revoked_at",
+        "tenant_id",
+        "token_hash"
+      ],
+      "domain": "tenant",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "family_product_offer_events",
+      "columns": [
+        "actor_key",
+        "id",
+        "occurred_at",
+        "operation",
+        "plan_key",
+        "price_minor",
+        "version"
+      ],
+      "domain": "billing",
+      "category": "AUDIT_RETENTION"
+    },
+    {
+      "table": "family_product_offers",
+      "columns": [
+        "plan_key",
+        "price_minor",
+        "proposed_actor",
+        "proposed_price",
+        "proposed_version",
+        "version"
+      ],
+      "domain": "billing",
+      "category": "OPERATIONAL_METADATA"
+    },
+    {
+      "table": "family_push_events",
+      "columns": [
+        "event_id",
+        "kind",
+        "occurred_at",
+        "tenant_id"
+      ],
+      "domain": "notification",
+      "category": "OPERATIONAL_METADATA"
+    },
+    {
+      "table": "family_push_installations",
+      "columns": [
+        "actor_key",
+        "installation_id",
+        "member_version",
+        "notification_consent",
+        "permission_granted",
+        "platform",
+        "provider",
+        "provider_token",
+        "revoked_at",
+        "tenant_id",
+        "token_hash",
+        "updated_at",
+        "version"
+      ],
+      "domain": "notification",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "family_push_outbox",
+      "columns": [
+        "actor_key",
+        "attempts",
+        "created_at",
+        "delivery_id",
+        "event_id",
+        "installation_id",
+        "installation_version",
+        "last_error",
+        "lease_id",
+        "lease_until",
+        "next_attempt_at",
+        "provider_message_id",
+        "state",
+        "tenant_id",
+        "updated_at"
+      ],
+      "domain": "notification",
+      "category": "OPERATIONAL_METADATA"
+    },
+    {
+      "table": "family_refund_requests",
+      "columns": [
+        "actor_key",
+        "created_at",
+        "id",
+        "key_hash",
+        "order_id",
+        "price_minor",
+        "provider_accepted_at",
+        "provider_refund_id",
+        "reason",
+        "refunded_at",
+        "request_hash",
+        "reviewed_at",
+        "reviewed_by",
+        "status",
+        "tenant_id"
+      ],
+      "domain": "billing",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "family_refund_reviews",
+      "columns": [
+        "decision",
+        "note",
+        "preview_hash",
+        "refund_id",
+        "reviewed_at",
+        "reviewer_key",
+        "tenant_id"
+      ],
+      "domain": "billing",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "family_rules",
+      "columns": [
+        "policy_id",
+        "rules_json",
+        "source_sequence",
+        "subject_id",
+        "tenant_id",
+        "updated_at",
+        "version"
+      ],
+      "domain": "family",
+      "category": "SUBJECT_DATA"
+    },
+    {
+      "table": "family_runtime_reports",
+      "columns": [
+        "device_id",
+        "observed_at",
+        "received_at",
+        "registration_id",
+        "report_json",
+        "report_sequence",
+        "tenant_id"
+      ],
+      "domain": "family",
+      "category": "DEVICE_DATA"
+    },
+    {
+      "table": "family_subscription_accounts",
+      "columns": [
+        "tenant_id",
+        "trial_device_id",
+        "trial_ends_at",
+        "trial_evidence_hash",
+        "trial_started_at",
+        "version"
+      ],
+      "domain": "billing",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
+      "table": "family_temporary_grants",
+      "columns": [
+        "device_id",
+        "not_after",
+        "registration_id",
+        "request_id",
+        "subject_id",
+        "tenant_id"
+      ],
+      "domain": "family",
+      "category": "AUTHORIZATION"
+    },
+    {
+      "table": "family_trial_claims",
+      "columns": [
+        "claimed_at",
+        "evidence_hash",
+        "identity_key",
+        "tenant_id"
+      ],
+      "domain": "billing",
+      "category": "SHARED_ACCOUNT"
+    },
+    {
       "table": "idempotency_requests",
       "columns": [
         "actor_id",
@@ -1623,6 +2113,60 @@
       ],
       "domain": "managedandroid",
       "category": "DERIVED_COPY"
+    },
+    {
+      "table": "identity_provider_heads",
+      "columns": ["environment_id", "latest_version_id", "version"],
+      "domain": "identityproviders",
+      "category": "OPERATIONAL_METADATA"
+    },
+    {
+      "table": "identity_provider_versions",
+      "columns": ["actor_key", "base_version", "created_at", "credential_presence_json", "environment_id", "id", "protected_payload", "protected_request", "settings_json", "version"],
+      "domain": "identityproviders",
+      "category": "SHARED_CONFIGURATION"
+    },
+    {
+      "table": "identity_provider_release_preparations",
+      "columns": ["actor_key", "created_at", "environment_id", "id", "reason_code", "status", "version_id"],
+      "domain": "identityproviders",
+      "category": "OPERATIONAL_METADATA"
+    },
+    {
+      "table": "identity_provider_acceptance_runs",
+      "columns": ["actor_key", "created_at", "environment_id", "expires_at", "id", "parent_apk_sha256", "provider_jar_sha256", "release_operation_id", "runtime_revision", "version_id"],
+      "domain": "identityproviders",
+      "category": "OPERATIONAL_METADATA"
+    },
+    {
+      "table": "identity_provider_audit_events",
+      "columns": ["action", "actor_key", "correlation_id", "environment_id", "id", "occurred_at", "resource_id", "result_code", "version_id"],
+      "domain": "identityproviders",
+      "category": "AUDIT_RETENTION"
+    },
+    {
+      "table": "identity_provider_runtime_heads",
+      "columns": ["active_operation_id", "confirmed_operation_id", "environment_id", "revision"],
+      "domain": "identityproviders",
+      "category": "OPERATIONAL_METADATA"
+    },
+    {
+      "table": "identity_provider_release_operations",
+      "columns": ["actor_key", "base_runtime_revision", "cancellation_actor_key", "cancellation_base_revision", "cancellation_id", "claim_id", "claim_started_at", "confirmed_at", "created_at", "environment_id", "id", "kind", "last_report", "parent_apk_sha256", "preparation_id", "provider_jar_sha256", "reason_code", "request_json", "state", "version_id"],
+      "domain": "identityproviders",
+      "category": "OPERATIONAL_METADATA"
+    },
+    {
+      "table": "identity_provider_runtime_checks",
+      "columns": ["actor_key", "completed_at", "created_at", "environment_id", "id", "instances_json", "operation_id", "reason_code", "state", "version_id"],
+      "domain": "identityproviders",
+      "category": "OPERATIONAL_METADATA"
+    },
+    {
+      "table": "identity_provider_executor_nonces",
+      "columns": ["environment_id", "nonce", "occurred_at"],
+      "domain": "identityproviders",
+      "category": "OPERATIONAL_METADATA"
     },
     {
       "table": "managed_policy_preparation_requests",

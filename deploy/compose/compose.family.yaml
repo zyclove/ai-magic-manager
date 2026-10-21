@@ -1,0 +1,74 @@
+# Opt in only for a fresh -ConsumerIdentity deployment. No switch proves supplier or device acceptance.
+services:
+  identity:
+    environment:
+      CONSUMER_PHONE_ENABLED: ${CONSUMER_PHONE_ENABLED:-false}
+      CONSUMER_WECHAT_ENABLED: ${CONSUMER_WECHAT_ENABLED:-false}
+      CONSUMER_ACCOUNT_SECURITY_ENABLED: ${FAMILY_ACCOUNT_SECURITY_ENABLED:-false}
+      CONSUMER_OTP_HMAC_KEY_FILE: /run/secrets/consumer_otp_hmac_key
+      ALIYUN_SMS_ACCESS_KEY_ID_FILE: /run/secrets/consumer_sms_access_key_id
+      ALIYUN_SMS_ACCESS_KEY_SECRET_FILE: /run/secrets/consumer_sms_access_key_secret
+      ALIYUN_SMS_SECURITY_TOKEN_FILE: /run/secrets/consumer_sms_security_token
+      ALIYUN_SMS_SIGN_NAME: ${ALIYUN_SMS_SIGN_NAME:-}
+      ALIYUN_SMS_TEMPLATE_CODE: ${ALIYUN_SMS_TEMPLATE_CODE:-}
+      WECHAT_NATIVE_APP_ID: ${WECHAT_NATIVE_APP_ID:-}
+      WECHAT_NATIVE_APP_SECRET_FILE: /run/secrets/consumer_wechat_app_secret
+    secrets:
+      - consumer_otp_hmac_key
+      - consumer_sms_access_key_id
+      - consumer_sms_access_key_secret
+      - consumer_sms_security_token
+      - consumer_wechat_app_secret
+    networks: [internal, family-egress]
+  backend:
+    environment:
+      MANAGER_CONSUMER_IDENTITY_ENABLED: ${FAMILY_ACCOUNT_SECURITY_ENABLED:-false}
+      MANAGER_CONSUMER_IDENTITY_STATUS_URL: http://identity:8080/identity/realms/ai-manager/consumer-account/status
+      MANAGER_FAMILY_AI_ENABLED: ${FAMILY_AI_ENABLED:-false}
+      MANAGER_FAMILY_AI_MODEL: ${FAMILY_AI_MODEL:-}
+      MANAGER_FAMILY_AI_API_KEY_FILE: /run/family/ai-key
+      MANAGER_FAMILY_PUSH_ALIYUN_ENABLED: ${FAMILY_PUSH_ENABLED:-false}
+      MANAGER_FAMILY_PUSH_ALIYUN_CREDENTIALS_FILE: /run/family/push-credentials.json
+      MANAGER_FAMILY_PUSH_WORKER_ENABLED: ${FAMILY_PUSH_WORKER_ENABLED:-false}
+      MANAGER_FAMILY_WECHAT_ENABLED: ${FAMILY_WECHAT_ENABLED:-false}
+      MANAGER_FAMILY_COMMERCE_WORKER_ENABLED: ${FAMILY_COMMERCE_WORKER_ENABLED:-false}
+      MANAGER_FAMILY_BILLS_WORKER_ENABLED: ${FAMILY_BILLS_WORKER_ENABLED:-false}
+      MANAGER_FAMILY_SALES_ENABLED: ${FAMILY_SALES_ENABLED:-false}
+      MANAGER_FAMILY_WECHAT_APP_ID: ${FAMILY_WECHAT_APP_ID:-}
+      MANAGER_FAMILY_WECHAT_MERCHANT_ID: ${FAMILY_WECHAT_MERCHANT_ID:-}
+      MANAGER_FAMILY_WECHAT_MERCHANT_SERIAL: ${FAMILY_WECHAT_MERCHANT_SERIAL:-}
+      MANAGER_FAMILY_WECHAT_PLATFORM_KEY_ID: ${FAMILY_WECHAT_PLATFORM_KEY_ID:-}
+      MANAGER_FAMILY_WECHAT_NOTIFY_URL: ${FAMILY_WECHAT_NOTIFY_URL:-}
+      MANAGER_FAMILY_WECHAT_MERCHANT_KEY_FILE: /run/family/wechat-merchant-key.pem
+      MANAGER_FAMILY_WECHAT_PLATFORM_KEY_FILE: /run/family/wechat-platform-key.pem
+      MANAGER_FAMILY_WECHAT_API_V3_KEY_FILE: /run/family/wechat-api-v3-key
+      MANAGER_FAMILY_ACCEPTANCE_ENABLED: ${FAMILY_ACCEPTANCE_ENABLED:-false}
+      MANAGER_FAMILY_ACCEPTANCE_MODELS_FILE: /run/family/accepted-models.json
+    secrets:
+      - source: family_ai_key
+        target: /run/family/ai-key
+      - source: family_push_credentials
+        target: /run/family/push-credentials.json
+      - source: family_wechat_merchant_key
+        target: /run/family/wechat-merchant-key.pem
+      - source: family_wechat_platform_key
+        target: /run/family/wechat-platform-key.pem
+      - source: family_wechat_api_v3_key
+        target: /run/family/wechat-api-v3-key
+      - source: family_accepted_models
+        target: /run/family/accepted-models.json
+    networks: [internal, family-egress]
+secrets:
+  consumer_otp_hmac_key: {file: "${DEPLOYMENT_ROOT:?Set DEPLOYMENT_ROOT}/secrets/consumer_otp_hmac_key"}
+  consumer_sms_access_key_id: {file: "${DEPLOYMENT_ROOT:?Set DEPLOYMENT_ROOT}/secrets/consumer_sms_access_key_id"}
+  consumer_sms_access_key_secret: {file: "${DEPLOYMENT_ROOT:?Set DEPLOYMENT_ROOT}/secrets/consumer_sms_access_key_secret"}
+  consumer_sms_security_token: {file: "${DEPLOYMENT_ROOT:?Set DEPLOYMENT_ROOT}/secrets/consumer_sms_security_token"}
+  consumer_wechat_app_secret: {file: "${DEPLOYMENT_ROOT:?Set DEPLOYMENT_ROOT}/secrets/consumer_wechat_app_secret"}
+  family_ai_key: {file: "${DEPLOYMENT_ROOT:?Set DEPLOYMENT_ROOT}/secrets/family_ai_key"}
+  family_push_credentials: {file: "${DEPLOYMENT_ROOT:?Set DEPLOYMENT_ROOT}/secrets/family_push_credentials.json"}
+  family_wechat_merchant_key: {file: "${DEPLOYMENT_ROOT:?Set DEPLOYMENT_ROOT}/secrets/family_wechat_merchant_key"}
+  family_wechat_platform_key: {file: "${DEPLOYMENT_ROOT:?Set DEPLOYMENT_ROOT}/secrets/family_wechat_platform_key"}
+  family_wechat_api_v3_key: {file: "${DEPLOYMENT_ROOT:?Set DEPLOYMENT_ROOT}/secrets/family_wechat_api_v3_key"}
+  family_accepted_models: {file: "${DEPLOYMENT_ROOT:?Set DEPLOYMENT_ROOT}/secrets/family_accepted_models.json"}
+networks:
+  family-egress: {}

@@ -9,10 +9,11 @@ import 'multi_device_reports.dart';
 /// Parent reports expose only server-authorized activity; directory visibility is not consent.
 class UsageReportCenter extends StatelessWidget {
   final ParentSession session;
-  const UsageReportCenter({super.key, required this.session});
+  final String? subjectId;
+  const UsageReportCenter({super.key, required this.session, this.subjectId});
   @override
-  Widget build(BuildContext context) =>
-      ParentReportDevicePicker(session: session, browseFirst: true);
+  Widget build(BuildContext context) => ParentReportDevicePicker(
+      session: session, browseFirst: true, subjectId: subjectId);
 }
 
 class ParentDeviceReportPage extends StatefulWidget {
@@ -107,6 +108,8 @@ class _ParentDeviceReportPageState extends State<ParentDeviceReportPage>
               child: DeviceUsageReportView(
                   title: '设备使用情况',
                   compactControls: true,
+                  initialDays:
+                      widget.session.tenant?['kind'] == 'FAMILY' ? 1 : 7,
                   notAuthorizedMessage:
                       '当前没有有效的使用观察授权。请通过右上角“管理观察授权”核对范围；这里不会展示以前的用量。',
                   description: '查看授权的应用使用区间、趋势与配置证据。缺少观测不会当作零使用。',
@@ -119,6 +122,8 @@ class _ParentDeviceReportPageState extends State<ParentDeviceReportPage>
                   cancel: loader.cancel,
                   accessChanges: widget.session,
                   available: () => current && foreground,
-                  timeZone: widget.session.tenant?['timeZone'] as String? ??
-                      'Asia/Shanghai')));
+                  timeZone: widget.session.tenant?['kind'] == 'FAMILY'
+                      ? 'Asia/Shanghai'
+                      : widget.session.tenant?['timeZone'] as String? ??
+                          'Asia/Shanghai')));
 }

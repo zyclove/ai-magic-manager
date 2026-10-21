@@ -34,7 +34,22 @@ class CurrentActorController {
             .anyMatch(a -> a.getAuthority().equals("SCOPE_contract:approve")),
         authentication.getAuthorities().stream()
             .anyMatch(a -> a.getAuthority().equals("SCOPE_emm:approve")),
-        actor.getClaimAsStringList("amr") == null ? List.of() : actor.getClaimAsStringList("amr"));
+        authentication.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("SCOPE_family-refunds:review")),
+        authentication.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("SCOPE_family-finance:manage")),
+        authentication.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("SCOPE_identity-config:read")),
+        authentication.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("SCOPE_identity-config:manage")),
+        authentication.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("SCOPE_identity-config:test")),
+        authentication.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("SCOPE_identity-config:publish")),
+        authentication.getAuthorities().stream()
+            .anyMatch(a -> a.getAuthority().equals("SCOPE_identity-config:rollback")),
+        actor.getClaimAsStringList("amr") == null ? List.of() : actor.getClaimAsStringList("amr"),
+        Boolean.TRUE.equals(actor.getClaim("phone_number_verified")) && actor.getClaimAsString("phone_number") != null);
   }
 
   record Profile(
@@ -47,5 +62,13 @@ class CurrentActorController {
       boolean canManageContracts,
       boolean canApproveContracts,
       boolean canReviewManagedAndroid,
-      List<String> authenticationMethods) {}
+      boolean canReviewFamilyRefunds,
+      boolean canManageFamilyFinance,
+      boolean canReadIdentityProviders,
+      boolean canManageIdentityProviders,
+      boolean canTestIdentityProviders,
+      boolean canPublishIdentityProviders,
+      boolean canRollbackIdentityProviders,
+      List<String> authenticationMethods,
+      boolean canCreateFamily) {}
 }

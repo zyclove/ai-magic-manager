@@ -58,6 +58,12 @@ class AndroidAgentCleanupExecutor implements AgentCleanupExecutor {
     }
 
     try {
+      // Native cached assistance must be stopped before its signed source is
+      // removed. Failed durable clearing cannot produce a successful receipt.
+      if (await secureStore.channel.invokeMethod<bool>('clearAssistance') !=
+          true) {
+        throw AgentCleanupFailure('STORAGE_FAILURE');
+      }
       final directory = await supportDirectory();
       if (!await directory.exists()) throw const FileSystemException();
       final files = <File>[];
@@ -97,9 +103,15 @@ class AndroidAgentCleanupExecutor implements AgentCleanupExecutor {
       }
       await secureStore.flushAgentFiles(directory.path);
       for (final key in keys) {
-        if (key == 'observation_record' ||
-            _accessSecret.hasMatch(key) ||
-            _helpSecret.hasMatch(key)) {
+        if (key == 'observation_record') {
+          final observations =
+              AndroidObservationStore.fromIdentityStore(secureStore);
+          final original = await observations.read();
+          if (!await observations.compareAndSet(
+              expected: original, replacement: null)) {
+            throw AgentCleanupFailure('STORAGE_FAILURE');
+          }
+        } else if (_accessSecret.hasMatch(key) || _helpSecret.hasMatch(key)) {
           await secureStore.storage.delete(key: key);
         }
       }

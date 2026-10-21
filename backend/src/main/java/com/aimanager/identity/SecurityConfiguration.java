@@ -18,6 +18,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.core.*;
 import org.springframework.security.oauth2.jwt.*;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -42,11 +43,25 @@ class SecurityConfiguration {
 
     @Bean @Order(3)
     SecurityFilterChain securityFilterChain(HttpSecurity http, ObjectMapper mapper,
-            @org.springframework.beans.factory.annotation.Qualifier("corsConfigurationSource") CorsConfigurationSource corsSource) throws Exception {
+            @org.springframework.beans.factory.annotation.Qualifier("corsConfigurationSource") CorsConfigurationSource corsSource,
+            @Value("${manager.consumer-security.enabled:false}") boolean consumerSecurityEnabled,
+            @Value("${manager.consumer-security.status-url:}") String consumerStatusUrl,
+            @Value("${manager.consumer-security.timeout-millis:2000}") int consumerTimeoutMillis) throws Exception {
+        // 只加入安全链，不声明 servlet Filter Bean，避免签名校验前重复执行。
+        var consumerGate = new ConsumerSessionGate(consumerSecurityEnabled, consumerSecurityEnabled
+            ? new ConsumerSessionStatusClient(consumerStatusUrl, consumerTimeoutMillis, mapper) : null, mapper);
         return http.cors(cors -> cors.configurationSource(corsSource)).csrf(csrf -> csrf.disable())
+            .addFilterAfter(consumerGate, BearerTokenAuthenticationFilter.class)
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/actuator/health", "/actuator/health/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/payments/wechat/notifications").permitAll()
+                // Independent host HMAC authentication is mandatory inside these typed handlers.
+                .requestMatchers(HttpMethod.POST, "/api/v1/platform/identity-provider-executor/claims",
+                    "/api/v1/platform/identity-provider-executor/claims/query",
+                    "/api/v1/platform/identity-provider-executor/claims/begin",
+                    "/api/v1/platform/identity-provider-executor/claims/outcomes",
+                    "/api/v1/platform/identity-provider-executor/claims/abandon").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/tenants").hasAuthority("SCOPE_tenant:create")
                 .anyRequest().authenticated())
             .oauth2ResourceServer(oauth -> oauth.jwt(jwt -> {}).authenticationEntryPoint(

@@ -1,0 +1,74 @@
+{
+  "date": "2026-10-16",
+  "scope": "WeChat order closure, daily reconciliation and manually reviewed original-route full refunds",
+  "tests": {
+    "backend": {
+      "tests": 1419,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 76,
+      "suites": 144,
+      "passed": 1343
+    },
+    "parent": {
+      "passed": 482,
+      "log": "parent-final.log"
+    },
+    "guardianVm": {
+      "passed": 630,
+      "log": "guardian-vm-final.log"
+    },
+    "guardianBrowser": {
+      "passed": 99,
+      "suites": 12,
+      "renderer": "html",
+      "log": "guardian-browser-html-final.log"
+    },
+    "parentAndroid": {
+      "tests": 10,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "suites": 3,
+      "passed": 10
+    },
+    "deployment": {
+      "passed": 6,
+      "log": "commerce-deployment-green.log"
+    },
+    "parentAnalyze": {
+      "issues": 0,
+      "log": "parent-final-analyze.log"
+    },
+    "guardianAnalyze": {
+      "issues": 0,
+      "log": "guardian-final-analyze.log"
+    }
+  },
+  "artifacts": [
+    {
+      "path": ".local/family-p0-commerce-20261016/artifacts/guardian-family-commerce-p0-web.zip",
+      "bytes": 8333387,
+      "sha256": "94e9482508c99aac0fb67802dc68430e33f2332c7bed0d2ac197e1cccf895322",
+      "productionRelease": false
+    },
+    {
+      "path": ".local/family-p0-commerce-20261016/artifacts/manager-family-commerce-p0.jar",
+      "bytes": 82064656,
+      "sha256": "1187de345b91ff5a37b9cde4c12a4f242966639f35690a1a71cfe955d5006ec7",
+      "productionRelease": false
+    },
+    {
+      "path": ".local/family-p0-commerce-20261016/artifacts/parent-family-commerce-p0-debug.apk",
+      "bytes": 297215696,
+      "sha256": "f9fc874fb0b551aadacc5452bdd7ed2b9507161323f309aebfbdc599d3b94b9d",
+      "productionRelease": false
+    }
+  ],
+  "liveDatabaseUntouched": true,
+  "realMerchantAcceptance": false,
+  "physicalDeviceAcceptance": false,
+  "salesEnabled": false,
+  "workersEnabledByDefault": false,
+  "sourceManifest": ".local/family-p0-commerce-20261016/source-hashes.json"
+}

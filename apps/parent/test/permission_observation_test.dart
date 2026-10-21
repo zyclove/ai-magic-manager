@@ -478,7 +478,9 @@ void main() {
     await tester.pumpAndSettle();
     expect(writes, 1);
     expect(session.checks, 1);
-    await tester.ensureVisible(find.text('我已核对当前授权与原结果'));
+    await tester.scrollUntilVisible(find.text('完成核对'), 120);
+    await tester.pumpAndSettle();
+    expect(find.text('我已核对当前授权与原结果').hitTestable(), findsOneWidget);
     await tester.tap(find.text('我已核对当前授权与原结果'));
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('完成核对'));

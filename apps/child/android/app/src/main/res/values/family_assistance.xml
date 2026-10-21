@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="family_assistance_name">家庭使用安排辅助</string>
+    <string name="family_assistance_description">经设备使用者同意后，仅根据前台应用包名执行已验证家庭使用安排；额度用完或不在可用时段时返回桌面。不读取页面、聊天或输入文字。电话、系统设置、桌面及本应用始终可用。可在本应用或系统设置关闭。</string>
+</resources>

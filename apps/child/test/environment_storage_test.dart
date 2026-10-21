@@ -3,6 +3,7 @@ import 'package:child/platform/secret_store.dart';
 import 'package:device_identity/device_identity.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -70,7 +71,10 @@ void main() {
       messenger.setMockMethodCallHandler(plugin, null);
       messenger.setMockMethodCallHandler(runtime, null);
     });
-    final store = AndroidIdentityStore(available: () => true);
+    final store = AndroidIdentityStore(
+        storage:
+            const FlutterSecureStorage(aOptions: AndroidIdentityStore.options),
+        available: () => true);
     await store.write('test-only-record');
     expect(events, ['encrypted-write', 'durability-barrier']);
     expect(await store.read(), isNull);

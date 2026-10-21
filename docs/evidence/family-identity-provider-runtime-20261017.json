@@ -1,0 +1,154 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-17",
+  "kind": "family-identity-provider-runtime-components",
+  "providerJar": {
+    "path": ".local/family-provider-release-20261017-r2/artifacts/consumer-identity-1.0.0.jar",
+    "sha256": "5092699c24f66dc60c87960785eaf4438b40232a406437580773a757d48a73e4",
+    "samePackageAsActualKeycloak": true,
+    "repackagedAfterAcceptance": false
+  },
+  "verification": {
+    "identityRegression": {
+      "tests": 71,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0
+    },
+    "hostRegression": {
+      "tests": 23,
+      "failures": 0,
+      "errors": 0,
+      "log": {
+        "path": ".cache/family-provider-release-20261017-r2/runtime/out/host-recovery-final.log",
+        "sha256": "a6bc78e8a138eb107231bf1e142523a77fadca6f39e617c89c7d2ef69b7d968d"
+      },
+      "httpBoundary": "private fixture server validating production executor HMAC",
+      "dockerBoundary": "private fixture executable recording fixed production arguments"
+    },
+    "actualKeycloak": {
+      "stages": [
+        "A",
+        "B",
+        "ROLLBACK_A"
+      ],
+      "backendConfirmedStages": 3,
+      "http200Stages": 3,
+      "actualCodeSourceJarMatched": true,
+      "actualLoadedSettingsAndFiveCredentialsProofVerified": true,
+      "distinctBoots": 3,
+      "distinctOperations": 3,
+      "historicalVersionRestoredWithNewOperation": true,
+      "environment": "isolated-real-boundary",
+      "consumerSwitchesClosed": true,
+      "networkInternal": false,
+      "hostPublish": "127.0.0.1",
+      "backendDatabase": "isolated H2 MySQL mode",
+      "keycloakDatabase": "isolated embedded H2 dev-file on tmpfs",
+      "adminAuthentication": "MockMvc JWT and recent MFA fixture",
+      "machineRequests": "production service methods with independent signed requests; machine HTTP route verified separately",
+      "hostExecution": "task-private adapter for one owned Docker container; production host runner not used",
+      "evidence": {
+        "path": ".cache/family-provider-release-20261017-r2/runtime/out/actual-runtime-stages.json",
+        "sha256": "ac56ab528ac4b6dc1049e3180804b4f16fa6a8676b325e732404f9fc0d350434"
+      }
+    }
+  },
+  "recoveryGuards": [
+    "shared deployment host lock through start and executor",
+    "current server confirmation required before finalizing pointer",
+    "old historical result cannot overwrite newer pointer",
+    "explicit never-begun claim can be safely abandoned",
+    "BEGIN unknown remains pending and is never re-executed",
+    "cancelled pending restoration requires server qualification and original pointer authentication",
+    "wrong approved provider digest safely cancels unbegun claim",
+    "resumed executable claim rechecks pinned image and Compose ownership"
+  ],
+  "cleanup": {
+    "ownedContainerAndNetwork": "COMPLETE",
+    "privateFixtureFilesRemoved": 51,
+    "uniqueEvidenceAndSourcePreserved": true,
+    "existingServicesTouched": false
+  },
+  "limitations": [
+    "No real SMS or WeChat supplier calls, no real user identity or Android device acceptance",
+    "No production MySQL plus Keycloak plus production host runner end-to-end acceptance in this component run",
+    "Production UID, deployment permissions and live Compose application require controlled deployment verification",
+    "Only one identity instance is supported by the host executor",
+    "Historical initial read/realm/readiness failures are preserved; final three-stage run is separately verified"
+  ],
+  "runtimeAppliedToExistingDeployment": false,
+  "salesAllowed": false,
+  "sources": [
+    {
+      "path": "scripts/family-identity-release-common.ps1",
+      "bytes": 18777,
+      "sha256": "8d8fc063a9864e32cdfb5841f2fdd9d2ee239b90494da8de7a121b6e895b73c5"
+    },
+    {
+      "path": "scripts/run_family_identity_release.ps1",
+      "bytes": 17467,
+      "sha256": "e9a6b0520a306f3dae185b8933c99373ad968f90d15d789c5e4886eb0ec2c531"
+    },
+    {
+      "path": "scripts/initialize_identity_provider_target.ps1",
+      "bytes": 7115,
+      "sha256": "5aaf65cbec96d378abe623c1254556c5017c678dd2ccda4376acb0057e6d62b9"
+    },
+    {
+      "path": "scripts/start-deployment.ps1",
+      "bytes": 7541,
+      "sha256": "68d9bd0e14207e8f5c8965e8caba58f686e640ff644f4808c4913a59e8a72fc3"
+    },
+    {
+      "path": "deploy/compose/compose.identity-runtime-image.yaml",
+      "bytes": 151,
+      "sha256": "4755300cdf0fed4f92b9b257f926a8c28f92ce785b2a0159da0bf1ccd42e6ab1"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerProviderRuntime.java",
+      "bytes": 6515,
+      "sha256": "0fcb443f6c6556314816d4db5749af9d2112e4537d7a60d59d81e86677ff1e80"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerAuthenticatorFactory.java",
+      "bytes": 1409,
+      "sha256": "a37af315a5c9c1b1e2080fb44268240f770438fcc62ed824d4c9c864d0c778c2"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerAccountResourceFactory.java",
+      "bytes": 770,
+      "sha256": "7e039347cae9059afa2b08dd229e09e299357b39e05fc0a98fee849ab11ee0d2"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerAccountResource.java",
+      "bytes": 5691,
+      "sha256": "f13e6cf8b2d48059b82a3691710420838e1b3b6a987732b4a5b2ca50718db2cd"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerProviderRuntimeTest.java",
+      "bytes": 6029,
+      "sha256": "1858e304e4ca2f47bf420478e3837d1d22f250916e9efc13e4e6cec671522410"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerRuntimeSnapshotTest.java",
+      "bytes": 1713,
+      "sha256": "908aeabe766666f759b84a66ea002e1aabe7abd8ee1c78bdc412b74475216fcb"
+    },
+    {
+      "path": "scripts/tests/test_family_identity_release_runtime.py",
+      "bytes": 32732,
+      "sha256": "5e9ce3255a915dc9ebdbf0d8d3b1b4c8f157b8fbe469ce15e821bc16cb26d057"
+    },
+    {
+      "path": "docs/family-identity-provider-runtime.md",
+      "bytes": 3306,
+      "sha256": "3f9713241b6f86c4e734c0de0c7962c86ac6b52147acd15653a4c5eabe373376"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-17-provider-runtime-contract.md",
+      "bytes": 13635,
+      "sha256": "7866d4b2c932e31e63ce9490f3f4ce8b72900abb34ddd68eaf8b135277d54b76"
+    }
+  ]
+}

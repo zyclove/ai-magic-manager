@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 1,
+  "kind": "family-identity-provider-release-preparation-verification",
+  "verifiedAt": "2026-10-17T10:21:36.0687781+08:00",
+  "sourcePins": [
+    {
+      "path": "scripts/prepare_family_identity_release.ps1",
+      "sha256": "b21a23c5a645508bc102fa06296680865a9b4e0b1ad4d04daa37bfa39f4eae4b"
+    },
+    {
+      "path": "scripts/tests/test_prepare_family_identity_release.py",
+      "sha256": "0729a2b90aa09a9b39ebf5d6adeebd18768ac44f7e6aca452afa694512f751c9"
+    },
+    {
+      "path": "scripts/test_family_identity_providers.ps1",
+      "sha256": "ab8a6c724e0482afce63163d9d7e421049adc0564764526108e4b036c45e8d9f"
+    },
+    {
+      "path": "docs/family-identity-provider-release.md",
+      "sha256": "514f2d5e822e659e730c6ab3a2542beb0b7be58165b2f382c2e78725cf038008"
+    }
+  ],
+  "tests": {
+    "failed": 0,
+    "total": 14,
+    "sourceChangedDuringTests": [],
+    "passed": 14,
+    "skipped": 0,
+    "logSha256": "ecb967e816639e5687afa81dfc4b132ac5e599cc2bc94bb3d5ebe1d146c8a789",
+    "exitCode": 0
+  },
+  "crossLanguageInterop": {
+    "status": "PASS",
+    "testFixtureOnly": true,
+    "environmentId": "isolated-admin",
+    "producer": "Java Nimbus JOSE dir/A256GCM",
+    "exitCode": 0,
+    "versionId": "83ee6065-b555-4809-823f-249ce0e4f03a",
+    "consumer": "PowerShell .NET AES-GCM"
+  },
+  "state": "APPLY_REQUIRED",
+  "applied": false,
+  "runtimeVerified": false,
+  "providerRequestsPerformed": false,
+  "serviceActionsPerformed": false,
+  "realSupplierAcceptance": "BLOCKED",
+  "salesAllowed": false,
+  "privateEvidenceDirectory": ".cache/family-provider-admin-20261017/deploy/out",
+  "limitations": [
+    "Offline preparation only; no deployment or consumer switch is applied.",
+    "No real SMS, native WeChat or production credentials were used.",
+    "Windows ACL behavior was exercised locally; Unix 0700/0600 branch was not run on this Windows host.",
+    "Runtime version acknowledgement, live enablement and rollback remain controlled deployment work."
+  ],
+  "documentationUpdatedAfterCodeVerification": true
+}

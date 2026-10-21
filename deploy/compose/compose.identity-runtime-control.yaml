@@ -1,0 +1,26 @@
+# Opt-in fixed inventory and independent machine keys; no Docker socket or identity mutation.
+services:
+  backend:
+    environment:
+      IDENTITY_PROVIDER_ENVIRONMENT_ID: ${IDENTITY_PROVIDER_ENVIRONMENT_ID:?Set the reviewed provider environment alias}
+      IDENTITY_PROVIDER_EXECUTOR_KEY_FILE: /run/identity-provider-runtime/executor-key
+      IDENTITY_PROVIDER_RUNTIME_INVENTORY_FILE: /run/identity-provider-runtime/inventory.json
+    volumes:
+      - type: bind
+        source: ${IDENTITY_PROVIDER_RUNTIME_ROOT:?Set the private runtime configuration root}/executor-key
+        target: /run/identity-provider-runtime/executor-key
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${IDENTITY_PROVIDER_RUNTIME_ROOT:?Set the private runtime configuration root}/observation-key
+        target: /run/identity-provider-runtime/observation-key
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${IDENTITY_PROVIDER_RUNTIME_ROOT:?Set the private runtime configuration root}/runtime-inventory.json
+        target: /run/identity-provider-runtime/inventory.json
+        read_only: true
+        bind:
+          create_host_path: false

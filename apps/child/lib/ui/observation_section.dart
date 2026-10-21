@@ -31,6 +31,7 @@ class ObservationSection extends StatelessWidget {
   }
 
   String _error(String code) => switch (code) {
+        'OBSERVATION_STATE_CONFLICT' => '报告正在同步，请稍后刷新。已保留最新记录。',
         'CONNECTION_FAILED' || 'NETWORK_TIMEOUT' => '暂时无法在线核对，已暂停新采集。请检查网络后刷新。',
         'OBSERVATION_STORAGE_FAILED' ||
         'OBSERVATION_STORAGE_UNAVAILABLE' =>

@@ -79,6 +79,39 @@ Compose secrets 采用文件挂载，环境配置只有文件路径。业务密�
 
 ## 身份初始化与权限
 
+家庭消费者身份是独立的可选构建模式，原管理端命令保持默认行为。为新空环境使用相同开关初始化和构建：
+
+```powershell
+./scripts/initialize-deployment.ps1 -Directory .local/family-deployment `
+  -ProjectName family-deployment -ConsumerIdentity
+./scripts/build-deployment.ps1 -Directory .local/family-deployment -ConsumerIdentity
+# 完整依赖已缓存时可加 -Offline -MavenRepository .local/m2
+```
+
+生成的 realm 只修改家长客户端的消费者认证绑定与受保护资料，保留管理端密码/OTP 流；原管理配置另存 `realm-management.json`。这不是已有 realm 的自动升级，也不会启动服务或修改数据库。离线转换现有导出可用 `deploy/keycloak/merge-consumer-realm.ps1 -InputPath <导出> -OutputPath <新文件>`；它拒绝覆盖已有输出，实际配置迁移仍须独立选定发布环境。
+
+消费者 SPI 在独立源码快照中先编译、测试，再进入唯一 release 的 Keycloak 构建上下文。Dockerfile 在 `kc.sh build` 前复制 provider；清单保存 JAR SHA-256，启动前核对模式、摘要与上下文。默认管理端不需要此扩展；没有编译成功时不会发布新清单。该开关没有赋予成人/MFA 身份，也没有生成任何设备或商户验收事实。
+
+消费者部署自动加入 `deploy/compose/compose.family.yaml`。身份和后端有供应商出站网络，数据库仍仅在内部网络；所有供应商及收费开关默认为关闭。配置示例位于 `deploy/keycloak/family.env.example`，只含非秘密参数。受限 `secrets/` 下生成独立 OTP HMAC 和空供应商文件；空文件不表示已配置供应商。密钥以只读文件挂载，`.env`、镜像和清单不保存实际凭据。身份 SPI 的文件注入契约见 [身份扩展说明](../identity-extensions/README.md)。
+
+|功能|非秘密环境参数|受限文件及格式|
+|---|---|---|
+|短信|`CONSUMER_PHONE_ENABLED`、已审核签名/模板|`consumer_sms_access_key_id` / `consumer_sms_access_key_secret`；可选 `consumer_sms_security_token`，均单行|
+|微信登录|`CONSUMER_WECHAT_ENABLED`、`WECHAT_NATIVE_APP_ID`|`consumer_wechat_app_secret`，单行服务端 AppSecret|
+|百炼内地 AI|`FAMILY_AI_ENABLED`、`FAMILY_AI_MODEL`|`family_ai_key`，单行 API key；固定默认内地 HTTPS endpoint|
+|阿里云 Android 推送|`FAMILY_PUSH_ENABLED`、独立 `FAMILY_PUSH_WORKER_ENABLED`|`family_push_credentials.json`：`accessKeyId`、`accessKeySecret`、`androidAppKey`、`androidChannelId`|
+|微信支付核验/退款|`FAMILY_WECHAT_ENABLED`、AppID、商户 ID、证书序列号、公钥 ID、HTTPS 回调|`family_wechat_merchant_key` 为 PKCS#8 RSA 私钥 PEM；`family_wechat_platform_key` 为 RSA 公钥 PEM；`family_wechat_api_v3_key` 为 32 字节单行密钥|
+|设备验收清单|`FAMILY_ACCEPTANCE_ENABLED`|`family_accepted_models.json`：人工审查的 manufacturer/model/apiLevel/validUntil/evidenceHash 数组；初始为空|
+|新销售|独立 `FAMILY_SALES_ENABLED=false`|没有自动生成或自报设备健康即可放开的验收文件|
+|家庭支付维护|独立 `FAMILY_COMMERCE_WORKER_ENABLED=false`|复用微信支付凭证，负责查单、可信关单、已审核退款恢复|
+|家庭日账单|独立 `FAMILY_BILLS_WORKER_ENABLED=false`|复用微信商户和 AppID；签名下载、校验、差异处理不直接改变权益|
+
+家庭售后与财务权限独立于家庭/机构角色。指定售后账号分配 `family-refund-reviewer`，指定财务账号分配 `family-finance-operator`，对应受限 scope 为 `family-refunds:review` / `family-finance:manage`；两者只在管理台客户端可用，所有操作要求近期 MFA，申请人不能自审。模板未给默认角色或任何用户授予这些权限。已有 realm 通过受控配置迁移新增角色、scope、scope mapping 及管理台 default client scopes，不能重建 realm 或重置已有用户。授权后重新登录并核验 `/api/v1/me` 的独立能力字段，再从“家庭售后与对账”进入。
+
+后台维护与日账单开关默认关闭。完成商户核验后分别配置 `FAMILY_COMMERCE_WORKER_ENABLED=true` / `FAMILY_BILLS_WORKER_ENABLED=true`，前者只推进已审核原退款和可信关单，后者不直接修改会员。管理台“已排队”仅表示任务预约；需读取后续真实结果。
+
+配置支付核验和退款不代表开放新销售。至少完成 8 台实际设备的 72 小时运行、真实商户交易/退款及主体渠道审核后，才可在获准环境单独开启销售；当前默认保持关闭。短信/微信移动应用、推送渠道和百炼账户须各自完成正式配置及真实验收，不能将本地构建和离线生成当作已上线。
+
 1. 打开 `/identity/admin/`，用 `bootstrap-admin` 和该环境 `secrets/bootstrap_admin` 文件中的一次性生成密码登录。该身份属于身份服务管理域，不会自动成为业务监护人。
 2. 在 `ai-manager` realm 创建正式成人/机构管理账号，设置其本人凭据；受批准的成人才能分配 `tenant-creator` realm 角色。不要给学生或儿童此角色。
 3. 管理员登录管理台创建工作空间；工作空间中的 OWNER/GUARDIAN/ORG_ADMIN 等授权事实保存在业务数据库。身份服务角色仅决定是否可创建工作空间。
@@ -106,6 +139,10 @@ Keycloak 的 `/identity` 是镜像构建参数；镜像已在 build 阶段设置
 TLS 覆盖使用 Compose 的端口替换语义，只发布 TLS 端口。默认仍绑定回环；外部入口仅在明确选择后修改该环境 `.env` 的 `EDGE_BIND_ADDRESS`，并配置防火墙/DNS。Nginx 支持 TLS 1.2/1.3，内部 HTTP 健康端口不提供应用入口；私钥不进入镜像。[Compose 合并规则](https://docs.docker.com/reference/compose-file/merge/)
 
 生产建议由现有受控负载均衡/证书管理系统终止 TLS。无论入口形式，OIDC issuer、客户端回调、Web origin、API 配置和实际入口必须一致。完成真实 HTTPS 登录、续期、登出和内部取钥验证后才标记 HTTPS 支持通过。
+
+由受信任的 HTTPS 隧道终止 TLS 时，可将公开的 443 入口与本机回环端口分开。初始化和启动均须显式传入 `-ExternalTlsProxy`，例如 `-PublicUrl https://mobile.example.com -EdgePort 18102`。此模式不挂载本地证书，启动前强制核对仅发布 `127.0.0.1:18102`；专用代理配置固定转发 HTTPS/443，避免采用客户端提供的协议头。隧道需单独连接此回环入口，不能将这个 HTTP 端口直接公开。
+
+移动端须使用同一公开 origin 重建：家长端的 `OIDC_ISSUER`、`API_URL`、`CONSOLE_URL`，以及儿童端的 `CHILD_API_ROOT`、实际 `CONFIGURATION_ISSUER` 与该环境 `verification.jwks` 公钥。临时隧道的地址停止后可能变化，旧安装包不会自动改地址；它只能作为联调入口。公开地址变更时必须同步身份配置、Web 构建和两个 APK，并重新验证登录与配对。
 
 ## 检查、初始化和恢复
 

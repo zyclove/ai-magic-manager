@@ -14,6 +14,7 @@ import 'package:parent/core/parent_api.dart';
 import 'package:parent/core/parent_durable_storage.dart';
 import 'package:parent/core/parent_session.dart';
 import 'package:parent/ui/invitation_acceptance.dart';
+import 'package:parent/ui/family_invitation_page.dart';
 import 'package:parent/main.dart';
 
 import 'support/parent_operation_journal_fixture.dart';
@@ -480,7 +481,8 @@ void main() {
     expect(find.byType(AlertDialog), findsNothing);
     expect(writes, 0);
   });
-  testWidgets('main app exposes join entry before any workspace exists',
+  testWidgets(
+      'main app exposes phone family join entry before any workspace exists',
       (tester) async {
     // The concurrent first-use widget uses native storage; this test covers only join entry routing.
     const secure =
@@ -500,9 +502,9 @@ void main() {
         apiFor((_) async => response({'items': [], 'nextCursor': null})));
     await tester.pumpWidget(ParentApp(session: session));
     await tester.pumpAndSettle();
-    expect(find.byType(InvitationAcceptanceEntry), findsOneWidget);
+    expect(find.byType(FamilyInvitationEntry), findsOneWidget);
     await tester.tap(find.text('我的'));
     await tester.pumpAndSettle();
-    expect(find.byType(InvitationAcceptanceEntry), findsOneWidget);
+    expect(find.byType(FamilyInvitationEntry), findsOneWidget);
   });
 }

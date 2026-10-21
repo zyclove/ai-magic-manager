@@ -1,0 +1,994 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-17",
+  "kind": "family-provider-acceptance-preparation-and-sales-gate",
+  "scope": "Read-only preparation, current confirmed target binding, stale detection and fail-closed payment gate; real evidence collection and opening are not implemented.",
+  "backend": {
+    "verification": {
+      "counts": {
+        "tests": 2406,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 79
+      },
+      "reportFiles": 186,
+      "skippedCases": [
+        {
+          "class": "com.aimanager.AndroidChildSubmissionJourneyTest",
+          "test": "realEnrollmentNativeCrashRecoveryAndRevocation",
+          "reason": "System property [device.android.runner] does not exist"
+        },
+        {
+          "class": "com.aimanager.AndroidCleanupHttpsJourneyTest",
+          "test": "nativeOriginalKeyExecutesRealHttpsCleanupAndRetainsAcknowledgedJournal",
+          "reason": "System property [device.cleanup.android.runner] does not exist"
+        },
+        {
+          "class": "com.aimanager.commerce.internal.ParentContractHttpInteropTest",
+          "test": "productionPhoneAcceptsOnceAndRecoversCurrentContractAfterReplyLoss",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.DeviceAccessHttpInteropTest",
+          "test": "realApprovalRetryReceiptsRevocationExpiryAndOpaqueRevocation",
+          "reason": "System property [device.access.package] does not exist"
+        },
+        {
+          "class": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+          "test": "actualDartSubmissionAdultDecisionAndExistingDeviceDeliveryReference",
+          "reason": "System property [device.access.package] does not exist"
+        },
+        {
+          "class": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+          "test": "actualChildUiRecoversOriginalCancellationAcrossProcesses",
+          "reason": "System property [device.child.package] does not exist"
+        },
+        {
+          "class": "com.aimanager.DeviceAccessSubmissionJourneyTest",
+          "test": "actualChildSessionAndUiRecoverOriginalSubmissionAcrossProcesses",
+          "reason": "System property [device.child.package] does not exist"
+        },
+        {
+          "class": "com.aimanager.DeviceConfigurationHttpInteropTest",
+          "test": "realDeviceTransportStoresTwoPagesAndRejectsRevokedCredential",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.DeviceIdentityHttpInteropTest",
+          "test": "actualEnrollmentRecoveryConfirmationRotationAndRevocation",
+          "reason": "System property [device.identity.package] does not exist"
+        },
+        {
+          "class": "com.aimanager.DeviceObservationHttpInteropTest",
+          "test": "adultConsentDeviceLostAcknowledgementReplayWithdrawalAndRevocation",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.DiagnosticPreviewJourneyTest",
+          "test": "productionDartClientReadsRealHttpAndRechecksCurrentAccess",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.GuardianDeviceManagementHttpTest",
+          "test": "dartReadsRealContractsAndRecoversCommittedRevokeWithoutReplay",
+          "reason": "System property [guardian.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.GuardianEnrollmentRecoveryHttpInteropTest",
+          "test": "lostCreationRecoversWithoutSecretReplayAndFailedConfirmationCommitsItsCount",
+          "reason": "System property [guardian.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.identityproviders.internal.IdentityProviderGuardianHttpTest",
+          "test": "productionDartReadsWritesRecoversAndKeepsRealAcceptancePending",
+          "reason": "System property [guardian.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.identityproviders.internal.ProviderRealRuntimeBoundaryTest",
+          "test": "backendPublishesAndRollsBackActualPackagedRuntime",
+          "reason": "System property [provider.runtime.boundary] does not exist"
+        },
+        {
+          "class": "com.aimanager.identityproviders.internal.ProviderReleaseGuardianHttpTest",
+          "test": "actualProductionRepositoryPublishesRecoversChecksCancelsAndRollsBack",
+          "reason": "System property [guardian.release.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.managedandroid.ManagedAgentDartProofInteropTest",
+          "test": "dartProofMatchesServerProtocolAndCannotBindAnotherChallenge",
+          "reason": "System property [device.identity.package] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAcceptanceHttpInteropTest",
+          "test": "productionRecipientDistinguishesAcceptedRevokedAndRejoinedMembership",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditExportHttpInteropTest",
+          "test": "requiredKeyAndInvalidRangesFailWithoutCreatingJobs",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditExportHttpInteropTest",
+          "test": "repeatedRequestsDoNotConsumeCreateRateBudget",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditExportHttpInteropTest",
+          "test": "transientGenerationFailureRetriesOnlyAfterBackoff",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditExportHttpInteropTest",
+          "test": "expiredAndCancelledJobsDoNotKeepArtifacts",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditExportHttpInteropTest",
+          "test": "queuedOrCancelledJobsCannotBeDownloaded",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditExportHttpInteropTest",
+          "test": "byteBudgetAndCrossJobCiphertextBindingAreEnforced",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditExportHttpInteropTest",
+          "test": "leaseLostDuringGenerationDoesNotPublishAnArtifact",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditExportHttpInteropTest",
+          "test": "recentMfaRequiredAndReadRolesDoNotGrantOtherCreatorsAccess",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditExportHttpInteropTest",
+          "test": "generationStoresOnlyAuthenticatedCiphertextAndDownloadsTheSelectedEvents",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditExportHttpInteropTest",
+          "test": "abandonedLeaseCanRecoverAndAttemptBudgetIsBounded",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditExportHttpInteropTest",
+          "test": "oversizedResultsFailWithoutPublishingPartialData",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditExportHttpInteropTest",
+          "test": "revokedCreatorNeverStartsGeneratingAndOldMetadataIsPurged",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditExportHttpInteropTest",
+          "test": "membershipEpochChangeRevokesArtifactsEvenWhenRoleRemainsAllowed",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditExportHttpInteropTest",
+          "test": "idempotencyReturnsCurrentCancelledStateAndRejectsChangedBody",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditExportHttpInteropTest",
+          "test": "twoWorkersPublishOnce",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditExportHttpInteropTest",
+          "test": "creationIsQueuedAndListsOnlyOwnJobs",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditExportHttpInteropTest",
+          "test": "productionMobileExportFlow",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditHttpInteropTest",
+          "test": "filtersIntersectAndEndIsExclusive",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditHttpInteropTest",
+          "test": "cursorCannotCrossFilterOrTenant",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditHttpInteropTest",
+          "test": "hashedActorResourceCanBeSearched",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditHttpInteropTest",
+          "test": "invalidBoundsFiltersAndCursorAre400",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditHttpInteropTest",
+          "test": "newestFirstStableTiesAndBoundedPages",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditHttpInteropTest",
+          "test": "detailFreshAuthorizationAndLegacyCompatibility",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditHttpInteropTest",
+          "test": "rolesRevocationAndTenantIsolation",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentAuditHttpInteropTest",
+          "test": "mobileReaderUsesRealPaginationFiltersAndAuthorization",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentClassHttpInteropTest",
+          "test": "productionClientRecoversClassCreationAndTransferWithoutDuplicateAssociations",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentHelpHttpInteropTest",
+          "test": "lostAcknowledgementRecoveryThroughParentController",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentInvitationHttpInteropTest",
+          "test": "productionClientRecoversIssuanceAndPreservesAcceptedMembership",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentMemberHttpInteropTest",
+          "test": "productionClientRecoversMemberEditsAndRevocationWithoutDuplicateHistory",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentNotificationHttpInteropTest",
+          "test": "requestReplayProducesOnePrivateNoticeAndReadStateBelongsToCurrentActor",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentNotificationHttpInteropTest",
+          "test": "privateScopeRevocationAndCaseDistinctActorsCannotReadOrMarkEachOthersNotices",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentNotificationHttpInteropTest",
+          "test": "repeatedDomainDeliveryDoesNotDuplicateOrResetPersonalReadState",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentNotificationHttpInteropTest",
+          "test": "approvalRevocationAndExpiryAreVersionedFactsWithoutClaimingExecution",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentNotificationHttpInteropTest",
+          "test": "mixedScopeBatchIsAtomicAndMalformedInputIsRejected",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentNotificationHttpInteropTest",
+          "test": "teacherNoticesRequireOwnRequestAndCurrentStudentScope",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentNotificationHttpInteropTest",
+          "test": "concurrentReadRetriesCreateExactlyOnePersonalReceipt",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentNotificationHttpInteropTest",
+          "test": "expiredRetentionIsExcludedFromListAndUnreadCountWithoutDeletingApprovalHistory",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentNotificationHttpInteropTest",
+          "test": "boundedRetentionRemovesOnlyOldNoticesAndTheirReceipts",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentNotificationHttpInteropTest",
+          "test": "failedTransactionalNotificationRollsBackRequestAuditAndIdempotencyBeforeSafeRetry",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentNotificationHttpInteropTest",
+          "test": "repeatedDeliverySeesConcurrentCommitBeyondAnEarlierSnapshot",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentNotificationHttpInteropTest",
+          "test": "paginationDoesNotSkipEqualTimestampsAndBatchReadOnlyMarksExplicitIds",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentNotificationHttpInteropTest",
+          "test": "cancellationAndDenialCreateTheirOwnNotificationVersions",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentNotificationHttpInteropTest",
+          "test": "productionDecisionClientRecoversWithoutResubmittingApproval",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentNotificationHttpInteropTest",
+          "test": "productionClientRecoversReadAndFetchesCurrentRequest",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentObservationHttpInteropTest",
+          "test": "lostResponseRecoveryAndWithdrawalThroughParentController",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentOwnershipHttpInteropTest",
+          "test": "productionOwnershipControllersRecoverLostRepliesAcrossRoleChanges",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentPermissionHttpInteropTest",
+          "test": "lostResponseRecoveryAndWithdrawalThroughParentController",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentQuotaHttpInteropTest",
+          "test": "productionClientRecoversLostRepliesWithoutDoubleGranting",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentQuotaPlanHttpInteropTest",
+          "test": "productionClientRecoversLostPlanRepliesWithoutDuplicateRevisions",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.ParentSubjectHttpInteropTest",
+          "test": "fullManagementFlowUsesProductionClient",
+          "reason": "System property [parent.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.retention.internal.ErasureAdmissionStoreTest",
+          "test": "leastPrivilegeRuntimeCanDrainWorkButCannotRewriteAcceptedRecords",
+          "reason": "Environment variable [NOTICE_IT_ROOT_PASSWORD] does not exist"
+        },
+        {
+          "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+          "test": "mismatchedIdentityAndMissingLedgerAreReportedWithoutAutomaticRecreation",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+          "test": "servletAsyncCannotEscapeTheRegisteredSynchronousPermit",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+          "test": "acceptedLedgerStopsAuthorizedBusinessRequestsWithoutDeletingTheirData",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+          "test": "realHttpRequestDrainsBeforeAcceptanceAndProbesRemainAvailable",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "class": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+          "test": "nonTransactionalEngineIsRejectedBeforeAppending",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "class": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+          "test": "initializationPinsTransactionalEngineEvenWhenServerDefaultDiffers",
+          "reason": "Environment variable [LEDGER_STORE_TEST_URL] does not exist"
+        },
+        {
+          "class": "com.aimanager.support.internal.DiagnosticPackageJourneyTest",
+          "test": "productionDartClientCompletesPackageLifecycleOverRealHttp",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.SupportGrantJourneyTest",
+          "test": "productionDartSupportClientCompletesRealHttpGrantLifecycle",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.UsageReportJobJourneyTest",
+          "test": "realHttpJobsAreConsumedByProductionDartClient",
+          "reason": "System property [device.dart.command] does not exist"
+        },
+        {
+          "class": "com.aimanager.UsageReportJourneyTest",
+          "test": "realHttpResponseIsConsumedByProductionDartReportClient",
+          "reason": "System property [device.dart.command] does not exist"
+        }
+      ]
+    },
+    "source": {
+      "files": 610,
+      "manifest": {
+        "path": ".cache/family-provider-acceptance-20261017-r3/root/out/backend-final-source-pins.json",
+        "bytes": 122344,
+        "sha256": "efbbb94e107538fd509a33f0de969ab42eb8f46c7e50a4047606eaee30999e81"
+      },
+      "workspaceDrift": [],
+      "frozenDrift": [],
+      "nonGeneratedFrozenDrift": [],
+      "generatedDateChanges": []
+    },
+    "artifact": {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/manager-backend-1.0.0.jar",
+      "bytes": 82397589,
+      "sha256": "0806265abf3463bbbe8883094cfd78263ec3e75e75380843f627b6b361f9280f"
+    },
+    "targeted": {
+      "counts": {
+        "tests": 72,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0
+      },
+      "reportFiles": 10,
+      "skippedCases": []
+    },
+    "targetedExecution": "71 focused tests passed; the first HTTP attempt failed while reading cached Dart dependencies, before API requests. A separate final HTTP test passed with 60 checks on the same frozen production source.",
+    "productionDartHttpChecks": 60,
+    "httpAuthenticationAndRuntimeObservationsAreFixtures": true
+  },
+  "mysql": {
+    "verification": {
+      "counts": {
+        "tests": 46,
+        "failures": 1,
+        "errors": 0,
+        "skipped": 0
+      },
+      "reportFiles": 3,
+      "skippedCases": []
+    },
+    "documentedFailures": [
+      {
+        "class": "com.aimanager.identityproviders.internal.IdentityProviderAdminJourneyTest",
+        "test": "databaseBoundaryIsExplicit",
+        "message": "\nExpecting actual:\n  \"8.0.41\"\nto start with:\n  \"8.4.\"\n"
+      }
+    ],
+    "receipt": {
+      "path": ".cache/family-provider-acceptance-20261017-r3/runtime/out/mysql-freeze04-verification.json",
+      "bytes": 3583,
+      "sha256": "f4cfa6bfdb0099cc9cea433a5a98b156c6deafaf17ccfc3418d4c36f5ef2d4f2"
+    },
+    "meaning": "Disposable native MySQL 8.0.41 SQL/state/concurrency boundary: new acceptance 14 and controlled release 21 passed. The existing admin test requires 8.4 and failed its version assertion; MySQL 8.4 admission is not accepted. Not real supplier/Keycloak/hardware acceptance."
+  },
+  "guardian": {
+    "record": {
+      "path": ".cache/family-provider-acceptance-20261017-r3/flutter/out/ui-verification-final-v2.json",
+      "bytes": 12535,
+      "sha256": "136644d79e8564eedf33afa216d316b77a8958ee2250adb69e600c11841de79d"
+    },
+    "source": {
+      "files": 479,
+      "manifest": {
+        "path": ".cache/family-provider-acceptance-20261017-r3/flutter/out/final-ui-4-source-pins.json",
+        "bytes": 84842,
+        "sha256": "863378eaca5d62e27f2d11a2e2c9469228d9afda1c593478ec1073211cddcd23"
+      },
+      "workspaceDrift": [],
+      "frozenDrift": [
+        "apps/guardian/.flutter-plugins-dependencies"
+      ],
+      "nonGeneratedFrozenDrift": [],
+      "generatedDateChanges": [
+        {
+          "path": "apps/guardian/.flutter-plugins-dependencies",
+          "prebuildSha256": "f8d59b173e4824216d71fea22f74154f834962781fed2dfa7d1d5b4ddba6fb3b",
+          "postbuildSha256": "397b4db025f6354686afe7d42660e2893a852f96f6183b72acd48194f55742cd",
+          "onlyChangedJsonKey": "date_created"
+        }
+      ]
+    },
+    "webFiles": 32,
+    "webBytes": 27040925,
+    "verification": {
+      "schemaVersion": 2,
+      "kind": "family-provider-acceptance-ui-verification",
+      "sourceSnapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\family-provider-acceptance-20261017-r3\\flutter\\src\\final-ui-4",
+      "sourceManifestSha256": "c8d67afb392668f6731aae5b9a5f565dd0c646452be5037413e04e482331ccbe",
+      "sourceFiles": 479,
+      "uiSourcePins": [
+        {
+          "path": "apps/guardian/test/family_identity_acceptance_refresh_test.dart",
+          "sha256": "65e6f9e8dc84cbb0e00b6adf7171a8277497a4f49d3c300165f0c8e360895d3c",
+          "bytes": 1791
+        },
+        {
+          "path": "apps/guardian/test/family_identity_acceptance_test.dart",
+          "sha256": "99ee06bb3634428ddf2ad3463a230bdec9be98a87e5420581ae23031a3712729",
+          "bytes": 12074
+        },
+        {
+          "path": "apps/guardian/test/family_identity_access_test.dart",
+          "sha256": "b6150dd25af29f4dd1c008223a088c240ca060bca283b5de5504f4cd849c7593",
+          "bytes": 2302
+        },
+        {
+          "path": "apps/guardian/test/family_identity_configuration_test.dart",
+          "sha256": "2126decd81dc84d09569c63877b5f1871f06fe423c3ff44bc50b0bf9e294bcb6",
+          "bytes": 4735
+        },
+        {
+          "path": "apps/guardian/test/family_identity_controller_test.dart",
+          "sha256": "b9be8dde9d530810da2fbc5cb91fe7e41a3e73d4230547bdc579d8ad233a30ff",
+          "bytes": 10075
+        },
+        {
+          "path": "apps/guardian/test/family_identity_editor_test.dart",
+          "sha256": "33919d63f42459702d4d0fb1cde6c5035308c2f25a3f12cf3983b79b05328fb8",
+          "bytes": 3299
+        },
+        {
+          "path": "apps/guardian/test/family_identity_entry_browser_test.dart",
+          "sha256": "ba9347624c016e388638adce68abaeea70b74038bdc2bd8d4b99a73fc6dab779",
+          "bytes": 7919
+        },
+        {
+          "path": "apps/guardian/test/family_identity_page_test.dart",
+          "sha256": "43c4be8f5f572569411b08d6658131e08d039c242196181492113229bc407552",
+          "bytes": 10998
+        },
+        {
+          "path": "apps/guardian/test/family_identity_release_fixtures.dart",
+          "sha256": "7c6040f62f295e7740f576eaa8a4308c45cac68db46edf23b3e7481825038587",
+          "bytes": 2683
+        },
+        {
+          "path": "apps/guardian/test/family_identity_release_panel_test.dart",
+          "sha256": "406ed9345d93203f8e60af422e2372885b3f38cf4d5bba82b0cd8d938da0f701",
+          "bytes": 9238
+        },
+        {
+          "path": "apps/guardian/test/family_identity_release_test.dart",
+          "sha256": "032bd723e9194b08bfcacb949668ef20ce649fa546b73c9cdcc5bc9dd7d6f540",
+          "bytes": 16115
+        },
+        {
+          "path": "apps/guardian/test/family_identity_repository_test.dart",
+          "sha256": "06d13983d8086a88200c3dc555d061e2e5dce935847ab1b25400e579dd887ade",
+          "bytes": 3873
+        },
+        {
+          "path": "apps/guardian/tool/verify_identity_provider_release_http.dart",
+          "sha256": "62e2991e7125f4700ad724fe72bd93d170bb5d392a9fe1254489d8e517b72079",
+          "bytes": 18415
+        },
+        {
+          "path": "apps/guardian/lib/core/family_identity_acceptance.dart",
+          "sha256": "1df8baa8e319c05e85b8b9c57ef1d38ae52b3b8c2684088f2c2489b6ed71cc5a",
+          "bytes": 3913
+        },
+        {
+          "path": "apps/guardian/lib/core/family_identity_configuration.dart",
+          "sha256": "9c7a9f85dc6b5c62448f11ca851e83cd5877cf46d76b19e7de923e098d03a375",
+          "bytes": 15535
+        },
+        {
+          "path": "apps/guardian/lib/core/family_identity_controller.dart",
+          "sha256": "b6d0acc67bef87f0b7092854bd4661b249d0a6cfae3400bf9feabe18ec0125db",
+          "bytes": 21407
+        },
+        {
+          "path": "apps/guardian/lib/core/family_identity_release.dart",
+          "sha256": "69f55bbc352c1a3abd1028cfbe315fc3154205e5e19ff2d1c0caa07f9b940b82",
+          "bytes": 8845
+        },
+        {
+          "path": "apps/guardian/lib/core/family_identity_repository.dart",
+          "sha256": "14118a0b7754401ce6121f7151775b9bba8405248c132bd4b3256d1e3b534990",
+          "bytes": 13268
+        },
+        {
+          "path": "apps/guardian/lib/ui/family_identity_acceptance_panel.dart",
+          "sha256": "ef27614ba99c4ae26f34bedb5d04f59351996037d056ebc491807d872f4383b7",
+          "bytes": 14149
+        },
+        {
+          "path": "apps/guardian/lib/ui/family_identity_editor.dart",
+          "sha256": "af24278f6b9067ad5f949bfa962a4514234a3d4fe66c05248f698dbb7d3f5fed",
+          "bytes": 15553
+        },
+        {
+          "path": "apps/guardian/lib/ui/family_identity_page.dart",
+          "sha256": "73ee51b3cf822afefc323a28037a1437cf14f3155367e5df20608cdb0d066155",
+          "bytes": 16703
+        },
+        {
+          "path": "apps/guardian/lib/ui/family_identity_release_panel.dart",
+          "sha256": "01b6d561fc6b6beab783a47ab91163439102af4edfe195afafb71759160a7bec",
+          "bytes": 18417
+        }
+      ],
+      "relatedTargeted": {
+        "snapshot": "green-3",
+        "passed": 50,
+        "failed": 0,
+        "exitCode": 0,
+        "log": "green-3-targeted.log",
+        "logSha256": "1869ca3447c8fa82e179d43b32f48f27ddd7a5daff89459ec3f55a3274d5633f",
+        "productionAndHttpToolSourcesEqualFinal": true
+      },
+      "fullGuardian": {
+        "sourceSnapshot": "final-ui-4",
+        "supplierRequestsPerformed": false,
+        "exitCode": 1,
+        "elapsedSeconds": 151.0723742,
+        "salesEnabled": false,
+        "kind": "final-ui-4-full",
+        "log": "final-ui-4-full.log",
+        "logSha256": "4343a4e728957469af6ef9a214748be5f78e8126b997c8e6148550110f954e74",
+        "passed": 949,
+        "failed": 11,
+        "skipped": 0,
+        "knownFailureFile": "apps/guardian/test/action_details_route_ownership_test.dart",
+        "knownFailureTestNames": [
+          "successful action preserves an unrelated covering notification",
+          "removing a covered successful window completes its caller",
+          "queued action cannot run after access loss before a frame",
+          "access loss and restoration cannot revive a private window",
+          "covered form success preserves notice and returns its result",
+          "queued form save cannot run after the form has closed",
+          "a stale form cancel callback cannot close another route",
+          "stale confirmation callback cannot close another route",
+          "stale details close callback cannot close another route",
+          "stale dropdown callback is harmless after its form closes",
+          "queued dropdown cannot change an uncertain submission snapshot"
+        ]
+      },
+      "analysis": {
+        "sourceSnapshot": "final-ui-4",
+        "supplierRequestsPerformed": false,
+        "exitCode": 1,
+        "elapsedSeconds": 41.3133731,
+        "salesEnabled": false,
+        "kind": "final-ui-4-analyze",
+        "log": "final-ui-4-analyze.log",
+        "logSha256": "10413666e79352031ed0c72cde27011997a9166a1f15aaeac8e54c381c225039",
+        "issues": [
+          "info - Don't use 'BuildContext's across async gaps - lib\\pages\\editors.dart:569:13 - use_build_context_synchronously",
+          "info - Don't use 'BuildContext's across async gaps - lib\\pages\\editors.dart:573:13 - use_build_context_synchronously",
+          "info - Don't use 'BuildContext's across async gaps - lib\\pages\\editors.dart:602:13 - use_build_context_synchronously",
+          "info - Don't use 'BuildContext's across async gaps - lib\\pages\\editors.dart:608:13 - use_build_context_synchronously"
+        ]
+      },
+      "baselineSharedDialogRegression": {
+        "sourceSnapshot": "baseline",
+        "supplierRequestsPerformed": false,
+        "exitCode": 1,
+        "elapsedSeconds": 26.242305,
+        "salesEnabled": false,
+        "kind": "baseline-route-regression",
+        "log": "baseline-route-regression.log",
+        "logSha256": "f57a228e721cfe69b99eef5b14f26f5147dbba081409cb0cdc87aec0e63e9e7b",
+        "passed": 2,
+        "failed": 11,
+        "skipped": 0
+      },
+      "baselineSourceComparisonSha256": "e9a7350050aec938c03a85cee1d956cc39dd7f0f1b9a7ed80c922b73bd89b581",
+      "browserHtml": {
+        "sourceSnapshot": "final-ui-4",
+        "supplierRequestsPerformed": false,
+        "exitCode": 0,
+        "elapsedSeconds": 78.7535978,
+        "salesEnabled": false,
+        "kind": "final-ui-4-browser-html",
+        "log": "final-ui-4-browser-html.log",
+        "logSha256": "2fb8f1cd3dd8e5bf40518f069830d234ecb7bbe586913746baa7bbe17139f93a",
+        "passed": 3,
+        "failed": 0,
+        "skipped": 0
+      },
+      "productionHtmlWeb": {
+        "sourceSnapshot": "final-ui-4",
+        "supplierRequestsPerformed": false,
+        "exitCode": 0,
+        "elapsedSeconds": 120.5356906,
+        "salesEnabled": false,
+        "kind": "final-ui-4-web",
+        "log": "final-ui-4-web.log",
+        "logSha256": "bbba889ff32073c81f970f4836bef702339399cc977be5e6a1fad56d8a394cb1"
+      },
+      "productionWebManifestSha256": "f256d67a42a1822572823382aadf1a1068634de7d06cc34fa1e686541c87cd00",
+      "semanticRed": {
+        "snapshot": "baseline",
+        "passed": 0,
+        "failed": 1,
+        "expectedBehavior": "status refresh reads acceptance-status",
+        "actualBeforeImplementationRequests": 0,
+        "log": "acceptance-refresh-behavior-red.log",
+        "logSha256": "a2f9066c9fc402c11594c05c1718d96eb8797be6c97f97f14e85689f36f9e748"
+      },
+      "unimplementedApiCompileRecord": {
+        "log": "acceptance-red-02.log",
+        "logSha256": "c643ba004d8058713d73c621e4e4ef0c2688dbac8c1ec5d592a0d07b4af40d1b",
+        "countedAsBehaviorRed": false
+      },
+      "cleanupReceipts": [
+        {
+          "path": "finished-build-cache-cleanup-01.json",
+          "sha256": "614e1841102d4e2325272db35bc7b5beae763a0e5b1a510c5ba24dd6aee3f97c",
+          "bytes": 139217223
+        },
+        {
+          "path": "finished-build-cache-cleanup-02.json",
+          "sha256": "4010601709d9befb87e9171de6642b5dd93f78d1c2543a90129e142abfab1ec4",
+          "bytes": 47865181
+        },
+        {
+          "path": "finished-build-cache-cleanup-03.json",
+          "sha256": "a4a57bece406136ca13f5b17fd9c57375455f075f7b353ff3896c03f88f2fa17",
+          "bytes": 230060629
+        }
+      ],
+      "cleanupBytes": 417143033,
+      "realAcceptancePassed": 0,
+      "realAcceptanceRequired": 12,
+      "supplierRequestsPerformed": false,
+      "salesEnabled": false,
+      "runtimeDeploymentApplied": false,
+      "productionOriginReviewed": false,
+      "screenshotsCaptured": false,
+      "browserAuthenticationSynthetic": true,
+      "allWorkspaceRegressionPassed": false,
+      "supersedes": {
+        "path": "ui-verification-final.json",
+        "sha256": "078ebd90037fdfe10d61dc69329938a0501d6a4fd4f5bf27c57b4c2ab6d28fcd",
+        "artifactPath": "guardian-ui-verification.json",
+        "reason": "The original zero-drift check compared live workspace files with pre-build pins only. Flutter regenerated a date_created timestamp in frozen plugin metadata; the frozen post-build inventory was not included in that assertion. All original records remain preserved."
+      },
+      "sourceManifestPhase": "POST_BUILD_FROZEN_INVENTORY",
+      "sourceManifestPath": "final-ui-4-post-build-source-pins.json",
+      "preBuildSourceManifestSha256": "863378eaca5d62e27f2d11a2e2c9469228d9afda1c593478ec1073211cddcd23",
+      "preBuildSourceManifestPath": "final-ui-4-source-pins.json",
+      "supersededLiveOnlyDriftRecord": {
+        "path": "final-ui-4-current-source-drift.json",
+        "sha256": "a93998f212f28df0b4d3d617a3e5425e49c999ab3a3ad20deabb2ae0a9c3429e",
+        "scope": "LIVE_WORKSPACE_VS_PRE_BUILD_ONLY",
+        "driftFiles": 0,
+        "doesNotDescribePostBuildFrozenFiles": true
+      },
+      "sourceAudit": {
+        "path": "final-ui-4-post-build-source-audit.json",
+        "sha256": "2e68bcdc97312676d215e52f563ed3e9d100c1f4f192648113336959a4e830a7",
+        "trackedFilesCompared": 479,
+        "frozenVsPreBuildDriftFiles": 1,
+        "liveVsPreBuildDriftFiles": 0,
+        "nonGeneratedTrackedFiles": 478,
+        "nonGeneratedFrozenVsPreBuildDriftFiles": 0,
+        "nonGeneratedLiveVsPreBuildDriftFiles": 0,
+        "frozenVsPostBuildDriftFiles": 0,
+        "excludedGeneratedFiles": [
+          {
+            "path": "apps/guardian/.flutter-plugins-dependencies",
+            "preBuildSha256": "f8d59b173e4824216d71fea22f74154f834962781fed2dfa7d1d5b4ddba6fb3b",
+            "postBuildFrozenSha256": "397b4db025f6354686afe7d42660e2893a852f96f6183b72acd48194f55742cd",
+            "liveSha256": "f8d59b173e4824216d71fea22f74154f834962781fed2dfa7d1d5b4ddba6fb3b",
+            "classification": "GENERATED_FLUTTER_PLUGIN_METADATA",
+            "changedTopLevelKeys": [
+              "date_created"
+            ],
+            "beforeDateCreated": "2026-10-15 11:31:42.448531",
+            "afterDateCreated": "2026-10-17 15:55:06.630595",
+            "allOtherJsonFieldsEqual": true,
+            "pluginsEqual": true,
+            "dependencyGraphEqual": true,
+            "flutterVersionEqual": true
+          }
+        ],
+        "all479FrozenFilesMatchOriginalManifest": false,
+        "all478NonGeneratedFilesMatchOriginalManifest": true
+      },
+      "productionWebManifestSourcePhase": "ORIGINAL_PRE_BUILD_MANIFEST; metadata-only generation drift is explained by sourceAudit"
+    }
+  },
+  "android": {
+    "verification": {
+      "schemaVersion": 1,
+      "kind": "family-android-preflight-verification",
+      "generatedAt": "2026-10-17T07:48:59.7509014+00:00",
+      "focusedTestsPassed": 15,
+      "focusedTestsFailed": 0,
+      "sourceDrift": [],
+      "sourcePins": [
+        {
+          "path": "scripts/test_family_android_acceptance.ps1",
+          "sha256": "4b7c6bf3defdf97aca9ee016481b5ae34cb9b320916588a18af3231253eca389"
+        },
+        {
+          "path": "scripts/tests/test_family_android_acceptance.py",
+          "sha256": "59fc2314c19bb035981a5adeea265a2bdcf03e56bda6070e0ffb4bb72d2ecf45"
+        },
+        {
+          "path": "docs/family-android-acceptance-preflight.md",
+          "sha256": "c1aa3e11fd99422c70b3845d8ee13937c55730d6b8c3a7820dd38090d95be0b0"
+        }
+      ],
+      "actualSdkApkCheck": {
+        "sdkBuildTools": "35.0.0",
+        "actualExistingApkSha256": "9bc3e5377865efc96efd1805b8b93bc1a6670a60b533262a636e96594b05919e",
+        "signatureVerified": true,
+        "debugCertificateRejected": true,
+        "debuggableRejected": true,
+        "expectedCertificateWasDebugDigestForRejectionCheck": true,
+        "connectedDevices": 0,
+        "realSupplierRequests": 0,
+        "realDeviceAcceptance": "BLOCKED",
+        "salesAllowed": false
+      },
+      "testLogSha256": "0450cee0816f9ee1ff778ea52702cbc43a96fd76c36b88eb2e9ab9361c85e7b8",
+      "actualReportSha256": "fa0f45966caaf85fdb616559f99df653e2296acf669d324cf27ce529c060af0f"
+    },
+    "actualReport": {
+      "path": ".cache/family-provider-acceptance-20261017-r3/runtime/out/android-actual-existing-debug-preflight-v2.json",
+      "bytes": 6450,
+      "sha256": "fa0f45966caaf85fdb616559f99df653e2296acf669d324cf27ce529c060af0f"
+    },
+    "meaning": "Actual existing debug APK rejected using SDK; no device connected and no app installed."
+  },
+  "providerAndDeploymentTools": {
+    "tests": 31,
+    "failures": 0,
+    "log": {
+      "path": ".cache/family-provider-acceptance-20261017-r3/root/out/provider-deployment-regression.log",
+      "bytes": 6596,
+      "sha256": "1c5a830bba322c67568ef3980680962a1f2b938d23d41f37967905ec6f361070"
+    }
+  },
+  "review": {
+    "record": {
+      "path": ".cache/family-provider-acceptance-20261017-r3/review/out/code-review.json",
+      "bytes": 10398,
+      "sha256": "e2784eff3b17a45cc1fc3681c54936c8bf50402dde78e740cebd501a4c25adc1"
+    },
+    "dynamicVerificationPerformedByReviewer": false
+  },
+  "boundaries": {
+    "realSupplierChecksPassed": 0,
+    "realSupplierChecksRequired": 12,
+    "salesAllowed": false,
+    "newPaymentBlocked": true,
+    "unpaidOrderDraftMayBeRecorded": true,
+    "afterSalesPreserved": true,
+    "consumerEntriesEnabled": false,
+    "signedAndroidHardwareAccepted": false,
+    "existingDeploymentChanged": false,
+    "existingDatabaseOrRealmChanged": false,
+    "allWorkspaceRegressionClaimedPassing": false
+  },
+  "copiedArtifacts": [
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/manager-backend-1.0.0.jar",
+      "bytes": 82397589,
+      "sha256": "0806265abf3463bbbe8883094cfd78263ec3e75e75380843f627b6b361f9280f"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/source-pins/backend-frozen.json",
+      "bytes": 122344,
+      "sha256": "efbbb94e107538fd509a33f0de969ab42eb8f46c7e50a4047606eaee30999e81"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/source-pins/backend-targeted-frozen.json",
+      "bytes": 122207,
+      "sha256": "b89784028cf88b34c3fba17a53d75fd59ebc8d756527e88ec7680287ab8b5125"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/backend-targeted-verification.json",
+      "bytes": 2142,
+      "sha256": "3182eed3931aa07850af73814ac944761bdcdb0462280a0a91cc6e58d9564b1d"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/schema-preservation.json",
+      "bytes": 812,
+      "sha256": "94ab631b5fa56ac93d01e2fd26d2a978aacbf6c9f08986e7c63d71933abe4601"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/guardian-ui-verification-v2.json",
+      "bytes": 12535,
+      "sha256": "136644d79e8564eedf33afa216d316b77a8958ee2250adb69e600c11841de79d"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/guardian-source-pins.json",
+      "bytes": 84842,
+      "sha256": "863378eaca5d62e27f2d11a2e2c9469228d9afda1c593478ec1073211cddcd23"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/source-pins/native-mysql-frozen.json",
+      "bytes": 110097,
+      "sha256": "4ec0b435c8e5d037a7421ace785f6bf5b30c7e68ab4fd2458917a053124485d9"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/code-review.json",
+      "bytes": 10398,
+      "sha256": "e2784eff3b17a45cc1fc3681c54936c8bf50402dde78e740cebd501a4c25adc1"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/native-mysql-verification.json",
+      "bytes": 3583,
+      "sha256": "f4cfa6bfdb0099cc9cea433a5a98b156c6deafaf17ccfc3418d4c36f5ef2d4f2"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/android-preflight-verification.json",
+      "bytes": 1365,
+      "sha256": "778c771ec62eb24d13f464a740f624abeb45d92b20083a90a7ab49761412adf3"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/android-debug-package-rejection.json",
+      "bytes": 6450,
+      "sha256": "fa0f45966caaf85fdb616559f99df653e2296acf669d324cf27ce529c060af0f"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/source-snapshots/test_family_android_acceptance.ps1",
+      "bytes": 18152,
+      "sha256": "4b7c6bf3defdf97aca9ee016481b5ae34cb9b320916588a18af3231253eca389"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/logs/provider-deployment-regression.log",
+      "bytes": 6596,
+      "sha256": "1c5a830bba322c67568ef3980680962a1f2b938d23d41f37967905ec6f361070"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/logs/backend-full.log",
+      "bytes": 2296252,
+      "sha256": "40f5c75cf90a9446c653f185d471b1e258439e3e5a89dede482dc4ec25d97cd2"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/logs/backend-package.log",
+      "bytes": 2365,
+      "sha256": "30880b14d34917fa7257e01678382f5a97fe2e5ba7c7787429c0d6a54377c951"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/logs/guardian-production-http.log",
+      "bytes": 53,
+      "sha256": "ba7a86d06e1f9f74eb582203fd3d5c48f908659b87eae68f1392ab794ea70b6f"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/mysql-reports/com.aimanager.identityproviders.internal.IdentityProviderAdminJourneyTest.txt",
+      "bytes": 985,
+      "sha256": "1b9ff27b921d313072a5866063e016735c1dac2c55f0c0303dd0d3c39df83a9c"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/mysql-reports/com.aimanager.identityproviders.internal.ProviderAcceptanceReadinessJourneyTest.txt",
+      "bytes": 413,
+      "sha256": "f818e07550f763cedd23cb0d65e1d7b2d5cf3ddbb4420464a33248f2b6a3a9d6"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/mysql-reports/com.aimanager.identityproviders.internal.ProviderControlledReleaseJourneyTest.txt",
+      "bytes": 409,
+      "sha256": "bdae65d173640c6ccff263d2ce76b05b8355883b71c47efc811b79ca80e0d424"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/mysql-reports/TEST-com.aimanager.identityproviders.internal.IdentityProviderAdminJourneyTest.xml",
+      "bytes": 69108,
+      "sha256": "99046634b7bb4e786e6ef34847b19c4459b6a17293b02354dad3d5a03f381958"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/mysql-reports/TEST-com.aimanager.identityproviders.internal.ProviderAcceptanceReadinessJourneyTest.xml",
+      "bytes": 75315,
+      "sha256": "c7b8fe10a5f8b9299a975d1e6c908ea8a974e51bbc644753577a6071eff2fdb9"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/mysql-reports/TEST-com.aimanager.identityproviders.internal.ProviderControlledReleaseJourneyTest.xml",
+      "bytes": 119481,
+      "sha256": "8a159d522006e548bd938684a2ef526e34cdc68deffad2d619cbcb80a7fe9dc5"
+    },
+    {
+      "path": ".local/family-provider-acceptance-20261017-r3/artifacts/native-mysql-cleanup.json",
+      "bytes": 436,
+      "sha256": "debd4c9c25aed4205b1e8037917e522899b80b453ab81200e169e98725ce9355"
+    }
+  ]
+}

@@ -1,0 +1,4 @@
+# Active releases pin an existing verified identity image. Backend and edge keep their normal build flow.
+services:
+  identity:
+    build: !reset null

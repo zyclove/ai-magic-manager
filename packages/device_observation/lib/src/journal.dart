@@ -8,6 +8,8 @@ import 'permission_snapshot.dart';
 class ObservationJournal {
   final ObservationScope scope;
   final ObservationStore store;
+  String? _serialized;
+  bool _loaded = false;
   ObservationAuthorization? authorization;
   PermissionObservationAuthorization? permissionAuthorization;
   int inventorySequence = 0,
@@ -20,9 +22,14 @@ class ObservationJournal {
   Map<String, dynamic>? pendingInventory, pendingUsage, pendingPermission;
   ObservationJournal(this.scope, this.store);
   Future<void> load() async {
+    _loaded = false;
     try {
       final encoded = await store.read();
-      if (encoded == null) return;
+      if (encoded == null) {
+        _serialized = null;
+        _loaded = true;
+        return;
+      }
       if (utf8.encode(encoded).length > 1048576) throw const FormatException();
       final json = jsonDecode(encoded);
       if (json is! Map<String, dynamic> || json['schema'] is! int) {
@@ -113,6 +120,8 @@ class ObservationJournal {
       if ((pendingInventory == null) != (pendingInventoryAt == null)) {
         throw const FormatException();
       }
+      _serialized = encoded;
+      _loaded = true;
     } catch (_) {
       throw const ObservationFailure('OBSERVATION_STORAGE_FAILED');
     }
@@ -207,6 +216,7 @@ class ObservationJournal {
 
   Future<void> save() async {
     try {
+      if (!_loaded) throw const FormatException();
       final encoded = jsonEncode({
         'schema': 2,
         'scope': scope.storageKey,
@@ -227,7 +237,17 @@ class ObservationJournal {
         'usageCount': usageCount
       });
       if (utf8.encode(encoded).length > 1048576) throw const FormatException();
-      await store.write(encoded);
+      if (store is ObservationCompareAndSet) {
+        final applied = await (store as ObservationCompareAndSet)
+            .compareAndSet(expected: _serialized, replacement: encoded);
+        if (!applied)
+          throw const ObservationFailure('OBSERVATION_STATE_CONFLICT');
+      } else {
+        await store.write(encoded);
+      }
+      _serialized = encoded;
+    } on ObservationFailure {
+      rethrow;
     } catch (_) {
       throw const ObservationFailure('OBSERVATION_STORAGE_FAILED');
     }

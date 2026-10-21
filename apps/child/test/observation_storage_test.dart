@@ -1,6 +1,7 @@
 import 'package:child/platform/secret_store.dart';
 import 'package:device_observation/device_observation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -13,13 +14,15 @@ void main() {
     const runtime = MethodChannel('com.aimanager.child/runtime');
     final calls = <String>[];
     var durable = true;
+    String? record='encrypted-plugin-returned-record';
     messenger.setMockMethodCallHandler(plugin, (call) async {
       expect((call.arguments as Map)['key'], 'observation_record');
       final options = (call.arguments as Map)['options'] as Map;
       expect(options['sharedPreferencesName'], 'aimanager_identity_v1');
       expect(options['resetOnError'], 'false');
       calls.add(call.method);
-      return call.method == 'read' ? 'encrypted-plugin-returned-record' : null;
+      if(call.method=='write')record=(call.arguments as Map)['value'] as String;
+      return call.method == 'read' ? record : null;
     });
     messenger.setMockMethodCallHandler(runtime, (call) async {
       calls.add('flush');
@@ -29,11 +32,12 @@ void main() {
       messenger.setMockMethodCallHandler(plugin, null);
       messenger.setMockMethodCallHandler(runtime, null);
     });
-    final store = AndroidObservationStore(available: () => true);
+    final store = AndroidObservationStore(
+        storage:const FlutterSecureStorage(aOptions:AndroidIdentityStore.options),available: () => true);
     await store.write('test-only');
-    expect(calls, ['write', 'flush']);
-    expect(await store.read(), 'encrypted-plugin-returned-record');
-    expect(calls, ['write', 'flush', 'read', 'flush']);
+    expect(calls, ['read','flush','read','flush','write','flush','read','flush']);
+    expect(await store.read(), 'test-only');
+    expect(calls.last,'flush');
     durable = false;
     await expectLater(
         store.write('test-only'), throwsA(isA<ObservationFailure>()));

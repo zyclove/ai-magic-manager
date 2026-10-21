@@ -59,6 +59,68 @@ class UsageReportJourneyTest {
   }
 
   @Test
+  void expiredMembershipGatesAdultAndDeviceHistoryEquallyWhileTodayAndRenewalRemainAvailable()
+      throws Exception {
+    batch(1, 2000, now);
+    String token = reportDeviceCredential().credential();
+    read(owner).andExpect(status().isOk());
+    mvc.perform(deviceReport(token)).andExpect(status().isOk());
+    long historicalFrom = from, historicalTo = to;
+    db.update("UPDATE commercial_sources SET expires_at=? WHERE tenant_id=?", now - 1, tenant);
+    read(owner).andExpect(status().isPaymentRequired())
+        .andExpect(jsonPath("$.errorCode").value("ENTITLEMENT_REQUIRED"));
+    mvc.perform(deviceReport(token)).andExpect(status().isPaymentRequired())
+        .andExpect(jsonPath("$.errorCode").value("ENTITLEMENT_REQUIRED"));
+
+    from = Instant.ofEpochMilli(now).atZone(ZoneId.of("Asia/Shanghai"))
+        .toLocalDate().atStartOfDay(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli();
+    to = now;
+    batch(2, 3000, now);
+    JsonNode adultToday = body(read(owner).andExpect(status().isOk()));
+    JsonNode deviceToday = body(mvc.perform(deviceReport(token)).andExpect(status().isOk()));
+    assertThat(deviceToday.path("from").asLong()).isEqualTo(from);
+    assertThat(deviceToday.path("devices").get(0).path("applications"))
+        .isEqualTo(adultToday.path("devices").get(0).path("applications"));
+    assertThat(deviceToday.path("devices").get(0).path("sourceBatchCount").asInt()).isEqualTo(1);
+    assertThat(deviceToday.path("devices").get(0).path("applications").get(0)
+        .path("packageName").asText()).isEqualTo("org.example.reader");
+
+    long renewed = System.currentTimeMillis();
+    db.update("INSERT INTO commercial_sources(tenant_id,source_system,source_key,source_revision,product_key,capacity_kind,device_capacity,features_json,active_from,expires_at,state,payload_hash,evidence_hash,verified_by,verified_at)"
+        + " VALUES(?,'CONTRACT',?,1,'FAMILY','BASE',3,'[]',?,?,'ACTIVE',?,?,'system:report-renewal-fixture',?)",
+        tenant, "d".repeat(64), renewed - 1000, renewed + 86400000,
+        "e".repeat(64), "f".repeat(64), renewed);
+    from = historicalFrom;
+    to = historicalTo;
+    read(owner).andExpect(status().isOk());
+    mvc.perform(deviceReport(token)).andExpect(status().isOk())
+        .andExpect(jsonPath("$.devices[0].applications[0].buckets[0].lowerMillis").value(2000));
+  }
+
+  @Test
+  void freeHistoryBoundaryIsShanghaiMidnightForBothAdultAndDeviceRegardlessOfQueryZone()
+      throws Exception {
+    db.update("UPDATE commercial_sources SET expires_at=? WHERE tenant_id=?", now - 1, tenant);
+    String token = reportDeviceCredential().credential();
+    long today = Instant.ofEpochMilli(now).atZone(ZoneId.of("Asia/Shanghai"))
+        .toLocalDate().atStartOfDay(ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli();
+    for (String zone : List.of("UTC", "America/Los_Angeles", "Pacific/Kiritimati")) {
+      mvc.perform(get(root).with(actor(owner)).param("deviceId", device)
+          .param("from", "" + (today - 1)).param("to", "" + now).param("timeZone", zone))
+          .andExpect(status().isPaymentRequired());
+      mvc.perform(get("/api/v1/device-api/usage-report").header("Authorization", "Bearer " + token)
+          .param("from", "" + (today - 1)).param("to", "" + now).param("timeZone", zone))
+          .andExpect(status().isPaymentRequired());
+      mvc.perform(get(root).with(actor(owner)).param("deviceId", device)
+          .param("from", "" + today).param("to", "" + now).param("timeZone", zone))
+          .andExpect(status().isOk()).andExpect(jsonPath("$.from").value(today));
+      mvc.perform(get("/api/v1/device-api/usage-report").header("Authorization", "Bearer " + token)
+          .param("from", "" + today).param("to", "" + now).param("timeZone", zone))
+          .andExpect(status().isOk()).andExpect(jsonPath("$.from").value(today));
+    }
+  }
+
+  @Test
   void deviceReportUsesItsAuthenticatedScopeAndTheSameAggregationAndConfigurationEvidence()
       throws Exception {
     batch(1, 2000, now);
@@ -1155,6 +1217,7 @@ class UsageReportJourneyTest {
                 .andExpect(status().isCreated()))
             .path("id")
             .asText();
+    PaidFamilyReportFixture.grant(db,tenant,now);
     subject = UUID.randomUUID().toString();
     device = UUID.randomUUID().toString();
     registration = UUID.randomUUID().toString();

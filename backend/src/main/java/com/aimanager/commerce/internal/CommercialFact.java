@@ -20,6 +20,8 @@ record CommercialFact(
     String evidenceHash,
     String verifiedBy) {
   enum SourceSystem {
+    WECHAT_PAY,
+    TRIAL,
     GOOGLE_PLAY,
     APP_STORE,
     CONTRACT,
@@ -37,6 +39,9 @@ record CommercialFact(
   }
 
   enum Feature {
+    FAMILY_MULTI_DEVICE,
+    FAMILY_ASSISTED_LIMITS,
+    REPORT_HISTORY,
     ADVANCED_SCHEDULES,
     WEB_FILTERING,
     MANAGED_ANDROID,

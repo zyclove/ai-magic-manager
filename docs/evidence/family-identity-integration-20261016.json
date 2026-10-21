@@ -1,0 +1,419 @@
+{
+  "schemaVersion": 1,
+  "kind": "family-identity-integration-acceptance",
+  "generatedAt": "2026-10-17T01:54:37.675195+00:00",
+  "completedClientDate": "2026-10-17",
+  "clientTimezone": "Asia/Shanghai",
+  "baseline": {
+    "head": "a74668c01ca4e6c893da7a37482eda12e925acd3",
+    "preservedSourceFiles": 1816,
+    "manifestSha256": "e2250c3f749c45821512fd534e7b37cee34ec30435dccacefe52a524d5098c29"
+  },
+  "backendFullFrozenRun": {
+    "tests": 1983,
+    "passed": 1907,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 76,
+    "exitCode": 0,
+    "manifestSha256": "1e343bed323593eda5dca9e60f3274cb9c33000048f879e6c676415e955d97b1"
+  },
+  "backendSupplementalConditions": {
+    "counts": [
+      {
+        "status": "NOT_EXECUTED",
+        "count": 9
+      },
+      {
+        "status": "PASSED",
+        "count": 67
+      }
+    ],
+    "notExecuted": [
+      {
+        "class": "com.aimanager.AndroidChildSubmissionJourneyTest",
+        "test": "realEnrollmentNativeCrashRecoveryAndRevocation"
+      },
+      {
+        "class": "com.aimanager.AndroidCleanupHttpsJourneyTest",
+        "test": "nativeOriginalKeyExecutesRealHttpsCleanupAndRetainsAcknowledgedJournal"
+      },
+      {
+        "class": "com.aimanager.retention.internal.ErasureAdmissionStoreTest",
+        "test": "leastPrivilegeRuntimeCanDrainWorkButCannotRewriteAcceptedRecords"
+      },
+      {
+        "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+        "test": "mismatchedIdentityAndMissingLedgerAreReportedWithoutAutomaticRecreation"
+      },
+      {
+        "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+        "test": "servletAsyncCannotEscapeTheRegisteredSynchronousPermit"
+      },
+      {
+        "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+        "test": "acceptedLedgerStopsAuthorizedBusinessRequestsWithoutDeletingTheirData"
+      },
+      {
+        "class": "com.aimanager.retention.internal.ErasureLedgerRuntimeTest",
+        "test": "realHttpRequestDrainsBeforeAcceptanceAndProbesRemainAvailable"
+      },
+      {
+        "class": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+        "test": "nonTransactionalEngineIsRejectedBeforeAppending"
+      },
+      {
+        "class": "com.aimanager.retention.internal.ErasureLedgerStoreTest",
+        "test": "initializationPinsTransactionalEngineEvenWhenServerDefaultDiffers"
+      }
+    ],
+    "mappingSha256": "411c7a7be670dc500cf0294ee31d7946a96a29dd9c2b8a802129d27ec00a957a",
+    "doesNotRewriteBaselineSkippedResults": true
+  },
+  "latestManagedFrozenRun": {
+    "tests": 676,
+    "passed": 676,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "exitCode": 0,
+    "manifestSha256": "e42f60108294809e07419b524f98dc8f6dba30412e1ae97243bd68ff3646df9f",
+    "overlapsEarlierManagedRuns": true
+  },
+  "frontend": {
+    "projects": [
+      {
+        "project": "apps/parent",
+        "analysisExit": 0,
+        "testExit": 0,
+        "summary": "01:36 +518: All tests passed!",
+        "passedTests": 518
+      },
+      {
+        "project": "apps/guardian",
+        "analysisExit": 0,
+        "testExit": 0,
+        "summary": "00:43 +631: All tests passed!",
+        "passedTests": 631
+      },
+      {
+        "project": "apps/child",
+        "analysisExit": 0,
+        "testExit": 0,
+        "summary": "01:16 +232: All tests passed!",
+        "passedTests": 232
+      },
+      {
+        "project": "packages/audit_client",
+        "analysisExit": 0,
+        "testExit": null,
+        "summary": "No package test suite; analyzed and exercised transitively by client suites.",
+        "testStatus": "NOT_APPLICABLE_NO_TEST_FILES",
+        "passedTests": null
+      },
+      {
+        "project": "packages/commerce_contracts",
+        "analysisExit": 0,
+        "testExit": null,
+        "summary": "No package test suite; analyzed and exercised transitively by client suites.",
+        "testStatus": "NOT_APPLICABLE_NO_TEST_FILES",
+        "passedTests": null
+      },
+      {
+        "project": "packages/device_access",
+        "analysisExit": 0,
+        "testExit": 0,
+        "summary": "00:11 +128: All tests passed!",
+        "passedTests": 128
+      },
+      {
+        "project": "packages/device_cleanup",
+        "analysisExit": 0,
+        "testExit": 0,
+        "summary": "00:02 +74: All tests passed!",
+        "passedTests": 74
+      },
+      {
+        "project": "packages/device_identity",
+        "analysisExit": 0,
+        "testExit": 0,
+        "summary": "00:01 +83: All tests passed!",
+        "passedTests": 83
+      },
+      {
+        "project": "packages/device_observation",
+        "analysisExit": 0,
+        "testExit": 0,
+        "summary": "00:00 +19: All tests passed!",
+        "passedTests": 19
+      },
+      {
+        "project": "packages/device_operations",
+        "analysisExit": 0,
+        "testExit": 0,
+        "summary": "00:01 +42: All tests passed!",
+        "runner": "flutter_test",
+        "passedTests": 42
+      },
+      {
+        "project": "packages/device_policy",
+        "analysisExit": 0,
+        "testExit": 0,
+        "summary": "00:01 +64: All tests passed!",
+        "passedTests": 64
+      },
+      {
+        "project": "packages/device_reports",
+        "analysisExit": 0,
+        "testExit": 0,
+        "summary": "00:00 +5: All tests passed!",
+        "passedTests": 5
+      },
+      {
+        "project": "packages/notification_client",
+        "analysisExit": 0,
+        "testExit": null,
+        "summary": "No package test suite; analyzed and exercised transitively by client suites.",
+        "passedTests": null
+      },
+      {
+        "project": "packages/usage_reporting",
+        "analysisExit": 0,
+        "testExit": 0,
+        "summary": "00:00 +2: All tests passed!",
+        "passedTests": 2
+      },
+      {
+        "project": "packages/usage_report_ui",
+        "analysisExit": 0,
+        "testExit": 0,
+        "summary": "00:03 +18: All tests passed!",
+        "passedTests": 18
+      }
+    ],
+    "browserOnlyGuardianTests": 19,
+    "sourceManifestSha256": "cd603915b4949730cdcb5e4aca9b0e95adf28880809dfd8a32fe32aaf626e02f"
+  },
+  "identityExtension": {
+    "tests": 66,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "newSerializationRegressionTests": 5,
+    "serializationRedAssertions": 5,
+    "currentReadRegressionTests": 13,
+    "netAddedCurrentReadTests": 12,
+    "providerSha256": "fda8d862715a1293e2891f78821c1f58eb5c7c33fbad2c486493fbb3692a8607",
+    "priorSerializationFixGreenLogSha256": "a3a34524f02f31edcf9eb4220f2e2c4f2957549c49fd59cfc6764747e5ead3ea",
+    "subsequentMysqlCurrentReadCorrection": true,
+    "currentReadFixLogSha256": "b6f7adcaf40caeca23412395a3c7828cb83aed57e970e86b3c254404fce83dac"
+  },
+  "deliveryArtifact": {
+    "path": ".local/family-p0-integration-20261016/artifacts/identity-20261017/consumer-identity-1.0.0.jar",
+    "sha256": "fda8d862715a1293e2891f78821c1f58eb5c7c33fbad2c486493fbb3692a8607",
+    "manifestSha256": "d6ca5f88ff5be11a1e2798d60ffa66a33531a1a4a497632157277bd4c4467634",
+    "sourceFilesMatchTestedSnapshot": true,
+    "existingDeploymentReplaced": false
+  },
+  "offlineTools": {
+    "deploymentCore": {
+      "tests": 27,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "logSha256": "e64b38875bf63c9227c16bd603e057c1a2c2ba95dfb975aa6020865c02c2843d"
+    },
+    "deploymentFamilyAndAiTools": {
+      "tests": 26,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "logSha256": "17b026975c5d8f3bb8c84e628a8b4bbafa13285e74a0cfe60fe48cbf00d9e8c9"
+    },
+    "consoleActivationAndStartup": {
+      "tests": 67,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "logSha256": "8aa8f3b6f821e668efdcdd64c894c6ca2ee3e13e47f8d64bff671271d8723e23"
+    },
+    "providerAcceptanceTools": {
+      "tests": 17,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "logSha256": "37567ad3209b07824e9e4fdb50e6fbe96748a113cc172d277e0d0b379528dc15"
+    },
+    "mysqlAcceptanceSafetyTools": {
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "logSha256": "5f12811d067ff303a4de9a23a635a6506a10d23025b2e5c2d690802e1a747d0b"
+    },
+    "childNativeRunners": {
+      "tests": 21,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "logSha256": "fa8b44a46af1e38261b1986bd5fcb18b2653cf8aa32883deaf288ad4423c40f1"
+    }
+  },
+  "wechatNativeState": {
+    "checks": 5,
+    "realWechatAuthorization": false
+  },
+  "isolatedMysqlOidc": {
+    "passed": [
+      "https-trusted-test-certificate-and-hostname-mismatch-rejected",
+      "https-only-runtime-plaintext-http-listener-closed",
+      "mysql84-repeatable-read",
+      "production-resource-authentication-boundary",
+      "real-oidc-pkce-phone-registration-simulated-sms",
+      "actual-online-and-offline-sessions-created",
+      "binding-rotates-revision-and-revokes-old-online-offline-sessions",
+      "linked-wechat-login-simulated-exchange",
+      "stale-identity-revision-rejected",
+      "phone-change-preserves-subject-removes-old-phone-and-revokes-old-session",
+      "bound-wechat-account-recovery-preserves-subject",
+      "wechat-unlink-retains-phone-and-blocks-unbound-unknown-recovery",
+      "wechat-rebind-after-unlink",
+      "mysql-rr-preloaded-locked-user-sees-current-enabled-revision-and-attribute",
+      "refresh-preserves-existing-model-references-and-pending-writes",
+      "mysql-rr-owner-federated-identity-current-read-after-committed-link",
+      "mysql-rr-actor-federated-identity-current-read-after-committed-link",
+      "real-pessimistic-realm-lock-wait-and-rollback-release",
+      "concurrent-two-actors-same-phone-exactly-one-commits",
+      "concurrent-two-actors-same-openid-exactly-one-commits",
+      "concurrent-same-actor-stale-version-cannot-overwrite"
+    ],
+    "count": 21,
+    "realMysqlAcceptance": true,
+    "realOidcPkce": true,
+    "realSupplierAcceptance": false,
+    "providerSha256": "fda8d862715a1293e2891f78821c1f58eb5c7c33fbad2c486493fbb3692a8607",
+    "images": {
+      "quay.io/keycloak/keycloak:26.8.0": "sha256:43ebe9d4e97c2e5483b7637edf474e6adc1bbf4832a7396686cf90259c396d42",
+      "mysql:8.4.11": "sha256:8d132912e9d3c985237567595ec2aeae04936044eb1f9336e8e4da2326238b84"
+    },
+    "networkInternal": true,
+    "hostPorts": [],
+    "keycloakNodeCount": 1,
+    "cacheMode": "local",
+    "multiNodeInvalidationVerified": false,
+    "fixtureExcludedFromProduction": true,
+    "tlsHostnameVerification": true,
+    "trustAllCertificates": false,
+    "realmSslRequired": "external"
+  },
+  "isolatedRuntimeCleanup": {
+    "containersRemoved": 2,
+    "networkRemoved": true,
+    "labelVerified": true,
+    "existingServicesTouched": false
+  },
+  "scratchHygiene": {
+    "inventoriedBeforeCleanup": true,
+    "finishedTmpDirectoriesRemoved": 3,
+    "uniqueSourcesAndArtifactsPreserved": true,
+    "rootDirectoriesCreated": false,
+    "machineOrUserEnvironmentChanged": false,
+    "receiptSha256": "0511dd6d5b200906a6b24a284f8a0b2a5213c5c93cb4c08f8d6b8a02c660a75d"
+  },
+  "providers": {
+    "realChecksPassed": 0,
+    "realChecksRequired": 12,
+    "acceptanceStatus": "BLOCKED",
+    "providerRequestsPerformed": false,
+    "configurationManagementUi": "deferred-by-user-not-implemented",
+    "finalPreflightSha256": "385bdfd63153becc0f6fba8153ea5a404196b65f45606f7936cd44dfd0f20fb1"
+  },
+  "sourceFiles": [
+    {
+      "path": "identity-extensions/pom.xml",
+      "sha256": "73c7fe28469d1a06e4278ec6e63317d8ae9bdb6ba070bb9b1fdc41a38f680722"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerClaimsMapper.java",
+      "sha256": "ab105651a4fe9a6cee8baf91c9e6bbc30d9186e54d5efebe73e0d12a31472be9"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerAccountResource.java",
+      "sha256": "b5ff8bf4d464dcec02ce35bee48be263a2031955767bf6454c9e7fe124fd6093"
+    },
+    {
+      "path": "identity-extensions/src/main/java/com/aimanager/identity/ConsumerIdentityTransactions.java",
+      "sha256": "26b3791e1ebdcf6d12bac7edbf29407886e4209f55f885eedd6718cdcb170fb4"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerClaimsSerializationTest.java",
+      "sha256": "4edf8b0bc5b25492552183c6defcd85f046316bdee75542b47c6a036091362b1"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerIdentityTransactionsTest.java",
+      "sha256": "a8436e531a89c4fbb17a59d1b25d054c800f7a618cf0afdbbe52d1290ab282a5"
+    },
+    {
+      "path": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerAccountFlowTest.java",
+      "sha256": "68199345baa017244fe8e348d53d189ae2074e7f8df5aaef78a1ae8d17a0d54b"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/GuardianEnrollmentRecoveryHttpInteropTest.java",
+      "sha256": "8ede9e9ad76676c36490adf99b6e8bc187d04c984987a5119b42cecf60bee183"
+    },
+    {
+      "path": "scripts/test_family_identity_mysql.ps1",
+      "sha256": "ef1db52a5e01baa871f42a1116ffa11a9fb1042e3564d43fbf69e4d6f2ca2f6d"
+    },
+    {
+      "path": "scripts/test_family_identity_providers.ps1",
+      "sha256": "ab8a6c724e0482afce63163d9d7e421049adc0564764526108e4b036c45e8d9f"
+    },
+    {
+      "path": "scripts/identity_acceptance/MysqlIdentityAcceptance.java",
+      "sha256": "3a187d6b8e3bd08c279ad3aa3f460971dd92dc2f4ab8d764fcf5a78946ccb1cc"
+    },
+    {
+      "path": "scripts/identity_acceptance/MysqlAcceptanceFactory.java",
+      "sha256": "05bc634686a14de8dcc732532ffc9b065ba8b2f3fa0dd9a08c586738e18d9fa0"
+    },
+    {
+      "path": "scripts/identity_acceptance/MysqlAcceptanceAuthenticatorFactory.java",
+      "sha256": "3b511a557c3617e597a9d15581210f3045ae3d28690e6eb1ab4419669db9ed60"
+    },
+    {
+      "path": "scripts/tests/test_family_identity_mysql.py",
+      "sha256": "cafe174e8086632f9bd23013a04d65ffbd9b11563df782850b34cb2b27ca76b7"
+    },
+    {
+      "path": "scripts/tests/test_family_identity_providers.py",
+      "sha256": "eddfcd1aea13358be5921390fec322f83a2fd23e9478a19083b6e8621b950a85"
+    }
+  ],
+  "scopeDecision": {
+    "familyAccountDelivery": "complete-in-isolated-supplier-fixture-environment",
+    "parallelManagedExecutionUi": "deferred-by-explicit-user-choice-2026-10-17"
+  },
+  "latestGuardianParallelSnapshot": {
+    "passedTests": 730,
+    "failedToLoadSuites": 2,
+    "analysisIssues": 11,
+    "analysisExit": 1,
+    "testExit": 1,
+    "reason": "Parallel managed execution controller and dialog files not implemented in the tested snapshot.",
+    "sourceManifestSha256": "620fd4a004af2ab5be3c2108b9dec272ec696759c9e7935bf8f33b95a211a1be",
+    "testLogSha256": "a1fde7978e8f549c56ac468032390f2190019e92710d0dd03287bfb8ac1f7a57",
+    "analysisLogSha256": "99ed567e1c41801c2479215ec0256fa595b98aebe6c257a4b455c0c43756a5a6"
+  },
+  "wholeCurrentProjectAllGreen": false,
+  "salesEnabled": false,
+  "liveDeploymentChanged": false,
+  "limitations": [
+    "Real SMS and WeChat are not accepted; supplier transports are private fixtures.",
+    "Single Keycloak node with local cache; multi-node invalidation is not accepted.",
+    "Two Android and seven independent retention-MySQL baseline conditions were not executed.",
+    "Baseline, supplemental and managed runs use separate frozen manifests; this is not a single combined current-worktree run.",
+    "Existing deployment artifacts remain unchanged; the corrected JAR is an explicitly pinned new validation build.",
+    "Original 2026-10-16 snapshots are retained as evidence; new 2026-10-17 scratch uses ignored repository .cache."
+  ]
+}

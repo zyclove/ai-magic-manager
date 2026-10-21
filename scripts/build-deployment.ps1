@@ -14,11 +14,15 @@ param(
     [string]$FlutterCommand = 'flutter',
     [string]$DartCommand = '',
     [string]$MavenRepository = '',
+    [switch]$ConsumerIdentity,
     [switch]$Offline
 )
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'deployment-common.ps1')
 $context = Get-DeploymentContext $Directory
+if (($context.Settings.consumerIdentity -eq $true) -ne $ConsumerIdentity.IsPresent) {
+    throw 'ConsumerIdentity must match the initialized deployment.'
+}
 $source = [IO.Path]::GetFullPath($SourceDirectory, $context.Repository)
 $applicationPaths = @('apps/guardian', 'apps/child', 'apps/parent')
 $interopPaths = [ordered]@{
@@ -33,6 +37,12 @@ $interopPaths = [ordered]@{
     'diagnostic.guardian.package' = 'apps/guardian'
 }
 $required = @('backend/pom.xml', 'packages/device_operations/pubspec.yaml') + @(@($applicationPaths) + @($interopPaths.Values) | Select-Object -Unique | ForEach-Object { "$_/pubspec.yaml" })
+if ($ConsumerIdentity) {
+    $required += @('identity-extensions/pom.xml', 'identity-extensions/maven-settings.xml',
+        'identity-extensions/src/main/resources/META-INF/services/org.keycloak.authentication.AuthenticatorFactory',
+        'identity-extensions/src/main/resources/META-INF/services/org.keycloak.protocol.ProtocolMapper',
+        'deploy/keycloak/entrypoint.sh', 'deploy/containers/keycloak.Dockerfile')
+}
 foreach ($name in $required) {
     if (-not (Test-Path -LiteralPath (Join-Path $source $name) -PathType Leaf)) { throw 'Source snapshot is missing a required project file.' }
 }
@@ -52,12 +62,30 @@ function CopySourceTree([string]$From, [string]$To) {
     $null = New-Item -ItemType Directory -Path $To -Force
     foreach ($entry in Get-ChildItem -LiteralPath $From -Force) {
         if ($entry.Name -in @('.git', '.local', 'target', 'build', '.dart_tool', '__pycache__') -or $entry.Name -like '.flutter-plugins*') { continue }
+        # Provider binaries can enter a release only from this snapshot's successful SPI verification.
+        if ($entry.Name -eq 'providers' -and (Split-Path $From -Leaf) -eq 'keycloak') { continue }
         if ($entry.Attributes -band [IO.FileAttributes]::ReparsePoint) { throw 'Source snapshots must not contain symbolic links.' }
         if ($entry.PSIsContainer) { CopySourceTree $entry.FullName (Join-Path $To $entry.Name) }
         else { Copy-Item -LiteralPath $entry.FullName -Destination (Join-Path $To $entry.Name) }
     }
 }
 foreach ($name in @('backend', 'packages') + $applicationPaths) { CopySourceTree (Join-Path $source $name) (Join-Path $snapshot $name) }
+$verifiedProjects = @()
+if ($ConsumerIdentity) {
+    foreach ($name in @('identity-extensions', 'deploy/keycloak', 'deploy/containers')) {
+        CopySourceTree (Join-Path $source $name) (Join-Path $snapshot $name)
+    }
+    $identityArgs = @('-B', '-f', (Join-Path $snapshot 'identity-extensions/pom.xml'),
+        '-s', (Join-Path $snapshot 'identity-extensions/maven-settings.xml'), 'verify', '-DfailIfNoTests=true')
+    if ($Offline) { $identityArgs += '-o' }
+    if ($MavenRepository) { $identityArgs += "-Dmaven.repo.local=$([IO.Path]::GetFullPath($MavenRepository, $context.Repository))" }
+    Write-Output 'Verifying consumer identity source snapshot...'
+    Invoke-DeploymentNative $MavenCommand $identityArgs (Join-Path $logs 'consumer-identity-verify.log')
+    if (-not (Test-Path -LiteralPath (Join-Path $snapshot 'identity-extensions/target/consumer-identity-1.0.0.jar') -PathType Leaf)) {
+        throw 'Consumer identity verification did not produce the expected provider JAR.'
+    }
+    $verifiedProjects += @{path='identity-extensions'; toolkit='maven'; analysis='compiled'; tests='passed'}
+}
 $projects = @(
     foreach ($path in $applicationPaths + @(Get-ChildItem -LiteralPath (Join-Path $snapshot 'packages') -Filter 'pubspec.yaml' -Recurse -File | Sort-Object FullName | ForEach-Object { [IO.Path]::GetRelativePath($snapshot, $_.DirectoryName).Replace('\', '/') })) {
         $pubspecPath = Join-Path $snapshot "$path/pubspec.yaml"
@@ -107,7 +135,6 @@ foreach ($property in $interopPaths.Keys) {
 }
 Write-Output 'Verifying backend source snapshot...'
 Invoke-DeploymentNative $MavenCommand $mavenArgs (Join-Path $logs 'backend-verify.log')
-$verifiedProjects = @()
 foreach ($project in $projects) {
     Write-Output "Verifying $($project.Path)..."
     Push-Location -LiteralPath (Join-Path $snapshot $project.Path)
@@ -137,12 +164,24 @@ $guardianContext = Join-Path $releaseRoot 'guardian'
 $null = New-Item -ItemType Directory -Path $backendContext, $guardianContext
 Copy-Item -LiteralPath (Join-Path $snapshot 'backend/target/manager-backend.jar') -Destination (Join-Path $backendContext 'manager-backend.jar')
 Copy-Item -Path (Join-Path $snapshot 'apps/guardian/build/web/*') -Destination $guardianContext -Recurse -Force
+$identityProviderHash = $null
+if ($ConsumerIdentity) {
+    $identityContext = Join-Path $releaseRoot 'keycloak'
+    CopySourceTree (Join-Path $snapshot 'deploy/keycloak') (Join-Path $identityContext 'keycloak')
+    CopySourceTree (Join-Path $snapshot 'deploy/containers') (Join-Path $identityContext 'containers')
+    $providerDirectory = Join-Path $identityContext 'keycloak/providers'
+    $null = New-Item -ItemType Directory -Path $providerDirectory
+    $provider = Join-Path $providerDirectory 'consumer-identity-1.0.0.jar'
+    Copy-Item -LiteralPath (Join-Path $snapshot 'identity-extensions/target/consumer-identity-1.0.0.jar') -Destination $provider
+    $identityProviderHash = (Get-FileHash -LiteralPath $provider -Algorithm SHA256).Hash.ToLowerInvariant()
+}
 $files = Get-ChildItem -LiteralPath $snapshot -Recurse -File | Where-Object {
     $relative = [IO.Path]::GetRelativePath($snapshot, $_.FullName)
     $relative -notmatch '(^|[\\/])(target|build|\.dart_tool|\.local)[\\/]' -and $_.Name -notlike '.flutter-plugins*'
 }
 $sourceDigests = @($files | Sort-Object FullName | ForEach-Object { @{path=[IO.Path]::GetRelativePath($snapshot, $_.FullName).Replace('\','/'); sha256=(Get-FileHash -LiteralPath $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()} })
 $manifest = @{schemaVersion=1; applicationVersion='1.0.0'; builtAt=[DateTimeOffset]::UtcNow.ToString('O'); publicUrl=$origin; sourceFiles=$sourceDigests;
+    consumerIdentity=$ConsumerIdentity.IsPresent; identityProviderSha256=$identityProviderHash;
     verifiedProjects=$verifiedProjects; interoperabilityProperties=@($interopPaths.Keys) + @(
         'device.dart.command', 'device.flutter.command', 'parent.dart.command', 'parent.flutter.tool',
         'parent.package', 'guardian.dart.command', 'guardian.flutter.tool', 'guardian.package');
@@ -151,9 +190,11 @@ $manifest = @{schemaVersion=1; applicationVersion='1.0.0'; builtAt=[DateTimeOffs
     guardianSha256=(Get-FileHash -LiteralPath (Join-Path $guardianContext 'main.dart.js') -Algorithm SHA256).Hash.ToLowerInvariant()}
 $manifestJson = $manifest | ConvertTo-Json -Depth 8
 $manifestJson | Set-Content -LiteralPath (Join-Path $releaseRoot 'release-manifest.json') -Encoding utf8
-$updatedEnvironment = @(Get-Content -LiteralPath $context.Environment | Where-Object { -not $_.StartsWith('BACKEND_BUILD_CONTEXT=') -and -not $_.StartsWith('GUARDIAN_BUILD_CONTEXT=') })
+$updatedEnvironment = @(Get-Content -LiteralPath $context.Environment | Where-Object { -not $_.StartsWith('BACKEND_BUILD_CONTEXT=') -and -not $_.StartsWith('GUARDIAN_BUILD_CONTEXT=') -and -not $_.StartsWith('KEYCLOAK_BUILD_CONTEXT=') })
 $updatedEnvironment += "BACKEND_BUILD_CONTEXT='$($backendContext.Replace('\','/'))'"
 $updatedEnvironment += "GUARDIAN_BUILD_CONTEXT='$($guardianContext.Replace('\','/'))'"
+$selectedIdentityContext = if ($ConsumerIdentity) { $identityContext } else { Join-Path $context.Repository 'deploy' }
+$updatedEnvironment += "KEYCLOAK_BUILD_CONTEXT='$($selectedIdentityContext.Replace('\','/'))'"
 $updatedEnvironment | Set-Content -LiteralPath $context.Environment -Encoding utf8
 $manifestJson | Set-Content -LiteralPath (Join-Path $context.Root 'release-manifest.json') -Encoding utf8
 Write-Output "Verified build contexts ready: $($context.Root)"

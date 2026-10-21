@@ -59,7 +59,7 @@ services:
   identity:
     image: ${IDENTITY_IMAGE:?Set IDENTITY_IMAGE}
     build:
-      context: ${REPOSITORY_ROOT:?Set REPOSITORY_ROOT}/deploy
+      context: ${KEYCLOAK_BUILD_CONTEXT:-${REPOSITORY_ROOT:?Set REPOSITORY_ROOT}/deploy}
       dockerfile: containers/keycloak.Dockerfile
       args:
         KEYCLOAK_BASE_IMAGE: ${KEYCLOAK_BASE_IMAGE:?Set KEYCLOAK_BASE_IMAGE}

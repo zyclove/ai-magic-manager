@@ -23,6 +23,7 @@ class DeviceUsageReportView extends StatefulWidget {
   final String title, description;
   final String notAuthorizedMessage;
   final DateTime Function()? now;
+  final int initialDays;
 
   /// Adult hosts opt into quick range apply and progressive disclosure.
   final bool compactControls;
@@ -45,7 +46,12 @@ class DeviceUsageReportView extends StatefulWidget {
       this.targets,
       this.compactControls = false,
       this.onManageObservation,
-      this.now});
+      this.initialDays = 7,
+      this.now})
+      : assert(initialDays == 1 ||
+            initialDays == 7 ||
+            initialDays == 14 ||
+            initialDays == 30);
   @override
   State<DeviceUsageReportView> createState() => _DeviceUsageReportViewState();
 }
@@ -82,8 +88,10 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
     } on UsageReportFailure {
       _zone = 'UTC';
     }
+    _quickDays = widget.initialDays;
     _dates = DateTimeRange(
-        start: _today.subtract(const Duration(days: 6)), end: _today);
+        start: _today.subtract(Duration(days: widget.initialDays - 1)),
+        end: _today);
     final state = WidgetsBinding.instance.lifecycleState;
     _foreground = state == null || state == AppLifecycleState.resumed;
     widget.accessChanges.addListener(_accessChanged);
@@ -423,6 +431,7 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
     final code =
         _error is UsageReportFailure ? (_error as UsageReportFailure).code : '';
     return switch (code) {
+      'ENTITLEMENT_REQUIRED' => '历史报告需要有效家庭会员。你仍可点击“今天”查看当日报告。',
       'REPORT_NOT_AVAILABLE' => '当前服务版本尚未提供本设备报表，请联系监护人检查服务更新。',
       'DEVICE_LOCKED' || 'OBSERVATION_DEVICE_LOCKED' => '请先解锁设备，再重新读取报表。',
       'SCOPE_DENIED' ||
@@ -468,9 +477,9 @@ class _DeviceUsageReportViewState extends State<DeviceUsageReportView>
           label: Text('时区：$_zone')),
     ];
     final quick = Wrap(spacing: 8, runSpacing: 8, children: [
-      for (final days in [7, 14, 30])
+      for (final days in [1, 7, 14, 30])
         ChoiceChip(
-            label: Text('近 $days 天'),
+            label: Text(days == 1 ? '今天' : '近 $days 天'),
             selected: _quickDays == days,
             onSelected: enabled
                 ? (_) {

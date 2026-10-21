@@ -435,7 +435,7 @@ class ApprovalService implements ApprovalMaintenance {
       String etag,
       String key) {
     access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN);
-    recent.require(actor);
+    recent.requireForTenant(actor, tenant, jdbc);
     if ("MEMBER".equals(row(tenant, id, false).requesterKind())
         && row(tenant, id, false).requesterKey().equals(ActorKeys.key(actor.getSubject())))
       throw new DomainException(HttpStatus.FORBIDDEN, "ACCESS_SELF_DECISION_FORBIDDEN");
@@ -561,7 +561,7 @@ class ApprovalService implements ApprovalMaintenance {
   @Transactional(timeout = 10)
   public AccessRequest revoke(String tenant, Jwt actor, String id, String etag, String key) {
     access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN);
-    recent.require(actor);
+    recent.requireForTenant(actor, tenant, jdbc);
     long expected = ResourceVersions.require(etag);
     requiredKey(key);
     return idempotency.execute(

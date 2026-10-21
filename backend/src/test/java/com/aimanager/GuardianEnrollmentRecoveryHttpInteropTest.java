@@ -7,6 +7,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.aimanager.commerce.FamilyDeviceAccess;
 import com.aimanager.identity.ActorKeys;
 import com.aimanager.shared.SecretMaterial;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,7 +37,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 /**
  * Production guardian controller and gateway against actual loopback Spring HTTP.
- * H2/Flyway, adult JWT issuance/MFA claims, and the claimed-device prerequisite
+ * H2/Flyway, adult JWT issuance/MFA claims, a three-device commercial entitlement,
+ * and the claimed-device prerequisite
  * are explicit fixtures; this is not real IdP/MFA, browser storage, or device proof acceptance.
  */
 @EnabledIfSystemProperty(named = "guardian.dart.command", matches = ".+")
@@ -53,6 +55,7 @@ class GuardianEnrollmentRecoveryHttpInteropTest {
   @Autowired MockMvc mvc;
   @Autowired ObjectMapper mapper;
   @Autowired JdbcTemplate db;
+  @Autowired FamilyDeviceAccess deviceAccess;
   @MockitoBean JwtDecoder decoder;
 
   private String create(String path, String actor, Map<String, Object> input) throws Exception {
@@ -89,6 +92,15 @@ class GuardianEnrollmentRecoveryHttpInteropTest {
     String creationId = UUID.randomUUID().toString(), claimedId = UUID.randomUUID().toString();
     String device = UUID.randomUUID().toString(), registration = UUID.randomUUID().toString();
     long now = System.currentTimeMillis();
+    // This recovery scenario uses two device seats. A free family has one seat;
+    // commercial admission stays enabled, with an explicit local paid fixture.
+    db.update("INSERT INTO commercial_accounts(tenant_id,version) VALUES(?,1)", tenant);
+    db.update("INSERT INTO commercial_sources(tenant_id,source_system,source_key,source_revision,"
+            + "product_key,capacity_kind,device_capacity,features_json,active_from,expires_at,"
+            + "state,payload_hash,evidence_hash,verified_by,verified_at) "
+            + "VALUES(?,'CONTRACT',?,1,'FAMILY','BASE',3,'[]',?,?,'ACTIVE',?,?,'system:guardian-enrollment-fixture',?)",
+        tenant, "a".repeat(64), now - 86_400_000, now + 86_400_000,
+        "b".repeat(64), "c".repeat(64), now);
     db.update("INSERT INTO devices(tenant_id,id,subject_id,registration_id,display_name,platform,"
             + "os_version,state,public_key_jwk,key_thumbprint,created_at) "
             + "VALUES(?,?,?,?,?,'ANDROID','14','AWAITING_CONFIRMATION','{}','fixture',?)",
@@ -98,6 +110,7 @@ class GuardianEnrollmentRecoveryHttpInteropTest {
             + "VALUES(?,?,?,?,'ANDROID','BYOD',?,'AWAITING_CONFIRMATION',?,?,?,?)",
         tenant, claimedId, subject, owner, SecretMaterial.hash(SecretMaterial.token()),
         now, now + 900_000, device, SecretMaterial.hash("A1B2C3D4"));
+    assertThat(deviceAccess.state(tenant).effectiveDeviceLimit()).isEqualTo(3);
 
     var fixture = new LinkedHashMap<String, Object>();
     fixture.put("testOnly", true);

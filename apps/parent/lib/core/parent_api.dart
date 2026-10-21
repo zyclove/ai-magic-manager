@@ -20,6 +20,26 @@ class ParentApiException implements Exception {
   const ParentApiException(this.status, this.code, [this.correlationId]);
 
   String get message => switch (code) {
+        'ACCOUNT_SECURITY_UNAVAILABLE' => '账号安全服务暂未开放或暂时无法连接，请稍后重试。',
+        'ACCOUNT_SESSION_STALE' => '账号登录方式已更新，请用当前手机号或已绑定微信重新登录。',
+        'ACCOUNT_OPERATION_CHANGED' => '账号状态已变化，请重新核对后操作。',
+        'ACCOUNT_OPERATION_UNCONFIRMED' => '暂未确认修改结果。请先核对当前账号状态，再继续操作。',
+        'ACCOUNT_OPERATION_NOT_STARTED' => '账号修改尚未开始，可重新选择验证方式。',
+        'WECHAT_NOT_INSTALLED' => '请先安装微信再使用微信验证；仍可用当前手机号登录。',
+        'FAMILY_LOGIN_UNAVAILABLE' => '此登录方式暂未开放，请稍后重试或选择其他登录方式。',
+        'VERIFIED_PHONE_REQUIRED' => '请先验证并绑定手机号，再创建家庭。',
+        'GUARDIAN_DECLARATION_REQUIRED' => '请确认成人监护人声明后继续。',
+        'AI_CONSENT_REQUIRED' => '请先阅读并同意云端智能服务说明。',
+        'AI_PROVIDER_UNAVAILABLE' => '云端助手暂不可用，日常规则和报告仍可使用。',
+        'AI_QUOTA_EXHAUSTED' => '本期智能服务次数已用完，下期会自动恢复。',
+        'ENTITLEMENT_REQUIRED' => '此功能需要有效的家庭会员。',
+        'FAMILY_DEVICE_LIMIT_REACHED' =>
+          '设备名额已用完。请查看当前连接和待确认的设备，再选择保留设备或核对会员状态。',
+        'FAMILY_SELECTION_NOT_REQUIRED' => '当前会员有效，无需选择保留设备。请刷新查看设备名额。',
+        'FAMILY_SELECTION_DEVICE_UNAVAILABLE' => '所选设备已退出或连接状态已变化，请刷新后重新选择。',
+        'FAMILY_DEVICE_RECOVERY_ONLY' =>
+          '此设备当前保留恢复功能，可放宽或解除规则、必要放行和正常退出。请查看保留设备或会员状态。',
+        'FAMILY_PAYMENT_UNAVAILABLE' => '当前尚未开放付款，请稍后再试。',
         'REAUTH_REQUIRED' => '请完成近期安全验证后重试。',
         'RESOURCE_VERSION_CONFLICT' => '记录已发生变化，请刷新后重新处理。',
         'PREVIEW_STALE' => '预览已过期或设备已变化，请重新预览。',
@@ -123,10 +143,15 @@ class ParentApi {
       String? clientRequestId,
       bool Function()? isCurrent,
       Future<bool> Function()? beforeDispatch,
+      int? expectedStatus,
       int maxResponseBytes = 1024 * 1024}) async {
     final captured = _captureScope?.call();
     bool current() => (captured?.call() ?? true) && (isCurrent?.call() ?? true);
     if (maxResponseBytes < 1 || maxResponseBytes > 4 * 1024 * 1024) {
+      throw const ParentApiException(400, 'INVALID_RESPONSE');
+    }
+    if (expectedStatus != null &&
+        (expectedStatus < 200 || expectedStatus > 299)) {
       throw const ParentApiException(400, 'INVALID_RESPONSE');
     }
     try {
@@ -212,6 +237,13 @@ class ParentApi {
             decoded is Map && decoded['correlationId'] is String
                 ? decoded['correlationId'] as String
                 : null);
+      }
+      // A 202 only acknowledges acceptance. Callers that revoke sensitive
+      // state must not erase their recovery journal before definite completion.
+      if (expectedStatus != null &&
+          (status != expectedStatus ||
+              (expectedStatus == 204 && bytes.isNotEmpty))) {
+        throw const ParentApiException(502, 'INVALID_RESPONSE');
       }
       return decoded;
     } on ParentApiException {

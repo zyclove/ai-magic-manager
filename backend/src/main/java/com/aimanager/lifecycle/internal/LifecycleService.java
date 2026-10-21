@@ -70,7 +70,7 @@ class LifecycleService implements CleanupMaintenance {
         this.clock = clock; this.previewSeconds = previewSeconds; this.cleanupSeconds = cleanupSeconds;
     }
     private void adult(String tenant, Jwt actor) {
-        access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN); recent.require(actor);
+        access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN); recent.requireForTenant(actor,tenant,jdbc);
     }
     private void requireKey(String tenant, Device device) {
         if (device.state() == Device.State.AWAITING_CONFIRMATION || !"BYOD".equals(device.managementMode()))

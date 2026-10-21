@@ -18,6 +18,8 @@ import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.HexFormat;
 import java.util.LinkedHashMap;
@@ -63,6 +65,7 @@ import org.springframework.test.web.servlet.request.RequestPostProcessor;
       "manager.messaging.artemis.enabled=false"
     })
 @AutoConfigureMockMvc(print = MockMvcPrint.NONE)
+@org.springframework.context.annotation.Import(com.aimanager.support.ControlledIdempotencyTimeConfiguration.class)
 class DeviceApprovalIdempotencyAttributionJourneyTest {
   private static final String ROUTE = "/api/v1/device-api/access-submissions";
   private static final String CREATE = "access.device.request";
@@ -76,7 +79,7 @@ class DeviceApprovalIdempotencyAttributionJourneyTest {
   @Autowired JdbcTemplate db;
   @Autowired ObjectMapper mapper;
   @Autowired DeviceCredentials credentials;
-  @Autowired Clock clock;
+  @MockitoBean Clock clock;
   @MockitoBean JwtDecoder decoder;
 
   @DynamicPropertySource
@@ -117,6 +120,13 @@ class DeviceApprovalIdempotencyAttributionJourneyTest {
 
   @BeforeEach
   void deviceBearerIsNotAnAdultJwt() {
+    // This journey compares complete business/ownership snapshots. Keep its
+    // fixture time fixed so a later trusted-time observation is not mistaken
+    // for a repeated mutation. Production database-clock checks stay intact.
+    Instant instant=Instant.now();
+    when(clock.instant()).thenReturn(instant);
+    when(clock.millis()).thenReturn(instant.toEpochMilli());
+    when(clock.getZone()).thenReturn(ZoneOffset.UTC);
     when(decoder.decode(anyString()))
         .thenThrow(new BadJwtException("Device credential is not an external issuer JWT"));
   }

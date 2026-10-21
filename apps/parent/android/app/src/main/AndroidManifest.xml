@@ -1,10 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <application
-        android:label="智能管家监护人端"
+        android:label="智能管家家长端"
         android:allowBackup="false"
         android:usesCleartextTraffic="false"
-        android:name="${applicationName}"
+        android:name=".ParentApplication"
         android:icon="@drawable/ic_manager">
         <activity
             android:name=".MainActivity"
@@ -22,11 +25,34 @@
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme"
               />
+            <meta-data android:name="flutter_deeplinking_enabled" android:value="false" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="aimanager" android:host="family-invitation" />
+            </intent-filter>
         </activity>
+        <receiver android:name=".FamilyAliyunMessageReceiver" android:exported="false">
+            <intent-filter><action android:name="com.alibaba.sdk.android.push.RECEIVE" /></intent-filter>
+            <intent-filter><action android:name="com.alibaba.push2.action.NOTIFICATION_OPENED" /></intent-filter>
+            <intent-filter><action android:name="com.alibaba.push2.action.NOTIFICATION_REMOVED" /></intent-filter>
+        </receiver>
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity
+            android:name=".wxapi.WXPayEntryActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity="com.aimanager.parent"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <!-- Don't delete the meta-data below.
              This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
         <meta-data
@@ -39,6 +65,7 @@
 
          In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
     <queries>
+        <package android:name="com.tencent.mm" />
         <intent>
             <action android:name="android.intent.action.PROCESS_TEXT"/>
             <data android:mimeType="text/plain"/>

@@ -1,0 +1,120 @@
+{
+  "date": "2026-10-16",
+  "scope": "Mainland family phone change, existing WeChat recovery, WeChat bind/unbind and current identity sessions",
+  "baseline": {
+    "files": 1774,
+    "missingFiles": [],
+    "head": "7ca62f4ec9c9d483dee78f85fab918b0c72da954",
+    "preservedWorkingTree": true
+  },
+  "sourceManifest": {
+    "path": ".local/family-p0-account-security-20261016/final-account-source-hashes.json",
+    "files": 256,
+    "sha256": "8f24a4450c669b9cfabfe5a63ceb2c128413f1426f34cec1f6ca0c60d265afb3"
+  },
+  "verification": {
+    "parent": {
+      "tests": 518,
+      "failures": 0,
+      "analyze": "passed",
+      "log": "parent-final-full.log"
+    },
+    "identity": {
+      "tests": 49,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "log": "identity-root-final-verify.log"
+    },
+    "backendAccountGate": {
+      "tests": 64,
+      "failures": 0,
+      "errors": 0,
+      "log": "backend-current-targeted.log"
+    },
+    "android": {
+      "build": "passed",
+      "nativeTests": 10,
+      "log": "parent-android-final.log"
+    },
+    "deployment": {
+      "tests": 6,
+      "failures": 0,
+      "log": "deployment-final.log"
+    },
+    "backendFrozenBaselinePlusAccountDelta": {
+      "tests": 1817,
+      "passed": 1741,
+      "skipped": 76,
+      "failures": 0,
+      "errors": 0,
+      "log": "backend-baseline-integration.log"
+    },
+    "backendConcurrentIntegrationSnapshot": {
+      "tests": 1909,
+      "failures": 34,
+      "errors": 7,
+      "skipped": 76,
+      "failingSuite": "ManagedDesiredPolicyReaderTest",
+      "reason": "Parallel managed policy reader snapshot requireDesiredTarget returned null; unchanged by this account scope",
+      "log": "backend-current-full.log"
+    }
+  },
+  "runtime": {
+    "keycloak": "26.8.0",
+    "result": "passed",
+    "database": "fresh isolated H2",
+    "network": "none",
+    "hostPorts": [],
+    "realSupplierCalls": false,
+    "containerRemoved": true,
+    "checks": [
+      "REST discovery and unauthenticated401/no-store",
+      "phone, change-phone and management login forms",
+      "JPA realm lock and current reads",
+      "phone rename preserves subject",
+      "WeChat unlink/rebind",
+      "rollback and subsequent lock release"
+    ],
+    "log": "identity-runtime-final-smoke.log",
+    "testOnlyFixtureExcludedFromArtifacts": true
+  },
+  "artifacts": [
+    {
+      "name": "consumer-identity-1.0.0.jar",
+      "bytes": 55555,
+      "sha256": "c2c0f4d71b7d9aa34b01d527c83feb38430fb7cf7f1c22a7513a02dff389613f",
+      "kind": "production-provider; activation-disabled-by-default"
+    },
+    {
+      "name": "manager-account-baseline-verified.jar",
+      "bytes": 82174984,
+      "sha256": "9e4db71e13036e58cf5512f82b11612040618016cbb9d119772f55ce12ce73c9",
+      "kind": "frozen-baseline-verification-only"
+    },
+    {
+      "name": "parent-account-security-debug.apk",
+      "bytes": 297215696,
+      "sha256": "9bc3e5377865efc96efd1805b8b93bc1a6670a60b533262a636e96594b05919e",
+      "kind": "debug-validation-apk; default-disabled-account-security"
+    }
+  ],
+  "release": {
+    "realSmsWeChatAcceptance": false,
+    "targetMySqlConcurrencyAcceptance": false,
+    "fullOidcAcceptance": false,
+    "physicalDeviceAcceptance": false,
+    "formalSigning": false,
+    "productionAccountFeatureEnabled": false,
+    "salesEnabled": false,
+    "existingDatabaseAndIdentityRealmChanged": false,
+    "readyForPaidLaunch": false
+  },
+  "remaining": [
+    "Target MySQL RR and multi-node concurrent identity operations, lock timeout and rollback",
+    "Real signed WeChat and SMS old/new phone verification with full OIDC session revocation",
+    "Physical device interruption and recovery",
+    "Integrate parallel managed policy work and rerun complete backend suite",
+    "Formal signing and all existing paid-launch gates"
+  ]
+}

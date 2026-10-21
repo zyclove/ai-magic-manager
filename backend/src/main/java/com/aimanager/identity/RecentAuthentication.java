@@ -35,4 +35,19 @@ public class RecentAuthentication {
             throw new DomainException(HttpStatus.UNAUTHORIZED, "REAUTH_REQUIRED");
         }
     }
+
+    /** Explicit consumer policy; a verified SMS is recent authentication, never relabelled MFA. */
+    public void requireForTenant(Jwt jwt,String tenant,org.springframework.jdbc.core.JdbcTemplate jdbc) {
+        var kinds=jdbc.queryForList("SELECT kind FROM tenants WHERE id=?",String.class,tenant);
+        if(kinds.size()!=1)throw DomainException.denied();
+        if("FAMILY".equals(kinds.get(0))) {
+            var time=jwt.getClaimAsInstant("auth_time");
+            var methods=jwt.getClaimAsStringList("amr");
+            var phone=jwt.getClaimAsString("phone_number");
+            if(Boolean.TRUE.equals(jwt.getClaim("phone_number_verified")) && phone!=null && phone.matches("\\+861[3-9][0-9]{9}")
+                && methods!=null && methods.contains("sms") && time!=null
+                && !time.isBefore(clock.instant().minusSeconds(maxAge)) && !time.isAfter(clock.instant().plusSeconds(30)))return;
+        }
+        require(jwt);
+    }
 }

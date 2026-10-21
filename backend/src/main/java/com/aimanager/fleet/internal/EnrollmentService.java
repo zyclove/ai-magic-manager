@@ -1,6 +1,7 @@
 package com.aimanager.fleet.internal;
 
 import com.aimanager.audit.AuditService;
+import com.aimanager.commerce.FamilyDeviceAccess;
 import com.aimanager.deviceidentity.DeviceCredentials;
 import com.aimanager.fleet.Device;
 import com.aimanager.fleet.DeviceRegistrationRevoked;
@@ -39,6 +40,7 @@ class EnrollmentService implements FleetAdministration {
         invalidatePending(event.tenantId(),event.actorId(),"ENROLLMENT_ACCESS_CANCELLED");
     }
     private void invalidatePending(String tenant,String actor,String action) {
+        familyDevices.lockFamily(tenant);
         var pending = jdbc.queryForList("SELECT id,device_id,creator_actor_id FROM device_enrollments WHERE tenant_id=? AND creator_actor_id=? AND state IN ('PENDING_CLAIM','AWAITING_CONFIRMATION') ORDER BY id FOR UPDATE",
             tenant, actor).stream().filter(row->actor.equals(row.get("creator_actor_id"))).toList();
         var devices = pending.stream().map(row -> (String) row.get("device_id")).filter(java.util.Objects::nonNull).distinct().sorted().toList();
@@ -62,11 +64,12 @@ class EnrollmentService implements FleetAdministration {
     private final long lifetimeSeconds;
     private final int maxPairingFailures;
     private final int maxRecoveryAttempts;
+    private final FamilyDeviceAccess familyDevices;
     EnrollmentService(JdbcTemplate jdbc, TenantAccess access, RecentAuthentication recent, EnrollmentProof proof,
                       DeviceCredentials credentials, AuditService audit, FleetReads reads, Clock clock, ApplicationEventPublisher events,
                       @Value("${manager.devices.enrollment-lifetime-seconds:900}") long lifetimeSeconds,
                       @Value("${manager.devices.max-pairing-failures:5}") int maxPairingFailures,
-                      @Value("${manager.devices.max-recovery-attempts:3}") int maxRecoveryAttempts) {
+                      @Value("${manager.devices.max-recovery-attempts:3}") int maxRecoveryAttempts,FamilyDeviceAccess familyDevices) {
         if (lifetimeSeconds < 60 || lifetimeSeconds > 3600 || maxPairingFailures < 1 || maxPairingFailures > 10)
             throw new IllegalArgumentException("Invalid enrollment configuration");
         if (maxRecoveryAttempts < 1 || maxRecoveryAttempts > 5) throw new IllegalArgumentException("Invalid recovery limit");
@@ -75,13 +78,15 @@ class EnrollmentService implements FleetAdministration {
         this.events = events;
         this.lifetimeSeconds = lifetimeSeconds; this.maxPairingFailures = maxPairingFailures;
         this.maxRecoveryAttempts = maxRecoveryAttempts;
+        this.familyDevices=familyDevices;
     }
 
     @Transactional(timeout = 10)
     public Ticket create(String tenant, Jwt actor, String subject, Device.Mode mode, Device.Platform platform,
                          String clientRequestId) {
         access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN);
-        recent.require(actor); requireSubject(tenant, subject);
+        recent.requireForTenant(actor,tenant,jdbc); familyDevices.lockFamily(tenant); requireSubject(tenant, subject);
+        if(platform==Device.Platform.ANDROID)familyDevices.requireEnrollmentSeat(tenant,null);
         // No EMM adapter is configured yet: ordinary pairing cannot produce system privileges.
         if (mode != Device.Mode.BYOD) throw new DomainException(HttpStatus.UNPROCESSABLE_ENTITY, "CAPABILITY_UNSUPPORTED");
         String id = enrollmentId(clientRequestId), token = SecretMaterial.token();
@@ -135,8 +140,10 @@ class EnrollmentService implements FleetAdministration {
         if (!pending.tokenHash().equals(SecretMaterial.hash(input.token()))) throw DomainException.denied();
         var verified = proof.verify(input.enrollmentId(), input.token(), input.publicKeyJwk(), input.proof());
         access.requireWriteRole(pending.tenant(), pending.creator(), OWNER, GUARDIAN, ORG_ADMIN);
+        familyDevices.lockFamily(pending.tenant());
         requireSubject(pending.tenant(), pending.subject());
         pending = read(pending.id(), true); requireState(pending, "PENDING_CLAIM");
+        if("ANDROID".equals(pending.platform()))familyDevices.requireEnrollmentSeat(pending.tenant(),null);
         consumeProof(pending, "ai-manager:enrollment-claim", verified.proofId());
         String device = UUID.randomUUID().toString(), registration = UUID.randomUUID().toString(), pairing = SecretMaterial.pairingCode();
         jdbc.update("INSERT INTO devices(tenant_id,id,subject_id,registration_id,display_name,platform,os_version,state,public_key_jwk,key_thumbprint,created_at) "
@@ -165,6 +172,7 @@ class EnrollmentService implements FleetAdministration {
         if (!pending.tokenHash().equals(SecretMaterial.hash(input.token()))) throw DomainException.denied();
         var verified = proof.verify(input.enrollmentId(), input.token(), input.publicKeyJwk(), input.proof(), "ai-manager:enrollment-recover");
         access.requireWriteRole(pending.tenant(), pending.creator(), OWNER, GUARDIAN, ORG_ADMIN);
+        familyDevices.lockFamily(pending.tenant());
         requireSubject(pending.tenant(), pending.subject()); pending = read(pending.id(), true);
         requireState(pending, "AWAITING_CONFIRMATION");
         var devices = jdbc.queryForList("SELECT registration_id,key_thumbprint,state FROM devices WHERE tenant_id=? AND id=? FOR UPDATE",
@@ -186,10 +194,11 @@ class EnrollmentService implements FleetAdministration {
     /** Return failure as a value so the transaction commits the attempt counter before HTTP rejection. */
     @Transactional(timeout = 10)
     public Confirmation confirm(String tenant, Jwt actor, String id, String pairingCode) {
-        access.requireRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN); recent.require(actor);
+        access.requireRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN); recent.requireForTenant(actor,tenant,jdbc);
         var pending = read(id, false);
         if (!tenant.equals(pending.tenant())) throw DomainException.denied();
         access.requireWriteRoles(tenant, java.util.List.of(actor.getSubject(), pending.creator()), OWNER, GUARDIAN, ORG_ADMIN);
+        familyDevices.lockFamily(tenant);
         requireSubject(tenant, pending.subject()); pending = read(id, true); requireState(pending, "AWAITING_CONFIRMATION");
         if (!pending.pairingHash().equals(SecretMaterial.hash(pairingCode.strip().toUpperCase(java.util.Locale.ROOT)))) {
             int failures = pending.failures() + 1;
@@ -201,6 +210,7 @@ class EnrollmentService implements FleetAdministration {
             }
             return new Confirmation(null, false);
         }
+        if("ANDROID".equals(pending.platform()))familyDevices.requireEnrollmentSeat(tenant,pending.deviceId());
         var device = reads.rawDevice(tenant, pending.deviceId());
         credentials.activate(tenant, device.registrationId());
         jdbc.update("UPDATE devices SET state='ACTIVE',version=version+1 WHERE tenant_id=? AND id=?", tenant, device.id());
@@ -211,7 +221,8 @@ class EnrollmentService implements FleetAdministration {
 
     @Transactional(timeout = 10)
     public void cancel(String tenant, Jwt actor, String id) {
-        access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN); recent.require(actor);
+        access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN); recent.requireForTenant(actor,tenant,jdbc);
+        familyDevices.lockFamily(tenant);
         var pending = read(id, true);
         if (!tenant.equals(pending.tenant())) throw DomainException.denied();
         if ("CANCELLED".equals(pending.state())) return;
@@ -224,13 +235,15 @@ class EnrollmentService implements FleetAdministration {
 
     @Transactional(timeout = 10)
     public void revoke(String tenant, Jwt actor, String id) {
-        access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN); recent.require(actor);
+        access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN); recent.requireForTenant(actor,tenant,jdbc);
+        familyDevices.lockFamily(tenant);
         revokeDevice(tenant, id, actor.getSubject());
     }
 
     @Override @Transactional(timeout = 10)
     public void revokeRegistration(String tenant, Jwt actor, String id, String registration, long expectedVersion) {
-        access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN); recent.require(actor);
+        access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN); recent.requireForTenant(actor,tenant,jdbc);
+        familyDevices.lockFamily(tenant);
         var current = reads.snapshot(tenant, actor.getSubject(), id, true).device();
         ResourceVersions.check(expectedVersion, current.version());
         if (!registration.equals(current.registrationId())) throw new DomainException(HttpStatus.CONFLICT, "REGISTRATION_CHANGED");

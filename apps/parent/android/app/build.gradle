@@ -34,6 +34,14 @@ def releaseAlias = System.getenv("PARENT_ANDROID_KEY_ALIAS")
 def releaseKeyPassword = System.getenv("PARENT_ANDROID_KEY_PASSWORD")
 def signingConfigured = [releaseStore, releaseStorePassword, releaseAlias, releaseKeyPassword]
     .every { it != null && !it.trim().isEmpty() }
+// EMAS mobile credentials only. Never embed server RAM access keys in an APK.
+def pushEnabled = System.getenv("PARENT_ALIYUN_PUSH_ENABLED") == "true"
+def pushAppKey = System.getenv("PARENT_ALIYUN_PUSH_APP_KEY") ?: ""
+def pushAppSecret = System.getenv("PARENT_ALIYUN_PUSH_APP_SECRET") ?: ""
+if (pushEnabled && (!pushAppKey.matches("[0-9]{5,32}") || !pushAppSecret.matches("[A-Za-z0-9]{16,128}"))) {
+    throw new GradleException("Enabled parent push requires valid EMAS mobile application credentials")
+}
+if (!pushEnabled) { pushAppKey = ""; pushAppSecret = "" }
 if (releaseRequested && !signingConfigured) {
     throw new GradleException("Parent release signing requires the four PARENT_ANDROID_* environment variables")
 }
@@ -52,6 +60,7 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions { jvmTarget = "17" }
+    buildFeatures { buildConfig = true }
 
     defaultConfig {
         applicationId = "com.aimanager.parent"
@@ -60,6 +69,14 @@ android {
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
         manifestPlaceholders += ['appAuthRedirectScheme': 'com.aimanager.parent']
+        def wechatAppId = System.getenv("PARENT_WECHAT_APP_ID") ?: ""
+        if (!wechatAppId.isEmpty() && !wechatAppId.matches("wx[0-9a-fA-F]{16}")) {
+            throw new GradleException("PARENT_WECHAT_APP_ID must be a registered WeChat app ID")
+        }
+        buildConfigField "String", "WECHAT_APP_ID", '"' + wechatAppId + '"'
+        buildConfigField "boolean", "ALIYUN_PUSH_ENABLED", pushEnabled.toString()
+        buildConfigField "String", "ALIYUN_PUSH_APP_KEY", '"' + pushAppKey + '"'
+        buildConfigField "String", "ALIYUN_PUSH_APP_SECRET", '"' + pushAppSecret + '"'
     }
 
     signingConfigs {
@@ -82,4 +99,10 @@ android {
 
 flutter {
     source = "../.."
+}
+
+dependencies {
+    implementation "com.aliyun.ams:alicloud-android-push:3.10.1"
+    implementation "com.tencent.mm.opensdk:wechat-sdk-android:6.8.40"
+    testImplementation "junit:junit:4.13.2"
 }

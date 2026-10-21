@@ -1,0 +1,20 @@
+# Opt-in administrator infrastructure. No consumer, supplier or sales switch is changed.
+services:
+  backend:
+    environment:
+      IDENTITY_PROVIDER_ENVIRONMENT_ID: ${IDENTITY_PROVIDER_ENVIRONMENT_ID:?Set the reviewed provider environment alias}
+      IDENTITY_PROVIDER_KEY_FILE: /run/identity-provider-admin/keyring.json
+      IDENTITY_PROVIDER_ACTIVE_KEY_ID: ${IDENTITY_PROVIDER_ACTIVE_KEY_ID:?Set the provider key id}
+      IDENTITY_PROVIDER_RELEASE_DIRECTORY: /var/lib/identity-provider-admin/releases
+    volumes:
+      - type: bind
+        source: ${IDENTITY_PROVIDER_ADMIN_ROOT:?Set the private administrator configuration root}/provider-keyring.json
+        target: /run/identity-provider-admin/keyring.json
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${IDENTITY_PROVIDER_ADMIN_ROOT:?Set the private administrator configuration root}/release-preparations
+        target: /var/lib/identity-provider-admin/releases
+        bind:
+          create_host_path: false

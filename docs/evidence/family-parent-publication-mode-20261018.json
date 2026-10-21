@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-18",
+  "kind": "parent-publication-result-explicit-mode-compatibility",
+  "productionChange": {
+    "target": "apps/parent/lib/ui/policy_center.dart",
+    "patchSha256": "32e144fc621a19b561593fc4d05abfd8686e9e1f19dbc984074adeea25dc15fc",
+    "beforeSha256": "dfdcee8200bf29f44916e7512f21e34038a92f4dfe55ebe6722dc38c32fee654",
+    "afterSha256": "e33ce9a29d1305b6d92e3f4999d32bed42ff2be0143f1c2adb8ab4da013142a3",
+    "beforeBytes": 45956,
+    "afterBytes": 45986,
+    "insertedLines": 1,
+    "removedLines": 0,
+    "originalBytesPreservedAfterRemovingInsertion": true,
+    "lineEndingsPreserved": true
+  },
+  "scope": "Only the existing parent CONFIGURE_ONLY publication-result GET gains mode; no backend or other family logic changed by this task.",
+  "verification": {
+    "fullParentFlutterTests": 520,
+    "fullFailures": 0,
+    "fullSnapshot": "green-final-3",
+    "finalSnapshot": "final",
+    "finalTargetedPassed": 2,
+    "finalAnalysisIssues": 0,
+    "missingModeMutantBehavioralFailures": 2,
+    "fullToFinalDelta": [
+      {
+        "path": "apps/parent/test/policy_publication_recovery_test.dart",
+        "meaning": "Only an unused foundation import removed after full regression; all production bytes and test bodies are identical."
+      }
+    ],
+    "sourceFilesVerified": 294,
+    "liveSourceDrift": []
+  },
+  "boundaries": {
+    "testHttpTransport": "Injected MockClient: real widget and ParentApi request construction; no external HTTP server.",
+    "realCandidateBackendJointAcceptance": false,
+    "actualAndroidProcessDeathTested": false,
+    "nativeAndroidBuildPerformed": false,
+    "providerRequestsPerformed": false,
+    "existingDeploymentChangedByTask": false,
+    "salesGateChangedByTask": false
+  },
+  "preservation": {
+    "beforeAndAfterBackupsKept": true,
+    "originalSourceBytesPreservedAfterRemovingInsertion": true,
+    "previousAcceptanceDeliveryUnchanged": true,
+    "initialBehavioralRedAndFixtureCompilationCleanupFailuresPreserved": true
+  },
+  "review": {
+    "path": ".cache/family-parent-publication-mode-20261018-r1/out/read-only-review-v2.json",
+    "bytes": 8713,
+    "sha256": "21f8cc273f58cd0654ad80ed6c73401bf7f2d7c946482a086c32a038d51ca03d"
+  },
+  "artifacts": [
+    {
+      "path": ".local/family-parent-publication-mode-20261018-r1/artifacts/minimal-preservation.json",
+      "bytes": 500,
+      "sha256": "47a777ed0d5f9a760bb59faa7dbdbfdbc24c0d3795c659bfe053e7a21b1be797"
+    },
+    {
+      "path": ".local/family-parent-publication-mode-20261018-r1/artifacts/source-pins/final.json",
+      "bytes": 51249,
+      "sha256": "b3351535cb8b14c7e5cc8e756183273dde3e8802ff8877b6f76cb55f1a5ac4d6"
+    },
+    {
+      "path": ".local/family-parent-publication-mode-20261018-r1/artifacts/source-pins/full-regression.json",
+      "bytes": 51249,
+      "sha256": "f8e232fc7a48857cdcefa61cb22bc9b24bcda5021a30aa8e47accf3e6332ff6d"
+    },
+    {
+      "path": ".local/family-parent-publication-mode-20261018-r1/artifacts/read-only-review-v2.json",
+      "bytes": 8713,
+      "sha256": "21f8cc273f58cd0654ad80ed6c73401bf7f2d7c946482a086c32a038d51ca03d"
+    },
+    {
+      "path": ".local/family-parent-publication-mode-20261018-r1/artifacts/logs/parent-full.log",
+      "bytes": 114736,
+      "sha256": "d3a1deab584b96f2c033510790e9c2394847f888109ca013793cff5b8b065463"
+    },
+    {
+      "path": ".local/family-parent-publication-mode-20261018-r1/artifacts/logs/final-targeted.log",
+      "bytes": 546,
+      "sha256": "8618961c5ec926c7f99ff3b280dbd8cd494ad1a9708c31b761b1b1aad92abaf7"
+    },
+    {
+      "path": ".local/family-parent-publication-mode-20261018-r1/artifacts/logs/final-analysis.log",
+      "bytes": 203,
+      "sha256": "d6209c00a5b3ac87bdb3905b3999b401bf95242a7e548e79212522490aa10b06"
+    },
+    {
+      "path": ".local/family-parent-publication-mode-20261018-r1/artifacts/logs/missing-mode-mutant.log",
+      "bytes": 5897,
+      "sha256": "ef86f1e69e7275ce18caa1009a0792366e631720857cdffe7d370c2372d23f1e"
+    },
+    {
+      "path": ".local/family-parent-publication-mode-20261018-r1/artifacts/source-snapshots/policy_center.dart",
+      "bytes": 45986,
+      "sha256": "e33ce9a29d1305b6d92e3f4999d32bed42ff2be0143f1c2adb8ab4da013142a3"
+    },
+    {
+      "path": ".local/family-parent-publication-mode-20261018-r1/artifacts/source-snapshots/policy_publication_recovery_test.dart",
+      "bytes": 5171,
+      "sha256": "b19240fbcabf9bbec80a71155905f7ae7ec1fef8e57ce9329bf29d725217d8f7"
+    },
+    {
+      "path": ".local/family-parent-publication-mode-20261018-r1/artifacts/parent-mode-proposal.patch",
+      "bytes": 399,
+      "sha256": "32e144fc621a19b561593fc4d05abfd8686e9e1f19dbc984074adeea25dc15fc"
+    }
+  ]
+}

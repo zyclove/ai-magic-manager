@@ -1,4 +1,5 @@
 const catalogChannels = [
+  'WECHAT_PAY',
   'GOOGLE_PLAY',
   'APP_STORE',
   'CONTRACT',
@@ -17,6 +18,9 @@ const catalogPriceTypes = ['FIXED', 'QUOTE'];
 const catalogTaxBases = ['INCLUSIVE', 'EXCLUSIVE', 'QUOTE_REQUIRED'];
 const catalogCapacityKinds = ['BASE', 'ADD_ON'];
 const catalogFeatures = [
+  'FAMILY_MULTI_DEVICE',
+  'FAMILY_ASSISTED_LIMITS',
+  'REPORT_HISTORY',
   'ADVANCED_SCHEDULES',
   'WEB_FILTERING',
   'MANAGED_ANDROID',
@@ -37,6 +41,10 @@ String catalogLabel(String code) =>
       'REVISED': '修订',
       'SUBMITTED': '提交审核',
       'GOOGLE_PLAY': 'Google Play',
+      'WECHAT_PAY': '微信支付',
+      'FAMILY_MULTI_DEVICE': '家庭多设备',
+      'FAMILY_ASSISTED_LIMITS': '家庭应用辅助限制',
+      'REPORT_HISTORY': '历史使用报告',
       'APP_STORE': 'App Store',
       'CONTRACT': '合同',
       'PRIVATE_LICENSE': '私有许可',

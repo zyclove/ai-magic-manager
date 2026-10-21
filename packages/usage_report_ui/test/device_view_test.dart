@@ -62,6 +62,42 @@ UsageReport result(DeviceReportWindow window, {String status = 'OBSERVED'}) {
 }
 
 void main() {
+  testWidgets(
+      'family daily entry loads only today and keeps history an explicit choice',
+      (t) async {
+    final access = ValueNotifier(true);
+    addTearDown(access.dispose);
+    final windows = <DeviceReportWindow>[];
+    await t.pumpWidget(MaterialApp(
+        home: Scaffold(
+            body: SingleChildScrollView(
+                child: DeviceUsageReportView(
+                    accessChanges: access,
+                    available: () => true,
+                    cancel: () {},
+                    compactControls: true,
+                    timeZone: 'Asia/Shanghai',
+                    initialDays: 1,
+                    now: () => DateTime.fromMillisecondsSinceEpoch(now),
+                    load: (w) async {
+                      windows.add(w);
+                      return result(w);
+                    })))));
+    await t.pumpAndSettle();
+    expect(find.text('今天'), findsOneWidget);
+    final date = usageLocalTime(now, 'Asia/Shanghai');
+    final expected = usageCalendarWindow(
+        DateTime(date.year, date.month, date.day),
+        DateTime(date.year, date.month, date.day),
+        'Asia/Shanghai');
+    expect(windows.single.from, expected.$1);
+    expect(windows.single.to, expected.$2);
+    await t.tap(find.text('近 7 天'));
+    await t.pumpAndSettle();
+    expect(windows, hasLength(2));
+    expect(windows.last.from, lessThan(windows.first.from));
+  });
+
   Future<void> mount(WidgetTester tester,
       Future<UsageReport> Function(DeviceReportWindow) load,
       {ValueNotifier<bool>? access, VoidCallback? cancel}) async {

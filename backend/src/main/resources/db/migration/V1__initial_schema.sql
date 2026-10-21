@@ -1596,6 +1596,245 @@ CREATE INDEX ix_help_state_time ON child_help_requests(tenant_id, state, created
 CREATE INDEX ix_help_device_rate ON child_help_requests
     (tenant_id, device_id, registration_id, created_at);
 
+-- Family subscription launch experience (unreleased 1.0.0 baseline).
+CREATE TABLE family_rules (
+ tenant_id VARCHAR(36) NOT NULL,
+ subject_id VARCHAR(36) NOT NULL,
+ policy_id VARCHAR(36) NOT NULL,
+ version BIGINT NOT NULL,
+ source_sequence BIGINT NOT NULL DEFAULT 0,
+ rules_json TEXT NOT NULL,
+ updated_at BIGINT NOT NULL,
+ PRIMARY KEY(tenant_id,subject_id),
+ FOREIGN KEY(tenant_id,subject_id) REFERENCES subjects(tenant_id,id)
+);
+CREATE TABLE family_runtime_reports (
+ tenant_id VARCHAR(36) NOT NULL,
+ device_id VARCHAR(36) NOT NULL,
+ registration_id VARCHAR(36) NOT NULL,
+ report_sequence BIGINT NOT NULL,
+ observed_at BIGINT NOT NULL,
+ received_at BIGINT NOT NULL,
+ report_json TEXT NOT NULL,
+ PRIMARY KEY(tenant_id,device_id)
+);
+CREATE TABLE family_guardian_declarations (
+ actor_key VARCHAR(64) NOT NULL PRIMARY KEY,
+ phone_hash VARCHAR(64) NOT NULL,
+ declaration_version VARCHAR(40) NOT NULL,
+ declared_at BIGINT NOT NULL,
+ tenant_id VARCHAR(36) NOT NULL
+);
+CREATE TABLE family_ai_suggestions (
+ tenant_id VARCHAR(36) NOT NULL,
+ id VARCHAR(36) NOT NULL,
+ actor_key VARCHAR(64) NOT NULL,
+ subject_id VARCHAR(36) NOT NULL,
+ rule_version BIGINT NOT NULL,
+ request_hash VARCHAR(64) NOT NULL,
+ task VARCHAR(30) NOT NULL,
+ result_json TEXT NOT NULL,
+ created_at BIGINT NOT NULL,
+ expires_at BIGINT NOT NULL,
+ PRIMARY KEY(tenant_id,id)
+);
+CREATE TABLE family_ai_months (
+ tenant_id VARCHAR(36) NOT NULL,
+ month_key VARCHAR(7) NOT NULL,
+ completed INT NOT NULL DEFAULT 0,
+ PRIMARY KEY(tenant_id,month_key)
+);
+
+
+-- Family consumer subscription tables.
+-- Merge into the initial baseline for new databases. This fragment is not an upgrade migration.
+CREATE TABLE IF NOT EXISTS family_subscription_accounts (
+    tenant_id VARCHAR(36) NOT NULL PRIMARY KEY,
+    trial_started_at BIGINT NULL,
+    trial_ends_at BIGINT NULL,
+    trial_device_id VARCHAR(36) NULL,
+    trial_evidence_hash VARCHAR(64) NULL,
+    version BIGINT NOT NULL DEFAULT 0,
+    CONSTRAINT fk_family_account_tenant FOREIGN KEY (tenant_id) REFERENCES tenants(id)
+);
+
+CREATE TABLE IF NOT EXISTS family_orders (
+    id VARCHAR(36) NOT NULL PRIMARY KEY,
+    tenant_id VARCHAR(36) NOT NULL,
+    actor_key VARCHAR(64) NOT NULL,
+    key_hash VARCHAR(64) NOT NULL,
+    request_hash VARCHAR(64) NOT NULL,
+    plan_key VARCHAR(40) NOT NULL,
+    status VARCHAR(30) NOT NULL,
+    price_minor INTEGER NOT NULL,
+    offer_version BIGINT NOT NULL DEFAULT 1,
+    currency VARCHAR(3) NOT NULL,
+    period_start BIGINT NOT NULL,
+    period_end BIGINT NOT NULL,
+    created_at BIGINT NOT NULL,
+    expires_at BIGINT NOT NULL,
+    provider_transaction_id VARCHAR(80) NULL,
+    paid_at BIGINT NULL,
+    CONSTRAINT uq_family_order_request UNIQUE (tenant_id, actor_key, key_hash),
+    CONSTRAINT uq_family_provider_transaction UNIQUE (provider_transaction_id),
+    INDEX ix_family_order_maintenance (status,expires_at,id),
+    CONSTRAINT fk_family_order_tenant FOREIGN KEY (tenant_id) REFERENCES tenants(id)
+);
+
+CREATE TABLE IF NOT EXISTS family_payment_attempts (
+    id VARCHAR(36) NOT NULL PRIMARY KEY,
+    tenant_id VARCHAR(36) NOT NULL,
+    order_id VARCHAR(36) NOT NULL,
+    actor_key VARCHAR(64) NOT NULL,
+    key_hash VARCHAR(64) NOT NULL,
+    status VARCHAR(30) NOT NULL,
+    provider_payload TEXT NULL,
+    created_at BIGINT NOT NULL,
+    CONSTRAINT uq_family_attempt_request UNIQUE (tenant_id, actor_key, key_hash),
+    CONSTRAINT uq_family_attempt_order UNIQUE (order_id),
+    CONSTRAINT fk_family_attempt_order FOREIGN KEY (order_id) REFERENCES family_orders(id)
+);
+
+CREATE TABLE IF NOT EXISTS family_refund_requests (
+    id VARCHAR(36) NOT NULL PRIMARY KEY,
+    tenant_id VARCHAR(36) NOT NULL,
+    order_id VARCHAR(36) NOT NULL,
+    actor_key VARCHAR(64) NOT NULL,
+    key_hash VARCHAR(64) NOT NULL,
+    request_hash VARCHAR(64) NOT NULL,
+    reason VARCHAR(200) NOT NULL,
+    status VARCHAR(30) NOT NULL,
+    price_minor INTEGER NOT NULL,
+    reviewed_by VARCHAR(64) NULL,
+    reviewed_at BIGINT NULL,
+    created_at BIGINT NOT NULL,
+    provider_refund_id VARCHAR(80) NULL,
+    provider_accepted_at BIGINT NULL,
+    refunded_at BIGINT NULL,
+    CONSTRAINT uq_family_refund_request UNIQUE (tenant_id, actor_key, key_hash),
+    CONSTRAINT uq_family_refund_order UNIQUE (order_id),
+    CONSTRAINT uq_family_provider_refund UNIQUE (provider_refund_id),
+    INDEX ix_family_refund_maintenance (status,created_at,id),
+    CONSTRAINT fk_family_refund_order FOREIGN KEY (order_id) REFERENCES family_orders(id)
+);
+
+CREATE TABLE IF NOT EXISTS family_payment_inbox (
+    event_id VARCHAR(100) NOT NULL PRIMARY KEY,
+    event_type VARCHAR(30) NOT NULL,
+    order_id VARCHAR(36) NOT NULL,
+    evidence_hash VARCHAR(64) NOT NULL,
+    accepted_at BIGINT NOT NULL,
+    CONSTRAINT fk_family_inbox_order FOREIGN KEY (order_id) REFERENCES family_orders(id)
+);
+
+
+-- Trial claims persist independently from a family deletion.
+CREATE TABLE IF NOT EXISTS family_trial_claims (
+ identity_key VARCHAR(100) NOT NULL PRIMARY KEY,
+ tenant_id VARCHAR(36) NULL,
+ claimed_at BIGINT NULL,
+ evidence_hash VARCHAR(64) NULL
+);
+
+CREATE TABLE family_access_requests (
+ tenant_id VARCHAR(36) NOT NULL,id VARCHAR(36) NOT NULL,subject_id VARCHAR(36) NOT NULL,
+ device_id VARCHAR(36) NOT NULL,registration_id VARCHAR(36) NOT NULL,base_rule_version BIGINT NOT NULL,
+ state VARCHAR(20) NOT NULL,requested_seconds INT NOT NULL,granted_seconds INT NULL,reason VARCHAR(300) NOT NULL,
+ created_at BIGINT NOT NULL,expires_at BIGINT NOT NULL,not_after BIGINT NULL,version BIGINT NOT NULL,
+ PRIMARY KEY(tenant_id,id)
+);
+CREATE INDEX ix_family_requests_device ON family_access_requests(tenant_id,device_id,created_at);
+CREATE TABLE family_temporary_grants (
+ tenant_id VARCHAR(36) NOT NULL,device_id VARCHAR(36) NOT NULL,registration_id VARCHAR(36) NOT NULL,
+ subject_id VARCHAR(36) NOT NULL,not_after BIGINT NOT NULL,request_id VARCHAR(36) NOT NULL,
+ PRIMARY KEY(tenant_id,device_id)
+);
+
+-- FAMILY adult push: tokens never enter the immutable event or delivery attempt records.
+CREATE TABLE family_push_installations (
+    installation_id VARCHAR(36) NOT NULL PRIMARY KEY,
+    tenant_id VARCHAR(36) NOT NULL,
+    actor_key VARCHAR(64) NOT NULL,
+    provider VARCHAR(20) NOT NULL,
+    platform VARCHAR(20) NOT NULL,
+    provider_token VARCHAR(256) NULL,
+    token_hash VARCHAR(64) NULL,
+    notification_consent BOOLEAN NOT NULL,
+    permission_granted BOOLEAN NOT NULL,
+    member_version BIGINT NOT NULL,
+    version BIGINT NOT NULL,
+    updated_at BIGINT NOT NULL,
+    revoked_at BIGINT NULL,
+    CONSTRAINT uq_family_push_token UNIQUE(token_hash),
+    CONSTRAINT fk_family_push_member FOREIGN KEY(tenant_id,actor_key) REFERENCES tenant_members(tenant_id,actor_key)
+);
+CREATE INDEX ix_family_push_recipient ON family_push_installations(tenant_id,actor_key,revoked_at);
+
+CREATE TABLE family_notification_preferences (
+    tenant_id VARCHAR(36) NOT NULL,
+    actor_key VARCHAR(64) NOT NULL,
+    enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    requests_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    device_attention_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    rule_expiry_enabled BOOLEAN NOT NULL DEFAULT FALSE,
+    updated_at BIGINT NOT NULL,
+    PRIMARY KEY(tenant_id,actor_key),
+    CONSTRAINT fk_family_push_preference_member FOREIGN KEY(tenant_id,actor_key) REFERENCES tenant_members(tenant_id,actor_key)
+);
+
+CREATE TABLE family_push_events (
+    tenant_id VARCHAR(36) NOT NULL,
+    event_id VARCHAR(36) NOT NULL,
+    kind VARCHAR(40) NOT NULL,
+    occurred_at BIGINT NOT NULL,
+    PRIMARY KEY(tenant_id,event_id),
+    CONSTRAINT fk_family_push_event_tenant FOREIGN KEY(tenant_id) REFERENCES tenants(id)
+);
+
+CREATE TABLE family_push_outbox (
+    delivery_id VARCHAR(36) NOT NULL PRIMARY KEY,
+    tenant_id VARCHAR(36) NOT NULL,
+    event_id VARCHAR(36) NOT NULL,
+    installation_id VARCHAR(36) NOT NULL,
+    installation_version BIGINT NOT NULL,
+    actor_key VARCHAR(64) NOT NULL,
+    state VARCHAR(20) NOT NULL,
+    attempts INTEGER NOT NULL DEFAULT 0,
+    next_attempt_at BIGINT NOT NULL,
+    lease_id VARCHAR(36) NULL,
+    lease_until BIGINT NULL,
+    provider_message_id VARCHAR(128) NULL,
+    last_error VARCHAR(60) NULL,
+    created_at BIGINT NOT NULL,
+    updated_at BIGINT NOT NULL,
+    CONSTRAINT uq_family_push_event_installation UNIQUE(tenant_id,event_id,installation_id),
+    CONSTRAINT fk_family_push_outbox_event FOREIGN KEY(tenant_id,event_id) REFERENCES family_push_events(tenant_id,event_id),
+    CONSTRAINT fk_family_push_outbox_installation FOREIGN KEY(installation_id) REFERENCES family_push_installations(installation_id)
+);
+CREATE INDEX ix_family_push_dispatch ON family_push_outbox(state,next_attempt_at,lease_until,delivery_id);
+
+
+-- Versioned default price configuration; this alone does not enable sales.
+CREATE TABLE family_product_offers (
+ plan_key VARCHAR(40) NOT NULL PRIMARY KEY,version BIGINT NOT NULL,price_minor INT NOT NULL,
+ proposed_price INT NULL,proposed_version BIGINT NULL,proposed_actor VARCHAR(64) NULL
+);
+INSERT INTO family_product_offers(plan_key,version,price_minor) VALUES('FAMILY_MONTH',1,1900),('FAMILY_YEAR',1,19900);
+CREATE TABLE family_product_offer_events (
+ id VARCHAR(36) NOT NULL PRIMARY KEY,plan_key VARCHAR(40) NOT NULL,version BIGINT NOT NULL,
+ operation VARCHAR(20) NOT NULL,price_minor INT NOT NULL,actor_key VARCHAR(64) NOT NULL,occurred_at BIGINT NOT NULL
+);
+-- Fresh baseline fragment, not a development database upgrade migration.
+CREATE TABLE IF NOT EXISTS family_device_access_accounts (
+    tenant_id VARCHAR(36) NOT NULL PRIMARY KEY,
+    version BIGINT NOT NULL DEFAULT 0,
+    projection_hash VARCHAR(64) NULL,
+    selected_device_id VARCHAR(36) NULL,
+    selected_registration_id VARCHAR(36) NULL,
+    selection_anchor BIGINT NULL,
+    CONSTRAINT fk_family_device_access_tenant FOREIGN KEY(tenant_id) REFERENCES tenants(id)
+);
+
 -- A local registration proof is distinct from provider enrollment and system policy capability.
 CREATE TABLE managed_agent_bindings (
     tenant_id VARCHAR(36) NOT NULL,
@@ -1672,6 +1911,172 @@ CREATE TABLE managed_application_evidence (
       REFERENCES application_definitions(tenant_id,id),
     CONSTRAINT ck_managed_application_evidence_state CHECK(state IN ('PENDING','VERIFIED','WAITING_REPORT','REJECTED','FAILED')),
     CONSTRAINT ck_managed_application_evidence_version CHECK(version >= 1)
+);
+
+
+-- Included verbatim in the unreleased 1.0.0 baseline; not an upgrade for an existing database.
+CREATE TABLE family_phone_invitations (
+ id VARCHAR(36) NOT NULL PRIMARY KEY,
+ tenant_id VARCHAR(36) NOT NULL,
+ inviter_actor_id VARCHAR(255) NOT NULL,
+ recipient_phone_hash VARCHAR(64) NOT NULL,
+ recipient_phone_masked VARCHAR(20) NOT NULL,
+ token_hash VARCHAR(64) NOT NULL,
+ expires_at BIGINT NOT NULL,
+ created_at BIGINT NOT NULL,
+ consumed_at BIGINT NULL,
+ consumed_by_actor_key VARCHAR(64) NULL,
+ revoked_at BIGINT NULL,
+ accepted_member_version BIGINT NULL,
+ CONSTRAINT uq_family_phone_invitation_token UNIQUE(token_hash),
+ CONSTRAINT fk_family_phone_invitation_tenant FOREIGN KEY(tenant_id) REFERENCES tenants(id)
+);
+CREATE INDEX ix_family_phone_invitation_tenant ON family_phone_invitations(tenant_id,created_at,id);
+
+CREATE TABLE family_invitation_attempts (
+ actor_key VARCHAR(64) NOT NULL PRIMARY KEY,
+ window_start BIGINT NOT NULL,
+ attempts INT NOT NULL
+);
+
+-- Current device attention episodes, separate from opaque lock-screen events.
+CREATE TABLE family_notification_device_states (
+    tenant_id VARCHAR(36) NOT NULL,
+    device_id VARCHAR(36) NOT NULL,
+    registration_id VARCHAR(36) NOT NULL,
+    was_healthy BOOLEAN NOT NULL DEFAULT FALSE,
+    condition_code VARCHAR(40) NULL,
+    condition_anchor BIGINT NULL,
+    episode BIGINT NOT NULL DEFAULT 0,
+    event_id VARCHAR(36) NULL,
+    updated_at BIGINT NOT NULL,
+    PRIMARY KEY(tenant_id,device_id),
+    CONSTRAINT fk_family_notice_device FOREIGN KEY(tenant_id,device_id) REFERENCES devices(tenant_id,id)
+);
+CREATE INDEX ix_family_notice_device_event ON family_notification_device_states(tenant_id,event_id);
+
+CREATE TABLE family_notification_subscription_states (
+    tenant_id VARCHAR(36) NOT NULL,
+    boundary_key VARCHAR(64) NOT NULL,
+    event_kind VARCHAR(40) NOT NULL,
+    period_end BIGINT NOT NULL,
+    trigger_at BIGINT NOT NULL,
+    event_id VARCHAR(36) NOT NULL,
+    created_at BIGINT NOT NULL,
+    PRIMARY KEY(tenant_id,boundary_key),
+    CONSTRAINT uq_family_notice_subscription_event UNIQUE(tenant_id,event_id),
+    CONSTRAINT fk_family_notice_subscription_tenant FOREIGN KEY(tenant_id) REFERENCES tenants(id)
+);
+
+CREATE TABLE family_notification_scan_cursors (
+    scope_key VARCHAR(20) NOT NULL PRIMARY KEY,
+    last_tenant_id VARCHAR(36) NOT NULL,
+    last_entity_id VARCHAR(36) NOT NULL,
+    updated_at BIGINT NOT NULL
+);
+
+
+-- 未发布初始化基线的片段；不得直接对已有生产数据库执行。
+CREATE TABLE IF NOT EXISTS family_refund_reviews (
+    refund_id VARCHAR(36) NOT NULL PRIMARY KEY,
+    tenant_id VARCHAR(36) NOT NULL,
+    decision VARCHAR(16) NOT NULL,
+    note VARCHAR(200) NOT NULL,
+    reviewer_key VARCHAR(64) NOT NULL,
+    reviewed_at BIGINT NOT NULL,
+    preview_hash VARCHAR(64) NOT NULL,
+    CONSTRAINT fk_family_review_refund FOREIGN KEY (refund_id) REFERENCES family_refund_requests(id)
+);
+
+-- 尚未发布的初始化基线片段；不得用于清空或重置已有本机数据库。
+CREATE TABLE IF NOT EXISTS family_commerce_work (
+    job_key VARCHAR(80) NOT NULL PRIMARY KEY,
+    tenant_id VARCHAR(36) NOT NULL,
+    kind VARCHAR(12) NOT NULL,
+    entity_id VARCHAR(36) NOT NULL,
+    generation BIGINT NOT NULL DEFAULT 0,
+    lease_until BIGINT NOT NULL DEFAULT 0,
+    next_attempt_at BIGINT NOT NULL DEFAULT 0,
+    attempts INTEGER NOT NULL DEFAULT 0,
+    state VARCHAR(20) NOT NULL,
+    last_code VARCHAR(80) NULL,
+    updated_at BIGINT NOT NULL,
+    CONSTRAINT fk_family_commerce_work_tenant FOREIGN KEY (tenant_id) REFERENCES tenants(id),
+    INDEX ix_family_commerce_work_due (state,next_attempt_at,lease_until)
+);
+
+-- 未发布初始化片段；仅新库，不作为已有数据升级脚本执行。
+CREATE TABLE IF NOT EXISTS family_bill_tasks (
+    id VARCHAR(36) NOT NULL PRIMARY KEY,
+    merchant_key VARCHAR(64) NOT NULL,
+    bill_date VARCHAR(10) NOT NULL,
+    status VARCHAR(30) NOT NULL,
+    attempt_count INTEGER NOT NULL DEFAULT 0,
+    latest_attempt_id VARCHAR(36) NULL,
+    lease_token VARCHAR(36) NULL,
+    lease_until BIGINT NULL,
+    next_attempt_at BIGINT NULL,
+    created_at BIGINT NOT NULL,
+    updated_at BIGINT NOT NULL,
+    INDEX idx_family_bill_work (status,next_attempt_at,lease_until),
+    CONSTRAINT uq_family_bill_day UNIQUE (merchant_key,bill_date)
+);
+
+CREATE TABLE IF NOT EXISTS family_bill_attempts (
+    id VARCHAR(36) NOT NULL PRIMARY KEY,
+    task_id VARCHAR(36) NOT NULL,
+    attempt_number INTEGER NOT NULL,
+    status VARCHAR(30) NOT NULL,
+    bill_hash VARCHAR(40) NULL,
+    row_count INTEGER NOT NULL DEFAULT 0,
+    matched_count INTEGER NOT NULL DEFAULT 0,
+    ignored_count INTEGER NOT NULL DEFAULT 0,
+    difference_count INTEGER NOT NULL DEFAULT 0,
+    error_code VARCHAR(80) NULL,
+    created_at BIGINT NOT NULL,
+    completed_at BIGINT NULL,
+    CONSTRAINT uq_family_bill_attempt UNIQUE (task_id,attempt_number),
+    CONSTRAINT fk_family_bill_attempt_task FOREIGN KEY (task_id) REFERENCES family_bill_tasks(id)
+);
+
+CREATE TABLE IF NOT EXISTS family_bill_differences (
+    id VARCHAR(36) NOT NULL PRIMARY KEY,
+    task_id VARCHAR(36) NOT NULL,
+    attempt_id VARCHAR(36) NOT NULL,
+    kind VARCHAR(80) NOT NULL,
+    tenant_id VARCHAR(36) NULL,
+    order_id VARCHAR(36) NULL,
+    refund_id VARCHAR(36) NULL,
+    provider_reference VARCHAR(128) NULL,
+    row_hash VARCHAR(64) NULL,
+    expected_minor BIGINT NULL,
+    actual_minor BIGINT NULL,
+    state VARCHAR(30) NOT NULL,
+    note VARCHAR(200) NULL,
+    acknowledged_by VARCHAR(64) NULL,
+    acknowledged_at BIGINT NULL,
+    created_at BIGINT NOT NULL,
+    INDEX idx_family_bill_difference_page (task_id,attempt_id,id),
+    CONSTRAINT fk_family_bill_difference_task FOREIGN KEY (task_id) REFERENCES family_bill_tasks(id),
+    CONSTRAINT fk_family_bill_difference_attempt FOREIGN KEY (attempt_id) REFERENCES family_bill_attempts(id)
+);
+
+CREATE TABLE IF NOT EXISTS family_bill_cursors (
+    merchant_key VARCHAR(64) NOT NULL PRIMARY KEY,
+    last_scheduled_date VARCHAR(10) NULL,
+    updated_at BIGINT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS family_bill_audit_events (
+    id VARCHAR(36) NOT NULL PRIMARY KEY,
+    task_id VARCHAR(36) NOT NULL,
+    difference_id VARCHAR(36) NULL,
+    action VARCHAR(80) NOT NULL,
+    actor_key VARCHAR(64) NOT NULL,
+    evidence_hash VARCHAR(64) NOT NULL,
+    occurred_at BIGINT NOT NULL,
+    CONSTRAINT fk_family_bill_audit_task FOREIGN KEY (task_id) REFERENCES family_bill_tasks(id),
+    CONSTRAINT fk_family_bill_audit_difference FOREIGN KEY (difference_id) REFERENCES family_bill_differences(id)
 );
 
 -- BEGIN managed-policy-execution-journal-v1 (unreleased 1.0.0 fresh database only)
@@ -1766,6 +2171,126 @@ CREATE TABLE managed_policy_execution_events (
         REFERENCES managed_policy_execution_tasks(tenant_id,id) ON DELETE CASCADE
 );
 -- END managed-policy-execution-journal-v1
+
+-- BEGIN platform-identity-provider-drafts-v1
+-- Dedicated immutable encrypted drafts. These tables never enable consumer entry or sales.
+CREATE TABLE identity_provider_heads (
+    environment_id VARCHAR(64) NOT NULL PRIMARY KEY,
+    version BIGINT NOT NULL,
+    latest_version_id VARCHAR(36) NULL,
+    CONSTRAINT ck_identity_provider_head_version CHECK(version >= 0)
+);
+CREATE TABLE identity_provider_versions (
+    id VARCHAR(36) NOT NULL PRIMARY KEY,
+    environment_id VARCHAR(64) NOT NULL,
+    version BIGINT NOT NULL,
+    base_version BIGINT NOT NULL,
+    settings_json TEXT NOT NULL,
+    credential_presence_json TEXT NOT NULL,
+    protected_payload TEXT NOT NULL,
+    protected_request TEXT NOT NULL,
+    actor_key VARCHAR(64) NOT NULL,
+    created_at BIGINT NOT NULL,
+    CONSTRAINT uq_identity_provider_version UNIQUE(environment_id,version),
+    CONSTRAINT fk_identity_provider_version_head FOREIGN KEY(environment_id) REFERENCES identity_provider_heads(environment_id),
+    CONSTRAINT ck_identity_provider_version CHECK(version > 0 AND base_version >= 0 AND version = base_version + 1)
+);
+CREATE TABLE identity_provider_release_preparations (
+    id VARCHAR(36) NOT NULL PRIMARY KEY,
+    environment_id VARCHAR(64) NOT NULL,
+    version_id VARCHAR(36) NOT NULL,
+    status VARCHAR(16) NOT NULL,
+    reason_code VARCHAR(64) NOT NULL,
+    actor_key VARCHAR(64) NOT NULL,
+    created_at BIGINT NOT NULL,
+    CONSTRAINT fk_identity_provider_release_version FOREIGN KEY(version_id) REFERENCES identity_provider_versions(id),
+    CONSTRAINT ck_identity_provider_release_state CHECK(status IN ('BLOCKED','PREPARED'))
+);
+CREATE TABLE identity_provider_acceptance_runs (
+    id VARCHAR(36) NOT NULL PRIMARY KEY,
+    environment_id VARCHAR(64) NOT NULL,
+    version_id VARCHAR(36) NOT NULL,
+    provider_jar_sha256 VARCHAR(64) NOT NULL,
+    parent_apk_sha256 VARCHAR(64) NOT NULL,
+    actor_key VARCHAR(64) NOT NULL,
+    created_at BIGINT NOT NULL,
+    release_operation_id VARCHAR(36) NULL,
+    runtime_revision BIGINT NULL,
+    expires_at BIGINT NULL,
+    CONSTRAINT fk_identity_provider_run_version FOREIGN KEY(version_id) REFERENCES identity_provider_versions(id)
+);
+CREATE TABLE identity_provider_audit_events (
+    id VARCHAR(36) NOT NULL PRIMARY KEY,
+    environment_id VARCHAR(64) NOT NULL,
+    actor_key VARCHAR(64) NOT NULL,
+    action VARCHAR(64) NOT NULL,
+    resource_id VARCHAR(36) NOT NULL,
+    version_id VARCHAR(36) NOT NULL,
+    result_code VARCHAR(64) NOT NULL,
+    correlation_id VARCHAR(36) NOT NULL,
+    occurred_at BIGINT NOT NULL
+);
+CREATE INDEX ix_identity_provider_audit ON identity_provider_audit_events(environment_id,occurred_at,id);
+-- END platform-identity-provider-drafts-v1
+
+-- BEGIN platform-identity-provider-controlled-release-v1
+-- Runtime heads are separate from editable draft heads. No receipt is evidence of supplier acceptance.
+CREATE TABLE identity_provider_runtime_heads (
+    environment_id VARCHAR(64) NOT NULL PRIMARY KEY,
+    revision BIGINT NOT NULL,
+    active_operation_id VARCHAR(36) NULL,
+    confirmed_operation_id VARCHAR(36) NULL,
+    CONSTRAINT ck_identity_provider_runtime_revision CHECK(revision >= 0)
+);
+CREATE TABLE identity_provider_release_operations (
+    id VARCHAR(36) NOT NULL PRIMARY KEY,
+    environment_id VARCHAR(64) NOT NULL,
+    kind VARCHAR(16) NOT NULL,
+    version_id VARCHAR(36) NOT NULL,
+    preparation_id VARCHAR(36) NOT NULL,
+    provider_jar_sha256 VARCHAR(64) NOT NULL,
+    parent_apk_sha256 VARCHAR(64) NOT NULL,
+    base_runtime_revision BIGINT NOT NULL,
+    state VARCHAR(32) NOT NULL,
+    reason_code VARCHAR(64) NOT NULL,
+    actor_key VARCHAR(64) NOT NULL,
+    request_json TEXT NOT NULL,
+    created_at BIGINT NOT NULL,
+    confirmed_at BIGINT NULL,
+    claim_id VARCHAR(36) NULL,
+    claim_started_at BIGINT NULL,
+    last_report VARCHAR(16) NULL,
+    cancellation_id VARCHAR(36) NULL UNIQUE,
+    cancellation_actor_key VARCHAR(64) NULL,
+    cancellation_base_revision BIGINT NULL,
+    CONSTRAINT fk_identity_provider_operation_version FOREIGN KEY(version_id) REFERENCES identity_provider_versions(id),
+    CONSTRAINT fk_identity_provider_operation_preparation FOREIGN KEY(preparation_id) REFERENCES identity_provider_release_preparations(id),
+    CONSTRAINT ck_identity_provider_operation_kind CHECK(kind IN ('PUBLISH','ROLLBACK')),
+    CONSTRAINT ck_identity_provider_operation_state CHECK(state IN ('WAITING_EXECUTOR','CLAIMED','EXECUTION_UNKNOWN','APPLIED_CLOSED','CANCELLED')),
+    CONSTRAINT ck_identity_provider_operation_report CHECK(last_report IS NULL OR last_report IN ('UNKNOWN','FAILED','FINISHED'))
+);
+CREATE INDEX ix_identity_provider_operation_history ON identity_provider_release_operations(environment_id,state,confirmed_at);
+CREATE TABLE identity_provider_runtime_checks (
+    id VARCHAR(36) NOT NULL PRIMARY KEY,
+    environment_id VARCHAR(64) NOT NULL,
+    operation_id VARCHAR(36) NOT NULL,
+    version_id VARCHAR(36) NOT NULL,
+    actor_key VARCHAR(64) NOT NULL,
+    state VARCHAR(16) NOT NULL,
+    reason_code VARCHAR(64) NOT NULL,
+    instances_json TEXT NOT NULL,
+    created_at BIGINT NOT NULL,
+    completed_at BIGINT NULL,
+    CONSTRAINT fk_identity_provider_check_operation FOREIGN KEY(operation_id) REFERENCES identity_provider_release_operations(id),
+    CONSTRAINT ck_identity_provider_check_state CHECK(state IN ('CHECKING','CONFIRMED','UNAVAILABLE','MISMATCH'))
+);
+CREATE TABLE identity_provider_executor_nonces (
+    environment_id VARCHAR(64) NOT NULL,
+    nonce VARCHAR(43) NOT NULL,
+    occurred_at BIGINT NOT NULL,
+    PRIMARY KEY(environment_id,nonce)
+);
+-- END platform-identity-provider-controlled-release-v1
 
 -- BEGIN managed-policy-preparation-requests-v1
 CREATE TABLE managed_policy_preparation_requests (

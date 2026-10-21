@@ -5,6 +5,7 @@ import 'package:sembast/sembast.dart';
 import '../platform/configuration_database.dart';
 import 'environment.dart';
 import 'session.dart';
+import 'assisted_runtime.dart';
 
 /// Receives CONFIGURE_ONLY documents; never reports APPLIED/system enforcement.
 class SignedRuleReceiver implements ChildRuleReceiver {
@@ -14,14 +15,16 @@ class SignedRuleReceiver implements ChildRuleReceiver {
   final DeviceIdentityManager identity;
   final DeviceIdentityView identityScope;
   final String? Function() sentCredential;
+  final AndroidAssistedRuntime? assistance;
   SignedRuleReceiver._(this.database, this.journal, this.synchronizer,
-      this.identity, this.identityScope, this.sentCredential);
+      this.identity, this.identityScope, this.sentCredential, this.assistance);
   static Future<ChildRuleReceiver> open(
       ChildEnvironment environment,
       DeviceIdentityManager identity,
       DeviceIdentityView view,
       int Function() clock,
       {Future<Database> Function()? databaseOpener,
+      AndroidAssistedRuntime? assistance,
       http.Client? client}) async {
     if (environment.configurationKeys == null ||
         environment.configurationIssuer.isEmpty) {
@@ -56,18 +59,26 @@ class SignedRuleReceiver implements ChildRuleReceiver {
               journal: journal, transport: transport),
           identity,
           view,
-          () => requestCredential);
+          () => requestCredential,
+          assistance);
     } catch (_) {
       await database.close();
       rethrow;
     }
   }
 
-  Future<ChildRules> _snapshot({bool hasMore = false}) async => ChildRules(
-      configurations: List.unmodifiable((await journal.restore()).values),
-      cursor: await journal.cursor(),
-      pendingReceipts: (await journal.pendingReceipts()).length,
-      hasMore: hasMore);
+  Future<ChildRules> _snapshot({bool hasMore = false}) async {
+    final configurations = List<VerifiedConfiguration>.unmodifiable(
+        (await journal.restore()).values);
+    // A display/STORED receipt stays distinct from native application assistance.
+    await assistance?.acceptVerified(configurations, journal.verifier);
+    return ChildRules(
+        configurations: configurations,
+        cursor: await journal.cursor(),
+        pendingReceipts: (await journal.pendingReceipts()).length,
+        hasMore: hasMore);
+  }
+
   @override
   Future<ChildRules> restore() => _snapshot();
   @override
@@ -79,8 +90,9 @@ class SignedRuleReceiver implements ChildRuleReceiver {
       final credential = sentCredential();
       if ((failure.status == 401 || failure.status == 403) &&
           credential != null) {
-        await identity.recordCredentialRejection(
+        final rejected = await identity.recordCredentialRejection(
             scope: identityScope, rejectedCredential: credential);
+        if (rejected) await assistance?.clear();
       }
       rethrow;
     }

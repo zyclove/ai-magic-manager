@@ -14,11 +14,31 @@ class MainActivity: FlutterActivity() {
     private var exportDocuments: AuditExportDocuments? = null
     private var storageExecutor = Executors.newSingleThreadExecutor()
     private val mainHandler = Handler(Looper.getMainLooper())
+    private var familyPayChannel: MethodChannel? = null
+    private var authChannel: MethodChannel? = null
+    private var familyPushHost: FamilyPushHost? = null
+    private var invitationLinks: MethodChannel? = null
     private var operationJournal: ParentOperationJournalStore? = null
+
+    override fun onCreate(savedInstanceState: android.os.Bundle?) {
+        FamilyInvitationLinkHost.capture(intent)
+        FamilyPushRuntime.capture(intent)
+        super.onCreate(savedInstanceState)
+    }
+
+    override fun onNewIntent(intent: android.content.Intent) {
+        FamilyInvitationLinkHost.capture(intent)
+        FamilyPushRuntime.capture(intent)
+        super.onNewIntent(intent)
+    }
 
     override fun configureFlutterEngine(engine: FlutterEngine) {
         super.configureFlutterEngine(engine)
         operationJournal = ParentOperationJournalStore(applicationContext, engine.dartExecutor.binaryMessenger)
+        familyPushHost = FamilyPushHost(this, engine.dartExecutor.binaryMessenger)
+        invitationLinks = FamilyInvitationLinkHost.install(engine.dartExecutor.binaryMessenger)
+        familyPayChannel = FamilyPayBridge.install(this, engine.dartExecutor.binaryMessenger)
+        authChannel = ConsumerWeChatAuthBridge.install(this, engine.dartExecutor.binaryMessenger)
         exportDocuments = AuditExportDocuments(this)
         MethodChannel(engine.dartExecutor.binaryMessenger, "com.aimanager.parent/audit-export")
             .setMethodCallHandler { call, result -> exportDocuments?.handle(call, result)
@@ -46,6 +66,15 @@ class MainActivity: FlutterActivity() {
     override fun cleanUpFlutterEngine(engine: FlutterEngine) {
         operationJournal?.close()
         operationJournal = null
+        familyPayChannel?.setMethodCallHandler(null)
+        familyPushHost?.close()
+        familyPushHost = null
+        invitationLinks?.setMethodCallHandler(null)
+        invitationLinks = null
+        familyPayChannel = null
+        authChannel?.setMethodCallHandler(null)
+        ConsumerWeChatAuthBridge.cancelPending()
+        authChannel = null
         MethodChannel(engine.dartExecutor.binaryMessenger, "com.aimanager.parent/audit-export").setMethodCallHandler(null)
         exportDocuments?.close()
         exportDocuments = null
@@ -56,6 +85,9 @@ class MainActivity: FlutterActivity() {
     }
 
     override fun onResume() { super.onResume(); exportDocuments?.onResume() }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (familyPushHost?.permissionResult(requestCode) != true) super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+    }
     override fun onPause() { exportDocuments?.onPause(); super.onPause() }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: android.content.Intent?) {
         if (exportDocuments?.onActivityResult(requestCode, resultCode, data) != true) {

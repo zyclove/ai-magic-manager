@@ -1,0 +1,8 @@
+# A trusted HTTPS tunnel terminates TLS and connects only to this loopback port.
+# The override pins forwarded scheme/port instead of trusting client headers.
+services:
+  edge:
+    volumes: !override
+      - ${REPOSITORY_ROOT:?Set REPOSITORY_ROOT}/deploy/edge/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ${REPOSITORY_ROOT:?Set REPOSITORY_ROOT}/deploy/edge/http.conf:/etc/nginx/conf.d/default.conf:ro
+      - ${REPOSITORY_ROOT:?Set REPOSITORY_ROOT}/deploy/edge/routes.external-tls.conf:/etc/nginx/includes/routes.conf:ro

@@ -4,6 +4,7 @@ import 'package:child/platform/secret_store.dart';
 import 'package:device_cleanup/device_cleanup.dart';
 import 'package:device_identity/device_identity.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sembast/sembast_io.dart';
@@ -18,12 +19,18 @@ class _Host {
   static const runtime = MethodChannel('com.aimanager.child/runtime');
   final records = <String, String>{};
   final calls = <String>[];
-  final store = AndroidIdentityStore(available: () => true);
+  final store = AndroidIdentityStore(
+      storage:
+          const FlutterSecureStorage(aOptions: AndroidIdentityStore.options),
+      available: () => true);
   late final identity = IdentityFixture(nativeSecrets: store);
   late final Directory directory;
   late final VerifiedCleanupCommand command;
   late final AndroidAgentCleanupExecutor executor;
-  bool closed = true, fileFlush = true, secretFlush = true;
+  bool closed = true,
+      fileFlush = true,
+      secretFlush = true,
+      assistanceClear = true;
   String? keepOnDelete, failOnDelete;
 
   Future<void> initialize() async {
@@ -54,6 +61,7 @@ class _Host {
         expect((call.arguments as Map)['directory'], directory.path);
         return fileFlush;
       }
+      if (call.method == 'clearAssistance') return assistanceClear;
       expect(call.method, 'flushIdentity');
       return secretFlush;
     });
@@ -106,6 +114,15 @@ void main() {
       .having((failure) => failure.reasonCode, 'reason', 'UNSUPPORTED_AGENT'));
   final storageFailure = throwsA(isA<AgentCleanupFailure>()
       .having((failure) => failure.reasonCode, 'reason', 'STORAGE_FAILURE'));
+
+  test('cleanup must stop native assistance before deleting signed caches',
+      () async {
+    final file = await host.database('configuration-v1.db');
+    host.assistanceClear = false;
+    await expectLater(host.executor.clearOwnData(host.command), storageFailure);
+    expect(host.calls, contains('clearAssistance'));
+    expect(await file.exists(), isTrue);
+  });
 
   test('cleanup removes Sembast recovery copy that can resurrect deleted data',
       () async {

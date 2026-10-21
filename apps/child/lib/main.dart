@@ -6,6 +6,7 @@ import 'core/environment.dart';
 import 'core/production_session.dart';
 import 'core/report_loader.dart';
 import 'core/help_requests.dart';
+import 'core/family_access.dart';
 import 'platform/secret_store.dart';
 import 'ui/child_app.dart';
 
@@ -47,6 +48,24 @@ Future<void> main() async {
       session: session,
       serviceLabel: configured.apiRoot.toString(),
       nativeAvailable: nativeAvailable,
+      assistedRuntime: runtime.assistance,
+      familyAccessFactory: nativeAvailable
+          ? (session) => FamilyAccessCoordinator(
+              session: session,
+              environment: configured,
+              store: AndroidHelpRequestStore(),
+              onCredentialRejected: () async {
+                await runtime.assistance?.clear();
+                await session.checkConnection();
+              },
+              afterApproval: () async {
+                if (!await session.synchronizeRules()) {
+                  throw const FamilyAccessFailure(
+                      'FAMILY_ACCESS_RULE_SYNC_PENDING');
+                }
+                await runtime.assistance?.refresh();
+              })
+          : null,
       reportFactory: nativeAvailable
           ? (session) => DeviceChildReports(
               session: session,

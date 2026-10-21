@@ -11,6 +11,9 @@ class DeviceIdentityManager {
   final DeviceSecretStore secrets;
   final DeviceEnrollmentKeys keys;
   final int Function() nowMillis;
+  // Each operation retains its own original bytes. A concurrent read-only view
+  // must not replace the expected record of a mutation waiting for HTTP.
+  final Expando<String> _serialized = Expando<String>('identity snapshot');
   bool _busy = false;
   DeviceIdentityManager(
       {required this.api,
@@ -60,6 +63,7 @@ class DeviceIdentityManager {
       if (serialized.length > 65536) throw const FormatException('Size');
       final value = Map<String, dynamic>.from(jsonDecode(serialized));
       if (!_validState(value)) throw const FormatException('Invalid record');
+      _serialized[value] = serialized;
       return value;
     } catch (_) {
       throw const DeviceIdentityFailure('IDENTITY_STATE_INVALID');
@@ -74,11 +78,30 @@ class DeviceIdentityManager {
     if (!_validState(state)) {
       throw const DeviceIdentityFailure('IDENTITY_STATE_INVALID');
     }
+    await _persist(state, jsonEncode(state));
+  }
+
+  Future<void> _persist(Map<String, dynamic> state, String? value) async {
+    var applied = true;
     try {
-      await secrets.write(jsonEncode(state));
+      if (secrets is DeviceSecretCompareAndSet) {
+        applied = await (secrets as DeviceSecretCompareAndSet)
+            .compareAndSet(expected: _serialized[state], value: value);
+      } else if (value == null) {
+        await (secrets as DeviceSecretDeletion).deleteIdentity();
+      } else {
+        await secrets.write(value);
+      }
     } catch (_) {
       throw const DeviceIdentityFailure('SECURE_STORAGE_FAILED');
     }
+    if (!applied) {
+      // Discard the stale operation. Reread for validation/recovery only; never
+      // reapply its HTTP response or its original mutation to the new record.
+      await _read();
+      throw const DeviceIdentityFailure('IDENTITY_STATE_CONFLICT');
+    }
+    _serialized[state] = value;
   }
 
   IdentityPhase _phase(Map<String, dynamic> state) =>
@@ -310,16 +333,13 @@ class DeviceIdentityManager {
           throw const DeviceIdentityFailure('IDENTITY_SCOPE_MISMATCH');
         }
         if (keys is! DeviceCleanupKeyDeletion ||
-            secrets is! DeviceSecretDeletion) {
+            (secrets is! DeviceSecretDeletion &&
+                secrets is! DeviceSecretCompareAndSet)) {
           throw const DeviceIdentityFailure('DEVICE_KEY_UNAVAILABLE');
         }
         await _keyOperation(() => (keys as DeviceCleanupKeyDeletion)
             .deleteOriginalHandle(state['keyHandle']));
-        try {
-          await (secrets as DeviceSecretDeletion).deleteIdentity();
-        } catch (_) {
-          throw const DeviceIdentityFailure('SECURE_STORAGE_FAILED');
-        }
+        await _persist(state, null);
       });
 
   /// Persist a 401/403 observed by a trusted device transport. Supply the exact

@@ -154,6 +154,12 @@ abstract interface class ObservationStore {
   Future<void> write(String value);
 }
 
+/// 前台与原生后台共享加密记录，只有原始字节仍一致时才能提交。
+abstract interface class ObservationCompareAndSet {
+  Future<bool> compareAndSet(
+      {required String? expected, required String? replacement});
+}
+
 abstract interface class ObservationApi {
   Future<Map<String, dynamic>> settings();
   Future<Map<String, dynamic>> inventory(Map<String, dynamic> body);

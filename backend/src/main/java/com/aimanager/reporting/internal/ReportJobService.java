@@ -57,6 +57,7 @@ class ReportJobService {
   @Transactional(timeout = 10)
   public ReportJobStore.Job create(String tenant, Jwt actor, ReportJobSelection input, String key) {
     var member = store.authorize(tenant, actor.getSubject(), true);
+    reports.requireHistory(tenant,input.from());
     recent.require(actor);
     cipher.requireAvailable();
     reports.validateQuery(input.from(), input.to(), input.timeZone(), input.period());
@@ -175,7 +176,7 @@ class ReportJobService {
   /** The caller owns the membership and job locks for the entire read/publication transaction. */
   void validateScope(ReportJobStore.Row row, String actor, List<ReportJobStore.Part> parts) {
     var ids = parts.stream().map(ReportJobStore.Part::deviceId).toList();
-    var expected = scopes.prepare(row.tenant(), actor, ids, row.selection().scope());
+    var expected = scopes.prepareHistory(row.tenant(), actor, ids, row.selection().scope(),row.selection().from());
     var current = source.authorize(row.tenant(), actor, ids);
     scopes.verify(expected, current);
     var indexed = new HashMap<String, ReportJobStore.Part>();
@@ -206,6 +207,7 @@ class ReportJobService {
     var hint = store.find(tenant, id, false);
     if (hint == null) return null;
     var member = store.member(tenant, hint.creator(), true);
+    reports.lockFamily(tenant);
     store.head(tenant);
     var row = store.find(tenant, id, true);
     return row == null ? null : new Locked(row, member);
@@ -240,6 +242,7 @@ class ReportJobService {
 
   private ReportJobStore.Job getLocked(String tenant, String id, Jwt actor) {
     var member = store.authorize(tenant, actor.getSubject(), true);
+    reports.lockFamily(tenant);
     store.head(tenant);
     var row = store.owned(tenant, id, actor.getSubject(), true);
     if (eligible(new Locked(row, member))) {
@@ -281,6 +284,7 @@ class ReportJobService {
       return tx.execute(
           status -> {
             var member = store.authorize(tenant, actor.getSubject(), true);
+            reports.lockFamily(tenant);
             store.head(tenant);
             var row = store.owned(tenant, id, actor.getSubject(), true);
             if (!store.effective(row, member, clock.millis()).equals("READY"))

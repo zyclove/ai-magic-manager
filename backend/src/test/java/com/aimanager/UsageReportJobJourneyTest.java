@@ -49,6 +49,72 @@ class UsageReportJobJourneyTest {
   @MockitoSpyBean com.aimanager.observation.UsageReportSource observationSource;
 
   @Test
+  void readyHistoricalDownloadRequiresCurrentMembershipAndRenewalRestoresTheSameArtifact()
+      throws Exception {
+    devices = new ArrayList<>(List.of(devices.get(0)));
+    long today = Instant.ofEpochMilli(now).atZone(java.time.ZoneId.of("Asia/Shanghai"))
+        .toLocalDate().atStartOfDay(java.time.ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli();
+    var historical = new HashMap<>(input());
+    historical.put("from", today - 3600000);
+    historical.put("to", today);
+    String id = body(create(UUID.randomUUID().toString(), historical)
+        .andExpect(status().isAccepted())).path("id").asText();
+    worker.runBatch(25);
+    assertThat(job(id).path("state").asText()).isEqualTo("READY");
+    byte[] original = mvc.perform(get(root + "/" + id + "/parts/0").with(actor(owner)))
+        .andExpect(status().isOk()).andReturn().getResponse().getContentAsByteArray();
+    String ciphertext = db.queryForObject(
+        "SELECT artifact FROM usage_report_parts WHERE tenant_id=? AND job_id=? AND ordinal=0",
+        String.class, tenant, id);
+
+    db.update("UPDATE commercial_sources SET expires_at=? WHERE tenant_id=?",
+        System.currentTimeMillis() - 1, tenant);
+    mvc.perform(get(root + "/" + id + "/parts/0").with(actor(owner)))
+        .andExpect(status().isPaymentRequired())
+        .andExpect(jsonPath("$.errorCode").value("ENTITLEMENT_REQUIRED"));
+    assertThat(db.queryForObject(
+        "SELECT state FROM usage_report_jobs WHERE tenant_id=? AND id=?",
+        String.class, tenant, id)).isEqualTo("READY");
+    assertThat(db.queryForObject(
+        "SELECT artifact FROM usage_report_parts WHERE tenant_id=? AND job_id=? AND ordinal=0",
+        String.class, tenant, id)).isEqualTo(ciphertext);
+
+    long renewed = System.currentTimeMillis();
+    db.update("INSERT INTO commercial_sources(tenant_id,source_system,source_key,source_revision,product_key,capacity_kind,device_capacity,features_json,active_from,expires_at,state,payload_hash,evidence_hash,verified_by,verified_at)"
+        + " VALUES(?,'CONTRACT',?,1,'FAMILY','BASE',3,'[]',?,?,'ACTIVE',?,?,'system:report-renewal-fixture',?)",
+        tenant, "d".repeat(64), renewed - 1000, renewed + 86400000,
+        "e".repeat(64), "f".repeat(64), renewed);
+    byte[] resumed = mvc.perform(get(root + "/" + id + "/parts/0").with(actor(owner)))
+        .andExpect(status().isOk()).andReturn().getResponse().getContentAsByteArray();
+    assertThat(resumed).isEqualTo(original);
+  }
+
+  @Test
+  void freeFamilyCanCreateAndDownloadTodayJobButCannotCreateHistoryJob() throws Exception {
+    devices = new ArrayList<>(List.of(devices.get(0)));
+    db.update("UPDATE commercial_sources SET expires_at=? WHERE tenant_id=?", now - 1, tenant);
+    long today = Instant.ofEpochMilli(now).atZone(java.time.ZoneId.of("Asia/Shanghai"))
+        .toLocalDate().atStartOfDay(java.time.ZoneId.of("Asia/Shanghai")).toInstant().toEpochMilli();
+    var history = new HashMap<>(input());
+    history.put("from", today - 1);
+    history.put("to", now);
+    create(UUID.randomUUID().toString(), history).andExpect(status().isPaymentRequired())
+        .andExpect(jsonPath("$.errorCode").value("ENTITLEMENT_REQUIRED"));
+    assertThat(db.queryForObject("SELECT COUNT(*) FROM usage_report_jobs WHERE tenant_id=?",
+        Integer.class, tenant)).isZero();
+
+    var current = new HashMap<>(history);
+    current.put("from", today);
+    String id = body(create(UUID.randomUUID().toString(), current)
+        .andExpect(status().isAccepted())).path("id").asText();
+    worker.runBatch(25);
+    assertThat(job(id).path("state").asText()).isEqualTo("READY");
+    mvc.perform(get(root + "/" + id + "/parts/0").with(actor(owner)))
+        .andExpect(status().isOk()).andExpect(jsonPath("$.from").value(today))
+        .andExpect(jsonPath("$.devices[0].deviceId").value(devices.get(0)));
+  }
+
+  @Test
   @org.junit.jupiter.api.condition.EnabledIfSystemProperty(
       named = "device.dart.command",
       matches = ".+")
@@ -660,6 +726,7 @@ class UsageReportJobJourneyTest {
                 .andExpect(status().isCreated()))
             .path("id")
             .asText();
+    PaidFamilyReportFixture.grant(db,tenant,now);
     subject = UUID.randomUUID().toString();
     db.update(
         "INSERT INTO subjects(tenant_id,id,nickname,age_band,created_at)"

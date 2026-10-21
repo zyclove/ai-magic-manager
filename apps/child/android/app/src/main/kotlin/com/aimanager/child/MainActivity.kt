@@ -15,9 +15,12 @@ import io.flutter.plugin.common.MethodChannel
 import java.util.UUID
 import java.io.File
 import java.util.concurrent.Executors
+import com.aimanager.child.assisted.AssistedRuntimeHost
+import com.aimanager.child.assisted.AndroidIdentityGate
+import com.aimanager.child.assisted.AndroidBackgroundSync
 
 /** Platform glue only. Encryption/key management remain in the vetted plugin.
- * No device-owner, accessibility, VPN, app suspension or admin role is claimed. */
+ * Optional application assistance remains distinct from system enforcement. */
 class MainActivity: FlutterActivity() {
     // Flutter can detach and reattach an engine to the same Activity. A closed
     // executor must never be reused for a later durability barrier.
@@ -36,6 +39,20 @@ class MainActivity: FlutterActivity() {
         window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
         observationHost = ObservationHost(this)
         AndroidObservationApi.setUp(engine.dartExecutor.binaryMessenger, observationHost)
+        MethodChannel(engine.dartExecutor.binaryMessenger, "com.aimanager.child/assistance")
+            .setMethodCallHandler { call, result ->
+                if (call.method in setOf("openUsageSettings", "openAccessibilitySettings", "clear", "inspect")) {
+                    try { result.success(AssistedRuntimeHost.get(this).invoke(this, call.method, call.arguments)) }
+                    catch (_: Exception) { result.error("ASSISTANCE_UNAVAILABLE", "Assistance unavailable", null) }
+                } else storageExecutor.execute {
+                    try {
+                        val output = AndroidBackgroundSync.invoke(this, this, call.method, call.arguments)
+                        mainHandler.post { result.success(output) }
+                    } catch (_: Exception) {
+                        mainHandler.post { result.error("ASSISTANCE_UNAVAILABLE", "Assistance unavailable", null) }
+                    }
+                }
+            }
         MethodChannel(engine.dartExecutor.binaryMessenger, "com.aimanager.child/device_keys")
             .setMethodCallHandler { call, result ->
                 storageExecutor.execute {
@@ -52,6 +69,36 @@ class MainActivity: FlutterActivity() {
         MethodChannel(engine.dartExecutor.binaryMessenger, "com.aimanager.child/runtime")
             .setMethodCallHandler { call, result ->
                 when (call.method) {
+                    "observationRead", "observationCompareAndSet" -> storageExecutor.execute {
+                        try {
+                            val output = if(call.method == "observationRead") AndroidIdentityGate.observationRead(this) else {
+                                val args = call.arguments as Map<*, *>
+                                require(args.containsKey("expected") && args.containsKey("replacement"))
+                                require(args["expected"] == null || args["expected"] is String)
+                                require(args["replacement"] == null || args["replacement"] is String)
+                                AndroidIdentityGate.observationCompareAndSet(this,
+                                    args["expected"] as String?, args["replacement"] as String?)
+                            }
+                            mainHandler.post { result.success(output) }
+                        } catch (_: Exception) {
+                            mainHandler.post { result.error("OBSERVATION_STORAGE_FAILED", "Observation storage unavailable", null) }
+                        }
+                    }
+                    "identityRead", "identityCompareAndSet", "identityDelete" -> storageExecutor.execute {
+                        try {
+                            val gate = AndroidIdentityGate.get(this)
+                            val output = if (call.method == "identityRead") gate.read() else {
+                                val args = call.arguments as Map<*, *>
+                                require(args.containsKey("expected") && (args["expected"] == null || args["expected"] is String))
+                                val value = if(call.method == "identityDelete") null else args["value"]
+                                require(value == null || value is String)
+                                gate.compareAndSet(args["expected"] as String?, value as String?)
+                            }
+                            mainHandler.post { result.success(output) }
+                        } catch (_: Exception) {
+                            mainHandler.post { result.error("SECURE_STORAGE_FAILED", "Secure storage unavailable", null) }
+                        }
+                    }
                     "flushIdentity" -> storageExecutor.execute {
                         // v10.0.0 uses apply() for wrapping keys and the record.
                         // commit waits for previous apply writes, then persists a
@@ -86,6 +133,10 @@ class MainActivity: FlutterActivity() {
                     "platformFacts" -> result.success(mapOf("osVersion" to "Android ${Build.VERSION.RELEASE} / API ${Build.VERSION.SDK_INT}",
                         "isTelevision" to (getSystemService(UiModeManager::class.java)?.currentModeType == Configuration.UI_MODE_TYPE_TELEVISION),
                         "systemEnforced" to false, "timeSource" to "OS_WALL_CLOCK"))
+                    "clearAssistance" -> storageExecutor.execute {
+                        val success = AndroidBackgroundSync.clear(this)
+                        mainHandler.post { result.success(success) }
+                    }
                     else -> result.notImplemented()
                 }
             }
@@ -98,6 +149,7 @@ class MainActivity: FlutterActivity() {
         observationHost = null
         MethodChannel(engine.dartExecutor.binaryMessenger, "com.aimanager.child/runtime").setMethodCallHandler(null)
         MethodChannel(engine.dartExecutor.binaryMessenger, "com.aimanager.child/device_keys").setMethodCallHandler(null)
+        MethodChannel(engine.dartExecutor.binaryMessenger, "com.aimanager.child/assistance").setMethodCallHandler(null)
         storageExecutor.shutdown()
         super.cleanUpFlutterEngine(engine)
     }

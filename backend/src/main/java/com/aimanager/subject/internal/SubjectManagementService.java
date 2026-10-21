@@ -69,7 +69,12 @@ class SubjectManagementService {
   @Transactional(timeout = 10)
   public Snapshot change(String tenant, Jwt actor, Change input, String key) {
     access.requireWriteRole(tenant, actor.getSubject(), OWNER, GUARDIAN, ORG_ADMIN);
-    recent.require(actor);
+    if (input != null && input.operation() != Operation.ARCHIVE
+        && "FAMILY".equals(db.queryForObject("SELECT kind FROM tenants WHERE id=?", String.class, tenant))) {
+      // Current adult family membership is enough for routine profile editing.
+    } else {
+      recent.requireForTenant(actor,tenant,db);
+    }
     canonical(key);
     var attributes = attributes(input);
     return journal.execute(tenant, actor.getSubject(), "subject.manage", key, attributes,

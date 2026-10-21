@@ -1,0 +1,497 @@
+{
+  "schemaVersion": 1,
+  "kind": "family-identity-provider-admin-verification",
+  "generatedAt": "2026-10-17T03:12:16.699956+00:00",
+  "clientDate": "2026-10-17",
+  "timezone": "Asia/Shanghai",
+  "features": [
+    "Dedicated platform navigation and recent MFA",
+    "Write-only encrypted immutable provider versions",
+    "CAS and operation-ID recovery without secret replay",
+    "Offline readiness separate from real acceptance",
+    "Encrypted release preparation and private deployment handoff",
+    "Twelve version-bound real-acceptance tasks"
+  ],
+  "backendFullFrozenRun": {
+    "failures": 0,
+    "errors": 0,
+    "skipped": 77,
+    "passed": 2162,
+    "tests": 2239,
+    "exitCode": 0,
+    "logSha256": "2aeb12f93f8f261e8cd6192adec9de70762ee17f6f2111bfc80122c3934f9012",
+    "sourceManifestSha256": "e85fae0a49f5e8c1fff843d4d51bcfa93bd160e58da3504b68807e392d2576e3",
+    "frozenSourceDrift": 0,
+    "workspaceFrozenFilesChangedSinceRun": [
+      {
+        "path": "backend/src/main/java/com/aimanager/managedandroid/internal/GoogleCompletePolicyCompiler.java",
+        "frozenSha256": "889d412788e08d052916bc97159d659855e674e48d6ee08bad5faf426aec9f70",
+        "workspaceSha256": "65da544d515eed8435e94c206d2faad8f55b05f98e99e50a9bdf27f3681b84a6"
+      },
+      {
+        "path": "backend/src/main/java/com/aimanager/managedandroid/internal/GooglePolicyPreparationService.java",
+        "frozenSha256": "d007fbbd2aa6c91e778194e0dbdbdbdf279cfc1bf6533f93fa82a93d1ce114eb",
+        "workspaceSha256": null
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/managedandroid/internal/GooglePolicyPreparationPublicationTest.java",
+        "frozenSha256": "b9dc9b9b1bcf75f6798078af8f44842c261793c32cd5bfa3c7fce4240201f6a8",
+        "workspaceSha256": "d4d0c2abad5d37af2a73484484747da747d2a877075f986864946906a93ad069"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/managedandroid/internal/GooglePolicyPreparationServiceTest.java",
+        "frozenSha256": "c23dd5123e222dc34b59f30b6f3cc03d20d60aaa769cd215e90e3750cbe6a6e4",
+        "workspaceSha256": "3517bf2cb7ccfd2576d4ce3f6aff8899bd12b63a66861b92566d6a387aa09d12"
+      }
+    ],
+    "additionalWorkspaceFilesNotInFrozenRun": [
+      {
+        "path": "backend/src/main/java/com/aimanager/managedandroid/internal/GoogleManagedPolicyDocumentCompiler.java",
+        "sha256": "f8f501c17f149924723822d18ddbf234dc127c847d5e81bcd3cabeac87632b4e"
+      },
+      {
+        "path": "backend/src/main/java/com/aimanager/managedandroid/internal/ManagedPolicyDocumentCompilers.java",
+        "sha256": "7c5840c8d735c35ae668c47c167867926c6034a97569b8e67e6ab3b00b320eaa"
+      },
+      {
+        "path": "backend/src/main/java/com/aimanager/managedandroid/internal/ManagedPolicyPreparationService.java",
+        "sha256": "7dc0f79cefa57f458635325e4e81cceadf30222590016dd10598d0fbdf7b5b5a"
+      },
+      {
+        "path": "backend/src/main/java/com/aimanager/managedandroid/ManagedPolicyDocumentCompiler.java",
+        "sha256": "8799b612d15eebaa3d4a5d8faf4f7ef12fa99df482566265a46dc4b526be4c67"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/managedandroid/internal/ManagedPolicyDocumentCompilersTest.java",
+        "sha256": "6c988b809afe27a4c5249e1e3e6c1bf4189dfeed4667b522f7e0fb8af3cfebeb"
+      },
+      {
+        "path": "backend/src/test/java/com/aimanager/managedandroid/internal/ManagedPolicyPreparationPartnerTest.java",
+        "sha256": "fbb9311b76b3db769bf44c3b1467c01605f96ebc2860b1322fea6b59b158f6ca"
+      }
+    ],
+    "beforeTargetedRerunSummarySha256": "3da688974f8deb160c3998d835f5d82f6a15eda585ffc4e87b8dc8b9a3615228",
+    "skipReasons": {
+      "System property [device.android.runner] does not exist": 1,
+      "System property [device.cleanup.android.runner] does not exist": 1,
+      "System property [parent.dart.command] does not exist": 52,
+      "System property [device.access.package] does not exist": 2,
+      "System property [device.child.package] does not exist": 2,
+      "System property [device.dart.command] does not exist": 7,
+      "System property [device.identity.package] does not exist": 2,
+      "System property [guardian.dart.command] does not exist": 3,
+      "Environment variable [NOTICE_IT_ROOT_PASSWORD] does not exist": 1,
+      "Environment variable [LEDGER_STORE_TEST_URL] does not exist": 6
+    }
+  },
+  "backendInitialFullFailure": {
+    "total": 2234,
+    "failures": 122,
+    "errors": 152,
+    "skipped": 77,
+    "affectedClasses": [
+      {
+        "className": "com.aimanager.retention.internal.ErasureAccessQuotaProcessorTest",
+        "failures": 12,
+        "errors": 18
+      },
+      {
+        "className": "com.aimanager.retention.internal.ErasureConfigurationProcessorTest",
+        "failures": 14,
+        "errors": 19
+      },
+      {
+        "className": "com.aimanager.retention.internal.ErasureDeviceIdentityProcessorTest",
+        "failures": 10,
+        "errors": 15
+      },
+      {
+        "className": "com.aimanager.retention.internal.ErasureIdempotencyCardinalityTest",
+        "failures": 2,
+        "errors": 1
+      },
+      {
+        "className": "com.aimanager.retention.internal.ErasureIdempotencyProcessorTest",
+        "failures": 5,
+        "errors": 18
+      },
+      {
+        "className": "com.aimanager.retention.internal.ErasureLifecycleProcessorTest",
+        "failures": 26,
+        "errors": 24
+      },
+      {
+        "className": "com.aimanager.retention.internal.ErasureManagedBindingProcessorTest",
+        "failures": 20,
+        "errors": 12
+      },
+      {
+        "className": "com.aimanager.retention.internal.ErasureObservationProcessorTest",
+        "failures": 6,
+        "errors": 10
+      },
+      {
+        "className": "com.aimanager.retention.internal.ErasurePermissionObservationTest",
+        "failures": 0,
+        "errors": 14
+      },
+      {
+        "className": "com.aimanager.retention.internal.ErasurePreflightJourneyTest",
+        "failures": 8,
+        "errors": 0
+      },
+      {
+        "className": "com.aimanager.retention.internal.ErasurePreviewJourneyTest",
+        "failures": 10,
+        "errors": 1
+      },
+      {
+        "className": "com.aimanager.retention.internal.ErasureSupportDiagnosticsProcessorTest",
+        "failures": 9,
+        "errors": 13
+      },
+      {
+        "className": "com.aimanager.retention.internal.FamilyErasureConfigurationProcessorTest",
+        "failures": 0,
+        "errors": 7
+      }
+    ],
+    "nonRetentionFailures": [],
+    "rootCause": "Five new global provider stores missing from exact reviewed coverage inventory; guard kept closed."
+  },
+  "catalogCorrection": {
+    "addedGlobalStores": 5,
+    "guardCodeChanged": false,
+    "existingStoresPreserved": 130,
+    "unknownTablesAndColumnsStillRejected": true,
+    "targetedTests": 4,
+    "logSha256": "686b73cf3709948445bf3cad305c48f6e798f4d8da6072b56cc185dd446f7a9f"
+  },
+  "isolatedMysqlAdminModule": {
+    "tests": 11,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "version": "8.4.11",
+    "isolation": "REPEATABLE READ",
+    "jwtAndSupplierInputsAreFixtures": true,
+    "realSupplierRequests": false,
+    "logSha256": "ffa8b59474ce10bec363ca37923dadda92e9a1290badbe310e502ac34bcf7cc2",
+    "resourcesCleaned": true,
+    "existingServicesTouched": false,
+    "cleanupSha256": "98295d0ea9250982563707a29a3be0dcd57b7913215da06b70cb042117d854d3",
+    "frozenSourceManifestSha256": "dab78764d07243a17f3b4cd45aac69ca1ec5ab21ea327542182c9da950231c51",
+    "initialSchemaSha256": "df2ad03a544213e73212f652ada00ab9591dcb2afdf995c98b2b4ea2e1e84997",
+    "schemaMatchesFinalSource": true,
+    "scope": "Eleven module checks on an earlier frozen candidate; final UUID and retention-catalog fixes are covered separately by final H2/HTTP/full regression."
+  },
+  "productionDartSpringHttp": {
+    "javaTests": 1,
+    "assertionChecks": 22,
+    "status": "PASS",
+    "realHttpAndH2Flyway": true,
+    "realOidcOrMfa": false,
+    "realSupplierRequests": false,
+    "lostCommittedReplyRecoveredByGetWithoutResubmission": true,
+    "logSha256": "ea9faaefffcae0edeabe5a64a790beb30e8190d481d81325b3e3aee6e1689595",
+    "finalSourceJavaRunLogSha256": "8a5a955107977857cf54f45109264f29f200e03f57397fdd91bcce63b736a5e2",
+    "sourcePinsSha256": "24dfae07e4c19ea9961a8c26d495461ac262eae37455d5ca3759ea3a0e42ee81"
+  },
+  "guardian": {
+    "fullVmFrozenBaseline": {
+      "passed": 798,
+      "exitCode": 0,
+      "logSha256": "3b93d396da587f894f1ff19ab0593383a16dee8ae721119fdd14bc70ee6f4d04"
+    },
+    "finalFeatureFrozenRun": {
+      "passed": 30,
+      "exitCode": 0,
+      "logSha256": "d25ee677b9dfa26acc665ecce6fa5fbbb4ca2b9306f153ccd2a57e5d59f0b4c2"
+    },
+    "featureAnalysis": {
+      "exitCode": 0,
+      "issues": 0,
+      "logSha256": "8251cc1f752b5cddc3b9fd6c23dc73e08add42a6a316574a5ab2e404fbf0eae4"
+    },
+    "wholeSnapshotAnalysis": {
+      "exitCode": 1,
+      "issues": 3,
+      "severity": "info",
+      "file": "apps/guardian/test/managed_execution_controller_test.dart",
+      "reason": "Parallel managed-execution tests omit braces; no files from that work were changed.",
+      "logSha256": "acea57b79ba452d3d9888e6ef1a0360db324e0482430ddeea682690c49c54835"
+    },
+    "countsOverlapNotAddedTogether": true,
+    "finalSourceManifestSha256": "dbaec016d018d4e564db913ba56361481030c0a0e4bb7ce03f63659b78eccdc0",
+    "workspaceChangesAfterFrozenRun": [
+      {
+        "path": "apps/guardian/lib/pages/console_pages.dart",
+        "frozenSha256": "cc8fe7c38076a1347d1b659503d6ec4c66766eace11fc6604bb6b31281718497",
+        "workspaceSha256": "cee4af8d58497e3d4edf330307e964e47f7e284e885a9b95f4bf239ed3a6d8f1"
+      }
+    ],
+    "currentIdentityEntryReadOnlyDelta": {
+      "status": "PASS_READ_ONLY_DELTA",
+      "verificationMode": "READ_ONLY_SOURCE_COMPARISON",
+      "filesCompared": 18,
+      "unchangedFiles": 17,
+      "changedFiles": [
+        "apps/guardian/lib/pages/console_pages.dart"
+      ],
+      "onlyImportRenameAndWhitespace": true,
+      "identityEntryLines68To79ByteTextEqual": true,
+      "welcomeEntryLines152To161ByteTextEqual": true,
+      "managedDialogPublicSignatureUnchanged": true,
+      "managedDialogEntrySha256": "172b4aec95f4675733f65fe4964e32f0837ae60a46d94735b83c45787aa13b61",
+      "newTestsPerformed": false,
+      "sourceModified": false,
+      "completeCurrentWorkspaceTested": false,
+      "featureTestsPreviouslyPassed": 30,
+      "featureTestSource": "src/final-2",
+      "guardianWebSource": "src/final-2",
+      "guardianWebCoversCurrentIntegrationDelta": false,
+      "priorEvidenceOverwritten": false,
+      "evidenceSha256": "39826d63daf1f712ceb37556028c9fbbe927cd60c3249f33dcde03ca18e85edf"
+    },
+    "browserEntryChecks": {
+      "status": "BLOCKED",
+      "casesCompleted": 0,
+      "reason": "Chrome bootstrap did not enter tests within the bounded diagnostic period."
+    }
+  },
+  "offlineTools": {
+    "administratorSetup": {
+      "tests": 7,
+      "status": "PASS",
+      "logSha256": "4982a6be1504a546cf31c161636c7dcbfefa527c349e7b9a3198864b004396dc"
+    },
+    "realmPermissionsAndPrivateExport": {
+      "tests": 7,
+      "status": "PASS",
+      "logSha256": "ab35886bad26363046dbc484ed53c3ccf6ef8a7ac0d557c085e3a53511fb929d"
+    },
+    "existingConsumerDeployment": {
+      "tests": 5,
+      "status": "PASS",
+      "logSha256": "02cca5568cf5ca67802f2decc92fe73c3e7747c8b43d9ef752becd99cbbbd4c4"
+    },
+    "existingSupplierAndMysqlTools": {
+      "tests": 25,
+      "status": "PASS",
+      "logSha256": "1c8a96584dd5bd3e34826365bb03505ba22c2be6259048bc8e519ad69575f7a1"
+    },
+    "releasePreparation": {
+      "failed": 0,
+      "total": 14,
+      "sourceChangedDuringTests": [],
+      "passed": 14,
+      "skipped": 0,
+      "logSha256": "ecb967e816639e5687afa81dfc4b132ac5e599cc2bc94bb3d5ebe1d146c8a789",
+      "exitCode": 0
+    },
+    "javaNimbusDotNetInterop": "PASS"
+  },
+  "browserVisualReview": {
+    "status": "BLOCKED",
+    "reasonCode": "AUTOMATIC_APPROVAL_REVIEW_TIMEOUT",
+    "attempts": 2,
+    "screenshotChecksCompleted": 0,
+    "securityBypassPerformed": false
+  },
+  "artifacts": {
+    "backendJar": {
+      "path": ".local/family-provider-admin-20261017/artifacts/manager-backend-1.0.0.jar",
+      "sha256": "0b710e59078a196cefd7d91108ec6a061d669a49e1334f2e95df2e346e5d2544",
+      "packagingTestsSkippedAfterIndependentFullRegression": true
+    },
+    "guardianHtml": {
+      "path": ".local/family-provider-admin-20261017/artifacts/guardian-web",
+      "fileCount": 32,
+      "manifestSha256": "df1335bc0ce919054a015dec9df4f4c56d8970f5e5e34fb3f06f11deb6167b32",
+      "developmentOriginsRequireReviewedProductionRebuild": true
+    }
+  },
+  "hygiene": {
+    "inventoriedBeforeCleanup": true,
+    "toolScratchDirectoriesRemoved": 5,
+    "designCleanupSha256": "00a5136eb0c1bedc5ecd9960587308be0327678a762309632f1b94a3e98c7ef6",
+    "flutterTmpRemoved": true,
+    "flutterCleanupSha256": "f2576a59efb8448e0ce906b6d94e040e792e08741187fdc3fc624d7570eb5f61",
+    "backendTemporaryDirectoriesRemoved": 3,
+    "backendCleanupSha256": "f133c08875d844e644fedc6799b38a4d23e2443da2683f80a1dbc8c2398d5989",
+    "emptyRootTestTmpCleanupSha256": "a4446a29c4fbeacaefcd465ea119a1fecec0ae403860b7e416490c02ddaf1cc7",
+    "importantSourceSnapshotsLogsAndArtifactsPreserved": true,
+    "driveRootTaskDirectoriesCreated": false
+  },
+  "sourceFiles": [
+    {
+      "path": "apps/guardian/lib/core/access.dart",
+      "sha256": "750635fee2d8d2684ec3ca03d54a10f02382f864e422cb00aab3202756a4da88"
+    },
+    {
+      "path": "apps/guardian/lib/core/family_identity_configuration.dart",
+      "sha256": "c2022b5c04d196bc3a35e7d5dd96c2e35e552a8fe43670a53d89d808ad2d5f09"
+    },
+    {
+      "path": "apps/guardian/lib/core/family_identity_controller.dart",
+      "sha256": "ae6a5c0431056492f64f2e966883e36843abdee324781a64f48a30bc5818bd9d"
+    },
+    {
+      "path": "apps/guardian/lib/core/family_identity_repository.dart",
+      "sha256": "d5448edf6cb9407e74e26057c327cb7d55e80da6fde3efb548fecba21b6fb838"
+    },
+    {
+      "path": "apps/guardian/lib/core/session.dart",
+      "sha256": "ce372a879cbdb1630037f53f655416043321de37d3b506d885302d3f9725ce0b"
+    },
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "sha256": "cee4af8d58497e3d4edf330307e964e47f7e284e885a9b95f4bf239ed3a6d8f1"
+    },
+    {
+      "path": "apps/guardian/lib/ui/console_navigation.dart",
+      "sha256": "a9b68194b8fbd1ab9e98422b3d0f40b924abeeec8c1e9373fb54f9438d0f696f"
+    },
+    {
+      "path": "apps/guardian/lib/ui/family_identity_editor.dart",
+      "sha256": "af24278f6b9067ad5f949bfa962a4514234a3d4fe66c05248f698dbb7d3f5fed"
+    },
+    {
+      "path": "apps/guardian/lib/ui/family_identity_page.dart",
+      "sha256": "bfc5110fb4ebb5cd1ff22797dc73876c3bef8b6e7b601e0b9fe26219eee83888"
+    },
+    {
+      "path": "apps/guardian/test/console_navigation_test.dart",
+      "sha256": "184feb991e7538ccc395deac0f8118a296a1b364d4f010fdf8ddbf0100b81cc3"
+    },
+    {
+      "path": "apps/guardian/test/family_identity_access_test.dart",
+      "sha256": "b6150dd25af29f4dd1c008223a088c240ca060bca283b5de5504f4cd849c7593"
+    },
+    {
+      "path": "apps/guardian/test/family_identity_configuration_test.dart",
+      "sha256": "7ffadbe2a23ededb3ab2ea51aacf3ff48cce89e2849c5ffaae68cb0a23db6587"
+    },
+    {
+      "path": "apps/guardian/test/family_identity_controller_test.dart",
+      "sha256": "266f447635d50eed9a66eac8c9ea6d191e829a973a807a86afd474f9b118faca"
+    },
+    {
+      "path": "apps/guardian/test/family_identity_editor_test.dart",
+      "sha256": "33919d63f42459702d4d0fb1cde6c5035308c2f25a3f12cf3983b79b05328fb8"
+    },
+    {
+      "path": "apps/guardian/test/family_identity_entry_browser_test.dart",
+      "sha256": "8c3bdcfdd3af2bbfa5ce4041ebc92f8e25b4d82af4fcc69abfbe9948ee143435"
+    },
+    {
+      "path": "apps/guardian/test/family_identity_page_test.dart",
+      "sha256": "331a7c49eba59b19e9326e25e6633317956d2ad2fad1223a63b63110c300c0b7"
+    },
+    {
+      "path": "apps/guardian/test/family_identity_repository_test.dart",
+      "sha256": "06d13983d8086a88200c3dc555d061e2e5dce935847ab1b25400e579dd887ade"
+    },
+    {
+      "path": "apps/guardian/tool/identity_providers_preview.dart",
+      "sha256": "8c744c5504e81ac01b98c8e4c664fc2e5b222eb5fed6e26256b0b5cb970c9cd7"
+    },
+    {
+      "path": "apps/guardian/tool/verify_identity_provider_http.dart",
+      "sha256": "990f7c20ca7a1aa432b798e0943e6beea6bcbf14e4d4e3727f21631c71068afe"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/identity/CurrentActorController.java",
+      "sha256": "211a3001c905263b423d7b8958b20223ef6834961ba8d92e409f202cbadfa39f"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/identityproviders/internal/IdentityProviderController.java",
+      "sha256": "bc7d90a3e67e4af8b09cfec1f4d8dc0f4ba2df1b5b76223ce3c3911eeece9e38"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/identityproviders/internal/ProviderConfigurationService.java",
+      "sha256": "6c9bacc09172685cccb12d5a1690cfd4ddbd5ba7dc0df12efdf17b16ba201b6c"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/identityproviders/internal/ProviderContracts.java",
+      "sha256": "f9a24ddb47e8f999d5889b8b2bceeead297095f1a8752d98e2ed4df78cf4fbc0"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/identityproviders/internal/ProviderVault.java",
+      "sha256": "5906ff1b4ebcd15c47dae9f9bff2e7ad6fa646c3bbbaf8609bc7b17c9777f2d9"
+    },
+    {
+      "path": "backend/src/main/resources/application.yml",
+      "sha256": "e42980ff277a910c143eb9e32e9d90e3ddccc77105ef398cbd586511a6449493"
+    },
+    {
+      "path": "backend/src/main/resources/db/migration/V1__initial_schema.sql",
+      "sha256": "df2ad03a544213e73212f652ada00ab9591dcb2afdf995c98b2b4ea2e1e84997"
+    },
+    {
+      "path": "backend/src/main/resources/retention/subject-data-stores.json",
+      "sha256": "bc39703496b2950ee1d3df04764d150f2f993e446efa35b09a2ef1bd9e8c2168"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/identity/CurrentActorIdentityProviderCapabilitiesTest.java",
+      "sha256": "064258e56817951ef1271e22cb5e6d3aead27ec10d80e7c25a8f0cc92e637e8d"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/identityproviders/internal/IdentityProviderGuardianHttpTest.java",
+      "sha256": "563beefc794d91455a3397af7e2e10f8c4ce064e0ffc9564f696aa64dfbd5feb"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/IdentityProviderCatalogTest.java",
+      "sha256": "cda417cda9d357658cb89270c8056fd163848ed2443f8acd64d2dc28f879e8bc"
+    },
+    {
+      "path": "deploy/compose/compose.identity-admin.yaml",
+      "sha256": "db025d6ecd5a92e9d1974387d911add1f77ca02b11209d78bc93ece1379be400"
+    },
+    {
+      "path": "deploy/keycloak/merge-identity-provider-admin-realm.ps1",
+      "sha256": "7d71e7d1f10d3144af5fa72fe50a3f9497ce1073b9ec1569be46bf146611e292"
+    },
+    {
+      "path": "deploy/keycloak/realm-template.json",
+      "sha256": "b8ee31b5aecfa7da89aea40fd97b550b05d591b94cdbe93517616d367e48bc3b"
+    },
+    {
+      "path": "scripts/initialize_identity_provider_admin.ps1",
+      "sha256": "d69760e11094502ff3d0f4662bf56c1ac51e1d44925e77df62aed972b46eb909"
+    },
+    {
+      "path": "scripts/prepare_family_identity_release.ps1",
+      "sha256": "b21a23c5a645508bc102fa06296680865a9b4e0b1ad4d04daa37bfa39f4eae4b"
+    },
+    {
+      "path": "scripts/tests/test_identity_provider_admin_permissions.py",
+      "sha256": "1992794eec8e24402abc622cdafd1b824d8f46dc6d62938cd67f3e4fe311f541"
+    },
+    {
+      "path": "scripts/tests/test_identity_provider_admin_setup.py",
+      "sha256": "fd55c35805d1213a97fcfc00af372badee6cb5c7f3d7938940268a826826173f"
+    },
+    {
+      "path": "scripts/tests/test_prepare_family_identity_release.py",
+      "sha256": "0729a2b90aa09a9b39ebf5d6adeebd18768ac44f7e6aca452afa694512f751c9"
+    }
+  ],
+  "runtimeStatus": "APPLY_REQUIRED",
+  "realSupplierChecksPassed": 0,
+  "realSupplierChecksRequired": 12,
+  "realSupplierRequestsPerformed": false,
+  "existingDeploymentChanged": false,
+  "salesAllowed": false,
+  "wholeCurrentProjectAllGreen": false,
+  "limitations": [
+    "Real SMS delivery and native WeChat authorization are not accepted.",
+    "No runtime configuration apply, instance acknowledgement, automatic evidence collection, enablement or rollback is implemented.",
+    "Existing database is unchanged; new schema is only verified in isolated databases and requires a reviewed migration before upgrades.",
+    "Full baseline and final feature tests are separately frozen and overlap.",
+    "Isolated MySQL module tests used the recorded earlier candidate; they do not certify the final full backend or target Keycloak/MySQL combination.",
+    "Three parallel test lint messages and incomplete browser checks remain.",
+    "Later parallel managed-Android edits remain in the workspace; this JAR and full regression use the separately hashed frozen source.",
+    "Permission tools ran on Windows; Unix permission branches were not executed."
+  ]
+}

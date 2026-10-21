@@ -94,11 +94,14 @@ class SubjectManagementJourneyTest {
     mvc.perform(post(path).with(actor(s.owner(), true)).contentType(MediaType.APPLICATION_JSON).content(CREATE)).andExpect(status().isForbidden());
     mvc.perform(get(s.root() + "/management").with(actor(s.owner(), true))).andExpect(status().isForbidden());
   }
-  @Test void mfaVersionAndForeignTargetsCannotMutate() throws Exception {
+  @Test void familyRoutineCreateUsesCurrentAdultButArchiveVersionAndForeignTargetsRemainProtected() throws Exception {
     var s = fixture();
-    mvc.perform(post(s.root() + "/changes").with(actor(s.owner(), false)).header("Idempotency-Key", UUID.randomUUID())
-        .contentType(MediaType.APPLICATION_JSON).content(CREATE)).andExpect(status().isUnauthorized());
-    String id = change(s, CREATE, UUID.randomUUID().toString()).get("id").asText();
+    var created=mvc.perform(post(s.root() + "/changes").with(actor(s.owner(), false)).header("Idempotency-Key", UUID.randomUUID())
+        .contentType(MediaType.APPLICATION_JSON).content(CREATE)).andExpect(status().isOk()).andReturn();
+    String id=json.readTree(created.getResponse().getContentAsString()).get("id").asText();
+    mvc.perform(post(s.root()+"/changes").with(actor(s.owner(),false)).header("Idempotency-Key",UUID.randomUUID())
+        .contentType(MediaType.APPLICATION_JSON).content("{\"operation\":\"ARCHIVE\",\"subjectId\":\""+id+"\",\"version\":0}"))
+        .andExpect(status().isUnauthorized());
     mvc.perform(post(s.root() + "/changes").with(actor(s.owner(), true)).header("Idempotency-Key", UUID.randomUUID())
         .contentType(MediaType.APPLICATION_JSON).content(edit(id, 1))).andExpect(status().isPreconditionFailed());
     var other = fixture();

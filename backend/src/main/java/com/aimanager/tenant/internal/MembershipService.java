@@ -370,11 +370,23 @@ class MembershipService {
 
   @Transactional(timeout = 10)
   public void revokeAccess(String tenant, Jwt actor, String memberKey, String etag, String key) {
+    revokeAccess(tenant,actor,memberKey,etag,key,false);
+  }
+
+  /** Consumer entry keeps organization/platform MFA intact and uses the family SMS policy. */
+  @Transactional(timeout = 10)
+  public void revokeFamilyAccess(String tenant, Jwt actor, String memberKey, String etag, String key) {
+    if(!"FAMILY".equals(jdbc.queryForObject("SELECT kind FROM tenants WHERE id=?",String.class,tenant)))
+      throw DomainException.denied();
+    revokeAccess(tenant,actor,memberKey,etag,key,true);
+  }
+
+  private void revokeAccess(String tenant, Jwt actor, String memberKey, String etag, String key,boolean consumer) {
     mutex.lock(tenant);
     var target = readAccess(tenant, memberKey, false, true);
     mutex.actors(tenant, java.util.List.of(actor.getSubject(), target.actorId()));
     var grant = access.requireWriteRole(tenant, actor.getSubject(), OWNER, ORG_ADMIN);
-    recent.require(actor);
+    if(consumer)recent.requireForTenant(actor,tenant,jdbc);else recent.require(actor);
     var current = readAccess(tenant, memberKey, true, true);
     if (current.role() == OWNER)
       throw new DomainException(HttpStatus.CONFLICT, "OWNER_TRANSFER_REQUIRED");
@@ -389,7 +401,7 @@ class MembershipService {
         Boolean.class,
         () -> {
           com.aimanager.shared.ResourceVersions.check(expected, current.version());
-          revoke(tenant, actor, current.actorId());
+          revoke(tenant, actor, current.actorId(),consumer);
           return true;
         });
   }
@@ -478,10 +490,14 @@ class MembershipService {
 
   @Transactional(timeout = 10)
   public void revoke(String tenantId, Jwt actor, String memberActor) {
+    revoke(tenantId,actor,memberActor,false);
+  }
+
+  private void revoke(String tenantId, Jwt actor, String memberActor,boolean consumer) {
     mutex.lock(tenantId);
     mutex.actors(tenantId, java.util.List.of(actor.getSubject(), memberActor));
     var grant = access.requireWriteRole(tenantId, actor.getSubject(), OWNER, ORG_ADMIN);
-    recent.require(actor);
+    if(consumer)recent.requireForTenant(actor,tenantId,jdbc);else recent.require(actor);
     var members =
         jdbc.query(
             "SELECT role FROM tenant_members WHERE tenant_id=? AND actor_key=? AND revoked_at IS"
