@@ -1,0 +1,250 @@
+{
+  "status": "STATIC_TWO_P2_THREE_PATHS_ALL_UNRUN",
+  "gitHeadObserved": "c4cd13fc880846b517ce18e5d73fd6d99ad6dbde",
+  "findings": [
+    {
+      "id": "P2-1",
+      "priority": 2,
+      "confidence": "high-static-source",
+      "title": "Recovered append leaves stale error; stale retry resets accumulated pages",
+      "paths": [
+        "apps/guardian/lib/pages/commercial_catalog_page.dart",
+        "apps/guardian/lib/pages/contracts_page.dart"
+      ],
+      "lines": [
+        89,
+        109,
+        123,
+        269,
+        298,
+        131,
+        150,
+        162,
+        395,
+        428
+      ],
+      "trigger": "valid cursor, append network failure, append success via load-more, old error remains; its generic retry reloads first page",
+      "requiresInvalidCursor": false,
+      "unrun": true
+    },
+    {
+      "id": "P2-2",
+      "priority": 2,
+      "confidence": "high-static-source",
+      "title": "Help-request append retry silently becomes first-page refresh",
+      "paths": [
+        "apps/guardian/lib/pages/help_requests_page.dart"
+      ],
+      "lines": [
+        55,
+        59,
+        63,
+        82,
+        167,
+        188
+      ],
+      "trigger": "multiple pages loaded, append network failure, error retry:load resets rows/cursor and loses progress",
+      "requiresInvalidCursor": false,
+      "unrun": true
+    }
+  ],
+  "searchPattern": "INVALID_CURSOR|nextCursor|cursor: in apps/guardian/lib/pages and ui, excluding two fixed paths",
+  "searchHitInventory": [
+    "ui/access_request_dialog.dart",
+    "ui/audit_view.dart",
+    "pages/console_pages.dart",
+    "ui/audit_exports_view.dart",
+    "pages/commercial_catalog_page.dart",
+    "ui/diagnostic_packages_view.dart",
+    "ui/family_finance_page.dart",
+    "pages/contracts_page.dart",
+    "ui/managed_agent_binding_dialog.dart",
+    "pages/help_requests_page.dart",
+    "pages/managed_android_review_page.dart",
+    "pages/managed_android_page.dart",
+    "pages/observation_page.dart",
+    "ui/managed_application_evidence_controller.dart",
+    "ui/managed_application_evidence_dialog.dart",
+    "ui/managed_execution_controller.dart",
+    "ui/notifications_view.dart",
+    "ui/observation_view.dart",
+    "ui/policy_target_picker.dart",
+    "ui/resource_page.dart",
+    "ui/support_center_view.dart",
+    "ui/usage_report_jobs_view.dart"
+  ],
+  "searchHitsAreNotAllDeepReviewed": true,
+  "sourcePins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\access_request_dialog.dart",
+      "bytes": 16902,
+      "sha256": "74a0679c5ca404dec0a3fb48a8a86dc3b5c7942679e9d5bcc742f778d02f0ef0"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\audit_view.dart",
+      "bytes": 14665,
+      "sha256": "9c446b177a5bf9f3badb63b9f011d19a87c92eecd0303213d3bef34a5590ffc6"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\console_pages.dart",
+      "bytes": 87392,
+      "sha256": "e0d76e148ff4d629e96f3ba4e9abdf760136e7a1b78fe454021a71414dab28e6"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\audit_exports_view.dart",
+      "bytes": 12530,
+      "sha256": "977a0b82101c834784af284f02c4481268e4746c11f0f63ec74f9685f776a7af"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\commercial_catalog_page.dart",
+      "bytes": 22334,
+      "sha256": "8707f8c041af44e6c790c1d31f7ea1cdaf41ad014152641ea9eb107f427ae12f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\diagnostic_packages_view.dart",
+      "bytes": 14543,
+      "sha256": "e2a877592dcf72f3994637b5d156cb35a216f5a08bffbb74937eb932f1a654f3"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\family_finance_page.dart",
+      "bytes": 37859,
+      "sha256": "fb46e880c30d350501148860977a06bcbb78d496fdf20d0086a66a29c009731b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\contracts_page.dart",
+      "bytes": 35091,
+      "sha256": "6d32ef2b41d73000333a02d9f1fc87bd46f206ddf773c27ba3a1b9d83b0fd898"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\managed_agent_binding_dialog.dart",
+      "bytes": 29433,
+      "sha256": "f86c1f475c508d0e456ae3bb0d16b40b6cbf644c9c585e4e4f6be75668171bdd"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\help_requests_page.dart",
+      "bytes": 8956,
+      "sha256": "f8267df461953840dfa4d6f74b3d33108eacab7a1f325a1d92968bdea1a095a0"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\managed_android_review_page.dart",
+      "bytes": 21443,
+      "sha256": "a6c782cb257153cfa8075d37120388e66682820fdcfa9b7cce76d97235fc6103"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\managed_android_page.dart",
+      "bytes": 28756,
+      "sha256": "3e35d8f90fda4fe818843d28552a02bdb91c7f3945e723424b4c0f8b6c5d6937"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\observation_page.dart",
+      "bytes": 11503,
+      "sha256": "ac0e30966f2a5c5f6b65dc12a8445a3ae7d52d8cda45cbb979b0b58a18e83816"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\managed_application_evidence_controller.dart",
+      "bytes": 9209,
+      "sha256": "0cb2f5f50f41c8261eecb1555334d34681b524a0d43a346fcf5a70e930b0f858"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\managed_application_evidence_dialog.dart",
+      "bytes": 21391,
+      "sha256": "486af077a2460777de9f1173c08ecf778654c68c9ce92fade2cc0ceba9385d4d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\managed_execution_controller.dart",
+      "bytes": 11669,
+      "sha256": "29057db0d5161bd4d6b76f5cd0876f1ffc93c46a092165d6e1957ce324de7aa5"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\notifications_view.dart",
+      "bytes": 14473,
+      "sha256": "8bb6ef841cd151ff4de16492eab7850bb94cd430c16212a369473c4cb8d73b88"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\observation_view.dart",
+      "bytes": 9715,
+      "sha256": "2c0b734194b68cda1ef722d3471447e83edbeb33a8aaf1474f16347f68855374"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\policy_target_picker.dart",
+      "bytes": 30042,
+      "sha256": "dcf4e64365869d18eb9347f473aa042b042c265affc519296460caa6585de4f9"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\resource_page.dart",
+      "bytes": 17324,
+      "sha256": "c742e801e36910b278525c29228b33b8eb7a69606b53a9d210b535db0e4c35e3"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\support_center_view.dart",
+      "bytes": 20430,
+      "sha256": "d6cd6843b34d3a76e95311cb972f5000f0a311b77cfa67f47b35c82a1f332e9b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\usage_report_jobs_view.dart",
+      "bytes": 22450,
+      "sha256": "c92f228310938ac6037c4e065f02ff71de137770e30a8cb368bf776a5147d9c8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\core\\api.dart",
+      "bytes": 22640,
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\core\\bounded_json.dart",
+      "bytes": 6327,
+      "sha256": "ca3bf7b46cc346bd003f9fcff712611d38cd55655bf492e975fc50e79bd1180b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\core\\commercial_catalog_repository.dart",
+      "bytes": 4147,
+      "sha256": "57aa6dea7df9491907ec8f8e8cc1f21484f45e038acd62133ffe1874c6411777"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\core\\contracts_repository.dart",
+      "bytes": 6308,
+      "sha256": "d8f779b24e20038f6a722afd1a41b1d236e5e8af27faff27d77740aa9d409cfe"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\backend\\src\\main\\java\\com\\aimanager\\shared\\ItemPage.java",
+      "bytes": 1035,
+      "sha256": "5f6cb57317ab1c4f41daaa0dd7bcf4e1ee536f793c25cfb40811c2840f86cc58"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\backend\\src\\main\\java\\com\\aimanager\\commerce\\internal\\CommercialCatalogService.java",
+      "bytes": 16164,
+      "sha256": "8b5465afaa4e171afc08b9379eb0e5ed3315f539a426b88da7b9146dca40c454"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\backend\\src\\main\\java\\com\\aimanager\\commerce\\internal\\CommercialContractService.java",
+      "bytes": 29447,
+      "sha256": "dde675fd131d4d610c40ec10be0c9ec45d4ce2dafa0a1655c46b1913948910cd"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\backend\\src\\main\\java\\com\\aimanager\\safety\\internal\\HelpRequestController.java",
+      "bytes": 3267,
+      "sha256": "16b407bf3dac73c2ee6e1f1311985e82d5f861f46faa28dfbfb465066190702f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\backend\\src\\main\\java\\com\\aimanager\\safety\\internal\\HelpRequestService.java",
+      "bytes": 11640,
+      "sha256": "6d78e0465df42a2ef1780e0d2af45ece155419e229e275b8b38e21d275b5b6e5"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\backend\\src\\main\\java\\com\\aimanager\\reporting\\internal\\ReportJobService.java",
+      "bytes": 15080,
+      "sha256": "4ad4692dca036d591326ee4fab07d4bb9c3b1559826f7ccf72a1c5b662c2430f"
+    }
+  ],
+  "sourcePinMeaning": "Current raw hashes; search hit pins do not imply complete per-file audit",
+  "invalidCursorTtlAssumed": false,
+  "allScenarios": "UNRUN",
+  "rendered": false,
+  "productionOrGitWritten": false,
+  "sourceParserSdkTestsFormatterNetworkOrProcessApiInvoked": false
+}

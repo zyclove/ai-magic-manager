@@ -1,0 +1,32 @@
+{
+  "status": "STATIC_UNRUN_SEALED_SINGLE_FILE_DELIVERY",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-pagination-recovery-20261023-r1\\after.dart",
+      "bytes": 11079,
+      "sha256": "c299fd7a069501d45462f8cac89327d4bc811426ca37c465145f8bc9ff368eb3"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-pagination-recovery-20261023-r1\\before.dart",
+      "bytes": 8956,
+      "sha256": "f8267df461953840dfa4d6f74b3d33108eacab7a1f325a1d92968bdea1a095a0"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-pagination-recovery-20261023-r1\\help-requests-pagination.patch",
+      "bytes": 4200,
+      "sha256": "355a1f7063bf4f9b6f15f7f62d66818c80b60a3425036a167cec3577af694a74"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-pagination-recovery-20261023-r1\\pins.json",
+      "bytes": 2862,
+      "sha256": "c4575cc0cc7496a5e373fd37c594ac87d521b9bbed58546236fcad21075394a5"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-pagination-recovery-20261023-r1\\review.md",
+      "bytes": 4677,
+      "sha256": "78df416fd3cc412c0b174983cfcd41370ae907e30a9989525629222767d0b29e"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "executionAuthorized": false
+}

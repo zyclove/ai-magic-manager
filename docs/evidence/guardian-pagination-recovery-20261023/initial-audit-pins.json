@@ -1,0 +1,16 @@
+{
+  "status": "STATIC_AUDIT_DELIVERY",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-pagination-variant-static-20261023-r1\\review.md",
+      "bytes": 6441,
+      "sha256": "20eefa3ed1e435ee1b8162b39a40e2930269d99798304eac62b7cff0013e3d0d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-pagination-variant-static-20261023-r1\\summary.json",
+      "bytes": 10069,
+      "sha256": "e5dd337d0636d416558618923e9c54d3ad9a7ce53517a612768b25a68d1cad64"
+    }
+  ],
+  "selfExcluded": "review-pins.json"
+}

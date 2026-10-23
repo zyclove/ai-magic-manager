@@ -1,0 +1,42 @@
+{
+  "status": "STATIC_UNRUN_SEALED_DELIVERY",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-commercial-pagination-recovery-20261023-r1\\after\\commercial_catalog_page.dart",
+      "bytes": 22761,
+      "sha256": "6e948a6881e68838eaf838917259a663849fb66107a3037ca093c89444e45819"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-commercial-pagination-recovery-20261023-r1\\after\\contracts_page.dart",
+      "bytes": 35518,
+      "sha256": "4737b6672e373e0e08d90ff00373725b14faaac8f8529964bfe48546e1ca258c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-commercial-pagination-recovery-20261023-r1\\before\\commercial_catalog_page.dart",
+      "bytes": 22334,
+      "sha256": "8707f8c041af44e6c790c1d31f7ea1cdaf41ad014152641ea9eb107f427ae12f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-commercial-pagination-recovery-20261023-r1\\before\\contracts_page.dart",
+      "bytes": 35091,
+      "sha256": "6d32ef2b41d73000333a02d9f1fc87bd46f206ddf773c27ba3a1b9d83b0fd898"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-commercial-pagination-recovery-20261023-r1\\commercial-pagination.patch",
+      "bytes": 6002,
+      "sha256": "ce3754c3436786b62b45c280afbe082d675801cf9c93bab99ed036971b45b278"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-commercial-pagination-recovery-20261023-r1\\pins.json",
+      "bytes": 3784,
+      "sha256": "10a0532add78b1e865caf750c15060a741d7abcaaf50bd83b38c04101dedbae9"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-commercial-pagination-recovery-20261023-r1\\review.md",
+      "bytes": 3829,
+      "sha256": "37e7d5b376326871c672f5b913f111a0b83276d57bda50eb590c29830e706f9b"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "executionAuthorized": false
+}

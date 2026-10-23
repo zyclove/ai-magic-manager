@@ -36,6 +36,7 @@ class _ContractsPageState extends State<ContractsPage> {
       historyError,
       comparisonError,
       capabilityError;
+  bool listPageFailed = false;
   bool loadingList = false,
       loadingMore = false,
       loadingDetail = false,
@@ -89,6 +90,7 @@ class _ContractsPageState extends State<ContractsPage> {
         nextBeforeVersion = null;
         capabilities = null;
         listError = const ApiFailure(403, 'SCOPE_DENIED');
+        listPageFailed = false;
         detailError = historyError = comparisonError = capabilityError = null;
         loadingList = loadingMore =
             loadingDetail = loadingHistory = loadingComparison = false;
@@ -122,18 +124,28 @@ class _ContractsPageState extends State<ContractsPage> {
     }
   }
 
+  void retryList() {
+    if (!mounted || !current() || listError == null || loadingList || loadingMore) {
+      return;
+    }
+    loadList(more: listPageFailed);
+  }
+
   Future<void> loadList({bool more = false}) async {
-    if (!current() || (more && (nextCursor == null || loadingMore))) return;
+    if (!current() ||
+        (more && (nextCursor == null || loadingList || loadingMore))) return;
     final ticket = generation;
     if (!more) listGeneration++;
     final listTicket = listGeneration;
     final cursor = more ? nextCursor : null;
     setState(() {
+      listError = null;
+      listPageFailed = false;
       if (more) {
         loadingMore = true;
       } else {
         loadingList = true;
-        listError = null;
+        loadingMore = false;
       }
     });
     try {
@@ -147,6 +159,8 @@ class _ContractsPageState extends State<ContractsPage> {
         throw const ApiFailure(502, 'INVALID_CONTRACT_RESPONSE');
       }
       setState(() {
+        listError = null;
+        listPageFailed = false;
         if (!more) reviews.clear();
         reviews.addAll(page.items);
         nextCursor = page.nextCursor;
@@ -160,6 +174,7 @@ class _ContractsPageState extends State<ContractsPage> {
           listTicket == listGeneration) {
         setState(() {
           listError = failure;
+          listPageFailed = more;
           loadingList = loadingMore = false;
         });
       }
@@ -392,7 +407,7 @@ class _ContractsPageState extends State<ContractsPage> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
         const SizedBox(height: 12),
         if (loadingList) const LinearProgressIndicator(),
-        if (listError != null) FailureView(listError!, retry: () => loadList()),
+        if (listError != null) FailureView(listError!, retry: retryList),
         if (!loadingList && reviews.isEmpty && listError == null)
           EmptyView(
               '暂无合同记录',
@@ -425,7 +440,8 @@ class _ContractsPageState extends State<ContractsPage> {
         if (loadingMore) const LinearProgressIndicator(),
         if (nextCursor != null)
           TextButton.icon(
-              onPressed: loadingMore ? null : () => loadList(more: true),
+              onPressed: loadingList || loadingMore
+                  ? null : () => loadList(more: true),
               icon: const Icon(Icons.expand_more),
               label: const Text('加载更多'))
       ]));

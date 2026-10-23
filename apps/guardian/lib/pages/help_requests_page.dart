@@ -22,7 +22,7 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
   List<HelpRequest> requests = const [];
   String? cursor;
   String filter = 'OPEN';
-  Object? error;
+  Object? error, pageError;
   bool loading = true, loadingMore = false;
   int generation = 0;
   final Set<String> uncertain = {}, sending = {};
@@ -34,6 +34,10 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
       sessionOwner.canOpen('help-requests');
 
   bool get current => mounted && scope.current;
+
+  bool get pageCursorInvalid =>
+      pageError is ApiFailure &&
+      (pageError as ApiFailure).code == 'INVALID_CURSOR';
 
   @override
   void initState() {
@@ -53,19 +57,22 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
   }
 
   Future<void> load({bool more = false}) async {
-    if (!current) return;
+    if (!current || (more && (loading || loadingMore || cursor == null))) return;
     final epoch = ++generation;
     final sourceFilter = filter;
     final nextCursor = more ? cursor : null;
     setState(() {
       if (more) {
         loadingMore = true;
+        pageError = null;
       } else {
         loading = true;
+        loadingMore = false;
         requests = const [];
         cursor = null;
+        error = null;
+        pageError = null;
       }
-      error = null;
     });
     try {
       final path =
@@ -76,11 +83,22 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
         setState(() {
           requests = more ? [...requests, ...parsed] : parsed;
           cursor = page.nextCursor;
-          uncertain.clear();
+          if (!more) uncertain.clear();
         });
       }
     } catch (failure) {
-      if (current && generation == epoch) setState(() => error = failure);
+      if (current && generation == epoch) {
+        setState(() {
+          if (more) {
+            pageError = failure;
+            if (failure is ApiFailure && failure.code == 'INVALID_CURSOR') {
+              cursor = null;
+            }
+          } else {
+            error = failure;
+          }
+        });
+      }
     } finally {
       if (mounted && generation == epoch) {
         setState(() {
@@ -89,6 +107,18 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
         });
       }
     }
+  }
+
+  void retryMore() {
+    if (!current || loading || loadingMore || cursor == null || pageError == null) {
+      return;
+    }
+    load(more: true);
+  }
+
+  void refreshAfterPageFailure() {
+    if (!current || loading || loadingMore || !pageCursorInvalid) return;
+    load();
   }
 
   void changeFilter(String next) {
@@ -185,7 +215,28 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
                                 _row(item),
                                 const Divider(height: 1)
                               ],
-                              if (cursor != null)
+                              if (pageError != null) ...[
+                                const SizedBox(height: 12),
+                                if (pageCursorInvalid) ...[
+                                  const Notice(
+                                      '分页位置无法继续使用，已保留当前求助记录。请刷新列表后继续查看。',
+                                      warning: true),
+                                  TextButton.icon(
+                                      onPressed: loading || loadingMore
+                                          ? null
+                                          : refreshAfterPageFailure,
+                                      icon: const Icon(Icons.refresh),
+                                      label: const Text('刷新求助记录')),
+                                ] else
+                                  FailureView(pageError!,
+                                      retry: loading || loadingMore
+                                          ? null
+                                          : retryMore,
+                                      reauth: () {
+                                        if (current) sessionOwner.login(stepUp: true);
+                                      }),
+                              ],
+                              if (cursor != null && pageError == null)
                                 TextButton.icon(
                                     onPressed: loadingMore
                                         ? null

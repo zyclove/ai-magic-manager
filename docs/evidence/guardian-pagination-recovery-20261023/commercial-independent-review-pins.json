@@ -1,0 +1,16 @@
+{
+  "status": "STATIC_REVIEW_NO_EXECUTION_GRANT",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-commercial-pagination-independent-20261023-r1\\review.md",
+      "bytes": 4038,
+      "sha256": "0fec7bdbb0696b6a12b088a7a3f669dd1dff661c4c997c9dae3596692d28246d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-commercial-pagination-independent-20261023-r1\\review.json",
+      "bytes": 5512,
+      "sha256": "2197a504e506749af4c7799707597e9428ab999d54c18b05c4fa54ecc9f9aac0"
+    }
+  ],
+  "selfExcluded": "review-pins.json"
+}

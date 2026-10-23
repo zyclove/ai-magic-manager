@@ -1,0 +1,68 @@
+{
+  "status": "STATIC_CANDIDATE_ALL_SCENARIOS_UNRUN_NOT_APPLIED",
+  "productionPaths": [
+    "apps/guardian/lib/pages/help_requests_page.dart"
+  ],
+  "before": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-pagination-recovery-20261023-r1\\before.dart",
+    "bytes": 8956,
+    "sha256": "f8267df461953840dfa4d6f74b3d33108eacab7a1f325a1d92968bdea1a095a0"
+  },
+  "after": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-pagination-recovery-20261023-r1\\after.dart",
+    "bytes": 11079,
+    "sha256": "c299fd7a069501d45462f8cac89327d4bc811426ca37c465145f8bc9ff368eb3"
+  },
+  "patch": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-pagination-recovery-20261023-r1\\help-requests-pagination.patch",
+    "bytes": 4200,
+    "sha256": "355a1f7063bf4f9b6f15f7f62d66818c80b60a3425036a167cec3577af694a74"
+  },
+  "review": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-pagination-recovery-20261023-r1\\review.md",
+    "bytes": 4677,
+    "sha256": "78df416fd3cc412c0b174983cfcd41370ae907e30a9989525629222767d0b29e"
+  },
+  "mainObserved": {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\help_requests_page.dart",
+    "bytes": 8956,
+    "sha256": "f8267df461953840dfa4d6f74b3d33108eacab7a1f325a1d92968bdea1a095a0"
+  },
+  "mainMatchesBefore": true,
+  "acknowledgeMethodByteIdentical": true,
+  "rowRenderingByteIdentical": true,
+  "scopeCurrentInitDisposeByteIdentical": true,
+  "existingGlobalWarningAndRecoveryUiByteIdentical": true,
+  "allScenarios": "UNRUN",
+  "parsedOrFormattedOrCompiled": false,
+  "sdkTestsWinApiProcessOrNetworkUsed": false,
+  "mainOrGitWritten": false,
+  "sourceFreezeUpdated": false,
+  "dependenciesSampled": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\device_subflow_scope.dart",
+      "bytes": 1512,
+      "sha256": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\core\\api.dart",
+      "bytes": 22640,
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\backend\\src\\main\\java\\com\\aimanager\\safety\\internal\\HelpRequestService.java",
+      "bytes": 11640,
+      "sha256": "6d78e0465df42a2ef1780e0d2af45ece155419e229e275b8b38e21d275b5b6e5"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\backend\\src\\main\\java\\com\\aimanager\\safety\\internal\\HelpRequestController.java",
+      "bytes": 3267,
+      "sha256": "16b407bf3dac73c2ee6e1f1311985e82d5f861f46faa28dfbfb465066190702f"
+    }
+  ]
+}

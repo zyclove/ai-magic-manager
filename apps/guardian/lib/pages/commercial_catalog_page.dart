@@ -27,6 +27,7 @@ class _CommercialCatalogPageState extends State<CommercialCatalogPage> {
   String? selectedId, nextCursor;
   int? nextBeforeRevision;
   Object? listError, detailError, historyError;
+  bool listPageFailed = false;
   bool loadingList = false,
       loadingMore = false,
       loadingDetail = false,
@@ -64,6 +65,7 @@ class _CommercialCatalogPageState extends State<CommercialCatalogPage> {
         selectedId = null;
         nextCursor = null;
         listError = const ApiFailure(403, 'SCOPE_DENIED');
+        listPageFailed = false;
         detailError = null;
         historyError = null;
         loadingList = loadingMore = loadingDetail = loadingHistory = false;
@@ -80,18 +82,28 @@ class _CommercialCatalogPageState extends State<CommercialCatalogPage> {
     super.dispose();
   }
 
+  void retryList() {
+    if (!mounted || !current() || listError == null || loadingList || loadingMore) {
+      return;
+    }
+    loadList(more: listPageFailed);
+  }
+
   Future<void> loadList({bool more = false}) async {
-    if (!current() || (more && (nextCursor == null || loadingMore))) return;
+    if (!current() ||
+        (more && (nextCursor == null || loadingList || loadingMore))) return;
     final ticket = generation;
     if (!more) listGeneration++;
     final listTicket = listGeneration;
     final cursor = more ? nextCursor : null;
     setState(() {
+      listError = null;
+      listPageFailed = false;
       if (more) {
         loadingMore = true;
       } else {
         loadingList = true;
-        listError = null;
+        loadingMore = false;
       }
     });
     try {
@@ -106,6 +118,8 @@ class _CommercialCatalogPageState extends State<CommercialCatalogPage> {
         throw const ApiFailure(502, 'INVALID_CATALOG_RESPONSE');
       }
       setState(() {
+        listError = null;
+        listPageFailed = false;
         if (!more) offers.clear();
         offers.addAll(page.items);
         nextCursor = page.nextCursor;
@@ -121,6 +135,7 @@ class _CommercialCatalogPageState extends State<CommercialCatalogPage> {
           listTicket == listGeneration) {
         setState(() {
           listError = failure;
+          listPageFailed = more;
           loadingList = loadingMore = false;
         });
       }
@@ -266,7 +281,7 @@ class _CommercialCatalogPageState extends State<CommercialCatalogPage> {
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
         const SizedBox(height: 12),
         if (loadingList) const LinearProgressIndicator(),
-        if (listError != null) FailureView(listError!, retry: () => loadList()),
+        if (listError != null) FailureView(listError!, retry: retryList),
         if (!loadingList && offers.isEmpty && listError == null)
           const EmptyView('暂无报价草稿', '平台运营人员可创建第一份草稿；草稿不会对客户售卖。'),
         for (final offer in offers)
@@ -295,7 +310,8 @@ class _CommercialCatalogPageState extends State<CommercialCatalogPage> {
         if (loadingMore) const LinearProgressIndicator(),
         if (nextCursor != null)
           TextButton.icon(
-              onPressed: loadingMore ? null : () => loadList(more: true),
+              onPressed: loadingList || loadingMore
+                  ? null : () => loadList(more: true),
               icon: const Icon(Icons.expand_more),
               label: const Text('加载更多'))
       ]));
