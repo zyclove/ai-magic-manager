@@ -1,0 +1,64 @@
+{
+  "status": "ACTUAL_READ_ONLY_PROCESS_NAME_DIAGNOSTIC_NOT_SDK_OR_QUALIFICATION",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-process-name-diagnostic-20261023-r1\\probe.ps1",
+      "bytes": 8085,
+      "sha256": "d3eba15eaf318a300f3a213eca3c3866814ccbc97992e5ca4ca900da2ae1f02a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-process-name-diagnostic-20261023-r1\\probe.json",
+      "bytes": 129530,
+      "sha256": "47f8b9d402d9a3c43a7157af987c9507a68a8c42b0966c86c1b2b32862450b31"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-process-name-diagnostic-20261023-r1\\review.md",
+      "bytes": 4127,
+      "sha256": "41f2be5bf722b6a23aa0b74dd5aebcfd343b4f550f990b0819a34838a0850188"
+    }
+  ],
+  "selfExcluded": "pins.json",
+  "preliminaryTool": {
+    "initial": "fea89e",
+    "sessionId": 80577,
+    "terminal": "d32523",
+    "actualExitCode": 0,
+    "laterIdentityMergeNotAdopted": true
+  },
+  "actualFixedProbeTool": {
+    "terminal": "c540b8",
+    "actualExitCode": 0,
+    "wallSeconds": 1.5970593
+  },
+  "metadataReadbackTool": {
+    "terminal": "51fe10",
+    "actualExitCode": 0
+  },
+  "authoritativeNameProvider": "Get-Process / System.Diagnostics.Process",
+  "beforeRows": 685,
+  "afterRows": 685,
+  "unknownCountBefore": 0,
+  "unknownCountAfter": 0,
+  "sdkCountBefore": 0,
+  "sdkCountAfter": 0,
+  "observedOrdinaryNamedProcess": [
+    {
+      "pid": 172,
+      "name": "Secure System",
+      "errors": []
+    }
+  ],
+  "resources": {
+    "availableRamBytes": 3129892864,
+    "diskFreeBytes": {
+      "C:/": 4891373568,
+      "D:/": 24252682240
+    }
+  },
+  "resourceHelperActualExitCode": 0,
+  "resourceHelperForced": false,
+  "newSdkGrant": false,
+  "runtimeClosureComplete": false,
+  "mainOrGitOrOldR10Written": false,
+  "candidateAstCompilerBusinessPredicateOrTestsRun": false
+}

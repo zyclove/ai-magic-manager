@@ -1,0 +1,16 @@
+{
+  "status": "STATIC_NO_BLOCKER_FOR_WORKBENCH_R2_ALL_SCENARIOS_UNRUN",
+  "files": [
+    {
+      "path": "review.md",
+      "bytes": 2113,
+      "sha256": "ec8d22aa77908b28df39c69efd489c89c36f3f0fc2241c12c663edde41fc0867"
+    },
+    {
+      "path": "review-pins.json",
+      "bytes": 2550,
+      "sha256": "4b65adb6aa3921cf783f4f9fcd911d8dba7ce0d05c8b8cd3a2273e5bd84c527f"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json"
+}

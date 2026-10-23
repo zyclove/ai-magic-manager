@@ -1,0 +1,16 @@
+{
+  "files": [
+    {
+      "path": "review.md",
+      "bytes": 3961,
+      "sha256": "7c97cc831b0b23f345b89289f49666dacda2a26ca34d09e0e6843bfe9219f550"
+    },
+    {
+      "path": "pins.json",
+      "bytes": 3626,
+      "sha256": "81b447e2015788c016734bdbacfb2294422370d2af6b71b48ad626718ac78fe3"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "status": "INDEPENDENT_STATIC_REVIEW_ALL_UNRUN"
+}

@@ -340,6 +340,7 @@ class _EditDialogState extends State<EditDialog> {
   final controls = <String, TextEditingController>{};
   final selected = <String, String?>{};
   Json? pendingValues;
+  Json? conflictValues;
   bool busy = false;
   Object? error;
   ModalRoute<dynamic>? _route;
@@ -354,6 +355,15 @@ class _EditDialogState extends State<EditDialog> {
     _observeAccess();
     return !_revoked;
   }
+
+  bool get versionConflict =>
+      error is ApiFailure && (error as ApiFailure).status == 412;
+
+  String get conflictDraft => widget.fields.map((field) {
+        final value = conflictValues?[field.key]?.toString() ?? '';
+        final display = field.options?[value] ?? value;
+        return '${field.label}：${display.isEmpty ? "（空）" : display}';
+      }).join('\n');
 
   bool get current =>
       mounted && _active && permitted && _route?.isCurrent == true;
@@ -447,7 +457,8 @@ class _EditDialogState extends State<EditDialog> {
   }
 
   Future<void> save() async {
-    if (!current || busy || form.currentState?.validate() != true) return;
+    if (!current || busy || versionConflict ||
+        form.currentState?.validate() != true) return;
     setState(() {
       busy = true;
       error = null;
@@ -466,6 +477,10 @@ class _EditDialogState extends State<EditDialog> {
       final result = await widget.onSubmit(submitted);
       if (mounted && _active && permitted) finish(result ?? submitted);
     } catch (e) {
+      final attempted = pendingValues;
+      if (e is ApiFailure && e.status == 412 && attempted != null) {
+        conflictValues = Map<String, dynamic>.unmodifiable(attempted);
+      }
       if (e is! ApiFailure || (e.status != 0 && e.status < 500)) {
         pendingValues = null;
       }
@@ -504,7 +519,21 @@ class _EditDialogState extends State<EditDialog> {
                                   child: Notice(
                                       '上次提交结果尚未确认。重试将发送相同内容；离开后请先刷新列表核对结果，避免重复创建。',
                                       warning: true)),
-                            ...widget.fields.map((f) => Padding(
+                            if (versionConflict) ...[
+                              FailureView(error!),
+                              const Text(
+                                  '记录已更新，已停止再次提交。可选中并复制下方草稿；关闭后请刷新原页面，再重新打开表单核对最新内容。',
+                                  style: TextStyle(height: 1.6)),
+                              if (widget.fields.isNotEmpty) ...[
+                                const SizedBox(height: 12),
+                                const Text('保留的草稿',
+                                    style: TextStyle(fontWeight: FontWeight.w600)),
+                                const SizedBox(height: 8),
+                                SelectableText(conflictDraft,
+                                    style: const TextStyle(height: 1.6)),
+                              ],
+                            ] else
+                              ...widget.fields.map((f) => Padding(
                                 padding: const EdgeInsets.only(bottom: 18),
                                 child: f.options != null
                                     ? DropdownButtonFormField<String>(
@@ -524,6 +553,7 @@ class _EditDialogState extends State<EditDialog> {
                                             : (v) {
                                                 if (!current ||
                                                     busy ||
+                                                    versionConflict ||
                                                     pendingValues != null ||
                                                     (v != null &&
                                                         !f.options!
@@ -568,7 +598,7 @@ class _EditDialogState extends State<EditDialog> {
                                           }
                                           return null;
                                         }))),
-                            if (error != null)
+                            if (error != null && !versionConflict)
                               FailureView(error!,
                                   reauth: widget.reauth == null
                                       ? null
@@ -579,9 +609,15 @@ class _EditDialogState extends State<EditDialog> {
                                         })
                           ])))),
           actions: [
-            TextButton(
-                onPressed: busy ? null : cancel, child: const Text('取消')),
-            FilledButton(
+            if (versionConflict)
+              FilledButton(
+                  onPressed: busy ? null : cancel,
+                  child: const Text('关闭表单')),
+            if (!versionConflict)
+              TextButton(
+                  onPressed: busy ? null : cancel, child: const Text('取消')),
+            if (!versionConflict)
+              FilledButton(
                 onPressed: busy ? null : save,
                 child: busy
                     ? const SizedBox(

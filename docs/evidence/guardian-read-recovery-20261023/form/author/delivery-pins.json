@@ -1,0 +1,41 @@
+{
+  "status": "STATIC_AUTHOR_CANDIDATE_ALL_SCENARIOS_UNRUN",
+  "files": [
+    {
+      "path": "before.dart",
+      "bytes": 31270,
+      "sha256": "456ffeb3de558e824d47ac3bf9841cda8dd6790349fd522e5c7bb7857942e5fc"
+    },
+    {
+      "path": "after.dart",
+      "bytes": 33152,
+      "sha256": "5cc095cf4c46316defaef0aeaeb35380bf38cd3ef264372bf63e20e58acf0925"
+    },
+    {
+      "path": "edit-dialog-conflict.patch",
+      "bytes": 4896,
+      "sha256": "70865d4b38979fb8b1157b8aec3d11eb2266a4e146600d8a9336416b9d2c66b8"
+    },
+    {
+      "path": "review.md",
+      "bytes": 3106,
+      "sha256": "045791f4e9550759c35201d6c81aacd88da34ef52e41183f16f3eba90fa5d34e"
+    },
+    {
+      "path": "pins.json",
+      "bytes": 3325,
+      "sha256": "c57006ae7da766629482463a74b32aecd68b3ed131059311ad0bfd2833067baf"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "expectedMembership": [
+    "before.dart",
+    "after.dart",
+    "edit-dialog-conflict.patch",
+    "review.md",
+    "pins.json",
+    "delivery-pins.json"
+  ],
+  "mainApplied": false,
+  "testsRun": false
+}

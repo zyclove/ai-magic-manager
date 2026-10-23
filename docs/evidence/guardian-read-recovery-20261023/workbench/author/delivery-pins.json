@@ -1,0 +1,41 @@
+{
+  "status": "STATIC_AUTHOR_CANDIDATE_ALL_UNRUN",
+  "files": [
+    {
+      "path": "before.dart",
+      "bytes": 16385,
+      "sha256": "f9f3aae0f2ffd4f0895784f37355c670cfdd4c678a8f68a30be0aa6a15de850d"
+    },
+    {
+      "path": "after.dart",
+      "bytes": 16807,
+      "sha256": "198b85c003e310ab4fa1cd1cfbc7c77ab29ea8e6ecc007c8c4cb02d06ce5d5ce"
+    },
+    {
+      "path": "workbench-common-actions.patch",
+      "bytes": 3045,
+      "sha256": "e8c4334943aa4c731236e0fa7bf0fa289fe2c04130bb2d5c2b2704c007a57cc5"
+    },
+    {
+      "path": "review.md",
+      "bytes": 3667,
+      "sha256": "d4c04c0f39998b60f9cb6f2234c65d099f53a3bf351df321ce6341712854ce4d"
+    },
+    {
+      "path": "pins.json",
+      "bytes": 1858,
+      "sha256": "1dad6f3b2f521a91193e9414c26c0fbe2c14b584bfc0dc102464392e67ef92e9"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "expectedMembership": [
+    "before.dart",
+    "after.dart",
+    "workbench-common-actions.patch",
+    "review.md",
+    "pins.json",
+    "delivery-pins.json"
+  ],
+  "mainApplied": false,
+  "testsRun": false
+}

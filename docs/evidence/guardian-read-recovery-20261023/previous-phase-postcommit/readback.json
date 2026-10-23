@@ -1,0 +1,115 @@
+{
+  "status": "EXACT_POST_COMMIT_READBACK_MATCH_ALL_APPLICATION_SCENARIOS_UNRUN",
+  "commit": "7cf2b2b9960db98f90a7f7630ae967e3ea99eba8",
+  "parent": "e303580030192497a63492d1147156e465082706",
+  "counts": {
+    "changedPaths": 74,
+    "production": 3,
+    "docs": 71,
+    "archiveFiles": 70,
+    "archiveManifestDescriptors": 69,
+    "selectedOriginalCopiesByteExact": 51,
+    "selectedOriginalCopyBytes": 295465,
+    "headRawBlobsCompared": 74,
+    "relativeMarkdownLinksResolved": 4
+  },
+  "checked74InventorySha256": "2a745646ec3e0d3236f7f1b050c56b690d8056f90ee4d736b69f2b9c551e16fd",
+  "pins": [
+    {
+      "path": ".cache/guardian-flow-usability-application-20261023/stage-pins.json",
+      "bytes": 20993,
+      "sha256": "9563a999b4a1eafe9b33261e6d752a1d8a9645085b9c20f02b3f21568fe7e031"
+    },
+    {
+      "path": "docs/evidence/guardian-flow-usability-20261023/manifest.json",
+      "bytes": 47308,
+      "sha256": "8f4a25e675cb81e60d8fb1e041f5477d1145f041f38986e7e8006ff24a4bab50"
+    },
+    {
+      "path": "docs/evidence/guardian-flow-usability-20261023/integration-manifest.json",
+      "bytes": 13486,
+      "sha256": "2a38098b6dad2d18af32c6dcc2b7042d613e56cce52546c896eab05f1fa61ce4"
+    },
+    {
+      "path": "docs/reviews/guardian-flow-usability-20261023.md",
+      "bytes": 3385,
+      "sha256": "15342dedb25de0d7c2addba467b05e05cdc978037b8cba30b42d5c4094964fda"
+    },
+    {
+      "path": "docs/managed-publication-admission-plan.md",
+      "bytes": 96340,
+      "sha256": "4994781cf65a736611e648fe693d0bec9b5aef6cc4315b818a036447dff22d9d"
+    }
+  ],
+  "foreign": {
+    "path": "docs/managed-publication-admission-plan.md",
+    "notInCommit": true,
+    "headEqualsParent": true,
+    "mainRawSha256": "4994781cf65a736611e648fe693d0bec9b5aef6cc4315b818a036447dff22d9d",
+    "indexEmpty": true,
+    "onlyRemainingTrackedWorkingTreeChange": true
+  },
+  "production": [
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "bytes": 93378,
+      "sha256": "89fac14a4d5930b8398c29b5e0955a86740dce3fae8eaf59c955e989e31d0657",
+      "gitRawBlobSha1": "a16726881dd6ec431c43ef3b8ac6240b959421ac"
+    },
+    {
+      "path": "apps/guardian/lib/ui/design.dart",
+      "bytes": 31270,
+      "sha256": "456ffeb3de558e824d47ac3bf9841cda8dd6790349fd522e5c7bb7857942e5fc",
+      "gitRawBlobSha1": "6dcf9343f51b545bada95c4618ee8e98eedc9b35"
+    },
+    {
+      "path": "apps/guardian/lib/ui/resource_page.dart",
+      "bytes": 19437,
+      "sha256": "ac3667fff335d8105c5e10e7e3b5b45dc0b5bbb8bc00eb0d94175ee432ed9ed3",
+      "gitRawBlobSha1": "a7dc10563c665948f0043f7ab08199c43b2198da"
+    }
+  ],
+  "relativeLinks": [
+    {
+      "document": "docs/reviews/guardian-flow-usability-20261023.md",
+      "target": "../evidence/guardian-flow-usability-20261023/README.md",
+      "resolved": "docs/evidence/guardian-flow-usability-20261023/README.md"
+    },
+    {
+      "document": "docs/reviews/guardian-flow-usability-20261023.md",
+      "target": "../evidence/guardian-flow-usability-20261023/search/independent/review.md",
+      "resolved": "docs/evidence/guardian-flow-usability-20261023/search/independent/review.md"
+    },
+    {
+      "document": "docs/reviews/guardian-flow-usability-20261023.md",
+      "target": "../evidence/guardian-flow-usability-20261023/subject/independent-review.md",
+      "resolved": "docs/evidence/guardian-flow-usability-20261023/subject/independent-review.md"
+    },
+    {
+      "document": "docs/reviews/guardian-flow-usability-20261023.md",
+      "target": "../evidence/guardian-flow-usability-20261023/integration-manifest.json",
+      "resolved": "docs/evidence/guardian-flow-usability-20261023/integration-manifest.json"
+    }
+  ],
+  "historicalBoundary": {
+    "r10Source": "e303580030192497a63492d1147156e465082706",
+    "r10Status": "NOT_ACCEPTED",
+    "r10SdkCalls": 0,
+    "rootActualHostExitCode": 1,
+    "rootForcedOwnHost": false,
+    "windowReleased": true,
+    "analysisAccepted": false,
+    "currentProductionApplicationScenarios": "UNRUN",
+    "fullRegressionRootFilesRemainRequired": 181,
+    "browserCasesAreSubset": 80
+  },
+  "notPerformed": [
+    "SDK",
+    "tests",
+    "AST or compiler",
+    "candidate/helper execution",
+    "process or WinAPI queries",
+    "network",
+    "Main/Git writes"
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "status": "AUTHOR_DOCUMENTATION_CORRECTION_NO_SOURCE_CHANGE_ALL_SCENARIOS_UNRUN",
+  "originalReview": {
+    "path": ".cache/guardian-edit-dialog-conflict-20261023-r1/review.md",
+    "bytes": 3106,
+    "sha256": "045791f4e9550759c35201d6c81aacd88da34ef52e41183f16f3eba90fa5d34e"
+  },
+  "afterUnchanged": {
+    "path": ".cache/guardian-edit-dialog-conflict-20261023-r1/after.dart",
+    "bytes": 33152,
+    "sha256": "5cc095cf4c46316defaef0aeaeb35380bf38cd3ef264372bf63e20e58acf0925"
+  },
+  "originalDeliveryUnchanged": {
+    "path": ".cache/guardian-edit-dialog-conflict-20261023-r1/delivery-pins.json",
+    "bytes": 1067,
+    "sha256": "e0cba3e919b611415236dcf952a1aaefe9d298dba6f43621c7393dc05aaef597"
+  },
+  "incorrectOriginalClaim": "The review grouped non-ApiFailure with status0/5xx as preserving pendingValues.",
+  "actualBeforeAndAfterRule": {
+    "retainPendingValues": "ApiFailure with status == 0 or status >= 500",
+    "clearPendingValues": "non-ApiFailure, or ApiFailure with nonzero status < 500"
+  },
+  "replacementExplanation": "Unknown HTTP/network results represented as ApiFailure status0/5xx keep the original pending values and retry closure. Other exception handling remains exactly the prior behavior; non-ApiFailure clears pendingValues. No broader unknown-exception recovery was added or demonstrated.",
+  "futureScenarioScope": "Verify existing non-ApiFailure clearing separately; do not describe it as preserved-body retry. All scenarios remain UNRUN.",
+  "sealedR1Modified": false,
+  "productionModified": false,
+  "testsOrSdkRun": false
+}

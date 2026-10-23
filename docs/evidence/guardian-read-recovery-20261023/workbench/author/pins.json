@@ -1,0 +1,56 @@
+{
+  "status": "STATIC_WORKBENCH_COMMON_ACTIONS_R2_AUTHOR_CANDIDATE_ALL_UNRUN",
+  "sourceCommit": "7cf2b2b9960db98f90a7f7630ae967e3ea99eba8",
+  "productionPath": "apps/guardian/lib/ui/workbench_view.dart",
+  "files": [
+    {
+      "path": "before.dart",
+      "bytes": 16385,
+      "sha256": "f9f3aae0f2ffd4f0895784f37355c670cfdd4c678a8f68a30be0aa6a15de850d"
+    },
+    {
+      "path": "after.dart",
+      "bytes": 16807,
+      "sha256": "198b85c003e310ab4fa1cd1cfbc7c77ab29ea8e6ecc007c8c4cb02d06ce5d5ce"
+    },
+    {
+      "path": "workbench-common-actions.patch",
+      "bytes": 3045,
+      "sha256": "e8c4334943aa4c731236e0fa7bf0fa289fe2c04130bb2d5c2b2704c007a57cc5"
+    },
+    {
+      "path": "review.md",
+      "bytes": 3667,
+      "sha256": "d4c04c0f39998b60f9cb6f2234c65d099f53a3bf351df321ce6341712854ce4d"
+    }
+  ],
+  "readOnlyContext": [
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "bytes": 93378,
+      "sha256": "89fac14a4d5930b8398c29b5e0955a86740dce3fae8eaf59c955e989e31d0657"
+    },
+    {
+      "path": "apps/guardian/lib/ui/design.dart",
+      "bytes": 31270,
+      "sha256": "456ffeb3de558e824d47ac3bf9841cda8dd6790349fd522e5c7bb7857942e5fc"
+    },
+    {
+      "path": "apps/guardian/test/workbench_view_test.dart",
+      "bytes": 9963,
+      "sha256": "e89431e83bae25b4a6405805f95304c5831b686d116149c34ff65dde7670251b"
+    }
+  ],
+  "onlyBuildChanged": true,
+  "propsImportsActionGuardsAndCallbacksUnchanged": true,
+  "commonActionsIndependentOfSummaryReadState": true,
+  "staleDataLabeledAndOriginalTimestampPreserved": true,
+  "countDrivenRecommendationSuppressedWhileErrorOrRefreshing": true,
+  "busyOrRefreshingFailureRetryAndReauthAbsent": true,
+  "testsChangedOrAdded": false,
+  "testsRun": false,
+  "rendered": false,
+  "mainApplied": false,
+  "allScenarios": "UNRUN",
+  "independentReviewRequired": true
+}

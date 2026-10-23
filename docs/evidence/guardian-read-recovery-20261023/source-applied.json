@@ -1,0 +1,25 @@
+{
+  "status": "REVIEWED_PRODUCT_SOURCES_APPLIED_APPLICATION_UNRUN",
+  "atUtc": "2026-10-23T15:36:56.332430+00:00",
+  "parent": "7cf2b2b9960db98f90a7f7630ae967e3ea99eba8",
+  "files": [
+    {
+      "path": "apps/guardian/lib/ui/design.dart",
+      "bytes": 33152,
+      "sha256": "5cc095cf4c46316defaef0aeaeb35380bf38cd3ef264372bf63e20e58acf0925",
+      "beforeSha256": "456ffeb3de558e824d47ac3bf9841cda8dd6790349fd522e5c7bb7857942e5fc",
+      "gitRawBlobSha1": "424ea0cfff05c379b8af75b312a2e6fef2e0f220"
+    },
+    {
+      "path": "apps/guardian/lib/ui/workbench_view.dart",
+      "bytes": 16807,
+      "sha256": "198b85c003e310ab4fa1cd1cfbc7c77ab29ea8e6ecc007c8c4cb02d06ce5d5ce",
+      "beforeSha256": "f9f3aae0f2ffd4f0895784f37355c670cfdd4c678a8f68a30be0aa6a15de850d",
+      "gitRawBlobSha1": "1428b444b8e41f212aced3298136565a75f2222d"
+    }
+  ],
+  "testsAddedOrRun": false,
+  "analysisRun": false,
+  "rendered": false,
+  "deployed": false
+}

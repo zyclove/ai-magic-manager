@@ -1,0 +1,94 @@
+{
+  "status": "STATIC_AUTHOR_CANDIDATE_ALL_SCENARIOS_UNRUN",
+  "sourceCommit": "7cf2b2b9960db98f90a7f7630ae967e3ea99eba8",
+  "productionPath": "apps/guardian/lib/ui/design.dart",
+  "baselineGitRawBlobSha1": "6dcf9343f51b545bada95c4618ee8e98eedc9b35",
+  "files": [
+    {
+      "path": "before.dart",
+      "bytes": 31270,
+      "sha256": "456ffeb3de558e824d47ac3bf9841cda8dd6790349fd522e5c7bb7857942e5fc"
+    },
+    {
+      "path": "after.dart",
+      "bytes": 33152,
+      "sha256": "5cc095cf4c46316defaef0aeaeb35380bf38cd3ef264372bf63e20e58acf0925"
+    },
+    {
+      "path": "edit-dialog-conflict.patch",
+      "bytes": 4896,
+      "sha256": "70865d4b38979fb8b1157b8aec3d11eb2266a4e146600d8a9336416b9d2c66b8"
+    },
+    {
+      "path": "review.md",
+      "bytes": 3106,
+      "sha256": "045791f4e9550759c35201d6c81aacd88da34ef52e41183f16f3eba90fa5d34e"
+    }
+  ],
+  "dependencies": [
+    {
+      "path": "apps/guardian/lib/core/api.dart",
+      "bytes": 22640,
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641"
+    },
+    {
+      "path": "apps/guardian/lib/ui/class_action_dialog.dart",
+      "bytes": 10284,
+      "sha256": "76924ad78dcf7aaba92eebc4c50e319f7a90d5252331ed8a0e20c5192c72dfb6"
+    },
+    {
+      "path": "apps/guardian/lib/ui/owned_dialog_route.dart",
+      "bytes": 1419,
+      "sha256": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946"
+    },
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "bytes": 93378,
+      "sha256": "89fac14a4d5930b8398c29b5e0955a86740dce3fae8eaf59c955e989e31d0657"
+    },
+    {
+      "path": "apps/guardian/lib/pages/classes_page.dart",
+      "bytes": 19780,
+      "sha256": "0b608bf9b96e0e7f9c66433c55b503e6413e72a61741e57970094e3aedcfa856"
+    },
+    {
+      "path": "apps/guardian/lib/pages/editors.dart",
+      "bytes": 46420,
+      "sha256": "c06f9f20545af8eb7929e50354c708193b151e56ca6637a7568988a6d97e0554"
+    },
+    {
+      "path": "apps/guardian/test/widget_test.dart",
+      "bytes": 4723,
+      "sha256": "08c74ac9115d60727973a5ef456cfaae4d049b1c3a939fc6b4a6e91c6215b87a"
+    },
+    {
+      "path": "apps/guardian/test/dialog_submit_guard_test.dart",
+      "bytes": 1385,
+      "sha256": "6a12fc99850d87b81da7404398b711c7956423724d9e7918eb0429d0fa898837"
+    },
+    {
+      "path": "apps/guardian/test/class_action_dialog_test.dart",
+      "bytes": 3343,
+      "sha256": "8fd915ebfde7f27727034ddaec9f8caf0b1ef9691c4843187369b138f7a5234c"
+    }
+  ],
+  "patchHunks": 8,
+  "completePatchReconstructedByteExact": true,
+  "outsideEditDialogStateByteIdentical": true,
+  "publicSignaturesAndFormDialogByteIdentical": true,
+  "originalScopeRouteLifetimeFinishCancelByteIdentical": true,
+  "clearKnownErrorPendingRuleUnchanged": true,
+  "unknownPendingOriginalBodyRetryUnchanged": true,
+  "conflictSnapshotBeforePendingClear": true,
+  "heldSaveRejectedBeforeValidationAndDispatch": true,
+  "heldDropdownRejectsConflict": true,
+  "noNewVersionGetOrAutomaticReplay": true,
+  "closeResult": "null via existing cancel/finish; not a refresh/saved marker",
+  "refreshIsManualAfterClose": true,
+  "testsAddedOrChanged": false,
+  "allScenarios": "UNRUN",
+  "rendered": false,
+  "sdkTestsAstCompilerFormatterCandidatesOrNetworkExecuted": false,
+  "mainOrGitWritten": false,
+  "independentReviewRequired": true
+}

@@ -1,0 +1,75 @@
+--- a/apps/guardian/lib/ui/workbench_view.dart
++++ b/apps/guardian/lib/ui/workbench_view.dart
+@@ -120,9 +120,10 @@
+   @override
+   Widget build(BuildContext context) {
+     final value = summary;
+-    final action = value == null ? null : _nextAction(value);
+-    final commonActions =
+-        value == null ? null : _commonActions(context, action?.shortcut);
++    final action = value == null || error != null || refreshing
++        ? null
++        : _nextAction(value);
++    final commonActions = _commonActions(context, action?.shortcut);
+     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+       PageHeading('工作台',
+           '$workspaceName · ${organization ? '机构管理' : '家庭管理'} · ${label(role)}',
+@@ -138,33 +139,41 @@
+                   : const Icon(Icons.refresh, size: 18),
+               label: Text(refreshing ? '正在刷新…' : '刷新状态'))),
+       if (error != null)
+-        Panel(child: FailureView(error!, retry: onRefresh, reauth: onReauth))
+-      else if (value == null)
++        Panel(
++            child: FailureView(error!,
++                retry: busy || refreshing ? null : onRefresh,
++                reauth: busy || refreshing ? null : onReauth)),
++      if (value == null && error == null)
+         const Panel(
+             child: SizedBox(
+                 height: 180,
+                 child:
+                     Center(child: CircularProgressIndicator(strokeWidth: 2))))
+-      else ...[
++      else if (value != null) ...[
++        if (error != null || refreshing) ...[
++          if (error != null) const SizedBox(height: 20),
++          Notice('以下为上次成功读取的数据，当前状态尚未更新。', warning: error != null),
++          const SizedBox(height: 20),
++        ],
+         if (action != null) ...[
+           _primaryAction(context, action),
+           const SizedBox(height: 20),
+         ],
+         _metrics(context, value),
+-        if (commonActions != null) ...[
+-          const SizedBox(height: 20),
+-          commonActions,
+-        ],
+-        if (canOpen('audit')) ...[
+-          const SizedBox(height: 20),
+-          _recentActivity(context, value),
+-        ],
+-        if (refreshedAt != null)
+-          Padding(
+-              padding: const EdgeInsets.only(top: 16),
+-              child: Text('上次读取完成：${dateLabel(refreshedAt!.toIso8601String())}',
+-                  style: const TextStyle(color: muted, fontSize: 12))),
+-      ]
++      ],
++      if (commonActions != null) ...[
++        const SizedBox(height: 20),
++        commonActions,
++      ],
++      if (value != null && canOpen('audit')) ...[
++        const SizedBox(height: 20),
++        _recentActivity(context, value),
++      ],
++      if (value != null && refreshedAt != null)
++        Padding(
++            padding: const EdgeInsets.only(top: 16),
++            child: Text('上次读取完成：${dateLabel(refreshedAt!.toIso8601String())}',
++                style: const TextStyle(color: muted, fontSize: 12))),
+     ]);
+   }
+ 
