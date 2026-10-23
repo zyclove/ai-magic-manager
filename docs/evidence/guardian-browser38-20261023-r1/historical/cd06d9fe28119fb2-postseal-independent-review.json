@@ -1,0 +1,36 @@
+{
+  "status": "POSTSEAL_INDEPENDENT_STATIC_READBACK_NO_CONFIRMED_BLOCKER",
+  "utc": "2026-10-23T03:27:40.120721+00:00",
+  "proposal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r2\\proposal.json",
+    "bytes": 28145,
+    "sha256": "e931d599edbdc2fc413ba2f156fcf592c165913ab00afff9b75fc148f71f501e"
+  },
+  "independentReviewer": "/root/browser31_candidate_review_20261023/html_flags_static_review",
+  "allPinsMatched": {
+    "candidate": 20,
+    "controlRuntime": 11,
+    "historicalMetadata": 65,
+    "totalRows": 96,
+    "historicalDuplicatePaths": 5
+  },
+  "workerOnlyThreeChanges": "HTML flag replacing unsupported concurrency; frozen source points to r1; new r2 input SHA.",
+  "controllerHelperReporterObserverByteIdenticalToR1": true,
+  "sourcePackageConfigCacheExpectedCasePinsUnchangedFromR1": true,
+  "r2HasNoSourceCopyOrAttempt": true,
+  "preparationCodeReviewV2MatchesLatestScriptsAndSupersedesV1": true,
+  "inheritedNegative32AndPositive2MetadataFixturesNotRerun": true,
+  "knownLimitsRetained": [
+    "Root external strict whole elapsed bound supplements inherited native polling deadline quantization.",
+    "Same owned profile Chrome startup retries remain conservatively rejected."
+  ],
+  "r1OriginalNotAcceptedPreservedAndNotApplicationRedOrPass": true,
+  "runtimeValidationClaimed": false,
+  "candidateModulesImportedOrExecuted": false,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "browserStarted": false,
+  "networkUsed": false,
+  "mainWritten": false,
+  "attemptExists": false
+}

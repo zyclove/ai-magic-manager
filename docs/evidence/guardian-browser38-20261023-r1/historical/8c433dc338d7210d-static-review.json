@@ -1,0 +1,62 @@
+{
+  "status": "STATIC_PREPARATION_ONLY_R2_ANALYSIS_UNRUN",
+  "candidateImported": false,
+  "candidateExecuted": false,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "pubRun": false,
+  "gitReadOnlyUsedForCommittedExtraction": true,
+  "sourceCommit": "18f270cb6664b9cec92677a1c55d315546e22b4a",
+  "sourceFiles": 404,
+  "sevenRootGitTrees": {
+    "apps/guardian": "f156086608813f2c76ca7129a3295f67db0a38e3",
+    "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+    "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+    "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+    "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+    "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+    "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+  },
+  "mainRawHashesRecorded": true,
+  "mainCrLfNormalizedMatchesCommitted": true,
+  "completeMainAndFrozenMembershipExact": true,
+  "controllerByteIdenticalToR1": true,
+  "controllerTemplateSha256": "9baa2f090040bcedb721bb344c7c12a1940bfc278d55361ff4c7f4711107b3ee",
+  "nativeHelperByteIdenticalToR1": true,
+  "nativeHelperSha256": "4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12",
+  "workerChangesOnly": [
+    "frozen directory r1 to r2",
+    "Root input SHA",
+    "actual complete source count"
+  ],
+  "rootInputPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261021-r2\\out\\analysis-inputs-root.json",
+    "bytes": 6617,
+    "sha256": "87ef567e9d14a94c9672e1c672720a5e2da636e4091eaa751959ed6c6a7dd323"
+  },
+  "packageRows": 70,
+  "rebasedInternalRows": 7,
+  "unchangedExternalRowsAndMetadata": 63,
+  "dependencySeedChangeOnlySevenProposedCandidateRootUris": true,
+  "cacheManifestReusedSha256": "0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2",
+  "cacheTrees": 70,
+  "fixedRuntimeFiles": 33,
+  "cacheFiles": 3537,
+  "cacheContentsNotRehashedDuringPreparation": true,
+  "fullCacheContentsStillRequiredPreAndPostRuntime": true,
+  "outerBudgetSeconds": 210,
+  "workerBudgetSeconds": 195,
+  "commandCapSeconds": 180,
+  "cleanupReserveSeconds": 5,
+  "postflightReserveSeconds": 25,
+  "astParsedOnly": [
+    "controller.py",
+    "worker.py",
+    "heap1536_windows_job.py"
+  ],
+  "noCandidateOrSdkInvoked": true,
+  "frozenSourceSnapshotWrittenDuringPreparation": true,
+  "mainSourceWritten": false,
+  "currentBranchOrIndexWritten": false,
+  "runtimeWatchdogVerifiedForThisCandidate": false
+}

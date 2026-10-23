@@ -1,0 +1,37 @@
+{
+  "status": "STATIC_BROWSER31_SEALED_FOR_ROOT_REVIEW_RUNTIME_UNRUN",
+  "proposal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\proposal.json",
+    "bytes": 17390,
+    "sha256": "d0ef7c05af1b6e9721e4fa6c4fcf0111a4cd9cef4785fc394feb62c771253c22"
+  },
+  "inputs": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\inputs.json",
+    "bytes": 9611,
+    "sha256": "2b372886d04f846400499e3c2e6a2e8a41673cb89bc976a77335de60e139f446"
+  },
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\out\\source-manifest.json",
+    "bytes": 241339,
+    "sha256": "81821274333fab474397695fb7cb6fb6da98ae7bb8c8381c0972aba2c6e4a4de"
+  },
+  "cacheManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\cache-content-chrome-refreshed.json",
+    "bytes": 725955,
+    "sha256": "8c0cfde01a9d6d5cb4bf002c1ed6d5069af28b0f27f110bec292f46e281f66c0"
+  },
+  "expectedCaseContract": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\expected-cases.json",
+    "bytes": 15547,
+    "sha256": "ec83cef3fd5a329dd10e26cc362272b11bd7ae3a5dfe1e8cecc34594a2cee603"
+  },
+  "staticReview": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\static-review.json",
+    "bytes": 5099,
+    "sha256": "0ceffbf94476556957c2063ee8e0a8d387b7ef7118bba26914d5b1247b351c68"
+  },
+  "candidateFiles": 21,
+  "sdkCalls": 0,
+  "chromeStarted": false,
+  "attemptExists": false
+}

@@ -1,0 +1,69 @@
+{
+  "status": "STATIC_BROWSER38_PREPARATION_ONLY_RUNTIME_UNRUN",
+  "sourceCommit": "fa2148954ccec749f7d58c38184a208085bfe181",
+  "sourceParent": "a99b40233fcc7c2b01828b8eb45c3477c4a90249",
+  "observedHeadAtStart": "fa2148954ccec749f7d58c38184a208085bfe181",
+  "observedHeadAtFinish": "fa2148954ccec749f7d58c38184a208085bfe181",
+  "sevenRootGitTrees": {
+    "apps/guardian": "b57ca8a0c6f01e82e05bb32f4d34ca157dba980a",
+    "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+    "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+    "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+    "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+    "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+    "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+  },
+  "sourceFiles": 406,
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\out\\source-manifest.json",
+    "bytes": 241948,
+    "sha256": "af9ae63d5dcd9cedf96b423a876636a3e19af3d0ea342728d0a74211c902bd48"
+  },
+  "sourceTreeSha256": "48e0de60f6ab8a5417febe83fdacbc991eeac05e679a81cfd43ee0f5c5d88212",
+  "allMainAndFrozenRawHashesAndMembershipMatch": true,
+  "mainLfMatchesCommitted": true,
+  "sourceSnapshotCopiedFromCommittedGitBlobs": true,
+  "packageRows": 70,
+  "rebasedInternalRoots": 7,
+  "externalRowsAndAllOtherMetadataPreserved": true,
+  "dependencyLibraryPins": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\out\\dependency-library-pins.json",
+    "bytes": 360075,
+    "sha256": "d3d727fb0dbd6cf4e2d26b8da01c67dd315e52b0502dae35b82df2468a280c9c"
+  },
+  "candidatePackageConfig": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+    "bytes": 15666,
+    "sha256": "1360722a78071ec6020aade7ef2b4595bcca2aa14f3745d1bcb8f5abd678f3de"
+  },
+  "cacheManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\cache-content-chrome-refreshed.json",
+    "bytes": 725955,
+    "sha256": "8c0cfde01a9d6d5cb4bf002c1ed6d5069af28b0f27f110bec292f46e281f66c0"
+  },
+  "cacheFiles": 3537,
+  "cacheRuntimeContentsNotRehashedDuringPreparation": true,
+  "all3537PreflightAndPostflightRequired": true,
+  "oldBrowserR2ValidationPinsMatched": 96,
+  "original31NamesPreserved": true,
+  "sourceCaseCounts": [
+    8,
+    4,
+    19,
+    7
+  ],
+  "expectedPhysicalSuites": 4,
+  "expectedVisibleCases": 38,
+  "actualCasesExecuted": null,
+  "nativeHelperByteIdenticalToR1R2": true,
+  "optionalPrivateJobDiagnosticNotAdded": true,
+  "onlyPureNameMetadataASTFunctionsEvaluated": true,
+  "candidateModuleImported": false,
+  "candidateControlExecuted": false,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "browserStarted": false,
+  "networkUsed": false,
+  "mainWritten": false,
+  "attemptExists": false
+}

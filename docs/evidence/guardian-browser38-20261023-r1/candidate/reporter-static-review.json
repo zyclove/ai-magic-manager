@@ -1,0 +1,64 @@
+{
+  "status": "INDEPENDENT_INHERITED_PRIMARY_REPORTER_PROTOCOL_REVIEW_NOT_APPLICATION_VALIDATION",
+  "reviewedAtUtc": "2026-10-23T04:11:12.446778+00:00",
+  "reviewedCodePin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\reporter_contract_reviewed.py",
+    "bytes": 10647,
+    "sha256": "3a47906938c1f638d462a2ac7b758c116f9d7ae74c8d48851b53b77a1302203c"
+  },
+  "inheritedPrimaryEvidenceReceiptPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\reporter-static-review.json",
+    "bytes": 1692,
+    "sha256": "8e811bc6aa846aaf65f6fa95c49dfac978dabd8f166c34a9ef32fbeda312d889"
+  },
+  "primaryEvidenceOrigin": "The r1 receipt records the actual original primary-source read and hash; no new primary reporter source read is claimed here.",
+  "primarySourceReadThisReview": false,
+  "inheritedOriginalPrimaryReadActualChunk": "c6c25d",
+  "inheritedCachedPrimarySourcePins": [
+    {
+      "path": "C:/Users/Administrator/AppData/Local/Pub/Cache/hosted/pub.dev/test_core-0.6.0/lib/src/runner/reporter/json.dart",
+      "bytes": 10643,
+      "sha256": "702ffdd55010ab82cce9b36cff8cf3d70180ad3274f5ca98946c2f4b3d0397e7",
+      "freshHashReadActualChunk": "3b8f65"
+    }
+  ],
+  "primaryReporterSourceNotInApplication3537Allowlist": true,
+  "allowlistBoundaryEvidence": "Inherited from r1 with the byte-identical refreshed cache manifest; the raw pub.dev reporter source is not substituted for the runtime snapshot.",
+  "actualToolSnapshotSeparatelyPinnedByRuntimeManifest": true,
+  "snapshotMetadataPinFromUnchangedCacheManifest": {
+    "path": "D:\\softwares\\flutter\\bin\\cache\\flutter_tools.snapshot",
+    "expectedSha256": "416dc26a08c049b21aebd6cf227367ac207396726f7798a02fb75535096b35e7",
+    "reason": "existing frozen executable/entry/version pin",
+    "bytes": 36968528,
+    "sha256": "416dc26a08c049b21aebd6cf227367ac207396726f7798a02fb75535096b35e7"
+  },
+  "cacheManifestPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\cache-content-chrome-refreshed.json",
+    "bytes": 725955,
+    "sha256": "8c0cfde01a9d6d5cb4bf002c1ed6d5069af28b0f27f110bec292f46e281f66c0"
+  },
+  "inheritedProtocolFactsObservedInPrimarySource": [
+    "Protocol 0.1.1; one global increasing ID counter for suites/groups/tests.",
+    "allSuites count is addedSuites length; LoadSuite and runner suite share the same suite ID.",
+    "time is elapsed milliseconds; visible and hidden tests both receive completion.",
+    "Failures/errors, skips and terminal success are separate fields/events.",
+    "No suiteDone event exists in the pinned implementation."
+  ],
+  "validatorRequires": [
+    "Exactly four physical Chrome suites and 38 exact expected visible successful names.",
+    "Every started test completes; any error, failure, skip, malformed output or nonzero native exit rejects.",
+    "Terminal successful done is required; suiteDone is neither present in protocol 0.1.1 nor invented.",
+    "Only the originally approved Chrome fixed row may differ from the original cache parent."
+  ],
+  "syntheticMetadataFixturesPassed": true,
+  "runtimeCompatibilityNotYetProven": true,
+  "candidateModulesImported": false,
+  "onlyAllowlistedPureAstNodesEvaluated": true,
+  "workerOrControllerOrNativeHelperLoaded": false,
+  "sdkStarted": false,
+  "browserStarted": false,
+  "networkUsed": false,
+  "applicationTestsRun": false,
+  "candidateRuntimeBehaviorVerified": false,
+  "attemptCreated": false
+}

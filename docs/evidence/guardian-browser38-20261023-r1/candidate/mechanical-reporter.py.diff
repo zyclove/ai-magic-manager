@@ -1,0 +1,56 @@
+--- browser31-html-r2/reporter.py
++++ browser38/reporter.py
+@@ -1,4 +1,4 @@
+-"""Pure metadata validation for exactly the 31 selected browser cases.
++"""Pure metadata validation for exactly the 38 selected browser cases.
+ 
+ Protocol 0.1.1 was checked against the existing test_core 0.6.0 JSON reporter.
+ This module starts no process and reads no files; callers supply bytes/metadata.
+@@ -74,8 +74,8 @@
+     demand(isinstance(raw, bytes) and len(raw) <= 16 * 1024**2, 'Report exceeds the fixed evidence limit')
+     expected = {(row['selector'], row['name']) for row in contract['cases']}
+     selectors = set(contract['selectors'])
+-    demand(len(expected) == 31 and len(contract['cases']) == 31 and len(selectors) == 3,
+-           'Expected contract must contain exactly 31 distinct cases in three physical suites')
++    demand(len(expected) == 38 and len(contract['cases']) == 38 and len(selectors) == 4,
++           'Expected contract must contain exactly 38 distinct cases in four physical suites')
+     demand({path for path, name in expected} == selectors, 'Expected case/suite contract differs')
+     text = raw.decode('utf-8-sig', errors='strict')
+     lines = text.splitlines()
+@@ -115,8 +115,8 @@
+             demand(integer(event.get('pid')) and event['pid'] > 0, 'Missing reporter process identity')
+         elif kind == 'allSuites':
+             suite_counts += 1
+-            demand(suite_counts == 1 and type(event.get('count')) is int and event['count'] == 3,
+-                   'Exactly one allSuites event for three physical suites is required')
++            demand(suite_counts == 1 and type(event.get('count')) is int and event['count'] == 4,
++                   'Exactly one allSuites event for four physical suites is required')
+         elif kind == 'suite':
+             row = event.get('suite')
+             demand(type(row) is dict and integer(row.get('id')) and row['id'] not in seen_ids,
+@@ -167,7 +167,7 @@
+             demand(event.get('success') is True, 'Terminal done did not report success')
+         else:
+             raise ValueError('Unexpected reporter event type: ' + kind)
+-    demand(starts == suite_counts == done_count == 1 and len(suites) == 3,
++    demand(starts == suite_counts == done_count == 1 and len(suites) == 4,
+            'Start, suite discovery or terminal completion is incomplete')
+     demand(set(tests) == set(finished), 'A started test never completed')
+     visible, hidden = [], []
+@@ -179,11 +179,11 @@
+         else:
+             visible.append({'testID':test_id, **row})
+     pairs = [(row['selector'], row['name']) for row in visible]
+-    demand(len(pairs) == 31 and len(set(pairs)) == 31 and set(pairs) == expected,
+-           'Actual visible test names do not match the exact 31-case contract')
+-    return {'status':'EXACT_BROWSER31_REPORT_ACCEPTED', 'protocolVersion':'0.1.1',
+-            'suitePaths':sorted(suites.values()), 'suiteCount':3, 'visibleTests':31,
+-            'successfulVisibleTests':31, 'failures':0, 'errors':0, 'skipped':0,
++    demand(len(pairs) == 38 and len(set(pairs)) == 38 and set(pairs) == expected,
++           'Actual visible test names do not match the exact 38-case contract')
++    return {'status':'EXACT_BROWSER38_REPORT_ACCEPTED', 'protocolVersion':'0.1.1',
++            'suitePaths':sorted(suites.values()), 'suiteCount':4, 'visibleTests':38,
++            'successfulVisibleTests':38, 'failures':0, 'errors':0, 'skipped':0,
+             'actualVisibleCases':visible, 'hiddenSuccessfulTests':hidden,
+             'allStartedTestsCompleted':True, 'terminalDoneSuccess':True,
+             'naturalNativeExitCode':native_exit_code, 'printEvents':printed,

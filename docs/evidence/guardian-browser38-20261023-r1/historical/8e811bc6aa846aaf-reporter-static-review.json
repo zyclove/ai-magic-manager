@@ -1,0 +1,35 @@
+{
+  "status": "ROOT_STATIC_REPORTER_PROTOCOL_REVIEW_NOT_APPLICATION_VALIDATION",
+  "utc": "2026-10-23T02:59:51.585395+00:00",
+  "reviewedCodeSha256": "5626b4d9859efe8f2cf04886c7f97ac967ac6daa258d31860528bb90676ca301",
+  "reviewedCopyByteIdenticalToOriginal": true,
+  "cachedPrimarySourceReadActualChunk": "c6c25d",
+  "cachedPrimarySource": [
+    {
+      "path": "C:/Users/Administrator/AppData/Local/Pub/Cache/hosted/pub.dev/test_core-0.6.0/lib/src/runner/reporter/json.dart",
+      "bytes": 10643,
+      "sha256": "702ffdd55010ab82cce9b36cff8cf3d70180ad3274f5ca98946c2f4b3d0397e7",
+      "freshHashReadActualChunk": "3b8f65"
+    }
+  ],
+  "primaryReporterSourceNotInApplicationCacheAllowlist": true,
+  "actualToolSnapshotSeparatelyPinnedByRuntimeManifest": true,
+  "protocolFactsObservedInPrimarySource": [
+    "Protocol 0.1.1; one global increasing ID counter for suites/groups/tests.",
+    "allSuites count is addedSuites length; LoadSuite and runner suite share the same suite ID.",
+    "time is elapsed milliseconds; visible and hidden tests both receive completion.",
+    "Failures/errors, skips and terminal success are separate fields/events.",
+    "No suiteDone event exists in the pinned implementation."
+  ],
+  "validatorRequires": [
+    "Exactly three physical Chrome suites and 31 expected visible successful names.",
+    "Every started test completed; no error or skip; native zero and terminal successful done.",
+    "Only the approved Chrome fixed row changes in the cache parent."
+  ],
+  "pureFunctionAstParsed": true,
+  "candidateImported": false,
+  "sdkStarted": false,
+  "applicationTestsRun": false,
+  "browserStarted": false,
+  "runtimeCompatibilityNotYetProven": true
+}

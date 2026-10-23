@@ -1,0 +1,44 @@
+{
+  "status": "INDEPENDENT_STATIC_BROWSER38_READBACK_NO_CONFIRMED_BLOCKER_RUNTIME_UNRUN",
+  "utc": "2026-10-23T04:20:07.820726+00:00",
+  "proposal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\proposal.json",
+    "bytes": 38059,
+    "sha256": "f478063e573d445eb048e9a93ff87b7ae5f900499aab5f55d5730e4a7ba9447c"
+  },
+  "independentReviewer": "/root/browser31_candidate_review_20261023/html_flags_static_review",
+  "matchedMetadataPins": {
+    "candidate": 24,
+    "control": 11,
+    "historical": 101,
+    "total": 136,
+    "historicalUniquePaths": 96
+  },
+  "sourceCommit": "fa2148954ccec749f7d58c38184a208085bfe181",
+  "sourceFiles": 406,
+  "physicalSuites": 4,
+  "expectedVisibleCases": 38,
+  "actualCasesExecuted": null,
+  "sourceMainAndFrozenRawMembershipChecked": true,
+  "fullPackage70MetadataAndOnlyInternal7UrisVerified": true,
+  "strictNaturalZeroNoForcedJobZeroAndExternalTimingBoundRetained": true,
+  "postsealSupplementalReadOnlyCacheHash": {
+    "actualOutput": "4bb248",
+    "naturalMetadataReaderExit": 0,
+    "trees": 70,
+    "files": 3537,
+    "bytes": 638537951,
+    "fullMembershipDirectoriesAndHashesMatch": true,
+    "scope": "Only the explicit3537 allowlist; this does not validate the whole SDK/browser installation or replace runtime pre/postflight."
+  },
+  "staticSealDidNotRehashRuntimeCacheClaimStillAccurate": true,
+  "nativeHelperAndOwnedObserverByteIdenticalToPriorCandidates": true,
+  "candidateModified": false,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "browserStarted": false,
+  "networkUsed": false,
+  "attemptCreated": false,
+  "runtimeAcceptanceExists": false,
+  "wholeUiAccepted": false
+}

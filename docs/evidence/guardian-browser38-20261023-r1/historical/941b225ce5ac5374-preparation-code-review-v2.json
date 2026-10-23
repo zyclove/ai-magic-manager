@@ -1,0 +1,57 @@
+{
+  "status": "PREPARATION_CODE_STATIC_REVIEW_V2_NO_CANDIDATE_IMPORT_OR_SDK",
+  "utc": "2026-10-23T03:25:09.749249+00:00",
+  "reviewedPreparationAndSealCode": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r2\\prepare_html_browser31.py",
+      "bytes": 15340,
+      "sha256": "4fe1c5fede15772470d476e2959c327af5bbe3d321289656f22654ec537cc39b",
+      "stdlibImports": [
+        "ast",
+        "copy",
+        "datetime",
+        "difflib",
+        "hashlib",
+        "json",
+        "os",
+        "stat",
+        "subprocess"
+      ],
+      "astParsed": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r2\\seal_html_browser31.py",
+      "bytes": 14718,
+      "sha256": "08463b5b5e7dc983287da7c2566e9799fe460795de4105efbb5c05f3cebfb1b5",
+      "stdlibImports": [
+        "ast",
+        "copy",
+        "datetime",
+        "difflib",
+        "hashlib",
+        "json",
+        "os",
+        "stat",
+        "subprocess"
+      ],
+      "astParsed": true
+    }
+  ],
+  "supersedesPreparationCodePinsIn": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r2\\preparation-code-review.json",
+    "sha256": "8a613ba17d0369ddce35833d0c77b459b699ffe217bbc83802533be591af53a9"
+  },
+  "preparationOnlyFailure": {
+    "actualOutput": "7443cd",
+    "reason": "Git dubious ownership under sandbox account; preparation stopped before candidate outputs existed.",
+    "correction": "Add process-local -c safe.directory for this exact repository to read-only Git metadata commands; no user/global Git configuration change."
+  },
+  "fileWritesRestrictedToCreateNewR2Children": true,
+  "subprocessScope": "Read-only fixed Git executable metadata only.",
+  "candidateModuleImportedOrExecuted": false,
+  "sdkCalls": 0,
+  "applicationTestsRun": false,
+  "browserStarted": false,
+  "networkUsed": false,
+  "attemptExists": false
+}

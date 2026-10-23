@@ -1,0 +1,22 @@
+{
+  "status": "STATIC_BROWSER31_HTML_R2_PREPARATION_ONLY_RUNTIME_UNRUN",
+  "inputs": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r2\\inputs.json",
+    "bytes": 9662,
+    "sha256": "a1214b44e1698080f410181c74699a6452d6b187020e63487a51e8de7bc5f64c"
+  },
+  "preparationReview": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r2\\preparation-review.json",
+    "bytes": 10888,
+    "sha256": "eab8b66065a79207b1ce6992fd6c773fb127ebbfc946fcfc883586d3704075f5"
+  },
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\out\\source-manifest.json",
+    "bytes": 241339,
+    "sha256": "81821274333fab474397695fb7cb6fb6da98ae7bb8c8381c0972aba2c6e4a4de"
+  },
+  "previousProposalSha256": "d0ef7c05af1b6e9721e4fa6c4fcf0111a4cd9cef4785fc394feb62c771253c22",
+  "sdkCalls": 0,
+  "candidateImported": false,
+  "attemptExists": false
+}

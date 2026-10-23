@@ -1,0 +1,133 @@
+{
+  "schemaVersion": 1,
+  "status": "BROWSER38_CASES_PASSED_COMMAND_TREE_TIMEOUT_NOT_ACCEPTED",
+  "facts": {
+    "originalResultStatus": "NOT_ACCEPTED",
+    "strictWholeRunAccepted": false,
+    "visibleCaseOutcome": "ALL_38_VISIBLE_CASES_SUCCEEDED",
+    "sourceCommit": "fa2148954ccec749f7d58c38184a208085bfe181",
+    "sourceFiles": 406,
+    "sevenRootGitTrees": {
+      "apps/guardian": "b57ca8a0c6f01e82e05bb32f4d34ca157dba980a",
+      "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+      "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+      "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+      "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+      "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+      "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+    },
+    "actualToolSession": 21954,
+    "initialToolChunk": "aa8215",
+    "finalToolChunk": "c0295c",
+    "actualNaturalOuterExitCode": 1,
+    "outerElapsedSeconds": 481.52575199999956,
+    "nativeRootExitCode": 0,
+    "timedOut": true,
+    "forcedTermination": true,
+    "commandTreeTerminationRequested": true,
+    "finalPrivateJobActiveProcesses": 0,
+    "outerOwnedCleanupPerformed": false,
+    "outerWatchdogExpired": false,
+    "reporterProtocolVersion": "0.1.1",
+    "physicalSuites": 4,
+    "visibleCases": 38,
+    "successfulVisibleCases": 38,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "suiteVisibleCaseCounts": {
+      "test/workspace_flow_entry_browser_test.dart": 8,
+      "test/audit_export_route_test.dart": 4,
+      "test/approval_help_flow_browser_test.dart": 19,
+      "test/notification_help_scope_browser_test.dart": 7
+    },
+    "all38NamesExactlyMatched": true,
+    "terminalDoneSuccess": true,
+    "terminalReporterTimeMilliseconds": 39000,
+    "hiddenSuccessfulLoadingTests": 4,
+    "reporterEventCount": 95,
+    "preflightAndPostflightComplete": true,
+    "packageRows": 70,
+    "cacheFiles": 3537,
+    "cacheBytes": 638537951,
+    "cacheTrees": 70,
+    "cacheFixedFiles": 33,
+    "rootExternalMetadataPinsRehashed": 136,
+    "rootExternalMainAndFrozenFilesIndependentlyRehashed": 406,
+    "rootExternalCacheFilesIndependentlyRehashed": 3537,
+    "rootExternalObservationUtc": "2026-10-23T04:41:09.958616+00:00",
+    "rootExternalSdkProcesses": [],
+    "rootExternalUnknownProcessNames": [],
+    "rootExternalAvailableRamBytes": 3700731904,
+    "ownedTreeObservedIdentities": 46,
+    "ownedTreeSnapshots": 20,
+    "sameObservedIdentitiesAbsent": true,
+    "observedSogouIdentity": {
+      "pid": 56576,
+      "created": 1792729731.007002,
+      "name": "SogouCloud.exe",
+      "parent": 44800
+    },
+    "observedSogouParentChromeIdentity": {
+      "pid": 44800,
+      "created": 1792729730.3399494
+    },
+    "independentOsJobMembershipProvenByTreeObserver": false,
+    "treeObserverProvesUniqueTimeoutCause": false,
+    "wholeSdkOrChromeInstallationPinned": false,
+    "wholeUiAccepted": false,
+    "pubRun": false,
+    "downloadsAllowed": false,
+    "servicesUpdated": false,
+    "automaticRetry": false
+  },
+  "command": [
+    "C:/Windows/System32/cmd.exe",
+    "/d",
+    "/v:off",
+    "/c",
+    "D:/softwares/flutter/bin/flutter.bat --no-version-check --suppress-analytics test --no-pub --platform=chrome --web-renderer=html --reporter=json test/workspace_flow_entry_browser_test.dart test/audit_export_route_test.dart test/approval_help_flow_browser_test.dart test/notification_help_scope_browser_test.dart"
+  ],
+  "workingDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\src\\apps\\guardian",
+  "rawLog": {
+    "archivePath": "attempt/out/browser38.jsonl",
+    "bytes": 21571,
+    "sha256": "2c61a046d5be978554d8b6df0851651fe662efaa9513a996a0abcbd869279ea8"
+  },
+  "actualToolReferences": [
+    {
+      "purpose": "Original actual browser controller invocation",
+      "session": 21954,
+      "initialChunk": "aa8215",
+      "finalChunk": "c0295c",
+      "naturalOuterExitCode": 1
+    },
+    {
+      "purpose": "Read-only ancestry observer",
+      "session": 9369,
+      "initialChunk": "269e5c",
+      "finalChunk": "a76699",
+      "naturalExitCode": 0
+    },
+    {
+      "purpose": "Root independent terminal/source/cache observation",
+      "chunk": "1365b3",
+      "naturalExitCode": 0,
+      "referenceSource": "Parent Root handoff; resulting external observation and exact observer source are archived."
+    }
+  ],
+  "rootExternalObservationReadHistory": "Root reported an initial cache read permission restriction; its later authorized read-only cache verification completed. No SDK invocation was used for the external observation.",
+  "reasonWholeRunNotAccepted": "The command root had exit code 0 and exact 38-case reporting succeeded, but private command-tree waiting reached its deadline and requested forced cleanup. The immutable contract rejects any timeout or forced termination; final Job0 does not upgrade the result.",
+  "ancestryEvidenceLimit": "SogouCloud PID56576/creation1792729731.007002 was observed as a descendant of this test Chrome PID44800/creation1792729730.3399494 and remained after the root exited. This read-only observer establishes observed ancestry and later disappearance only, not independent Windows Job membership or a unique causal explanation for the timeout.",
+  "historicalStatusesPreserved": "Candidate proposal/seal/static reviews retain their original STATIC/UNRUN/attempt-absent fields; all actual result and receipt status fields remain NOT_ACCEPTED.",
+  "archiveTaskActions": {
+    "gitInvoked": false,
+    "sdkInvoked": false,
+    "testsOrBrowserStarted": false,
+    "candidateImportedOrExecuted": false,
+    "mainModified": false,
+    "originalCandidateOrAttemptModified": false,
+    "cacheModifiedOrCleaned": false,
+    "privateProfileCookieCredentialOrTmpContentsRead": false
+  }
+}

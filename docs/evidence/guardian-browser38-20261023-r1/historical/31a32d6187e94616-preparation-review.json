@@ -1,0 +1,85 @@
+{
+  "status": "STATIC_BROWSER31_PREPARATION_ONLY_RUNTIME_UNRUN",
+  "sourceCommit": "080e41c66a348d48d8ac313cde77e4dd8f36cc47",
+  "sourceFiles": 405,
+  "sevenRootGitTrees": {
+    "apps/guardian": "4e4a84b1ad22c12862cb1353ecc3fb0caa6c85dc",
+    "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+    "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+    "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+    "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+    "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+    "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+  },
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\out\\source-manifest.json",
+    "bytes": 241339,
+    "sha256": "81821274333fab474397695fb7cb6fb6da98ae7bb8c8381c0972aba2c6e4a4de"
+  },
+  "mainFullRawHashesRecorded": true,
+  "mainCrLfNormalizedMatchesCommitted": true,
+  "fullMainAndFrozenMembershipExact": true,
+  "packageRows": 70,
+  "changedInternalRootUris": 7,
+  "externalRowsUnchanged": 63,
+  "originalCacheBaseSha256": "0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2",
+  "cacheManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\cache-content-chrome-refreshed.json",
+    "bytes": 725955,
+    "sha256": "8c0cfde01a9d6d5cb4bf002c1ed6d5069af28b0f27f110bec292f46e281f66c0"
+  },
+  "cacheTrees": 70,
+  "fixedFiles": 33,
+  "cacheFiles": 3537,
+  "otherCachePinsUnchanged": 3536,
+  "onlyChromeExecutableRefreshed": true,
+  "fullCacheContentsNotRehashedDuringPreparation": true,
+  "fullRuntimePreflightAndPostflightRequired": true,
+  "sourceNameCases": [
+    8,
+    4,
+    19
+  ],
+  "actualCasesExecuted": null,
+  "outerBudgetSeconds": 510,
+  "outerSoftCutoffSeconds": 504,
+  "workerBudgetSeconds": 495,
+  "commandCapSeconds": 480,
+  "commandCleanupReserveSeconds": 5,
+  "minimumPostflightReserveSeconds": 25,
+  "controllerWorkerEolNormalizedToLf": true,
+  "nativeHelperByteIdenticalToR2": true,
+  "nativeHelperSha256": "4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12",
+  "originalFourFilesPreserved": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\reporter_contract.py",
+      "bytes": 10649,
+      "sha256": "5626b4d9859efe8f2cf04886c7f97ac967ac6daa258d31860528bb90676ca301"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\owned_chrome_observer.py",
+      "bytes": 5344,
+      "sha256": "5552f9bf7bf77d4b409a01a18080f0f51b6ea5c69c3a6ad38756f2e19619c052"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\pure_metadata_review.py",
+      "bytes": 6860,
+      "sha256": "afbe1bde2bb7e33b9bcfc20e1bbd4e218d3ae398fc5e48fa28228793c939783e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\source_name_contract.py",
+      "bytes": 5650,
+      "sha256": "2bb8d70cd54e3f643bcce0a605af317f118c1eb3012b9b4810faa53b3c5df646"
+    }
+  ],
+  "original26TemplatePinsRetained": true,
+  "pureNameParserASTFunctionsOnlyEvaluated": true,
+  "candidateImported": false,
+  "candidateExecuted": false,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "chromeStarted": false,
+  "networkUsed": false,
+  "mainWritten": false,
+  "attemptExists": false
+}

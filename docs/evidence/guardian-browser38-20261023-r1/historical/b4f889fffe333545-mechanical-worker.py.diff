@@ -1,0 +1,211 @@
+--- r2-analysis/worker.py
++++ browser31/worker.py
+@@ -1,4 +1,4 @@
+-"""Static candidate: one fixed full Guardian analysis, gated by Root's frozen input."""
++"""Static candidate: one fixed 31-case Guardian browser regression, gated by Root's frozen input."""
+ import sys
+ if sys.stdin.readline().strip() != 'OWNED_JOB_READY':
+     raise SystemExit('Owned job handshake missing; no SDK started')
+@@ -16,15 +16,15 @@
+ import psutil
+ 
+ START = time.monotonic()
+-HARD = START + 195
++HARD = START + 495
+ CANDIDATE = Path(__file__).absolute().parent
+ ATTEMPT = CANDIDATE / 'attempt'
+ REPO = CANDIDATE.parents[1]
+-FROZEN = REPO / '.cache/guardian-current-20261021-r2'
++FROZEN = CANDIDATE
+ SOURCE = FROZEN / 'src'
+ MODULE = SOURCE / 'apps/guardian'
+-INPUT = FROZEN / 'out/analysis-inputs-root.json'
+-INPUT_SHA256 = '87ef567e9d14a94c9672e1c672720a5e2da636e4091eaa751959ed6c6a7dd323'
++INPUT = CANDIDATE / 'inputs.json'
++INPUT_SHA256 = '2b372886d04f846400499e3c2e6a2e8a41673cb89bc976a77335de60e139f446'
+ HELPER_SHA256 = '4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12'
+ ROOTS = ['apps/guardian', 'packages/audit_client', 'packages/commerce_contracts',
+          'packages/notification_client', 'packages/device_operations',
+@@ -32,8 +32,11 @@
+ CMD = Path('C:/Windows/System32/cmd.exe')
+ FLUTTER = Path('D:/softwares/flutter/bin/flutter.bat')
+ SDK = FLUTTER.parent.parent
+-FLAGS = ['--no-version-check', '--suppress-analytics', 'analyze', '--no-pub',
+-         '--fatal-infos', '--fatal-warnings']
++FLAGS = ['--no-version-check', '--suppress-analytics', 'test', '--no-pub',
++         '--platform=chrome', '--concurrency=1', '--reporter=json',
++         'test/workspace_flow_entry_browser_test.dart',
++         'test/audit_export_route_test.dart',
++         'test/approval_help_flow_browser_test.dart']
+ GENERATED_DIRS = {'.dart_tool', 'build', '.idea'}
+ GENERATED_FILES = {'.flutter-plugins', '.flutter-plugins-dependencies',
+                    'guardian.iml', 'device_operations_showcase.iml'}
+@@ -53,7 +56,7 @@
+ 
+ 
+ def budget():
+-    require(time.monotonic() < HARD, 'Complete worker budget of 195 seconds exceeded')
++    require(time.monotonic() < HARD, 'Complete worker budget of 495 seconds exceeded')
+ 
+ 
+ def save(name, value):
+@@ -181,10 +184,10 @@
+ def source_check():
+     manifest = load_pin(inputs['sourceManifest'])
+     rows = manifest['sourceFiles']
+-    require(manifest['roots'] == ROOTS and len(rows) == 404 and manifest['sourceCount'] == 404,
+-            'Frozen seven-root/404 source boundary changed')
++    require(manifest['roots'] == ROOTS and len(rows) == 405 and manifest['sourceCount'] == 405,
++            'Frozen seven-root/405 source boundary changed')
+     expected = {row['path'] for row in rows}
+-    require(len(expected) == 404, 'Duplicate source input')
++    require(len(expected) == 405, 'Duplicate source input')
+     observed = {}
+     for label, base in [('frozenRawGit', SOURCE), ('mainRaw', REPO)]:
+         actual = set()
+@@ -247,10 +250,12 @@
+ 
+ def cache_check():
+     cache = load_pin(inputs['cacheManifest'])
+-    require(cache['status'] == 'READ_ONLY_CONTENT_COLLECTION_COMPLETE_NOT_SDK_VALIDATION'
++    require(cache['status'] == 'BROWSER_CHROME_REFRESH_FROM_FIXED_BASE_NOT_RUNTIME_VALIDATION'
+             and cache['fullAllowlistCollected'] and len(cache['trees']) == 70
+             and len(cache['fixedFiles']) == 33 and cache['totals']['files'] == 3537,
+             'Complete collected cache boundary changed')
++    base = load_pin(inputs['browserCacheBaseManifest'])
++    protocol.validate_cache_refresh(base, cache, inputs['chromeExecutablePin'])
+     totals = {'files': 0, 'bytes': 0}
+     for spec in cache['trees']:
+         base = Path(spec['root'])
+@@ -335,13 +340,14 @@
+         save(label + '-pins.json', result)
+ 
+ 
+-receipt = {'status': 'NOT_ACCEPTED', 'phaseScope': 'FULL_GUARDIAN_ANALYZE',
+-           'startedAtUtc': utc(), 'workerBudgetSeconds': 195, 'commandCapSeconds': 180,
++receipt = {'status': 'NOT_ACCEPTED', 'phaseScope': 'GUARDIAN_BROWSER31',
++           'startedAtUtc': utc(), 'workerBudgetSeconds': 495, 'commandCapSeconds': 480,
+            'commandCleanupReserveSeconds': 5, 'minimumPostflightReserveSeconds': 25,
+-           'sdkCalls': 0, 'testsRun': False, 'pubRun': False, 'downloadsAllowed': False,
++           'sdkCalls': 0, 'testsRequested': True, 'reportedVisibleTests': None, 'pubRun': False, 'downloadsAllowed': False,
+            'cacheCopied': False, 'mainSourceWritten': False, 'forcedTermination': False}
+ command_job = None
+ command_launched = False
++protocol = chrome_observer = None
+ inputs = None
+ code = 1
+ try:
+@@ -352,10 +358,23 @@
+     require(actual_input['sha256'] == INPUT_SHA256, 'Frozen Root input changed')
+     input_bytes = actual_input['bytes']
+     inputs = json.loads(INPUT.read_bytes())
+-    require(inputs['phase'] == 'analyze-all-guardian', 'Only one fixed Guardian analysis phase')
++    require(inputs['phase'] == 'browser-31-guardian', 'Only the fixed 31-case browser phase')
+     require(set(inputs['generatedExclusions']['directories']) == GENERATED_DIRS
+             and set(inputs['generatedExclusions']['files']) == GENERATED_FILES,
+             'Root/source generated exclusions differ')
++    for field, name in [('reporterContractCode', 'guardian_browser31_runtime_contract'),
++                        ('ownedChromeObserverCode', 'guardian_browser31_owned_chrome')]:
++        verify_pin(inputs[field])
++        module_spec = importlib.util.spec_from_file_location(name, inputs[field]['path'])
++        module_value = importlib.util.module_from_spec(module_spec)
++        module_spec.loader.exec_module(module_value)
++        if field == 'reporterContractCode':
++            protocol = module_value
++        else:
++            observer_module = module_value
++    expected_cases = load_pin(inputs['expectedCaseContract'])
++    require(expected_cases['selectors'] == FLAGS[-3:] and expected_cases['expectedVisibleCases'] == 31,
++            'Frozen browser selector/name contract changed')
+     first = resources()
+     save('initial-gate.json', first)
+     resource_gate(first)
+@@ -373,7 +392,7 @@
+     save('launch-gate.json', ready)
+     resource_gate(ready)
+     now = time.monotonic()
+-    deadline = min(now + 180, HARD - 30)
++    deadline = min(now + 480, HARD - 30)
+     cleanup_deadline = min(deadline + 5, HARD - 25)
+     require(deadline > now + 1, 'Insufficient full budget after preflight; no SDK started')
+     environment = os.environ.copy()
+@@ -382,7 +401,7 @@
+                        PUB_HOSTED_URL='http://127.0.0.1:9',
+                        FLUTTER_STORAGE_BASE_URL='http://127.0.0.1:9',
+                        FLUTTER_SUPPRESS_ANALYTICS='true', DART_SUPPRESS_ANALYTICS='true',
+-                       CI='true', COMSPEC=str(CMD), GIT_OPTIONAL_LOCKS='0',
++                       CI='true', CHROME_EXECUTABLE=inputs['chromeExecutablePin']['path'], COMSPEC=str(CMD), GIT_OPTIONAL_LOCKS='0',
+                        GIT_TERMINAL_PROMPT='0', GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL='NUL')
+     tail = str(FLUTTER) + ' ' + ' '.join(FLAGS)
+     require(not any(char in tail for char in '&|<>^%!"\r\n'), 'Unsafe fixed command spelling')
+@@ -392,19 +411,22 @@
+         # The reused native helper inherits only this worker-local environment.
+         os.environ.clear()
+         os.environ.update(environment)
+-        command_job.spawn(argv, MODULE, ATTEMPT / 'out/analyze.log')
++        command_job.spawn(argv, MODULE, ATTEMPT / 'out/browser31.jsonl')
+     finally:
+         os.environ.clear()
+         os.environ.update(previous)
+     command_launched = True
+     receipt['sdkCalls'] = 1
+     launch = {'utc': utc(), 'pid': command_job.pid, 'argv': argv,
+-              'workingDirectory': str(MODULE), 'selectorCount': 0,
++              'workingDirectory': str(MODULE), 'selectorCount': 3, 'expectedVisibleCases': 31,
+               'commandBudgetSeconds': deadline - now, 'workerElapsedAtLaunch': now - START,
+               'postflightReserveSeconds': 25, 'cleanupReserveSeconds': 5,
+               'processLocalTemp': str(ATTEMPT / 'tmp'), 'pubAndStorageLoopbackDisabled': True,
+               'nativeProcessHandleRetained': True, 'atomicNestedJobMembership': True}
+     save('launch.json', launch)
++    chrome_observer = observer_module.OwnedChromeObserver(
++        command_job.pid, inputs['chromeExecutablePin']['path'], ATTEMPT / 'tmp')
++    chrome_observer.start()
+     state = command_job.wait(deadline, cleanup_deadline)
+     receipt['commandTerminalState'] = state
+     receipt['forcedTermination'] = state['terminationRequested'] or state['timedOut']
+@@ -422,6 +444,12 @@
+         except Exception as cleanup_error:
+             receipt['commandCleanupError'] = type(cleanup_error).__name__ + ': ' + str(cleanup_error)
+ finally:
++    if chrome_observer is not None:
++        try:
++            receipt['ownedChromeObservation'] = chrome_observer.finish()
++            save('owned-chrome-observation.json', receipt['ownedChromeObservation'])
++        except Exception as observer_error:
++            receipt['chromeObserverError'] = type(observer_error).__name__ + ': ' + str(observer_error)
+     if inputs is not None:
+         try:
+             receipt['postflight'] = full_check('postflight')
+@@ -441,22 +469,28 @@
+         receipt['resourceAfter'] = after
+     except Exception as resource_error:
+         receipt['postflightResourceError'] = type(resource_error).__name__ + ': ' + str(resource_error)
+-    log = ATTEMPT / 'out/analyze.log'
++    log = ATTEMPT / 'out/browser31.jsonl'
+     if log.is_file():
+         try:
++            require(log.stat().st_size <= 16 * 1024**2, 'Browser reporter log exceeds 16MiB')
+             receipt['logPin'] = pin(log)
+-            receipt['noIssuesFound'] = 'No issues found!' in log.read_text('utf-8', errors='replace')
++            report = protocol.validate_report(log.read_bytes(), expected_cases, str(MODULE),
++                receipt.get('commandTerminalStateAfterPostflight', {}).get('rootExitCode'))
++            receipt['reporterValidation'] = report
++            receipt['reportedVisibleTests'] = report['visibleTests']
++            save('reporter-validation.json', report)
+         except Exception as log_error:
+             receipt['logError'] = type(log_error).__name__ + ': ' + str(log_error)
+     terminal = receipt.get('commandTerminalStateAfterPostflight', {})
+     passed = (command_launched and receipt['sdkCalls'] == 1 and not receipt['forcedTermination']
+               and terminal.get('terminalVerified') is True and terminal.get('rootExitCode') == 0
+               and terminal.get('activeProcesses') == 0 and not terminal.get('timedOut')
+-              and not terminal.get('terminationRequested') and receipt.get('noIssuesFound') is True
++              and not terminal.get('terminationRequested') and receipt.get('reporterValidation', {}).get('status') == 'EXACT_BROWSER31_REPORT_ACCEPTED'
++              and receipt.get('ownedChromeObservation', {}).get('status') == 'OWNED_CHROME_ARGUMENTS_OBSERVED'
+               and receipt.get('postflight', {}).get('complete') is True
+               and not any(name.endswith('Error') for name in receipt)
+               and 'errorType' not in receipt and time.monotonic() < HARD)
+-    receipt['status'] = 'FULL_GUARDIAN_ANALYZE_WORKER_PASSED' if passed else 'NOT_ACCEPTED'
++    receipt['status'] = 'GUARDIAN_BROWSER31_WORKER_PASSED' if passed else 'NOT_ACCEPTED'
+     receipt['finishedAtUtc'] = utc()
+     receipt['elapsedCompleteSeconds'] = time.monotonic() - START
+     receipt['outerExternalAcceptanceRequired'] = True

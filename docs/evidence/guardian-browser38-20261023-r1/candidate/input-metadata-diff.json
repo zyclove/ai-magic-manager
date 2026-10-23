@@ -1,0 +1,164 @@
+{
+  "cacheManifest": {
+    "before": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\cache-content-chrome-refreshed.json",
+      "bytes": 725955,
+      "sha256": "8c0cfde01a9d6d5cb4bf002c1ed6d5069af28b0f27f110bec292f46e281f66c0"
+    },
+    "after": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\cache-content-chrome-refreshed.json",
+      "bytes": 725955,
+      "sha256": "8c0cfde01a9d6d5cb4bf002c1ed6d5069af28b0f27f110bec292f46e281f66c0"
+    }
+  },
+  "candidatePackageConfig": {
+    "before": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+      "bytes": 15666,
+      "sha256": "b4f9c4adcf6af3e1637c44aebbbb74735e749d445c0f783bdaf3896d2a475d5c"
+    },
+    "after": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+      "bytes": 15666,
+      "sha256": "1360722a78071ec6020aade7ef2b4595bcca2aa14f3745d1bcb8f5abd678f3de"
+    }
+  },
+  "candidatePackageConfigTemplate": {
+    "before": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\generated\\guardian-package_config.json",
+      "bytes": 15666,
+      "sha256": "b4f9c4adcf6af3e1637c44aebbbb74735e749d445c0f783bdaf3896d2a475d5c"
+    },
+    "after": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\generated\\guardian-package_config.json",
+      "bytes": 15666,
+      "sha256": "1360722a78071ec6020aade7ef2b4595bcca2aa14f3745d1bcb8f5abd678f3de"
+    }
+  },
+  "createdAtUtc": {
+    "before": "2026-10-23T03:25:16.011128+00:00",
+    "after": "2026-10-23T04:07:49.612497+00:00"
+  },
+  "dependencyLibraryPins": {
+    "before": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\out\\dependency-library-pins.json",
+      "bytes": 360075,
+      "sha256": "700633ef73314c4ae44d3932798b321bec428de347b491324c2f5cedbf606de1"
+    },
+    "after": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\out\\dependency-library-pins.json",
+      "bytes": 360075,
+      "sha256": "d3d727fb0dbd6cf4e2d26b8da01c67dd315e52b0502dae35b82df2468a280c9c"
+    }
+  },
+  "expectedCaseContract": {
+    "before": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\expected-cases.json",
+      "bytes": 15547,
+      "sha256": "ec83cef3fd5a329dd10e26cc362272b11bd7ae3a5dfe1e8cecc34594a2cee603"
+    },
+    "after": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\expected-cases.json",
+      "bytes": 20019,
+      "sha256": "58e757467b1fbd761a9ae5eef6312fe7cf939fa15ba730e33ce6a4ddcf39f9b2"
+    }
+  },
+  "ownedChromeObserverCode": {
+    "before": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r2\\owned_chrome_observer.py",
+      "bytes": 5344,
+      "sha256": "5552f9bf7bf77d4b409a01a18080f0f51b6ea5c69c3a6ad38756f2e19619c052"
+    },
+    "after": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\owned_chrome_observer.py",
+      "bytes": 5344,
+      "sha256": "5552f9bf7bf77d4b409a01a18080f0f51b6ea5c69c3a6ad38756f2e19619c052"
+    }
+  },
+  "phase": {
+    "before": "browser-31-guardian",
+    "after": "browser-38-guardian"
+  },
+  "reporterContractCode": {
+    "before": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r2\\reporter_contract_reviewed.py",
+      "bytes": 10649,
+      "sha256": "5626b4d9859efe8f2cf04886c7f97ac967ac6daa258d31860528bb90676ca301"
+    },
+    "after": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\reporter_contract_reviewed.py",
+      "bytes": 10647,
+      "sha256": "3a47906938c1f638d462a2ac7b758c116f9d7ae74c8d48851b53b77a1302203c"
+    }
+  },
+  "scope": {
+    "before": "HTML renderer; same three Chrome selectors and 31 exact visible names; reuse r1 frozen source and existing generated cache; runtime unrun.",
+    "after": "Only four exact HTML Chrome selectors and 38 literal expanded visible names; all 31 previous names retained plus 7 required notification cases; runtime unrun."
+  },
+  "sevenRootGitTrees": {
+    "before": {
+      "apps/guardian": "4e4a84b1ad22c12862cb1353ecc3fb0caa6c85dc",
+      "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+      "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+      "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+      "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+      "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+      "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+    },
+    "after": {
+      "apps/guardian": "b57ca8a0c6f01e82e05bb32f4d34ca157dba980a",
+      "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+      "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+      "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+      "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+      "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+      "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+    }
+  },
+  "sourceCommit": {
+    "before": "080e41c66a348d48d8ac313cde77e4dd8f36cc47",
+    "after": "fa2148954ccec749f7d58c38184a208085bfe181"
+  },
+  "sourceManifest": {
+    "before": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\out\\source-manifest.json",
+      "bytes": 241339,
+      "sha256": "81821274333fab474397695fb7cb6fb6da98ae7bb8c8381c0972aba2c6e4a4de"
+    },
+    "after": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\out\\source-manifest.json",
+      "bytes": 241948,
+      "sha256": "af9ae63d5dcd9cedf96b423a876636a3e19af3d0ea342728d0a74211c902bd48"
+    }
+  },
+  "sourceMembershipCheck": {
+    "before": {
+      "main": {
+        "files": 405,
+        "fullMembershipExact": true
+      },
+      "frozen": {
+        "files": 405,
+        "fullMembershipExact": true
+      }
+    },
+    "after": {
+      "main": {
+        "files": 406,
+        "fullMembershipExact": true
+      },
+      "frozen": {
+        "files": 406,
+        "fullMembershipExact": true
+      }
+    }
+  },
+  "sourceTreeSha256": {
+    "before": "585e72347318b6a5262af63c1f5d94f9cb7cf9e9ca72037f8ea38d930b2eb788",
+    "after": "48e0de60f6ab8a5417febe83fdacbc991eeac05e679a81cfd43ee0f5c5d88212"
+  },
+  "status": {
+    "before": "STATIC_BROWSER31_INPUTS_RUNTIME_UNRUN",
+    "after": "STATIC_BROWSER38_INPUTS_RUNTIME_UNRUN"
+  }
+}

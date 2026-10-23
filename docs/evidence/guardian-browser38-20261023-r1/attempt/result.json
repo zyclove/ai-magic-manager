@@ -1,0 +1,428 @@
+{
+  "status": "NOT_ACCEPTED",
+  "outerBudgetSeconds": 510,
+  "terminationReserveSeconds": 6,
+  "startedAtUtc": "2026-10-23T04:28:13.463281+00:00",
+  "workerPid": 8764,
+  "phaseScope": "GUARDIAN_BROWSER38",
+  "workerExitCode": 1,
+  "workerReceipt": {
+    "status": "NOT_ACCEPTED",
+    "phaseScope": "GUARDIAN_BROWSER38",
+    "startedAtUtc": "2026-10-23T04:28:13.641438+00:00",
+    "workerBudgetSeconds": 495,
+    "commandCapSeconds": 480,
+    "commandCleanupReserveSeconds": 5,
+    "minimumPostflightReserveSeconds": 25,
+    "sdkCalls": 1,
+    "testsRequested": true,
+    "reportedVisibleTests": 38,
+    "pubRun": false,
+    "downloadsAllowed": false,
+    "cacheCopied": false,
+    "mainSourceWritten": false,
+    "forcedTermination": true,
+    "commandTerminalState": {
+      "pid": 46812,
+      "rootHandleSignaled": true,
+      "rootExitCode": 0,
+      "activeProcesses": 0,
+      "totalProcesses": 78,
+      "terminatedProcesses": 0,
+      "terminalVerified": true,
+      "timedOut": true,
+      "terminationRequested": true,
+      "terminationCallSucceeded": true
+    },
+    "ownedChromeObservation": {
+      "status": "OWNED_CHROME_ARGUMENTS_OBSERVED",
+      "chromeRoots": [
+        {
+          "pid": 44800,
+          "created": 1792729730.3399494,
+          "executable": "c:\\program files\\google\\chrome\\application\\chrome.exe",
+          "profile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\attempt\\tmp\\flutter_tools.9c954dc8\\flutter_tools_chrome_device.a639f378",
+          "debuggingPort": 64207,
+          "testServerOrigins": [
+            "http://localhost:64205"
+          ],
+          "headless": true,
+          "observedOnlyAsOwnedCommandDescendant": true
+        },
+        {
+          "pid": 35212,
+          "created": 1792729737.8813868,
+          "executable": "c:\\program files\\google\\chrome\\application\\chrome.exe",
+          "profile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\attempt\\tmp\\flutter_tools.9c954dc8\\flutter_tools_chrome_device.20703eee",
+          "debuggingPort": 60282,
+          "testServerOrigins": [
+            "http://localhost:64205"
+          ],
+          "headless": true,
+          "observedOnlyAsOwnedCommandDescendant": true
+        },
+        {
+          "pid": 45192,
+          "created": 1792729744.386536,
+          "executable": "c:\\program files\\google\\chrome\\application\\chrome.exe",
+          "profile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\attempt\\tmp\\flutter_tools.9c954dc8\\flutter_tools_chrome_device.628be2a0",
+          "debuggingPort": 63170,
+          "testServerOrigins": [
+            "http://localhost:64205"
+          ],
+          "headless": true,
+          "observedOnlyAsOwnedCommandDescendant": true
+        },
+        {
+          "pid": 50440,
+          "created": 1792729760.0640764,
+          "executable": "c:\\program files\\google\\chrome\\application\\chrome.exe",
+          "profile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\attempt\\tmp\\flutter_tools.9c954dc8\\flutter_tools_chrome_device.86c19371",
+          "debuggingPort": 52866,
+          "testServerOrigins": [
+            "http://localhost:64205"
+          ],
+          "headless": true,
+          "observedOnlyAsOwnedCommandDescendant": true
+        }
+      ],
+      "problems": [],
+      "userChromeInspectedOrStopped": false,
+      "entireChromeInstallationPinned": false,
+      "loopbackDebugBindingInferredFromPinnedFlutterLauncher": true
+    },
+    "postflight": {
+      "stage": "postflight",
+      "startedAtUtc": "2026-10-23T04:35:58.644203+00:00",
+      "complete": true,
+      "source": {
+        "frozenRawGit": {
+          "files": 406,
+          "fullMembershipExact": true,
+          "allRawHashesMatch": true
+        },
+        "mainRaw": {
+          "files": 406,
+          "fullMembershipExact": true,
+          "allRawHashesMatch": true
+        },
+        "currentSevenRootGitTrees": {
+          "apps/guardian": "b57ca8a0c6f01e82e05bb32f4d34ca157dba980a",
+          "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+          "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+          "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+          "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+          "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+          "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+        }
+      },
+      "packages": {
+        "packages": 70,
+        "rebasedInternalRoots": 7,
+        "unchangedExternalRows": 63,
+        "metadataPreserved": true,
+        "candidateSha256": "1360722a78071ec6020aade7ef2b4595bcca2aa14f3745d1bcb8f5abd678f3de"
+      },
+      "cache": {
+        "manifestSha256": "8c0cfde01a9d6d5cb4bf002c1ed6d5069af28b0f27f110bec292f46e281f66c0",
+        "trees": 70,
+        "fixedFiles": 33,
+        "allMembersDirectoriesBytesAndHashesMatch": true,
+        "totals": {
+          "files": 3537,
+          "bytes": 638537951
+        }
+      },
+      "runtime": {
+        "sdkGitRevision": "761747bfc538b5af34aa0d3fac380f1bc331ec49",
+        "controlAndExtraRuntimePinsMatch": true,
+        "snapshotAndStampReady": true,
+        "pubspecNotNewerThanLock": true,
+        "forbiddenEnvironmentOverridesAbsent": true,
+        "bootstrapAbsent": true,
+        "engineDartStampMatchesEngineVersion": true,
+        "fixedProcessPathVerified": true,
+        "bootstrapAllowed": false
+      },
+      "finishedAtUtc": "2026-10-23T04:36:14.709993+00:00",
+      "elapsedWorkerSeconds": 481.06867930000044
+    },
+    "commandTerminalStateAfterPostflight": {
+      "pid": 46812,
+      "rootHandleSignaled": true,
+      "rootExitCode": 0,
+      "activeProcesses": 0,
+      "totalProcesses": 78,
+      "terminatedProcesses": 0,
+      "terminalVerified": true,
+      "timedOut": true,
+      "terminationRequested": true,
+      "terminationCallSucceeded": true
+    },
+    "resourceAfter": {
+      "utc": "2026-10-23T04:36:14.729482+00:00",
+      "sdkProcesses": [],
+      "unknownProcessNames": [],
+      "availableRamBytes": 3729776640,
+      "diskFreeBytes": {
+        "C:/": 7149518848,
+        "D:/": 35711860736
+      }
+    },
+    "logPin": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\attempt\\out\\browser38.jsonl",
+      "bytes": 21571,
+      "sha256": "2c61a046d5be978554d8b6df0851651fe662efaa9513a996a0abcbd869279ea8"
+    },
+    "reporterValidation": {
+      "status": "EXACT_BROWSER38_REPORT_ACCEPTED",
+      "protocolVersion": "0.1.1",
+      "suitePaths": [
+        "test/approval_help_flow_browser_test.dart",
+        "test/audit_export_route_test.dart",
+        "test/notification_help_scope_browser_test.dart",
+        "test/workspace_flow_entry_browser_test.dart"
+      ],
+      "suiteCount": 4,
+      "visibleTests": 38,
+      "successfulVisibleTests": 38,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "actualVisibleCases": [
+        {
+          "testID": 3,
+          "selector": "test/workspace_flow_entry_browser_test.dart",
+          "name": "audit entry recreates a readable page for a new scope generation"
+        },
+        {
+          "testID": 4,
+          "selector": "test/workspace_flow_entry_browser_test.dart",
+          "name": "managed entry reloads and enables refresh after generation change"
+        },
+        {
+          "testID": 5,
+          "selector": "test/workspace_flow_entry_browser_test.dart",
+          "name": "export old repository rejects late data after actor ABA"
+        },
+        {
+          "testID": 6,
+          "selector": "test/workspace_flow_entry_browser_test.dart",
+          "name": "export old repository rejects late data after generation"
+        },
+        {
+          "testID": 7,
+          "selector": "test/workspace_flow_entry_browser_test.dart",
+          "name": "export old repository rejects late data after dispose"
+        },
+        {
+          "testID": 8,
+          "selector": "test/workspace_flow_entry_browser_test.dart",
+          "name": "workspace picker ignores its already selected tenant"
+        },
+        {
+          "testID": 9,
+          "selector": "test/workspace_flow_entry_browser_test.dart",
+          "name": "superseded workspace return cannot navigate or toast after newest selection fails"
+        },
+        {
+          "testID": 10,
+          "selector": "test/workspace_flow_entry_browser_test.dart",
+          "name": "newest successful workspace selection returns home"
+        },
+        {
+          "testID": 14,
+          "selector": "test/audit_export_route_test.dart",
+          "name": "covered export success preserves the cover and audit location"
+        },
+        {
+          "testID": 15,
+          "selector": "test/audit_export_route_test.dart",
+          "name": "current export success opens the export jobs page"
+        },
+        {
+          "testID": 16,
+          "selector": "test/audit_export_route_test.dart",
+          "name": "covered success cannot redirect when the cover closes at completion"
+        },
+        {
+          "testID": 17,
+          "selector": "test/audit_export_route_test.dart",
+          "name": "a cover during export closing prevents the late redirect"
+        },
+        {
+          "testID": 21,
+          "selector": "test/approval_help_flow_browser_test.dart",
+          "name": "批准 cancellation preserves the original approval details"
+        },
+        {
+          "testID": 22,
+          "selector": "test/approval_help_flow_browser_test.dart",
+          "name": "批准 success closes its approval details"
+        },
+        {
+          "testID": 23,
+          "selector": "test/approval_help_flow_browser_test.dart",
+          "name": "批准 success cannot dismiss an unrelated covering dialog"
+        },
+        {
+          "testID": 24,
+          "selector": "test/approval_help_flow_browser_test.dart",
+          "name": "批准 failed submission keeps the original details open"
+        },
+        {
+          "testID": 25,
+          "selector": "test/approval_help_flow_browser_test.dart",
+          "name": "拒绝 cancellation preserves the original approval details"
+        },
+        {
+          "testID": 26,
+          "selector": "test/approval_help_flow_browser_test.dart",
+          "name": "拒绝 success closes its approval details"
+        },
+        {
+          "testID": 27,
+          "selector": "test/approval_help_flow_browser_test.dart",
+          "name": "拒绝 success cannot dismiss an unrelated covering dialog"
+        },
+        {
+          "testID": 28,
+          "selector": "test/approval_help_flow_browser_test.dart",
+          "name": "拒绝 failed submission keeps the original details open"
+        },
+        {
+          "testID": 29,
+          "selector": "test/approval_help_flow_browser_test.dart",
+          "name": "撤销批准 cancellation preserves the original approval details"
+        },
+        {
+          "testID": 30,
+          "selector": "test/approval_help_flow_browser_test.dart",
+          "name": "撤销批准 success closes its approval details"
+        },
+        {
+          "testID": 31,
+          "selector": "test/approval_help_flow_browser_test.dart",
+          "name": "撤销批准 success cannot dismiss an unrelated covering dialog"
+        },
+        {
+          "testID": 32,
+          "selector": "test/approval_help_flow_browser_test.dart",
+          "name": "撤销批准 failed submission keeps the original details open"
+        },
+        {
+          "testID": 33,
+          "selector": "test/approval_help_flow_browser_test.dart",
+          "name": "help initial success after disposal does not update the removed page"
+        },
+        {
+          "testID": 34,
+          "selector": "test/approval_help_flow_browser_test.dart",
+          "name": "help acknowledgement success after disposal cannot start a follow-up read"
+        },
+        {
+          "testID": 35,
+          "selector": "test/approval_help_flow_browser_test.dart",
+          "name": "help initial error after disposal does not update the removed page"
+        },
+        {
+          "testID": 36,
+          "selector": "test/approval_help_flow_browser_test.dart",
+          "name": "help acknowledgement error after disposal cannot start a follow-up read"
+        },
+        {
+          "testID": 37,
+          "selector": "test/approval_help_flow_browser_test.dart",
+          "name": "help actor ABA cannot revive a late read or old filter callback"
+        },
+        {
+          "testID": 38,
+          "selector": "test/approval_help_flow_browser_test.dart",
+          "name": "help console entry creates a new page for the current generation"
+        },
+        {
+          "testID": 39,
+          "selector": "test/approval_help_flow_browser_test.dart",
+          "name": "a captured help filter callback is inert after page disposal"
+        },
+        {
+          "testID": 43,
+          "selector": "test/notification_help_scope_browser_test.dart",
+          "name": "real selection invalidates late inbox GET and Help count before membership resolves, and failure cannot restore them"
+        },
+        {
+          "testID": 44,
+          "selector": "test/notification_help_scope_browser_test.dart",
+          "name": "late markRead and retained actions stay inert after real selection then failure"
+        },
+        {
+          "testID": 45,
+          "selector": "test/notification_help_scope_browser_test.dart",
+          "name": "late markRead and retained actions stay inert after dispose"
+        },
+        {
+          "testID": 46,
+          "selector": "test/notification_help_scope_browser_test.dart",
+          "name": "a fresh repository can read while the old read is pending; retained View callbacks and old completion keep their owner"
+        },
+        {
+          "testID": 47,
+          "selector": "test/notification_help_scope_browser_test.dart",
+          "name": "fixed host keys fail closed when Session instance changes; fresh host keys attach and dispose listeners correctly"
+        },
+        {
+          "testID": 48,
+          "selector": "test/notification_help_scope_browser_test.dart",
+          "name": "fresh shell entries navigate, read and open current approval after real successful workspace selection"
+        },
+        {
+          "testID": 49,
+          "selector": "test/notification_help_scope_browser_test.dart",
+          "name": "SYNTHETIC optional actor ABA never revives held host scopes"
+        }
+      ],
+      "hiddenSuccessfulTests": [
+        {
+          "testID": 1,
+          "selector": "test/workspace_flow_entry_browser_test.dart",
+          "name": "loading D:/codes/mobile/ai-manager/.cache/guardian-browser38-20261023-r1/src/apps/guardian/test/workspace_flow_entry_browser_test.dart"
+        },
+        {
+          "testID": 12,
+          "selector": "test/audit_export_route_test.dart",
+          "name": "loading D:/codes/mobile/ai-manager/.cache/guardian-browser38-20261023-r1/src/apps/guardian/test/audit_export_route_test.dart"
+        },
+        {
+          "testID": 19,
+          "selector": "test/approval_help_flow_browser_test.dart",
+          "name": "loading D:/codes/mobile/ai-manager/.cache/guardian-browser38-20261023-r1/src/apps/guardian/test/approval_help_flow_browser_test.dart"
+        },
+        {
+          "testID": 41,
+          "selector": "test/notification_help_scope_browser_test.dart",
+          "name": "loading D:/codes/mobile/ai-manager/.cache/guardian-browser38-20261023-r1/src/apps/guardian/test/notification_help_scope_browser_test.dart"
+        }
+      ],
+      "allStartedTestsCompleted": true,
+      "terminalDoneSuccess": true,
+      "naturalNativeExitCode": 0,
+      "printEvents": 0,
+      "eventCount": 95,
+      "bootstrapNotices": 1
+    },
+    "finishedAtUtc": "2026-10-23T04:36:14.744633+00:00",
+    "elapsedCompleteSeconds": 481.10331939999924,
+    "outerExternalAcceptanceRequired": true
+  },
+  "ownedJobActiveProcesses": 0,
+  "ownedCleanupPerformed": false,
+  "watchdogExpired": false,
+  "sdkProcessesAfter": [],
+  "unknownProcessNames": [],
+  "availableRamBytesAfter": 3745792000,
+  "workerConsoleSha256": "e378b505722d2df90c0b72c97b49d211ea6de245a13330750e54e6a22ec49ff0",
+  "postCandidateAndControlRuntimeMismatches": [],
+  "ownedJobActiveProcessesFinal": 0,
+  "finishedAtUtc": "2026-10-23T04:36:14.944650+00:00",
+  "elapsedCompleteSeconds": 481.52575199999956
+}

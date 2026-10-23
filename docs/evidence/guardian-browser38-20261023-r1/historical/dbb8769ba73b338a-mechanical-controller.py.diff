@@ -1,0 +1,71 @@
+--- r2-analysis/controller.py
++++ browser31/controller.py
+@@ -6,7 +6,7 @@
+ CANDIDATE = Path(__file__).absolute().parent
+ REPO = CANDIDATE.parents[1]
+ ATTEMPT = CANDIDATE/'attempt'
+-HARD = START+210
++HARD = START+510
+ CUTOFF = HARD-6
+ job = child = None
+ expired = threading.Event()
+@@ -20,7 +20,7 @@
+ def hard_stop():
+     os._exit(124)  # OS closes the private kill-on-close Job handle.
+ hard_timer=threading.Timer(max(0,HARD-monotonic()),hard_stop);hard_timer.daemon=True;hard_timer.start()
+-result={'status':'NOT_ACCEPTED','outerBudgetSeconds':210,'terminationReserveSeconds':6,'startedAtUtc':utc(),'workerPid':None,'phaseScope':'FULL_GUARDIAN_ANALYZE'}
++result={'status':'NOT_ACCEPTED','outerBudgetSeconds':510,'terminationReserveSeconds':6,'startedAtUtc':utc(),'workerPid':None,'phaseScope':'GUARDIAN_BROWSER31'}
+ code=1;assigned=False;cleanup=False;console=None;soft_timer=None;attempt_created=False
+ try:
+     if len(sys.argv)!=2 or not re.fullmatch('[0-9a-f]{64}',sys.argv[1]):raise RuntimeError('Exact approved proposal SHA required')
+@@ -31,7 +31,7 @@
+     proposal=json.loads((CANDIDATE/'proposal.json').read_text('utf-8'))
+     ATTEMPT.mkdir()  # Single-use attempt; an existing directory is never reused.
+     attempt_created=True
+-    save(ATTEMPT/'request.json',{'approvedProposalSha256':sys.argv[1],'outerBudgetSeconds':210,'startedAtUtc':result['startedAtUtc']})
++    save(ATTEMPT/'request.json',{'approvedProposalSha256':sys.argv[1],'outerBudgetSeconds':510,'startedAtUtc':result['startedAtUtc']})
+     for row in proposal['candidateFiles']+proposal['controlRuntimeFiles']+proposal['historicalMetadataFiles']:
+         p=Path(row['path']) if row.get('absolute') else CANDIDATE/row['path']
+         if p.is_symlink() or p.is_junction() or p.stat().st_size!=row['bytes'] or sha(p)!=row['sha256']:raise RuntimeError('Pinned validation/runtime file changed')
+@@ -53,13 +53,13 @@
+     win32job.AssignProcessToJobObject(job,int(child._handle));assigned=True
+     if expired.is_set() or monotonic()>=CUTOFF:raise RuntimeError('Working deadline reached before handshake')
+     child.stdin.write('OWNED_JOB_READY\n');child.stdin.flush();child.stdin.close()
+-    print(json.dumps({'state':'OWNED_GUARDIAN_ANALYZE_WORKER_STARTED','workerPid':child.pid,'attempt':str(ATTEMPT),'outerBudgetSeconds':210}),flush=True)
++    print(json.dumps({'state':'OWNED_GUARDIAN_BROWSER31_WORKER_STARTED','workerPid':child.pid,'attempt':str(ATTEMPT),'outerBudgetSeconds':510}),flush=True)
+     announced=False
+     while child.poll() is None and monotonic()<CUTOFF:
+         launch=ATTEMPT/'launch.json'
+         if not announced and launch.is_file():
+             try:
+-                row=json.loads(launch.read_text('utf-8'));print(json.dumps({'state':'GUARDIAN_ANALYZE_COMMAND_STARTED','pid':row['pid'],'utc':row['utc']}),flush=True);announced=True
++                row=json.loads(launch.read_text('utf-8'));print(json.dumps({'state':'GUARDIAN_BROWSER31_COMMAND_STARTED','pid':row['pid'],'utc':row['utc']}),flush=True);announced=True
+             except (OSError,json.JSONDecodeError):pass
+         threading.Event().wait(0.1)
+     active=win32job.QueryInformationJobObject(job,win32job.JobObjectBasicAccountingInformation)['ActiveProcesses']
+@@ -80,14 +80,14 @@
+         if p.info['name'] is None and p.pid not in (0,4):unknown.append(p.pid)
+         elif (p.info['name'] or '').lower() in sdk_names:sdk.append(p.info)
+     result.update(workerExitCode=child.returncode,workerReceipt=worker,ownedJobActiveProcesses=active,ownedCleanupPerformed=cleanup,watchdogExpired=expired.is_set(),sdkProcessesAfter=sdk,unknownProcessNames=unknown,availableRamBytesAfter=psutil.virtual_memory().available,workerConsoleSha256=sha(ATTEMPT/'worker-console.log'))
+-    passed=child.returncode==0 and worker and worker.get('status')=='FULL_GUARDIAN_ANALYZE_WORKER_PASSED' and active==0 and not cleanup and not expired.is_set() and not sdk and not unknown and monotonic()<HARD
++    passed=child.returncode==0 and worker and worker.get('status')=='GUARDIAN_BROWSER31_WORKER_PASSED' and active==0 and not cleanup and not expired.is_set() and not sdk and not unknown and monotonic()<HARD
+     post_pin_mismatches=[]
+     for row in proposal['candidateFiles']+proposal['controlRuntimeFiles']+proposal['historicalMetadataFiles']:
+         path=Path(row['path']) if row.get('absolute') else CANDIDATE/row['path']
+         if not path.is_file() or path.stat().st_size!=row['bytes'] or sha(path)!=row['sha256']:post_pin_mismatches.append(str(path))
+     result['postCandidateAndControlRuntimeMismatches']=post_pin_mismatches
+     passed=passed and not post_pin_mismatches and monotonic()<HARD
+-    result['status']='FULL_GUARDIAN_ANALYZE_PASSED' if passed else 'NOT_ACCEPTED';code=0 if passed else 1
++    result['status']='GUARDIAN_BROWSER31_PASSED' if passed else 'NOT_ACCEPTED';code=0 if passed else 1
+ except Exception as error:
+     result['errorType']=type(error).__name__;result['reason']=str(error)
+     if job is not None:
+@@ -107,7 +107,7 @@
+         job.Close()
+     if console:console.close()
+     result['finishedAtUtc']=utc();result['elapsedCompleteSeconds']=monotonic()-START
+-    if result.get('ownedJobActiveProcessesFinal')!=0 or result['elapsedCompleteSeconds']>=210:result['status']='NOT_ACCEPTED';code=1
++    if result.get('ownedJobActiveProcessesFinal')!=0 or result['elapsedCompleteSeconds']>=510:result['status']='NOT_ACCEPTED';code=1
+     if attempt_created:save(ATTEMPT/'result.json',result)
+     print(json.dumps({'status':result['status'],'elapsedCompleteSeconds':result['elapsedCompleteSeconds'],'result':str(ATTEMPT/'result.json'),'workerPid':result['workerPid']}),flush=True)
+ os._exit(code)

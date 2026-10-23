@@ -1,0 +1,291 @@
+{
+  "status": "READ_ONLY_OWNED_ANCESTRY_OBSERVATION_FINISHED",
+  "utc": "2026-10-23T04:36:14.964948+00:00",
+  "workerPid": 8764,
+  "commandPid": 46812,
+  "observedIdentities": [
+    {
+      "pid": 46812,
+      "created": 1792729710.455318,
+      "name": "cmd.exe",
+      "parent": 8764
+    },
+    {
+      "pid": 27432,
+      "created": 1792729710.460099,
+      "name": "conhost.exe",
+      "parent": 46812
+    },
+    {
+      "pid": 55040,
+      "created": 1792729710.5681987,
+      "name": "dart.exe",
+      "parent": 46812
+    },
+    {
+      "pid": 59816,
+      "created": 1792729711.6076648,
+      "name": "dartaotruntime.exe",
+      "parent": 55040
+    },
+    {
+      "pid": 36588,
+      "created": 1792729711.6128747,
+      "name": "conhost.exe",
+      "parent": 59816
+    },
+    {
+      "pid": 44800,
+      "created": 1792729730.3399494,
+      "name": "chrome.exe",
+      "parent": 55040
+    },
+    {
+      "pid": 54404,
+      "created": 1792729730.512821,
+      "name": "chrome.exe",
+      "parent": 44800
+    },
+    {
+      "pid": 56576,
+      "created": 1792729731.007002,
+      "name": "SogouCloud.exe",
+      "parent": 44800
+    },
+    {
+      "pid": 58284,
+      "created": 1792729731.1719608,
+      "name": "chrome.exe",
+      "parent": 44800
+    },
+    {
+      "pid": 56504,
+      "created": 1792729731.1874487,
+      "name": "chrome.exe",
+      "parent": 44800
+    },
+    {
+      "pid": 49644,
+      "created": 1792729731.2142909,
+      "name": "chrome.exe",
+      "parent": 44800
+    },
+    {
+      "pid": 50940,
+      "created": 1792729731.2902572,
+      "name": "chrome.exe",
+      "parent": 44800
+    },
+    {
+      "pid": 58896,
+      "created": 1792729731.3431442,
+      "name": "chrome.exe",
+      "parent": 44800
+    },
+    {
+      "pid": 42276,
+      "created": 1792729731.398301,
+      "name": "chrome.exe",
+      "parent": 44800
+    },
+    {
+      "pid": 48860,
+      "created": 1792729731.4171996,
+      "name": "chrome.exe",
+      "parent": 44800
+    },
+    {
+      "pid": 41152,
+      "created": 1792729731.4906683,
+      "name": "chrome.exe",
+      "parent": 44800
+    },
+    {
+      "pid": 35212,
+      "created": 1792729737.8813868,
+      "name": "chrome.exe",
+      "parent": 55040
+    },
+    {
+      "pid": 41100,
+      "created": 1792729738.0039115,
+      "name": "chrome.exe",
+      "parent": 35212
+    },
+    {
+      "pid": 5352,
+      "created": 1792729738.4521828,
+      "name": "chrome.exe",
+      "parent": 35212
+    },
+    {
+      "pid": 41764,
+      "created": 1792729738.4704056,
+      "name": "chrome.exe",
+      "parent": 35212
+    },
+    {
+      "pid": 54888,
+      "created": 1792729738.4906595,
+      "name": "chrome.exe",
+      "parent": 35212
+    },
+    {
+      "pid": 52592,
+      "created": 1792729738.545215,
+      "name": "chrome.exe",
+      "parent": 35212
+    },
+    {
+      "pid": 30828,
+      "created": 1792729738.598333,
+      "name": "chrome.exe",
+      "parent": 35212
+    },
+    {
+      "pid": 31424,
+      "created": 1792729738.6226344,
+      "name": "chrome.exe",
+      "parent": 35212
+    },
+    {
+      "pid": 18240,
+      "created": 1792729738.6441891,
+      "name": "chrome.exe",
+      "parent": 35212
+    },
+    {
+      "pid": 43560,
+      "created": 1792729738.7160287,
+      "name": "chrome.exe",
+      "parent": 35212
+    },
+    {
+      "pid": 45192,
+      "created": 1792729744.386536,
+      "name": "chrome.exe",
+      "parent": 55040
+    },
+    {
+      "pid": 52136,
+      "created": 1792729744.5034015,
+      "name": "chrome.exe",
+      "parent": 45192
+    },
+    {
+      "pid": 21992,
+      "created": 1792729744.957414,
+      "name": "chrome.exe",
+      "parent": 45192
+    },
+    {
+      "pid": 44720,
+      "created": 1792729744.974826,
+      "name": "chrome.exe",
+      "parent": 45192
+    },
+    {
+      "pid": 57696,
+      "created": 1792729744.9912953,
+      "name": "chrome.exe",
+      "parent": 45192
+    },
+    {
+      "pid": 3180,
+      "created": 1792729745.0353427,
+      "name": "chrome.exe",
+      "parent": 45192
+    },
+    {
+      "pid": 53700,
+      "created": 1792729745.0861356,
+      "name": "chrome.exe",
+      "parent": 45192
+    },
+    {
+      "pid": 21592,
+      "created": 1792729745.1131299,
+      "name": "chrome.exe",
+      "parent": 45192
+    },
+    {
+      "pid": 43600,
+      "created": 1792729745.1336305,
+      "name": "chrome.exe",
+      "parent": 45192
+    },
+    {
+      "pid": 28480,
+      "created": 1792729745.206644,
+      "name": "chrome.exe",
+      "parent": 45192
+    },
+    {
+      "pid": 50440,
+      "created": 1792729760.0640764,
+      "name": "chrome.exe",
+      "parent": 55040
+    },
+    {
+      "pid": 37008,
+      "created": 1792729760.184178,
+      "name": "chrome.exe",
+      "parent": 50440
+    },
+    {
+      "pid": 7720,
+      "created": 1792729760.6807835,
+      "name": "chrome.exe",
+      "parent": 50440
+    },
+    {
+      "pid": 47892,
+      "created": 1792729760.6988058,
+      "name": "chrome.exe",
+      "parent": 50440
+    },
+    {
+      "pid": 53336,
+      "created": 1792729760.7186997,
+      "name": "chrome.exe",
+      "parent": 50440
+    },
+    {
+      "pid": 42360,
+      "created": 1792729760.7691133,
+      "name": "chrome.exe",
+      "parent": 50440
+    },
+    {
+      "pid": 53696,
+      "created": 1792729760.8256445,
+      "name": "chrome.exe",
+      "parent": 50440
+    },
+    {
+      "pid": 41100,
+      "created": 1792729760.8544683,
+      "name": "chrome.exe",
+      "parent": 50440
+    },
+    {
+      "pid": 21976,
+      "created": 1792729760.874925,
+      "name": "chrome.exe",
+      "parent": 50440
+    },
+    {
+      "pid": 58160,
+      "created": 1792729760.9535406,
+      "name": "chrome.exe",
+      "parent": 50440
+    }
+  ],
+  "snapshots": 20,
+  "problems": [],
+  "lastLiveIdentities": [],
+  "osJobMembershipIndependentlyProven": false,
+  "processesStartedOrStoppedByObserver": false,
+  "sdkOrUserChromeStateChanged": false,
+  "doesNotUpgradeRunAcceptance": true
+}

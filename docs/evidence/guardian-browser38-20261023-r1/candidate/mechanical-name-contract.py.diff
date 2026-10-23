@@ -1,0 +1,31 @@
+--- browser31-html-r2/name-contract.py
++++ browser38/name-contract.py
+@@ -1,4 +1,4 @@
+-"""Fixed static name extraction for the three selected Guardian source files.
++"""Fixed static name extraction for the four selected Guardian source files.
+ 
+ This is deliberately restricted to their literal names and three existing loop
+ forms. It refuses unsupported source syntax rather than guessing test discovery.
+@@ -8,8 +8,9 @@
+ 
+ SELECTORS = ['test/workspace_flow_entry_browser_test.dart',
+              'test/audit_export_route_test.dart',
+-             'test/approval_help_flow_browser_test.dart']
+-COUNTS = [8, 4, 19]
++             'test/approval_help_flow_browser_test.dart',
++             'test/notification_help_scope_browser_test.dart']
++COUNTS = [8, 4, 19, 7]
+ 
+ 
+ def tokens(text):
+@@ -82,7 +83,9 @@
+                 continue
+             assert item[0] == 'string' or item[1] in ('true', 'false')
+             members.append(item[1])
+-        expected = {'loss': ['actor ABA', 'generation', 'dispose'],
++        expected = {'loss': (['real selection then failure', 'dispose']
++                             if selector == 'test/notification_help_scope_browser_test.dart'
++                             else ['actor ABA', 'generation', 'dispose']),
+                     'action': ['批准', '拒绝', '撤销批准'],
+                     'succeeds': ['true', 'false']}[variable]
+         assert members == expected, 'Selected loop values changed'

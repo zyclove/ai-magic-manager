@@ -1,0 +1,113 @@
+{
+  "status": "STATIC_BROWSER38_SEAL_REVIEW_ONLY_RUNTIME_UNRUN",
+  "createdAtUtc": "2026-10-23T04:12:21.902848+00:00",
+  "sourceCommit": "fa2148954ccec749f7d58c38184a208085bfe181",
+  "currentObservedHead": "fa2148954ccec749f7d58c38184a208085bfe181",
+  "sevenRootGitTrees": {
+    "apps/guardian": "b57ca8a0c6f01e82e05bb32f4d34ca157dba980a",
+    "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+    "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+    "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+    "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+    "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+    "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+  },
+  "sourceFiles": 406,
+  "fullMainAndFrozenRawAndMembershipRechecked": true,
+  "mainLfMatchesCommitted": true,
+  "packageRows": 70,
+  "internalUrisOnlyChanges": 7,
+  "unchangedExternalRows": 63,
+  "cacheFiles": 3537,
+  "cacheMetadataChromeOnlyDerivationStillExact": true,
+  "runtimeCacheFileContentsNotRehashedDuringStaticSeal": true,
+  "full3537PreflightAndPostflightRequired": true,
+  "expectedPhysicalSuites": 4,
+  "sourceExpandedCounts": [
+    8,
+    4,
+    19,
+    7
+  ],
+  "expectedVisibleCases": 38,
+  "actualCasesExecuted": null,
+  "original31NamesPreserved": true,
+  "independentSyntheticMetadataReview": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\independent-metadata-review.json",
+    "bytes": 15792,
+    "sha256": "9d7330b045e499d49e7ee75210997b06a0418915767024e9ac8eeec092a45e75"
+  },
+  "reporterReview": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\reporter-static-review.json",
+    "bytes": 3492,
+    "sha256": "de9f0defbfe39ad9248086f9a41e58495ccae12c427066284feb5ff8148a1336"
+  },
+  "astParsedOnlyFiles": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\adapt_controls38.py",
+      "bytes": 4188,
+      "sha256": "cfa594300f4a7503ba76843ca23e406ba332100f3c2617cfe5f89504253eb1cc"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\controller.py",
+      "bytes": 8043,
+      "sha256": "6ec3b8f9f0e7573d9a3656cc869e6d802954060d38b7700dad2012a80e865b7c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\heap1536_windows_job.py",
+      "bytes": 9292,
+      "sha256": "4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\independent_metadata_review.py",
+      "bytes": 19647,
+      "sha256": "7ca45d3f87450954f60955e5c77f78fdb703bb9db56899901bb6d10345a5fd6e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\owned_chrome_observer.py",
+      "bytes": 5344,
+      "sha256": "5552f9bf7bf77d4b409a01a18080f0f51b6ea5c69c3a6ad38756f2e19619c052"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\prepare_browser38.py",
+      "bytes": 17818,
+      "sha256": "97ca935a3bfb042226a2e55379a5c09d5e09d39c361e4cff5bf95e033270fb45"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\reporter_contract.py",
+      "bytes": 10647,
+      "sha256": "3a47906938c1f638d462a2ac7b758c116f9d7ae74c8d48851b53b77a1302203c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\reporter_contract_reviewed.py",
+      "bytes": 10647,
+      "sha256": "3a47906938c1f638d462a2ac7b758c116f9d7ae74c8d48851b53b77a1302203c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\seal_browser38.py",
+      "bytes": 14910,
+      "sha256": "9d292a16dd36b6a992dfab23212d70a5deb85c3a982d3a0b1b0e98f2baeeac1b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\source_name_contract.py",
+      "bytes": 5887,
+      "sha256": "7fe208bdb1cf46307185343fdc249a4e99fa2879dba44cff165d04675dc7f77b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\worker.py",
+      "bytes": 25257,
+      "sha256": "598a9509984462b1859f6737fd16eb04e7e89919a81bd2dfa509e8c705a989b6"
+    }
+  ],
+  "nativeHelperAndChromeObserverByteIdenticalToR1R2": true,
+  "optionalPrivateJobDiagnosticNotAdded": true,
+  "candidateImported": false,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "browserStarted": false,
+  "networkUsed": false,
+  "mainWritten": false,
+  "attemptExists": false,
+  "runtimeWatchdogOrBrowserVerified": false,
+  "executionApproved": false
+}

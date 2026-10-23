@@ -1,0 +1,24 @@
+{
+  "status": "FRESH_FILE_VERSION_INFO_ONLY_EXISTING_CHROME_NOT_EXECUTED",
+  "observedAtUtc": "2026-10-23T03:00:01.255911+00:00",
+  "file": {
+    "path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "bytes": 4720792,
+    "sha256": "de999bce6a1c954df71a8f15bf751b336172f55ac1a0325bb0580cbc2121268c"
+  },
+  "versionInfo": {
+    "FileVersion": "155.0.8059.85",
+    "ProductVersion": "155.0.8059.85",
+    "CompanyName": "Google LLC",
+    "OriginalFilename": "chrome.exe"
+  },
+  "versionInfoBoundToSameContentHash": "de999bce6a1c954df71a8f15bf751b336172f55ac1a0325bb0580cbc2121268c",
+  "observationExecutable": {
+    "path": "C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe",
+    "bytes": 450560,
+    "sha256": "3247bcfd60f6dd25f34cb74b5889ab10ef1b3ec72b4d4b3d95b5b25b534560b8"
+  },
+  "browserStarted": false,
+  "installedOrUpdatedByTask": false,
+  "entireChromeInstallationPinned": false
+}

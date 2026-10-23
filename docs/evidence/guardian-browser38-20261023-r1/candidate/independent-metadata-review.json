@@ -1,0 +1,386 @@
+{
+  "status": "INDEPENDENT_AST_PURE_METADATA_FIXTURES_ONLY_NOT_APPLICATION_VALIDATION",
+  "reviewedAtUtc": "2026-10-23T04:11:12.446778+00:00",
+  "independentReviewCodePin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\independent_metadata_review.py",
+    "bytes": 19647,
+    "sha256": "7ca45d3f87450954f60955e5c77f78fdb703bb9db56899901bb6d10345a5fd6e"
+  },
+  "reporterCodePin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\reporter_contract_reviewed.py",
+    "bytes": 10647,
+    "sha256": "3a47906938c1f638d462a2ac7b758c116f9d7ae74c8d48851b53b77a1302203c"
+  },
+  "expectedCaseContractPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\expected-cases.json",
+    "bytes": 20019,
+    "sha256": "58e757467b1fbd761a9ae5eef6312fe7cf939fa15ba730e33ce6a4ddcf39f9b2"
+  },
+  "sourceNameParserPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\source_name_contract.py",
+    "bytes": 5887,
+    "sha256": "7fe208bdb1cf46307185343fdc249a4e99fa2879dba44cff165d04675dc7f77b"
+  },
+  "selectedSourcePins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\src\\apps\\guardian\\test\\workspace_flow_entry_browser_test.dart",
+      "bytes": 11874,
+      "sha256": "15fb4c531970c6488438d78e4c35265c51286159c8c462a3f8938ad39c995736"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\src\\apps\\guardian\\test\\audit_export_route_test.dart",
+      "bytes": 6429,
+      "sha256": "beff27499cbf2a10eeb469c930027218a56c8094a803f2e471fdb76f16659d20"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\src\\apps\\guardian\\test\\approval_help_flow_browser_test.dart",
+      "bytes": 13713,
+      "sha256": "845cb4f4b5a65cf126080861b7e29bd579a0101f5b3be437c1394bf7c0be0127"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\src\\apps\\guardian\\test\\notification_help_scope_browser_test.dart",
+      "bytes": 22316,
+      "sha256": "7db37e189d9e162ee901b8d536a6e6845ae42a00ec3ce01a0108956902e3016e"
+    }
+  ],
+  "cacheBaseManifestPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261021-r1\\out\\cache-content-20261021-r1.json",
+    "bytes": 725122,
+    "sha256": "0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2"
+  },
+  "cacheDerivedManifestPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\cache-content-chrome-refreshed.json",
+    "bytes": 725955,
+    "sha256": "8c0cfde01a9d6d5cb4bf002c1ed6d5069af28b0f27f110bec292f46e281f66c0"
+  },
+  "positiveReporterFixtures": 2,
+  "positiveCacheFixtures": 1,
+  "negativeFixtures": 50,
+  "rejectedFixtures": [
+    "visible failure",
+    "visible error result",
+    "visible skip",
+    "hidden expected case",
+    "missing visible case",
+    "wrong visible name despite count",
+    "duplicate visible name",
+    "late reporter error",
+    "missing completion",
+    "duplicate completion",
+    "wrong Chrome suite",
+    "outside frozen suite path",
+    "duplicate physical suite",
+    "allSuites count other than physical four",
+    "duplicate allSuites",
+    "missing allSuites",
+    "missing terminal done",
+    "done unsuccessful",
+    "done null",
+    "event after done",
+    "invented suiteDone event",
+    "unknown group ownership",
+    "native nonzero despite perfect JSON",
+    "native bool is not integer zero",
+    "time moves backward",
+    "malformed JSON",
+    "fatal infrastructure text",
+    "old 31-case three-suite contract rejected",
+    "old 31-case three-suite stream rejected by 38-case contract",
+    "invalid UTF-8 reporter bytes",
+    "bootstrap notice repeated",
+    "new notification case missing: real selection invalidates late inbox GET and Help count before membership resolves, and failure cannot restore them",
+    "new notification case wrong name: real selection invalidates late inbox GET and Help count before membership resolves, and failure cannot restore them",
+    "new notification case missing: late markRead and retained actions stay inert after real selection then failure",
+    "new notification case wrong name: late markRead and retained actions stay inert after real selection then failure",
+    "new notification case missing: late markRead and retained actions stay inert after dispose",
+    "new notification case wrong name: late markRead and retained actions stay inert after dispose",
+    "new notification case missing: a fresh repository can read while the old read is pending; retained View callbacks and old completion keep their owner",
+    "new notification case wrong name: a fresh repository can read while the old read is pending; retained View callbacks and old completion keep their owner",
+    "new notification case missing: fixed host keys fail closed when Session instance changes; fresh host keys attach and dispose listeners correctly",
+    "new notification case wrong name: fixed host keys fail closed when Session instance changes; fresh host keys attach and dispose listeners correctly",
+    "new notification case missing: fresh shell entries navigate, read and open current approval after real successful workspace selection",
+    "new notification case wrong name: fresh shell entries navigate, read and open current approval after real successful workspace selection",
+    "new notification case missing: SYNTHETIC optional actor ABA never revives held host scopes",
+    "new notification case wrong name: SYNTHETIC optional actor ABA never revives held host scopes",
+    "non-Chrome fixed SHA",
+    "hosted library SHA",
+    "incorrect total bytes",
+    "unapproved Chrome SHA",
+    "missing original provenance"
+  ],
+  "goodSyntheticReport": {
+    "status": "EXACT_BROWSER38_REPORT_ACCEPTED",
+    "protocolVersion": "0.1.1",
+    "suitePaths": [
+      "test/approval_help_flow_browser_test.dart",
+      "test/audit_export_route_test.dart",
+      "test/notification_help_scope_browser_test.dart",
+      "test/workspace_flow_entry_browser_test.dart"
+    ],
+    "suiteCount": 4,
+    "visibleTests": 38,
+    "successfulVisibleTests": 38,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "actualVisibleCases": [
+      {
+        "testID": 14,
+        "selector": "test/workspace_flow_entry_browser_test.dart",
+        "name": "audit entry recreates a readable page for a new scope generation"
+      },
+      {
+        "testID": 15,
+        "selector": "test/workspace_flow_entry_browser_test.dart",
+        "name": "managed entry reloads and enables refresh after generation change"
+      },
+      {
+        "testID": 16,
+        "selector": "test/workspace_flow_entry_browser_test.dart",
+        "name": "export old repository rejects late data after actor ABA"
+      },
+      {
+        "testID": 17,
+        "selector": "test/workspace_flow_entry_browser_test.dart",
+        "name": "export old repository rejects late data after generation"
+      },
+      {
+        "testID": 18,
+        "selector": "test/workspace_flow_entry_browser_test.dart",
+        "name": "export old repository rejects late data after dispose"
+      },
+      {
+        "testID": 19,
+        "selector": "test/workspace_flow_entry_browser_test.dart",
+        "name": "workspace picker ignores its already selected tenant"
+      },
+      {
+        "testID": 20,
+        "selector": "test/workspace_flow_entry_browser_test.dart",
+        "name": "superseded workspace return cannot navigate or toast after newest selection fails"
+      },
+      {
+        "testID": 21,
+        "selector": "test/workspace_flow_entry_browser_test.dart",
+        "name": "newest successful workspace selection returns home"
+      },
+      {
+        "testID": 22,
+        "selector": "test/audit_export_route_test.dart",
+        "name": "covered export success preserves the cover and audit location"
+      },
+      {
+        "testID": 23,
+        "selector": "test/audit_export_route_test.dart",
+        "name": "current export success opens the export jobs page"
+      },
+      {
+        "testID": 24,
+        "selector": "test/audit_export_route_test.dart",
+        "name": "covered success cannot redirect when the cover closes at completion"
+      },
+      {
+        "testID": 25,
+        "selector": "test/audit_export_route_test.dart",
+        "name": "a cover during export closing prevents the late redirect"
+      },
+      {
+        "testID": 26,
+        "selector": "test/approval_help_flow_browser_test.dart",
+        "name": "批准 cancellation preserves the original approval details"
+      },
+      {
+        "testID": 27,
+        "selector": "test/approval_help_flow_browser_test.dart",
+        "name": "拒绝 cancellation preserves the original approval details"
+      },
+      {
+        "testID": 28,
+        "selector": "test/approval_help_flow_browser_test.dart",
+        "name": "撤销批准 cancellation preserves the original approval details"
+      },
+      {
+        "testID": 29,
+        "selector": "test/approval_help_flow_browser_test.dart",
+        "name": "批准 success closes its approval details"
+      },
+      {
+        "testID": 30,
+        "selector": "test/approval_help_flow_browser_test.dart",
+        "name": "拒绝 success closes its approval details"
+      },
+      {
+        "testID": 31,
+        "selector": "test/approval_help_flow_browser_test.dart",
+        "name": "撤销批准 success closes its approval details"
+      },
+      {
+        "testID": 32,
+        "selector": "test/approval_help_flow_browser_test.dart",
+        "name": "批准 success cannot dismiss an unrelated covering dialog"
+      },
+      {
+        "testID": 33,
+        "selector": "test/approval_help_flow_browser_test.dart",
+        "name": "拒绝 success cannot dismiss an unrelated covering dialog"
+      },
+      {
+        "testID": 34,
+        "selector": "test/approval_help_flow_browser_test.dart",
+        "name": "撤销批准 success cannot dismiss an unrelated covering dialog"
+      },
+      {
+        "testID": 35,
+        "selector": "test/approval_help_flow_browser_test.dart",
+        "name": "批准 failed submission keeps the original details open"
+      },
+      {
+        "testID": 36,
+        "selector": "test/approval_help_flow_browser_test.dart",
+        "name": "拒绝 failed submission keeps the original details open"
+      },
+      {
+        "testID": 37,
+        "selector": "test/approval_help_flow_browser_test.dart",
+        "name": "撤销批准 failed submission keeps the original details open"
+      },
+      {
+        "testID": 38,
+        "selector": "test/approval_help_flow_browser_test.dart",
+        "name": "help initial success after disposal does not update the removed page"
+      },
+      {
+        "testID": 39,
+        "selector": "test/approval_help_flow_browser_test.dart",
+        "name": "help initial error after disposal does not update the removed page"
+      },
+      {
+        "testID": 40,
+        "selector": "test/approval_help_flow_browser_test.dart",
+        "name": "help acknowledgement success after disposal cannot start a follow-up read"
+      },
+      {
+        "testID": 41,
+        "selector": "test/approval_help_flow_browser_test.dart",
+        "name": "help acknowledgement error after disposal cannot start a follow-up read"
+      },
+      {
+        "testID": 42,
+        "selector": "test/approval_help_flow_browser_test.dart",
+        "name": "help actor ABA cannot revive a late read or old filter callback"
+      },
+      {
+        "testID": 43,
+        "selector": "test/approval_help_flow_browser_test.dart",
+        "name": "help console entry creates a new page for the current generation"
+      },
+      {
+        "testID": 44,
+        "selector": "test/approval_help_flow_browser_test.dart",
+        "name": "a captured help filter callback is inert after page disposal"
+      },
+      {
+        "testID": 45,
+        "selector": "test/notification_help_scope_browser_test.dart",
+        "name": "real selection invalidates late inbox GET and Help count before membership resolves, and failure cannot restore them"
+      },
+      {
+        "testID": 46,
+        "selector": "test/notification_help_scope_browser_test.dart",
+        "name": "late markRead and retained actions stay inert after real selection then failure"
+      },
+      {
+        "testID": 47,
+        "selector": "test/notification_help_scope_browser_test.dart",
+        "name": "late markRead and retained actions stay inert after dispose"
+      },
+      {
+        "testID": 48,
+        "selector": "test/notification_help_scope_browser_test.dart",
+        "name": "a fresh repository can read while the old read is pending; retained View callbacks and old completion keep their owner"
+      },
+      {
+        "testID": 49,
+        "selector": "test/notification_help_scope_browser_test.dart",
+        "name": "fixed host keys fail closed when Session instance changes; fresh host keys attach and dispose listeners correctly"
+      },
+      {
+        "testID": 50,
+        "selector": "test/notification_help_scope_browser_test.dart",
+        "name": "fresh shell entries navigate, read and open current approval after real successful workspace selection"
+      },
+      {
+        "testID": 51,
+        "selector": "test/notification_help_scope_browser_test.dart",
+        "name": "SYNTHETIC optional actor ABA never revives held host scopes"
+      }
+    ],
+    "hiddenSuccessfulTests": [
+      {
+        "testID": 10,
+        "selector": "test/workspace_flow_entry_browser_test.dart",
+        "name": "loading test/workspace_flow_entry_browser_test.dart"
+      },
+      {
+        "testID": 11,
+        "selector": "test/audit_export_route_test.dart",
+        "name": "loading test/audit_export_route_test.dart"
+      },
+      {
+        "testID": 12,
+        "selector": "test/approval_help_flow_browser_test.dart",
+        "name": "loading test/approval_help_flow_browser_test.dart"
+      },
+      {
+        "testID": 13,
+        "selector": "test/notification_help_scope_browser_test.dart",
+        "name": "loading test/notification_help_scope_browser_test.dart"
+      }
+    ],
+    "allStartedTestsCompleted": true,
+    "terminalDoneSuccess": true,
+    "naturalNativeExitCode": 0,
+    "printEvents": 0,
+    "eventCount": 91,
+    "bootstrapNotices": 0
+  },
+  "goodSyntheticCache": {
+    "status": "SINGLE_CHROME_ROW_REFRESH_METADATA_MATCHES",
+    "baseManifestSha256": "0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2",
+    "changedFixedRows": 1,
+    "unchangedPinnedFiles": 3536,
+    "allCacheFilesStillRequiredAtRuntime": 3537,
+    "chromeExecutable": {
+      "path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+      "bytes": 4720792,
+      "sha256": "de999bce6a1c954df71a8f15bf751b336172f55ac1a0325bb0580cbc2121268c"
+    },
+    "entireChromeInstallationPinned": false
+  },
+  "bootstrapPositiveAccepted": true,
+  "exactCounts": {
+    "physicalSuites": 4,
+    "visibleCases": 38,
+    "hiddenLoadingCases": 4
+  },
+  "old31NamesUnchanged": true,
+  "new7IndividuallyMissingAndWrongNameRejected": true,
+  "reporterStrictCountStatusAdaptationOnly": true,
+  "cacheValidatorAstUnchangedFromR1": true,
+  "unchangedReporterFunctions": [
+    "demand",
+    "integer",
+    "suite_path",
+    "validate_cache_refresh"
+  ],
+  "sourceNameParserParsedOnlyNeverExecuted": true,
+  "candidateModulesImported": false,
+  "onlyAllowlistedPureAstNodesEvaluated": true,
+  "workerOrControllerOrNativeHelperLoaded": false,
+  "sdkStarted": false,
+  "browserStarted": false,
+  "networkUsed": false,
+  "applicationTestsRun": false,
+  "candidateRuntimeBehaviorVerified": false,
+  "attemptCreated": false
+}

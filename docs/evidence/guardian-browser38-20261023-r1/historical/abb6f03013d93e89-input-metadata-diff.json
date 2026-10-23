@@ -1,0 +1,34 @@
+{
+  "createdAtUtc": {
+    "before": "2026-10-23T03:00:01.306593+00:00",
+    "after": "2026-10-23T03:25:16.011128+00:00"
+  },
+  "ownedChromeObserverCode": {
+    "before": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\owned_chrome_observer.py",
+      "bytes": 5344,
+      "sha256": "5552f9bf7bf77d4b409a01a18080f0f51b6ea5c69c3a6ad38756f2e19619c052"
+    },
+    "after": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r2\\owned_chrome_observer.py",
+      "bytes": 5344,
+      "sha256": "5552f9bf7bf77d4b409a01a18080f0f51b6ea5c69c3a6ad38756f2e19619c052"
+    }
+  },
+  "reporterContractCode": {
+    "before": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\reporter_contract_reviewed.py",
+      "bytes": 10649,
+      "sha256": "5626b4d9859efe8f2cf04886c7f97ac967ac6daa258d31860528bb90676ca301"
+    },
+    "after": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r2\\reporter_contract_reviewed.py",
+      "bytes": 10649,
+      "sha256": "5626b4d9859efe8f2cf04886c7f97ac967ac6daa258d31860528bb90676ca301"
+    }
+  },
+  "scope": {
+    "before": "Only three exact Chrome selectors and 31 literal expanded visible names; runtime unrun.",
+    "after": "HTML renderer; same three Chrome selectors and 31 exact visible names; reuse r1 frozen source and existing generated cache; runtime unrun."
+  }
+}
