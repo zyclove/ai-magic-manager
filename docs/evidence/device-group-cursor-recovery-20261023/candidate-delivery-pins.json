@@ -1,0 +1,32 @@
+{
+  "status": "STATIC_UNRUN_SEALED_DELIVERY",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\device-group-picker-cursor-recovery-20261023-r1\\before.dart",
+      "bytes": 13677,
+      "sha256": "9efcda7088e2937a6d63a3375b2195f239567c94631acb17158e25342eb6feea"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\device-group-picker-cursor-recovery-20261023-r1\\device-group-batch-picker.patch",
+      "bytes": 3242,
+      "sha256": "230801ad3da7b90b1056f061c5b3c66db4f230cd987af90ed87e691857b18161"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\device-group-picker-cursor-recovery-20261023-r1\\device_group_batch_picker.dart",
+      "bytes": 14799,
+      "sha256": "2713b6f7fca00461f6929e91ea8267d3009708e1181f5c4a102843febeecf264"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\device-group-picker-cursor-recovery-20261023-r1\\pins.json",
+      "bytes": 2254,
+      "sha256": "4506bf5b292aa9346129ebfc84890c7fd088a977017bc87b7c1c1471b85eddc9"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\device-group-picker-cursor-recovery-20261023-r1\\review.md",
+      "bytes": 3884,
+      "sha256": "56f6dd3717b929707cc4d840bf61318897f58e11bc2b1868d7f307d02f9a149e"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "executionAuthorized": false
+}

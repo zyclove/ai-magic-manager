@@ -1,0 +1,13 @@
+# Root static review: batch-picker pagination recovery
+
+Root read the complete original picker, complete candidate, final unified patch, existing FailureView and candidate explanation. Candidate source is 14799 bytes, SHA256 `2713b6f7fca00461f6929e91ea8267d3009708e1181f5c4a102843febeecf264`; the original is 13677 bytes, SHA256 `9efcda7088e2937a6d63a3375b2195f239567c94631acb17158e25342eb6feea`.
+
+The change fixes a concrete recovery path: an append rejected with INVALID_CURSOR previously left that cursor available to both retry and load-more. The new invalid state clears only pagination, keeps loaded rows and selected registrations, and blocks every ordinary load entry until the user explicitly restarts browsing. An old generic retry callback cannot silently replace the first page while preserving stale selections.
+
+The explicit restart checks current route/access, loading and the invalid flag at invocation. It synchronously clears rows, selections, cursor, error and selected-only filtering before starting a first-page read. A previously captured restart cannot clear selections made after a fresh page because the invalid flag is then false. A captured old row cannot be selected while the current row list is empty because selectable checks the current loaded ID/registration set. A row returned again with the same identity remains an ordinary valid target; no blanket historical-callback claim is made.
+
+Ordinary append failures retain their cursor and selections. Initial or restarted first-page failures keep first-page retry. Cursor rejection does not establish that loaded device registrations changed, so the user may confirm loaded selections through the existing current-route, nonempty, cap, membership, registration and active-state checks. Backend version, registration and idempotency checks remain unchanged. The restart action explicitly says it clears selection. The known rejection shows one Notice and one recovery button; ordinary errors keep FailureView.
+
+No new static blocker was found in this patch. This is source reasoning only: no Dart formatter/compiler/analyzer, widget test, app test, browser or rendered layout was run. Existing validation results for old commits do not cover this source. Future validation still needs ordinary retry, invalid cursor, retained selection, explicit restart, both held retry/restart callbacks, held row, first-page failure, permission/route loss, cancellation and small-screen/large-text cases.
+
+This review alone does not authorize an SDK window or deployment. Main application is conditional on a separately pinned independent review and fresh exact-before-source checks. The EF r5 source snapshot will become historical when this patch is applied.

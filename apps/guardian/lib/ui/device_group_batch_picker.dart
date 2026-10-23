@@ -35,7 +35,7 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
   List<Json> devices = const [];
   String? cursor;
   Object? error;
-  bool loading = false;
+  bool loading = false, cursorInvalid = false;
   ModalRoute<dynamic>? _route;
   bool _active = true, _revoked = false, _rebuildPending = false;
   int generation = 0;
@@ -181,7 +181,7 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
   }
 
   Future<void> load({bool more = false}) async {
-    if (!current || loading || (more && cursor == null)) {
+    if (!current || loading || cursorInvalid || (more && cursor == null)) {
       return;
     }
     final requestedCursor = more ? cursor : null;
@@ -217,13 +217,32 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
       });
     } catch (failure) {
       if (mounted && _active && permitted && generation == requested) {
-        setState(() => error = failure);
+        setState(() {
+          error = failure;
+          if (more && failure is ApiFailure && failure.code == 'INVALID_CURSOR') {
+            cursor = null;
+            cursorInvalid = true;
+          }
+        });
       }
     } finally {
       if (mounted && _active && permitted && generation == requested) {
         setState(() => loading = false);
       }
     }
+  }
+
+  void reloadFromStart() {
+    if (!current || loading || !cursorInvalid) return;
+    setState(() {
+      selected.clear();
+      devices = const [];
+      cursor = null;
+      error = null;
+      cursorInvalid = false;
+      onlySelected = false;
+    });
+    load();
   }
 
   void toggle(Json row) {
@@ -298,8 +317,18 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
                       style: Theme.of(context).textTheme.bodySmall),
                   const SizedBox(height: 8),
                   if (loading) const LinearProgressIndicator(),
-                  if (error != null)
-                    FailureView(error!, retry: () => load(more: cursor != null)),
+                  if (error != null) ...[
+                    if (cursorInvalid) ...[
+                      const Notice(
+                          '分页信息无法继续使用，已保留已加载设备和当前选择。可继续核对已选设备；需要继续浏览时，请重新加载并重新选择。',
+                          warning: true),
+                      TextButton.icon(
+                          onPressed: loading ? null : reloadFromStart,
+                          icon: const Icon(Icons.refresh),
+                          label: const Text('重新加载并清空选择')),
+                    ] else
+                      FailureView(error!, retry: () => load(more: cursor != null)),
+                  ],
                   SizedBox(
                       height: (MediaQuery.sizeOf(context).height * .36)
                           .clamp(100.0, 320.0).toDouble(),
@@ -341,7 +370,7 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
                                   controlAffinity: ListTileControlAffinity.leading,
                                 );
                               })),
-                  if (cursor != null)
+                  if (cursor != null && !cursorInvalid)
                     TextButton.icon(
                         onPressed: loading ? null : () => load(more: true),
                         icon: const Icon(Icons.expand_more),

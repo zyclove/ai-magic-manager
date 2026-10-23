@@ -1,0 +1,55 @@
+{
+  "status": "ONE_P2_RECOVERY_GAP_STATIC_ONLY",
+  "report": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\device-group-user-flow-static-audit-20261023-r2\\review.md",
+    "bytes": 3477,
+    "sha256": "31cff510e292efe15f7d51e52abebb3eb58f72e1e9898a439f95a2ec45b23e4b"
+  },
+  "inputs": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\device_groups_page.dart",
+      "bytes": 36200,
+      "sha256": "a4e951742370b108eece12d852104dfa2e817033ed392e1418234dc44a9a8a57"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\device_group_batch_picker.dart",
+      "bytes": 13677,
+      "sha256": "9efcda7088e2937a6d63a3375b2195f239567c94631acb17158e25342eb6feea"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\owned_dialog_route.dart",
+      "bytes": 1419,
+      "sha256": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\device_subflow_scope.dart",
+      "bytes": 1512,
+      "sha256": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\core\\api.dart",
+      "bytes": 22640,
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\submit_direct_variant_test.dart",
+      "bytes": 15948,
+      "sha256": "0b40af26d2b16927a546d7634b21a41be88153d28fc8b35dba7e18e8fe5c93ec"
+    }
+  ],
+  "candidate": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\device-group-picker-cursor-recovery-20261023-r1\\device_group_batch_picker.dart",
+    "bytes": 14799,
+    "sha256": "2713b6f7fca00461f6929e91ea8267d3009708e1181f5c4a102843febeecf264"
+  },
+  "mainUnchanged": true,
+  "testsRun": false,
+  "renderingViewed": false,
+  "sdkStarted": false,
+  "mainOrGitWritten": false
+}

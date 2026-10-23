@@ -1,0 +1,75 @@
+{
+  "status": "STATIC_REVIEW_EVIDENCE_NOT_APPLICATION_TEST_PASS",
+  "sourceBeforeInGitCommit": "ef179e765ab1d594b4be48aa613bb765c3502933",
+  "sourceAfterSha256": "2713b6f7fca00461f6929e91ea8267d3009708e1181f5c4a102843febeecf264",
+  "beforeAndAfterSourceRecoverableFromGitAndCandidatePatch": true,
+  "files": [
+    {
+      "path": "docs/evidence/device-group-cursor-recovery-20261023/application-receipt.json",
+      "bytes": 5785,
+      "sha256": "2be22956c7b9241ae2a3cd3071bd8bdf7d61a9a270bcbdbdc8a30db4edd9ae3d",
+      "gitRawBlobSha1": "e6b0694bbc14fcb88c5b265f71b2e293f436c853"
+    },
+    {
+      "path": "docs/evidence/device-group-cursor-recovery-20261023/candidate-delivery-pins.json",
+      "bytes": 1343,
+      "sha256": "f06c0e342e7d603d8fa74201c7b75b5a837357ab9ea2dd276257d0a527b7ba96",
+      "gitRawBlobSha1": "f6631ee9bf97db915906a143d8b33b3f0ff78afe"
+    },
+    {
+      "path": "docs/evidence/device-group-cursor-recovery-20261023/candidate-pins.json",
+      "bytes": 2254,
+      "sha256": "4506bf5b292aa9346129ebfc84890c7fd088a977017bc87b7c1c1471b85eddc9",
+      "gitRawBlobSha1": "a4e7f12d9fda0666e704a4a06893edbb4c167d4f"
+    },
+    {
+      "path": "docs/evidence/device-group-cursor-recovery-20261023/candidate-review.md",
+      "bytes": 3884,
+      "sha256": "56f6dd3717b929707cc4d840bf61318897f58e11bc2b1868d7f307d02f9a149e",
+      "gitRawBlobSha1": "bf11875742cdd21d85de70947d5f174c63242a61"
+    },
+    {
+      "path": "docs/evidence/device-group-cursor-recovery-20261023/candidate.patch",
+      "bytes": 3242,
+      "sha256": "230801ad3da7b90b1056f061c5b3c66db4f230cd987af90ed87e691857b18161",
+      "gitRawBlobSha1": "d0220852dcd88e07b43315189670528b022701fd"
+    },
+    {
+      "path": "docs/evidence/device-group-cursor-recovery-20261023/independent-review-pins.json",
+      "bytes": 586,
+      "sha256": "ad570ca8303932a34395c1bcfef1f96ffdc95d9e1891a7d09d148806fcd49325",
+      "gitRawBlobSha1": "6cee856d35fc50a7fbeda851a6c54e143e903541"
+    },
+    {
+      "path": "docs/evidence/device-group-cursor-recovery-20261023/independent-review.json",
+      "bytes": 4023,
+      "sha256": "07f1d271a516c83b9c33a97ee5c528d139a64d28443ca9fbd26990fb8a05da4a",
+      "gitRawBlobSha1": "e42afc1f9d2996381cb49b76af8efe7aaf6885c0"
+    },
+    {
+      "path": "docs/evidence/device-group-cursor-recovery-20261023/independent-review.md",
+      "bytes": 3859,
+      "sha256": "4532d4b5fe80b0db55bebbefd78b6e0c2dafa24b996bad461216d097c8a02c7b",
+      "gitRawBlobSha1": "a12657c073f97809808e0ae685743387400beb7c"
+    },
+    {
+      "path": "docs/evidence/device-group-cursor-recovery-20261023/initial-audit-pins.json",
+      "bytes": 2181,
+      "sha256": "728cc117dfdff253ed086f7636b5ffe0440e13fd2966fa25072304d65bfee7dc",
+      "gitRawBlobSha1": "c6589cfebddb228eaa21bb8150d64b3274413f9e"
+    },
+    {
+      "path": "docs/evidence/device-group-cursor-recovery-20261023/initial-audit.md",
+      "bytes": 3477,
+      "sha256": "31cff510e292efe15f7d51e52abebb3eb58f72e1e9898a439f95a2ec45b23e4b",
+      "gitRawBlobSha1": "f985b53f8e609e87a89fb886ea2e692f79cb4990"
+    },
+    {
+      "path": "docs/evidence/device-group-cursor-recovery-20261023/root-review.md",
+      "bytes": 2728,
+      "sha256": "bcb82b585c59e87d16ba099e36eb7c43880b3ec12ee33b008b86a3aa40c20989",
+      "gitRawBlobSha1": "ecd70fed59aeae28de49047ff76a10665ffbf75e"
+    }
+  ],
+  "selfExcluded": "manifest.json"
+}

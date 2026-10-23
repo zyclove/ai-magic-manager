@@ -1,0 +1,16 @@
+{
+  "status": "STATIC_REVIEW_NO_EXECUTION_AUTHORIZATION",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\device-group-picker-cursor-independent-20261023-r1\\review.md",
+      "bytes": 3859,
+      "sha256": "4532d4b5fe80b0db55bebbefd78b6e0c2dafa24b996bad461216d097c8a02c7b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\device-group-picker-cursor-independent-20261023-r1\\review.json",
+      "bytes": 4023,
+      "sha256": "07f1d271a516c83b9c33a97ee5c528d139a64d28443ca9fbd26990fb8a05da4a"
+    }
+  ],
+  "selfExcluded": "review-pins.json"
+}
