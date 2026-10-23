@@ -1,0 +1,34 @@
+{
+  "status": "ANALYSIS_BYTES_AND_ACTUAL_TERMINAL_INDEPENDENTLY_MATCHED_AWAIT_FRESH_SYSTEM_GATE",
+  "utc": "2026-10-23T05:41:32.849380+00:00",
+  "grant": "guardian-analyze-r6-root-20261023",
+  "sourceCommit": "88871eb69f16012e04ad4d8aa58209edea791e4a",
+  "actualToolSession": 35555,
+  "initialToolChunk": "7f7712",
+  "finalToolChunk": "c6f353",
+  "naturalExitCode": 0,
+  "outerElapsedSeconds": 60.30615890000081,
+  "strictCompleteBoundSeconds": 135.0,
+  "sourceFilesIndependentlyRehashedBothTrees": 408,
+  "cacheFilesIndependentlyRehashed": 3536,
+  "cacheBytesIndependentlyRehashed": 633817159,
+  "candidateAndRuntimeMetadataPinsMatched": 156,
+  "prePostComplete": true,
+  "ownedJobActiveProcesses": 0,
+  "knownOwnedPidsAbsent": [
+    54256,
+    45096
+  ],
+  "forcedTermination": false,
+  "diagnostics": {
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0
+  },
+  "rawLogSha256": "e2349d900784c3844ce17c39807908be56cb7170be77334cac663cb9fd489d82",
+  "testsRun": false,
+  "browserRun": false,
+  "servicesUpdated": false,
+  "wholeProductAccepted": false,
+  "systemGateNote": "psutil blank Secure System name is not treated as a zero unknown count; separate fresh full Get-Process inventory required before release."
+}

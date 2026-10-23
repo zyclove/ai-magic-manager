@@ -1,0 +1,135 @@
+{
+  "status": "FULL_GUARDIAN_ANALYZE_PASSED",
+  "outerBudgetSeconds": 180,
+  "terminationReserveSeconds": 6,
+  "startedAtUtc": "2026-10-23T05:39:21.103226+00:00",
+  "workerPid": 54256,
+  "phaseScope": "FULL_GUARDIAN_ANALYZE",
+  "workerExitCode": 0,
+  "workerReceipt": {
+    "status": "FULL_GUARDIAN_ANALYZE_WORKER_PASSED",
+    "phaseScope": "FULL_GUARDIAN_ANALYZE",
+    "startedAtUtc": "2026-10-23T05:39:21.273497+00:00",
+    "workerBudgetSeconds": 165,
+    "commandCapSeconds": 150,
+    "commandCleanupReserveSeconds": 5,
+    "minimumPostflightReserveSeconds": 25,
+    "sdkCalls": 1,
+    "testsRun": false,
+    "pubRun": false,
+    "downloadsAllowed": false,
+    "cacheCopied": false,
+    "mainSourceWritten": false,
+    "forcedTermination": false,
+    "commandTerminalState": {
+      "pid": 45096,
+      "rootHandleSignaled": true,
+      "rootExitCode": 0,
+      "activeProcesses": 0,
+      "totalProcesses": 9,
+      "terminatedProcesses": 0,
+      "terminalVerified": true,
+      "timedOut": false,
+      "terminationRequested": false,
+      "terminationCallSucceeded": false
+    },
+    "postflight": {
+      "stage": "postflight",
+      "startedAtUtc": "2026-10-23T05:39:55.803509+00:00",
+      "complete": true,
+      "source": {
+        "frozenRawGit": {
+          "files": 408,
+          "fullMembershipExact": true,
+          "allRawHashesMatch": true
+        },
+        "mainRaw": {
+          "files": 408,
+          "fullMembershipExact": true,
+          "allRawHashesMatch": true
+        },
+        "currentSevenRootGitTrees": {
+          "apps/guardian": "46b5ad2b531160d53f8c07b401f3f9522a2fc1e6",
+          "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+          "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+          "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+          "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+          "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+          "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+        }
+      },
+      "packages": {
+        "packages": 70,
+        "rebasedInternalRoots": 7,
+        "unchangedExternalRows": 63,
+        "metadataPreserved": true,
+        "candidateSha256": "32546e6b312b632b83c20a4a7d1029298523b5b4694c843c3818bb73c827431c"
+      },
+      "cache": {
+        "manifestSha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84",
+        "trees": 70,
+        "fixedFiles": 32,
+        "allMembersDirectoriesBytesAndHashesMatch": true,
+        "totals": {
+          "files": 3536,
+          "bytes": 633817159
+        }
+      },
+      "runtime": {
+        "sdkGitRevision": "761747bfc538b5af34aa0d3fac380f1bc331ec49",
+        "controlAndExtraRuntimePinsMatch": true,
+        "snapshotAndStampReady": true,
+        "pubspecNotNewerThanLock": true,
+        "forbiddenEnvironmentOverridesAbsent": true,
+        "bootstrapAbsent": true,
+        "engineDartStampMatchesEngineVersion": true,
+        "fixedProcessPathVerified": true,
+        "bootstrapAllowed": false
+      },
+      "finishedAtUtc": "2026-10-23T05:40:21.060709+00:00",
+      "elapsedWorkerSeconds": 59.78733509999984
+    },
+    "commandTerminalStateAfterPostflight": {
+      "pid": 45096,
+      "rootHandleSignaled": true,
+      "rootExitCode": 0,
+      "activeProcesses": 0,
+      "totalProcesses": 9,
+      "terminatedProcesses": 0,
+      "terminalVerified": true,
+      "timedOut": false,
+      "terminationRequested": false,
+      "terminationCallSucceeded": false
+    },
+    "resourceAfter": {
+      "utc": "2026-10-23T05:40:21.091096+00:00",
+      "sdkProcesses": [],
+      "unknownProcessNames": [],
+      "availableRamBytes": 3023998976,
+      "diskFreeBytes": {
+        "C:/": 6953418752,
+        "D:/": 35378556928
+      }
+    },
+    "logPin": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\attempt\\out\\analyze.log",
+      "bytes": 189,
+      "sha256": "e2349d900784c3844ce17c39807908be56cb7170be77334cac663cb9fd489d82"
+    },
+    "noIssuesFound": true,
+    "finishedAtUtc": "2026-10-23T05:40:21.120529+00:00",
+    "elapsedCompleteSeconds": 59.84715030000007,
+    "outerExternalAcceptanceRequired": true
+  },
+  "ownedJobActiveProcesses": 0,
+  "ownedCleanupPerformed": false,
+  "watchdogExpired": false,
+  "sdkProcessesAfter": [],
+  "unknownProcessNames": [],
+  "availableRamBytesAfter": 3034501120,
+  "workerConsoleSha256": "611709d1f52adf448ec6700fe36b8ec31d49ec6151c720ae9a99ed2e3fcbcd66",
+  "postCandidateAndControlRuntimeMismatches": [],
+  "ownedJobActiveProcessesFinal": 0,
+  "finishedAtUtc": "2026-10-23T05:40:21.381418+00:00",
+  "elapsedCompleteSeconds": 60.30615890000081
+}

@@ -1,0 +1,50 @@
+{
+  "status": "STATIC_ANALYSIS408_R6_SEALED_ROOT_REVIEW_REQUIRED_UNRUN",
+  "proposal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\proposal.json",
+    "bytes": 42509,
+    "sha256": "b4cf7534705500f7a3dd1cd825a2c314bbb5654295e63aa21b007b496cffb7b5"
+  },
+  "inputs": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\inputs.json",
+    "bytes": 6993,
+    "sha256": "c89ddfc7b6a1725fc23027f8b27cd73fe0aefd6f6501a344aa8bf2ecfc4749ab"
+  },
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\source-manifest.json",
+    "bytes": 243867,
+    "sha256": "5ff8304370d890089517f78f7a5f7f5f99e894a3c31dd969f80edca7a830fcc7"
+  },
+  "sourceSnapshotSeal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\seal-static-source.json",
+    "bytes": 80061,
+    "sha256": "f5b78356c80ed9d007892a3cd2c2da00a934ef416f9aa6c55f476e827da8f46d"
+  },
+  "candidatePackageConfig": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+    "bytes": 15708,
+    "sha256": "32546e6b312b632b83c20a4a7d1029298523b5b4694c843c3818bb73c827431c"
+  },
+  "cacheManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\cache-analysis-projection.json",
+    "bytes": 724690,
+    "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84"
+  },
+  "candidateFiles": 12,
+  "controlRuntimeFiles": 11,
+  "historicalMetadataFiles": 133,
+  "originalR5PinsPreserved": 101,
+  "sourceFiles": 408,
+  "cacheFiles": 3536,
+  "outerBudgetSeconds": 180,
+  "workerBudgetSeconds": 165,
+  "commandCapSeconds": 150,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "browserStarted": false,
+  "candidateImported": false,
+  "sourceCopied": false,
+  "cacheCopied": false,
+  "executionApproved": false,
+  "attemptExists": false
+}

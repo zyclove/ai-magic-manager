@@ -1,0 +1,141 @@
+{
+  "status": "STATIC_SOURCE_DELTA",
+  "beforeCommit": "1ca1f7fc4cddefca6f711bea0ae90f3cb8c89f9e",
+  "afterCommit": "88871eb69f16012e04ad4d8aa58209edea791e4a",
+  "beforeFiles": 407,
+  "afterFiles": 408,
+  "unchangedFiles": 400,
+  "modifiedFiles": 7,
+  "addedFiles": 1,
+  "deletedFiles": 0,
+  "beforeSourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\source-before407-manifest.json",
+    "bytes": 243262,
+    "sha256": "a41ed00d2f124b51535aec59116bffecda15e02544cd8a2e7e12fd0e7680582d"
+  },
+  "deltas": [
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "change": "MODIFIED",
+      "before": {
+        "gitBlob": "37e2eaae2f038c6aec0158eb10d8f0f2b35aa061",
+        "mode": "100644",
+        "bytes": 87318,
+        "sha256": "c903fc88989db4cedc645154b098256e088330b2be6f42a14fd49a0c46155bc3"
+      },
+      "after": {
+        "gitBlob": "78527a2e3cada7f9b43f760229cc3fb598f8b9e4",
+        "mode": "100644",
+        "bytes": 87392,
+        "sha256": "e0d76e148ff4d629e96f3ba4e9abdf760136e7a1b78fe454021a71414dab28e6"
+      }
+    },
+    {
+      "path": "apps/guardian/lib/pages/usage_reports_page.dart",
+      "change": "MODIFIED",
+      "before": {
+        "gitBlob": "aaad52ccc4a23cac1d4ee21c0fe2827705da11ba",
+        "mode": "100644",
+        "bytes": 9836,
+        "sha256": "feecd1f03426db88fb66deff4a78a0b482ff98bdc7c908e4a167fd97f6afbd51"
+      },
+      "after": {
+        "gitBlob": "3f588f07655315e048797f7b7c4b531d23b2a11b",
+        "mode": "100644",
+        "bytes": 11091,
+        "sha256": "d867d1bbf85f4deaa5392ff5fa519b7195ccc781d38e1af63dd8bac14aaaed12"
+      }
+    },
+    {
+      "path": "apps/guardian/lib/ui/owned_dialog_route.dart",
+      "change": "MODIFIED",
+      "before": {
+        "gitBlob": "289d0f1defa3536e20fec8c38c7fc182b7ee73e3",
+        "mode": "100644",
+        "bytes": 1387,
+        "sha256": "f4401bb72906eb9abdacbcc2a077a319223a04ae36eda6b74359d2868d731676"
+      },
+      "after": {
+        "gitBlob": "98a5a2482320d18a1c19fb15bdd24843bc67f5d6",
+        "mode": "100644",
+        "bytes": 1419,
+        "sha256": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946"
+      }
+    },
+    {
+      "path": "apps/guardian/lib/ui/usage_report_device_picker.dart",
+      "change": "MODIFIED",
+      "before": {
+        "gitBlob": "c6186898140dc9eaf9a9a5aab59ea44ac181234b",
+        "mode": "100644",
+        "bytes": 4334,
+        "sha256": "a89c0fc8c4e324b987fef89e626b66a078ecb32c5e2f3a680c3f80ee1bea4387"
+      },
+      "after": {
+        "gitBlob": "bc6e29a1cf3b3a0fde0660e8c7d1a56cfa7c0abc",
+        "mode": "100644",
+        "bytes": 5485,
+        "sha256": "c5a08c51ef3a4cd169ae237d9b7ac928426ee0664ad8d45f3cfbfe9e0c1bd3f7"
+      }
+    },
+    {
+      "path": "apps/guardian/lib/ui/usage_report_job_dialog.dart",
+      "change": "MODIFIED",
+      "before": {
+        "gitBlob": "419e85b7357dabcb279a48e52e5969271e8ad61f",
+        "mode": "100644",
+        "bytes": 5576,
+        "sha256": "e20506e761cd9b8df9f5d1468835662b8cc6546d5c41d1d35b22bbaa74f2116f"
+      },
+      "after": {
+        "gitBlob": "943d3b079016b5bc50421183c3f506609fab7ebf",
+        "mode": "100644",
+        "bytes": 7156,
+        "sha256": "c316ed59fdda8f8f00b51e28968df25116eacbb2c3116016e7f96b9bc42257f2"
+      }
+    },
+    {
+      "path": "apps/guardian/lib/ui/usage_report_jobs_view.dart",
+      "change": "MODIFIED",
+      "before": {
+        "gitBlob": "e7690d179644fb60788f39c3465d694d852cdc43",
+        "mode": "100644",
+        "bytes": 21109,
+        "sha256": "89a1dcc50df887ba722b05b8439b3f28b53588efc196c3e5579301cf16b293f3"
+      },
+      "after": {
+        "gitBlob": "41b9a6838c05663b759a246a7d8693c0bfb82c8e",
+        "mode": "100644",
+        "bytes": 22450,
+        "sha256": "c92f228310938ac6037c4e065f02ff71de137770e30a8cb368bf776a5147d9c8"
+      }
+    },
+    {
+      "path": "apps/guardian/lib/ui/usage_reports_view.dart",
+      "change": "MODIFIED",
+      "before": {
+        "gitBlob": "1d766ccda01b8e03ce5e26b6b83be44da895e22a",
+        "mode": "100644",
+        "bytes": 32506,
+        "sha256": "6fa3921d315633171c78fe5cf771dc2aebf436157cd23c3f2ee4c16764689526"
+      },
+      "after": {
+        "gitBlob": "e8f567f12014e9d1a7c2b54357a040a98d671b0b",
+        "mode": "100644",
+        "bytes": 33639,
+        "sha256": "bbf14588f26a5a8fbc0f8c729e3671031829c2d4c9fcea54db33a46258e4a4e1"
+      }
+    },
+    {
+      "path": "apps/guardian/test/usage_reports_scope_browser_test.dart",
+      "change": "ADDED",
+      "before": null,
+      "after": {
+        "gitBlob": "4b3bd282dbc7c263b883c51c3166ad3b65b5b9a3",
+        "mode": "100644",
+        "bytes": 47212,
+        "sha256": "38bcdf8e624db06af0dcc5368ca12e70ae6900a22d03b4ea0131cd8a3aabdeb8"
+      }
+    }
+  ]
+}

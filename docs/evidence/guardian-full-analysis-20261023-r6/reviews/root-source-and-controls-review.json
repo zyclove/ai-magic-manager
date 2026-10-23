@@ -1,0 +1,44 @@
+{
+  "status": "ROOT_INDEPENDENT_STATIC_REVIEW_MATCHED_EXECUTION_UNRUN",
+  "atUtc": "2026-10-23T05:38:22.489941+00:00",
+  "head": "88871eb69f16012e04ad4d8aa58209edea791e4a",
+  "sourceFiles": 408,
+  "rawCommittedGitBlobsMatched": 408,
+  "mainAndFrozenMembershipMatched": true,
+  "mainRawDifferencesOnlyCrLf": [
+    "apps/guardian/lib/ui/quota_balance.dart",
+    "apps/guardian/pubspec.yaml"
+  ],
+  "modified": [
+    "apps/guardian/lib/pages/console_pages.dart",
+    "apps/guardian/lib/pages/usage_reports_page.dart",
+    "apps/guardian/lib/ui/owned_dialog_route.dart",
+    "apps/guardian/lib/ui/usage_report_device_picker.dart",
+    "apps/guardian/lib/ui/usage_report_job_dialog.dart",
+    "apps/guardian/lib/ui/usage_report_jobs_view.dart",
+    "apps/guardian/lib/ui/usage_reports_view.dart"
+  ],
+  "added": [
+    "apps/guardian/test/usage_reports_scope_browser_test.dart"
+  ],
+  "packageRows": 70,
+  "internalRootsRebased": 7,
+  "original46CaseMetadataPreserved": true,
+  "preparedCases": 67,
+  "physicalSuites": 6,
+  "r6PinsMatched": 156,
+  "r5PinsPreserved": 101,
+  "controllerNativeByteIdentical": true,
+  "changedWorkerAstNodes": [
+    "FROZEN",
+    "INPUT_SHA256",
+    "source_check"
+  ],
+  "budgetUnchanged": true,
+  "cacheProjectionByteIdentical": true,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "dartParseRun": false,
+  "runtimeAcceptance": false,
+  "attemptCreated": false
+}

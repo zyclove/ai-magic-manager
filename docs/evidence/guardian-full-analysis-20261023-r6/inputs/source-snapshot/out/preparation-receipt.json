@@ -1,0 +1,44 @@
+{
+  "status": "SOURCE_AND_METADATA_ONLY_NOT_EXECUTION_PROPOSAL",
+  "sourceCommit": "88871eb69f16012e04ad4d8aa58209edea791e4a",
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\source-manifest.json",
+    "bytes": 243867,
+    "sha256": "5ff8304370d890089517f78f7a5f7f5f99e894a3c31dd969f80edca7a830fcc7"
+  },
+  "sourceTreeSha256": "de0c81e9a1e044462646a33e62317869600ed53fa73a637912d80ae75b0b95e3",
+  "sourceFiles": 408,
+  "sourceBytes": 3928993,
+  "mainRawDifferenceCount": 2,
+  "old46NamesAndMetadataPreserved": true,
+  "expectedCases": 67,
+  "caseCounts": [
+    8,
+    4,
+    19,
+    7,
+    8,
+    21
+  ],
+  "expectedCaseContract": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\expected-cases.json",
+    "bytes": 38207,
+    "sha256": "16137a4d38c0c96955ae845bad481e6adc5c9780f87ca32f4829950345ae031a"
+  },
+  "preparationReview": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\preparation-review.json",
+    "bytes": 6623,
+    "sha256": "a6f8eba446f080ba1b8ae4835a2de886cf6f6f49a9fe48018fa570e3e1a41e46"
+  },
+  "deliveryInventory": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\delivery-inventory.json",
+    "bytes": 78900,
+    "sha256": "8c3a92b83099362d74787e85ebea98538f099db8fa538fac8e9777e12c38f825"
+  },
+  "sdkCalls": 0,
+  "testsRun": false,
+  "controllerOrWorkerImported": false,
+  "validationWorkerCreated": false,
+  "executionApproved": false,
+  "attemptExists": false
+}
