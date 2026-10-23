@@ -1,0 +1,20 @@
+{
+  "status": "ONE_REDUNDANT_ASSERTION_REMOVED_RUNTIME_RECHECK_PENDING",
+  "atUtc": "2026-10-23T06:08:13.736328+00:00",
+  "sourceParent": "a55849d902b248fe02d06e23cd0bad3d28912a27",
+  "path": "apps/guardian/lib/pages/observation_page.dart",
+  "before": {
+    "bytes": 11504,
+    "sha256": "63111f7117aebfcd19ce61579ff77fe2eef95fd3e4914035a5fd6c810f115644"
+  },
+  "after": {
+    "bytes": 11503,
+    "sha256": "ac0e30966f2a5c5f6b65dc12a8445a3ae7d52d8cda45cbb979b0b58a18e83816"
+  },
+  "actualRedSession": 1854,
+  "actualRedFinalChunk": "dff5b1",
+  "diagnostic": "unnecessary_non_null_assertion",
+  "functionalityChanged": false,
+  "testsRun": false,
+  "analysisRecheck": "UNRUN"
+}

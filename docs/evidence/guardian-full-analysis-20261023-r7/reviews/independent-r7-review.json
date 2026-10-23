@@ -1,0 +1,169 @@
+{
+  "status": "R7_STATIC_REVIEW_NO_BLOCKER_UNRUN_NO_GRANT",
+  "blockingFindings": [],
+  "sourceCommit": "a55849d902b248fe02d06e23cd0bad3d28912a27",
+  "sourceFiles": 409,
+  "proposalPinsMatched": {
+    "candidate": 12,
+    "controlRuntime": 11,
+    "historicalMetadata": 189,
+    "total": 212
+  },
+  "proposalInputsSealFixedPinsMatch": true,
+  "r7Core16FileMembershipMatchNoAttempt": true,
+  "separateUnexecutedRootReviewMetadataNotPartOfProposal": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\external_observe_root.py",
+      "bytes": 5398,
+      "sha256": "876f46dc2e982ae5aa1784b922bebcf86cd153d1de3a5d377ac06745860229d8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\root-static-review.json",
+      "bytes": 621,
+      "sha256": "da85656e85514a50067c62866fdb67a85e20e76da76fca1a00accf202a23a46c"
+    }
+  ],
+  "r6Original156RowsExactlyRetainedAndPinsMatch": true,
+  "controllerAndNativeByteIdenticalToR6": true,
+  "workerChangedTopLevelAstNodes": [
+    "assignment:FROZEN",
+    "assignment:INPUT_SHA256",
+    "function:source_check"
+  ],
+  "workerWholeTextEqualsOnlyApprovedMechanicalReplacement": true,
+  "workerUnifiedDiffIndependentlyRecomputed": true,
+  "inputChangedFields": [
+    "cacheManifest",
+    "candidatePackageConfig",
+    "candidatePackageConfigTemplate",
+    "createdAtUtc",
+    "dependencyLibraryPins",
+    "scope",
+    "sevenRootGitTrees",
+    "sourceCommit",
+    "sourceManifest",
+    "sourceMembershipCheck",
+    "sourceTreeSha256"
+  ],
+  "allOtherInputFieldsUnchanged": true,
+  "unchangedProposalPolicyFields": [
+    "schemaVersion",
+    "executionApproved",
+    "sdkCalls",
+    "testsRun",
+    "phase",
+    "phaseScope",
+    "sourceRoots",
+    "controlRuntimeFiles",
+    "outerMetadataFieldRetainedFromController",
+    "outerBudgetSeconds",
+    "terminationReserveSeconds",
+    "outerSoftCutoffSeconds",
+    "workerBudgetSeconds",
+    "commandCapSeconds",
+    "commandCleanupReserveSeconds",
+    "minimumPostflightReserveSeconds",
+    "minimumRamBytes",
+    "minimumEachDiskBytes",
+    "sdkNames",
+    "command",
+    "attemptSingleUse",
+    "noSelectors",
+    "noPub",
+    "noCacheCopy",
+    "cacheManifestSha256",
+    "cacheTrees",
+    "fixedRuntimeFiles",
+    "cacheFiles",
+    "fullPreflightAndPostflightRequired",
+    "nativeProcessHandleRetained",
+    "nativeNestedJobHelperByteIdentical",
+    "anyTimeoutOrForcedTerminationIsNotAccepted",
+    "naturalZeroAndNoIssuesLogRequired",
+    "runtimeWatchdogVerifiedForThisCandidate",
+    "rootActualExternalObservationRequired",
+    "processLocalEnvironmentOnly",
+    "entireSdkOrBrowserInstallationPinned",
+    "snapshotMtimeComparedToPubspec",
+    "snapshotContentPinned",
+    "sdkToolPubspecNotNewerThanLockRequired",
+    "parentCacheManifestSha256",
+    "cacheProjectionExclusion",
+    "frozenSourceSnapshotWrittenDuringPreparation",
+    "mainSourceWrittenDuringPreparation",
+    "sourceCopied",
+    "independentGrantRequired",
+    "automaticChaining",
+    "externalStrictDeadlineBoundRequired",
+    "budgetSupersedesEarlierStaticPlan",
+    "dynamicCommandDeadlineWorkerRelativeMaxSeconds",
+    "dynamicCleanupWorkerRelativeMaxSeconds"
+  ],
+  "fullGuardianNoSelectorsAnalyzeFatalInfosFatalWarnings": true,
+  "budget": {
+    "outerHard": 180,
+    "outerSoft": 174,
+    "worker": 165,
+    "commandCap": 150,
+    "cleanup": 5,
+    "postflightReserve": 25,
+    "dynamicCommandMaximumWorkerRelative": 135,
+    "dynamicCleanupMaximumWorkerRelative": 140
+  },
+  "cacheProjectionByteIdenticalToR6": {
+    "trees": 70,
+    "fixedFiles": 32,
+    "files": 3536,
+    "bytes": 633817159
+  },
+  "cacheAndRuntimeAlgorithmsUnchangedByExactWorkerProof": true,
+  "fullRuntime3536CacheContentsRehashed": false,
+  "r6ActualAcceptanceEvidenceRetained": {
+    "session": 35555,
+    "originalObserverStatus": "ANALYSIS_BYTES_AND_ACTUAL_TERMINAL_INDEPENDENTLY_MATCHED_AWAIT_FRESH_SYSTEM_GATE",
+    "separateRootFinalGateStatus": "FULL_GUARDIAN_ANALYZE_EXTERNALLY_ACCEPTED",
+    "formalRelease": true,
+    "acceptanceNotInherited": true
+  },
+  "limitations": [
+    "Static Python AST/text/hash and historical metadata evidence only; no SDK, Dart parse/analysis/compile/browser/test, native function or candidate import/call.",
+    "Historical dependency seed errors remain unchanged; complete runtime/cache pre/post integrity and fresh resource/SDK0/unknown0 gates are still execution requirements.",
+    "Same approved r6 controller/native is retained, including external strict real terminal deadline observation requirement. Root must independently verify actual natural0/no diagnostics, complete postflight, Job0 and final fresh system gate before acceptance.",
+    "No analysis acceptance or execution grant is created by this static review; current409 analysis and all80 browser cases remain UNRUN."
+  ],
+  "sdkCandidateNativeNetworkProcessApiCalls": 0,
+  "mainGitOrFrozenWrites": false,
+  "executionApprovedByReviewer": false,
+  "reviewedPins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\proposal.json",
+      "bytes": 56463,
+      "sha256": "2c1c4e32c0255b3a3eaa4272058ef5eb5f2e5388e5eb58b45d5a1ceb6d37ef36"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\seal-receipt.json",
+      "bytes": 1997,
+      "sha256": "07f73d81f4e45f8501bad2a71e027904d1eef281376d9e6aa7131f51c128df0a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\inputs.json",
+      "bytes": 7013,
+      "sha256": "1f6f40ba9dd55123bb3a7da37078224dc32c84e7d0694109fd5c21c55a10ff70"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\worker.py",
+      "bytes": 24527,
+      "sha256": "8d873855983b7d63e277def43136471a6d95d756af2aa1a1ef9b45b6b32e41ca"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\attempt\\external-observation-root.json",
+      "bytes": 1250,
+      "sha256": "ba433ef511f6b42c5606c952c9b84be66cf90a8acdb264e7609d6ed565ffb695"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\attempt\\root-final-system-gate.json",
+      "bytes": 908,
+      "sha256": "bb6c04e55c9cc296aec3dfbf9f7d072d47bbe821e23627c8de53dfb7fe45a433"
+    }
+  ]
+}

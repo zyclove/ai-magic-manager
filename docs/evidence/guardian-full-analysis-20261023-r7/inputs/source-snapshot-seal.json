@@ -1,0 +1,2147 @@
+{
+  "schema": 1,
+  "status": "STATIC_SOURCE_METADATA_SEALED_NO_EXECUTION_AUTHORIZATION",
+  "createdUtc": "2026-10-23T05:56:37.773754+00:00",
+  "sourceCommit": "a55849d902b248fe02d06e23cd0bad3d28912a27",
+  "sourceTreeSha256": "ddf027a0292fb2e06ac069a60bc03c87676fbeb4efc3d6f4a23186da0c87110a",
+  "sourceFiles": 409,
+  "sourceBytes": 3956604,
+  "files": [
+    {
+      "path": "generated/guardian-package_config.json",
+      "bytes": 15736,
+      "sha256": "9391dba658c5309fe6c1aa95dfb7586e74ea12bc2465463a7f53ee84a83e8ce6"
+    },
+    {
+      "path": "generated/main-package_config-original.json",
+      "bytes": 15171,
+      "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7"
+    },
+    {
+      "path": "generated/reference-source-name-contract-browser38.py",
+      "bytes": 5887,
+      "sha256": "7fe208bdb1cf46307185343fdc249a4e99fa2879dba44cff165d04675dc7f77b"
+    },
+    {
+      "path": "out/delivery-inventory.json",
+      "bytes": 79101,
+      "sha256": "63a5c9e7328885b7c715afca02859d7d8df797fb20a6a7ae818de5a627fe951a"
+    },
+    {
+      "path": "out/delta-from-source408.json",
+      "bytes": 2039,
+      "sha256": "8536259d248e0beca29a22da1f2d712549e877a614a31105ccbc0e804a8be59a"
+    },
+    {
+      "path": "out/dependency-library-pins.json",
+      "bytes": 360145,
+      "sha256": "972121e9a6659bcd68a0734ee44df8e7670045eab3bb177f60c58558d0963815"
+    },
+    {
+      "path": "out/expected-cases.json",
+      "bytes": 46718,
+      "sha256": "fe7e3471ef3d3797a95360d53a70b668b785aa7034e96799650c5f91e2e3025f"
+    },
+    {
+      "path": "out/preparation-receipt.json",
+      "bytes": 1622,
+      "sha256": "8dd562e515fabfbccb7dc93c281d2b2b5dcc9f4b82c143d78387fc6329db74de"
+    },
+    {
+      "path": "out/preparation-review.json",
+      "bytes": 6856,
+      "sha256": "a0c2b42caa8b54e65d3c4f7481efa99209b76fed3f76f97988049dcee9325cab"
+    },
+    {
+      "path": "out/prepare_static_source.py",
+      "bytes": 26158,
+      "sha256": "46d0f50b9f83a169ccf32159d24c24487362340932fcdeb574943a216c97e64f"
+    },
+    {
+      "path": "out/source-before408-manifest.json",
+      "bytes": 243867,
+      "sha256": "5ff8304370d890089517f78f7a5f7f5f99e894a3c31dd969f80edca7a830fcc7"
+    },
+    {
+      "path": "out/source-directory-list.json",
+      "bytes": 24781,
+      "sha256": "e3db4141a2f8a13fc4779a12a98b72bfd9b553dad9a0b16e5ed75736ea86f42f"
+    },
+    {
+      "path": "out/source-manifest.json",
+      "bytes": 244476,
+      "sha256": "a23441e3f91224f86296a1b5b3ada8c7b2a8d5189c2ce36bfb6510a7ed0347b5"
+    },
+    {
+      "path": "src/apps/guardian/.dart_tool/package_config.json",
+      "bytes": 15736,
+      "sha256": "9391dba658c5309fe6c1aa95dfb7586e74ea12bc2465463a7f53ee84a83e8ce6"
+    },
+    {
+      "path": "src/apps/guardian/.gitignore",
+      "bytes": 734,
+      "sha256": "a36ca275533062651096c69c910d5c78aa0a8e572d431bf0de5b2b506161633d"
+    },
+    {
+      "path": "src/apps/guardian/.metadata",
+      "bytes": 964,
+      "sha256": "5c7a89dc1a45b54d84f36a0a62d4546b2061e0fecca46a06dbd2770ac8c2f37e"
+    },
+    {
+      "path": "src/apps/guardian/analysis_options.yaml",
+      "bytes": 1448,
+      "sha256": "b63207cf529949ec4727b68c23dbb38ce255b6f6f4ae1effcb5c1dcf2852d238"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/access.dart",
+      "bytes": 3047,
+      "sha256": "eab2c1299a3c27cd2ac7358ba4642e8edab9baefec6b8e7bbf3f233a501665ad"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/api.dart",
+      "bytes": 22640,
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/application_classification.dart",
+      "bytes": 2159,
+      "sha256": "ed04cf9823f670688d603576b08f5a39759e6a975d533f25bdd7814f86fe78b7"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/audit.dart",
+      "bytes": 1626,
+      "sha256": "ee067fa9e3b2c1b6bc7bae32bf5877c4cc2146961b8dcb6d13980b5cff3f3fae"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/audit_exports.dart",
+      "bytes": 6060,
+      "sha256": "c217342853057d6ea1f1140b330843307b7bc212a42c77298f35b90b3cdfb541"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/bounded_json.dart",
+      "bytes": 6327,
+      "sha256": "ca3bf7b46cc346bd003f9fcff712611d38cd55655bf492e975fc50e79bd1180b"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/browser_enrollment_journal.dart",
+      "bytes": 704,
+      "sha256": "95f94130f32c7f6b77bcd95805e673f4ad48e148c66c55b3313b5e6a054f4175"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/browser_execution_operation_journal.dart",
+      "bytes": 12609,
+      "sha256": "24a951c0c87a2ff868586433746d0099572ee688778bce975ed35c1945ccd566"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/browser_json_download.dart",
+      "bytes": 813,
+      "sha256": "bfa03aec32c6d486781290e973366cd9586a3a8e72ae0b9b754157ca32877af3"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/browser_publication_journal.dart",
+      "bytes": 18885,
+      "sha256": "306a1b7b75d716e07def7b067e6b12859d444d2d8fcffeb45b2263c12305e885"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/commercial_catalog.dart",
+      "bytes": 8417,
+      "sha256": "3b97d037dd9f68508ed21ce422258164b167dadb59c67a0f7255542385c4e0c1"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/commercial_catalog_repository.dart",
+      "bytes": 4147,
+      "sha256": "57aa6dea7df9491907ec8f8e8cc1f21484f45e038acd62133ffe1874c6411777"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/commercial_entitlements.dart",
+      "bytes": 2708,
+      "sha256": "4fcbc7af7a5b0d8eca6daf81002235300ad8e35b89db3ab9b62e69f8f6fff17b"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/commercial_repository.dart",
+      "bytes": 1264,
+      "sha256": "0da4e5a84dc1fb63c681f3bc974f5b1e239961dbcb914f32d050832ef777edc7"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/contract_action_resume.dart",
+      "bytes": 1836,
+      "sha256": "d1ea3353c53a6b58025be099ca0d211f6f7528c939ae24b29e3d68c07894fe24"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/contracts.dart",
+      "bytes": 152,
+      "sha256": "1905e2ffb9e24f8fe8adc666ae0454eeed1e3e1064583289c0234e76dc41b204"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/contracts_repository.dart",
+      "bytes": 6308,
+      "sha256": "d8f779b24e20038f6a722afd1a41b1d236e5e8af27faff27d77740aa9d409cfe"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/device_diagnostic.dart",
+      "bytes": 9665,
+      "sha256": "0d955a8f150622ba3f39ff2a1daed41b925d4dd3c234ba52e581fea752be629c"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/device_group_summary.dart",
+      "bytes": 1801,
+      "sha256": "ff2a05cfd39aa4eee5b577b320c6e413d202cf927666bce556bac2c61f75a41c"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/device_management.dart",
+      "bytes": 20055,
+      "sha256": "4615e4869803dd80911dcd7f8e46006decfc12f83937fbe0d4174f78bc94a89b"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/diagnostic_package.dart",
+      "bytes": 13325,
+      "sha256": "10858a1035f416cbd9a70082d0ca56e9eddf688e0a5521afaf6a23860b3f57bf"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/diagnostic_package_repository.dart",
+      "bytes": 4372,
+      "sha256": "aab8d417ead4ad477255a7ccc12ac45cee93f0ba3e705f9d809d638228b38232"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/diagnostic_repository.dart",
+      "bytes": 4598,
+      "sha256": "6140251402f88ba42ac632a8c78f158719df1638355cd471aee364cb700c1998"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/enrollment_journal.dart",
+      "bytes": 6613,
+      "sha256": "dd6b856d97234f764eb91e420bb623d4228305513dd1444f1dda9adb6d9924ef"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/enrollment_recovery.dart",
+      "bytes": 20733,
+      "sha256": "88d37239c5c5db68dcf42abd3b0a1dd3666ede3c7e09f7af307f7b0bf561069e"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/enrollment_ticket.dart",
+      "bytes": 329,
+      "sha256": "f6a656179fa6bb5afd6a18cfbd7eb4296b9cc66226787c9c50138a56bbe96f87"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/execution_operation_journal.dart",
+      "bytes": 6784,
+      "sha256": "9efb9ed2ff24a23d41e81b138702d8b22ec524f70c29e8134967ef4c02977a48"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/family_finance.dart",
+      "bytes": 16037,
+      "sha256": "e7ac217c275359cd70b9e2e23bf419f01fc34a738a99313de912cb502ab15a35"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/family_finance_storage_stub.dart",
+      "bytes": 485,
+      "sha256": "be64a61b9ffcc07162553faece9acd0e6e4e9bc099459bf68cd1097a06031dfc"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/family_finance_storage_web.dart",
+      "bytes": 519,
+      "sha256": "94d56d61f614fe95687f92880b884e2729d8217bbce1b60f31f7dd3ff9056250"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/family_identity_acceptance.dart",
+      "bytes": 3913,
+      "sha256": "1df8baa8e319c05e85b8b9c57ef1d38ae52b3b8c2684088f2c2489b6ed71cc5a"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/family_identity_configuration.dart",
+      "bytes": 15535,
+      "sha256": "9c7a9f85dc6b5c62448f11ca851e83cd5877cf46d76b19e7de923e098d03a375"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/family_identity_controller.dart",
+      "bytes": 21407,
+      "sha256": "b6d0acc67bef87f0b7092854bd4661b249d0a6cfae3400bf9feabe18ec0125db"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/family_identity_release.dart",
+      "bytes": 8845,
+      "sha256": "69f55bbc352c1a3abd1028cfbe315fc3154205e5e19ff2d1c0caa07f9b940b82"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/family_identity_repository.dart",
+      "bytes": 13268,
+      "sha256": "14118a0b7754401ce6121f7151775b9bba8405248c132bd4b3256d1e3b534990"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/finance_storage_port.dart",
+      "bytes": 145,
+      "sha256": "bad8e8acd9d310ac25ff6666378428e5f169beff846ab201a63cc46e3ffb31f3"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/help_requests.dart",
+      "bytes": 2496,
+      "sha256": "2e92c25e0d7845ddbc73e3841798e0e9a8977f3cedf5f9a02446bd5ca457a3cb"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/labels.dart",
+      "bytes": 7829,
+      "sha256": "af993d51e8f460bada004033c86b59193d7a5a933ce54e0a363f79cec1f3161a"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/local_date.dart",
+      "bytes": 1133,
+      "sha256": "691c879aac7431d5e2c0f263d2caae426e57b2faa4e57068aa1aed596fdb64fb"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/managed_agent_binding.dart",
+      "bytes": 8200,
+      "sha256": "0ae0391af3b08c70674b16bc1df30c27706948ea24948f7af251fcffcdf45d19"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/managed_agent_binding_repository.dart",
+      "bytes": 3702,
+      "sha256": "17296c43970e329474230210e335857d55627ca3c1ad01a3232fb2b7f251e3d6"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/managed_android.dart",
+      "bytes": 15191,
+      "sha256": "6bf83b6a6a7b5adc5c4b0c7e429bac7e833ae0c332dd641856ead35abcb76931"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/managed_android_repository.dart",
+      "bytes": 8344,
+      "sha256": "c9db5bc3ff4f219d37424a90f35945dfa92093bb3f6491be55337d2c6e0eba37"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/managed_application_evidence.dart",
+      "bytes": 13140,
+      "sha256": "de09d4ba4717a1aff84422cf5056bf2e0773090a7ea736043c2f52a70eeb18aa"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/managed_control_summary.dart",
+      "bytes": 4985,
+      "sha256": "9b9776564723a6cfada3b401c0160f90d43a2308b510fd1382e1fd917bf90e04"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/managed_execution.dart",
+      "bytes": 9100,
+      "sha256": "266a9b162fc5d742cf7cd7bb6695bdedcb931c287e33935219d36879f37e8eec"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/managed_execution_repository.dart",
+      "bytes": 5037,
+      "sha256": "60676d015a400d8f09ebf28ae318079c382df5840825ca6870583e195810e67f"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/managed_execution_review.dart",
+      "bytes": 7635,
+      "sha256": "b054e9481b8fdecc03852fe5fd8880152fbd9b95ab20c0a0c4c26fff18e1fe51"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/managed_execution_review_repository.dart",
+      "bytes": 5924,
+      "sha256": "4b4a5e6d47eed63afab9751c1f3bbec420071143f99213024bc102c468cd6760"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/member_access.dart",
+      "bytes": 2231,
+      "sha256": "ee2aa505ea3f6085393dec9e64fc43268a7d44a279e58559c49569d3a3587a7b"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/notifications.dart",
+      "bytes": 1326,
+      "sha256": "bf7a88811bf3034f811d13c1e3d3e3d7102cb66169de9fbd4affe8c63ac823c9"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/observation.dart",
+      "bytes": 11934,
+      "sha256": "1f6ce778078d2a0b11dd2a6ace5d317eb862c98e46e45d17f3fe167f0b440638"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/overview_summary.dart",
+      "bytes": 2198,
+      "sha256": "5fdc0f4a130fd30c82571f96daac8697d81a25e96463fb430efc390cdc99170e"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/permission_observation.dart",
+      "bytes": 4105,
+      "sha256": "efd14b63c8434689fbb88ceb4d0a6a0161320142ad5b793221ba15c4d7f9e0b6"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/policy_publication.dart",
+      "bytes": 14949,
+      "sha256": "918374d7a884917e0bf0b8e7d9dda63600031a018d25ac783fec0a2f2f4a6cd6"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/policy_publication_repository.dart",
+      "bytes": 7015,
+      "sha256": "29a99e6abf117e1e8053c4d4ee936b267644d4b684452468b2791f66094bcb85"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/publication_journal.dart",
+      "bytes": 2119,
+      "sha256": "d3fc867f57c30a7f66c13f79158b773c09aaac7b3399ca38a3b9310bb063b69d"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/report_configurations.dart",
+      "bytes": 297,
+      "sha256": "acadf0cbf19079a9e2630c34d0c35f636d147138cf4a00756347cbe057823c82"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/report_job_resume.dart",
+      "bytes": 1596,
+      "sha256": "dc66350638d775e0a7a8c01c7c6c492fa88aa3a2b6894764b9d4e86ba8d22c6a"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/rule_parameter_labels.dart",
+      "bytes": 1026,
+      "sha256": "30b1c3cee64653f872aa79688c2e35f025658fad035732f67c10f4344920c70b"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/scoped_http_client.dart",
+      "bytes": 7888,
+      "sha256": "dc8653e88438bc9678c28e634f9a176db86493a601fede7f2db15df54c1c61ad"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/session.dart",
+      "bytes": 14334,
+      "sha256": "2c0c354df653359c24619fc1be3162030ae503127bbd3dd1a6ec2b96fce2a864"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/support.dart",
+      "bytes": 9188,
+      "sha256": "2182084d9bdb855702dc623683ab2ac7bd715c4ff04faf66f39d44cf055aeca3"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/support_diagnostic.dart",
+      "bytes": 4154,
+      "sha256": "a4309ba85f07c871b477a777730eb5c8c85af3a481bb0cfe6457b05c6fc6afa8"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/support_repository.dart",
+      "bytes": 8507,
+      "sha256": "c800e6cd4fbf6f42fdbd5de88dfc2c245ea62989ea9ce78731fde0f6b9935f8a"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/usage_report_jobs.dart",
+      "bytes": 13260,
+      "sha256": "454feee93a204d308a44289f11ded7b226511e31bd91feff07c8bd78060dd896"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/usage_reports.dart",
+      "bytes": 4373,
+      "sha256": "0f1ab0b6db47cfcc7798e55715347b12dadc5a674f27bdafbef65b0e729726a4"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/usage_trends.dart",
+      "bytes": 176,
+      "sha256": "6ed72bdf789df6fd7c63ff02720774ad512665701e3c825a6b1118e6d5577418"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/wellbeing_insight.dart",
+      "bytes": 4512,
+      "sha256": "6b9580edd7b1648cc881bca56c85cd90ded34c68942cf61c3d6a1c5542c72443"
+    },
+    {
+      "path": "src/apps/guardian/lib/core/workspace_read_recovery.dart",
+      "bytes": 602,
+      "sha256": "cac9d629c3bb2ce1da800e470dd943c578604b5a7fa1f98cd9c4521fe72c0f97"
+    },
+    {
+      "path": "src/apps/guardian/lib/main.dart",
+      "bytes": 6828,
+      "sha256": "a1a1221bb89b86ae2d29d648594822d8991478d24c4ad2109437527322de0c1b"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/audit_exports_page.dart",
+      "bytes": 2574,
+      "sha256": "fad07fd2d90eda7e2413a9778500aca113d22f6b34c05b72411aa30acaa3d932"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/audit_page.dart",
+      "bytes": 4436,
+      "sha256": "cc0cde463bf0b2fb6f90ba655938d6bd8fcb5e92612a6aa5490a103e357e9358"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/classes_page.dart",
+      "bytes": 19780,
+      "sha256": "0b608bf9b96e0e7f9c66433c55b503e6413e72a61741e57970094e3aedcfa856"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/commercial_account_page.dart",
+      "bytes": 3288,
+      "sha256": "d7edd0b898845ace76ffdd1aa637cce712ca2d29371bfc6dd8359376a1de6a62"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/commercial_catalog_editor.dart",
+      "bytes": 19300,
+      "sha256": "f27c2d7a97e87b4eb7ed1aeab6965a2ea47405f9710b43af24bcae644ded301e"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/commercial_catalog_page.dart",
+      "bytes": 22334,
+      "sha256": "8707f8c041af44e6c790c1d31f7ea1cdaf41ad014152641ea9eb107f427ae12f"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/console_pages.dart",
+      "bytes": 87392,
+      "sha256": "e0d76e148ff4d629e96f3ba4e9abdf760136e7a1b78fe454021a71414dab28e6"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/contracts_page.dart",
+      "bytes": 35091,
+      "sha256": "6d32ef2b41d73000333a02d9f1fc87bd46f206ddf773c27ba3a1b9d83b0fd898"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/device_capabilities_dialog.dart",
+      "bytes": 8398,
+      "sha256": "f68d982dd2b740bf12fd4a3057ec7e39e9b5f252ce9610ddecef291e47d3b7b0"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/device_diagnostic_dialog.dart",
+      "bytes": 1976,
+      "sha256": "d39982d236676428a189002d632b44b6109206877e9f33fa472a7ae841dcf21f"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/device_exit_dialog.dart",
+      "bytes": 4832,
+      "sha256": "dde0fde5ea64b5cd971872bee2d1c88bd62c2f49a62bf0730b026163ff4ed1c7"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/device_groups_page.dart",
+      "bytes": 34590,
+      "sha256": "749ce2d4666bd5cbf1923621b1c7f6e31d4d85df391fe4b18e10e9a09d2bb486"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/device_subflow_scope.dart",
+      "bytes": 1512,
+      "sha256": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/diagnostic_packages_dialog.dart",
+      "bytes": 2959,
+      "sha256": "e885c2a7ec6adcae6f7e54ce6cb3bc9efb4326576be37f128ec06c46a59ea0ad"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/editors.dart",
+      "bytes": 46420,
+      "sha256": "c06f9f20545af8eb7929e50354c708193b151e56ca6637a7568988a6d97e0554"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/help_requests_page.dart",
+      "bytes": 8956,
+      "sha256": "f8267df461953840dfa4d6f74b3d33108eacab7a1f325a1d92968bdea1a095a0"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/managed_android_page.dart",
+      "bytes": 28756,
+      "sha256": "3e35d8f90fda4fe818843d28552a02bdb91c7f3945e723424b4c0f8b6c5d6937"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/managed_android_review_page.dart",
+      "bytes": 21443,
+      "sha256": "a6c782cb257153cfa8075d37120388e66682820fdcfa9b7cce76d97235fc6103"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/managed_application_evidence_entry.dart",
+      "bytes": 4908,
+      "sha256": "c043ae1d77a3cfc0be72b95fd69e9b3da9f42a0cb290431f3b7a8f65ee744c5e"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/managed_execution_dialog_entry.dart",
+      "bytes": 6825,
+      "sha256": "fa59a765af52a43bb7c7f5b2a32acdbd7c79e31af129bc944e2b05b9b531c6ff"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/members_page.dart",
+      "bytes": 17685,
+      "sha256": "e11751c5ab7361182fb3e03851ee043ec50bc9d0ba791b427236f0be316034ed"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/notifications_page.dart",
+      "bytes": 1872,
+      "sha256": "728693256dfba6909b47b619a97861133d57ed9ba0ecd91f829d4bf4059bbe8a"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/observation_page.dart",
+      "bytes": 11504,
+      "sha256": "63111f7117aebfcd19ce61579ff77fe2eef95fd3e4914035a5fd6c810f115644"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/ownership_page.dart",
+      "bytes": 10789,
+      "sha256": "8387b2e64fdd52678350689c76dcef8d958ca0764bef9ee7107647678b014907"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/policy_details_entry.dart",
+      "bytes": 23683,
+      "sha256": "621f9aeb686a2cc89d571a6916ccc07b54afa33df555f339b783b8f5d00bca0a"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/policy_publication_entry.dart",
+      "bytes": 8078,
+      "sha256": "2421071dadbcb6dc7ed39f98b9b68044819084a87b17d7ed4ee2f12679076a94"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/quota_page.dart",
+      "bytes": 13956,
+      "sha256": "158c68288b889d35229ee6b2c4212c328e531cb3efc2eed4e0c6c6a0860e7801"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/quota_plan_editor.dart",
+      "bytes": 19568,
+      "sha256": "d076f83498ebbb540da28e5b1e4e64f0a009c17e9521624a87945e58a79e8be5"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/quota_plans_page.dart",
+      "bytes": 12090,
+      "sha256": "3635e1a03eab26f663c4dc2d404abd61a84b6f546e2754f5a8450e20ef635d6a"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/scoped_overview_page.dart",
+      "bytes": 7941,
+      "sha256": "53cb8d803db3d5d3a89a6cc28d8d0ef3ef644e4d38427f0007b4b2fc9c3b1c7e"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/support_page.dart",
+      "bytes": 4875,
+      "sha256": "73cc30da97d0ae9f72ae8df784aaffa1bd521c53b44523aacd9355bee2bb7d92"
+    },
+    {
+      "path": "src/apps/guardian/lib/pages/usage_reports_page.dart",
+      "bytes": 11091,
+      "sha256": "d867d1bbf85f4deaa5392ff5fa519b7195ccc781d38e1af63dd8bac14aaaed12"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/access_request_dialog.dart",
+      "bytes": 16902,
+      "sha256": "74a0679c5ca404dec0a3fb48a8a86dc3b5c7942679e9d5bcc742f778d02f0ef0"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/application_classification_dialog.dart",
+      "bytes": 9018,
+      "sha256": "4a6e7370c938108c7dd0c4fa2db46687b0d59353741a90661ae3358ee82b6d50"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/audit_exports_view.dart",
+      "bytes": 12530,
+      "sha256": "977a0b82101c834784af284f02c4481268e4746c11f0f63ec74f9685f776a7af"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/audit_view.dart",
+      "bytes": 14665,
+      "sha256": "9c446b177a5bf9f3badb63b9f011d19a87c92eecd0303213d3bef34a5590ffc6"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/class_action_dialog.dart",
+      "bytes": 10284,
+      "sha256": "76924ad78dcf7aaba92eebc4c50e319f7a90d5252331ed8a0e20c5192c72dfb6"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/commercial_account_view.dart",
+      "bytes": 4461,
+      "sha256": "7ecea076c604e59a6652ab23fbaf355fc6109990c9424bfed159ea2d3fc6f634"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/console_navigation.dart",
+      "bytes": 13696,
+      "sha256": "200be76718b6ae4427324ab4ee06266abf51fd16eb2899b4005a3d7e2faddf23"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/device_group_batch_picker.dart",
+      "bytes": 10193,
+      "sha256": "a428576fdda28c1b531a513b2105c316e6f9aa3e69ed44675df4e7d63e7c5c8c"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/device_management_dialog.dart",
+      "bytes": 32289,
+      "sha256": "28e3be992e5e3a2454fefa677dfb74748840fdea0dbd2a48e4d4ce50c94dd380"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/device_observation_status.dart",
+      "bytes": 2330,
+      "sha256": "81b622f8e78c3bcbeff47552ef145df8f0699e2d344d8ced24726464b25edca4"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/diagnostic_packages_view.dart",
+      "bytes": 14543,
+      "sha256": "e2a877592dcf72f3994637b5d156cb35a216f5a08bffbb74937eb932f1a654f3"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/diagnostic_preview_view.dart",
+      "bytes": 14413,
+      "sha256": "b6d6d946e184aab70d7ee397e3f000c2d88e325f3e9f7fbd28e0206c324d2dc0"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/dialog_access.dart",
+      "bytes": 2748,
+      "sha256": "8fe7c3d9ee1b7a038dc08939ea5cd40572a411ced63a01ba6eb12a88e50145d5"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/enrollment_dialog.dart",
+      "bytes": 22876,
+      "sha256": "45d90e99285fe29280a5eb5d627d375497a37fafe308fb4e6ff201a97f9fa82b"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/export_create_dialog.dart",
+      "bytes": 5757,
+      "sha256": "823e93225cfbccfe87c95217e77836ab1dd83c4d833a59df2cb1f40910e76645"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/family_finance_page.dart",
+      "bytes": 37859,
+      "sha256": "fb46e880c30d350501148860977a06bcbb78d496fdf20d0086a66a29c009731b"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/family_identity_acceptance_panel.dart",
+      "bytes": 14149,
+      "sha256": "ef27614ba99c4ae26f34bedb5d04f59351996037d056ebc491807d872f4383b7"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/family_identity_editor.dart",
+      "bytes": 15553,
+      "sha256": "af24278f6b9067ad5f949bfa962a4514234a3d4fe66c05248f698dbb7d3f5fed"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/family_identity_page.dart",
+      "bytes": 16703,
+      "sha256": "73ee51b3cf822afefc323a28037a1437cf14f3155367e5df20608cdb0d066155"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/family_identity_release_panel.dart",
+      "bytes": 18417,
+      "sha256": "01b6d561fc6b6beab783a47ab91163439102af4edfe195afafb71759160a7bec"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/help_shortcut.dart",
+      "bytes": 4163,
+      "sha256": "8f89ac3184a8d10385eeed49708c458961e5a84daea0d9b656fe28f3e8f07b7b"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/managed_agent_binding_dialog.dart",
+      "bytes": 29433,
+      "sha256": "f86c1f475c508d0e456ae3bb0d16b40b6cbf644c9c585e4e4f6be75668171bdd"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/managed_application_evidence_controller.dart",
+      "bytes": 9209,
+      "sha256": "0cb2f5f50f41c8261eecb1555334d34681b524a0d43a346fcf5a70e930b0f858"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/managed_application_evidence_dialog.dart",
+      "bytes": 21391,
+      "sha256": "486af077a2460777de9f1173c08ecf778654c68c9ce92fade2cc0ceba9385d4d"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/managed_enrollment_form.dart",
+      "bytes": 4034,
+      "sha256": "d1175fe8d84ba4217727a1ad2aa360cf509cf421e884836dd261883829b17688"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/managed_enrollment_guide.dart",
+      "bytes": 6994,
+      "sha256": "34a4e181aa6dbebfeee0360248978d851baa76656e7065e8f10e1a5083b8fe9f"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/managed_execution_controller.dart",
+      "bytes": 11669,
+      "sha256": "29057db0d5161bd4d6b76f5cd0876f1ffc93c46a092165d6e1957ce324de7aa5"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/managed_execution_dialog.dart",
+      "bytes": 35605,
+      "sha256": "b2b783739a686dafe71c53d810436caf7d308efec22ac35110079f560330d4b0"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/managed_execution_review_controller.dart",
+      "bytes": 18723,
+      "sha256": "ab99684df697c37bab3d15b0da4fb83583ac3f61b6276b8d24cb7d189683b0aa"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/member_editor.dart",
+      "bytes": 24912,
+      "sha256": "d7a60dbd2f3197d4a9ce0a92485a4415dfd67ae40b2cd135b81d6d81f90ca838"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/notification_shortcut.dart",
+      "bytes": 2891,
+      "sha256": "264f090aa65e243a396264f536ebb92edef01e2b2d9e9775e51d64e81b458637"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/notifications_view.dart",
+      "bytes": 14473,
+      "sha256": "8bb6ef841cd151ff4de16492eab7850bb94cd430c16212a369473c4cb8d73b88"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/observation_editor.dart",
+      "bytes": 13560,
+      "sha256": "f6768b8558f967645467e008de7b594d322a975f680fad7cf5a1771b7cf76cd3"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/observation_view.dart",
+      "bytes": 9715,
+      "sha256": "2c0b734194b68cda1ef722d3471447e83edbeb33a8aaf1474f16347f68855374"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/owned_dialog_route.dart",
+      "bytes": 1419,
+      "sha256": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/permission_observation_panel.dart",
+      "bytes": 15241,
+      "sha256": "12658403f5b8c66d54a911d8ba98acc844ba71bf43df095c8ff4214fac26e89d"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/policy_preview_results.dart",
+      "bytes": 28770,
+      "sha256": "ac8ffb620400fd469d76f851f4e46def45156231e85b2909723811da9a309308"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/policy_publication_controller.dart",
+      "bytes": 22058,
+      "sha256": "8f7d4892ce93f6ebe1b590893cc775a1d8584716ac66ab2ac1856cd17485438a"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/policy_publication_dialog.dart",
+      "bytes": 21029,
+      "sha256": "6a746047e390e4cd20f9bba1ce14349f8d7587d7d325fa0f3e181725ba2fa6ab"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/policy_target_picker.dart",
+      "bytes": 30042,
+      "sha256": "dcf4e64365869d18eb9347f473aa042b042c265affc519296460caa6585de4f9"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/quota_balance.dart",
+      "bytes": 2679,
+      "sha256": "5bc73835fe10fb8a34b192aac9641ca54a7a72a270afea7c264fe8212f5ba51a"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/report_configurations_view.dart",
+      "bytes": 85,
+      "sha256": "8755e0f647240a5eec8b44f1247d1cb99fd4a4f421b5841465656ffd7aac6103"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/resource_page.dart",
+      "bytes": 17324,
+      "sha256": "c742e801e36910b278525c29228b33b8eb7a69606b53a9d210b535db0e4c35e3"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/shell.dart",
+      "bytes": 10236,
+      "sha256": "9d810d67c38eeb78f5e6f5e4132890efcad676f7a3d57466b5a4b2f410b50ff8"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/support_center_view.dart",
+      "bytes": 20430,
+      "sha256": "d6cd6843b34d3a76e95311cb972f5000f0a311b77cfa67f47b35c82a1f332e9b"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/support_diagnostic_details.dart",
+      "bytes": 4769,
+      "sha256": "94854a04c9e87d550bc02571f2621267f3af4ef19ff2455ed57c4a60753bfc1f"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/support_grant_view.dart",
+      "bytes": 13066,
+      "sha256": "7a3939ad4b0d6959b18839e71bb79b558e33b646189eb4ad97a990bf7a3ef992"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/support_view_state.dart",
+      "bytes": 5337,
+      "sha256": "4665f61c54ce56db3a721a76a2a9d1a07cad5c4344bd5a54752bc1c1b209b7c1"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/usage_report_device_picker.dart",
+      "bytes": 5485,
+      "sha256": "c5a08c51ef3a4cd169ae237d9b7ac928426ee0664ad8d45f3cfbfe9e0c1bd3f7"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/usage_report_job_dialog.dart",
+      "bytes": 7156,
+      "sha256": "c316ed59fdda8f8f00b51e28968df25116eacbb2c3116016e7f96b9bc42257f2"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/usage_report_jobs_view.dart",
+      "bytes": 22450,
+      "sha256": "c92f228310938ac6037c4e065f02ff71de137770e30a8cb368bf776a5147d9c8"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/usage_reports_view.dart",
+      "bytes": 33639,
+      "sha256": "bbf14588f26a5a8fbc0f8c729e3671031829c2d4c9fcea54db33a46258e4a4e1"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/usage_trend_view.dart",
+      "bytes": 75,
+      "sha256": "3cbbfce40251a672a7f6c3795a038c3eaef1e2c1bba4a62a72839cc073e60334"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/workbench_view.dart",
+      "bytes": 16385,
+      "sha256": "f9f3aae0f2ffd4f0895784f37355c670cfdd4c678a8f68a30be0aa6a15de850d"
+    },
+    {
+      "path": "src/apps/guardian/lib/ui/workspace_welcome.dart",
+      "bytes": 11840,
+      "sha256": "e0f08f577d54215080cdc86f803bf39852245bbf2647fb3bce94e8c6484fb14e"
+    },
+    {
+      "path": "src/apps/guardian/pubspec.lock",
+      "bytes": 15981,
+      "sha256": "a9591beb8b568839e7734f09727e1d588ab4caf400f1d5bb8470c7dab9c7501c"
+    },
+    {
+      "path": "src/apps/guardian/pubspec.yaml",
+      "bytes": 943,
+      "sha256": "51f00819245d30c60289b9c4ae13910d5ebd14a2cedfe1ef977375626ad77661"
+    },
+    {
+      "path": "src/apps/guardian/README.md",
+      "bytes": 4437,
+      "sha256": "a29162bc513e105bf35f95fb0b96fb417327cd671a383914c6ddc4eb37a99973"
+    },
+    {
+      "path": "src/apps/guardian/test/access_delivery_labels_test.dart",
+      "bytes": 1464,
+      "sha256": "b8739ba5fbf11c3ff91c98bcb0b4d5811b4d5e69ea355ee17661052dacd6927b"
+    },
+    {
+      "path": "src/apps/guardian/test/access_request_dialog_test.dart",
+      "bytes": 8499,
+      "sha256": "9d62d540d8d4d798376427dff95765af2ad080e306e74a999a50a60976415bac"
+    },
+    {
+      "path": "src/apps/guardian/test/access_test.dart",
+      "bytes": 2993,
+      "sha256": "b0c24e19a8821fcf64b24d542cb4400598e7e242fc31282946d6529afcecfcea"
+    },
+    {
+      "path": "src/apps/guardian/test/action_details_route_ownership_test.dart",
+      "bytes": 12877,
+      "sha256": "e136a57910a233cb126b550c4ba93a66822f3bbb4059b4f79f62f1d8271b796a"
+    },
+    {
+      "path": "src/apps/guardian/test/api_bound_scope_test.dart",
+      "bytes": 10678,
+      "sha256": "4968f5f287432325ac5105aca1b0b34a0757b9df002fc1f85154d58ed5ef645e"
+    },
+    {
+      "path": "src/apps/guardian/test/api_scope_test.dart",
+      "bytes": 10115,
+      "sha256": "8861f7b316e7df4460bfc06a09563c471e9e3b1f673d22651a08a674afcf8a9f"
+    },
+    {
+      "path": "src/apps/guardian/test/api_test.dart",
+      "bytes": 6111,
+      "sha256": "989cde51db12c6573461b0e3d048088007c67c1cfe1a6325416255cc708575da"
+    },
+    {
+      "path": "src/apps/guardian/test/application_classification_dialog_test.dart",
+      "bytes": 5268,
+      "sha256": "4258e0eed5a9541a1e35f5e767443dcc23fc74e5a7ff7142a4fb4af97b73c032"
+    },
+    {
+      "path": "src/apps/guardian/test/application_classification_scope_browser_test.dart",
+      "bytes": 20469,
+      "sha256": "50d5fb8f33c335f28c7a273e8d4b453ad526ef393fe497002df33e8ad555b9cf"
+    },
+    {
+      "path": "src/apps/guardian/test/application_classification_test.dart",
+      "bytes": 3649,
+      "sha256": "edbb8cb372043d6d6057da856f1d8e40315c657d388d87fe574f4a3f7f04a017"
+    },
+    {
+      "path": "src/apps/guardian/test/approval_help_flow_browser_test.dart",
+      "bytes": 13713,
+      "sha256": "845cb4f4b5a65cf126080861b7e29bd579a0101f5b3be437c1394bf7c0be0127"
+    },
+    {
+      "path": "src/apps/guardian/test/audit_export_route_test.dart",
+      "bytes": 6429,
+      "sha256": "beff27499cbf2a10eeb469c930027218a56c8094a803f2e471fdb76f16659d20"
+    },
+    {
+      "path": "src/apps/guardian/test/audit_exports_test.dart",
+      "bytes": 8364,
+      "sha256": "5cb7e268f4ab9f34aa945d90631acd63efc8d87b477e9b70928cd49001848a7c"
+    },
+    {
+      "path": "src/apps/guardian/test/audit_test.dart",
+      "bytes": 6765,
+      "sha256": "9c3067911062675c6408ad73f3e6ff98bda154c31298f5b15380294b00afe7de"
+    },
+    {
+      "path": "src/apps/guardian/test/bounded_json_http_error_test.dart",
+      "bytes": 7766,
+      "sha256": "f3e5aad2e76ab9741880cbcda90bd38c9bd2e5300fd274697a7a1c112424bbf5"
+    },
+    {
+      "path": "src/apps/guardian/test/bounded_json_test.dart",
+      "bytes": 9366,
+      "sha256": "6f4df42af1109371f5cf23fcb1c5f51b1d13a4f13cb149830bf23cc53ea373a1"
+    },
+    {
+      "path": "src/apps/guardian/test/browser_execution_operation_journal_additional_test.dart",
+      "bytes": 11464,
+      "sha256": "9879780c9e811edbfd6ce9bc250d8c3785f5ca87711e6d8f10b861b76003b260"
+    },
+    {
+      "path": "src/apps/guardian/test/browser_execution_operation_journal_test.dart",
+      "bytes": 5345,
+      "sha256": "6b9fa25eee238e43c8f10c64a0f90acf471eb2e1ae66c4c7311baebb1b07600b"
+    },
+    {
+      "path": "src/apps/guardian/test/browser_publication_journal_test.dart",
+      "bytes": 15881,
+      "sha256": "742ee295ceae9a02cbcc0e3aa1a4758a0805060672bdceea40943bcb99088446"
+    },
+    {
+      "path": "src/apps/guardian/test/class_action_dialog_test.dart",
+      "bytes": 3343,
+      "sha256": "8fd915ebfde7f27727034ddaec9f8caf0b1ef9691c4843187369b138f7a5234c"
+    },
+    {
+      "path": "src/apps/guardian/test/commercial_account_view_test.dart",
+      "bytes": 2299,
+      "sha256": "45315491e2ef8bbad99ba357e22ddfa4a858ecf6dbab56d9cf7da2e489d2e4b6"
+    },
+    {
+      "path": "src/apps/guardian/test/commercial_catalog_editor_test.dart",
+      "bytes": 2852,
+      "sha256": "81353858bf6a8e2cd015c15f85612414564bf62c6bb8d287aae9afcb2127be60"
+    },
+    {
+      "path": "src/apps/guardian/test/commercial_catalog_test.dart",
+      "bytes": 5197,
+      "sha256": "f05ce9f6093e686531a1923c044d00649f1b69008eecd7d9d282a22fe333bb57"
+    },
+    {
+      "path": "src/apps/guardian/test/commercial_entitlements_test.dart",
+      "bytes": 4588,
+      "sha256": "e1f51da90950fb4c58c9def0fd67ef63517d6e93b74c0e8a1c9b1e0952cfbf5e"
+    },
+    {
+      "path": "src/apps/guardian/test/console_navigation_test.dart",
+      "bytes": 5262,
+      "sha256": "184feb991e7538ccc395deac0f8118a296a1b364d4f010fdf8ddbf0100b81cc3"
+    },
+    {
+      "path": "src/apps/guardian/test/contract_action_resume_test.dart",
+      "bytes": 2602,
+      "sha256": "3856672ec554fc720b36e248b156c681279f4a361f55c5361a0a42b499722374"
+    },
+    {
+      "path": "src/apps/guardian/test/contracts_test.dart",
+      "bytes": 11093,
+      "sha256": "88eb963463ba71ec68b74e5704959116277589dbca17c63747ad877eacfeda7b"
+    },
+    {
+      "path": "src/apps/guardian/test/device_management_browser_test.dart",
+      "bytes": 1609,
+      "sha256": "ba8ff2379bd90b383fab91415dfe117598b333ef0dfe65f5479c4e6882fc2663"
+    },
+    {
+      "path": "src/apps/guardian/test/device_management_dialog_test.dart",
+      "bytes": 35968,
+      "sha256": "123d8e6ce6bfdaf4afe94e89beabbfdbd59eca0e64c038c82444edb2a49d8a4c"
+    },
+    {
+      "path": "src/apps/guardian/test/device_management_entry_test.dart",
+      "bytes": 5303,
+      "sha256": "bf41e4e882a21d1560f35f999667ea506c617a327d2896b102bccbadd596e4a1"
+    },
+    {
+      "path": "src/apps/guardian/test/device_management_test.dart",
+      "bytes": 17765,
+      "sha256": "16a673db1f72ec50d8808d312811dd2455ddf4f0feeb3090ae47888e441049b3"
+    },
+    {
+      "path": "src/apps/guardian/test/device_subflow_scope_test.dart",
+      "bytes": 19713,
+      "sha256": "a9112faa51f845bb338f8d4ab6ec50567bc9b7af3703e543d740fb5c05960fe3"
+    },
+    {
+      "path": "src/apps/guardian/test/diagnostic_model_test.dart",
+      "bytes": 4313,
+      "sha256": "9e52d0e4ce5aa37e6243848fe73e8cfc1c1104555be443cf0fcbce7bfcc47ee1"
+    },
+    {
+      "path": "src/apps/guardian/test/diagnostic_package_model_test.dart",
+      "bytes": 5302,
+      "sha256": "f13b5c8ad63b9fde62c01c8afba1a612d0c78789423b80557994406187ac770b"
+    },
+    {
+      "path": "src/apps/guardian/test/diagnostic_package_repository_test.dart",
+      "bytes": 7551,
+      "sha256": "c4d9c54c6f13601e149beb3910be7df4a2f40a90bffe8a613c545fc3aa9d4cea"
+    },
+    {
+      "path": "src/apps/guardian/test/diagnostic_packages_view_test.dart",
+      "bytes": 13979,
+      "sha256": "a5f6d5d94632e49b54da0c13699fe89e74bebcb0b70b356ff635f0942ac19660"
+    },
+    {
+      "path": "src/apps/guardian/test/diagnostic_preview_view_test.dart",
+      "bytes": 6963,
+      "sha256": "f8865b49a7505ba4ca4689b3bdf688081364c421a9f0d4a369ca4b9622abb761"
+    },
+    {
+      "path": "src/apps/guardian/test/diagnostic_repository_test.dart",
+      "bytes": 6158,
+      "sha256": "21a1e22311c47726a4bf756a19b5e39404414e980cea12a36a0abd07149a1a28"
+    },
+    {
+      "path": "src/apps/guardian/test/dialog_submit_guard_test.dart",
+      "bytes": 1385,
+      "sha256": "6a12fc99850d87b81da7404398b711c7956423724d9e7918eb0429d0fa898837"
+    },
+    {
+      "path": "src/apps/guardian/test/editor_submit_guard_test.dart",
+      "bytes": 9807,
+      "sha256": "8fde368ce0a34436be2118d1753b620b5bc043810db08574c4a132719d2f5733"
+    },
+    {
+      "path": "src/apps/guardian/test/enrollment_dialog_test.dart",
+      "bytes": 15072,
+      "sha256": "7c4ac2fb8573d365ff97afda119c9626ea0bd76bc7615ffdd15de2e82bcd18b7"
+    },
+    {
+      "path": "src/apps/guardian/test/enrollment_journal_test.dart",
+      "bytes": 13932,
+      "sha256": "2166ac745d79d2b608f5ee806ca6c3d82fad4282b8b4b5409dc85c1b8ad8c2fd"
+    },
+    {
+      "path": "src/apps/guardian/test/enrollment_recovery_test.dart",
+      "bytes": 32544,
+      "sha256": "26c449a7696dab960f61a6a4f9f2066366b02f28cff8cac1448349f9267fdd85"
+    },
+    {
+      "path": "src/apps/guardian/test/enrollment_ticket_test.dart",
+      "bytes": 591,
+      "sha256": "0941f3922382af338e4609dd0233c2bfeca9aee433515083311b0b56589a980c"
+    },
+    {
+      "path": "src/apps/guardian/test/export_create_dialog_scope_test.dart",
+      "bytes": 7405,
+      "sha256": "039914946a35b9e5c624bcf7d036d438248f3133a581b4cded83151660fe1649"
+    },
+    {
+      "path": "src/apps/guardian/test/family_finance_access_test.dart",
+      "bytes": 1097,
+      "sha256": "2abdea6763a34312b5eef7e3e51019476b380c46f2635510e6dd24df5e1be0af"
+    },
+    {
+      "path": "src/apps/guardian/test/family_finance_entry_browser_test.dart",
+      "bytes": 8312,
+      "sha256": "8b55c8189209b6ba786388696e72a6b0f51f5640d854b62e150ffd8856a7ec67"
+    },
+    {
+      "path": "src/apps/guardian/test/family_finance_page_test.dart",
+      "bytes": 14669,
+      "sha256": "023cb6d979fbaf363a6c71be331b1038a09a8965ccd685771ddfc5ec21fecfb7"
+    },
+    {
+      "path": "src/apps/guardian/test/family_finance_test.dart",
+      "bytes": 18017,
+      "sha256": "615255c3e68fbb860f85fad50c875d2fccfeef080bfcdaae856b90e7fcd308b3"
+    },
+    {
+      "path": "src/apps/guardian/test/family_identity_acceptance_refresh_test.dart",
+      "bytes": 1791,
+      "sha256": "65e6f9e8dc84cbb0e00b6adf7171a8277497a4f49d3c300165f0c8e360895d3c"
+    },
+    {
+      "path": "src/apps/guardian/test/family_identity_acceptance_test.dart",
+      "bytes": 12074,
+      "sha256": "99ee06bb3634428ddf2ad3463a230bdec9be98a87e5420581ae23031a3712729"
+    },
+    {
+      "path": "src/apps/guardian/test/family_identity_access_test.dart",
+      "bytes": 2302,
+      "sha256": "b6150dd25af29f4dd1c008223a088c240ca060bca283b5de5504f4cd849c7593"
+    },
+    {
+      "path": "src/apps/guardian/test/family_identity_configuration_test.dart",
+      "bytes": 4735,
+      "sha256": "2126decd81dc84d09569c63877b5f1871f06fe423c3ff44bc50b0bf9e294bcb6"
+    },
+    {
+      "path": "src/apps/guardian/test/family_identity_controller_test.dart",
+      "bytes": 10075,
+      "sha256": "b9be8dde9d530810da2fbc5cb91fe7e41a3e73d4230547bdc579d8ad233a30ff"
+    },
+    {
+      "path": "src/apps/guardian/test/family_identity_editor_test.dart",
+      "bytes": 3299,
+      "sha256": "33919d63f42459702d4d0fb1cde6c5035308c2f25a3f12cf3983b79b05328fb8"
+    },
+    {
+      "path": "src/apps/guardian/test/family_identity_entry_browser_test.dart",
+      "bytes": 7919,
+      "sha256": "ba9347624c016e388638adce68abaeea70b74038bdc2bd8d4b99a73fc6dab779"
+    },
+    {
+      "path": "src/apps/guardian/test/family_identity_page_test.dart",
+      "bytes": 10998,
+      "sha256": "43c4be8f5f572569411b08d6658131e08d039c242196181492113229bc407552"
+    },
+    {
+      "path": "src/apps/guardian/test/family_identity_release_fixtures.dart",
+      "bytes": 2683,
+      "sha256": "7c6040f62f295e7740f576eaa8a4308c45cac68db46edf23b3e7481825038587"
+    },
+    {
+      "path": "src/apps/guardian/test/family_identity_release_panel_test.dart",
+      "bytes": 9238,
+      "sha256": "406ed9345d93203f8e60af422e2372885b3f38cf4d5bba82b0cd8d938da0f701"
+    },
+    {
+      "path": "src/apps/guardian/test/family_identity_release_test.dart",
+      "bytes": 16115,
+      "sha256": "032bd723e9194b08bfcacb949668ef20ce649fa546b73c9cdcc5bc9dd7d6f540"
+    },
+    {
+      "path": "src/apps/guardian/test/family_identity_repository_test.dart",
+      "bytes": 3873,
+      "sha256": "06d13983d8086a88200c3dc555d061e2e5dce935847ab1b25400e579dd887ade"
+    },
+    {
+      "path": "src/apps/guardian/test/fixtures/diagnostic.dart",
+      "bytes": 2072,
+      "sha256": "cf2c881cb811f422015acd6c0956855413845c219a76177b8c01566e99275845"
+    },
+    {
+      "path": "src/apps/guardian/test/fixtures/diagnostic_package.dart",
+      "bytes": 2139,
+      "sha256": "4ba0832b7c3de496bd27f971399891a093c9fffcc785b9b62a87c6bbc8ca6518"
+    },
+    {
+      "path": "src/apps/guardian/test/fixtures/policy_preview_fixture_data.dart",
+      "bytes": 3617,
+      "sha256": "1a7ca8e0f28340275b212b939f4e1b3baa28470558e5339f971531ce9965ecf3"
+    },
+    {
+      "path": "src/apps/guardian/test/fixtures/support.dart",
+      "bytes": 1899,
+      "sha256": "239ec5fe6241eafbac9a6c074364dbb4be9816a51cc741bf3e3a27c502f7076d"
+    },
+    {
+      "path": "src/apps/guardian/test/local_date_browser_test.dart",
+      "bytes": 713,
+      "sha256": "99c0cc858c25e8d43bed5d6a9361de5153b5a086b56799bfa9100072f3f9b244"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_agent_binding_dialog_test.dart",
+      "bytes": 6855,
+      "sha256": "597597849b5a83a431fe5e47a7f8768e313f1ec4c8101b86a11d283d0431be60"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_agent_binding_fixtures.dart",
+      "bytes": 4021,
+      "sha256": "9df8849ae42a51714f390f587cbb6a2f47a82a1a142fc4cbcaa595b125118126"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_agent_binding_page_test.dart",
+      "bytes": 7534,
+      "sha256": "2ea1e3f93c86c3d8c4c001086e6ff83b110c8778f779bc164a7e607b22aab1b4"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_agent_binding_test.dart",
+      "bytes": 5891,
+      "sha256": "f9432fdcef8c97ce7f83701bdcb03a693adf22a84b980ae307fc676ba2d55a6f"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_android_review_recovery_test.dart",
+      "bytes": 29892,
+      "sha256": "14648237a5b1f12df66fdc517e8a33b9a597704b964c893b4e061eb3d3dc1139"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_application_evidence_binding_entry_test.dart",
+      "bytes": 20920,
+      "sha256": "5badedc61e706e61001994c33cdae1096a1445f174ad480dd953f36d1968b2d4"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_application_evidence_controller_test.dart",
+      "bytes": 29127,
+      "sha256": "9427a6bba99794ac925ae710ebe01b538a6647a890a7f479b5ed049476cf3aee"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_application_evidence_dialog_test.dart",
+      "bytes": 31101,
+      "sha256": "1e95a4708cd6a132bdb2f94a2025f95f5e4b4cea82d1f57a4181ce102c842532"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_application_evidence_entry_test.dart",
+      "bytes": 17327,
+      "sha256": "ad249db5082cbfd15983abdd06733a94e654d273bbee25dee2ebc8fe7ed10bc1"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_application_evidence_test.dart",
+      "bytes": 53863,
+      "sha256": "04b68541b0bb1a30a3490d172b55517a525819f2a013017a01e65dd72927dae0"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_binding_usability_test.dart",
+      "bytes": 5719,
+      "sha256": "961d8204c957511b523046240c845a9dd4c3ca7d14dc65515d290fc81481effc"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_control_summary_test.dart",
+      "bytes": 5688,
+      "sha256": "b61a2eb8e71ff1296dbdc23679c675904fa7eb2815962f889abb5c3e32186641"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_enrollment_guide_test.dart",
+      "bytes": 9874,
+      "sha256": "8a3492c35f0d3bdb084ac85578949430da2c0678180f53bf3a9d66d48150f6f3"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_enrollment_page_test.dart",
+      "bytes": 10304,
+      "sha256": "cc4aa88315753c14d2b3c246fff461f39b2b732e6ce47a6d235ffed1c731b6d0"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_execution_binding_entry_test.dart",
+      "bytes": 5256,
+      "sha256": "a4077b7387557f889a9a51b329dcd549da4b1006d42b221cdd0511c3413c23e7"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_execution_binding_lifetime_test.dart",
+      "bytes": 17670,
+      "sha256": "74b318df70875d3587f9e4c9bd9aefc24819430e95d9e6fa4f05936efb8ce770"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_execution_controller_test.dart",
+      "bytes": 20114,
+      "sha256": "eb32b9ee323bf23e46a496b20eca3728e0dc20be0a7b5865937d323ef24ccf47"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_execution_dialog_test.dart",
+      "bytes": 19357,
+      "sha256": "239854b199e6b563e402a8e5788111310fbb0f480406c4d61c932b96f7d94444"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_execution_entry_test.dart",
+      "bytes": 3278,
+      "sha256": "c1853d9ff77ae3b47e2125f0257f4fb9ae07e57055830aeb8f79cfa95f09c059"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_execution_fixtures.dart",
+      "bytes": 3132,
+      "sha256": "6efd3ac9415bf35b18b33eb0c5b8f43922aa81b5562a9e7d9efcbb4201d26eb8"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_execution_host_test.dart",
+      "bytes": 17026,
+      "sha256": "4d6c321d322455ccba2f22bda977a1981cd273b57fb80db3052f824a8f9eb336"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_execution_review_controller_test.dart",
+      "bytes": 21228,
+      "sha256": "dc6a85de598c981a0bbe4c41d38f472132f84d33897fa691cc377c66459b3146"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_execution_review_dialog_test.dart",
+      "bytes": 21824,
+      "sha256": "dbabdfc8d6c1d219e408c24e80e4c581454d600effefd3c2e094a593b665d3f9"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_execution_review_host_test.dart",
+      "bytes": 8968,
+      "sha256": "594ae3a7bfd42d9eb8c7d93b323cfb6571b99584e83fd98ee9b9d68c1e09ba91"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_execution_review_widget_fixtures.dart",
+      "bytes": 10002,
+      "sha256": "086412db715b7818c5bd9614bde20c2da3c9c2b39ce08a3bc5d258d23e615d49"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_execution_test.dart",
+      "bytes": 17819,
+      "sha256": "d1ad5335ed84c3f059cca72e69af76b3934b87c77501e92907c4170eb3cedb46"
+    },
+    {
+      "path": "src/apps/guardian/test/managed_institution_execution_entry_test.dart",
+      "bytes": 12472,
+      "sha256": "f5de7f53047a8964174fbd7f8a3f29c64f9bc96e53c6620193bb07cb1d18a1d9"
+    },
+    {
+      "path": "src/apps/guardian/test/manual_recheck_cancel_receipt_test.dart",
+      "bytes": 3120,
+      "sha256": "3e4d9593ae98463a0535d3c4a42c8cbcb6c847e89b03c36738e99114725530e9"
+    },
+    {
+      "path": "src/apps/guardian/test/manual_recheck_contract_fixtures.dart",
+      "bytes": 4925,
+      "sha256": "a1a7259e94975a1392b928b5cfadb091ef86ab8c6e3c8b4a29dab19ad914f997"
+    },
+    {
+      "path": "src/apps/guardian/test/manual_recheck_eligibility_boundary_test.dart",
+      "bytes": 1241,
+      "sha256": "366a96cab7a2942851828deeb23c17b089b13d0ad748bb772a52849a05ab9908"
+    },
+    {
+      "path": "src/apps/guardian/test/manual_recheck_eligibility_contract_test.dart",
+      "bytes": 3272,
+      "sha256": "9ed9d2ce376c9b2b4df7221b2466c80c8cf186cea081bc20ec6559cd03618134"
+    },
+    {
+      "path": "src/apps/guardian/test/manual_recheck_http_contract_test.dart",
+      "bytes": 11608,
+      "sha256": "d6a4a79780b999b1dabd74c11f32853c625cdb3486ebc8a3dd423c16ebff0b2f"
+    },
+    {
+      "path": "src/apps/guardian/test/manual_recheck_reason_red_test.dart",
+      "bytes": 2730,
+      "sha256": "c6b330ffd801d95f6e7f3fd58fa01350ba5e57f640b4a979dd1b3d99e35bee6f"
+    },
+    {
+      "path": "src/apps/guardian/test/member_editor_test.dart",
+      "bytes": 6042,
+      "sha256": "c894ec060fa2edbcaef1e9884a16983cdf74d554c7d0a361aea12004480379f7"
+    },
+    {
+      "path": "src/apps/guardian/test/notification_help_scope_browser_test.dart",
+      "bytes": 22316,
+      "sha256": "7db37e189d9e162ee901b8d536a6e6845ae42a00ec3ce01a0108956902e3016e"
+    },
+    {
+      "path": "src/apps/guardian/test/notifications_test.dart",
+      "bytes": 11732,
+      "sha256": "d9e0207252d6dc6819e0436cb5c1d045ec76021904c430e246374bda9068ad74"
+    },
+    {
+      "path": "src/apps/guardian/test/observation_editor_test.dart",
+      "bytes": 5980,
+      "sha256": "bf4e97461f42c0895c57f704f633c5f0244dded1554a47d387c4f123314461ee"
+    },
+    {
+      "path": "src/apps/guardian/test/observation_model_test.dart",
+      "bytes": 7489,
+      "sha256": "5efbd7fbe48faa36cb735a9326aec14ca73c52a52eb1faa773427e4a13f1b2d6"
+    },
+    {
+      "path": "src/apps/guardian/test/observation_route_scope_browser_test.dart",
+      "bytes": 23442,
+      "sha256": "9028c8219e9e255871b27b7975a78d5b39a9a410d1f58b48668cda4c16f6645f"
+    },
+    {
+      "path": "src/apps/guardian/test/observation_view_test.dart",
+      "bytes": 4832,
+      "sha256": "a8d4b80b3087626c15635e0b31aa74e9c52d656bc98c3d574d09989e89f39bb0"
+    },
+    {
+      "path": "src/apps/guardian/test/ownership_test.dart",
+      "bytes": 1155,
+      "sha256": "5751002fbea341ddb4bef03539b3ea1b36b7e2005303bb5650f326e259856dff"
+    },
+    {
+      "path": "src/apps/guardian/test/policy_details_scope_test.dart",
+      "bytes": 19030,
+      "sha256": "c11df02ece85b69cd68c7b1fe8de37ae032eeb6015be8836840d5b3e90dbecf1"
+    },
+    {
+      "path": "src/apps/guardian/test/policy_editor_lifecycle_test.dart",
+      "bytes": 30428,
+      "sha256": "55d6a6208f7aebeef1fddb1de4267ef4be11062f38b6651aeb198db36e2ad7b3"
+    },
+    {
+      "path": "src/apps/guardian/test/policy_preview_authorization_flow_test.dart",
+      "bytes": 19910,
+      "sha256": "417863f062bca0f092fa3e561e3bbeec39f6047deacaf466f07c6652ed628baa"
+    },
+    {
+      "path": "src/apps/guardian/test/policy_preview_control_scope_test.dart",
+      "bytes": 13189,
+      "sha256": "bc787aacaa4d59da7ba3f41cfcdadc8df12ad7d5fea31976ee4a4b66143de299"
+    },
+    {
+      "path": "src/apps/guardian/test/policy_preview_evidence_view_test.dart",
+      "bytes": 17053,
+      "sha256": "0da792104bdac1e7c464ef53f6cc11072a75b3ef4217dce98770670d14a2a814"
+    },
+    {
+      "path": "src/apps/guardian/test/policy_preview_flow_test.dart",
+      "bytes": 21680,
+      "sha256": "2da8ae71537e7548dd47ee2239a4ebfe752ff315b6e7e8ed16bc53bea037060a"
+    },
+    {
+      "path": "src/apps/guardian/test/policy_preview_results_flow_test.dart",
+      "bytes": 13369,
+      "sha256": "c790332027bfc8d4f7313bf557624be51a03b4929823b6b38ce6b14499d03f21"
+    },
+    {
+      "path": "src/apps/guardian/test/policy_preview_rule_details_test.dart",
+      "bytes": 20200,
+      "sha256": "d50f69adc5959a84f9f2ba1086ff57df761842f068c68abea2020a64291326b9"
+    },
+    {
+      "path": "src/apps/guardian/test/policy_preview_save_flow_test.dart",
+      "bytes": 6538,
+      "sha256": "8b303ebb96b9e0ea4c3ef9d76baa13a517abb7da15f8b5815a56ec7aa07166a1"
+    },
+    {
+      "path": "src/apps/guardian/test/policy_publication_controller_fixtures.dart",
+      "bytes": 12357,
+      "sha256": "62cd66921acd74d479c2e9c4d4a89da19b2c35e687b9571aa0e1ddb73a321ede"
+    },
+    {
+      "path": "src/apps/guardian/test/policy_publication_controller_test.dart",
+      "bytes": 14039,
+      "sha256": "eaf2dec077bdc6f592d8a502e74843121858860ea3c3ce318b7bec63d986b0e4"
+    },
+    {
+      "path": "src/apps/guardian/test/policy_publication_dialog_test.dart",
+      "bytes": 10778,
+      "sha256": "106dafea22b8517a059697b26785acfce383f6b7533fbb704e11a47eca2081c4"
+    },
+    {
+      "path": "src/apps/guardian/test/policy_publication_entry_test.dart",
+      "bytes": 13398,
+      "sha256": "d831fc95f0bab7e19a5d122e28adaec46f2a1f1393520ae967c29c9bfee6b96b"
+    },
+    {
+      "path": "src/apps/guardian/test/policy_publication_recovery_flow_test.dart",
+      "bytes": 12621,
+      "sha256": "113031d018d8f8e40080dcff138618035d84996b78d55ce65d218f797126600a"
+    },
+    {
+      "path": "src/apps/guardian/test/policy_publication_repository_test.dart",
+      "bytes": 9055,
+      "sha256": "ba4938a6c6c10e510ec2b7ae385c4c2670a666e8956536d2653b2582039d198d"
+    },
+    {
+      "path": "src/apps/guardian/test/policy_publication_test.dart",
+      "bytes": 12931,
+      "sha256": "d3cbc2c6d1bbba435557a59613033250457c1e7387613756a289a08ca5482781"
+    },
+    {
+      "path": "src/apps/guardian/test/policy_target_dialog_test.dart",
+      "bytes": 6546,
+      "sha256": "117923f3ea2b6843c7d14801c0e713ad787bb30789610def599b89000c541f3b"
+    },
+    {
+      "path": "src/apps/guardian/test/policy_target_picker_test.dart",
+      "bytes": 10690,
+      "sha256": "59759dc6a9b6e50106fb062e8b22cd8b99eb92b94e9c2cfa2e9996b9a3fa162b"
+    },
+    {
+      "path": "src/apps/guardian/test/policy_target_scope_test.dart",
+      "bytes": 3174,
+      "sha256": "0939c371a14da62a03873c57091b49fe02735618306a6daeaca2fb6430712e93"
+    },
+    {
+      "path": "src/apps/guardian/test/publication_test_journal.dart",
+      "bytes": 8673,
+      "sha256": "f4cc1ee665c63045190753417dbbed5a6d61b2c1b2a0461a0ab897a382867acf"
+    },
+    {
+      "path": "src/apps/guardian/test/quota_balance_test.dart",
+      "bytes": 1546,
+      "sha256": "c2d31f67f9fd82c42c3393c711dd34a288ad4f1be33763456de4e3117ff43e8b"
+    },
+    {
+      "path": "src/apps/guardian/test/quota_plan_editor_test.dart",
+      "bytes": 4224,
+      "sha256": "b1bde96e61d10d9bbee17c1560052ae51f7f98b12d49101c1d4ceb5925255a64"
+    },
+    {
+      "path": "src/apps/guardian/test/report_configurations_test.dart",
+      "bytes": 4798,
+      "sha256": "3bf918fbac774de94d530ac36e7ae69f3413ee4d264685818a240ed1767431c3"
+    },
+    {
+      "path": "src/apps/guardian/test/report_job_resume_test.dart",
+      "bytes": 1324,
+      "sha256": "a8c2d08bf651267fef7544e367c96706e36f5d4818294ef78381178bfed230cf"
+    },
+    {
+      "path": "src/apps/guardian/test/resource_page_resilience_test.dart",
+      "bytes": 22170,
+      "sha256": "a003a75c83ef01e6347bfea7ee08801302267f0e97012534e455c57bbc7575f2"
+    },
+    {
+      "path": "src/apps/guardian/test/scope_binding_client_test.dart",
+      "bytes": 27373,
+      "sha256": "36af4d8aff75ee08dcd31408e5cca06a95135578937d2614a71a713ddbfbc746"
+    },
+    {
+      "path": "src/apps/guardian/test/scoped_http_client_test.dart",
+      "bytes": 5023,
+      "sha256": "b3ad56e5eafcf6e6c0dadec5fb178062acbc9d3d6f7275b4a926b52167f9bb0f"
+    },
+    {
+      "path": "src/apps/guardian/test/submit_confirmation_variant_test.dart",
+      "bytes": 15313,
+      "sha256": "20a3cea1c3473de1edd50c21bdd3d4687cc7eb3afdd79c381743abc9a517fb7b"
+    },
+    {
+      "path": "src/apps/guardian/test/submit_direct_variant_test.dart",
+      "bytes": 15948,
+      "sha256": "0b40af26d2b16927a546d7634b21a41be88153d28fc8b35dba7e18e8fe5c93ec"
+    },
+    {
+      "path": "src/apps/guardian/test/support_model_test.dart",
+      "bytes": 4957,
+      "sha256": "2da6ae894ae47db6a6617443fdaa34cf7752161b39de8a6d1a98e93e435a0a9a"
+    },
+    {
+      "path": "src/apps/guardian/test/support_repository_test.dart",
+      "bytes": 6287,
+      "sha256": "235385c3122f8553ea2e169b88be2868b8d78f601bbcc6acd604b6715c5cda5a"
+    },
+    {
+      "path": "src/apps/guardian/test/support_views_test.dart",
+      "bytes": 13241,
+      "sha256": "2afef3ab81da2be8406fee6f1a1dce6147d620238dce8a4b615d24c3eed584cd"
+    },
+    {
+      "path": "src/apps/guardian/test/usage_report_device_picker_test.dart",
+      "bytes": 1844,
+      "sha256": "6d2ab2bef93338a51469976b3bf212cee6b059158151292e4874bb4a4a7a43c4"
+    },
+    {
+      "path": "src/apps/guardian/test/usage_report_jobs_test.dart",
+      "bytes": 6867,
+      "sha256": "e8195ec16c33325443b2e7e4850ac6ee505ee30e721a1d4986df6d4b265da94b"
+    },
+    {
+      "path": "src/apps/guardian/test/usage_report_jobs_view_test.dart",
+      "bytes": 14432,
+      "sha256": "72bcf0b132617f0d48cb441baf87be14193482eabeea3874ccd1b7d1b9a6ae15"
+    },
+    {
+      "path": "src/apps/guardian/test/usage_reports_lifecycle_test.dart",
+      "bytes": 5805,
+      "sha256": "86663887fb570367e3d500a46d6bd9b029415b9de05a7a528e5cb5227b251033"
+    },
+    {
+      "path": "src/apps/guardian/test/usage_reports_scope_browser_test.dart",
+      "bytes": 47212,
+      "sha256": "38bcdf8e624db06af0dcc5368ca12e70ae6900a22d03b4ea0131cd8a3aabdeb8"
+    },
+    {
+      "path": "src/apps/guardian/test/usage_reports_test.dart",
+      "bytes": 12133,
+      "sha256": "e8138c097612f745d00de78f43e289f0c34feff6ef0d72a50a532c3874797b89"
+    },
+    {
+      "path": "src/apps/guardian/test/usage_reports_view_test.dart",
+      "bytes": 17413,
+      "sha256": "ad6d636850d2dc9bc509ad997aeb54e637b1ea059c1e41593d50bf8782726ec2"
+    },
+    {
+      "path": "src/apps/guardian/test/usage_trend_view_test.dart",
+      "bytes": 1384,
+      "sha256": "33bead9c677f9f6ad96bf10c74b646a2dd387f8748e2d45f9ecc17ec33718d82"
+    },
+    {
+      "path": "src/apps/guardian/test/usage_trends_test.dart",
+      "bytes": 4207,
+      "sha256": "5618cb8557d11aad7e36c43db59305f531e3a84be0e91326555b72210c079e21"
+    },
+    {
+      "path": "src/apps/guardian/test/widget_test.dart",
+      "bytes": 4723,
+      "sha256": "08c74ac9115d60727973a5ef456cfaae4d049b1c3a939fc6b4a6e91c6215b87a"
+    },
+    {
+      "path": "src/apps/guardian/test/workbench_view_test.dart",
+      "bytes": 9963,
+      "sha256": "e89431e83bae25b4a6405805f95304c5831b686d116149c34ff65dde7670251b"
+    },
+    {
+      "path": "src/apps/guardian/test/workspace_flow_entry_browser_test.dart",
+      "bytes": 11874,
+      "sha256": "15fb4c531970c6488438d78e4c35265c51286159c8c462a3f8938ad39c995736"
+    },
+    {
+      "path": "src/apps/guardian/test/workspace_recovery_browser_test.dart",
+      "bytes": 18690,
+      "sha256": "82a3f46133dd42c33decbaec58ab80cc9e513e00685e6dcc4db3bd4d238ca02f"
+    },
+    {
+      "path": "src/apps/guardian/test/workspace_welcome_test.dart",
+      "bytes": 11777,
+      "sha256": "476e0f5f07fef892e2ef28d4f5ae1eb76f73cc5e4d48034f6a2719b926e5f0bf"
+    },
+    {
+      "path": "src/apps/guardian/tool/identity_providers_preview.dart",
+      "bytes": 9421,
+      "sha256": "f064ed17b0a73e2c7d26063cab198f786d3e0aceeaec85c22fe66ca338637251"
+    },
+    {
+      "path": "src/apps/guardian/tool/observation_preview.dart",
+      "bytes": 4346,
+      "sha256": "c122eb98536f09c3c8e47ca8ebacd4b50749674e468d242717cbad47e2c3e4f4"
+    },
+    {
+      "path": "src/apps/guardian/tool/verify_device_management_http_test.dart",
+      "bytes": 15533,
+      "sha256": "ffbac3b76d7a84a4066ea37441b905bb2f17f079546388184a49074d4b533224"
+    },
+    {
+      "path": "src/apps/guardian/tool/verify_diagnostic_http.dart",
+      "bytes": 4812,
+      "sha256": "a37c4af18e65cd3a774528594f49ee4d988edf6a14e170db07c4a105ab76eb8b"
+    },
+    {
+      "path": "src/apps/guardian/tool/verify_diagnostic_package_http.dart",
+      "bytes": 6303,
+      "sha256": "d9325d7530cee6023a4f76802eca1ce7af5ff4ab8b1020602e131f27017ed092"
+    },
+    {
+      "path": "src/apps/guardian/tool/verify_enrollment_http_test.dart",
+      "bytes": 9607,
+      "sha256": "265a3191ec04a42b1261c07624403689d4dffb69512e64e8b89a01700d3048dc"
+    },
+    {
+      "path": "src/apps/guardian/tool/verify_identity_provider_http.dart",
+      "bytes": 6453,
+      "sha256": "990f7c20ca7a1aa432b798e0943e6beea6bcbf14e4d4e3727f21631c71068afe"
+    },
+    {
+      "path": "src/apps/guardian/tool/verify_identity_provider_release_http.dart",
+      "bytes": 18415,
+      "sha256": "62e2991e7125f4700ad724fe72bd93d170bb5d392a9fe1254489d8e517b72079"
+    },
+    {
+      "path": "src/apps/guardian/tool/verify_observation_fixture.dart",
+      "bytes": 2443,
+      "sha256": "c23d71e060c7895a755a2fbb6f22052688f88ed52fd13e3da1663cc0bec58795"
+    },
+    {
+      "path": "src/apps/guardian/tool/verify_support_http.dart",
+      "bytes": 6031,
+      "sha256": "756fb0dda6dec179a4737e6f1f7e75294a2908034a7675a57ef8fac68b7c543a"
+    },
+    {
+      "path": "src/apps/guardian/tool/verify_usage_report_fixture.dart",
+      "bytes": 5295,
+      "sha256": "d87b6b40d4a335fa849978841004bdcd534a45043c628761ee27f837bd67b6b2"
+    },
+    {
+      "path": "src/apps/guardian/tool/verify_usage_report_jobs_http.dart",
+      "bytes": 4455,
+      "sha256": "6fa1b4c59e94e8efc05c99c6b3ee4013e2778848d190d3a29dc5d3f90342f554"
+    },
+    {
+      "path": "src/apps/guardian/web/favicon.png",
+      "bytes": 917,
+      "sha256": "7ab2525f4b86b65d3e4c70358a17e5a1aaf6f437f99cbcc046dad73d59bb9015"
+    },
+    {
+      "path": "src/apps/guardian/web/flutter_bootstrap.js",
+      "bytes": 65,
+      "sha256": "32fababde22d6dfc99bdc925bb96aebb6c48c04203886573270a9386c3b88b1a"
+    },
+    {
+      "path": "src/apps/guardian/web/icons/Icon-192.png",
+      "bytes": 5292,
+      "sha256": "3dce99077602f70421c1c6b2a240bc9b83d64d86681d45f2154143310c980be3"
+    },
+    {
+      "path": "src/apps/guardian/web/icons/Icon-512.png",
+      "bytes": 8252,
+      "sha256": "baccb205ae45f0b421be1657259b4943ac40c95094ab877f3bcbe12cd544dcbe"
+    },
+    {
+      "path": "src/apps/guardian/web/icons/Icon-maskable-192.png",
+      "bytes": 5594,
+      "sha256": "d2c842e22a9f4ec9d996b23373a905c88d9a203b220c5c151885ad621f974b5c"
+    },
+    {
+      "path": "src/apps/guardian/web/icons/Icon-maskable-512.png",
+      "bytes": 20998,
+      "sha256": "6aee06cdcab6b2aef74b1734c4778f4421d2da100b0ff9e52b21b55240202929"
+    },
+    {
+      "path": "src/apps/guardian/web/icons/manager.svg",
+      "bytes": 327,
+      "sha256": "bd10bcc2ed647a9a11e4be51c85cb66e2dc5533e11697c46cf30ef43b540bd87"
+    },
+    {
+      "path": "src/apps/guardian/web/index.html",
+      "bytes": 1285,
+      "sha256": "109fb2101105be33d99cc58b41a2c2d07f086da5a1cc1457b8f5f66116a2ff75"
+    },
+    {
+      "path": "src/apps/guardian/web/manifest.json",
+      "bytes": 447,
+      "sha256": "852117056aca3bf5d059b51c026b57d9caf74aba4f1b4e478c00fd1ea02367a2"
+    },
+    {
+      "path": "src/packages/audit_client/lib/audit_client.dart",
+      "bytes": 4125,
+      "sha256": "24d81bb99d9ec6c43b454076925cc5f8fbf2c915cfb885f1917e8a0bef33f87f"
+    },
+    {
+      "path": "src/packages/audit_client/lib/exports.dart",
+      "bytes": 7507,
+      "sha256": "07c51f0fd45bad6a9071085becd51257520a750f80d7ae1b27417fa556238451"
+    },
+    {
+      "path": "src/packages/audit_client/pubspec.yaml",
+      "bytes": 162,
+      "sha256": "4308293af1f06d9a5401ebab05f11a8f36bbbcba59bf37b9468007eb46ea4085"
+    },
+    {
+      "path": "src/packages/audit_client/README.md",
+      "bytes": 1260,
+      "sha256": "ccd4826476e08b40a0464874fcd622d791f5edea750f29c64f09cc1363c28b9f"
+    },
+    {
+      "path": "src/packages/commerce_contracts/lib/commerce_contracts.dart",
+      "bytes": 62,
+      "sha256": "d4e957aa02cebd36f13659354a5d2f19d5eef6604972f19a5b45224ec545b1e9"
+    },
+    {
+      "path": "src/packages/commerce_contracts/lib/src/models.dart",
+      "bytes": 15089,
+      "sha256": "721f94bc1636eb135c30f1ad53c27f852c57d2ca9ef881f58bec82b65d754eb3"
+    },
+    {
+      "path": "src/packages/commerce_contracts/lib/vocabulary.dart",
+      "bytes": 2446,
+      "sha256": "52b6556d3d408e8c62758f09c5088ea4c1a0899beaeb6caf12e03e70ed9eda60"
+    },
+    {
+      "path": "src/packages/commerce_contracts/pubspec.yaml",
+      "bytes": 171,
+      "sha256": "e4ec1940fc2bf024dcdde0296557eddfe22876aa7410290f07586b676dfc0ba0"
+    },
+    {
+      "path": "src/packages/commerce_contracts/README.md",
+      "bytes": 1077,
+      "sha256": "d0442a09a7d9ff11e2c67275f364552ed6db2a3d13e4fa6158f8fbe499380e59"
+    },
+    {
+      "path": "src/packages/device_operations/analysis_options.yaml",
+      "bytes": 44,
+      "sha256": "c1e9534c05acb3643e72a82ad3d92d56d2ba9b0df2add014c18f7e1d462f24e4"
+    },
+    {
+      "path": "src/packages/device_operations/example/.gitignore",
+      "bytes": 734,
+      "sha256": "a36ca275533062651096c69c910d5c78aa0a8e572d431bf0de5b2b506161633d"
+    },
+    {
+      "path": "src/packages/device_operations/example/.metadata",
+      "bytes": 964,
+      "sha256": "5c7a89dc1a45b54d84f36a0a62d4546b2061e0fecca46a06dbd2770ac8c2f37e"
+    },
+    {
+      "path": "src/packages/device_operations/example/analysis_options.yaml",
+      "bytes": 1448,
+      "sha256": "b63207cf529949ec4727b68c23dbb38ce255b6f6f4ae1effcb5c1dcf2852d238"
+    },
+    {
+      "path": "src/packages/device_operations/example/lib/fixtures.dart",
+      "bytes": 3975,
+      "sha256": "ca9cf941fdacb82dfa4798464add67d189f843b1cf608809306d8a413747bac0"
+    },
+    {
+      "path": "src/packages/device_operations/example/lib/main.dart",
+      "bytes": 5571,
+      "sha256": "417253a36221b83393c74f44e63bc14cf3c55d15dd4733ce78e30e41df32bb53"
+    },
+    {
+      "path": "src/packages/device_operations/example/pubspec.lock",
+      "bytes": 12114,
+      "sha256": "c86313dd835c653340a5085aee0f09dc275282a04e745d86da1cc5e867cd1840"
+    },
+    {
+      "path": "src/packages/device_operations/example/pubspec.yaml",
+      "bytes": 370,
+      "sha256": "b9f2196aa65c14103e05a3e2b4baeb541f4e95135fb09f43051ed66d2c7abe98"
+    },
+    {
+      "path": "src/packages/device_operations/example/README.md",
+      "bytes": 664,
+      "sha256": "60be23a2f6d0475b0615784990bda286fe47647517eeeb7c2cdf669f43adffc0"
+    },
+    {
+      "path": "src/packages/device_operations/example/test/widget_test.dart",
+      "bytes": 518,
+      "sha256": "0dee699bc7ce0de64a718dbd3a49e2d822ed74c7450e214ec0af117a7c9bcc35"
+    },
+    {
+      "path": "src/packages/device_operations/example/web/favicon.png",
+      "bytes": 917,
+      "sha256": "7ab2525f4b86b65d3e4c70358a17e5a1aaf6f437f99cbcc046dad73d59bb9015"
+    },
+    {
+      "path": "src/packages/device_operations/example/web/icons/Icon-192.png",
+      "bytes": 5292,
+      "sha256": "3dce99077602f70421c1c6b2a240bc9b83d64d86681d45f2154143310c980be3"
+    },
+    {
+      "path": "src/packages/device_operations/example/web/icons/Icon-512.png",
+      "bytes": 8252,
+      "sha256": "baccb205ae45f0b421be1657259b4943ac40c95094ab877f3bcbe12cd544dcbe"
+    },
+    {
+      "path": "src/packages/device_operations/example/web/icons/Icon-maskable-192.png",
+      "bytes": 5594,
+      "sha256": "d2c842e22a9f4ec9d996b23373a905c88d9a203b220c5c151885ad621f974b5c"
+    },
+    {
+      "path": "src/packages/device_operations/example/web/icons/Icon-maskable-512.png",
+      "bytes": 20998,
+      "sha256": "6aee06cdcab6b2aef74b1734c4778f4421d2da100b0ff9e52b21b55240202929"
+    },
+    {
+      "path": "src/packages/device_operations/example/web/index.html",
+      "bytes": 1343,
+      "sha256": "06062533207fe8cfe4a67d50a109f01caba505f22b02a618f366f67859675f49"
+    },
+    {
+      "path": "src/packages/device_operations/example/web/manifest.json",
+      "bytes": 983,
+      "sha256": "e53d75028b366dc73dea6b546bbec32d54222f129e695793636ee289b396df55"
+    },
+    {
+      "path": "src/packages/device_operations/lib/device_operations.dart",
+      "bytes": 227,
+      "sha256": "d264a20cb7874ebebc4d0f2859699bc9301e66437c4c5e8b4ce65a5e075d0d1b"
+    },
+    {
+      "path": "src/packages/device_operations/lib/permission_observation_view.dart",
+      "bytes": 6888,
+      "sha256": "ee4f3b6c04bb31702e1d9583651dde26ade9a4bc71ef5b900c3a42e802c4fcec"
+    },
+    {
+      "path": "src/packages/device_operations/lib/src/client.dart",
+      "bytes": 11297,
+      "sha256": "074d16dd33ef85e6591de8c9180e61d57384dcae7d6d7e6df6b7cafaa900a013"
+    },
+    {
+      "path": "src/packages/device_operations/lib/src/controller.dart",
+      "bytes": 9661,
+      "sha256": "75479329862992eeda308617a833833c884ed687aa1448642e9031bc8b55ba29"
+    },
+    {
+      "path": "src/packages/device_operations/lib/src/journal.dart",
+      "bytes": 4491,
+      "sha256": "d327414986309097c42bc3bc1ecb265590affe7fe7573246b9a900d66c7838f4"
+    },
+    {
+      "path": "src/packages/device_operations/lib/src/models.dart",
+      "bytes": 7494,
+      "sha256": "c478683d7c5b50a3028240f67ef9c9d5ac5edb3e11964020a3eef77c476d3767"
+    },
+    {
+      "path": "src/packages/device_operations/lib/src/panel.dart",
+      "bytes": 17514,
+      "sha256": "27aa87e529d86e59debd59b875f35b9a229241afa095b29fc03e9eb1d852585f"
+    },
+    {
+      "path": "src/packages/device_operations/pubspec.lock",
+      "bytes": 11987,
+      "sha256": "79d3985b78802d045f76c735f9b6dd6faaa84fe39b7021b7315d409dae8f3c2e"
+    },
+    {
+      "path": "src/packages/device_operations/pubspec.yaml",
+      "bytes": 459,
+      "sha256": "c6fd0fdbb4a2210ded4e010b6560f95e7ee2fa4f1e7217481f6f63a2f569f0fd"
+    },
+    {
+      "path": "src/packages/device_operations/README.md",
+      "bytes": 1991,
+      "sha256": "8bb42ff37af60f886ce06d24a6ea69ab3346cd91c3e9372b07d46ab453d61f3a"
+    },
+    {
+      "path": "src/packages/device_operations/test/client_test.dart",
+      "bytes": 6886,
+      "sha256": "514bc87c0d2d2e4b894fecd590d5d778cb47c1d6022a24757bf62e120793fb48"
+    },
+    {
+      "path": "src/packages/device_operations/test/controller_test.dart",
+      "bytes": 9787,
+      "sha256": "978e3b16bdd4bc1561e9bc8e7d9b6ab8b78183854fe27c0a87d43c17baea35fd"
+    },
+    {
+      "path": "src/packages/device_operations/test/fixtures.dart",
+      "bytes": 2142,
+      "sha256": "d3e3e153b0e4088e870ec52fe0d0710274890229fd87d83bf8f6d037ac46635d"
+    },
+    {
+      "path": "src/packages/device_operations/test/journal_test.dart",
+      "bytes": 3319,
+      "sha256": "fa578d31822248d6368eee2fbbe63e6ea78cdfbc88f06105fcc3eccc1345171f"
+    },
+    {
+      "path": "src/packages/device_operations/test/models_test.dart",
+      "bytes": 1629,
+      "sha256": "58860cd465c4dbc11f4230ac326aada975cc7865f0f6bf33db4fb03fff941f7f"
+    },
+    {
+      "path": "src/packages/device_operations/test/panel_test.dart",
+      "bytes": 4623,
+      "sha256": "b4d2017c9fb2560ea1a5e4f98d3ff09a7b0a771a47ce93f21871432354e77e30"
+    },
+    {
+      "path": "src/packages/notification_client/lib/help_attention.dart",
+      "bytes": 2588,
+      "sha256": "a120610d2e6ec1ea9d89568217404433ddfa43fa2143b3730221ee74585133dc"
+    },
+    {
+      "path": "src/packages/notification_client/lib/notification_client.dart",
+      "bytes": 7526,
+      "sha256": "1d5f73960125f837481be5ab6f35a155b12995b964c2c98359125a14249e9e08"
+    },
+    {
+      "path": "src/packages/notification_client/pubspec.yaml",
+      "bytes": 168,
+      "sha256": "e9175499f37e955de2a6f760d4d4eb4e9b5caff86e7bc83493e5f8ba3a2eef7c"
+    },
+    {
+      "path": "src/packages/notification_client/README.md",
+      "bytes": 814,
+      "sha256": "b4d7b012d4aa9dfefc0701ca6fe81f6612710e273045c3024fdebaa0ad3ffa7a"
+    },
+    {
+      "path": "src/packages/usage_report_ui/analysis_options.yaml",
+      "bytes": 44,
+      "sha256": "c1e9534c05acb3643e72a82ad3d92d56d2ba9b0df2add014c18f7e1d462f24e4"
+    },
+    {
+      "path": "src/packages/usage_report_ui/lib/src/design.dart",
+      "bytes": 884,
+      "sha256": "cb9f25c34b8126bfa52d9e1a9f365ee03f18dbeda0298ee2d442a04be21ef55e"
+    },
+    {
+      "path": "src/packages/usage_report_ui/lib/src/device_view.dart",
+      "bytes": 31606,
+      "sha256": "01b81009ea1ff06d1a02a760c0d8ba13e0cb0232959531047598f06aa5b2560d"
+    },
+    {
+      "path": "src/packages/usage_report_ui/lib/src/report_configurations_view.dart",
+      "bytes": 5544,
+      "sha256": "4429acd49412ede60ebd7db85054222fff57fd0bf9eeec310ae4dba0929d258b"
+    },
+    {
+      "path": "src/packages/usage_report_ui/lib/src/usage_trend_view.dart",
+      "bytes": 12123,
+      "sha256": "4e4580051a9e9637a7f7ed220ad08f78d7fd0792b59e942759cd91f1769bf1cc"
+    },
+    {
+      "path": "src/packages/usage_report_ui/lib/usage_report_ui.dart",
+      "bytes": 139,
+      "sha256": "2dc214bd8d026e71697e9e32979d475220d2c2b8305ad43c72fdae6d5dbb328f"
+    },
+    {
+      "path": "src/packages/usage_report_ui/pubspec.lock",
+      "bytes": 6809,
+      "sha256": "becf8be73b7d0eafa3fe133bda65477cfe85f1434cd3e10a654a43cae7916469"
+    },
+    {
+      "path": "src/packages/usage_report_ui/pubspec.yaml",
+      "bytes": 392,
+      "sha256": "8e7dca93c1d7a29b186afdf932f03e815796d90b7078f316ad8eb448853572bc"
+    },
+    {
+      "path": "src/packages/usage_report_ui/README.md",
+      "bytes": 1162,
+      "sha256": "d5aa892f1643ef567bc7cb6ed1a7a52950894f2de860f17f0144cf9d92226a32"
+    },
+    {
+      "path": "src/packages/usage_report_ui/test/device_view_test.dart",
+      "bytes": 10006,
+      "sha256": "caf805981e3f1fe87283c7c139fb35ac7baf2f04c6de9693abd23e6404e19c2f"
+    },
+    {
+      "path": "src/packages/usage_report_ui/test/fixture.dart",
+      "bytes": 2562,
+      "sha256": "6125ed20f281ec7c26ce74610725f42da56c755b6f50d9113afa0c1e7b37689f"
+    },
+    {
+      "path": "src/packages/usage_report_ui/test/multi_device_view_test.dart",
+      "bytes": 11437,
+      "sha256": "35823692c9a9765456335b586647b0c52c0cf968ffe145a398293fb61cf91b39"
+    },
+    {
+      "path": "src/packages/usage_reporting/lib/src/application_classification.dart",
+      "bytes": 2458,
+      "sha256": "653a7b0decb2f72e8139f686206950bcb54a0dbdaf45ba3cd83b02dd3349540f"
+    },
+    {
+      "path": "src/packages/usage_reporting/lib/src/failure.dart",
+      "bytes": 323,
+      "sha256": "19bc3add8894a5fffc96992e5cb08889e20aea540e1aaab1ea53af2dc771373c"
+    },
+    {
+      "path": "src/packages/usage_reporting/lib/src/report_configurations.dart",
+      "bytes": 9029,
+      "sha256": "142f5eed318870a05b782777d8a4710f292d1b548e0dc881f3eac5457436c296"
+    },
+    {
+      "path": "src/packages/usage_reporting/lib/src/usage_insights.dart",
+      "bytes": 1233,
+      "sha256": "24706887bd16882d9b5597b07b0e7088afa7ca89b31631538727943cdda67da3"
+    },
+    {
+      "path": "src/packages/usage_reporting/lib/src/usage_reports.dart",
+      "bytes": 16268,
+      "sha256": "7b511cbe34579b25d8eae2213d7c9434f26303d5fc28db27649275ade6dc7636"
+    },
+    {
+      "path": "src/packages/usage_reporting/lib/src/usage_trends.dart",
+      "bytes": 3189,
+      "sha256": "20ad55adc83b6bdf3511f553e6eeef4e333a81fc376c722136cf6d462bcbdaca"
+    },
+    {
+      "path": "src/packages/usage_reporting/lib/usage_reporting.dart",
+      "bytes": 239,
+      "sha256": "cfbe96e836518e07f3dbcdcc6025269dff31bd5d9516fac8a8b72366718eb832"
+    },
+    {
+      "path": "src/packages/usage_reporting/pubspec.lock",
+      "bytes": 12920,
+      "sha256": "c2f574c618136320d45533b12d7c658a1df1f0e26405d366fc4c4f98520fa9f3"
+    },
+    {
+      "path": "src/packages/usage_reporting/pubspec.yaml",
+      "bytes": 279,
+      "sha256": "5d17164defb43bdfc7f3b6471e845ae3371d91adb78ff24971800341ea64c486"
+    },
+    {
+      "path": "src/packages/usage_reporting/README.md",
+      "bytes": 788,
+      "sha256": "68f70717c23ce021baae61b48f31bafedbe800bfababac239f1c1058f750c2cf"
+    },
+    {
+      "path": "src/packages/usage_reporting/test/fixture.dart",
+      "bytes": 2562,
+      "sha256": "6125ed20f281ec7c26ce74610725f42da56c755b6f50d9113afa0c1e7b37689f"
+    },
+    {
+      "path": "src/packages/usage_reporting/test/shared_models_test.dart",
+      "bytes": 1547,
+      "sha256": "daff02af560e2041060053c42a2e72c2cd120c60347b1bc016817ea431b2317b"
+    }
+  ],
+  "fileCount": 423,
+  "sealExcludesItself": true,
+  "mainRawDifferences": [
+    "apps/guardian/lib/ui/quota_balance.dart",
+    "apps/guardian/pubspec.yaml"
+  ],
+  "onlyCrLfNormalizationMatches": true,
+  "old67NamesAndMetadataExact": true,
+  "newObservationNames": 13,
+  "expectedVisibleCases": 80,
+  "expectedPhysicalSuites": 7,
+  "configurationRows": 70,
+  "onlyInternalRootsChanged": 7,
+  "independentReadback": "REQUIRED_BY_ROOT_NOT_PERFORMED_BY_THIS_PREPARER",
+  "sdkInvoked": false,
+  "dartParsingPerformed": false,
+  "formatter": "UNRUN",
+  "dartTypeCheck": "UNRUN",
+  "applicationTests": "UNRUN",
+  "controllerOrWorkerImported": false,
+  "executionApproved": false
+}

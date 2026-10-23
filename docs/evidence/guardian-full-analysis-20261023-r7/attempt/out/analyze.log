@@ -1,0 +1,6 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+Analyzing guardian...                                           
+
+warning - The '!' will have no effect because the receiver can't be null - lib\pages\observation_page.dart:31:52 - unnecessary_non_null_assertion
+
+1 issue found. (ran in 9.3s)

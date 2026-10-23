@@ -1,0 +1,95 @@
+{
+  "status": "SOURCE409_STATIC_REVIEW_NO_BLOCKER_R7_PENDING",
+  "blockingFindings": [],
+  "sourceCommit": "a55849d902b248fe02d06e23cd0bad3d28912a27",
+  "sourceParent": "9ec50922edce76311cce68a323fe03d6c636dbd5",
+  "sourceCount": 409,
+  "sourceTreeSha256": "ddf027a0292fb2e06ac069a60bc03c87676fbeb4efc3d6f4a23186da0c87110a",
+  "sourceBytes": 3956604,
+  "sealFilePinsVerified": 423,
+  "sealFullMembershipExact": true,
+  "allGitBlobsAndSha1Recomputed": 409,
+  "frozenBytesEqualCommittedGitBlobs": true,
+  "mainAllRawPinsAndFullMembershipMatch": true,
+  "frozenAllRawPinsAndFullMembershipMatch": true,
+  "currentSevenTreesMatch": {
+    "apps/guardian": "2b8856731e588844cac70d112194bbaffda655d9",
+    "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+    "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+    "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+    "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+    "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+    "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+  },
+  "directoryMembershipExact": true,
+  "rawMainDifferencesPreserved": [
+    "apps/guardian/lib/ui/quota_balance.dart",
+    "apps/guardian/pubspec.yaml"
+  ],
+  "onlyCrLfNormalizationMatchesAll": true,
+  "oldSource408SealPreserved": true,
+  "sourceDelta": {
+    "modified": [
+      "apps/guardian/lib/pages/observation_page.dart",
+      "apps/guardian/lib/ui/observation_editor.dart"
+    ],
+    "added": [
+      "apps/guardian/test/observation_route_scope_browser_test.dart"
+    ],
+    "deleted": [],
+    "allMetadataUnchangedRows": 406
+  },
+  "caseContract": {
+    "old67FullCaseMetadataExact": true,
+    "oldSixFullSelectedSourcesMetadataExact": true,
+    "appendedObservation13NamesLinesMetadataMatch": true,
+    "expectedCases": 80,
+    "physicalSuites": 7,
+    "counts": [
+      8,
+      4,
+      19,
+      7,
+      8,
+      21,
+      13
+    ],
+    "literalExtractionNotDartParsingOrRuntimeDiscovery": true
+  },
+  "packageConfig": {
+    "rows": 70,
+    "onlyRebasedInternalRoots": 7,
+    "externalRowsAndAllOtherMetadataPreserved": 63,
+    "historicalSeedErrorsPreserved": true,
+    "runtimeSdkOrCacheContentRevalidationPerformed": false
+  },
+  "r7Review": "PENDING_SEPARATE_SEALED_DELIVERY",
+  "sdkDartAnalysisCompileBrowserTestCalls": 0,
+  "candidateFunctionsImportedOrCalled": false,
+  "networkProcessApiGitWriteMainOrFrozenWrite": false,
+  "gitReadCommandsUsed": true,
+  "tests": "80_UNRUN",
+  "executionGranted": false,
+  "reviewedPins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\seal-static-source.json",
+      "bytes": 80267,
+      "sha256": "700d75070f869bcc666f373394ec77b688bb1b48950f1390f4312be72022d1f7"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\source-manifest.json",
+      "bytes": 244476,
+      "sha256": "a23441e3f91224f86296a1b5b3ada8c7b2a8d5189c2ce36bfb6510a7ed0347b5"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\expected-cases.json",
+      "bytes": 46718,
+      "sha256": "fe7e3471ef3d3797a95360d53a70b668b785aa7034e96799650c5f91e2e3025f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\dependency-library-pins.json",
+      "bytes": 360145,
+      "sha256": "972121e9a6659bcd68a0734ee44df8e7670045eab3bb177f60c58558d0963815"
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "status": "ROOT_R7_CONTROLS_STATIC_REVIEW_MATCHED_EXECUTION_UNRUN",
+  "atUtc": "2026-10-23T06:01:18.996085+00:00",
+  "proposalSha256": "2c1c4e32c0255b3a3eaa4272058ef5eb5f2e5388e5eb58b45d5a1ceb6d37ef36",
+  "sourceCommit": "a55849d902b248fe02d06e23cd0bad3d28912a27",
+  "sourceFiles": 409,
+  "pinsMatched": 212,
+  "priorR6PinsPreserved": 156,
+  "controllerNativeByteIdentical": true,
+  "workerAstChanges": [
+    "FROZEN",
+    "INPUT_SHA256",
+    "source_check"
+  ],
+  "budgetsUnchanged": true,
+  "cacheProjectionByteIdentical": true,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "attemptCreated": false
+}

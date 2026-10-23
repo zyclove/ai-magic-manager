@@ -28,7 +28,7 @@ Future<void> openDeviceObservation(
           canReadObservation(session.role));
   OwnedDialogRoute<void>? observationRoute;
   bool current() => scope.current &&
-      (observationRoute == null || observationRoute!.available);
+      (observationRoute == null || observationRoute.available);
   final changes = Listenable.merge([scope, parent.changes]);
   try {
     if (!context.mounted || !current()) return;

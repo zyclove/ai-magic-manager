@@ -1,0 +1,30 @@
+--- accepted-analysis-r6/worker.py
++++ analysis409-r7/worker.py
+@@ -20,11 +20,11 @@
+ CANDIDATE = Path(__file__).absolute().parent
+ ATTEMPT = CANDIDATE / 'attempt'
+ REPO = CANDIDATE.parents[1]
+-FROZEN = REPO / '.cache/guardian-reports-current-20261023-r1'
++FROZEN = REPO / '.cache/guardian-observation-current-20261023-r1'
+ SOURCE = FROZEN / 'src'
+ MODULE = SOURCE / 'apps/guardian'
+ INPUT = CANDIDATE / 'inputs.json'
+-INPUT_SHA256 = 'c89ddfc7b6a1725fc23027f8b27cd73fe0aefd6f6501a344aa8bf2ecfc4749ab'
++INPUT_SHA256 = '1f6f40ba9dd55123bb3a7da37078224dc32c84e7d0694109fd5c21c55a10ff70'
+ HELPER_SHA256 = '4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12'
+ ROOTS = ['apps/guardian', 'packages/audit_client', 'packages/commerce_contracts',
+          'packages/notification_client', 'packages/device_operations',
+@@ -181,10 +181,10 @@
+ def source_check():
+     manifest = load_pin(inputs['sourceManifest'])
+     rows = manifest['sourceFiles']
+-    require(manifest['roots'] == ROOTS and len(rows) == 408 and manifest['sourceCount'] == 408,
+-            'Frozen seven-root/408 source boundary changed')
++    require(manifest['roots'] == ROOTS and len(rows) == 409 and manifest['sourceCount'] == 409,
++            'Frozen seven-root/409 source boundary changed')
+     expected = {row['path'] for row in rows}
+-    require(len(expected) == 408, 'Duplicate source input')
++    require(len(expected) == 409, 'Duplicate source input')
+     observed = {}
+     for label, base in [('frozenRawGit', SOURCE), ('mainRaw', REPO)]:
+         actual = set()

@@ -1,0 +1,61 @@
+{
+  "status": "STATIC_SOURCE_DELTA",
+  "beforeCommit": "88871eb69f16012e04ad4d8aa58209edea791e4a",
+  "afterCommit": "a55849d902b248fe02d06e23cd0bad3d28912a27",
+  "beforeFiles": 408,
+  "afterFiles": 409,
+  "unchangedFiles": 406,
+  "modifiedFiles": 2,
+  "addedFiles": 1,
+  "deletedFiles": 0,
+  "beforeSourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\source-before408-manifest.json",
+    "bytes": 243867,
+    "sha256": "5ff8304370d890089517f78f7a5f7f5f99e894a3c31dd969f80edca7a830fcc7"
+  },
+  "deltas": [
+    {
+      "path": "apps/guardian/lib/pages/observation_page.dart",
+      "change": "MODIFIED",
+      "before": {
+        "gitBlob": "76891b89f4e49d3d85ee3c87d605bd4e9e75ed52",
+        "mode": "100644",
+        "bytes": 9714,
+        "sha256": "c3f5f3e1d7e08cd87af1b47d620926d5720a80acbaafef6ed2ea5969bdaea1be"
+      },
+      "after": {
+        "gitBlob": "2f1e26799c02232b3a169340235b1f83b72aa1ef",
+        "mode": "100644",
+        "bytes": 11504,
+        "sha256": "63111f7117aebfcd19ce61579ff77fe2eef95fd3e4914035a5fd6c810f115644"
+      }
+    },
+    {
+      "path": "apps/guardian/lib/ui/observation_editor.dart",
+      "change": "MODIFIED",
+      "before": {
+        "gitBlob": "36173ee3031869df7109b8497ee5dffd566a97d6",
+        "mode": "100644",
+        "bytes": 11181,
+        "sha256": "43d9e17708f8868e82022b17466724cceec12087f2b49b997337d4b834e39060"
+      },
+      "after": {
+        "gitBlob": "b5eb376599b63a7623d99e8c37bc4818bd2b4105",
+        "mode": "100644",
+        "bytes": 13560,
+        "sha256": "f6768b8558f967645467e008de7b594d322a975f680fad7cf5a1771b7cf76cd3"
+      }
+    },
+    {
+      "path": "apps/guardian/test/observation_route_scope_browser_test.dart",
+      "change": "ADDED",
+      "before": null,
+      "after": {
+        "gitBlob": "647337efa500e4c75cfa6edd14eb6f7d3624e05f",
+        "mode": "100644",
+        "bytes": 23442,
+        "sha256": "9028c8219e9e255871b27b7975a78d5b39a9a410d1f58b48668cda4c16f6645f"
+      }
+    }
+  ]
+}

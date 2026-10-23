@@ -1,0 +1,50 @@
+{
+  "status": "STATIC_ANALYSIS409_R7_SEALED_ROOT_REVIEW_REQUIRED_UNRUN",
+  "proposal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\proposal.json",
+    "bytes": 56463,
+    "sha256": "2c1c4e32c0255b3a3eaa4272058ef5eb5f2e5388e5eb58b45d5a1ceb6d37ef36"
+  },
+  "inputs": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\inputs.json",
+    "bytes": 7013,
+    "sha256": "1f6f40ba9dd55123bb3a7da37078224dc32c84e7d0694109fd5c21c55a10ff70"
+  },
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\source-manifest.json",
+    "bytes": 244476,
+    "sha256": "a23441e3f91224f86296a1b5b3ada8c7b2a8d5189c2ce36bfb6510a7ed0347b5"
+  },
+  "sourceSnapshotSeal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\seal-static-source.json",
+    "bytes": 80267,
+    "sha256": "700d75070f869bcc666f373394ec77b688bb1b48950f1390f4312be72022d1f7"
+  },
+  "candidatePackageConfig": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+    "bytes": 15736,
+    "sha256": "9391dba658c5309fe6c1aa95dfb7586e74ea12bc2465463a7f53ee84a83e8ce6"
+  },
+  "cacheManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\cache-analysis-projection.json",
+    "bytes": 724690,
+    "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84"
+  },
+  "candidateFiles": 12,
+  "controlRuntimeFiles": 11,
+  "historicalMetadataFiles": 189,
+  "originalR6PinsPreserved": 156,
+  "sourceFiles": 409,
+  "cacheFiles": 3536,
+  "outerBudgetSeconds": 180,
+  "workerBudgetSeconds": 165,
+  "commandCapSeconds": 150,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "browserStarted": false,
+  "candidateImported": false,
+  "sourceCopied": false,
+  "cacheCopied": false,
+  "executionApproved": false,
+  "attemptExists": false
+}

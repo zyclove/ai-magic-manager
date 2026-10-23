@@ -1,0 +1,27 @@
+{
+  "status": "R7_ANALYSIS_RED_WINDOW_FORMALLY_RELEASED",
+  "atUtc": "2026-10-23T06:07:35.7548122Z",
+  "grant": "guardian-analyze-r7-root-20261023",
+  "actualSession": 1854,
+  "actualFinalChunk": "dff5b1",
+  "naturalExitCode": 1,
+  "sourceCommit": "a55849d902b248fe02d06e23cd0bad3d28912a27",
+  "sdkCount": 0,
+  "unknownProcessNameCount": 0,
+  "availableRamBytes": 2570756096,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 6898806784
+    },
+    {
+      "Name": "D",
+      "Free": 35274272768
+    }
+  ],
+  "readbackChunk": "ddbf41",
+  "ownedJobActiveProcesses": 0,
+  "formalRelease": true,
+  "analysisAccepted": false,
+  "wholeProductAccepted": false
+}

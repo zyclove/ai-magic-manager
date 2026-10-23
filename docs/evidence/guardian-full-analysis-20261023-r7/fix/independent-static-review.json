@@ -1,0 +1,37 @@
+{
+  "status": "STATIC_SINGLE_CHARACTER_REMOVAL_SUPPORTED_NOT_DART_COMPILE_OR_TEST_RESULT",
+  "scope": "Review only; Root owns Main fix, commit, new snapshot and future rebind. Old a558 snapshot/browser80r1 remain unchanged.",
+  "sourceCommit": "a55849d902b248fe02d06e23cd0bad3d28912a27",
+  "beforeFrozen": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\src\\apps\\guardian\\lib\\pages\\observation_page.dart",
+    "bytes": 11504,
+    "sha256": "63111f7117aebfcd19ce61579ff77fe2eef95fd3e4914035a5fd6c810f115644"
+  },
+  "actualR7Log": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\attempt\\out\\analyze.log",
+    "bytes": 334,
+    "sha256": "a55fc79044b6d6153184c6c784f6a3a27c331b599a560f404cc012598825bd6a"
+  },
+  "line": 31,
+  "column": 52,
+  "beforeExpression": "observationRoute == null || observationRoute!.available",
+  "afterExpression": "observationRoute == null || observationRoute.available",
+  "candidateRawBytesRemoved": 1,
+  "reason": "Synchronous OR: RHS runs only after the same local observationRoute was non-null. No await, callback, assignment or intervening side effect between null guard and receiver read; explicit null guard promotes that read.",
+  "caseReasoning": [
+    "scope.current false still short circuits false",
+    "route null before assignment still returns true from null branch",
+    "non-null active available route still delegates to the same bool getter",
+    "finished/inactive/unmounted route still returns false from available",
+    "normal route cover remains active and does not introduce isCurrent rejection"
+  ],
+  "dependenciesRead": [
+    "apps/guardian/lib/ui/owned_dialog_route.dart",
+    "apps/guardian/lib/ui/dialog_access.dart",
+    "apps/guardian/lib/pages/device_subflow_scope.dart"
+  ],
+  "actualDiagnostic": "unnecessary_non_null_assertion; exactly one warning in r7 log",
+  "sdkOrDartOrTestsRunByReviewer": false,
+  "mainGitOldSnapshotOrBrowserCandidateWrites": false,
+  "newSnapshotOrBrowserR2Assembled": false
+}

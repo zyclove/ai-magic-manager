@@ -1,0 +1,37 @@
+{
+  "status": "R7_ANALYSIS_RED_INDEPENDENTLY_CONFIRMED_AWAIT_FRESH_SYSTEM_RELEASE",
+  "atUtc": "2026-10-23T06:07:07.292078+00:00",
+  "actualSession": 1854,
+  "initialChunk": "804cf2",
+  "finalChunk": "dff5b1",
+  "naturalExitCode": 1,
+  "outerElapsedSeconds": 43.6962024000004,
+  "strictCompleteDeadlineSeconds": 135.0,
+  "sourceCommit": "a55849d902b248fe02d06e23cd0bad3d28912a27",
+  "sourceFilesRehashedBothTrees": 409,
+  "cacheFilesRehashed": 3536,
+  "cacheBytesRehashed": 633817159,
+  "pinsMatched": 212,
+  "diagnostics": {
+    "errors": 0,
+    "warnings": 1,
+    "infos": 0
+  },
+  "diagnosticLines": [
+    [
+      "warning",
+      "The '!' will have no effect because the receiver can't be null - lib\\pages\\observation_page.dart:31:52 - unnecessary_non_null_assertion"
+    ]
+  ],
+  "rawLogSha256": "a55fc79044b6d6153184c6c784f6a3a27c331b599a560f404cc012598825bd6a",
+  "ownedJobActiveProcesses": 0,
+  "knownOwnedPidsAbsent": [
+    62388,
+    3724
+  ],
+  "forcedTermination": false,
+  "testsRun": false,
+  "browserRun": false,
+  "analysisAccepted": false,
+  "wholeProductAccepted": false
+}

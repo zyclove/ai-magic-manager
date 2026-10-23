@@ -1,0 +1,153 @@
+{
+  "schema": 1,
+  "status": "SOURCE_AND_METADATA_ONLY_NOT_EXECUTION_PROPOSAL",
+  "sourceCommit": "a55849d902b248fe02d06e23cd0bad3d28912a27",
+  "sourceParent": "9ec50922edce76311cce68a323fe03d6c636dbd5",
+  "observedHeadAtStart": "a55849d902b248fe02d06e23cd0bad3d28912a27",
+  "observedHeadAtFinish": "a55849d902b248fe02d06e23cd0bad3d28912a27",
+  "sevenRootGitTrees": {
+    "apps/guardian": "2b8856731e588844cac70d112194bbaffda655d9",
+    "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+    "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+    "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+    "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+    "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+    "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+  },
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\source-manifest.json",
+    "bytes": 244476,
+    "sha256": "a23441e3f91224f86296a1b5b3ada8c7b2a8d5189c2ce36bfb6510a7ed0347b5"
+  },
+  "sourceDirectoryList": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\source-directory-list.json",
+    "bytes": 24781,
+    "sha256": "e3db4141a2f8a13fc4779a12a98b72bfd9b553dad9a0b16e5ed75736ea86f42f"
+  },
+  "deltaFromSource408": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\delta-from-source408.json",
+    "bytes": 2039,
+    "sha256": "8536259d248e0beca29a22da1f2d712549e877a614a31105ccbc0e804a8be59a"
+  },
+  "expectedCaseContract": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\expected-cases.json",
+    "bytes": 46718,
+    "sha256": "fe7e3471ef3d3797a95360d53a70b668b785aa7034e96799650c5f91e2e3025f"
+  },
+  "dependencyLibraryPins": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\dependency-library-pins.json",
+    "bytes": 360145,
+    "sha256": "972121e9a6659bcd68a0734ee44df8e7670045eab3bb177f60c58558d0963815"
+  },
+  "candidatePackageConfig": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+    "bytes": 15736,
+    "sha256": "9391dba658c5309fe6c1aa95dfb7586e74ea12bc2465463a7f53ee84a83e8ce6"
+  },
+  "candidatePackageConfigTemplate": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\generated\\guardian-package_config.json",
+    "bytes": 15736,
+    "sha256": "9391dba658c5309fe6c1aa95dfb7586e74ea12bc2465463a7f53ee84a83e8ce6"
+  },
+  "originalPackageConfig": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\generated\\main-package_config-original.json",
+    "bytes": 15171,
+    "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7"
+  },
+  "internalPackageRoots": {
+    "audit_client": "packages/audit_client",
+    "commerce_contracts": "packages/commerce_contracts",
+    "device_operations": "packages/device_operations",
+    "notification_client": "packages/notification_client",
+    "usage_report_ui": "packages/usage_report_ui",
+    "usage_reporting": "packages/usage_reporting",
+    "guardian": "apps/guardian"
+  },
+  "packageRows": 70,
+  "rebasedInternalRoots": 7,
+  "externalRowsAndAllOtherConfigMetadataPreserved": true,
+  "sourceMembershipExclusions": {
+    "directories": [
+      ".dart_tool",
+      ".idea",
+      "build"
+    ],
+    "files": [
+      ".flutter-plugins",
+      ".flutter-plugins-dependencies",
+      "device_operations_showcase.iml",
+      "guardian.iml"
+    ]
+  },
+  "sourceCopiesAreRawCommittedGitBlobs": true,
+  "everyGitBlobRecomputedFromRawBytes": true,
+  "before408SourceManifestOriginal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\source-manifest.json",
+    "bytes": 243867,
+    "sha256": "5ff8304370d890089517f78f7a5f7f5f99e894a3c31dd969f80edca7a830fcc7"
+  },
+  "preparationReferences": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\prepare_static_source.py",
+      "bytes": 25864,
+      "sha256": "6c670bcce29130813dfa73770252524b361487770956d9f0067525cfe3a81804"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\inputs.json",
+      "bytes": 6993,
+      "sha256": "c89ddfc7b6a1725fc23027f8b27cd73fe0aefd6f6501a344aa8bf2ecfc4749ab"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\seal-static-source.json",
+      "bytes": 80061,
+      "sha256": "f5b78356c80ed9d007892a3cd2c2da00a934ef416f9aa6c55f476e827da8f46d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\generated\\reference-source-name-contract-browser38.py",
+      "bytes": 5887,
+      "sha256": "7fe208bdb1cf46307185343fdc249a4e99fa2879dba44cff165d04675dc7f77b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\dependency-library-pins.json",
+      "bytes": 360117,
+      "sha256": "c3397c181ca945563789c73134689937c6716752568b00fa7a4f7bbc04648fd3"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\expected-cases.json",
+      "bytes": 38207,
+      "sha256": "16137a4d38c0c96955ae845bad481e6adc5c9780f87ca32f4829950345ae031a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-scope-20261023-r3\\out\\test-case-inventory.json",
+      "bytes": 3164,
+      "sha256": "95c7dfd296517d6018bc393ea589f19e75bd13ae1351b9389803170f8960a653"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-route-20261023-r2\\out\\test-case-inventory.json",
+      "bytes": 2104,
+      "sha256": "09dcc6cac92dfecb79ca801745791690262ba8c1e262243a4ed5e1ec9aead4a2"
+    }
+  ],
+  "dependencySeedLimit": "Inherited historical dependency metadata, including historical access errors, is preserved byte-for-field except seven proposed internal roots. It is not a fresh external cache integrity check.",
+  "noCacheContentCopyOrRehash": true,
+  "sdkCalls": 0,
+  "networkCalls": 0,
+  "applicationTests": "UNRUN",
+  "formatter": "UNRUN",
+  "dartTypeCheck": "UNRUN",
+  "runtimeDiscovery": "UNRUN",
+  "gitWrites": false,
+  "mainWrites": false,
+  "controllerOrWorkerImported": false,
+  "validationWorkerCreated": false,
+  "executionGrant": null,
+  "attemptDirectoryCreated": false,
+  "mainMembership": {
+    "files": 409,
+    "fullMembershipExact": true
+  },
+  "frozenMembership": {
+    "files": 409,
+    "fullMembershipExact": true
+  }
+}
