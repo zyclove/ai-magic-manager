@@ -1,0 +1,290 @@
+{
+  "status": "CURRENT_GUARDIAN_STATIC_ANALYSIS_ACCEPTED_TESTS_AND_UI_UNRUN",
+  "copiedFiles": [
+    {
+      "source": {
+        "path": ".cache/guardian-analyze-20261024-r12-current/inputs.json",
+        "bytes": 16388,
+        "sha256": "b8a00cb5f47df9b5a1787b06728c6cbb6340bce8ba4da5a1942748001b40952f"
+      },
+      "archived": {
+        "path": "docs/evidence/guardian-static-analysis-pass-20261024/controls/inputs.json",
+        "bytes": 16388,
+        "sha256": "b8a00cb5f47df9b5a1787b06728c6cbb6340bce8ba4da5a1942748001b40952f"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-analyze-20261024-r12-current/proposal.json",
+        "bytes": 9067,
+        "sha256": "37ed26b4f0b3e796a8dbc4440311b0ac7ddd7e840deb1da0a064d6e1468be6de"
+      },
+      "archived": {
+        "path": "docs/evidence/guardian-static-analysis-pass-20261024/controls/proposal.json",
+        "bytes": 9067,
+        "sha256": "37ed26b4f0b3e796a8dbc4440311b0ac7ddd7e840deb1da0a064d6e1468be6de"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-analyze-20261024-r12-current/control-pins.json",
+        "bytes": 2073,
+        "sha256": "45422b646ea128e32a6e30bb0c167d546f4b69d363eca8cbbf8de010f4d95b02"
+      },
+      "archived": {
+        "path": "docs/evidence/guardian-static-analysis-pass-20261024/controls/control-pins.json",
+        "bytes": 2073,
+        "sha256": "45422b646ea128e32a6e30bb0c167d546f4b69d363eca8cbbf8de010f4d95b02"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-analyze-20261024-r12-current/final-r12-vs-r11.patch",
+        "bytes": 1696,
+        "sha256": "3f1e66771ca006566882a667b1ae489c38f99c012a0177e8c3439efe604757ce"
+      },
+      "archived": {
+        "path": "docs/evidence/guardian-static-analysis-pass-20261024/controls/final-r12-vs-r11.patch",
+        "bytes": 1696,
+        "sha256": "3f1e66771ca006566882a667b1ae489c38f99c012a0177e8c3439efe604757ce"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-analyze-20261024-r12-current/root-sdk-grant.json",
+        "bytes": 2205,
+        "sha256": "bf7740c8d3de58b018a0829f589199596906b57900702f4d0678998410ef5108"
+      },
+      "archived": {
+        "path": "docs/evidence/guardian-static-analysis-pass-20261024/controls/root-sdk-grant.json",
+        "bytes": 2205,
+        "sha256": "bf7740c8d3de58b018a0829f589199596906b57900702f4d0678998410ef5108"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-analyze-root-launch-20261024-r12-current.ps1",
+        "bytes": 9179,
+        "sha256": "bc6fda8aa3de32487a39fcf02135b1d4b2e0756f45d15095e138647c82111a49"
+      },
+      "archived": {
+        "path": "docs/evidence/guardian-static-analysis-pass-20261024/controls/guardian-analyze-root-launch-20261024-r12-current.ps1",
+        "bytes": 9179,
+        "sha256": "bc6fda8aa3de32487a39fcf02135b1d4b2e0756f45d15095e138647c82111a49"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-analyze-r12-release-20261024.ps1",
+        "bytes": 4371,
+        "sha256": "086667869c5dea18fc6bbe6101846422b9a3dcf420b0e332c02730b58d55519a"
+      },
+      "archived": {
+        "path": "docs/evidence/guardian-static-analysis-pass-20261024/controls/guardian-analyze-r12-release-20261024.ps1",
+        "bytes": 4371,
+        "sha256": "086667869c5dea18fc6bbe6101846422b9a3dcf420b0e332c02730b58d55519a"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-analyze-r12-post-20261024-r1/post.py",
+        "bytes": 30356,
+        "sha256": "5b8862f477c2d4d1a74ac53386366b4d4620666e81f1e4949faf9bbf1e23160a"
+      },
+      "archived": {
+        "path": "docs/evidence/guardian-static-analysis-pass-20261024/post/post.py",
+        "bytes": 30356,
+        "sha256": "5b8862f477c2d4d1a74ac53386366b4d4620666e81f1e4949faf9bbf1e23160a"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-analyze-r12-post-20261024-r1/post.json",
+        "bytes": 23985,
+        "sha256": "611621e281d23aff7bfd09149951c0ae2d6cf65cb08046015c82985db4bc70cc"
+      },
+      "archived": {
+        "path": "docs/evidence/guardian-static-analysis-pass-20261024/post/post.json",
+        "bytes": 23985,
+        "sha256": "611621e281d23aff7bfd09149951c0ae2d6cf65cb08046015c82985db4bc70cc"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-analyze-20261024-r12-current/root-attempt/result.json",
+        "bytes": 1265,
+        "sha256": "d8a8b7876f2398de932a8077ecce2eef73021d60acfd570956b7780d1476b91f"
+      },
+      "archived": {
+        "path": "docs/evidence/guardian-static-analysis-pass-20261024/actual/result.json",
+        "bytes": 1265,
+        "sha256": "d8a8b7876f2398de932a8077ecce2eef73021d60acfd570956b7780d1476b91f"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-analyze-20261024-r12-current/root-attempt/release.json",
+        "bytes": 1443,
+        "sha256": "3340b9e8ddc8ca30ad539075d6dfc2d9b02f9c182802174ed59633a986c92383"
+      },
+      "archived": {
+        "path": "docs/evidence/guardian-static-analysis-pass-20261024/actual/release.json",
+        "bytes": 1443,
+        "sha256": "3340b9e8ddc8ca30ad539075d6dfc2d9b02f9c182802174ed59633a986c92383"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-analyze-20261024-r12-current/attempt/out/analyze.log",
+        "bytes": 189,
+        "sha256": "3f1312814172b8ae324ead49276e7a732c66beedab309929a622d146f37bee8d"
+      },
+      "archived": {
+        "path": "docs/evidence/guardian-static-analysis-pass-20261024/actual/analyze.log",
+        "bytes": 189,
+        "sha256": "3f1312814172b8ae324ead49276e7a732c66beedab309929a622d146f37bee8d"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-analyze-20261024-r12-current/attempt/preflight-pins.json",
+        "bytes": 1973,
+        "sha256": "335c2214daed3e88e947171ccd1a80c45902fcd7968d7f41362053b8b6334f27"
+      },
+      "archived": {
+        "path": "docs/evidence/guardian-static-analysis-pass-20261024/actual/preflight-pins.json",
+        "bytes": 1973,
+        "sha256": "335c2214daed3e88e947171ccd1a80c45902fcd7968d7f41362053b8b6334f27"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-analyze-20261024-r12-current/attempt/postflight-pins.json",
+        "bytes": 1974,
+        "sha256": "e2bcb587ddd185413cf701a0057fa1494c963476e3cecee77fe02fb5960851b2"
+      },
+      "archived": {
+        "path": "docs/evidence/guardian-static-analysis-pass-20261024/actual/postflight-pins.json",
+        "bytes": 1974,
+        "sha256": "e2bcb587ddd185413cf701a0057fa1494c963476e3cecee77fe02fb5960851b2"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-analyze-r12-actual-independent-20261024-r1/review.md",
+        "bytes": 2798,
+        "sha256": "d240e232ff6f7fcc98e3a28ba2fe87bca643db77c0394dcb3a90bb7e36349e6e"
+      },
+      "archived": {
+        "path": "docs/evidence/guardian-static-analysis-pass-20261024/actual-review/review.md",
+        "bytes": 2798,
+        "sha256": "d240e232ff6f7fcc98e3a28ba2fe87bca643db77c0394dcb3a90bb7e36349e6e"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-analyze-r12-actual-independent-20261024-r1/pins.json",
+        "bytes": 11128,
+        "sha256": "07049529c3d5ea6f0127a3aafa06cf6bbfc154565869b3bc76e1900b2e4d97f0"
+      },
+      "archived": {
+        "path": "docs/evidence/guardian-static-analysis-pass-20261024/actual-review/pins.json",
+        "bytes": 11128,
+        "sha256": "07049529c3d5ea6f0127a3aafa06cf6bbfc154565869b3bc76e1900b2e4d97f0"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-analyze-r12-input-independent-20261024-r1/review.md",
+        "bytes": 2121,
+        "sha256": "cd2d40e63dbf67c4d49e518d4989de78cc1f20553dd936e6f31d945c68baf62b"
+      },
+      "archived": {
+        "path": "docs/evidence/guardian-static-analysis-pass-20261024/input-review.md",
+        "bytes": 2121,
+        "sha256": "cd2d40e63dbf67c4d49e518d4989de78cc1f20553dd936e6f31d945c68baf62b"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-current-20261024-r11-current/out/pins.json",
+        "bytes": 5036,
+        "sha256": "612ff887f0156036fbbc1980fb844d6a71ef65dc26874e9815aa3c8ce21bfc95"
+      },
+      "archived": {
+        "path": "docs/evidence/guardian-static-analysis-pass-20261024/source-pins.json",
+        "bytes": 5036,
+        "sha256": "612ff887f0156036fbbc1980fb844d6a71ef65dc26874e9815aa3c8ce21bfc95"
+      }
+    }
+  ],
+  "summary": {
+    "path": "docs/evidence/guardian-static-analysis-pass-20261024/summary.json",
+    "bytes": 1468,
+    "sha256": "4839730f4f386b5c76584f4cb7e3c6e2646679f6ace8f738cc00ef039a35d457"
+  },
+  "cacheReferencesNotCopied": [
+    {
+      "path": ".cache/guardian-analyze-20261024-r12-current/analysis-host.py",
+      "bytes": 21660,
+      "sha256": "867b3a382004471a9f9ef1cb89489496339e42fba726109c070bf5daa4266d11"
+    },
+    {
+      "path": ".cache/guardian-analyze-20261024-r12-current/worker.py",
+      "bytes": 37092,
+      "sha256": "0e177e983dca7edca5dd4ffdd8a371548d959983e9d0679e01d31a3ae30d8289"
+    },
+    {
+      "path": ".cache/guardian-analyze-20261024-r12-current/owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "path": ".cache/guardian-analyze-20261024-r12-current/process-inventory.ps1",
+      "bytes": 2439,
+      "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+    },
+    {
+      "path": ".cache/guardian-analyze-20261024-r12-current/attempt/result.json",
+      "bytes": 95217,
+      "sha256": "b35180d6e96035d3710cef6bfefa57c50b937eacf16a2aec3d5456b04096b34f"
+    },
+    {
+      "path": ".cache/guardian-analyze-20261024-r12-current/attempt/receipt.json",
+      "bytes": 82945,
+      "sha256": "2bf0869702caab1fc3090436e4e310ab7eaaeed3eeafa2d8eecab807d284225e"
+    },
+    {
+      "path": ".cache/guardian-analyze-20261024-r12-current/attempt/initial-gate.json",
+      "bytes": 67891,
+      "sha256": "618d50f6bffd303dc4afaf98895c2d77f4937d560bb6095305413b663b6992f5"
+    },
+    {
+      "path": ".cache/guardian-analyze-20261024-r12-current/attempt/launch-gate.json",
+      "bytes": 67078,
+      "sha256": "6dcc55eaa3ea684a5fb9ced9c650a5390a2607e826a0317018d55d27be38cbeb"
+    },
+    {
+      "path": ".cache/guardian-analyze-20261024-r12-current/attempt/postflight-gate.json",
+      "bytes": 68026,
+      "sha256": "619668ecb99f9dd5a45ec78f7cfc8f4ead20c36783aa97f1b852f9504739960f"
+    },
+    {
+      "path": ".cache/guardian-analyze-20261024-r12-current/root-attempt/post-process-inventory.json",
+      "bytes": 44902,
+      "sha256": "487b9f243805eda3f22ef6baaee6564bab245b38a08791806966facd6121bff0"
+    },
+    {
+      "path": ".cache/guardian-current-20261024-r11-current/out/seal-static-source.json",
+      "bytes": 79811,
+      "sha256": "ebde3e4f6d46d0b8ada900e466fee899b16abba0bfd0567e323a3ebb20bee8d8"
+    },
+    {
+      "path": ".cache/guardian-current-20261024-r11-current/out/source-manifest.json",
+      "bytes": 245050,
+      "sha256": "def6ba467ee283b9af1cc9778c3d5844816664c6653812c5a3d66b9c812b415f"
+    }
+  ],
+  "fullProcessInventoriesNotDuplicated": true,
+  "controlsReconstruction": "The final literal patch reconstructs r12 host/worker from the archived r11 controls in guardian-async-context-analysis-20261024. OwnedJob/provider are byte-identical; hashes remain referenced."
+}

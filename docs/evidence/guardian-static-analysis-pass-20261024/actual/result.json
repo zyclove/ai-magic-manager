@@ -1,0 +1,38 @@
+{
+  "status": "ROOT_HOST_TERMINAL_PENDING_INDEPENDENT_ANALYSIS_POST",
+  "atUtc": "2026-10-23T16:24:51.9517218Z",
+  "sourceCommit": "c90b1465eaed3bb14f281bfb07d3972bcd4e26f3",
+  "proposalSha256": "37ed26b4f0b3e796a8dbc4440311b0ac7ddd7e840deb1da0a064d6e1468be6de",
+  "launcherSha256": "bc6fda8aa3de32487a39fcf02135b1d4b2e0756f45d15095e138647c82111a49",
+  "sdkCount": 0,
+  "unknownCount": 0,
+  "availableRamBytes": 3398692864,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 4830380032
+    },
+    {
+      "Name": "D",
+      "Free": 22005587968
+    }
+  ],
+  "maximumHostSeconds": 180,
+  "reusedBudget": false,
+  "grant": "guardian-full-analyze-current-r12-single-sdk-call",
+  "applicationTestsRun": false,
+  "hostPid": 64152,
+  "sameHandleCreationFiletime": "134372462920232791",
+  "sameHandleExitFiletime": "134372463417942693",
+  "sameHandleSignaled": true,
+  "actualHostExitCode": 0,
+  "firstWaitSignaledElapsedSeconds": 49.7796295,
+  "rootForcedOwnHost": false,
+  "emergencyCleanupAttempted": false,
+  "failure": null,
+  "hostTimelyAgainstOriginalRootAnchor": true,
+  "candidateRuntimePinsMatchAfter": true,
+  "rootHostTerminalAccepted": true,
+  "analysisAccepted": false,
+  "rootElapsedBeforeReceiptSeconds": 49.8595404
+}

@@ -1,0 +1,121 @@
+{
+  "status": "STATIC_CURRENT_SOURCE_INPUT_NOT_EXECUTION_AUTHORIZATION",
+  "sourceCommit": "c90b1465eaed3bb14f281bfb07d3972bcd4e26f3",
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r11-current\\out\\source-manifest.json",
+    "bytes": 245050,
+    "sha256": "def6ba467ee283b9af1cc9778c3d5844816664c6653812c5a3d66b9c812b415f"
+  },
+  "sourceDirectoryList": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r11-current\\out\\source-directory-list.json",
+    "bytes": 24825,
+    "sha256": "73a3e71b5df48242eb962bab5a7441e7d44e6b5afa9d8109d0ad263f625ba7bf"
+  },
+  "expectedCaseContract": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r11-current\\out\\expected-cases.json",
+    "bytes": 47153,
+    "sha256": "a56d5f68ea444dbe5d1df866db9dea1250b3aa94cebf330beab899c48ded547e"
+  },
+  "fullRegressionInventoryBinding": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r11-current\\out\\full-regression-181-bindings.json",
+    "bytes": 83400,
+    "sha256": "4a18dc43c3d572f89245c73fbaf39c407587d8c5967b38a213cefd2a46f49f22"
+  },
+  "candidatePackageConfig": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r11-current\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+    "bytes": 15715,
+    "sha256": "800201cf98adf34dca996cd1ace37939e3b24f1758bf068f085ce62593a237f2"
+  },
+  "candidatePackageConfigTemplate": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r11-current\\generated\\guardian-package_config.json",
+    "bytes": 15715,
+    "sha256": "800201cf98adf34dca996cd1ace37939e3b24f1758bf068f085ce62593a237f2"
+  },
+  "originalPackageConfig": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r11-current\\generated\\main-package_config-original.json",
+    "bytes": 15171,
+    "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7"
+  },
+  "dependencyLibraryPins": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r11-current\\out\\dependency-library-pins.json",
+    "bytes": 360124,
+    "sha256": "3e5c1a81583a04fd26065112380917a878cd57c2a305b572cdbf983e1b4569c4"
+  },
+  "internalPackageRoots": {
+    "audit_client": "packages/audit_client",
+    "commerce_contracts": "packages/commerce_contracts",
+    "device_operations": "packages/device_operations",
+    "notification_client": "packages/notification_client",
+    "usage_report_ui": "packages/usage_report_ui",
+    "usage_reporting": "packages/usage_reporting",
+    "guardian": "apps/guardian"
+  },
+  "sevenRootGitTrees": {
+    "apps/guardian": "0e2a7c3d1d1deb24450f20b092d3bd52b9506b30",
+    "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+    "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+    "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+    "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+    "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+    "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+  },
+  "generatedExclusions": {
+    "directories": [
+      ".dart_tool",
+      ".idea",
+      "build"
+    ],
+    "files": [
+      ".flutter-plugins",
+      ".flutter-plugins-dependencies",
+      "device_operations_showcase.iml",
+      "guardian.iml"
+    ]
+  },
+  "sourceFiles": 410,
+  "sourceBytes": 4007208,
+  "sourceTreeSha256": "40134ed0d2d9eacd5932eb014712a772497e576c141c87bcca31455848296135",
+  "sourceMembershipCheck": {
+    "main": {
+      "files": 410,
+      "fullMembershipExact": true
+    },
+    "frozen": {
+      "files": 410,
+      "fullMembershipExact": true
+    }
+  },
+  "deltaFromAbb2": {
+    "modifiedProductionFiles": [
+      "apps/guardian/lib/pages/quota_page.dart",
+      "apps/guardian/lib/pages/quota_plan_editor.dart",
+      "apps/guardian/lib/pages/quota_plans_page.dart",
+      "apps/guardian/lib/ui/audit_view.dart",
+      "apps/guardian/lib/ui/view_lifetime.dart"
+    ],
+    "unchangedFiles": 405,
+    "modifiedTests": 0,
+    "addedFiles": 0,
+    "deletedFiles": 0
+  },
+  "fullRegressionRoots": 181,
+  "all181RowsExactlyEqualAbb2": true,
+  "all80CasesAndSevenSelectedSourcesExactlyEqualAbb2": true,
+  "readme": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r11-current\\README.md",
+    "bytes": 1873,
+    "sha256": "748a2c709895c77315522d88f5b2a340c90caeb9f97cb6d2261d737ba9320c74"
+  },
+  "producer": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r11-current\\out\\prepare.py",
+    "bytes": 20232,
+    "sha256": "6345f1b73893ba75d871aa8a66b1ec89c1275eac651a3c5324bd2624cfc7f953"
+  },
+  "runtimeClosureComplete": false,
+  "externalCachePayloadFreshlyVerified": false,
+  "analysisAndTests": "UNRUN",
+  "executionApproved": false,
+  "attemptCreated": false,
+  "sdkOrAstOrCandidateOrTestsInvoked": false,
+  "mainOrGitOrOldFreezeWritten": false
+}

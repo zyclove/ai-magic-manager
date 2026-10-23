@@ -1,0 +1,316 @@
+{
+  "status": "INDEPENDENT_FILE_REVIEW_GUARDIAN_STATIC_ANALYSIS_SUCCESS_ONLY",
+  "sourceCommit": "c90b1465eaed3bb14f281bfb07d3972bcd4e26f3",
+  "sourceFiles": 410,
+  "sourceBytes": 4007208,
+  "originalFiles": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\proposal.json",
+      "bytes": 9067,
+      "sha256": "37ed26b4f0b3e796a8dbc4440311b0ac7ddd7e840deb1da0a064d6e1468be6de"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\inputs.json",
+      "bytes": 16388,
+      "sha256": "b8a00cb5f47df9b5a1787b06728c6cbb6340bce8ba4da5a1942748001b40952f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\analysis-host.py",
+      "bytes": 21660,
+      "sha256": "867b3a382004471a9f9ef1cb89489496339e42fba726109c070bf5daa4266d11"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\worker.py",
+      "bytes": 37092,
+      "sha256": "0e177e983dca7edca5dd4ffdd8a371548d959983e9d0679e01d31a3ae30d8289"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\process-inventory.ps1",
+      "bytes": 2439,
+      "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\root-sdk-grant.json",
+      "bytes": 2205,
+      "sha256": "bf7740c8d3de58b018a0829f589199596906b57900702f4d0678998410ef5108"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-root-launch-20261024-r12-current.ps1",
+      "bytes": 9179,
+      "sha256": "bc6fda8aa3de32487a39fcf02135b1d4b2e0756f45d15095e138647c82111a49"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r12-release-20261024.ps1",
+      "bytes": 4371,
+      "sha256": "086667869c5dea18fc6bbe6101846422b9a3dcf420b0e332c02730b58d55519a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\root-attempt\\preflight.json",
+      "bytes": 706,
+      "sha256": "3493da92d41bd68e774995d49750c742d673bc5e3a199ad64b82e144622bb579"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\root-attempt\\result.json",
+      "bytes": 1265,
+      "sha256": "d8a8b7876f2398de932a8077ecce2eef73021d60acfd570956b7780d1476b91f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\root-attempt\\release.json",
+      "bytes": 1443,
+      "sha256": "3340b9e8ddc8ca30ad539075d6dfc2d9b02f9c182802174ed59633a986c92383"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\root-attempt\\post-process-inventory.json",
+      "bytes": 44902,
+      "sha256": "487b9f243805eda3f22ef6baaee6564bab245b38a08791806966facd6121bff0"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\attempt\\request.json",
+      "bytes": 301,
+      "sha256": "cc5b27b781648332739ebf8ebf832a1a48acae0ca9a1766840e2d664947648de"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\attempt\\result.json",
+      "bytes": 95217,
+      "sha256": "b35180d6e96035d3710cef6bfefa57c50b937eacf16a2aec3d5456b04096b34f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\attempt\\receipt.json",
+      "bytes": 82945,
+      "sha256": "2bf0869702caab1fc3090436e4e310ab7eaaeed3eeafa2d8eecab807d284225e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\attempt\\launch.json",
+      "bytes": 1170,
+      "sha256": "71ef0ca4f1fa37b239445d87992d60e7bcc6eb4a0ac0b1ccccb74eaf086b8706"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\attempt\\preflight-pins.json",
+      "bytes": 1973,
+      "sha256": "335c2214daed3e88e947171ccd1a80c45902fcd7968d7f41362053b8b6334f27"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\attempt\\postflight-pins.json",
+      "bytes": 1974,
+      "sha256": "e2bcb587ddd185413cf701a0057fa1494c963476e3cecee77fe02fb5960851b2"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\attempt\\initial-gate.json",
+      "bytes": 67891,
+      "sha256": "618d50f6bffd303dc4afaf98895c2d77f4937d560bb6095305413b663b6992f5"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\attempt\\launch-gate.json",
+      "bytes": 67078,
+      "sha256": "6dcc55eaa3ea684a5fb9ced9c650a5390a2607e826a0317018d55d27be38cbeb"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\attempt\\postflight-gate.json",
+      "bytes": 68026,
+      "sha256": "619668ecb99f9dd5a45ec78f7cfc8f4ead20c36783aa97f1b852f9504739960f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\attempt\\out\\analyze.log",
+      "bytes": 189,
+      "sha256": "3f1312814172b8ae324ead49276e7a732c66beedab309929a622d146f37bee8d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\attempt\\worker-console.log",
+      "bytes": 111,
+      "sha256": "97d90739e595fd4266c058b1e62f13dd1295c3e38a2ae27346fe8e4b58183c48"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r12-post-20261024-r1\\post.py",
+      "bytes": 30356,
+      "sha256": "5b8862f477c2d4d1a74ac53386366b4d4620666e81f1e4949faf9bbf1e23160a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r12-post-20261024-r1\\post.json",
+      "bytes": 23985,
+      "sha256": "611621e281d23aff7bfd09149951c0ae2d6cf65cb08046015c82985db4bc70cc"
+    }
+  ],
+  "rawEmbeddedRecordsMatch": true,
+  "proposalInputLauncherLogPostReleaseFingerprintCrossMatch": true,
+  "logDiagnostics": {
+    "info": 0,
+    "warning": 0,
+    "error": 0
+  },
+  "gates": [
+    {
+      "file": "initial-gate.json",
+      "rows": 765,
+      "reportedRows": 765,
+      "rootFields": [
+        "availableRamBytes",
+        "diskFreeBytes",
+        "processNameInventory",
+        "processNameProviderScriptSha256",
+        "sdkProcesses",
+        "unknownProcessNames",
+        "utc"
+      ],
+      "inventoryFields": [
+        "enumerationSucceeded",
+        "powerShellVersion",
+        "provider",
+        "providerErrors",
+        "purpose",
+        "rowCount",
+        "rows",
+        "sampleFinishedAtUtc",
+        "sampleStartedAtUtc",
+        "schemaVersion"
+      ],
+      "enumerationSucceeded": true,
+      "providerErrors": [],
+      "nonemptyRowErrors": [],
+      "duplicatePidCount": 0,
+      "blankNameCount": 0,
+      "pidTypeHistogram": {
+        "int": 765
+      },
+      "nameTypeHistogram": {
+        "str": 765
+      },
+      "errorsTypeHistogram": {
+        "list": 765
+      },
+      "originalSdkNameOccurrences": 0,
+      "testSuffixOccurrences": 0,
+      "reportedSdk": [],
+      "reportedUnknown": [],
+      "scriptSha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046",
+      "availableRamBytes": 3421405184,
+      "diskFreeBytes": {
+        "C:/": 4830375936,
+        "D:/": 21986398208
+      }
+    },
+    {
+      "file": "launch-gate.json",
+      "rows": 755,
+      "reportedRows": 755,
+      "rootFields": [
+        "availableRamBytes",
+        "diskFreeBytes",
+        "processNameInventory",
+        "processNameProviderScriptSha256",
+        "sdkProcesses",
+        "unknownProcessNames",
+        "utc"
+      ],
+      "inventoryFields": [
+        "enumerationSucceeded",
+        "powerShellVersion",
+        "provider",
+        "providerErrors",
+        "purpose",
+        "rowCount",
+        "rows",
+        "sampleFinishedAtUtc",
+        "sampleStartedAtUtc",
+        "schemaVersion"
+      ],
+      "enumerationSucceeded": true,
+      "providerErrors": [],
+      "nonemptyRowErrors": [],
+      "duplicatePidCount": 0,
+      "blankNameCount": 0,
+      "pidTypeHistogram": {
+        "int": 755
+      },
+      "nameTypeHistogram": {
+        "str": 755
+      },
+      "errorsTypeHistogram": {
+        "list": 755
+      },
+      "originalSdkNameOccurrences": 0,
+      "testSuffixOccurrences": 0,
+      "reportedSdk": [],
+      "reportedUnknown": [],
+      "scriptSha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046",
+      "availableRamBytes": 4014825472,
+      "diskFreeBytes": {
+        "C:/": 4830052352,
+        "D:/": 21851598848
+      }
+    },
+    {
+      "file": "postflight-gate.json",
+      "rows": 766,
+      "reportedRows": 766,
+      "rootFields": [
+        "availableRamBytes",
+        "diskFreeBytes",
+        "processNameInventory",
+        "processNameProviderScriptSha256",
+        "sdkProcesses",
+        "unknownProcessNames",
+        "utc"
+      ],
+      "inventoryFields": [
+        "enumerationSucceeded",
+        "powerShellVersion",
+        "provider",
+        "providerErrors",
+        "purpose",
+        "rowCount",
+        "rows",
+        "sampleFinishedAtUtc",
+        "sampleStartedAtUtc",
+        "schemaVersion"
+      ],
+      "enumerationSucceeded": true,
+      "providerErrors": [],
+      "nonemptyRowErrors": [],
+      "duplicatePidCount": 0,
+      "blankNameCount": 0,
+      "pidTypeHistogram": {
+        "int": 766
+      },
+      "nameTypeHistogram": {
+        "str": 766
+      },
+      "errorsTypeHistogram": {
+        "list": 766
+      },
+      "originalSdkNameOccurrences": 0,
+      "testSuffixOccurrences": 0,
+      "reportedSdk": [],
+      "reportedUnknown": [],
+      "scriptSha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046",
+      "availableRamBytes": 3727626240,
+      "diskFreeBytes": {
+        "C:/": 4817469440,
+        "D:/": 21851521024
+      }
+    }
+  ],
+  "releaseInventoryRows": 750,
+  "knownOwnedPidsPresent": [],
+  "recordedRootActualToolTerminalChunk": "f78e2d",
+  "recordedPostActualToolTerminalChunk": "e87f34",
+  "recordedReleaseToolTerminalChunk": "c2e03c",
+  "rootToolFactsProvidedByRootNotRerun": true,
+  "recordedAnalysisAccepted": true,
+  "recordedWindowReleased": true,
+  "full181Tests80BrowserUiBackendDevices": "UNRUN",
+  "cachePayloadRehashedByReview": false,
+  "postOrCandidatePredicateExecuted": false,
+  "sdkAstTestsNativeProcessOrNetworkExecuted": false,
+  "oldR11RedNotModified": true,
+  "runtimeClosureComplete": false,
+  "review": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r12-actual-independent-20261024-r1\\review.md",
+    "bytes": 2798,
+    "sha256": "d240e232ff6f7fcc98e3a28ba2fe87bca643db77c0394dcb3a90bb7e36349e6e"
+  }
+}

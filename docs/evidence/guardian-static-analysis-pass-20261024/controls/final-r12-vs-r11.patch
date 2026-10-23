@@ -1,0 +1,34 @@
+--- r11/analysis-host.py
++++ r12/analysis-host.py
+@@ -13,9 +13,9 @@
+ 
+ HERE = Path(__file__).absolute().parent
+-EXPECTED_HERE = Path(r'D:\codes\mobile\ai-manager\.cache\guardian-analyze-20261023-r11-current')
++EXPECTED_HERE = Path(r'D:\codes\mobile\ai-manager\.cache\guardian-analyze-20261024-r12-current')
+ PYTHON = Path(r'C:\Python313\python.exe')
+-SOURCE_COMMIT = 'abb2e016650cf579fc7ad1dbccdecc682072807a'
+-INPUT_BYTES = 16341
+-INPUT_SHA256 = 'b5256a52c81a0fe84e4436bd3c8ab19e51d88b65701fc6e9407e442f4ff3463d'
++SOURCE_COMMIT = 'c90b1465eaed3bb14f281bfb07d3972bcd4e26f3'
++INPUT_BYTES = 16388
++INPUT_SHA256 = 'b8a00cb5f47df9b5a1787b06728c6cbb6340bce8ba4da5a1942748001b40952f'
+ PROCESS_INVENTORY_SHA256 = 'f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046'
+ BUDGETS = {'outer': 180, 'working': 174, 'worker': 165, 'command': 135,
+--- r11/worker.py
++++ r12/worker.py
+@@ -23,11 +23,11 @@
+ ATTEMPT = CANDIDATE / 'attempt'
+ REPO = CANDIDATE.parents[1]
+-FROZEN = REPO / '.cache/guardian-current-20261023-r10-current'
+-SOURCE_COMMIT = 'abb2e016650cf579fc7ad1dbccdecc682072807a'
++FROZEN = REPO / '.cache/guardian-current-20261024-r11-current'
++SOURCE_COMMIT = 'c90b1465eaed3bb14f281bfb07d3972bcd4e26f3'
+ SOURCE = FROZEN / 'src'
+ MODULE = SOURCE / 'apps/guardian'
+ INPUT = CANDIDATE / 'inputs.json'
+-INPUT_BYTES = 16341
+-INPUT_SHA256 = 'b5256a52c81a0fe84e4436bd3c8ab19e51d88b65701fc6e9407e442f4ff3463d'
++INPUT_BYTES = 16388
++INPUT_SHA256 = 'b8a00cb5f47df9b5a1787b06728c6cbb6340bce8ba4da5a1942748001b40952f'
+ PWSH = Path(r'C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.exe')
+ PROCESS_INVENTORY = CANDIDATE / 'process-inventory.ps1'

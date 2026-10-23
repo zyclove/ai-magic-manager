@@ -1,0 +1,52 @@
+{
+  "status": "ROOT_APPROVED_SINGLE_FIXED_ANALYSIS",
+  "atUtc": "2026-10-23T16:24:33.864471+00:00",
+  "proposalSha256": "37ed26b4f0b3e796a8dbc4440311b0ac7ddd7e840deb1da0a064d6e1468be6de",
+  "launcherSha256": "bc6fda8aa3de32487a39fcf02135b1d4b2e0756f45d15095e138647c82111a49",
+  "sourceCommit": "c90b1465eaed3bb14f281bfb07d3972bcd4e26f3",
+  "sdkCallsAllowed": 1,
+  "authority": "Existing human offline verification and Flutter cache-access authorization. Fresh resource gate and identity validation scheduling completed. Current-source full Guardian analyze only.",
+  "rootFinalProposalLauncherAndPostRebindReviewed": true,
+  "nativeAndProviderByteExactPrevious": true,
+  "previousR11ApplicationRedPreserved": true,
+  "evidence": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-r3-actual-independent-20261023-r1\\review.md",
+      "bytes": 4106,
+      "sha256": "e152e3d920f30c06deeb1bdb3632c09475cf4b08ebfe70d23520277f7933c909"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r11-current\\out\\pins.json",
+      "bytes": 5036,
+      "sha256": "612ff887f0156036fbbc1980fb844d6a71ef65dc26874e9815aa3c8ce21bfc95"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r12-input-independent-20261024-r1\\review.md",
+      "bytes": 2121,
+      "sha256": "cd2d40e63dbf67c4d49e518d4989de78cc1f20553dd936e6f31d945c68baf62b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r12-current\\control-pins.json",
+      "bytes": 2073,
+      "sha256": "45422b646ea128e32a6e30bb0c167d546f4b69d363eca8cbbf8de010f4d95b02"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r11-actual-independent-20261024-r1\\review.md",
+      "bytes": 3913,
+      "sha256": "996de2a97591c0334229f0eced9efa2fdda54e1750e092a044b50a5fd188ef6b"
+    }
+  ],
+  "budgets": {
+    "outer": 180,
+    "working": 174,
+    "worker": 165,
+    "command": 135,
+    "commandCleanup": 140,
+    "postflightReserve": 25
+  },
+  "testsAllowed": false,
+  "downloadsAllowed": false,
+  "pushed": false,
+  "deployed": false,
+  "qualificationManifestHistoricalFlagsUnchanged": true
+}

@@ -1,0 +1,46 @@
+{
+  "status": "CURRENT_GUARDIAN_STATIC_ANALYSIS_ACCEPTED_TESTS_AND_UI_UNRUN",
+  "recordedAtUtc": "2026-10-23T16:29:14.561765+00:00",
+  "sourceCommit": "c90b1465eaed3bb14f281bfb07d3972bcd4e26f3",
+  "sourceFiles": 410,
+  "sourceBytes": 4007208,
+  "sourceTreeSha256": "40134ed0d2d9eacd5932eb014712a772497e576c141c87bcca31455848296135",
+  "command": "flutter --no-version-check --suppress-analytics analyze --no-pub --fatal-infos --fatal-warnings",
+  "logResult": "No issues found!",
+  "analyzerReportedSeconds": 10.8,
+  "rootActualTerminal": {
+    "initialChunk": "afe65f",
+    "session": 81940,
+    "terminalChunk": "f78e2d",
+    "naturalExitCode": 0,
+    "firstSameHandleSignalSeconds": 49.7796295,
+    "forced": false
+  },
+  "postActualTerminal": {
+    "chunk": "e87f34",
+    "naturalExitCode": 0
+  },
+  "releaseActualTerminal": {
+    "chunk": "c2e03c",
+    "naturalExitCode": 0
+  },
+  "analysisAccepted": true,
+  "windowReleased": true,
+  "sdkCalls": 1,
+  "testsRun": false,
+  "pubRun": false,
+  "downloadsAllowed": false,
+  "preflightAndPostflightComplete": true,
+  "packages": 70,
+  "cacheFiles": 3536,
+  "cacheBytes": 633817159,
+  "all181RegressionRootsExecuted": false,
+  "browser80CasesExecuted": false,
+  "uiRendered": false,
+  "backendOrPhysicalDeviceJointValidationAccepted": false,
+  "previousR11NonzeroResultPreserved": true,
+  "runtimeClosureComplete": false,
+  "productionSourceChangedByThisEvidencePhase": false,
+  "pushed": false,
+  "deployed": false
+}

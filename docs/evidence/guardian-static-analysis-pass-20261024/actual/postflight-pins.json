@@ -1,0 +1,57 @@
+{
+  "stage": "postflight",
+  "startedAtUtc": "2026-10-23T16:25:26.074601+00:00",
+  "complete": true,
+  "source": {
+    "frozenRawGit": {
+      "files": 410,
+      "fullMembershipExact": true,
+      "allRawHashesMatch": true
+    },
+    "mainRaw": {
+      "files": 410,
+      "fullMembershipExact": true,
+      "allRawHashesMatch": true
+    },
+    "currentSevenRootGitTrees": {
+      "apps/guardian": "0e2a7c3d1d1deb24450f20b092d3bd52b9506b30",
+      "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+      "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+      "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+      "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+      "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+      "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+    },
+    "regressionMetadataBoundOnlyNotExecuted": true
+  },
+  "packages": {
+    "packages": 70,
+    "rebasedInternalRoots": 7,
+    "unchangedExternalRows": 63,
+    "metadataPreserved": true,
+    "candidateSha256": "800201cf98adf34dca996cd1ace37939e3b24f1758bf068f085ce62593a237f2"
+  },
+  "cache": {
+    "manifestSha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84",
+    "trees": 70,
+    "fixedFiles": 32,
+    "allMembersDirectoriesBytesAndHashesMatch": true,
+    "totals": {
+      "files": 3536,
+      "bytes": 633817159
+    }
+  },
+  "runtime": {
+    "sdkGitRevision": "761747bfc538b5af34aa0d3fac380f1bc331ec49",
+    "controlAndExtraRuntimePinsMatch": true,
+    "snapshotAndStampReady": true,
+    "pubspecNotNewerThanLock": true,
+    "forbiddenEnvironmentOverridesAbsent": true,
+    "bootstrapAbsent": true,
+    "engineDartStampMatchesEngineVersion": true,
+    "fixedProcessPathVerified": true,
+    "bootstrapAllowed": false
+  },
+  "finishedAtUtc": "2026-10-23T16:25:41.110585+00:00",
+  "elapsedWorkerSeconds": 48.539957900000445
+}

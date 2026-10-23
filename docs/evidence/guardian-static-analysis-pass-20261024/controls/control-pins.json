@@ -1,0 +1,67 @@
+{
+  "status": "STATIC_R12_FOUR_CONTROLS_FINAL_AUTHOR_ALL_UNRUN",
+  "sourceCommit": "c90b1465eaed3bb14f281bfb07d3972bcd4e26f3",
+  "frozenSource": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r11-current",
+  "inputs": {
+    "path": "inputs.json",
+    "bytes": 16388,
+    "sha256": "b8a00cb5f47df9b5a1787b06728c6cbb6340bce8ba4da5a1942748001b40952f"
+  },
+  "controlFiles": [
+    "analysis-host.py",
+    "worker.py",
+    "owned_job.py",
+    "process-inventory.ps1"
+  ],
+  "files": [
+    {
+      "path": "analysis-host.py",
+      "bytes": 21660,
+      "sha256": "867b3a382004471a9f9ef1cb89489496339e42fba726109c070bf5daa4266d11"
+    },
+    {
+      "path": "worker.py",
+      "bytes": 37092,
+      "sha256": "0e177e983dca7edca5dd4ffdd8a371548d959983e9d0679e01d31a3ae30d8289"
+    },
+    {
+      "path": "owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "path": "process-inventory.ps1",
+      "bytes": 2439,
+      "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+    },
+    {
+      "path": "final-r12-vs-r11.patch",
+      "bytes": 1696,
+      "sha256": "3f1e66771ca006566882a667b1ae489c38f99c012a0177e8c3439efe604757ce"
+    },
+    {
+      "path": "controls-review.md",
+      "bytes": 1138,
+      "sha256": "b29e313f23c280bc4cfed6a0fed7b04936cb0897364213c2217aa49021b7faf1"
+    }
+  ],
+  "sharedDirectoryExclusiveClaimed": false,
+  "exactLiteralChangesPerHostWorker": 4,
+  "reverseToActualR11ByteExact": true,
+  "ownedAndProviderByteExact": true,
+  "logicNameProviderRuntimeContractFlagsEnvAndNativeMonitorUnchanged": true,
+  "budgets": {
+    "outer": 180,
+    "working": 174,
+    "worker": 165,
+    "command": 135,
+    "commandCleanup": 140,
+    "postflightReserve": 25
+  },
+  "templateCheckpointHistorical": true,
+  "runtimeClosureComplete": false,
+  "proposalGrantOrAttemptCreatedByThisTask": false,
+  "allScenarios": "UNRUN",
+  "candidateSdkQualificationAstTestsFormatterProcessOrNetworkExecuted": false,
+  "mainGitOrOldR11Written": false
+}
