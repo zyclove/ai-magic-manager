@@ -1,0 +1,2097 @@
+{
+  "schemaVersion": 1,
+  "status": "STATIC_ANALYSIS409_R9_CANDIDATE_ONLY_ROOT_REVIEW_REQUIRED",
+  "executionApproved": false,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "phase": "analyze-all-guardian",
+  "phaseScope": "FULL_GUARDIAN_ANALYZE",
+  "sourceCommit": "a2b5ca6ef2398397e4208065090b7c1d65992358",
+  "sourceFiles": 409,
+  "sourceRoots": [
+    "apps/guardian",
+    "packages/audit_client",
+    "packages/commerce_contracts",
+    "packages/notification_client",
+    "packages/device_operations",
+    "packages/usage_reporting",
+    "packages/usage_report_ui"
+  ],
+  "sevenRootGitTrees": {
+    "apps/guardian": "ed552cf50f545b803484992b9296c4e31017963f",
+    "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+    "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+    "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+    "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+    "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+    "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+  },
+  "analysisInputs": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r9\\inputs.json",
+    "bytes": 7010,
+    "sha256": "bc28a78035d46791d7bd9cab066668bb7c119b601ed7ba6f8f00a683c3f78075",
+    "absolute": true
+  },
+  "candidateFiles": [
+    {
+      "path": "controller.py",
+      "bytes": 8048,
+      "sha256": "2c0d3b0b36d551219816b3c5cb3e05e69a2e56d32ed16a7e611fcacb751b547f"
+    },
+    {
+      "path": "worker.py",
+      "bytes": 24520,
+      "sha256": "57a251218e83970929182279b210c19821ba7733ddbe1dad081a1a8d43a1360a"
+    },
+    {
+      "path": "heap1536_windows_job.py",
+      "bytes": 9292,
+      "sha256": "4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12"
+    },
+    {
+      "path": "prepare_analysis_r9.py",
+      "bytes": 22791,
+      "sha256": "9a54543b342066598d509e83901c40e005554bb6efcdf6253ac828a6cb081bf2"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2265,
+      "sha256": "8e79bcf9cc3cef7ed5d2761eb9637479de73aeffd180038a2ab1efb206252a37"
+    },
+    {
+      "path": "mechanical-controller.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "mechanical-worker.py.diff",
+      "bytes": 827,
+      "sha256": "07e023f0ef7eae2a740a6d7c4919061f5451b445ffc50fe3315632edb56e4162"
+    },
+    {
+      "path": "mechanical-native-helper.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "input-metadata-diff.json",
+      "bytes": 4847,
+      "sha256": "244a695afac184cf31037dcac99f14f50eab7cb077b1565edfbb43e3a5a92478"
+    },
+    {
+      "path": "ast-diff-proof.json",
+      "bytes": 858,
+      "sha256": "1ab0ca34baddab28965f1b4d4f7596b6a1342f1ac584d2ebc03c26cf5475475e"
+    },
+    {
+      "path": "template-r8-pin-preservation.json",
+      "bytes": 580,
+      "sha256": "4f8060acefe0194ed667c2406d9407ce80a3de6bbc18390ee33914ca46855a18"
+    },
+    {
+      "path": "static-review.json",
+      "bytes": 3662,
+      "sha256": "9d2a57c8f9749218c8abe5e6c800a51f9a076cac02317563f9b5c2b0860eb4e0"
+    }
+  ],
+  "controlRuntimeFiles": [
+    {
+      "path": "C:\\Python313\\python.exe",
+      "absolute": true,
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125"
+    },
+    {
+      "path": "C:\\Python313\\python313.dll",
+      "absolute": true,
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\win32\\win32job.pyd",
+      "absolute": true,
+      "bytes": 28672,
+      "sha256": "8f2a15f090e4fa75fd7179de0aa41108e9c6fe95786f736f373f5a7501e7e769"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\pywin32_system32\\pywintypes313.dll",
+      "absolute": true,
+      "bytes": 136192,
+      "sha256": "90ba935a0145ee9ae56267a365cc0088d34fa506b7afeb2bd1bd78cd33359605"
+    },
+    {
+      "path": "C:\\Program Files\\Git\\cmd\\git.exe",
+      "bytes": 45032,
+      "sha256": "4ab2b391de7fb5eb3afb34b5bd19ee7f71d0450bf7e4c207b201a0392e3825ae",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Windows\\System32\\cmd.exe",
+      "bytes": 327680,
+      "sha256": "a6e3b3b22b7fe8ce2c9245816126723eaa13f43b9f591883e59959a2d409426a",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Windows\\System32\\where.exe",
+      "bytes": 61440,
+      "sha256": "ade557dd65848c5cf6565913cf6e01cf5c9a8033f0d784c4d6932394958d743e",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\internal\\exit_with_errorlevel.bat",
+      "bytes": 562,
+      "sha256": "f4014bd05cc24391ff28f7bd5b22949cc80f0bb66ab9eda512c9c3997f0283e0",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.yaml",
+      "bytes": 6215,
+      "sha256": "d703ed2f5467e37193640b26522839137430af10b631f36c0d89a54f3236172f",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.lock",
+      "bytes": 22135,
+      "sha256": "097571421b53ac57c9b72523ee5d2ae584c3d6ba58412f8cbe3af35c55c5593a",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\.dart_tool\\package_config.json",
+      "bytes": 20035,
+      "sha256": "49d0a9ce1c70ca6edd29537570cfe7ea6539843da50c6a85a107d829330150e8",
+      "absolute": true
+    }
+  ],
+  "historicalMetadataFiles": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\controller.py",
+      "bytes": 8048,
+      "sha256": "2c0d3b0b36d551219816b3c5cb3e05e69a2e56d32ed16a7e611fcacb751b547f",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\worker.py",
+      "bytes": 24527,
+      "sha256": "fa6fd724e2967723a25df62a41f5ff7e47b4d9e8e2c4cf41de48249de0df4d63",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\heap1536_windows_job.py",
+      "bytes": 9292,
+      "sha256": "4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\prepare_analysis_r8.py",
+      "bytes": 24997,
+      "sha256": "11db2dfd806192c11e716516ccefaf4117d0f83bedef09a27c0b4ac1e84f2707",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\README.md",
+      "bytes": 2830,
+      "sha256": "7eff6af251d06ba873082e73ac6957a4cc9053cdb5c64aac24caad9bcd8f1be6",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\mechanical-controller.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\mechanical-worker.py.diff",
+      "bytes": 831,
+      "sha256": "d44b1bfbe543ae35f00be086cb9c64be0be7889e01d6cfe71563df6c4d48c68c",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\mechanical-native-helper.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\input-metadata-diff.json",
+      "bytes": 4850,
+      "sha256": "dc8653217a3684db154f3ec096eb6a8d849ce7ab2b753f5d0a8aa0c9a14e6c93",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\ast-diff-proof.json",
+      "bytes": 858,
+      "sha256": "04e4a48c8f1abc9cbd6a71b73843b6f2996b01f7b94edcd0e9419a3705ef6204",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\template-r7-pin-preservation.json",
+      "bytes": 104270,
+      "sha256": "b858fc2c224e42834936c042db72ad4231066abad1aca5f985ea932a1422e771",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\static-review.json",
+      "bytes": 3827,
+      "sha256": "f4f625cd2639b270740ac6aa8261be543326dfcac14663d7873342e7d11b2fe7",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\python.exe",
+      "absolute": true,
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125"
+    },
+    {
+      "path": "C:\\Python313\\python313.dll",
+      "absolute": true,
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\win32\\win32job.pyd",
+      "absolute": true,
+      "bytes": 28672,
+      "sha256": "8f2a15f090e4fa75fd7179de0aa41108e9c6fe95786f736f373f5a7501e7e769"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\pywin32_system32\\pywintypes313.dll",
+      "absolute": true,
+      "bytes": 136192,
+      "sha256": "90ba935a0145ee9ae56267a365cc0088d34fa506b7afeb2bd1bd78cd33359605"
+    },
+    {
+      "path": "C:\\Program Files\\Git\\cmd\\git.exe",
+      "bytes": 45032,
+      "sha256": "4ab2b391de7fb5eb3afb34b5bd19ee7f71d0450bf7e4c207b201a0392e3825ae",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Windows\\System32\\cmd.exe",
+      "bytes": 327680,
+      "sha256": "a6e3b3b22b7fe8ce2c9245816126723eaa13f43b9f591883e59959a2d409426a",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Windows\\System32\\where.exe",
+      "bytes": 61440,
+      "sha256": "ade557dd65848c5cf6565913cf6e01cf5c9a8033f0d784c4d6932394958d743e",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\internal\\exit_with_errorlevel.bat",
+      "bytes": 562,
+      "sha256": "f4014bd05cc24391ff28f7bd5b22949cc80f0bb66ab9eda512c9c3997f0283e0",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.yaml",
+      "bytes": 6215,
+      "sha256": "d703ed2f5467e37193640b26522839137430af10b631f36c0d89a54f3236172f",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.lock",
+      "bytes": 22135,
+      "sha256": "097571421b53ac57c9b72523ee5d2ae584c3d6ba58412f8cbe3af35c55c5593a",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\.dart_tool\\package_config.json",
+      "bytes": 20035,
+      "sha256": "49d0a9ce1c70ca6edd29537570cfe7ea6539843da50c6a85a107d829330150e8",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\controller.py",
+      "bytes": 8048,
+      "sha256": "2c0d3b0b36d551219816b3c5cb3e05e69a2e56d32ed16a7e611fcacb751b547f",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\worker.py",
+      "bytes": 24527,
+      "sha256": "8d873855983b7d63e277def43136471a6d95d756af2aa1a1ef9b45b6b32e41ca",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\heap1536_windows_job.py",
+      "bytes": 9292,
+      "sha256": "4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\prepare_analysis_r7.py",
+      "bytes": 23736,
+      "sha256": "28ad8b0ef821583e134f4b016990d24e80d8b6ea686dcc289b93a520a1cacf31",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\README.md",
+      "bytes": 3363,
+      "sha256": "653393d1ff29fa817d82cd94410f3d145bf9262de49aa6ec45ffb05bb8b11d05",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\mechanical-controller.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\mechanical-worker.py.diff",
+      "bytes": 1552,
+      "sha256": "972e418a98517af0fb2c15882b8ded98bc69731927f577e069f408eae02ba8bd",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\mechanical-native-helper.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\input-metadata-diff.json",
+      "bytes": 5229,
+      "sha256": "42891989c047cf25fed914c2f52afef2d8c7916309a75db0576fc41f01853c87",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\ast-diff-proof.json",
+      "bytes": 904,
+      "sha256": "395fe7dc1557a06f586a89040eb0cd828d4139c4b8c5e591e5434ba5c66ee49d",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\template-r6-pin-preservation.json",
+      "bytes": 76386,
+      "sha256": "678c9426f70915161848f2c10c7d5da61fa7c281f819e96f584607ca2a293e40",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\static-review.json",
+      "bytes": 2894,
+      "sha256": "94895e2debca8b1810454825c78e0dd7047dcce8ef788d71f4b4d93bdac2618b",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\python.exe",
+      "absolute": true,
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125"
+    },
+    {
+      "path": "C:\\Python313\\python313.dll",
+      "absolute": true,
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\win32\\win32job.pyd",
+      "absolute": true,
+      "bytes": 28672,
+      "sha256": "8f2a15f090e4fa75fd7179de0aa41108e9c6fe95786f736f373f5a7501e7e769"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\pywin32_system32\\pywintypes313.dll",
+      "absolute": true,
+      "bytes": 136192,
+      "sha256": "90ba935a0145ee9ae56267a365cc0088d34fa506b7afeb2bd1bd78cd33359605"
+    },
+    {
+      "path": "C:\\Program Files\\Git\\cmd\\git.exe",
+      "bytes": 45032,
+      "sha256": "4ab2b391de7fb5eb3afb34b5bd19ee7f71d0450bf7e4c207b201a0392e3825ae",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Windows\\System32\\cmd.exe",
+      "bytes": 327680,
+      "sha256": "a6e3b3b22b7fe8ce2c9245816126723eaa13f43b9f591883e59959a2d409426a",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Windows\\System32\\where.exe",
+      "bytes": 61440,
+      "sha256": "ade557dd65848c5cf6565913cf6e01cf5c9a8033f0d784c4d6932394958d743e",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\internal\\exit_with_errorlevel.bat",
+      "bytes": 562,
+      "sha256": "f4014bd05cc24391ff28f7bd5b22949cc80f0bb66ab9eda512c9c3997f0283e0",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.yaml",
+      "bytes": 6215,
+      "sha256": "d703ed2f5467e37193640b26522839137430af10b631f36c0d89a54f3236172f",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.lock",
+      "bytes": 22135,
+      "sha256": "097571421b53ac57c9b72523ee5d2ae584c3d6ba58412f8cbe3af35c55c5593a",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\.dart_tool\\package_config.json",
+      "bytes": 20035,
+      "sha256": "49d0a9ce1c70ca6edd29537570cfe7ea6539843da50c6a85a107d829330150e8",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\controller.py",
+      "bytes": 8048,
+      "sha256": "2c0d3b0b36d551219816b3c5cb3e05e69a2e56d32ed16a7e611fcacb751b547f",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\worker.py",
+      "bytes": 24523,
+      "sha256": "b673c14a14bc325efa2a010986669e3f0defa70300095bec1c716349e25a9c68",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\heap1536_windows_job.py",
+      "bytes": 9292,
+      "sha256": "4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\prepare_analysis_r6.py",
+      "bytes": 22145,
+      "sha256": "b2eef3f7ad78cfbeee699e1138776e29e12a3b746d396713ff56df0f03e8964a",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\README.md",
+      "bytes": 3042,
+      "sha256": "4d3f17910e48eb200261bc5cff3917ca1e9d41ce4b40330aad7294b6f5b646a9",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\mechanical-controller.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\mechanical-worker.py.diff",
+      "bytes": 1555,
+      "sha256": "93dd7da84e5ce90b6cf58f2660bf08cdf678e03eef7f5d9a57cfb8c35a91b63a",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\mechanical-native-helper.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\input-metadata-diff.json",
+      "bytes": 5244,
+      "sha256": "3b5405cd5d10f420c0f558cfd0e34d28a006185a95b73c950b5f3a565278dee0",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\ast-diff-proof.json",
+      "bytes": 904,
+      "sha256": "bc6b4bf9727f3459ad2a3d22e1ed2caefb2ae79b1a35629e2058f0bdcd98509b",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\template-r5-pin-preservation.json",
+      "bytes": 49134,
+      "sha256": "5ee043b8afe26634e963c3d24ba4a1b0628ca87dd3ad4ecf9ff5e47cc4458f7f",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\static-review.json",
+      "bytes": 2336,
+      "sha256": "a27eb263140c754c4abe1950bcfeee42de76a5ffa2e79ec6e18fe79d9c326b31",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\python.exe",
+      "absolute": true,
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125"
+    },
+    {
+      "path": "C:\\Python313\\python313.dll",
+      "absolute": true,
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\win32\\win32job.pyd",
+      "absolute": true,
+      "bytes": 28672,
+      "sha256": "8f2a15f090e4fa75fd7179de0aa41108e9c6fe95786f736f373f5a7501e7e769"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\pywin32_system32\\pywintypes313.dll",
+      "absolute": true,
+      "bytes": 136192,
+      "sha256": "90ba935a0145ee9ae56267a365cc0088d34fa506b7afeb2bd1bd78cd33359605"
+    },
+    {
+      "path": "C:\\Program Files\\Git\\cmd\\git.exe",
+      "bytes": 45032,
+      "sha256": "4ab2b391de7fb5eb3afb34b5bd19ee7f71d0450bf7e4c207b201a0392e3825ae",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Windows\\System32\\cmd.exe",
+      "bytes": 327680,
+      "sha256": "a6e3b3b22b7fe8ce2c9245816126723eaa13f43b9f591883e59959a2d409426a",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Windows\\System32\\where.exe",
+      "bytes": 61440,
+      "sha256": "ade557dd65848c5cf6565913cf6e01cf5c9a8033f0d784c4d6932394958d743e",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\internal\\exit_with_errorlevel.bat",
+      "bytes": 562,
+      "sha256": "f4014bd05cc24391ff28f7bd5b22949cc80f0bb66ab9eda512c9c3997f0283e0",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.yaml",
+      "bytes": 6215,
+      "sha256": "d703ed2f5467e37193640b26522839137430af10b631f36c0d89a54f3236172f",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.lock",
+      "bytes": 22135,
+      "sha256": "097571421b53ac57c9b72523ee5d2ae584c3d6ba58412f8cbe3af35c55c5593a",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\.dart_tool\\package_config.json",
+      "bytes": 20035,
+      "sha256": "49d0a9ce1c70ca6edd29537570cfe7ea6539843da50c6a85a107d829330150e8",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\controller.py",
+      "bytes": 8048,
+      "sha256": "2c0d3b0b36d551219816b3c5cb3e05e69a2e56d32ed16a7e611fcacb751b547f",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\worker.py",
+      "bytes": 24530,
+      "sha256": "4883226861551df17b7fe8445f73ae15515322e97c040b00d922055cb1d74f98",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\heap1536_windows_job.py",
+      "bytes": 9292,
+      "sha256": "4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\prepare_analysis_r5.py",
+      "bytes": 22025,
+      "sha256": "a5069758afb66cc101ee57e0aeb578f7e6804d65aa66fbcb05ecb2e7b751564e",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\README.md",
+      "bytes": 3041,
+      "sha256": "1f54ecf1806f4f190cd112034bddb69c19d408f4563c756f8a965f11a08cc4a3",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\mechanical-controller.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\mechanical-worker.py.diff",
+      "bytes": 1549,
+      "sha256": "bf4675f71b31416a634e6f6ee7ac484f212e21bc557f8c15581200b69638f857",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\mechanical-native-helper.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\input-metadata-diff.json",
+      "bytes": 5173,
+      "sha256": "52f8199d2c3d32e826f68a32186483564f29579e082276b9e46e06494fe64111",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\ast-diff-proof.json",
+      "bytes": 904,
+      "sha256": "9b20cdc82da565f3f4acadf34347b5b29d5171c53a5b3b2ada874d5e44ffe48c",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\template-r4-pin-preservation.json",
+      "bytes": 23867,
+      "sha256": "a6479040a73ff29cc20b1ed9ca07496ca18f185a29d6c2a5c0dc96da5a0964d9",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\static-review.json",
+      "bytes": 2356,
+      "sha256": "f9360a610b04447676dfdc9c96ea85f42532936d51fd9e8fe3fd81c49a097fbf",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\python.exe",
+      "absolute": true,
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125"
+    },
+    {
+      "path": "C:\\Python313\\python313.dll",
+      "absolute": true,
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\win32\\win32job.pyd",
+      "absolute": true,
+      "bytes": 28672,
+      "sha256": "8f2a15f090e4fa75fd7179de0aa41108e9c6fe95786f736f373f5a7501e7e769"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\pywin32_system32\\pywintypes313.dll",
+      "absolute": true,
+      "bytes": 136192,
+      "sha256": "90ba935a0145ee9ae56267a365cc0088d34fa506b7afeb2bd1bd78cd33359605"
+    },
+    {
+      "path": "C:\\Program Files\\Git\\cmd\\git.exe",
+      "bytes": 45032,
+      "sha256": "4ab2b391de7fb5eb3afb34b5bd19ee7f71d0450bf7e4c207b201a0392e3825ae",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Windows\\System32\\cmd.exe",
+      "bytes": 327680,
+      "sha256": "a6e3b3b22b7fe8ce2c9245816126723eaa13f43b9f591883e59959a2d409426a",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Windows\\System32\\where.exe",
+      "bytes": 61440,
+      "sha256": "ade557dd65848c5cf6565913cf6e01cf5c9a8033f0d784c4d6932394958d743e",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\internal\\exit_with_errorlevel.bat",
+      "bytes": 562,
+      "sha256": "f4014bd05cc24391ff28f7bd5b22949cc80f0bb66ab9eda512c9c3997f0283e0",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.yaml",
+      "bytes": 6215,
+      "sha256": "d703ed2f5467e37193640b26522839137430af10b631f36c0d89a54f3236172f",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.lock",
+      "bytes": 22135,
+      "sha256": "097571421b53ac57c9b72523ee5d2ae584c3d6ba58412f8cbe3af35c55c5593a",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\.dart_tool\\package_config.json",
+      "bytes": 20035,
+      "sha256": "49d0a9ce1c70ca6edd29537570cfe7ea6539843da50c6a85a107d829330150e8",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\controller.py",
+      "bytes": 8048,
+      "sha256": "2c0d3b0b36d551219816b3c5cb3e05e69a2e56d32ed16a7e611fcacb751b547f",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\worker.py",
+      "bytes": 24517,
+      "sha256": "016768f9e06e1a27ffea979d2545355852188ebb1e9fe7a07424395f01c69647",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\heap1536_windows_job.py",
+      "bytes": 9292,
+      "sha256": "4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\prepare_analysis_r4.py",
+      "bytes": 17104,
+      "sha256": "3d5f136f115e3320159856709634e31c88dbbcc4cef34bdf115ddc87f72cd959",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\README.md",
+      "bytes": 2623,
+      "sha256": "273fcc278be9979b3f52d0b04438d52018fe5c7c357737f251e8fc79c4ef5284",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\mechanical-controller.py.diff",
+      "bytes": 3294,
+      "sha256": "dea823d4beecbf9afb51a8d02f9c189a9a83ad556c8545461b3d272c324eb5fe",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\mechanical-worker.py.diff",
+      "bytes": 2828,
+      "sha256": "ae48d4f002d2e11e253916cda88cbe3741e6fba277b4d1096513a9fa81c72570",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\mechanical-native-helper.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\input-metadata-diff.json",
+      "bytes": 5026,
+      "sha256": "07f826cc6e7cf52054ff291fd1b04f41844e7a37f2cb82bfd87a797b416bf06b",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\static-review.json",
+      "bytes": 2834,
+      "sha256": "ee9c3557871803f7f59e1418d5311197e93c1d804c563263fbc6957bc9f861e9",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\python.exe",
+      "absolute": true,
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125"
+    },
+    {
+      "path": "C:\\Python313\\python313.dll",
+      "absolute": true,
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\win32\\win32job.pyd",
+      "absolute": true,
+      "bytes": 28672,
+      "sha256": "8f2a15f090e4fa75fd7179de0aa41108e9c6fe95786f736f373f5a7501e7e769"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\pywin32_system32\\pywintypes313.dll",
+      "absolute": true,
+      "bytes": 136192,
+      "sha256": "90ba935a0145ee9ae56267a365cc0088d34fa506b7afeb2bd1bd78cd33359605"
+    },
+    {
+      "path": "C:\\Program Files\\Git\\cmd\\git.exe",
+      "bytes": 45032,
+      "sha256": "4ab2b391de7fb5eb3afb34b5bd19ee7f71d0450bf7e4c207b201a0392e3825ae",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Windows\\System32\\cmd.exe",
+      "bytes": 327680,
+      "sha256": "a6e3b3b22b7fe8ce2c9245816126723eaa13f43b9f591883e59959a2d409426a",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Windows\\System32\\where.exe",
+      "bytes": 61440,
+      "sha256": "ade557dd65848c5cf6565913cf6e01cf5c9a8033f0d784c4d6932394958d743e",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\internal\\exit_with_errorlevel.bat",
+      "bytes": 562,
+      "sha256": "f4014bd05cc24391ff28f7bd5b22949cc80f0bb66ab9eda512c9c3997f0283e0",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.yaml",
+      "bytes": 6215,
+      "sha256": "d703ed2f5467e37193640b26522839137430af10b631f36c0d89a54f3236172f",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.lock",
+      "bytes": 22135,
+      "sha256": "097571421b53ac57c9b72523ee5d2ae584c3d6ba58412f8cbe3af35c55c5593a",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\.dart_tool\\package_config.json",
+      "bytes": 20035,
+      "sha256": "49d0a9ce1c70ca6edd29537570cfe7ea6539843da50c6a85a107d829330150e8",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3\\out\\analysis-inputs-root.json",
+      "bytes": 6881,
+      "sha256": "c1a91fc4d62ba4ce162a0f289560887d8c7dfc3b2f98370b4a606e7c84b07305",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3\\out\\source-manifest.json",
+      "bytes": 227011,
+      "sha256": "5b630f7e0f182ec7eda3e9a7a29679b2b806e3cf6795085d53b416a5442e4468",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3\\out\\dependency-library-pins.json",
+      "bytes": 360061,
+      "sha256": "0335412fea23b233a629755f90281f13aea48c78ddd52165c735e2f68f0d73b1",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261021-r1\\out\\cache-content-20261021-r1.json",
+      "bytes": 725122,
+      "sha256": "0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3\\out\\cache-analysis-projection.json",
+      "bytes": 724690,
+      "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\.dart_tool\\package_config.json",
+      "bytes": 15171,
+      "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+      "bytes": 15652,
+      "sha256": "64bc9326600b9bf6062cc34233b51ad32f981743f44feba4390334c9ea854e96",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3\\generated\\guardian-package_config.json",
+      "bytes": 15652,
+      "sha256": "64bc9326600b9bf6062cc34233b51ad32f981743f44feba4390334c9ea854e96",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\controller.py",
+      "bytes": 8048,
+      "sha256": "9baa2f090040bcedb721bb344c7c12a1940bfc278d55361ff4c7f4711107b3ee",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\worker.py",
+      "bytes": 24530,
+      "sha256": "2af24677868b6044444c5c0c60768e2f0a59091189210042a544ee8b98c35ace",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\heap1536_windows_job.py",
+      "bytes": 9292,
+      "sha256": "4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\README.md",
+      "bytes": 4937,
+      "sha256": "6893b916af9bc80dc37096983c0cc58819a2ae2f69fcd7e44934c5dbcc0a2d6e",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\expected-root-input-schema.json",
+      "bytes": 2153,
+      "sha256": "903e8b13321d4de68f45b4e5783261a314e8b964ec4ee20e25124ac4b71926a6",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\mechanical-controller.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\mechanical-worker.py.diff",
+      "bytes": 4399,
+      "sha256": "45db629bc0dcf7b848aa6c1680c4f9781240d4c803850d82600b722a50fab7bb",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\static-review.json",
+      "bytes": 3233,
+      "sha256": "ff9020dfa69d78a542ef4f5809571b04f505214712998c1f5b7645cc4e6aa338",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\proposal.json",
+      "bytes": 9627,
+      "sha256": "06b3c62694c4ff6abd87ea7ad37b3c13d1aba5b771ed9ffb1034783ed636593e",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\root-static-review.json",
+      "bytes": 832,
+      "sha256": "ad0628ec6cd110d8a100524d009ed37216315e124b78f13cf16a8e5f1c7d3c49",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\attempt\\result.json",
+      "bytes": 4756,
+      "sha256": "2cd22231cb02a925f444e767b5eb15e9c90644941889ecb5e6f48074bfef16c9",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\attempt\\receipt.json",
+      "bytes": 3785,
+      "sha256": "eaaca3d72f5e6f06930eb050a8a02f10cb3290d38f2a9617d72595a67cdd118a",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\attempt\\external-observation-root.json",
+      "bytes": 1362,
+      "sha256": "8dae677cad7409b183d73c118a6d5100ca2f48066245a3497f3a523d4be06a1c",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\proposal.json",
+      "bytes": 38059,
+      "sha256": "f478063e573d445eb048e9a93ff87b7ae5f900499aab5f55d5730e4a7ba9447c",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\seal-receipt.json",
+      "bytes": 2294,
+      "sha256": "43f6c907f1134de23c56d6a7e0ee02e77a06de956d4a1fa805eee41c20213d58",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\inputs.json",
+      "bytes": 6922,
+      "sha256": "e5dd60d9392cb516b18dd237092d23046be3ada830c15487230d562cfa822607",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\cache-analysis-projection.json",
+      "bytes": 724690,
+      "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\out\\source-manifest.json",
+      "bytes": 241948,
+      "sha256": "af9ae63d5dcd9cedf96b423a876636a3e19af3d0ea342728d0a74211c902bd48",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\out\\dependency-library-pins.json",
+      "bytes": 360075,
+      "sha256": "d3d727fb0dbd6cf4e2d26b8da01c67dd315e52b0502dae35b82df2468a280c9c",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+      "bytes": 15666,
+      "sha256": "1360722a78071ec6020aade7ef2b4595bcca2aa14f3745d1bcb8f5abd678f3de",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\generated\\guardian-package_config.json",
+      "bytes": 15666,
+      "sha256": "1360722a78071ec6020aade7ef2b4595bcca2aa14f3745d1bcb8f5abd678f3de",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\proposal.json",
+      "bytes": 15784,
+      "sha256": "ee65482a8f848e92d74d884379d971f2525b943989c06e04dc17aa7840c68779",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\seal-receipt.json",
+      "bytes": 1631,
+      "sha256": "ba7b5a6f8ae154f80daa2f091e27fd1cbce406dc4d5f080d0986a85aa5ac0f98",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\external_observe_root.py",
+      "bytes": 4295,
+      "sha256": "17c5a55cf8f33813960009d19ab16219fbbacf5af591e9e9bd2f48dd68403823",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\attempt\\result.json",
+      "bytes": 4757,
+      "sha256": "4c577bcfcca52aaa43f1df2f36e090a10d45814c1bf53f40dfe0157f5d04fa5e",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\attempt\\receipt.json",
+      "bytes": 3787,
+      "sha256": "888da08208e85bf5523ecec6e8fdbf6dfb3ecc5cf70eebf54fe32cc16ac420e1",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\attempt\\external-observation-root.json",
+      "bytes": 1408,
+      "sha256": "5f55c078a442255ccad5398d29fb46eb512e2f3de0083ac0c28e72f3f2ebacaf",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\attempt\\launch.json",
+      "bytes": 807,
+      "sha256": "e5296466780206794890e16a41155317e19352c832a27872d5ae6f6c9eee41ad",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\attempt\\preflight-pins.json",
+      "bytes": 1921,
+      "sha256": "751cad10b750d00a19b8a8fd9bbf064271c12f3c1fde19451c44e7c435a3e3ab",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\attempt\\postflight-pins.json",
+      "bytes": 1921,
+      "sha256": "ca40f36d19c2c636d86ef6c19f3436c31b3aea76cbffee8c9c3534d289cd9dc3",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\attempt\\postflight-gate.json",
+      "bytes": 206,
+      "sha256": "c485b9c4e341c92f1505863d42d3e9b2c681c6999b1592e13ab333322f303623",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\attempt\\out\\analyze.log",
+      "bytes": 189,
+      "sha256": "6f6532a2d306330df4c1cd8b804fd8254e1cb116bd95c2f55de2cf8f30a9f834",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\generated\\guardian-package_config.json",
+      "bytes": 15757,
+      "sha256": "82b513d43529f9eb81950a23b5e69eb41e7844b6e9cc00fa94dc3f6011b03f47",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\generated\\main-package_config-original.json",
+      "bytes": 15171,
+      "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\generated\\reference-source-name-contract-browser38.py",
+      "bytes": 5887,
+      "sha256": "7fe208bdb1cf46307185343fdc249a4e99fa2879dba44cff165d04675dc7f77b",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\delivery-inventory.json",
+      "bytes": 78702,
+      "sha256": "e66e6b85aa3d07316639f9eced9472c1594a4ecd01e7a23337045fd18ea43612",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\delta-from-browser38.json",
+      "bytes": 2061,
+      "sha256": "fc71da1abf8f427b8de2db2182ada9a80753426f90fb84a8ae1d05e06aa0702e",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\dependency-library-pins.json",
+      "bytes": 360166,
+      "sha256": "b9a54b838df97860aee6dd5ddda93a90e61b50ce644c59d44375e47df9bfff8c",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\expected-cases.json",
+      "bytes": 25121,
+      "sha256": "89e17325e49ce430e490832bdb91daff3a698344caf7f6efbf08103fb48d3eae",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\preparation-receipt.json",
+      "bytes": 1607,
+      "sha256": "101b34addc43407f1c566b1ec498d6ddaefa42a56f51a0d9ecf1fd16618984e7",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\preparation-review.json",
+      "bytes": 6083,
+      "sha256": "b876ba4386c5b779c249c79ce569aa55a1de906981a15c54b0efe99e1f8d76ef",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\prepare_static_source.py",
+      "bytes": 19535,
+      "sha256": "158892496ddc9c1757454510fb6cf63833f1915ae4bc621c3d014c39dbf74f2f",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\source-before38-manifest.json",
+      "bytes": 241948,
+      "sha256": "af9ae63d5dcd9cedf96b423a876636a3e19af3d0ea342728d0a74211c902bd48",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\source-directory-list.json",
+      "bytes": 24652,
+      "sha256": "7c546daa3713a1a2e1c8f878e4702e8fbebdc51249efeed1452ebf032e212259",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\source-manifest.json",
+      "bytes": 243262,
+      "sha256": "a41ed00d2f124b51535aec59116bffecda15e02544cd8a2e7e12fd0e7680582d",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+      "bytes": 15757,
+      "sha256": "82b513d43529f9eb81950a23b5e69eb41e7844b6e9cc00fa94dc3f6011b03f47",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\seal-static-source.json",
+      "bytes": 79968,
+      "sha256": "576a2d5d0644b91967a4b2dec81b15eeabedaac3cbfbb70f8a235593daf9829d",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\inputs.json",
+      "bytes": 7028,
+      "sha256": "92a27fbff4e96d237524fee9c60f31eb5ac21f94e713e5f875bd51915aff3b28",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\cache-analysis-projection.json",
+      "bytes": 724690,
+      "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\proposal.json",
+      "bytes": 28904,
+      "sha256": "595c764f7b70e4a76d25a7eefb6008b9656848ba9f9dcd67e33331eabdc8bd8b",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\seal-receipt.json",
+      "bytes": 2004,
+      "sha256": "719ac6f20535f7501a621c274528dcff6ff111af6b4f7ef37b4efed7760b0691",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\external_observe_root.py",
+      "bytes": 4309,
+      "sha256": "a6a63544bea058219d286e9ae1d9becaa177706fede03551f7560befaaef88b3",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\attempt\\result.json",
+      "bytes": 4759,
+      "sha256": "061fbf9ca5f55bbcaa21ed9e0e3a66746bdd31b871d5c73520975e90bc936a16",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\attempt\\receipt.json",
+      "bytes": 3788,
+      "sha256": "84dae0b8141e15aea882afb99a2a8847a41ccce73196d7572b16702f9c3e90e5",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\attempt\\external-observation-root.json",
+      "bytes": 1410,
+      "sha256": "5b0e0e1a5afb8e689d5fc4dc36f7f6e19a2739019448689d9e98dcc1e1b92a8a",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\attempt\\launch.json",
+      "bytes": 819,
+      "sha256": "9ebab9f8176946ccb0c399f8fe5bec816ba86afaedbd411e89831d3a3ddcf7dd",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\attempt\\preflight-pins.json",
+      "bytes": 1920,
+      "sha256": "377bd0d7f8fcfc369268f31955a6e7532233b8d1cb20433aecc31add08ff668d",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\attempt\\postflight-pins.json",
+      "bytes": 1922,
+      "sha256": "ad424c1a94a7341c3540834acbe2fac9efc3200eda7623f6a2b09db4e6b03489",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\attempt\\postflight-gate.json",
+      "bytes": 206,
+      "sha256": "bdc0f125e35db815cfd704fd13bddd5c85a00666af5b9418a9222d2d39e415e0",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\attempt\\out\\analyze.log",
+      "bytes": 189,
+      "sha256": "904508d212d85e7f91980135b981ca597aff1ac32b99839d0d596945ea72d177",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\root-static-review.json",
+      "bytes": 491,
+      "sha256": "9946b301b80df80798a6508b3811234d6945bb46f943405891fad9a3dab86828",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\attempt\\request.json",
+      "bytes": 182,
+      "sha256": "0e21eff948cebb194a646fd8868aa5ee8b4e9d6051b2d55a7cb40014394c4907",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\attempt\\initial-gate.json",
+      "bytes": 206,
+      "sha256": "17ef98544c4da79a28bb4f5de2c9c1c2c8f4086012e085fd66933b74b36d3a97",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\attempt\\launch-gate.json",
+      "bytes": 206,
+      "sha256": "665af120651e553b17c75da185531235d75102b982b84659df9c390a5096915a",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\generated\\guardian-package_config.json",
+      "bytes": 15708,
+      "sha256": "32546e6b312b632b83c20a4a7d1029298523b5b4694c843c3818bb73c827431c",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\generated\\main-package_config-original.json",
+      "bytes": 15171,
+      "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\generated\\reference-source-name-contract-browser38.py",
+      "bytes": 5887,
+      "sha256": "7fe208bdb1cf46307185343fdc249a4e99fa2879dba44cff165d04675dc7f77b",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\delivery-inventory.json",
+      "bytes": 78900,
+      "sha256": "8c3a92b83099362d74787e85ebea98538f099db8fa538fac8e9777e12c38f825",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\delta-from-source407.json",
+      "bytes": 4797,
+      "sha256": "3d9919dab052d04c07e7c76fa92225d0f6b1a6500be591232a4bd5bfe656923d",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\dependency-library-pins.json",
+      "bytes": 360117,
+      "sha256": "c3397c181ca945563789c73134689937c6716752568b00fa7a4f7bbc04648fd3",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\expected-cases.json",
+      "bytes": 38207,
+      "sha256": "16137a4d38c0c96955ae845bad481e6adc5c9780f87ca32f4829950345ae031a",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\preparation-receipt.json",
+      "bytes": 1598,
+      "sha256": "16c70e56c613ba4576746033e9923562a456a345a09a4f545bcb96eec97671cb",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\preparation-review.json",
+      "bytes": 6623,
+      "sha256": "a6f8eba446f080ba1b8ae4835a2de886cf6f6f49a9fe48018fa570e3e1a41e46",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\prepare_static_source.py",
+      "bytes": 25864,
+      "sha256": "6c670bcce29130813dfa73770252524b361487770956d9f0067525cfe3a81804",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\source-before407-manifest.json",
+      "bytes": 243262,
+      "sha256": "a41ed00d2f124b51535aec59116bffecda15e02544cd8a2e7e12fd0e7680582d",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\source-directory-list.json",
+      "bytes": 24709,
+      "sha256": "092bd72e06e6470bad00135ef6d3cfc33c9051c62fe56ce0aa55fc3bd3d828a6",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\source-manifest.json",
+      "bytes": 243867,
+      "sha256": "5ff8304370d890089517f78f7a5f7f5f99e894a3c31dd969f80edca7a830fcc7",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+      "bytes": 15708,
+      "sha256": "32546e6b312b632b83c20a4a7d1029298523b5b4694c843c3818bb73c827431c",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-current-20261023-r1\\out\\seal-static-source.json",
+      "bytes": 80061,
+      "sha256": "f5b78356c80ed9d007892a3cd2c2da00a934ef416f9aa6c55f476e827da8f46d",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\inputs.json",
+      "bytes": 6993,
+      "sha256": "c89ddfc7b6a1725fc23027f8b27cd73fe0aefd6f6501a344aa8bf2ecfc4749ab",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\cache-analysis-projection.json",
+      "bytes": 724690,
+      "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\proposal.json",
+      "bytes": 42509,
+      "sha256": "b4cf7534705500f7a3dd1cd825a2c314bbb5654295e63aa21b007b496cffb7b5",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\seal-receipt.json",
+      "bytes": 1985,
+      "sha256": "b7c14876346bec346e52a4974440488b6d1e427cc5cebf115eb0ae9ffa6a204e",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\external_observe_root.py",
+      "bytes": 5376,
+      "sha256": "8f34dbe2f80b2f0fc93881c1df0ffacc971abe023302aba62bbb15df280ae534",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\attempt\\result.json",
+      "bytes": 4756,
+      "sha256": "1d753b4fcded64b4c8a28b28de929e189902c96792e5e7b5a2e77cb0b55aeefb",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\attempt\\receipt.json",
+      "bytes": 3786,
+      "sha256": "866711d85b5e27de8ead83778a5edfea83c4387e8fd27fa24f617fcf47508041",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\attempt\\external-observation-root.json",
+      "bytes": 1250,
+      "sha256": "ba433ef511f6b42c5606c952c9b84be66cf90a8acdb264e7609d6ed565ffb695",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\attempt\\launch.json",
+      "bytes": 812,
+      "sha256": "f0ae00bb0b1979297c2f8a72d24f620529e0b2e2a03872e17df74a9014c55134",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\attempt\\preflight-pins.json",
+      "bytes": 1920,
+      "sha256": "60cb1c73a5bc5b290daa4642f1ea5d856ba3253784df4cd55501150a04694049",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\attempt\\postflight-pins.json",
+      "bytes": 1921,
+      "sha256": "6f780e0aba5524e739488a36a2a8a6c8306f0bb1acfaa5ed3c818440465a6308",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\attempt\\postflight-gate.json",
+      "bytes": 206,
+      "sha256": "cec4cd18ff567eefb055c829fb60355ad98aa59136bb65c9bebdd021bdc2a7bf",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\attempt\\out\\analyze.log",
+      "bytes": 189,
+      "sha256": "e2349d900784c3844ce17c39807908be56cb7170be77334cac663cb9fd489d82",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\attempt\\root-final-system-gate.json",
+      "bytes": 908,
+      "sha256": "bb6c04e55c9cc296aec3dfbf9f7d072d47bbe821e23627c8de53dfb7fe45a433",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\attempt\\request.json",
+      "bytes": 182,
+      "sha256": "bf5776b5c113e1914e8fd41fb950f74e9396f291f820e9560eff417e818b4ab1",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\attempt\\initial-gate.json",
+      "bytes": 206,
+      "sha256": "e872edd1d7b88133aa2fc8d3c2f43f08d0fa1733e3a1533d2bacb48e1d717aad",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r6\\attempt\\launch-gate.json",
+      "bytes": 206,
+      "sha256": "ef7dc27825f4ca0cb9fa68b51bef814418a153ae8b6c618dafd779a53e810d0d",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\generated\\guardian-package_config.json",
+      "bytes": 15736,
+      "sha256": "9391dba658c5309fe6c1aa95dfb7586e74ea12bc2465463a7f53ee84a83e8ce6",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\generated\\main-package_config-original.json",
+      "bytes": 15171,
+      "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\generated\\reference-source-name-contract-browser38.py",
+      "bytes": 5887,
+      "sha256": "7fe208bdb1cf46307185343fdc249a4e99fa2879dba44cff165d04675dc7f77b",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\delivery-inventory.json",
+      "bytes": 79101,
+      "sha256": "63a5c9e7328885b7c715afca02859d7d8df797fb20a6a7ae818de5a627fe951a",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\delta-from-source408.json",
+      "bytes": 2039,
+      "sha256": "8536259d248e0beca29a22da1f2d712549e877a614a31105ccbc0e804a8be59a",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\dependency-library-pins.json",
+      "bytes": 360145,
+      "sha256": "972121e9a6659bcd68a0734ee44df8e7670045eab3bb177f60c58558d0963815",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\expected-cases.json",
+      "bytes": 46718,
+      "sha256": "fe7e3471ef3d3797a95360d53a70b668b785aa7034e96799650c5f91e2e3025f",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\preparation-receipt.json",
+      "bytes": 1622,
+      "sha256": "8dd562e515fabfbccb7dc93c281d2b2b5dcc9f4b82c143d78387fc6329db74de",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\preparation-review.json",
+      "bytes": 6856,
+      "sha256": "a0c2b42caa8b54e65d3c4f7481efa99209b76fed3f76f97988049dcee9325cab",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\prepare_static_source.py",
+      "bytes": 26158,
+      "sha256": "46d0f50b9f83a169ccf32159d24c24487362340932fcdeb574943a216c97e64f",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\source-before408-manifest.json",
+      "bytes": 243867,
+      "sha256": "5ff8304370d890089517f78f7a5f7f5f99e894a3c31dd969f80edca7a830fcc7",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\source-directory-list.json",
+      "bytes": 24781,
+      "sha256": "e3db4141a2f8a13fc4779a12a98b72bfd9b553dad9a0b16e5ed75736ea86f42f",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\source-manifest.json",
+      "bytes": 244476,
+      "sha256": "a23441e3f91224f86296a1b5b3ada8c7b2a8d5189c2ce36bfb6510a7ed0347b5",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+      "bytes": 15736,
+      "sha256": "9391dba658c5309fe6c1aa95dfb7586e74ea12bc2465463a7f53ee84a83e8ce6",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\seal-static-source.json",
+      "bytes": 80267,
+      "sha256": "700d75070f869bcc666f373394ec77b688bb1b48950f1390f4312be72022d1f7",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-reports-r6-root-review-20261023.json",
+      "bytes": 1426,
+      "sha256": "c17f20f518b14798ec31dc899a673958b99e769fb470220d953070bd3ff0c563",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\inputs.json",
+      "bytes": 7013,
+      "sha256": "1f6f40ba9dd55123bb3a7da37078224dc32c84e7d0694109fd5c21c55a10ff70",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\cache-analysis-projection.json",
+      "bytes": 724690,
+      "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\proposal.json",
+      "bytes": 56463,
+      "sha256": "2c1c4e32c0255b3a3eaa4272058ef5eb5f2e5388e5eb58b45d5a1ceb6d37ef36",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\seal-receipt.json",
+      "bytes": 1997,
+      "sha256": "07f73d81f4e45f8501bad2a71e027904d1eef281376d9e6aa7131f51c128df0a",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\attempt\\result.json",
+      "bytes": 4715,
+      "sha256": "d6fd811d5c60b4dc0e9deb45d06b9a5d4d34da2c98435326482d564ff8348782",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\attempt\\receipt.json",
+      "bytes": 3762,
+      "sha256": "d0dbf533497eef1b6d0b1d96043f2240f0cf0beb6a9a8808558623ad69a042af",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\attempt\\external-red-readback-root.json",
+      "bytes": 1130,
+      "sha256": "58bcf8348bb82221a67a87840b1ae175848baa5172d3ea4a5bf0aa57f28931a1",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\attempt\\root-final-system-gate.json",
+      "bytes": 684,
+      "sha256": "146f95ab05280a6bc34a9169e1e3432eb24f70098a524a8f046413c5af5bec52",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\attempt\\launch.json",
+      "bytes": 816,
+      "sha256": "347ff9d6955d2a9badfb9395c5730ffc7ceb0d90e0287f298011ef3213f64d53",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\attempt\\preflight-pins.json",
+      "bytes": 1920,
+      "sha256": "40220945e199a95d7877a69e9fbcba5b6b864c5e414673d8f804c80d99324caf",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\attempt\\postflight-pins.json",
+      "bytes": 1921,
+      "sha256": "442bf2218e4b76b65753b56cdc90e3595122f68279508e0cdd38205af9ccf9e1",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\attempt\\postflight-gate.json",
+      "bytes": 206,
+      "sha256": "034d36e7b888f23bef63938c28c584219fa958e5ef19e1baeefdf9dff157eed3",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\attempt\\out\\analyze.log",
+      "bytes": 334,
+      "sha256": "a55fc79044b6d6153184c6c784f6a3a27c331b599a560f404cc012598825bd6a",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\root-static-review.json",
+      "bytes": 621,
+      "sha256": "da85656e85514a50067c62866fdb67a85e20e76da76fca1a00accf202a23a46c",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\attempt\\request.json",
+      "bytes": 182,
+      "sha256": "741852ec4eb05d8a6b9f043dabb6c762b44aae846cc0c23059561ee457c04d07",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\attempt\\initial-gate.json",
+      "bytes": 206,
+      "sha256": "a225b88e5514c517c4e9c2f04427701b0a8c5f9ba986504a885cc5a9acd60f7c",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\attempt\\launch-gate.json",
+      "bytes": 206,
+      "sha256": "793c3b750d2bbab97f72191a8100bb95255077f0e1a0d0f9862b210d01ef0311",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\generated\\guardian-package_config.json",
+      "bytes": 15736,
+      "sha256": "a00844558722a7bb4fce05eea27d08e824d54afa6a1b686e0d87dd8ec1e05db4",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\generated\\main-package_config-original.json",
+      "bytes": 15171,
+      "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\generated\\reference-source-name-contract-browser38.py",
+      "bytes": 5887,
+      "sha256": "7fe208bdb1cf46307185343fdc249a4e99fa2879dba44cff165d04675dc7f77b",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\delivery-inventory.json",
+      "bytes": 79101,
+      "sha256": "cf2f558cd598891fc0d2d5dcce46caac513db73f5c4a4bcd50e270a0c3513d74",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\delta-from-source409.json",
+      "bytes": 1128,
+      "sha256": "1c0205d831f2a2af75a8ab974a4a2c7392c321d3d98ea3f7ad6721146f3f4930",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\dependency-library-pins.json",
+      "bytes": 360145,
+      "sha256": "9fbfdbd9e417fe389c7d9192d86c76526ef58fc92c0143ce41fa79b53dfd806c",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\expected-cases.json",
+      "bytes": 46728,
+      "sha256": "b6b08aad0e1f5d8aa61a43729c489b3662d076efc1fc503d7914de76cbf9fe05",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\preparation-receipt.json",
+      "bytes": 1622,
+      "sha256": "f1440f2b4604f7e70cc12deb7224a1c9092c69ceba79fe7173beb3ebdfc46c8c",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\preparation-review.json",
+      "bytes": 7743,
+      "sha256": "e9bb5bfdc1d5913a821663d47d56947f9d6917d8f307111cefd3b2cf18484b06",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\prepare_static_source.py",
+      "bytes": 26980,
+      "sha256": "e5f066516448f114c7534ede934f521212a62dd6f756ad7866edadab05854457",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\source-before409-manifest.json",
+      "bytes": 244476,
+      "sha256": "a23441e3f91224f86296a1b5b3ada8c7b2a8d5189c2ce36bfb6510a7ed0347b5",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\source-directory-list.json",
+      "bytes": 24781,
+      "sha256": "559683182932a0bbd5314ad21acdfd03b58909855fb7715d675abef47a7504b3",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\source-manifest.json",
+      "bytes": 244476,
+      "sha256": "d31ffbcc2dd74f062c588dd5756b2e7c5845b1bca40ca27b900d3b23dcdb22f2",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+      "bytes": 15736,
+      "sha256": "a00844558722a7bb4fce05eea27d08e824d54afa6a1b686e0d87dd8ec1e05db4",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\seal-static-source.json",
+      "bytes": 80272,
+      "sha256": "cb7b531b176433c2b1e8ed5154d49710a53a642268f9296816a9af07f8139957",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r7-red-readback-root-20261023.py",
+      "bytes": 4444,
+      "sha256": "7ff94b32bf71fb017b30779a0eca013d357be2673f6db6fd31b7b41068e94801",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\guardian-full-analysis-20261023-r7\\archive-inventory.json",
+      "bytes": 90778,
+      "sha256": "93d294a61863d400578bbfba9bc66b0ccbe5ee031882117a572b6507f4a07099",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\guardian-full-analysis-20261023-r7\\summary.json",
+      "bytes": 2957,
+      "sha256": "c101869205be73d9a591fab4898547041b7fccf5f7cfa30129dacdfd8c37f3ef",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\guardian-full-analysis-20261023-r7\\fix\\root-one-character-fix-receipt.json",
+      "bytes": 698,
+      "sha256": "de6553adacc2fbc9d0950d80e7ca7947d8dd25523cf2439536f6ef73230452f5",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\guardian-full-analysis-20261023-r7\\fix\\independent-static-review.md",
+      "bytes": 804,
+      "sha256": "1d35e4389f05f18910fcc40a4a4848ae35ccb765bcd9f7dbca24402025ef9241",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\guardian-full-analysis-20261023-r7\\fix\\independent-static-review.json",
+      "bytes": 2057,
+      "sha256": "65a96102287dff2c7bed1a70de45734117ef73c8411a1de473729571b4acca6f",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\inputs.json",
+      "bytes": 7026,
+      "sha256": "53795ab6aedf4c0621516c4f2b54c638f11e646ee590d305f2383aac79e5e02c",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\cache-analysis-projection.json",
+      "bytes": 724690,
+      "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\proposal.json",
+      "bytes": 72070,
+      "sha256": "f6f9a00027a9b070a2b289e5560a34d31c3314e2137a40cd75a8b1dd76e03ae1",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\seal-receipt.json",
+      "bytes": 2078,
+      "sha256": "63cadf20e9245ae85b9124c30cab9fb3393966b3b51489c3e4cd9fffa334c736",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\attempt\\result.json",
+      "bytes": 4759,
+      "sha256": "9d6a742eb349a4afd61edc1a8beb9172ab3b93b220323b2aa02f3c25db8317a3",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\attempt\\receipt.json",
+      "bytes": 3788,
+      "sha256": "ff8f9a527854d42aeae9ad0fc4236bb25516f853470f14205e8bacca9639c981",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\attempt\\external-observation-root.json",
+      "bytes": 1251,
+      "sha256": "88bd0bed6b87103835a3814fe08c93dd5ab22b28e350609f36b98227c09f016f",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\attempt\\root-final-system-gate.json",
+      "bytes": 720,
+      "sha256": "66dc83b50c52f5f7c6fac5aa0635ebe8106f8e81963f16f49fc7f2ba7770ed76",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\attempt\\launch.json",
+      "bytes": 816,
+      "sha256": "5199dee83ed8737724e2d2b0413e29709b0de6d89ba7225398ec6ac7de60b5fd",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\attempt\\preflight-pins.json",
+      "bytes": 1921,
+      "sha256": "487abc89d6b7b111226b1d7a165f5062f045edd73fec5ceee4d0177194c899e8",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\attempt\\postflight-pins.json",
+      "bytes": 1922,
+      "sha256": "063194d5bcb277d446c48baaf25505711510430e08f7ea161d5ac998d2c92f62",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\attempt\\postflight-gate.json",
+      "bytes": 206,
+      "sha256": "99c5492fdfa53620b62b0f0d395c4a6c3e255ebc38d37fa9107ae42b2ddaecf1",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\attempt\\out\\analyze.log",
+      "bytes": 188,
+      "sha256": "2ba03692a6f38eae0ca42daa91105fe29a02f7925caf7f168919907dbf51787b",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\attempt\\request.json",
+      "bytes": 182,
+      "sha256": "d7e4b81c8f1a454313a1422a37fcb66999f28e140429b934fd3d896cfa4abee0",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\attempt\\initial-gate.json",
+      "bytes": 206,
+      "sha256": "e676a1d85ffdfe404de78eea181ce2ab8fb8a19a59f9504d8fd1b5b48efd1ced",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\attempt\\launch-gate.json",
+      "bytes": 206,
+      "sha256": "dbe05349e5c4e366b13b0686cdadfc3fa8aea56e858490b984a753dbc133b33f",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\generated\\guardian-package_config.json",
+      "bytes": 15687,
+      "sha256": "2e82de4993d4b014be83c274dd6cf1a22324cf6ff8722c4510704f475f086fd0",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\generated\\main-package_config-original.json",
+      "bytes": 15171,
+      "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\generated\\reference-source-name-contract-browser38.py",
+      "bytes": 5887,
+      "sha256": "7fe208bdb1cf46307185343fdc249a4e99fa2879dba44cff165d04675dc7f77b",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\out\\delivery-inventory.json",
+      "bytes": 79102,
+      "sha256": "c2880cc758d84b8e7174ec25f0923b60a9b707b133f1ed1eb80aae55a090a5b3",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\out\\delta-from-source409.json",
+      "bytes": 1699,
+      "sha256": "e82c37dd8757a85e8d7a5cedaa55abe34a32aab10fcbf6ca77e1b5d711865e37",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\out\\dependency-library-pins.json",
+      "bytes": 360096,
+      "sha256": "596fd8420caccf791f3874522c548372f74d307a5b4b3c09e644b48f26875766",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\out\\expected-cases.json",
+      "bytes": 55016,
+      "sha256": "e3d88c99a94b877c1a95237f5b11afbd17cc39094a09afda46809b7f0469b8f3",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\out\\preparation-receipt.json",
+      "bytes": 1704,
+      "sha256": "54bdf7df09ac8a4cc25108ce500e84ff3b31e9af3c3cca80f8f0332863461c6b",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\out\\preparation-review.json",
+      "bytes": 20231,
+      "sha256": "f98c61faa40bccdd2aa8eb4ffacbce78a3a7c1e82c70f5e32bee3dc1f748166a",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\out\\prepare_static_source.py",
+      "bytes": 30948,
+      "sha256": "98ac3256b3361c56cefadf4fbb727b8ac75a954deba31f74286a35bafc1d896d",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\out\\source-before409-manifest.json",
+      "bytes": 244476,
+      "sha256": "d31ffbcc2dd74f062c588dd5756b2e7c5845b1bca40ca27b900d3b23dcdb22f2",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\out\\source-directory-list.json",
+      "bytes": 24774,
+      "sha256": "9fb347a4ec2d672921e343e62df21a0b26da4e4b84f6d4e09197ded7a8608e7d",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\out\\source-manifest.json",
+      "bytes": 244476,
+      "sha256": "2db0c4ff6cf71ce93d65405d97fb9f78a414d42f668def7a7eee56c18abd2398",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+      "bytes": 15687,
+      "sha256": "2e82de4993d4b014be83c274dd6cf1a22324cf6ff8722c4510704f475f086fd0",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\out\\seal-static-source.json",
+      "bytes": 80339,
+      "sha256": "869a6c582e6de734a2d6b0220e00a09d8264aef7055c1ba4145e9c63ccb22adb",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\guardian-full-analysis-20261023-r8\\archive-inventory.json",
+      "bytes": 111886,
+      "sha256": "406c8005a1da9cdfe25d69aa500ebeca4487ce6f81bd2c5fd09fab6624da6c5c",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\guardian-full-analysis-20261023-r8\\summary.json",
+      "bytes": 2707,
+      "sha256": "4a7a1e23db33c9a0fb22c7cc02f0196b203db072559f0c5e1ab8b83bf583bd58",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r9\\inputs.json",
+      "bytes": 7010,
+      "sha256": "bc28a78035d46791d7bd9cab066668bb7c119b601ed7ba6f8f00a683c3f78075",
+      "absolute": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r9\\cache-analysis-projection.json",
+      "bytes": 724690,
+      "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84",
+      "absolute": true
+    }
+  ],
+  "outerMetadataFieldRetainedFromController": true,
+  "outerBudgetSeconds": 180,
+  "terminationReserveSeconds": 6,
+  "outerSoftCutoffSeconds": 174,
+  "workerBudgetSeconds": 165,
+  "commandCapSeconds": 150,
+  "commandCleanupReserveSeconds": 5,
+  "minimumPostflightReserveSeconds": 25,
+  "minimumRamBytes": 2147483648,
+  "minimumEachDiskBytes": 2147483648,
+  "sdkNames": [
+    "aapt2.exe",
+    "asm.exe",
+    "cgo.exe",
+    "compile.exe",
+    "dart.exe",
+    "dartaotruntime.exe",
+    "flutter.exe",
+    "flutter_tester.exe",
+    "gen_snapshot.exe",
+    "go.exe",
+    "gofmt.exe",
+    "java.exe",
+    "javac.exe",
+    "javaw.exe",
+    "link.exe",
+    "qemu-system-x86_64.exe"
+  ],
+  "command": [
+    "C:/Windows/System32/cmd.exe",
+    "/d",
+    "/v:off",
+    "/c",
+    "D:/softwares/flutter/bin/flutter.bat --no-version-check --suppress-analytics analyze --no-pub --fatal-infos --fatal-warnings"
+  ],
+  "workingDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\src\\apps\\guardian",
+  "attemptDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r9\\attempt",
+  "attemptSingleUse": true,
+  "noSelectors": true,
+  "noPub": true,
+  "noCacheCopy": true,
+  "cacheManifestSha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84",
+  "cacheTrees": 70,
+  "fixedRuntimeFiles": 32,
+  "cacheFiles": 3536,
+  "fullPreflightAndPostflightRequired": true,
+  "nativeProcessHandleRetained": true,
+  "nativeNestedJobHelperByteIdentical": true,
+  "anyTimeoutOrForcedTerminationIsNotAccepted": true,
+  "naturalZeroAndNoIssuesLogRequired": true,
+  "runtimeWatchdogVerifiedForThisCandidate": false,
+  "rootActualExternalObservationRequired": true,
+  "processLocalEnvironmentOnly": true,
+  "entireSdkOrBrowserInstallationPinned": false,
+  "snapshotMtimeComparedToPubspec": false,
+  "snapshotContentPinned": true,
+  "sdkToolPubspecNotNewerThanLockRequired": true,
+  "parentCacheManifestSha256": "0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2",
+  "cacheProjectionExclusion": "only analysis-unused Chrome executable; all other parent row data unchanged",
+  "frozenSourceSnapshotWrittenDuringPreparation": false,
+  "mainSourceWrittenDuringPreparation": false,
+  "preparationScript": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r9\\prepare_analysis_r9.py",
+    "bytes": 22791,
+    "sha256": "9a54543b342066598d509e83901c40e005554bb6efcdf6253ac828a6cb081bf2"
+  },
+  "preparationRootApprovedCommit": "a2b5ca6ef2398397e4208065090b7c1d65992358",
+  "sharedSourceSnapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\src",
+  "sourceCopied": false,
+  "independentGrantRequired": true,
+  "automaticChaining": false,
+  "externalStrictDeadlineBoundRequired": "actual complete outer elapsed < launch.workerElapsedAtLaunch + launch.commandBudgetSeconds, otherwise additional actual terminal timing evidence is required",
+  "budgetSupersedesEarlierStaticPlan": true,
+  "dynamicCommandDeadlineWorkerRelativeMaxSeconds": 135,
+  "dynamicCleanupWorkerRelativeMaxSeconds": 140,
+  "actualAcceptedTemplate": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\proposal.json",
+    "bytes": 72070,
+    "sha256": "f6f9a00027a9b070a2b289e5560a34d31c3314e2137a40cd75a8b1dd76e03ae1",
+    "absolute": true
+  },
+  "sourceSnapshotSeal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\out\\seal-static-source.json",
+    "bytes": 80339,
+    "sha256": "869a6c582e6de734a2d6b0220e00a09d8264aef7055c1ba4145e9c63ccb22adb",
+    "absolute": true
+  },
+  "mechanicalControlTemplate": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\proposal.json",
+    "bytes": 72070,
+    "sha256": "f6f9a00027a9b070a2b289e5560a34d31c3314e2137a40cd75a8b1dd76e03ae1",
+    "absolute": true
+  },
+  "mechanicalTemplateActualStatus": "FULL_GUARDIAN_ANALYZE_PASSED"
+}

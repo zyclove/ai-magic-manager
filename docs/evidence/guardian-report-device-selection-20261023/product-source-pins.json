@@ -1,0 +1,57 @@
+[
+  {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\usage_report_device_picker.dart",
+    "bytes": 5485,
+    "sha256": "c5a08c51ef3a4cd169ae237d9b7ac928426ee0664ad8d45f3cfbfe9e0c1bd3f7"
+  },
+  {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\usage_reports_view.dart",
+    "bytes": 33639,
+    "sha256": "bbf14588f26a5a8fbc0f8c729e3671031829c2d4c9fcea54db33a46258e4a4e1"
+  },
+  {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\policy_target_picker.dart",
+    "bytes": 30042,
+    "sha256": "dcf4e64365869d18eb9347f473aa042b042c265affc519296460caa6585de4f9"
+  },
+  {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\device_group_batch_picker.dart",
+    "bytes": 10193,
+    "sha256": "a428576fdda28c1b531a513b2105c316e6f9aa3e69ed44675df4e7d63e7c5c8c"
+  },
+  {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\device_groups_page.dart",
+    "bytes": 34590,
+    "sha256": "749ce2d4666bd5cbf1923621b1c7f6e31d4d85df391fe4b18e10e9a09d2bb486"
+  },
+  {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\owned_dialog_route.dart",
+    "bytes": 1419,
+    "sha256": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946"
+  },
+  {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\usage_report_device_picker_test.dart",
+    "bytes": 1844,
+    "sha256": "6d2ab2bef93338a51469976b3bf212cee6b059158151292e4874bb4a4a7a43c4"
+  },
+  {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\usage_reports_scope_browser_test.dart",
+    "bytes": 47589,
+    "sha256": "5960608f034c3db2a7ca45622f5b5445fdfddeee1c982ad9e27db9ba6185f1ae"
+  },
+  {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\policy_target_picker_test.dart",
+    "bytes": 10690,
+    "sha256": "59759dc6a9b6e50106fb062e8b22cd8b99eb92b94e9c2cfa2e9996b9a3fa162b"
+  },
+  {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\policy_target_dialog_test.dart",
+    "bytes": 6546,
+    "sha256": "117923f3ea2b6843c7d14801c0e713ad787bb30789610def599b89000c541f3b"
+  },
+  {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\policy_target_scope_test.dart",
+    "bytes": 3174,
+    "sha256": "0939c371a14da62a03873c57091b49fe02735618306a6daeaca2fb6430712e93"
+  }
+]

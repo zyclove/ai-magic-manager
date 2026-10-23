@@ -1,0 +1,207 @@
+{
+  "status": "COMPACT_DURABLE_STATIC_PLANS_ONLY_ALL_UNRUN",
+  "rawCopyFiles": 12,
+  "totalArchiveFiles": 14,
+  "copyMappings": [
+    {
+      "original": {
+        "path": ".cache/guardian-full-regression-platforms-20261023-r2/README.md",
+        "bytes": 9016,
+        "sha256": "e1defaa204f8a7fc1e983b02b4c85a70f800a621572e9bf952680ba3c8c07508"
+      },
+      "archivePath": "docs/evidence/validation-static-plans-20261023/guardian-full-regression-platforms-20261023-r2/README.md",
+      "rawBytesPreserved": true,
+      "targetBytes": 9016,
+      "targetSha256": "e1defaa204f8a7fc1e983b02b4c85a70f800a621572e9bf952680ba3c8c07508"
+    },
+    {
+      "original": {
+        "path": ".cache/guardian-full-regression-platforms-20261023-r2/summary.json",
+        "bytes": 256103,
+        "sha256": "cf2d9dc96c90855234d894c52dfe530faa06217fa704bf914e5aa9ad8de6ebf8"
+      },
+      "archivePath": "docs/evidence/validation-static-plans-20261023/guardian-full-regression-platforms-20261023-r2/summary.json",
+      "rawBytesPreserved": true,
+      "targetBytes": 256103,
+      "targetSha256": "cf2d9dc96c90855234d894c52dfe530faa06217fa704bf914e5aa9ad8de6ebf8"
+    },
+    {
+      "original": {
+        "path": ".cache/guardian-full-regression-platforms-20261023-r2/final-pins.json",
+        "bytes": 1649,
+        "sha256": "64edeb28a7a9b1fb50919268052c4f535dc3d4d10d456dd1aefaac3f4dd2f13e"
+      },
+      "archivePath": "docs/evidence/validation-static-plans-20261023/guardian-full-regression-platforms-20261023-r2/final-pins.json",
+      "rawBytesPreserved": true,
+      "targetBytes": 1649,
+      "targetSha256": "64edeb28a7a9b1fb50919268052c4f535dc3d4d10d456dd1aefaac3f4dd2f13e"
+    },
+    {
+      "original": {
+        "path": ".cache/guardian-full-regression-platforms-20261023-r2/package-config-roots.json",
+        "bytes": 3736,
+        "sha256": "b51cfd5a51d74705f5aa8b312b420d969a55e1fd49dd7a818b6803a5bf525c9d"
+      },
+      "archivePath": "docs/evidence/validation-static-plans-20261023/guardian-full-regression-platforms-20261023-r2/package-config-roots.json",
+      "rawBytesPreserved": true,
+      "targetBytes": 3736,
+      "targetSha256": "b51cfd5a51d74705f5aa8b312b420d969a55e1fd49dd7a818b6803a5bf525c9d"
+    },
+    {
+      "original": {
+        "path": ".cache/id17-current35-static-inputs-20261023-r1/README.md",
+        "bytes": 2788,
+        "sha256": "594f2d029c310ca561b200abcbc7fe64b3a5a2f864bf7e4f2272f6fdcfe14c93"
+      },
+      "archivePath": "docs/evidence/validation-static-plans-20261023/id17-current35-static-inputs-20261023-r1/README.md",
+      "rawBytesPreserved": true,
+      "targetBytes": 2788,
+      "targetSha256": "594f2d029c310ca561b200abcbc7fe64b3a5a2f864bf7e4f2272f6fdcfe14c93"
+    },
+    {
+      "original": {
+        "path": ".cache/id17-current35-static-inputs-20261023-r1/out/expected-tests.json",
+        "bytes": 8615,
+        "sha256": "5c6220665fe15f46ecaa62cecaf1f94ed8c19377347396f54c2dcba904da9263"
+      },
+      "archivePath": "docs/evidence/validation-static-plans-20261023/id17-current35-static-inputs-20261023-r1/out/expected-tests.json",
+      "rawBytesPreserved": true,
+      "targetBytes": 8615,
+      "targetSha256": "5c6220665fe15f46ecaa62cecaf1f94ed8c19377347396f54c2dcba904da9263"
+    },
+    {
+      "original": {
+        "path": ".cache/id17-current35-static-inputs-20261023-r1/out/source-manifest.json",
+        "bytes": 12811,
+        "sha256": "f4599b58264168e1b6b849c7d98b95983b788a15ddf676d28e27237b823837d4"
+      },
+      "archivePath": "docs/evidence/validation-static-plans-20261023/id17-current35-static-inputs-20261023-r1/out/source-manifest.json",
+      "rawBytesPreserved": true,
+      "targetBytes": 12811,
+      "targetSha256": "f4599b58264168e1b6b849c7d98b95983b788a15ddf676d28e27237b823837d4"
+    },
+    {
+      "original": {
+        "path": ".cache/id17-current35-static-inputs-20261023-r1/out/static-plan.json",
+        "bytes": 6460,
+        "sha256": "1ad83f4dd475cded8092d34714a3e87627f285354b19753babe04108e352a7ad"
+      },
+      "archivePath": "docs/evidence/validation-static-plans-20261023/id17-current35-static-inputs-20261023-r1/out/static-plan.json",
+      "rawBytesPreserved": true,
+      "targetBytes": 6460,
+      "targetSha256": "1ad83f4dd475cded8092d34714a3e87627f285354b19753babe04108e352a7ad"
+    },
+    {
+      "original": {
+        "path": ".cache/id17-current35-static-inputs-20261023-r1/out/control-path-addendum.json",
+        "bytes": 1234,
+        "sha256": "90d79d73315e34fd69c088796b79c693227a23c9b7c9941fc2e100ed154adba2"
+      },
+      "archivePath": "docs/evidence/validation-static-plans-20261023/id17-current35-static-inputs-20261023-r1/out/control-path-addendum.json",
+      "rawBytesPreserved": true,
+      "targetBytes": 1234,
+      "targetSha256": "90d79d73315e34fd69c088796b79c693227a23c9b7c9941fc2e100ed154adba2"
+    },
+    {
+      "original": {
+        "path": ".cache/id17-current35-static-inputs-20261023-r1/out/final-delivery-pins.json",
+        "bytes": 19829,
+        "sha256": "cf090afc547ea85498f3d412584b98280db451e6791c573776b4d686fd893a64"
+      },
+      "archivePath": "docs/evidence/validation-static-plans-20261023/id17-current35-static-inputs-20261023-r1/out/final-delivery-pins.json",
+      "rawBytesPreserved": true,
+      "targetBytes": 19829,
+      "targetSha256": "cf090afc547ea85498f3d412584b98280db451e6791c573776b4d686fd893a64"
+    },
+    {
+      "original": {
+        "path": ".cache/id17-current35-static-inputs-20261023-r1/out/required-pom-inputs.json",
+        "bytes": 31935,
+        "sha256": "6c6d37ec6ee33e2fd95d1f5162c8cb82769ba9388d86534f429b659d93c8e73b"
+      },
+      "archivePath": "docs/evidence/validation-static-plans-20261023/id17-current35-static-inputs-20261023-r1/out/required-pom-inputs.json",
+      "rawBytesPreserved": true,
+      "targetBytes": 31935,
+      "targetSha256": "6c6d37ec6ee33e2fd95d1f5162c8cb82769ba9388d86534f429b659d93c8e73b"
+    },
+    {
+      "original": {
+        "path": ".cache/id17-current35-static-inputs-20261023-r1/out/main-raw-observation.json",
+        "bytes": 17266,
+        "sha256": "817df4096d05cd8e1b9e376c24f41b2d3d75fca73e1576a67cdbaa06dca5a372"
+      },
+      "archivePath": "docs/evidence/validation-static-plans-20261023/id17-current35-static-inputs-20261023-r1/out/main-raw-observation.json",
+      "rawBytesPreserved": true,
+      "targetBytes": 17266,
+      "targetSha256": "817df4096d05cd8e1b9e376c24f41b2d3d75fca73e1576a67cdbaa06dca5a372"
+    }
+  ],
+  "generatedFiles": [
+    {
+      "path": "docs/evidence/validation-static-plans-20261023/README.md",
+      "bytes": 2658,
+      "sha256": "53af1ebbe057640b3174394a0279943011f0fafce17f054d6152b9df07fdbc9d"
+    }
+  ],
+  "guardianOriginalFinalPins": {
+    "path": ".cache/guardian-full-regression-platforms-20261023-r2/final-pins.json",
+    "bytes": 1649,
+    "sha256": "64edeb28a7a9b1fb50919268052c4f535dc3d4d10d456dd1aefaac3f4dd2f13e"
+  },
+  "guardianOriginalFinalPinsRowsIndependentlyMatched": 7,
+  "guardianPreservedExternalGraphReferences": [
+    {
+      "role": "r1Summary",
+      "path": ".cache/guardian-full-regression-platforms-20261023-r1/summary.json",
+      "bytes": 89666,
+      "sha256": "3aded423db1403efcddb204d201e0c05dd85e82d303801beddcafb856ce9f8c2",
+      "copiedIntoArchive": false
+    },
+    {
+      "role": "r1FlatImportGraph",
+      "path": ".cache/guardian-full-regression-platforms-20261023-r1/local-import-nodes.json",
+      "bytes": 789674,
+      "sha256": "c2a3e6070f573c1667068627a390204798355242207b35392713f5a786dc8221",
+      "copiedIntoArchive": false
+    },
+    {
+      "role": "r1CompleteGraph",
+      "path": ".cache/guardian-full-regression-platforms-20261023-r1/platform-inventory.json",
+      "bytes": 2744553,
+      "sha256": "79dc4147f63e4782d40fcfa52cc5b9f39d71e25f5690b60cdf8098806f623979",
+      "copiedIntoArchive": false
+    }
+  ],
+  "guardianR1DeliveryPin": {
+    "path": ".cache/guardian-full-regression-platforms-20261023-r1/delivery-pins.json",
+    "bytes": 1615,
+    "sha256": "2b56cf9f6e8b2c21ea52a4c3b390fff70c31d52210024c92ce4e712b875e5dce"
+  },
+  "identityOriginalFinalPins": {
+    "path": ".cache/id17-current35-static-inputs-20261023-r1/out/final-delivery-pins.json",
+    "bytes": 19829,
+    "sha256": "cf090afc547ea85498f3d412584b98280db451e6791c573776b4d686fd893a64"
+  },
+  "identityOriginalFinalPinsRowsIndependentlyMatched": 94,
+  "identityMainRaw35Rechecked": true,
+  "identitySourceCommit": "a2b5ca6ef2398397e4208065090b7c1d65992358",
+  "identityModuleTree": "96ab1e0f33eb3696fd715bfe482b9708ce6869e4",
+  "identityBudgetOrApprovalChanged": false,
+  "omissions": {
+    "wholeSourceSnapshots": true,
+    "jarOrRuntimeBinaries": true,
+    "mavenCacheContents": true,
+    "pomBodies43": true,
+    "guardianLargeOrFlatGraphs": true,
+    "originalPreparationScripts": true,
+    "executionControlsOrAttempts": true
+  },
+  "originalPinDescriptorsRemainUnmodified": true,
+  "unmappedDescriptorsAreExternalCacheReferencesNotCopiedEvidence": true,
+  "notAnExecutableOrSelfContainedValidationBundle": true,
+  "sdkInvocations": 0,
+  "testsRun": false,
+  "newRunnerCreated": false,
+  "mainOrGitWritten": false,
+  "selfHashExcluded": "archive-manifest.json is hashed by the external exact stage plan"
+}

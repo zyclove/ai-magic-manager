@@ -1,0 +1,833 @@
+{
+  "status": "STATIC_XML_PARENT_CLOSURE_NOT_MAVEN_DEPENDENCY_RESOLUTION",
+  "modulePomHasParent": false,
+  "repositoryParentPomExists": false,
+  "modulePomMainRaw": {
+    "path": "D:\\codes\\mobile\\ai-manager\\identity-extensions\\pom.xml",
+    "bytes": 4713,
+    "sha256": "73c7fe28469d1a06e4278ec6e63317d8ae9bdb6ba070bb9b1fdc41a38f680722"
+  },
+  "modulePomGitLf": {
+    "path": "identity-extensions/pom.xml",
+    "mode": "100644",
+    "gitObject": "3c5f05020efd59c617c255b1f5d9107355cd8487",
+    "bytes": 4607,
+    "sha256": "28f16e1bf4f68048034dbcc585696c85a2699f04b07c02b98326463ea8032a2c",
+    "origin": "EXACT_RAW_GIT_ARCHIVE_BLOB_LF"
+  },
+  "roots": [
+    {
+      "role": "module-direct-dependency",
+      "groupId": "org.keycloak",
+      "artifactId": "keycloak-model-jpa",
+      "version": "26.8.0"
+    },
+    {
+      "role": "module-direct-dependency",
+      "groupId": "jakarta.persistence",
+      "artifactId": "jakarta.persistence-api",
+      "version": "3.1.0"
+    },
+    {
+      "role": "module-direct-dependency",
+      "groupId": "org.keycloak",
+      "artifactId": "keycloak-core",
+      "version": "26.8.0"
+    },
+    {
+      "role": "module-direct-dependency",
+      "groupId": "org.keycloak",
+      "artifactId": "keycloak-common",
+      "version": "26.8.0"
+    },
+    {
+      "role": "module-direct-dependency",
+      "groupId": "jakarta.ws.rs",
+      "artifactId": "jakarta.ws.rs-api",
+      "version": "3.1.0"
+    },
+    {
+      "role": "module-direct-dependency",
+      "groupId": "com.fasterxml.jackson.core",
+      "artifactId": "jackson-databind",
+      "version": "2.21.4"
+    },
+    {
+      "role": "module-direct-dependency",
+      "groupId": "org.jboss.logging",
+      "artifactId": "jboss-logging",
+      "version": "3.6.1.Final"
+    },
+    {
+      "role": "module-direct-dependency",
+      "groupId": "org.keycloak",
+      "artifactId": "keycloak-server-spi",
+      "version": "26.8.0"
+    },
+    {
+      "role": "module-direct-dependency",
+      "groupId": "org.keycloak",
+      "artifactId": "keycloak-server-spi-private",
+      "version": "26.8.0"
+    },
+    {
+      "role": "module-direct-dependency",
+      "groupId": "org.keycloak",
+      "artifactId": "keycloak-services",
+      "version": "26.8.0"
+    },
+    {
+      "role": "module-direct-dependency",
+      "groupId": "org.junit.jupiter",
+      "artifactId": "junit-jupiter",
+      "version": "5.10.1"
+    },
+    {
+      "role": "module-direct-dependency",
+      "groupId": "org.mockito",
+      "artifactId": "mockito-core",
+      "version": "5.14.2"
+    },
+    {
+      "role": "module-direct-dependency",
+      "groupId": "com.fasterxml.jackson.datatype",
+      "artifactId": "jackson-datatype-jdk8",
+      "version": "2.21.4"
+    },
+    {
+      "role": "module-direct-dependency",
+      "groupId": "com.fasterxml.jackson.datatype",
+      "artifactId": "jackson-datatype-jsr310",
+      "version": "2.21.4"
+    },
+    {
+      "role": "module-direct-dependency",
+      "groupId": "jakarta.transaction",
+      "artifactId": "jakarta.transaction-api",
+      "version": "2.0.1"
+    },
+    {
+      "role": "module-explicit-build-plugin",
+      "groupId": "org.apache.maven.plugins",
+      "artifactId": "maven-compiler-plugin",
+      "version": "3.13.0"
+    },
+    {
+      "role": "module-explicit-build-plugin",
+      "groupId": "org.apache.maven.plugins",
+      "artifactId": "maven-surefire-plugin",
+      "version": "3.5.2"
+    },
+    {
+      "role": "module-explicit-build-plugin",
+      "groupId": "org.apache.maven.plugins",
+      "artifactId": "maven-jar-plugin",
+      "version": "3.4.2"
+    },
+    {
+      "role": "historically-observed-default-lifecycle-plugin",
+      "groupId": "org.apache.maven.plugins",
+      "artifactId": "maven-resources-plugin",
+      "version": "3.3.1"
+    }
+  ],
+  "requiredPomFiles": 43,
+  "poms": [
+    {
+      "cacheRelativePath": "org/keycloak/keycloak-model-jpa/26.8.0/keycloak-model-jpa-26.8.0.pom",
+      "bytes": 9144,
+      "sha256": "1a25ff3fb9891eb2cf13370d46e7cfcc9a753c4d2baa2a6b509d5bbf9b8bfd2c",
+      "coordinate": {
+        "role": "module-direct-dependency",
+        "groupId": "org.keycloak",
+        "artifactId": "keycloak-model-jpa",
+        "version": "26.8.0"
+      },
+      "parent": {
+        "groupId": "org.keycloak",
+        "artifactId": "keycloak-model-pom",
+        "version": "26.8.0"
+      },
+      "snapshotPath": "inputs/required-poms/org/keycloak/keycloak-model-jpa/26.8.0/keycloak-model-jpa-26.8.0.pom"
+    },
+    {
+      "cacheRelativePath": "jakarta/persistence/jakarta.persistence-api/3.1.0/jakarta.persistence-api-3.1.0.pom",
+      "bytes": 15533,
+      "sha256": "f876fc8d886733540f59815ab77b1b998beec7080032dfb1526cade46ceeccbd",
+      "coordinate": {
+        "role": "module-direct-dependency",
+        "groupId": "jakarta.persistence",
+        "artifactId": "jakarta.persistence-api",
+        "version": "3.1.0"
+      },
+      "parent": {
+        "groupId": "org.eclipse.ee4j",
+        "artifactId": "project",
+        "version": "1.0.7"
+      },
+      "snapshotPath": "inputs/required-poms/jakarta/persistence/jakarta.persistence-api/3.1.0/jakarta.persistence-api-3.1.0.pom"
+    },
+    {
+      "cacheRelativePath": "org/keycloak/keycloak-core/26.8.0/keycloak-core-26.8.0.pom",
+      "bytes": 5342,
+      "sha256": "69db85aace998fc822855f97f08613755554b25aa485936aace3cd2c85332778",
+      "coordinate": {
+        "role": "module-direct-dependency",
+        "groupId": "org.keycloak",
+        "artifactId": "keycloak-core",
+        "version": "26.8.0"
+      },
+      "parent": {
+        "groupId": "org.keycloak",
+        "artifactId": "keycloak-parent",
+        "version": "26.8.0"
+      },
+      "snapshotPath": "inputs/required-poms/org/keycloak/keycloak-core/26.8.0/keycloak-core-26.8.0.pom"
+    },
+    {
+      "cacheRelativePath": "org/keycloak/keycloak-common/26.8.0/keycloak-common-26.8.0.pom",
+      "bytes": 2671,
+      "sha256": "2eeef37567a6c6ba3d2ad8fda912f40e44f57dfee3721990a7bda1e9208686e0",
+      "coordinate": {
+        "role": "module-direct-dependency",
+        "groupId": "org.keycloak",
+        "artifactId": "keycloak-common",
+        "version": "26.8.0"
+      },
+      "parent": {
+        "groupId": "org.keycloak",
+        "artifactId": "keycloak-parent",
+        "version": "26.8.0"
+      },
+      "snapshotPath": "inputs/required-poms/org/keycloak/keycloak-common/26.8.0/keycloak-common-26.8.0.pom"
+    },
+    {
+      "cacheRelativePath": "jakarta/ws/rs/jakarta.ws.rs-api/3.1.0/jakarta.ws.rs-api-3.1.0.pom",
+      "bytes": 17636,
+      "sha256": "c697a303e9ffc31963eb1c275bbf77a583a7d482965ac4f1bb26dc91e595ffbf",
+      "coordinate": {
+        "role": "module-direct-dependency",
+        "groupId": "jakarta.ws.rs",
+        "artifactId": "jakarta.ws.rs-api",
+        "version": "3.1.0"
+      },
+      "parent": {
+        "groupId": "jakarta.ws.rs",
+        "artifactId": "all",
+        "version": "3.1.0"
+      },
+      "snapshotPath": "inputs/required-poms/jakarta/ws/rs/jakarta.ws.rs-api/3.1.0/jakarta.ws.rs-api-3.1.0.pom"
+    },
+    {
+      "cacheRelativePath": "com/fasterxml/jackson/core/jackson-databind/2.21.4/jackson-databind-2.21.4.pom",
+      "bytes": 23024,
+      "sha256": "58c9c87c3d46ec8fb57d855fc675185e01147f3a9a415a92a2e464a5c02b9cec",
+      "coordinate": {
+        "role": "module-direct-dependency",
+        "groupId": "com.fasterxml.jackson.core",
+        "artifactId": "jackson-databind",
+        "version": "2.21.4"
+      },
+      "parent": {
+        "groupId": "com.fasterxml.jackson",
+        "artifactId": "jackson-base",
+        "version": "2.21.4"
+      },
+      "snapshotPath": "inputs/required-poms/com/fasterxml/jackson/core/jackson-databind/2.21.4/jackson-databind-2.21.4.pom"
+    },
+    {
+      "cacheRelativePath": "org/jboss/logging/jboss-logging/3.6.1.Final/jboss-logging-3.6.1.Final.pom",
+      "bytes": 18326,
+      "sha256": "27cd88ab8e5946b8a7aa92644eb3732e35be281439ab07af71f898453ee7540d",
+      "coordinate": {
+        "role": "module-direct-dependency",
+        "groupId": "org.jboss.logging",
+        "artifactId": "jboss-logging",
+        "version": "3.6.1.Final"
+      },
+      "parent": {
+        "groupId": "org.jboss.logging",
+        "artifactId": "logging-parent",
+        "version": "1.0.3.Final"
+      },
+      "snapshotPath": "inputs/required-poms/org/jboss/logging/jboss-logging/3.6.1.Final/jboss-logging-3.6.1.Final.pom"
+    },
+    {
+      "cacheRelativePath": "org/keycloak/keycloak-server-spi/26.8.0/keycloak-server-spi-26.8.0.pom",
+      "bytes": 2660,
+      "sha256": "84f5238063f31897d95deae9958ddd3b49fa278c683f2de101c101d6f08b86bc",
+      "coordinate": {
+        "role": "module-direct-dependency",
+        "groupId": "org.keycloak",
+        "artifactId": "keycloak-server-spi",
+        "version": "26.8.0"
+      },
+      "parent": {
+        "groupId": "org.keycloak",
+        "artifactId": "keycloak-parent",
+        "version": "26.8.0"
+      },
+      "snapshotPath": "inputs/required-poms/org/keycloak/keycloak-server-spi/26.8.0/keycloak-server-spi-26.8.0.pom"
+    },
+    {
+      "cacheRelativePath": "org/keycloak/keycloak-server-spi-private/26.8.0/keycloak-server-spi-private-26.8.0.pom",
+      "bytes": 4185,
+      "sha256": "2bda852b3b47c98cd483bcb45230fd91edd4f56df6bba41e18dd371ed5c1ee32",
+      "coordinate": {
+        "role": "module-direct-dependency",
+        "groupId": "org.keycloak",
+        "artifactId": "keycloak-server-spi-private",
+        "version": "26.8.0"
+      },
+      "parent": {
+        "groupId": "org.keycloak",
+        "artifactId": "keycloak-parent",
+        "version": "26.8.0"
+      },
+      "snapshotPath": "inputs/required-poms/org/keycloak/keycloak-server-spi-private/26.8.0/keycloak-server-spi-private-26.8.0.pom"
+    },
+    {
+      "cacheRelativePath": "org/keycloak/keycloak-services/26.8.0/keycloak-services-26.8.0.pom",
+      "bytes": 21866,
+      "sha256": "9368f5bbe7d3468c2c474722fe5c3ecf7ddc53cddf99cb42fc1826b373f64a06",
+      "coordinate": {
+        "role": "module-direct-dependency",
+        "groupId": "org.keycloak",
+        "artifactId": "keycloak-services",
+        "version": "26.8.0"
+      },
+      "parent": {
+        "groupId": "org.keycloak",
+        "artifactId": "keycloak-parent",
+        "version": "26.8.0"
+      },
+      "snapshotPath": "inputs/required-poms/org/keycloak/keycloak-services/26.8.0/keycloak-services-26.8.0.pom"
+    },
+    {
+      "cacheRelativePath": "org/junit/jupiter/junit-jupiter/5.10.1/junit-jupiter-5.10.1.pom",
+      "bytes": 3205,
+      "sha256": "4d4a2589a724b0a1820c850587103020905d3110ccf46534325ec254c71d7bf8",
+      "coordinate": {
+        "role": "module-direct-dependency",
+        "groupId": "org.junit.jupiter",
+        "artifactId": "junit-jupiter",
+        "version": "5.10.1"
+      },
+      "parent": null,
+      "snapshotPath": "inputs/required-poms/org/junit/jupiter/junit-jupiter/5.10.1/junit-jupiter-5.10.1.pom"
+    },
+    {
+      "cacheRelativePath": "org/mockito/mockito-core/5.14.2/mockito-core-5.14.2.pom",
+      "bytes": 2467,
+      "sha256": "638e56a68f496879bc8a0f53cfbdf9c4cc39a45b6e438a333a5ea83c09ee9cfd",
+      "coordinate": {
+        "role": "module-direct-dependency",
+        "groupId": "org.mockito",
+        "artifactId": "mockito-core",
+        "version": "5.14.2"
+      },
+      "parent": null,
+      "snapshotPath": "inputs/required-poms/org/mockito/mockito-core/5.14.2/mockito-core-5.14.2.pom"
+    },
+    {
+      "cacheRelativePath": "com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.21.4/jackson-datatype-jdk8-2.21.4.pom",
+      "bytes": 2765,
+      "sha256": "f3c4367e2e17b97d49260edb730b00cc5567b066f7218c9d7545f450530d0ab6",
+      "coordinate": {
+        "role": "module-direct-dependency",
+        "groupId": "com.fasterxml.jackson.datatype",
+        "artifactId": "jackson-datatype-jdk8",
+        "version": "2.21.4"
+      },
+      "parent": {
+        "groupId": "com.fasterxml.jackson.module",
+        "artifactId": "jackson-modules-java8",
+        "version": "2.21.4"
+      },
+      "snapshotPath": "inputs/required-poms/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.21.4/jackson-datatype-jdk8-2.21.4.pom"
+    },
+    {
+      "cacheRelativePath": "com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.21.4/jackson-datatype-jsr310-2.21.4.pom",
+      "bytes": 5350,
+      "sha256": "2ac48defe3501a077a1d9dc5515ddc39a6791ca0f5bb43983ba814524881c28c",
+      "coordinate": {
+        "role": "module-direct-dependency",
+        "groupId": "com.fasterxml.jackson.datatype",
+        "artifactId": "jackson-datatype-jsr310",
+        "version": "2.21.4"
+      },
+      "parent": {
+        "groupId": "com.fasterxml.jackson.module",
+        "artifactId": "jackson-modules-java8",
+        "version": "2.21.4"
+      },
+      "snapshotPath": "inputs/required-poms/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.21.4/jackson-datatype-jsr310-2.21.4.pom"
+    },
+    {
+      "cacheRelativePath": "jakarta/transaction/jakarta.transaction-api/2.0.1/jakarta.transaction-api-2.0.1.pom",
+      "bytes": 13635,
+      "sha256": "5fe349981c156fbbe26388d59949fdac16bb8d7879ee61b34c49c7b5ce0f2f23",
+      "coordinate": {
+        "role": "module-direct-dependency",
+        "groupId": "jakarta.transaction",
+        "artifactId": "jakarta.transaction-api",
+        "version": "2.0.1"
+      },
+      "parent": {
+        "groupId": "org.eclipse.ee4j",
+        "artifactId": "project",
+        "version": "1.0.6"
+      },
+      "snapshotPath": "inputs/required-poms/jakarta/transaction/jakarta.transaction-api/2.0.1/jakarta.transaction-api-2.0.1.pom"
+    },
+    {
+      "cacheRelativePath": "org/apache/maven/plugins/maven-compiler-plugin/3.13.0/maven-compiler-plugin-3.13.0.pom",
+      "bytes": 10444,
+      "sha256": "0d00b84f26ff5f3e845bf349302345633ca65f8d8e9101b31082082415912c1e",
+      "coordinate": {
+        "role": "module-explicit-build-plugin",
+        "groupId": "org.apache.maven.plugins",
+        "artifactId": "maven-compiler-plugin",
+        "version": "3.13.0"
+      },
+      "parent": {
+        "groupId": "org.apache.maven.plugins",
+        "artifactId": "maven-plugins",
+        "version": "41"
+      },
+      "snapshotPath": "inputs/required-poms/org/apache/maven/plugins/maven-compiler-plugin/3.13.0/maven-compiler-plugin-3.13.0.pom"
+    },
+    {
+      "cacheRelativePath": "org/apache/maven/plugins/maven-surefire-plugin/3.5.2/maven-surefire-plugin-3.5.2.pom",
+      "bytes": 5694,
+      "sha256": "36b259129b8e9c93067431bf00e00359d22c1ec8fdf94a7644ddec7b20d7cea1",
+      "coordinate": {
+        "role": "module-explicit-build-plugin",
+        "groupId": "org.apache.maven.plugins",
+        "artifactId": "maven-surefire-plugin",
+        "version": "3.5.2"
+      },
+      "parent": {
+        "groupId": "org.apache.maven.surefire",
+        "artifactId": "surefire",
+        "version": "3.5.2"
+      },
+      "snapshotPath": "inputs/required-poms/org/apache/maven/plugins/maven-surefire-plugin/3.5.2/maven-surefire-plugin-3.5.2.pom"
+    },
+    {
+      "cacheRelativePath": "org/apache/maven/plugins/maven-jar-plugin/3.4.2/maven-jar-plugin-3.4.2.pom",
+      "bytes": 7683,
+      "sha256": "1b6e93c9c1d87b893808d9efc07f56638e60909d501558b11838659b937157af",
+      "coordinate": {
+        "role": "module-explicit-build-plugin",
+        "groupId": "org.apache.maven.plugins",
+        "artifactId": "maven-jar-plugin",
+        "version": "3.4.2"
+      },
+      "parent": {
+        "groupId": "org.apache.maven.plugins",
+        "artifactId": "maven-plugins",
+        "version": "42"
+      },
+      "snapshotPath": "inputs/required-poms/org/apache/maven/plugins/maven-jar-plugin/3.4.2/maven-jar-plugin-3.4.2.pom"
+    },
+    {
+      "cacheRelativePath": "org/apache/maven/plugins/maven-resources-plugin/3.3.1/maven-resources-plugin-3.3.1.pom",
+      "bytes": 8158,
+      "sha256": "3269d0a6e3cd614a29486f57fc86488b0f1e458a11bebc61f9408fd6c7cf85ae",
+      "coordinate": {
+        "role": "historically-observed-default-lifecycle-plugin",
+        "groupId": "org.apache.maven.plugins",
+        "artifactId": "maven-resources-plugin",
+        "version": "3.3.1"
+      },
+      "parent": {
+        "groupId": "org.apache.maven.plugins",
+        "artifactId": "maven-plugins",
+        "version": "39"
+      },
+      "snapshotPath": "inputs/required-poms/org/apache/maven/plugins/maven-resources-plugin/3.3.1/maven-resources-plugin-3.3.1.pom"
+    },
+    {
+      "cacheRelativePath": "org/keycloak/keycloak-model-pom/26.8.0/keycloak-model-pom-26.8.0.pom",
+      "bytes": 1536,
+      "sha256": "216dd7f71e4f8a46a2ef047ed74553ee4075e95441ee29af4909f8415dd08161",
+      "coordinate": {
+        "role": "parent-pom-of:org/keycloak/keycloak-model-jpa/26.8.0/keycloak-model-jpa-26.8.0.pom",
+        "groupId": "org.keycloak",
+        "artifactId": "keycloak-model-pom",
+        "version": "26.8.0"
+      },
+      "parent": {
+        "groupId": "org.keycloak",
+        "artifactId": "keycloak-parent",
+        "version": "26.8.0"
+      },
+      "snapshotPath": "inputs/required-poms/org/keycloak/keycloak-model-pom/26.8.0/keycloak-model-pom-26.8.0.pom"
+    },
+    {
+      "cacheRelativePath": "org/eclipse/ee4j/project/1.0.7/project-1.0.7.pom",
+      "bytes": 14181,
+      "sha256": "205c039a42cbae3556efbeb04a483eb3a3cf9550bd75bf84260dc8f28218f105",
+      "coordinate": {
+        "role": "parent-pom-of:jakarta/persistence/jakarta.persistence-api/3.1.0/jakarta.persistence-api-3.1.0.pom",
+        "groupId": "org.eclipse.ee4j",
+        "artifactId": "project",
+        "version": "1.0.7"
+      },
+      "parent": null,
+      "snapshotPath": "inputs/required-poms/org/eclipse/ee4j/project/1.0.7/project-1.0.7.pom"
+    },
+    {
+      "cacheRelativePath": "org/keycloak/keycloak-parent/26.8.0/keycloak-parent-26.8.0.pom",
+      "bytes": 83836,
+      "sha256": "231480bc61773041613b470efbd64a20ee017df750bc0728d573b076859a5917",
+      "coordinate": {
+        "role": "parent-pom-of:org/keycloak/keycloak-core/26.8.0/keycloak-core-26.8.0.pom",
+        "groupId": "org.keycloak",
+        "artifactId": "keycloak-parent",
+        "version": "26.8.0"
+      },
+      "parent": null,
+      "snapshotPath": "inputs/required-poms/org/keycloak/keycloak-parent/26.8.0/keycloak-parent-26.8.0.pom"
+    },
+    {
+      "cacheRelativePath": "jakarta/ws/rs/all/3.1.0/all-3.1.0.pom",
+      "bytes": 2828,
+      "sha256": "d4fdd41780e065aacd5ac099cd0490171937cc5122dc2c8ef1b88a87b3c9424c",
+      "coordinate": {
+        "role": "parent-pom-of:jakarta/ws/rs/jakarta.ws.rs-api/3.1.0/jakarta.ws.rs-api-3.1.0.pom",
+        "groupId": "jakarta.ws.rs",
+        "artifactId": "all",
+        "version": "3.1.0"
+      },
+      "parent": {
+        "groupId": "org.eclipse.ee4j",
+        "artifactId": "project",
+        "version": "1.0.7"
+      },
+      "snapshotPath": "inputs/required-poms/jakarta/ws/rs/all/3.1.0/all-3.1.0.pom"
+    },
+    {
+      "cacheRelativePath": "com/fasterxml/jackson/jackson-base/2.21.4/jackson-base-2.21.4.pom",
+      "bytes": 13361,
+      "sha256": "91e9c95e0ced7356bfa6e28297f2c1e2acdae67306713fa945aa5245c0d0fef5",
+      "coordinate": {
+        "role": "parent-pom-of:com/fasterxml/jackson/core/jackson-databind/2.21.4/jackson-databind-2.21.4.pom",
+        "groupId": "com.fasterxml.jackson",
+        "artifactId": "jackson-base",
+        "version": "2.21.4"
+      },
+      "parent": {
+        "groupId": "com.fasterxml.jackson",
+        "artifactId": "jackson-bom",
+        "version": "2.21.4"
+      },
+      "snapshotPath": "inputs/required-poms/com/fasterxml/jackson/jackson-base/2.21.4/jackson-base-2.21.4.pom"
+    },
+    {
+      "cacheRelativePath": "org/jboss/logging/logging-parent/1.0.3.Final/logging-parent-1.0.3.Final.pom",
+      "bytes": 5660,
+      "sha256": "9972c894749cda355766217d43ded7009b1eeb26e0301c30914a2db253dd685b",
+      "coordinate": {
+        "role": "parent-pom-of:org/jboss/logging/jboss-logging/3.6.1.Final/jboss-logging-3.6.1.Final.pom",
+        "groupId": "org.jboss.logging",
+        "artifactId": "logging-parent",
+        "version": "1.0.3.Final"
+      },
+      "parent": {
+        "groupId": "org.jboss",
+        "artifactId": "jboss-parent",
+        "version": "42"
+      },
+      "snapshotPath": "inputs/required-poms/org/jboss/logging/logging-parent/1.0.3.Final/logging-parent-1.0.3.Final.pom"
+    },
+    {
+      "cacheRelativePath": "com/fasterxml/jackson/module/jackson-modules-java8/2.21.4/jackson-modules-java8-2.21.4.pom",
+      "bytes": 3067,
+      "sha256": "9ff11d3c7da6d773f60d3add741e5f4ef2b8b67560d7f729a5885a99609753fb",
+      "coordinate": {
+        "role": "parent-pom-of:com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.21.4/jackson-datatype-jdk8-2.21.4.pom",
+        "groupId": "com.fasterxml.jackson.module",
+        "artifactId": "jackson-modules-java8",
+        "version": "2.21.4"
+      },
+      "parent": {
+        "groupId": "com.fasterxml.jackson",
+        "artifactId": "jackson-base",
+        "version": "2.21.4"
+      },
+      "snapshotPath": "inputs/required-poms/com/fasterxml/jackson/module/jackson-modules-java8/2.21.4/jackson-modules-java8-2.21.4.pom"
+    },
+    {
+      "cacheRelativePath": "org/eclipse/ee4j/project/1.0.6/project-1.0.6.pom",
+      "bytes": 13331,
+      "sha256": "4e7d8329d8da7dcf30779d824241be145f27108932f5a5a24eb907677bc8d72d",
+      "coordinate": {
+        "role": "parent-pom-of:jakarta/transaction/jakarta.transaction-api/2.0.1/jakarta.transaction-api-2.0.1.pom",
+        "groupId": "org.eclipse.ee4j",
+        "artifactId": "project",
+        "version": "1.0.6"
+      },
+      "parent": null,
+      "snapshotPath": "inputs/required-poms/org/eclipse/ee4j/project/1.0.6/project-1.0.6.pom"
+    },
+    {
+      "cacheRelativePath": "org/apache/maven/plugins/maven-plugins/41/maven-plugins-41.pom",
+      "bytes": 7353,
+      "sha256": "9e64593239bb69d80b2db9e595d8c0fc3cb44cf2aa5c1ed547718b4cfd732efe",
+      "coordinate": {
+        "role": "parent-pom-of:org/apache/maven/plugins/maven-compiler-plugin/3.13.0/maven-compiler-plugin-3.13.0.pom",
+        "groupId": "org.apache.maven.plugins",
+        "artifactId": "maven-plugins",
+        "version": "41"
+      },
+      "parent": {
+        "groupId": "org.apache.maven",
+        "artifactId": "maven-parent",
+        "version": "41"
+      },
+      "snapshotPath": "inputs/required-poms/org/apache/maven/plugins/maven-plugins/41/maven-plugins-41.pom"
+    },
+    {
+      "cacheRelativePath": "org/apache/maven/surefire/surefire/3.5.2/surefire-3.5.2.pom",
+      "bytes": 20173,
+      "sha256": "d3cc7eb1d3efc669b3efab57d9e6f4d702d9cd610806adc0a501b50d696bb31a",
+      "coordinate": {
+        "role": "parent-pom-of:org/apache/maven/plugins/maven-surefire-plugin/3.5.2/maven-surefire-plugin-3.5.2.pom",
+        "groupId": "org.apache.maven.surefire",
+        "artifactId": "surefire",
+        "version": "3.5.2"
+      },
+      "parent": {
+        "groupId": "org.apache.maven",
+        "artifactId": "maven-parent",
+        "version": "43"
+      },
+      "snapshotPath": "inputs/required-poms/org/apache/maven/surefire/surefire/3.5.2/surefire-3.5.2.pom"
+    },
+    {
+      "cacheRelativePath": "org/apache/maven/plugins/maven-plugins/42/maven-plugins-42.pom",
+      "bytes": 7690,
+      "sha256": "5b31681ea67e838a8ed1f08af891d1ae50f16dfadd3fc2b787900ed69d5f2503",
+      "coordinate": {
+        "role": "parent-pom-of:org/apache/maven/plugins/maven-jar-plugin/3.4.2/maven-jar-plugin-3.4.2.pom",
+        "groupId": "org.apache.maven.plugins",
+        "artifactId": "maven-plugins",
+        "version": "42"
+      },
+      "parent": {
+        "groupId": "org.apache.maven",
+        "artifactId": "maven-parent",
+        "version": "42"
+      },
+      "snapshotPath": "inputs/required-poms/org/apache/maven/plugins/maven-plugins/42/maven-plugins-42.pom"
+    },
+    {
+      "cacheRelativePath": "org/apache/maven/plugins/maven-plugins/39/maven-plugins-39.pom",
+      "bytes": 8092,
+      "sha256": "18085afbef3a17942b442135a3f0e77018cda66edd33c6b18fd18440661bc29e",
+      "coordinate": {
+        "role": "parent-pom-of:org/apache/maven/plugins/maven-resources-plugin/3.3.1/maven-resources-plugin-3.3.1.pom",
+        "groupId": "org.apache.maven.plugins",
+        "artifactId": "maven-plugins",
+        "version": "39"
+      },
+      "parent": {
+        "groupId": "org.apache.maven",
+        "artifactId": "maven-parent",
+        "version": "39"
+      },
+      "snapshotPath": "inputs/required-poms/org/apache/maven/plugins/maven-plugins/39/maven-plugins-39.pom"
+    },
+    {
+      "cacheRelativePath": "com/fasterxml/jackson/jackson-bom/2.21.4/jackson-bom-2.21.4.pom",
+      "bytes": 20225,
+      "sha256": "52a50e69686abd4489c962db4c15f30ee5cc7732849de6301845e4660db1a0b7",
+      "coordinate": {
+        "role": "parent-pom-of:com/fasterxml/jackson/jackson-base/2.21.4/jackson-base-2.21.4.pom",
+        "groupId": "com.fasterxml.jackson",
+        "artifactId": "jackson-bom",
+        "version": "2.21.4"
+      },
+      "parent": {
+        "groupId": "com.fasterxml.jackson",
+        "artifactId": "jackson-parent",
+        "version": "2.21"
+      },
+      "snapshotPath": "inputs/required-poms/com/fasterxml/jackson/jackson-bom/2.21.4/jackson-bom-2.21.4.pom"
+    },
+    {
+      "cacheRelativePath": "org/jboss/jboss-parent/42/jboss-parent-42.pom",
+      "bytes": 75551,
+      "sha256": "e41276efe3509054cba4197b3d6360c51dd57bc640dde48cf37dafaa45a09c3b",
+      "coordinate": {
+        "role": "parent-pom-of:org/jboss/logging/logging-parent/1.0.3.Final/logging-parent-1.0.3.Final.pom",
+        "groupId": "org.jboss",
+        "artifactId": "jboss-parent",
+        "version": "42"
+      },
+      "parent": null,
+      "snapshotPath": "inputs/required-poms/org/jboss/jboss-parent/42/jboss-parent-42.pom"
+    },
+    {
+      "cacheRelativePath": "org/apache/maven/maven-parent/41/maven-parent-41.pom",
+      "bytes": 49873,
+      "sha256": "762fcdd4ce8621c5fa0a2cf6495ad26972a8093eb432aa3e402bc2d4e2500c53",
+      "coordinate": {
+        "role": "parent-pom-of:org/apache/maven/plugins/maven-plugins/41/maven-plugins-41.pom",
+        "groupId": "org.apache.maven",
+        "artifactId": "maven-parent",
+        "version": "41"
+      },
+      "parent": {
+        "groupId": "org.apache",
+        "artifactId": "apache",
+        "version": "31"
+      },
+      "snapshotPath": "inputs/required-poms/org/apache/maven/maven-parent/41/maven-parent-41.pom"
+    },
+    {
+      "cacheRelativePath": "org/apache/maven/maven-parent/43/maven-parent-43.pom",
+      "bytes": 50343,
+      "sha256": "468a1262e9aaa5febf9d604e2836267f815351f2b4520f28fb17f53c71e33554",
+      "coordinate": {
+        "role": "parent-pom-of:org/apache/maven/surefire/surefire/3.5.2/surefire-3.5.2.pom",
+        "groupId": "org.apache.maven",
+        "artifactId": "maven-parent",
+        "version": "43"
+      },
+      "parent": {
+        "groupId": "org.apache",
+        "artifactId": "apache",
+        "version": "33"
+      },
+      "snapshotPath": "inputs/required-poms/org/apache/maven/maven-parent/43/maven-parent-43.pom"
+    },
+    {
+      "cacheRelativePath": "org/apache/maven/maven-parent/42/maven-parent-42.pom",
+      "bytes": 50444,
+      "sha256": "04534dea350a2187970a5b74444338bcf78ba8e537d44f262acfba16ebb33056",
+      "coordinate": {
+        "role": "parent-pom-of:org/apache/maven/plugins/maven-plugins/42/maven-plugins-42.pom",
+        "groupId": "org.apache.maven",
+        "artifactId": "maven-parent",
+        "version": "42"
+      },
+      "parent": {
+        "groupId": "org.apache",
+        "artifactId": "apache",
+        "version": "32"
+      },
+      "snapshotPath": "inputs/required-poms/org/apache/maven/maven-parent/42/maven-parent-42.pom"
+    },
+    {
+      "cacheRelativePath": "org/apache/maven/maven-parent/39/maven-parent-39.pom",
+      "bytes": 47971,
+      "sha256": "cfe4820aa1d96ae51d1dc5b0e2a9dc582c42478c24c95ca8238f547e60bef721",
+      "coordinate": {
+        "role": "parent-pom-of:org/apache/maven/plugins/maven-plugins/39/maven-plugins-39.pom",
+        "groupId": "org.apache.maven",
+        "artifactId": "maven-parent",
+        "version": "39"
+      },
+      "parent": {
+        "groupId": "org.apache",
+        "artifactId": "apache",
+        "version": "29"
+      },
+      "snapshotPath": "inputs/required-poms/org/apache/maven/maven-parent/39/maven-parent-39.pom"
+    },
+    {
+      "cacheRelativePath": "com/fasterxml/jackson/jackson-parent/2.21/jackson-parent-2.21.pom",
+      "bytes": 6879,
+      "sha256": "3851df627faeb46887b956104630b74a8bbb5f7de22e974cf15982e20e0373de",
+      "coordinate": {
+        "role": "parent-pom-of:com/fasterxml/jackson/jackson-bom/2.21.4/jackson-bom-2.21.4.pom",
+        "groupId": "com.fasterxml.jackson",
+        "artifactId": "jackson-parent",
+        "version": "2.21"
+      },
+      "parent": {
+        "groupId": "com.fasterxml",
+        "artifactId": "oss-parent",
+        "version": "75"
+      },
+      "snapshotPath": "inputs/required-poms/com/fasterxml/jackson/jackson-parent/2.21/jackson-parent-2.21.pom"
+    },
+    {
+      "cacheRelativePath": "org/apache/apache/31/apache-31.pom",
+      "bytes": 23531,
+      "sha256": "555d0c9eaa69c042aff924927b9381e8f8174136d355eead445224452e6291cc",
+      "coordinate": {
+        "role": "parent-pom-of:org/apache/maven/maven-parent/41/maven-parent-41.pom",
+        "groupId": "org.apache",
+        "artifactId": "apache",
+        "version": "31"
+      },
+      "parent": null,
+      "snapshotPath": "inputs/required-poms/org/apache/apache/31/apache-31.pom"
+    },
+    {
+      "cacheRelativePath": "org/apache/apache/33/apache-33.pom",
+      "bytes": 24184,
+      "sha256": "d78bd8524c5f8380a190a6525686629a95dfe512df21111383a6d8c0923a4415",
+      "coordinate": {
+        "role": "parent-pom-of:org/apache/maven/maven-parent/43/maven-parent-43.pom",
+        "groupId": "org.apache",
+        "artifactId": "apache",
+        "version": "33"
+      },
+      "parent": null,
+      "snapshotPath": "inputs/required-poms/org/apache/apache/33/apache-33.pom"
+    },
+    {
+      "cacheRelativePath": "org/apache/apache/32/apache-32.pom",
+      "bytes": 24184,
+      "sha256": "cfd872c0ec27f53ae68f43dbc0fecded8add773079a53afbd390e407b42ce72f",
+      "coordinate": {
+        "role": "parent-pom-of:org/apache/maven/maven-parent/42/maven-parent-42.pom",
+        "groupId": "org.apache",
+        "artifactId": "apache",
+        "version": "32"
+      },
+      "parent": null,
+      "snapshotPath": "inputs/required-poms/org/apache/apache/32/apache-32.pom"
+    },
+    {
+      "cacheRelativePath": "org/apache/apache/29/apache-29.pom",
+      "bytes": 20721,
+      "sha256": "3e49037174820bbd0df63420a977255886398954c2a06291fa61f727ac35b377",
+      "coordinate": {
+        "role": "parent-pom-of:org/apache/maven/maven-parent/39/maven-parent-39.pom",
+        "groupId": "org.apache",
+        "artifactId": "apache",
+        "version": "29"
+      },
+      "parent": null,
+      "snapshotPath": "inputs/required-poms/org/apache/apache/29/apache-29.pom"
+    },
+    {
+      "cacheRelativePath": "com/fasterxml/oss-parent/75/oss-parent-75.pom",
+      "bytes": 24055,
+      "sha256": "fcbbf1c18c9047e6917d384f2064e21b42a58fc85fb0523a9e2e015eff7c619d",
+      "coordinate": {
+        "role": "parent-pom-of:com/fasterxml/jackson/jackson-parent/2.21/jackson-parent-2.21.pom",
+        "groupId": "com.fasterxml",
+        "artifactId": "oss-parent",
+        "version": "75"
+      },
+      "parent": null,
+      "snapshotPath": "inputs/required-poms/com/fasterxml/oss-parent/75/oss-parent-75.pom"
+    }
+  ],
+  "unresolvedParentCoordinates": [],
+  "scopeLimit": "Direct dependencies/build plugins/default resources observed historically plus parent chains; not a complete transitive/BOM/effective Maven graph proof",
+  "binaryCacheFilesCopied": 0,
+  "cacheEntriesUnchanged": 3788,
+  "cacheMetadata": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\committed-validation-20261021-r1\\existing-project-maven-cache-pins.json",
+    "bytes": 794045,
+    "sha256": "1ccbf25d1793fb7c76f91e4f1fb5c76edbb6f66c8877fd5d137664d06fb057b7"
+  }
+}

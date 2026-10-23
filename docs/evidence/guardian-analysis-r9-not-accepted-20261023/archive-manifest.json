@@ -1,0 +1,253 @@
+{
+  "status": "NOT_ACCEPTED_ATTEMPT_PRESERVED_SOURCE_UNCHANGED_WINDOW_RELEASED",
+  "archivedAtUtc": "2026-10-23T09:25:30.896996+00:00",
+  "sourceCommit": "a2b5ca6ef2398397e4208065090b7c1d65992358",
+  "actualSession": 58699,
+  "initialChunk": "f8c394",
+  "finalChunk": "720805",
+  "naturalOuterExitCode": 1,
+  "controllerPreExitSampleSeconds": 314.11633989999973,
+  "afterToolObservationUpperBoundSeconds": 423.2936237,
+  "exactControllerExitTimeRecorded": false,
+  "workerStartPreflightOrAnalysisLaunchProved": false,
+  "workerConsoleBytes": 0,
+  "workerReceiptAbsent": true,
+  "cacheFullPrePostProved": false,
+  "rootFailurePostPinsMatched": 329,
+  "rootFailurePostSourceSealMatched": 423,
+  "rootFailurePostMainFilesMatched": 409,
+  "ownedJobActiveProcessesFinal": 0,
+  "formalRelease": {
+    "status": "ROOT_R9_FAILED_WINDOW_FORMALLY_RELEASED",
+    "atUtc": "2026-10-23T08:59:43.2369321Z",
+    "actualSession": 58699,
+    "initialChunk": "f8c394",
+    "finalChunk": "720805",
+    "naturalExitCode": 1,
+    "analysisAccepted": false,
+    "controllerReportedPreExitSeconds": 314.1163399,
+    "postReadbackChunk": "06747c",
+    "pinsMatched": 329,
+    "sourceSealMatched": 423,
+    "mainFilesMatched": 409,
+    "worker36468Present": false,
+    "sdkCount": 0,
+    "unknownCount": 0,
+    "availableRamBytes": 1051181056,
+    "processCount": 920,
+    "fullCachePrePostAvailable": false,
+    "noNextGrant": true
+  },
+  "preparationReceiptsRetainOriginalUnrunAndAttemptAbsentFields": true,
+  "runtimeFactsSupersedePreparationStatusOnlyInThisSeparateSummary": true,
+  "fullProductAccepted": false,
+  "newServicesDeployed": false,
+  "originalFilesModified": false,
+  "scratchDeleted": false,
+  "copiedFiles": [
+    {
+      "original": ".cache/guardian-analyze-20261023-r9/controller.py",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/candidate/controller.py",
+      "bytes": 8048,
+      "sha256": "2c0d3b0b36d551219816b3c5cb3e05e69a2e56d32ed16a7e611fcacb751b547f"
+    },
+    {
+      "original": ".cache/guardian-analyze-20261023-r9/worker.py",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/candidate/worker.py",
+      "bytes": 24520,
+      "sha256": "57a251218e83970929182279b210c19821ba7733ddbe1dad081a1a8d43a1360a"
+    },
+    {
+      "original": ".cache/guardian-analyze-20261023-r9/heap1536_windows_job.py",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/candidate/heap1536_windows_job.py",
+      "bytes": 9292,
+      "sha256": "4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12"
+    },
+    {
+      "original": ".cache/guardian-analyze-20261023-r9/prepare_analysis_r9.py",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/candidate/prepare_analysis_r9.py",
+      "bytes": 22791,
+      "sha256": "9a54543b342066598d509e83901c40e005554bb6efcdf6253ac828a6cb081bf2"
+    },
+    {
+      "original": ".cache/guardian-analyze-20261023-r9/README.md",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/candidate/README.md",
+      "bytes": 2265,
+      "sha256": "8e79bcf9cc3cef7ed5d2761eb9637479de73aeffd180038a2ab1efb206252a37"
+    },
+    {
+      "original": ".cache/guardian-analyze-20261023-r9/mechanical-controller.py.diff",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/candidate/mechanical-controller.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "original": ".cache/guardian-analyze-20261023-r9/mechanical-worker.py.diff",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/candidate/mechanical-worker.py.diff",
+      "bytes": 827,
+      "sha256": "07e023f0ef7eae2a740a6d7c4919061f5451b445ffc50fe3315632edb56e4162"
+    },
+    {
+      "original": ".cache/guardian-analyze-20261023-r9/mechanical-native-helper.py.diff",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/candidate/mechanical-native-helper.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "original": ".cache/guardian-analyze-20261023-r9/input-metadata-diff.json",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/candidate/input-metadata-diff.json",
+      "bytes": 4847,
+      "sha256": "244a695afac184cf31037dcac99f14f50eab7cb077b1565edfbb43e3a5a92478"
+    },
+    {
+      "original": ".cache/guardian-analyze-20261023-r9/ast-diff-proof.json",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/candidate/ast-diff-proof.json",
+      "bytes": 858,
+      "sha256": "1ab0ca34baddab28965f1b4d4f7596b6a1342f1ac584d2ebc03c26cf5475475e"
+    },
+    {
+      "original": ".cache/guardian-analyze-20261023-r9/template-r8-pin-preservation.json",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/candidate/template-r8-pin-preservation.json",
+      "bytes": 580,
+      "sha256": "4f8060acefe0194ed667c2406d9407ce80a3de6bbc18390ee33914ca46855a18"
+    },
+    {
+      "original": ".cache/guardian-analyze-20261023-r9/static-review.json",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/candidate/static-review.json",
+      "bytes": 3662,
+      "sha256": "9d2a57c8f9749218c8abe5e6c800a51f9a076cac02317563f9b5c2b0860eb4e0"
+    },
+    {
+      "original": ".cache/guardian-analyze-20261023-r9/proposal.json",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/candidate/proposal.json",
+      "bytes": 85925,
+      "sha256": "8f106238ac96a77822fba2bdb596aba33aa27878ffc19a6e0ddd566ed863eecf"
+    },
+    {
+      "original": ".cache/guardian-analyze-20261023-r9/inputs.json",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/candidate/inputs.json",
+      "bytes": 7010,
+      "sha256": "bc28a78035d46791d7bd9cab066668bb7c119b601ed7ba6f8f00a683c3f78075"
+    },
+    {
+      "original": ".cache/guardian-analyze-20261023-r9/seal-receipt.json",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/candidate/seal-receipt.json",
+      "bytes": 2148,
+      "sha256": "886d66b7223733f73b08713c497562274f8b82e2ca33f45b5a82034cfbadd79f"
+    },
+    {
+      "original": ".cache/guardian-analyze-20261023-r9/cache-analysis-projection.json",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/candidate/cache-analysis-projection.json",
+      "bytes": 724690,
+      "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84"
+    },
+    {
+      "original": ".cache/guardian-analyze-20261023-r9/attempt/request.json",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/attempt/request.json",
+      "bytes": 182,
+      "sha256": "274c1b32b869bdb26e54f6f924ecd8c5abb1948819005cde9e35202718b06bc4"
+    },
+    {
+      "original": ".cache/guardian-analyze-20261023-r9/attempt/result.json",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/attempt/result.json",
+      "bytes": 583,
+      "sha256": "cfc3a17588993b07382910717023239d286d636d97501aa24a2da3f378d8193d"
+    },
+    {
+      "original": ".cache/guardian-analyze-20261023-r9/attempt/worker-console.log",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/attempt/worker-console.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "original": ".cache/guardian-analyze-r9-root-launch-20261023.ps1",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/root/guardian-analyze-r9-root-launch-20261023.ps1",
+      "bytes": 2116,
+      "sha256": "f19cf558b0b0352c249882fdd04ef6f41c1684c9e6805ba433e7b0cf47ec0d70"
+    },
+    {
+      "original": ".cache/guardian-analyze-r9-root-timing-20261023.py",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/root/guardian-analyze-r9-root-timing-20261023.py",
+      "bytes": 1386,
+      "sha256": "2675b2b6b10423938591924ce73cc0b7dad0ddbbc5222bc66fe3393871eb6d56"
+    },
+    {
+      "original": ".cache/guardian-analyze-r9-root-preflight-system-20261023.json",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/root/guardian-analyze-r9-root-preflight-system-20261023.json",
+      "bytes": 515,
+      "sha256": "bfd7fe3db1a3a2c3a0fbd55c112cddc40b9bd1d38e74a1c420720acb6efc19da"
+    },
+    {
+      "original": ".cache/guardian-analyze-r9-root-actual-terminal-20261023.json",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/root/guardian-analyze-r9-root-actual-terminal-20261023.json",
+      "bytes": 434,
+      "sha256": "6971691921b7c0a36ee79bed052a65d8042f6d91fe61eaa0572455b665850aab"
+    },
+    {
+      "original": ".cache/guardian-analyze-r9-root-static-review-20261023.json",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/root/guardian-analyze-r9-root-static-review-20261023.json",
+      "bytes": 789,
+      "sha256": "edb86da6508a8b78cb8cc921afb87203103eca65d3ee2cedcfdcf9261f6f4af5"
+    },
+    {
+      "original": ".cache/guardian-r9-post-system-20261023.json",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/root/guardian-r9-post-system-20261023.json",
+      "bytes": 342,
+      "sha256": "5097a07e2f9681856c942d1367086fdb6b97734d38230a7a9499f8647e44158c"
+    },
+    {
+      "original": ".cache/guardian-r9-formal-release-20261023.json",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/root/guardian-r9-formal-release-20261023.json",
+      "bytes": 604,
+      "sha256": "b7fa6a7bf9631c418b022a1ef17f5cf51bb106982e823edb7ce2d764f676b6a6"
+    },
+    {
+      "original": ".cache/guardian-analyze-r9-failed-post-20261023-r1/readback.json",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/post/readback.json",
+      "bytes": 3758,
+      "sha256": "9ce756b606c4f9700b3a5ed5a75a55e33fef3fb35324fadd8b50e1556db64091"
+    },
+    {
+      "original": ".cache/guardian-analyze-r9-failed-post-20261023-r1/readback.md",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/post/readback.md",
+      "bytes": 1426,
+      "sha256": "c8762bff74a9465c80016409b7ca54c141c9532eb75b22a9314d80c62362bf14"
+    },
+    {
+      "original": ".cache/guardian-analyze-r9-failed-post-20261023-r1/readback.py",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/post/readback.py",
+      "bytes": 11088,
+      "sha256": "0d2b747d129c7ec935724abc8b80f381277a606f7202cc720a164ce59bbd3462"
+    },
+    {
+      "original": ".cache/guardian-analyze-r9-failed-post-20261023-r1/report-pins.json",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/post/report-pins.json",
+      "bytes": 666,
+      "sha256": "28fb55609fb775a4ea7e75d18d2e57224aee916a01d5d87607b93f7bbd65228f"
+    },
+    {
+      "original": ".cache/guardian-analyze-r9-timeout-diagnosis-20261023-r1/pins.json",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/diagnosis/pins.json",
+      "bytes": 512,
+      "sha256": "d6b1a62fba592d04233f356e996e5cd9c1301cc18fa8dfe162783897998069f8"
+    },
+    {
+      "original": ".cache/guardian-analyze-r9-timeout-diagnosis-20261023-r1/review.json",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/diagnosis/review.json",
+      "bytes": 9399,
+      "sha256": "b8aa0bb7e96580fd712ded0c3f1bd6dc5e70af9df7fae0ed1d69aca13e88430d"
+    },
+    {
+      "original": ".cache/guardian-analyze-r9-timeout-diagnosis-20261023-r1/review.md",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/diagnosis/review.md",
+      "bytes": 4878,
+      "sha256": "e2e63aeeada0f30602245d6ad00b4d322311dd149e9bfe131072b9f5ca2d00a7"
+    },
+    {
+      "original": ".cache/guardian-analyze-r9-root-prelaunch-20261023.json",
+      "path": "docs/evidence/guardian-analysis-r9-not-accepted-20261023/root/guardian-analyze-r9-root-prelaunch-20261023.json",
+      "bytes": 272,
+      "sha256": "386a55987320b2079424eb4a10170e880540ec307698ef774021365a6683eea8"
+    }
+  ]
+}

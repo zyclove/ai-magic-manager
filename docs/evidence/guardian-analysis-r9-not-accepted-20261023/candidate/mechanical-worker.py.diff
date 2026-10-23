@@ -1,0 +1,16 @@
+--- accepted-analysis-r8/worker.py
++++ current-analysis409-r9/worker.py
+@@ -20,11 +20,11 @@
+ CANDIDATE = Path(__file__).absolute().parent
+ ATTEMPT = CANDIDATE / 'attempt'
+ REPO = CANDIDATE.parents[1]
+-FROZEN = REPO / '.cache/guardian-observation-current-20261023-r2'
++FROZEN = REPO / '.cache/guardian-current-20261023-r3-a2b5'
+ SOURCE = FROZEN / 'src'
+ MODULE = SOURCE / 'apps/guardian'
+ INPUT = CANDIDATE / 'inputs.json'
+-INPUT_SHA256 = '53795ab6aedf4c0621516c4f2b54c638f11e646ee590d305f2383aac79e5e02c'
++INPUT_SHA256 = 'bc28a78035d46791d7bd9cab066668bb7c119b601ed7ba6f8f00a683c3f78075'
+ HELPER_SHA256 = '4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12'
+ ROOTS = ['apps/guardian', 'packages/audit_client', 'packages/commerce_contracts',
+          'packages/notification_client', 'packages/device_operations',

@@ -1,0 +1,23 @@
+{
+  "status": "STATIC_NO_BLOCKER_NOT_RUN",
+  "candidate": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-picker-20261023-r1\\usage_report_device_picker.dart",
+    "bytes": 10456,
+    "sha256": "10f70a11f6938d3c8545d8b10c8afedaff200adbaea211d86ae04c68e846b310"
+  },
+  "before": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-picker-20261023-r1\\before.dart",
+    "bytes": 5485,
+    "sha256": "c5a08c51ef3a4cd169ae237d9b7ac928426ee0664ad8d45f3cfbfe9e0c1bd3f7"
+  },
+  "main": {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\usage_report_device_picker.dart",
+    "bytes": 5485,
+    "sha256": "c5a08c51ef3a4cd169ae237d9b7ac928426ee0664ad8d45f3cfbfe9e0c1bd3f7"
+  },
+  "review": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-picker-independent-20261023-r1\\review.md",
+    "bytes": 4260,
+    "sha256": "3daad9b12c7a2dc703137cfd3b6ab136fd0567364071a425b3bce82894f98d73"
+  }
+}

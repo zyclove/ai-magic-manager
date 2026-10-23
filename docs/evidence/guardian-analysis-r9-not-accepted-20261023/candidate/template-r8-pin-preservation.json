@@ -1,0 +1,14 @@
+{
+  "status": "ALL_273_TEMPLATE_DESCRIPTORS_RETAINED",
+  "templateProposal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\proposal.json",
+    "bytes": 72070,
+    "sha256": "f6f9a00027a9b070a2b289e5560a34d31c3314e2137a40cd75a8b1dd76e03ae1",
+    "absolute": true
+  },
+  "count": 273,
+  "originalDescriptorListsRetainedVerbatimIn": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\proposal.json",
+  "absoluteHistoricalRowsInNewProposal": true,
+  "rawHistoricalCopiesCreated": 0,
+  "externalRuntimeRehashPerformed": false
+}

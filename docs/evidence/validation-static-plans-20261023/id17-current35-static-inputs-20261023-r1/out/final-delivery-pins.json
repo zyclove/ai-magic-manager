@@ -1,0 +1,476 @@
+{
+  "status": "STATIC35_98_SOURCE_INPUT_PLAN_ALL_UNRUN",
+  "files": [
+    {
+      "path": "inputs/offline-settings.xml",
+      "bytes": 1677,
+      "sha256": "4925e1bcc0d37d71a3f2f751737aceb3d89d2c58346a0ac8ce8710778ee5f5e4"
+    },
+    {
+      "path": "inputs/required-poms/com/fasterxml/jackson/core/jackson-databind/2.21.4/jackson-databind-2.21.4.pom",
+      "bytes": 23024,
+      "sha256": "58c9c87c3d46ec8fb57d855fc675185e01147f3a9a415a92a2e464a5c02b9cec"
+    },
+    {
+      "path": "inputs/required-poms/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.21.4/jackson-datatype-jdk8-2.21.4.pom",
+      "bytes": 2765,
+      "sha256": "f3c4367e2e17b97d49260edb730b00cc5567b066f7218c9d7545f450530d0ab6"
+    },
+    {
+      "path": "inputs/required-poms/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.21.4/jackson-datatype-jsr310-2.21.4.pom",
+      "bytes": 5350,
+      "sha256": "2ac48defe3501a077a1d9dc5515ddc39a6791ca0f5bb43983ba814524881c28c"
+    },
+    {
+      "path": "inputs/required-poms/com/fasterxml/jackson/jackson-base/2.21.4/jackson-base-2.21.4.pom",
+      "bytes": 13361,
+      "sha256": "91e9c95e0ced7356bfa6e28297f2c1e2acdae67306713fa945aa5245c0d0fef5"
+    },
+    {
+      "path": "inputs/required-poms/com/fasterxml/jackson/jackson-bom/2.21.4/jackson-bom-2.21.4.pom",
+      "bytes": 20225,
+      "sha256": "52a50e69686abd4489c962db4c15f30ee5cc7732849de6301845e4660db1a0b7"
+    },
+    {
+      "path": "inputs/required-poms/com/fasterxml/jackson/jackson-parent/2.21/jackson-parent-2.21.pom",
+      "bytes": 6879,
+      "sha256": "3851df627faeb46887b956104630b74a8bbb5f7de22e974cf15982e20e0373de"
+    },
+    {
+      "path": "inputs/required-poms/com/fasterxml/jackson/module/jackson-modules-java8/2.21.4/jackson-modules-java8-2.21.4.pom",
+      "bytes": 3067,
+      "sha256": "9ff11d3c7da6d773f60d3add741e5f4ef2b8b67560d7f729a5885a99609753fb"
+    },
+    {
+      "path": "inputs/required-poms/com/fasterxml/oss-parent/75/oss-parent-75.pom",
+      "bytes": 24055,
+      "sha256": "fcbbf1c18c9047e6917d384f2064e21b42a58fc85fb0523a9e2e015eff7c619d"
+    },
+    {
+      "path": "inputs/required-poms/jakarta/persistence/jakarta.persistence-api/3.1.0/jakarta.persistence-api-3.1.0.pom",
+      "bytes": 15533,
+      "sha256": "f876fc8d886733540f59815ab77b1b998beec7080032dfb1526cade46ceeccbd"
+    },
+    {
+      "path": "inputs/required-poms/jakarta/transaction/jakarta.transaction-api/2.0.1/jakarta.transaction-api-2.0.1.pom",
+      "bytes": 13635,
+      "sha256": "5fe349981c156fbbe26388d59949fdac16bb8d7879ee61b34c49c7b5ce0f2f23"
+    },
+    {
+      "path": "inputs/required-poms/jakarta/ws/rs/all/3.1.0/all-3.1.0.pom",
+      "bytes": 2828,
+      "sha256": "d4fdd41780e065aacd5ac099cd0490171937cc5122dc2c8ef1b88a87b3c9424c"
+    },
+    {
+      "path": "inputs/required-poms/jakarta/ws/rs/jakarta.ws.rs-api/3.1.0/jakarta.ws.rs-api-3.1.0.pom",
+      "bytes": 17636,
+      "sha256": "c697a303e9ffc31963eb1c275bbf77a583a7d482965ac4f1bb26dc91e595ffbf"
+    },
+    {
+      "path": "inputs/required-poms/org/apache/apache/29/apache-29.pom",
+      "bytes": 20721,
+      "sha256": "3e49037174820bbd0df63420a977255886398954c2a06291fa61f727ac35b377"
+    },
+    {
+      "path": "inputs/required-poms/org/apache/apache/31/apache-31.pom",
+      "bytes": 23531,
+      "sha256": "555d0c9eaa69c042aff924927b9381e8f8174136d355eead445224452e6291cc"
+    },
+    {
+      "path": "inputs/required-poms/org/apache/apache/32/apache-32.pom",
+      "bytes": 24184,
+      "sha256": "cfd872c0ec27f53ae68f43dbc0fecded8add773079a53afbd390e407b42ce72f"
+    },
+    {
+      "path": "inputs/required-poms/org/apache/apache/33/apache-33.pom",
+      "bytes": 24184,
+      "sha256": "d78bd8524c5f8380a190a6525686629a95dfe512df21111383a6d8c0923a4415"
+    },
+    {
+      "path": "inputs/required-poms/org/apache/maven/maven-parent/39/maven-parent-39.pom",
+      "bytes": 47971,
+      "sha256": "cfe4820aa1d96ae51d1dc5b0e2a9dc582c42478c24c95ca8238f547e60bef721"
+    },
+    {
+      "path": "inputs/required-poms/org/apache/maven/maven-parent/41/maven-parent-41.pom",
+      "bytes": 49873,
+      "sha256": "762fcdd4ce8621c5fa0a2cf6495ad26972a8093eb432aa3e402bc2d4e2500c53"
+    },
+    {
+      "path": "inputs/required-poms/org/apache/maven/maven-parent/42/maven-parent-42.pom",
+      "bytes": 50444,
+      "sha256": "04534dea350a2187970a5b74444338bcf78ba8e537d44f262acfba16ebb33056"
+    },
+    {
+      "path": "inputs/required-poms/org/apache/maven/maven-parent/43/maven-parent-43.pom",
+      "bytes": 50343,
+      "sha256": "468a1262e9aaa5febf9d604e2836267f815351f2b4520f28fb17f53c71e33554"
+    },
+    {
+      "path": "inputs/required-poms/org/apache/maven/plugins/maven-compiler-plugin/3.13.0/maven-compiler-plugin-3.13.0.pom",
+      "bytes": 10444,
+      "sha256": "0d00b84f26ff5f3e845bf349302345633ca65f8d8e9101b31082082415912c1e"
+    },
+    {
+      "path": "inputs/required-poms/org/apache/maven/plugins/maven-jar-plugin/3.4.2/maven-jar-plugin-3.4.2.pom",
+      "bytes": 7683,
+      "sha256": "1b6e93c9c1d87b893808d9efc07f56638e60909d501558b11838659b937157af"
+    },
+    {
+      "path": "inputs/required-poms/org/apache/maven/plugins/maven-plugins/39/maven-plugins-39.pom",
+      "bytes": 8092,
+      "sha256": "18085afbef3a17942b442135a3f0e77018cda66edd33c6b18fd18440661bc29e"
+    },
+    {
+      "path": "inputs/required-poms/org/apache/maven/plugins/maven-plugins/41/maven-plugins-41.pom",
+      "bytes": 7353,
+      "sha256": "9e64593239bb69d80b2db9e595d8c0fc3cb44cf2aa5c1ed547718b4cfd732efe"
+    },
+    {
+      "path": "inputs/required-poms/org/apache/maven/plugins/maven-plugins/42/maven-plugins-42.pom",
+      "bytes": 7690,
+      "sha256": "5b31681ea67e838a8ed1f08af891d1ae50f16dfadd3fc2b787900ed69d5f2503"
+    },
+    {
+      "path": "inputs/required-poms/org/apache/maven/plugins/maven-resources-plugin/3.3.1/maven-resources-plugin-3.3.1.pom",
+      "bytes": 8158,
+      "sha256": "3269d0a6e3cd614a29486f57fc86488b0f1e458a11bebc61f9408fd6c7cf85ae"
+    },
+    {
+      "path": "inputs/required-poms/org/apache/maven/plugins/maven-surefire-plugin/3.5.2/maven-surefire-plugin-3.5.2.pom",
+      "bytes": 5694,
+      "sha256": "36b259129b8e9c93067431bf00e00359d22c1ec8fdf94a7644ddec7b20d7cea1"
+    },
+    {
+      "path": "inputs/required-poms/org/apache/maven/surefire/surefire/3.5.2/surefire-3.5.2.pom",
+      "bytes": 20173,
+      "sha256": "d3cc7eb1d3efc669b3efab57d9e6f4d702d9cd610806adc0a501b50d696bb31a"
+    },
+    {
+      "path": "inputs/required-poms/org/eclipse/ee4j/project/1.0.6/project-1.0.6.pom",
+      "bytes": 13331,
+      "sha256": "4e7d8329d8da7dcf30779d824241be145f27108932f5a5a24eb907677bc8d72d"
+    },
+    {
+      "path": "inputs/required-poms/org/eclipse/ee4j/project/1.0.7/project-1.0.7.pom",
+      "bytes": 14181,
+      "sha256": "205c039a42cbae3556efbeb04a483eb3a3cf9550bd75bf84260dc8f28218f105"
+    },
+    {
+      "path": "inputs/required-poms/org/jboss/jboss-parent/42/jboss-parent-42.pom",
+      "bytes": 75551,
+      "sha256": "e41276efe3509054cba4197b3d6360c51dd57bc640dde48cf37dafaa45a09c3b"
+    },
+    {
+      "path": "inputs/required-poms/org/jboss/logging/jboss-logging/3.6.1.Final/jboss-logging-3.6.1.Final.pom",
+      "bytes": 18326,
+      "sha256": "27cd88ab8e5946b8a7aa92644eb3732e35be281439ab07af71f898453ee7540d"
+    },
+    {
+      "path": "inputs/required-poms/org/jboss/logging/logging-parent/1.0.3.Final/logging-parent-1.0.3.Final.pom",
+      "bytes": 5660,
+      "sha256": "9972c894749cda355766217d43ded7009b1eeb26e0301c30914a2db253dd685b"
+    },
+    {
+      "path": "inputs/required-poms/org/junit/jupiter/junit-jupiter/5.10.1/junit-jupiter-5.10.1.pom",
+      "bytes": 3205,
+      "sha256": "4d4a2589a724b0a1820c850587103020905d3110ccf46534325ec254c71d7bf8"
+    },
+    {
+      "path": "inputs/required-poms/org/keycloak/keycloak-common/26.8.0/keycloak-common-26.8.0.pom",
+      "bytes": 2671,
+      "sha256": "2eeef37567a6c6ba3d2ad8fda912f40e44f57dfee3721990a7bda1e9208686e0"
+    },
+    {
+      "path": "inputs/required-poms/org/keycloak/keycloak-core/26.8.0/keycloak-core-26.8.0.pom",
+      "bytes": 5342,
+      "sha256": "69db85aace998fc822855f97f08613755554b25aa485936aace3cd2c85332778"
+    },
+    {
+      "path": "inputs/required-poms/org/keycloak/keycloak-model-jpa/26.8.0/keycloak-model-jpa-26.8.0.pom",
+      "bytes": 9144,
+      "sha256": "1a25ff3fb9891eb2cf13370d46e7cfcc9a753c4d2baa2a6b509d5bbf9b8bfd2c"
+    },
+    {
+      "path": "inputs/required-poms/org/keycloak/keycloak-model-pom/26.8.0/keycloak-model-pom-26.8.0.pom",
+      "bytes": 1536,
+      "sha256": "216dd7f71e4f8a46a2ef047ed74553ee4075e95441ee29af4909f8415dd08161"
+    },
+    {
+      "path": "inputs/required-poms/org/keycloak/keycloak-parent/26.8.0/keycloak-parent-26.8.0.pom",
+      "bytes": 83836,
+      "sha256": "231480bc61773041613b470efbd64a20ee017df750bc0728d573b076859a5917"
+    },
+    {
+      "path": "inputs/required-poms/org/keycloak/keycloak-server-spi/26.8.0/keycloak-server-spi-26.8.0.pom",
+      "bytes": 2660,
+      "sha256": "84f5238063f31897d95deae9958ddd3b49fa278c683f2de101c101d6f08b86bc"
+    },
+    {
+      "path": "inputs/required-poms/org/keycloak/keycloak-server-spi-private/26.8.0/keycloak-server-spi-private-26.8.0.pom",
+      "bytes": 4185,
+      "sha256": "2bda852b3b47c98cd483bcb45230fd91edd4f56df6bba41e18dd371ed5c1ee32"
+    },
+    {
+      "path": "inputs/required-poms/org/keycloak/keycloak-services/26.8.0/keycloak-services-26.8.0.pom",
+      "bytes": 21866,
+      "sha256": "9368f5bbe7d3468c2c474722fe5c3ecf7ddc53cddf99cb42fc1826b373f64a06"
+    },
+    {
+      "path": "inputs/required-poms/org/mockito/mockito-core/5.14.2/mockito-core-5.14.2.pom",
+      "bytes": 2467,
+      "sha256": "638e56a68f496879bc8a0f53cfbdf9c4cc39a45b6e438a333a5ea83c09ee9cfd"
+    },
+    {
+      "path": "out/control-path-addendum.json",
+      "bytes": 1234,
+      "sha256": "90d79d73315e34fd69c088796b79c693227a23c9b7c9941fc2e100ed154adba2"
+    },
+    {
+      "path": "out/delivery-pins.json",
+      "bytes": 19491,
+      "sha256": "ee295499a242aa0a4bccb291b551667455598d4fd5b5075998702efb888eb746"
+    },
+    {
+      "path": "out/expected-tests.json",
+      "bytes": 8615,
+      "sha256": "5c6220665fe15f46ecaa62cecaf1f94ed8c19377347396f54c2dcba904da9263"
+    },
+    {
+      "path": "out/git-source-metadata.json",
+      "bytes": 10223,
+      "sha256": "8c81e9683e8c354f92d3813c973fd5efdfa08373eced1c86ef9c34ac82fd3389"
+    },
+    {
+      "path": "out/inherited-control-pins.json",
+      "bytes": 16673,
+      "sha256": "201d56ee18dbb34e459c8c0d22e472c5f4aca41c88e6b1c92d6e30cc186860af"
+    },
+    {
+      "path": "out/input-manifest.json",
+      "bytes": 787571,
+      "sha256": "b3d4c0d1d405e5ce5bc4fc0a2fa406fda03993b15632879831becf98ddff3f59"
+    },
+    {
+      "path": "out/main-raw-observation.json",
+      "bytes": 17266,
+      "sha256": "817df4096d05cd8e1b9e376c24f41b2d3d75fca73e1576a67cdbaa06dca5a372"
+    },
+    {
+      "path": "out/read-input-pins.json",
+      "bytes": 24431,
+      "sha256": "93dd4798eb60814ff1526f7429ff93c44c08809812ff87b68c553dabc5411473"
+    },
+    {
+      "path": "out/required-pom-inputs.json",
+      "bytes": 31935,
+      "sha256": "6c6d37ec6ee33e2fd95d1f5162c8cb82769ba9388d86534f429b659d93c8e73b"
+    },
+    {
+      "path": "out/source-git.tar",
+      "bytes": 266240,
+      "sha256": "4a832e2a811efd4457bdc01118bbc6afad7c8fcf206f8cc0543a37a3dba8cfa2"
+    },
+    {
+      "path": "out/source-manifest.json",
+      "bytes": 12811,
+      "sha256": "f4599b58264168e1b6b849c7d98b95983b788a15ddf676d28e27237b823837d4"
+    },
+    {
+      "path": "out/static-plan.json",
+      "bytes": 6460,
+      "sha256": "1ad83f4dd475cded8092d34714a3e87627f285354b19753babe04108e352a7ad"
+    },
+    {
+      "path": "out/test-name-extraction.json",
+      "bytes": 17674,
+      "sha256": "84f1f4d5c544aa79b78468d4ab5fe1b4d2a0b8f81ddeee5721478307f7030473"
+    },
+    {
+      "path": "prepare_static_inputs.py",
+      "bytes": 20637,
+      "sha256": "dc8d4c7932683eab1d52169c0a88ee26141231512ce3f58a03d331f16f4a04fd"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2788,
+      "sha256": "594f2d029c310ca561b200abcbc7fe64b3a5a2f864bf7e4f2272f6fdcfe14c93"
+    },
+    {
+      "path": "src/identity-extensions/maven-settings.xml",
+      "bytes": 376,
+      "sha256": "906221a94b3fbc7d7fda3eb5b5ae53b5ee405f5e7ab1baa66f4c86e065677a4a"
+    },
+    {
+      "path": "src/identity-extensions/pom.xml",
+      "bytes": 4607,
+      "sha256": "28f16e1bf4f68048034dbcc585696c85a2699f04b07c02b98326463ea8032a2c"
+    },
+    {
+      "path": "src/identity-extensions/README.md",
+      "bytes": 16206,
+      "sha256": "5510acccbebc58c710946b2b788e21063f0107dc892e0de56561aba274684e32"
+    },
+    {
+      "path": "src/identity-extensions/src/main/java/com/aimanager/identity/AliyunSms.java",
+      "bytes": 4553,
+      "sha256": "8f36a458fd9df21eb76aa582987db8c63c4ff69fa76e024ca38a81c7e25145a7"
+    },
+    {
+      "path": "src/identity-extensions/src/main/java/com/aimanager/identity/ConsumerAccountFlow.java",
+      "bytes": 14498,
+      "sha256": "bebef13e2daf8bf8182a318febfc4c3cb38bfc916fd4def590af0cd9e4cb1896"
+    },
+    {
+      "path": "src/identity-extensions/src/main/java/com/aimanager/identity/ConsumerAccountResource.java",
+      "bytes": 5691,
+      "sha256": "f13e6cf8b2d48059b82a3691710420838e1b3b6a987732b4a5b2ca50718db2cd"
+    },
+    {
+      "path": "src/identity-extensions/src/main/java/com/aimanager/identity/ConsumerAccountResourceFactory.java",
+      "bytes": 770,
+      "sha256": "7e039347cae9059afa2b08dd229e09e299357b39e05fc0a98fee849ab11ee0d2"
+    },
+    {
+      "path": "src/identity-extensions/src/main/java/com/aimanager/identity/ConsumerAuthenticator.java",
+      "bytes": 9401,
+      "sha256": "f16a33f78800b1178a7c6d503bd24023a339f0210b1aee62019e0995e8251f92"
+    },
+    {
+      "path": "src/identity-extensions/src/main/java/com/aimanager/identity/ConsumerAuthenticatorFactory.java",
+      "bytes": 2659,
+      "sha256": "a07e20a2a9c22f4eec75540380383d7f4c8ae870a519c9d3b21cf26099247a25"
+    },
+    {
+      "path": "src/identity-extensions/src/main/java/com/aimanager/identity/ConsumerClaimsMapper.java",
+      "bytes": 2699,
+      "sha256": "ab105651a4fe9a6cee8baf91c9e6bbc30d9186e54d5efebe73e0d12a31472be9"
+    },
+    {
+      "path": "src/identity-extensions/src/main/java/com/aimanager/identity/ConsumerConfiguration.java",
+      "bytes": 2679,
+      "sha256": "e4a903cda0de55bec76c336bb23abc52ce6b2daf27df0efaa08883f3b3fe4935"
+    },
+    {
+      "path": "src/identity-extensions/src/main/java/com/aimanager/identity/ConsumerIdentity.java",
+      "bytes": 3891,
+      "sha256": "9f2517ebaa1d967a207391b130a0c42f247cae79af418ba26fd642c302860eb0"
+    },
+    {
+      "path": "src/identity-extensions/src/main/java/com/aimanager/identity/ConsumerIdentityTransactions.java",
+      "bytes": 10707,
+      "sha256": "26b3791e1ebdcf6d12bac7edbf29407886e4209f55f885eedd6718cdcb170fb4"
+    },
+    {
+      "path": "src/identity-extensions/src/main/java/com/aimanager/identity/ConsumerProviderRuntime.java",
+      "bytes": 6515,
+      "sha256": "0fcb443f6c6556314816d4db5749af9d2112e4537d7a60d59d81e86677ff1e80"
+    },
+    {
+      "path": "src/identity-extensions/src/main/java/com/aimanager/identity/PhoneOtp.java",
+      "bytes": 3990,
+      "sha256": "29edc057c9d8f5f08cdc38d965982efc91eda2d4b895fe5d0c94a79533fbd974"
+    },
+    {
+      "path": "src/identity-extensions/src/main/java/com/aimanager/identity/ProviderHttpTransport.java",
+      "bytes": 7654,
+      "sha256": "943be6c9cac25568279789a31b77c7bbbefeed8a71795b7aa7921c314077cab4"
+    },
+    {
+      "path": "src/identity-extensions/src/main/java/com/aimanager/identity/WechatNative.java",
+      "bytes": 1761,
+      "sha256": "533f3411c92c81223c6e7625c0551f0c6cb38f0ffd2edd9ea1ebaa3e9f007c63"
+    },
+    {
+      "path": "src/identity-extensions/src/main/resources/META-INF/beans.xml",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "src/identity-extensions/src/main/resources/META-INF/services/org.keycloak.authentication.AuthenticatorFactory",
+      "bytes": 52,
+      "sha256": "6af9d79ca04029ff9ffdccf9f73d6bf50f8d29e6507686eb04a5209a50b1a381"
+    },
+    {
+      "path": "src/identity-extensions/src/main/resources/META-INF/services/org.keycloak.protocol.ProtocolMapper",
+      "bytes": 44,
+      "sha256": "280e403e28ec793e67ba5aa06d0a9aeca80f8b3489746c1173a4932b17dd579b"
+    },
+    {
+      "path": "src/identity-extensions/src/main/resources/META-INF/services/org.keycloak.services.resource.RealmResourceProviderFactory",
+      "bytes": 54,
+      "sha256": "c75e601769eb0cc24c186350709a88475eca0842d46d49287b52300dd79107f5"
+    },
+    {
+      "path": "src/identity-extensions/src/test/java/com/aimanager/identity/AliyunSmsTest.java",
+      "bytes": 2371,
+      "sha256": "a65c35ddf6fb308e962bc97fd817d5e6a7ea78a54248c0244285b93a0ee64cee"
+    },
+    {
+      "path": "src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerAccountFlowTest.java",
+      "bytes": 21068,
+      "sha256": "68199345baa017244fe8e348d53d189ae2074e7f8df5aaef78a1ae8d17a0d54b"
+    },
+    {
+      "path": "src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerAccountSpiPackagingTest.java",
+      "bytes": 970,
+      "sha256": "f7256066b80683879de946f7f133a77eb9e01297da949d0d846233706830385d"
+    },
+    {
+      "path": "src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerAccountStatusTest.java",
+      "bytes": 4628,
+      "sha256": "092b9f91eb4ead12af665cd984e1479d951f9e309d50daea97e547fbcdaea838"
+    },
+    {
+      "path": "src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerAuthenticatorTest.java",
+      "bytes": 11343,
+      "sha256": "c617a1e1b6fb5ec58b19bcba5ec29469f5aa73c846a9c4f23a9cc729b6f5826d"
+    },
+    {
+      "path": "src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerClaimsSerializationTest.java",
+      "bytes": 5947,
+      "sha256": "4edf8b0bc5b25492552183c6defcd85f046316bdee75542b47c6a036091362b1"
+    },
+    {
+      "path": "src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerConfigurationTest.java",
+      "bytes": 1919,
+      "sha256": "603b0d4e02364201e6c3b49fa4d6c84d69330d32174ebd15e73596ac5c58632c"
+    },
+    {
+      "path": "src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerHttpClientReuseTest.java",
+      "bytes": 5863,
+      "sha256": "27985051a0ec21630ef456c99ea917c00be5fe3d3d799db4fd3f41ef4b7c22e8"
+    },
+    {
+      "path": "src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerIdentityTest.java",
+      "bytes": 3983,
+      "sha256": "65b5009508dbfa5cf49d535d5a88b8a5d809aee9059560267d693b6219f0549b"
+    },
+    {
+      "path": "src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerIdentityTransactionsTest.java",
+      "bytes": 15536,
+      "sha256": "a8436e531a89c4fbb17a59d1b25d054c800f7a618cf0afdbbe52d1290ab282a5"
+    },
+    {
+      "path": "src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerProviderRuntimeTest.java",
+      "bytes": 6029,
+      "sha256": "1858e304e4ca2f47bf420478e3837d1d22f250916e9efc13e4e6cec671522410"
+    },
+    {
+      "path": "src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerRuntimeSnapshotTest.java",
+      "bytes": 7169,
+      "sha256": "aecea8583cd1aeb7fc297710230149e0a8aa26501d71fa817f19d2d9396e6e3b"
+    },
+    {
+      "path": "src/identity-extensions/src/test/java/com/aimanager/identity/PhoneOtpTest.java",
+      "bytes": 5858,
+      "sha256": "165f7919e9df974e54e26e89b4831c03122c9fc923dd1991ec307edeef87704c"
+    },
+    {
+      "path": "src/identity-extensions/src/test/java/com/aimanager/identity/ProviderHttpTransportTest.java",
+      "bytes": 31874,
+      "sha256": "cb9b8131eedb97c0b76005ba4593c72b0c57344105e3698ca0b51a8090858164"
+    }
+  ],
+  "selfExcluded": "out/final-delivery-pins.json"
+}

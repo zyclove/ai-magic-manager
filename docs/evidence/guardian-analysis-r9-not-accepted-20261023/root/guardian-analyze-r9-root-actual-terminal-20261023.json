@@ -1,0 +1,13 @@
+{
+  "utc": "2026-10-23T08:41:51.240392+00:00",
+  "monotonic": 23017.999399,
+  "status": "ROOT_R9_ACTUAL_SAME_SESSION_TERMINAL_OBSERVED",
+  "actualSession": 58699,
+  "initialChunk": "f8c394",
+  "finalChunk": "720805",
+  "naturalExitCode": 1,
+  "anchorToAfterTerminalSeconds": 423.29362369999944,
+  "actualOuterTerminalBefore180": false,
+  "conservativeActualCompleteBefore135": false,
+  "preIoReceiptElapsedNotUsedAsExitProof": true
+}

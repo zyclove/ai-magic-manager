@@ -1,0 +1,16 @@
+{
+  "status": "STATIC_DIAGNOSIS_ONLY_ORIGINALS_UNCHANGED",
+  "files": [
+    {
+      "path": ".cache/guardian-analyze-r9-timeout-diagnosis-20261023-r1/review.json",
+      "bytes": 9399,
+      "sha256": "b8aa0bb7e96580fd712ded0c3f1bd6dc5e70af9df7fae0ed1d69aca13e88430d"
+    },
+    {
+      "path": ".cache/guardian-analyze-r9-timeout-diagnosis-20261023-r1/review.md",
+      "bytes": 4878,
+      "sha256": "e2e63aeeada0f30602245d6ad00b4d322311dd149e9bfe131072b9f5ca2d00a7"
+    }
+  ],
+  "selfExcluded": "pins.json"
+}

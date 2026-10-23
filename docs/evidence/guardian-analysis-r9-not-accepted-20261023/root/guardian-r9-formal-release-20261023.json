@@ -1,0 +1,21 @@
+{
+  "status": "ROOT_R9_FAILED_WINDOW_FORMALLY_RELEASED",
+  "atUtc": "2026-10-23T08:59:43.2369321Z",
+  "actualSession": 58699,
+  "initialChunk": "f8c394",
+  "finalChunk": "720805",
+  "naturalExitCode": 1,
+  "analysisAccepted": false,
+  "controllerReportedPreExitSeconds": 314.1163399,
+  "postReadbackChunk": "06747c",
+  "pinsMatched": 329,
+  "sourceSealMatched": 423,
+  "mainFilesMatched": 409,
+  "worker36468Present": false,
+  "sdkCount": 0,
+  "unknownCount": 0,
+  "availableRamBytes": 1051181056,
+  "processCount": 920,
+  "fullCachePrePostAvailable": false,
+  "noNextGrant": true
+}

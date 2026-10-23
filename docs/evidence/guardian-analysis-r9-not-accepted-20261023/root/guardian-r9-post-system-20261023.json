@@ -1,0 +1,19 @@
+{
+  "atUtc": "2026-10-23T08:57:18.8675048Z",
+  "sdkCount": 0,
+  "sdk": [],
+  "unknownCount": 0,
+  "processCount": 884,
+  "knownWorker36468Present": false,
+  "availableRamBytes": 1189240832,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 6558720000
+    },
+    {
+      "Name": "D",
+      "Free": 29329870848
+    }
+  ]
+}

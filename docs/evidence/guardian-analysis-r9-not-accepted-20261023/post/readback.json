@@ -1,0 +1,110 @@
+{
+  "status": "FAILED_R9_POST_BYTES_READBACK_NOT_ACCEPTED_NO_RUNTIME_ACCEPTANCE",
+  "atUtc": "2026-10-23T08:59:06.959766+00:00",
+  "actualSessionContextFromRoot": 58699,
+  "initialChunkContextFromRoot": "f8c394",
+  "finalChunkContextFromRoot": "720805",
+  "naturalOuterExitContextFromRoot": 1,
+  "actualResult": {
+    "status": "NOT_ACCEPTED",
+    "outerBudgetSeconds": 180,
+    "terminationReserveSeconds": 6,
+    "startedAtUtc": "2026-10-23T08:34:48.025061+00:00",
+    "workerPid": 36468,
+    "phaseScope": "FULL_GUARDIAN_ANALYZE",
+    "errorType": "TimeoutExpired",
+    "reason": "Command '['C:\\\\Python313\\\\python.exe', '-I', '-B', '-u', 'D:\\\\codes\\\\mobile\\\\ai-manager\\\\.cache\\\\guardian-analyze-20261023-r9\\\\worker.py']' timed out after 0.1 seconds",
+    "ownedJobActiveProcessesFinal": 0,
+    "finishedAtUtc": "2026-10-23T08:40:02.107283+00:00",
+    "elapsedCompleteSeconds": 314.11633989999973
+  },
+  "actualResultPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r9\\attempt\\result.json",
+    "bytes": 583,
+    "sha256": "cfc3a17588993b07382910717023239d286d636d97501aa24a2da3f378d8193d"
+  },
+  "proposalPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r9\\proposal.json",
+    "bytes": 85925,
+    "sha256": "8f106238ac96a77822fba2bdb596aba33aa27878ffc19a6e0ddd566ed863eecf"
+  },
+  "candidateSealPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r9\\seal-receipt.json",
+    "bytes": 2148,
+    "sha256": "886d66b7223733f73b08713c497562274f8b82e2ca33f45b5a82034cfbadd79f"
+  },
+  "proposalPinGroups": {
+    "candidateFiles": {
+      "descriptors": 12,
+      "matched": 12
+    },
+    "controlRuntimeFiles": {
+      "descriptors": 11,
+      "matched": 11
+    },
+    "historicalMetadataFiles": {
+      "descriptors": 306,
+      "matched": 306
+    }
+  },
+  "proposalDescriptors": 329,
+  "uniqueReadPathsAcrossPinsAndSources": 1092,
+  "sourceSnapshotSealPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\out\\seal-static-source.json",
+    "bytes": 80339,
+    "sha256": "869a6c582e6de734a2d6b0220e00a09d8264aef7055c1ba4145e9c63ccb22adb"
+  },
+  "sourceSealDescriptors": 423,
+  "sourceSealMatched": 423,
+  "mainRaw409Matched": 409,
+  "sourceMembership": {
+    "main": {
+      "files": 409,
+      "exact": true,
+      "extra": [],
+      "missing": []
+    },
+    "frozen": {
+      "files": 409,
+      "exact": true,
+      "extra": [],
+      "missing": []
+    }
+  },
+  "currentHead": "a2b5ca6ef2398397e4208065090b7c1d65992358",
+  "sevenRootGitTreesMatch": true,
+  "gitMembershipModeAndBlobIdentityMatch": true,
+  "gitRawBlobsMatched": 409,
+  "attemptFiles": [
+    "request.json",
+    "result.json",
+    "worker-console.log"
+  ],
+  "absentWorkerArtifacts": [
+    "receipt.json",
+    "launch.json",
+    "initial-gate.json",
+    "launch-gate.json",
+    "preflight-pins.json",
+    "postflight-pins.json",
+    "postflight-gate.json",
+    "out/analyze.log"
+  ],
+  "workerConsoleBytes": 0,
+  "workerPreflightOrLaunchRecorded": false,
+  "sdkAnalysisStartedOrCompleted": "NOT_EVIDENCED; no worker preflight, launch, receipt or analyze log exists",
+  "cache3536FullContentReadbackPerformed": false,
+  "cacheReason": "No worker preflight/command/cache check is recorded; no six-hundred-MB cache read was required or performed. This is not pre/post verification.",
+  "osProcessInventoryOrFormalReleasePerformed": false,
+  "formalReleaseMustComeFromRoot": true,
+  "sourceOrPinsDrift": false,
+  "errors": [],
+  "actions": {
+    "candidateImport": false,
+    "sdkOrTestsOrFormatterOrCompiler": false,
+    "processApiOrControl": false,
+    "network": false,
+    "gitWrites": false,
+    "mainWrites": false
+  }
+}

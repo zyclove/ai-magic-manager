@@ -1,0 +1,21 @@
+{
+  "status": "ROOT_R9_FRESH_PRELAUNCH_GATE_PASSED",
+  "atUtc": "2026-10-23T08:34:47.8592779Z",
+  "grant": "guardian-analyze-r9-root-20261023",
+  "sourceCommit": "a2b5ca6ef2398397e4208065090b7c1d65992358",
+  "sdkCount": 0,
+  "unknownProcessNameCount": 0,
+  "availableRamBytes": 5523918848,
+  "memorySource": "existing psutil, read-only",
+  "processCount": 584,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 6625751040
+    },
+    {
+      "Name": "D",
+      "Free": 29495861248
+    }
+  ]
+}

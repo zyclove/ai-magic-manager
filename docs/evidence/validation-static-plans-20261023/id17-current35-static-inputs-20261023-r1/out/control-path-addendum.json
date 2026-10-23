@@ -1,0 +1,19 @@
+{
+  "status": "STATIC_PATH_JOIN_NOT_APPLIED_NO_EXECUTABLE_BUNDLE",
+  "newSourceRoot": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-current35-static-inputs-20261023-r1",
+  "newSourceFilesChild": "src",
+  "newManifestChild": "out/input-manifest.json",
+  "oldBaselineManifestReferences": {
+    "literal": "BASELINE/'input-manifest.json'",
+    "lineNumbers": [
+      163,
+      165,
+      301
+    ]
+  },
+  "requiredPathJoin": "If BASELINE binds the new source root, all three manifest accesses must use BASELINE/out/input-manifest.json; source accesses remain BASELINE/src/entry. Merely changing BASELINE without its manifest child is insufficient.",
+  "futureTaskSettings": "New inputs/offline-settings.xml is an immutable input copy; a future fresh controller candidate may copy these exact bytes to its own offline-settings.xml and keep the old TASK_SETTINGS constant/hash. No control candidate or copy to an active attempt is made now.",
+  "futurePinBoundary": "Fresh proposal must bind current35 source/input manifest, exact98 name contract, source commit/tree, original3788 metadata, settings and inherited runtimes. Existing body79 approval/digest cannot authorize this unbuilt35/98 scope.",
+  "testsRun": false,
+  "sdkCalls": 0
+}

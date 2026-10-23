@@ -1,0 +1,28 @@
+{
+  "status": "ROOT_R9_CONTROL_INPUT_SOURCE_REVIEW_PASSED_UNRUN",
+  "atUtc": "2026-10-23T08:34:02.571878+00:00",
+  "sourceCommit": "a2b5ca6ef2398397e4208065090b7c1d65992358",
+  "pinsMatched": 329,
+  "oldDescriptorOccurrencesPreserved": 273,
+  "controllerAndNativeByteIdenticalToActualR8": true,
+  "workerAstChanges": [
+    "FROZEN",
+    "INPUT_SHA256"
+  ],
+  "actualInputDeltaKeys": [
+    "cacheManifest",
+    "candidatePackageConfig",
+    "candidatePackageConfigTemplate",
+    "createdAtUtc",
+    "dependencyLibraryPins",
+    "scope",
+    "sevenRootGitTrees",
+    "sourceCommit",
+    "sourceManifest",
+    "sourceTreeSha256"
+  ],
+  "allBudgetsCommandsEnvironmentUnchanged": true,
+  "sourceIndependentReadback": "d5e7c5",
+  "sdkCalls": 0,
+  "testsRun": false
+}

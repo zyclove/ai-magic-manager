@@ -1,0 +1,90 @@
+{
+  "status": "STATIC_ANALYSIS409_R9_ROOT_REVIEW_REQUIRED_UNRUN",
+  "createdAtUtc": "2026-10-23T08:31:29.344921+00:00",
+  "sourceCommit": "a2b5ca6ef2398397e4208065090b7c1d65992358",
+  "sourceFiles": 409,
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\out\\source-manifest.json",
+    "bytes": 244476,
+    "sha256": "2db0c4ff6cf71ce93d65405d97fb9f78a414d42f668def7a7eee56c18abd2398"
+  },
+  "sourceSnapshotSeal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\out\\seal-static-source.json",
+    "bytes": 80339,
+    "sha256": "869a6c582e6de734a2d6b0220e00a09d8264aef7055c1ba4145e9c63ccb22adb"
+  },
+  "sourceTreeSha256": "2c8feb3bb4084142d5c2bd722077fff5dfac493850c7c9869c191082ea61d369",
+  "observedCurrentHead": "a2b5ca6ef2398397e4208065090b7c1d65992358",
+  "sharedSnapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\src",
+  "fullMainAndFrozenRawAndMembershipMatch": true,
+  "packageRows": 70,
+  "controllerByteIdentical": true,
+  "nativeHelperByteIdentical": true,
+  "workerChangedFunctions": [],
+  "workerChangedAssignments": [
+    "FROZEN",
+    "INPUT_SHA256"
+  ],
+  "allBudgetNodesUnchanged": true,
+  "cacheProjection": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r9\\cache-analysis-projection.json",
+    "bytes": 724690,
+    "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84"
+  },
+  "cacheFiles": 3536,
+  "cacheBytes": 633817159,
+  "cacheTrees": 70,
+  "fixedRuntimeFiles": 32,
+  "runtimeCacheContentsNotRehashedDuringPreparation": true,
+  "templateDescriptorsPreserved": 273,
+  "mechanicalTemplateActuallyAccepted": true,
+  "mechanicalTemplateActualStatus": "FULL_GUARDIAN_ANALYZE_PASSED",
+  "actualAcceptedControlLineage": "r8",
+  "acceptedControlLineageActuallyAccepted": true,
+  "oldActualAcceptanceAppliesToThisCandidate": false,
+  "acceptedR8Evidence": {
+    "proposal": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\proposal.json",
+      "bytes": 72070,
+      "sha256": "f6f9a00027a9b070a2b289e5560a34d31c3314e2137a40cd75a8b1dd76e03ae1"
+    },
+    "result": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\attempt\\result.json",
+      "bytes": 4759,
+      "sha256": "9d6a742eb349a4afd61edc1a8beb9172ab3b93b220323b2aa02f3c25db8317a3"
+    },
+    "externalReadback": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\attempt\\external-observation-root.json",
+      "bytes": 1251,
+      "sha256": "88bd0bed6b87103835a3814fe08c93dd5ab22b28e350609f36b98227c09f016f"
+    },
+    "finalSystemGate": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\attempt\\root-final-system-gate.json",
+      "bytes": 720,
+      "sha256": "66dc83b50c52f5f7c6fac5aa0635ebe8106f8e81963f16f49fc7f2ba7770ed76"
+    },
+    "actualSession": 95689,
+    "finalChunk": "af189a",
+    "naturalExitCode": 0
+  },
+  "priorR7RemainsNotAccepted": true,
+  "priorBrowser80R2RemainsNotAccepted": true,
+  "outerBudgetSeconds": 180,
+  "outerSoftCutoffSeconds": 174,
+  "workerBudgetSeconds": 165,
+  "commandCapSeconds": 150,
+  "commandCleanupReserveSeconds": 5,
+  "minimumPostflightReserveSeconds": 25,
+  "dynamicCommandDeadlineWorkerRelativeMaxSeconds": 135,
+  "dynamicCleanupWorkerRelativeMaxSeconds": 140,
+  "sourceCopied": false,
+  "cacheCopied": false,
+  "candidateImported": false,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "browserStarted": false,
+  "networkUsed": false,
+  "mainWritten": false,
+  "gitWritten": false,
+  "attemptExists": false
+}

@@ -1,0 +1,13 @@
+{
+  "status": "NOT_ACCEPTED",
+  "outerBudgetSeconds": 180,
+  "terminationReserveSeconds": 6,
+  "startedAtUtc": "2026-10-23T08:34:48.025061+00:00",
+  "workerPid": 36468,
+  "phaseScope": "FULL_GUARDIAN_ANALYZE",
+  "errorType": "TimeoutExpired",
+  "reason": "Command '['C:\\\\Python313\\\\python.exe', '-I', '-B', '-u', 'D:\\\\codes\\\\mobile\\\\ai-manager\\\\.cache\\\\guardian-analyze-20261023-r9\\\\worker.py']' timed out after 0.1 seconds",
+  "ownedJobActiveProcessesFinal": 0,
+  "finishedAtUtc": "2026-10-23T08:40:02.107283+00:00",
+  "elapsedCompleteSeconds": 314.11633989999973
+}

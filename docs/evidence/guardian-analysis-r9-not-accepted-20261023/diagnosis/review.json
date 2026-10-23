@@ -1,0 +1,199 @@
+{
+  "status": "STATIC_DIAGNOSIS_NO_EXECUTION_NO_ROOT_CAUSE_CLAIM",
+  "attempt": "guardian-analyze-20261023-r9",
+  "workerPidRecorded": 36468,
+  "sessionRecordedByRoot": 58699,
+  "initialChunkRecordedByRoot": "f8c394",
+  "finalChunkRecordedByRoot": "720805",
+  "naturalControllerExitRecordedByRoot": 1,
+  "controllerElapsedPreFinalIoSeconds": 314.11633989999973,
+  "controllerUtcIntervalSeconds": 314.082222,
+  "rootAnchorToAfterTerminalSeconds": 423.29362369999944,
+  "exactActualExitQpcKnown": false,
+  "attemptFiles": [
+    "request.json",
+    "result.json",
+    "worker-console.log"
+  ],
+  "nativeHelperExecutionEstablished": false,
+  "claims": [
+    {
+      "confidence": "OBSERVED",
+      "claim": "Outer180 enforcement failed: controller reached final result sample314.1163399s and Root recorded same-session natural1; no accepted full analysis result exists.",
+      "evidence": [
+        "attempt/result.json",
+        "Root terminal receipt"
+      ]
+    },
+    {
+      "confidence": "OBSERVED",
+      "claim": "TimeoutExpired reason0.1 is a final individual wait timeout, not the elapsed duration of the entire failure. Its clamped wait argument is max(0.1,min(3,HARD-now)).",
+      "evidence": [
+        "controller.py:73",
+        "controller.py:100",
+        "result.reason"
+      ]
+    },
+    {
+      "confidence": "CONTROL_FLOW_INFERENCE_NOT_STACK_PROOF",
+      "claim": "The most direct source for recorded TimeoutExpired is main wait:73; cleanup wait:100 suppresses exceptions. On this normal pinned path Assign returned, cutoff check:54 passed, handshake:55 and stdout flush:56 completed before main wait. Only check54 has a before174 gate; handshake/print completion timestamps are absent.",
+      "evidence": [
+        "controller.py:53-56",
+        "controller.py:73",
+        "controller.py:91-101"
+      ]
+    },
+    {
+      "confidence": "OBSERVED_LIMIT",
+      "claim": "No worker initial/preflight/launch/receipt or command log exists; console contains0bytes. Worker could be in startup/import/input/resource checks or killed before evidence. Missing receipts do not prove SDK0 or a precise blocked location.",
+      "evidence": [
+        "attempt exact directory listing",
+        "worker.py:1-17",
+        "worker.py:373-391"
+      ]
+    },
+    {
+      "confidence": "OBSERVED_LIMIT",
+      "claim": "Final Job0 is a late accounting sample, not a worker natural-exit code or timely135/180 completion proof. Exception path did not persist assigned/cleanup/expired/workerExit state.",
+      "evidence": [
+        "controller.py:82",
+        "controller.py:91-110",
+        "result fields"
+      ]
+    },
+    {
+      "confidence": "OBSERVED_LIMIT",
+      "claim": "Root anchor-to-after-terminal423.2936237 is a conservative upper bound including observation delay. Controller314.1163399 is sampled before result fsync/print/os._exit, so neither is the exact process exit timestamp.",
+      "evidence": [
+        "root-timing.py",
+        "Root terminal receipt",
+        "controller.py:109-113"
+      ]
+    },
+    {
+      "confidence": "NOT_ESTABLISHED",
+      "claim": "No stack traces, per-call timings, timer-fire acknowledgements, GIL ownership evidence or OS suspend/resume events are present. Win32Job holds-GIL, OS suspend, resource starvation, stdout/filesystem stalls remain hypotheses, not causes proved here.",
+      "evidence": [
+        "missing telemetry",
+        "Python source cannot establish pywin32 C wrapper GIL behavior"
+      ]
+    },
+    {
+      "confidence": "STATIC_ORDER_LIMIT",
+      "claim": "The worker native helper would be imported only after initial-gate/preflight writes. Its code is not positive evidence of execution in this attempt and cannot be assigned blame for the observed outer-controller overrun.",
+      "evidence": [
+        "worker.py:382-392"
+      ]
+    }
+  ],
+  "recommendations": [
+    {
+      "step": 1,
+      "scope": "Design only; requires independent review and a fresh grant",
+      "action": "Replace same-interpreter Timer-only enforcement claims with one independent supervising process/host using mature retained process handles, bounded native waits (or .NET Process.WaitForExit equivalent), and the private Job for exact owned descendants. Supervisor must not share the potentially stalled controller interpreter or its stdout/file-read loop. Do not create a broad PID scanner or retry framework."
+    },
+    {
+      "step": 2,
+      "action": "Keep original outer180/soft174/worker165 and command worker-relative deadline<=135 (cleanup<=140/postflight25). Derive every remaining timeout from the original monotonic anchor; no reset after preflight. Late resume, forced termination or uncertain terminal evidence remains NOT_ACCEPTED. A host-wide suspend or scheduler stall can delay software observation; do not promise physical real-time guarantees."
+    },
+    {
+      "step": 3,
+      "action": "Before any next expensive SDK run, separately review a tiny control-only/no-SDK qualification of the existing ownership/wait path and supervisor cutoff. No qualification or executable control is produced or executed by this report."
+    },
+    {
+      "step": 4,
+      "action": "Persist bounded phase boundaries before/after child creation, Assign, handshake write/flush, stdout announce, each Job query/terminate, child wait, Job close, result fsync. Record timer armed/entered/returned and exception-path assigned/cleanup/expired/child.returncode without requiring successful postflight."
+    },
+    {
+      "step": 5,
+      "action": "On the same retained controller/worker/native-command handle, capture first WAIT_OBJECT_0/poll-terminal observation immediately with monotonic/QPC, exit code, identity/creation stamp and termination-attempt flags. Query GetProcessTimes ExitTime from that signaled retained handle for the OS exit timestamp. Keep UTC FILETIME and QPC domains explicit; do not infer QPC exit time by unverified conversion."
+    },
+    {
+      "step": 6,
+      "action": "Success must depend on the first captured terminal observation strictly before its finite checked deadline plus natural0/Job0/full pinned pre-post/log requirements. A later cleanup wait, result-file timestamp or terminate-call success cannot supply missing timely terminal proof. Observation after real exit is conservative sampling, not an atomic kernel exit event."
+    }
+  ],
+  "sourcePins": [
+    {
+      "path": ".cache/guardian-analyze-20261023-r9/controller.py",
+      "bytes": 8048,
+      "sha256": "2c0d3b0b36d551219816b3c5cb3e05e69a2e56d32ed16a7e611fcacb751b547f"
+    },
+    {
+      "path": ".cache/guardian-analyze-20261023-r9/worker.py",
+      "bytes": 24520,
+      "sha256": "57a251218e83970929182279b210c19821ba7733ddbe1dad081a1a8d43a1360a"
+    },
+    {
+      "path": ".cache/guardian-analyze-20261023-r9/heap1536_windows_job.py",
+      "bytes": 9292,
+      "sha256": "4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12"
+    },
+    {
+      "path": ".cache/guardian-analyze-20261023-r9/proposal.json",
+      "bytes": 85925,
+      "sha256": "8f106238ac96a77822fba2bdb596aba33aa27878ffc19a6e0ddd566ed863eecf"
+    },
+    {
+      "path": ".cache/guardian-analyze-20261023-r9/inputs.json",
+      "bytes": 7010,
+      "sha256": "bc28a78035d46791d7bd9cab066668bb7c119b601ed7ba6f8f00a683c3f78075"
+    },
+    {
+      "path": ".cache/guardian-analyze-20261023-r9/attempt/request.json",
+      "bytes": 182,
+      "sha256": "274c1b32b869bdb26e54f6f924ecd8c5abb1948819005cde9e35202718b06bc4"
+    },
+    {
+      "path": ".cache/guardian-analyze-20261023-r9/attempt/result.json",
+      "bytes": 583,
+      "sha256": "cfc3a17588993b07382910717023239d286d636d97501aa24a2da3f378d8193d"
+    },
+    {
+      "path": ".cache/guardian-analyze-20261023-r9/attempt/worker-console.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".cache/guardian-analyze-r9-root-launch-20261023.ps1",
+      "bytes": 2116,
+      "sha256": "f19cf558b0b0352c249882fdd04ef6f41c1684c9e6805ba433e7b0cf47ec0d70"
+    },
+    {
+      "path": ".cache/guardian-analyze-r9-root-timing-20261023.py",
+      "bytes": 1386,
+      "sha256": "2675b2b6b10423938591924ce73cc0b7dad0ddbbc5222bc66fe3393871eb6d56"
+    },
+    {
+      "path": ".cache/guardian-analyze-r9-root-prelaunch-20261023.json",
+      "bytes": 272,
+      "sha256": "386a55987320b2079424eb4a10170e880540ec307698ef774021365a6683eea8"
+    },
+    {
+      "path": ".cache/guardian-analyze-r9-root-actual-terminal-20261023.json",
+      "bytes": 434,
+      "sha256": "6971691921b7c0a36ee79bed052a65d8042f6d91fe61eaa0572455b665850aab"
+    },
+    {
+      "path": ".cache/guardian-analyze-r9-root-preflight-system-20261023.json",
+      "bytes": 515,
+      "sha256": "bfd7fe3db1a3a2c3a0fbd55c112cddc40b9bd1d38e74a1c420720acb6efc19da"
+    },
+    {
+      "path": ".cache/guardian-r9-post-system-20261023.json",
+      "bytes": 342,
+      "sha256": "5097a07e2f9681856c942d1367086fdb6b97734d38230a7a9499f8647e44158c"
+    },
+    {
+      "path": ".cache/guardian-analyze-r9-root-static-review-20261023.json",
+      "bytes": 789,
+      "sha256": "edb86da6508a8b78cb8cc921afb87203103eca65d3ee2cedcfdcf9261f6f4af5"
+    }
+  ],
+  "sdkInvocations": 0,
+  "processesSpawnedOrControlled": 0,
+  "networkUsed": false,
+  "originalsModified": false,
+  "mainOrGitWritten": false,
+  "rootCause": "UNDETERMINED_FROM_AVAILABLE_EVIDENCE"
+}

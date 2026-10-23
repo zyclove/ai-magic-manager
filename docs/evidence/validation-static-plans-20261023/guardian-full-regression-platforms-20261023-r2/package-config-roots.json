@@ -1,0 +1,100 @@
+{
+  "status": "STATIC_CONFIG_ROOT_CHECK_ONLY_UNRUN",
+  "rootFilesRehashed": 181,
+  "additionalInputPinsRehashed": 107,
+  "packageProjects": 10,
+  "allSelfRootEntriesMatchMain": true,
+  "checks": [
+    {
+      "packageName": "device_access",
+      "projectRoot": "packages/device_access",
+      "packageConfig": "packages/device_access/.dart_tool/package_config.json",
+      "declaredOwnRootUri": "../",
+      "declaredPackageUri": "lib/",
+      "resolvedOwnRoot": "packages/device_access",
+      "matchesMainPubspecRoot": true
+    },
+    {
+      "packageName": "device_cleanup",
+      "projectRoot": "packages/device_cleanup",
+      "packageConfig": "packages/device_cleanup/.dart_tool/package_config.json",
+      "declaredOwnRootUri": "../",
+      "declaredPackageUri": "lib/",
+      "resolvedOwnRoot": "packages/device_cleanup",
+      "matchesMainPubspecRoot": true
+    },
+    {
+      "packageName": "device_identity",
+      "projectRoot": "packages/device_identity",
+      "packageConfig": "packages/device_identity/.dart_tool/package_config.json",
+      "declaredOwnRootUri": "../",
+      "declaredPackageUri": "lib/",
+      "resolvedOwnRoot": "packages/device_identity",
+      "matchesMainPubspecRoot": true
+    },
+    {
+      "packageName": "device_observation",
+      "projectRoot": "packages/device_observation",
+      "packageConfig": "packages/device_observation/.dart_tool/package_config.json",
+      "declaredOwnRootUri": "../",
+      "declaredPackageUri": "lib/",
+      "resolvedOwnRoot": "packages/device_observation",
+      "matchesMainPubspecRoot": true
+    },
+    {
+      "packageName": "device_operations",
+      "projectRoot": "packages/device_operations",
+      "packageConfig": "packages/device_operations/.dart_tool/package_config.json",
+      "declaredOwnRootUri": "../",
+      "declaredPackageUri": "lib/",
+      "resolvedOwnRoot": "packages/device_operations",
+      "matchesMainPubspecRoot": true
+    },
+    {
+      "packageName": "device_operations_showcase",
+      "projectRoot": "packages/device_operations/example",
+      "packageConfig": "packages/device_operations/example/.dart_tool/package_config.json",
+      "declaredOwnRootUri": "../",
+      "declaredPackageUri": "lib/",
+      "resolvedOwnRoot": "packages/device_operations/example",
+      "matchesMainPubspecRoot": true
+    },
+    {
+      "packageName": "device_policy",
+      "projectRoot": "packages/device_policy",
+      "packageConfig": "packages/device_policy/.dart_tool/package_config.json",
+      "declaredOwnRootUri": "../",
+      "declaredPackageUri": "lib/",
+      "resolvedOwnRoot": "packages/device_policy",
+      "matchesMainPubspecRoot": true
+    },
+    {
+      "packageName": "device_reports",
+      "projectRoot": "packages/device_reports",
+      "packageConfig": "packages/device_reports/.dart_tool/package_config.json",
+      "declaredOwnRootUri": "../",
+      "declaredPackageUri": "lib/",
+      "resolvedOwnRoot": "packages/device_reports",
+      "matchesMainPubspecRoot": true
+    },
+    {
+      "packageName": "usage_report_ui",
+      "projectRoot": "packages/usage_report_ui",
+      "packageConfig": "packages/usage_report_ui/.dart_tool/package_config.json",
+      "declaredOwnRootUri": "../",
+      "declaredPackageUri": "lib/",
+      "resolvedOwnRoot": "packages/usage_report_ui",
+      "matchesMainPubspecRoot": true
+    },
+    {
+      "packageName": "usage_reporting",
+      "projectRoot": "packages/usage_reporting",
+      "packageConfig": "packages/usage_reporting/.dart_tool/package_config.json",
+      "declaredOwnRootUri": "../",
+      "declaredPackageUri": "lib/",
+      "resolvedOwnRoot": "packages/usage_reporting",
+      "matchesMainPubspecRoot": true
+    }
+  ],
+  "externalPackageImplementationsRead": false
+}

@@ -1,0 +1,165 @@
+{
+  "status": "STATIC_MINIMAL_INPUT_PLAN_ONLY_NO_NEW_EXECUTION_CONTROLS_OR_GRANT",
+  "commit": "a2b5ca6ef2398397e4208065090b7c1d65992358",
+  "moduleTree": "96ab1e0f33eb3696fd715bfe482b9708ce6869e4",
+  "sourceCount": 35,
+  "mainJava": 14,
+  "testJava": 14,
+  "expectedSuites": 14,
+  "expectedTests": 98,
+  "expectedJarMainClasses": 35,
+  "mainResources": 4,
+  "jarClassCountMeaning": "Expected contract: historical33 classes plus new ProviderHttpTransport and LimitedBodySubscriber. No javac/javap/JAR compilation inspection or proof.",
+  "deltaFromCurrent33": {
+    "added": [
+      "identity-extensions/src/main/java/com/aimanager/identity/ProviderHttpTransport.java",
+      "identity-extensions/src/test/java/com/aimanager/identity/ProviderHttpTransportTest.java"
+    ],
+    "removed": [],
+    "changed": [
+      "identity-extensions/src/main/java/com/aimanager/identity/AliyunSms.java",
+      "identity-extensions/src/main/java/com/aimanager/identity/WechatNative.java",
+      "identity-extensions/src/test/java/com/aimanager/identity/ConsumerHttpClientReuseTest.java"
+    ]
+  },
+  "historicalBodyOverlayIncluded": false,
+  "original76NamesPreserved": true,
+  "historicalControls": {
+    "controller.py": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-body-deadline-20261021-r1\\controller.py",
+      "bytes": 8033,
+      "sha256": "ff284aa59028a18ac3ce0fbece599ad4465f33fcee7940ee9377219073a3e49a"
+    },
+    "worker.py": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-body-deadline-20261021-r1\\worker.py",
+      "bytes": 23751,
+      "sha256": "e1bead96066aae7906200236a44b04ec552914f3a1d9f57ef56bb6c7bfe23915"
+    }
+  },
+  "controlChangesRequired": [
+    {
+      "file": "controller.py",
+      "beforeNeedle": "'testsScope':'COMMITTED33_PLUS_BODY_DEADLINE_TEST_OVERLAY_FULL_VERIFY'",
+      "lineNumbers": [
+        23
+      ],
+      "requiredChangeNotApplied": "scope label only -> CURRENT_COMMITTED35_FULL_VERIFY"
+    },
+    {
+      "file": "worker.py",
+      "beforeNeedle": "BASELINE = REPO / '.cache/id17-current33-20261021-r1/frozen'",
+      "lineNumbers": [
+        22
+      ],
+      "requiredChangeNotApplied": "bind this new complete35 frozen inputs after independent review"
+    },
+    {
+      "file": "worker.py",
+      "beforeNeedle": "COMMIT = '984ae0f9ab4354b16ba6834a836c55ca2351db27'",
+      "lineNumbers": [
+        24
+      ],
+      "requiredChangeNotApplied": "bind a2b5ca6 full commit; fixed tree7796 ->96ab1e0f"
+    },
+    {
+      "file": "worker.py",
+      "beforeNeedle": "EXPECTED_TESTS_SHA256 =",
+      "lineNumbers": [
+        27
+      ],
+      "requiredChangeNotApplied": "new expected-tests.json pin; current total98/suites14"
+    },
+    {
+      "file": "worker.py",
+      "beforeNeedle": "FROZEN_MANIFEST_SHA256 =",
+      "lineNumbers": [
+        28
+      ],
+      "requiredChangeNotApplied": "new complete35 input-manifest pin"
+    },
+    {
+      "file": "worker.py",
+      "beforeNeedle": "TEST_OVERLAY =",
+      "lineNumbers": [
+        29
+      ],
+      "requiredChangeNotApplied": "remove historical 4MiB overlay assignment, copy, append, testOverlay manifest field and post-overlay hash; no stale overlay references"
+    },
+    {
+      "file": "worker.py",
+      "beforeNeedle": "totals == dict(tests=79",
+      "lineNumbers": [
+        116
+      ],
+      "requiredChangeNotApplied": "79 ->98; all 14 exact suites/names, zero skipped/failures/errors"
+    },
+    {
+      "file": "worker.py",
+      "beforeNeedle": "len(classes)==33",
+      "lineNumbers": [
+        134
+      ],
+      "requiredChangeNotApplied": "33 ->35 expected module class files; 4 SPI/CDI resources and Java17 headers unchanged; actual compilation/JAR proof pending"
+    },
+    {
+      "file": "worker.py",
+      "beforeNeedle": "'expectedCases':79",
+      "lineNumbers": [
+        137
+      ],
+      "requiredChangeNotApplied": "79 ->98"
+    },
+    {
+      "file": "worker.py",
+      "beforeNeedle": "if len(source_entries) != 33:",
+      "lineNumbers": [
+        172
+      ],
+      "requiredChangeNotApplied": "33 ->35 complete tracked module inputs"
+    },
+    {
+      "file": "worker.py",
+      "beforeNeedle": "'baselineSource':base_source_entries,'testOverlay':TEST_OVERLAY",
+      "lineNumbers": [
+        261
+      ],
+      "requiredChangeNotApplied": "replace overlay metadata with full35 source provenance; source compilation sets remain derived/exact"
+    },
+    {
+      "file": "worker.py",
+      "beforeNeedle": "sha(CANDIDATE/TEST_OVERLAY['candidatePath'])",
+      "lineNumbers": [
+        301
+      ],
+      "requiredChangeNotApplied": "remove obsolete overlay postcondition; preserve all35 source/input/config/cache/runtime pre/post gates"
+    }
+  ],
+  "budgetsRetainedForFutureReviewNotGranted": {
+    "outerSeconds": 180,
+    "controllerWorkingCutoffSeconds": 174,
+    "preflightSeconds": 60,
+    "terminationReserveSeconds": 6,
+    "jvmHeapMiB": 512,
+    "minimumRamBytes": 2147483648,
+    "minimumEachDiskBytes": 2147483648,
+    "cacheEntries": 3788,
+    "mavenScope": "Full offline verify; skipTests=false and maven.test.skip=false; no selector or download"
+  },
+  "budgetRisk": "Full98 unmeasured. Three deliberate5100ms waits (~15.3s), two real~5s deadlines and a concurrent~5s cancellation scenario already consume substantial test time before fixture cleanup/compile/cache/post checks. Historical79 worker50.114s is not a current98 bound. Do not expand180/174/60/6, select tests or skip checks; if actual full98 cannot fit, return NOT_ACCEPTED and seek a separately reviewed plan.",
+  "noParentPomRollback": true,
+  "pomMainRawBytes": 4713,
+  "pomCanonicalGitBytes": 4607,
+  "parentPomsFrozen": 43,
+  "allSelectedPomPinsMatchHistoricalCacheMetadata": true,
+  "cacheFreshness": "Only selected POM text subset checked. Entire3788 cache and actual Java/Maven runtime require fresh existing gates before any later execution.",
+  "draftSearch": "Top-level id17/identity matching directory inventory found old current33/body79 and transport source r1/r2, but no current35/98 execution draft; none imported or executed.",
+  "sourceFreeze": "35 exact Git archive blobs; every Main raw is either exact or CRLF-normalized equal. Main was not changed.",
+  "newControllerOrWorkerCreated": false,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "candidateFunctionsImportedOrExecuted": false,
+  "network": false,
+  "processInspection": false,
+  "mainOrGitMetadataWritten": false,
+  "runtimeOrJarBinaryCopied": false
+}

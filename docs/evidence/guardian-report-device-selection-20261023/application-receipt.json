@@ -1,0 +1,53 @@
+{
+  "status": "REVIEWED_SINGLE_FILE_APPLIED_UNFORMATTED_UNCOMPILED_UNRUN",
+  "atUtc": "2026-10-23T09:27:14.418579+00:00",
+  "parent": "a2b5ca6ef2398397e4208065090b7c1d65992358",
+  "path": "apps/guardian/lib/ui/usage_report_device_picker.dart",
+  "beforeRawSha256": "c5a08c51ef3a4cd169ae237d9b7ac928426ee0664ad8d45f3cfbfe9e0c1bd3f7",
+  "reviewedCandidateLfSha256": "10f70a11f6938d3c8545d8b10c8afedaff200adbaea211d86ae04c68e846b310",
+  "afterRawBytes": 10456,
+  "afterRawSha256": "10f70a11f6938d3c8545d8b10c8afedaff200adbaea211d86ae04c68e846b310",
+  "onlyIntegrationTransformation": "None: Main is byte-identical to independently reviewed LF candidate.",
+  "runtimeDependenciesAdded": [],
+  "backendApiChanged": false,
+  "testFilesModified": false,
+  "testsRun": false,
+  "sdkInvoked": false,
+  "newSourceDeployed": false,
+  "gitWritten": false,
+  "foreignTrackedWipPreservedSha256": "4994781cf65a736611e648fe693d0bec9b5aef6cc4315b818a036447dff22d9d",
+  "reviewArchives": [
+    {
+      "original": ".cache/guardian-device-picker-product-review-20261023-r1/review.md",
+      "path": "docs/evidence/guardian-report-device-selection-20261023/product-review.md",
+      "bytes": 5928,
+      "sha256": "7b0174dd951d2fb3b5c1120955d2f6e42d7f238f5ab47f78b5c86411c7d9b9e3"
+    },
+    {
+      "original": ".cache/guardian-device-picker-product-review-20261023-r1/source-pins.json",
+      "path": "docs/evidence/guardian-report-device-selection-20261023/product-source-pins.json",
+      "bytes": 2362,
+      "sha256": "5a986fa0f42648351d725074416df963267cd58ad50b75533eab9885d55da8d4"
+    },
+    {
+      "original": ".cache/guardian-picker-independent-20261023-r1/review.md",
+      "path": "docs/evidence/guardian-report-device-selection-20261023/independent-review.md",
+      "bytes": 4260,
+      "sha256": "3daad9b12c7a2dc703137cfd3b6ab136fd0567364071a425b3bce82894f98d73"
+    },
+    {
+      "original": ".cache/guardian-picker-independent-20261023-r1/review-pins.json",
+      "path": "docs/evidence/guardian-report-device-selection-20261023/independent-review-pins.json",
+      "bytes": 963,
+      "sha256": "d5deecd07beaef28dbaafa394dfd1e024b40bb3cb70fb7b8e8fc877fd7b6d7b3"
+    }
+  ],
+  "finalizedAtUtc": "2026-10-23T09:28:38.077749+00:00",
+  "originalMainLineEndings": "LF (138 LF / 0 CRLF)",
+  "initialNewlineAssumptionIncorrectAndCorrectedBeforeStaging": true,
+  "initialApplicationReceiptPreserved": {
+    "path": ".cache/guardian-picker-20261023-r1/initial-application-receipt-newline-assumption.json",
+    "bytes": 2187,
+    "sha256": "18556ef85046f619e3312367069231667140744bb50adff72cdbe6620636de65"
+  }
+}

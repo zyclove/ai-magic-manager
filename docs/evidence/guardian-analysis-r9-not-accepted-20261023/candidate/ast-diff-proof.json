@@ -1,0 +1,23 @@
+{
+  "status": "PYTHON_AST_STATIC_PROOF_NO_CONTROL_IMPORT",
+  "changedTopLevelNodes": [
+    "assignment:FROZEN",
+    "assignment:INPUT_SHA256"
+  ],
+  "onlyChangedFunction": null,
+  "sourceCheckDifference": "None; source_check remains exactly the r8 409-file boundary.",
+  "allOtherWorkerNodesAstIdentical": true,
+  "allBudgetAndCleanupNodesUnchanged": true,
+  "controllerByteIdentical": true,
+  "nativeByteIdentical": true,
+  "oldWorker": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\worker.py",
+    "bytes": 24527,
+    "sha256": "fa6fd724e2967723a25df62a41f5ff7e47b4d9e8e2c4cf41de48249de0df4d63"
+  },
+  "newWorker": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r9\\worker.py",
+    "bytes": 24520,
+    "sha256": "57a251218e83970929182279b210c19821ba7733ddbe1dad081a1a8d43a1360a"
+  }
+}

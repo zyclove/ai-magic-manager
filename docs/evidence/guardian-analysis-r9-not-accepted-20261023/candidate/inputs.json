@@ -1,0 +1,176 @@
+{
+  "status": "STATIC_INPUTS_ONLY_NOT_AN_ANALYSIS_RESULT",
+  "phase": "analyze-all-guardian",
+  "createdAtUtc": "2026-10-23T08:31:29.344921+00:00",
+  "sourceCommit": "a2b5ca6ef2398397e4208065090b7c1d65992358",
+  "sourceTreeSha256": "2c8feb3bb4084142d5c2bd722077fff5dfac493850c7c9869c191082ea61d369",
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\out\\source-manifest.json",
+    "bytes": 244476,
+    "sha256": "2db0c4ff6cf71ce93d65405d97fb9f78a414d42f668def7a7eee56c18abd2398"
+  },
+  "dependencyLibraryPins": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\out\\dependency-library-pins.json",
+    "bytes": 360096,
+    "sha256": "596fd8420caccf791f3874522c548372f74d307a5b4b3c09e644b48f26875766"
+  },
+  "cacheManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r9\\cache-analysis-projection.json",
+    "bytes": 724690,
+    "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84"
+  },
+  "originalPackageConfig": {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\.dart_tool\\package_config.json",
+    "bytes": 15171,
+    "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7"
+  },
+  "candidatePackageConfig": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+    "bytes": 15687,
+    "sha256": "2e82de4993d4b014be83c274dd6cf1a22324cf6ff8722c4510704f475f086fd0"
+  },
+  "candidatePackageConfigTemplate": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\generated\\guardian-package_config.json",
+    "bytes": 15687,
+    "sha256": "2e82de4993d4b014be83c274dd6cf1a22324cf6ff8722c4510704f475f086fd0"
+  },
+  "internalPackageRoots": {
+    "audit_client": "packages/audit_client",
+    "commerce_contracts": "packages/commerce_contracts",
+    "device_operations": "packages/device_operations",
+    "notification_client": "packages/notification_client",
+    "usage_report_ui": "packages/usage_report_ui",
+    "usage_reporting": "packages/usage_reporting",
+    "guardian": "apps/guardian"
+  },
+  "sevenRootGitTrees": {
+    "apps/guardian": "ed552cf50f545b803484992b9296c4e31017963f",
+    "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+    "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+    "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+    "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+    "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+    "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+  },
+  "gitExecutable": "C:\\Program Files\\Git\\cmd\\git.exe",
+  "controlRuntimeFiles": [
+    {
+      "path": "C:\\Python313\\python.exe",
+      "absolute": true,
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125"
+    },
+    {
+      "path": "C:\\Python313\\python313.dll",
+      "absolute": true,
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\win32\\win32job.pyd",
+      "absolute": true,
+      "bytes": 28672,
+      "sha256": "8f2a15f090e4fa75fd7179de0aa41108e9c6fe95786f736f373f5a7501e7e769"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\pywin32_system32\\pywintypes313.dll",
+      "absolute": true,
+      "bytes": 136192,
+      "sha256": "90ba935a0145ee9ae56267a365cc0088d34fa506b7afeb2bd1bd78cd33359605"
+    }
+  ],
+  "extraRuntimeFiles": [
+    {
+      "path": "C:\\Program Files\\Git\\cmd\\git.exe",
+      "bytes": 45032,
+      "sha256": "4ab2b391de7fb5eb3afb34b5bd19ee7f71d0450bf7e4c207b201a0392e3825ae"
+    },
+    {
+      "path": "C:\\Windows\\System32\\cmd.exe",
+      "bytes": 327680,
+      "sha256": "a6e3b3b22b7fe8ce2c9245816126723eaa13f43b9f591883e59959a2d409426a"
+    },
+    {
+      "path": "C:\\Windows\\System32\\where.exe",
+      "bytes": 61440,
+      "sha256": "ade557dd65848c5cf6565913cf6e01cf5c9a8033f0d784c4d6932394958d743e"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\internal\\exit_with_errorlevel.bat",
+      "bytes": 562,
+      "sha256": "f4014bd05cc24391ff28f7bd5b22949cc80f0bb66ab9eda512c9c3997f0283e0"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.yaml",
+      "bytes": 6215,
+      "sha256": "d703ed2f5467e37193640b26522839137430af10b631f36c0d89a54f3236172f"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.lock",
+      "bytes": 22135,
+      "sha256": "097571421b53ac57c9b72523ee5d2ae584c3d6ba58412f8cbe3af35c55c5593a"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\.dart_tool\\package_config.json",
+      "bytes": 20035,
+      "sha256": "49d0a9ce1c70ca6edd29537570cfe7ea6539843da50c6a85a107d829330150e8"
+    }
+  ],
+  "sdkBootstrap": {
+    "sdkGitRevision": "761747bfc538b5af34aa0d3fac380f1bc331ec49",
+    "flutterToolsStampText": "\"761747bfc538b5af34aa0d3fac380f1bc331ec49:\"",
+    "bootstrapMustBeAbsent": "D:\\softwares\\flutter\\bin\\internal\\bootstrap.bat",
+    "engineVersionText": "edd8546116457bdf1c5bdfb13ecb9463d2bb5ed4",
+    "sdkToolPubspecMtimeNs": 1717926884971133900,
+    "sdkToolLockMtimeNs": 1717927794318016500,
+    "sdkToolSnapshotMtimeNs": 1717926793445546100
+  },
+  "processPath": "C:\\Windows\\System32;C:\\Program Files\\Git\\cmd;D:\\softwares\\flutter\\bin\\cache\\dart-sdk\\bin",
+  "forbiddenEnvironmentOverrides": [
+    "FLUTTER_TOOL_ARGS",
+    "FLUTTER_ALREADY_LOCKED",
+    "FLUTTER_ROOT",
+    "DART_VM_OPTIONS",
+    "DART_VM_FLAGS",
+    "FLUTTER_ENGINE",
+    "FLUTTER_ENGINE_VERSION",
+    "FLUTTER_PREBUILT_ENGINE_VERSION",
+    "FLUTTER_TEST",
+    "FLUTTER_WEB_CANVASKIT_URL",
+    "FLUTTER_BUILD_DIR",
+    "FLUTTER_TARGET",
+    "DART_FLAGS",
+    "DART_SDK",
+    "PUB_CACHE"
+  ],
+  "generatedExclusions": {
+    "directories": [
+      ".dart_tool",
+      ".idea",
+      "build"
+    ],
+    "files": [
+      ".flutter-plugins",
+      ".flutter-plugins-dependencies",
+      "device_operations_showcase.iml",
+      "guardian.iml"
+    ]
+  },
+  "sourceMembershipCheck": {
+    "main": {
+      "files": 409,
+      "fullMembershipExact": true
+    },
+    "frozen": {
+      "files": 409,
+      "fullMembershipExact": true
+    }
+  },
+  "scope": "Full Guardian lib/test analysis of committed a2b5ca6/409 via sealed current-r3-a2b5 snapshot; two test scheduling changes only; fatal infos and warnings; no selectors, test execution, pub, downloads, service changes or deployment.",
+  "entireSdkOrBrowserInstallationPinned": false,
+  "cacheProjectionParentManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261021-r1\\out\\cache-content-20261021-r1.json",
+    "bytes": 725122,
+    "sha256": "0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2"
+  }
+}

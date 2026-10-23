@@ -1,0 +1,43 @@
+{
+  "status": "STATIC_EXPANDED_PLATFORM_PLAN_FROZEN_UNRUN",
+  "files": [
+    {
+      "path": ".cache/guardian-full-regression-platforms-20261023-r2/additional-import-nodes.json",
+      "bytes": 151989,
+      "sha256": "d9a7db5ee557bb97ea70514d6c568f69cfccbee02b74ea6d32985ffee303bd48"
+    },
+    {
+      "path": ".cache/guardian-full-regression-platforms-20261023-r2/delivery-pins.json",
+      "bytes": 1176,
+      "sha256": "02df09cec8b29d56922d0187a3da3ddeae7f7c30a931f40f234f1ca0138192e8"
+    },
+    {
+      "path": ".cache/guardian-full-regression-platforms-20261023-r2/git-package-membership.json",
+      "bytes": 8408,
+      "sha256": "19f88b7735bbbbbf204b3d84a1e1d2e6cd3aafb5e6010b492bafd8b16267cc85"
+    },
+    {
+      "path": ".cache/guardian-full-regression-platforms-20261023-r2/inspect_additional_static.py",
+      "bytes": 26674,
+      "sha256": "049c5955c5c21a880e754eaa327d507cd3bcd500492df919c4102180aec8e660"
+    },
+    {
+      "path": ".cache/guardian-full-regression-platforms-20261023-r2/package-config-roots.json",
+      "bytes": 3736,
+      "sha256": "b51cfd5a51d74705f5aa8b312b420d969a55e1fd49dd7a818b6803a5bf525c9d"
+    },
+    {
+      "path": ".cache/guardian-full-regression-platforms-20261023-r2/README.md",
+      "bytes": 9016,
+      "sha256": "e1defaa204f8a7fc1e983b02b4c85a70f800a621572e9bf952680ba3c8c07508"
+    },
+    {
+      "path": ".cache/guardian-full-regression-platforms-20261023-r2/summary.json",
+      "bytes": 256103,
+      "sha256": "cf2d9dc96c90855234d894c52dfe530faa06217fa704bf914e5aa9ad8de6ebf8"
+    }
+  ],
+  "selfExcluded": "final-pins.json",
+  "sourceRootsRehashed": 181,
+  "mainOrGitWritten": false
+}

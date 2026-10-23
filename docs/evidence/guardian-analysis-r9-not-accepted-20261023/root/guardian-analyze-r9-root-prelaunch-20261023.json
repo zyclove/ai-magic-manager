@@ -1,0 +1,8 @@
+{
+  "utc": "2026-10-23T08:34:47.946768+00:00",
+  "monotonic": 22594.7057753,
+  "status": "ROOT_R9_PRELAUNCH_QPC_NO_SDK",
+  "grant": "guardian-analyze-r9-root-20261023",
+  "clock": "QueryPerformanceCounter()",
+  "sourceCommit": "a2b5ca6ef2398397e4208065090b7c1d65992358"
+}

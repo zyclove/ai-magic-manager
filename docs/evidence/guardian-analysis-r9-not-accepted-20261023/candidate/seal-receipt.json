@@ -1,0 +1,54 @@
+{
+  "status": "STATIC_ANALYSIS409_R9_SEALED_ROOT_REVIEW_REQUIRED_UNRUN",
+  "proposal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r9\\proposal.json",
+    "bytes": 85925,
+    "sha256": "8f106238ac96a77822fba2bdb596aba33aa27878ffc19a6e0ddd566ed863eecf"
+  },
+  "inputs": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r9\\inputs.json",
+    "bytes": 7010,
+    "sha256": "bc28a78035d46791d7bd9cab066668bb7c119b601ed7ba6f8f00a683c3f78075"
+  },
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\out\\source-manifest.json",
+    "bytes": 244476,
+    "sha256": "2db0c4ff6cf71ce93d65405d97fb9f78a414d42f668def7a7eee56c18abd2398"
+  },
+  "sourceSnapshotSeal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\out\\seal-static-source.json",
+    "bytes": 80339,
+    "sha256": "869a6c582e6de734a2d6b0220e00a09d8264aef7055c1ba4145e9c63ccb22adb"
+  },
+  "candidatePackageConfig": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3-a2b5\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+    "bytes": 15687,
+    "sha256": "2e82de4993d4b014be83c274dd6cf1a22324cf6ff8722c4510704f475f086fd0"
+  },
+  "cacheManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r9\\cache-analysis-projection.json",
+    "bytes": 724690,
+    "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84"
+  },
+  "candidateFiles": 12,
+  "controlRuntimeFiles": 11,
+  "historicalMetadataFiles": 306,
+  "originalR8DescriptorsPreserved": 273,
+  "mechanicalR8AnalysisAccepted": true,
+  "actualAcceptedControlLineage": "r8",
+  "oldAcceptanceAppliesToCurrentSource": false,
+  "priorR7RemainsNotAccepted": true,
+  "sourceFiles": 409,
+  "cacheFiles": 3536,
+  "outerBudgetSeconds": 180,
+  "workerBudgetSeconds": 165,
+  "commandCapSeconds": 150,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "browserStarted": false,
+  "candidateImported": false,
+  "sourceCopied": false,
+  "cacheCopied": false,
+  "executionApproved": false,
+  "attemptExists": false
+}
