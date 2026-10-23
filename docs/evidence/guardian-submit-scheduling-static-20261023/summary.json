@@ -1,0 +1,50 @@
+{
+  "status": "TWO_TEST_FILES_EIGHT_NETWORK_WAIT_SITES_APPLIED_STATIC_REVIEW_ONLY_UNRUN",
+  "atUtc": "2026-10-23T07:34:01.021019+00:00",
+  "parent": "ab6d01becf72ce83a6159fcc59d08a42d963beb8",
+  "files": [
+    {
+      "path": "apps/guardian/test/usage_reports_scope_browser_test.dart",
+      "before": {
+        "bytes": 47212,
+        "sha256": "38bcdf8e624db06af0dcc5368ca12e70ae6900a22d03b4ea0131cd8a3aabdeb8"
+      },
+      "after": {
+        "bytes": 47589,
+        "sha256": "5960608f034c3db2a7ca45622f5b5445fdfddeee1c982ad9e27db9ba6185f1ae"
+      },
+      "networkSubmissionSites": 3,
+      "literalNamesUnchanged": true,
+      "validation": "UNRUN"
+    },
+    {
+      "path": "apps/guardian/test/observation_route_scope_browser_test.dart",
+      "before": {
+        "bytes": 23442,
+        "sha256": "9028c8219e9e255871b27b7975a78d5b39a9a410d1f58b48668cda4c16f6645f"
+      },
+      "after": {
+        "bytes": 23707,
+        "sha256": "2cb3ff92b4052ad50076b060450899201032e43740ebc46ad276cd702433ffc2"
+      },
+      "networkSubmissionSites": 5,
+      "literalNamesUnchanged": true,
+      "validation": "UNRUN"
+    }
+  ],
+  "productionFilesChanged": 0,
+  "networkSitesChanged": 8,
+  "originalNamesAndAssertionsPreserved": true,
+  "selectedCases": 80,
+  "selectedSuites": 7,
+  "synchronousClosedAndInvalidatedChecksPreservedWithoutPump": true,
+  "timeoutsExpanded": false,
+  "uniqueRootCauseProved": false,
+  "formatterOrDartParserRun": false,
+  "testsRunAfterCorrection": false,
+  "analysisRunAfterCorrection": false,
+  "previousBrowserRun": "NOT_ACCEPTED: 54 successful visible cases, one pending, no terminal done",
+  "oldFrozenSourceAndRedEvidenceModified": false,
+  "servicesUpdated": false,
+  "wholeProductAccepted": false
+}

@@ -1,0 +1,34 @@
+{
+  "status": "ROOT_BROWSER80_R2_STATIC_CONTROL_INPUT_SOURCE_MATCHED_UNRUN",
+  "atUtc": "2026-10-23T06:40:36.710233+00:00",
+  "sourceCommit": "45950b88a270e2fded2409e333fb126851b6f861",
+  "pinsMatched": 381,
+  "oldR1PinsPreserved": 269,
+  "fiveControlsByteIdentical": true,
+  "workerAstChanges": [
+    "FROZEN",
+    "INPUT_SHA256"
+  ],
+  "actualInputDeltaKeys": [
+    "candidatePackageConfig",
+    "candidatePackageConfigTemplate",
+    "createdAtUtc",
+    "dependencyLibraryPins",
+    "expectedCaseContract",
+    "originalPackageConfig",
+    "ownedChromeObserverCode",
+    "reporterContractCode",
+    "sevenRootGitTrees",
+    "sourceCommit",
+    "sourceManifest",
+    "sourceSnapshotSeal",
+    "sourceTreeSha256"
+  ],
+  "numericalBudgetsUnchanged": true,
+  "browserCacheFiles": 3537,
+  "r8ActualAnalysisPrerequisiteAccepted": true,
+  "r7RedPreserved": true,
+  "testsExecuted": 0,
+  "attemptCreated": false,
+  "sdkCalls": 0
+}

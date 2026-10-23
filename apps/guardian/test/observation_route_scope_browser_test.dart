@@ -87,6 +87,15 @@ class _Invocation {
   }
 }
 
+// Start real transport work without blocking the test's async/frame drain.
+Future<void> _submitAndFlush(
+    WidgetTester tester, Future<void> Function() submit) async {
+  final invocation = _Invocation(submit());
+  await workspace.flushReads(tester);
+  expect(invocation.completed, isTrue);
+  expect(invocation.failure, isNull);
+}
+
 Future<_Session> _session(WidgetTester tester, _Service service) async {
   final session = _Session(service.call);
   await session.authenticate();
@@ -160,8 +169,7 @@ void main() {
     expect(find.text('请输入本次授权变更原因'), findsNothing);
     expect(find.text('请先确认采集范围和撤回影响'), findsOneWidget);
     tester.widget<CheckboxListTile>(find.byKey(const Key('observe-confirm'))).onChanged!(true);
-    await tester.pump(); await _submit(tester)();
-    await workspace.flushReads(tester);
+    await tester.pump(); await _submitAndFlush(tester, _submit(tester));
     expect(service.writes, hasLength(1)); expect(service.reads, hasLength(2));
     expect(jsonDecode(service.writes.single.body), {
       'inventoryEnabled': true, 'usageEnabled': false, 'reason': '监护人确认清单用途'});
@@ -227,7 +235,7 @@ void main() {
     service.intercept = (r) async => r.method == 'PUT' ? _reply({'errorCode': 'REAUTH_REQUIRED'}, 401) : null;
     final session = await _session(tester, service);
     await _open(tester, session); await _edit(tester); await _fill(tester);
-    await _submit(tester)(); await workspace.flushReads(tester);
+    await _submitAndFlush(tester, _submit(tester));
     final reauth = _textButton(tester, '重新安全验证');
     reauth(); expect(session.stepUps, 1);
     final close = _textButton(tester, '关闭并刷新'); close(); reauth();
@@ -390,10 +398,10 @@ void main() {
         ? _reply({'errorCode': 'SERVICE_UNAVAILABLE'}, 503) : null;
     final session = await _session(tester, service);
     await _open(tester, session); await _edit(tester); await _fill(tester);
-    await _submit(tester)(); await workspace.flushReads(tester);
+    await _submitAndFlush(tester, _submit(tester));
     expect(tester.widget<SwitchListTile>(find.byKey(const Key('observe-inventory'))).onChanged, isNull);
     expect(tester.widget<TextFormField>(find.byKey(const Key('observe-reason'))).enabled, isFalse);
-    await _submit(tester)(); await workspace.flushReads(tester);
+    await _submitAndFlush(tester, _submit(tester));
     expect(service.writes, hasLength(2));
     expect(service.writes.first.body, service.writes.last.body);
     expect(service.writes.map((r) => r.headers['if-match']).toSet(), {'"0"'});
@@ -409,7 +417,7 @@ void main() {
     service.intercept = (r) async => r.method == 'PUT' ? _reply({'errorCode': 'RESOURCE_VERSION_CONFLICT'}, 412) : null;
     final session = await _session(tester, service);
     await _open(tester, session); await _edit(tester); await _fill(tester);
-    final submit = _submit(tester); await submit(); await workspace.flushReads(tester);
+    final submit = _submit(tester); await _submitAndFlush(tester, submit);
     await submit(); expect(service.writes, hasLength(1));
     expect(tester.widget<FilledButton>(find.widgetWithText(FilledButton, '确认授权变更')).onPressed, isNull);
     _textButton(tester, '关闭并刷新')(); await workspace.flushReads(tester);

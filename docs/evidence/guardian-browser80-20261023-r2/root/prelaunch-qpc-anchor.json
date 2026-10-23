@@ -1,0 +1,10 @@
+{
+  "status": "ROOT_PRELAUNCH_QPC_ANCHOR_NO_SDK_STARTED",
+  "utc": "2026-10-23T06:51:52.966712+00:00",
+  "monotonic": 16419.7257194,
+  "clockImplementation": "QueryPerformanceCounter()",
+  "grant": "guardian-browser80-r2-root-20261023",
+  "proposalSha256": "a9951961c2d4a933567bd38446228bb177cc469cdbe23a8d9b42b816f11857be",
+  "sourceCommit": "45950b88a270e2fded2409e333fb126851b6f861",
+  "outerHardSeconds": 300
+}

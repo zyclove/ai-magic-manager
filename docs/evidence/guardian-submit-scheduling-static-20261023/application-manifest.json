@@ -1,0 +1,70 @@
+{
+  "status": "CACHE_ONLY_TEST_SCHEDULING_CANDIDATE_UNRUN",
+  "productionFilesChanged": 0,
+  "files": [
+    {
+      "path": "apps/guardian/test/usage_reports_scope_browser_test.dart",
+      "before": {
+        "bytes": 47212,
+        "sha256": "38bcdf8e624db06af0dcc5368ca12e70ae6900a22d03b4ea0131cd8a3aabdeb8"
+      },
+      "after": {
+        "bytes": 47589,
+        "sha256": "5960608f034c3db2a7ca45622f5b5445fdfddeee1c982ad9e27db9ba6185f1ae"
+      },
+      "networkSubmissionSites": 3,
+      "literalNamesUnchanged": true,
+      "validation": "UNRUN"
+    },
+    {
+      "path": "apps/guardian/test/observation_route_scope_browser_test.dart",
+      "before": {
+        "bytes": 23442,
+        "sha256": "9028c8219e9e255871b27b7975a78d5b39a9a410d1f58b48668cda4c16f6645f"
+      },
+      "after": {
+        "bytes": 23707,
+        "sha256": "2cb3ff92b4052ad50076b060450899201032e43740ebc46ad276cd702433ffc2"
+      },
+      "networkSubmissionSites": 5,
+      "literalNamesUnchanged": true,
+      "validation": "UNRUN"
+    }
+  ],
+  "totalNetworkSubmissionSites": 8,
+  "helperAddedPerFile": "_submitAndFlush uses existing _Invocation and workspace.flushReads, with completion/failure assertions",
+  "allOriginalExpectFixturesKeysFailureStatusesAndGuardOrderRetained": true,
+  "timeoutsChanged": false,
+  "caseNamesChanged": false,
+  "selectedSuitesChanged": false,
+  "sdkTestsOrFormatterInvoked": false,
+  "mainOrFrozenOrOldCandidateWritten": false,
+  "edits": [
+    {
+      "path": "apps/guardian/test/usage_reports_scope_browser_test.dart",
+      "beforeLocations": [
+        571,
+        607,
+        614
+      ],
+      "sites": 3,
+      "allOtherBytesRoundTripExact": true
+    },
+    {
+      "path": "apps/guardian/test/observation_route_scope_browser_test.dart",
+      "beforeLocations": [
+        163,
+        230,
+        393,
+        396,
+        412
+      ],
+      "sites": 5,
+      "allOtherBytesRoundTripExact": true
+    }
+  ],
+  "patch": {
+    "bytes": 5589,
+    "sha256": "fa986cdfc016dcd6853812262198a48f0bf7eeb4fc532e3a8698302b9278ba96"
+  }
+}

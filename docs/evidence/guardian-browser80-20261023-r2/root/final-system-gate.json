@@ -1,0 +1,43 @@
+{
+  "status": "BROWSER80_R2_NOT_ACCEPTED_FORMALLY_RELEASED",
+  "atUtc": "2026-10-23T07:03:23.8068029Z",
+  "grant": "guardian-browser80-r2-root-20261023",
+  "sourceCommit": "45950b88a270e2fded2409e333fb126851b6f861",
+  "actualSession": 84534,
+  "initialChunk": "939a2c",
+  "finalChunk": "c39c42",
+  "naturalOuterExitCode": 1,
+  "actualOuterTerminalObservedBefore300": true,
+  "actualOuterAnchorSeconds": 257.0758057999992,
+  "commandTimedOut": true,
+  "commandForced": true,
+  "commandExitCode": 124,
+  "ownedJobActiveProcesses": 0,
+  "knownOwnedPidsAbsent": true,
+  "independentReadbackActualSession": 35508,
+  "independentReadbackFinalChunk": "fa939c",
+  "pinsMatched": 381,
+  "sourceFiles": 409,
+  "cacheFiles": 3537,
+  "cacheBytes": 638537951,
+  "visiblePassed": 54,
+  "expectedVisibleCases": 80,
+  "browser80Accepted": false,
+  "processCount": 818,
+  "sdkCount": 0,
+  "unknownProcessNameCount": 0,
+  "availableRamBytes": 1217282048,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 6819655680
+    },
+    {
+      "Name": "D",
+      "Free": 31394361344
+    }
+  ],
+  "formalRelease": true,
+  "servicesUpdated": false,
+  "wholeProductAccepted": false
+}

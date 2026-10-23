@@ -1,0 +1,21 @@
+{
+  "status": "ROOT_BROWSER80_R2_FRESH_PRELAUNCH_GATE_PASSED",
+  "atUtc": "2026-10-23T06:51:52.8921323Z",
+  "grant": "guardian-browser80-r2-root-20261023",
+  "sourceCommit": "45950b88a270e2fded2409e333fb126851b6f861",
+  "processCount": 635,
+  "sdkCount": 0,
+  "unknownProcessNameCount": 0,
+  "availableRamBytes": 3074682880,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 6873579520
+    },
+    {
+      "Name": "D",
+      "Free": 35091632128
+    }
+  ],
+  "previousStockPostSha256": "1f9ea49610f2e29827f21603ea503af9d6d7802144916950f381ba7591ed1359"
+}

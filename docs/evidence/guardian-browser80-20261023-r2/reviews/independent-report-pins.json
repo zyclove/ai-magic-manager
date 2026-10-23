@@ -1,0 +1,17 @@
+[
+  {
+    "path": ".cache\\guardian-browser80-independent-20261023-r2\\review.md",
+    "bytes": 3066,
+    "sha256": "74d2cd9a663a97f6fe5e14d9fccab709d2269f22d891b5e9118f6d59abd164b3"
+  },
+  {
+    "path": ".cache\\guardian-browser80-independent-20261023-r2\\review.json",
+    "bytes": 3915,
+    "sha256": "bb675935611c10b46794103e1dd3bee313241488e2f2c1d68d220ec48ea8fc52"
+  },
+  {
+    "path": ".cache\\guardian-browser80-independent-20261023-r2\\review.py",
+    "bytes": 12262,
+    "sha256": "4055128bb097e5f14d54732b7d1d4bc9a571c9d7488a6f1cda3fdf30830eff7f"
+  }
+]

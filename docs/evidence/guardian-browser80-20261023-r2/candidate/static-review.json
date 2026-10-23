@@ -1,0 +1,43 @@
+{
+  "status": "STATIC_BROWSER80_R2_REBOUND_REVIEW_REQUIRED_ALL80_UNRUN",
+  "sourceCommit": "45950b88a270e2fded2409e333fb126851b6f861",
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\source-manifest.json",
+    "bytes": 244476,
+    "sha256": "d31ffbcc2dd74f062c588dd5756b2e7c5845b1bca40ca27b900d3b23dcdb22f2"
+  },
+  "sourceSnapshotSeal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\seal-static-source.json",
+    "bytes": 80272,
+    "sha256": "cb7b531b176433c2b1e8ed5154d49710a53a642268f9296816a9af07f8139957"
+  },
+  "sourceFiles": 409,
+  "sourceSealFilesVerified": 423,
+  "mainAndNewFrozenRawHashesAndMembershipMatched": true,
+  "gitInvoked": false,
+  "gitProvenanceLimit": "Published seal/Root-provided commit only; Root must independently confirm current Git identities before grant.",
+  "onlySourceRowChangedFromA558": "apps/guardian/lib/pages/observation_page.dart",
+  "oneByteNullAssertionRemovalVerified": true,
+  "all80CaseAndSelectedSourceMetadataIdentical": true,
+  "preparedCases": 80,
+  "physicalSuites": 7,
+  "controlsBudgetByteIdenticalToR1": [
+    "controller.py",
+    "heap1536_windows_job.py",
+    "reporter_contract.py",
+    "owned_chrome_observer.py",
+    "budget-policy.json"
+  ],
+  "workerOnlyChangedAssignments": [
+    "FROZEN",
+    "INPUT_SHA256"
+  ],
+  "fullRuntimeCacheRehashPerformed": false,
+  "browserCacheBoundary": 3537,
+  "runtimeSourceParserAdded": false,
+  "candidateImportedOrCalled": false,
+  "sdkBrowserProcessGitNetworkCalls": 0,
+  "attemptExists": false,
+  "executionApproved": false,
+  "oldR1FilesPreserved": 23
+}

@@ -1,0 +1,13 @@
+{
+  "status": "ACTUAL_EXEC_SESSION_TERMINAL_OBSERVED",
+  "utc": "2026-10-23T06:56:10.042516+00:00",
+  "monotonic": 16676.8015252,
+  "anchorToAfterToolTerminalSeconds": 257.0758057999992,
+  "conservativeActualOuterTerminalBefore300": true,
+  "actualSession": 84534,
+  "initialChunk": "939a2c",
+  "finalChunk": "c39c42",
+  "naturalExitCode": 1,
+  "basis": "Anchor precedes controller launch; this observation follows same exec-session terminal return.",
+  "candidateReceiptElapsedNotUsedAsOuterExitProof": true
+}

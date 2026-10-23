@@ -1,0 +1,217 @@
+{
+  "status": "NOT_ACCEPTED",
+  "phaseScope": "BROWSER80_OWNED_AUX",
+  "legacyStrictAccepted": false,
+  "startedAtUtc": "2026-10-23T06:51:53.225662+00:00",
+  "workerBudgetSeconds": 285,
+  "workerHardMonotonic": 16704.9468271,
+  "outerBudgetBinding": {
+    "protocol": "OWNED_JOB_READY_BROWSER80_V2",
+    "clockImplementation": "QueryPerformanceCounter()",
+    "outerStartedMonotonic": 16419.7680444,
+    "outerHardMonotonic": 16719.7680444,
+    "outerSoftMonotonic": 16713.7680444,
+    "controllerFinalReserveSeconds": 6,
+    "workerFinishByMonotonic": 16707.7680444
+  },
+  "commandCapSeconds": 210,
+  "commandCleanupReserveSeconds": 6,
+  "minimumPostflightReserveSeconds": 45,
+  "sdkCalls": 1,
+  "testsRequested": true,
+  "reportedVisibleTests": null,
+  "pubRun": false,
+  "downloadsAllowed": false,
+  "cacheCopied": false,
+  "mainSourceWritten": false,
+  "forcedTermination": true,
+  "commandTreeForced": true,
+  "auxCleanup": false,
+  "sdkRootNaturalZero": false,
+  "sdkForced": null,
+  "errorType": "RuntimeError",
+  "reason": "SDK command deadline exceeded",
+  "commandTerminalState": {
+    "pid": 61824,
+    "rootHandleSignaled": true,
+    "rootExitCode": 124,
+    "activeProcesses": 0,
+    "totalProcesses": 121,
+    "terminatedProcesses": 0,
+    "terminalVerified": true,
+    "timedOut": true,
+    "terminationRequested": true,
+    "terminationCallSucceeded": true
+  },
+  "postflightWindowStartedMonotonic": 16646.2336769,
+  "postflightReservedSecondsAtStart": 58.71315020000111,
+  "ownedChromeObservation": {
+    "status": "OWNED_CHROME_ARGUMENTS_OBSERVED",
+    "chromeRoots": [
+      {
+        "pid": 51816,
+        "created": 1792738349.8280575,
+        "executable": "c:\\program files\\google\\chrome\\application\\chrome.exe",
+        "profile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r2\\attempt\\tmp\\flutter_tools.3d9946e4\\flutter_tools_chrome_device.13b74514",
+        "debuggingPort": 56317,
+        "testServerOrigins": [
+          "http://localhost:56315"
+        ],
+        "headless": true,
+        "observedOnlyAsOwnedCommandDescendant": true
+      },
+      {
+        "pid": 57624,
+        "created": 1792738357.0633929,
+        "executable": "c:\\program files\\google\\chrome\\application\\chrome.exe",
+        "profile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r2\\attempt\\tmp\\flutter_tools.3d9946e4\\flutter_tools_chrome_device.2d4f358d",
+        "debuggingPort": 58508,
+        "testServerOrigins": [
+          "http://localhost:56315"
+        ],
+        "headless": true,
+        "observedOnlyAsOwnedCommandDescendant": true
+      },
+      {
+        "pid": 62312,
+        "created": 1792738363.7216065,
+        "executable": "c:\\program files\\google\\chrome\\application\\chrome.exe",
+        "profile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r2\\attempt\\tmp\\flutter_tools.3d9946e4\\flutter_tools_chrome_device.9070ad40",
+        "debuggingPort": 59533,
+        "testServerOrigins": [
+          "http://localhost:56315"
+        ],
+        "headless": true,
+        "observedOnlyAsOwnedCommandDescendant": true
+      },
+      {
+        "pid": 63280,
+        "created": 1792738379.474908,
+        "executable": "c:\\program files\\google\\chrome\\application\\chrome.exe",
+        "profile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r2\\attempt\\tmp\\flutter_tools.3d9946e4\\flutter_tools_chrome_device.4d87462e",
+        "debuggingPort": 59557,
+        "testServerOrigins": [
+          "http://localhost:56315"
+        ],
+        "headless": true,
+        "observedOnlyAsOwnedCommandDescendant": true
+      },
+      {
+        "pid": 30744,
+        "created": 1792738389.7042572,
+        "executable": "c:\\program files\\google\\chrome\\application\\chrome.exe",
+        "profile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r2\\attempt\\tmp\\flutter_tools.3d9946e4\\flutter_tools_chrome_device.a74adcd8",
+        "debuggingPort": 64447,
+        "testServerOrigins": [
+          "http://localhost:56315"
+        ],
+        "headless": true,
+        "observedOnlyAsOwnedCommandDescendant": true
+      },
+      {
+        "pid": 41424,
+        "created": 1792738399.576322,
+        "executable": "c:\\program files\\google\\chrome\\application\\chrome.exe",
+        "profile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r2\\attempt\\tmp\\flutter_tools.3d9946e4\\flutter_tools_chrome_device.687fefc9",
+        "debuggingPort": 65520,
+        "testServerOrigins": [
+          "http://localhost:56315"
+        ],
+        "headless": true,
+        "observedOnlyAsOwnedCommandDescendant": true
+      }
+    ],
+    "problems": [],
+    "userChromeInspectedOrStopped": false,
+    "entireChromeInstallationPinned": false,
+    "loopbackDebugBindingInferredFromPinnedFlutterLauncher": true
+  },
+  "postflight": {
+    "stage": "postflight",
+    "startedAtUtc": "2026-10-23T06:55:39.476078+00:00",
+    "complete": true,
+    "source": {
+      "frozenRawGit": {
+        "files": 409,
+        "fullMembershipExact": true,
+        "allRawHashesMatch": true
+      },
+      "mainRaw": {
+        "files": 409,
+        "fullMembershipExact": true,
+        "allRawHashesMatch": true
+      },
+      "currentSevenRootGitTrees": {
+        "apps/guardian": "ba4b1955202be83f0776362e37d21a08891f175c",
+        "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+        "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+        "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+        "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+        "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+        "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+      }
+    },
+    "packages": {
+      "packages": 70,
+      "rebasedInternalRoots": 7,
+      "unchangedExternalRows": 63,
+      "metadataPreserved": true,
+      "candidateSha256": "a00844558722a7bb4fce05eea27d08e824d54afa6a1b686e0d87dd8ec1e05db4"
+    },
+    "cache": {
+      "manifestSha256": "8c0cfde01a9d6d5cb4bf002c1ed6d5069af28b0f27f110bec292f46e281f66c0",
+      "trees": 70,
+      "fixedFiles": 33,
+      "allMembersDirectoriesBytesAndHashesMatch": true,
+      "totals": {
+        "files": 3537,
+        "bytes": 638537951
+      }
+    },
+    "runtime": {
+      "sdkGitRevision": "761747bfc538b5af34aa0d3fac380f1bc331ec49",
+      "controlAndExtraRuntimePinsMatch": true,
+      "snapshotAndStampReady": true,
+      "pubspecNotNewerThanLock": true,
+      "forbiddenEnvironmentOverridesAbsent": true,
+      "bootstrapAbsent": true,
+      "engineDartStampMatchesEngineVersion": true,
+      "fixedProcessPathVerified": true,
+      "bootstrapAllowed": false
+    },
+    "finishedAtUtc": "2026-10-23T06:55:58.158397+00:00",
+    "elapsedWorkerSeconds": 244.9705955999998
+  },
+  "commandTerminalStateAfterPostflight": {
+    "pid": 61824,
+    "rootHandleSignaled": true,
+    "rootExitCode": 124,
+    "activeProcesses": 0,
+    "totalProcesses": 121,
+    "terminatedProcesses": 0,
+    "terminalVerified": true,
+    "timedOut": true,
+    "terminationRequested": true,
+    "terminationCallSucceeded": true
+  },
+  "commandTreeCloseFallbackRequested": false,
+  "resourceAfter": {
+    "utc": "2026-10-23T06:55:58.180691+00:00",
+    "sdkProcesses": [],
+    "unknownProcessNames": [],
+    "availableRamBytes": 2647560192,
+    "diskFreeBytes": {
+      "C:/": 6848872448,
+      "D:/": 23746207744
+    }
+  },
+  "logPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r2\\attempt\\out\\browser80.jsonl",
+    "bytes": 32505,
+    "sha256": "5e537a317c9acc32b73f267d387f8df20cdb538b6f18a7c4392e74ee1f6c28c0"
+  },
+  "logError": "ValueError: Natural native exit zero is required",
+  "finishedAtUtc": "2026-10-23T06:55:58.213804+00:00",
+  "elapsedCompleteSeconds": 245.02600220000022,
+  "outerExternalAcceptanceRequired": true
+}

@@ -1,0 +1,125 @@
+{
+  "status": "SEALED_R1_AND_HISTORICAL_FAILURES_UNCHANGED",
+  "before": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\ast-diff-proof.json",
+      "bytes": 4578,
+      "sha256": "893f8848b8a31794f890d33bef758412aca785cf8571a76a9c15cda15462c926"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\budget-policy.json",
+      "bytes": 874,
+      "sha256": "1e5d589fbd8b91545d642acd02aebeb962b8ea858562f4bedb699098c8dc2e1b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\chrome-executable-readback.json",
+      "bytes": 728,
+      "sha256": "069f2285595318198248e1f7f91ad58a87f3ae19c3bd355a81b32ab786978f3c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\controller.py",
+      "bytes": 11976,
+      "sha256": "126c743f996b8c7224971876d06306682c180806e46e9d375c24502956f46c15"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\delivery-pins.json",
+      "bytes": 5064,
+      "sha256": "4c5af299884603c06742db7c2bd4faf23bb2e2e591ab7edef4a29576515ae295"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\heap1536_windows_job.py",
+      "bytes": 16481,
+      "sha256": "3e3eb3d43825db45630630b3c750f9f3625c96295302837026aefc549bca0ea7"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\input-metadata-diff.json",
+      "bytes": 8758,
+      "sha256": "eb3bbb36e5b3f55fa1e7fa393ee95b0999b19ad96c39312ed9a8df6ca1eacda5"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\inputs.json",
+      "bytes": 10364,
+      "sha256": "a6b8b01f36acdbce6cdb97e9c0671c9a17f3b5f440ef0f554b62a670387fc15d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\mechanical-controller.py.diff",
+      "bytes": 3679,
+      "sha256": "792079f46b00193851d462114550487c01f332f05af6411876f602c6384525fc"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\mechanical-native-helper.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\mechanical-observer.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\mechanical-reporter.py.diff",
+      "bytes": 3678,
+      "sha256": "efea14b4e4c14a169ce5cccc1c6207519872b63c6d956c5678a998efcb8af072"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\mechanical-worker.py.diff",
+      "bytes": 10247,
+      "sha256": "580911f03442ceb7d2fb4650b6cbbbeb4d6a1f9cd53c03e868865b5454bf8a99"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\owned_chrome_observer.py",
+      "bytes": 5344,
+      "sha256": "5552f9bf7bf77d4b409a01a18080f0f51b6ea5c69c3a6ad38756f2e19619c052"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\prepare_browser80.py",
+      "bytes": 29706,
+      "sha256": "ba61f2f47c77755af92b11361570ef26f1700ad89914ae614994ee50635c44a9"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\proposal.json",
+      "bytes": 73334,
+      "sha256": "b602e13ad6319606709fbf6c28265fdbd389d38832e93ffd4c0f721281203b95"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\README.md",
+      "bytes": 3503,
+      "sha256": "c9b37843ee7b78c9da182cd91e2321b4768ac5edb7629644121656bc47481764"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\reporter_contract.py",
+      "bytes": 10649,
+      "sha256": "1f06b0bf48d41e5166f2427bea69868602971a25899e5e5371171c86595501e9"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\seal-receipt.json",
+      "bytes": 1746,
+      "sha256": "ac861a5649725f4023b8c364f99ab9883738e55b3f74930e317347bee861ace0"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\static-final-readback.json",
+      "bytes": 1141,
+      "sha256": "6de6cab188324b5f5e31901020ce7c1557f1167d600d59d8cf37ac1e393dccb1"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\static-review.json",
+      "bytes": 1514,
+      "sha256": "a3c9c61dbc0877a8642afe90073b16fc938634b4e183a5552b4089392c0e4a2a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\template-pin-preservation.json",
+      "bytes": 61785,
+      "sha256": "fc2908ede6966494da2a7a257a93c7edd4f08d70f6ed4b43ae0c5dc187ea2d40"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\worker.py",
+      "bytes": 39672,
+      "sha256": "ab65c8cd54ccbe1eb369962f81ca950e357e367d634c23d7172020a80b1f60a9"
+    }
+  ],
+  "all269OriginalProposalPinsRetainedAsHistoricalReferences": true,
+  "originalR7SourceA558RemainsRed": true,
+  "r1SourceA558NotExecutableForCurrentMain": true,
+  "browser80R1AndR2CasesExecuted": 0,
+  "runtimeOrSourceOrCacheCopy": false
+}

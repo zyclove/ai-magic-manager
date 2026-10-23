@@ -1,0 +1,22 @@
+{
+  "utc": "2026-10-23T06:52:09.379242+00:00",
+  "pid": 61824,
+  "argv": [
+    "C:\\Windows\\System32\\cmd.exe",
+    "/d",
+    "/v:off",
+    "/c",
+    "D:\\softwares\\flutter\\bin\\flutter.bat --no-version-check --suppress-analytics test --no-pub --platform=chrome --web-renderer=html --reporter=json test/workspace_flow_entry_browser_test.dart test/audit_export_route_test.dart test/approval_help_flow_browser_test.dart test/notification_help_scope_browser_test.dart test/application_classification_scope_browser_test.dart test/usage_reports_scope_browser_test.dart test/observation_route_scope_browser_test.dart"
+  ],
+  "workingDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\src\\apps\\guardian",
+  "selectorCount": 7,
+  "expectedVisibleCases": 80,
+  "commandBudgetSeconds": 210.0,
+  "workerElapsedAtLaunch": 16.185149099997943,
+  "postflightReserveSeconds": 45,
+  "cleanupReserveSeconds": 6,
+  "processLocalTemp": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r2\\attempt\\tmp",
+  "pubAndStorageLoopbackDisabled": true,
+  "nativeProcessHandleRetained": true,
+  "atomicNestedJobMembership": true
+}

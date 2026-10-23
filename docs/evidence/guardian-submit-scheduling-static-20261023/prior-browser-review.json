@@ -1,0 +1,482 @@
+{
+  "status": "STATIC_ARCHIVE_REVIEW_NO_BLOCKER_NOT_RUNTIME_ACCEPTANCE",
+  "stagePinSha256": "9d43f01eb3059dca2fff954af73ca89ff0921b95c0e446fcc6751512f385c434",
+  "archiveFiles": 54,
+  "archiveBytes": 448689,
+  "rawByteExactCopies": 50,
+  "generatedFiles": 4,
+  "allArchiveSha256AndRawGitBlobSha1Match": true,
+  "exactArchiveMembership": true,
+  "inventory53PlusSelfMatchesStage54": true,
+  "proposalDescriptors": [
+    19,
+    11,
+    351
+  ],
+  "rawEvents": 135,
+  "rawSuccessfulVisibleCases": 54,
+  "rawPending": 1,
+  "physicalSuites": 6,
+  "errors": 0,
+  "doneEvents": 0,
+  "nativeExit": 124,
+  "commandCapSeconds": 210,
+  "outerNaturalExit": 1,
+  "candidatePreIoSeconds": 245.5821743000015,
+  "independentAnchorToAfterTerminalSeconds": 257.0758057999992,
+  "terminalSession": 84534,
+  "initialChunk": "939a2c",
+  "finalChunk": "c39c42",
+  "formalRelease": true,
+  "browserAccepted": false,
+  "sdkForced": null,
+  "futureSchedulingFix": "UNRUN; archive does not apply or validate it",
+  "capturedReadbackNameLimitation": {
+    "count": 12,
+    "exactNamesMustUse": "raw UTF-8 JSONL plus expected80; independently matched here",
+    "originalReadbackPreservedByteExact": true,
+    "differences": [
+      {
+        "testID": 21,
+        "rawUtf8Name": "批准 cancellation preserves the original approval details",
+        "originalCapturedReadbackName": "��׼ cancellation preserves the original approval details"
+      },
+      {
+        "testID": 22,
+        "rawUtf8Name": "批准 success closes its approval details",
+        "originalCapturedReadbackName": "��׼ success closes its approval details"
+      },
+      {
+        "testID": 23,
+        "rawUtf8Name": "批准 success cannot dismiss an unrelated covering dialog",
+        "originalCapturedReadbackName": "��׼ success cannot dismiss an unrelated covering dialog"
+      },
+      {
+        "testID": 24,
+        "rawUtf8Name": "批准 failed submission keeps the original details open",
+        "originalCapturedReadbackName": "��׼ failed submission keeps the original details open"
+      },
+      {
+        "testID": 25,
+        "rawUtf8Name": "拒绝 cancellation preserves the original approval details",
+        "originalCapturedReadbackName": "�ܾ� cancellation preserves the original approval details"
+      },
+      {
+        "testID": 26,
+        "rawUtf8Name": "拒绝 success closes its approval details",
+        "originalCapturedReadbackName": "�ܾ� success closes its approval details"
+      },
+      {
+        "testID": 27,
+        "rawUtf8Name": "拒绝 success cannot dismiss an unrelated covering dialog",
+        "originalCapturedReadbackName": "�ܾ� success cannot dismiss an unrelated covering dialog"
+      },
+      {
+        "testID": 28,
+        "rawUtf8Name": "拒绝 failed submission keeps the original details open",
+        "originalCapturedReadbackName": "�ܾ� failed submission keeps the original details open"
+      },
+      {
+        "testID": 29,
+        "rawUtf8Name": "撤销批准 cancellation preserves the original approval details",
+        "originalCapturedReadbackName": "������׼ cancellation preserves the original approval details"
+      },
+      {
+        "testID": 30,
+        "rawUtf8Name": "撤销批准 success closes its approval details",
+        "originalCapturedReadbackName": "������׼ success closes its approval details"
+      },
+      {
+        "testID": 31,
+        "rawUtf8Name": "撤销批准 success cannot dismiss an unrelated covering dialog",
+        "originalCapturedReadbackName": "������׼ success cannot dismiss an unrelated covering dialog"
+      },
+      {
+        "testID": 32,
+        "rawUtf8Name": "撤销批准 failed submission keeps the original details open",
+        "originalCapturedReadbackName": "������׼ failed submission keeps the original details open"
+      }
+    ]
+  },
+  "boundary": "Read original and archived small files only; did not rehash source/cache trees, query process APIs, import candidates, run SDK, or write Main/Git. Root 21031e is supplied tool context, not an embedded raw chunk field.",
+  "verifiedFiles": [
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/.gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da",
+      "gitRawBlobSha1": "fa1385d99a319b43c06f5309d1aae9fdd3adea46",
+      "originalByteExact": false
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/README.md",
+      "bytes": 2425,
+      "sha256": "f73e09604fb1b931b84074b2bbc5554a29b004f3e5e52da0aa1a4e043407519f",
+      "gitRawBlobSha1": "cf326d942a4ca7e4482d3c4302318318980a67c5",
+      "originalByteExact": false
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/archive-inventory.json",
+      "bytes": 15646,
+      "sha256": "2141e48fd71b78cf8e510543d662ac1464605e516666bd5bd2e8c6753a01a946",
+      "gitRawBlobSha1": "0d395fd34f789aa72e321022d95a8443e7712de5",
+      "originalByteExact": false
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/attempt/initial-gate.json",
+      "bytes": 206,
+      "sha256": "d979caa4def298eecd8f47de5130c072f594c65c42b0071bf31ada7d45a188fe",
+      "gitRawBlobSha1": "a12869897c135206c07c49c159a447a4ee1417d7",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/attempt/launch-gate.json",
+      "bytes": 206,
+      "sha256": "d5200e8370e33a1f96a573a30b77250677bffb35a6dbdc04cda00def8992af2d",
+      "gitRawBlobSha1": "5f0533daf8062642b7abf8a5737b519ff750e8a6",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/attempt/launch.json",
+      "bytes": 1169,
+      "sha256": "8e3e184414662da6d5205809f654694511d436a9bfaf55307d107a60a5bd2b71",
+      "gitRawBlobSha1": "25884419815159c1b021c752fc1b159b21c91a67",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/attempt/out/browser80.jsonl",
+      "bytes": 32505,
+      "sha256": "5e537a317c9acc32b73f267d387f8df20cdb538b6f18a7c4392e74ee1f6c28c0",
+      "gitRawBlobSha1": "11fef2cdd63e8ae58e1f98332c523f5254df41e2",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/attempt/owned-chrome-observation.json",
+      "bytes": 3202,
+      "sha256": "6900840828b4dd7784e23edd6e38c15edc72d4a013b7da6bdb8d95a37e81da45",
+      "gitRawBlobSha1": "0ba492cb69eda27feacf7c68b54f5f74d4915630",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/attempt/postflight-gate.json",
+      "bytes": 206,
+      "sha256": "cce04fc6f8982a238b7aeb01f02710968456039c00d827cd45e6b29416d5be1e",
+      "gitRawBlobSha1": "3dd56a6460d7df5fee18ad8cddee3bb9de2b1796",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/attempt/postflight-pins.json",
+      "bytes": 1921,
+      "sha256": "e64e3ba5876539117b7a805da84f9906f47324dde8baf4c153e6f8427efe2417",
+      "gitRawBlobSha1": "afe7ac1a42e975a3f7ef49fa6be1b559d17f66f3",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/attempt/preflight-pins.json",
+      "bytes": 1920,
+      "sha256": "885cd658de053d8f3f914be007d50a9ec1e12984311a3ab7f9fb002fc046b0c3",
+      "gitRawBlobSha1": "bdc9ddfc98f9bd3d98324d07f4c151e8d6c7cbb9",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/attempt/receipt.json",
+      "bytes": 7995,
+      "sha256": "da27b3391bd5beed82494aaac937ef4b6dd53b017bd5a2f88a5266d50f1756f6",
+      "gitRawBlobSha1": "7e461f0c0fb5faa6b91cf5ba5fff3240f813975f",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/attempt/request.json",
+      "bytes": 182,
+      "sha256": "f92326566a0b8e07cc07ce302c3567ef8b8e47471418410800e220f83d484156",
+      "gitRawBlobSha1": "d761b8ef213c5ddbd259607fbc99a9ba1083d6b1",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/attempt/result.json",
+      "bytes": 9893,
+      "sha256": "fec59e3a26f15b42178aaf159b3db06c1e5be74c983429eb36acb3899221c5a3",
+      "gitRawBlobSha1": "fb31c475299f4ebbf9104e503e515a8180882ad7",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/attempt/worker-console.log",
+      "bytes": 89,
+      "sha256": "80698278ba53cb18482387d22af7ddf29690c9dca53a1b27cc72e0fd930497e3",
+      "gitRawBlobSha1": "d7e5ca26fb13d774090af46d872c7d749b9da7d6",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/README.md",
+      "bytes": 3339,
+      "sha256": "e2f14c6b18919a7a6e848b36c1d59380d3b802076daa849c5b289fbb6e613734",
+      "gitRawBlobSha1": "0ae3dd80c946407b2871495a55d9307057f52f7e",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/ast-diff-proof.json",
+      "bytes": 1258,
+      "sha256": "2ef81adc09e04d237e4f8c10074ef0701491e3b43325da53d9224bed046432a8",
+      "gitRawBlobSha1": "4b7b2bc9bd9d63a29be737daaae2c62890ce85a2",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/budget-policy.json",
+      "bytes": 874,
+      "sha256": "1e5d589fbd8b91545d642acd02aebeb962b8ea858562f4bedb699098c8dc2e1b",
+      "gitRawBlobSha1": "5287dedc46827739c0530e0cd1e814990afd441a",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/controller.py",
+      "bytes": 11976,
+      "sha256": "126c743f996b8c7224971876d06306682c180806e46e9d375c24502956f46c15",
+      "gitRawBlobSha1": "074a935309a49d34f32ce336886883247c748d65",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/delivery-pins.json",
+      "bytes": 5082,
+      "sha256": "87a1ab87613ff691ad4f1201725697ef91072ba14335c0b2ec8faf51742224b9",
+      "gitRawBlobSha1": "76a501141bf971dd5fd659343914b6d59715176e",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/heap1536_windows_job.py",
+      "bytes": 16481,
+      "sha256": "3e3eb3d43825db45630630b3c750f9f3625c96295302837026aefc549bca0ea7",
+      "gitRawBlobSha1": "d3c5953c093dc64ed813b2a194559f9987b917ac",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/input-metadata-diff.json",
+      "bytes": 7468,
+      "sha256": "56f52670a5fc209fe7ab0bb0e905b70f3702be4d0c51b09cf3a80793dfc545bb",
+      "gitRawBlobSha1": "b0e77c99ae111cf9fecffb065dd07e79a990d3c0",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/inputs.json",
+      "bytes": 10364,
+      "sha256": "d29dce69ceb432cd8523333fa7ba588366dc39aaae29785355ea269647a4fe8a",
+      "gitRawBlobSha1": "7e2dca2e9f971f57ed33d8273844004a52e32a95",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/mechanical-budget-policy.json.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gitRawBlobSha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/mechanical-controller.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gitRawBlobSha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/mechanical-heap1536_windows_job.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gitRawBlobSha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/mechanical-owned_chrome_observer.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gitRawBlobSha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/mechanical-reporter_contract.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "gitRawBlobSha1": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/mechanical-worker.py.diff",
+      "bytes": 877,
+      "sha256": "f0cee2f042dd8a2983712ab365dbf54c95533c928e42ccf821dd5d846cfb340b",
+      "gitRawBlobSha1": "dd649e6e481a22781c783d63adfc2f46f42b457f",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/old-r1-preservation.json",
+      "bytes": 5540,
+      "sha256": "dfef7e14a7f63784e18d40ad99ffc87c242540742b1c3f2ebfd5b0ddebda9a6e",
+      "gitRawBlobSha1": "bdb1b0bfe78a41d5d1d2129a55f27b95cbcbbc02",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/owned_chrome_observer.py",
+      "bytes": 5344,
+      "sha256": "5552f9bf7bf77d4b409a01a18080f0f51b6ea5c69c3a6ad38756f2e19619c052",
+      "gitRawBlobSha1": "07414d57a3358ca375fe8dbe4053113fbd79db77",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/prepare_browser80_r2.py",
+      "bytes": 18487,
+      "sha256": "850c220c20ade2c15b63faf9cf63f59533fed308c8a920a07a78cd8895cd6243",
+      "gitRawBlobSha1": "75784355fc96c5f5705b1e0b53a64a357985d9dc",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/proposal.json",
+      "bytes": 103870,
+      "sha256": "a9951961c2d4a933567bd38446228bb177cc469cdbe23a8d9b42b816f11857be",
+      "gitRawBlobSha1": "a6c13f8556de5170e08d3570a812c5cc14d01570",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/reporter_contract.py",
+      "bytes": 10649,
+      "sha256": "1f06b0bf48d41e5166f2427bea69868602971a25899e5e5371171c86595501e9",
+      "gitRawBlobSha1": "da1b2734e1e9dc1acf5717245f6a0e281510cc1d",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/seal-receipt.json",
+      "bytes": 1806,
+      "sha256": "84cc8f6078337e2efa4e2ca41ddb8a6f4aac32518f14334f5e9af7ea5ab15e56",
+      "gitRawBlobSha1": "c171cacf3dcd2e290ba288addbd4a967188e228a",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/static-final-readback.json",
+      "bytes": 1252,
+      "sha256": "8e0dbb848528b448864daa96c488d9b1146cca027c8292ad9ccd87aba23f53e5",
+      "gitRawBlobSha1": "bbf825266a8d6e6b3d5836f0ee83ffeea7003200",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/static-review.json",
+      "bytes": 1681,
+      "sha256": "ad282d9b4b22b6b865f4518b4fa14e327c17ff3e67c6a0355188d3e4baa39f0a",
+      "gitRawBlobSha1": "2dc9e2431c4a54a795adf29122be4d1e7f648c08",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/candidate/worker.py",
+      "bytes": 39672,
+      "sha256": "977681cb272e9531b7aa2957bf61818a313f961698f210e012e923079ddc846f",
+      "gitRawBlobSha1": "f03aa095be4b29bd7602452c277e38bd076ef14a",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/inputs/expected-80-cases.json",
+      "bytes": 46728,
+      "sha256": "b6b08aad0e1f5d8aa61a43729c489b3662d076efc1fc503d7914de76cbf9fe05",
+      "gitRawBlobSha1": "615111f5abd884278c7d0da77e14e7a2b00946d6",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/preparation/archive_browser_red.py",
+      "bytes": 16014,
+      "sha256": "cef7eee7c5d9e47c457effbbda037bce990f0a1769150a1e7426a4d1afee558b",
+      "gitRawBlobSha1": "e55c8f573d80fa6b81339b9abee4886fa448035e",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/reviews/independent-report-pins.json",
+      "bytes": 581,
+      "sha256": "e8a3b6495862273f7448cdf7cdb00784b425d3034dbd3d03520c199706be05d7",
+      "gitRawBlobSha1": "a3e82505c8c72240991cce5cc026780e88192da2",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/reviews/independent-review.json",
+      "bytes": 3915,
+      "sha256": "bb675935611c10b46794103e1dd3bee313241488e2f2c1d68d220ec48ea8fc52",
+      "gitRawBlobSha1": "6815658a4d4639ed62b7dd1ea9a38ff02779a56c",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/reviews/independent-review.md",
+      "bytes": 3066,
+      "sha256": "74d2cd9a663a97f6fe5e14d9fccab709d2269f22d891b5e9118f6d59abd164b3",
+      "gitRawBlobSha1": "52e5199a43d745a138cd684c155a62b1839f7071",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/root/actual-independent-red-readback.json",
+      "bytes": 17140,
+      "sha256": "f56156dc60dd5744a84a20fb6434a1234abeaa90068a4ebeec607703a1f04185",
+      "gitRawBlobSha1": "a2e123464f5c8a0ab4d77a07dbf25df37ea8ff28",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/root/actual-outer-terminal.json",
+      "bytes": 511,
+      "sha256": "379418255d1ec70b2d9ae4dbc69a21523922c352b7a0b34814506a906617e5b0",
+      "gitRawBlobSha1": "9262bc513d25af17df5d57aa3df15f4212d2a6b5",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/root/actual-red-readback-helper.py",
+      "bytes": 22438,
+      "sha256": "cb8afb603e800ac94ef59b20002096ffa8c375f004ea5974561048583b82fbf9",
+      "gitRawBlobSha1": "69ec1a3b54decc91595c64b312d241b3cedb98d6",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/root/final-system-gate.json",
+      "bytes": 1199,
+      "sha256": "ed0db97070ecdc7b82e17c7dcfb84b648c3a1017fb5b2da625992292f4d535ea",
+      "gitRawBlobSha1": "de04ef40c12fde6f5b80f9baa89d865904e5cf3f",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/root/launch.ps1",
+      "bytes": 2308,
+      "sha256": "dcaa131b217df451ed8b362d54568973e8694ea1256b6dde48608c7656956831",
+      "gitRawBlobSha1": "42c6c56c1b8b13926b624b7fb8d0df666c01ac0c",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/root/preflight-system-gate.json",
+      "bytes": 576,
+      "sha256": "471bab76734b0d67bccd9e4ad2a111548bcd4d7272270f1808ea828cccf12189",
+      "gitRawBlobSha1": "0c1542f73f53afcedfb2cc5800e50410051830ac",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/root/prelaunch-qpc-anchor.json",
+      "bytes": 415,
+      "sha256": "02e75808eb3a3db51dab46fb600f7844829377a6ae217d0f9e4b75d4936e8de6",
+      "gitRawBlobSha1": "bd1f1fb6e1da6b86d617d92ce3fb9d292e7714e9",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/root/static-review.json",
+      "bytes": 959,
+      "sha256": "048dcefbdaf67251f27d005907f23c800b5815d6f8da729bb893e4492ffa6f9a",
+      "gitRawBlobSha1": "35efa6354811fb110f70b040a8b0d4dc4014adad",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/root/static-review.py",
+      "bytes": 4692,
+      "sha256": "ea4a6c6707b1d690ec00b9d20eb669536e3f81a97f17eebfd45a92ecd3ce2867",
+      "gitRawBlobSha1": "36aa2e6ea8472dffc0c2966bc9bacab600781144",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/root/timing-helper.py",
+      "bytes": 1920,
+      "sha256": "21ae8d40c8be7c12ec8bd8c43767a22df8bf50d62c994db9de74558d75d2fdaf",
+      "gitRawBlobSha1": "bff74c4065f1d94c31d76b287b7332eca22c48d6",
+      "originalByteExact": true
+    },
+    {
+      "path": "docs/evidence/guardian-browser80-20261023-r2/summary.json",
+      "bytes": 2634,
+      "sha256": "bac7d51bb4872e1da9964eac72aefca8aee06e0b3e0784a95a888cda3d0375e0",
+      "gitRawBlobSha1": "89ca6e1850b8ea62081b731406464976a5ffb749",
+      "originalByteExact": false
+    }
+  ]
+}

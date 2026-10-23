@@ -1,0 +1,36 @@
+{
+  "status": "STATIC_DIFFERENT_PATH_READBACK_MATCHED_BROWSER80_R2_ALL_UNRUN",
+  "atUtc": "2026-10-23T06:25:49.248462+00:00",
+  "proposal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r2\\proposal.json",
+    "bytes": 103870,
+    "sha256": "a9951961c2d4a933567bd38446228bb177cc469cdbe23a8d9b42b816f11857be"
+  },
+  "seal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r2\\seal-receipt.json",
+    "bytes": 1806,
+    "sha256": "84cc8f6078337e2efa4e2ca41ddb8a6f4aac32518f14334f5e9af7ea5ab15e56"
+  },
+  "pinsMatched": 381,
+  "controlsByteExact": [
+    "controller.py",
+    "heap1536_windows_job.py",
+    "reporter_contract.py",
+    "owned_chrome_observer.py",
+    "budget-policy.json"
+  ],
+  "workerChangedOnly": [
+    "FROZEN",
+    "INPUT_SHA256"
+  ],
+  "source409MainAndFrozenHashesMatched": true,
+  "all80CaseAnd7SelectedSourceMetadataUnchanged": true,
+  "r1Full23MembersAndRawPinsUnchanged": true,
+  "runtimeCache3537InheritedNoRebaseline": true,
+  "sourceCommit": "45950b88a270e2fded2409e333fb126851b6f861",
+  "candidateImportedOrCalled": false,
+  "sdkBrowserNativeProcessGitNetworkCalls": 0,
+  "testsRun": false,
+  "attemptExists": false,
+  "oldCandidateOrMainWrites": false
+}

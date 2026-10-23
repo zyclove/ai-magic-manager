@@ -1,0 +1,20 @@
+{
+  "status": "STATIC_REVIEW_ONLY",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-submit-scheduling-independent-20261023-r1\\review_static.py",
+      "bytes": 11891,
+      "sha256": "ae67835253cdf3f9d89142ed64956d5ef37c25d53d23a8fa87bade31f342a307"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-submit-scheduling-independent-20261023-r1\\review.json",
+      "bytes": 6111,
+      "sha256": "db4b0f3d7834c4212d16d1cb5e969664b8949c19747c4c688435b068461bc4b5"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-submit-scheduling-independent-20261023-r1\\review.md",
+      "bytes": 1649,
+      "sha256": "89aa83fc23c70b9d51d6f8ed2f4bf9cb8199907120cda0efe932c925a1d68aa0"
+    }
+  ]
+}

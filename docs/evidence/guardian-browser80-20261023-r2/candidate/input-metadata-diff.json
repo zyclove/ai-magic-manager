@@ -1,0 +1,158 @@
+{
+  "status": "SOURCE_AND_PACKAGE_URI_REBIND_ONLY_RUNTIME_UNRUN",
+  "oldInputs": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\inputs.json",
+    "bytes": 10364,
+    "sha256": "a6b8b01f36acdbce6cdb97e9c0671c9a17f3b5f440ef0f554b62a670387fc15d"
+  },
+  "newInputs": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r2\\inputs.json",
+    "bytes": 10364,
+    "sha256": "d29dce69ceb432cd8523333fa7ba588366dc39aaae29785355ea269647a4fe8a"
+  },
+  "changedFields": {
+    "candidatePackageConfig": {
+      "before": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+        "bytes": 15736,
+        "sha256": "9391dba658c5309fe6c1aa95dfb7586e74ea12bc2465463a7f53ee84a83e8ce6"
+      },
+      "after": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+        "bytes": 15736,
+        "sha256": "a00844558722a7bb4fce05eea27d08e824d54afa6a1b686e0d87dd8ec1e05db4"
+      }
+    },
+    "candidatePackageConfigTemplate": {
+      "before": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\generated\\guardian-package_config.json",
+        "bytes": 15736,
+        "sha256": "9391dba658c5309fe6c1aa95dfb7586e74ea12bc2465463a7f53ee84a83e8ce6"
+      },
+      "after": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\generated\\guardian-package_config.json",
+        "bytes": 15736,
+        "sha256": "a00844558722a7bb4fce05eea27d08e824d54afa6a1b686e0d87dd8ec1e05db4"
+      }
+    },
+    "createdAtUtc": {
+      "before": "2026-10-23T06:02:27.915958+00:00",
+      "after": "2026-10-23T06:24:34.606415+00:00"
+    },
+    "dependencyLibraryPins": {
+      "before": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\dependency-library-pins.json",
+        "bytes": 360145,
+        "sha256": "972121e9a6659bcd68a0734ee44df8e7670045eab3bb177f60c58558d0963815"
+      },
+      "after": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\dependency-library-pins.json",
+        "bytes": 360145,
+        "sha256": "9fbfdbd9e417fe389c7d9192d86c76526ef58fc92c0143ce41fa79b53dfd806c"
+      }
+    },
+    "expectedCaseContract": {
+      "before": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\expected-cases.json",
+        "bytes": 46718,
+        "sha256": "fe7e3471ef3d3797a95360d53a70b668b785aa7034e96799650c5f91e2e3025f"
+      },
+      "after": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\expected-cases.json",
+        "bytes": 46728,
+        "sha256": "b6b08aad0e1f5d8aa61a43729c489b3662d076efc1fc503d7914de76cbf9fe05"
+      }
+    },
+    "originalPackageConfig": {
+      "before": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\generated\\main-package_config-original.json",
+        "bytes": 15171,
+        "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7"
+      },
+      "after": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\generated\\main-package_config-original.json",
+        "bytes": 15171,
+        "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7"
+      }
+    },
+    "ownedChromeObserverCode": {
+      "before": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\owned_chrome_observer.py",
+        "bytes": 5344,
+        "sha256": "5552f9bf7bf77d4b409a01a18080f0f51b6ea5c69c3a6ad38756f2e19619c052"
+      },
+      "after": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r2\\owned_chrome_observer.py",
+        "bytes": 5344,
+        "sha256": "5552f9bf7bf77d4b409a01a18080f0f51b6ea5c69c3a6ad38756f2e19619c052"
+      }
+    },
+    "reporterContractCode": {
+      "before": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\reporter_contract.py",
+        "bytes": 10649,
+        "sha256": "1f06b0bf48d41e5166f2427bea69868602971a25899e5e5371171c86595501e9"
+      },
+      "after": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r2\\reporter_contract.py",
+        "bytes": 10649,
+        "sha256": "1f06b0bf48d41e5166f2427bea69868602971a25899e5e5371171c86595501e9"
+      }
+    },
+    "sevenRootGitTrees": {
+      "before": {
+        "apps/guardian": "2b8856731e588844cac70d112194bbaffda655d9",
+        "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+        "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+        "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+        "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+        "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+        "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+      },
+      "after": {
+        "apps/guardian": "ba4b1955202be83f0776362e37d21a08891f175c",
+        "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+        "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+        "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+        "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+        "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+        "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+      }
+    },
+    "sourceCommit": {
+      "before": "a55849d902b248fe02d06e23cd0bad3d28912a27",
+      "after": "45950b88a270e2fded2409e333fb126851b6f861"
+    },
+    "sourceManifest": {
+      "before": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\source-manifest.json",
+        "bytes": 244476,
+        "sha256": "a23441e3f91224f86296a1b5b3ada8c7b2a8d5189c2ce36bfb6510a7ed0347b5"
+      },
+      "after": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\source-manifest.json",
+        "bytes": 244476,
+        "sha256": "d31ffbcc2dd74f062c588dd5756b2e7c5845b1bca40ca27b900d3b23dcdb22f2"
+      }
+    },
+    "sourceSnapshotSeal": {
+      "before": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\seal-static-source.json",
+        "bytes": 80267,
+        "sha256": "700d75070f869bcc666f373394ec77b688bb1b48950f1390f4312be72022d1f7"
+      },
+      "after": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\seal-static-source.json",
+        "bytes": 80272,
+        "sha256": "cb7b531b176433c2b1e8ed5154d49710a53a642268f9296816a9af07f8139957"
+      }
+    },
+    "sourceTreeSha256": {
+      "before": "ddf027a0292fb2e06ac069a60bc03c87676fbeb4efc3d6f4a23186da0c87110a",
+      "after": "f8666796ddd71389e022000754df0e4d81da75fe0cd186d6d7c894b1c51e4246"
+    }
+  },
+  "cacheManifestAnd3537BoundaryUnchanged": true,
+  "selectorsAndCasesNotRegenerated": true,
+  "runtimeSourceNameParserAdded": false
+}

@@ -1,0 +1,48 @@
+{
+  "status": "STATIC_BROWSER80_R2_SEALED_ALL80_UNRUN_NOT_EXECUTION_AUTHORIZATION",
+  "proposal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r2\\proposal.json",
+    "bytes": 103870,
+    "sha256": "a9951961c2d4a933567bd38446228bb177cc469cdbe23a8d9b42b816f11857be"
+  },
+  "inputs": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r2\\inputs.json",
+    "bytes": 10364,
+    "sha256": "d29dce69ceb432cd8523333fa7ba588366dc39aaae29785355ea269647a4fe8a"
+  },
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\source-manifest.json",
+    "bytes": 244476,
+    "sha256": "d31ffbcc2dd74f062c588dd5756b2e7c5845b1bca40ca27b900d3b23dcdb22f2"
+  },
+  "sourceSnapshotSeal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\seal-static-source.json",
+    "bytes": 80272,
+    "sha256": "cb7b531b176433c2b1e8ed5154d49710a53a642268f9296816a9af07f8139957"
+  },
+  "expectedCaseContract": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\expected-cases.json",
+    "bytes": 46728,
+    "sha256": "b6b08aad0e1f5d8aa61a43729c489b3662d076efc1fc503d7914de76cbf9fe05"
+  },
+  "candidateFiles": 19,
+  "controlRuntimeFiles": 11,
+  "historicalMetadataFiles": 351,
+  "sourceFiles": 409,
+  "visibleCases": 80,
+  "physicalSuites": 7,
+  "workerOnlyAssignmentsChanged": [
+    "FROZEN",
+    "INPUT_SHA256"
+  ],
+  "sdkCalls": 0,
+  "browserStarted": false,
+  "candidateImportedOrCalled": false,
+  "processInspectionPerformed": false,
+  "gitOrNetworkCalls": 0,
+  "mainOrOldCandidateWrites": false,
+  "sourceCopied": false,
+  "cacheCopied": false,
+  "attemptExists": false,
+  "executionApproved": false
+}

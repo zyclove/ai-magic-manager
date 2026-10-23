@@ -1,0 +1,16 @@
+--- sealed-browser80-r1/worker.py
++++ browser80-r2/worker.py
+@@ -49,11 +49,11 @@
+ CANDIDATE = Path(__file__).absolute().parent
+ ATTEMPT = CANDIDATE / 'attempt'
+ REPO = CANDIDATE.parents[1]
+-FROZEN = Path(r'D:\codes\mobile\ai-manager\.cache\guardian-observation-current-20261023-r1')
++FROZEN = Path(r'D:\codes\mobile\ai-manager\.cache\guardian-observation-current-20261023-r2')
+ SOURCE = FROZEN / 'src'
+ MODULE = SOURCE / 'apps/guardian'
+ INPUT = CANDIDATE / 'inputs.json'
+-INPUT_SHA256 = 'a6b8b01f36acdbce6cdb97e9c0671c9a17f3b5f440ef0f554b62a670387fc15d'
++INPUT_SHA256 = 'd29dce69ceb432cd8523333fa7ba588366dc39aaae29785355ea269647a4fe8a'
+ HELPER_SHA256 = '3e3eb3d43825db45630630b3c750f9f3625c96295302837026aefc549bca0ea7'
+ ROOTS = ['apps/guardian', 'packages/audit_client', 'packages/commerce_contracts',
+          'packages/notification_client', 'packages/device_operations',

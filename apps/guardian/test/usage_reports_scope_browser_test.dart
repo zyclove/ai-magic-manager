@@ -228,6 +228,15 @@ class _Invocation {
   }
 }
 
+// Start real transport work without blocking the test's async/frame drain.
+Future<void> _submitAndFlush(
+    WidgetTester tester, Future<void> Function() submit) async {
+  final invocation = _Invocation(submit());
+  await workspace.flushReads(tester);
+  expect(invocation.completed, isTrue);
+  expect(invocation.failure, isNull);
+}
+
 Future<void> _cover(WidgetTester tester, Finder owner) async {
   unawaited(showDialog<void>(context: tester.element(owner),
       builder: (_) => const AlertDialog(title: Text('后续覆盖窗口'))));
@@ -568,7 +577,7 @@ void main() {
     await _cover(tester, find.byType(UsageReportJobDialog));
     expect(route.isCurrent, isFalse);
     expect(route.available, isTrue);
-    await submit();
+    await _submitAndFlush(tester, submit);
     expect(posts, 1); // Covered standalone<void> is valid; isCurrent must not block it.
     expect(created, 0);
     expect(repository.current(), isTrue);
@@ -604,15 +613,13 @@ void main() {
     final opening = _Invocation(page.createJob(draft, requestKey: _requestKey) as Future<void>);
     await workspace.flushReads(tester);
     final dynamic state = tester.state(find.byType(UsageReportJobDialog));
-    await state.submit();
-    await workspace.flushReads(tester);
+    await _submitAndFlush(tester, state.submit as Future<void> Function());
     final dialog = tester.widget<UsageReportJobDialog>(find.byType(UsageReportJobDialog));
     dialog.onReauth!(draft, _requestKey);
     expect(session.resumes, hasLength(1));
     expect(session.resumes.single.draft.body, draft.body);
     expect(session.resumes.single.requestKey, _requestKey);
-    await state.submit();
-    await workspace.flushReads(tester);
+    await _submitAndFlush(tester, state.submit as Future<void> Function());
     expect(posts, hasLength(2));
     expect(posts.map((request) => request.body).toSet(), {jsonEncode(draft.body)});
     expect(posts.map((request) => request.headers['idempotency-key']).toSet(), {_requestKey});

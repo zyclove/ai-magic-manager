@@ -1,0 +1,148 @@
+{
+  "status": "NO_STATIC_BLOCKING_FINDING_TEST_SCHEDULING_CANDIDATE_UNRUN",
+  "findings": [],
+  "patch": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-submit-scheduling-20261023-r1\\scheduling.patch",
+    "bytes": 5589,
+    "sha256": "fa986cdfc016dcd6853812262198a48f0bf7eeb4fc532e3a8698302b9278ba96"
+  },
+  "manifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-submit-scheduling-20261023-r1\\application-manifest.json",
+    "bytes": 2125,
+    "sha256": "f332a892191fb571c37a7080c4ec0f7907d730e4be5b451a70774689f2b7fdef"
+  },
+  "readme": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-submit-scheduling-20261023-r1\\README.md",
+    "bytes": 3852,
+    "sha256": "3599c558511dfeaac18cb958b1f5e4f8d775a3e514d193f77316d6f1f1b0741a"
+  },
+  "delivery": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-submit-scheduling-20261023-r1\\delivery-pins.json",
+    "bytes": 1514,
+    "sha256": "f63e937b08eb2efd4e6e12a47e8ede219cb4df049f77c338c96d0a5cfc50ac69"
+  },
+  "deliveryPinsMatched": 8,
+  "mainBeforeFilesMatched": 2,
+  "productionChanged": 0,
+  "validNetworkSubmitSites": 8,
+  "reportsSites": 3,
+  "observationSites": 5,
+  "files": [
+    {
+      "path": "apps/guardian/test/usage_reports_scope_browser_test.dart",
+      "mainBeforeMatches": true,
+      "sites": 3,
+      "allBytesOutsideOneHelperAndSelectedEightCallsRevertExactly": true,
+      "originalExpectFixturesRequestCountsKeysIfMatchGuardOrderAndLoopBodiesPreserved": true,
+      "newCompletionFailureAssertions": 2,
+      "before": {
+        "bytes": 47212,
+        "sha256": "38bcdf8e624db06af0dcc5368ca12e70ae6900a22d03b4ea0131cd8a3aabdeb8"
+      },
+      "after": {
+        "bytes": 47589,
+        "sha256": "5960608f034c3db2a7ca45622f5b5445fdfddeee1c982ad9e27db9ba6185f1ae"
+      }
+    },
+    {
+      "path": "apps/guardian/test/observation_route_scope_browser_test.dart",
+      "mainBeforeMatches": true,
+      "sites": 5,
+      "allBytesOutsideOneHelperAndSelectedEightCallsRevertExactly": true,
+      "originalExpectFixturesRequestCountsKeysIfMatchGuardOrderAndLoopBodiesPreserved": true,
+      "newCompletionFailureAssertions": 2,
+      "before": {
+        "bytes": 23442,
+        "sha256": "9028c8219e9e255871b27b7975a78d5b39a9a410d1f58b48668cda4c16f6645f"
+      },
+      "after": {
+        "bytes": 23707,
+        "sha256": "2cb3ff92b4052ad50076b060450899201032e43740ebc46ad276cd702433ffc2"
+      }
+    }
+  ],
+  "patchIndependentlyReconstructedByteExactly": true,
+  "guardedSynchronousCallsIncludingClosedInvalidatedBusyFormAndTerminalUntouched": true,
+  "invocationClassesAndAllOriginalAssertionsFixturesFailureStatusesAndRequestsUnchanged": true,
+  "helperImmediatelyInvokesSubmitThenUsesExistingBoundedDrain": true,
+  "futureCompletionAndFailureAreBothAssertedNotSilentlyDiscarded": true,
+  "existingDrain": "8 iterations of runAsync(real Duration.zero) then pump50ms; no new deadline or loop.",
+  "timeoutsExtended": false,
+  "boundedJsonProductionTimeoutSecondsUnchanged": 25,
+  "caseSuiteContractPreservedStructurally": {
+    "cases": 80,
+    "suites": 7,
+    "literalDeclarationsComparedAcrossAllSeven": [
+      {
+        "selector": "test/workspace_flow_entry_browser_test.dart",
+        "literalDeclarations": 6
+      },
+      {
+        "selector": "test/audit_export_route_test.dart",
+        "literalDeclarations": 4
+      },
+      {
+        "selector": "test/approval_help_flow_browser_test.dart",
+        "literalDeclarations": 7
+      },
+      {
+        "selector": "test/notification_help_scope_browser_test.dart",
+        "literalDeclarations": 6
+      },
+      {
+        "selector": "test/application_classification_scope_browser_test.dart",
+        "literalDeclarations": 8
+      },
+      {
+        "selector": "test/usage_reports_scope_browser_test.dart",
+        "literalDeclarations": 19
+      },
+      {
+        "selector": "test/observation_route_scope_browser_test.dart",
+        "literalDeclarations": 13
+      }
+    ],
+    "caseNamesAndLoopBodiesModified": false,
+    "newDeclarationPositionsRequireFreshSourceContract": true
+  },
+  "diagnosticScope": "Plausible scheduling experiment consistent with actual timeout and existing fixture pattern, not a proved unique stream/fake-zone/root cause. No hung stack or runtime reproduction examined here.",
+  "limits": [
+    "Static text/hash only; no Dart parsing/analysis/compile, formatter, fixtures or browser tests ran.",
+    "Bounded existing drain may still be insufficient for an actual async chain; completion assertion then fails instead of proving reliability.",
+    "All80 cases remain UNRUN for this candidate; prior timeout/RED is not rewritten."
+  ],
+  "sdkCandidateProcessNetworkGitCalls": 0,
+  "mainOldFrozenOrCandidateWrites": false,
+  "dependencyPinsRead": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\workspace_recovery_browser_test.dart",
+      "bytes": 18690,
+      "sha256": "82a3f46133dd42c33decbaec58ab80cc9e513e00685e6dcc4db3bd4d238ca02f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\core\\bounded_json.dart",
+      "bytes": 6327,
+      "sha256": "ca3bf7b46cc346bd003f9fcff712611d38cd55655bf492e975fc50e79bd1180b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\core\\usage_report_jobs.dart",
+      "bytes": 13260,
+      "sha256": "454feee93a204d308a44289f11ded7b226511e31bd91feff07c8bd78060dd896"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\usage_report_job_dialog.dart",
+      "bytes": 7156,
+      "sha256": "c316ed59fdda8f8f00b51e28968df25116eacbb2c3116016e7f96b9bc42257f2"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\observation_editor.dart",
+      "bytes": 13560,
+      "sha256": "f6768b8558f967645467e008de7b594d322a975f680fad7cf5a1771b7cf76cd3"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\expected-cases.json",
+      "bytes": 46728,
+      "sha256": "b6b08aad0e1f5d8aa61a43729c489b3662d076efc1fc503d7914de76cbf9fe05"
+    }
+  ]
+}

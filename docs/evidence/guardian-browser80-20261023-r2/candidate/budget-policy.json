@@ -1,0 +1,20 @@
+{
+  "status": "PROPOSED_MAXIMA_NEW_REVIEW_AND_GRANT_REQUIRED",
+  "outerHardSecondsMaximum": 300,
+  "outerSoftCutoffSeconds": 294,
+  "outerContainmentTailSeconds": 6,
+  "controllerFinalReserveBeforeSoftSeconds": 6,
+  "outerWorkerFinishBySeconds": 288,
+  "workerLocalSecondsMaximum": 285,
+  "workerHardFormula": "min(worker_start+285,outer_soft-6)",
+  "commandSecondsMaximum": 210,
+  "commandDeadlineFormula": "min(command_start+210,worker_hard-51)",
+  "cleanupSecondsMaximum": 6,
+  "cleanupDeadlineFormula": "min(command_deadline+6,worker_hard-45)",
+  "actionCapFormula": "min(action_start+6,cleanup_deadline)",
+  "minimumPostflightReserveSeconds": 45,
+  "minimumSdkWindowBeforeSpawnSecondsExclusive": 1,
+  "sharedClock": "pinned Windows Python313 QueryPerformanceCounter()",
+  "handshakeProtocol": "OWNED_JOB_READY_BROWSER80_V2",
+  "timingOrNativeBehaviorVerified": false
+}

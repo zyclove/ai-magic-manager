@@ -1,0 +1,33 @@
+{
+  "status": "STATIC_AST_ONLY_NO_CANDIDATE_IMPORTS_OR_CALLS",
+  "workerChangedTopLevelAssignments": [
+    "FROZEN",
+    "INPUT_SHA256"
+  ],
+  "workerReversesExactlyByOnlyTwoReplacements": true,
+  "oldWorker": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r1\\worker.py",
+    "bytes": 39672,
+    "sha256": "ab65c8cd54ccbe1eb369962f81ca950e357e367d634c23d7172020a80b1f60a9"
+  },
+  "newWorker": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r2\\worker.py",
+    "bytes": 39672,
+    "sha256": "977681cb272e9531b7aa2957bf61818a313f961698f210e012e923079ddc846f"
+  },
+  "allOtherWorkerAstNodesIdentical": true,
+  "allWorkerFunctionsIncludingSourceCheckAndAuxQualificationIdentical": true,
+  "controlsByteIdenticalToR1": [
+    "controller.py",
+    "heap1536_windows_job.py",
+    "reporter_contract.py",
+    "owned_chrome_observer.py",
+    "budget-policy.json"
+  ],
+  "budgetsProtocolCountsFlagsAndFirstRetainedTerminalGateUnchanged": true,
+  "source409OnlyChangedFile": "apps/guardian/lib/pages/observation_page.dart",
+  "sourceChangeBytes": -1,
+  "old80AllNameAndSelectedSourceMetadataExact": true,
+  "gitOrNetworkOrSdkOrNativeProcessCalls": 0,
+  "candidateFunctionsImportedOrCalled": false
+}

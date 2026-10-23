@@ -1,0 +1,97 @@
+{
+  "status": "BROWSER80_R2_STATIC_REVIEW_NO_BLOCKER_ALL80_UNRUN_NO_GRANT",
+  "blockingFindings": [],
+  "proposalPinsMatched": {
+    "candidate": 19,
+    "runtime": 11,
+    "historical": 351,
+    "total": 381
+  },
+  "deliveryPinsMatched": 22,
+  "oldBrowser80R1All23FilesAnd269ProposalRowsPreserved": true,
+  "r7RedArchive60FilesPreservedAndNotUpgraded": true,
+  "byteIdenticalControls": [
+    "controller.py",
+    "heap1536_windows_job.py",
+    "reporter_contract.py",
+    "owned_chrome_observer.py",
+    "budget-policy.json"
+  ],
+  "workerWholeTextAndAstOnlyAssignmentsChanged": [
+    "FROZEN",
+    "INPUT_SHA256"
+  ],
+  "allOtherWorkerFunctionsAndBudgetProtocol80Case7SuiteAuxFlagsAndStrictTerminalGateUnchanged": true,
+  "inputChangedFields": [
+    "candidatePackageConfig",
+    "candidatePackageConfigTemplate",
+    "createdAtUtc",
+    "dependencyLibraryPins",
+    "expectedCaseContract",
+    "originalPackageConfig",
+    "ownedChromeObserverCode",
+    "reporterContractCode",
+    "sevenRootGitTrees",
+    "sourceCommit",
+    "sourceManifest",
+    "sourceSnapshotSeal",
+    "sourceTreeSha256"
+  ],
+  "allOtherOriginalProposalPolicyFieldsUnchanged": true,
+  "sourceCommit": "45950b88a270e2fded2409e333fb126851b6f861",
+  "sourceSeal423PinsMatched": true,
+  "source409Delta": {
+    "onlyChangedPath": "apps/guardian/lib/pages/observation_page.dart",
+    "exactChange": "observationRoute!.available -> observationRoute.available",
+    "bytes": -1,
+    "unchangedFullSourceMetadataRows": 408
+  },
+  "all409FrozenGitBlobSha1AndMainRawPinsAndMembershipMatch": true,
+  "originalTwoCrLfDifferencesPreserved": [
+    "apps/guardian/lib/ui/quota_balance.dart",
+    "apps/guardian/pubspec.yaml"
+  ],
+  "all80CasesAndSevenSelectedSourcesMetadataExactlyUnchanged": true,
+  "package70OnlySevenInternalRebasesAndAllExternalMetadataPreserved": true,
+  "inherited3537CacheAndChromePinsUnchanged": true,
+  "full3537RuntimeCacheRehashPerformed": false,
+  "freshGitReadPerformed": false,
+  "gitCommitIdentityBeforeGrantRemainsRootRequirement": true,
+  "sdkCandidateNativeProcessNetworkGitCalls": 0,
+  "mainOrFrozenOrOriginalPackageWrites": false,
+  "executionGranted": false,
+  "allBrowserCases": "80_UNRUN",
+  "limitations": "Static hash/text/AST only. No runtime/native/OS timing/Chrome behavior, analysis pass or browser test result is established. Fresh resources, full runtime pre/post, actual terminal and final release/new explicit grant remain required.",
+  "reviewedPins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r2\\proposal.json",
+      "bytes": 103870,
+      "sha256": "a9951961c2d4a933567bd38446228bb177cc469cdbe23a8d9b42b816f11857be"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r2\\seal-receipt.json",
+      "bytes": 1806,
+      "sha256": "84cc8f6078337e2efa4e2ca41ddb8a6f4aac32518f14334f5e9af7ea5ab15e56"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r2\\delivery-pins.json",
+      "bytes": 5082,
+      "sha256": "87a1ab87613ff691ad4f1201725697ef91072ba14335c0b2ec8faf51742224b9"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r2\\inputs.json",
+      "bytes": 10364,
+      "sha256": "d29dce69ceb432cd8523333fa7ba588366dc39aaae29785355ea269647a4fe8a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser80-20261023-r2\\worker.py",
+      "bytes": 39672,
+      "sha256": "977681cb272e9531b7aa2957bf61818a313f961698f210e012e923079ddc846f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\seal-static-source.json",
+      "bytes": 80272,
+      "sha256": "cb7b531b176433c2b1e8ed5154d49710a53a642268f9296816a9af07f8139957"
+    }
+  ]
+}
