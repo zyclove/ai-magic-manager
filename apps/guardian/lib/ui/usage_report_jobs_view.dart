@@ -7,6 +7,7 @@ import '../core/application_classification.dart';
 import '../core/usage_report_jobs.dart';
 import '../core/usage_reports.dart';
 import 'design.dart';
+import 'owned_dialog_route.dart';
 import 'usage_reports_view.dart';
 
 class UsageReportJobsView extends StatefulWidget {
@@ -45,7 +46,7 @@ class _UsageReportJobsViewState extends State<UsageReportJobsView>
   bool cancelInFlight = false;
   int generation = 0;
   Timer? timer;
-  ModalRoute<dynamic>? dialog;
+  OwnedDialogRoute<dynamic>? dialog;
   int get now => widget.clock?.call() ?? DateTime.now().millisecondsSinceEpoch;
   bool get current => mounted && foreground && widget.repository.current();
   bool available(UsageReportJob job) => job.ready && now < job.expiresAt;
@@ -75,13 +76,7 @@ class _UsageReportJobsViewState extends State<UsageReportJobsView>
     dialogJobId = null;
     if (route == null) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (route.isActive) {
-        if (route.isCurrent) {
-          route.navigator!.pop();
-        } else {
-          route.navigator!.removeRoute(route);
-        }
-      }
+      route.finish();
     });
   }
 
@@ -188,7 +183,8 @@ class _UsageReportJobsViewState extends State<UsageReportJobsView>
   }
 
   Future<void> chooseResult(UsageReportJob job) async {
-    if (busy || !current || !available(job)) return;
+    if (busy || !current || !available(job) || dialog != null ||
+        ModalRoute.of(context)?.isCurrent == false) return;
     final names = <String, String>{};
     if (widget.loadTargets != null) {
       timer?.cancel();
@@ -225,13 +221,16 @@ class _UsageReportJobsViewState extends State<UsageReportJobsView>
         }
       }
     }
-    if (!mounted || !current || !available(job)) return;
+    if (!mounted || !current || !available(job) || dialog != null ||
+        ModalRoute.of(context)?.isCurrent == false) return;
     String search = '';
     dialogJobId = job.id;
-    final part = await showDialog<UsageReportJobPart>(
+    late final OwnedDialogRoute<UsageReportJobPart> route;
+    bool active() => current && identical(dialog, route) && route.available &&
+        available(job);
+    route = OwnedDialogRoute<UsageReportJobPart>(
         context: context,
         builder: (context) {
-          dialog = ModalRoute.of(context);
           return StatefulBuilder(builder: (context, update) {
             final visible = job.parts
                 .where((p) =>
@@ -250,8 +249,11 @@ class _UsageReportJobsViewState extends State<UsageReportJobsView>
                           decoration: const InputDecoration(
                               labelText: '搜索结果设备',
                               prefixIcon: Icon(Icons.search)),
-                          onChanged: (value) => update(
-                              () => search = value.trim().toLowerCase())),
+                          onChanged: (value) {
+                            if (active() && context.mounted) {
+                              update(() => search = value.trim().toLowerCase());
+                            }
+                          }),
                       const SizedBox(height: 8),
                       Expanded(
                           child: visible.isEmpty
@@ -271,20 +273,32 @@ class _UsageReportJobsViewState extends State<UsageReportJobsView>
                                                 '档案 ${part.subjectId.substring(0, 8)} · ${part.usageEnabled ? '已授权用量' : '未开启用量观察'}'),
                                             trailing:
                                                 const Icon(Icons.chevron_right),
-                                            onTap: () =>
-                                                Navigator.pop(context, part)));
+                                            onTap: () {
+                                              if (active()) route.finish(part);
+                                            }));
                                   }))
                     ])),
                 actions: [
                   TextButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () {
+                        if (active()) route.finish();
+                      },
                       child: const Text('关闭'))
                 ]);
           });
         });
-    dialog = null;
-    dialogJobId = null;
-    if (part != null && current) openResult(job.id, part.ordinal);
+    final dialogGeneration = generation;
+    dialog = route;
+    try {
+      final part = await presentOwnedDialog(context, route);
+      if (part != null && current && generation == dialogGeneration &&
+          identical(dialog, route)) await openResult(job.id, part.ordinal);
+    } finally {
+      if (identical(dialog, route)) {
+        dialog = null;
+        dialogJobId = null;
+      }
+    }
   }
 
   Future<void> openResult(String id, int ordinal) async {
@@ -321,27 +335,40 @@ class _UsageReportJobsViewState extends State<UsageReportJobsView>
   }
 
   Future<void> cancel(UsageReportJob job) async {
-    if (cancelInFlight || !current || busy) return;
+    if (cancelInFlight || !current || busy || dialog != null ||
+        ModalRoute.of(context)?.isCurrent == false) return;
     cancelInFlight = true;
     try {
-      final confirmed = await showDialog<bool>(
+      late final OwnedDialogRoute<bool> route;
+      bool active() => current && identical(dialog, route) && route.available;
+      route = OwnedDialogRoute<bool>(
           context: context,
           builder: (context) {
-            dialog = ModalRoute.of(context);
             return AlertDialog(
                 title: const Text('取消这份报表任务？'),
                 content: const Text('取消后将删除已生成的在线结果。需要时可重新选择范围生成。'),
                 actions: [
                   TextButton(
-                      onPressed: () => Navigator.pop(context),
+                      onPressed: () {
+                        if (active()) route.finish();
+                      },
                       child: const Text('保留任务')),
                   FilledButton(
-                      onPressed: () => Navigator.pop(context, true),
+                      onPressed: () {
+                        if (active()) route.finish(true);
+                      },
                       child: const Text('确认取消'))
                 ]);
           });
-      dialog = null;
-      if (confirmed != true || !current) return;
+      final dialogGeneration = generation;
+      dialog = route;
+      bool? confirmed;
+      try {
+        confirmed = await presentOwnedDialog(context, route);
+      } finally {
+        if (identical(dialog, route)) dialog = null;
+      }
+      if (confirmed != true || !current || generation != dialogGeneration) return;
       timer?.cancel();
       final revision = ++generation;
       setState(() {
@@ -408,7 +435,7 @@ class _UsageReportJobsViewState extends State<UsageReportJobsView>
   }
 
   void navigate(String? next, {bool previous = false}) {
-    if (busy) return;
+    if (!current || busy || (previous && history.isEmpty)) return;
     closeDialog();
     if (previous) {
       cursor = history.removeLast();
@@ -545,7 +572,9 @@ class _UsageReportJobsViewState extends State<UsageReportJobsView>
               for (final entry in applicationCategories.entries)
                 DropdownMenuItem(value: entry.key, child: Text(entry.value))
             ],
-            onChanged: (value) => setState(() => category = value!)),
+            onChanged: (value) {
+              if (current && !busy) setState(() => category = value!);
+            }),
         const SizedBox(height: 12),
         UsageReportDeviceView(
             key: ValueKey(
@@ -553,9 +582,12 @@ class _UsageReportJobsViewState extends State<UsageReportJobsView>
             device: report!.devices.single,
             report: report!,
             historical: true,
+            isCurrent: () => current,
             categoryFilter: category),
         TextButton(
-            onPressed: () => setState(clearPrivate), child: const Text('收起结果')),
+            onPressed: () {
+              if (current && !busy) setState(clearPrivate);
+            }, child: const Text('收起结果')),
       ],
     ]);
   }

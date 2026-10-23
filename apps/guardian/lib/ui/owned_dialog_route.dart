@@ -7,7 +7,8 @@ class OwnedDialogRoute<T> extends DialogRoute<T> {
   OwnedDialogRoute(
       {required super.context,
       required super.builder,
-      super.barrierDismissible = true})
+      super.barrierDismissible = true,
+      super.useSafeArea = true})
       : super(
             themes: InheritedTheme.capture(
                 from: context,

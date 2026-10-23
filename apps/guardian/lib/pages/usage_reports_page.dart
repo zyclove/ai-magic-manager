@@ -11,6 +11,9 @@ import '../core/browser_json_download.dart';
 import '../ui/usage_reports_view.dart';
 import '../ui/usage_report_job_dialog.dart';
 import '../ui/usage_report_jobs_view.dart';
+import '../ui/design.dart';
+import '../ui/owned_dialog_route.dart';
+import 'device_subflow_scope.dart';
 
 class UsageReportsPage extends StatefulWidget {
   final Session session;
@@ -21,41 +24,53 @@ class UsageReportsPage extends StatefulWidget {
 
 class _UsageReportsPageState extends State<UsageReportsPage>
     with WidgetsBindingObserver {
-  late final String root, role, actor;
+  late final Session sessionOwner;
+  late final String root, role, timeZone;
+  late final bool organization;
+  late final DeviceSubflowScope scope;
   late final UsageReportRepository repository;
   late final UsageReportJobRepository jobs;
   late final WellbeingInsightRepository insights;
   bool showJobs = false, foreground = true;
-  ModalRoute<dynamic>? dialog;
-  bool current() =>
-      widget.session.authenticated &&
-      widget.session.tenant != null &&
-      widget.session.root == root &&
-      widget.session.role == role &&
-      widget.session.profile?['subject'] == actor &&
-      usageReportRoles.contains(role);
+  OwnedDialogRoute<UsageReportJob>? dialog;
+  bool permitted() =>
+      mounted &&
+      identical(widget.session, sessionOwner) &&
+      sessionOwner.tenant != null &&
+      sessionOwner.root == root &&
+      sessionOwner.canOpen('reports') &&
+      usageReportRoles.contains(sessionOwner.role);
+  bool current() => mounted && scope.current;
+
+  void reauthenticate() {
+    if (current() && foreground) sessionOwner.login(stepUp: true);
+  }
   @override
   void initState() {
     super.initState();
     foreground = WidgetsBinding.instance.lifecycleState == null ||
         WidgetsBinding.instance.lifecycleState == AppLifecycleState.resumed;
-    root = widget.session.root;
-    role = widget.session.role;
-    actor = widget.session.profile!['subject'];
+    sessionOwner = widget.session;
+    root = sessionOwner.root;
+    role = sessionOwner.role;
+    timeZone = sessionOwner.tenant?['timeZone'] as String? ?? 'UTC';
+    organization = sessionOwner.tenant?['kind'] == 'ORGANIZATION' &&
+        const {'OWNER', 'ORG_ADMIN'}.contains(role);
+    scope = DeviceSubflowScope(sessionOwner, permitted: permitted);
     repository = UsageReportRepository(
-        api: widget.session.api, root: root, current: current);
+        api: scope.api, root: root, current: current);
     jobs = UsageReportJobRepository(
-        api: widget.session.api,
+        api: scope.api,
         root: root,
         current: () => current() && usageReportJobRoles.contains(role));
     insights = WellbeingInsightRepository(
-        api: widget.session.api,
+        api: scope.api,
         root: root,
-        tenantId: widget.session.tenant!['id'] as String,
+        tenantId: sessionOwner.tenant!['id'] as String,
         current: () => current() && role != 'CHILD' && foreground);
     WidgetsBinding.instance.addObserver(this);
-    widget.session.addListener(accessChanged);
-    final resume = widget.session.takeReportResume();
+    scope.addListener(accessChanged);
+    final resume = sessionOwner.takeReportResume();
     if (resume != null && jobs.current()) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && current()) {
@@ -65,12 +80,18 @@ class _UsageReportsPageState extends State<UsageReportsPage>
     }
   }
 
+  @override
+  void didUpdateWidget(covariant UsageReportsPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!current()) closeDialog();
+  }
+
   void closeDialog() {
     final route = dialog;
     dialog = null;
     if (route == null) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (route.isActive) route.navigator!.removeRoute(route);
+      route.finish();
     });
   }
 
@@ -86,43 +107,55 @@ class _UsageReportsPageState extends State<UsageReportsPage>
 
   @override
   void dispose() {
+    scope.removeListener(accessChanged);
+    scope.dispose();
     closeDialog();
-    widget.session.removeListener(accessChanged);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
 
   Future<void> createJob(UsageReportJobDraft draft,
       {String? requestKey}) async {
-    if (!jobs.current() || !foreground || dialog != null) return;
-    final created = await showDialog<UsageReportJob>(
+    if (!jobs.current() || !foreground || dialog != null ||
+        ModalRoute.of(context)?.isCurrent == false) return;
+    late final OwnedDialogRoute<UsageReportJob> route;
+    route = OwnedDialogRoute<UsageReportJob>(
         context: context,
         barrierDismissible: false,
-        builder: (context) {
-          dialog = ModalRoute.of(context);
-          return UsageReportJobDialog(
-              repository: jobs,
-              draft: draft,
-              requestKey: requestKey,
-              accessChanges: widget.session,
-              onReauth: (draft, key) => widget.session
-                  .reauthenticateReport(ReportJobResume(draft, key)),
-              onCreated: (job) {
-                if (mounted &&
-                    current() &&
-                    foreground &&
-                    dialog?.isActive == true) Navigator.pop(context, job);
-              });
-        });
-    dialog = null;
-    if (created != null && mounted && jobs.current() && foreground) {
-      setState(() => showJobs = true);
+        builder: (_) => UsageReportJobDialog(
+            repository: jobs,
+            draft: draft,
+            requestKey: requestKey,
+            accessChanges: scope,
+            hasAccess: () => current() && foreground &&
+                identical(dialog, route) && route.available,
+            onReauth: (draft, key) {
+              if (jobs.current() && foreground && identical(dialog, route) &&
+                  route.available) {
+                sessionOwner.reauthenticateReport(ReportJobResume(draft, key));
+              }
+            },
+            onCreated: (job) {
+              if (jobs.current() && foreground && identical(dialog, route) &&
+                  route.available) {
+                route.finish(job);
+              }
+            }));
+    dialog = route;
+    try {
+      final created = await presentOwnedDialog(context, route);
+      if (created != null && jobs.current() && foreground &&
+          identical(dialog, route)) {
+        setState(() => showJobs = true);
+      }
+    } finally {
+      if (identical(dialog, route)) dialog = null;
     }
   }
 
   Future<UsageReportTarget> resultTarget(UsageReportJobPart part) async {
     final value = await boundedJson(
-        widget.session.api, 'GET', '$root/devices/${part.deviceId}',
+        scope.api, 'GET', '$root/devices/${part.deviceId}',
         ensureCurrent: jobs.ensureCurrent);
     if (value is! Json ||
         value['id'] != part.deviceId ||
@@ -145,8 +178,8 @@ class _UsageReportsPageState extends State<UsageReportsPage>
   Future<List<UsageReportTarget>> targets() async {
     repository.ensureCurrent();
     final values = await Future.wait([
-      widget.session.api.all('$root/devices'),
-      widget.session.api.all('$root/subjects')
+      scope.api.all('$root/devices'),
+      scope.api.all('$root/subjects')
     ]);
     repository.ensureCurrent();
     final names = {
@@ -173,12 +206,10 @@ class _UsageReportsPageState extends State<UsageReportsPage>
 
   Future<List<UsageReportScope>> scopes() async {
     repository.ensureCurrent();
-    final organization = widget.session.tenant?['kind'] == 'ORGANIZATION' &&
-        const {'OWNER', 'ORG_ADMIN'}.contains(role);
     final values = await Future.wait([
-      widget.session.api.all('$root/subjects'),
+      scope.api.all('$root/subjects'),
       organization
-          ? widget.session.api.all('$root/classes')
+          ? scope.api.all('$root/classes')
           : Future.value(<Json>[])
     ]);
     repository.ensureCurrent();
@@ -202,9 +233,9 @@ class _UsageReportsPageState extends State<UsageReportsPage>
   Future<UsageReportScope> resolveScope(UsageReportScope selection) async {
     repository.ensureCurrent();
     final members =
-        await widget.session.api.all('$root/classes/${selection.id}/students');
+        await scope.api.all('$root/classes/${selection.id}/students');
     final currentClass =
-        await widget.session.api.send('GET', '$root/classes/${selection.id}');
+        await scope.api.send('GET', '$root/classes/${selection.id}');
     repository.ensureCurrent();
     if (currentClass is! Json ||
         currentClass['id'] != selection.id ||
@@ -227,7 +258,14 @@ class _UsageReportsPageState extends State<UsageReportsPage>
   }
 
   @override
-  Widget build(BuildContext context) => showJobs &&
+  Widget build(BuildContext context) => AnimatedBuilder(
+      animation: scope,
+      builder: (_, __) => current()
+          ? buildContent(context)
+          : const Panel(
+              child: EmptyView('工作空间或权限已变化', '已隐藏旧报表，请重新打开使用报表。')));
+
+  Widget buildContent(BuildContext context) => showJobs &&
           usageReportJobRoles.contains(role)
       ? UsageReportJobsView(
           repository: jobs,
@@ -239,34 +277,38 @@ class _UsageReportsPageState extends State<UsageReportsPage>
                   throw const ApiFailure(409, 'WORKSPACE_CHANGED');
                 }
               }),
-          accessChanges: widget.session,
-          reauth: () => widget.session.login(stepUp: true),
-          onQuery: () => setState(() => showJobs = false))
+          accessChanges: scope,
+          reauth: reauthenticate,
+          onQuery: () {
+            if (current() && foreground) setState(() => showJobs = false);
+          })
       : UsageReportsView(
           repository: repository,
           loadTargets: targets,
           loadScopes: scopes,
           resolveScope: resolveScope,
-          timeZone: widget.session.tenant?['timeZone'] as String? ?? 'UTC',
-          accessChanges: widget.session,
+          timeZone: timeZone,
+          accessChanges: scope,
           onBackground: usageReportJobRoles.contains(role) ? createJob : null,
           onJobs: usageReportJobRoles.contains(role)
-              ? () => setState(() => showJobs = true)
-              : null,
-          onReviewRules: widget.session.canWrite
               ? () {
-                  if (current() && widget.session.canOpen('policies')) {
+                  if (current() && foreground) setState(() => showJobs = true);
+                }
+              : null,
+          onReviewRules: sessionOwner.canWrite
+              ? () {
+                  if (current() && foreground && sessionOwner.canOpen('policies')) {
                     context.go('/policies');
                   }
                 }
               : null,
-          onCheckDevice: widget.session.canWrite
+          onCheckDevice: sessionOwner.canWrite
               ? () {
-                  if (current() && widget.session.canOpen('devices')) {
+                  if (current() && foreground && sessionOwner.canOpen('devices')) {
                     context.go('/devices');
                   }
                 }
               : null,
           loadInsight: role == 'CHILD' ? null : insights.load,
-          reauth: () => widget.session.login(stepUp: true));
+          reauth: reauthenticate);
 }

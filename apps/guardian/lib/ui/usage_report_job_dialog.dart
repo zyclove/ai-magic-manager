@@ -4,6 +4,7 @@ import '../core/api.dart';
 import '../core/usage_report_jobs.dart';
 import '../core/usage_reports.dart';
 import 'design.dart';
+import 'owned_dialog_route.dart';
 
 class UsageReportJobDialog extends StatefulWidget {
   final UsageReportJobRepository repository;
@@ -12,6 +13,7 @@ class UsageReportJobDialog extends StatefulWidget {
   final ValueChanged<UsageReportJob> onCreated;
   final void Function(UsageReportJobDraft, String)? onReauth;
   final Listenable? accessChanges;
+  final bool Function()? hasAccess;
   const UsageReportJobDialog(
       {super.key,
       required this.repository,
@@ -19,7 +21,8 @@ class UsageReportJobDialog extends StatefulWidget {
       required this.onCreated,
       this.requestKey,
       this.onReauth,
-      this.accessChanges});
+      this.accessChanges,
+      this.hasAccess});
   @override
   State<UsageReportJobDialog> createState() => _UsageReportJobDialogState();
 }
@@ -27,7 +30,7 @@ class UsageReportJobDialog extends StatefulWidget {
 class _UsageReportJobDialogState extends State<UsageReportJobDialog> {
   late final String requestKey = widget.requestKey ?? requestId();
   late final UsageReportJobDraft draft = widget.draft;
-  bool busy = false, attempted = false, done = false;
+  bool busy = false, attempted = false, done = false, invalidated = false;
   Object? error;
   @override
   void initState() {
@@ -35,8 +38,48 @@ class _UsageReportJobDialogState extends State<UsageReportJobDialog> {
     widget.accessChanges?.addListener(changed);
   }
 
+  bool current(UsageReportJobRepository repository) {
+    if (!mounted || invalidated || !identical(widget.repository, repository) ||
+        !repository.current() || widget.hasAccess?.call() == false) return false;
+    final route = ModalRoute.of(context);
+    return route?.isActive == true &&
+        (route is! OwnedDialogRoute<dynamic> || route.available);
+  }
+
+  @override
+  void didUpdateWidget(covariant UsageReportJobDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.accessChanges, widget.accessChanges)) {
+      oldWidget.accessChanges?.removeListener(changed);
+      widget.accessChanges?.addListener(changed);
+    }
+    if (!identical(oldWidget.repository, widget.repository)) invalidated = true;
+    changed();
+  }
+
   void changed() {
-    if (mounted) setState(() {});
+    if (!mounted) return;
+    setState(() {
+      if (!widget.repository.current()) invalidated = true;
+      if (invalidated) {
+        error = null;
+        busy = false;
+      }
+    });
+  }
+
+  void close() {
+    if (!mounted || (busy && current(widget.repository))) return;
+    final route = ModalRoute.of(context);
+    if (route is OwnedDialogRoute<dynamic>) {
+      route.finish();
+    } else if (route?.isActive == true) {
+      if (route!.isCurrent) {
+        route.navigator!.pop();
+      } else {
+        route.navigator!.removeRoute(route);
+      }
+    }
   }
 
   @override
@@ -46,40 +89,41 @@ class _UsageReportJobDialogState extends State<UsageReportJobDialog> {
   }
 
   Future<void> submit() async {
-    if (busy || done || !widget.repository.current()) return;
+    final repository = widget.repository;
+    if (busy || done || !current(repository)) return;
     setState(() {
       busy = true;
       attempted = true;
       error = null;
     });
     try {
-      final job = await widget.repository.create(draft, requestKey);
-      if (!mounted || !widget.repository.current()) return;
+      final job = await repository.create(draft, requestKey);
+      if (!current(repository)) return;
       setState(() {
         done = true;
         busy = false;
       });
       widget.onCreated(job);
     } catch (e) {
-      if (mounted && widget.repository.current()) setState(() => error = e);
+      if (current(repository)) setState(() => error = e);
     } finally {
-      if (mounted) setState(() => busy = false);
+      if (current(repository)) setState(() => busy = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final current = widget.repository.current();
+    final allowed = current(widget.repository);
     String date(int value) => DateFormat('yyyy-MM-dd HH:mm')
         .format(usageLocalTime(value, draft.timeZone));
     return PopScope(
-        canPop: !busy || !current,
+        canPop: !busy || !allowed,
         child: AlertDialog(
             title: const Text('后台生成使用报表'),
             content: SizedBox(
                 width: 480,
                 child: SingleChildScrollView(
-                    child: current
+                    child: allowed
                         ? Column(
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -110,19 +154,21 @@ class _UsageReportJobDialogState extends State<UsageReportJobDialog> {
                                   FailureView(error!,
                                       reauth: busy || widget.onReauth == null
                                           ? null
-                                          : () => widget.onReauth!(
-                                              draft, requestKey)),
+                                          : () {
+                                              if (current(widget.repository) &&
+                                                  !busy && !done) {
+                                                widget.onReauth!(draft, requestKey);
+                                              }
+                                            }),
                                 ],
                                 if (done) const Notice('任务已创建。'),
                               ])
                         : const Notice('工作空间或权限已变化，请重新打开报表。', warning: true))),
             actions: [
               TextButton(
-                  onPressed: busy && current
-                      ? null
-                      : () => Navigator.of(context).pop(),
+                  onPressed: busy && allowed ? null : close,
                   child: const Text('关闭')),
-              if (current && !done)
+              if (allowed && !done)
                 FilledButton(
                     onPressed: busy ? null : submit,
                     child: Text(busy

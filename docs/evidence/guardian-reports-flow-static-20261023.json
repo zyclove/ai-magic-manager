@@ -1,0 +1,117 @@
+{
+  "status": "APPLIED_STATIC_REVIEW_ONLY_RUNTIME_VALIDATION_PENDING",
+  "appliedAtUtc": "2026-10-23T05:25:42.463898+00:00",
+  "parent": "09f56a177abeb5da6ddecc0f54c0b7b1e7c182f4",
+  "manifestSha256": "52059505edd662332bae03602dd8977af79375f6ac107a3ab75903febf36241a",
+  "sourceFiles": [
+    {
+      "path": "apps/guardian/lib/pages/usage_reports_page.dart",
+      "beforeBytes": 9836,
+      "beforeSha256": "feecd1f03426db88fb66deff4a78a0b482ff98bdc7c908e4a167fd97f6afbd51",
+      "afterBytes": 11091,
+      "afterSha256": "d867d1bbf85f4deaa5392ff5fa519b7195ccc781d38e1af63dd8bac14aaaed12",
+      "status": "UNRUN",
+      "r2AfterBytes": 10974,
+      "r2AfterSha256": "90eb742be5992d7957c44a689d34236a0a7c71030d318a1101ca68dfa2497100"
+    },
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "beforeBytes": 87318,
+      "beforeSha256": "c903fc88989db4cedc645154b098256e088330b2be6f42a14fd49a0c46155bc3",
+      "afterBytes": 87392,
+      "afterSha256": "e0d76e148ff4d629e96f3ba4e9abdf760136e7a1b78fe454021a71414dab28e6",
+      "status": "UNRUN",
+      "r2AfterBytes": 87392,
+      "r2AfterSha256": "e0d76e148ff4d629e96f3ba4e9abdf760136e7a1b78fe454021a71414dab28e6"
+    },
+    {
+      "path": "apps/guardian/lib/ui/usage_report_job_dialog.dart",
+      "beforeBytes": 5576,
+      "beforeSha256": "e20506e761cd9b8df9f5d1468835662b8cc6546d5c41d1d35b22bbaa74f2116f",
+      "afterBytes": 7156,
+      "afterSha256": "c316ed59fdda8f8f00b51e28968df25116eacbb2c3116016e7f96b9bc42257f2",
+      "status": "UNRUN",
+      "r2AfterBytes": 6899,
+      "r2AfterSha256": "56ec24301aed6b149136a9a00869e32ea89b539d9e63eac874a9e68bf5f7482f"
+    },
+    {
+      "path": "apps/guardian/lib/ui/usage_report_jobs_view.dart",
+      "beforeBytes": 21109,
+      "beforeSha256": "89a1dcc50df887ba722b05b8439b3f28b53588efc196c3e5579301cf16b293f3",
+      "afterBytes": 22450,
+      "afterSha256": "c92f228310938ac6037c4e065f02ff71de137770e30a8cb368bf776a5147d9c8",
+      "status": "UNRUN",
+      "r2AfterBytes": 22450,
+      "r2AfterSha256": "c92f228310938ac6037c4e065f02ff71de137770e30a8cb368bf776a5147d9c8"
+    },
+    {
+      "path": "apps/guardian/lib/ui/usage_reports_view.dart",
+      "beforeBytes": 32506,
+      "beforeSha256": "6fa3921d315633171c78fe5cf771dc2aebf436157cd23c3f2ee4c16764689526",
+      "afterBytes": 33639,
+      "afterSha256": "bbf14588f26a5a8fbc0f8c729e3671031829c2d4c9fcea54db33a46258e4a4e1",
+      "status": "UNRUN",
+      "r2AfterBytes": 33639,
+      "r2AfterSha256": "bbf14588f26a5a8fbc0f8c729e3671031829c2d4c9fcea54db33a46258e4a4e1"
+    },
+    {
+      "path": "apps/guardian/lib/ui/usage_report_device_picker.dart",
+      "beforeBytes": 4334,
+      "beforeSha256": "a89c0fc8c4e324b987fef89e626b66a078ecb32c5e2f3a680c3f80ee1bea4387",
+      "afterBytes": 5485,
+      "afterSha256": "c5a08c51ef3a4cd169ae237d9b7ac928426ee0664ad8d45f3cfbfe9e0c1bd3f7",
+      "status": "UNRUN",
+      "r2AfterBytes": 5485,
+      "r2AfterSha256": "c5a08c51ef3a4cd169ae237d9b7ac928426ee0664ad8d45f3cfbfe9e0c1bd3f7"
+    },
+    {
+      "path": "apps/guardian/lib/ui/owned_dialog_route.dart",
+      "beforeBytes": 1387,
+      "beforeSha256": "f4401bb72906eb9abdacbcc2a077a319223a04ae36eda6b74359d2868d731676",
+      "afterBytes": 1419,
+      "afterSha256": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946",
+      "status": "UNRUN",
+      "r2AfterBytes": 1419,
+      "r2AfterSha256": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946"
+    },
+    {
+      "path": "apps/guardian/test/usage_reports_scope_browser_test.dart",
+      "beforeExists": false,
+      "beforeBytes": null,
+      "beforeSha256": null,
+      "afterBytes": 47212,
+      "afterSha256": "38bcdf8e624db06af0dcc5368ca12e70ae6900a22d03b4ea0131cd8a3aabdeb8",
+      "status": "UNRUN",
+      "r2AfterBytes": 40822,
+      "r2AfterSha256": "c1ed230af4f3c12f623e4768f324bf51bae7be8993266043be0232e9c30d3387"
+    }
+  ],
+  "preparedExpandedBrowserCases": 21,
+  "behavior": [
+    "Report journeys capture the current Session, actor, workspace, role and scope generation.",
+    "Creating, closing, selecting and cancelling jobs complete only their owned dialog routes.",
+    "Own-route and exact host-route checks reject retained submit callbacks immediately after closure or background revocation.",
+    "Dates retain the official DateRangePickerDialog; devices and dates use the existing OwnedDialogRoute.",
+    "Existing idempotency keys, report byte limits and CLASS scopeVersion checks are preserved."
+  ],
+  "limits": [
+    "Official date-picker internals are not reimplemented or exhaustively tested.",
+    "No physical network cancellation or server-side revocation is claimed.",
+    "The new date-picker currentDate explicitly uses the captured workspace time zone."
+  ],
+  "validation": {
+    "format": "UNRUN",
+    "analysis": "UNRUN",
+    "browserTests": "UNRUN",
+    "visualReview": "UNRUN"
+  },
+  "priorAcceptedAnalysis": {
+    "sourceCommit": "1ca1f7fc4cddefca6f711bea0ae90f3cb8c89f9e",
+    "sourceFiles": 407
+  },
+  "priorAnalysisDoesNotCoverTheseChanges": true,
+  "sdkStarted": false,
+  "dependenciesChanged": false,
+  "servicesUpdated": false,
+  "wholeUiAccepted": false
+}

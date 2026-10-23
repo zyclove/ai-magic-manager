@@ -8,6 +8,7 @@ import '../core/usage_report_jobs.dart';
 import '../core/wellbeing_insight.dart';
 import '../core/observation.dart' show observationProfile;
 import 'design.dart';
+import 'owned_dialog_route.dart';
 import 'usage_trend_view.dart';
 import 'report_configurations_view.dart';
 import 'usage_report_device_picker.dart';
@@ -59,7 +60,7 @@ class _UsageReportsViewState extends State<UsageReportsView>
   bool get current =>
       mounted && foreground && !invalidated && widget.repository.current();
   int generation = 0;
-  ModalRoute<dynamic>? activeDialog;
+  OwnedDialogRoute<dynamic>? activeDialog;
   String period = 'DAY';
   String categoryFilter = 'ALL';
   late String zone;
@@ -132,9 +133,7 @@ class _UsageReportsViewState extends State<UsageReportsView>
     activeDialog = null;
     if (route == null) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (route.isActive) {
-        route.navigator!.removeRoute(route);
-      }
+      route.finish();
     });
   }
 
@@ -262,20 +261,29 @@ class _UsageReportsViewState extends State<UsageReportsView>
 
   Future<void> chooseDevices() async {
     if (!current) return;
+    if (activeDialog != null || ModalRoute.of(context)?.isCurrent == false) return;
     final revision = generation;
-    final result = await showDialog<Set<String>>(
+    late final OwnedDialogRoute<Set<String>> route;
+    route = OwnedDialogRoute<Set<String>>(
         context: context,
-        builder: (context) {
-          activeDialog = ModalRoute.of(context);
-          return UsageReportDevicePicker(
-              targets: available, selected: selected, limit: maxDevices);
+        builder: (_) => UsageReportDevicePicker(
+            targets: available,
+            selected: selected,
+            limit: maxDevices,
+            accessChanges: widget.accessChanges,
+            hasAccess: () => current && revision == generation &&
+                identical(activeDialog, route) && route.available));
+    activeDialog = route;
+    try {
+      final result = await presentOwnedDialog(context, route);
+      if (result != null && current && revision == generation) {
+        setState(() {
+          selected.clear();
+          selected.addAll(result);
         });
-    activeDialog = null;
-    if (result != null && current && revision == generation) {
-      setState(() {
-        selected.clear();
-        selected.addAll(result);
-      });
+      }
+    } finally {
+      if (identical(activeDialog, route)) activeDialog = null;
     }
   }
 
@@ -303,26 +311,31 @@ class _UsageReportsViewState extends State<UsageReportsView>
   }
 
   Future<void> chooseDates() async {
-    if (!current) return;
+    if (!current || activeDialog != null ||
+        ModalRoute.of(context)?.isCurrent == false) return;
     final revision = generation;
     final local = usageLocalTime(DateTime.now().millisecondsSinceEpoch, zone);
     final today = DateTime(local.year, local.month, local.day);
-    final value = await showDateRangePicker(
+    final route = OwnedDialogRoute<DateTimeRange>(
         context: context,
-        builder: (context, child) {
-          activeDialog = ModalRoute.of(context);
-          return child!;
-        },
-        firstDate: today.subtract(const Duration(days: 90)),
-        lastDate: today,
-        initialDateRange: DateTimeRange(
-            start: dates.start.isAfter(today) ? today : dates.start,
-            end: dates.end.isAfter(today) ? today : dates.end),
-        helpText: '选择报表日期（按 $zone）',
-        saveText: '应用日期');
-    activeDialog = null;
-    if (value != null && current && revision == generation) {
-      setState(() => dates = value);
+        useSafeArea: false,
+        builder: (_) => DateRangePickerDialog(
+            firstDate: today.subtract(const Duration(days: 90)),
+            lastDate: today,
+            currentDate: today,
+            initialDateRange: DateTimeRange(
+                start: dates.start.isAfter(today) ? today : dates.start,
+                end: dates.end.isAfter(today) ? today : dates.end),
+            helpText: '选择报表日期（按 $zone）',
+            saveText: '应用日期'));
+    activeDialog = route;
+    try {
+      final value = await presentOwnedDialog(context, route);
+      if (value != null && current && revision == generation) {
+        setState(() => dates = value);
+      }
+    } finally {
+      if (identical(activeDialog, route)) activeDialog = null;
     }
   }
 
@@ -414,7 +427,9 @@ class _UsageReportsViewState extends State<UsageReportsView>
                                 .toList(),
                             onChanged: loading
                                 ? null
-                                : (value) => setState(() => zone = value!))),
+                                : (value) {
+                                    if (current && !loading) setState(() => zone = value!);
+                                  })),
                     SizedBox(
                         width: 130,
                         child: DropdownButtonFormField<String>(
@@ -427,7 +442,9 @@ class _UsageReportsViewState extends State<UsageReportsView>
                             ],
                             onChanged: loading
                                 ? null
-                                : (v) => setState(() => period = v!))),
+                                : (v) {
+                                    if (current && !loading) setState(() => period = v!);
+                                  })),
                     FilledButton.icon(
                         onPressed:
                             loading || selected.isEmpty || selected.length > 20
@@ -483,8 +500,9 @@ class _UsageReportsViewState extends State<UsageReportsView>
                       DropdownMenuItem(
                           value: entry.key, child: Text(entry.value))
                   ],
-                  onChanged: (value) =>
-                      setState(() => categoryFilter = value!))),
+                  onChanged: (value) {
+                    if (current && !loading) setState(() => categoryFilter = value!);
+                  })),
           const SizedBox(height: 8),
           const Text(
               '按本次报表返回的当前分类筛选，不重新查询。分类由工作空间管理员声明，不代表历史分类或安全评级；设备覆盖率仍针对完整查询范围。'),
@@ -508,6 +526,7 @@ class _UsageReportsViewState extends State<UsageReportsView>
                         '${report!.generatedAt}-${device.deviceId}-$categoryFilter'),
                     device: device,
                     categoryFilter: categoryFilter,
+                    isCurrent: () => current,
                     onReviewRules: widget.onReviewRules,
                     onCheckDevice: widget.onCheckDevice,
                     loadInsight: widget.loadInsight,
@@ -525,6 +544,7 @@ class UsageReportDeviceView extends StatefulWidget {
   final UsageReport report;
   final String categoryFilter;
   final bool historical;
+  final bool Function()? isCurrent;
   final VoidCallback? onReviewRules, onCheckDevice;
   final Future<WellbeingInsight> Function(String, String)? loadInsight;
   const UsageReportDeviceView(
@@ -532,6 +552,7 @@ class UsageReportDeviceView extends StatefulWidget {
       required this.device,
       required this.report,
       this.historical = false,
+      this.isCurrent,
       this.onReviewRules,
       this.onCheckDevice,
       this.loadInsight,
@@ -545,10 +566,11 @@ class UsageReportDeviceViewState extends State<UsageReportDeviceView> {
   WellbeingInsight? insight;
   Object? insightError;
   bool insightLoading = false;
+  bool get current => mounted && (widget.isCurrent?.call() ?? true);
 
   Future<void> _loadInsight() async {
     final loader = widget.loadInsight;
-    if (loader == null || insightLoading) return;
+    if (!current || loader == null || insightLoading) return;
     setState(() {
       insightLoading = true;
       insightError = null;
@@ -557,11 +579,11 @@ class UsageReportDeviceViewState extends State<UsageReportDeviceView> {
     try {
       final result =
           await loader(widget.device.deviceId, widget.device.registrationId);
-      if (mounted) setState(() => insight = result);
+      if (current) setState(() => insight = result);
     } catch (error) {
-      if (mounted) setState(() => insightError = error);
+      if (current) setState(() => insightError = error);
     } finally {
-      if (mounted) setState(() => insightLoading = false);
+      if (current) setState(() => insightLoading = false);
     }
   }
 
@@ -683,7 +705,9 @@ class UsageReportDeviceViewState extends State<UsageReportDeviceView> {
                           '${apps[i].displayName} · ${observationProfile(apps[i].profile)}',
                           overflow: TextOverflow.ellipsis))
               ],
-              onChanged: (v) => setState(() => selected = v!)),
+              onChanged: (v) {
+                if (current) setState(() => selected = v!);
+              }),
           const SizedBox(height: 8),
           Text(
               '类别：${applicationCategories[app.classification.category]} · ${app.classification.source == 'NONE' ? '尚未设置' : '来源：管理员声明 · 版本 ${app.classification.version}'}',

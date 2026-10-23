@@ -220,7 +220,9 @@ class ConsolePages extends StatelessWidget {
               s.scopeGeneration)), session: s);
     }
     if (section == 'reports') {
-      return UsageReportsPage(key: ValueKey('${s.root}-${s.role}'), session: s);
+      return UsageReportsPage(
+          key: ValueKey((s, s.profile?['subject'], s.tenant?['id'], s.role,
+              s.scopeGeneration)), session: s);
     }
     if (section == 'commercial') {
       return CommercialAccountPage(

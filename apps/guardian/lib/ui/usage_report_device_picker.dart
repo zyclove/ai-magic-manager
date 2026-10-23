@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import '../core/usage_reports.dart';
 import 'design.dart';
+import 'owned_dialog_route.dart';
 
 class UsageReportDevicePicker extends StatefulWidget {
   final List<UsageReportTarget> targets;
   final Set<String> selected;
   final int limit;
+  final Listenable? accessChanges;
+  final bool Function()? hasAccess;
   const UsageReportDevicePicker(
       {super.key,
       required this.targets,
       required this.selected,
-      required this.limit});
+      required this.limit,
+      this.accessChanges,
+      this.hasAccess});
   @override
   State<UsageReportDevicePicker> createState() =>
       _UsageReportDevicePickerState();
@@ -20,6 +25,35 @@ class _UsageReportDevicePickerState extends State<UsageReportDevicePicker> {
   late final Set<String> selected = widget.selected
       .intersection(widget.targets.map((t) => t.deviceId).toSet());
   String search = '';
+  bool invalidated = false;
+  bool get current => mounted && !invalidated &&
+      (widget.hasAccess?.call() ?? true);
+
+  @override
+  void initState() {
+    super.initState();
+    widget.accessChanges?.addListener(changed);
+  }
+
+  void changed() {
+    if (mounted && !current) setState(() => invalidated = true);
+  }
+
+  @override
+  void dispose() {
+    widget.accessChanges?.removeListener(changed);
+    super.dispose();
+  }
+
+  void finish([Set<String>? value]) {
+    if (!current) return;
+    final route = ModalRoute.of(context);
+    if (route is OwnedDialogRoute<Set<String>>) {
+      route.finish(value);
+    } else if (route?.isActive == true && route?.isCurrent == true) {
+      route!.navigator!.pop(value);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     final visible = widget.targets
@@ -38,20 +72,25 @@ class _UsageReportDevicePickerState extends State<UsageReportDevicePicker> {
               TextField(
                   decoration: const InputDecoration(
                       labelText: '搜索设备或档案', prefixIcon: Icon(Icons.search)),
-                  onChanged: (value) =>
-                      setState(() => search = value.trim().toLowerCase())),
+                  onChanged: (value) {
+                    if (current) setState(() => search = value.trim().toLowerCase());
+                  }),
               const SizedBox(height: 8),
               Text('已选 ${selected.length} / ${widget.limit} 台'),
               Wrap(spacing: 8, children: [
                 TextButton(
                     onPressed: union.length > widget.limit || visible.isEmpty
                         ? null
-                        : () => setState(() => selected.addAll(union)),
+                        : () {
+                            if (current) setState(() => selected.addAll(union));
+                          },
                     child: const Text('选择筛选结果')),
                 TextButton(
                     onPressed: selected.isEmpty
                         ? null
-                        : () => setState(selected.clear),
+                        : () {
+                            if (current) setState(selected.clear);
+                          },
                     child: const Text('清空选择')),
               ]),
               if (union.length > widget.limit)
@@ -74,22 +113,25 @@ class _UsageReportDevicePickerState extends State<UsageReportDevicePicker> {
                                 onChanged: !checked &&
                                         selected.length >= widget.limit
                                     ? null
-                                    : (value) => setState(() {
+                                    : (value) {
+                                        if (!current) return;
+                                        setState(() {
                                           if (value == true) {
                                             selected.add(target.deviceId);
                                           } else {
                                             selected.remove(target.deviceId);
                                           }
-                                        }));
+                                        });
+                                      });
                           })),
             ])),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context), child: const Text('取消')),
+              onPressed: finish, child: const Text('取消')),
           FilledButton(
               onPressed: selected.isEmpty || selected.length > widget.limit
                   ? null
-                  : () => Navigator.pop(context, Set<String>.of(selected)),
+                  : () => finish(Set<String>.of(selected)),
               child: const Text('确认选择')),
         ]);
   }
