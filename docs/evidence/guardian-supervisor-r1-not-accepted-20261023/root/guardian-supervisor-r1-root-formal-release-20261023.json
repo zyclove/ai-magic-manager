@@ -1,0 +1,23 @@
+{
+  "status": "ROOT_QUALIFICATION_R1_FAILED_WINDOW_FORMALLY_RELEASED",
+  "atUtc": "2026-10-23T10:16:47.4350219Z",
+  "actualRootChunk": "dd72ce",
+  "rootExitCode": 1,
+  "hostPid": 101944,
+  "hostExitCode": 1,
+  "sameHandleFirstSignaledSeconds": 0.2161604,
+  "hostBeforeRoot14Seconds": true,
+  "rootForcedHost": false,
+  "fixturePid": 100312,
+  "fixtureExitCode": 0,
+  "fixtureJobForced": true,
+  "finalJobActive": 0,
+  "postFileDescriptorsMatched": 21,
+  "hostAndFixtureAbsent": true,
+  "sdkCount": 0,
+  "unknownCount": 0,
+  "remainingThreeCases": "UNRUN",
+  "qualificationAccepted": false,
+  "analysisAccepted": false,
+  "newGrant": false
+}

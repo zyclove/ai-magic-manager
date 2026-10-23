@@ -1,0 +1,11 @@
+{
+  "status": "ROOT_QUALIFICATION_R1_TERMINAL_OS_POST_MATCH",
+  "atUtc": "2026-10-23T10:14:06.8630282Z",
+  "host101944Present": false,
+  "fixture100312Present": false,
+  "sdkCount": 0,
+  "unknownCount": 0,
+  "processCount": 900,
+  "fullOtherCasesRun": false,
+  "analysisAccepted": false
+}

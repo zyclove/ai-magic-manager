@@ -1,0 +1,94 @@
+{
+  "status": "STATIC_QUALIFICATION_ONLY_ALL_UNRUN",
+  "executionApproved": false,
+  "realControllerEntryEnabled": false,
+  "sdkAllowed": false,
+  "candidateNames": [
+    "supervisor.py",
+    "owned_job.py",
+    "fixtures.py",
+    "qualification-cases.json",
+    "README.md",
+    "design.md"
+  ],
+  "candidateFiles": [
+    {
+      "path": "supervisor.py",
+      "bytes": 9146,
+      "sha256": "3d564913465a44ca269d4a617ae0c57791036b4a883c8e14edc852936f9b6580"
+    },
+    {
+      "path": "owned_job.py",
+      "bytes": 8780,
+      "sha256": "c454012bf5fa1c5275fe57e5d095053fc72b495779e12209fde44359a8950f1e"
+    },
+    {
+      "path": "fixtures.py",
+      "bytes": 1834,
+      "sha256": "5b98c93d0efdd612641591db7d14ceb3973d50dbb5fec7925182ab63b61ac4b7"
+    },
+    {
+      "path": "qualification-cases.json",
+      "bytes": 802,
+      "sha256": "af96e8ee1f7a1a77b9a33508982e6a6e09595047ceebebbbafb95d0af5130e9e"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1630,
+      "sha256": "16093d775631eb96a4fff60cfd712cb4917d279bf935296d8860b5002d1d9fb9"
+    },
+    {
+      "path": "design.md",
+      "bytes": 3986,
+      "sha256": "c891de0ad70d663d898e2954883df8da3d1db57b04e71572c37dfd9561b068ca"
+    }
+  ],
+  "runtimePins": [
+    {
+      "path": "C:\\Python313\\python.exe",
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\python313.dll",
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\DLLs\\_ctypes.pyd",
+      "bytes": 133992,
+      "sha256": "5c0d5082fba1a2a3eb8d5e23073be25164c19f21304b09cecaab340dc7198815",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\DLLs\\libffi-8.dll",
+      "bytes": 39696,
+      "sha256": "eff52743773eb550fcc6ce3efc37c85724502233b6b002a35496d828bd7b280a",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\__init__.py",
+      "bytes": 19374,
+      "sha256": "2e63f01ac6b8ffc1acfa4eec4c253eef8fbd65e09506d690cb3be71a2d78303a",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\_endian.py",
+      "bytes": 2635,
+      "sha256": "f2752ab2425dac9bfaff5aa1a3c6cd66aa342fee0db2f2a42de568fc59d5cbea",
+      "absolute": true
+    }
+  ],
+  "runtimeClosureComplete": false,
+  "fixedPython": "C:/Python313/python.exe",
+  "caseIds": [
+    "natural-zero",
+    "natural-nonzero",
+    "deadline",
+    "nested-owned-child"
+  ],
+  "mainOrOldR9Written": false,
+  "newDependenciesInstalled": false
+}

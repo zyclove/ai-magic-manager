@@ -1,0 +1,171 @@
+{
+  "status": "STATIC_NO_BLOCKER_FOR_FIXED_QUALIFICATION_ONLY",
+  "caseExecution": "ALL_FOUR_UNRUN",
+  "realAnalysisAcceptance": false,
+  "executionAuthorizedByThisReview": false,
+  "reviewerCodeParsing": false,
+  "reviewerCandidateImport": false,
+  "reviewerSdkOrNativeCalls": 0,
+  "mainOrGitWritten": false,
+  "manifest": {
+    "bytes": 2643,
+    "sha256": "f6f0b42cb8277399eeb7b5f01e6c36b8e9ad63ef57e4800bf98aa8f6cba7061d"
+  },
+  "delivery": {
+    "bytes": 1293,
+    "sha256": "205439d4e3dd09c829033a9f1ab1374efd4db25483419292a72eb7fea690878a"
+  },
+  "exactDeliveryMembership": true,
+  "deliveryDescriptors": 8,
+  "manifestCandidateDescriptors": 6,
+  "runtimeDescriptors": 6,
+  "allDescriptorsMatch": true,
+  "failures": [],
+  "checked": [
+    {
+      "kind": "delivery",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\design.md",
+      "bytes": 3986,
+      "sha256": "c891de0ad70d663d898e2954883df8da3d1db57b04e71572c37dfd9561b068ca",
+      "match": true
+    },
+    {
+      "kind": "delivery",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\fixtures.py",
+      "bytes": 1834,
+      "sha256": "5b98c93d0efdd612641591db7d14ceb3973d50dbb5fec7925182ab63b61ac4b7",
+      "match": true
+    },
+    {
+      "kind": "delivery",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\manifest.json",
+      "bytes": 2643,
+      "sha256": "f6f0b42cb8277399eeb7b5f01e6c36b8e9ad63ef57e4800bf98aa8f6cba7061d",
+      "match": true
+    },
+    {
+      "kind": "delivery",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\owned_job.py",
+      "bytes": 8780,
+      "sha256": "c454012bf5fa1c5275fe57e5d095053fc72b495779e12209fde44359a8950f1e",
+      "match": true
+    },
+    {
+      "kind": "delivery",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\qualification-cases.json",
+      "bytes": 802,
+      "sha256": "af96e8ee1f7a1a77b9a33508982e6a6e09595047ceebebbbafb95d0af5130e9e",
+      "match": true
+    },
+    {
+      "kind": "delivery",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\README.md",
+      "bytes": 1630,
+      "sha256": "16093d775631eb96a4fff60cfd712cb4917d279bf935296d8860b5002d1d9fb9",
+      "match": true
+    },
+    {
+      "kind": "delivery",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\static-review.json",
+      "bytes": 1247,
+      "sha256": "0ec27163caa774d4fb951df5db6aa88decb3607bad059591aa653d5e097c0a21",
+      "match": true
+    },
+    {
+      "kind": "delivery",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\supervisor.py",
+      "bytes": 9146,
+      "sha256": "3d564913465a44ca269d4a617ae0c57791036b4a883c8e14edc852936f9b6580",
+      "match": true
+    },
+    {
+      "kind": "manifestCandidate",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\supervisor.py",
+      "bytes": 9146,
+      "sha256": "3d564913465a44ca269d4a617ae0c57791036b4a883c8e14edc852936f9b6580",
+      "match": true
+    },
+    {
+      "kind": "manifestCandidate",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\owned_job.py",
+      "bytes": 8780,
+      "sha256": "c454012bf5fa1c5275fe57e5d095053fc72b495779e12209fde44359a8950f1e",
+      "match": true
+    },
+    {
+      "kind": "manifestCandidate",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\fixtures.py",
+      "bytes": 1834,
+      "sha256": "5b98c93d0efdd612641591db7d14ceb3973d50dbb5fec7925182ab63b61ac4b7",
+      "match": true
+    },
+    {
+      "kind": "manifestCandidate",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\qualification-cases.json",
+      "bytes": 802,
+      "sha256": "af96e8ee1f7a1a77b9a33508982e6a6e09595047ceebebbbafb95d0af5130e9e",
+      "match": true
+    },
+    {
+      "kind": "manifestCandidate",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\README.md",
+      "bytes": 1630,
+      "sha256": "16093d775631eb96a4fff60cfd712cb4917d279bf935296d8860b5002d1d9fb9",
+      "match": true
+    },
+    {
+      "kind": "manifestCandidate",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\design.md",
+      "bytes": 3986,
+      "sha256": "c891de0ad70d663d898e2954883df8da3d1db57b04e71572c37dfd9561b068ca",
+      "match": true
+    },
+    {
+      "kind": "runtime",
+      "path": "C:\\Python313\\python.exe",
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125",
+      "match": true
+    },
+    {
+      "kind": "runtime",
+      "path": "C:\\Python313\\python313.dll",
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529",
+      "match": true
+    },
+    {
+      "kind": "runtime",
+      "path": "C:\\Python313\\DLLs\\_ctypes.pyd",
+      "bytes": 133992,
+      "sha256": "5c0d5082fba1a2a3eb8d5e23073be25164c19f21304b09cecaab340dc7198815",
+      "match": true
+    },
+    {
+      "kind": "runtime",
+      "path": "C:\\Python313\\DLLs\\libffi-8.dll",
+      "bytes": 39696,
+      "sha256": "eff52743773eb550fcc6ce3efc37c85724502233b6b002a35496d828bd7b280a",
+      "match": true
+    },
+    {
+      "kind": "runtime",
+      "path": "C:\\Python313\\Lib\\ctypes\\__init__.py",
+      "bytes": 19374,
+      "sha256": "2e63f01ac6b8ffc1acfa4eec4c253eef8fbd65e09506d690cb3be71a2d78303a",
+      "match": true
+    },
+    {
+      "kind": "runtime",
+      "path": "C:\\Python313\\Lib\\ctypes\\_endian.py",
+      "bytes": 2635,
+      "sha256": "f2752ab2425dac9bfaff5aa1a3c6cd66aa342fee0db2f2a42de568fc59d5cbea",
+      "match": true
+    }
+  ],
+  "report": {
+    "path": "review.md",
+    "bytes": 5031,
+    "sha256": "9148059aabab98bcde0b935224dc529afcea359c60c1e31873bb2d843fc7327a"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "status": "SOURCE_ONLY_UNRUN_NO_EXECUTION_GRANT",
+  "cases": {
+    "natural-zero": {"workSeconds": 8, "cleanupSeconds": 6, "expectedExitCode": 0, "expectsForcedCleanup": false},
+    "natural-nonzero": {"workSeconds": 8, "cleanupSeconds": 6, "expectedExitCode": 7, "expectsForcedCleanup": false},
+    "deadline": {"workSeconds": 4, "cleanupSeconds": 6, "expectedExitCode": 124, "expectsForcedCleanup": true},
+    "nested-owned-child": {"workSeconds": 8, "cleanupSeconds": 6, "expectedExitCode": 124, "expectsForcedCleanup": true, "requiresNestedJobEvidence": true}
+  },
+  "inheritedCeilingsOnly": {"outer": 180, "working": 174, "worker": 165, "commandWorkerRelative": 135, "commandCleanupWorkerRelative": 140, "postflightReserve": 25},
+  "sdkAllowed": false,
+  "realControllerEntryEnabled": false
+}

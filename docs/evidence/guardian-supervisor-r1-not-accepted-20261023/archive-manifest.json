@@ -1,0 +1,233 @@
+{
+  "status": "ACTUAL_NATURAL_ZERO_NOT_ACCEPTED_ORIGINAL_BYTES_PRESERVED",
+  "atUtc": "2026-10-23T10:18:48.706262+00:00",
+  "actualChunk": "dd72ce",
+  "rootToolNaturalExitCode": 1,
+  "actualRetainedHost": {
+    "status": "FIXED_CASE_QUALIFICATION_NOT_ACCEPTED",
+    "case": "natural-zero",
+    "grant": "guardian-supervisor-fixed-qualification-root-20261023-r1",
+    "atUtc": "2026-10-23T10:09:50.0519447Z",
+    "sdkCount": 0,
+    "unknownCount": 0,
+    "availableRamBytes": 2240106496,
+    "disks": [
+      {
+        "Name": "C",
+        "Free": 5660037120
+      },
+      {
+        "Name": "D",
+        "Free": 23801135104
+      }
+    ],
+    "manifestSha256": "f6f0b42cb8277399eeb7b5f01e6c36b8e9ad63ef57e4800bf98aa8f6cba7061d",
+    "maximumHostSeconds": 14.0,
+    "reusedBudget": false,
+    "scope": "One fixed no-SDK qualification case; no real controller.",
+    "hostPid": 101944,
+    "sameHandleCreationFiletimeUtcDomain": "134372237900881770",
+    "sameHandleExitFiletimeUtcDomain": "134372237902975730",
+    "firstWaitSignaledElapsedSeconds": 0.2161604,
+    "hostActualExitCode": 1,
+    "rootForcedOwnHost": false,
+    "rootEmergencyCleanupAttempted": false,
+    "failure": null,
+    "hostTimelyAgainstEarlierRootAnchor": true,
+    "rawObservationPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\qualification-attempts\\natural-zero\\observation.json",
+    "postPinsMatch": true,
+    "qualificationAccepted": false,
+    "analysisAccepted": false,
+    "realControllerStarted": false,
+    "rootElapsedBeforeReceiptSeconds": 0.241911
+  },
+  "firstSignaledCompleteJobSnapshotMissing": true,
+  "cumulativeTotal2MemberIdentityNotKnown": true,
+  "otherThreeCases": "UNRUN",
+  "allFourQualified": false,
+  "analysisAccepted": false,
+  "sourceDeployed": false,
+  "originalFilesModified": false,
+  "scratchDeleted": false,
+  "formalRelease": {
+    "status": "ROOT_QUALIFICATION_R1_FAILED_WINDOW_FORMALLY_RELEASED",
+    "atUtc": "2026-10-23T10:16:47.4350219Z",
+    "actualRootChunk": "dd72ce",
+    "rootExitCode": 1,
+    "hostPid": 101944,
+    "hostExitCode": 1,
+    "sameHandleFirstSignaledSeconds": 0.2161604,
+    "hostBeforeRoot14Seconds": true,
+    "rootForcedHost": false,
+    "fixturePid": 100312,
+    "fixtureExitCode": 0,
+    "fixtureJobForced": true,
+    "finalJobActive": 0,
+    "postFileDescriptorsMatched": 21,
+    "hostAndFixtureAbsent": true,
+    "sdkCount": 0,
+    "unknownCount": 0,
+    "remainingThreeCases": "UNRUN",
+    "qualificationAccepted": false,
+    "analysisAccepted": false,
+    "newGrant": false
+  },
+  "copiedFiles": [
+    {
+      "original": ".cache/guardian-supervisor-20261023-r1/delivery-pins.json",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/candidate/delivery-pins.json",
+      "bytes": 1293,
+      "sha256": "205439d4e3dd09c829033a9f1ab1374efd4db25483419292a72eb7fea690878a"
+    },
+    {
+      "original": ".cache/guardian-supervisor-20261023-r1/design.md",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/candidate/design.md",
+      "bytes": 3986,
+      "sha256": "c891de0ad70d663d898e2954883df8da3d1db57b04e71572c37dfd9561b068ca"
+    },
+    {
+      "original": ".cache/guardian-supervisor-20261023-r1/fixtures.py",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/candidate/fixtures.py",
+      "bytes": 1834,
+      "sha256": "5b98c93d0efdd612641591db7d14ceb3973d50dbb5fec7925182ab63b61ac4b7"
+    },
+    {
+      "original": ".cache/guardian-supervisor-20261023-r1/manifest.json",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/candidate/manifest.json",
+      "bytes": 2643,
+      "sha256": "f6f0b42cb8277399eeb7b5f01e6c36b8e9ad63ef57e4800bf98aa8f6cba7061d"
+    },
+    {
+      "original": ".cache/guardian-supervisor-20261023-r1/owned_job.py",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/candidate/owned_job.py",
+      "bytes": 8780,
+      "sha256": "c454012bf5fa1c5275fe57e5d095053fc72b495779e12209fde44359a8950f1e"
+    },
+    {
+      "original": ".cache/guardian-supervisor-20261023-r1/qualification-cases.json",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/candidate/qualification-cases.json",
+      "bytes": 802,
+      "sha256": "af96e8ee1f7a1a77b9a33508982e6a6e09595047ceebebbbafb95d0af5130e9e"
+    },
+    {
+      "original": ".cache/guardian-supervisor-20261023-r1/README.md",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/candidate/README.md",
+      "bytes": 1630,
+      "sha256": "16093d775631eb96a4fff60cfd712cb4917d279bf935296d8860b5002d1d9fb9"
+    },
+    {
+      "original": ".cache/guardian-supervisor-20261023-r1/static-review.json",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/candidate/static-review.json",
+      "bytes": 1247,
+      "sha256": "0ec27163caa774d4fb951df5db6aa88decb3607bad059591aa653d5e097c0a21"
+    },
+    {
+      "original": ".cache/guardian-supervisor-20261023-r1/supervisor.py",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/candidate/supervisor.py",
+      "bytes": 9146,
+      "sha256": "3d564913465a44ca269d4a617ae0c57791036b4a883c8e14edc852936f9b6580"
+    },
+    {
+      "original": ".cache/guardian-supervisor-20261023-r1/qualification-attempts/natural-zero/observation.json",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/attempt/observation.json",
+      "bytes": 1984,
+      "sha256": "a9f9ac1cb4b4ddf5428d4102b3d0a75580e43680ba22f8beb18030f8525bf0bd"
+    },
+    {
+      "original": ".cache/guardian-supervisor-20261023-r1/qualification-attempts/natural-zero/fixture-console.log",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/attempt/fixture-console.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "original": ".cache/guardian-supervisor-root-qualification-20261023-r1/natural-zero/preflight.json",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/root/preflight.json",
+      "bytes": 627,
+      "sha256": "1042474cfb645f4db6aaf27a260190506c949a0e3989aafaacaeb8f327d72db2"
+    },
+    {
+      "original": ".cache/guardian-supervisor-root-qualification-20261023-r1/natural-zero/result.json",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/root/result.json",
+      "bytes": 1331,
+      "sha256": "786dddb7dfb6d808fb31ec700bbac61df66bf657b39afcd4ead70a5521474bf4"
+    },
+    {
+      "original": ".cache/guardian-supervisor-root-qualify-20261023.ps1",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/root/guardian-supervisor-root-qualify-20261023.ps1",
+      "bytes": 7538,
+      "sha256": "082b132e7f573ee792e99afb8a27ddd5df2dae47cb242c3a871c8d444170ccfc"
+    },
+    {
+      "original": ".cache/guardian-supervisor-root-qualify-before-cleanup-fix-20261023.ps1",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/root/guardian-supervisor-root-qualify-before-cleanup-fix-20261023.ps1",
+      "bytes": 7360,
+      "sha256": "267bcfcc53883adcf1990cb25d4af509b8966b68e01da39c85d2bdf9e08af322"
+    },
+    {
+      "original": ".cache/guardian-supervisor-root-not-started-20261023-r1.json",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/root/guardian-supervisor-root-not-started-20261023-r1.json",
+      "bytes": 548,
+      "sha256": "11ac71b8a9e3b71a1110bac107afd3ff0fcaf1fba645c0afa80ded86e6c35adc"
+    },
+    {
+      "original": ".cache/guardian-supervisor-r1-root-os-post-20261023.json",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/root/guardian-supervisor-r1-root-os-post-20261023.json",
+      "bytes": 300,
+      "sha256": "17eee172edbe2189f06df1652194dda46b42ec394ccaf5fc29ddb3f8de1c326f"
+    },
+    {
+      "original": ".cache/guardian-supervisor-r1-root-formal-release-20261023.json",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/root/guardian-supervisor-r1-root-formal-release-20261023.json",
+      "bytes": 664,
+      "sha256": "4bf858a7d3cda95ccff267c1156cecc37bf3f8a669af7d9964c168ea1b07531a"
+    },
+    {
+      "original": ".cache/guardian-supervisor-independent-20261023-r1/review.md",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/independent/review.md",
+      "bytes": 5031,
+      "sha256": "9148059aabab98bcde0b935224dc529afcea359c60c1e31873bb2d843fc7327a"
+    },
+    {
+      "original": ".cache/guardian-supervisor-independent-20261023-r1/review-pins.json",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/independent/review-pins.json",
+      "bytes": 6148,
+      "sha256": "daf411b8221af4cf55e6579cbc694210aea6381586a1572454c8cbdf52f00492"
+    },
+    {
+      "original": ".cache/guardian-supervisor-root-launcher-independent-20261023-r2/review.md",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/launcher-review/review.md",
+      "bytes": 1491,
+      "sha256": "2808f8276cc8d95cba907b27eb348509455e4499e0bfb57d255f3e081329e987"
+    },
+    {
+      "original": ".cache/guardian-supervisor-root-launcher-independent-20261023-r2/review.json",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/launcher-review/review.json",
+      "bytes": 3929,
+      "sha256": "c44ff39a731228d9fd8fb49cf5afd1e80e58b9eff0e96f86807c1ecaf7e1d0ca"
+    },
+    {
+      "original": ".cache/guardian-supervisor-root-launcher-independent-20261023-r2/pins.json",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/launcher-review/pins.json",
+      "bytes": 388,
+      "sha256": "ab16814fe2a1aab6b949a5a6c4e5038566847aab660e133dcaeee2edef79d843"
+    },
+    {
+      "original": ".cache/guardian-supervisor-r1-failed-post-20261023-r1/readback.md",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/post/readback.md",
+      "bytes": 3748,
+      "sha256": "4da34042bf426c70a6d797683eb72d09b9c7599d419424e6c6e99c36f807aa6f"
+    },
+    {
+      "original": ".cache/guardian-supervisor-r1-failed-post-20261023-r1/readback.json",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/post/readback.json",
+      "bytes": 13292,
+      "sha256": "36a4390e87d40c3ded7d559484760bc645158e862ec39f0641cd21d98820cedb"
+    },
+    {
+      "original": ".cache/guardian-supervisor-r1-failed-post-20261023-r1/delivery-pins.json",
+      "path": "docs/evidence/guardian-supervisor-r1-not-accepted-20261023/post/delivery-pins.json",
+      "bytes": 1616,
+      "sha256": "1fe0f89330f2fb51644fc40c238f5fcc0a34ebe21cf758e3954b6493e6383186"
+    }
+  ]
+}

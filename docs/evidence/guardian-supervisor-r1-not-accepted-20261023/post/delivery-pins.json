@@ -1,0 +1,36 @@
+{
+  "status": "FAILED_POST_READBACK_ONLY",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-r1-failed-post-20261023-r1\\readback.md",
+      "bytes": 3748,
+      "sha256": "4da34042bf426c70a6d797683eb72d09b9c7599d419424e6c6e99c36f807aa6f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-r1-failed-post-20261023-r1\\readback.json",
+      "bytes": 13292,
+      "sha256": "36a4390e87d40c3ded7d559484760bc645158e862ec39f0641cd21d98820cedb"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-r1-failed-post-20261023-r1\\preserved\\inner-fixture-console.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-r1-failed-post-20261023-r1\\preserved\\inner-observation.json",
+      "bytes": 1984,
+      "sha256": "a9f9ac1cb4b4ddf5428d4102b3d0a75580e43680ba22f8beb18030f8525bf0bd"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-r1-failed-post-20261023-r1\\preserved\\root-preflight.json",
+      "bytes": 627,
+      "sha256": "1042474cfb645f4db6aaf27a260190506c949a0e3989aafaacaeb8f327d72db2"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-r1-failed-post-20261023-r1\\preserved\\root-result.json",
+      "bytes": 1331,
+      "sha256": "786dddb7dfb6d808fb31ec700bbac61df66bf657b39afcd4ead70a5521474bf4"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json"
+}

@@ -1,0 +1,374 @@
+{
+  "status": "FAILED_QUALIFICATION_POST_PINS_MATCH_NOT_ACCEPTED",
+  "allPinsMatch": true,
+  "exactDeliveryTopLevelMembership": true,
+  "checkedDescriptorCounts": {
+    "candidate": 6,
+    "runtime": 6,
+    "delivery": 8,
+    "rootLauncher": 1
+  },
+  "anchors": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\manifest.json",
+      "bytes": 2643,
+      "sha256": "f6f0b42cb8277399eeb7b5f01e6c36b8e9ad63ef57e4800bf98aa8f6cba7061d",
+      "match": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\delivery-pins.json",
+      "bytes": 1293,
+      "sha256": "205439d4e3dd09c829033a9f1ab1374efd4db25483419292a72eb7fea690878a",
+      "match": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualify-20261023.ps1",
+      "bytes": 7538,
+      "sha256": "082b132e7f573ee792e99afb8a27ddd5df2dae47cb242c3a871c8d444170ccfc",
+      "match": true
+    }
+  ],
+  "checked": [
+    {
+      "kind": "candidate",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\supervisor.py",
+      "bytes": 9146,
+      "sha256": "3d564913465a44ca269d4a617ae0c57791036b4a883c8e14edc852936f9b6580",
+      "match": true
+    },
+    {
+      "kind": "candidate",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\owned_job.py",
+      "bytes": 8780,
+      "sha256": "c454012bf5fa1c5275fe57e5d095053fc72b495779e12209fde44359a8950f1e",
+      "match": true
+    },
+    {
+      "kind": "candidate",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\fixtures.py",
+      "bytes": 1834,
+      "sha256": "5b98c93d0efdd612641591db7d14ceb3973d50dbb5fec7925182ab63b61ac4b7",
+      "match": true
+    },
+    {
+      "kind": "candidate",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\qualification-cases.json",
+      "bytes": 802,
+      "sha256": "af96e8ee1f7a1a77b9a33508982e6a6e09595047ceebebbbafb95d0af5130e9e",
+      "match": true
+    },
+    {
+      "kind": "candidate",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\README.md",
+      "bytes": 1630,
+      "sha256": "16093d775631eb96a4fff60cfd712cb4917d279bf935296d8860b5002d1d9fb9",
+      "match": true
+    },
+    {
+      "kind": "candidate",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\design.md",
+      "bytes": 3986,
+      "sha256": "c891de0ad70d663d898e2954883df8da3d1db57b04e71572c37dfd9561b068ca",
+      "match": true
+    },
+    {
+      "kind": "runtime",
+      "path": "C:\\Python313\\python.exe",
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125",
+      "match": true
+    },
+    {
+      "kind": "runtime",
+      "path": "C:\\Python313\\python313.dll",
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529",
+      "match": true
+    },
+    {
+      "kind": "runtime",
+      "path": "C:\\Python313\\DLLs\\_ctypes.pyd",
+      "bytes": 133992,
+      "sha256": "5c0d5082fba1a2a3eb8d5e23073be25164c19f21304b09cecaab340dc7198815",
+      "match": true
+    },
+    {
+      "kind": "runtime",
+      "path": "C:\\Python313\\DLLs\\libffi-8.dll",
+      "bytes": 39696,
+      "sha256": "eff52743773eb550fcc6ce3efc37c85724502233b6b002a35496d828bd7b280a",
+      "match": true
+    },
+    {
+      "kind": "runtime",
+      "path": "C:\\Python313\\Lib\\ctypes\\__init__.py",
+      "bytes": 19374,
+      "sha256": "2e63f01ac6b8ffc1acfa4eec4c253eef8fbd65e09506d690cb3be71a2d78303a",
+      "match": true
+    },
+    {
+      "kind": "runtime",
+      "path": "C:\\Python313\\Lib\\ctypes\\_endian.py",
+      "bytes": 2635,
+      "sha256": "f2752ab2425dac9bfaff5aa1a3c6cd66aa342fee0db2f2a42de568fc59d5cbea",
+      "match": true
+    },
+    {
+      "kind": "delivery",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\design.md",
+      "bytes": 3986,
+      "sha256": "c891de0ad70d663d898e2954883df8da3d1db57b04e71572c37dfd9561b068ca",
+      "match": true
+    },
+    {
+      "kind": "delivery",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\fixtures.py",
+      "bytes": 1834,
+      "sha256": "5b98c93d0efdd612641591db7d14ceb3973d50dbb5fec7925182ab63b61ac4b7",
+      "match": true
+    },
+    {
+      "kind": "delivery",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\manifest.json",
+      "bytes": 2643,
+      "sha256": "f6f0b42cb8277399eeb7b5f01e6c36b8e9ad63ef57e4800bf98aa8f6cba7061d",
+      "match": true
+    },
+    {
+      "kind": "delivery",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\owned_job.py",
+      "bytes": 8780,
+      "sha256": "c454012bf5fa1c5275fe57e5d095053fc72b495779e12209fde44359a8950f1e",
+      "match": true
+    },
+    {
+      "kind": "delivery",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\qualification-cases.json",
+      "bytes": 802,
+      "sha256": "af96e8ee1f7a1a77b9a33508982e6a6e09595047ceebebbbafb95d0af5130e9e",
+      "match": true
+    },
+    {
+      "kind": "delivery",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\README.md",
+      "bytes": 1630,
+      "sha256": "16093d775631eb96a4fff60cfd712cb4917d279bf935296d8860b5002d1d9fb9",
+      "match": true
+    },
+    {
+      "kind": "delivery",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\static-review.json",
+      "bytes": 1247,
+      "sha256": "0ec27163caa774d4fb951df5db6aa88decb3607bad059591aa653d5e097c0a21",
+      "match": true
+    },
+    {
+      "kind": "delivery",
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\supervisor.py",
+      "bytes": 9146,
+      "sha256": "3d564913465a44ca269d4a617ae0c57791036b4a883c8e14edc852936f9b6580",
+      "match": true
+    }
+  ],
+  "rawEvidencePreservation": [
+    {
+      "source": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualification-20261023-r1\\natural-zero\\preflight.json",
+      "preserved": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-r1-failed-post-20261023-r1\\preserved\\root-preflight.json",
+      "bytes": 627,
+      "sha256": "1042474cfb645f4db6aaf27a260190506c949a0e3989aafaacaeb8f327d72db2",
+      "sourceAndPreservedMatch": true
+    },
+    {
+      "source": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualification-20261023-r1\\natural-zero\\result.json",
+      "preserved": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-r1-failed-post-20261023-r1\\preserved\\root-result.json",
+      "bytes": 1331,
+      "sha256": "786dddb7dfb6d808fb31ec700bbac61df66bf657b39afcd4ead70a5521474bf4",
+      "sourceAndPreservedMatch": true
+    },
+    {
+      "source": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\qualification-attempts\\natural-zero\\observation.json",
+      "preserved": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-r1-failed-post-20261023-r1\\preserved\\inner-observation.json",
+      "bytes": 1984,
+      "sha256": "a9f9ac1cb4b4ddf5428d4102b3d0a75580e43680ba22f8beb18030f8525bf0bd",
+      "sourceAndPreservedMatch": true
+    },
+    {
+      "source": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\qualification-attempts\\natural-zero\\fixture-console.log",
+      "preserved": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-r1-failed-post-20261023-r1\\preserved\\inner-fixture-console.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "sourceAndPreservedMatch": true
+    }
+  ],
+  "caseStatus": [
+    {
+      "case": "natural-zero",
+      "candidateAttemptExists": true,
+      "rootResultExists": true,
+      "status": "ACTUALLY_RAN_NOT_ACCEPTED"
+    },
+    {
+      "case": "natural-nonzero",
+      "candidateAttemptExists": false,
+      "rootResultExists": false,
+      "status": "UNRUN"
+    },
+    {
+      "case": "deadline",
+      "candidateAttemptExists": false,
+      "rootResultExists": false,
+      "status": "UNRUN"
+    },
+    {
+      "case": "nested-owned-child",
+      "candidateAttemptExists": false,
+      "rootResultExists": false,
+      "status": "UNRUN"
+    }
+  ],
+  "rootRecordedResult": {
+    "status": "FIXED_CASE_QUALIFICATION_NOT_ACCEPTED",
+    "case": "natural-zero",
+    "grant": "guardian-supervisor-fixed-qualification-root-20261023-r1",
+    "atUtc": "2026-10-23T10:09:50.0519447Z",
+    "sdkCount": 0,
+    "unknownCount": 0,
+    "availableRamBytes": 2240106496,
+    "disks": [
+      {
+        "Name": "C",
+        "Free": 5660037120
+      },
+      {
+        "Name": "D",
+        "Free": 23801135104
+      }
+    ],
+    "manifestSha256": "f6f0b42cb8277399eeb7b5f01e6c36b8e9ad63ef57e4800bf98aa8f6cba7061d",
+    "maximumHostSeconds": 14.0,
+    "reusedBudget": false,
+    "scope": "One fixed no-SDK qualification case; no real controller.",
+    "hostPid": 101944,
+    "sameHandleCreationFiletimeUtcDomain": "134372237900881770",
+    "sameHandleExitFiletimeUtcDomain": "134372237902975730",
+    "firstWaitSignaledElapsedSeconds": 0.2161604,
+    "hostActualExitCode": 1,
+    "rootForcedOwnHost": false,
+    "rootEmergencyCleanupAttempted": false,
+    "failure": null,
+    "hostTimelyAgainstEarlierRootAnchor": true,
+    "rawObservationPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r1\\qualification-attempts\\natural-zero\\observation.json",
+    "postPinsMatch": true,
+    "qualificationAccepted": false,
+    "analysisAccepted": false,
+    "realControllerStarted": false,
+    "rootElapsedBeforeReceiptSeconds": 0.241911
+  },
+  "innerRecordedObservation": {
+    "status": "QUALIFICATION_OBSERVATION_NOT_ANALYSIS_ACCEPTANCE",
+    "case": "natural-zero",
+    "qpcAnchor": 28296.8873177,
+    "workDeadlineQpc": 28304.8873177,
+    "cleanupDeadlineQpc": 28310.8873177,
+    "originalOuterDeadlineQpc": 28476.8873177,
+    "terminal": {
+      "pid": 100312,
+      "creationFiletime": 134372237901889745,
+      "firstSignaledQpc": 28297.0403444,
+      "sampleQpc": 28297.0404701,
+      "signaled": true,
+      "exitCode": 0,
+      "exitFiletime": 134372237902758683,
+      "kernel100ns": 0,
+      "user100ns": 0,
+      "activeProcesses": 0,
+      "totalProcesses": 2,
+      "terminatedProcesses": 0,
+      "terminal": true
+    },
+    "maximumObservedJobTotal": 2,
+    "forcedCleanupRequested": true,
+    "terminationCallSucceeded": true,
+    "deadlineReached": false,
+    "error": null,
+    "events": [
+      {
+        "stage": "before-job",
+        "qpc": 28296.9469835
+      },
+      {
+        "stage": "after-job",
+        "qpc": 28296.947162
+      },
+      {
+        "stage": "before-create-suspended",
+        "qpc": 28296.947165
+      },
+      {
+        "stage": "after-create-suspended",
+        "qpc": 28296.9521041
+      },
+      {
+        "stage": "before-resume",
+        "qpc": 28296.9521294
+      },
+      {
+        "stage": "after-resume",
+        "qpc": 28296.9521414
+      },
+      {
+        "stage": "before-owned-termination",
+        "qpc": 28297.040445
+      },
+      {
+        "stage": "after-owned-termination",
+        "qpc": 28297.0404629
+      },
+      {
+        "stage": "terminal-loop-finished",
+        "qpc": 28297.040494
+      },
+      {
+        "stage": "before-owned-close",
+        "qpc": 28297.040495
+      },
+      {
+        "stage": "after-owned-close",
+        "qpc": 28297.0405052
+      }
+    ],
+    "nestedProof": null,
+    "expectedOutcomeObservedBeforeOutput": false,
+    "candidateAndRuntimePinsMatchAfter": true,
+    "supervisorActualTerminalBeforeDeadlineStillRequired": true,
+    "kernelExitFiletimeIsUtcDomainNotQpc": true,
+    "firstSignaledIsConservativeSampling": true,
+    "sdkCalls": 0,
+    "realControllerInvoked": false,
+    "allFourCasesQualified": false
+  },
+  "evidenceBoundary": {
+    "rootSuppliedExecutionReference": "dd72ce natural1",
+    "firstSignaledTimestampRecorded": true,
+    "firstSignaledFullSampleRecorded": false,
+    "totalProcessesProvesKnownAuxiliary": false,
+    "lateFinalJobZeroProvesNaturalPass": false,
+    "rootCauseMemberIdentityEstablished": false,
+    "codePathInference": "Signaled root with nonterminal Job triggered explicit own-Job termination before work deadline",
+    "qualified": false,
+    "analysisAccepted": false,
+    "rootFormalOsReleasePerformedByThisReadback": false
+  },
+  "method": {
+    "candidateImported": false,
+    "codeParserInvoked": false,
+    "sdkOrNativeCalls": 0,
+    "testsRun": false,
+    "processApiCalled": false,
+    "networkUsed": false,
+    "mainOrGitWritten": false,
+    "unrelatedContentsOrFullCachePayloadRead": false,
+    "initialFilenameLookupWasBroaderThanIntended": true
+  },
+  "errors": []
+}

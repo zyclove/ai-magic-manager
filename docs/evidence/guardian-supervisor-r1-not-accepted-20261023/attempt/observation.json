@@ -1,0 +1,83 @@
+{
+  "status": "QUALIFICATION_OBSERVATION_NOT_ANALYSIS_ACCEPTANCE",
+  "case": "natural-zero",
+  "qpcAnchor": 28296.8873177,
+  "workDeadlineQpc": 28304.8873177,
+  "cleanupDeadlineQpc": 28310.8873177,
+  "originalOuterDeadlineQpc": 28476.8873177,
+  "terminal": {
+    "pid": 100312,
+    "creationFiletime": 134372237901889745,
+    "firstSignaledQpc": 28297.0403444,
+    "sampleQpc": 28297.0404701,
+    "signaled": true,
+    "exitCode": 0,
+    "exitFiletime": 134372237902758683,
+    "kernel100ns": 0,
+    "user100ns": 0,
+    "activeProcesses": 0,
+    "totalProcesses": 2,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "maximumObservedJobTotal": 2,
+  "forcedCleanupRequested": true,
+  "terminationCallSucceeded": true,
+  "deadlineReached": false,
+  "error": null,
+  "events": [
+    {
+      "stage": "before-job",
+      "qpc": 28296.9469835
+    },
+    {
+      "stage": "after-job",
+      "qpc": 28296.947162
+    },
+    {
+      "stage": "before-create-suspended",
+      "qpc": 28296.947165
+    },
+    {
+      "stage": "after-create-suspended",
+      "qpc": 28296.9521041
+    },
+    {
+      "stage": "before-resume",
+      "qpc": 28296.9521294
+    },
+    {
+      "stage": "after-resume",
+      "qpc": 28296.9521414
+    },
+    {
+      "stage": "before-owned-termination",
+      "qpc": 28297.040445
+    },
+    {
+      "stage": "after-owned-termination",
+      "qpc": 28297.0404629
+    },
+    {
+      "stage": "terminal-loop-finished",
+      "qpc": 28297.040494
+    },
+    {
+      "stage": "before-owned-close",
+      "qpc": 28297.040495
+    },
+    {
+      "stage": "after-owned-close",
+      "qpc": 28297.0405052
+    }
+  ],
+  "nestedProof": null,
+  "expectedOutcomeObservedBeforeOutput": false,
+  "candidateAndRuntimePinsMatchAfter": true,
+  "supervisorActualTerminalBeforeDeadlineStillRequired": true,
+  "kernelExitFiletimeIsUtcDomainNotQpc": true,
+  "firstSignaledIsConservativeSampling": true,
+  "sdkCalls": 0,
+  "realControllerInvoked": false,
+  "allFourCasesQualified": false
+}

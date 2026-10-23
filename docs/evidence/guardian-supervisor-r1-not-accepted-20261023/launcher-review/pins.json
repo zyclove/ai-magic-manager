@@ -1,0 +1,16 @@
+{
+  "status": "STATIC_ONLY_P2_CLOSED_ALL_UNRUN",
+  "files": [
+    {
+      "path": "review.json",
+      "bytes": 3929,
+      "sha256": "c44ff39a731228d9fd8fb49cf5afd1e80e58b9eff0e96f86807c1ecaf7e1d0ca"
+    },
+    {
+      "path": "review.md",
+      "bytes": 1491,
+      "sha256": "2808f8276cc8d95cba907b27eb348509455e4499e0bfb57d255f3e081329e987"
+    }
+  ],
+  "selfExcluded": "pins.json"
+}

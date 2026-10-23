@@ -1,0 +1,43 @@
+{
+  "status": "STATIC_SELF_REVIEW_NOT_RUNTIME_QUALIFICATION",
+  "pythonSyntaxOnly": [
+    {
+      "file": "supervisor.py",
+      "pythonAstParsed": true,
+      "importedOrExecuted": false,
+      "sdkOrNativeCalled": false,
+      "functions": 5
+    },
+    {
+      "file": "owned_job.py",
+      "pythonAstParsed": true,
+      "importedOrExecuted": false,
+      "sdkOrNativeCalled": false,
+      "functions": 10
+    },
+    {
+      "file": "fixtures.py",
+      "pythonAstParsed": true,
+      "importedOrExecuted": false,
+      "sdkOrNativeCalled": false,
+      "functions": 1
+    }
+  ],
+  "allCases": "UNRUN",
+  "candidateFunctionsImportedOrExecuted": false,
+  "nativeOrSdkCalls": 0,
+  "processesStarted": 0,
+  "positiveAndNegativeExpectationsWrittenBeforeHostCode": true,
+  "remainingIndependentReviewRequired": true,
+  "limitations": [
+    "No Windows ABI/runtime/nested Job support proved by AST parsing",
+    "No finite API latency or physical realtime scheduling guarantee",
+    "External same-host actual terminal before deadline still required",
+    "No real controller binding provided"
+  ],
+  "manifest": {
+    "path": "manifest.json",
+    "bytes": 2643,
+    "sha256": "f6f0b42cb8277399eeb7b5f01e6c36b8e9ad63ef57e4800bf98aa8f6cba7061d"
+  }
+}

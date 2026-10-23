@@ -1,0 +1,46 @@
+{
+  "status": "SOURCE_ONLY_UNRUN_NOT_GRANTED",
+  "files": [
+    {
+      "path": "design.md",
+      "bytes": 3986,
+      "sha256": "c891de0ad70d663d898e2954883df8da3d1db57b04e71572c37dfd9561b068ca"
+    },
+    {
+      "path": "fixtures.py",
+      "bytes": 1834,
+      "sha256": "5b98c93d0efdd612641591db7d14ceb3973d50dbb5fec7925182ab63b61ac4b7"
+    },
+    {
+      "path": "manifest.json",
+      "bytes": 2643,
+      "sha256": "f6f0b42cb8277399eeb7b5f01e6c36b8e9ad63ef57e4800bf98aa8f6cba7061d"
+    },
+    {
+      "path": "owned_job.py",
+      "bytes": 8780,
+      "sha256": "c454012bf5fa1c5275fe57e5d095053fc72b495779e12209fde44359a8950f1e"
+    },
+    {
+      "path": "qualification-cases.json",
+      "bytes": 802,
+      "sha256": "af96e8ee1f7a1a77b9a33508982e6a6e09595047ceebebbbafb95d0af5130e9e"
+    },
+    {
+      "path": "README.md",
+      "bytes": 1630,
+      "sha256": "16093d775631eb96a4fff60cfd712cb4917d279bf935296d8860b5002d1d9fb9"
+    },
+    {
+      "path": "static-review.json",
+      "bytes": 1247,
+      "sha256": "0ec27163caa774d4fb951df5db6aa88decb3607bad059591aa653d5e097c0a21"
+    },
+    {
+      "path": "supervisor.py",
+      "bytes": 9146,
+      "sha256": "3d564913465a44ca269d4a617ae0c57791036b4a883c8e14edc852936f9b6580"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json"
+}

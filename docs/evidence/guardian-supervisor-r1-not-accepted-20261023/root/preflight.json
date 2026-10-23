@@ -1,0 +1,23 @@
+{
+  "status": "ROOT_QUALIFICATION_STARTED",
+  "case": "natural-zero",
+  "grant": "guardian-supervisor-fixed-qualification-root-20261023-r1",
+  "atUtc": "2026-10-23T10:09:50.0519447Z",
+  "sdkCount": 0,
+  "unknownCount": 0,
+  "availableRamBytes": 2240106496,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 5660037120
+    },
+    {
+      "Name": "D",
+      "Free": 23801135104
+    }
+  ],
+  "manifestSha256": "f6f0b42cb8277399eeb7b5f01e6c36b8e9ad63ef57e4800bf98aa8f6cba7061d",
+  "maximumHostSeconds": 14.0,
+  "reusedBudget": false,
+  "scope": "One fixed no-SDK qualification case; no real controller."
+}

@@ -1,0 +1,82 @@
+{
+  "status": "STATIC_NO_BLOCKER_FOR_FIXED_QUALIFICATION_ONLY_P2_CLOSED",
+  "source": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualify-20261023.ps1",
+    "bytes": 7538,
+    "sha256": "082b132e7f573ee792e99afb8a27ddd5df2dae47cb242c3a871c8d444170ccfc"
+  },
+  "preservedBefore": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualify-before-cleanup-fix-20261023.ps1",
+    "bytes": 7360,
+    "sha256": "267bcfcc53883adcf1990cb25d4af509b8966b68e01da39c85d2bdf9e08af322"
+  },
+  "p2Closed": true,
+  "exactMechanicalChangesOnly": true,
+  "changeMeaning": "cleanupAttempted initialized false; set true before either Kill; catch enters cleanup only if started and cleanup not attempted; receipt records request. Main-path timeout, Kill exception or first two-second wait failure cannot restart a second two-second wait.",
+  "waitLocations": [
+    77,
+    90
+  ],
+  "cleanupGuardLocations": [
+    53,
+    75,
+    85,
+    87,
+    110
+  ],
+  "maximumEmergencyWaitInvocationsPerRun": 1,
+  "maximumRequestedEmergencyWaitMilliseconds": 2000,
+  "wallclockKillOrOsLatencyGuaranteed": false,
+  "acceptanceBoundary": "Any rootForced, failure, absent/late firstSignaled or nonzero host rejects; root exact-own-host kill is cleanup only. Failed/unobserved terminal remains NotAccepted and pending external post observation, never a window release proof.",
+  "otherChecks": [
+    "Four fixed ValidateSet cases and exact f6 manifest, literal executable and ArgumentList; no arbitrary command interface.",
+    "Root Stopwatch precedes Start; retained Handle/StartTime/ExitTime/ExitCode remain on the same Process instance until Dispose; no PID reopen.",
+    "WaitForExit clamped0..50ms; first signaled observation strictly before work+6 bound, preserving the earlier Root anchor.",
+    "Pre/post six candidate plus six runtime pins and unchanged resource gate; qualification requires Root fresh SDK0/unknown0/RAM2GiB/both disks2GiB.",
+    "This proves no runtime ABI, native latency, nestedJob, cleanup or case outcome; .NET/PowerShell versions are supplied by Root, not queried through APIs."
+  ],
+  "diff": [
+    "--- before267",
+    "+++ after082",
+    "@@ -50,6 +50,7 @@",
+    " $started=$false",
+    " $firstSignaledSeconds=$null",
+    " $rootForced=$false",
+    "+$cleanupAttempted=$false",
+    " $hostExitCode=$null",
+    " $hostExitFiletime=$null",
+    " $hostCreationFiletime=$null",
+    "@@ -71,6 +72,7 @@",
+    "         if($signaled){$firstSignaledSeconds=$observed;break}",
+    "         if($observed -ge $maximumSeconds){",
+    "             $rootForced=$true",
+    "+            $cleanupAttempted=$true",
+    "             $ownedProcess.Kill()",
+    "             if(-not $ownedProcess.WaitForExit(2000)){throw 'Owned host did not terminate after exact-handle cleanup'}",
+    "             break",
+    "@@ -80,8 +82,9 @@",
+    "     $hostExitFiletime=[string]$ownedProcess.ExitTime.ToUniversalTime().ToFileTimeUtc()",
+    " } catch {",
+    "     $failure=$_.Exception.GetType().FullName+': '+$_.Exception.Message",
+    "-    if($started){",
+    "+    if($started -and -not $cleanupAttempted){",
+    "         $rootForced=$true",
+    "+        $cleanupAttempted=$true",
+    "         try {",
+    "             $ownedProcess.Kill()",
+    "             [void]$ownedProcess.WaitForExit(2000)",
+    "@@ -104,6 +107,7 @@",
+    " $receipt.firstWaitSignaledElapsedSeconds=$firstSignaledSeconds",
+    " $receipt.hostActualExitCode=$hostExitCode",
+    " $receipt.rootForcedOwnHost=$rootForced",
+    "+$receipt.rootEmergencyCleanupAttempted=$cleanupAttempted",
+    " $receipt.failure=$failure",
+    " $receipt.hostTimelyAgainstEarlierRootAnchor=$timely",
+    " $receipt.rawObservationPath=$observationPath"
+  ],
+  "allCases": "UNRUN",
+  "executionAuthorizedByThisReview": false,
+  "sdkOrProcessOrWinapiCalls": 0,
+  "parserOrCandidateImport": false,
+  "originalsModified": false
+}
