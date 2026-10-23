@@ -1,0 +1,121 @@
+{
+  "status": "STATIC_SOURCE_INTEGRATION_NOT_RUNTIME_VALIDATION",
+  "parent": "979b02ce251d9ea9c0a3ba7a85d44fdf59d53e48",
+  "files": [
+    {
+      "path": "docs/evidence/guardian-read-state-20261023/application-receipt.json",
+      "bytes": 10392,
+      "sha256": "f17e2cb577b7f492e11ca49d75ff3ee12b1184027919b5ffb297afa5cd9b4d80",
+      "gitRawBlobSha1": "853b232e82b566dc20497bedda861987a5affb6d"
+    },
+    {
+      "path": "docs/evidence/guardian-read-state-20261023/help-author-review.raw.txt",
+      "bytes": 5176,
+      "sha256": "d847f11e41506cf4458c3d47d43e7f86c9e1c3c3598febf98e230fe08fda7e6e",
+      "gitRawBlobSha1": "7ef204164f8b3f960dc66e71b5bcd6573f983c2f"
+    },
+    {
+      "path": "docs/evidence/guardian-read-state-20261023/help-candidate-pins.json",
+      "bytes": 4118,
+      "sha256": "f01db9935f5992eed25de68ada854961cfb63696007b1cdcca4917d00eec545c",
+      "gitRawBlobSha1": "e684ba4234935e58c4ba21b77f156ed49364b762"
+    },
+    {
+      "path": "docs/evidence/guardian-read-state-20261023/help-delivery-pins.json",
+      "bytes": 1489,
+      "sha256": "86fa059ff69adce9676ebfe7cf16015edd9bac2adc008f61682b59329fcae822",
+      "gitRawBlobSha1": "410ffbfb0f59252e58b315eb3fef20feffdcc1f2"
+    },
+    {
+      "path": "docs/evidence/guardian-read-state-20261023/help-delta-from-initial-candidate.patch",
+      "bytes": 3092,
+      "sha256": "31421bc4a49e941de51c9688f32d68cf9e06f816ae7e463ff34113beaad2e339",
+      "gitRawBlobSha1": "6e81faa9874a249dd2d587c3bcde7a379877620d"
+    },
+    {
+      "path": "docs/evidence/guardian-read-state-20261023/help-independent-delivery-pins.json",
+      "bytes": 682,
+      "sha256": "4ee2d3b297e04e4cdbbcdc19588252f47c7990ea1d381d68fa7c2e9cf659a515",
+      "gitRawBlobSha1": "d2505e76bea99705f961105851a78da3e359eb3f"
+    },
+    {
+      "path": "docs/evidence/guardian-read-state-20261023/help-independent-review.json",
+      "bytes": 6790,
+      "sha256": "b84ae303351e490a894f86952644ede6a74e8029730d9db1e8588b87294a9f70",
+      "gitRawBlobSha1": "928256309585f78e5f41ffaa74b8280402bad8e6"
+    },
+    {
+      "path": "docs/evidence/guardian-read-state-20261023/help-independent-review.raw.txt",
+      "bytes": 4388,
+      "sha256": "907034483b226e41ceaabda8c84003c860fbc1dd93857de070f4d02c19503f72",
+      "gitRawBlobSha1": "0197d12db28bc4f373b5caa0e6f2fb64ea6146b1"
+    },
+    {
+      "path": "docs/evidence/guardian-read-state-20261023/help-request-acknowledgement-recovery-review-20261023.raw.txt",
+      "bytes": 3900,
+      "sha256": "28b4af26bf59a32a9c4d80d3ab6eab269d888b7a7cd728ba6026cd4f4703a76c",
+      "gitRawBlobSha1": "30eb7e8c388f91b5ca5a459a52672f78df42aaf2"
+    },
+    {
+      "path": "docs/evidence/guardian-read-state-20261023/help-request-empty-state-review-20261023.raw.txt",
+      "bytes": 3760,
+      "sha256": "613729963cbe7f7a98d92f25ee5829fe1bca7ff1b15829ecb48670932e4d9421",
+      "gitRawBlobSha1": "d1736e1efe15a4cdd8b39336b9155f965f01e408"
+    },
+    {
+      "path": "docs/evidence/guardian-read-state-20261023/help.patch",
+      "bytes": 4669,
+      "sha256": "185de56e7b980f9a38a6c58e63ab7c7852461957314de0d1265c3f756cf39cc8",
+      "gitRawBlobSha1": "559f01ba85de4072ab0b5bdc972ce99744ad0ed6"
+    },
+    {
+      "path": "docs/evidence/guardian-read-state-20261023/permission-author-review.raw.txt",
+      "bytes": 4774,
+      "sha256": "be0c7248f6db7de1ca7eef1e0e89c758ede7c86804f155082d8c7e53929f87db",
+      "gitRawBlobSha1": "940773d99520504a3ceefb19daa3ef19f01fc045"
+    },
+    {
+      "path": "docs/evidence/guardian-read-state-20261023/permission-candidate-pins.json",
+      "bytes": 2853,
+      "sha256": "0858d906acd1570a199c6e059f6540f64dde7fd26b4bf0c0ea4d42306dd3b37b",
+      "gitRawBlobSha1": "c22e411b17934d276df00d3dc244b0db733ee0c7"
+    },
+    {
+      "path": "docs/evidence/guardian-read-state-20261023/permission-delivery-pins.json",
+      "bytes": 1307,
+      "sha256": "dfd1f6faa86baf84465085b8cc18854c69ca87d158001798f176429131cb2042",
+      "gitRawBlobSha1": "080665a098b8b63ec75c1799666f2bfe10554dfb"
+    },
+    {
+      "path": "docs/evidence/guardian-read-state-20261023/permission-independent-delivery-pins.json",
+      "bytes": 641,
+      "sha256": "f8cf598fee3f7e68b0da7948bd134440202351aad345d8edf4f8a031c0c1d5b2",
+      "gitRawBlobSha1": "2348bbfe6510ac238ed44d46cbf3e41348044489"
+    },
+    {
+      "path": "docs/evidence/guardian-read-state-20261023/permission-independent-review.json",
+      "bytes": 8231,
+      "sha256": "03f3f39612aa3a68084014f4867cb091394e6230ae9a09289bbd373beb2e02f0",
+      "gitRawBlobSha1": "ffb07c31395ca068ff5a16a853de815d7c923652"
+    },
+    {
+      "path": "docs/evidence/guardian-read-state-20261023/permission-independent-review.raw.txt",
+      "bytes": 5011,
+      "sha256": "ac913a7ac672578f99a9b9b7679eeb18718b0e9d8a3a966d1103ca902012b76b",
+      "gitRawBlobSha1": "49cdeccd5e991bfe820f6ba9d8dd800415eda750"
+    },
+    {
+      "path": "docs/evidence/guardian-read-state-20261023/permission-observation-unknown-state-review-20261023.raw.txt",
+      "bytes": 3778,
+      "sha256": "e23918475b4efa680aa97e0f2c408e374f75452bb40d330db1afd34f72945968",
+      "gitRawBlobSha1": "8ca80ea97d43a9766198cdddd528ad7ab033bb0e"
+    },
+    {
+      "path": "docs/evidence/guardian-read-state-20261023/permission.patch",
+      "bytes": 2330,
+      "sha256": "99d022b3bfffb917897be59a6d49d7b768bd5bb14f9c855fed99fe146808b816",
+      "gitRawBlobSha1": "3d08701e47dac762d82181a2a2a8624970e091fe"
+    }
+  ],
+  "selfExcluded": "manifest.json"
+}

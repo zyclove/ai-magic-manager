@@ -1,0 +1,18 @@
+{
+  "status": "STATIC_FINAL_INDEPENDENT_REVIEW_NO_EXECUTION_GRANT",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-r2-independent-20261023-r1\\review.md",
+      "bytes": 4388,
+      "sha256": "907034483b226e41ceaabda8c84003c860fbc1dd93857de070f4d02c19503f72",
+      "beforeAfterReadBytesEqual": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-r2-independent-20261023-r1\\review.json",
+      "bytes": 6790,
+      "sha256": "b84ae303351e490a894f86952644ede6a74e8029730d9db1e8588b87294a9f70",
+      "beforeAfterReadBytesEqual": true
+    }
+  ],
+  "selfExcluded": "delivery-pins.json"
+}

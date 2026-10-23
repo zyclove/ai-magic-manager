@@ -1,0 +1,28 @@
+# Help read-state and acknowledgement recovery candidate r2
+
+Status: **STATIC_CANDIDATE_ALL_NEW_SCENARIOS_UNRUN_NOT_APPLIED**. Main/before remains SHA256 `c299fd7a069501d45462f8cac89327d4bc811426ca37c465145f8bc9ff368eb3`. This separate r2 includes the sealed r1 firstPageLoaded change and the concrete acknowledgement/read ordering correction requested by Root. R1 after `a1273a3e3ec4350d8efa565ef573050d5b9316b9bb5ffb244498af79b73eb697` and delivery `c6496809221345768cce3c2b291dcf169b239d01e0f8fe19b6cb64aad819ffd3` remain unchanged.
+
+After: `439dbf336a716758196932e7b182fec415d1080f7d875d0f4ce6fe196d1a74fa`. `help-read-state.patch` is the complete Main-to-r2 patch; `delta-from-r1.patch` isolates the additional ordering correction. No SDK, AST/code parser, candidate execution/import, tests, business-predicate simulation, formatter, build, WinAPI/process API or network was used. Main, Git, previous candidates and source freezes were not written.
+
+## State and dispatch changes
+
+- `uncertain` becomes a Map from request ID to that operation's monotonically allocated `ackSequence`. Failure records the sequence of the actual dispatched operation. Every existing UI/guard membership lookup uses containsKey; existing labels and explanatory text are preserved.
+- Fresh read start takes an independent copy of the then-current uncertainty map. Only a current + generation + filter-matching fresh success removes entries whose current operation sequence still equals its captured sequence. New or changed uncertainty is retained. Append success/error does not reconcile uncertainty. No whole-map clear remains.
+- `lastDispatchedSequence` retains each ID's most recent dispatch across fresh/append reads. Opening a confirmation captures that ID's current value. After confirmAction returns, current, sending, uncertainty and that same captured per-ID value are rechecked before allocating the next global sequence and synchronously registering sending/dispatch. Cancellation changes no sequence. A dispatch on another ID does not invalidate this ID's confirmation.
+- The same scope-bound POST, item.version, response ID/state validation and successful acknowledgement's necessary fresh reload are preserved. No global busy guard discards that reload. FirstPageLoaded continues to describe only a valid first-page read; it cannot by itself unlock an uncertain acknowledgement.
+
+## Three required ordering traces — UNRUN
+
+1. **Read B starts while acknowledgement A is pending.** A is not yet in uncertain, so B's snapshot cannot contain A's later operation. A's 503/network failure records its sequence. B's later old OPEN response may populate the list, but cannot remove that newly added uncertainty; the row remains locked for explicit later reconciliation.
+2. **Read C starts after A fails.** C captures A's uncertainty sequence. A matching current fresh success may remove that same unchanged entry. If the current entry has changed to a different operation, C cannot remove it. Append reads never perform this removal.
+3. **Two old confirmation windows for the same ID.** Both capture the earlier per-ID dispatch value. The first accepted completion registers a new value before its request await. The other old completion is rejected while the first is pending, after failure, and after success plus its fresh reload, because the per-ID dispatch value changed even when sending/uncertain no longer contains the ID. A newly opened confirmation can capture the latest value; an unrelated ID remains independent.
+
+These are source-order statements, not an executed predicate model or runtime verification.
+
+## Preserved first-read fix and boundaries
+
+R1's firstPageLoaded initialization/reset/matching-fresh-success and unknown-read panel remain. A failed still-mounted fresh read cannot show the successful empty text. Original global FailureView retry/401 action, pageError separation, same-cursor append retry, invalid-cursor explicit refresh, scope/generation and filter guards remain. The currently checked `approval_help_flow_browser_test.dart:267-280` removes the page before completing its initial 503 and does not cover either the mounted read-state error or the new crossed request ordering. Zero test sources changed.
+
+Input finding: `docs/reviews/help-request-acknowledgement-recovery-review-20261023.md`, SHA256 `28b4af26bf59a32a9c4d80d3ab6eab269d888b7a7cd728ba6026cd4f4703a76c`. This candidate addresses that concrete earlier-read unlock and stale-confirm dispatch sequence. It does not claim server-side duplicate writes, final consistency guarantees, target membership validation, all possible acknowledgement races or universal reconciliation of every record. Existing API and If-Match/version semantics remain the authority.
+
+Later validation must cover the three orderings above, operation replacement for one ID, independent parallel IDs, cancelled confirmations, first-success/refresh-failure, append/uncertainty isolation, filter/generation/scope changes, 401 recovery and rendering. Every scenario remains **UNRUN**. Root and an independent reviewer must inspect the exact sealed candidate before application or separate validation authorization.

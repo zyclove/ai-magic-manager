@@ -1,0 +1,173 @@
+{
+  "schema": 1,
+  "status": "INDEPENDENT_STATIC_REVIEW_NO_INTEGRATION_BLOCKER_FOUND_ALL_COMBINATIONS_UNRUN",
+  "recordedAtUtc": "2026-10-23T12:06:20.746478+00:00",
+  "reviewedCandidate": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-permission-read-state-20261023-r1",
+  "readOnlyCandidateInventory": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-permission-read-state-20261023-r1\\after.dart",
+      "bytes": 16183,
+      "sha256": "38a638d0f87d4e6092c1b3faf41dbd69b0ba7ffc6fb631b166872bfb7ade7784"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-permission-read-state-20261023-r1\\before.dart",
+      "bytes": 15241,
+      "sha256": "12658403f5b8c66d54a911d8ba98acc844ba71bf43df095c8ff4214fac26e89d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-permission-read-state-20261023-r1\\permission-read-state.patch",
+      "bytes": 2330,
+      "sha256": "99d022b3bfffb917897be59a6d49d7b768bd5bb14f9c855fed99fe146808b816"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-permission-read-state-20261023-r1\\pins.json",
+      "bytes": 2853,
+      "sha256": "0858d906acd1570a199c6e059f6540f64dde7fd26b4bf0c0ea4d42306dd3b37b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-permission-read-state-20261023-r1\\review.md",
+      "bytes": 4774,
+      "sha256": "be0c7248f6db7de1ca7eef1e0e89c758ede7c86804f155082d8c7e53929f87db"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-permission-read-state-20261023-r1\\delivery-pins.json",
+      "bytes": 1307,
+      "sha256": "dfd1f6faa86baf84465085b8cc18854c69ca87d158001798f176429131cb2042"
+    }
+  ],
+  "mainObserved": {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\permission_observation_panel.dart",
+    "bytes": 15241,
+    "sha256": "12658403f5b8c66d54a911d8ba98acc844ba71bf43df095c8ff4214fac26e89d"
+  },
+  "mainRawExactlyMatchesBefore": true,
+  "deliveryAllFiveRowsAndSixFileMembershipVerified": true,
+  "pinsAllFourCandidateRowsAndMainRowVerified": true,
+  "dependencyPinsAllFiveVerified": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\docs\\reviews\\permission-observation-unknown-state-review-20261023.md",
+      "bytes": 3778,
+      "sha256": "e23918475b4efa680aa97e0f2c408e374f75452bb40d330db1afd34f72945968"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\observation_page.dart",
+      "bytes": 11503,
+      "sha256": "ac0e30966f2a5c5f6b65dc12a8445a3ae7d52d8cda45cbb979b0b58a18e83816"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\core\\permission_observation.dart",
+      "bytes": 4105,
+      "sha256": "efd14b63c8434689fbb88ceb4d0a6a0161320142ad5b793221ba15c4d7f9e0b6"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\packages\\device_operations\\lib\\permission_observation_view.dart",
+      "bytes": 6888,
+      "sha256": "ee4f3b6c04bb31702e1d9583651dde26ade9a4bc71ef5b900c3a42e802c4fcec"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    }
+  ],
+  "completePatchRebuiltFromFullBeforeAfterBytes": true,
+  "completePatchBytes": 2330,
+  "completePatchSha256": "99d022b3bfffb917897be59a6d49d7b768bd5bb14f9c855fed99fe146808b816",
+  "exactlyTwoBuildTextRegionsReconstructEveryAfterByte": true,
+  "inverseTwoTextRegionsReconstructEveryBeforeByte": true,
+  "beforeBuildPrefix": {
+    "bytes": 8454,
+    "sha256": "83b004c63112fa232e0459af943f7581ad03a70ac0f5dbfbcff1f5fc352beefc",
+    "unchanged": true
+  },
+  "existingInventoryDisplayTail": {
+    "bytes": 3873,
+    "sha256": "4410d9a77b40e19017faa0636ddd0946dff021e34915e77928a3d35c791f5804",
+    "unchanged": true
+  },
+  "sourceObligations": [
+    {
+      "input": "parent inventoryEnabled=null",
+      "evidence": "after.dart:289-290",
+      "conclusion": "Unknown parent authorization; no false/enable instruction; directs parent observation refresh.",
+      "basis": "MANUAL_SOURCE_READING_ONLY_NOT_EXECUTED_OR_SIMULATED",
+      "runtimeStatus": "UNRUN"
+    },
+    {
+      "input": "parent inventoryEnabled=false",
+      "evidence": "after.dart:291-292",
+      "conclusion": "Original known-false enable instruction is preserved verbatim.",
+      "basis": "MANUAL_SOURCE_READING_ONLY_NOT_EXECUTED_OR_SIMULATED",
+      "runtimeStatus": "UNRUN"
+    },
+    {
+      "input": "parent true, settings=null, busy=true/false",
+      "evidence": "after.dart:293-296",
+      "conclusion": "Waiting and unknown are explicit; neither is represented as enabled=false.",
+      "basis": "MANUAL_SOURCE_READING_ONLY_NOT_EXECUTED_OR_SIMULATED",
+      "runtimeStatus": "UNRUN"
+    },
+    {
+      "input": "parent true, settings.enabled=false",
+      "evidence": "after.dart:297-298",
+      "conclusion": "Original independent permission not-authorized instruction remains for a settings object with false.",
+      "basis": "MANUAL_SOURCE_READING_ONLY_NOT_EXECUTED_OR_SIMULATED",
+      "runtimeStatus": "UNRUN"
+    },
+    {
+      "input": "both authorizations true, inventory=null, busy=true/false",
+      "evidence": "after.dart:299-302",
+      "conclusion": "Waiting and unknown application inventory are explicit; null cannot reach the old empty-app state.",
+      "basis": "MANUAL_SOURCE_READING_ONLY_NOT_EXECUTED_OR_SIMULATED",
+      "runtimeStatus": "UNRUN"
+    },
+    {
+      "input": "both true, inventory object with zero applications",
+      "evidence": "after.dart:303-311",
+      "conclusion": "Original visible inventory status and real-empty guidance remain; no absent inventory is invented.",
+      "basis": "MANUAL_SOURCE_READING_ONLY_NOT_EXECUTED_OR_SIMULATED",
+      "runtimeStatus": "UNRUN"
+    },
+    {
+      "input": "both true, inventory object with applications/results",
+      "evidence": "after.dart:304-379",
+      "conclusion": "Complete existing selection/read/evidence tail is byte-identical.",
+      "basis": "MANUAL_SOURCE_READING_ONLY_NOT_EXECUTED_OR_SIMULATED",
+      "runtimeStatus": "UNRUN"
+    },
+    {
+      "input": "settings null or known true/false header",
+      "evidence": "after.dart:264-270",
+      "conclusion": "Null uses busy/unknown; known true is on and known false is off without claiming it is always a default.",
+      "basis": "MANUAL_SOURCE_READING_ONLY_NOT_EXECUTED_OR_SIMULATED",
+      "runtimeStatus": "UNRUN"
+    },
+    {
+      "input": "read failure, including backend unavailable/401/reauth",
+      "evidence": "after.dart:84-95,196-208,246-257,275-278",
+      "conclusion": "Existing error/reset and eligible reauthentication/refresh remain unchanged; no success false response is synthesized.",
+      "basis": "MANUAL_SOURCE_READING_ONLY_NOT_EXECUTED_OR_SIMULATED",
+      "runtimeStatus": "UNRUN"
+    }
+  ],
+  "unchangedContracts": [
+    "Widget fields including bool? inventoryEnabled, repository/canEdit/reauth API: after.dart:8-34",
+    "init/didUpdate/dispose, generation, load/read, change/version/key/reason: after.dart:36-194",
+    "Parent gate default and scope/current/canEdit/reauth bindings: observation_page.dart:263-282",
+    "Repository current before/after API, 404 mapping, scope validation, version/key and reread: permission_observation.dart:33-118",
+    "Strict bool settings and nonnullable parsed inventory object/applications: permission_observation_view.dart:30-98",
+    "Existing Material/EmptyView/Panel APIs, no new imports or dependencies: after.dart:1-5; design.dart:70-85,206-226"
+  ],
+  "findings": [],
+  "scopeLimit": "Only this pinned display delta is reviewed. Existing asynchronous mutation/read races and all UI behavior are not certified by static equality.",
+  "featureFlagStillDefaultClosed": true,
+  "sourceSnapshotsReadBackUnchanged": true,
+  "allCombinations": "UNRUN",
+  "rendered": false,
+  "applicationValidation": "UNRUN",
+  "dartFunctionsOrBranchesExecutedOrSimulated": false,
+  "sdkAstFormatterCompilerCandidateTestsWinApiProcessNetworkUsed": false,
+  "mainGitOriginalCandidateOrDependenciesWritten": false,
+  "onlyOwnTextHashJsonDiffReaderExecuted": true,
+  "newExecutionOrQualificationGrant": false
+}

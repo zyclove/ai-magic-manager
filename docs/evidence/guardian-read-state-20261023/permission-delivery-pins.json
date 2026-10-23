@@ -1,0 +1,32 @@
+{
+  "status": "STATIC_UNRUN_SEALED_SINGLE_FILE_CANDIDATE",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-permission-read-state-20261023-r1\\after.dart",
+      "bytes": 16183,
+      "sha256": "38a638d0f87d4e6092c1b3faf41dbd69b0ba7ffc6fb631b166872bfb7ade7784"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-permission-read-state-20261023-r1\\before.dart",
+      "bytes": 15241,
+      "sha256": "12658403f5b8c66d54a911d8ba98acc844ba71bf43df095c8ff4214fac26e89d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-permission-read-state-20261023-r1\\permission-read-state.patch",
+      "bytes": 2330,
+      "sha256": "99d022b3bfffb917897be59a6d49d7b768bd5bb14f9c855fed99fe146808b816"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-permission-read-state-20261023-r1\\pins.json",
+      "bytes": 2853,
+      "sha256": "0858d906acd1570a199c6e059f6540f64dde7fd26b4bf0c0ea4d42306dd3b37b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-permission-read-state-20261023-r1\\review.md",
+      "bytes": 4774,
+      "sha256": "be0c7248f6db7de1ca7eef1e0e89c758ede7c86804f155082d8c7e53929f87db"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "executionAuthorized": false
+}

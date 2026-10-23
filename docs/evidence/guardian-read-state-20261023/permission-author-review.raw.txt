@@ -1,0 +1,39 @@
+# 应用权限观察未知状态：单文件候选 r1
+
+**STATIC_CANDIDATE_UNRUN / NOT_APPLIED。所有组合未运行、未渲染，没有编译或执行授权。**
+
+对应 docs/reviews/permission-observation-unknown-state-review-20261023.md 的 P2。仅修改 PermissionObservationPanel 的 build 展示分支与顶部状态标签，使用原 Material/EmptyView；before.dart 是真实 Main raw，after.dart 是候选，完整差异见 permission-read-state.patch。
+
+## 状态表达
+
+| 输入 | 候选展示 | 约束 |
+| --- | --- | --- |
+| 父 inventoryEnabled=null | 应用清单授权状态未知；引导刷新上方观察状态 | 不再提示已关闭或先开启；没有新增父参数/刷新回调 |
+| 父 inventoryEnabled=false | 保留原“先开启应用清单授权”与原操作引导 | 仅已知 false 进入该分支 |
+| 父 true，独立 settings=null，busy=true | 正在确认权限观察授权，请稍候 | 覆盖首次读取和授权更新等待，不声称已关闭 |
+| 父 true，独立 settings=null，busy=false | 权限观察授权状态未知；引导“刷新权限状态” | 读取失败保留既有 error/适用重认证入口，不补造 false |
+| 父 true，settings.enabled=false | 保留原“权限观察尚未授权”文案 | 仅已知 false 进入该分支 |
+| 两授权 true，inventory=null，busy=true | 正在读取可见应用 | 父 false→true 会清 inventory 并 load，旧 settings=true 也不会误显示空成功 |
+| 两授权 true，inventory=null，busy=false | 可见应用清单状态未知；引导“刷新权限状态” | 不用空列表替代尚未读取到的对象 |
+| 两授权 true，成功读取 inventory 对象、applications真实空 | 保留原“暂无可选应用”及“空列表不表示没有安装应用” | 不把 empty/UNKNOWN evidence 解释为没有安装应用 |
+| 两授权 true，inventory对象非空 | 原选择/读取/设备代理证据内容 | 原结果、分类、授予标志与未核对系统执行的说明均不改 |
+
+Panel顶部 settings=null 同样区分 busy“正在确认授权状态…”与非busy“授权状态未知”；已知 false 改为准确“已关闭”，不再把任何已知false状态一概说成“默认关闭”。仅使用状态文字和 EmptyView，没有叠加新的 Notice 警告。
+
+## 原有契约保持
+
+- build之前的全部字段、父 bool? 参数、init/didUpdate/dispose、load/change/read、generation、scope调用、授权更新 version/key、操作原因和重认证逻辑原始文本逐字相同。
+- 父 ObservationPage 当前仍传 snapshot?.settings.inventoryEnabled；PERMISSION_OBSERVATION_ENABLED 仍是原 const bool.fromEnvironment 无默认true配置，默认关闭，未修改父入口或新增回调。
+- Repository和严格共享模型未变：读取失败抛错并清settings/inventory是未知状态，不是enabled=false成功响应；当前注册身份/权限、版本和写后读核对仍由原代码承担。本候选不默认授权、不自动采集、不修改系统权限。
+- 从原真实 inventory 分支的可见应用标题到文件尾全文不变，包括空态正文、应用选择/read、设备结果/权限条目及所有来源限制文案。新 inventory==null 分支在它之前，只有已读取对象才可到原真实空态。
+- 本轮只修事实表达，不重构业务/路由/写后读并发，不声称原change/read的所有竞态已解决。
+
+## 后续构建与渲染矩阵（全部 UNRUN）
+
+1. Guardian Web默认构建（未启用客户端flag）：面板仍不出现，默认开关合同不变。
+2. Guardian Web显式 PERMISSION_OBSERVATION_ENABLED=true 构建：上述父null/false/true × 独立settings读取中/失败/false/true × inventory null/empty/nonempty的可达组合；Chrome运行/短屏/大字号/键盘与屏幕阅读均需另排验证。
+3. flag启用但服务未启用（Repository映射404为PERMISSION_BACKEND_UNAVAILABLE）、503/网络错误、401/REAUTH_REQUIRED：保留原错误与适用安全验证，不能产生“先开启”或“尚未授权”的虚假已知关闭结论。
+4. 父 false→true 且旧settings=true、首次load、刷新、授权撤回/更新中：inventory未返回时只见等待/未知，真实空对象返回后才见原空态。
+5. 当前scope/注册变化、generation supersede、迟到GET/PUT、既有重认证/版本冲突流程：后续按原守卫做回归；本候选未改这些方法，也未增加SDK/测试入口。
+
+本轮只做文件/文本/hash与本新cache候选写入，没有运行SDK、AST/代码解析器、测试、formatter、编译、候选、WinAPI/进程查询或网络，没有改Main/Git、父页面、Repo或旧证据。所有矩阵项仅为未来验收计划；须他人独审后由Root决定是否应用。

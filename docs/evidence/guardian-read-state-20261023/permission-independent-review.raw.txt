@@ -1,0 +1,45 @@
+# 权限读取状态候选 r1：独立静态审阅
+
+## 结论
+
+对固定候选未发现阻止整合的新缺口。当前 Main raw 与 before 完全相同；全部 after 字节可由原文件的两处 build 文本替换重建，完整两段 patch 也逐字重建一致。此结论只适用于本次显示修正；**全部状态组合 UNRUN、未渲染、应用验证 UNRUN**，不构成运行验收或资格授权。
+
+## 文件与范围核对
+
+- 候选目录准确包含六文件；delivery 的五条记录无重复，覆盖除自身以外的全部文件。
+- after：16183B / `38a638d0f87d4e6092c1b3faf41dbd69b0ba7ffc6fb631b166872bfb7ade7784`。
+- before/Main：15241B / `12658403f5b8c66d54a911d8ba98acc844ba71bf43df095c8ff4214fac26e89d`。
+- 完整 patch：2330B / `99d022b3bfffb917897be59a6d49d7b768bd5bb14f9c855fed99fe146808b816`；与全文 before/after 重建相同。
+- delivery：1307B / `dfd1f6faa86baf84465085b8cc18854c69ca87d158001798f176429131cb2042`；pins/review 和五个依赖的实际 bytes/hash 全吻合，详见 review.json。
+- build 前的 8454B 完全不变（SHA256 `83b004c63112fa232e0459af943f7581ad03a70ac0f5dbfbcff1f5fc352beefc`）；从原“可见应用”标题到文件尾 3873B 完全不变（SHA256 `4410d9a77b40e19017faa0636ddd0946dff021e34915e77928a3d35c791f5804`）。
+
+## 状态分支证据
+
+以下为人工源码解读，不执行或模拟分支，全部组合仍 UNRUN。行号指候选 `D:\codes\mobile\ai-manager\.cache\guardian-permission-read-state-20261023-r1\after.dart`。
+
+| 源码输入 | 静态结论与行号 |
+| --- | --- |
+| 父 bool? 为 null | 289–290 明示清单授权未知并指向上方观察状态刷新；没有与 false 合并。 |
+| 父 bool? 为 false | 291–292 保留原“先开启应用清单授权”文案；只有明确 false 进入此分支。 |
+| 父 true，settings null，busy true / false | 293–296 分别为确认中 / 未知，指向既有刷新按钮；不当成已关闭。 |
+| 父 true，settings.enabled=false | 297–298 保留原“权限观察尚未授权”；读取到 settings 对象是必要条件。 |
+| 两授权 true，inventory null，busy true / false | 299–302 分别为读取中 / 未知，阻止进入真实空清单分支。 |
+| 两授权 true，已读取 inventory 且 applications 真空 | 303–311 才能到原空态；“空列表不表示没有安装应用”保持。 |
+| 已读取非空 inventory / 权限结果 | 304 至文件尾逐字不变，选择、读取与代理自报/系统执行未核对说明保持。 |
+| 顶部独立授权状态 | 264–270 区分 null 的忙碌/未知与已知 true/false，已知 false 显示“已关闭”。 |
+
+`load` 的原 catch 会清除 settings/inventory 并保留 error（84–95），所以 API 503、网络/校验失败不能伪装成一份 enabled=false 成功响应。现有错误文案、安全验证入口和刷新按钮（196–208、246–257、275–278）逐字不变；401/REAUTH_REQUIRED 仍由原条件决定。新 UI 没有增加授权、采集、网络或系统权限操作。
+
+## 不变契约与依赖
+
+- 所有字段、父 bool? 参数、init/didUpdate/dispose、generation、load/read/change、操作原因、版本/key 等都在未变的 build 前缀（8–231）。父 false→true 的 didUpdate 清 inventory（43–52）与原 load（61–95）未改；候选仅正确展示已有状态。
+- 父页面 `D:\codes\mobile\ai-manager\apps\guardian\lib\pages\observation_page.dart` 的 263–264 保留原 const bool.fromEnvironment('PERMISSION_OBSERVATION_ENABLED')，没有 defaultValue=true；功能仍默认关闭。268–282 的 repository/scope、canEdit、snapshot?.settings.inventoryEnabled、reauth 绑定均未变。
+- Repo `D:\codes\mobile\ai-manager\apps\guardian\lib\core\permission_observation.dart` 的 33–68 保留 scope/current/404 处理，77–97 保留更新 version/key 与回读校验，105–118 保留读取前后设置版本核对。
+- 共享模型 `D:\codes\mobile\ai-manager\packages\device_operations\lib\permission_observation_view.dart` 的 30–55 要求真实 bool；63–98 的 inventory 对象和 applications 列表不是“未读”null 的替代物。候选没有改这些类型/API。
+- `D:\codes\mobile\ai-manager\apps\guardian\lib\ui\design.dart` 的原 Panel（70–85）和 const EmptyView（206–226）满足本次原有组件调用；imports 不变，无新依赖或新回调。
+
+## 限制与交付
+
+本次不声称原 change/read 的异步竞态、覆盖路由或所有权限行为已通过验证，也不证明当前服务启用了该构建 flag。短屏、大字、键盘/读屏、失败恢复、撤回/刷新与迟到响应组合均需在允许窗口另行验证。
+
+本轮只执行自有文本/hash/JSON/diff 读回器，没有执行 Dart、任何候选/函数/谓词/分支、SDK、AST、formatter、编译、测试、WinAPI、进程查询或网络；未写 Main/Git、原候选或依赖。只新增本报告目录。Root 决定后续整合，所有执行/资格许可保持未授予。

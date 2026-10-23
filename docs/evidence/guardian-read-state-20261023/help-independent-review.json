@@ -1,0 +1,155 @@
+{
+  "status": "STATIC_NO_BLOCKER_FINAL_BUNDLE_ALL_NEW_SCENARIOS_UNRUN",
+  "blockingFindings": [],
+  "finalDeliveryEntriesVerified": 6,
+  "directoryFileCount": 7,
+  "mainRawEqualsBefore": true,
+  "finalAfterEqualsDraftSha256": "439dbf336a716758196932e7b182fec415d1080f7d875d0f4ce6fe196d1a74fa",
+  "readBeforeAfterHashesConsistent": true,
+  "fullAndR1DeltaPatchesReconstructedByteExact": true,
+  "scopeInitDisposeAndPaginationMethodsByteIdentical": true,
+  "postVersionResponseCheckAndRequiredFreshReloadByteIdentical": true,
+  "r1ReadStateUiByteIdentical": true,
+  "uncertainSnapshotSameOperationOnlyAndAppendDoesNotReconcile": true,
+  "perIdLastDispatchPersistsAcrossFreshAndRejectsOldConfirmation": true,
+  "oldR1StillPinned": true,
+  "sourcePins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r2\\after.dart",
+      "bytes": 12046,
+      "sha256": "439dbf336a716758196932e7b182fec415d1080f7d875d0f4ce6fe196d1a74fa",
+      "beforeAfterReadBytesEqual": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r2\\before.dart",
+      "bytes": 11079,
+      "sha256": "c299fd7a069501d45462f8cac89327d4bc811426ca37c465145f8bc9ff368eb3",
+      "beforeAfterReadBytesEqual": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r2\\delivery-pins.json",
+      "bytes": 1489,
+      "sha256": "86fa059ff69adce9676ebfe7cf16015edd9bac2adc008f61682b59329fcae822",
+      "beforeAfterReadBytesEqual": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r2\\delta-from-r1.patch",
+      "bytes": 3092,
+      "sha256": "31421bc4a49e941de51c9688f32d68cf9e06f816ae7e463ff34113beaad2e339",
+      "beforeAfterReadBytesEqual": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r2\\help-read-state.patch",
+      "bytes": 4669,
+      "sha256": "185de56e7b980f9a38a6c58e63ab7c7852461957314de0d1265c3f756cf39cc8",
+      "beforeAfterReadBytesEqual": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r2\\pins.json",
+      "bytes": 4118,
+      "sha256": "f01db9935f5992eed25de68ada854961cfb63696007b1cdcca4917d00eec545c",
+      "beforeAfterReadBytesEqual": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r2\\review.md",
+      "bytes": 5176,
+      "sha256": "d847f11e41506cf4458c3d47d43e7f86c9e1c3c3598febf98e230fe08fda7e6e",
+      "beforeAfterReadBytesEqual": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r1\\after.dart",
+      "bytes": 11459,
+      "sha256": "a1273a3e3ec4350d8efa565ef573050d5b9316b9bb5ffb244498af79b73eb697",
+      "beforeAfterReadBytesEqual": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r1\\before.dart",
+      "bytes": 11079,
+      "sha256": "c299fd7a069501d45462f8cac89327d4bc811426ca37c465145f8bc9ff368eb3",
+      "beforeAfterReadBytesEqual": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r1\\delivery-pins.json",
+      "bytes": 1258,
+      "sha256": "c6496809221345768cce3c2b291dcf169b239d01e0f8fe19b6cb64aad819ffd3",
+      "beforeAfterReadBytesEqual": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r1\\help-read-state.patch",
+      "bytes": 2080,
+      "sha256": "3ec505e733bdcfbc82dfe70cf856092f7acc8fc849e4ccb79656e3733ceb736c",
+      "beforeAfterReadBytesEqual": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r1\\pins.json",
+      "bytes": 2041,
+      "sha256": "2e9d03549f0eb5b82a9cd19681eb158f8d549d4cc364b2cba9cac03deabb7219",
+      "beforeAfterReadBytesEqual": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r1\\review.md",
+      "bytes": 3862,
+      "sha256": "27be287cc6e0021a6a2395e48d8e104c3112cb14855fbca3d6f26549c20f481d",
+      "beforeAfterReadBytesEqual": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\help_requests_page.dart",
+      "bytes": 11079,
+      "sha256": "c299fd7a069501d45462f8cac89327d4bc811426ca37c465145f8bc9ff368eb3",
+      "beforeAfterReadBytesEqual": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\docs\\reviews\\help-request-acknowledgement-recovery-review-20261023.md",
+      "bytes": 3900,
+      "sha256": "28b4af26bf59a32a9c4d80d3ab6eab269d888b7a7cd728ba6026cd4f4703a76c",
+      "beforeAfterReadBytesEqual": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\docs\\reviews\\help-request-empty-state-review-20261023.md",
+      "bytes": 3760,
+      "sha256": "613729963cbe7f7a98d92f25ee5829fe1bca7ff1b15829ecb48670932e4d9421",
+      "beforeAfterReadBytesEqual": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\device_subflow_scope.dart",
+      "bytes": 1512,
+      "sha256": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e",
+      "beforeAfterReadBytesEqual": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\core\\api.dart",
+      "bytes": 22640,
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641",
+      "beforeAfterReadBytesEqual": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\core\\help_requests.dart",
+      "bytes": 2496,
+      "sha256": "2e92c25e0d7845ddbc73e3841798e0e9a8977f3cedf5f9a02446bd5ca457a3cb",
+      "beforeAfterReadBytesEqual": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95",
+      "beforeAfterReadBytesEqual": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\backend\\src\\main\\java\\com\\aimanager\\safety\\internal\\HelpRequestService.java",
+      "bytes": 11640,
+      "sha256": "6d78e0465df42a2ef1780e0d2af45ece155419e229e275b8b38e21d275b5b6e5",
+      "beforeAfterReadBytesEqual": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\backend\\src\\main\\java\\com\\aimanager\\shared\\ResourceVersions.java",
+      "bytes": 968,
+      "sha256": "717e7909a5505fc2336694baa7588b36a7ad740daa2dc08a4d86dad4d91ce4da",
+      "beforeAfterReadBytesEqual": true
+    }
+  ],
+  "allNewScenarios": "UNRUN",
+  "rendered": false,
+  "businessPredicatesSimulated": false,
+  "sdkAstCandidateTestFormatterCompilerProcessNetworkUsed": false,
+  "mainGitOrOldBundleWritten": false
+}

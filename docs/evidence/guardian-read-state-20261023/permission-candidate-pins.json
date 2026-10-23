@@ -1,0 +1,65 @@
+{
+  "status": "STATIC_SINGLE_PRODUCTION_FILE_CANDIDATE_ALL_COMBINATIONS_UNRUN",
+  "repositoryPath": "apps/guardian/lib/ui/permission_observation_panel.dart",
+  "before": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-permission-read-state-20261023-r1\\before.dart",
+    "bytes": 15241,
+    "sha256": "12658403f5b8c66d54a911d8ba98acc844ba71bf43df095c8ff4214fac26e89d"
+  },
+  "after": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-permission-read-state-20261023-r1\\after.dart",
+    "bytes": 16183,
+    "sha256": "38a638d0f87d4e6092c1b3faf41dbd69b0ba7ffc6fb631b166872bfb7ade7784"
+  },
+  "patch": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-permission-read-state-20261023-r1\\permission-read-state.patch",
+    "bytes": 2330,
+    "sha256": "99d022b3bfffb917897be59a6d49d7b768bd5bb14f9c855fed99fe146808b816"
+  },
+  "review": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-permission-read-state-20261023-r1\\review.md",
+    "bytes": 4774,
+    "sha256": "be0c7248f6db7de1ca7eef1e0e89c758ede7c86804f155082d8c7e53929f87db"
+  },
+  "mainObserved": {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\permission_observation_panel.dart",
+    "bytes": 15241,
+    "sha256": "12658403f5b8c66d54a911d8ba98acc844ba71bf43df095c8ff4214fac26e89d"
+  },
+  "mainRawMatchesBefore": true,
+  "beforeBuildAllBusinessAndLifecycleTextByteIdentical": true,
+  "realInventoryDisplayTailByteIdentical": true,
+  "noParentRepoApiCallbackFlagOrDependencyChanges": true,
+  "emptyApplicationsRequiresInventoryObject": true,
+  "allCombinations": "UNRUN",
+  "rendered": false,
+  "sdkAstTestsFormatterCompilerCandidateWinApiNetworkUsed": false,
+  "mainOrGitWritten": false,
+  "dependencyPins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\docs\\reviews\\permission-observation-unknown-state-review-20261023.md",
+      "bytes": 3778,
+      "sha256": "e23918475b4efa680aa97e0f2c408e374f75452bb40d330db1afd34f72945968"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\observation_page.dart",
+      "bytes": 11503,
+      "sha256": "ac0e30966f2a5c5f6b65dc12a8445a3ae7d52d8cda45cbb979b0b58a18e83816"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\core\\permission_observation.dart",
+      "bytes": 4105,
+      "sha256": "efd14b63c8434689fbb88ceb4d0a6a0161320142ad5b793221ba15c4d7f9e0b6"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\packages\\device_operations\\lib\\permission_observation_view.dart",
+      "bytes": 6888,
+      "sha256": "ee4f3b6c04bb31702e1d9583651dde26ade9a4bc71ef5b900c3a42e802c4fcec"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    }
+  ]
+}

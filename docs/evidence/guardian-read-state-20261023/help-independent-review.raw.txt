@@ -1,0 +1,30 @@
+# Help 读取状态 / 确认恢复 r2：独立静态审阅
+
+**结论：最终固定候选未发现静态阻断。所有新场景 UNRUN / 未渲染；不代表编译、测试或服务行为通过。**
+
+先按实际库存审 draft after/fullpatch，再等作者最终 delivery 到位。最终 after仍12046B / `439dbf336a716758196932e7b182fec415d1080f7d875d0f4ce6fe196d1a74fa`，与draft一致；全部最终文件读取前后原始bytes一致。已全文阅读候选、Main→r2完整patch、r1→r2增量、两个源问题报告及真实 Help model/API、DeviceSubflowScope、后端list/ack和ResourceVersions相关实现。没有执行候选或模拟业务谓词。
+
+## 读取事实与未定操作
+
+- firstPageLoaded四处语义保留：初值false、fresh开始false、只有current/generation/filter匹配的fresh成功才true、Panel先以此区分未知读取和真实成功空态。追加读不设首屏成功标记；确认错误也不被当作读取成功标志。r1 的读取状态/错误恢复UI与r2逐字相同。
+- uncertain改为ID→操作代次Map。fresh在发读前取得独立快照；成功仅移除当前值仍等于快照代次的项。B读开始时A仍pending且不在uncertain，随后A失败新增代次，B较早OPEN响应不能清该新增项。A失败后才开始的C可以核对其已捕获且未变化的项；不同/新代次留存。append不进入removeWhere，原列表分页恢复入口保持。
+- 该映射只证明“读取开始以后新增/改变的未定操作不会被较早读取解锁”。不把它提升为服务器最终一致性、目标成员核对或所有未知写入已完成的证明；候选作者的限制与实际实现一致。
+
+## 同ID旧确认与必要写后读
+
+- 确认打开前捕获该ID的lastDispatchedSequence；await confirmAction后重新核current/sending/uncertain与该ID捕获值是否仍相同，才分配单调ackSequence并同步记录lastDispatchedSequence及sending，再进入POST await。
+- 同ID两份旧确认都捕获早先值时，第一份dispatch已改变该ID值；第二份在pending时被sending拦、失败后被uncertain/序列拦、首次成功+fresh结束并移除sending后仍被序列拦。lastDispatchedSequence不随fresh/append清除，故没有sending-away-and-back的ABA缺口。取消不产生dispatch序列；其他ID只更新各自Map项，不因全局计数增长使本ID窗口失效。新打开的确认可以捕获当前最新值。
+- POST路径、item.version/If-Match、响应ID与ACKNOWLEDGED状态检查，以及成功后的`if (current) await load()`整段与Main逐字相同。没有新增会吞掉必要fresh的全局busy条件；fresh仍可supersede旧append，原generation/filter守卫拒绝旧回写。
+- current/permitted/init/dispose范围及分页retry/INVALID_CURSOR明确刷新方法逐字相同；行呈现除了uncertain.contains改containsKey外逐字相同，原警告与按钮说明保留。scope撤销仍由原DeviceSubflowScope sticky身份约束，不新增父参数或API。
+
+## 最终固定原件核对
+
+候选目录精确7文件：6条delivery原件加delivery自身，全部bytes/SHA匹配。Main raw仍等before c299fd7a…68eb3。完整Main→r2补丁4669B / `185de56e7b980f9a38a6c58e63ab7c7852461957314de0d1265c3f756cf39cc8`，以及r1→r2增量3092B / `31421bc4a49e941de51c9688f32d68cf9e06f816ae7e463ff34113beaad2e339` 均从真实全文重建、逐字节相同。原r1五项+delivery和作者依赖pins全部保持。
+
+最终delivery1489B / `86fa059ff69adce9676ebfe7cf16015edd9bac2adc008f61682b59329fcae822`；pins4118B / `f01db9935f5992eed25de68ada854961cfb63696007b1cdcca4917d00eec545c`。输入确认恢复报告28b4af26…a76c、空态报告61372996…9421均核实际原件摘要。
+
+## 限制
+
+静态审阅涵盖三个指定交叉顺序、同ID代次替换/多ID/取消、首屏失败/真实空、追加与fresh隔离，以及scope/generation迟到路径；全部未运行。后端仍执行权限与If-Match版本检查，本候选不证明之前服务端重复更新、漏处理或越权，也不替代后续实际交互回归。
+
+本轮只读文本/hash/JSON并写本新cache报告；无SDK、AST/代码解析器、候选导入或执行、谓词模拟、测试、formatter、编译、WinAPI/进程查询或网络，没有写Main/Git/旧候选/最终bundle。最终delivery实际核齐后才作本结论，不将draft意见当最终验收。

@@ -1,0 +1,49 @@
+# 求助确认结果未定：核对读取必须晚于对应操作
+
+审查日期：2026-10-23。本地源码基线为 `979b02ce251d9ea9c0a3ba7a85d44fdf59d53e48`。以下为 **P2 静态控制流发现**，全部运行场景尚未执行。前一轮分页审查已明确保留 fresh-read / acknowledgement 竞态；本报告补充具体、可由页面正常操作触发的路径。
+
+## 请求交叉路径
+
+```mermaid
+sequenceDiagram
+    actor Adult as 监护人
+    participant UI as 求助记录页
+    participant API as 服务端
+    Adult->>UI: 确认已看到
+    UI->>API: A：POST acknowledge，If-Match 0
+    Note over UI,API: A 尚未完成；sending 中有此记录，loading 仍为 false
+    Adult->>UI: 刷新
+    UI->>API: B：首屏 GET
+    Note right of API: B 查询得到 OPEN v0，响应延迟
+    API-->>UI: A：503 / 网络错误
+    Note right of UI: uncertain 加入此 ID，sending 随后移除
+    API-->>UI: B：先前读取的 OPEN v0
+    Note right of UI: fresh 成功直接 uncertain.clear，旧记录可再次确认
+```
+
+这里仅要求独立请求及响应有不同延迟；不需要最终一致性数据库或捕获已移除控件的回调。B 的查询发生在 A 服务端提交之前，也允许其响应晚于 A 的错误返回。源码路径允许客户端在不知道 A 最终结果时使用这一较早读取解锁。
+
+## 源码依据
+
+- `help_requests_page.dart:138–145` 开始确认只设置 sending，未设置列表 loading；188 行刷新按钮只受 loading 限制，因此 A pending 时 B 可启动。
+- `load` 在 61 行保存请求 generation；确认失败的 151–159 行新增 uncertain、设置错误并移除 sending，没有使 B 的 generation 失效。
+- B 成功时的 82–86 行通过现有 current / generation / filter 检查，直接 `uncertain.clear()`。272–279 行依赖 sending / uncertain 禁用确认按钮；两者此时均不含此 ID，故旧 OPEN 记录可再次确认。
+- `HelpRequestService.list:98–132` 的只读查询与 `acknowledge:159–178` 是不同事务。确认仍执行资源版本检查；`ResourceVersions.check` 对不匹配版本返回 412。因此本发现的影响是客户端过早解除核对要求、重复尝试和错误状态冲突，没有证明服务端重复更新、越权或实际漏处理事件。
+
+## 修复与验收要求
+
+核对成功必须对应到具体确认操作。较早发出的读取不能清除其开始以后新增或变化的结果未定状态。可以按操作代次记录未定记录、捕获读取开始时有资格核对的集合，并只解除对应项；也可采用明确的等价读写协调。
+
+需要保留分页上下文、工作空间与筛选隔离，以及确认成功后必要的列表刷新，避免以一个全局 busy 判断丢弃必要的写后读取。新空态成功标志只描述列表读取，不能替代确认结果的核对资格。
+
+后续场景均待运行：A pending 时 B 读取旧 OPEN；A 错误先返回而 B 后返回；A 失败以后才开始的 C 正常核对恢复；同一 ID 多次操作代次；多条记录并行；追加读取、切换筛选和工作空间后的迟到响应；确认成功后刷新失败。现有初始/确认后 dispose 用例不覆盖上述仍挂载的交叉顺序。
+
+## 输入指纹
+
+| 文件 | SHA-256 |
+| --- | --- |
+| `apps/guardian/lib/pages/help_requests_page.dart` | `c299fd7a069501d45462f8cac89327d4bc811426ca37c465145f8bc9ff368eb3` |
+| `backend/src/main/java/com/aimanager/safety/internal/HelpRequestService.java` | `6d78e0465df42a2ef1780e0d2af45ece155419e229e275b8b38e21d275b5b6e5` |
+| `backend/src/main/java/com/aimanager/shared/ResourceVersions.java` | `717e7909a5505fc2336694baa7588b36a7ad740daa2dc08a4d86dad4d91ce4da` |
+
+发现已同步主任务。本轮只新增审查文档，未修改生产/测试源码、运行 SDK、执行 Git 写操作或更新服务；源码推导不计为运行验证通过。

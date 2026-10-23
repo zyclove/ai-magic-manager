@@ -1,0 +1,93 @@
+{
+  "status": "STATIC_CANDIDATE_ALL_NEW_SCENARIOS_UNRUN_NOT_APPLIED",
+  "productionPaths": [
+    "apps/guardian/lib/pages/help_requests_page.dart"
+  ],
+  "before": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r2\\before.dart",
+    "bytes": 11079,
+    "sha256": "c299fd7a069501d45462f8cac89327d4bc811426ca37c465145f8bc9ff368eb3"
+  },
+  "after": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r2\\after.dart",
+    "bytes": 12046,
+    "sha256": "439dbf336a716758196932e7b182fec415d1080f7d875d0f4ce6fe196d1a74fa"
+  },
+  "fullPatch": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r2\\help-read-state.patch",
+    "bytes": 4669,
+    "sha256": "185de56e7b980f9a38a6c58e63ab7c7852461957314de0d1265c3f756cf39cc8"
+  },
+  "deltaFromR1": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r2\\delta-from-r1.patch",
+    "bytes": 3092,
+    "sha256": "31421bc4a49e941de51c9688f32d68cf9e06f816ae7e463ff34113beaad2e339"
+  },
+  "review": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r2\\review.md",
+    "bytes": 5176,
+    "sha256": "d847f11e41506cf4458c3d47d43e7f86c9e1c3c3598febf98e230fe08fda7e6e"
+  },
+  "mainObserved": {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\help_requests_page.dart",
+    "bytes": 11079,
+    "sha256": "c299fd7a069501d45462f8cac89327d4bc811426ca37c465145f8bc9ff368eb3"
+  },
+  "mainMatchesBefore": true,
+  "originalR1Delivery": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r1\\delivery-pins.json",
+    "bytes": 1258,
+    "sha256": "c6496809221345768cce3c2b291dcf169b239d01e0f8fe19b6cb64aad819ffd3"
+  },
+  "originalR1FiveFilesStillMatch": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r1\\after.dart",
+      "bytes": 11459,
+      "sha256": "a1273a3e3ec4350d8efa565ef573050d5b9316b9bb5ffb244498af79b73eb697"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r1\\before.dart",
+      "bytes": 11079,
+      "sha256": "c299fd7a069501d45462f8cac89327d4bc811426ca37c465145f8bc9ff368eb3"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r1\\help-read-state.patch",
+      "bytes": 2080,
+      "sha256": "3ec505e733bdcfbc82dfe70cf856092f7acc8fc849e4ccb79656e3733ceb736c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r1\\pins.json",
+      "bytes": 2041,
+      "sha256": "2e9d03549f0eb5b82a9cd19681eb158f8d549d4cc364b2cba9cac03deabb7219"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r1\\review.md",
+      "bytes": 3862,
+      "sha256": "27be287cc6e0021a6a2395e48d8e104c3112cb14855fbca3d6f26549c20f481d"
+    }
+  ],
+  "findingInput": {
+    "path": "D:\\codes\\mobile\\ai-manager\\docs\\reviews\\help-request-acknowledgement-recovery-review-20261023.md",
+    "bytes": 3900,
+    "sha256": "28b4af26bf59a32a9c4d80d3ab6eab269d888b7a7cd728ba6026cd4f4703a76c"
+  },
+  "existingTestReadOnly": {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\approval_help_flow_browser_test.dart",
+    "bytes": 13713,
+    "sha256": "845cb4f4b5a65cf126080861b7e29bd579a0101f5b3be437c1394bf7c0be0127"
+  },
+  "requestVersionResponseValidationAndRequiredFreshReloadByteIdentical": true,
+  "scopeCurrentInitDisposeByteIdenticalExceptNewStateFields": true,
+  "paginationRetryAndInvalidRefreshMethodsByteIdentical": true,
+  "r1ReadStateAndErrorRecoveryUiByteIdentical": true,
+  "rowRenderingOnlyUncertainMembershipLookupChanged": true,
+  "testSourcesChanged": 0,
+  "businessPredicatesSimulated": false,
+  "allNewScenarios": "UNRUN_SOURCE_NARRATIVE_ONLY",
+  "candidateImportedOrExecuted": false,
+  "codeParserOrAstInvoked": false,
+  "sdkTestsFormatterBuildNativeProcessOrNetworkUsed": false,
+  "renderedUiViewed": false,
+  "mainOrGitOrPreviousSealWritten": false,
+  "independentReview": "PENDING"
+}

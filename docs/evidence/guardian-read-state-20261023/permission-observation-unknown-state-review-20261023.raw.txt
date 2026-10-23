@@ -1,0 +1,38 @@
+# 应用权限观察：未知授权状态不应显示为关闭
+
+## 范围与结论
+
+审查日期：2026-10-23。本地 `dev` 基线：`979b02ce251d9ea9c0a3ba7a85d44fdf59d53e48`。发现一项 **P2**：应用权限观察面板把未读到授权状态的 `null` 与已确认关闭的 `false` 合并，可能在加载中或读取失败时提示“先开启应用清单授权”或“权限观察尚未授权”。
+
+此路径限 `PERMISSION_OBSERVATION_ENABLED=true` 的构建。该开关默认关闭；本报告没有确认当前服务开启此功能，也没有运行复现。问题影响管理端对授权事实的表达，没有证明服务端授权被绕过或系统权限发生改变。
+
+## 源码路径
+
+| 输入状态 | 当前处理 | 可见结论的问题 |
+| --- | --- | --- |
+| 父观察摘要仍在读取或读取失败 | `observation_page.dart:278–279` 从可空 `snapshot` 传入 `inventoryEnabled = null` | 面板 `permission_observation_panel.dart:287–288` 用 `!= true` 显示“先开启应用清单授权”，未知被视为已关闭 |
+| 父应用清单授权已知为 true，独立权限授权首次读取尚未完成 | Panel 的初始 `settings` 为 null | 289–290 行用 `settings?.enabled != true` 显示“权限观察尚未授权” |
+| 独立授权或清单 GET 返回普通 503 / 网络失败 | `load` catch 在 84–90 行清除 settings、inventory、selectedPackage 并设置 error | 错误提示与确定的“尚未授权”同时出现；服务端的真实授权可能仍为开启 |
+
+面板上方 264–268 行已将 `settings == null` 表达为“等待读取”，但下方分支没有沿用这一状态区分。上述路径不需要权限变化、非法数据或用户修改注册身份。
+
+`PermissionObservationRepository` 在发送前后检查 current，并将服务端/传输错误抛给面板；这里的读取失败不是一份 `enabled=false` 的成功响应。父入口的构建开关与参数绑定见 `observation_page.dart:263–279`。
+
+## 修复与后续验收要求
+
+- 显式区分加载中、读取失败、已确认开启与已确认关闭。只有当前有效读取明确得到 false，才显示对应的开启授权引导。
+- 父应用清单状态未知时说明尚未确认并指向父观察状态刷新；独立权限授权读取失败时保留刷新和适用的安全验证入口。
+- 授权、应用清单、权限结果分别沿用现有数据范围和失败恢复规则；状态显示修正不能默认授权、自动采集或宣称系统执行成功。
+- 后续检查父状态 null / false / true 与独立设置 loading / error / enabled / disabled 的可达组合，以及刷新、撤回、迟到响应和工作空间变化。全部场景尚未运行。
+
+当前 `submit_confirmation_variant_test.dart` 的权限用例固定传 `inventoryEnabled=false`，验证的是排队回调只打开一个原因窗口，没有覆盖授权读取失败的事实表达。相邻 `ResourcePage`、`NotificationsView`、`ObservationView` 和 `UsageReportsView` 的相关首屏分支有成功数据或错误条件限制，本轮未将其报告为同形问题；这不是这些组件的完整审计结论。
+
+## 输入指纹
+
+| 文件 | SHA-256 |
+| --- | --- |
+| `apps/guardian/lib/ui/permission_observation_panel.dart` | `12658403f5b8c66d54a911d8ba98acc844ba71bf43df095c8ff4214fac26e89d` |
+| `apps/guardian/lib/core/permission_observation.dart` | `efd14b63c8434689fbb88ceb4d0a6a0161320142ad5b793221ba15c4d7f9e0b6` |
+| `apps/guardian/lib/pages/observation_page.dart` | `ac0e30966f2a5c5f6b65dc12a8445a3ae7d52d8cda45cbb979b0b58a18e83816` |
+
+本轮仅执行文本读取、只读 Git 核对和新增本报告。发现已同步主任务；生产修改、编译、应用测试、界面验证和发布仍由主任务按原分工推进。

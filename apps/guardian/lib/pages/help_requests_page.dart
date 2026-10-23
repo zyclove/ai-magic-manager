@@ -24,8 +24,11 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
   String filter = 'OPEN';
   Object? error, pageError;
   bool loading = true, loadingMore = false;
-  int generation = 0;
-  final Set<String> uncertain = {}, sending = {};
+  bool firstPageLoaded = false;
+  int generation = 0, ackSequence = 0;
+  final Map<String, int> uncertain = {};
+  final Map<String, int> lastDispatchedSequence = {};
+  final Set<String> sending = {};
 
   bool permitted() =>
       mounted &&
@@ -60,6 +63,9 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
     if (!current || (more && (loading || loadingMore || cursor == null))) return;
     final epoch = ++generation;
     final sourceFilter = filter;
+    final uncertainAtReadStart = more
+        ? const <String, int>{}
+        : Map<String, int>.of(uncertain);
     final nextCursor = more ? cursor : null;
     setState(() {
       if (more) {
@@ -68,6 +74,7 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
       } else {
         loading = true;
         loadingMore = false;
+        firstPageLoaded = false;
         requests = const [];
         cursor = null;
         error = null;
@@ -83,7 +90,11 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
         setState(() {
           requests = more ? [...requests, ...parsed] : parsed;
           cursor = page.nextCursor;
-          if (!more) uncertain.clear();
+          if (!more) {
+            firstPageLoaded = true;
+            uncertain.removeWhere((id, operation) =>
+                uncertainAtReadStart[id] == operation);
+          }
         });
       }
     } catch (failure) {
@@ -128,14 +139,19 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
   }
 
   Future<void> acknowledge(HelpRequest item) async {
-    if (!current || sending.contains(item.id) || uncertain.contains(item.id)) {
+    if (!current || sending.contains(item.id) || uncertain.containsKey(item.id)) {
       return;
     }
+    final openedAtSequence = lastDispatchedSequence[item.id];
     final confirmed = await confirmAction(context, '确认已看到求助',
         '此操作只记录你已看到这条求助，不代表已联系孩子、问题已解决或紧急服务已接收。请根据实际情况尽快联系并提供帮助。',
         confirm: '已看到');
-    if (!confirmed || !current) return;
+    if (!confirmed || !current || sending.contains(item.id) ||
+        uncertain.containsKey(item.id) ||
+        lastDispatchedSequence[item.id] != openedAtSequence) return;
+    final operation = ++ackSequence;
     setState(() {
+      lastDispatchedSequence[item.id] = operation;
       sending.add(item.id);
       error = null;
     });
@@ -151,7 +167,7 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
     } catch (failure) {
       if (current) {
         setState(() {
-          uncertain.add(item.id);
+          uncertain[item.id] = operation;
           error = failure;
         });
       }
@@ -207,10 +223,13 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
                           child: Padding(
                               padding: EdgeInsets.all(40),
                               child: CircularProgressIndicator(strokeWidth: 2)))
-                      : requests.isEmpty
-                          ? EmptyView(filter == 'OPEN' ? '暂无待查看求助' : '暂无求助记录',
-                              '仅展示已由设备成功提交到本服务的记录。')
-                          : Column(children: [
+                      : !firstPageLoaded
+                          ? const EmptyView('读取尚未完成',
+                              '当前求助记录未知。请使用上方“重试”或“重新安全验证”后再核对。')
+                          : requests.isEmpty
+                              ? EmptyView(filter == 'OPEN' ? '暂无待查看求助' : '暂无求助记录',
+                                  '仅展示已由设备成功提交到本服务的记录。')
+                              : Column(children: [
                               for (final item in requests) ...[
                                 _row(item),
                                 const Divider(height: 1)
@@ -270,12 +289,12 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
               alignment: Alignment.centerRight,
               child: OutlinedButton(
                   onPressed:
-                      sending.contains(item.id) || uncertain.contains(item.id)
+                      sending.contains(item.id) || uncertain.containsKey(item.id)
                           ? null
                           : () => acknowledge(item),
                   child: Text(sending.contains(item.id)
                       ? '处理中'
-                      : uncertain.contains(item.id)
+                      : uncertain.containsKey(item.id)
                           ? '请先刷新核对'
                           : '确认已看到')))
       ]));

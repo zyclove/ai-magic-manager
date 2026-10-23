@@ -1,0 +1,23 @@
+{
+  "status": "INDEPENDENT_STATIC_REVIEW_NO_INTEGRATION_BLOCKER_FOUND_ALL_COMBINATIONS_UNRUN",
+  "files": [
+    {
+      "path": "readback.py",
+      "bytes": 17909,
+      "sha256": "20f821e936aa4c70fbad5a127194d4c727c6a11412a152c281f32efd485d0300"
+    },
+    {
+      "path": "review.json",
+      "bytes": 8231,
+      "sha256": "03f3f39612aa3a68084014f4867cb091394e6230ae9a09289bbd373beb2e02f0"
+    },
+    {
+      "path": "review.md",
+      "bytes": 5011,
+      "sha256": "ac913a7ac672578f99a9b9b7679eeb18718b0e9d8a3a966d1103ca902012b76b"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "allCombinations": "UNRUN",
+  "rendered": false
+}

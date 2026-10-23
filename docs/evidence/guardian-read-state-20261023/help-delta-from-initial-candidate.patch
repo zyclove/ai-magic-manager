@@ -1,0 +1,81 @@
+--- a/r1/help_requests_page.dart
++++ b/apps/guardian/lib/pages/help_requests_page.dart
+@@ -25,8 +25,10 @@
+   Object? error, pageError;
+   bool loading = true, loadingMore = false;
+   bool firstPageLoaded = false;
+-  int generation = 0;
+-  final Set<String> uncertain = {}, sending = {};
++  int generation = 0, ackSequence = 0;
++  final Map<String, int> uncertain = {};
++  final Map<String, int> lastDispatchedSequence = {};
++  final Set<String> sending = {};
+ 
+   bool permitted() =>
+       mounted &&
+@@ -61,6 +63,9 @@
+     if (!current || (more && (loading || loadingMore || cursor == null))) return;
+     final epoch = ++generation;
+     final sourceFilter = filter;
++    final uncertainAtReadStart = more
++        ? const <String, int>{}
++        : Map<String, int>.of(uncertain);
+     final nextCursor = more ? cursor : null;
+     setState(() {
+       if (more) {
+@@ -87,7 +92,8 @@
+           cursor = page.nextCursor;
+           if (!more) {
+             firstPageLoaded = true;
+-            uncertain.clear();
++            uncertain.removeWhere((id, operation) =>
++                uncertainAtReadStart[id] == operation);
+           }
+         });
+       }
+@@ -133,14 +139,19 @@
+   }
+ 
+   Future<void> acknowledge(HelpRequest item) async {
+-    if (!current || sending.contains(item.id) || uncertain.contains(item.id)) {
++    if (!current || sending.contains(item.id) || uncertain.containsKey(item.id)) {
+       return;
+     }
++    final openedAtSequence = lastDispatchedSequence[item.id];
+     final confirmed = await confirmAction(context, '确认已看到求助',
+         '此操作只记录你已看到这条求助，不代表已联系孩子、问题已解决或紧急服务已接收。请根据实际情况尽快联系并提供帮助。',
+         confirm: '已看到');
+-    if (!confirmed || !current) return;
++    if (!confirmed || !current || sending.contains(item.id) ||
++        uncertain.containsKey(item.id) ||
++        lastDispatchedSequence[item.id] != openedAtSequence) return;
++    final operation = ++ackSequence;
+     setState(() {
++      lastDispatchedSequence[item.id] = operation;
+       sending.add(item.id);
+       error = null;
+     });
+@@ -156,7 +167,7 @@
+     } catch (failure) {
+       if (current) {
+         setState(() {
+-          uncertain.add(item.id);
++          uncertain[item.id] = operation;
+           error = failure;
+         });
+       }
+@@ -278,12 +289,12 @@
+               alignment: Alignment.centerRight,
+               child: OutlinedButton(
+                   onPressed:
+-                      sending.contains(item.id) || uncertain.contains(item.id)
++                      sending.contains(item.id) || uncertain.containsKey(item.id)
+                           ? null
+                           : () => acknowledge(item),
+                   child: Text(sending.contains(item.id)
+                       ? '处理中'
+-                      : uncertain.contains(item.id)
++                      : uncertain.containsKey(item.id)
+                           ? '请先刷新核对'
+                           : '确认已看到')))
+       ]));

@@ -1,0 +1,37 @@
+{
+  "status": "STATIC_UNRUN_SEALED_DELIVERY",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r2\\after.dart",
+      "bytes": 12046,
+      "sha256": "439dbf336a716758196932e7b182fec415d1080f7d875d0f4ce6fe196d1a74fa"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r2\\before.dart",
+      "bytes": 11079,
+      "sha256": "c299fd7a069501d45462f8cac89327d4bc811426ca37c465145f8bc9ff368eb3"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r2\\delta-from-r1.patch",
+      "bytes": 3092,
+      "sha256": "31421bc4a49e941de51c9688f32d68cf9e06f816ae7e463ff34113beaad2e339"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r2\\help-read-state.patch",
+      "bytes": 4669,
+      "sha256": "185de56e7b980f9a38a6c58e63ab7c7852461957314de0d1265c3f756cf39cc8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r2\\pins.json",
+      "bytes": 4118,
+      "sha256": "f01db9935f5992eed25de68ada854961cfb63696007b1cdcca4917d00eec545c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-help-read-state-20261023-r2\\review.md",
+      "bytes": 5176,
+      "sha256": "d847f11e41506cf4458c3d47d43e7f86c9e1c3c3598febf98e230fe08fda7e6e"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "executionAuthorized": false
+}
