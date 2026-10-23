@@ -1,0 +1,52 @@
+{
+  "status": "EXISTING_LOCAL_SERVICES_RESTORED_STARTUP_CONTRACT_VERIFIED",
+  "utc": "2026-10-23T03:36:47.174575+00:00",
+  "project": "ai-manager-v1-refresh-20261016-r1",
+  "publicUrl": "http://localhost:18101",
+  "restoration": {
+    "dockerDesktopStarted": true,
+    "dockerEngineVersion": "29.8.2",
+    "existingContainersHealthy": [
+      "backend",
+      "database",
+      "edge",
+      "erasure-database",
+      "identity",
+      "identity-database"
+    ],
+    "dockerInventoryActualChunk": "7b5a56"
+  },
+  "activationPredicate": {
+    "canonicalFields": [
+      "schemaVersion=1",
+      "state=COMMITTED",
+      "project",
+      "publicUrl"
+    ],
+    "redActualChunk": "90cc20",
+    "redCases": 8,
+    "redFailures": 5,
+    "greenActualChunk": "977d4f",
+    "greenCases": 8,
+    "greenFailures": 0
+  },
+  "actualReadOnlySmoke": {
+    "toolSession": 13373,
+    "initialChunk": "11a902",
+    "finalChunk": "11e874",
+    "naturalExit": 0,
+    "frontend": "PASS",
+    "callbackFallback": "PASS",
+    "discovery": "PASS",
+    "anonymousApi": "PASS",
+    "backendHealth": "PASS",
+    "authenticatedJourney": "NOT_RUN",
+    "nativeDeviceExecution": "NOT_RUN"
+  },
+  "latestWorkspaceCodeDeployed": false,
+  "dependenciesInstalledOrUpgraded": false,
+  "businessDataWrittenBySmoke": false,
+  "databaseMigrationInvoked": false,
+  "credentialsReadByObserver": false,
+  "newBrowser31RegressionAccepted": false
+}

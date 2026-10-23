@@ -1,0 +1,58 @@
+{
+  "scope": "Activation predicate only; synthetic metadata",
+  "cases": 8,
+  "failures": 0,
+  "results": [
+    {
+      "name": "canonical committed receipt",
+      "expected": true,
+      "actual": true,
+      "matched": true
+    },
+    {
+      "name": "wrong project",
+      "expected": false,
+      "actual": false,
+      "matched": true
+    },
+    {
+      "name": "wrong public URL",
+      "expected": false,
+      "actual": false,
+      "matched": true
+    },
+    {
+      "name": "uncommitted receipt",
+      "expected": false,
+      "actual": false,
+      "matched": true
+    },
+    {
+      "name": "unsupported schema",
+      "expected": false,
+      "actual": false,
+      "matched": true
+    },
+    {
+      "name": "origin alone is not canonical URL",
+      "expected": false,
+      "actual": false,
+      "matched": true
+    },
+    {
+      "name": "missing receipt",
+      "expected": false,
+      "actual": false,
+      "matched": true
+    },
+    {
+      "name": "receipt outside project local directory",
+      "expected": true,
+      "actual": true,
+      "matched": true
+    }
+  ],
+  "sdkStarted": false,
+  "dockerInvoked": false,
+  "servicesChanged": false
+}
