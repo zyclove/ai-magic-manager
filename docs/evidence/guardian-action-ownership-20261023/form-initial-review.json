@@ -1,0 +1,61 @@
+{
+  "status": "STATIC_REVIEW_WITH_TWO_P2_FINDINGS",
+  "sourceCommit": "ad9f967a802e0d57dcea0e5289bf76d4e55070af",
+  "scope": [
+    "members",
+    "notifications",
+    "devices"
+  ],
+  "findings": [
+    {
+      "id": "FORM-R2-01",
+      "priority": "P2",
+      "title": "Retained notification page-batch callback survives same-owner snapshot replacement",
+      "location": {
+        "path": "apps/guardian/lib/ui/notifications_view.dart",
+        "start": 204,
+        "end": 208
+      },
+      "causeLocations": [
+        {
+          "path": "apps/guardian/lib/ui/notifications_view.dart",
+          "start": 97,
+          "end": 105
+        }
+      ],
+      "runtimeStatus": "UNRUN",
+      "securityClaim": false
+    },
+    {
+      "id": "FORM-R2-02",
+      "priority": "P2",
+      "title": "Retained device close callback can pop a covering child route",
+      "location": {
+        "path": "apps/guardian/lib/ui/device_management_dialog.dart",
+        "start": 99,
+        "end": 101
+      },
+      "causeLocations": [
+        {
+          "path": "apps/guardian/lib/pages/console_pages.dart",
+          "start": 1022,
+          "end": 1029
+        },
+        {
+          "path": "apps/guardian/lib/core/device_management.dart",
+          "start": 587,
+          "end": 599
+        }
+      ],
+      "runtimeStatus": "UNRUN",
+      "securityClaim": false
+    }
+  ],
+  "runtimeStatus": "UNRUN",
+  "rendering": "NOT_OBSERVED",
+  "mainModified": false,
+  "gitModified": false,
+  "sdkExecuted": false,
+  "testExecuted": false,
+  "astOrCandidateExecuted": false
+}

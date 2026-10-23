@@ -1,0 +1,31 @@
+{
+  "status": "STATIC_CANDIDATE_UNRUN",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-device-close-20261023-r2\\after.dart",
+      "bytes": 32500,
+      "sha256": "70424e803dfae979d9cc6596b6628d52d5a38c05de9d62a799874fcfb31759f5"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-device-close-20261023-r2\\before.dart",
+      "bytes": 32289,
+      "sha256": "28e3be992e5e3a2454fefa677dfb74748840fdea0dbd2a48e4d4ce50c94dd380"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-device-close-20261023-r2\\device-close.patch",
+      "bytes": 832,
+      "sha256": "8e39387b9308e5fb3b6065e64f852cad7931b976022977c7b2e32042d4529af8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-device-close-20261023-r2\\pins.json",
+      "bytes": 1918,
+      "sha256": "efdc9fe2b63a4a264bf3a3437dd5720a8354ec7301a0d1067ab83a978038f131"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-device-close-20261023-r2\\review.md",
+      "bytes": 1476,
+      "sha256": "b4f3588e96678766ad46af98e196dd97d5ce6d5e81f0e27022495837689ab9ac"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json"
+}

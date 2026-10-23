@@ -1,0 +1,11 @@
+# 共用列表：事件绑定到当前资源
+
+当前 ResourcePage 在路径或 API 改变时复用 State 并递增 resourceGeneration，但旧 build 的行回调保留 row、调用时才读取新 widget.onOpen，action 又在调用时才捕获新代次。设备组页面使用固定 GlobalKey 切换 includeArchived，因此并非所有宿主都会销毁 State。
+
+本候选在 build 捕获资源代次、path/API、原 isCurrent、create/onOpen/reauth 回调；所有列表内部事件先核归属。创建、打开和重新验证还核捕获的处理器仍是当前处理器；处理器替换或移除后不执行旧入口。旧清除搜索、输入、刷新、分页、创建、打开详情和重新验证不会作用于已替换资源。保留当前资源有效事件、异步 action 的原后置检查和写后必要刷新；toolbar/ColumnSpec 的外部行为仍由宿主负责。权限闭包仍遵守原组件契约，由宿主捕获不可复活的 owner，不能将纯动态 bool 的离开再返回当作新授权身份。
+
+load/action/clearSearch 入口先检查 mounted 及当前权限，防止已销毁 State 的入口先 setState。没有把普通刷新增加到资源代次，正常同资源搜索、刷新、追加和写后读取契约不改；API/字段/方法签名不变。
+
+这是基于文本数据流的修正，未声称复现普通手势、越权或运行通过。现有资源回归只覆盖动作已开始以后替换资源，不能证明持有旧事件在替换完成后才执行安全。未来需覆盖路径/API替换、away/back、dispose、原权限失效后恢复、各类旧回调、当前有效操作及全部既有资源回归。
+
+本轮只读源码/Git原blob、文本替换、补丁重建及hash；不执行 Dart、SDK、AST、formatter、编译、测试、候选函数、进程或网络，不修改 Main/Git。全部应用场景 UNRUN，未渲染。

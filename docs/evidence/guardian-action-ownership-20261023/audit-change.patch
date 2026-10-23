@@ -1,0 +1,249 @@
+--- a/apps/guardian/lib/ui/audit_view.dart
++++ b/apps/guardian/lib/ui/audit_view.dart
+@@ -30,7 +30,9 @@
+   final history = <String?>[];
+   Object? error;
+   VoidCallback? retry;
+-  bool busy = false, opening = false;
++  bool busy = false;
++  Object? openingOperation;
++  bool get opening => openingOperation != null;
+   int generation = 0;
+   bool recent = true;
+   @override
+@@ -74,8 +76,16 @@
+       action: value(action),
+       resourceId: value(resource),
+       correlationId: value(trace));
++  bool current(AuditRepository repository) =>
++      mounted &&
++      identical(widget.repository, repository) &&
++      repository.current();
++  bool eventCurrent(AuditRepository repository, int ticket) =>
++      current(repository) && generation == ticket && !busy && !opening;
+   Future<void> load(
+       {String? target, int direction = 0, bool refresh = false}) async {
++    final repository = widget.repository;
++    if (!current(repository)) return;
+     final ticket = ++generation;
+     if (refresh) {
+       if (recent) resetRange();
+@@ -84,15 +94,17 @@
+       cursor = null;
+     }
+     final destination = refresh ? null : target;
++    final selection = applied;
+     setState(() {
+       busy = true;
++      openingOperation = null;
+       error = null;
+       retry = null;
+       page = null;
+     });
+     try {
+-      final result = await widget.repository.load(applied, cursor: destination);
+-      if (!mounted || ticket != generation) return;
++      final result = await repository.load(selection, cursor: destination);
++      if (!current(repository) || ticket != generation) return;
+       setState(() {
+         if (direction > 0) history.add(cursor);
+         if (direction < 0 && history.isNotEmpty) history.removeLast();
+@@ -100,23 +112,34 @@
+         page = result;
+       });
+     } catch (e) {
+-      if (mounted && ticket == generation) {
++      if (current(repository) && ticket == generation) {
+         setState(() {
+           error = e;
+-          retry = () => load(target: destination, direction: direction);
++          retry = () {
++            if (!eventCurrent(repository, ticket)) return;
++            load(target: destination, direction: direction);
++          };
+         });
+       }
+     } finally {
+-      if (mounted && ticket == generation) setState(() => busy = false);
++      if (current(repository) && ticket == generation) {
++        setState(() => busy = false);
++      }
+     }
+   }
+ 
+   Future<void> open(AuditEvent row) async {
+-    if (opening || busy) return;
+-    setState(() => opening = true);
++    final repository = widget.repository;
++    final ticket = generation;
++    if (!eventCurrent(repository, ticket)) return;
++    final operation = Object();
++    final destination = cursor;
++    final accessChanges = widget.accessChanges;
++    setState(() => openingOperation = operation);
+     try {
+-      final item = await widget.repository.detail(row.id);
+-      if (!mounted) return;
++      final item = await repository.detail(row.id);
++      if (!current(repository) || ticket != generation ||
++          !identical(openingOperation, operation)) return;
+       await actionDetails(
+           context,
+           '审计事件详情',
+@@ -132,22 +155,31 @@
+             '关联编号': item.correlationId,
+             '事件编号': item.id,
+           },
+-          accessChanges: widget.accessChanges,
+-          hasAccess: widget.repository.current);
++          accessChanges: accessChanges,
++          hasAccess: repository.current);
+     } catch (e) {
+-      if (mounted) {
++      if (current(repository) && ticket == generation &&
++          identical(openingOperation, operation)) {
+         setState(() {
+           error = e;
+           page = null;
+-          retry = () => load(target: cursor);
++          retry = () {
++            if (!eventCurrent(repository, ticket)) return;
++            load(target: destination);
++          };
+         });
+       }
+     } finally {
+-      if (mounted) setState(() => opening = false);
++      if (mounted && identical(openingOperation, operation)) {
++        setState(() => openingOperation = null);
++      }
+     }
+   }
+ 
+   Future<void> dates() async {
++    final repository = widget.repository;
++    final ticket = generation;
++    if (!eventCurrent(repository, ticket)) return;
+     final now = DateTime.now();
+     final first = DateTime.fromMillisecondsSinceEpoch(0);
+     final selectedStart = range.start.isAfter(now) ? now : range.start;
+@@ -161,7 +193,7 @@
+             end: selectedEnd.isAfter(now) ? now : selectedEnd),
+         helpText: '选择审计日期范围',
+         saveText: '确定');
+-    if (!mounted || chosen == null) return;
++    if (!eventCurrent(repository, ticket) || chosen == null) return;
+     final end = DateTime(chosen.end.year, chosen.end.month, chosen.end.day + 1);
+     if (end.difference(chosen.start) > const Duration(days: 366)) {
+       toast(context, '一次最多查询 366 天，请缩小日期范围。');
+@@ -193,7 +225,14 @@
+           : '请输入详情中的完整资源编号';
+   @override
+   Widget build(BuildContext context) {
+-    final disabled = busy || opening;
++    final repository = widget.repository;
++    final ticket = generation;
++    final disabled = !eventCurrent(repository, ticket);
++    final selection = applied;
++    final onExport = widget.onExport;
++    final hasPrevious = history.isNotEmpty;
++    final previousCursor = hasPrevious ? history.last : null;
++    final nextCursor = page?.nextCursor;
+     final compact = MediaQuery.sizeOf(context).width < 600;
+     final start = DateFormat('yyyy-MM-dd').format(range.start),
+         end = DateFormat('yyyy-MM-dd')
+@@ -205,6 +244,7 @@
+               onPressed: disabled
+                   ? null
+                   : () {
++                      if (!eventCurrent(repository, ticket)) return;
+                       if (form.currentState!.validate()) load(refresh: true);
+                     },
+               icon: const Icon(Icons.refresh))),
+@@ -224,7 +264,12 @@
+                         crossAxisAlignment: WrapCrossAlignment.center,
+                         children: [
+                           OutlinedButton.icon(
+-                              onPressed: disabled ? null : dates,
++                              onPressed: disabled
++                                  ? null
++                                  : () {
++                                      if (!eventCurrent(repository, ticket)) return;
++                                      dates();
++                                    },
+                               icon: const Icon(Icons.date_range_outlined),
+                               label: Text(recent ? '最近 7 天' : '$start — $end')),
+                           Text('时间按本机时区 ${DateTime.now().timeZoneName} 显示',
+@@ -280,17 +325,22 @@
+                     }),
+                     const SizedBox(height: 16),
+                     Wrap(spacing: 12, children: [
+-                      if (widget.onExport != null)
++                      if (onExport != null)
+                         OutlinedButton.icon(
+                             onPressed: disabled || page == null
+                                 ? null
+-                                : () => widget.onExport!(applied),
++                                : () {
++                                    if (!eventCurrent(repository, ticket) ||
++                                        page == null) return;
++                                    onExport(selection);
++                                  },
+                             icon: const Icon(Icons.download_outlined, size: 18),
+                             label: const Text('导出当前结果')),
+                       FilledButton.icon(
+                           onPressed: disabled
+                               ? null
+                               : () {
++                                  if (!eventCurrent(repository, ticket)) return;
+                                   if (form.currentState!.validate()) {
+                                     load(refresh: true);
+                                   }
+@@ -301,6 +351,7 @@
+                           onPressed: disabled
+                               ? null
+                               : () {
++                                  if (!eventCurrent(repository, ticket)) return;
+                                   action.clear();
+                                   resource.clear();
+                                   trace.clear();
+@@ -337,7 +388,12 @@
+                 subtitle: Text(
+                     '${dateLabel(row.occurredAt)}\n资源 ${shortId(row.resourceId)}'),
+                 trailing: TextButton(
+-                    onPressed: disabled ? null : () => open(row),
++                    onPressed: disabled
++                        ? null
++                        : () {
++                            if (!eventCurrent(repository, ticket)) return;
++                            open(row);
++                          },
+                     child: const Text('查看详情'))),
+             if (row != page!.items.last) const Divider(height: 1),
+           ]
+@@ -350,15 +406,21 @@
+                 crossAxisAlignment: WrapCrossAlignment.center,
+                 children: [
+                   OutlinedButton(
+-                      onPressed: disabled || history.isEmpty
++                      onPressed: disabled || !hasPrevious
+                           ? null
+-                          : () => load(target: history.last, direction: -1),
++                          : () {
++                              if (!eventCurrent(repository, ticket)) return;
++                              load(target: previousCursor, direction: -1);
++                            },
+                       child: const Text('上一页')),
+                   Text('第 ${history.length + 1} 页 · ${page!.items.length} 条'),
+                   OutlinedButton(
+-                      onPressed: disabled || page!.nextCursor == null
++                      onPressed: disabled || nextCursor == null
+                           ? null
+-                          : () => load(target: page!.nextCursor, direction: 1),
++                          : () {
++                              if (!eventCurrent(repository, ticket)) return;
++                              load(target: nextCursor, direction: 1);
++                            },
+                       child: const Text('下一页')),
+                 ])),
+       const SizedBox(height: 16),

@@ -1,0 +1,31 @@
+{
+  "status": "STATIC_TEST_SOURCE_CANDIDATE_UNRUN",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-existing-test-20261023-r1\\after.dart",
+      "bytes": 22319,
+      "sha256": "8ab27ee265f4bd89c8a8ba2902c50d5d4f7540a1c3f1180d76c2363baaeb5d0f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-existing-test-20261023-r1\\before.dart",
+      "bytes": 22316,
+      "sha256": "7db37e189d9e162ee901b8d536a6e6845ae42a00ec3ce01a0108956902e3016e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-existing-test-20261023-r1\\existing-test-expectation.patch",
+      "bytes": 1458,
+      "sha256": "f2c4094c1c331a12d7141fbec34dc8d0b2d74782ed11228018c1ea651f07e68c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-existing-test-20261023-r1\\pins.json",
+      "bytes": 1102,
+      "sha256": "97f1831f434c67331555067950882a50aaada8825f920b011ae75ea594a0ecb8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-existing-test-20261023-r1\\review.md",
+      "bytes": 1056,
+      "sha256": "57b2ef6729446ff1811a099e1fa0ef082054ff84210610d753faab4e7cff65fc"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json"
+}

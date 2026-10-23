@@ -1,0 +1,41 @@
+# 通知列表事件候选 r1：独立静态审阅
+
+## 结论
+
+固定候选的产品差异未见新的整合阻断；有 **1 项明确的既有测试预期冲突**需要随新事件合同调整，详见下文 T1。不能据此声称旧测试会全部通过。所有场景 **UNRUN、未渲染**，没有执行候选/谓词/分支、AST、SDK、测试或网络。
+
+候选目录：`.cache/guardian-notification-page-actions-20261023-r1`；after 16791B / `2be26e954cdefa39d62bbaab4f1cfd25d389f785260db86cdd1ae3015a243fd7`，完整 patch 8565B / `430a128b08bc1089d5ce000896addfde826f6754c56b3320b531a9cc1322df89`，delivery 819B / `0f7d013a8adfec228b26c382b1b6180361c3f5b657e752eb4cf27f519a789694`。完整全文和 patch 已人工读回；精确六成员、所有 pins/delivery、Main-before 与完整 diff 重建结果见 readback.json。
+
+## 核心数据流核对
+
+行号指候选 notifications_view.dart。
+
+- **current/事件 guard（46–55）**：保留 mounted、相同 repository、repository.current；叠加原 generation、实时 !busy、activeRead==null。在发起原操作前检查，既不改 ID，也不提前自增 ticket。
+- **10 个 UI 事件**：刷新 177–182、全部 217–222、未读 226–231、本页已读 233–239、可见错误重试 270–275、打开申请 336–345、单条已读 350–357、首页 373–378、上一页 381–388、下一页 391–409 都捕相同 build 的 repository/pageTicket。第一个有效事件进入原 load/read 后同步自增 generation；同构建旧事件之后因 ticket/忙碌/activeRead 不再有效。
+- **4 类失败 retry**：GET 82–85、标记/打开 140–143、401/403/WORKSPACE_CHANGED 的只读恢复 149–152、重复 cursor 的首页恢复 399–404，均在调用前检查失败或来源页面的原 ticket。build:169/274 捕获 immutable retryAction，不从旧按钮运行时读取新替换的 retry 字段。
+- **上一页栈保护（384–387）**：在 removeLast 前同时检查事件票据与 cursors.length>1。旧第 2 页控件不能在首页删掉唯一 null。下一页先核 ticket，再使用其捕获的 data；不会在换筛选/翻页后将旧 nextCursor 混入新列表。
+
+## 内部必要刷新与 exact IDs
+
+63–163 的 load/firstPage/read 原方法，除三处失败 retry 包装外，其余完整原始文本保持；读回器以三个精确文本逆替换重建并对比，不运行 Dart 逻辑。
+
+- read:114 的 List.unmodifiable(selected)、requestId/owner 和 markRead 分支保持。失败 retry:142 仍传原 ids/requestId，不替换为新页编号。合法重试在原 finally 释放 busy/activeRead 后可进入；它发起新 read 便获得新 generation，重复投递旧重试被拒。
+- **写后内部 load:135 仍直接调用原 load**。load:65 只有 current 入口，不加 activeRead 或 busy 事件 guard，因此原 activeRead 尚占有时仍可完成必要刷新。内部 load 自增自己的请求代次，并由 load 自己的 finally:88–90 释放 busy；read 的 outer finally:160–161 只清自己拥有的 operation。没有把 UI 事件守卫错误套到内部恢复上。
+- 已读成功后刷新失败，原 load retry 属于该 GET 的新 ticket，仍是读取恢复；不会变成重新发送已成功的写入。原 401/403/WORKSPACE_CHANGED 隐藏快照并转读取恢复的分支保留。
+- scope 失效、repository 更换、迟到响应、原 activeRead identity finally、严格协议、50 个批量上限/回执 exact ID 验证均未改。没有修改 Repository/API、父页、共享包、imports 或 Widget 公共参数。
+
+## T1 / P2：既有测试依赖“过期刷新打断 pending read”，与新授权合同相反
+
+文件：`apps/guardian/test/notification_help_scope_browser_test.dart:328–375`，具体旧动作在 351/364，冲突断言在 371–375。**这是静态源码证明的预期冲突，未运行测试。**
+
+该测试先保存 freshRefresh，然后 352 行调用 freshOpen，使 read 同步增加 generation 并持有 activeRead。364 行刻意投递旧 freshRefresh，原代码允许它调用 firstPage/load、增加 generation，借此使旧 read 完成后不再 onOpen；371 行因此断言 opened 为空。新候选 180 行按 Root 明确要求拒绝这个旧 ticket/activeRead 的刷新。369 行完成 freshReceipt 后，仍为当前代次的 read 将正常 onOpen；371 的旧断言不再成立。
+
+不能为保留这条旧断言放松事件 guard。最小调整是把该段改成验证旧 freshRefresh 无新读取/无代次替换、pending activeRead 仍阻止旧重复 open；完成原 read 后 onOpen 正常且只发生一次，内部写后刷新仍完成。如仍需覆盖“内部 load 替代 pending read”的完成归属，应使用明确的内部方法路径单独表达该测试目的，而不依赖已被禁止的过期 UI 事件。Root 和作者已收到此冲突，本轮没有修改或执行测试。
+
+## 覆盖边界和后续窗口
+
+现有 notifications_test:66–117 验证失败 exact IDs 重试，118–150 验证正常分页/筛选；submit_confirmation_variant_test:251–317、366–415 验证 pending 重复事件/失败重试；notification_help_scope_browser_test:224–295 验证失权/dispose。这些源码仍有参考价值，T1 的原断言需先对齐。旧运行结果不能视为新候选结果。
+
+本次没有审查并解决所有通知副作用、网络不确定结果或跨路由覆盖行为。未来应验证同 owner 新列表完成后所有旧 UI/retry 不发读写、同页双击一次、原 IDs 重试、prev 首页保护、cycle-cursor 恢复、写后内部 load、scope 失效及短屏大字交互。全部保持 UNRUN。
+
+本轮只新增本报告目录，执行自有文本/hash/JSON/diff 读回；不写 Main/Git、原候选、依赖或测试。没有新增执行/资格授权。

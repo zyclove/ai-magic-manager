@@ -1,0 +1,7 @@
+# 同步一条既有通知回归的事件契约
+
+交叉静态审阅指出，原 notification_help_scope_browser_test.dart 的既有仓库替换用例依赖旧 refresh 在新的 pending read 中生效，以使当前 read 的 onOpen 被旧代次取代。新的生产契约要求该旧刷新回调被拒绝；当前 read 收到自己的回执后应正常打开申请。
+
+本候选只改此既有用例的三处文本：三行说明；freshReceipt 后期待正常一次打开；再点击当前新按钮后期待累计两次打开。所有旧/新请求发起及完成顺序、旧owner不得动作和PUT恰好两次的断言保留。没有删除断言、跳过、放宽为非空，或改fixture来绕过生产guard；未增加testWidgets用例，声明名称和源码行数不变。
+
+这是预期适配，不是用例已通过。全部应用测试、解析、编译、formatter和实际时序验证未运行；新生产guard的其他新增场景仍须补齐并在可用窗口运行。这里只用文本、hash、只读Git及完整patch检查，Main/Git未改。

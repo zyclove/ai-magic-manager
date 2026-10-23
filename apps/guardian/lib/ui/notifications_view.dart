@@ -48,6 +48,12 @@ class _NotificationsViewState extends State<NotificationsView> {
       identical(widget.repository, repository) &&
       repository.current();
 
+  bool actionCurrent(NotificationRepository repository, int ticket) =>
+      current(repository) &&
+      generation == ticket &&
+      !busy &&
+      activeRead == null;
+
   @override
   void dispose() {
     generation++;
@@ -73,7 +79,10 @@ class _NotificationsViewState extends State<NotificationsView> {
       if (current(repository) && generation == request) {
         setState(() {
           error = failure;
-          retry = () => load(owner: repository);
+          retry = () async {
+            if (!actionCurrent(repository, request)) return;
+            await load(owner: repository);
+          };
         });
       }
     } finally {
@@ -128,13 +137,19 @@ class _NotificationsViewState extends State<NotificationsView> {
         if (!current(repository) || generation != request) return;
         setState(() {
           error = failure;
-          retry = () => read(ids, requestId: requestId, owner: repository);
+          retry = () async {
+            if (!actionCurrent(repository, request)) return;
+            await read(ids, requestId: requestId, owner: repository);
+          };
           if (failure is ApiFailure &&
               (failure.status == 401 ||
                   failure.status == 403 ||
                   failure.code == 'WORKSPACE_CHANGED')) {
             snapshot = null;
-            retry = () => load(owner: repository);
+            retry = () async {
+              if (!actionCurrent(repository, request)) return;
+              await load(owner: repository);
+            };
           }
         });
       } finally {
@@ -150,6 +165,8 @@ class _NotificationsViewState extends State<NotificationsView> {
   @override
   Widget build(BuildContext context) {
     final repository = widget.repository;
+    final pageTicket = generation;
+    final retryAction = retry;
     final data = snapshot;
     final unreadIds =
         data?.page.items.where((n) => n.unread).map((n) => n.id).toList() ??
@@ -157,7 +174,12 @@ class _NotificationsViewState extends State<NotificationsView> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       PageHeading('通知中心', '跟进访问申请，及时查看处理进度。',
           action: OutlinedButton.icon(
-              onPressed: busy ? null : () => firstPage(owner: repository),
+              onPressed: busy
+                  ? null
+                  : () {
+                      if (!actionCurrent(repository, pageTicket)) return;
+                      firstPage(owner: repository);
+                    },
               icon: const Icon(Icons.refresh, size: 18),
               label: const Text('刷新通知'))),
       Panel(
@@ -194,18 +216,27 @@ class _NotificationsViewState extends State<NotificationsView> {
                   selected: !unreadOnly,
                   onSelected: busy
                       ? null
-                      : (_) => firstPage(filter: false, owner: repository)),
+                      : (_) {
+                          if (!actionCurrent(repository, pageTicket)) return;
+                          firstPage(filter: false, owner: repository);
+                        }),
               ChoiceChip(
                   label: const Text('未读'),
                   selected: unreadOnly,
                   onSelected: busy
                       ? null
-                      : (_) => firstPage(filter: true, owner: repository)),
+                      : (_) {
+                          if (!actionCurrent(repository, pageTicket)) return;
+                          firstPage(filter: true, owner: repository);
+                        }),
               OutlinedButton.icon(
                   onPressed:
                       busy || unreadIds.isEmpty
                           ? null
-                          : () => read(unreadIds, owner: repository),
+                          : () {
+                              if (!actionCurrent(repository, pageTicket)) return;
+                              read(unreadIds, owner: repository);
+                            },
                   icon: const Icon(Icons.done_all, size: 18),
                   label: const Text('将本页标为已读')),
             ]),
@@ -236,7 +267,13 @@ class _NotificationsViewState extends State<NotificationsView> {
                           warning: true)),
                   const SizedBox(height: 12),
                   OutlinedButton(
-                      onPressed: busy ? null : retry, child: const Text('重试')),
+                      onPressed: busy || retryAction == null
+                          ? null
+                          : () {
+                              if (!actionCurrent(repository, pageTicket)) return;
+                              retryAction();
+                            },
+                      child: const Text('重试')),
                 ]))),
       if (busy)
         const Padding(
@@ -298,9 +335,14 @@ class _NotificationsViewState extends State<NotificationsView> {
                           OutlinedButton.icon(
                               onPressed: busy
                                   ? null
-                                  : () => read(notice.unread ? [notice.id] : [],
-                                      requestId: notice.requestId,
-                                      owner: repository),
+                                  : () {
+                                      if (!actionCurrent(repository, pageTicket)) {
+                                        return;
+                                      }
+                                      read(notice.unread ? [notice.id] : [],
+                                          requestId: notice.requestId,
+                                          owner: repository);
+                                    },
                               icon: const Icon(Icons.open_in_new, size: 17),
                               label: const Text('查看当前申请')),
                           if (notice.unread)
@@ -308,7 +350,11 @@ class _NotificationsViewState extends State<NotificationsView> {
                                 onPressed:
                                     busy
                                         ? null
-                                        : () => read([notice.id], owner: repository),
+                                        : () {
+                                            if (!actionCurrent(
+                                                repository, pageTicket)) return;
+                                            read([notice.id], owner: repository);
+                                          },
                                 child: const Text('标为已读')),
                         ]),
                       ]))),
@@ -326,13 +372,17 @@ class _NotificationsViewState extends State<NotificationsView> {
                   TextButton(
                       onPressed: busy || cursors.length == 1
                           ? null
-                          : () => firstPage(owner: repository),
+                          : () {
+                              if (!actionCurrent(repository, pageTicket)) return;
+                              firstPage(owner: repository);
+                            },
                       child: const Text('返回首页')),
                   OutlinedButton(
                       onPressed: busy || cursors.length == 1
                           ? null
                           : () {
-                              if (!current(repository)) return;
+                              if (!actionCurrent(repository, pageTicket) ||
+                                  cursors.length <= 1) return;
                               cursors.removeLast();
                               load(owner: repository);
                             },
@@ -341,12 +391,17 @@ class _NotificationsViewState extends State<NotificationsView> {
                       onPressed: busy || data?.page.nextCursor == null
                           ? null
                           : () {
-                              if (!current(repository)) return;
+                              if (!actionCurrent(repository, pageTicket)) return;
                               if (cursors.contains(data!.page.nextCursor)) {
                                 setState(() {
                                   error = const ApiFailure(
                                       502, 'INVALID_NOTIFICATION_RESPONSE');
-                                  retry = () => firstPage(owner: repository);
+                                  retry = () async {
+                                    if (!actionCurrent(repository, pageTicket)) {
+                                      return;
+                                    }
+                                    await firstPage(owner: repository);
+                                  };
                                 });
                                 return;
                               }

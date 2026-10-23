@@ -47,6 +47,7 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
   final search = TextEditingController();
   _ConfirmationLifetime? confirmationLifetime;
   bool confirming = false, showingSubflow = false;
+  bool closeRequested = false;
   DeviceManagementController get c => widget.controller;
   bool get checkingRevoke =>
       c.revokeResultUnknown || c.revokeAcceptedAwaitingRead;
@@ -97,7 +98,11 @@ class _DeviceManagementDialogState extends State<DeviceManagementDialog> {
   }
 
   void close() {
-    if (!c.writeBusy) widget.onClose();
+    if (!mounted || closeRequested || c.writeBusy) return;
+    final route = ModalRoute.of(context);
+    if (route == null || !route.isCurrent || !route.isActive) return;
+    closeRequested = true;
+    widget.onClose();
   }
 
   Future<void> revoke() => c.revoke(confirmCloudRevoke);

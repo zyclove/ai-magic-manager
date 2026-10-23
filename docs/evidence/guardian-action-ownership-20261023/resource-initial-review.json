@@ -1,0 +1,65 @@
+{
+  "status": "ONE_STATIC_P2_RESOURCE_EVENT_OWNER_BINDING_GAP",
+  "head": "ad9f967a802e0d57dcea0e5289bf76d4e55070af",
+  "findings": [
+    {
+      "id": "P2-1",
+      "file": "apps/guardian/lib/ui/resource_page.dart",
+      "entryLines": [
+        159,
+        160,
+        161,
+        200,
+        293,
+        310,
+        359,
+        371
+      ],
+      "title": "Old build callbacks can enter the replacement resource because owner is sampled at invocation",
+      "rootCause": "A retained old row closure dynamically resolves widget.onOpen, while action captures only the current resourceGeneration after entry.",
+      "actualHost": "DeviceGroupsPage fixed GlobalKey at27 and same-State includeArchived path change at558–575; open guard/capture at194–215 is current-session rather than original list epoch.",
+      "impact": "Stale UI intent can open an old row in the new resource context, retarget create/refresh/search, or reach unmounted setState.",
+      "authorizationBypassProven": false,
+      "ordinaryGestureReproduced": false
+    }
+  ],
+  "existingHeldCallbackTest": "110–129 blocks a revoked isCurrent predicate; it does not cover replacement with current permission true",
+  "minimumDesign": "Capture render generation/path/api/permitted and handler; check before all callback side effects; preserve in-flight guards and load semantics; add mounted method entry protection.",
+  "sourcePins": [
+    {
+      "bytes": 17324,
+      "path": "apps/guardian/lib/ui/resource_page.dart",
+      "sha256": "c742e801e36910b278525c29228b33b8eb7a69606b53a9d210b535db0e4c35e3"
+    },
+    {
+      "bytes": 22170,
+      "path": "apps/guardian/test/resource_page_resilience_test.dart",
+      "sha256": "a003a75c83ef01e6347bfea7ee08801302267f0e97012534e455c57bbc7575f2"
+    },
+    {
+      "bytes": 36200,
+      "path": "apps/guardian/lib/pages/device_groups_page.dart",
+      "sha256": "a4e951742370b108eece12d852104dfa2e817033ed392e1418234dc44a9a8a57"
+    },
+    {
+      "bytes": 1512,
+      "path": "apps/guardian/lib/pages/device_subflow_scope.dart",
+      "sha256": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e"
+    },
+    {
+      "bytes": 22640,
+      "path": "apps/guardian/lib/core/api.dart",
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641"
+    }
+  ],
+  "allScenarios": "UNRUN",
+  "rendered": false,
+  "implementationChanged": false,
+  "sdkTestsParserFormatterPredicateProcessInspectionWinApiNetworkCalls": 0,
+  "mainGitOrOriginalArtifactsWritten": false,
+  "limitations": [
+    "Manual source dataflow establishes a callable retained-closure path, not frequency or a rendered reproduction.",
+    "Existing session and HTTP guards remain effective; no authorization bypass claim.",
+    "One issue only; sampled host review is not an exhaustive ResourcePage consumer audit."
+  ]
+}

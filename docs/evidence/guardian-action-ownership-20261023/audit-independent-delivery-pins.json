@@ -1,0 +1,18 @@
+{
+  "status": "STATIC_NO_BLOCKER_AUDIT_PAGE_ACTIONS_ALL_SCENARIOS_UNRUN",
+  "files": [
+    {
+      "path": "review.md",
+      "bytes": 4177,
+      "sha256": "982a68dc684e666aae6919705f26d761a7bc008fd2c374a10a9260d80a128734"
+    },
+    {
+      "path": "review.json",
+      "bytes": 4914,
+      "sha256": "4b3a0e299ecc779aa25f48dd6a4fd0193abfee916c1341b9930b67b2c3c27111"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "allScenarios": "UNRUN",
+  "executionApproved": false
+}

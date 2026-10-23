@@ -1,0 +1,47 @@
+# ResourcePage 旧事件入口只读审计
+
+## 结论：一项 P2，旧 build 的事件没有绑定原资源身份
+
+定位：apps/guardian/lib/ui/resource_page.dart:159–170、200、293、310、359–372。旧行回调捕获了旧 row，却在调用时读取当前 widget.onOpen；action 又在执行时才捕获 resourceGeneration。路径/API 已替换且新首屏加载完成后，旧回调因而可以通过当前 busy/权限检查，用旧 row 执行当前 onOpen。只检查请求返回时的 generation 不能识别这种“旧回调在切换后才开始”的操作。
+
+这不是单纯假定宿主会错误复用 State。真实宿主 DeviceGroupsPage:27 持有固定 GlobalKey<ResourcePageState>；558–575 在同一 key 上改变 includeArchived 路径。其 onOpen:584 调用 open(id)，194–215 仅要求当前宿主/会话仍有效，再创建新的操作 scope 并发起详情、成员及摘要 GET。该 scope 捕获的是操作开始后的当前代次，不包含旧列表的 resourceGeneration；所以宿主没有补齐这个入口检查。原 scope/HTTP 权限约束仍有效，报告不主张越权、旧凭证泄漏或后端校验绕过。
+
+## 静态触发序列与证据边界
+
+1. 列表 A 已加载，保留其“查看详情”或 DataRow.onSelectChanged 回调，它包含 A 的 row。
+2. 在相同 ResourcePage State 上替换 path/API。真实设备组“包含已归档”切换就会改变 path；didUpdateWidget:65–76 增加 resourceGeneration、清理旧行并加载新页。
+3. 等列表 B 读完，loading/acting 均为 false，原租户和权限仍有效。
+4. 执行此前保留的回调。310 或 359–372 进入 action；160 读当前状态，161 才采 B 的代次，170 调用动态 widget.onOpen(oldRow)。设备组宿主接受旧 id 并开启详情读取。
+
+上面是人工源码数据流证明，不是浏览器复现。没有证明 Flutter 某一普通手势必然跨更新保留这份回调，也没有估计实际发生频率；结论针对组件已经在既有测试中明确使用的 held-callback 失效契约。真实路径切换、可调用旧闭包及入口无原 owner 检查均有源代码依据。若后续修复验收，需用固定旧回调先保留、切换完成后再调用的用例验证，不应把“先发请求再切换”当作同一覆盖。
+
+## 同一根因在其他入口的表现
+
+| 入口 | 当前处理 | 边界 |
+| --- | --- | --- |
+| 新建按钮：200、293 | 调用时读取 widget.create! | 旧事件可能执行新 create；若新 create 已为 null，空值断言先于 action 的检查发生 |
+| 窄屏行：308–310；表格行/按钮：356–372 | 旧 row + 当前 widget.onOpen | 可跨资源混合；新 onOpen 为 null 时也没有原入口失效判断 |
+| 刷新/重试：238、258、273、286、405；加载更多：410–411 | 调用当前 load，94–104 此时才采 path/API/代次 | 旧事件可以刷新或追加新资源；append busy/cursor 防重仍存在，不代表绑定了原资源 |
+| 搜索 onChanged：225 | 直接 setState | 没有旧代次或 mounted 入口判断 |
+| clearSearch：87–91、233、303 | 有 mounted 判断 | dispose 后会退出；路径替换但 State 仍挂载时，会清除新列表搜索并请求焦点 |
+
+dispose 方面，action:160 和 load:95 没有 mounted 前置，之后在165/104 调用 setState；因此保留回调在 dispose 后执行会触及已卸载 State 的 setState，而不是成为安静的无操作。按现有语句顺序，不能据此声称 dispose 后已成功发出 action/HTTP：setState 位于 callback/API 调用之前。这里仍归为同一入口生命周期/归属问题，不再单列发现。
+
+## 现有保护与测试覆盖
+
+- ResourcePage:99–102、161–164 捕获开始后的资源代次，119、171–179 对迟到结果/动作返回有 mounted 与 generation 防护。Api.page:322–329 及 send:282–287 在认证和发送前后检查 scope。这些保护保留价值，但无法恢复事件原来属于哪个 build。
+- resource_page_resilience_test.dart:110–129 确有一项 held create 场景；它将原 isCurrent 闭包变成 false 后再调用，所以160可以挡住。本发现要求路径/API 替换后当前权限仍为 true，两者不同。
+- 341–368、370–394、426–450、486–508 覆盖先发请求/动作再切换；不覆盖保留旧 onTap/onSelectChanged/create/refresh/clearSearch 后，切换完成再执行。
+- 现有重复操作、append busy、fresh supersede append 及正常操作后刷新用例都应保留。所有测试在本轮均未运行。
+
+## 最小稳妥修正设计（未实现）
+
+1. 在 build 创建事件时捕获不可混用的绑定：resourceGeneration、path、api、原 isCurrent，以及具体 create/onOpen 回调。进入任何本组件创建的事件前，先检查 mounted、原代次/路径/API 仍匹配、原权限闭包仍允许。代次递增须继续使 A→B→A 也不能复活旧回调。
+2. 检查必须放在读取 widget.create!/widget.onOpen!、setState、控制器/焦点操作和 load/action 调用之前；通过后调用捕获的具体处理器，不用旧 row 动态查找新 widget.onOpen。同路径处理器被替换或撤销时，事件也应验证原处理器仍适用，避免空值断言或调用已撤销入口。
+3. 对组件自己创建的两处 create、三种行打开、全部刷新/重试/append、搜索 onChanged/clear 一致应用该绑定。外部 toolbar 的业务权限仍由其宿主负责，不把本轮改成全局 UI 重构。
+4. load/action 还需 mounted 的方法入口保护，以覆盖宿主持有 State 方法或旧方法引用的情形。不要只加 mounted，也不要只固定 onOpen；前者不能区分复用 State 的不同资源。
+5. 保留现有开始后 scope/generation 检查、正常成功后刷新一次、重复动作锁、fresh 可取代旧 append、初始 load 正常执行；不以全局 loading guard 吞掉初始化或必要刷新。不更改 API、If-Match、幂等键、Session 或宿主授权策略。
+
+## 范围
+
+只读人工文本审计，基线 HEAD ad9f967a802e0d57dcea0e5289bf76d4e55070af。最多报告上述一项问题；不声称检查了所有 ResourcePage 宿主业务，也没有实现、解析 AST、编译、运行谓词/测试/SDK/进程检查/WinAPI/网络。仅在自有缓存目录写本报告和指纹，Main/Git 原件未改。所有场景 UNRUN、未渲染。

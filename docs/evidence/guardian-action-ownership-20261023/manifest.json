@@ -1,0 +1,289 @@
+{
+  "status": "STATIC_SOURCE_INTEGRATION_NOT_RUNTIME_ACCEPTANCE",
+  "parent": "ad9f967a802e0d57dcea0e5289bf76d4e55070af",
+  "files": [
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/application-receipt.json",
+      "bytes": 25914,
+      "sha256": "8d3ff51ac72a7031ddbfa58a16a2664d8b0d7803941e2782e56166f82f5bcbc7",
+      "gitRawBlobSha1": "f8d5acf35c634750e78b91bc65c0808d9a38137e"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/audit-author-review.raw.txt",
+      "bytes": 3551,
+      "sha256": "a739a741e4d66d8828ee7b2f9bc78ab6cb1dc72be387bb0f4ae27a06efa2b76d",
+      "gitRawBlobSha1": "7493973ce42344e7241dddef17c297204ee0b5bc"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/audit-candidate-delivery-pins.json",
+      "bytes": 959,
+      "sha256": "524fc3d2882e87c83cb2cf144c170af607c2761c756d59cb7d2353f8154e5148",
+      "gitRawBlobSha1": "3030c6ca7fadfb8bc80a26354db965984deed4d2"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/audit-candidate-pins.json",
+      "bytes": 4423,
+      "sha256": "403b05a4c436a955c47be4536a141a9a16e353af5e149190afbd65c1387cd9e5",
+      "gitRawBlobSha1": "5764ba49f837088c84b7fd8446b40af7c5b6ece3"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/audit-change.patch",
+      "bytes": 10492,
+      "sha256": "a162bb94d64c4feeb15374cfc4569c2ad54a83f1eb6a63adaca5cf205785d5d9",
+      "gitRawBlobSha1": "29a3e172e84a6bac04d6e13940976afd37a21dc5"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/audit-independent-delivery-pins.json",
+      "bytes": 479,
+      "sha256": "75b46751939634a3bd1b7f75a31a384e24fa5db9c9edb40c919ca2a14a7f8c8b",
+      "gitRawBlobSha1": "400535fd17f9a6a2f880b937a4a125c42d1073be"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/audit-independent-review.json",
+      "bytes": 4914,
+      "sha256": "4b3a0e299ecc779aa25f48dd6a4fd0193abfee916c1341b9930b67b2c3c27111",
+      "gitRawBlobSha1": "b78843fd48858589e92cba826488cbd4757f5d3a"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/audit-independent-review.raw.txt",
+      "bytes": 4177,
+      "sha256": "982a68dc684e666aae6919705f26d761a7bc008fd2c374a10a9260d80a128734",
+      "gitRawBlobSha1": "c6fdce9a31ed99f71ce7ec0061be080ef644c66d"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/device-close-author-review.raw.txt",
+      "bytes": 1476,
+      "sha256": "b4f3588e96678766ad46af98e196dd97d5ce6d5e81f0e27022495837689ab9ac",
+      "gitRawBlobSha1": "4dda045a4915482808b922f8df6edf2a19bae961"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/device-close-candidate-delivery-pins.json",
+      "bytes": 1201,
+      "sha256": "46d0bc25200da73c8c13d84d07cf68ccdf947dc37c4d8a7d3b3d7bd16a70587d",
+      "gitRawBlobSha1": "71a2c3f7ca72184e3d43c624b92d8c3183a624d1"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/device-close-candidate-pins.json",
+      "bytes": 1918,
+      "sha256": "efdc9fe2b63a4a264bf3a3437dd5720a8354ec7301a0d1067ab83a978038f131",
+      "gitRawBlobSha1": "5cffa2540c804c2a2ff8f2426fea5b0caa7e38cc"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/device-close-change.patch",
+      "bytes": 832,
+      "sha256": "8e39387b9308e5fb3b6065e64f852cad7931b976022977c7b2e32042d4529af8",
+      "gitRawBlobSha1": "4e78936eb76a985da358274820dbae8fe7b877f8"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/device-close-independent-delivery-pins.json",
+      "bytes": 498,
+      "sha256": "f745f37b97b2dc5d7d48a5019143fa0e27e27203fcdcb4fd390a093db58ce6d7",
+      "gitRawBlobSha1": "14bfb8712b329bdccabc27a7c8ee1a61d59be09c"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/device-close-independent-input-pins.json",
+      "bytes": 2079,
+      "sha256": "01ccc04fdb4612e4d9518e1447a21ed7b4a4f6afabef74b90b67e2e938115382",
+      "gitRawBlobSha1": "44094dcac02f783f81ea48e6a755be32720bdde8"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/device-close-independent-review.json",
+      "bytes": 441,
+      "sha256": "6f803b2110a83030824b046a8ca23ce0feb2996487d2c327c00bbfb533c0c624",
+      "gitRawBlobSha1": "f7f55c10b9ac573e54f5b8b67d0dca843bf30013"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/device-close-independent-review.raw.txt",
+      "bytes": 6805,
+      "sha256": "ccf96c25ca89b55b236b6fc19c14b5cbbf2bd2dc225e70a6a426ec4a043b85e8",
+      "gitRawBlobSha1": "eccc1a854cf590f5a94a9d67315c3efc1cc9c417"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/form-initial-delivery-pins.json",
+      "bytes": 494,
+      "sha256": "161d603d7d102281a2ff3602bf99e590862bb0b6f2b94cccba4cb6d35b3ef0d4",
+      "gitRawBlobSha1": "32bc89438548e0e6521821d8990b263af4334059"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/form-initial-input-pins.json",
+      "bytes": 4178,
+      "sha256": "2d1aa9be8c9221761f54c566d6fa914bac050b01d6170c4167c7d29dc7b57a92",
+      "gitRawBlobSha1": "b7505feac94e0ee08ac3d9f5ef2ff52c789e563e"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/form-initial-review.json",
+      "bytes": 1561,
+      "sha256": "d8900c86a6750c7356562f3a941290f836d2e72ece8a48fdf232d3e8078bcc4b",
+      "gitRawBlobSha1": "1cd01b1cae7bfc442b686e38f0fb2fcd20374cfe"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/form-initial-review.raw.txt",
+      "bytes": 10772,
+      "sha256": "7b0f33261f853b0c46c87df1882c68c1a7160317d04c1d1bf2599163c46c33fd",
+      "gitRawBlobSha1": "f065c45ce9863294283564562f4237ed5583554e"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/list-initial-delivery-pins.json",
+      "bytes": 522,
+      "sha256": "072c58503612e31ae8ea50f2b4c007b80fb139ff897f0e0be3f82bc360219160",
+      "gitRawBlobSha1": "17a432bf5a40c0ac67db2b783bca13da784131fd"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/list-initial-pins.json",
+      "bytes": 3996,
+      "sha256": "4ccc0544c58cc7381b5c9a027b6c36d7e327c26009e912c2c25076e42267b14c",
+      "gitRawBlobSha1": "c3066bfbcc128c0e2e7d54e686c099eea8b1dcc7"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/list-initial-review.raw.txt",
+      "bytes": 7561,
+      "sha256": "384b659c00e6e44a04f2989e2c48206ceb6506b4eddfd816b3648ca1c6dcd720",
+      "gitRawBlobSha1": "a5e6255fbc8c2e8fa09b054318a2642045b1f04d"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/notification-author-review.raw.txt",
+      "bytes": 7104,
+      "sha256": "52f70b1a6cfd30bb19e3daef2dabfc93bacf35387446b8e7fd13f6df6f537fce",
+      "gitRawBlobSha1": "657f65b6d2241f8ae8fd81ec78f4efe365eb21c7"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/notification-candidate-delivery-pins.json",
+      "bytes": 819,
+      "sha256": "0f7d013a8adfec228b26c382b1b6180361c3f5b657e752eb4cf27f519a789694",
+      "gitRawBlobSha1": "36d7debb108d826757ac525e07803ba781d110c8"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/notification-candidate-pins.json",
+      "bytes": 1175,
+      "sha256": "2166bc8562bbeaf13e60f28e7fed97d69f136dcb4036d32f0b1490dbe0cb5338",
+      "gitRawBlobSha1": "e0238f233c4e2493edb1fa31d473c6901ab3dd99"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/notification-change.patch",
+      "bytes": 8565,
+      "sha256": "430a128b08bc1089d5ce000896addfde826f6754c56b3320b531a9cc1322df89",
+      "gitRawBlobSha1": "e52a091f29360ebb79116e1867fba9ec32102d40"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/notification-existing-test-author-review.raw.txt",
+      "bytes": 1056,
+      "sha256": "57b2ef6729446ff1811a099e1fa0ef082054ff84210610d753faab4e7cff65fc",
+      "gitRawBlobSha1": "0fb125ea612a03ed2191db58bd9a4a8bb640c414"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/notification-existing-test-candidate-delivery-pins.json",
+      "bytes": 1297,
+      "sha256": "ff7bd2f53dfc973605ed74042f11f1a08450e31de5c455b6d5eaf10bc8c0124f",
+      "gitRawBlobSha1": "8be7dba1bc72494088f88c08d92700f84cd74258"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/notification-existing-test-candidate-pins.json",
+      "bytes": 1102,
+      "sha256": "97f1831f434c67331555067950882a50aaada8825f920b011ae75ea594a0ecb8",
+      "gitRawBlobSha1": "77632352147645bccce512eeacf9a0cf0cea7ea9"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/notification-existing-test-change.patch",
+      "bytes": 1458,
+      "sha256": "f2c4094c1c331a12d7141fbec34dc8d0b2d74782ed11228018c1ea651f07e68c",
+      "gitRawBlobSha1": "9850792b0570b276c4f9c2672dda4f396b357746"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/notification-existing-test-independent-delivery-pins.json",
+      "bytes": 518,
+      "sha256": "7091423c6f634542689b8858b1d5dc0bbacc9b0f446c488e2db77e0099a00fac",
+      "gitRawBlobSha1": "e81fbb5e0eec4469136f0a61578be33d4c2edaca"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/notification-existing-test-independent-readback.json",
+      "bytes": 4598,
+      "sha256": "0e538004135eb339b8460ef986ea85e315c61208c6216b9de2edbe35e7f4b3d4",
+      "gitRawBlobSha1": "c60413924aac417e3332e151119ea97eda961a97"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/notification-existing-test-independent-review.raw.txt",
+      "bytes": 4006,
+      "sha256": "b0172aabef322cafdecda81f8f770f7ff93800f64b060bf6256f4c375dd39c80",
+      "gitRawBlobSha1": "96e1b33f1b5feb0e9fa76e15968c0990d7ace5fc"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/notification-independent-delivery-pins.json",
+      "bytes": 528,
+      "sha256": "f10cce24055eaa0b4b1adf3b45f59cae2c33ec145e0f3a29057824873bbbd265",
+      "gitRawBlobSha1": "31ae86b5076c4eb95d862442342a730410852b2b"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/notification-independent-readback.json",
+      "bytes": 5564,
+      "sha256": "af6bef2d926508737004dc2960c70e50cbcb65034ffdc11b5d62607ebd8a74bd",
+      "gitRawBlobSha1": "f78ed3e0719e3c527930cdb1fb0c246ebbed709f"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/notification-independent-review.raw.txt",
+      "bytes": 5804,
+      "sha256": "bd82a2b06ebbc8c7ac788c80e1d6b50c321ce7d1c5970baacc518d369a42b828",
+      "gitRawBlobSha1": "d9954bfb5bbedd777fd6fb08662bdde96c9539f7"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/resource-author-review.raw.txt",
+      "bytes": 1883,
+      "sha256": "d156aab1e9964996da6045dd154f7584f8d29428ac991c951c08ffe5895a37b9",
+      "gitRawBlobSha1": "723055acf8a358f192b929a9049a35fdd273d51f"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/resource-candidate-delivery-pins.json",
+      "bytes": 1257,
+      "sha256": "e19452a335e913044f84324724a3a79a87ce45b8f7536aeadb4765fd7c95bca7",
+      "gitRawBlobSha1": "1d5d0a2d16ed8fedd3ff7269068832bd12d4163d"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/resource-candidate-pins.json",
+      "bytes": 1731,
+      "sha256": "fda2122966e4040e7e924ca1e398665e08fcdee772d27b10b942e7131065ecc1",
+      "gitRawBlobSha1": "95914be2121664da170b2c8af08bb342f937d480"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/resource-change.patch",
+      "bytes": 10501,
+      "sha256": "ecf276c93526dfde8b5b5dd3235d8ec229f442399c253b399ef6bb07f729613a",
+      "gitRawBlobSha1": "1b61db3edf2aa7e47de55f8bccddd2019663776a"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/resource-independent-delivery-pins.json",
+      "bytes": 455,
+      "sha256": "9700993bc9fcc4bff5315869af62d22d5d95700684df0460ddc9e4769fd2622c",
+      "gitRawBlobSha1": "1f7106295e9aea417ed2e4c168c6d13b0587aec1"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/resource-independent-review.json",
+      "bytes": 3310,
+      "sha256": "329b41b66def48be930a770124ecda7f2758b7aa3eb6e7c9a264580a981a5413",
+      "gitRawBlobSha1": "6238777d789b474574e378336331873a0d088ddb"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/resource-independent-review.raw.txt",
+      "bytes": 3550,
+      "sha256": "d63d684ea33beb58c0e2437263c36fc080a3c77ee3faf60b1c57d2a24c8d42c5",
+      "gitRawBlobSha1": "ad8a121800a76a96b5541f9d89f0ca57292f43b7"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/resource-initial-delivery-pins.json",
+      "bytes": 439,
+      "sha256": "b2d71c4bdb10aa419abe1680b431d1fe52e18972ddc2378dfb9dce861f56e23c",
+      "gitRawBlobSha1": "0d675f5d05d337a4cda74400d41da8845bafa5b0"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/resource-initial-review.json",
+      "bytes": 2849,
+      "sha256": "075627c5338016a381e3eca69e6673651bec8a021624b53d01afd472c9cf7c06",
+      "gitRawBlobSha1": "4f78bb103f56f1d2a8109bbcd20a1e9657386496"
+    },
+    {
+      "path": "docs/evidence/guardian-action-ownership-20261023/resource-initial-review.raw.txt",
+      "bytes": 6384,
+      "sha256": "f1023c2057f6178e2d2976d40d6263622026f26cd6aed3feb5bfb291df0f7a18",
+      "gitRawBlobSha1": "1848f8dc559c627d08b91828bb0e3dd79ff54a3e"
+    }
+  ],
+  "selfExcluded": "manifest.json"
+}

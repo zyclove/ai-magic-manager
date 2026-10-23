@@ -1,0 +1,109 @@
+{
+  "status": "READ_ONLY_MANUAL_AUDIT_ONE_NEW_FINDING_PLUS_NOTIFICATION_CROSS_REVIEW",
+  "head": "ad9f967a802e0d57dcea0e5289bf76d4e55070af",
+  "sources": [
+    {
+      "path": "apps/guardian/lib/pages/audit_page.dart",
+      "bytes": 4436,
+      "sha256": "cc0cde463bf0b2fb6f90ba655938d6bd8fcb5e92612a6aa5490a103e357e9358"
+    },
+    {
+      "path": "apps/guardian/lib/pages/notifications_page.dart",
+      "bytes": 1872,
+      "sha256": "728693256dfba6909b47b619a97861133d57ed9ba0ecd91f829d4bf4059bbe8a"
+    },
+    {
+      "path": "apps/guardian/lib/pages/members_page.dart",
+      "bytes": 17685,
+      "sha256": "e11751c5ab7361182fb3e03851ee043ec50bc9d0ba791b427236f0be316034ed"
+    },
+    {
+      "path": "apps/guardian/lib/ui/audit_view.dart",
+      "bytes": 14665,
+      "sha256": "9c446b177a5bf9f3badb63b9f011d19a87c92eecd0303213d3bef34a5590ffc6"
+    },
+    {
+      "path": "apps/guardian/lib/core/audit.dart",
+      "bytes": 1626,
+      "sha256": "ee067fa9e3b2c1b6bc7bae32bf5877c4cc2146961b8dcb6d13980b5cff3f3fae"
+    },
+    {
+      "path": "apps/guardian/lib/ui/notifications_view.dart",
+      "bytes": 14473,
+      "sha256": "8bb6ef841cd151ff4de16492eab7850bb94cd430c16212a369473c4cb8d73b88"
+    },
+    {
+      "path": "apps/guardian/lib/core/notifications.dart",
+      "bytes": 1326,
+      "sha256": "bf7a88811bf3034f811d13c1e3d3e3d7102cb66169de9fbd4affe8c63ac823c9"
+    },
+    {
+      "path": "apps/guardian/lib/ui/resource_page.dart",
+      "bytes": 17324,
+      "sha256": "c742e801e36910b278525c29228b33b8eb7a69606b53a9d210b535db0e4c35e3"
+    },
+    {
+      "path": "apps/guardian/lib/ui/design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    },
+    {
+      "path": "packages/notification_client/lib/notification_client.dart",
+      "bytes": 7526,
+      "sha256": "1d5f73960125f837481be5ab6f35a155b12995b964c2c98359125a14249e9e08"
+    },
+    {
+      "path": "packages/audit_client/lib/audit_client.dart",
+      "bytes": 4125,
+      "sha256": "24d81bb99d9ec6c43b454076925cc5f8fbf2c915cfb885f1917e8a0bef33f87f"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/tenant/internal/AuditExplorer.java",
+      "bytes": 5159,
+      "sha256": "48297228b65d542d2e6ac325401f9fbb9208f817eca940d128092b8e16bb876f"
+    },
+    {
+      "path": "docs/audit-explorer-contract.md",
+      "bytes": 2858,
+      "sha256": "a319c64a8eb0e2e0f78a2796c08820f8c733561d68073f6d93abd253aa89f2d2"
+    },
+    {
+      "path": "apps/guardian/test/audit_test.dart",
+      "bytes": 6765,
+      "sha256": "9c3067911062675c6408ad73f3e6ff98bda154c31298f5b15380294b00afe7de"
+    },
+    {
+      "path": "apps/guardian/test/notifications_test.dart",
+      "bytes": 11732,
+      "sha256": "d9e0207252d6dc6819e0436cb5c1d045ec76021904c430e246374bda9068ad74"
+    },
+    {
+      "path": "apps/guardian/test/submit_confirmation_variant_test.dart",
+      "bytes": 15313,
+      "sha256": "20a3cea1c3473de1edd50c21bdd3d4687cc7eb3afdd79c381743abc9a517fb7b"
+    },
+    {
+      "path": "apps/guardian/test/notification_help_scope_browser_test.dart",
+      "bytes": 22316,
+      "sha256": "7db37e189d9e162ee901b8d536a6e6845ae42a00ec3ce01a0108956902e3016e"
+    },
+    {
+      "path": "apps/guardian/test/workspace_flow_entry_browser_test.dart",
+      "bytes": 11874,
+      "sha256": "15fb4c531970c6488438d78e4c35265c51286159c8c462a3f8938ad39c995736"
+    },
+    {
+      "path": "apps/guardian/test/resource_page_resilience_test.dart",
+      "bytes": 22170,
+      "sha256": "a003a75c83ef01e6347bfea7ee08801302267f0e97012534e455c57bbc7575f2"
+    }
+  ],
+  "newFindings": 1,
+  "notificationFindingFirstOwnedBy": "reports_scope_tests_prepare_20261023",
+  "notificationDuplicateFindingCreated": false,
+  "pages": 3,
+  "allScenarios": "UNRUN",
+  "rendered": false,
+  "sdkTestsAstParserCandidateProductFunctionsExecuted": false,
+  "mainGitWritten": false
+}

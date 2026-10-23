@@ -1,0 +1,539 @@
+{
+  "status": "FOUR_UI_FILES_AND_ONE_EXISTING_TEST_EXPECTATION_APPLIED_STATIC_ONLY",
+  "parent": "ad9f967a802e0d57dcea0e5289bf76d4e55070af",
+  "sourceChanges": [
+    {
+      "path": "apps/guardian/lib/ui/resource_page.dart",
+      "beforeSha256": "c742e801e36910b278525c29228b33b8eb7a69606b53a9d210b535db0e4c35e3",
+      "beforeBytes": 17324,
+      "afterSource": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-resource-page-actions-20261023-r3\\after.dart",
+      "afterSha256": "692b1f4c4e9eefbef6fb80a7abeb7ced7e2c505b85fb01e8b032469cbc7b8c5e",
+      "candidateDelivery": "e19452a335e913044f84324724a3a79a87ce45b8f7536aeadb4765fd7c95bca7",
+      "independentDelivery": "9700993bc9fcc4bff5315869af62d22d5d95700684df0460ddc9e4769fd2622c"
+    },
+    {
+      "path": "apps/guardian/lib/ui/notifications_view.dart",
+      "beforeSha256": "8bb6ef841cd151ff4de16492eab7850bb94cd430c16212a369473c4cb8d73b88",
+      "beforeBytes": 14473,
+      "afterSource": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-page-actions-20261023-r1\\notifications_view.dart",
+      "afterSha256": "2be26e954cdefa39d62bbaab4f1cfd25d389f785260db86cdd1ae3015a243fd7",
+      "candidateDelivery": "0f7d013a8adfec228b26c382b1b6180361c3f5b657e752eb4cf27f519a789694",
+      "independentDelivery": "f10cce24055eaa0b4b1adf3b45f59cae2c33ec145e0f3a29057824873bbbd265"
+    },
+    {
+      "path": "apps/guardian/lib/ui/audit_view.dart",
+      "beforeSha256": "9c446b177a5bf9f3badb63b9f011d19a87c92eecd0303213d3bef34a5590ffc6",
+      "beforeBytes": 14665,
+      "afterSource": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-audit-page-actions-20261023-r1\\after.dart",
+      "afterSha256": "f86610dc7041c739865cc2a75ee5e0c08df5bea662ccbfb46021bb3a6769984f",
+      "candidateDelivery": "524fc3d2882e87c83cb2cf144c170af607c2761c756d59cb7d2353f8154e5148",
+      "independentDelivery": "75b46751939634a3bd1b7f75a31a384e24fa5db9c9edb40c919ca2a14a7f8c8b"
+    },
+    {
+      "path": "apps/guardian/lib/ui/device_management_dialog.dart",
+      "beforeSha256": "28e3be992e5e3a2454fefa677dfb74748840fdea0dbd2a48e4d4ce50c94dd380",
+      "beforeBytes": 32289,
+      "afterSource": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-device-close-20261023-r2\\after.dart",
+      "afterSha256": "70424e803dfae979d9cc6596b6628d52d5a38c05de9d62a799874fcfb31759f5",
+      "candidateDelivery": "46d0bc25200da73c8c13d84d07cf68ccdf947dc37c4d8a7d3b3d7bd16a70587d",
+      "independentDelivery": "f745f37b97b2dc5d7d48a5019143fa0e27e27203fcdcb4fd390a093db58ce6d7"
+    },
+    {
+      "path": "apps/guardian/test/notification_help_scope_browser_test.dart",
+      "beforeSha256": "7db37e189d9e162ee901b8d536a6e6845ae42a00ec3ce01a0108956902e3016e",
+      "beforeBytes": 22316,
+      "afterSource": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-existing-test-20261023-r1\\after.dart",
+      "afterSha256": "8ab27ee265f4bd89c8a8ba2902c50d5d4f7540a1c3f1180d76c2363baaeb5d0f",
+      "candidateDelivery": "ff7bd2f53dfc973605ed74042f11f1a08450e31de5c455b6d5eaf10bc8c0124f",
+      "independentDelivery": "7091423c6f634542689b8858b1d5dc0bbacc9b0f446c488e2db77e0099a00fac"
+    }
+  ],
+  "sourceAfter": [
+    {
+      "path": "apps/guardian/lib/ui/resource_page.dart",
+      "bytes": 18380,
+      "sha256": "692b1f4c4e9eefbef6fb80a7abeb7ced7e2c505b85fb01e8b032469cbc7b8c5e",
+      "gitRawBlobSha1": "c522ca2a9399c25c2cda6b8c99b4f3e12892bb8d"
+    },
+    {
+      "path": "apps/guardian/lib/ui/notifications_view.dart",
+      "bytes": 16791,
+      "sha256": "2be26e954cdefa39d62bbaab4f1cfd25d389f785260db86cdd1ae3015a243fd7",
+      "gitRawBlobSha1": "6be0c534073f1de69e69c315632b9c8ccfb55448"
+    },
+    {
+      "path": "apps/guardian/lib/ui/audit_view.dart",
+      "bytes": 17365,
+      "sha256": "f86610dc7041c739865cc2a75ee5e0c08df5bea662ccbfb46021bb3a6769984f",
+      "gitRawBlobSha1": "747517d483fee69e4ca0753ba22e43ce89be688e"
+    },
+    {
+      "path": "apps/guardian/lib/ui/device_management_dialog.dart",
+      "bytes": 32500,
+      "sha256": "70424e803dfae979d9cc6596b6628d52d5a38c05de9d62a799874fcfb31759f5",
+      "gitRawBlobSha1": "5f7172724cb324c5a66e909e2df7cd25948b70b1"
+    },
+    {
+      "path": "apps/guardian/test/notification_help_scope_browser_test.dart",
+      "bytes": 22319,
+      "sha256": "8ab27ee265f4bd89c8a8ba2902c50d5d4f7540a1c3f1180d76c2363baaeb5d0f",
+      "gitRawBlobSha1": "f5dd6826d25c6a9ecf8d608738bec722ce63a2b6"
+    }
+  ],
+  "archiveCopies": [
+    {
+      "original": ".cache/guardian-resource-page-actions-20261023-r3/resource-page-actions.patch",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/resource-change.patch",
+        "bytes": 10501,
+        "sha256": "ecf276c93526dfde8b5b5dd3235d8ec229f442399c253b399ef6bb07f729613a",
+        "gitRawBlobSha1": "1b61db3edf2aa7e47de55f8bccddd2019663776a"
+      }
+    },
+    {
+      "original": ".cache/guardian-resource-page-actions-20261023-r3/review.md",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/resource-author-review.raw.txt",
+        "bytes": 1883,
+        "sha256": "d156aab1e9964996da6045dd154f7584f8d29428ac991c951c08ffe5895a37b9",
+        "gitRawBlobSha1": "723055acf8a358f192b929a9049a35fdd273d51f"
+      }
+    },
+    {
+      "original": ".cache/guardian-resource-page-actions-20261023-r3/pins.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/resource-candidate-pins.json",
+        "bytes": 1731,
+        "sha256": "fda2122966e4040e7e924ca1e398665e08fcdee772d27b10b942e7131065ecc1",
+        "gitRawBlobSha1": "95914be2121664da170b2c8af08bb342f937d480"
+      }
+    },
+    {
+      "original": ".cache/guardian-resource-page-actions-20261023-r3/delivery-pins.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/resource-candidate-delivery-pins.json",
+        "bytes": 1257,
+        "sha256": "e19452a335e913044f84324724a3a79a87ce45b8f7536aeadb4765fd7c95bca7",
+        "gitRawBlobSha1": "1d5d0a2d16ed8fedd3ff7269068832bd12d4163d"
+      }
+    },
+    {
+      "original": ".cache/guardian-resource-page-actions-independent-20261023-r1/delivery-pins.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/resource-independent-delivery-pins.json",
+        "bytes": 455,
+        "sha256": "9700993bc9fcc4bff5315869af62d22d5d95700684df0460ddc9e4769fd2622c",
+        "gitRawBlobSha1": "1f7106295e9aea417ed2e4c168c6d13b0587aec1"
+      }
+    },
+    {
+      "original": ".cache/guardian-resource-page-actions-independent-20261023-r1/review.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/resource-independent-review.json",
+        "bytes": 3310,
+        "sha256": "329b41b66def48be930a770124ecda7f2758b7aa3eb6e7c9a264580a981a5413",
+        "gitRawBlobSha1": "6238777d789b474574e378336331873a0d088ddb"
+      }
+    },
+    {
+      "original": ".cache/guardian-resource-page-actions-independent-20261023-r1/review.md",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/resource-independent-review.raw.txt",
+        "bytes": 3550,
+        "sha256": "d63d684ea33beb58c0e2437263c36fc080a3c77ee3faf60b1c57d2a24c8d42c5",
+        "gitRawBlobSha1": "ad8a121800a76a96b5541f9d89f0ca57292f43b7"
+      }
+    },
+    {
+      "original": ".cache/guardian-notification-page-actions-20261023-r1/notifications-page-actions.patch",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/notification-change.patch",
+        "bytes": 8565,
+        "sha256": "430a128b08bc1089d5ce000896addfde826f6754c56b3320b531a9cc1322df89",
+        "gitRawBlobSha1": "e52a091f29360ebb79116e1867fba9ec32102d40"
+      }
+    },
+    {
+      "original": ".cache/guardian-notification-page-actions-20261023-r1/review.md",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/notification-author-review.raw.txt",
+        "bytes": 7104,
+        "sha256": "52f70b1a6cfd30bb19e3daef2dabfc93bacf35387446b8e7fd13f6df6f537fce",
+        "gitRawBlobSha1": "657f65b6d2241f8ae8fd81ec78f4efe365eb21c7"
+      }
+    },
+    {
+      "original": ".cache/guardian-notification-page-actions-20261023-r1/pins.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/notification-candidate-pins.json",
+        "bytes": 1175,
+        "sha256": "2166bc8562bbeaf13e60f28e7fed97d69f136dcb4036d32f0b1490dbe0cb5338",
+        "gitRawBlobSha1": "e0238f233c4e2493edb1fa31d473c6901ab3dd99"
+      }
+    },
+    {
+      "original": ".cache/guardian-notification-page-actions-20261023-r1/delivery-pins.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/notification-candidate-delivery-pins.json",
+        "bytes": 819,
+        "sha256": "0f7d013a8adfec228b26c382b1b6180361c3f5b657e752eb4cf27f519a789694",
+        "gitRawBlobSha1": "36d7debb108d826757ac525e07803ba781d110c8"
+      }
+    },
+    {
+      "original": ".cache/guardian-notification-page-actions-independent-20261023-r1/delivery-pins.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/notification-independent-delivery-pins.json",
+        "bytes": 528,
+        "sha256": "f10cce24055eaa0b4b1adf3b45f59cae2c33ec145e0f3a29057824873bbbd265",
+        "gitRawBlobSha1": "31ae86b5076c4eb95d862442342a730410852b2b"
+      }
+    },
+    {
+      "original": ".cache/guardian-notification-page-actions-independent-20261023-r1/readback.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/notification-independent-readback.json",
+        "bytes": 5564,
+        "sha256": "af6bef2d926508737004dc2960c70e50cbcb65034ffdc11b5d62607ebd8a74bd",
+        "gitRawBlobSha1": "f78ed3e0719e3c527930cdb1fb0c246ebbed709f"
+      }
+    },
+    {
+      "original": ".cache/guardian-notification-page-actions-independent-20261023-r1/review.md",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/notification-independent-review.raw.txt",
+        "bytes": 5804,
+        "sha256": "bd82a2b06ebbc8c7ac788c80e1d6b50c321ce7d1c5970baacc518d369a42b828",
+        "gitRawBlobSha1": "d9954bfb5bbedd777fd6fb08662bdde96c9539f7"
+      }
+    },
+    {
+      "original": ".cache/guardian-audit-page-actions-20261023-r1/audit-page-actions.patch",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/audit-change.patch",
+        "bytes": 10492,
+        "sha256": "a162bb94d64c4feeb15374cfc4569c2ad54a83f1eb6a63adaca5cf205785d5d9",
+        "gitRawBlobSha1": "29a3e172e84a6bac04d6e13940976afd37a21dc5"
+      }
+    },
+    {
+      "original": ".cache/guardian-audit-page-actions-20261023-r1/review.md",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/audit-author-review.raw.txt",
+        "bytes": 3551,
+        "sha256": "a739a741e4d66d8828ee7b2f9bc78ab6cb1dc72be387bb0f4ae27a06efa2b76d",
+        "gitRawBlobSha1": "7493973ce42344e7241dddef17c297204ee0b5bc"
+      }
+    },
+    {
+      "original": ".cache/guardian-audit-page-actions-20261023-r1/pins.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/audit-candidate-pins.json",
+        "bytes": 4423,
+        "sha256": "403b05a4c436a955c47be4536a141a9a16e353af5e149190afbd65c1387cd9e5",
+        "gitRawBlobSha1": "5764ba49f837088c84b7fd8446b40af7c5b6ece3"
+      }
+    },
+    {
+      "original": ".cache/guardian-audit-page-actions-20261023-r1/delivery-pins.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/audit-candidate-delivery-pins.json",
+        "bytes": 959,
+        "sha256": "524fc3d2882e87c83cb2cf144c170af607c2761c756d59cb7d2353f8154e5148",
+        "gitRawBlobSha1": "3030c6ca7fadfb8bc80a26354db965984deed4d2"
+      }
+    },
+    {
+      "original": ".cache/guardian-audit-page-actions-independent-20261023-r1/delivery-pins.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/audit-independent-delivery-pins.json",
+        "bytes": 479,
+        "sha256": "75b46751939634a3bd1b7f75a31a384e24fa5db9c9edb40c919ca2a14a7f8c8b",
+        "gitRawBlobSha1": "400535fd17f9a6a2f880b937a4a125c42d1073be"
+      }
+    },
+    {
+      "original": ".cache/guardian-audit-page-actions-independent-20261023-r1/review.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/audit-independent-review.json",
+        "bytes": 4914,
+        "sha256": "4b3a0e299ecc779aa25f48dd6a4fd0193abfee916c1341b9930b67b2c3c27111",
+        "gitRawBlobSha1": "b78843fd48858589e92cba826488cbd4757f5d3a"
+      }
+    },
+    {
+      "original": ".cache/guardian-audit-page-actions-independent-20261023-r1/review.md",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/audit-independent-review.raw.txt",
+        "bytes": 4177,
+        "sha256": "982a68dc684e666aae6919705f26d761a7bc008fd2c374a10a9260d80a128734",
+        "gitRawBlobSha1": "c6fdce9a31ed99f71ce7ec0061be080ef644c66d"
+      }
+    },
+    {
+      "original": ".cache/guardian-device-close-20261023-r2/device-close.patch",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/device-close-change.patch",
+        "bytes": 832,
+        "sha256": "8e39387b9308e5fb3b6065e64f852cad7931b976022977c7b2e32042d4529af8",
+        "gitRawBlobSha1": "4e78936eb76a985da358274820dbae8fe7b877f8"
+      }
+    },
+    {
+      "original": ".cache/guardian-device-close-20261023-r2/review.md",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/device-close-author-review.raw.txt",
+        "bytes": 1476,
+        "sha256": "b4f3588e96678766ad46af98e196dd97d5ce6d5e81f0e27022495837689ab9ac",
+        "gitRawBlobSha1": "4dda045a4915482808b922f8df6edf2a19bae961"
+      }
+    },
+    {
+      "original": ".cache/guardian-device-close-20261023-r2/pins.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/device-close-candidate-pins.json",
+        "bytes": 1918,
+        "sha256": "efdc9fe2b63a4a264bf3a3437dd5720a8354ec7301a0d1067ab83a978038f131",
+        "gitRawBlobSha1": "5cffa2540c804c2a2ff8f2426fea5b0caa7e38cc"
+      }
+    },
+    {
+      "original": ".cache/guardian-device-close-20261023-r2/delivery-pins.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/device-close-candidate-delivery-pins.json",
+        "bytes": 1201,
+        "sha256": "46d0bc25200da73c8c13d84d07cf68ccdf947dc37c4d8a7d3b3d7bd16a70587d",
+        "gitRawBlobSha1": "71a2c3f7ca72184e3d43c624b92d8c3183a624d1"
+      }
+    },
+    {
+      "original": ".cache/guardian-device-close-independent-20261023-r1/delivery-pins.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/device-close-independent-delivery-pins.json",
+        "bytes": 498,
+        "sha256": "f745f37b97b2dc5d7d48a5019143fa0e27e27203fcdcb4fd390a093db58ce6d7",
+        "gitRawBlobSha1": "14bfb8712b329bdccabc27a7c8ee1a61d59be09c"
+      }
+    },
+    {
+      "original": ".cache/guardian-device-close-independent-20261023-r1/input-pins.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/device-close-independent-input-pins.json",
+        "bytes": 2079,
+        "sha256": "01ccc04fdb4612e4d9518e1447a21ed7b4a4f6afabef74b90b67e2e938115382",
+        "gitRawBlobSha1": "44094dcac02f783f81ea48e6a755be32720bdde8"
+      }
+    },
+    {
+      "original": ".cache/guardian-device-close-independent-20261023-r1/review.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/device-close-independent-review.json",
+        "bytes": 441,
+        "sha256": "6f803b2110a83030824b046a8ca23ce0feb2996487d2c327c00bbfb533c0c624",
+        "gitRawBlobSha1": "f7f55c10b9ac573e54f5b8b67d0dca843bf30013"
+      }
+    },
+    {
+      "original": ".cache/guardian-device-close-independent-20261023-r1/review.md",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/device-close-independent-review.raw.txt",
+        "bytes": 6805,
+        "sha256": "ccf96c25ca89b55b236b6fc19c14b5cbbf2bd2dc225e70a6a426ec4a043b85e8",
+        "gitRawBlobSha1": "eccc1a854cf590f5a94a9d67315c3efc1cc9c417"
+      }
+    },
+    {
+      "original": ".cache/guardian-notification-existing-test-20261023-r1/existing-test-expectation.patch",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/notification-existing-test-change.patch",
+        "bytes": 1458,
+        "sha256": "f2c4094c1c331a12d7141fbec34dc8d0b2d74782ed11228018c1ea651f07e68c",
+        "gitRawBlobSha1": "9850792b0570b276c4f9c2672dda4f396b357746"
+      }
+    },
+    {
+      "original": ".cache/guardian-notification-existing-test-20261023-r1/review.md",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/notification-existing-test-author-review.raw.txt",
+        "bytes": 1056,
+        "sha256": "57b2ef6729446ff1811a099e1fa0ef082054ff84210610d753faab4e7cff65fc",
+        "gitRawBlobSha1": "0fb125ea612a03ed2191db58bd9a4a8bb640c414"
+      }
+    },
+    {
+      "original": ".cache/guardian-notification-existing-test-20261023-r1/pins.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/notification-existing-test-candidate-pins.json",
+        "bytes": 1102,
+        "sha256": "97f1831f434c67331555067950882a50aaada8825f920b011ae75ea594a0ecb8",
+        "gitRawBlobSha1": "77632352147645bccce512eeacf9a0cf0cea7ea9"
+      }
+    },
+    {
+      "original": ".cache/guardian-notification-existing-test-20261023-r1/delivery-pins.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/notification-existing-test-candidate-delivery-pins.json",
+        "bytes": 1297,
+        "sha256": "ff7bd2f53dfc973605ed74042f11f1a08450e31de5c455b6d5eaf10bc8c0124f",
+        "gitRawBlobSha1": "8be7dba1bc72494088f88c08d92700f84cd74258"
+      }
+    },
+    {
+      "original": ".cache/guardian-notification-existing-test-independent-20261023-r1/delivery-pins.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/notification-existing-test-independent-delivery-pins.json",
+        "bytes": 518,
+        "sha256": "7091423c6f634542689b8858b1d5dc0bbacc9b0f446c488e2db77e0099a00fac",
+        "gitRawBlobSha1": "e81fbb5e0eec4469136f0a61578be33d4c2edaca"
+      }
+    },
+    {
+      "original": ".cache/guardian-notification-existing-test-independent-20261023-r1/readback.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/notification-existing-test-independent-readback.json",
+        "bytes": 4598,
+        "sha256": "0e538004135eb339b8460ef986ea85e315c61208c6216b9de2edbe35e7f4b3d4",
+        "gitRawBlobSha1": "c60413924aac417e3332e151119ea97eda961a97"
+      }
+    },
+    {
+      "original": ".cache/guardian-notification-existing-test-independent-20261023-r1/review.md",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/notification-existing-test-independent-review.raw.txt",
+        "bytes": 4006,
+        "sha256": "b0172aabef322cafdecda81f8f770f7ff93800f64b060bf6256f4c375dd39c80",
+        "gitRawBlobSha1": "96e1b33f1b5feb0e9fa76e15968c0990d7ace5fc"
+      }
+    },
+    {
+      "original": ".cache/guardian-resource-callback-audit-20261023-r1/delivery-pins.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/resource-initial-delivery-pins.json",
+        "bytes": 439,
+        "sha256": "b2d71c4bdb10aa419abe1680b431d1fe52e18972ddc2378dfb9dce861f56e23c",
+        "gitRawBlobSha1": "0d675f5d05d337a4cda74400d41da8845bafa5b0"
+      }
+    },
+    {
+      "original": ".cache/guardian-resource-callback-audit-20261023-r1/review.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/resource-initial-review.json",
+        "bytes": 2849,
+        "sha256": "075627c5338016a381e3eca69e6673651bec8a021624b53d01afd472c9cf7c06",
+        "gitRawBlobSha1": "4f78bb103f56f1d2a8109bbcd20a1e9657386496"
+      }
+    },
+    {
+      "original": ".cache/guardian-resource-callback-audit-20261023-r1/review.md",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/resource-initial-review.raw.txt",
+        "bytes": 6384,
+        "sha256": "f1023c2057f6178e2d2976d40d6263622026f26cd6aed3feb5bfb291df0f7a18",
+        "gitRawBlobSha1": "1848f8dc559c627d08b91828bb0e3dd79ff54a3e"
+      }
+    },
+    {
+      "original": ".cache/guardian-list-workflow-audit-20261023-r2/delivery-pins.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/list-initial-delivery-pins.json",
+        "bytes": 522,
+        "sha256": "072c58503612e31ae8ea50f2b4c007b80fb139ff897f0e0be3f82bc360219160",
+        "gitRawBlobSha1": "17a432bf5a40c0ac67db2b783bca13da784131fd"
+      }
+    },
+    {
+      "original": ".cache/guardian-list-workflow-audit-20261023-r2/pins.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/list-initial-pins.json",
+        "bytes": 3996,
+        "sha256": "4ccc0544c58cc7381b5c9a027b6c36d7e327c26009e912c2c25076e42267b14c",
+        "gitRawBlobSha1": "c3066bfbcc128c0e2e7d54e686c099eea8b1dcc7"
+      }
+    },
+    {
+      "original": ".cache/guardian-list-workflow-audit-20261023-r2/review.md",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/list-initial-review.raw.txt",
+        "bytes": 7561,
+        "sha256": "384b659c00e6e44a04f2989e2c48206ceb6506b4eddfd816b3648ca1c6dcd720",
+        "gitRawBlobSha1": "a5e6255fbc8c2e8fa09b054318a2642045b1f04d"
+      }
+    },
+    {
+      "original": ".cache/guardian-form-workflow-audit-20261023-r2/delivery-pins.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/form-initial-delivery-pins.json",
+        "bytes": 494,
+        "sha256": "161d603d7d102281a2ff3602bf99e590862bb0b6f2b94cccba4cb6d35b3ef0d4",
+        "gitRawBlobSha1": "32bc89438548e0e6521821d8990b263af4334059"
+      }
+    },
+    {
+      "original": ".cache/guardian-form-workflow-audit-20261023-r2/input-pins.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/form-initial-input-pins.json",
+        "bytes": 4178,
+        "sha256": "2d1aa9be8c9221761f54c566d6fa914bac050b01d6170c4167c7d29dc7b57a92",
+        "gitRawBlobSha1": "b7505feac94e0ee08ac3d9f5ef2ff52c789e563e"
+      }
+    },
+    {
+      "original": ".cache/guardian-form-workflow-audit-20261023-r2/review.json",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/form-initial-review.json",
+        "bytes": 1561,
+        "sha256": "d8900c86a6750c7356562f3a941290f836d2e72ece8a48fdf232d3e8078bcc4b",
+        "gitRawBlobSha1": "1cd01b1cae7bfc442b686e38f0fb2fcd20374cfe"
+      }
+    },
+    {
+      "original": ".cache/guardian-form-workflow-audit-20261023-r2/review.md",
+      "archived": {
+        "path": "docs/evidence/guardian-action-ownership-20261023/form-initial-review.raw.txt",
+        "bytes": 10772,
+        "sha256": "7b0f33261f853b0c46c87df1882c68c1a7160317d04c1d1bf2599163c46c33fd",
+        "gitRawBlobSha1": "f065c45ce9863294283564562f4237ed5583554e"
+      }
+    }
+  ],
+  "rawPatchesApplicableBeforeApplication": true,
+  "rootAndIndependentStaticReview": "NO_BLOCKER_FOUND_FOR_THE_FIXED_DELTAS",
+  "archiveIsSelectedReviewEvidenceNotAFullOriginalCandidateDirectoryClone": true,
+  "sourceBeforeAndAfterRecoverableFromParentGitCommitAndPatches": true,
+  "existingPublicApiAndBackendContractsUnchanged": true,
+  "productionFilesChanged": 4,
+  "existingTestSourcesChanged": 1,
+  "testCasesAddedOrRemoved": 0,
+  "existingTestChange": "Three text edits align stale-refresh expectation with the new guard; original sequence and PUT=2 assertions retained",
+  "existingTestCaseNamesAndSourceLineCountPreserved": true,
+  "testCoverageLimit": "Adapted test verifies new UI contract; does not replace dedicated internal-load-supersedes-pending-read ownership coverage",
+  "applicationTestsRun": false,
+  "rendered": false,
+  "sdkAstFormatterCompilerOrBusinessPredicatesRun": false,
+  "deployed": false,
+  "pushed": false,
+  "r8SourceFreezeNowHistorical": true,
+  "newExecutionInputBindingRequiredBeforeAnyFutureValidation": true,
+  "foreignTrackedWip": {
+    "path": "docs/managed-publication-admission-plan.md",
+    "sha256": "4994781cf65a736611e648fe693d0bec9b5aef6cc4315b818a036447dff22d9d"
+  },
+  "futureRequiredScenariosAllUnrun": [
+    "resource path/API replacement and away/back before held create/open/refresh/append/search/clear/reauth",
+    "resource handler replacement/removal and disposal; valid actions and required write-followup refresh",
+    "notification same-repository filter/page/refresh before old batch/single/open/navigation callbacks",
+    "notification exact-ID current-failure retry, duplicate pending action, load failure and read-only auth recovery",
+    "audit old retry/cursor after new filter; current failure retries original cursor; old page events cannot dereference a new null page",
+    "audit late detail/errors/dates, operation lock ownership, ordinary valid export and history semantics",
+    "production device route close under covering child; repeated close, reverse/dispose and unrelated route",
+    "device read remains closeable; confirmed write blocks close; redacted scope-loss route can close",
+    "full current 181-root frontend regression, backend integration, short-screen/large-text/accessibility rendering"
+  ],
+  "notClaimed": [
+    "actual ordinary-gesture reproduction",
+    "authorization bypass",
+    "all original route or form races solved",
+    "SDK/process state across other sessions",
+    "current frontend/backend release readiness"
+  ]
+}

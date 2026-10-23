@@ -1,0 +1,95 @@
+# Guardian form and batch workflow audit, r2
+
+Status: STATIC_REVIEW_WITH_TWO_P2_FINDINGS. All proposed scenarios are UNRUN. No rendering, SDK, test, formatter, compiler, AST/parser, candidate import/execution, network or process API was used. This is a scoped read-only source audit, not runtime validation or a claim of exhaustive coverage.
+
+## Bound input and scope
+
+- HEAD at initial inspection and final readback: `ad9f967a802e0d57dcea0e5289bf76d4e55070af`.
+- `member_access_page.dart` does not exist in the inspected pages inventory; the actual existing entry is `members_page.dart`.
+- Three flows: MembersPage/MemberEditor; NotificationsPage/NotificationsView; the existing devices entry and DeviceManagementDialog.
+- Input files are pinned in `input-pins.json`. Some dependency/test files were inspected by relevant ranges or literal searches; a hash binds the whole original file, and does not imply every line was reviewed.
+- Read-only Git diff of the seven principal production files against HEAD was empty at final readback (tool `630ee7`, exit 0). No production/test/Git/historical cache file was written. Only this new audit directory is a deliverable.
+- This audit does not repeat Help read-state/ack recovery, report picker, device-group pagination or cursor recovery findings.
+
+## FORM-R2-01 — P2: a retained page-batch notification callback is not tied to the displayed snapshot
+
+### Source evidence
+
+- `apps/guardian/lib/ui/notifications_view.dart:152-155`: `data` and its `unreadIds` are captured for a particular build.
+- `notifications_view.dart:204-210`: the page-batch button closes over those `unreadIds`; its handler calls `read(unreadIds, owner: repository)`.
+- `notifications_view.dart:86-94` and `:332-354`: filter/page navigation changes cursors and/or unreadOnly and starts a new load without replacing the repository.
+- `notifications_view.dart:57-81`: a successful load increments `generation`, installs a new snapshot, clears error/retry and eventually makes `busy=false`.
+- `notifications_view.dart:97-105`: `read` checks current repository, activeRead and busy, but no captured snapshot identity, selected page/filter or request generation. The current repository can remain valid after all these changes.
+- `notifications_view.dart:114-126`: admitted old IDs are submitted to markRead; success then resets cursors to the first page.
+- `packages/notification_client/lib/notification_client.dart:184-208`: markRead validates UUIDs, selection size and response IDs. It does not know which UI snapshot/page/filter supplied the IDs.
+
+### Concrete sequence and user effect
+
+1. Page A renders unread IDs A1/A2. Retain its page-batch callback.
+2. In the same repository, switch filter or navigate to another page; the new read completes and busy becomes false. Snapshot B is now displayed. Workspace/actor access never changes.
+3. Invoke the retained A callback (a queued/stale handler, not a currently visible A button).
+4. The `read` entry guards all pass, so IDs A1/A2 can be marked read while B is the current page. This also resets the pagination on completion.
+
+This is a stale UI operation boundary and personal notification-state problem, not an authorization bypass or a claim that ordinary fresh button presses select the wrong IDs. Runtime reachability/timing is not demonstrated here. The exact retained-callback branch is supported by the current source.
+
+### Minimal existing pattern to reuse
+
+Bind the page-batch callback to the original snapshot identity or a view revision plus the existing repository owner; recheck it synchronously at the action entry before calling read. Current same-snapshot repeated presses must continue to use the existing activeRead/busy lock. Do not replace an old selection with whatever IDs happen to be current. Keep ordinary retry of a failed read using the original IDs and keep the repository protocol/API unchanged. Generation capture must account for read itself incrementing generation; a distinct snapshot identity or existing load revision can avoid invalidating its own valid retry.
+
+### Required later scenarios (all UNRUN)
+
+- Capture page A batch; complete a same-owner filter change to B; invoke A callback and assert no PUT/POST, no onOpen and no pagination reset.
+- Repeat with a successful next-page load and an explicit refresh, including the same filter with different returned unread IDs.
+- Current snapshot batch still submits exactly the displayed IDs once; repeated callback while pending submits once; a current failed original operation can retry its exact IDs once.
+- Workspace generation loss/dispose remains inert; do not weaken existing access checks.
+
+### Existing test coverage boundary
+
+`notifications_test.dart:77-120` checks original-ID retry and duplicate clicks; `:122-152` checks normal page/filter behavior. `submit_confirmation_variant_test.dart:366-415` checks two retry calls while one retry is pending. `notification_help_scope_browser_test.dart:225-293` checks retained actions after access/dispose loss. These do not assert that a retained page-batch handler becomes inert after a successful same-owner snapshot replacement. No test was run.
+
+## FORM-R2-02 — P2: device close can pop a covering route through a stale callback
+
+### Source evidence
+
+- `apps/guardian/lib/ui/device_management_dialog.dart:99-101`: close only checks `!c.writeBusy` before calling the host onClose; it does not check mounted, own-route activity/currentness or a synchronously completed close.
+- `device_management_dialog.dart:777-782`: the close IconButton is enabled whenever writeBusy is false and exposes that callback.
+- `apps/guardian/lib/pages/console_pages.dart:1021-1029`: the real device window is opened by showDialog and its host callback directly calls `Navigator.of(dialogContext).pop()`.
+- `device_management_dialog.dart:579-588`: a normal child flow sets showingSubflow while awaiting the child action.
+- `apps/guardian/lib/core/device_management.dart:587-615`: runAction sets `_busy`, not `_writeBusy`. Thus an ordinary child window does not make the retained close callback fail its only guard.
+- By contrast, `device_management_dialog.dart:105-110` already guards the inner confirmation finish with `ModalRoute.of(routeContext)?.isCurrent == true`.
+- `apps/guardian/lib/ui/design.dart:690-691,812-815` uses route currentness for close; `owned_dialog_route.dart:17-31` already provides available/finish semantics to finish the owned route without popping a covering route.
+
+### Concrete sequence and user effect
+
+1. Open the production device detail and retain its close callback.
+2. Open one ordinary child flow (for example privacy or diagnostics) through runAction. The parent stays mounted; writeBusy remains false while the child covers it.
+3. Invoke the retained parent close callback.
+4. Its guard passes and the host performs Navigator.pop against the top route, which is now the child rather than the device detail. The child can be dismissed unexpectedly, losing unfinished local work. The original parent is not necessarily closed.
+
+The missing mounted/current-route checks also leave retained callbacks after teardown/reverse outside an explicit lifetime guard; no particular resulting exception is claimed without runtime evidence. This finding is specifically the proven source-level route-targeting mismatch above. It does not claim a write is submitted or that access checks are bypassed.
+
+### Minimal existing pattern to reuse
+
+Apply a mounted + originating route active/current guard at the actual close entry, preserving the existing rule that reads are cancelable and writeBusy blocks close. Bind the production host callback to that same route; reusing OwnedDialogRoute/available/finish can make a completed close synchronously inert and avoid bare top-route pops. Do not disable closing for all reads and do not pop an unrelated cover. Decide explicitly whether a covered parent close is inert or finishes only its own route, matching existing owned dialog patterns.
+
+### Required later scenarios (all UNRUN)
+
+- Through the real ConsoleActions device entry, retain parent close, open a child, invoke parent close; assert cover future and child input stay alive and the intended parent lifecycle is preserved.
+- Capture close, close the parent, open an unrelated route, call old close during reverse and after dispose; the unrelated route/future remains untouched, no exception.
+- Repeated close in the same turn finishes only the originating device route once.
+- Close remains usable during a plain read and disabled during a confirmed write; access loss still hides private fields and leaves a usable safe close.
+
+### Existing test coverage boundary
+
+`device_management_dialog_test.dart:782-798` checks close enabled during reads/disabled during writes with `onClose: () => closeCalls++` from its fixture (`:294`), so it cannot observe which actual Navigator route was popped. Parent/confirmation replacement tests (`:612-778`) exercise queued confirmation acceptance, not the parent close callback against a cover. `action_details_route_ownership_test.dart:252-269` covers the shared details dialog close implementation, which the production device path does not use. No test was run.
+
+## Reviewed behavior with no finding in this scope
+
+- MembersPage captures a DeviceSubflowScope and uses the scoped dialog API before destructive requests (`members_page.dart:77-90,183-216,221-348`). The detail action helper sets busy synchronously before awaiting confirmation (`design.dart:745-759`), so repeated callbacks cannot open a second confirm/submit through this helper while pending.
+- MemberEditor.save synchronously rejects current=false/busy/version conflict and locks uncertain original payloads (`member_editor.dart:242-279`); `editor_submit_guard_test.dart:235-269` has a retained double-submit assertion. The submitted version/key are captured by the caller (`members_page.dart:293-339`). No new member repeat-submit finding was found in the reviewed path.
+- Notification activeRead and busy protect a current pending operation, and repository.current protects owner changes. FORM-R2-01 concerns a successful same-owner snapshot replacement after those locks are released.
+- DeviceManagementController write uncertainty and scope/identity protections remain in place (`device_management.dart:400-412,437-506,540-583`). FORM-R2-02 is a close-route issue rather than an additional mutation race.
+
+## Delivery status
+
+Two P2 findings; no implementation or test source was created. All new scenarios are UNRUN, rendered layout is NOT_OBSERVED. Current source remains at the inspected commit for these files. Root should independently assess the narrowly described retained-callback sequences before authorizing any implementation.

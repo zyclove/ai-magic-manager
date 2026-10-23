@@ -1,0 +1,30 @@
+{
+  "status": "STATIC_CANDIDATE_UNRUN",
+  "files": [
+    {
+      "path": "before.dart",
+      "bytes": 14473,
+      "sha256": "8bb6ef841cd151ff4de16492eab7850bb94cd430c16212a369473c4cb8d73b88"
+    },
+    {
+      "path": "notifications_view.dart",
+      "bytes": 16791,
+      "sha256": "2be26e954cdefa39d62bbaab4f1cfd25d389f785260db86cdd1ae3015a243fd7"
+    },
+    {
+      "path": "notifications-page-actions.patch",
+      "bytes": 8565,
+      "sha256": "430a128b08bc1089d5ce000896addfde826f6754c56b3320b531a9cc1322df89"
+    },
+    {
+      "path": "review.md",
+      "bytes": 7104,
+      "sha256": "52f70b1a6cfd30bb19e3daef2dabfc93bacf35387446b8e7fd13f6df6f537fce"
+    },
+    {
+      "path": "pins.json",
+      "bytes": 1175,
+      "sha256": "2166bc8562bbeaf13e60f28e7fed97d69f136dcb4036d32f0b1490dbe0cb5338"
+    }
+  ]
+}

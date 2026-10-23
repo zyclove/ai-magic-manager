@@ -1,0 +1,9 @@
+# 设备窗口：关闭入口只操作当前窗口
+
+原 close 仅核 writeBusy；生产宿主直接 Navigator.pop。普通子窗口令 runAction busy 而不令 writeBusy，所以保留的父窗口关闭事件可以误弹出覆盖的子窗口。该数据流已独立只读审查；不是普通手势复现或越权结论。
+
+本候选只改 close 入口及一个同步锁：先核 mounted/writeBusy/是否已请求关闭，再核当前 ModalRoute 确为当前活动路由。被子窗口覆盖时不调用宿主关闭，子窗口离开后当前有效关闭仍可用；首次允许关闭先同步锁住，再调用原 onClose。重复事件、反向过渡及 dispose 后不再调用宿主。继续允许纯读取时关闭、保持写入时禁用；权限已失效时仍能关闭已隐藏资料的原窗口。
+
+沿用本文件 finishConfirmation 的 ModalRoute current 模式；不新增路由框架，不改宿主、controller、请求、版本、权限或其他按钮。未声称解决所有路由重挂载、子流程或控制器并发问题。
+
+后续须验证真实ConsoleActions入口：父关闭事件+覆盖子窗口保留输入；子窗口关闭后父可关；同轮双关；反向过渡后另开无关路由；纯读取可关/写入不可关；scope失效可安全退出。现有fixture只计onClose次数，不能证明真实Navigator目标。全部场景UNRUN、未渲染；没有SDK/AST/编译/测试/候选函数或谓词执行、进程或网络，Main/Git未写。

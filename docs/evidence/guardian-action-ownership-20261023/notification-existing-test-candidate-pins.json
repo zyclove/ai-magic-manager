@@ -1,0 +1,25 @@
+{
+  "status": "EXISTING_TEST_EXPECTATION_ALIGNMENT_UNRUN",
+  "sourceCommit": "ad9f967a802e0d57dcea0e5289bf76d4e55070af",
+  "repositoryPath": "apps/guardian/test/notification_help_scope_browser_test.dart",
+  "before": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-existing-test-20261023-r1\\before.dart",
+    "bytes": 22316,
+    "sha256": "7db37e189d9e162ee901b8d536a6e6845ae42a00ec3ce01a0108956902e3016e"
+  },
+  "after": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-existing-test-20261023-r1\\after.dart",
+    "bytes": 22319,
+    "sha256": "8ab27ee265f4bd89c8a8ba2902c50d5d4f7540a1c3f1180d76c2363baaeb5d0f"
+  },
+  "patch": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-existing-test-20261023-r1\\existing-test-expectation.patch",
+    "bytes": 1458,
+    "sha256": "f2c4094c1c331a12d7141fbec34dc8d0b2d74782ed11228018c1ea651f07e68c"
+  },
+  "testCasesAddedOrRemoved": 0,
+  "caseDeclarationTextAndLineCountPreserved": true,
+  "testsRun": false,
+  "sdkParserOrCandidateExecuted": false,
+  "mainOrGitWritten": false
+}

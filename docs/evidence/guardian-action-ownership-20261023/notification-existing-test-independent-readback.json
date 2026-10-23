@@ -1,0 +1,107 @@
+{
+  "status": "INDEPENDENT_STATIC_EXISTING_TEST_ALIGNMENT_NO_DELTA_BLOCKER_UNRUN_NOT_TEST_PASS",
+  "candidateInventory": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-existing-test-20261023-r1\\after.dart",
+      "bytes": 22319,
+      "sha256": "8ab27ee265f4bd89c8a8ba2902c50d5d4f7540a1c3f1180d76c2363baaeb5d0f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-existing-test-20261023-r1\\before.dart",
+      "bytes": 22316,
+      "sha256": "7db37e189d9e162ee901b8d536a6e6845ae42a00ec3ce01a0108956902e3016e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-existing-test-20261023-r1\\existing-test-expectation.patch",
+      "bytes": 1458,
+      "sha256": "f2c4094c1c331a12d7141fbec34dc8d0b2d74782ed11228018c1ea651f07e68c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-existing-test-20261023-r1\\pins.json",
+      "bytes": 1102,
+      "sha256": "97f1831f434c67331555067950882a50aaada8825f920b011ae75ea594a0ecb8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-existing-test-20261023-r1\\review.md",
+      "bytes": 1056,
+      "sha256": "57b2ef6729446ff1811a099e1fa0ef082054ff84210610d753faab4e7cff65fc"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-existing-test-20261023-r1\\delivery-pins.json",
+      "bytes": 1297,
+      "sha256": "ff7bd2f53dfc973605ed74042f11f1a08450e31de5c455b6d5eaf10bc8c0124f"
+    }
+  ],
+  "sixMembersAndFiveDeliveryRowsVerified": true,
+  "threePinsRowsVerified": true,
+  "mainObserved": {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\notification_help_scope_browser_test.dart",
+    "bytes": 22316,
+    "sha256": "7db37e189d9e162ee901b8d536a6e6845ae42a00ec3ce01a0108956902e3016e"
+  },
+  "mainRawMatchesBefore": true,
+  "completePatchRebuiltByteExactly": true,
+  "exactlyThreeTextRegionsRebuildAllAfterBytes": true,
+  "threeInverseTextRegionsRestoreAllBeforeBytes": true,
+  "lineCountBefore": 537,
+  "lineCountAfter": 537,
+  "testDeclarationTextAndLineNumbers": [
+    {
+      "line": 155,
+      "text": "  testWidgets('real selection invalidates late inbox GET and Help count before '"
+    },
+    {
+      "line": 225,
+      "text": "    testWidgets('late markRead and retained actions stay inert after $loss',"
+    },
+    {
+      "line": 297,
+      "text": "  testWidgets('a fresh repository can read while the old read is pending; '"
+    },
+    {
+      "line": 380,
+      "text": "  testWidgets('fixed host keys fail closed when Session instance changes; '"
+    },
+    {
+      "line": 417,
+      "text": "  testWidgets('fresh shell entries navigate, read and open current approval '"
+    },
+    {
+      "line": 501,
+      "text": "  testWidgets('SYNTHETIC optional actor ABA never revives held host scopes',"
+    }
+  ],
+  "testDeclarationLinesUnchanged": true,
+  "newOrRemovedTestCases": 0,
+  "requestFixtureTimingImportsAndAllOtherAssertionsByteIdentical": true,
+  "existingPutExactlyTwoAssertionUnchanged": true,
+  "originalNotificationIndependentReviewPreserved": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-page-actions-independent-20261023-r1\\review.md",
+    "bytes": 5804,
+    "sha256": "bd82a2b06ebbc8c7ac788c80e1d6b50c321ce7d1c5970baacc518d369a42b828"
+  },
+  "notificationProductionCandidateBound": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-page-actions-20261023-r1\\notifications_view.dart",
+    "bytes": 16791,
+    "sha256": "2be26e954cdefa39d62bbaab4f1cfd25d389f785260db86cdd1ae3015a243fd7"
+  },
+  "firstFreshReceiptExpectedOpened": [
+    "requestId"
+  ],
+  "currentNewButtonExpectedOpened": [
+    "requestId",
+    "requestId"
+  ],
+  "coverageBoundary": "New stale-UI guard contract is covered in the existing case source; prior deliberately UI-triggered internal-supersede/activeRead-finally branch coverage is not preserved equivalently. A future explicit internal/fixture path is required if that branch needs dedicated coverage.",
+  "sourceReasoningOnlyNotProductFunctionOrTestExecution": true,
+  "originalT1StaticExpectationConflictAlignedByPairedCandidates": true,
+  "fullActiveReadBranchCoverageClaimed": false,
+  "testPassedClaimed": false,
+  "sdkAstParserCompilerFormatterTestsCandidateOrPredicateExecuted": false,
+  "mainGitOriginalCandidatesOrTestsWritten": false,
+  "processOrNetworkUsed": false,
+  "onlyOwnTextHashJsonDiffMetadataUsed": true,
+  "allScenarios": "UNRUN",
+  "newExecutionGrant": false,
+  "findings": []
+}

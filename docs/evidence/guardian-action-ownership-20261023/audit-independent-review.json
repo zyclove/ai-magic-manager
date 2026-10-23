@@ -1,0 +1,119 @@
+{
+  "status": "STATIC_NO_BLOCKER_AUDIT_PAGE_ACTIONS_ALL_SCENARIOS_UNRUN",
+  "head": "ad9f967a802e0d57dcea0e5289bf76d4e55070af",
+  "beforeGitBlob": "11c562a587db95e19490a53b801a6c03b7cb268e",
+  "before": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-audit-page-actions-20261023-r1\\before.dart",
+    "bytes": 14665,
+    "sha256": "9c446b177a5bf9f3badb63b9f011d19a87c92eecd0303213d3bef34a5590ffc6"
+  },
+  "after": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-audit-page-actions-20261023-r1\\after.dart",
+    "bytes": 17365,
+    "sha256": "f86610dc7041c739865cc2a75ee5e0c08df5bea662ccbfb46021bb3a6769984f"
+  },
+  "patch": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-audit-page-actions-20261023-r1\\audit-page-actions.patch",
+    "bytes": 10492,
+    "sha256": "a162bb94d64c4feeb15374cfc4569c2ad54a83f1eb6a63adaca5cf205785d5d9"
+  },
+  "delivery": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-audit-page-actions-20261023-r1\\delivery-pins.json",
+    "bytes": 959,
+    "sha256": "524fc3d2882e87c83cb2cf144c170af607c2761c756d59cb7d2353f8154e5148"
+  },
+  "fullPatchHunks": 13,
+  "fullPatchReconstructsEveryAfterByte": true,
+  "exactBundleMembers": 6,
+  "deliveryPinsVerified": 5,
+  "dependencies": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\audit_page.dart",
+      "bytes": 4436,
+      "sha256": "cc0cde463bf0b2fb6f90ba655938d6bd8fcb5e92612a6aa5490a103e357e9358"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\core\\audit.dart",
+      "bytes": 1626,
+      "sha256": "ee067fa9e3b2c1b6bc7bae32bf5877c4cc2146961b8dcb6d13980b5cff3f3fae"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\packages\\audit_client\\lib\\audit_client.dart",
+      "bytes": 4125,
+      "sha256": "24d81bb99d9ec6c43b454076925cc5f8fbf2c915cfb885f1917e8a0bef33f87f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\backend\\src\\main\\java\\com\\aimanager\\tenant\\internal\\AuditExplorer.java",
+      "bytes": 5159,
+      "sha256": "48297228b65d542d2e6ac325401f9fbb9208f817eca940d128092b8e16bb876f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\docs\\audit-explorer-contract.md",
+      "bytes": 2858,
+      "sha256": "a319c64a8eb0e2e0f78a2796c08820f8c733561d68073f6d93abd253aa89f2d2"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\audit_test.dart",
+      "bytes": 6765,
+      "sha256": "9c3067911062675c6408ad73f3e6ff98bda154c31298f5b15380294b00afe7de"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\workspace_flow_entry_browser_test.dart",
+      "bytes": 11874,
+      "sha256": "15fb4c531970c6488438d78e4c35265c51286159c8c462a3f8938ad39c995736"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\audit_export_route_test.dart",
+      "bytes": 6429,
+      "sha256": "beff27499cbf2a10eeb469c930027218a56c8094a803f2e471fdb76f16659d20"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-list-workflow-audit-20261023-r2\\review.md",
+      "bytes": 7561,
+      "sha256": "384b659c00e6e44a04f2989e2c48206ceb6506b4eddfd816b3648ca1c6dcd720"
+    }
+  ],
+  "main": {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\audit_view.dart",
+    "bytes": 14665,
+    "sha256": "9c446b177a5bf9f3badb63b9f011d19a87c92eecd0303213d3bef34a5590ffc6"
+  },
+  "importsAndWidgetApiByteIdentical": true,
+  "successPaginationStackBlockByteIdentical": true,
+  "dateLogicByteIdenticalExceptEntryAndAfterAwaitGuards": true,
+  "uiEventKinds": [
+    "refresh",
+    "dates",
+    "export",
+    "apply",
+    "reset",
+    "detail",
+    "previous",
+    "next"
+  ],
+  "retryKinds": [
+    "list failed destination/direction",
+    "detail failure original page cursor"
+  ],
+  "ownerAndTicket": "mounted + same repository + repository.current + generation + runtime !busy/!opening",
+  "openingLock": "Object identity; new load clears old owner; old finally only clears own identical lock",
+  "internalLoad": "Current-owner check without event busy/opening guard; init and explicit fresh remain possible",
+  "manualTypeReview": "No static type mismatch identified by manual inspection; not compiler evidence",
+  "boundaries": [
+    "No new coverage-route policy",
+    "No arbitrary repository-replacement lifecycle guarantee",
+    "No claim to solve every concurrent date-picker scenario"
+  ],
+  "allScenarios": "UNRUN",
+  "rendered": false,
+  "newTestsAdded": 0,
+  "executionAuthorization": false,
+  "candidateOrBusinessPredicateRun": false,
+  "astParserSdkTestsFormatterProcessInspectionWinApiNetworkCalls": 0,
+  "mainGitDependenciesTestsOrCandidateOriginalsWritten": false
+}

@@ -1,0 +1,68 @@
+{
+  "status": "STATIC_NO_BLOCKER_RESOURCE_PAGE_ACTIONS_R3_ALL_SCENARIOS_UNRUN",
+  "head": "ad9f967a802e0d57dcea0e5289bf76d4e55070af",
+  "mainGitBlob": "29b22defbbaf1eddde1e0f26fddee6b79e6e219c",
+  "before": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-resource-page-actions-20261023-r3\\before.dart",
+    "bytes": 17324,
+    "sha256": "c742e801e36910b278525c29228b33b8eb7a69606b53a9d210b535db0e4c35e3"
+  },
+  "after": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-resource-page-actions-20261023-r3\\after.dart",
+    "bytes": 18380,
+    "sha256": "692b1f4c4e9eefbef6fb80a7abeb7ced7e2c505b85fb01e8b032469cbc7b8c5e"
+  },
+  "patch": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-resource-page-actions-20261023-r3\\resource-page-actions.patch",
+    "bytes": 10501,
+    "sha256": "ecf276c93526dfde8b5b5dd3235d8ec229f442399c253b399ef6bb07f729613a"
+  },
+  "delivery": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-resource-page-actions-20261023-r3\\delivery-pins.json",
+    "bytes": 1257,
+    "sha256": "e19452a335e913044f84324724a3a79a87ce45b8f7536aeadb4765fd7c95bca7"
+  },
+  "deliveryPinsVerified": 5,
+  "exactBundleMembership": 6,
+  "fullPatchHunks": 15,
+  "fullPatchByteExactlyReconstructsAfter": true,
+  "dependencies": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\resource_page_resilience_test.dart",
+      "bytes": 22170,
+      "sha256": "a003a75c83ef01e6347bfea7ee08801302267f0e97012534e455c57bbc7575f2"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\device_groups_page.dart",
+      "bytes": 36200,
+      "sha256": "a4e951742370b108eece12d852104dfa2e817033ed392e1418234dc44a9a8a57"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\core\\api.dart",
+      "bytes": 22640,
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641"
+    }
+  ],
+  "designDependency": {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\design.dart",
+    "bytes": 31270,
+    "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+  },
+  "publicWidgetAndColumnSpecBytesIdentical": true,
+  "publicMethodSignaturesUnchanged": true,
+  "loadBodyIdenticalExceptEarlyOwnerGuard": true,
+  "actionBodyIdenticalExceptEarlyOwnerGuard": true,
+  "scopeBinding": "Original epoch/path/api/permitted plus mounted/current predicate; original handlers and exact handler identity",
+  "internalUiEntrypoints": "2 create; 3 open; 5 fresh refresh/retry; append; input; 2 clear; 4 reauth bindings",
+  "manualTypeReview": "Plausible final nullable-function promotion and VoidCallback event adapters; not compiler evidence",
+  "preserved": "init/didUpdate load, write-after-read refresh, fresh supersedes append, busy guards, generation/scope/error/finally, API/protocol/test sources",
+  "limitations": [
+    "All scenarios UNRUN/unrendered; no parser/compiler/runtime proof",
+    "Pure bool ABA is not solved; host must retain original non-resurrectable owner contract",
+    "External toolbar and ColumnSpec actions remain host-owned"
+  ],
+  "candidateOrPredicateExecuted": false,
+  "parserAstSdkTestsFormatterProcessInspectionWinApiNetworkCalls": 0,
+  "mainGitOrOriginalFilesWritten": false,
+  "allScenarios": "UNRUN"
+}

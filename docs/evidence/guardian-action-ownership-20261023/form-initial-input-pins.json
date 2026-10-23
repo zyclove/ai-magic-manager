@@ -1,0 +1,116 @@
+{
+  "sourceCommit": "ad9f967a802e0d57dcea0e5289bf76d4e55070af",
+  "scope": "Whole-file byte pins; inspection was full text or relevant ranges/searches as noted in review.md",
+  "files": [
+    {
+      "path": "apps/guardian/lib/pages/members_page.dart",
+      "bytes": 17685,
+      "sha256": "e11751c5ab7361182fb3e03851ee043ec50bc9d0ba791b427236f0be316034ed"
+    },
+    {
+      "path": "apps/guardian/lib/ui/member_editor.dart",
+      "bytes": 24912,
+      "sha256": "d7a60dbd2f3197d4a9ce0a92485a4415dfd67ae40b2cd135b81d6d81f90ca838"
+    },
+    {
+      "path": "apps/guardian/lib/pages/notifications_page.dart",
+      "bytes": 1872,
+      "sha256": "728693256dfba6909b47b619a97861133d57ed9ba0ecd91f829d4bf4059bbe8a"
+    },
+    {
+      "path": "apps/guardian/lib/ui/notifications_view.dart",
+      "bytes": 14473,
+      "sha256": "8bb6ef841cd151ff4de16492eab7850bb94cd430c16212a369473c4cb8d73b88"
+    },
+    {
+      "path": "apps/guardian/lib/core/notifications.dart",
+      "bytes": 1326,
+      "sha256": "bf7a88811bf3034f811d13c1e3d3e3d7102cb66169de9fbd4affe8c63ac823c9"
+    },
+    {
+      "path": "packages/notification_client/lib/notification_client.dart",
+      "bytes": 7526,
+      "sha256": "1d5f73960125f837481be5ab6f35a155b12995b964c2c98359125a14249e9e08"
+    },
+    {
+      "path": "apps/guardian/lib/ui/resource_page.dart",
+      "bytes": 17324,
+      "sha256": "c742e801e36910b278525c29228b33b8eb7a69606b53a9d210b535db0e4c35e3"
+    },
+    {
+      "path": "apps/guardian/lib/ui/dialog_access.dart",
+      "bytes": 2748,
+      "sha256": "8fe7c3d9ee1b7a038dc08939ea5cd40572a411ced63a01ba6eb12a88e50145d5"
+    },
+    {
+      "path": "apps/guardian/lib/ui/design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    },
+    {
+      "path": "apps/guardian/lib/ui/owned_dialog_route.dart",
+      "bytes": 1419,
+      "sha256": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946"
+    },
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "bytes": 87392,
+      "sha256": "e0d76e148ff4d629e96f3ba4e9abdf760136e7a1b78fe454021a71414dab28e6"
+    },
+    {
+      "path": "apps/guardian/lib/ui/device_management_dialog.dart",
+      "bytes": 32289,
+      "sha256": "28e3be992e5e3a2454fefa677dfb74748840fdea0dbd2a48e4d4ce50c94dd380"
+    },
+    {
+      "path": "apps/guardian/lib/core/device_management.dart",
+      "bytes": 20055,
+      "sha256": "4615e4869803dd80911dcd7f8e46006decfc12f83937fbe0d4174f78bc94a89b"
+    },
+    {
+      "path": "apps/guardian/lib/core/api.dart",
+      "bytes": 22640,
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641"
+    },
+    {
+      "path": "apps/guardian/test/member_editor_test.dart",
+      "bytes": 6042,
+      "sha256": "c894ec060fa2edbcaef1e9884a16983cdf74d554c7d0a361aea12004480379f7"
+    },
+    {
+      "path": "apps/guardian/test/editor_submit_guard_test.dart",
+      "bytes": 9807,
+      "sha256": "8fde368ce0a34436be2118d1753b620b5bc043810db08574c4a132719d2f5733"
+    },
+    {
+      "path": "apps/guardian/test/notifications_test.dart",
+      "bytes": 11732,
+      "sha256": "d9e0207252d6dc6819e0436cb5c1d045ec76021904c430e246374bda9068ad74"
+    },
+    {
+      "path": "apps/guardian/test/submit_confirmation_variant_test.dart",
+      "bytes": 15313,
+      "sha256": "20a3cea1c3473de1edd50c21bdd3d4687cc7eb3afdd79c381743abc9a517fb7b"
+    },
+    {
+      "path": "apps/guardian/test/notification_help_scope_browser_test.dart",
+      "bytes": 22316,
+      "sha256": "7db37e189d9e162ee901b8d536a6e6845ae42a00ec3ce01a0108956902e3016e"
+    },
+    {
+      "path": "apps/guardian/test/device_management_dialog_test.dart",
+      "bytes": 35968,
+      "sha256": "123d8e6ce6bfdaf4afe94e89beabbfdbd59eca0e64c038c82444edb2a49d8a4c"
+    },
+    {
+      "path": "apps/guardian/test/action_details_route_ownership_test.dart",
+      "bytes": 12877,
+      "sha256": "e136a57910a233cb126b550c4ba93a66822f3bbb4059b4f79f62f1d8271b796a"
+    },
+    {
+      "path": "apps/guardian/test/device_subflow_scope_test.dart",
+      "bytes": 19723,
+      "sha256": "c951fa672e6cf781717436782b7f15630c6b84dcacdb825fb17ce30678af0975"
+    }
+  ]
+}

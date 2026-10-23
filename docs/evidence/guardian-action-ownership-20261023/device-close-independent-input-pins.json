@@ -1,0 +1,59 @@
+{
+  "files": [
+    {
+      "path": ".cache/guardian-device-close-20261023-r2/after.dart",
+      "bytes": 32500,
+      "sha256": "70424e803dfae979d9cc6596b6628d52d5a38c05de9d62a799874fcfb31759f5"
+    },
+    {
+      "path": ".cache/guardian-device-close-20261023-r2/before.dart",
+      "bytes": 32289,
+      "sha256": "28e3be992e5e3a2454fefa677dfb74748840fdea0dbd2a48e4d4ce50c94dd380"
+    },
+    {
+      "path": ".cache/guardian-device-close-20261023-r2/device-close.patch",
+      "bytes": 832,
+      "sha256": "8e39387b9308e5fb3b6065e64f852cad7931b976022977c7b2e32042d4529af8"
+    },
+    {
+      "path": ".cache/guardian-device-close-20261023-r2/pins.json",
+      "bytes": 1918,
+      "sha256": "efdc9fe2b63a4a264bf3a3437dd5720a8354ec7301a0d1067ab83a978038f131"
+    },
+    {
+      "path": ".cache/guardian-device-close-20261023-r2/review.md",
+      "bytes": 1476,
+      "sha256": "b4f3588e96678766ad46af98e196dd97d5ce6d5e81f0e27022495837689ab9ac"
+    },
+    {
+      "path": ".cache/guardian-device-close-20261023-r2/delivery-pins.json",
+      "bytes": 1201,
+      "sha256": "46d0bc25200da73c8c13d84d07cf68ccdf947dc37c4d8a7d3b3d7bd16a70587d"
+    },
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "bytes": 87392,
+      "sha256": "e0d76e148ff4d629e96f3ba4e9abdf760136e7a1b78fe454021a71414dab28e6"
+    },
+    {
+      "path": "apps/guardian/lib/core/device_management.dart",
+      "bytes": 20055,
+      "sha256": "4615e4869803dd80911dcd7f8e46006decfc12f83937fbe0d4174f78bc94a89b"
+    },
+    {
+      "path": "apps/guardian/test/device_management_dialog_test.dart",
+      "bytes": 35968,
+      "sha256": "123d8e6ce6bfdaf4afe94e89beabbfdbd59eca0e64c038c82444edb2a49d8a4c"
+    },
+    {
+      "path": ".cache/guardian-form-workflow-audit-20261023-r2/review.md",
+      "bytes": 10772,
+      "sha256": "7b0f33261f853b0c46c87df1882c68c1a7160317d04c1d1bf2599163c46c33fd"
+    },
+    {
+      "path": "apps/guardian/lib/ui/device_management_dialog.dart",
+      "bytes": 32289,
+      "sha256": "28e3be992e5e3a2454fefa677dfb74748840fdea0dbd2a48e4d4ce50c94dd380"
+    }
+  ]
+}

@@ -1,0 +1,18 @@
+{
+  "status": "INDEPENDENT_STATIC_NO_PRODUCT_DELTA_BLOCKER_EXISTING_TEST_EXPECTATION_CONFLICT_ALL_UNRUN",
+  "files": [
+    {
+      "path": "review.md",
+      "bytes": 5804,
+      "sha256": "bd82a2b06ebbc8c7ac788c80e1d6b50c321ce7d1c5970baacc518d369a42b828"
+    },
+    {
+      "path": "readback.json",
+      "bytes": 5564,
+      "sha256": "af6bef2d926508737004dc2960c70e50cbcb65034ffdc11b5d62607ebd8a74bd"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "allScenarios": "UNRUN",
+  "newBusinessImplementationApplied": false
+}

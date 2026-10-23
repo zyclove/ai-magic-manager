@@ -1,0 +1,41 @@
+{
+  "status": "STATIC_CANDIDATE_ALL_APPLICATION_SCENARIOS_UNRUN",
+  "sourceCommit": "ad9f967a802e0d57dcea0e5289bf76d4e55070af",
+  "repositoryPath": "apps/guardian/lib/ui/resource_page.dart",
+  "before": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-resource-page-actions-20261023-r3\\before.dart",
+    "bytes": 17324,
+    "sha256": "c742e801e36910b278525c29228b33b8eb7a69606b53a9d210b535db0e4c35e3"
+  },
+  "after": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-resource-page-actions-20261023-r3\\after.dart",
+    "bytes": 18380,
+    "sha256": "692b1f4c4e9eefbef6fb80a7abeb7ced7e2c505b85fb01e8b032469cbc7b8c5e"
+  },
+  "patch": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-resource-page-actions-20261023-r3\\resource-page-actions.patch",
+    "bytes": 10501,
+    "sha256": "ecf276c93526dfde8b5b5dd3235d8ec229f442399c253b399ef6bb07f729613a"
+  },
+  "dependencies": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\resource_page_resilience_test.dart",
+      "bytes": 22170,
+      "sha256": "a003a75c83ef01e6347bfea7ee08801302267f0e97012534e455c57bbc7575f2"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\device_groups_page.dart",
+      "bytes": 36200,
+      "sha256": "a4e951742370b108eece12d852104dfa2e817033ed392e1418234dc44a9a8a57"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\core\\api.dart",
+      "bytes": 22640,
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641"
+    }
+  ],
+  "apiAndPublicMethodSignaturesUnchanged": true,
+  "testSourcesChanged": 0,
+  "sdkTestsAstFormatterCompilerOrBusinessPredicatesRun": false,
+  "mainOrGitWritten": false
+}

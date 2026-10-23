@@ -1,0 +1,37 @@
+# 既有通知测试预期调整：独立静态核对
+
+## 结论
+
+Root 的三处小改动与固定通知生产候选 `2be26e954cdefa39d62bbaab4f1cfd25d389f785260db86cdd1ae3015a243fd7` 的事件合同相符，未见本次测试 delta 的整合阻断。它静态消除了原通知独审记录的 T1 预期冲突；**这不是测试通过，全部应用验证仍 UNRUN**。该测试预期应与相应生产守卫配套整合。
+
+候选：`.cache/guardian-notification-existing-test-20261023-r1`。after：22319B / `8ab27ee265f4bd89c8a8ba2902c50d5d4f7540a1c3f1180d76c2363baaeb5d0f`；patch：1458B / `f2c4094c1c331a12d7141fbec34dc8d0b2d74782ed11228018c1ea651f07e68c`；delivery：1297B / `ff7bd2f53dfc973605ed74042f11f1a08450e31de5c455b6d5eaf10bc8c0124f`。
+
+## 三处准确差异
+
+行号指候选 after.dart，仍与原文件相同。
+
+1. 361–363 的三行注释改为：旧 refresh/open 不得打断 B 的 pending read；A 的完成不得解锁它们；B 收到自己的回执后应正常打开申请。
+2. 371–372 的断言及其 reason：freshReceipt 完成、flushReads 后，opened 精确等于 `[_requestId]`；不是仅判断非空。
+3. 375 的当前新按钮操作完成后断言：opened 精确等于 `[_requestId, _requestId]`，保留第二次明确操作仍正常打开的检查。
+
+完整 before/after 可由这三个精确文本替换双向重建；完整 patch 逐字重建一致。所有 test/testWidgets 声明文本、声明行号、总行数保持相同，没有新增、删除、改名或 skip 测试；没有修改 fixture/import、请求顺序或其他断言，详见 readback.json。
+
+## 与真实源码时序的对应（仅人工解读）
+
+目标仍为 `notification_help_scope_browser_test.dart:297–377` 的原用例。
+
+- 328–331 保存 A 控件并启动旧 read，334–339 切换并安装 B；旧 owner/完成保持隔离的原断言不变。
+- 350–353 保存 B 的控件并启动 freshOpen。生产候选 read 同步增加 generation 并持有 activeRead；351 保存的旧 freshRefresh 在 364 被再次投递时应被 actionCurrent 拒绝。
+- 358 完成 A 的旧回执后，360 仍断言没有打开；364–368 的旧 refresh/open 投递顺序与 **PUT 恰好 2 次**断言原样保留。
+- 369 完成 B 回执后，B 仍为有效请求代次，生产候选继续调用 onOpen，再直接执行必要的内部 load，得到第一个精确 requestId。该内部 load 没有被 activeRead 事件守卫拦截。
+- 373 再取得当前新“查看当前申请”按钮并调用。fixture 此时 B 的通知为已读，原生产分支传空 ids，正常打开同一申请后刷新；预期累计两次打开符合原按钮功能，而不是默认允许旧控件复活。
+
+这些是源代码数据流推断，没有构造 fixture、调用谓词、模拟分支或运行时序。原独审目录 `.cache/guardian-notification-page-actions-independent-20261023-r1` 的 T1 记录与全部原件保持不变；本报告仅作配套小 delta 附加核对。
+
+原测试借旧 refresh 释放 busy、制造内部 load supersede 来探 activeRead finally 的路径，现已被新事件合同禁止。本适配验证的是旧 UI 无效与当前操作正常完成，**不等价于保留原内部 supersede 分支覆盖**。如需专门核内部 load 替代 pending read 时的 operation ownership，应在窗口恢复后通过明确的内部/fixture 入口补覆盖；这三处改动不能证明所有 activeRead 分支。用例总数未变也不表示新场景覆盖完整。
+
+## 限制
+
+精确六文件库存、pins/delivery、Main-before、生产候选绑定和测试源文本不变项已按 bytes/hash 核对。仅新增本 .cache 报告目录；未写 Main/Git、原候选或测试。没有运行 SDK、AST/代码解析器、测试、formatter、编译、候选、产品函数、进程查询或网络。
+
+本轮没有新增测试；新生产守卫的其他场景仍待可用窗口补齐并验证。合理预期不等于真实通过，无新增执行许可或发布就绪声明。

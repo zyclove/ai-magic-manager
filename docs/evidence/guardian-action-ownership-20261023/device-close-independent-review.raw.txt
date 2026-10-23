@@ -1,0 +1,57 @@
+# Independent static review: device close candidate r2
+
+Conclusion: STATIC_NO_BLOCKER for the submitted narrow close-entry change. FORM-R2-02 is statically addressed for the actual existing production host. Runtime/type/rendering status remains UNRUN / NOT_OBSERVED. This is not proof of runtime behavior, a universal GlobalKey reattachment contract, or closure of all device subflow races.
+
+## Identity and byte checks
+
+- Reviewed candidate: `.cache/guardian-device-close-20261023-r2`; r1 is historical and was not used as the implementation under review.
+- Bound source commit and observed current HEAD: `ad9f967a802e0d57dcea0e5289bf76d4e55070af`.
+- Before/Main: 32289B, SHA256 `28e3be992e5e3a2454fefa677dfb74748840fdea0dbd2a48e4d4ce50c94dd380`.
+- After: 32500B, SHA256 `70424e803dfae979d9cc6596b6628d52d5a38c05de9d62a799874fcfb31759f5`.
+- Complete patch: 832B, SHA256 `8e39387b9308e5fb3b6065e64f852cad7931b976022977c7b2e32042d4529af8`.
+- Candidate delivery: 1201B, SHA256 `46d0bc25200da73c8c13d84d07cf68ccdf947dc37c4d8a7d3b3d7bd16a70587d`.
+- Own static readback `2b0db3` exited naturally 0: five delivery descriptors, three main manifest descriptors and four dependency descriptors all matched; exact six-file candidate membership matched; Main raw bytes equaled before; recomputed full unified diff equaled the submitted patch.
+- A pure text construction of the two advertised edit regions equaled the entire after bytes, confirming all remaining before/after text is unchanged. This was string/byte comparison, not Dart parsing, execution or business-predicate simulation.
+- Narrow read-only Git diff against HEAD for device_management_dialog.dart, console_pages.dart and core/device_management.dart was empty (`1f68e2` inventory, subsequent source read tool); HEAD was independently read in that source-read call.
+
+All eleven unique candidate/dependency/Main paths read for this review are pinned in `input-pins.json`. Hashes bind whole-file originals; dependency/test reasoning used relevant source ranges. No historical artifact, Main or Git data was changed.
+
+## Lifecycle review
+
+### Covered parent close is inert and does not poison later close
+
+`after.dart:100-106` checks mounted, closeRequested and writeBusy, then obtains ModalRoute and rejects null, non-current or inactive routes before setting closeRequested. An ordinary device subflow makes the parent route non-current. Its held close therefore cannot reach the host callback, and the close latch stays false. When the cover has legitimately finished, the same parent route can again pass current/active and close normally.
+
+The production callback remains `Navigator.of(dialogContext).pop()` (`apps/guardian/lib/pages/console_pages.dart:1022-1029`). The checked State context belongs to DeviceManagementDialog built in that same dialog route. There is no await between the route guard and this fixed immediate host callback. The narrow fix therefore blocks the reported stale parent handler from popping the then-current covering route.
+
+### First accepted close locks before invoking the host
+
+`after.dart:104` sets closeRequested synchronously before `widget.onClose()` at 105. A second held callback in the same turn returns at line 101 even before a reverse transition/dispose. After disposal mounted is false. If another mechanism already popped the original route, the active/current check rejects its held callback. The latch also avoids relying solely on a later route-status update.
+
+The latch is not cleared when a cover is dismissed because the rejected covered branch never set it. Its lack of setState is sufficient for this action-entry guard in the fixed production immediate-close host; no visual success state is claimed or required.
+
+### Read cancellation and safe exit after scope loss are preserved
+
+The guard uses writeBusy, not the general controller busy or hasAccess. `core/device_management.dart:587-615` sets only busy for ordinary subflows; `:508-526` does so for reads. A plain read therefore remains closeable when the originating route is current. Actual writes still use writeBusy and remain protected. Scope invalidation hides private fields and clears writeBusy in the existing controller (`:437-448`); this close entry does not require access to the old data, so the current redacted window retains its close action.
+
+The candidate changes no controller/API, access/version/key behavior, host callback, subflow action, confirmation lifetime, current action busy lock or field rendering. It does not claim support for an arbitrary onClose implementation that fails to complete its window, nor for reusing the same State as an unrelated new route via GlobalKey.
+
+## Existing test evidence is source coverage only
+
+- `device_management_dialog_test.dart:782-798` checks writes disable close and reads permit it.
+- Its actual Fixture host places DeviceManagementDialog directly in the home Scaffold and wires `onClose: () => closeCalls++` (`:281-295`). Although Fixture.open creates real child dialogs (`:263-277`), the parent close callback itself does not pop a real parent route. The existing closeCalls assertion cannot prove which production Navigator route closes.
+- Existing retained confirmation tests (`:612-778`) concern confirmation acceptance after parent removal/controller replacement. They do not assert the original close callback against a covering child.
+- The shared details route tests cited by the original finding use a different host/OwnedDialogRoute implementation and do not substitute for this device path.
+
+No test was added, modified or run. Previous test results do not validate this candidate.
+
+## Required later scenarios, all UNRUN
+
+1. Real ConsoleActions device route: retain parent close; open an ordinary device child with editable local input; invoke retained parent close and assert no cover pop/future completion/input loss. Close the child legitimately and assert the parent can then close once.
+2. Invoke valid parent close twice before pumping; assert only the originating route completes and an unrelated underlying route remains. Invoke the same old callback during reverse and after dispose with a later unrelated cover; it must remain untouched, with no exception.
+3. Verify a current plain-read window can close, writeBusy blocks close, and a scope-invalidated redacted current window can safely exit.
+4. Keep existing controller/request/access protection scenarios unchanged; do not claim this single guard solves every child-flow lifecycle.
+
+## Execution boundary
+
+Only filesystem text/bytes/hash/JSON operations, rg inventory/search and read-only Git data were used. No SDK, formatter, analyzer, compiler, tests, AST/parser, candidate import/function, predicate, WinAPI/process API or network was used. Only this new independent cache report was written.

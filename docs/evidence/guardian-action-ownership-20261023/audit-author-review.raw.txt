@@ -1,0 +1,32 @@
+# 审计列表事件：单文件作者候选 r1
+
+**STATIC_AUTHOR_CANDIDATE / NOT_APPLIED；所有场景 UNRUN、未渲染，须独立审阅。** Main/Git、测试和依赖未修改。基线 HEAD 为 ad9f967a802e0d57dcea0e5289bf76d4e55070af。
+
+对应 `.cache/guardian-list-workflow-audit-20261023-r2/review.md` F1。before.dart 为当前 audit_view.dart 原字节，after.dart 为唯一产品文件候选；完整差异见 audit-page-actions.patch。
+
+## 事件绑定
+
+- after:79–84 增加 current/eventCurrent：mounted、同 repository、repository.current、捕获的 generation、实时 !busy/!opening。
+- after:228–235 每次构建捕 owner/ticket、已应用 selection/onExport、previous/next cursor。刷新、日期、导出、应用、重置、详情、上一页、下一页共 8 个事件入口均在实际操作前重核。分页不再在旧闭包中读取可变 page!/history.last。
+- after:87–107 的 load 先检查 current，再增加请求代次；捕不可变 selection/destination。它没有套用户事件的 busy/opening guard，初始化、明确新读取和必要内部读取仍可正常进入。成功/失败/结束均核原 repository+ticket。
+- after:118–121 的列表失败 retry 捕失败 repository/ticket/destination/direction；仅同代次空闲时发送原请求。刷新失败重试沿用原 applied，不重新滚动最近七天窗口；next/previous 栈仍只在成功时加/减。
+
+## 异步详情和日期
+
+- after:131–175 的详情捕 repository/ticket/cursor 与操作对象。迟到 detail 或错误被新 load/owner 替换后不呈现、不覆盖新列表。详情失败仍保留原隐藏页面并重读同页的语义，只给 retry 补同票据守卫。
+- opening 由 after:34–35 的 operation 归属表示。新 load 在 after:100 释放旧详情的 UI 占用；这不取消已经发出的 GET。旧详情 finally 仅能清除自己仍持有的操作对象，不能清掉新详情，也不会永久锁住已被新 load 替代的列表。
+- after:179–206 的日期选择在进入和 await 返回均核原 owner/ticket 与空闲状态。新读取或失权后迟到选择不覆盖新日期。不重构覆盖路由/日期选择器本身。
+
+## 保持的合同
+
+- Widget 公共字段/构造参数、imports、Repository/API、协议、导出 callback 类型与已应用 query 语义不变；没有新增 API 参数或依赖。
+- 保留 recent 七天、366 天限制、表单校验、筛选显式应用、失败先隐藏数据、初始 query 校验、cursor 历史栈、成功才移动分页、只读/设备执行未核对说明。
+- 没有业务写入、新网络类型、自动导出或默认授权；没有改 AuditExplorerPage、AuditRepository、共享模型、后端、FailureView 或测试。
+
+## 静态读回与未来验收（全部 UNRUN）
+
+完整 before/after diff 已人工读回。metadata 仅对文本/hash/JSON/diff 操作；没有执行 Dart、候选 helper/谓词/分支、SDK、AST、formatter、编译或测试。现有测试仅作为未改依赖被 pin。
+
+未来窗口需要确认：普通 next/previous 失败重试原 cursor 且栈只变一次；refresh 失败沿用原窗口；换筛选后旧 retry/分页不发读不清状态；快速重复应用/重置不重复；旧导出/详情不跨代次；详情读取被新 load 替代、旧 finally 不清新 opening；日期 await 迟到；scope 失效；短屏大字与正常详情/导出操作。
+
+这是作者候选交付，不能视为独立审阅或运行验收。所有应用验证保持 UNRUN，执行许可未新增。

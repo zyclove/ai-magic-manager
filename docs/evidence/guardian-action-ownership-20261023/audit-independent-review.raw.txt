@@ -1,0 +1,29 @@
+# AuditView 最终候选独立静态审阅
+
+## 结论
+
+固定单文件候选未发现静态阻断。完整补丁与 after 已人工读完；8 类 UI 入口、2 类失败 retry、日期 await 和详情操作归属均在约定范围内。所有场景仍 UNRUN、未渲染；本结论不是编译、测试或浏览器行为通过。
+
+## 实际改动与证据
+
+- after:79–84 的 current 先检查 mounted，再核同一 repository 和 repository.current；eventCurrent 还要求原 generation 与实时 !busy/!opening。228–235 每次 build 捕获 repository/ticket、applied selection、onExport、previous/next cursor。
+- 刷新、日期、导出、应用、重置、详情、上一页、下一页 8 类 UI 入口均在表单校验/清空、日期入口、读取、打开或导出前重查原票据。分页不再由旧回调访问可变 page!/history.last；export 使用捕获的不可变 AuditQuery 和处理器，且在调用时还要求 page 非空。
+- load:87–107 先核 owner，再递增 generation、捕 selection/destination 并开始请求。没有套 !busy/!opening 作为内部 load 门槛，因此 initState 和明确 fresh 仍可进入，也可用新 load 替代旧详情请求。结果、错误和结束均核原 repository+ticket。
+- 列表错误 retry:118–121 捕原 repository/ticket/destination/direction。原失败同代次空闲时仍重发同 cursor；新读取使原票据失效。刷新失败的 retry 不再次启用 refresh，沿用当次 applied 窗口。成功才移动 history/cursor/page 的代码块逐字不变，失败不额外加减栈。
+- detail:131–175 捕 repository/ticket/目标 cursor/accessChanges，并用独立 Object 标记 openingOperation。迟到详情和错误只可在原 owner、票据、操作身份均匹配时呈现。详情失败 retry:166–169 重读原页 cursor，且受原票据约束。
+- 新 load:100 清除旧 operation 的 UI 占用；旧 finally:173 只清仍与自己 identical 的 operation，不会释放后续详情的锁。finally 保留 mounted+操作身份而非盲目清全局 bool；已经投递的 detail GET 并未被当作取消。
+- dates:180–196 在进入和 picker await 返回后检查原 owner/ticket/空闲状态，再修改日期或提示。除前后 guard，日期选择器参数、本地时区/整日转换、366 天限制、recent 和 range 更新代码逐字不变。
+
+## 人工类型与合同核对
+
+AuditRepository.current 为 bool Function()；AuditQuery 的字段为 final，捕获 selection 不会随表单编辑改变。onExport 是 final nullable ValueChanged<AuditQuery>，外层非空分支后闭包调用符合原函数合同。捕获的 previous/next 为 String?，兼容 load 的可空 target；previous 的 null 仍可代表第一页。openingOperation 为 Object?，getter opening 为 bool，新的赋值及 identity 判断与 busy/opening 的使用一致。以上仅人工类型合理性核对，没有解析或编译。
+
+imports/Widget 公共字段、构造参数逐字不变；Repository/API/共享模型/后端/测试未改。保留初始 query 校验、显式应用筛选、失败隐藏数据、成功后移动分页栈、只读与设备执行未核对说明。两类 retry 仍按原恢复意图工作，没有自动重放写操作或扩大导出权限。
+
+## 原件核对与范围
+
+精确 6 文件成员、全部 5 delivery pins、10 个依赖 pins、Main before 都匹配；完整补丁机械重建 after 每个字节。before 14665B/9c446b17…0ffc6 与当前 ad9f967 的 Git blob 11c562a587db95e19490a53b801a6c03b7cb268e 相同；after 17365B SHA256 f86610dc7041c739865cc2a75ee5e0c08df5bea662ccbfb46021bb3a6769984f。
+
+未扩展覆盖路由策略、没有声称任意 repository 更换时自动重建整页，也未声称全部日期选择器并发情形已解决。实际 AuditExplorerPage 持有其原仓库/作用域，本候选只给固定旧事件、已发异步结果及 retry 补归属。没有新增用例或执行资格。
+
+本轮只做文本/hash/JSON/只读 Git 与自有报告写入；没有执行候选、业务谓词、AST/解析器、SDK/测试/formatter、进程检查/WinAPI/网络；Main/Git、依赖、测试与候选原件未写。

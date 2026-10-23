@@ -1,0 +1,56 @@
+# 列表筛选、分页与重试：只读审阅 r2
+
+基线：`ad9f967a802e0d57dcea0e5289bf76d4e55070af`。人工追踪审计、通知、成员三页及其列表组件/Repository。只新增本报告目录；全部场景 **UNRUN、未渲染**，没有运行 SDK、测试、AST/代码解析器、候选、产品函数、网络或进程查询，没有改 Main/Git。文件实读指纹见 pins.json。
+
+本轮只新增 **1 项发现**。通知旧闭包由另一审阅者 reports_scope 先发现，下面只作交叉确认和统一设计，不重复立项。未重复目录、合同、求助和设备分组已提交问题。
+
+## F1 / P2：审计旧重试把旧游标配上新筛选，并取得新的请求代次
+
+主位置：`apps/guardian/lib/ui/audit_view.dart:106`；数据流证据：77–110、203–209、293–310、352–362。Repository：`apps/guardian/lib/core/audit.dart:28–39`。后端实际限制：`backend/src/main/java/com/aimanager/tenant/internal/AuditExplorer.java:54–76`。
+
+1. 筛选 A 的下一页失败后，106 行将 destination/direction 捕进 retry，但没有捕获并校验失败时的 generation/repository；94 行实际读取的是可变字段 applied。
+2. 用户应用筛选 B，80–85 行更换 applied 并清 history/cursor；旧 FailureView 虽被移除，已持有或已排队的旧重试闭包本身仍可被投递。
+3. 旧重试随后调用 load，79 行主动增加 generation，87–92 行清除当前 B 的 page/error/retry，再用 **B 的 applied + A 的 destination** 发 GET。它没有被 busy/opening 或期望代次挡住；甚至可使较早发出的正确 B 响应因 ticket 不匹配而被忽略。
+4. 这不是跨租户越权：后端将 tenant+selection 指纹写入 cursor，65–76 行明确拒绝与新 selection 不一致的旧 cursor，产生 INVALID_CURSOR。可静态证明的用户影响是新筛选结果被旧控件打断并进入错误状态；未声称后端返回错误数据。
+
+同根因还影响分页闭包：355/361 行在调用时读取当前 history/page，只有构建时 disabled，没有实时票据与忙碌校验。旧 next 在另一次 load 已把 page 清为 null 后仍可能访问 page!。这是 F1 的同一事件入口问题，不另立发现。
+
+### 最小合理设计
+
+- 保持当前 query/API、cursor 栈及方向语义，使用现成 State/Material，不引入依赖。
+- 当前性包含 mounted、同一个 repository 及 repository.current()。构建事件捕获 repository+generation，在任何表单清空、日期变更、分页栈变更、导出/详情或读取前实时检查票据和 busy/opening。
+- next/previous 在构建时捕获不可变目标 cursor，不通过旧回调临时解引用当前 page/history。
+- 失败 retry 捕获当次 repository、generation、destination、direction，只在仍为同一代次且空闲时执行原请求。新筛选/翻页后，旧 retry 不清数据、不递增代次、不发读。
+- load 的入口先校验当前 scope；初始化、明确新读取和内部必要调用仍正常。详情 GET/错误和日期选择器 await 返回均检查原 owner+ticket；旧完成不能污染新列表。若新读取允许替代详情请求，opening 锁也须有归属，不能由旧 finally 解锁新详情或永久锁住新列表。
+- 覆盖路由不在本次扩展范围；保留授权失效隐藏规则、导出契约及必要刷新。
+
+### 已有测试覆盖边界
+
+`apps/guardian/test/audit_test.dart:51–83` 验证同一筛选的失败下一页重试同 cursor；117–143 验证正常应用筛选重置分页/刷新失败隐藏旧数据；144–164 验证详情 403 隐藏记录。`workspace_flow_entry_browser_test.dart:123–147` 验证真实 scope generation 更换重建页面。它们没有在同一 repository 下保留旧 retry/next/previous，应用新筛选后再投递旧回调。以上只读测试源码，全部未运行。
+
+## 通知：对 reports_scope 发现的交叉审阅
+
+核心发现相同：`notifications_view.dart:154–156,205–208` 将旧页 unreadIds 捕入“将本页标为已读”；97–115 的 read 入口只核 repository/current、activeRead/busy，没有原列表票据或 snapshot。翻页/筛选完成后同一 owner 仍有效，旧控件可为旧页发已读请求。共享 Repository 的 184–208 行校验 ID/回执，不知道前端当前页；这是个人已读操作上下文问题，未证明越权。
+
+完整事件族还有同一缺口，适合统一修复而非只补批量按钮：
+
+| 入口 | 实际证据与问题 |
+| --- | --- |
+| 全部/未读、刷新/首页 | 86–94、160、192–203、329 只捕 owner；firstPage 不检查原构建代次或实时 busy，可让旧控件重置新筛选与页栈。 |
+| 上一页 | 334–338 仅 current；旧第 2 页闭包在首页被调用时可 removeLast 删除唯一 null，随后 load:69 访问空 cursors.last。 |
+| 下一页 | 343–354 捕旧 data.nextCursor，却修改当前 cursors 并由 load:69 使用当前 unreadOnly；没有原 snapshot/代次绑定。重复旧 next 还可能在新请求中设置旧错误。 |
+| GET 失败重试 | 76 仅捕 owner，实际游标/筛选从当前字段读取，不代表原失败列表的恢复意图。 |
+| 已读/打开失败重试 | 131 捕 ids/requestId/owner，但未绑定原失败代次；139 后另一次列表读取不使已持有的旧 retry 失效。 |
+| 行已读/查看申请 | 301–311 与批量 read 共用入口，应采用同一列表事件守卫。 |
+
+建议每次构建捕 repository+generation，所有用户事件在副作用前统一检查 current、原票据、!busy、activeRead==null，并捕获目标 cursor/行数据。各失败 retry 额外绑定失败票据。保留 activeRead 操作归属、同一显式重试的不可变 exact IDs 和内部写后 load；不能把旧页 ID 自动替换为新页 ID，也不能把已投递操作误当作取消。另一作者已向 Root 准备该页单文件候选，本报告只提供交叉证据。
+
+现有 `notifications_test.dart:66–117`、118–150 覆盖 exact IDs 重试与正常分页/筛选；`submit_confirmation_variant_test.dart:251–317,366–415` 覆盖 pending 双击/同失败回调重复投递；`notification_help_scope_browser_test.dart:224–295,297–377` 覆盖失权、dispose、repository 更换和保留回调的 owner。未覆盖 **同一 repository、空闲的新列表代次之后** 再投递旧页批量/翻页/失败回调。所有检查均为源码阅读，未执行场景。
+
+## 成员页：本轮未新增发现的范围
+
+成员与邀请在 `members_page.dart:102–107,125–135,175–178` 通过 key/path 区分两列表，并在 onOpen 重核 invitations。实际加载委托 ResourcePage：搜索明确限已加载记录（resource_page.dart:189–191,225–227,296–305），失败与成功空态分开（262–305），普通追加失败保留上下文并重试同 cursor，失效 cursor 指向刷新（94–155、377–416）。已有 `resource_page_resilience_test.dart` 的初始/追加/刷新失败与搜索作用域场景与这些路径对应。本轮没有重报其已存在保护，也不声称所有成员操作无其他问题。
+
+## 后续静态候选与验证
+
+Root 已安排审计页候选准备与通知页另一作者修复。候选仅进入新 .cache，Main/Git 不在本轮修改。未来窗口应验证同筛选失败仍重试原页、筛选/翻页后旧事件无副作用、快速重复事件、详情/日期迟到响应、scope 变化和短屏大字交互；此处仅为验收建议，没有新增或运行测试。全部应用验证保持 UNRUN。

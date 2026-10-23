@@ -1,0 +1,38 @@
+{
+  "status": "STATIC_CANDIDATE_UNRUN",
+  "sourceCommit": "ad9f967a802e0d57dcea0e5289bf76d4e55070af",
+  "productionPath": "apps/guardian/lib/ui/notifications_view.dart",
+  "productionFilesChanged": 1,
+  "testFilesChanged": 0,
+  "mainModified": false,
+  "gitModified": false,
+  "sdkOrTestsExecuted": false,
+  "astOrCandidateExecuted": false,
+  "files": [
+    {
+      "path": "before.dart",
+      "bytes": 14473,
+      "sha256": "8bb6ef841cd151ff4de16492eab7850bb94cd430c16212a369473c4cb8d73b88"
+    },
+    {
+      "path": "notifications_view.dart",
+      "bytes": 16791,
+      "sha256": "2be26e954cdefa39d62bbaab4f1cfd25d389f785260db86cdd1ae3015a243fd7"
+    },
+    {
+      "path": "notifications-page-actions.patch",
+      "bytes": 8565,
+      "sha256": "430a128b08bc1089d5ce000896addfde826f6754c56b3320b531a9cc1322df89"
+    },
+    {
+      "path": "review.md",
+      "bytes": 7104,
+      "sha256": "52f70b1a6cfd30bb19e3daef2dabfc93bacf35387446b8e7fd13f6df6f537fce"
+    }
+  ],
+  "findingInput": {
+    "path": ".cache/guardian-form-workflow-audit-20261023-r2/review.md",
+    "bytes": 10772,
+    "sha256": "7b0f33261f853b0c46c87df1882c68c1a7160317d04c1d1bf2599163c46c33fd"
+  }
+}

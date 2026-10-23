@@ -1,0 +1,19 @@
+{
+  "status": "INDEPENDENT_STATIC_EXISTING_TEST_ALIGNMENT_NO_DELTA_BLOCKER_UNRUN_NOT_TEST_PASS",
+  "files": [
+    {
+      "path": "review.md",
+      "bytes": 4006,
+      "sha256": "b0172aabef322cafdecda81f8f770f7ff93800f64b060bf6256f4c375dd39c80"
+    },
+    {
+      "path": "readback.json",
+      "bytes": 4598,
+      "sha256": "0e538004135eb339b8460ef986ea85e315c61208c6216b9de2edbe35e7f4b3d4"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "testsAdded": false,
+  "testsRun": false,
+  "allScenarios": "UNRUN"
+}

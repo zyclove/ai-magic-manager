@@ -1,0 +1,18 @@
+{
+  "status": "READ_ONLY_MANUAL_AUDIT_ONE_NEW_FINDING_PLUS_NOTIFICATION_CROSS_REVIEW",
+  "files": [
+    {
+      "path": "review.md",
+      "bytes": 7561,
+      "sha256": "384b659c00e6e44a04f2989e2c48206ceb6506b4eddfd816b3648ca1c6dcd720"
+    },
+    {
+      "path": "pins.json",
+      "bytes": 3996,
+      "sha256": "4ccc0544c58cc7381b5c9a027b6c36d7e327c26009e912c2c25076e42267b14c"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "allScenarios": "UNRUN",
+  "newBusinessImplementationApplied": false
+}

@@ -1,0 +1,17 @@
+{
+  "status": "STATIC_NO_BLOCKER_RESOURCE_PAGE_ACTIONS_R3_ALL_SCENARIOS_UNRUN",
+  "files": [
+    {
+      "path": "review.md",
+      "bytes": 3550,
+      "sha256": "d63d684ea33beb58c0e2437263c36fc080a3c77ee3faf60b1c57d2a24c8d42c5"
+    },
+    {
+      "path": "review.json",
+      "bytes": 3310,
+      "sha256": "329b41b66def48be930a770124ecda7f2758b7aa3eb6e7c9a264580a981a5413"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "allScenarios": "UNRUN"
+}

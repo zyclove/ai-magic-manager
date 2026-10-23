@@ -55,6 +55,8 @@ class ResourcePageState extends State<ResourcePage> {
   Object? actionError;
   int generation = 0;
   int resourceGeneration = 0;
+
+  bool get _currentOwner => mounted && widget.isCurrent?.call() != false;
   @override
   void initState() {
     super.initState();
@@ -85,13 +87,14 @@ class ResourcePageState extends State<ResourcePage> {
   }
 
   void clearSearch() {
-    if (!mounted) return;
+    if (!_currentOwner) return;
     search.clear();
     setState(() => query = '');
     searchFocus.requestFocus();
   }
 
   Future<void> load({bool append = false}) async {
+    if (!_currentOwner) return;
     if (append && (loading || more || acting || cursor == null)) return;
     final epoch = ++generation;
     final api = widget.api;
@@ -157,7 +160,7 @@ class ResourcePageState extends State<ResourcePage> {
   }
 
   Future<void> action(Future<void> Function() callback) async {
-    if (acting || loading || widget.isCurrent?.call() == false) return;
+    if (!_currentOwner || acting || loading) return;
     final scope = resourceGeneration;
     final permitted = widget.isCurrent;
     bool current() =>
@@ -186,6 +189,36 @@ class ResourcePageState extends State<ResourcePage> {
       return const Panel(
           child: EmptyView('工作空间或权限已变化', '已隐藏旧记录，请重新打开当前工作空间的页面。'));
     }
+    final owner = resourceGeneration;
+    final permitted = widget.isCurrent;
+    final api = widget.api;
+    final path = widget.path;
+    final create = widget.create;
+    final onOpen = widget.onOpen;
+    final reauth = widget.reauth;
+    bool viewCurrent() =>
+        _currentOwner && resourceGeneration == owner &&
+        identical(widget.api, api) && widget.path == path &&
+        permitted?.call() != false;
+    VoidCallback guard(VoidCallback callback) => () {
+          if (viewCurrent()) callback();
+        };
+    void refreshRecords() {
+      if (viewCurrent() && !loading && !acting) load();
+    }
+    void createRecord() {
+      if (viewCurrent() && create != null && identical(widget.create, create)) {
+        action(create);
+      }
+    }
+    void openRecord(Json row) {
+      if (viewCurrent() && onOpen != null && identical(widget.onOpen, onOpen)) {
+        action(() => onOpen(row));
+      }
+    }
+    final guardedReauth = reauth == null ? null : guard(() {
+      if (identical(widget.reauth, reauth)) reauth();
+    });
     final filtered = rows
         .where((r) => r.values.any(
             (v) => v.toString().toLowerCase().contains(query.toLowerCase())))
@@ -197,7 +230,7 @@ class ResourcePageState extends State<ResourcePage> {
           action: widget.create == null
               ? null
               : FilledButton.icon(
-                  onPressed: canAct ? () => action(widget.create!) : null,
+                  onPressed: canAct ? createRecord : null,
                   icon: const Icon(Icons.add, size: 18),
                   label: Text(widget.createLabel))),
       if (widget.notice != null)
@@ -222,7 +255,9 @@ class ResourcePageState extends State<ResourcePage> {
                               controller: search,
                               focusNode: searchFocus,
                               textInputAction: TextInputAction.search,
-                              onChanged: (v) => setState(() => query = v.trim()),
+                              onChanged: (v) {
+                                if (viewCurrent()) setState(() => query = v.trim());
+                              },
                               decoration: InputDecoration(
                                   hintText: '搜索已加载记录',
                                   prefixIcon: const Icon(Icons.search, size: 20),
@@ -230,12 +265,12 @@ class ResourcePageState extends State<ResourcePage> {
                                       ? null
                                       : IconButton(
                                           tooltip: '清除列表搜索',
-                                          onPressed: clearSearch,
+                                          onPressed: guard(clearSearch),
                                           icon: const Icon(Icons.close, size: 18)),
                                   isDense: true))),
                       IconButton(
                           tooltip: '刷新',
-                          onPressed: loading || acting ? null : () => load(),
+                          onPressed: loading || acting ? null : refreshRecords,
                           icon: const Icon(Icons.refresh, size: 20)),
                       ...widget.toolbar
                     ])),
@@ -251,11 +286,11 @@ class ResourcePageState extends State<ResourcePage> {
                         const Text('操作未完成，已保留当前列表',
                             style: TextStyle(fontWeight: FontWeight.w600)),
                         const SizedBox(height: 8),
-                        FailureView(actionError!, reauth: widget.reauth),
+                        FailureView(actionError!, reauth: guardedReauth),
                         const Text('请先刷新列表核对结果，再重新打开详情或重新操作。',
                             style: TextStyle(color: muted, fontSize: 12)),
                         TextButton.icon(
-                            onPressed: loading || acting ? null : () => load(),
+                            onPressed: loading || acting ? null : refreshRecords,
                             icon: const Icon(Icons.refresh, size: 18),
                             label: const Text('刷新列表'))
                       ])),
@@ -268,9 +303,9 @@ class ResourcePageState extends State<ResourcePage> {
                         const Text('刷新未完成，已保留已加载记录',
                             style: TextStyle(fontWeight: FontWeight.w600)),
                         const SizedBox(height: 8),
-                        FailureView(error!, reauth: widget.reauth),
+                        FailureView(error!, reauth: guardedReauth),
                         TextButton.icon(
-                            onPressed: loading || acting ? null : () => load(),
+                            onPressed: loading || acting ? null : refreshRecords,
                             icon: const Icon(Icons.refresh, size: 18),
                             label: const Text('重新刷新列表'))
                       ])),
@@ -283,14 +318,14 @@ class ResourcePageState extends State<ResourcePage> {
               Padding(
                   padding: const EdgeInsets.all(24),
                   child: FailureView(error!,
-                      retry: () => load(),
-                      reauth: widget.reauth))
+                      retry: refreshRecords,
+                      reauth: guardedReauth))
             else if (rows.isEmpty)
               EmptyView(widget.emptyTitle, widget.emptyDescription,
                   action: widget.create == null
                       ? null
                       : OutlinedButton.icon(
-                          onPressed: canAct ? () => action(widget.create!) : null,
+                          onPressed: canAct ? createRecord : null,
                           icon: const Icon(Icons.add, size: 18),
                           label: Text(widget.createLabel)))
             else if (filtered.isEmpty)
@@ -300,14 +335,14 @@ class ResourcePageState extends State<ResourcePage> {
                       ? '调整搜索关键词后再试。'
                       : '搜索仅匹配已加载记录，可加载更多后继续查找。',
                   action: TextButton.icon(
-                      onPressed: clearSearch,
+                      onPressed: guard(clearSearch),
                       icon: const Icon(Icons.clear, size: 18),
                       label: const Text('清除搜索')))
             else if (narrow)
               ...filtered.map((row) => InkWell(
                   onTap: widget.onOpen == null || !canAct
                       ? null
-                      : () => action(() => widget.onOpen!(row)),
+                      : () => openRecord(row),
                   child: Container(
                       padding: const EdgeInsets.all(18),
                       decoration: const BoxDecoration(
@@ -356,8 +391,7 @@ class ResourcePageState extends State<ResourcePage> {
                                           onSelectChanged:
                                               widget.onOpen == null || !canAct
                                               ? null
-                                              : (_) => action(
-                                                  () => widget.onOpen!(row)),
+                                              : (_) => openRecord(row),
                                           cells: [
                                             ...widget.columns.map((c) =>
                                                 DataCell(ConstrainedBox(
@@ -368,8 +402,7 @@ class ResourcePageState extends State<ResourcePage> {
                                             if (widget.onOpen != null)
                                               DataCell(TextButton(
                                                   onPressed: canAct
-                                                      ? () => action(() =>
-                                                          widget.onOpen!(row))
+                                                      ? () => openRecord(row)
                                                       : null,
                                                   child: const Text('查看详情')))
                                           ]))
@@ -385,7 +418,7 @@ class ResourcePageState extends State<ResourcePage> {
                                 : '后续记录未加载，已保留已加载记录',
                             style: const TextStyle(fontWeight: FontWeight.w600)),
                         const SizedBox(height: 8),
-                        FailureView(appendError!, reauth: widget.reauth)
+                        FailureView(appendError!, reauth: guardedReauth)
                       ])),
             if (!loading)
               Padding(
@@ -402,13 +435,13 @@ class ResourcePageState extends State<ResourcePage> {
                                 const TextStyle(color: muted, fontSize: 12)),
                     if (cursorExpired)
                       OutlinedButton.icon(
-                          onPressed: acting ? null : () => load(),
+                          onPressed: acting ? null : refreshRecords,
                           icon: const Icon(Icons.refresh, size: 18),
                           label: const Text('刷新列表后继续查看'))
                     else if (cursor != null)
                       OutlinedButton(
                           onPressed:
-                              more || acting ? null : () => load(append: true),
+                              more || acting ? null : guard(() => load(append: true)),
                           child: Text(more
                               ? '加载中…'
                               : appendError != null

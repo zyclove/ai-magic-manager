@@ -1,0 +1,12 @@
+{
+  "conclusion": "STATIC_NO_BLOCKER",
+  "finding": "FORM-R2-02",
+  "candidate": ".cache/guardian-device-close-20261023-r2",
+  "candidateAfterSha256": "70424e803dfae979d9cc6596b6628d52d5a38c05de9d62a799874fcfb31759f5",
+  "sourceCommit": "ad9f967a802e0d57dcea0e5289bf76d4e55070af",
+  "scenarioStatus": "UNRUN",
+  "rendering": "NOT_OBSERVED",
+  "blockers": [],
+  "realNavigatorCoveredByExistingCloseTest": false,
+  "runtimePassClaim": false
+}

@@ -1,0 +1,23 @@
+# ResourcePage r3 独立静态审阅
+
+## 结论
+
+未发现本候选的静态阻断。原“旧 build 回调在资源替换后才执行，会使用新处理器/新代次”的入口归属问题已在源码层面闭合。仅审最终 r3，不将 Root 的 r1/r2 审稿历史作为交付候选。所有场景 UNRUN、未渲染；本报告不是 Dart 分析、编译或行为通过证明。
+
+## 具体证据
+
+- after.dart:192–202 捕获原 resourceGeneration、API、path、isCurrent；viewCurrent 先通过 mounted/当前权限，再核原代次/API identity/path及原权限闭包。path/API 的 A→B→A 仍因单调代次不同拒绝旧入口。
+- 209–217 捕获 create/onOpen，并在调用前要求当前处理器与原处理器 identical；旧 create 被移除会在判断中退出，不再求值 widget.create!。旧 row 只可能交给其原 onOpen，不能动态套用替代处理器。
+- 两个 create、三种行打开、五个 fresh 刷新/重试、分页、搜索输入及两处清除搜索均接入原 owner 检查。219–221 及四处 FailureView 的 reauth 也绑定原 owner 和处理器 identity。外部 toolbar/ColumnSpec 原样保留，由宿主负责业务入口。
+- _currentOwner:59 用 mounted 的短路保护 widget 读取；clearSearch:90、load:97、action:163 在状态、控制器、焦点或请求操作前退出无效 owner。旧组件内部回调还会先检查 build 绑定。
+- refreshRecords:206–208 在调用时复查 !loading && !acting，防止旧 UI 刷新在当前忙碌时启动。内部 load 没有增加该 fresh busy 条件：initState/didUpdateWidget 的初始化、action:174 的必要回读，以及 fresh supersede append 仍保留。append 原 loading/more/acting/cursor 判断不变。
+- 方法内部的请求 generation、原 scope、迟到响应、动作成功后刷新一次、错误及 finally 分支均保留；文本核对确认 load 除新增入口保护外逐字不变，action 除入口保护替换外逐字不变。公共方法签名、ResourcePage/ColumnSpec 公共定义、API 和测试源码未改。
+- 人工类型核对：捕获的 create/onOpen/reauth 为 final nullable 函数，非空分支后调用，未再解引用可变 widget 的 nullable 处理器。guard 返回 VoidCallback；fresh/create/search 包装均为 void，本地 openRecord 适配行事件；FailureView 的 retry/reauth 接口为 VoidCallback?。这只是人工合理性审阅，未调用解析器或 SDK。
+
+## 指纹与边界
+
+6 文件 bundle 成员精确匹配，全部 5 delivery pins、3 依赖 pins、Main before 均匹配。完整 15-hunk 补丁从 before 重建 after 每个字节。Main before 与当前 ad9f967 的原 Git blob 29b22defbbaf1eddde1e0f26fddee6b79e6e219c 相同。after 18380B SHA256 692b1f4c4e9eefbef6fb80a7abeb7ced7e2c505b85fb01e8b032469cbc7b8c5e。
+
+isCurrent 继续要求宿主提供原有不可复活 owner 语义；本候选没有声称解决未被观察的纯 bool ABA。公共 State 方法的直接引用代表当前 State 操作；原资源失效由组件生成事件的 build 绑定屏蔽，未为公共方法新增参数或更改签名。普通同资源刷新不递增 resourceGeneration。
+
+未来仍需运行现有资源回归以及“持有旧事件→替换完成→调用”、处理器移除/替换、dispose、权限失效、原权限闭包 ABA、正常 current 事件和 busy 刷新的实际用例。本轮仅文本/hash/JSON/只读 Git；未执行候选、解析/AST/SDK/测试/formatter/业务谓词/进程检查/WinAPI/网络，不写 Main/Git 或候选原件。

@@ -1,0 +1,17 @@
+{
+  "status": "ONE_STATIC_P2_RESOURCE_EVENT_OWNER_BINDING_GAP",
+  "files": [
+    {
+      "path": "review.md",
+      "bytes": 6384,
+      "sha256": "f1023c2057f6178e2d2976d40d6263622026f26cd6aed3feb5bfb291df0f7a18"
+    },
+    {
+      "path": "review.json",
+      "bytes": 2849,
+      "sha256": "075627c5338016a381e3eca69e6673651bec8a021624b53d01afd472c9cf7c06"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "allScenarios": "UNRUN"
+}

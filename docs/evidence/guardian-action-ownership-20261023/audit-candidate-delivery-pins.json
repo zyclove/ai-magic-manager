@@ -1,0 +1,34 @@
+{
+  "status": "STATIC_AUTHOR_CANDIDATE_ONLY_ALL_SCENARIOS_UNRUN",
+  "files": [
+    {
+      "path": "before.dart",
+      "bytes": 14665,
+      "sha256": "9c446b177a5bf9f3badb63b9f011d19a87c92eecd0303213d3bef34a5590ffc6"
+    },
+    {
+      "path": "after.dart",
+      "bytes": 17365,
+      "sha256": "f86610dc7041c739865cc2a75ee5e0c08df5bea662ccbfb46021bb3a6769984f"
+    },
+    {
+      "path": "audit-page-actions.patch",
+      "bytes": 10492,
+      "sha256": "a162bb94d64c4feeb15374cfc4569c2ad54a83f1eb6a63adaca5cf205785d5d9"
+    },
+    {
+      "path": "review.md",
+      "bytes": 3551,
+      "sha256": "a739a741e4d66d8828ee7b2f9bc78ab6cb1dc72be387bb0f4ae27a06efa2b76d"
+    },
+    {
+      "path": "pins.json",
+      "bytes": 4423,
+      "sha256": "403b05a4c436a955c47be4536a141a9a16e353af5e149190afbd65c1387cd9e5"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "independentReviewRequired": true,
+  "allScenarios": "UNRUN",
+  "executionApproved": false
+}

@@ -1,0 +1,30 @@
+--- a/apps/guardian/test/notification_help_scope_browser_test.dart
++++ b/apps/guardian/test/notification_help_scope_browser_test.dart
+@@ -358,9 +358,9 @@
+     oldReceipt.complete(_receipt());
+     await workspace.flushReads(tester);
+     expect(opened, isEmpty);
+-    // A retained refresh can finish while B's read remains pending. With busy
+-    // false again, only B's operation ownership prevents the held open action
+-    // from dispatching a duplicate after A's finally block has run.
++    // Old refresh/open callbacks must not interrupt B's pending read. A's
++    // completion must not unlock them, and B's current operation must still
++    // open its request normally when its own receipt arrives.
+     freshRefresh();
+     await workspace.flushReads(tester);
+     freshOpen();
+@@ -368,11 +368,11 @@
+     expect(session.requests.where((r) => r.method == 'PUT'), hasLength(2));
+     freshReceipt.complete(_receipt());
+     await workspace.flushReads(tester);
+-    expect(opened, isEmpty,
+-        reason: 'The retained refresh superseded that read generation.');
++    expect(opened, [_requestId],
++        reason: 'An old refresh must not interrupt the current read.');
+     _button(tester, '查看当前申请')();
+     await workspace.flushReads(tester);
+-    expect(opened, [_requestId]);
++    expect(opened, [_requestId, _requestId]);
+     expect(find.text('0 条未读'), findsOneWidget);
+     expect(tester.takeException(), isNull);
+   });

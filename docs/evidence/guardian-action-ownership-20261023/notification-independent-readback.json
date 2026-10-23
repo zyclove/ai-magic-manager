@@ -1,0 +1,139 @@
+{
+  "status": "INDEPENDENT_STATIC_NO_PRODUCT_DELTA_BLOCKER_EXISTING_TEST_EXPECTATION_CONFLICT_ALL_UNRUN",
+  "candidateInventory": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-page-actions-20261023-r1\\before.dart",
+      "bytes": 14473,
+      "sha256": "8bb6ef841cd151ff4de16492eab7850bb94cd430c16212a369473c4cb8d73b88"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-page-actions-20261023-r1\\notifications_view.dart",
+      "bytes": 16791,
+      "sha256": "2be26e954cdefa39d62bbaab4f1cfd25d389f785260db86cdd1ae3015a243fd7"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-page-actions-20261023-r1\\notifications-page-actions.patch",
+      "bytes": 8565,
+      "sha256": "430a128b08bc1089d5ce000896addfde826f6754c56b3320b531a9cc1322df89"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-page-actions-20261023-r1\\review.md",
+      "bytes": 7104,
+      "sha256": "52f70b1a6cfd30bb19e3daef2dabfc93bacf35387446b8e7fd13f6df6f537fce"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-page-actions-20261023-r1\\pins.json",
+      "bytes": 1175,
+      "sha256": "2166bc8562bbeaf13e60f28e7fed97d69f136dcb4036d32f0b1490dbe0cb5338"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-notification-page-actions-20261023-r1\\delivery-pins.json",
+      "bytes": 819,
+      "sha256": "0f7d013a8adfec228b26c382b1b6180361c3f5b657e752eb4cf27f519a789694"
+    }
+  ],
+  "pinsFourRowsAndDeliveryFiveRowsAndSixMembersVerified": true,
+  "mainObserved": {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\notifications_view.dart",
+    "bytes": 14473,
+    "sha256": "8bb6ef841cd151ff4de16492eab7850bb94cd430c16212a369473c4cb8d73b88"
+  },
+  "mainRawMatchesBefore": true,
+  "completePatchRebuiltByteExactly": true,
+  "loadFirstPageReadWholeTextEqualAfterOnlyThreeRetryInverseReplacements": true,
+  "operationBodyBeforeBytes": 3042,
+  "operationBodyBeforeSha256": "9ad601de53ff2a99280d167d059d5af1011a430094ac64cd513b7a674b41c74b",
+  "widgetPublicApiAndImportsByteIdentical": true,
+  "findingInput": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-form-workflow-audit-20261023-r2\\review.md",
+    "bytes": 10772,
+    "sha256": "7b0f33261f853b0c46c87df1882c68c1a7160317d04c1d1bf2599163c46c33fd"
+  },
+  "dependencyPins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\notifications_page.dart",
+      "bytes": 1872,
+      "sha256": "728693256dfba6909b47b619a97861133d57ed9ba0ecd91f829d4bf4059bbe8a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\core\\notifications.dart",
+      "bytes": 1326,
+      "sha256": "bf7a88811bf3034f811d13c1e3d3e3d7102cb66169de9fbd4affe8c63ac823c9"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\packages\\notification_client\\lib\\notification_client.dart",
+      "bytes": 7526,
+      "sha256": "1d5f73960125f837481be5ab6f35a155b12995b964c2c98359125a14249e9e08"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\notifications_test.dart",
+      "bytes": 11732,
+      "sha256": "d9e0207252d6dc6819e0436cb5c1d045ec76021904c430e246374bda9068ad74"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\submit_confirmation_variant_test.dart",
+      "bytes": 15313,
+      "sha256": "20a3cea1c3473de1edd50c21bdd3d4687cc7eb3afdd79c381743abc9a517fb7b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\notification_help_scope_browser_test.dart",
+      "bytes": 22316,
+      "sha256": "7db37e189d9e162ee901b8d536a6e6845ae42a00ec3ce01a0108956902e3016e"
+    }
+  ],
+  "tenUiEventKinds": [
+    "refresh",
+    "all filter",
+    "unread filter",
+    "page batch",
+    "displayed error retry",
+    "open request",
+    "single read",
+    "home",
+    "previous",
+    "next"
+  ],
+  "fourInstalledRetryKinds": [
+    "GET failure",
+    "read/open failure",
+    "access failure GET recovery",
+    "cursor cycle first-page recovery"
+  ],
+  "internalWriteFollowupLoadStillDirectAndNotActionGuarded": true,
+  "exactOriginalIdsAndRequestIdRetriesRetained": true,
+  "activeReadOwnershipAndFinallyRetained": true,
+  "previousLengthGuardPresent": true,
+  "scopeAndProtocolUnchanged": true,
+  "findings": [
+    {
+      "id": "T1",
+      "priority": 2,
+      "kind": "EXISTING_TEST_EXPECTATION_CONFLICT_WITH_NEW_AUTHORIZED_UI_GUARD",
+      "path": "apps/guardian/test/notification_help_scope_browser_test.dart",
+      "lines": [
+        351,
+        364,
+        369,
+        371,
+        375
+      ],
+      "basis": "Manual source reasoning only; stale refresh is now inert, so pending fresh read reaches onOpen instead of being superseded.",
+      "actualTestExecuted": false,
+      "fixOwner": "Root",
+      "testCandidateAwaitingSeparateStaticReview": ".cache/guardian-notification-existing-test-20261023-r1"
+    }
+  ],
+  "rootAndAuthorNotified": true,
+  "noPredicateOrProductBranchExecutedOrSimulated": true,
+  "onlyOwnTextHashJsonDiffMetadataUsed": true,
+  "sdkAstParserFormatterCompilerTestsCandidateProcessNetworkUsed": false,
+  "mainGitCandidateDependenciesOrTestsWritten": false,
+  "allScenarios": "UNRUN",
+  "rendered": false,
+  "newExecutionGrant": false
+}
