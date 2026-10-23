@@ -1,0 +1,42 @@
+{
+  "status": "SEALED_STATIC_CANDIDATE_UNRUN",
+  "files": [
+    {
+      "path": "after.dart",
+      "bytes": 16855,
+      "sha256": "df01196e5c457562481df52aed2585597fc3422a6c8821d166565e3cae243063"
+    },
+    {
+      "path": "before.dart",
+      "bytes": 13956,
+      "sha256": "158c68288b889d35229ee6b2c4212c328e531cb3efc2eed4e0c6c6a0860e7801"
+    },
+    {
+      "path": "host-after.dart",
+      "bytes": 87508,
+      "sha256": "0b1ee926b5f73f4c79862778dc831953ae82bf4858136a458bdaf1891bdc30a7"
+    },
+    {
+      "path": "host-before.dart",
+      "bytes": 87392,
+      "sha256": "e0d76e148ff4d629e96f3ba4e9abdf760136e7a1b78fe454021a71414dab28e6"
+    },
+    {
+      "path": "pins.json",
+      "bytes": 3158,
+      "sha256": "0b087bb9892c8d3c181fc5407d247ab1baf1cd51eaf3056ad5726e4b4d8a7b32"
+    },
+    {
+      "path": "quota-page-scope.patch",
+      "bytes": 32108,
+      "sha256": "b92479c6da26c072e786016d70a63cbe87a690b7fc7a7bd029747800212eec37"
+    },
+    {
+      "path": "review.md",
+      "bytes": 5075,
+      "sha256": "499abdb06a7447c9cbf14e18a72dfea8085685fe8bf1398e9b51d3aedcfdbfce"
+    }
+  ],
+  "testsRun": false,
+  "applied": false
+}

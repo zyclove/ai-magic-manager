@@ -1,0 +1,18 @@
+{
+  "status": "STATIC_NO_BLOCKER_EDITOR_R2_FIXED_SOURCE_ALL_UNRUN",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-quota-editor-independent-20261023-r1\\review.md",
+      "bytes": 5594,
+      "sha256": "1f2a758ed09d30ccf3dead29864bd769548e0c1c8ec1c3abbba78de3b60b7835"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-quota-editor-independent-20261023-r1\\review.json",
+      "bytes": 3228,
+      "sha256": "356b10d0ef8bec7907fcbfaea267876f26cb65945d7d05599b11369aa7bfd5ff"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "allScenarios": "UNRUN",
+  "executionAuthorized": false
+}

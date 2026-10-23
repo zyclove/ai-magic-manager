@@ -1,0 +1,39 @@
+{
+  "status": "STATIC_REVIEW_WITH_TWO_P2_FINDINGS",
+  "sourceCommit": "ad9f967a802e0d57dcea0e5289bf76d4e55070af",
+  "findings": [
+    {
+      "id": "QUOTA-R1-01",
+      "priority": "P2",
+      "title": "Repeat-plan journey lacks original page and Session access lifetime binding",
+      "primaryLocation": {
+        "path": "apps/guardian/lib/pages/quota_plans_page.dart",
+        "start": 119,
+        "end": 138
+      },
+      "runtimeStatus": "UNRUN",
+      "backendAuthorizationBypassClaim": false
+    },
+    {
+      "id": "QUOTA-R1-02",
+      "priority": "P2",
+      "title": "Repeat-plan editor dispatch and completion lack own-route lifetime",
+      "primaryLocation": {
+        "path": "apps/guardian/lib/pages/quota_plan_editor.dart",
+        "start": 168,
+        "end": 198
+      },
+      "runtimeStatus": "UNRUN",
+      "backendAuthorizationBypassClaim": false
+    }
+  ],
+  "existingProtectedWrites": [
+    "QuotaPage.create",
+    "QuotaPage.adjust"
+  ],
+  "scenarioStatus": "UNRUN",
+  "rendering": "NOT_OBSERVED",
+  "implementationPrepared": false,
+  "testSourceChanged": false,
+  "runtimePassClaim": false
+}

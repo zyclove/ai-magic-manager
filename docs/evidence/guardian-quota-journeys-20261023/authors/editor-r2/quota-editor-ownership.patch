@@ -1,0 +1,632 @@
+--- a/apps/guardian/lib/pages/quota_plan_editor.dart
++++ b/apps/guardian/lib/pages/quota_plan_editor.dart
+@@ -3,7 +3,10 @@
+ import 'package:intl/intl.dart';
+ import '../core/api.dart';
+ import '../ui/design.dart';
++import '../ui/dialog_access.dart';
++import '../ui/owned_dialog_route.dart';
+ import '../ui/quota_balance.dart';
++import '../ui/view_lifetime.dart';
+ 
+ const quotaWeek = <String, String>{
+   'MONDAY': '周一',
+@@ -23,6 +26,8 @@
+   final Future<Json> Function(String subject) loadCalendar;
+   final Future<void> Function(Json body) onSubmit;
+   final VoidCallback? reauth;
++  final Listenable? accessChanges;
++  final bool Function()? hasAccess;
+   const QuotaPlanEditor(
+       {super.key,
+       required this.children,
+@@ -31,12 +36,21 @@
+       this.targetDescription,
+       required this.loadCalendar,
+       required this.onSubmit,
+-      this.reauth});
++      this.reauth,
++      this.accessChanges,
++      this.hasAccess});
+   @override
+   State<QuotaPlanEditor> createState() => _QuotaPlanEditorState();
+ }
+ 
+ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
++  late final QuotaPlanEditor owner;
++  final lifetime = ViewLifetime();
++  DialogAccessBinding? access;
++  ModalRoute<dynamic>? route;
++  late final Listenable changes;
++  bool active = true, closed = false, bound = false;
++  Object? overrideOperation, saveOperation;
+   final form = GlobalKey<FormState>();
+   final errorAnchor = GlobalKey();
+   late final TextEditingController name;
+@@ -50,15 +64,108 @@
+   int calendarGeneration = 0;
+   Json? calendar, pending;
+   Object? error;
+-  bool get locked => busy || pending != null;
+-  bool get editing => widget.plan != null;
++  bool get locked => busy || pending != null || overrideOperation != null;
++  bool get editing => owner.plan != null;
++  bool get accepted {
++    if (!mounted || !active || closed || !lifetime.active || !bound) return false;
++    final original = route;
++    final allowed = original != null && original.isActive &&
++        (original is! OwnedDialogRoute<dynamic> || original.available) &&
++        access?.permitted() == true;
++    if (!allowed) invalidate();
++    return allowed;
++  }
++  bool get current => accepted && route?.isCurrent == true;
++  bool get canAct => current && !busy && overrideOperation == null;
++  bool get canEdit => canAct && pending == null;
++
++  void invalidate() {
++    calendarGeneration++;
++    overrideOperation = null;
++    saveOperation = null;
++    lifetime.invalidate();
++  }
++
++  void observeAccess() {
++    if (bound && lifetime.active) {
++      // accepted invalidates synchronously; notification is deferred by lifetime.
++      if (!accepted) lifetime.invalidate();
++    }
++  }
++
++  void markClosed() {
++    closed = true;
++    invalidate();
++  }
++
++  void finish({bool allowCovered = false}) {
++    if (!mounted || !active) return;
++    final original = route;
++    if (original == null || !original.isActive ||
++        (!allowCovered && !original.isCurrent)) return;
++    if (original is OwnedDialogRoute<void>) {
++      if (!original.available) return;
++      markClosed();
++      original.finish();
++    } else {
++      markClosed();
++      if (original.isCurrent) original.navigator?.pop<void>();
++    }
++  }
++
++  void cancel() {
++    if (!canAct) return;
++    finish();
++  }
++
++  void reauthenticate() {
++    if (!canAct) return;
++    owner.reauth?.call();
++  }
++
++  @override
++  void didChangeDependencies() {
++    super.didChangeDependencies();
++    final original = ModalRoute.of(context);
++    if (bound) {
++      if (!identical(route, original)) invalidate();
++      return;
++    }
++    route = original;
++    access = DialogAccessBinding(context,
++        accessChanges: owner.accessChanges,
++        hasAccess: () => lifetime.active && !closed &&
++            owner.hasAccess?.call() != false);
++    changes = Listenable.merge([lifetime.changes, access!.changes]);
++    bound = true;
++    access!.changes.addListener(observeAccess);
++    owner.accessChanges?.addListener(observeAccess);
++    observeAccess();
++    WidgetsBinding.instance.addPostFrameCallback((_) {
++      if (accepted && subject != null) readCalendar();
++    });
++  }
++
++  @override
++  void deactivate() {
++    active = false;
++    invalidate();
++    super.deactivate();
++  }
++
++  @override
++  void activate() {
++    super.activate();
++    active = true;
++  }
+   @override
+   void initState() {
+     super.initState();
+-    final p = widget.plan;
++    owner = widget;
++    final p = owner.plan;
+     name = TextEditingController(text: p?['name'] as String? ?? '每周使用额度');
+     subject = p?['subjectId'] as String? ??
+-        (widget.children.length == 1 ? widget.children.keys.first : null);
++        (owner.children.length == 1 ? owner.children.keys.first : null);
+     application = p?['applicationId'] as String? ?? '';
+     state = p?['state'] as String? ?? 'ACTIVE';
+     for (final day in quotaWeek.keys) {
+@@ -70,10 +177,15 @@
+     for (final entry in ((p?['dateOverrides'] as Map?) ?? {}).entries) {
+       overrides[entry.key as String] = (entry.value as num).toInt();
+     }
+-    if (subject != null) loadCalendar();
+   }
+ 
+   Future<void> loadCalendar() async {
++    if (!canEdit) return;
++    await readCalendar();
++  }
++
++  Future<void> readCalendar() async {
++    if (!accepted || locked) return;
+     final selected = subject;
+     if (selected == null) return;
+     final generation = ++calendarGeneration;
+@@ -82,12 +194,12 @@
+       error = null;
+     });
+     try {
+-      final value = await widget.loadCalendar(selected);
+-      if (mounted && generation == calendarGeneration) {
++      final value = await owner.loadCalendar(selected);
++      if (accepted && generation == calendarGeneration && subject == selected) {
+         setState(() => calendar = value);
+       }
+     } catch (e) {
+-      if (mounted && generation == calendarGeneration) {
++      if (accepted && generation == calendarGeneration && subject == selected) {
+         setState(() => error = e);
+         revealError();
+       }
+@@ -97,7 +209,7 @@
+   void revealError() {
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+       final target = errorAnchor.currentContext;
+-      if (mounted && target != null) {
++      if (current && target != null) {
+         Scrollable.ensureVisible(target,
+             alignment: 1,
+             duration: const Duration(milliseconds: 200),
+@@ -117,6 +229,15 @@
+ 
+   @override
+   void dispose() {
++    active = false;
++    markClosed();
++    owner.accessChanges?.removeListener(observeAccess);
++    final binding = access;
++    binding?.changes.removeListener(observeAccess);
++    lifetime.dispose();
++    // Descendant forms first observe lifetime loss, then release this binding.
++    WidgetsBinding.instance.addPostFrameCallback((_) => binding?.dispose());
++    WidgetsBinding.instance.ensureVisualUpdate();
+     name.dispose();
+     for (final c in days.values) {
+       c.dispose();
+@@ -125,49 +246,145 @@
+   }
+ 
+   void copyDays(String source, Iterable<String> targets) {
+-    for (final day in targets) {
++    if (!canEdit || !days.containsKey(source)) return;
++    final selected = targets.toList(growable: false);
++    if (selected.any((day) => !days.containsKey(day))) return;
++    for (final day in selected) {
+       days[day]!.text = days[source]!.text;
+       changedDays.add(day);
+     }
+     setState(() {});
+   }
+ 
++  void changeSubject(String? value) {
++    if (!canEdit || editing ||
++        (value != null && !owner.children.containsKey(value))) return;
++    setState(() {
++      subject = value;
++      calendarGeneration++;
++      calendar = null;
++      error = null;
++    });
++    loadCalendar();
++  }
++
++  void changeApplication(String? value) {
++    if (!canEdit || editing || (value != null && value.isNotEmpty &&
++        !owner.applications.containsKey(value))) return;
++    setState(() => application = value ?? '');
++  }
++
++  void changeTomorrow(bool? value) {
++    if (!canEdit || editing) return;
++    setState(() => tomorrow = value ?? false);
++  }
++
++  void changePlanState(String? value) {
++    if (!canEdit || !editing ||
++        (value != 'ACTIVE' && value != 'PAUSED')) return;
++    setState(() => state = value!);
++  }
++
++  void removeOverride(String date) {
++    if (!canEdit || !overrides.containsKey(date)) return;
++    setState(() => overrides.remove(date));
++  }
++
+   Future<void> addOverride() async {
+-    if (calendar == null || locked) return;
++    if (!canEdit || calendar == null) return;
+     if (overrides.length >= 60) {
+       toast(context, '最多设置 60 个日期例外，请先删除不再需要的日期。');
+       return;
+     }
+-    final today = DateTime.parse(calendar!['currentDate']);
+-    final selected = await showDatePicker(
+-        context: context,
+-        initialDate: today,
+-        firstDate: today,
+-        lastDate: DateTime(today.year, today.month, today.day + 366),
+-        helpText: '选择单独设置额度的日期');
+-    if (selected == null || !mounted) return;
+-    final date = DateFormat('yyyy-MM-dd').format(selected);
+-    final result = await formDialog(context,
+-        title: '$date 的额度',
+-        description: '此日期使用这里的额度，覆盖星期规则。0 分钟表示该日无可分配时间。',
+-        fields: const [
+-          FieldSpec('minutes', '额度（分钟，0–1440）', numeric: true, maxLength: 4)
+-        ],
+-        initial: {
+-          'minutes': (overrides[date] ?? 3600) ~/ 60
+-        }, onSubmit: (value) async {
+-      final minutes = value['minutes'] as int;
+-      if (minutes > 1440) throw const ApiFailure(400, 'QUOTA_LIMIT_INVALID');
+-      return {'seconds': minutes * 60};
+-    });
+-    if (result != null && mounted) {
+-      setState(() => overrides[date] = result['seconds'] as int);
++    final operation = Object();
++    final selectedCalendar = calendar;
++    final selectedSubject = subject;
++    final generation = calendarGeneration;
++    setState(() => overrideOperation = operation);
++    bool permitted() => accepted && identical(overrideOperation, operation) &&
++        identical(calendar, selectedCalendar) && subject == selectedSubject &&
++        calendarGeneration == generation;
++    final childAccess = DialogAccessBinding(context,
++        accessChanges: changes, hasAccess: permitted);
++    bool childPermitted() => permitted() && childAccess.permitted();
++    try {
++      if (!childPermitted() || route?.isCurrent != true) return;
++      final today = DateTime.parse(selectedCalendar!['currentDate']);
++      late final OwnedDialogRoute<DateTime> dateRoute;
++      bool dateCurrent() => childPermitted() && dateRoute.available &&
++          dateRoute.isCurrent;
++      void closeDate() {
++        if (dateRoute.available && dateRoute.isCurrent) dateRoute.finish();
++      }
++      dateRoute = OwnedDialogRoute<DateTime>(
++          context: context,
++          barrierDismissible: false,
++          builder: (_) => AnimatedBuilder(
++              animation: childAccess.changes,
++              builder: (_, __) => !childPermitted()
++                  ? AlertDialog(
++                      title: const Text('工作空间或权限已变化'),
++                      content: const Text('已隐藏原日期选择。请关闭后重新打开当前计划。'),
++                      actions: [
++                        TextButton(onPressed: closeDate, child: const Text('关闭'))
++                      ])
++                  : Navigator(
++                      pages: [
++                        MaterialPage<DateTime>(
++                            child: DatePickerDialog(
++                                initialDate: today,
++                                firstDate: today,
++                                lastDate: DateTime(
++                                    today.year, today.month, today.day + 366),
++                                helpText: '选择单独设置额度的日期'))
++                      ],
++                      // The stock picker pops its nearest navigator. Keep that
++                      // pop local, and complete only its captured owned dialog.
++                      onPopPage: (_, result) {
++                        if (dateCurrent()) {
++                          dateRoute.finish(result is DateTime ? result : null);
++                        }
++                        return false;
++                      })));
++      final selected = await presentOwnedDialog<DateTime>(context, dateRoute);
++      if (!childPermitted() || !current || selected == null) return;
++      final date = DateFormat('yyyy-MM-dd').format(selected);
++      final result = await formDialog(context,
++          title: '$date 的额度',
++          description: '此日期使用这里的额度，覆盖星期规则。0 分钟表示该日无可分配时间。',
++          fields: const [
++            FieldSpec('minutes', '额度（分钟，0–1440）', numeric: true, maxLength: 4)
++          ],
++          initial: {
++            'minutes': (overrides[date] ?? 3600) ~/ 60
++          },
++          accessChanges: childAccess.changes,
++          hasAccess: childPermitted,
++          reauth: () {
++            if (childPermitted()) owner.reauth?.call();
++          },
++          onSubmit: (value) async {
++            if (!childPermitted()) {
++              throw const ApiFailure(409, 'WORKSPACE_CHANGED');
++            }
++            final minutes = value['minutes'] as int;
++            if (minutes > 1440) throw const ApiFailure(400, 'QUOTA_LIMIT_INVALID');
++            return {'seconds': minutes * 60};
++          });
++      if (childPermitted() && current && result != null) {
++        setState(() => overrides[date] = result['seconds'] as int);
++      }
++    } finally {
++      childAccess.dispose();
++      if (accepted && identical(overrideOperation, operation)) {
++        setState(() => overrideOperation = null);
++      }
+     }
+   }
+ 
+   Future<void> save() async {
+-    if (busy) return;
+-    if (!form.currentState!.validate() || calendar == null || subject == null) {
++    if (!canAct) return;
++    if (form.currentState?.validate() != true || calendar == null || subject == null) {
+       return;
+     }
+     final data = pending ??
+@@ -189,15 +406,19 @@
+           },
+           'dateOverrides': Map<String, int>.from(overrides),
+         };
++    final operation = Object();
++    saveOperation = operation;
+     setState(() {
+       busy = true;
+       error = null;
+     });
+     try {
+-      await widget.onSubmit(data);
+-      if (mounted) Navigator.pop(context);
++      await owner.onSubmit(data);
++      if (accepted && identical(saveOperation, operation)) {
++        finish(allowCovered: true);
++      }
+     } catch (e) {
+-      if (mounted) {
++      if (accepted && identical(saveOperation, operation)) {
+         setState(() {
+           error = e;
+           if (e is! ApiFailure || e.status == 0 || e.status >= 500) {
+@@ -207,13 +428,37 @@
+         revealError();
+       }
+     } finally {
+-      if (mounted) setState(() => busy = false);
++      if (accepted && identical(saveOperation, operation)) {
++        saveOperation = null;
++        setState(() => busy = false);
++      }
+     }
+   }
+ 
+   @override
+-  Widget build(BuildContext context) => PopScope(
++  Widget build(BuildContext context) => AnimatedBuilder(
++      animation: changes,
++      builder: (_, __) => accepted
++          ? editor(context)
++          : PopScope(
++              onPopInvoked: (didPop) {
++                if (didPop) markClosed();
++              },
++              child: AlertDialog(
++                  title: Text(closed ? '编辑已结束' : '工作空间或权限已变化'),
++                  content: const Text('已隐藏原计划内容。请关闭后在当前工作空间重新打开；已提交的操作请回到原工作空间刷新列表核对结果。'),
++                  actions: [
++                    TextButton(onPressed: finish, child: const Text('关闭'))
++                  ])));
++
++  Widget editor(BuildContext context) {
++    final generation = calendarGeneration;
++    final selected = subject;
++    return PopScope(
+       canPop: !busy,
++      onPopInvoked: (didPop) {
++        if (didPop) markClosed();
++      },
+       child: AlertDialog(
+         title: Text(editing ? '修改重复计划' : '创建重复计划'),
+         content: SizedBox(
+@@ -226,10 +471,10 @@
+                         mainAxisSize: MainAxisSize.min,
+                         crossAxisAlignment: CrossAxisAlignment.start,
+                         children: [
+-                          if (editing && widget.targetDescription != null)
++                          if (editing && owner.targetDescription != null)
+                             Padding(
+                                 padding: const EdgeInsets.only(bottom: 16),
+-                                child: Text(widget.targetDescription!,
++                                child: Text(owner.targetDescription!,
+                                     style: const TextStyle(
+                                         fontWeight: FontWeight.w600,
+                                         height: 1.6))),
+@@ -239,7 +484,7 @@
+                           const SizedBox(height: 20),
+                           TextFormField(
+                               controller: name,
+-                              enabled: !locked,
++                              enabled: canEdit,
+                               decoration:
+                                   const InputDecoration(labelText: '计划名称'),
+                               maxLength: 100,
+@@ -253,18 +498,15 @@
+                                 decoration:
+                                     const InputDecoration(labelText: '儿童'),
+                                 items: [
+-                                  for (final child in widget.children.entries)
++                                  for (final child in owner.children.entries)
+                                     DropdownMenuItem(
+                                         value: child.key,
+                                         child: Text(child.value,
+                                             overflow: TextOverflow.ellipsis))
+                                 ],
+-                                onChanged: locked
++                                onChanged: !canEdit
+                                     ? null
+-                                    : (v) {
+-                                        setState(() => subject = v);
+-                                        loadCalendar();
+-                                      },
++                                    : changeSubject,
+                                 validator: (v) => v == null ? '请选择儿童' : null),
+                             const SizedBox(height: 18),
+                             DropdownButtonFormField<String>(
+@@ -275,24 +517,22 @@
+                                 items: [
+                                   const DropdownMenuItem(
+                                       value: '', child: Text('儿童总额度')),
+-                                  ...widget.applications.entries.map((e) =>
++                                  ...owner.applications.entries.map((e) =>
+                                       DropdownMenuItem(
+                                           value: e.key,
+                                           child: Text(e.value,
+                                               overflow: TextOverflow.ellipsis)))
+                                 ],
+-                                onChanged: locked
++                                onChanged: !canEdit
+                                     ? null
+-                                    : (v) =>
+-                                        setState(() => application = v ?? '')),
++                                    : changeApplication),
+                             CheckboxListTile(
+                                 contentPadding: EdgeInsets.zero,
+                                 title: const Text('从明天开始'),
+                                 value: tomorrow,
+-                                onChanged: locked
++                                onChanged: !canEdit
+                                     ? null
+-                                    : (v) =>
+-                                        setState(() => tomorrow = v ?? false)),
++                                    : changeTomorrow),
+                           ],
+                           const SizedBox(height: 12),
+                           Text(
+@@ -308,13 +548,13 @@
+                               style: TextStyle(color: muted, fontSize: 12)),
+                           Wrap(spacing: 8, children: [
+                             TextButton(
+-                                onPressed: locked
++                                onPressed: !canEdit
+                                     ? null
+                                     : () => copyDays(
+                                         'MONDAY', quotaWeek.keys.take(5)),
+                                 child: const Text('周一额度应用到工作日')),
+                             TextButton(
+-                                onPressed: locked
++                                onPressed: !canEdit
+                                     ? null
+                                     : () => copyDays(
+                                         'SATURDAY', ['SATURDAY', 'SUNDAY']),
+@@ -330,7 +570,7 @@
+                                               : size.maxWidth,
+                                           child: TextFormField(
+                                               controller: days[day.key],
+-                                              enabled: !locked,
++                                              enabled: canEdit,
+                                               keyboardType:
+                                                   TextInputType.number,
+                                               inputFormatters: [
+@@ -346,8 +586,10 @@
+                                                           0
+                                                       ? '原额度 ${quotaDuration(originalSeconds[day.key])}，不改此项会保留秒数'
+                                                       : null),
+-                                              onChanged: (_) =>
+-                                                  changedDays.add(day.key),
++                                              onChanged: (_) {
++                                                if (!canEdit) return;
++                                                changedDays.add(day.key);
++                                              },
+                                               validator: (v) {
+                                                 final n = int.tryParse(v ?? '');
+                                                 return n == null ||
+@@ -365,7 +607,7 @@
+                                         fontWeight: FontWeight.w600,
+                                         fontSize: 16))),
+                             TextButton.icon(
+-                                onPressed: locked || calendar == null
++                                onPressed: !canEdit || calendar == null
+                                     ? null
+                                     : addOverride,
+                                 icon: const Icon(Icons.add, size: 18),
+@@ -381,10 +623,9 @@
+                                 subtitle: Text(quotaDuration(overrides[date])),
+                                 trailing: IconButton(
+                                     tooltip: '删除 $date 的例外',
+-                                    onPressed: locked
++                                    onPressed: !canEdit
+                                         ? null
+-                                        : () => setState(
+-                                            () => overrides.remove(date)),
++                                        : () => removeOverride(date),
+                                     icon: const Icon(Icons.close, size: 18))),
+                           if (editing) ...[
+                             const SizedBox(height: 20),
+@@ -399,9 +640,9 @@
+                                   DropdownMenuItem(
+                                       value: 'PAUSED', child: Text('暂停后续日期的生成'))
+                                 ],
+-                                onChanged: locked
++                                onChanged: !canEdit
+                                     ? null
+-                                    : (v) => setState(() => state = v!))
++                                    : changePlanState)
+                           ],
+                           if (pending != null) ...[
+                             const SizedBox(height: 16),
+@@ -413,17 +654,22 @@
+                                 key: errorAnchor,
+                                 padding: const EdgeInsets.only(top: 16),
+                                 child: FailureView(error!,
+-                                    reauth: widget.reauth,
++                                    reauth: owner.reauth == null
++                                        ? null : reauthenticate,
+                                     retry:
+-                                        calendar == null ? loadCalendar : null))
++                                        calendar == null ? () {
++                                          if (!canEdit || subject != selected ||
++                                              generation != calendarGeneration) return;
++                                          loadCalendar();
++                                        } : null))
+                           ],
+                         ])))),
+         actions: [
+           TextButton(
+-              onPressed: busy ? null : () => Navigator.pop(context),
++              onPressed: canAct ? cancel : null,
+               child: const Text('取消')),
+           FilledButton(
+-              onPressed: busy || calendar == null ? null : save,
++              onPressed: !canAct || calendar == null ? null : save,
+               child: Text(busy
+                   ? '保存中…'
+                   : pending != null
+@@ -431,4 +677,5 @@
+                       : '保存计划'))
+         ],
+       ));
++  }
+ }

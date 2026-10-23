@@ -1,0 +1,67 @@
+{
+  "status": "STATIC_CANDIDATE_UNRUN_REQUIRES_COORDINATED_INTEGRATION",
+  "sourceCommit": "bb93c0b0bacfea622e50828e635aa61d738f342b",
+  "sources": [
+    {
+      "productionPath": "apps/guardian/lib/ui/view_lifetime.dart",
+      "before": null,
+      "after": {
+        "path": "after.dart",
+        "bytes": 1068,
+        "sha256": "c68c7457f2cd212df0b8d34b727c8e07364b6605832c41dc133d70355d719815"
+      },
+      "newFile": true
+    }
+  ],
+  "baselineDependencies": [
+    {
+      "path": "apps/guardian/lib/core/api.dart",
+      "bytes": 22640,
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641"
+    },
+    {
+      "path": "apps/guardian/lib/core/session.dart",
+      "bytes": 14334,
+      "sha256": "2c0c354df653359c24619fc1be3162030ae503127bbd3dd1a6ec2b96fce2a864"
+    },
+    {
+      "path": "apps/guardian/lib/pages/device_subflow_scope.dart",
+      "bytes": 1512,
+      "sha256": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e"
+    },
+    {
+      "path": "apps/guardian/lib/ui/dialog_access.dart",
+      "bytes": 2748,
+      "sha256": "8fe7c3d9ee1b7a038dc08939ea5cd40572a411ced63a01ba6eb12a88e50145d5"
+    },
+    {
+      "path": "apps/guardian/lib/ui/owned_dialog_route.dart",
+      "bytes": 1419,
+      "sha256": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946"
+    },
+    {
+      "path": "apps/guardian/lib/ui/design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    }
+  ],
+  "files": [
+    {
+      "path": "after.dart",
+      "bytes": 1068,
+      "sha256": "c68c7457f2cd212df0b8d34b727c8e07364b6605832c41dc133d70355d719815"
+    },
+    {
+      "path": "review.md",
+      "bytes": 1492,
+      "sha256": "31df177200de5eba805211268a387c4b0bbf3d044afb7289a0fb0a9bc7165c4b"
+    },
+    {
+      "path": "view-lifetime.patch",
+      "bytes": 1179,
+      "sha256": "e45c69291e00738dbe18b9373dcc08ffd57f6b00701e88e71812aaaa78044d6d"
+    }
+  ],
+  "testsRun": false,
+  "mainOrGitModified": false
+}

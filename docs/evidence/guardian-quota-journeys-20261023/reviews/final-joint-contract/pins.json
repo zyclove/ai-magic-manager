@@ -1,0 +1,1107 @@
+{
+  "status": "STATIC_FINAL_JOINT_CONTRACT_NO_NEW_BLOCKER_ALL_SCENARIOS_UNRUN",
+  "baselineHeadObserved": "bb93c0b0bacfea622e50828e635aa61d738f342b",
+  "reviewerRole": "Editor author; joint interface/delta check only, not independent Editor review",
+  "previousJointPreserved": {
+    "directory": ".cache/guardian-quota-joint-contract-20261023-r1",
+    "files": [
+      {
+        "path": ".cache/guardian-quota-joint-contract-20261023-r1/review.md",
+        "bytes": 7421,
+        "sha256": "41b9d721aa6be8a58cec28544f139732821b03c2d4889abd393a32a46eb583d5"
+      },
+      {
+        "path": ".cache/guardian-quota-joint-contract-20261023-r1/pins.json",
+        "bytes": 37589,
+        "sha256": "a6b6cdc6fbcdea91026157be6cc7bc39d9d53ec0b0c78fedd8d8ef450eb92eeb"
+      },
+      {
+        "path": ".cache/guardian-quota-joint-contract-20261023-r1/delivery.json",
+        "bytes": 470,
+        "sha256": "c8fe17ddad29a68d3c64cc913d6c0cf002f5f30fbaaca1080dd7af9078269be1"
+      }
+    ]
+  },
+  "sourceCount": 6,
+  "sources": [
+    {
+      "productionPath": "apps/guardian/lib/pages/quota_plan_editor.dart",
+      "after": {
+        "path": ".cache/guardian-quota-editor-ownership-20261023-r2/after.dart",
+        "bytes": 28314,
+        "sha256": "15f1814e1294fbae7dc618d5333ee02d7ebdc6b05c7fdf626fd6e94597d24b6a"
+      },
+      "before": {
+        "path": ".cache/guardian-quota-editor-ownership-20261023-r2/before.dart",
+        "bytes": 19568,
+        "sha256": "d076f83498ebbb540da28e5b1e4e64f0a009c17e9521624a87945e58a79e8be5"
+      },
+      "mainObserved": {
+        "path": "apps/guardian/lib/pages/quota_plan_editor.dart",
+        "bytes": 19568,
+        "sha256": "d076f83498ebbb540da28e5b1e4e64f0a009c17e9521624a87945e58a79e8be5"
+      },
+      "mainMatchesBeforeOrNewAbsent": true,
+      "relativeImports": [
+        {
+          "line": 4,
+          "uri": "../core/api.dart",
+          "resolvedProductionPath": "apps/guardian/lib/core/api.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 5,
+          "uri": "../ui/design.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/design.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 6,
+          "uri": "../ui/dialog_access.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/dialog_access.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 7,
+          "uri": "../ui/owned_dialog_route.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/owned_dialog_route.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 8,
+          "uri": "../ui/quota_balance.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/quota_balance.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 9,
+          "uri": "../ui/view_lifetime.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/view_lifetime.dart",
+          "candidateOverride": true,
+          "presentInJointSetOrMain": true
+        }
+      ]
+    },
+    {
+      "productionPath": "apps/guardian/lib/pages/quota_plans_page.dart",
+      "after": {
+        "path": ".cache/guardian-quota-plans-scope-20261023-r2/after.dart",
+        "bytes": 16151,
+        "sha256": "9abbb08efcb075ba451190ba0dcc678c5682018f18611a1eade65b1f651b5191"
+      },
+      "before": {
+        "path": ".cache/guardian-quota-plans-scope-20261023-r2/before.dart",
+        "bytes": 12090,
+        "sha256": "3635e1a03eab26f663c4dc2d404abd61a84b6f546e2754f5a8450e20ef635d6a"
+      },
+      "mainObserved": {
+        "path": "apps/guardian/lib/pages/quota_plans_page.dart",
+        "bytes": 12090,
+        "sha256": "3635e1a03eab26f663c4dc2d404abd61a84b6f546e2754f5a8450e20ef635d6a"
+      },
+      "mainMatchesBeforeOrNewAbsent": true,
+      "relativeImports": [
+        {
+          "line": 2,
+          "uri": "../core/api.dart",
+          "resolvedProductionPath": "apps/guardian/lib/core/api.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 3,
+          "uri": "../core/session.dart",
+          "resolvedProductionPath": "apps/guardian/lib/core/session.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 4,
+          "uri": "../ui/design.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/design.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 5,
+          "uri": "../ui/dialog_access.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/dialog_access.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 6,
+          "uri": "../ui/owned_dialog_route.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/owned_dialog_route.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 7,
+          "uri": "../ui/quota_balance.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/quota_balance.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 8,
+          "uri": "../ui/resource_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/resource_page.dart",
+          "candidateOverride": true,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 9,
+          "uri": "../ui/view_lifetime.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/view_lifetime.dart",
+          "candidateOverride": true,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 10,
+          "uri": "device_subflow_scope.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/device_subflow_scope.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 11,
+          "uri": "editors.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/editors.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 12,
+          "uri": "quota_plan_editor.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/quota_plan_editor.dart",
+          "candidateOverride": true,
+          "presentInJointSetOrMain": true
+        }
+      ]
+    },
+    {
+      "productionPath": "apps/guardian/lib/pages/quota_page.dart",
+      "after": {
+        "path": ".cache/guardian-quota-page-scope-20261023-r3/after.dart",
+        "bytes": 16855,
+        "sha256": "df01196e5c457562481df52aed2585597fc3422a6c8821d166565e3cae243063"
+      },
+      "before": {
+        "path": ".cache/guardian-quota-page-scope-20261023-r3/before.dart",
+        "bytes": 13956,
+        "sha256": "158c68288b889d35229ee6b2c4212c328e531cb3efc2eed4e0c6c6a0860e7801"
+      },
+      "mainObserved": {
+        "path": "apps/guardian/lib/pages/quota_page.dart",
+        "bytes": 13956,
+        "sha256": "158c68288b889d35229ee6b2c4212c328e531cb3efc2eed4e0c6c6a0860e7801"
+      },
+      "mainMatchesBeforeOrNewAbsent": true,
+      "relativeImports": [
+        {
+          "line": 3,
+          "uri": "../core/api.dart",
+          "resolvedProductionPath": "apps/guardian/lib/core/api.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 4,
+          "uri": "../core/labels.dart",
+          "resolvedProductionPath": "apps/guardian/lib/core/labels.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 5,
+          "uri": "../core/local_date.dart",
+          "resolvedProductionPath": "apps/guardian/lib/core/local_date.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 6,
+          "uri": "../core/session.dart",
+          "resolvedProductionPath": "apps/guardian/lib/core/session.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 7,
+          "uri": "../ui/design.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/design.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 8,
+          "uri": "../ui/dialog_access.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/dialog_access.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 9,
+          "uri": "../ui/owned_dialog_route.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/owned_dialog_route.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 10,
+          "uri": "../ui/view_lifetime.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/view_lifetime.dart",
+          "candidateOverride": true,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 11,
+          "uri": "../ui/resource_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/resource_page.dart",
+          "candidateOverride": true,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 12,
+          "uri": "../ui/quota_balance.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/quota_balance.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 13,
+          "uri": "editors.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/editors.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 14,
+          "uri": "quota_plans_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/quota_plans_page.dart",
+          "candidateOverride": true,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 15,
+          "uri": "device_subflow_scope.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/device_subflow_scope.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        }
+      ]
+    },
+    {
+      "productionPath": "apps/guardian/lib/pages/console_pages.dart",
+      "after": {
+        "path": ".cache/guardian-quota-page-scope-20261023-r3/host-after.dart",
+        "bytes": 87508,
+        "sha256": "0b1ee926b5f73f4c79862778dc831953ae82bf4858136a458bdaf1891bdc30a7"
+      },
+      "before": {
+        "path": ".cache/guardian-quota-page-scope-20261023-r3/host-before.dart",
+        "bytes": 87392,
+        "sha256": "e0d76e148ff4d629e96f3ba4e9abdf760136e7a1b78fe454021a71414dab28e6"
+      },
+      "mainObserved": {
+        "path": "apps/guardian/lib/pages/console_pages.dart",
+        "bytes": 87392,
+        "sha256": "e0d76e148ff4d629e96f3ba4e9abdf760136e7a1b78fe454021a71414dab28e6"
+      },
+      "mainMatchesBeforeOrNewAbsent": true,
+      "relativeImports": [
+        {
+          "line": 3,
+          "uri": "../core/browser_publication_journal.dart",
+          "resolvedProductionPath": "apps/guardian/lib/core/browser_publication_journal.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 4,
+          "uri": "../core/policy_publication.dart",
+          "resolvedProductionPath": "apps/guardian/lib/core/policy_publication.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 5,
+          "uri": "../core/policy_publication_repository.dart",
+          "resolvedProductionPath": "apps/guardian/lib/core/policy_publication_repository.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 6,
+          "uri": "../core/publication_journal.dart",
+          "resolvedProductionPath": "apps/guardian/lib/core/publication_journal.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 7,
+          "uri": "policy_publication_entry.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/policy_publication_entry.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 12,
+          "uri": "../core/api.dart",
+          "resolvedProductionPath": "apps/guardian/lib/core/api.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 13,
+          "uri": "../core/application_classification.dart",
+          "resolvedProductionPath": "apps/guardian/lib/core/application_classification.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 14,
+          "uri": "../core/enrollment_recovery.dart",
+          "resolvedProductionPath": "apps/guardian/lib/core/enrollment_recovery.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 15,
+          "uri": "../core/device_management.dart",
+          "resolvedProductionPath": "apps/guardian/lib/core/device_management.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 16,
+          "uri": "../core/managed_execution.dart",
+          "resolvedProductionPath": "apps/guardian/lib/core/managed_execution.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 17,
+          "uri": "managed_execution_dialog_entry.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/managed_execution_dialog_entry.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 18,
+          "uri": "../ui/device_management_dialog.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/device_management_dialog.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 19,
+          "uri": "../core/browser_enrollment_journal.dart",
+          "resolvedProductionPath": "apps/guardian/lib/core/browser_enrollment_journal.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 20,
+          "uri": "../ui/enrollment_dialog.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/enrollment_dialog.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 22,
+          "uri": "../core/labels.dart",
+          "resolvedProductionPath": "apps/guardian/lib/core/labels.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 24,
+          "uri": "../core/overview_summary.dart",
+          "resolvedProductionPath": "apps/guardian/lib/core/overview_summary.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 25,
+          "uri": "../core/session.dart",
+          "resolvedProductionPath": "apps/guardian/lib/core/session.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 26,
+          "uri": "../core/workspace_read_recovery.dart",
+          "resolvedProductionPath": "apps/guardian/lib/core/workspace_read_recovery.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 27,
+          "uri": "device_subflow_scope.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/device_subflow_scope.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 28,
+          "uri": "policy_details_entry.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/policy_details_entry.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 29,
+          "uri": "observation_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/observation_page.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 30,
+          "uri": "../ui/design.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/design.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 31,
+          "uri": "../ui/dialog_access.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/dialog_access.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 32,
+          "uri": "../ui/device_observation_status.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/device_observation_status.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 33,
+          "uri": "../ui/application_classification_dialog.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/application_classification_dialog.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 34,
+          "uri": "../ui/resource_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/resource_page.dart",
+          "candidateOverride": true,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 35,
+          "uri": "../ui/workbench_view.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/workbench_view.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 36,
+          "uri": "../ui/workspace_welcome.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/workspace_welcome.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 37,
+          "uri": "../ui/family_finance_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/family_finance_page.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 38,
+          "uri": "../ui/family_identity_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/family_identity_page.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 39,
+          "uri": "../ui/member_editor.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/member_editor.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 40,
+          "uri": "../ui/owned_dialog_route.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/owned_dialog_route.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 41,
+          "uri": "../ui/access_request_dialog.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/access_request_dialog.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 42,
+          "uri": "../ui/policy_target_picker.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/policy_target_picker.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 43,
+          "uri": "members_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/members_page.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 44,
+          "uri": "classes_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/classes_page.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 45,
+          "uri": "device_groups_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/device_groups_page.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 46,
+          "uri": "managed_android_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/managed_android_page.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 47,
+          "uri": "managed_android_review_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/managed_android_review_page.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 48,
+          "uri": "audit_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/audit_page.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 49,
+          "uri": "audit_exports_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/audit_exports_page.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 50,
+          "uri": "usage_reports_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/usage_reports_page.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 51,
+          "uri": "editors.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/editors.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 52,
+          "uri": "device_exit_dialog.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/device_exit_dialog.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 53,
+          "uri": "device_diagnostic_dialog.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/device_diagnostic_dialog.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 54,
+          "uri": "diagnostic_packages_dialog.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/diagnostic_packages_dialog.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 55,
+          "uri": "quota_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/quota_page.dart",
+          "candidateOverride": true,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 56,
+          "uri": "ownership_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/ownership_page.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 57,
+          "uri": "notifications_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/notifications_page.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 58,
+          "uri": "support_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/support_page.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 59,
+          "uri": "help_requests_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/help_requests_page.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 60,
+          "uri": "scoped_overview_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/scoped_overview_page.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 61,
+          "uri": "commercial_account_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/commercial_account_page.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 62,
+          "uri": "commercial_catalog_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/commercial_catalog_page.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 63,
+          "uri": "contracts_page.dart",
+          "resolvedProductionPath": "apps/guardian/lib/pages/contracts_page.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        }
+      ]
+    },
+    {
+      "productionPath": "apps/guardian/lib/ui/resource_page.dart",
+      "after": {
+        "path": ".cache/guardian-quota-resource-interaction-20261023-r1/after.dart",
+        "bytes": 18737,
+        "sha256": "50ca974f0b792c77d493eaf4d17c83dbe250550ac5035ae1fbd148a5758f0360"
+      },
+      "before": {
+        "path": ".cache/guardian-quota-resource-interaction-20261023-r1/before.dart",
+        "bytes": 18380,
+        "sha256": "692b1f4c4e9eefbef6fb80a7abeb7ced7e2c505b85fb01e8b032469cbc7b8c5e"
+      },
+      "mainObserved": {
+        "path": "apps/guardian/lib/ui/resource_page.dart",
+        "bytes": 18380,
+        "sha256": "692b1f4c4e9eefbef6fb80a7abeb7ced7e2c505b85fb01e8b032469cbc7b8c5e"
+      },
+      "mainMatchesBeforeOrNewAbsent": true,
+      "relativeImports": [
+        {
+          "line": 2,
+          "uri": "../core/api.dart",
+          "resolvedProductionPath": "apps/guardian/lib/core/api.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        },
+        {
+          "line": 3,
+          "uri": "design.dart",
+          "resolvedProductionPath": "apps/guardian/lib/ui/design.dart",
+          "candidateOverride": false,
+          "presentInJointSetOrMain": true
+        }
+      ]
+    },
+    {
+      "productionPath": "apps/guardian/lib/ui/view_lifetime.dart",
+      "after": {
+        "path": ".cache/guardian-quota-view-lifetime-20261023-r1/after.dart",
+        "bytes": 1068,
+        "sha256": "c68c7457f2cd212df0b8d34b727c8e07364b6605832c41dc133d70355d719815"
+      },
+      "before": null,
+      "mainObserved": {
+        "path": "apps/guardian/lib/ui/view_lifetime.dart",
+        "exists": false
+      },
+      "mainMatchesBeforeOrNewAbsent": true,
+      "relativeImports": []
+    }
+  ],
+  "inputDeliveries": [
+    {
+      "directory": ".cache/guardian-quota-editor-ownership-20261023-r2",
+      "delivery": {
+        "path": ".cache/guardian-quota-editor-ownership-20261023-r2/delivery-pins.json",
+        "bytes": 986,
+        "sha256": "9a0ed0942e588b17c0fd37b7c53365d8f75dd02478922a1503918680c294c975"
+      },
+      "declaredRowsExact": true,
+      "members": [
+        {
+          "path": ".cache/guardian-quota-editor-ownership-20261023-r2/before.dart",
+          "bytes": 19568,
+          "sha256": "d076f83498ebbb540da28e5b1e4e64f0a009c17e9521624a87945e58a79e8be5"
+        },
+        {
+          "path": ".cache/guardian-quota-editor-ownership-20261023-r2/after.dart",
+          "bytes": 28314,
+          "sha256": "15f1814e1294fbae7dc618d5333ee02d7ebdc6b05c7fdf626fd6e94597d24b6a"
+        },
+        {
+          "path": ".cache/guardian-quota-editor-ownership-20261023-r2/quota-editor-ownership.patch",
+          "bytes": 26235,
+          "sha256": "53e00e59f5c5999b0ceb2e284f242144d47fbccfa61d063ee98be80a8bd047a5"
+        },
+        {
+          "path": ".cache/guardian-quota-editor-ownership-20261023-r2/review.md",
+          "bytes": 8683,
+          "sha256": "e3d91c643bf5f87dd8ac812f72178ec53ad9e31d31f04039bd522ed4cab926f4"
+        },
+        {
+          "path": ".cache/guardian-quota-editor-ownership-20261023-r2/pins.json",
+          "bytes": 4103,
+          "sha256": "cababbc6fa0ce461ed0795b56beca871214c0767faebec1ff7239d98418d4e07"
+        }
+      ],
+      "exactMembership": [
+        "after.dart",
+        "before.dart",
+        "delivery-pins.json",
+        "pins.json",
+        "quota-editor-ownership.patch",
+        "review.md"
+      ]
+    },
+    {
+      "directory": ".cache/guardian-quota-plans-scope-20261023-r2",
+      "delivery": {
+        "path": ".cache/guardian-quota-plans-scope-20261023-r2/delivery-pins.json",
+        "bytes": 831,
+        "sha256": "0e8eb303c4ff5091b9aab11e9714768ecc9e59e986b5072c5bfd68762ea38a25"
+      },
+      "declaredRowsExact": true,
+      "members": [
+        {
+          "path": ".cache/guardian-quota-plans-scope-20261023-r2/before.dart",
+          "bytes": 12090,
+          "sha256": "3635e1a03eab26f663c4dc2d404abd61a84b6f546e2754f5a8450e20ef635d6a"
+        },
+        {
+          "path": ".cache/guardian-quota-plans-scope-20261023-r2/after.dart",
+          "bytes": 16151,
+          "sha256": "9abbb08efcb075ba451190ba0dcc678c5682018f18611a1eade65b1f651b5191"
+        },
+        {
+          "path": ".cache/guardian-quota-plans-scope-20261023-r2/quota-plans-scope.patch",
+          "bytes": 24570,
+          "sha256": "5275a4b6e4a4549a564a3dbce97cffd0da6fd7d8a2a74bcaee9c8a82d791ea6f"
+        },
+        {
+          "path": ".cache/guardian-quota-plans-scope-20261023-r2/review.md",
+          "bytes": 5803,
+          "sha256": "f1239cba3a6b31d716e971ab03abf2da1dcdba6545594a1404519a2742ec546e"
+        },
+        {
+          "path": ".cache/guardian-quota-plans-scope-20261023-r2/pins.json",
+          "bytes": 4500,
+          "sha256": "e2bad47b4176bd515e7b133b57a3430f001b4914d07d89d2789c1ec4e5fd3126"
+        }
+      ],
+      "exactMembership": [
+        "after.dart",
+        "before.dart",
+        "delivery-pins.json",
+        "pins.json",
+        "quota-plans-scope.patch",
+        "review.md"
+      ]
+    },
+    {
+      "directory": ".cache/guardian-quota-page-scope-20261023-r3",
+      "delivery": {
+        "path": ".cache/guardian-quota-page-scope-20261023-r3/delivery.json",
+        "bytes": 1148,
+        "sha256": "c9723ddae98b3739c2f172fd5ce374de6e97f6c35fa33b1da0af8827e692b177"
+      },
+      "declaredRowsExact": true,
+      "members": [
+        {
+          "path": ".cache/guardian-quota-page-scope-20261023-r3/after.dart",
+          "bytes": 16855,
+          "sha256": "df01196e5c457562481df52aed2585597fc3422a6c8821d166565e3cae243063"
+        },
+        {
+          "path": ".cache/guardian-quota-page-scope-20261023-r3/before.dart",
+          "bytes": 13956,
+          "sha256": "158c68288b889d35229ee6b2c4212c328e531cb3efc2eed4e0c6c6a0860e7801"
+        },
+        {
+          "path": ".cache/guardian-quota-page-scope-20261023-r3/host-after.dart",
+          "bytes": 87508,
+          "sha256": "0b1ee926b5f73f4c79862778dc831953ae82bf4858136a458bdaf1891bdc30a7"
+        },
+        {
+          "path": ".cache/guardian-quota-page-scope-20261023-r3/host-before.dart",
+          "bytes": 87392,
+          "sha256": "e0d76e148ff4d629e96f3ba4e9abdf760136e7a1b78fe454021a71414dab28e6"
+        },
+        {
+          "path": ".cache/guardian-quota-page-scope-20261023-r3/pins.json",
+          "bytes": 3158,
+          "sha256": "0b087bb9892c8d3c181fc5407d247ab1baf1cd51eaf3056ad5726e4b4d8a7b32"
+        },
+        {
+          "path": ".cache/guardian-quota-page-scope-20261023-r3/quota-page-scope.patch",
+          "bytes": 32108,
+          "sha256": "b92479c6da26c072e786016d70a63cbe87a690b7fc7a7bd029747800212eec37"
+        },
+        {
+          "path": ".cache/guardian-quota-page-scope-20261023-r3/review.md",
+          "bytes": 5075,
+          "sha256": "499abdb06a7447c9cbf14e18a72dfea8085685fe8bf1398e9b51d3aedcfdbfce"
+        }
+      ],
+      "exactMembership": [
+        "after.dart",
+        "before.dart",
+        "delivery.json",
+        "host-after.dart",
+        "host-before.dart",
+        "pins.json",
+        "quota-page-scope.patch",
+        "review.md"
+      ]
+    },
+    {
+      "directory": ".cache/guardian-quota-resource-interaction-20261023-r1",
+      "delivery": {
+        "path": ".cache/guardian-quota-resource-interaction-20261023-r1/delivery.json",
+        "bytes": 848,
+        "sha256": "169ebe39524cc277ae54c8dc63edd24aae83ca1e225044d9ae2e731e7e9e4be4"
+      },
+      "declaredRowsExact": true,
+      "members": [
+        {
+          "path": ".cache/guardian-quota-resource-interaction-20261023-r1/after.dart",
+          "bytes": 18737,
+          "sha256": "50ca974f0b792c77d493eaf4d17c83dbe250550ac5035ae1fbd148a5758f0360"
+        },
+        {
+          "path": ".cache/guardian-quota-resource-interaction-20261023-r1/before.dart",
+          "bytes": 18380,
+          "sha256": "692b1f4c4e9eefbef6fb80a7abeb7ced7e2c505b85fb01e8b032469cbc7b8c5e"
+        },
+        {
+          "path": ".cache/guardian-quota-resource-interaction-20261023-r1/pins.json",
+          "bytes": 2331,
+          "sha256": "19cc9a22c9d92aba5a8b94b8591d599aa5ec88fff13b1712d91b68fd8aa3fdf2"
+        },
+        {
+          "path": ".cache/guardian-quota-resource-interaction-20261023-r1/resource-interaction.patch",
+          "bytes": 3087,
+          "sha256": "f49aceff6b35d38547d2a5eeacf5ddfa823b464ef666d1959e6ed2c33d8c098c"
+        },
+        {
+          "path": ".cache/guardian-quota-resource-interaction-20261023-r1/review.md",
+          "bytes": 1755,
+          "sha256": "01960786c232c5195e3c68df09c1ca4b8b480aace74b6bc52ac1309e40dc60d0"
+        }
+      ],
+      "exactMembership": [
+        "after.dart",
+        "before.dart",
+        "delivery.json",
+        "pins.json",
+        "resource-interaction.patch",
+        "review.md"
+      ]
+    },
+    {
+      "directory": ".cache/guardian-quota-view-lifetime-20261023-r1",
+      "delivery": {
+        "path": ".cache/guardian-quota-view-lifetime-20261023-r1/delivery.json",
+        "bytes": 693,
+        "sha256": "3782aafe93430f9b9758f7bb8866441f0b3e4273b2e5dc364c959d22fae8c332"
+      },
+      "declaredRowsExact": true,
+      "members": [
+        {
+          "path": ".cache/guardian-quota-view-lifetime-20261023-r1/after.dart",
+          "bytes": 1068,
+          "sha256": "c68c7457f2cd212df0b8d34b727c8e07364b6605832c41dc133d70355d719815"
+        },
+        {
+          "path": ".cache/guardian-quota-view-lifetime-20261023-r1/pins.json",
+          "bytes": 2029,
+          "sha256": "cdd68ef44ac7483fc4bb3a1bc6295772f58244b272eb039779bf4c05b0ae08a3"
+        },
+        {
+          "path": ".cache/guardian-quota-view-lifetime-20261023-r1/review.md",
+          "bytes": 1492,
+          "sha256": "31df177200de5eba805211268a387c4b0bbf3d044afb7289a0fb0a9bc7165c4b"
+        },
+        {
+          "path": ".cache/guardian-quota-view-lifetime-20261023-r1/view-lifetime.patch",
+          "bytes": 1179,
+          "sha256": "e45c69291e00738dbe18b9373dcc08ffd57f6b00701e88e71812aaaa78044d6d"
+        }
+      ],
+      "exactMembership": [
+        "after.dart",
+        "delivery.json",
+        "pins.json",
+        "review.md",
+        "view-lifetime.patch"
+      ]
+    }
+  ],
+  "dependencies": [
+    {
+      "path": "apps/guardian/lib/core/api.dart",
+      "bytes": 22640,
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641"
+    },
+    {
+      "path": "apps/guardian/lib/core/session.dart",
+      "bytes": 14334,
+      "sha256": "2c0c354df653359c24619fc1be3162030ae503127bbd3dd1a6ec2b96fce2a864"
+    },
+    {
+      "path": "apps/guardian/lib/pages/device_subflow_scope.dart",
+      "bytes": 1512,
+      "sha256": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e"
+    },
+    {
+      "path": "apps/guardian/lib/ui/dialog_access.dart",
+      "bytes": 2748,
+      "sha256": "8fe7c3d9ee1b7a038dc08939ea5cd40572a411ced63a01ba6eb12a88e50145d5"
+    },
+    {
+      "path": "apps/guardian/lib/ui/owned_dialog_route.dart",
+      "bytes": 1419,
+      "sha256": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946"
+    },
+    {
+      "path": "apps/guardian/lib/ui/design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    },
+    {
+      "path": "apps/guardian/lib/ui/quota_balance.dart",
+      "bytes": 2746,
+      "sha256": "82464b0b802a10d46784a899351f9e5e29669a4ae28c75c671ea326084acfb94"
+    },
+    {
+      "path": "apps/guardian/test/quota_plan_editor_test.dart",
+      "bytes": 4224,
+      "sha256": "b1bde96e61d10d9bbee17c1560052ae51f7f98b12d49101c1d4ceb5925255a64"
+    }
+  ],
+  "readDeltas": [
+    {
+      "before": {
+        "path": ".cache/guardian-quota-editor-ownership-20261023-r1/after.dart",
+        "bytes": 28026,
+        "sha256": "91365fe49fd623a4944c63cf24bde64d8a8dd4212a75662a7c44d307cebbe235"
+      },
+      "after": {
+        "path": ".cache/guardian-quota-editor-ownership-20261023-r2/after.dart",
+        "bytes": 28314,
+        "sha256": "15f1814e1294fbae7dc618d5333ee02d7ebdc6b05c7fdf626fd6e94597d24b6a"
+      },
+      "normalizedTextDeltaBytes": 3895,
+      "normalizedTextDeltaSha256": "ad13759798eb498156fa5792597606253c6f38e02c0c06341173692c9b888d7a",
+      "manuallyRead": true
+    },
+    {
+      "before": {
+        "path": ".cache/guardian-quota-plans-scope-20261023-r1/after.dart",
+        "bytes": 16238,
+        "sha256": "621d3f71141ef30904fa70334f4f2f221debd9cff960798ee49e0eedba193fdd"
+      },
+      "after": {
+        "path": ".cache/guardian-quota-plans-scope-20261023-r2/after.dart",
+        "bytes": 16151,
+        "sha256": "9abbb08efcb075ba451190ba0dcc678c5682018f18611a1eade65b1f651b5191"
+      },
+      "normalizedTextDeltaBytes": 1453,
+      "normalizedTextDeltaSha256": "b8ac73ba3c60214081ac47bddcaefa0af2df81d044a7e4bcd940988851305e5f",
+      "manuallyRead": true
+    },
+    {
+      "before": {
+        "path": ".cache/guardian-quota-page-scope-20261023-r2/after.dart",
+        "bytes": 16985,
+        "sha256": "8d5473a890547ea6d003f687305698fa9b1a300dec297aafe3c253e781f481b8"
+      },
+      "after": {
+        "path": ".cache/guardian-quota-page-scope-20261023-r3/after.dart",
+        "bytes": 16855,
+        "sha256": "df01196e5c457562481df52aed2585597fc3422a6c8821d166565e3cae243063"
+      },
+      "normalizedTextDeltaBytes": 2001,
+      "normalizedTextDeltaSha256": "48ebfe01374e23304354ca2b89c11cdd6b6694851921a1f2175ae3fc7176a676",
+      "manuallyRead": true
+    }
+  ],
+  "exactTextDeltaChecks": {
+    "plansExactlyThreeLocalListenerAssignments": true,
+    "pageExactlyFourLocalListenerExpressions": true,
+    "pageHostByteIdentical": true,
+    "editorPrefixBeforeAddOverrideByteIdentical": true,
+    "editorSuffixFromSaveIdenticalExceptOriginalWorkspaceCopy": true
+  },
+  "productionConstructorCallLines": {
+    "QuotaPage": 287,
+    "QuotaPlansPage": 102,
+    "QuotaPlanEditor": 191
+  },
+  "productionConstructorCallsEach": 1,
+  "existingPureEditorTests": {
+    "count": 5,
+    "declarationLines": [
+      33,
+      41,
+      55,
+      69,
+      84
+    ],
+    "sharedConstructorLine": 16,
+    "newHooksOptional": true,
+    "changed": false,
+    "executed": false
+  },
+  "authorEditorIndependentReviewClaimed": false,
+  "allScenarios": "UNRUN",
+  "rendered": false,
+  "mainGitOrOriginalArtifactsWritten": false,
+  "candidatePredicatesSdkAstTestsProcessQueriesWinApiOrNetworkExecuted": false,
+  "newExecutionGrant": false
+}

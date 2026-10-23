@@ -1,0 +1,32 @@
+{
+  "status": "SEALED_STATIC_CANDIDATE_UNRUN",
+  "files": [
+    {
+      "path": "after.dart",
+      "bytes": 18737,
+      "sha256": "50ca974f0b792c77d493eaf4d17c83dbe250550ac5035ae1fbd148a5758f0360"
+    },
+    {
+      "path": "before.dart",
+      "bytes": 18380,
+      "sha256": "692b1f4c4e9eefbef6fb80a7abeb7ced7e2c505b85fb01e8b032469cbc7b8c5e"
+    },
+    {
+      "path": "pins.json",
+      "bytes": 2331,
+      "sha256": "19cc9a22c9d92aba5a8b94b8591d599aa5ec88fff13b1712d91b68fd8aa3fdf2"
+    },
+    {
+      "path": "resource-interaction.patch",
+      "bytes": 3087,
+      "sha256": "f49aceff6b35d38547d2a5eeacf5ddfa823b464ef666d1959e6ed2c33d8c098c"
+    },
+    {
+      "path": "review.md",
+      "bytes": 1755,
+      "sha256": "01960786c232c5195e3c68df09c1ca4b8b480aace74b6bc52ac1309e40dc60d0"
+    }
+  ],
+  "testsRun": false,
+  "applied": false
+}

@@ -284,7 +284,9 @@ class ConsolePages extends StatelessWidget {
             reauth: () => s.login(stepUp: true));
     switch (section) {
       case 'quota':
-        return QuotaPage(session: s);
+        return QuotaPage(
+            key: ValueKey((s, s.profile?['subject'], s.tenant?['id'], s.role,
+                s.scopeGeneration)), session: s);
       case 'subjects':
         return resource(
             title: '儿童档案',

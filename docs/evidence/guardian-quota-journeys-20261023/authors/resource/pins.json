@@ -1,0 +1,76 @@
+{
+  "status": "STATIC_CANDIDATE_UNRUN_REQUIRES_COORDINATED_INTEGRATION",
+  "sourceCommit": "bb93c0b0bacfea622e50828e635aa61d738f342b",
+  "sources": [
+    {
+      "productionPath": "apps/guardian/lib/ui/resource_page.dart",
+      "before": {
+        "path": "before.dart",
+        "bytes": 18380,
+        "sha256": "692b1f4c4e9eefbef6fb80a7abeb7ced7e2c505b85fb01e8b032469cbc7b8c5e"
+      },
+      "after": {
+        "path": "after.dart",
+        "bytes": 18737,
+        "sha256": "50ca974f0b792c77d493eaf4d17c83dbe250550ac5035ae1fbd148a5758f0360"
+      },
+      "newFile": false
+    }
+  ],
+  "baselineDependencies": [
+    {
+      "path": "apps/guardian/lib/core/api.dart",
+      "bytes": 22640,
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641"
+    },
+    {
+      "path": "apps/guardian/lib/core/session.dart",
+      "bytes": 14334,
+      "sha256": "2c0c354df653359c24619fc1be3162030ae503127bbd3dd1a6ec2b96fce2a864"
+    },
+    {
+      "path": "apps/guardian/lib/pages/device_subflow_scope.dart",
+      "bytes": 1512,
+      "sha256": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e"
+    },
+    {
+      "path": "apps/guardian/lib/ui/dialog_access.dart",
+      "bytes": 2748,
+      "sha256": "8fe7c3d9ee1b7a038dc08939ea5cd40572a411ced63a01ba6eb12a88e50145d5"
+    },
+    {
+      "path": "apps/guardian/lib/ui/owned_dialog_route.dart",
+      "bytes": 1419,
+      "sha256": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946"
+    },
+    {
+      "path": "apps/guardian/lib/ui/design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    }
+  ],
+  "files": [
+    {
+      "path": "after.dart",
+      "bytes": 18737,
+      "sha256": "50ca974f0b792c77d493eaf4d17c83dbe250550ac5035ae1fbd148a5758f0360"
+    },
+    {
+      "path": "before.dart",
+      "bytes": 18380,
+      "sha256": "692b1f4c4e9eefbef6fb80a7abeb7ced7e2c505b85fb01e8b032469cbc7b8c5e"
+    },
+    {
+      "path": "resource-interaction.patch",
+      "bytes": 3087,
+      "sha256": "f49aceff6b35d38547d2a5eeacf5ddfa823b464ef666d1959e6ed2c33d8c098c"
+    },
+    {
+      "path": "review.md",
+      "bytes": 1755,
+      "sha256": "01960786c232c5195e3c68df09c1ca4b8b480aace74b6bc52ac1309e40dc60d0"
+    }
+  ],
+  "testsRun": false,
+  "mainOrGitModified": false
+}

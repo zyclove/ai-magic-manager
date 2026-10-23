@@ -1,0 +1,968 @@
+{
+  "parent": "bb93c0b0bacfea622e50828e635aa61d738f342b",
+  "allApplicationScenarios": "UNRUN",
+  "sources": [
+    {
+      "path": "apps/guardian/lib/ui/view_lifetime.dart",
+      "before": null,
+      "after": {
+        "path": ".cache/guardian-quota-view-lifetime-20261023-r1/after.dart",
+        "bytes": 1068,
+        "sha256": "c68c7457f2cd212df0b8d34b727c8e07364b6605832c41dc133d70355d719815"
+      }
+    },
+    {
+      "path": "apps/guardian/lib/ui/resource_page.dart",
+      "before": {
+        "path": ".cache/guardian-quota-resource-interaction-20261023-r1/before.dart",
+        "bytes": 18380,
+        "sha256": "692b1f4c4e9eefbef6fb80a7abeb7ced7e2c505b85fb01e8b032469cbc7b8c5e"
+      },
+      "after": {
+        "path": ".cache/guardian-quota-resource-interaction-20261023-r1/after.dart",
+        "bytes": 18737,
+        "sha256": "50ca974f0b792c77d493eaf4d17c83dbe250550ac5035ae1fbd148a5758f0360"
+      }
+    },
+    {
+      "path": "apps/guardian/lib/pages/quota_page.dart",
+      "before": {
+        "path": ".cache/guardian-quota-page-scope-20261023-r3/before.dart",
+        "bytes": 13956,
+        "sha256": "158c68288b889d35229ee6b2c4212c328e531cb3efc2eed4e0c6c6a0860e7801"
+      },
+      "after": {
+        "path": ".cache/guardian-quota-page-scope-20261023-r3/after.dart",
+        "bytes": 16855,
+        "sha256": "df01196e5c457562481df52aed2585597fc3422a6c8821d166565e3cae243063"
+      }
+    },
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "before": {
+        "path": ".cache/guardian-quota-page-scope-20261023-r3/host-before.dart",
+        "bytes": 87392,
+        "sha256": "e0d76e148ff4d629e96f3ba4e9abdf760136e7a1b78fe454021a71414dab28e6"
+      },
+      "after": {
+        "path": ".cache/guardian-quota-page-scope-20261023-r3/host-after.dart",
+        "bytes": 87508,
+        "sha256": "0b1ee926b5f73f4c79862778dc831953ae82bf4858136a458bdaf1891bdc30a7"
+      }
+    },
+    {
+      "path": "apps/guardian/lib/pages/quota_plans_page.dart",
+      "before": {
+        "path": ".cache/guardian-quota-plans-scope-20261023-r2/before.dart",
+        "bytes": 12090,
+        "sha256": "3635e1a03eab26f663c4dc2d404abd61a84b6f546e2754f5a8450e20ef635d6a"
+      },
+      "after": {
+        "path": ".cache/guardian-quota-plans-scope-20261023-r2/after.dart",
+        "bytes": 16151,
+        "sha256": "9abbb08efcb075ba451190ba0dcc678c5682018f18611a1eade65b1f651b5191"
+      }
+    },
+    {
+      "path": "apps/guardian/lib/pages/quota_plan_editor.dart",
+      "before": {
+        "path": ".cache/guardian-quota-editor-ownership-20261023-r2/before.dart",
+        "bytes": 19568,
+        "sha256": "d076f83498ebbb540da28e5b1e4e64f0a009c17e9521624a87945e58a79e8be5"
+      },
+      "after": {
+        "path": ".cache/guardian-quota-editor-ownership-20261023-r2/after.dart",
+        "bytes": 28314,
+        "sha256": "15f1814e1294fbae7dc618d5333ee02d7ebdc6b05c7fdf626fd6e94597d24b6a"
+      }
+    }
+  ],
+  "approvedInputs": [
+    {
+      "path": ".cache/apply-guardian-quota-journeys-20261023.py",
+      "bytes": 8870,
+      "sha256": "fc9836cf52efa557169ab8b9150dd924ceffbe4044a2eff8f8b8c5a3045ea48f"
+    },
+    {
+      "path": ".cache/guardian-action-ownership-post-commit-20261023-r1/delivery-pins.json",
+      "bytes": 649,
+      "sha256": "b36e6011a19ab8346899959c2c7e1ae34e60be13063fcad5d10d755b27deba3b"
+    },
+    {
+      "path": ".cache/guardian-action-ownership-post-commit-20261023-r1/readback.json",
+      "bytes": 2401,
+      "sha256": "6835e50079886607a3bd4a7460ffd7ba2ef66d996bc3f825a540e46a8a92956c"
+    },
+    {
+      "path": ".cache/guardian-action-ownership-post-commit-20261023-r1/readback.py",
+      "bytes": 10280,
+      "sha256": "3a4a119fa50382213b61fa9569fe0f34e5a0e33f3486021b2268effa89f84bd0"
+    },
+    {
+      "path": ".cache/guardian-action-ownership-post-commit-20261023-r1/review.md",
+      "bytes": 2251,
+      "sha256": "df60ed2265bf604414fe6e4c633db4e841dbc933e369cee6e1afe8e5aeb684ce"
+    },
+    {
+      "path": ".cache/guardian-quota-contract-review-20261023-r1/delivery-pins.json",
+      "bytes": 473,
+      "sha256": "54d56f1a427556c0429aba6369e6e34543d1053c5bb64615074b35e8345524e4"
+    },
+    {
+      "path": ".cache/guardian-quota-contract-review-20261023-r1/review.json",
+      "bytes": 3327,
+      "sha256": "f655b13477aa7d38b0cc142c4663b503b04ad1ea2eeaad88af4eff4b23f9c9de"
+    },
+    {
+      "path": ".cache/guardian-quota-contract-review-20261023-r1/review.md",
+      "bytes": 6583,
+      "sha256": "1fea1dc47e6eed79980cf3011b3b219820f487a311fb30d6c2d81c011a8f506a"
+    },
+    {
+      "path": ".cache/guardian-quota-editor-independent-20261023-r1/delivery-pins.json",
+      "bytes": 646,
+      "sha256": "6a03600baa571c4af28a3f2c49465b70dc3745515f0c0f9534441184c24ac133"
+    },
+    {
+      "path": ".cache/guardian-quota-editor-independent-20261023-r1/review.json",
+      "bytes": 3228,
+      "sha256": "356b10d0ef8bec7907fcbfaea267876f26cb65945d7d05599b11369aa7bfd5ff"
+    },
+    {
+      "path": ".cache/guardian-quota-editor-independent-20261023-r1/review.md",
+      "bytes": 5594,
+      "sha256": "1f2a758ed09d30ccf3dead29864bd769548e0c1c8ec1c3abbba78de3b60b7835"
+    },
+    {
+      "path": ".cache/guardian-quota-editor-ownership-20261023-r2/after.dart",
+      "bytes": 28314,
+      "sha256": "15f1814e1294fbae7dc618d5333ee02d7ebdc6b05c7fdf626fd6e94597d24b6a"
+    },
+    {
+      "path": ".cache/guardian-quota-editor-ownership-20261023-r2/before.dart",
+      "bytes": 19568,
+      "sha256": "d076f83498ebbb540da28e5b1e4e64f0a009c17e9521624a87945e58a79e8be5"
+    },
+    {
+      "path": ".cache/guardian-quota-editor-ownership-20261023-r2/delivery-pins.json",
+      "bytes": 986,
+      "sha256": "9a0ed0942e588b17c0fd37b7c53365d8f75dd02478922a1503918680c294c975"
+    },
+    {
+      "path": ".cache/guardian-quota-editor-ownership-20261023-r2/pins.json",
+      "bytes": 4103,
+      "sha256": "cababbc6fa0ce461ed0795b56beca871214c0767faebec1ff7239d98418d4e07"
+    },
+    {
+      "path": ".cache/guardian-quota-editor-ownership-20261023-r2/quota-editor-ownership.patch",
+      "bytes": 26235,
+      "sha256": "53e00e59f5c5999b0ceb2e284f242144d47fbccfa61d063ee98be80a8bd047a5"
+    },
+    {
+      "path": ".cache/guardian-quota-editor-ownership-20261023-r2/review.md",
+      "bytes": 8683,
+      "sha256": "e3d91c643bf5f87dd8ac812f72178ec53ad9e31d31f04039bd522ed4cab926f4"
+    },
+    {
+      "path": ".cache/guardian-quota-joint-contract-20261023-r2/delivery.json",
+      "bytes": 474,
+      "sha256": "b6ff27561afc9710876732a01d3cf0b1ec84b2c9a1b58e551f4e63b12b97e6c4"
+    },
+    {
+      "path": ".cache/guardian-quota-joint-contract-20261023-r2/pins.json",
+      "bytes": 40046,
+      "sha256": "33aff91f3f9633fc4adeb72493f25a191295d3c4160279e485dd956c67b50b71"
+    },
+    {
+      "path": ".cache/guardian-quota-joint-contract-20261023-r2/review.md",
+      "bytes": 6563,
+      "sha256": "7d03373394cb1636c7a47f876bc13dd97a27f19ef2dc94e0887229dce492e797"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r1/delivery-pins.json",
+      "bytes": 499,
+      "sha256": "a45b6c3f17489b7027fdcc591d3c7635d5901ce86dbcc02597c71c134f2df40c"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r1/input-pins.json",
+      "bytes": 4115,
+      "sha256": "198e9c9d561479a7e20b445d7dde1cf08bdeed1c4862ad5256d63d4d4f837e5b"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r1/review.json",
+      "bytes": 592,
+      "sha256": "e22bd3822b8be39afe88fdf2c0a801df5485c0d2fef619a839078b5b1388aaf7"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r1/review.md",
+      "bytes": 11421,
+      "sha256": "e55a6587762be622fb310dd6bb8895704159ff5b6f906c947fc58bf68cee65a2"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r2/delivery-pins.json",
+      "bytes": 498,
+      "sha256": "eca7fbaffa3e107c6ed525219d063c34bf83a34a208a0487c95be7fd39a0b365"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r2/input-pins.json",
+      "bytes": 4727,
+      "sha256": "c65585e9597f6daf1b0275187b3fdb12fbcb7b63a0dc90c08317d3c3f2ee9594"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r2/review.json",
+      "bytes": 531,
+      "sha256": "4580966f1f4c42471201595d5221f6cd9be144eada539d2d38195783b2780d7e"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r2/review.md",
+      "bytes": 7753,
+      "sha256": "011e9a52a108db3eb96eb0471a52647933b0d359c3a44e9d5907a7b396f7e979"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r3/delivery-pins.json",
+      "bytes": 498,
+      "sha256": "33992edb8c728e521cf731fdf550f101ff5d863d3e10ab9b7b2e8ea5014be6f9"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r3/input-pins.json",
+      "bytes": 4338,
+      "sha256": "53185ebbe329e9a717a1741d84b27e4d42331250ee814fe19f5be3823fdd174c"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r3/review.json",
+      "bytes": 520,
+      "sha256": "2de5ed8b085e21f2e5c08960f861a91ab32a16e34a958144176301f6faf7fb04"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r3/review.md",
+      "bytes": 7189,
+      "sha256": "2147f6272dc2dfe25ec003effa1a92f372f69fa1d196e23548a658391f9c1bd2"
+    },
+    {
+      "path": ".cache/guardian-quota-page-scope-20261023-r3/after.dart",
+      "bytes": 16855,
+      "sha256": "df01196e5c457562481df52aed2585597fc3422a6c8821d166565e3cae243063"
+    },
+    {
+      "path": ".cache/guardian-quota-page-scope-20261023-r3/before.dart",
+      "bytes": 13956,
+      "sha256": "158c68288b889d35229ee6b2c4212c328e531cb3efc2eed4e0c6c6a0860e7801"
+    },
+    {
+      "path": ".cache/guardian-quota-page-scope-20261023-r3/delivery.json",
+      "bytes": 1148,
+      "sha256": "c9723ddae98b3739c2f172fd5ce374de6e97f6c35fa33b1da0af8827e692b177"
+    },
+    {
+      "path": ".cache/guardian-quota-page-scope-20261023-r3/host-after.dart",
+      "bytes": 87508,
+      "sha256": "0b1ee926b5f73f4c79862778dc831953ae82bf4858136a458bdaf1891bdc30a7"
+    },
+    {
+      "path": ".cache/guardian-quota-page-scope-20261023-r3/host-before.dart",
+      "bytes": 87392,
+      "sha256": "e0d76e148ff4d629e96f3ba4e9abdf760136e7a1b78fe454021a71414dab28e6"
+    },
+    {
+      "path": ".cache/guardian-quota-page-scope-20261023-r3/pins.json",
+      "bytes": 3158,
+      "sha256": "0b087bb9892c8d3c181fc5407d247ab1baf1cd51eaf3056ad5726e4b4d8a7b32"
+    },
+    {
+      "path": ".cache/guardian-quota-page-scope-20261023-r3/quota-page-scope.patch",
+      "bytes": 32108,
+      "sha256": "b92479c6da26c072e786016d70a63cbe87a690b7fc7a7bd029747800212eec37"
+    },
+    {
+      "path": ".cache/guardian-quota-page-scope-20261023-r3/review.md",
+      "bytes": 5075,
+      "sha256": "499abdb06a7447c9cbf14e18a72dfea8085685fe8bf1398e9b51d3aedcfdbfce"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-independent-20261023-r1/delivery-pins.json",
+      "bytes": 495,
+      "sha256": "8ed988893ada258565d4e00d0200b13777374500c87793c5265b82fbd9a537b8"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-independent-20261023-r1/review.json",
+      "bytes": 5185,
+      "sha256": "7b9280089e6467c44a7147577187d360ba7c0e6c4f311f55cf77de8699b5d053"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-independent-20261023-r1/review.md",
+      "bytes": 5812,
+      "sha256": "070f1f927c93d2b072ff83b96fa853ad232822d86aa6282000f276e0c3104d47"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-independent-20261023-r2/delivery-pins.json",
+      "bytes": 632,
+      "sha256": "9b0fe3eb4f6c91a92e1c75ebf1084ba0d5a626d5f2d844a5b206212100011e93"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-independent-20261023-r2/review.json",
+      "bytes": 2063,
+      "sha256": "1e0206a535812a3f1938c2fc0232f94d27e362a6984be128a10b97a65e7447f1"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-independent-20261023-r2/review.md",
+      "bytes": 2405,
+      "sha256": "2e500df88e346ec9858b8027b850a904d04738603a20e3670bb238556d417c89"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-scope-20261023-r2/after.dart",
+      "bytes": 16151,
+      "sha256": "9abbb08efcb075ba451190ba0dcc678c5682018f18611a1eade65b1f651b5191"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-scope-20261023-r2/before.dart",
+      "bytes": 12090,
+      "sha256": "3635e1a03eab26f663c4dc2d404abd61a84b6f546e2754f5a8450e20ef635d6a"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-scope-20261023-r2/delivery-pins.json",
+      "bytes": 831,
+      "sha256": "0e8eb303c4ff5091b9aab11e9714768ecc9e59e986b5072c5bfd68762ea38a25"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-scope-20261023-r2/pins.json",
+      "bytes": 4500,
+      "sha256": "e2bad47b4176bd515e7b133b57a3430f001b4914d07d89d2789c1ec4e5fd3126"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-scope-20261023-r2/quota-plans-scope.patch",
+      "bytes": 24570,
+      "sha256": "5275a4b6e4a4549a564a3dbce97cffd0da6fd7d8a2a74bcaee9c8a82d791ea6f"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-scope-20261023-r2/review.md",
+      "bytes": 5803,
+      "sha256": "f1239cba3a6b31d716e971ab03abf2da1dcdba6545594a1404519a2742ec546e"
+    },
+    {
+      "path": ".cache/guardian-quota-resource-independent-20261023-r1/delivery-pins.json",
+      "bytes": 489,
+      "sha256": "58f43d1fa7217348522365322bf4e0d563337a2da3c4d736ceced41324650d63"
+    },
+    {
+      "path": ".cache/guardian-quota-resource-independent-20261023-r1/review.json",
+      "bytes": 3765,
+      "sha256": "8424184f722f128fd4558c0a4dc675f6b8397d9a8290071facc60c580fca1636"
+    },
+    {
+      "path": ".cache/guardian-quota-resource-independent-20261023-r1/review.md",
+      "bytes": 3749,
+      "sha256": "9591c468c77daf5574816fa723bece04141c199d30cda6951c9c605aeec9c5ce"
+    },
+    {
+      "path": ".cache/guardian-quota-resource-interaction-20261023-r1/after.dart",
+      "bytes": 18737,
+      "sha256": "50ca974f0b792c77d493eaf4d17c83dbe250550ac5035ae1fbd148a5758f0360"
+    },
+    {
+      "path": ".cache/guardian-quota-resource-interaction-20261023-r1/before.dart",
+      "bytes": 18380,
+      "sha256": "692b1f4c4e9eefbef6fb80a7abeb7ced7e2c505b85fb01e8b032469cbc7b8c5e"
+    },
+    {
+      "path": ".cache/guardian-quota-resource-interaction-20261023-r1/delivery.json",
+      "bytes": 848,
+      "sha256": "169ebe39524cc277ae54c8dc63edd24aae83ca1e225044d9ae2e731e7e9e4be4"
+    },
+    {
+      "path": ".cache/guardian-quota-resource-interaction-20261023-r1/pins.json",
+      "bytes": 2331,
+      "sha256": "19cc9a22c9d92aba5a8b94b8591d599aa5ec88fff13b1712d91b68fd8aa3fdf2"
+    },
+    {
+      "path": ".cache/guardian-quota-resource-interaction-20261023-r1/resource-interaction.patch",
+      "bytes": 3087,
+      "sha256": "f49aceff6b35d38547d2a5eeacf5ddfa823b464ef666d1959e6ed2c33d8c098c"
+    },
+    {
+      "path": ".cache/guardian-quota-resource-interaction-20261023-r1/review.md",
+      "bytes": 1755,
+      "sha256": "01960786c232c5195e3c68df09c1ca4b8b480aace74b6bc52ac1309e40dc60d0"
+    },
+    {
+      "path": ".cache/guardian-quota-view-lifetime-20261023-r1/after.dart",
+      "bytes": 1068,
+      "sha256": "c68c7457f2cd212df0b8d34b727c8e07364b6605832c41dc133d70355d719815"
+    },
+    {
+      "path": ".cache/guardian-quota-view-lifetime-20261023-r1/delivery.json",
+      "bytes": 693,
+      "sha256": "3782aafe93430f9b9758f7bb8866441f0b3e4273b2e5dc364c959d22fae8c332"
+    },
+    {
+      "path": ".cache/guardian-quota-view-lifetime-20261023-r1/pins.json",
+      "bytes": 2029,
+      "sha256": "cdd68ef44ac7483fc4bb3a1bc6295772f58244b272eb039779bf4c05b0ae08a3"
+    },
+    {
+      "path": ".cache/guardian-quota-view-lifetime-20261023-r1/review.md",
+      "bytes": 1492,
+      "sha256": "31df177200de5eba805211268a387c4b0bbf3d044afb7289a0fb0a9bc7165c4b"
+    },
+    {
+      "path": ".cache/guardian-quota-view-lifetime-20261023-r1/view-lifetime.patch",
+      "bytes": 1179,
+      "sha256": "e45c69291e00738dbe18b9373dcc08ffd57f6b00701e88e71812aaaa78044d6d"
+    },
+    {
+      "path": ".cache/guardian-quota-workflow-audit-20261023-r1/delivery-pins.json",
+      "bytes": 494,
+      "sha256": "cd944c5927609b073d356d8ca008868b00c793301674d529d33691a89ad8638c"
+    },
+    {
+      "path": ".cache/guardian-quota-workflow-audit-20261023-r1/input-pins.json",
+      "bytes": 2655,
+      "sha256": "54e01bf754b75f691bd5d5b5fb490c6ef7dddab2568784882018b5c92b3a988f"
+    },
+    {
+      "path": ".cache/guardian-quota-workflow-audit-20261023-r1/review.json",
+      "bytes": 1122,
+      "sha256": "2f2c209a3db916ddb548d0a1ec14173aa16a0669875a4b39257090332cce5060"
+    },
+    {
+      "path": ".cache/guardian-quota-workflow-audit-20261023-r1/review.md",
+      "bytes": 14219,
+      "sha256": "faf15f506a448f92718108df92d803f22052e2bd16ba47709116a19fc7e4dbe7"
+    },
+    {
+      "path": "apps/guardian/lib/core/api.dart",
+      "bytes": 22640,
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641"
+    },
+    {
+      "path": "apps/guardian/lib/core/session.dart",
+      "bytes": 14334,
+      "sha256": "2c0c354df653359c24619fc1be3162030ae503127bbd3dd1a6ec2b96fce2a864"
+    },
+    {
+      "path": "apps/guardian/lib/pages/device_subflow_scope.dart",
+      "bytes": 1512,
+      "sha256": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e"
+    },
+    {
+      "path": "apps/guardian/lib/pages/quota_page.dart",
+      "bytes": 13956,
+      "sha256": "158c68288b889d35229ee6b2c4212c328e531cb3efc2eed4e0c6c6a0860e7801"
+    },
+    {
+      "path": "apps/guardian/lib/pages/quota_plan_editor.dart",
+      "bytes": 19568,
+      "sha256": "d076f83498ebbb540da28e5b1e4e64f0a009c17e9521624a87945e58a79e8be5"
+    },
+    {
+      "path": "apps/guardian/lib/pages/quota_plans_page.dart",
+      "bytes": 12090,
+      "sha256": "3635e1a03eab26f663c4dc2d404abd61a84b6f546e2754f5a8450e20ef635d6a"
+    },
+    {
+      "path": "apps/guardian/lib/ui/design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    },
+    {
+      "path": "apps/guardian/lib/ui/dialog_access.dart",
+      "bytes": 2748,
+      "sha256": "8fe7c3d9ee1b7a038dc08939ea5cd40572a411ced63a01ba6eb12a88e50145d5"
+    },
+    {
+      "path": "apps/guardian/lib/ui/owned_dialog_route.dart",
+      "bytes": 1419,
+      "sha256": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946"
+    },
+    {
+      "path": "apps/guardian/lib/ui/quota_balance.dart",
+      "bytes": 2746,
+      "sha256": "82464b0b802a10d46784a899351f9e5e29669a4ae28c75c671ea326084acfb94"
+    },
+    {
+      "path": "apps/guardian/lib/ui/resource_page.dart",
+      "bytes": 18380,
+      "sha256": "692b1f4c4e9eefbef6fb80a7abeb7ced7e2c505b85fb01e8b032469cbc7b8c5e"
+    },
+    {
+      "path": "apps/guardian/test/quota_plan_editor_test.dart",
+      "bytes": 4224,
+      "sha256": "b1bde96e61d10d9bbee17c1560052ae51f7f98b12d49101c1d4ceb5925255a64"
+    }
+  ],
+  "deliveries": [
+    {
+      "path": ".cache/guardian-quota-view-lifetime-20261023-r1/delivery.json",
+      "bytes": 693,
+      "sha256": "3782aafe93430f9b9758f7bb8866441f0b3e4273b2e5dc364c959d22fae8c332"
+    },
+    {
+      "path": ".cache/guardian-quota-resource-interaction-20261023-r1/delivery.json",
+      "bytes": 848,
+      "sha256": "169ebe39524cc277ae54c8dc63edd24aae83ca1e225044d9ae2e731e7e9e4be4"
+    },
+    {
+      "path": ".cache/guardian-quota-page-scope-20261023-r3/delivery.json",
+      "bytes": 1148,
+      "sha256": "c9723ddae98b3739c2f172fd5ce374de6e97f6c35fa33b1da0af8827e692b177"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-scope-20261023-r2/delivery-pins.json",
+      "bytes": 831,
+      "sha256": "0e8eb303c4ff5091b9aab11e9714768ecc9e59e986b5072c5bfd68762ea38a25"
+    },
+    {
+      "path": ".cache/guardian-quota-editor-ownership-20261023-r2/delivery-pins.json",
+      "bytes": 986,
+      "sha256": "9a0ed0942e588b17c0fd37b7c53365d8f75dd02478922a1503918680c294c975"
+    },
+    {
+      "path": ".cache/guardian-quota-contract-review-20261023-r1/delivery-pins.json",
+      "bytes": 473,
+      "sha256": "54d56f1a427556c0429aba6369e6e34543d1053c5bb64615074b35e8345524e4"
+    },
+    {
+      "path": ".cache/guardian-quota-workflow-audit-20261023-r1/delivery-pins.json",
+      "bytes": 494,
+      "sha256": "cd944c5927609b073d356d8ca008868b00c793301674d529d33691a89ad8638c"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-independent-20261023-r1/delivery-pins.json",
+      "bytes": 495,
+      "sha256": "8ed988893ada258565d4e00d0200b13777374500c87793c5265b82fbd9a537b8"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-independent-20261023-r2/delivery-pins.json",
+      "bytes": 632,
+      "sha256": "9b0fe3eb4f6c91a92e1c75ebf1084ba0d5a626d5f2d844a5b206212100011e93"
+    },
+    {
+      "path": ".cache/guardian-quota-resource-independent-20261023-r1/delivery-pins.json",
+      "bytes": 489,
+      "sha256": "58f43d1fa7217348522365322bf4e0d563337a2da3c4d736ceced41324650d63"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r1/delivery-pins.json",
+      "bytes": 499,
+      "sha256": "a45b6c3f17489b7027fdcc591d3c7635d5901ce86dbcc02597c71c134f2df40c"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r2/delivery-pins.json",
+      "bytes": 498,
+      "sha256": "eca7fbaffa3e107c6ed525219d063c34bf83a34a208a0487c95be7fd39a0b365"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r3/delivery-pins.json",
+      "bytes": 498,
+      "sha256": "33992edb8c728e521cf731fdf550f101ff5d863d3e10ab9b7b2e8ea5014be6f9"
+    },
+    {
+      "path": ".cache/guardian-action-ownership-post-commit-20261023-r1/delivery-pins.json",
+      "bytes": 649,
+      "sha256": "b36e6011a19ab8346899959c2c7e1ae34e60be13063fcad5d10d755b27deba3b"
+    },
+    {
+      "path": ".cache/guardian-quota-editor-independent-20261023-r1/delivery-pins.json",
+      "bytes": 646,
+      "sha256": "6a03600baa571c4af28a3f2c49465b70dc3745515f0c0f9534441184c24ac133"
+    },
+    {
+      "path": ".cache/guardian-quota-joint-contract-20261023-r2/delivery.json",
+      "bytes": 474,
+      "sha256": "b6ff27561afc9710876732a01d3cf0b1ec84b2c9a1b58e551f4e63b12b97e6c4"
+    }
+  ],
+  "patches": [
+    {
+      "path": ".cache/guardian-quota-view-lifetime-20261023-r1/view-lifetime.patch",
+      "bytes": 1179,
+      "sha256": "e45c69291e00738dbe18b9373dcc08ffd57f6b00701e88e71812aaaa78044d6d"
+    },
+    {
+      "path": ".cache/guardian-quota-resource-interaction-20261023-r1/resource-interaction.patch",
+      "bytes": 3087,
+      "sha256": "f49aceff6b35d38547d2a5eeacf5ddfa823b464ef666d1959e6ed2c33d8c098c"
+    },
+    {
+      "path": ".cache/guardian-quota-page-scope-20261023-r3/quota-page-scope.patch",
+      "bytes": 32108,
+      "sha256": "b92479c6da26c072e786016d70a63cbe87a690b7fc7a7bd029747800212eec37"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-scope-20261023-r2/quota-plans-scope.patch",
+      "bytes": 24570,
+      "sha256": "5275a4b6e4a4549a564a3dbce97cffd0da6fd7d8a2a74bcaee9c8a82d791ea6f"
+    },
+    {
+      "path": ".cache/guardian-quota-editor-ownership-20261023-r2/quota-editor-ownership.patch",
+      "bytes": 26235,
+      "sha256": "53e00e59f5c5999b0ceb2e284f242144d47fbccfa61d063ee98be80a8bd047a5"
+    }
+  ],
+  "archive": [
+    {
+      "path": ".cache/guardian-quota-view-lifetime-20261023-r1/delivery.json",
+      "bytes": 693,
+      "sha256": "3782aafe93430f9b9758f7bb8866441f0b3e4273b2e5dc364c959d22fae8c332",
+      "archivePath": "authors/lifetime/delivery.json"
+    },
+    {
+      "path": ".cache/guardian-quota-view-lifetime-20261023-r1/pins.json",
+      "bytes": 2029,
+      "sha256": "cdd68ef44ac7483fc4bb3a1bc6295772f58244b272eb039779bf4c05b0ae08a3",
+      "archivePath": "authors/lifetime/pins.json"
+    },
+    {
+      "path": ".cache/guardian-quota-view-lifetime-20261023-r1/review.md",
+      "bytes": 1492,
+      "sha256": "31df177200de5eba805211268a387c4b0bbf3d044afb7289a0fb0a9bc7165c4b",
+      "archivePath": "authors/lifetime/review.md"
+    },
+    {
+      "path": ".cache/guardian-quota-view-lifetime-20261023-r1/view-lifetime.patch",
+      "bytes": 1179,
+      "sha256": "e45c69291e00738dbe18b9373dcc08ffd57f6b00701e88e71812aaaa78044d6d",
+      "archivePath": "authors/lifetime/view-lifetime.patch"
+    },
+    {
+      "path": ".cache/guardian-quota-resource-interaction-20261023-r1/delivery.json",
+      "bytes": 848,
+      "sha256": "169ebe39524cc277ae54c8dc63edd24aae83ca1e225044d9ae2e731e7e9e4be4",
+      "archivePath": "authors/resource/delivery.json"
+    },
+    {
+      "path": ".cache/guardian-quota-resource-interaction-20261023-r1/pins.json",
+      "bytes": 2331,
+      "sha256": "19cc9a22c9d92aba5a8b94b8591d599aa5ec88fff13b1712d91b68fd8aa3fdf2",
+      "archivePath": "authors/resource/pins.json"
+    },
+    {
+      "path": ".cache/guardian-quota-resource-interaction-20261023-r1/resource-interaction.patch",
+      "bytes": 3087,
+      "sha256": "f49aceff6b35d38547d2a5eeacf5ddfa823b464ef666d1959e6ed2c33d8c098c",
+      "archivePath": "authors/resource/resource-interaction.patch"
+    },
+    {
+      "path": ".cache/guardian-quota-resource-interaction-20261023-r1/review.md",
+      "bytes": 1755,
+      "sha256": "01960786c232c5195e3c68df09c1ca4b8b480aace74b6bc52ac1309e40dc60d0",
+      "archivePath": "authors/resource/review.md"
+    },
+    {
+      "path": ".cache/guardian-quota-page-scope-20261023-r3/delivery.json",
+      "bytes": 1148,
+      "sha256": "c9723ddae98b3739c2f172fd5ce374de6e97f6c35fa33b1da0af8827e692b177",
+      "archivePath": "authors/page-r3/delivery.json"
+    },
+    {
+      "path": ".cache/guardian-quota-page-scope-20261023-r3/pins.json",
+      "bytes": 3158,
+      "sha256": "0b087bb9892c8d3c181fc5407d247ab1baf1cd51eaf3056ad5726e4b4d8a7b32",
+      "archivePath": "authors/page-r3/pins.json"
+    },
+    {
+      "path": ".cache/guardian-quota-page-scope-20261023-r3/quota-page-scope.patch",
+      "bytes": 32108,
+      "sha256": "b92479c6da26c072e786016d70a63cbe87a690b7fc7a7bd029747800212eec37",
+      "archivePath": "authors/page-r3/quota-page-scope.patch"
+    },
+    {
+      "path": ".cache/guardian-quota-page-scope-20261023-r3/review.md",
+      "bytes": 5075,
+      "sha256": "499abdb06a7447c9cbf14e18a72dfea8085685fe8bf1398e9b51d3aedcfdbfce",
+      "archivePath": "authors/page-r3/review.md"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-scope-20261023-r2/delivery-pins.json",
+      "bytes": 831,
+      "sha256": "0e8eb303c4ff5091b9aab11e9714768ecc9e59e986b5072c5bfd68762ea38a25",
+      "archivePath": "authors/plans-r2/delivery-pins.json"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-scope-20261023-r2/pins.json",
+      "bytes": 4500,
+      "sha256": "e2bad47b4176bd515e7b133b57a3430f001b4914d07d89d2789c1ec4e5fd3126",
+      "archivePath": "authors/plans-r2/pins.json"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-scope-20261023-r2/quota-plans-scope.patch",
+      "bytes": 24570,
+      "sha256": "5275a4b6e4a4549a564a3dbce97cffd0da6fd7d8a2a74bcaee9c8a82d791ea6f",
+      "archivePath": "authors/plans-r2/quota-plans-scope.patch"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-scope-20261023-r2/review.md",
+      "bytes": 5803,
+      "sha256": "f1239cba3a6b31d716e971ab03abf2da1dcdba6545594a1404519a2742ec546e",
+      "archivePath": "authors/plans-r2/review.md"
+    },
+    {
+      "path": ".cache/guardian-quota-editor-ownership-20261023-r2/delivery-pins.json",
+      "bytes": 986,
+      "sha256": "9a0ed0942e588b17c0fd37b7c53365d8f75dd02478922a1503918680c294c975",
+      "archivePath": "authors/editor-r2/delivery-pins.json"
+    },
+    {
+      "path": ".cache/guardian-quota-editor-ownership-20261023-r2/pins.json",
+      "bytes": 4103,
+      "sha256": "cababbc6fa0ce461ed0795b56beca871214c0767faebec1ff7239d98418d4e07",
+      "archivePath": "authors/editor-r2/pins.json"
+    },
+    {
+      "path": ".cache/guardian-quota-editor-ownership-20261023-r2/quota-editor-ownership.patch",
+      "bytes": 26235,
+      "sha256": "53e00e59f5c5999b0ceb2e284f242144d47fbccfa61d063ee98be80a8bd047a5",
+      "archivePath": "authors/editor-r2/quota-editor-ownership.patch"
+    },
+    {
+      "path": ".cache/guardian-quota-editor-ownership-20261023-r2/review.md",
+      "bytes": 8683,
+      "sha256": "e3d91c643bf5f87dd8ac812f72178ec53ad9e31d31f04039bd522ed4cab926f4",
+      "archivePath": "authors/editor-r2/review.md"
+    },
+    {
+      "path": ".cache/guardian-quota-contract-review-20261023-r1/delivery-pins.json",
+      "bytes": 473,
+      "sha256": "54d56f1a427556c0429aba6369e6e34543d1053c5bb64615074b35e8345524e4",
+      "archivePath": "reviews/shared-contract/delivery-pins.json"
+    },
+    {
+      "path": ".cache/guardian-quota-contract-review-20261023-r1/review.json",
+      "bytes": 3327,
+      "sha256": "f655b13477aa7d38b0cc142c4663b503b04ad1ea2eeaad88af4eff4b23f9c9de",
+      "archivePath": "reviews/shared-contract/review.json"
+    },
+    {
+      "path": ".cache/guardian-quota-contract-review-20261023-r1/review.md",
+      "bytes": 6583,
+      "sha256": "1fea1dc47e6eed79980cf3011b3b219820f487a311fb30d6c2d81c011a8f506a",
+      "archivePath": "reviews/shared-contract/review.md"
+    },
+    {
+      "path": ".cache/guardian-quota-workflow-audit-20261023-r1/delivery-pins.json",
+      "bytes": 494,
+      "sha256": "cd944c5927609b073d356d8ca008868b00c793301674d529d33691a89ad8638c",
+      "archivePath": "reviews/original-audit/delivery-pins.json"
+    },
+    {
+      "path": ".cache/guardian-quota-workflow-audit-20261023-r1/input-pins.json",
+      "bytes": 2655,
+      "sha256": "54e01bf754b75f691bd5d5b5fb490c6ef7dddab2568784882018b5c92b3a988f",
+      "archivePath": "reviews/original-audit/input-pins.json"
+    },
+    {
+      "path": ".cache/guardian-quota-workflow-audit-20261023-r1/review.json",
+      "bytes": 1122,
+      "sha256": "2f2c209a3db916ddb548d0a1ec14173aa16a0669875a4b39257090332cce5060",
+      "archivePath": "reviews/original-audit/review.json"
+    },
+    {
+      "path": ".cache/guardian-quota-workflow-audit-20261023-r1/review.md",
+      "bytes": 14219,
+      "sha256": "faf15f506a448f92718108df92d803f22052e2bd16ba47709116a19fc7e4dbe7",
+      "archivePath": "reviews/original-audit/review.md"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-independent-20261023-r1/delivery-pins.json",
+      "bytes": 495,
+      "sha256": "8ed988893ada258565d4e00d0200b13777374500c87793c5265b82fbd9a537b8",
+      "archivePath": "reviews/plans-r1/delivery-pins.json"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-independent-20261023-r1/review.json",
+      "bytes": 5185,
+      "sha256": "7b9280089e6467c44a7147577187d360ba7c0e6c4f311f55cf77de8699b5d053",
+      "archivePath": "reviews/plans-r1/review.json"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-independent-20261023-r1/review.md",
+      "bytes": 5812,
+      "sha256": "070f1f927c93d2b072ff83b96fa853ad232822d86aa6282000f276e0c3104d47",
+      "archivePath": "reviews/plans-r1/review.md"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-independent-20261023-r2/delivery-pins.json",
+      "bytes": 632,
+      "sha256": "9b0fe3eb4f6c91a92e1c75ebf1084ba0d5a626d5f2d844a5b206212100011e93",
+      "archivePath": "reviews/plans-r2/delivery-pins.json"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-independent-20261023-r2/review.json",
+      "bytes": 2063,
+      "sha256": "1e0206a535812a3f1938c2fc0232f94d27e362a6984be128a10b97a65e7447f1",
+      "archivePath": "reviews/plans-r2/review.json"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-independent-20261023-r2/review.md",
+      "bytes": 2405,
+      "sha256": "2e500df88e346ec9858b8027b850a904d04738603a20e3670bb238556d417c89",
+      "archivePath": "reviews/plans-r2/review.md"
+    },
+    {
+      "path": ".cache/guardian-quota-resource-independent-20261023-r1/delivery-pins.json",
+      "bytes": 489,
+      "sha256": "58f43d1fa7217348522365322bf4e0d563337a2da3c4d736ceced41324650d63",
+      "archivePath": "reviews/resource/delivery-pins.json"
+    },
+    {
+      "path": ".cache/guardian-quota-resource-independent-20261023-r1/review.json",
+      "bytes": 3765,
+      "sha256": "8424184f722f128fd4558c0a4dc675f6b8397d9a8290071facc60c580fca1636",
+      "archivePath": "reviews/resource/review.json"
+    },
+    {
+      "path": ".cache/guardian-quota-resource-independent-20261023-r1/review.md",
+      "bytes": 3749,
+      "sha256": "9591c468c77daf5574816fa723bece04141c199d30cda6951c9c605aeec9c5ce",
+      "archivePath": "reviews/resource/review.md"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r1/delivery-pins.json",
+      "bytes": 499,
+      "sha256": "a45b6c3f17489b7027fdcc591d3c7635d5901ce86dbcc02597c71c134f2df40c",
+      "archivePath": "reviews/page-r1/delivery-pins.json"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r1/input-pins.json",
+      "bytes": 4115,
+      "sha256": "198e9c9d561479a7e20b445d7dde1cf08bdeed1c4862ad5256d63d4d4f837e5b",
+      "archivePath": "reviews/page-r1/input-pins.json"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r1/review.json",
+      "bytes": 592,
+      "sha256": "e22bd3822b8be39afe88fdf2c0a801df5485c0d2fef619a839078b5b1388aaf7",
+      "archivePath": "reviews/page-r1/review.json"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r1/review.md",
+      "bytes": 11421,
+      "sha256": "e55a6587762be622fb310dd6bb8895704159ff5b6f906c947fc58bf68cee65a2",
+      "archivePath": "reviews/page-r1/review.md"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r2/delivery-pins.json",
+      "bytes": 498,
+      "sha256": "eca7fbaffa3e107c6ed525219d063c34bf83a34a208a0487c95be7fd39a0b365",
+      "archivePath": "reviews/page-r2/delivery-pins.json"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r2/input-pins.json",
+      "bytes": 4727,
+      "sha256": "c65585e9597f6daf1b0275187b3fdb12fbcb7b63a0dc90c08317d3c3f2ee9594",
+      "archivePath": "reviews/page-r2/input-pins.json"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r2/review.json",
+      "bytes": 531,
+      "sha256": "4580966f1f4c42471201595d5221f6cd9be144eada539d2d38195783b2780d7e",
+      "archivePath": "reviews/page-r2/review.json"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r2/review.md",
+      "bytes": 7753,
+      "sha256": "011e9a52a108db3eb96eb0471a52647933b0d359c3a44e9d5907a7b396f7e979",
+      "archivePath": "reviews/page-r2/review.md"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r3/delivery-pins.json",
+      "bytes": 498,
+      "sha256": "33992edb8c728e521cf731fdf550f101ff5d863d3e10ab9b7b2e8ea5014be6f9",
+      "archivePath": "reviews/page-r3/delivery-pins.json"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r3/input-pins.json",
+      "bytes": 4338,
+      "sha256": "53185ebbe329e9a717a1741d84b27e4d42331250ee814fe19f5be3823fdd174c",
+      "archivePath": "reviews/page-r3/input-pins.json"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r3/review.json",
+      "bytes": 520,
+      "sha256": "2de5ed8b085e21f2e5c08960f861a91ab32a16e34a958144176301f6faf7fb04",
+      "archivePath": "reviews/page-r3/review.json"
+    },
+    {
+      "path": ".cache/guardian-quota-page-independent-20261023-r3/review.md",
+      "bytes": 7189,
+      "sha256": "2147f6272dc2dfe25ec003effa1a92f372f69fa1d196e23548a658391f9c1bd2",
+      "archivePath": "reviews/page-r3/review.md"
+    },
+    {
+      "path": ".cache/guardian-action-ownership-post-commit-20261023-r1/delivery-pins.json",
+      "bytes": 649,
+      "sha256": "b36e6011a19ab8346899959c2c7e1ae34e60be13063fcad5d10d755b27deba3b",
+      "archivePath": "reviews/previous-phase-commit/delivery-pins.json"
+    },
+    {
+      "path": ".cache/guardian-action-ownership-post-commit-20261023-r1/readback.json",
+      "bytes": 2401,
+      "sha256": "6835e50079886607a3bd4a7460ffd7ba2ef66d996bc3f825a540e46a8a92956c",
+      "archivePath": "reviews/previous-phase-commit/readback.json"
+    },
+    {
+      "path": ".cache/guardian-action-ownership-post-commit-20261023-r1/readback.py",
+      "bytes": 10280,
+      "sha256": "3a4a119fa50382213b61fa9569fe0f34e5a0e33f3486021b2268effa89f84bd0",
+      "archivePath": "reviews/previous-phase-commit/readback.py"
+    },
+    {
+      "path": ".cache/guardian-action-ownership-post-commit-20261023-r1/review.md",
+      "bytes": 2251,
+      "sha256": "df60ed2265bf604414fe6e4c633db4e841dbc933e369cee6e1afe8e5aeb684ce",
+      "archivePath": "reviews/previous-phase-commit/review.md"
+    },
+    {
+      "path": ".cache/guardian-quota-editor-independent-20261023-r1/delivery-pins.json",
+      "bytes": 646,
+      "sha256": "6a03600baa571c4af28a3f2c49465b70dc3745515f0c0f9534441184c24ac133",
+      "archivePath": "reviews/editor-r2/delivery-pins.json"
+    },
+    {
+      "path": ".cache/guardian-quota-editor-independent-20261023-r1/review.json",
+      "bytes": 3228,
+      "sha256": "356b10d0ef8bec7907fcbfaea267876f26cb65945d7d05599b11369aa7bfd5ff",
+      "archivePath": "reviews/editor-r2/review.json"
+    },
+    {
+      "path": ".cache/guardian-quota-editor-independent-20261023-r1/review.md",
+      "bytes": 5594,
+      "sha256": "1f2a758ed09d30ccf3dead29864bd769548e0c1c8ec1c3abbba78de3b60b7835",
+      "archivePath": "reviews/editor-r2/review.md"
+    },
+    {
+      "path": ".cache/guardian-quota-joint-contract-20261023-r2/delivery.json",
+      "bytes": 474,
+      "sha256": "b6ff27561afc9710876732a01d3cf0b1ec84b2c9a1b58e551f4e63b12b97e6c4",
+      "archivePath": "reviews/final-joint-contract/delivery.json"
+    },
+    {
+      "path": ".cache/guardian-quota-joint-contract-20261023-r2/pins.json",
+      "bytes": 40046,
+      "sha256": "33aff91f3f9633fc4adeb72493f25a191295d3c4160279e485dd956c67b50b71",
+      "archivePath": "reviews/final-joint-contract/pins.json"
+    },
+    {
+      "path": ".cache/guardian-quota-joint-contract-20261023-r2/review.md",
+      "bytes": 6563,
+      "sha256": "7d03373394cb1636c7a47f876bc13dd97a27f19ef2dc94e0887229dce492e797",
+      "archivePath": "reviews/final-joint-contract/review.md"
+    },
+    {
+      "path": ".cache/apply-guardian-quota-journeys-20261023.py",
+      "bytes": 8870,
+      "sha256": "fc9836cf52efa557169ab8b9150dd924ceffbe4044a2eff8f8b8c5a3045ea48f",
+      "archivePath": "integration/apply-reviewed-phase.py"
+    }
+  ],
+  "currentAuthorFolders": [
+    "guardian-quota-view-lifetime-20261023-r1",
+    "guardian-quota-resource-interaction-20261023-r1",
+    "guardian-quota-page-scope-20261023-r3",
+    "guardian-quota-plans-scope-20261023-r2",
+    "guardian-quota-editor-ownership-20261023-r2"
+  ],
+  "rootReadFinalReports": true,
+  "testsRun": false,
+  "deployed": false,
+  "pushed": false
+}

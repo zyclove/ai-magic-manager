@@ -1,0 +1,14 @@
+{
+  "conclusion": "STATIC_NO_BLOCKER",
+  "sourceCommit": "bb93c0b0bacfea622e50828e635aa61d738f342b",
+  "candidateAfterSha256": "df01196e5c457562481df52aed2585597fc3422a6c8821d166565e3cae243063",
+  "delta": "exactly four route UI listener expressions use local access.changes",
+  "blockers": [],
+  "cancelKeepsDetails": true,
+  "acceptedCoveredSuccessRetained": true,
+  "r1r2Preserved": true,
+  "scenarioStatus": "UNRUN",
+  "rendering": "NOT_OBSERVED",
+  "otherSiblingsAcceptedHere": false,
+  "runtimePassClaim": false
+}

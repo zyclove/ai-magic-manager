@@ -1,0 +1,48 @@
+{
+  "status": "STATIC_NO_BLOCKER_PLANS_R2_PENDING_EXACT_SIBLING_INTEGRATION_ALL_UNRUN",
+  "candidate": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-quota-plans-scope-20261023-r2",
+  "baselineHead": "bb93c0b0bacfea622e50828e635aa61d738f342b",
+  "baselineRawGitBlob": "52557a0205392eec97cc4d1e9f104abc9dd735a4",
+  "exactMemberCount": 6,
+  "deliveryRowsMatched": 5,
+  "metadataRowsMatched": 4,
+  "baselineDependenciesMatched": 8,
+  "helperMatched": true,
+  "historicalR1PinsMatched": 3,
+  "fullPatchHunks": 3,
+  "patchReconstructsAfterByteExact": true,
+  "exactR1ToR2ExpressionChanges": 3,
+  "sourceAfter": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-quota-plans-scope-20261023-r2\\after.dart",
+    "bytes": 16151,
+    "sha256": "9abbb08efcb075ba451190ba0dcc678c5682018f18611a1eade65b1f651b5191"
+  },
+  "candidatePins": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-quota-plans-scope-20261023-r2\\pins.json",
+    "bytes": 4500,
+    "sha256": "e2bad47b4176bd515e7b133b57a3430f001b4914d07d89d2789c1ec4e5fd3126"
+  },
+  "candidateDelivery": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-quota-plans-scope-20261023-r2\\delivery-pins.json",
+    "bytes": 831,
+    "sha256": "0e8eb303c4ff5091b9aab11e9714768ecc9e59e986b5072c5bfd68762ea38a25"
+  },
+  "priorIndependentReview": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-quota-plans-independent-20261023-r1\\review.md",
+    "bytes": 5812,
+    "sha256": "070f1f927c93d2b072ff83b96fa853ad232822d86aa6282000f276e0c3104d47"
+  },
+  "siblingsRequireFinalJointIntegration": [
+    "QuotaPage r3 final",
+    "QuotaPlanEditor r2 final",
+    "ResourcePage canInteract 50ca974f0b792c77d493eaf4d17c83dbe250550ac5035ae1fbd148a5758f0360",
+    "ViewLifetime c68c7457f2cd212df0b8d34b727c8e07364b6605832c41dc133d70355d719815"
+  ],
+  "allScenarios": "UNRUN",
+  "rendered": false,
+  "compiled": false,
+  "candidateOrPredicateExecuted": false,
+  "sdkTestsAstFormatterProcessWinApiNetworkUsed": false,
+  "mainGitOrOriginalsWritten": false,
+  "executionAuthorized": false
+}

@@ -1,0 +1,79 @@
+{
+  "files": [
+    {
+      "path": ".cache/guardian-quota-followup-source-note-20261023.json",
+      "bytes": 1809,
+      "sha256": "3083d45268ef4bdab9556cf7d502ec31fd57ce9deb1154e8ba26c373e6fe367e"
+    },
+    {
+      "path": "apps/guardian/lib/pages/quota_plans_page.dart",
+      "bytes": 12090,
+      "sha256": "3635e1a03eab26f663c4dc2d404abd61a84b6f546e2754f5a8450e20ef635d6a"
+    },
+    {
+      "path": "apps/guardian/lib/pages/quota_plan_editor.dart",
+      "bytes": 19568,
+      "sha256": "d076f83498ebbb540da28e5b1e4e64f0a009c17e9521624a87945e58a79e8be5"
+    },
+    {
+      "path": "apps/guardian/lib/pages/quota_page.dart",
+      "bytes": 13956,
+      "sha256": "158c68288b889d35229ee6b2c4212c328e531cb3efc2eed4e0c6c6a0860e7801"
+    },
+    {
+      "path": "apps/guardian/lib/pages/device_subflow_scope.dart",
+      "bytes": 1512,
+      "sha256": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e"
+    },
+    {
+      "path": "apps/guardian/lib/core/session.dart",
+      "bytes": 14334,
+      "sha256": "2c0c354df653359c24619fc1be3162030ae503127bbd3dd1a6ec2b96fce2a864"
+    },
+    {
+      "path": "apps/guardian/lib/core/api.dart",
+      "bytes": 22640,
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641"
+    },
+    {
+      "path": "apps/guardian/lib/main.dart",
+      "bytes": 6828,
+      "sha256": "a1a1221bb89b86ae2d29d648594822d8991478d24c4ad2109437527322de0c1b"
+    },
+    {
+      "path": "apps/guardian/lib/ui/shell.dart",
+      "bytes": 10236,
+      "sha256": "9d810d67c38eeb78f5e6f5e4132890efcad676f7a3d57466b5a4b2f410b50ff8"
+    },
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "bytes": 87392,
+      "sha256": "e0d76e148ff4d629e96f3ba4e9abdf760136e7a1b78fe454021a71414dab28e6"
+    },
+    {
+      "path": "apps/guardian/lib/ui/resource_page.dart",
+      "bytes": 17324,
+      "sha256": "c742e801e36910b278525c29228b33b8eb7a69606b53a9d210b535db0e4c35e3"
+    },
+    {
+      "path": "apps/guardian/lib/ui/design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    },
+    {
+      "path": "apps/guardian/lib/ui/dialog_access.dart",
+      "bytes": 2748,
+      "sha256": "8fe7c3d9ee1b7a038dc08939ea5cd40572a411ced63a01ba6eb12a88e50145d5"
+    },
+    {
+      "path": "apps/guardian/lib/ui/owned_dialog_route.dart",
+      "bytes": 1419,
+      "sha256": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946"
+    },
+    {
+      "path": "apps/guardian/test/quota_plan_editor_test.dart",
+      "bytes": 4224,
+      "sha256": "b1bde96e61d10d9bbee17c1560052ae51f7f98b12d49101c1d4ceb5925255a64"
+    }
+  ]
+}

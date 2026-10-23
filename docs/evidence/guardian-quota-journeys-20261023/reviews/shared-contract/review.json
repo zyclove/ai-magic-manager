@@ -1,0 +1,76 @@
+{
+  "status": "STATIC_HELPER_NO_BLOCKER_MINIMAL_QUOTA_CONTRACT_CHECKLIST_FINAL_BINDINGS_PENDING",
+  "baselineHead": "bb93c0b0bacfea622e50828e635aa61d738f342b",
+  "inputPins": [
+    {
+      "path": ".cache/guardian-quota-view-lifetime-20261023-r1/after.dart",
+      "bytes": 1068,
+      "sha256": "c68c7457f2cd212df0b8d34b727c8e07364b6605832c41dc133d70355d719815"
+    },
+    {
+      "path": "apps/guardian/lib/ui/owned_dialog_route.dart",
+      "bytes": 1419,
+      "sha256": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946"
+    },
+    {
+      "path": "apps/guardian/lib/ui/dialog_access.dart",
+      "bytes": 2748,
+      "sha256": "8fe7c3d9ee1b7a038dc08939ea5cd40572a411ced63a01ba6eb12a88e50145d5"
+    },
+    {
+      "path": "apps/guardian/lib/ui/design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    },
+    {
+      "path": "apps/guardian/lib/ui/resource_page.dart",
+      "bytes": 18380,
+      "sha256": "692b1f4c4e9eefbef6fb80a7abeb7ced7e2c505b85fb01e8b032469cbc7b8c5e"
+    },
+    {
+      "path": "apps/guardian/lib/pages/device_subflow_scope.dart",
+      "bytes": 1512,
+      "sha256": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e"
+    },
+    {
+      "path": "apps/guardian/lib/pages/quota_page.dart",
+      "bytes": 13956,
+      "sha256": "158c68288b889d35229ee6b2c4212c328e531cb3efc2eed4e0c6c6a0860e7801"
+    },
+    {
+      "path": "apps/guardian/lib/pages/quota_plans_page.dart",
+      "bytes": 12090,
+      "sha256": "3635e1a03eab26f663c4dc2d404abd61a84b6f546e2754f5a8450e20ef635d6a"
+    },
+    {
+      "path": "apps/guardian/lib/pages/quota_plan_editor.dart",
+      "bytes": 19568,
+      "sha256": "d076f83498ebbb540da28e5b1e4e64f0a009c17e9521624a87945e58a79e8be5"
+    }
+  ],
+  "helperStaticBlockers": 0,
+  "helper": "Plain class; synchronous active=false; deferred notification A; idempotent dispose queues B after A; ensureVisualUpdate; no early disposed flag",
+  "contractAxes": [
+    "persistent owner and available ancestor",
+    "current-route interaction only",
+    "accepted-operation covered completion"
+  ],
+  "resourcePageCanInteract": "Planned optional UI-only gate, not owner/API/load or write-followup; final candidate not yet reviewed",
+  "requiredPlans": "parentCurrent/accessChanges from original parent, own lifecycle signal",
+  "optionalEditor": "hasAccess/accessChanges production supplied; legacy pure-form test defaults retained",
+  "sharedFormDialogAncestorBoundary": "Caller adds original Owned ancestor.available; helper parent gate currently only isActive",
+  "crossFileRisks": [
+    "Owner predicate must allow legitimate child cover",
+    "DeviceScope.dispose alone does not notify detached root dialogs",
+    "Stable listener inputs; no new bindings after lifetime inactive",
+    "Captured branch/parent identity must not revive through re-created lifetime",
+    "Covered accepted save finishes only its original Owned route/Future",
+    "Original key/version/pending payload and retry must remain exact"
+  ],
+  "finalPageEditorResourceCandidateAccepted": false,
+  "allScenarios": "UNRUN",
+  "rendered": false,
+  "executionApproved": false,
+  "sdkAstTestsFormatterCandidatePredicatesProcessInspectionWinApiNetworkInvoked": false,
+  "mainGitTestsOrOriginalArtifactsWritten": false
+}

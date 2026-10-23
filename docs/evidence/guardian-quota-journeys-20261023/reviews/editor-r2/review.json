@@ -1,0 +1,81 @@
+{
+  "status": "STATIC_NO_BLOCKER_EDITOR_R2_FIXED_SOURCE_ALL_UNRUN",
+  "candidate": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-quota-editor-ownership-20261023-r2",
+  "baselineHead": "bb93c0b0bacfea622e50828e635aa61d738f342b",
+  "mainRawGitBlob": "f09858e86f7c2c74b50661aa3474f71b4ed60611",
+  "memberCount": 6,
+  "deliveryRowsMatched": 5,
+  "metadataDescriptorsMatched": 5,
+  "finalDependencyPinsMatched": 6,
+  "historicalR1FilesMatched": 6,
+  "sdkSourceTextPinsMatched": 2,
+  "fullPatchHunks": 23,
+  "fullPatchByteExact": true,
+  "r1DeltaHunks": 5,
+  "r1DeltaEmbeddedPin": {
+    "bytes": 3799,
+    "sha256": "dab68c1b7b6f22a999a7c1dcf221af8fc0be9cb7c9d32be831a9fc8d3e0e1ae1"
+  },
+  "r1DeltaByteExact": true,
+  "after": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-quota-editor-ownership-20261023-r2\\after.dart",
+    "bytes": 28314,
+    "sha256": "15f1814e1294fbae7dc618d5333ee02d7ebdc6b05c7fdf626fd6e94597d24b6a"
+  },
+  "candidatePins": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-quota-editor-ownership-20261023-r2\\pins.json",
+    "bytes": 4103,
+    "sha256": "cababbc6fa0ce461ed0795b56beca871214c0767faebec1ff7239d98418d4e07"
+  },
+  "candidateDelivery": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-quota-editor-ownership-20261023-r2\\delivery-pins.json",
+    "bytes": 986,
+    "sha256": "9a0ed0942e588b17c0fd37b7c53365d8f75dd02478922a1503918680c294c975"
+  },
+  "invariants": {
+    "saveUnchangedFromR1": {
+      "bytes": 1611,
+      "sha256": "e5e22f4a511f27090afbacb3c190a6466e8a324390696966ec99b8bff0de86bd"
+    },
+    "bodyUnchangedFromMain": {
+      "bytes": 731,
+      "sha256": "f8cadb537477e6bb04915d8196384d8ec8d02c0a0aac842ac180cc90637e2151"
+    },
+    "civilDateUnchangedFromMain": {
+      "bytes": 379,
+      "sha256": "88c7d308b1373345f7c97d7371274777953d6922024909c9d0a11bab6fee9bb3"
+    },
+    "weekMapUnchanged": true,
+    "originalOverridePermittedUnchanged": true,
+    "originalOverrideUnlockUnchanged": true,
+    "ownerCalendarPrefixUnchanged": true,
+    "editorControlsTailUnchanged": true
+  },
+  "observedSiblingSources": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-quota-plans-scope-20261023-r2\\after.dart",
+      "bytes": 16151,
+      "sha256": "9abbb08efcb075ba451190ba0dcc678c5682018f18611a1eade65b1f651b5191"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-quota-resource-interaction-20261023-r1\\after.dart",
+      "bytes": 18737,
+      "sha256": "50ca974f0b792c77d493eaf4d17c83dbe250550ac5035ae1fbd148a5758f0360"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-quota-view-lifetime-20261023-r1\\after.dart",
+      "bytes": 1068,
+      "sha256": "c68c7457f2cd212df0b8d34b727c8e07364b6605832c41dc133d70355d719815"
+    }
+  ],
+  "contractLimit": "Root final Page/host and exact six-file integration remain Root responsibility; no compilation/runtime acceptance",
+  "existingPureTestsUnchanged": 5,
+  "newTests": 0,
+  "allScenarios": "UNRUN",
+  "rendered": false,
+  "compiled": false,
+  "candidateOrPredicateExecuted": false,
+  "sdkTestsAstFormatterProcessWinApiNetworkUsed": false,
+  "mainGitOriginalsOrTestsWritten": false,
+  "executionAuthorized": false
+}

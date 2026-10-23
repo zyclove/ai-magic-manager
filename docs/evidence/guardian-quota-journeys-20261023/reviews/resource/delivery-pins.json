@@ -1,0 +1,18 @@
+{
+  "status": "STATIC_NO_BLOCKER_RESOURCE_CANINTERACT_FINAL_SINGLE_FILE_ALL_UNRUN",
+  "files": [
+    {
+      "path": "review.md",
+      "bytes": 3749,
+      "sha256": "9591c468c77daf5574816fa723bece04141c199d30cda6951c9c605aeec9c5ce"
+    },
+    {
+      "path": "review.json",
+      "bytes": 3765,
+      "sha256": "8424184f722f128fd4558c0a4dc675f6b8397d9a8290071facc60c580fca1636"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "allScenarios": "UNRUN",
+  "executionApproved": false
+}

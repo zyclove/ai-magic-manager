@@ -1,0 +1,34 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+
+/// Invalidates access immediately and publishes it after the current frame.
+/// Detached dialogs can observe a page ending without rebuilding a locked tree.
+class ViewLifetime {
+  final ValueNotifier<bool> _changes = ValueNotifier<bool>(true);
+  bool _active = true, _disposeQueued = false, _disposed = false;
+
+  bool get active => _active;
+  Listenable get changes => _changes;
+
+  void invalidate() {
+    if (!_active) return;
+    _active = false;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!_disposed) _changes.value = false;
+    });
+    WidgetsBinding.instance.ensureVisualUpdate();
+  }
+
+  void dispose() {
+    if (_disposeQueued) return;
+    _disposeQueued = true;
+    invalidate();
+    // Registered after invalidation: listeners observe loss before teardown.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (_disposed) return;
+      _disposed = true;
+      _changes.dispose();
+    });
+    WidgetsBinding.instance.ensureVisualUpdate();
+  }
+}

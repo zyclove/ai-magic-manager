@@ -1,0 +1,18 @@
+{
+  "status": "SEALED_STATIC_JOINT_CONTRACT_CHECK_ALL_UNRUN",
+  "files": [
+    {
+      "path": "review.md",
+      "bytes": 6563,
+      "sha256": "7d03373394cb1636c7a47f876bc13dd97a27f19ef2dc94e0887229dce492e797"
+    },
+    {
+      "path": "pins.json",
+      "bytes": 40046,
+      "sha256": "33aff91f3f9633fc4adeb72493f25a191295d3c4160279e485dd956c67b50b71"
+    }
+  ],
+  "selfExcluded": "delivery.json",
+  "editorIndependentReviewClaimed": false,
+  "executionGrant": false
+}

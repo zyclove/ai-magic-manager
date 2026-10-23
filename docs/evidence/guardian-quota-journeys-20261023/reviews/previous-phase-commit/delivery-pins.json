@@ -1,0 +1,23 @@
+{
+  "status": "EXACT_54_POST_COMMIT_INTEGRATION_MATCH_APPLICATION_SCENARIOS_UNRUN",
+  "files": [
+    {
+      "path": "review.md",
+      "bytes": 2251,
+      "sha256": "df60ed2265bf604414fe6e4c633db4e841dbc933e369cee6e1afe8e5aeb684ce"
+    },
+    {
+      "path": "readback.json",
+      "bytes": 2401,
+      "sha256": "6835e50079886607a3bd4a7460ffd7ba2ef66d996bc3f825a540e46a8a92956c"
+    },
+    {
+      "path": "readback.py",
+      "bytes": 10280,
+      "sha256": "3a4a119fa50382213b61fa9569fe0f34e5a0e33f3486021b2268effa89f84bd0"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "allApplicationScenarios": "UNRUN",
+  "executionApproved": false
+}

@@ -1,0 +1,17 @@
+{
+  "status": "STATIC_NO_BLOCKER_PLANS_R2_PENDING_EXACT_SIBLING_INTEGRATION_ALL_UNRUN",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-quota-plans-independent-20261023-r2\\review.md",
+      "bytes": 2405,
+      "sha256": "2e500df88e346ec9858b8027b850a904d04738603a20e3670bb238556d417c89"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-quota-plans-independent-20261023-r2\\review.json",
+      "bytes": 2063,
+      "sha256": "1e0206a535812a3f1938c2fc0232f94d27e362a6984be128a10b97a65e7447f1"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "allScenarios": "UNRUN"
+}

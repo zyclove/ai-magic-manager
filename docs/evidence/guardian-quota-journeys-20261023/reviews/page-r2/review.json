@@ -1,0 +1,13 @@
+{
+  "conclusion": "STATIC_NO_BLOCKER",
+  "sourceCommit": "bb93c0b0bacfea622e50828e635aa61d738f342b",
+  "reviewType": "r2 exact delta plus full patch/metadata",
+  "candidateAfterSha256": "8d5473a890547ea6d003f687305698fa9b1a300dec297aafe3c253e781f481b8",
+  "blockers": [],
+  "adjustCancellationReturns": "same original details",
+  "coveredAcceptedSuccess": "finish captured owned detail without top-route postcheck",
+  "r1Preserved": true,
+  "scenarioStatus": "UNRUN",
+  "runtimePassClaim": false,
+  "siblingsAcceptedHere": false
+}

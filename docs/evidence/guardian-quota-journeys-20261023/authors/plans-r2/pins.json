@@ -1,0 +1,125 @@
+{
+  "status": "STATIC_CANDIDATE_UNRUN_REQUIRES_COORDINATED_INTEGRATION",
+  "sourceCommit": "bb93c0b0bacfea622e50828e635aa61d738f342b",
+  "productionPath": "apps/guardian/lib/pages/quota_plans_page.dart",
+  "productionFilesChanged": 1,
+  "testFilesChanged": 0,
+  "files": [
+    {
+      "path": "before.dart",
+      "bytes": 12090,
+      "sha256": "3635e1a03eab26f663c4dc2d404abd61a84b6f546e2754f5a8450e20ef635d6a"
+    },
+    {
+      "path": "after.dart",
+      "bytes": 16151,
+      "sha256": "9abbb08efcb075ba451190ba0dcc678c5682018f18611a1eade65b1f651b5191"
+    },
+    {
+      "path": "quota-plans-scope.patch",
+      "bytes": 24570,
+      "sha256": "5275a4b6e4a4549a564a3dbce97cffd0da6fd7d8a2a74bcaee9c8a82d791ea6f"
+    },
+    {
+      "path": "review.md",
+      "bytes": 5803,
+      "sha256": "f1239cba3a6b31d716e971ab03abf2da1dcdba6545594a1404519a2742ec546e"
+    }
+  ],
+  "baselineDependencies": [
+    {
+      "path": "apps/guardian/lib/pages/quota_plans_page.dart",
+      "bytes": 12090,
+      "sha256": "3635e1a03eab26f663c4dc2d404abd61a84b6f546e2754f5a8450e20ef635d6a"
+    },
+    {
+      "path": "apps/guardian/lib/pages/device_subflow_scope.dart",
+      "bytes": 1512,
+      "sha256": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e"
+    },
+    {
+      "path": "apps/guardian/lib/ui/dialog_access.dart",
+      "bytes": 2748,
+      "sha256": "8fe7c3d9ee1b7a038dc08939ea5cd40572a411ced63a01ba6eb12a88e50145d5"
+    },
+    {
+      "path": "apps/guardian/lib/ui/owned_dialog_route.dart",
+      "bytes": 1419,
+      "sha256": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946"
+    },
+    {
+      "path": "apps/guardian/lib/ui/resource_page.dart",
+      "bytes": 18380,
+      "sha256": "692b1f4c4e9eefbef6fb80a7abeb7ced7e2c505b85fb01e8b032469cbc7b8c5e"
+    },
+    {
+      "path": "apps/guardian/lib/ui/design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    },
+    {
+      "path": "apps/guardian/lib/pages/quota_plan_editor.dart",
+      "bytes": 19568,
+      "sha256": "d076f83498ebbb540da28e5b1e4e64f0a009c17e9521624a87945e58a79e8be5"
+    },
+    {
+      "path": "apps/guardian/lib/pages/quota_page.dart",
+      "bytes": 13956,
+      "sha256": "158c68288b889d35229ee6b2c4212c328e531cb3efc2eed4e0c6c6a0860e7801"
+    }
+  ],
+  "viewLifetimeInput": {
+    "path": ".cache/guardian-quota-view-lifetime-20261023-r1/after.dart",
+    "bytes": 1068,
+    "sha256": "c68c7457f2cd212df0b8d34b727c8e07364b6605832c41dc133d70355d719815"
+  },
+  "priorR1": [
+    {
+      "path": ".cache/guardian-quota-plans-scope-20261023-r1/after.dart",
+      "bytes": 16238,
+      "sha256": "621d3f71141ef30904fa70334f4f2f221debd9cff960798ee49e0eedba193fdd"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-scope-20261023-r1/pins.json",
+      "bytes": 3656,
+      "sha256": "0d5f6bc162e592fd7df77a4458a101e414337810773468f8ca0367c761d361cc"
+    },
+    {
+      "path": ".cache/guardian-quota-plans-scope-20261023-r1/delivery-pins.json",
+      "bytes": 827,
+      "sha256": "a1605c940da3676c4b012be5eb4d06215f54a2cd69e13f20182d3b80009802ce"
+    }
+  ],
+  "delta": "Only editorChanges/detailChanges/historyChanges change from merge([changes, access.changes]) to access.changes",
+  "pendingSiblingInterfaces": [
+    {
+      "owner": "Root",
+      "path": "apps/guardian/lib/pages/quota_page.dart",
+      "requirement": "Pass required original parentCurrent/accessChanges to the sole QuotaPlansPage call",
+      "deliveryStatus": "PENDING_SEPARATE_CANDIDATE"
+    },
+    {
+      "owner": "Editor author",
+      "path": "apps/guardian/lib/pages/quota_plan_editor.dart",
+      "requirement": "optional accessChanges/hasAccess, interaction route guard and own completion",
+      "deliveryStatus": "PENDING_SEPARATE_CANDIDATE"
+    },
+    {
+      "owner": "Root",
+      "path": "apps/guardian/lib/ui/resource_page.dart",
+      "requirement": "optional canInteract user-event guard separated from owner/read isCurrent",
+      "deliveryStatus": "PENDING_SEPARATE_CANDIDATE"
+    },
+    {
+      "owner": "Root",
+      "path": "apps/guardian/lib/ui/view_lifetime.dart",
+      "requirement": "Apply separately reviewed helper bound above",
+      "deliveryStatus": "CACHE_SOURCE_PRESENT_MAIN_APPLICATION_PENDING"
+    }
+  ],
+  "scenarioStatus": "UNRUN",
+  "mainOrGitModified": false,
+  "sdkTestsAstOrCandidateExecuted": false,
+  "authorIndependentReview": false,
+  "supersedesWithoutDeleting": ".cache/guardian-quota-plans-scope-20261023-r1"
+}

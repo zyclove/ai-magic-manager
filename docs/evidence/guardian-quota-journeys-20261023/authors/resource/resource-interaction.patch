@@ -1,0 +1,83 @@
+--- a/apps/guardian/lib/ui/resource_page.dart
++++ b/apps/guardian/lib/ui/resource_page.dart
+@@ -20,6 +20,8 @@
+   final VoidCallback? reauth;
+   /// Captures this list's owner; its page key must change with the owner scope.
+   final bool Function()? isCurrent;
++  /// Gates new user events without invalidating accepted or in-flight reads.
++  final bool Function()? canInteract;
+   const ResourcePage(
+       {super.key,
+       required this.title,
+@@ -35,7 +37,8 @@
+       this.toolbar = const [],
+       this.notice,
+       this.reauth,
+-      this.isCurrent});
++      this.isCurrent,
++      this.canInteract});
+   @override
+   State<ResourcePage> createState() => ResourcePageState();
+ }
+@@ -57,6 +60,7 @@
+   int resourceGeneration = 0;
+ 
+   bool get _currentOwner => mounted && widget.isCurrent?.call() != false;
++  bool get _canInteract => _currentOwner && widget.canInteract?.call() != false;
+   @override
+   void initState() {
+     super.initState();
+@@ -87,7 +91,7 @@
+   }
+ 
+   void clearSearch() {
+-    if (!_currentOwner) return;
++    if (!_canInteract) return;
+     search.clear();
+     setState(() => query = '');
+     searchFocus.requestFocus();
+@@ -160,7 +164,7 @@
+   }
+ 
+   Future<void> action(Future<void> Function() callback) async {
+-    if (!_currentOwner || acting || loading) return;
++    if (!_canInteract || acting || loading) return;
+     final scope = resourceGeneration;
+     final permitted = widget.isCurrent;
+     bool current() =>
+@@ -191,15 +195,16 @@
+     }
+     final owner = resourceGeneration;
+     final permitted = widget.isCurrent;
++    final interact = widget.canInteract;
+     final api = widget.api;
+     final path = widget.path;
+     final create = widget.create;
+     final onOpen = widget.onOpen;
+     final reauth = widget.reauth;
+     bool viewCurrent() =>
+-        _currentOwner && resourceGeneration == owner &&
++        _canInteract && resourceGeneration == owner &&
+         identical(widget.api, api) && widget.path == path &&
+-        permitted?.call() != false;
++        permitted?.call() != false && interact?.call() != false;
+     VoidCallback guard(VoidCallback callback) => () {
+           if (viewCurrent()) callback();
+         };
+@@ -224,7 +229,7 @@
+             (v) => v.toString().toLowerCase().contains(query.toLowerCase())))
+         .toList();
+     final narrow = MediaQuery.sizeOf(context).width < 760;
+-    final canAct = !loading && !acting;
++    final canAct = _canInteract && !loading && !acting;
+     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+       PageHeading(widget.title, widget.subtitle,
+           action: widget.create == null
+@@ -254,6 +259,7 @@
+                               key: ValueKey(resourceGeneration),
+                               controller: search,
+                               focusNode: searchFocus,
++                              enabled: _canInteract,
+                               textInputAction: TextInputAction.search,
+                               onChanged: (v) {
+                                 if (viewCurrent()) setState(() => query = v.trim());

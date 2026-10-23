@@ -1,0 +1,25 @@
+{
+  "conclusion": "STATIC_NO_BLOCKER",
+  "sourceCommit": "bb93c0b0bacfea622e50828e635aa61d738f342b",
+  "reviewed": [
+    "QuotaPage",
+    "console host key only",
+    "ViewLifetime"
+  ],
+  "notAcceptedHere": [
+    "authored QuotaPlansPage",
+    "QuotaPlanEditor candidate",
+    "ResourcePage.canInteract candidate",
+    "six-file assembled runtime"
+  ],
+  "blockers": [],
+  "scenarioStatus": "UNRUN",
+  "rendering": "NOT_OBSERVED",
+  "pageNewlines": {
+    "beforeCRLF": 303,
+    "afterLF": 380,
+    "preserved": false
+  },
+  "adjustCancellationReturns": "list",
+  "runtimePassClaim": false
+}

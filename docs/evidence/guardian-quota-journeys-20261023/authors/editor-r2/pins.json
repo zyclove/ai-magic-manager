@@ -1,0 +1,113 @@
+{
+  "status": "STATIC_AUTHOR_CANDIDATE_REQUIRES_INDEPENDENT_REVIEW_ALL_SCENARIOS_UNRUN",
+  "baselineHead": "bb93c0b0bacfea622e50828e635aa61d738f342b",
+  "productionPath": "apps/guardian/lib/pages/quota_plan_editor.dart",
+  "before": {
+    "path": ".cache/guardian-quota-editor-ownership-20261023-r2/before.dart",
+    "bytes": 19568,
+    "sha256": "d076f83498ebbb540da28e5b1e4e64f0a009c17e9521624a87945e58a79e8be5"
+  },
+  "after": {
+    "path": ".cache/guardian-quota-editor-ownership-20261023-r2/after.dart",
+    "bytes": 28314,
+    "sha256": "15f1814e1294fbae7dc618d5333ee02d7ebdc6b05c7fdf626fd6e94597d24b6a"
+  },
+  "fullPatch": {
+    "path": ".cache/guardian-quota-editor-ownership-20261023-r2/quota-editor-ownership.patch",
+    "bytes": 26235,
+    "sha256": "53e00e59f5c5999b0ceb2e284f242144d47fbccfa61d063ee98be80a8bd047a5"
+  },
+  "review": {
+    "path": ".cache/guardian-quota-editor-ownership-20261023-r2/review.md",
+    "bytes": 8683,
+    "sha256": "e3d91c643bf5f87dd8ac812f72178ec53ad9e31d31f04039bd522ed4cab926f4"
+  },
+  "r1Provenance": {
+    "after": {
+      "path": ".cache/guardian-quota-editor-ownership-20261023-r1/after.dart",
+      "bytes": 28026,
+      "sha256": "91365fe49fd623a4944c63cf24bde64d8a8dd4212a75662a7c44d307cebbe235"
+    },
+    "delivery": {
+      "path": ".cache/guardian-quota-editor-ownership-20261023-r1/delivery-pins.json",
+      "bytes": 974,
+      "sha256": "80421c3d5b4e3af59dce3738145da888a45d269be4a506d0a70e18098248f6e1"
+    },
+    "sixOriginalMembersPreserved": true
+  },
+  "r1ToR2Delta": {
+    "bytes": 3799,
+    "sha256": "dab68c1b7b6f22a999a7c1dcf221af8fc0be9cb7c9d32be831a9fc8d3e0e1ae1",
+    "embeddedInReview": true,
+    "separateFile": false
+  },
+  "mainObserved": {
+    "path": "apps/guardian/lib/pages/quota_plan_editor.dart",
+    "bytes": 19568,
+    "sha256": "d076f83498ebbb540da28e5b1e4e64f0a009c17e9521624a87945e58a79e8be5"
+  },
+  "mainRawMatchesBefore": true,
+  "dependencyPins": [
+    {
+      "path": "apps/guardian/lib/ui/dialog_access.dart",
+      "bytes": 2748,
+      "sha256": "8fe7c3d9ee1b7a038dc08939ea5cd40572a411ced63a01ba6eb12a88e50145d5"
+    },
+    {
+      "path": "apps/guardian/lib/ui/owned_dialog_route.dart",
+      "bytes": 1419,
+      "sha256": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946"
+    },
+    {
+      "path": "apps/guardian/lib/ui/design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    },
+    {
+      "path": "apps/guardian/lib/ui/quota_balance.dart",
+      "bytes": 2746,
+      "sha256": "82464b0b802a10d46784a899351f9e5e29669a4ae28c75c671ea326084acfb94"
+    },
+    {
+      "path": "apps/guardian/test/quota_plan_editor_test.dart",
+      "bytes": 4224,
+      "sha256": "b1bde96e61d10d9bbee17c1560052ae51f7f98b12d49101c1d4ceb5925255a64"
+    },
+    {
+      "path": ".cache/guardian-quota-view-lifetime-20261023-r1/after.dart",
+      "bytes": 1068,
+      "sha256": "c68c7457f2cd212df0b8d34b727c8e07364b6605832c41dc133d70355d719815"
+    }
+  ],
+  "lineAnchors": {
+    "originalPermitted": 304,
+    "localBinding": 307,
+    "combinedPermission": 309,
+    "dateUiListener": 323,
+    "dateCurrent": 314,
+    "dateResult": 350,
+    "formUiListener": 361,
+    "formPermission": 362,
+    "overrideMerge": 374,
+    "bindingDisposal": 378,
+    "resultWorkspaceCopy": 449
+  },
+  "entireSaveFunctionByteIdenticalToR1": {
+    "bytes": 1611,
+    "sha256": "e5e22f4a511f27090afbacb3c190a6466e8a324390696966ec99b8bff0de86bd"
+  },
+  "originalPermittedDefinitionByteIdenticalToR1": true,
+  "originalUnlockConditionByteIdenticalToR1": true,
+  "r1FieldsOwnerLifetimeAcceptedAndSaveOtherwiseUnchanged": true,
+  "childUiReceivesOnlyFlowOwnedChanges": true,
+  "childBindingHasAccessCallsOriginalPermittedOnly": true,
+  "flowDisposalAfterBothAwaitedRouteFutures": true,
+  "newDependenciesOrTests": false,
+  "pureEditorTestsUnchanged": 5,
+  "allScenarios": "UNRUN",
+  "rendered": false,
+  "mainGitOrExistingArtifactsWritten": false,
+  "sdkAstCandidatePredicatesTestsOrNetworkExecuted": false,
+  "independentReviewRequired": true,
+  "newExecutionGrant": false
+}

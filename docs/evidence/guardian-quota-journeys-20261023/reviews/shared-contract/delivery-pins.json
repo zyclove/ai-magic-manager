@@ -1,0 +1,17 @@
+{
+  "status": "STATIC_HELPER_NO_BLOCKER_MINIMAL_QUOTA_CONTRACT_CHECKLIST_FINAL_BINDINGS_PENDING",
+  "files": [
+    {
+      "path": "review.md",
+      "bytes": 6583,
+      "sha256": "1fea1dc47e6eed79980cf3011b3b219820f487a311fb30d6c2d81c011a8f506a"
+    },
+    {
+      "path": "review.json",
+      "bytes": 3327,
+      "sha256": "f655b13477aa7d38b0cc142c4663b503b04ad1ea2eeaad88af4eff4b23f9c9de"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "allScenarios": "UNRUN"
+}

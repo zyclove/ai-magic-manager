@@ -1,0 +1,87 @@
+{
+  "status": "STATIC_NO_BLOCKER_RESOURCE_CANINTERACT_FINAL_SINGLE_FILE_ALL_UNRUN",
+  "head": "bb93c0b0bacfea622e50828e635aa61d738f342b",
+  "beforeGitBlob": "c522ca2a9399c25c2cda6b8c99b4f3e12892bb8d",
+  "before": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-quota-resource-interaction-20261023-r1\\before.dart",
+    "bytes": 18380,
+    "sha256": "692b1f4c4e9eefbef6fb80a7abeb7ced7e2c505b85fb01e8b032469cbc7b8c5e"
+  },
+  "after": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-quota-resource-interaction-20261023-r1\\after.dart",
+    "bytes": 18737,
+    "sha256": "50ca974f0b792c77d493eaf4d17c83dbe250550ac5035ae1fbd148a5758f0360"
+  },
+  "patch": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-quota-resource-interaction-20261023-r1\\resource-interaction.patch",
+    "bytes": 3087,
+    "sha256": "f49aceff6b35d38547d2a5eeacf5ddfa823b464ef666d1959e6ed2c33d8c098c"
+  },
+  "delivery": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-quota-resource-interaction-20261023-r1\\delivery.json",
+    "bytes": 848,
+    "sha256": "169ebe39524cc277ae54c8dc63edd24aae83ca1e225044d9ae2e731e7e9e4be4"
+  },
+  "pinsMetadata": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-quota-resource-interaction-20261023-r1\\pins.json",
+    "bytes": 2331,
+    "sha256": "19cc9a22c9d92aba5a8b94b8591d599aa5ec88fff13b1712d91b68fd8aa3fdf2"
+  },
+  "exactBundleMembers": 6,
+  "deliveryPinsVerified": 5,
+  "metadataPinsVerified": 4,
+  "baselineDependencies": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\core\\api.dart",
+      "bytes": 22640,
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\core\\session.dart",
+      "bytes": 14334,
+      "sha256": "2c0c354df653359c24619fc1be3162030ae503127bbd3dd1a6ec2b96fce2a864"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\device_subflow_scope.dart",
+      "bytes": 1512,
+      "sha256": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\dialog_access.dart",
+      "bytes": 2748,
+      "sha256": "8fe7c3d9ee1b7a038dc08939ea5cd40572a411ced63a01ba6eb12a88e50145d5"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\owned_dialog_route.dart",
+      "bytes": 1419,
+      "sha256": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    }
+  ],
+  "existingTest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\resource_page_resilience_test.dart",
+    "bytes": 22170,
+    "sha256": "a003a75c83ef01e6347bfea7ee08801302267f0e97012534e455c57bbc7575f2"
+  },
+  "fullPatchHunks": 8,
+  "fullPatchByteExact": true,
+  "fullInverseTextRecoversBefore": true,
+  "loadBytesIdentical": true,
+  "actionCompletionBytesIdentical": true,
+  "callerDraftContractOnly": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-quota-plans-scope-20261023-r1\\after.dart",
+    "bytes": 16238,
+    "sha256": "621d3f71141ef30904fa70334f4f2f221debd9cff960798ee49e0eedba193fdd"
+  },
+  "hook": "Optional new interaction only; original owner and accepted completion remain separate",
+  "editorOrRootQuotaPageAccepted": false,
+  "allScenarios": "UNRUN",
+  "rendered": false,
+  "executionApproved": false,
+  "candidateAstParserSdkTestsPredicatesFormatterProcessInspectionWinApiNetworkInvoked": false,
+  "mainGitTestsOrOriginalArtifactsWritten": false
+}

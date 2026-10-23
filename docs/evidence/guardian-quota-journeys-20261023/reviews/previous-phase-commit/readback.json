@@ -1,0 +1,60 @@
+{
+  "status": "EXACT_54_POST_COMMIT_INTEGRATION_MATCH_APPLICATION_SCENARIOS_UNRUN",
+  "commit": "bb93c0b0bacfea622e50828e635aa61d738f342b",
+  "parent": "ad9f967a802e0d57dcea0e5289bf76d4e55070af",
+  "stagePins": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-action-ownership-application-20261023\\stage-pins.json",
+    "bytes": 15303,
+    "sha256": "1c4dbb9a6c756684d7f1434a31752bbc45601a6f9c12989be606bfdfd5012c37"
+  },
+  "exactCommitPathSet": 54,
+  "modified": 5,
+  "added": 49,
+  "mainBytesSha256RawGitBlobMatched": 54,
+  "indexEmpty": true,
+  "productionChanged": [
+    "apps/guardian/lib/ui/audit_view.dart",
+    "apps/guardian/lib/ui/device_management_dialog.dart",
+    "apps/guardian/lib/ui/notifications_view.dart",
+    "apps/guardian/lib/ui/resource_page.dart"
+  ],
+  "existingTestChanged": [
+    "apps/guardian/test/notification_help_scope_browser_test.dart"
+  ],
+  "testCasesAddedOrRemoved": 0,
+  "testTextEditsExactly": 3,
+  "testLineCountBeforeAfter": [
+    537,
+    537
+  ],
+  "testDeclarationLinesUnchanged": true,
+  "archiveFiles": 48,
+  "manifestDescriptors": 47,
+  "archiveCopiesByteExactlyOriginals": 46,
+  "manifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\guardian-action-ownership-20261023\\manifest.json",
+    "bytes": 13634,
+    "sha256": "5f9953e1235a27cb93b84ee69ce4ba879e34411f62a1f381fcc1a74769a1a397"
+  },
+  "applicationReceipt": {
+    "path": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\guardian-action-ownership-20261023\\application-receipt.json",
+    "bytes": 25914,
+    "sha256": "8d3ff51ac72a7031ddbfa58a16a2664d8b0d7803941e2782e56166f82f5bcbc7"
+  },
+  "sourceCandidateAfterBytesMatched": 5,
+  "sourceParentBeforeMatched": 5,
+  "trackedForeignWipOnly": {
+    "path": "docs/managed-publication-admission-plan.md",
+    "sha256": "4994781cf65a736611e648fe693d0bec9b5aef6cc4315b818a036447dff22d9d"
+  },
+  "trackedWorktreeGloballyClean": false,
+  "untrackedHistoricalEvidenceNotClaimedCleanOrAudited": true,
+  "r8SourceFreezeHistorical": true,
+  "newSourceCopyOrExecutionBundleCreated": false,
+  "allApplicationScenarios": "UNRUN",
+  "rendered": false,
+  "deployedOrPushedByThisTask": false,
+  "sdkTestsAstCandidateBusinessPredicatesProcessInspectionNetworkInvoked": false,
+  "mainGitOrOriginalArtifactsWritten": false,
+  "scope": "Integration bytes and evidence only; no repeated business review or execution qualification."
+}

@@ -1,0 +1,18 @@
+{
+  "status": "STATIC_NO_BLOCKER_PLANS_FILE_PENDING_EXACT_SIBLING_INTEGRATION_ALL_UNRUN",
+  "files": [
+    {
+      "path": "review.md",
+      "bytes": 5812,
+      "sha256": "070f1f927c93d2b072ff83b96fa853ad232822d86aa6282000f276e0c3104d47"
+    },
+    {
+      "path": "review.json",
+      "bytes": 5185,
+      "sha256": "7b9280089e6467c44a7147577187d360ba7c0e6c4f311f55cf77de8699b5d053"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "allScenarios": "UNRUN",
+  "executionApproved": false
+}

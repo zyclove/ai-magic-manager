@@ -1,0 +1,30 @@
+{
+  "status": "STATIC_CANDIDATE_UNRUN_REQUIRES_COORDINATED_INTEGRATION",
+  "files": [
+    {
+      "path": "before.dart",
+      "bytes": 12090,
+      "sha256": "3635e1a03eab26f663c4dc2d404abd61a84b6f546e2754f5a8450e20ef635d6a"
+    },
+    {
+      "path": "after.dart",
+      "bytes": 16151,
+      "sha256": "9abbb08efcb075ba451190ba0dcc678c5682018f18611a1eade65b1f651b5191"
+    },
+    {
+      "path": "quota-plans-scope.patch",
+      "bytes": 24570,
+      "sha256": "5275a4b6e4a4549a564a3dbce97cffd0da6fd7d8a2a74bcaee9c8a82d791ea6f"
+    },
+    {
+      "path": "review.md",
+      "bytes": 5803,
+      "sha256": "f1239cba3a6b31d716e971ab03abf2da1dcdba6545594a1404519a2742ec546e"
+    },
+    {
+      "path": "pins.json",
+      "bytes": 4500,
+      "sha256": "e2bad47b4176bd515e7b133b57a3430f001b4914d07d89d2789c1ec4e5fd3126"
+    }
+  ]
+}
