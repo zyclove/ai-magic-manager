@@ -354,17 +354,8 @@ class ConsolePages extends StatelessWidget {
             ],
             create: s.canWrite ? actions.application : null,
             createLabel: '登记应用',
-            open: (r) => actionDetails(context, r['displayName'], {
-                  '包名': r['packageName'],
-                  '平台': label(r['platform']),
-                  '资料空间': label(r['profile']),
-                  '签名摘要': (r['signingDigests'] as List).join('\n'),
-                  '身份状态': label(r['evidenceStatus']),
-                  '应用编号': r['id']
-                }, actions: [
-                  DetailAction(
-                      '查看与设置分类', (_) => actions.applicationClassification(r))
-                ]),
+            open: (r) =>
+                actions.applicationDetails(r, isCurrent: resourceCurrent),
             notice: '目录中的身份由管理员登记，不代表应用已经安装或完成安全认证。');
       case 'schedules':
         return resource(
@@ -715,27 +706,71 @@ class ConsoleActions {
     });
   }
 
-  Future<void> applicationClassification(Json application) async {
-    final capturedRole = s.role;
-    final repository = ApplicationClassificationRepository(
-        api: s.api,
-        root: root,
-        applicationId: application['id'],
-        identity: ApplicationClassificationIdentity(application['platform'],
-            application['profile'], application['packageName']),
-        current: () =>
-            s.authenticated &&
-            s.tenant != null &&
-            s.root == root &&
-            s.role == capturedRole);
-    await showDialog<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => ApplicationClassificationDialog(
-            repository: repository,
-            applicationName: application['displayName'],
-            canEdit: s.canWrite,
-            accessChanges: s));
+  Future<void> applicationDetails(Json application,
+      {required bool Function() isCurrent}) async {
+    if (!context.mounted || !isCurrent()) return;
+    final scope = DeviceSubflowScope(s,
+        permitted: () => context.mounted && isCurrent() &&
+            s.tenant != null && s.root == root && s.canOpen('applications'));
+    final access = DialogAccessBinding(context,
+        accessChanges: scope, hasAccess: () => scope.current);
+    try {
+      if (!access.permitted()) return;
+      await actionDetails(context, application['displayName'], {
+        '包名': application['packageName'],
+        '平台': label(application['platform']),
+        '资料空间': label(application['profile']),
+        '签名摘要': (application['signingDigests'] as List).join('\n'),
+        '身份状态': label(application['evidenceStatus']),
+        '应用编号': application['id']
+      }, accessChanges: access.changes, hasAccess: access.permitted, actions: [
+        DetailAction('查看与设置分类', (owner) async {
+          final finish = captureDialogCompletion(owner);
+          final saved = await applicationClassification(application,
+              parent: owner, accessChanges: access.changes,
+              hasAccess: access.permitted);
+          if (saved && access.permitted()) finish();
+        }, closeOnSuccess: false)
+      ]);
+    } finally {
+      access.dispose();
+      scope.dispose();
+    }
+  }
+
+  Future<bool> applicationClassification(Json application,
+      {BuildContext? parent, Listenable? accessChanges,
+      bool Function()? hasAccess}) async {
+    final owner = parent ?? context;
+    if (!context.mounted || !owner.mounted) return false;
+    final access = DialogAccessBinding(owner,
+        accessChanges: accessChanges, hasAccess: hasAccess);
+    final scope = DeviceSubflowScope(s,
+        permitted: () => context.mounted && access.permitted() &&
+            s.tenant != null && s.root == root && s.canOpen('applications'));
+    try {
+      if (!scope.current) return false;
+      final repository = ApplicationClassificationRepository(
+          api: scope.api,
+          root: root,
+          applicationId: application['id'],
+          identity: ApplicationClassificationIdentity(application['platform'],
+              application['profile'], application['packageName']),
+          current: () => scope.current);
+      final route = OwnedDialogRoute<bool>(
+          context: owner,
+          barrierDismissible: false,
+          builder: (_) => ApplicationClassificationDialog(
+              repository: repository,
+              applicationName: application['displayName'],
+              canEdit: s.canWrite,
+              accessChanges: Listenable.merge([scope, access.changes])));
+      final saved = await presentOwnedDialog(owner, route);
+      return saved == true && scope.current;
+    } finally {
+      scope.dispose();
+      access.dispose();
+    }
   }
 
   Future<void> scheduleDetails(Json r) async {

@@ -1,0 +1,66 @@
+{
+  "status": "APPLIED_STATIC_REVIEW_ONLY_RUNTIME_VALIDATION_PENDING",
+  "appliedAtUtc": "2026-10-23T04:44:58.372458+00:00",
+  "parent": "5def20e716336051ef6ee0cc792b9f934a859e64",
+  "applicationManifestSha256": "446d75e5e19ddb1462059c97f232a3855214854d39bec970a22a4ccddd4c32a4",
+  "files": [
+    {
+      "target": "apps/guardian/lib/pages/console_pages.dart",
+      "source": "src/final-v3/apps/guardian/lib/pages/console_pages.dart",
+      "operation": "replace_exact_bytes",
+      "before": {
+        "size": 85721,
+        "sha256": "e55f5152e2e183e4d49d9fd101e63cbc800b981573aa6f2a43603d1aaa403fa7"
+      },
+      "after": {
+        "size": 87318,
+        "sha256": "c903fc88989db4cedc645154b098256e088330b2be6f42a14fd49a0c46155bc3"
+      }
+    },
+    {
+      "target": "apps/guardian/lib/ui/application_classification_dialog.dart",
+      "source": "src/final-v3/apps/guardian/lib/ui/application_classification_dialog.dart",
+      "operation": "replace_exact_bytes",
+      "before": {
+        "size": 7603,
+        "sha256": "397224f51e43a9d00903d3802af57b02fad2259e772e95447b6b689051d01b7c"
+      },
+      "after": {
+        "size": 9018,
+        "sha256": "4a6e7370c938108c7dd0c4fa2db46687b0d59353741a90661ae3358ee82b6d50"
+      }
+    },
+    {
+      "target": "apps/guardian/test/application_classification_scope_browser_test.dart",
+      "source": "src/final-v3/apps/guardian/test/application_classification_scope_browser_test.dart",
+      "operation": "create_new_exact_bytes",
+      "before": {
+        "exists": false
+      },
+      "after": {
+        "size": 20469,
+        "sha256": "50d5fb8f33c335f28c7a273e8d4b453ad526ef393fe497002df33e8ad555b9cf"
+      }
+    }
+  ],
+  "preparedBrowserCases": 8,
+  "behavior": [
+    "Closing classification without saving keeps the application details available.",
+    "A current successful save completes only its captured child and details routes.",
+    "The existing sticky DeviceSubflowScope rejects stale workspace-generation, actor and session access.",
+    "Late responses and retained load/save/category callbacks cannot change a replacement or disposed owner.",
+    "Existing repository protocol, If-Match version and retry request identity remain unchanged."
+  ],
+  "coverageLimit": "Eight prepared cases cover real pending loadTenants/selectTenant generation loss, late GET/PUT, parent disposal, covered owned completion, cancellation and saved host flow, and stable retry. No separate actor-ABA or repository-replacement case was added.",
+  "validation": {
+    "format": "UNRUN",
+    "analysis": "UNRUN",
+    "browserTests": "UNRUN"
+  },
+  "priorAnalysisSource": "fa2148954ccec749f7d58c38184a208085bfe181",
+  "priorAnalysisDoesNotCoverTheseChanges": true,
+  "sdkStarted": false,
+  "dependenciesChanged": false,
+  "servicesUpdated": false,
+  "wholeUiAccepted": false
+}

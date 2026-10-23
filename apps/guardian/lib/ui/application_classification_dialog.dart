@@ -3,6 +3,7 @@ import '../core/api.dart';
 import '../core/application_classification.dart';
 import '../core/labels.dart';
 import 'design.dart';
+import 'owned_dialog_route.dart';
 
 class ApplicationClassificationDialog extends StatefulWidget {
   final ApplicationClassificationRepository repository;
@@ -40,32 +41,67 @@ class _ApplicationClassificationDialogState
   }
 
   @override
+  void didUpdateWidget(covariant ApplicationClassificationDialog oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.accessChanges, widget.accessChanges)) {
+      oldWidget.accessChanges?.removeListener(accessChanged);
+      widget.accessChanges?.addListener(accessChanged);
+    }
+    if (!identical(oldWidget.repository, widget.repository)) {
+      invalidate();
+    } else {
+      accessChanged();
+    }
+  }
+
+  bool current(ApplicationClassificationRepository repository) =>
+      mounted && !invalidated && identical(widget.repository, repository) &&
+      repository.current();
+
+  @override
   void dispose() {
     generation++;
     widget.accessChanges?.removeListener(accessChanged);
     super.dispose();
   }
 
-  void accessChanged() {
-    if (!mounted || widget.repository.current()) return;
+  void close({bool saved = false}) {
+    if (!mounted) return;
     final route = ModalRoute.of(context);
+    if (route is OwnedDialogRoute<bool>) {
+      route.finish(saved);
+    } else if (route is OwnedDialogRoute<void>) {
+      route.finish();
+    } else if (route?.isActive == true) {
+      if (route!.isCurrent) {
+        route.navigator!.pop();
+      } else {
+        route.navigator!.removeRoute(route);
+      }
+    }
+  }
+
+  void accessChanged() {
+    if (!mounted || invalidated || widget.repository.current()) return;
+    invalidate();
+  }
+
+  void invalidate() {
+    if (!mounted || invalidated) return;
     setState(() {
       invalidated = true;
       generation++;
       before = null;
     });
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (route?.isActive == true) {
-        if (route!.isCurrent) {
-          route.navigator!.pop();
-        } else {
-          route.navigator!.removeRoute(route);
-        }
-      }
-    });
+    WidgetsBinding.instance.addPostFrameCallback((_) => close());
   }
 
   Future<void> load() async {
+    final repository = widget.repository;
+    if (!current(repository)) {
+      accessChanged();
+      return;
+    }
     final revision = ++generation;
     setState(() {
       loading = true;
@@ -75,21 +111,26 @@ class _ApplicationClassificationDialogState
       key = null;
     });
     try {
-      final result = await widget.repository.load();
-      if (mounted && revision == generation) {
+      final result = await repository.load();
+      if (current(repository) && revision == generation) {
         setState(() {
           before = result;
           selected = result.category;
         });
       }
     } catch (e) {
-      if (mounted && revision == generation) setState(() => error = e);
+      if (current(repository) && revision == generation) setState(() => error = e);
     } finally {
-      if (mounted && revision == generation) setState(() => loading = false);
+      if (current(repository) && revision == generation) setState(() => loading = false);
     }
   }
 
   Future<void> save() async {
+    final repository = widget.repository;
+    if (!current(repository)) {
+      accessChanged();
+      return;
+    }
     if (busy ||
         terminal ||
         !widget.canEdit ||
@@ -103,10 +144,10 @@ class _ApplicationClassificationDialogState
       error = null;
     });
     try {
-      await widget.repository.save(before!, pending!, key!);
-      if (mounted && revision == generation) Navigator.of(context).pop();
+      await repository.save(before!, pending!, key!);
+      if (current(repository) && revision == generation) close(saved: true);
     } catch (e) {
-      if (mounted && revision == generation) {
+      if (current(repository) && revision == generation) {
         setState(() {
           error = e;
           if (e is ApiFailure && e.status != 0 && e.status < 500) {
@@ -116,14 +157,15 @@ class _ApplicationClassificationDialogState
         });
       }
     } finally {
-      if (mounted && revision == generation) setState(() => busy = false);
+      if (current(repository) && revision == generation) setState(() => busy = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (invalidated) return const SizedBox.shrink();
-    final identity = widget.repository.identity;
+    final repository = widget.repository;
+    if (!current(repository)) return const SizedBox.shrink();
+    final identity = repository.identity;
     return PopScope(
         canPop: !busy,
         child: AlertDialog(
@@ -161,7 +203,10 @@ class _ApplicationClassificationDialogState
                                 .toList(),
                             onChanged: locked
                                 ? null
-                                : (value) => setState(() => selected = value))
+                                : (value) {
+                                    if (!current(repository) || locked) return;
+                                    setState(() => selected = value);
+                                  })
                       else
                         Text(applicationCategories[before!.category]!,
                             style: Theme.of(context).textTheme.titleMedium),
@@ -186,7 +231,7 @@ class _ApplicationClassificationDialogState
                   ]))),
           actions: [
             TextButton(
-                onPressed: busy ? null : () => Navigator.of(context).pop(),
+                onPressed: busy ? null : close,
                 child: const Text('关闭')),
             if (before != null && terminal)
               TextButton(
