@@ -1,0 +1,92 @@
+{
+  "status": "FOUR_EXISTING_TEST_MATCHERS_APPLIED_UNFORMATTED_UNCOMPILED_UNRUN",
+  "atUtc": "2026-10-23T10:07:49.790431+00:00",
+  "parent": "80a7c896c17166e8667270cda0ba8c5b6a28b8e4",
+  "files": [
+    {
+      "path": "apps/guardian/test/device_subflow_scope_test.dart",
+      "beforeSha256": "a9112faa51f845bb338f8d4ab6ec50567bc9b7af3703e543d740fb5c05960fe3",
+      "afterSha256": "c951fa672e6cf781717436782b7f15630c6b84dcacdb825fb17ce30678af0975",
+      "afterBytes": 19723,
+      "replacements": 2
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_control_scope_test.dart",
+      "beforeSha256": "bc787aacaa4d59da7ba3f41cfcdadc8df12ad7d5fea31976ee4a4b66143de299",
+      "afterSha256": "074dba4e9874c34107b45b0646a0bde7ab9af594d39be55bbea8f41b19606d35",
+      "afterBytes": 13204,
+      "replacements": 3
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_rule_details_test.dart",
+      "beforeSha256": "d50f69adc5959a84f9f2ba1086ff57df761842f068c68abea2020a64291326b9",
+      "afterSha256": "d41e109ae0f10a688d94810b4a294f5dd6b1c95cae91a6259bbb137b016b17f6",
+      "afterBytes": 20215,
+      "replacements": 3
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_evidence_view_test.dart",
+      "beforeSha256": "0da792104bdac1e7c464ef53f6cc11072a75b3ef4217dce98770670d14a2a814",
+      "afterSha256": "320723031be8dfcdc1675a1c6fdd464596e9c0ec8cf1dcd86d97a3bb4fd41b41",
+      "afterBytes": 17083,
+      "replacements": 6
+    }
+  ],
+  "expressionReplacements": 14,
+  "exactReconstructionMatched": true,
+  "testNamesAndBusinessAssertionsUnchanged": true,
+  "testsAdded": false,
+  "testsRun": false,
+  "sdkSourcesReadOnly": true,
+  "sdkInvoked": false,
+  "productionSourceModified": false,
+  "dependenciesAdded": [],
+  "sourceDeployed": false,
+  "originalPreparationReceiptsUnchanged": true,
+  "rawCopyPairs": [
+    {
+      "original": ".cache/button-finder-variant-review-20261023/preparation-receipt.json",
+      "path": "docs/evidence/button-subtype-assertions-20261023/candidate-preparation-receipt.json",
+      "bytes": 5933,
+      "sha256": "edb124e447868167003065632379c8208dfc0eb020bd42ff34de9933517b5b84"
+    },
+    {
+      "original": ".cache/button-finder-variant-review-20261023/inventory.json",
+      "path": "docs/evidence/button-subtype-assertions-20261023/candidate-inventory.json",
+      "bytes": 2219,
+      "sha256": "79589dbc52449467b36da07018bdfc8364264875cedcf1b069f6c60a516e41cf"
+    },
+    {
+      "original": ".cache/button-finder-variant-review-20261023/button-subtype-assertions.patch",
+      "path": "docs/evidence/button-subtype-assertions-20261023/candidate-button-subtype-assertions.patch",
+      "bytes": 3750,
+      "sha256": "7889849f5a096634dfd58a96f4b667ce6164e31991dafd64de20370e50d4f765"
+    },
+    {
+      "original": ".cache/button-finder-variant-review-20261023/README.md",
+      "path": "docs/evidence/button-subtype-assertions-20261023/candidate-README.md",
+      "bytes": 2770,
+      "sha256": "9940c2cc090c0389bbfee35539a44633b514a74a48e3c2c493371d45fd608b55"
+    },
+    {
+      "original": ".cache/button-finder-root-independent-20261023-r1/review.md",
+      "path": "docs/evidence/button-subtype-assertions-20261023/independent-review.md",
+      "bytes": 7708,
+      "sha256": "a5046e66b1ba0b9be6469b9a24281454f92dfc1e272d7320d8ba3033a6ebc680"
+    },
+    {
+      "original": ".cache/button-finder-root-independent-20261023-r1/readback.json",
+      "path": "docs/evidence/button-subtype-assertions-20261023/independent-readback.json",
+      "bytes": 19638,
+      "sha256": "95ee649990992a0933fba2405567510130b1f2e8c1a8e0344b7015f7d3e4d221"
+    },
+    {
+      "original": ".cache/button-finder-root-independent-20261023-r1/delivery-pins.json",
+      "path": "docs/evidence/button-subtype-assertions-20261023/independent-delivery-pins.json",
+      "bytes": 756,
+      "sha256": "afbf1c0b352b63b3c7cad9971f8e6964273b7572592fb139a944fece8337915c"
+    }
+  ],
+  "foreignTrackedWipPreserved": true,
+  "pushed": false
+}

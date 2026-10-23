@@ -1,0 +1,174 @@
+{
+  "schemaVersion": 1,
+  "status": "UNAPPLIED_TEST_MATCHER_CANDIDATE_NOT_RUNTIME_VERIFIED",
+  "sourceInputs": [
+    {
+      "path": "apps/guardian/test/device_subflow_scope_test.dart",
+      "bytes": 19713,
+      "sha256": "a9112faa51f845bb338f8d4ab6ec50567bc9b7af3703e543d740fb5c05960fe3"
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_control_scope_test.dart",
+      "bytes": 13189,
+      "sha256": "bc787aacaa4d59da7ba3f41cfcdadc8df12ad7d5fea31976ee4a4b66143de299"
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_rule_details_test.dart",
+      "bytes": 20200,
+      "sha256": "d50f69adc5959a84f9f2ba1086ff57df761842f068c68abea2020a64291326b9"
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_evidence_view_test.dart",
+      "bytes": 17053,
+      "sha256": "0da792104bdac1e7c464ef53f6cc11072a75b3ef4217dce98770670d14a2a814"
+    },
+    {
+      "path": "apps/guardian/lib/ui/diagnostic_preview_view.dart",
+      "bytes": 14413,
+      "sha256": "b6d6d946e184aab70d7ee397e3f000c2d88e325f3e9f7fbd28e0206c324d2dc0"
+    },
+    {
+      "path": "apps/guardian/lib/ui/diagnostic_packages_view.dart",
+      "bytes": 14543,
+      "sha256": "e2a877592dcf72f3994637b5d156cb35a216f5a08bffbb74937eb932f1a654f3"
+    },
+    {
+      "path": "apps/parent/lib/ui/family_account_security_page.dart",
+      "bytes": 16731,
+      "sha256": "48f4208ee252c7e1e00ba2b8bb1cd179ca5f20d4f3a5f9918adf4b446d56e4db"
+    },
+    {
+      "path": "packages/usage_report_ui/lib/src/device_view.dart",
+      "bytes": 31606,
+      "sha256": "01b81009ea1ff06d1a02a760c0d8ba13e0cb0232959531047598f06aa5b2560d"
+    },
+    {
+      "path": "apps/child/lib/ui/observation_section.dart",
+      "bytes": 15409,
+      "sha256": "9a456cef87f22be18b729c927db878ba590db1650ea5226221c8a783df2f8fc5"
+    }
+  ],
+  "sdkSourceReadOnlyPins": [
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_test\\lib\\src\\finders.dart",
+      "bytes": 60527,
+      "sha256": "9bc8abd582709c3741730d0387a6dae4d525badc47e947199493cbb64be6783d"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter\\lib\\src\\material\\outlined_button.dart",
+      "bytes": 23992,
+      "sha256": "1bc699b84a222261d2f3f19946e5e675ac14e8c547923ed121b97e2277acfb9e"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter\\lib\\src\\material\\filled_button.dart",
+      "bytes": 31106,
+      "sha256": "dd775763a3acccf3fb3e02c9005710bbf78c4e77e25e153d3942f2e669383400"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter\\lib\\src\\material\\text_button.dart",
+      "bytes": 25049,
+      "sha256": "07e5fd694c87a972a3eaf910280af934a81f65d51ceebb9cabea0842eab3fb5b"
+    }
+  ],
+  "sdkSourcesCopied": false,
+  "candidateTests": [
+    {
+      "path": "src/apps/guardian/test/device_subflow_scope_test.dart",
+      "bytes": 19723,
+      "sha256": "c951fa672e6cf781717436782b7f15630c6b84dcacdb825fb17ce30678af0975",
+      "expressions": [
+        {
+          "from": "find.byType(FilledButton)",
+          "to": "find.bySubtype<FilledButton>()",
+          "count": 1
+        },
+        {
+          "from": "find.byType(OutlinedButton)",
+          "to": "find.bySubtype<OutlinedButton>()",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "src/apps/guardian/test/policy_preview_control_scope_test.dart",
+      "bytes": 13204,
+      "sha256": "074dba4e9874c34107b45b0646a0bde7ab9af594d39be55bbea8f41b19606d35",
+      "expressions": [
+        {
+          "from": "find.byType(FilledButton)",
+          "to": "find.bySubtype<FilledButton>()",
+          "count": 1
+        },
+        {
+          "from": "find.byType(OutlinedButton)",
+          "to": "find.bySubtype<OutlinedButton>()",
+          "count": 1
+        },
+        {
+          "from": "find.byType(TextButton)",
+          "to": "find.bySubtype<TextButton>()",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "src/apps/guardian/test/policy_preview_rule_details_test.dart",
+      "bytes": 20215,
+      "sha256": "d41e109ae0f10a688d94810b4a294f5dd6b1c95cae91a6259bbb137b016b17f6",
+      "expressions": [
+        {
+          "from": "find.byType(FilledButton)",
+          "to": "find.bySubtype<FilledButton>()",
+          "count": 1
+        },
+        {
+          "from": "find.byType(OutlinedButton)",
+          "to": "find.bySubtype<OutlinedButton>()",
+          "count": 1
+        },
+        {
+          "from": "find.byType(TextButton)",
+          "to": "find.bySubtype<TextButton>()",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "path": "src/apps/guardian/test/policy_preview_evidence_view_test.dart",
+      "bytes": 17083,
+      "sha256": "320723031be8dfcdc1675a1c6fdd464596e9c0ec8cf1dcd86d97a3bb4fd41b41",
+      "expressions": [
+        {
+          "from": "find.byType(FilledButton)",
+          "to": "find.bySubtype<FilledButton>()",
+          "count": 2
+        },
+        {
+          "from": "find.byType(OutlinedButton)",
+          "to": "find.bySubtype<OutlinedButton>()",
+          "count": 2
+        },
+        {
+          "from": "find.byType(TextButton)",
+          "to": "find.bySubtype<TextButton>()",
+          "count": 2
+        }
+      ]
+    }
+  ],
+  "matcherExpressions": 14,
+  "patchSha256": "7889849f5a096634dfd58a96f4b667ce6164e31991dafd64de20370e50d4f765",
+  "reverseSubstitutionRecoversOriginalNormalizedText": true,
+  "sourceInputsUnchangedAtEnd": true,
+  "productionFilesChanged": false,
+  "realTestFilesChanged": false,
+  "testsAdded": false,
+  "testsSkippedOrRemoved": false,
+  "sdkRun": false,
+  "testsRun": false,
+  "patchApplied": false,
+  "compiledOrFormatted": false,
+  "rootWorkspaceFinderIncluded": false,
+  "newProductVulnerabilityClaimed": false,
+  "needsMainScopeBeforeIntegrationAndSdkExecution": true
+}

@@ -1,0 +1,438 @@
+{
+  "schema": 1,
+  "recordedAtUtc": "2026-10-23T10:01:58.840261+00:00",
+  "status": "INTEGRABLE_STATIC_MATCHER_CHANGE_ONLY_UNRUN",
+  "head": "80a7c896c17166e8667270cda0ba8c5b6a28b8e4",
+  "patchSha256": "7889849f5a096634dfd58a96f4b667ce6164e31991dafd64de20370e50d4f765",
+  "originalSourcePins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\device_subflow_scope_test.dart",
+      "bytes": 19713,
+      "sha256": "a9112faa51f845bb338f8d4ab6ec50567bc9b7af3703e543d740fb5c05960fe3",
+      "expectedBytes": 19713,
+      "expectedSha256": "a9112faa51f845bb338f8d4ab6ec50567bc9b7af3703e543d740fb5c05960fe3",
+      "match": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\policy_preview_control_scope_test.dart",
+      "bytes": 13189,
+      "sha256": "bc787aacaa4d59da7ba3f41cfcdadc8df12ad7d5fea31976ee4a4b66143de299",
+      "expectedBytes": 13189,
+      "expectedSha256": "bc787aacaa4d59da7ba3f41cfcdadc8df12ad7d5fea31976ee4a4b66143de299",
+      "match": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\policy_preview_rule_details_test.dart",
+      "bytes": 20200,
+      "sha256": "d50f69adc5959a84f9f2ba1086ff57df761842f068c68abea2020a64291326b9",
+      "expectedBytes": 20200,
+      "expectedSha256": "d50f69adc5959a84f9f2ba1086ff57df761842f068c68abea2020a64291326b9",
+      "match": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\policy_preview_evidence_view_test.dart",
+      "bytes": 17053,
+      "sha256": "0da792104bdac1e7c464ef53f6cc11072a75b3ef4217dce98770670d14a2a814",
+      "expectedBytes": 17053,
+      "expectedSha256": "0da792104bdac1e7c464ef53f6cc11072a75b3ef4217dce98770670d14a2a814",
+      "match": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\diagnostic_preview_view.dart",
+      "bytes": 14413,
+      "sha256": "b6d6d946e184aab70d7ee397e3f000c2d88e325f3e9f7fbd28e0206c324d2dc0",
+      "expectedBytes": 14413,
+      "expectedSha256": "b6d6d946e184aab70d7ee397e3f000c2d88e325f3e9f7fbd28e0206c324d2dc0",
+      "match": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\diagnostic_packages_view.dart",
+      "bytes": 14543,
+      "sha256": "e2a877592dcf72f3994637b5d156cb35a216f5a08bffbb74937eb932f1a654f3",
+      "expectedBytes": 14543,
+      "expectedSha256": "e2a877592dcf72f3994637b5d156cb35a216f5a08bffbb74937eb932f1a654f3",
+      "match": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\parent\\lib\\ui\\family_account_security_page.dart",
+      "bytes": 16731,
+      "sha256": "48f4208ee252c7e1e00ba2b8bb1cd179ca5f20d4f3a5f9918adf4b446d56e4db",
+      "expectedBytes": 16731,
+      "expectedSha256": "48f4208ee252c7e1e00ba2b8bb1cd179ca5f20d4f3a5f9918adf4b446d56e4db",
+      "match": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\packages\\usage_report_ui\\lib\\src\\device_view.dart",
+      "bytes": 31606,
+      "sha256": "01b81009ea1ff06d1a02a760c0d8ba13e0cb0232959531047598f06aa5b2560d",
+      "expectedBytes": 31606,
+      "expectedSha256": "01b81009ea1ff06d1a02a760c0d8ba13e0cb0232959531047598f06aa5b2560d",
+      "match": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\child\\lib\\ui\\observation_section.dart",
+      "bytes": 15409,
+      "sha256": "9a456cef87f22be18b729c927db878ba590db1650ea5226221c8a783df2f8fc5",
+      "expectedBytes": 15409,
+      "expectedSha256": "9a456cef87f22be18b729c927db878ba590db1650ea5226221c8a783df2f8fc5",
+      "match": true
+    }
+  ],
+  "originalSdkSourcePins": [
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_test\\lib\\src\\finders.dart",
+      "bytes": 60527,
+      "sha256": "9bc8abd582709c3741730d0387a6dae4d525badc47e947199493cbb64be6783d",
+      "expectedBytes": 60527,
+      "expectedSha256": "9bc8abd582709c3741730d0387a6dae4d525badc47e947199493cbb64be6783d",
+      "match": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter\\lib\\src\\material\\outlined_button.dart",
+      "bytes": 23992,
+      "sha256": "1bc699b84a222261d2f3f19946e5e675ac14e8c547923ed121b97e2277acfb9e",
+      "expectedBytes": 23992,
+      "expectedSha256": "1bc699b84a222261d2f3f19946e5e675ac14e8c547923ed121b97e2277acfb9e",
+      "match": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter\\lib\\src\\material\\filled_button.dart",
+      "bytes": 31106,
+      "sha256": "dd775763a3acccf3fb3e02c9005710bbf78c4e77e25e153d3942f2e669383400",
+      "expectedBytes": 31106,
+      "expectedSha256": "dd775763a3acccf3fb3e02c9005710bbf78c4e77e25e153d3942f2e669383400",
+      "match": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter\\lib\\src\\material\\text_button.dart",
+      "bytes": 25049,
+      "sha256": "07e5fd694c87a972a3eaf910280af934a81f65d51ceebb9cabea0842eab3fb5b",
+      "expectedBytes": 25049,
+      "expectedSha256": "07e5fd694c87a972a3eaf910280af934a81f65d51ceebb9cabea0842eab3fb5b",
+      "match": true
+    }
+  ],
+  "originalDeliveryPins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\button-finder-variant-review-20261023\\button-subtype-assertions.patch",
+      "bytes": 3750,
+      "sha256": "7889849f5a096634dfd58a96f4b667ce6164e31991dafd64de20370e50d4f765",
+      "expectedBytes": 3750,
+      "expectedSha256": "7889849f5a096634dfd58a96f4b667ce6164e31991dafd64de20370e50d4f765",
+      "match": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\button-finder-variant-review-20261023\\preparation-receipt.json",
+      "bytes": 5933,
+      "sha256": "edb124e447868167003065632379c8208dfc0eb020bd42ff34de9933517b5b84",
+      "expectedBytes": 5933,
+      "expectedSha256": "edb124e447868167003065632379c8208dfc0eb020bd42ff34de9933517b5b84",
+      "match": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\button-finder-variant-review-20261023\\prepare_candidate.py",
+      "bytes": 4886,
+      "sha256": "b3295b31dd3b0ed65eb2d7976b17570bbcffaf9925f9a7cc6f72d970b020a01c",
+      "expectedBytes": 4886,
+      "expectedSha256": "b3295b31dd3b0ed65eb2d7976b17570bbcffaf9925f9a7cc6f72d970b020a01c",
+      "match": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\button-finder-variant-review-20261023\\README.md",
+      "bytes": 2770,
+      "sha256": "9940c2cc090c0389bbfee35539a44633b514a74a48e3c2c493371d45fd608b55",
+      "expectedBytes": 2770,
+      "expectedSha256": "9940c2cc090c0389bbfee35539a44633b514a74a48e3c2c493371d45fd608b55",
+      "match": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\button-finder-variant-review-20261023\\src\\apps\\guardian\\test\\device_subflow_scope_test.dart",
+      "bytes": 19723,
+      "sha256": "c951fa672e6cf781717436782b7f15630c6b84dcacdb825fb17ce30678af0975",
+      "expectedBytes": 19723,
+      "expectedSha256": "c951fa672e6cf781717436782b7f15630c6b84dcacdb825fb17ce30678af0975",
+      "match": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\button-finder-variant-review-20261023\\src\\apps\\guardian\\test\\policy_preview_control_scope_test.dart",
+      "bytes": 13204,
+      "sha256": "074dba4e9874c34107b45b0646a0bde7ab9af594d39be55bbea8f41b19606d35",
+      "expectedBytes": 13204,
+      "expectedSha256": "074dba4e9874c34107b45b0646a0bde7ab9af594d39be55bbea8f41b19606d35",
+      "match": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\button-finder-variant-review-20261023\\src\\apps\\guardian\\test\\policy_preview_evidence_view_test.dart",
+      "bytes": 17083,
+      "sha256": "320723031be8dfcdc1675a1c6fdd464596e9c0ec8cf1dcd86d97a3bb4fd41b41",
+      "expectedBytes": 17083,
+      "expectedSha256": "320723031be8dfcdc1675a1c6fdd464596e9c0ec8cf1dcd86d97a3bb4fd41b41",
+      "match": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\button-finder-variant-review-20261023\\src\\apps\\guardian\\test\\policy_preview_rule_details_test.dart",
+      "bytes": 20215,
+      "sha256": "d41e109ae0f10a688d94810b4a294f5dd6b1c95cae91a6259bbb137b016b17f6",
+      "expectedBytes": 20215,
+      "expectedSha256": "d41e109ae0f10a688d94810b4a294f5dd6b1c95cae91a6259bbb137b016b17f6",
+      "match": true
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\docs\\reviews\\flutter-button-finder-variants-20261023.md",
+      "bytes": 3568,
+      "sha256": "6a347f676a78c00a63071caf46da345eb8a8e1d8ef970cc81a441f413f7a4781",
+      "expectedBytes": 3568,
+      "expectedSha256": "6a347f676a78c00a63071caf46da345eb8a8e1d8ef970cc81a441f413f7a4781",
+      "match": true
+    }
+  ],
+  "extraReadOnlyPins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\policy_preview_results.dart",
+      "bytes": 28770,
+      "sha256": "ac8ffb620400fd469d76f851f4e46def45156231e85b2909723811da9a309308"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\.dart_tool\\package_config.json",
+      "bytes": 15171,
+      "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_test\\lib\\flutter_test.dart",
+      "bytes": 3728,
+      "sha256": "0f5d0d36ee1998b77921e5e5d4e27b8399c7e4b16eddd55017c2eaa3d8f000f8"
+    }
+  ],
+  "currentFlutterBindings": {
+    "flutter": "file:///D:/softwares/flutter/packages/flutter",
+    "flutter_test": "file:///D:/softwares/flutter/packages/flutter_test"
+  },
+  "files": [
+    {
+      "path": "apps/guardian/test/device_subflow_scope_test.dart",
+      "beforeBytes": 19713,
+      "beforeSha256": "a9112faa51f845bb338f8d4ab6ec50567bc9b7af3703e543d740fb5c05960fe3",
+      "afterBytes": 19723,
+      "afterSha256": "c951fa672e6cf781717436782b7f15630c6b84dcacdb825fb17ce30678af0975",
+      "headNormalizedMatchesMain": true,
+      "reverseSubstitutionRestoresEntireNormalizedText": true,
+      "testNamesFixturesAssertionsAndImportsPreservedByExactInverse": true,
+      "testWidgetsDeclarations": 7,
+      "imports": [
+        "import 'dart:async';",
+        "import 'dart:convert';",
+        "import 'dart:html' as html;",
+        "import 'package:device_operations/device_operations.dart';",
+        "import 'package:flutter/material.dart';",
+        "import 'package:flutter_test/flutter_test.dart';",
+        "import 'package:guardian/core/api.dart';",
+        "import 'package:guardian/core/session.dart';",
+        "import 'package:guardian/core/scoped_http_client.dart';",
+        "import 'package:guardian/pages/device_diagnostic_dialog.dart';",
+        "import 'package:guardian/pages/device_exit_dialog.dart';",
+        "import 'package:guardian/pages/diagnostic_packages_dialog.dart';",
+        "import 'package:guardian/pages/observation_page.dart';",
+        "import 'package:guardian/pages/support_page.dart';",
+        "import 'package:guardian/ui/design.dart';",
+        "import 'package:guardian/ui/diagnostic_packages_view.dart';",
+        "import 'package:guardian/ui/diagnostic_preview_view.dart';",
+        "import 'package:guardian/ui/observation_view.dart';",
+        "import 'package:guardian/ui/support_center_view.dart';",
+        "import 'package:guardian/ui/support_grant_view.dart';",
+        "import 'package:http/http.dart' as http;",
+        "import 'package:http/testing.dart';",
+        "import 'package:oauth2/oauth2.dart' as oauth;",
+        "import 'package:shared_preferences_platform_interface/in_memory_shared_preferences_async.dart';",
+        "import 'package:shared_preferences_platform_interface/shared_preferences_async_platform_interface.dart';",
+        "import 'api_scope_test.dart'",
+        "import 'fixtures/diagnostic.dart' as diagnostic;",
+        "import 'fixtures/support.dart' as support;"
+      ],
+      "changes": 2
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_control_scope_test.dart",
+      "beforeBytes": 13189,
+      "beforeSha256": "bc787aacaa4d59da7ba3f41cfcdadc8df12ad7d5fea31976ee4a4b66143de299",
+      "afterBytes": 13204,
+      "afterSha256": "074dba4e9874c34107b45b0646a0bde7ab9af594d39be55bbea8f41b19606d35",
+      "headNormalizedMatchesMain": true,
+      "reverseSubstitutionRestoresEntireNormalizedText": true,
+      "testNamesFixturesAssertionsAndImportsPreservedByExactInverse": true,
+      "testWidgetsDeclarations": 10,
+      "imports": [
+        "import 'package:flutter/material.dart';",
+        "import 'package:flutter_test/flutter_test.dart';",
+        "import 'package:guardian/core/api.dart';",
+        "import 'package:guardian/ui/design.dart';",
+        "import 'package:guardian/ui/policy_preview_results.dart';",
+        "import 'fixtures/policy_preview_fixture_data.dart';"
+      ],
+      "changes": 3
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_rule_details_test.dart",
+      "beforeBytes": 20200,
+      "beforeSha256": "d50f69adc5959a84f9f2ba1086ff57df761842f068c68abea2020a64291326b9",
+      "afterBytes": 20215,
+      "afterSha256": "d41e109ae0f10a688d94810b4a294f5dd6b1c95cae91a6259bbb137b016b17f6",
+      "headNormalizedMatchesMain": true,
+      "reverseSubstitutionRestoresEntireNormalizedText": true,
+      "testNamesFixturesAssertionsAndImportsPreservedByExactInverse": true,
+      "testWidgetsDeclarations": 14,
+      "imports": [
+        "import 'package:flutter/material.dart';",
+        "import 'package:flutter_test/flutter_test.dart';",
+        "import 'package:guardian/core/api.dart';",
+        "import 'package:guardian/ui/design.dart';",
+        "import 'package:guardian/ui/policy_preview_results.dart';",
+        "import 'fixtures/policy_preview_fixture_data.dart';"
+      ],
+      "changes": 3
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_evidence_view_test.dart",
+      "beforeBytes": 17053,
+      "beforeSha256": "0da792104bdac1e7c464ef53f6cc11072a75b3ef4217dce98770670d14a2a814",
+      "afterBytes": 17083,
+      "afterSha256": "320723031be8dfcdc1675a1c6fdd464596e9c0ec8cf1dcd86d97a3bb4fd41b41",
+      "headNormalizedMatchesMain": true,
+      "reverseSubstitutionRestoresEntireNormalizedText": true,
+      "testNamesFixturesAssertionsAndImportsPreservedByExactInverse": true,
+      "testWidgetsDeclarations": 16,
+      "imports": [
+        "import 'package:flutter/material.dart';",
+        "import 'package:flutter_test/flutter_test.dart';",
+        "import 'package:guardian/core/api.dart';",
+        "import 'package:guardian/ui/design.dart';",
+        "import 'package:guardian/ui/policy_preview_results.dart';",
+        "import 'fixtures/policy_preview_fixture_data.dart';"
+      ],
+      "changes": 6
+    }
+  ],
+  "exactChanges": [
+    {
+      "path": "apps/guardian/test/device_subflow_scope_test.dart",
+      "beforeLine": 333,
+      "afterLine": 333,
+      "type": "FilledButton",
+      "before": "of: diagnosticView, matching: find.byType(FilledButton));",
+      "after": "of: diagnosticView, matching: find.bySubtype<FilledButton>());"
+    },
+    {
+      "path": "apps/guardian/test/device_subflow_scope_test.dart",
+      "beforeLine": 350,
+      "afterLine": 350,
+      "type": "OutlinedButton",
+      "before": "of: packagesView, matching: find.byType(OutlinedButton)),",
+      "after": "of: packagesView, matching: find.bySubtype<OutlinedButton>()),"
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_control_scope_test.dart",
+      "beforeLine": 94,
+      "afterLine": 94,
+      "type": "FilledButton",
+      "before": "expect(find.byType(FilledButton), findsNothing);",
+      "after": "expect(find.bySubtype<FilledButton>(), findsNothing);"
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_control_scope_test.dart",
+      "beforeLine": 95,
+      "afterLine": 95,
+      "type": "OutlinedButton",
+      "before": "expect(find.byType(OutlinedButton), findsNothing);",
+      "after": "expect(find.bySubtype<OutlinedButton>(), findsNothing);"
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_control_scope_test.dart",
+      "beforeLine": 96,
+      "afterLine": 96,
+      "type": "TextButton",
+      "before": "expect(find.byType(TextButton), findsNothing);",
+      "after": "expect(find.bySubtype<TextButton>(), findsNothing);"
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_rule_details_test.dart",
+      "beforeLine": 132,
+      "afterLine": 132,
+      "type": "FilledButton",
+      "before": "expect(find.byType(FilledButton), findsNothing);",
+      "after": "expect(find.bySubtype<FilledButton>(), findsNothing);"
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_rule_details_test.dart",
+      "beforeLine": 133,
+      "afterLine": 133,
+      "type": "OutlinedButton",
+      "before": "expect(find.byType(OutlinedButton), findsNothing);",
+      "after": "expect(find.bySubtype<OutlinedButton>(), findsNothing);"
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_rule_details_test.dart",
+      "beforeLine": 134,
+      "afterLine": 134,
+      "type": "TextButton",
+      "before": "expect(find.byType(TextButton), findsNothing);",
+      "after": "expect(find.bySubtype<TextButton>(), findsNothing);"
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_evidence_view_test.dart",
+      "beforeLine": 251,
+      "afterLine": 251,
+      "type": "FilledButton",
+      "before": "expect(find.byType(FilledButton), findsNothing);",
+      "after": "expect(find.bySubtype<FilledButton>(), findsNothing);"
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_evidence_view_test.dart",
+      "beforeLine": 252,
+      "afterLine": 252,
+      "type": "OutlinedButton",
+      "before": "expect(find.byType(OutlinedButton), findsNothing);",
+      "after": "expect(find.bySubtype<OutlinedButton>(), findsNothing);"
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_evidence_view_test.dart",
+      "beforeLine": 253,
+      "afterLine": 253,
+      "type": "TextButton",
+      "before": "expect(find.byType(TextButton), findsNothing);",
+      "after": "expect(find.bySubtype<TextButton>(), findsNothing);"
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_evidence_view_test.dart",
+      "beforeLine": 350,
+      "afterLine": 350,
+      "type": "FilledButton",
+      "before": "expect(find.byType(FilledButton), findsNothing);",
+      "after": "expect(find.bySubtype<FilledButton>(), findsNothing);"
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_evidence_view_test.dart",
+      "beforeLine": 351,
+      "afterLine": 351,
+      "type": "OutlinedButton",
+      "before": "expect(find.byType(OutlinedButton), findsNothing);",
+      "after": "expect(find.bySubtype<OutlinedButton>(), findsNothing);"
+    },
+    {
+      "path": "apps/guardian/test/policy_preview_evidence_view_test.dart",
+      "beforeLine": 352,
+      "afterLine": 352,
+      "type": "TextButton",
+      "before": "expect(find.byType(TextButton), findsNothing);",
+      "after": "expect(find.bySubtype<TextButton>(), findsNothing);"
+    }
+  ],
+  "allOriginalPinsMatch": true,
+  "allCandidatePinsMatch": true,
+  "exactPatchReconstructedInMemory": true,
+  "sdkCalls": 0,
+  "testRuns": 0,
+  "formatterRuns": 0,
+  "mainWrites": 0,
+  "gitWrites": 0,
+  "originalCandidateWrites": 0,
+  "runtimeClaim": "NONE; source API and type semantics only"
+}

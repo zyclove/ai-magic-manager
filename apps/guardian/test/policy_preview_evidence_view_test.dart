@@ -248,9 +248,9 @@ void main() {
       final tile = await _expand(tester, _names[_firstDevice]!);
       expect(_inside(tile, unavailable.$2), findsOneWidget);
       expect(_inside(tile, unavailable.$3), findsOneWidget);
-      expect(find.byType(FilledButton), findsNothing);
-      expect(find.byType(OutlinedButton), findsNothing);
-      expect(find.byType(TextButton), findsNothing);
+      expect(find.bySubtype<FilledButton>(), findsNothing);
+      expect(find.bySubtype<OutlinedButton>(), findsNothing);
+      expect(find.bySubtype<TextButton>(), findsNothing);
       expect(find.byTooltip('刷新应用核验'), findsNothing);
       expect(_inside(tile, '应用身份已核验'), findsNothing);
       _expectNoExecutionClaim();
@@ -347,9 +347,9 @@ void main() {
     expect(_inside(second, '域名访问'), findsNothing);
     await tester.pump(const Duration(seconds: 2));
     expect(find.byType(CircularProgressIndicator), findsNothing);
-    expect(find.byType(FilledButton), findsNothing);
-    expect(find.byType(OutlinedButton), findsNothing);
-    expect(find.byType(TextButton), findsNothing);
+    expect(find.bySubtype<FilledButton>(), findsNothing);
+    expect(find.bySubtype<OutlinedButton>(), findsNothing);
+    expect(find.bySubtype<TextButton>(), findsNothing);
     expect(find.byTooltip('刷新应用核验'), findsNothing);
     _expectNoExecutionClaim();
     expect(tester.takeException(), isNull);

@@ -91,9 +91,9 @@ void _noExecutionOrWriteClaim() {
   for (final text in ['已执行', '已应用', '已管控', '已生效', '支持执行']) {
     expect(find.text(text), findsNothing, reason: text);
   }
-  expect(find.byType(FilledButton), findsNothing);
-  expect(find.byType(OutlinedButton), findsNothing);
-  expect(find.byType(TextButton), findsNothing);
+  expect(find.bySubtype<FilledButton>(), findsNothing);
+  expect(find.bySubtype<OutlinedButton>(), findsNothing);
+  expect(find.bySubtype<TextButton>(), findsNothing);
 }
 
 void main() {

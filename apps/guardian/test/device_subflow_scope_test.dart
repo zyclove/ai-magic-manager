@@ -330,7 +330,7 @@ void _expectHidden(WidgetTester tester, _Flow flow) {
     case _Flow.diagnostic:
       final diagnosticView = find.byType(DiagnosticPreviewView);
       final buttons = find.descendant(
-          of: diagnosticView, matching: find.byType(FilledButton));
+          of: diagnosticView, matching: find.bySubtype<FilledButton>());
       for (final button in tester.widgetList<FilledButton>(buttons)) {
         expect(button.onPressed, isNull,
             reason: 'An invalidated diagnostic cannot be loaded again.');
@@ -347,7 +347,7 @@ void _expectHidden(WidgetTester tester, _Flow flow) {
           findsNothing);
       expect(
           find.descendant(
-              of: packagesView, matching: find.byType(OutlinedButton)),
+              of: packagesView, matching: find.bySubtype<OutlinedButton>()),
           findsNothing);
       break;
     case _Flow.grant:

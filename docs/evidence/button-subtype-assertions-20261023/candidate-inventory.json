@@ -1,0 +1,56 @@
+{
+  "SchemaVersion": 1,
+  "Status": "UNAPPLIED_TEST_ONLY_CANDIDATE",
+  "Artifacts": [
+    {
+      "Path": ".cache/button-finder-variant-review-20261023/button-subtype-assertions.patch",
+      "Bytes": 3750,
+      "Sha256": "7889849f5a096634dfd58a96f4b667ce6164e31991dafd64de20370e50d4f765"
+    },
+    {
+      "Path": ".cache/button-finder-variant-review-20261023/preparation-receipt.json",
+      "Bytes": 5933,
+      "Sha256": "edb124e447868167003065632379c8208dfc0eb020bd42ff34de9933517b5b84"
+    },
+    {
+      "Path": ".cache/button-finder-variant-review-20261023/prepare_candidate.py",
+      "Bytes": 4886,
+      "Sha256": "b3295b31dd3b0ed65eb2d7976b17570bbcffaf9925f9a7cc6f72d970b020a01c"
+    },
+    {
+      "Path": ".cache/button-finder-variant-review-20261023/README.md",
+      "Bytes": 2770,
+      "Sha256": "9940c2cc090c0389bbfee35539a44633b514a74a48e3c2c493371d45fd608b55"
+    },
+    {
+      "Path": ".cache/button-finder-variant-review-20261023/src/apps/guardian/test/device_subflow_scope_test.dart",
+      "Bytes": 19723,
+      "Sha256": "c951fa672e6cf781717436782b7f15630c6b84dcacdb825fb17ce30678af0975"
+    },
+    {
+      "Path": ".cache/button-finder-variant-review-20261023/src/apps/guardian/test/policy_preview_control_scope_test.dart",
+      "Bytes": 13204,
+      "Sha256": "074dba4e9874c34107b45b0646a0bde7ab9af594d39be55bbea8f41b19606d35"
+    },
+    {
+      "Path": ".cache/button-finder-variant-review-20261023/src/apps/guardian/test/policy_preview_evidence_view_test.dart",
+      "Bytes": 17083,
+      "Sha256": "320723031be8dfcdc1675a1c6fdd464596e9c0ec8cf1dcd86d97a3bb4fd41b41"
+    },
+    {
+      "Path": ".cache/button-finder-variant-review-20261023/src/apps/guardian/test/policy_preview_rule_details_test.dart",
+      "Bytes": 20215,
+      "Sha256": "d41e109ae0f10a688d94810b4a294f5dd6b1c95cae91a6259bbb137b016b17f6"
+    },
+    {
+      "Path": "docs/reviews/flutter-button-finder-variants-20261023.md",
+      "Bytes": 3568,
+      "Sha256": "6a347f676a78c00a63071caf46da345eb8a8e1d8ef970cc81a441f413f7a4781"
+    }
+  ],
+  "SelfExcluded": true,
+  "SourceInputsStillMatch": 9,
+  "TestsRun": false,
+  "SdkRun": false,
+  "PatchApplied": false
+}

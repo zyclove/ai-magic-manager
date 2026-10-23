@@ -1,0 +1,27 @@
+{
+  "recordedAtUtc": "2026-10-23T10:04:02.403073+00:00",
+  "status": "STATIC_INTEGRABILITY_REVIEW_ONLY_UNRUN",
+  "files": [
+    {
+      "path": "review.md",
+      "bytes": 7708,
+      "sha256": "a5046e66b1ba0b9be6469b9a24281454f92dfc1e272d7320d8ba3033a6ebc680"
+    },
+    {
+      "path": "readback.py",
+      "bytes": 7130,
+      "sha256": "c42b849c972f3f541d09f9dec870006a7f1da3c352817f5085f40c2d9340d0d7"
+    },
+    {
+      "path": "readback.json",
+      "bytes": 19638,
+      "sha256": "95ee649990992a0933fba2405567510130b1f2e8c1a8e0344b7015f7d3e4d221"
+    }
+  ],
+  "finalFourMainAndOriginalDeliveryPinsStillMatch": true,
+  "sdkCalls": 0,
+  "testRuns": 0,
+  "mainWrites": 0,
+  "gitWrites": 0,
+  "originalCandidateWrites": 0
+}

@@ -1,0 +1,78 @@
+--- a/apps/guardian/test/device_subflow_scope_test.dart
++++ b/apps/guardian/test/device_subflow_scope_test.dart
+@@ -330,7 +330,7 @@
+     case _Flow.diagnostic:
+       final diagnosticView = find.byType(DiagnosticPreviewView);
+       final buttons = find.descendant(
+-          of: diagnosticView, matching: find.byType(FilledButton));
++          of: diagnosticView, matching: find.bySubtype<FilledButton>());
+       for (final button in tester.widgetList<FilledButton>(buttons)) {
+         expect(button.onPressed, isNull,
+             reason: 'An invalidated diagnostic cannot be loaded again.');
+@@ -347,7 +347,7 @@
+           findsNothing);
+       expect(
+           find.descendant(
+-              of: packagesView, matching: find.byType(OutlinedButton)),
++              of: packagesView, matching: find.bySubtype<OutlinedButton>()),
+           findsNothing);
+       break;
+     case _Flow.grant:
+--- a/apps/guardian/test/policy_preview_control_scope_test.dart
++++ b/apps/guardian/test/policy_preview_control_scope_test.dart
+@@ -91,9 +91,9 @@
+   for (final text in ['已执行', '已应用', '已管控', '已生效', '支持执行']) {
+     expect(find.text(text), findsNothing, reason: text);
+   }
+-  expect(find.byType(FilledButton), findsNothing);
+-  expect(find.byType(OutlinedButton), findsNothing);
+-  expect(find.byType(TextButton), findsNothing);
++  expect(find.bySubtype<FilledButton>(), findsNothing);
++  expect(find.bySubtype<OutlinedButton>(), findsNothing);
++  expect(find.bySubtype<TextButton>(), findsNothing);
+ }
+ 
+ void main() {
+--- a/apps/guardian/test/policy_preview_rule_details_test.dart
++++ b/apps/guardian/test/policy_preview_rule_details_test.dart
+@@ -129,9 +129,9 @@
+   for (final claim in ['已执行', '已应用', '已管控', '已生效', '已授予']) {
+     expect(find.textContaining(claim), findsNothing, reason: claim);
+   }
+-  expect(find.byType(FilledButton), findsNothing);
+-  expect(find.byType(OutlinedButton), findsNothing);
+-  expect(find.byType(TextButton), findsNothing);
++  expect(find.bySubtype<FilledButton>(), findsNothing);
++  expect(find.bySubtype<OutlinedButton>(), findsNothing);
++  expect(find.bySubtype<TextButton>(), findsNothing);
+ }
+ 
+ void main() {
+--- a/apps/guardian/test/policy_preview_evidence_view_test.dart
++++ b/apps/guardian/test/policy_preview_evidence_view_test.dart
+@@ -248,9 +248,9 @@
+       final tile = await _expand(tester, _names[_firstDevice]!);
+       expect(_inside(tile, unavailable.$2), findsOneWidget);
+       expect(_inside(tile, unavailable.$3), findsOneWidget);
+-      expect(find.byType(FilledButton), findsNothing);
+-      expect(find.byType(OutlinedButton), findsNothing);
+-      expect(find.byType(TextButton), findsNothing);
++      expect(find.bySubtype<FilledButton>(), findsNothing);
++      expect(find.bySubtype<OutlinedButton>(), findsNothing);
++      expect(find.bySubtype<TextButton>(), findsNothing);
+       expect(find.byTooltip('刷新应用核验'), findsNothing);
+       expect(_inside(tile, '应用身份已核验'), findsNothing);
+       _expectNoExecutionClaim();
+@@ -347,9 +347,9 @@
+     expect(_inside(second, '域名访问'), findsNothing);
+     await tester.pump(const Duration(seconds: 2));
+     expect(find.byType(CircularProgressIndicator), findsNothing);
+-    expect(find.byType(FilledButton), findsNothing);
+-    expect(find.byType(OutlinedButton), findsNothing);
+-    expect(find.byType(TextButton), findsNothing);
++    expect(find.bySubtype<FilledButton>(), findsNothing);
++    expect(find.bySubtype<OutlinedButton>(), findsNothing);
++    expect(find.bySubtype<TextButton>(), findsNothing);
+     expect(find.byTooltip('刷新应用核验'), findsNothing);
+     _expectNoExecutionClaim();
+     expect(tester.takeException(), isNull);

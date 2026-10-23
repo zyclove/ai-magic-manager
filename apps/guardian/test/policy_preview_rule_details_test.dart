@@ -129,9 +129,9 @@ void _expectPreviewBoundary() {
   for (final claim in ['已执行', '已应用', '已管控', '已生效', '已授予']) {
     expect(find.textContaining(claim), findsNothing, reason: claim);
   }
-  expect(find.byType(FilledButton), findsNothing);
-  expect(find.byType(OutlinedButton), findsNothing);
-  expect(find.byType(TextButton), findsNothing);
+  expect(find.bySubtype<FilledButton>(), findsNothing);
+  expect(find.bySubtype<OutlinedButton>(), findsNothing);
+  expect(find.bySubtype<TextButton>(), findsNothing);
 }
 
 void main() {
