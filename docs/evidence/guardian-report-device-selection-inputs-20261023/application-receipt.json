@@ -1,0 +1,46 @@
+{
+  "status": "REVIEWED_INPUT_BINDING_DELTA_UNFORMATTED_UNCOMPILED_UNRUN",
+  "atUtc": "2026-10-23T09:35:57.050054+00:00",
+  "parent": "d01f7204fef6eec63d198d049da5f508abbf20bd",
+  "sourcePath": "apps/guardian/lib/ui/usage_report_device_picker.dart",
+  "beforeRawSha256": "10f70a11f6938d3c8545d8b10c8afedaff200adbaea211d86ae04c68e846b310",
+  "afterRawSha256": "e980900a3d870c0293930801fb180cf25e566fe729d979f9aa29b6d11907ad4a",
+  "boundAtInit": [
+    "deviceId",
+    "registrationId",
+    "subjectId",
+    "platform",
+    "limit"
+  ],
+  "renameAndReorderPreserveSelection": true,
+  "observedBindingOrLimitChangesInvalidateWholeDraft": true,
+  "initialAndCurrentDuplicateIdsInvalidate": true,
+  "noAutomaticUnnotifiedListObservationClaim": true,
+  "noUnobservedAbaDetectionClaim": true,
+  "existingTestsUnmodified": true,
+  "testsRun": false,
+  "sdkInvoked": false,
+  "newSourceDeployed": false,
+  "pushed": false,
+  "originalReviewFilesModified": false,
+  "reviewCopies": [
+    {
+      "original": ".cache/guardian-picker-inputs-independent-20261023-r2/review-pins.json",
+      "path": "docs/evidence/guardian-report-device-selection-inputs-20261023/review-pins.json",
+      "bytes": 987,
+      "sha256": "a8052a22208c76d25c33d9b3c33aa855e4b5606759a3599336b476092ddfc97f"
+    },
+    {
+      "original": ".cache/guardian-picker-inputs-independent-20261023-r2/review.md",
+      "path": "docs/evidence/guardian-report-device-selection-inputs-20261023/review.md",
+      "bytes": 2520,
+      "sha256": "4ddc483ec8f3ad989728291e93581985354ad720c0e90967692861a1b1629cb9"
+    },
+    {
+      "original": ".cache/guardian-picker-inputs-independent-20261023-r2/reviewed-delta.patch",
+      "path": "docs/evidence/guardian-report-device-selection-inputs-20261023/reviewed-delta.patch",
+      "bytes": 2750,
+      "sha256": "fd54d0ae43d92ed8f0570c5fc620d96d5315c5a49ceb5529552d8729cd0bdcd3"
+    }
+  ]
+}

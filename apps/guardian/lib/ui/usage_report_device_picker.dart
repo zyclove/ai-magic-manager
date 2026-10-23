@@ -24,6 +24,8 @@ class UsageReportDevicePicker extends StatefulWidget {
 }
 
 class _UsageReportDevicePickerState extends State<UsageReportDevicePicker> {
+  late final int initialLimit;
+  late final Map<String, (String, String, String)> initialTargets;
   late final Set<String> selected = widget.selected
       .intersection(widget.targets.map((t) => t.deviceId).toSet());
   final searchController = TextEditingController();
@@ -31,10 +33,12 @@ class _UsageReportDevicePickerState extends State<UsageReportDevicePicker> {
   String search = '';
   bool onlySelected = false;
   bool invalidated = false, closing = false, rebuildPending = false;
+  String invalidationMessage = '工作空间或权限已变化，请关闭窗口后重新选择设备。';
 
-  void invalidate() {
+  void invalidate([String? message]) {
     if (invalidated) return;
     invalidated = true;
+    if (message != null) invalidationMessage = message;
     selected.clear();
     if (!mounted || closing) return;
     if (SchedulerBinding.instance.schedulerPhase ==
@@ -52,6 +56,17 @@ class _UsageReportDevicePickerState extends State<UsageReportDevicePicker> {
 
   void observeAccess() {
     if (widget.hasAccess?.call() == false) invalidate();
+    if (invalidated) return;
+    // Pin values rather than List identity: callers can reuse or reorder a list.
+    if (widget.limit != initialLimit ||
+        widget.targets.length != initialTargets.length ||
+        widget.targets.map((t) => t.deviceId).toSet().length !=
+            initialTargets.length ||
+        widget.targets.any((target) =>
+            initialTargets[target.deviceId] !=
+            (target.registrationId, target.subjectId, target.platform))) {
+      invalidate('可选设备或选择上限已变化，请关闭窗口后重新选择。');
+    }
   }
 
   bool get current {
@@ -70,6 +85,15 @@ class _UsageReportDevicePickerState extends State<UsageReportDevicePicker> {
   @override
   void initState() {
     super.initState();
+    initialLimit = widget.limit;
+    initialTargets = Map.unmodifiable({
+      for (final target in widget.targets)
+        target.deviceId:
+            (target.registrationId, target.subjectId, target.platform),
+    });
+    if (initialTargets.length != widget.targets.length) {
+      invalidate('可选设备列表存在重复记录，请关闭窗口后刷新设备列表。');
+    }
     observeAccess();
     widget.accessChanges?.addListener(changed);
   }
@@ -250,7 +274,7 @@ class _UsageReportDevicePickerState extends State<UsageReportDevicePicker> {
                                                 target.deviceId, value == true));
                                   })),
                     ])
-                : const Notice('工作空间或权限已变化，请关闭窗口后重新选择设备。', warning: true)),
+                : Notice(invalidationMessage, warning: true)),
         actions: [
           TextButton(
               onPressed: finish, child: Text(allowed ? '取消' : '关闭')),

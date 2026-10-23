@@ -1,0 +1,23 @@
+{
+  "status": "STATIC_DELTA_NO_BLOCKER_UNRUN",
+  "before": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-picker-inputs-20261023-r2\\before.dart",
+    "bytes": 10456,
+    "sha256": "10f70a11f6938d3c8545d8b10c8afedaff200adbaea211d86ae04c68e846b310"
+  },
+  "after": {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\usage_report_device_picker.dart",
+    "bytes": 11629,
+    "sha256": "e980900a3d870c0293930801fb180cf25e566fe729d979f9aa29b6d11907ad4a"
+  },
+  "delta": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-picker-inputs-independent-20261023-r2\\reviewed-delta.patch",
+    "bytes": 2750,
+    "sha256": "fd54d0ae43d92ed8f0570c5fc620d96d5315c5a49ceb5529552d8729cd0bdcd3"
+  },
+  "review": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-picker-inputs-independent-20261023-r2\\review.md",
+    "bytes": 2520,
+    "sha256": "4ddc483ec8f3ad989728291e93581985354ad720c0e90967692861a1b1629cb9"
+  }
+}
