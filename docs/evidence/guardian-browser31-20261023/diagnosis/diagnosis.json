@@ -1,0 +1,178 @@
+{
+  "status": "CONFIRMED_FIXTURE_FINDER_TYPE_MISMATCH_NOT_EVIDENCE_OF_PRODUCT_RELOAD_FAILURE",
+  "utc": "2026-10-23T03:47:58.051769+00:00",
+  "logSnapshot": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r2\\attempt\\out\\browser31.jsonl",
+    "bytes": 21027,
+    "sha256": "2a53bf2c675c79040b159b0c5f7b4de27864a8c8f88cde849973d285efcfb12e"
+  },
+  "failureEvidence": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r2-diagnosis\\failure-evidence.json",
+    "bytes": 6661,
+    "sha256": "cc5f64b63ebdef8e77c3087da6e6e8fab52aa2728430c295c3fa343840a91609"
+  },
+  "sourcePins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\src\\apps\\guardian\\test\\workspace_flow_entry_browser_test.dart",
+      "bytes": 11402,
+      "sha256": "0fd0927063b66f1b52a44f2e7b868019a8818105e8ce15096090ecf5c0de676c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\src\\apps\\guardian\\test\\audit_export_route_test.dart",
+      "bytes": 6429,
+      "sha256": "beff27499cbf2a10eeb469c930027218a56c8094a803f2e471fdb76f16659d20"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\src\\apps\\guardian\\test\\approval_help_flow_browser_test.dart",
+      "bytes": 13713,
+      "sha256": "845cb4f4b5a65cf126080861b7e29bd579a0101f5b3be437c1394bf7c0be0127"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\src\\apps\\guardian\\test\\managed_enrollment_page_test.dart",
+      "bytes": 10304,
+      "sha256": "cc4aa88315753c14d2b3c246fff461f39b2b732e6ce47a6d235ffed1c731b6d0"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\src\\apps\\guardian\\test\\device_management_entry_test.dart",
+      "bytes": 5303,
+      "sha256": "bf41e4e882a21d1560f35f999667ea506c617a327d2896b102bccbadd596e4a1"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\src\\apps\\guardian\\lib\\pages\\managed_android_page.dart",
+      "bytes": 28756,
+      "sha256": "3e35d8f90fda4fe818843d28552a02bdb91c7f3945e723424b4c0f8b6c5d6937"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\src\\apps\\guardian\\lib\\pages\\console_pages.dart",
+      "bytes": 85658,
+      "sha256": "805b3b398b1ca93a28d80e5f32603f323ef9113baa856893bb68dfbe4d91fd41"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter\\lib\\src\\material\\outlined_button.dart",
+      "bytes": 23992,
+      "sha256": "1bc699b84a222261d2f3f19946e5e675ac14e8c547923ed121b97e2277acfb9e"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_test\\lib\\src\\finders.dart",
+      "bytes": 60527,
+      "sha256": "9bc8abd582709c3741730d0387a6dae4d525badc47e947199493cbb64be6783d"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_test\\lib\\src\\controller.dart",
+      "bytes": 97012,
+      "sha256": "98370266e71ff3c6aa3b0572ecf21d5a7f2e4664cd889416efca076da92b407f"
+    }
+  ],
+  "actualVisibleResults": {
+    "expected": 31,
+    "success": 30,
+    "error": 1,
+    "failureResult": 0,
+    "skipped": 0
+  },
+  "suiteCounts": [
+    {
+      "path": "D:/codes/mobile/ai-manager/.cache/guardian-browser31-20261023-r1/src/apps/guardian/test/workspace_flow_entry_browser_test.dart",
+      "visibleSuccess": 7,
+      "visibleError": 1,
+      "visibleFailure": 0,
+      "skipped": 0,
+      "hiddenSuccess": 1
+    },
+    {
+      "path": "D:/codes/mobile/ai-manager/.cache/guardian-browser31-20261023-r1/src/apps/guardian/test/audit_export_route_test.dart",
+      "visibleSuccess": 4,
+      "visibleError": 0,
+      "visibleFailure": 0,
+      "skipped": 0,
+      "hiddenSuccess": 1
+    },
+    {
+      "path": "D:/codes/mobile/ai-manager/.cache/guardian-browser31-20261023-r1/src/apps/guardian/test/approval_help_flow_browser_test.dart",
+      "visibleSuccess": 19,
+      "visibleError": 0,
+      "visibleFailure": 0,
+      "skipped": 0,
+      "hiddenSuccess": 1
+    }
+  ],
+  "onlyFailedCase": {
+    "testID": 4,
+    "name": "managed entry reloads and enables refresh after generation change",
+    "error": "StateError: Bad state: No element",
+    "reporterIsFailure": false
+  },
+  "causeTrace": [
+    {
+      "file": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\src\\apps\\guardian\\test\\workspace_flow_entry_browser_test.dart",
+      "lines": [
+        158,
+        167
+      ],
+      "fact": "The case asserts one readiness request, changes generation, asserts two requests, then calls tester.widget<OutlinedButton>(find.widgetWithText(OutlinedButton, refresh label))."
+    },
+    {
+      "file": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\src\\apps\\guardian\\lib\\pages\\console_pages.dart",
+      "lines": [
+        217,
+        220
+      ],
+      "fact": "ManagedAndroidPage key includes session scopeGeneration, so generation changes create a new page."
+    },
+    {
+      "file": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\src\\apps\\guardian\\lib\\pages\\managed_android_page.dart",
+      "lines": [
+        467,
+        474
+      ],
+      "fact": "The actual refresh control is OutlinedButton.icon with a non-null Icons.refresh icon."
+    },
+    {
+      "file": "D:/softwares/flutter/packages/flutter/lib/src/material/outlined_button.dart",
+      "lines": [
+        94,
+        120,
+        452
+      ],
+      "fact": "OutlinedButton.icon returns _OutlinedButtonWithIcon for a non-null icon; that concrete class extends OutlinedButton."
+    },
+    {
+      "file": "D:/softwares/flutter/packages/flutter_test/lib/src/finders.dart",
+      "lines": [
+        171,
+        175,
+        223,
+        224,
+        1450,
+        1460
+      ],
+      "fact": "widgetWithText uses byType; byType matches runtimeType equality and does not match subclasses."
+    },
+    {
+      "file": "D:/softwares/flutter/packages/flutter_test/lib/src/controller.dart",
+      "lines": [
+        799,
+        801
+      ],
+      "fact": "tester.widget reads finder.evaluate().single, producing No element when the exact-type finder is empty."
+    }
+  ],
+  "observedInference": "The readiness 1-to-2 assertions precede the failing widget lookup and did not produce an assertion failure. The refresh onPressed assertion was not reached.",
+  "classification": "The recorded error is caused by the test finder expecting a base runtime type while production builds its icon subclass. This is a fixture defect; no production reload defect is established by this failure.",
+  "futureRepairScopeOnly": "In a separately authorized source change, retain the same case and assertion but find the labeled button with a subtype-aware ancestor finder, such as matching find.bySubtype<OutlinedButton>(), and assert exactly one match before reading onPressed.",
+  "limits": [
+    "No fix or reproduction run was performed.",
+    "Refresh enabled-state assertion remains unverified after the lookup error.",
+    "Thirty successful business results do not make the 31-case candidate accepted.",
+    "Root owns outer terminal/job/postflight/release acceptance.",
+    "Only specific local SDK source files are pinned as diagnosis references; no whole SDK or browser installation validation is claimed."
+  ],
+  "candidateModified": false,
+  "attemptModified": false,
+  "mainModified": false,
+  "sdkCalls": 0,
+  "browserStarted": false,
+  "applicationTestsRunByDiagnosis": false,
+  "networkUsed": false,
+  "candidateImported": false
+}

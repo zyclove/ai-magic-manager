@@ -1,0 +1,46 @@
+{
+  "status": "BROWSER31_ORIGINAL_RUNS_NOT_ACCEPTED_FINDER_FIX_REVALIDATION_DEFERRED",
+  "createdAtUtc": "2026-10-23T03:50:26.127354+00:00",
+  "sourceUnderTest": "080e41c66a348d48d8ac313cde77e4dd8f36cc47",
+  "r1": {
+    "actualSession": 1823,
+    "initialChunk": "147d4c",
+    "finalChunk": "b68bf2",
+    "outerExit": 1,
+    "businessCasesStarted": 0,
+    "diagnosis": "Auto renderer CanvasKit loader returned local 404; no business assertions ran."
+  },
+  "r2": {
+    "actualSession": 38719,
+    "initialChunk": "487781",
+    "finalChunk": "29dcf6",
+    "outerExit": 1,
+    "visibleCases": 31,
+    "success": 30,
+    "error": 1,
+    "skip": 0,
+    "reporterDoneSuccess": false,
+    "failedName": "managed entry reloads and enables refresh after generation change",
+    "diagnosis": "Exact-type finder misses the OutlinedButton.icon subtype; no product change required.",
+    "ownedJobCleanupAtDeadline": true,
+    "ownedJobsFinal": 0,
+    "source405Cache3537PostflightMatched": true,
+    "postflightResourceGatePassed": false
+  },
+  "fixtureChange": {
+    "path": "apps\\guardian\\test\\workspace_flow_entry_browser_test.dart",
+    "beforeSha256": "0fd0927063b66f1b52a44f2e7b868019a8818105e8ce15096090ecf5c0de676c",
+    "afterSha256": "15fb4c531970c6488438d78e4c35265c51286159c8c462a3f8938ad39c995736",
+    "sameVisibleCaseNames": true,
+    "retainedReadinessAssertions": [
+      1,
+      2
+    ],
+    "addedRefreshReadinessAssertion": 3,
+    "rerun": "UNRUN_RESOURCE_WINDOW_UNAVAILABLE",
+    "sdkInvokedDuringFix": false
+  },
+  "wholeUiAccepted": false,
+  "newCodeDeployed": false,
+  "automaticRetry": false
+}

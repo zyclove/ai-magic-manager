@@ -1,0 +1,96 @@
+{
+  "events": [
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "network",
+          "level": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1792724890217.14,
+          "url": "http://localhost:61396/favicon.ico",
+          "networkRequestId": "40384.5"
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "network",
+          "level": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1792724893218.794,
+          "url": "http://localhost:61396/canvaskit/chromium/canvaskit.js",
+          "networkRequestId": "40384.617"
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "security",
+          "level": "error",
+          "text": "Refused to execute script from 'http://localhost:61396/canvaskit/chromium/canvaskit.js' because its MIME type ('text/plain') is not executable, and strict MIME type checking is enabled.",
+          "timestamp": 1792724893218.855,
+          "url": "http://localhost:61396/workspace_flow_entry_browser_test.html#%7B%22metadata%22:%7B%22testOn%22:%22browser%22,%22timeout%22:%7B%22duration%22:null,%22scaleFactor%22:1%7D,%22skip%22:null,%22skipReason%22:null,%22verboseTrace%22:null,%22chainStackTraces%22:true,%22retry%22:null,%22tags%22:%5B%5D,%22onPlatform%22:%5B%5D,%22forTag%22:%7B%7D,%22languageVersionComment%22:null%7D,%22browser%22:%22chrome%22%7D"
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "network",
+          "level": "error",
+          "text": "Failed to load resource: the server responded with a status of 404 (Not Found)",
+          "timestamp": 1792724893223.406,
+          "url": "http://localhost:61396/canvaskit/canvaskit.js",
+          "networkRequestId": "40384.618"
+        }
+      }
+    },
+    {
+      "method": "Log.entryAdded",
+      "params": {
+        "entry": {
+          "source": "security",
+          "level": "error",
+          "text": "Refused to execute script from 'http://localhost:61396/canvaskit/canvaskit.js' because its MIME type ('text/plain') is not executable, and strict MIME type checking is enabled.",
+          "timestamp": 1792724893223.451,
+          "url": "http://localhost:61396/workspace_flow_entry_browser_test.html#%7B%22metadata%22:%7B%22testOn%22:%22browser%22,%22timeout%22:%7B%22duration%22:null,%22scaleFactor%22:1%7D,%22skip%22:null,%22skipReason%22:null,%22verboseTrace%22:null,%22chainStackTraces%22:true,%22retry%22:null,%22tags%22:%5B%5D,%22onPlatform%22:%5B%5D,%22forTag%22:%7B%7D,%22languageVersionComment%22:null%7D,%22browser%22:%22chrome%22%7D"
+        }
+      }
+    },
+    {
+      "method": "Runtime.exceptionThrown",
+      "params": {
+        "timestamp": 1792724893225.17,
+        "exceptionDetails": {
+          "exceptionId": 1,
+          "text": "Uncaught (in promise)",
+          "lineNumber": 0,
+          "columnNumber": 0,
+          "scriptId": "1",
+          "url": "http://localhost:61396/workspace_flow_entry_browser_test.html#%7B%22metadata%22:%7B%22testOn%22:%22browser%22,%22timeout%22:%7B%22duration%22:null,%22scaleFactor%22:1%7D,%22skip%22:null,%22skipReason%22:null,%22verboseTrace%22:null,%22chainStackTraces%22:true,%22retry%22:null,%22tags%22:%5B%5D,%22onPlatform%22:%5B%5D,%22forTag%22:%7B%7D,%22languageVersionComment%22:null%7D,%22browser%22:%22chrome%22%7D",
+          "exception": {
+            "type": "object",
+            "subtype": "null",
+            "value": null
+          },
+          "executionContextId": 2
+        }
+      }
+    },
+    {
+      "id": 3,
+      "result": {
+        "result": {
+          "type": "string",
+          "value": "[{\"src\":\"http://localhost:61396/workspace_flow_entry_browser_test.html#%7B%22metadata%22:%7B%22testOn%22:%22browser%22,%22timeout%22:%7B%22duration%22:null,%22scaleFactor%22:1%7D,%22skip%22:null,%22skipReason%22:null,%22verboseTrace%22:null,%22chainStackTraces%22:true,%22retry%22:null,%22tags%22:%5B%5D,%22onPlatform%22:%5B%5D,%22forTag%22:%7B%7D,%22languageVersionComment%22:null%7D,%22browser%22:%22chrome%22%7D\",\"ready\":\"complete\",\"resourceCount\":250,\"badResources\":[],\"amdPending\":[]}]"
+        }
+      }
+    }
+  ]
+}

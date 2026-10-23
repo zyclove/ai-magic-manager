@@ -1,0 +1,306 @@
+{
+  "files": [
+    {
+      "path": "r1/attempt/external-observation-root.json",
+      "bytes": 1426,
+      "sha256": "a7b2ac39d2dec03702f31f5f613276d6680536d23eb104d29a17a417aca33351",
+      "source": ".cache\\guardian-browser31-20261023-r1\\attempt\\external-observation-root.json"
+    },
+    {
+      "path": "r1/attempt/initial-gate.json",
+      "bytes": 206,
+      "sha256": "dc02d561fb51757d1e96c93ec253152e95712a4df76b8003fa44449622f7be0a",
+      "source": ".cache\\guardian-browser31-20261023-r1\\attempt\\initial-gate.json"
+    },
+    {
+      "path": "r1/attempt/launch-gate.json",
+      "bytes": 206,
+      "sha256": "f811ea6877cdd1c7a25aa82fa65e17513d0c5edf07a26925c356cf6053d8c926",
+      "source": ".cache\\guardian-browser31-20261023-r1\\attempt\\launch-gate.json"
+    },
+    {
+      "path": "r1/attempt/launch.json",
+      "bytes": 975,
+      "sha256": "bcf580a290d7ae28b7b73e9d5b81eec4db1eab20fc8a4a86e2245b43096e9729",
+      "source": ".cache\\guardian-browser31-20261023-r1\\attempt\\launch.json"
+    },
+    {
+      "path": "r1/attempt/owned-chrome-observation.json",
+      "bytes": 734,
+      "sha256": "a2802a9832cc6d972f8cb862f17a2bab0355f4fbfd88962995217a3a9726bead",
+      "source": ".cache\\guardian-browser31-20261023-r1\\attempt\\owned-chrome-observation.json"
+    },
+    {
+      "path": "r1/attempt/postflight-gate.json",
+      "bytes": 206,
+      "sha256": "122701bf01451fa784050f076e974586deab349ab3c81ea8417e014675f113ae",
+      "source": ".cache\\guardian-browser31-20261023-r1\\attempt\\postflight-gate.json"
+    },
+    {
+      "path": "r1/attempt/postflight-pins.json",
+      "bytes": 1922,
+      "sha256": "c9774eae426eccb7a5df0faeebbc2178bdc92a147b1756d3636e9f0ea87ffccc",
+      "source": ".cache\\guardian-browser31-20261023-r1\\attempt\\postflight-pins.json"
+    },
+    {
+      "path": "r1/attempt/preflight-pins.json",
+      "bytes": 1921,
+      "sha256": "b79053eee07c0a8fbce2825728153ceafe677cd5953d18eb4c6e42e20c282a01",
+      "source": ".cache\\guardian-browser31-20261023-r1\\attempt\\preflight-pins.json"
+    },
+    {
+      "path": "r1/attempt/receipt.json",
+      "bytes": 4647,
+      "sha256": "22403a0638ca7899156f4eb06862395747b4bee6d20a981578d41629dca985cd",
+      "source": ".cache\\guardian-browser31-20261023-r1\\attempt\\receipt.json"
+    },
+    {
+      "path": "r1/attempt/request.json",
+      "bytes": 182,
+      "sha256": "e123fc4a6669da2905955dc09c130f49755a6133c33e2ca968f0f26c0d4d8951",
+      "source": ".cache\\guardian-browser31-20261023-r1\\attempt\\request.json"
+    },
+    {
+      "path": "r1/attempt/result.json",
+      "bytes": 5642,
+      "sha256": "e523307c2b8490be5abca0d4e1b4e38c745b6d24f6fe4a6aec70480f225154c3",
+      "source": ".cache\\guardian-browser31-20261023-r1\\attempt\\result.json"
+    },
+    {
+      "path": "r1/attempt/worker-console.log",
+      "bytes": 88,
+      "sha256": "80bec3fa32968b51b3ead75756e9820e51d6e7641973cdc018daf5b383542c99",
+      "source": ".cache\\guardian-browser31-20261023-r1\\attempt\\worker-console.log"
+    },
+    {
+      "path": "r1/attempt/out/browser31.jsonl",
+      "bytes": 836,
+      "sha256": "b4ea2c5dd098aea1f0afa62326fdf3c8e7763873223b783be47dc0cf30c24f3d",
+      "source": ".cache\\guardian-browser31-20261023-r1\\attempt\\out\\browser31.jsonl"
+    },
+    {
+      "path": "r1/proposal.json",
+      "bytes": 17390,
+      "sha256": "d0ef7c05af1b6e9721e4fa6c4fcf0111a4cd9cef4785fc394feb62c771253c22",
+      "source": ".cache\\guardian-browser31-20261023-r1\\proposal.json"
+    },
+    {
+      "path": "r1/inputs.json",
+      "bytes": 9611,
+      "sha256": "2b372886d04f846400499e3c2e6a2e8a41673cb89bc976a77335de60e139f446",
+      "source": ".cache\\guardian-browser31-20261023-r1\\inputs.json"
+    },
+    {
+      "path": "r1/controller.py",
+      "bytes": 8043,
+      "sha256": "bd519c70c1c3e6b3ca04455fed90ec36e9717d067973ea606e80e1d292cb02a0",
+      "source": ".cache\\guardian-browser31-20261023-r1\\controller.py"
+    },
+    {
+      "path": "r1/worker.py",
+      "bytes": 25194,
+      "sha256": "d3ebec3531c3aaac78e5b5c6627685be0fa72907c62dedac227f01a9a0e5e0bf",
+      "source": ".cache\\guardian-browser31-20261023-r1\\worker.py"
+    },
+    {
+      "path": "r1/heap1536_windows_job.py",
+      "bytes": 9292,
+      "sha256": "4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12",
+      "source": ".cache\\guardian-browser31-20261023-r1\\heap1536_windows_job.py"
+    },
+    {
+      "path": "r1/reporter_contract.py",
+      "bytes": 10649,
+      "sha256": "5626b4d9859efe8f2cf04886c7f97ac967ac6daa258d31860528bb90676ca301",
+      "source": ".cache\\guardian-browser31-20261023-r1\\reporter_contract.py"
+    },
+    {
+      "path": "r1/owned_chrome_observer.py",
+      "bytes": 5344,
+      "sha256": "5552f9bf7bf77d4b409a01a18080f0f51b6ea5c69c3a6ad38756f2e19619c052",
+      "source": ".cache\\guardian-browser31-20261023-r1\\owned_chrome_observer.py"
+    },
+    {
+      "path": "r2/attempt/external-observation-root.json",
+      "bytes": 1487,
+      "sha256": "36ced9da2c31dc5a8c41d59ba538f3bc605f924443347c612a840b0868cd696b",
+      "source": ".cache\\guardian-browser31-20261023-r2\\attempt\\external-observation-root.json"
+    },
+    {
+      "path": "r2/attempt/initial-gate.json",
+      "bytes": 206,
+      "sha256": "a72b77154f6dedc22dc7207cc3f8961f9a0a66b687c7b8a5f4dfe7953ad97fe1",
+      "source": ".cache\\guardian-browser31-20261023-r2\\attempt\\initial-gate.json"
+    },
+    {
+      "path": "r2/attempt/launch-gate.json",
+      "bytes": 206,
+      "sha256": "6002245e6d8083773f6259c88ed563b710e0174a8cea8a153dacedb44b6331a4",
+      "source": ".cache\\guardian-browser31-20261023-r2\\attempt\\launch-gate.json"
+    },
+    {
+      "path": "r2/attempt/launch.json",
+      "bytes": 979,
+      "sha256": "c4a67b12557638b95344b215628ced7dd004b4dc4c73a71d7dec1e9d8302eb68",
+      "source": ".cache\\guardian-browser31-20261023-r2\\attempt\\launch.json"
+    },
+    {
+      "path": "r2/attempt/owned-chrome-observation.json",
+      "bytes": 1720,
+      "sha256": "c1cd67419bc6e0eb78a78c566e14391e2c28fc4392088f6d91c185ec07bf49e8",
+      "source": ".cache\\guardian-browser31-20261023-r2\\attempt\\owned-chrome-observation.json"
+    },
+    {
+      "path": "r2/attempt/postflight-gate.json",
+      "bytes": 206,
+      "sha256": "5c1b320ddad5fe49d2a96e297dffccdb5823d206d4c387cdffe45d22e5f1abe2",
+      "source": ".cache\\guardian-browser31-20261023-r2\\attempt\\postflight-gate.json"
+    },
+    {
+      "path": "r2/attempt/postflight-pins.json",
+      "bytes": 1922,
+      "sha256": "65f973b339b47a5a8cd818651c4f85f0648a7c972fad1029e20e50db7a15ae17",
+      "source": ".cache\\guardian-browser31-20261023-r2\\attempt\\postflight-pins.json"
+    },
+    {
+      "path": "r2/attempt/preflight-pins.json",
+      "bytes": 1921,
+      "sha256": "185fd22ceae6c5ca20ac95b7a032e9e296f4659f74571c85b5691dde22f7bb59",
+      "source": ".cache\\guardian-browser31-20261023-r2\\attempt\\preflight-pins.json"
+    },
+    {
+      "path": "r2/attempt/receipt.json",
+      "bytes": 5512,
+      "sha256": "c47eade9934cbbf9dbc825b99e3c0a01c9de4d72122cbfced00be049891477fc",
+      "source": ".cache\\guardian-browser31-20261023-r2\\attempt\\receipt.json"
+    },
+    {
+      "path": "r2/attempt/request.json",
+      "bytes": 182,
+      "sha256": "c496fbfa5ad612378da74fd3c5711c84031008def97b585c0217b60b2f0856b1",
+      "source": ".cache\\guardian-browser31-20261023-r2\\attempt\\request.json"
+    },
+    {
+      "path": "r2/attempt/result.json",
+      "bytes": 6531,
+      "sha256": "03740c8a474966bacf6741bdbd56d2e803524bb0b18813cb7bf5f179cf3f1c83",
+      "source": ".cache\\guardian-browser31-20261023-r2\\attempt\\result.json"
+    },
+    {
+      "path": "r2/attempt/worker-console.log",
+      "bytes": 88,
+      "sha256": "807f05e4a2376b0fe507188196c9cf5ce9abf73d5cf8ed66b674759d5998e978",
+      "source": ".cache\\guardian-browser31-20261023-r2\\attempt\\worker-console.log"
+    },
+    {
+      "path": "r2/attempt/out/browser31.jsonl",
+      "bytes": 21027,
+      "sha256": "2a53bf2c675c79040b159b0c5f7b4de27864a8c8f88cde849973d285efcfb12e",
+      "source": ".cache\\guardian-browser31-20261023-r2\\attempt\\out\\browser31.jsonl"
+    },
+    {
+      "path": "r2/proposal.json",
+      "bytes": 28145,
+      "sha256": "e931d599edbdc2fc413ba2f156fcf592c165913ab00afff9b75fc148f71f501e",
+      "source": ".cache\\guardian-browser31-20261023-r2\\proposal.json"
+    },
+    {
+      "path": "r2/inputs.json",
+      "bytes": 9662,
+      "sha256": "a1214b44e1698080f410181c74699a6452d6b187020e63487a51e8de7bc5f64c",
+      "source": ".cache\\guardian-browser31-20261023-r2\\inputs.json"
+    },
+    {
+      "path": "r2/controller.py",
+      "bytes": 8043,
+      "sha256": "bd519c70c1c3e6b3ca04455fed90ec36e9717d067973ea606e80e1d292cb02a0",
+      "source": ".cache\\guardian-browser31-20261023-r2\\controller.py"
+    },
+    {
+      "path": "r2/worker.py",
+      "bytes": 25235,
+      "sha256": "5239b9fa2dbf22afe4f396125ac37287054b00cf365177fd4c12c1c5898d6766",
+      "source": ".cache\\guardian-browser31-20261023-r2\\worker.py"
+    },
+    {
+      "path": "r2/heap1536_windows_job.py",
+      "bytes": 9292,
+      "sha256": "4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12",
+      "source": ".cache\\guardian-browser31-20261023-r2\\heap1536_windows_job.py"
+    },
+    {
+      "path": "r2/reporter_contract.py",
+      "bytes": 10649,
+      "sha256": "5626b4d9859efe8f2cf04886c7f97ac967ac6daa258d31860528bb90676ca301",
+      "source": ".cache\\guardian-browser31-20261023-r2\\reporter_contract.py"
+    },
+    {
+      "path": "r2/owned_chrome_observer.py",
+      "bytes": 5344,
+      "sha256": "5552f9bf7bf77d4b409a01a18080f0f51b6ea5c69c3a6ad38756f2e19619c052",
+      "source": ".cache\\guardian-browser31-20261023-r2\\owned_chrome_observer.py"
+    },
+    {
+      "path": "r1/expected-cases.json",
+      "bytes": 15547,
+      "sha256": "ec83cef3fd5a329dd10e26cc362272b11bd7ae3a5dfe1e8cecc34594a2cee603",
+      "source": ".cache\\guardian-browser31-20261023-r1\\expected-cases.json"
+    },
+    {
+      "path": "r1/cache-content-chrome-refreshed.json",
+      "bytes": 725955,
+      "sha256": "8c0cfde01a9d6d5cb4bf002c1ed6d5069af28b0f27f110bec292f46e281f66c0",
+      "source": ".cache\\guardian-browser31-20261023-r1\\cache-content-chrome-refreshed.json"
+    },
+    {
+      "path": "r1/root-owned-page-errors.json",
+      "bytes": 4450,
+      "sha256": "f9906eddbc9a57e6af497e696263e76e60be2df51d4937006ff28169930925c6",
+      "source": ".cache\\guardian-browser31-20261023-r1\\root-owned-page-errors.json"
+    },
+    {
+      "path": "r1/out/source-manifest.json",
+      "bytes": 241339,
+      "sha256": "81821274333fab474397695fb7cb6fb6da98ae7bb8c8381c0972aba2c6e4a4de",
+      "source": ".cache\\guardian-browser31-20261023-r1\\out\\source-manifest.json"
+    },
+    {
+      "path": "r1/out/dependency-library-pins.json",
+      "bytes": 360075,
+      "sha256": "700633ef73314c4ae44d3932798b321bec428de347b491324c2f5cedbf606de1",
+      "source": ".cache\\guardian-browser31-20261023-r1\\out\\dependency-library-pins.json"
+    },
+    {
+      "path": "diagnosis/diagnosis.json",
+      "bytes": 7634,
+      "sha256": "6c0d3e78d25a58448a97da206b8372deee20c0e5f966d95d455031f775f022e8",
+      "source": ".cache\\guardian-browser31-20261023-r2-diagnosis\\diagnosis.json"
+    },
+    {
+      "path": "diagnosis/failure-evidence.json",
+      "bytes": 6661,
+      "sha256": "cc5f64b63ebdef8e77c3087da6e6e8fab52aa2728430c295c3fa343840a91609",
+      "source": ".cache\\guardian-browser31-20261023-r2-diagnosis\\failure-evidence.json"
+    },
+    {
+      "path": "fixture-before.dart",
+      "bytes": 11402,
+      "sha256": "0fd0927063b66f1b52a44f2e7b868019a8818105e8ce15096090ecf5c0de676c",
+      "source": "apps\\guardian\\test\\workspace_flow_entry_browser_test.dart"
+    },
+    {
+      "path": "summary.json",
+      "bytes": 1612,
+      "sha256": "c9b0801ac86ce9c368e12bba67f66a0149fff8c10ef2cf77d53d56dcb2190a64",
+      "source": null
+    },
+    {
+      "path": "README.md",
+      "bytes": 2399,
+      "sha256": "ed7ec5db4ee8cf9c379e10bb2957fec163f229dda5ffea93d8a5af10395d8c16",
+      "source": null
+    }
+  ],
+  "rawArchiveFiles": 48,
+  "totalBytesExcludingInventory": 1619945
+}

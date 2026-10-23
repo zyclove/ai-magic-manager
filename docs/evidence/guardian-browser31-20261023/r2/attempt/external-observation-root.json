@@ -1,0 +1,43 @@
+{
+  "status": "HTML_BROWSER31_RED_WITH_OWNED_JOB_CLEANUP_NOT_ACCEPTED",
+  "utc": "2026-10-23T03:48:27.890047+00:00",
+  "grant": "guardian-browser31-html-r2-root-20261023",
+  "actualToolSession": 38719,
+  "initialChunk": "487781",
+  "finalChunk": "29dcf6",
+  "naturalOuterExit": 1,
+  "outerElapsedSeconds": 484.7644467,
+  "nativeRootExit": 1,
+  "ownedJobsEmpty": true,
+  "knownOwnedPidsAbsent": [
+    44008,
+    57796,
+    31448,
+    13452,
+    55568
+  ],
+  "commandJobCleanupAtDeadline": true,
+  "wholeRunNaturalOrAccepted": false,
+  "sdkProcesses": [],
+  "unknownProcessNames": [],
+  "availableRamBytes": 548909056,
+  "metadataPinsMatched": 96,
+  "completeSource405Cache3537PostflightMatched": true,
+  "visibleCases": 31,
+  "visibleSuccess": 30,
+  "visibleError": 1,
+  "visibleSkipped": 0,
+  "preservedNonJsonLines": [
+    "Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!"
+  ],
+  "failedNames": [
+    "managed entry reloads and enables refresh after generation change"
+  ],
+  "reporterDoneSuccess": false,
+  "diagnosis": "The failed fixture uses exact-type widgetWithText(OutlinedButton); the production OutlinedButton.icon has a private subtype. Its prior readiness read-count assertions passed. Fix the finder and verify actual refresh dispatch in a new candidate.",
+  "postflightResourceGatePassed": false,
+  "rawOriginalStatusPreserved": "NOT_ACCEPTED",
+  "automaticRetry": false,
+  "wholeUiAccepted": false,
+  "servicesUpdated": false
+}

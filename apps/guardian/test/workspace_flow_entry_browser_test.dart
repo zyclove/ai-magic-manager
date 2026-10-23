@@ -161,9 +161,18 @@ void main() {
     await settleReads(tester);
     expect(session.requests.where((r) => r.url.path.endsWith('/readiness')),
         hasLength(2));
-    final refresh = tester.widget<OutlinedButton>(
-        find.widgetWithText(OutlinedButton, '刷新状态'));
+    // OutlinedButton.icon uses a subtype; an exact byType lookup misses it.
+    final refreshFinder = find.ancestor(
+        of: find.text('刷新状态'),
+        matching: find.bySubtype<OutlinedButton>());
+    expect(refreshFinder, findsOneWidget);
+    final refresh = tester.widget<OutlinedButton>(refreshFinder);
     expect(refresh.onPressed, isNotNull);
+    await tester.ensureVisible(refreshFinder);
+    await tester.tap(refreshFinder);
+    await settleReads(tester);
+    expect(session.requests.where((r) => r.url.path.endsWith('/readiness')),
+        hasLength(3), reason: 'Refresh must dispatch in the new scope.');
     expect(tester.takeException(), isNull);
   });
 

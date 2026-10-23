@@ -1,0 +1,112 @@
+{
+  "status": "READ_ONLY_BOUNDED_R2_REPORTER_FAILURE_EXTRACTION",
+  "logSnapshot": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r2\\attempt\\out\\browser31.jsonl",
+    "bytes": 21027,
+    "sha256": "2a53bf2c675c79040b159b0c5f7b4de27864a8c8f88cde849973d285efcfb12e"
+  },
+  "failedTest": {
+    "id": 4,
+    "name": "managed entry reloads and enables refresh after generation change",
+    "suiteID": 0,
+    "groupIDs": [
+      2
+    ],
+    "metadata": {
+      "skip": false,
+      "skipReason": null
+    },
+    "line": 10414,
+    "column": 19,
+    "url": "file:///D:/codes/mobile/ai-manager/.cache/guardian-browser31-20261023-r1/src/apps/guardian/packages/flutter_test/src/test_text_input_key_handler.dart.js"
+  },
+  "events": [
+    {
+      "line": 10,
+      "event": {
+        "test": {
+          "id": 4,
+          "name": "managed entry reloads and enables refresh after generation change",
+          "suiteID": 0,
+          "groupIDs": [
+            2
+          ],
+          "metadata": {
+            "skip": false,
+            "skipReason": null
+          },
+          "line": 10414,
+          "column": 19,
+          "url": "file:///D:/codes/mobile/ai-manager/.cache/guardian-browser31-20261023-r1/src/apps/guardian/packages/flutter_test/src/test_text_input_key_handler.dart.js"
+        },
+        "type": "testStart",
+        "time": 4826
+      }
+    },
+    {
+      "line": 11,
+      "event": {
+        "testID": 4,
+        "messageType": "print",
+        "message": "══╡ EXCEPTION CAUGHT BY FLUTTER TEST FRAMEWORK ╞════════════════════════════════════════════════════\nThe following StateError was thrown running a test:\nBad state: No element\n\nWhen the exception was thrown, this was the stack:\ndart-sdk/lib/_internal/js_dev_runtime/private/ddc_runtime/errors.dart 296:3  throw_\ndart-sdk/lib/core/iterable.dart 674:25                                       get single\npackages/flutter_test/src/test_text_input_key_handler.dart.js 8985:40        widget\nworkspace_flow_entry_browser_test.dart.js 527:28                             <fn>\ndart-sdk/lib/_internal/js_dev_runtime/patch/async_patch.dart 45:50           <fn>\npackages/stack_trace/src/stack_zone_specification.dart.js 241:98             <fn>\npackages/stack_trace/src/stack_zone_specification.dart.js 293:16             [_run]\npackages/stack_trace/src/stack_zone_specification.dart.js 241:80             <fn>\ndart-sdk/lib/async/zone.dart 1407:47                                         _rootRunUnary\ndart-sdk/lib/async/zone.dart 1308:19                                         runUnary\ndart-sdk/lib/async/future_impl.dart 163:18                                   handleValue\ndart-sdk/lib/async/future_impl.dart 847:44                                   handleValueCallback\ndart-sdk/lib/async/future_impl.dart 876:13                                   _propagateToListeners\ndart-sdk/lib/async/future_impl.dart 652:5                                    [_completeWithValue]\ndart-sdk/lib/async/future_impl.dart 722:7                                    <fn>\npackages/fake_async/fake_async.dart.js 163:40                                flushMicrotasks\npackages/flutter_test/src/test_text_input_key_handler.dart.js 11623:21       <fn>\ndart-sdk/lib/_internal/js_dev_runtime/patch/async_patch.dart 45:50           <fn>\npackages/stack_trace/src/stack_zone_specification.dart.js 241:98             <fn>\npackages/stack_trace/src/stack_zone_specification.dart.js 293:16             [_run]\npackages/stack_trace/src/stack_zone_specification.dart.js 241:80             <fn>\ndart-sdk/lib/async/zone.dart 1407:47                                         _rootRunUnary\ndart-sdk/lib/async/zone.dart 1308:19                                         runUnary\ndart-sdk/lib/async/future_impl.dart 163:18                                   handleValue\ndart-sdk/lib/async/future_impl.dart 847:44                                   handleValueCallback\ndart-sdk/lib/async/future_impl.dart 876:13                                   _propagateToListeners\ndart-sdk/lib/async/future_impl.dart 652:5                                    [_completeWithValue]\ndart-sdk/lib/async/future_impl.dart 722:7                                    callback\ndart-sdk/lib/async/schedule_microtask.dart 40:11                             _microtaskLoop\ndart-sdk/lib/async/schedule_microtask.dart 49:5                              _startMicrotaskLoop\ndart-sdk/lib/_internal/js_dev_runtime/patch/async_patch.dart 181:7           <fn>\n\nThe test description was:\n  managed entry reloads and enables refresh after generation change\n════════════════════════════════════════════════════════════════════════════════════════════════════",
+        "type": "print",
+        "time": 5242
+      }
+    },
+    {
+      "line": 12,
+      "event": {
+        "testID": 4,
+        "error": "Test failed. See exception logs above.\nThe test description was: managed entry reloads and enables refresh after generation change",
+        "stackTrace": "",
+        "isFailure": false,
+        "type": "error",
+        "time": 5244
+      }
+    },
+    {
+      "line": 13,
+      "event": {
+        "testID": 4,
+        "result": "error",
+        "skipped": false,
+        "hidden": false,
+        "type": "testDone",
+        "time": 5245
+      }
+    }
+  ],
+  "suiteCounts": [
+    {
+      "path": "D:/codes/mobile/ai-manager/.cache/guardian-browser31-20261023-r1/src/apps/guardian/test/workspace_flow_entry_browser_test.dart",
+      "visibleSuccess": 7,
+      "visibleError": 1,
+      "visibleFailure": 0,
+      "skipped": 0,
+      "hiddenSuccess": 1
+    },
+    {
+      "path": "D:/codes/mobile/ai-manager/.cache/guardian-browser31-20261023-r1/src/apps/guardian/test/audit_export_route_test.dart",
+      "visibleSuccess": 4,
+      "visibleError": 0,
+      "visibleFailure": 0,
+      "skipped": 0,
+      "hiddenSuccess": 1
+    },
+    {
+      "path": "D:/codes/mobile/ai-manager/.cache/guardian-browser31-20261023-r1/src/apps/guardian/test/approval_help_flow_browser_test.dart",
+      "visibleSuccess": 19,
+      "visibleError": 0,
+      "visibleFailure": 0,
+      "skipped": 0,
+      "hiddenSuccess": 1
+    }
+  ],
+  "terminalReporterDone": {
+    "success": false,
+    "type": "done",
+    "time": 31667
+  },
+  "allStartedTestsHaveCompletion": true,
+  "outerTerminalStateNotObservedByThisDiagnosis": true
+}

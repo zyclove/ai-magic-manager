@@ -1,0 +1,157 @@
+{
+  "status": "NOT_ACCEPTED",
+  "outerBudgetSeconds": 510,
+  "terminationReserveSeconds": 6,
+  "startedAtUtc": "2026-10-23T03:07:34.912254+00:00",
+  "workerPid": 50412,
+  "phaseScope": "GUARDIAN_BROWSER31",
+  "workerExitCode": 1,
+  "workerReceipt": {
+    "status": "NOT_ACCEPTED",
+    "phaseScope": "GUARDIAN_BROWSER31",
+    "startedAtUtc": "2026-10-23T03:07:35.031399+00:00",
+    "workerBudgetSeconds": 495,
+    "commandCapSeconds": 480,
+    "commandCleanupReserveSeconds": 5,
+    "minimumPostflightReserveSeconds": 25,
+    "sdkCalls": 1,
+    "testsRequested": true,
+    "reportedVisibleTests": null,
+    "pubRun": false,
+    "downloadsAllowed": false,
+    "cacheCopied": false,
+    "mainSourceWritten": false,
+    "forcedTermination": true,
+    "commandTerminalState": {
+      "pid": 29544,
+      "rootHandleSignaled": true,
+      "rootExitCode": 124,
+      "activeProcesses": 0,
+      "totalProcesses": 52,
+      "terminatedProcesses": 0,
+      "terminalVerified": true,
+      "timedOut": true,
+      "terminationRequested": true,
+      "terminationCallSucceeded": true
+    },
+    "ownedChromeObservation": {
+      "status": "OWNED_CHROME_ARGUMENTS_OBSERVED",
+      "chromeRoots": [
+        {
+          "pid": 18600,
+          "created": 1792724888.9275897,
+          "executable": "c:\\program files\\google\\chrome\\application\\chrome.exe",
+          "profile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\attempt\\tmp\\flutter_tools.412f49b6\\flutter_tools_chrome_device.2b7503a7",
+          "debuggingPort": 61398,
+          "testServerOrigins": [
+            "http://localhost:61396"
+          ],
+          "headless": true,
+          "observedOnlyAsOwnedCommandDescendant": true
+        }
+      ],
+      "problems": [],
+      "userChromeInspectedOrStopped": false,
+      "entireChromeInstallationPinned": false,
+      "loopbackDebugBindingInferredFromPinnedFlutterLauncher": true
+    },
+    "postflight": {
+      "stage": "postflight",
+      "startedAtUtc": "2026-10-23T03:15:20.134599+00:00",
+      "complete": true,
+      "source": {
+        "frozenRawGit": {
+          "files": 405,
+          "fullMembershipExact": true,
+          "allRawHashesMatch": true
+        },
+        "mainRaw": {
+          "files": 405,
+          "fullMembershipExact": true,
+          "allRawHashesMatch": true
+        },
+        "currentSevenRootGitTrees": {
+          "apps/guardian": "4e4a84b1ad22c12862cb1353ecc3fb0caa6c85dc",
+          "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+          "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+          "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+          "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+          "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+          "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+        }
+      },
+      "packages": {
+        "packages": 70,
+        "rebasedInternalRoots": 7,
+        "unchangedExternalRows": 63,
+        "metadataPreserved": true,
+        "candidateSha256": "b4f9c4adcf6af3e1637c44aebbbb74735e749d445c0f783bdaf3896d2a475d5c"
+      },
+      "cache": {
+        "manifestSha256": "8c0cfde01a9d6d5cb4bf002c1ed6d5069af28b0f27f110bec292f46e281f66c0",
+        "trees": 70,
+        "fixedFiles": 33,
+        "allMembersDirectoriesBytesAndHashesMatch": true,
+        "totals": {
+          "files": 3537,
+          "bytes": 638537951
+        }
+      },
+      "runtime": {
+        "sdkGitRevision": "761747bfc538b5af34aa0d3fac380f1bc331ec49",
+        "controlAndExtraRuntimePinsMatch": true,
+        "snapshotAndStampReady": true,
+        "pubspecNotNewerThanLock": true,
+        "forbiddenEnvironmentOverridesAbsent": true,
+        "bootstrapAbsent": true,
+        "engineDartStampMatchesEngineVersion": true,
+        "fixedProcessPathVerified": true,
+        "bootstrapAllowed": false
+      },
+      "finishedAtUtc": "2026-10-23T03:15:34.873143+00:00",
+      "elapsedWorkerSeconds": 479.84188289999975
+    },
+    "commandTerminalStateAfterPostflight": {
+      "pid": 29544,
+      "rootHandleSignaled": true,
+      "rootExitCode": 124,
+      "activeProcesses": 0,
+      "totalProcesses": 52,
+      "terminatedProcesses": 0,
+      "terminalVerified": true,
+      "timedOut": true,
+      "terminationRequested": true,
+      "terminationCallSucceeded": true
+    },
+    "resourceAfter": {
+      "utc": "2026-10-23T03:15:34.892884+00:00",
+      "sdkProcesses": [],
+      "unknownProcessNames": [],
+      "availableRamBytes": 5050982400,
+      "diskFreeBytes": {
+        "C:/": 7391846400,
+        "D:/": 36758052864
+      }
+    },
+    "logPin": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r1\\attempt\\out\\browser31.jsonl",
+      "bytes": 836,
+      "sha256": "b4ea2c5dd098aea1f0afa62326fdf3c8e7763873223b783be47dc0cf30c24f3d"
+    },
+    "logError": "ValueError: Natural native exit zero is required",
+    "finishedAtUtc": "2026-10-23T03:15:34.908434+00:00",
+    "elapsedCompleteSeconds": 479.8771711999998,
+    "outerExternalAcceptanceRequired": true
+  },
+  "ownedJobActiveProcesses": 0,
+  "ownedCleanupPerformed": false,
+  "watchdogExpired": false,
+  "sdkProcessesAfter": [],
+  "unknownProcessNames": [],
+  "availableRamBytesAfter": 5069504512,
+  "workerConsoleSha256": "80bec3fa32968b51b3ead75756e9820e51d6e7641973cdc018daf5b383542c99",
+  "postCandidateAndControlRuntimeMismatches": [],
+  "ownedJobActiveProcessesFinal": 0,
+  "finishedAtUtc": "2026-10-23T03:15:35.082955+00:00",
+  "elapsedCompleteSeconds": 480.1991444999999
+}

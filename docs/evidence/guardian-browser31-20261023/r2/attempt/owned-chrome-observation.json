@@ -1,0 +1,45 @@
+{
+  "status": "OWNED_CHROME_ARGUMENTS_OBSERVED",
+  "chromeRoots": [
+    {
+      "pid": 31448,
+      "created": 1792726781.0194442,
+      "executable": "c:\\program files\\google\\chrome\\application\\chrome.exe",
+      "profile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r2\\attempt\\tmp\\flutter_tools.379e27cd\\flutter_tools_chrome_device.42759fa7",
+      "debuggingPort": 50844,
+      "testServerOrigins": [
+        "http://localhost:50842"
+      ],
+      "headless": true,
+      "observedOnlyAsOwnedCommandDescendant": true
+    },
+    {
+      "pid": 13452,
+      "created": 1792726788.371153,
+      "executable": "c:\\program files\\google\\chrome\\application\\chrome.exe",
+      "profile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r2\\attempt\\tmp\\flutter_tools.379e27cd\\flutter_tools_chrome_device.9fbb5e5e",
+      "debuggingPort": 61456,
+      "testServerOrigins": [
+        "http://localhost:50842"
+      ],
+      "headless": true,
+      "observedOnlyAsOwnedCommandDescendant": true
+    },
+    {
+      "pid": 55568,
+      "created": 1792726795.275524,
+      "executable": "c:\\program files\\google\\chrome\\application\\chrome.exe",
+      "profile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser31-20261023-r2\\attempt\\tmp\\flutter_tools.379e27cd\\flutter_tools_chrome_device.4c58d988",
+      "debuggingPort": 50718,
+      "testServerOrigins": [
+        "http://localhost:50842"
+      ],
+      "headless": true,
+      "observedOnlyAsOwnedCommandDescendant": true
+    }
+  ],
+  "problems": [],
+  "userChromeInspectedOrStopped": false,
+  "entireChromeInstallationPinned": false,
+  "loopbackDebugBindingInferredFromPinnedFlutterLauncher": true
+}

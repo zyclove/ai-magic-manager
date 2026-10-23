@@ -1,0 +1,37 @@
+{
+  "status": "BROWSER_LOADER_TIMEOUT_OBSERVED_NOT_APPLICATION_TEST_RED_OR_PASS",
+  "utc": "2026-10-23T03:16:29.200656+00:00",
+  "grant": "guardian-browser31-r1-root-20261023",
+  "actualToolSession": 1823,
+  "initialChunk": "147d4c",
+  "finalChunk": "b68bf2",
+  "naturalOuterExit": 1,
+  "outerElapsedSeconds": 480.1991444999999,
+  "commandExit": 124,
+  "commandTimedOutAndOwnJobTerminated": true,
+  "ownedJobsEmpty": true,
+  "knownOwnedPidsAbsent": [
+    50412,
+    29544,
+    18600
+  ],
+  "sdkProcesses": [],
+  "unknownProcessNames": [],
+  "availableRamBytes": 5248761856,
+  "metadataPinsMatched": 58,
+  "fullSource405AndRuntime3537PostflightMatched": true,
+  "businessCasesStarted": 0,
+  "businessCasesPassed": 0,
+  "expectedCases": 31,
+  "rawOriginalStatusPreserved": "NOT_ACCEPTED",
+  "loader404Urls": [
+    "http://localhost:61396/canvaskit/chromium/canvaskit.js",
+    "http://localhost:61396/canvaskit/canvaskit.js"
+  ],
+  "diagnosis": "The actual auto-renderer loader requested CanvasKit URLs that the local test server returned 404. Files exist in the SDK. The project deployment explicitly uses html renderer; this test invocation omitted that setting.",
+  "secondaryRunnerIssue": "Unsupported concurrency flag prints a known SDK status line; web test runner already fixes jobs=1.",
+  "futureFixRequiresNewCandidateAndWindow": true,
+  "automaticRetry": false,
+  "wholeUiAccepted": false,
+  "servicesUpdated": false
+}
