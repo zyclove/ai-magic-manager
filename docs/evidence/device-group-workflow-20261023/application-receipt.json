@@ -1,0 +1,81 @@
+{
+  "status": "TWO_REVIEWED_SOURCE_FILES_APPLIED_UNFORMATTED_UNCOMPILED_UNRUN",
+  "atUtc": "2026-10-23T09:52:04.701271+00:00",
+  "parent": "91cffeeab202414a451100dd48511fc78066692e",
+  "files": [
+    {
+      "path": "apps/guardian/lib/ui/device_group_batch_picker.dart",
+      "beforeBytes": 10193,
+      "beforeSha256": "a428576fdda28c1b531a513b2105c316e6f9aa3e69ed44675df4e7d63e7c5c8c",
+      "afterBytes": 13677,
+      "afterSha256": "9efcda7088e2937a6d63a3375b2195f239567c94631acb17158e25342eb6feea"
+    },
+    {
+      "path": "apps/guardian/lib/pages/device_groups_page.dart",
+      "beforeBytes": 34590,
+      "beforeSha256": "749ce2d4666bd5cbf1923621b1c7f6e31d4d85df391fe4b18e10e9a09d2bb486",
+      "afterBytes": 36200,
+      "afterSha256": "a4e951742370b108eece12d852104dfa2e817033ed392e1418234dc44a9a8a57"
+    }
+  ],
+  "rawCopyPairs": [
+    {
+      "original": ".cache/device-group-picker-workflow-candidate-20261023-r1/application-manifest.json",
+      "path": "docs/evidence/device-group-workflow-20261023/picker-application-manifest.json",
+      "bytes": 1605,
+      "sha256": "e54f1e24c818c1a95cf1b4e0614aef830b9a1cec99ccf6d11c0d07af3b8246a2"
+    },
+    {
+      "original": ".cache/device-group-picker-workflow-candidate-20261023-r1/delivery-pins.json",
+      "path": "docs/evidence/device-group-workflow-20261023/picker-delivery-pins.json",
+      "bytes": 1246,
+      "sha256": "ac206da91009b47346e204e4f073c3a1c9b3abb2b1ff7c1e19e18c3375ce29d7"
+    },
+    {
+      "original": ".cache/device-group-picker-workflow-candidate-20261023-r1/candidate.patch",
+      "path": "docs/evidence/device-group-workflow-20261023/picker-candidate.patch",
+      "bytes": 13327,
+      "sha256": "84666455553151cc9b368b466ea3a4da0dd6f44d63ad8cb4800e19670f0ba107"
+    },
+    {
+      "original": ".cache/device-group-picker-workflow-candidate-20261023-r1/README.md",
+      "path": "docs/evidence/device-group-workflow-20261023/picker-candidate-readme.md",
+      "bytes": 2422,
+      "sha256": "7cd9dc4ad758a4e16f4957003e35a7ee91ec5c298ad000abfd1f5917d808fb5c"
+    },
+    {
+      "original": ".cache/device-group-picker-workflow-review-20261023-r1/review.md",
+      "path": "docs/evidence/device-group-workflow-20261023/product-review.md",
+      "bytes": 8005,
+      "sha256": "869117fee446f13e14f1f5b09c2151666c88496dfa03d7c7172429fdfb8e87d4"
+    },
+    {
+      "original": ".cache/device-group-picker-workflow-review-20261023-r1/source-pins.json",
+      "path": "docs/evidence/device-group-workflow-20261023/product-source-pins.json",
+      "bytes": 2604,
+      "sha256": "c10db452e75b92dbb9cc2a17ba499b372ca0e48b462e324200f43ae30b37581b"
+    },
+    {
+      "original": ".cache/device-group-pagination-independent-20261023-r1/review.md",
+      "path": "docs/evidence/device-group-workflow-20261023/page-independent-review.md",
+      "bytes": 3735,
+      "sha256": "612ad627ee64acd2f365531a2abed844cddab4394be2a46b066e472751526e47"
+    },
+    {
+      "original": ".cache/device-group-pagination-independent-20261023-r1/review-pins.json",
+      "path": "docs/evidence/device-group-workflow-20261023/page-independent-review-pins.json",
+      "bytes": 2592,
+      "sha256": "5b6acc647323f28f07b5bcd7be02b90f72a2972598f85bb803d1b04a6a338e64"
+    }
+  ],
+  "dependenciesAdded": [],
+  "apiChanged": false,
+  "testsAdded": false,
+  "testsRun": false,
+  "sdkInvoked": false,
+  "sourceDeployed": false,
+  "oldSnapshot91cffeeStillHistorical": true,
+  "newSnapshotRequiredBeforeExecution": true,
+  "foreignTrackedWipPreserved": true,
+  "pushed": false
+}

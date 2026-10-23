@@ -28,6 +28,10 @@ class DeviceGroupBatchPicker extends StatefulWidget {
 
 class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
   final selected = <String, Json>{};
+  final searchController = TextEditingController();
+  final searchFocus = FocusNode(debugLabel: 'device-group-batch-search');
+  String search = '';
+  bool onlySelected = false;
   List<Json> devices = const [];
   String? cursor;
   Object? error;
@@ -83,8 +87,42 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
   }
 
   void confirm() {
-    if (!current || selected.isEmpty) return;
+    if (!current || selected.isEmpty || selected.length > 50 ||
+        selected.entries.any((entry) => entry.key != idOf(entry.value) ||
+            !selectable(entry.value))) return;
     finish(List<Json>.unmodifiable(selected.values));
+  }
+
+  bool selectable(Json row) => devices.any((item) =>
+      idOf(item) == idOf(row) &&
+      item['registrationId'] == row['registrationId'] &&
+      (removing || item['state'] == 'ACTIVE'));
+
+  List<Json> get visibleDevices => devices.where((row) =>
+      (!onlySelected || selected.containsKey(idOf(row))) &&
+      '${row['displayName']} ${idOf(row)} ${row['registrationId']}'
+          .toLowerCase().contains(search)).toList();
+
+  void changeSearch(String value) {
+    if (!current) return;
+    setState(() => search = value.trim().toLowerCase());
+  }
+
+  void clearSearch() {
+    if (!current) return;
+    searchController.clear();
+    setState(() => search = '');
+    searchFocus.requestFocus();
+  }
+
+  void changeSelectedFilter(bool value) {
+    if (!current) return;
+    setState(() => onlySelected = value);
+  }
+
+  void clearSelection() {
+    if (!current) return;
+    setState(selected.clear);
   }
   bool get removing => widget.groupId != null;
   String idOf(Json row) => row[removing ? 'deviceId' : 'id'] as String;
@@ -137,6 +175,8 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
     _revoked = true;
     generation++;
     widget.accessChanges?.removeListener(_accessChanged);
+    searchController.dispose();
+    searchFocus.dispose();
     super.dispose();
   }
 
@@ -189,8 +229,7 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
   void toggle(Json row) {
     if (!current || (!removing && row['state'] != 'ACTIVE')) return;
     final id = idOf(row);
-    if (!devices.any((item) => idOf(item) == id &&
-        item['registrationId'] == row['registrationId'])) return;
+    if (!selectable(row)) return;
     setState(() {
       if (selected.containsKey(id)) {
         selected.remove(id);
@@ -201,86 +240,118 @@ class _DeviceGroupBatchPickerState extends State<DeviceGroupBatchPicker> {
   }
 
   @override
-  Widget build(BuildContext context) => !permitted
-      ? AlertDialog(
+  Widget build(BuildContext context) {
+    if (!permitted) {
+      return AlertDialog(
           title: const Text('工作空间或权限已变化'),
           content: const Text('已隐藏原设备选择。请关闭窗口，在当前工作空间重新打开。'),
           actions: [TextButton(onPressed: () {
             if (_route?.isCurrent == true) finish();
-          }, child: const Text('关闭'))])
-      : Dialog(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 680, maxHeight: 720),
-          child: Padding(
-            padding: const EdgeInsets.all(20),
+          }, child: const Text('关闭'))]);
+    }
+    final visible = visibleDevices;
+    return AlertDialog(
+        title: Text(removing ? '批量移出设备组' : '批量加入设备组'),
+        scrollable: true,
+        content: SizedBox(
+            width: 600,
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(removing ? '批量移出设备组' : '批量加入设备组',
-                    style: Theme.of(context).textTheme.titleLarge),
-                const SizedBox(height: 8),
-                Text(removing
-                    ? '可清理停用、旧注册周期及其他成员；单次最多 50 台。移出不撤销设备注册或已有独立策略。'
-                    : '仅可选择已激活的本机构设备；单次最多 50 台。确认时会重新核对每台设备的注册周期。'),
-                const SizedBox(height: 12),
-                Text('已选择 ${selected.length} / 50 台',
-                    style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 8),
-                if (loading) const LinearProgressIndicator(),
-                if (error != null)
-                  FailureView(error!, retry: () => load(more: cursor != null)),
-                Expanded(
-                  child: devices.isEmpty && !loading && error == null
-                      ? EmptyView(removing ? '组内没有设备' : '没有可选设备',
-                          removing ? '当前设备组已没有需要清理的成员。' : '请先注册并激活机构设备。')
-                      : ListView.builder(
-                          itemCount: devices.length + (cursor == null ? 0 : 1),
-                          itemBuilder: (context, index) {
-                            if (index == devices.length) {
-                              return TextButton.icon(
-                                onPressed:
-                                    loading ? null : () => load(more: true),
-                                icon: const Icon(Icons.expand_more),
-                                label: const Text('加载更多设备'),
-                              );
-                            }
-                            final row = devices[index];
-                            final id = idOf(row);
-                            final active = row['state'] == 'ACTIVE';
-                            final checked = selected.containsKey(id);
-                            return CheckboxListTile(
-                              value: checked,
-                              onChanged: (removing || active) &&
-                                      (checked || selected.length < 50)
-                                  ? (_) => toggle(row)
-                                  : null,
-                              title: Text(row['displayName'] as String),
-                              subtitle: Text(
-                                  '${label(row['platform'])} · ${label(row['state'])}'
-                                  '${removing ? ' · ${label(row['membershipStatus'])}' : ''}\n$id'),
-                              isThreeLine: true,
-                              controlAffinity: ListTileControlAffinity.leading,
-                            );
-                          },
-                        ),
-                ),
-                const SizedBox(height: 12),
-                Wrap(
-                  alignment: WrapAlignment.end,
-                  spacing: 8,
-                  children: [
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(removing
+                      ? '可清理停用、旧注册周期及其他成员；单次最多 50 台。移出不撤销设备注册或已有独立策略。'
+                      : '仅可选择已激活的本机构设备；单次最多 50 台。确认时会重新核对每台设备的注册周期。'),
+                  const SizedBox(height: 12),
+                  TextField(
+                      controller: searchController,
+                      focusNode: searchFocus,
+                      textInputAction: TextInputAction.search,
+                      decoration: InputDecoration(
+                          labelText: '搜索已加载设备',
+                          helperText: '按名称、设备编号或注册编号查找；不会自动查询未加载的设备。',
+                          helperMaxLines: 3,
+                          prefixIcon: const Icon(Icons.search),
+                          suffixIcon: searchController.text.isEmpty
+                              ? null
+                              : IconButton(
+                                  tooltip: '清除设备搜索',
+                                  onPressed: clearSearch,
+                                  icon: const Icon(Icons.close))),
+                      onChanged: changeSearch),
+                  const SizedBox(height: 12),
+                  Semantics(
+                      liveRegion: true,
+                      child: Text('已选择 ${selected.length} / 50 台 · 当前显示 ${visible.length} 台',
+                          style: Theme.of(context).textTheme.titleMedium)),
+                  const SizedBox(height: 8),
+                  Wrap(spacing: 8, runSpacing: 4, children: [
+                    FilterChip(
+                        label: const Text('仅看已选'),
+                        selected: onlySelected,
+                        onSelected: changeSelectedFilter),
                     TextButton(
-                        onPressed: close,
-                        child: const Text('取消')),
-                    FilledButton(
-                        onPressed: selected.isEmpty ? null : confirm,
-                        child: Text(
-                            '核对并${removing ? '移出' : '加入'} ${selected.length} 台')),
-                  ],
-                ),
-              ],
-            ),
-          ),
-        ),
-      );
+                        onPressed: selected.isEmpty ? null : clearSelection,
+                        child: const Text('清空选择')),
+                  ]),
+                  Text('已加载 ${devices.length} 台${cursor == null ? '' : '，还有更多设备'}',
+                      style: Theme.of(context).textTheme.bodySmall),
+                  const SizedBox(height: 8),
+                  if (loading) const LinearProgressIndicator(),
+                  if (error != null)
+                    FailureView(error!, retry: () => load(more: cursor != null)),
+                  SizedBox(
+                      height: (MediaQuery.sizeOf(context).height * .36)
+                          .clamp(100.0, 320.0).toDouble(),
+                      child: visible.isEmpty
+                          ? Center(child: Text(devices.isEmpty
+                              ? loading
+                                  ? '正在加载设备…'
+                                  : error != null
+                                      ? '设备尚未加载，请重试。'
+                                      : removing
+                                          ? '组内没有设备。'
+                                          : '没有可选设备，请先注册并激活机构设备。'
+                              : onlySelected && selected.isEmpty
+                                  ? '还没有选择设备，关闭“仅看已选”后继续选择。'
+                                  : onlySelected
+                                      ? '已选设备中没有匹配项，请调整或清除搜索。'
+                                      : cursor != null
+                                          ? '已加载设备中没有匹配项，可调整搜索或继续加载更多。'
+                                          : '没有匹配的设备，请调整或清除搜索。'))
+                          : ListView.builder(
+                              itemCount: visible.length,
+                              itemBuilder: (context, index) {
+                                final row = visible[index];
+                                final id = idOf(row);
+                                final active = row['state'] == 'ACTIVE';
+                                final checked = selected.containsKey(id);
+                                return CheckboxListTile(
+                                  key: ValueKey(id),
+                                  value: checked,
+                                  onChanged: (removing || active) &&
+                                          (checked || selected.length < 50)
+                                      ? (_) => toggle(row)
+                                      : null,
+                                  title: Text(row['displayName'] as String),
+                                  subtitle: Text(
+                                      '${label(row['platform'])} · ${label(row['state'])}'
+                                      '${removing ? ' · ${label(row['membershipStatus'])}' : ''}\n设备 $id'),
+                                  isThreeLine: true,
+                                  controlAffinity: ListTileControlAffinity.leading,
+                                );
+                              })),
+                  if (cursor != null)
+                    TextButton.icon(
+                        onPressed: loading ? null : () => load(more: true),
+                        icon: const Icon(Icons.expand_more),
+                        label: const Text('加载更多设备')),
+                ])),
+        actions: [
+          TextButton(onPressed: close, child: const Text('取消')),
+          FilledButton(
+              onPressed: selected.isEmpty || selected.length > 50 ? null : confirm,
+              child: Text('核对并${removing ? '移出' : '加入'} ${selected.length} 台')),
+        ]);
+  }
 }

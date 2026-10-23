@@ -1,0 +1,18 @@
+# Device-group pagination and confirmation review
+
+Status: **STATIC_NO_BLOCKER** for candidate SHA256 `a4e951742370b108eece12d852104dfa2e817033ed392e1418234dc44a9a8a57`. This is a text and byte review only. No SDK, formatter, analyzer, test, browser, process API or network was run. Main and Git were not written. Intermediate candidate `016ced...` is not the reviewed final artifact.
+
+## Reviewed behavior
+
+- Pagination failures now use `memberPageError` rather than the initial-load/mutation `error` (32-33, 240-273). A normal append failure does not replace loaded members or the captured cursor. Retry invokes `moreMembers`, captures the current cursor, clears the previous page error before its await, and retains the existing current/generation/group scope guards. Initial refresh and a second append cannot overlap through this action because both loading flags are checked.
+- `INVALID_CURSOR` clears the cursor and records the recovery mode (264-267). The bottom notice offers a group refresh instead of repeating the rejected cursor (681-704). `open`, access loss and return-to-list clear both new fields (63-64, 205-206, 600-601). Filter changes call `open`; successful mutations already call `open`. Consequently an obsolete append response/catch/finally cannot restore an old error or clear a newer loading operation after its scope loses the captured generation/group.
+- Duplicate-member and response validation are unchanged (250-255). Failed append validation also keeps prior records and cursor. The new UI does not consume the initial-load error or hide the loaded member rows.
+- Backend `DeviceGroupService.members` calls `ItemPage.validate` at 515. The current cursor contract rejects non-canonical UUIDs; it has no cursor expiry timer. The notice says the pagination information is unusable and requests a refresh; this review does not claim time-based expiry or server-side retry semantics.
+- Batch-add and batch-remove descriptions enumerate every element of `chosen`, with display name and the matching device identifier (`id` for add, `deviceId` for remove), with no `take(3)` or omitted suffix (394-405, 424-435). The request still maps the complete same `chosen` list into its original device/registration body, retains the captured group version, and retains the original idempotency key. The existing batch picker limits normal selection to 50.
+- The shared confirmation `AlertDialog` is now scrollable (942-960). Its description/error content uses a minimum-size Column and no lazy viewport or Expanded child; the complete 50-row text can scroll while Flutter retains its dialog action area. Submit, uncertain retry, scope/OwnedDialogRoute and close behavior are unchanged. This is structural review, not proof of rendered short-screen or large-text layout.
+
+## Limits and future checks
+
+No blocking static issue found in the final delta. Existing `submit_direct_variant_test.dart` V06 checks a single archive submission with version and idempotency headers; it is not pagination or full-batch review coverage. No tests were added or run in this task. Future checks remain **UNRUN**: transient append failure then retry of the same cursor; invalid cursor then refresh; filter/group/back/access changes with a late append success or failure; no duplicate append under rapid activation; full 50-device add/remove confirmation on a short screen with large text, with exact body/version/request-key assertions. The pre-existing whole-detail eager member list and other unrelated lifecycle behavior were not redesigned here.
+
+`review-pins.json` records the actual reviewed bytes, including the unchanged Main/before identity. Historical source freezes, RED evidence and original candidate files were preserved.

@@ -1,0 +1,140 @@
+--- a/apps/guardian/lib/pages/device_groups_page.dart
++++ b/apps/guardian/lib/pages/device_groups_page.dart
+@@ -29,7 +29,8 @@
+   Json? detail;
+   DeviceGroupSummary? summary;
+   List<Json> members = const [];
+-  Object? error;
++  Object? error, memberPageError;
++  bool memberCursorInvalid = false;
+   bool loading = false, loadingMore = false, archived = false;
+   int generation = 0;
+   final dialogs = <OwnedDialogRoute<dynamic>>{};
+@@ -59,7 +60,8 @@
+     memberFilter = null;
+     nextMemberCursor = null;
+     loading = loadingMore = false;
+-    error = null;
++    error = memberPageError = null;
++    memberCursorInvalid = false;
+     if (!mounted || !_active) return;
+     if (SchedulerBinding.instance.schedulerPhase ==
+         SchedulerPhase.persistentCallbacks) {
+@@ -200,6 +202,8 @@
+       members = const [];
+       nextMemberCursor = null;
+       error = null;
++      memberPageError = null;
++      memberCursorInvalid = false;
+       loading = true;
+       loadingMore = false;
+     });
+@@ -235,9 +239,12 @@
+ 
+   Future<void> moreMembers() async {
+     final id = selectedId, cursor = nextMemberCursor;
+-    if (!current || id == null || cursor == null || loadingMore) return;
++    if (!current || id == null || cursor == null || loading || loadingMore) return;
+     final scope = capture();
+-    setState(() => loadingMore = true);
++    setState(() {
++      loadingMore = true;
++      memberPageError = null;
++    });
+     try {
+       final page = await scope.api.page(membersPath(id), cursor: cursor);
+       if (!current || !scope.current) return;
+@@ -251,7 +258,15 @@
+         nextMemberCursor = page.nextCursor;
+       });
+     } catch (failure) {
+-      if (current && scope.current) setState(() => error = failure);
++      if (current && scope.current) {
++        setState(() {
++          memberPageError = failure;
++          if (failure is ApiFailure && failure.code == 'INVALID_CURSOR') {
++            nextMemberCursor = null;
++            memberCursorInvalid = true;
++          }
++        });
++      }
+     } finally {
+       if (current && scope.current) setState(() => loadingMore = false);
+       scope.dispose();
+@@ -376,12 +391,12 @@
+               current: available, accessChanges: scope));
+       if (!current || !scope.current || chosen == null || chosen.isEmpty) return;
+       final key = requestId();
+-      final names = chosen.take(3).map((row) => row['displayName']).join('、');
+-      final suffix = chosen.length > 3 ? '等' : '';
++      final names = chosen.map((row) =>
++          '• ${row['displayName']} · 设备 ${shortId(row['id'])}').join('\n');
+       final result = await confirm(scope: scope,
+           title: '批量加入设备组',
+           description:
+-              '将 $names$suffix ${chosen.length} 台设备加入“${group['name']}”。整批会以当前组版本核对，任一设备注册周期或状态变化都不会提交。设备组关联不改变设备规则。',
++              '将以下 ${chosen.length} 台设备加入“${group['name']}”。整批会以当前组版本核对，任一设备注册周期或状态变化都不会提交。设备组关联不改变设备规则。\n\n本次设备清单：\n$names',
+           submit: '确认加入 ${chosen.length} 台',
+           operation: (api) => api.send('POST',
+               '$root/device-groups/${group['id']}/devices/batches',
+@@ -406,12 +421,12 @@
+               current: available, accessChanges: scope));
+       if (!current || !scope.current || chosen == null || chosen.isEmpty) return;
+       final key = requestId();
+-      final names = chosen.take(3).map((row) => row['displayName']).join('、');
+-      final suffix = chosen.length > 3 ? '等' : '';
++      final names = chosen.map((row) =>
++          '• ${row['displayName']} · 设备 ${shortId(row['deviceId'])}').join('\n');
+       final result = await confirm(scope: scope,
+           title: '批量移出设备组',
+           description:
+-              '将 $names$suffix ${chosen.length} 台设备从“${group['name']}”移出。整批按当前组版本及原注册周期核对；不会撤销设备注册或已发布的独立配置。',
++              '将以下 ${chosen.length} 台设备从“${group['name']}”移出。整批按当前组版本及原注册周期核对；不会撤销设备注册或已发布的独立配置。\n\n本次设备清单：\n$names',
+           submit: '确认移出 ${chosen.length} 台',
+           operation: (api) => api.send('POST',
+               '$root/device-groups/${group['id']}/devices/removals',
+@@ -582,6 +597,8 @@
+                   nextMemberCursor = null;
+                   loading = loadingMore = false;
+                   error = null;
++                  memberPageError = null;
++                  memberCursorInvalid = false;
+                   generation++;
+                 });
+               },
+@@ -661,7 +678,26 @@
+                             icon: const Icon(Icons.remove_circle_outline))
+                         : null),
+               if (loadingMore) const LinearProgressIndicator(),
+-              if (nextMemberCursor != null)
++              if (memberPageError != null) ...[
++                const SizedBox(height: 12),
++                Notice(
++                    memberCursorInvalid
++                        ? '分页信息已失效，请刷新设备组后继续。已加载记录暂时保留。'
++                        : '加载更多未完成，已保留当前记录。可重试继续加载。',
++                    warning: true),
++                FailureView(memberPageError!, reauth: reauth),
++                TextButton.icon(
++                    onPressed: loading || loadingMore
++                        ? null
++                        : memberCursorInvalid
++                            ? () {
++                                if (current && selectedId != null) open(selectedId!);
++                              }
++                            : moreMembers,
++                    icon: const Icon(Icons.refresh),
++                    label: Text(memberCursorInvalid ? '刷新设备组' : '重试加载更多')),
++              ],
++              if (memberPageError == null && nextMemberCursor != null)
+                 TextButton.icon(
+                     onPressed: loadingMore ? null : moreMembers,
+                     icon: const Icon(Icons.expand_more),
+@@ -905,6 +941,7 @@
+       canPop: !busy,
+       child: AlertDialog(
+           title: Text(widget.title),
++          scrollable: true,
+           content: SizedBox(
+               width: 480,
+               child: Column(

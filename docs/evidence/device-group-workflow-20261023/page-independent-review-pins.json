@@ -1,0 +1,71 @@
+{
+  "status": "STATIC_NO_BLOCKER_NOT_EXECUTED",
+  "candidateSha256": "a4e951742370b108eece12d852104dfa2e817033ed392e1418234dc44a9a8a57",
+  "mainAndBeforeSha256": "749ce2d4666bd5cbf1923621b1c7f6e31d4d85df391fe4b18e10e9a09d2bb486",
+  "sdkInvoked": false,
+  "testsRun": false,
+  "mainWritten": false,
+  "gitWritten": false,
+  "inputs": [
+    {
+      "path": ".cache/device-group-pagination-20261023-r1/device_groups_page.dart",
+      "bytes": 36200,
+      "sha256": "a4e951742370b108eece12d852104dfa2e817033ed392e1418234dc44a9a8a57"
+    },
+    {
+      "path": ".cache/device-group-pagination-20261023-r1/before.dart",
+      "bytes": 34590,
+      "sha256": "749ce2d4666bd5cbf1923621b1c7f6e31d4d85df391fe4b18e10e9a09d2bb486"
+    },
+    {
+      "path": "apps/guardian/lib/pages/device_groups_page.dart",
+      "bytes": 34590,
+      "sha256": "749ce2d4666bd5cbf1923621b1c7f6e31d4d85df391fe4b18e10e9a09d2bb486"
+    },
+    {
+      "path": "apps/guardian/lib/pages/device_subflow_scope.dart",
+      "bytes": 1512,
+      "sha256": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e"
+    },
+    {
+      "path": "apps/guardian/lib/core/api.dart",
+      "bytes": 22640,
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641"
+    },
+    {
+      "path": "apps/guardian/lib/core/labels.dart",
+      "bytes": 7829,
+      "sha256": "af993d51e8f460bada004033c86b59193d7a5a933ce54e0a363f79cec1f3161a"
+    },
+    {
+      "path": "apps/guardian/lib/ui/design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    },
+    {
+      "path": "apps/guardian/lib/ui/device_group_batch_picker.dart",
+      "bytes": 10193,
+      "sha256": "a428576fdda28c1b531a513b2105c316e6f9aa3e69ed44675df4e7d63e7c5c8c"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/fleet/internal/DeviceGroupService.java",
+      "bytes": 27626,
+      "sha256": "0b910fbc9e206c290eef7abfb0021b0746759ff96d936e00891111d516201aef"
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/shared/ItemPage.java",
+      "bytes": 1035,
+      "sha256": "5f6cb57317ab1c4f41daaa0dd7bcf4e1ee536f793c25cfb40811c2840f86cc58"
+    },
+    {
+      "path": "apps/guardian/test/submit_direct_variant_test.dart",
+      "bytes": 15948,
+      "sha256": "0b40af26d2b16927a546d7634b21a41be88153d28fc8b35dba7e18e8fe5c93ec"
+    }
+  ],
+  "report": {
+    "path": "review.md",
+    "bytes": 3735,
+    "sha256": "612ad627ee64acd2f365531a2abed844cddab4394be2a46b066e472751526e47"
+  }
+}

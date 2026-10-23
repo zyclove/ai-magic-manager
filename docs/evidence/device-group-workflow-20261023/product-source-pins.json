@@ -1,0 +1,77 @@
+{
+  "schema": 1,
+  "recordedAtUtc": "2026-10-23T09:44:24.049585+00:00",
+  "sourceHead": "91cffeeab202414a451100dd48511fc78066692e",
+  "scope": "SOURCE_ONLY_REVIEW_UNRUN",
+  "sdkCalls": 0,
+  "mainWrites": 0,
+  "gitWrites": 0,
+  "sources": [
+    {
+      "path": "apps/guardian/lib/ui/device_group_batch_picker.dart",
+      "bytes": 10193,
+      "sha256": "a428576fdda28c1b531a513b2105c316e6f9aa3e69ed44675df4e7d63e7c5c8c",
+      "lines": 286
+    },
+    {
+      "path": "apps/guardian/lib/pages/device_groups_page.dart",
+      "bytes": 34590,
+      "sha256": "749ce2d4666bd5cbf1923621b1c7f6e31d4d85df391fe4b18e10e9a09d2bb486",
+      "lines": 938
+    },
+    {
+      "path": "apps/guardian/lib/pages/device_subflow_scope.dart",
+      "bytes": 1512,
+      "sha256": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e",
+      "lines": 53
+    },
+    {
+      "path": "apps/guardian/lib/ui/owned_dialog_route.dart",
+      "bytes": 1419,
+      "sha256": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946",
+      "lines": 52
+    },
+    {
+      "path": "apps/guardian/lib/core/api.dart",
+      "bytes": 22640,
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641",
+      "lines": 360
+    },
+    {
+      "path": "apps/guardian/lib/ui/usage_report_device_picker.dart",
+      "bytes": 11629,
+      "sha256": "e980900a3d870c0293930801fb180cf25e566fe729d979f9aa29b6d11907ad4a",
+      "lines": 289
+    },
+    {
+      "path": "apps/guardian/lib/ui/design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95",
+      "lines": 819
+    },
+    {
+      "path": "apps/guardian/test/submit_direct_variant_test.dart",
+      "bytes": 15948,
+      "sha256": "0b40af26d2b16927a546d7634b21a41be88153d28fc8b35dba7e18e8fe5c93ec",
+      "lines": 473
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/fleet/internal/DeviceGroupService.java",
+      "bytes": 27626,
+      "sha256": "0b910fbc9e206c290eef7abfb0021b0746759ff96d936e00891111d516201aef",
+      "lines": 644
+    },
+    {
+      "path": "backend/src/main/java/com/aimanager/fleet/internal/DeviceGroupController.java",
+      "bytes": 8462,
+      "sha256": "eb877ca2a48be75bb0bf3c707ad2c47a3036ab88b5acd5178bf0ee2b6d330353",
+      "lines": 189
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/DeviceGroupRecoveryTest.java",
+      "bytes": 10331,
+      "sha256": "e5e0470abd3c91f877f21d305ab8aac3ae2ad42d68c4bb81bab7738e1a18de54",
+      "lines": 136
+    }
+  ]
+}
