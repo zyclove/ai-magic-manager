@@ -1,0 +1,28 @@
+{
+  "status": "FULL_GUARDIAN_ANALYZE_EXTERNALLY_ACCEPTED",
+  "atUtc": "2026-10-23T06:34:47.2141725Z",
+  "grant": "guardian-analyze-r8-root-20261023",
+  "sourceCommit": "45950b88a270e2fded2409e333fb126851b6f861",
+  "actualSession": 95689,
+  "actualInitialChunk": "af428c",
+  "actualFinalChunk": "af189a",
+  "naturalExitCode": 0,
+  "sdkCount": 0,
+  "unknownProcessNameCount": 0,
+  "availableRamBytes": 2812280832,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 6879293440
+    },
+    {
+      "Name": "D",
+      "Free": 35107995648
+    }
+  ],
+  "readbackChunk": "933c3c",
+  "ownedJobActiveProcesses": 0,
+  "formalRelease": true,
+  "browserTestsRun": false,
+  "wholeProductAccepted": false
+}

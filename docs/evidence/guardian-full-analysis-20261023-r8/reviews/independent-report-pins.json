@@ -1,0 +1,17 @@
+[
+  {
+    "path": ".cache\\guardian-source409r2-r8-independent-20261023-r1\\review.md",
+    "bytes": 3513,
+    "sha256": "c219ecf534280ecb3a1e42629082ba812e426b49c45694278fe9b898085a1394"
+  },
+  {
+    "path": ".cache\\guardian-source409r2-r8-independent-20261023-r1\\review.json",
+    "bytes": 4498,
+    "sha256": "52645fd983503692307b0a01eec951eb251f23a360f464d750d70bc907bf3a3d"
+  },
+  {
+    "path": ".cache\\guardian-source409r2-r8-independent-20261023-r1\\review.py",
+    "bytes": 15320,
+    "sha256": "c942d76e6db459d6ff686bde04aa114d384068fd25a22b4970650d3d38efbd28"
+  }
+]

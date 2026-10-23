@@ -1,0 +1,112 @@
+{
+  "status": "SOURCE409R2_AND_R8_STATIC_REVIEW_NO_BLOCKER_NO_REVIEWER_RUN_OR_GRANT",
+  "blockingFindings": [],
+  "r8ProposalPinsMatched": {
+    "candidate": 12,
+    "runtime": 11,
+    "historical": 250,
+    "total": 273
+  },
+  "r7All212ProposalRowsPreserved": true,
+  "controllerNativeByteIdenticalToAcceptedR6AndRedR7": true,
+  "workerWholeTextAndAstOnlyAssignmentsChanged": [
+    "FROZEN",
+    "INPUT_SHA256"
+  ],
+  "sourceCheck409AndEveryFunctionBudgetCommandGuardCleanupUnchanged": true,
+  "inputChangedFields": [
+    "cacheManifest",
+    "candidatePackageConfig",
+    "candidatePackageConfigTemplate",
+    "createdAtUtc",
+    "dependencyLibraryPins",
+    "scope",
+    "sevenRootGitTrees",
+    "sourceCommit",
+    "sourceManifest",
+    "sourceTreeSha256"
+  ],
+  "allOtherOriginalProposalPolicyFieldsUnchanged": true,
+  "budget": "outer180/soft174/worker165/commandcap150/cleanup5/postflight25; dynamic135/140",
+  "analysisCacheProjectionByteIdenticalR6R7": {
+    "files": 3536,
+    "bytes": 633817159,
+    "trees": 70,
+    "fixed": 32
+  },
+  "sourceCommit": "45950b88a270e2fded2409e333fb126851b6f861",
+  "sourceTreeSha256": "f8666796ddd71389e022000754df0e4d81da75fe0cd186d6d7c894b1c51e4246",
+  "source423SealPinsMatch": true,
+  "freshReadOnlyGitCommitAndCurrentTreesMembershipAll409GitBlobsMatch": true,
+  "all409FrozenRawAndMainRawPinsAndMembershipMatch": true,
+  "exactSingleBytePageCorrectionAnd408FullMetadataRowsUnchanged": true,
+  "oldTwoCrLfDifferencesPreserved": [
+    "apps/guardian/lib/ui/quota_balance.dart",
+    "apps/guardian/pubspec.yaml"
+  ],
+  "all80CasesSevenSelectedSourcesFullMetadataUnchanged": true,
+  "package70OnlySevenInternalRebasesAll63ExternalAndOtherMetadataUnchanged": true,
+  "r7RedEvidenceNotUpgraded": {
+    "session": 1854,
+    "naturalExit": 1,
+    "diagnostics": {
+      "errors": 0,
+      "warnings": 1,
+      "infos": 0
+    },
+    "formalRelease": true,
+    "analysisAccepted": false
+  },
+  "actualAcceptedLineageOnlyR6": {
+    "session": 35555,
+    "naturalExit": 0,
+    "notInheritedByR8": true
+  },
+  "actualRuntimeCache3536Rehashed": false,
+  "r8Analysis": "No reviewer execution; Root current runtime status is outside this static audit",
+  "r8AttemptObservedAtReviewStart": true,
+  "r8AttemptObservedAtReviewEnd": true,
+  "browser80": "UNRUN_BY_THIS_REVIEWER",
+  "candidateSdkNativeNetworkProcessApiCalls": 0,
+  "gitReadCommandsUsed": true,
+  "mainGitOrFrozenWrites": false,
+  "executionGranted": false,
+  "limitations": "Text/AST/hash and Git reads only. Fresh resource/SDK0/unknown0 gates, exact new grant, complete runtime/source/package/cache pre/post, actual natural terminal within strict external deadline and final system release remain required. No compile/analysis/browser/native execution performed.",
+  "reviewedPins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\proposal.json",
+      "bytes": 72070,
+      "sha256": "f6f9a00027a9b070a2b289e5560a34d31c3314e2137a40cd75a8b1dd76e03ae1"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\seal-receipt.json",
+      "bytes": 2078,
+      "sha256": "63cadf20e9245ae85b9124c30cab9fb3393966b3b51489c3e4cd9fffa334c736"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\inputs.json",
+      "bytes": 7026,
+      "sha256": "53795ab6aedf4c0621516c4f2b54c638f11e646ee590d305f2383aac79e5e02c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\source-manifest.json",
+      "bytes": 244476,
+      "sha256": "d31ffbcc2dd74f062c588dd5756b2e7c5845b1bca40ca27b900d3b23dcdb22f2"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\seal-static-source.json",
+      "bytes": 80272,
+      "sha256": "cb7b531b176433c2b1e8ed5154d49710a53a642268f9296816a9af07f8139957"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\worker.py",
+      "bytes": 24527,
+      "sha256": "fa6fd724e2967723a25df62a41f5ff7e47b4d9e8e2c4cf41de48249de0df4d63"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\attempt\\external-red-readback-root.json",
+      "bytes": 1130,
+      "sha256": "58bcf8348bb82221a67a87840b1ae175848baa5172d3ea4a5bf0aa57f28931a1"
+    }
+  ]
+}

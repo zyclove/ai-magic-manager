@@ -1,0 +1,45 @@
+{
+  "status": "SOURCE_AND_METADATA_ONLY_NOT_EXECUTION_PROPOSAL",
+  "sourceCommit": "45950b88a270e2fded2409e333fb126851b6f861",
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\source-manifest.json",
+    "bytes": 244476,
+    "sha256": "d31ffbcc2dd74f062c588dd5756b2e7c5845b1bca40ca27b900d3b23dcdb22f2"
+  },
+  "sourceTreeSha256": "f8666796ddd71389e022000754df0e4d81da75fe0cd186d6d7c894b1c51e4246",
+  "sourceFiles": 409,
+  "sourceBytes": 3956603,
+  "mainRawDifferenceCount": 2,
+  "old80NamesAndMetadataPreserved": true,
+  "expectedCases": 80,
+  "caseCounts": [
+    8,
+    4,
+    19,
+    7,
+    8,
+    21,
+    13
+  ],
+  "expectedCaseContract": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\expected-cases.json",
+    "bytes": 46728,
+    "sha256": "b6b08aad0e1f5d8aa61a43729c489b3662d076efc1fc503d7914de76cbf9fe05"
+  },
+  "preparationReview": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\preparation-review.json",
+    "bytes": 7743,
+    "sha256": "e9bb5bfdc1d5913a821663d47d56947f9d6917d8f307111cefd3b2cf18484b06"
+  },
+  "deliveryInventory": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\delivery-inventory.json",
+    "bytes": 79101,
+    "sha256": "cf2f558cd598891fc0d2d5dcce46caac513db73f5c4a4bcd50e270a0c3513d74"
+  },
+  "sdkCalls": 0,
+  "testsRun": false,
+  "controllerOrWorkerImported": false,
+  "validationWorkerCreated": false,
+  "executionApproved": false,
+  "attemptExists": false
+}

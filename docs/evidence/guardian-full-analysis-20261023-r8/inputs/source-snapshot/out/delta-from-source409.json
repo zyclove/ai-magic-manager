@@ -1,0 +1,34 @@
+{
+  "status": "STATIC_SOURCE_DELTA",
+  "beforeCommit": "a55849d902b248fe02d06e23cd0bad3d28912a27",
+  "afterCommit": "45950b88a270e2fded2409e333fb126851b6f861",
+  "beforeFiles": 409,
+  "afterFiles": 409,
+  "unchangedFiles": 408,
+  "modifiedFiles": 1,
+  "addedFiles": 0,
+  "deletedFiles": 0,
+  "beforeSourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\source-before409-manifest.json",
+    "bytes": 244476,
+    "sha256": "a23441e3f91224f86296a1b5b3ada8c7b2a8d5189c2ce36bfb6510a7ed0347b5"
+  },
+  "deltas": [
+    {
+      "path": "apps/guardian/lib/pages/observation_page.dart",
+      "change": "MODIFIED",
+      "before": {
+        "gitBlob": "2f1e26799c02232b3a169340235b1f83b72aa1ef",
+        "mode": "100644",
+        "bytes": 11504,
+        "sha256": "63111f7117aebfcd19ce61579ff77fe2eef95fd3e4914035a5fd6c810f115644"
+      },
+      "after": {
+        "gitBlob": "6db0994426eee7ea066e5b88b307e65647b3505d",
+        "mode": "100644",
+        "bytes": 11503,
+        "sha256": "ac0e30966f2a5c5f6b65dc12a8445a3ae7d52d8cda45cbb979b0b58a18e83816"
+      }
+    }
+  ]
+}

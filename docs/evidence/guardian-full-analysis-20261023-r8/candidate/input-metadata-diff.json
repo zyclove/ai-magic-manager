@@ -1,0 +1,98 @@
+{
+  "cacheManifest": {
+    "before": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r7\\cache-analysis-projection.json",
+      "bytes": 724690,
+      "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84"
+    },
+    "after": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r8\\cache-analysis-projection.json",
+      "bytes": 724690,
+      "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84"
+    }
+  },
+  "candidatePackageConfig": {
+    "before": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+      "bytes": 15736,
+      "sha256": "9391dba658c5309fe6c1aa95dfb7586e74ea12bc2465463a7f53ee84a83e8ce6"
+    },
+    "after": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+      "bytes": 15736,
+      "sha256": "a00844558722a7bb4fce05eea27d08e824d54afa6a1b686e0d87dd8ec1e05db4"
+    }
+  },
+  "candidatePackageConfigTemplate": {
+    "before": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\generated\\guardian-package_config.json",
+      "bytes": 15736,
+      "sha256": "9391dba658c5309fe6c1aa95dfb7586e74ea12bc2465463a7f53ee84a83e8ce6"
+    },
+    "after": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\generated\\guardian-package_config.json",
+      "bytes": 15736,
+      "sha256": "a00844558722a7bb4fce05eea27d08e824d54afa6a1b686e0d87dd8ec1e05db4"
+    }
+  },
+  "createdAtUtc": {
+    "before": "2026-10-23T05:59:25.850033+00:00",
+    "after": "2026-10-23T06:28:35.617028+00:00"
+  },
+  "dependencyLibraryPins": {
+    "before": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\dependency-library-pins.json",
+      "bytes": 360145,
+      "sha256": "972121e9a6659bcd68a0734ee44df8e7670045eab3bb177f60c58558d0963815"
+    },
+    "after": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\dependency-library-pins.json",
+      "bytes": 360145,
+      "sha256": "9fbfdbd9e417fe389c7d9192d86c76526ef58fc92c0143ce41fa79b53dfd806c"
+    }
+  },
+  "scope": {
+    "before": "Full Guardian lib/test analysis of committed a55849d9/409 via the sealed observation-current snapshot; fatal infos and warnings; no selectors, test execution, pub, downloads, service changes or deployment.",
+    "after": "Full Guardian lib/test analysis of committed 45950b88/409 via the corrected sealed observation-current r2 snapshot; fatal infos and warnings; no selectors, test execution, pub, downloads, service changes or deployment."
+  },
+  "sevenRootGitTrees": {
+    "before": {
+      "apps/guardian": "2b8856731e588844cac70d112194bbaffda655d9",
+      "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+      "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+      "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+      "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+      "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+      "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+    },
+    "after": {
+      "apps/guardian": "ba4b1955202be83f0776362e37d21a08891f175c",
+      "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+      "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+      "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+      "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+      "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+      "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+    }
+  },
+  "sourceCommit": {
+    "before": "a55849d902b248fe02d06e23cd0bad3d28912a27",
+    "after": "45950b88a270e2fded2409e333fb126851b6f861"
+  },
+  "sourceManifest": {
+    "before": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r1\\out\\source-manifest.json",
+      "bytes": 244476,
+      "sha256": "a23441e3f91224f86296a1b5b3ada8c7b2a8d5189c2ce36bfb6510a7ed0347b5"
+    },
+    "after": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-observation-current-20261023-r2\\out\\source-manifest.json",
+      "bytes": 244476,
+      "sha256": "d31ffbcc2dd74f062c588dd5756b2e7c5845b1bca40ca27b900d3b23dcdb22f2"
+    }
+  },
+  "sourceTreeSha256": {
+    "before": "ddf027a0292fb2e06ac069a60bc03c87676fbeb4efc3d6f4a23186da0c87110a",
+    "after": "f8666796ddd71389e022000754df0e4d81da75fe0cd186d6d7c894b1c51e4246"
+  }
+}
