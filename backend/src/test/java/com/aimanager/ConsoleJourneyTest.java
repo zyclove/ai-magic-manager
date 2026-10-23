@@ -33,6 +33,24 @@ class ConsoleJourneyTest {
             .header("Access-Control-Request-Method", "GET"))
             .andExpect(status().isForbidden()).andExpect(header().doesNotExist("Access-Control-Allow-Origin"));
     }
+    @Test void browserEnrollmentRecoveryPreflightAllowsStableRequestId() throws Exception {
+        var path = "/api/v1/tenants/00000000-0000-4000-8000-000000000001/enrollments";
+        var result = mvc.perform(options(path).header("Origin", "http://localhost:3000")
+            .header("Access-Control-Request-Method", "POST")
+            .header("Access-Control-Request-Headers", "authorization,content-type,client-request-id"))
+            .andExpect(status().isOk())
+            .andExpect(header().string("Access-Control-Allow-Origin", "http://localhost:3000"))
+            .andReturn();
+        var allowed = result.getResponse().getHeader("Access-Control-Allow-Headers");
+        org.junit.jupiter.api.Assertions.assertNotNull(allowed);
+        org.junit.jupiter.api.Assertions.assertTrue(java.util.Arrays.stream(allowed.split(","))
+            .anyMatch(value -> "Client-Request-Id".equalsIgnoreCase(value.trim())));
+        mvc.perform(options(path).header("Origin", "http://localhost:3000")
+            .header("Access-Control-Request-Method", "POST")
+            .header("Access-Control-Request-Headers", "x-actor-id"))
+            .andExpect(status().isForbidden())
+            .andExpect(header().doesNotExist("Access-Control-Allow-Headers"));
+    }
     private org.springframework.test.web.servlet.request.RequestPostProcessor actor(String subject) {
         return jwt().jwt(t -> t.subject(subject).claim("email", "admin@example.test"))
             .authorities(new SimpleGrantedAuthority("SCOPE_tenant:create"));

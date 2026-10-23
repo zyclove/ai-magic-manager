@@ -80,7 +80,8 @@ class SecurityConfiguration {
         var config = new CorsConfiguration();
         config.setAllowedOrigins(Arrays.stream(origins.split(",")).map(String::trim).filter(s -> !s.isEmpty()).toList());
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Idempotency-Key", "If-Match"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Idempotency-Key", "If-Match",
+            "Client-Request-Id"));
         config.setExposedHeaders(List.of("X-Correlation-Id", "ETag"));
         config.setAllowCredentials(false); // Bearer-only API: no cookie session, therefore no ambient cookie authentication.
         var source = new UrlBasedCorsConfigurationSource();

@@ -1,0 +1,38 @@
+{
+  "status": "CORS_ENROLLMENT_CONTRACT_IMPLEMENTED_STATIC_ONLY_RUNTIME_UNRUN",
+  "utc": "2026-10-23T03:18:02.443490+00:00",
+  "baseCommit": "30e0cbf58d7bc38c201b43f19bd2e5b622792ecd",
+  "before": [
+    {
+      "path": "backend/src/main/java/com/aimanager/identity/SecurityConfiguration.java",
+      "bytes": 5692,
+      "sha256": "d9bc962381c7a8e8d9991adbc3bd1eb6abe18dd2c73063024a634781020fc21c"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/ConsoleJourneyTest.java",
+      "bytes": 6431,
+      "sha256": "eab1f8b172616d92381f4fbb2493821cf56e0b5c6de3681830b7d6f6cbea0f75"
+    }
+  ],
+  "after": [
+    {
+      "path": "backend/src/main/java/com/aimanager/identity/SecurityConfiguration.java",
+      "bytes": 5725,
+      "sha256": "315fcf886ab4df578cf26f4857b800cf0d74a0380ba05e32b91fc74c2187dea5"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/ConsoleJourneyTest.java",
+      "bytes": 7695,
+      "sha256": "2a89111a8852ca9a4cc5ae74f08b68e1b96ba51fe62f1b357dcd4a2d99ce38ae"
+    }
+  ],
+  "patchSha256": "abceb71b4ecc0def3f5e416cc9758274d6fe3dc2680734b6b409d7ce5c49c78b",
+  "testScenario": "Allow Client-Request-Id for configured-origin enrollment POST preflight; reject x-actor-id.",
+  "sdkStarted": false,
+  "testsRun": false,
+  "actualPreflightRun": false,
+  "gitIndexWritten": false,
+  "servicesUpdated": false,
+  "dependenciesChanged": false,
+  "redOverlayCanUse": "before SecurityConfiguration plus after ConsoleJourneyTest; not executed"
+}
