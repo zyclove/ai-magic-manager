@@ -1,0 +1,69 @@
+{
+  "status": "STATIC_NO_BLOCKER",
+  "sourceCommitObserved": "e303580030192497a63492d1147156e465082706",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-list-search-independent-20261023-r1\\review.md",
+      "bytes": 2723,
+      "sha256": "78982faae7a0e398409d349f8433e8d30961e218206a8ce3cc6f1020b41f8e3d"
+    }
+  ],
+  "inputs": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-list-search-ux-20261023-r1\\resource_page.dart",
+      "bytes": 19437,
+      "sha256": "ac3667fff335d8105c5e10e7e3b5b45dc0b5bbb8bc00eb0d94175ee432ed9ed3"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-list-search-ux-20261023-r1\\resource-page.patch",
+      "bytes": 1615,
+      "sha256": "9c24456ba66289a8cdddf682d1582f72d26140130cc11aa02648d00472beaefb"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-list-search-ux-20261023-r1\\pins.json",
+      "bytes": 420,
+      "sha256": "b8355b9567621304cc90dd18fdefd01368f0b9271f54540fc65b07dbe564e37a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\resource_page.dart",
+      "bytes": 18737,
+      "sha256": "50ca974f0b792c77d493eaf4d17c83dbe250550ac5035ae1fbd148a5758f0360"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\core\\labels.dart",
+      "bytes": 7829,
+      "sha256": "af993d51e8f460bada004033c86b59193d7a5a933ce54e0a363f79cec1f3161a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\core\\api.dart",
+      "bytes": 22640,
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\design.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\console_pages.dart",
+      "bytes": 87508,
+      "sha256": "0b1ee926b5f73f4c79862778dc831953ae82bf4858136a458bdaf1891bdc30a7"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\analysis_options.yaml",
+      "bytes": 1448,
+      "sha256": "b63207cf529949ec4727b68c23dbb38ce255b6f6f4ae1effcb5c1dcf2852d238"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\resource_page_resilience_test.dart",
+      "bytes": 22170,
+      "sha256": "a003a75c83ef01e6347bfea7ee08801302267f0e97012534e455c57bbc7575f2"
+    }
+  ],
+  "fullPatchByteExact": true,
+  "testsAdded": false,
+  "allApplicationScenarios": "UNRUN",
+  "sdkAstCandidateTestFormatterProcessNetworkExecuted": false,
+  "mainOrOldCandidateWritten": false,
+  "selfExcluded": "pins.json"
+}

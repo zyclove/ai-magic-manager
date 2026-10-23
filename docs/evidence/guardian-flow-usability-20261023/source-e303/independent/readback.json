@@ -1,0 +1,95 @@
+{
+  "status": "R9_STATIC_SOURCE_BINDING_MATCH_ALL_APPLICATION_VALIDATION_UNRUN",
+  "sourceCommit": "e303580030192497a63492d1147156e465082706",
+  "topLevelPins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r9-e303\\out\\seal-static-source.json",
+      "bytes": 80882,
+      "sha256": "8fcfa6a49ecec81a1a5eb2f9449234abfd1c5622a8b84f7adebd77f7d813c03c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r9-e303\\out\\source-manifest.json",
+      "bytes": 245064,
+      "sha256": "4ca3c2285abcfdb27b877fa39ad956cfbc2a372655591bc3c61710b43f4bfa14"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r9-e303\\out\\delivery-inventory.json",
+      "bytes": 79489,
+      "sha256": "e2d76096b90d9140284664f2d7104f3e4d0bd5e9e79a0ad6a8fa543e5b4c612b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r9-e303\\out\\expected-cases.json",
+      "bytes": 52929,
+      "sha256": "70007d268f69b0445f526c308effd32b17fe8db6c87bce512a625c5132ef4d91"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r9-e303\\out\\full-regression-181-bindings.json",
+      "bytes": 83383,
+      "sha256": "5b47d261823f78bf2ad7c9eff826f65851106452ab5e6412f5712dd5b6e47325"
+    }
+  ],
+  "sealedDescriptorsMatched": 425,
+  "exactDirectoryFilesIncludingSeal": 426,
+  "deliveryDescriptorsMatched": 423,
+  "sourceFilesMatchedFrozenMainAndGit": 410,
+  "sourceBytes": 3998096,
+  "sourceTreeSha256": "6b7db8abb07a71682010f2735098387057e018afe6657766617cf2f73ca54fd2",
+  "sevenRootTreesMatched": 7,
+  "mainRawDifferencesCrLfOnly": [
+    "apps/guardian/lib/ui/quota_balance.dart",
+    "apps/guardian/pubspec.yaml"
+  ],
+  "modifiedProductionVsR8": 8,
+  "modifiedTestVsR8": "apps/guardian/test/notification_help_scope_browser_test.dart",
+  "addedSource": [
+    "apps/guardian/lib/ui/view_lifetime.dart"
+  ],
+  "unchangedSourcesVsR8": 400,
+  "selectors": 7,
+  "visibleCasesRetainedExactly": 80,
+  "sourceCaseCounts": [
+    8,
+    4,
+    19,
+    7,
+    8,
+    21,
+    13
+  ],
+  "sixSelectedFullMetadataByteSourceUnchanged": true,
+  "changedSelectedDeclarations": 6,
+  "changedSelectedVisibleCases": 7,
+  "changedSelectedSourceLines": [
+    361,
+    362,
+    363,
+    371,
+    372,
+    375
+  ],
+  "allDeclarationEightLineBlocksAndLoopMetadataPreserved": true,
+  "fullRegressionRoots": 181,
+  "regressionRowsUnchanged": 180,
+  "regressionRowPinsRebound": 1,
+  "groups": {
+    "guardian": 142,
+    "package": 37,
+    "separate-live-http": 2
+  },
+  "extraPackageTestsOutside410": 28,
+  "packageRows": 70,
+  "internalRootUrisRebased": 7,
+  "externalRowsUnchanged": 63,
+  "externalDependencyMetadataInheritedOnly": true,
+  "externalPayloadReadOrRuntimeClosureClaimed": false,
+  "directoryCount": 37,
+  "allApplicationValidation": "UNRUN",
+  "newSdkGrantCreated": false,
+  "candidatePrepareHelperParserAstSdkTestFormatterOrQualificationPredicateExecuted": false,
+  "readOnlyGitCommands": [
+    "rev-parse",
+    "ls-tree"
+  ],
+  "processInspectionWinApiNetworkUsed": false,
+  "sourceMainGitOrOriginalArtifactsWritten": false
+}

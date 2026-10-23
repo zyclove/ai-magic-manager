@@ -1,0 +1,90 @@
+{
+  "status": "STATIC_SUBJECT_DIALOG_AUTHOR_CANDIDATE_ALL_SCENARIOS_UNRUN",
+  "sourceCommit": "e303580030192497a63492d1147156e465082706",
+  "productionPaths": [
+    "apps/guardian/lib/pages/console_pages.dart",
+    "apps/guardian/lib/ui/design.dart"
+  ],
+  "files": [
+    {
+      "path": "console-before.dart",
+      "bytes": 87508,
+      "sha256": "0b1ee926b5f73f4c79862778dc831953ae82bf4858136a458bdaf1891bdc30a7"
+    },
+    {
+      "path": "console-after.dart",
+      "bytes": 93344,
+      "sha256": "8d961e6a0272c82a9bb02ce9e950f5b326c1843e9505eedb1382a6073c1a64e4"
+    },
+    {
+      "path": "design-before.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    },
+    {
+      "path": "design-after.dart",
+      "bytes": 31270,
+      "sha256": "456ffeb3de558e824d47ac3bf9841cda8dd6790349fd522e5c7bb7857942e5fc"
+    },
+    {
+      "path": "subject-dialog-ux.patch",
+      "bytes": 10363,
+      "sha256": "2c10e291c9420238e7e2bb88be51168a57bb283ad19c39163697f96af263db72"
+    },
+    {
+      "path": "review.md",
+      "bytes": 5649,
+      "sha256": "95fac737826e6b50454df17c5d493eec2f06e0012f75895edf06688821ab78ee"
+    }
+  ],
+  "dependencies": [
+    {
+      "path": "apps/guardian/lib/ui/dialog_access.dart",
+      "bytes": 2748,
+      "sha256": "8fe7c3d9ee1b7a038dc08939ea5cd40572a411ced63a01ba6eb12a88e50145d5"
+    },
+    {
+      "path": "apps/guardian/lib/ui/owned_dialog_route.dart",
+      "bytes": 1419,
+      "sha256": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946"
+    },
+    {
+      "path": "apps/guardian/lib/pages/device_subflow_scope.dart",
+      "bytes": 1512,
+      "sha256": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e"
+    },
+    {
+      "path": "apps/guardian/lib/core/api.dart",
+      "bytes": 22640,
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641"
+    },
+    {
+      "path": "apps/guardian/test/api_test.dart",
+      "bytes": 6111,
+      "sha256": "989cde51db12c6573461b0e3d048088007c67c1cfe1a6325416255cc708575da"
+    }
+  ],
+  "publicSubjectSignatureUnchanged": "Future<void> subject([Json? existing])",
+  "publicExistingCallerSitesUnchanged": [
+    304,
+    2074
+  ],
+  "privateResultHelper": "Future<Json?> _subjectForm",
+  "archiveResultHelper": "Future<bool> _archiveSubject",
+  "consoleOutsideOriginalSubjectRegionByteIdentical": true,
+  "genericTenantFormByteIdentical": true,
+  "designOnlyOriginalApplicationToWindowCopy": true,
+  "completePatchReconstructedExact": true,
+  "uiOnlyListensToFlowOwnedBindingChanges": true,
+  "editAndArchiveCloseOnSuccessFalse": true,
+  "cancelDoesNotDispatchSubjectWriteOrFinishDetail": true,
+  "successfulCompletionFinishesCapturedDetailOnly": true,
+  "scopeLostRequestsNotReboundToNewWorkspace": true,
+  "originalFieldsPayloadRequestKeyAndVersionSemanticsPreserved": true,
+  "testsChangedOrAdded": false,
+  "allScenarios": "UNRUN",
+  "rendered": false,
+  "sdkAstFormatterCandidatePredicatesTestsProcessQueriesOrNetworkExecuted": false,
+  "mainGitR10SdkOrSharedCacheWritten": false,
+  "independentReviewRequired": true
+}

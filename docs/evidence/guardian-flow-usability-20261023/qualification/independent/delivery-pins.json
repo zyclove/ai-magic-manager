@@ -1,0 +1,18 @@
+{
+  "status": "FOUR_FIXED_NO_SDK_QUALIFICATION_ACTUAL_EVIDENCE_CONSISTENT_NOT_APP_ACCEPTANCE",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-r3-actual-independent-20261023-r1\\review.md",
+      "bytes": 4106,
+      "sha256": "e152e3d920f30c06deeb1bdb3632c09475cf4b08ebfe70d23520277f7933c909"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-r3-actual-independent-20261023-r1\\review-pins.json",
+      "bytes": 24234,
+      "sha256": "ebed8ca85cdb4a021ca2751870da07640f355473393b8c0b8a8394f7081249ac"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "applicationValidation": "UNRUN",
+  "nextSdkGrant": false
+}

@@ -1,0 +1,38 @@
+{
+  "status": "FIXED_CASE_EXPECTED_OUTCOME_AND_ACTUAL_HOST_EXIT_OBSERVED",
+  "case": "natural-nonzero",
+  "grant": "guardian-supervisor-fixed-qualification-root-20261023-r3",
+  "atUtc": "2026-10-23T14:11:53.0177321Z",
+  "sdkCount": 0,
+  "unknownCount": 0,
+  "availableRamBytes": 4139651072,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 4930523136
+    },
+    {
+      "Name": "D",
+      "Free": 22652612608
+    }
+  ],
+  "manifestSha256": "f088c5b70ffab3c75e2ebc7fa381cc23350903f54b60ea4d45ab3c9794fb0370",
+  "maximumHostSeconds": 14.0,
+  "reusedBudget": false,
+  "scope": "One fixed no-SDK qualification case; no real controller.",
+  "hostPid": 106580,
+  "sameHandleCreationFiletimeUtcDomain": "134372383130526022",
+  "sameHandleExitFiletimeUtcDomain": "134372383132437980",
+  "firstWaitSignaledElapsedSeconds": 0.1984433,
+  "hostActualExitCode": 0,
+  "rootForcedOwnHost": false,
+  "rootEmergencyCleanupAttempted": false,
+  "failure": null,
+  "hostTimelyAgainstEarlierRootAnchor": true,
+  "rawObservationPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\qualification-attempts\\natural-nonzero\\observation.json",
+  "postPinsMatch": true,
+  "qualificationAccepted": true,
+  "analysisAccepted": false,
+  "realControllerStarted": false,
+  "rootElapsedBeforeReceiptSeconds": 0.2352489
+}

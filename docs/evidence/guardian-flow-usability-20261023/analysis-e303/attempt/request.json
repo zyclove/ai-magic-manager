@@ -1,0 +1,8 @@
+{
+  "approvedProposalSha256": "6ad444f0cc33b7d138a9bdfc74aa604a7393912cd63cf727f77e004dee177ad9",
+  "qpcAnchor": 45567.5193577,
+  "workDeadlineQpc": 45741.5193577,
+  "cleanupDeadlineQpc": 45747.5193577,
+  "sourceCommit": "e303580030192497a63492d1147156e465082706",
+  "phase": "analyze-all-guardian"
+}

@@ -1,0 +1,24 @@
+{
+  "status": "ROOT_FIXED_ANALYSIS_STARTED",
+  "atUtc": "2026-10-23T14:57:38.6161460Z",
+  "sourceCommit": "e303580030192497a63492d1147156e465082706",
+  "proposalSha256": "6ad444f0cc33b7d138a9bdfc74aa604a7393912cd63cf727f77e004dee177ad9",
+  "launcherSha256": "74587554468edbf9c704d22220074aa7b407945d94485a62f5c865b219c169e2",
+  "sdkCount": 0,
+  "unknownCount": 0,
+  "availableRamBytes": 3879403520,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 4930711552
+    },
+    {
+      "Name": "D",
+      "Free": 24846450688
+    }
+  ],
+  "maximumHostSeconds": 180,
+  "reusedBudget": false,
+  "grant": "guardian-full-analyze-e303-r10-single-sdk-call",
+  "applicationTestsRun": false
+}

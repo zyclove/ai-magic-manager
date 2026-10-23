@@ -1,0 +1,52 @@
+{
+  "status": "STATIC_FILE_READER_PREPARED_NOT_RUN",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r10-post-20261023-r1\\post.py",
+      "bytes": 26898,
+      "sha256": "e5dd61f3853511d383dfbc717dbf493862355e73c53ffdec3860bac93d523086"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r10-post-20261023-r1\\review.md",
+      "bytes": 3427,
+      "sha256": "aaf7d8202c58a08e18954b7615567c6a5e04d1b6ac666e8046bc188c93064371"
+    }
+  ],
+  "selfExcluded": "pins.json",
+  "schemaSourcesReadOnly": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r10-e303\\analysis-host.py",
+      "bytes": 18928,
+      "sha256": "79b6e69e83af397989ee3da9aff136d87c8693d62a3bfdee998f23338ef46ca1"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r10-e303\\worker.py",
+      "bytes": 31761,
+      "sha256": "f7319e1643f234891a169781246b2b141d5101aa30dd91fae2843b158b2543c5"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r10-e303\\owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r10-e303\\proposal.json",
+      "bytes": 6463,
+      "sha256": "6ad444f0cc33b7d138a9bdfc74aa604a7393912cd63cf727f77e004dee177ad9"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r10-e303\\inputs.json",
+      "bytes": 13528,
+      "sha256": "35fb069ba0c9ddd86cc23a0c09f7f3bafab94e8764e787045e10712d80cfdcba"
+    }
+  ],
+  "entry": "post.py <actual-approved-proposal-sha256>",
+  "fixedOutput": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r10-post-20261023-r1\\post.json",
+  "successStatus": "DERIVED_ANALYSIS_CONSISTENT_PENDING_ROOT_RELEASE",
+  "analysisAccepted": false,
+  "postExecuted": false,
+  "candidateSdkAstPredicateTestsProcessApiNetworkExecuted": false,
+  "actualRootToolTerminalAndFreshReleaseStillRequired": true,
+  "mutableRootLauncherHashCheckedAgainstActualGrantWhenRun": true,
+  "entireSharedDirectorySealed": false
+}

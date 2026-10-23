@@ -1,0 +1,19 @@
+--- a/apps/guardian/lib/pages/console_pages.dart
++++ b/apps/guardian/lib/pages/console_pages.dart
+@@ -639,12 +639,13 @@
+     final owner = parent ?? context;
+     if (!context.mounted || !owner.mounted || hasAccess?.call() == false) return null;
+     final parentRoute = ModalRoute.of(owner);
+-    if (parentRoute?.isCurrent != true ||
+-        parentRoute?.isActive != true ||
++    if (parentRoute == null ||
++        !parentRoute.isCurrent ||
++        !parentRoute.isActive ||
+         (parentRoute is OwnedDialogRoute<dynamic> && !parentRoute.available)) return null;
+     final scope = DeviceSubflowScope(s,
+         permitted: () => context.mounted && owner.mounted &&
+-            parentRoute!.isActive &&
++            parentRoute.isActive &&
+             (parentRoute is! OwnedDialogRoute<dynamic> || parentRoute.available) &&
+             hasAccess?.call() != false && s.tenant != null && s.root == root &&
+             s.canWrite && s.canOpen('subjects'));

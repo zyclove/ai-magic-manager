@@ -1,0 +1,9 @@
+{
+  "status": "STATIC_ROOT_INTEGRATION_CANDIDATE_UNRUN",
+  "beforeR2Sha256": "e84f08855ffbc58b88fc4b8190490c57f2cbb2984cb4c530f78349fe65d5074f",
+  "afterBytes": 93378,
+  "afterSha256": "89fac14a4d5930b8398c29b5e0955a86740dce3fae8eaf59c955e989e31d0657",
+  "onlyChange": "Explicit context.mounted check after details GET before actionDetails(context); onTop already checked this indirectly. Preserve direct context guard for async lint and clarity.",
+  "applied": false,
+  "testsRun": false
+}

@@ -1,0 +1,16 @@
+{
+  "status": "STATIC_INDEPENDENT_REVIEW_ALL_SUBJECT_SCENARIOS_UNRUN",
+  "files": [
+    {
+      "path": "review.md",
+      "bytes": 3156,
+      "sha256": "3ca5fc10de6cf1e7e815ad6b0b02b49614fef97824f6f8a15f9e75f9519f3ecd"
+    },
+    {
+      "path": "review-pins.json",
+      "bytes": 6298,
+      "sha256": "37e2504153e20e99acae237d7a3d0fd2cfe7f6d9a6bc91d3c2e233979646ce3e"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json"
+}

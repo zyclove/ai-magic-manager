@@ -1,0 +1,11 @@
+--- r2/console-after.dart
++++ integration/console-final.dart
+@@ -749,7 +749,7 @@
+       if (!access.permitted()) return;
+       final api = scope.api.scoped(access.permitted);
+       final r = await api.send('GET', '$root/subjects/${row['id']}') as Json;
+-      if (!onTop() || !access.permitted()) return;
++      if (!context.mounted || !onTop() || !access.permitted()) return;
+       await actionDetails(context, r['nickname'], {
+         '昵称': r['nickname'],
+         '年龄段': label(r['ageBand']),

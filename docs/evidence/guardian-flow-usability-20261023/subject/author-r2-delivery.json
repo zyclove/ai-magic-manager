@@ -1,0 +1,35 @@
+{
+  "status": "STATIC_AUTHOR_DELTA_ALL_UNRUN",
+  "files": [
+    {
+      "path": "console-after.dart",
+      "bytes": 93358,
+      "sha256": "e84f08855ffbc58b88fc4b8190490c57f2cbb2984cb4c530f78349fe65d5074f"
+    },
+    {
+      "path": "r2-vs-r1.patch",
+      "bytes": 966,
+      "sha256": "d2c40efab27ce8b265568f6c868614bfa538f6a2e28794bbdbb65eb0a624b01f"
+    },
+    {
+      "path": "review.md",
+      "bytes": 1465,
+      "sha256": "2879948be19cd6a5ae4e9c9700d93365b45803fce1627246c78510f1fb7150c3"
+    },
+    {
+      "path": "pins.json",
+      "bytes": 2468,
+      "sha256": "43f7bfb3f9d28e71c7b4ff731120019d2e21f7ed8209ce70e4edc44bae08a8b9"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "expectedMembership": [
+    "console-after.dart",
+    "r2-vs-r1.patch",
+    "review.md",
+    "pins.json",
+    "delivery-pins.json"
+  ],
+  "mainApplied": false,
+  "testsRun": false
+}

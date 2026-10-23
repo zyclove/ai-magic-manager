@@ -1,0 +1,23 @@
+{
+  "status": "R9_STATIC_SOURCE_BINDING_MATCH_ALL_APPLICATION_VALIDATION_UNRUN",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-r9-root-independent-20261023-r1\\review.md",
+      "bytes": 3406,
+      "sha256": "22d0b25ef6868e638f460401e856242eb652050c43008cd1361d5020d097792f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-r9-root-independent-20261023-r1\\readback.json",
+      "bytes": 3182,
+      "sha256": "a305501680e63ce7ac9b3c67f248517156dff387c22810b410bfb54bcf2a65be"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-r9-root-independent-20261023-r1\\readback.py",
+      "bytes": 17074,
+      "sha256": "bb14e7089449a974f36b6e5d658e2308300255cb1440b46453bdb40d34dfd97c"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "applicationValidation": "UNRUN",
+  "sdkGrantCreated": false
+}

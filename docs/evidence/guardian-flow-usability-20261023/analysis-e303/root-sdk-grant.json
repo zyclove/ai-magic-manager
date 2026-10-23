@@ -1,0 +1,15 @@
+{
+  "status": "ROOT_APPROVED_SINGLE_FIXED_ANALYSIS",
+  "atUtc": "2026-10-23T14:57:16.247045+00:00",
+  "sourceCommit": "e303580030192497a63492d1147156e465082706",
+  "proposalSha256": "6ad444f0cc33b7d138a9bdfc74aa604a7393912cd63cf727f77e004dee177ad9",
+  "launcherSha256": "74587554468edbf9c704d22220074aa7b407945d94485a62f5c865b219c169e2",
+  "sdkCallsAllowed": 1,
+  "authorization": "Existing human authorization for offline validation; resource and exclusive SDK gate is mandatory again before launch",
+  "qualificationIndependentReviewSha256": "e152e3d920f30c06deeb1bdb3632c09475cf4b08ebfe70d23520277f7933c909",
+  "analysisStaticIndependentReviewSha256": "32653ecb46b98285dfbcf1d8d729c731758ce3724c5e0f55b140fd248f804025",
+  "testsAllowed": false,
+  "pubOrDownloadsAllowed": false,
+  "deployed": false,
+  "postAcceptanceStillRequiresActualExecutionAndRelease": true
+}

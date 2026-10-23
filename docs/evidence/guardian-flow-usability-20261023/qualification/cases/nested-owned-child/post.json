@@ -1,0 +1,244 @@
+{
+  "status": "FIXED_CASE_POST_COMPLETE_NOT_ANALYSIS_ACCEPTANCE",
+  "case": "nested-owned-child",
+  "rootReportedQualificationAccepted": true,
+  "rootReportedStatus": "FIXED_CASE_EXPECTED_OUTCOME_AND_ACTUAL_HOST_EXIT_OBSERVED",
+  "derivedQualificationAccepted": true,
+  "rootReportConsistentWithDerived": true,
+  "rootStatusConsistentWithReportedVerdict": true,
+  "consistencyErrors": [],
+  "qualificationAccepted": true,
+  "analysisAccepted": false,
+  "rootReportedAnalysisAccepted": false,
+  "checks": {
+    "fixed-case-and-manifest": true,
+    "fixed-root-grant": true,
+    "fixed-host-budget": true,
+    "preflight-schema": true,
+    "retained-host-identity-fields": true,
+    "actual-root-host-exit-and-deadline": true,
+    "root-no-force-no-failure": true,
+    "root-pins-and-no-analysis": true,
+    "observation-exists": true,
+    "inner-no-error-and-expected-outcome": true,
+    "inner-pins-no-sdk-controller": true,
+    "fixture-identity": true,
+    "fixture-terminal-job-zero": true,
+    "fixture-exit-and-force-contract": true,
+    "original-inner-qpc-budgets": true,
+    "inner-complete-observation-order": true,
+    "forced-124-qualified-path": true,
+    "nested-proof-original-contract": true,
+    "required-raw-evidence-present": true
+  },
+  "failedChecks": [],
+  "actualHostExitCode": 0,
+  "firstWaitSignaledElapsedSeconds": 8.0916503,
+  "hostPid": 78052,
+  "hostCreationFiletime": "134372384186827352",
+  "hostExitFiletime": "134372384267668567",
+  "fixturePid": 106676,
+  "fixtureCreationFiletime": 134372384187800922,
+  "fixtureExitCode": 124,
+  "fixtureForcedCleanup": true,
+  "completeTerminalQpc": 42935.5638151,
+  "naturalTerminalDeadlineQpc": 42935.5427197,
+  "terminalActive": 0,
+  "descriptors": [
+    {
+      "descriptorSet": "candidate",
+      "path": ".cache\\guardian-supervisor-20261023-r3\\supervisor.py",
+      "bytes": 12102,
+      "sha256": "ebef1a94c14c5bce2ac65bd6ddf81e9029c3347d70e9d3cab97b9290b3d0e5f8"
+    },
+    {
+      "descriptorSet": "candidate",
+      "path": ".cache\\guardian-supervisor-20261023-r3\\owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "descriptorSet": "candidate",
+      "path": ".cache\\guardian-supervisor-20261023-r3\\fixtures.py",
+      "bytes": 1834,
+      "sha256": "5b98c93d0efdd612641591db7d14ceb3973d50dbb5fec7925182ab63b61ac4b7"
+    },
+    {
+      "descriptorSet": "candidate",
+      "path": ".cache\\guardian-supervisor-20261023-r3\\qualification-cases.json",
+      "bytes": 802,
+      "sha256": "af96e8ee1f7a1a77b9a33508982e6a6e09595047ceebebbbafb95d0af5130e9e"
+    },
+    {
+      "descriptorSet": "candidate",
+      "path": ".cache\\guardian-supervisor-20261023-r3\\README.md",
+      "bytes": 2877,
+      "sha256": "0fb5d0a4e09249afd41555b6d2dc4b3a358952e691f9cdaafcc69a2a6179f5f9"
+    },
+    {
+      "descriptorSet": "candidate",
+      "path": ".cache\\guardian-supervisor-20261023-r3\\design.md",
+      "bytes": 7138,
+      "sha256": "6dff84cdb4ac6891ecbe49df8bcd039c1a23c6f14a0e43deea2dc07e4ad33d5a"
+    },
+    {
+      "descriptorSet": "runtime",
+      "path": "C:\\Python313\\python.exe",
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125"
+    },
+    {
+      "descriptorSet": "runtime",
+      "path": "C:\\Python313\\python313.dll",
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529"
+    },
+    {
+      "descriptorSet": "runtime",
+      "path": "C:\\Python313\\DLLs\\_ctypes.pyd",
+      "bytes": 133992,
+      "sha256": "5c0d5082fba1a2a3eb8d5e23073be25164c19f21304b09cecaab340dc7198815"
+    },
+    {
+      "descriptorSet": "runtime",
+      "path": "C:\\Python313\\DLLs\\libffi-8.dll",
+      "bytes": 39696,
+      "sha256": "eff52743773eb550fcc6ce3efc37c85724502233b6b002a35496d828bd7b280a"
+    },
+    {
+      "descriptorSet": "runtime",
+      "path": "C:\\Python313\\Lib\\ctypes\\__init__.py",
+      "bytes": 19374,
+      "sha256": "2e63f01ac6b8ffc1acfa4eec4c253eef8fbd65e09506d690cb3be71a2d78303a"
+    },
+    {
+      "descriptorSet": "runtime",
+      "path": "C:\\Python313\\Lib\\ctypes\\_endian.py",
+      "bytes": 2635,
+      "sha256": "f2752ab2425dac9bfaff5aa1a3c6cd66aa342fee0db2f2a42de568fc59d5cbea"
+    },
+    {
+      "descriptorSet": "delivery",
+      "path": ".cache\\guardian-supervisor-20261023-r3\\design.md",
+      "bytes": 7138,
+      "sha256": "6dff84cdb4ac6891ecbe49df8bcd039c1a23c6f14a0e43deea2dc07e4ad33d5a"
+    },
+    {
+      "descriptorSet": "delivery",
+      "path": ".cache\\guardian-supervisor-20261023-r3\\fixtures.py",
+      "bytes": 1834,
+      "sha256": "5b98c93d0efdd612641591db7d14ceb3973d50dbb5fec7925182ab63b61ac4b7"
+    },
+    {
+      "descriptorSet": "delivery",
+      "path": ".cache\\guardian-supervisor-20261023-r3\\manifest.json",
+      "bytes": 2872,
+      "sha256": "f088c5b70ffab3c75e2ebc7fa381cc23350903f54b60ea4d45ab3c9794fb0370"
+    },
+    {
+      "descriptorSet": "delivery",
+      "path": ".cache\\guardian-supervisor-20261023-r3\\owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "descriptorSet": "delivery",
+      "path": ".cache\\guardian-supervisor-20261023-r3\\provenance.json",
+      "bytes": 3111,
+      "sha256": "7a78de8b97ff28ea54aa31772ace1507a66b6e85684e1d4ac506907a3c3f9118"
+    },
+    {
+      "descriptorSet": "delivery",
+      "path": ".cache\\guardian-supervisor-20261023-r3\\qualification-cases.json",
+      "bytes": 802,
+      "sha256": "af96e8ee1f7a1a77b9a33508982e6a6e09595047ceebebbbafb95d0af5130e9e"
+    },
+    {
+      "descriptorSet": "delivery",
+      "path": ".cache\\guardian-supervisor-20261023-r3\\r3-vs-r2.patch",
+      "bytes": 10200,
+      "sha256": "1ef67370d557f57a6b525282e8d4a2d898748c59eefe0eaa4ca19bced3c519ae"
+    },
+    {
+      "descriptorSet": "delivery",
+      "path": ".cache\\guardian-supervisor-20261023-r3\\README.md",
+      "bytes": 2877,
+      "sha256": "0fb5d0a4e09249afd41555b6d2dc4b3a358952e691f9cdaafcc69a2a6179f5f9"
+    },
+    {
+      "descriptorSet": "delivery",
+      "path": ".cache\\guardian-supervisor-20261023-r3\\static-path-witnesses.json",
+      "bytes": 2207,
+      "sha256": "eb430aeea9281ca75ff1041dda810756472c11d477d01ae6c65b18841ff8c885"
+    },
+    {
+      "descriptorSet": "delivery",
+      "path": ".cache\\guardian-supervisor-20261023-r3\\static-review.json",
+      "bytes": 1557,
+      "sha256": "1afeb71c4554a6402815b05a27f5608455a505d0950fb86cd0a450f052d21333"
+    },
+    {
+      "descriptorSet": "delivery",
+      "path": ".cache\\guardian-supervisor-20261023-r3\\supervisor.py",
+      "bytes": 12102,
+      "sha256": "ebef1a94c14c5bce2ac65bd6ddf81e9029c3347d70e9d3cab97b9290b3d0e5f8"
+    },
+    {
+      "descriptorSet": "delivery-self",
+      "path": ".cache\\guardian-supervisor-20261023-r3\\delivery-pins.json",
+      "bytes": 1766,
+      "sha256": "4b1e5c3990eb5444807ec8cf171d076bc7700e0e46f01e8044d72f10f4f0f3be"
+    },
+    {
+      "descriptorSet": "root-launcher",
+      "path": ".cache\\guardian-supervisor-root-qualify-20261023-r3.ps1",
+      "bytes": 7538,
+      "sha256": "c1f8c0aad2db2f95419e829a31852e7de460cdc815fd83e0bf7c3548773af3ba"
+    }
+  ],
+  "descriptorCount": 25,
+  "uniqueInputFileCount": 19,
+  "rawEvidence": [
+    {
+      "path": ".cache\\guardian-supervisor-root-qualification-20261023-r3\\nested-owned-child\\result.json",
+      "bytes": 1362,
+      "sha256": "857712056ff346da8f58e04766db018001fd119a48e017b3f62cdcd62e3e8f00"
+    },
+    {
+      "path": ".cache\\guardian-supervisor-root-qualification-20261023-r3\\nested-owned-child\\preflight.json",
+      "bytes": 633,
+      "sha256": "7104cc4f210472be13087ebf9085fa43f0ac8757774dbe6da3d31bac14390998"
+    },
+    {
+      "path": ".cache\\guardian-supervisor-20261023-r3\\qualification-attempts\\nested-owned-child\\observation.json",
+      "bytes": 4344,
+      "sha256": "2d3ab576a7526f9e8b6702ab60f97570147fa9a0d06babb3914c07435c81fa45"
+    },
+    {
+      "path": ".cache\\guardian-supervisor-20261023-r3\\qualification-attempts\\nested-owned-child\\fixture-console.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": ".cache\\guardian-supervisor-20261023-r3\\qualification-attempts\\nested-owned-child\\nested-proof.json",
+      "bytes": 240,
+      "sha256": "b5989dfbf3ffce8c5af8fdd973647c134eca5aea04f61c0e07926c4d8472a566"
+    },
+    {
+      "path": ".cache\\guardian-supervisor-20261023-r3\\qualification-attempts\\nested-owned-child\\owned-leaf.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "missingRawEvidence": [],
+  "rootReportedRealControllerStarted": false,
+  "observedRealControllerInvoked": false,
+  "observedSdkCalls": 0,
+  "rootFullProcessObservationAndFormalReleaseStillRequired": true,
+  "rootActualPostToolTerminalObservationStillRequired": true,
+  "sameHandleIdentitySource": "Fixed Root launcher receipt; no OS handle reopened by this tool.",
+  "caseOnly": true,
+  "postToolApplicationTestsRun": false,
+  "postToolStartedSdk": false,
+  "postToolInvokedRealController": false
+}

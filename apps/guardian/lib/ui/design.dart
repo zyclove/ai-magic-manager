@@ -699,7 +699,7 @@ Future<void> actionDetails(
           Widget content() => !permitted()
               ? AlertDialog(
                   title: const Text('工作空间或权限已变化'),
-                  content: const Text('已隐藏原申请内容。请关闭窗口，在当前工作空间重新打开。'),
+                  content: const Text('已隐藏原窗口内容。请关闭窗口，在当前工作空间重新打开。'),
                   actions: [
                       TextButton(
                           onPressed: closeCurrent, child: const Text('关闭'))

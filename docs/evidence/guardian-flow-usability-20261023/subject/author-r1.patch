@@ -1,0 +1,223 @@
+--- a/apps/guardian/lib/pages/console_pages.dart
++++ b/apps/guardian/lib/pages/console_pages.dart
+@@ -630,51 +630,168 @@
+   }
+ 
+   Future<void> subject([Json? existing]) async {
+-    final key = requestId();
+-    await _tenantForm(
+-        title: existing == null ? '添加儿童档案' : '编辑儿童档案',
+-        section: 'subjects',
+-        fields: [
+-          const FieldSpec('nickname', '昵称', maxLength: 60),
+-          FieldSpec('ageBand', '年龄段',
+-              options: options(['UNDER_7', 'AGE_7_12', 'AGE_13_17']))
+-        ],
+-        initial: existing ?? {},
+-        onSubmit: (api, v) async => await api.send(
+-            existing == null ? 'POST' : 'PATCH',
+-            '$root/subjects${existing == null ? '' : '/${existing['id']}'}',
+-            body: v,
+-            key: key,
+-            version: existing?['version']) as Json);
++    await _subjectForm(existing);
++  }
++
++  Future<Json?> _subjectForm(Json? existing,
++      {BuildContext? parent, Listenable? accessChanges,
++      bool Function()? hasAccess}) async {
++    final owner = parent ?? context;
++    if (!context.mounted || !owner.mounted || hasAccess?.call() == false) return null;
++    final parentRoute = ModalRoute.of(owner);
++    if (parentRoute?.isCurrent != true ||
++        parentRoute?.isActive != true ||
++        (parentRoute is OwnedDialogRoute<dynamic> && !parentRoute.available)) return null;
++    final scope = DeviceSubflowScope(s,
++        permitted: () => context.mounted && owner.mounted &&
++            parentRoute!.isActive &&
++            (parentRoute is! OwnedDialogRoute<dynamic> || parentRoute.available) &&
++            hasAccess?.call() != false && s.tenant != null && s.root == root &&
++            s.canWrite && s.canOpen('subjects'));
++    final access = DialogAccessBinding(owner,
++        accessChanges: Listenable.merge([scope, if (accessChanges != null) accessChanges]),
++        hasAccess: () => scope.current);
++    try {
++      if (!access.permitted()) return null;
++      final key = requestId();
++      final version = existing?['version'];
++      final path = '$root/subjects${existing == null ? '' : '/${existing['id']}'}';
++      final api = scope.api.scoped(access.permitted);
++      return await formDialog(owner,
++          title: existing == null ? '添加儿童档案' : '编辑儿童档案',
++          fields: [
++            const FieldSpec('nickname', '昵称', maxLength: 60),
++            FieldSpec('ageBand', '年龄段',
++                options: options(['UNDER_7', 'AGE_7_12', 'AGE_13_17']))
++          ],
++          initial: existing ?? {},
++          accessChanges: access.changes,
++          hasAccess: access.permitted,
++          reauth: () {
++            if (access.permitted()) reauth();
++          },
++          onSubmit: (values) async => await api.send(
++              existing == null ? 'POST' : 'PATCH', path,
++              body: values, key: key, version: version) as Json);
++    } finally {
++      access.dispose();
++      scope.dispose();
++    }
++  }
++
++  Future<bool> _archiveSubject(BuildContext owner, Json subject,
++      {required Api api, required Listenable accessChanges,
++      required bool Function() hasAccess}) async {
++    if (!context.mounted || !owner.mounted || !hasAccess()) return false;
++    final parent = ModalRoute.of(owner);
++    if (parent is! OwnedDialogRoute<void> ||
++        !parent.available || !parent.isCurrent) return false;
++    final access = DialogAccessBinding(owner,
++        accessChanges: accessChanges, hasAccess: hasAccess);
++    try {
++      if (!access.permitted()) return false;
++      final version = subject['version'];
++      final path = '$root/subjects/${subject['id']}/archive';
++      final boundApi = api.scoped(access.permitted);
++      late final OwnedDialogRoute<bool> route;
++      void close(bool confirmed) {
++        if (!route.available || !route.isCurrent) return;
++        if (confirmed && !access.permitted()) return;
++        route.finish(confirmed);
++      }
++
++      route = OwnedDialogRoute<bool>(
++          context: owner,
++          builder: (_) => AnimatedBuilder(
++              animation: access.changes,
++              builder: (_, __) => !access.permitted()
++                  ? AlertDialog(
++                      title: const Text('工作空间或权限已变化'),
++                      content: const Text('已隐藏原归档确认。请关闭窗口后重新打开当前档案。'),
++                      actions: [
++                        TextButton(onPressed: () => close(false), child: const Text('关闭'))
++                      ])
++                  : AlertDialog(
++                      title: const Text('归档儿童档案'),
++                      content: const SizedBox(
++                          width: 460,
++                          child: Text(
++                              '归档后将不再显示在活动档案中，相关临时访问窗口会失效。此操作不会自动解除设备管理。',
++                              style: TextStyle(height: 1.8))),
++                      actions: [
++                        TextButton(onPressed: () => close(false), child: const Text('取消')),
++                        FilledButton(onPressed: () => close(true), child: const Text('确认归档'))
++                      ])));
++      final confirmed = await presentOwnedDialog<bool>(owner, route);
++      if (confirmed != true || !access.permitted() ||
++          !parent.available || !parent.isCurrent) return false;
++      await boundApi.send('POST', path, version: version);
++      return access.permitted();
++    } finally {
++      access.dispose();
++    }
+   }
+ 
+   Future<void> subjectDetails(Json row) async {
+-    final r = await s.api.send('GET', '$root/subjects/${row['id']}') as Json;
+     if (!context.mounted) return;
+-    await actionDetails(
+-        context,
+-        r['nickname'],
+-        {
+-          '昵称': r['nickname'],
+-          '年龄段': label(r['ageBand']),
+-          '档案编号': r['id'],
+-          '版本': r['version']
+-        },
+-        reauth: reauth,
+-        actions: s.canWrite
+-            ? [
+-                DetailAction('编辑档案', (_) => subject(r)),
+-                DetailAction('归档', (ctx) async {
+-                  if (await confirmAction(ctx, '归档儿童档案',
+-                      '归档后将不再显示在活动档案中，相关临时访问窗口会失效。此操作不会自动解除设备管理。',
+-                      confirm: '确认归档')) {
+-                    await s.api.send(
+-                        'POST', '$root/subjects/${r['id']}/archive',
+-                        version: r['version']);
+-                  }
+-                }, destructive: true)
+-              ]
+-            : []);
++    final parent = ModalRoute.of(context);
++    bool onTop() => context.mounted && parent?.isCurrent == true &&
++        parent?.isActive == true &&
++        (parent is! OwnedDialogRoute<dynamic> || parent.available);
++    if (!onTop()) return;
++    final scope = DeviceSubflowScope(s,
++        permitted: () => context.mounted && s.tenant != null &&
++            s.root == root && s.canOpen('subjects'));
++    final access = DialogAccessBinding(context,
++        accessChanges: scope, hasAccess: () => scope.current);
++    try {
++      if (!access.permitted()) return;
++      final api = scope.api.scoped(access.permitted);
++      final r = await api.send('GET', '$root/subjects/${row['id']}') as Json;
++      if (!onTop() || !access.permitted()) return;
++      await actionDetails(context, r['nickname'], {
++        '昵称': r['nickname'],
++        '年龄段': label(r['ageBand']),
++        '档案编号': r['id'],
++        '版本': r['version']
++      },
++          accessChanges: access.changes,
++          hasAccess: access.permitted,
++          reauth: () {
++            if (access.permitted()) reauth();
++          },
++          actions: s.canWrite
++              ? [
++                  DetailAction('编辑档案', (owner) async {
++                    if (!owner.mounted || !access.permitted() || !s.canWrite) return;
++                    final route = ModalRoute.of(owner);
++                    if (route is! OwnedDialogRoute<void> || !route.available ||
++                        !route.isCurrent) return;
++                    final finish = captureDialogCompletion(owner);
++                    bool accepted() => access.permitted() && s.canWrite &&
++                        route.available && route.isActive;
++                    final result = await _subjectForm(r, parent: owner,
++                        accessChanges: access.changes, hasAccess: accepted);
++                    if (result != null && accepted()) finish();
++                  }, closeOnSuccess: false),
++                  DetailAction('归档', (owner) async {
++                    if (!owner.mounted || !access.permitted() || !s.canWrite) return;
++                    final route = ModalRoute.of(owner);
++                    if (route is! OwnedDialogRoute<void> || !route.available ||
++                        !route.isCurrent) return;
++                    final finish = captureDialogCompletion(owner);
++                    bool accepted() => access.permitted() && s.canWrite &&
++                        route.available && route.isActive;
++                    final saved = await _archiveSubject(owner, r,
++                        api: api, accessChanges: access.changes, hasAccess: accepted);
++                    if (saved && accepted()) finish();
++                  }, destructive: true, closeOnSuccess: false)
++                ]
++              : []);
++    } finally {
++      access.dispose();
++      scope.dispose();
++    }
+   }
+ 
+   Future<void> application() async {
+--- a/apps/guardian/lib/ui/design.dart
++++ b/apps/guardian/lib/ui/design.dart
+@@ -699,7 +699,7 @@
+           Widget content() => !permitted()
+               ? AlertDialog(
+                   title: const Text('工作空间或权限已变化'),
+-                  content: const Text('已隐藏原申请内容。请关闭窗口，在当前工作空间重新打开。'),
++                  content: const Text('已隐藏原窗口内容。请关闭窗口，在当前工作空间重新打开。'),
+                   actions: [
+                       TextButton(
+                           onPressed: closeCurrent, child: const Text('关闭'))

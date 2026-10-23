@@ -1,0 +1,37 @@
+{
+  "status": "OWN_FIXED_CASE_TERMINAL_NO_NEXT_SDK_GRANT",
+  "case": "nested-owned-child",
+  "atUtc": "2026-10-23T14:14:47.9953766Z",
+  "actualRootToolTerminalChunk": "caf7e4",
+  "actualPostToolTerminalChunk": "0aaad1",
+  "actualRootToolExitCode": 0,
+  "actualPostToolExitCode": 0,
+  "qualificationAccepted": true,
+  "fixtureJobActive": 0,
+  "fixtureExitCode": 124,
+  "sameHandleHostExitCode": 0,
+  "sameHandleHostCreationFiletime": "134372384186827352",
+  "sameHandleHostExitFiletime": "134372384267668567",
+  "ownHostHandleReleasedByFixedLauncher": true,
+  "ownLiveSdkHandle": false,
+  "sdkCount": 0,
+  "sdkProcesses": [],
+  "unknownCount": 0,
+  "currentAvailableRamBytes": 4101890048,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 4926255104
+    },
+    {
+      "Name": "D",
+      "Free": 22651727872
+    }
+  ],
+  "processInventoryFile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualification-20261023-r3\\nested-owned-child\\post-process-inventory.json",
+  "processInventorySha256": "5613403b86d2ee73e19d0aedbcd0e65d9d2c95a150eb35bea2c526bc7feedfc3",
+  "fixedPostSha256": "12ca5d1e3b1411da5ffd410e3fd9a62ebbfffc4134ac7d4a66af1a871c050bc7",
+  "applicationTestsRun": false,
+  "realControllerInvoked": false,
+  "nextSdkGrant": false
+}

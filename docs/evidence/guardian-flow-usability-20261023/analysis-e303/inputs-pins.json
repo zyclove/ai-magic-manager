@@ -1,0 +1,150 @@
+{
+  "status": "FOUR_OWN_INPUT_FILES_ONLY_STATIC_UNRUN",
+  "selfExcluded": "inputs-pins.json",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r10-e303\\inputs.json",
+      "bytes": 13528,
+      "sha256": "35fb069ba0c9ddd86cc23a0c09f7f3bafab94e8764e787045e10712d80cfdcba"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r10-e303\\cache-analysis-projection.json",
+      "bytes": 724690,
+      "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r10-e303\\inputs-review.md",
+      "bytes": 3696,
+      "sha256": "6fed97b2dbf0166cae24219dd3f1c78dbce6310c2955658d62e46a97176e4ce6"
+    }
+  ],
+  "oldInput": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r9\\inputs.json",
+    "bytes": 7010,
+    "sha256": "bc28a78035d46791d7bd9cab066668bb7c119b601ed7ba6f8f00a683c3f78075"
+  },
+  "oldProjection": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r9\\cache-analysis-projection.json",
+    "bytes": 724690,
+    "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84"
+  },
+  "sourceSeal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r9-e303\\out\\seal-static-source.json",
+    "bytes": 80882,
+    "sha256": "8fcfa6a49ecec81a1a5eb2f9449234abfd1c5622a8b84f7adebd77f7d813c03c"
+  },
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r9-e303\\out\\source-manifest.json",
+    "bytes": 245064,
+    "sha256": "4ca3c2285abcfdb27b877fa39ad956cfbc2a372655591bc3c61710b43f4bfa14"
+  },
+  "fullRegressionInventoryBinding": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r9-e303\\out\\full-regression-181-bindings.json",
+    "bytes": 83383,
+    "sha256": "5b47d261823f78bf2ad7c9eff826f65851106452ab5e6412f5712dd5b6e47325"
+  },
+  "expectedCaseContract": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r9-e303\\out\\expected-cases.json",
+    "bytes": 52929,
+    "sha256": "70007d268f69b0445f526c308effd32b17fe8db6c87bce512a625c5132ef4d91"
+  },
+  "qualifiedRuntimeManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\manifest.json",
+    "bytes": 2872,
+    "sha256": "f088c5b70ffab3c75e2ebc7fa381cc23350903f54b60ea4d45ab3c9794fb0370"
+  },
+  "qualifiedRuntimeDescriptors": [
+    {
+      "path": "C:\\Python313\\python.exe",
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\python313.dll",
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\DLLs\\_ctypes.pyd",
+      "bytes": 133992,
+      "sha256": "5c0d5082fba1a2a3eb8d5e23073be25164c19f21304b09cecaab340dc7198815",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\DLLs\\libffi-8.dll",
+      "bytes": 39696,
+      "sha256": "eff52743773eb550fcc6ce3efc37c85724502233b6b002a35496d828bd7b280a",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\__init__.py",
+      "bytes": 19374,
+      "sha256": "2e63f01ac6b8ffc1acfa4eec4c253eef8fbd65e09506d690cb3be71a2d78303a",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\_endian.py",
+      "bytes": 2635,
+      "sha256": "f2752ab2425dac9bfaff5aa1a3c6cd66aa342fee0db2f2a42de568fc59d5cbea",
+      "absolute": true
+    }
+  ],
+  "runtimeFileCount": 26,
+  "controlRuntimeFileCount": 8,
+  "extraRuntimeFileCount": 18,
+  "psutilNewCodeFiles": 10,
+  "wintypesNewFiles": 1,
+  "runtimeClosureComplete": false,
+  "sourceFiles": 410,
+  "rootFiles": 181,
+  "cacheProjectionFiles": 3536,
+  "cacheProjectionBytes": 633817159,
+  "cachePayloadFreshlyHashed": false,
+  "changedInputKeys": [
+    "cacheManifest",
+    "candidatePackageConfig",
+    "candidatePackageConfigTemplate",
+    "controlRuntimeFiles",
+    "createdAtUtc",
+    "dependencyLibraryPins",
+    "expectedBrowserSubsetCases",
+    "expectedBrowserSubsetSuites",
+    "expectedCaseContract",
+    "extraRuntimeFiles",
+    "fullRegressionInventoryBinding",
+    "fullRegressionRootFiles",
+    "psutilCodeInventory",
+    "qualificationRuntimeEvidenceBound",
+    "qualifiedHostRuntimeManifest",
+    "runtimeClosureComplete",
+    "runtimePinPreparation",
+    "scope",
+    "sevenRootGitTrees",
+    "sourceCommit",
+    "sourceCount",
+    "sourceDirectoryList",
+    "sourceFiles",
+    "sourceManifest",
+    "sourceMembershipCheck",
+    "sourceSeal",
+    "sourceTreeSha256",
+    "staticPreparation"
+  ],
+  "guardKeysExactlyRetained": [
+    "phase",
+    "originalPackageConfig",
+    "internalPackageRoots",
+    "gitExecutable",
+    "sdkBootstrap",
+    "processPath",
+    "forbiddenEnvironmentOverrides",
+    "generatedExclusions",
+    "entireSdkOrBrowserInstallationPinned",
+    "cacheProjectionParentManifest"
+  ],
+  "noWholeSharedDirectorySeal": true,
+  "controlsOrProposalOrAttemptWritten": false,
+  "executionApproved": false
+}

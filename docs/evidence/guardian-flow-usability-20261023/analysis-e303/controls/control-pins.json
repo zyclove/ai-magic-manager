@@ -1,0 +1,141 @@
+{
+  "status": "STATIC_CONTROLS_SOURCE_ONLY_ALL_ANALYSIS_UNRUN",
+  "sourceCommit": "e303580030192497a63492d1147156e465082706",
+  "controlFiles": [
+    "analysis-host.py",
+    "worker.py",
+    "owned_job.py"
+  ],
+  "authorFilesExcludingThisFile": [
+    "analysis-host.py",
+    "worker.py",
+    "owned_job.py",
+    "worker-r10-vs-r9.patch",
+    "analysis-host-vs-qualified-r3.patch",
+    "owned-job-vs-qualified-r3.patch",
+    "controls-review.md"
+  ],
+  "sharedDirectoryExclusiveClaimed": false,
+  "files": [
+    {
+      "path": "analysis-host.py",
+      "bytes": 18928,
+      "sha256": "79b6e69e83af397989ee3da9aff136d87c8693d62a3bfdee998f23338ef46ca1"
+    },
+    {
+      "path": "worker.py",
+      "bytes": 31761,
+      "sha256": "f7319e1643f234891a169781246b2b141d5101aa30dd91fae2843b158b2543c5"
+    },
+    {
+      "path": "owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "path": "worker-r10-vs-r9.patch",
+      "bytes": 21956,
+      "sha256": "5b495fc8a8ccb38c911c37799d26ac4442bb21eee89b6dd78b430bc879d41996"
+    },
+    {
+      "path": "analysis-host-vs-qualified-r3.patch",
+      "bytes": 31142,
+      "sha256": "0315c45cc835cd7eeaa49b6d76af567c5d17d0dfb3c8ec89aa281364fccaeded"
+    },
+    {
+      "path": "owned-job-vs-qualified-r3.patch",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "controls-review.md",
+      "bytes": 8475,
+      "sha256": "e0eceae767f20cccbb53946b2890a938e6c4b0355d42ca75b2d2de65024d5e34"
+    }
+  ],
+  "inputs": {
+    "path": ".cache/guardian-analyze-20261023-r10-e303/inputs.json",
+    "bytes": 13528,
+    "sha256": "35fb069ba0c9ddd86cc23a0c09f7f3bafab94e8764e787045e10712d80cfdcba"
+  },
+  "provenanceOldR9": [
+    {
+      "path": ".cache/guardian-analyze-20261023-r9/worker.py",
+      "bytes": 24520,
+      "sha256": "57a251218e83970929182279b210c19821ba7733ddbe1dad081a1a8d43a1360a"
+    },
+    {
+      "path": ".cache/guardian-analyze-20261023-r9/controller.py",
+      "bytes": 8048,
+      "sha256": "2c0d3b0b36d551219816b3c5cb3e05e69a2e56d32ed16a7e611fcacb751b547f"
+    },
+    {
+      "path": ".cache/guardian-analyze-20261023-r9/inputs.json",
+      "bytes": 7010,
+      "sha256": "bc28a78035d46791d7bd9cab066668bb7c119b601ed7ba6f8f00a683c3f78075"
+    },
+    {
+      "path": ".cache/guardian-analyze-20261023-r9/proposal.json",
+      "bytes": 85925,
+      "sha256": "8f106238ac96a77822fba2bdb596aba33aa27878ffc19a6e0ddd566ed863eecf"
+    }
+  ],
+  "provenanceQualifiedR3": [
+    {
+      "path": ".cache/guardian-supervisor-20261023-r3/supervisor.py",
+      "bytes": 12102,
+      "sha256": "ebef1a94c14c5bce2ac65bd6ddf81e9029c3347d70e9d3cab97b9290b3d0e5f8"
+    },
+    {
+      "path": ".cache/guardian-supervisor-20261023-r3/owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "path": ".cache/guardian-supervisor-20261023-r3/manifest.json",
+      "bytes": 2872,
+      "sha256": "f088c5b70ffab3c75e2ebc7fa381cc23350903f54b60ea4d45ab3c9794fb0370"
+    }
+  ],
+  "byteExactRetainedWorkerFunctions": [
+    "utc",
+    "require",
+    "budget",
+    "save",
+    "safe",
+    "pin",
+    "verify_pin",
+    "load_pin",
+    "relative",
+    "inventory",
+    "resource_gate",
+    "package_check",
+    "cache_check",
+    "full_check"
+  ],
+  "originalRuntimeCheckBodyAfterNewProvenancePrefixByteExact": true,
+  "originalFlutterFlagsByteExact": true,
+  "originalSdkEnvironmentEntriesRetainedWithOnlyFixedSafeDirectoryAddition": true,
+  "ownedJobByteIdenticalToQualifiedR3": true,
+  "gitSafeDirectoryLimitedToRepoAndSdk": true,
+  "sdkChildBareGitSafeDirectoryCount": 2,
+  "sdkGateMatchesRootMvnGradleVetTestSuffixAndEmptyUnknown": true,
+  "budgets": {
+    "outer": 180,
+    "working": 174,
+    "worker": 165,
+    "command": 135,
+    "commandCleanup": 140,
+    "postflightReserve": 25
+  },
+  "naturalDrainMaxSecondsWithinOriginalDeadline": 0.5,
+  "nativeMemoryLimitClaimed": false,
+  "entireRuntimeClosureClaimed": false,
+  "actualCandidateOrPredicateExecution": false,
+  "astParsingOrCompilation": false,
+  "sdkTestsFixturesOrNetworkRun": false,
+  "processQueriesRunDuringPreparation": false,
+  "mainGitOldCandidatesSharedRuntimeOrCacheWritten": false,
+  "attemptCreated": false,
+  "rootProposalIndependentGrantAndActualSameHandleExitRequired": true
+}

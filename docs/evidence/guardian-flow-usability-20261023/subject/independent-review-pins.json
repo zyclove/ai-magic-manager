@@ -1,0 +1,162 @@
+{
+  "status": "STATIC_NO_BLOCKER_FOR_REVIEWED_SUBJECT_DIALOG_FINAL_SOURCES",
+  "sourceCommit": "e303580030192497a63492d1147156e465082706",
+  "production": [
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "baselineCommit": "e303580030192497a63492d1147156e465082706",
+      "baselineGitBlob": "3feefb3472f5bd43b650e480e0f2653ed9b34e43",
+      "baselineBytes": 87508,
+      "baselineSha256": "0b1ee926b5f73f4c79862778dc831953ae82bf4858136a458bdaf1891bdc30a7",
+      "currentMainBytes": 93378,
+      "currentMainSha256": "89fac14a4d5930b8398c29b5e0955a86740dce3fae8eaf59c955e989e31d0657"
+    },
+    {
+      "path": "apps/guardian/lib/ui/design.dart",
+      "baselineCommit": "e303580030192497a63492d1147156e465082706",
+      "baselineGitBlob": "235a0915fab70ab5cb075af2844b0e0c2b666324",
+      "baselineBytes": 31270,
+      "baselineSha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95",
+      "currentMainBytes": 31270,
+      "currentMainSha256": "456ffeb3de558e824d47ac3bf9841cda8dd6790349fd522e5c7bb7857942e5fc"
+    }
+  ],
+  "inputPins": [
+    {
+      "path": ".cache/guardian-flow-usability-application-20261023/console-final-pin.json",
+      "bytes": 491,
+      "sha256": "e122dad2a8b0c7409ccf208a15b0c7fd4ec229c4e65aa97c23b3472b5bab814f"
+    },
+    {
+      "path": ".cache/guardian-flow-usability-application-20261023/console-final.dart",
+      "bytes": 93378,
+      "sha256": "89fac14a4d5930b8398c29b5e0955a86740dce3fae8eaf59c955e989e31d0657"
+    },
+    {
+      "path": ".cache/guardian-flow-usability-application-20261023/console-mounted-guard.patch",
+      "bytes": 509,
+      "sha256": "907585eb0b8d858d1f66e9e62f5b8c7fdf058fd30051fb1d99bf7f6db4f8d71c"
+    },
+    {
+      "path": ".cache/guardian-flow-usability-application-20261023/subject-applied.json",
+      "bytes": 797,
+      "sha256": "f59e4ebdbe3b0cf042ebecc3fc05db07f45fc8caf0fb14793c40c4c369029c47"
+    },
+    {
+      "path": ".cache/guardian-subject-dialog-ux-20261023-r1/console-after.dart",
+      "bytes": 93344,
+      "sha256": "8d961e6a0272c82a9bb02ce9e950f5b326c1843e9505eedb1382a6073c1a64e4"
+    },
+    {
+      "path": ".cache/guardian-subject-dialog-ux-20261023-r1/console-before.dart",
+      "bytes": 87508,
+      "sha256": "0b1ee926b5f73f4c79862778dc831953ae82bf4858136a458bdaf1891bdc30a7"
+    },
+    {
+      "path": ".cache/guardian-subject-dialog-ux-20261023-r1/delivery-pins.json",
+      "bytes": 1269,
+      "sha256": "a006bc6df102ac2f0460145536f56af7732a76ff5bb9413432998a729f383877"
+    },
+    {
+      "path": ".cache/guardian-subject-dialog-ux-20261023-r1/design-after.dart",
+      "bytes": 31270,
+      "sha256": "456ffeb3de558e824d47ac3bf9841cda8dd6790349fd522e5c7bb7857942e5fc"
+    },
+    {
+      "path": ".cache/guardian-subject-dialog-ux-20261023-r1/design-before.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    },
+    {
+      "path": ".cache/guardian-subject-dialog-ux-20261023-r1/pins.json",
+      "bytes": 3123,
+      "sha256": "3462ace159f51885f89cc9ff65782123bafdd7877ad29d32976d207a9fb08e0a"
+    },
+    {
+      "path": ".cache/guardian-subject-dialog-ux-20261023-r1/review.md",
+      "bytes": 5649,
+      "sha256": "95fac737826e6b50454df17c5d493eec2f06e0012f75895edf06688821ab78ee"
+    },
+    {
+      "path": ".cache/guardian-subject-dialog-ux-20261023-r1/subject-dialog-ux.patch",
+      "bytes": 10363,
+      "sha256": "2c10e291c9420238e7e2bb88be51168a57bb283ad19c39163697f96af263db72"
+    },
+    {
+      "path": ".cache/guardian-subject-dialog-ux-20261023-r2/console-after.dart",
+      "bytes": 93358,
+      "sha256": "e84f08855ffbc58b88fc4b8190490c57f2cbb2984cb4c530f78349fe65d5074f"
+    },
+    {
+      "path": ".cache/guardian-subject-dialog-ux-20261023-r2/delivery-pins.json",
+      "bytes": 878,
+      "sha256": "b307d9637e8e6478dc11879f6de0093aee4e1b7191b8c30c243855e50648450a"
+    },
+    {
+      "path": ".cache/guardian-subject-dialog-ux-20261023-r2/pins.json",
+      "bytes": 2468,
+      "sha256": "43f7bfb3f9d28e71c7b4ff731120019d2e21f7ed8209ce70e4edc44bae08a8b9"
+    },
+    {
+      "path": ".cache/guardian-subject-dialog-ux-20261023-r2/r2-vs-r1.patch",
+      "bytes": 966,
+      "sha256": "d2c40efab27ce8b265568f6c868614bfa538f6a2e28794bbdbb65eb0a624b01f"
+    },
+    {
+      "path": ".cache/guardian-subject-dialog-ux-20261023-r2/review.md",
+      "bytes": 1465,
+      "sha256": "2879948be19cd6a5ae4e9c9700d93365b45803fce1627246c78510f1fb7150c3"
+    },
+    {
+      "path": "apps/guardian/lib/core/api.dart",
+      "bytes": 22640,
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641"
+    },
+    {
+      "path": "apps/guardian/lib/pages/device_subflow_scope.dart",
+      "bytes": 1512,
+      "sha256": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e"
+    },
+    {
+      "path": "apps/guardian/lib/ui/dialog_access.dart",
+      "bytes": 2748,
+      "sha256": "8fe7c3d9ee1b7a038dc08939ea5cd40572a411ced63a01ba6eb12a88e50145d5"
+    },
+    {
+      "path": "apps/guardian/lib/ui/owned_dialog_route.dart",
+      "bytes": 1419,
+      "sha256": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946"
+    },
+    {
+      "path": "apps/guardian/test/api_test.dart",
+      "bytes": 6111,
+      "sha256": "989cde51db12c6573461b0e3d048088007c67c1cfe1a6325416255cc708575da"
+    }
+  ],
+  "checks": {
+    "r1ExactMembers": 8,
+    "r1DeliveryMatched": 7,
+    "r1MetadataMatched": 6,
+    "dependencyPinsMatched": 5,
+    "r2ExactMembers": 5,
+    "r2DeliveryMatched": 4,
+    "r2ReusedR1Matched": 6,
+    "r1TwoProductionPatchesReconstructedByteExact": true,
+    "r2ExactTwoLogicalReplacements": true,
+    "rootExactMountedGuardReplacement": true,
+    "allThreePatchLayersReconstructedByteExact": true,
+    "outsideConsoleSubjectRegionByteIdentical": true,
+    "mainTwoTargetsMatchFinal": true,
+    "baselineTwoTargetsMatchRawGit": true
+  },
+  "limits": {
+    "allSubjectScenarios": "UNRUN",
+    "rendered": false,
+    "testsAddedOrRun": false,
+    "sdkOrCandidateOrAstExecution": false,
+    "wholeMainCleanClaim": false,
+    "knownParallelResourcePageChange": "Outside these two targets; reviewed separately",
+    "alreadySentRequestsCannotBeRolledBack": true,
+    "arbitrarySessionReplacementOrUnnotifiedBoolABAClaimedSolved": false
+  }
+}

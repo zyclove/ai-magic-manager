@@ -1,0 +1,653 @@
+{
+  "status": "FOUR_FIXED_NO_SDK_QUALIFICATION_ACTUAL_EVIDENCE_CONSISTENT_NOT_APP_ACCEPTANCE",
+  "sourceHeadAtReview": "e303580030192497a63492d1147156e465082706",
+  "caseCount": 4,
+  "reviewMethod": "Manual cross-read of serialized values/types; own file hashes only; no fixed post/predicate execution",
+  "caseEvidence": [
+    {
+      "case": "natural-zero",
+      "hostPid": 111316,
+      "hostCreationFiletime": "134372381134349582",
+      "hostExitFiletime": "134372381136502115",
+      "hostExitCode": 0,
+      "hostFirstWaitSeconds": 0.2238287,
+      "hostMaximumSeconds": 14.0,
+      "rootForced": false,
+      "rootEmergencyCleanup": false,
+      "rootFailure": null,
+      "fixtureTerminal": {
+        "pid": 81020,
+        "creationFiletime": 134372381135475858,
+        "firstSignaledQpc": 42622.4379566,
+        "sampleQpc": 42622.4485632,
+        "signaled": true,
+        "exitCode": 0,
+        "exitFiletime": 134372381136186799,
+        "kernel100ns": 0,
+        "user100ns": 0,
+        "jobAccountingObservedQpc": 42622.4486263,
+        "firstCompleteTerminalQpc": 42622.4486263,
+        "activeProcesses": 0,
+        "totalProcesses": 2,
+        "terminatedProcesses": 0,
+        "terminal": true
+      },
+      "qpcAnchor": 42622.2973244,
+      "workDeadlineQpc": 42630.2973244,
+      "cleanupDeadlineQpc": 42636.2973244,
+      "outerDeadlineQpc": 42802.2973244,
+      "naturalTerminalDeadlineQpc": 42622.9379566,
+      "forcedCleanup": false,
+      "terminationCallSucceeded": false,
+      "deadlineReached": false,
+      "firstSignaledJobActive": 1,
+      "firstSignaledMemberIdentity": [
+        {
+          "pid": 105888,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134372381135548955,
+          "exitFiletime": 0,
+          "kernel100ns": 0,
+          "user100ns": 0,
+          "sampleQpc": 42622.4381399,
+          "signaled": false,
+          "imagePath": "C:\\Windows\\System32\\conhost.exe"
+        }
+      ],
+      "nestedProof": null,
+      "maximumObservedJobTotal": 2,
+      "rootReportedQualificationAccepted": true,
+      "postDerivedQualificationAccepted": true,
+      "postConsistency": true,
+      "postStatus": "FIXED_CASE_POST_COMPLETE_NOT_ANALYSIS_ACCEPTANCE",
+      "postFailedChecks": [],
+      "fixedDescriptorRows": 25,
+      "fixedUniqueInputFiles": 19,
+      "rawRowsHashMatched": 4,
+      "preflightRamBytes": 3931893760,
+      "preflightDisks": [
+        {
+          "Name": "C",
+          "Free": 4934127616
+        },
+        {
+          "Name": "D",
+          "Free": 22659002368
+        }
+      ],
+      "releaseStatus": "OWN_FIXED_CASE_TERMINAL_NO_NEXT_SDK_GRANT",
+      "releaseRootToolChunk": "38b49e",
+      "releasePostToolChunk": "940973",
+      "releaseToolExitCodes": [
+        0,
+        0
+      ],
+      "inventoryRows": 752,
+      "serializedInventorySdkCount": 0,
+      "serializedInventoryUnknownCount": 0,
+      "knownOwnIdsStillListed": [],
+      "releaseSdkCount": 0,
+      "releaseUnknownCount": 0,
+      "releaseRamBytes": 4070326272,
+      "releaseDisks": [
+        {
+          "Name": "C",
+          "Free": 4931219456
+        },
+        {
+          "Name": "D",
+          "Free": 22652944384
+        }
+      ],
+      "nextSdkGrant": false,
+      "applicationTestsRun": false
+    },
+    {
+      "case": "natural-nonzero",
+      "hostPid": 106580,
+      "hostCreationFiletime": "134372383130526022",
+      "hostExitFiletime": "134372383132437980",
+      "hostExitCode": 0,
+      "hostFirstWaitSeconds": 0.1984433,
+      "hostMaximumSeconds": 14.0,
+      "rootForced": false,
+      "rootEmergencyCleanup": false,
+      "rootFailure": null,
+      "fixtureTerminal": {
+        "pid": 93980,
+        "creationFiletime": 134372383131506862,
+        "firstSignaledQpc": 42822.0350671,
+        "sampleQpc": 42822.0458823,
+        "signaled": true,
+        "exitCode": 7,
+        "exitFiletime": 134372383132155733,
+        "kernel100ns": 0,
+        "user100ns": 0,
+        "jobAccountingObservedQpc": 42822.0459379,
+        "firstCompleteTerminalQpc": 42822.0459379,
+        "activeProcesses": 0,
+        "totalProcesses": 2,
+        "terminatedProcesses": 0,
+        "terminal": true
+      },
+      "qpcAnchor": 42821.9158136,
+      "workDeadlineQpc": 42829.9158136,
+      "cleanupDeadlineQpc": 42835.9158136,
+      "outerDeadlineQpc": 43001.9158136,
+      "naturalTerminalDeadlineQpc": 42822.5350671,
+      "forcedCleanup": false,
+      "terminationCallSucceeded": false,
+      "deadlineReached": false,
+      "firstSignaledJobActive": 1,
+      "firstSignaledMemberIdentity": [
+        {
+          "pid": 107072,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134372383131575406,
+          "exitFiletime": 0,
+          "kernel100ns": 0,
+          "user100ns": 0,
+          "sampleQpc": 42822.0352489,
+          "signaled": false,
+          "imagePath": "C:\\Windows\\System32\\conhost.exe"
+        }
+      ],
+      "nestedProof": null,
+      "maximumObservedJobTotal": 2,
+      "rootReportedQualificationAccepted": true,
+      "postDerivedQualificationAccepted": true,
+      "postConsistency": true,
+      "postStatus": "FIXED_CASE_POST_COMPLETE_NOT_ANALYSIS_ACCEPTANCE",
+      "postFailedChecks": [],
+      "fixedDescriptorRows": 25,
+      "fixedUniqueInputFiles": 19,
+      "rawRowsHashMatched": 4,
+      "preflightRamBytes": 4139651072,
+      "preflightDisks": [
+        {
+          "Name": "C",
+          "Free": 4930523136
+        },
+        {
+          "Name": "D",
+          "Free": 22652612608
+        }
+      ],
+      "releaseStatus": "OWN_FIXED_CASE_TERMINAL_NO_NEXT_SDK_GRANT",
+      "releaseRootToolChunk": "743f67",
+      "releasePostToolChunk": "8253bc",
+      "releaseToolExitCodes": [
+        0,
+        0
+      ],
+      "inventoryRows": 759,
+      "serializedInventorySdkCount": 0,
+      "serializedInventoryUnknownCount": 0,
+      "knownOwnIdsStillListed": [],
+      "releaseSdkCount": 0,
+      "releaseUnknownCount": 0,
+      "releaseRamBytes": 4240560128,
+      "releaseDisks": [
+        {
+          "Name": "C",
+          "Free": 4930052096
+        },
+        {
+          "Name": "D",
+          "Free": 22652493824
+        }
+      ],
+      "nextSdkGrant": false,
+      "applicationTestsRun": false
+    },
+    {
+      "case": "deadline",
+      "hostPid": 89608,
+      "hostCreationFiletime": "134372383802300461",
+      "hostExitFiletime": "134372383843013460",
+      "hostExitCode": 0,
+      "hostFirstWaitSeconds": 4.0825113,
+      "hostMaximumSeconds": 10.0,
+      "rootForced": false,
+      "rootEmergencyCleanup": false,
+      "rootFailure": null,
+      "fixtureTerminal": {
+        "pid": 81464,
+        "creationFiletime": 134372383803289935,
+        "firstSignaledQpc": 42893.1020706,
+        "sampleQpc": 42893.1020706,
+        "signaled": true,
+        "exitCode": 124,
+        "exitFiletime": 134372383842806712,
+        "kernel100ns": 156250,
+        "user100ns": 156250,
+        "jobAccountingObservedQpc": 42893.1021492,
+        "firstCompleteTerminalQpc": 42893.1021492,
+        "activeProcesses": 0,
+        "totalProcesses": 2,
+        "terminatedProcesses": 0,
+        "terminal": true
+      },
+      "qpcAnchor": 42889.0897734,
+      "workDeadlineQpc": 42893.0897734,
+      "cleanupDeadlineQpc": 42899.0897734,
+      "outerDeadlineQpc": 43069.0897734,
+      "naturalTerminalDeadlineQpc": 42893.0897734,
+      "forcedCleanup": true,
+      "terminationCallSucceeded": true,
+      "deadlineReached": true,
+      "firstSignaledJobActive": 0,
+      "firstSignaledMemberIdentity": [],
+      "nestedProof": null,
+      "maximumObservedJobTotal": 2,
+      "rootReportedQualificationAccepted": true,
+      "postDerivedQualificationAccepted": true,
+      "postConsistency": true,
+      "postStatus": "FIXED_CASE_POST_COMPLETE_NOT_ANALYSIS_ACCEPTANCE",
+      "postFailedChecks": [],
+      "fixedDescriptorRows": 25,
+      "fixedUniqueInputFiles": 19,
+      "rawRowsHashMatched": 4,
+      "preflightRamBytes": 4123435008,
+      "preflightDisks": [
+        {
+          "Name": "C",
+          "Free": 4928970752
+        },
+        {
+          "Name": "D",
+          "Free": 22652489728
+        }
+      ],
+      "releaseStatus": "OWN_FIXED_CASE_TERMINAL_NO_NEXT_SDK_GRANT",
+      "releaseRootToolChunk": "e53fbb",
+      "releasePostToolChunk": "957db9",
+      "releaseToolExitCodes": [
+        0,
+        0
+      ],
+      "inventoryRows": 749,
+      "serializedInventorySdkCount": 0,
+      "serializedInventoryUnknownCount": 0,
+      "knownOwnIdsStillListed": [],
+      "releaseSdkCount": 0,
+      "releaseUnknownCount": 0,
+      "releaseRamBytes": 3996774400,
+      "releaseDisks": [
+        {
+          "Name": "C",
+          "Free": 4929179648
+        },
+        {
+          "Name": "D",
+          "Free": 22652407808
+        }
+      ],
+      "nextSdkGrant": false,
+      "applicationTestsRun": false
+    },
+    {
+      "case": "nested-owned-child",
+      "hostPid": 78052,
+      "hostCreationFiletime": "134372384186827352",
+      "hostExitFiletime": "134372384267668567",
+      "hostExitCode": 0,
+      "hostFirstWaitSeconds": 8.0916503,
+      "hostMaximumSeconds": 14.0,
+      "rootForced": false,
+      "rootEmergencyCleanup": false,
+      "rootFailure": null,
+      "fixtureTerminal": {
+        "pid": 106676,
+        "creationFiletime": 134372384187800922,
+        "firstSignaledQpc": 42935.5637144,
+        "sampleQpc": 42935.5637144,
+        "signaled": true,
+        "exitCode": 124,
+        "exitFiletime": 134372384267400881,
+        "kernel100ns": 156250,
+        "user100ns": 0,
+        "jobAccountingObservedQpc": 42935.5638151,
+        "firstCompleteTerminalQpc": 42935.5638151,
+        "activeProcesses": 0,
+        "totalProcesses": 4,
+        "terminatedProcesses": 0,
+        "terminal": true
+      },
+      "qpcAnchor": 42927.5427197,
+      "workDeadlineQpc": 42935.5427197,
+      "cleanupDeadlineQpc": 42941.5427197,
+      "outerDeadlineQpc": 43107.5427197,
+      "naturalTerminalDeadlineQpc": 42935.5427197,
+      "forcedCleanup": true,
+      "terminationCallSucceeded": true,
+      "deadlineReached": true,
+      "firstSignaledJobActive": 0,
+      "firstSignaledMemberIdentity": [],
+      "nestedProof": {
+        "status": "OWNED_NESTED_JOB_CHILD_STARTED",
+        "childPid": 77588,
+        "childCreationFiletime": 134372384188705751,
+        "atomicMembershipCheckedBeforeResume": true,
+        "suspendedActive": 1,
+        "innerJobActive": 1,
+        "innerJobTotal": 1,
+        "childSignaled": false
+      },
+      "maximumObservedJobTotal": 4,
+      "rootReportedQualificationAccepted": true,
+      "postDerivedQualificationAccepted": true,
+      "postConsistency": true,
+      "postStatus": "FIXED_CASE_POST_COMPLETE_NOT_ANALYSIS_ACCEPTANCE",
+      "postFailedChecks": [],
+      "fixedDescriptorRows": 25,
+      "fixedUniqueInputFiles": 19,
+      "rawRowsHashMatched": 6,
+      "preflightRamBytes": 4048285696,
+      "preflightDisks": [
+        {
+          "Name": "C",
+          "Free": 4927664128
+        },
+        {
+          "Name": "D",
+          "Free": 22652092416
+        }
+      ],
+      "releaseStatus": "OWN_FIXED_CASE_TERMINAL_NO_NEXT_SDK_GRANT",
+      "releaseRootToolChunk": "caf7e4",
+      "releasePostToolChunk": "0aaad1",
+      "releaseToolExitCodes": [
+        0,
+        0
+      ],
+      "inventoryRows": 749,
+      "serializedInventorySdkCount": 0,
+      "serializedInventoryUnknownCount": 0,
+      "knownOwnIdsStillListed": [],
+      "releaseSdkCount": 0,
+      "releaseUnknownCount": 0,
+      "releaseRamBytes": 4101890048,
+      "releaseDisks": [
+        {
+          "Name": "C",
+          "Free": 4926255104
+        },
+        {
+          "Name": "D",
+          "Free": 22651727872
+        }
+      ],
+      "nextSdkGrant": false,
+      "applicationTestsRun": false
+    }
+  ],
+  "fixedUniquePinsIncludingPostHelper": 20,
+  "actualUniqueEvidencePins": 30,
+  "fixedPins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\supervisor.py",
+      "bytes": 12102,
+      "sha256": "ebef1a94c14c5bce2ac65bd6ddf81e9029c3347d70e9d3cab97b9290b3d0e5f8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\fixtures.py",
+      "bytes": 1834,
+      "sha256": "5b98c93d0efdd612641591db7d14ceb3973d50dbb5fec7925182ab63b61ac4b7"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\qualification-cases.json",
+      "bytes": 802,
+      "sha256": "af96e8ee1f7a1a77b9a33508982e6a6e09595047ceebebbbafb95d0af5130e9e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\README.md",
+      "bytes": 2877,
+      "sha256": "0fb5d0a4e09249afd41555b6d2dc4b3a358952e691f9cdaafcc69a2a6179f5f9"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\design.md",
+      "bytes": 7138,
+      "sha256": "6dff84cdb4ac6891ecbe49df8bcd039c1a23c6f14a0e43deea2dc07e4ad33d5a"
+    },
+    {
+      "path": "C:\\Python313\\python.exe",
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125"
+    },
+    {
+      "path": "C:\\Python313\\python313.dll",
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529"
+    },
+    {
+      "path": "C:\\Python313\\DLLs\\_ctypes.pyd",
+      "bytes": 133992,
+      "sha256": "5c0d5082fba1a2a3eb8d5e23073be25164c19f21304b09cecaab340dc7198815"
+    },
+    {
+      "path": "C:\\Python313\\DLLs\\libffi-8.dll",
+      "bytes": 39696,
+      "sha256": "eff52743773eb550fcc6ce3efc37c85724502233b6b002a35496d828bd7b280a"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\__init__.py",
+      "bytes": 19374,
+      "sha256": "2e63f01ac6b8ffc1acfa4eec4c253eef8fbd65e09506d690cb3be71a2d78303a"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\_endian.py",
+      "bytes": 2635,
+      "sha256": "f2752ab2425dac9bfaff5aa1a3c6cd66aa342fee0db2f2a42de568fc59d5cbea"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\manifest.json",
+      "bytes": 2872,
+      "sha256": "f088c5b70ffab3c75e2ebc7fa381cc23350903f54b60ea4d45ab3c9794fb0370"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\provenance.json",
+      "bytes": 3111,
+      "sha256": "7a78de8b97ff28ea54aa31772ace1507a66b6e85684e1d4ac506907a3c3f9118"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\r3-vs-r2.patch",
+      "bytes": 10200,
+      "sha256": "1ef67370d557f57a6b525282e8d4a2d898748c59eefe0eaa4ca19bced3c519ae"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\static-path-witnesses.json",
+      "bytes": 2207,
+      "sha256": "eb430aeea9281ca75ff1041dda810756472c11d477d01ae6c65b18841ff8c885"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\static-review.json",
+      "bytes": 1557,
+      "sha256": "1afeb71c4554a6402815b05a27f5608455a505d0950fb86cd0a450f052d21333"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\delivery-pins.json",
+      "bytes": 1766,
+      "sha256": "4b1e5c3990eb5444807ec8cf171d076bc7700e0e46f01e8044d72f10f4f0f3be"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualify-20261023-r3.ps1",
+      "bytes": 7538,
+      "sha256": "c1f8c0aad2db2f95419e829a31852e7de460cdc815fd83e0bf7c3548773af3ba"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-r3-root-post-20261023-r3.py",
+      "bytes": 16015,
+      "sha256": "15694b2b40b397976fdc20b836ed17bf50880fed3195ca0897a1b3bfeb180042"
+    }
+  ],
+  "actualEvidencePins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualification-20261023-r3\\natural-zero\\result.json",
+      "bytes": 1351,
+      "sha256": "7b29c6ac2fac4276282b2913fcad7fb9315b4ce125344c7eb143a3058073ebb6"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualification-20261023-r3\\natural-zero\\preflight.json",
+      "bytes": 627,
+      "sha256": "06ca7b3f118d2bac22094efd670b17ec30e8d37890e048727ba08657d5ad3450"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\qualification-attempts\\natural-zero\\observation.json",
+      "bytes": 4423,
+      "sha256": "07f54cd2d329c81616d32610f4b3f62c1d81274dc1c1a1e68d398121c2a31cdf"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\qualification-attempts\\natural-zero\\fixture-console.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualification-20261023-r3\\natural-zero\\release.json",
+      "bytes": 1288,
+      "sha256": "22ccbecb4c471c43a68b969cbd53b7ed9b66d545487fd8f2c003656fe1af3db3"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualification-20261023-r3\\natural-zero\\post-process-inventory.json",
+      "bytes": 44974,
+      "sha256": "bd3e757d96e43ca9cbbeab03f108f25cbe17d00d70edf9dc6ff437502c57d982"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-r3-root-post-20261023-r3\\natural-zero\\post.json",
+      "bytes": 8687,
+      "sha256": "8264ca72049729e8ddbb502b63e8a71700d59ded5e8fafdc1334467b12f4cc45"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualification-20261023-r3\\natural-nonzero\\result.json",
+      "bytes": 1357,
+      "sha256": "76d0bd001048f70785ba503be1931547d318ee134ae5ab2192156f816996c159"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualification-20261023-r3\\natural-nonzero\\preflight.json",
+      "bytes": 630,
+      "sha256": "c396e2ddfbed20e1008a2a9ad6fb46304e215f864fe0c1b4094c85c6e6a38f90"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\qualification-attempts\\natural-nonzero\\observation.json",
+      "bytes": 4426,
+      "sha256": "6a149dc96aeb361a673b053308267928bf5bebe78bf791f9b2c0a40ec93368a4"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\qualification-attempts\\natural-nonzero\\fixture-console.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualification-20261023-r3\\natural-nonzero\\release.json",
+      "bytes": 1294,
+      "sha256": "16143ad36cc94201a890620f810302e843d859fd8f00e36bb272940150da6f8b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualification-20261023-r3\\natural-nonzero\\post-process-inventory.json",
+      "bytes": 45405,
+      "sha256": "c803d2c8f0bf854ce534810ec8aa2aeb905deac5fc9cb0dca04dd44b27245ebd"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-r3-root-post-20261023-r3\\natural-nonzero\\post.json",
+      "bytes": 8702,
+      "sha256": "25fcdd89ed247f991ddca6edb0219ffdf6b7229eccec959d0c344f55ab5d6158"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualification-20261023-r3\\deadline\\result.json",
+      "bytes": 1342,
+      "sha256": "83cff531f4c1f4fe844391671485342e271068ec01c305b9de2971a2c5f068c4"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualification-20261023-r3\\deadline\\preflight.json",
+      "bytes": 623,
+      "sha256": "e97446427fa6cf18c299ef0932436bd55f708554f3da77bbeb1e347eb4e89c4c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\qualification-attempts\\deadline\\observation.json",
+      "bytes": 4073,
+      "sha256": "3f7309273a04c574c5a9e277455a8d305b2981b9924b9357b65dacff47c09cec"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\qualification-attempts\\deadline\\fixture-console.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualification-20261023-r3\\deadline\\release.json",
+      "bytes": 1282,
+      "sha256": "8d01a9132f02f353e604e610ce8cdf1ae2142f56ea48e071cba2d438922e2ecb"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualification-20261023-r3\\deadline\\post-process-inventory.json",
+      "bytes": 44795,
+      "sha256": "ffcbca6c06abe936948e5a3170a94fcd7a0d46fcbb8f437b8c278438d577a834"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-r3-root-post-20261023-r3\\deadline\\post.json",
+      "bytes": 8660,
+      "sha256": "ad79b22523516e6f4577601a2b50406e5629befd25138639b83db7995266ec74"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualification-20261023-r3\\nested-owned-child\\result.json",
+      "bytes": 1362,
+      "sha256": "857712056ff346da8f58e04766db018001fd119a48e017b3f62cdcd62e3e8f00"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualification-20261023-r3\\nested-owned-child\\preflight.json",
+      "bytes": 633,
+      "sha256": "7104cc4f210472be13087ebf9085fa43f0ac8757774dbe6da3d31bac14390998"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\qualification-attempts\\nested-owned-child\\observation.json",
+      "bytes": 4344,
+      "sha256": "2d3ab576a7526f9e8b6702ab60f97570147fa9a0d06babb3914c07435c81fa45"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\qualification-attempts\\nested-owned-child\\fixture-console.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\qualification-attempts\\nested-owned-child\\nested-proof.json",
+      "bytes": 240,
+      "sha256": "b5989dfbf3ffce8c5af8fdd973647c134eca5aea04f61c0e07926c4d8472a566"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\qualification-attempts\\nested-owned-child\\owned-leaf.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualification-20261023-r3\\nested-owned-child\\release.json",
+      "bytes": 1302,
+      "sha256": "490f218651110567af4796caaea15ab91a666b3c58dde49bbdeda003645aee1c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualification-20261023-r3\\nested-owned-child\\post-process-inventory.json",
+      "bytes": 44796,
+      "sha256": "5613403b86d2ee73e19d0aedbcd0e65d9d2c95a150eb35bea2c526bc7feedfc3"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-r3-root-post-20261023-r3\\nested-owned-child\\post.json",
+      "bytes": 9222,
+      "sha256": "12ca5d1e3b1411da5ffd410e3fd9a62ebbfffc4134ac7d4a66af1a871c050bc7"
+    }
+  ],
+  "applicationValidation": "UNRUN",
+  "fullRegressionRoots": 181,
+  "critical80": "subset only",
+  "sdkGrantCreated": false,
+  "candidateSdkAllowedStillFalse": true,
+  "reviewerExecutedCandidateOrHelperOrPredicate": false,
+  "reviewerSdkTestAstWinApiProcessNetworkUsed": false,
+  "mainGitOriginalsWritten": false
+}

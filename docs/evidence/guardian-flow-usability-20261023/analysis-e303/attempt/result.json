@@ -1,0 +1,237 @@
+{
+  "status": "NOT_ACCEPTED",
+  "phase": "analyze-all-guardian",
+  "sourceCommit": "e303580030192497a63492d1147156e465082706",
+  "approvedProposalSha256": "6ad444f0cc33b7d138a9bdfc74aa604a7393912cd63cf727f77e004dee177ad9",
+  "qpcAnchor": 45567.5193577,
+  "workDeadlineQpc": 45741.5193577,
+  "cleanupDeadlineQpc": 45747.5193577,
+  "workerResumeBeforeQpc": 45567.6755222,
+  "terminal": {
+    "pid": 96776,
+    "creationFiletime": 134372410588566531,
+    "firstSignaledQpc": 45585.9198896,
+    "sampleQpc": 45585.9307964,
+    "signaled": true,
+    "exitCode": 1,
+    "exitFiletime": 134372410770994715,
+    "kernel100ns": 45937500,
+    "user100ns": 9687500,
+    "jobAccountingObservedQpc": 45585.9308482,
+    "firstCompleteTerminalQpc": 45585.9308482,
+    "activeProcesses": 0,
+    "totalProcesses": 14,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "firstSignaledState": {
+    "pid": 96776,
+    "creationFiletime": 134372410588566531,
+    "firstSignaledQpc": 45585.9198896,
+    "sampleQpc": 45585.9198896,
+    "signaled": true,
+    "exitCode": 1,
+    "exitFiletime": 134372410770994715,
+    "kernel100ns": 45937500,
+    "user100ns": 9687500,
+    "jobAccountingObservedQpc": 45585.9199779,
+    "firstCompleteTerminalQpc": null,
+    "activeProcesses": 1,
+    "totalProcesses": 14,
+    "terminatedProcesses": 0,
+    "terminal": false
+  },
+  "firstSignaledOwnJobMembers": {
+    "startedQpc": 45585.9200121,
+    "deadlineQpc": 45586.4198896,
+    "before": {
+      "qpc": 45585.9200121,
+      "complete": true,
+      "assigned": 1,
+      "listed": 1,
+      "limit": 32,
+      "error": 0,
+      "pids": [
+        18604
+      ]
+    },
+    "identities": [
+      {
+        "pid": 18604,
+        "openedFromOwnJobList": true,
+        "verifiedOwnMembership": true,
+        "retainedRootHandleUsed": false,
+        "creationFiletime": 134372410588650780,
+        "exitFiletime": 0,
+        "kernel100ns": 0,
+        "user100ns": 0,
+        "sampleQpc": 45585.9200862,
+        "signaled": false,
+        "imagePath": "C:\\Windows\\System32\\conhost.exe"
+      }
+    ],
+    "after": {
+      "qpc": 45585.9202439,
+      "complete": true,
+      "assigned": 1,
+      "listed": 1,
+      "limit": 32,
+      "error": 0,
+      "pids": [
+        18604
+      ]
+    },
+    "identityRowsLimitedByDeadline": false,
+    "scope": "This private Job only; read-only handles, no command line/environment, no PID termination",
+    "causeClassified": false
+  },
+  "finalOwnJobMembers": {
+    "startedQpc": 45585.9308733,
+    "deadlineQpc": 45747.5193577,
+    "before": {
+      "qpc": 45585.9308733,
+      "complete": true,
+      "assigned": 0,
+      "listed": 0,
+      "limit": 32,
+      "error": 0,
+      "pids": []
+    },
+    "identities": [],
+    "after": {
+      "qpc": 45585.9308789,
+      "complete": true,
+      "assigned": 0,
+      "listed": 0,
+      "limit": 32,
+      "error": 0,
+      "pids": []
+    },
+    "identityRowsLimitedByDeadline": false,
+    "scope": "This private Job only; read-only handles, no command line/environment, no PID termination",
+    "causeClassified": false
+  },
+  "maximumObservedJobTotal": 14,
+  "naturalDrainLimitSeconds": 0.5,
+  "naturalDrainDeadlineQpc": 45586.4198896,
+  "naturalCompleteTerminalTimely": false,
+  "forcedCleanupRequested": false,
+  "terminationCallSucceeded": false,
+  "closedWithLiveOrUnknownMembers": false,
+  "deadlineReached": false,
+  "candidateAndRuntimePinsMatchAfter": true,
+  "workerReportedPassed": false,
+  "workerDerivedPassed": false,
+  "workerReportedDerivedConsistent": true,
+  "workerReceipt": {
+    "status": "NOT_ACCEPTED",
+    "phaseScope": "FULL_GUARDIAN_ANALYZE",
+    "startedAtUtc": "2026-10-23T14:57:38.954187+00:00",
+    "workerStartQpc": 45567.7203059,
+    "workerDeadlineQpc": 45732.7203059,
+    "commandDeadlineQpc": 45702.7203059,
+    "commandCleanupDeadlineQpc": 45707.7203059,
+    "workerBudgetSeconds": 165,
+    "commandWorkerRelativeSeconds": 135,
+    "commandCleanupWorkerRelativeSeconds": 140,
+    "minimumPostflightReserveSeconds": 25,
+    "sdkCalls": 0,
+    "testsRun": false,
+    "pubRun": false,
+    "downloadsAllowed": false,
+    "cacheCopied": false,
+    "mainSourceWritten": false,
+    "forcedTermination": false,
+    "commandCloseFallback": false,
+    "commandNaturalCompleteBeforeDeadline": false,
+    "naturalDrainLimitSeconds": 0.5,
+    "nativeMemoryLimitClaimed": false,
+    "errorType": "RuntimeError",
+    "reason": "SDK/unknown process gate failed",
+    "postflight": {
+      "stage": "postflight",
+      "startedAtUtc": "2026-10-23T14:57:39.040319+00:00",
+      "complete": true,
+      "source": {
+        "frozenRawGit": {
+          "files": 410,
+          "fullMembershipExact": true,
+          "allRawHashesMatch": true
+        },
+        "mainRaw": {
+          "files": 410,
+          "fullMembershipExact": true,
+          "allRawHashesMatch": true
+        },
+        "currentSevenRootGitTrees": {
+          "apps/guardian": "535944fa6995032de4e64f46b6e918b885ab3485",
+          "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+          "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+          "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+          "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+          "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+          "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+        },
+        "regressionMetadataBoundOnlyNotExecuted": true
+      },
+      "packages": {
+        "packages": 70,
+        "rebasedInternalRoots": 7,
+        "unchangedExternalRows": 63,
+        "metadataPreserved": true,
+        "candidateSha256": "d03d1f825e3750d1b535ec092a34fd08e81adf033a3da4b7f1f13e6466a45870"
+      },
+      "cache": {
+        "manifestSha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84",
+        "trees": 70,
+        "fixedFiles": 32,
+        "allMembersDirectoriesBytesAndHashesMatch": true,
+        "totals": {
+          "files": 3536,
+          "bytes": 633817159
+        }
+      },
+      "runtime": {
+        "sdkGitRevision": "761747bfc538b5af34aa0d3fac380f1bc331ec49",
+        "controlAndExtraRuntimePinsMatch": true,
+        "snapshotAndStampReady": true,
+        "pubspecNotNewerThanLock": true,
+        "forbiddenEnvironmentOverridesAbsent": true,
+        "bootstrapAbsent": true,
+        "engineDartStampMatchesEngineVersion": true,
+        "fixedProcessPathVerified": true,
+        "bootstrapAllowed": false
+      },
+      "finishedAtUtc": "2026-10-23T14:57:57.048690+00:00",
+      "elapsedWorkerSeconds": 18.14278909999848
+    },
+    "postflightResourceError": "RuntimeError: SDK/unknown process gate failed",
+    "finishedAtUtc": "2026-10-23T14:57:57.089331+00:00",
+    "workerFinishedQpc": 45585.903734,
+    "elapsedCompleteSeconds": 18.1834280999974,
+    "outerExternalAcceptanceRequired": true
+  },
+  "error": null,
+  "events": [
+    {
+      "stage": "before-create-suspended",
+      "qpc": 45567.6701112
+    },
+    {
+      "stage": "after-resume",
+      "qpc": 45567.6755354
+    },
+    {
+      "stage": "natural-drain-started",
+      "qpc": 45585.9202528
+    }
+  ],
+  "analysisAcceptedBeforeOutput": false,
+  "rootActualSameHandleExitStillRequired": true,
+  "rootFullProcessReleaseStillRequired": true,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "entirePythonOrSdkInstallationPinned": false,
+  "observedBeforeOutputQpc": 45585.9741631,
+  "elapsedBeforeOutputSeconds": 18.454805399996985
+}

@@ -1,0 +1,37 @@
+{
+  "status": "OWN_FIXED_CASE_TERMINAL_NO_NEXT_SDK_GRANT",
+  "case": "deadline",
+  "atUtc": "2026-10-23T14:13:23.6184810Z",
+  "actualRootToolTerminalChunk": "e53fbb",
+  "actualPostToolTerminalChunk": "957db9",
+  "actualRootToolExitCode": 0,
+  "actualPostToolExitCode": 0,
+  "qualificationAccepted": true,
+  "fixtureJobActive": 0,
+  "fixtureExitCode": 124,
+  "sameHandleHostExitCode": 0,
+  "sameHandleHostCreationFiletime": "134372383802300461",
+  "sameHandleHostExitFiletime": "134372383843013460",
+  "ownHostHandleReleasedByFixedLauncher": true,
+  "ownLiveSdkHandle": false,
+  "sdkCount": 0,
+  "sdkProcesses": [],
+  "unknownCount": 0,
+  "currentAvailableRamBytes": 3996774400,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 4929179648
+    },
+    {
+      "Name": "D",
+      "Free": 22652407808
+    }
+  ],
+  "processInventoryFile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-root-qualification-20261023-r3\\deadline\\post-process-inventory.json",
+  "processInventorySha256": "ffcbca6c06abe936948e5a3170a94fcd7a0d46fcbb8f437b8c278438d577a834",
+  "fixedPostSha256": "ad79b22523516e6f4577601a2b50406e5629befd25138639b83db7995266ec74",
+  "applicationTestsRun": false,
+  "realControllerInvoked": false,
+  "nextSdkGrant": false
+}

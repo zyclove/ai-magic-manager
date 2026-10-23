@@ -1,0 +1,44 @@
+{
+  "status": "STATIC_SUBJECT_DIALOG_AUTHOR_CANDIDATE_ALL_UNRUN",
+  "files": [
+    {
+      "path": "console-before.dart",
+      "bytes": 87508,
+      "sha256": "0b1ee926b5f73f4c79862778dc831953ae82bf4858136a458bdaf1891bdc30a7"
+    },
+    {
+      "path": "console-after.dart",
+      "bytes": 93344,
+      "sha256": "8d961e6a0272c82a9bb02ce9e950f5b326c1843e9505eedb1382a6073c1a64e4"
+    },
+    {
+      "path": "design-before.dart",
+      "bytes": 31270,
+      "sha256": "d702ddba4c755ef72bc735753afa21130decb84abff5df36fdf2dff51c68ba95"
+    },
+    {
+      "path": "design-after.dart",
+      "bytes": 31270,
+      "sha256": "456ffeb3de558e824d47ac3bf9841cda8dd6790349fd522e5c7bb7857942e5fc"
+    },
+    {
+      "path": "subject-dialog-ux.patch",
+      "bytes": 10363,
+      "sha256": "2c10e291c9420238e7e2bb88be51168a57bb283ad19c39163697f96af263db72"
+    },
+    {
+      "path": "review.md",
+      "bytes": 5649,
+      "sha256": "95fac737826e6b50454df17c5d493eec2f06e0012f75895edf06688821ab78ee"
+    },
+    {
+      "path": "pins.json",
+      "bytes": 3123,
+      "sha256": "3462ace159f51885f89cc9ff65782123bafdd7877ad29d32976d207a9fb08e0a"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "mainApplied": false,
+  "testsRun": false,
+  "independentReviewRequired": true
+}

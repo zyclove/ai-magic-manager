@@ -1,0 +1,15 @@
+{
+  "status": "STATIC_SOURCE_CANDIDATE_APPLICATION_UNRUN",
+  "path": "apps/guardian/lib/ui/resource_page.dart",
+  "before": {
+    "bytes": 18737,
+    "sha256": "50ca974f0b792c77d493eaf4d17c83dbe250550ac5035ae1fbd148a5758f0360"
+  },
+  "after": {
+    "bytes": 19437,
+    "sha256": "ac3667fff335d8105c5e10e7e3b5b45dc0b5bbb8bc00eb0d94175ee432ed9ed3"
+  },
+  "testsAdded": false,
+  "testsRun": false,
+  "mainChanged": false
+}

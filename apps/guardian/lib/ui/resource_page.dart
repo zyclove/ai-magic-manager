@@ -1,6 +1,20 @@
 import 'package:flutter/material.dart';
 import '../core/api.dart';
+import '../core/labels.dart';
 import 'design.dart';
+
+// Search server values and the same localized labels displayed by status cells.
+// JSON rows are acyclic; traverse nested values without constructing widgets.
+String _resourceSearchText(Object? value) {
+  if (value == null) return '';
+  if (value is Map) {
+    return value.values.map(_resourceSearchText).join('\n');
+  }
+  if (value is Iterable) {
+    return value.map(_resourceSearchText).join('\n');
+  }
+  return '${value.toString()}\n${label(value)}'.toLowerCase();
+}
 
 class ColumnSpec {
   final String title;
@@ -224,10 +238,17 @@ class ResourcePageState extends State<ResourcePage> {
     final guardedReauth = reauth == null ? null : guard(() {
       if (identical(widget.reauth, reauth)) reauth();
     });
-    final filtered = rows
-        .where((r) => r.values.any(
-            (v) => v.toString().toLowerCase().contains(query.toLowerCase())))
+    final terms = query
+        .toLowerCase()
+        .split(RegExp(r'\s+'))
+        .where((term) => term.isNotEmpty)
         .toList();
+    final filtered = terms.isEmpty
+        ? rows
+        : rows.where((row) {
+            final text = _resourceSearchText(row);
+            return terms.every((term) => text.contains(term));
+          }).toList();
     final narrow = MediaQuery.sizeOf(context).width < 760;
     final canAct = _canInteract && !loading && !acting;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [

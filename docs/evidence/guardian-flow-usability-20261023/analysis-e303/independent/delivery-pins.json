@@ -1,0 +1,18 @@
+{
+  "status": "STATIC_NO_BLOCKER_FIXED_R10_REVIEW_POST_INTERFACE_PENDING_ALL_UNRUN",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r10-independent-20261023-r1\\review.md",
+      "bytes": 5515,
+      "sha256": "32653ecb46b98285dfbcf1d8d729c731758ce3724c5e0f55b140fd248f804025"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r10-independent-20261023-r1\\review-pins.json",
+      "bytes": 14790,
+      "sha256": "7aa550974156fbc68afd9b7f389b60f3e83a49e04fb5b17ea26b930476e5a3af"
+    }
+  ],
+  "selfExcluded": "delivery-pins.json",
+  "allApplicationExecution": "UNRUN",
+  "executionGrantCreated": false
+}
