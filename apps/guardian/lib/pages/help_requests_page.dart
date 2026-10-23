@@ -4,6 +4,7 @@ import '../core/help_requests.dart';
 import '../core/labels.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
+import 'device_subflow_scope.dart';
 
 /// Acknowledgement means an authorized adult opened the record, not that help was delivered.
 class HelpRequestsPage extends StatefulWidget {
@@ -15,6 +16,8 @@ class HelpRequestsPage extends StatefulWidget {
 }
 
 class _HelpRequestsPageState extends State<HelpRequestsPage> {
+  late final Session sessionOwner;
+  late final DeviceSubflowScope scope;
   late final String root, role;
   List<HelpRequest> requests = const [];
   String? cursor;
@@ -24,19 +27,29 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
   int generation = 0;
   final Set<String> uncertain = {}, sending = {};
 
-  bool get current =>
-      widget.session.authenticated &&
-      widget.session.tenant != null &&
-      widget.session.root == root &&
-      widget.session.role == role &&
-      widget.session.canOpen('help-requests');
+  bool permitted() =>
+      mounted &&
+      identical(widget.session, sessionOwner) &&
+      sessionOwner.tenant != null &&
+      sessionOwner.canOpen('help-requests');
+
+  bool get current => mounted && scope.current;
 
   @override
   void initState() {
     super.initState();
-    root = widget.session.root;
-    role = widget.session.role;
+    sessionOwner = widget.session;
+    root = sessionOwner.root;
+    role = sessionOwner.role;
+    scope = DeviceSubflowScope(sessionOwner, permitted: permitted);
     load();
+  }
+
+  @override
+  void dispose() {
+    generation++;
+    scope.dispose();
+    super.dispose();
   }
 
   Future<void> load({bool more = false}) async {
@@ -57,7 +70,7 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
     try {
       final path =
           '$root/help-requests${sourceFilter == 'OPEN' ? '?state=OPEN' : ''}';
-      final page = await widget.session.api.page(path, cursor: nextCursor);
+      final page = await scope.api.page(path, cursor: nextCursor);
       final parsed = page.items.map(HelpRequest.parse).toList(growable: false);
       if (current && generation == epoch && filter == sourceFilter) {
         setState(() {
@@ -79,7 +92,7 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
   }
 
   void changeFilter(String next) {
-    if (filter == next) return;
+    if (!current || filter == next) return;
     setState(() => filter = next);
     load();
   }
@@ -97,7 +110,7 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
       error = null;
     });
     try {
-      final response = await widget.session.api.send(
+      final response = await scope.api.send(
           'POST', '$root/help-requests/${item.id}/acknowledge',
           version: item.version);
       final updated = HelpRequest.parse(response);
@@ -119,7 +132,7 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
 
   @override
   Widget build(BuildContext context) => AnimatedBuilder(
-      animation: widget.session,
+      animation: scope,
       builder: (context, _) => !current
           ? const Panel(child: EmptyView('工作空间或权限已变化', '已隐藏旧求助记录，请重新打开当前工作空间。'))
           : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -153,7 +166,9 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
                 const SizedBox(height: 8),
                 FailureView(error!,
                     retry: load,
-                    reauth: () => widget.session.login(stepUp: true)),
+                    reauth: () {
+                      if (current) sessionOwner.login(stepUp: true);
+                    }),
                 const SizedBox(height: 16)
               ],
               Panel(

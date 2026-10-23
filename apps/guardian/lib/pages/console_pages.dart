@@ -198,7 +198,9 @@ class ConsolePages extends StatelessWidget {
           child: EmptyView('此角色无权访问该页面', '请从导航中选择可用功能，或联系工作空间管理员。'));
     }
     if (section == 'help-requests') {
-      return HelpRequestsPage(key: ValueKey('${s.root}/${s.role}'), session: s);
+      return HelpRequestsPage(
+          key: ValueKey((s.profile?['subject'], s.tenant?['id'], s.role,
+              s.scopeGeneration)), session: s);
     }
     if (section == 'overview' && !s.canWrite) {
       return ScopedOverviewPage(
@@ -1448,8 +1450,9 @@ class ConsoleActions {
               closeOnSuccess: false),
           if (s.canWrite && r['state'] == 'PENDING') ...[
             DetailAction('批准', (ctx) async {
+              final finish = captureDialogCompletion(ctx);
               final key = requestId();
-              await _tenantForm(
+              final result = await _tenantForm(
                   parent: ctx,
                   title: '批准临时访问',
                   section: 'approvals',
@@ -1467,10 +1470,12 @@ class ConsoleActions {
                             'decision': 'APPROVE',
                             'grantedWindowSeconds': v['seconds']
                           }) as Json);
-            }),
+              if (result != null && current()) finish();
+            }, closeOnSuccess: false),
             DetailAction('拒绝', (ctx) async {
+              final finish = captureDialogCompletion(ctx);
               final key = requestId();
-              await _tenantForm(
+              final result = await _tenantForm(
                   parent: ctx,
                   title: '拒绝申请',
                   section: 'approvals',
@@ -1486,16 +1491,22 @@ class ConsoleActions {
                       version: r['version'],
                       key: key,
                       body: {'decision': 'DENY', ...v}) as Json);
-            }, destructive: true)
+              if (result != null && current()) finish();
+            }, destructive: true, closeOnSuccess: false)
           ],
           if (s.canWrite && r['state'] == 'APPROVED_PENDING_DELIVERY')
             DetailAction('撤销批准', (ctx) async {
+              final finish = captureDialogCompletion(ctx);
               if (await confirmAction(ctx, '撤销批准', '撤销此访问窗口并记录审计。')) {
+                if (!current()) {
+                  throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+                }
                 await api.send(
                     'POST', '$root/access-requests/${r['id']}/revoke',
                     version: r['version'], key: requestId());
+                if (current()) finish();
               }
-            }, destructive: true)
+            }, destructive: true, closeOnSuccess: false)
         ]);
     } finally {
       scope.dispose();

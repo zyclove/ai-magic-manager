@@ -1,0 +1,55 @@
+{
+  "status": "STATIC_REVIEWED_CURRENT_SOURCE_RUNTIME_UNRUN",
+  "createdAtUtc": "2026-10-23T02:41:00.424104+00:00",
+  "baseCommit": "18f270cb6664b9cec92677a1c55d315546e22b4a",
+  "sourceFiles": [
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "bytes": 85658,
+      "sha256": "805b3b398b1ca93a28d80e5f32603f323ef9113baa856893bb68dfbe4d91fd41",
+      "beforeCommittedBytes": 85036,
+      "beforeCommittedSha256": "de4a6d0cb768049dab79fd4d3460bc9ab934941570b4f8e5f0b210d3109c18bd"
+    },
+    {
+      "path": "apps/guardian/lib/pages/help_requests_page.dart",
+      "bytes": 8956,
+      "sha256": "f8267df461953840dfa4d6f74b3d33108eacab7a1f325a1d92968bdea1a095a0",
+      "beforeCommittedBytes": 8612,
+      "beforeCommittedSha256": "67617dc8fd85fe5ef594f109e924874c6d578727db9fc83fc3bd9d009ca0f081"
+    },
+    {
+      "path": "apps/guardian/test/approval_help_flow_browser_test.dart",
+      "bytes": 13713,
+      "sha256": "845cb4f4b5a65cf126080861b7e29bd579a0101f5b3be437c1394bf7c0be0127"
+    }
+  ],
+  "expandedBrowserCases": 19,
+  "caseGroups": {
+    "approvalActions": 12,
+    "helpLateReadAfterDisposal": 2,
+    "helpLateAcknowledgementAfterDisposal": 2,
+    "syntheticActorAndGenerationAba": 1,
+    "consoleEntryGenerationRebuild": 1,
+    "retainedFilterAfterDisposal": 1
+  },
+  "staticChecks": {
+    "exactSourceDiffWhitespaceExit": 0,
+    "independentReviewAgent": "/root/approval_help_review_20261023",
+    "independentReviewResult": "No proven blocker in the three reviewed files"
+  },
+  "evidenceLimits": [
+    "19 is a static expanded count; none of these browser cases has run.",
+    "The synthetic actor ABA also advances EntrySession generation; it is not actor-only proof.",
+    "No direct retained reauthentication callback, tenant/role/permission ABA, mounted ACK late response, or Session replacement test.",
+    "No live backend, provider, build, deployment, or broad acceptance is implied."
+  ],
+  "newDependencies": false,
+  "sdkCalls": 0,
+  "analysisRun": false,
+  "testsRun": false,
+  "browserRun": false,
+  "formatRun": false,
+  "servicesUpdated": false,
+  "pushed": false,
+  "scope": "Two existing production files and one browser regression file; shared backend fixture WIP excluded."
+}
