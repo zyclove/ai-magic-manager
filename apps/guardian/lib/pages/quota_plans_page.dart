@@ -172,6 +172,7 @@ class _QuotaPlansPageState extends State<QuotaPlansPage> {
           ? '$root/quota-plans' : '$root/quota-plans/${plan['id']}';
       final children = plan == null
           ? await api.all('$root/subjects') : <Json>[];
+      if (!parent.mounted) return;
       if (!onTop(parent) || !access.permitted()) return;
       if (plan == null && children.isEmpty) {
         toast(parent, '请先添加儿童档案。');
@@ -179,6 +180,7 @@ class _QuotaPlansPageState extends State<QuotaPlansPage> {
       }
       final apps = plan == null
           ? await api.all('$root/applications') : <Json>[];
+      if (!parent.mounted) return;
       if (!onTop(parent) || !access.permitted()) return;
       late final OwnedDialogRoute<void> route;
       bool accepted() => canWrite && access.permitted() &&
@@ -226,6 +228,7 @@ class _QuotaPlansPageState extends State<QuotaPlansPage> {
       if (!access.permitted()) return;
       final api = scope.api.scoped(access.permitted);
       final plan = await api.send('GET', '$root/quota-plans/$id') as Json;
+      if (!parent.mounted) return;
       if (!onTop(parent) || !access.permitted()) return;
       final overrides = Map<String, dynamic>.from(plan['dateOverrides'] as Map);
       final detailChanges = access.changes;
@@ -287,6 +290,7 @@ class _QuotaPlansPageState extends State<QuotaPlansPage> {
                 route.finish();
               }, closeOnSuccess: false),
           ]);
+      if (!parent.mounted) return;
       if (requestedEdit && onTop(parent) && canWrite && access.permitted()) {
         await edit(parent, plan: plan);
       }

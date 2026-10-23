@@ -347,7 +347,7 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
                         return false;
                       })));
       final selected = await presentOwnedDialog<DateTime>(context, dateRoute);
-      if (!childPermitted() || !current || selected == null) return;
+      if (!mounted || !childPermitted() || !current || selected == null) return;
       final date = DateFormat('yyyy-MM-dd').format(selected);
       final result = await formDialog(context,
           title: '$date 的额度',

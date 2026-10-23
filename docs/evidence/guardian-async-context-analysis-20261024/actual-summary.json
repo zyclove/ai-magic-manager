@@ -1,0 +1,73 @@
+{
+  "status": "ANALYSIS_RED_RECORDED_AND_TARGETED_FIXES_IMPLEMENTED_NOT_REANALYZED",
+  "recordedAtUtc": "2026-10-23T16:13:12.666447+00:00",
+  "analyzedCommit": "abb2e016650cf579fc7ad1dbccdecc682072807a",
+  "analysisAccepted": false,
+  "diagnostics": {
+    "info": 19,
+    "use_build_context_synchronously": 18,
+    "unnecessary_import": 1,
+    "warning": 0,
+    "error": 0
+  },
+  "actualRootTerminal": {
+    "initialChunk": "b996f6",
+    "session": 89578,
+    "terminalChunk": "f672a5",
+    "naturalExitCode": 1,
+    "firstSignalSeconds": 64.6758028,
+    "forced": false
+  },
+  "postTerminal": {
+    "chunk": "e840fc",
+    "naturalExitCode": 1
+  },
+  "releaseTerminal": {
+    "chunk": "fc927a",
+    "naturalExitCode": 1,
+    "windowReleased": true,
+    "sdkCount": 0,
+    "unknownCount": 0
+  },
+  "sdkCalls": 1,
+  "testsRun": false,
+  "fullRegressionRootScope": 181,
+  "criticalBrowserCasesSubsetOnly": 80,
+  "rendered": false,
+  "sourceFiles": 410,
+  "packageRows": 70,
+  "cacheFiles": 3536,
+  "cacheBytes": 633817159,
+  "completePreflightAndPostflight": true,
+  "newProductionPins": [
+    {
+      "path": "apps\\guardian\\lib\\pages\\quota_page.dart",
+      "bytes": 16959,
+      "sha256": "b34a23c114d1e9f8b97e468474b261d37f56dfcb6f614e9b5175a83f3528a252"
+    },
+    {
+      "path": "apps\\guardian\\lib\\pages\\quota_plans_page.dart",
+      "bytes": 16291,
+      "sha256": "61e85cf50f65b78f63125fa246e65f5fa6e39df24ec3d399f84a5710eb4e581e"
+    },
+    {
+      "path": "apps\\guardian\\lib\\pages\\quota_plan_editor.dart",
+      "bytes": 28326,
+      "sha256": "a292e0c1bbd1a3d9ed8c3cc303270851f8f26d37b0a1f218c9098a7ffeb03d4c"
+    },
+    {
+      "path": "apps\\guardian\\lib\\ui\\audit_view.dart",
+      "bytes": 17389,
+      "sha256": "0169f617edb150e4f2bf4f95dff5d28fdbfd369be2cbe88f045d81d12ea8a14c"
+    },
+    {
+      "path": "apps\\guardian\\lib\\ui\\view_lifetime.dart",
+      "bytes": 1026,
+      "sha256": "dd4a9b56a05f4bab62c0bd34022ef200366dc27d1c17170800f5519e8b2bca63"
+    }
+  ],
+  "analysisAfterFixRun": false,
+  "runtimeClosureComplete": false,
+  "pushed": false,
+  "deployed": false
+}

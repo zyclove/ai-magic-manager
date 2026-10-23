@@ -1,0 +1,159 @@
+{
+  "status": "INDEPENDENT_FILE_REVIEW_NOT_ACCEPTED_PRESERVED",
+  "sourceCommit": "abb2e016650cf579fc7ad1dbccdecc682072807a",
+  "review": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r11-actual-independent-20261024-r1\\review.md",
+    "bytes": 3913,
+    "sha256": "996de2a97591c0334229f0eced9efa2fdda54e1750e092a044b50a5fd188ef6b"
+  },
+  "readFiles": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\proposal.json",
+      "bytes": 9067,
+      "sha256": "12ed0370a0270b1c9d92f281e8584a51bd235fb5bf9f8b0857025b0d33f9456e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\inputs.json",
+      "bytes": 16341,
+      "sha256": "b5256a52c81a0fe84e4436bd3c8ab19e51d88b65701fc6e9407e442f4ff3463d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\analysis-host.py",
+      "bytes": 21660,
+      "sha256": "77de9068c9fcdfc8bb13d4ef6e5f08042bc86615a3124003e698c0f83d74803a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\worker.py",
+      "bytes": 37092,
+      "sha256": "f9889bfce15164642bc589c96c685b620b865c5480c896b8f97e195b449f9d3c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\process-inventory.ps1",
+      "bytes": 2439,
+      "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\root-sdk-grant-r2.json",
+      "bytes": 2825,
+      "sha256": "03e3d82b4b96be7cd5cddcf41034af8b76f34bcc0a13b01e6771fe5840be7cff"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-root-launch-20261023-r11-current-r2.ps1",
+      "bytes": 9182,
+      "sha256": "d3fbab86fedcd8978ac9051a75dd556307e3621ac5d9bf7e8ad9b626daed1207"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r11-release-20261023-r2.ps1",
+      "bytes": 4371,
+      "sha256": "f028801980a2b4b5458b8307b980d179c9eabdd82441cc76591131b482275c77"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\root-attempt\\preflight.json",
+      "bytes": 706,
+      "sha256": "77e4d9cce7c55bceddf85d596c0277ccaca0b295bf13a95f60a10edf777be128"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\root-attempt\\result.json",
+      "bytes": 1245,
+      "sha256": "06b1d5c03f55e82811a77d78735910748829ad2d2505fdb9d714925bfa414100"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\root-attempt\\release.json",
+      "bytes": 1438,
+      "sha256": "60c5ac0de50cfabdcd94f87cb6328d9987c0f245ad9cd116704a9aa854d816b1"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\root-attempt\\post-process-inventory.json",
+      "bytes": 42892,
+      "sha256": "543f1769eb8d02f0fc9600582064c4b012e4b99de8e4b44bd575aa0fa892901d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\attempt\\request.json",
+      "bytes": 301,
+      "sha256": "fd363f1e2808fe819c0675ee9c0634699ea04181b90c0abd6bf3a24ef44b503a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\attempt\\result.json",
+      "bytes": 89374,
+      "sha256": "2feb56fb3a74b4c1c8d419d4f4e7f39b6bdf8b6cf1ea16529f389278145011fb"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\attempt\\receipt.json",
+      "bytes": 77666,
+      "sha256": "c5fdf5801cf333a4e66672c33ee164dca61dc2b20cef2299b096e8de6289d0c4"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\attempt\\launch.json",
+      "bytes": 1169,
+      "sha256": "d5d0785496565a90a2ebc8d225f05e2d5f48ea8120a13ee6702f50fa2ea0b8df"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\attempt\\preflight-pins.json",
+      "bytes": 1972,
+      "sha256": "33bea8527341c4b84afaea7945888768ca30e72faebf4497f9a8109978e69705"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\attempt\\postflight-pins.json",
+      "bytes": 1973,
+      "sha256": "171e90114682bdedfc4ca185dc51bbe9d034c9a0175587e0b991b395b2fe6699"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\attempt\\initial-gate.json",
+      "bytes": 63455,
+      "sha256": "9c83ef80eefeab00dcd93a76c4168654aa761ad859e2fb22ce77446655b81589"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\attempt\\launch-gate.json",
+      "bytes": 63543,
+      "sha256": "0dd92d17177ca3aa93642501cb2d5c8e559cce3884cbdebc920b2b1335ee6ac5"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\attempt\\postflight-gate.json",
+      "bytes": 63306,
+      "sha256": "4c0eb5f1ae816b54782fce7a5dbc1a04fe62f96b495c8b81b304a2e004868155"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\attempt\\out\\analyze.log",
+      "bytes": 2685,
+      "sha256": "625ac599bc0435cc68816ff397b19f658d4a3fe81c757e5a56993e74966c6b77"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\attempt\\worker-console.log",
+      "bytes": 88,
+      "sha256": "2d56fde486db8b629641fa5684dea3dd78f11d311c2055260a76e3c591dba182"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r11-post-20261023-r2\\post.py",
+      "bytes": 30362,
+      "sha256": "d23b0b7ed267e674f9f04755edd735a4e63fad6b1a1fdb24b44a5db3e496de33"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r11-post-20261023-r2\\post.json",
+      "bytes": 20354,
+      "sha256": "fc2db1091a68093e18c48f91a0e0edb71e7040fe264d95a3c55b0506ac9aaa3f"
+    }
+  ],
+  "logDiagnosticCounts": {
+    "info": 19,
+    "warning": 0,
+    "error": 0
+  },
+  "contextInfoCount": 18,
+  "unnecessaryImportInfoCount": 1,
+  "rawEmbeddedReceiptAndStagesEqual": true,
+  "releaseInventoryAndPostHashesMatch": true,
+  "completeWorkerGuardReportsRead": true,
+  "cachePayloadRehashedByReview": false,
+  "onlyVisibleAnalysisFailure": "19 info diagnostics under --fatal-infos; no other execution problem visible in retained records",
+  "postOrCandidatePredicateExecuted": false,
+  "sdkTestsAstNativeProcessOrNetworkExecuted": false,
+  "mainGitOrOriginalEvidenceWritten": false,
+  "runtimeClosureComplete": false,
+  "analysisAccepted": false,
+  "windowReleasedRecorded": true
+}

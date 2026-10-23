@@ -1,0 +1,109 @@
+{
+  "status": "STATIC_QUOTA_CONTEXT_GUARDS_AUTHOR_CANDIDATE_ALL_UNRUN",
+  "sourceCommit": "abb2e016650cf579fc7ad1dbccdecc682072807a",
+  "productionInputs": [
+    {
+      "path": "apps/guardian/lib/pages/quota_page.dart",
+      "bytes": 16855,
+      "sha256": "df01196e5c457562481df52aed2585597fc3422a6c8821d166565e3cae243063"
+    },
+    {
+      "path": "apps/guardian/lib/pages/quota_plans_page.dart",
+      "bytes": 16151,
+      "sha256": "9abbb08efcb075ba451190ba0dcc678c5682018f18611a1eade65b1f651b5191"
+    }
+  ],
+  "readOnlyOwnershipContext": [
+    {
+      "path": "apps/guardian/lib/ui/view_lifetime.dart",
+      "bytes": 1026,
+      "sha256": "dd4a9b56a05f4bab62c0bd34022ef200366dc27d1c17170800f5519e8b2bca63"
+    },
+    {
+      "path": "apps/guardian/lib/pages/device_subflow_scope.dart",
+      "bytes": 1512,
+      "sha256": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e"
+    },
+    {
+      "path": "apps/guardian/lib/ui/dialog_access.dart",
+      "bytes": 2748,
+      "sha256": "8fe7c3d9ee1b7a038dc08939ea5cd40572a411ced63a01ba6eb12a88e50145d5"
+    },
+    {
+      "path": "apps/guardian/lib/ui/owned_dialog_route.dart",
+      "bytes": 1419,
+      "sha256": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946"
+    },
+    {
+      "path": "apps/guardian/lib/ui/resource_page.dart",
+      "bytes": 19437,
+      "sha256": "ac3667fff335d8105c5e10e7e3b5b45dc0b5bbb8bc00eb0d94175ee432ed9ed3"
+    }
+  ],
+  "files": [
+    {
+      "path": "quota_page.before.dart",
+      "bytes": 16855,
+      "sha256": "df01196e5c457562481df52aed2585597fc3422a6c8821d166565e3cae243063"
+    },
+    {
+      "path": "quota_page.after.dart",
+      "bytes": 16959,
+      "sha256": "b34a23c114d1e9f8b97e468474b261d37f56dfcb6f614e9b5175a83f3528a252"
+    },
+    {
+      "path": "quota_plans_page.before.dart",
+      "bytes": 16151,
+      "sha256": "9abbb08efcb075ba451190ba0dcc678c5682018f18611a1eade65b1f651b5191"
+    },
+    {
+      "path": "quota_plans_page.after.dart",
+      "bytes": 16291,
+      "sha256": "61e85cf50f65b78f63125fa246e65f5fa6e39df24ec3d399f84a5710eb4e581e"
+    },
+    {
+      "path": "quota-context-fix.patch",
+      "bytes": 2562,
+      "sha256": "92b3fc7741390ec6c5cc2d3ccc0e44cf8d33b3a4b05c4d28e7f94bc20f4b9a8d"
+    },
+    {
+      "path": "review.md",
+      "bytes": 3190,
+      "sha256": "a0ce0dd068c7adbc6c722236ad638bd0ea12d102796f7ee2ef4e612d9111270a"
+    }
+  ],
+  "insertedGuards": {
+    "quota_page.dart": 3,
+    "quota_plans_page.dart": 4
+  },
+  "diagnosticOriginalLines": {
+    "quota_page.dart": [
+      170,
+      172,
+      176,
+      178,
+      245,
+      246
+    ],
+    "quota_plans_page.dart": [
+      175,
+      177,
+      182,
+      189,
+      215,
+      229,
+      233,
+      290,
+      291
+    ]
+  },
+  "onlySevenSameContextMountedGuardLinesAdded": true,
+  "removingInsertedLinesRestoresBothBeforeBytes": true,
+  "existingScopeLifetimeRequestsRoutesCallbacksUnchanged": true,
+  "importsTestsAndDependenciesUnchanged": true,
+  "mainApplied": false,
+  "allScenarios": "UNRUN",
+  "rendered": false,
+  "sdkAstAnalyzerFormatterTestsNetworkOrProcessQueriesExecuted": false,
+  "independentReviewRequired": true
+}

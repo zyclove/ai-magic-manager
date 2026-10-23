@@ -1,0 +1,37 @@
+{
+  "status": "ROOT_PRELAUNCH_FAILED_NO_ATTEMPT_NO_SDK",
+  "atUtc": "2026-10-23T16:02:15.446155+00:00",
+  "actualToolTerminalChunk": "bf7904",
+  "actualToolExitCode": 1,
+  "reason": "Root launcher incorrectly used optional absolute marker for path routing; seven existing runtime descriptors omit marker. Rejected before Root/worker attempt creation.",
+  "sdkCalls": 0,
+  "rootAttemptExists": false,
+  "workerAttemptExists": false,
+  "oldProposal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\proposal.json",
+    "bytes": 9067,
+    "sha256": "12ed0370a0270b1c9d92f281e8584a51bd235fb5bf9f8b0857025b0d33f9456e"
+  },
+  "oldGrant": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\root-sdk-grant.json",
+    "bytes": 2214,
+    "sha256": "e8bfcccbcc91c0269f1a446b7a61679df4426dbbd2cc9c8e641048987e9991b6"
+  },
+  "oldLauncher": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-root-launch-20261023-r11-current.ps1",
+    "bytes": 9150,
+    "sha256": "d8e4934d99a95b79c835c0b684f0998ae088e3cc81253f34794546fb5e9ff1ec"
+  },
+  "correctedRootLauncher": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-root-launch-20261023-r11-current-r2.ps1",
+    "bytes": 9182,
+    "sha256": "d3fbab86fedcd8978ac9051a75dd556307e3621ac5d9bf7e8ad9b626daed1207"
+  },
+  "newReleaseHelper": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r11-release-20261023-r2.ps1",
+    "bytes": 4371,
+    "sha256": "f028801980a2b4b5458b8307b980d179c9eabdd82441cc76591131b482275c77"
+  },
+  "sourceInputsAndFourControlsChanged": false,
+  "budgetsChanged": false
+}

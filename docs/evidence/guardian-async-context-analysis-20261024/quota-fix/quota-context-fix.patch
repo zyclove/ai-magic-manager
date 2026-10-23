@@ -1,0 +1,59 @@
+--- a/apps/guardian/lib/pages/quota_page.dart
++++ b/apps/guardian/lib/pages/quota_page.dart
+@@ -167,12 +167,14 @@
+     if (!scope.current) return;
+     final zone = s.tenant?['timeZone'] as String? ?? 'Asia/Shanghai';
+     final children = await scope.api.all('$root/subjects');
++    if (!context.mounted) return;
+     if (!scope.current || !interactive(context)) return;
+     if (children.isEmpty) {
+       toast(context, '请先添加儿童档案。');
+       return;
+     }
+     final apps = await scope.api.all('$root/applications');
++    if (!context.mounted) return;
+     if (!scope.current || !interactive(context)) return;
+     final key = requestId();
+     await formDialog(context,
+@@ -242,6 +244,7 @@
+     final api = pageScope.api.scoped(access.permitted);
+     try {
+       final pool = await api.send('GET', '$root/quota-pools/$id') as Json;
++      if (!context.mounted) return;
+       if (!access.permitted() || !interactive(context)) return;
+       await scopedDetailsDialog(context, pool['name'], const {},
+           accessChanges: access.changes,
+--- a/apps/guardian/lib/pages/quota_plans_page.dart
++++ b/apps/guardian/lib/pages/quota_plans_page.dart
+@@ -172,6 +172,7 @@
+           ? '$root/quota-plans' : '$root/quota-plans/${plan['id']}';
+       final children = plan == null
+           ? await api.all('$root/subjects') : <Json>[];
++      if (!parent.mounted) return;
+       if (!onTop(parent) || !access.permitted()) return;
+       if (plan == null && children.isEmpty) {
+         toast(parent, '请先添加儿童档案。');
+@@ -179,6 +180,7 @@
+       }
+       final apps = plan == null
+           ? await api.all('$root/applications') : <Json>[];
++      if (!parent.mounted) return;
+       if (!onTop(parent) || !access.permitted()) return;
+       late final OwnedDialogRoute<void> route;
+       bool accepted() => canWrite && access.permitted() &&
+@@ -226,6 +228,7 @@
+       if (!access.permitted()) return;
+       final api = scope.api.scoped(access.permitted);
+       final plan = await api.send('GET', '$root/quota-plans/$id') as Json;
++      if (!parent.mounted) return;
+       if (!onTop(parent) || !access.permitted()) return;
+       final overrides = Map<String, dynamic>.from(plan['dateOverrides'] as Map);
+       final detailChanges = access.changes;
+@@ -287,6 +290,7 @@
+                 route.finish();
+               }, closeOnSuccess: false),
+           ]);
++      if (!parent.mounted) return;
+       if (requestedEdit && onTop(parent) && canWrite && access.permitted()) {
+         await edit(parent, plan: plan);
+       }

@@ -1,0 +1,18 @@
+{
+  "status": "MINIMAL_UNUSED_IMPORT_REMOVAL_UNRUN",
+  "path": "apps/guardian/lib/ui/view_lifetime.dart",
+  "before": {
+    "path": "before.dart",
+    "bytes": 1068,
+    "sha256": "c68c7457f2cd212df0b8d34b727c8e07364b6605832c41dc133d70355d719815"
+  },
+  "after": {
+    "path": "after.dart",
+    "bytes": 1026,
+    "sha256": "dd4a9b56a05f4bab62c0bd34022ef200366dc27d1c17170800f5519e8b2bca63"
+  },
+  "diagnostic": "unnecessary_import: view_lifetime.dart:1:8; widgets.dart provides every used foundation symbol",
+  "runtimeBehaviorChanged": false,
+  "testsRun": false,
+  "analyzedAfterFix": false
+}

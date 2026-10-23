@@ -138,7 +138,7 @@ class _AuditViewState extends State<AuditView> {
     setState(() => openingOperation = operation);
     try {
       final item = await repository.detail(row.id);
-      if (!current(repository) || ticket != generation ||
+      if (!mounted || !current(repository) || ticket != generation ||
           !identical(openingOperation, operation)) return;
       await actionDetails(
           context,
@@ -193,7 +193,7 @@ class _AuditViewState extends State<AuditView> {
             end: selectedEnd.isAfter(now) ? now : selectedEnd),
         helpText: '选择审计日期范围',
         saveText: '确定');
-    if (!eventCurrent(repository, ticket) || chosen == null) return;
+    if (!mounted || !eventCurrent(repository, ticket) || chosen == null) return;
     final end = DateTime(chosen.end.year, chosen.end.month, chosen.end.day + 1);
     if (end.difference(chosen.start) > const Duration(days: 366)) {
       toast(context, '一次最多查询 366 天，请缩小日期范围。');

@@ -167,12 +167,14 @@ class _QuotaPageState extends State<QuotaPage> {
     if (!scope.current) return;
     final zone = s.tenant?['timeZone'] as String? ?? 'Asia/Shanghai';
     final children = await scope.api.all('$root/subjects');
+    if (!context.mounted) return;
     if (!scope.current || !interactive(context)) return;
     if (children.isEmpty) {
       toast(context, '请先添加儿童档案。');
       return;
     }
     final apps = await scope.api.all('$root/applications');
+    if (!context.mounted) return;
     if (!scope.current || !interactive(context)) return;
     final key = requestId();
     await formDialog(context,
@@ -242,6 +244,7 @@ class _QuotaPageState extends State<QuotaPage> {
     final api = pageScope.api.scoped(access.permitted);
     try {
       final pool = await api.send('GET', '$root/quota-pools/$id') as Json;
+      if (!context.mounted) return;
       if (!access.permitted() || !interactive(context)) return;
       await scopedDetailsDialog(context, pool['name'], const {},
           accessChanges: access.changes,

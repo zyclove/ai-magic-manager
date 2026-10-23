@@ -1,0 +1,480 @@
+{
+  "status": "NOT_ACCEPTED_FILE_READBACK",
+  "errorType": "ValueError",
+  "reason": "Root retained-handle natural exit proof rejected",
+  "analysisAccepted": false,
+  "rootActualToolTerminalStillRequired": true,
+  "freshFullProcessReleaseStillRequired": true,
+  "observedFilePins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\proposal.json",
+      "bytes": 9067,
+      "sha256": "12ed0370a0270b1c9d92f281e8584a51bd235fb5bf9f8b0857025b0d33f9456e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\analysis-host.py",
+      "bytes": 21660,
+      "sha256": "77de9068c9fcdfc8bb13d4ef6e5f08042bc86615a3124003e698c0f83d74803a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\worker.py",
+      "bytes": 37092,
+      "sha256": "f9889bfce15164642bc589c96c685b620b865c5480c896b8f97e195b449f9d3c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\process-inventory.ps1",
+      "bytes": 2439,
+      "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\inputs.json",
+      "bytes": 16341,
+      "sha256": "b5256a52c81a0fe84e4436bd3c8ab19e51d88b65701fc6e9407e442f4ff3463d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\inputs.json",
+      "bytes": 16341,
+      "sha256": "b5256a52c81a0fe84e4436bd3c8ab19e51d88b65701fc6e9407e442f4ff3463d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\process-inventory.ps1",
+      "bytes": 2439,
+      "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+    },
+    {
+      "path": "C:\\Python313\\python.exe",
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125"
+    },
+    {
+      "path": "C:\\Python313\\python313.dll",
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\win32\\win32job.pyd",
+      "bytes": 28672,
+      "sha256": "8f2a15f090e4fa75fd7179de0aa41108e9c6fe95786f736f373f5a7501e7e769"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\pywin32_system32\\pywintypes313.dll",
+      "bytes": 136192,
+      "sha256": "90ba935a0145ee9ae56267a365cc0088d34fa506b7afeb2bd1bd78cd33359605"
+    },
+    {
+      "path": "C:\\Python313\\DLLs\\_ctypes.pyd",
+      "bytes": 133992,
+      "sha256": "5c0d5082fba1a2a3eb8d5e23073be25164c19f21304b09cecaab340dc7198815"
+    },
+    {
+      "path": "C:\\Python313\\DLLs\\libffi-8.dll",
+      "bytes": 39696,
+      "sha256": "eff52743773eb550fcc6ce3efc37c85724502233b6b002a35496d828bd7b280a"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\__init__.py",
+      "bytes": 19374,
+      "sha256": "2e63f01ac6b8ffc1acfa4eec4c253eef8fbd65e09506d690cb3be71a2d78303a"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\_endian.py",
+      "bytes": 2635,
+      "sha256": "f2752ab2425dac9bfaff5aa1a3c6cd66aa342fee0db2f2a42de568fc59d5cbea"
+    },
+    {
+      "path": "C:\\Program Files\\Git\\cmd\\git.exe",
+      "bytes": 45032,
+      "sha256": "4ab2b391de7fb5eb3afb34b5bd19ee7f71d0450bf7e4c207b201a0392e3825ae"
+    },
+    {
+      "path": "C:\\Windows\\System32\\cmd.exe",
+      "bytes": 327680,
+      "sha256": "a6e3b3b22b7fe8ce2c9245816126723eaa13f43b9f591883e59959a2d409426a"
+    },
+    {
+      "path": "C:\\Windows\\System32\\where.exe",
+      "bytes": 61440,
+      "sha256": "ade557dd65848c5cf6565913cf6e01cf5c9a8033f0d784c4d6932394958d743e"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\internal\\exit_with_errorlevel.bat",
+      "bytes": 562,
+      "sha256": "f4014bd05cc24391ff28f7bd5b22949cc80f0bb66ab9eda512c9c3997f0283e0"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.yaml",
+      "bytes": 6215,
+      "sha256": "d703ed2f5467e37193640b26522839137430af10b631f36c0d89a54f3236172f"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.lock",
+      "bytes": 22135,
+      "sha256": "097571421b53ac57c9b72523ee5d2ae584c3d6ba58412f8cbe3af35c55c5593a"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\.dart_tool\\package_config.json",
+      "bytes": 20035,
+      "sha256": "49d0a9ce1c70ca6edd29537570cfe7ea6539843da50c6a85a107d829330150e8"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\wintypes.py",
+      "bytes": 5831,
+      "sha256": "4d9150e8603bd922e9dbee8a5e9cf1379cf599a382b09a5cbf09bed520f6c459"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\__init__.py",
+      "bytes": 89075,
+      "sha256": "96f6567584375b47e5719796d6f6cde50828487baaa1f5c19ccc4764bcf082b5"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_common.py",
+      "bytes": 29592,
+      "sha256": "b4f13b615cc2d19201859cd8773a8e16787e81e25500b6f2058dd3480c00497c"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psaix.py",
+      "bytes": 18817,
+      "sha256": "08504bc148bc0d1e4ab030b4c82b348e52ed2dfd9d861c8602b0211bfb9da8af"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psbsd.py",
+      "bytes": 32727,
+      "sha256": "51777e41751593f1ffc1b1475addafb21702856c41acfc27dfc3d7d077985dfa"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_pslinux.py",
+      "bytes": 88323,
+      "sha256": "c0a4f57371d7f1786767cb03357d6188a45b563ee9e7701227a55a9e229ac6ce"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psosx.py",
+      "bytes": 16421,
+      "sha256": "2f014fe80b4aa768733564526922da58707a9e1d4288a48cbbf2af3f9d34f481"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psposix.py",
+      "bytes": 7349,
+      "sha256": "009c726913dfd61f1dc93f6b9ec17c73ea6c1f05c46caa9a344b7738e9b866e9"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_pssunos.py",
+      "bytes": 25654,
+      "sha256": "079f056382636df9ddadd99b115ed0197ea5562d2ffbe57e83f1f1b20f79f0c3"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psutil_windows.pyd",
+      "bytes": 67072,
+      "sha256": "9c7fc855d9d1614e70705c7dcc6f4ac3cdcab5adfeb6a67d382f5ade09eadc15"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_pswindows.py",
+      "bytes": 37052,
+      "sha256": "8acfc2ab7c8cb859ea1947e939e894f285b365035698affe5ededab1bf180aee"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+      "bytes": 301368,
+      "sha256": "362a356ce7f0940ec74f73a8fc2c990a2cc24a38a11c90bbd8eca947110ad139"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.dll",
+      "bytes": 157496,
+      "sha256": "3046ed02928f5d8f78bb3106a861984498d4dc5f80e69a1d5bc7eeb911f0fa90"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\System.Management.Automation.dll",
+      "bytes": 19646264,
+      "sha256": "2d8af026e589c5603629bfc3e7c57265b4167b12eca3ae549c6a6c3ca7e4967b"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\Microsoft.PowerShell.Commands.Management.dll",
+      "bytes": 1124152,
+      "sha256": "40818818dd94a5fa1f53043e33d31d8312adad24ef61b06481dfae4c45d6e677"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\Microsoft.PowerShell.Commands.Utility.dll",
+      "bytes": 1652504,
+      "sha256": "2f6201bb3caf4c08158be733e786dd85b11537694f7e6ab40356fc0727a3596f"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\System.Diagnostics.Process.dll",
+      "bytes": 329512,
+      "sha256": "2b4871e02b366113c6ccf3b1436fadde5e69fc0a3e3ac421e2fa0f7af8c2bc3b"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\coreclr.dll",
+      "bytes": 4614440,
+      "sha256": "c98c3078a4f2495dd7d3ced967c7a6981545194ed163454703580b740f435521"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\clrjit.dll",
+      "bytes": 2092328,
+      "sha256": "e7bf743e7bf9a01c8c2bcdc0d828212fd8dfc285be9d4ec21962becf456df648"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\hostfxr.dll",
+      "bytes": 379728,
+      "sha256": "44f97e946b36415176dbc56a4426565a5e9b3e722c0ad579e20a749e3c0c7bcd"
+    },
+    {
+      "path": "C:\\Python313\\python.exe",
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125"
+    },
+    {
+      "path": "C:\\Python313\\python313.dll",
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\win32\\win32job.pyd",
+      "bytes": 28672,
+      "sha256": "8f2a15f090e4fa75fd7179de0aa41108e9c6fe95786f736f373f5a7501e7e769"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\pywin32_system32\\pywintypes313.dll",
+      "bytes": 136192,
+      "sha256": "90ba935a0145ee9ae56267a365cc0088d34fa506b7afeb2bd1bd78cd33359605"
+    },
+    {
+      "path": "C:\\Python313\\DLLs\\_ctypes.pyd",
+      "bytes": 133992,
+      "sha256": "5c0d5082fba1a2a3eb8d5e23073be25164c19f21304b09cecaab340dc7198815"
+    },
+    {
+      "path": "C:\\Python313\\DLLs\\libffi-8.dll",
+      "bytes": 39696,
+      "sha256": "eff52743773eb550fcc6ce3efc37c85724502233b6b002a35496d828bd7b280a"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\__init__.py",
+      "bytes": 19374,
+      "sha256": "2e63f01ac6b8ffc1acfa4eec4c253eef8fbd65e09506d690cb3be71a2d78303a"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\_endian.py",
+      "bytes": 2635,
+      "sha256": "f2752ab2425dac9bfaff5aa1a3c6cd66aa342fee0db2f2a42de568fc59d5cbea"
+    },
+    {
+      "path": "C:\\Program Files\\Git\\cmd\\git.exe",
+      "bytes": 45032,
+      "sha256": "4ab2b391de7fb5eb3afb34b5bd19ee7f71d0450bf7e4c207b201a0392e3825ae"
+    },
+    {
+      "path": "C:\\Windows\\System32\\cmd.exe",
+      "bytes": 327680,
+      "sha256": "a6e3b3b22b7fe8ce2c9245816126723eaa13f43b9f591883e59959a2d409426a"
+    },
+    {
+      "path": "C:\\Windows\\System32\\where.exe",
+      "bytes": 61440,
+      "sha256": "ade557dd65848c5cf6565913cf6e01cf5c9a8033f0d784c4d6932394958d743e"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\internal\\exit_with_errorlevel.bat",
+      "bytes": 562,
+      "sha256": "f4014bd05cc24391ff28f7bd5b22949cc80f0bb66ab9eda512c9c3997f0283e0"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.yaml",
+      "bytes": 6215,
+      "sha256": "d703ed2f5467e37193640b26522839137430af10b631f36c0d89a54f3236172f"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.lock",
+      "bytes": 22135,
+      "sha256": "097571421b53ac57c9b72523ee5d2ae584c3d6ba58412f8cbe3af35c55c5593a"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\.dart_tool\\package_config.json",
+      "bytes": 20035,
+      "sha256": "49d0a9ce1c70ca6edd29537570cfe7ea6539843da50c6a85a107d829330150e8"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\wintypes.py",
+      "bytes": 5831,
+      "sha256": "4d9150e8603bd922e9dbee8a5e9cf1379cf599a382b09a5cbf09bed520f6c459"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\__init__.py",
+      "bytes": 89075,
+      "sha256": "96f6567584375b47e5719796d6f6cde50828487baaa1f5c19ccc4764bcf082b5"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_common.py",
+      "bytes": 29592,
+      "sha256": "b4f13b615cc2d19201859cd8773a8e16787e81e25500b6f2058dd3480c00497c"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psaix.py",
+      "bytes": 18817,
+      "sha256": "08504bc148bc0d1e4ab030b4c82b348e52ed2dfd9d861c8602b0211bfb9da8af"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psbsd.py",
+      "bytes": 32727,
+      "sha256": "51777e41751593f1ffc1b1475addafb21702856c41acfc27dfc3d7d077985dfa"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_pslinux.py",
+      "bytes": 88323,
+      "sha256": "c0a4f57371d7f1786767cb03357d6188a45b563ee9e7701227a55a9e229ac6ce"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psosx.py",
+      "bytes": 16421,
+      "sha256": "2f014fe80b4aa768733564526922da58707a9e1d4288a48cbbf2af3f9d34f481"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psposix.py",
+      "bytes": 7349,
+      "sha256": "009c726913dfd61f1dc93f6b9ec17c73ea6c1f05c46caa9a344b7738e9b866e9"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_pssunos.py",
+      "bytes": 25654,
+      "sha256": "079f056382636df9ddadd99b115ed0197ea5562d2ffbe57e83f1f1b20f79f0c3"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psutil_windows.pyd",
+      "bytes": 67072,
+      "sha256": "9c7fc855d9d1614e70705c7dcc6f4ac3cdcab5adfeb6a67d382f5ade09eadc15"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_pswindows.py",
+      "bytes": 37052,
+      "sha256": "8acfc2ab7c8cb859ea1947e939e894f285b365035698affe5ededab1bf180aee"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+      "bytes": 301368,
+      "sha256": "362a356ce7f0940ec74f73a8fc2c990a2cc24a38a11c90bbd8eca947110ad139"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.dll",
+      "bytes": 157496,
+      "sha256": "3046ed02928f5d8f78bb3106a861984498d4dc5f80e69a1d5bc7eeb911f0fa90"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\System.Management.Automation.dll",
+      "bytes": 19646264,
+      "sha256": "2d8af026e589c5603629bfc3e7c57265b4167b12eca3ae549c6a6c3ca7e4967b"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\Microsoft.PowerShell.Commands.Management.dll",
+      "bytes": 1124152,
+      "sha256": "40818818dd94a5fa1f53043e33d31d8312adad24ef61b06481dfae4c45d6e677"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\Microsoft.PowerShell.Commands.Utility.dll",
+      "bytes": 1652504,
+      "sha256": "2f6201bb3caf4c08158be733e786dd85b11537694f7e6ab40356fc0727a3596f"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\System.Diagnostics.Process.dll",
+      "bytes": 329512,
+      "sha256": "2b4871e02b366113c6ccf3b1436fadde5e69fc0a3e3ac421e2fa0f7af8c2bc3b"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\coreclr.dll",
+      "bytes": 4614440,
+      "sha256": "c98c3078a4f2495dd7d3ced967c7a6981545194ed163454703580b740f435521"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\clrjit.dll",
+      "bytes": 2092328,
+      "sha256": "e7bf743e7bf9a01c8c2bcdc0d828212fd8dfc285be9d4ec21962becf456df648"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\hostfxr.dll",
+      "bytes": 379728,
+      "sha256": "44f97e946b36415176dbc56a4426565a5e9b3e722c0ad579e20a749e3c0c7bcd"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r10-current\\out\\seal-static-source.json",
+      "bytes": 79811,
+      "sha256": "cfbfbd2a8d46c63edb2dc4df5b2e4639c27e6bad694324f9a7a4837fa5a1d666"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r10-current\\out\\source-manifest.json",
+      "bytes": 245050,
+      "sha256": "3fc17f5a9c5d65bbeeb9054c6c1ec5c17667b41f10d57419182d56b6b857347f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r10-current\\out\\source-directory-list.json",
+      "bytes": 24825,
+      "sha256": "9cd57c46376da2bd6a2c08332d0767fbf5afe88c5e3d67b43e61db306be758c4"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r10-current\\out\\dependency-library-pins.json",
+      "bytes": 360124,
+      "sha256": "6cd6823bddddf5c7c7b30f8c98a0b64d1e46749c9ca4dabc82036b10d292eba0"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r10-current\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+      "bytes": 15715,
+      "sha256": "36b1b98eab51289aeaf602104816f2ac7cd74fb25b85057dee9d653c1c932aa4"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r10-current\\generated\\guardian-package_config.json",
+      "bytes": 15715,
+      "sha256": "36b1b98eab51289aeaf602104816f2ac7cd74fb25b85057dee9d653c1c932aa4"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\.dart_tool\\package_config.json",
+      "bytes": 15171,
+      "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r10-current\\out\\full-regression-181-bindings.json",
+      "bytes": 83396,
+      "sha256": "babdc57a9c479fe541dfb05fdf1077a94111e1bd82ce7be465b37c48ebbd1115"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r10-current\\out\\expected-cases.json",
+      "bytes": 47149,
+      "sha256": "2d3d3f04672556ab9c5c80d8e3b88cf42aff6424250a8e784d2c28634056c625"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\cache-analysis-projection.json",
+      "bytes": 724690,
+      "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261021-r1\\out\\cache-content-20261021-r1.json",
+      "bytes": 725122,
+      "sha256": "0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\manifest.json",
+      "bytes": 2872,
+      "sha256": "f088c5b70ffab3c75e2ebc7fa381cc23350903f54b60ea4d45ab3c9794fb0370"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\root-sdk-grant-r2.json",
+      "bytes": 2825,
+      "sha256": "03e3d82b4b96be7cd5cddcf41034af8b76f34bcc0a13b01e6771fe5840be7cff"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-root-launch-20261023-r11-current-r2.ps1",
+      "bytes": 9182,
+      "sha256": "d3fbab86fedcd8978ac9051a75dd556307e3621ac5d9bf7e8ad9b626daed1207"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\root-attempt\\preflight.json",
+      "bytes": 706,
+      "sha256": "77e4d9cce7c55bceddf85d596c0277ccaca0b295bf13a95f60a10edf777be128"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\root-attempt\\result.json",
+      "bytes": 1245,
+      "sha256": "06b1d5c03f55e82811a77d78735910748829ad2d2505fdb9d714925bfa414100"
+    }
+  ]
+}

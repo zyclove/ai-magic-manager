@@ -1,0 +1,64 @@
+{
+  "status": "ROOT_APPROVED_SINGLE_FIXED_ANALYSIS",
+  "atUtc": "2026-10-23T16:02:38.554759+00:00",
+  "proposalSha256": "12ed0370a0270b1c9d92f281e8584a51bd235fb5bf9f8b0857025b0d33f9456e",
+  "launcherSha256": "d3fbab86fedcd8978ac9051a75dd556307e3621ac5d9bf7e8ad9b626daed1207",
+  "sourceCommit": "abb2e016650cf579fc7ad1dbccdecc682072807a",
+  "sdkCallsAllowed": 1,
+  "authority": "Existing human offline verification/cache-access authorization; restored fresh memory and scheduled SDK window. Local analysis only, no tests, downloads, dependency upgrades, push or deployment.",
+  "rootFinalProposalAndLauncherBindingChecked": true,
+  "independentControlSourceMessagesReceived": true,
+  "formalFinalIndependentProposalReportStillSeparate": true,
+  "evidence": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-r3-actual-independent-20261023-r1\\review.md",
+      "bytes": 4106,
+      "sha256": "e152e3d920f30c06deeb1bdb3632c09475cf4b08ebfe70d23520277f7933c909"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-r10-independent-20261023-r1\\review.md",
+      "bytes": 1640,
+      "sha256": "ccebc4155d32c9f2ccc3dc6277c2ec06e16ca6433ad123703bba95440bec158c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r11-post-20261023-r1\\input-review.md",
+      "bytes": 1965,
+      "sha256": "86c3a76beb1b373624817c8ea8ae34e05ccbca5a76294098711a651004b913e4"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\controls-review.md",
+      "bytes": 6317,
+      "sha256": "c550ec515a08f808596c22d2f8c167abca025678ca517e110df2f4589af6a50a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r11-post-20261023-r1\\review.md",
+      "bytes": 2263,
+      "sha256": "4c7c2bab3041db939489687ff5a5fb1b773f3906cb389e73484f30df75691901"
+    }
+  ],
+  "budgets": {
+    "outer": 180,
+    "working": 174,
+    "worker": 165,
+    "command": 135,
+    "commandCleanup": 140,
+    "postflightReserve": 25
+  },
+  "testsAllowed": false,
+  "downloadsAllowed": false,
+  "deployed": false,
+  "pushed": false,
+  "qualificationManifestHistoricalFlagsUnchanged": true,
+  "revision": 2,
+  "supersedesUnconsumedGrantOnlyAfterPrelaunchFailure": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\root-sdk-grant.json",
+    "bytes": 2214,
+    "sha256": "e8bfcccbcc91c0269f1a446b7a61679df4426dbbd2cc9c8e641048987e9991b6"
+  },
+  "prelaunchFailure": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r11-current\\root-prelaunch-failure-bf7904.json",
+    "bytes": 1677,
+    "sha256": "8dc634da02cd3616106cc2f542a58ea24308495cf53c134cb515f61aaeca12bf"
+  },
+  "independentMinimalR2PathCorrectionMessageReceived": true
+}

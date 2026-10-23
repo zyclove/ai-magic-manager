@@ -1,0 +1,97 @@
+{
+  "status": "STATIC_NO_BLOCKER_ALL_RUNTIME_UNRUN",
+  "baselineCommit": "abb2e016650cf579fc7ad1dbccdecc682072807a",
+  "files": [
+    {
+      "path": "apps/guardian/lib/pages/quota_page.dart",
+      "baselineCommit": "abb2e016650cf579fc7ad1dbccdecc682072807a",
+      "beforeBytes": 16855,
+      "beforeSha256": "df01196e5c457562481df52aed2585597fc3422a6c8821d166565e3cae243063",
+      "after": {
+        "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\quota_page.dart",
+        "bytes": 16959,
+        "sha256": "b34a23c114d1e9f8b97e468474b261d37f56dfcb6f614e9b5175a83f3528a252"
+      },
+      "onlyDeclaredLiteralChanges": true,
+      "changeCount": 3,
+      "guardLines": [
+        170,
+        177,
+        247
+      ]
+    },
+    {
+      "path": "apps/guardian/lib/pages/quota_plans_page.dart",
+      "baselineCommit": "abb2e016650cf579fc7ad1dbccdecc682072807a",
+      "beforeBytes": 16151,
+      "beforeSha256": "9abbb08efcb075ba451190ba0dcc678c5682018f18611a1eade65b1f651b5191",
+      "after": {
+        "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\quota_plans_page.dart",
+        "bytes": 16291,
+        "sha256": "61e85cf50f65b78f63125fa246e65f5fa6e39df24ec3d399f84a5710eb4e581e"
+      },
+      "onlyDeclaredLiteralChanges": true,
+      "changeCount": 4,
+      "guardLines": [
+        175,
+        183,
+        231,
+        293
+      ]
+    },
+    {
+      "path": "apps/guardian/lib/pages/quota_plan_editor.dart",
+      "baselineCommit": "abb2e016650cf579fc7ad1dbccdecc682072807a",
+      "beforeBytes": 28314,
+      "beforeSha256": "15f1814e1294fbae7dc618d5333ee02d7ebdc6b05c7fdf626fd6e94597d24b6a",
+      "after": {
+        "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\quota_plan_editor.dart",
+        "bytes": 28326,
+        "sha256": "a292e0c1bbd1a3d9ed8c3cc303270851f8f26d37b0a1f218c9098a7ffeb03d4c"
+      },
+      "onlyDeclaredLiteralChanges": true,
+      "changeCount": 1,
+      "guardLines": []
+    },
+    {
+      "path": "apps/guardian/lib/ui/audit_view.dart",
+      "baselineCommit": "abb2e016650cf579fc7ad1dbccdecc682072807a",
+      "beforeBytes": 17365,
+      "beforeSha256": "f86610dc7041c739865cc2a75ee5e0c08df5bea662ccbfb46021bb3a6769984f",
+      "after": {
+        "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\audit_view.dart",
+        "bytes": 17389,
+        "sha256": "0169f617edb150e4f2bf4f95dff5d28fdbfd369be2cbe88f045d81d12ea8a14c"
+      },
+      "onlyDeclaredLiteralChanges": true,
+      "changeCount": 2,
+      "guardLines": []
+    },
+    {
+      "path": "apps/guardian/lib/ui/view_lifetime.dart",
+      "baselineCommit": "abb2e016650cf579fc7ad1dbccdecc682072807a",
+      "beforeBytes": 1068,
+      "beforeSha256": "c68c7457f2cd212df0b8d34b727c8e07364b6605832c41dc133d70355d719815",
+      "after": {
+        "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\view_lifetime.dart",
+        "bytes": 1026,
+        "sha256": "dd4a9b56a05f4bab62c0bd34022ef200366dc27d1c17170800f5519e8b2bca63"
+      },
+      "onlyDeclaredLiteralChanges": true,
+      "changeCount": 1,
+      "guardLines": []
+    }
+  ],
+  "buildContextGuardInsertions": 7,
+  "stateMountedConditionPrefixes": 3,
+  "removedImports": 1,
+  "declaredEditsReconstructActualAfterBytesExactly": true,
+  "runtimeAnalysisOrTestsRun": false,
+  "sdkAstCandidateNativeProcessOrNetworkExecuted": false,
+  "mainOrGitWritten": false,
+  "review": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-async-context-fix-independent-20261024-r1\\review.md",
+    "bytes": 2348,
+    "sha256": "0f0d9cd5fdeafc10da666b97e87a7a256b28821735f78b9c9ea118cbf75928ed"
+  }
+}

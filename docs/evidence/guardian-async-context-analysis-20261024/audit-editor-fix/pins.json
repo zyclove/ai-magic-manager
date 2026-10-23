@@ -1,0 +1,77 @@
+{
+  "status": "STATIC_CONTEXT_GUARD_AUTHOR_CANDIDATE_ALL_UNRUN",
+  "sourceCommit": "abb2e016650cf579fc7ad1dbccdecc682072807a",
+  "production": [
+    {
+      "path": "apps/guardian/lib/pages/quota_plan_editor.dart",
+      "beforeBytes": 28314,
+      "beforeSha256": "15f1814e1294fbae7dc618d5333ee02d7ebdc6b05c7fdf626fd6e94597d24b6a",
+      "baselineGitBlob": "10ed353fbb3c9ae0256361c434b6e590c0e9d749",
+      "afterBytes": 28326,
+      "afterSha256": "a292e0c1bbd1a3d9ed8c3cc303270851f8f26d37b0a1f218c9098a7ffeb03d4c",
+      "explicitStateMountedGuardAdditions": 1,
+      "patchHunks": 1
+    },
+    {
+      "path": "apps/guardian/lib/ui/audit_view.dart",
+      "beforeBytes": 17365,
+      "beforeSha256": "f86610dc7041c739865cc2a75ee5e0c08df5bea662ccbfb46021bb3a6769984f",
+      "baselineGitBlob": "747517d483fee69e4ca0753ba22e43ce89be688e",
+      "afterBytes": 17389,
+      "afterSha256": "0169f617edb150e4f2bf4f95dff5d28fdbfd369be2cbe88f045d81d12ea8a14c",
+      "explicitStateMountedGuardAdditions": 2,
+      "patchHunks": 2
+    }
+  ],
+  "files": [
+    {
+      "path": "quota-editor-before.dart",
+      "bytes": 28314,
+      "sha256": "15f1814e1294fbae7dc618d5333ee02d7ebdc6b05c7fdf626fd6e94597d24b6a"
+    },
+    {
+      "path": "quota-editor-after.dart",
+      "bytes": 28326,
+      "sha256": "a292e0c1bbd1a3d9ed8c3cc303270851f8f26d37b0a1f218c9098a7ffeb03d4c"
+    },
+    {
+      "path": "audit-before.dart",
+      "bytes": 17365,
+      "sha256": "f86610dc7041c739865cc2a75ee5e0c08df5bea662ccbfb46021bb3a6769984f"
+    },
+    {
+      "path": "audit-after.dart",
+      "bytes": 17389,
+      "sha256": "0169f617edb150e4f2bf4f95dff5d28fdbfd369be2cbe88f045d81d12ea8a14c"
+    },
+    {
+      "path": "context-guards.patch",
+      "bytes": 1578,
+      "sha256": "7a896f881d74e98cdc331c2dda092343c24cbc925d2ec0e681721bf6c032282e"
+    },
+    {
+      "path": "review.md",
+      "bytes": 1813,
+      "sha256": "e99ff1a41344a9dcc68b8098fff066bb24d8b1f39ea976df5758776a0c9aa8e2"
+    }
+  ],
+  "reviewedLifetimeContracts": [
+    "QuotaPlanEditor.accepted/current/addOverride/childAccess finally",
+    "AuditView.current/eventCurrent/open/dates",
+    "DialogAccessBinding",
+    "OwnedDialogRoute",
+    "AuditRepository/AuditExplorerPage"
+  ],
+  "onlyThreeExistingConditionPrefixesChanged": true,
+  "lineCountsUnchanged": true,
+  "mainAndBaselineRawGitMatchBefore": true,
+  "patchReconstructedByteExact": true,
+  "publicSignaturesRequestsScopeAndOwnedRouteUnchanged": true,
+  "lintIgnored": false,
+  "testsAddedOrRun": false,
+  "allScenarios": "UNRUN",
+  "rendered": false,
+  "sdkAstCompilerFormatterCandidateProcessApiOrNetworkExecuted": false,
+  "mainOrGitWritten": false,
+  "independentReviewRequired": true
+}
