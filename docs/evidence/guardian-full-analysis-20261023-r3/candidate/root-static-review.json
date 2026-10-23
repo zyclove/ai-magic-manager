@@ -1,0 +1,25 @@
+{
+  "status": "ROOT_STATIC_REVIEWED_NOT_RUNTIME_ACCEPTANCE",
+  "utc": "2026-10-23T02:46:29.096382+00:00",
+  "proposalSha256": "06b3c62694c4ff6abd87ea7ad37b3c13d1aba5b771ed9ffb1034783ed636593e",
+  "pinnedMetadataAndControls": 27,
+  "sourceFiles": 405,
+  "mainAndFrozenMembershipAndHashesMatched": true,
+  "sevenGitTreesMatched": true,
+  "packageRows": 70,
+  "internalRemappedRows": 7,
+  "analysisCacheProjection": {
+    "trees": 70,
+    "fixedFiles": 32,
+    "files": 3536,
+    "onlyUnusedChromeExcluded": true,
+    "remainingParentRowsExact": true
+  },
+  "cacheContentsNotRehashedByThisStaticReview": true,
+  "controllerAndNativeHelperByteIdenticalToActuallyRunR1": true,
+  "workerMechanicalDiffReadByRoot": true,
+  "astParsedWithoutImport": true,
+  "sdkStarted": false,
+  "runtimeAttemptExists": false,
+  "analysisPassed": false
+}

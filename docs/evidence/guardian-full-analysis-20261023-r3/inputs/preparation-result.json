@@ -1,0 +1,34 @@
+{
+  "status": "PREPARED_STATIC_CANDIDATE_ONLY_ROOT_REVIEW_REQUIRED",
+  "sourceCommit": "080e41c66a348d48d8ac313cde77e4dd8f36cc47",
+  "sourceFiles": 405,
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3\\out\\source-manifest.json",
+    "bytes": 227011,
+    "sha256": "5b630f7e0f182ec7eda3e9a7a29679b2b806e3cf6795085d53b416a5442e4468"
+  },
+  "testScope": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3\\out\\test-scope.json",
+    "bytes": 30895,
+    "sha256": "a3c2f540099e6bb3918ffb61b217135b58079d3a5407d7bf8cd7ccf33f7ec27a"
+  },
+  "input": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3\\out\\analysis-inputs-root.json",
+    "bytes": 6881,
+    "sha256": "c1a91fc4d62ba4ce162a0f289560887d8c7dfc3b2f98370b4a606e7c84b07305"
+  },
+  "proposal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\proposal.json",
+    "bytes": 9627,
+    "sha256": "06b3c62694c4ff6abd87ea7ad37b3c13d1aba5b771ed9ffb1034783ed636593e"
+  },
+  "controllerSha256": "9baa2f090040bcedb721bb344c7c12a1940bfc278d55361ff4c7f4711107b3ee",
+  "workerSha256": "2af24677868b6044444c5c0c60768e2f0a59091189210042a544ee8b98c35ace",
+  "helperSha256": "4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12",
+  "sdkStarted": false,
+  "analysisRun": false,
+  "testsRun": false,
+  "pubRun": false,
+  "mainChanged": false,
+  "runtimeAttemptExists": false
+}

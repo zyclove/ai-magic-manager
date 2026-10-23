@@ -1,0 +1,95 @@
+{
+  "schemaVersion": 1,
+  "status": "HISTORICAL_ENVIRONMENT_REFUSAL_SDK_ZERO_NOT_ACCEPTED",
+  "createdAtUtc": "2026-10-23T02:51:43.775323+00:00",
+  "copiedRawFiles": 8,
+  "copiedRawBytes": 13937,
+  "listedFilesExcludingInventory": 10,
+  "listedBytesExcludingInventory": 15613,
+  "copiedEveryFileByteForByte": true,
+  "allRawSourcePinsRecheckedAfterCopy": true,
+  "privateRuntimeFilesRead": false,
+  "sdkStartedByArchiveTask": false,
+  "testsRunByArchiveTask": false,
+  "gitRunByArchiveTask": false,
+  "archiveIsAnEvidenceCopyNotAnExecutableRelocation": true,
+  "facts": {
+    "sourceCommit": "18f270cb6664b9cec92677a1c55d315546e22b4a",
+    "actualToolSession": 93673,
+    "initialToolChunk": "303320",
+    "finalToolChunk": "075487",
+    "naturalExitCode": 1,
+    "outerElapsedSeconds": 43.79067199998826,
+    "sdkCalls": 0,
+    "analysisRun": false,
+    "testsRun": false,
+    "originalStatus": "NOT_ACCEPTED",
+    "environmentRefusal": true,
+    "sourceRedNotEstablished": true,
+    "forcedTermination": false,
+    "wholeProductAccepted": false
+  },
+  "durableReferences": [],
+  "files": [
+    {
+      "sourcePath": null,
+      "archivePath": ".gitattributes",
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "sourcePath": null,
+      "archivePath": "README.md",
+      "bytes": 1668,
+      "sha256": "3f499c47db5cafc5cb0ed5c8e9bef13482e937e56c9c2d5552e4236221fac946"
+    },
+    {
+      "sourcePath": ".cache/guardian-analyze-20261021-r2/attempt/initial-gate.json",
+      "archivePath": "attempt/initial-gate.json",
+      "bytes": 325,
+      "sha256": "81717ea88ba8bd7d6afea5552456318caeb2cb667df6ef03f0b59e0bd869ab9d"
+    },
+    {
+      "sourcePath": ".cache/guardian-analyze-20261021-r2/attempt/postflight-gate.json",
+      "archivePath": "attempt/postflight-gate.json",
+      "bytes": 325,
+      "sha256": "3a037224b52edb32732d13ca52c7046284d749f19247e05db1d4b29ffb9a4463"
+    },
+    {
+      "sourcePath": ".cache/guardian-analyze-20261021-r2/attempt/postflight-pins.json",
+      "archivePath": "attempt/postflight-pins.json",
+      "bytes": 1255,
+      "sha256": "6cbc21e859e03a2f5c1aec61f9596c67d1b19eb573ac03172fa6cae3022ffe7c"
+    },
+    {
+      "sourcePath": ".cache/guardian-analyze-20261021-r2/attempt/receipt.json",
+      "archivePath": "attempt/receipt.json",
+      "bytes": 860,
+      "sha256": "9a8c77bbee87baf1d898d59c65662be3977a977319d21e4fc3f8ffaded2b9c32"
+    },
+    {
+      "sourcePath": ".cache/guardian-analyze-20261021-r2/attempt/request.json",
+      "archivePath": "attempt/request.json",
+      "bytes": 182,
+      "sha256": "be89ba16a8f74c2aa17baae78da504b21fba22e0e97d407a3ce4224d8f482102"
+    },
+    {
+      "sourcePath": ".cache/guardian-analyze-20261021-r2/attempt/result.json",
+      "archivePath": "attempt/result.json",
+      "bytes": 1749,
+      "sha256": "e830deb664f76470d7bdce95fd003f35175882b1ee98822d72e8c05d9a6d9cd8"
+    },
+    {
+      "sourcePath": ".cache/guardian-analyze-20261021-r2/attempt/worker-console.log",
+      "archivePath": "attempt/worker-console.log",
+      "bytes": 87,
+      "sha256": "4417fcb6e86d447e1d78e11b793e8e3c690b5f8dcf81f55541558bcc30fc1c67"
+    },
+    {
+      "sourcePath": ".cache/guardian-analyze-20261021-r2/proposal.json",
+      "archivePath": "candidate/proposal.json",
+      "bytes": 9154,
+      "sha256": "5a321054ee020199025e7c40ab062f5577a0ecf3ade5ec899a131bacdce80490"
+    }
+  ]
+}

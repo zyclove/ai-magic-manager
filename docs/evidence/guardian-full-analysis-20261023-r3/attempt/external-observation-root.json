@@ -1,0 +1,43 @@
+{
+  "status": "FULL_GUARDIAN_ANALYZE_EXTERNALLY_ACCEPTED",
+  "utc": "2026-10-23T02:47:57.469380+00:00",
+  "grant": "guardian-full-analysis-r3-root-20261023",
+  "actualToolSession": 20133,
+  "initialToolChunk": "db2264",
+  "finalToolChunk": "d7a441",
+  "actualNaturalExitCode": 0,
+  "outerElapsedSeconds": 46.289922700000034,
+  "ownedJobActiveProcesses": 0,
+  "knownOwnedPidsAbsent": [
+    44736,
+    4996
+  ],
+  "sdkProcesses": [],
+  "unknownProcessNames": [],
+  "availableRamBytes": 6846382080,
+  "fullAnalysisAccepted": true,
+  "scope": "080e41c seven-root 405-file snapshot, entire Guardian lib/test analysis; no test execution",
+  "diagnostics": {
+    "errors": 0,
+    "warnings": 0,
+    "infos": 0
+  },
+  "candidateAndRuntimeMetadataPinsMatched": 27,
+  "preAndPost": {
+    "complete": true,
+    "sourceFiles": 405,
+    "cacheFiles": 3536,
+    "cacheBytes": 633817159,
+    "packageRows": 70
+  },
+  "analysisCacheProjection": "Unchanged historical parent minus only Chrome unused by analyze; browser phase needs its own current browser pin.",
+  "rawLogSha256": "3f1312814172b8ae324ead49276e7a732c66beedab309929a622d146f37bee8d",
+  "forcedTermination": false,
+  "pubRun": false,
+  "downloadsAllowed": false,
+  "testsRun": false,
+  "browserRun": false,
+  "mainOrFrozenSourceChangedByRunner": false,
+  "servicesUpdated": false,
+  "wholeProductAccepted": false
+}

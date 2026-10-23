@@ -1,0 +1,77 @@
+{
+  "status": "STATIC_PREPARATION_ONLY_R3_ANALYSIS_UNRUN",
+  "candidateImported": false,
+  "candidateExecuted": false,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "pubRun": false,
+  "gitReadOnlyUsedForCommittedExtraction": true,
+  "sourceCommit": "080e41c66a348d48d8ac313cde77e4dd8f36cc47",
+  "sourceFiles": 405,
+  "sevenRootGitTrees": {
+    "apps/guardian": "4e4a84b1ad22c12862cb1353ecc3fb0caa6c85dc",
+    "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+    "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+    "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+    "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+    "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+    "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+  },
+  "mainRawHashesRecorded": true,
+  "mainCrLfNormalizedMatchesCommitted": true,
+  "completeMainAndFrozenMembershipExact": true,
+  "controllerByteIdenticalToR1": true,
+  "controllerTemplateSha256": "9baa2f090040bcedb721bb344c7c12a1940bfc278d55361ff4c7f4711107b3ee",
+  "nativeHelperByteIdenticalToR1": true,
+  "nativeHelperSha256": "4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12",
+  "workerChangesOnly": [
+    "frozen directory r1 to r3",
+    "Root input SHA",
+    "actual complete source count",
+    "phase cache exact parent projection validation excluding only unused Chrome"
+  ],
+  "rootInputPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3\\out\\analysis-inputs-root.json",
+    "bytes": 6881,
+    "sha256": "c1a91fc4d62ba4ce162a0f289560887d8c7dfc3b2f98370b4a606e7c84b07305"
+  },
+  "packageRows": 70,
+  "rebasedInternalRows": 7,
+  "unchangedExternalRowsAndMetadata": 63,
+  "dependencySeedChangeOnlySevenProposedCandidateRootUris": true,
+  "parentCacheManifestSha256": "0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2",
+  "cacheProjection": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3\\out\\cache-analysis-projection.json",
+    "bytes": 724690,
+    "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84"
+  },
+  "cacheTrees": 70,
+  "fixedRuntimeFiles": 32,
+  "cacheFiles": 3536,
+  "excludedFixedFiles": [
+    {
+      "path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+      "expectedSha256": "36a30716f0994b377f1ce6b47cfe35399b9719e31d597fe0ea0d8f3b62aed532",
+      "reason": "existing frozen executable/entry/version pin",
+      "bytes": 4600472,
+      "sha256": "36a30716f0994b377f1ce6b47cfe35399b9719e31d597fe0ea0d8f3b62aed532"
+    }
+  ],
+  "cacheContentsNotRehashedDuringPreparation": true,
+  "fullCacheContentsStillRequiredPreAndPostRuntime": true,
+  "outerBudgetSeconds": 210,
+  "workerBudgetSeconds": 195,
+  "commandCapSeconds": 180,
+  "cleanupReserveSeconds": 5,
+  "postflightReserveSeconds": 25,
+  "astParsedOnly": [
+    "controller.py",
+    "worker.py",
+    "heap1536_windows_job.py"
+  ],
+  "noCandidateOrSdkInvoked": true,
+  "frozenSourceSnapshotWrittenDuringPreparation": true,
+  "mainSourceWritten": false,
+  "currentBranchOrIndexWritten": false,
+  "runtimeWatchdogVerifiedForThisCandidate": false
+}

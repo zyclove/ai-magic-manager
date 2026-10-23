@@ -1,0 +1,33 @@
+{
+  "status": "SCHEMA_FOR_ROOT_ALIGNMENT_ONLY_NOT_EXECUTION_INPUT",
+  "fixedInputPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3\\out\\analysis-inputs-root.json",
+  "phase": "analyze-all-guardian",
+  "pinRowShape": {
+    "path": "absolute path",
+    "bytes": 0,
+    "sha256": "64 lowercase hex"
+  },
+  "fields": {
+    "sourceManifest": "pin row for source-manifest.json (405 raw Git files and corresponding Main raw hashes)",
+    "sevenRootGitTrees": "map of each of the seven fixed repository roots to its approved Git tree object ID",
+    "gitExecutable": "absolute path of the pinned Git executable",
+    "originalPackageConfig": "pin row for the original complete 70-package Main configuration",
+    "candidatePackageConfig": "pin row for the independent candidate 70-package configuration at the frozen Guardian .dart_tool/package_config.json",
+    "dependencyLibraryPins": "pin row for dependency-library-pins.json with 70 package mappings",
+    "internalPackageRoots": "map of seven internal package names to their repository-relative source roots",
+    "cacheManifest": "pin row for cache-analysis-projection.json; exact historical parent minus only analysis-unused Chrome row",
+    "controlRuntimeFiles": "complete approved control-runtime pin rows",
+    "extraRuntimeFiles": "complete approved cmd/Git/SDK bootstrap pin rows",
+    "sdkBootstrap": {
+      "sdkGitRevision": "fixed SDK HEAD",
+      "flutterToolsStampText": "exact stripped existing quoted stamp content",
+      "bootstrapMustBeAbsent": "fixed bootstrap.bat path that must remain absent"
+    },
+    "processPath": "C:/Windows/System32;C:/Program Files/Git/cmd;D:/softwares/flutter/bin/cache/dart-sdk/bin",
+    "forbiddenEnvironmentOverrides": "fixed names whose nonempty inherited values must refuse SDK launch",
+    "cacheProjectionParentManifest": "pin row for unchanged complete parent manifest 0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2; metadata read only"
+  },
+  "unresolvedAlignment": [
+    "SDK flutter_tools pubspec/lock/snapshot readiness is checked; source snapshot pubspec timestamps are not bootstrap inputs."
+  ]
+}

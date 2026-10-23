@@ -1,0 +1,19 @@
+{
+  "utc": "2026-10-21T09:12:47.820646+00:00",
+  "sdkProcesses": [
+    {
+      "pid": 29948,
+      "name": "java.exe"
+    },
+    {
+      "pid": 36664,
+      "name": "java.exe"
+    }
+  ],
+  "unknownProcessNames": [],
+  "availableRamBytes": 1658638336,
+  "diskFreeBytes": {
+    "C:/": 11292790784,
+    "D:/": 34234253312
+  }
+}

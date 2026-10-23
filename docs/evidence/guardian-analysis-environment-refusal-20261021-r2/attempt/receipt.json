@@ -1,0 +1,23 @@
+{
+  "status": "NOT_ACCEPTED",
+  "phaseScope": "FULL_GUARDIAN_ANALYZE",
+  "startedAtUtc": "2026-10-21T09:12:04.752590+00:00",
+  "workerBudgetSeconds": 195,
+  "commandCapSeconds": 180,
+  "commandCleanupReserveSeconds": 5,
+  "minimumPostflightReserveSeconds": 25,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "pubRun": false,
+  "downloadsAllowed": false,
+  "cacheCopied": false,
+  "mainSourceWritten": false,
+  "forcedTermination": false,
+  "errorType": "RuntimeError",
+  "reason": "SDK/unknown process gate failed",
+  "postflightError": "RuntimeError: Fixed runtime content changed: C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  "postflightResourceError": "RuntimeError: SDK/unknown process gate failed",
+  "finishedAtUtc": "2026-10-21T09:12:47.847477+00:00",
+  "elapsedCompleteSeconds": 43.0951034000027,
+  "outerExternalAcceptanceRequired": true
+}

@@ -1,0 +1,76 @@
+--- r1/worker.py
++++ r3/worker.py
+@@ -20,11 +20,11 @@
+ CANDIDATE = Path(__file__).absolute().parent
+ ATTEMPT = CANDIDATE / 'attempt'
+ REPO = CANDIDATE.parents[1]
+-FROZEN = REPO / '.cache/guardian-current-20261021-r1'
++FROZEN = REPO / '.cache/guardian-current-20261023-r3'
+ SOURCE = FROZEN / 'src'
+ MODULE = SOURCE / 'apps/guardian'
+ INPUT = FROZEN / 'out/analysis-inputs-root.json'
+-INPUT_SHA256 = 'effa9742b264f85dac08217eca4a28517ce2b8bfb9782f902c2034a0e0e94cf9'
++INPUT_SHA256 = 'c1a91fc4d62ba4ce162a0f289560887d8c7dfc3b2f98370b4a606e7c84b07305'
+ HELPER_SHA256 = '4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12'
+ ROOTS = ['apps/guardian', 'packages/audit_client', 'packages/commerce_contracts',
+          'packages/notification_client', 'packages/device_operations',
+@@ -181,10 +181,10 @@
+ def source_check():
+     manifest = load_pin(inputs['sourceManifest'])
+     rows = manifest['sourceFiles']
+-    require(manifest['roots'] == ROOTS and len(rows) == 403 and manifest['sourceCount'] == 403,
+-            'Frozen seven-root/403 source boundary changed')
++    require(manifest['roots'] == ROOTS and len(rows) == 405 and manifest['sourceCount'] == 405,
++            'Frozen seven-root/405 source boundary changed')
+     expected = {row['path'] for row in rows}
+-    require(len(expected) == 403, 'Duplicate source input')
++    require(len(expected) == 405, 'Duplicate source input')
+     observed = {}
+     for label, base in [('frozenRawGit', SOURCE), ('mainRaw', REPO)]:
+         actual = set()
+@@ -247,10 +247,32 @@
+ 
+ def cache_check():
+     cache = load_pin(inputs['cacheManifest'])
+-    require(cache['status'] == 'READ_ONLY_CONTENT_COLLECTION_COMPLETE_NOT_SDK_VALIDATION'
+-            and cache['fullAllowlistCollected'] and len(cache['trees']) == 70
+-            and len(cache['fixedFiles']) == 33 and cache['totals']['files'] == 3537,
+-            'Complete collected cache boundary changed')
++    parent = load_pin(inputs['cacheProjectionParentManifest'])
++    require(inputs['cacheProjectionParentManifest']['sha256'] == '0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2'
++            and parent['status'] == 'READ_ONLY_CONTENT_COLLECTION_COMPLETE_NOT_SDK_VALIDATION'
++            and parent['fullAllowlistCollected'] and len(parent['trees']) == 70
++            and len(parent['fixedFiles']) == 33 and parent['totals'] == {'files': 3537, 'bytes': 638417631},
++            'Historical parent cache manifest changed')
++    excluded = [row for row in parent['fixedFiles']
++                if row['path'].replace(chr(92), '/').casefold()
++                == 'c:/program files/google/chrome/application/chrome.exe']
++    require(len(excluded) == 1 and excluded[0]['bytes'] == 4600472
++            and excluded[0]['sha256'] == '36a30716f0994b377f1ce6b47cfe35399b9719e31d597fe0ea0d8f3b62aed532',
++            'Only the known analysis-unused Chrome row may be excluded')
++    require(cache == {
++        'status': 'READ_ONLY_ANALYSIS_CACHE_PROJECTION_NOT_SDK_VALIDATION',
++        'phase': 'analyze-all-guardian',
++        'parentManifest': inputs['cacheProjectionParentManifest'],
++        'excludedFixedFiles': excluded,
++        'exclusionReason': 'The fixed Flutter analyze command does not consume Chrome. A browser test phase must independently pin its current browser executable.',
++        'trees': parent['trees'],
++        'fixedFiles': [row for row in parent['fixedFiles'] if row not in excluded],
++        'totals': {'files': 3536, 'bytes': 633817159},
++        'allRemainingParentRowsPreserved': True,
++        'cacheContentsRehashedDuringProjection': False,
++        'sdkStarted': False, 'pubRun': False, 'browserStarted': False,
++        'cacheCopied': False, 'entireSdkOrBrowserInstallationPinned': False},
++        'Complete analysis-only projection must preserve every remaining parent row')
+     totals = {'files': 0, 'bytes': 0}
+     for spec in cache['trees']:
+         base = Path(spec['root'])
+@@ -279,7 +301,7 @@
+         totals['files'] += 1
+         totals['bytes'] += current['bytes']
+     require(totals == cache['totals'], 'Full cache totals changed')
+-    return {'manifestSha256': inputs['cacheManifest']['sha256'], 'trees': 70, 'fixedFiles': 33,
++    return {'manifestSha256': inputs['cacheManifest']['sha256'], 'trees': 70, 'fixedFiles': 32,
+             'allMembersDirectoriesBytesAndHashesMatch': True, 'totals': totals}
+ 
+ 
