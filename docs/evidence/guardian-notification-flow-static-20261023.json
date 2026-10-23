@@ -1,0 +1,119 @@
+{
+  "status": "APPLIED_STATIC_REVIEW_ONLY_VALIDATION_PENDING",
+  "appliedAtUtc": "2026-10-23T03:58:53.825020+00:00",
+  "parent": "a99b40233fcc7c2b01828b8eb45c3477c4a90249",
+  "applicationManifestSha256": "4d62deb1bae2005b46fa57e8a214d71605a19b3232dcf905cec2fb5a424f38ae",
+  "files": [
+    {
+      "target": "apps/guardian/lib/pages/notifications_page.dart",
+      "operation": "replace_exact_bytes",
+      "source": "src/final/apps/guardian/lib/pages/notifications_page.dart",
+      "before": {
+        "size": 1447,
+        "sha256": "78b8facd828e4eae5ecb240ee81fb4ad007cd1df38681f655285e0c97b364e91"
+      },
+      "after": {
+        "size": 1872,
+        "sha256": "728693256dfba6909b47b619a97861133d57ed9ba0ecd91f829d4bf4059bbe8a"
+      }
+    },
+    {
+      "target": "apps/guardian/lib/ui/help_shortcut.dart",
+      "operation": "replace_exact_bytes",
+      "source": "src/final/apps/guardian/lib/ui/help_shortcut.dart",
+      "before": {
+        "size": 3232,
+        "sha256": "758bce29fca5a22f669fd68c870ddc092d59ba34a79c4b30fafc15620ace5c86"
+      },
+      "after": {
+        "size": 4163,
+        "sha256": "8f89ac3184a8d10385eeed49708c458961e5a84daea0d9b656fe28f3e8f07b7b"
+      }
+    },
+    {
+      "target": "apps/guardian/lib/ui/notifications_view.dart",
+      "operation": "replace_exact_bytes",
+      "source": "src/final-v2/apps/guardian/lib/ui/notifications_view.dart",
+      "before": {
+        "size": 12916,
+        "sha256": "f982bfd301ad52c2fd2d1dc0ad079677d6d2fa687c3aeedfc6fbc20c8c651f8f"
+      },
+      "after": {
+        "size": 14473,
+        "sha256": "8bb6ef841cd151ff4de16492eab7850bb94cd430c16212a369473c4cb8d73b88"
+      }
+    },
+    {
+      "target": "apps/guardian/lib/ui/shell.dart",
+      "operation": "replace_exact_bytes",
+      "source": "src/final/apps/guardian/lib/ui/shell.dart",
+      "before": {
+        "size": 9457,
+        "sha256": "2a3ae193625f11a9c027aa5a234ced368a0e6861f32daa9c2fd22feea0ed7954"
+      },
+      "after": {
+        "size": 10236,
+        "sha256": "9d810d67c38eeb78f5e6f5e4132890efcad676f7a3d57466b5a4b2f410b50ff8"
+      }
+    },
+    {
+      "target": "apps/guardian/lib/pages/console_pages.dart",
+      "operation": "replace_exact_bytes",
+      "source": "src/final/apps/guardian/lib/pages/console_pages.dart",
+      "before": {
+        "size": 85658,
+        "sha256": "805b3b398b1ca93a28d80e5f32603f323ef9113baa856893bb68dfbe4d91fd41"
+      },
+      "after": {
+        "size": 85721,
+        "sha256": "e55f5152e2e183e4d49d9fd101e63cbc800b981573aa6f2a43603d1aaa403fa7"
+      }
+    },
+    {
+      "target": "apps/guardian/test/notification_help_scope_browser_test.dart",
+      "operation": "create_new_exact_bytes",
+      "source": "src/final/apps/guardian/test/notification_help_scope_browser_test.dart",
+      "before": {
+        "exists": false
+      },
+      "after": {
+        "size": 22316,
+        "sha256": "7db37e189d9e162ee901b8d536a6e6845ae42a00ec3ce01a0108956902e3016e"
+      }
+    }
+  ],
+  "design": [
+    "NotificationsPage and HelpShortcut own Session identity and the existing sticky DeviceSubflowScope.",
+    "Old callbacks, polls and late responses are rejected after scope loss or disposal.",
+    "Console and shell entries recreate current journeys for Session/actor/tenant/role/generation changes.",
+    "Each markRead operation clears only its own lock; a replacement repository can operate immediately."
+  ],
+  "regressionSource": {
+    "expandedCases": 7,
+    "identityAndHttpFacts": "SYNTHETIC",
+    "realBehaviorUsed": [
+      "Session.initialize",
+      "Session.selectTenant",
+      "SelectionGeneration",
+      "canOpen",
+      "scopeGeneration"
+    ],
+    "scope": [
+      "generation-only pending selection and selection failure",
+      "late GET/count/PUT",
+      "retained actions after disposal",
+      "repository replacement during pending markRead",
+      "Session identity replacement and listener disposal",
+      "current shell navigation and approval detail",
+      "optional synthetic actor ABA, separately labelled"
+    ],
+    "execution": "UNRUN",
+    "format": "UNRUN",
+    "analysis": "UNRUN"
+  },
+  "priorAnalysisSource": "080e41c66a348d48d8ac313cde77e4dd8f36cc47",
+  "priorAnalysisDoesNotCoverTheseChanges": true,
+  "sdkStarted": false,
+  "wholeUiAccepted": false,
+  "newCodeDeployed": false
+}

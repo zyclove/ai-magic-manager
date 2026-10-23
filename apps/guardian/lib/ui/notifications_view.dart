@@ -17,7 +17,7 @@ class _NotificationsViewState extends State<NotificationsView> {
   InboxSnapshot? snapshot;
   Object? error;
   bool busy = false, unreadOnly = false;
-  bool readInFlight = false;
+  Object? activeRead;
   int generation = 0;
   final cursors = <String?>[null];
   Future<void> Function()? retry;
@@ -33,6 +33,7 @@ class _NotificationsViewState extends State<NotificationsView> {
   void didUpdateWidget(covariant NotificationsView oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.repository != widget.repository) {
+      activeRead = null;
       cursors
         ..clear()
         ..add(null);
@@ -42,7 +43,20 @@ class _NotificationsViewState extends State<NotificationsView> {
     }
   }
 
-  Future<void> load() async {
+  bool current(NotificationRepository repository) =>
+      mounted &&
+      identical(widget.repository, repository) &&
+      repository.current();
+
+  @override
+  void dispose() {
+    generation++;
+    super.dispose();
+  }
+
+  Future<void> load({NotificationRepository? owner}) async {
+    final repository = owner ?? widget.repository;
+    if (!current(repository)) return;
     final request = ++generation;
     setState(() {
       busy = true;
@@ -51,38 +65,45 @@ class _NotificationsViewState extends State<NotificationsView> {
       snapshot = null;
     });
     try {
-      final value = await widget.repository
-          .load(cursor: cursors.last, unreadOnly: unreadOnly);
-      if (!mounted || generation != request) return;
+      final value = await repository.load(
+          cursor: cursors.last, unreadOnly: unreadOnly);
+      if (!current(repository) || generation != request) return;
       setState(() => snapshot = value);
     } catch (failure) {
-      if (mounted && generation == request) {
+      if (current(repository) && generation == request) {
         setState(() {
           error = failure;
-          retry = load;
+          retry = () => load(owner: repository);
         });
       }
     } finally {
-      if (mounted && generation == request) setState(() => busy = false);
+      if (current(repository) && generation == request) {
+        setState(() => busy = false);
+      }
     }
   }
 
-  Future<void> firstPage({bool? filter}) async {
+  Future<void> firstPage({bool? filter, NotificationRepository? owner}) async {
+    final repository = owner ?? widget.repository;
+    if (!current(repository)) return;
     cursors
       ..clear()
       ..add(null);
     if (filter != null) unreadOnly = filter;
     confirmation = null;
-    await load();
+    await load(owner: repository);
   }
 
-  Future<void> read(List<String> selected, {String? requestId}) async {
-    if (readInFlight || busy) return;
-    readInFlight = true;
+  Future<void> read(List<String> selected,
+      {String? requestId, NotificationRepository? owner}) async {
+    final repository = owner ?? widget.repository;
+    if (!current(repository) || activeRead != null || busy) return;
+    final onOpen = widget.onOpen;
+    final operation = Object();
+    activeRead = operation;
     try {
       final ids = List<String>.unmodifiable(selected);
       final request = ++generation;
-      final repository = widget.repository;
       setState(() {
         busy = true;
         error = null;
@@ -92,40 +113,43 @@ class _NotificationsViewState extends State<NotificationsView> {
       try {
         repository.ensureCurrent();
         if (ids.isNotEmpty) await repository.markRead(ids);
-        if (!mounted || generation != request) return;
+        if (!current(repository) || generation != request) return;
         repository.ensureCurrent();
-        if (requestId != null) await widget.onOpen(requestId);
-        if (!mounted || generation != request) return;
+        if (requestId != null) await onOpen(requestId);
+        if (!current(repository) || generation != request) return;
         repository.ensureCurrent();
         confirmation =
             requestId == null ? '已将 ${ids.length} 条通知标为已读，仅影响你的账号。' : null;
         cursors
           ..clear()
           ..add(null);
-        await load();
+        await load(owner: repository);
       } catch (failure) {
-        if (!mounted || generation != request) return;
+        if (!current(repository) || generation != request) return;
         setState(() {
           error = failure;
-          retry = () => read(ids, requestId: requestId);
+          retry = () => read(ids, requestId: requestId, owner: repository);
           if (failure is ApiFailure &&
               (failure.status == 401 ||
                   failure.status == 403 ||
                   failure.code == 'WORKSPACE_CHANGED')) {
             snapshot = null;
-            retry = load;
+            retry = () => load(owner: repository);
           }
         });
       } finally {
-        if (mounted && generation == request) setState(() => busy = false);
+        if (current(repository) && generation == request) {
+          setState(() => busy = false);
+        }
       }
     } finally {
-      readInFlight = false;
+      if (identical(activeRead, operation)) activeRead = null;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final repository = widget.repository;
     final data = snapshot;
     final unreadIds =
         data?.page.items.where((n) => n.unread).map((n) => n.id).toList() ??
@@ -133,7 +157,7 @@ class _NotificationsViewState extends State<NotificationsView> {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       PageHeading('通知中心', '跟进访问申请，及时查看处理进度。',
           action: OutlinedButton.icon(
-              onPressed: busy ? null : firstPage,
+              onPressed: busy ? null : () => firstPage(owner: repository),
               icon: const Icon(Icons.refresh, size: 18),
               label: const Text('刷新通知'))),
       Panel(
@@ -168,14 +192,20 @@ class _NotificationsViewState extends State<NotificationsView> {
               ChoiceChip(
                   label: const Text('全部'),
                   selected: !unreadOnly,
-                  onSelected: busy ? null : (_) => firstPage(filter: false)),
+                  onSelected: busy
+                      ? null
+                      : (_) => firstPage(filter: false, owner: repository)),
               ChoiceChip(
                   label: const Text('未读'),
                   selected: unreadOnly,
-                  onSelected: busy ? null : (_) => firstPage(filter: true)),
+                  onSelected: busy
+                      ? null
+                      : (_) => firstPage(filter: true, owner: repository)),
               OutlinedButton.icon(
                   onPressed:
-                      busy || unreadIds.isEmpty ? null : () => read(unreadIds),
+                      busy || unreadIds.isEmpty
+                          ? null
+                          : () => read(unreadIds, owner: repository),
                   icon: const Icon(Icons.done_all, size: 18),
                   label: const Text('将本页标为已读')),
             ]),
@@ -269,13 +299,16 @@ class _NotificationsViewState extends State<NotificationsView> {
                               onPressed: busy
                                   ? null
                                   : () => read(notice.unread ? [notice.id] : [],
-                                      requestId: notice.requestId),
+                                      requestId: notice.requestId,
+                                      owner: repository),
                               icon: const Icon(Icons.open_in_new, size: 17),
                               label: const Text('查看当前申请')),
                           if (notice.unread)
                             TextButton(
                                 onPressed:
-                                    busy ? null : () => read([notice.id]),
+                                    busy
+                                        ? null
+                                        : () => read([notice.id], owner: repository),
                                 child: const Text('标为已读')),
                         ]),
                       ]))),
@@ -291,30 +324,34 @@ class _NotificationsViewState extends State<NotificationsView> {
                   Text('第 ${cursors.length} 页 · 每页最多 20 条',
                       style: const TextStyle(color: muted, fontSize: 12)),
                   TextButton(
-                      onPressed: busy || cursors.length == 1 ? null : firstPage,
+                      onPressed: busy || cursors.length == 1
+                          ? null
+                          : () => firstPage(owner: repository),
                       child: const Text('返回首页')),
                   OutlinedButton(
                       onPressed: busy || cursors.length == 1
                           ? null
                           : () {
+                              if (!current(repository)) return;
                               cursors.removeLast();
-                              load();
+                              load(owner: repository);
                             },
                       child: const Text('上一页')),
                   OutlinedButton(
                       onPressed: busy || data?.page.nextCursor == null
                           ? null
                           : () {
+                              if (!current(repository)) return;
                               if (cursors.contains(data!.page.nextCursor)) {
                                 setState(() {
                                   error = const ApiFailure(
                                       502, 'INVALID_NOTIFICATION_RESPONSE');
-                                  retry = firstPage;
+                                  retry = () => firstPage(owner: repository);
                                 });
                                 return;
                               }
                               cursors.add(data.page.nextCursor);
-                              load();
+                              load(owner: repository);
                             },
                       child: const Text('下一页')),
                 ])),

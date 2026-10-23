@@ -15,15 +15,19 @@ class ConsoleShell extends StatelessWidget {
   const ConsoleShell({super.key, required this.section});
   NotificationRepository notificationRepository(Session session) {
     final root = session.root, role = session.role;
+    final actor = session.profile?['subject'], tenant = session.tenant?['id'];
+    final generation = session.scopeGeneration;
+    bool current() =>
+        session.authenticated &&
+        session.tenant != null &&
+        session.profile?['subject'] == actor &&
+        session.tenant?['id'] == tenant &&
+        session.root == root &&
+        session.role == role &&
+        session.scopeGeneration == generation &&
+        notificationRoles.contains(role);
     return NotificationRepository(
-        api: session.api,
-        root: root,
-        current: () =>
-            session.authenticated &&
-            session.tenant != null &&
-            session.root == root &&
-            session.role == role &&
-            notificationRoles.contains(role));
+        api: session.api.scoped(current), root: root, current: current);
   }
 
   Widget navigation(BuildContext context, Session s, bool drawer) => Container(
@@ -86,6 +90,9 @@ class ConsoleShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = context.watch<Session>();
+    final notifications = s.tenant != null && s.canOpen('notifications')
+        ? notificationRepository(s)
+        : null;
     final wide = MediaQuery.sizeOf(context).width >= 1000;
     final workspacePicker = s.tenant == null
         ? null
@@ -165,14 +172,22 @@ class ConsoleShell extends StatelessWidget {
                         child: Align(
                             alignment: Alignment.centerLeft,
                             child: workspacePicker)),
-                  if (s.tenant != null && s.canOpen('notifications'))
+                  if (notifications != null)
                     NotificationShortcut(
-                        key: ValueKey('notifications-${s.root}-${s.role}'),
-                        repository: notificationRepository(s),
-                        onOpen: () => context.go('/notifications')),
+                        key: ValueKey(('notifications', s, s.profile?['subject'],
+                            s.tenant?['id'], s.role, s.scopeGeneration)),
+                        repository: notifications,
+                        onOpen: () {
+                          if (context.mounted &&
+                              identical(context.read<Session>(), s) &&
+                              notifications.current()) {
+                            context.go('/notifications');
+                          }
+                        }),
                   if (s.tenant != null && s.canOpen('help-requests'))
                     HelpShortcut(
-                        key: ValueKey('help-${s.root}-${s.role}'),
+                        key: ValueKey(('help', s, s.profile?['subject'],
+                            s.tenant?['id'], s.role, s.scopeGeneration)),
                         session: s,
                         onOpen: () => context.go('/help-requests')),
                   const SizedBox(width: 12),

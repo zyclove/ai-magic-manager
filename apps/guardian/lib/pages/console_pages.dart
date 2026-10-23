@@ -234,7 +234,8 @@ class ConsolePages extends StatelessWidget {
     }
     if (section == 'notifications') {
       return NotificationsPage(
-          key: ValueKey('${s.root}-${s.role}'),
+          key: ValueKey((s, s.profile?['subject'], s.tenant?['id'], s.role,
+              s.scopeGeneration)),
           session: s,
           onOpen: (id) => actions.approvalDetails({'id': id}));
     }
