@@ -1,0 +1,12 @@
+{
+  "status": "TEST_SOURCE_WRITTEN_BEFORE_CANDIDATE_PRODUCTION_NOT_EXECUTED",
+  "atUtc": "2026-10-23T07:02:29.4716129+00:00",
+  "path": "D:/codes/mobile/ai-manager/.cache/identity-transport-candidate-20261023-r1/src/identity-extensions/src/test/java/com/aimanager/identity/ProviderHttpTransportTest.java",
+  "bytes": 24919,
+  "sha256": "93dea7d1bb3d894c2eb6fe9f79fe9c8f29643db0d54bfc359eda342a18b5297b",
+  "declaredTests": 18,
+  "candidateProductionFiles": 0,
+  "redRun": false,
+  "greenRun": false,
+  "sdkRun": false
+}

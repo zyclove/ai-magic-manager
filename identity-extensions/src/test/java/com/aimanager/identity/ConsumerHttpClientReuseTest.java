@@ -61,12 +61,12 @@ class ConsumerHttpClientReuseTest {
     var client=mock(HttpClient.class);
     var builder=mock(HttpClient.Builder.class,RETURNS_SELF);
     when(builder.build()).thenReturn(client);
-    when(client.send(any(HttpRequest.class),org.mockito.ArgumentMatchers.<HttpResponse.BodyHandler<String>>any()))
+    when(client.sendAsync(any(HttpRequest.class),org.mockito.ArgumentMatchers.<HttpResponse.BodyHandler<byte[]>>any()))
         .thenAnswer(invocation->{
           HttpRequest request=invocation.getArgument(0);
-          return response(request.uri().getHost().equals("api.weixin.qq.com")
+          return java.util.concurrent.CompletableFuture.completedFuture(response(request.uri().getHost().equals("api.weixin.qq.com")
               ?"{\"access_token\":\"synthetic-token\",\"openid\":\"wechat-a\"}"
-              :"{\"Code\":\"OK\"}");
+              :"{\"Code\":\"OK\"}"));
         });
     try(var runtimes=mockStatic(ConsumerProviderRuntime.class);
         var clients=mockStatic(HttpClient.class)) {
@@ -83,7 +83,7 @@ class ConsumerHttpClientReuseTest {
         fixture.verify("not-an-otp");
         assertEquals(0,fixture.successes);
         assertEquals(ConsumerAccountFlowTest.OLD,user.getFirstAttribute("consumer_phone_number"));
-        verify(client,times(2)).send(any(HttpRequest.class),org.mockito.ArgumentMatchers.<HttpResponse.BodyHandler<String>>any());
+        verify(client,times(2)).sendAsync(any(HttpRequest.class),org.mockito.ArgumentMatchers.<HttpResponse.BodyHandler<byte[]>>any());
         verify(builder,times(1)).build();
       } finally {
         factory.close();
@@ -117,10 +117,10 @@ class ConsumerHttpClientReuseTest {
   }
 
   @SuppressWarnings("unchecked")
-  private static HttpResponse<String> response(String body) {
-    HttpResponse<String> response=mock(HttpResponse.class);
+  private static HttpResponse<byte[]> response(String body) {
+    HttpResponse<byte[]> response=mock(HttpResponse.class);
     when(response.statusCode()).thenReturn(200);
-    when(response.body()).thenReturn(body);
+    when(response.body()).thenReturn(body.getBytes(java.nio.charset.StandardCharsets.UTF_8));
     return response;
   }
 }

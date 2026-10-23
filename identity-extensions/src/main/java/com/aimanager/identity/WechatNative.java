@@ -24,7 +24,6 @@ public final class WechatNative {
   }
   public static Transport httpTransport(HttpClient client){
     java.util.Objects.requireNonNull(client);
-    return uri->{try{var response=client.send(HttpRequest.newBuilder(uri).timeout(Duration.ofSeconds(5)).GET().build(),HttpResponse.BodyHandlers.ofString());return new AliyunSms.Response(response.statusCode(),response.body());}
-      catch(InterruptedException e){Thread.currentThread().interrupt();throw new IOException("WeChat request interrupted");}};
+    return uri->ProviderHttpTransport.send(client,()->HttpRequest.newBuilder(uri).timeout(Duration.ofSeconds(5)).GET().build());
   }
 }

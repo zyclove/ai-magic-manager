@@ -46,11 +46,10 @@ public final class AliyunSms implements PhoneOtp.Sender {
   static String form(Map<String,String> values){return values.entrySet().stream().map(entry->encode(entry.getKey())+"="+encode(entry.getValue())).collect(java.util.stream.Collectors.joining("&"));}
   public static Transport httpTransport(HttpClient client){
     java.util.Objects.requireNonNull(client);
-    return request->{
+    return request->ProviderHttpTransport.send(client,()->{
       HttpRequest.Builder builder=HttpRequest.newBuilder(request.uri()).timeout(Duration.ofSeconds(5)).POST(HttpRequest.BodyPublishers.ofString(request.body(),StandardCharsets.UTF_8));
       request.headers().forEach((key,value)->{if(!key.equalsIgnoreCase("host"))builder.header(key,value);});
-      try{var response=client.send(builder.build(),HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));return new Response(response.statusCode(),response.body());}
-      catch(InterruptedException e){Thread.currentThread().interrupt();throw new IOException("SMS request interrupted");}
-    };
+      return builder.build();
+    });
   }
 }

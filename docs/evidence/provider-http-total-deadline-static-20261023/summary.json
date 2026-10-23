@@ -1,0 +1,126 @@
+{
+  "status": "PROVIDER_TOTAL_DEADLINE_SOURCE_APPLIED_STATIC_ONLY_UNCOMPILED_UNRUN",
+  "atUtc": "2026-10-23T07:46:58.592194+00:00",
+  "parent": "a05a0888712ee600236e909997eb330837ad9aeb",
+  "productionFiles": 3,
+  "testFiles": 2,
+  "sourceFiles": [
+    {
+      "relativePath": "identity-extensions/src/main/java/com/aimanager/identity/ProviderHttpTransport.java",
+      "operation": "ADD",
+      "after": {
+        "path": "D:/codes/mobile/ai-manager/.cache/identity-transport-candidate-20261023-r2/src/identity-extensions/src/main/java/com/aimanager/identity/ProviderHttpTransport.java",
+        "bytes": 7654,
+        "sha256": "943be6c9cac25568279789a31b77c7bbbefeed8a71795b7aa7921c314077cab4"
+      },
+      "before": null,
+      "r1After": {
+        "path": "D:/codes/mobile/ai-manager/.cache/identity-transport-candidate-20261023-r1/src/identity-extensions/src/main/java/com/aimanager/identity/ProviderHttpTransport.java",
+        "bytes": 7654,
+        "sha256": "943be6c9cac25568279789a31b77c7bbbefeed8a71795b7aa7921c314077cab4"
+      },
+      "changedFromR1": false,
+      "mainStillBeforeOrAbsent": true,
+      "gitBlobSha1": "db2f7f5e13fa7abaab685a5c5b88c4dab990657f"
+    },
+    {
+      "relativePath": "identity-extensions/src/main/java/com/aimanager/identity/AliyunSms.java",
+      "operation": "MODIFY",
+      "after": {
+        "path": "D:/codes/mobile/ai-manager/.cache/identity-transport-candidate-20261023-r2/src/identity-extensions/src/main/java/com/aimanager/identity/AliyunSms.java",
+        "bytes": 4553,
+        "sha256": "8f36a458fd9df21eb76aa582987db8c63c4ff69fa76e024ca38a81c7e25145a7"
+      },
+      "before": {
+        "path": "D:/codes/mobile/ai-manager/.cache/identity-transport-candidate-20261023-r2/before/AliyunSms.java",
+        "bytes": 4778,
+        "sha256": "6dcf7f9b7182f1800a81b407d9a373c0b6dfaaa8043d1d12e694dad32fb8da8b"
+      },
+      "r1After": {
+        "path": "D:/codes/mobile/ai-manager/.cache/identity-transport-candidate-20261023-r1/src/identity-extensions/src/main/java/com/aimanager/identity/AliyunSms.java",
+        "bytes": 4553,
+        "sha256": "8f36a458fd9df21eb76aa582987db8c63c4ff69fa76e024ca38a81c7e25145a7"
+      },
+      "changedFromR1": false,
+      "mainStillBeforeOrAbsent": true,
+      "gitBlobSha1": "b007d17b390df8a3866c55018731d6119d7b54e6"
+    },
+    {
+      "relativePath": "identity-extensions/src/main/java/com/aimanager/identity/WechatNative.java",
+      "operation": "MODIFY",
+      "after": {
+        "path": "D:/codes/mobile/ai-manager/.cache/identity-transport-candidate-20261023-r2/src/identity-extensions/src/main/java/com/aimanager/identity/WechatNative.java",
+        "bytes": 1761,
+        "sha256": "533f3411c92c81223c6e7625c0551f0c6cb38f0ffd2edd9ea1ebaa3e9f007c63"
+      },
+      "before": {
+        "path": "D:/codes/mobile/ai-manager/.cache/identity-transport-candidate-20261023-r2/before/WechatNative.java",
+        "bytes": 1987,
+        "sha256": "459d446dc9c4a911f56b68b637aa6f9b6e5cda5c5a9cbec2635b885cc4541535"
+      },
+      "r1After": {
+        "path": "D:/codes/mobile/ai-manager/.cache/identity-transport-candidate-20261023-r1/src/identity-extensions/src/main/java/com/aimanager/identity/WechatNative.java",
+        "bytes": 1761,
+        "sha256": "533f3411c92c81223c6e7625c0551f0c6cb38f0ffd2edd9ea1ebaa3e9f007c63"
+      },
+      "changedFromR1": false,
+      "mainStillBeforeOrAbsent": true,
+      "gitBlobSha1": "6c7af5f83acbaa09a4c41c4c4940502cef210d93"
+    },
+    {
+      "relativePath": "identity-extensions/src/test/java/com/aimanager/identity/ConsumerHttpClientReuseTest.java",
+      "operation": "MODIFY",
+      "after": {
+        "path": "D:/codes/mobile/ai-manager/.cache/identity-transport-candidate-20261023-r2/src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerHttpClientReuseTest.java",
+        "bytes": 5863,
+        "sha256": "27985051a0ec21630ef456c99ea917c00be5fe3d3d799db4fd3f41ef4b7c22e8"
+      },
+      "before": {
+        "path": "D:/codes/mobile/ai-manager/.cache/identity-transport-candidate-20261023-r2/before/ConsumerHttpClientReuseTest.java",
+        "bytes": 5747,
+        "sha256": "3128eb0abaf10cc5123c64684f3e7cb27a7f5cc872ba64312f6d5acd422b5d54"
+      },
+      "r1After": {
+        "path": "D:/codes/mobile/ai-manager/.cache/identity-transport-candidate-20261023-r1/src/identity-extensions/src/test/java/com/aimanager/identity/ConsumerHttpClientReuseTest.java",
+        "bytes": 5863,
+        "sha256": "27985051a0ec21630ef456c99ea917c00be5fe3d3d799db4fd3f41ef4b7c22e8"
+      },
+      "changedFromR1": false,
+      "mainStillBeforeOrAbsent": true,
+      "gitBlobSha1": "7e0d49ec850272da687b7a90cd04885d9f93750b"
+    },
+    {
+      "relativePath": "identity-extensions/src/test/java/com/aimanager/identity/ProviderHttpTransportTest.java",
+      "operation": "ADD",
+      "after": {
+        "path": "D:/codes/mobile/ai-manager/.cache/identity-transport-candidate-20261023-r2/src/identity-extensions/src/test/java/com/aimanager/identity/ProviderHttpTransportTest.java",
+        "bytes": 31874,
+        "sha256": "cb9b8131eedb97c0b76005ba4593c72b0c57344105e3698ca0b51a8090858164"
+      },
+      "before": null,
+      "r1After": {
+        "path": "D:/codes/mobile/ai-manager/.cache/identity-transport-candidate-20261023-r1/src/identity-extensions/src/test/java/com/aimanager/identity/ProviderHttpTransportTest.java",
+        "bytes": 27732,
+        "sha256": "087041b5f742ac1285ca664451e235172bbe9a1a737928383efcf8ae1690e2d9"
+      },
+      "changedFromR1": true,
+      "mainStillBeforeOrAbsent": true,
+      "gitBlobSha1": "a866a43d979fb3166f0cad306fddd6991bbba0f4"
+    }
+  ],
+  "requestTotalDeadlineSeconds": 5,
+  "responseByteLimit": 65536,
+  "newTestDeclarations": 22,
+  "projectedModuleTestDeclarations": 98,
+  "countsAreStaticOnly": true,
+  "r1ConcurrencyCoverageGap": "CLOSED_IN_TEST_SOURCE_R2_NOT_EXECUTED",
+  "javaParserOrCompilerRun": false,
+  "testsRun": false,
+  "actualNetworkCancellationVerified": false,
+  "http2CancellationVerified": false,
+  "factoryPomDeploymentChanged": false,
+  "synchronousCustomSupplierOrSendAsyncPreemptible": false,
+  "oldBodyDeadline79Result": "UNCHANGED_77_PASS_2_ASSERTION_FAILURES_NOT_ACCEPTED",
+  "servicesUpdated": false,
+  "wholeProductAccepted": false
+}
