@@ -14,7 +14,8 @@ import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.transaction.support.TransactionTemplate;
 
-class ErasureRecoveryJobsTest {
+class ErasureRecoveryJobsTest implements AutoCloseable {
+  private final List<DataSource> ownedH2Sources = new ArrayList<>();
   DataSource business, journal;
   JdbcTemplate db, ledgerDb;
   String id;
@@ -32,10 +33,34 @@ class ErasureRecoveryJobsTest {
     if (env.containsKey(prefix + "_URL")
         && !url.matches("jdbc:mysql://127\\.0\\.0\\.1:3308/notification_it_[a-f0-9]{32}\\?.*"))
       throw new IllegalArgumentException("Recovery tests require isolated schemas");
-    return new DriverManagerDataSource(
+    var source = new DriverManagerDataSource(
         url,
         env.getOrDefault(prefix + "_USERNAME", "sa"),
         env.getOrDefault(prefix + "_PASSWORD", ""));
+    if (!env.containsKey(prefix + "_URL")) {
+      // Keep the owned address private even if a test replaces or changes its source.
+      ownedH2Sources.add(new DriverManagerDataSource(url, source.getUsername(), source.getPassword()));
+    }
+    return source;
+  }
+
+  @Override
+  @AfterEach
+  public void close() {
+    var owned = List.copyOf(ownedH2Sources);
+    ownedH2Sources.clear();
+    IllegalStateException failure = null;
+    for (var source : owned) {
+      try {
+        new JdbcTemplate(source).execute("SHUTDOWN");
+      } catch (RuntimeException error) {
+        if (failure == null) {
+          failure = new IllegalStateException("Unable to close fixture-owned H2 databases");
+        }
+        failure.addSuppressed(error);
+      }
+    }
+    if (failure != null) throw failure;
   }
 
   @BeforeEach

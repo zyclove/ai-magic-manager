@@ -8,7 +8,7 @@ import java.util.concurrent.*;
 import org.junit.jupiter.api.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-class ErasureAccessQuotaProcessorTest {
+class ErasureAccessQuotaProcessorTest implements AutoCloseable {
   ErasureObservationProcessorTest fixture;
   JdbcTemplate db;
   ErasureAccessQuotaProcessor processor;
@@ -35,6 +35,12 @@ class ErasureAccessQuotaProcessorTest {
 
   String id() {
     return UUID.randomUUID().toString();
+  }
+
+  @Override
+  @AfterEach
+  public void close() {
+    if (fixture != null) fixture.close();
   }
 
   @BeforeEach

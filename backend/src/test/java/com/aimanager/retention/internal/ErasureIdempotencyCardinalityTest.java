@@ -24,6 +24,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
@@ -35,7 +36,7 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.transaction.support.TransactionTemplate;
 
 /** 真实事务和独立删除账本的边界验收；不表示普通 HTTP 在恢复暂停期间返回 410。 */
-class ErasureIdempotencyCardinalityTest {
+class ErasureIdempotencyCardinalityTest implements AutoCloseable {
   private static final String ACTOR = "cardinality-fixture-actor";
   private static final String OPERATION = "reports.cardinality-fixture";
   private static final String SHARED_KEY = "shared-two-hundred-subjects";
@@ -53,6 +54,12 @@ class ErasureIdempotencyCardinalityTest {
   private String tenant;
 
   record SharedResponse(List<String> subjectIds, String description) {}
+
+  @Override
+  @AfterEach
+  public void close() {
+    if (fixture != null) fixture.close();
+  }
 
   @BeforeEach
   void setup() {

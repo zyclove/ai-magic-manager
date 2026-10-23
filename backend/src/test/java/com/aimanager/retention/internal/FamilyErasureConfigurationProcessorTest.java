@@ -3,17 +3,24 @@ package com.aimanager.retention.internal;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-class FamilyErasureConfigurationProcessorTest {
+class FamilyErasureConfigurationProcessorTest implements AutoCloseable {
   static final List<String> FAMILY_COPIES = List.of(
       "family_rules", "family_ai_suggestions", "family_access_requests",
       "family_runtime_reports", "family_temporary_grants");
   ErasureConfigurationProcessorTest fixture;
   JdbcTemplate db;
   String tenant;
+
+  @Override
+  @AfterEach
+  public void close() {
+    if (fixture != null) fixture.close();
+  }
 
   @BeforeEach
   void setup() {

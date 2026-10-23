@@ -3,6 +3,7 @@ package com.aimanager.retention.internal;
 import static org.assertj.core.api.Assertions.*;
 
 import java.util.Objects;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -10,9 +11,15 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /** Pending test proposal: real schema, bounded cleanup and no cross-subject erasure. */
-class ErasurePreparationRequestsTest {
+class ErasurePreparationRequestsTest implements AutoCloseable {
   ErasureManagedBindingProcessorTest f;
   JdbcTemplate db;
+
+  @Override
+  @AfterEach
+  public void close() {
+    if (f != null) f.close();
+  }
 
   @BeforeEach
   void setup() {

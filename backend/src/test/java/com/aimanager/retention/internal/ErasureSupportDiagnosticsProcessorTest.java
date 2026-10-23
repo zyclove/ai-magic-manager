@@ -8,7 +8,7 @@ import java.util.concurrent.*;
 import org.junit.jupiter.api.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-class ErasureSupportDiagnosticsProcessorTest {
+class ErasureSupportDiagnosticsProcessorTest implements AutoCloseable {
   ErasureObservationProcessorTest fixture;
   JdbcTemplate db;
   ErasureSupportDiagnosticsProcessor processor;
@@ -16,6 +16,12 @@ class ErasureSupportDiagnosticsProcessorTest {
 
   String id() {
     return UUID.randomUUID().toString();
+  }
+
+  @Override
+  @AfterEach
+  public void close() {
+    if (fixture != null) fixture.close();
   }
 
   @BeforeEach

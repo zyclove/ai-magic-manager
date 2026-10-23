@@ -10,7 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-class ErasurePermissionObservationTest {
+class ErasurePermissionObservationTest implements AutoCloseable {
   private static final List<String> STORES =
       List.of(
           "device_permission_observation_snapshots",
@@ -18,6 +18,12 @@ class ErasurePermissionObservationTest {
           "device_permission_observation_settings");
   ErasureObservationProcessorTest fixture;
   JdbcTemplate db;
+
+  @Override
+  @AfterEach
+  public void close() {
+    if (fixture != null) fixture.close();
+  }
 
   @BeforeEach
   void setup() {

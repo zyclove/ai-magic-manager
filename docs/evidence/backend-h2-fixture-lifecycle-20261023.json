@@ -1,0 +1,239 @@
+{
+  "schemaVersion": 1,
+  "date": "2026-10-23",
+  "status": "TARGETED_FIXTURE_RED_GREEN_VERIFIED_FULL_REGRESSION_PENDING",
+  "scope": "Test-owned UUID H2 fixture lifecycle only",
+  "productionChanged": false,
+  "pomChanged": false,
+  "originalSourceFiles": 674,
+  "greenSourceFiles": 675,
+  "originalSourceManifestSha256": "3c9d6003ff7d4fa68c7e179d0cecf76ea3ad138123ebf9106d71e99eb787bbab",
+  "greenSourceManifestSha256": "3bab1f701a6ae444c935a80b4fdb12de5e359e50e80aa8cc19b79291922c0dd9",
+  "existingFixtureFilesChanged": 14,
+  "lifecycleTestFilesAdded": 1,
+  "originalBusinessCasesPreserved": 304,
+  "changedFixtures": [
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureRecoveryJobsTest.java",
+      "baseSha256": "c0ff2dd9bc72295d6b6fa6a933bfc6383fa1c5ff9716b058620ed4cf0291b7e1",
+      "greenSha256": "6d528b1ec4813ad53599a2a5528265a705238520d02794dd0c76df7433a848d4"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureObservationProcessorTest.java",
+      "baseSha256": "0b6b38ded01015ac0f4dcfea4dabbe0dfd6b0cfbe17c64c55db64d2b8eac189c",
+      "greenSha256": "ba29044cecfa5c0fe9229dbe840b0bbeda9ca848c20a7c4f526d3e0efbab9aa3"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureRecoveryBatchTest.java",
+      "baseSha256": "057a55e7a96b3fabca92697aa5fef18ad08f4584f9aaf5391712e7579dc76b5b",
+      "greenSha256": "3fc1ca1ecc52d0aa6d28c054c57242c6038db79a744dfe92203d3970b7def30c"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureAccessQuotaProcessorTest.java",
+      "baseSha256": "27a260cac1de129a48bf7aa1a2655e3dfcb55d49ab668da8c5bd98a439b605a4",
+      "greenSha256": "e84e87405d4a11ad216576e826303eba8f1875e42d619f56db8cc229723c5221"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureConfigurationProcessorTest.java",
+      "baseSha256": "e3577b1a57977e9e59b9284fa9c948f7b26e5a28b80dbb64d59c4fd387c43025",
+      "greenSha256": "fa1febbcd5932cf521ae1100ec6e80d7d29d3d856663dc3f5e63774f3eb4b44d"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureDeviceIdentityProcessorTest.java",
+      "baseSha256": "b8f97c485e0018439cca8d7f68b4e6f6b1abc40815c57ba001f2b915749ff656",
+      "greenSha256": "d8fc7ca0ad4240728808a4d4351052a0b662e576b8766acfab825d053df8d8b1"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureIdempotencyCardinalityTest.java",
+      "baseSha256": "769c208c8536705505d5414e594b92abe1f8c8d26e9918566fe2ffe01107226d",
+      "greenSha256": "65ef8757c1de083379124d8807ce8e8683fab2449cd22f4ed342ce3f1a7958f5"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureIdempotencyProcessorTest.java",
+      "baseSha256": "eb3bcec7303a80e1718f7a992770eb010a2225e51ef6d6a8053e4eaf31ce29b9",
+      "greenSha256": "0b73f697ab78c3049f342c83d8408135faa9dea0d9ed2365a6b117054cfefc59"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureLifecycleProcessorTest.java",
+      "baseSha256": "7d2a6823947c56c7c61e944ffcdd69811ff72250292333f4eeb74f05cb0aacf5",
+      "greenSha256": "c0acdeab4173f6e02252423d87dd533c3a8db228611c61631f3b85a4d7b61508"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureManagedBindingProcessorTest.java",
+      "baseSha256": "ba16fcf8970f0b362c5165c517031e1acd292d71db90f5a0808f96aa86fb9b6b",
+      "greenSha256": "ae24a758ce6d7e67609b602f369935ab5298db7873c47469f267843c700777f2"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasurePermissionObservationTest.java",
+      "baseSha256": "4f515c705ce66becbfddb3e9f7ca4a1fb9d73e559ca5cac5b29f23d0a8d6452b",
+      "greenSha256": "ee75578e2444f9cfe1b7275cea0e4f2137c3e67f3874564be023d7fa09c7c021"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasurePreparationRequestsTest.java",
+      "baseSha256": "3c2d00174b5dc150046afdc64421673f3f42c4e6f3cea63db79b8b4e8b604c45",
+      "greenSha256": "b5aeec81cd49242b2eb6e1c86404b54193b03d33d38db1d3cadfb088b00aa7b0"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureSupportDiagnosticsProcessorTest.java",
+      "baseSha256": "bbf458ef62e60c3323fc1f5a5fe0804fc6c745e890a3b250da5d77670e54cdb0",
+      "greenSha256": "5d774546fc94f37c1bbb5b622231d47fa771c1ddb97317864dc336842482260a"
+    },
+    {
+      "path": "backend/src/test/java/com/aimanager/retention/internal/FamilyErasureConfigurationProcessorTest.java",
+      "baseSha256": "47cfd8f92f6c51a91932fb918c2d89579f49f5b9fae8ea2d6aa5cd7193cb4292",
+      "greenSha256": "c368dab56dd50790d0d6bb39ec743664a9833f9be93264f912acef48394e389e"
+    }
+  ],
+  "lifecycleTest": {
+    "path": "backend/src/test/java/com/aimanager/retention/internal/ErasureRecoveryFixtureLifecycleTest.java",
+    "sha256": "48fb298099b3e3d05cf4fea97f9599432cf98cb95125e44dd57df7d1ed44afac",
+    "cases": 4
+  },
+  "cleanupBoundary": "Only instance-registered factory-created UUID H2 databases; external MySQL and replacement fields excluded",
+  "red": {
+    "actualToolSession": 67585,
+    "initialToolChunk": "995870",
+    "finalToolChunk": "882c63",
+    "actualNaturalSupervisorExitCode": 0,
+    "mavenNaturalExitCode": 1,
+    "elapsedSeconds": 65.12075930000003,
+    "tests": 4,
+    "expectedAssertionFailures": 2,
+    "passed": 2,
+    "errors": 0,
+    "skipped": 0,
+    "exactNormalAndPartialInitializationRetentionMarkers": true,
+    "externalObservationSha256": "49e40ecad5c3bbfb87bd72aad00f865795189e0de0389c80b990b358b77cd047",
+    "xmlSha256": "659f787c3c2b3eb689b930f95cbabc1cd7fc533a9808a4376bcb63a8ecc072de",
+    "resultSha256": "c6e4735fcac94c4326d6980b3f7603f7bb36fca0a50bd76982c7928be95715e3"
+  },
+  "green": {
+    "actualToolSession": 19263,
+    "initialToolChunk": "91128d",
+    "finalToolChunk": "ff9d52",
+    "actualNaturalSupervisorExitCode": 0,
+    "mavenNaturalExitCode": 0,
+    "elapsedSeconds": 103.29828210000005,
+    "classes": 15,
+    "tests": 308,
+    "passed": 308,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "allXmlFresh": true,
+    "allXmlCacheMaxSize": 4,
+    "completeOrdinarySurefireSuccessFooter": true,
+    "ownedJobsTerminalAndEmpty": true,
+    "forcedTermination": false,
+    "sourceGreen675x3Original674AndRuntime188PostflightMatched": true,
+    "externalReleaseAtUtc": "2026-10-23T03:03:15.913728+00:00",
+    "releaseSdkCount": 0,
+    "releaseUnknownNames": 0,
+    "knownOwnedPidsAbsent": [
+      34184,
+      25664,
+      52100,
+      29620
+    ],
+    "releaseAvailableRamBytes": 6269784064,
+    "proposalSha256": "c5f38b43a6266d9663059537e1ac6535e61986cfd3a09ca1bc6181185271dbc0",
+    "resultSha256": "e6fa1ec362c9260d2653b3cf2d617adc353b9ecf69ae5520f7be8130fbced2f6",
+    "logSha256": "081fd9daf00bd9d9c2539b219bcefeda24cd392c47cfed51ddc53801c03d4718",
+    "externalObservationSha256": "e628af87fa5de8b9b6ed4505c110cec8af73dcbaec3e7aa1da88bcc0d9464126",
+    "reports": [
+      {
+        "path": "src/target/surefire-reports/TEST-com.aimanager.retention.internal.ErasureAccessQuotaProcessorTest.xml",
+        "tests": 31,
+        "sha256": "f9acf748cbe06914580c29e2722e5b25eb0f2c3bde0d94e876740a6fe65f3c7e"
+      },
+      {
+        "path": "src/target/surefire-reports/TEST-com.aimanager.retention.internal.ErasureConfigurationProcessorTest.xml",
+        "tests": 34,
+        "sha256": "2730f862aabc8db392e96040e2ece83c58e8c85a47395125c28888cba32d8700"
+      },
+      {
+        "path": "src/target/surefire-reports/TEST-com.aimanager.retention.internal.ErasureDeviceIdentityProcessorTest.xml",
+        "tests": 27,
+        "sha256": "f42d5eb7fc468f3ce2f5721b2389302b874802538b29d6382db1495ca279b6b8"
+      },
+      {
+        "path": "src/target/surefire-reports/TEST-com.aimanager.retention.internal.ErasureIdempotencyCardinalityTest.xml",
+        "tests": 5,
+        "sha256": "0b87d2e6357e5edff65d3ad7d5ab84cfaeeb0603b4b5ff0c0883d0ef48dfedc6"
+      },
+      {
+        "path": "src/target/surefire-reports/TEST-com.aimanager.retention.internal.ErasureIdempotencyProcessorTest.xml",
+        "tests": 24,
+        "sha256": "ec6758dd9389a9754e73b93eebbd86fc97f457f3866e578e79335b5fe459bd45"
+      },
+      {
+        "path": "src/target/surefire-reports/TEST-com.aimanager.retention.internal.ErasureLifecycleProcessorTest.xml",
+        "tests": 51,
+        "sha256": "38bc78521a208920f0f34f88a6581f2b2f8d57426ce070469c49b6f6a9d4407c"
+      },
+      {
+        "path": "src/target/surefire-reports/TEST-com.aimanager.retention.internal.ErasureManagedBindingProcessorTest.xml",
+        "tests": 33,
+        "sha256": "9fd79705736aedf8a0040bc22af54d80abd7e20dfc702d9bb463dd6f86a60858"
+      },
+      {
+        "path": "src/target/surefire-reports/TEST-com.aimanager.retention.internal.ErasureObservationProcessorTest.xml",
+        "tests": 17,
+        "sha256": "6f63171d9a2de4d74f28a0ace91133f8cda0d4f3ba88302db05725a990fb8005"
+      },
+      {
+        "path": "src/target/surefire-reports/TEST-com.aimanager.retention.internal.ErasurePermissionObservationTest.xml",
+        "tests": 15,
+        "sha256": "2dfc951524166e14f25acfe317cd0978e19116165cde96517816c59556b2c919"
+      },
+      {
+        "path": "src/target/surefire-reports/TEST-com.aimanager.retention.internal.ErasurePreparationRequestsTest.xml",
+        "tests": 11,
+        "sha256": "3493870f3485c4df229a7c21258e4e04f660a1bda98176232123ff5b8fad2bec"
+      },
+      {
+        "path": "src/target/surefire-reports/TEST-com.aimanager.retention.internal.ErasureRecoveryBatchTest.xml",
+        "tests": 8,
+        "sha256": "ff5a5fe2c269cdcd29df4c5e0de76c8421d21eb4fb6ce3864a4cb04a03c3123f"
+      },
+      {
+        "path": "src/target/surefire-reports/TEST-com.aimanager.retention.internal.ErasureRecoveryFixtureLifecycleTest.xml",
+        "tests": 4,
+        "sha256": "f8eebd270392e9ebf09794d7ff8941baab79d8146434160f60972d1b8a9d07bb"
+      },
+      {
+        "path": "src/target/surefire-reports/TEST-com.aimanager.retention.internal.ErasureRecoveryJobsTest.xml",
+        "tests": 17,
+        "sha256": "7ad5011c196f42e5c62b35a29384a796bfe9c5c2498291e072e8e91d44260745"
+      },
+      {
+        "path": "src/target/surefire-reports/TEST-com.aimanager.retention.internal.ErasureSupportDiagnosticsProcessorTest.xml",
+        "tests": 24,
+        "sha256": "076fb2a0f1bcc4c8b92a00ef776a1b37be9a51f7b6fd7369a2ccd76a610e3382"
+      },
+      {
+        "path": "src/target/surefire-reports/TEST-com.aimanager.retention.internal.FamilyErasureConfigurationProcessorTest.xml",
+        "tests": 7,
+        "sha256": "23e681d01263a04ca56f73acecd4a4704bac7ec7981f5839b0104e323e33fc0b"
+      }
+    ]
+  },
+  "fullBackendAccepted": false,
+  "confirmedTimeoutOrOomCause": false,
+  "actualMySqlOrSmsWeChatPaymentAndroidAccepted": false,
+  "salesOpened": false,
+  "remaining": "Separate reviewed 600-second full-backend run with GREEN675; real provider/device acceptance remains separate",
+  "artifactDirectory": ".local/family-payment-terminal-20261021/artifacts/backend/h2-green-h2g1-20261023",
+  "independentRuntimeCrosschecks": [
+    {
+      "path": ".cache/family-payment-terminal-20261021/backend/out/h2-green/h2g1/root-external-observation.json",
+      "sha256": "f91309c695e45c415e2dabfe678aca0b2fea3abc6080bb22bb82a61c87875d8a",
+      "scope": "Root coordinator independently re-parsed all original reports and actual natural-termination metadata"
+    },
+    {
+      "path": ".cache/family-h2-20261023/review-h2g1-runtime.json",
+      "sha256": "ca0888149935e16c80156df1b2bc1d75c3e231975a1ccc8ad11d5a4c86506de5",
+      "scope": "Independent raw XML, log, actual metadata and fresh byte verification of675x3+674+188"
+    }
+  ]
+}

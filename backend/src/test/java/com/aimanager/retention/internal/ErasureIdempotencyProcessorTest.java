@@ -13,7 +13,7 @@ import org.junit.jupiter.api.*;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-class ErasureIdempotencyProcessorTest {
+class ErasureIdempotencyProcessorTest implements AutoCloseable {
   private static final String STEP = "IDEMPOTENCY_RESPONSES";
   private static final String ZERO_HASH = "0".repeat(64);
   ErasureObservationProcessorTest fixture;
@@ -22,6 +22,12 @@ class ErasureIdempotencyProcessorTest {
   String tenant, subject, peer;
 
   record Cache(String scope, String actor, String operation, String key) {}
+
+  @Override
+  @AfterEach
+  public void close() {
+    if (fixture != null) fixture.close();
+  }
 
   @BeforeEach
   void setup() {

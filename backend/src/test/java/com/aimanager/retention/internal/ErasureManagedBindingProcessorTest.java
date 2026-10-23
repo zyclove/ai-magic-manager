@@ -10,7 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-class ErasureManagedBindingProcessorTest {
+class ErasureManagedBindingProcessorTest implements AutoCloseable {
   ErasureObservationProcessorTest fixture;
   JdbcTemplate db;
   ErasureManagedBindingProcessor processor;
@@ -19,6 +19,12 @@ class ErasureManagedBindingProcessorTest {
 
   String id() {
     return UUID.randomUUID().toString();
+  }
+
+  @Override
+  @AfterEach
+  public void close() {
+    if (fixture != null) fixture.close();
   }
 
   @BeforeEach

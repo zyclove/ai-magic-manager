@@ -4,13 +4,20 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class ErasureRecoveryBatchTest {
+class ErasureRecoveryBatchTest implements AutoCloseable {
   ErasureRecoveryJobsTest data;
   ErasureRecoveryJobs.Claim claim;
   String tenant;
+
+  @Override
+  @AfterEach
+  public void close() {
+    if (data != null) data.close();
+  }
 
   @BeforeEach
   void setup() {
