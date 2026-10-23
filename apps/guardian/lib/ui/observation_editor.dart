@@ -2,14 +2,18 @@ import 'package:flutter/material.dart';
 import '../core/api.dart';
 import '../core/observation.dart';
 import 'design.dart';
+import 'owned_dialog_route.dart';
 
 /// Result unknown freezes the original payload; only a fresh view can rebase it.
 class ObservationEditor extends StatefulWidget {
   final ManagedObservationSettings before;
   final Future<void> Function(Json) onSubmit;
   final VoidCallback? reauth;
+  final Listenable? accessChanges;
+  final bool Function()? hasAccess;
   const ObservationEditor(
-      {super.key, required this.before, required this.onSubmit, this.reauth});
+      {super.key, required this.before, required this.onSubmit, this.reauth,
+      this.accessChanges, this.hasAccess});
   @override
   State<ObservationEditor> createState() => _ObservationEditorState();
 }
@@ -23,6 +27,7 @@ class _ObservationEditorState extends State<ObservationEditor> {
       busy = false,
       attempted = false,
       missingAcknowledgement = false;
+  bool invalidated = false, closed = false;
   Object? error;
   Json? pending;
   bool get terminal =>
@@ -35,17 +40,68 @@ class _ObservationEditorState extends State<ObservationEditor> {
     super.initState();
     inventory = widget.before.inventoryEnabled;
     usage = widget.before.usageEnabled;
+    widget.accessChanges?.addListener(accessChanged);
+  }
+
+  bool get current {
+    if (!mounted || closed || invalidated) return false;
+    final route = ModalRoute.of(context);
+    final allowed = widget.hasAccess?.call() != false &&
+        (route is OwnedDialogRoute<dynamic> ? route.available : route?.isActive != false);
+    if (!allowed) invalidated = true;
+    return allowed;
+  }
+
+  void accessChanged() {
+    if (!mounted || closed || current) return;
+    setState(() { error = null; pending = null; });
+    WidgetsBinding.instance.addPostFrameCallback((_) => finish(null));
+  }
+
+  @override
+  void didUpdateWidget(covariant ObservationEditor oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.accessChanges, widget.accessChanges)) {
+      oldWidget.accessChanges?.removeListener(accessChanged);
+      widget.accessChanges?.addListener(accessChanged);
+    }
+    if (!identical(oldWidget.before, widget.before)) invalidated = true;
+    accessChanged();
+  }
+
+  void finish(Json? result) {
+    if (!mounted || closed) return;
+    final route = ModalRoute.of(context);
+    if (route is OwnedDialogRoute<dynamic>) {
+      closed = true;
+      route.finish(result);
+    } else if (route?.isActive == true && route!.isCurrent) {
+      closed = true;
+      route.navigator!.pop<Json>(result);
+    }
+  }
+
+  void close() {
+    if (!mounted || closed) return;
+    final allowed = current;
+    if (busy && allowed) return;
+    finish(attempted && allowed ? <String, dynamic>{'refresh': true} : null);
+  }
+
+  void reauthenticate() {
+    if (current && !busy) widget.reauth?.call();
   }
 
   @override
   void dispose() {
+    widget.accessChanges?.removeListener(accessChanged);
     scroll.dispose();
     reason.dispose();
     super.dispose();
   }
 
   Future<void> submit() async {
-    if (busy || terminal) return;
+    if (!current || busy || terminal) return;
     final valid = form.currentState!.validate();
     setState(() => missingAcknowledgement = !acknowledged);
     if (!valid || !acknowledged) return;
@@ -62,10 +118,11 @@ class _ObservationEditorState extends State<ObservationEditor> {
       error = null;
     });
     try {
-      await widget.onSubmit(body);
-      if (mounted) Navigator.pop(context, <String, dynamic>{'refresh': true});
+      final send = widget.onSubmit;
+      await send(body);
+      if (current) finish(<String, dynamic>{'refresh': true});
     } catch (failure) {
-      if (mounted) {
+      if (current) {
         setState(() {
           error = failure;
           pending = failure is! ApiFailure ||
@@ -75,7 +132,7 @@ class _ObservationEditorState extends State<ObservationEditor> {
               : null;
         });
         WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted && scroll.hasClients) {
+          if (current && scroll.hasClients) {
             scroll.animateTo(scroll.position.maxScrollExtent,
                 duration: const Duration(milliseconds: 220),
                 curve: Curves.easeOut);
@@ -83,7 +140,7 @@ class _ObservationEditorState extends State<ObservationEditor> {
         });
       }
     } finally {
-      if (mounted) setState(() => busy = false);
+      if (current) setState(() => busy = false);
     }
   }
 
@@ -92,7 +149,14 @@ class _ObservationEditorState extends State<ObservationEditor> {
       child:
           Text('$title：${oldValue ? '允许' : '关闭'} → ${newValue ? '允许' : '关闭'}'));
   @override
-  Widget build(BuildContext context) => PopScope(
+  Widget build(BuildContext context) {
+    if (!current) {
+      return AlertDialog(
+          title: const Text('工作空间或权限已变化'),
+          content: const Text('已隐藏原授权内容，请关闭窗口后重新核对当前设备。'),
+          actions: [TextButton(onPressed: close, child: const Text('关闭'))]);
+    }
+    return PopScope(
       canPop: !busy,
       child: AlertDialog(
         title: const Text('修改观察授权'),
@@ -124,8 +188,9 @@ class _ObservationEditorState extends State<ObservationEditor> {
                                 value: inventory,
                                 onChanged: locked
                                     ? null
-                                    : (value) =>
-                                        setState(() => inventory = value)),
+                                    : (value) {
+                                        if (current && !locked) setState(() => inventory = value);
+                                      }),
                             SwitchListTile(
                                 key: const Key('observe-usage'),
                                 contentPadding: EdgeInsets.zero,
@@ -135,7 +200,9 @@ class _ObservationEditorState extends State<ObservationEditor> {
                                 value: usage,
                                 onChanged: locked
                                     ? null
-                                    : (value) => setState(() => usage = value)),
+                                    : (value) {
+                                        if (current && !locked) setState(() => usage = value);
+                                      }),
                             const SizedBox(height: 12),
                             // Older Flutter web engines keep a semantic textarea
                             // for disabled fields. Expose the frozen value as
@@ -187,10 +254,13 @@ class _ObservationEditorState extends State<ObservationEditor> {
                                 value: acknowledged,
                                 onChanged: locked
                                     ? null
-                                    : (value) => setState(() {
+                                    : (value) {
+                                        if (!current || locked) return;
+                                        setState(() {
                                           acknowledged = value == true;
                                           missingAcknowledgement = false;
-                                        })),
+                                        });
+                                      }),
                             if (missingAcknowledgement)
                               const Text('请先确认采集范围和撤回影响',
                                   style: TextStyle(color: Colors.red)),
@@ -204,7 +274,7 @@ class _ObservationEditorState extends State<ObservationEditor> {
                                   (error as ApiFailure).status == 401 &&
                                   widget.reauth != null)
                                 TextButton.icon(
-                                    onPressed: widget.reauth,
+                                    onPressed: reauthenticate,
                                     icon: const Icon(
                                         Icons.verified_user_outlined),
                                     label: const Text('重新安全验证')),
@@ -218,10 +288,7 @@ class _ObservationEditorState extends State<ObservationEditor> {
         ),
         actions: [
           TextButton(
-              onPressed: busy
-                  ? null
-                  : () => Navigator.pop(context,
-                      attempted ? <String, dynamic>{'refresh': true} : null),
+              onPressed: busy ? null : close,
               child: Text(attempted ? '关闭并刷新' : '取消')),
           FilledButton(
               onPressed: busy || terminal ? null : submit,
@@ -232,4 +299,5 @@ class _ObservationEditorState extends State<ObservationEditor> {
                       : '确认授权变更')),
         ],
       ));
+  }
 }

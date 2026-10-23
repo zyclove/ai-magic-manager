@@ -1,0 +1,85 @@
+{
+  "status": "CODE_APPLIED_AFTER_INDEPENDENT_STATIC_REVIEW_ALL_RUNTIME_VALIDATION_UNRUN",
+  "atUtc": "2026-10-23T05:53:42.504158+00:00",
+  "parentCommit": "9ec50922edce76311cce68a323fe03d6c636dbd5",
+  "candidateManifestSha256": "6aa9c232c7869cfe562c0ae5591b94940c8025cef7c98264ba9e16355c9b91e7",
+  "candidateDeliverySha256": "d9ff4023572c650743d7d3e0d094eb90ea657092d0c951c6c002bd48a781e4f2",
+  "productionFiles": 2,
+  "newTestFiles": 1,
+  "preparedBrowserCases": 13,
+  "originalCasesPreserved": 12,
+  "format": "UNRUN",
+  "analysis": "UNRUN",
+  "browser": "UNRUN",
+  "visual": "UNRUN",
+  "testsExecuted": 0,
+  "servicesUpdated": false,
+  "coveredCompletion": "Existing OwnedDialogRoute<dynamic>.finish; current plain route uses public Navigator.pop; no protected method or raw covered completion claim",
+  "workflow": [
+    "保存完成仅刷新原详情一次",
+    "取消不提交也不刷新",
+    "关闭立即阻断旧保存与重新认证",
+    "切换工作空间或父窗口关闭使旧操作失效",
+    "未知结果保持原载荷、版本与请求标识重试"
+  ],
+  "confirmationPreserved": true,
+  "backgroundAutoCloseAdded": false,
+  "files": [
+    {
+      "path": "apps/guardian/lib/pages/observation_page.dart",
+      "beforeExists": true,
+      "before": {
+        "bytes": 9714,
+        "sha256": "c3f5f3e1d7e08cd87af1b47d620926d5720a80acbaafef6ed2ea5969bdaea1be"
+      },
+      "after": {
+        "bytes": 11504,
+        "sha256": "63111f7117aebfcd19ce61579ff77fe2eef95fd3e4914035a5fd6c810f115644"
+      },
+      "r1After": {
+        "bytes": 11504,
+        "sha256": "63111f7117aebfcd19ce61579ff77fe2eef95fd3e4914035a5fd6c810f115644"
+      },
+      "validation": "UNRUN"
+    },
+    {
+      "path": "apps/guardian/lib/ui/observation_editor.dart",
+      "beforeExists": true,
+      "before": {
+        "bytes": 11181,
+        "sha256": "43d9e17708f8868e82022b17466724cceec12087f2b49b997337d4b834e39060"
+      },
+      "after": {
+        "bytes": 13560,
+        "sha256": "f6768b8558f967645467e008de7b594d322a975f680fad7cf5a1771b7cf76cd3"
+      },
+      "r1After": {
+        "bytes": 13649,
+        "sha256": "3c59efbb8aebc70c9c0e5d0018d9d29e8e890022997c5fe51d380a197ff6aaee"
+      },
+      "validation": "UNRUN"
+    },
+    {
+      "path": "apps/guardian/test/observation_route_scope_browser_test.dart",
+      "beforeExists": false,
+      "before": null,
+      "after": {
+        "bytes": 23442,
+        "sha256": "9028c8219e9e255871b27b7975a78d5b39a9a410d1f58b48668cda4c16f6645f"
+      },
+      "r1After": {
+        "bytes": 19933,
+        "sha256": "775987e677ae1eb7764fd19701dc53400c152bb59b36b7e5f74be7be2057e48b"
+      },
+      "validation": "UNRUN"
+    }
+  ],
+  "priorValidationBoundary": "r6 analysis accepted only previous408/88871eb; this new observation phase is not covered by it",
+  "plannedCombinedBrowserScope": {
+    "sourceFiles": 409,
+    "cases": 80,
+    "suites": 7,
+    "status": "NOT_FROZEN_NOT_EXECUTED"
+  },
+  "wholeProductAccepted": false
+}

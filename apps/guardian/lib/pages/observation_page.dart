@@ -3,87 +3,103 @@ import '../core/api.dart';
 import '../core/observation.dart';
 import '../core/permission_observation.dart';
 import '../core/session.dart';
+import '../ui/dialog_access.dart';
 import '../ui/observation_editor.dart';
 import '../ui/observation_view.dart';
+import '../ui/owned_dialog_route.dart';
 import '../ui/permission_observation_panel.dart';
 import 'device_subflow_scope.dart';
 
 /// Device-detail entry. Capture workspace/device/registration before any await.
 Future<void> openDeviceObservation(
     BuildContext context, Session session, Json device) async {
+  if (!context.mounted) return;
   if (!session.authenticated ||
       session.tenant?['id'] is! String ||
       session.profile?['subject'] is! String ||
       !canReadObservation(session.role)) {
     throw const ApiFailure(403, 'SCOPE_DENIED');
   }
+  if (ModalRoute.of(context)?.isCurrent == false) return;
   final root = session.root;
+  final parent = DialogAccessBinding(context);
   final scope = DeviceSubflowScope(session,
-      permitted: () => canReadObservation(session.role));
-  bool current() => scope.current;
+      permitted: () => context.mounted && parent.permitted() &&
+          canReadObservation(session.role));
+  OwnedDialogRoute<void>? observationRoute;
+  bool current() => scope.current &&
+      (observationRoute == null || observationRoute!.available);
+  final changes = Listenable.merge([scope, parent.changes]);
   try {
-  if (device['registrationId'] is! String) {
     if (!context.mounted || !current()) return;
-    await showDialog<void>(
+    if (device['registrationId'] is! String) {
+      late final OwnedDialogRoute<void> route;
+      route = OwnedDialogRoute<void>(
+          context: context,
+          builder: (_) => AnimatedBuilder(
+              animation: changes,
+              builder: (_, __) => current()
+                  ? AlertDialog(
+                      title: const Text('设备尚未注册'),
+                      content: const Text('完成设备配对后才能查看或设置观察授权。'),
+                      actions: [
+                        TextButton(onPressed: route.finish,
+                            child: const Text('关闭'))
+                      ])
+                  : _observationScopeLost(route)));
+      observationRoute = route;
+      await presentOwnedDialog(context, route);
+      return;
+    }
+    final repository = ObservationRepository(
+        api: scope.api.scoped(current),
+        root: root,
+        deviceId: device['id'] as String,
+        registrationId: device['registrationId'] as String,
+        current: current);
+    late final OwnedDialogRoute<void> route;
+    route = OwnedDialogRoute<void>(
         context: context,
-        builder: (dialogContext) => AnimatedBuilder(
-            animation: scope,
+        barrierDismissible: false,
+        builder: (_) => AnimatedBuilder(
+            animation: changes,
             builder: (_, __) => current()
-                ? AlertDialog(
-                    title: const Text('设备尚未注册'),
-                    content: const Text('完成设备配对后才能查看或设置观察授权。'),
-                    actions: [
-                      TextButton(
-                          onPressed: () => Navigator.pop(dialogContext),
-                          child: const Text('关闭'))
-                    ])
-                : _observationScopeLost(dialogContext)));
-    return;
-  }
-  final repository = ObservationRepository(
-      api: scope.api,
-      root: root,
-      deviceId: device['id'] as String,
-      registrationId: device['registrationId'] as String,
-      current: current);
-  if (!context.mounted || !current()) return;
-  await showDialog<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (dialogContext) => AnimatedBuilder(
-          animation: scope,
-          builder: (_, __) {
-            if (!current()) {
-              return _observationScopeLost(dialogContext);
-            }
-            return _ObservationDialog(
-                repository: repository,
-                scope: scope,
-                session: session,
-                deviceName: device['displayName'] as String? ?? '设备',
-                deviceState: device['state'] as String? ?? 'UNKNOWN');
-          }));
+                ? _ObservationDialog(
+                    route: route,
+                    repository: repository,
+                    scope: scope,
+                    accessChanges: changes,
+                    session: session,
+                    deviceName: device['displayName'] as String? ?? '设备',
+                    deviceState: device['state'] as String? ?? 'UNKNOWN')
+                : _observationScopeLost(route)));
+    observationRoute = route;
+    await presentOwnedDialog(context, route);
   } finally {
     scope.dispose();
+    parent.dispose();
   }
 }
 
-Widget _observationScopeLost(BuildContext context) => AlertDialog(
+Widget _observationScopeLost(OwnedDialogRoute<void> route) => AlertDialog(
     title: const Text('工作空间已变化'),
     content: const Text('已隐藏当前设备数据。请关闭窗口，在新的工作空间重新打开。'),
     actions: [
-      TextButton(
-          onPressed: () => Navigator.pop(context), child: const Text('关闭'))
+      TextButton(onPressed: route.finish, child: const Text('关闭'))
     ]);
 
 class _ObservationDialog extends StatefulWidget {
+  final OwnedDialogRoute<void> route;
   final ObservationRepository repository;
   final DeviceSubflowScope scope;
+  final Listenable accessChanges;
   final Session session;
   final String deviceName, deviceState;
   const _ObservationDialog(
-      {required this.repository,
+      {required this.route,
+      required this.repository,
       required this.scope,
+      required this.accessChanges,
       required this.session,
       required this.deviceName,
       required this.deviceState});
@@ -96,15 +112,32 @@ class _ObservationDialogState extends State<_ObservationDialog> {
   Object? error;
   bool busy = false;
   int generation = 0;
+  OwnedDialogRoute<Json>? editor;
   final cursors = <String?>[null];
+  bool get current => mounted && widget.route.available &&
+      widget.scope.current && widget.repository.current();
   @override
   void initState() {
     super.initState();
     load();
   }
 
+  void closeEditor() {
+    final route = editor;
+    editor = null;
+    if (route != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => route.finish());
+    }
+  }
+
+  void close() {
+    closeEditor();
+    widget.route.finish();
+  }
+
   Future<void> load({String? cursor, bool reset = true}) async {
-    if (!widget.scope.current) return;
+    if (!current) return;
+    closeEditor();
     final request = ++generation;
     setState(() {
       busy = true;
@@ -113,7 +146,7 @@ class _ObservationDialogState extends State<_ObservationDialog> {
     });
     try {
       final value = await widget.repository.load(cursor: cursor);
-      if (!mounted || request != generation || !widget.scope.current) return;
+      if (!current || request != generation) return;
       setState(() {
         snapshot = value;
         if (reset) {
@@ -122,61 +155,69 @@ class _ObservationDialogState extends State<_ObservationDialog> {
         }
       });
     } catch (failure) {
-      if (mounted && request == generation && widget.scope.current) {
-        setState(() => error = failure);
-      }
+      if (current && request == generation) setState(() => error = failure);
     } finally {
-      if (mounted && request == generation && widget.scope.current) {
-        setState(() => busy = false);
-      }
+      if (current && request == generation) setState(() => busy = false);
     }
   }
 
   Future<void> edit() async {
-    final scope = widget.scope;
+    if (!current || busy || editor != null || !widget.route.isCurrent) return;
     final session = widget.session;
     final repository = widget.repository;
     final deviceState = widget.deviceState;
     final before = snapshot?.settings;
-    if (!scope.current ||
-        before == null ||
-        busy ||
-        !canEditObservation(session.role, deviceState)) return;
+    if (before == null || !canEditObservation(session.role, deviceState)) return;
+    final revision = generation;
     final key = requestId();
-    final result = await showDialog<Json>(
-        context: context,
-        barrierDismissible: false,
-        builder: (dialogContext) => AnimatedBuilder(
-          animation: scope,
-          builder: (_, __) {
-            if (!scope.current) {
-              return _observationScopeLost(dialogContext);
-            }
-            return ObservationEditor(
-            before: before,
-            reauth: () {
-              if (scope.current) session.login(stepUp: true);
-            },
-            onSubmit: (body) async {
-              if (!scope.current) {
-                throw const ApiFailure(409, 'WORKSPACE_CHANGED');
-              }
-              if (!canEditObservation(session.role, deviceState)) {
-                throw const ApiFailure(403, 'SCOPE_DENIED');
-              }
-              // Clear reports before a consent mutation, including unknown outcomes.
-              if (mounted) setState(() => snapshot = null);
-              await repository.update(before, body, key);
-            });
-          }));
-    if (mounted && scope.current && result?['refresh'] == true) {
-      await load();
+    final access = DialogAccessBinding(context,
+        accessChanges: widget.accessChanges, hasAccess: () => current);
+    OwnedDialogRoute<Json>? ownedRoute;
+    bool childCurrent() {
+      final route = ownedRoute;
+      return route != null && current && access.permitted() &&
+          revision == generation && identical(editor, route) && route.available;
     }
+    var refresh = false;
+    try {
+      if (!access.permitted()) return;
+      final route = OwnedDialogRoute<Json>(
+          context: context,
+          barrierDismissible: false,
+          builder: (_) => ObservationEditor(
+              before: before,
+              accessChanges: Listenable.merge([widget.accessChanges, access.changes]),
+              hasAccess: childCurrent,
+              reauth: () {
+                if (childCurrent()) session.login(stepUp: true);
+              },
+              onSubmit: (body) async {
+                if (!childCurrent()) {
+                  throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+                }
+                if (!canEditObservation(session.role, deviceState)) {
+                  throw const ApiFailure(403, 'SCOPE_DENIED');
+                }
+                // Clear reports before a consent mutation, including unknown outcomes.
+                setState(() => snapshot = null);
+                await repository.update(before, body, key);
+              }));
+      ownedRoute = route;
+      editor = route;
+      final result = await presentOwnedDialog(context, route);
+      refresh = result?['refresh'] == true && current && access.permitted() &&
+          revision == generation && identical(editor, route);
+    } finally {
+      if (identical(editor, ownedRoute)) editor = null;
+      access.dispose();
+    }
+    if (refresh && current && revision == generation) await load();
   }
 
   @override
   void dispose() {
     generation++;
+    closeEditor();
     super.dispose();
   }
 
@@ -198,17 +239,16 @@ class _ObservationDialogState extends State<_ObservationDialog> {
                               error: error,
                               busy: busy,
                               deviceName: widget.deviceName,
-                              canEdit: widget.scope.current && canEditObservation(
+                              canEdit: current && canEditObservation(
                                   widget.session.role, widget.deviceState),
                               refresh: () => load(),
                               edit: edit,
                               reauth: () {
-                                if (widget.scope.current) {
-                                  widget.session.login(stepUp: true);
-                                }
+                                if (current) widget.session.login(stepUp: true);
                               },
                               previous: cursors.length > 1
                                   ? () {
+                                      if (!current || busy || cursors.length <= 1) return;
                                       cursors.removeLast();
                                       load(cursor: cursors.last, reset: false);
                                     }
@@ -216,6 +256,7 @@ class _ObservationDialogState extends State<_ObservationDialog> {
                               next: snapshot?.nextCursor == null
                                   ? null
                                   : () {
+                                      if (!current || busy || snapshot?.nextCursor == null) return;
                                       cursors.add(snapshot!.nextCursor);
                                       load(cursor: cursors.last, reset: false);
                                     }),
@@ -232,14 +273,12 @@ class _ObservationDialogState extends State<_ObservationDialog> {
                                     registrationId:
                                         widget.repository.registrationId,
                                     current: widget.repository.current),
-                                canEdit: widget.scope.current && canEditObservation(
+                                canEdit: current && canEditObservation(
                                     widget.session.role, widget.deviceState),
                                 inventoryEnabled:
                                     snapshot?.settings.inventoryEnabled,
                                 reauth: () {
-                                  if (widget.scope.current) {
-                                    widget.session.login(stepUp: true);
-                                  }
+                                  if (current) widget.session.login(stepUp: true);
                                 })
                           ]
                         ]))),
@@ -248,8 +287,6 @@ class _ObservationDialogState extends State<_ObservationDialog> {
                 alignment: Alignment.centerRight,
                 child: Padding(
                     padding: const EdgeInsets.all(12),
-                    child: TextButton(
-                        onPressed: () => Navigator.pop(context),
-                        child: const Text('关闭')))),
+                    child: TextButton(onPressed: close, child: const Text('关闭')))),
           ])));
 }
