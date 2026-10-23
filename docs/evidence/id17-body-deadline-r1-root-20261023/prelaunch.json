@@ -1,0 +1,24 @@
+{
+  "grantId": "id17-body-deadline-r1-root-20261023",
+  "grantSourceThreadId": "01a11ea6-cc46-7563-baf7-82638043ee15",
+  "utc": "2026-10-23T04:14:59.566992+00:00",
+  "approvedProposalSha256": "937366e2d31ed718c751688cc678cd888b5ad478e53c5f903c198f2218535175",
+  "metadataPinsChecked": 56,
+  "baselineSourcesChecked": 33,
+  "overlaySha256": "ad76aaae45c356d2fe4b54c188d8e0fdc9a471d99dde8f84b571dd4a5f9e50f5",
+  "jdkFilesChecked": 418,
+  "mavenFilesChecked": 90,
+  "cacheFilesChecked": 3788,
+  "moduleTree": "7796f5aaf6a38ff87b8a2ca77113bb8ef5ded321",
+  "availableRamBytes": 4444712960,
+  "diskFreeBytes": {
+    "C:/": 7052730368,
+    "D:/": 36133715968
+  },
+  "sdkProcesses": [],
+  "unknownProcessNames": [],
+  "ready": true,
+  "sdkStarted": false,
+  "attemptExists": false,
+  "sourceOrCacheCopied": false
+}

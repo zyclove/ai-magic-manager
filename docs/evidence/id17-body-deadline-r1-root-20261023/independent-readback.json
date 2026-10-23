@@ -1,0 +1,217 @@
+{
+  "schemaVersion": 1,
+  "status": "OBSERVED_LEGACY_DEADLINE_RED_NOT_VERIFY_PASS",
+  "actualSessionId": 49080,
+  "initialChunk": "133ef4",
+  "mavenStartedChunk": "8a042b",
+  "finalChunk": "187c62",
+  "actualOuterExitCode": 1,
+  "controllerResultSha256": "0077957a6eb4a8ff933cb3e4422d376171f2bcca7694eabd6672abb74ea2cbed",
+  "workerReceiptSha256": "abae7e30a832a60a828eb3b174f84b21b1ead687db1689cd540fcb39368a819f",
+  "elapsedSeconds": 50.50293920000058,
+  "totals": {
+    "suites": 14,
+    "cases": 79,
+    "passed": 77,
+    "failures": 2,
+    "errors": 0,
+    "skipped": 0
+  },
+  "original76AllPassed": true,
+  "interruptGuardPassed": true,
+  "failedCases": [
+    {
+      "className": "com.aimanager.identity.ProviderHttpBodyDeadlineTest",
+      "method": "smsHttp11BodyMustRespectWholeRequestDeadline",
+      "type": "org.opentest4j.AssertionFailedError",
+      "message": "WHOLE_BODY_DEADLINE_REQUIRED: successful late body completion is not a timeout ==> Unexpected null value, expected: <java.net.http.HttpTimeoutException> but was: <null>",
+      "timeSeconds": "6.898"
+    },
+    {
+      "className": "com.aimanager.identity.ProviderHttpBodyDeadlineTest",
+      "method": "wechatHttp11DripBodyMustRespectWholeRequestDeadline",
+      "type": "org.opentest4j.AssertionFailedError",
+      "message": "WHOLE_BODY_DEADLINE_REQUIRED: successful late body completion is not a timeout ==> Unexpected null value, expected: <java.net.http.HttpTimeoutException> but was: <null>",
+      "timeSeconds": "7.277"
+    }
+  ],
+  "observations": [
+    {
+      "method": "smsHttp11BodyMustRespectWholeRequestDeadline",
+      "value": {
+        "case": "sms-delayed-body",
+        "javaRuntimeVersion": "17.0.14+8-LTS-191",
+        "scope": "loopback-http11-original-transport-only",
+        "requestTimeoutMillis": 5000,
+        "headersAfterStartMillis": 89,
+        "elapsedMillis": 6612,
+        "exceptionType": null,
+        "returnedStatus": 200,
+        "returnedBodyLength": 4194304,
+        "fixtureCleanupVerified": true,
+        "fixtureWriteFailedBeforeCleanup": false,
+        "fixtureHandlerFailure": null,
+        "handlerEndedBeforeCleanup": true,
+        "writeFailedBeforeCleanup": false
+      }
+    },
+    {
+      "method": "wechatHttp11DripBodyMustRespectWholeRequestDeadline",
+      "value": {
+        "case": "wechat-drip-body",
+        "javaRuntimeVersion": "17.0.14+8-LTS-191",
+        "scope": "loopback-http11-original-transport-only",
+        "requestTimeoutMillis": 5000,
+        "headersAfterStartMillis": 2,
+        "elapsedMillis": 7271,
+        "exceptionType": null,
+        "returnedStatus": 200,
+        "returnedBodyLength": 4194304,
+        "fixtureCleanupVerified": true,
+        "fixtureWriteFailedBeforeCleanup": false,
+        "fixtureHandlerFailure": null,
+        "handlerEndedBeforeCleanup": true,
+        "writeFailedBeforeCleanup": false
+      }
+    },
+    {
+      "method": "smsCallerInterruptionClosesOwnedExchangeBeforeFixtureCleanup",
+      "value": {
+        "case": "sms-caller-interruption",
+        "javaRuntimeVersion": "17.0.14+8-LTS-191",
+        "scope": "loopback-http11-original-transport-only",
+        "requestTimeoutMillis": 5000,
+        "headersAfterStartMillis": 5,
+        "elapsedMillis": 8,
+        "exceptionType": "java.io.IOException",
+        "returnedStatus": null,
+        "returnedBodyLength": null,
+        "fixtureCleanupVerified": true,
+        "fixtureWriteFailedBeforeCleanup": true,
+        "fixtureHandlerFailure": null,
+        "callerExitedBeforeBodyRelease": true,
+        "ownedCallerAliveAfterCleanup": false,
+        "handlerEndedBeforeCleanup": true,
+        "writeFailedBeforeCleanup": true,
+        "interruptPreserved": true
+      }
+    }
+  ],
+  "reports": [
+    {
+      "name": "com.aimanager.identity.AliyunSmsTest",
+      "sha256": "ab9da01686d78a6e70eadf1f3007c1ba79d13285eb7c5f809f93983c76d77215",
+      "cases": 2
+    },
+    {
+      "name": "com.aimanager.identity.ConsumerAccountFlowTest",
+      "sha256": "db907d16f5fa93f180cb3d1b7c8fe8b64d9a8c57019b43e62c8d969724b08206",
+      "cases": 17
+    },
+    {
+      "name": "com.aimanager.identity.ConsumerAccountSpiPackagingTest",
+      "sha256": "d059f56c8514a36c3e883faef5abe8797e7a0b51c6bd42a4da09ae12ad81622d",
+      "cases": 1
+    },
+    {
+      "name": "com.aimanager.identity.ConsumerAccountStatusTest",
+      "sha256": "c3590ee1ecd3a4df7b284c793cde3a4fa7844bc4b03131f20949cc2683c38b37",
+      "cases": 6
+    },
+    {
+      "name": "com.aimanager.identity.ConsumerAuthenticatorTest",
+      "sha256": "f02721b8260c0ea942ebaace269afbc2941e82ef1177b7e7447339514e2bb0dd",
+      "cases": 8
+    },
+    {
+      "name": "com.aimanager.identity.ConsumerClaimsSerializationTest",
+      "sha256": "9883c0c1501f15e4d51aaf179613525f867105381b9c7ddcae46b9fec3d63398",
+      "cases": 5
+    },
+    {
+      "name": "com.aimanager.identity.ConsumerConfigurationTest",
+      "sha256": "32b0e4d0a89d3ed836d2ab8b60347baefacd4bf630eea90299524440d5760e82",
+      "cases": 3
+    },
+    {
+      "name": "com.aimanager.identity.ConsumerHttpClientReuseTest",
+      "sha256": "b10ceb6a5966dc89cbafb52049590269f25bd4d5e1996f3cd488184164b84986",
+      "cases": 4
+    },
+    {
+      "name": "com.aimanager.identity.ConsumerIdentityTest",
+      "sha256": "6c27262695e4cd6fd7413f97074bbf0c29c8333e85339d0b8c117e8c86e85b42",
+      "cases": 5
+    },
+    {
+      "name": "com.aimanager.identity.ConsumerIdentityTransactionsTest",
+      "sha256": "a8e6a5c652b76c0ccb1e9b502273ff5fddd1e45e35b22a3f5281b549332b076c",
+      "cases": 13
+    },
+    {
+      "name": "com.aimanager.identity.ConsumerProviderRuntimeTest",
+      "sha256": "f0333a71ce0cdd72988ad3de35ba601daada9e4e4090f753349315c221890adf",
+      "cases": 4
+    },
+    {
+      "name": "com.aimanager.identity.ConsumerRuntimeSnapshotTest",
+      "sha256": "ff2efd21fac5b13137419149c134e92c4cb6fc2462cc494938ae19f7dabbbb04",
+      "cases": 2
+    },
+    {
+      "name": "com.aimanager.identity.PhoneOtpTest",
+      "sha256": "3b1e933f936e6b9ea1594025bf2024959fbef3b247102aa7fef9afa8cddeeccb",
+      "cases": 6
+    },
+    {
+      "name": "com.aimanager.identity.ProviderHttpBodyDeadlineTest",
+      "sha256": "8d388b31effd82509a66dae14d59f42b405fcbf32def6d7afc5547529aff714c",
+      "cases": 3
+    }
+  ],
+  "normalStatusPreserved": "NOT_ACCEPTED",
+  "mavenOwnExitCode": 1,
+  "workerProcessExitCode": 0,
+  "jar": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\id17-body-deadline-20261021-r1\\attempt\\src\\identity-extensions\\target\\consumer-identity-1.0.0.jar",
+    "produced": false,
+    "accepted": false
+  },
+  "postflight": {
+    "sourceInputsUnchanged": true,
+    "originalCacheAfter": {
+      "files": 3788,
+      "fileSetExact": true,
+      "mismatches": [],
+      "unchanged": true
+    },
+    "executionCacheAfter": {
+      "files": 3788,
+      "fileSetExact": true,
+      "mismatches": [],
+      "unchanged": true
+    },
+    "frozenBaselineSourceUnchanged": true,
+    "postToolMismatches": [],
+    "postConfigurationUnchanged": true,
+    "forcedTermination": false
+  },
+  "metadataPinsFreshlyRechecked": 56,
+  "privateJobFinalActiveProcesses": 0,
+  "ownedCleanupPerformed": false,
+  "watchdogExpired": false,
+  "freshResource": {
+    "utc": "2026-10-23T04:21:28.863054+00:00",
+    "availableRamBytes": 4194205696,
+    "diskFreeBytes": {
+      "C:/": 7044853760,
+      "D:/": 35931627520
+    },
+    "sdkProcesses": [],
+    "unknownProcessNames": []
+  },
+  "formalWindowReleaseReady": true,
+  "productionOrGitChanged": false,
+  "sdkRuns": 1,
+  "retry": false
+}

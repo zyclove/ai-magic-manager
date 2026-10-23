@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "grantId": "id17-body-deadline-r1-root-20261023",
+  "actualSessionId": 49080,
+  "initialChunk": "133ef4",
+  "mavenStartedChunk": "8a042b",
+  "mavenPid": 28628,
+  "finalTool": {
+    "chunk_id": "187c62",
+    "wall_time_seconds": 0.0000165,
+    "exit_code": 1,
+    "original_token_count": 50,
+    "output": "{\"status\": \"NOT_ACCEPTED\", \"elapsedCompleteSeconds\": 50.50293920000058, \"result\": \"D:\\\\codes\\\\mobile\\\\ai-manager\\\\.cache\\\\id17-body-deadline-20261021-r1\\\\attempt\\\\result.json\", \"workerPid\": 1972}\r\n"
+  },
+  "SDKAttempts": 1,
+  "automaticRetry": false,
+  "scope": "Original sealed controller and proposal 937366; no broader acceptance claimed"
+}

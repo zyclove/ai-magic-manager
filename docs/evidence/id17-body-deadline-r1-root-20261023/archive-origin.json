@@ -1,0 +1,32 @@
+{
+  "SchemaVersion": 1,
+  "CopiedAfterWindowReleased": true,
+  "SdkRunDuringArchive": false,
+  "OriginalFilesPreserved": true,
+  "Files": [
+    {
+      "Source": ".cache/id17-body-deadline-20261021-r1/attempt/result.json",
+      "Copy": "docs/evidence/id17-body-deadline-r1-root-20261023/original-result.json",
+      "Bytes": 16544,
+      "Sha256": "0077957a6eb4a8ff933cb3e4422d376171f2bcca7694eabd6672abb74ea2cbed"
+    },
+    {
+      "Source": ".cache/id17-body-deadline-20261021-r1/attempt/receipt.json",
+      "Copy": "docs/evidence/id17-body-deadline-r1-root-20261023/original-receipt.json",
+      "Bytes": 15449,
+      "Sha256": "abae7e30a832a60a828eb3b174f84b21b1ead687db1689cd540fcb39368a819f"
+    },
+    {
+      "Source": ".cache/id17-body-deadline-20261021-r1/attempt/launch.json",
+      "Copy": "docs/evidence/id17-body-deadline-r1-root-20261023/original-launch.json",
+      "Bytes": 1655,
+      "Sha256": "b0f8986331afd3f075efeb97a72e923a916358365cd4ffda8b69dcc71a7351d7"
+    },
+    {
+      "Source": ".cache/id17-body-deadline-20261021-r1/attempt/request.json",
+      "Copy": "docs/evidence/id17-body-deadline-r1-root-20261023/original-request.json",
+      "Bytes": 182,
+      "Sha256": "6865dad621d153a826947aaa8e651af75611272a05e883349974c2f578076c75"
+    }
+  ]
+}

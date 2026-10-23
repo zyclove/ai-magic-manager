@@ -1,0 +1,60 @@
+{
+  "SchemaVersion": 1,
+  "Status": "OBSERVED_LEGACY_DEADLINE_RED_NOT_VERIFY_PASS",
+  "Artifacts": [
+    {
+      "Path": "docs/evidence/id17-body-deadline-r1-root-20261023/actual-process.json",
+      "Bytes": 704,
+      "Sha256": "842261a61985ec7a166ede54c2e9d777840df63b9562bc32653fbff2d8722bd1"
+    },
+    {
+      "Path": "docs/evidence/id17-body-deadline-r1-root-20261023/archive-origin.json",
+      "Bytes": 1309,
+      "Sha256": "bccdca3fa3451c84323ac57503f5f51336fc4cc67af799c86d7170aac04deb36"
+    },
+    {
+      "Path": "docs/evidence/id17-body-deadline-r1-root-20261023/case-results.json",
+      "Bytes": 17347,
+      "Sha256": "79b745209f5455ba7d044f70eaf18f742c6beb43c072bf2a43705b0fcb1ddfa0"
+    },
+    {
+      "Path": "docs/evidence/id17-body-deadline-r1-root-20261023/independent-readback.json",
+      "Bytes": 7534,
+      "Sha256": "e1817b93525085e9e55ed1b22b04a11ad718351fef9d262f01b3ac7bee05ae0c"
+    },
+    {
+      "Path": "docs/evidence/id17-body-deadline-r1-root-20261023/original-launch.json",
+      "Bytes": 1655,
+      "Sha256": "b0f8986331afd3f075efeb97a72e923a916358365cd4ffda8b69dcc71a7351d7"
+    },
+    {
+      "Path": "docs/evidence/id17-body-deadline-r1-root-20261023/original-receipt.json",
+      "Bytes": 15449,
+      "Sha256": "abae7e30a832a60a828eb3b174f84b21b1ead687db1689cd540fcb39368a819f"
+    },
+    {
+      "Path": "docs/evidence/id17-body-deadline-r1-root-20261023/original-request.json",
+      "Bytes": 182,
+      "Sha256": "6865dad621d153a826947aaa8e651af75611272a05e883349974c2f578076c75"
+    },
+    {
+      "Path": "docs/evidence/id17-body-deadline-r1-root-20261023/original-result.json",
+      "Bytes": 16544,
+      "Sha256": "0077957a6eb4a8ff933cb3e4422d376171f2bcca7694eabd6672abb74ea2cbed"
+    },
+    {
+      "Path": "docs/evidence/id17-body-deadline-r1-root-20261023/prelaunch.json",
+      "Bytes": 807,
+      "Sha256": "e8363c508228498d644153c657aa40ebfe4a6b51992bb33768e5ff4b5a976ef2"
+    },
+    {
+      "Path": "docs/reviews/identity-body-deadline-verification-20261023.md",
+      "Bytes": 5265,
+      "Sha256": "47ca3d4942c4e0a9078bf56b67db453ff706e53f9ee2a3d101265f2a4bb3e247"
+    }
+  ],
+  "SelfExcluded": true,
+  "GitModified": false,
+  "ProductionSourceModified": false,
+  "RuntimeRetry": false
+}

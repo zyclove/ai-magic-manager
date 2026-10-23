@@ -1,0 +1,480 @@
+{
+  "SchemaVersion": 1,
+  "Scope": "Derived case results; original XML hashes retained in independent-readback.json",
+  "Cases": [
+    {
+      "Class": "com.aimanager.identity.AliyunSmsTest",
+      "Method": "sendsOnlyToPinnedChinaEndpointUsesOfficialQueryMetadataAndRejectsProviderFailure",
+      "TimeSeconds": "0.371",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.AliyunSmsTest",
+      "Method": "signatureMatchesOfficialV3KnownAnswer",
+      "TimeSeconds": "0.002",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountFlowTest",
+      "Method": "anotherAccountsWechatIsNeverReassigned",
+      "TimeSeconds": "2.822",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountFlowTest",
+      "Method": "disablingAccountSecurityLeavesIdentityUntouched",
+      "TimeSeconds": "0.014",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountFlowTest",
+      "Method": "wrongAndExhaustedOtpNeverAcquireTheGlobalDatabaseFence",
+      "TimeSeconds": "0.042",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountFlowTest",
+      "Method": "staleRevisionAndOccupiedTargetNeverChangeIdentity",
+      "TimeSeconds": "0.06",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountFlowTest",
+      "Method": "aLoginOtpCannotApproveAnAccountSecurityOperation",
+      "TimeSeconds": "0.017",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountFlowTest",
+      "Method": "recoveryRequiresExistingWechatAndUpdatesItsOriginalAccount",
+      "TimeSeconds": "0.067",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountFlowTest",
+      "Method": "unableToAcquireDatabaseFenceCannotChangeTheUser",
+      "TimeSeconds": "0.015",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountFlowTest",
+      "Method": "changingPhoneProvesBothNumbersAndKeepsOriginalSubject",
+      "TimeSeconds": "0.03",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountFlowTest",
+      "Method": "changingTheNewNumberDoesNotReuseThePreviousNumbersProof",
+      "TimeSeconds": "0.021",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountFlowTest",
+      "Method": "unlinkedWechatCannotCreateAnAccountThroughRecovery",
+      "TimeSeconds": "0.006",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountFlowTest",
+      "Method": "bindingThenUnbindingKeepsPhoneAndRejectsAnotherAccountsWechat",
+      "TimeSeconds": "0.033",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountFlowTest",
+      "Method": "oldPhoneProofExpiresBeforeNewPhoneCanBeCommitted",
+      "TimeSeconds": "0.026",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountFlowTest",
+      "Method": "repeatedOperationDoesNotTurnConsumedOtpIntoNewAuthentication",
+      "TimeSeconds": "0.008",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountFlowTest",
+      "Method": "thirtyMinuteDeadlineDoesNotExtendWhenAuthenticationIsRenderedAgain",
+      "TimeSeconds": "0.013",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountFlowTest",
+      "Method": "missingActionCannotFallThroughToNormalRegistration",
+      "TimeSeconds": "0.011",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountFlowTest",
+      "Method": "recoveryRejectsDifferentExpectedActorBeforeSendingNewNumberSms",
+      "TimeSeconds": "0.008",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountFlowTest",
+      "Method": "concurrentIdentityChangeInvalidatesTheInFlightOperation",
+      "TimeSeconds": "0.017",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountSpiPackagingTest",
+      "Method": "restSpiRegistrationAndProviderMarkerArePackaged",
+      "TimeSeconds": "0.017",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountStatusTest",
+      "Method": "oldPhoneOldRevisionAndOtherClientsAreRejected",
+      "TimeSeconds": "0.014",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountStatusTest",
+      "Method": "malformedReceiptFailsClosedWithoutAnInternalError",
+      "TimeSeconds": "0.008",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountStatusTest",
+      "Method": "currentStatusExposesOnlyMaskedPhoneAndRealBindingCapabilities",
+      "TimeSeconds": "0.006",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountStatusTest",
+      "Method": "cdiCanConstructAnUnconfiguredProviderWithoutInjectingSecrets",
+      "TimeSeconds": "0.002",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountStatusTest",
+      "Method": "legacyTokenWorksOnlyWhileCurrentUserStillHasRevisionOne",
+      "TimeSeconds": "0.009",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAccountStatusTest",
+      "Method": "disabledUserAndDisabledProviderCannotReturnCurrentEvidence",
+      "TimeSeconds": "0.007",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAuthenticatorTest",
+      "Method": "currentRawRevisionCannotBeResetByAnOlderCacheAwareUser",
+      "TimeSeconds": "0.011",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAuthenticatorTest",
+      "Method": "missingProviderConfigCannotAuthenticateOrCreateUser",
+      "TimeSeconds": "0.029",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAuthenticatorTest",
+      "Method": "verifiedPhoneSetsTrustedNotesAndDoesNotClaimMfa",
+      "TimeSeconds": "0.001",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAuthenticatorTest",
+      "Method": "tokenClaimsComeOnlyFromTrustedSessionNotesWithAccurateWechatAmr",
+      "TimeSeconds": "0.013",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAuthenticatorTest",
+      "Method": "changedPhoneCannotBeResignedFromAnOlderRefreshSession",
+      "TimeSeconds": "0.005",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAuthenticatorTest",
+      "Method": "incompleteTrustedSessionCannotEmitVerifiedClaimsOrCrashTokenIssuance",
+      "TimeSeconds": "0.005",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAuthenticatorTest",
+      "Method": "newPhoneAccountIsCreatedOnlyAfterRealOtpVerificationAndEmitsSmsClaims",
+      "TimeSeconds": "0.026",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerAuthenticatorTest",
+      "Method": "incompleteConsumerMethodCannotDowngradeIntoAnUnmarkedInstitutionToken",
+      "TimeSeconds": "0.006",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerClaimsSerializationTest",
+      "Method": "otherClaimsCannotSubstituteForMissingStandardPhoneFields",
+      "TimeSeconds": "0.007",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerClaimsSerializationTest",
+      "Method": "accessTokenStandardClaimsReplaceEarlierValuesWithoutDuplicateJsonFields",
+      "TimeSeconds": "0.447",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerClaimsSerializationTest",
+      "Method": "otherClaimsCannotOverrideConflictingStandardPhoneFields",
+      "TimeSeconds": "0.007",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerClaimsSerializationTest",
+      "Method": "idTokenStandardClaimsReplaceEarlierValuesWithoutDuplicateJsonFields",
+      "TimeSeconds": "0.013",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerClaimsSerializationTest",
+      "Method": "accountEvidenceAcceptsTheActualKeycloakSerializedToken",
+      "TimeSeconds": "0.019",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerConfigurationTest",
+      "Method": "malformedMissingAndOversizedFileDisableAllConsumerEntrypoints",
+      "TimeSeconds": "0.036",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerConfigurationTest",
+      "Method": "shortHmacCannotAdvertiseUsablePhoneService",
+      "TimeSeconds": "0.008",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerConfigurationTest",
+      "Method": "bothFactoriesCanLoadOnlyKnownBoundedFileBackedSecrets",
+      "TimeSeconds": "0.004",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerHttpClientReuseTest",
+      "Method": "factoryUsesTheSameClientForWechatSmsAndOtpVerification",
+      "TimeSeconds": "0.242",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerHttpClientReuseTest",
+      "Method": "injectedProvidersDoNotCreateClientsDuringPhoneChangeAndOtpVerification",
+      "TimeSeconds": "0.016",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerHttpClientReuseTest",
+      "Method": "factoryReusesOneClientAcrossDistinctAuthenticatorInstances",
+      "TimeSeconds": "0.008",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerHttpClientReuseTest",
+      "Method": "disabledOrIncompleteProviderConfigurationDoesNotFailFactoryInitialization",
+      "TimeSeconds": "0.011",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerIdentityTest",
+      "Method": "rejectsMissingOrUnverifiedStoredPhoneForWechatLogin",
+      "TimeSeconds": "0.004",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerIdentityTest",
+      "Method": "linksOnlyExactAppIdOpenIdAndNeverUnionId",
+      "TimeSeconds": "0.007",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerIdentityTest",
+      "Method": "wechatExchangePinsNativeAppAndRejectsErrorsOrMissingOpenId",
+      "TimeSeconds": "0.01",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerIdentityTest",
+      "Method": "refusesWechatIdentityAlreadyLinkedToAnotherPhoneAccount",
+      "TimeSeconds": "0.003",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerIdentityTest",
+      "Method": "refusesWritableOrMissingServerPhoneAttributes",
+      "TimeSeconds": "0.0",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerIdentityTransactionsTest",
+      "Method": "alreadyLockedUserUsesAllCurrentScalarsWithoutDetachingExistingAdapters",
+      "TimeSeconds": "0.095",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerIdentityTransactionsTest",
+      "Method": "duplicateCurrentWechatLinksFailClosed",
+      "TimeSeconds": "0.012",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerIdentityTransactionsTest",
+      "Method": "refreshPreservesTheManagedCollectionAndExistingUserAdapter",
+      "TimeSeconds": "0.003",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerIdentityTransactionsTest",
+      "Method": "removedWechatLinkDoesNotReappearFromTheFirstLevelSnapshot",
+      "TimeSeconds": "0.009",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerIdentityTransactionsTest",
+      "Method": "pendingAttributeAndUnrelatedEntityChangesAreFlushedBeforeReload",
+      "TimeSeconds": "0.002",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerIdentityTransactionsTest",
+      "Method": "deletedSnapshotAttributeIsNotRefreshedAndNewCurrentAttributeIsVisible",
+      "TimeSeconds": "0.004",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerIdentityTransactionsTest",
+      "Method": "invalidCurrentScalarTypesFailClosedWithoutCoercingThem",
+      "TimeSeconds": "0.005",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerIdentityTransactionsTest",
+      "Method": "currentWechatProjectionMustMatchItsLookupScope",
+      "TimeSeconds": "0.011",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerIdentityTransactionsTest",
+      "Method": "missingLockedAttributeFailsClosedInsteadOfSilentlyDiscardingIt",
+      "TimeSeconds": "0.004",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerIdentityTransactionsTest",
+      "Method": "wechatForUserUsesCurrentLockedFactsAfterTheSnapshotPredatesTheLink",
+      "TimeSeconds": "0.004",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerIdentityTransactionsTest",
+      "Method": "nullableEmailAndTimestampsPreserveTheExactCurrentConstraint",
+      "TimeSeconds": "0.002",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerIdentityTransactionsTest",
+      "Method": "currentUserProjectionCannotChangeTheActorOrRealm",
+      "TimeSeconds": "0.004",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerIdentityTransactionsTest",
+      "Method": "wechatOwnerUsesCurrentLockedFactsWithoutRefreshingAnInvisibleSnapshotEntity",
+      "TimeSeconds": "0.004",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerProviderRuntimeTest",
+      "Method": "proofBindsActualSnapshotAndNeverReturnsSecretsOrStableSecretDigests",
+      "TimeSeconds": "0.026",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerProviderRuntimeTest",
+      "Method": "authenticatedRequestsRejectWrongEnvironmentOperationProofExpiredAndMalformedNonce",
+      "TimeSeconds": "0.006",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerProviderRuntimeTest",
+      "Method": "changedFileDoesNotChangeExistingProofButRestartChangesBootAndLoadedSecrets",
+      "TimeSeconds": "0.012",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerProviderRuntimeTest",
+      "Method": "missingObservationKeyOrJarClosesOnlyObservationAndDoesNotInventFacts",
+      "TimeSeconds": "0.011",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerRuntimeSnapshotTest",
+      "Method": "runningFactoriesKeepTheSameLoadedSecretsUntilProcessRestart",
+      "TimeSeconds": "2.04",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ConsumerRuntimeSnapshotTest",
+      "Method": "failedProbesCloseStreamsAndOnlyTerminateTheirOwnLiveProcess",
+      "TimeSeconds": "0.11",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.PhoneOtpTest",
+      "Method": "throttlesPhoneAcrossSessionsAndDoesNotCreateChallengeWhenProviderFails",
+      "TimeSeconds": "0.004",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.PhoneOtpTest",
+      "Method": "codeIsSecretBoundToSessionAndPhoneExpiresAndConsumesOnce",
+      "TimeSeconds": "0.004",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.PhoneOtpTest",
+      "Method": "fifthFailedAttemptPermanentlyExhaustsChallenge",
+      "TimeSeconds": "0.002",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.PhoneOtpTest",
+      "Method": "canonicalizesMainlandNumbersAndRejectsOtherCountriesAndMalformedInput",
+      "TimeSeconds": "0.002",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.PhoneOtpTest",
+      "Method": "dailyPhoneAndHourlyIpBudgetsStopFurtherSmsDispatch",
+      "TimeSeconds": "0.016",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.PhoneOtpTest",
+      "Method": "concurrentVerificationOnlyAuthenticatesOneRequest",
+      "TimeSeconds": "0.011",
+      "Status": "PASSED"
+    },
+    {
+      "Class": "com.aimanager.identity.ProviderHttpBodyDeadlineTest",
+      "Method": "smsHttp11BodyMustRespectWholeRequestDeadline",
+      "TimeSeconds": "6.898",
+      "Status": "FAILURE"
+    },
+    {
+      "Class": "com.aimanager.identity.ProviderHttpBodyDeadlineTest",
+      "Method": "wechatHttp11DripBodyMustRespectWholeRequestDeadline",
+      "TimeSeconds": "7.277",
+      "Status": "FAILURE"
+    },
+    {
+      "Class": "com.aimanager.identity.ProviderHttpBodyDeadlineTest",
+      "Method": "smsCallerInterruptionClosesOwnedExchangeBeforeFixtureCleanup",
+      "TimeSeconds": "0.011",
+      "Status": "PASSED"
+    }
+  ]
+}
