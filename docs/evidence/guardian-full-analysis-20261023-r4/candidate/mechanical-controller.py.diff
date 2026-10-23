@@ -1,0 +1,47 @@
+--- clean-analysis-r3/controller.py
++++ analysis406-r4/controller.py
+@@ -6,7 +6,7 @@
+ CANDIDATE = Path(__file__).absolute().parent
+ REPO = CANDIDATE.parents[1]
+ ATTEMPT = CANDIDATE/'attempt'
+-HARD = START+210
++HARD = START+180
+ CUTOFF = HARD-6
+ job = child = None
+ expired = threading.Event()
+@@ -20,7 +20,7 @@
+ def hard_stop():
+     os._exit(124)  # OS closes the private kill-on-close Job handle.
+ hard_timer=threading.Timer(max(0,HARD-monotonic()),hard_stop);hard_timer.daemon=True;hard_timer.start()
+-result={'status':'NOT_ACCEPTED','outerBudgetSeconds':210,'terminationReserveSeconds':6,'startedAtUtc':utc(),'workerPid':None,'phaseScope':'FULL_GUARDIAN_ANALYZE'}
++result={'status':'NOT_ACCEPTED','outerBudgetSeconds':180,'terminationReserveSeconds':6,'startedAtUtc':utc(),'workerPid':None,'phaseScope':'FULL_GUARDIAN_ANALYZE'}
+ code=1;assigned=False;cleanup=False;console=None;soft_timer=None;attempt_created=False
+ try:
+     if len(sys.argv)!=2 or not re.fullmatch('[0-9a-f]{64}',sys.argv[1]):raise RuntimeError('Exact approved proposal SHA required')
+@@ -31,7 +31,7 @@
+     proposal=json.loads((CANDIDATE/'proposal.json').read_text('utf-8'))
+     ATTEMPT.mkdir()  # Single-use attempt; an existing directory is never reused.
+     attempt_created=True
+-    save(ATTEMPT/'request.json',{'approvedProposalSha256':sys.argv[1],'outerBudgetSeconds':210,'startedAtUtc':result['startedAtUtc']})
++    save(ATTEMPT/'request.json',{'approvedProposalSha256':sys.argv[1],'outerBudgetSeconds':180,'startedAtUtc':result['startedAtUtc']})
+     for row in proposal['candidateFiles']+proposal['controlRuntimeFiles']+proposal['historicalMetadataFiles']:
+         p=Path(row['path']) if row.get('absolute') else CANDIDATE/row['path']
+         if p.is_symlink() or p.is_junction() or p.stat().st_size!=row['bytes'] or sha(p)!=row['sha256']:raise RuntimeError('Pinned validation/runtime file changed')
+@@ -53,7 +53,7 @@
+     win32job.AssignProcessToJobObject(job,int(child._handle));assigned=True
+     if expired.is_set() or monotonic()>=CUTOFF:raise RuntimeError('Working deadline reached before handshake')
+     child.stdin.write('OWNED_JOB_READY\n');child.stdin.flush();child.stdin.close()
+-    print(json.dumps({'state':'OWNED_GUARDIAN_ANALYZE_WORKER_STARTED','workerPid':child.pid,'attempt':str(ATTEMPT),'outerBudgetSeconds':210}),flush=True)
++    print(json.dumps({'state':'OWNED_GUARDIAN_ANALYZE_WORKER_STARTED','workerPid':child.pid,'attempt':str(ATTEMPT),'outerBudgetSeconds':180}),flush=True)
+     announced=False
+     while child.poll() is None and monotonic()<CUTOFF:
+         launch=ATTEMPT/'launch.json'
+@@ -107,7 +107,7 @@
+         job.Close()
+     if console:console.close()
+     result['finishedAtUtc']=utc();result['elapsedCompleteSeconds']=monotonic()-START
+-    if result.get('ownedJobActiveProcessesFinal')!=0 or result['elapsedCompleteSeconds']>=210:result['status']='NOT_ACCEPTED';code=1
++    if result.get('ownedJobActiveProcessesFinal')!=0 or result['elapsedCompleteSeconds']>=180:result['status']='NOT_ACCEPTED';code=1
+     if attempt_created:save(ATTEMPT/'result.json',result)
+     print(json.dumps({'status':result['status'],'elapsedCompleteSeconds':result['elapsedCompleteSeconds'],'result':str(ATTEMPT/'result.json'),'workerPid':result['workerPid']}),flush=True)
+ os._exit(code)

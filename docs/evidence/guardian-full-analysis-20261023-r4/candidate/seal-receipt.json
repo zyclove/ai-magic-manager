@@ -1,0 +1,42 @@
+{
+  "status": "STATIC_ANALYSIS406_R4_SEALED_ROOT_REVIEW_REQUIRED_UNRUN",
+  "proposal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\proposal.json",
+    "bytes": 15784,
+    "sha256": "ee65482a8f848e92d74d884379d971f2525b943989c06e04dc17aa7840c68779"
+  },
+  "inputs": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\inputs.json",
+    "bytes": 6922,
+    "sha256": "e5dd60d9392cb516b18dd237092d23046be3ada830c15487230d562cfa822607"
+  },
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\out\\source-manifest.json",
+    "bytes": 241948,
+    "sha256": "af9ae63d5dcd9cedf96b423a876636a3e19af3d0ea342728d0a74211c902bd48"
+  },
+  "candidatePackageConfig": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+    "bytes": 15666,
+    "sha256": "1360722a78071ec6020aade7ef2b4595bcca2aa14f3745d1bcb8f5abd678f3de"
+  },
+  "cacheManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\cache-analysis-projection.json",
+    "bytes": 724690,
+    "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84"
+  },
+  "candidateFiles": 10,
+  "controlRuntimeFiles": 11,
+  "historicalMetadataFiles": 29,
+  "sourceFiles": 406,
+  "cacheFiles": 3536,
+  "outerBudgetSeconds": 180,
+  "workerBudgetSeconds": 165,
+  "commandCapSeconds": 150,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "browserStarted": false,
+  "candidateImported": false,
+  "sourceCopied": false,
+  "attemptExists": false
+}

@@ -1,0 +1,136 @@
+{
+  "schemaVersion": 1,
+  "status": "FULL_GUARDIAN_ANALYSIS_EXTERNALLY_ACCEPTED_TESTS_NOT_RUN",
+  "facts": {
+    "sourceCommit": "fa2148954ccec749f7d58c38184a208085bfe181",
+    "sourceFiles": 406,
+    "scope": "Complete Guardian lib/test analysis with no selectors; tests were not executed.",
+    "sevenRootGitTrees": {
+      "apps/guardian": "b57ca8a0c6f01e82e05bb32f4d34ca157dba980a",
+      "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+      "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+      "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+      "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+      "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+      "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+    },
+    "actualToolSession": 89525,
+    "initialToolChunk": "25badb",
+    "intermediateToolChunk": "13affd",
+    "finalToolChunk": "5c9348",
+    "naturalExitCode": 0,
+    "outerElapsedSeconds": 45.59640880000006,
+    "diagnostics": {
+      "errors": 0,
+      "warnings": 0,
+      "infos": 0
+    },
+    "testsRunInThisAnalysis": false,
+    "browserRunInThisAnalysis": false,
+    "testStatus": "NOT_RUN",
+    "separateBrowserRunOutcomeIncluded": false,
+    "packageRows": 70,
+    "rebasedInternalRoots": 7,
+    "unchangedExternalRows": 63,
+    "cacheTrees": 70,
+    "cacheFixedFiles": 32,
+    "cacheFiles": 3536,
+    "cacheBytes": 633817159,
+    "candidateAndRuntimeMetadataPinsMatched": 50,
+    "preflightAndPostflightComplete": true,
+    "forcedTermination": false,
+    "privateJobActiveProcessesAfter": 0,
+    "outerCleanupPerformed": false,
+    "watchdogExpired": false,
+    "strictCompleteOuterBeforeCommandDeadline": true,
+    "workerElapsedAtLaunchSeconds": 18.210460399999647,
+    "commandBudgetSeconds": 116.78953960000035,
+    "workerRelativeCommandDeadlineSeconds": 135.0,
+    "outerTotalBudgetSeconds": 180,
+    "workerBudgetSeconds": 165,
+    "commandCapSeconds": 150,
+    "releaseObservationUtc": "2026-10-23T04:25:16.690593+00:00",
+    "releaseSdkProcesses": [],
+    "releaseUnknownProcessNames": [],
+    "releaseKnownOwnedPidsAbsent": [
+      53964,
+      57848
+    ],
+    "releaseAvailableRamBytes": 3991142400,
+    "pubRun": false,
+    "downloadsAllowed": false,
+    "cacheCopiedByRunner": false,
+    "mainOrFrozenSourceChangedByRunner": false,
+    "servicesUpdated": false,
+    "wholeSdkOrBrowserInstallationPinned": false,
+    "wholeProductAccepted": false
+  },
+  "analysisCommand": [
+    "C:/Windows/System32/cmd.exe",
+    "/d",
+    "/v:off",
+    "/c",
+    "D:/softwares/flutter/bin/flutter.bat --no-version-check --suppress-analytics analyze --no-pub --fatal-infos --fatal-warnings"
+  ],
+  "analysisWorkingDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\src\\apps\\guardian",
+  "rawLog": {
+    "archivePath": "attempt/out/analyze.log",
+    "bytes": 189,
+    "sha256": "6f6532a2d306330df4c1cd8b804fd8254e1cb116bd95c2f55de2cf8f30a9f834"
+  },
+  "rootExternalObservation": {
+    "archivePath": "attempt/external-observation-root.json",
+    "bytes": 1408,
+    "sha256": "5f55c078a442255ccad5398d29fb46eb512e2f3de0083ac0c28e72f3f2ebacaf"
+  },
+  "actualToolReferences": [
+    {
+      "purpose": "Root actual controller invocation",
+      "session": 89525,
+      "initialChunk": "25badb",
+      "intermediateChunk": "13affd",
+      "finalChunk": "5c9348",
+      "naturalExitCode": 0,
+      "referenceSource": "Parent Root handoff; session/initial/final/exit independently present in archived external observation."
+    },
+    {
+      "purpose": "Root independent external observation invocation",
+      "chunk": "ac688f",
+      "naturalExitCode": 0,
+      "referenceSource": "Parent Root handoff; exact resulting JSON and observer source are archived."
+    },
+    {
+      "purpose": "Metadata-only candidate preparation",
+      "chunk": "21de6c",
+      "naturalExitCode": 0,
+      "referenceSource": "Preparing subagent actual tool result; no SDK or candidate execution."
+    },
+    {
+      "purpose": "Independent static review",
+      "chunks": [
+        "f6389a",
+        "3ad28b",
+        "b1042a"
+      ],
+      "referenceSource": "Archived independent static review receipt; no SDK execution."
+    }
+  ],
+  "historicalStatusesPreserved": "Preparation and static reviews retain their original UNRUN/attemptAbsent fields; later attempt and Root external observation establish the actual analysis outcome.",
+  "scopeLimits": [
+    "This archive accepts only the source-fa21489/406-file full Guardian analysis.",
+    "No test, browser, backend, deployment, provider, or whole-product acceptance is asserted here.",
+    "The separate Browser38 execution outcome is excluded from this archive.",
+    "The 3536-file allowlist is the unchanged historical parent except for its sole analysis-unused Chrome row; it does not pin the entire SDK/browser installation.",
+    "Raw paths and statuses are evidence; this archive is not a relocated executable candidate."
+  ],
+  "archiveTaskActions": {
+    "sdkStarted": false,
+    "testsRun": false,
+    "browserStarted": false,
+    "candidateImportedOrExecuted": false,
+    "gitRun": false,
+    "mainSourceWritten": false,
+    "cacheModifiedOrCleaned": false,
+    "separateBrowserSourceControlsOrAttemptModified": false
+  }
+}

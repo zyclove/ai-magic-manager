@@ -1,0 +1,54 @@
+{
+  "status": "STATIC_BROWSER38_SEALED_FOR_ROOT_REVIEW_RUNTIME_UNRUN",
+  "proposal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\proposal.json",
+    "bytes": 38059,
+    "sha256": "f478063e573d445eb048e9a93ff87b7ae5f900499aab5f55d5730e4a7ba9447c"
+  },
+  "inputs": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\inputs.json",
+    "bytes": 9682,
+    "sha256": "770589fea56a9578234eb728f7a1b98fcf2eb240f022c9a7098140ea5448e320"
+  },
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\out\\source-manifest.json",
+    "bytes": 241948,
+    "sha256": "af9ae63d5dcd9cedf96b423a876636a3e19af3d0ea342728d0a74211c902bd48"
+  },
+  "dependencyLibraryPins": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\out\\dependency-library-pins.json",
+    "bytes": 360075,
+    "sha256": "d3d727fb0dbd6cf4e2d26b8da01c67dd315e52b0502dae35b82df2468a280c9c"
+  },
+  "candidatePackageConfig": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+    "bytes": 15666,
+    "sha256": "1360722a78071ec6020aade7ef2b4595bcca2aa14f3745d1bcb8f5abd678f3de"
+  },
+  "cacheManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\cache-content-chrome-refreshed.json",
+    "bytes": 725955,
+    "sha256": "8c0cfde01a9d6d5cb4bf002c1ed6d5069af28b0f27f110bec292f46e281f66c0"
+  },
+  "expectedCaseContract": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\expected-cases.json",
+    "bytes": 20019,
+    "sha256": "58e757467b1fbd761a9ae5eef6312fe7cf939fa15ba730e33ce6a4ddcf39f9b2"
+  },
+  "staticReview": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\static-review.json",
+    "bytes": 4769,
+    "sha256": "d9069ecda5326063d2f5d2ae17fa2f9729ad6fe106428c8b1e6dff42555543b0"
+  },
+  "candidateFiles": 24,
+  "controlRuntimeFiles": 11,
+  "historicalMetadataFiles": 101,
+  "sourceFiles": 406,
+  "expectedPhysicalSuites": 4,
+  "expectedVisibleCases": 38,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "browserStarted": false,
+  "candidateImported": false,
+  "attemptExists": false
+}

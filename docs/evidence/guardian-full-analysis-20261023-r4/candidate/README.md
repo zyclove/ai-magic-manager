@@ -1,0 +1,13 @@
+# Full Guardian analysis r4 — static executable candidate
+
+This unexecuted candidate references the sealed browser38 source406 snapshot at commit fa2148954ccec749f7d58c38184a208085bfe181. All seven source roots, complete Main/frozen raw hashes, Git trees/blobs and70 package mappings are checked before and after execution. No source tree is copied. HEAD may advance outside those seven roots.
+
+The sole proposed command is `flutter.bat --no-version-check --suppress-analytics analyze --no-pub --fatal-infos --fatal-warnings`, from the frozen Guardian package, with no file selectors. It is full analysis, not test execution. Earlier source080e zero-issues evidence does not cover the new source406.
+
+Controls are mechanically adapted from the actually accepted analysis-r3 template. Root's requested180-second total is implemented as outer180 / soft174 / worker165 / commandcap150, retaining cleanup5 and complete postflight>=25 seconds. The dynamic command deadline is at most worker-relative135 seconds, and full preflight consumes part of that time; cleanup ends by worker-relative140 seconds. The underlying helper is unchanged. RAM and each C:/D: free-space minimum remain2GiB, with global SDK0/unknown0 before launch and after completion.
+
+The existing strict analysis-only projection is copied byte-for-byte: parent0027 minus the one unused Chrome executable, preserving all70 trees,32 fixed files and every other3536 file pin (633817159 bytes). It is also exactly the current browser38 manifest after excluding that manifest's sole Chrome row. cache_check is AST-identical to the clean template. No cache contents were rebaselined or copied.
+
+Acceptance requires natural native exit0 and No issues found!, fatal warnings/infos enabled, no timeout or forced termination, retained process handle terminal state, owned Job0, full source/package/cache/runtime postflight and resource gates, and actual outer natural zero. Root must additionally enforce the strict complete outer elapsed bound against launch.workerElapsedAtLaunch + launch.commandBudgetSeconds, or require additional actual terminal timing evidence. Cleanup never upgrades a result to passing.
+
+Status is STATIC/UNRUN and executionApproved=false. There is no attempt directory, dependency resolution, SDK invocation, application test, browser, network use, service/deployment action or automatic chaining from Family/browser grants. The entire SDK/browser installation is not pinned. The separate earlier analysis plan remains historical; its210-second proposal was superseded by this180-total candidate and must not be treated as the active budget.

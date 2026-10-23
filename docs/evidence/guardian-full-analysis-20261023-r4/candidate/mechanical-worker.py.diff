@@ -1,0 +1,63 @@
+--- clean-analysis-r3/worker.py
++++ analysis406-r4/worker.py
+@@ -16,15 +16,15 @@
+ import psutil
+ 
+ START = time.monotonic()
+-HARD = START + 195
++HARD = START + 165
+ CANDIDATE = Path(__file__).absolute().parent
+ ATTEMPT = CANDIDATE / 'attempt'
+ REPO = CANDIDATE.parents[1]
+-FROZEN = REPO / '.cache/guardian-current-20261023-r3'
++FROZEN = REPO / '.cache/guardian-browser38-20261023-r1'
+ SOURCE = FROZEN / 'src'
+ MODULE = SOURCE / 'apps/guardian'
+-INPUT = FROZEN / 'out/analysis-inputs-root.json'
+-INPUT_SHA256 = 'c1a91fc4d62ba4ce162a0f289560887d8c7dfc3b2f98370b4a606e7c84b07305'
++INPUT = CANDIDATE / 'inputs.json'
++INPUT_SHA256 = 'e5dd60d9392cb516b18dd237092d23046be3ada830c15487230d562cfa822607'
+ HELPER_SHA256 = '4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12'
+ ROOTS = ['apps/guardian', 'packages/audit_client', 'packages/commerce_contracts',
+          'packages/notification_client', 'packages/device_operations',
+@@ -53,7 +53,7 @@
+ 
+ 
+ def budget():
+-    require(time.monotonic() < HARD, 'Complete worker budget of 195 seconds exceeded')
++    require(time.monotonic() < HARD, 'Complete worker budget of 165 seconds exceeded')
+ 
+ 
+ def save(name, value):
+@@ -181,10 +181,10 @@
+ def source_check():
+     manifest = load_pin(inputs['sourceManifest'])
+     rows = manifest['sourceFiles']
+-    require(manifest['roots'] == ROOTS and len(rows) == 405 and manifest['sourceCount'] == 405,
+-            'Frozen seven-root/405 source boundary changed')
++    require(manifest['roots'] == ROOTS and len(rows) == 406 and manifest['sourceCount'] == 406,
++            'Frozen seven-root/406 source boundary changed')
+     expected = {row['path'] for row in rows}
+-    require(len(expected) == 405, 'Duplicate source input')
++    require(len(expected) == 406, 'Duplicate source input')
+     observed = {}
+     for label, base in [('frozenRawGit', SOURCE), ('mainRaw', REPO)]:
+         actual = set()
+@@ -358,7 +358,7 @@
+ 
+ 
+ receipt = {'status': 'NOT_ACCEPTED', 'phaseScope': 'FULL_GUARDIAN_ANALYZE',
+-           'startedAtUtc': utc(), 'workerBudgetSeconds': 195, 'commandCapSeconds': 180,
++           'startedAtUtc': utc(), 'workerBudgetSeconds': 165, 'commandCapSeconds': 150,
+            'commandCleanupReserveSeconds': 5, 'minimumPostflightReserveSeconds': 25,
+            'sdkCalls': 0, 'testsRun': False, 'pubRun': False, 'downloadsAllowed': False,
+            'cacheCopied': False, 'mainSourceWritten': False, 'forcedTermination': False}
+@@ -395,7 +395,7 @@
+     save('launch-gate.json', ready)
+     resource_gate(ready)
+     now = time.monotonic()
+-    deadline = min(now + 180, HARD - 30)
++    deadline = min(now + 150, HARD - 30)
+     cleanup_deadline = min(deadline + 5, HARD - 25)
+     require(deadline > now + 1, 'Insufficient full budget after preflight; no SDK started')
+     environment = os.environ.copy()

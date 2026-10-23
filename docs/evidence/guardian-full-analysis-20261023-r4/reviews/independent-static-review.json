@@ -1,0 +1,86 @@
+{
+  "status": "INDEPENDENT_STATIC_REVIEW_READY_UNRUN_NO_EXECUTION_AUTHORIZATION",
+  "createdAtUtc": "2026-10-23T04:22:27.263312+00:00",
+  "candidate": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4",
+  "proposal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\proposal.json",
+    "bytes": 15784,
+    "sha256": "ee65482a8f848e92d74d884379d971f2525b943989c06e04dc17aa7840c68779"
+  },
+  "inputs": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\inputs.json",
+    "bytes": 6922,
+    "sha256": "e5dd60d9392cb516b18dd237092d23046be3ada830c15487230d562cfa822607"
+  },
+  "sealReceipt": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\seal-receipt.json",
+    "bytes": 1631,
+    "sha256": "ba7b5a6f8ae154f80daa2f091e27fd1cbce406dc4d5f080d0986a85aa5ac0f98"
+  },
+  "sourceCommit": "fa2148954ccec749f7d58c38184a208085bfe181",
+  "currentHeadObservedByIndependentReview": "619bd91e7b638b9050908ef7ca1452c583dec062",
+  "independentReviewer": "/root/browser31_candidate_review_20261023/html_flags_static_review",
+  "independentReadOnlyActuals": [
+    "f6389a",
+    "3ad28b",
+    "b1042a"
+  ],
+  "checks": {
+    "pinsMatched": 50,
+    "candidatePins": 10,
+    "controlRuntimePins": 11,
+    "historicalPins": 29,
+    "cleanR3OriginalPinsPreserved": 27,
+    "mainSourceFiles": 406,
+    "frozenSourceFiles": 406,
+    "mainFrozenMembershipAndRawHashesExact": true,
+    "sevenCurrentGitTreesMatchApprovedSource": true,
+    "packageMappings": 70,
+    "internalRebasedMappings": 7,
+    "externalMappingsUnchanged": 63,
+    "sharedBrowser38SourceNoDuplicateCopy": true,
+    "cacheProjectionSha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84",
+    "cacheFiles": 3536,
+    "projectionEqualsBrowser38ExceptSoleChromeFixedRow": true,
+    "cacheCheckAstUnchangedFromCleanR3": true,
+    "workerChangesOnlyApprovedPathsInputHashCountAndBudgets": true,
+    "controllerOnly210To180": true,
+    "nativeHelperUnchanged": true,
+    "attemptAbsent": true
+  },
+  "budgetsSeconds": {
+    "outerTotal": 180,
+    "outerSoft": 174,
+    "worker": 165,
+    "commandCap": 150,
+    "cleanup": 5,
+    "postReserve": 25,
+    "dynamicCommandDeadlineAtMostWorkerRelative": 135,
+    "dynamicCleanupDeadlineAtMostWorkerRelative": 140
+  },
+  "requiredAcceptance": [
+    "Separate explicit Root execution grant and fresh resources",
+    "Actual outer natural exit 0",
+    "Native command natural exit 0 and No issues found! with --fatal-infos --fatal-warnings",
+    "No timeout or forced termination; retained root handle terminal and private Job 0",
+    "Full pre/post source406/package70/runtime3536 checks and resource gates",
+    "Root external conservative strict elapsed bound or separate terminal timing evidence"
+  ],
+  "limits": [
+    "Static metadata/source review only; no analysis or tests run",
+    "No fresh runtime3536 entity content reread in this independent r4 review; actual execution must perform pre/post",
+    "Whole SDK/browser installation is not pinned",
+    "No optional private Job member diagnostics added"
+  ],
+  "actions": {
+    "sdkCalls": 0,
+    "testsRun": false,
+    "browserStarted": false,
+    "candidateImportedOrExecuted": false,
+    "mainModified": false,
+    "candidateModifiedByThisReceipt": false,
+    "attemptCreated": false,
+    "commitCreated": false
+  },
+  "blockers": []
+}

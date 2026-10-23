@@ -1,0 +1,21 @@
+{
+  "utc": "2026-10-23T04:23:41.813264+00:00",
+  "pid": 57848,
+  "argv": [
+    "C:\\Windows\\System32\\cmd.exe",
+    "/d",
+    "/v:off",
+    "/c",
+    "D:\\softwares\\flutter\\bin\\flutter.bat --no-version-check --suppress-analytics analyze --no-pub --fatal-infos --fatal-warnings"
+  ],
+  "workingDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\src\\apps\\guardian",
+  "selectorCount": 0,
+  "commandBudgetSeconds": 116.78953960000035,
+  "workerElapsedAtLaunch": 18.210460399999647,
+  "postflightReserveSeconds": 25,
+  "cleanupReserveSeconds": 5,
+  "processLocalTemp": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\attempt\\tmp",
+  "pubAndStorageLoopbackDisabled": true,
+  "nativeProcessHandleRetained": true,
+  "atomicNestedJobMembership": true
+}
