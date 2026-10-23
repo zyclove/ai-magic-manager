@@ -1,0 +1,1040 @@
+{
+  "schemaVersion": 1,
+  "status": "FULL_GUARDIAN_ANALYSIS_EXTERNALLY_ACCEPTED_BROWSER46_UNRUN",
+  "createdAtUtc": "2026-10-23T05:01:26.828118+00:00",
+  "copiedRawFiles": 44,
+  "copiedRawBytes": 1772211,
+  "pinnedCandidateFilesCopied": 12,
+  "actualAttemptFilesCopied": 12,
+  "listedFilesExcludingInventory": 48,
+  "listedBytesExcludingInventory": 1788342,
+  "copiedEveryFileByteForByte": true,
+  "allRawSourcePinsRecheckedAfterCopy": true,
+  "facts": {
+    "sourceCommit": "1ca1f7fc4cddefca6f711bea0ae90f3cb8c89f9e",
+    "sourceFiles": 407,
+    "sourceTreeSha256": "465a01da3438ee2924f99abd0fa840c0b0e32f61016db5f15e852dd0cbd41224",
+    "sevenRootGitTrees": {
+      "apps/guardian": "fd8bcf1b6a90668c11c24ed464b660e8ca5b84fa",
+      "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+      "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+      "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+      "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+      "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+      "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+    },
+    "scope": "Full Guardian lib/test analysis with no selectors; no application test or browser execution.",
+    "fullAnalysisAccepted": true,
+    "actualToolSession": 76515,
+    "initialToolChunk": "4ab17c",
+    "finalToolChunk": "fa5143",
+    "actualNaturalExitCode": 0,
+    "outerElapsedSeconds": 62.624172999998336,
+    "rootExternalObserverToolChunk": "8c337f",
+    "rootExternalObserverNaturalExitCode": 0,
+    "diagnostics": {
+      "errors": 0,
+      "warnings": 0,
+      "infos": 0
+    },
+    "candidateAndRuntimeMetadataPinsMatched": 101,
+    "packageRows": 70,
+    "rebasedInternalRoots": 7,
+    "unchangedExternalRows": 63,
+    "cacheFiles": 3536,
+    "cacheBytes": 633817159,
+    "cacheTrees": 70,
+    "cacheFixedFiles": 32,
+    "preflightAndPostflightComplete": true,
+    "outerBudgetSeconds": 180,
+    "workerBudgetSeconds": 165,
+    "commandCapSeconds": 150,
+    "workerRelativeCommandDeadlineSeconds": 135.0,
+    "strictCompleteOuterBeforeCommandDeadline": true,
+    "commandPid": 29336,
+    "workerPid": 41616,
+    "ownedJobActiveProcessesAfter": 0,
+    "forcedTermination": false,
+    "outerCleanupPerformed": false,
+    "watchdogExpired": false,
+    "releaseObservationUtc": "2026-10-23T04:57:08.877102+00:00",
+    "releaseSdkProcesses": [],
+    "releaseUnknownProcessNames": [],
+    "releaseKnownOwnedPidsAbsent": [
+      41616,
+      29336
+    ],
+    "releaseAvailableRamBytes": 3750559744,
+    "testsRunInThisAnalysis": false,
+    "browserRunInThisAnalysis": false,
+    "browser46Status": "UNRUN",
+    "newClassificationBrowserCases": 8,
+    "prior38StaticNamesPreserved": true,
+    "pubRun": false,
+    "downloadsAllowed": false,
+    "servicesUpdated": false,
+    "wholeProductAccepted": false
+  },
+  "durableHistoricalMetadataPins": [
+    {
+      "historicalIndex": 0,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\controller.py",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/candidate/controller.py",
+      "bytes": 8048,
+      "sha256": "2c0d3b0b36d551219816b3c5cb3e05e69a2e56d32ed16a7e611fcacb751b547f"
+    },
+    {
+      "historicalIndex": 1,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\worker.py",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/candidate/worker.py",
+      "bytes": 24517,
+      "sha256": "016768f9e06e1a27ffea979d2545355852188ebb1e9fe7a07424395f01c69647"
+    },
+    {
+      "historicalIndex": 2,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\heap1536_windows_job.py",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/candidate/heap1536_windows_job.py",
+      "bytes": 9292,
+      "sha256": "4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12"
+    },
+    {
+      "historicalIndex": 3,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\prepare_analysis_r4.py",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/preparation/prepare_analysis_r4.py",
+      "bytes": 17104,
+      "sha256": "3d5f136f115e3320159856709634e31c88dbbcc4cef34bdf115ddc87f72cd959"
+    },
+    {
+      "historicalIndex": 4,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\README.md",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/candidate/README.md",
+      "bytes": 2623,
+      "sha256": "273fcc278be9979b3f52d0b04438d52018fe5c7c357737f251e8fc79c4ef5284"
+    },
+    {
+      "historicalIndex": 5,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\mechanical-controller.py.diff",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/candidate/mechanical-controller.py.diff",
+      "bytes": 3294,
+      "sha256": "dea823d4beecbf9afb51a8d02f9c189a9a83ad556c8545461b3d272c324eb5fe"
+    },
+    {
+      "historicalIndex": 6,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\mechanical-worker.py.diff",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/candidate/mechanical-worker.py.diff",
+      "bytes": 2828,
+      "sha256": "ae48d4f002d2e11e253916cda88cbe3741e6fba277b4d1096513a9fa81c72570"
+    },
+    {
+      "historicalIndex": 7,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\mechanical-native-helper.py.diff",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/candidate/mechanical-native-helper.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "historicalIndex": 8,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\input-metadata-diff.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/candidate/input-metadata-diff.json",
+      "bytes": 5026,
+      "sha256": "07f826cc6e7cf52054ff291fd1b04f41844e7a37f2cb82bfd87a797b416bf06b"
+    },
+    {
+      "historicalIndex": 9,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\static-review.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/candidate/static-review.json",
+      "bytes": 2834,
+      "sha256": "ee9c3557871803f7f59e1418d5311197e93c1d804c563263fbc6957bc9f861e9"
+    },
+    {
+      "historicalIndex": 21,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3\\out\\analysis-inputs-root.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r3/inputs/analysis-inputs-root.json",
+      "bytes": 6881,
+      "sha256": "c1a91fc4d62ba4ce162a0f289560887d8c7dfc3b2f98370b4a606e7c84b07305"
+    },
+    {
+      "historicalIndex": 22,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3\\out\\source-manifest.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r3/inputs/source-manifest.json",
+      "bytes": 227011,
+      "sha256": "5b630f7e0f182ec7eda3e9a7a29679b2b806e3cf6795085d53b416a5442e4468"
+    },
+    {
+      "historicalIndex": 23,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3\\out\\dependency-library-pins.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r3/inputs/dependency-library-pins.json",
+      "bytes": 360061,
+      "sha256": "0335412fea23b233a629755f90281f13aea48c78ddd52165c735e2f68f0d73b1"
+    },
+    {
+      "historicalIndex": 24,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261021-r1\\out\\cache-content-20261021-r1.json",
+      "durableArchivePath": "docs/evidence/guardian-baseline-analysis-20261021/inputs/cache-content-20261021-r1.json",
+      "bytes": 725122,
+      "sha256": "0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2"
+    },
+    {
+      "historicalIndex": 25,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3\\out\\cache-analysis-projection.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/inputs/cache-analysis-projection.json",
+      "bytes": 724690,
+      "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84"
+    },
+    {
+      "historicalIndex": 26,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\.dart_tool\\package_config.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/original-package_config.json",
+      "bytes": 15171,
+      "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7"
+    },
+    {
+      "historicalIndex": 27,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r3/inputs/guardian-package_config.json",
+      "bytes": 15652,
+      "sha256": "64bc9326600b9bf6062cc34233b51ad32f981743f44feba4390334c9ea854e96"
+    },
+    {
+      "historicalIndex": 28,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r3\\generated\\guardian-package_config.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r3/inputs/guardian-package_config.json",
+      "bytes": 15652,
+      "sha256": "64bc9326600b9bf6062cc34233b51ad32f981743f44feba4390334c9ea854e96"
+    },
+    {
+      "historicalIndex": 29,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\controller.py",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r3/candidate/controller.py",
+      "bytes": 8048,
+      "sha256": "9baa2f090040bcedb721bb344c7c12a1940bfc278d55361ff4c7f4711107b3ee"
+    },
+    {
+      "historicalIndex": 30,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\worker.py",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r3/candidate/worker.py",
+      "bytes": 24530,
+      "sha256": "2af24677868b6044444c5c0c60768e2f0a59091189210042a544ee8b98c35ace"
+    },
+    {
+      "historicalIndex": 31,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\heap1536_windows_job.py",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/candidate/heap1536_windows_job.py",
+      "bytes": 9292,
+      "sha256": "4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12"
+    },
+    {
+      "historicalIndex": 32,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\README.md",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r3/candidate/README.md",
+      "bytes": 4937,
+      "sha256": "6893b916af9bc80dc37096983c0cc58819a2ae2f69fcd7e44934c5dbcc0a2d6e"
+    },
+    {
+      "historicalIndex": 33,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\expected-root-input-schema.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r3/candidate/expected-root-input-schema.json",
+      "bytes": 2153,
+      "sha256": "903e8b13321d4de68f45b4e5783261a314e8b964ec4ee20e25124ac4b71926a6"
+    },
+    {
+      "historicalIndex": 34,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\mechanical-controller.py.diff",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/candidate/mechanical-native-helper.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "historicalIndex": 35,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\mechanical-worker.py.diff",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r3/candidate/mechanical-worker.py.diff",
+      "bytes": 4399,
+      "sha256": "45db629bc0dcf7b848aa6c1680c4f9781240d4c803850d82600b722a50fab7bb"
+    },
+    {
+      "historicalIndex": 36,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\static-review.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r3/candidate/static-review.json",
+      "bytes": 3233,
+      "sha256": "ff9020dfa69d78a542ef4f5809571b04f505214712998c1f5b7645cc4e6aa338"
+    },
+    {
+      "historicalIndex": 37,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\proposal.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r3/candidate/proposal.json",
+      "bytes": 9627,
+      "sha256": "06b3c62694c4ff6abd87ea7ad37b3c13d1aba5b771ed9ffb1034783ed636593e"
+    },
+    {
+      "historicalIndex": 38,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\root-static-review.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r3/candidate/root-static-review.json",
+      "bytes": 832,
+      "sha256": "ad0628ec6cd110d8a100524d009ed37216315e124b78f13cf16a8e5f1c7d3c49"
+    },
+    {
+      "historicalIndex": 39,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\attempt\\result.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r3/attempt/result.json",
+      "bytes": 4756,
+      "sha256": "2cd22231cb02a925f444e767b5eb15e9c90644941889ecb5e6f48074bfef16c9"
+    },
+    {
+      "historicalIndex": 40,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\attempt\\receipt.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r3/attempt/receipt.json",
+      "bytes": 3785,
+      "sha256": "eaaca3d72f5e6f06930eb050a8a02f10cb3290d38f2a9617d72595a67cdd118a"
+    },
+    {
+      "historicalIndex": 41,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r3\\attempt\\external-observation-root.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r3/attempt/external-observation-root.json",
+      "bytes": 1362,
+      "sha256": "8dae677cad7409b183d73c118a6d5100ca2f48066245a3497f3a523d4be06a1c"
+    },
+    {
+      "historicalIndex": 42,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\proposal.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/inputs/source-snapshot-proposal.json",
+      "bytes": 38059,
+      "sha256": "f478063e573d445eb048e9a93ff87b7ae5f900499aab5f55d5730e4a7ba9447c"
+    },
+    {
+      "historicalIndex": 43,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\seal-receipt.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/inputs/source-snapshot-seal-receipt.json",
+      "bytes": 2294,
+      "sha256": "43f6c907f1134de23c56d6a7e0ee02e77a06de956d4a1fa805eee41c20213d58"
+    },
+    {
+      "historicalIndex": 44,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\inputs.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/inputs/analysis-inputs-root.json",
+      "bytes": 6922,
+      "sha256": "e5dd60d9392cb516b18dd237092d23046be3ada830c15487230d562cfa822607"
+    },
+    {
+      "historicalIndex": 45,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\cache-analysis-projection.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/inputs/cache-analysis-projection.json",
+      "bytes": 724690,
+      "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84"
+    },
+    {
+      "historicalIndex": 46,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\out\\source-manifest.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/inputs/source-manifest.json",
+      "bytes": 241948,
+      "sha256": "af9ae63d5dcd9cedf96b423a876636a3e19af3d0ea342728d0a74211c902bd48"
+    },
+    {
+      "historicalIndex": 47,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\out\\dependency-library-pins.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/inputs/dependency-library-pins.json",
+      "bytes": 360075,
+      "sha256": "d3d727fb0dbd6cf4e2d26b8da01c67dd315e52b0502dae35b82df2468a280c9c"
+    },
+    {
+      "historicalIndex": 48,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/inputs/frozen-guardian-package_config.json",
+      "bytes": 15666,
+      "sha256": "1360722a78071ec6020aade7ef2b4595bcca2aa14f3745d1bcb8f5abd678f3de"
+    },
+    {
+      "historicalIndex": 49,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser38-20261023-r1\\generated\\guardian-package_config.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/inputs/frozen-guardian-package_config.json",
+      "bytes": 15666,
+      "sha256": "1360722a78071ec6020aade7ef2b4595bcca2aa14f3745d1bcb8f5abd678f3de"
+    },
+    {
+      "historicalIndex": 50,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\proposal.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/candidate/proposal.json",
+      "bytes": 15784,
+      "sha256": "ee65482a8f848e92d74d884379d971f2525b943989c06e04dc17aa7840c68779"
+    },
+    {
+      "historicalIndex": 51,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\seal-receipt.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/candidate/seal-receipt.json",
+      "bytes": 1631,
+      "sha256": "ba7b5a6f8ae154f80daa2f091e27fd1cbce406dc4d5f080d0986a85aa5ac0f98"
+    },
+    {
+      "historicalIndex": 52,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\external_observe_root.py",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/candidate/external_observe_root.py",
+      "bytes": 4295,
+      "sha256": "17c5a55cf8f33813960009d19ab16219fbbacf5af591e9e9bd2f48dd68403823"
+    },
+    {
+      "historicalIndex": 53,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\attempt\\result.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/attempt/result.json",
+      "bytes": 4757,
+      "sha256": "4c577bcfcca52aaa43f1df2f36e090a10d45814c1bf53f40dfe0157f5d04fa5e"
+    },
+    {
+      "historicalIndex": 54,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\attempt\\receipt.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/attempt/receipt.json",
+      "bytes": 3787,
+      "sha256": "888da08208e85bf5523ecec6e8fdbf6dfb3ecc5cf70eebf54fe32cc16ac420e1"
+    },
+    {
+      "historicalIndex": 55,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\attempt\\external-observation-root.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/attempt/external-observation-root.json",
+      "bytes": 1408,
+      "sha256": "5f55c078a442255ccad5398d29fb46eb512e2f3de0083ac0c28e72f3f2ebacaf"
+    },
+    {
+      "historicalIndex": 56,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\attempt\\launch.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/attempt/launch.json",
+      "bytes": 807,
+      "sha256": "e5296466780206794890e16a41155317e19352c832a27872d5ae6f6c9eee41ad"
+    },
+    {
+      "historicalIndex": 57,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\attempt\\preflight-pins.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/attempt/preflight-pins.json",
+      "bytes": 1921,
+      "sha256": "751cad10b750d00a19b8a8fd9bbf064271c12f3c1fde19451c44e7c435a3e3ab"
+    },
+    {
+      "historicalIndex": 58,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\attempt\\postflight-pins.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/attempt/postflight-pins.json",
+      "bytes": 1921,
+      "sha256": "ca40f36d19c2c636d86ef6c19f3436c31b3aea76cbffee8c9c3534d289cd9dc3"
+    },
+    {
+      "historicalIndex": 59,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\attempt\\postflight-gate.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/attempt/postflight-gate.json",
+      "bytes": 206,
+      "sha256": "c485b9c4e341c92f1505863d42d3e9b2c681c6999b1592e13ab333322f303623"
+    },
+    {
+      "historicalIndex": 60,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\attempt\\out\\analyze.log",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/attempt/out/analyze.log",
+      "bytes": 189,
+      "sha256": "6f6532a2d306330df4c1cd8b804fd8254e1cb116bd95c2f55de2cf8f30a9f834"
+    },
+    {
+      "historicalIndex": 61,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\generated\\guardian-package_config.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/guardian-package_config.json",
+      "bytes": 15757,
+      "sha256": "82b513d43529f9eb81950a23b5e69eb41e7844b6e9cc00fa94dc3f6011b03f47"
+    },
+    {
+      "historicalIndex": 62,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\generated\\main-package_config-original.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/inputs/original-package_config.json",
+      "bytes": 15171,
+      "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7"
+    },
+    {
+      "historicalIndex": 63,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\generated\\reference-source-name-contract-browser38.py",
+      "durableArchivePath": "docs/evidence/guardian-browser38-20261023-r1/candidate/source_name_contract.py",
+      "bytes": 5887,
+      "sha256": "7fe208bdb1cf46307185343fdc249a4e99fa2879dba44cff165d04675dc7f77b"
+    },
+    {
+      "historicalIndex": 64,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\delivery-inventory.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/source-snapshot/out/delivery-inventory.json",
+      "bytes": 78702,
+      "sha256": "e66e6b85aa3d07316639f9eced9472c1594a4ecd01e7a23337045fd18ea43612"
+    },
+    {
+      "historicalIndex": 65,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\delta-from-browser38.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/source-snapshot/out/delta-from-browser38.json",
+      "bytes": 2061,
+      "sha256": "fc71da1abf8f427b8de2db2182ada9a80753426f90fb84a8ae1d05e06aa0702e"
+    },
+    {
+      "historicalIndex": 66,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\dependency-library-pins.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/dependency-library-pins.json",
+      "bytes": 360166,
+      "sha256": "b9a54b838df97860aee6dd5ddda93a90e61b50ce644c59d44375e47df9bfff8c"
+    },
+    {
+      "historicalIndex": 67,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\expected-cases.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/source-snapshot/out/expected-cases.json",
+      "bytes": 25121,
+      "sha256": "89e17325e49ce430e490832bdb91daff3a698344caf7f6efbf08103fb48d3eae"
+    },
+    {
+      "historicalIndex": 68,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\preparation-receipt.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/source-snapshot/out/preparation-receipt.json",
+      "bytes": 1607,
+      "sha256": "101b34addc43407f1c566b1ec498d6ddaefa42a56f51a0d9ecf1fd16618984e7"
+    },
+    {
+      "historicalIndex": 69,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\preparation-review.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/source-snapshot/out/preparation-review.json",
+      "bytes": 6083,
+      "sha256": "b876ba4386c5b779c249c79ce569aa55a1de906981a15c54b0efe99e1f8d76ef"
+    },
+    {
+      "historicalIndex": 70,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\prepare_static_source.py",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/source-snapshot/out/prepare_static_source.py",
+      "bytes": 19535,
+      "sha256": "158892496ddc9c1757454510fb6cf63833f1915ae4bc621c3d014c39dbf74f2f"
+    },
+    {
+      "historicalIndex": 71,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\source-before38-manifest.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/inputs/source-manifest.json",
+      "bytes": 241948,
+      "sha256": "af9ae63d5dcd9cedf96b423a876636a3e19af3d0ea342728d0a74211c902bd48"
+    },
+    {
+      "historicalIndex": 72,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\source-directory-list.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/source-snapshot/out/source-directory-list.json",
+      "bytes": 24652,
+      "sha256": "7c546daa3713a1a2e1c8f878e4702e8fbebdc51249efeed1452ebf032e212259"
+    },
+    {
+      "historicalIndex": 73,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\source-manifest.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/source-manifest.json",
+      "bytes": 243262,
+      "sha256": "a41ed00d2f124b51535aec59116bffecda15e02544cd8a2e7e12fd0e7680582d"
+    },
+    {
+      "historicalIndex": 74,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/frozen-guardian-package_config.json",
+      "bytes": 15757,
+      "sha256": "82b513d43529f9eb81950a23b5e69eb41e7844b6e9cc00fa94dc3f6011b03f47"
+    },
+    {
+      "historicalIndex": 75,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\seal-static-source.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/source-snapshot-seal.json",
+      "bytes": 79968,
+      "sha256": "576a2d5d0644b91967a4b2dec81b15eeabedaac3cbfbb70f8a235593daf9829d"
+    },
+    {
+      "historicalIndex": 76,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\inputs.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/analysis-inputs-root.json",
+      "bytes": 7028,
+      "sha256": "92a27fbff4e96d237524fee9c60f31eb5ac21f94e713e5f875bd51915aff3b28"
+    },
+    {
+      "historicalIndex": 77,
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\cache-analysis-projection.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/cache-analysis-projection.json",
+      "bytes": 724690,
+      "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84"
+    }
+  ],
+  "inheritedRuntimePinDescriptors": [
+    {
+      "historicalIndex": 10,
+      "path": "C:\\Python313\\python.exe",
+      "absolute": true,
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125",
+      "evidenceKind": "EXACT_PIN_DESCRIPTOR_ONLY_RUNTIME_FILE_BYTES_NOT_ARCHIVED",
+      "originalDescriptorArchivePath": "candidate/proposal.json",
+      "originalDescriptorJsonLocation": "historicalMetadataFiles/10"
+    },
+    {
+      "historicalIndex": 11,
+      "path": "C:\\Python313\\python313.dll",
+      "absolute": true,
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529",
+      "evidenceKind": "EXACT_PIN_DESCRIPTOR_ONLY_RUNTIME_FILE_BYTES_NOT_ARCHIVED",
+      "originalDescriptorArchivePath": "candidate/proposal.json",
+      "originalDescriptorJsonLocation": "historicalMetadataFiles/11"
+    },
+    {
+      "historicalIndex": 12,
+      "path": "C:\\Python313\\Lib\\site-packages\\win32\\win32job.pyd",
+      "absolute": true,
+      "bytes": 28672,
+      "sha256": "8f2a15f090e4fa75fd7179de0aa41108e9c6fe95786f736f373f5a7501e7e769",
+      "evidenceKind": "EXACT_PIN_DESCRIPTOR_ONLY_RUNTIME_FILE_BYTES_NOT_ARCHIVED",
+      "originalDescriptorArchivePath": "candidate/proposal.json",
+      "originalDescriptorJsonLocation": "historicalMetadataFiles/12"
+    },
+    {
+      "historicalIndex": 13,
+      "path": "C:\\Python313\\Lib\\site-packages\\pywin32_system32\\pywintypes313.dll",
+      "absolute": true,
+      "bytes": 136192,
+      "sha256": "90ba935a0145ee9ae56267a365cc0088d34fa506b7afeb2bd1bd78cd33359605",
+      "evidenceKind": "EXACT_PIN_DESCRIPTOR_ONLY_RUNTIME_FILE_BYTES_NOT_ARCHIVED",
+      "originalDescriptorArchivePath": "candidate/proposal.json",
+      "originalDescriptorJsonLocation": "historicalMetadataFiles/13"
+    },
+    {
+      "historicalIndex": 14,
+      "path": "C:\\Program Files\\Git\\cmd\\git.exe",
+      "bytes": 45032,
+      "sha256": "4ab2b391de7fb5eb3afb34b5bd19ee7f71d0450bf7e4c207b201a0392e3825ae",
+      "absolute": true,
+      "evidenceKind": "EXACT_PIN_DESCRIPTOR_ONLY_RUNTIME_FILE_BYTES_NOT_ARCHIVED",
+      "originalDescriptorArchivePath": "candidate/proposal.json",
+      "originalDescriptorJsonLocation": "historicalMetadataFiles/14"
+    },
+    {
+      "historicalIndex": 15,
+      "path": "C:\\Windows\\System32\\cmd.exe",
+      "bytes": 327680,
+      "sha256": "a6e3b3b22b7fe8ce2c9245816126723eaa13f43b9f591883e59959a2d409426a",
+      "absolute": true,
+      "evidenceKind": "EXACT_PIN_DESCRIPTOR_ONLY_RUNTIME_FILE_BYTES_NOT_ARCHIVED",
+      "originalDescriptorArchivePath": "candidate/proposal.json",
+      "originalDescriptorJsonLocation": "historicalMetadataFiles/15"
+    },
+    {
+      "historicalIndex": 16,
+      "path": "C:\\Windows\\System32\\where.exe",
+      "bytes": 61440,
+      "sha256": "ade557dd65848c5cf6565913cf6e01cf5c9a8033f0d784c4d6932394958d743e",
+      "absolute": true,
+      "evidenceKind": "EXACT_PIN_DESCRIPTOR_ONLY_RUNTIME_FILE_BYTES_NOT_ARCHIVED",
+      "originalDescriptorArchivePath": "candidate/proposal.json",
+      "originalDescriptorJsonLocation": "historicalMetadataFiles/16"
+    },
+    {
+      "historicalIndex": 17,
+      "path": "D:\\softwares\\flutter\\bin\\internal\\exit_with_errorlevel.bat",
+      "bytes": 562,
+      "sha256": "f4014bd05cc24391ff28f7bd5b22949cc80f0bb66ab9eda512c9c3997f0283e0",
+      "absolute": true,
+      "evidenceKind": "EXACT_PIN_DESCRIPTOR_ONLY_RUNTIME_FILE_BYTES_NOT_ARCHIVED",
+      "originalDescriptorArchivePath": "candidate/proposal.json",
+      "originalDescriptorJsonLocation": "historicalMetadataFiles/17"
+    },
+    {
+      "historicalIndex": 18,
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.yaml",
+      "bytes": 6215,
+      "sha256": "d703ed2f5467e37193640b26522839137430af10b631f36c0d89a54f3236172f",
+      "absolute": true,
+      "evidenceKind": "EXACT_PIN_DESCRIPTOR_ONLY_RUNTIME_FILE_BYTES_NOT_ARCHIVED",
+      "originalDescriptorArchivePath": "candidate/proposal.json",
+      "originalDescriptorJsonLocation": "historicalMetadataFiles/18"
+    },
+    {
+      "historicalIndex": 19,
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.lock",
+      "bytes": 22135,
+      "sha256": "097571421b53ac57c9b72523ee5d2ae584c3d6ba58412f8cbe3af35c55c5593a",
+      "absolute": true,
+      "evidenceKind": "EXACT_PIN_DESCRIPTOR_ONLY_RUNTIME_FILE_BYTES_NOT_ARCHIVED",
+      "originalDescriptorArchivePath": "candidate/proposal.json",
+      "originalDescriptorJsonLocation": "historicalMetadataFiles/19"
+    },
+    {
+      "historicalIndex": 20,
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\.dart_tool\\package_config.json",
+      "bytes": 20035,
+      "sha256": "49d0a9ce1c70ca6edd29537570cfe7ea6539843da50c6a85a107d829330150e8",
+      "absolute": true,
+      "evidenceKind": "EXACT_PIN_DESCRIPTOR_ONLY_RUNTIME_FILE_BYTES_NOT_ARCHIVED",
+      "originalDescriptorArchivePath": "candidate/proposal.json",
+      "originalDescriptorJsonLocation": "historicalMetadataFiles/20"
+    }
+  ],
+  "sourceSnapshotMetadataReferences": [
+    {
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\generated\\guardian-package_config.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/guardian-package_config.json",
+      "bytes": 15757,
+      "sha256": "82b513d43529f9eb81950a23b5e69eb41e7844b6e9cc00fa94dc3f6011b03f47"
+    },
+    {
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\generated\\main-package_config-original.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/inputs/original-package_config.json",
+      "bytes": 15171,
+      "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7"
+    },
+    {
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\generated\\reference-source-name-contract-browser38.py",
+      "durableArchivePath": "docs/evidence/guardian-browser38-20261023-r1/candidate/source_name_contract.py",
+      "bytes": 5887,
+      "sha256": "7fe208bdb1cf46307185343fdc249a4e99fa2879dba44cff165d04675dc7f77b"
+    },
+    {
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\delivery-inventory.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/source-snapshot/out/delivery-inventory.json",
+      "bytes": 78702,
+      "sha256": "e66e6b85aa3d07316639f9eced9472c1594a4ecd01e7a23337045fd18ea43612"
+    },
+    {
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\delta-from-browser38.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/source-snapshot/out/delta-from-browser38.json",
+      "bytes": 2061,
+      "sha256": "fc71da1abf8f427b8de2db2182ada9a80753426f90fb84a8ae1d05e06aa0702e"
+    },
+    {
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\dependency-library-pins.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/dependency-library-pins.json",
+      "bytes": 360166,
+      "sha256": "b9a54b838df97860aee6dd5ddda93a90e61b50ce644c59d44375e47df9bfff8c"
+    },
+    {
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\expected-cases.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/source-snapshot/out/expected-cases.json",
+      "bytes": 25121,
+      "sha256": "89e17325e49ce430e490832bdb91daff3a698344caf7f6efbf08103fb48d3eae"
+    },
+    {
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\preparation-receipt.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/source-snapshot/out/preparation-receipt.json",
+      "bytes": 1607,
+      "sha256": "101b34addc43407f1c566b1ec498d6ddaefa42a56f51a0d9ecf1fd16618984e7"
+    },
+    {
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\preparation-review.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/source-snapshot/out/preparation-review.json",
+      "bytes": 6083,
+      "sha256": "b876ba4386c5b779c249c79ce569aa55a1de906981a15c54b0efe99e1f8d76ef"
+    },
+    {
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\prepare_static_source.py",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/source-snapshot/out/prepare_static_source.py",
+      "bytes": 19535,
+      "sha256": "158892496ddc9c1757454510fb6cf63833f1915ae4bc621c3d014c39dbf74f2f"
+    },
+    {
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\source-before38-manifest.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r4/inputs/source-manifest.json",
+      "bytes": 241948,
+      "sha256": "af9ae63d5dcd9cedf96b423a876636a3e19af3d0ea342728d0a74211c902bd48"
+    },
+    {
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\source-directory-list.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/source-snapshot/out/source-directory-list.json",
+      "bytes": 24652,
+      "sha256": "7c546daa3713a1a2e1c8f878e4702e8fbebdc51249efeed1452ebf032e212259"
+    },
+    {
+      "originalPath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\source-manifest.json",
+      "durableArchivePath": "docs/evidence/guardian-full-analysis-20261023-r5/inputs/source-manifest.json",
+      "bytes": 243262,
+      "sha256": "a41ed00d2f124b51535aec59116bffecda15e02544cd8a2e7e12fd0e7680582d"
+    }
+  ],
+  "historicalCoverage": {
+    "total": 78,
+    "byteExactMetadata": 67,
+    "runtimePinDescriptorsOnly": 11
+  },
+  "files": [
+    {
+      "archivePath": ".gitattributes",
+      "sourcePath": null,
+      "bytes": 8,
+      "sha256": "705fd4d6451a31d36b3df7de96f83f30ac976c9b4a6d1e51671d8e2f33e2d0da"
+    },
+    {
+      "archivePath": "attempt/external-observation-root.json",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/attempt/external-observation-root.json",
+      "bytes": 1410,
+      "sha256": "5b0e0e1a5afb8e689d5fc4dc36f7f6e19a2739019448689d9e98dcc1e1b92a8a"
+    },
+    {
+      "archivePath": "attempt/initial-gate.json",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/attempt/initial-gate.json",
+      "bytes": 206,
+      "sha256": "17ef98544c4da79a28bb4f5de2c9c1c2c8f4086012e085fd66933b74b36d3a97"
+    },
+    {
+      "archivePath": "attempt/launch-gate.json",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/attempt/launch-gate.json",
+      "bytes": 206,
+      "sha256": "665af120651e553b17c75da185531235d75102b982b84659df9c390a5096915a"
+    },
+    {
+      "archivePath": "attempt/launch.json",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/attempt/launch.json",
+      "bytes": 819,
+      "sha256": "9ebab9f8176946ccb0c399f8fe5bec816ba86afaedbd411e89831d3a3ddcf7dd"
+    },
+    {
+      "archivePath": "attempt/out/analyze.log",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/attempt/out/analyze.log",
+      "bytes": 189,
+      "sha256": "904508d212d85e7f91980135b981ca597aff1ac32b99839d0d596945ea72d177"
+    },
+    {
+      "archivePath": "attempt/postflight-gate.json",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/attempt/postflight-gate.json",
+      "bytes": 206,
+      "sha256": "bdc0f125e35db815cfd704fd13bddd5c85a00666af5b9418a9222d2d39e415e0"
+    },
+    {
+      "archivePath": "attempt/postflight-pins.json",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/attempt/postflight-pins.json",
+      "bytes": 1922,
+      "sha256": "ad424c1a94a7341c3540834acbe2fac9efc3200eda7623f6a2b09db4e6b03489"
+    },
+    {
+      "archivePath": "attempt/preflight-pins.json",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/attempt/preflight-pins.json",
+      "bytes": 1920,
+      "sha256": "377bd0d7f8fcfc369268f31955a6e7532233b8d1cb20433aecc31add08ff668d"
+    },
+    {
+      "archivePath": "attempt/receipt.json",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/attempt/receipt.json",
+      "bytes": 3788,
+      "sha256": "84dae0b8141e15aea882afb99a2a8847a41ccce73196d7572b16702f9c3e90e5"
+    },
+    {
+      "archivePath": "attempt/request.json",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/attempt/request.json",
+      "bytes": 182,
+      "sha256": "0e21eff948cebb194a646fd8868aa5ee8b4e9d6051b2d55a7cb40014394c4907"
+    },
+    {
+      "archivePath": "attempt/result.json",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/attempt/result.json",
+      "bytes": 4759,
+      "sha256": "061fbf9ca5f55bbcaa21ed9e0e3a66746bdd31b871d5c73520975e90bc936a16"
+    },
+    {
+      "archivePath": "attempt/worker-console.log",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/attempt/worker-console.log",
+      "bytes": 112,
+      "sha256": "86283e542b7b7ffc4d1bfa0666f0658859a4250ea5e3a54d0136e3f372be65aa"
+    },
+    {
+      "archivePath": "candidate/ast-diff-proof.json",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/ast-diff-proof.json",
+      "bytes": 904,
+      "sha256": "9b20cdc82da565f3f4acadf34347b5b29d5171c53a5b3b2ada874d5e44ffe48c"
+    },
+    {
+      "archivePath": "candidate/controller.py",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/controller.py",
+      "bytes": 8048,
+      "sha256": "2c0d3b0b36d551219816b3c5cb3e05e69a2e56d32ed16a7e611fcacb751b547f"
+    },
+    {
+      "archivePath": "candidate/external_observe_root.py",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/external_observe_root.py",
+      "bytes": 4309,
+      "sha256": "a6a63544bea058219d286e9ae1d9becaa177706fede03551f7560befaaef88b3"
+    },
+    {
+      "archivePath": "candidate/heap1536_windows_job.py",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/heap1536_windows_job.py",
+      "bytes": 9292,
+      "sha256": "4965e39eecfe70c7eeeb7ce317c0c06f4ae484d36f025706fff3a669cec4ab12"
+    },
+    {
+      "archivePath": "candidate/input-metadata-diff.json",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/input-metadata-diff.json",
+      "bytes": 5173,
+      "sha256": "52f8199d2c3d32e826f68a32186483564f29579e082276b9e46e06494fe64111"
+    },
+    {
+      "archivePath": "candidate/mechanical-controller.py.diff",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/mechanical-controller.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archivePath": "candidate/mechanical-native-helper.py.diff",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/mechanical-native-helper.py.diff",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "archivePath": "candidate/mechanical-worker.py.diff",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/mechanical-worker.py.diff",
+      "bytes": 1549,
+      "sha256": "bf4675f71b31416a634e6f6ee7ac484f212e21bc557f8c15581200b69638f857"
+    },
+    {
+      "archivePath": "candidate/proposal.json",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/proposal.json",
+      "bytes": 28904,
+      "sha256": "595c764f7b70e4a76d25a7eefb6008b9656848ba9f9dcd67e33331eabdc8bd8b"
+    },
+    {
+      "archivePath": "candidate/README.md",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/README.md",
+      "bytes": 3041,
+      "sha256": "1f54ecf1806f4f190cd112034bddb69c19d408f4563c756f8a965f11a08cc4a3"
+    },
+    {
+      "archivePath": "candidate/seal-receipt.json",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/seal-receipt.json",
+      "bytes": 2004,
+      "sha256": "719ac6f20535f7501a621c274528dcff6ff111af6b4f7ef37b4efed7760b0691"
+    },
+    {
+      "archivePath": "candidate/static-review.json",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/static-review.json",
+      "bytes": 2356,
+      "sha256": "f9360a610b04447676dfdc9c96ea85f42532936d51fd9e8fe3fd81c49a097fbf"
+    },
+    {
+      "archivePath": "candidate/template-r4-pin-preservation.json",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/template-r4-pin-preservation.json",
+      "bytes": 23867,
+      "sha256": "a6479040a73ff29cc20b1ed9ca07496ca18f185a29d6c2a5c0dc96da5a0964d9"
+    },
+    {
+      "archivePath": "candidate/worker.py",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/worker.py",
+      "bytes": 24530,
+      "sha256": "4883226861551df17b7fe8445f73ae15515322e97c040b00d922055cb1d74f98"
+    },
+    {
+      "archivePath": "inputs/analysis-inputs-root.json",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/inputs.json",
+      "bytes": 7028,
+      "sha256": "92a27fbff4e96d237524fee9c60f31eb5ac21f94e713e5f875bd51915aff3b28"
+    },
+    {
+      "archivePath": "inputs/cache-analysis-projection.json",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/cache-analysis-projection.json",
+      "bytes": 724690,
+      "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84"
+    },
+    {
+      "archivePath": "inputs/dependency-library-pins.json",
+      "sourcePath": ".cache/guardian-classification-current-20261023-r1/out/dependency-library-pins.json",
+      "bytes": 360166,
+      "sha256": "b9a54b838df97860aee6dd5ddda93a90e61b50ce644c59d44375e47df9bfff8c"
+    },
+    {
+      "archivePath": "inputs/frozen-guardian-package_config.json",
+      "sourcePath": ".cache/guardian-classification-current-20261023-r1/src/apps/guardian/.dart_tool/package_config.json",
+      "bytes": 15757,
+      "sha256": "82b513d43529f9eb81950a23b5e69eb41e7844b6e9cc00fa94dc3f6011b03f47"
+    },
+    {
+      "archivePath": "inputs/guardian-package_config.json",
+      "sourcePath": ".cache/guardian-classification-current-20261023-r1/generated/guardian-package_config.json",
+      "bytes": 15757,
+      "sha256": "82b513d43529f9eb81950a23b5e69eb41e7844b6e9cc00fa94dc3f6011b03f47"
+    },
+    {
+      "archivePath": "inputs/inherited-runtime-pin-descriptors.json",
+      "sourcePath": null,
+      "bytes": 5109,
+      "sha256": "8f692d34d917e9cdbaa92f559f1cf564891efae64141b2b8aa223b7fc46d5104"
+    },
+    {
+      "archivePath": "inputs/original-package_config.json",
+      "sourcePath": "apps/guardian/.dart_tool/package_config.json",
+      "bytes": 15171,
+      "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7"
+    },
+    {
+      "archivePath": "inputs/source-manifest.json",
+      "sourcePath": ".cache/guardian-classification-current-20261023-r1/out/source-manifest.json",
+      "bytes": 243262,
+      "sha256": "a41ed00d2f124b51535aec59116bffecda15e02544cd8a2e7e12fd0e7680582d"
+    },
+    {
+      "archivePath": "inputs/source-snapshot/out/delivery-inventory.json",
+      "sourcePath": ".cache/guardian-classification-current-20261023-r1/out/delivery-inventory.json",
+      "bytes": 78702,
+      "sha256": "e66e6b85aa3d07316639f9eced9472c1594a4ecd01e7a23337045fd18ea43612"
+    },
+    {
+      "archivePath": "inputs/source-snapshot/out/delta-from-browser38.json",
+      "sourcePath": ".cache/guardian-classification-current-20261023-r1/out/delta-from-browser38.json",
+      "bytes": 2061,
+      "sha256": "fc71da1abf8f427b8de2db2182ada9a80753426f90fb84a8ae1d05e06aa0702e"
+    },
+    {
+      "archivePath": "inputs/source-snapshot/out/expected-cases.json",
+      "sourcePath": ".cache/guardian-classification-current-20261023-r1/out/expected-cases.json",
+      "bytes": 25121,
+      "sha256": "89e17325e49ce430e490832bdb91daff3a698344caf7f6efbf08103fb48d3eae"
+    },
+    {
+      "archivePath": "inputs/source-snapshot/out/preparation-receipt.json",
+      "sourcePath": ".cache/guardian-classification-current-20261023-r1/out/preparation-receipt.json",
+      "bytes": 1607,
+      "sha256": "101b34addc43407f1c566b1ec498d6ddaefa42a56f51a0d9ecf1fd16618984e7"
+    },
+    {
+      "archivePath": "inputs/source-snapshot/out/preparation-review.json",
+      "sourcePath": ".cache/guardian-classification-current-20261023-r1/out/preparation-review.json",
+      "bytes": 6083,
+      "sha256": "b876ba4386c5b779c249c79ce569aa55a1de906981a15c54b0efe99e1f8d76ef"
+    },
+    {
+      "archivePath": "inputs/source-snapshot/out/prepare_static_source.py",
+      "sourcePath": ".cache/guardian-classification-current-20261023-r1/out/prepare_static_source.py",
+      "bytes": 19535,
+      "sha256": "158892496ddc9c1757454510fb6cf63833f1915ae4bc621c3d014c39dbf74f2f"
+    },
+    {
+      "archivePath": "inputs/source-snapshot/out/source-directory-list.json",
+      "sourcePath": ".cache/guardian-classification-current-20261023-r1/out/source-directory-list.json",
+      "bytes": 24652,
+      "sha256": "7c546daa3713a1a2e1c8f878e4702e8fbebdc51249efeed1452ebf032e212259"
+    },
+    {
+      "archivePath": "inputs/source-snapshot-seal.json",
+      "sourcePath": ".cache/guardian-classification-current-20261023-r1/out/seal-static-source.json",
+      "bytes": 79968,
+      "sha256": "576a2d5d0644b91967a4b2dec81b15eeabedaac3cbfbb70f8a235593daf9829d"
+    },
+    {
+      "archivePath": "preparation/prepare_analysis_r5.py",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/prepare_analysis_r5.py",
+      "bytes": 22025,
+      "sha256": "a5069758afb66cc101ee57e0aeb578f7e6804d65aa66fbcb05ecb2e7b751564e"
+    },
+    {
+      "archivePath": "README.md",
+      "sourcePath": null,
+      "bytes": 2105,
+      "sha256": "01533578419b5745e64c2f72df84ebf69bff7751e9fed6050fa5c405c99b19fe"
+    },
+    {
+      "archivePath": "reviews/root-source407-review.json",
+      "sourcePath": ".cache/guardian-classification-source407-root-review-20261023.json",
+      "bytes": 439,
+      "sha256": "b9e8cf3d9b4c403ab6b22a140578c0b4ba53582492801217090444fc44a7c878"
+    },
+    {
+      "archivePath": "reviews/root-static-review.json",
+      "sourcePath": ".cache/guardian-analyze-20261023-r5/root-static-review.json",
+      "bytes": 491,
+      "sha256": "9946b301b80df80798a6508b3811234d6945bb46f943405891fad9a3dab86828"
+    },
+    {
+      "archivePath": "summary.json",
+      "sourcePath": null,
+      "bytes": 8909,
+      "sha256": "bf114646adb98daa1b73b6bc699d7c79de756cdf6599b791252bb7069a1690d6"
+    }
+  ],
+  "sdkInvokedByArchiveTask": false,
+  "gitInvokedByArchiveTask": false,
+  "candidateImportedOrExecutedByArchiveTask": false,
+  "archiveIsAnEvidenceCopyNotAnExecutableRelocation": true
+}

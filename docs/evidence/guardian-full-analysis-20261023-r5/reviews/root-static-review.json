@@ -1,0 +1,15 @@
+{
+  "status": "ROOT_STATIC_REVIEW101_PINS_AND_FRESH_PREGRANT_MATCHED",
+  "utc": "2026-10-23T04:55:14.102249+00:00",
+  "proposalSha256": "595c764f7b70e4a76d25a7eefb6008b9656848ba9f9dcd67e33331eabdc8bd8b",
+  "metadataPins": 101,
+  "source407RootReadback": "2144f0",
+  "controllerAndNativeByteIdentical": true,
+  "workerOnlyDeclaredSourceChanges": true,
+  "fullAnalysisOnly": true,
+  "budget": 180,
+  "sdk": [],
+  "unknown": [],
+  "ramBytes": 3734773760,
+  "sdkInvoked": false
+}

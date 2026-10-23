@@ -1,0 +1,50 @@
+{
+  "status": "STATIC_ANALYSIS407_R5_SEALED_ROOT_REVIEW_REQUIRED_UNRUN",
+  "proposal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\proposal.json",
+    "bytes": 28904,
+    "sha256": "595c764f7b70e4a76d25a7eefb6008b9656848ba9f9dcd67e33331eabdc8bd8b"
+  },
+  "inputs": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\inputs.json",
+    "bytes": 7028,
+    "sha256": "92a27fbff4e96d237524fee9c60f31eb5ac21f94e713e5f875bd51915aff3b28"
+  },
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\source-manifest.json",
+    "bytes": 243262,
+    "sha256": "a41ed00d2f124b51535aec59116bffecda15e02544cd8a2e7e12fd0e7680582d"
+  },
+  "sourceSnapshotSeal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\seal-static-source.json",
+    "bytes": 79968,
+    "sha256": "576a2d5d0644b91967a4b2dec81b15eeabedaac3cbfbb70f8a235593daf9829d"
+  },
+  "candidatePackageConfig": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+    "bytes": 15757,
+    "sha256": "82b513d43529f9eb81950a23b5e69eb41e7844b6e9cc00fa94dc3f6011b03f47"
+  },
+  "cacheManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\cache-analysis-projection.json",
+    "bytes": 724690,
+    "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84"
+  },
+  "candidateFiles": 12,
+  "controlRuntimeFiles": 11,
+  "historicalMetadataFiles": 78,
+  "originalR4PinsPreserved": 50,
+  "sourceFiles": 407,
+  "cacheFiles": 3536,
+  "outerBudgetSeconds": 180,
+  "workerBudgetSeconds": 165,
+  "commandCapSeconds": 150,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "browserStarted": false,
+  "candidateImported": false,
+  "sourceCopied": false,
+  "cacheCopied": false,
+  "executionApproved": false,
+  "attemptExists": false
+}

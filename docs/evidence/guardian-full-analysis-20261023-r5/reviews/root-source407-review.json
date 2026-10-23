@@ -1,0 +1,14 @@
+{
+  "status": "ROOT_SOURCE407_PACKAGE70_STATIC_REVIEW_MATCHED",
+  "utc": "2026-10-23T04:50:31.476134+00:00",
+  "commit": "1ca1f7fc4cddefca6f711bea0ae90f3cb8c89f9e",
+  "sourceFiles": 407,
+  "mainRawAndCommittedLfMatch": true,
+  "recomputedRawGitBlobs": 407,
+  "packageRows": 70,
+  "internalRootOnlyChanges": 7,
+  "expectedStaticCases": 46,
+  "prior38ExactlyPreserved": true,
+  "sdkRun": false,
+  "dartParseOrCompile": false
+}

@@ -1,0 +1,115 @@
+{
+  "status": "PIN_METADATA_ONLY_RUNTIME_BYTES_NOT_ARCHIVED",
+  "rows": [
+    {
+      "historicalIndex": 10,
+      "path": "C:\\Python313\\python.exe",
+      "absolute": true,
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125",
+      "evidenceKind": "EXACT_PIN_DESCRIPTOR_ONLY_RUNTIME_FILE_BYTES_NOT_ARCHIVED",
+      "originalDescriptorArchivePath": "candidate/proposal.json",
+      "originalDescriptorJsonLocation": "historicalMetadataFiles/10"
+    },
+    {
+      "historicalIndex": 11,
+      "path": "C:\\Python313\\python313.dll",
+      "absolute": true,
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529",
+      "evidenceKind": "EXACT_PIN_DESCRIPTOR_ONLY_RUNTIME_FILE_BYTES_NOT_ARCHIVED",
+      "originalDescriptorArchivePath": "candidate/proposal.json",
+      "originalDescriptorJsonLocation": "historicalMetadataFiles/11"
+    },
+    {
+      "historicalIndex": 12,
+      "path": "C:\\Python313\\Lib\\site-packages\\win32\\win32job.pyd",
+      "absolute": true,
+      "bytes": 28672,
+      "sha256": "8f2a15f090e4fa75fd7179de0aa41108e9c6fe95786f736f373f5a7501e7e769",
+      "evidenceKind": "EXACT_PIN_DESCRIPTOR_ONLY_RUNTIME_FILE_BYTES_NOT_ARCHIVED",
+      "originalDescriptorArchivePath": "candidate/proposal.json",
+      "originalDescriptorJsonLocation": "historicalMetadataFiles/12"
+    },
+    {
+      "historicalIndex": 13,
+      "path": "C:\\Python313\\Lib\\site-packages\\pywin32_system32\\pywintypes313.dll",
+      "absolute": true,
+      "bytes": 136192,
+      "sha256": "90ba935a0145ee9ae56267a365cc0088d34fa506b7afeb2bd1bd78cd33359605",
+      "evidenceKind": "EXACT_PIN_DESCRIPTOR_ONLY_RUNTIME_FILE_BYTES_NOT_ARCHIVED",
+      "originalDescriptorArchivePath": "candidate/proposal.json",
+      "originalDescriptorJsonLocation": "historicalMetadataFiles/13"
+    },
+    {
+      "historicalIndex": 14,
+      "path": "C:\\Program Files\\Git\\cmd\\git.exe",
+      "bytes": 45032,
+      "sha256": "4ab2b391de7fb5eb3afb34b5bd19ee7f71d0450bf7e4c207b201a0392e3825ae",
+      "absolute": true,
+      "evidenceKind": "EXACT_PIN_DESCRIPTOR_ONLY_RUNTIME_FILE_BYTES_NOT_ARCHIVED",
+      "originalDescriptorArchivePath": "candidate/proposal.json",
+      "originalDescriptorJsonLocation": "historicalMetadataFiles/14"
+    },
+    {
+      "historicalIndex": 15,
+      "path": "C:\\Windows\\System32\\cmd.exe",
+      "bytes": 327680,
+      "sha256": "a6e3b3b22b7fe8ce2c9245816126723eaa13f43b9f591883e59959a2d409426a",
+      "absolute": true,
+      "evidenceKind": "EXACT_PIN_DESCRIPTOR_ONLY_RUNTIME_FILE_BYTES_NOT_ARCHIVED",
+      "originalDescriptorArchivePath": "candidate/proposal.json",
+      "originalDescriptorJsonLocation": "historicalMetadataFiles/15"
+    },
+    {
+      "historicalIndex": 16,
+      "path": "C:\\Windows\\System32\\where.exe",
+      "bytes": 61440,
+      "sha256": "ade557dd65848c5cf6565913cf6e01cf5c9a8033f0d784c4d6932394958d743e",
+      "absolute": true,
+      "evidenceKind": "EXACT_PIN_DESCRIPTOR_ONLY_RUNTIME_FILE_BYTES_NOT_ARCHIVED",
+      "originalDescriptorArchivePath": "candidate/proposal.json",
+      "originalDescriptorJsonLocation": "historicalMetadataFiles/16"
+    },
+    {
+      "historicalIndex": 17,
+      "path": "D:\\softwares\\flutter\\bin\\internal\\exit_with_errorlevel.bat",
+      "bytes": 562,
+      "sha256": "f4014bd05cc24391ff28f7bd5b22949cc80f0bb66ab9eda512c9c3997f0283e0",
+      "absolute": true,
+      "evidenceKind": "EXACT_PIN_DESCRIPTOR_ONLY_RUNTIME_FILE_BYTES_NOT_ARCHIVED",
+      "originalDescriptorArchivePath": "candidate/proposal.json",
+      "originalDescriptorJsonLocation": "historicalMetadataFiles/17"
+    },
+    {
+      "historicalIndex": 18,
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.yaml",
+      "bytes": 6215,
+      "sha256": "d703ed2f5467e37193640b26522839137430af10b631f36c0d89a54f3236172f",
+      "absolute": true,
+      "evidenceKind": "EXACT_PIN_DESCRIPTOR_ONLY_RUNTIME_FILE_BYTES_NOT_ARCHIVED",
+      "originalDescriptorArchivePath": "candidate/proposal.json",
+      "originalDescriptorJsonLocation": "historicalMetadataFiles/18"
+    },
+    {
+      "historicalIndex": 19,
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.lock",
+      "bytes": 22135,
+      "sha256": "097571421b53ac57c9b72523ee5d2ae584c3d6ba58412f8cbe3af35c55c5593a",
+      "absolute": true,
+      "evidenceKind": "EXACT_PIN_DESCRIPTOR_ONLY_RUNTIME_FILE_BYTES_NOT_ARCHIVED",
+      "originalDescriptorArchivePath": "candidate/proposal.json",
+      "originalDescriptorJsonLocation": "historicalMetadataFiles/19"
+    },
+    {
+      "historicalIndex": 20,
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\.dart_tool\\package_config.json",
+      "bytes": 20035,
+      "sha256": "49d0a9ce1c70ca6edd29537570cfe7ea6539843da50c6a85a107d829330150e8",
+      "absolute": true,
+      "evidenceKind": "EXACT_PIN_DESCRIPTOR_ONLY_RUNTIME_FILE_BYTES_NOT_ARCHIVED",
+      "originalDescriptorArchivePath": "candidate/proposal.json",
+      "originalDescriptorJsonLocation": "historicalMetadataFiles/20"
+    }
+  ]
+}

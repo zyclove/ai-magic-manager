@@ -1,0 +1,62 @@
+{
+  "status": "STATIC_ANALYSIS407_R5_ROOT_REVIEW_REQUIRED_UNRUN",
+  "createdAtUtc": "2026-10-23T04:54:28.415663+00:00",
+  "sourceCommit": "1ca1f7fc4cddefca6f711bea0ae90f3cb8c89f9e",
+  "sourceFiles": 407,
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\source-manifest.json",
+    "bytes": 243262,
+    "sha256": "a41ed00d2f124b51535aec59116bffecda15e02544cd8a2e7e12fd0e7680582d"
+  },
+  "sourceSnapshotSeal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\out\\seal-static-source.json",
+    "bytes": 79968,
+    "sha256": "576a2d5d0644b91967a4b2dec81b15eeabedaac3cbfbb70f8a235593daf9829d"
+  },
+  "sourceTreeSha256": "465a01da3438ee2924f99abd0fa840c0b0e32f61016db5f15e852dd0cbd41224",
+  "observedCurrentHead": "5c53db4e7275fb826fb1104fef74792145d3014e",
+  "sharedSnapshot": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\src",
+  "fullMainAndFrozenRawAndMembershipMatch": true,
+  "packageRows": 70,
+  "controllerByteIdentical": true,
+  "nativeHelperByteIdentical": true,
+  "workerChangedFunctions": [
+    "source_check"
+  ],
+  "workerChangedAssignments": [
+    "FROZEN",
+    "INPUT_SHA256"
+  ],
+  "allBudgetNodesUnchanged": true,
+  "cacheProjection": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\cache-analysis-projection.json",
+    "bytes": 724690,
+    "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84"
+  },
+  "cacheFiles": 3536,
+  "cacheBytes": 633817159,
+  "cacheTrees": 70,
+  "fixedRuntimeFiles": 32,
+  "runtimeCacheContentsNotRehashedDuringPreparation": true,
+  "templatePinsMatched": 50,
+  "templateActuallyAccepted": true,
+  "oldActualAcceptanceAppliesToThisCandidate": false,
+  "outerBudgetSeconds": 180,
+  "outerSoftCutoffSeconds": 174,
+  "workerBudgetSeconds": 165,
+  "commandCapSeconds": 150,
+  "commandCleanupReserveSeconds": 5,
+  "minimumPostflightReserveSeconds": 25,
+  "dynamicCommandDeadlineWorkerRelativeMaxSeconds": 135,
+  "dynamicCleanupWorkerRelativeMaxSeconds": 140,
+  "sourceCopied": false,
+  "cacheCopied": false,
+  "candidateImported": false,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "browserStarted": false,
+  "networkUsed": false,
+  "mainWritten": false,
+  "gitWritten": false,
+  "attemptExists": false
+}

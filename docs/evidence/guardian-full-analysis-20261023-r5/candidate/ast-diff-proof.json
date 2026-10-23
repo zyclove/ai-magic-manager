@@ -1,0 +1,24 @@
+{
+  "status": "PYTHON_AST_STATIC_PROOF_NO_CONTROL_IMPORT",
+  "changedTopLevelNodes": [
+    "assignment:FROZEN",
+    "assignment:INPUT_SHA256",
+    "function:source_check"
+  ],
+  "onlyChangedFunction": "source_check",
+  "sourceCheckDifference": "Only three 406 integer literals and its 406 reason text become 407.",
+  "allOtherWorkerNodesAstIdentical": true,
+  "allBudgetAndCleanupNodesUnchanged": true,
+  "controllerByteIdentical": true,
+  "nativeByteIdentical": true,
+  "oldWorker": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r4\\worker.py",
+    "bytes": 24517,
+    "sha256": "016768f9e06e1a27ffea979d2545355852188ebb1e9fe7a07424395f01c69647"
+  },
+  "newWorker": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261023-r5\\worker.py",
+    "bytes": 24530,
+    "sha256": "4883226861551df17b7fe8445f73ae15515322e97c040b00d922055cb1d74f98"
+  }
+}

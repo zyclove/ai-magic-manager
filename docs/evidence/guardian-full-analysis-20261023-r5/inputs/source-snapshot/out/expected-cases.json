@@ -1,0 +1,676 @@
+{
+  "status": "STATIC_LITERAL_SOURCE_NAMES_NOT_RUNTIME_DISCOVERY",
+  "sourceCommit": "1ca1f7fc4cddefca6f711bea0ae90f3cb8c89f9e",
+  "sourceFiles": 407,
+  "sourceTreeSha256": "465a01da3438ee2924f99abd0fa840c0b0e32f61016db5f15e852dd0cbd41224",
+  "selectors": [
+    "test/workspace_flow_entry_browser_test.dart",
+    "test/audit_export_route_test.dart",
+    "test/approval_help_flow_browser_test.dart",
+    "test/notification_help_scope_browser_test.dart",
+    "test/application_classification_scope_browser_test.dart"
+  ],
+  "expectedPhysicalSuites": 5,
+  "expectedVisibleCases": 46,
+  "sourceCaseCounts": [
+    8,
+    4,
+    19,
+    7,
+    8
+  ],
+  "selectedSources": [
+    {
+      "selector": "test/workspace_flow_entry_browser_test.dart",
+      "expectedVisibleCases": 8,
+      "source": {
+        "path": "apps/guardian/test/workspace_flow_entry_browser_test.dart",
+        "gitBlob": "f97b1db8789ea265188a134a57f6f14feefc8f80",
+        "bytes": 11874,
+        "sha256": "15fb4c531970c6488438d78e4c35265c51286159c8c462a3f8938ad39c995736"
+      },
+      "declarations": [
+        {
+          "line": 123,
+          "nameTemplate": "audit entry recreates a readable page for a new scope generation",
+          "expandedNames": [
+            "audit entry recreates a readable page for a new scope generation"
+          ]
+        },
+        {
+          "line": 149,
+          "nameTemplate": "managed entry reloads and enables refresh after generation change",
+          "expandedNames": [
+            "managed entry reloads and enables refresh after generation change"
+          ]
+        },
+        {
+          "line": 180,
+          "nameTemplate": "export old repository rejects late data after $loss",
+          "expandedNames": [
+            "export old repository rejects late data after actor ABA",
+            "export old repository rejects late data after generation",
+            "export old repository rejects late data after dispose"
+          ]
+        },
+        {
+          "line": 226,
+          "nameTemplate": "workspace picker ignores its already selected tenant",
+          "expandedNames": [
+            "workspace picker ignores its already selected tenant"
+          ]
+        },
+        {
+          "line": 240,
+          "nameTemplate": "superseded workspace return cannot navigate or toast after newest selection fails",
+          "expandedNames": [
+            "superseded workspace return cannot navigate or toast after newest selection fails"
+          ]
+        },
+        {
+          "line": 281,
+          "nameTemplate": "newest successful workspace selection returns home",
+          "expandedNames": [
+            "newest successful workspace selection returns home"
+          ]
+        }
+      ]
+    },
+    {
+      "selector": "test/audit_export_route_test.dart",
+      "expectedVisibleCases": 4,
+      "source": {
+        "path": "apps/guardian/test/audit_export_route_test.dart",
+        "gitBlob": "696c38a6050769228855acad05b0c62c5160e891",
+        "bytes": 6429,
+        "sha256": "beff27499cbf2a10eeb469c930027218a56c8094a803f2e471fdb76f16659d20"
+      },
+      "declarations": [
+        {
+          "line": 90,
+          "nameTemplate": "covered export success preserves the cover and audit location",
+          "expandedNames": [
+            "covered export success preserves the cover and audit location"
+          ]
+        },
+        {
+          "line": 112,
+          "nameTemplate": "current export success opens the export jobs page",
+          "expandedNames": [
+            "current export success opens the export jobs page"
+          ]
+        },
+        {
+          "line": 126,
+          "nameTemplate": "covered success cannot redirect when the cover closes at completion",
+          "expandedNames": [
+            "covered success cannot redirect when the cover closes at completion"
+          ]
+        },
+        {
+          "line": 147,
+          "nameTemplate": "a cover during export closing prevents the late redirect",
+          "expandedNames": [
+            "a cover during export closing prevents the late redirect"
+          ]
+        }
+      ]
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "expectedVisibleCases": 19,
+      "source": {
+        "path": "apps/guardian/test/approval_help_flow_browser_test.dart",
+        "gitBlob": "c2846fccfd30f9a54be3598c98a9d7c95e7e12c4",
+        "bytes": 13713,
+        "sha256": "845cb4f4b5a65cf126080861b7e29bd579a0101f5b3be437c1394bf7c0be0127"
+      },
+      "declarations": [
+        {
+          "line": 193,
+          "nameTemplate": "$action cancellation preserves the original approval details",
+          "expandedNames": [
+            "批准 cancellation preserves the original approval details",
+            "拒绝 cancellation preserves the original approval details",
+            "撤销批准 cancellation preserves the original approval details"
+          ]
+        },
+        {
+          "line": 207,
+          "nameTemplate": "$action success closes its approval details",
+          "expandedNames": [
+            "批准 success closes its approval details",
+            "拒绝 success closes its approval details",
+            "撤销批准 success closes its approval details"
+          ]
+        },
+        {
+          "line": 221,
+          "nameTemplate": "$action success cannot dismiss an unrelated covering dialog",
+          "expandedNames": [
+            "批准 success cannot dismiss an unrelated covering dialog",
+            "拒绝 success cannot dismiss an unrelated covering dialog",
+            "撤销批准 success cannot dismiss an unrelated covering dialog"
+          ]
+        },
+        {
+          "line": 243,
+          "nameTemplate": "$action failed submission keeps the original details open",
+          "expandedNames": [
+            "批准 failed submission keeps the original details open",
+            "拒绝 failed submission keeps the original details open",
+            "撤销批准 failed submission keeps the original details open"
+          ]
+        },
+        {
+          "line": 267,
+          "nameTemplate": "help initial ${succeeds ? 'success' : 'error'} after disposal does not update the removed page",
+          "expandedNames": [
+            "help initial success after disposal does not update the removed page",
+            "help initial error after disposal does not update the removed page"
+          ]
+        },
+        {
+          "line": 283,
+          "nameTemplate": "help acknowledgement ${succeeds ? 'success' : 'error'} after disposal cannot start a follow-up read",
+          "expandedNames": [
+            "help acknowledgement success after disposal cannot start a follow-up read",
+            "help acknowledgement error after disposal cannot start a follow-up read"
+          ]
+        },
+        {
+          "line": 307,
+          "nameTemplate": "help actor ABA cannot revive a late read or old filter callback",
+          "expandedNames": [
+            "help actor ABA cannot revive a late read or old filter callback"
+          ]
+        },
+        {
+          "line": 331,
+          "nameTemplate": "help console entry creates a new page for the current generation",
+          "expandedNames": [
+            "help console entry creates a new page for the current generation"
+          ]
+        },
+        {
+          "line": 348,
+          "nameTemplate": "a captured help filter callback is inert after page disposal",
+          "expandedNames": [
+            "a captured help filter callback is inert after page disposal"
+          ]
+        }
+      ]
+    },
+    {
+      "selector": "test/notification_help_scope_browser_test.dart",
+      "expectedVisibleCases": 7,
+      "source": {
+        "path": "apps/guardian/test/notification_help_scope_browser_test.dart",
+        "gitBlob": "a3e1e7fbb16f50ad7dae10660870beb1e0662696",
+        "bytes": 22316,
+        "sha256": "7db37e189d9e162ee901b8d536a6e6845ae42a00ec3ce01a0108956902e3016e"
+      },
+      "declarations": [
+        {
+          "line": 155,
+          "nameTemplate": "real selection invalidates late inbox GET and Help count before membership resolves, and failure cannot restore them",
+          "expandedNames": [
+            "real selection invalidates late inbox GET and Help count before membership resolves, and failure cannot restore them"
+          ]
+        },
+        {
+          "line": 225,
+          "nameTemplate": "late markRead and retained actions stay inert after $loss",
+          "expandedNames": [
+            "late markRead and retained actions stay inert after real selection then failure",
+            "late markRead and retained actions stay inert after dispose"
+          ]
+        },
+        {
+          "line": 297,
+          "nameTemplate": "a fresh repository can read while the old read is pending; retained View callbacks and old completion keep their owner",
+          "expandedNames": [
+            "a fresh repository can read while the old read is pending; retained View callbacks and old completion keep their owner"
+          ]
+        },
+        {
+          "line": 380,
+          "nameTemplate": "fixed host keys fail closed when Session instance changes; fresh host keys attach and dispose listeners correctly",
+          "expandedNames": [
+            "fixed host keys fail closed when Session instance changes; fresh host keys attach and dispose listeners correctly"
+          ]
+        },
+        {
+          "line": 417,
+          "nameTemplate": "fresh shell entries navigate, read and open current approval after real successful workspace selection",
+          "expandedNames": [
+            "fresh shell entries navigate, read and open current approval after real successful workspace selection"
+          ]
+        },
+        {
+          "line": 501,
+          "nameTemplate": "SYNTHETIC optional actor ABA never revives held host scopes",
+          "expandedNames": [
+            "SYNTHETIC optional actor ABA never revives held host scopes"
+          ]
+        }
+      ]
+    },
+    {
+      "selector": "test/application_classification_scope_browser_test.dart",
+      "expectedVisibleCases": 8,
+      "source": {
+        "path": "apps/guardian/test/application_classification_scope_browser_test.dart",
+        "gitBlob": "dfe5f88d71138014503a055d37d58c1c5c8e6872",
+        "bytes": 20469,
+        "sha256": "50d5fb8f33c335f28c7a273e8d4b453ad526ef393fe497002df33e8ad555b9cf"
+      },
+      "declarations": [
+        {
+          "line": 145,
+          "nameTemplate": "already pending real workspace reload invalidates classification GET when selectTenant advances only generation",
+          "expandedNames": [
+            "already pending real workspace reload invalidates classification GET when selectTenant advances only generation"
+          ]
+        },
+        {
+          "line": 200,
+          "nameTemplate": "old application row and details entry cannot create a new classification journey after a real selection starts or fails",
+          "expandedNames": [
+            "old application row and details entry cannot create a new classification journey after a real selection starts or fails"
+          ]
+        },
+        {
+          "line": 246,
+          "nameTemplate": "late PUT and retained callbacks cannot mutate or pop a covering route after real generation loss",
+          "expandedNames": [
+            "late PUT and retained callbacks cannot mutate or pop a covering route after real generation loss"
+          ]
+        },
+        {
+          "line": 299,
+          "nameTemplate": "successful covered save finishes its own classification route and leaves the later dialog open",
+          "expandedNames": [
+            "successful covered save finishes its own classification route and leaves the later dialog open"
+          ]
+        },
+        {
+          "line": 325,
+          "nameTemplate": "closing the covered application details owner revokes its child classification without a Session change",
+          "expandedNames": [
+            "closing the covered application details owner revokes its child classification without a Session change"
+          ]
+        },
+        {
+          "line": 359,
+          "nameTemplate": "closing classification without saving keeps its application details parent open",
+          "expandedNames": [
+            "closing classification without saving keeps its application details parent open"
+          ]
+        },
+        {
+          "line": 387,
+          "nameTemplate": "successful classification save completes only its original application details while a later dialog covers both",
+          "expandedNames": [
+            "successful classification save completes only its original application details while a later dialog covers both"
+          ]
+        },
+        {
+          "line": 427,
+          "nameTemplate": "normal fresh classification retry preserves category, version and idempotency key",
+          "expandedNames": [
+            "normal fresh classification retry preserves category, version and idempotency key"
+          ]
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "selector": "test/workspace_flow_entry_browser_test.dart",
+      "name": "audit entry recreates a readable page for a new scope generation",
+      "declarationLine": 123,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/workspace_flow_entry_browser_test.dart",
+      "name": "managed entry reloads and enables refresh after generation change",
+      "declarationLine": 149,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/workspace_flow_entry_browser_test.dart",
+      "name": "export old repository rejects late data after actor ABA",
+      "declarationLine": 180,
+      "loopBinding": {
+        "loss": "actor ABA"
+      }
+    },
+    {
+      "selector": "test/workspace_flow_entry_browser_test.dart",
+      "name": "export old repository rejects late data after generation",
+      "declarationLine": 180,
+      "loopBinding": {
+        "loss": "generation"
+      }
+    },
+    {
+      "selector": "test/workspace_flow_entry_browser_test.dart",
+      "name": "export old repository rejects late data after dispose",
+      "declarationLine": 180,
+      "loopBinding": {
+        "loss": "dispose"
+      }
+    },
+    {
+      "selector": "test/workspace_flow_entry_browser_test.dart",
+      "name": "workspace picker ignores its already selected tenant",
+      "declarationLine": 226,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/workspace_flow_entry_browser_test.dart",
+      "name": "superseded workspace return cannot navigate or toast after newest selection fails",
+      "declarationLine": 240,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/workspace_flow_entry_browser_test.dart",
+      "name": "newest successful workspace selection returns home",
+      "declarationLine": 281,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/audit_export_route_test.dart",
+      "name": "covered export success preserves the cover and audit location",
+      "declarationLine": 90,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/audit_export_route_test.dart",
+      "name": "current export success opens the export jobs page",
+      "declarationLine": 112,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/audit_export_route_test.dart",
+      "name": "covered success cannot redirect when the cover closes at completion",
+      "declarationLine": 126,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/audit_export_route_test.dart",
+      "name": "a cover during export closing prevents the late redirect",
+      "declarationLine": 147,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "批准 cancellation preserves the original approval details",
+      "declarationLine": 193,
+      "loopBinding": {
+        "action": "批准"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "拒绝 cancellation preserves the original approval details",
+      "declarationLine": 193,
+      "loopBinding": {
+        "action": "拒绝"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "撤销批准 cancellation preserves the original approval details",
+      "declarationLine": 193,
+      "loopBinding": {
+        "action": "撤销批准"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "批准 success closes its approval details",
+      "declarationLine": 207,
+      "loopBinding": {
+        "action": "批准"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "拒绝 success closes its approval details",
+      "declarationLine": 207,
+      "loopBinding": {
+        "action": "拒绝"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "撤销批准 success closes its approval details",
+      "declarationLine": 207,
+      "loopBinding": {
+        "action": "撤销批准"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "批准 success cannot dismiss an unrelated covering dialog",
+      "declarationLine": 221,
+      "loopBinding": {
+        "action": "批准"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "拒绝 success cannot dismiss an unrelated covering dialog",
+      "declarationLine": 221,
+      "loopBinding": {
+        "action": "拒绝"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "撤销批准 success cannot dismiss an unrelated covering dialog",
+      "declarationLine": 221,
+      "loopBinding": {
+        "action": "撤销批准"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "批准 failed submission keeps the original details open",
+      "declarationLine": 243,
+      "loopBinding": {
+        "action": "批准"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "拒绝 failed submission keeps the original details open",
+      "declarationLine": 243,
+      "loopBinding": {
+        "action": "拒绝"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "撤销批准 failed submission keeps the original details open",
+      "declarationLine": 243,
+      "loopBinding": {
+        "action": "撤销批准"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "help initial success after disposal does not update the removed page",
+      "declarationLine": 267,
+      "loopBinding": {
+        "succeeds": "true"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "help initial error after disposal does not update the removed page",
+      "declarationLine": 267,
+      "loopBinding": {
+        "succeeds": "false"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "help acknowledgement success after disposal cannot start a follow-up read",
+      "declarationLine": 283,
+      "loopBinding": {
+        "succeeds": "true"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "help acknowledgement error after disposal cannot start a follow-up read",
+      "declarationLine": 283,
+      "loopBinding": {
+        "succeeds": "false"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "help actor ABA cannot revive a late read or old filter callback",
+      "declarationLine": 307,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "help console entry creates a new page for the current generation",
+      "declarationLine": 331,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "a captured help filter callback is inert after page disposal",
+      "declarationLine": 348,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/notification_help_scope_browser_test.dart",
+      "name": "real selection invalidates late inbox GET and Help count before membership resolves, and failure cannot restore them",
+      "declarationLine": 155,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/notification_help_scope_browser_test.dart",
+      "name": "late markRead and retained actions stay inert after real selection then failure",
+      "declarationLine": 225,
+      "loopBinding": {
+        "loss": "real selection then failure"
+      }
+    },
+    {
+      "selector": "test/notification_help_scope_browser_test.dart",
+      "name": "late markRead and retained actions stay inert after dispose",
+      "declarationLine": 225,
+      "loopBinding": {
+        "loss": "dispose"
+      }
+    },
+    {
+      "selector": "test/notification_help_scope_browser_test.dart",
+      "name": "a fresh repository can read while the old read is pending; retained View callbacks and old completion keep their owner",
+      "declarationLine": 297,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/notification_help_scope_browser_test.dart",
+      "name": "fixed host keys fail closed when Session instance changes; fresh host keys attach and dispose listeners correctly",
+      "declarationLine": 380,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/notification_help_scope_browser_test.dart",
+      "name": "fresh shell entries navigate, read and open current approval after real successful workspace selection",
+      "declarationLine": 417,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/notification_help_scope_browser_test.dart",
+      "name": "SYNTHETIC optional actor ABA never revives held host scopes",
+      "declarationLine": 501,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/application_classification_scope_browser_test.dart",
+      "name": "already pending real workspace reload invalidates classification GET when selectTenant advances only generation",
+      "declarationLine": 145,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/application_classification_scope_browser_test.dart",
+      "name": "old application row and details entry cannot create a new classification journey after a real selection starts or fails",
+      "declarationLine": 200,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/application_classification_scope_browser_test.dart",
+      "name": "late PUT and retained callbacks cannot mutate or pop a covering route after real generation loss",
+      "declarationLine": 246,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/application_classification_scope_browser_test.dart",
+      "name": "successful covered save finishes its own classification route and leaves the later dialog open",
+      "declarationLine": 299,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/application_classification_scope_browser_test.dart",
+      "name": "closing the covered application details owner revokes its child classification without a Session change",
+      "declarationLine": 325,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/application_classification_scope_browser_test.dart",
+      "name": "closing classification without saving keeps its application details parent open",
+      "declarationLine": 359,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/application_classification_scope_browser_test.dart",
+      "name": "successful classification save completes only its original application details while a later dialog covers both",
+      "declarationLine": 387,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/application_classification_scope_browser_test.dart",
+      "name": "normal fresh classification retry preserves category, version and idempotency key",
+      "declarationLine": 427,
+      "loopBinding": {}
+    }
+  ],
+  "sourceNameParser": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-classification-current-20261023-r1\\generated\\reference-source-name-contract-browser38.py",
+    "bytes": 5887,
+    "sha256": "7fe208bdb1cf46307185343fdc249a4e99fa2879dba44cff165d04675dc7f77b"
+  },
+  "parserConfiguration": {
+    "SELECTORS": [
+      "test/workspace_flow_entry_browser_test.dart",
+      "test/audit_export_route_test.dart",
+      "test/approval_help_flow_browser_test.dart",
+      "test/notification_help_scope_browser_test.dart",
+      "test/application_classification_scope_browser_test.dart"
+    ],
+    "COUNTS": [
+      8,
+      4,
+      19,
+      7,
+      8
+    ],
+    "change": "Only in-memory literal selector/count configuration extends the unchanged reviewed pure parser."
+  },
+  "original38VisibleNamesAndDeclarationMetadataPreservedExactly": true,
+  "newClassificationCasesRequired": 8,
+  "runtimeDiscoveryPerformed": false,
+  "dartParsingPerformed": false,
+  "sdkStarted": false,
+  "browserStarted": false
+}
