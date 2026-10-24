@@ -1,0 +1,472 @@
+{
+  "status": "R5_APPLICATION13_SUCCESS_FULL_RUN_NOT_ACCEPTED_EVIDENCE_INVENTORY",
+  "sourceCopies": [
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/analysis-host.py",
+      "archived": "plan/analysis-host.py",
+      "bytes": 35006,
+      "sha256": "e725afa7ff90291c6bb4ef03c4946619f25a22e057bc3fc068f7875ac4a1ec74"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/base-pins.json",
+      "archived": "plan/base-pins.json",
+      "bytes": 5754,
+      "sha256": "0b50db25ce19c59cb3c5f7509c81706159693ccc7655f35d450fa421ab3c10e0"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/binding-pins.json",
+      "archived": "plan/binding-pins.json",
+      "bytes": 10040,
+      "sha256": "458034ec9ce45869012bbd6dfc8e641a88cd3e59e1c47194a0dd14f76009ed8c"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/binding-start.json",
+      "archived": "plan/binding-start.json",
+      "bytes": 57,
+      "sha256": "73b0aa2f25e52869b45a6784cfbd4f0b6e5090f6227604c6961a194b7fa8fda3"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/case-contract-source-rebinding.json",
+      "archived": "plan/case-contract-source-rebinding.json",
+      "bytes": 3061,
+      "sha256": "e47a8a4a5a8d9d1befa1bb2f334bcdee2a4807945b8f064b31c1f17d8a43302f"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/chrome-evidence-json-guard.fragment",
+      "archived": "plan/chrome-evidence-json-guard.fragment",
+      "bytes": 8819,
+      "sha256": "12c62a6307e9c460b56ee1e58f7b2e930512fba74dd371609401a96370ca0868"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/control-preparation-pins.json",
+      "archived": "plan/control-preparation-pins.json",
+      "bytes": 38637,
+      "sha256": "a2b29f1ec83159e38b98ed43877be5dce83cb4bab23d765648525cb085bbfbd6"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/expected-browser13-cases.json",
+      "archived": "plan/expected-browser13-cases.json",
+      "bytes": 6343,
+      "sha256": "11f16121ffa11a0359852e5f0af7a830a83355b9fa55cec91edc85482d945f2b"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/host-vs-vm35.patch",
+      "archived": "plan/host-vs-vm35.patch",
+      "bytes": 18314,
+      "sha256": "97e93d9b6e5caf345c1ea2a975caaf4eaf6d16642a62dbfd970fb5632ba2795a"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/inputs.json",
+      "archived": "plan/inputs.json",
+      "bytes": 20346,
+      "sha256": "3e769ab0ecded31dc6b0927661591df69fb1e6199293145977e67ded236ecd92"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/observer-qualification-reuse.json",
+      "archived": "plan/observer-qualification-reuse.json",
+      "bytes": 1657,
+      "sha256": "bf4a6a3684504e03b4a8da118fc98d7ac0cc26a3e4d518459dbdfeefe4491743"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/observer-runtime-pins.json",
+      "archived": "plan/observer-runtime-pins.json",
+      "bytes": 3331,
+      "sha256": "1513a067e91e755f576484ba381c8f4640cf2586da638eaa0114170611bd34f3"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/owned_chrome_evidence.py",
+      "archived": "plan/owned_chrome_evidence.py",
+      "bytes": 29439,
+      "sha256": "34e80553205db29267baf4299821ff40111adbc79bd2e83e49fbf20282eb5a3f"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/owned_job.py",
+      "archived": "plan/owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/package-rebase-check.json",
+      "archived": "plan/package-rebase-check.json",
+      "bytes": 1003,
+      "sha256": "272c0c387ac62c6d872b69c175700006322d6d54dc401ec844c7fbafcc9be47a"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/preparation-review.md",
+      "archived": "plan/preparation-review.md",
+      "bytes": 2244,
+      "sha256": "2323781a484d19e0a6fe87fdb79f45d55dc707365212f3196eea0e7771d1689e"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/process-inventory.ps1",
+      "archived": "plan/process-inventory.ps1",
+      "bytes": 2439,
+      "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/proposal.json",
+      "archived": "plan/proposal.json",
+      "bytes": 11067,
+      "sha256": "1fa692d44a033e8ed6060e0b20803fcf565875177388807be17c3213a006cf02"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/r4-preservation-and-source-rebind.json",
+      "archived": "plan/r4-preservation-and-source-rebind.json",
+      "bytes": 12297,
+      "sha256": "ad01fe36559d2e251f5a029b26ea8055f73ab79a871fb067d104dc51c75e4e5d"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/r5-current3cf-source-binding-audit.json",
+      "archived": "plan/r5-current3cf-source-binding-audit.json",
+      "bytes": 7627,
+      "sha256": "4460895a322e60e2c3daf69a9e2c3289b9407de136f3da1fe84dad2461b62047"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/r5-vs-r4-0-worker.py.patch",
+      "archived": "plan/r5-vs-r4-0-worker.py.patch",
+      "bytes": 1172,
+      "sha256": "9da82dc91c46ee08df73b10ce113a36497c7b37f46564e64bb3b8c04fd23a962"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/r5-vs-r4-1-analysis-host.py.patch",
+      "archived": "plan/r5-vs-r4-1-analysis-host.py.patch",
+      "bytes": 1625,
+      "sha256": "70c087da96502dbc30960d5f9e77a74b93d5d204531bda52be9c1f8dfe0d0bd5"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/r5-vs-r4-2-post.py.patch",
+      "archived": "plan/r5-vs-r4-2-post.py.patch",
+      "bytes": 4131,
+      "sha256": "b04370ac56d719ba3590f8fe82330db83237c0c0898e31914859a8c41ea9ee03"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/r5-vs-r4-3-root-launch.patch",
+      "archived": "plan/r5-vs-r4-3-root-launch.patch",
+      "bytes": 2075,
+      "sha256": "1614e5795bdce7088c7a0251ead9aa33d0e8fbd569e5b105e4358c71c77ba735"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/r5-vs-r4-4-release.patch",
+      "archived": "plan/r5-vs-r4-4-release.patch",
+      "bytes": 1588,
+      "sha256": "f86c18f6f0b0b1d2fa6b8d055881754a49cec35525b0f472827784c568a3e03b"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/release-vs-vm35.patch",
+      "archived": "plan/release-vs-vm35.patch",
+      "bytes": 2267,
+      "sha256": "a4a1c456605d71a3833c2b73ad1dabf409245063c149b79c50c1ab22b285e341"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/reporter_contract.py",
+      "archived": "plan/reporter_contract.py",
+      "bytes": 14280,
+      "sha256": "dcd85cf451b20bd24857cef6726d0f1ebb406c67096146d3d3c82306942b67e8"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/root-final-resource-and-window.json",
+      "archived": "plan/root-final-resource-and-window.json",
+      "bytes": 57851,
+      "sha256": "99b5d510cf335e91729d512ba42736e9f0c40b259d7d2613e75cbd3b7d10dfd9"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/root-launch-vs-vm35.patch",
+      "archived": "plan/root-launch-vs-vm35.patch",
+      "bytes": 5181,
+      "sha256": "6180a41ab1f0589e03c57cc629dbb8621fc701465ec2d0020d0ff1e2bcfe0071"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/root-sdk-grant.json",
+      "archived": "plan/root-sdk-grant.json",
+      "bytes": 3932,
+      "sha256": "36474a9f4304ad4177a3d097dee31ec1e03f573f8cd63e83532e860e24589cab"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/sealed-preparation-pins.json",
+      "archived": "plan/sealed-preparation-pins.json",
+      "bytes": 10333,
+      "sha256": "9e3e990fad1c3d0f1223aa86c6ee0967686d84d3c19e388b3829a0a63f9134f5"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/worker-vs-vm35.patch",
+      "archived": "plan/worker-vs-vm35.patch",
+      "bytes": 25343,
+      "sha256": "08af5c6215e44a0233cd7f265cef3523265f6f802b8fd9571ecd9731b460334f"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/worker.py",
+      "archived": "plan/worker.py",
+      "bytes": 54920,
+      "sha256": "3866a59c30b7f2e9a964337d2101f9c0e5fc4d8532cb2da196b42bbcb1da3214"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/attempt/initial-gate.json",
+      "archived": "attempt/initial-gate.json",
+      "bytes": 54555,
+      "sha256": "805a2369666f9db31a36fd732605b8d013e62ce96d90938a3642b21d2e8c90ac"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/attempt/launch-gate.json",
+      "archived": "attempt/launch-gate.json",
+      "bytes": 54290,
+      "sha256": "334aaaa4475eb03b52a01f2a6266305bb80da96b7abedc4a26b581f52da5c8b3"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/attempt/launch.json",
+      "archived": "attempt/launch.json",
+      "bytes": 2714,
+      "sha256": "5d15cc177d8975720026fd84ca2c382efe95e114ea2241df4c166b8b4e3fb206"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/attempt/owned-chrome-evidence.json",
+      "archived": "attempt/owned-chrome-evidence.json",
+      "bytes": 2503,
+      "sha256": "2557d0fc1a0042ef79beba958c101aaf15ef625841a135f02806ab1b1ea6dbc0"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/attempt/owned-chrome-member-diagnostics.json",
+      "archived": "attempt/owned-chrome-member-diagnostics.json",
+      "bytes": 10084,
+      "sha256": "b9c6b3de574873b977c2f10a2b9f1ac48adb45ed3d65c1fe5d8a7ec962e1f700"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/attempt/postflight-gate.json",
+      "archived": "attempt/postflight-gate.json",
+      "bytes": 54377,
+      "sha256": "0b0d9db96fbbbd5b8e5761bf5c5aa7488cc6bf7283e7f722638527fcaeb82ba2"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/attempt/postflight-pins.json",
+      "archived": "attempt/postflight-pins.json",
+      "bytes": 1974,
+      "sha256": "64b8b0bc122f299b1f16c3c4b085a0712f728d78ef035bce7e6559c7cdbc34ad"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/attempt/preflight-pins.json",
+      "archived": "attempt/preflight-pins.json",
+      "bytes": 1973,
+      "sha256": "77da2a4ba446c945e221d90503b41d9651c76a61b82531c1ea5a5aa0597cec70"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/attempt/receipt.json",
+      "archived": "attempt/receipt.json",
+      "bytes": 76932,
+      "sha256": "2b13ec95f29e947a978f5dbb8588495fe1389bd98ba5a119cbcaef8a88caa95a"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/attempt/reporter-validation.json",
+      "archived": "attempt/reporter-validation.json",
+      "bytes": 4315,
+      "sha256": "f9ab4a78fafe944b641e426cdd2e204c1bfb13096d3fad27cb42eae6e3840a56"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/attempt/request.json",
+      "archived": "attempt/request.json",
+      "bytes": 299,
+      "sha256": "290e25743f726612a7664b085473303275ab4643b2b3a3f8302192d9a1573a19"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/attempt/result.json",
+      "archived": "attempt/result.json",
+      "bytes": 88127,
+      "sha256": "b2081d477d745cab6021e4322833903878f1c97ab6188a1816de4cde2f7dd5f9"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/attempt/worker-console.log",
+      "archived": "attempt/worker-console.log",
+      "bytes": 88,
+      "sha256": "710c4ebfdf38504d394b3346ec1b57b5beb2b821c8e3458c5d0052236feefeb5"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/root-attempt/post-process-inventory.json",
+      "archived": "root-attempt/post-process-inventory.json",
+      "bytes": 36273,
+      "sha256": "ca05ac37ad9215c4d15c8d9167dfbffeebfcecaad39dc482727048317e902806"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/root-attempt/preflight.json",
+      "archived": "root-attempt/preflight.json",
+      "bytes": 718,
+      "sha256": "670df9d514a484873f62e684a92356680cd5a73a3b173a414975375191168b3e"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/root-attempt/release.json",
+      "archived": "root-attempt/release.json",
+      "bytes": 1476,
+      "sha256": "6b9fd860fae8854b611bd765367f7370aa9b29ef40141ce094c3826d899f8a9e"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/root-attempt/result.json",
+      "archived": "root-attempt/result.json",
+      "bytes": 1254,
+      "sha256": "da35a9d036514b4106e1968e217bf3ab9105ae832bdf68663f74c77777271834"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/attempt/out/tests.jsonl",
+      "archived": "attempt/out/tests.jsonl",
+      "bytes": 7468,
+      "sha256": "bdfe730349fb81ae59ca2e96104ca6b15e6ea4093a40320cbeaa65573f455ba6"
+    },
+    {
+      "source": ".cache/guardian-browser13-post-20261024-r5-typed-finder-current3cf/pins.json",
+      "archived": "post/pins.json",
+      "bytes": 25721,
+      "sha256": "71ba9e1741abb5700b6c2d7bd1d8c028da0c360df3b6916c984737350263b514"
+    },
+    {
+      "source": ".cache/guardian-browser13-post-20261024-r5-typed-finder-current3cf/post-vs-vm35.patch",
+      "archived": "post/post-vs-vm35.patch",
+      "bytes": 35950,
+      "sha256": "84ce3c2f26d63857131e0a995b5060cb6fa9927acafa4d4eeaae378d97633613"
+    },
+    {
+      "source": ".cache/guardian-browser13-post-20261024-r5-typed-finder-current3cf/post.json",
+      "archived": "post/post.json",
+      "bytes": 5046,
+      "sha256": "da132881fbc332a731a6b6085a2aa114a08cf041a8bb4e74030b36a3c8cdf260"
+    },
+    {
+      "source": ".cache/guardian-browser13-post-20261024-r5-typed-finder-current3cf/post.py",
+      "archived": "post/post.py",
+      "bytes": 55048,
+      "sha256": "9180fdf299078cd7d4ab8e4d25b3140ff597971049a6e76a3729b73c451d772c"
+    },
+    {
+      "source": ".cache/guardian-browser13-root-launch-20261024-r5-typed-finder-current3cf.ps1",
+      "archived": "plan/guardian-browser13-root-launch-20261024-r5-typed-finder-current3cf.ps1",
+      "bytes": 9268,
+      "sha256": "0ac6e7e4660610a44d3673edb48482edcc7be46b31218d178327aad49be34c1e"
+    },
+    {
+      "source": ".cache/guardian-browser13-release-20261024-r5-typed-finder-current3cf.ps1",
+      "archived": "plan/guardian-browser13-release-20261024-r5-typed-finder-current3cf.ps1",
+      "bytes": 4465,
+      "sha256": "ac03e2a7962b7fe784e837664d62364f88ce82bc5413455f347245c02e8868fa"
+    },
+    {
+      "source": ".cache/guardian-browser13-static-independent-20261024-r5/pins.json",
+      "archived": "reviews/static-pins.json",
+      "bytes": 18193,
+      "sha256": "d8ee6a5d9d74b4a14e659edc1c06ccbec6ab839debc3629fb38151e45561f768"
+    },
+    {
+      "source": ".cache/guardian-browser13-static-independent-20261024-r5/review.md",
+      "archived": "reviews/static-review.md",
+      "bytes": 4652,
+      "sha256": "6d49f41ac8561faa03039ee656cd3a76009e1ee623e50a397f7db97702e8f2a9"
+    },
+    {
+      "source": ".cache/guardian-current-20261024-r16-typed-schedule-finder/out/source-manifest.json",
+      "archived": "metadata/sourceManifest.json",
+      "bytes": 246807,
+      "sha256": "f7929324fe02cb5416fa04957fcba16588c6a338bc8562e2bb6261271aa7f1c8"
+    },
+    {
+      "source": ".cache/guardian-current-20261024-r16-typed-schedule-finder/out/dependency-library-pins.json",
+      "archived": "metadata/dependencyLibraryPins.json",
+      "bytes": 360222,
+      "sha256": "577c202ab486e0c5eb5b913ec98702704bbae76c9ee7b0c066e2a1bceef04e3a"
+    },
+    {
+      "source": ".cache/guardian-current-20261024-r16-typed-schedule-finder/src/apps/guardian/.dart_tool/package_config.json",
+      "archived": "metadata/candidatePackageConfig.json",
+      "bytes": 15813,
+      "sha256": "6082db85cc0d2462be9ffe07d876286d0baae0fb3d4cde2b4b79855c33ad9d2d"
+    },
+    {
+      "source": ".cache/guardian-current-20261024-r16-typed-schedule-finder/out/seal-static-source.json",
+      "archived": "metadata/sourceSeal.json",
+      "bytes": 80517,
+      "sha256": "123eeab6c5e8ef9c18af21137e332ad4584fbe852bb31365f386b2840f447ff8"
+    },
+    {
+      "source": ".cache/guardian-current-20261024-r16-typed-schedule-finder/out/source-directory-list.json",
+      "archived": "metadata/sourceDirectoryList.json",
+      "bytes": 24979,
+      "sha256": "309e04487271d51fb513f721fefd4dd2f3a8d9f475ca30deba276847fe10ada4"
+    },
+    {
+      "source": ".cache/guardian-current-20261024-r16-typed-schedule-finder/out/full-regression-183-bindings.json",
+      "archived": "metadata/fullRegressionInventoryBinding.json",
+      "bytes": 85282,
+      "sha256": "e1d950fd074f2df4d2fb6244c413b39ba7312bfdd33bcde137c44685db688e1c"
+    },
+    {
+      "source": ".cache/guardian-current-20261024-r16-typed-schedule-finder/out/expected-cases.json",
+      "archived": "metadata/expectedCaseContract.json",
+      "bytes": 47284,
+      "sha256": "9fe7af77a2399f5273f1e6fcb35470e7bcbc076ff66f31a4e56b11e8c33c9e21"
+    },
+    {
+      "source": ".cache/guardian-supervisor-20261023-r3/manifest.json",
+      "archived": "metadata/qualifiedHostRuntimeManifest.json",
+      "bytes": 2872,
+      "sha256": "f088c5b70ffab3c75e2ebc7fa381cc23350903f54b60ea4d45ab3c9794fb0370"
+    },
+    {
+      "source": ".cache/guardian-current-20261024-r16-typed-schedule-finder/out/full-regression-183-scope.json",
+      "archived": "metadata/fullRegressionScope.json",
+      "bytes": 91189,
+      "sha256": "f2b0537319ede68fb8ecf37571db2e9fa3cbf6503ed53c21788afe7a1003b314"
+    }
+  ],
+  "durableReferences": [
+    {
+      "key": "cacheManifest",
+      "source": ".cache/guardian-browser13-20261024-r5-typed-finder-current3cf/cache-browser-projection.json",
+      "durable": "docs/evidence/guardian-browser13-r2-red-20261024/plan/cache-browser-projection.json",
+      "bytes": 773953,
+      "sha256": "3b74998cd55045e58c02b17b3de9151e878d78aab199e85bbcc3ec99d9c30166",
+      "sourceDurableByteEqual": true,
+      "copied": false
+    },
+    {
+      "key": "cacheProjectionParentManifest",
+      "source": "docs/evidence/guardian-baseline-analysis-20261021/inputs/cache-content-20261021-r1.json",
+      "durable": "docs/evidence/guardian-baseline-analysis-20261021/inputs/cache-content-20261021-r1.json",
+      "bytes": 725122,
+      "sha256": "0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2",
+      "sourceDurableByteEqual": true,
+      "copied": false
+    },
+    {
+      "key": "B3.originalQualificationBoundDirectlyByInput",
+      "source": ".cache/guardian-browser13-20261024-r3-html-diagnostic/observer-native-qualification-binding.json",
+      "durable": "docs/evidence/guardian-browser13-r3-presdk-red-20261024/plan/observer-native-qualification-binding.json",
+      "bytes": 1307,
+      "sha256": "6e8ba3d2436bfa7ba1c80bad1bb24856f3eca27de6bf8476fd1c297c773a070a",
+      "sourceDurableByteEqual": true,
+      "copied": false
+    },
+    {
+      "key": "B3.actualQualificationResult",
+      "source": ".cache/guardian-browser13-20261024-r3-html-diagnostic/observer-fixture/result.json",
+      "durable": "docs/evidence/guardian-browser13-r3-presdk-red-20261024/observer-fixture/result.json",
+      "bytes": 2321,
+      "sha256": "293eef8510874f37a6679dd932d4abef5ec437c71334ee8234828933507b927d",
+      "sourceDurableByteEqual": true,
+      "copied": false
+    },
+    {
+      "key": "B3.actualOuterQualificationResult",
+      "source": ".cache/guardian-browser13-20261024-r3-html-diagnostic/observer-fixture-host/result.json",
+      "durable": "docs/evidence/guardian-browser13-r3-presdk-red-20261024/observer-fixture-host/result.json",
+      "bytes": 314,
+      "sha256": "5982a79092aa4138f47350f676b6e8f9421659619494d3949bfbc7bfffd6ab2d",
+      "sourceDurableByteEqual": true,
+      "copied": false
+    }
+  ],
+  "generated": [
+    {
+      "path": "docs/evidence/guardian-browser13-r5-current3cf-20261024/summary.json",
+      "bytes": 9183,
+      "sha256": "bfc05fdf369de73232d31f90c78601fc84b314e7fe7ea07859d3c61ab913f07a"
+    },
+    {
+      "path": "docs/evidence/guardian-browser13-r5-current3cf-20261024/review.md",
+      "bytes": 2508,
+      "sha256": "8dbc257e0426f2633388b55928ef7b578bb4afa691c68d38b847d3300ff60327"
+    }
+  ]
+}

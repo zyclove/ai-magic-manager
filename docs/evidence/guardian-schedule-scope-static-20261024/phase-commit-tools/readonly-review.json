@@ -1,0 +1,55 @@
+{
+  "status": "READ_ONLY_SCOPE_COMMIT_HELPER_EXACT_ALLOWED_DELTA_NO_NEW_ALGORITHM_BLOCKER",
+  "parent": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-exact-commit-20261024-r2.py",
+    "bytes": 9402,
+    "sha256": "f028a6b7ca53e8317730fa73b5949d312fbf25b4d53802925ad7e65765d08071"
+  },
+  "helper": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-schedule-scope-exact-commit-20261024-r1.py",
+    "bytes": 9759,
+    "sha256": "406bd080c740d079de13cdeeffb38225354dfc1437914ecce085032e1585fc51"
+  },
+  "generator": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-scope-commit-helper-prepare-20261024-r1.py",
+    "bytes": 2966,
+    "sha256": "01e0144dce53b63a29800dcdec2a8af8462c3a33f87e5497dfa173508f733ddd"
+  },
+  "singleLiteralReplacementGroups": 8,
+  "forwardRegenerationAndReverseToQualifiedParentExact": true,
+  "protectedRegions": [
+    {
+      "name": "gitPrivateIndexDispatcher",
+      "bytes": 215,
+      "sha256": "7afe1625c7a6dfcd0a9f182827aad6841dbcd110627f3935cdd2ce0c2ae83bc2",
+      "byteExactToQualifiedParent": true
+    },
+    {
+      "name": "headStagedAndTreeGuards",
+      "bytes": 659,
+      "sha256": "9e71fb62f53c90a42d59d548f37beb8d2bf1cec00bc3f50ee686a7c8f9076687",
+      "byteExactToQualifiedParent": true
+    },
+    {
+      "name": "commitCasLockUncertainReadbackAlgorithm",
+      "bytes": 4438,
+      "sha256": "6080708949f5e4db6dbd90bf7ace20e08bd217f041587b0c81aa32dbe536004d",
+      "byteExactToQualifiedParent": true
+    }
+  ],
+  "sourceWhitelist": [
+    "apps/guardian/lib/pages/editors.dart",
+    "apps/guardian/test/editor_submit_guard_test.dart"
+  ],
+  "allowedEvidencePrefixes": [
+    "guardian-browser13-r5-current3cf-20261024",
+    "guardian-browser13-r6-static-preparation-20261024",
+    "guardian-services-recovery-20261024",
+    "guardian-schedule-scope-static-20261024"
+  ],
+  "sourceParentBlobGuardCoversBothSourcePaths": true,
+  "parentRemainsPlanBoundNotHardcodedInHelper": "Root must set future stage plan parent to 3cfbf535099ade86234661556d9e92db9069743a; unchanged_head and explicit update-ref CAS enforce it",
+  "helperOrGeneratorExecuted": false,
+  "gitMutationFixtureSdkOrNetwork": false,
+  "helperModified": false
+}

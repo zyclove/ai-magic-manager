@@ -1,0 +1,20 @@
+{
+  "status": "PURE_MOCK_COLLECTOR_CHECKED_NOT_NATIVE_OR_APPLICATION_QUALIFICATION",
+  "caseCount": 11,
+  "cases": [
+    "first-pending-does-not-hide-second-before-row",
+    "ordinary-after-only-is-not-fatal-or-invented-identity",
+    "diagnostic-resample-stopped",
+    "image-remains-unknown-in-resolution",
+    "hard-row-after-first-pending-stays-fatal",
+    "missing-finality-does-not-resolve",
+    "at-original-drain-boundary-rejected",
+    "wrong-command-job-rejected",
+    "creation-conflict-never-cleared",
+    "ninth-failure-overflow-is-hard",
+    "ordinary-spawn-does-not-consume-failure-cap"
+  ],
+  "nativeReaderConstructed": false,
+  "realJobOrProcessQueried": false,
+  "sdkChromeNetworkStarted": false
+}

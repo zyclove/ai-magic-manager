@@ -1,0 +1,377 @@
+--- D:\codes\mobile\ai-manager\.cache\guardian-browser13-20261024-r5-typed-finder-current3cf\owned_chrome_evidence.py
++++ D:\codes\mobile\ai-manager\.cache\guardian-browser13-20261024-r6-owned-member-finality\owned_chrome_evidence.py
+@@ -288,6 +288,245 @@
+         self.problems, self.checked, self.pending, self.complete = set(), set(), {}, {}
+         self.samples = 0
+         self._initialize_diagnostics()
++        self._initialize_acceptance()
++
++    def _initialize_acceptance(self):
++        self._failure_snapshots = []
++        self._failure_snapshots_seen = 0
++        self._failure_snapshots_dropped = 0
++        self._acceptance_overflow = False
++        self._first_identities = []
++        self._identity_map = {}
++        self._identity_conflicts = []
++        self._pending_occurrences = []
++        self._resolved_occurrences = []
++        self._member_fatal = set()
++        self._observed_problems = set()
++
++    @staticmethod
++    def _json_copy(value):
++        return json.loads(json.dumps(value, ensure_ascii=True, allow_nan=False))
++
++    def _failure_ledger(self):
++        return {'schemaVersion': 1, 'maximumFailureSnapshots': 8,
++                'maximumSerializedBytes': 262144,
++                'totalFailureSnapshotsSeen': self._failure_snapshots_seen,
++                'storedFailureSnapshots': len(self._failure_snapshots),
++                'droppedFailureSnapshots': self._failure_snapshots_dropped,
++                'overflow': self._acceptance_overflow,
++                'snapshots': self._failure_snapshots,
++                'firstIdentityObservations': self._first_identities,
++                'identityConflicts': self._identity_conflicts,
++                'pendingOccurrences': self._pending_occurrences,
++                'resolvedOccurrences': self._resolved_occurrences,
++                'fatalProblems': sorted(self._member_fatal)}
++
++    def _fatal(self, code):
++        self._member_fatal.add(code)
++        self._observed_problems.add(code)
++        self.problems.add(code)
++
++    def _ledger_append(self, destination, value):
++        if self._acceptance_overflow:
++            return False
++        destination.append(self._json_copy(value))
++        if self._diagnostic_bytes(self._failure_ledger()) > 261120:
++            destination.pop()
++            self._acceptance_overflow = True
++            self._fatal('MEMBER_ACCEPTANCE_LEDGER_OVERFLOW')
++            return False
++        return True
++
++    def _member_row_kind(self, row, before_qpc, after_qpc):
++        base = {'pid', 'openedFromOwnJobList', 'verifiedOwnMembership', 'retainedRootHandleUsed',
++                'creationFiletime', 'exitFiletime', 'kernel100ns', 'user100ns', 'sampleQpc', 'signaled'}
++        if type(row) is not dict:
++            return 'fatal'
++        signaled = row.get('signaled')
++        image = 'imagePath' if 'imagePath' in row else 'imageError'
++        wanted = base | {image} | ({'exitCode'} if signaled is True else set())
++        if set(row) != wanted or type(signaled) is not bool:
++            return 'fatal'
++        if not (type(row['pid']) is int and row['pid'] > 0
++                and row['openedFromOwnJobList'] is True and row['verifiedOwnMembership'] is True
++                and type(row['retainedRootHandleUsed']) is bool
++                and row['retainedRootHandleUsed'] == (row['pid'] == self.job.pid)
++                and type(row['creationFiletime']) is int
++                and self.job.identity <= row['creationFiletime'] < (1 << 64)
++                and all(type(row[key]) is int and 0 <= row[key] < (1 << 64)
++                        for key in ('exitFiletime', 'kernel100ns', 'user100ns'))
++                and type(row['sampleQpc']) is float and finite(row['sampleQpc'])
++                and before_qpc <= row['sampleQpc'] <= after_qpc):
++            return 'fatal'
++        if signaled and not (type(row['exitCode']) is int and 0 <= row['exitCode'] < (1 << 32)):
++            return 'fatal'
++        if image == 'imageError':
++            return 'pending' if type(row['imageError']) is int and 0 <= row['imageError'] < (1 << 32) else 'fatal'
++        if not (type(row['imagePath']) is str and 0 < len(row['imagePath']) <= 32766):
++            return 'fatal'
++        try:
++            normalized_path(row['imagePath'])
++        except EvidenceRejected:
++            return 'fatal'
++        return 'complete'
++
++    def _snapshot_kinds(self, snapshot):
++        demand(type(snapshot) is dict and set(snapshot) == {
++            'startedQpc', 'deadlineQpc', 'before', 'identities', 'after',
++            'identityRowsLimitedByDeadline', 'scope', 'causeClassified'}, 'MEMBER_SNAPSHOT_SCHEMA_INVALID')
++        demand(snapshot['scope'] == 'This private Job only; read-only handles, no command line/environment, no PID termination'
++               and snapshot['causeClassified'] is False and snapshot['identityRowsLimitedByDeadline'] is False,
++               'OWN_JOB_INVENTORY_INCOMPLETE')
++        for listing in (snapshot['before'], snapshot['after']):
++            demand(type(listing) is dict and set(listing) == {'qpc', 'complete', 'assigned', 'listed', 'limit', 'error', 'pids'}
++                   and listing['complete'] is True and type(listing['limit']) is int and listing['limit'] == 32
++                   and type(listing['error']) is int and listing['error'] == 0
++                   and type(listing['pids']) is list and len(listing['pids']) <= 32
++                   and all(type(pid) is int and pid > 0 for pid in listing['pids'])
++                   and len(set(listing['pids'])) == len(listing['pids'])
++                   and type(listing['assigned']) is int and type(listing['listed']) is int
++                   and listing['assigned'] == listing['listed'] == len(listing['pids'])
++                   and type(listing['qpc']) is float and finite(listing['qpc']),
++                   'OWN_JOB_INVENTORY_INCOMPLETE')
++        demand(type(snapshot['startedQpc']) is float and type(snapshot['deadlineQpc']) is float
++               and snapshot['startedQpc'] == snapshot['before']['qpc']
++               and snapshot['deadlineQpc'] == self.reader.deadline
++               and snapshot['before']['qpc'] <= snapshot['after']['qpc'] < self.reader.deadline,
++               'MEMBER_SNAPSHOT_TIME_INVALID')
++        rows = snapshot['identities']
++        demand(type(rows) is list and len(rows) == len(snapshot['before']['pids'])
++               and all(type(row) is dict and type(row.get('pid')) is int for row in rows)
++               and len({row['pid'] for row in rows}) == len(rows)
++               and {row['pid'] for row in rows} == set(snapshot['before']['pids']),
++               'MEMBER_BEFORE_IDENTITY_COVERAGE_INVALID')
++        return [self._member_row_kind(row, snapshot['before']['qpc'], snapshot['after']['qpc']) for row in rows]
++
++    def _store_failure_snapshot(self, snapshot, kinds):
++        self._failure_snapshots_seen += 1
++        if len(self._failure_snapshots) >= 8:
++            self._failure_snapshots_dropped += 1
++            self._acceptance_overflow = True
++            self._fatal('MEMBER_ACCEPTANCE_LEDGER_OVERFLOW')
++            return
++        before = snapshot.get('before', {}) if type(snapshot) is dict else {}
++        after = snapshot.get('after', {}) if type(snapshot) is dict else {}
++        before_pids, after_pids = before.get('pids'), after.get('pids')
++        comparable = (type(before_pids) is list and type(after_pids) is list
++                      and all(type(pid) is int for pid in before_pids + after_pids))
++        frame = {'sampleOrdinal': self.samples, 'jobRootPid': self.job.pid,
++                 'jobRootCreationFiletime': self.job.identity, 'rawSnapshot': snapshot,
++                 'afterOnlyNotQueried': sorted(set(after_pids) - set(before_pids)) if comparable else []}
++        index = len(self._failure_snapshots)
++        if not self._ledger_append(self._failure_snapshots, frame):
++            self._failure_snapshots_dropped += 1
++            return
++        for row_index, kind in enumerate(kinds):
++            if kind == 'pending':
++                row = snapshot['identities'][row_index]
++                self._ledger_append(self._pending_occurrences, {
++                    'snapshotIndex': index, 'rowIndex': row_index, 'sampleOrdinal': self.samples,
++                    'pid': row['pid'], 'creationFiletime': row['creationFiletime']})
++
++    def _collect_snapshot(self, snapshot):
++        try:
++            kinds = self._snapshot_kinds(snapshot)
++        except EvidenceRejected as failure:
++            self._fatal(str(failure))
++            self._store_failure_snapshot(snapshot, [])
++            self._failed_sample_calls += 1
++            return [], True
++        failed = False
++        for index, (row, kind) in enumerate(zip(snapshot['identities'], kinds)):
++            if kind == 'fatal':
++                self._fatal('OWN_JOB_MEMBER_HARD_ERROR')
++                failed = True
++            else:
++                pid, creation = row['pid'], row['creationFiletime']
++                previous = self._identity_map.get(pid)
++                if previous is None:
++                    record = {'sampleOrdinal': self.samples, 'pid': pid,
++                              'creationFiletime': creation, 'rawRow': row}
++                    if self._ledger_append(self._first_identities, record):
++                        self._identity_map[pid] = creation
++                    else:
++                        failed = True
++                elif previous != creation:
++                    self._ledger_append(self._identity_conflicts, {
++                        'sampleOrdinal': self.samples, 'pid': pid,
++                        'expectedCreationFiletime': previous, 'observedCreationFiletime': creation,
++                        'rawRow': row})
++                    self._fatal('OWN_JOB_MEMBER_CREATION_CONFLICT')
++                    failed = True
++            if kind == 'pending':
++                self._observed_problems.add('OWN_JOB_MEMBER_IDENTITY_UNPROVED')
++                failed = True
++            if kind != 'complete':
++                self._record_unknown_member(row, snapshot)
++        if failed:
++            self._store_failure_snapshot(snapshot, kinds)
++            self._failed_sample_calls += 1
++        return kinds, failed
++
++    def _finality_valid(self, value):
++        try:
++            if not (type(value) is dict and set(value) == {
++                    'schemaVersion', 'source', 'jobRootPid', 'jobRootCreationFiletime',
++                    'originalCommandDeadlineQpc', 'deadlineQpc', 'naturalDrainSeconds',
++                    'A0', 'M', 'A1', 'forceRequested', 'closeFallback'}
++                    and type(value['schemaVersion']) is int and value['schemaVersion'] == 1
++                    and value['source'] == 'SAME_COMMAND_OWNED_JOB'
++                    and type(value['jobRootPid']) is int and value['jobRootPid'] == self.job.pid
++                    and type(value['jobRootCreationFiletime']) is int and value['jobRootCreationFiletime'] == self.job.identity
++                    and type(value['originalCommandDeadlineQpc']) is float and value['originalCommandDeadlineQpc'] == self.deadline
++                    and type(value['naturalDrainSeconds']) is float and value['naturalDrainSeconds'] == .5
++                    and value['forceRequested'] is False and value['closeFallback'] is False
++                    and self.job.force_requested is False):
++                return False
++            a0, middle, a1 = value['A0'], value['M'], value['A1']
++            state_keys = {'pid', 'creationFiletime', 'firstSignaledQpc', 'sampleQpc', 'signaled', 'exitCode',
++                          'exitFiletime', 'kernel100ns', 'user100ns', 'jobAccountingObservedQpc',
++                          'firstCompleteTerminalQpc', 'activeProcesses', 'totalProcesses', 'terminatedProcesses', 'terminal'}
++            for state in (a0, a1):
++                if not (type(state) is dict and set(state) == state_keys
++                        and type(state['pid']) is int and state['pid'] == self.job.pid
++                        and type(state['creationFiletime']) is int and state['creationFiletime'] == self.job.identity
++                        and state['signaled'] is True and state['terminal'] is True
++                        and type(state['exitCode']) is int and state['exitCode'] == 0
++                        and type(state['activeProcesses']) is int and state['activeProcesses'] == 0
++                        and all(type(state[key]) is int and 0 <= state[key] < (1 << 64) for key in
++                                ('exitFiletime', 'kernel100ns', 'user100ns', 'totalProcesses', 'terminatedProcesses'))
++                        and state['exitFiletime'] > 0
++                        and all(type(state[key]) is float and finite(state[key]) for key in
++                                ('firstSignaledQpc', 'firstCompleteTerminalQpc', 'sampleQpc', 'jobAccountingObservedQpc'))):
++                    return False
++            anchors = ('firstSignaledQpc', 'firstCompleteTerminalQpc', 'exitFiletime', 'totalProcesses', 'terminatedProcesses')
++            if any(a0[key] != a1[key] for key in anchors):
++                return False
++            if (a0['firstSignaledQpc'] != self.job.first_signaled_qpc
++                    or a0['firstCompleteTerminalQpc'] != self.job.first_complete_terminal_qpc):
++                return False
++            end = min(self.deadline, a0['firstSignaledQpc'] + .5)
++            if not (type(value['deadlineQpc']) is float and value['deadlineQpc'] == end
++                    and type(middle) is dict and set(middle) == {'startedQpc', 'deadlineQpc', 'before', 'identities',
++                        'after', 'identityRowsLimitedByDeadline', 'scope', 'causeClassified'}
++                    and middle['identities'] == [] and type(middle['identities']) is list
++                    and middle['identityRowsLimitedByDeadline'] is False and middle['causeClassified'] is False
++                    and middle['scope'] == 'This private Job only; read-only handles, no command line/environment, no PID termination'
++                    and type(middle['deadlineQpc']) is float and middle['deadlineQpc'] == end
++                    and type(middle['startedQpc']) is float and middle['startedQpc'] == middle['before']['qpc']):
++                return False
++            for listing in (middle['before'], middle['after']):
++                if not (type(listing) is dict and set(listing) == {'qpc', 'complete', 'assigned', 'listed', 'limit', 'error', 'pids'}
++                        and listing['complete'] is True and listing['pids'] == [] and type(listing['pids']) is list
++                        and all(type(listing[key]) is int and listing[key] == 0 for key in ('assigned', 'listed', 'error'))
++                        and type(listing['limit']) is int and listing['limit'] == 32
++                        and type(listing['qpc']) is float and finite(listing['qpc'])):
++                    return False
++            return (0 <= a0['firstSignaledQpc'] <= a0['firstCompleteTerminalQpc'] <= a0['sampleQpc']
++                    <= a0['jobAccountingObservedQpc'] <= middle['before']['qpc'] <= middle['after']['qpc']
++                    <= a1['sampleQpc'] <= a1['jobAccountingObservedQpc'] < end)
++        except (KeyError, TypeError, ValueError, AttributeError, OverflowError):
++            return False
+ 
+     def _initialize_diagnostics(self):
+         self._member_diagnostic_records = []
+@@ -389,36 +628,12 @@
+                       'originalObservationDeadlineQpc': self.reader.deadline,
+                       'failedRow': self._diagnostic_row(row),
+                       'firstSnapshot': self._diagnostic_snapshot(snapshot),
+-                      'resample': {'status': 'NOT_ATTEMPTED'}}
+-            if self._diagnostic_bytes(self._diagnostic_value(self._member_diagnostic_records + [record])) > 30720:
+-                self._member_diagnostic_dropped += 1
+-                return
+-            if time.monotonic() >= self.reader.deadline:
+-                record['resample'] = {'status': 'SKIPPED_ORIGINAL_DEADLINE'}
+-            else:
+-                self._member_diagnostic_resamples += 1
+-                try:
+-                    # One immediate call on this same Job, no wait or new grace.
+-                    again = self.job.member_identities(float(self.reader.deadline))
+-                    pid = row.get('pid') if type(row) is dict else None
+-                    identities = again.get('identities') if type(again) is dict else None
+-                    matching = [item for item in identities
+-                                if type(item) is dict and type(pid) is int and item.get('pid') == pid]
+-                    record['resample'] = {'status': 'RECORDED',
+-                        'snapshot': self._diagnostic_snapshot(again),
+-                        'matchingRowCount': len(matching),
+-                        'matchingRows': [self._diagnostic_row(item) for item in matching[:2]],
+-                        'matchingRowsTruncated': len(matching) > 2}
+-                except Exception as failure:
+-                    name = type(failure).__name__
+-                    record['resample'] = {'status': 'ERROR',
+-                        'errorType': re.sub('[^A-Za-z0-9_]', '_', name)[:64]}
++                      'resample': {'status': 'NOT_USED_SCHEMA2'}}
+             if self._diagnostic_bytes(self._diagnostic_value(self._member_diagnostic_records + [record])) <= 30720:
+                 self._member_diagnostic_records.append(record)
+             else:
+                 self._member_diagnostic_dropped += 1
+         except Exception:
+-            # Diagnostic failure can never replace or bypass the original demand.
+             self._member_diagnostic_errors += 1
+             self._member_diagnostic_dropped += 1
+ 
+@@ -472,19 +687,14 @@
+             demand(finite(deadline_qpc), 'INVALID_SAMPLE_DEADLINE')
+             self.reader.deadline = min(self.deadline, float(deadline_qpc))
+         self.samples += 1
++        snapshot, kinds, frame_failed = None, [], False
+         try:
+             self.reader.check_deadline()
+             snapshot = self.job.member_identities(float(self.reader.deadline))
+-            demand(snapshot['before']['complete'] and snapshot['after']['complete']
+-                   and not snapshot['identityRowsLimitedByDeadline'], 'OWN_JOB_INVENTORY_INCOMPLETE')
+-            for row in snapshot['identities']:
+-                if row.get('signaled') is True:
++            kinds, frame_failed = self._collect_snapshot(snapshot)
++            for row, kind in zip(snapshot.get('identities', []), kinds):
++                if kind != 'complete' or row['signaled'] is True:
+                     continue
+-                if not (row.get('verifiedOwnMembership') is True and type(row.get('imagePath')) is str
+-                        and type(row.get('creationFiletime')) is int):
+-                    self._record_unknown_member(row, snapshot)
+-                demand(row.get('verifiedOwnMembership') is True and type(row.get('imagePath')) is str
+-                       and type(row.get('creationFiletime')) is int, 'OWN_JOB_MEMBER_IDENTITY_UNPROVED')
+                 if normalized_path(row['imagePath']) != self.executable:
+                     continue
+                 identity = (row['pid'], row['creationFiletime'])
+@@ -515,11 +725,15 @@
+                 finally:
+                     self.job.k.CloseHandle(handle)
+         except EvidenceRejected as failure:
+-            self._failed_sample_calls += 1
+-            self.problems.add(str(failure))
++            self._fatal(str(failure))
++            if not frame_failed:
++                self._failed_sample_calls += 1
++                self._store_failure_snapshot(snapshot, kinds)
+         except Exception as failure:
+-            self._failed_sample_calls += 1
+-            self.problems.add('OBSERVATION_API_ERROR_' + type(failure).__name__)
++            self._fatal('OBSERVATION_API_ERROR_' + type(failure).__name__)
++            if not frame_failed:
++                self._failed_sample_calls += 1
++                self._store_failure_snapshot(snapshot, kinds)
+         finally:
+             elapsed = time.monotonic() - sample_started
+             if math.isfinite(elapsed) and elapsed >= 0:
+@@ -528,7 +742,27 @@
+             else:
+                 self._member_diagnostic_errors += 1
+ 
+-    def finish(self):
++    def finish(self, terminal_finality=None):
++        valid_finality = self._finality_valid(terminal_finality)
++        if valid_finality:
++            try:
++                a0_qpc = terminal_finality['A0']['sampleQpc']
++                valid_finality = (all(row['rawRow']['sampleQpc'] <= a0_qpc for row in self._first_identities)
++                    and all(frame['rawSnapshot']['after']['qpc'] <= a0_qpc for frame in self._failure_snapshots)
++                    and all(row['observedQpc'] <= a0_qpc for row in self.complete.values()))
++            except (KeyError, TypeError, ValueError, AttributeError):
++                valid_finality = False
++        if not valid_finality:
++            self.problems.add('COMMAND_JOB_FINALITY_UNPROVED')
++        if valid_finality and not self._member_fatal and not self._acceptance_overflow and not self._identity_conflicts:
++            self._resolved_occurrences = [dict(row, resolution='OWNED_MEMBER_CLOSED_IMAGE_UNKNOWN')
++                                          for row in self._pending_occurrences]
++            if self._diagnostic_bytes(self._failure_ledger()) > 262144:
++                self._resolved_occurrences = []
++                self._acceptance_overflow = True
++                self._fatal('MEMBER_ACCEPTANCE_LEDGER_OVERFLOW')
++        if len(self._resolved_occurrences) != len(self._pending_occurrences):
++            self.problems.add('OWN_JOB_MEMBER_IDENTITY_UNPROVED')
+         # No native/process/network call here: only aggregate prior observations.
+         if self.pending:
+             self.problems.add('CHROME_ROOT_LISTENER_UNOBSERVED')
+@@ -539,7 +773,7 @@
+             self.problems.add('CHROME_ROOT_PROFILE_REUSED')
+         if len({row['debuggingPort'] for row in roots}) != len(roots):
+             self.problems.add('CHROME_ROOT_DEBUG_PORT_REUSED')
+-        return {'schemaVersion': 1,
++        return {'schemaVersion': 2,
+                 'status': 'OWNED_CHROME_BOUNDARIES_OBSERVED' if not self.problems else 'NOT_ACCEPTED',
+                 'chromeRoots': sorted(roots, key=lambda row: (row['pid'], row['creationFiletime'])),
+                 'problems': sorted(self.problems), 'sampleCalls': self.samples,
+@@ -548,4 +782,7 @@
+                 'commandLineSource': 'SAME_RETAINED_HANDLE_PBI0_READPROCESSMEMORY',
+                 'debugBindingProof': 'PID_FILTERED_LISTEN_ROWS_BRACKETED_BY_SAME_HANDLE_IDENTITY',
+                 'foreignCommandLinesRead': False, 'processesTerminated': False,
+-                'environmentRead': False, 'nativeReadPathQualificationSeparate': True}
++                'environmentRead': False, 'nativeReadPathQualificationSeparate': True,
++                'observedProblems': sorted(self._observed_problems | self.problems),
++                'failureLedger': self._json_copy(self._failure_ledger()),
++                'terminalFinality': self._json_copy(terminal_finality)}

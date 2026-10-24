@@ -25,25 +25,52 @@ Map<String, String> options(Iterable<String> keys) =>
 Map<String, String> entityOptions(List<Json> rows, String name) =>
     {for (final r in rows) r['id'] as String: r[name] as String};
 
-Future<void> scheduleEditor(BuildContext context, Session session) {
+Future<void> scheduleEditor(BuildContext context, Session session) async {
+  if (!session.authenticated) {
+    throw const ApiFailure(401, 'UNAUTHENTICATED');
+  }
+  if (!session.canWrite || !session.canOpen('schedules')) {
+    throw const ApiFailure(403, 'ACCESS_DENIED');
+  }
+  if (!context.mounted || session.tenant == null) return;
   final root = session.root;
   final timeZone = session.tenant?['timeZone'] as String? ?? 'Asia/Shanghai';
-  return presentOwnedDialog<void>(context, OwnedDialogRoute<void>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) =>
-          ScheduleEditor(session: session, root: root, timeZone: timeZone)));
+  var live = true;
+  final scope = DeviceSubflowScope(session,
+      permitted: () =>
+          live &&
+          context.mounted &&
+          session.tenant != null &&
+          session.root == root &&
+          session.canWrite &&
+          session.canOpen('schedules'));
+  try {
+    if (!scope.current) return;
+    await presentOwnedDialog<void>(context, OwnedDialogRoute<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => ScheduleEditor(
+            session: session,
+            root: root,
+            timeZone: timeZone,
+            operationScope: scope)));
+  } finally {
+    live = false;
+    scope.dispose();
+  }
 }
 
 class ScheduleEditor extends StatefulWidget {
   final Session session;
   final String root;
   final String timeZone;
+  final DeviceSubflowScope? operationScope;
   const ScheduleEditor(
       {super.key,
       required this.session,
       required this.root,
-      required this.timeZone});
+      required this.timeZone,
+      this.operationScope});
   @override
   State<ScheduleEditor> createState() => _ScheduleEditorState();
 }
@@ -58,16 +85,92 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   List<Json> exceptions = [];
   Object? error;
   bool busy = false, resultUnknown = false, closing = false, exitOpen = false;
+  bool revoked = false, reviewPriorSubmission = false;
   Json? pendingBody;
   ModalRoute<dynamic>? owner;
   OwnedDialogRoute<bool>? exitRoute;
+  late final DeviceSubflowScope scope;
+  late final bool ownsScope;
+  late final Api api;
   final key = requestId();
 
-  bool get current => mounted && !closing && owner?.isActive == true &&
+  bool get current => mounted && !closing && !revoked && scope.current &&
+      owner?.isActive == true &&
       (owner is! OwnedDialogRoute<void> ||
           (owner as OwnedDialogRoute<void>).available);
   bool get interactive => current && owner?.isCurrent == true;
   bool get locked => busy || resultUnknown || exitOpen;
+
+  @override
+  void initState() {
+    super.initState();
+    ownsScope = widget.operationScope == null;
+    scope = widget.operationScope ??
+        DeviceSubflowScope(widget.session,
+            permitted: () =>
+                mounted &&
+                !closing &&
+                !revoked &&
+                widget.session.tenant != null &&
+                widget.session.root == widget.root &&
+                widget.session.canWrite &&
+                widget.session.canOpen('schedules'));
+    // A covering dialog must not revoke an otherwise valid in-flight request.
+    api = scope.api.scoped(() => current);
+    scope.addListener(scopeChanged);
+    if (!scope.current) revoke();
+  }
+
+  void scopeChanged() {
+    if (!scope.current) revoke();
+  }
+
+  @override
+  void didUpdateWidget(covariant ScheduleEditor oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.session, widget.session) ||
+        oldWidget.root != widget.root ||
+        !identical(oldWidget.operationScope, widget.operationScope)) {
+      revoke();
+    }
+  }
+
+  void revoke() {
+    if (revoked || !mounted || closing) return;
+    // Latch before any deferred rebuild: returning to the old scope cannot
+    // revive captured callbacks or a request waiting for an authenticated client.
+    revoked = true;
+    reviewPriorSubmission = busy || resultUnknown || pendingBody != null;
+    pendingBody = null;
+    windows = [];
+    exceptions = [];
+    days.clear();
+    error = null;
+    busy = resultUnknown = false;
+
+    void refresh() {
+      if (!mounted || closing) return;
+      name.clear();
+      zone.clear();
+      final confirmation = exitRoute;
+      exitRoute = null;
+      if (confirmation?.available == true) confirmation!.finish();
+      setState(() => exitOpen = false);
+    }
+
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => refresh());
+    } else {
+      refresh();
+    }
+  }
+
+  bool privateFailure(Object failure) =>
+      failure is ApiFailure &&
+      (failure.code == 'WORKSPACE_CHANGED' ||
+          failure.status == 403 ||
+          (failure.status == 401 && failure.code != 'REAUTH_REQUIRED'));
 
   @override
   void didChangeDependencies() {
@@ -80,6 +183,8 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   @override
   void dispose() {
     closing = true;
+    scope.removeListener(scopeChanged);
+    if (ownsScope) scope.dispose();
     final confirmation = exitRoute;
     exitRoute = null;
     if (confirmation != null) {
@@ -256,7 +361,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
       error = null;
     });
     try {
-      await widget.session.api.send('POST', '${widget.root}/schedules',
+      await api.send('POST', '${widget.root}/schedules',
           key: key, body: pendingBody);
       if (!current) return;
       pendingBody = null;
@@ -264,6 +369,10 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
       closeOwnRoute();
     } catch (failure) {
       if (!current) return;
+      if (privateFailure(failure)) {
+        revoke();
+        return;
+      }
       setState(() {
         error = failure;
         resultUnknown = resultUnknown || failure is! ApiFailure ||
@@ -272,12 +381,35 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
         if (!resultUnknown) pendingBody = null;
       });
     } finally {
-      if (mounted && !closing) setState(() => busy = false);
+      if (mounted && !closing && !revoked) setState(() => busy = false);
     }
   }
 
   @override
-  Widget build(BuildContext context) => PopScope(
+  Widget build(BuildContext context) {
+    if (revoked || !scope.current) {
+      return AlertDialog(
+          scrollable: true,
+          title: const Text('当前操作已失效'),
+          content: SizedBox(
+              width: 640,
+              child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text('账户、工作空间或权限已变化，原计划内容已隐藏。'
+                        '请关闭窗口，在当前工作空间重新打开。'),
+                    if (reviewPriorSubmission) ...[
+                      const SizedBox(height: 12),
+                      const Text('如果先前的提交已经发出，仍需在有权限时核对原工作空间的计划列表。'
+                          '关闭窗口不会取消已发出的请求。'),
+                    ],
+                  ])),
+          actions: [
+            TextButton(onPressed: closeOwnRoute, child: const Text('关闭'))
+          ]);
+    }
+    return PopScope(
       canPop: !busy && !resultUnknown && !exitOpen,
       onPopInvoked: (didPop) {
         if (!didPop && resultUnknown && !busy && !exitOpen) {
@@ -424,6 +556,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                   onPressed: locked ? null : save,
                   child: Text(busy ? '保存中…' : '保存计划'))
           ]));
+  }
 }
 
 const ruleEffects = {

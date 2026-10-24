@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "status": "EXISTING_SELECTED_SERVICES_RESTORED",
+  "authenticatedJourney": "NOT_RUN",
+  "newSourceDeployed": false,
+  "noNewBuildOrImagePull": true,
+  "files": [
+    {
+      "path": "receipt.json",
+      "source": ".cache/guardian-services-recovery-20261024-r1.json",
+      "bytes": 3446,
+      "sha256": "3bdb712501d22cf1488baa60b26fa137ee00d3226934451d310d84fa556b0eb7"
+    },
+    {
+      "path": "readonly-recovery.ps1",
+      "source": ".cache/guardian-services-recovery-20261024-r1.ps1",
+      "bytes": 3556,
+      "sha256": "1467e7134a0f79ce19e26fe9e6d05e4dc037476a7f47b1d2f25b78b0a548836e"
+    }
+  ]
+}

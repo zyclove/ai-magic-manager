@@ -1,0 +1,26 @@
+--- D:\codes\mobile\ai-manager\.cache\guardian-browser13-root-launch-20261024-r4-canonical-git.ps1
++++ D:\codes\mobile\ai-manager\.cache\guardian-browser13-root-launch-20261024-r5-typed-finder-current3cf.ps1
+@@ -1,11 +1,11 @@
+ $ErrorActionPreference='Stop'
+ $taskRepository='D:\codes\mobile\ai-manager'
+-$analysisDirectory=Join-Path $taskRepository '.cache\guardian-browser13-20261024-r4-canonical-git'
++$analysisDirectory=Join-Path $taskRepository '.cache\guardian-browser13-20261024-r5-typed-finder-current3cf'
+ $proposalFile=Join-Path $analysisDirectory 'proposal.json'
+ $grantFile=Join-Path $analysisDirectory 'root-sdk-grant.json'
+ $rootAttempt=Join-Path $analysisDirectory 'root-attempt'
+-$expectedProposalSha='849e0819fdce2cbb794f0c008a4e5c20aa5eff9517104c2d6902c970aac2a348'
+-$expectedCommit='006ee45850c9b6b0f90570d9478bced3beb0e0fe'
++$expectedProposalSha='1fa692d44a033e8ed6060e0b20803fcf565875177388807be17c3213a006cf02'
++$expectedCommit='3cfbf535099ade86234661556d9e92db9069743a'
+ if($expectedProposalSha -notmatch '^[a-f0-9]{64}$'){throw 'Static launcher is disabled pending exact reviewed proposal'}
+ if($PSVersionTable.PSVersion.ToString() -ne '7.6.5'){throw 'Fixed reviewed PowerShell runtime required'}
+ foreach($taskPath in @($taskRepository,(Join-Path $taskRepository '.cache'),$analysisDirectory,$rootAttempt)){
+@@ -52,7 +52,7 @@
+     status='ROOT_FIXED_BROWSER13_STARTED';atUtc=[DateTime]::UtcNow.ToString('o');sourceCommit=$expectedCommit
+     proposalSha256=$expectedProposalSha;launcherSha256=$launcherSha;sdkCount=$analysisSdk.Count;unknownCount=$analysisUnknown.Count
+     availableRamBytes=[long]$analysisMemory;disks=$analysisDisks;maximumHostSeconds=180;reusedBudget=$false
+-    grant='guardian-browser13-current-head006ee-single-sdk-call';applicationTestsRequested=$true
++    grant='guardian-browser13-current-head3cfbf535-single-sdk-call';applicationTestsRequested=$true
+ }
+ $rootReceipt|ConvertTo-Json -Depth 8|Set-Content -LiteralPath (Join-Path $rootAttempt 'preflight.json') -Encoding utf8
+ $startInfo=[Diagnostics.ProcessStartInfo]::new()

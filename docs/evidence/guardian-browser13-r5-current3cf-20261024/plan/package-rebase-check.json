@@ -1,0 +1,26 @@
+{
+  "status": "FILE_ONLY_70_PACKAGE_CONFIG_EXACTLY_SEVEN_INTERNAL_ROOT_URI_REBASES",
+  "oldConfig": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+    "bytes": 15764,
+    "sha256": "8f20ecafd7053d93555ab0a6dba15457f3c37c7eda256d5268d209290794db24"
+  },
+  "newConfig": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r16-typed-schedule-finder\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+    "bytes": 15813,
+    "sha256": "6082db85cc0d2462be9ffe07d876286d0baae0fb3d4cde2b4b79855c33ad9d2d"
+  },
+  "packageCount": 70,
+  "changedInternalNames": [
+    "audit_client",
+    "commerce_contracts",
+    "device_operations",
+    "notification_client",
+    "usage_report_ui",
+    "usage_reporting",
+    "guardian"
+  ],
+  "external63RowsAndAllOtherFieldsByteSemanticallyExact": true,
+  "candidateAndTemplateBytesExact": true,
+  "sdkFixtureOrTestsExecuted": false
+}

@@ -1,0 +1,551 @@
+{
+  "status": "BROWSER13_POST_FILE_ONLY_REBIND_AND_CHROME_JSON_DERIVATION_NOT_EXECUTED",
+  "post": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-post-20261024-r5-typed-finder-current3cf\\post.py",
+    "bytes": 55048,
+    "sha256": "9180fdf299078cd7d4ab8e4d25b3140ff597971049a6e76a3729b73c451d772c"
+  },
+  "patch": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-post-20261024-r5-typed-finder-current3cf\\post-vs-vm35.patch",
+    "bytes": 35950,
+    "sha256": "84ce3c2f26d63857131e0a995b5060cb6fa9927acafa4d4eeaae378d97633613"
+  },
+  "inputs": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\inputs.json",
+    "bytes": 20346,
+    "sha256": "3e769ab0ecded31dc6b0927661591df69fb1e6199293145977e67ded236ecd92"
+  },
+  "proposal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\proposal.json",
+    "bytes": 11067,
+    "sha256": "1fa692d44a033e8ed6060e0b20803fcf565875177388807be17c3213a006cf02"
+  },
+  "caseContract": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\expected-browser13-cases.json",
+    "bytes": 6343,
+    "sha256": "11f16121ffa11a0359852e5f0af7a830a83355b9fa55cec91edc85482d945f2b"
+  },
+  "reporter": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\reporter_contract.py",
+    "bytes": 14280,
+    "sha256": "dcd85cf451b20bd24857cef6726d0f1ebb406c67096146d3d3c82306942b67e8"
+  },
+  "sourceCommit": "3cfbf535099ade86234661556d9e92db9069743a",
+  "selectedRoots": 1,
+  "expectedVisibleCases": 13,
+  "runtimeUnionCount": 43,
+  "inverseRestoresVM35Exactly": true,
+  "literalAndHookChanges": [
+    {
+      "old": "guardian-vm35",
+      "new": "guardian-browser13",
+      "count": 6,
+      "replacementBytePositions": [
+        273,
+        326,
+        389,
+        22050,
+        27935,
+        30052
+      ]
+    },
+    {
+      "old": "VM35",
+      "new": "BROWSER13",
+      "count": 13,
+      "replacementBytePositions": [
+        12385,
+        20790,
+        21531,
+        24388,
+        25633,
+        28228,
+        29470,
+        30465,
+        33550,
+        39542,
+        41020,
+        41342,
+        41704
+      ]
+    },
+    {
+      "old": "independent_vm30",
+      "new": "independent_browser13",
+      "count": 2,
+      "replacementBytePositions": [
+        11659,
+        40377
+      ]
+    },
+    {
+      "old": "guardian-browser13-20261024-r1",
+      "new": "guardian-browser13-20261024-r5-typed-finder-current3cf",
+      "count": 1,
+      "replacementBytePositions": [
+        273
+      ]
+    },
+    {
+      "old": "guardian-browser13-post-20261024-r1",
+      "new": "guardian-browser13-post-20261024-r5-typed-finder-current3cf",
+      "count": 1,
+      "replacementBytePositions": [
+        350
+      ]
+    },
+    {
+      "old": "guardian-browser13-root-launch-20261024-r1.ps1",
+      "new": "guardian-browser13-root-launch-20261024-r5-typed-finder-current3cf.ps1",
+      "count": 1,
+      "replacementBytePositions": [
+        437
+      ]
+    },
+    {
+      "old": "56012ab858575ef7f356d4cf1e5ed94815c9e12e53423d889a0168caf1494eb5",
+      "new": "3e769ab0ecded31dc6b0927661591df69fb1e6199293145977e67ded236ecd92",
+      "count": 1,
+      "replacementBytePositions": [
+        574
+      ]
+    },
+    {
+      "old": "8d8001ea23ddfc7295e8cb302d0eaa951280bc62ab4698036f4897419d2074d0",
+      "new": "1fa692d44a033e8ed6060e0b20803fcf565875177388807be17c3213a006cf02",
+      "count": 1,
+      "replacementBytePositions": [
+        894
+      ]
+    },
+    {
+      "old": "fe10ca0eab38e40d9edddb6c5d53101ef2b134dcad931189b378b59f9f32bcf6",
+      "new": "dcd85cf451b20bd24857cef6726d0f1ebb406c67096146d3d3c82306942b67e8",
+      "count": 1,
+      "replacementBytePositions": [
+        1120
+      ]
+    },
+    {
+      "old": "dad42332d72a01db3f02ba71772cecbe584e67ea0dade4b2b9d8241de5a678cc",
+      "new": "11f16121ffa11a0359852e5f0af7a830a83355b9fa55cec91edc85482d945f2b",
+      "count": 1,
+      "replacementBytePositions": [
+        1198
+      ]
+    },
+    {
+      "old": "proposal['inputs']['bytes'] == 17077",
+      "new": "proposal['inputs']['bytes'] == 20346",
+      "count": 1,
+      "replacementBytePositions": [
+        22836
+      ]
+    },
+    {
+      "old": "inputs['reporterContractCode']['bytes'] == 14369",
+      "new": "inputs['reporterContractCode']['bytes'] == 14280",
+      "count": 1,
+      "replacementBytePositions": [
+        28504
+      ]
+    },
+    {
+      "old": "inputs['testCaseContract']['bytes'] == 15481",
+      "new": "inputs['testCaseContract']['bytes'] == 6343",
+      "count": 1,
+      "replacementBytePositions": [
+        28789
+      ]
+    },
+    {
+      "old": "expected-vm35-cases.json",
+      "new": "expected-browser13-cases.json",
+      "count": 1,
+      "replacementBytePositions": [
+        28694
+      ]
+    },
+    {
+      "old": "['test/workbench_view_test.dart', 'test/dialog_submit_guard_test.dart', 'test/failure_view_test.dart', 'test/login_view_test.dart']",
+      "new": "['test/editor_submit_guard_test.dart']",
+      "count": 1,
+      "replacementBytePositions": [
+        972
+      ]
+    },
+    {
+      "old": "[15, 6, 9, 5]",
+      "new": "[13]",
+      "count": 2,
+      "replacementBytePositions": [
+        12346,
+        12971
+      ]
+    },
+    {
+      "old": "default Flutter VM tester",
+      "new": "Flutter chrome browser",
+      "count": 1,
+      "replacementBytePositions": [
+        11994
+      ]
+    },
+    {
+      "old": "row.get('platform') == 'vm'",
+      "new": "row.get('platform') == 'chrome'",
+      "count": 1,
+      "replacementBytePositions": [
+        16229
+      ]
+    },
+    {
+      "old": "Non-VM or nonlocal suite",
+      "new": "Non-Chrome or nonlocal suite",
+      "count": 1,
+      "replacementBytePositions": [
+        16472
+      ]
+    },
+    {
+      "old": "'process-inventory.ps1', 'reporter_contract.py'}",
+      "new": "'process-inventory.ps1', 'reporter_contract.py', 'owned_chrome_evidence.py'}",
+      "count": 1,
+      "replacementBytePositions": [
+        829
+      ]
+    },
+    {
+      "old": "len(proposal['candidateFiles']) == 5",
+      "new": "len(proposal['candidateFiles']) == 6",
+      "count": 1,
+      "replacementBytePositions": [
+        22351
+      ]
+    },
+    {
+      "old": "len(proposal['runtimePins']) == 35",
+      "new": "len(proposal['runtimePins']) == 43",
+      "count": 1,
+      "replacementBytePositions": [
+        26949
+      ]
+    },
+    {
+      "old": "len(runtime) == len(set(runtime)) == 35",
+      "new": "len(runtime) == len(set(runtime)) == 43",
+      "count": 1,
+      "replacementBytePositions": [
+        27201
+      ]
+    },
+    {
+      "old": "'fixedFiles': 184",
+      "new": "'fixedFiles': 185",
+      "count": 1,
+      "replacementBytePositions": [
+        11026
+      ]
+    },
+    {
+      "old": "'files': 3688",
+      "new": "'files': 3689",
+      "count": 1,
+      "replacementBytePositions": [
+        11118
+      ]
+    },
+    {
+      "old": "641815136",
+      "new": "646535928",
+      "count": 1,
+      "replacementBytePositions": [
+        11142
+      ]
+    },
+    {
+      "old": "contract['expectedVisibleCases'] == 35",
+      "new": "contract['expectedVisibleCases'] == 13",
+      "count": 1,
+      "replacementBytePositions": [
+        12175
+      ]
+    },
+    {
+      "old": "contract['expectedTestRoots'] == 4",
+      "new": "contract['expectedTestRoots'] == 1",
+      "count": 1,
+      "replacementBytePositions": [
+        12281
+      ]
+    },
+    {
+      "old": "len(contract['cases']) == 35",
+      "new": "len(contract['cases']) == 13",
+      "count": 1,
+      "replacementBytePositions": [
+        12472
+      ]
+    },
+    {
+      "old": "Thirty-five contract rows required",
+      "new": "Thirteen contract rows required",
+      "count": 1,
+      "replacementBytePositions": [
+        12515
+      ]
+    },
+    {
+      "old": "len(set(wanted)) == 35",
+      "new": "len(set(wanted)) == 13",
+      "count": 1,
+      "replacementBytePositions": [
+        12876
+      ]
+    },
+    {
+      "old": "event['count'] == 4",
+      "new": "event['count'] == 1",
+      "count": 1,
+      "replacementBytePositions": [
+        15736
+      ]
+    },
+    {
+      "old": "len(suites) == 4",
+      "new": "len(suites) == 1",
+      "count": 1,
+      "replacementBytePositions": [
+        20028
+      ]
+    },
+    {
+      "old": "len(actual) == len(set(actual)) == 35",
+      "new": "len(actual) == len(set(actual)) == 13",
+      "count": 1,
+      "replacementBytePositions": [
+        20642
+      ]
+    },
+    {
+      "old": "35 exact visible cases differ",
+      "new": "13 exact visible cases differ",
+      "count": 1,
+      "replacementBytePositions": [
+        20725
+      ]
+    },
+    {
+      "old": "'expectedSuiteCount': 4",
+      "new": "'expectedSuiteCount': 1",
+      "count": 1,
+      "replacementBytePositions": [
+        20854
+      ]
+    },
+    {
+      "old": "'actualSuiteCount': 4",
+      "new": "'actualSuiteCount': 1",
+      "count": 1,
+      "replacementBytePositions": [
+        20879
+      ]
+    },
+    {
+      "old": "'suiteCount': 4",
+      "new": "'suiteCount': 1",
+      "count": 1,
+      "replacementBytePositions": [
+        20902
+      ]
+    },
+    {
+      "old": "'expectedVisibleTests': 35",
+      "new": "'expectedVisibleTests': 13",
+      "count": 1,
+      "replacementBytePositions": [
+        20970
+      ]
+    },
+    {
+      "old": "'visibleTests': 35",
+      "new": "'visibleTests': 13",
+      "count": 1,
+      "replacementBytePositions": [
+        21010
+      ]
+    },
+    {
+      "old": "'successfulVisibleTests': 35",
+      "new": "'successfulVisibleTests': 13",
+      "count": 1,
+      "replacementBytePositions": [
+        21030
+      ]
+    },
+    {
+      "old": "grant['selectedRoots'] == 4",
+      "new": "grant['selectedRoots'] == 1",
+      "count": 1,
+      "replacementBytePositions": [
+        28074
+      ]
+    },
+    {
+      "old": "grant['expectedVisibleCases'] == 35",
+      "new": "grant['expectedVisibleCases'] == 13",
+      "count": 1,
+      "replacementBytePositions": [
+        28169
+      ]
+    },
+    {
+      "old": "inputs['expectedVisibleCases'] == 35",
+      "new": "inputs['expectedVisibleCases'] == 13",
+      "count": 1,
+      "replacementBytePositions": [
+        29173
+      ]
+    },
+    {
+      "old": "expectedVmTestRoots",
+      "new": "expectedBrowserTestRoots",
+      "count": 2,
+      "replacementBytePositions": [
+        29243,
+        29290
+      ]
+    },
+    {
+      "old": "inputs['expectedBrowserTestRoots'] == 4",
+      "new": "inputs['expectedBrowserTestRoots'] == 1",
+      "count": 1,
+      "replacementBytePositions": [
+        29282
+      ]
+    },
+    {
+      "old": "remainingFullRegressionRootsUnrun",
+      "new": "otherFullRegressionRootsNotExecutedByThisBatch",
+      "count": 2,
+      "replacementBytePositions": [
+        29355,
+        29436
+      ]
+    },
+    {
+      "old": "inputs['otherFullRegressionRootsNotExecutedByThisBatch'] == 179",
+      "new": "inputs['otherFullRegressionRootsNotExecutedByThisBatch'] == 182",
+      "count": 1,
+      "replacementBytePositions": [
+        29428
+      ]
+    },
+    {
+      "old": "launch['selectorCount'] == 4",
+      "new": "launch['selectorCount'] == 1",
+      "count": 1,
+      "replacementBytePositions": [
+        37302
+      ]
+    },
+    {
+      "old": "launch['expectedVisibleCases'] == 35",
+      "new": "launch['expectedVisibleCases'] == 13",
+      "count": 1,
+      "replacementBytePositions": [
+        37456
+      ]
+    },
+    {
+      "old": "test --no-pub --concurrency=1 --reporter=json test/workbench_view_test.dart test/dialog_submit_guard_test.dart test/failure_view_test.dart test/login_view_test.dart",
+      "new": "test --platform=chrome --no-pub --web-renderer=html --reporter=json test/editor_submit_guard_test.dart",
+      "count": 1,
+      "replacementBytePositions": [
+        36683
+      ]
+    },
+    {
+      "old": "'selectedTestRoots': 4",
+      "new": "'selectedTestRoots': 1",
+      "count": 1,
+      "replacementBytePositions": [
+        42119
+      ]
+    },
+    {
+      "old": "'expectedVisibleCases': 35",
+      "new": "'expectedVisibleCases': 13",
+      "count": 1,
+      "replacementBytePositions": [
+        42143
+      ]
+    },
+    {
+      "old": "'otherFullRegressionRootsUnrun': 179",
+      "new": "'otherFullRegressionRootsNotExecutedByThisBatch': 182",
+      "count": 1,
+      "replacementBytePositions": [
+        42171
+      ]
+    },
+    {
+      "old": "[str(REPO), str(Path(r'D:\\softwares\\flutter'))]",
+      "new": "[REPO.as_posix(), Path(r'D:\\softwares\\flutter').as_posix()]",
+      "count": 1,
+      "replacementBytePositions": [
+        37748
+      ]
+    },
+    {
+      "old": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+      "new": "3cfbf535099ade86234661556d9e92db9069743a",
+      "count": 1,
+      "replacementBytePositions": [
+        519
+      ]
+    },
+    {
+      "old": "guardian-current-20261024-r15-login-schedule",
+      "new": "guardian-current-20261024-r16-typed-schedule-finder",
+      "count": 2,
+      "replacementBytePositions": [
+        36909,
+        40434
+      ]
+    },
+    {
+      "old": "def independent_browser13(raw, contract, module, log_pin):",
+      "new": "def chrome_evidence_valid(value, inputs, command_state, start, end, attempt):\n    \"\"\"Derive Chrome boundaries from pinned JSON; no process or network API.\"\"\"\n    import ipaddress\n    import math\n    import ntpath\n    import re\n    from urllib.parse import urlsplit\n\n    def number(item):\n        return type(item) is float and math.isfinite(item)\n\n    def positive(item):\n        return type(item) is int and item > 0\n\n    def digest(item):\n        return type(item) is str and re.fullmatch('[a-f0-9]{64}', item) is not None\n\n    def canonical(item):\n        if not (type(item) is str and 0 < len(item) <= 32766\n                and re.match(r'^[A-Za-z]:[\\\\/]', item)\n                and not any(ord(char) < 32 for char in item)\n                and '..' not in item.replace('/', '\\\\').split('\\\\')):\n            raise ValueError('Nonlocal or unsafe Chrome evidence path')\n        drive, tail = ntpath.splitdrive(item)\n        if ':' in tail:\n            raise ValueError('ADS Chrome evidence path')\n        return ntpath.normcase(ntpath.normpath(item))\n\n    try:\n        keys = {'schemaVersion', 'status', 'chromeRoots', 'problems', 'sampleCalls',\n                'pinnedBrowserPath', 'temporaryRoot', 'commandCreationFiletime',\n                'observationDeadlineQpc', 'commandLineSource', 'debugBindingProof',\n                'foreignCommandLinesRead', 'processesTerminated', 'environmentRead',\n                'nativeReadPathQualificationSeparate'}\n        if not (type(value) is dict and set(value) == keys\n                and type(value['schemaVersion']) is int and value['schemaVersion'] == 1\n                and value['status'] == 'OWNED_CHROME_BOUNDARIES_OBSERVED'\n                and type(value['problems']) is list and value['problems'] == []\n                and positive(value['sampleCalls']) and value['sampleCalls'] <= 100000\n                and value['foreignCommandLinesRead'] is False\n                and value['processesTerminated'] is False and value['environmentRead'] is False\n                and value['nativeReadPathQualificationSeparate'] is True\n                and value['commandLineSource'] == 'SAME_RETAINED_HANDLE_PBI0_READPROCESSMEMORY'\n                and value['debugBindingProof'] == 'PID_FILTERED_LISTEN_ROWS_BRACKETED_BY_SAME_HANDLE_IDENTITY'\n                and type(command_state) is dict and positive(command_state.get('pid'))\n                and positive(command_state.get('creationFiletime'))\n                and positive(value['commandCreationFiletime'])\n                and value['commandCreationFiletime'] == command_state['creationFiletime']\n                and number(start) and number(end) and start < end\n                and number(value['observationDeadlineQpc'])\n                and value['observationDeadlineQpc'] == end):\n            return False\n        executable = canonical(inputs['browserExecutable']['path'])\n        temporary = canonical(str(attempt / 'tmp'))\n        if canonical(value['pinnedBrowserPath']) != executable or canonical(value['temporaryRoot']) != temporary:\n            return False\n        roots = value['chromeRoots']\n        if type(roots) is not list or not 1 <= len(roots) <= 64:\n            return False\n        identities, profiles, ports = set(), set(), set()\n        row_keys = {'pid', 'creationFiletime', 'commandCreationFiletime', 'imagePath', 'profile',\n                    'debuggingPort', 'testServerOrigins', 'testTargets', 'managerTarget', 'headless',\n                    'argvTestTargetLoopback', 'flutterManagerTargetSameLoopbackOrigin',\n                    'commandLineUtf16Sha256', 'commandLineReadBeforeQpc', 'commandLineReadAfterQpc',\n                    'sameReadHandleVerified', 'ownedMembershipVerifiedBeforeAndAfter', 'liveBeforeAndAfter',\n                    'observedQpc', 'debugListenerAddresses', 'listenerReadBeforeQpc', 'listenerReadAfterQpc',\n                    'listenerSameHandleIdentityVerifiedBeforeAndAfter', 'debugBindingLoopbackObserved'}\n        for row in roots:\n            if not (type(row) is dict and set(row) == row_keys\n                    and positive(row['pid']) and row['pid'] != command_state['pid']\n                    and positive(row['creationFiletime'])\n                    and row['creationFiletime'] >= command_state['creationFiletime']\n                    and positive(row['commandCreationFiletime'])\n                    and row['commandCreationFiletime'] == command_state['creationFiletime']\n                    and canonical(row['imagePath']) == executable\n                    and positive(row['debuggingPort']) and row['debuggingPort'] < 65536\n                    and all(row[key] is True for key in ('headless', 'argvTestTargetLoopback',\n                        'flutterManagerTargetSameLoopbackOrigin', 'sameReadHandleVerified',\n                        'ownedMembershipVerifiedBeforeAndAfter', 'liveBeforeAndAfter',\n                        'listenerSameHandleIdentityVerifiedBeforeAndAfter', 'debugBindingLoopbackObserved'))\n                    and digest(row['commandLineUtf16Sha256'])):\n                return False\n            identity = (row['pid'], row['creationFiletime'])\n            profile = canonical(row['profile'])\n            port = row['debuggingPort']\n            if not profile.startswith(temporary.rstrip('\\\\') + '\\\\') or len(profile.split('\\\\')) > 64:\n                return False\n            if identity in identities or profile in profiles or port in ports:\n                return False\n            identities.add(identity); profiles.add(profile); ports.add(port)\n            times = [row[key] for key in ('commandLineReadBeforeQpc', 'commandLineReadAfterQpc',\n                'listenerReadBeforeQpc', 'listenerReadAfterQpc', 'observedQpc')]\n            if not (all(number(item) for item in times)\n                    and start <= times[0] <= times[1] <= times[2] <= times[3] == times[4] < end):\n                return False\n            targets, origins = row['testTargets'], row['testServerOrigins']\n            if not (type(targets) is list and len(targets) == 1\n                    and type(origins) is list and len(origins) == 1 and type(origins[0]) is str):\n                return False\n            target = targets[0]\n            if not (type(target) is dict and set(target) == {'scheme', 'host', 'port', 'path', 'urlSha256'}\n                    and target['scheme'] == 'http' and target['host'] in ('localhost', '127.0.0.1', '::1')\n                    and positive(target['port']) and target['port'] < 65536\n                    and target['path'] == '/static/index.html' and digest(target['urlSha256'])):\n                return False\n            manager = row['managerTarget']\n            if not (type(manager) is dict and set(manager) == {'scheme', 'host', 'port'}\n                    and type(manager['scheme']) is str and manager['scheme'] == 'ws'\n                    and type(manager['host']) is str\n                    and manager['host'] in ('localhost', '127.0.0.1', '::1')\n                    and positive(manager['port']) and manager['port'] < 65536\n                    and manager['host'] == target['host'] and manager['port'] == target['port']):\n                return False\n            origin = urlsplit(origins[0])\n            if not (origin.scheme == 'http' and origin.hostname == target['host']\n                    and origin.port == target['port'] and origin.path == ''\n                    and origin.username is None and origin.password is None\n                    and not origin.query and not origin.fragment):\n                return False\n            listeners = row['debugListenerAddresses']\n            if type(listeners) is not list or not 1 <= len(listeners) <= 32:\n                return False\n            seen = set()\n            for listener in listeners:\n                if not (type(listener) is dict and set(listener) == {'address', 'port', 'family', 'status'}\n                        and type(listener['address']) is str and len(listener['address']) <= 64\n                        and type(listener['port']) is int and listener['port'] == port\n                        and listener['status'] == 'LISTEN' and listener['family'] in ('AF_INET', 'AF_INET6')):\n                    return False\n                address = ipaddress.ip_address(listener['address'])\n                if not (address.is_loopback and\n                        ((address.version == 4 and listener['family'] == 'AF_INET')\n                         or (address.version == 6 and listener['family'] == 'AF_INET6'))):\n                    return False\n                entry = (str(address), listener['port'], listener['family'], listener['status'])\n                if entry in seen:\n                    return False\n                seen.add(entry)\n        return True\n    except (KeyError, TypeError, ValueError, AttributeError, OverflowError):\n        return False\n\n\ndef independent_browser13(raw, contract, module, log_pin):",
+      "count": 1,
+      "replacementBytePositions": [
+        11662
+      ]
+    },
+    {
+      "old": "    grant = load(BASE / 'root-sdk-grant.json')\n",
+      "new": "    descriptor(inputs['ownedChromeEvidenceCode'])\n    require(Path(inputs['ownedChromeEvidenceCode']['path']) == BASE / 'owned_chrome_evidence.py',\n            'Fixed Chrome evidence code path differs')\n    descriptor(inputs['ownedChromeNativeQualification'])\n    chrome_qualification = load(Path(inputs['ownedChromeNativeQualification']['path']))\n    require(chrome_qualification['observerCodeSha256'] == inputs['ownedChromeEvidenceCode']['sha256']\n            and chrome_qualification['newNativeReadPathActuallyQualified'] is True\n            and chrome_qualification['sdkOrChromeLifecycleOrTcpQualified'] is False,\n            'Narrow actual reader qualification differs')\n    descriptor(chrome_qualification['actualQualificationResult'])\n    descriptor(chrome_qualification['actualOuterQualificationResult'])\n    grant = load(BASE / 'root-sdk-grant.json')\n",
+      "count": 1,
+      "replacementBytePositions": [
+        32539
+      ]
+    },
+    {
+      "old": "    log_path = attempt / 'out/tests.jsonl'\n",
+      "new": "    chrome_pin = receipt.get('ownedChromeEvidencePin')\n    require(type(chrome_pin) is dict\n            and Path(chrome_pin.get('path', '')) == attempt / 'owned-chrome-evidence.json'\n            and receipt.get('ownedChromeBoundariesAccepted') is True\n            and same(receipt.get('ownedChromeEvidenceCodePin'), inputs['ownedChromeEvidenceCode'])\n            and same(receipt.get('browserExecutablePin'), inputs['browserExecutable']),\n            'Bound raw Chrome evidence descriptor missing')\n    descriptor(chrome_pin)\n    chrome_raw = load(Path(chrome_pin['path']))\n    descriptor(chrome_pin)\n    require(same(chrome_raw, receipt.get('ownedChromeEvidence'))\n            and chrome_evidence_valid(chrome_raw, inputs, command, start, start + 135.0, attempt),\n            'Chrome ownership/profile/actual-loopback evidence does not independently derive')\n    require(launch.get('chromeExecutable') == inputs['browserExecutable']['path']\n            and same(launch.get('browserToolSources'), inputs['browserToolSources'])\n            and same(launch.get('ownedChromeEvidenceCodePin'), inputs['ownedChromeEvidenceCode']),\n            'Fixed Chrome executable/tool-source environment launch differs')\n    log_path = attempt / 'out/tests.jsonl'\n",
+      "count": 1,
+      "replacementBytePositions": [
+        49046
+      ]
+    },
+    {
+      "old": "        'reporterDerivedConsistent': True, 'independentReporterValidation': independently_derived,\n",
+      "new": "        'reporterDerivedConsistent': True, 'independentReporterValidation': independently_derived,\n        'ownedChromeEvidenceIndependentlyDerived': True, 'ownedChromeEvidencePin': chrome_pin,\n        'chromeBoundaries': {'roots': len(chrome_raw['chromeRoots']),\n            'sameHandleOwnJobRead': True, 'privateProfiles': True, 'headless': True,\n            'testTargetLoopback': True, 'debugLoopbackListenerActuallyObserved': True,\n            'auxiliaryCleanupUsed': False, 'foreignCommandLinesRead': False},\n",
+      "count": 1,
+      "replacementBytePositions": [
+        52876
+      ]
+    }
+  ],
+  "candidateImportOrSDKOrBrowserRun": false
+}

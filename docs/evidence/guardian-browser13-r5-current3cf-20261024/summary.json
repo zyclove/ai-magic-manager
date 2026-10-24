@@ -1,0 +1,285 @@
+{
+  "status": "APPLICATION13_EXACT_SUCCESS_FULL_RUN_STILL_NOT_ACCEPTED",
+  "sourceCommit": "3cfbf535099ade86234661556d9e92db9069743a",
+  "application13ExactReportSuccess": true,
+  "applicationCasesCompleted": 13,
+  "applicationCasesSuccessful": 13,
+  "visibleSkipped": 0,
+  "errorEvents": 0,
+  "printEvents": 0,
+  "rawDoneSuccess": true,
+  "rawJsonEvents": 33,
+  "bootstrapNotices": 1,
+  "cases": [
+    {
+      "selector": "test/editor_submit_guard_test.dart",
+      "name": "ClassActionDialog submits once when a captured callback is repeated",
+      "testID": 6,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/editor_submit_guard_test.dart",
+      "name": "MemberEditor submits once when a captured callback is repeated",
+      "testID": 5,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/editor_submit_guard_test.dart",
+      "name": "PolicyEditor saves once when a captured callback is repeated",
+      "testID": 4,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/editor_submit_guard_test.dart",
+      "name": "ScheduleEditor known rejection permits a corrected submission",
+      "testID": 10,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/editor_submit_guard_test.dart",
+      "name": "ScheduleEditor late date result cannot edit a closed owner",
+      "testID": 15,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/editor_submit_guard_test.dart",
+      "name": "ScheduleEditor late success preserves an unrelated covering dialog",
+      "testID": 13,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/editor_submit_guard_test.dart",
+      "name": "ScheduleEditor late time result cannot edit a closed owner",
+      "testID": 14,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/editor_submit_guard_test.dart",
+      "name": "ScheduleEditor network outcome preserves the original retry",
+      "testID": 7,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/editor_submit_guard_test.dart",
+      "name": "ScheduleEditor pending-operation rejection retains unknown content",
+      "testID": 11,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/editor_submit_guard_test.dart",
+      "name": "ScheduleEditor saves once when a captured callback is repeated",
+      "testID": 3,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/editor_submit_guard_test.dart",
+      "name": "ScheduleEditor server outcome preserves the original retry",
+      "testID": 8,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/editor_submit_guard_test.dart",
+      "name": "ScheduleEditor unexpected outcome preserves the original retry",
+      "testID": 9,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/editor_submit_guard_test.dart",
+      "name": "ScheduleEditor unknown back navigation requires explicit close",
+      "testID": 12,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    }
+  ],
+  "sourceContractExact": true,
+  "applicationTestsRun": true,
+  "sdkCalls": 1,
+  "entireRunAccepted": false,
+  "testAccepted": false,
+  "fullRegressionAccepted": false,
+  "sdkCommand": {
+    "pid": 138272,
+    "naturalExitCode": 0,
+    "activeProcessesAtTerminal": 0,
+    "firstSignalQpc": 123793.0158711,
+    "firstJobZeroQpc": 123793.062232,
+    "drainSeconds": 0.046360899999854155,
+    "originalDrainLimitSeconds": 0.5,
+    "forcedTermination": false,
+    "commandNaturalCompleteBeforeDeadline": true,
+    "commandDeadlineReached": false
+  },
+  "remainingRefusal": {
+    "problems": [
+      "OWN_JOB_MEMBER_IDENTITY_UNPROVED"
+    ],
+    "diagnosticRecordCount": 3,
+    "note": "Application reporter success and natural SDK Job completion are valid recorded facts. Existing sticky observer refusal still rejects the complete run; no historical state is retroactively changed."
+  },
+  "memberFacts": [
+    {
+      "sampleOrdinal": 299,
+      "failedRow": {
+        "rowShapeValid": true,
+        "creationFiletime": 134373192665259355,
+        "exitFiletime": 134373192666083354,
+        "imageError": 5,
+        "pid": 16124,
+        "openedFromOwnJobList": true,
+        "retainedRootHandleUsed": false,
+        "signaled": false,
+        "verifiedOwnMembership": true,
+        "sampleQpc": 123778.8129338
+      },
+      "repeatedMatchingRows": [],
+      "originalBeforeContainsPid": true,
+      "originalAfterContainsPid": false,
+      "repeatBeforeContainsPid": false,
+      "repeatAfterContainsPid": false,
+      "earlierCompleteChromeRootSameIdentity": false
+    },
+    {
+      "sampleOrdinal": 523,
+      "failedRow": {
+        "rowShapeValid": true,
+        "creationFiletime": 134373192655848226,
+        "exitFiletime": 134373192805061080,
+        "imageError": 5,
+        "pid": 164324,
+        "openedFromOwnJobList": true,
+        "retainedRootHandleUsed": false,
+        "signaled": false,
+        "verifiedOwnMembership": true,
+        "sampleQpc": 123792.7233793
+      },
+      "repeatedMatchingRows": [
+        {
+          "rowShapeValid": true,
+          "creationFiletime": 134373192655848226,
+          "exitFiletime": 134373192805061080,
+          "imageError": 5,
+          "pid": 164324,
+          "openedFromOwnJobList": true,
+          "retainedRootHandleUsed": false,
+          "signaled": false,
+          "verifiedOwnMembership": true,
+          "sampleQpc": 123792.7248132
+        }
+      ],
+      "originalBeforeContainsPid": true,
+      "originalAfterContainsPid": true,
+      "repeatBeforeContainsPid": true,
+      "repeatAfterContainsPid": true,
+      "earlierCompleteChromeRootSameIdentity": true
+    },
+    {
+      "sampleOrdinal": 524,
+      "failedRow": {
+        "rowShapeValid": true,
+        "creationFiletime": 134373192665605904,
+        "exitFiletime": 134373192805357605,
+        "imageError": 5,
+        "pid": 157756,
+        "openedFromOwnJobList": true,
+        "retainedRootHandleUsed": false,
+        "signaled": false,
+        "verifiedOwnMembership": true,
+        "sampleQpc": 123792.7862566
+      },
+      "repeatedMatchingRows": [
+        {
+          "rowShapeValid": true,
+          "creationFiletime": 134373192665605904,
+          "exitFiletime": 134373192805357605,
+          "imageError": 5,
+          "pid": 157756,
+          "openedFromOwnJobList": true,
+          "retainedRootHandleUsed": false,
+          "signaled": false,
+          "verifiedOwnMembership": true,
+          "sampleQpc": 123792.7870978
+        }
+      ],
+      "originalBeforeContainsPid": true,
+      "originalAfterContainsPid": true,
+      "repeatBeforeContainsPid": true,
+      "repeatAfterContainsPid": true,
+      "earlierCompleteChromeRootSameIdentity": false
+    }
+  ],
+  "finalityEvidence": {
+    "commandTerminalStateLocation": "attempt/receipt.json.commandTerminalState",
+    "commandTerminalJobZeroQpc": 123793.062232,
+    "commandAfterPostflightJobZeroQpc": 123809.3351844,
+    "finalCommandOwnJobMembersSaved": false,
+    "outerFinalOwnJobMembersLocation": "attempt/result.json.finalOwnJobMembers",
+    "outerEmptyBeforeQpc": 123809.9297544,
+    "outerEmptyAfterQpc": 123809.9297656,
+    "gap": "The empty before/after PID lists belong to the outer worker Job. The SDK command Job has accounting Job0 but no saved final member-list snapshot or per-old-identity retained-handle finality record. These observations must not be relabeled as finalCommandOwnJobMembers or used to waive the sticky problem."
+  },
+  "rootHost": {
+    "naturalExitCode": 1,
+    "rootForcedOwnHost": false,
+    "elapsedSeconds": 77.4520629
+  },
+  "post": {
+    "status": "NOT_ACCEPTED_FILE_READBACK",
+    "reason": "Root retained-handle natural exit proof rejected"
+  },
+  "release": {
+    "sdkCount": 0,
+    "unknownCount": 0,
+    "windowReleased": true,
+    "testAccepted": false,
+    "applicationTestsRun": true,
+    "nextSdkGrant": false
+  },
+  "actualToolExecution": {
+    "provenance": "Root-reported earlier tool completions; root/post terminal IDs also recorded in release.json",
+    "root": {
+      "launchChunk": "69107",
+      "terminalChunk": "49fbc4",
+      "exitCode": 1
+    },
+    "post": {
+      "terminalChunk": "6f2f45",
+      "exitCode": 1
+    },
+    "release": {
+      "terminalChunk": "a42f79",
+      "exitCode": 1
+    }
+  },
+  "preservation": {
+    "B5P5R16OriginalsUnchanged": true,
+    "chromeProfileCopied": false,
+    "sdkOrFixtureOrProcessApiOrNetworkOrGitMutationRunByArchiver": false,
+    "oldDurableReferencesVerifiedByByteEquality": true
+  },
+  "scopeNote": "13 application cases succeeded on current3cf. The full183 inventory is metadata, and the complete browser run remains NOT_ACCEPTED."
+}

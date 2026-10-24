@@ -1,0 +1,20 @@
+--- D:\codes\mobile\ai-manager\.cache\guardian-browser13-20261024-r4-canonical-git\worker.py
++++ D:\codes\mobile\ai-manager\.cache\guardian-browser13-20261024-r5-typed-finder-current3cf\worker.py
+@@ -22,13 +22,13 @@
+ CANDIDATE = Path(__file__).absolute().parent
+ ATTEMPT = CANDIDATE / 'attempt'
+ REPO = CANDIDATE.parents[1]
+-FROZEN = REPO / '.cache/guardian-current-20261024-r15-login-schedule'
+-SOURCE_COMMIT = '006ee45850c9b6b0f90570d9478bced3beb0e0fe'
++FROZEN = REPO / '.cache/guardian-current-20261024-r16-typed-schedule-finder'
++SOURCE_COMMIT = '3cfbf535099ade86234661556d9e92db9069743a'
+ SOURCE = FROZEN / 'src'
+ MODULE = SOURCE / 'apps/guardian'
+ INPUT = CANDIDATE / 'inputs.json'
+-INPUT_BYTES = 20240
+-INPUT_SHA256 = '906ca7d4c49602b8cb59fb9bb3cdd058f6bd1a0c6f1e10dae363c4a64fc17311'
++INPUT_BYTES = 20346
++INPUT_SHA256 = '3e769ab0ecded31dc6b0927661591df69fb1e6199293145977e67ded236ecd92'
+ PWSH = Path(r'C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.exe')
+ PROCESS_INVENTORY = CANDIDATE / 'process-inventory.ps1'
+ PROCESS_INVENTORY_SHA256 = 'f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046'

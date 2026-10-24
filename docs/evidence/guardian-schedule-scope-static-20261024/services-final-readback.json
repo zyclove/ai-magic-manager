@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "status": "EXISTING_SELECTED_SERVICES_STILL_RUNNING",
+  "project": "ai-manager-v1-refresh-20261016-r1",
+  "publicUrl": "http://localhost:18101",
+  "containerReadback": {
+    "actualTerminal": "f7ce7e",
+    "exitCode": 0,
+    "runningHealthyCount": 6,
+    "services": ["backend", "database", "edge", "erasure-database", "identity", "identity-database"]
+  },
+  "httpReadback": {
+    "actualTerminal": "be7dc3",
+    "exitCode": 0,
+    "checks": [
+      {"path": "/", "status": 200, "bytes": 1268},
+      {"path": "/identity/realms/ai-manager/.well-known/openid-configuration", "status": 200, "bytes": 6863},
+      {"path": "/api/v1/me", "status": 401, "bytes": 157}
+    ]
+  },
+  "authenticatedJourney": "NOT_RUN",
+  "newSourceDeployed": false,
+  "runtimeImageProvenanceClaimed": false,
+  "freshResourceReadback": {
+    "actualTerminal": "489f3b",
+    "exitCode": 0,
+    "availableGiB": 2.2578773498535156,
+    "cFreeGiB": 1.7362442016601562,
+    "dFreeGiB": 25.163429260253906,
+    "newSdkTests": "DEFERRED_ORIGINAL_RESOURCE_GATE_NOT_MET"
+  }
+}

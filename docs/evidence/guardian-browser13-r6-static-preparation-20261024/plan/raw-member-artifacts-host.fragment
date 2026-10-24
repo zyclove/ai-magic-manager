@@ -1,0 +1,15 @@
+    for field, filename, embedded, maximum in (
+            ('ownedMemberFailureLedgerPin', 'member-failure-ledger.json', 'failureLedger', 262144),
+            ('commandJobFinalityPin', 'command-job-finality.json', 'terminalFinality', 65536)):
+        raw_pin = receipt.get(field)
+        if not (type(raw_pin) is dict and Path(raw_pin.get('path', '')) == attempt / filename):
+            return False
+        descriptor(raw_pin, FINISH_END)
+        require(raw_pin['bytes'] <= maximum, 'Raw member artifact exceeds its fixed bound')
+        raw_member = json.loads(Path(raw_pin['path']).read_bytes())
+        descriptor(raw_pin, FINISH_END)
+        if not same_json(raw_member, chrome_raw.get(embedded)):
+            return False
+        if embedded == 'terminalFinality' and not same_json(raw_member, receipt.get('commandFinalityCapture')):
+            return False
+

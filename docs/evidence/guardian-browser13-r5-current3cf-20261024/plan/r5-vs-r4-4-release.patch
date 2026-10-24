@@ -1,0 +1,22 @@
+--- D:\codes\mobile\ai-manager\.cache\guardian-browser13-release-20261024-r4-canonical-git.ps1
++++ D:\codes\mobile\ai-manager\.cache\guardian-browser13-release-20261024-r5-typed-finder-current3cf.ps1
+@@ -6,8 +6,8 @@
+ )
+ $ErrorActionPreference='Stop'
+ $taskRepository='D:\codes\mobile\ai-manager'
+-$taskAnalysis=Join-Path $taskRepository '.cache\guardian-browser13-20261024-r4-canonical-git'
+-$taskPost=Join-Path $taskRepository '.cache\guardian-browser13-post-20261024-r4-canonical-git\post.json'
++$taskAnalysis=Join-Path $taskRepository '.cache\guardian-browser13-20261024-r5-typed-finder-current3cf'
++$taskPost=Join-Path $taskRepository '.cache\guardian-browser13-post-20261024-r5-typed-finder-current3cf\post.json'
+ $taskOutput=Join-Path $taskAnalysis 'root-attempt'
+ $taskInventory=Join-Path $taskOutput 'post-process-inventory.json'
+ $taskRelease=Join-Path $taskOutput 'release.json'
+@@ -36,7 +36,7 @@
+ $taskReceipt=[ordered]@{
+     status=if($taskConsistent -and $taskReleased){'GUARDIAN_BROWSER13_ACCEPTED_AND_WINDOW_RELEASED'}else{'BROWSER13_NOT_ACCEPTED_OR_RELEASE_INCOMPLETE'}
+     atUtc=[DateTime]::UtcNow.ToString('o')
+-    sourceCommit='006ee45850c9b6b0f90570d9478bced3beb0e0fe'
++    sourceCommit='3cfbf535099ade86234661556d9e92db9069743a'
+     actualRootToolTerminalChunk=$RootTerminalChunk;actualRootToolExitCode=$RootActualExitCode
+     actualPostToolTerminalChunk=$PostTerminalChunk;actualPostToolExitCode=$PostActualExitCode
+     hostPid=$taskResult.hostPid;hostCreationFiletime=$taskResult.sameHandleCreationFiletime;hostExitFiletime=$taskResult.sameHandleExitFiletime

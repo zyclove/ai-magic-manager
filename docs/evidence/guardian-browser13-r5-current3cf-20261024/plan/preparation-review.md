@@ -1,0 +1,11 @@
+# B5 current source binding with typed Schedule finders
+
+This is preparation, not test acceptance. Source is committed HEAD `3cfbf535099ade86234661556d9e92db9069743a`, frozen in r16: 413 files / 4,061,481 bytes and the complete 183-root inventory. Only `editor_submit_guard_test.dart` changed. Its two tooltip lookups now require actual `IconButton` widgets; all 13 exact case names, 71 assertion calls and the selected single Chrome suite remain unchanged. The other 412 source files and 182 regression rows are retained. The 70 dependency mappings change only the seven internal root URI rebases.
+
+The 13-case contract includes a source commit and one source descriptor, so it cannot remain byte-identical. Only that commit, the single test-source descriptor and twelve line-position metadata fields (six later cases, two fields each, +2 lines) are updated. All case names, selector, counts and other contract fields remain identical.
+
+The B4 harness is retained exactly after inverse substitution of source/freeze/input/proposal/case-contract/path bindings. Explicit HTML renderer and absence of the ignored concurrency argument remain unchanged. No assertions are removed, no other test root is substituted and no native failure is waived. Observer code remains 29,439 bytes / SHA256 `34e80553205db29267baf4299821ff40111adbc79bd2e83e49fbf20282eb5a3f`, with the same direct reference to the original B3 narrow read-path qualification. No fixture is rerun.
+
+The original same-handle checks, unknown-member sticky rejection, natural Job-zero completion, 0.5-second drain, forced-termination rejection, canonical command-scoped Git values and 135/140/165/174/180-second budgets plus separate post25 are unchanged. The reporter, three Chrome JSON predicates, native f8, process provider, 43 runtime pins and the durable-parent cache projection are byte-identical to B4.
+
+B4 remains RED. A prior file-only renderer diagnostic found its private profile missing after the task ended and the window was released; no actual HTTP renderer fact was obtained. This B5 plan neither requires an HTTP-cache artifact nor promotes command/source inference to actual HTTP evidence. Fresh Root review, grant and an actual SDK window remain separate and unrun.

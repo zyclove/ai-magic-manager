@@ -1,0 +1,430 @@
+{
+  "status": "PURE_JSON_GUARD_EXPECTATION_FAILED",
+  "checks": [
+    {
+      "name": "known-own-image-unknown-closes-with-original-bracketed-same-job-finality",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "name": "image-error-0-does-not-change-lifecycle-meaning",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "name": "image-error-87-does-not-change-lifecycle-meaning",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "name": "image-error-299-does-not-change-lifecycle-meaning",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "name": "image-error-4294967295-does-not-change-lifecycle-meaning",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "name": "empty-failure-ledger-with-complete-terminal-transaction",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "name": "schema1-not-retroactively-accepted",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "fatal-problem-never-cleared",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "unresolved-problem-rejects",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "observed-problem-cannot-be-erased",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "overflow-rejects",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "drop-rejects",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "failure-count-mismatch",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "stored-count-mismatch",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "cap-change-rejects",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "byte-cap-change-rejects",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "identity-conflict-rejects",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "missing-occurrence-rejects",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "missing-resolution-rejects",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "resolution-must-keep-image-unknown",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "occurrence-cannot-point-after-only",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "wrong-snapshot-job",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "wrong-snapshot-creation",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "after-only-observation-cannot-be-hidden",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "before-list-incomplete",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "after-list-incomplete",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "before-list-query-error",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "before-list-count-mismatch",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "snapshot-limited-rejects",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "wrong-snapshot-deadline",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "unknown-row-ownership",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "creation-zero",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "creation-conflict",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "bad-retained-flag",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "first-identity-missing",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "first-identity-conflict",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "terminal-proof-missing",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "wrong-finality-source",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "wrong-finality-root",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "wrong-finality-creation",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "new-original-deadline-forbidden",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "new-drain-deadline-forbidden",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "new-grace-forbidden",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "force-forbidden",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "close-fallback-forbidden",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "a0-nonzero-exit",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "a1-nonzero-exit",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "a0-nonempty-accounting",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "a1-nonempty-accounting",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "a1-identity-changed",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "reset-first-signal-anchor",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "reset-first-terminal-anchor",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "accounting-counter-changed",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "equal-boundary-rejects",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "postflight-time-rejects",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "middle-wrong-deadline",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "middle-before-incomplete",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "middle-after-error",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "middle-identities-not-empty",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "middle-before-not-empty",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "middle-after-not-empty",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "a1-before-middle-completes",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "original-chrome-listener-proof-still-required",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "original-manager-origin-still-required",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "original-chrome24-schema-still-exact",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "extra-api-error-openError-fatal-even-zero",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "extra-api-error-membershipQueryError-fatal-even-zero",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "extra-api-error-timesError-fatal-even-zero",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "extra-api-error-waitError-fatal-even-zero",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "extra-api-error-exitCodeError-fatal-even-zero",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "hard-error-after-first-pending-is-not-hidden",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "duplicate-before-row-rejects",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "missing-before-row-rejects",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "after-only-cannot-be-fabricated-as-queried-row",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "duplicate-resolution-rejects",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "more-than-eight-failure-frames-rejects",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "ledger-byte-overflow-rejects",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "resolved-index-bool-is-not-integer",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "after-only-first-row-cannot-be-invented-in-same-snapshot",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "covered-hard-error-after-pending-is-not-short-circuited",
+      "expected": false,
+      "actual": false
+    },
+    {
+      "name": "queried-signaled-row-keeps-image-unknown-until-scope-closure",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "name": "pending-pid-value-is-not-a-whitelist",
+      "expected": true,
+      "actual": true
+    },
+    {
+      "name": "chrome-live-proof-after-terminal-transaction-is-contradictory",
+      "expected": false,
+      "actual": true
+    },
+    {
+      "failedAssertion": "chrome-live-proof-after-terminal-transaction-is-contradictory"
+    }
+  ],
+  "guardPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\chrome-evidence-json-guard.fragment",
+    "bytes": 23378,
+    "sha256": "c01826d6561ec658e7f37864174f4ab27e49e789f0029ca7186033bc758195d6"
+  },
+  "nativeOrSdkOrProcessOrNetworkCalls": false,
+  "applicationTestsRun": false
+}

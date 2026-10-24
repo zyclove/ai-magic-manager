@@ -1,0 +1,82 @@
+{
+  "schemaVersion": 1,
+  "observedAtUtc": "2026-10-24T14:18:08.6634925+00:00",
+  "action": "DOCKER_DESKTOP_STARTED_EXISTING_RESTART_POLICY_CONTAINERS",
+  "startupActual": "3a995d exit0",
+  "selection": {
+    "schemaVersion": 1,
+    "state": "COMMITTED",
+    "project": "ai-manager-v1-refresh-20261016-r1",
+    "publicUrl": "http://localhost:18101",
+    "sourceDirectory": "D:\\codes\\mobile\\ai-manager\\.local\\v1-refresh-source-20261016-r1",
+    "deploymentDirectory": "D:\\codes\\mobile\\ai-manager\\.local\\v1-refresh-source-20261016-r1\\.local\\deployment",
+    "releaseManifestSha256": "b6db21c77cb4ed5815931895f92158ec3473b0174e0cf5385b78157bdb773793",
+    "activationReceipt": "D:\\codes\\mobile\\ai-manager\\.local\\runtime\\v1-refresh-activation-20261016-222425-3dbbac8c8dbd4d8da2f0d0faf9020af7.json",
+    "activationReceiptSha256": "f636397a9aaf76805b6873b95ca981e32ca0a5727c4cff28c9d53c66c5f9b3af"
+  },
+  "containers": [
+    {
+      "id": "d81881aecb72545ff7609fee67ac9d7ef4004ea7cc3875509a26a93093792769",
+      "imageId": "sha256:c0159bc46b1fa61b9eaa09ce28c50c12da042ce896c46b502e91746d69c6e20e",
+      "running": true,
+      "health": "healthy",
+      "project": "ai-manager-v1-refresh-20261016-r1",
+      "service": "backend"
+    },
+    {
+      "id": "6c52a513809e6c267d08609ee2b12eb09ec24cf7bc75ad9886a4c9fe1ddf8ba5",
+      "imageId": "sha256:8d132912e9d3c985237567595ec2aeae04936044eb1f9336e8e4da2326238b84",
+      "running": true,
+      "health": "healthy",
+      "project": "ai-manager-v1-refresh-20261016-r1",
+      "service": "database"
+    },
+    {
+      "id": "90020d266fbfd3bfe2c31d2679cc856f99df165e4c9d5dc6facc14c724c24485",
+      "imageId": "sha256:eaff657de2b2fdf80c44706c81300c2ee84387494fef94fa69c00b4087d8e58f",
+      "running": true,
+      "health": "healthy",
+      "project": "ai-manager-v1-refresh-20261016-r1",
+      "service": "edge"
+    },
+    {
+      "id": "6be337ff534ca75a4b5bddd86d30879b31ae97433ae57ca7eb9e9e58f247688d",
+      "imageId": "sha256:8d132912e9d3c985237567595ec2aeae04936044eb1f9336e8e4da2326238b84",
+      "running": true,
+      "health": "healthy",
+      "project": "ai-manager-v1-refresh-20261016-r1",
+      "service": "erasure-database"
+    },
+    {
+      "id": "24d84192e3bf031040c115332a61b9bfe8cfeb979cabf698f5789a52997b7bfb",
+      "imageId": "sha256:a311b440875991df7ff1076626b62c1c8615167f2023f7bc2f94678c26184b3e",
+      "running": true,
+      "health": "healthy",
+      "project": "ai-manager-v1-refresh-20261016-r1",
+      "service": "identity"
+    },
+    {
+      "id": "4a36b36aa27db27c38bbd503660505c0c40ccea231807535100985ac744bc5f9",
+      "imageId": "sha256:8d132912e9d3c985237567595ec2aeae04936044eb1f9336e8e4da2326238b84",
+      "running": true,
+      "health": "healthy",
+      "project": "ai-manager-v1-refresh-20261016-r1",
+      "service": "identity-database"
+    }
+  ],
+  "smoke": {
+    "publicUrl": "http://localhost:18101",
+    "frontend": "PASS",
+    "callbackFallback": "PASS",
+    "discovery": "PASS",
+    "anonymousApi": "PASS",
+    "backendHealth": "PASS",
+    "authenticatedJourney": "NOT_RUN",
+    "nativeDeviceExecution": "NOT_RUN"
+  },
+  "newSourceDeployed": false,
+  "newImageBuiltOrPulled": false,
+  "databaseMigrationInvoked": false,
+  "credentialsFileRead": false,
+  "imageProvenance": "OBSERVED_IMAGE_IDS_ONLY_LEGACY_SELECTED_MANIFEST_HAS_NO_RUNTIME_IMAGE_BINDING"
+}

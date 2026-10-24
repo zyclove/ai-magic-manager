@@ -1,0 +1,15 @@
+            save('member-failure-ledger.json', chrome_evidence['failureLedger'])
+            save('command-job-finality.json', chrome_evidence['terminalFinality'])
+            ledger_pin = pin(ATTEMPT / 'member-failure-ledger.json')
+            finality_pin = pin(ATTEMPT / 'command-job-finality.json')
+            require(ledger_pin['bytes'] <= 262144 and finality_pin['bytes'] <= 65536,
+                    'Bounded raw member ledger and finality artifacts required')
+            raw_ledger = load_pin(ledger_pin)
+            raw_finality = load_pin(finality_pin)
+            require(same_json(raw_ledger, chrome_evidence['failureLedger'])
+                    and same_json(raw_finality, chrome_evidence['terminalFinality'])
+                    and same_json(raw_finality, receipt.get('commandFinalityCapture')),
+                    'Raw member artifacts must exactly match embedded evidence and command capture')
+            receipt['ownedMemberFailureLedgerPin'] = ledger_pin
+            receipt['commandJobFinalityPin'] = finality_pin
+

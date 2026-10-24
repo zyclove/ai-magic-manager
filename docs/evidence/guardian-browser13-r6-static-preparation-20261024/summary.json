@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "status": "APP_NOT_RUN_NO_GRANT_NO_ATTEMPT_SOURCE3CF_RETAINED",
+  "sourceCommit": "3cfbf535099ade86234661556d9e92db9069743a",
+  "frozenSource": "r16-typed-schedule-finder",
+  "sourceFiles": 413,
+  "fullRoots": 183,
+  "selectedChromeSuites": 1,
+  "exactVisibleCases": 13,
+  "sdkApplicationExecution": "APP_NOT_RUN",
+  "grantCreated": false,
+  "applicationAttemptCreated": false,
+  "priorR5Status": "NOT_ACCEPTED",
+  "newMainChangesAcceptedByThisOldPlan": false,
+  "futureNewHeadRequiresNewFreezeAndPlan": true,
+  "staticIndependentReview": "NO_NEW_STATIC_BLOCKER_ONLY",
+  "actualNarrowFixture": {
+    "terminalChunk": "be612a",
+    "naturalExitCode": 0,
+    "hostSeconds": 1.7586461,
+    "forced": false,
+    "sameOwnPythonJobA0EmptyMA1Observed": true,
+    "f8QualificationReplay": false,
+    "chromeTcpSdkOrApplicationQualification": false
+  },
+  "qualificationRealFilesCopiedFromInventory": [
+    {
+      "source": ".cache/guardian-browser13-20261024-r6-owned-member-finality/observer-fixture/child.log",
+      "archived": "plan/observer-fixture/child.log",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "byteExactBeforeAndAfter": true
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r6-owned-member-finality/observer-fixture/result.json",
+      "archived": "plan/observer-fixture/result.json",
+      "bytes": 4474,
+      "sha256": "48090e774ca66cf7564169dcb92176d015003db117213b77ed8406a095c22959",
+      "byteExactBeforeAndAfter": true
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r6-owned-member-finality/observer-fixture-host/result.json",
+      "archived": "plan/observer-fixture-host/result.json",
+      "bytes": 316,
+      "sha256": "594442f6b21b6b097a43728b4427f5de9e55241d39008aabbc1185e402d6f715",
+      "byteExactBeforeAndAfter": true
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r6-owned-member-finality/observer-fixture-host/stderr.txt",
+      "archived": "plan/observer-fixture-host/stderr.txt",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "byteExactBeforeAndAfter": true
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r6-owned-member-finality/observer-fixture-host/stdout.json",
+      "archived": "plan/observer-fixture-host/stdout.json",
+      "bytes": 3572,
+      "sha256": "6d68b7d30cc746ed6f702d022505fcaf5b4b00624284c05e4ba5a327d5ee6143",
+      "byteExactBeforeAndAfter": true
+    }
+  ],
+  "profileRuntimePayloadCredentialsOrWholeCacheCopied": false,
+  "archivedScriptsAreHistoricalPreparationNotFreshAuthorization": true,
+  "sourceOldPlanAndR16Unmodified": true,
+  "sdkProcessApiNetworkGitMutationOrCleanupByArchive": false
+}

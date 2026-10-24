@@ -1,0 +1,31 @@
+--- vm35/release
++++ browser13/release
+@@ -6,8 +6,8 @@
+ )
+ $ErrorActionPreference='Stop'
+ $taskRepository='D:\codes\mobile\ai-manager'
+-$taskAnalysis=Join-Path $taskRepository '.cache\guardian-vm35-20261024-r1'
+-$taskPost=Join-Path $taskRepository '.cache\guardian-vm35-post-20261024-r1\post.json'
++$taskAnalysis=Join-Path $taskRepository '.cache\guardian-browser13-20261024-r5-typed-finder-current3cf'
++$taskPost=Join-Path $taskRepository '.cache\guardian-browser13-post-20261024-r5-typed-finder-current3cf\post.json'
+ $taskOutput=Join-Path $taskAnalysis 'root-attempt'
+ $taskInventory=Join-Path $taskOutput 'post-process-inventory.json'
+ $taskRelease=Join-Path $taskOutput 'release.json'
+@@ -29,14 +29,14 @@
+ $taskProcesses|ConvertTo-Json -Depth 4|Set-Content -LiteralPath $taskInventory -Encoding utf8
+ $taskConsistent=$RootActualExitCode -eq 0 -and $PostActualExitCode -eq 0 -and
+     $taskResult.rootHostTerminalAccepted -is [bool] -and $taskResult.rootHostTerminalAccepted -and
+-    $taskPostResult.status -eq 'DERIVED_VM35_CONSISTENT_PENDING_ROOT_RELEASE'
++    $taskPostResult.status -eq 'DERIVED_BROWSER13_CONSISTENT_PENDING_ROOT_RELEASE'
+ $taskOwnedPids=@($taskResult.hostPid,$taskHostResult.terminal.pid,$taskHostResult.workerReceipt.commandTerminalState.pid)|Where-Object{$null -ne $_}
+ $taskReleased=$taskSdk.Count -eq 0 -and $taskUnknown.Count -eq 0 -and
+     @($taskProcesses|Where-Object{$_.Id -in $taskOwnedPids}).Count -eq 0
+ $taskReceipt=[ordered]@{
+-    status=if($taskConsistent -and $taskReleased){'GUARDIAN_VM35_ACCEPTED_AND_WINDOW_RELEASED'}else{'VM35_NOT_ACCEPTED_OR_RELEASE_INCOMPLETE'}
++    status=if($taskConsistent -and $taskReleased){'GUARDIAN_BROWSER13_ACCEPTED_AND_WINDOW_RELEASED'}else{'BROWSER13_NOT_ACCEPTED_OR_RELEASE_INCOMPLETE'}
+     atUtc=[DateTime]::UtcNow.ToString('o')
+-    sourceCommit='006ee45850c9b6b0f90570d9478bced3beb0e0fe'
++    sourceCommit='3cfbf535099ade86234661556d9e92db9069743a'
+     actualRootToolTerminalChunk=$RootTerminalChunk;actualRootToolExitCode=$RootActualExitCode
+     actualPostToolTerminalChunk=$PostTerminalChunk;actualPostToolExitCode=$PostActualExitCode
+     hostPid=$taskResult.hostPid;hostCreationFiletime=$taskResult.sameHandleCreationFiletime;hostExitFiletime=$taskResult.sameHandleExitFiletime

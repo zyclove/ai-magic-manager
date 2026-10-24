@@ -1,0 +1,91 @@
+{
+  "schemaVersion": 1,
+  "status": "STATIC_IMPLEMENTATION_ONLY_NEW_TESTS_UNRUN",
+  "parent": "3cfbf535099ade86234661556d9e92db9069743a",
+  "newCasesPrepared": 14,
+  "expandedFileCases": 27,
+  "sdkOrFormatterOrAnalysisRun": false,
+  "applicationAccepted": false,
+  "b6OldPlanAcceptsNewSource": false,
+  "newSourceDeployed": false,
+  "sourcePins": [
+    {
+      "path": "apps/guardian/lib/pages/editors.dart",
+      "bytes": 56593,
+      "sha256": "05884925e66ed02c779f0f866700eec35a2d33d6f9c0d47825d8a84325308829"
+    },
+    {
+      "path": "apps/guardian/test/editor_submit_guard_test.dart",
+      "bytes": 32589,
+      "sha256": "55e9198b605e5b4c3113d1421709c7a52fc80ee6135b3b5d27e728235af09278"
+    }
+  ],
+  "files": [
+    {
+      "path": "design.md",
+      "source": ".cache/guardian-schedule-operation-scope-design-20261024-r1.md",
+      "bytes": 2511,
+      "sha256": "6dee64d9e33e0c6e342329a46e15278c7912f2be11a4f4482f284f17668f2e2f"
+    },
+    {
+      "path": "design-review.md",
+      "source": ".cache/guardian-schedule-operation-scope-static-review-20261024-r1/review.md",
+      "bytes": 9162,
+      "sha256": "7cd61e43067e3aaeee3d122bc74249d597e3729cf989bd94ebd4d96d5ed91ae3"
+    },
+    {
+      "path": "design-review-pins.json",
+      "source": ".cache/guardian-schedule-operation-scope-static-review-20261024-r1/pins.json",
+      "bytes": 3151,
+      "sha256": "a83e98da93db5c0935cdde5e2cde35bc909b9f6b49f098b41dd72b5d2b7f3d7b"
+    },
+    {
+      "path": "test-static-readback.json",
+      "source": ".cache/guardian-schedule-scope-test-static-20261024-r1.json",
+      "bytes": 2015,
+      "sha256": "fc2eec4d79d51a8b50831af33c4f61447ce1e8e12abd24c362afb20bce1a207d"
+    },
+    {
+      "path": "implementation-review.md",
+      "source": ".cache/guardian-schedule-scope-implementation-review-20261024-r1/review.md",
+      "bytes": 2251,
+      "sha256": "78d2b7e0f73d35a1db8a38e8b41abd5eb9caf9617bf98bd3c0a3274334b748f0"
+    },
+    {
+      "path": "implementation-review-pins.json",
+      "source": ".cache/guardian-schedule-scope-implementation-review-20261024-r1/pins.json",
+      "bytes": 1143,
+      "sha256": "4dc056891f556db2c6ff0470dafc4ba3d281f3c4a739ccddc91bf28416f06f38"
+    },
+    {
+      "path": "phase-commit-tools/exact-commit.py",
+      "source": ".cache/guardian-schedule-scope-exact-commit-20261024-r1.py",
+      "bytes": 9759,
+      "sha256": "406bd080c740d079de13cdeeffb38225354dfc1437914ecce085032e1585fc51"
+    },
+    {
+      "path": "phase-commit-tools/prepare-helper.py",
+      "source": ".cache/guardian-scope-commit-helper-prepare-20261024-r1.py",
+      "bytes": 2966,
+      "sha256": "01e0144dce53b63a29800dcdec2a8af8462c3a33f87e5497dfa173508f733ddd"
+    },
+    {
+      "path": "phase-commit-tools/prepare-plan.py",
+      "source": ".cache/guardian-schedule-scope-stage-plan-20261024-r1.py",
+      "bytes": 3424,
+      "sha256": "9522608064b374f72c4bcf0cc1d97850ebf00760160c38439195e2b19f1faf60"
+    },
+    {
+      "path": "phase-commit-tools/readonly-review.json",
+      "source": ".cache/guardian-scope-commit-helper-readonly-review-20261024-r1.json",
+      "bytes": 2214,
+      "sha256": "410eab0fe984fb6771d43fd5b5d9005e324642ff820acd3d329a9d7f3c171aa3"
+    },
+    {
+      "path": "services-final-readback.json",
+      "source": ".cache/guardian-services-final-readback-20261024-r1.json",
+      "bytes": 1068,
+      "sha256": "c8c1fb29fad5a61231f004cc810f0a0b5440035cb2a7088cd671988f53ee393b"
+    }
+  ]
+}

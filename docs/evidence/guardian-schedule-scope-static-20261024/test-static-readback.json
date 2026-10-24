@@ -1,0 +1,55 @@
+{
+  "status": "STATIC_TEST_CHANGE_REVIEW_ONLY_NEW_CASES_UNRUN",
+  "sourceCommitAtPreparation": "3cfbf535099ade86234661556d9e92db9069743a",
+  "test": {
+    "path": "apps/guardian/test/editor_submit_guard_test.dart",
+    "bytes": 32589,
+    "sha256": "55e9198b605e5b4c3113d1421709c7a52fc80ee6135b3b5d27e728235af09278"
+  },
+  "change": {
+    "addedLines": 287,
+    "deletedLines": 0,
+    "originalMainBodyBytes": 15360,
+    "originalMainBodyPreservedByteExactly": true,
+    "appendSeparatorNewlines": 1,
+    "originalExpectExpressionsPreserved": 71,
+    "originalMainExpectExpressions": 69,
+    "originalHelperExpectExpressions": 2,
+    "addedExpectExpressions": 46,
+    "importsUnchanged": true,
+    "originalExpandedCases": 13,
+    "addedLiteralDeclarations": 7,
+    "addedExpandedCases": 14,
+    "totalExpandedCases": 27
+  },
+  "addedCases": {
+    "scopeLossWhileAwaitingClient": 1,
+    "sameFrameGenerationActorTenantRoleAwayAndBack": 4,
+    "coveredUnknownConfirmationOwnedRemovalAndStaleRetry": 1,
+    "lateSuccessOrServerFailureAfterScopeLoss": 2,
+    "unauthenticatedForbiddenWorkspaceChangedResponses": 3,
+    "reauthRequiredDoesNotMeanScopeRevocation": 1,
+    "widgetSessionOrRootReplacementStaysRevoked": 2
+  },
+  "completedStaticChecks": [
+    {
+      "toolChunk": "a30124",
+      "exitCode": 0,
+      "kind": "File bytes, original main-body preservation, import equality and literal count readback"
+    },
+    {
+      "toolChunk": "72baf9",
+      "exitCode": 0,
+      "kind": "Read-only Git diff whitespace check with command-local core.whitespace=cr-at-eol"
+    }
+  ],
+  "newCasesExecution": "UNRUN",
+  "dartOrFlutterOrSdkInvoked": false,
+  "astOrFormatterInvoked": false,
+  "testExecutionPerformed": false,
+  "redGreenOrFunctionalAcceptanceClaimed": false,
+  "gitStageOrCommitPerformed": false,
+  "b6OrR16FrozenArtifactsModified": false,
+  "baselineCaseBodiesChanged": false,
+  "note": "Records prior completed static checks only. New tests remain pending a permitted resource and validation window."
+}

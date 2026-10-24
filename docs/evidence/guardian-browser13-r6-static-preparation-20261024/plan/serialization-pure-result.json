@@ -1,0 +1,12 @@
+{
+  "status": "PURE_JSON_WRITER_REGRESSION_OLD_RED_NEW_THREE_WRITERS_LOSSLESS",
+  "oldEnsureAsciiFalseRaisesUnicodeEncodeError": true,
+  "newEnsureAsciiTrueWritersRoundtripOriginalUtf16LoneSurrogate": [
+    "worker",
+    "host",
+    "post"
+  ],
+  "candidateImported": false,
+  "realJobOrProcessQueried": false,
+  "sdkChromeNetworkStarted": false
+}

@@ -1,0 +1,290 @@
+{
+  "status": "B6_SCHEMA2_LIFECYCLE_FINALITY_PREPARATION_SEALED_NOT_APPLICATION_ACCEPTANCE",
+  "sourceCommit": "3cfbf535099ade86234661556d9e92db9069743a",
+  "sourceFiles": 413,
+  "fullRegressionRoots": 183,
+  "selectedChromeSuites": 1,
+  "exactVisibleCases": 13,
+  "sourceAndCaseAndAllOriginalBudgetsUnchanged": true,
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\inputs.json",
+      "bytes": 20342,
+      "sha256": "1269013619e239151e3048b7fc1d3caaa4f00cfd1036e383cc6960ccbfb7ee73"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\proposal.json",
+      "bytes": 11065,
+      "sha256": "6347722e6a4ccaf470596c5e700e08a7909e93418ecd28b17859f7ba8a8b82f8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\analysis-host.py",
+      "bytes": 50681,
+      "sha256": "525cf80ece1e14a06df71656e041825adb5fd0499925e95cd4f375ee9ce1e000"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\worker.py",
+      "bytes": 72822,
+      "sha256": "969eae3a2110e40a4af6f81e2039959f7d47ea13a8272dfadbaa4fc9873a9cae"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\process-inventory.ps1",
+      "bytes": 2439,
+      "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\reporter_contract.py",
+      "bytes": 14280,
+      "sha256": "dcd85cf451b20bd24857cef6726d0f1ebb406c67096146d3d3c82306942b67e8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\owned_chrome_evidence.py",
+      "bytes": 43987,
+      "sha256": "81be26d61faf4b2a77a18b0c2cd8b34c908e776517dc95159b3c903b8e2371b0"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\expected-browser13-cases.json",
+      "bytes": 6343,
+      "sha256": "11f16121ffa11a0359852e5f0af7a830a83355b9fa55cec91edc85482d945f2b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\cache-browser-projection.json",
+      "bytes": 773953,
+      "sha256": "3b74998cd55045e58c02b17b3de9151e878d78aab199e85bbcc3ec99d9c30166"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\base-pins.json",
+      "bytes": 5748,
+      "sha256": "21b6569d5d12a1cec37b7c344629c1d6f042a9023f996a77a78dfc0c976e26aa"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\observer-runtime-pins.json",
+      "bytes": 3331,
+      "sha256": "1513a067e91e755f576484ba381c8f4640cf2586da638eaa0114170611bd34f3"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\chrome-evidence-json-guard.fragment",
+      "bytes": 23628,
+      "sha256": "0f44fe849b8dbdacdca28c111232f8ad29511ad35d87d935df423b08d9547a3d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\observer-native-qualification-binding.json",
+      "bytes": 1608,
+      "sha256": "39e4675e5216b659273f07cf0caf12eeaf0e6cbcaf6afa4ee84db2fe1363e6b7"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\observer-fixture\\result.json",
+      "bytes": 4474,
+      "sha256": "48090e774ca66cf7564169dcb92176d015003db117213b77ed8406a095c22959"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\observer-fixture-host\\result.json",
+      "bytes": 316,
+      "sha256": "594442f6b21b6b097a43728b4427f5de9e55241d39008aabbc1185e402d6f715"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\observer-fixture.py",
+      "bytes": 6998,
+      "sha256": "855f2e450cf36efa4f1e9a7167fcbeed251c19af1498342595945df8c518339e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\observer-fixture-launch.ps1",
+      "bytes": 2199,
+      "sha256": "fe9d6b0c46651bdc598c395509541bf50bd476c157c6182911c6eb7ef12171ac"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\observer-fixture-child.py",
+      "bytes": 106,
+      "sha256": "035c6e65f98b022f4f5ee908ab6291c4fa688bf37449bb4459bac6136efe89b4"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\observer-module-final-before-fixture.json",
+      "bytes": 578,
+      "sha256": "08011b004967f1eb7fb536f609e1f93c0a33eaa89197c36e9feb3967ac84b2c8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\member-finality-guard-pins-final.json",
+      "bytes": 2525,
+      "sha256": "96f5a1c20e26da09c2b79dce3e63095f4b3de996eabd4145bdbb49c757493986"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\member-finality-guard-final-notes.md",
+      "bytes": 2137,
+      "sha256": "8346696226e7f38b03ed62d7d821dc82029afbd7b34e997e2a00cf9a144d58db"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\member-finality-guard-pure-result-green-r3.json",
+      "bytes": 9545,
+      "sha256": "82f0127ae603092e5ed8cd2ccb6ab7e5acdada1d0d0a563366ca08c91620a20d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\member-finality-guard-collector-compatibility.json",
+      "bytes": 1270,
+      "sha256": "a6850d997b4190923567097a3a3bf6b5a843337c32d45e6b3adbaeb2a8cefa50"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\observer-ledger-pure-check-r2.py",
+      "bytes": 6996,
+      "sha256": "c876ef26b416bae88eaf57ffd4eb26e84b8d34e9898486cbe9bb3989fde33d6c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\observer-ledger-pure-result-r2.json",
+      "bytes": 934,
+      "sha256": "b7c0b35982c88c06be17c59c92202b7ddf0c75fd63864f44ac545dcc55b2ac59"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\observer-full-schema2-mock.json",
+      "bytes": 9573,
+      "sha256": "889a557733a278a634203726dcf8e16328c2c281768b07bbf32c8590aa4407ae"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\worker-command-finality-hook.fragment",
+      "bytes": 1841,
+      "sha256": "332e6e3830b33d26208f0bc42ec3fa089d1812c9972b1ce94eb062c5d4ab89b4"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\worker-finality-pure-check.py",
+      "bytes": 3454,
+      "sha256": "70cb357681db381c3a5a8420541d685bd4597768549627f7d6ee76c7e62cf33a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\worker-finality-pure-check-prepared.py",
+      "bytes": 3529,
+      "sha256": "b7791a0d66c34da5b167767b1ee9ce03a211900bd945dea05785d3300496ac24"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\raw-member-artifacts-worker.fragment",
+      "bytes": 1041,
+      "sha256": "f0008805c3891cc2b4c1531fcdee9e6fe2f720bd7e56788bb4af291db2b2fec9"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\raw-member-artifacts-host.fragment",
+      "bytes": 869,
+      "sha256": "bb622fe5e4dcc8bd901b3297203672676eb76199a75085855a90274f62956c35"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\raw-member-artifacts-post.fragment",
+      "bytes": 950,
+      "sha256": "277b66516416fba58980d5360dacfcf737063930d27b169c0cc2f1cce1746dbf"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\serialization-pure-result.json",
+      "bytes": 348,
+      "sha256": "48dc91e6a12b123cb72c92a49416d5192ce19beb1e1b3dee4d5fc8839daf241d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\binding-pins.json",
+      "bytes": 9730,
+      "sha256": "e916acd0059418165369aa81c45bbdcbad0740b0167a3613bd30ba1ce2064154"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\control-preparation-pins.json",
+      "bytes": 123365,
+      "sha256": "24e694ffaf12acc753e38ee75f5407c40859c38be78dbdbb15bbb11d2e8e0c68"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\preparation-review.md",
+      "bytes": 3912,
+      "sha256": "c044ef28213f7b915fe5f4727a2be1243821d6465d4c485f37977a6ae6b119d8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-post-20261024-r6-owned-member-finality\\post.py",
+      "bytes": 70800,
+      "sha256": "7ac673020b090e17f524e0d8e0a8a82b43254aa1b58c769908e1f2c50e9bd1d2"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-post-20261024-r6-owned-member-finality\\pins.json",
+      "bytes": 1105,
+      "sha256": "adf798e87446e697345b8eff23e3740935d4577a12394f16625b38b18ef142ca"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-root-launch-20261024-r6-owned-member-finality.ps1",
+      "bytes": 9266,
+      "sha256": "bfb692c475be562258216b067fcb3d85b40b17040aabc04cbc7ab0b089836fc9"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-release-20261024-r6-owned-member-finality.ps1",
+      "bytes": 4461,
+      "sha256": "e839be7c8bede6db291de3b58619af05bfa60b2554d2fe97f7f83d0962f30770"
+    }
+  ],
+  "schemaVersion": 2,
+  "originalChromeRootFieldCount": 24,
+  "failureSnapshotsMaximum": 8,
+  "failureLedgerMaximumSerializedBytes": 262144,
+  "diagnosticMaximumRecords": 8,
+  "diagnosticMaximumSerializedBytes": 32768,
+  "diagnosticNativeResamples": 0,
+  "resolutionMeaning": "OWNED_MEMBER_CLOSED_IMAGE_UNKNOWN_NOT_IMAGE_OR_CHROME_IDENTITY_RECOVERY",
+  "actualPreparationEvidence": [
+    {
+      "chunk": "875e8c",
+      "kind": "collector-old-red",
+      "naturalExitCode": 1
+    },
+    {
+      "chunk": "4ee2ac",
+      "kind": "collector-pure15-green",
+      "naturalExitCode": 0
+    },
+    {
+      "chunk": "eea71d",
+      "kind": "independent-guard-pure84-green",
+      "naturalExitCode": 0
+    },
+    {
+      "chunk": "118d72",
+      "kind": "independent-full-collector-schema2-mock-readback",
+      "naturalExitCode": 0
+    },
+    {
+      "chunk": "cefd41",
+      "kind": "old-monitor-no-finality-red",
+      "naturalExitCode": 1
+    },
+    {
+      "chunk": "693621",
+      "kind": "hook-pure-green",
+      "naturalExitCode": 0
+    },
+    {
+      "chunk": "bd4c72",
+      "kind": "final-prepared-worker-hook-pure-green",
+      "naturalExitCode": 0
+    },
+    {
+      "chunk": "0d5ff0",
+      "kind": "old-writer-red-new-three-writer-green-roundtrip",
+      "naturalExitCode": 0
+    },
+    {
+      "chunk": "22758b",
+      "kind": "controls-and-post-preparation-not-execution",
+      "naturalExitCode": 0
+    },
+    {
+      "chunk": "c66d06",
+      "kind": "five-artifact-b5-and-six-vm35-inverse-plus18descriptor43runtime",
+      "naturalExitCode": 0
+    }
+  ],
+  "actualOneNarrowQualification": {
+    "chunk": "be612a",
+    "naturalExitCode": 0,
+    "hostElapsedSeconds": 1.7586461,
+    "maximumHostSeconds": 10,
+    "forced": false,
+    "sameJobA0EmptyMA1ActuallyObserved": true,
+    "nativeF8RequalificationRepeated": false,
+    "chromeTcpSdkOrApplicationQualified": false
+  },
+  "priorB5RemainsNotAccepted": true,
+  "sdkChromeNetworkGitMutationOrGrantOrApplicationAttemptCreated": false,
+  "wholeRuntimeClosureOrFreshCachePayloadClaimed": false,
+  "pendingIndependentFinalBundleReview": true
+}

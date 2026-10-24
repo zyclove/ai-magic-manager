@@ -1,0 +1,115 @@
+{
+  "status": "SAME_THIRTEEN_EXACT_NAMES_ONE_SOURCE_DESCRIPTOR_AND_DECLARATION_POSITIONS_REBOUND",
+  "before": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\expected-browser13-cases.json",
+    "bytes": 6343,
+    "sha256": "6ea16bdf3b93fbea589aa95a4aa7a9e808afbe9605938d755fb54d8ce748c340"
+  },
+  "after": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\expected-browser13-cases.json",
+    "bytes": 6343,
+    "sha256": "11f16121ffa11a0359852e5f0af7a830a83355b9fa55cec91edc85482d945f2b"
+  },
+  "oldSourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "newSourceCommit": "3cfbf535099ade86234661556d9e92db9069743a",
+  "onlySelectedSourceRowBefore": {
+    "selector": "test/editor_submit_guard_test.dart",
+    "source": {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\editor_submit_guard_test.dart",
+      "bytes": 21431,
+      "sha256": "a8d24bca8147a38ffe0c5db9b620e533e47b18cf371c9198dc62d9ab33280ed9"
+    },
+    "explicitTestOn": "browser",
+    "explicitTags": false,
+    "explicitSkip": false
+  },
+  "onlySelectedSourceRowAfter": {
+    "selector": "test/editor_submit_guard_test.dart",
+    "source": {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\editor_submit_guard_test.dart",
+      "bytes": 21581,
+      "sha256": "0e0a0d3f2392bddf6f94f6cbc42dcc93bfcc9b2d3f2fb1aeef8c3044b03fb99b"
+    },
+    "explicitTestOn": "browser",
+    "explicitTags": false,
+    "explicitSkip": false
+  },
+  "sourceMainAndFrozenByteExact": true,
+  "caseNamesAndSelectorsAndCountUnchanged": true,
+  "lineNumberUpdates": [
+    {
+      "caseIndex": 7,
+      "field": "testDeclarationLine",
+      "old": 444,
+      "new": 446
+    },
+    {
+      "caseIndex": 7,
+      "field": "nameDeclarationLine",
+      "old": 444,
+      "new": 446
+    },
+    {
+      "caseIndex": 8,
+      "field": "testDeclarationLine",
+      "old": 478,
+      "new": 480
+    },
+    {
+      "caseIndex": 8,
+      "field": "nameDeclarationLine",
+      "old": 478,
+      "new": 480
+    },
+    {
+      "caseIndex": 9,
+      "field": "testDeclarationLine",
+      "old": 511,
+      "new": 513
+    },
+    {
+      "caseIndex": 9,
+      "field": "nameDeclarationLine",
+      "old": 511,
+      "new": 513
+    },
+    {
+      "caseIndex": 10,
+      "field": "testDeclarationLine",
+      "old": 543,
+      "new": 545
+    },
+    {
+      "caseIndex": 10,
+      "field": "nameDeclarationLine",
+      "old": 543,
+      "new": 545
+    },
+    {
+      "caseIndex": 11,
+      "field": "testDeclarationLine",
+      "old": 575,
+      "new": 577
+    },
+    {
+      "caseIndex": 11,
+      "field": "nameDeclarationLine",
+      "old": 575,
+      "new": 577
+    },
+    {
+      "caseIndex": 12,
+      "field": "testDeclarationLine",
+      "old": 575,
+      "new": 577
+    },
+    {
+      "caseIndex": 12,
+      "field": "nameDeclarationLine",
+      "old": 575,
+      "new": 577
+    }
+  ],
+  "allOtherContractFieldsExact": true,
+  "sdkAstParserCandidateOrTestsExecuted": false
+}

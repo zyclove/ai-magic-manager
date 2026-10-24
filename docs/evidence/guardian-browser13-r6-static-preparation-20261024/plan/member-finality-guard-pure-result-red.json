@@ -1,0 +1,20 @@
+{
+  "status": "PURE_JSON_GUARD_EXPECTATION_FAILED",
+  "checks": [
+    {
+      "name": "known-own-image-unknown-closes-with-original-bracketed-same-job-finality",
+      "expected": true,
+      "actual": false
+    },
+    {
+      "failedAssertion": "known-own-image-unknown-closes-with-original-bracketed-same-job-finality"
+    }
+  ],
+  "guardPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\chrome-evidence-json-guard.fragment",
+    "bytes": 8819,
+    "sha256": "12c62a6307e9c460b56ee1e58f7b2e930512fba74dd371609401a96370ca0868"
+  },
+  "nativeOrSdkOrProcessOrNetworkCalls": false,
+  "applicationTestsRun": false
+}

@@ -1,0 +1,52 @@
+{
+  "status": "FINAL_SCHEMA2_PURE_GUARD_READY_FOR_BINDING_AND_INDEPENDENT_REVIEW",
+  "positive": 8,
+  "negative": 76,
+  "originalChrome24PredicateBodyByteExact": true,
+  "actualFinalTestToolChunk": "eea71d",
+  "actualFinalTestExitCode": 0,
+  "nativeOrSdkOrProcessOrNetworkCalls": false,
+  "callersMustLoadAndCompareBothRawAcceptanceArtifacts": true,
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\chrome-evidence-json-guard.fragment",
+      "bytes": 23628,
+      "sha256": "0f44fe849b8dbdacdca28c111232f8ad29511ad35d87d935df423b08d9547a3d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\member-finality-guard-pure-check-r3.py",
+      "bytes": 17281,
+      "sha256": "80cd425b61b13329a2bdb921636bd7eb53a9ccd2dbdda8827f83306b6abee5f3"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\member-finality-guard-pure-result-green-r3.json",
+      "bytes": 9545,
+      "sha256": "82f0127ae603092e5ed8cd2ccb6ab7e5acdada1d0d0a563366ca08c91620a20d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\member-finality-guard-pure-result-red-r3.json",
+      "bytes": 9470,
+      "sha256": "055482f2b9fda31e81169a965b3b8e3c4184b39731e9bad63af4cf14f5ce3625"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\member-finality-guard-intermediate-22885.fragment",
+      "bytes": 22885,
+      "sha256": "61f04973d42dd5e733e7eea560c39e9b44a5fd32582c0d8ea0a9070c51359f82"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\member-finality-guard-intermediate-23378.fragment",
+      "bytes": 23378,
+      "sha256": "c01826d6561ec658e7f37864174f4ab27e49e789f0029ca7186033bc758195d6"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\member-finality-guard-notes.md",
+      "bytes": 4013,
+      "sha256": "2339a2dfa31ef144e32677c9bc5e68c45c117055b41c8e4f5ec70684c1a47e83"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\member-finality-guard-final-notes.md",
+      "bytes": 2137,
+      "sha256": "8346696226e7f38b03ed62d7d821dc82029afbd7b34e997e2a00cf9a144d58db"
+    }
+  ]
+}

@@ -1,0 +1,83 @@
+{
+  "status": "ROOT_APPROVED_SINGLE_FIXED_TEST",
+  "atUtc": "2026-10-24T12:38:39.804165+00:00",
+  "proposalSha256": "1fa692d44a033e8ed6060e0b20803fcf565875177388807be17c3213a006cf02",
+  "launcherSha256": "0ac6e7e4660610a44d3673edb48482edcc7be46b31218d178327aad49be34c1e",
+  "sourceCommit": "3cfbf535099ade86234661556d9e92db9069743a",
+  "sdkCallsAllowed": 1,
+  "phase": "guardian-browser13",
+  "selectedRoots": 1,
+  "expectedVisibleCases": 13,
+  "wholeRegressionRoots": 183,
+  "otherRootsNotExecutedByThisBatch": 182,
+  "testsAllowed": true,
+  "downloadsAllowed": false,
+  "pubAllowed": false,
+  "budgets": {
+    "outer": 180,
+    "working": 174,
+    "worker": 165,
+    "command": 135,
+    "commandCleanup": 140,
+    "postflightReserve": 25
+  },
+  "authority": "Persistent direct human offline/cache validation and existing Flutter cache-lock access authorization. Six authorized chats notified12:40-12:43UTC;047b91 SDK0/unknown0/RAM6703034368. Final independent0d8933, Root947dd4/1e9454/cbfbd5 source/contract/control readback. Same original safeguards, no new fixture. Fixed launcher/worker freshly recheck source/runtime/resources.",
+  "evidence": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-static-independent-20261024-r5\\review.md",
+      "bytes": 4652,
+      "sha256": "6d49f41ac8561faa03039ee656cd3a76009e1ee623e50a397f7db97702e8f2a9"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-static-independent-20261024-r5\\pins.json",
+      "bytes": 18193,
+      "sha256": "d8ee6a5d9d74b4a14e659edc1c06ccbec6ab839debc3629fb38151e45561f768"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\sealed-preparation-pins.json",
+      "bytes": 10333,
+      "sha256": "9e3e990fad1c3d0f1223aa86c6ee0967686d84d3c19e388b3829a0a63f9134f5"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\binding-pins.json",
+      "bytes": 10040,
+      "sha256": "458034ec9ce45869012bbd6dfc8e641a88cd3e59e1c47194a0dd14f76009ed8c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\case-contract-source-rebinding.json",
+      "bytes": 3061,
+      "sha256": "e47a8a4a5a8d9d1befa1bb2f334bcdee2a4807945b8f064b31c1f17d8a43302f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\root-final-resource-and-window.json",
+      "bytes": 57851,
+      "sha256": "99b5d510cf335e91729d512ba42736e9f0c40b259d7d2613e75cbd3b7d10dfd9"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r16-typed-schedule-finder\\out\\pins.json",
+      "bytes": 5167,
+      "sha256": "21145493df89edab60c45b10e134c9962b10538e082f2ebc7b3afa8537bcfa4a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-r16-freeze-production-20261024-r1\\receipt.json",
+      "bytes": 3795,
+      "sha256": "3a3b36b686931a33d5ecd796330d4d78317b96c0dd4b1640d1222ec3cd5d7e61"
+    }
+  ],
+  "plannedWindowStartUtc": "2026-10-24T12:40:00.0000000Z",
+  "plannedWindowEndUtc": "2026-10-24T12:43:00.0000000Z",
+  "nativeF8AndProviderUnchangedNoOriginalFourFixtureRerun": true,
+  "newNarrowReadPathFixtureNotChromeQualification": true,
+  "actualChromePrivateTargetAndListenerEvidenceRequired": true,
+  "requiredNullableRunnerVersionPreserved": true,
+  "htmlMatchesExistingProductTarget": true,
+  "canvasKitCompatibilityAccepted": false,
+  "diagnosticsOnlyNeverAcceptance": true,
+  "rootActualTerminalPurePostFreshReleaseStillRequired": true,
+  "noForeignProcessCommandLineOrEnvironmentReadsAllowed": true,
+  "noForeignProcessTerminationAllowed": true,
+  "pushed": false,
+  "deployed": false,
+  "previouslyAuthorizedCacheLockAccess": true,
+  "originalNarrowQualificationReusedSameBytes": true
+}

@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "status": "NOT_ACCEPTED",
+  "chromeRoots": [
+    {
+      "imagePath": "c:\\program files\\google\\chrome\\application\\chrome.exe",
+      "profile": "d:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\attempt\\tmp\\flutter_tools.c7aa1131\\flutter_tools_chrome_device.cfc6254e",
+      "debuggingPort": 59504,
+      "testServerOrigins": [
+        "http://localhost:59502"
+      ],
+      "managerTarget": {
+        "scheme": "ws",
+        "host": "localhost",
+        "port": 59502
+      },
+      "testTargets": [
+        {
+          "scheme": "http",
+          "host": "localhost",
+          "port": 59502,
+          "path": "/static/index.html",
+          "urlSha256": "a275c97d87e7e115ed5fbcf04597ed475da1453c45e134f7a5d17e45e5ad6c1a"
+        }
+      ],
+      "headless": true,
+      "argvTestTargetLoopback": true,
+      "flutterManagerTargetSameLoopbackOrigin": true,
+      "commandLineUtf16Sha256": "2d6700b7fb5498a9408dca6999d5de78a2cdd200ab1d2b019f88aadf856f27a1",
+      "commandLineReadBeforeQpc": 123777.8111262,
+      "commandLineReadAfterQpc": 123777.8113189,
+      "pid": 164324,
+      "creationFiletime": 134373192655848226,
+      "commandCreationFiletime": 134373192480113659,
+      "sameReadHandleVerified": true,
+      "ownedMembershipVerifiedBeforeAndAfter": true,
+      "liveBeforeAndAfter": true,
+      "observedQpc": 123778.6909878,
+      "debugListenerAddresses": [
+        {
+          "address": "127.0.0.1",
+          "port": 59504,
+          "family": "AF_INET",
+          "status": "LISTEN"
+        }
+      ],
+      "listenerReadBeforeQpc": 123778.6888652,
+      "listenerReadAfterQpc": 123778.6909878,
+      "listenerSameHandleIdentityVerifiedBeforeAndAfter": true,
+      "debugBindingLoopbackObserved": true
+    }
+  ],
+  "problems": [
+    "OWN_JOB_MEMBER_IDENTITY_UNPROVED"
+  ],
+  "sampleCalls": 531,
+  "pinnedBrowserPath": "c:\\program files\\google\\chrome\\application\\chrome.exe",
+  "temporaryRoot": "d:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\attempt\\tmp",
+  "commandCreationFiletime": 134373192480113659,
+  "observationDeadlineQpc": 123867.9680336,
+  "commandLineSource": "SAME_RETAINED_HANDLE_PBI0_READPROCESSMEMORY",
+  "debugBindingProof": "PID_FILTERED_LISTEN_ROWS_BRACKETED_BY_SAME_HANDLE_IDENTITY",
+  "foreignCommandLinesRead": false,
+  "processesTerminated": false,
+  "environmentRead": false,
+  "nativeReadPathQualificationSeparate": true
+}

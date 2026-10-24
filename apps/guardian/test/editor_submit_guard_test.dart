@@ -31,6 +31,30 @@ class _EditorSession extends Session {
 
   @override
   bool get authenticated => profile != null;
+
+  int _generation = 0;
+  @override
+  int get scopeGeneration => _generation;
+
+  void changeScope(String dimension, {bool restore = false}) {
+    switch (dimension) {
+      case 'generation':
+        _generation = restore ? 0 : 1;
+        break;
+      case 'actor':
+        profile = {...profile!, 'subject': restore ? 'admin' : 'other-admin'};
+        break;
+      case 'tenant':
+        tenant = {...tenant!, 'id': restore ? _tenantId : 'other-tenant'};
+        break;
+      case 'role':
+        role = restore ? 'OWNER' : 'GUARDIAN';
+        break;
+      default:
+        throw ArgumentError.value(dimension);
+    }
+    notifyListeners();
+  }
 }
 
 const _tenantId = fixture.tenant;
@@ -187,6 +211,26 @@ Future<void> Function() _submissionCleanup(
 
   Future<void> cleanup() => pendingCleanup ??= performCleanup();
   return cleanup;
+}
+
+Future<void> _fillScopeSchedule(WidgetTester tester) async {
+  await tester.enterText(find.widgetWithText(TextFormField, '计划名称'),
+      '范围变化前的私有计划');
+  await tester.ensureVisible(_scheduleButton('加入计划'));
+  await tester.tap(_scheduleButton('加入计划'));
+  await tester.pumpAndSettle();
+}
+
+Future<void> _coverScopeNotice(
+    WidgetTester tester, VoidCallback onClosed) async {
+  unawaited(showDialog<void>(
+      context: tester.element(find.byType(ScheduleEditor)),
+      builder: (context) => AlertDialog(
+          title: const Text('范围外通知'),
+          actions: [TextButton(onPressed: () => Navigator.pop(context),
+              child: const Text('关闭范围外通知'))]))
+      .then((_) => onClosed()));
+  await tester.pumpAndSettle();
 }
 
 void main() {
@@ -599,6 +643,249 @@ void main() {
         expect(tester.takeException(), isNull);
       } finally {
         await f.cleanup(tester);
+      }
+    });
+  }
+
+  // Scope changes must invalidate captured callbacks and in-flight views.
+  testWidgets('ScheduleEditor scope loss while awaiting client prevents dispatch',
+      (tester) async {
+    final blocked = _BlockedApi();
+    final session = _EditorSession(blocked.api);
+    final cleanup = _apiCleanup(tester, blocked, session);
+    try {
+      await _open(tester, ScheduleEditor(session: session, root: _root,
+          timeZone: 'Asia/Shanghai'));
+      await _fillScopeSchedule(tester);
+      _capturedSubmit(tester, '保存计划')();
+      await _flush(tester);
+      expect(blocked.requests, isEmpty);
+      session.changeScope('tenant');
+      blocked.releaseClient();
+      await _flush(tester);
+      await tester.pumpAndSettle();
+      expect(blocked.requests, isEmpty,
+          reason: 'A client released after scope loss must not receive the old POST.');
+      expect(find.text('当前操作已失效'), findsOneWidget);
+      expect(find.byType(TextFormField), findsNothing);
+      await tester.tap(find.widgetWithText(TextButton, '关闭'));
+      await tester.pumpAndSettle();
+      expect(find.byType(ScheduleEditor), findsNothing);
+      expect(tester.takeException(), isNull);
+    } finally {
+      await cleanup();
+    }
+  });
+
+  for (final dimension in ['generation', 'actor', 'tenant', 'role']) {
+    testWidgets('ScheduleEditor same-frame $dimension away and back stays revoked',
+        (tester) async {
+      final f = _ScheduleRecoveryFixture();
+      try {
+        await _openSchedule(tester, f);
+        final save = _capturedSubmit(tester, '保存计划');
+        final add = _scheduleCallback(tester, _scheduleButton('加入计划'));
+        final time = _scheduleCallback(tester, _scheduleButton('18:00'));
+        final date = _scheduleCallback(tester, _scheduleButton('添加关闭日期'));
+        final day = tester.widget<FilterChip>(find.byType(FilterChip).first)
+            .onSelected!;
+        f.session.changeScope(dimension);
+        f.session.changeScope(dimension, restore: true);
+        save();
+        add();
+        time();
+        date();
+        day(false);
+        await _flush(tester);
+        await tester.pumpAndSettle();
+        expect(f.requests, isEmpty,
+            reason: 'Restoring final scope values cannot revive captured callbacks.');
+        expect(find.text('当前操作已失效'), findsOneWidget);
+        expect(find.byType(TextFormField), findsNothing);
+        expect(find.byType(TimePickerDialog), findsNothing);
+        expect(find.byType(DatePickerDialog), findsNothing);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await f.cleanup(tester);
+      }
+    });
+  }
+
+  testWidgets('ScheduleEditor scope loss removes only its covered unknown confirmation',
+      (tester) async {
+    final f = _ScheduleRecoveryFixture();
+    try {
+      await _openSchedule(tester, f);
+      final save = _capturedSubmit(tester, '保存计划');
+      save();
+      await _flush(tester);
+      f.reply(0, 503, {'errorCode': 'SERVICE_UNAVAILABLE'});
+      await _flush(tester);
+      final retry = _capturedSubmit(tester, '重试原提交');
+      await tester.tap(find.byKey(const Key('schedule-editor-close-unknown')));
+      await tester.pumpAndSettle();
+      final confirm = tester.widget<TextButton>(find.byKey(
+          const Key('schedule-editor-confirm-close-unknown'))).onPressed!;
+      var noticeClosed = false;
+      await _coverScopeNotice(tester, () => noticeClosed = true);
+      f.session.changeScope('actor');
+      retry();
+      save();
+      confirm();
+      await _flush(tester);
+      await tester.pumpAndSettle();
+      expect(find.text('范围外通知'), findsOneWidget);
+      expect(noticeClosed, isFalse);
+      expect(find.byKey(const Key('schedule-editor-confirm-close-unknown'),
+          skipOffstage: false), findsNothing);
+      expect(f.requests, hasLength(1));
+      await tester.tap(find.text('关闭范围外通知'));
+      await tester.pumpAndSettle();
+      expect(find.text('当前操作已失效'), findsOneWidget);
+      expect(find.byType(TextFormField), findsNothing);
+      await tester.tap(find.widgetWithText(TextButton, '关闭'));
+      await tester.pumpAndSettle();
+      expect(find.byType(ScheduleEditor), findsNothing);
+      expect(tester.takeException(), isNull);
+    } finally {
+      await f.cleanup(tester);
+    }
+  });
+
+  for (final status in [200, 503]) {
+    testWidgets('ScheduleEditor late $status after scope loss preserves covering notice',
+        (tester) async {
+      final f = _ScheduleRecoveryFixture();
+      try {
+        await _openSchedule(tester, f);
+        _capturedSubmit(tester, '保存计划')();
+        await _flush(tester);
+        expect(f.requests, hasLength(1));
+        var noticeClosed = false;
+        await _coverScopeNotice(tester, () => noticeClosed = true);
+        f.session.changeScope('tenant');
+        await tester.pump();
+        f.reply(0, status, status == 200 ? {} : {'errorCode': 'SERVICE_UNAVAILABLE'});
+        await _flush(tester);
+        await tester.pumpAndSettle();
+        expect(noticeClosed, isFalse);
+        expect(find.text('范围外通知'), findsOneWidget);
+        expect(find.byType(ScheduleEditor, skipOffstage: false), findsOneWidget);
+        await tester.tap(find.text('关闭范围外通知'));
+        await tester.pumpAndSettle();
+        expect(find.text('当前操作已失效'), findsOneWidget);
+        expect(find.byType(TextFormField), findsNothing);
+        expect(find.text('重试原提交'), findsNothing);
+        expect(f.requests, hasLength(1));
+        await tester.tap(find.widgetWithText(TextButton, '关闭'));
+        await tester.pumpAndSettle();
+        expect(find.byType(ScheduleEditor), findsNothing);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await f.cleanup(tester);
+      }
+    });
+  }
+
+  for (final rejection in const {
+    401: 'UNAUTHENTICATED',
+    403: 'ACCESS_DENIED',
+    409: 'WORKSPACE_CHANGED',
+  }.entries) {
+    testWidgets('ScheduleEditor ${rejection.value} hides a revoked submission',
+        (tester) async {
+      final f = _ScheduleRecoveryFixture();
+      try {
+        await _openSchedule(tester, f);
+        final save = _capturedSubmit(tester, '保存计划');
+        save();
+        await _flush(tester);
+        f.reply(0, rejection.key, {'errorCode': rejection.value});
+        await _flush(tester);
+        await tester.pumpAndSettle();
+        expect(find.text('当前操作已失效'), findsOneWidget);
+        expect(find.byType(TextFormField), findsNothing);
+        save();
+        await _flush(tester);
+        expect(f.requests, hasLength(1));
+        await tester.tap(find.widgetWithText(TextButton, '关闭'));
+        await tester.pumpAndSettle();
+        expect(find.byType(ScheduleEditor), findsNothing);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await f.cleanup(tester);
+      }
+    });
+  }
+
+  testWidgets('ScheduleEditor reauthentication requirement is not scope revocation',
+      (tester) async {
+    final f = _ScheduleRecoveryFixture();
+    try {
+      await _openSchedule(tester, f);
+      _capturedSubmit(tester, '保存计划')();
+      await _flush(tester);
+      f.reply(0, 401, {'errorCode': 'REAUTH_REQUIRED'});
+      await _flush(tester);
+      await tester.pumpAndSettle();
+      expect(find.text('当前操作已失效'), findsNothing);
+      expect(tester.widget<TextFormField>(
+          find.widgetWithText(TextFormField, '计划名称')).enabled, isTrue);
+      _capturedSubmit(tester, '保存计划')();
+      await _flush(tester);
+      expect(f.requests, hasLength(2));
+      f.reply(1, 200, {});
+      await _flush(tester);
+      await tester.pumpAndSettle();
+      expect(find.byType(ScheduleEditor), findsNothing);
+      expect(tester.takeException(), isNull);
+    } finally {
+      await f.cleanup(tester);
+    }
+  });
+
+  for (final replacement in ['session', 'root']) {
+    testWidgets('ScheduleEditor $replacement replacement cannot revive old state',
+        (tester) async {
+      final original = _ScheduleRecoveryFixture();
+      final next = _ScheduleRecoveryFixture();
+      late StateSetter rebuild;
+      var session = original.session;
+      var root = _root;
+      try {
+        await _open(tester, StatefulBuilder(builder: (context, setState) {
+          rebuild = setState;
+          return ScheduleEditor(key: const Key('scope-replaced-schedule'),
+              session: session, root: root, timeZone: 'Asia/Shanghai');
+        }));
+        await _fillScopeSchedule(tester);
+        final save = _capturedSubmit(tester, '保存计划');
+        rebuild(() {
+          if (replacement == 'session') {
+            session = next.session;
+          } else {
+            root = '/tenants/other-tenant';
+          }
+        });
+        await tester.pumpAndSettle();
+        rebuild(() {
+          session = original.session;
+          root = _root;
+        });
+        await tester.pumpAndSettle();
+        save();
+        await _flush(tester);
+        expect(find.text('当前操作已失效'), findsOneWidget);
+        expect(find.byType(TextFormField), findsNothing);
+        expect(original.requests, isEmpty);
+        expect(next.requests, isEmpty);
+        await tester.tap(find.widgetWithText(TextButton, '关闭'));
+        await tester.pumpAndSettle();
+        expect(find.byType(ScheduleEditor), findsNothing);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await original.cleanup(tester);
+        await next.cleanup(tester);
       }
     });
   }

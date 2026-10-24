@@ -1,0 +1,155 @@
+{
+  "schemaVersion": 1,
+  "status": "STATIC_EXACT_NAME_MAPPING_NOT_EXECUTION_RESULT",
+  "sourceCommit": "3cfbf535099ade86234661556d9e92db9069743a",
+  "module": "apps/guardian",
+  "platform": "Flutter chrome browser",
+  "selectors": [
+    "test/editor_submit_guard_test.dart"
+  ],
+  "selectedSources": [
+    {
+      "selector": "test/editor_submit_guard_test.dart",
+      "source": {
+        "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\editor_submit_guard_test.dart",
+        "bytes": 21581,
+        "sha256": "0e0a0d3f2392bddf6f94f6cbc42dcc93bfcc9b2d3f2fb1aeef8c3044b03fb99b"
+      },
+      "explicitTestOn": "browser",
+      "explicitTags": false,
+      "explicitSkip": false
+    }
+  ],
+  "expectedVisibleCases": 13,
+  "expectedTestRoots": 1,
+  "sourceCaseCounts": [
+    13
+  ],
+  "cases": [
+    {
+      "name": "ScheduleEditor saves once when a captured callback is repeated",
+      "selector": "test/editor_submit_guard_test.dart",
+      "testDeclarationLine": 193,
+      "nameDeclarationLine": 193,
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN_IN_THIS_BATCH",
+      "originalOrAdded": "retained original four editor submission cases"
+    },
+    {
+      "name": "PolicyEditor saves once when a captured callback is repeated",
+      "selector": "test/editor_submit_guard_test.dart",
+      "testDeclarationLine": 249,
+      "nameDeclarationLine": 249,
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN_IN_THIS_BATCH",
+      "originalOrAdded": "retained original four editor submission cases"
+    },
+    {
+      "name": "MemberEditor submits once when a captured callback is repeated",
+      "selector": "test/editor_submit_guard_test.dart",
+      "testDeclarationLine": 292,
+      "nameDeclarationLine": 292,
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN_IN_THIS_BATCH",
+      "originalOrAdded": "retained original four editor submission cases"
+    },
+    {
+      "name": "ClassActionDialog submits once when a captured callback is repeated",
+      "selector": "test/editor_submit_guard_test.dart",
+      "testDeclarationLine": 332,
+      "nameDeclarationLine": 333,
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN_IN_THIS_BATCH",
+      "originalOrAdded": "retained original four editor submission cases"
+    },
+    {
+      "name": "ScheduleEditor network outcome preserves the original retry",
+      "selector": "test/editor_submit_guard_test.dart",
+      "testDeclarationLine": 371,
+      "nameDeclarationLine": 371,
+      "declarationKind": "three-value failure loop",
+      "execution": "UNRUN_IN_THIS_BATCH",
+      "originalOrAdded": "committed nine-case Schedule recovery addition"
+    },
+    {
+      "name": "ScheduleEditor server outcome preserves the original retry",
+      "selector": "test/editor_submit_guard_test.dart",
+      "testDeclarationLine": 371,
+      "nameDeclarationLine": 371,
+      "declarationKind": "three-value failure loop",
+      "execution": "UNRUN_IN_THIS_BATCH",
+      "originalOrAdded": "committed nine-case Schedule recovery addition"
+    },
+    {
+      "name": "ScheduleEditor unexpected outcome preserves the original retry",
+      "selector": "test/editor_submit_guard_test.dart",
+      "testDeclarationLine": 371,
+      "nameDeclarationLine": 371,
+      "declarationKind": "three-value failure loop",
+      "execution": "UNRUN_IN_THIS_BATCH",
+      "originalOrAdded": "committed nine-case Schedule recovery addition"
+    },
+    {
+      "name": "ScheduleEditor known rejection permits a corrected submission",
+      "selector": "test/editor_submit_guard_test.dart",
+      "testDeclarationLine": 446,
+      "nameDeclarationLine": 446,
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN_IN_THIS_BATCH",
+      "originalOrAdded": "committed nine-case Schedule recovery addition"
+    },
+    {
+      "name": "ScheduleEditor pending-operation rejection retains unknown content",
+      "selector": "test/editor_submit_guard_test.dart",
+      "testDeclarationLine": 480,
+      "nameDeclarationLine": 480,
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN_IN_THIS_BATCH",
+      "originalOrAdded": "committed nine-case Schedule recovery addition"
+    },
+    {
+      "name": "ScheduleEditor unknown back navigation requires explicit close",
+      "selector": "test/editor_submit_guard_test.dart",
+      "testDeclarationLine": 513,
+      "nameDeclarationLine": 513,
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN_IN_THIS_BATCH",
+      "originalOrAdded": "committed nine-case Schedule recovery addition"
+    },
+    {
+      "name": "ScheduleEditor late success preserves an unrelated covering dialog",
+      "selector": "test/editor_submit_guard_test.dart",
+      "testDeclarationLine": 545,
+      "nameDeclarationLine": 545,
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN_IN_THIS_BATCH",
+      "originalOrAdded": "committed nine-case Schedule recovery addition"
+    },
+    {
+      "name": "ScheduleEditor late time result cannot edit a closed owner",
+      "selector": "test/editor_submit_guard_test.dart",
+      "testDeclarationLine": 577,
+      "nameDeclarationLine": 577,
+      "declarationKind": "two-value picker loop",
+      "execution": "UNRUN_IN_THIS_BATCH",
+      "originalOrAdded": "committed nine-case Schedule recovery addition"
+    },
+    {
+      "name": "ScheduleEditor late date result cannot edit a closed owner",
+      "selector": "test/editor_submit_guard_test.dart",
+      "testDeclarationLine": 577,
+      "nameDeclarationLine": 577,
+      "declarationKind": "two-value picker loop",
+      "execution": "UNRUN_IN_THIS_BATCH",
+      "originalOrAdded": "committed nine-case Schedule recovery addition"
+    }
+  ],
+  "fullRegressionRootScope": 183,
+  "selectedRootCount": 1,
+  "otherRootsNotExecutedByThisBatch": 182,
+  "previousVM35AcceptanceRetainedSeparately": true,
+  "testsModifiedByThisPreparation": false,
+  "sdkOrTestsRun": false,
+  "executionApprovedByThisFile": false,
+  "preparationMethod": "Read current committed source as ordinary text; retain4 literal names and expand3 failure plus2 picker values with4 other new literal names from the committed nine-case ledger. No AST, parser execution or candidate/helper import."
+}

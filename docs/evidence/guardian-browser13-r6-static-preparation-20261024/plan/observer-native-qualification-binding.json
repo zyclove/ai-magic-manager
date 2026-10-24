@@ -1,0 +1,28 @@
+{
+  "status": "CURRENT_SCHEMA2_MODULE_NARROW_READER_AND_SAME_JOB_FINALITY_FIXTURE_NOT_APPLICATION_ACCEPTANCE",
+  "observerCodeSha256": "81be26d61faf4b2a77a18b0c2cd8b34c908e776517dc95159b3c903b8e2371b0",
+  "sourceObserverPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\owned_chrome_evidence.py",
+    "bytes": 43987,
+    "sha256": "81be26d61faf4b2a77a18b0c2cd8b34c908e776517dc95159b3c903b8e2371b0"
+  },
+  "newNativeReadPathActuallyQualified": true,
+  "sameCommandJobTerminalTransactionActuallyObserved": true,
+  "actualQualificationResult": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\observer-fixture\\result.json",
+    "bytes": 4474,
+    "sha256": "48090e774ca66cf7564169dcb92176d015003db117213b77ed8406a095c22959"
+  },
+  "actualOuterQualificationResult": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\observer-fixture-host\\result.json",
+    "bytes": 316,
+    "sha256": "594442f6b21b6b097a43728b4427f5de9e55241d39008aabbc1185e402d6f715"
+  },
+  "actualToolTerminalChunk": "be612a",
+  "actualToolTerminalExitCode": 0,
+  "nativeReaderAndAbiUnchanged": true,
+  "f8RequalificationRepeated": false,
+  "scope": "One own-Python retained-handle reader fixture with original narrow positive/negative cases plus actual same-Job A0/empty-M/A1 inside original 0.5s and 8s fixture deadline; no Chrome/TCP/SDK/application qualification.",
+  "sdkOrChromeLifecycleOrTcpQualified": false,
+  "applicationAcceptanceQualified": false
+}

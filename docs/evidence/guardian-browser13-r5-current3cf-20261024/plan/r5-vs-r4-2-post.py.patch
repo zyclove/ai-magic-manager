@@ -1,0 +1,55 @@
+--- D:\codes\mobile\ai-manager\.cache\guardian-browser13-post-20261024-r4-canonical-git\post.py
++++ D:\codes\mobile\ai-manager\.cache\guardian-browser13-post-20261024-r5-typed-finder-current3cf\post.py
+@@ -10,18 +10,18 @@
+ import sys
+ 
+ REPO = Path(r'D:\codes\mobile\ai-manager')
+-BASE = REPO / '.cache/guardian-browser13-20261024-r4-canonical-git'
+-OUT = REPO / '.cache/guardian-browser13-post-20261024-r4-canonical-git'
+-LAUNCHER = REPO / '.cache/guardian-browser13-root-launch-20261024-r4-canonical-git.ps1'
+-COMMIT = '006ee45850c9b6b0f90570d9478bced3beb0e0fe'
+-INPUT_SHA = '906ca7d4c49602b8cb59fb9bb3cdd058f6bd1a0c6f1e10dae363c4a64fc17311'
++BASE = REPO / '.cache/guardian-browser13-20261024-r5-typed-finder-current3cf'
++OUT = REPO / '.cache/guardian-browser13-post-20261024-r5-typed-finder-current3cf'
++LAUNCHER = REPO / '.cache/guardian-browser13-root-launch-20261024-r5-typed-finder-current3cf.ps1'
++COMMIT = '3cfbf535099ade86234661556d9e92db9069743a'
++INPUT_SHA = '3e769ab0ecded31dc6b0927661591df69fb1e6199293145977e67ded236ecd92'
+ BUDGETS = {'outer': 180, 'working': 174, 'worker': 165, 'command': 135,
+            'commandCleanup': 140, 'postflightReserve': 25}
+ NAMES = {'analysis-host.py', 'worker.py', 'owned_job.py', 'process-inventory.ps1', 'reporter_contract.py', 'owned_chrome_evidence.py'}
+-PROPOSAL_SHA = '849e0819fdce2cbb794f0c008a4e5c20aa5eff9517104c2d6902c970aac2a348'
++PROPOSAL_SHA = '1fa692d44a033e8ed6060e0b20803fcf565875177388807be17c3213a006cf02'
+ SELECTORS = ['test/editor_submit_guard_test.dart']
+ REPORTER_SHA = 'dcd85cf451b20bd24857cef6726d0f1ebb406c67096146d3d3c82306942b67e8'
+-CASE_SHA = '6ea16bdf3b93fbea589aa95a4aa7a9e808afbe9605938d755fb54d8ce748c340'
++CASE_SHA = '11f16121ffa11a0359852e5f0af7a830a83355b9fa55cec91edc85482d945f2b'
+ PROCESS_INVENTORY_SHA = 'f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046'
+ SDK_NAMES = {'java.exe', 'javaw.exe', 'javac.exe', 'dart.exe', 'dartaotruntime.exe',
+              'go.exe', 'gofmt.exe', 'flutter.exe', 'flutter_tester.exe', 'gen_snapshot.exe',
+@@ -537,7 +537,7 @@
+     for row in proposal['candidateFiles']:
+         descriptor(row, candidate=True)
+     require(Path(proposal['inputs']['path']) == BASE / 'inputs.json'
+-            and type(proposal['inputs']['bytes']) is int and proposal['inputs']['bytes'] == 20240
++            and type(proposal['inputs']['bytes']) is int and proposal['inputs']['bytes'] == 20346
+             and proposal['inputs']['sha256'] == INPUT_SHA, 'Fixed current input required')
+     descriptor(proposal['inputs'])
+     inputs = load(BASE / 'inputs.json')
+@@ -725,7 +725,7 @@
+     expected_argv = [r'C:\Windows\System32\cmd.exe', '/d', '/v:off', '/c',
+         r'D:\softwares\flutter\bin\flutter.bat --no-version-check --suppress-analytics test --platform=chrome --no-pub --web-renderer=html --reporter=json test/editor_submit_guard_test.dart']
+     require(same(launch.get('argv'), expected_argv)
+-            and launch.get('workingDirectory') == str(REPO / '.cache/guardian-current-20261024-r15-login-schedule/src/apps/guardian')
++            and launch.get('workingDirectory') == str(REPO / '.cache/guardian-current-20261024-r16-typed-schedule-finder/src/apps/guardian')
+             and type(launch.get('pid')) is int and launch['pid'] == command['pid']
+             and type(launch.get('creationFiletime')) is int and launch['creationFiletime'] == command['creationFiletime']
+             and type(launch.get('selectorCount')) is int and launch['selectorCount'] == 1
+@@ -788,7 +788,7 @@
+     descriptor(receipt['reporterValidationPin'])
+     raw_validation = load(attempt / 'reporter-validation.json')
+     independently_derived = independent_browser13(raw_log, case_contract,
+-        REPO / '.cache/guardian-current-20261024-r15-login-schedule/src/apps/guardian', log_pin)
++        REPO / '.cache/guardian-current-20261024-r16-typed-schedule-finder/src/apps/guardian', log_pin)
+     require(same(raw_validation, receipt.get('reporterValidation'))
+             and same(independently_derived, raw_validation),
+             'Independent raw JSON derivation differs from reporter raw/embedded result')

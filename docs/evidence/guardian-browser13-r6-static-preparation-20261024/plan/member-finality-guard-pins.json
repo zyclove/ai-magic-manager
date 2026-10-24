@@ -1,0 +1,50 @@
+{
+  "status": "SCHEMA2_PURE_GUARD_READY_FOR_INDEPENDENT_REVIEW_NOT_NATIVE_QUALIFICATION",
+  "positiveChecks": 8,
+  "negativeChecks": 74,
+  "originalChrome24PredicateBodyByteExact": true,
+  "callersMustLoadAndMatchRawArtifacts": true,
+  "nativeOrSdkOrProcessOrNetworkCalls": false,
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\chrome-evidence-json-guard.fragment",
+      "bytes": 23378,
+      "sha256": "c01826d6561ec658e7f37864174f4ab27e49e789f0029ca7186033bc758195d6"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\member-finality-guard-pure-check.py",
+      "bytes": 16432,
+      "sha256": "75fb6a895cf0c9a3e0a18db45849bc189372e51b2b48227e8cd3cfbcaf09a744"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\member-finality-guard-pure-result-red.json",
+      "bytes": 679,
+      "sha256": "9cd668e418337326739a7a4b7245b172bbd500c9317b1415462f000d76c5aa21"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\member-finality-guard-pure-result-green.json",
+      "bytes": 8632,
+      "sha256": "1ad507102c9a8eea04dece72b7e9a2e8ca89955144e1a236f1f31cb98584daf9"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\member-finality-guard-pure-result-red-r2.json",
+      "bytes": 8789,
+      "sha256": "ccf69169180c71b301dca9713601beba36291a70628fdb6ba73d41c614b5222f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\member-finality-guard-pure-result-green-r2.json",
+      "bytes": 9259,
+      "sha256": "a92b4d04b701a21b189234da6d850596471e62d60c8c43fa4a5bacbbfab38008"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\member-finality-guard-intermediate-22885.fragment",
+      "bytes": 22885,
+      "sha256": "61f04973d42dd5e733e7eea560c39e9b44a5fd32582c0d8ea0a9070c51359f82"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\member-finality-guard-notes.md",
+      "bytes": 4013,
+      "sha256": "2339a2dfa31ef144e32677c9bc5e68c45c117055b41c8e4f5ec70684c1a47e83"
+    }
+  ]
+}

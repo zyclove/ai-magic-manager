@@ -1,0 +1,43 @@
+{
+  "status": "BROWSER13_NOT_ACCEPTED_OR_RELEASE_INCOMPLETE",
+  "atUtc": "2026-10-24T12:41:56.2461674Z",
+  "sourceCommit": "3cfbf535099ade86234661556d9e92db9069743a",
+  "actualRootToolTerminalChunk": "49fbc4",
+  "actualRootToolExitCode": 1,
+  "actualPostToolTerminalChunk": "6f2f45",
+  "actualPostToolExitCode": 1,
+  "hostPid": 156752,
+  "hostCreationFiletime": "134373192204147225",
+  "hostExitFiletime": "134373192978551885",
+  "fixedLauncherDisposedOwnHostHandle": true,
+  "ownLiveSdkHandle": false,
+  "sdkCount": 0,
+  "sdkProcesses": [],
+  "unknownCount": 0,
+  "knownOwnedPids": [
+    156752,
+    160080,
+    138272
+  ],
+  "availableRamBytes": 6901907456,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 2412204032
+    },
+    {
+      "Name": "D",
+      "Free": 30551355392
+    }
+  ],
+  "processInventoryFile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\root-attempt\\post-process-inventory.json",
+  "processInventorySha256": "ca05ac37ad9215c4d15c8d9167dfbffeebfcecaad39dc482727048317e902806",
+  "fixedPostFile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-post-20261024-r5-typed-finder-current3cf\\post.json",
+  "fixedPostSha256": "da132881fbc332a731a6b6085a2aa114a08cf041a8bb4e74030b36a3c8cdf260",
+  "resultConsistent": false,
+  "windowReleased": true,
+  "testAccepted": false,
+  "applicationTestsRun": true,
+  "deployed": false,
+  "nextSdkGrant": false
+}

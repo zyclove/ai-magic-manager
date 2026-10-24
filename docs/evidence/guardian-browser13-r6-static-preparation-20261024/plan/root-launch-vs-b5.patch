@@ -1,0 +1,15 @@
+--- D:\codes\mobile\ai-manager\.cache\guardian-browser13-root-launch-20261024-r5-typed-finder-current3cf.ps1
++++ D:\codes\mobile\ai-manager\.cache\guardian-browser13-root-launch-20261024-r6-owned-member-finality.ps1
+@@ -1,10 +1,10 @@
+ $ErrorActionPreference='Stop'
+ $taskRepository='D:\codes\mobile\ai-manager'
+-$analysisDirectory=Join-Path $taskRepository '.cache\guardian-browser13-20261024-r5-typed-finder-current3cf'
++$analysisDirectory=Join-Path $taskRepository '.cache\guardian-browser13-20261024-r6-owned-member-finality'
+ $proposalFile=Join-Path $analysisDirectory 'proposal.json'
+ $grantFile=Join-Path $analysisDirectory 'root-sdk-grant.json'
+ $rootAttempt=Join-Path $analysisDirectory 'root-attempt'
+-$expectedProposalSha='1fa692d44a033e8ed6060e0b20803fcf565875177388807be17c3213a006cf02'
++$expectedProposalSha='6347722e6a4ccaf470596c5e700e08a7909e93418ecd28b17859f7ba8a8b82f8'
+ $expectedCommit='3cfbf535099ade86234661556d9e92db9069743a'
+ if($expectedProposalSha -notmatch '^[a-f0-9]{64}$'){throw 'Static launcher is disabled pending exact reviewed proposal'}
+ if($PSVersionTable.PSVersion.ToString() -ne '7.6.5'){throw 'Fixed reviewed PowerShell runtime required'}

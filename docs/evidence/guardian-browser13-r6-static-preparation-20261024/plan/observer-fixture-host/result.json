@@ -1,0 +1,12 @@
+{
+  "status": "OWNED_OBSERVER_FIXTURE_HOST_NATURAL_ZERO",
+  "pid": 166708,
+  "creationFiletime": "134373246177031357",
+  "terminal": true,
+  "forced": false,
+  "exitCode": 0,
+  "firstObservedTerminalSeconds": 1.7586461,
+  "limitSeconds": 10,
+  "nativeReadPathOnly": true,
+  "sdkOrChromeStarted": false
+}

@@ -1,0 +1,219 @@
+{
+  "status": "B5_TYPED_FINDER_CURRENT_3CF_PREPARATION_SEALED_PENDING_FRESH_ROOT_REVIEW_GRANT_AND_SDK_WINDOW",
+  "sourceCommit": "3cfbf535099ade86234661556d9e92db9069743a",
+  "sourceFiles": 413,
+  "sourceBytes": 4061481,
+  "sourceTreeSha256": "5aaaa958f5e5830800544ff51954d7e028f0b6f5bbbe3f349349388d1d53dca7",
+  "fullRegressionRoots": 183,
+  "selectedChromeSuites": 1,
+  "exactVisibleCases": 13,
+  "assertionCallsPreserved": 71,
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\inputs.json",
+      "bytes": 20346,
+      "sha256": "3e769ab0ecded31dc6b0927661591df69fb1e6199293145977e67ded236ecd92"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\proposal.json",
+      "bytes": 11067,
+      "sha256": "1fa692d44a033e8ed6060e0b20803fcf565875177388807be17c3213a006cf02"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\worker.py",
+      "bytes": 54920,
+      "sha256": "3866a59c30b7f2e9a964337d2101f9c0e5fc4d8532cb2da196b42bbcb1da3214"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\analysis-host.py",
+      "bytes": 35006,
+      "sha256": "e725afa7ff90291c6bb4ef03c4946619f25a22e057bc3fc068f7875ac4a1ec74"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\process-inventory.ps1",
+      "bytes": 2439,
+      "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\reporter_contract.py",
+      "bytes": 14280,
+      "sha256": "dcd85cf451b20bd24857cef6726d0f1ebb406c67096146d3d3c82306942b67e8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\owned_chrome_evidence.py",
+      "bytes": 29439,
+      "sha256": "34e80553205db29267baf4299821ff40111adbc79bd2e83e49fbf20282eb5a3f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\chrome-evidence-json-guard.fragment",
+      "bytes": 8819,
+      "sha256": "12c62a6307e9c460b56ee1e58f7b2e930512fba74dd371609401a96370ca0868"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\expected-browser13-cases.json",
+      "bytes": 6343,
+      "sha256": "11f16121ffa11a0359852e5f0af7a830a83355b9fa55cec91edc85482d945f2b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\cache-browser-projection.json",
+      "bytes": 773953,
+      "sha256": "3b74998cd55045e58c02b17b3de9151e878d78aab199e85bbcc3ec99d9c30166"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\base-pins.json",
+      "bytes": 5754,
+      "sha256": "0b50db25ce19c59cb3c5f7509c81706159693ccc7655f35d450fa421ab3c10e0"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\observer-runtime-pins.json",
+      "bytes": 3331,
+      "sha256": "1513a067e91e755f576484ba381c8f4640cf2586da638eaa0114170611bd34f3"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\observer-qualification-reuse.json",
+      "bytes": 1657,
+      "sha256": "bf4a6a3684504e03b4a8da118fc98d7ac0cc26a3e4d518459dbdfeefe4491743"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\case-contract-source-rebinding.json",
+      "bytes": 3061,
+      "sha256": "e47a8a4a5a8d9d1befa1bb2f334bcdee2a4807945b8f064b31c1f17d8a43302f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\binding-pins.json",
+      "bytes": 10040,
+      "sha256": "458034ec9ce45869012bbd6dfc8e641a88cd3e59e1c47194a0dd14f76009ed8c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\control-preparation-pins.json",
+      "bytes": 38637,
+      "sha256": "a2b29f1ec83159e38b98ed43877be5dce83cb4bab23d765648525cb085bbfbd6"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\r5-current3cf-source-binding-audit.json",
+      "bytes": 7627,
+      "sha256": "4460895a322e60e2c3daf69a9e2c3289b9407de136f3da1fe84dad2461b62047"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\r4-preservation-and-source-rebind.json",
+      "bytes": 12297,
+      "sha256": "ad01fe36559d2e251f5a029b26ea8055f73ab79a871fb067d104dc51c75e4e5d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\package-rebase-check.json",
+      "bytes": 1003,
+      "sha256": "272c0c387ac62c6d872b69c175700006322d6d54dc401ec844c7fbafcc9be47a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\preparation-review.md",
+      "bytes": 2244,
+      "sha256": "2323781a484d19e0a6fe87fdb79f45d55dc707365212f3196eea0e7771d1689e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-post-20261024-r5-typed-finder-current3cf\\post.py",
+      "bytes": 55048,
+      "sha256": "9180fdf299078cd7d4ab8e4d25b3140ff597971049a6e76a3729b73c451d772c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-post-20261024-r5-typed-finder-current3cf\\pins.json",
+      "bytes": 25721,
+      "sha256": "71ba9e1741abb5700b6c2d7bd1d8c028da0c360df3b6916c984737350263b514"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-root-launch-20261024-r5-typed-finder-current3cf.ps1",
+      "bytes": 9268,
+      "sha256": "0ac6e7e4660610a44d3673edb48482edcc7be46b31218d178327aad49be34c1e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-release-20261024-r5-typed-finder-current3cf.ps1",
+      "bytes": 4465,
+      "sha256": "ac03e2a7962b7fe784e837664d62364f88ce82bc5413455f347245c02e8868fa"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-native-qualification-binding.json",
+      "bytes": 1307,
+      "sha256": "6e8ba3d2436bfa7ba1c80bad1bb24856f3eca27de6bf8476fd1c297c773a070a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-fixture\\result.json",
+      "bytes": 2321,
+      "sha256": "293eef8510874f37a6679dd932d4abef5ec437c71334ee8234828933507b927d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-fixture-host\\result.json",
+      "bytes": 314,
+      "sha256": "5982a79092aa4138f47350f676b6e8f9421659619494d3949bfbc7bfffd6ab2d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r16-typed-schedule-finder\\out\\pins.json",
+      "bytes": 5167,
+      "sha256": "21145493df89edab60c45b10e134c9962b10538e082f2ebc7b3afa8537bcfa4a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r16-typed-schedule-finder\\out\\seal-static-source.json",
+      "bytes": 80517,
+      "sha256": "123eeab6c5e8ef9c18af21137e332ad4584fbe852bb31365f386b2840f447ff8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-r16-freeze-production-20261024-r1\\receipt.json",
+      "bytes": 3795,
+      "sha256": "3a3b36b686931a33d5ecd796330d4d78317b96c0dd4b1640d1222ec3cd5d7e61"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-r16-freeze-production-20261024-r1\\pins.json",
+      "bytes": 1267,
+      "sha256": "5ae230a3621a3697d678b0a46726c2abb9fecf0d1c2c9d9c6eb826612a1156f4"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-r16-freeze-production-20261024-r1\\onefile-vs-r15.patch",
+      "bytes": 1026,
+      "sha256": "18651893ee039578d61d79353ec15234b549ef3625ae31c37be5e5aaa0eac5b8"
+    }
+  ],
+  "caseNamesSelectorsAssertionsAndAllNativeAcceptanceRulesUnchanged": true,
+  "sourceMetadataChangesOnly": "one test-source blob; six later declaration/name line pairs +2; source/freeze/183-scope bindings; seven internal root URI rebases",
+  "runtime43Cache185Trees70Files3689Bytes646535928Unchanged": true,
+  "observerBytes": 29439,
+  "observerSha256": "34e80553205db29267baf4299821ff40111adbc79bd2e83e49fbf20282eb5a3f",
+  "originalQualificationDirectReference": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-native-qualification-binding.json",
+    "bytes": 1307,
+    "sha256": "6e8ba3d2436bfa7ba1c80bad1bb24856f3eca27de6bf8476fd1c297c773a070a"
+  },
+  "newFixtureExecuted": false,
+  "actualPreparationEvidence": [
+    {
+      "chunk": "19d48e",
+      "kind": "source-case-contract-and-base-preparation",
+      "naturalExitCode": 0
+    },
+    {
+      "chunk": "65330c",
+      "kind": "controls-and-18-input-descriptors-43-runtime-hashes",
+      "naturalExitCode": 0
+    },
+    {
+      "chunk": "b97c80",
+      "kind": "independent-post-construction-not-execution",
+      "naturalExitCode": 0
+    },
+    {
+      "chunk": "ea562c",
+      "kind": "six-code-VM35-exact-inverse-and-final-descriptor-closure",
+      "naturalExitCode": 0
+    },
+    {
+      "chunk": "31d1ec",
+      "kind": "five-code-B4-exact-inverse-and-413-183-70-source-metadata-delta",
+      "naturalExitCode": 0
+    }
+  ],
+  "b4OriginalsNotModified": true,
+  "sdkChromeAstNetworkGitMutationGrantOrAttemptByThisPreparation": false,
+  "actualHttpCacheProofNotRequiredOrClaimed": true
+}

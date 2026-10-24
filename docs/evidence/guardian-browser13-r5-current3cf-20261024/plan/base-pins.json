@@ -1,0 +1,220 @@
+{
+  "status": "STATIC_BROWSER13_BASE_ONLY_NO_OBSERVER_OR_PROPOSAL_YET",
+  "sourceCommit": "3cfbf535099ade86234661556d9e92db9069743a",
+  "caseContract": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\expected-browser13-cases.json",
+    "bytes": 6343,
+    "sha256": "11f16121ffa11a0359852e5f0af7a830a83355b9fa55cec91edc85482d945f2b"
+  },
+  "reporter": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\reporter_contract.py",
+    "bytes": 14280,
+    "sha256": "dcd85cf451b20bd24857cef6726d0f1ebb406c67096146d3d3c82306942b67e8"
+  },
+  "browserExecutable": {
+    "path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "bytes": 4720792,
+    "sha256": "de999bce6a1c954df71a8f15bf751b336172f55ac1a0325bb0580cbc2121268c"
+  },
+  "browserToolSources": [
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\lib\\src\\web\\chrome.dart",
+      "bytes": 20585,
+      "sha256": "16eb12ac25b6d8c9f6360ecc62ef65d6103441b8bb6c5690b61b7413216ed6e7"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\lib\\src\\test\\flutter_web_platform.dart",
+      "bytes": 35444,
+      "sha256": "aac43b3f5ba51f73de80b9f3947bf48d2d86ffa56133f70fbd7e18dbed013448"
+    }
+  ],
+  "newRuntimeFiles": [
+    {
+      "path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+      "bytes": 4720792,
+      "sha256": "de999bce6a1c954df71a8f15bf751b336172f55ac1a0325bb0580cbc2121268c",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\lib\\src\\web\\chrome.dart",
+      "bytes": 20585,
+      "sha256": "16eb12ac25b6d8c9f6360ecc62ef65d6103441b8bb6c5690b61b7413216ed6e7",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\lib\\src\\test\\flutter_web_platform.dart",
+      "bytes": 35444,
+      "sha256": "aac43b3f5ba51f73de80b9f3947bf48d2d86ffa56133f70fbd7e18dbed013448",
+      "absolute": true
+    }
+  ],
+  "runtimeUnionCount": 38,
+  "cacheManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r5-typed-finder-current3cf\\cache-browser-projection.json",
+    "bytes": 773953,
+    "sha256": "3b74998cd55045e58c02b17b3de9151e878d78aab199e85bbcc3ec99d9c30166"
+  },
+  "cachePayloadNotRehashedByThisPreparation": true,
+  "parent184FixedRowsRetainedExactly": true,
+  "oldFourCaseNamesRetained": true,
+  "reporterLiteralChanges": [
+    {
+      "old": "VM35",
+      "new": "BROWSER13",
+      "count": 4,
+      "replacementBytePositions": [
+        62,
+        4971,
+        11838,
+        13603
+      ]
+    },
+    {
+      "old": "four-root",
+      "new": "single-root",
+      "count": 2,
+      "replacementBytePositions": [
+        52,
+        4963
+      ]
+    },
+    {
+      "old": "default Flutter VM tester",
+      "new": "Flutter chrome browser",
+      "count": 1,
+      "replacementBytePositions": [
+        4347
+      ]
+    },
+    {
+      "old": "('test/workbench_view_test.dart', 'test/dialog_submit_guard_test.dart', 'test/failure_view_test.dart', 'test/login_view_test.dart')",
+      "new": "('test/editor_submit_guard_test.dart',)",
+      "count": 1,
+      "replacementBytePositions": [
+        469
+      ]
+    },
+    {
+      "old": "[15, 6, 9, 5]",
+      "new": "[13]",
+      "count": 2,
+      "replacementBytePositions": [
+        4829,
+        5544
+      ]
+    },
+    {
+      "old": "== 35",
+      "new": "== 13",
+      "count": 4,
+      "replacementBytePositions": [
+        4511,
+        4983,
+        13326,
+        13353
+      ]
+    },
+    {
+      "old": "== 4,",
+      "new": "== 1,",
+      "count": 2,
+      "replacementBytePositions": [
+        8446,
+        12653
+      ]
+    },
+    {
+      "old": "== 4\n",
+      "new": "== 1\n",
+      "count": 1,
+      "replacementBytePositions": [
+        4628
+      ]
+    },
+    {
+      "old": "thirty-five",
+      "new": "thirteen",
+      "count": 2,
+      "replacementBytePositions": [
+        5000,
+        13430
+      ]
+    },
+    {
+      "old": "Exactly four discovered suites required",
+      "new": "Exactly one discovered suite required",
+      "count": 1,
+      "replacementBytePositions": [
+        8450
+      ]
+    },
+    {
+      "old": "row.get('platform') == 'vm'",
+      "new": "row.get('platform') == 'chrome'",
+      "count": 1,
+      "replacementBytePositions": [
+        8680
+      ]
+    },
+    {
+      "old": "non-VM suite",
+      "new": "non-Chrome suite",
+      "count": 1,
+      "replacementBytePositions": [
+        8753
+      ]
+    },
+    {
+      "old": "'expectedSuiteCount': 4",
+      "new": "'expectedSuiteCount': 1",
+      "count": 1,
+      "replacementBytePositions": [
+        13562
+      ]
+    },
+    {
+      "old": "'actualSuiteCount': 4",
+      "new": "'actualSuiteCount': 1",
+      "count": 1,
+      "replacementBytePositions": [
+        13587
+      ]
+    },
+    {
+      "old": "'suiteCount': 4",
+      "new": "'suiteCount': 1",
+      "count": 1,
+      "replacementBytePositions": [
+        13610
+      ]
+    },
+    {
+      "old": "'expectedVisibleTests': 35",
+      "new": "'expectedVisibleTests': 13",
+      "count": 1,
+      "replacementBytePositions": [
+        13678
+      ]
+    },
+    {
+      "old": "'visibleTests': 35",
+      "new": "'visibleTests': 13",
+      "count": 1,
+      "replacementBytePositions": [
+        13718
+      ]
+    },
+    {
+      "old": "'successfulVisibleTests': 35",
+      "new": "'successfulVisibleTests': 13",
+      "count": 1,
+      "replacementBytePositions": [
+        13738
+      ]
+    }
+  ],
+  "reporterInverseByteExact": true,
+  "sdkOrBrowserOrTestsRun": false,
+  "observerStillRequired": true,
+  "grantOrAttemptOrProposalCreated": false
+}

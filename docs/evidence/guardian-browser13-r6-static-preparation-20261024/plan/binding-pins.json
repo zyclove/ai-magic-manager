@@ -1,0 +1,248 @@
+{
+  "status": "B6_FINAL_STATIC_BINDING_AND_INVERSE_CHECKS_NOT_SDK_ACCEPTANCE",
+  "inputs": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\inputs.json",
+    "bytes": 20342,
+    "sha256": "1269013619e239151e3048b7fc1d3caaa4f00cfd1036e383cc6960ccbfb7ee73"
+  },
+  "proposal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\proposal.json",
+    "bytes": 11065,
+    "sha256": "6347722e6a4ccaf470596c5e700e08a7909e93418ecd28b17859f7ba8a8b82f8"
+  },
+  "sourceCommit": "3cfbf535099ade86234661556d9e92db9069743a",
+  "sourceFiles": 413,
+  "fullRoots": 183,
+  "selectedChromeSuites": 1,
+  "exactVisibleCases": 13,
+  "fiveArtifactsInverseToB5AndOriginalVM35": [
+    {
+      "file": "worker.py",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\worker.py",
+        "bytes": 72822,
+        "sha256": "969eae3a2110e40a4af6f81e2039959f7d47ea13a8272dfadbaa4fc9873a9cae"
+      },
+      "inverseToB5Exact": true,
+      "originalVM35InverseChainExact": true
+    },
+    {
+      "file": "analysis-host.py",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\analysis-host.py",
+        "bytes": 50681,
+        "sha256": "525cf80ece1e14a06df71656e041825adb5fd0499925e95cd4f375ee9ce1e000"
+      },
+      "inverseToB5Exact": true,
+      "originalVM35InverseChainExact": true
+    },
+    {
+      "file": "root-launch",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-root-launch-20261024-r6-owned-member-finality.ps1",
+        "bytes": 9266,
+        "sha256": "bfb692c475be562258216b067fcb3d85b40b17040aabc04cbc7ab0b089836fc9"
+      },
+      "inverseToB5Exact": true,
+      "originalVM35InverseChainExact": true
+    },
+    {
+      "file": "release",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-release-20261024-r6-owned-member-finality.ps1",
+        "bytes": 4461,
+        "sha256": "e839be7c8bede6db291de3b58619af05bfa60b2554d2fe97f7f83d0962f30770"
+      },
+      "inverseToB5Exact": true,
+      "originalVM35InverseChainExact": true
+    },
+    {
+      "file": "post.py",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-post-20261024-r6-owned-member-finality\\post.py",
+        "bytes": 70800,
+        "sha256": "7ac673020b090e17f524e0d8e0a8a82b43254aa1b58c769908e1f2c50e9bd1d2"
+      },
+      "inverseToB5Exact": true,
+      "originalVM35InverseChainExact": true
+    }
+  ],
+  "sixCodeArtifactVM35InverseIncludingUnchangedReporter": true,
+  "sensitiveRegions": [
+    {
+      "name": "parsersAndNativeReaderPrefix",
+      "bytes": 13958,
+      "sha256": "04c75549387fd150b93afc3d2a77ff4d237423496f6b0bcc9a1d972f4681f41a",
+      "byteExact": true
+    },
+    {
+      "name": "profileAndListenerMethods",
+      "bytes": 1857,
+      "sha256": "ef5acf896345f8153492801fab9e410f15e9603e0530f7162fab825a7753c768",
+      "byteExact": true
+    },
+    {
+      "name": "chromeRetainedReadCallBlock",
+      "bytes": 1857,
+      "sha256": "eccbf313e13a118a4d86cae37f3a9a8e319e13a554882db6c19a82fb7859d040",
+      "byteExact": true
+    }
+  ],
+  "topLevelInputDescriptorsActuallyHashed": [
+    {
+      "key": "sourceManifest",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r16-typed-schedule-finder\\out\\source-manifest.json",
+        "bytes": 246807,
+        "sha256": "f7929324fe02cb5416fa04957fcba16588c6a338bc8562e2bb6261271aa7f1c8"
+      }
+    },
+    {
+      "key": "dependencyLibraryPins",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r16-typed-schedule-finder\\out\\dependency-library-pins.json",
+        "bytes": 360222,
+        "sha256": "577c202ab486e0c5eb5b913ec98702704bbae76c9ee7b0c066e2a1bceef04e3a"
+      }
+    },
+    {
+      "key": "cacheManifest",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\cache-browser-projection.json",
+        "bytes": 773953,
+        "sha256": "3b74998cd55045e58c02b17b3de9151e878d78aab199e85bbcc3ec99d9c30166"
+      }
+    },
+    {
+      "key": "originalPackageConfig",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\.dart_tool\\package_config.json",
+        "bytes": 15171,
+        "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7"
+      }
+    },
+    {
+      "key": "candidatePackageConfig",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r16-typed-schedule-finder\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+        "bytes": 15813,
+        "sha256": "6082db85cc0d2462be9ffe07d876286d0baae0fb3d4cde2b4b79855c33ad9d2d"
+      }
+    },
+    {
+      "key": "candidatePackageConfigTemplate",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r16-typed-schedule-finder\\generated\\guardian-package_config.json",
+        "bytes": 15813,
+        "sha256": "6082db85cc0d2462be9ffe07d876286d0baae0fb3d4cde2b4b79855c33ad9d2d"
+      }
+    },
+    {
+      "key": "cacheProjectionParentManifest",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\guardian-baseline-analysis-20261021\\inputs\\cache-content-20261021-r1.json",
+        "bytes": 725122,
+        "sha256": "0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2"
+      }
+    },
+    {
+      "key": "sourceSeal",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r16-typed-schedule-finder\\out\\seal-static-source.json",
+        "bytes": 80517,
+        "sha256": "123eeab6c5e8ef9c18af21137e332ad4584fbe852bb31365f386b2840f447ff8"
+      }
+    },
+    {
+      "key": "sourceDirectoryList",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r16-typed-schedule-finder\\out\\source-directory-list.json",
+        "bytes": 24979,
+        "sha256": "309e04487271d51fb513f721fefd4dd2f3a8d9f475ca30deba276847fe10ada4"
+      }
+    },
+    {
+      "key": "fullRegressionInventoryBinding",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r16-typed-schedule-finder\\out\\full-regression-183-bindings.json",
+        "bytes": 85282,
+        "sha256": "e1d950fd074f2df4d2fb6244c413b39ba7312bfdd33bcde137c44685db688e1c"
+      }
+    },
+    {
+      "key": "expectedCaseContract",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r16-typed-schedule-finder\\out\\expected-cases.json",
+        "bytes": 47284,
+        "sha256": "9fe7af77a2399f5273f1e6fcb35470e7bcbc076ff66f31a4e56b11e8c33c9e21"
+      }
+    },
+    {
+      "key": "qualifiedHostRuntimeManifest",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\manifest.json",
+        "bytes": 2872,
+        "sha256": "f088c5b70ffab3c75e2ebc7fa381cc23350903f54b60ea4d45ab3c9794fb0370"
+      }
+    },
+    {
+      "key": "processInventoryProvider",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\process-inventory.ps1",
+        "bytes": 2439,
+        "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+      }
+    },
+    {
+      "key": "testCaseContract",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\expected-browser13-cases.json",
+        "bytes": 6343,
+        "sha256": "11f16121ffa11a0359852e5f0af7a830a83355b9fa55cec91edc85482d945f2b"
+      }
+    },
+    {
+      "key": "reporterContractCode",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\reporter_contract.py",
+        "bytes": 14280,
+        "sha256": "dcd85cf451b20bd24857cef6726d0f1ebb406c67096146d3d3c82306942b67e8"
+      }
+    },
+    {
+      "key": "ownedChromeEvidenceCode",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\owned_chrome_evidence.py",
+        "bytes": 43987,
+        "sha256": "81be26d61faf4b2a77a18b0c2cd8b34c908e776517dc95159b3c903b8e2371b0"
+      }
+    },
+    {
+      "key": "ownedChromeNativeQualification",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\observer-native-qualification-binding.json",
+        "bytes": 1608,
+        "sha256": "39e4675e5216b659273f07cf0caf12eeaf0e6cbcaf6afa4ee84db2fe1363e6b7"
+      }
+    },
+    {
+      "key": "browserExecutable",
+      "pin": {
+        "path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+        "bytes": 4720792,
+        "sha256": "de999bce6a1c954df71a8f15bf751b336172f55ac1a0325bb0580cbc2121268c"
+      }
+    }
+  ],
+  "runtimeFilesActuallyHashed": 43,
+  "nativeProviderReporterCaseAndCacheByteExactToB5": true,
+  "allOriginalBudgetsAndDrainAndNoForceRetained": true,
+  "rawLedgerAndFinalityMirroredAndPinnedAtAllThreeCallers": true,
+  "jsonWritersUseAsciiEscapesForLosslessUtf16SurrogateRoundtrip": true,
+  "actualNarrowQualification": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\observer-native-qualification-binding.json",
+    "bytes": 1608,
+    "sha256": "39e4675e5216b659273f07cf0caf12eeaf0e6cbcaf6afa4ee84db2fe1363e6b7"
+  },
+  "sdkChromeNetworkGitMutationOrGrantOrAttemptCreated": false
+}

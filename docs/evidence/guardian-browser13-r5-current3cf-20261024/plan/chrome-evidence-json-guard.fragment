@@ -1,0 +1,141 @@
+def chrome_evidence_valid(value, inputs, command_state, start, end, attempt):
+    """Derive Chrome boundaries from pinned JSON; no process or network API."""
+    import ipaddress
+    import math
+    import ntpath
+    import re
+    from urllib.parse import urlsplit
+
+    def number(item):
+        return type(item) is float and math.isfinite(item)
+
+    def positive(item):
+        return type(item) is int and item > 0
+
+    def digest(item):
+        return type(item) is str and re.fullmatch('[a-f0-9]{64}', item) is not None
+
+    def canonical(item):
+        if not (type(item) is str and 0 < len(item) <= 32766
+                and re.match(r'^[A-Za-z]:[\\/]', item)
+                and not any(ord(char) < 32 for char in item)
+                and '..' not in item.replace('/', '\\').split('\\')):
+            raise ValueError('Nonlocal or unsafe Chrome evidence path')
+        drive, tail = ntpath.splitdrive(item)
+        if ':' in tail:
+            raise ValueError('ADS Chrome evidence path')
+        return ntpath.normcase(ntpath.normpath(item))
+
+    try:
+        keys = {'schemaVersion', 'status', 'chromeRoots', 'problems', 'sampleCalls',
+                'pinnedBrowserPath', 'temporaryRoot', 'commandCreationFiletime',
+                'observationDeadlineQpc', 'commandLineSource', 'debugBindingProof',
+                'foreignCommandLinesRead', 'processesTerminated', 'environmentRead',
+                'nativeReadPathQualificationSeparate'}
+        if not (type(value) is dict and set(value) == keys
+                and type(value['schemaVersion']) is int and value['schemaVersion'] == 1
+                and value['status'] == 'OWNED_CHROME_BOUNDARIES_OBSERVED'
+                and type(value['problems']) is list and value['problems'] == []
+                and positive(value['sampleCalls']) and value['sampleCalls'] <= 100000
+                and value['foreignCommandLinesRead'] is False
+                and value['processesTerminated'] is False and value['environmentRead'] is False
+                and value['nativeReadPathQualificationSeparate'] is True
+                and value['commandLineSource'] == 'SAME_RETAINED_HANDLE_PBI0_READPROCESSMEMORY'
+                and value['debugBindingProof'] == 'PID_FILTERED_LISTEN_ROWS_BRACKETED_BY_SAME_HANDLE_IDENTITY'
+                and type(command_state) is dict and positive(command_state.get('pid'))
+                and positive(command_state.get('creationFiletime'))
+                and positive(value['commandCreationFiletime'])
+                and value['commandCreationFiletime'] == command_state['creationFiletime']
+                and number(start) and number(end) and start < end
+                and number(value['observationDeadlineQpc'])
+                and value['observationDeadlineQpc'] == end):
+            return False
+        executable = canonical(inputs['browserExecutable']['path'])
+        temporary = canonical(str(attempt / 'tmp'))
+        if canonical(value['pinnedBrowserPath']) != executable or canonical(value['temporaryRoot']) != temporary:
+            return False
+        roots = value['chromeRoots']
+        if type(roots) is not list or not 1 <= len(roots) <= 64:
+            return False
+        identities, profiles, ports = set(), set(), set()
+        row_keys = {'pid', 'creationFiletime', 'commandCreationFiletime', 'imagePath', 'profile',
+                    'debuggingPort', 'testServerOrigins', 'testTargets', 'managerTarget', 'headless',
+                    'argvTestTargetLoopback', 'flutterManagerTargetSameLoopbackOrigin',
+                    'commandLineUtf16Sha256', 'commandLineReadBeforeQpc', 'commandLineReadAfterQpc',
+                    'sameReadHandleVerified', 'ownedMembershipVerifiedBeforeAndAfter', 'liveBeforeAndAfter',
+                    'observedQpc', 'debugListenerAddresses', 'listenerReadBeforeQpc', 'listenerReadAfterQpc',
+                    'listenerSameHandleIdentityVerifiedBeforeAndAfter', 'debugBindingLoopbackObserved'}
+        for row in roots:
+            if not (type(row) is dict and set(row) == row_keys
+                    and positive(row['pid']) and row['pid'] != command_state['pid']
+                    and positive(row['creationFiletime'])
+                    and row['creationFiletime'] >= command_state['creationFiletime']
+                    and positive(row['commandCreationFiletime'])
+                    and row['commandCreationFiletime'] == command_state['creationFiletime']
+                    and canonical(row['imagePath']) == executable
+                    and positive(row['debuggingPort']) and row['debuggingPort'] < 65536
+                    and all(row[key] is True for key in ('headless', 'argvTestTargetLoopback',
+                        'flutterManagerTargetSameLoopbackOrigin', 'sameReadHandleVerified',
+                        'ownedMembershipVerifiedBeforeAndAfter', 'liveBeforeAndAfter',
+                        'listenerSameHandleIdentityVerifiedBeforeAndAfter', 'debugBindingLoopbackObserved'))
+                    and digest(row['commandLineUtf16Sha256'])):
+                return False
+            identity = (row['pid'], row['creationFiletime'])
+            profile = canonical(row['profile'])
+            port = row['debuggingPort']
+            if not profile.startswith(temporary.rstrip('\\') + '\\') or len(profile.split('\\')) > 64:
+                return False
+            if identity in identities or profile in profiles or port in ports:
+                return False
+            identities.add(identity); profiles.add(profile); ports.add(port)
+            times = [row[key] for key in ('commandLineReadBeforeQpc', 'commandLineReadAfterQpc',
+                'listenerReadBeforeQpc', 'listenerReadAfterQpc', 'observedQpc')]
+            if not (all(number(item) for item in times)
+                    and start <= times[0] <= times[1] <= times[2] <= times[3] == times[4] < end):
+                return False
+            targets, origins = row['testTargets'], row['testServerOrigins']
+            if not (type(targets) is list and len(targets) == 1
+                    and type(origins) is list and len(origins) == 1 and type(origins[0]) is str):
+                return False
+            target = targets[0]
+            if not (type(target) is dict and set(target) == {'scheme', 'host', 'port', 'path', 'urlSha256'}
+                    and target['scheme'] == 'http' and target['host'] in ('localhost', '127.0.0.1', '::1')
+                    and positive(target['port']) and target['port'] < 65536
+                    and target['path'] == '/static/index.html' and digest(target['urlSha256'])):
+                return False
+            manager = row['managerTarget']
+            if not (type(manager) is dict and set(manager) == {'scheme', 'host', 'port'}
+                    and type(manager['scheme']) is str and manager['scheme'] == 'ws'
+                    and type(manager['host']) is str
+                    and manager['host'] in ('localhost', '127.0.0.1', '::1')
+                    and positive(manager['port']) and manager['port'] < 65536
+                    and manager['host'] == target['host'] and manager['port'] == target['port']):
+                return False
+            origin = urlsplit(origins[0])
+            if not (origin.scheme == 'http' and origin.hostname == target['host']
+                    and origin.port == target['port'] and origin.path == ''
+                    and origin.username is None and origin.password is None
+                    and not origin.query and not origin.fragment):
+                return False
+            listeners = row['debugListenerAddresses']
+            if type(listeners) is not list or not 1 <= len(listeners) <= 32:
+                return False
+            seen = set()
+            for listener in listeners:
+                if not (type(listener) is dict and set(listener) == {'address', 'port', 'family', 'status'}
+                        and type(listener['address']) is str and len(listener['address']) <= 64
+                        and type(listener['port']) is int and listener['port'] == port
+                        and listener['status'] == 'LISTEN' and listener['family'] in ('AF_INET', 'AF_INET6')):
+                    return False
+                address = ipaddress.ip_address(listener['address'])
+                if not (address.is_loopback and
+                        ((address.version == 4 and listener['family'] == 'AF_INET')
+                         or (address.version == 6 and listener['family'] == 'AF_INET6'))):
+                    return False
+                entry = (str(address), listener['port'], listener['family'], listener['status'])
+                if entry in seen:
+                    return False
+                seen.add(entry)
+        return True
+    except (KeyError, TypeError, ValueError, AttributeError, OverflowError):
+        return False

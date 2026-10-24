@@ -1,0 +1,13 @@
+{
+  "status": "FINAL_MODULE_BYTES_FIXED_FOR_SINGLE_AUTHORIZED_NARROW_FIXTURE",
+  "module": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\owned_chrome_evidence.py",
+    "bytes": 43987,
+    "sha256": "81be26d61faf4b2a77a18b0c2cd8b34c908e776517dc95159b3c903b8e2371b0"
+  },
+  "reviewerReadOnlyNoModuleBlockerChunk": "53a58a",
+  "collectorPureGreen15Chunk": "4ee2ac",
+  "sensitiveNativeRegionsByteExactChunk": "bc1254",
+  "wholeSdkOrChromeQualificationClaimed": false,
+  "fixturePreviouslyExecutedForThisModule": false
+}

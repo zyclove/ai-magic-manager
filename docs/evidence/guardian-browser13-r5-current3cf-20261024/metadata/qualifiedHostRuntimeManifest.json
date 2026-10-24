@@ -1,0 +1,96 @@
+{
+  "status": "STATIC_R3_QUALIFICATION_ONLY_ALL4_UNRUN",
+  "executionApproved": false,
+  "realControllerEntryEnabled": false,
+  "sdkAllowed": false,
+  "candidateNames": [
+    "supervisor.py",
+    "owned_job.py",
+    "fixtures.py",
+    "qualification-cases.json",
+    "README.md",
+    "design.md"
+  ],
+  "candidateFiles": [
+    {
+      "path": "supervisor.py",
+      "bytes": 12102,
+      "sha256": "ebef1a94c14c5bce2ac65bd6ddf81e9029c3347d70e9d3cab97b9290b3d0e5f8"
+    },
+    {
+      "path": "owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "path": "fixtures.py",
+      "bytes": 1834,
+      "sha256": "5b98c93d0efdd612641591db7d14ceb3973d50dbb5fec7925182ab63b61ac4b7"
+    },
+    {
+      "path": "qualification-cases.json",
+      "bytes": 802,
+      "sha256": "af96e8ee1f7a1a77b9a33508982e6a6e09595047ceebebbbafb95d0af5130e9e"
+    },
+    {
+      "path": "README.md",
+      "bytes": 2877,
+      "sha256": "0fb5d0a4e09249afd41555b6d2dc4b3a358952e691f9cdaafcc69a2a6179f5f9"
+    },
+    {
+      "path": "design.md",
+      "bytes": 7138,
+      "sha256": "6dff84cdb4ac6891ecbe49df8bcd039c1a23c6f14a0e43deea2dc07e4ad33d5a"
+    }
+  ],
+  "runtimePins": [
+    {
+      "path": "C:\\Python313\\python.exe",
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\python313.dll",
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\DLLs\\_ctypes.pyd",
+      "bytes": 133992,
+      "sha256": "5c0d5082fba1a2a3eb8d5e23073be25164c19f21304b09cecaab340dc7198815",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\DLLs\\libffi-8.dll",
+      "bytes": 39696,
+      "sha256": "eff52743773eb550fcc6ce3efc37c85724502233b6b002a35496d828bd7b280a",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\__init__.py",
+      "bytes": 19374,
+      "sha256": "2e63f01ac6b8ffc1acfa4eec4c253eef8fbd65e09506d690cb3be71a2d78303a",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\_endian.py",
+      "bytes": 2635,
+      "sha256": "f2752ab2425dac9bfaff5aa1a3c6cd66aa342fee0db2f2a42de568fc59d5cbea",
+      "absolute": true
+    }
+  ],
+  "runtimeClosureComplete": false,
+  "fixedPython": "C:/Python313/python.exe",
+  "caseIds": [
+    "natural-zero",
+    "natural-nonzero",
+    "deadline",
+    "nested-owned-child"
+  ],
+  "mainOrOldR9Written": false,
+  "newDependenciesInstalled": false,
+  "parentManifestSha256": "d1c5b1357d634ed83a948e52d5b1ce945692398984b5262e3563e91c0bbd97b8",
+  "r3Delta": "F1: post-accounting QPC + sticky first complete terminal + strict original natural deadline; no budget expansion"
+}

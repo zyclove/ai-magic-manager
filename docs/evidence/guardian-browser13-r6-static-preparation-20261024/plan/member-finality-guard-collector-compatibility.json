@@ -1,0 +1,31 @@
+{
+  "status": "COLLECTOR_MOCK_SCHEMA2_INDEPENDENT_GUARD_COMPATIBLE",
+  "guardAccepted": true,
+  "schemaVersion": 2,
+  "topLevelKeys": 18,
+  "chromeRootCount": 1,
+  "failureSnapshotsSeen": 1,
+  "storedFailureSnapshots": 1,
+  "pendingOccurrences": 1,
+  "resolvedImageUnknownOccurrences": 1,
+  "fatalProblems": [],
+  "identityConflicts": [],
+  "overflow": false,
+  "droppedFailureSnapshots": 0,
+  "finalitySource": "SAME_COMMAND_OWNED_JOB",
+  "finalityDeadline": 150.5,
+  "sameCommandIdentity": true,
+  "collectorExecutionProvenance": "Binding-agent report: real collector.sample/finish with FakeJob/FakeReader; not executed by this author",
+  "nativeOrSdkOrRealFixtureOrProcessOrNetworkCallsByThisAuthor": false,
+  "applicationCasesRun": false,
+  "guardPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\chrome-evidence-json-guard.fragment",
+    "bytes": 23628,
+    "sha256": "0f44fe849b8dbdacdca28c111232f8ad29511ad35d87d935df423b08d9547a3d"
+  },
+  "mockPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r6-owned-member-finality\\observer-full-schema2-mock.json",
+    "bytes": 9573,
+    "sha256": "889a557733a278a634203726dcf8e16328c2c281768b07bbf32c8590aa4407ae"
+  }
+}

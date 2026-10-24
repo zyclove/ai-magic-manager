@@ -1,0 +1,325 @@
+{
+  "status": "FULL_SCHEMA2_COLLECTOR_OUTPUT_INDEPENDENT_GUARD_ACCEPTED_PURE_ONLY",
+  "evidence": {
+    "schemaVersion": 2,
+    "status": "OWNED_CHROME_BOUNDARIES_OBSERVED",
+    "chromeRoots": [
+      {
+        "pid": 201,
+        "creationFiletime": 1001,
+        "commandCreationFiletime": 1000,
+        "imagePath": "C:\\Chrome\\chrome.exe",
+        "profile": "D:\\fixture\\attempt\\tmp\\private",
+        "debuggingPort": 55002,
+        "testServerOrigins": [
+          "http://localhost:55001"
+        ],
+        "testTargets": [
+          {
+            "scheme": "http",
+            "host": "localhost",
+            "port": 55001,
+            "path": "/static/index.html",
+            "urlSha256": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+          }
+        ],
+        "managerTarget": {
+          "scheme": "ws",
+          "host": "localhost",
+          "port": 55001
+        },
+        "headless": true,
+        "argvTestTargetLoopback": true,
+        "flutterManagerTargetSameLoopbackOrigin": true,
+        "commandLineUtf16Sha256": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+        "commandLineReadBeforeQpc": 110.0,
+        "commandLineReadAfterQpc": 110.001,
+        "sameReadHandleVerified": true,
+        "ownedMembershipVerifiedBeforeAndAfter": true,
+        "liveBeforeAndAfter": true,
+        "observedQpc": 110.02,
+        "debugListenerAddresses": [
+          {
+            "address": "127.0.0.1",
+            "port": 55002,
+            "family": "AF_INET",
+            "status": "LISTEN"
+          }
+        ],
+        "listenerReadBeforeQpc": 110.01,
+        "listenerReadAfterQpc": 110.02,
+        "listenerSameHandleIdentityVerifiedBeforeAndAfter": true,
+        "debugBindingLoopbackObserved": true
+      }
+    ],
+    "problems": [],
+    "sampleCalls": 5,
+    "pinnedBrowserPath": "c:\\chrome\\chrome.exe",
+    "temporaryRoot": "d:\\fixture\\attempt\\tmp",
+    "commandCreationFiletime": 1000,
+    "observationDeadlineQpc": 235.0,
+    "commandLineSource": "SAME_RETAINED_HANDLE_PBI0_READPROCESSMEMORY",
+    "debugBindingProof": "PID_FILTERED_LISTEN_ROWS_BRACKETED_BY_SAME_HANDLE_IDENTITY",
+    "foreignCommandLinesRead": false,
+    "processesTerminated": false,
+    "environmentRead": false,
+    "nativeReadPathQualificationSeparate": true,
+    "observedProblems": [
+      "OWN_JOB_MEMBER_IDENTITY_UNPROVED"
+    ],
+    "failureLedger": {
+      "schemaVersion": 1,
+      "maximumFailureSnapshots": 8,
+      "maximumSerializedBytes": 262144,
+      "totalFailureSnapshotsSeen": 1,
+      "storedFailureSnapshots": 1,
+      "droppedFailureSnapshots": 0,
+      "overflow": false,
+      "snapshots": [
+        {
+          "sampleOrdinal": 5,
+          "jobRootPid": 101,
+          "jobRootCreationFiletime": 1000,
+          "rawSnapshot": {
+            "startedQpc": 120.0,
+            "deadlineQpc": 235.0,
+            "before": {
+              "qpc": 120.0,
+              "complete": true,
+              "assigned": 2,
+              "listed": 2,
+              "limit": 32,
+              "error": 0,
+              "pids": [
+                101,
+                301
+              ]
+            },
+            "identities": [
+              {
+                "pid": 101,
+                "openedFromOwnJobList": true,
+                "verifiedOwnMembership": true,
+                "retainedRootHandleUsed": true,
+                "creationFiletime": 1000,
+                "exitFiletime": 0,
+                "kernel100ns": 0,
+                "user100ns": 0,
+                "signaled": false,
+                "sampleQpc": 120.001,
+                "imagePath": "C:\\Windows\\System32\\cmd.exe"
+              },
+              {
+                "pid": 301,
+                "openedFromOwnJobList": true,
+                "verifiedOwnMembership": true,
+                "retainedRootHandleUsed": false,
+                "creationFiletime": 1002,
+                "exitFiletime": 1003,
+                "kernel100ns": 0,
+                "user100ns": 0,
+                "signaled": false,
+                "sampleQpc": 120.005,
+                "imageError": 5
+              }
+            ],
+            "after": {
+              "qpc": 120.01,
+              "complete": true,
+              "assigned": 3,
+              "listed": 3,
+              "limit": 32,
+              "error": 0,
+              "pids": [
+                101,
+                301,
+                401
+              ]
+            },
+            "identityRowsLimitedByDeadline": false,
+            "scope": "This private Job only; read-only handles, no command line/environment, no PID termination",
+            "causeClassified": false
+          },
+          "afterOnlyNotQueried": [
+            401
+          ]
+        }
+      ],
+      "firstIdentityObservations": [
+        {
+          "sampleOrdinal": 1,
+          "pid": 101,
+          "creationFiletime": 1000,
+          "rawRow": {
+            "pid": 101,
+            "openedFromOwnJobList": true,
+            "verifiedOwnMembership": true,
+            "retainedRootHandleUsed": true,
+            "creationFiletime": 1000,
+            "exitFiletime": 0,
+            "kernel100ns": 0,
+            "user100ns": 0,
+            "signaled": false,
+            "sampleQpc": 105.0,
+            "imagePath": "C:\\Windows\\System32\\cmd.exe"
+          }
+        },
+        {
+          "sampleOrdinal": 1,
+          "pid": 201,
+          "creationFiletime": 1001,
+          "rawRow": {
+            "pid": 201,
+            "openedFromOwnJobList": true,
+            "verifiedOwnMembership": true,
+            "retainedRootHandleUsed": false,
+            "creationFiletime": 1001,
+            "exitFiletime": 0,
+            "kernel100ns": 0,
+            "user100ns": 0,
+            "signaled": false,
+            "sampleQpc": 110.0,
+            "imagePath": "C:\\Chrome\\chrome.exe"
+          }
+        },
+        {
+          "sampleOrdinal": 5,
+          "pid": 301,
+          "creationFiletime": 1002,
+          "rawRow": {
+            "pid": 301,
+            "openedFromOwnJobList": true,
+            "verifiedOwnMembership": true,
+            "retainedRootHandleUsed": false,
+            "creationFiletime": 1002,
+            "exitFiletime": 1003,
+            "kernel100ns": 0,
+            "user100ns": 0,
+            "signaled": false,
+            "sampleQpc": 120.005,
+            "imageError": 5
+          }
+        }
+      ],
+      "identityConflicts": [],
+      "pendingOccurrences": [
+        {
+          "snapshotIndex": 0,
+          "rowIndex": 1,
+          "sampleOrdinal": 5,
+          "pid": 301,
+          "creationFiletime": 1002
+        }
+      ],
+      "resolvedOccurrences": [
+        {
+          "snapshotIndex": 0,
+          "rowIndex": 1,
+          "sampleOrdinal": 5,
+          "pid": 301,
+          "creationFiletime": 1002,
+          "resolution": "OWNED_MEMBER_CLOSED_IMAGE_UNKNOWN"
+        }
+      ],
+      "fatalProblems": []
+    },
+    "terminalFinality": {
+      "schemaVersion": 1,
+      "source": "SAME_COMMAND_OWNED_JOB",
+      "jobRootPid": 101,
+      "jobRootCreationFiletime": 1000,
+      "originalCommandDeadlineQpc": 235.0,
+      "deadlineQpc": 150.5,
+      "naturalDrainSeconds": 0.5,
+      "A0": {
+        "pid": 101,
+        "creationFiletime": 1000,
+        "firstSignaledQpc": 150.0,
+        "sampleQpc": 150.06,
+        "signaled": true,
+        "exitCode": 0,
+        "exitFiletime": 2000,
+        "kernel100ns": 0,
+        "user100ns": 0,
+        "jobAccountingObservedQpc": 150.061,
+        "firstCompleteTerminalQpc": 150.05,
+        "activeProcesses": 0,
+        "totalProcesses": 5,
+        "terminatedProcesses": 0,
+        "terminal": true
+      },
+      "M": {
+        "startedQpc": 150.062,
+        "deadlineQpc": 150.5,
+        "before": {
+          "qpc": 150.062,
+          "complete": true,
+          "assigned": 0,
+          "listed": 0,
+          "limit": 32,
+          "error": 0,
+          "pids": []
+        },
+        "identities": [],
+        "after": {
+          "qpc": 150.063,
+          "complete": true,
+          "assigned": 0,
+          "listed": 0,
+          "limit": 32,
+          "error": 0,
+          "pids": []
+        },
+        "identityRowsLimitedByDeadline": false,
+        "scope": "This private Job only; read-only handles, no command line/environment, no PID termination",
+        "causeClassified": false
+      },
+      "A1": {
+        "pid": 101,
+        "creationFiletime": 1000,
+        "firstSignaledQpc": 150.0,
+        "sampleQpc": 150.064,
+        "signaled": true,
+        "exitCode": 0,
+        "exitFiletime": 2000,
+        "kernel100ns": 0,
+        "user100ns": 0,
+        "jobAccountingObservedQpc": 150.065,
+        "firstCompleteTerminalQpc": 150.05,
+        "activeProcesses": 0,
+        "totalProcesses": 5,
+        "terminatedProcesses": 0,
+        "terminal": true
+      },
+      "forceRequested": false,
+      "closeFallback": false
+    }
+  },
+  "inputs": {
+    "browserExecutable": {
+      "path": "C:\\Chrome\\chrome.exe"
+    }
+  },
+  "commandState": {
+    "pid": 101,
+    "creationFiletime": 1000,
+    "firstSignaledQpc": 150.0,
+    "sampleQpc": 150.049,
+    "signaled": true,
+    "exitCode": 0,
+    "exitFiletime": 2000,
+    "kernel100ns": 0,
+    "user100ns": 0,
+    "jobAccountingObservedQpc": 150.05,
+    "firstCompleteTerminalQpc": 150.05,
+    "activeProcesses": 0,
+    "totalProcesses": 5,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "start": 100.0,
+  "end": 235.0,
+  "attempt": "D:\\fixture\\attempt",
+  "nativeReaderConstructed": false,
+  "realJobProcessOrNetworkQueried": false
+}

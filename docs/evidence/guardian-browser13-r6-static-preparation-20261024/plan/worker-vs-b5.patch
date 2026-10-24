@@ -1,0 +1,336 @@
+--- D:\codes\mobile\ai-manager\.cache\guardian-browser13-20261024-r5-typed-finder-current3cf\worker.py
++++ D:\codes\mobile\ai-manager\.cache\guardian-browser13-20261024-r6-owned-member-finality\worker.py
+@@ -27,8 +27,8 @@
+ SOURCE = FROZEN / 'src'
+ MODULE = SOURCE / 'apps/guardian'
+ INPUT = CANDIDATE / 'inputs.json'
+-INPUT_BYTES = 20346
+-INPUT_SHA256 = '3e769ab0ecded31dc6b0927661591df69fb1e6199293145977e67ded236ecd92'
++INPUT_BYTES = 20342
++INPUT_SHA256 = '1269013619e239151e3048b7fc1d3caaa4f00cfd1036e383cc6960ccbfb7ee73'
+ PWSH = Path(r'C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.exe')
+ PROCESS_INVENTORY = CANDIDATE / 'process-inventory.ps1'
+ PROCESS_INVENTORY_SHA256 = 'f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046'
+@@ -67,7 +67,7 @@
+ 
+ def save(name, value):
+     with (ATTEMPT / name).open('x', encoding='utf-8', newline='\n') as stream:
+-        json.dump(value, stream, ensure_ascii=False, indent=2)
++        json.dump(value, stream, ensure_ascii=True, indent=2)
+         stream.write('\n')
+         stream.flush()
+         os.fsync(stream.fileno())
+@@ -535,7 +535,7 @@
+         save(label + '-pins.json', result)
+ 
+ 
+-def chrome_evidence_valid(value, inputs, command_state, start, end, attempt):
++def _chrome_roots_schema1_valid(value, inputs, command_state, start, end, attempt):
+     """Derive Chrome boundaries from pinned JSON; no process or network API."""
+     import ipaddress
+     import math
+@@ -678,8 +678,255 @@
+         return False
+ 
+ 
++def chrome_evidence_valid(value, inputs, command_state, start, end, attempt):
++    """Schema2: derive lifecycle closure while preserving unknown images as unknown."""
++    import json
++    import math
++    import ntpath
++    import re
++
++    def exact(item, keys):
++        return type(item) is dict and set(item) == set(keys.split())
++
++    def uint(item, bits=64, positive=False):
++        return type(item) is int and (0 < item if positive else 0 <= item) and item < (1 << bits)
++
++    def qpc(item):
++        return type(item) is float and math.isfinite(item)
++
++    def path(item):
++        if not (type(item) is str and 0 < len(item) <= 32766
++                and re.match(r'^[A-Za-z]:[\\/]',item) and not any(ord(c)<32 for c in item)
++                and '..' not in item.replace('/','\\').split('\\')):
++            return False
++        return ':' not in ntpath.splitdrive(item)[1]
++
++    def pid_list(item):
++        if not exact(item,'qpc complete assigned listed limit error pids'):
++            return False
++        pids=item['pids']
++        return (qpc(item['qpc']) and start <= item['qpc'] < d
++            and item['complete'] is True and type(item['error']) is int and item['error']==0
++            and type(item['limit']) is int and item['limit']==32
++            and type(pids) is list and len(pids)<=32
++            and all(uint(pid,32,True) for pid in pids) and len(set(pids))==len(pids)
++            and type(item['assigned']) is int and type(item['listed']) is int
++            and item['assigned']==item['listed']==len(pids))
++
++    def member(row):
++        if type(row) is not dict or type(row.get('signaled')) is not bool:
++            return False
++        keys=set('pid openedFromOwnJobList verifiedOwnMembership retainedRootHandleUsed creationFiletime exitFiletime kernel100ns user100ns sampleQpc signaled'.split())
++        keys.add('imagePath' if 'imagePath' in row else 'imageError')
++        if row['signaled']:
++            keys.add('exitCode')
++        if not (set(row)==keys and uint(row['pid'],32,True)
++                and row['openedFromOwnJobList'] is True and row['verifiedOwnMembership'] is True
++                and type(row['retainedRootHandleUsed']) is bool
++                and row['retainedRootHandleUsed']==(row['pid']==command_state['pid'])
++                and uint(row['creationFiletime'],64,True)
++                and row['creationFiletime']>=command_state['creationFiletime']
++                and (row['pid']!=command_state['pid'] or row['creationFiletime']==command_state['creationFiletime'])
++                and all(uint(row[key]) for key in ('exitFiletime','kernel100ns','user100ns'))
++                and (row['exitFiletime']==0 or row['exitFiletime']>=row['creationFiletime'])
++                and qpc(row['sampleQpc']) and start<=row['sampleQpc']<d):
++            return False
++        if row['signaled'] and not (row['exitFiletime']>0 and uint(row['exitCode'],32)):
++            return False
++        if 'imagePath' in row:
++            return 'known' if path(row['imagePath']) else False
++        return 'pending' if uint(row['imageError'],32) else False
++
++    def snapshot(raw, empty=False):
++        if not (exact(raw,'startedQpc deadlineQpc before identities after identityRowsLimitedByDeadline scope causeClassified')
++                and raw['scope']=='This private Job only; read-only handles, no command line/environment, no PID termination'
++                and raw['causeClassified'] is False and raw['identityRowsLimitedByDeadline'] is False
++                and qpc(raw['startedQpc']) and qpc(raw['deadlineQpc'])
++                and raw['deadlineQpc'] in (end,d)
++                and pid_list(raw['before']) and pid_list(raw['after'])
++                and raw['startedQpc']==raw['before']['qpc']<=raw['after']['qpc']<min(d,raw['deadlineQpc'])
++                and type(raw['identities']) is list):
++            return False
++        if empty:
++            return raw['deadlineQpc']==d and raw['before']['pids']==raw['after']['pids']==raw['identities']==[]
++        rows=raw['identities']
++        if not (all(type(row) is dict and uint(row.get('pid'),32,True) for row in rows)
++                and sorted(row['pid'] for row in rows)==sorted(raw['before']['pids'])):
++            return False
++        return all(member(row) and raw['before']['qpc']<=row['sampleQpc']<=raw['after']['qpc'] for row in rows)
++
++    def natural(state):
++        return (exact(state,'pid creationFiletime firstSignaledQpc sampleQpc signaled exitCode exitFiletime kernel100ns user100ns jobAccountingObservedQpc firstCompleteTerminalQpc activeProcesses totalProcesses terminatedProcesses terminal')
++            and uint(state['pid'],32,True) and uint(state['creationFiletime'],64,True)
++            and state['pid']==command_state['pid'] and state['creationFiletime']==command_state['creationFiletime']
++            and state['terminal'] is True and state['signaled'] is True
++            and type(state['exitCode']) is int and state['exitCode']==0
++            and type(state['activeProcesses']) is int and state['activeProcesses']==0
++            and uint(state['totalProcesses'],32,True) and uint(state['terminatedProcesses'],32)
++            and state['terminatedProcesses']<=state['totalProcesses']
++            and uint(state['exitFiletime'],64,True) and state['exitFiletime']>=state['creationFiletime']
++            and uint(state['kernel100ns']) and uint(state['user100ns'])
++            and all(qpc(state[key]) for key in ('firstSignaledQpc','sampleQpc','jobAccountingObservedQpc','firstCompleteTerminalQpc'))
++            and start<=state['firstSignaledQpc']<=state['sampleQpc']<=state['jobAccountingObservedQpc']<d
++            and state['firstSignaledQpc']<=state['firstCompleteTerminalQpc']<=state['jobAccountingObservedQpc'])
++
++    try:
++        top='schemaVersion status chromeRoots problems sampleCalls pinnedBrowserPath temporaryRoot commandCreationFiletime observationDeadlineQpc commandLineSource debugBindingProof foreignCommandLinesRead processesTerminated environmentRead nativeReadPathQualificationSeparate observedProblems failureLedger terminalFinality'
++        if not (exact(value,top) and type(value['schemaVersion']) is int and value['schemaVersion']==2
++                and value['status']=='OWNED_CHROME_BOUNDARIES_OBSERVED' and value['problems']==[]
++                and type(value['problems']) is list and type(value['observedProblems']) is list
++                and uint(value['sampleCalls'],32,True) and value['sampleCalls']<=100000
++                and qpc(start) and qpc(end) and start<end and type(command_state) is dict
++                and qpc(command_state.get('firstSignaledQpc'))):
++            return False
++        d=min(end,command_state['firstSignaledQpc']+0.5)
++        if not natural(command_state):
++            return False
++        final=value['terminalFinality']
++        if not (exact(final,'schemaVersion source jobRootPid jobRootCreationFiletime originalCommandDeadlineQpc deadlineQpc naturalDrainSeconds A0 M A1 forceRequested closeFallback')
++                and type(final['schemaVersion']) is int and final['schemaVersion']==1
++                and final['source']=='SAME_COMMAND_OWNED_JOB'
++                and type(final['jobRootPid']) is int and final['jobRootPid']==command_state['pid']
++                and type(final['jobRootCreationFiletime']) is int and final['jobRootCreationFiletime']==command_state['creationFiletime']
++                and qpc(final['originalCommandDeadlineQpc']) and final['originalCommandDeadlineQpc']==end
++                and qpc(final['deadlineQpc']) and final['deadlineQpc']==d
++                and type(final['naturalDrainSeconds']) is float and final['naturalDrainSeconds']==0.5
++                and final['forceRequested'] is False and final['closeFallback'] is False
++                and natural(final['A0']) and natural(final['A1']) and snapshot(final['M'],True)):
++            return False
++        a0,a1,m=final['A0'],final['A1'],final['M']
++        stable=set(command_state)-{'sampleQpc','jobAccountingObservedQpc'}
++        if not (all(a0[key]==command_state[key]==a1[key] for key in stable)
++                and command_state['jobAccountingObservedQpc']<=a0['sampleQpc']
++                and a0['jobAccountingObservedQpc']<=m['before']['qpc']<=m['after']['qpc']<=a1['sampleQpc']):
++            return False
++        ledger=value['failureLedger']
++        ledger_keys='schemaVersion maximumFailureSnapshots maximumSerializedBytes totalFailureSnapshotsSeen storedFailureSnapshots droppedFailureSnapshots overflow snapshots firstIdentityObservations identityConflicts pendingOccurrences resolvedOccurrences fatalProblems'
++        if not (exact(ledger,ledger_keys) and type(ledger['schemaVersion']) is int and ledger['schemaVersion']==1
++                and type(ledger['maximumFailureSnapshots']) is int and ledger['maximumFailureSnapshots']==8
++                and type(ledger['maximumSerializedBytes']) is int and ledger['maximumSerializedBytes']==262144
++                and uint(ledger['totalFailureSnapshotsSeen'],32) and uint(ledger['storedFailureSnapshots'],32)
++                and type(ledger['droppedFailureSnapshots']) is int and ledger['droppedFailureSnapshots']==0
++                and ledger['overflow'] is False and ledger['identityConflicts']==[] and type(ledger['identityConflicts']) is list
++                and ledger['fatalProblems']==[] and type(ledger['fatalProblems']) is list
++                and all(type(ledger[key]) is list for key in ('snapshots','firstIdentityObservations','pendingOccurrences','resolvedOccurrences'))
++                and ledger['totalFailureSnapshotsSeen']==ledger['storedFailureSnapshots']==len(ledger['snapshots'])<=8
++                and len((json.dumps(ledger,ensure_ascii=True,indent=2,allow_nan=False)+'\n').encode('utf-8'))<=262144):
++            return False
++        first={}
++        last_ordinal=0
++        for observation in ledger['firstIdentityObservations']:
++            if not (exact(observation,'sampleOrdinal pid creationFiletime rawRow')
++                    and uint(observation['sampleOrdinal'],32,True)
++                    and last_ordinal<=observation['sampleOrdinal']<=value['sampleCalls']
++                    and uint(observation['pid'],32,True) and observation['pid'] not in first
++                    and member(observation['rawRow'])
++                    and observation['pid']==observation['rawRow']['pid']
++                    and observation['rawRow']['sampleQpc']<=a0['sampleQpc']
++                    and type(observation['creationFiletime']) is int
++                    and observation['creationFiletime']==observation['rawRow']['creationFiletime']):
++                return False
++            first[observation['pid']]=observation
++            last_ordinal=observation['sampleOrdinal']
++        pending=[]
++        raw_pending=[]
++        last_ordinal=0
++        for index,frame in enumerate(ledger['snapshots']):
++            if not (exact(frame,'sampleOrdinal jobRootPid jobRootCreationFiletime rawSnapshot afterOnlyNotQueried')
++                    and uint(frame['sampleOrdinal'],32,True) and last_ordinal<frame['sampleOrdinal']<=value['sampleCalls']
++                    and type(frame['jobRootPid']) is int and frame['jobRootPid']==command_state['pid']
++                    and type(frame['jobRootCreationFiletime']) is int and frame['jobRootCreationFiletime']==command_state['creationFiletime']
++                    and snapshot(frame['rawSnapshot'])):
++                return False
++            raw=frame['rawSnapshot']
++            if raw['after']['qpc']>a0['sampleQpc']:
++                return False
++            if any(observation['sampleOrdinal']==frame['sampleOrdinal']
++                   and observation['rawRow'] not in raw['identities'] for observation in first.values()):
++                return False
++            after_only=sorted(set(raw['after']['pids'])-set(raw['before']['pids']))
++            if not (type(frame['afterOnlyNotQueried']) is list and all(uint(pid,32,True) for pid in frame['afterOnlyNotQueried'])
++                    and frame['afterOnlyNotQueried']==after_only):
++                return False
++            count_before=len(pending)
++            for row_index,row in enumerate(raw['identities']):
++                observation=first.get(row['pid'])
++                if not (observation is not None and observation['creationFiletime']==row['creationFiletime']
++                        and observation['sampleOrdinal']<=frame['sampleOrdinal']
++                        and observation['rawRow']['sampleQpc']<=row['sampleQpc']):
++                    return False
++                if member(row)=='pending':
++                    pending.append(dict(snapshotIndex=index,rowIndex=row_index,sampleOrdinal=frame['sampleOrdinal'],
++                        pid=row['pid'],creationFiletime=row['creationFiletime']))
++                    raw_pending.append((frame['sampleOrdinal'],row))
++            if len(pending)==count_before:
++                return False
++            last_ordinal=frame['sampleOrdinal']
++        for observation in first.values():
++            if member(observation['rawRow'])=='pending' and not any(
++                    ordinal==observation['sampleOrdinal'] and row==observation['rawRow'] for ordinal,row in raw_pending):
++                return False
++        if ledger['pendingOccurrences']!=pending:
++            return False
++        for entry in ledger['pendingOccurrences']:
++            if not exact(entry,'snapshotIndex rowIndex sampleOrdinal pid creationFiletime') or not all(type(item) is int for item in entry.values()):
++                return False
++        resolved=[dict(entry,resolution='OWNED_MEMBER_CLOSED_IMAGE_UNKNOWN') for entry in pending]
++        if ledger['resolvedOccurrences']!=resolved:
++            return False
++        for entry in ledger['resolvedOccurrences']:
++            if not (exact(entry,'snapshotIndex rowIndex sampleOrdinal pid creationFiletime resolution')
++                    and all(type(entry[key]) is int for key in ('snapshotIndex','rowIndex','sampleOrdinal','pid','creationFiletime'))
++                    and type(entry['resolution']) is str):
++                return False
++        if value['observedProblems'] != (['OWN_JOB_MEMBER_IDENTITY_UNPROVED'] if pending else []):
++            return False
++        for root in value['chromeRoots']:
++            observation=first.get(root['pid'])
++            if (observation is None or observation['creationFiletime']!=root['creationFiletime']
++                    or not qpc(root['observedQpc']) or root['observedQpc']>a0['sampleQpc']):
++                return False
++        old={key:item for key,item in value.items() if key not in ('observedProblems','failureLedger','terminalFinality')}
++        old['schemaVersion']=1
++        return _chrome_roots_schema1_valid(old,inputs,command_state,start,end,attempt)
++    except (KeyError,TypeError,ValueError,AttributeError,OverflowError,RecursionError):
++        return False
++
++
+ def finite(value):
+     return type(value) is float and math.isfinite(value)
++
++
++def capture_command_finality(job, initial):
++    """One transaction on this held command Job, within its original drain."""
++    if not (natural_command(initial) and job.force_requested is False
++            and receipt.get('commandCloseFallback') is False):
++        return None
++    finality_end = min(COMMAND_END, initial['firstSignaledQpc'] + 0.5)
++    proof = {'schemaVersion': 1, 'source': 'SAME_COMMAND_OWNED_JOB',
++             'jobRootPid': job.pid, 'jobRootCreationFiletime': job.identity,
++             'originalCommandDeadlineQpc': COMMAND_END, 'deadlineQpc': finality_end,
++             'naturalDrainSeconds': 0.5, 'A0': None, 'M': None, 'A1': None,
++             'forceRequested': job.force_requested,
++             'closeFallback': receipt.get('commandCloseFallback')}
++    try:
++        require(monotonic() < finality_end, 'Original command finality window exhausted')
++        proof['A0'] = job.sample(0)
++        require(natural_command(proof['A0']) and all(
++            same_json(proof['A0'][key], initial[key]) for key in (
++                'pid', 'creationFiletime', 'firstSignaledQpc', 'firstCompleteTerminalQpc',
++                'exitFiletime', 'totalProcesses', 'terminatedProcesses')),
++            'Command retained terminal identity changed before empty inventory')
++        require(monotonic() < finality_end, 'Original command finality window exhausted before inventory')
++        proof['M'] = job.member_identities(float(finality_end))
++        require(monotonic() < finality_end, 'Original command finality window exhausted after inventory')
++        proof['A1'] = job.sample(0)
++    except Exception as finality_error:
++        receipt['commandFinalityCaptureError'] = type(finality_error).__name__
++    proof['forceRequested'] = job.force_requested
++    proof['closeFallback'] = receipt.get('commandCloseFallback')
++    return proof
++
+ 
+ 
+ def natural_command(state):
+@@ -706,6 +953,7 @@
+         if state['signaled'] and first_signaled is None:
+             first_signaled = dict(state)
+         if state['terminal']:
++            receipt['commandFinalityCapture'] = capture_command_finality(job, state)
+             break
+         if state['signaled']:
+             if drain_end is None:
+@@ -725,6 +973,7 @@
+             if state['signaled'] and first_signaled is None:
+                 first_signaled = dict(state)
+             if state['terminal']:
++                receipt['commandFinalityCapture'] = capture_command_finality(job, state)
+                 break
+             job.terminate_owned()
+             break
+@@ -875,7 +1124,22 @@
+ finally:
+     if chrome_observer is not None:
+         try:
+-            chrome_evidence = chrome_observer.finish()
++            chrome_evidence = chrome_observer.finish(receipt.get('commandFinalityCapture'))
++            save('member-failure-ledger.json', chrome_evidence['failureLedger'])
++            save('command-job-finality.json', chrome_evidence['terminalFinality'])
++            ledger_pin = pin(ATTEMPT / 'member-failure-ledger.json')
++            finality_pin = pin(ATTEMPT / 'command-job-finality.json')
++            require(ledger_pin['bytes'] <= 262144 and finality_pin['bytes'] <= 65536,
++                    'Bounded raw member ledger and finality artifacts required')
++            raw_ledger = load_pin(ledger_pin)
++            raw_finality = load_pin(finality_pin)
++            require(same_json(raw_ledger, chrome_evidence['failureLedger'])
++                    and same_json(raw_finality, chrome_evidence['terminalFinality'])
++                    and same_json(raw_finality, receipt.get('commandFinalityCapture')),
++                    'Raw member artifacts must exactly match embedded evidence and command capture')
++            receipt['ownedMemberFailureLedgerPin'] = ledger_pin
++            receipt['commandJobFinalityPin'] = finality_pin
++
+             save('owned-chrome-evidence.json', chrome_evidence)
+             receipt['ownedChromeEvidencePin'] = pin(ATTEMPT / 'owned-chrome-evidence.json')
+             receipt['ownedChromeEvidence'] = chrome_evidence
+@@ -893,7 +1157,7 @@
+                     and len(chrome_diagnostics['records']) <= 8
+                     and chrome_diagnostics.get('acceptanceRulesChanged') is False,
+                     'Bounded diagnostic-only Chrome member record required')
+-            diagnostic_bytes = (json.dumps(chrome_diagnostics, ensure_ascii=False, indent=2) + '\n').encode('utf-8')
++            diagnostic_bytes = (json.dumps(chrome_diagnostics, ensure_ascii=True, indent=2) + '\n').encode('utf-8')
+             require(len(diagnostic_bytes) <= 32768, 'Chrome member diagnostic output exceeds 32KiB')
+             save('owned-chrome-member-diagnostics.json', chrome_diagnostics)
+             receipt['ownedChromeMemberDiagnosticsPin'] = pin(ATTEMPT / 'owned-chrome-member-diagnostics.json')
