@@ -1,0 +1,52 @@
+--- vm35/root-launch
++++ browser13/root-launch
+@@ -1,10 +1,10 @@
+ $ErrorActionPreference='Stop'
+ $taskRepository='D:\codes\mobile\ai-manager'
+-$analysisDirectory=Join-Path $taskRepository '.cache\guardian-vm35-20261024-r1'
++$analysisDirectory=Join-Path $taskRepository '.cache\guardian-browser13-20261024-r3-html-diagnostic'
+ $proposalFile=Join-Path $analysisDirectory 'proposal.json'
+ $grantFile=Join-Path $analysisDirectory 'root-sdk-grant.json'
+ $rootAttempt=Join-Path $analysisDirectory 'root-attempt'
+-$expectedProposalSha='8d8001ea23ddfc7295e8cb302d0eaa951280bc62ab4698036f4897419d2074d0'
++$expectedProposalSha='1473afaec08c0506a1c634b3f40808c6dbe71fde33ae096bf0f8f54e1e38bfbd'
+ $expectedCommit='006ee45850c9b6b0f90570d9478bced3beb0e0fe'
+ if($expectedProposalSha -notmatch '^[a-f0-9]{64}$'){throw 'Static launcher is disabled pending exact reviewed proposal'}
+ if($PSVersionTable.PSVersion.ToString() -ne '7.6.5'){throw 'Fixed reviewed PowerShell runtime required'}
+@@ -19,12 +19,12 @@
+ $launcherSha=(Get-FileHash -LiteralPath $PSCommandPath -Algorithm SHA256).Hash.ToLowerInvariant()
+ if($grant.status -ne 'ROOT_APPROVED_SINGLE_FIXED_TEST' -or $grant.proposalSha256 -ne $expectedProposalSha -or
+    $grant.launcherSha256 -ne $launcherSha -or $grant.sourceCommit -ne $expectedCommit -or $grant.sdkCallsAllowed -ne 1){throw 'Fixed Root analysis grant mismatch'}
+-if($proposal.schemaVersion -ne 1 -or $proposal.phase -ne 'guardian-vm35' -or
++if($proposal.schemaVersion -ne 1 -or $proposal.phase -ne 'guardian-browser13' -or
+    $proposal.sourceCommit -ne $expectedCommit -or $proposal.pythonExecutable -ne 'C:/Python313/python.exe'){throw 'Fixed analysis scope mismatch'}
+ if($proposal.budgets.outer -ne 180 -or $proposal.budgets.working -ne 174 -or $proposal.budgets.worker -ne 165 -or
+    $proposal.budgets.command -ne 135 -or $proposal.budgets.commandCleanup -ne 140 -or $proposal.budgets.postflightReserve -ne 25){throw 'Budget drift'}
+ $candidateNames=@($proposal.candidateFiles|ForEach-Object{[string]$_.path}|Sort-Object)
+-if(($candidateNames -join '|') -ne 'analysis-host.py|owned_job.py|process-inventory.ps1|reporter_contract.py|worker.py'){throw 'Unexpected analysis candidate set'}
++if(($candidateNames -join '|') -ne 'analysis-host.py|owned_chrome_evidence.py|owned_job.py|process-inventory.ps1|reporter_contract.py|worker.py'){throw 'Unexpected analysis candidate set'}
+ function Test-AnalysisPins {
+     foreach($analysisPin in @($proposal.candidateFiles)+@($proposal.runtimePins)){
+         $analysisPinPath=if([IO.Path]::IsPathRooted([string]$analysisPin.path)){[string]$analysisPin.path}else{Join-Path $analysisDirectory ([string]$analysisPin.path)}
+@@ -49,10 +49,10 @@
+ $rootTemp=Join-Path $rootAttempt 'tmp'
+ New-Item -ItemType Directory -Path $rootTemp|Out-Null
+ $rootReceipt=[ordered]@{
+-    status='ROOT_FIXED_VM35_STARTED';atUtc=[DateTime]::UtcNow.ToString('o');sourceCommit=$expectedCommit
++    status='ROOT_FIXED_BROWSER13_STARTED';atUtc=[DateTime]::UtcNow.ToString('o');sourceCommit=$expectedCommit
+     proposalSha256=$expectedProposalSha;launcherSha256=$launcherSha;sdkCount=$analysisSdk.Count;unknownCount=$analysisUnknown.Count
+     availableRamBytes=[long]$analysisMemory;disks=$analysisDisks;maximumHostSeconds=180;reusedBudget=$false
+-    grant='guardian-vm35-current-head006ee-single-sdk-call';applicationTestsRequested=$true
++    grant='guardian-browser13-current-head006ee-single-sdk-call';applicationTestsRequested=$true
+ }
+ $rootReceipt|ConvertTo-Json -Depth 8|Set-Content -LiteralPath (Join-Path $rootAttempt 'preflight.json') -Encoding utf8
+ $startInfo=[Diagnostics.ProcessStartInfo]::new()
+@@ -108,7 +108,7 @@
+ try {Test-AnalysisPins;$pinsAfter=$true} catch {$failure+='; post pins: '+$_.Exception.Message}
+ $timely=$hostSignaled -and $null -ne $firstSignaled -and $firstSignaled -lt 180
+ $accepted=$null -eq $failure -and -not $rootForced -and $timely -and $hostCode -eq 0 -and $pinsAfter
+-$rootReceipt.status=if($accepted){'ROOT_HOST_TERMINAL_PENDING_INDEPENDENT_VM35_POST'}else{'ROOT_HOST_VM35_NOT_ACCEPTED'}
++$rootReceipt.status=if($accepted){'ROOT_HOST_TERMINAL_PENDING_INDEPENDENT_BROWSER13_POST'}else{'ROOT_HOST_BROWSER13_NOT_ACCEPTED'}
+ $rootReceipt.hostPid=$hostId
+ $rootReceipt.sameHandleCreationFiletime=$hostCreation
+ $rootReceipt.sameHandleExitFiletime=$hostExit

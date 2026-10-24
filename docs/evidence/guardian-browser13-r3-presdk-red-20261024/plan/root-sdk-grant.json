@@ -1,0 +1,96 @@
+{
+  "status": "ROOT_APPROVED_SINGLE_FIXED_TEST",
+  "atUtc": "2026-10-24T11:27:35.690111+00:00",
+  "proposalSha256": "1473afaec08c0506a1c634b3f40808c6dbe71fde33ae096bf0f8f54e1e38bfbd",
+  "launcherSha256": "d1cbfa4167fdc8217fc699cc5a8dbbff6c348486c34add5a2dd136de8fcb0874",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "sdkCallsAllowed": 1,
+  "phase": "guardian-browser13",
+  "selectedRoots": 1,
+  "expectedVisibleCases": 13,
+  "wholeRegressionRoots": 183,
+  "otherRootsNotExecutedByThisBatch": 182,
+  "testsAllowed": true,
+  "downloadsAllowed": false,
+  "pubAllowed": false,
+  "budgets": {
+    "outer": 180,
+    "working": 174,
+    "worker": 165,
+    "command": 135,
+    "commandCleanup": 140,
+    "postflightReserve": 25
+  },
+  "authority": "Persistent direct human offline/cache validation authorization after resource/window recovery. Six authorized chats notified11:30-11:33UTC; befcc9 SDK0/unknown0/RAM6056579072. Final independent2f5be8 and Root c13354/2a5c75/570061/472543 readback. Fixed launcher and worker freshly recheck all resource/source/runtime gates.",
+  "evidence": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-static-independent-20261024-r3\\review.md",
+      "bytes": 7729,
+      "sha256": "3c992ea4485a0352b1eaeba701fa3416559d67df2ff0e8fa5e4deedf6797e405"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-static-independent-20261024-r3\\pins.json",
+      "bytes": 21578,
+      "sha256": "ced34f66d28a66ee681645430f3106ed01b39c82a3376654ff199a5384579e27"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\sealed-preparation-pins.json",
+      "bytes": 8484,
+      "sha256": "a4e845bd96ade749ca7e8768aeea236bf01aab572cfdd7423daaeab82b694a6c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\binding-pins.json",
+      "bytes": 9864,
+      "sha256": "9a6bf5238c6005b762d926cb3951b09d8bde695126c920766bf15bc81bb30a92"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\r3-html-diagnostic-audit.json",
+      "bytes": 5558,
+      "sha256": "7a90d2458b5d42e704dc72de22dbf54a51b88c52fe19c910968d0042cbd6011c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-diagnostic-pins.json",
+      "bytes": 2331,
+      "sha256": "68796bdc2715e02009863d6b0660ad7ebc49517a1d28777ec2975652e7e60c52"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-fixture\\result.json",
+      "bytes": 2321,
+      "sha256": "293eef8510874f37a6679dd932d4abef5ec437c71334ee8234828933507b927d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-fixture-host\\result.json",
+      "bytes": 314,
+      "sha256": "5982a79092aa4138f47350f676b6e8f9421659619494d3949bfbc7bfffd6ab2d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\root-final-resource-and-window.json",
+      "bytes": 58535,
+      "sha256": "8f909f840036cd99da4814098a4a68c2408ac5143904eeedd217e9b931d50fd9"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\guardian-browser13-loading-diagnosis-20261024\\manifest.json",
+      "bytes": 3331,
+      "sha256": "87a561b4cb58744e1938bedaa2e87d63904b9ad1d7d4d730d6d18db96ee93c91"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\pins.json",
+      "bytes": 5287,
+      "sha256": "60de07c26a0e570abc857f12d80fc1250c5436cf2ef7b143c3bca8ac19b6b242"
+    }
+  ],
+  "plannedWindowStartUtc": "2026-10-24T11:30:00.0000000Z",
+  "plannedWindowEndUtc": "2026-10-24T11:33:00.0000000Z",
+  "nativeF8AndProviderUnchangedNoOriginalFourFixtureRerun": true,
+  "newNarrowReadPathFixtureNotChromeQualification": true,
+  "actualChromePrivateTargetAndListenerEvidenceRequired": true,
+  "requiredNullableRunnerVersionPreserved": true,
+  "htmlMatchesExistingProductTarget": true,
+  "canvasKitCompatibilityAccepted": false,
+  "diagnosticsOnlyNeverAcceptance": true,
+  "rootActualTerminalPurePostFreshReleaseStillRequired": true,
+  "noForeignProcessCommandLineOrEnvironmentReadsAllowed": true,
+  "noForeignProcessTerminationAllowed": true,
+  "pushed": false,
+  "deployed": false
+}

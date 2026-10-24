@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "createdAtUtc": "2026-10-24T12:01:08.172906+00:00",
+  "status": "TRACKED_TEST_DELTA_STATIC_NO_NEW_BLOCKER_EXECUTION_UNRUN",
+  "helper": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-exact-commit-20261024-r2.py",
+    "bytes": 9402,
+    "sha256": "f028a6b7ca53e8317730fa73b5949d312fbf25b4d53802925ad7e65765d08071"
+  },
+  "baseHelper": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-exact-commit-20261024-r1.py",
+    "bytes": 8539,
+    "sha256": "ca90c035e120a9ecbf3cc19366b61665025efef758bd3b000febe2368d079fa4"
+  },
+  "finalPatch": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-exact-commit-20261024-r2-final-vs-r1.patch",
+    "bytes": 3383,
+    "sha256": "6408fab011a5fcde5d4c6027ad11185dfbffef7e425ddc46a0e316d33f029b57"
+  },
+  "originalDraftPatchPreserved": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-exact-commit-20261024-r2-vs-r1.patch",
+    "bytes": 2681,
+    "sha256": "a4a002f13c8b829ab44804a351ce8d38646979c6d2d0fc60953830de0f2706ec"
+  },
+  "originalDraftHelperSha256": "f9c203fdaf218c1664e7489818b4c3d390952dd5566e8e79b968704b82a9dc78",
+  "resolvedFinding": "docs-only containment now exact fixed-test branch; other rows unchanged",
+  "entireFinalDeltaReversesByteExactToCa90": true,
+  "fixedTrackedTestPath": "apps/guardian/test/editor_submit_guard_test.dart",
+  "trackedParentRequiresMode100644AndExactBeforeOid": true,
+  "otherDocsMustBeAbsentAtParent": true,
+  "coreCasPrivateIndexLockIntentUnchanged": true,
+  "stagePlanExistsAtSeal": false,
+  "helperExecuted": false,
+  "gitCalls": 0,
+  "sdkCalls": 0,
+  "fixtureImportCompileCalls": 0,
+  "verification": "UNRUN",
+  "newGrantCreated": false,
+  "readToolExits": {
+    "42e379": 0,
+    "2f1678": 0,
+    "295281": 0,
+    "54cdb2": 0
+  },
+  "review": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-helper-static-20261024-r3\\review.md",
+    "bytes": 4139,
+    "sha256": "cb1ce7c97ecf8b609320060d8bbc4df893480930242609b3f3efe88fcb47955e"
+  }
+}

@@ -1,0 +1,172 @@
+{
+  "status": "ACTUAL_BROWSER13_R4_RED_NOT_ACCEPTED",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "sdkCalls": 1,
+  "applicationTestsRun": true,
+  "expectedVisibleCases": 13,
+  "rawVisibleTestDoneCounts": {
+    "success": 10,
+    "error": 3
+  },
+  "rawVisibleSkipped": 0,
+  "rawDoneSuccess": false,
+  "errorCases": [
+    {
+      "testId": 7,
+      "name": "ScheduleEditor network outcome preserves the original retry",
+      "rawDoneLine": 19
+    },
+    {
+      "testId": 8,
+      "name": "ScheduleEditor server outcome preserves the original retry",
+      "rawDoneLine": 23
+    },
+    {
+      "testId": 9,
+      "name": "ScheduleEditor unexpected outcome preserves the original retry",
+      "rawDoneLine": 27
+    }
+  ],
+  "tooltipIconButtonTypeErrorPrints": [
+    {
+      "testId": 7,
+      "rawPrintLine": 17
+    },
+    {
+      "testId": 8,
+      "rawPrintLine": 21
+    },
+    {
+      "testId": 9,
+      "rawPrintLine": 25
+    }
+  ],
+  "testAccepted": false,
+  "fullRegressionAccepted": false,
+  "commandTimeline": {
+    "resumeBeforeQpc": 120444.2817762,
+    "firstSignaledQpc": 120474.7090861,
+    "firstSignaledExitCode": 1,
+    "activeJobMembersAtFirstSignal": 5,
+    "naturalDrainLimitSeconds": 0.5,
+    "naturalDrainDeadlineQpc": 120475.2090861,
+    "firstJobZeroQpc": 120475.2093493,
+    "observedDrainSeconds": 0.5002631999959704,
+    "sdkJobForcedTermination": true,
+    "terminationCallSucceeded": true,
+    "commandDeadlineReached": false,
+    "originalCommandDeadlineQpc": 120548.4088874,
+    "commandNaturalCompleteBeforeDeadline": false,
+    "causeInferredFromFixedWorkerControlFlow": "After the root command exited1, a later sample remained nonterminal at the original0.5s drain limit; monitor_command invoked exact-own-Job TerminateJobObject(124). The cleanup loop then observed Job0.",
+    "exactTerminationCallQpcRecorded": false,
+    "identitiesTerminatedByThatCallRecorded": false,
+    "note": "Root host was not forced. That fact does not negate the worker SDK-Job force flag."
+  },
+  "rootHost": {
+    "actualExitCode": 1,
+    "rootForcedOwnHost": false,
+    "elapsedSeconds": 82.432667
+  },
+  "memberDiagnostics": {
+    "sampleCalls": 529,
+    "failedSamples": 3,
+    "records": [
+      {
+        "sampleOrdinal": 478,
+        "pid": 113868,
+        "creationFiletime": 134373159620488644,
+        "exitFiletime": 134373159621514381,
+        "firstRowQpc": 120474.3492931,
+        "repeatedRowQpc": 120474.3505815,
+        "sameVerifiedOwnIdentityRepeated": true,
+        "waitSignaled": false,
+        "waitTimeoutInferredFromF8BranchAndNoWaitError": true,
+        "imageError": 5,
+        "presentInAllFourOwnJobLists": true,
+        "fullySignaledExitProven": false
+      },
+      {
+        "sampleOrdinal": 479,
+        "pid": 151768,
+        "creationFiletime": 134373159484983618,
+        "exitFiletime": 134373159622051987,
+        "firstRowQpc": 120474.4073528,
+        "repeatedRowQpc": 120474.4084078,
+        "sameVerifiedOwnIdentityRepeated": true,
+        "waitSignaled": false,
+        "waitTimeoutInferredFromF8BranchAndNoWaitError": true,
+        "imageError": 5,
+        "presentInAllFourOwnJobLists": true,
+        "fullySignaledExitProven": false
+      },
+      {
+        "sampleOrdinal": 480,
+        "pid": 153304,
+        "creationFiletime": 134373159494997939,
+        "exitFiletime": 134373159622196031,
+        "firstRowQpc": 120474.470039,
+        "repeatedRowQpc": 120474.4712705,
+        "sameVerifiedOwnIdentityRepeated": true,
+        "waitSignaled": false,
+        "waitTimeoutInferredFromF8BranchAndNoWaitError": true,
+        "imageError": 5,
+        "presentInAllFourOwnJobLists": true,
+        "fullySignaledExitProven": false
+      }
+    ],
+    "totalSampleSeconds": 1.0002888000162784,
+    "maximumSampleSeconds": 0.07911930000409484,
+    "averageSampleSeconds": 0.0018909051040005263,
+    "interpretation": "Same verified own PID/creation and nonzero exit time repeat, but Wait(0) is not signaled and image query is denied. F8 reads times, then wait, then image on one handle: these are non-atomic observations of an identified member around termination. They prove neither a harmless gone member nor a fully signaled exit. Missing required image evidence remains a refusal; no exemption is applied.",
+    "performanceLimit": "Recorded sample() work totals about1s, so repeated observer sampling does not explain most of81.8s worker time. The counters do not explain loading, postflight, system scheduling, or every unmeasured operation."
+  },
+  "post": {
+    "status": "NOT_ACCEPTED_FILE_READBACK",
+    "reason": "Root retained-handle natural exit proof rejected",
+    "approvedProposalSha256": "849e0819fdce2cbb794f0c008a4e5c20aa5eff9517104c2d6902c970aac2a348",
+    "note": "This invocation received the correct proposal SHA and rejected retained-handle natural-zero proof; it did not fail the R3 argument-usage check."
+  },
+  "release": {
+    "sdkCount": 0,
+    "unknownCount": 0,
+    "windowReleased": true,
+    "testAccepted": false,
+    "applicationTestsRun": true,
+    "nextSdkGrant": false
+  },
+  "actualToolExecution": {
+    "provenance": "Root report; not personally observed by archiver",
+    "root": {
+      "launchChunk": "40313",
+      "terminalChunk": "fe3554",
+      "exitCode": 1
+    },
+    "post": {
+      "terminalChunk": "b480ba",
+      "exitCode": 1
+    },
+    "release": {
+      "terminalChunk": "0a355a",
+      "exitCode": 1
+    },
+    "fileRecordedRootAndPostChunks": {
+      "root": "fe3554",
+      "post": "b480ba"
+    }
+  },
+  "originalBudgetsSeconds": {
+    "root": 180,
+    "hostWork": 174,
+    "worker": 165,
+    "command": 135,
+    "commandCleanup": 140,
+    "minimumPostflightReserve": 25
+  },
+  "preservation": {
+    "originalR4FilesUnchanged": true,
+    "chromeProfileCopied": false,
+    "nativeOrObserverRulesChanged": false,
+    "sdkFixtureOrProcessApiOrNetworkOrGitMutationRunByArchiver": false
+  },
+  "scopeNote": "Raw10success/3error is an observed partial result. Force, reporter errors and missing image proof keep the13-case run unaccepted;183 is not a passed-test claim."
+}

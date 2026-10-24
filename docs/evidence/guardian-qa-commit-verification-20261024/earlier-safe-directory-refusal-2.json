@@ -1,0 +1,73 @@
+{
+  "status": "FIXTURE_ERROR",
+  "appTestsRun": false,
+  "sdkOrChromeOrNetworkRun": false,
+  "realRepositoryMutations": false,
+  "scenarios": [],
+  "deadlineSeconds": 58.0,
+  "helper": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-exact-commit-20261024-r1.py",
+    "bytes": 8539,
+    "sha256": "ca90c035e120a9ecbf3cc19366b61665025efef758bd3b000febe2368d079fa4"
+  },
+  "errorType": "RuntimeError",
+  "error": "main-head-before-readonly exited 128: b\"fatal: detected dubious ownership in repository at 'D:/codes/mobile/ai-manager'\\n'D:/codes/mobile/ai-manager' is owned by:\\n\\tBUILTIN/Administrators (S-1-5-32-544)\\nbut the current user is:\\n\\tUFO/CodexSandboxOffline (S-1-5-21-2855720842-1651825730-2458486029-1005)\\nTo add an exception for this directory, call:\\n\\n\\tgit config --global --add safe.directory D:/codes/mobile/ai-manager\\n\"",
+  "mainReadbackError": "RuntimeError",
+  "helperUnchanged": true,
+  "elapsedSeconds": 0.33536820000153966,
+  "steps": [
+    {
+      "number": 1,
+      "label": "main-head-before-readonly",
+      "cwd": "D:\\codes\\mobile\\ai-manager",
+      "command": [
+        "git",
+        "-c",
+        "safe.directory=D:\\codes\\mobile\\ai-manager",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exitCode": 128,
+      "elapsedSeconds": 0.16264210001099855,
+      "naturalProcessCompletion": true,
+      "forcedTermination": false,
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r2\\001-main-head-before-readonly.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r2\\001-main-head-before-readonly.stderr",
+        "bytes": 376,
+        "sha256": "59924347f9e6d2d2828f506e2e0c8b7cee1d26bb41dfdbc41cb895164529c555"
+      }
+    },
+    {
+      "number": 2,
+      "label": "main-head-after-readonly",
+      "cwd": "D:\\codes\\mobile\\ai-manager",
+      "command": [
+        "git",
+        "-c",
+        "safe.directory=D:\\codes\\mobile\\ai-manager",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exitCode": 128,
+      "elapsedSeconds": 0.15632280000136234,
+      "naturalProcessCompletion": true,
+      "forcedTermination": false,
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r2\\002-main-head-after-readonly.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r2\\002-main-head-after-readonly.stderr",
+        "bytes": 376,
+        "sha256": "59924347f9e6d2d2828f506e2e0c8b7cee1d26bb41dfdbc41cb895164529c555"
+      }
+    }
+  ],
+  "naturalStepCount": 2
+}

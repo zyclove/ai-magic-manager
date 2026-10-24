@@ -1,0 +1,196 @@
+--- D:\codes\mobile\ai-manager\.cache\guardian-browser13-20261024-r2-manager-proof\owned_chrome_evidence.py
++++ D:\codes\mobile\ai-manager\.cache\guardian-browser13-20261024-r3-html-diagnostic\owned_chrome_evidence.py
+@@ -8,6 +8,7 @@
+ from ctypes import wintypes as W
+ import hashlib
+ import ipaddress
++import json
+ import math
+ import ntpath
+ from pathlib import Path
+@@ -286,6 +287,148 @@
+         self.reader = RetainedJobReader(command_job, self.deadline)
+         self.problems, self.checked, self.pending, self.complete = set(), set(), {}, {}
+         self.samples = 0
++        self._initialize_diagnostics()
++
++    def _initialize_diagnostics(self):
++        self._member_diagnostic_records = []
++        self._member_diagnostic_attempts = 0
++        self._member_diagnostic_dropped = 0
++        self._member_diagnostic_errors = 0
++        self._member_identity_failure_count = 0
++        self._failed_sample_calls = 0
++        self._sample_elapsed_total = 0.0
++        self._sample_elapsed_maximum = 0.0
++        self._first_member_failure_qpc = None
++        self._last_member_failure_qpc = None
++        self._member_diagnostic_resamples = 0
++
++    @staticmethod
++    def _diagnostic_row(row):
++        # Never stringify unknown values or save a full image path/argv/env.
++        if type(row) is not dict:
++            return {'rowShapeValid': False}
++        result = {'rowShapeValid': True}
++        integers = {'pid', 'creationFiletime', 'exitFiletime', 'exitCode', 'openError',
++                    'membershipQueryError', 'timesError', 'waitError', 'imageError', 'exitCodeError'}
++        booleans = {'openedFromOwnJobList', 'verifiedOwnMembership', 'retainedRootHandleUsed',
++                    'signaled', 'membershipRaceOrChange', 'retainedIdentityMismatch', 'invalidZeroPid'}
++        for key in sorted(integers):
++            value = row.get(key)
++            if type(value) is int and 0 <= value < (1 << 64):
++                result[key] = value
++        for key in sorted(booleans):
++            if type(row.get(key)) is bool:
++                result[key] = row[key]
++        if finite(row.get('sampleQpc')):
++            result['sampleQpc'] = row['sampleQpc']
++        image = row.get('imagePath')
++        if row.get('verifiedOwnMembership') is True and type(image) is str and len(image) <= 32766:
++            result['imageBaseName'] = ''.join(c if ord(c) >= 32 and not 0xD800 <= ord(c) <= 0xDFFF else '?'
++                                             for c in ntpath.basename(image))[:260]
++            result['imagePathSha256'] = hashlib.sha256(image.encode('utf-8', errors='surrogatepass')).hexdigest()
++        return result
++
++    @staticmethod
++    def _diagnostic_listing(value):
++        value = value if type(value) is dict else {}
++        result = {}
++        for key in ('assigned', 'listed', 'limit', 'error'):
++            item = value.get(key)
++            result[key] = item if type(item) is int and 0 <= item < (1 << 32) else None
++        result['qpc'] = value.get('qpc') if finite(value.get('qpc')) else None
++        result['complete'] = value.get('complete') if type(value.get('complete')) is bool else None
++        pids = value.get('pids')
++        valid = type(pids) is list and all(type(pid) is int and 0 <= pid < (1 << 32) for pid in pids[:32])
++        result['pids'] = pids[:32] if valid else []
++        result['pidsTruncatedOrInvalid'] = not valid or len(pids) > 32
++        return result
++
++    @classmethod
++    def _diagnostic_snapshot(cls, value):
++        value = value if type(value) is dict else {}
++        return {'before': cls._diagnostic_listing(value.get('before')),
++                'after': cls._diagnostic_listing(value.get('after')),
++                'identityRowsLimitedByDeadline': value.get('identityRowsLimitedByDeadline')
++                    if type(value.get('identityRowsLimitedByDeadline')) is bool else None}
++
++    def _diagnostic_value(self, records=None):
++        return {'schemaVersion': 1, 'status': 'DIAGNOSTIC_ONLY_NOT_ACCEPTANCE',
++                'maximumRecords': 8, 'maximumSerializedBytes': 32768,
++                'sampleCalls': self.samples, 'failedSampleCalls': self._failed_sample_calls,
++                'memberIdentityFailureCount': self._member_identity_failure_count,
++                'sampleElapsedTotalSeconds': self._sample_elapsed_total,
++                'sampleElapsedMaximumSeconds': self._sample_elapsed_maximum,
++                'firstMemberFailureQpc': self._first_member_failure_qpc,
++                'lastMemberFailureQpc': self._last_member_failure_qpc,
++                'originalCommandDeadlineQpc': self.deadline,
++                'recordsAttempted': self._member_diagnostic_attempts,
++                'resampleCalls': self._member_diagnostic_resamples,
++                'recordsDropped': self._member_diagnostic_dropped,
++                'internalDiagnosticErrors': self._member_diagnostic_errors,
++                'records': list(self._member_diagnostic_records if records is None else records),
++                'nativeOrNetworkQueriesPerformedByDiagnosticsMethod': False,
++                'acceptanceRulesChanged': False}
++
++    @staticmethod
++    def _diagnostic_bytes(value):
++        # Worst case for either normal ensure_ascii setting used by the writer.
++        return len((json.dumps(value, ensure_ascii=True, indent=2, allow_nan=False) + '\n').encode('utf-8'))
++
++    def _record_unknown_member(self, row, snapshot):
++        self._member_identity_failure_count += 1
++        observed = time.monotonic()
++        if self._first_member_failure_qpc is None:
++            self._first_member_failure_qpc = observed
++        self._last_member_failure_qpc = observed
++        if self._member_diagnostic_attempts >= 8:
++            self._member_diagnostic_dropped += 1
++            return
++        self._member_diagnostic_attempts += 1
++        try:
++            record = {'sampleOrdinal': self.samples, 'observedQpc': observed,
++                      'originalObservationDeadlineQpc': self.reader.deadline,
++                      'failedRow': self._diagnostic_row(row),
++                      'firstSnapshot': self._diagnostic_snapshot(snapshot),
++                      'resample': {'status': 'NOT_ATTEMPTED'}}
++            if self._diagnostic_bytes(self._diagnostic_value(self._member_diagnostic_records + [record])) > 30720:
++                self._member_diagnostic_dropped += 1
++                return
++            if time.monotonic() >= self.reader.deadline:
++                record['resample'] = {'status': 'SKIPPED_ORIGINAL_DEADLINE'}
++            else:
++                self._member_diagnostic_resamples += 1
++                try:
++                    # One immediate call on this same Job, no wait or new grace.
++                    again = self.job.member_identities(float(self.reader.deadline))
++                    pid = row.get('pid') if type(row) is dict else None
++                    identities = again.get('identities') if type(again) is dict else None
++                    matching = [item for item in identities
++                                if type(item) is dict and type(pid) is int and item.get('pid') == pid]
++                    record['resample'] = {'status': 'RECORDED',
++                        'snapshot': self._diagnostic_snapshot(again),
++                        'matchingRowCount': len(matching),
++                        'matchingRows': [self._diagnostic_row(item) for item in matching[:2]],
++                        'matchingRowsTruncated': len(matching) > 2}
++                except Exception as failure:
++                    name = type(failure).__name__
++                    record['resample'] = {'status': 'ERROR',
++                        'errorType': re.sub('[^A-Za-z0-9_]', '_', name)[:64]}
++            if self._diagnostic_bytes(self._diagnostic_value(self._member_diagnostic_records + [record])) <= 30720:
++                self._member_diagnostic_records.append(record)
++            else:
++                self._member_diagnostic_dropped += 1
++        except Exception:
++            # Diagnostic failure can never replace or bypass the original demand.
++            self._member_diagnostic_errors += 1
++            self._member_diagnostic_dropped += 1
++
++    def diagnostics(self):
++        # Pure aggregation only: no Job/API/process/socket/file call here.
++        value = self._diagnostic_value()
++        while self._diagnostic_bytes(value) > 32768 and value['records']:
++            value['records'].pop()
++            value['recordsDropped'] += 1
++        return json.loads(json.dumps(value, ensure_ascii=True, allow_nan=False))
+ 
+     def _profile_unlinked(self, profile):
+         path, temporary = Path(profile), Path(self.temporary)
+@@ -324,6 +467,7 @@
+         return ([dict(zip(('address', 'port', 'family', 'status'), row)) for row in parsed], before, after)
+ 
+     def sample(self, deadline_qpc=None):
++        sample_started = time.monotonic()
+         if deadline_qpc is not None:
+             demand(finite(deadline_qpc), 'INVALID_SAMPLE_DEADLINE')
+             self.reader.deadline = min(self.deadline, float(deadline_qpc))
+@@ -336,6 +480,9 @@
+             for row in snapshot['identities']:
+                 if row.get('signaled') is True:
+                     continue
++                if not (row.get('verifiedOwnMembership') is True and type(row.get('imagePath')) is str
++                        and type(row.get('creationFiletime')) is int):
++                    self._record_unknown_member(row, snapshot)
+                 demand(row.get('verifiedOwnMembership') is True and type(row.get('imagePath')) is str
+                        and type(row.get('creationFiletime')) is int, 'OWN_JOB_MEMBER_IDENTITY_UNPROVED')
+                 if normalized_path(row['imagePath']) != self.executable:
+@@ -368,9 +515,18 @@
+                 finally:
+                     self.job.k.CloseHandle(handle)
+         except EvidenceRejected as failure:
++            self._failed_sample_calls += 1
+             self.problems.add(str(failure))
+         except Exception as failure:
++            self._failed_sample_calls += 1
+             self.problems.add('OBSERVATION_API_ERROR_' + type(failure).__name__)
++        finally:
++            elapsed = time.monotonic() - sample_started
++            if math.isfinite(elapsed) and elapsed >= 0:
++                self._sample_elapsed_total += elapsed
++                self._sample_elapsed_maximum = max(self._sample_elapsed_maximum, elapsed)
++            else:
++                self._member_diagnostic_errors += 1
+ 
+     def finish(self):
+         # No native/process/network call here: only aggregate prior observations.

@@ -1,0 +1,346 @@
+{
+  "status": "EXACT_VM35_REPORT_ACCEPTED",
+  "protocolVersion": "0.1.1",
+  "expectedSuiteCount": 4,
+  "actualSuiteCount": 4,
+  "suiteCount": 4,
+  "suitePaths": [
+    "test/dialog_submit_guard_test.dart",
+    "test/failure_view_test.dart",
+    "test/login_view_test.dart",
+    "test/workbench_view_test.dart"
+  ],
+  "expectedVisibleTests": 35,
+  "visibleTests": 35,
+  "successfulVisibleTests": 35,
+  "failures": 0,
+  "errors": 0,
+  "skipped": 0,
+  "actualVisibleCases": [
+    {
+      "selector": "test/dialog_submit_guard_test.dart",
+      "name": "412 draft preserves trimmed text numeric labels and empty fields",
+      "testID": 26,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/dialog_submit_guard_test.dart",
+      "name": "412 preserves the submitted draft and blocks held save callbacks",
+      "testID": 22,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/dialog_submit_guard_test.dart",
+      "name": "access loss during submission hides a late 412 and prevents resubmit",
+      "testID": 25,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/dialog_submit_guard_test.dart",
+      "name": "access loss hides a 412 draft and gives original workspace guidance",
+      "testID": 24,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/dialog_submit_guard_test.dart",
+      "name": "queued edit callbacks submit only once before the next frame",
+      "testID": 21,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/dialog_submit_guard_test.dart",
+      "name": "unknown result retries the same payload before a 412 stops replay",
+      "testID": 23,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/failure_view_test.dart",
+      "name": "changing the correlation ID collapses previously expanded details",
+      "testID": 34,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/failure_view_test.dart",
+      "name": "changing the error code collapses previously expanded diagnostics",
+      "testID": 33,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/failure_view_test.dart",
+      "name": "diagnostics are collapsed by default and toggle selectable details",
+      "testID": 30,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/failure_view_test.dart",
+      "name": "missing correlation IDs do not render an empty tracking label",
+      "testID": 36,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/failure_view_test.dart",
+      "name": "narrow large text keeps recovery and diagnostic details operable",
+      "testID": 38,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/failure_view_test.dart",
+      "name": "reauth remains limited to authentication and unknown failures",
+      "testID": 32,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/failure_view_test.dart",
+      "name": "recovery actions remain available before and after details open",
+      "testID": 31,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/failure_view_test.dart",
+      "name": "unknown errors keep private exception text out of the interface",
+      "testID": 35,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/failure_view_test.dart",
+      "name": "usage report failures share the optional diagnostic disclosure",
+      "testID": 37,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/login_view_test.dart",
+      "name": "keyboard traversal activates login exactly once",
+      "testID": 46,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/login_view_test.dart",
+      "name": "large text in a short desktop window can reach both pane ends",
+      "testID": 43,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/login_view_test.dart",
+      "name": "login remains reachable after opening error details",
+      "testID": 45,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/login_view_test.dart",
+      "name": "narrow window and large text keep the primary login usable",
+      "testID": 44,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/login_view_test.dart",
+      "name": "wide short window keeps login reachable without layout errors",
+      "testID": 42,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "background refresh preserves prior activity and common actions",
+      "testID": 17,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "connection checks take priority over setup",
+      "testID": 5,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "empty workspace opens the existing subject form",
+      "testID": 6,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "established workspace offers reports instead of onboarding",
+      "testID": 9,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "existing subject without devices opens the existing device form",
+      "testID": 7,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "help takes priority over every other task",
+      "testID": 3,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "loading and failures never show ready counts or connection claims",
+      "testID": 12,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "narrow large text keeps urgent action and metrics operable",
+      "testID": 14,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "network retry keeps stale summary until a fresh result arrives",
+      "testID": 16,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "no draft links to rules without claiming rules are absent",
+      "testID": 8,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "pending approvals take priority over connection checks",
+      "testID": 4,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "refresh completion is explicit and active forms block duplicates",
+      "testID": 13,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "stale summary with 503 keeps common actions and previous data",
+      "testID": 15,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "summary links and common actions keep their intended targets",
+      "testID": 10,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "unavailable sections hide counts, actions and audit content",
+      "testID": 11,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    }
+  ],
+  "hiddenSuccessfulTests": [
+    {
+      "selector": "test/dialog_submit_guard_test.dart",
+      "name": "loading D:/codes/mobile/ai-manager/.cache/guardian-current-20261024-r15-login-schedule/src/apps/guardian/test/dialog_submit_guard_test.dart",
+      "testID": 19,
+      "result": "success",
+      "skipped": false,
+      "hidden": true
+    },
+    {
+      "selector": "test/failure_view_test.dart",
+      "name": "loading D:/codes/mobile/ai-manager/.cache/guardian-current-20261024-r15-login-schedule/src/apps/guardian/test/failure_view_test.dart",
+      "testID": 28,
+      "result": "success",
+      "skipped": false,
+      "hidden": true
+    },
+    {
+      "selector": "test/login_view_test.dart",
+      "name": "loading D:/codes/mobile/ai-manager/.cache/guardian-current-20261024-r15-login-schedule/src/apps/guardian/test/login_view_test.dart",
+      "testID": 40,
+      "result": "success",
+      "skipped": false,
+      "hidden": true
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "loading D:/codes/mobile/ai-manager/.cache/guardian-current-20261024-r15-login-schedule/src/apps/guardian/test/workbench_view_test.dart",
+      "testID": 1,
+      "result": "success",
+      "skipped": false,
+      "hidden": true
+    }
+  ],
+  "allStartedTestsCompleted": true,
+  "terminalDoneSuccess": true,
+  "eventCount": 89,
+  "printEvents": 0,
+  "bootstrapNotices": 1,
+  "logPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\attempt\\out\\tests.jsonl",
+    "bytes": 22282,
+    "sha256": "1b3e33390c9bdf8e3885c22764cc43ca59af6e21579972e3429a0ed2bc48d127"
+  },
+  "nativeExitAndJobChecksRemainCallerResponsibility": true
+}

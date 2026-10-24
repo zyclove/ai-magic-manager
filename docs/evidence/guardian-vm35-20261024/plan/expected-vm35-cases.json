@@ -1,0 +1,403 @@
+{
+  "schemaVersion": 1,
+  "status": "STATIC_EXACT_NAME_MAPPING_NOT_EXECUTION_RESULT",
+  "sourceAnalysisBasisCommit": "c90b1465eaed3bb14f281bfb07d3972bcd4e26f3",
+  "module": "apps/guardian",
+  "platform": "default Flutter VM tester",
+  "selectors": [
+    "test/workbench_view_test.dart",
+    "test/dialog_submit_guard_test.dart",
+    "test/failure_view_test.dart",
+    "test/login_view_test.dart"
+  ],
+  "selectedSources": [
+    {
+      "selector": "test/workbench_view_test.dart",
+      "source": {
+        "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\workbench_view_test.dart",
+        "bytes": 15881,
+        "sha256": "033973e571156f94b786bca14bdab1cac184ae185079e447140d9f24b3b3495b"
+      },
+      "explicitTestOn": null,
+      "explicitTags": false,
+      "explicitSkip": false
+    },
+    {
+      "selector": "test/dialog_submit_guard_test.dart",
+      "source": {
+        "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\dialog_submit_guard_test.dart",
+        "bytes": 12362,
+        "sha256": "8cdc3af3763ec70d55c4188338c07479cdc93fe7c2224bbc093ffc7b12a5674d"
+      },
+      "explicitTestOn": null,
+      "explicitTags": false,
+      "explicitSkip": false
+    },
+    {
+      "selector": "test/failure_view_test.dart",
+      "source": {
+        "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\failure_view_test.dart",
+        "bytes": 8857,
+        "sha256": "4064e0c25b80f972c7e2d679d28eaa4782465f32875f2cf2b6b9293db20a9db4"
+      },
+      "explicitTestOn": null,
+      "explicitTags": false,
+      "explicitSkip": false
+    },
+    {
+      "selector": "test/login_view_test.dart",
+      "source": {
+        "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\login_view_test.dart",
+        "bytes": 4185,
+        "sha256": "655608d669bac81e1fcbbff82a7d984061451c9bf9dff9667155feb592fff579"
+      },
+      "explicitTestOn": null,
+      "explicitTags": false,
+      "explicitSkip": false
+    }
+  ],
+  "expectedVisibleCases": 35,
+  "expectedTestRoots": 4,
+  "sourceCaseCounts": [
+    15,
+    6,
+    9,
+    5
+  ],
+  "cases": [
+    {
+      "name": "help takes priority over every other task",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 54,
+      "testDeclarationLine": 90,
+      "declarationKind": "seven-entry item.name loop",
+      "execution": "UNRUN",
+      "originalOrAdded": "retained original13"
+    },
+    {
+      "name": "pending approvals take priority over connection checks",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 59,
+      "testDeclarationLine": 90,
+      "declarationKind": "seven-entry item.name loop",
+      "execution": "UNRUN",
+      "originalOrAdded": "retained original13"
+    },
+    {
+      "name": "connection checks take priority over setup",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 64,
+      "testDeclarationLine": 90,
+      "declarationKind": "seven-entry item.name loop",
+      "execution": "UNRUN",
+      "originalOrAdded": "retained original13"
+    },
+    {
+      "name": "empty workspace opens the existing subject form",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 69,
+      "testDeclarationLine": 90,
+      "declarationKind": "seven-entry item.name loop",
+      "execution": "UNRUN",
+      "originalOrAdded": "retained original13"
+    },
+    {
+      "name": "existing subject without devices opens the existing device form",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 74,
+      "testDeclarationLine": 90,
+      "declarationKind": "seven-entry item.name loop",
+      "execution": "UNRUN",
+      "originalOrAdded": "retained original13"
+    },
+    {
+      "name": "no draft links to rules without claiming rules are absent",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 79,
+      "testDeclarationLine": 90,
+      "declarationKind": "seven-entry item.name loop",
+      "execution": "UNRUN",
+      "originalOrAdded": "retained original13"
+    },
+    {
+      "name": "established workspace offers reports instead of onboarding",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 84,
+      "testDeclarationLine": 90,
+      "declarationKind": "seven-entry item.name loop",
+      "execution": "UNRUN",
+      "originalOrAdded": "retained original13"
+    },
+    {
+      "name": "summary links and common actions keep their intended targets",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 121,
+      "testDeclarationLine": 121,
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "retained original13"
+    },
+    {
+      "name": "unavailable sections hide counts, actions and audit content",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 148,
+      "testDeclarationLine": 148,
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "retained original13"
+    },
+    {
+      "name": "loading and failures never show ready counts or connection claims",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 177,
+      "testDeclarationLine": 176,
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "retained original13"
+    },
+    {
+      "name": "refresh completion is explicit and active forms block duplicates",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 204,
+      "testDeclarationLine": 203,
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "retained original13"
+    },
+    {
+      "name": "narrow large text keeps urgent action and metrics operable",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 241,
+      "testDeclarationLine": 241,
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "retained original13"
+    },
+    {
+      "name": "stale summary with 503 keeps common actions and previous data",
+      "selector": "test/workbench_view_test.dart",
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "committed eight-case addition",
+      "nameDeclarationLine": 270,
+      "testDeclarationLine": 270
+    },
+    {
+      "name": "network retry keeps stale summary until a fresh result arrives",
+      "selector": "test/workbench_view_test.dart",
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "committed eight-case addition",
+      "nameDeclarationLine": 312,
+      "testDeclarationLine": 312
+    },
+    {
+      "name": "background refresh preserves prior activity and common actions",
+      "selector": "test/workbench_view_test.dart",
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "committed eight-case addition",
+      "nameDeclarationLine": 369,
+      "testDeclarationLine": 369
+    },
+    {
+      "name": "queued edit callbacks submit only once before the next frame",
+      "selector": "test/dialog_submit_guard_test.dart",
+      "nameDeclarationLine": 50,
+      "testDeclarationLine": 50,
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "retained original13"
+    },
+    {
+      "name": "412 preserves the submitted draft and blocks held save callbacks",
+      "selector": "test/dialog_submit_guard_test.dart",
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "committed eight-case addition",
+      "nameDeclarationLine": 86,
+      "testDeclarationLine": 86
+    },
+    {
+      "name": "unknown result retries the same payload before a 412 stops replay",
+      "selector": "test/dialog_submit_guard_test.dart",
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "committed eight-case addition",
+      "nameDeclarationLine": 130,
+      "testDeclarationLine": 130
+    },
+    {
+      "name": "access loss hides a 412 draft and gives original workspace guidance",
+      "selector": "test/dialog_submit_guard_test.dart",
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "committed eight-case addition",
+      "nameDeclarationLine": 175,
+      "testDeclarationLine": 175
+    },
+    {
+      "name": "access loss during submission hides a late 412 and prevents resubmit",
+      "selector": "test/dialog_submit_guard_test.dart",
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "committed eight-case addition",
+      "nameDeclarationLine": 217,
+      "testDeclarationLine": 217
+    },
+    {
+      "name": "412 draft preserves trimmed text numeric labels and empty fields",
+      "selector": "test/dialog_submit_guard_test.dart",
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "committed eight-case addition",
+      "nameDeclarationLine": 255,
+      "testDeclarationLine": 255
+    },
+    {
+      "name": "diagnostics are collapsed by default and toggle selectable details",
+      "selector": "test/failure_view_test.dart",
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "committed nine-case FailureView addition",
+      "nameDeclarationLine": 26,
+      "testDeclarationLine": 26
+    },
+    {
+      "name": "recovery actions remain available before and after details open",
+      "selector": "test/failure_view_test.dart",
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "committed nine-case FailureView addition",
+      "nameDeclarationLine": 45,
+      "testDeclarationLine": 45
+    },
+    {
+      "name": "reauth remains limited to authentication and unknown failures",
+      "selector": "test/failure_view_test.dart",
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "committed nine-case FailureView addition",
+      "nameDeclarationLine": 74,
+      "testDeclarationLine": 74
+    },
+    {
+      "name": "changing the error code collapses previously expanded diagnostics",
+      "selector": "test/failure_view_test.dart",
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "committed nine-case FailureView addition",
+      "nameDeclarationLine": 91,
+      "testDeclarationLine": 91
+    },
+    {
+      "name": "changing the correlation ID collapses previously expanded details",
+      "selector": "test/failure_view_test.dart",
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "committed nine-case FailureView addition",
+      "nameDeclarationLine": 109,
+      "testDeclarationLine": 109
+    },
+    {
+      "name": "unknown errors keep private exception text out of the interface",
+      "selector": "test/failure_view_test.dart",
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "committed nine-case FailureView addition",
+      "nameDeclarationLine": 127,
+      "testDeclarationLine": 127
+    },
+    {
+      "name": "missing correlation IDs do not render an empty tracking label",
+      "selector": "test/failure_view_test.dart",
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "committed nine-case FailureView addition",
+      "nameDeclarationLine": 139,
+      "testDeclarationLine": 139
+    },
+    {
+      "name": "usage report failures share the optional diagnostic disclosure",
+      "selector": "test/failure_view_test.dart",
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "committed nine-case FailureView addition",
+      "nameDeclarationLine": 158,
+      "testDeclarationLine": 158
+    },
+    {
+      "name": "narrow large text keeps recovery and diagnostic details operable",
+      "selector": "test/failure_view_test.dart",
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "committed nine-case FailureView addition",
+      "nameDeclarationLine": 172,
+      "testDeclarationLine": 172
+    },
+    {
+      "name": "wide short window keeps login reachable without layout errors",
+      "selector": "test/login_view_test.dart",
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "committed five-case LoginView addition",
+      "nameDeclarationLine": 25,
+      "testDeclarationLine": 25
+    },
+    {
+      "name": "large text in a short desktop window can reach both pane ends",
+      "selector": "test/login_view_test.dart",
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "committed five-case LoginView addition",
+      "nameDeclarationLine": 39,
+      "testDeclarationLine": 39
+    },
+    {
+      "name": "narrow window and large text keep the primary login usable",
+      "selector": "test/login_view_test.dart",
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "committed five-case LoginView addition",
+      "nameDeclarationLine": 56,
+      "testDeclarationLine": 56
+    },
+    {
+      "name": "login remains reachable after opening error details",
+      "selector": "test/login_view_test.dart",
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "committed five-case LoginView addition",
+      "nameDeclarationLine": 69,
+      "testDeclarationLine": 69
+    },
+    {
+      "name": "keyboard traversal activates login exactly once",
+      "selector": "test/login_view_test.dart",
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN",
+      "originalOrAdded": "committed five-case LoginView addition",
+      "nameDeclarationLine": 94,
+      "testDeclarationLine": 94
+    }
+  ],
+  "preparationMethod": "Retain30 exact VM30 names and append5 literal LoginView declarations from current committed text. All35 names/lines and four Main/HEAD raw sources read; no AST, helper, candidate or test function called.",
+  "fullRegressionRootScope": 183,
+  "selectedRootCount": 4,
+  "otherRootsRemainUnrun": 179,
+  "otherRootStatus": "UNRUN",
+  "critical80ContractModified": false,
+  "testsModified": false,
+  "sdkOrTestsRun": false,
+  "executionApprovedByThisFile": false,
+  "reporterBoundary": "Exactly35 visible product cases in4 physical VM suites:15 Workbench,6 shared form,9 FailureView,5 LoginView. Hidden framework records cannot replace expected visible names. Not an execution grant or runtime result.",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "sourceAnalysisBasisIsHistorical": true,
+  "sourceAnalysisBasisNote": "The c90 analyzer basis remains historical only. This contract binds current006ee458 test sources and retains30 names from e445b3b VM30. No current analyzer/test result inferred.",
+  "committedNewCases": 22,
+  "originalCasesRetained": 13,
+  "testsModifiedByThisPreparation": false,
+  "previousSelectionCasesRetained": 30,
+  "addedFailureViewCases": 9,
+  "addedLoginViewCases": 5
+}

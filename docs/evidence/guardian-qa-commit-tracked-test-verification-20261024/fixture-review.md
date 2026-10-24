@@ -1,0 +1,11 @@
+# New tracked-test guard: independent real-Git fixture
+
+Final fixed helper9402B/SHAf028a6b7ca53e8317730fa73b5949d312fbf25b4d53802925ad7e65765d08071 was copied byte-exactly into each new mini repo src/.cache. The earlier9170B/f9c203 version was only read and statically rejected because its unconditional docs containment excluded the test path; it was never executed. The final exact fixed-test containment guard is included. No helper bytes were edited by the fixture author.
+
+Actual fccc8e completed naturally with runner exit0 in5.2336069s, below58s/60s. There are34 recorded subprocess steps. All exit0 except the intentional wrong-before-blob stage refusal exit1. None was force-terminated. No old four CAS scenarios were rerun.
+
+Case1 seeds the actual21431B r15 test bytes at apps/guardian/test/editor_submit_guard_test.dart with Git mode100644 and exact raw prior OIDaf9e7369ae5ede1926980af8c9d972fbaf32311f. It modifies the test to the approved21581B/0e0a0d3f2392bddf6f94f6cbc42dcc93bfcc9b2d3f2fb1aeef8c3044b03fb99b raw bytes and adds one QA document containing CRLF. Private staging leaves the shared index unchanged. Commit/readback succeed with exact test and document blob bytes; foreign tracked unstaged bytes survive and remain unstaged. Receipts report1 test source change and0 application source changes.
+
+Case2 is a separate new mini repo with the same real seed but a deliberately wrong40-zero before OID. The final helper refuses Fixed prior test blob required. The branch ref and shared index bytes remain unchanged, foreign working bytes remain intact, no stage receipt/commit intent/task index.lock is created. The preparatory private read-tree index may remain; this is a task artifact, not shared-index mutation.
+
+Real project HEAD before/after is006ee45850c9b6b0f90570d9478bced3beb0e0fe. Real-project Git use was readonly HEAD queries only, with command-scoped canonical safe.directory; mini-repo identities/signing/autocrlf settings are local. Global configuration and user/machine environment were not changed; isolated environment copies apply only to child processes. No SDK, application tests or network was run. This validates only the new tracked-test branch, not app behavior or an actual phase commit.

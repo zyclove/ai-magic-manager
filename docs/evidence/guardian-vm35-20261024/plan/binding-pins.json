@@ -1,0 +1,901 @@
+{
+  "status": "VM35_LITERAL_REBIND_ONLY_NOT_EXECUTED",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "inputs": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\inputs.json",
+    "bytes": 17077,
+    "sha256": "56012ab858575ef7f356d4cf1e5ed94815c9e12e53423d889a0168caf1494eb5"
+  },
+  "proposal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\proposal.json",
+    "bytes": 9204,
+    "sha256": "8d8001ea23ddfc7295e8cb302d0eaa951280bc62ab4698036f4897419d2074d0"
+  },
+  "post": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-post-20261024-r1\\post.py",
+    "bytes": 43678,
+    "sha256": "90a9bff90840a9918736550b9ad8fecc860ecead597ffe331e7fbe1b9560a1c0"
+  },
+  "caseContract": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\expected-vm35-cases.json",
+    "bytes": 15481,
+    "sha256": "dad42332d72a01db3f02ba71772cecbe584e67ea0dade4b2b9d8241de5a678cc"
+  },
+  "reporter": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\reporter_contract.py",
+    "bytes": 14369,
+    "sha256": "fe10ca0eab38e40d9edddb6c5d53101ef2b134dcad931189b378b59f9f32bcf6"
+  },
+  "sourceFreezePins": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\pins.json",
+    "bytes": 5287,
+    "sha256": "60de07c26a0e570abc857f12d80fc1250c5436cf2ef7b143c3bca8ac19b6b242"
+  },
+  "candidateFiles": [
+    {
+      "path": "analysis-host.py",
+      "bytes": 25173,
+      "sha256": "f833971d94aeeea5f8b9e503b83cba38f0501cbaa1a8e93eff2a81594526aec8"
+    },
+    {
+      "path": "worker.py",
+      "bytes": 42206,
+      "sha256": "08d958d9c87b0a01a462592d541a5a238b39411c47f9e7278b28686f4a452a98"
+    },
+    {
+      "path": "owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "path": "process-inventory.ps1",
+      "bytes": 2439,
+      "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+    },
+    {
+      "path": "reporter_contract.py",
+      "bytes": 14369,
+      "sha256": "fe10ca0eab38e40d9edddb6c5d53101ef2b134dcad931189b378b59f9f32bcf6"
+    }
+  ],
+  "rootLauncher": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-root-launch-20261024-r1.ps1",
+    "bytes": 9164,
+    "sha256": "183e36dda9a5e4f90b76a1188c8b8f29442cc0bea95d9e4dda9a56e0a88f0ca1"
+  },
+  "release": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-release-20261024-r1.ps1",
+    "bytes": 4392,
+    "sha256": "72e4ac9d0c626c59ce44c1e6d92998110df501a9dd2d447f7a86de8481efd553"
+  },
+  "sourceFiles": 413,
+  "fullRegressionRoots": 183,
+  "selectedRoots": 4,
+  "expectedVisibleCases": 35,
+  "otherRootsUnrun": 179,
+  "sourceCaseCounts": [
+    15,
+    6,
+    9,
+    5
+  ],
+  "budgetsUnchanged": {
+    "outer": 180,
+    "working": 174,
+    "worker": 165,
+    "command": 135,
+    "commandCleanup": 140,
+    "postflightReserve": 25
+  },
+  "allLiteralTransformsInverseByteExact": true,
+  "ownedJobAndProcessProviderByteExact": true,
+  "runtimePinsByteExactToVM30": true,
+  "runtime35ListedFilesFreshlyHashed": true,
+  "cachePayloadNotRehashedByThisProducer": true,
+  "cachePayloadOriginalTotalsRetained": {
+    "files": 3688,
+    "bytes": 641815136
+  },
+  "nullableRequiredVersionRetained": true,
+  "literalReplacements": [
+    {
+      "file": "reporter_contract.py",
+      "old": "VM30",
+      "new": "VM35",
+      "count": 4,
+      "replacementBytePositions": [
+        63,
+        4936,
+        11791,
+        13546
+      ]
+    },
+    {
+      "file": "reporter_contract.py",
+      "old": "three-root",
+      "new": "four-root",
+      "count": 2,
+      "replacementBytePositions": [
+        52,
+        4924
+      ]
+    },
+    {
+      "file": "reporter_contract.py",
+      "old": "thirty",
+      "new": "thirty-five",
+      "count": 2,
+      "replacementBytePositions": [
+        5058,
+        13493
+      ]
+    },
+    {
+      "file": "reporter_contract.py",
+      "old": "('test/workbench_view_test.dart', 'test/dialog_submit_guard_test.dart', 'test/failure_view_test.dart')",
+      "new": "('test/workbench_view_test.dart', 'test/dialog_submit_guard_test.dart', 'test/failure_view_test.dart', 'test/login_view_test.dart')",
+      "count": 1,
+      "replacementBytePositions": [
+        462
+      ]
+    },
+    {
+      "file": "reporter_contract.py",
+      "old": "[15, 6, 9]",
+      "new": "[15, 6, 9, 5]",
+      "count": 2,
+      "replacementBytePositions": [
+        4917,
+        5634
+      ]
+    },
+    {
+      "file": "reporter_contract.py",
+      "old": "== 30",
+      "new": "== 35",
+      "count": 4,
+      "replacementBytePositions": [
+        4599,
+        5073,
+        13421,
+        13448
+      ]
+    },
+    {
+      "file": "reporter_contract.py",
+      "old": "== 3,",
+      "new": "== 4,",
+      "count": 2,
+      "replacementBytePositions": [
+        8545,
+        12748
+      ]
+    },
+    {
+      "file": "reporter_contract.py",
+      "old": "== 3\n",
+      "new": "== 4\n",
+      "count": 1,
+      "replacementBytePositions": [
+        4716
+      ]
+    },
+    {
+      "file": "reporter_contract.py",
+      "old": "Exactly three discovered suites required",
+      "new": "Exactly four discovered suites required",
+      "count": 1,
+      "replacementBytePositions": [
+        8552
+      ]
+    },
+    {
+      "file": "reporter_contract.py",
+      "old": "'expectedSuiteCount': 3",
+      "new": "'expectedSuiteCount': 4",
+      "count": 1,
+      "replacementBytePositions": [
+        13651
+      ]
+    },
+    {
+      "file": "reporter_contract.py",
+      "old": "'actualSuiteCount': 3",
+      "new": "'actualSuiteCount': 4",
+      "count": 1,
+      "replacementBytePositions": [
+        13676
+      ]
+    },
+    {
+      "file": "reporter_contract.py",
+      "old": "'suiteCount': 3",
+      "new": "'suiteCount': 4",
+      "count": 1,
+      "replacementBytePositions": [
+        13699
+      ]
+    },
+    {
+      "file": "reporter_contract.py",
+      "old": "'expectedVisibleTests': 30",
+      "new": "'expectedVisibleTests': 35",
+      "count": 1,
+      "replacementBytePositions": [
+        13767
+      ]
+    },
+    {
+      "file": "reporter_contract.py",
+      "old": "'visibleTests': 30",
+      "new": "'visibleTests': 35",
+      "count": 1,
+      "replacementBytePositions": [
+        13807
+      ]
+    },
+    {
+      "file": "reporter_contract.py",
+      "old": "'successfulVisibleTests': 30",
+      "new": "'successfulVisibleTests': 35",
+      "count": 1,
+      "replacementBytePositions": [
+        13827
+      ]
+    },
+    {
+      "file": "analysis-host.py",
+      "old": "guardian-vm30",
+      "new": "guardian-vm35",
+      "count": 5,
+      "replacementBytePositions": [
+        355,
+        14127,
+        15281,
+        17052,
+        23024
+      ]
+    },
+    {
+      "file": "analysis-host.py",
+      "old": "VM30",
+      "new": "VM35",
+      "count": 6,
+      "replacementBytePositions": [
+        9,
+        9305,
+        12736,
+        15056,
+        22173,
+        22947
+      ]
+    },
+    {
+      "file": "analysis-host.py",
+      "old": "guardian-current-20261024-r14-heade445",
+      "new": "guardian-current-20261024-r15-login-schedule",
+      "count": 1,
+      "replacementBytePositions": [
+        12455
+      ]
+    },
+    {
+      "file": "analysis-host.py",
+      "old": "e445b3b3384605b5427e00d912fb34eb973dfe2c",
+      "new": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+      "count": 1,
+      "replacementBytePositions": [
+        442
+      ]
+    },
+    {
+      "file": "analysis-host.py",
+      "old": "e952b3302a454dad335def2fb5710defb381b901fe26d6a5440512fefe259d2b",
+      "new": "56012ab858575ef7f356d4cf1e5ed94815c9e12e53423d889a0168caf1494eb5",
+      "count": 1,
+      "replacementBytePositions": [
+        520
+      ]
+    },
+    {
+      "file": "analysis-host.py",
+      "old": "INPUT_BYTES = 16972",
+      "new": "INPUT_BYTES = 17077",
+      "count": 1,
+      "replacementBytePositions": [
+        484
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "guardian-vm30",
+      "new": "guardian-vm35",
+      "count": 2,
+      "replacementBytePositions": [
+        19317,
+        32009
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "VM30",
+      "new": "VM35",
+      "count": 7,
+      "replacementBytePositions": [
+        42,
+        30325,
+        32061,
+        39561,
+        39759,
+        41279,
+        41617
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "guardian-current-20261024-r14-heade445",
+      "new": "guardian-current-20261024-r15-login-schedule",
+      "count": 1,
+      "replacementBytePositions": [
+        531
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "e445b3b3384605b5427e00d912fb34eb973dfe2c",
+      "new": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+      "count": 1,
+      "replacementBytePositions": [
+        594
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "e952b3302a454dad335def2fb5710defb381b901fe26d6a5440512fefe259d2b",
+      "new": "56012ab858575ef7f356d4cf1e5ed94815c9e12e53423d889a0168caf1494eb5",
+      "count": 1,
+      "replacementBytePositions": [
+        764
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "INPUT_BYTES = 16972",
+      "new": "INPUT_BYTES = 17077",
+      "count": 1,
+      "replacementBytePositions": [
+        728
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "['test/workbench_view_test.dart', 'test/dialog_submit_guard_test.dart', 'test/failure_view_test.dart']",
+      "new": "['test/workbench_view_test.dart', 'test/dialog_submit_guard_test.dart', 'test/failure_view_test.dart', 'test/login_view_test.dart']",
+      "count": 1,
+      "replacementBytePositions": [
+        1541
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "three-root",
+      "new": "four-root",
+      "count": 2,
+      "replacementBytePositions": [
+        31,
+        32075
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "== 411",
+      "new": "== 413",
+      "count": 6,
+      "replacementBytePositions": [
+        12093,
+        12126,
+        12467,
+        13387,
+        13422,
+        13562
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "== 182",
+      "new": "== 183",
+      "count": 2,
+      "replacementBytePositions": [
+        12968,
+        13001
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "committed 411-source",
+      "new": "committed 413-source",
+      "count": 1,
+      "replacementBytePositions": [
+        12290
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "seven-root/411 source",
+      "new": "seven-root/413 source",
+      "count": 1,
+      "replacementBytePositions": [
+        13450
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "'selectorCount': 3",
+      "new": "'selectorCount': 4",
+      "count": 1,
+      "replacementBytePositions": [
+        34537
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "'expectedVisibleCases': 30",
+      "new": "'expectedVisibleCases': 35",
+      "count": 1,
+      "replacementBytePositions": [
+        34601
+      ]
+    },
+    {
+      "file": "root-launch",
+      "old": "guardian-vm30",
+      "new": "guardian-vm35",
+      "count": 3,
+      "replacementBytePositions": [
+        128,
+        1881,
+        4822
+      ]
+    },
+    {
+      "file": "root-launch",
+      "old": "VM30",
+      "new": "VM35",
+      "count": 3,
+      "replacementBytePositions": [
+        4489,
+        8242,
+        8269
+      ]
+    },
+    {
+      "file": "root-launch",
+      "old": "e445b3b3384605b5427e00d912fb34eb973dfe2c",
+      "new": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+      "count": 1,
+      "replacementBytePositions": [
+        438
+      ]
+    },
+    {
+      "file": "root-launch",
+      "old": "f6e2ec6f9402ab36aa20b2cf76e137d3d6babc67f21764bd25f4038e3850326a",
+      "new": "8d8001ea23ddfc7295e8cb302d0eaa951280bc62ab4698036f4897419d2074d0",
+      "count": 1,
+      "replacementBytePositions": [
+        355
+      ]
+    },
+    {
+      "file": "root-launch",
+      "old": "current-heade445",
+      "new": "current-head006ee",
+      "count": 1,
+      "replacementBytePositions": [
+        4836
+      ]
+    },
+    {
+      "file": "release",
+      "old": "guardian-vm30",
+      "new": "guardian-vm35",
+      "count": 2,
+      "replacementBytePositions": [
+        367,
+        438
+      ]
+    },
+    {
+      "file": "release",
+      "old": "VM30",
+      "new": "VM35",
+      "count": 3,
+      "replacementBytePositions": [
+        2471,
+        2886,
+        2927
+      ]
+    },
+    {
+      "file": "release",
+      "old": "e445b3b3384605b5427e00d912fb34eb973dfe2c",
+      "new": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+      "count": 1,
+      "replacementBytePositions": [
+        3030
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "guardian-vm30",
+      "new": "guardian-vm35",
+      "count": 6,
+      "replacementBytePositions": [
+        273,
+        321,
+        379,
+        21995,
+        27875,
+        29987
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "VM30",
+      "new": "VM35",
+      "count": 13,
+      "replacementBytePositions": [
+        12338,
+        20730,
+        21466,
+        24313,
+        25553,
+        28138,
+        29375,
+        30360,
+        33440,
+        39395,
+        40862,
+        41179,
+        41536
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "e445b3b3384605b5427e00d912fb34eb973dfe2c",
+      "new": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+      "count": 1,
+      "replacementBytePositions": [
+        432
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "e952b3302a454dad335def2fb5710defb381b901fe26d6a5440512fefe259d2b",
+      "new": "56012ab858575ef7f356d4cf1e5ed94815c9e12e53423d889a0168caf1494eb5",
+      "count": 1,
+      "replacementBytePositions": [
+        487
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "f6e2ec6f9402ab36aa20b2cf76e137d3d6babc67f21764bd25f4038e3850326a",
+      "new": "8d8001ea23ddfc7295e8cb302d0eaa951280bc62ab4698036f4897419d2074d0",
+      "count": 1,
+      "replacementBytePositions": [
+        807
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "a88a6a36537a667f3b45cfb1e17060154900940dd0d31cb94a651e598353337f",
+      "new": "fe10ca0eab38e40d9edddb6c5d53101ef2b134dcad931189b378b59f9f32bcf6",
+      "count": 1,
+      "replacementBytePositions": [
+        1004
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "81eef3472a48cdd2968992d4dbd883076180d5dc66855581c94ae762d33ce70b",
+      "new": "dad42332d72a01db3f02ba71772cecbe584e67ea0dade4b2b9d8241de5a678cc",
+      "count": 1,
+      "replacementBytePositions": [
+        1082
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "proposal['inputs']['bytes'] == 16972",
+      "new": "proposal['inputs']['bytes'] == 17077",
+      "count": 1,
+      "replacementBytePositions": [
+        22684
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "inputs['reporterContractCode']['bytes'] == 14327",
+      "new": "inputs['reporterContractCode']['bytes'] == 14369",
+      "count": 1,
+      "replacementBytePositions": [
+        28332
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "inputs['testCaseContract']['bytes'] == 13489",
+      "new": "inputs['testCaseContract']['bytes'] == 15481",
+      "count": 1,
+      "replacementBytePositions": [
+        28617
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "['test/workbench_view_test.dart', 'test/dialog_submit_guard_test.dart', 'test/failure_view_test.dart']",
+      "new": "['test/workbench_view_test.dart', 'test/dialog_submit_guard_test.dart', 'test/failure_view_test.dart', 'test/login_view_test.dart']",
+      "count": 1,
+      "replacementBytePositions": [
+        885
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "[15, 6, 9]",
+      "new": "[15, 6, 9, 5]",
+      "count": 2,
+      "replacementBytePositions": [
+        12347,
+        12971
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "'files': 411",
+      "new": "'files': 413",
+      "count": 1,
+      "replacementBytePositions": [
+        10234
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "current411",
+      "new": "current413",
+      "count": 1,
+      "replacementBytePositions": [
+        10586
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "== 411",
+      "new": "== 413",
+      "count": 2,
+      "replacementBytePositions": [
+        23481,
+        23514
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "== 182",
+      "new": "== 183",
+      "count": 1,
+      "replacementBytePositions": [
+        23571
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "Current411/full182",
+      "new": "Current413/full183",
+      "count": 1,
+      "replacementBytePositions": [
+        23638
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "full182 scope",
+      "new": "full183 scope",
+      "count": 1,
+      "replacementBytePositions": [
+        29422
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "== 30",
+      "new": "== 35",
+      "count": 7,
+      "replacementBytePositions": [
+        12184,
+        12475,
+        12871,
+        20653,
+        28148,
+        29144,
+        37339
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "Thirty contract rows required",
+      "new": "Thirty-five contract rows required",
+      "count": 1,
+      "replacementBytePositions": [
+        12495
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "30 exact visible cases differ",
+      "new": "35 exact visible cases differ",
+      "count": 1,
+      "replacementBytePositions": [
+        20709
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "contract['expectedTestRoots'] == 3",
+      "new": "contract['expectedTestRoots'] == 4",
+      "count": 1,
+      "replacementBytePositions": [
+        12257
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "event['count'] == 3",
+      "new": "event['count'] == 4",
+      "count": 1,
+      "replacementBytePositions": [
+        15728
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "len(suites) == 3",
+      "new": "len(suites) == 4",
+      "count": 1,
+      "replacementBytePositions": [
+        20012
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "'expectedSuiteCount': 3",
+      "new": "'expectedSuiteCount': 4",
+      "count": 1,
+      "replacementBytePositions": [
+        20833
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "'actualSuiteCount': 3",
+      "new": "'actualSuiteCount': 4",
+      "count": 1,
+      "replacementBytePositions": [
+        20858
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "'suiteCount': 3",
+      "new": "'suiteCount': 4",
+      "count": 1,
+      "replacementBytePositions": [
+        20881
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "'expectedVisibleTests': 30",
+      "new": "'expectedVisibleTests': 35",
+      "count": 1,
+      "replacementBytePositions": [
+        20949
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "'visibleTests': 30",
+      "new": "'visibleTests': 35",
+      "count": 1,
+      "replacementBytePositions": [
+        20989
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "'successfulVisibleTests': 30",
+      "new": "'successfulVisibleTests': 35",
+      "count": 1,
+      "replacementBytePositions": [
+        21009
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "grant['selectedRoots'] == 3",
+      "new": "grant['selectedRoots'] == 4",
+      "count": 1,
+      "replacementBytePositions": [
+        28028
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "inputs['expectedVmTestRoots'] == 3",
+      "new": "inputs['expectedVmTestRoots'] == 4",
+      "count": 1,
+      "replacementBytePositions": [
+        29222
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "launch['selectorCount'] == 3",
+      "new": "launch['selectorCount'] == 4",
+      "count": 1,
+      "replacementBytePositions": [
+        37159
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "test/workbench_view_test.dart test/dialog_submit_guard_test.dart test/failure_view_test.dart",
+      "new": "test/workbench_view_test.dart test/dialog_submit_guard_test.dart test/failure_view_test.dart test/login_view_test.dart",
+      "count": 1,
+      "replacementBytePositions": [
+        36618
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "'selectedTestRoots': 3",
+      "new": "'selectedTestRoots': 4",
+      "count": 1,
+      "replacementBytePositions": [
+        42033
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "'expectedVisibleCases': 30",
+      "new": "'expectedVisibleCases': 35",
+      "count": 1,
+      "replacementBytePositions": [
+        42057
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "expected-vm30-cases.json",
+      "new": "expected-vm35-cases.json",
+      "count": 1,
+      "replacementBytePositions": [
+        28562
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "guardian-current-20261024-r14-heade445",
+      "new": "guardian-current-20261024-r15-login-schedule",
+      "count": 2,
+      "replacementBytePositions": [
+        36860,
+        40356
+      ]
+    }
+  ],
+  "sdkTestsAstCandidateImported": false,
+  "grantCreated": false,
+  "attemptCreated": false,
+  "qualificationRepeated": false
+}

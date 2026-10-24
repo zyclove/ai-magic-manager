@@ -1,0 +1,34 @@
+{
+  "status": "PROJECTION_PARENT_PATH_ONLY_JSON_AND_RAW_INVERSE_PROOF_NOT_PAYLOAD_VALIDATION",
+  "oldProjection": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r14-current006ee\\cache-analysis-projection.json",
+    "bytes": 724690,
+    "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84"
+  },
+  "newProjection": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r15-current006ee-durable-parent\\cache-analysis-projection.json",
+    "bytes": 724708,
+    "sha256": "9268bef004a4289e1f154973c8d661ec5d8bcc7a6f4a81ea7283b421b407aebf"
+  },
+  "changes": [
+    {
+      "jsonPointer": "/parentManifest/path",
+      "old": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261021-r1\\out\\cache-content-20261021-r1.json",
+      "new": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\guardian-baseline-analysis-20261021\\inputs\\cache-content-20261021-r1.json"
+    }
+  ],
+  "allOtherJsonValuesEqual": true,
+  "inverseRawBytesEqual": true,
+  "wholeProjectionRawBytesEqual": false,
+  "all70TreeRowsAnd32FixedRowsEqual": true,
+  "totalsUnchanged": {
+    "files": 3536,
+    "bytes": 633817159
+  },
+  "sameParentBytesSha256": {
+    "bytes": 725122,
+    "sha256": "0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2"
+  },
+  "durableArchiveActuallyReadAndHashMatched": true,
+  "cachePayloadsRehashed": false
+}

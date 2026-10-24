@@ -1,0 +1,515 @@
+{
+  "status": "STATIC_INPUTS_ONLY_NOT_ANALYSIS_RESULT",
+  "phase": "guardian-browser13",
+  "createdAtUtc": "2026-10-24T11:16:42.065706+00:00",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "sourceTreeSha256": "c5df8a3d2438b898b64638424fe4809289fa5da1c533151d716c04ee7dd8f172",
+  "sourceManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\source-manifest.json",
+    "bytes": 246807,
+    "sha256": "3adaceffd81db09ffd0b41e2c83bc4d8eb435563ef335bd8ab8a47ce9dedb032"
+  },
+  "dependencyLibraryPins": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\dependency-library-pins.json",
+    "bytes": 360173,
+    "sha256": "b38f1519381b158ed485834df4ea1e4aaa96ea59386157e7fd0f2544b121bc40"
+  },
+  "cacheManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\cache-browser-projection.json",
+    "bytes": 773953,
+    "sha256": "3b74998cd55045e58c02b17b3de9151e878d78aab199e85bbcc3ec99d9c30166"
+  },
+  "originalPackageConfig": {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\.dart_tool\\package_config.json",
+    "bytes": 15171,
+    "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7"
+  },
+  "candidatePackageConfig": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+    "bytes": 15764,
+    "sha256": "8f20ecafd7053d93555ab0a6dba15457f3c37c7eda256d5268d209290794db24"
+  },
+  "candidatePackageConfigTemplate": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\generated\\guardian-package_config.json",
+    "bytes": 15764,
+    "sha256": "8f20ecafd7053d93555ab0a6dba15457f3c37c7eda256d5268d209290794db24"
+  },
+  "internalPackageRoots": {
+    "audit_client": "packages/audit_client",
+    "commerce_contracts": "packages/commerce_contracts",
+    "device_operations": "packages/device_operations",
+    "notification_client": "packages/notification_client",
+    "usage_report_ui": "packages/usage_report_ui",
+    "usage_reporting": "packages/usage_reporting",
+    "guardian": "apps/guardian"
+  },
+  "sevenRootGitTrees": {
+    "apps/guardian": "0afc3ef60f50d5c34d45eddc64b61d6e36cb8d5f",
+    "packages/audit_client": "78ec5e33ac6f6d12e11dcf67670d5d1a652ca88b",
+    "packages/commerce_contracts": "7622f332e19eb948080962271f305d55939205c3",
+    "packages/notification_client": "b4357814f6a56990389b51184acc5b0e0c8a90c0",
+    "packages/device_operations": "330c03b3f4a4b7a1023f85bf217e5a9992705f5f",
+    "packages/usage_reporting": "f954f4cb1598a9ecad2760a22319a097063b232a",
+    "packages/usage_report_ui": "d8f40afd96e3891e226019e5e1e61a2cc7f79024"
+  },
+  "gitExecutable": "C:\\Program Files\\Git\\cmd\\git.exe",
+  "controlRuntimeFiles": [
+    {
+      "path": "C:\\Python313\\python.exe",
+      "absolute": true,
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125"
+    },
+    {
+      "path": "C:\\Python313\\python313.dll",
+      "absolute": true,
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\win32\\win32job.pyd",
+      "absolute": true,
+      "bytes": 28672,
+      "sha256": "8f2a15f090e4fa75fd7179de0aa41108e9c6fe95786f736f373f5a7501e7e769"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\pywin32_system32\\pywintypes313.dll",
+      "absolute": true,
+      "bytes": 136192,
+      "sha256": "90ba935a0145ee9ae56267a365cc0088d34fa506b7afeb2bd1bd78cd33359605"
+    },
+    {
+      "path": "C:\\Python313\\DLLs\\_ctypes.pyd",
+      "bytes": 133992,
+      "sha256": "5c0d5082fba1a2a3eb8d5e23073be25164c19f21304b09cecaab340dc7198815",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\DLLs\\libffi-8.dll",
+      "bytes": 39696,
+      "sha256": "eff52743773eb550fcc6ce3efc37c85724502233b6b002a35496d828bd7b280a",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\__init__.py",
+      "bytes": 19374,
+      "sha256": "2e63f01ac6b8ffc1acfa4eec4c253eef8fbd65e09506d690cb3be71a2d78303a",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\_endian.py",
+      "bytes": 2635,
+      "sha256": "f2752ab2425dac9bfaff5aa1a3c6cd66aa342fee0db2f2a42de568fc59d5cbea",
+      "absolute": true
+    }
+  ],
+  "extraRuntimeFiles": [
+    {
+      "path": "C:\\Program Files\\Git\\cmd\\git.exe",
+      "bytes": 45032,
+      "sha256": "4ab2b391de7fb5eb3afb34b5bd19ee7f71d0450bf7e4c207b201a0392e3825ae"
+    },
+    {
+      "path": "C:\\Windows\\System32\\cmd.exe",
+      "bytes": 327680,
+      "sha256": "a6e3b3b22b7fe8ce2c9245816126723eaa13f43b9f591883e59959a2d409426a"
+    },
+    {
+      "path": "C:\\Windows\\System32\\where.exe",
+      "bytes": 61440,
+      "sha256": "ade557dd65848c5cf6565913cf6e01cf5c9a8033f0d784c4d6932394958d743e"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\internal\\exit_with_errorlevel.bat",
+      "bytes": 562,
+      "sha256": "f4014bd05cc24391ff28f7bd5b22949cc80f0bb66ab9eda512c9c3997f0283e0"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.yaml",
+      "bytes": 6215,
+      "sha256": "d703ed2f5467e37193640b26522839137430af10b631f36c0d89a54f3236172f"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.lock",
+      "bytes": 22135,
+      "sha256": "097571421b53ac57c9b72523ee5d2ae584c3d6ba58412f8cbe3af35c55c5593a"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\.dart_tool\\package_config.json",
+      "bytes": 20035,
+      "sha256": "49d0a9ce1c70ca6edd29537570cfe7ea6539843da50c6a85a107d829330150e8"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\wintypes.py",
+      "bytes": 5831,
+      "sha256": "4d9150e8603bd922e9dbee8a5e9cf1379cf599a382b09a5cbf09bed520f6c459",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\__init__.py",
+      "bytes": 89075,
+      "sha256": "96f6567584375b47e5719796d6f6cde50828487baaa1f5c19ccc4764bcf082b5",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_common.py",
+      "bytes": 29592,
+      "sha256": "b4f13b615cc2d19201859cd8773a8e16787e81e25500b6f2058dd3480c00497c",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psaix.py",
+      "bytes": 18817,
+      "sha256": "08504bc148bc0d1e4ab030b4c82b348e52ed2dfd9d861c8602b0211bfb9da8af",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psbsd.py",
+      "bytes": 32727,
+      "sha256": "51777e41751593f1ffc1b1475addafb21702856c41acfc27dfc3d7d077985dfa",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_pslinux.py",
+      "bytes": 88323,
+      "sha256": "c0a4f57371d7f1786767cb03357d6188a45b563ee9e7701227a55a9e229ac6ce",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psosx.py",
+      "bytes": 16421,
+      "sha256": "2f014fe80b4aa768733564526922da58707a9e1d4288a48cbbf2af3f9d34f481",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psposix.py",
+      "bytes": 7349,
+      "sha256": "009c726913dfd61f1dc93f6b9ec17c73ea6c1f05c46caa9a344b7738e9b866e9",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_pssunos.py",
+      "bytes": 25654,
+      "sha256": "079f056382636df9ddadd99b115ed0197ea5562d2ffbe57e83f1f1b20f79f0c3",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psutil_windows.pyd",
+      "bytes": 67072,
+      "sha256": "9c7fc855d9d1614e70705c7dcc6f4ac3cdcab5adfeb6a67d382f5ade09eadc15",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_pswindows.py",
+      "bytes": 37052,
+      "sha256": "8acfc2ab7c8cb859ea1947e939e894f285b365035698affe5ededab1bf180aee",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+      "bytes": 301368,
+      "sha256": "362a356ce7f0940ec74f73a8fc2c990a2cc24a38a11c90bbd8eca947110ad139",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.dll",
+      "bytes": 157496,
+      "sha256": "3046ed02928f5d8f78bb3106a861984498d4dc5f80e69a1d5bc7eeb911f0fa90",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\System.Management.Automation.dll",
+      "bytes": 19646264,
+      "sha256": "2d8af026e589c5603629bfc3e7c57265b4167b12eca3ae549c6a6c3ca7e4967b",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\Microsoft.PowerShell.Commands.Management.dll",
+      "bytes": 1124152,
+      "sha256": "40818818dd94a5fa1f53043e33d31d8312adad24ef61b06481dfae4c45d6e677",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\Microsoft.PowerShell.Commands.Utility.dll",
+      "bytes": 1652504,
+      "sha256": "2f6201bb3caf4c08158be733e786dd85b11537694f7e6ab40356fc0727a3596f",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\System.Diagnostics.Process.dll",
+      "bytes": 329512,
+      "sha256": "2b4871e02b366113c6ccf3b1436fadde5e69fc0a3e3ac421e2fa0f7af8c2bc3b",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\coreclr.dll",
+      "bytes": 4614440,
+      "sha256": "c98c3078a4f2495dd7d3ced967c7a6981545194ed163454703580b740f435521",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\clrjit.dll",
+      "bytes": 2092328,
+      "sha256": "e7bf743e7bf9a01c8c2bcdc0d828212fd8dfc285be9d4ec21962becf456df648",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\hostfxr.dll",
+      "bytes": 379728,
+      "sha256": "44f97e946b36415176dbc56a4426565a5e9b3e722c0ad579e20a749e3c0c7bcd",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+      "bytes": 4720792,
+      "sha256": "de999bce6a1c954df71a8f15bf751b336172f55ac1a0325bb0580cbc2121268c",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\lib\\src\\web\\chrome.dart",
+      "bytes": 20585,
+      "sha256": "16eb12ac25b6d8c9f6360ecc62ef65d6103441b8bb6c5690b61b7413216ed6e7",
+      "absolute": true
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\lib\\src\\test\\flutter_web_platform.dart",
+      "bytes": 35444,
+      "sha256": "aac43b3f5ba51f73de80b9f3947bf48d2d86ffa56133f70fbd7e18dbed013448",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ipaddress.py",
+      "bytes": 83565,
+      "sha256": "f20e2e7f92884181d9e09477ed5281dad661560c4941d889dcfd90584476122e",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\urllib\\__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\urllib\\parse.py",
+      "bytes": 46938,
+      "sha256": "8e1026b2de5fb7ef9265bf512b6ba11923c3a8bfa48a8b2158475c07c255e1a1",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\socket.py",
+      "bytes": 38741,
+      "sha256": "523695ac3383799547b421b4fe18004de1e80181e97181b6d7a10533b47f4c49",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\DLLs\\_socket.pyd",
+      "bytes": 86008,
+      "sha256": "bced17d6f081d81ea7cd92f1e071e38f8840e61ee0fe1524221b776bcfa78650",
+      "absolute": true
+    }
+  ],
+  "sdkBootstrap": {
+    "sdkGitRevision": "761747bfc538b5af34aa0d3fac380f1bc331ec49",
+    "flutterToolsStampText": "\"761747bfc538b5af34aa0d3fac380f1bc331ec49:\"",
+    "bootstrapMustBeAbsent": "D:\\softwares\\flutter\\bin\\internal\\bootstrap.bat",
+    "engineVersionText": "edd8546116457bdf1c5bdfb13ecb9463d2bb5ed4",
+    "sdkToolPubspecMtimeNs": 1717926884971133900,
+    "sdkToolLockMtimeNs": 1717927794318016500,
+    "sdkToolSnapshotMtimeNs": 1717926793445546100
+  },
+  "processPath": "C:\\Windows\\System32;C:\\Program Files\\Git\\cmd;D:\\softwares\\flutter\\bin\\cache\\dart-sdk\\bin",
+  "forbiddenEnvironmentOverrides": [
+    "FLUTTER_TOOL_ARGS",
+    "FLUTTER_ALREADY_LOCKED",
+    "FLUTTER_ROOT",
+    "DART_VM_OPTIONS",
+    "DART_VM_FLAGS",
+    "FLUTTER_ENGINE",
+    "FLUTTER_ENGINE_VERSION",
+    "FLUTTER_PREBUILT_ENGINE_VERSION",
+    "FLUTTER_TEST",
+    "FLUTTER_WEB_CANVASKIT_URL",
+    "FLUTTER_BUILD_DIR",
+    "FLUTTER_TARGET",
+    "DART_FLAGS",
+    "DART_SDK",
+    "PUB_CACHE",
+    "CHROME_EXECUTABLE",
+    "EDGE_ENVIRONMENT"
+  ],
+  "generatedExclusions": {
+    "directories": [
+      ".dart_tool",
+      ".idea",
+      "build"
+    ],
+    "files": [
+      ".flutter-plugins",
+      ".flutter-plugins-dependencies",
+      "device_operations_showcase.iml",
+      "guardian.iml"
+    ]
+  },
+  "sourceMembershipCheck": {
+    "main": {
+      "files": 413,
+      "fullMembershipExact": true
+    },
+    "frozen": {
+      "files": 413,
+      "fullMembershipExact": true
+    }
+  },
+  "scope": "Current006ee458 Chrome-only editor batch:1 Guardian browser root/13 exact cases. Complete183 remains; other182 roots are not executed or newly signed by this batch. Prior VM35 acceptance is separate. No pub/download, default assets, no auxiliary cleanup acceptance.",
+  "entireSdkOrBrowserInstallationPinned": false,
+  "cacheProjectionParentManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\guardian-baseline-analysis-20261021\\inputs\\cache-content-20261021-r1.json",
+    "bytes": 725122,
+    "sha256": "0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2"
+  },
+  "sourceFiles": 413,
+  "sourceCount": 413,
+  "sourceSeal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\seal-static-source.json",
+    "bytes": 80347,
+    "sha256": "2104f13ce6933043f3ca24be468d2644de36cfdb51c80c26571935307cf362fa"
+  },
+  "sourceDirectoryList": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\source-directory-list.json",
+    "bytes": 24972,
+    "sha256": "863a33480397b52751e470fdc0fc06dbe13da8f40ebf918ffc65234255cdc65f"
+  },
+  "fullRegressionInventoryBinding": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\full-regression-183-bindings.json",
+    "bytes": 85242,
+    "sha256": "e1987382f4430c94f6ccc42be73563ee98a05b9beb52956f2cfe4fd571b0f5b7"
+  },
+  "expectedCaseContract": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\expected-cases.json",
+    "bytes": 47372,
+    "sha256": "224a56311f1bcee9c5fe4738614c9df4511c2643f7111cc0f81866fd65104419"
+  },
+  "fullRegressionRootFiles": 183,
+  "expectedBrowserSubsetCases": 80,
+  "expectedBrowserSubsetSuites": 7,
+  "runtimeClosureComplete": false,
+  "qualifiedHostRuntimeManifest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\manifest.json",
+    "bytes": 2872,
+    "sha256": "f088c5b70ffab3c75e2ebc7fa381cc23350903f54b60ea4d45ab3c9794fb0370"
+  },
+  "qualificationRuntimeEvidenceBound": false,
+  "runtimePinPreparation": {
+    "oldControlPinsRetained": 4,
+    "oldExtraPinsRetained": 7,
+    "qualifiedR3RuntimePins": 6,
+    "qualifiedRuntimeNewUniquePins": 4,
+    "wintypesNewPins": 1,
+    "psutilNewCodePins": 10,
+    "runtimeUniquePins": 43,
+    "listedRuntimeFilesFreshlyReadForSizeAndHash": true,
+    "pywin32GuardsPreservedNotClaimedAsNewOwnedJobDependencies": true,
+    "runtimeClosureComplete": false,
+    "powerShellNewPins": 9,
+    "previousVM35RuntimePinsRetained": 35,
+    "browserExecutableAndToolSourcePinsAdded": 3,
+    "observerAdditionalExplicitPins": 5
+  },
+  "psutilCodeInventory": {
+    "root": "C:\\Python313\\Lib\\site-packages\\psutil",
+    "includedExtensions": [
+      ".py",
+      ".pyd"
+    ],
+    "excludedDirectoryNames": [
+      ".git",
+      "__pycache__",
+      "doc",
+      "docs",
+      "test",
+      "tests"
+    ],
+    "files": [
+      "__init__.py",
+      "_common.py",
+      "_psaix.py",
+      "_psbsd.py",
+      "_pslinux.py",
+      "_psosx.py",
+      "_psposix.py",
+      "_pssunos.py",
+      "_psutil_windows.pyd",
+      "_pswindows.py"
+    ],
+    "fileCount": 10,
+    "membershipRecordedByFileReadsOnly": true,
+    "packageImported": false
+  },
+  "staticPreparation": {
+    "status": "CURRENT_BROWSER13_INPUT_METADATA_NOT_EXECUTION_RESULT",
+    "sourceAndMetadataCurrentAtPreparedSeal": true,
+    "sourceScenarioExecution": "UNRUN",
+    "listedRuntimeFilesOnlyFreshlyHashed": true,
+    "cacheOriginal70TreesAnd32FixedRowsRetainedExactly": true,
+    "knownAdditionalAssetFixedFiles": 152,
+    "knownAdditionalAssetFilesPreviouslyFreshlyHashed": true,
+    "baselineCachePayloadFreshlyVerified": false,
+    "cachePayloadRehashDeferredToWorkerPreAndPost": true,
+    "runtimeClosureComplete": false,
+    "sdkInvoked": false,
+    "testsRun": false,
+    "astOrCandidateImported": false,
+    "networkUsed": false,
+    "mainOrOldFilesWritten": false,
+    "executionApproved": false,
+    "attemptCreated": false
+  },
+  "processInventoryProvider": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\process-inventory.ps1",
+    "bytes": 2439,
+    "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+  },
+  "testCaseContract": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\expected-browser13-cases.json",
+    "bytes": 6343,
+    "sha256": "6ea16bdf3b93fbea589aa95a4aa7a9e808afbe9605938d755fb54d8ce748c340"
+  },
+  "reporterContractCode": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\reporter_contract.py",
+    "bytes": 14280,
+    "sha256": "dcd85cf451b20bd24857cef6726d0f1ebb406c67096146d3d3c82306942b67e8"
+  },
+  "testSelectors": [
+    "test/editor_submit_guard_test.dart"
+  ],
+  "expectedVisibleCases": 13,
+  "ownedChromeEvidenceCode": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\owned_chrome_evidence.py",
+    "bytes": 29439,
+    "sha256": "34e80553205db29267baf4299821ff40111adbc79bd2e83e49fbf20282eb5a3f"
+  },
+  "ownedChromeNativeQualification": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-native-qualification-binding.json",
+    "bytes": 1307,
+    "sha256": "6e8ba3d2436bfa7ba1c80bad1bb24856f3eca27de6bf8476fd1c297c773a070a"
+  },
+  "browserExecutable": {
+    "path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+    "bytes": 4720792,
+    "sha256": "de999bce6a1c954df71a8f15bf751b336172f55ac1a0325bb0580cbc2121268c"
+  },
+  "browserToolSources": [
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\lib\\src\\web\\chrome.dart",
+      "bytes": 20585,
+      "sha256": "16eb12ac25b6d8c9f6360ecc62ef65d6103441b8bb6c5690b61b7413216ed6e7"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\lib\\src\\test\\flutter_web_platform.dart",
+      "bytes": 35444,
+      "sha256": "aac43b3f5ba51f73de80b9f3947bf48d2d86ffa56133f70fbd7e18dbed013448"
+    }
+  ],
+  "expectedBrowserTestRoots": 1,
+  "otherFullRegressionRootsNotExecutedByThisBatch": 182
+}

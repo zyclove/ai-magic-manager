@@ -1,0 +1,26 @@
+--- D:\codes\mobile\ai-manager\.cache\guardian-browser13-20261024-r1\chrome-evidence-json-guard.fragment
++++ D:\codes\mobile\ai-manager\.cache\guardian-browser13-20261024-r2-manager-proof\chrome-evidence-json-guard.fragment
+@@ -59,7 +59,7 @@
+             return False
+         identities, profiles, ports = set(), set(), set()
+         row_keys = {'pid', 'creationFiletime', 'commandCreationFiletime', 'imagePath', 'profile',
+-                    'debuggingPort', 'testServerOrigins', 'testTargets', 'headless',
++                    'debuggingPort', 'testServerOrigins', 'testTargets', 'managerTarget', 'headless',
+                     'argvTestTargetLoopback', 'flutterManagerTargetSameLoopbackOrigin',
+                     'commandLineUtf16Sha256', 'commandLineReadBeforeQpc', 'commandLineReadAfterQpc',
+                     'sameReadHandleVerified', 'ownedMembershipVerifiedBeforeAndAfter', 'liveBeforeAndAfter',
+@@ -103,6 +103,14 @@
+                     and positive(target['port']) and target['port'] < 65536
+                     and target['path'] == '/static/index.html' and digest(target['urlSha256'])):
+                 return False
++            manager = row['managerTarget']
++            if not (type(manager) is dict and set(manager) == {'scheme', 'host', 'port'}
++                    and type(manager['scheme']) is str and manager['scheme'] == 'ws'
++                    and type(manager['host']) is str
++                    and manager['host'] in ('localhost', '127.0.0.1', '::1')
++                    and positive(manager['port']) and manager['port'] < 65536
++                    and manager['host'] == target['host'] and manager['port'] == target['port']):
++                return False
+             origin = urlsplit(origins[0])
+             if not (origin.scheme == 'http' and origin.hostname == target['host']
+                     and origin.port == target['port'] and origin.path == ''

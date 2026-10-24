@@ -1,0 +1,13 @@
+--- D:\codes\mobile\ai-manager\.cache\guardian-browser13-release-20261024-r1.ps1
++++ D:\codes\mobile\ai-manager\.cache\guardian-browser13-release-20261024-r2-manager-proof.ps1
+@@ -6,8 +6,8 @@
+ )
+ $ErrorActionPreference='Stop'
+ $taskRepository='D:\codes\mobile\ai-manager'
+-$taskAnalysis=Join-Path $taskRepository '.cache\guardian-browser13-20261024-r1'
+-$taskPost=Join-Path $taskRepository '.cache\guardian-browser13-post-20261024-r1\post.json'
++$taskAnalysis=Join-Path $taskRepository '.cache\guardian-browser13-20261024-r2-manager-proof'
++$taskPost=Join-Path $taskRepository '.cache\guardian-browser13-post-20261024-r2-manager-proof\post.json'
+ $taskOutput=Join-Path $taskAnalysis 'root-attempt'
+ $taskInventory=Join-Path $taskOutput 'post-process-inventory.json'
+ $taskRelease=Join-Path $taskOutput 'release.json'

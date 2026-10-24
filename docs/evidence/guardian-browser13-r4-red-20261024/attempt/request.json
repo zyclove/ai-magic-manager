@@ -1,0 +1,8 @@
+{
+  "approvedProposalSha256": "849e0819fdce2cbb794f0c008a4e5c20aa5eff9517104c2d6902c970aac2a348",
+  "qpcAnchor": 120413.0507603,
+  "workDeadlineQpc": 120587.0507603,
+  "cleanupDeadlineQpc": 120593.0507603,
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "phase": "guardian-browser13"
+}

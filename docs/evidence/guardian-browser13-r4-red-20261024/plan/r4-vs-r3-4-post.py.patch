@@ -1,0 +1,41 @@
+--- D:\codes\mobile\ai-manager\.cache\guardian-browser13-post-20261024-r3-html-diagnostic\post.py
++++ D:\codes\mobile\ai-manager\.cache\guardian-browser13-post-20261024-r4-canonical-git\post.py
+@@ -10,15 +10,15 @@
+ import sys
+ 
+ REPO = Path(r'D:\codes\mobile\ai-manager')
+-BASE = REPO / '.cache/guardian-browser13-20261024-r3-html-diagnostic'
+-OUT = REPO / '.cache/guardian-browser13-post-20261024-r3-html-diagnostic'
+-LAUNCHER = REPO / '.cache/guardian-browser13-root-launch-20261024-r3-html-diagnostic.ps1'
++BASE = REPO / '.cache/guardian-browser13-20261024-r4-canonical-git'
++OUT = REPO / '.cache/guardian-browser13-post-20261024-r4-canonical-git'
++LAUNCHER = REPO / '.cache/guardian-browser13-root-launch-20261024-r4-canonical-git.ps1'
+ COMMIT = '006ee45850c9b6b0f90570d9478bced3beb0e0fe'
+-INPUT_SHA = '48466d5b67b8ebc13142ed2faf002481d66e483563045749bf3b6c8a63da0f7e'
++INPUT_SHA = '906ca7d4c49602b8cb59fb9bb3cdd058f6bd1a0c6f1e10dae363c4a64fc17311'
+ BUDGETS = {'outer': 180, 'working': 174, 'worker': 165, 'command': 135,
+            'commandCleanup': 140, 'postflightReserve': 25}
+ NAMES = {'analysis-host.py', 'worker.py', 'owned_job.py', 'process-inventory.ps1', 'reporter_contract.py', 'owned_chrome_evidence.py'}
+-PROPOSAL_SHA = '1473afaec08c0506a1c634b3f40808c6dbe71fde33ae096bf0f8f54e1e38bfbd'
++PROPOSAL_SHA = '849e0819fdce2cbb794f0c008a4e5c20aa5eff9517104c2d6902c970aac2a348'
+ SELECTORS = ['test/editor_submit_guard_test.dart']
+ REPORTER_SHA = 'dcd85cf451b20bd24857cef6726d0f1ebb406c67096146d3d3c82306942b67e8'
+ CASE_SHA = '6ea16bdf3b93fbea589aa95a4aa7a9e808afbe9605938d755fb54d8ce748c340'
+@@ -537,7 +537,7 @@
+     for row in proposal['candidateFiles']:
+         descriptor(row, candidate=True)
+     require(Path(proposal['inputs']['path']) == BASE / 'inputs.json'
+-            and type(proposal['inputs']['bytes']) is int and proposal['inputs']['bytes'] == 20250
++            and type(proposal['inputs']['bytes']) is int and proposal['inputs']['bytes'] == 20240
+             and proposal['inputs']['sha256'] == INPUT_SHA, 'Fixed current input required')
+     descriptor(proposal['inputs'])
+     inputs = load(BASE / 'inputs.json')
+@@ -735,7 +735,7 @@
+             and same(launch.get('reporterContractCodePin'), inputs['reporterContractCode']),
+             'Fixed command launch identity/argv/module differs')
+     require(same(launch.get('sdkProcessSafeDirectories'),
+-                 [str(REPO), str(Path(r'D:\softwares\flutter'))]),
++                 [REPO.as_posix(), Path(r'D:\softwares\flutter').as_posix()]),
+             'SDK child Git safe.directory allowance is not exactly REPO and SDK')
+     for key in ('workerStartQpc', 'commandDeadlineQpc', 'commandCleanupDeadlineQpc', 'workerDeadlineQpc'):
+         require(same(launch.get(key), receipt[key]), 'Launch original deadline differs: ' + key)

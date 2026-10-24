@@ -1,0 +1,226 @@
+{
+  "status": "R15_CURRENT006_DURABLE_PARENT_METADATA_ONLY_NOT_EXECUTED",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "sourceFiles": 413,
+  "fullRegressionRoots": 183,
+  "inputs": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r15-current006ee-durable-parent\\inputs.json",
+    "bytes": 17023,
+    "sha256": "ee2387b44bf6b172ee65baba0864f554b49d3e8f53a7aa635104034cc1b0ccb9"
+  },
+  "proposal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r15-current006ee-durable-parent\\proposal.json",
+    "bytes": 9087,
+    "sha256": "07272dc0ce1792b1e035a37ab4f951125f61b26e391f19e30d5b139093287088"
+  },
+  "post": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r15-post-20261024-r1-durable-parent\\post.py",
+    "bytes": 30418,
+    "sha256": "52368e95d9419a3402ef98308269e3580ca2cf2577f847570591136a6fdc4aef"
+  },
+  "candidateFiles": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r15-current006ee-durable-parent\\analysis-host.py",
+      "bytes": 21680,
+      "sha256": "45096deff53eeae14d912c6447b166351b62318c203e1e283c7e22748edd106f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r15-current006ee-durable-parent\\worker.py",
+      "bytes": 37099,
+      "sha256": "a565d833b4d357981603b93bfebe01b9775fea88103adb3d5cc2e98d52cf687e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r15-current006ee-durable-parent\\owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r15-current006ee-durable-parent\\process-inventory.ps1",
+      "bytes": 2439,
+      "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+    }
+  ],
+  "rootLauncher": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-root-launch-20261024-r15-current006ee-durable-parent.ps1",
+    "bytes": 9214,
+    "sha256": "1c86cc293501a5747fcbc4bdf5cbf3cf837fe4c40ea49de5b3f680c710d8c397"
+  },
+  "release": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r15-release-20261024-durable-parent.ps1",
+    "bytes": 4406,
+    "sha256": "f822d9320f50cce864c59b653249e91a8365676249966a380a4453fe7b4c0fdb"
+  },
+  "descriptorReadback": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r15-current006ee-durable-parent\\input-descriptor-readback.json",
+    "bytes": 14306,
+    "sha256": "f5307767a0d1ccbd3ca617f6c10a84812b692ff3296ac634cfa2e01a3260eb91"
+  },
+  "projectionParentPathDelta": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r15-current006ee-durable-parent\\projection-parent-path-delta.json",
+    "bytes": 1405,
+    "sha256": "a93de870e99dced4574fa68258f8a55d62149009053bbffea2f4d59554510cf7"
+  },
+  "runtimePinCount": 35,
+  "runtimeRowsByteExactR14": true,
+  "nativeAndProviderByteExact": true,
+  "wholeProjectionByteExactR14": false,
+  "projectionExceptParentPathEqualR12R13R14": true,
+  "cacheTrees": 70,
+  "cacheFixedFiles": 32,
+  "cacheTotals": {
+    "files": 3536,
+    "bytes": 633817159
+  },
+  "budgetsUnchanged": {
+    "outer": 180,
+    "working": 174,
+    "worker": 165,
+    "command": 135,
+    "commandCleanup": 140,
+    "postflightReserve": 25
+  },
+  "literalReplacements": [
+    {
+      "file": "analysis-host.py",
+      "old": "guardian-analyze-20261024-r14-current006ee",
+      "new": "guardian-analyze-20261024-r15-current006ee-durable-parent",
+      "count": 1,
+      "replacementBytePositions": [
+        359
+      ]
+    },
+    {
+      "file": "analysis-host.py",
+      "old": "Fixed r14 input descriptor required",
+      "new": "Fixed r15 input descriptor required",
+      "count": 1,
+      "replacementBytePositions": [
+        12296
+      ]
+    },
+    {
+      "file": "analysis-host.py",
+      "old": "db05ecf65669d87591e8f8ab82a58abd26e47fd6f8502786573861cc8935105d",
+      "new": "ee2387b44bf6b172ee65baba0864f554b49d3e8f53a7aa635104034cc1b0ccb9",
+      "count": 1,
+      "replacementBytePositions": [
+        556
+      ]
+    },
+    {
+      "file": "analysis-host.py",
+      "old": "INPUT_BYTES = 16841",
+      "new": "INPUT_BYTES = 17023",
+      "count": 1,
+      "replacementBytePositions": [
+        520
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "db05ecf65669d87591e8f8ab82a58abd26e47fd6f8502786573861cc8935105d",
+      "new": "ee2387b44bf6b172ee65baba0864f554b49d3e8f53a7aa635104034cc1b0ccb9",
+      "count": 1,
+      "replacementBytePositions": [
+        765
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "INPUT_BYTES = 16841",
+      "new": "INPUT_BYTES = 17023",
+      "count": 1,
+      "replacementBytePositions": [
+        729
+      ]
+    },
+    {
+      "file": "root-launch",
+      "old": "guardian-analyze-20261024-r14-current006ee",
+      "new": "guardian-analyze-20261024-r15-current006ee-durable-parent",
+      "count": 1,
+      "replacementBytePositions": [
+        128
+      ]
+    },
+    {
+      "file": "root-launch",
+      "old": "507ca5b9ad9120e9b448f892bb440d440704b1f5ee14c7696bd1995bf3827043",
+      "new": "07272dc0ce1792b1e035a37ab4f951125f61b26e391f19e30d5b139093287088",
+      "count": 1,
+      "replacementBytePositions": [
+        387
+      ]
+    },
+    {
+      "file": "root-launch",
+      "old": "guardian-full-analyze-current-r14-single-sdk-call",
+      "new": "guardian-full-analyze-current-r15-durable-parent-single-sdk-call",
+      "count": 1,
+      "replacementBytePositions": [
+        4848
+      ]
+    },
+    {
+      "file": "release",
+      "old": "guardian-analyze-20261024-r14-current006ee",
+      "new": "guardian-analyze-20261024-r15-current006ee-durable-parent",
+      "count": 1,
+      "replacementBytePositions": [
+        367
+      ]
+    },
+    {
+      "file": "release",
+      "old": "guardian-analyze-r14-post-20261024-r1",
+      "new": "guardian-analyze-r15-post-20261024-r1-durable-parent",
+      "count": 1,
+      "replacementBytePositions": [
+        470
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "guardian-analyze-20261024-r14-current006ee",
+      "new": "guardian-analyze-20261024-r15-current006ee-durable-parent",
+      "count": 1,
+      "replacementBytePositions": [
+        259
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "guardian-analyze-r14-post-20261024-r1",
+      "new": "guardian-analyze-r15-post-20261024-r1-durable-parent",
+      "count": 1,
+      "replacementBytePositions": [
+        339
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "guardian-analyze-root-launch-20261024-r14-current006ee.ps1",
+      "new": "guardian-analyze-root-launch-20261024-r15-current006ee-durable-parent.ps1",
+      "count": 1,
+      "replacementBytePositions": [
+        419
+      ]
+    },
+    {
+      "file": "post.py",
+      "old": "db05ecf65669d87591e8f8ab82a58abd26e47fd6f8502786573861cc8935105d",
+      "new": "ee2387b44bf6b172ee65baba0864f554b49d3e8f53a7aa635104034cc1b0ccb9",
+      "count": 1,
+      "replacementBytePositions": [
+        559
+      ]
+    }
+  ],
+  "allLiteralTransformsInverseByteExact": true,
+  "all13TopInputDescriptorsAnd35RuntimeActuallyReadHashMatched": true,
+  "cacheTreesOrAllSourcePayloadsRehashed": false,
+  "r13FailureAndR14ProvisionalPreserved": true,
+  "sdkOrCandidateOrAstTestsQualificationNativeGitNetworkUsed": false,
+  "grantCreated": false,
+  "attemptCreated": false
+}

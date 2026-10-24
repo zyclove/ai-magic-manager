@@ -1,0 +1,2549 @@
+{
+  "utc": "2026-10-24T08:58:20.840283+00:00",
+  "sdkProcesses": [],
+  "unknownProcessNames": [],
+  "processNameInventory": {
+    "schemaVersion": 1,
+    "provider": "PowerShell7 Get-Process / System.Diagnostics.Process",
+    "purpose": "FULL_FRESH_NAME_INVENTORY_NOT_PROCESS_CONTROL_IDENTITY",
+    "powerShellVersion": "7.6.5",
+    "sampleStartedAtUtc": "2026-10-24T08:58:20.5683338Z",
+    "sampleFinishedAtUtc": "2026-10-24T08:58:20.7275648Z",
+    "enumerationSucceeded": true,
+    "providerErrors": [],
+    "rowCount": 505,
+    "rows": [
+      {
+        "pid": 3848,
+        "name": "amdfendrsr",
+        "errors": []
+      },
+      {
+        "pid": 4824,
+        "name": "atieclxx",
+        "errors": []
+      },
+      {
+        "pid": 3856,
+        "name": "atiesrxx",
+        "errors": []
+      },
+      {
+        "pid": 147260,
+        "name": "audiodg",
+        "errors": []
+      },
+      {
+        "pid": 1060,
+        "name": "AutoModeDetect",
+        "errors": []
+      },
+      {
+        "pid": 17008,
+        "name": "betterleaks",
+        "errors": []
+      },
+      {
+        "pid": 27228,
+        "name": "ChatGPT",
+        "errors": []
+      },
+      {
+        "pid": 53336,
+        "name": "ChatGPT",
+        "errors": []
+      },
+      {
+        "pid": 95356,
+        "name": "ChatGPT",
+        "errors": []
+      },
+      {
+        "pid": 105840,
+        "name": "ChatGPT",
+        "errors": []
+      },
+      {
+        "pid": 117792,
+        "name": "ChatGPT",
+        "errors": []
+      },
+      {
+        "pid": 119820,
+        "name": "ChatGPT",
+        "errors": []
+      },
+      {
+        "pid": 143372,
+        "name": "ChatGPT",
+        "errors": []
+      },
+      {
+        "pid": 146984,
+        "name": "ChatGPT",
+        "errors": []
+      },
+      {
+        "pid": 147128,
+        "name": "ChatGPT",
+        "errors": []
+      },
+      {
+        "pid": 147380,
+        "name": "ChatGPT",
+        "errors": []
+      },
+      {
+        "pid": 148324,
+        "name": "ChatGPT",
+        "errors": []
+      },
+      {
+        "pid": 148440,
+        "name": "ChatGPT",
+        "errors": []
+      },
+      {
+        "pid": 148684,
+        "name": "ChatGPT",
+        "errors": []
+      },
+      {
+        "pid": 8660,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 11464,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 34860,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 42740,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 48752,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 69088,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 78704,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 83744,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 84040,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 86900,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 88568,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 89012,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 89160,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 89348,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 89880,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 90484,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 91640,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 100836,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 100856,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 138012,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 139020,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 144024,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 147956,
+        "name": "chrome",
+        "errors": []
+      },
+      {
+        "pid": 13608,
+        "name": "ChsIME",
+        "errors": []
+      },
+      {
+        "pid": 17372,
+        "name": "clash-verge",
+        "errors": []
+      },
+      {
+        "pid": 6164,
+        "name": "clash-verge-service",
+        "errors": []
+      },
+      {
+        "pid": 2856,
+        "name": "cmd",
+        "errors": []
+      },
+      {
+        "pid": 17640,
+        "name": "cmd",
+        "errors": []
+      },
+      {
+        "pid": 57368,
+        "name": "cmd",
+        "errors": []
+      },
+      {
+        "pid": 73776,
+        "name": "cmd",
+        "errors": []
+      },
+      {
+        "pid": 86332,
+        "name": "cmd",
+        "errors": []
+      },
+      {
+        "pid": 87220,
+        "name": "cmd",
+        "errors": []
+      },
+      {
+        "pid": 89524,
+        "name": "cmd",
+        "errors": []
+      },
+      {
+        "pid": 96204,
+        "name": "cmd",
+        "errors": []
+      },
+      {
+        "pid": 113084,
+        "name": "cmd",
+        "errors": []
+      },
+      {
+        "pid": 114708,
+        "name": "cmd",
+        "errors": []
+      },
+      {
+        "pid": 115564,
+        "name": "cmd",
+        "errors": []
+      },
+      {
+        "pid": 124492,
+        "name": "cmd",
+        "errors": []
+      },
+      {
+        "pid": 132524,
+        "name": "cmd",
+        "errors": []
+      },
+      {
+        "pid": 134736,
+        "name": "cmd",
+        "errors": []
+      },
+      {
+        "pid": 137808,
+        "name": "cmd",
+        "errors": []
+      },
+      {
+        "pid": 145516,
+        "name": "cmd",
+        "errors": []
+      },
+      {
+        "pid": 145772,
+        "name": "cmd",
+        "errors": []
+      },
+      {
+        "pid": 18440,
+        "name": "CNMNSST2",
+        "errors": []
+      },
+      {
+        "pid": 10816,
+        "name": "CNQMMAIN",
+        "errors": []
+      },
+      {
+        "pid": 24572,
+        "name": "CNQMUPDT",
+        "errors": []
+      },
+      {
+        "pid": 12636,
+        "name": "codebase-memory-mcp",
+        "errors": []
+      },
+      {
+        "pid": 26684,
+        "name": "codebase-memory-mcp",
+        "errors": []
+      },
+      {
+        "pid": 56408,
+        "name": "codebase-memory-mcp",
+        "errors": []
+      },
+      {
+        "pid": 117628,
+        "name": "codebase-memory-mcp",
+        "errors": []
+      },
+      {
+        "pid": 125880,
+        "name": "codebase-memory-mcp",
+        "errors": []
+      },
+      {
+        "pid": 129652,
+        "name": "codebase-memory-mcp",
+        "errors": []
+      },
+      {
+        "pid": 134464,
+        "name": "codebase-memory-mcp",
+        "errors": []
+      },
+      {
+        "pid": 137548,
+        "name": "codebase-memory-mcp",
+        "errors": []
+      },
+      {
+        "pid": 148700,
+        "name": "codebase-memory-mcp",
+        "errors": []
+      },
+      {
+        "pid": 148760,
+        "name": "codebase-memory-mcp",
+        "errors": []
+      },
+      {
+        "pid": 115184,
+        "name": "codex",
+        "errors": []
+      },
+      {
+        "pid": 132264,
+        "name": "codex",
+        "errors": []
+      },
+      {
+        "pid": 111364,
+        "name": "codex-code-mode-host",
+        "errors": []
+      },
+      {
+        "pid": 134864,
+        "name": "codex-computer-use-swift",
+        "errors": []
+      },
+      {
+        "pid": 141720,
+        "name": "codex-windows-sandbox-service",
+        "errors": []
+      },
+      {
+        "pid": 1384,
+        "name": "codex-windows-sandbox-setup",
+        "errors": []
+      },
+      {
+        "pid": 2328,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 2504,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 3076,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 5728,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 7128,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 7792,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 8884,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 9004,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 9096,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 16784,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 17140,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 17912,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 19164,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 20284,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 20828,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 22336,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 22668,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 23428,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 24116,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 28684,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 29200,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 34732,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 36100,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 41940,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 42388,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 45820,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 48144,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 50452,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 52996,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 53392,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 55400,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 56236,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 58892,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 60124,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 61028,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 65016,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 65392,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 69704,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 80216,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 82488,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 85592,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 86904,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 87760,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 89384,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 90732,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 94184,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 94860,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 95228,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 100736,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 101804,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 107684,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 108216,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 108724,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 109052,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 110956,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 112344,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 113188,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 113364,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 115364,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 118004,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 118156,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 118280,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 118828,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 119304,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 119760,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 121132,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 122680,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 122852,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 124392,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 125148,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 128364,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 130324,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 130412,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 132924,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 133148,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 133852,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 137192,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 138064,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 139292,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 139412,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 139420,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 140048,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 140280,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 140432,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 141076,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 141484,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 142016,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 142440,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 143264,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 143540,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 143612,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 143836,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 144104,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 144680,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 145032,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 145600,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 146448,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 146676,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 147252,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 147388,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 147472,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 147556,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 147728,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 148904,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 149216,
+        "name": "conhost",
+        "errors": []
+      },
+      {
+        "pid": 18648,
+        "name": "Coze",
+        "errors": []
+      },
+      {
+        "pid": 18824,
+        "name": "Coze",
+        "errors": []
+      },
+      {
+        "pid": 18844,
+        "name": "Coze",
+        "errors": []
+      },
+      {
+        "pid": 19100,
+        "name": "Coze",
+        "errors": []
+      },
+      {
+        "pid": 19128,
+        "name": "Coze",
+        "errors": []
+      },
+      {
+        "pid": 19592,
+        "name": "Coze",
+        "errors": []
+      },
+      {
+        "pid": 19764,
+        "name": "Coze",
+        "errors": []
+      },
+      {
+        "pid": 20372,
+        "name": "Coze",
+        "errors": []
+      },
+      {
+        "pid": 14776,
+        "name": "coze-daemon",
+        "errors": []
+      },
+      {
+        "pid": 20804,
+        "name": "cozedrive-core",
+        "errors": []
+      },
+      {
+        "pid": 1208,
+        "name": "csrss",
+        "errors": []
+      },
+      {
+        "pid": 1412,
+        "name": "csrss",
+        "errors": []
+      },
+      {
+        "pid": 7148,
+        "name": "ctfmon",
+        "errors": []
+      },
+      {
+        "pid": 6228,
+        "name": "DAX3API",
+        "errors": []
+      },
+      {
+        "pid": 7696,
+        "name": "DAX3API",
+        "errors": []
+      },
+      {
+        "pid": 11884,
+        "name": "dllhost",
+        "errors": []
+      },
+      {
+        "pid": 12808,
+        "name": "dllhost",
+        "errors": []
+      },
+      {
+        "pid": 56828,
+        "name": "dllhost",
+        "errors": []
+      },
+      {
+        "pid": 10012,
+        "name": "douyin_guard",
+        "errors": []
+      },
+      {
+        "pid": 2528,
+        "name": "dwm",
+        "errors": []
+      },
+      {
+        "pid": 6116,
+        "name": "ElevocControlService",
+        "errors": []
+      },
+      {
+        "pid": 6260,
+        "name": "Everything",
+        "errors": []
+      },
+      {
+        "pid": 9708,
+        "name": "explorer",
+        "errors": []
+      },
+      {
+        "pid": 108984,
+        "name": "extension-host",
+        "errors": []
+      },
+      {
+        "pid": 9336,
+        "name": "FnHotkeyCapsLKNumLK",
+        "errors": []
+      },
+      {
+        "pid": 9356,
+        "name": "FnHotkeyUtility",
+        "errors": []
+      },
+      {
+        "pid": 1728,
+        "name": "fontdrvhost",
+        "errors": []
+      },
+      {
+        "pid": 1736,
+        "name": "fontdrvhost",
+        "errors": []
+      },
+      {
+        "pid": 12116,
+        "name": "gitkraken",
+        "errors": []
+      },
+      {
+        "pid": 14780,
+        "name": "gitkraken",
+        "errors": []
+      },
+      {
+        "pid": 21904,
+        "name": "gitkraken",
+        "errors": []
+      },
+      {
+        "pid": 26824,
+        "name": "gitkraken",
+        "errors": []
+      },
+      {
+        "pid": 29344,
+        "name": "gitkraken",
+        "errors": []
+      },
+      {
+        "pid": 32484,
+        "name": "gitkraken",
+        "errors": []
+      },
+      {
+        "pid": 36196,
+        "name": "gitkraken",
+        "errors": []
+      },
+      {
+        "pid": 0,
+        "name": "Idle",
+        "errors": []
+      },
+      {
+        "pid": 41492,
+        "name": "keyboxd",
+        "errors": []
+      },
+      {
+        "pid": 6220,
+        "name": "lenovodrvsrv",
+        "errors": []
+      },
+      {
+        "pid": 6140,
+        "name": "LenovoUtilityService",
+        "errors": []
+      },
+      {
+        "pid": 6248,
+        "name": "LNBITSSvc",
+        "errors": []
+      },
+      {
+        "pid": 8924,
+        "name": "Locator",
+        "errors": []
+      },
+      {
+        "pid": 1548,
+        "name": "LsaIso",
+        "errors": []
+      },
+      {
+        "pid": 1560,
+        "name": "lsass",
+        "errors": []
+      },
+      {
+        "pid": 6056,
+        "name": "mDNSResponder",
+        "errors": []
+      },
+      {
+        "pid": 6684,
+        "name": "msedgewebview2",
+        "errors": []
+      },
+      {
+        "pid": 16812,
+        "name": "msedgewebview2",
+        "errors": []
+      },
+      {
+        "pid": 16960,
+        "name": "msedgewebview2",
+        "errors": []
+      },
+      {
+        "pid": 17128,
+        "name": "msedgewebview2",
+        "errors": []
+      },
+      {
+        "pid": 17548,
+        "name": "msedgewebview2",
+        "errors": []
+      },
+      {
+        "pid": 17980,
+        "name": "msedgewebview2",
+        "errors": []
+      },
+      {
+        "pid": 18208,
+        "name": "msedgewebview2",
+        "errors": []
+      },
+      {
+        "pid": 21192,
+        "name": "msedgewebview2",
+        "errors": []
+      },
+      {
+        "pid": 22232,
+        "name": "msedgewebview2",
+        "errors": []
+      },
+      {
+        "pid": 22756,
+        "name": "msedgewebview2",
+        "errors": []
+      },
+      {
+        "pid": 23840,
+        "name": "msedgewebview2",
+        "errors": []
+      },
+      {
+        "pid": 24432,
+        "name": "msedgewebview2",
+        "errors": []
+      },
+      {
+        "pid": 5748,
+        "name": "MSOfficePLUSService",
+        "errors": []
+      },
+      {
+        "pid": 7284,
+        "name": "MSPCManagerService",
+        "errors": []
+      },
+      {
+        "pid": 88680,
+        "name": "multica",
+        "errors": []
+      },
+      {
+        "pid": 6452,
+        "name": "mysqld",
+        "errors": []
+      },
+      {
+        "pid": 7760,
+        "name": "mysqld",
+        "errors": []
+      },
+      {
+        "pid": 12560,
+        "name": "NeatDM",
+        "errors": []
+      },
+      {
+        "pid": 2212,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 4608,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 11488,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 13684,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 22348,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 26256,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 27352,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 35196,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 48788,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 52640,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 54800,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 72832,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 76388,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 78496,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 79044,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 81072,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 82308,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 84940,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 96108,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 96312,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 100592,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 112744,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 113796,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 114780,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 116864,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 117440,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 118148,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 121524,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 123520,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 125256,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 129404,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 129624,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 135208,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 135252,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 135896,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 136584,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 136928,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 140872,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 142248,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 142500,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 143084,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 145128,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 145432,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 145980,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 146172,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 146892,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 148968,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 149208,
+        "name": "node",
+        "errors": []
+      },
+      {
+        "pid": 35964,
+        "name": "node-spawn-server",
+        "errors": []
+      },
+      {
+        "pid": 26420,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 26852,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 27552,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 54192,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 64080,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 69540,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 72360,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 80428,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 81648,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 84904,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 87236,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 91376,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 100236,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 104544,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 112296,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 112788,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 114048,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 117004,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 117804,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 121284,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 121640,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 124840,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 127160,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 129068,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 130936,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 140728,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 142260,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 143908,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 145068,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 145404,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 146400,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 147132,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 148380,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 148680,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 149072,
+        "name": "node_repl",
+        "errors": []
+      },
+      {
+        "pid": 6504,
+        "name": "OfficeClickToRun",
+        "errors": []
+      },
+      {
+        "pid": 10664,
+        "name": "powershell",
+        "errors": []
+      },
+      {
+        "pid": 78884,
+        "name": "powershell",
+        "errors": []
+      },
+      {
+        "pid": 82468,
+        "name": "powershell",
+        "errors": []
+      },
+      {
+        "pid": 104692,
+        "name": "powershell",
+        "errors": []
+      },
+      {
+        "pid": 130604,
+        "name": "powershell",
+        "errors": []
+      },
+      {
+        "pid": 8272,
+        "name": "pwsh",
+        "errors": []
+      },
+      {
+        "pid": 132608,
+        "name": "pwsh",
+        "errors": []
+      },
+      {
+        "pid": 138600,
+        "name": "pwsh",
+        "errors": []
+      },
+      {
+        "pid": 85604,
+        "name": "python",
+        "errors": []
+      },
+      {
+        "pid": 89092,
+        "name": "python",
+        "errors": []
+      },
+      {
+        "pid": 224,
+        "name": "Registry",
+        "errors": []
+      },
+      {
+        "pid": 4916,
+        "name": "RtkAudUService64",
+        "errors": []
+      },
+      {
+        "pid": 6284,
+        "name": "RtkAudUService64",
+        "errors": []
+      },
+      {
+        "pid": 11164,
+        "name": "RuntimeBroker",
+        "errors": []
+      },
+      {
+        "pid": 11376,
+        "name": "RuntimeBroker",
+        "errors": []
+      },
+      {
+        "pid": 14544,
+        "name": "RuntimeBroker",
+        "errors": []
+      },
+      {
+        "pid": 92916,
+        "name": "RuntimeBroker",
+        "errors": []
+      },
+      {
+        "pid": 17100,
+        "name": "sandbox-center",
+        "errors": []
+      },
+      {
+        "pid": 16740,
+        "name": "sandbox-cli-gc",
+        "errors": []
+      },
+      {
+        "pid": 10288,
+        "name": "SearchFilterHost",
+        "errors": []
+      },
+      {
+        "pid": 53852,
+        "name": "SearchFilterHost",
+        "errors": []
+      },
+      {
+        "pid": 4952,
+        "name": "SearchHost",
+        "errors": []
+      },
+      {
+        "pid": 8480,
+        "name": "SearchIndexer",
+        "errors": []
+      },
+      {
+        "pid": 123628,
+        "name": "SearchProtocolHost",
+        "errors": []
+      },
+      {
+        "pid": 172,
+        "name": "Secure System",
+        "errors": []
+      },
+      {
+        "pid": 11784,
+        "name": "SecurityHealthService",
+        "errors": []
+      },
+      {
+        "pid": 8964,
+        "name": "SecurityHealthSystray",
+        "errors": []
+      },
+      {
+        "pid": 1516,
+        "name": "services",
+        "errors": []
+      },
+      {
+        "pid": 13808,
+        "name": "SGTool",
+        "errors": []
+      },
+      {
+        "pid": 13252,
+        "name": "ShellExperienceHost",
+        "errors": []
+      },
+      {
+        "pid": 9432,
+        "name": "sihost",
+        "errors": []
+      },
+      {
+        "pid": 6200,
+        "name": "SmartSense",
+        "errors": []
+      },
+      {
+        "pid": 7620,
+        "name": "SmartSenseController",
+        "errors": []
+      },
+      {
+        "pid": 740,
+        "name": "smss",
+        "errors": []
+      },
+      {
+        "pid": 90200,
+        "name": "SogouCloud",
+        "errors": []
+      },
+      {
+        "pid": 25084,
+        "name": "SogouComMgr",
+        "errors": []
+      },
+      {
+        "pid": 53824,
+        "name": "SogouImeBroker",
+        "errors": []
+      },
+      {
+        "pid": 19076,
+        "name": "splwow64",
+        "errors": []
+      },
+      {
+        "pid": 5592,
+        "name": "spoolsv",
+        "errors": []
+      },
+      {
+        "pid": 7476,
+        "name": "StartMenuExperienceHost",
+        "errors": []
+      },
+      {
+        "pid": 1544,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 1600,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 1640,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 1696,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 1868,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 1920,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 1924,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 2052,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 2060,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 2076,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 2176,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 2192,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 2224,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 2232,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 2400,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 2408,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 2548,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 2556,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 2572,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 2688,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 2924,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 2944,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 3000,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 3064,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 3392,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 3596,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 3660,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 3764,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 3808,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 3864,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 3872,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 3972,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 4028,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 4036,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 4080,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 4228,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 4712,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 4720,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 4800,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 4808,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 4892,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 5080,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 5212,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 5256,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 5468,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 5864,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 6068,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 6080,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 6088,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 6128,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 6148,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 6208,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 6464,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 6640,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 7020,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 8180,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 8400,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 9064,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 9176,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 9524,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 9536,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 9584,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 9648,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 9768,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 9820,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 10200,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 11228,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 11436,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 12276,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 14448,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 14596,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 14756,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 14896,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 14904,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 15384,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 15892,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 18324,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 20744,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 22592,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 22720,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 23856,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 24364,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 25152,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 25568,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 31940,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 32560,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 53436,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 109832,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 113768,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 148956,
+        "name": "svchost",
+        "errors": []
+      },
+      {
+        "pid": 6236,
+        "name": "SysCleanProService",
+        "errors": []
+      },
+      {
+        "pid": 4,
+        "name": "System",
+        "errors": []
+      },
+      {
+        "pid": 14620,
+        "name": "SystemSettingsBroker",
+        "errors": []
+      },
+      {
+        "pid": 10024,
+        "name": "taskhostw",
+        "errors": []
+      },
+      {
+        "pid": 63480,
+        "name": "taskhostw",
+        "errors": []
+      },
+      {
+        "pid": 13664,
+        "name": "TextInputHost",
+        "errors": []
+      },
+      {
+        "pid": 6416,
+        "name": "unsecapp",
+        "errors": []
+      },
+      {
+        "pid": 9452,
+        "name": "unsecapp",
+        "errors": []
+      },
+      {
+        "pid": 27812,
+        "name": "UserOOBEBroker",
+        "errors": []
+      },
+      {
+        "pid": 141488,
+        "name": "UserSSCtrl",
+        "errors": []
+      },
+      {
+        "pid": 18296,
+        "name": "verge-mihomo",
+        "errors": []
+      },
+      {
+        "pid": 4440,
+        "name": "vmcompute",
+        "errors": []
+      },
+      {
+        "pid": 3616,
+        "name": "vmms",
+        "errors": []
+      },
+      {
+        "pid": 6392,
+        "name": "vmnat",
+        "errors": []
+      },
+      {
+        "pid": 6304,
+        "name": "vmnetdhcp",
+        "errors": []
+      },
+      {
+        "pid": 6172,
+        "name": "vmware-authd",
+        "errors": []
+      },
+      {
+        "pid": 6296,
+        "name": "vmware-usbarbitrator64",
+        "errors": []
+      },
+      {
+        "pid": 11348,
+        "name": "Widgets",
+        "errors": []
+      },
+      {
+        "pid": 3916,
+        "name": "WidgetService",
+        "errors": []
+      },
+      {
+        "pid": 1392,
+        "name": "wininit",
+        "errors": []
+      },
+      {
+        "pid": 1496,
+        "name": "winlogon",
+        "errors": []
+      },
+      {
+        "pid": 5704,
+        "name": "wlanext",
+        "errors": []
+      },
+      {
+        "pid": 7056,
+        "name": "WmiApSrv",
+        "errors": []
+      },
+      {
+        "pid": 4576,
+        "name": "WmiPrvSE",
+        "errors": []
+      },
+      {
+        "pid": 21440,
+        "name": "WmiPrvSE",
+        "errors": []
+      },
+      {
+        "pid": 29908,
+        "name": "WmiPrvSE",
+        "errors": []
+      },
+      {
+        "pid": 5408,
+        "name": "WorkBuddy",
+        "errors": []
+      },
+      {
+        "pid": 9532,
+        "name": "WorkBuddy",
+        "errors": []
+      },
+      {
+        "pid": 15684,
+        "name": "WorkBuddy",
+        "errors": []
+      },
+      {
+        "pid": 15768,
+        "name": "WorkBuddy",
+        "errors": []
+      },
+      {
+        "pid": 16484,
+        "name": "WorkBuddy",
+        "errors": []
+      },
+      {
+        "pid": 17208,
+        "name": "WorkBuddy",
+        "errors": []
+      },
+      {
+        "pid": 18464,
+        "name": "WorkBuddy",
+        "errors": []
+      },
+      {
+        "pid": 144408,
+        "name": "WorkBuddy",
+        "errors": []
+      },
+      {
+        "pid": 54048,
+        "name": "wps",
+        "errors": []
+      },
+      {
+        "pid": 6328,
+        "name": "wslservice",
+        "errors": []
+      },
+      {
+        "pid": 1760,
+        "name": "WUDFHost",
+        "errors": []
+      },
+      {
+        "pid": 1956,
+        "name": "WUDFHost",
+        "errors": []
+      },
+      {
+        "pid": 2044,
+        "name": "WUDFHost",
+        "errors": []
+      },
+      {
+        "pid": 4332,
+        "name": "WUDFHost",
+        "errors": []
+      },
+      {
+        "pid": 13648,
+        "name": "YunDetectService",
+        "errors": []
+      },
+      {
+        "pid": 4784,
+        "name": "ZhuDongFangYu",
+        "errors": []
+      }
+    ]
+  },
+  "processNameProviderScriptSha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046",
+  "availableRamBytes": 9941131264,
+  "diskFreeBytes": {
+    "C:/": 3375521792,
+    "D:/": 6852120576
+  }
+}

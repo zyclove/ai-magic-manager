@@ -1,0 +1,24 @@
+--- D:\codes\mobile\ai-manager\.cache\guardian-browser13-root-launch-20261024-r3-html-diagnostic.ps1
++++ D:\codes\mobile\ai-manager\.cache\guardian-browser13-root-launch-20261024-r4-canonical-git.ps1
+@@ -1,10 +1,10 @@
+ $ErrorActionPreference='Stop'
+ $taskRepository='D:\codes\mobile\ai-manager'
+-$analysisDirectory=Join-Path $taskRepository '.cache\guardian-browser13-20261024-r3-html-diagnostic'
++$analysisDirectory=Join-Path $taskRepository '.cache\guardian-browser13-20261024-r4-canonical-git'
+ $proposalFile=Join-Path $analysisDirectory 'proposal.json'
+ $grantFile=Join-Path $analysisDirectory 'root-sdk-grant.json'
+ $rootAttempt=Join-Path $analysisDirectory 'root-attempt'
+-$expectedProposalSha='1473afaec08c0506a1c634b3f40808c6dbe71fde33ae096bf0f8f54e1e38bfbd'
++$expectedProposalSha='849e0819fdce2cbb794f0c008a4e5c20aa5eff9517104c2d6902c970aac2a348'
+ $expectedCommit='006ee45850c9b6b0f90570d9478bced3beb0e0fe'
+ if($expectedProposalSha -notmatch '^[a-f0-9]{64}$'){throw 'Static launcher is disabled pending exact reviewed proposal'}
+ if($PSVersionTable.PSVersion.ToString() -ne '7.6.5'){throw 'Fixed reviewed PowerShell runtime required'}
+@@ -35,7 +35,7 @@
+     }
+ }
+ Test-AnalysisPins
+-$currentHead=& 'C:\Program Files\Git\cmd\git.exe' -c "safe.directory=$taskRepository" -C $taskRepository rev-parse HEAD
++$currentHead=& 'C:\Program Files\Git\cmd\git.exe' -c ("safe.directory=" + $taskRepository.Replace('\','/')) -C $taskRepository rev-parse HEAD
+ if($LASTEXITCODE -ne 0 -or $currentHead -ne $expectedCommit){throw 'Current source commit changed'}
+ $analysisProcesses=@(Get-Process)
+ $analysisSdk=@($analysisProcesses|Where-Object{$_.ProcessName -match '^(dart|dartaotruntime|flutter|flutter_tester|gen_snapshot|java|javaw|javac|mvn|gradle|go|gofmt|compile|link|vet|aapt2|asm|cgo|qemu-system-x86_64)$|\.test$'})

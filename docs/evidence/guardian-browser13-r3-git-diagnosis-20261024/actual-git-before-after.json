@@ -1,0 +1,230 @@
+{
+  "status": "READ_ONLY_GIT_CANONICAL_SAFE_DIRECTORY_BEFORE_AFTER",
+  "createdAtUtc": "2026-10-24T11:35:17.871160+00:00",
+  "environmentConstruction": "Root whitelist only plus bounded PATH/TEMP/TMP and worker Git isolation keys; no inherited GIT variables",
+  "environmentKeys": [
+    "APPDATA",
+    "COMSPEC",
+    "GIT_CONFIG_GLOBAL",
+    "GIT_CONFIG_NOSYSTEM",
+    "GIT_OPTIONAL_LOCKS",
+    "GIT_TERMINAL_PROMPT",
+    "LOCALAPPDATA",
+    "NUMBER_OF_PROCESSORS",
+    "PATH",
+    "ProgramData",
+    "ProgramFiles",
+    "ProgramFiles(x86)",
+    "SystemRoot",
+    "TEMP",
+    "TMP",
+    "USERPROFILE",
+    "WINDIR"
+  ],
+  "globalConfig": "NUL",
+  "systemConfigDisabled": true,
+  "optionalLocksDisabled": true,
+  "commandScopedTrustOnly": true,
+  "sdkOrBrowserCalls": 0,
+  "gitWriteOrConfigOrOwnershipOrPermissionChanges": 0,
+  "cases": [
+    {
+      "label": "repo-head-backslash",
+      "cwd": "D:\\codes\\mobile\\ai-manager",
+      "argv": [
+        "C:\\Program Files\\Git\\cmd\\git.exe",
+        "-c",
+        "safe.directory=D:\\codes\\mobile\\ai-manager",
+        "-c",
+        "core.fsmonitor=false",
+        "-c",
+        "core.untrackedCache=false",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exitCode": 128,
+      "elapsedSeconds": 0.09570869999879505,
+      "safeDirectoryStyle": "backslash",
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-git-diagnosis-20261024-r1\\repo-head-backslash.stdout.bin",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-git-diagnosis-20261024-r1\\repo-head-backslash.stderr.bin",
+        "bytes": 376,
+        "sha256": "59924347f9e6d2d2828f506e2e0c8b7cee1d26bb41dfdbc41cb895164529c555"
+      },
+      "stdoutText": "",
+      "stderrText": "fatal: detected dubious ownership in repository at 'D:/codes/mobile/ai-manager'\n'D:/codes/mobile/ai-manager' is owned by:\n\tBUILTIN/Administrators (S-1-5-32-544)\nbut the current user is:\n\tUFO/CodexSandboxOffline (S-1-5-21-2855720842-1651825730-2458486029-1005)\nTo add an exception for this directory, call:\n\n\tgit config --global --add safe.directory D:/codes/mobile/ai-manager\n"
+    },
+    {
+      "label": "repo-head-forwardslash",
+      "cwd": "D:\\codes\\mobile\\ai-manager",
+      "argv": [
+        "C:\\Program Files\\Git\\cmd\\git.exe",
+        "-c",
+        "safe.directory=D:/codes/mobile/ai-manager",
+        "-c",
+        "core.fsmonitor=false",
+        "-c",
+        "core.untrackedCache=false",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.09333329999935813,
+      "safeDirectoryStyle": "forwardslash",
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-git-diagnosis-20261024-r1\\repo-head-forwardslash.stdout.bin",
+        "bytes": 41,
+        "sha256": "5cb355ac440bee4452fd1ba3bb7bcad4417816dfdfd1a4704aa012ed7241ee41"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-git-diagnosis-20261024-r1\\repo-head-forwardslash.stderr.bin",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdoutText": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+      "stderrText": ""
+    },
+    {
+      "label": "sdk-head-backslash",
+      "cwd": "D:\\softwares\\flutter",
+      "argv": [
+        "C:\\Program Files\\Git\\cmd\\git.exe",
+        "-c",
+        "safe.directory=D:\\softwares\\flutter",
+        "-c",
+        "core.fsmonitor=false",
+        "-c",
+        "core.untrackedCache=false",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exitCode": 128,
+      "elapsedSeconds": 0.08994539998820983,
+      "safeDirectoryStyle": "backslash",
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-git-diagnosis-20261024-r1\\sdk-head-backslash.stdout.bin",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-git-diagnosis-20261024-r1\\sdk-head-backslash.stderr.bin",
+        "bytes": 358,
+        "sha256": "d933e12db22a7bd01c8082301d651a308416f89c7a9b99eb0d7d2befe003391b"
+      },
+      "stdoutText": "",
+      "stderrText": "fatal: detected dubious ownership in repository at 'D:/softwares/flutter'\n'D:/softwares/flutter' is owned by:\n\tBUILTIN/Administrators (S-1-5-32-544)\nbut the current user is:\n\tUFO/CodexSandboxOffline (S-1-5-21-2855720842-1651825730-2458486029-1005)\nTo add an exception for this directory, call:\n\n\tgit config --global --add safe.directory D:/softwares/flutter\n"
+    },
+    {
+      "label": "sdk-head-forwardslash",
+      "cwd": "D:\\softwares\\flutter",
+      "argv": [
+        "C:\\Program Files\\Git\\cmd\\git.exe",
+        "-c",
+        "safe.directory=D:/softwares/flutter",
+        "-c",
+        "core.fsmonitor=false",
+        "-c",
+        "core.untrackedCache=false",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.10031009999511298,
+      "safeDirectoryStyle": "forwardslash",
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-git-diagnosis-20261024-r1\\sdk-head-forwardslash.stdout.bin",
+        "bytes": 41,
+        "sha256": "3b308e7bab12fa2404bbf24e867f891c392f4d47648a473b29736008bb84e2bc"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-git-diagnosis-20261024-r1\\sdk-head-forwardslash.stderr.bin",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stdoutText": "761747bfc538b5af34aa0d3fac380f1bc331ec49",
+      "stderrText": ""
+    },
+    {
+      "label": "repo-seven-trees-backslash",
+      "cwd": "D:\\codes\\mobile\\ai-manager",
+      "argv": [
+        "C:\\Program Files\\Git\\cmd\\git.exe",
+        "-c",
+        "safe.directory=D:\\codes\\mobile\\ai-manager",
+        "-c",
+        "core.fsmonitor=false",
+        "-c",
+        "core.untrackedCache=false",
+        "ls-tree",
+        "-rz",
+        "HEAD",
+        "--",
+        "apps/guardian",
+        "packages/audit_client",
+        "packages/commerce_contracts",
+        "packages/device_operations",
+        "packages/notification_client",
+        "packages/usage_report_ui",
+        "packages/usage_reporting"
+      ],
+      "exitCode": 128,
+      "elapsedSeconds": 0.08982140000443906,
+      "safeDirectoryStyle": "backslash",
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-git-diagnosis-20261024-r1\\repo-seven-trees-backslash.stdout.bin",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-git-diagnosis-20261024-r1\\repo-seven-trees-backslash.stderr.bin",
+        "bytes": 376,
+        "sha256": "59924347f9e6d2d2828f506e2e0c8b7cee1d26bb41dfdbc41cb895164529c555"
+      },
+      "nulTerminatedTreeRows": 0,
+      "stderrText": "fatal: detected dubious ownership in repository at 'D:/codes/mobile/ai-manager'\n'D:/codes/mobile/ai-manager' is owned by:\n\tBUILTIN/Administrators (S-1-5-32-544)\nbut the current user is:\n\tUFO/CodexSandboxOffline (S-1-5-21-2855720842-1651825730-2458486029-1005)\nTo add an exception for this directory, call:\n\n\tgit config --global --add safe.directory D:/codes/mobile/ai-manager\n"
+    },
+    {
+      "label": "repo-seven-trees-forwardslash",
+      "cwd": "D:\\codes\\mobile\\ai-manager",
+      "argv": [
+        "C:\\Program Files\\Git\\cmd\\git.exe",
+        "-c",
+        "safe.directory=D:/codes/mobile/ai-manager",
+        "-c",
+        "core.fsmonitor=false",
+        "-c",
+        "core.untrackedCache=false",
+        "ls-tree",
+        "-rz",
+        "HEAD",
+        "--",
+        "apps/guardian",
+        "packages/audit_client",
+        "packages/commerce_contracts",
+        "packages/device_operations",
+        "packages/notification_client",
+        "packages/usage_report_ui",
+        "packages/usage_reporting"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.09442789999593515,
+      "safeDirectoryStyle": "forwardslash",
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-git-diagnosis-20261024-r1\\repo-seven-trees-forwardslash.stdout.bin",
+        "bytes": 42370,
+        "sha256": "58f3c04325fe25f63230bd1ad5c60a81fac8fc92c7a7277d39f1123acad0917c"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-git-diagnosis-20261024-r1\\repo-seven-trees-forwardslash.stderr.bin",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "nulTerminatedTreeRows": 413,
+      "stderrText": ""
+    }
+  ]
+}

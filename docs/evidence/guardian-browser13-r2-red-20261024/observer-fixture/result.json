@@ -1,0 +1,79 @@
+{
+  "status": "OWNED_READ_PATH_FIXTURE_ACCEPTED_NOT_CHROME_QUALIFICATION",
+  "sdkStarted": false,
+  "chromeStarted": false,
+  "networkQueriesOrRequests": false,
+  "environmentRead": false,
+  "newReadPathOnlyNotF8Requalification": true,
+  "chromeLifecycleQualified": false,
+  "observerSha256": "4a5d49f4e55d583478a423532e9997eb8ea6e3f7da9ab4d1e1ea8c5cde29bf72",
+  "originalDeadlineQpc": 115378.528641,
+  "forced": false,
+  "naturalJobZero": true,
+  "cases": [
+    {
+      "case": "own-job-retained-handle-command-line",
+      "accepted": true,
+      "proof": {
+        "commandLineUtf16Sha256": "6d74285ce3ce131d1ca090fbbaa9216722da26aada4ad8c15555043acce46df8",
+        "commandLineReadBeforeQpc": 115370.6209117,
+        "commandLineReadAfterQpc": 115370.6210415
+      },
+      "rawCommandLineSaved": false
+    },
+    {
+      "case": "wrong-creation",
+      "rejected": true,
+      "memoryReads": 0
+    },
+    {
+      "case": "task-parent-outside-private-job",
+      "rejected": true,
+      "memoryReads": 0
+    },
+    {
+      "case": "invalid-read-length",
+      "rejected": true,
+      "memoryReads": 0
+    }
+  ],
+  "pid": 150808,
+  "creationFiletime": 134373108584214217,
+  "terminal": {
+    "pid": 150808,
+    "creationFiletime": 134373108584214217,
+    "firstSignaledQpc": 115372.1729295,
+    "sampleQpc": 115372.1810668,
+    "signaled": true,
+    "exitCode": 0,
+    "exitFiletime": 134373108599734952,
+    "kernel100ns": 156250,
+    "user100ns": 0,
+    "jobAccountingObservedQpc": 115372.1811011,
+    "firstCompleteTerminalQpc": 115372.1811011,
+    "activeProcesses": 0,
+    "totalProcesses": 2,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "remoteMemoryReads": 5,
+  "commandLineReads": 1,
+  "terminalAtClose": {
+    "pid": 150808,
+    "creationFiletime": 134373108584214217,
+    "firstSignaledQpc": 115372.1729295,
+    "sampleQpc": 115372.1811267,
+    "signaled": true,
+    "exitCode": 0,
+    "exitFiletime": 134373108599734952,
+    "kernel100ns": 156250,
+    "user100ns": 0,
+    "jobAccountingObservedQpc": 115372.1811547,
+    "firstCompleteTerminalQpc": 115372.1811011,
+    "activeProcesses": 0,
+    "totalProcesses": 2,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "elapsedSeconds": 1.6525930000061635
+}

@@ -1,0 +1,78 @@
+{
+  "status": "READ_ONLY_OWNED_PROFILE_CACHE_RESPONSE_EVIDENCE_NOT_RETEST",
+  "sourceFile": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\attempt\\tmp\\flutter_tools.861447e7\\flutter_tools_chrome_device.51dd7e1e\\Default\\Cache\\Cache_Data\\data_1",
+    "bytes": 532480,
+    "sha256": "5696be056a8df260ca60d233357bd99626eb230839d076ebf5cc0aa85d7e0874"
+  },
+  "cacheLayoutChecks": "8192-byte file header; file blockSize=256; EntryStore inline key at+96/key_len+32; stream sizes+40/44 and addresses+56/60; initialized block addresses decoded to same data file and exact streams.",
+  "cacheReadIdentityStable": true,
+  "responses": [
+    {
+      "url": "http://localhost:54407/canvaskit/chromium/canvaskit.js",
+      "entryOffset": 319232,
+      "keyOffset": 319328,
+      "keyBytes": 96,
+      "metadataStream": {
+        "file": "data_1",
+        "addressHex": "0xa10104c0",
+        "offset": 319488,
+        "bytes": 312,
+        "blockSize": 256
+      },
+      "bodyStream": {
+        "file": "data_1",
+        "addressHex": "0xa00104c2",
+        "offset": 320000,
+        "bytes": 9,
+        "blockSize": 256
+      },
+      "headers": [
+        "HTTP/1.1 404 Not Found",
+        "x-powered-by: Dart with package:shelf",
+        "date: Sat, 24 Oct 2026 10:39:45 GMT",
+        "content-length: 9",
+        "content-type: text/plain; charset=utf-8"
+      ],
+      "body": "Not Found"
+    },
+    {
+      "url": "http://localhost:54407/canvaskit/canvaskit.js",
+      "entryOffset": 320256,
+      "keyOffset": 320352,
+      "keyBytes": 87,
+      "metadataStream": {
+        "file": "data_1",
+        "addressHex": "0xa10104c4",
+        "offset": 320512,
+        "bytes": 312,
+        "blockSize": 256
+      },
+      "bodyStream": {
+        "file": "data_1",
+        "addressHex": "0xa00104c6",
+        "offset": 321024,
+        "bytes": 9,
+        "blockSize": 256
+      },
+      "headers": [
+        "HTTP/1.1 404 Not Found",
+        "x-powered-by: Dart with package:shelf",
+        "date: Sat, 24 Oct 2026 10:39:45 GMT",
+        "content-length: 9",
+        "content-type: text/plain; charset=utf-8"
+      ],
+      "body": "Not Found"
+    }
+  ],
+  "actualCachedWrapper": {
+    "offset": 13320,
+    "bytes": 667,
+    "sha256": "3b43774f521fbaab090dc2f76282e4bc0c6722d26db6703db8a0104c25fe13ee",
+    "renderer": "auto",
+    "canvasKitBaseUrl": "/canvaskit/",
+    "selector": "editor_submit_guard_test.dart"
+  },
+  "noneOfWholeProfileOrRawCommandLineOrManagerQueryCopied": true,
+  "sdkBrowserNetworkOrCleanupPerformed": false
+}

@@ -1,0 +1,484 @@
+{
+  "status": "ACTUAL_BROWSER13_R4_RED_EVIDENCE_INVENTORY",
+  "sourceCopies": [
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/analysis-host.py",
+      "archived": "plan/analysis-host.py",
+      "bytes": 34989,
+      "sha256": "34cbbb3d6654341dc20c3c4e8275251d931800766e284df870683d1b5d483cdc"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/base-pins.json",
+      "archived": "plan/base-pins.json",
+      "bytes": 5724,
+      "sha256": "4fc799ef42eef204603e90185c410f66b0af56dc1180e27a988fbf84ec9f4130"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/binding-pins.json",
+      "archived": "plan/binding-pins.json",
+      "bytes": 9834,
+      "sha256": "60aa95010d655c123474f5f004ba0f4c32508686d72c584f23cb1667a782736e"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/binding-start.json",
+      "archived": "plan/binding-start.json",
+      "bytes": 57,
+      "sha256": "3e36f6afcdd4b9c552bb44560ec8779c4682cd19324763ba18decffd1182ba81"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/chrome-evidence-json-guard.fragment",
+      "archived": "plan/chrome-evidence-json-guard.fragment",
+      "bytes": 8819,
+      "sha256": "12c62a6307e9c460b56ee1e58f7b2e930512fba74dd371609401a96370ca0868"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/control-preparation-pins.json",
+      "archived": "plan/control-preparation-pins.json",
+      "bytes": 36964,
+      "sha256": "ac4f1e323e62f12846b9b59bf104da023b36c8bc18b0dfa38b875ca4367ebba3"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/expected-browser13-cases.json",
+      "archived": "plan/expected-browser13-cases.json",
+      "bytes": 6343,
+      "sha256": "6ea16bdf3b93fbea589aa95a4aa7a9e808afbe9605938d755fb54d8ce748c340"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/host-vs-vm35.patch",
+      "archived": "plan/host-vs-vm35.patch",
+      "bytes": 17895,
+      "sha256": "50ae7219a57e456df50aa649320a4bc01d9f63eec41183f0f9b86842c6278a06"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/inputs.json",
+      "archived": "plan/inputs.json",
+      "bytes": 20240,
+      "sha256": "906ca7d4c49602b8cb59fb9bb3cdd058f6bd1a0c6f1e10dae363c4a64fc17311"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/observer-qualification-reuse.json",
+      "archived": "plan/observer-qualification-reuse.json",
+      "bytes": 1647,
+      "sha256": "9bdcaab0893be9ea0216c2fa0a26f355643337eb8264f60d231a25fd73487ce6"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/observer-runtime-pins.json",
+      "archived": "plan/observer-runtime-pins.json",
+      "bytes": 3331,
+      "sha256": "1513a067e91e755f576484ba381c8f4640cf2586da638eaa0114170611bd34f3"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/owned_chrome_evidence.py",
+      "archived": "plan/owned_chrome_evidence.py",
+      "bytes": 29439,
+      "sha256": "34e80553205db29267baf4299821ff40111adbc79bd2e83e49fbf20282eb5a3f"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/owned_job.py",
+      "archived": "plan/owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/preparation-review.md",
+      "archived": "plan/preparation-review.md",
+      "bytes": 2321,
+      "sha256": "c08184237ee468bb863e7c26b44584cc9e841426c81c5723419ecb5c89ce25ff"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/process-inventory.ps1",
+      "archived": "plan/process-inventory.ps1",
+      "bytes": 2439,
+      "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/proposal.json",
+      "archived": "plan/proposal.json",
+      "bytes": 11057,
+      "sha256": "849e0819fdce2cbb794f0c008a4e5c20aa5eff9517104c2d6902c970aac2a348"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/r3-preservation-and-base-copy.json",
+      "archived": "plan/r3-preservation-and-base-copy.json",
+      "bytes": 12399,
+      "sha256": "f149f5bc26f2e50a72e10a68f7e8c34aea6a9e70ed5f4b77728c0ad4df068601"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/r4-canonical-git-audit.json",
+      "archived": "plan/r4-canonical-git-audit.json",
+      "bytes": 5458,
+      "sha256": "67bef78cb66702764532add20babd82992246ba7deb1aef91946f4d358c9fb95"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/r4-vs-r3-0-inputs.json.patch",
+      "archived": "plan/r4-vs-r3-0-inputs.json.patch",
+      "bytes": 2768,
+      "sha256": "fe9d633fad5c261858ee8a70b9ccc052a0939729cf7ffe82881149bb21010d00"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/r4-vs-r3-1-proposal.json.patch",
+      "archived": "plan/r4-vs-r3-1-proposal.json.patch",
+      "bytes": 1348,
+      "sha256": "03f39e5ba335731bc1f705340084b7821374a25e67d94857350b2c95302ce5b8"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/r4-vs-r3-2-worker.py.patch",
+      "archived": "plan/r4-vs-r3-2-worker.py.patch",
+      "bytes": 2856,
+      "sha256": "39c6311f8093ef50b57097f7fc652c46a8bf400475c7239a350ec2ec637426be"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/r4-vs-r3-3-analysis-host.py.patch",
+      "archived": "plan/r4-vs-r3-3-analysis-host.py.patch",
+      "bytes": 1029,
+      "sha256": "5c0d425a78618925d64cba12e3dab68dc822280c6f955bc0d9ef0510427d64e2"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/r4-vs-r3-4-post.py.patch",
+      "archived": "plan/r4-vs-r3-4-post.py.patch",
+      "bytes": 2820,
+      "sha256": "338948488d86c88740eb475be04c28fd6a59b596f0fb94ceec95038637aadbdb"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/r4-vs-r3-5-guardian-browser13-root-launch-20261024-r4-canonical-git.ps1.patch",
+      "archived": "plan/r4-vs-r3-5-guardian-browser13-root-launch-20261024-r4-canonical-git.ps1.patch",
+      "bytes": 1820,
+      "sha256": "90ea2072c8ef75fa722a5a3a8a69a1ec69f387c3b3d405f4b4d1afd461378a12"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/r4-vs-r3-6-guardian-browser13-release-20261024-r4-canonical-git.ps1.patch",
+      "archived": "plan/r4-vs-r3-6-guardian-browser13-release-20261024-r4-canonical-git.ps1.patch",
+      "bytes": 865,
+      "sha256": "48398c60d78d864d8ead50d0579bb88735fe2c2216d21bfe0ffd5b1915373cbb"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/release-vs-vm35.patch",
+      "archived": "plan/release-vs-vm35.patch",
+      "bytes": 1946,
+      "sha256": "37a44502b7880a26f3a5b7345efc7b1cd9ad6c17f070ae5a7b0275b25956db2f"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/reporter_contract.py",
+      "archived": "plan/reporter_contract.py",
+      "bytes": 14280,
+      "sha256": "dcd85cf451b20bd24857cef6726d0f1ebb406c67096146d3d3c82306942b67e8"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/root-final-resource-and-window.json",
+      "archived": "plan/root-final-resource-and-window.json",
+      "bytes": 56523,
+      "sha256": "b003a352a66ac0330b5378fecf01636d6026085199960f22bf14b01ad323f915"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/root-launch-vs-vm35.patch",
+      "archived": "plan/root-launch-vs-vm35.patch",
+      "bytes": 4996,
+      "sha256": "670fe7c2cc8071f3a784d1057efbfe155899fc37bdd111c2ba7be0be3815e5b5"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/root-sdk-grant.json",
+      "archived": "plan/root-sdk-grant.json",
+      "bytes": 4143,
+      "sha256": "663e2dd8c0104d2f35e90f0cda57d75f0a5e5ab2db4fb234a5d737d801669442"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/sealed-preparation-pins.json",
+      "archived": "plan/sealed-preparation-pins.json",
+      "bytes": 8538,
+      "sha256": "26fdbba052b131fb4044a1f83d06b2419582bdc56d4ccac4349bd256eb98e942"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/worker-vs-vm35.patch",
+      "archived": "plan/worker-vs-vm35.patch",
+      "bytes": 24964,
+      "sha256": "7439d9fa3a5c2a5e269760ac712069427abcb958e26727df750b7a6893579b91"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/worker.py",
+      "archived": "plan/worker.py",
+      "bytes": 54913,
+      "sha256": "5a92e0b70ee84047c727712732fd437ab99f13fb7ce07d20c9045bfa6ff38201"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/attempt/initial-gate.json",
+      "archived": "attempt/initial-gate.json",
+      "bytes": 51925,
+      "sha256": "7f0800398e3239a1c5a02530d04b63bcd5119ad109d4ba9ca354edb60028d742"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/attempt/launch-gate.json",
+      "archived": "attempt/launch-gate.json",
+      "bytes": 52348,
+      "sha256": "b73c3bb47252ae0f0655ba4349cf5b0644e0d6ea703729743f653c7d9dd75292"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/attempt/launch.json",
+      "archived": "attempt/launch.json",
+      "bytes": 2667,
+      "sha256": "aa9f5093c12d4cca2a8880e727b958e33dc70a762ea292515143b801969b0771"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/attempt/owned-chrome-evidence.json",
+      "archived": "attempt/owned-chrome-evidence.json",
+      "bytes": 2483,
+      "sha256": "e0dcd84c8e69fde9e81362f0294c1d029448e10d7f9a3d21df63abec4ca4105e"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/attempt/owned-chrome-member-diagnostics.json",
+      "archived": "attempt/owned-chrome-member-diagnostics.json",
+      "bytes": 11225,
+      "sha256": "138560e46d84753d47b8ccd40e36ed682b3a9df09e6f50e05d9c78763e971e8d"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/attempt/postflight-gate.json",
+      "archived": "attempt/postflight-gate.json",
+      "bytes": 51922,
+      "sha256": "083f0f0f046f70b987603e31a70add0dcf2329e33a1c3c558b5d429b5b9fdad8"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/attempt/postflight-pins.json",
+      "archived": "attempt/postflight-pins.json",
+      "bytes": 1973,
+      "sha256": "15a0a33d22f53c3e307d69b9dbf847c95b3f77660256050a24cd777c4d6a64a5"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/attempt/preflight-pins.json",
+      "archived": "attempt/preflight-pins.json",
+      "bytes": 1974,
+      "sha256": "0466f97fa562179dc520f9a6e9ae44f37508da1d91e13ae197be5d78fabd51c9"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/attempt/receipt.json",
+      "archived": "attempt/receipt.json",
+      "bytes": 69353,
+      "sha256": "306f55e818c8f8e4a10477deda0f11b75abff5dcc9d9d237928486577541b632"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/attempt/request.json",
+      "archived": "attempt/request.json",
+      "bytes": 302,
+      "sha256": "9c1ca651ee434a2726e5b0d70155b19e4afae4f7bf3513db4800fc17ce845de0"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/attempt/result.json",
+      "archived": "attempt/result.json",
+      "bytes": 79976,
+      "sha256": "2de2f9a4f1965ee371fcf76fa3147026f23108468ed8e79053969ba4a11ab571"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/attempt/worker-console.log",
+      "archived": "attempt/worker-console.log",
+      "bytes": 87,
+      "sha256": "99893b4a6692ab7510bd855e2c9ce351d6ce211db647b3227f17f71d4594dffb"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/root-attempt/post-process-inventory.json",
+      "archived": "root-attempt/post-process-inventory.json",
+      "bytes": 34935,
+      "sha256": "5da5178ff198b6c7a6435efc34dfb0a2c9505d0a241b2f21addba861831cf71d"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/root-attempt/preflight.json",
+      "archived": "root-attempt/preflight.json",
+      "bytes": 715,
+      "sha256": "b0670282cd39b835a54f7fe6976913b6bc652058da65beb5837647c02acacd2b"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/root-attempt/release.json",
+      "archived": "root-attempt/release.json",
+      "bytes": 1456,
+      "sha256": "79349c826905af25224eb20469f39750bc85c0f93e02ebb13b8a5d1534f7c4db"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/root-attempt/result.json",
+      "archived": "root-attempt/result.json",
+      "bytes": 1250,
+      "sha256": "61a54dfcb4217906217285172f1fb0c595c551fc2c63560ad68a5a92a482df67"
+    },
+    {
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/attempt/out/tests.jsonl",
+      "archived": "attempt/out/tests.jsonl",
+      "bytes": 20465,
+      "sha256": "dc4e3a8395ba2aea649269c133da768d9077877af6b1dbf1ae92bc9a516bf8c9"
+    },
+    {
+      "source": ".cache/guardian-browser13-post-20261024-r4-canonical-git/pins.json",
+      "archived": "post/pins.json",
+      "bytes": 25197,
+      "sha256": "284c4c85a4cf3ac00e82af09da2491c1528f0e1f40fa2e4fd8a229e151b1bc61"
+    },
+    {
+      "source": ".cache/guardian-browser13-post-20261024-r4-canonical-git/post-vs-vm35.patch",
+      "archived": "post/post-vs-vm35.patch",
+      "bytes": 35530,
+      "sha256": "7d7e164d85d974d7e981f9c1ee0fad774aeeda294c264dcab876ae1bc8c429cc"
+    },
+    {
+      "source": ".cache/guardian-browser13-post-20261024-r4-canonical-git/post.json",
+      "archived": "post/post.json",
+      "bytes": 4896,
+      "sha256": "4b93a597b416a0619087dd1d596b0c83b60a60a30515c21d78c7fb6826feb906"
+    },
+    {
+      "source": ".cache/guardian-browser13-post-20261024-r4-canonical-git/post.py",
+      "archived": "post/post.py",
+      "bytes": 55004,
+      "sha256": "5aa635100c49e676b5ec4796781812ea27c5780215da847474b30734ba1920ce"
+    },
+    {
+      "source": ".cache/guardian-browser13-root-launch-20261024-r4-canonical-git.ps1",
+      "archived": "plan/guardian-browser13-root-launch-20261024-r4-canonical-git.ps1",
+      "bytes": 9255,
+      "sha256": "6edc2809f89ec8f63d8dc51e414a82ba514214cf26d0431d4342ae01aa667395"
+    },
+    {
+      "source": ".cache/guardian-browser13-release-20261024-r4-canonical-git.ps1",
+      "archived": "plan/guardian-browser13-release-20261024-r4-canonical-git.ps1",
+      "bytes": 4445,
+      "sha256": "98a99e501d6106349b8cd0b88df6b8afdf7f964d9b03276819572489993ea251"
+    },
+    {
+      "source": ".cache/guardian-browser13-static-independent-20261024-r4/pins.json",
+      "archived": "reviews/static-pins.json",
+      "bytes": 16704,
+      "sha256": "911c25f6b79a9c1bc4d6d547e8beabec445cf1684f126266f07eb016a508ef06"
+    },
+    {
+      "source": ".cache/guardian-browser13-static-independent-20261024-r4/review.md",
+      "archived": "reviews/static-review.md",
+      "bytes": 4213,
+      "sha256": "44f390397475d7c58af9c68a44becc17f7bcce0e3d643de1f1c40d71be1a3150"
+    }
+  ],
+  "durableReferences": [
+    {
+      "key": "sourceManifest",
+      "source": ".cache/guardian-current-20261024-r15-login-schedule/out/source-manifest.json",
+      "durable": "docs/evidence/guardian-browser13-r2-red-20261024/metadata/sourceManifest.json",
+      "bytes": 246807,
+      "sha256": "3adaceffd81db09ffd0b41e2c83bc4d8eb435563ef335bd8ab8a47ce9dedb032",
+      "sourceDurableByteEqual": true,
+      "copied": false
+    },
+    {
+      "key": "dependencyLibraryPins",
+      "source": ".cache/guardian-current-20261024-r15-login-schedule/out/dependency-library-pins.json",
+      "durable": "docs/evidence/guardian-browser13-r2-red-20261024/metadata/dependencyLibraryPins.json",
+      "bytes": 360173,
+      "sha256": "b38f1519381b158ed485834df4ea1e4aaa96ea59386157e7fd0f2544b121bc40",
+      "sourceDurableByteEqual": true,
+      "copied": false
+    },
+    {
+      "key": "candidatePackageConfig",
+      "source": ".cache/guardian-current-20261024-r15-login-schedule/src/apps/guardian/.dart_tool/package_config.json",
+      "durable": "docs/evidence/guardian-browser13-r2-red-20261024/metadata/candidatePackageConfig.json",
+      "bytes": 15764,
+      "sha256": "8f20ecafd7053d93555ab0a6dba15457f3c37c7eda256d5268d209290794db24",
+      "sourceDurableByteEqual": true,
+      "copied": false
+    },
+    {
+      "key": "sourceSeal",
+      "source": ".cache/guardian-current-20261024-r15-login-schedule/out/seal-static-source.json",
+      "durable": "docs/evidence/guardian-browser13-r2-red-20261024/metadata/sourceSeal.json",
+      "bytes": 80347,
+      "sha256": "2104f13ce6933043f3ca24be468d2644de36cfdb51c80c26571935307cf362fa",
+      "sourceDurableByteEqual": true,
+      "copied": false
+    },
+    {
+      "key": "sourceDirectoryList",
+      "source": ".cache/guardian-current-20261024-r15-login-schedule/out/source-directory-list.json",
+      "durable": "docs/evidence/guardian-browser13-r2-red-20261024/metadata/sourceDirectoryList.json",
+      "bytes": 24972,
+      "sha256": "863a33480397b52751e470fdc0fc06dbe13da8f40ebf918ffc65234255cdc65f",
+      "sourceDurableByteEqual": true,
+      "copied": false
+    },
+    {
+      "key": "fullRegressionInventoryBinding",
+      "source": ".cache/guardian-current-20261024-r15-login-schedule/out/full-regression-183-bindings.json",
+      "durable": "docs/evidence/guardian-browser13-r2-red-20261024/metadata/fullRegressionInventoryBinding.json",
+      "bytes": 85242,
+      "sha256": "e1987382f4430c94f6ccc42be73563ee98a05b9beb52956f2cfe4fd571b0f5b7",
+      "sourceDurableByteEqual": true,
+      "copied": false
+    },
+    {
+      "key": "expectedCaseContract",
+      "source": ".cache/guardian-current-20261024-r15-login-schedule/out/expected-cases.json",
+      "durable": "docs/evidence/guardian-browser13-r2-red-20261024/metadata/expectedCaseContract.json",
+      "bytes": 47372,
+      "sha256": "224a56311f1bcee9c5fe4738614c9df4511c2643f7111cc0f81866fd65104419",
+      "sourceDurableByteEqual": true,
+      "copied": false
+    },
+    {
+      "key": "qualifiedHostRuntimeManifest",
+      "source": ".cache/guardian-supervisor-20261023-r3/manifest.json",
+      "durable": "docs/evidence/guardian-browser13-r2-red-20261024/metadata/qualifiedHostRuntimeManifest.json",
+      "bytes": 2872,
+      "sha256": "f088c5b70ffab3c75e2ebc7fa381cc23350903f54b60ea4d45ab3c9794fb0370",
+      "sourceDurableByteEqual": true,
+      "copied": false
+    },
+    {
+      "key": "cacheManifest",
+      "source": ".cache/guardian-browser13-20261024-r4-canonical-git/cache-browser-projection.json",
+      "durable": "docs/evidence/guardian-browser13-r2-red-20261024/plan/cache-browser-projection.json",
+      "bytes": 773953,
+      "sha256": "3b74998cd55045e58c02b17b3de9151e878d78aab199e85bbcc3ec99d9c30166",
+      "sourceDurableByteEqual": true,
+      "copied": false
+    },
+    {
+      "key": "cacheProjectionParentManifest",
+      "source": "docs/evidence/guardian-baseline-analysis-20261021/inputs/cache-content-20261021-r1.json",
+      "durable": "docs/evidence/guardian-baseline-analysis-20261021/inputs/cache-content-20261021-r1.json",
+      "bytes": 725122,
+      "sha256": "0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2",
+      "sourceDurableByteEqual": true,
+      "copied": false
+    },
+    {
+      "key": "previousB3.originalQualificationBoundDirectlyByInput",
+      "source": ".cache/guardian-browser13-20261024-r3-html-diagnostic/observer-native-qualification-binding.json",
+      "durable": "docs/evidence/guardian-browser13-r3-presdk-red-20261024/plan/observer-native-qualification-binding.json",
+      "bytes": 1307,
+      "sha256": "6e8ba3d2436bfa7ba1c80bad1bb24856f3eca27de6bf8476fd1c297c773a070a",
+      "sourceDurableByteEqual": true,
+      "copied": false
+    },
+    {
+      "key": "previousB3.actualQualificationResult",
+      "source": ".cache/guardian-browser13-20261024-r3-html-diagnostic/observer-fixture/result.json",
+      "durable": "docs/evidence/guardian-browser13-r3-presdk-red-20261024/observer-fixture/result.json",
+      "bytes": 2321,
+      "sha256": "293eef8510874f37a6679dd932d4abef5ec437c71334ee8234828933507b927d",
+      "sourceDurableByteEqual": true,
+      "copied": false
+    },
+    {
+      "key": "previousB3.actualOuterQualificationResult",
+      "source": ".cache/guardian-browser13-20261024-r3-html-diagnostic/observer-fixture-host/result.json",
+      "durable": "docs/evidence/guardian-browser13-r3-presdk-red-20261024/observer-fixture-host/result.json",
+      "bytes": 314,
+      "sha256": "5982a79092aa4138f47350f676b6e8f9421659619494d3949bfbc7bfffd6ab2d",
+      "sourceDurableByteEqual": true,
+      "copied": false
+    }
+  ],
+  "generated": [
+    {
+      "path": "docs/evidence/guardian-browser13-r4-red-20261024/summary.json",
+      "bytes": 6100,
+      "sha256": "e433b4672485028651339ed68cdde71b6fe43bab2e28dec62e24e9b29eab4e29"
+    },
+    {
+      "path": "docs/evidence/guardian-browser13-r4-red-20261024/diagnosis.md",
+      "bytes": 2913,
+      "sha256": "9d895a2223ee4d8cba89e9fac24e200955dedcf91e82ca9d9cc7691f932f896d"
+    }
+  ]
+}

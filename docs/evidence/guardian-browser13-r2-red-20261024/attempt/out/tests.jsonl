@@ -1,0 +1,6 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+-j/--concurrency was parsed but will be ignored, this option is not supported when running Integration Tests or web tests.
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":155876,"type":"start","time":0}
+{"suite":{"id":0,"platform":"chrome","path":"D:/codes/mobile/ai-manager/.cache/guardian-current-20261024-r15-login-schedule/src/apps/guardian/test/editor_submit_guard_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading D:/codes/mobile/ai-manager/.cache/guardian-current-20261024-r15-login-schedule/src/apps/guardian/test/editor_submit_guard_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1}
+{"count":1,"time":11,"type":"allSuites"}

@@ -1,0 +1,20 @@
+{
+  "status": "EXACT_MISSING_METADATA_RECOVERED_FROM_DURABLE_PROJECT_ARCHIVE",
+  "atUtc": "2026-10-24T09:40:35.9006314Z",
+  "source": "docs/evidence/guardian-baseline-analysis-20261021/inputs/cache-content-20261021-r1.json",
+  "target": ".cache/guardian-current-20261021-r1/out/cache-content-20261021-r1.json",
+  "bytes": 725122,
+  "sha256": "0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2",
+  "existingFileOverwritten": false,
+  "sourceHashMatchedBeforeCopy": true,
+  "destinationHashMatchedAfterCopy": true,
+  "taskPathsInsideRepositoryCache": true,
+  "linkedAncestorRefused": true,
+  "runtimeOrSdkPayloadChanged": false,
+  "sourceCodeChanged": false,
+  "qualificationRepeated": false,
+  "sdkCalls": 0,
+  "failedR13AttemptPreserved": true,
+  "inputDescriptorBytesAndShaUnchanged": true,
+  "recoveryNotAnalysisAcceptance": true
+}

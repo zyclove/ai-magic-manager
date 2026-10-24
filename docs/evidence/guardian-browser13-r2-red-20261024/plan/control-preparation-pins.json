@@ -1,0 +1,476 @@
+{
+  "status": "BROWSER13_CONTROLS_PREPARED_POST_STILL_REQUIRED_NO_EXECUTION",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "inputs": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\inputs.json",
+    "bytes": 20238,
+    "sha256": "7f5252253aa92b29c0fe5e7c7203ef4d5e4d9054d4b47f381e90111dfcddc2c2"
+  },
+  "proposal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\proposal.json",
+    "bytes": 11057,
+    "sha256": "669a8366f805044f7f9c0b2140b3b69975d86076bf380f1d749134dbb4d0d905"
+  },
+  "candidateFiles": [
+    {
+      "path": "analysis-host.py",
+      "bytes": 34989,
+      "sha256": "9e7cc9d97cd04eb81d5e43cd6b19f516a33743abd204ff4a4341aac394915569"
+    },
+    {
+      "path": "worker.py",
+      "bytes": 53718,
+      "sha256": "5d16266c0174b07d895b105b38c23f95e2920529f6969bda2671c065d93f3b3d"
+    },
+    {
+      "path": "owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "path": "process-inventory.ps1",
+      "bytes": 2439,
+      "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+    },
+    {
+      "path": "reporter_contract.py",
+      "bytes": 14280,
+      "sha256": "dcd85cf451b20bd24857cef6726d0f1ebb406c67096146d3d3c82306942b67e8"
+    },
+    {
+      "path": "owned_chrome_evidence.py",
+      "bytes": 20833,
+      "sha256": "4a5d49f4e55d583478a423532e9997eb8ea6e3f7da9ab4d1e1ea8c5cde29bf72"
+    }
+  ],
+  "runtimeUnionCount": 43,
+  "selectedRoots": 1,
+  "expectedVisibleCases": 13,
+  "fullRegressionRoots": 183,
+  "otherRootsNotExecutedByThisBatch": 182,
+  "budgets": {
+    "outer": 180,
+    "working": 174,
+    "worker": 165,
+    "command": 135,
+    "commandCleanup": 140,
+    "postflightReserve": 25
+  },
+  "observerQualification": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\observer-native-qualification-binding.json",
+    "bytes": 1301,
+    "sha256": "b9f4a050b45033e618b17f2f11ab8f14b283c21e11cb9235cc008af48d5e0dbb"
+  },
+  "guardFragment": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\chrome-evidence-json-guard.fragment",
+    "bytes": 8819,
+    "sha256": "12c62a6307e9c460b56ee1e58f7b2e930512fba74dd371609401a96370ca0868"
+  },
+  "literalAndHookChanges": [
+    {
+      "file": "worker.py",
+      "old": "guardian-vm35",
+      "new": "guardian-browser13",
+      "count": 2,
+      "replacementBytePositions": [
+        19351,
+        32048
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "VM35",
+      "new": "BROWSER13",
+      "count": 7,
+      "replacementBytePositions": [
+        41,
+        30369,
+        32114,
+        39619,
+        39822,
+        41347,
+        41690
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "56012ab858575ef7f356d4cf1e5ed94815c9e12e53423d889a0168caf1494eb5",
+      "new": "7f5252253aa92b29c0fe5e7c7203ef4d5e4d9054d4b47f381e90111dfcddc2c2",
+      "count": 1,
+      "replacementBytePositions": [
+        768
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "INPUT_BYTES = 17077",
+      "new": "INPUT_BYTES = 20238",
+      "count": 1,
+      "replacementBytePositions": [
+        732
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "['test/workbench_view_test.dart', 'test/dialog_submit_guard_test.dart', 'test/failure_view_test.dart', 'test/login_view_test.dart']",
+      "new": "['test/editor_submit_guard_test.dart']",
+      "count": 1,
+      "replacementBytePositions": [
+        1545
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "four-root",
+      "new": "single-root",
+      "count": 2,
+      "replacementBytePositions": [
+        31,
+        32004
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "'selectorCount': 4",
+      "new": "'selectorCount': 1",
+      "count": 1,
+      "replacementBytePositions": [
+        34473
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "'expectedVisibleCases': 35",
+      "new": "'expectedVisibleCases': 13",
+      "count": 1,
+      "replacementBytePositions": [
+        34537
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "'test', '--no-pub'",
+      "new": "'test', '--platform=chrome', '--no-pub'",
+      "count": 1,
+      "replacementBytePositions": [
+        1641
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "READ_ONLY_VM_TEST_CACHE_PROJECTION_NOT_SDK_VALIDATION",
+      "new": "READ_ONLY_BROWSER_TEST_CACHE_PROJECTION_NOT_SDK_VALIDATION",
+      "count": 1,
+      "replacementBytePositions": [
+        19196
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "The fixed default VM tester command does not consume Chrome. A browser test phase must independently pin its current browser executable.",
+      "new": "The historical parent Chrome descriptor is excluded; the current Chrome executable is independently pinned and appended for this fixed Chrome-only phase.",
+      "count": 1,
+      "replacementBytePositions": [
+        19513
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "Only the known VM-unused Chrome row may be excluded",
+      "new": "Only the fixed historical Chrome descriptor may be replaced by the current independent pin",
+      "count": 1,
+      "replacementBytePositions": [
+        18521
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "guardian_vm30_reporter",
+      "new": "guardian_browser13_reporter",
+      "count": 1,
+      "replacementBytePositions": [
+        24170
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "def finite(value):",
+      "new": "def chrome_evidence_valid(value, inputs, command_state, start, end, attempt):\n    \"\"\"Derive Chrome boundaries from pinned JSON; no process or network API.\"\"\"\n    import ipaddress\n    import math\n    import ntpath\n    import re\n    from urllib.parse import urlsplit\n\n    def number(item):\n        return type(item) is float and math.isfinite(item)\n\n    def positive(item):\n        return type(item) is int and item > 0\n\n    def digest(item):\n        return type(item) is str and re.fullmatch('[a-f0-9]{64}', item) is not None\n\n    def canonical(item):\n        if not (type(item) is str and 0 < len(item) <= 32766\n                and re.match(r'^[A-Za-z]:[\\\\/]', item)\n                and not any(ord(char) < 32 for char in item)\n                and '..' not in item.replace('/', '\\\\').split('\\\\')):\n            raise ValueError('Nonlocal or unsafe Chrome evidence path')\n        drive, tail = ntpath.splitdrive(item)\n        if ':' in tail:\n            raise ValueError('ADS Chrome evidence path')\n        return ntpath.normcase(ntpath.normpath(item))\n\n    try:\n        keys = {'schemaVersion', 'status', 'chromeRoots', 'problems', 'sampleCalls',\n                'pinnedBrowserPath', 'temporaryRoot', 'commandCreationFiletime',\n                'observationDeadlineQpc', 'commandLineSource', 'debugBindingProof',\n                'foreignCommandLinesRead', 'processesTerminated', 'environmentRead',\n                'nativeReadPathQualificationSeparate'}\n        if not (type(value) is dict and set(value) == keys\n                and type(value['schemaVersion']) is int and value['schemaVersion'] == 1\n                and value['status'] == 'OWNED_CHROME_BOUNDARIES_OBSERVED'\n                and type(value['problems']) is list and value['problems'] == []\n                and positive(value['sampleCalls']) and value['sampleCalls'] <= 100000\n                and value['foreignCommandLinesRead'] is False\n                and value['processesTerminated'] is False and value['environmentRead'] is False\n                and value['nativeReadPathQualificationSeparate'] is True\n                and value['commandLineSource'] == 'SAME_RETAINED_HANDLE_PBI0_READPROCESSMEMORY'\n                and value['debugBindingProof'] == 'PID_FILTERED_LISTEN_ROWS_BRACKETED_BY_SAME_HANDLE_IDENTITY'\n                and type(command_state) is dict and positive(command_state.get('pid'))\n                and positive(command_state.get('creationFiletime'))\n                and positive(value['commandCreationFiletime'])\n                and value['commandCreationFiletime'] == command_state['creationFiletime']\n                and number(start) and number(end) and start < end\n                and number(value['observationDeadlineQpc'])\n                and value['observationDeadlineQpc'] == end):\n            return False\n        executable = canonical(inputs['browserExecutable']['path'])\n        temporary = canonical(str(attempt / 'tmp'))\n        if canonical(value['pinnedBrowserPath']) != executable or canonical(value['temporaryRoot']) != temporary:\n            return False\n        roots = value['chromeRoots']\n        if type(roots) is not list or not 1 <= len(roots) <= 64:\n            return False\n        identities, profiles, ports = set(), set(), set()\n        row_keys = {'pid', 'creationFiletime', 'commandCreationFiletime', 'imagePath', 'profile',\n                    'debuggingPort', 'testServerOrigins', 'testTargets', 'managerTarget', 'headless',\n                    'argvTestTargetLoopback', 'flutterManagerTargetSameLoopbackOrigin',\n                    'commandLineUtf16Sha256', 'commandLineReadBeforeQpc', 'commandLineReadAfterQpc',\n                    'sameReadHandleVerified', 'ownedMembershipVerifiedBeforeAndAfter', 'liveBeforeAndAfter',\n                    'observedQpc', 'debugListenerAddresses', 'listenerReadBeforeQpc', 'listenerReadAfterQpc',\n                    'listenerSameHandleIdentityVerifiedBeforeAndAfter', 'debugBindingLoopbackObserved'}\n        for row in roots:\n            if not (type(row) is dict and set(row) == row_keys\n                    and positive(row['pid']) and row['pid'] != command_state['pid']\n                    and positive(row['creationFiletime'])\n                    and row['creationFiletime'] >= command_state['creationFiletime']\n                    and positive(row['commandCreationFiletime'])\n                    and row['commandCreationFiletime'] == command_state['creationFiletime']\n                    and canonical(row['imagePath']) == executable\n                    and positive(row['debuggingPort']) and row['debuggingPort'] < 65536\n                    and all(row[key] is True for key in ('headless', 'argvTestTargetLoopback',\n                        'flutterManagerTargetSameLoopbackOrigin', 'sameReadHandleVerified',\n                        'ownedMembershipVerifiedBeforeAndAfter', 'liveBeforeAndAfter',\n                        'listenerSameHandleIdentityVerifiedBeforeAndAfter', 'debugBindingLoopbackObserved'))\n                    and digest(row['commandLineUtf16Sha256'])):\n                return False\n            identity = (row['pid'], row['creationFiletime'])\n            profile = canonical(row['profile'])\n            port = row['debuggingPort']\n            if not profile.startswith(temporary.rstrip('\\\\') + '\\\\') or len(profile.split('\\\\')) > 64:\n                return False\n            if identity in identities or profile in profiles or port in ports:\n                return False\n            identities.add(identity); profiles.add(profile); ports.add(port)\n            times = [row[key] for key in ('commandLineReadBeforeQpc', 'commandLineReadAfterQpc',\n                'listenerReadBeforeQpc', 'listenerReadAfterQpc', 'observedQpc')]\n            if not (all(number(item) for item in times)\n                    and start <= times[0] <= times[1] <= times[2] <= times[3] == times[4] < end):\n                return False\n            targets, origins = row['testTargets'], row['testServerOrigins']\n            if not (type(targets) is list and len(targets) == 1\n                    and type(origins) is list and len(origins) == 1 and type(origins[0]) is str):\n                return False\n            target = targets[0]\n            if not (type(target) is dict and set(target) == {'scheme', 'host', 'port', 'path', 'urlSha256'}\n                    and target['scheme'] == 'http' and target['host'] in ('localhost', '127.0.0.1', '::1')\n                    and positive(target['port']) and target['port'] < 65536\n                    and target['path'] == '/static/index.html' and digest(target['urlSha256'])):\n                return False\n            manager = row['managerTarget']\n            if not (type(manager) is dict and set(manager) == {'scheme', 'host', 'port'}\n                    and type(manager['scheme']) is str and manager['scheme'] == 'ws'\n                    and type(manager['host']) is str\n                    and manager['host'] in ('localhost', '127.0.0.1', '::1')\n                    and positive(manager['port']) and manager['port'] < 65536\n                    and manager['host'] == target['host'] and manager['port'] == target['port']):\n                return False\n            origin = urlsplit(origins[0])\n            if not (origin.scheme == 'http' and origin.hostname == target['host']\n                    and origin.port == target['port'] and origin.path == ''\n                    and origin.username is None and origin.password is None\n                    and not origin.query and not origin.fragment):\n                return False\n            listeners = row['debugListenerAddresses']\n            if type(listeners) is not list or not 1 <= len(listeners) <= 32:\n                return False\n            seen = set()\n            for listener in listeners:\n                if not (type(listener) is dict and set(listener) == {'address', 'port', 'family', 'status'}\n                        and type(listener['address']) is str and len(listener['address']) <= 64\n                        and type(listener['port']) is int and listener['port'] == port\n                        and listener['status'] == 'LISTEN' and listener['family'] in ('AF_INET', 'AF_INET6')):\n                    return False\n                address = ipaddress.ip_address(listener['address'])\n                if not (address.is_loopback and\n                        ((address.version == 4 and listener['family'] == 'AF_INET')\n                         or (address.version == 6 and listener['family'] == 'AF_INET6'))):\n                    return False\n                entry = (str(address), listener['port'], listener['family'], listener['status'])\n                if entry in seen:\n                    return False\n                seen.add(entry)\n        return True\n    except (KeyError, TypeError, ValueError, AttributeError, OverflowError):\n        return False\n\n\ndef finite(value):",
+      "count": 1,
+      "replacementBytePositions": [
+        27873
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "reporter = None\ntest_contract = None",
+      "new": "reporter = None\ntest_contract = None\nchrome_observer = None\nchrome_evidence = None",
+      "count": 1,
+      "replacementBytePositions": [
+        40113
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "    for row in inputs['controlRuntimeFiles'] + inputs['extraRuntimeFiles']:\n",
+      "new": "    chrome_qualification = load_pin(inputs['ownedChromeNativeQualification'])\n    require(chrome_qualification['observerCodeSha256'] == inputs['ownedChromeEvidenceCode']['sha256']\n            and chrome_qualification['newNativeReadPathActuallyQualified'] is True,\n            'Separately qualified current Chrome read path required')\n    verify_pin(chrome_qualification['actualQualificationResult'])\n    verify_pin(inputs['ownedChromeEvidenceCode'])\n    for row in inputs['controlRuntimeFiles'] + inputs['extraRuntimeFiles']:\n",
+      "count": 1,
+      "replacementBytePositions": [
+        24887
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "GIT_CONFIG_VALUE_1=str(SDK))",
+      "new": "GIT_CONFIG_VALUE_1=str(SDK),\n                       CHROME_EXECUTABLE=inputs['browserExecutable']['path'])",
+      "count": 1,
+      "replacementBytePositions": [
+        43190
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "    tail = str(FLUTTER) + ' ' + ' '.join(FLAGS)",
+      "new": "    observer_row = inputs['ownedChromeEvidenceCode']\n    require(Path(observer_row['path']) == CANDIDATE / 'owned_chrome_evidence.py', 'Fixed Chrome observer path required')\n    verify_pin(observer_row)\n    observer_spec = importlib.util.spec_from_file_location('guardian_browser13_owned_chrome', Path(observer_row['path']))\n    observer_module = importlib.util.module_from_spec(observer_spec)\n    sys.modules[observer_spec.name] = observer_module\n    observer_spec.loader.exec_module(observer_module)\n    verify_pin(observer_row)\n    receipt['ownedChromeEvidenceCodePin'] = dict(observer_row)\n    receipt['browserExecutablePin'] = dict(inputs['browserExecutable'])\n    tail = str(FLUTTER) + ' ' + ' '.join(FLAGS)",
+      "count": 1,
+      "replacementBytePositions": [
+        43297
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "    # File output finishes while the root is still suspended, before monitoring.",
+      "new": "    launch['chromeExecutable'] = inputs['browserExecutable']['path']\n    launch['browserToolSources'] = inputs['browserToolSources']\n    launch['ownedChromeEvidenceCodePin'] = inputs['ownedChromeEvidenceCode']\n    chrome_observer = observer_module.OwnedChromeEvidence(command_job,\n        Path(inputs['browserExecutable']['path']), ATTEMPT / 'tmp', COMMAND_END)\n    # File output finishes while the root is still suspended, before monitoring.",
+      "count": 1,
+      "replacementBytePositions": [
+        45521
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "            if monotonic() < drain_end:\n",
+      "new": "            if monotonic() < min(COMMAND_END, drain_end):\n                chrome_observer.sample(deadline_qpc=min(COMMAND_END, drain_end))\n            if monotonic() < drain_end:\n",
+      "count": 1,
+      "replacementBytePositions": [
+        38499
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "        if monotonic() >= COMMAND_END or (state['signaled'] and drain_end is not None\n",
+      "new": "        if not state['signaled'] and monotonic() < COMMAND_END:\n            chrome_observer.sample(deadline_qpc=COMMAND_END)\n        if monotonic() >= COMMAND_END or (state['signaled'] and drain_end is not None\n",
+      "count": 1,
+      "replacementBytePositions": [
+        38776
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "finally:\n    if command_job is not None and command_job.process is not None:",
+      "new": "finally:\n    if chrome_observer is not None:\n        try:\n            chrome_evidence = chrome_observer.finish()\n            save('owned-chrome-evidence.json', chrome_evidence)\n            receipt['ownedChromeEvidencePin'] = pin(ATTEMPT / 'owned-chrome-evidence.json')\n            receipt['ownedChromeEvidence'] = chrome_evidence\n            receipt['ownedChromeBoundariesAccepted'] = chrome_evidence_valid(\n                chrome_evidence, inputs, receipt.get('commandTerminalState'), START, COMMAND_END, ATTEMPT)\n            verify_pin(inputs['ownedChromeEvidenceCode'])\n        except Exception as chrome_error:\n            receipt['ownedChromeEvidenceError'] = type(chrome_error).__name__ + ': ' + str(chrome_error)\n    if command_job is not None and command_job.process is not None:",
+      "count": 1,
+      "replacementBytePositions": [
+        47962
+      ]
+    },
+    {
+      "file": "worker.py",
+      "old": "and receipt['processNameProviderForced'] is False\n",
+      "new": "and receipt.get('ownedChromeBoundariesAccepted') is True\n              and receipt['processNameProviderForced'] is False\n",
+      "count": 1,
+      "replacementBytePositions": [
+        51997
+      ]
+    },
+    {
+      "file": "analysis-host.py",
+      "old": "guardian-vm35",
+      "new": "guardian-browser13",
+      "count": 5,
+      "replacementBytePositions": [
+        355,
+        14138,
+        15297,
+        17073,
+        23050
+      ]
+    },
+    {
+      "file": "analysis-host.py",
+      "old": "VM35",
+      "new": "BROWSER13",
+      "count": 6,
+      "replacementBytePositions": [
+        9,
+        9315,
+        12757,
+        15087,
+        22219,
+        22998
+      ]
+    },
+    {
+      "file": "analysis-host.py",
+      "old": "56012ab858575ef7f356d4cf1e5ed94815c9e12e53423d889a0168caf1494eb5",
+      "new": "7f5252253aa92b29c0fe5e7c7203ef4d5e4d9054d4b47f381e90111dfcddc2c2",
+      "count": 1,
+      "replacementBytePositions": [
+        530
+      ]
+    },
+    {
+      "file": "analysis-host.py",
+      "old": "INPUT_BYTES = 17077",
+      "new": "INPUT_BYTES = 20238",
+      "count": 1,
+      "replacementBytePositions": [
+        494
+      ]
+    },
+    {
+      "file": "analysis-host.py",
+      "old": "'process-inventory.ps1', 'reporter_contract.py'}",
+      "new": "'process-inventory.ps1', 'reporter_contract.py', 'owned_chrome_evidence.py'}",
+      "count": 1,
+      "replacementBytePositions": [
+        879
+      ]
+    },
+    {
+      "file": "analysis-host.py",
+      "old": "len(proposal['candidateFiles']) == 5",
+      "new": "len(proposal['candidateFiles']) == 6",
+      "count": 1,
+      "replacementBytePositions": [
+        14671
+      ]
+    },
+    {
+      "file": "analysis-host.py",
+      "old": "guardian_vm30_host_reporter",
+      "new": "guardian_browser13_host_reporter",
+      "count": 1,
+      "replacementBytePositions": [
+        7361
+      ]
+    },
+    {
+      "file": "analysis-host.py",
+      "old": "guardian-browser13-20261024-r1",
+      "new": "guardian-browser13-20261024-r2-manager-proof",
+      "count": 1,
+      "replacementBytePositions": [
+        360
+      ]
+    },
+    {
+      "file": "analysis-host.py",
+      "old": "def worker_outcome(receipt, terminal, before_resume, attempt, inputs):",
+      "new": "def chrome_evidence_valid(value, inputs, command_state, start, end, attempt):\n    \"\"\"Derive Chrome boundaries from pinned JSON; no process or network API.\"\"\"\n    import ipaddress\n    import math\n    import ntpath\n    import re\n    from urllib.parse import urlsplit\n\n    def number(item):\n        return type(item) is float and math.isfinite(item)\n\n    def positive(item):\n        return type(item) is int and item > 0\n\n    def digest(item):\n        return type(item) is str and re.fullmatch('[a-f0-9]{64}', item) is not None\n\n    def canonical(item):\n        if not (type(item) is str and 0 < len(item) <= 32766\n                and re.match(r'^[A-Za-z]:[\\\\/]', item)\n                and not any(ord(char) < 32 for char in item)\n                and '..' not in item.replace('/', '\\\\').split('\\\\')):\n            raise ValueError('Nonlocal or unsafe Chrome evidence path')\n        drive, tail = ntpath.splitdrive(item)\n        if ':' in tail:\n            raise ValueError('ADS Chrome evidence path')\n        return ntpath.normcase(ntpath.normpath(item))\n\n    try:\n        keys = {'schemaVersion', 'status', 'chromeRoots', 'problems', 'sampleCalls',\n                'pinnedBrowserPath', 'temporaryRoot', 'commandCreationFiletime',\n                'observationDeadlineQpc', 'commandLineSource', 'debugBindingProof',\n                'foreignCommandLinesRead', 'processesTerminated', 'environmentRead',\n                'nativeReadPathQualificationSeparate'}\n        if not (type(value) is dict and set(value) == keys\n                and type(value['schemaVersion']) is int and value['schemaVersion'] == 1\n                and value['status'] == 'OWNED_CHROME_BOUNDARIES_OBSERVED'\n                and type(value['problems']) is list and value['problems'] == []\n                and positive(value['sampleCalls']) and value['sampleCalls'] <= 100000\n                and value['foreignCommandLinesRead'] is False\n                and value['processesTerminated'] is False and value['environmentRead'] is False\n                and value['nativeReadPathQualificationSeparate'] is True\n                and value['commandLineSource'] == 'SAME_RETAINED_HANDLE_PBI0_READPROCESSMEMORY'\n                and value['debugBindingProof'] == 'PID_FILTERED_LISTEN_ROWS_BRACKETED_BY_SAME_HANDLE_IDENTITY'\n                and type(command_state) is dict and positive(command_state.get('pid'))\n                and positive(command_state.get('creationFiletime'))\n                and positive(value['commandCreationFiletime'])\n                and value['commandCreationFiletime'] == command_state['creationFiletime']\n                and number(start) and number(end) and start < end\n                and number(value['observationDeadlineQpc'])\n                and value['observationDeadlineQpc'] == end):\n            return False\n        executable = canonical(inputs['browserExecutable']['path'])\n        temporary = canonical(str(attempt / 'tmp'))\n        if canonical(value['pinnedBrowserPath']) != executable or canonical(value['temporaryRoot']) != temporary:\n            return False\n        roots = value['chromeRoots']\n        if type(roots) is not list or not 1 <= len(roots) <= 64:\n            return False\n        identities, profiles, ports = set(), set(), set()\n        row_keys = {'pid', 'creationFiletime', 'commandCreationFiletime', 'imagePath', 'profile',\n                    'debuggingPort', 'testServerOrigins', 'testTargets', 'managerTarget', 'headless',\n                    'argvTestTargetLoopback', 'flutterManagerTargetSameLoopbackOrigin',\n                    'commandLineUtf16Sha256', 'commandLineReadBeforeQpc', 'commandLineReadAfterQpc',\n                    'sameReadHandleVerified', 'ownedMembershipVerifiedBeforeAndAfter', 'liveBeforeAndAfter',\n                    'observedQpc', 'debugListenerAddresses', 'listenerReadBeforeQpc', 'listenerReadAfterQpc',\n                    'listenerSameHandleIdentityVerifiedBeforeAndAfter', 'debugBindingLoopbackObserved'}\n        for row in roots:\n            if not (type(row) is dict and set(row) == row_keys\n                    and positive(row['pid']) and row['pid'] != command_state['pid']\n                    and positive(row['creationFiletime'])\n                    and row['creationFiletime'] >= command_state['creationFiletime']\n                    and positive(row['commandCreationFiletime'])\n                    and row['commandCreationFiletime'] == command_state['creationFiletime']\n                    and canonical(row['imagePath']) == executable\n                    and positive(row['debuggingPort']) and row['debuggingPort'] < 65536\n                    and all(row[key] is True for key in ('headless', 'argvTestTargetLoopback',\n                        'flutterManagerTargetSameLoopbackOrigin', 'sameReadHandleVerified',\n                        'ownedMembershipVerifiedBeforeAndAfter', 'liveBeforeAndAfter',\n                        'listenerSameHandleIdentityVerifiedBeforeAndAfter', 'debugBindingLoopbackObserved'))\n                    and digest(row['commandLineUtf16Sha256'])):\n                return False\n            identity = (row['pid'], row['creationFiletime'])\n            profile = canonical(row['profile'])\n            port = row['debuggingPort']\n            if not profile.startswith(temporary.rstrip('\\\\') + '\\\\') or len(profile.split('\\\\')) > 64:\n                return False\n            if identity in identities or profile in profiles or port in ports:\n                return False\n            identities.add(identity); profiles.add(profile); ports.add(port)\n            times = [row[key] for key in ('commandLineReadBeforeQpc', 'commandLineReadAfterQpc',\n                'listenerReadBeforeQpc', 'listenerReadAfterQpc', 'observedQpc')]\n            if not (all(number(item) for item in times)\n                    and start <= times[0] <= times[1] <= times[2] <= times[3] == times[4] < end):\n                return False\n            targets, origins = row['testTargets'], row['testServerOrigins']\n            if not (type(targets) is list and len(targets) == 1\n                    and type(origins) is list and len(origins) == 1 and type(origins[0]) is str):\n                return False\n            target = targets[0]\n            if not (type(target) is dict and set(target) == {'scheme', 'host', 'port', 'path', 'urlSha256'}\n                    and target['scheme'] == 'http' and target['host'] in ('localhost', '127.0.0.1', '::1')\n                    and positive(target['port']) and target['port'] < 65536\n                    and target['path'] == '/static/index.html' and digest(target['urlSha256'])):\n                return False\n            manager = row['managerTarget']\n            if not (type(manager) is dict and set(manager) == {'scheme', 'host', 'port'}\n                    and type(manager['scheme']) is str and manager['scheme'] == 'ws'\n                    and type(manager['host']) is str\n                    and manager['host'] in ('localhost', '127.0.0.1', '::1')\n                    and positive(manager['port']) and manager['port'] < 65536\n                    and manager['host'] == target['host'] and manager['port'] == target['port']):\n                return False\n            origin = urlsplit(origins[0])\n            if not (origin.scheme == 'http' and origin.hostname == target['host']\n                    and origin.port == target['port'] and origin.path == ''\n                    and origin.username is None and origin.password is None\n                    and not origin.query and not origin.fragment):\n                return False\n            listeners = row['debugListenerAddresses']\n            if type(listeners) is not list or not 1 <= len(listeners) <= 32:\n                return False\n            seen = set()\n            for listener in listeners:\n                if not (type(listener) is dict and set(listener) == {'address', 'port', 'family', 'status'}\n                        and type(listener['address']) is str and len(listener['address']) <= 64\n                        and type(listener['port']) is int and listener['port'] == port\n                        and listener['status'] == 'LISTEN' and listener['family'] in ('AF_INET', 'AF_INET6')):\n                    return False\n                address = ipaddress.ip_address(listener['address'])\n                if not (address.is_loopback and\n                        ((address.version == 4 and listener['family'] == 'AF_INET')\n                         or (address.version == 6 and listener['family'] == 'AF_INET6'))):\n                    return False\n                entry = (str(address), listener['port'], listener['family'], listener['status'])\n                if entry in seen:\n                    return False\n                seen.add(entry)\n        return True\n    except (KeyError, TypeError, ValueError, AttributeError, OverflowError):\n        return False\n\n\ndef worker_outcome(receipt, terminal, before_resume, attempt, inputs):",
+      "count": 1,
+      "replacementBytePositions": [
+        7715
+      ]
+    },
+    {
+      "file": "analysis-host.py",
+      "old": "    log_pin = receipt.get('logPin')\n",
+      "new": "    chrome_pin = receipt.get('ownedChromeEvidencePin')\n    if not (receipt.get('ownedChromeBoundariesAccepted') is True\n            and same_json(receipt.get('ownedChromeEvidenceCodePin'), inputs['ownedChromeEvidenceCode'])\n            and same_json(receipt.get('browserExecutablePin'), inputs['browserExecutable'])\n            and type(chrome_pin) is dict\n            and Path(chrome_pin.get('path', '')) == attempt / 'owned-chrome-evidence.json'):\n        return False\n    descriptor(chrome_pin, FINISH_END)\n    require(chrome_pin['bytes'] <= 2 * 1024 * 1024, 'Bounded Chrome evidence required')\n    chrome_raw = json.loads(Path(chrome_pin['path']).read_bytes())\n    descriptor(chrome_pin, FINISH_END)\n    if not (same_json(chrome_raw, receipt.get('ownedChromeEvidence'))\n            and chrome_evidence_valid(chrome_raw, inputs, first, start, start + 135.0, attempt)):\n        return False\n    log_pin = receipt.get('logPin')\n",
+      "count": 1,
+      "replacementBytePositions": [
+        20216
+      ]
+    },
+    {
+      "file": "root-launch",
+      "old": "guardian-vm35",
+      "new": "guardian-browser13",
+      "count": 3,
+      "replacementBytePositions": [
+        128,
+        1886,
+        4832
+      ]
+    },
+    {
+      "file": "root-launch",
+      "old": "VM35",
+      "new": "BROWSER13",
+      "count": 3,
+      "replacementBytePositions": [
+        4499,
+        8263,
+        8295
+      ]
+    },
+    {
+      "file": "root-launch",
+      "old": "guardian-browser13-20261024-r1",
+      "new": "guardian-browser13-20261024-r2-manager-proof",
+      "count": 1,
+      "replacementBytePositions": [
+        128
+      ]
+    },
+    {
+      "file": "root-launch",
+      "old": "8d8001ea23ddfc7295e8cb302d0eaa951280bc62ab4698036f4897419d2074d0",
+      "new": "669a8366f805044f7f9c0b2140b3b69975d86076bf380f1d749134dbb4d0d905",
+      "count": 1,
+      "replacementBytePositions": [
+        374
+      ]
+    },
+    {
+      "file": "root-launch",
+      "old": "analysis-host.py|owned_job.py|process-inventory.ps1|reporter_contract.py|worker.py",
+      "new": "analysis-host.py|owned_chrome_evidence.py|owned_job.py|process-inventory.ps1|reporter_contract.py|worker.py",
+      "count": 1,
+      "replacementBytePositions": [
+        2461
+      ]
+    },
+    {
+      "file": "release",
+      "old": "guardian-vm35",
+      "new": "guardian-browser13",
+      "count": 2,
+      "replacementBytePositions": [
+        367,
+        443
+      ]
+    },
+    {
+      "file": "release",
+      "old": "VM35",
+      "new": "BROWSER13",
+      "count": 3,
+      "replacementBytePositions": [
+        2481,
+        2901,
+        2947
+      ]
+    },
+    {
+      "file": "release",
+      "old": "guardian-browser13-20261024-r1",
+      "new": "guardian-browser13-20261024-r2-manager-proof",
+      "count": 1,
+      "replacementBytePositions": [
+        367
+      ]
+    },
+    {
+      "file": "release",
+      "old": "guardian-browser13-post-20261024-r1",
+      "new": "guardian-browser13-post-20261024-r2-manager-proof",
+      "count": 1,
+      "replacementBytePositions": [
+        457
+      ]
+    }
+  ],
+  "nativeAndProcessProviderUnchanged": true,
+  "rootGrantOrAttemptCreated": false,
+  "sdkBrowserAstTestOrCandidateExecuted": false
+}

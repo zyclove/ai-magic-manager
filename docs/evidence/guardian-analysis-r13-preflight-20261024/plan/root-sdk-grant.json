@@ -1,0 +1,52 @@
+{
+  "status": "ROOT_APPROVED_SINGLE_FIXED_ANALYSIS",
+  "atUtc": "2026-10-24T09:32:55.170322+00:00",
+  "proposalSha256": "76dbc7d7e37ba4e6c855a322a18f77a1a46d26269ea50e7aecd4d3cbb5a81684",
+  "launcherSha256": "c0e3fca44b1f62f4ed225ac63373696f78ac29e687305717ab2e8b9693660299",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "sdkCallsAllowed": 1,
+  "testsAllowed": false,
+  "downloadsAllowed": false,
+  "pubAllowed": false,
+  "wholeRegressionRoots": 183,
+  "phase": "analyze-all-guardian",
+  "budgets": {
+    "outer": 180,
+    "working": 174,
+    "worker": 165,
+    "command": 135,
+    "commandCleanup": 140,
+    "postflightReserve": 25
+  },
+  "authority": "Existing direct human offline/cache validation authorization once resources recover. Root independently rechecked metadata and exact reversed code; six authorized chats notified for09:34-09:37UTC. Launcher and worker freshly recheck resources before SDK.",
+  "evidence": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r13-current006ee\\root-static-review.json",
+      "bytes": 5280,
+      "sha256": "69bb89e75f11c79436454106bbe2cb825fcc46b8f492a61e2d8a474a1345de90"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r13-current006ee\\binding-pins.json",
+      "bytes": 10127,
+      "sha256": "361ab3504eb0b2c4d37e79e00fff08f41730f018fd9922ee84622705b26afdfc"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\pins.json",
+      "bytes": 5287,
+      "sha256": "60de07c26a0e570abc857f12d80fc1250c5436cf2ef7b143c3bca8ac19b6b242"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r13-current006ee\\cache-analysis-projection.json",
+      "bytes": 724690,
+      "sha256": "3ca7ed28e9778c69360245186c96110d1a86e6bf7c621c5ea1a56bd4b19a3e84"
+    }
+  ],
+  "plannedWindowStartUtc": "2026-10-24T09:34:00.0000000Z",
+  "plannedWindowEndUtc": "2026-10-24T09:37:00.0000000Z",
+  "nativeAndProviderByteExactNoQualificationRerun": true,
+  "rootReadAllFiveDiffs": true,
+  "runtimeSourceCachePhysicalPinsRemainPrePostObligations": true,
+  "rootActualTerminalPurePostFreshReleaseStillRequired": true,
+  "pushed": false,
+  "deployed": false
+}

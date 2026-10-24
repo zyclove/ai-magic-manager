@@ -1,0 +1,15 @@
+{
+  "status": "FRESH_RELEASE_OBSERVATION_ONLY_NO_NEW_SDK_OR_BUDGET",
+  "originalReleaseActualChunk": "a70fa9",
+  "originalReleaseActualExitCode": 1,
+  "originalReleaseSha256": "ab369d0b6150fbdf53d974a2fce6d72546c401e4e6d9396b2e52e03fc92215d8",
+  "oldReceiptPreserved": true,
+  "onlyTwoOutputBasenamesDifferInverseByteExact": true,
+  "fixedOriginalRootActualTerminal": "0f8647",
+  "fixedOriginalRootActualExitCode": 0,
+  "fixedOriginalPostActualTerminal": "feb663",
+  "fixedOriginalPostActualExitCode": 0,
+  "sdkCallsInFollowup": 0,
+  "freshObservationTrigger": "a8dc6b SDK0 unknown0 at09:01:49 UTC",
+  "scriptSha256": "f622d59a35d35a82bf9e3d5b04b23dc2241f6ce8037738802de5757c0d98ff1d"
+}

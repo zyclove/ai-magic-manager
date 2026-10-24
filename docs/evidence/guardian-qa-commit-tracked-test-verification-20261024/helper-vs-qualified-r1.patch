@@ -1,0 +1,65 @@
+--- qualified-r1
++++ r2-tracked-test-guard
+@@ -7,10 +7,10 @@
+ import sys
+ 
+ ROOT = Path(__file__).resolve().parents[1]
+-PHASE = ROOT / '.cache/guardian-qa-phase-commit-20261024-r1'
++PHASE = ROOT / '.cache/guardian-qa-phase-commit-20261024-r2'
+ PLAN = PHASE / 'stage-pins.json'
+ INDEX, PRIVATE, LOCK = ROOT / '.git/index', PHASE / 'private.index', ROOT / '.git/index.lock'
+-MESSAGE = 'docs: record Guardian login and schedule verification results'
++MESSAGE = 'test: correct schedule retry button lookup and record validation'
+ 
+ def require(ok, reason):
+     if not ok:
+@@ -27,7 +27,8 @@
+ require(bool(paths) and len(paths) == len(set(paths)), 'Empty/duplicate paths')
+ require(all(p.startswith('docs/evidence/guardian-') or p in {
+     'docs/reviews/guardian-vm35-20261024.md',
+-    'docs/reviews/guardian-analysis-and-browser13-20261024.md'} for p in paths), 'Out-of-scope path')
++    'docs/reviews/guardian-analysis-and-browser13-20261024.md',
++    'apps/guardian/test/editor_submit_guard_test.dart'} for p in paths), 'Out-of-scope path')
+ 
+ def git(*args, data=None, private=False):
+     env = dict(os.environ)
+@@ -44,7 +45,11 @@
+ 
+ for row in rows:
+     p = ROOT / row['path']
+-    require(p.resolve(strict=True).is_relative_to(ROOT / 'docs'), 'Escaped docs')
++    if row['path'] == 'apps/guardian/test/editor_submit_guard_test.dart':
++        require(p.resolve(strict=True) == ROOT / 'apps/guardian/test/editor_submit_guard_test.dart',
++                'Escaped fixed test path')
++    else:
++        require(p.resolve(strict=True).is_relative_to(ROOT / 'docs'), 'Escaped docs')
+     require(not any(a.is_symlink() for a in [p, *p.parents] if a.is_relative_to(ROOT)), 'Linked path')
+     pin(p.read_bytes(), row)
+ require(INDEX.is_file() and not INDEX.is_symlink() and not PRIVATE.is_symlink(), 'Invalid index')
+@@ -64,7 +69,9 @@
+         pin(git('cat-file', 'blob', tree + ':' + row['path']), row)
+ 
+ receipt = dict(parent=plan['parent'], files=len(rows), totalBytes=sum(r['bytes'] for r in rows),
+-               applicationSourceChanges=0, testsRun=False, pushed=False, deployed=False)
++               applicationSourceChanges=0,
++               testSourceChanges=sum(r['path'].startswith('apps/guardian/test/') for r in rows),
++               testsRun=False, pushed=False, deployed=False)
+ if mode == 'stage':
+     unchanged_head()
+     no_staged()
+@@ -73,7 +80,14 @@
+     git('read-tree', plan['parent'], private=True)
+     updates = []
+     for row in rows:
+-        require(not git('ls-tree', plan['parent'], '--', row['path']), 'Expected new QA path')
++        existing = git('ls-tree', plan['parent'], '--', row['path'])
++        if row['path'] == 'apps/guardian/test/editor_submit_guard_test.dart':
++            before = row.get('beforeGitRawBlobSha1')
++            require(type(before) is str and len(before) == 40 and
++                    existing == f"100644 blob {before}\t{row['path']}\n".encode() and
++                    before != row['gitRawBlobSha1'], 'Fixed prior test blob required')
++        else:
++            require(row.get('beforeGitRawBlobSha1') is None and not existing, 'Expected new QA path')
+         oid = git('hash-object', '-w', '--stdin', data=(ROOT / row['path']).read_bytes()).decode().strip()
+         require(oid == row['gitRawBlobSha1'], 'Written object mismatched plan')
+         updates.append(f"100644 {oid}\t{row['path']}\0".encode())

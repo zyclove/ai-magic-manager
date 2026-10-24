@@ -1,0 +1,80 @@
+{
+  "status": "R2_LOADING_READ_ONLY_DIAGNOSIS_NOT_A_NEW_TEST_RUN",
+  "sourceCopies": [
+    {
+      "source": ".cache/guardian-browser13-loading-static-20261024-r1/cache-entry-summary.json",
+      "archived": "cache-entry-summary.json",
+      "bytes": 2694,
+      "sha256": "735e9a0323570bb862b710b31a2b3cc93b18fa0cabc0ba07b14729d0fbfdfbb0"
+    },
+    {
+      "source": ".cache/guardian-browser13-loading-static-20261024-r1/chromium-entry.bin",
+      "archived": "chromium-entry.bin",
+      "bytes": 256,
+      "sha256": "fe806cff227ffd4699ad17a9fa71517a4cc50f68d4e82b7df1d7a1f18169f323"
+    },
+    {
+      "source": ".cache/guardian-browser13-loading-static-20261024-r1/chromium-response-body.bin",
+      "archived": "chromium-response-body.bin",
+      "bytes": 9,
+      "sha256": "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+    },
+    {
+      "source": ".cache/guardian-browser13-loading-static-20261024-r1/chromium-response-metadata.bin",
+      "archived": "chromium-response-metadata.bin",
+      "bytes": 312,
+      "sha256": "d4fb617139164d824bc06a486aa0b5e761d2af552135640052fc075b0ac07df3"
+    },
+    {
+      "source": ".cache/guardian-browser13-loading-static-20261024-r1/fallback-entry.bin",
+      "archived": "fallback-entry.bin",
+      "bytes": 256,
+      "sha256": "9d2e3c08187318106d4e1584c723c4bb884d880c8c0abd8bbc30eb7509d8fa48"
+    },
+    {
+      "source": ".cache/guardian-browser13-loading-static-20261024-r1/fallback-response-body.bin",
+      "archived": "fallback-response-body.bin",
+      "bytes": 9,
+      "sha256": "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+    },
+    {
+      "source": ".cache/guardian-browser13-loading-static-20261024-r1/fallback-response-metadata.bin",
+      "archived": "fallback-response-metadata.bin",
+      "bytes": 312,
+      "sha256": "a6fa6c83c285282d4fd3748fbd3c4f71a22ea5b1bc9d86aacf83c0878b2d55d7"
+    },
+    {
+      "source": ".cache/guardian-browser13-loading-static-20261024-r1/generated-wrapper.html",
+      "archived": "generated-wrapper.html",
+      "bytes": 667,
+      "sha256": "3b43774f521fbaab090dc2f76282e4bc0c6722d26db6703db8a0104c25fe13ee"
+    },
+    {
+      "source": ".cache/guardian-browser13-loading-static-20261024-r1/pins.json",
+      "archived": "pins.json",
+      "bytes": 10910,
+      "sha256": "881eecc2ea31a3ab89a1496835cbee9fd9f4926bb8c6d968c5f009590e8bcf20"
+    },
+    {
+      "source": ".cache/guardian-browser13-loading-static-20261024-r1/review.md",
+      "archived": "review.md",
+      "bytes": 8832,
+      "sha256": "bc5241a7a5df418170403ef905500427eb5524c94711b6b91ad45da5e541dc88"
+    },
+    {
+      "source": ".cache/guardian-browser13-loading-diagnosis-20261024-r1/owned-cache-response-summary.json",
+      "archived": "binding-owned-cache-response-summary.json",
+      "bytes": 2578,
+      "sha256": "c87474f7d3d62991bc5760fc4e1007a7e65a126a58c0a7f1d48f7bab06dbed19"
+    }
+  ],
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "reviewActualChunk": "ebbe63",
+  "reviewActualExitCode": 0,
+  "bindingReadbackActualChunk": "eb3d82",
+  "bindingReadbackActualExitCode": 0,
+  "originalR2Accepted": false,
+  "newSdkCalls": 0,
+  "wholeChromeProfileCopied": false,
+  "entireTimeoutUniqueCauseClaimed": false
+}

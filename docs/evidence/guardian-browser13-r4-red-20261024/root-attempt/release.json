@@ -1,0 +1,43 @@
+{
+  "status": "BROWSER13_NOT_ACCEPTED_OR_RELEASE_INCOMPLETE",
+  "atUtc": "2026-10-24T11:46:53.1658941Z",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "actualRootToolTerminalChunk": "fe3554",
+  "actualRootToolExitCode": 1,
+  "actualPostToolTerminalChunk": "b480ba",
+  "actualPostToolExitCode": 1,
+  "hostPid": 152752,
+  "hostCreationFiletime": "134373159007993392",
+  "hostExitFiletime": "134373159832207479",
+  "fixedLauncherDisposedOwnHostHandle": true,
+  "ownLiveSdkHandle": false,
+  "sdkCount": 0,
+  "sdkProcesses": [],
+  "unknownCount": 0,
+  "knownOwnedPids": [
+    152752,
+    154452,
+    154216
+  ],
+  "availableRamBytes": 7574970368,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 2936840192
+    },
+    {
+      "Name": "D",
+      "Free": 31221383168
+    }
+  ],
+  "processInventoryFile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\root-attempt\\post-process-inventory.json",
+  "processInventorySha256": "5da5178ff198b6c7a6435efc34dfb0a2c9505d0a241b2f21addba861831cf71d",
+  "fixedPostFile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-post-20261024-r4-canonical-git\\post.json",
+  "fixedPostSha256": "4b93a597b416a0619087dd1d596b0c83b60a60a30515c21d78c7fb6826feb906",
+  "resultConsistent": false,
+  "windowReleased": true,
+  "testAccepted": false,
+  "applicationTestsRun": true,
+  "deployed": false,
+  "nextSdkGrant": false
+}

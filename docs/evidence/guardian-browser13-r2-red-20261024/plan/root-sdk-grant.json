@@ -1,0 +1,80 @@
+{
+  "status": "ROOT_APPROVED_SINGLE_FIXED_TEST",
+  "atUtc": "2026-10-24T10:38:47.903170+00:00",
+  "proposalSha256": "669a8366f805044f7f9c0b2140b3b69975d86076bf380f1d749134dbb4d0d905",
+  "launcherSha256": "15456c65e14feaa809d89f9caa44484dcff9b2386a754a38e6bcba3e5ee21f1e",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "sdkCallsAllowed": 1,
+  "phase": "guardian-browser13",
+  "selectedRoots": 1,
+  "expectedVisibleCases": 13,
+  "wholeRegressionRoots": 183,
+  "otherRootsNotExecutedByThisBatch": 182,
+  "testsAllowed": true,
+  "downloadsAllowed": false,
+  "pubAllowed": false,
+  "budgets": {
+    "outer": 180,
+    "working": 174,
+    "worker": 165,
+    "command": 135,
+    "commandCleanup": 140,
+    "postflightReserve": 25
+  },
+  "authority": "Persistent direct human offline/cache validation authorization after resource/window recovery. Fresh e29a02 SDK0/unknown0/RAM7679610880; six authorized chats notified10:39-10:42UTC. Independent2e9220/e73a18 final B2 review, Root full observer/schema/launch/release review. Launcher and worker freshly recheck gates.",
+  "evidence": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-static-independent-20261024-r1\\review.md",
+      "bytes": 5012,
+      "sha256": "3b7bc90196467db8d8b7045096b90b142a0b216cb01c5ebde2aad9c667ef6fac"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-static-independent-20261024-r1\\pins.json",
+      "bytes": 13137,
+      "sha256": "06cb84d1fd53feaa7747a6cf990a6ca0f81032871154031ac6f6ba882d29855d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\binding-pins.json",
+      "bytes": 9830,
+      "sha256": "bba8eb4210958e3dda8b60805d4d4b55bbca7403ec6c8c12306c3d3022ff6d94"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\observer-pins.json",
+      "bytes": 4277,
+      "sha256": "dc29ba7c3174c981f1ab18b845ed627444ae8f5798cc905dd2361b5606c8cc3b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\observer-fixture\\result.json",
+      "bytes": 2320,
+      "sha256": "47d1880dc9b2b8049a98fdbbd28fb62a1083356593881d4d20612b1ebfa81246"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\r2-manager-proof-audit.json",
+      "bytes": 3698,
+      "sha256": "54346e67b41a8ff5d671be65495905a847f807b0b6b48c3e99f5141ce403247c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\pins.json",
+      "bytes": 5287,
+      "sha256": "60de07c26a0e570abc857f12d80fc1250c5436cf2ef7b143c3bca8ac19b6b242"
+    }
+  ],
+  "plannedWindowStartUtc": "2026-10-24T10:39:00.0000000Z",
+  "plannedWindowEndUtc": "2026-10-24T10:42:00.0000000Z",
+  "rootReadObserverActualChunks": [
+    "f89899",
+    "91f2fe",
+    "97073d",
+    "2547cd",
+    "79bcb7"
+  ],
+  "nativeF8AndProviderUnchangedNoOriginalFourFixtureRerun": true,
+  "newNarrowReadPathFixtureNotChromeQualification": true,
+  "actualChromePrivateTargetAndListenerEvidenceRequired": true,
+  "requiredNullableRunnerVersionPreserved": true,
+  "rootActualTerminalPurePostFreshReleaseStillRequired": true,
+  "noForeignProcessCommandLineOrEnvironmentReadsAllowed": true,
+  "noForeignProcessTerminationAllowed": true,
+  "pushed": false,
+  "deployed": false
+}

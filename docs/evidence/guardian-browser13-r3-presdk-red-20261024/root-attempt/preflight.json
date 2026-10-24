@@ -1,0 +1,24 @@
+{
+  "status": "ROOT_FIXED_BROWSER13_STARTED",
+  "atUtc": "2026-10-24T11:30:41.8900664Z",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "proposalSha256": "1473afaec08c0506a1c634b3f40808c6dbe71fde33ae096bf0f8f54e1e38bfbd",
+  "launcherSha256": "d1cbfa4167fdc8217fc699cc5a8dbbff6c348486c34add5a2dd136de8fcb0874",
+  "sdkCount": 0,
+  "unknownCount": 0,
+  "availableRamBytes": 7507574784,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 2954842112
+    },
+    {
+      "Name": "D",
+      "Free": 31239983104
+    }
+  ],
+  "maximumHostSeconds": 180,
+  "reusedBudget": false,
+  "grant": "guardian-browser13-current-head006ee-single-sdk-call",
+  "applicationTestsRequested": true
+}

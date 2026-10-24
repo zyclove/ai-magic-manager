@@ -1,0 +1,138 @@
+{
+  "status": "TRACKED_TEST_GUARD_REAL_GIT_FIXTURES_FILE_READBACK_VERIFIED",
+  "actualToolChunk": "fccc8e",
+  "runnerExitCode": 0,
+  "subprocessSteps": 34,
+  "elapsedSeconds": 5.233606900001178,
+  "mainHeadUnchanged": true,
+  "helperUnchanged": true,
+  "applicationTestsRun": false,
+  "oldFourCasScenariosRepeated": false,
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\runner.py",
+      "bytes": 9352,
+      "sha256": "efb9b44b213f2e9179ad64de1f6cfd39afb308bbcd274bd891e6bb0aab4db1ed"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\out\\result.json",
+      "bytes": 35694,
+      "sha256": "edabc8ebd26f526a7c22f78235c03c2286d033af75884cc440cd9b0a91756e46"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\review.md",
+      "bytes": 2236,
+      "sha256": "9f6f38ea22df66352742c338b56a685e70d5e2af9c6ecf79f561e680533a6e0c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\case1\\src\\.git\\HEAD",
+      "bytes": 20,
+      "sha256": "bda77d7d12a90332080071375095fb080d8cd2a6702e6ee44552863a0ca4317e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\case1\\src\\.git\\config",
+      "bytes": 288,
+      "sha256": "f8d6612af031ce4a264d389c90d209672c9ca4318b5bfc74f471f240b4e2e448"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\case1\\src\\.git\\index",
+      "bytes": 584,
+      "sha256": "5d311c54cb70e052ba5429fe01e4a52e7000ebc13c60f2f0067c8e17a7bafe46"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\case1\\src\\.git\\refs\\heads\\dev",
+      "bytes": 41,
+      "sha256": "e9afcfe4e22e33d270e7d4194798e5b9d0e22a8d62ce55e8fb3e2454b07752cd"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\case1\\src\\.cache\\guardian-qa-exact-commit-20261024-r2.py",
+      "bytes": 9402,
+      "sha256": "f028a6b7ca53e8317730fa73b5949d312fbf25b4d53802925ad7e65765d08071"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\case1\\src\\apps\\guardian\\test\\editor_submit_guard_test.dart",
+      "bytes": 21581,
+      "sha256": "0e0a0d3f2392bddf6f94f6cbc42dcc93bfcc9b2d3f2fb1aeef8c3044b03fb99b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\case1\\src\\foreign.txt",
+      "bytes": 38,
+      "sha256": "a97e4e7b51f1afde5c3ce652b15ced86c69cd4de44607987311ebd2ad9746721"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\case1\\src\\.cache\\guardian-qa-phase-commit-20261024-r2\\commit-intent.json",
+      "bytes": 603,
+      "sha256": "c22b486fe07e9f85123a098b33d27da1773369d9ba3d20dce74735f32a0c9f8f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\case1\\src\\.cache\\guardian-qa-phase-commit-20261024-r2\\commit-receipt.json",
+      "bytes": 431,
+      "sha256": "38442bffc45755064dcf1424765122f7b819e97ea352d23b0a03df7f34994059"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\case1\\src\\.cache\\guardian-qa-phase-commit-20261024-r2\\private.index",
+      "bytes": 584,
+      "sha256": "345b5e7e6d19c606c609f25f39a770807e4694a60fe97cc8cd854adbfeb38d32"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\case1\\src\\.cache\\guardian-qa-phase-commit-20261024-r2\\readback-receipt.json",
+      "bytes": 373,
+      "sha256": "8a96d2c17de131c280a6e1356077cb57c481a50a5dfb3b65ff1724a16f8577c0"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\case1\\src\\.cache\\guardian-qa-phase-commit-20261024-r2\\stage-pins.json",
+      "bytes": 750,
+      "sha256": "8e75dde9c5b6db30c2f1c89a829031c41f92c8616dbd0056464a770a8a767f89"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\case1\\src\\.cache\\guardian-qa-phase-commit-20261024-r2\\stage-receipt.json",
+      "bytes": 539,
+      "sha256": "e19b2ce43c121d2b5674f2de6abe80127c2fdb8e3292b0f9eb4b334062063273"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\case2\\src\\.git\\HEAD",
+      "bytes": 20,
+      "sha256": "bda77d7d12a90332080071375095fb080d8cd2a6702e6ee44552863a0ca4317e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\case2\\src\\.git\\config",
+      "bytes": 288,
+      "sha256": "f8d6612af031ce4a264d389c90d209672c9ca4318b5bfc74f471f240b4e2e448"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\case2\\src\\.git\\index",
+      "bytes": 348,
+      "sha256": "55d133fcc936c91bfb78f36b6f905c756c37114b80038678c97211b9c5ed2562"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\case2\\src\\.git\\refs\\heads\\dev",
+      "bytes": 41,
+      "sha256": "3cafaf6201a49bebd016f633a0b1f0737f300b0d0d2967e6b085685adb5d15e0"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\case2\\src\\.cache\\guardian-qa-exact-commit-20261024-r2.py",
+      "bytes": 9402,
+      "sha256": "f028a6b7ca53e8317730fa73b5949d312fbf25b4d53802925ad7e65765d08071"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\case2\\src\\apps\\guardian\\test\\editor_submit_guard_test.dart",
+      "bytes": 21581,
+      "sha256": "0e0a0d3f2392bddf6f94f6cbc42dcc93bfcc9b2d3f2fb1aeef8c3044b03fb99b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\case2\\src\\foreign.txt",
+      "bytes": 38,
+      "sha256": "a97e4e7b51f1afde5c3ce652b15ced86c69cd4de44607987311ebd2ad9746721"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\case2\\src\\.cache\\guardian-qa-phase-commit-20261024-r2\\private.index",
+      "bytes": 348,
+      "sha256": "8b1cd709d5c26cab89e47edaadcad91896f3228cb9b14ed9ee2bd7a0d5a42116"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-tracked-test-fixture-20261024-r1\\case2\\src\\.cache\\guardian-qa-phase-commit-20261024-r2\\stage-pins.json",
+      "bytes": 750,
+      "sha256": "ff64c7edbf4116e915e88e0996f1086dc7856459b7944c845ce2093519701491"
+    }
+  ]
+}

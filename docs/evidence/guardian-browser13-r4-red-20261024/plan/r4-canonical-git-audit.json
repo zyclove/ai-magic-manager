@@ -1,0 +1,126 @@
+{
+  "status": "R4_CANONICAL_GIT_STATIC_AUDIT_NOT_APPLICATION_ACCEPTANCE",
+  "r3TwentyEightSealedFilesUnchanged": true,
+  "r3TerminalPreSdkRedPreserved": true,
+  "fiveControlsReverseToR3ExactlyAfterCommandScopedCanonicalSpellingAndBindings": [
+    {
+      "file": "worker.py",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\worker.py",
+        "bytes": 54913,
+        "sha256": "5a92e0b70ee84047c727712732fd437ab99f13fb7ce07d20c9045bfa6ff38201"
+      },
+      "inverseToR3Exact": true,
+      "canonicalGitSpellingChanges": 4
+    },
+    {
+      "file": "analysis-host.py",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\analysis-host.py",
+        "bytes": 34989,
+        "sha256": "34cbbb3d6654341dc20c3c4e8275251d931800766e284df870683d1b5d483cdc"
+      },
+      "inverseToR3Exact": true,
+      "canonicalGitSpellingChanges": 0
+    },
+    {
+      "file": "post.py",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-post-20261024-r4-canonical-git\\post.py",
+        "bytes": 55004,
+        "sha256": "5aa635100c49e676b5ec4796781812ea27c5780215da847474b30734ba1920ce"
+      },
+      "inverseToR3Exact": true,
+      "canonicalGitSpellingChanges": 1
+    },
+    {
+      "file": "root-launch",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-root-launch-20261024-r4-canonical-git.ps1",
+        "bytes": 9255,
+        "sha256": "6edc2809f89ec8f63d8dc51e414a82ba514214cf26d0431d4342ae01aa667395"
+      },
+      "inverseToR3Exact": true,
+      "canonicalGitSpellingChanges": 1
+    },
+    {
+      "file": "release",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-release-20261024-r4-canonical-git.ps1",
+        "bytes": 4445,
+        "sha256": "98a99e501d6106349b8cd0b88df6b8afdf7f964d9b03276819572489993ea251"
+      },
+      "inverseToR3Exact": true,
+      "canonicalGitSpellingChanges": 0
+    }
+  ],
+  "observerNativeReporterGuardCaseContractCacheProviderByteExactToR3": true,
+  "originalQualificationBoundDirectlyWithoutNewFixture": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-native-qualification-binding.json",
+    "bytes": 1307,
+    "sha256": "6e8ba3d2436bfa7ba1c80bad1bb24856f3eca27de6bf8476fd1c297c773a070a"
+  },
+  "qualificationSameObserverBytesProof": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\observer-qualification-reuse.json",
+    "bytes": 1647,
+    "sha256": "9bdcaab0893be9ea0216c2fa0a26f355643337eb8264f60d231a25fd73487ce6"
+  },
+  "cleanEnvironmentReadonlyGitProofFromIndependentReviewer": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-git-diagnosis-20261024-r1\\actual-git-before-after.json",
+    "bytes": 9092,
+    "sha256": "1a0d09f608c1e0b858f7d176ded81d13075e1686b3e02bc5e0b29a5761779485"
+  },
+  "gitTrustedRootsUnchanged": [
+    "D:/codes/mobile/ai-manager",
+    "D:/softwares/flutter"
+  ],
+  "allCwdsUnchanged": true,
+  "globalOrSystemGitConfigOrOwnerOrPermissionsChanged": false,
+  "originalVM35SixCodeInverseChecks": true,
+  "runtimeFilesActuallyHashed": 43,
+  "topLevelInputDescriptorsActuallyHashed": 18,
+  "sourceFiles": 413,
+  "fullRoots": 183,
+  "selectedChromeSuites": 1,
+  "exactVisibleCases": 13,
+  "other182RootsNotNewlyExecutedOrSigned": true,
+  "allBudgetsAndAcceptanceRulesRetained": true,
+  "patches": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\r4-vs-r3-0-inputs.json.patch",
+      "bytes": 2768,
+      "sha256": "fe9d633fad5c261858ee8a70b9ccc052a0939729cf7ffe82881149bb21010d00"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\r4-vs-r3-1-proposal.json.patch",
+      "bytes": 1348,
+      "sha256": "03f39e5ba335731bc1f705340084b7821374a25e67d94857350b2c95302ce5b8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\r4-vs-r3-2-worker.py.patch",
+      "bytes": 2856,
+      "sha256": "39c6311f8093ef50b57097f7fc652c46a8bf400475c7239a350ec2ec637426be"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\r4-vs-r3-3-analysis-host.py.patch",
+      "bytes": 1029,
+      "sha256": "5c0d425a78618925d64cba12e3dab68dc822280c6f955bc0d9ef0510427d64e2"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\r4-vs-r3-4-post.py.patch",
+      "bytes": 2820,
+      "sha256": "338948488d86c88740eb475be04c28fd6a59b596f0fb94ceec95038637aadbdb"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\r4-vs-r3-5-guardian-browser13-root-launch-20261024-r4-canonical-git.ps1.patch",
+      "bytes": 1820,
+      "sha256": "90ea2072c8ef75fa722a5a3a8a69a1ec69f387c3b3d405f4b4d1afd461378a12"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\r4-vs-r3-6-guardian-browser13-release-20261024-r4-canonical-git.ps1.patch",
+      "bytes": 865,
+      "sha256": "48398c60d78d864d8ead50d0579bb88735fe2c2216d21bfe0ffd5b1915373cbb"
+    }
+  ],
+  "sdkChromeNetworkFixtureGrantAttemptOrGitMutationByThisAudit": false
+}

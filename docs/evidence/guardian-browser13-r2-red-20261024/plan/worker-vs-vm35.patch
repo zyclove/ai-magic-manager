@@ -1,0 +1,364 @@
+--- vm35/worker.py
++++ browser13/worker.py
+@@ -1,4 +1,4 @@
+-"""Static candidate: the fixed four-root VM35 test selection, gated by Root input."""
++"""Static candidate: the fixed single-root BROWSER13 test selection, gated by Root input."""
+ from time import monotonic
+ START = monotonic()
+ import sys
+@@ -27,8 +27,8 @@
+ SOURCE = FROZEN / 'src'
+ MODULE = SOURCE / 'apps/guardian'
+ INPUT = CANDIDATE / 'inputs.json'
+-INPUT_BYTES = 17077
+-INPUT_SHA256 = '56012ab858575ef7f356d4cf1e5ed94815c9e12e53423d889a0168caf1494eb5'
++INPUT_BYTES = 20238
++INPUT_SHA256 = '7f5252253aa92b29c0fe5e7c7203ef4d5e4d9054d4b47f381e90111dfcddc2c2'
+ PWSH = Path(r'C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.exe')
+ PROCESS_INVENTORY = CANDIDATE / 'process-inventory.ps1'
+ PROCESS_INVENTORY_SHA256 = 'f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046'
+@@ -39,8 +39,8 @@
+ CMD = Path('C:/Windows/System32/cmd.exe')
+ FLUTTER = Path('D:/softwares/flutter/bin/flutter.bat')
+ SDK = FLUTTER.parent.parent
+-SELECTORS = ['test/workbench_view_test.dart', 'test/dialog_submit_guard_test.dart', 'test/failure_view_test.dart', 'test/login_view_test.dart']
+-FLAGS = ['--no-version-check', '--suppress-analytics', 'test', '--no-pub',
++SELECTORS = ['test/editor_submit_guard_test.dart']
++FLAGS = ['--no-version-check', '--suppress-analytics', 'test', '--platform=chrome', '--no-pub',
+          '--concurrency=1', '--reporter=json', *SELECTORS]
+ GENERATED_DIRS = {'.dart_tool', 'build', '.idea'}
+ GENERATED_FILES = {'.flutter-plugins', '.flutter-plugins-dependencies',
+@@ -378,7 +378,7 @@
+                 == 'c:/program files/google/chrome/application/chrome.exe']
+     require(len(excluded) == 1 and excluded[0]['bytes'] == 4600472
+             and excluded[0]['sha256'] == '36a30716f0994b377f1ce6b47cfe35399b9719e31d597fe0ea0d8f3b62aed532',
+-            'Only the known VM-unused Chrome row may be excluded')
++            'Only the fixed historical Chrome descriptor may be replaced by the current independent pin')
+     base_fixed = [row for row in parent['fixedFiles']
+                   if row['path'].replace(chr(92), '/').casefold()
+                   != 'c:/program files/google/chrome/application/chrome.exe']
+@@ -387,11 +387,11 @@
+             'cacheContentsRehashedDuringProjection', 'sdkStarted', 'pubRun', 'browserStarted',
+             'cacheCopied', 'entireSdkOrBrowserInstallationPinned'}
+     require(type(cache) is dict and set(cache) == keys
+-            and cache['status'] == 'READ_ONLY_VM_TEST_CACHE_PROJECTION_NOT_SDK_VALIDATION'
+-            and cache['phase'] == 'guardian-vm35'
++            and cache['status'] == 'READ_ONLY_BROWSER_TEST_CACHE_PROJECTION_NOT_SDK_VALIDATION'
++            and cache['phase'] == 'guardian-browser13'
+             and same_json(cache['parentManifest'], inputs['cacheProjectionParentManifest'])
+             and same_json(cache['excludedFixedFiles'], excluded)
+-            and cache['exclusionReason'] == 'The fixed default VM tester command does not consume Chrome. A browser test phase must independently pin its current browser executable.'
++            and cache['exclusionReason'] == 'The historical parent Chrome descriptor is excluded; the current Chrome executable is independently pinned and appended for this fixed Chrome-only phase.'
+             and same_json(cache['trees'], parent['trees'])
+             and type(cache['fixedFiles']) is list and len(cache['fixedFiles']) >= len(base_fixed)
+             and same_json(cache['fixedFiles'][:len(base_fixed)], base_fixed)
+@@ -462,7 +462,7 @@
+     require(Path(code_row['path']) == CANDIDATE / 'reporter_contract.py',
+             'Only the fixed pinned reporter helper may be imported')
+     contract = load_pin(contract_row)
+-    spec = importlib.util.spec_from_file_location('guardian_vm30_reporter', Path(code_row['path']))
++    spec = importlib.util.spec_from_file_location('guardian_browser13_reporter', Path(code_row['path']))
+     reporter = importlib.util.module_from_spec(spec)
+     spec.loader.exec_module(reporter)
+     verify_pin(code_row)
+@@ -478,6 +478,12 @@
+     require(qualification['sdkAllowed'] is False
+             and qualification['realControllerEntryEnabled'] is False,
+             'Qualification provenance must not be repurposed as an SDK grant')
++    chrome_qualification = load_pin(inputs['ownedChromeNativeQualification'])
++    require(chrome_qualification['observerCodeSha256'] == inputs['ownedChromeEvidenceCode']['sha256']
++            and chrome_qualification['newNativeReadPathActuallyQualified'] is True,
++            'Separately qualified current Chrome read path required')
++    verify_pin(chrome_qualification['actualQualificationResult'])
++    verify_pin(inputs['ownedChromeEvidenceCode'])
+     for row in inputs['controlRuntimeFiles'] + inputs['extraRuntimeFiles']:
+         verify_pin(row)
+     gate = inputs['sdkBootstrap']
+@@ -529,6 +535,149 @@
+         save(label + '-pins.json', result)
+ 
+ 
++def chrome_evidence_valid(value, inputs, command_state, start, end, attempt):
++    """Derive Chrome boundaries from pinned JSON; no process or network API."""
++    import ipaddress
++    import math
++    import ntpath
++    import re
++    from urllib.parse import urlsplit
++
++    def number(item):
++        return type(item) is float and math.isfinite(item)
++
++    def positive(item):
++        return type(item) is int and item > 0
++
++    def digest(item):
++        return type(item) is str and re.fullmatch('[a-f0-9]{64}', item) is not None
++
++    def canonical(item):
++        if not (type(item) is str and 0 < len(item) <= 32766
++                and re.match(r'^[A-Za-z]:[\\/]', item)
++                and not any(ord(char) < 32 for char in item)
++                and '..' not in item.replace('/', '\\').split('\\')):
++            raise ValueError('Nonlocal or unsafe Chrome evidence path')
++        drive, tail = ntpath.splitdrive(item)
++        if ':' in tail:
++            raise ValueError('ADS Chrome evidence path')
++        return ntpath.normcase(ntpath.normpath(item))
++
++    try:
++        keys = {'schemaVersion', 'status', 'chromeRoots', 'problems', 'sampleCalls',
++                'pinnedBrowserPath', 'temporaryRoot', 'commandCreationFiletime',
++                'observationDeadlineQpc', 'commandLineSource', 'debugBindingProof',
++                'foreignCommandLinesRead', 'processesTerminated', 'environmentRead',
++                'nativeReadPathQualificationSeparate'}
++        if not (type(value) is dict and set(value) == keys
++                and type(value['schemaVersion']) is int and value['schemaVersion'] == 1
++                and value['status'] == 'OWNED_CHROME_BOUNDARIES_OBSERVED'
++                and type(value['problems']) is list and value['problems'] == []
++                and positive(value['sampleCalls']) and value['sampleCalls'] <= 100000
++                and value['foreignCommandLinesRead'] is False
++                and value['processesTerminated'] is False and value['environmentRead'] is False
++                and value['nativeReadPathQualificationSeparate'] is True
++                and value['commandLineSource'] == 'SAME_RETAINED_HANDLE_PBI0_READPROCESSMEMORY'
++                and value['debugBindingProof'] == 'PID_FILTERED_LISTEN_ROWS_BRACKETED_BY_SAME_HANDLE_IDENTITY'
++                and type(command_state) is dict and positive(command_state.get('pid'))
++                and positive(command_state.get('creationFiletime'))
++                and positive(value['commandCreationFiletime'])
++                and value['commandCreationFiletime'] == command_state['creationFiletime']
++                and number(start) and number(end) and start < end
++                and number(value['observationDeadlineQpc'])
++                and value['observationDeadlineQpc'] == end):
++            return False
++        executable = canonical(inputs['browserExecutable']['path'])
++        temporary = canonical(str(attempt / 'tmp'))
++        if canonical(value['pinnedBrowserPath']) != executable or canonical(value['temporaryRoot']) != temporary:
++            return False
++        roots = value['chromeRoots']
++        if type(roots) is not list or not 1 <= len(roots) <= 64:
++            return False
++        identities, profiles, ports = set(), set(), set()
++        row_keys = {'pid', 'creationFiletime', 'commandCreationFiletime', 'imagePath', 'profile',
++                    'debuggingPort', 'testServerOrigins', 'testTargets', 'managerTarget', 'headless',
++                    'argvTestTargetLoopback', 'flutterManagerTargetSameLoopbackOrigin',
++                    'commandLineUtf16Sha256', 'commandLineReadBeforeQpc', 'commandLineReadAfterQpc',
++                    'sameReadHandleVerified', 'ownedMembershipVerifiedBeforeAndAfter', 'liveBeforeAndAfter',
++                    'observedQpc', 'debugListenerAddresses', 'listenerReadBeforeQpc', 'listenerReadAfterQpc',
++                    'listenerSameHandleIdentityVerifiedBeforeAndAfter', 'debugBindingLoopbackObserved'}
++        for row in roots:
++            if not (type(row) is dict and set(row) == row_keys
++                    and positive(row['pid']) and row['pid'] != command_state['pid']
++                    and positive(row['creationFiletime'])
++                    and row['creationFiletime'] >= command_state['creationFiletime']
++                    and positive(row['commandCreationFiletime'])
++                    and row['commandCreationFiletime'] == command_state['creationFiletime']
++                    and canonical(row['imagePath']) == executable
++                    and positive(row['debuggingPort']) and row['debuggingPort'] < 65536
++                    and all(row[key] is True for key in ('headless', 'argvTestTargetLoopback',
++                        'flutterManagerTargetSameLoopbackOrigin', 'sameReadHandleVerified',
++                        'ownedMembershipVerifiedBeforeAndAfter', 'liveBeforeAndAfter',
++                        'listenerSameHandleIdentityVerifiedBeforeAndAfter', 'debugBindingLoopbackObserved'))
++                    and digest(row['commandLineUtf16Sha256'])):
++                return False
++            identity = (row['pid'], row['creationFiletime'])
++            profile = canonical(row['profile'])
++            port = row['debuggingPort']
++            if not profile.startswith(temporary.rstrip('\\') + '\\') or len(profile.split('\\')) > 64:
++                return False
++            if identity in identities or profile in profiles or port in ports:
++                return False
++            identities.add(identity); profiles.add(profile); ports.add(port)
++            times = [row[key] for key in ('commandLineReadBeforeQpc', 'commandLineReadAfterQpc',
++                'listenerReadBeforeQpc', 'listenerReadAfterQpc', 'observedQpc')]
++            if not (all(number(item) for item in times)
++                    and start <= times[0] <= times[1] <= times[2] <= times[3] == times[4] < end):
++                return False
++            targets, origins = row['testTargets'], row['testServerOrigins']
++            if not (type(targets) is list and len(targets) == 1
++                    and type(origins) is list and len(origins) == 1 and type(origins[0]) is str):
++                return False
++            target = targets[0]
++            if not (type(target) is dict and set(target) == {'scheme', 'host', 'port', 'path', 'urlSha256'}
++                    and target['scheme'] == 'http' and target['host'] in ('localhost', '127.0.0.1', '::1')
++                    and positive(target['port']) and target['port'] < 65536
++                    and target['path'] == '/static/index.html' and digest(target['urlSha256'])):
++                return False
++            manager = row['managerTarget']
++            if not (type(manager) is dict and set(manager) == {'scheme', 'host', 'port'}
++                    and type(manager['scheme']) is str and manager['scheme'] == 'ws'
++                    and type(manager['host']) is str
++                    and manager['host'] in ('localhost', '127.0.0.1', '::1')
++                    and positive(manager['port']) and manager['port'] < 65536
++                    and manager['host'] == target['host'] and manager['port'] == target['port']):
++                return False
++            origin = urlsplit(origins[0])
++            if not (origin.scheme == 'http' and origin.hostname == target['host']
++                    and origin.port == target['port'] and origin.path == ''
++                    and origin.username is None and origin.password is None
++                    and not origin.query and not origin.fragment):
++                return False
++            listeners = row['debugListenerAddresses']
++            if type(listeners) is not list or not 1 <= len(listeners) <= 32:
++                return False
++            seen = set()
++            for listener in listeners:
++                if not (type(listener) is dict and set(listener) == {'address', 'port', 'family', 'status'}
++                        and type(listener['address']) is str and len(listener['address']) <= 64
++                        and type(listener['port']) is int and listener['port'] == port
++                        and listener['status'] == 'LISTEN' and listener['family'] in ('AF_INET', 'AF_INET6')):
++                    return False
++                address = ipaddress.ip_address(listener['address'])
++                if not (address.is_loopback and
++                        ((address.version == 4 and listener['family'] == 'AF_INET')
++                         or (address.version == 6 and listener['family'] == 'AF_INET6'))):
++                    return False
++                entry = (str(address), listener['port'], listener['family'], listener['status'])
++                if entry in seen:
++                    return False
++                seen.add(entry)
++        return True
++    except (KeyError, TypeError, ValueError, AttributeError, OverflowError):
++        return False
++
++
+ def finite(value):
+     return type(value) is float and math.isfinite(value)
+ 
+@@ -561,9 +710,13 @@
+         if state['signaled']:
+             if drain_end is None:
+                 drain_end = min(COMMAND_END, state['firstSignaledQpc'] + 0.5)
++            if monotonic() < min(COMMAND_END, drain_end):
++                chrome_observer.sample(deadline_qpc=min(COMMAND_END, drain_end))
+             if monotonic() < drain_end:
+                 time.sleep(min(0.01, max(0.0, drain_end - monotonic())))
+                 continue
++        if not state['signaled'] and monotonic() < COMMAND_END:
++            chrome_observer.sample(deadline_qpc=COMMAND_END)
+         if monotonic() >= COMMAND_END or (state['signaled'] and drain_end is not None
+                                           and monotonic() >= drain_end):
+             deadline_reached = monotonic() >= COMMAND_END
+@@ -583,7 +736,7 @@
+     return state, first_signaled, drain_end, deadline_reached, maximum_total
+ 
+ 
+-receipt = {'status': 'NOT_ACCEPTED', 'phaseScope': 'GUARDIAN_VM35',
++receipt = {'status': 'NOT_ACCEPTED', 'phaseScope': 'GUARDIAN_BROWSER13',
+            'startedAtUtc': utc(), 'workerStartQpc': START, 'workerDeadlineQpc': HARD,
+            'commandDeadlineQpc': COMMAND_END, 'commandCleanupDeadlineQpc': CLEANUP_END,
+            'workerBudgetSeconds': 165, 'commandWorkerRelativeSeconds': 135,
+@@ -600,6 +753,8 @@
+ inputs = None
+ reporter = None
+ test_contract = None
++chrome_observer = None
++chrome_evidence = None
+ code = 1
+ try:
+     require(len(sys.argv) == 1 and os.name == 'nt' and sys.flags.isolated == 1
+@@ -613,7 +768,7 @@
+             'Frozen Root input bytes/hash changed')
+     input_bytes = actual_input['bytes']
+     inputs = json.loads(INPUT.read_bytes())
+-    require(inputs['phase'] == 'guardian-vm35', 'Only the fixed four-root Guardian VM35 phase')
++    require(inputs['phase'] == 'guardian-browser13', 'Only the fixed single-root Guardian BROWSER13 phase')
+     require(set(inputs['generatedExclusions']['directories']) == GENERATED_DIRS
+             and set(inputs['generatedExclusions']['files']) == GENERATED_FILES,
+             'Root/source generated exclusions differ')
+@@ -644,7 +799,18 @@
+                        GIT_TERMINAL_PROMPT='0', GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL='NUL',
+                        GIT_CONFIG_COUNT='2', GIT_CONFIG_KEY_0='safe.directory',
+                        GIT_CONFIG_VALUE_0=str(REPO), GIT_CONFIG_KEY_1='safe.directory',
+-                       GIT_CONFIG_VALUE_1=str(SDK))
++                       GIT_CONFIG_VALUE_1=str(SDK),
++                       CHROME_EXECUTABLE=inputs['browserExecutable']['path'])
++    observer_row = inputs['ownedChromeEvidenceCode']
++    require(Path(observer_row['path']) == CANDIDATE / 'owned_chrome_evidence.py', 'Fixed Chrome observer path required')
++    verify_pin(observer_row)
++    observer_spec = importlib.util.spec_from_file_location('guardian_browser13_owned_chrome', Path(observer_row['path']))
++    observer_module = importlib.util.module_from_spec(observer_spec)
++    sys.modules[observer_spec.name] = observer_module
++    observer_spec.loader.exec_module(observer_module)
++    verify_pin(observer_row)
++    receipt['ownedChromeEvidenceCodePin'] = dict(observer_row)
++    receipt['browserExecutablePin'] = dict(inputs['browserExecutable'])
+     tail = str(FLUTTER) + ' ' + ' '.join(FLAGS)
+     require(not any(char in tail for char in '&|<>^%!"\r\n'), 'Unsafe fixed command spelling')
+     argv = [str(CMD), '/d', '/v:off', '/c', tail]
+@@ -655,8 +821,8 @@
+     require(not paused['signaled'] and paused['activeProcesses'] == 1,
+             'Unexpected suspended SDK command membership')
+     launch = {'utc': utc(), 'pid': command_job.pid, 'creationFiletime': command_job.identity,
+-              'argv': argv, 'workingDirectory': str(MODULE), 'selectorCount': 4,
+-              'selectors': list(SELECTORS), 'expectedVisibleCases': 35,
++              'argv': argv, 'workingDirectory': str(MODULE), 'selectorCount': 1,
++              'selectors': list(SELECTORS), 'expectedVisibleCases': 13,
+               'testCaseContractPin': dict(inputs['testCaseContract']),
+               'reporterContractCodePin': dict(inputs['reporterContractCode']),
+               'workerStartQpc': START, 'commandDeadlineQpc': COMMAND_END,
+@@ -668,6 +834,11 @@
+               'atomicNestedJobMembership': True, 'launchRecordBeforeResume': True,
+               'sdkProcessSafeDirectories': [str(REPO), str(SDK)],
+               'nativeMemoryLimitClaimed': False}
++    launch['chromeExecutable'] = inputs['browserExecutable']['path']
++    launch['browserToolSources'] = inputs['browserToolSources']
++    launch['ownedChromeEvidenceCodePin'] = inputs['ownedChromeEvidenceCode']
++    chrome_observer = observer_module.OwnedChromeEvidence(command_job,
++        Path(inputs['browserExecutable']['path']), ATTEMPT / 'tmp', COMMAND_END)
+     # File output finishes while the root is still suspended, before monitoring.
+     save('launch.json', launch)
+     require(monotonic() + 1.0 < COMMAND_END,
+@@ -702,6 +873,17 @@
+         except Exception as cleanup_error:
+             receipt['commandCleanupError'] = type(cleanup_error).__name__ + ': ' + str(cleanup_error)
+ finally:
++    if chrome_observer is not None:
++        try:
++            chrome_evidence = chrome_observer.finish()
++            save('owned-chrome-evidence.json', chrome_evidence)
++            receipt['ownedChromeEvidencePin'] = pin(ATTEMPT / 'owned-chrome-evidence.json')
++            receipt['ownedChromeEvidence'] = chrome_evidence
++            receipt['ownedChromeBoundariesAccepted'] = chrome_evidence_valid(
++                chrome_evidence, inputs, receipt.get('commandTerminalState'), START, COMMAND_END, ATTEMPT)
++            verify_pin(inputs['ownedChromeEvidenceCode'])
++        except Exception as chrome_error:
++            receipt['ownedChromeEvidenceError'] = type(chrome_error).__name__ + ': ' + str(chrome_error)
+     if command_job is not None and command_job.process is not None:
+         known = receipt.get('commandTerminalState')
+         if not (type(known) is dict and known.get('terminal') is True):
+@@ -746,10 +928,10 @@
+             verify_pin(inputs['testCaseContract'])
+             validation = reporter.validate_report(log, test_contract, MODULE)
+             require(type(validation) is dict
+-                    and validation.get('status') == 'EXACT_VM35_REPORT_ACCEPTED'
++                    and validation.get('status') == 'EXACT_BROWSER13_REPORT_ACCEPTED'
+                     and same_json(validation.get('logPin'), receipt['logPin'])
+                     and same_json(pin(log), receipt['logPin']),
+-                    'Exact fixed VM35 reporter acceptance and stable raw log required')
++                    'Exact fixed BROWSER13 reporter acceptance and stable raw log required')
+             verify_pin(inputs['reporterContractCode'])
+             verify_pin(inputs['testCaseContract'])
+             save('reporter-validation.json', validation)
+@@ -761,6 +943,7 @@
+     terminal = receipt.get('commandTerminalStateAfterPostflight')
+     initial_terminal = receipt.get('commandTerminalState')
+     passed = (command_launched and receipt['sdkCalls'] == 1 and not receipt['forcedTermination']
++              and receipt.get('ownedChromeBoundariesAccepted') is True
+               and receipt['processNameProviderForced'] is False
+               and receipt['postflightSkipped'] is False
+               and not receipt['commandCloseFallback'] and natural_command(initial_terminal)
+@@ -770,12 +953,12 @@
+               and initial_terminal['firstCompleteTerminalQpc'] == terminal['firstCompleteTerminalQpc']
+               and receipt['testsRun'] is True and receipt['exactTestReportAccepted'] is True
+               and type(receipt['reporterValidation']) is dict
+-              and receipt['reporterValidation'].get('status') == 'EXACT_VM35_REPORT_ACCEPTED'
++              and receipt['reporterValidation'].get('status') == 'EXACT_BROWSER13_REPORT_ACCEPTED'
+               and receipt.get('preflight', {}).get('complete') is True
+               and receipt.get('postflight', {}).get('complete') is True
+               and not any(name.endswith('Error') for name in receipt)
+               and 'errorType' not in receipt and monotonic() < HARD)
+-    receipt['status'] = 'GUARDIAN_VM35_WORKER_PASSED' if passed else 'NOT_ACCEPTED'
++    receipt['status'] = 'GUARDIAN_BROWSER13_WORKER_PASSED' if passed else 'NOT_ACCEPTED'
+     receipt['finishedAtUtc'] = utc()
+     receipt['workerFinishedQpc'] = monotonic()
+     receipt['elapsedCompleteSeconds'] = receipt['workerFinishedQpc'] - START

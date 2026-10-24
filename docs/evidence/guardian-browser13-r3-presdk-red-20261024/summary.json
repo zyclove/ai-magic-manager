@@ -1,0 +1,89 @@
+{
+  "status": "ACTUAL_BROWSER13_R3_PRE_SDK_NOT_ACCEPTED",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "sdkCalls": 0,
+  "chromeStartedByThisAttempt": false,
+  "sdkRunnerWrapperExecuted": false,
+  "applicationTestsRun": false,
+  "applicationCasesVerified": 0,
+  "testAccepted": false,
+  "fullRegressionAccepted": false,
+  "workerFailure": {
+    "errorType": "CalledProcessError",
+    "gitExitCode": 128,
+    "reason": "Command-level safe.directory used a backslash path which did not match the canonical repository path; Git rejected repository ownership before SDK launch.",
+    "elapsedSeconds": 3.4801313999923877
+  },
+  "host": {
+    "actualExitCodeFromFile": 1,
+    "sameHandleSignaled": true,
+    "elapsedSecondsFromFile": 4.006027,
+    "forcedOwnHost": false,
+    "accepted": false
+  },
+  "workerJob": {
+    "actualExitCodeFromFile": 1,
+    "activeProcessesAtTerminal": 0,
+    "forcedCleanupRequested": false,
+    "naturalDrainLimitSeconds": 0.5,
+    "naturalCompleteTerminalTimely": false,
+    "observedDrainSeconds": 0.010896299994783476,
+    "note": "The observed Job0 drain is within0.5s, but combined naturalCompleteTerminalTimely is false because the worker exited1."
+  },
+  "post": {
+    "status": "NOT_ACCEPTED_FILE_READBACK",
+    "errorType": "ValueError",
+    "reason": "Usage: post.py <actual-approved-proposal-sha256>",
+    "note": "The separate post invocation failed its argument-usage check; it is not a successful file readback."
+  },
+  "release": {
+    "sdkCount": 0,
+    "unknownCount": 0,
+    "windowReleased": true,
+    "testAccepted": false,
+    "applicationTestsRun": false,
+    "nextSdkGrant": false,
+    "note": "Window release is resource availability only, not application/test acceptance."
+  },
+  "originalBudgetsSeconds": {
+    "root": 180,
+    "hostWork": 174,
+    "worker": 165,
+    "command": 135,
+    "commandCleanup": 140,
+    "minimumPostflightReserve": 25
+  },
+  "actualToolExecution": {
+    "provenance": "Root-reported tool completion; not independently observed by this archiver",
+    "root": {
+      "chunk": "f987a0",
+      "exitCode": 1
+    },
+    "post": {
+      "chunk": "fe8d5b",
+      "exitCode": 1
+    },
+    "release": {
+      "chunk": "1ca2b3",
+      "exitCode": 1
+    },
+    "fileRecordedRootAndPostChunks": {
+      "root": "f987a0",
+      "post": "fe8d5b"
+    }
+  },
+  "existingNativeReaderQualification": {
+    "source": "observer-fixture and observer-fixture-host",
+    "separateEarlierOwnPythonFixture": true,
+    "reexecutedForThisArchive": false,
+    "chromeLifecycleProven": false
+  },
+  "preservation": {
+    "originalR3FilesUnchanged": true,
+    "chromeProfileCopied": false,
+    "sourceFilesOrGitModified": false,
+    "newGrantReusable": false,
+    "durableMetadataReusedOnlyAfterByteEquality": true
+  },
+  "scopeNote": "13 expected browser cases and the full183 inventory remain planning metadata only; neither passed in this pre-SDK failed attempt."
+}

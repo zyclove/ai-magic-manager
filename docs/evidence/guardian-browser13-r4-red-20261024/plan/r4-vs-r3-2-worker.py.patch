@@ -1,0 +1,42 @@
+--- D:\codes\mobile\ai-manager\.cache\guardian-browser13-20261024-r3-html-diagnostic\worker.py
++++ D:\codes\mobile\ai-manager\.cache\guardian-browser13-20261024-r4-canonical-git\worker.py
+@@ -27,8 +27,8 @@
+ SOURCE = FROZEN / 'src'
+ MODULE = SOURCE / 'apps/guardian'
+ INPUT = CANDIDATE / 'inputs.json'
+-INPUT_BYTES = 20250
+-INPUT_SHA256 = '48466d5b67b8ebc13142ed2faf002481d66e483563045749bf3b6c8a63da0f7e'
++INPUT_BYTES = 20240
++INPUT_SHA256 = '906ca7d4c49602b8cb59fb9bb3cdd058f6bd1a0c6f1e10dae363c4a64fc17311'
+ PWSH = Path(r'C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.exe')
+ PROCESS_INVENTORY = CANDIDATE / 'process-inventory.ps1'
+ PROCESS_INVENTORY_SHA256 = 'f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046'
+@@ -260,7 +260,7 @@
+     environment = os.environ.copy()
+     environment.update(GIT_OPTIONAL_LOCKS='0', GIT_TERMINAL_PROMPT='0',
+                        GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL='NUL')
+-    value = subprocess.check_output([inputs['gitExecutable'], '-c', 'safe.directory=' + str(cwd),
++    value = subprocess.check_output([inputs['gitExecutable'], '-c', 'safe.directory=' + Path(cwd).as_posix(),
+                                     '-c', 'core.fsmonitor=false',
+                                     '-c', 'core.untrackedCache=false', *arguments],
+                                    cwd=cwd, env=environment,
+@@ -798,8 +798,8 @@
+                        CI='true', COMSPEC=str(CMD), GIT_OPTIONAL_LOCKS='0',
+                        GIT_TERMINAL_PROMPT='0', GIT_CONFIG_NOSYSTEM='1', GIT_CONFIG_GLOBAL='NUL',
+                        GIT_CONFIG_COUNT='2', GIT_CONFIG_KEY_0='safe.directory',
+-                       GIT_CONFIG_VALUE_0=str(REPO), GIT_CONFIG_KEY_1='safe.directory',
+-                       GIT_CONFIG_VALUE_1=str(SDK),
++                       GIT_CONFIG_VALUE_0=REPO.as_posix(), GIT_CONFIG_KEY_1='safe.directory',
++                       GIT_CONFIG_VALUE_1=SDK.as_posix(),
+                        CHROME_EXECUTABLE=inputs['browserExecutable']['path'])
+     observer_row = inputs['ownedChromeEvidenceCode']
+     require(Path(observer_row['path']) == CANDIDATE / 'owned_chrome_evidence.py', 'Fixed Chrome observer path required')
+@@ -832,7 +832,7 @@
+               'postflightReserveSeconds': 25, 'processLocalTemp': str(ATTEMPT / 'tmp'),
+               'pubAndStorageLoopbackDisabled': True, 'nativeProcessHandleRetained': True,
+               'atomicNestedJobMembership': True, 'launchRecordBeforeResume': True,
+-              'sdkProcessSafeDirectories': [str(REPO), str(SDK)],
++              'sdkProcessSafeDirectories': [REPO.as_posix(), SDK.as_posix()],
+               'nativeMemoryLimitClaimed': False}
+     launch['chromeExecutable'] = inputs['browserExecutable']['path']
+     launch['browserToolSources'] = inputs['browserToolSources']

@@ -1,0 +1,38 @@
+{
+  "status": "ROOT_HOST_BROWSER13_NOT_ACCEPTED",
+  "atUtc": "2026-10-24T10:39:02.0528583Z",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "proposalSha256": "669a8366f805044f7f9c0b2140b3b69975d86076bf380f1d749134dbb4d0d905",
+  "launcherSha256": "15456c65e14feaa809d89f9caa44484dcff9b2386a754a38e6bcba3e5ee21f1e",
+  "sdkCount": 0,
+  "unknownCount": 0,
+  "availableRamBytes": 5624188928,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 3013185536
+    },
+    {
+      "Name": "D",
+      "Free": 35392765952
+    }
+  ],
+  "maximumHostSeconds": 180,
+  "reusedBudget": false,
+  "grant": "guardian-browser13-current-head006ee-single-sdk-call",
+  "applicationTestsRequested": true,
+  "hostPid": 151508,
+  "sameHandleCreationFiletime": "134373119420917078",
+  "sameHandleExitFiletime": "134373120941357281",
+  "sameHandleSignaled": true,
+  "actualHostExitCode": 1,
+  "firstWaitSignaledElapsedSeconds": 152.0545963,
+  "rootForcedOwnHost": false,
+  "emergencyCleanupAttempted": false,
+  "failure": null,
+  "hostTimelyAgainstOriginalRootAnchor": true,
+  "candidateRuntimePinsMatchAfter": true,
+  "rootHostTerminalAccepted": false,
+  "testAccepted": false,
+  "rootElapsedBeforeReceiptSeconds": 152.1549547
+}

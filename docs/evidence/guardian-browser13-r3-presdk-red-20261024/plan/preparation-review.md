@@ -1,0 +1,15 @@
+# Browser13 R3 HTML and bounded diagnostics
+
+This is a separate preparation bundle, not an application acceptance result. R2 is terminal RED and remains intact. No grant or SDK attempt is created by preparation.
+
+The selected source is commit `006ee45850c9b6b0f90570d9478bced3beb0e0fe`, r15, 413 source files and the complete 183-root regression inventory. This batch selects only `test/editor_submit_guard_test.dart`: one Chrome suite, 13 exact visible cases. The other 182 roots receive no new execution or acceptance from this batch.
+
+R2's owned private Chrome cache contains two exact local HTTP 404 responses: `/canvaskit/chromium/canvaskit.js` and its `/canvaskit/canvaskit.js` fallback. Its generated HTML selected `renderer: auto` and local `/canvaskit/`. The pinned Windows filesystem/path implementation converts URI separators to backslashes before the pinned handler compares a forward-slash prefix. The static path chain and actual responses are recorded in the separate loading diagnosis bundle. An external CDN failure is not established. R2 also emitted an ignored-concurrency warning that correctly failed strict JSON parsing.
+
+R3 removes the web platform's unsupported `--concurrency=1` argument and explicitly selects `--web-renderer=html`, the existing product release target in `scripts/build-deployment.ps1`. Historical actual browser38 and browser80 launches used that same target. Their launch records establish the target and loading behavior, not success of this batch.
+
+The required 180/174/165/135/140-second windows, separate 25-second post window, original QPC anchors, same retained handles, natural command exit with Job zero, 0.5-second drain and forced-termination rejection remain unchanged. Reporter, exact-case contract and the Chrome JSON guard are byte-identical to R2. No warning whitelist or alternative success branch is added. The fixed cache still includes 70 trees and 185 fixed files, 3,689 files / 646,535,928 bytes. All 43 explicit runtime pins and the durable parent manifest remain required.
+
+The new observer records at most eight redacted failure observations, serializes at most 32 KiB, and retains the original sticky rejection. A bounded immediate resample uses only the same owned Job and the remaining original deadline, with no wait, grace period or exemption. `diagnostics()` itself only aggregates memory. The worker calls it once, checks the exact pending serialized byte count, writes `owned-chrome-member-diagnostics.json` once and records its pin separately. This file never contributes to acceptance. The existing `finish()` result and the worker, host and independent post acceptance predicates remain unchanged.
+
+The observer's separately authorized own-Python fixture is a narrow qualification of the retained-handle command-line read path. It is not a repeat of f8 qualification, a Chrome lifecycle/TCP qualification, a browser test or product acceptance. All application execution remains pending independent Root review and a fresh execution grant.

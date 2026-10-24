@@ -1,0 +1,41 @@
+--- D:\codes\mobile\ai-manager\.cache\guardian-browser13-20261024-r1\proposal.json
++++ D:\codes\mobile\ai-manager\.cache\guardian-browser13-20261024-r2-manager-proof\proposal.json
+@@ -3,20 +3,20 @@
+   "phase": "guardian-browser13",
+   "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+   "inputs": {
+-    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r1\\inputs.json",
+-    "bytes": 20154,
+-    "sha256": "03fe10e087bd8199cf67a5ce609e442b8f458ae4b113e91e896f4051b0e7ae4b"
++    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\inputs.json",
++    "bytes": 20238,
++    "sha256": "7f5252253aa92b29c0fe5e7c7203ef4d5e4d9054d4b47f381e90111dfcddc2c2"
+   },
+   "candidateFiles": [
+     {
+       "path": "analysis-host.py",
+-      "bytes": 34406,
+-      "sha256": "92a98940289a83655e1f816c27e9411ddaf65980af6601d81e60b73b799ae785"
++      "bytes": 34989,
++      "sha256": "9e7cc9d97cd04eb81d5e43cd6b19f516a33743abd204ff4a4341aac394915569"
+     },
+     {
+       "path": "worker.py",
+-      "bytes": 53149,
+-      "sha256": "abd4beb7db3765ab268418098e4836abd05db6e0f9d2f0fee23c33077b12f997"
++      "bytes": 53718,
++      "sha256": "5d16266c0174b07d895b105b38c23f95e2920529f6969bda2671c065d93f3b3d"
+     },
+     {
+       "path": "owned_job.py",
+@@ -35,8 +35,8 @@
+     },
+     {
+       "path": "owned_chrome_evidence.py",
+-      "bytes": 20728,
+-      "sha256": "209ffe6097e1f84ef7ea197032a50d665cc68a6fb04fd2cfedc19d48dac134bf"
++      "bytes": 20833,
++      "sha256": "4a5d49f4e55d583478a423532e9997eb8ea6e3f7da9ab4d1e1ea8c5cde29bf72"
+     }
+   ],
+   "runtimePins": [

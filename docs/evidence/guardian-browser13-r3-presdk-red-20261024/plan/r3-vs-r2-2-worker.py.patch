@@ -1,0 +1,45 @@
+--- D:\codes\mobile\ai-manager\.cache\guardian-browser13-20261024-r2-manager-proof\worker.py
++++ D:\codes\mobile\ai-manager\.cache\guardian-browser13-20261024-r3-html-diagnostic\worker.py
+@@ -27,8 +27,8 @@
+ SOURCE = FROZEN / 'src'
+ MODULE = SOURCE / 'apps/guardian'
+ INPUT = CANDIDATE / 'inputs.json'
+-INPUT_BYTES = 20238
+-INPUT_SHA256 = '7f5252253aa92b29c0fe5e7c7203ef4d5e4d9054d4b47f381e90111dfcddc2c2'
++INPUT_BYTES = 20250
++INPUT_SHA256 = '48466d5b67b8ebc13142ed2faf002481d66e483563045749bf3b6c8a63da0f7e'
+ PWSH = Path(r'C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.exe')
+ PROCESS_INVENTORY = CANDIDATE / 'process-inventory.ps1'
+ PROCESS_INVENTORY_SHA256 = 'f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046'
+@@ -41,7 +41,7 @@
+ SDK = FLUTTER.parent.parent
+ SELECTORS = ['test/editor_submit_guard_test.dart']
+ FLAGS = ['--no-version-check', '--suppress-analytics', 'test', '--platform=chrome', '--no-pub',
+-         '--concurrency=1', '--reporter=json', *SELECTORS]
++         '--web-renderer=html', '--reporter=json', *SELECTORS]
+ GENERATED_DIRS = {'.dart_tool', 'build', '.idea'}
+ GENERATED_FILES = {'.flutter-plugins', '.flutter-plugins-dependencies',
+                    'guardian.iml', 'device_operations_showcase.iml'}
+@@ -884,6 +884,22 @@
+             verify_pin(inputs['ownedChromeEvidenceCode'])
+         except Exception as chrome_error:
+             receipt['ownedChromeEvidenceError'] = type(chrome_error).__name__ + ': ' + str(chrome_error)
++    if chrome_observer is not None:
++        try:
++            chrome_diagnostics = chrome_observer.diagnostics()
++            require(type(chrome_diagnostics) is dict
++                    and chrome_diagnostics.get('status') == 'DIAGNOSTIC_ONLY_NOT_ACCEPTANCE'
++                    and type(chrome_diagnostics.get('records')) is list
++                    and len(chrome_diagnostics['records']) <= 8
++                    and chrome_diagnostics.get('acceptanceRulesChanged') is False,
++                    'Bounded diagnostic-only Chrome member record required')
++            diagnostic_bytes = (json.dumps(chrome_diagnostics, ensure_ascii=False, indent=2) + '\n').encode('utf-8')
++            require(len(diagnostic_bytes) <= 32768, 'Chrome member diagnostic output exceeds 32KiB')
++            save('owned-chrome-member-diagnostics.json', chrome_diagnostics)
++            receipt['ownedChromeMemberDiagnosticsPin'] = pin(ATTEMPT / 'owned-chrome-member-diagnostics.json')
++            verify_pin(inputs['ownedChromeEvidenceCode'])
++        except Exception as diagnostic_error:
++            receipt['ownedChromeMemberDiagnosticsError'] = type(diagnostic_error).__name__
+     if command_job is not None and command_job.process is not None:
+         known = receipt.get('commandTerminalState')
+         if not (type(known) is dict and known.get('terminal') is True):

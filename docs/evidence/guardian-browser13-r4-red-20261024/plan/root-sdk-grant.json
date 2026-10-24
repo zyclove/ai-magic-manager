@@ -1,0 +1,88 @@
+{
+  "status": "ROOT_APPROVED_SINGLE_FIXED_TEST",
+  "atUtc": "2026-10-24T11:44:10.837349+00:00",
+  "proposalSha256": "849e0819fdce2cbb794f0c008a4e5c20aa5eff9517104c2d6902c970aac2a348",
+  "launcherSha256": "6edc2809f89ec8f63d8dc51e414a82ba514214cf26d0431d4342ae01aa667395",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "sdkCallsAllowed": 1,
+  "phase": "guardian-browser13",
+  "selectedRoots": 1,
+  "expectedVisibleCases": 13,
+  "wholeRegressionRoots": 183,
+  "otherRootsNotExecutedByThisBatch": 182,
+  "testsAllowed": true,
+  "downloadsAllowed": false,
+  "pubAllowed": false,
+  "budgets": {
+    "outer": 180,
+    "working": 174,
+    "worker": 165,
+    "command": 135,
+    "commandCleanup": 140,
+    "postflightReserve": 25
+  },
+  "authority": "Persistent direct human offline/cache validation and existing Flutter cache-lock access authorization. Six authorized chats notified11:45-11:48UTC; c0a67c SDK0/unknown0/RAM7424454656. Final independent98eddb, Rootac3a2b/ce3816/a0db10/331b40 readback. Canonical command-only trust values proven by read-only before/after. Fixed launcher/worker freshly recheck source/runtime/resources.",
+  "evidence": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-static-independent-20261024-r4\\review.md",
+      "bytes": 4213,
+      "sha256": "44f390397475d7c58af9c68a44becc17f7bcce0e3d643de1f1c40d71be1a3150"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-static-independent-20261024-r4\\pins.json",
+      "bytes": 16704,
+      "sha256": "911c25f6b79a9c1bc4d6d547e8beabec445cf1684f126266f07eb016a508ef06"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\sealed-preparation-pins.json",
+      "bytes": 8538,
+      "sha256": "26fdbba052b131fb4044a1f83d06b2419582bdc56d4ccac4349bd256eb98e942"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\binding-pins.json",
+      "bytes": 9834,
+      "sha256": "60aa95010d655c123474f5f004ba0f4c32508686d72c584f23cb1667a782736e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\observer-qualification-reuse.json",
+      "bytes": 1647,
+      "sha256": "9bdcaab0893be9ea0216c2fa0a26f355643337eb8264f60d231a25fd73487ce6"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\root-final-resource-and-window.json",
+      "bytes": 56523,
+      "sha256": "b003a352a66ac0330b5378fecf01636d6026085199960f22bf14b01ad323f915"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\guardian-browser13-r3-git-diagnosis-20261024\\manifest.json",
+      "bytes": 7167,
+      "sha256": "02b9b5199e756e40dbc36768713b534172bf8d6acd6689be6cb2bcdfdd36dd30"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\guardian-browser13-r3-presdk-red-20261024\\manifest.json",
+      "bytes": 23277,
+      "sha256": "f36abd9cb2b7e34ab89eacf3d8b0bc7bd2c41d3418625cec2200f8bd996de254"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\pins.json",
+      "bytes": 5287,
+      "sha256": "60de07c26a0e570abc857f12d80fc1250c5436cf2ef7b143c3bca8ac19b6b242"
+    }
+  ],
+  "plannedWindowStartUtc": "2026-10-24T11:45:00.0000000Z",
+  "plannedWindowEndUtc": "2026-10-24T11:48:00.0000000Z",
+  "nativeF8AndProviderUnchangedNoOriginalFourFixtureRerun": true,
+  "newNarrowReadPathFixtureNotChromeQualification": true,
+  "actualChromePrivateTargetAndListenerEvidenceRequired": true,
+  "requiredNullableRunnerVersionPreserved": true,
+  "htmlMatchesExistingProductTarget": true,
+  "canvasKitCompatibilityAccepted": false,
+  "diagnosticsOnlyNeverAcceptance": true,
+  "rootActualTerminalPurePostFreshReleaseStillRequired": true,
+  "noForeignProcessCommandLineOrEnvironmentReadsAllowed": true,
+  "noForeignProcessTerminationAllowed": true,
+  "pushed": false,
+  "deployed": false,
+  "previouslyAuthorizedCacheLockAccess": true,
+  "originalNarrowQualificationReusedSameBytes": true
+}

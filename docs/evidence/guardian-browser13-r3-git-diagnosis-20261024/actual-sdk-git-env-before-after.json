@@ -1,0 +1,120 @@
+{
+  "status": "READ_ONLY_SDK_CHILD_GIT_ENV_SAFE_DIRECTORY_BEFORE_AFTER",
+  "createdAtUtc": "2026-10-24T11:37:02.335093+00:00",
+  "cases": [
+    {
+      "label": "sdk-env-repo-backslash",
+      "cwd": "D:\\codes\\mobile\\ai-manager",
+      "argv": [
+        "C:\\Program Files\\Git\\cmd\\git.exe",
+        "rev-parse",
+        "HEAD"
+      ],
+      "safeDirectories": [
+        "D:\\codes\\mobile\\ai-manager",
+        "D:\\softwares\\flutter"
+      ],
+      "exitCode": 128,
+      "elapsedSeconds": 0.09821520000696182,
+      "stdoutText": "",
+      "stderrText": "fatal: detected dubious ownership in repository at 'D:/codes/mobile/ai-manager'\n'D:/codes/mobile/ai-manager' is owned by:\n\tBUILTIN/Administrators (S-1-5-32-544)\nbut the current user is:\n\tUFO/CodexSandboxOffline (S-1-5-21-2855720842-1651825730-2458486029-1005)\nTo add an exception for this directory, call:\n\n\tgit config --global --add safe.directory D:/codes/mobile/ai-manager\n",
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-git-diagnosis-20261024-r1\\sdk-env-repo-backslash.stdout.bin",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-git-diagnosis-20261024-r1\\sdk-env-repo-backslash.stderr.bin",
+        "bytes": 376,
+        "sha256": "59924347f9e6d2d2828f506e2e0c8b7cee1d26bb41dfdbc41cb895164529c555"
+      }
+    },
+    {
+      "label": "sdk-env-sdk-backslash",
+      "cwd": "D:\\softwares\\flutter",
+      "argv": [
+        "C:\\Program Files\\Git\\cmd\\git.exe",
+        "rev-parse",
+        "HEAD"
+      ],
+      "safeDirectories": [
+        "D:\\codes\\mobile\\ai-manager",
+        "D:\\softwares\\flutter"
+      ],
+      "exitCode": 128,
+      "elapsedSeconds": 0.08511709999584127,
+      "stdoutText": "",
+      "stderrText": "fatal: detected dubious ownership in repository at 'D:/softwares/flutter'\n'D:/softwares/flutter' is owned by:\n\tBUILTIN/Administrators (S-1-5-32-544)\nbut the current user is:\n\tUFO/CodexSandboxOffline (S-1-5-21-2855720842-1651825730-2458486029-1005)\nTo add an exception for this directory, call:\n\n\tgit config --global --add safe.directory D:/softwares/flutter\n",
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-git-diagnosis-20261024-r1\\sdk-env-sdk-backslash.stdout.bin",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-git-diagnosis-20261024-r1\\sdk-env-sdk-backslash.stderr.bin",
+        "bytes": 358,
+        "sha256": "d933e12db22a7bd01c8082301d651a308416f89c7a9b99eb0d7d2befe003391b"
+      }
+    },
+    {
+      "label": "sdk-env-repo-forwardslash",
+      "cwd": "D:\\codes\\mobile\\ai-manager",
+      "argv": [
+        "C:\\Program Files\\Git\\cmd\\git.exe",
+        "rev-parse",
+        "HEAD"
+      ],
+      "safeDirectories": [
+        "D:/codes/mobile/ai-manager",
+        "D:/softwares/flutter"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.07952660000592005,
+      "stdoutText": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+      "stderrText": "",
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-git-diagnosis-20261024-r1\\sdk-env-repo-forwardslash.stdout.bin",
+        "bytes": 41,
+        "sha256": "5cb355ac440bee4452fd1ba3bb7bcad4417816dfdfd1a4704aa012ed7241ee41"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-git-diagnosis-20261024-r1\\sdk-env-repo-forwardslash.stderr.bin",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "label": "sdk-env-sdk-forwardslash",
+      "cwd": "D:\\softwares\\flutter",
+      "argv": [
+        "C:\\Program Files\\Git\\cmd\\git.exe",
+        "rev-parse",
+        "HEAD"
+      ],
+      "safeDirectories": [
+        "D:/codes/mobile/ai-manager",
+        "D:/softwares/flutter"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.08537160001287702,
+      "stdoutText": "761747bfc538b5af34aa0d3fac380f1bc331ec49",
+      "stderrText": "",
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-git-diagnosis-20261024-r1\\sdk-env-sdk-forwardslash.stdout.bin",
+        "bytes": 41,
+        "sha256": "3b308e7bab12fa2404bbf24e867f891c392f4d47648a473b29736008bb84e2bc"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-git-diagnosis-20261024-r1\\sdk-env-sdk-forwardslash.stderr.bin",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "isolatedGlobalAndSystemConfiguration": true,
+  "environmentSafeDirectoriesExactlyRepoAndSdk": true,
+  "sourceManifest413PathAndBlobMapMatchesForwardslashTree": true,
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "newSdkCalls": 0,
+  "gitConfigOrRefOrIndexWrites": 0
+}

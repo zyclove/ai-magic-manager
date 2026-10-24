@@ -1,0 +1,62 @@
+{
+  "status": "ROOT_APPROVED_SINGLE_FIXED_TEST",
+  "atUtc": "2026-10-24T08:54:50.065863+00:00",
+  "proposalSha256": "8d8001ea23ddfc7295e8cb302d0eaa951280bc62ab4698036f4897419d2074d0",
+  "launcherSha256": "183e36dda9a5e4f90b76a1188c8b8f29442cc0bea95d9e4dda9a56e0a88f0ca1",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "sdkCallsAllowed": 1,
+  "phase": "guardian-vm35",
+  "selectedRoots": 4,
+  "expectedVisibleCases": 35,
+  "wholeRegressionRoots": 183,
+  "otherRootsUnrun": 179,
+  "testsAllowed": true,
+  "downloadsAllowed": false,
+  "pubAllowed": false,
+  "pushed": false,
+  "deployed": false,
+  "budgets": {
+    "outer": 180,
+    "working": 174,
+    "worker": 165,
+    "command": 135,
+    "commandCleanup": 140,
+    "postflightReserve": 25
+  },
+  "authority": "Persistent direct human offline/cache verification authorization after resource/window recovery; fresh 07d259 SDK0 unknown0 RAM10099617792; scheduling-only notices delivered to six human-authorized targets for08:54-08:57 UTC; launcher and worker independently recheck resource gates. No peer approval or absent reply is represented as approval.",
+  "evidence": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-static-independent-20261024-r1\\review.md",
+      "bytes": 3253,
+      "sha256": "231e0cdcd4ecfc5c83185cb4f4eed428df6aec48950a00abecee7c10447cacc8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-static-independent-20261024-r1\\pins.json",
+      "bytes": 7960,
+      "sha256": "37557e4b1f974a3d4c2fd7d6d57cfa513a1181670ee01662262bda065dcf23c0"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\pins.json",
+      "bytes": 5287,
+      "sha256": "60de07c26a0e570abc857f12d80fc1250c5436cf2ef7b143c3bca8ac19b6b242"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\binding-pins.json",
+      "bytes": 21379,
+      "sha256": "92f5cf14cf56e0992ac6fccd505a8995bbd05c26d8491aa6be536add883bdda5"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\expected-vm35-cases.json",
+      "bytes": 15481,
+      "sha256": "dad42332d72a01db3f02ba71772cecbe584e67ea0dade4b2b9d8241de5a678cc"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\cache-vm-projection.json",
+      "bytes": 773556,
+      "sha256": "ee4f3853085b4f0cf2ef31f231672a0b0531544cc55ca07ea91fa42fc4a564c5"
+    }
+  ],
+  "rootReadFullControllerDeltaAndReporterDeltaAgainstPriorReviewedBytes": true,
+  "nativeAndProviderByteExactNoQualificationRerun": true,
+  "rootActualTerminalAndPureFilePostAndFreshReleaseStillRequired": true
+}

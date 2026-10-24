@@ -1,0 +1,157 @@
+{
+  "status": "READ_ONLY_GIT_CANONICAL_PATH_DIAGNOSIS_NOT_APPLICATION_TESTS",
+  "sourceCopies": [
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/actual-git-before-after.json",
+      "archived": "actual-git-before-after.json",
+      "bytes": 9092,
+      "sha256": "1a0d09f608c1e0b858f7d176ded81d13075e1686b3e02bc5e0b29a5761779485"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/actual-sdk-git-env-before-after.json",
+      "archived": "actual-sdk-git-env-before-after.json",
+      "bytes": 5178,
+      "sha256": "23b6649bbcb2a6db2b0b4f7b11f72816f8b30e03a80b37ad029eda8a99953966"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/pins.json",
+      "archived": "pins.json",
+      "bytes": 8830,
+      "sha256": "0300bf64298f57310d6d0d7d8a26be0e98ddb0be2dee3ab44788b0f8fa70bf11"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/repo-head-backslash.stderr.bin",
+      "archived": "repo-head-backslash.stderr.bin",
+      "bytes": 376,
+      "sha256": "59924347f9e6d2d2828f506e2e0c8b7cee1d26bb41dfdbc41cb895164529c555"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/repo-head-backslash.stdout.bin",
+      "archived": "repo-head-backslash.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/repo-head-forwardslash.stderr.bin",
+      "archived": "repo-head-forwardslash.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/repo-head-forwardslash.stdout.bin",
+      "archived": "repo-head-forwardslash.stdout.bin",
+      "bytes": 41,
+      "sha256": "5cb355ac440bee4452fd1ba3bb7bcad4417816dfdfd1a4704aa012ed7241ee41"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/repo-seven-trees-backslash.stderr.bin",
+      "archived": "repo-seven-trees-backslash.stderr.bin",
+      "bytes": 376,
+      "sha256": "59924347f9e6d2d2828f506e2e0c8b7cee1d26bb41dfdbc41cb895164529c555"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/repo-seven-trees-backslash.stdout.bin",
+      "archived": "repo-seven-trees-backslash.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/repo-seven-trees-forwardslash.stderr.bin",
+      "archived": "repo-seven-trees-forwardslash.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/repo-seven-trees-forwardslash.stdout.bin",
+      "archived": "repo-seven-trees-forwardslash.stdout.bin",
+      "bytes": 42370,
+      "sha256": "58f3c04325fe25f63230bd1ad5c60a81fac8fc92c7a7277d39f1123acad0917c"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/review.md",
+      "archived": "review.md",
+      "bytes": 7227,
+      "sha256": "7cb610eb53ea1541c3e6403b0777de4bf3a33ccc449667b2e9a396489a56372c"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/sdk-env-repo-backslash.stderr.bin",
+      "archived": "sdk-env-repo-backslash.stderr.bin",
+      "bytes": 376,
+      "sha256": "59924347f9e6d2d2828f506e2e0c8b7cee1d26bb41dfdbc41cb895164529c555"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/sdk-env-repo-backslash.stdout.bin",
+      "archived": "sdk-env-repo-backslash.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/sdk-env-repo-forwardslash.stderr.bin",
+      "archived": "sdk-env-repo-forwardslash.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/sdk-env-repo-forwardslash.stdout.bin",
+      "archived": "sdk-env-repo-forwardslash.stdout.bin",
+      "bytes": 41,
+      "sha256": "5cb355ac440bee4452fd1ba3bb7bcad4417816dfdfd1a4704aa012ed7241ee41"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/sdk-env-sdk-backslash.stderr.bin",
+      "archived": "sdk-env-sdk-backslash.stderr.bin",
+      "bytes": 358,
+      "sha256": "d933e12db22a7bd01c8082301d651a308416f89c7a9b99eb0d7d2befe003391b"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/sdk-env-sdk-backslash.stdout.bin",
+      "archived": "sdk-env-sdk-backslash.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/sdk-env-sdk-forwardslash.stderr.bin",
+      "archived": "sdk-env-sdk-forwardslash.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/sdk-env-sdk-forwardslash.stdout.bin",
+      "archived": "sdk-env-sdk-forwardslash.stdout.bin",
+      "bytes": 41,
+      "sha256": "3b308e7bab12fa2404bbf24e867f891c392f4d47648a473b29736008bb84e2bc"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/sdk-head-backslash.stderr.bin",
+      "archived": "sdk-head-backslash.stderr.bin",
+      "bytes": 358,
+      "sha256": "d933e12db22a7bd01c8082301d651a308416f89c7a9b99eb0d7d2befe003391b"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/sdk-head-backslash.stdout.bin",
+      "archived": "sdk-head-backslash.stdout.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/sdk-head-forwardslash.stderr.bin",
+      "archived": "sdk-head-forwardslash.stderr.bin",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": ".cache/guardian-browser13-r3-git-diagnosis-20261024-r1/sdk-head-forwardslash.stdout.bin",
+      "archived": "sdk-head-forwardslash.stdout.bin",
+      "bytes": 41,
+      "sha256": "3b308e7bab12fa2404bbf24e867f891c392f4d47648a473b29736008bb84e2bc"
+    }
+  ],
+  "actualDiagnosisChunk": "d04a04",
+  "actualDiagnosisExitCode": 0,
+  "actualSealChunk": "d6a4cb",
+  "actualSealExitCode": 0,
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "sdkCalls": 0,
+  "configurationOrOwnershipOrPermissionChanged": false,
+  "fullSourcePathBlobRowsMatched": 413
+}

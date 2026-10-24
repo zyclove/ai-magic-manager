@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "status": "R4_INDEPENDENT_STATIC_REVIEW_DURABLE_ARCHIVE_APPLICATION_ACTUAL_RED",
+  "sourceCopies": [
+    {
+      "source": ".cache/guardian-browser13-static-independent-20261024-r4/review.md",
+      "archived": "review.md",
+      "bytes": 4213,
+      "sha256": "44f390397475d7c58af9c68a44becc17f7bcce0e3d643de1f1c40d71be1a3150",
+      "byteExactToSourceBeforeAndAfter": true
+    },
+    {
+      "source": ".cache/guardian-browser13-static-independent-20261024-r4/pins.json",
+      "archived": "pins.json",
+      "bytes": 16704,
+      "sha256": "911c25f6b79a9c1bc4d6d547e8beabec445cf1684f126266f07eb016a508ef06",
+      "byteExactToSourceBeforeAndAfter": true
+    }
+  ],
+  "sourceReviewStatusPreserved": "B4_MINIMAL_INDEPENDENT_STATIC_NO_NEW_BLOCKER_APPLICATION_UNRUN",
+  "staticReviewOccurredBeforeApplicationExecution": true,
+  "actualApplicationStatus": "RED",
+  "testAccepted": false,
+  "rendererHttpBodyFactEstablished": false,
+  "staticNoBlockerIsNotApplicationAcceptance": true,
+  "durableActualBatchReference": {
+    "path": "docs/evidence/guardian-browser13-r4-red-20261024/manifest.json",
+    "bytes": 21538,
+    "sha256": "18affd013bdb875aa6d28b10f30118eba28dd9350b5c48d22f12eebae0cc3ce5"
+  },
+  "durableQualificationReferences": [
+    {
+      "path": "docs/evidence/guardian-browser13-r3-presdk-red-20261024/plan/observer-native-qualification-binding.json",
+      "bytes": 1307,
+      "sha256": "6e8ba3d2436bfa7ba1c80bad1bb24856f3eca27de6bf8476fd1c297c773a070a"
+    },
+    {
+      "path": "docs/evidence/guardian-browser13-r3-presdk-red-20261024/observer-fixture/result.json",
+      "bytes": 2321,
+      "sha256": "293eef8510874f37a6679dd932d4abef5ec437c71334ee8234828933507b927d"
+    },
+    {
+      "path": "docs/evidence/guardian-browser13-r3-presdk-red-20261024/observer-fixture-host/result.json",
+      "bytes": 314,
+      "sha256": "5982a79092aa4138f47350f676b6e8f9421659619494d3949bfbc7bfffd6ab2d"
+    }
+  ],
+  "profileOrCachePayloadCopied": false,
+  "sdkChromeFixtureProcessQueryNetworkSourceOrGitMutationByArchival": false
+}

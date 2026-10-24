@@ -1,0 +1,24 @@
+{
+  "status": "CURRENT_OBSERVER_READ_PATH_ONLY_QUALIFICATION_BINDING_NOT_CHROME_ACCEPTANCE",
+  "observerCodeSha256": "4a5d49f4e55d583478a423532e9997eb8ea6e3f7da9ab4d1e1ea8c5cde29bf72",
+  "newNativeReadPathActuallyQualified": true,
+  "actualQualificationResult": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\observer-fixture\\result.json",
+    "bytes": 2320,
+    "sha256": "47d1880dc9b2b8049a98fdbbd28fb62a1083356593881d4d20612b1ebfa81246"
+  },
+  "actualOuterQualificationResult": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\observer-fixture-host\\result.json",
+    "bytes": 316,
+    "sha256": "048a8b3bebc3a509d4364eb899ceb9a1c1d9e161cccb6dd60e3f6d4878420f05"
+  },
+  "actualToolTerminalChunk": "b0f270",
+  "actualToolTerminalExitCode": 0,
+  "scope": "Owned retained-handle PBI0/ReadProcessMemory command-line path only; not f8 requalification, Chrome lifecycle, or TCP qualification.",
+  "sdkOrChromeLifecycleOrTcpQualified": false,
+  "sourceObserverPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\owned_chrome_evidence.py",
+    "bytes": 20833,
+    "sha256": "4a5d49f4e55d583478a423532e9997eb8ea6e3f7da9ab4d1e1ea8c5cde29bf72"
+  }
+}

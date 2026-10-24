@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+          <title>editor_submit_guard_test.dart Test</title>
+          <script src="flutter.js"></script>
+          <script>
+            _flutter.buildConfig = {
+              builds: [
+                      {
+        compileTarget: "dartdevc",
+        renderer: "auto",
+        mainJsPath: "main.dart.browser_test.dart.js",
+      }
+
+              ]
+            }
+            window.testSelector = "editor_submit_guard_test.dart";
+            _flutter.loader.load({
+              config: {
+                canvasKitBaseUrl: "/canvaskit/",
+              }
+            });
+          </script>
+        </head>
+        </html>

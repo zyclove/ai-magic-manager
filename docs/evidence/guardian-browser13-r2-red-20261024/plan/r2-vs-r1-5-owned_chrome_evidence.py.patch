@@ -1,0 +1,10 @@
+--- D:\codes\mobile\ai-manager\.cache\guardian-browser13-20261024-r1\owned_chrome_evidence.py
++++ D:\codes\mobile\ai-manager\.cache\guardian-browser13-20261024-r2-manager-proof\owned_chrome_evidence.py
+@@ -96,6 +96,7 @@
+     demand(len(targets) == 1, 'ONE_LOOPBACK_FLUTTER_TEST_TARGET_REQUIRED')
+     return {'imagePath': normalized_path(executable), 'profile': profile,
+             'debuggingPort': int(ports[0]), 'testServerOrigins': sorted(set(origins)),
++            'managerTarget': {'scheme': manager.scheme, 'host': manager.hostname, 'port': manager_port},
+             'testTargets': targets, 'headless': True, 'argvTestTargetLoopback': True,
+             'flutterManagerTargetSameLoopbackOrigin': True}
+ 

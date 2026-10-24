@@ -1,0 +1,105 @@
+{
+  "schemaVersion": 1,
+  "createdAtUtc": "2026-10-24T11:53:37.157275+00:00",
+  "status": "TEST_ONLY_TYPED_FINDER_FIX_READY_FOR_ROOT_REFREEZE_RETEST_UNRUN",
+  "mainTest": {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\editor_submit_guard_test.dart",
+    "bytes": 21581,
+    "sha256": "0e0a0d3f2392bddf6f94f6cbc42dcc93bfcc9b2d3f2fb1aeef8c3044b03fb99b"
+  },
+  "productionUnchanged": {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\editors.dart",
+    "bytes": 52075,
+    "sha256": "208926fbdc201d66fc5bf3e261465d9d76488141c27ed1b30bcbf40a4d0ff957"
+  },
+  "originalR4RawLog": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\attempt\\out\\tests.jsonl",
+    "bytes": 20465,
+    "sha256": "dc4e3a8395ba2aea649269c133da768d9077877af6b1dbf1ae92bc9a516bf8c9"
+  },
+  "frameworkSourcePins": [
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_test\\lib\\src\\finders.dart",
+      "bytes": 60527,
+      "sha256": "9bc8abd582709c3741730d0387a6dae4d525badc47e947199493cbb64be6783d"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_test\\lib\\src\\controller.dart",
+      "bytes": 97012,
+      "sha256": "98370266e71ff3c6aa3b0572ecf21d5a7f2e4664cd889416efca076da92b407f"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter\\lib\\src\\material\\icon_button.dart",
+      "bytes": 58533,
+      "sha256": "d8893bf228ca711c388fd59a7cff4e92b290ab11eb5176183c5641660fe5eeee"
+    }
+  ],
+  "frameworkLines": {
+    "byTooltip": [
+      372,
+      376
+    ],
+    "testerWidgetCast": [
+      799,
+      801
+    ],
+    "material3Tooltip": [
+      703,
+      717
+    ],
+    "material2Tooltip": [
+      764,
+      768
+    ]
+  },
+  "exactlyTwoCallbackCaptureFindersChanged": true,
+  "allOtherTestBytesUnchanged": true,
+  "assertionCountPreserved": 71,
+  "testWidgetsDeclarationsPreserved": 10,
+  "visibleCaseInventoryPreserved": 13,
+  "r4ObservedVisibleSuccesses": 10,
+  "r4ObservedVisibleErrors": 3,
+  "r4Accepted": false,
+  "retest": "UNRUN",
+  "newSdkOrBrowserCalls": 0,
+  "compilerOrFormatterOrFixtureCalls": 0,
+  "gitWrites": 0,
+  "applicationSourceChanges": 0,
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-schedule-tooltip-finder-fix-20261024-r1\\before-pins.json",
+      "bytes": 392,
+      "sha256": "4fde280dbd096550a83169c4d1c86fe56f0405a71ca1a481dba730460d0b0963"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-schedule-tooltip-finder-fix-20261024-r1\\editor_submit_guard_test.after.dart",
+      "bytes": 21581,
+      "sha256": "0e0a0d3f2392bddf6f94f6cbc42dcc93bfcc9b2d3f2fb1aeef8c3044b03fb99b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-schedule-tooltip-finder-fix-20261024-r1\\editor_submit_guard_test.before.dart",
+      "bytes": 21431,
+      "sha256": "a8d24bca8147a38ffe0c5db9b620e533e47b18cf371c9198dc62d9ab33280ed9"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-schedule-tooltip-finder-fix-20261024-r1\\minimal-test-finder.patch",
+      "bytes": 1022,
+      "sha256": "1cadbf0bbfadd7e4c63b352572fe2b27d66c471eae1e2170c425e4d905e5aed4"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-schedule-tooltip-finder-fix-20261024-r1\\r4-observed-test-errors.json",
+      "bytes": 8624,
+      "sha256": "0a2e52efca057b8ceea28f198c41113ee1eccc027e1f460f27b472104cbd45dd"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-schedule-tooltip-finder-fix-20261024-r1\\review.md",
+      "bytes": 4429,
+      "sha256": "65e62dd3af8f3fd31256dfd73ba3dc543ef230a9c2c63aac9ca559b800cd2781"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-schedule-tooltip-finder-fix-20261024-r1\\static-delta-check.json",
+      "bytes": 662,
+      "sha256": "853568c85c3d9087504d44dddeae7071a47bc5726581f59aef9f39e6ed555a73"
+    }
+  ]
+}

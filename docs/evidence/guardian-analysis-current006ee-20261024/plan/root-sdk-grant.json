@@ -1,0 +1,64 @@
+{
+  "status": "ROOT_APPROVED_SINGLE_FIXED_ANALYSIS",
+  "atUtc": "2026-10-24T10:01:30.057297+00:00",
+  "proposalSha256": "07272dc0ce1792b1e035a37ab4f951125f61b26e391f19e30d5b139093287088",
+  "launcherSha256": "1c86cc293501a5747fcbc4bdf5cbf3cf837fe4c40ea49de5b3f680c710d8c397",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "sdkCallsAllowed": 1,
+  "testsAllowed": false,
+  "downloadsAllowed": false,
+  "pubAllowed": false,
+  "wholeRegressionRoots": 183,
+  "phase": "analyze-all-guardian",
+  "budgets": {
+    "outer": 180,
+    "working": 174,
+    "worker": 165,
+    "command": 135,
+    "commandCleanup": 140,
+    "postflightReserve": 25
+  },
+  "authority": "Persistent human offline/cache validation authorization after resources recover; independent5fbf6b current R15-durable review; Root read all deltas b94025 and prior691fb7/4295cf. Six authorized chats notified for10:03-10:06 UTC. Launcher and worker must freshly recheck gates before SDK.",
+  "evidence": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r15-static-independent-20261024-r1\\review.md",
+      "bytes": 2483,
+      "sha256": "86e9b5ddb066ab3ec7a33b0808eefde794581d0b217d47a945577ae05d0f15c8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-r15-static-independent-20261024-r1\\pins.json",
+      "bytes": 19149,
+      "sha256": "0e5f16819badcb1c413da31f5b89e6b9a50049c187f710343525d424421a0579"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r15-current006ee-durable-parent\\binding-pins.json",
+      "bytes": 7533,
+      "sha256": "a0b8ec7de5b15a12f05a8e171f5e9f66d6cac028dc675af11710d3274b7aa6a9"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r15-current006ee-durable-parent\\projection-parent-path-delta.json",
+      "bytes": 1405,
+      "sha256": "a93de870e99dced4574fa68258f8a55d62149009053bbffea2f4d59554510cf7"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\pins.json",
+      "bytes": 5287,
+      "sha256": "60de07c26a0e570abc857f12d80fc1250c5436cf2ef7b143c3bca8ac19b6b242"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\guardian-baseline-analysis-20261021\\inputs\\cache-content-20261021-r1.json",
+      "bytes": 725122,
+      "sha256": "0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2"
+    }
+  ],
+  "plannedWindowStartUtc": "2026-10-24T10:03:00.0000000Z",
+  "plannedWindowEndUtc": "2026-10-24T10:06:00.0000000Z",
+  "nativeAndProviderByteExactNoQualificationRerun": true,
+  "runtimeSourceCachePhysicalPinsRemainPrePostObligations": true,
+  "earlierR13SdkCalls": 0,
+  "earlierFailurePreserved": true,
+  "r14NeverGrantedAndRetired": true,
+  "rootActualTerminalPurePostFreshReleaseStillRequired": true,
+  "pushed": false,
+  "deployed": false
+}

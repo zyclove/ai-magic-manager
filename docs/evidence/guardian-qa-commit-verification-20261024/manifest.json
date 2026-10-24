@@ -1,0 +1,69 @@
+{
+  "status": "COMMIT_HELPER_QUALIFICATION_NOT_APPLICATION_TESTS_OR_REAL_PHASE_COMMIT",
+  "sourceCopies": [
+    {
+      "source": ".cache/guardian-qa-exact-commit-20261024-r1.py",
+      "archived": "helper.py",
+      "bytes": 8539,
+      "sha256": "ca90c035e120a9ecbf3cc19366b61665025efef758bd3b000febe2368d079fa4"
+    },
+    {
+      "source": ".cache/guardian-qa-commit-helper-static-20261024-r2/final-review.md",
+      "archived": "static-review.md",
+      "bytes": 3699,
+      "sha256": "5809cf170317d331e1e20ec40d3312311ed91f3932877584f5a94c8c48ff88ad"
+    },
+    {
+      "source": ".cache/guardian-qa-commit-helper-static-20261024-r2/final-pins.json",
+      "archived": "static-pins.json",
+      "bytes": 1313,
+      "sha256": "39687ce3a93d7a37cd0ac7b02df8be8abdb162e43df29fe2bf3ea5c54b9cfcc0"
+    },
+    {
+      "source": ".cache/guardian-qa-commit-fixture-20261024-r1/review.md",
+      "archived": "fixture-review.md",
+      "bytes": 3434,
+      "sha256": "2528ba23b541e41bd9331259ac165e1d3d996dc354cc88f3d6fcacec6eae28cf"
+    },
+    {
+      "source": ".cache/guardian-qa-commit-fixture-20261024-r1/pins.json",
+      "archived": "fixture-pins.json",
+      "bytes": 45548,
+      "sha256": "ba9666a0c19bdfdf095757abe900b05b2dfaffae7aa605f241bfeef06b9aa9be"
+    },
+    {
+      "source": ".cache/guardian-qa-commit-fixture-20261024-r1/out-r4/result.json",
+      "archived": "fixture-result.json",
+      "bytes": 65261,
+      "sha256": "3ea353c3ed4ee118e275743df850f997495f043e96fe88c7a394dc96151935c3"
+    },
+    {
+      "source": ".cache/guardian-qa-commit-fixture-20261024-r1/out/result.json",
+      "archived": "earlier-safe-directory-refusal-1.json",
+      "bytes": 2796,
+      "sha256": "bb2bc357801355026b51758ccfbb5e7acb395d6046beeb44687f947927a232e0"
+    },
+    {
+      "source": ".cache/guardian-qa-commit-fixture-20261024-r1/out-r2/result.json",
+      "archived": "earlier-safe-directory-refusal-2.json",
+      "bytes": 2948,
+      "sha256": "548f483521024ffa88920f067275261a9268d552dff917921b62360502c43471"
+    },
+    {
+      "source": ".cache/guardian-qa-commit-fixture-20261024-r1/out-r3/result.json",
+      "archived": "earlier-extra-attribute-assertion-failure.json",
+      "bytes": 18385,
+      "sha256": "9ecfe7fee35c02016aa3e26956d7e2c3eb34bc91691f6ec11fe203f8929d7f54"
+    }
+  ],
+  "helperSha256": "ca90c035e120a9ecbf3cc19366b61665025efef758bd3b000febe2368d079fa4",
+  "staticActualChunk": "7bc3cb",
+  "fixtureActualTerminalChunk": "c470ea",
+  "fixtureActualExitCode": 0,
+  "fixtureElapsedSeconds": 14.2024901,
+  "realGitFixtureCases": 4,
+  "mainRepositoryHeadBeforeAfter": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "actualMainRepositoryPhaseCommit": false,
+  "sdkCalls": 0,
+  "pushed": false
+}

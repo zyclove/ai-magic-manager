@@ -1,0 +1,286 @@
+--- vm30/post.py
++++ vm35/post.py
+@@ -10,18 +10,18 @@
+ import sys
+ 
+ REPO = Path(r'D:\codes\mobile\ai-manager')
+-BASE = REPO / '.cache/guardian-vm30-20261024-r1'
+-OUT = REPO / '.cache/guardian-vm30-post-20261024-r1'
+-LAUNCHER = REPO / '.cache/guardian-vm30-root-launch-20261024-r1.ps1'
+-COMMIT = 'e445b3b3384605b5427e00d912fb34eb973dfe2c'
+-INPUT_SHA = 'e952b3302a454dad335def2fb5710defb381b901fe26d6a5440512fefe259d2b'
++BASE = REPO / '.cache/guardian-vm35-20261024-r1'
++OUT = REPO / '.cache/guardian-vm35-post-20261024-r1'
++LAUNCHER = REPO / '.cache/guardian-vm35-root-launch-20261024-r1.ps1'
++COMMIT = '006ee45850c9b6b0f90570d9478bced3beb0e0fe'
++INPUT_SHA = '56012ab858575ef7f356d4cf1e5ed94815c9e12e53423d889a0168caf1494eb5'
+ BUDGETS = {'outer': 180, 'working': 174, 'worker': 165, 'command': 135,
+            'commandCleanup': 140, 'postflightReserve': 25}
+ NAMES = {'analysis-host.py', 'worker.py', 'owned_job.py', 'process-inventory.ps1', 'reporter_contract.py'}
+-PROPOSAL_SHA = 'f6e2ec6f9402ab36aa20b2cf76e137d3d6babc67f21764bd25f4038e3850326a'
+-SELECTORS = ['test/workbench_view_test.dart', 'test/dialog_submit_guard_test.dart', 'test/failure_view_test.dart']
+-REPORTER_SHA = 'a88a6a36537a667f3b45cfb1e17060154900940dd0d31cb94a651e598353337f'
+-CASE_SHA = '81eef3472a48cdd2968992d4dbd883076180d5dc66855581c94ae762d33ce70b'
++PROPOSAL_SHA = '8d8001ea23ddfc7295e8cb302d0eaa951280bc62ab4698036f4897419d2074d0'
++SELECTORS = ['test/workbench_view_test.dart', 'test/dialog_submit_guard_test.dart', 'test/failure_view_test.dart', 'test/login_view_test.dart']
++REPORTER_SHA = 'fe10ca0eab38e40d9edddb6c5d53101ef2b134dcad931189b378b59f9f32bcf6'
++CASE_SHA = 'dad42332d72a01db3f02ba71772cecbe584e67ea0dade4b2b9d8241de5a678cc'
+ PROCESS_INVENTORY_SHA = 'f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046'
+ SDK_NAMES = {'java.exe', 'javaw.exe', 'javac.exe', 'dart.exe', 'dartaotruntime.exe',
+              'go.exe', 'gofmt.exe', 'flutter.exe', 'flutter_tester.exe', 'gen_snapshot.exe',
+@@ -199,11 +199,11 @@
+     require(type(value.get('startedAtUtc')) is str and type(value.get('finishedAtUtc')) is str,
+             'Pre/post timestamps missing')
+     require(0.0 <= number(value.get('elapsedWorkerSeconds')) < 165.0, 'Pre/post elapsed invalid')
+-    expected_source = {key: {'files': 411, 'fullMembershipExact': True, 'allRawHashesMatch': True}
++    expected_source = {key: {'files': 413, 'fullMembershipExact': True, 'allRawHashesMatch': True}
+                        for key in ('frozenRawGit', 'mainRaw')}
+     expected_source.update(currentSevenRootGitTrees=inputs['sevenRootGitTrees'],
+                            regressionMetadataBoundOnlyNotExecuted=True)
+-    require(same(value.get('source'), expected_source), 'Complete current411 raw source summary differs')
++    require(same(value.get('source'), expected_source), 'Complete current413 raw source summary differs')
+     require(same(value.get('packages'), {'packages': 70, 'rebasedInternalRoots': 7,
+             'unchangedExternalRows': 63, 'metadataPreserved': True,
+             'candidateSha256': inputs['candidatePackageConfig']['sha256']}), 'Package guard summary differs')
+@@ -223,18 +223,18 @@
+             and contract['schemaVersion'] == 1 and contract.get('module') == 'apps/guardian'
+             and contract.get('platform') == 'default Flutter VM tester'
+             and same(contract.get('selectors'), SELECTORS)
+-            and type(contract.get('expectedVisibleCases')) is int and contract['expectedVisibleCases'] == 30
+-            and type(contract.get('expectedTestRoots')) is int and contract['expectedTestRoots'] == 3
+-            and same(contract.get('sourceCaseCounts'), [15, 6, 9]), 'Exact VM30 case contract required')
+-    require(type(contract.get('cases')) is list and len(contract['cases']) == 30,
+-            'Thirty contract rows required')
++            and type(contract.get('expectedVisibleCases')) is int and contract['expectedVisibleCases'] == 35
++            and type(contract.get('expectedTestRoots')) is int and contract['expectedTestRoots'] == 4
++            and same(contract.get('sourceCaseCounts'), [15, 6, 9, 5]), 'Exact VM35 case contract required')
++    require(type(contract.get('cases')) is list and len(contract['cases']) == 35,
++            'Thirty-five contract rows required')
+     wanted = []
+     for row in contract['cases']:
+         require(type(row) is dict and type(row.get('selector')) is str and row['selector'] in SELECTORS
+                 and type(row.get('name')) is str and bool(row['name'].strip()), 'Malformed expected case')
+         wanted.append((row['selector'], row['name']))
+-    require(len(set(wanted)) == 30 and [sum(path == selector for path, name in wanted)
+-            for selector in SELECTORS] == [15, 6, 9], 'Duplicate/misallocated expected names')
++    require(len(set(wanted)) == 35 and [sum(path == selector for path, name in wanted)
++            for selector in SELECTORS] == [15, 6, 9, 5], 'Duplicate/misallocated expected names')
+     require(type(raw) is bytes and 0 < len(raw) <= 16 * 1024 * 1024 and raw.endswith(b'\n'),
+             'Bounded complete JSONL log required')
+     text = raw.decode('utf-8-sig', errors='strict')
+@@ -288,7 +288,7 @@
+                     'Invalid reporter start')
+         elif kind == 'allSuites':
+             suite_count += 1
+-            require(suite_count == 1 and type(event.get('count')) is int and event['count'] == 3,
++            require(suite_count == 1 and type(event.get('count')) is int and event['count'] == 4,
+                     'Incorrect physical-suite discovery')
+         elif kind in ('suite', 'group', 'testStart'):
+             row = event.get({'suite': 'suite', 'group': 'group', 'testStart': 'test'}[kind])
+@@ -355,7 +355,7 @@
+             require(event.get('success') is True, 'Terminal done false/null/missing')
+         else:
+             raise ValueError('Unknown reporter event: ' + kind)
+-    require(start_count == suite_count == finish_count == 1 and len(suites) == 3
++    require(start_count == suite_count == finish_count == 1 and len(suites) == 4
+             and set(running) == set(done), 'Incomplete reporter stream')
+     visible, hidden = [], []
+     for identifier, pair in running.items():
+@@ -365,12 +365,12 @@
+     visible = sorted(visible, key=lambda row: (row['selector'], row['name']))
+     hidden = sorted(hidden, key=lambda row: (row['selector'], row['name']))
+     actual = [(row['selector'], row['name']) for row in visible]
+-    require(len(actual) == len(set(actual)) == 30 and set(actual) == set(wanted),
+-            '30 exact visible cases differ')
+-    return {'status': 'EXACT_VM30_REPORT_ACCEPTED', 'protocolVersion': '0.1.1',
+-            'expectedSuiteCount': 3, 'actualSuiteCount': 3, 'suiteCount': 3,
+-            'suitePaths': sorted(suites.values()), 'expectedVisibleTests': 30,
+-            'visibleTests': 30, 'successfulVisibleTests': 30, 'failures': 0, 'errors': 0, 'skipped': 0,
++    require(len(actual) == len(set(actual)) == 35 and set(actual) == set(wanted),
++            '35 exact visible cases differ')
++    return {'status': 'EXACT_VM35_REPORT_ACCEPTED', 'protocolVersion': '0.1.1',
++            'expectedSuiteCount': 4, 'actualSuiteCount': 4, 'suiteCount': 4,
++            'suitePaths': sorted(suites.values()), 'expectedVisibleTests': 35,
++            'visibleTests': 35, 'successfulVisibleTests': 35, 'failures': 0, 'errors': 0, 'skipped': 0,
+             'actualVisibleCases': visible, 'hiddenSuccessfulTests': hidden,
+             'allStartedTestsCompleted': True, 'terminalDoneSuccess': True,
+             'eventCount': len(events), 'printEvents': output_count, 'bootstrapNotices': bootstrap,
+@@ -378,14 +378,14 @@
+ 
+ 
+ def main(approved_sha):
+-    require(approved_sha == PROPOSAL_SHA, 'Supply the fixed VM30 R1 approved proposal SHA')
++    require(approved_sha == PROPOSAL_SHA, 'Supply the fixed VM35 R1 approved proposal SHA')
+     proposal_raw = read(BASE / 'proposal.json')
+     require(hashlib.sha256(proposal_raw).hexdigest() == approved_sha, 'Approved proposal drift')
+     proposal = decode(proposal_raw)
+     require(set(proposal) == {'schemaVersion', 'phase', 'sourceCommit', 'inputs', 'candidateFiles',
+             'runtimePins', 'pythonExecutable', 'budgets'}, 'Fixed proposal schema differs')
+     require(type(proposal['schemaVersion']) is int and proposal['schemaVersion'] == 1
+-            and proposal['phase'] == 'guardian-vm30' and proposal['sourceCommit'] == COMMIT
++            and proposal['phase'] == 'guardian-vm35' and proposal['sourceCommit'] == COMMIT
+             and proposal['pythonExecutable'] == 'C:/Python313/python.exe'
+             and same(proposal['budgets'], BUDGETS), 'Proposal scope or original budgets differ')
+     require(type(proposal['candidateFiles']) is list and len(proposal['candidateFiles']) == 5
+@@ -394,7 +394,7 @@
+     for row in proposal['candidateFiles']:
+         descriptor(row, candidate=True)
+     require(Path(proposal['inputs']['path']) == BASE / 'inputs.json'
+-            and type(proposal['inputs']['bytes']) is int and proposal['inputs']['bytes'] == 16972
++            and type(proposal['inputs']['bytes']) is int and proposal['inputs']['bytes'] == 17077
+             and proposal['inputs']['sha256'] == INPUT_SHA, 'Fixed current input required')
+     descriptor(proposal['inputs'])
+     inputs = load(BASE / 'inputs.json')
+@@ -405,9 +405,9 @@
+             'Fixed process name provider descriptor required')
+     descriptor(inputs['processInventoryProvider'])
+     require(inputs['sourceCommit'] == COMMIT and type(inputs['sourceCount']) is int
+-            and inputs['sourceCount'] == 411 and inputs['sourceFiles'] == 411
+-            and inputs['fullRegressionRootFiles'] == 182 and inputs['runtimeClosureComplete'] is False,
+-            'Current411/full182 input boundary differs')
++            and inputs['sourceCount'] == 413 and inputs['sourceFiles'] == 413
++            and inputs['fullRegressionRootFiles'] == 183 and inputs['runtimeClosureComplete'] is False,
++            'Current413/full183 input boundary differs')
+     grant = load(BASE / 'root-sdk-grant.json')
+     launcher_raw = read(LAUNCHER)
+     launcher_sha = hashlib.sha256(launcher_raw).hexdigest()
+@@ -417,7 +417,7 @@
+             and grant['sdkCallsAllowed'] == 1, 'Root exact grant/launcher does not match')
+     root_pre = load(BASE / 'root-attempt/preflight.json')
+     root = load(BASE / 'root-attempt/result.json')
+-    require(root_pre.get('status') == 'ROOT_FIXED_VM30_STARTED', 'Wrong Root preflight')
++    require(root_pre.get('status') == 'ROOT_FIXED_VM35_STARTED', 'Wrong Root preflight')
+     for key, value in root_pre.items():
+         if key != 'status':
+             require(key in root and same(root[key], value), 'Root preflight/result field changed: ' + key)
+@@ -434,7 +434,7 @@
+                 and {item.get('Name') for item in row['disks']} == {'C', 'D'}, 'Root disk scope differs')
+         for disk in row['disks']:
+             integer(disk.get('Free'), 2**31)
+-    require(root.get('status') == 'ROOT_HOST_TERMINAL_PENDING_INDEPENDENT_VM30_POST'
++    require(root.get('status') == 'ROOT_HOST_TERMINAL_PENDING_INDEPENDENT_VM35_POST'
+             and root.get('sameHandleSignaled') is True and type(root.get('actualHostExitCode')) is int
+             and root['actualHostExitCode'] == 0 and root.get('rootForcedOwnHost') is False
+             and root.get('emergencyCleanupAttempted') is False and root.get('failure') is None
+@@ -463,26 +463,26 @@
+                 'cacheProjectionParentManifest', 'qualifiedHostRuntimeManifest'):
+         descriptor(inputs[key])
+ 
+-    require(grant.get('phase') == 'guardian-vm30' and grant.get('testsAllowed') is True
+-            and type(grant.get('selectedRoots')) is int and grant['selectedRoots'] == 3
+-            and type(grant.get('expectedVisibleCases')) is int and grant['expectedVisibleCases'] == 30,
+-            'Root VM30 selection grant differs')
++    require(grant.get('phase') == 'guardian-vm35' and grant.get('testsAllowed') is True
++            and type(grant.get('selectedRoots')) is int and grant['selectedRoots'] == 4
++            and type(grant.get('expectedVisibleCases')) is int and grant['expectedVisibleCases'] == 35,
++            'Root VM35 selection grant differs')
+     require(Path(inputs['reporterContractCode']['path']) == BASE / 'reporter_contract.py'
+-            and type(inputs['reporterContractCode']['bytes']) is int and inputs['reporterContractCode']['bytes'] == 14327
++            and type(inputs['reporterContractCode']['bytes']) is int and inputs['reporterContractCode']['bytes'] == 14369
+             and inputs['reporterContractCode']['sha256'] == REPORTER_SHA
+-            and Path(inputs['testCaseContract']['path']) == BASE / 'expected-vm30-cases.json'
+-            and type(inputs['testCaseContract']['bytes']) is int and inputs['testCaseContract']['bytes'] == 13489
++            and Path(inputs['testCaseContract']['path']) == BASE / 'expected-vm35-cases.json'
++            and type(inputs['testCaseContract']['bytes']) is int and inputs['testCaseContract']['bytes'] == 15481
+             and inputs['testCaseContract']['sha256'] == CASE_SHA,
+             'Fixed reporter code/case contract descriptors differ')
+     descriptor(inputs['reporterContractCode'])
+     descriptor(inputs['testCaseContract'])
+     case_contract = load(Path(inputs['testCaseContract']['path']))
+     require(same(inputs.get('testSelectors'), SELECTORS)
+-            and type(inputs.get('expectedVisibleCases')) is int and inputs['expectedVisibleCases'] == 30
+-            and type(inputs.get('expectedVmTestRoots')) is int and inputs['expectedVmTestRoots'] == 3
++            and type(inputs.get('expectedVisibleCases')) is int and inputs['expectedVisibleCases'] == 35
++            and type(inputs.get('expectedVmTestRoots')) is int and inputs['expectedVmTestRoots'] == 4
+             and type(inputs.get('remainingFullRegressionRootsUnrun')) is int
+             and inputs['remainingFullRegressionRootsUnrun'] == 179,
+-            'VM30 versus full182 scope differs')
++            'VM35 versus full183 scope differs')
+ 
+     attempt = BASE / 'attempt'
+     request = load(attempt / 'request.json')
+@@ -493,12 +493,12 @@
+             'cleanupDeadlineQpc', 'sourceCommit', 'phase'}, 'Host request schema differs')
+     anchor = qpc(request.get('qpcAnchor'))
+     require(request.get('approvedProposalSha256') == approved_sha and request.get('sourceCommit') == COMMIT
+-            and request.get('phase') == 'guardian-vm30'
++            and request.get('phase') == 'guardian-vm35'
+             and qpc(request.get('workDeadlineQpc')) == anchor + 174.0
+             and qpc(request.get('cleanupDeadlineQpc')) == anchor + 180.0, 'Host request budget anchor differs')
+     for key in request:
+         require(key in host and same(host[key], request[key]), 'Host request/result field differs: ' + key)
+-    require(host.get('status') == 'GUARDIAN_VM30_HOST_OBSERVED'
++    require(host.get('status') == 'GUARDIAN_VM35_HOST_OBSERVED'
+             and host.get('naturalCompleteTerminalTimely') is True and host.get('forcedCleanupRequested') is False
+             and host.get('terminationCallSucceeded') is False and host.get('closedWithLiveOrUnknownMembers') is False
+             and host.get('deadlineReached') is False and host.get('candidateAndRuntimePinsMatchAfter') is True
+@@ -536,7 +536,7 @@
+             and 0.0 <= receipt['elapsedCompleteSeconds'] == finished - start < 165.0
+             and worker_terminal['firstCompleteTerminalQpc'] < start + 165.0,
+             'Original worker/command deadlines or actual observed worker exit invalid')
+-    require(receipt.get('phaseScope') == 'GUARDIAN_VM30'
++    require(receipt.get('phaseScope') == 'GUARDIAN_VM35'
+             and receipt.get('workerBudgetSeconds') == 165 and type(receipt.get('workerBudgetSeconds')) is int
+             and receipt.get('commandWorkerRelativeSeconds') == 135 and type(receipt.get('commandWorkerRelativeSeconds')) is int
+             and receipt.get('commandCleanupWorkerRelativeSeconds') == 140 and type(receipt.get('commandCleanupWorkerRelativeSeconds')) is int
+@@ -569,14 +569,14 @@
+     require(first_command['pid'] == command['pid'] and first_command['creationFiletime'] == command['creationFiletime']
+             and first_command['firstSignaledQpc'] == command['firstSignaledQpc'], 'First command signal identity differs')
+     expected_argv = [r'C:\Windows\System32\cmd.exe', '/d', '/v:off', '/c',
+-        r'D:\softwares\flutter\bin\flutter.bat --no-version-check --suppress-analytics test --no-pub --concurrency=1 --reporter=json test/workbench_view_test.dart test/dialog_submit_guard_test.dart test/failure_view_test.dart']
++        r'D:\softwares\flutter\bin\flutter.bat --no-version-check --suppress-analytics test --no-pub --concurrency=1 --reporter=json test/workbench_view_test.dart test/dialog_submit_guard_test.dart test/failure_view_test.dart test/login_view_test.dart']
+     require(same(launch.get('argv'), expected_argv)
+-            and launch.get('workingDirectory') == str(REPO / '.cache/guardian-current-20261024-r14-heade445/src/apps/guardian')
++            and launch.get('workingDirectory') == str(REPO / '.cache/guardian-current-20261024-r15-login-schedule/src/apps/guardian')
+             and type(launch.get('pid')) is int and launch['pid'] == command['pid']
+             and type(launch.get('creationFiletime')) is int and launch['creationFiletime'] == command['creationFiletime']
+-            and type(launch.get('selectorCount')) is int and launch['selectorCount'] == 3
++            and type(launch.get('selectorCount')) is int and launch['selectorCount'] == 4
+             and same(launch.get('selectors'), SELECTORS)
+-            and type(launch.get('expectedVisibleCases')) is int and launch['expectedVisibleCases'] == 30
++            and type(launch.get('expectedVisibleCases')) is int and launch['expectedVisibleCases'] == 35
+             and same(launch.get('testCaseContractPin'), inputs['testCaseContract'])
+             and same(launch.get('reporterContractCodePin'), inputs['reporterContractCode']),
+             'Fixed command launch identity/argv/module differs')
+@@ -604,7 +604,7 @@
+         if name == 'postflight-gate.json':
+             require(same(value, receipt.get('resourceAfter')), 'Worker final resource raw/embedded gate differs')
+     log_path = attempt / 'out/tests.jsonl'
+-    require(Path(receipt.get('logPin', {}).get('path', '')) == log_path, 'Fixed VM30 JSON log required')
++    require(Path(receipt.get('logPin', {}).get('path', '')) == log_path, 'Fixed VM35 JSON log required')
+     descriptor(receipt['logPin'])
+     raw_log = read(log_path, 16 * 1024 * 1024)
+     log_pin = {'path': str(log_path), 'bytes': len(raw_log), 'sha256': hashlib.sha256(raw_log).hexdigest()}
+@@ -617,7 +617,7 @@
+     descriptor(receipt['reporterValidationPin'])
+     raw_validation = load(attempt / 'reporter-validation.json')
+     independently_derived = independent_vm30(raw_log, case_contract,
+-        REPO / '.cache/guardian-current-20261024-r14-heade445/src/apps/guardian', log_pin)
++        REPO / '.cache/guardian-current-20261024-r15-login-schedule/src/apps/guardian', log_pin)
+     require(same(raw_validation, receipt.get('reporterValidation'))
+             and same(independently_derived, raw_validation),
+             'Independent raw JSON derivation differs from reporter raw/embedded result')
+@@ -626,19 +626,19 @@
+     descriptor(inputs['reporterContractCode'])
+     descriptor(inputs['testCaseContract'])
+     console = decode(read(attempt / 'worker-console.log', 1024 * 1024))
+-    require(same(console, {'status': 'GUARDIAN_VM30_WORKER_PASSED', 'sdkCalls': 1,
++    require(same(console, {'status': 'GUARDIAN_VM35_WORKER_PASSED', 'sdkCalls': 1,
+                           'elapsedCompleteSeconds': receipt['elapsedCompleteSeconds']}), 'Worker console outcome differs')
+     derived_worker = True  # Reached only after independent file/timing/identity/guard checks above.
+-    reported_worker = receipt.get('status') == 'GUARDIAN_VM30_WORKER_PASSED'
++    reported_worker = receipt.get('status') == 'GUARDIAN_VM35_WORKER_PASSED'
+     require(reported_worker is derived_worker and host.get('workerReportedPassed') is reported_worker
+             and host.get('workerDerivedPassed') is derived_worker and host.get('workerReportedDerivedConsistent') is True,
+             'Worker/host reported versus independently derived outcome differs')
+-    return {'status': 'DERIVED_VM30_CONSISTENT_PENDING_ROOT_RELEASE', 'sourceCommit': COMMIT,
++    return {'status': 'DERIVED_VM35_CONSISTENT_PENDING_ROOT_RELEASE', 'sourceCommit': COMMIT,
+         'approvedProposalSha256': approved_sha, 'rootRecordedSameHandleNaturalZero': True,
+         'rootRecordedFirstWaitSeconds': root_signal, 'hostOriginalBudgets': BUDGETS,
+         'workerDerivedConsistent': True, 'sdkCalls': 1, 'applicationTestsRun': True,
+         'reporterDerivedConsistent': True, 'independentReporterValidation': independently_derived,
+-        'selectedTestRoots': 3, 'expectedVisibleCases': 30, 'otherFullRegressionRootsUnrun': 179,
++        'selectedTestRoots': 4, 'expectedVisibleCases': 35, 'otherFullRegressionRootsUnrun': 179,
+         'hostPreOutputElapsedNotUsedAsOuterExit': True,
+         'rootActualToolTerminalEvidenceInspected': False, 'freshFullProcessReleaseInspected': False,
+         'rootActualToolTerminalStillRequired': True, 'freshFullProcessReleaseStillRequired': True,

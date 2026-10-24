@@ -1,0 +1,31 @@
+{
+  "utc": "2026-10-24T10:03:19.915022+00:00",
+  "pid": 153696,
+  "creationFiletime": 134373097999131303,
+  "argv": [
+    "C:\\Windows\\System32\\cmd.exe",
+    "/d",
+    "/v:off",
+    "/c",
+    "D:\\softwares\\flutter\\bin\\flutter.bat --no-version-check --suppress-analytics analyze --no-pub --fatal-infos --fatal-warnings"
+  ],
+  "workingDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\src\\apps\\guardian",
+  "selectorCount": 0,
+  "workerStartQpc": 114293.1870759,
+  "commandDeadlineQpc": 114428.1870759,
+  "commandCleanupDeadlineQpc": 114433.1870759,
+  "workerDeadlineQpc": 114458.1870759,
+  "commandBudgetSeconds": 116.08140260000073,
+  "workerElapsedAtLaunch": 18.918598200005363,
+  "postflightReserveSeconds": 25,
+  "processLocalTemp": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-analyze-20261024-r15-current006ee-durable-parent\\attempt\\tmp",
+  "pubAndStorageLoopbackDisabled": true,
+  "nativeProcessHandleRetained": true,
+  "atomicNestedJobMembership": true,
+  "launchRecordBeforeResume": true,
+  "sdkProcessSafeDirectories": [
+    "D:\\codes\\mobile\\ai-manager",
+    "D:\\softwares\\flutter"
+  ],
+  "nativeMemoryLimitClaimed": false
+}

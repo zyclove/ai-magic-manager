@@ -1,0 +1,56 @@
+{
+  "status": "EXACT_TWO_TYPED_FINDER_FIXES_RETEST_PENDING",
+  "sourceCopies": [
+    {
+      "source": ".cache/guardian-schedule-tooltip-finder-fix-20261024-r1/before-pins.json",
+      "archived": "before-pins.json",
+      "bytes": 392,
+      "sha256": "4fde280dbd096550a83169c4d1c86fe56f0405a71ca1a481dba730460d0b0963"
+    },
+    {
+      "source": ".cache/guardian-schedule-tooltip-finder-fix-20261024-r1/editor_submit_guard_test.after.dart",
+      "archived": "editor_submit_guard_test.after.dart",
+      "bytes": 21581,
+      "sha256": "0e0a0d3f2392bddf6f94f6cbc42dcc93bfcc9b2d3f2fb1aeef8c3044b03fb99b"
+    },
+    {
+      "source": ".cache/guardian-schedule-tooltip-finder-fix-20261024-r1/editor_submit_guard_test.before.dart",
+      "archived": "editor_submit_guard_test.before.dart",
+      "bytes": 21431,
+      "sha256": "a8d24bca8147a38ffe0c5db9b620e533e47b18cf371c9198dc62d9ab33280ed9"
+    },
+    {
+      "source": ".cache/guardian-schedule-tooltip-finder-fix-20261024-r1/minimal-test-finder.patch",
+      "archived": "minimal-test-finder.patch",
+      "bytes": 1022,
+      "sha256": "1cadbf0bbfadd7e4c63b352572fe2b27d66c471eae1e2170c425e4d905e5aed4"
+    },
+    {
+      "source": ".cache/guardian-schedule-tooltip-finder-fix-20261024-r1/pins.json",
+      "archived": "pins.json",
+      "bytes": 3944,
+      "sha256": "12176360d6c71f0ed576f35db0e65d641963eb3e75cce0d73bfa81ef334b374c"
+    },
+    {
+      "source": ".cache/guardian-schedule-tooltip-finder-fix-20261024-r1/r4-observed-test-errors.json",
+      "archived": "r4-observed-test-errors.json",
+      "bytes": 8624,
+      "sha256": "0a2e52efca057b8ceea28f198c41113ee1eccc027e1f460f27b472104cbd45dd"
+    },
+    {
+      "source": ".cache/guardian-schedule-tooltip-finder-fix-20261024-r1/review.md",
+      "archived": "review.md",
+      "bytes": 4429,
+      "sha256": "65e62dd3af8f3fd31256dfd73ba3dc543ef230a9c2c63aac9ca559b800cd2781"
+    },
+    {
+      "source": ".cache/guardian-schedule-tooltip-finder-fix-20261024-r1/static-delta-check.json",
+      "archived": "static-delta-check.json",
+      "bytes": 662,
+      "sha256": "853568c85c3d9087504d44dddeae7071a47bc5726581f59aef9f39e6ed555a73"
+    }
+  ],
+  "applicationRetestRun": false,
+  "realPhaseCommitPerformed": false,
+  "pushed": false
+}

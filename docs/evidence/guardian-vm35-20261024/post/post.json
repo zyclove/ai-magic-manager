@@ -1,0 +1,960 @@
+{
+  "status": "DERIVED_VM35_CONSISTENT_PENDING_ROOT_RELEASE",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "approvedProposalSha256": "8d8001ea23ddfc7295e8cb302d0eaa951280bc62ab4698036f4897419d2074d0",
+  "rootRecordedSameHandleNaturalZero": true,
+  "rootRecordedFirstWaitSeconds": 54.5001849,
+  "hostOriginalBudgets": {
+    "outer": 180,
+    "working": 174,
+    "worker": 165,
+    "command": 135,
+    "commandCleanup": 140,
+    "postflightReserve": 25
+  },
+  "workerDerivedConsistent": true,
+  "sdkCalls": 1,
+  "applicationTestsRun": true,
+  "reporterDerivedConsistent": true,
+  "independentReporterValidation": {
+    "status": "EXACT_VM35_REPORT_ACCEPTED",
+    "protocolVersion": "0.1.1",
+    "expectedSuiteCount": 4,
+    "actualSuiteCount": 4,
+    "suiteCount": 4,
+    "suitePaths": [
+      "test/dialog_submit_guard_test.dart",
+      "test/failure_view_test.dart",
+      "test/login_view_test.dart",
+      "test/workbench_view_test.dart"
+    ],
+    "expectedVisibleTests": 35,
+    "visibleTests": 35,
+    "successfulVisibleTests": 35,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "actualVisibleCases": [
+      {
+        "selector": "test/dialog_submit_guard_test.dart",
+        "name": "412 draft preserves trimmed text numeric labels and empty fields",
+        "testID": 26,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/dialog_submit_guard_test.dart",
+        "name": "412 preserves the submitted draft and blocks held save callbacks",
+        "testID": 22,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/dialog_submit_guard_test.dart",
+        "name": "access loss during submission hides a late 412 and prevents resubmit",
+        "testID": 25,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/dialog_submit_guard_test.dart",
+        "name": "access loss hides a 412 draft and gives original workspace guidance",
+        "testID": 24,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/dialog_submit_guard_test.dart",
+        "name": "queued edit callbacks submit only once before the next frame",
+        "testID": 21,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/dialog_submit_guard_test.dart",
+        "name": "unknown result retries the same payload before a 412 stops replay",
+        "testID": 23,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/failure_view_test.dart",
+        "name": "changing the correlation ID collapses previously expanded details",
+        "testID": 34,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/failure_view_test.dart",
+        "name": "changing the error code collapses previously expanded diagnostics",
+        "testID": 33,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/failure_view_test.dart",
+        "name": "diagnostics are collapsed by default and toggle selectable details",
+        "testID": 30,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/failure_view_test.dart",
+        "name": "missing correlation IDs do not render an empty tracking label",
+        "testID": 36,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/failure_view_test.dart",
+        "name": "narrow large text keeps recovery and diagnostic details operable",
+        "testID": 38,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/failure_view_test.dart",
+        "name": "reauth remains limited to authentication and unknown failures",
+        "testID": 32,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/failure_view_test.dart",
+        "name": "recovery actions remain available before and after details open",
+        "testID": 31,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/failure_view_test.dart",
+        "name": "unknown errors keep private exception text out of the interface",
+        "testID": 35,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/failure_view_test.dart",
+        "name": "usage report failures share the optional diagnostic disclosure",
+        "testID": 37,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/login_view_test.dart",
+        "name": "keyboard traversal activates login exactly once",
+        "testID": 46,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/login_view_test.dart",
+        "name": "large text in a short desktop window can reach both pane ends",
+        "testID": 43,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/login_view_test.dart",
+        "name": "login remains reachable after opening error details",
+        "testID": 45,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/login_view_test.dart",
+        "name": "narrow window and large text keep the primary login usable",
+        "testID": 44,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/login_view_test.dart",
+        "name": "wide short window keeps login reachable without layout errors",
+        "testID": 42,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "background refresh preserves prior activity and common actions",
+        "testID": 17,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "connection checks take priority over setup",
+        "testID": 5,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "empty workspace opens the existing subject form",
+        "testID": 6,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "established workspace offers reports instead of onboarding",
+        "testID": 9,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "existing subject without devices opens the existing device form",
+        "testID": 7,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "help takes priority over every other task",
+        "testID": 3,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "loading and failures never show ready counts or connection claims",
+        "testID": 12,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "narrow large text keeps urgent action and metrics operable",
+        "testID": 14,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "network retry keeps stale summary until a fresh result arrives",
+        "testID": 16,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "no draft links to rules without claiming rules are absent",
+        "testID": 8,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "pending approvals take priority over connection checks",
+        "testID": 4,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "refresh completion is explicit and active forms block duplicates",
+        "testID": 13,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "stale summary with 503 keeps common actions and previous data",
+        "testID": 15,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "summary links and common actions keep their intended targets",
+        "testID": 10,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "unavailable sections hide counts, actions and audit content",
+        "testID": 11,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      }
+    ],
+    "hiddenSuccessfulTests": [
+      {
+        "selector": "test/dialog_submit_guard_test.dart",
+        "name": "loading D:/codes/mobile/ai-manager/.cache/guardian-current-20261024-r15-login-schedule/src/apps/guardian/test/dialog_submit_guard_test.dart",
+        "testID": 19,
+        "result": "success",
+        "skipped": false,
+        "hidden": true
+      },
+      {
+        "selector": "test/failure_view_test.dart",
+        "name": "loading D:/codes/mobile/ai-manager/.cache/guardian-current-20261024-r15-login-schedule/src/apps/guardian/test/failure_view_test.dart",
+        "testID": 28,
+        "result": "success",
+        "skipped": false,
+        "hidden": true
+      },
+      {
+        "selector": "test/login_view_test.dart",
+        "name": "loading D:/codes/mobile/ai-manager/.cache/guardian-current-20261024-r15-login-schedule/src/apps/guardian/test/login_view_test.dart",
+        "testID": 40,
+        "result": "success",
+        "skipped": false,
+        "hidden": true
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "loading D:/codes/mobile/ai-manager/.cache/guardian-current-20261024-r15-login-schedule/src/apps/guardian/test/workbench_view_test.dart",
+        "testID": 1,
+        "result": "success",
+        "skipped": false,
+        "hidden": true
+      }
+    ],
+    "allStartedTestsCompleted": true,
+    "terminalDoneSuccess": true,
+    "eventCount": 89,
+    "printEvents": 0,
+    "bootstrapNotices": 1,
+    "logPin": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\attempt\\out\\tests.jsonl",
+      "bytes": 22282,
+      "sha256": "1b3e33390c9bdf8e3885c22764cc43ca59af6e21579972e3429a0ed2bc48d127"
+    },
+    "nativeExitAndJobChecksRemainCallerResponsibility": true
+  },
+  "selectedTestRoots": 4,
+  "expectedVisibleCases": 35,
+  "otherFullRegressionRootsUnrun": 179,
+  "hostPreOutputElapsedNotUsedAsOuterExit": true,
+  "rootActualToolTerminalEvidenceInspected": false,
+  "freshFullProcessReleaseInspected": false,
+  "rootActualToolTerminalStillRequired": true,
+  "freshFullProcessReleaseStillRequired": true,
+  "testAccepted": false,
+  "runtimeClosureComplete": false,
+  "externalCachePayloadRehashedByThisPost": false,
+  "privateJobMemberDiagnosticsCauseNotClassified": true,
+  "candidateSdkAstProcessNativeOrNetworkExecutedByThisPost": false,
+  "observedFilePins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\proposal.json",
+      "bytes": 9204,
+      "sha256": "8d8001ea23ddfc7295e8cb302d0eaa951280bc62ab4698036f4897419d2074d0"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\analysis-host.py",
+      "bytes": 25173,
+      "sha256": "f833971d94aeeea5f8b9e503b83cba38f0501cbaa1a8e93eff2a81594526aec8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\worker.py",
+      "bytes": 42206,
+      "sha256": "08d958d9c87b0a01a462592d541a5a238b39411c47f9e7278b28686f4a452a98"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\process-inventory.ps1",
+      "bytes": 2439,
+      "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\reporter_contract.py",
+      "bytes": 14369,
+      "sha256": "fe10ca0eab38e40d9edddb6c5d53101ef2b134dcad931189b378b59f9f32bcf6"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\inputs.json",
+      "bytes": 17077,
+      "sha256": "56012ab858575ef7f356d4cf1e5ed94815c9e12e53423d889a0168caf1494eb5"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\inputs.json",
+      "bytes": 17077,
+      "sha256": "56012ab858575ef7f356d4cf1e5ed94815c9e12e53423d889a0168caf1494eb5"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\process-inventory.ps1",
+      "bytes": 2439,
+      "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\root-sdk-grant.json",
+      "bytes": 2784,
+      "sha256": "36f3217848f16c9c6ce4a5ad3b92b99a09384ec1ff3fd415edae6b9743049115"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-root-launch-20261024-r1.ps1",
+      "bytes": 9164,
+      "sha256": "183e36dda9a5e4f90b76a1188c8b8f29442cc0bea95d9e4dda9a56e0a88f0ca1"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\root-attempt\\preflight.json",
+      "bytes": 704,
+      "sha256": "083ef4e084dacd9d552d0f52320ccaf4a2793fbee51d7a241ea4eef7d1b6187c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\root-attempt\\result.json",
+      "bytes": 1259,
+      "sha256": "750c7d994e55179f23e603c3fbbdeebdf2cd0da144c567a3b1b94753a330e87d"
+    },
+    {
+      "path": "C:\\Python313\\python.exe",
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125"
+    },
+    {
+      "path": "C:\\Python313\\python313.dll",
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\win32\\win32job.pyd",
+      "bytes": 28672,
+      "sha256": "8f2a15f090e4fa75fd7179de0aa41108e9c6fe95786f736f373f5a7501e7e769"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\pywin32_system32\\pywintypes313.dll",
+      "bytes": 136192,
+      "sha256": "90ba935a0145ee9ae56267a365cc0088d34fa506b7afeb2bd1bd78cd33359605"
+    },
+    {
+      "path": "C:\\Python313\\DLLs\\_ctypes.pyd",
+      "bytes": 133992,
+      "sha256": "5c0d5082fba1a2a3eb8d5e23073be25164c19f21304b09cecaab340dc7198815"
+    },
+    {
+      "path": "C:\\Python313\\DLLs\\libffi-8.dll",
+      "bytes": 39696,
+      "sha256": "eff52743773eb550fcc6ce3efc37c85724502233b6b002a35496d828bd7b280a"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\__init__.py",
+      "bytes": 19374,
+      "sha256": "2e63f01ac6b8ffc1acfa4eec4c253eef8fbd65e09506d690cb3be71a2d78303a"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\_endian.py",
+      "bytes": 2635,
+      "sha256": "f2752ab2425dac9bfaff5aa1a3c6cd66aa342fee0db2f2a42de568fc59d5cbea"
+    },
+    {
+      "path": "C:\\Program Files\\Git\\cmd\\git.exe",
+      "bytes": 45032,
+      "sha256": "4ab2b391de7fb5eb3afb34b5bd19ee7f71d0450bf7e4c207b201a0392e3825ae"
+    },
+    {
+      "path": "C:\\Windows\\System32\\cmd.exe",
+      "bytes": 327680,
+      "sha256": "a6e3b3b22b7fe8ce2c9245816126723eaa13f43b9f591883e59959a2d409426a"
+    },
+    {
+      "path": "C:\\Windows\\System32\\where.exe",
+      "bytes": 61440,
+      "sha256": "ade557dd65848c5cf6565913cf6e01cf5c9a8033f0d784c4d6932394958d743e"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\internal\\exit_with_errorlevel.bat",
+      "bytes": 562,
+      "sha256": "f4014bd05cc24391ff28f7bd5b22949cc80f0bb66ab9eda512c9c3997f0283e0"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.yaml",
+      "bytes": 6215,
+      "sha256": "d703ed2f5467e37193640b26522839137430af10b631f36c0d89a54f3236172f"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.lock",
+      "bytes": 22135,
+      "sha256": "097571421b53ac57c9b72523ee5d2ae584c3d6ba58412f8cbe3af35c55c5593a"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\.dart_tool\\package_config.json",
+      "bytes": 20035,
+      "sha256": "49d0a9ce1c70ca6edd29537570cfe7ea6539843da50c6a85a107d829330150e8"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\wintypes.py",
+      "bytes": 5831,
+      "sha256": "4d9150e8603bd922e9dbee8a5e9cf1379cf599a382b09a5cbf09bed520f6c459"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\__init__.py",
+      "bytes": 89075,
+      "sha256": "96f6567584375b47e5719796d6f6cde50828487baaa1f5c19ccc4764bcf082b5"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_common.py",
+      "bytes": 29592,
+      "sha256": "b4f13b615cc2d19201859cd8773a8e16787e81e25500b6f2058dd3480c00497c"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psaix.py",
+      "bytes": 18817,
+      "sha256": "08504bc148bc0d1e4ab030b4c82b348e52ed2dfd9d861c8602b0211bfb9da8af"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psbsd.py",
+      "bytes": 32727,
+      "sha256": "51777e41751593f1ffc1b1475addafb21702856c41acfc27dfc3d7d077985dfa"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_pslinux.py",
+      "bytes": 88323,
+      "sha256": "c0a4f57371d7f1786767cb03357d6188a45b563ee9e7701227a55a9e229ac6ce"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psosx.py",
+      "bytes": 16421,
+      "sha256": "2f014fe80b4aa768733564526922da58707a9e1d4288a48cbbf2af3f9d34f481"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psposix.py",
+      "bytes": 7349,
+      "sha256": "009c726913dfd61f1dc93f6b9ec17c73ea6c1f05c46caa9a344b7738e9b866e9"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_pssunos.py",
+      "bytes": 25654,
+      "sha256": "079f056382636df9ddadd99b115ed0197ea5562d2ffbe57e83f1f1b20f79f0c3"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psutil_windows.pyd",
+      "bytes": 67072,
+      "sha256": "9c7fc855d9d1614e70705c7dcc6f4ac3cdcab5adfeb6a67d382f5ade09eadc15"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_pswindows.py",
+      "bytes": 37052,
+      "sha256": "8acfc2ab7c8cb859ea1947e939e894f285b365035698affe5ededab1bf180aee"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+      "bytes": 301368,
+      "sha256": "362a356ce7f0940ec74f73a8fc2c990a2cc24a38a11c90bbd8eca947110ad139"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.dll",
+      "bytes": 157496,
+      "sha256": "3046ed02928f5d8f78bb3106a861984498d4dc5f80e69a1d5bc7eeb911f0fa90"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\System.Management.Automation.dll",
+      "bytes": 19646264,
+      "sha256": "2d8af026e589c5603629bfc3e7c57265b4167b12eca3ae549c6a6c3ca7e4967b"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\Microsoft.PowerShell.Commands.Management.dll",
+      "bytes": 1124152,
+      "sha256": "40818818dd94a5fa1f53043e33d31d8312adad24ef61b06481dfae4c45d6e677"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\Microsoft.PowerShell.Commands.Utility.dll",
+      "bytes": 1652504,
+      "sha256": "2f6201bb3caf4c08158be733e786dd85b11537694f7e6ab40356fc0727a3596f"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\System.Diagnostics.Process.dll",
+      "bytes": 329512,
+      "sha256": "2b4871e02b366113c6ccf3b1436fadde5e69fc0a3e3ac421e2fa0f7af8c2bc3b"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\coreclr.dll",
+      "bytes": 4614440,
+      "sha256": "c98c3078a4f2495dd7d3ced967c7a6981545194ed163454703580b740f435521"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\clrjit.dll",
+      "bytes": 2092328,
+      "sha256": "e7bf743e7bf9a01c8c2bcdc0d828212fd8dfc285be9d4ec21962becf456df648"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\hostfxr.dll",
+      "bytes": 379728,
+      "sha256": "44f97e946b36415176dbc56a4426565a5e9b3e722c0ad579e20a749e3c0c7bcd"
+    },
+    {
+      "path": "C:\\Python313\\python.exe",
+      "bytes": 105832,
+      "sha256": "d87063e5597f257004c731b66c59c56c91038861c6877b1a3dca6b8c4e919125"
+    },
+    {
+      "path": "C:\\Python313\\python313.dll",
+      "bytes": 6099960,
+      "sha256": "69fd86ea29370697c203f7e12830084f920f490766a8e3045af52c036a9ad529"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\win32\\win32job.pyd",
+      "bytes": 28672,
+      "sha256": "8f2a15f090e4fa75fd7179de0aa41108e9c6fe95786f736f373f5a7501e7e769"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\pywin32_system32\\pywintypes313.dll",
+      "bytes": 136192,
+      "sha256": "90ba935a0145ee9ae56267a365cc0088d34fa506b7afeb2bd1bd78cd33359605"
+    },
+    {
+      "path": "C:\\Python313\\DLLs\\_ctypes.pyd",
+      "bytes": 133992,
+      "sha256": "5c0d5082fba1a2a3eb8d5e23073be25164c19f21304b09cecaab340dc7198815"
+    },
+    {
+      "path": "C:\\Python313\\DLLs\\libffi-8.dll",
+      "bytes": 39696,
+      "sha256": "eff52743773eb550fcc6ce3efc37c85724502233b6b002a35496d828bd7b280a"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\__init__.py",
+      "bytes": 19374,
+      "sha256": "2e63f01ac6b8ffc1acfa4eec4c253eef8fbd65e09506d690cb3be71a2d78303a"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\_endian.py",
+      "bytes": 2635,
+      "sha256": "f2752ab2425dac9bfaff5aa1a3c6cd66aa342fee0db2f2a42de568fc59d5cbea"
+    },
+    {
+      "path": "C:\\Program Files\\Git\\cmd\\git.exe",
+      "bytes": 45032,
+      "sha256": "4ab2b391de7fb5eb3afb34b5bd19ee7f71d0450bf7e4c207b201a0392e3825ae"
+    },
+    {
+      "path": "C:\\Windows\\System32\\cmd.exe",
+      "bytes": 327680,
+      "sha256": "a6e3b3b22b7fe8ce2c9245816126723eaa13f43b9f591883e59959a2d409426a"
+    },
+    {
+      "path": "C:\\Windows\\System32\\where.exe",
+      "bytes": 61440,
+      "sha256": "ade557dd65848c5cf6565913cf6e01cf5c9a8033f0d784c4d6932394958d743e"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\internal\\exit_with_errorlevel.bat",
+      "bytes": 562,
+      "sha256": "f4014bd05cc24391ff28f7bd5b22949cc80f0bb66ab9eda512c9c3997f0283e0"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.yaml",
+      "bytes": 6215,
+      "sha256": "d703ed2f5467e37193640b26522839137430af10b631f36c0d89a54f3236172f"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\pubspec.lock",
+      "bytes": 22135,
+      "sha256": "097571421b53ac57c9b72523ee5d2ae584c3d6ba58412f8cbe3af35c55c5593a"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\.dart_tool\\package_config.json",
+      "bytes": 20035,
+      "sha256": "49d0a9ce1c70ca6edd29537570cfe7ea6539843da50c6a85a107d829330150e8"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\wintypes.py",
+      "bytes": 5831,
+      "sha256": "4d9150e8603bd922e9dbee8a5e9cf1379cf599a382b09a5cbf09bed520f6c459"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\__init__.py",
+      "bytes": 89075,
+      "sha256": "96f6567584375b47e5719796d6f6cde50828487baaa1f5c19ccc4764bcf082b5"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_common.py",
+      "bytes": 29592,
+      "sha256": "b4f13b615cc2d19201859cd8773a8e16787e81e25500b6f2058dd3480c00497c"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psaix.py",
+      "bytes": 18817,
+      "sha256": "08504bc148bc0d1e4ab030b4c82b348e52ed2dfd9d861c8602b0211bfb9da8af"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psbsd.py",
+      "bytes": 32727,
+      "sha256": "51777e41751593f1ffc1b1475addafb21702856c41acfc27dfc3d7d077985dfa"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_pslinux.py",
+      "bytes": 88323,
+      "sha256": "c0a4f57371d7f1786767cb03357d6188a45b563ee9e7701227a55a9e229ac6ce"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psosx.py",
+      "bytes": 16421,
+      "sha256": "2f014fe80b4aa768733564526922da58707a9e1d4288a48cbbf2af3f9d34f481"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psposix.py",
+      "bytes": 7349,
+      "sha256": "009c726913dfd61f1dc93f6b9ec17c73ea6c1f05c46caa9a344b7738e9b866e9"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_pssunos.py",
+      "bytes": 25654,
+      "sha256": "079f056382636df9ddadd99b115ed0197ea5562d2ffbe57e83f1f1b20f79f0c3"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psutil_windows.pyd",
+      "bytes": 67072,
+      "sha256": "9c7fc855d9d1614e70705c7dcc6f4ac3cdcab5adfeb6a67d382f5ade09eadc15"
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_pswindows.py",
+      "bytes": 37052,
+      "sha256": "8acfc2ab7c8cb859ea1947e939e894f285b365035698affe5ededab1bf180aee"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.exe",
+      "bytes": 301368,
+      "sha256": "362a356ce7f0940ec74f73a8fc2c990a2cc24a38a11c90bbd8eca947110ad139"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\pwsh.dll",
+      "bytes": 157496,
+      "sha256": "3046ed02928f5d8f78bb3106a861984498d4dc5f80e69a1d5bc7eeb911f0fa90"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\System.Management.Automation.dll",
+      "bytes": 19646264,
+      "sha256": "2d8af026e589c5603629bfc3e7c57265b4167b12eca3ae549c6a6c3ca7e4967b"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\Microsoft.PowerShell.Commands.Management.dll",
+      "bytes": 1124152,
+      "sha256": "40818818dd94a5fa1f53043e33d31d8312adad24ef61b06481dfae4c45d6e677"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\Microsoft.PowerShell.Commands.Utility.dll",
+      "bytes": 1652504,
+      "sha256": "2f6201bb3caf4c08158be733e786dd85b11537694f7e6ab40356fc0727a3596f"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\System.Diagnostics.Process.dll",
+      "bytes": 329512,
+      "sha256": "2b4871e02b366113c6ccf3b1436fadde5e69fc0a3e3ac421e2fa0f7af8c2bc3b"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\coreclr.dll",
+      "bytes": 4614440,
+      "sha256": "c98c3078a4f2495dd7d3ced967c7a6981545194ed163454703580b740f435521"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\clrjit.dll",
+      "bytes": 2092328,
+      "sha256": "e7bf743e7bf9a01c8c2bcdc0d828212fd8dfc285be9d4ec21962becf456df648"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\.cache\\codex-runtimes\\codex-primary-runtime\\dependencies\\native\\powershell\\hostfxr.dll",
+      "bytes": 379728,
+      "sha256": "44f97e946b36415176dbc56a4426565a5e9b3e722c0ad579e20a749e3c0c7bcd"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\seal-static-source.json",
+      "bytes": 80347,
+      "sha256": "2104f13ce6933043f3ca24be468d2644de36cfdb51c80c26571935307cf362fa"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\source-manifest.json",
+      "bytes": 246807,
+      "sha256": "3adaceffd81db09ffd0b41e2c83bc4d8eb435563ef335bd8ab8a47ce9dedb032"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\source-directory-list.json",
+      "bytes": 24972,
+      "sha256": "863a33480397b52751e470fdc0fc06dbe13da8f40ebf918ffc65234255cdc65f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\dependency-library-pins.json",
+      "bytes": 360173,
+      "sha256": "b38f1519381b158ed485834df4ea1e4aaa96ea59386157e7fd0f2544b121bc40"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+      "bytes": 15764,
+      "sha256": "8f20ecafd7053d93555ab0a6dba15457f3c37c7eda256d5268d209290794db24"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\generated\\guardian-package_config.json",
+      "bytes": 15764,
+      "sha256": "8f20ecafd7053d93555ab0a6dba15457f3c37c7eda256d5268d209290794db24"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\.dart_tool\\package_config.json",
+      "bytes": 15171,
+      "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\full-regression-183-bindings.json",
+      "bytes": 85242,
+      "sha256": "e1987382f4430c94f6ccc42be73563ee98a05b9beb52956f2cfe4fd571b0f5b7"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\expected-cases.json",
+      "bytes": 47372,
+      "sha256": "224a56311f1bcee9c5fe4738614c9df4511c2643f7111cc0f81866fd65104419"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\cache-vm-projection.json",
+      "bytes": 773556,
+      "sha256": "ee4f3853085b4f0cf2ef31f231672a0b0531544cc55ca07ea91fa42fc4a564c5"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261021-r1\\out\\cache-content-20261021-r1.json",
+      "bytes": 725122,
+      "sha256": "0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\manifest.json",
+      "bytes": 2872,
+      "sha256": "f088c5b70ffab3c75e2ebc7fa381cc23350903f54b60ea4d45ab3c9794fb0370"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\reporter_contract.py",
+      "bytes": 14369,
+      "sha256": "fe10ca0eab38e40d9edddb6c5d53101ef2b134dcad931189b378b59f9f32bcf6"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\expected-vm35-cases.json",
+      "bytes": 15481,
+      "sha256": "dad42332d72a01db3f02ba71772cecbe584e67ea0dade4b2b9d8241de5a678cc"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\expected-vm35-cases.json",
+      "bytes": 15481,
+      "sha256": "dad42332d72a01db3f02ba71772cecbe584e67ea0dade4b2b9d8241de5a678cc"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\attempt\\request.json",
+      "bytes": 297,
+      "sha256": "edf5d85eb0d548b264e114cda8c583cb8af4f7a6ef14535e84432fa2964709ab"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\attempt\\result.json",
+      "bytes": 79282,
+      "sha256": "73c9f0545d886d5cae27aeff041533a8d10850a15495ce5df224910b5ba81c8e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\attempt\\receipt.json",
+      "bytes": 68933,
+      "sha256": "2ad39748a4f88a26b36b02a07cafe8f09701e912b4cafce167e898cd8e72bfb0"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\attempt\\launch.json",
+      "bytes": 1962,
+      "sha256": "c061c2a8d0423b29a660748dafd8172f4b1e25210686082e770a5974eb2a5ba0"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\attempt\\preflight-pins.json",
+      "bytes": 1974,
+      "sha256": "cb925033d4bbffce25d39a68672f5379c569d6bdb72c83e6fa3125caa0af7da2"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\attempt\\postflight-pins.json",
+      "bytes": 1973,
+      "sha256": "06b1cd9c0f354aaaca977e813bdb11f45795249ed8b2c00c5a8a23ee7673758d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\attempt\\initial-gate.json",
+      "bytes": 46178,
+      "sha256": "ee1113cdda7e6768cdd702d0213263da7db8fbf939aa2cd9e46c88ca3fedb786"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\attempt\\launch-gate.json",
+      "bytes": 45247,
+      "sha256": "79f5ca3d8837e7f8be6e0963cc58e5ff583d4285cc699c4b648e15d4a60c3c9d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\attempt\\postflight-gate.json",
+      "bytes": 44875,
+      "sha256": "ff6d4c3d856dec0a3141293b24a42db9f65ebd59dea7ad5948579f99d82a9429"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\attempt\\out\\tests.jsonl",
+      "bytes": 22282,
+      "sha256": "1b3e33390c9bdf8e3885c22764cc43ca59af6e21579972e3429a0ed2bc48d127"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\attempt\\out\\tests.jsonl",
+      "bytes": 22282,
+      "sha256": "1b3e33390c9bdf8e3885c22764cc43ca59af6e21579972e3429a0ed2bc48d127"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\attempt\\reporter-validation.json",
+      "bytes": 10357,
+      "sha256": "2129379157fe532822c6a4954e76578d0c1855f66aa57a89905ff8549b9d57c2"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\attempt\\reporter-validation.json",
+      "bytes": 10357,
+      "sha256": "2129379157fe532822c6a4954e76578d0c1855f66aa57a89905ff8549b9d57c2"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\attempt\\out\\tests.jsonl",
+      "bytes": 22282,
+      "sha256": "1b3e33390c9bdf8e3885c22764cc43ca59af6e21579972e3429a0ed2bc48d127"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\attempt\\reporter-validation.json",
+      "bytes": 10357,
+      "sha256": "2129379157fe532822c6a4954e76578d0c1855f66aa57a89905ff8549b9d57c2"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\reporter_contract.py",
+      "bytes": 14369,
+      "sha256": "fe10ca0eab38e40d9edddb6c5d53101ef2b134dcad931189b378b59f9f32bcf6"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\expected-vm35-cases.json",
+      "bytes": 15481,
+      "sha256": "dad42332d72a01db3f02ba71772cecbe584e67ea0dade4b2b9d8241de5a678cc"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\attempt\\worker-console.log",
+      "bytes": 103,
+      "sha256": "eebe5dff0f7aa83c1555c2af13b439603ebfaf37a0a4ffdf3cea8c23b7d34aa4"
+    }
+  ]
+}

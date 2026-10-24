@@ -1,0 +1,81 @@
+{
+  "status": "R2_MANAGER_TARGET_EXPLICIT_PROOF_STATIC_AUDIT_NOT_APPLICATION_ACCEPTANCE",
+  "r1InventoryCount": 14,
+  "r1InventoryStillByteExact": true,
+  "fiveBaseFilesByteExact": true,
+  "inputOnlyChangesAfterPathNormalization": [
+    "createdAtUtc",
+    "ownedChromeEvidenceCode",
+    "ownedChromeNativeQualification"
+  ],
+  "managerGuardByteIdenticalInWorkerHostAndIndependentPost": true,
+  "managerFieldExactKeys": [
+    "scheme",
+    "host",
+    "port"
+  ],
+  "managerScheme": "ws",
+  "managerHostTypedLoopbackAndExactlyTestTargetHost": true,
+  "managerPortTypedIntAndExactlyTestTargetPort": true,
+  "oldBooleanNotSufficientForAcceptance": true,
+  "runtimeCount": 43,
+  "originalVM35GuardsInverseChecked": true,
+  "newObserver": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\owned_chrome_evidence.py",
+    "bytes": 20833,
+    "sha256": "4a5d49f4e55d583478a423532e9997eb8ea6e3f7da9ab4d1e1ea8c5cde29bf72"
+  },
+  "newReadOnlyQualification": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\observer-native-qualification-binding.json",
+    "bytes": 1301,
+    "sha256": "b9f4a050b45033e618b17f2f11ab8f14b283c21e11cb9235cc008af48d5e0dbb"
+  },
+  "patches": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\r2-vs-r1-0-inputs.json.patch",
+      "bytes": 3401,
+      "sha256": "673cf94988fec42f9d8e59f89143bf078d331e0e273f17552a47ae8136979434"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\r2-vs-r1-1-proposal.json.patch",
+      "bytes": 1639,
+      "sha256": "e849cfac0a1dc7cd5111d3971928dad39105bbd1c21c7b37910f93e2051cf0be"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\r2-vs-r1-2-worker.py.patch",
+      "bytes": 2483,
+      "sha256": "956bbf2e13025a99b66b52b21a7a49f3fc06dd2eb43c5914f6681aeb9dcfa570"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\r2-vs-r1-3-analysis-host.py.patch",
+      "bytes": 2711,
+      "sha256": "dfda19710adbce30c900b15c0aba67628b06bd3b1f54b712dfbda845c06dc875"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\r2-vs-r1-4-chrome-evidence-json-guard.fragment.patch",
+      "bytes": 1905,
+      "sha256": "d83a786c7b0d9b6f10177e2ae1b84ff7a832ea057c3daf5a6ec95023bed08675"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\r2-vs-r1-5-owned_chrome_evidence.py.patch",
+      "bytes": 715,
+      "sha256": "85186ea9e2f7edce0077f319bc847df90c2a7d5e377c3c3425a06b22e0bd63c4"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\r2-vs-r1-6-post.py.patch",
+      "bytes": 3794,
+      "sha256": "5dc30eb9e6f12b5155c2350dd5be8c8d6c5010b1984ad3a9ba66df15029e17be"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\r2-vs-r1-7-guardian-browser13-root-launch-20261024-r2-manager-proof.ps1.patch",
+      "bytes": 1112,
+      "sha256": "cf44eaf8ec5e01c97bde34663a153c073db037bd8d933eaefeb7ac5a5c0b0e3c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\r2-vs-r1-8-guardian-browser13-release-20261024-r2-manager-proof.ps1.patch",
+      "bytes": 817,
+      "sha256": "a2daf31eaf33ea099a173b2d6bdb12d46dea2394b87e38a643692a4fc12037de"
+    }
+  ],
+  "sdkChromeAstNetworkGrantAttemptOrGitMutationByThisAudit": false
+}

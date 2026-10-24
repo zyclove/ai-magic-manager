@@ -1,0 +1,52 @@
+{
+  "status": "VM35_NOT_ACCEPTED_OR_RELEASE_INCOMPLETE",
+  "atUtc": "2026-10-24T09:00:02.7762135Z",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "actualRootToolTerminalChunk": "0f8647",
+  "actualRootToolExitCode": 0,
+  "actualPostToolTerminalChunk": "feb663",
+  "actualPostToolExitCode": 0,
+  "hostPid": 85604,
+  "hostCreationFiletime": "134373058807989197",
+  "hostExitFiletime": "134373059352887980",
+  "fixedLauncherDisposedOwnHostHandle": true,
+  "ownLiveSdkHandle": false,
+  "sdkCount": 2,
+  "sdkProcesses": [
+    {
+      "Id": 117296,
+      "ProcessName": "runner.test"
+    },
+    {
+      "Id": 133136,
+      "ProcessName": "go"
+    }
+  ],
+  "unknownCount": 0,
+  "knownOwnedPids": [
+    85604,
+    89092,
+    118564
+  ],
+  "availableRamBytes": 9879109632,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 3337162752
+    },
+    {
+      "Name": "D",
+      "Free": 6778941440
+    }
+  ],
+  "processInventoryFile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\root-attempt\\post-process-inventory.json",
+  "processInventorySha256": "ded1b9978d8c8224f5cb72d5c10b0f0d4b472d603940623e0e40214307245d8a",
+  "fixedPostFile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-post-20261024-r1\\post.json",
+  "fixedPostSha256": "27d360059ccda8a6ff8caefcb275f95d9a27b074bd4c6d23aab3c3105c803521",
+  "resultConsistent": true,
+  "windowReleased": false,
+  "testAccepted": false,
+  "applicationTestsRun": true,
+  "deployed": false,
+  "nextSdkGrant": false
+}

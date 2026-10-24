@@ -1,0 +1,37 @@
+{
+  "status": "FILE_ONLY_DIAGNOSTIC_DELTA_PROVEN",
+  "r2Base": {
+    "bytes": 20833,
+    "sha256": "4a5d49f4e55d583478a423532e9997eb8ea6e3f7da9ab4d1e1ea8c5cde29bf72"
+  },
+  "newObserver": {
+    "bytes": 29439,
+    "sha256": "34e80553205db29267baf4299821ff40111adbc79bd2e83e49fbf20282eb5a3f"
+  },
+  "entireR2ReverseByteExact": true,
+  "unchangedRegions": [
+    {
+      "name": "NativeReaderABI",
+      "bytes": 7030,
+      "sha256": "e5e32bc2f241ee274a662fd78d1bf71f8f28a58899c7a182d7c734f975156642"
+    },
+    {
+      "name": "argvAndListenerParsers",
+      "bytes": 5786,
+      "sha256": "9f62380a1783291b2a5998212cb8ae816be3ec4b39f2b3191073f0fce107e037"
+    },
+    {
+      "name": "profileAndListenerMethods",
+      "bytes": 1857,
+      "sha256": "ef5acf896345f8153492801fab9e410f15e9603e0530f7162fab825a7753c768"
+    },
+    {
+      "name": "finishSchemaAndAcceptance",
+      "bytes": 1443,
+      "sha256": "ed7913c600f2e92b5d4cc0e048c671acd0245903a565a80bb525964fbf911e1a"
+    }
+  ],
+  "nativeJobAndProviderByteExact": true,
+  "pureMockedChecks": 10,
+  "sdkOrChromeOrRealProcessOrNetworkCallsByThisCheck": false
+}

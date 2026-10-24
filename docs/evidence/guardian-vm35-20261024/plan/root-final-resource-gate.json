@@ -1,0 +1,19 @@
+{
+  "atUtc": "2026-10-24T08:53:49.7248064Z",
+  "sdk": [],
+  "unknown": [],
+  "availableRamBytes": 10099617792,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 3394019328
+    },
+    {
+      "Name": "D",
+      "Free": 6854901760
+    }
+  ],
+  "sdkGrantExists": false,
+  "rootAttemptExists": false,
+  "workerAttemptExists": false
+}

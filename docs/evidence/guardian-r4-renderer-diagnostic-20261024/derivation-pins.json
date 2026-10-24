@@ -1,0 +1,103 @@
+{
+  "status": "EXPLICIT_ROOT_AUTHORIZED_SINGLE_RED_RENDERER_DIAGNOSTIC_ENTRYPOINT_PREPARED_NOT_EXECUTED",
+  "original": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r4-wrapper-readback-20261024-r1\\readback.py",
+    "bytes": 18242,
+    "sha256": "b98447cbb1d4d6fea657d79c332430f63494c0b9da99c6f48db223408e9e8854"
+  },
+  "derived": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r4-red-renderer-diagnostic-20261024-r1\\readback.py",
+    "bytes": 24247,
+    "sha256": "40ad99a90102f0b7d7db3b2ef4b0abd965f17c8769d3405eae3daf2eb30d860c"
+  },
+  "patch": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r4-red-renderer-diagnostic-20261024-r1\\red-entrypoint-vs-original.patch",
+    "bytes": 9723,
+    "sha256": "5af77621ebcb293c0708d7a621b9d13a9f1cf2714fd837a0336e2c29d0abdb1c"
+  },
+  "inverseToOriginalExact": true,
+  "changes": [
+    {
+      "old": "import json\n",
+      "new": "import json\nimport ipaddress\nimport math\n",
+      "count": 1,
+      "replacementBytePositions": [
+        382
+      ]
+    },
+    {
+      "old": "    value = json.loads(raw)\n",
+      "new": "    value = json.loads(raw)\n    require(type(value) is dict and set(value) == {\n        'schemaVersion', 'status', 'chromeRoots', 'problems', 'sampleCalls',\n        'pinnedBrowserPath', 'temporaryRoot', 'commandCreationFiletime',\n        'observationDeadlineQpc', 'commandLineSource', 'debugBindingProof',\n        'foreignCommandLinesRead', 'processesTerminated', 'environmentRead',\n        'nativeReadPathQualificationSeparate'}, 'UNKNOWN_TOP_EVIDENCE_FIELDS')\n    require(type(value['schemaVersion']) is int and type(value['sampleCalls']) is int\n            and 0 < value['sampleCalls'] <= 100000\n            and value['nativeReadPathQualificationSeparate'] is True,\n            'RED_DIAGNOSTIC_TOP_TYPES_REFUSED')\n",
+      "count": 1,
+      "replacementBytePositions": [
+        3008
+      ]
+    },
+    {
+      "old": "and value.get('status') == 'OWNED_CHROME_BOUNDARIES_OBSERVED'\n            and value.get('problems') == []",
+      "new": "and value.get('status') == 'NOT_ACCEPTED'\n            and value.get('problems') == ['OWN_JOB_MEMBER_IDENTITY_UNPROVED']",
+      "count": 1,
+      "replacementBytePositions": [
+        3805
+      ]
+    },
+    {
+      "old": "    root = roots[0]\n",
+      "new": "    root = roots[0]\n    require(type(root) is dict and set(root) == {\n        'pid', 'creationFiletime', 'commandCreationFiletime', 'imagePath', 'profile',\n        'debuggingPort', 'testServerOrigins', 'testTargets', 'managerTarget', 'headless',\n        'argvTestTargetLoopback', 'flutterManagerTargetSameLoopbackOrigin',\n        'commandLineUtf16Sha256', 'commandLineReadBeforeQpc', 'commandLineReadAfterQpc',\n        'sameReadHandleVerified', 'ownedMembershipVerifiedBeforeAndAfter', 'liveBeforeAndAfter',\n        'observedQpc', 'debugListenerAddresses', 'listenerReadBeforeQpc', 'listenerReadAfterQpc',\n        'listenerSameHandleIdentityVerifiedBeforeAndAfter', 'debugBindingLoopbackObserved'},\n        'UNKNOWN_ROOT_EVIDENCE_FIELDS')\n    require(type(root['pid']) is int and root['pid'] > 0\n            and type(root['creationFiletime']) is int and type(value['commandCreationFiletime']) is int\n            and root['creationFiletime'] >= value['commandCreationFiletime'] > 0\n            and type(root['commandCreationFiletime']) is int\n            and root['commandCreationFiletime'] == value['commandCreationFiletime']\n            and type(root['commandLineUtf16Sha256']) is str\n            and re.fullmatch('[0-9a-f]{64}', root['commandLineUtf16Sha256']) is not None,\n            'ROOT_IDENTITY_EVIDENCE_REFUSED')\n    times = [root[key] for key in ('commandLineReadBeforeQpc', 'commandLineReadAfterQpc',\n        'listenerReadBeforeQpc', 'listenerReadAfterQpc', 'observedQpc')]\n    require(all(type(item) is float and math.isfinite(item) for item in times)\n            and type(value['observationDeadlineQpc']) is float and math.isfinite(value['observationDeadlineQpc'])\n            and 0 <= times[0] <= times[1] <= times[2] <= times[3] == times[4] < value['observationDeadlineQpc'],\n            'ROOT_ORIGINAL_OBSERVATION_TIMES_REFUSED')\n    require(type(root['debuggingPort']) is int and 0 < root['debuggingPort'] < 65536,\n            'ROOT_DEBUG_PORT_REFUSED')\n    listeners = root['debugListenerAddresses']\n    require(type(listeners) is list and 1 <= len(listeners) <= 32, 'ROOT_LISTENER_EVIDENCE_MISSING')\n    seen = set()\n    for listener in listeners:\n        require(type(listener) is dict and set(listener) == {'address', 'port', 'family', 'status'}\n                and type(listener['address']) is str and type(listener['port']) is int\n                and listener['port'] == root['debuggingPort'] and listener['status'] == 'LISTEN'\n                and listener['family'] in ('AF_INET', 'AF_INET6'), 'ROOT_LISTENER_SCHEMA_REFUSED')\n        address = ipaddress.ip_address(listener['address'])\n        require(address.is_loopback and ((address.version == 4 and listener['family'] == 'AF_INET')\n                or (address.version == 6 and listener['family'] == 'AF_INET6')), 'ROOT_LISTENER_NOT_LOOPBACK')\n        entry = (str(address), listener['port'], listener['family'], listener['status'])\n        require(entry not in seen, 'ROOT_LISTENER_DUPLICATE')\n        seen.add(entry)\n",
+      "count": 1,
+      "replacementBytePositions": [
+        4567
+      ]
+    },
+    {
+      "old": "def main():\n",
+      "new": "def released_red_window():\n    release_path = BASE / 'root-attempt/release.json'\n    raw = bounded_file(release_path, 65536)\n    require(digest(raw) == '79349c826905af25224eb20469f39750bc85c0f93e02ebb13b8a5d1534f7c4db',\n            'FIXED_ACTUAL_RELEASE_BYTES_CHANGED')\n    value = json.loads(raw)\n    require(type(value) is dict and set(value) == {\n        'status', 'atUtc', 'sourceCommit', 'actualRootToolTerminalChunk', 'actualRootToolExitCode',\n        'actualPostToolTerminalChunk', 'actualPostToolExitCode', 'hostPid', 'hostCreationFiletime',\n        'hostExitFiletime', 'fixedLauncherDisposedOwnHostHandle', 'ownLiveSdkHandle', 'sdkCount',\n        'sdkProcesses', 'unknownCount', 'knownOwnedPids', 'availableRamBytes', 'disks',\n        'processInventoryFile', 'processInventorySha256', 'fixedPostFile', 'fixedPostSha256',\n        'resultConsistent', 'windowReleased', 'testAccepted', 'applicationTestsRun', 'deployed',\n        'nextSdkGrant'}, 'UNKNOWN_RELEASE_FIELDS')\n    require(value['status'] == 'BROWSER13_NOT_ACCEPTED_OR_RELEASE_INCOMPLETE'\n            and value['sourceCommit'] == '006ee45850c9b6b0f90570d9478bced3beb0e0fe'\n            and value['windowReleased'] is True and value['ownLiveSdkHandle'] is False\n            and value['fixedLauncherDisposedOwnHostHandle'] is True\n            and type(value['sdkCount']) is int and value['sdkCount'] == 0 and value['sdkProcesses'] == []\n            and type(value['unknownCount']) is int and value['unknownCount'] == 0\n            and value['testAccepted'] is False and value['resultConsistent'] is False,\n            'ACTUAL_RELEASE_NOT_COMPLETE_RED_AND_SDK_ZERO')\n    return raw\n\n\ndef main():\n",
+      "count": 1,
+      "replacementBytePositions": [
+        19827
+      ]
+    },
+    {
+      "old": "'kind': 'FILE_ONLY_WRAPPER_READBACK_NOT_APPLICATION_TEST',",
+      "new": "'kind': 'DIAGNOSTIC_RENDERER_FACTS_NOT_TEST_ACCEPTANCE', 'testAccepted': False,\n              'overallChromeBoundariesAccepted': False, 'thirteenApplicationCasesPassed': False,",
+      "count": 1,
+      "replacementBytePositions": [
+        21897
+      ]
+    },
+    {
+      "old": "        raw = bounded_file(EVIDENCE, 2 * 1024 * 1024)\n",
+      "new": "        release_raw = released_red_window()\n        raw = bounded_file(EVIDENCE, 2 * 1024 * 1024)\n        require(digest(raw) == 'e0dcd84c8e69fde9e81362f0294c1d029448e10d7f9a3d21df63abec4ca4105e',\n                'FIXED_ACTUAL_RED_CHROME_EVIDENCE_CHANGED')\n",
+      "count": 1,
+      "replacementBytePositions": [
+        22344
+      ]
+    },
+    {
+      "old": "        result.update(status='OWNED_CACHED_WRAPPER_HTML_RENDERER_PRECISELY_ASSOCIATED',\n",
+      "new": "        require(released_red_window() == release_raw, 'RELEASE_CHANGED_DURING_READBACK')\n        result.update(status='OWNED_CACHED_WRAPPER_HTML_RENDERER_PRECISELY_ASSOCIATED',\n            release={'path': str(BASE / 'root-attempt/release.json'), 'bytes': len(release_raw), 'sha256': digest(release_raw)},\n            overallEvidenceStatusRetained='NOT_ACCEPTED',\n            stickyProblemsRetained=['OWN_JOB_MEMBER_IDENTITY_UNPROVED'],\n",
+      "count": 1,
+      "replacementBytePositions": [
+        22846
+      ]
+    },
+    {
+      "old": "OWNED_CACHED_WRAPPER_HTML_RENDERER_PRECISELY_ASSOCIATED",
+      "new": "DIAGNOSTIC_RENDERER_FACTS_NOT_TEST_ACCEPTANCE",
+      "count": 2,
+      "replacementBytePositions": [
+        22965,
+        24135
+      ]
+    }
+  ],
+  "strictKnownTopAndRootAndReleaseFieldSets": true,
+  "onlyAcceptedTopFailure": [
+    "OWN_JOB_MEMBER_IDENTITY_UNPROVED"
+  ],
+  "allOriginalPerRootRequirementsRetained": true,
+  "releaseMustBeCompleteSdkAndUnknownZeroOwnLiveFalse": true,
+  "testAcceptanceAlwaysFalse": true,
+  "cacheProfileNativeSdkBrowserNetworkOrProcessReadByPreparation": false,
+  "syntaxOnlyChecked": true
+}

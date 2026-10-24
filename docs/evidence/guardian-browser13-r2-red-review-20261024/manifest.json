@@ -1,0 +1,22 @@
+{
+  "status": "FILE_ONLY_RED_ARCHIVE_INDEPENDENT_REVIEW",
+  "originalArchiveManifest": "docs/evidence/guardian-browser13-r2-red-20261024/manifest.json",
+  "originalArchiveManifestSha256": "852f7c5103ea223aeb7953ee4b022f6d2e23aba348e9e405fd940072541871a1",
+  "sourceCopies": [
+    {
+      "source": ".cache/guardian-browser13-r2-red-archive-independent-20261024-r1/review.md",
+      "archived": "review.md",
+      "bytes": 2899,
+      "sha256": "309a13348e25c6a70a6f2abe1300f6154a2e2020e687b41124d53998b5ccc18e"
+    },
+    {
+      "source": ".cache/guardian-browser13-r2-red-archive-independent-20261024-r1/pins.json",
+      "archived": "pins.json",
+      "bytes": 42580,
+      "sha256": "94c03f150a532cb76969d73a51bb89e7eb564ad374198070f01c49b205785539"
+    }
+  ],
+  "reviewActualChunk": "d8e43c",
+  "reviewActualExitCode": 0,
+  "testAccepted": false
+}

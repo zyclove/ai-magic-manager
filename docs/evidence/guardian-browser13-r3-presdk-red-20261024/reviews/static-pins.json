@@ -1,0 +1,495 @@
+{
+  "schemaVersion": 1,
+  "createdAtUtc": "2026-10-24T11:23:49.773597+00:00",
+  "status": "INDEPENDENT_STATIC_NO_NEW_BLOCKER_R3_APPLICATION_UNRUN",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "sourceFiles": 413,
+  "fullRegressionRoots": 183,
+  "selectedRoots": 1,
+  "exactVisibleCases": 13,
+  "otherRootsNotNewlySigned": 182,
+  "corePins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\inputs.json",
+      "bytes": 20250,
+      "sha256": "48466d5b67b8ebc13142ed2faf002481d66e483563045749bf3b6c8a63da0f7e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\proposal.json",
+      "bytes": 11059,
+      "sha256": "1473afaec08c0506a1c634b3f40808c6dbe71fde33ae096bf0f8f54e1e38bfbd"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\owned_chrome_evidence.py",
+      "bytes": 29439,
+      "sha256": "34e80553205db29267baf4299821ff40111adbc79bd2e83e49fbf20282eb5a3f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-post-20261024-r3-html-diagnostic\\post.py",
+      "bytes": 54998,
+      "sha256": "f92b71e38b37b5e8d05e9a51ad4422ef7b80e135d460a4f2e5499021045ddd6c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-root-launch-20261024-r3-html-diagnostic.ps1",
+      "bytes": 9235,
+      "sha256": "d1cbfa4167fdc8217fc699cc5a8dbbff6c348486c34add5a2dd136de8fcb0874"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-release-20261024-r3-html-diagnostic.ps1",
+      "bytes": 4449,
+      "sha256": "d6e8cfd39f77916d3d7e0f16d532e80d58a013b7daac4836f504b235c1910dcc"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\binding-pins.json",
+      "bytes": 9864,
+      "sha256": "9a6bf5238c6005b762d926cb3951b09d8bde695126c920766bf15bc81bb30a92"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\r3-html-diagnostic-audit.json",
+      "bytes": 5558,
+      "sha256": "7a90d2458b5d42e704dc72de22dbf54a51b88c52fe19c910968d0042cbd6011c"
+    }
+  ],
+  "sealedSmallFilesRehashed": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\inputs.json",
+      "bytes": 20250,
+      "sha256": "48466d5b67b8ebc13142ed2faf002481d66e483563045749bf3b6c8a63da0f7e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\proposal.json",
+      "bytes": 11059,
+      "sha256": "1473afaec08c0506a1c634b3f40808c6dbe71fde33ae096bf0f8f54e1e38bfbd"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\worker.py",
+      "bytes": 54877,
+      "sha256": "11a446e1655fa6696bc4d6b76be4c7bd2e668022c5313b58e62f8e3b4ff43a8f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\analysis-host.py",
+      "bytes": 34991,
+      "sha256": "960a16cc3a2b51ace6d99417a4fa9249ceadea903394b7d1c1171eb8f8b34107"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\process-inventory.ps1",
+      "bytes": 2439,
+      "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\reporter_contract.py",
+      "bytes": 14280,
+      "sha256": "dcd85cf451b20bd24857cef6726d0f1ebb406c67096146d3d3c82306942b67e8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\owned_chrome_evidence.py",
+      "bytes": 29439,
+      "sha256": "34e80553205db29267baf4299821ff40111adbc79bd2e83e49fbf20282eb5a3f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\chrome-evidence-json-guard.fragment",
+      "bytes": 8819,
+      "sha256": "12c62a6307e9c460b56ee1e58f7b2e930512fba74dd371609401a96370ca0868"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\expected-browser13-cases.json",
+      "bytes": 6343,
+      "sha256": "6ea16bdf3b93fbea589aa95a4aa7a9e808afbe9605938d755fb54d8ce748c340"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\cache-browser-projection.json",
+      "bytes": 773953,
+      "sha256": "3b74998cd55045e58c02b17b3de9151e878d78aab199e85bbcc3ec99d9c30166"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\base-pins.json",
+      "bytes": 5730,
+      "sha256": "2818ef50852305dae2658f1afea520d4ee03f5187cff1941155c9c32cf1b8018"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-native-qualification-binding.json",
+      "bytes": 1307,
+      "sha256": "6e8ba3d2436bfa7ba1c80bad1bb24856f3eca27de6bf8476fd1c297c773a070a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-fixture\\result.json",
+      "bytes": 2321,
+      "sha256": "293eef8510874f37a6679dd932d4abef5ec437c71334ee8234828933507b927d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-fixture-host\\result.json",
+      "bytes": 314,
+      "sha256": "5982a79092aa4138f47350f676b6e8f9421659619494d3949bfbc7bfffd6ab2d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-runtime-pins.json",
+      "bytes": 3331,
+      "sha256": "1513a067e91e755f576484ba381c8f4640cf2586da638eaa0114170611bd34f3"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-diagnostic-pins.json",
+      "bytes": 2331,
+      "sha256": "68796bdc2715e02009863d6b0660ad7ebc49517a1d28777ec2975652e7e60c52"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-diagnostic-byteexact-proof.json",
+      "bytes": 1117,
+      "sha256": "7e5dc748432bbb22d3e7e24d360bee9f47a08759fff5487fe9ad00693ff9c9a8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-member-diagnostic-pure-result-r2.json",
+      "bytes": 1171,
+      "sha256": "62910a1e25d522bf7246a69c05c5212c4d16e5dfd77b58c185a052fa103f54d3"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\binding-pins.json",
+      "bytes": 9864,
+      "sha256": "9a6bf5238c6005b762d926cb3951b09d8bde695126c920766bf15bc81bb30a92"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\control-preparation-pins.json",
+      "bytes": 35822,
+      "sha256": "a425e9ef18678edf4213374ae7c373d736e4708abbd311ddebc1abd490bb765d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\r3-html-diagnostic-audit.json",
+      "bytes": 5558,
+      "sha256": "7a90d2458b5d42e704dc72de22dbf54a51b88c52fe19c910968d0042cbd6011c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\r2-preservation-and-base-copy.json",
+      "bytes": 10973,
+      "sha256": "d5beb104ded150d0560147b85c7e9aabc002c042f81420f50e4d2cfdd5f58fde"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\preparation-review.md",
+      "bytes": 3020,
+      "sha256": "3df855fb6298f60c281ca0d9149b6c7c9dbc926e9ae09d427afa58492aaa942d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-post-20261024-r3-html-diagnostic\\post.py",
+      "bytes": 54998,
+      "sha256": "f92b71e38b37b5e8d05e9a51ad4422ef7b80e135d460a4f2e5499021045ddd6c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-post-20261024-r3-html-diagnostic\\pins.json",
+      "bytes": 24982,
+      "sha256": "abec9ebcb72c7dd288ba82947d83ca4b17e11b0d317892182cdc1899d4bf3af9"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-root-launch-20261024-r3-html-diagnostic.ps1",
+      "bytes": 9235,
+      "sha256": "d1cbfa4167fdc8217fc699cc5a8dbbff6c348486c34add5a2dd136de8fcb0874"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-release-20261024-r3-html-diagnostic.ps1",
+      "bytes": 4449,
+      "sha256": "d6e8cfd39f77916d3d7e0f16d532e80d58a013b7daac4836f504b235c1910dcc"
+    }
+  ],
+  "inputMetadataDescriptorsRehashed": [
+    {
+      "key": "sourceManifest",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\source-manifest.json",
+        "bytes": 246807,
+        "sha256": "3adaceffd81db09ffd0b41e2c83bc4d8eb435563ef335bd8ab8a47ce9dedb032"
+      }
+    },
+    {
+      "key": "dependencyLibraryPins",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\dependency-library-pins.json",
+        "bytes": 360173,
+        "sha256": "b38f1519381b158ed485834df4ea1e4aaa96ea59386157e7fd0f2544b121bc40"
+      }
+    },
+    {
+      "key": "cacheManifest",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\cache-browser-projection.json",
+        "bytes": 773953,
+        "sha256": "3b74998cd55045e58c02b17b3de9151e878d78aab199e85bbcc3ec99d9c30166"
+      }
+    },
+    {
+      "key": "originalPackageConfig",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\.dart_tool\\package_config.json",
+        "bytes": 15171,
+        "sha256": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7"
+      }
+    },
+    {
+      "key": "candidatePackageConfig",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\src\\apps\\guardian\\.dart_tool\\package_config.json",
+        "bytes": 15764,
+        "sha256": "8f20ecafd7053d93555ab0a6dba15457f3c37c7eda256d5268d209290794db24"
+      }
+    },
+    {
+      "key": "candidatePackageConfigTemplate",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\generated\\guardian-package_config.json",
+        "bytes": 15764,
+        "sha256": "8f20ecafd7053d93555ab0a6dba15457f3c37c7eda256d5268d209290794db24"
+      }
+    },
+    {
+      "key": "cacheProjectionParentManifest",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\guardian-baseline-analysis-20261021\\inputs\\cache-content-20261021-r1.json",
+        "bytes": 725122,
+        "sha256": "0027b4f8d65b9054e273b3c98a8b62f8de963fe9b59e054bf750eaae1cc6f3c2"
+      }
+    },
+    {
+      "key": "sourceSeal",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\seal-static-source.json",
+        "bytes": 80347,
+        "sha256": "2104f13ce6933043f3ca24be468d2644de36cfdb51c80c26571935307cf362fa"
+      }
+    },
+    {
+      "key": "sourceDirectoryList",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\source-directory-list.json",
+        "bytes": 24972,
+        "sha256": "863a33480397b52751e470fdc0fc06dbe13da8f40ebf918ffc65234255cdc65f"
+      }
+    },
+    {
+      "key": "fullRegressionInventoryBinding",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\full-regression-183-bindings.json",
+        "bytes": 85242,
+        "sha256": "e1987382f4430c94f6ccc42be73563ee98a05b9beb52956f2cfe4fd571b0f5b7"
+      }
+    },
+    {
+      "key": "expectedCaseContract",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\out\\expected-cases.json",
+        "bytes": 47372,
+        "sha256": "224a56311f1bcee9c5fe4738614c9df4511c2643f7111cc0f81866fd65104419"
+      }
+    },
+    {
+      "key": "qualifiedHostRuntimeManifest",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-supervisor-20261023-r3\\manifest.json",
+        "bytes": 2872,
+        "sha256": "f088c5b70ffab3c75e2ebc7fa381cc23350903f54b60ea4d45ab3c9794fb0370"
+      }
+    },
+    {
+      "key": "processInventoryProvider",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\process-inventory.ps1",
+        "bytes": 2439,
+        "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+      }
+    },
+    {
+      "key": "testCaseContract",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\expected-browser13-cases.json",
+        "bytes": 6343,
+        "sha256": "6ea16bdf3b93fbea589aa95a4aa7a9e808afbe9605938d755fb54d8ce748c340"
+      }
+    },
+    {
+      "key": "reporterContractCode",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\reporter_contract.py",
+        "bytes": 14280,
+        "sha256": "dcd85cf451b20bd24857cef6726d0f1ebb406c67096146d3d3c82306942b67e8"
+      }
+    },
+    {
+      "key": "ownedChromeEvidenceCode",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\owned_chrome_evidence.py",
+        "bytes": 29439,
+        "sha256": "34e80553205db29267baf4299821ff40111adbc79bd2e83e49fbf20282eb5a3f"
+      }
+    },
+    {
+      "key": "ownedChromeNativeQualification",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-native-qualification-binding.json",
+        "bytes": 1307,
+        "sha256": "6e8ba3d2436bfa7ba1c80bad1bb24856f3eca27de6bf8476fd1c297c773a070a"
+      }
+    }
+  ],
+  "runtimePayloadsRehashedByThisReviewer": false,
+  "runtimeDescriptorsCompared": 43,
+  "runtimeRowsEqualR2": true,
+  "cacheProjectionByteExactR2": true,
+  "cachePayloadRehashed": false,
+  "cacheProjectionCounts": {
+    "trees": 70,
+    "fixed": 185,
+    "files": 3689,
+    "bytes": 646535928
+  },
+  "originalR2SmallInventoryRehashed": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\base-pins.json",
+      "bytes": 5724,
+      "sha256": "3e7a45eeb38c9f514f666908b0bf829547b12291dea9ec82262848d45179c7c1"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\inputs.json",
+      "bytes": 20238,
+      "sha256": "7f5252253aa92b29c0fe5e7c7203ef4d5e4d9054d4b47f381e90111dfcddc2c2"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\proposal.json",
+      "bytes": 11057,
+      "sha256": "669a8366f805044f7f9c0b2140b3b69975d86076bf380f1d749134dbb4d0d905"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\binding-pins.json",
+      "bytes": 9830,
+      "sha256": "bba8eb4210958e3dda8b60805d4d4b55bbca7403ec6c8c12306c3d3022ff6d94"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\worker.py",
+      "bytes": 53718,
+      "sha256": "5d16266c0174b07d895b105b38c23f95e2920529f6969bda2671c065d93f3b3d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\analysis-host.py",
+      "bytes": 34989,
+      "sha256": "9e7cc9d97cd04eb81d5e43cd6b19f516a33743abd204ff4a4341aac394915569"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\process-inventory.ps1",
+      "bytes": 2439,
+      "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\reporter_contract.py",
+      "bytes": 14280,
+      "sha256": "dcd85cf451b20bd24857cef6726d0f1ebb406c67096146d3d3c82306942b67e8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\expected-browser13-cases.json",
+      "bytes": 6343,
+      "sha256": "6ea16bdf3b93fbea589aa95a4aa7a9e808afbe9605938d755fb54d8ce748c340"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\cache-browser-projection.json",
+      "bytes": 773953,
+      "sha256": "3b74998cd55045e58c02b17b3de9151e878d78aab199e85bbcc3ec99d9c30166"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\chrome-evidence-json-guard.fragment",
+      "bytes": 8819,
+      "sha256": "12c62a6307e9c460b56ee1e58f7b2e930512fba74dd371609401a96370ca0868"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\owned_chrome_evidence.py",
+      "bytes": 20833,
+      "sha256": "4a5d49f4e55d583478a423532e9997eb8ea6e3f7da9ab4d1e1ea8c5cde29bf72"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\observer-native-qualification-binding.json",
+      "bytes": 1301,
+      "sha256": "b9f4a050b45033e618b17f2f11ab8f14b283c21e11cb9235cc008af48d5e0dbb"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\observer-fixture\\result.json",
+      "bytes": 2320,
+      "sha256": "47d1880dc9b2b8049a98fdbbd28fb62a1083356593881d4d20612b1ebfa81246"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\observer-fixture-host\\result.json",
+      "bytes": 316,
+      "sha256": "048a8b3bebc3a509d4364eb899ceb9a1c1d9e161cccb6dd60e3f6d4878420f05"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\root-sdk-grant.json",
+      "bytes": 3531,
+      "sha256": "4a11cc040a2e94329bbdddbeb5c2a19c3545493b7c2f0175dee32814b0a010b9"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-post-20261024-r2-manager-proof\\post.py",
+      "bytes": 54988,
+      "sha256": "537b8c5e5d880d82ee2c499e53880a840e5810b7b33607742e499c717bbfa90f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-root-launch-20261024-r2-manager-proof.ps1",
+      "bytes": 9233,
+      "sha256": "15456c65e14feaa809d89f9caa44484dcff9b2386a754a38e6bcba3e5ee21f1e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-release-20261024-r2-manager-proof.ps1",
+      "bytes": 4445,
+      "sha256": "5e6437e9766a98a092f83184868714458b0179cb6b6dcaff277fca9746b575a1"
+    }
+  ],
+  "r2TerminalRedPreserved": true,
+  "sixCodeTextInverseToActualR2ByteExact": true,
+  "strictChromeGuardThreeEmbeddingsByteExact": true,
+  "nativeProviderReporterCasesUnchanged": true,
+  "observerFinishSha256": "ed7913c600f2e92b5d4cc0e048c671acd0245903a565a80bb525964fbf911e1a",
+  "qualificationStoredEvidencePins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-fixture\\result.json",
+      "bytes": 2321,
+      "sha256": "293eef8510874f37a6679dd932d4abef5ec437c71334ee8234828933507b927d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-fixture-host\\result.json",
+      "bytes": 314,
+      "sha256": "5982a79092aa4138f47350f676b6e8f9421659619494d3949bfbc7bfffd6ab2d"
+    }
+  ],
+  "pureMockCasesRecorded": 10,
+  "actualQualificationHostSecondsRecorded": 1.7382773,
+  "noGrantNoAttempt": {
+    "root-sdk-grant.json": true,
+    "root-attempt": true,
+    "attempt": true
+  },
+  "newSdkCalls": 0,
+  "newCandidateImportsOrCompiles": 0,
+  "newFixturesOrReplays": 0,
+  "newProcessApiOrNetworkCalls": 0,
+  "gitOperations": 0,
+  "applicationExecution": "UNRUN",
+  "executionGrantCreated": false,
+  "readToolExits": {
+    "c3d897": 0,
+    "8a6c5d": 0,
+    "d9d992": 0,
+    "bdb891": 0,
+    "ded2a0": 0,
+    "703314": 0,
+    "588b41": 0
+  },
+  "correctedReviewerReadFailures": {
+    "b49b51": "wrapper JSON key assumption; corrected bfac97",
+    "29aaf0": "candidate descriptor relative path; corrected d9d992"
+  },
+  "review": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-static-independent-20261024-r3\\review.md",
+    "bytes": 7729,
+    "sha256": "3c992ea4485a0352b1eaeba701fa3416559d67df2ff0e8fa5e4deedf6797e405"
+  }
+}

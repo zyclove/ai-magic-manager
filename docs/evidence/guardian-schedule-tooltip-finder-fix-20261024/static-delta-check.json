@@ -1,0 +1,17 @@
+{
+  "status": "TEST_ONLY_TWO_TYPED_FINDERS_REPLACED_RETEST_UNRUN",
+  "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\editor_submit_guard_test.dart",
+  "bytes": 21581,
+  "sha256": "0e0a0d3f2392bddf6f94f6cbc42dcc93bfcc9b2d3f2fb1aeef8c3044b03fb99b",
+  "onlySpecifiedByteBlockChanged": true,
+  "allOtherBytesIncludingAssertionsUnchanged": true,
+  "testWidgetsDeclarationsBefore": 10,
+  "testWidgetsDeclarationsAfter": 10,
+  "expectCallsBefore": 71,
+  "expectCallsAfter": 71,
+  "caseParametersUnchanged": true,
+  "expectedVisibleCases": 13,
+  "productionBytesUnchanged": true,
+  "sdkOrFormatterOrCompilerRun": false,
+  "gitWrites": 0
+}

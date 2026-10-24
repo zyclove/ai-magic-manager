@@ -1,0 +1,146 @@
+--- D:\codes\mobile\ai-manager\.cache\guardian-browser13-r4-wrapper-readback-20261024-r1\readback.py
++++ D:\codes\mobile\ai-manager\.cache\guardian-browser13-r4-red-renderer-diagnostic-20261024-r1\readback.py
+@@ -8,6 +8,8 @@
+ import argparse
+ import hashlib
+ import json
++import ipaddress
++import math
+ import ntpath
+ import os
+ import re
+@@ -89,9 +91,19 @@
+ 
+ def owned_target(raw):
+     value = json.loads(raw)
++    require(type(value) is dict and set(value) == {
++        'schemaVersion', 'status', 'chromeRoots', 'problems', 'sampleCalls',
++        'pinnedBrowserPath', 'temporaryRoot', 'commandCreationFiletime',
++        'observationDeadlineQpc', 'commandLineSource', 'debugBindingProof',
++        'foreignCommandLinesRead', 'processesTerminated', 'environmentRead',
++        'nativeReadPathQualificationSeparate'}, 'UNKNOWN_TOP_EVIDENCE_FIELDS')
++    require(type(value['schemaVersion']) is int and type(value['sampleCalls']) is int
++            and 0 < value['sampleCalls'] <= 100000
++            and value['nativeReadPathQualificationSeparate'] is True,
++            'RED_DIAGNOSTIC_TOP_TYPES_REFUSED')
+     require(type(value) is dict and value.get('schemaVersion') == 1
+-            and value.get('status') == 'OWNED_CHROME_BOUNDARIES_OBSERVED'
+-            and value.get('problems') == []
++            and value.get('status') == 'NOT_ACCEPTED'
++            and value.get('problems') == ['OWN_JOB_MEMBER_IDENTITY_UNPROVED']
+             and value.get('foreignCommandLinesRead') is False
+             and value.get('processesTerminated') is False and value.get('environmentRead') is False
+             and value.get('commandLineSource') == 'SAME_RETAINED_HANDLE_PBI0_READPROCESSMEMORY'
+@@ -101,6 +113,45 @@
+     roots = value.get('chromeRoots')
+     require(type(roots) is list and len(roots) == 1, 'ONE_UNAMBIGUOUS_OWN_PROFILE_REQUIRED')
+     root = roots[0]
++    require(type(root) is dict and set(root) == {
++        'pid', 'creationFiletime', 'commandCreationFiletime', 'imagePath', 'profile',
++        'debuggingPort', 'testServerOrigins', 'testTargets', 'managerTarget', 'headless',
++        'argvTestTargetLoopback', 'flutterManagerTargetSameLoopbackOrigin',
++        'commandLineUtf16Sha256', 'commandLineReadBeforeQpc', 'commandLineReadAfterQpc',
++        'sameReadHandleVerified', 'ownedMembershipVerifiedBeforeAndAfter', 'liveBeforeAndAfter',
++        'observedQpc', 'debugListenerAddresses', 'listenerReadBeforeQpc', 'listenerReadAfterQpc',
++        'listenerSameHandleIdentityVerifiedBeforeAndAfter', 'debugBindingLoopbackObserved'},
++        'UNKNOWN_ROOT_EVIDENCE_FIELDS')
++    require(type(root['pid']) is int and root['pid'] > 0
++            and type(root['creationFiletime']) is int and type(value['commandCreationFiletime']) is int
++            and root['creationFiletime'] >= value['commandCreationFiletime'] > 0
++            and type(root['commandCreationFiletime']) is int
++            and root['commandCreationFiletime'] == value['commandCreationFiletime']
++            and type(root['commandLineUtf16Sha256']) is str
++            and re.fullmatch('[0-9a-f]{64}', root['commandLineUtf16Sha256']) is not None,
++            'ROOT_IDENTITY_EVIDENCE_REFUSED')
++    times = [root[key] for key in ('commandLineReadBeforeQpc', 'commandLineReadAfterQpc',
++        'listenerReadBeforeQpc', 'listenerReadAfterQpc', 'observedQpc')]
++    require(all(type(item) is float and math.isfinite(item) for item in times)
++            and type(value['observationDeadlineQpc']) is float and math.isfinite(value['observationDeadlineQpc'])
++            and 0 <= times[0] <= times[1] <= times[2] <= times[3] == times[4] < value['observationDeadlineQpc'],
++            'ROOT_ORIGINAL_OBSERVATION_TIMES_REFUSED')
++    require(type(root['debuggingPort']) is int and 0 < root['debuggingPort'] < 65536,
++            'ROOT_DEBUG_PORT_REFUSED')
++    listeners = root['debugListenerAddresses']
++    require(type(listeners) is list and 1 <= len(listeners) <= 32, 'ROOT_LISTENER_EVIDENCE_MISSING')
++    seen = set()
++    for listener in listeners:
++        require(type(listener) is dict and set(listener) == {'address', 'port', 'family', 'status'}
++                and type(listener['address']) is str and type(listener['port']) is int
++                and listener['port'] == root['debuggingPort'] and listener['status'] == 'LISTEN'
++                and listener['family'] in ('AF_INET', 'AF_INET6'), 'ROOT_LISTENER_SCHEMA_REFUSED')
++        address = ipaddress.ip_address(listener['address'])
++        require(address.is_loopback and ((address.version == 4 and listener['family'] == 'AF_INET')
++                or (address.version == 6 and listener['family'] == 'AF_INET6')), 'ROOT_LISTENER_NOT_LOOPBACK')
++        entry = (str(address), listener['port'], listener['family'], listener['status'])
++        require(entry not in seen, 'ROOT_LISTENER_DUPLICATE')
++        seen.add(entry)
+     require(type(root) is dict and all(root.get(key) is True for key in (
+         'headless', 'argvTestTargetLoopback', 'flutterManagerTargetSameLoopbackOrigin',
+         'sameReadHandleVerified', 'ownedMembershipVerifiedBeforeAndAfter', 'liveBeforeAndAfter',
+@@ -310,22 +361,55 @@
+     return {'path': str(path), 'bytes': len(raw), 'sha256': digest(raw)}
+ 
+ 
++def released_red_window():
++    release_path = BASE / 'root-attempt/release.json'
++    raw = bounded_file(release_path, 65536)
++    require(digest(raw) == '79349c826905af25224eb20469f39750bc85c0f93e02ebb13b8a5d1534f7c4db',
++            'FIXED_ACTUAL_RELEASE_BYTES_CHANGED')
++    value = json.loads(raw)
++    require(type(value) is dict and set(value) == {
++        'status', 'atUtc', 'sourceCommit', 'actualRootToolTerminalChunk', 'actualRootToolExitCode',
++        'actualPostToolTerminalChunk', 'actualPostToolExitCode', 'hostPid', 'hostCreationFiletime',
++        'hostExitFiletime', 'fixedLauncherDisposedOwnHostHandle', 'ownLiveSdkHandle', 'sdkCount',
++        'sdkProcesses', 'unknownCount', 'knownOwnedPids', 'availableRamBytes', 'disks',
++        'processInventoryFile', 'processInventorySha256', 'fixedPostFile', 'fixedPostSha256',
++        'resultConsistent', 'windowReleased', 'testAccepted', 'applicationTestsRun', 'deployed',
++        'nextSdkGrant'}, 'UNKNOWN_RELEASE_FIELDS')
++    require(value['status'] == 'BROWSER13_NOT_ACCEPTED_OR_RELEASE_INCOMPLETE'
++            and value['sourceCommit'] == '006ee45850c9b6b0f90570d9478bced3beb0e0fe'
++            and value['windowReleased'] is True and value['ownLiveSdkHandle'] is False
++            and value['fixedLauncherDisposedOwnHostHandle'] is True
++            and type(value['sdkCount']) is int and value['sdkCount'] == 0 and value['sdkProcesses'] == []
++            and type(value['unknownCount']) is int and value['unknownCount'] == 0
++            and value['testAccepted'] is False and value['resultConsistent'] is False,
++            'ACTUAL_RELEASE_NOT_COMPLETE_RED_AND_SDK_ZERO')
++    return raw
++
++
+ def main():
+     parser = argparse.ArgumentParser(description=__doc__)
+     parser.add_argument('--after-root-release', action='store_true', required=True,
+                         help='Root confirms the actual SDK window ended and release finished.')
+     parser.parse_args()
+     require(not (HERE / 'result.json').exists(), 'SINGLE_USE_READBACK_ALREADY_CONSUMED')
+-    result = {'schemaVersion': 1, 'status': 'NOT_ACCEPTED', 'kind': 'FILE_ONLY_WRAPPER_READBACK_NOT_APPLICATION_TEST',
++    result = {'schemaVersion': 1, 'status': 'NOT_ACCEPTED', 'kind': 'DIAGNOSTIC_RENDERER_FACTS_NOT_TEST_ACCEPTANCE', 'testAccepted': False,
++              'overallChromeBoundariesAccepted': False, 'thirteenApplicationCasesPassed': False,
+               'sdkBrowserProcessOrNetworkStarted': False, 'foreignProfilesRead': False,
+               'managerQueryOrRawCommandLineSaved': False, 'wholeProfileCopiedOrHashed': False,
+               'absenceOfCanvasKitCacheEntriesClaimedAsNetworkAbsence': False}
+     try:
++        release_raw = released_red_window()
+         raw = bounded_file(EVIDENCE, 2 * 1024 * 1024)
++        require(digest(raw) == 'e0dcd84c8e69fde9e81362f0294c1d029448e10d7f9a3d21df63abec4ca4105e',
++                'FIXED_ACTUAL_RED_CHROME_EVIDENCE_CHANGED')
+         profile, target, origin = owned_target(raw)
+         association, body, header, files, count = inspect_cache(profile, target, origin)
+         require(bounded_file(EVIDENCE, 2 * 1024 * 1024) == raw, 'OWN_EVIDENCE_CHANGED_DURING_READBACK')
+-        result.update(status='OWNED_CACHED_WRAPPER_HTML_RENDERER_PRECISELY_ASSOCIATED',
++        require(released_red_window() == release_raw, 'RELEASE_CHANGED_DURING_READBACK')
++        result.update(status='DIAGNOSTIC_RENDERER_FACTS_NOT_TEST_ACCEPTANCE',
++            release={'path': str(BASE / 'root-attempt/release.json'), 'bytes': len(release_raw), 'sha256': digest(release_raw)},
++            overallEvidenceStatusRetained='NOT_ACCEPTED',
++            stickyProblemsRetained=['OWN_JOB_MEMBER_IDENTITY_UNPROVED'],
+             evidence={'path': str(EVIDENCE), 'bytes': len(raw), 'sha256': digest(raw)},
+             ownedProfile=str(profile), cacheFiles=files, totalCacheBytesRead=count,
+             preciseEntryAssociation=association,
+@@ -336,7 +420,7 @@
+                       errorCode=str(failure) if isinstance(failure, ReadbackRejected) else 'UNEXPECTED_FILE_OR_FORMAT_ERROR')
+     pin = create('result.json', (json.dumps(result, indent=2, ensure_ascii=True) + '\n').encode('utf-8'))
+     print(json.dumps({'status': result['status'], 'result': pin}))
+-    return 0 if result['status'] == 'OWNED_CACHED_WRAPPER_HTML_RENDERER_PRECISELY_ASSOCIATED' else 1
++    return 0 if result['status'] == 'DIAGNOSTIC_RENDERER_FACTS_NOT_TEST_ACCEPTANCE' else 1
+ 
+ 
+ if __name__ == '__main__':

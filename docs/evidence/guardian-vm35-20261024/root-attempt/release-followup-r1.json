@@ -1,0 +1,43 @@
+{
+  "status": "GUARDIAN_VM35_ACCEPTED_AND_WINDOW_RELEASED",
+  "atUtc": "2026-10-24T09:02:17.6505159Z",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "actualRootToolTerminalChunk": "0f8647",
+  "actualRootToolExitCode": 0,
+  "actualPostToolTerminalChunk": "feb663",
+  "actualPostToolExitCode": 0,
+  "hostPid": 85604,
+  "hostCreationFiletime": "134373058807989197",
+  "hostExitFiletime": "134373059352887980",
+  "fixedLauncherDisposedOwnHostHandle": true,
+  "ownLiveSdkHandle": false,
+  "sdkCount": 0,
+  "sdkProcesses": [],
+  "unknownCount": 0,
+  "knownOwnedPids": [
+    85604,
+    89092,
+    118564
+  ],
+  "availableRamBytes": 9994874880,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 3323764736
+    },
+    {
+      "Name": "D",
+      "Free": 6786457600
+    }
+  ],
+  "processInventoryFile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\root-attempt\\post-process-inventory-followup-r1.json",
+  "processInventorySha256": "4a2f473e7d2ca20400815f6724634b9d16e8577154292c5ad03cbb2fa6af2829",
+  "fixedPostFile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-post-20261024-r1\\post.json",
+  "fixedPostSha256": "27d360059ccda8a6ff8caefcb275f95d9a27b074bd4c6d23aab3c3105c803521",
+  "resultConsistent": true,
+  "windowReleased": true,
+  "testAccepted": true,
+  "applicationTestsRun": true,
+  "deployed": false,
+  "nextSdkGrant": false
+}

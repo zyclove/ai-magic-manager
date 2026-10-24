@@ -1,0 +1,546 @@
+{
+  "status": "INDEPENDENT_ACTUAL_FILE_READBACK_CONSISTENT_SELECTED_35_ONLY",
+  "atUtc": "2026-10-24T09:15:16.825118+00:00",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "sourceFiles": 413,
+  "wholeRegressionRoots": 183,
+  "selectedRoots": 4,
+  "exactVisibleCases": 35,
+  "sourceCaseCounts": [
+    15,
+    6,
+    9,
+    5
+  ],
+  "hiddenLoadingCases": 4,
+  "skipped": 0,
+  "errors": 0,
+  "otherRootsUnrun": 179,
+  "scheduleBrowser13NotCovered": true,
+  "rows": [
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/root-sdk-grant.json",
+      "bytes": 2784,
+      "sha256": "36f3217848f16c9c6ce4a5ad3b92b99a09384ec1ff3fd415edae6b9743049115"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/window-amendment.json",
+      "bytes": 338,
+      "sha256": "f1ecb9c1f90e63308753d58a03f2ea59544c2c4418018a46d5a21801756ee028"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/root-final-resource-gate.json",
+      "bytes": 351,
+      "sha256": "fa31f63972872f99d35d09ac62e4143165258e6f1b8b48e72cef502870c1ef91"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/release-followup-proof.json",
+      "bytes": 702,
+      "sha256": "97d9bc2ce4e30be48ed5e91cb4134f98ad007fa5bb2a3b89c6b7f28c080ff9cb"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/no-start-boundary-receipt.json",
+      "bytes": 800,
+      "sha256": "743b61da0ee78902bd8431332746a8d4f9dd4e95e06927e5477ac6b7c78377bc"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/binding-pins.json",
+      "bytes": 21379,
+      "sha256": "92f5cf14cf56e0992ac6fccd505a8995bbd05c26d8491aa6be536add883bdda5"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/inputs.json",
+      "bytes": 17077,
+      "sha256": "56012ab858575ef7f356d4cf1e5ed94815c9e12e53423d889a0168caf1494eb5"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/proposal.json",
+      "bytes": 9204,
+      "sha256": "8d8001ea23ddfc7295e8cb302d0eaa951280bc62ab4698036f4897419d2074d0"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/expected-vm35-cases.json",
+      "bytes": 15481,
+      "sha256": "dad42332d72a01db3f02ba71772cecbe584e67ea0dade4b2b9d8241de5a678cc"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/cache-vm-projection.json",
+      "bytes": 773556,
+      "sha256": "ee4f3853085b4f0cf2ef31f231672a0b0531544cc55ca07ea91fa42fc4a564c5"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/analysis-host.py",
+      "bytes": 25173,
+      "sha256": "f833971d94aeeea5f8b9e503b83cba38f0501cbaa1a8e93eff2a81594526aec8"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/worker.py",
+      "bytes": 42206,
+      "sha256": "08d958d9c87b0a01a462592d541a5a238b39411c47f9e7278b28686f4a452a98"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/reporter_contract.py",
+      "bytes": 14369,
+      "sha256": "fe10ca0eab38e40d9edddb6c5d53101ef2b134dcad931189b378b59f9f32bcf6"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/process-inventory.ps1",
+      "bytes": 2439,
+      "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/root-attempt/preflight.json",
+      "bytes": 704,
+      "sha256": "083ef4e084dacd9d552d0f52320ccaf4a2793fbee51d7a241ea4eef7d1b6187c"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/root-attempt/result.json",
+      "bytes": 1259,
+      "sha256": "750c7d994e55179f23e603c3fbbdeebdf2cd0da144c567a3b1b94753a330e87d"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/root-attempt/release.json",
+      "bytes": 1547,
+      "sha256": "ab369d0b6150fbdf53d974a2fce6d72546c401e4e6d9396b2e52e03fc92215d8"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/root-attempt/release-followup-r1.json",
+      "bytes": 1422,
+      "sha256": "de43b9d795b5a64e23155064c0150c5efbb1ec7bc777163d28e1a89c0b4b4717"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/root-attempt/post-process-inventory.json",
+      "bytes": 30192,
+      "sha256": "ded1b9978d8c8224f5cb72d5c10b0f0d4b472d603940623e0e40214307245d8a"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/root-attempt/post-process-inventory-followup-r1.json",
+      "bytes": 29888,
+      "sha256": "4a2f473e7d2ca20400815f6724634b9d16e8577154292c5ad03cbb2fa6af2829"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/attempt/initial-gate.json",
+      "bytes": 46178,
+      "sha256": "ee1113cdda7e6768cdd702d0213263da7db8fbf939aa2cd9e46c88ca3fedb786"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/attempt/launch-gate.json",
+      "bytes": 45247,
+      "sha256": "79f5ca3d8837e7f8be6e0963cc58e5ff583d4285cc699c4b648e15d4a60c3c9d"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/attempt/launch.json",
+      "bytes": 1962,
+      "sha256": "c061c2a8d0423b29a660748dafd8172f4b1e25210686082e770a5974eb2a5ba0"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/attempt/postflight-gate.json",
+      "bytes": 44875,
+      "sha256": "ff6d4c3d856dec0a3141293b24a42db9f65ebd59dea7ad5948579f99d82a9429"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/attempt/postflight-pins.json",
+      "bytes": 1973,
+      "sha256": "06b1cd9c0f354aaaca977e813bdb11f45795249ed8b2c00c5a8a23ee7673758d"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/attempt/preflight-pins.json",
+      "bytes": 1974,
+      "sha256": "cb925033d4bbffce25d39a68672f5379c569d6bdb72c83e6fa3125caa0af7da2"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/attempt/receipt.json",
+      "bytes": 68933,
+      "sha256": "2ad39748a4f88a26b36b02a07cafe8f09701e912b4cafce167e898cd8e72bfb0"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/attempt/request.json",
+      "bytes": 297,
+      "sha256": "edf5d85eb0d548b264e114cda8c583cb8af4f7a6ef14535e84432fa2964709ab"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/attempt/result.json",
+      "bytes": 79282,
+      "sha256": "73c9f0545d886d5cae27aeff041533a8d10850a15495ce5df224910b5ba81c8e"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/attempt/reporter-validation.json",
+      "bytes": 10357,
+      "sha256": "2129379157fe532822c6a4954e76578d0c1855f66aa57a89905ff8549b9d57c2"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/attempt/worker-console.log",
+      "bytes": 103,
+      "sha256": "eebe5dff0f7aa83c1555c2af13b439603ebfaf37a0a4ffdf3cea8c23b7d34aa4"
+    },
+    {
+      "path": ".cache/guardian-vm35-20261024-r1/attempt/out/tests.jsonl",
+      "bytes": 22282,
+      "sha256": "1b3e33390c9bdf8e3885c22764cc43ca59af6e21579972e3429a0ed2bc48d127"
+    },
+    {
+      "path": ".cache/guardian-vm35-post-20261024-r1/post.py",
+      "bytes": 43678,
+      "sha256": "90a9bff90840a9918736550b9ad8fecc860ecead597ffe331e7fbe1b9560a1c0"
+    },
+    {
+      "path": ".cache/guardian-vm35-post-20261024-r1/post.json",
+      "bytes": 37222,
+      "sha256": "27d360059ccda8a6ff8caefcb275f95d9a27b074bd4c6d23aab3c3105c803521"
+    },
+    {
+      "path": ".cache/guardian-vm35-root-launch-20261024-r1.ps1",
+      "bytes": 9164,
+      "sha256": "183e36dda9a5e4f90b76a1188c8b8f29442cc0bea95d9e4dda9a56e0a88f0ca1"
+    },
+    {
+      "path": ".cache/guardian-vm35-release-20261024-r1.ps1",
+      "bytes": 4392,
+      "sha256": "72e4ac9d0c626c59ce44c1e6d92998110df501a9dd2d447f7a86de8481efd553"
+    },
+    {
+      "path": ".cache/guardian-vm35-release-followup-20261024-r1.ps1",
+      "bytes": 4416,
+      "sha256": "f622d59a35d35a82bf9e3d5b04b23dc2241f6ce8037738802de5757c0d98ff1d"
+    },
+    {
+      "path": ".cache/guardian-vm35-static-independent-20261024-r1/review.md",
+      "bytes": 3253,
+      "sha256": "231e0cdcd4ecfc5c83185cb4f4eed428df6aec48950a00abecee7c10447cacc8"
+    },
+    {
+      "path": ".cache/guardian-vm35-static-independent-20261024-r1/pins.json",
+      "bytes": 7960,
+      "sha256": "37557e4b1f974a3d4c2fd7d6d57cfa513a1181670ee01662262bda065dcf23c0"
+    },
+    {
+      "path": ".cache/guardian-current-20261024-r15-login-schedule/out/pins.json",
+      "bytes": 5287,
+      "sha256": "60de07c26a0e570abc857f12d80fc1250c5436cf2ef7b143c3bca8ac19b6b242"
+    }
+  ],
+  "review": {
+    "path": ".cache/guardian-vm35-actual-independent-20261024-r1/review.md",
+    "bytes": 3950,
+    "sha256": "f5f660b39b8df92c36b63d4f618e5333817d90abb770b3dcf40e46f51f4cdc2a"
+  },
+  "actualVisibleCasesFromRawMatchingPersistedSummaries": [
+    {
+      "selector": "test/dialog_submit_guard_test.dart",
+      "name": "412 draft preserves trimmed text numeric labels and empty fields",
+      "testID": 26,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/dialog_submit_guard_test.dart",
+      "name": "412 preserves the submitted draft and blocks held save callbacks",
+      "testID": 22,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/dialog_submit_guard_test.dart",
+      "name": "access loss during submission hides a late 412 and prevents resubmit",
+      "testID": 25,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/dialog_submit_guard_test.dart",
+      "name": "access loss hides a 412 draft and gives original workspace guidance",
+      "testID": 24,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/dialog_submit_guard_test.dart",
+      "name": "queued edit callbacks submit only once before the next frame",
+      "testID": 21,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/dialog_submit_guard_test.dart",
+      "name": "unknown result retries the same payload before a 412 stops replay",
+      "testID": 23,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/failure_view_test.dart",
+      "name": "changing the correlation ID collapses previously expanded details",
+      "testID": 34,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/failure_view_test.dart",
+      "name": "changing the error code collapses previously expanded diagnostics",
+      "testID": 33,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/failure_view_test.dart",
+      "name": "diagnostics are collapsed by default and toggle selectable details",
+      "testID": 30,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/failure_view_test.dart",
+      "name": "missing correlation IDs do not render an empty tracking label",
+      "testID": 36,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/failure_view_test.dart",
+      "name": "narrow large text keeps recovery and diagnostic details operable",
+      "testID": 38,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/failure_view_test.dart",
+      "name": "reauth remains limited to authentication and unknown failures",
+      "testID": 32,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/failure_view_test.dart",
+      "name": "recovery actions remain available before and after details open",
+      "testID": 31,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/failure_view_test.dart",
+      "name": "unknown errors keep private exception text out of the interface",
+      "testID": 35,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/failure_view_test.dart",
+      "name": "usage report failures share the optional diagnostic disclosure",
+      "testID": 37,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/login_view_test.dart",
+      "name": "keyboard traversal activates login exactly once",
+      "testID": 46,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/login_view_test.dart",
+      "name": "large text in a short desktop window can reach both pane ends",
+      "testID": 43,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/login_view_test.dart",
+      "name": "login remains reachable after opening error details",
+      "testID": 45,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/login_view_test.dart",
+      "name": "narrow window and large text keep the primary login usable",
+      "testID": 44,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/login_view_test.dart",
+      "name": "wide short window keeps login reachable without layout errors",
+      "testID": 42,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "background refresh preserves prior activity and common actions",
+      "testID": 17,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "connection checks take priority over setup",
+      "testID": 5,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "empty workspace opens the existing subject form",
+      "testID": 6,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "established workspace offers reports instead of onboarding",
+      "testID": 9,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "existing subject without devices opens the existing device form",
+      "testID": 7,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "help takes priority over every other task",
+      "testID": 3,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "loading and failures never show ready counts or connection claims",
+      "testID": 12,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "narrow large text keeps urgent action and metrics operable",
+      "testID": 14,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "network retry keeps stale summary until a fresh result arrives",
+      "testID": 16,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "no draft links to rules without claiming rules are absent",
+      "testID": 8,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "pending approvals take priority over connection checks",
+      "testID": 4,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "refresh completion is explicit and active forms block duplicates",
+      "testID": 13,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "stale summary with 503 keeps common actions and previous data",
+      "testID": 15,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "summary links and common actions keep their intended targets",
+      "testID": 10,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    },
+    {
+      "selector": "test/workbench_view_test.dart",
+      "name": "unavailable sections hide counts, actions and audit content",
+      "testID": 11,
+      "result": "success",
+      "skipped": false,
+      "hidden": false
+    }
+  ],
+  "logPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm35-20261024-r1\\attempt\\out\\tests.jsonl",
+    "bytes": 22282,
+    "sha256": "1b3e33390c9bdf8e3885c22764cc43ca59af6e21579972e3429a0ed2bc48d127"
+  },
+  "independentActualFileCheckChunk": "4ff33b",
+  "independentFileCheckNaturalExitCode": 0,
+  "parentProvidedActualToolEvidence": {
+    "rootInitial": "611335",
+    "rootSession": 80843,
+    "rootTerminal": "0f8647",
+    "rootExit": 0,
+    "post": "feb663",
+    "postExit": 0,
+    "initialRelease": "a70fa9",
+    "initialReleaseExit": 1,
+    "followupRelease": "749858",
+    "followupReleaseExit": 0,
+    "boundaryNoStart": "cbfcde",
+    "boundaryNoStartFixedLauncherInvoked": false
+  },
+  "recordedRootNaturalSeconds": 54.5001849,
+  "sdkCallsInOriginalExecution": 1,
+  "initialReleasePreservedAndIncomplete": true,
+  "followupTwoOutputNamesOnlyInverseExact": true,
+  "followupRecordedSdkUnknownOwnPidsZero": true,
+  "originalReleaseShaFieldIsReceipt": true,
+  "runtimeSourceCachePayloadRehashedByThisReview": false,
+  "candidateImportedCalledOrReplayed": false,
+  "sdkNativeProcessNetworkApiCalledByThisReview": false,
+  "full183Accepted": false,
+  "wholeObjectiveAccepted": false
+}

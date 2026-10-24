@@ -1,0 +1,20 @@
+{
+  "status": "NO_START_BEFORE_FIXED_LAUNCHER_INVOCATION",
+  "evidenceKind": "Root transcribed actual tool output; not a new execution",
+  "actualToolChunk": "cbfcde",
+  "actualToolExitCode": 1,
+  "actualOutput": "Exception: No SDK started: outside reserved start boundary: 2026-10-24T08:55:22.5360017Z",
+  "fixedLauncherInvoked": false,
+  "rootAttemptCreated": false,
+  "workerAttemptCreated": false,
+  "sdkCalls": 0,
+  "grantConsumed": false,
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "laterActualRootStartIsSeparate": "2026-10-24T08:58:00.7730884Z",
+  "laterActualToolInitialChunk": "611335",
+  "laterActualToolSession": 80843,
+  "laterActualToolTerminalChunk": "0f8647",
+  "laterActualToolExitCode": 0,
+  "laterSdkCalls": 1,
+  "doesNotAuthorizeAnyAdditionalSdkCall": true
+}

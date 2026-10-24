@@ -1,0 +1,50 @@
+{
+  "status": "STATIC_REVIEW_AND_FIXTURE_ONLY_NOT_APP_TEST_ACCEPTANCE",
+  "sourceCopies": [
+    {
+      "source": ".cache/guardian-qa-exact-commit-20261024-r2.py",
+      "archived": "helper.py",
+      "bytes": 9402,
+      "sha256": "f028a6b7ca53e8317730fa73b5949d312fbf25b4d53802925ad7e65765d08071"
+    },
+    {
+      "source": ".cache/guardian-qa-exact-commit-20261024-r2-final-vs-r1.patch",
+      "archived": "helper-vs-qualified-r1.patch",
+      "bytes": 3383,
+      "sha256": "6408fab011a5fcde5d4c6027ad11185dfbffef7e425ddc46a0e316d33f029b57"
+    },
+    {
+      "source": ".cache/guardian-qa-commit-helper-static-20261024-r3/review.md",
+      "archived": "static-review.md",
+      "bytes": 4139,
+      "sha256": "cb1ce7c97ecf8b609320060d8bbc4df893480930242609b3f3efe88fcb47955e"
+    },
+    {
+      "source": ".cache/guardian-qa-commit-helper-static-20261024-r3/pins.json",
+      "archived": "static-pins.json",
+      "bytes": 2037,
+      "sha256": "5f77646c658a62e5462fac3facdf6a15a50d52a262304cb64bfe946d77df2b62"
+    },
+    {
+      "source": ".cache/guardian-qa-commit-tracked-test-fixture-20261024-r1/review.md",
+      "archived": "fixture-review.md",
+      "bytes": 2236,
+      "sha256": "9f6f38ea22df66352742c338b56a685e70d5e2af9c6ecf79f561e680533a6e0c"
+    },
+    {
+      "source": ".cache/guardian-qa-commit-tracked-test-fixture-20261024-r1/pins.json",
+      "archived": "fixture-pins.json",
+      "bytes": 7121,
+      "sha256": "1b20dddaee05b83b56464f2fa677eb369dc7f08aa480cf503ced0f91c9a67645"
+    },
+    {
+      "source": ".cache/guardian-qa-commit-tracked-test-fixture-20261024-r1/out/result.json",
+      "archived": "fixture-result.json",
+      "bytes": 35694,
+      "sha256": "edabc8ebd26f526a7c22f78235c03c2286d033af75884cc440cd9b0a91756e46"
+    }
+  ],
+  "applicationRetestRun": false,
+  "realPhaseCommitPerformed": false,
+  "pushed": false
+}

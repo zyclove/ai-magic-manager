@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "createdAtUtc": "2026-10-24T11:16:26.279776+00:00",
+  "status": "FINAL_INCREMENTAL_STATIC_NO_NEW_BLOCKER_WITHIN_SCOPE",
+  "helper": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-exact-commit-20261024-r1.py",
+    "bytes": 8539,
+    "sha256": "ca90c035e120a9ecbf3cc19366b61665025efef758bd3b000febe2368d079fa4"
+  },
+  "readTool": {
+    "id": "1fbf5e",
+    "exitCode": 0
+  },
+  "historicalCandidates": [
+    {
+      "bytes": 3531,
+      "sha256": "42ff90228f563eabaf4c19c81866048bfddd69d413d0cf3146d5c6394772fe7a"
+    },
+    {
+      "bytes": 7696,
+      "sha256": "a89aad27a3ace9ebd9846576ce8aa1c0443996dd2c619820c8a89f1fc5655839"
+    }
+  ],
+  "resolvedFindings": [
+    "shared-index-check-to-commit-race",
+    "no-atomic-expected-parent-update",
+    "mutable-worktree-readback-oracle",
+    "assert-stripping",
+    "uncertain-cas-lock-cleanup"
+  ],
+  "stagePinsExistsAtSeal": false,
+  "helperExecuted": false,
+  "gitCommandsRun": 0,
+  "sdkCalls": 0,
+  "fixturesRun": false,
+  "verification": "UNRUN",
+  "executionGrantCreated": false,
+  "review": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-helper-static-20261024-r2\\final-review.md",
+    "bytes": 3699,
+    "sha256": "5809cf170317d331e1e20ec40d3312311ed91f3932877584f5a94c8c48ff88ad"
+  }
+}

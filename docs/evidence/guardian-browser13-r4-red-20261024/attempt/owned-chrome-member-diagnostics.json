@@ -1,0 +1,448 @@
+{
+  "schemaVersion": 1,
+  "status": "DIAGNOSTIC_ONLY_NOT_ACCEPTANCE",
+  "maximumRecords": 8,
+  "maximumSerializedBytes": 32768,
+  "sampleCalls": 529,
+  "failedSampleCalls": 3,
+  "memberIdentityFailureCount": 3,
+  "sampleElapsedTotalSeconds": 1.0002888000162784,
+  "sampleElapsedMaximumSeconds": 0.07911930000409484,
+  "firstMemberFailureQpc": 120474.3496225,
+  "lastMemberFailureQpc": 120474.4702654,
+  "originalCommandDeadlineQpc": 120548.4088874,
+  "recordsAttempted": 3,
+  "resampleCalls": 3,
+  "recordsDropped": 0,
+  "internalDiagnosticErrors": 0,
+  "records": [
+    {
+      "sampleOrdinal": 478,
+      "observedQpc": 120474.3496225,
+      "originalObservationDeadlineQpc": 120548.4088874,
+      "failedRow": {
+        "rowShapeValid": true,
+        "creationFiletime": 134373159620488644,
+        "exitFiletime": 134373159621514381,
+        "imageError": 5,
+        "pid": 113868,
+        "openedFromOwnJobList": true,
+        "retainedRootHandleUsed": false,
+        "signaled": false,
+        "verifiedOwnMembership": true,
+        "sampleQpc": 120474.3492931
+      },
+      "firstSnapshot": {
+        "before": {
+          "assigned": 18,
+          "listed": 18,
+          "limit": 32,
+          "error": 0,
+          "qpc": 120474.3441717,
+          "complete": true,
+          "pids": [
+            154216,
+            151980,
+            152744,
+            150052,
+            149652,
+            151768,
+            156368,
+            156116,
+            157184,
+            158704,
+            153304,
+            158528,
+            159584,
+            158652,
+            113868,
+            150360,
+            149248,
+            146904
+          ],
+          "pidsTruncatedOrInvalid": false
+        },
+        "after": {
+          "assigned": 18,
+          "listed": 18,
+          "limit": 32,
+          "error": 0,
+          "qpc": 120474.3494896,
+          "complete": true,
+          "pids": [
+            154216,
+            151980,
+            152744,
+            150052,
+            149652,
+            151768,
+            156368,
+            156116,
+            157184,
+            158704,
+            153304,
+            158528,
+            159584,
+            158652,
+            113868,
+            150360,
+            149248,
+            146904
+          ],
+          "pidsTruncatedOrInvalid": false
+        },
+        "identityRowsLimitedByDeadline": false
+      },
+      "resample": {
+        "status": "RECORDED",
+        "snapshot": {
+          "before": {
+            "assigned": 18,
+            "listed": 18,
+            "limit": 32,
+            "error": 0,
+            "qpc": 120474.3497843,
+            "complete": true,
+            "pids": [
+              154216,
+              151980,
+              152744,
+              150052,
+              149652,
+              151768,
+              156368,
+              156116,
+              157184,
+              158704,
+              153304,
+              158528,
+              159584,
+              158652,
+              113868,
+              150360,
+              149248,
+              146904
+            ],
+            "pidsTruncatedOrInvalid": false
+          },
+          "after": {
+            "assigned": 18,
+            "listed": 18,
+            "limit": 32,
+            "error": 0,
+            "qpc": 120474.3507121,
+            "complete": true,
+            "pids": [
+              154216,
+              151980,
+              152744,
+              150052,
+              149652,
+              151768,
+              156368,
+              156116,
+              157184,
+              158704,
+              153304,
+              158528,
+              159584,
+              158652,
+              113868,
+              150360,
+              149248,
+              146904
+            ],
+            "pidsTruncatedOrInvalid": false
+          },
+          "identityRowsLimitedByDeadline": false
+        },
+        "matchingRowCount": 1,
+        "matchingRows": [
+          {
+            "rowShapeValid": true,
+            "creationFiletime": 134373159620488644,
+            "exitFiletime": 134373159621514381,
+            "imageError": 5,
+            "pid": 113868,
+            "openedFromOwnJobList": true,
+            "retainedRootHandleUsed": false,
+            "signaled": false,
+            "verifiedOwnMembership": true,
+            "sampleQpc": 120474.3505815
+          }
+        ],
+        "matchingRowsTruncated": false
+      }
+    },
+    {
+      "sampleOrdinal": 479,
+      "observedQpc": 120474.407959,
+      "originalObservationDeadlineQpc": 120548.4088874,
+      "failedRow": {
+        "rowShapeValid": true,
+        "creationFiletime": 134373159484983618,
+        "exitFiletime": 134373159622051987,
+        "imageError": 5,
+        "pid": 151768,
+        "openedFromOwnJobList": true,
+        "retainedRootHandleUsed": false,
+        "signaled": false,
+        "verifiedOwnMembership": true,
+        "sampleQpc": 120474.4073528
+      },
+      "firstSnapshot": {
+        "before": {
+          "assigned": 16,
+          "listed": 16,
+          "limit": 32,
+          "error": 0,
+          "qpc": 120474.4069397,
+          "complete": true,
+          "pids": [
+            154216,
+            151980,
+            152744,
+            150052,
+            149652,
+            151768,
+            156368,
+            156116,
+            157184,
+            158704,
+            153304,
+            158528,
+            159584,
+            158652,
+            150360,
+            149248
+          ],
+          "pidsTruncatedOrInvalid": false
+        },
+        "after": {
+          "assigned": 16,
+          "listed": 16,
+          "limit": 32,
+          "error": 0,
+          "qpc": 120474.4078848,
+          "complete": true,
+          "pids": [
+            154216,
+            151980,
+            152744,
+            150052,
+            149652,
+            151768,
+            156368,
+            156116,
+            157184,
+            158704,
+            153304,
+            158528,
+            159584,
+            158652,
+            150360,
+            149248
+          ],
+          "pidsTruncatedOrInvalid": false
+        },
+        "identityRowsLimitedByDeadline": false
+      },
+      "resample": {
+        "status": "RECORDED",
+        "snapshot": {
+          "before": {
+            "assigned": 16,
+            "listed": 16,
+            "limit": 32,
+            "error": 0,
+            "qpc": 120474.4081113,
+            "complete": true,
+            "pids": [
+              154216,
+              151980,
+              152744,
+              150052,
+              149652,
+              151768,
+              156368,
+              156116,
+              157184,
+              158704,
+              153304,
+              158528,
+              159584,
+              158652,
+              150360,
+              149248
+            ],
+            "pidsTruncatedOrInvalid": false
+          },
+          "after": {
+            "assigned": 16,
+            "listed": 16,
+            "limit": 32,
+            "error": 0,
+            "qpc": 120474.414365,
+            "complete": true,
+            "pids": [
+              154216,
+              151980,
+              152744,
+              150052,
+              149652,
+              151768,
+              156368,
+              156116,
+              157184,
+              158704,
+              153304,
+              158528,
+              159584,
+              158652,
+              150360,
+              149248
+            ],
+            "pidsTruncatedOrInvalid": false
+          },
+          "identityRowsLimitedByDeadline": false
+        },
+        "matchingRowCount": 1,
+        "matchingRows": [
+          {
+            "rowShapeValid": true,
+            "creationFiletime": 134373159484983618,
+            "exitFiletime": 134373159622051987,
+            "imageError": 5,
+            "pid": 151768,
+            "openedFromOwnJobList": true,
+            "retainedRootHandleUsed": false,
+            "signaled": false,
+            "verifiedOwnMembership": true,
+            "sampleQpc": 120474.4084078
+          }
+        ],
+        "matchingRowsTruncated": false
+      }
+    },
+    {
+      "sampleOrdinal": 480,
+      "observedQpc": 120474.4702654,
+      "originalObservationDeadlineQpc": 120548.4088874,
+      "failedRow": {
+        "rowShapeValid": true,
+        "creationFiletime": 134373159494997939,
+        "exitFiletime": 134373159622196031,
+        "imageError": 5,
+        "pid": 153304,
+        "openedFromOwnJobList": true,
+        "retainedRootHandleUsed": false,
+        "signaled": false,
+        "verifiedOwnMembership": true,
+        "sampleQpc": 120474.470039
+      },
+      "firstSnapshot": {
+        "before": {
+          "assigned": 8,
+          "listed": 8,
+          "limit": 32,
+          "error": 0,
+          "qpc": 120474.4691314,
+          "complete": true,
+          "pids": [
+            154216,
+            151980,
+            152744,
+            150052,
+            149652,
+            156368,
+            153304,
+            149248
+          ],
+          "pidsTruncatedOrInvalid": false
+        },
+        "after": {
+          "assigned": 8,
+          "listed": 8,
+          "limit": 32,
+          "error": 0,
+          "qpc": 120474.4701555,
+          "complete": true,
+          "pids": [
+            154216,
+            151980,
+            152744,
+            150052,
+            149652,
+            156368,
+            153304,
+            149248
+          ],
+          "pidsTruncatedOrInvalid": false
+        },
+        "identityRowsLimitedByDeadline": false
+      },
+      "resample": {
+        "status": "RECORDED",
+        "snapshot": {
+          "before": {
+            "assigned": 8,
+            "listed": 8,
+            "limit": 32,
+            "error": 0,
+            "qpc": 120474.4705881,
+            "complete": true,
+            "pids": [
+              154216,
+              151980,
+              152744,
+              150052,
+              149652,
+              156368,
+              153304,
+              149248
+            ],
+            "pidsTruncatedOrInvalid": false
+          },
+          "after": {
+            "assigned": 8,
+            "listed": 8,
+            "limit": 32,
+            "error": 0,
+            "qpc": 120474.4713413,
+            "complete": true,
+            "pids": [
+              154216,
+              151980,
+              152744,
+              150052,
+              149652,
+              156368,
+              153304,
+              149248
+            ],
+            "pidsTruncatedOrInvalid": false
+          },
+          "identityRowsLimitedByDeadline": false
+        },
+        "matchingRowCount": 1,
+        "matchingRows": [
+          {
+            "rowShapeValid": true,
+            "creationFiletime": 134373159494997939,
+            "exitFiletime": 134373159622196031,
+            "imageError": 5,
+            "pid": 153304,
+            "openedFromOwnJobList": true,
+            "retainedRootHandleUsed": false,
+            "signaled": false,
+            "verifiedOwnMembership": true,
+            "sampleQpc": 120474.4712705
+          }
+        ],
+        "matchingRowsTruncated": false
+      }
+    }
+  ],
+  "nativeOrNetworkQueriesPerformedByDiagnosticsMethod": false,
+  "acceptanceRulesChanged": false
+}

@@ -1,0 +1,128 @@
+{
+  "status": "R3_HTML_DIAGNOSTIC_STATIC_AUDIT_NOT_APPLICATION_ACCEPTANCE",
+  "r2InventoryCount": 20,
+  "r2TerminalRedEvidencePreserved": true,
+  "nineBaseAndFixtureFilesByteExact": true,
+  "inputOnlyChangesAfterPathNormalization": [
+    "createdAtUtc",
+    "ownedChromeEvidenceCode",
+    "ownedChromeNativeQualification"
+  ],
+  "runtime43Cache185Trees70Files3689Bytes646535928Unchanged": true,
+  "reporterAndCaseContractAndThreeChromeAcceptancePredicatesByteExactToR2": true,
+  "fiveControlsReverseToR2ExactlyAfterListedDiagnosticAndRendererAndBindingEdits": [
+    {
+      "file": "worker.py",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\worker.py",
+        "bytes": 54877,
+        "sha256": "11a446e1655fa6696bc4d6b76be4c7bd2e668022c5313b58e62f8e3b4ff43a8f"
+      },
+      "inverseToR2Exact": true
+    },
+    {
+      "file": "analysis-host.py",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\analysis-host.py",
+        "bytes": 34991,
+        "sha256": "960a16cc3a2b51ace6d99417a4fa9249ceadea903394b7d1c1171eb8f8b34107"
+      },
+      "inverseToR2Exact": true
+    },
+    {
+      "file": "post.py",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-post-20261024-r3-html-diagnostic\\post.py",
+        "bytes": 54998,
+        "sha256": "f92b71e38b37b5e8d05e9a51ad4422ef7b80e135d460a4f2e5499021045ddd6c"
+      },
+      "inverseToR2Exact": true
+    },
+    {
+      "file": "root-launch",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-root-launch-20261024-r3-html-diagnostic.ps1",
+        "bytes": 9235,
+        "sha256": "d1cbfa4167fdc8217fc699cc5a8dbbff6c348486c34add5a2dd136de8fcb0874"
+      },
+      "inverseToR2Exact": true
+    },
+    {
+      "file": "release",
+      "pin": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-release-20261024-r3-html-diagnostic.ps1",
+        "bytes": 4449,
+        "sha256": "d6e8cfd39f77916d3d7e0f16d532e80d58a013b7daac4836f504b235c1910dcc"
+      },
+      "inverseToR2Exact": true
+    }
+  ],
+  "workerDiagnosticFileWrittenAtMostOnceFromMemoryOnlyNotAcceptance": true,
+  "maximumDiagnosticRows": 8,
+  "maximumSerializedUtf8Bytes": 32768,
+  "originalVM35SixCodeInverseChecks": true,
+  "newObserver": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\owned_chrome_evidence.py",
+    "bytes": 29439,
+    "sha256": "34e80553205db29267baf4299821ff40111adbc79bd2e83e49fbf20282eb5a3f"
+  },
+  "newReadOnlyQualification": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-native-qualification-binding.json",
+    "bytes": 1307,
+    "sha256": "6e8ba3d2436bfa7ba1c80bad1bb24856f3eca27de6bf8476fd1c297c773a070a"
+  },
+  "sourceHead": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "sourceFiles": 413,
+  "fullRoots": 183,
+  "selectedChromeSuites": 1,
+  "exactVisibleCases": 13,
+  "other182RootsNotNewlyExecutedOrSigned": true,
+  "commandDelta": [
+    "remove --concurrency=1 ignored by web platform",
+    "explicit --web-renderer=html matches scripts/build-deployment.ps1"
+  ],
+  "originalBudgetsAndQpcAnchorsAndSameHandlesAndNaturalJobZeroAndForceFailsRetained": true,
+  "patches": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\r3-vs-r2-0-inputs.json.patch",
+      "bytes": 3513,
+      "sha256": "24a3fd9303c60e6bb6571387f44129d5593fffc31e35ae5ce0cb77a86cc781a5"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\r3-vs-r2-1-proposal.json.patch",
+      "bytes": 1671,
+      "sha256": "bf72099b6cd62921f440429729390116861c73bb95497bf5560a54b1a5718960"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\r3-vs-r2-2-worker.py.patch",
+      "bytes": 2894,
+      "sha256": "92caef56e55beee41c6fe51f8240c6538fd1b3922523f95cb341f1855a33684d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\r3-vs-r2-3-analysis-host.py.patch",
+      "bytes": 1029,
+      "sha256": "15746672dc51f26f67486f60bed9b88c11886db71b014022e54b39b6383b4409"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\r3-vs-r2-4-owned_chrome_evidence.py.patch",
+      "bytes": 10635,
+      "sha256": "49d083f42a2814d93401763649cdd96c382f35ffc9dace61c1afb1719ecb48c2"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\r3-vs-r2-5-post.py.patch",
+      "bytes": 3139,
+      "sha256": "949ff0f3985136f2bddb9bbaf06c080ea5567674841a5b705a7406cd2d1b8e95"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\r3-vs-r2-6-guardian-browser13-root-launch-20261024-r3-html-diagnostic.ps1.patch",
+      "bytes": 1144,
+      "sha256": "2f0613faf726ca73d3f68ad924873ea0b7755a4c9abc759086389a2179d6036c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\r3-vs-r2-7-guardian-browser13-release-20261024-r3-html-diagnostic.ps1.patch",
+      "bytes": 865,
+      "sha256": "51ce84e28f478c4d613c4b91bfc2904c941d821ba0eea7023705cac9398ed1f1"
+    }
+  ],
+  "sdkChromeAstNetworkGrantAttemptOrGitMutationByThisAudit": false
+}

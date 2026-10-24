@@ -1,0 +1,42 @@
+{
+  "status": "BROWSER13_NOT_ACCEPTED_OR_RELEASE_INCOMPLETE",
+  "atUtc": "2026-10-24T11:30:58.5577333Z",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "actualRootToolTerminalChunk": "f987a0",
+  "actualRootToolExitCode": 1,
+  "actualPostToolTerminalChunk": "fe8d5b",
+  "actualPostToolExitCode": 1,
+  "hostPid": 151008,
+  "hostCreationFiletime": "134373150419215174",
+  "hostExitFiletime": "134373150459160704",
+  "fixedLauncherDisposedOwnHostHandle": true,
+  "ownLiveSdkHandle": false,
+  "sdkCount": 0,
+  "sdkProcesses": [],
+  "unknownCount": 0,
+  "knownOwnedPids": [
+    151008,
+    153408
+  ],
+  "availableRamBytes": 7518412800,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 2954747904
+    },
+    {
+      "Name": "D",
+      "Free": 31234936832
+    }
+  ],
+  "processInventoryFile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\root-attempt\\post-process-inventory.json",
+  "processInventorySha256": "1f658ed7388941d7262bdf0aab1190af329aa5a53c195f7efef8d03fff29c95c",
+  "fixedPostFile": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-post-20261024-r3-html-diagnostic\\post.json",
+  "fixedPostSha256": "00d507ae44becef27fb1bc72153dfd9c92d1f1c82a2015de9dd6ab304a223ddf",
+  "resultConsistent": false,
+  "windowReleased": true,
+  "testAccepted": false,
+  "applicationTestsRun": false,
+  "deployed": false,
+  "nextSdkGrant": false
+}

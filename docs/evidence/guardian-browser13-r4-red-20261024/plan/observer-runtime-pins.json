@@ -1,0 +1,95 @@
+{
+  "status": "OBSERVER_FILE_PINS_NOT_WHOLE_RUNTIME_CLOSURE",
+  "alreadyInVm35": [
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\__init__.py",
+      "bytes": 89075,
+      "sha256": "96f6567584375b47e5719796d6f6cde50828487baaa1f5c19ccc4764bcf082b5",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_common.py",
+      "bytes": 29592,
+      "sha256": "b4f13b615cc2d19201859cd8773a8e16787e81e25500b6f2058dd3480c00497c",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_pswindows.py",
+      "bytes": 37052,
+      "sha256": "8acfc2ab7c8cb859ea1947e939e894f285b365035698affe5ededab1bf180aee",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\site-packages\\psutil\\_psutil_windows.pyd",
+      "bytes": 67072,
+      "sha256": "9c7fc855d9d1614e70705c7dcc6f4ac3cdcab5adfeb6a67d382f5ade09eadc15",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\ctypes\\wintypes.py",
+      "bytes": 5831,
+      "sha256": "4d9150e8603bd922e9dbee8a5e9cf1379cf599a382b09a5cbf09bed520f6c459",
+      "absolute": true
+    }
+  ],
+  "additionalExplicitRuntimeFiles": [
+    {
+      "path": "C:\\Python313\\Lib\\ipaddress.py",
+      "bytes": 83565,
+      "sha256": "f20e2e7f92884181d9e09477ed5281dad661560c4941d889dcfd90584476122e",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\urllib\\__init__.py",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\urllib\\parse.py",
+      "bytes": 46938,
+      "sha256": "8e1026b2de5fb7ef9265bf512b6ba11923c3a8bfa48a8b2158475c07c255e1a1",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\Lib\\socket.py",
+      "bytes": 38741,
+      "sha256": "523695ac3383799547b421b4fe18004de1e80181e97181b6d7a10533b47f4c49",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Python313\\DLLs\\_socket.pyd",
+      "bytes": 86008,
+      "sha256": "bced17d6f081d81ea7cd92f1e071e38f8840e61ee0fe1524221b776bcfa78650",
+      "absolute": true
+    }
+  ],
+  "primarySdkReferencePins": [
+    {
+      "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\winternl.h",
+      "bytes": 30360,
+      "sha256": "a43424486349c38f697c009512dfe4eb8fca733d7665afab42f50752170b9785",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\memoryapi.h",
+      "bytes": 33539,
+      "sha256": "58edcc2090c411a1821e04a6a2954c258fd59ded44440bdd671984027e0a852f",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\wow64apiset.h",
+      "bytes": 5421,
+      "sha256": "6b14e2b59ae5b9f22bfd9a1e989a5589adf5790832ff24cb9d8828d4e8d45cda",
+      "absolute": true
+    },
+    {
+      "path": "C:\\Program Files (x86)\\Windows Kits\\10\\Include\\10.0.26100.0\\um\\shellapi.h",
+      "bytes": 72165,
+      "sha256": "c0712ed939babdd72f9602a031120d71360324d7ec7933c31d6739aadb49c989",
+      "absolute": true
+    }
+  ],
+  "nativeReadOnlyFixtureAccepted": true,
+  "actualTcpAndChromeQualified": false
+}

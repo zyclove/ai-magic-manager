@@ -1,0 +1,9 @@
+{
+  "status": "SCHEDULED_SAME_UNCONSUMED_VM35_GRANT",
+  "atUtc": "2026-10-24T08:57:32.8574090Z",
+  "startUtc": "2026-10-24T08:58:00.0000000Z",
+  "priorNoStartChunk": "cbfcde",
+  "previousFixedLauncherInvoked": false,
+  "currentSourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "windowEndUtc": "2026-10-24T09:01:00Z"
+}

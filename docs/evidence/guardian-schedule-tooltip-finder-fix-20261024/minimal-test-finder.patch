@@ -1,0 +1,19 @@
+--- a/apps/guardian/test/editor_submit_guard_test.dart
++++ b/apps/guardian/test/editor_submit_guard_test.dart
+@@ -379,10 +379,12 @@
+         final date = _scheduleCallback(tester, _scheduleButton('添加关闭日期'));
+         final day = tester.widget<FilterChip>(find.byType(FilterChip).first)
+             .onSelected!;
+-        final remove = tester.widget<IconButton>(
+-            find.byTooltip('移除此时段').first).onPressed!;
+-        final removeException = tester.widget<IconButton>(
+-            find.byTooltip('移除例外').first).onPressed!;
++        final remove = tester.widget<IconButton>(find.byWidgetPredicate(
++            (widget) => widget is IconButton && widget.tooltip == '移除此时段')
++            .first).onPressed!;
++        final removeException = tester.widget<IconButton>(find.byWidgetPredicate(
++            (widget) => widget is IconButton && widget.tooltip == '移除例外')
++            .first).onPressed!;
+         save();
+         save();
+         await _flush(tester);

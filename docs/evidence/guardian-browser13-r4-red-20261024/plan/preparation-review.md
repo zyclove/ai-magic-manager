@@ -1,0 +1,11 @@
+# R4 command-scoped canonical Git paths
+
+R3 stopped before SDK creation: the worker's clean-environment `rev-parse HEAD` rejected the repository ownership boundary, leaving SDK calls zero and application tests unrun. R3 remains terminal RED with all original plan, attempt, post and release evidence retained. Its wrapper reader was never executed.
+
+R4 changes only the spelling of the existing two command-scoped `safe.directory` values. Worker read-only Git calls use `Path(cwd).as_posix()`; the SDK child environment uses `REPO.as_posix()` and `SDK.as_posix()`. The launch record and independent post require those same exact two canonical values. Root's own HEAD query uses forward slashes in its `-c safe.directory` argument. No working directory or allowed repository changes, and no global/system configuration, permissions or owner changes.
+
+The host starts the worker in its own candidate directory. Worker Git permits only Main REPO and Flutter SDK; SDK test execution remains in the frozen Guardian module. There is no `.git` in the frozen module, its apps/src/freeze ancestors or `.cache`, so Git discovery from the frozen module still reaches Main REPO. No additional trust root is needed. The independent reviewer demonstrated the same clean-environment HEAD and tree queries failing with backslashes and succeeding with canonical forward slashes, without SDK execution.
+
+Observer code remains byte-identical to R3: 29,439 bytes, SHA256 `34e80553205db29267baf4299821ff40111adbc79bd2e83e49fbf20282eb5a3f`. Input directly references the original R3 narrow retained-handle read-path qualification record and its actual result. No fixture is rerun and no new Chrome/TCP qualification is claimed. Native f8, process provider, reporter, exact case contract, all three Chrome JSON guards, cache projection and 43 runtime pins are unchanged.
+
+Source remains commit `006ee45850c9b6b0f90570d9478bced3beb0e0fe`, r15, 413 files/full 183 roots. This batch still selects one Chrome suite and exactly 13 visible cases with explicit HTML renderer. The other 182 roots receive no new acceptance. The 180/174/165/135/140-second budgets, separate post25, original QPC anchors, same handles, natural Job zero, 0.5-second drain and forced-exit rejection are unchanged. Fresh Root grant and an actual SDK window remain required.

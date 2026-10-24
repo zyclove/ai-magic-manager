@@ -1,0 +1,13 @@
+{
+  "testBefore": {
+    "bytes": 21431,
+    "sha256": "a8d24bca8147a38ffe0c5db9b620e533e47b18cf371c9198dc62d9ab33280ed9"
+  },
+  "productionBefore": {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\editors.dart",
+    "bytes": 52075,
+    "sha256": "208926fbdc201d66fc5bf3e261465d9d76488141c27ed1b30bcbf40a4d0ff957"
+  },
+  "sdkCalls": 0,
+  "gitWrites": 0
+}

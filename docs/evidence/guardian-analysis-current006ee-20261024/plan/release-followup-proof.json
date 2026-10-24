@@ -1,0 +1,16 @@
+{
+  "status": "FRESH_RELEASE_OBSERVATION_ONLY_NO_SDK_OR_BUDGET_REUSE",
+  "originalReleaseActualChunk": "480b4e",
+  "originalReleaseActualExitCode": 1,
+  "originalReleaseReceiptSha256": "11ef34940d683bad62886fca663143bb14fe5ba08c864b47e40702d2926578c9",
+  "originalReleaseScriptSha256": "f822d9320f50cce864c59b653249e91a8365676249966a380a4453fe7b4c0fdb",
+  "followupScriptSha256": "243d87b903f267980fc5c3065f91ead1998713a4aaaac20c813b1f6f47817d27",
+  "oldReceiptPreserved": true,
+  "onlyTwoOutputBasenamesDifferInverseByteExact": true,
+  "sameRootActualTerminal": "4dc1e8",
+  "sameRootActualExitCode": 0,
+  "samePostActualTerminal": "610e5d",
+  "samePostActualExitCode": 0,
+  "newSdkCalls": 0,
+  "trigger": "fresh fb3d0a SDK0 unknown0 10:07:58UTC"
+}

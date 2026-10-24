@@ -1,0 +1,482 @@
+{
+  "status": "FIXTURE_ERROR",
+  "appTestsRun": false,
+  "sdkOrChromeOrNetworkRun": false,
+  "realRepositoryMutations": false,
+  "scenarios": [],
+  "deadlineSeconds": 58.0,
+  "helper": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-exact-commit-20261024-r1.py",
+    "bytes": 8539,
+    "sha256": "ca90c035e120a9ecbf3cc19366b61665025efef758bd3b000febe2368d079fa4"
+  },
+  "mainHeadBefore": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "errorType": "AssertionError",
+  "error": "",
+  "mainHeadAfter": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "mainHeadUnchanged": true,
+  "helperUnchanged": true,
+  "elapsedSeconds": 3.368642200002796,
+  "steps": [
+    {
+      "number": 1,
+      "label": "main-head-before-readonly",
+      "cwd": "D:\\codes\\mobile\\ai-manager",
+      "command": [
+        "git",
+        "-c",
+        "safe.directory=D:/codes/mobile/ai-manager",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.06999940000241622,
+      "naturalProcessCompletion": true,
+      "forcedTermination": false,
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\001-main-head-before-readonly.stdout",
+        "bytes": 41,
+        "sha256": "5cb355ac440bee4452fd1ba3bb7bcad4417816dfdfd1a4704aa012ed7241ee41"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\001-main-head-before-readonly.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "number": 2,
+      "label": "c1-init",
+      "cwd": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\case1\\src",
+      "command": [
+        "git",
+        "init",
+        "-b",
+        "dev"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.08951039999374188,
+      "naturalProcessCompletion": true,
+      "forcedTermination": false,
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\002-c1-init.stdout",
+        "bytes": 125,
+        "sha256": "a9fff7fc1ed6342415689b7da2a9ec47f0718d133b7ee95b1846400805416bf6"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\002-c1-init.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "number": 3,
+      "label": "c1-config-user.name",
+      "cwd": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\case1\\src",
+      "command": [
+        "git",
+        "config",
+        "--local",
+        "user.name",
+        "Guardian isolated fixture"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.05975929999840446,
+      "naturalProcessCompletion": true,
+      "forcedTermination": false,
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\003-c1-config-user.name.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\003-c1-config-user.name.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "number": 4,
+      "label": "c1-config-user.email",
+      "cwd": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\case1\\src",
+      "command": [
+        "git",
+        "config",
+        "--local",
+        "user.email",
+        "guardian-fixture@example.invalid"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.06460019999940414,
+      "naturalProcessCompletion": true,
+      "forcedTermination": false,
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\004-c1-config-user.email.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\004-c1-config-user.email.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "number": 5,
+      "label": "c1-config-commit.gpgsign",
+      "cwd": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\case1\\src",
+      "command": [
+        "git",
+        "config",
+        "--local",
+        "commit.gpgsign",
+        "false"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.06757260000449605,
+      "naturalProcessCompletion": true,
+      "forcedTermination": false,
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\005-c1-config-commit.gpgsign.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\005-c1-config-commit.gpgsign.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "number": 6,
+      "label": "c1-config-core.autocrlf",
+      "cwd": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\case1\\src",
+      "command": [
+        "git",
+        "config",
+        "--local",
+        "core.autocrlf",
+        "false"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.0588932999962708,
+      "naturalProcessCompletion": true,
+      "forcedTermination": false,
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\006-c1-config-core.autocrlf.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\006-c1-config-core.autocrlf.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "number": 7,
+      "label": "c1-config-core.safecrlf",
+      "cwd": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\case1\\src",
+      "command": [
+        "git",
+        "config",
+        "--local",
+        "core.safecrlf",
+        "false"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.06546080000407528,
+      "naturalProcessCompletion": true,
+      "forcedTermination": false,
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\007-c1-config-core.safecrlf.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\007-c1-config-core.safecrlf.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "number": 8,
+      "label": "c1-initial-add",
+      "cwd": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\case1\\src",
+      "command": [
+        "git",
+        "add",
+        "--",
+        "tracked.txt",
+        "foreign.txt",
+        ".gitattributes"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.07363270000496414,
+      "naturalProcessCompletion": true,
+      "forcedTermination": false,
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\008-c1-initial-add.stdout",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\008-c1-initial-add.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "number": 9,
+      "label": "c1-initial-commit",
+      "cwd": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\case1\\src",
+      "command": [
+        "git",
+        "commit",
+        "-m",
+        "isolated fixture baseline"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.12561220000497997,
+      "naturalProcessCompletion": true,
+      "forcedTermination": false,
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\009-c1-initial-commit.stdout",
+        "bytes": 187,
+        "sha256": "00d71262ef49a98682f2160ad76fecd038b3caf82deedd968bf5c1a77b984835"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\009-c1-initial-commit.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "number": 10,
+      "label": "c1-initial-head",
+      "cwd": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\case1\\src",
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.06035820000397507,
+      "naturalProcessCompletion": true,
+      "forcedTermination": false,
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\010-c1-initial-head.stdout",
+        "bytes": 41,
+        "sha256": "dafeecfd15f567ab9ccec5a3df9a1546604a17198247dba2a1e5e899760526b8"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\010-c1-initial-head.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "number": 11,
+      "label": "c1-helper-stage",
+      "cwd": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\case1\\src",
+      "command": [
+        "C:\\Python313\\python.exe",
+        "-I",
+        "-B",
+        "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\case1\\src\\.cache\\guardian-qa-exact-commit-20261024-r1.py",
+        "stage"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.8461821000091732,
+      "naturalProcessCompletion": true,
+      "forcedTermination": false,
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\011-c1-helper-stage.stdout",
+        "bytes": 485,
+        "sha256": "8fc07149dba1ade7f7bb0434215efd2e887a20234f908e0932628dc1718b94d0"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\011-c1-helper-stage.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "number": 12,
+      "label": "c1-helper-commit",
+      "cwd": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\case1\\src",
+      "command": [
+        "C:\\Python313\\python.exe",
+        "-I",
+        "-B",
+        "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\case1\\src\\.cache\\guardian-qa-exact-commit-20261024-r1.py",
+        "commit"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 1.019565300011891,
+      "naturalProcessCompletion": true,
+      "forcedTermination": false,
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\012-c1-helper-commit.stdout",
+        "bytes": 377,
+        "sha256": "0a157a6d14318661191774420ff8db6c5968588659346a479d305606c97e6f50"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\012-c1-helper-commit.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "number": 13,
+      "label": "c1-helper-readback",
+      "cwd": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\case1\\src",
+      "command": [
+        "C:\\Python313\\python.exe",
+        "-I",
+        "-B",
+        "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\case1\\src\\.cache\\guardian-qa-exact-commit-20261024-r1.py",
+        "readback"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.4485834000079194,
+      "naturalProcessCompletion": true,
+      "forcedTermination": false,
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\013-c1-helper-readback.stdout",
+        "bytes": 323,
+        "sha256": "c9a77b17e8cee3b51594d1cbf0f5f366527d1f91e860eb8795ecc69454491aea"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\013-c1-helper-readback.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "number": 14,
+      "label": "c1-final-head",
+      "cwd": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\case1\\src",
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.06074359999911394,
+      "naturalProcessCompletion": true,
+      "forcedTermination": false,
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\014-c1-final-head.stdout",
+        "bytes": 41,
+        "sha256": "3e2a914ec07ff56f9539514b00036dd9c7a30fc1b62366e4a286dd8d24a92729"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\014-c1-final-head.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "number": 15,
+      "label": "c1-parent",
+      "cwd": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\case1\\src",
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD^"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.05980669999553356,
+      "naturalProcessCompletion": true,
+      "forcedTermination": false,
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\015-c1-parent.stdout",
+        "bytes": 41,
+        "sha256": "dafeecfd15f567ab9ccec5a3df9a1546604a17198247dba2a1e5e899760526b8"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\015-c1-parent.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "number": 16,
+      "label": "c1-raw-blob",
+      "cwd": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\case1\\src",
+      "command": [
+        "git",
+        "cat-file",
+        "blob",
+        "HEAD:docs/evidence/guardian-fixture/qa.txt"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.061628099996596575,
+      "naturalProcessCompletion": true,
+      "forcedTermination": false,
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\016-c1-raw-blob.stdout",
+        "bytes": 33,
+        "sha256": "0dffd41bf5d404126ba0ee25ca4d7f3eca72d13ffea28baaea3d78cd4da5db5c"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\016-c1-raw-blob.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "number": 17,
+      "label": "c1-unstaged-paths",
+      "cwd": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\case1\\src",
+      "command": [
+        "git",
+        "diff",
+        "--name-only",
+        "-z"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.06756909999239724,
+      "naturalProcessCompletion": true,
+      "forcedTermination": false,
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\017-c1-unstaged-paths.stdout",
+        "bytes": 50,
+        "sha256": "0741b93f52a78c623c6b53989d96081096baecd381e510f2dae7f789d2fb7171"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\017-c1-unstaged-paths.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    },
+    {
+      "number": 18,
+      "label": "main-head-after-readonly",
+      "cwd": "D:\\codes\\mobile\\ai-manager",
+      "command": [
+        "git",
+        "-c",
+        "safe.directory=D:/codes/mobile/ai-manager",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exitCode": 0,
+      "elapsedSeconds": 0.06049170000187587,
+      "naturalProcessCompletion": true,
+      "forcedTermination": false,
+      "stdout": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\018-main-head-after-readonly.stdout",
+        "bytes": 41,
+        "sha256": "5cb355ac440bee4452fd1ba3bb7bcad4417816dfdfd1a4704aa012ed7241ee41"
+      },
+      "stderr": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-qa-commit-fixture-20261024-r1\\out-r3\\018-main-head-after-readonly.stderr",
+        "bytes": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      }
+    }
+  ],
+  "naturalStepCount": 18
+}

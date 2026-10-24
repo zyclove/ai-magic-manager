@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "status": "NOT_ACCEPTED",
+  "kind": "DIAGNOSTIC_RENDERER_FACTS_NOT_TEST_ACCEPTANCE",
+  "testAccepted": false,
+  "overallChromeBoundariesAccepted": false,
+  "thirteenApplicationCasesPassed": false,
+  "sdkBrowserProcessOrNetworkStarted": false,
+  "foreignProfilesRead": false,
+  "managerQueryOrRawCommandLineSaved": false,
+  "wholeProfileCopiedOrHashed": false,
+  "absenceOfCanvasKitCacheEntriesClaimedAsNetworkAbsence": false,
+  "errorType": "FileNotFoundError",
+  "errorCode": "UNEXPECTED_FILE_OR_FORMAT_ERROR"
+}

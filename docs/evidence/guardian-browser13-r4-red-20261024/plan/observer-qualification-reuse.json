@@ -1,0 +1,33 @@
+{
+  "status": "SAME_OBSERVER_BYTES_DIRECTLY_REUSE_ORIGINAL_NARROW_READ_PATH_QUALIFICATION",
+  "originalObserver": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\owned_chrome_evidence.py",
+    "bytes": 29439,
+    "sha256": "34e80553205db29267baf4299821ff40111adbc79bd2e83e49fbf20282eb5a3f"
+  },
+  "currentObserver": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\owned_chrome_evidence.py",
+    "bytes": 29439,
+    "sha256": "34e80553205db29267baf4299821ff40111adbc79bd2e83e49fbf20282eb5a3f"
+  },
+  "observerBytesIdentical": true,
+  "originalQualificationBoundDirectlyByInput": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-native-qualification-binding.json",
+    "bytes": 1307,
+    "sha256": "6e8ba3d2436bfa7ba1c80bad1bb24856f3eca27de6bf8476fd1c297c773a070a"
+  },
+  "actualQualificationResult": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-fixture\\result.json",
+    "bytes": 2321,
+    "sha256": "293eef8510874f37a6679dd932d4abef5ec437c71334ee8234828933507b927d"
+  },
+  "actualOuterQualificationResult": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-fixture-host\\result.json",
+    "bytes": 314,
+    "sha256": "5982a79092aa4138f47350f676b6e8f9421659619494d3949bfbc7bfffd6ab2d"
+  },
+  "originalActualToolTerminalChunk": "f56bdd",
+  "newFixtureExecuted": false,
+  "newQualificationClaimed": false,
+  "sdkChromeOrTcpQualificationClaimed": false
+}

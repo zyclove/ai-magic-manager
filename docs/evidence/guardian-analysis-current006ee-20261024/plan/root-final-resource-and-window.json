@@ -1,0 +1,20 @@
+{
+  "atUtc": "2026-10-24T10:00:26.7900693Z",
+  "sdk": [],
+  "unknown": [],
+  "availableRamBytes": 8670232576,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 3086807040
+    },
+    {
+      "Name": "D",
+      "Free": 36947132416
+    }
+  ],
+  "plannedStartUtc": "2026-10-24T10:03:00.0000000Z",
+  "plannedEndUtc": "2026-10-24T10:06:00.0000000Z",
+  "plannedStartBeijing": "18:03",
+  "plannedEndBeijing": "18:06"
+}

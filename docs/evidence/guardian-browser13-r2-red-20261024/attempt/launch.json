@@ -1,0 +1,63 @@
+{
+  "utc": "2026-10-24T10:39:24.898913+00:00",
+  "pid": 155860,
+  "creationFiletime": 134373119648974471,
+  "argv": [
+    "C:\\Windows\\System32\\cmd.exe",
+    "/d",
+    "/v:off",
+    "/c",
+    "D:\\softwares\\flutter\\bin\\flutter.bat --no-version-check --suppress-analytics test --platform=chrome --no-pub --concurrency=1 --reporter=json test/editor_submit_guard_test.dart"
+  ],
+  "workingDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\src\\apps\\guardian",
+  "selectorCount": 1,
+  "selectors": [
+    "test/editor_submit_guard_test.dart"
+  ],
+  "expectedVisibleCases": 13,
+  "testCaseContractPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\expected-browser13-cases.json",
+    "bytes": 6343,
+    "sha256": "6ea16bdf3b93fbea589aa95a4aa7a9e808afbe9605938d755fb54d8ce748c340"
+  },
+  "reporterContractCodePin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\reporter_contract.py",
+    "bytes": 14280,
+    "sha256": "dcd85cf451b20bd24857cef6726d0f1ebb406c67096146d3d3c82306942b67e8"
+  },
+  "workerStartQpc": 116454.6958499,
+  "commandDeadlineQpc": 116589.6958499,
+  "commandCleanupDeadlineQpc": 116594.6958499,
+  "workerDeadlineQpc": 116619.6958499,
+  "commandBudgetSeconds": 112.60628560000623,
+  "workerElapsedAtLaunch": 22.3937150999991,
+  "postflightReserveSeconds": 25,
+  "processLocalTemp": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\attempt\\tmp",
+  "pubAndStorageLoopbackDisabled": true,
+  "nativeProcessHandleRetained": true,
+  "atomicNestedJobMembership": true,
+  "launchRecordBeforeResume": true,
+  "sdkProcessSafeDirectories": [
+    "D:\\codes\\mobile\\ai-manager",
+    "D:\\softwares\\flutter"
+  ],
+  "nativeMemoryLimitClaimed": false,
+  "chromeExecutable": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  "browserToolSources": [
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\lib\\src\\web\\chrome.dart",
+      "bytes": 20585,
+      "sha256": "16eb12ac25b6d8c9f6360ecc62ef65d6103441b8bb6c5690b61b7413216ed6e7"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\lib\\src\\test\\flutter_web_platform.dart",
+      "bytes": 35444,
+      "sha256": "aac43b3f5ba51f73de80b9f3947bf48d2d86ffa56133f70fbd7e18dbed013448"
+    }
+  ],
+  "ownedChromeEvidenceCodePin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\owned_chrome_evidence.py",
+    "bytes": 20833,
+    "sha256": "4a5d49f4e55d583478a423532e9997eb8ea6e3f7da9ab4d1e1ea8c5cde29bf72"
+  }
+}

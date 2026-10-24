@@ -1,0 +1,37 @@
+--- D:\codes\mobile\ai-manager\.cache\guardian-browser13-20261024-r1\worker.py
++++ D:\codes\mobile\ai-manager\.cache\guardian-browser13-20261024-r2-manager-proof\worker.py
+@@ -27,8 +27,8 @@
+ SOURCE = FROZEN / 'src'
+ MODULE = SOURCE / 'apps/guardian'
+ INPUT = CANDIDATE / 'inputs.json'
+-INPUT_BYTES = 20154
+-INPUT_SHA256 = '03fe10e087bd8199cf67a5ce609e442b8f458ae4b113e91e896f4051b0e7ae4b'
++INPUT_BYTES = 20238
++INPUT_SHA256 = '7f5252253aa92b29c0fe5e7c7203ef4d5e4d9054d4b47f381e90111dfcddc2c2'
+ PWSH = Path(r'C:\Users\Administrator\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell\pwsh.exe')
+ PROCESS_INVENTORY = CANDIDATE / 'process-inventory.ps1'
+ PROCESS_INVENTORY_SHA256 = 'f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046'
+@@ -596,7 +596,7 @@
+             return False
+         identities, profiles, ports = set(), set(), set()
+         row_keys = {'pid', 'creationFiletime', 'commandCreationFiletime', 'imagePath', 'profile',
+-                    'debuggingPort', 'testServerOrigins', 'testTargets', 'headless',
++                    'debuggingPort', 'testServerOrigins', 'testTargets', 'managerTarget', 'headless',
+                     'argvTestTargetLoopback', 'flutterManagerTargetSameLoopbackOrigin',
+                     'commandLineUtf16Sha256', 'commandLineReadBeforeQpc', 'commandLineReadAfterQpc',
+                     'sameReadHandleVerified', 'ownedMembershipVerifiedBeforeAndAfter', 'liveBeforeAndAfter',
+@@ -639,6 +639,14 @@
+                     and target['scheme'] == 'http' and target['host'] in ('localhost', '127.0.0.1', '::1')
+                     and positive(target['port']) and target['port'] < 65536
+                     and target['path'] == '/static/index.html' and digest(target['urlSha256'])):
++                return False
++            manager = row['managerTarget']
++            if not (type(manager) is dict and set(manager) == {'scheme', 'host', 'port'}
++                    and type(manager['scheme']) is str and manager['scheme'] == 'ws'
++                    and type(manager['host']) is str
++                    and manager['host'] in ('localhost', '127.0.0.1', '::1')
++                    and positive(manager['port']) and manager['port'] < 65536
++                    and manager['host'] == target['host'] and manager['port'] == target['port']):
+                 return False
+             origin = urlsplit(origins[0])
+             if not (origin.scheme == 'http' and origin.hostname == target['host']

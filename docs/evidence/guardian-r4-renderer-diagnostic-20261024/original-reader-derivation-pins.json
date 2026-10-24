@@ -1,0 +1,24 @@
+{
+  "status": "B4_FIXED_BASE_AND_OUTPUT_DERIVATION_ONLY_NOT_EXECUTED",
+  "original": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-wrapper-readback-20261024-r1\\readback.py",
+    "bytes": 18244,
+    "sha256": "d085fdb73fc404bf336091289cf0e3ca2fe8a7c1a4a36e1009d6c6d8ff36f718"
+  },
+  "derived": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r4-wrapper-readback-20261024-r1\\readback.py",
+    "bytes": 18242,
+    "sha256": "b98447cbb1d4d6fea657d79c332430f63494c0b9da99c6f48db223408e9e8854"
+  },
+  "onlyLiteralChange": {
+    "old": "guardian-browser13-20261024-r3-html-diagnostic",
+    "new": "guardian-browser13-20261024-r4-canonical-git",
+    "count": 1
+  },
+  "outputDirectoryDerivedOnlyFromOwnScriptParent": true,
+  "inverseByteExactToOriginal": true,
+  "syntaxOnlyCompiledWithoutExecution": true,
+  "oldReaderUnmodified": true,
+  "cacheProfileSdkChromeNetworkOrProcessReadByDerivation": false,
+  "existingStrictTopLevelAcceptanceGateUnchanged": true
+}

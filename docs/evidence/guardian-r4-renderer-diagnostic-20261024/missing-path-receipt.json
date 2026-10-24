@@ -1,0 +1,35 @@
+{
+  "status": "EXACT_OWN_PROFILE_PATH_METADATA_ONLY_NO_READER_RETRY",
+  "evidenceSha256": "e0dcd84c8e69fde9e81362f0294c1d029448e10d7f9a3d21df63abec4ca4105e",
+  "paths": [
+    {
+      "path": "d:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\attempt\\tmp\\flutter_tools.e6a80fd7",
+      "exists": false
+    },
+    {
+      "path": "d:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\attempt\\tmp\\flutter_tools.e6a80fd7\\flutter_tools_chrome_device.4cace75d",
+      "exists": false
+    },
+    {
+      "path": "d:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\attempt\\tmp\\flutter_tools.e6a80fd7\\flutter_tools_chrome_device.4cace75d\\Default",
+      "exists": false
+    },
+    {
+      "path": "d:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\attempt\\tmp\\flutter_tools.e6a80fd7\\flutter_tools_chrome_device.4cace75d\\Default\\Cache",
+      "exists": false
+    },
+    {
+      "path": "d:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\attempt\\tmp\\flutter_tools.e6a80fd7\\flutter_tools_chrome_device.4cace75d\\Default\\Cache\\Cache_Data",
+      "exists": false
+    },
+    {
+      "path": "d:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\attempt\\tmp\\flutter_tools.e6a80fd7\\flutter_tools_chrome_device.4cace75d\\Default\\Cache\\Cache_Data\\data_1",
+      "exists": false
+    }
+  ],
+  "otherDirectoriesEnumerated": false,
+  "cacheBytesReadByThisMetadataCheck": 0,
+  "sdkChromeNetworkOrProcessCalls": false,
+  "rendererFactEstablished": false,
+  "testAccepted": false
+}

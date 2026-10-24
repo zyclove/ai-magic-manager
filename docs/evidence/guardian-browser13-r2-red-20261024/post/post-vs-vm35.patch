@@ -1,0 +1,490 @@
+--- vm35/post.py
++++ browser13/post.py
+@@ -10,18 +10,18 @@
+ import sys
+ 
+ REPO = Path(r'D:\codes\mobile\ai-manager')
+-BASE = REPO / '.cache/guardian-vm35-20261024-r1'
+-OUT = REPO / '.cache/guardian-vm35-post-20261024-r1'
+-LAUNCHER = REPO / '.cache/guardian-vm35-root-launch-20261024-r1.ps1'
++BASE = REPO / '.cache/guardian-browser13-20261024-r2-manager-proof'
++OUT = REPO / '.cache/guardian-browser13-post-20261024-r2-manager-proof'
++LAUNCHER = REPO / '.cache/guardian-browser13-root-launch-20261024-r2-manager-proof.ps1'
+ COMMIT = '006ee45850c9b6b0f90570d9478bced3beb0e0fe'
+-INPUT_SHA = '56012ab858575ef7f356d4cf1e5ed94815c9e12e53423d889a0168caf1494eb5'
++INPUT_SHA = '7f5252253aa92b29c0fe5e7c7203ef4d5e4d9054d4b47f381e90111dfcddc2c2'
+ BUDGETS = {'outer': 180, 'working': 174, 'worker': 165, 'command': 135,
+            'commandCleanup': 140, 'postflightReserve': 25}
+-NAMES = {'analysis-host.py', 'worker.py', 'owned_job.py', 'process-inventory.ps1', 'reporter_contract.py'}
+-PROPOSAL_SHA = '8d8001ea23ddfc7295e8cb302d0eaa951280bc62ab4698036f4897419d2074d0'
+-SELECTORS = ['test/workbench_view_test.dart', 'test/dialog_submit_guard_test.dart', 'test/failure_view_test.dart', 'test/login_view_test.dart']
+-REPORTER_SHA = 'fe10ca0eab38e40d9edddb6c5d53101ef2b134dcad931189b378b59f9f32bcf6'
+-CASE_SHA = 'dad42332d72a01db3f02ba71772cecbe584e67ea0dade4b2b9d8241de5a678cc'
++NAMES = {'analysis-host.py', 'worker.py', 'owned_job.py', 'process-inventory.ps1', 'reporter_contract.py', 'owned_chrome_evidence.py'}
++PROPOSAL_SHA = '669a8366f805044f7f9c0b2140b3b69975d86076bf380f1d749134dbb4d0d905'
++SELECTORS = ['test/editor_submit_guard_test.dart']
++REPORTER_SHA = 'dcd85cf451b20bd24857cef6726d0f1ebb406c67096146d3d3c82306942b67e8'
++CASE_SHA = '6ea16bdf3b93fbea589aa95a4aa7a9e808afbe9605938d755fb54d8ce748c340'
+ PROCESS_INVENTORY_SHA = 'f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046'
+ SDK_NAMES = {'java.exe', 'javaw.exe', 'javac.exe', 'dart.exe', 'dartaotruntime.exe',
+              'go.exe', 'gofmt.exe', 'flutter.exe', 'flutter_tester.exe', 'gen_snapshot.exe',
+@@ -208,8 +208,8 @@
+             'unchangedExternalRows': 63, 'metadataPreserved': True,
+             'candidateSha256': inputs['candidatePackageConfig']['sha256']}), 'Package guard summary differs')
+     require(same(value.get('cache'), {'manifestSha256': inputs['cacheManifest']['sha256'],
+-            'trees': 70, 'fixedFiles': 184, 'allMembersDirectoriesBytesAndHashesMatch': True,
+-            'totals': {'files': 3688, 'bytes': 641815136}}), 'Full cache guard summary differs')
++            'trees': 70, 'fixedFiles': 185, 'allMembersDirectoriesBytesAndHashesMatch': True,
++            'totals': {'files': 3689, 'bytes': 646535928}}), 'Full cache guard summary differs')
+     require(same(value.get('runtime'), {'sdkGitRevision': inputs['sdkBootstrap']['sdkGitRevision'],
+             'controlAndExtraRuntimePinsMatch': True, 'snapshotAndStampReady': True,
+             'pubspecNotNewerThanLock': True, 'forbiddenEnvironmentOverridesAbsent': True,
+@@ -217,24 +217,167 @@
+             'fixedProcessPathVerified': True, 'bootstrapAllowed': False}), 'SDK/runtime guard summary differs')
+ 
+ 
+-def independent_vm30(raw, contract, module, log_pin):
++def chrome_evidence_valid(value, inputs, command_state, start, end, attempt):
++    """Derive Chrome boundaries from pinned JSON; no process or network API."""
++    import ipaddress
++    import math
++    import ntpath
++    import re
++    from urllib.parse import urlsplit
++
++    def number(item):
++        return type(item) is float and math.isfinite(item)
++
++    def positive(item):
++        return type(item) is int and item > 0
++
++    def digest(item):
++        return type(item) is str and re.fullmatch('[a-f0-9]{64}', item) is not None
++
++    def canonical(item):
++        if not (type(item) is str and 0 < len(item) <= 32766
++                and re.match(r'^[A-Za-z]:[\\/]', item)
++                and not any(ord(char) < 32 for char in item)
++                and '..' not in item.replace('/', '\\').split('\\')):
++            raise ValueError('Nonlocal or unsafe Chrome evidence path')
++        drive, tail = ntpath.splitdrive(item)
++        if ':' in tail:
++            raise ValueError('ADS Chrome evidence path')
++        return ntpath.normcase(ntpath.normpath(item))
++
++    try:
++        keys = {'schemaVersion', 'status', 'chromeRoots', 'problems', 'sampleCalls',
++                'pinnedBrowserPath', 'temporaryRoot', 'commandCreationFiletime',
++                'observationDeadlineQpc', 'commandLineSource', 'debugBindingProof',
++                'foreignCommandLinesRead', 'processesTerminated', 'environmentRead',
++                'nativeReadPathQualificationSeparate'}
++        if not (type(value) is dict and set(value) == keys
++                and type(value['schemaVersion']) is int and value['schemaVersion'] == 1
++                and value['status'] == 'OWNED_CHROME_BOUNDARIES_OBSERVED'
++                and type(value['problems']) is list and value['problems'] == []
++                and positive(value['sampleCalls']) and value['sampleCalls'] <= 100000
++                and value['foreignCommandLinesRead'] is False
++                and value['processesTerminated'] is False and value['environmentRead'] is False
++                and value['nativeReadPathQualificationSeparate'] is True
++                and value['commandLineSource'] == 'SAME_RETAINED_HANDLE_PBI0_READPROCESSMEMORY'
++                and value['debugBindingProof'] == 'PID_FILTERED_LISTEN_ROWS_BRACKETED_BY_SAME_HANDLE_IDENTITY'
++                and type(command_state) is dict and positive(command_state.get('pid'))
++                and positive(command_state.get('creationFiletime'))
++                and positive(value['commandCreationFiletime'])
++                and value['commandCreationFiletime'] == command_state['creationFiletime']
++                and number(start) and number(end) and start < end
++                and number(value['observationDeadlineQpc'])
++                and value['observationDeadlineQpc'] == end):
++            return False
++        executable = canonical(inputs['browserExecutable']['path'])
++        temporary = canonical(str(attempt / 'tmp'))
++        if canonical(value['pinnedBrowserPath']) != executable or canonical(value['temporaryRoot']) != temporary:
++            return False
++        roots = value['chromeRoots']
++        if type(roots) is not list or not 1 <= len(roots) <= 64:
++            return False
++        identities, profiles, ports = set(), set(), set()
++        row_keys = {'pid', 'creationFiletime', 'commandCreationFiletime', 'imagePath', 'profile',
++                    'debuggingPort', 'testServerOrigins', 'testTargets', 'managerTarget', 'headless',
++                    'argvTestTargetLoopback', 'flutterManagerTargetSameLoopbackOrigin',
++                    'commandLineUtf16Sha256', 'commandLineReadBeforeQpc', 'commandLineReadAfterQpc',
++                    'sameReadHandleVerified', 'ownedMembershipVerifiedBeforeAndAfter', 'liveBeforeAndAfter',
++                    'observedQpc', 'debugListenerAddresses', 'listenerReadBeforeQpc', 'listenerReadAfterQpc',
++                    'listenerSameHandleIdentityVerifiedBeforeAndAfter', 'debugBindingLoopbackObserved'}
++        for row in roots:
++            if not (type(row) is dict and set(row) == row_keys
++                    and positive(row['pid']) and row['pid'] != command_state['pid']
++                    and positive(row['creationFiletime'])
++                    and row['creationFiletime'] >= command_state['creationFiletime']
++                    and positive(row['commandCreationFiletime'])
++                    and row['commandCreationFiletime'] == command_state['creationFiletime']
++                    and canonical(row['imagePath']) == executable
++                    and positive(row['debuggingPort']) and row['debuggingPort'] < 65536
++                    and all(row[key] is True for key in ('headless', 'argvTestTargetLoopback',
++                        'flutterManagerTargetSameLoopbackOrigin', 'sameReadHandleVerified',
++                        'ownedMembershipVerifiedBeforeAndAfter', 'liveBeforeAndAfter',
++                        'listenerSameHandleIdentityVerifiedBeforeAndAfter', 'debugBindingLoopbackObserved'))
++                    and digest(row['commandLineUtf16Sha256'])):
++                return False
++            identity = (row['pid'], row['creationFiletime'])
++            profile = canonical(row['profile'])
++            port = row['debuggingPort']
++            if not profile.startswith(temporary.rstrip('\\') + '\\') or len(profile.split('\\')) > 64:
++                return False
++            if identity in identities or profile in profiles or port in ports:
++                return False
++            identities.add(identity); profiles.add(profile); ports.add(port)
++            times = [row[key] for key in ('commandLineReadBeforeQpc', 'commandLineReadAfterQpc',
++                'listenerReadBeforeQpc', 'listenerReadAfterQpc', 'observedQpc')]
++            if not (all(number(item) for item in times)
++                    and start <= times[0] <= times[1] <= times[2] <= times[3] == times[4] < end):
++                return False
++            targets, origins = row['testTargets'], row['testServerOrigins']
++            if not (type(targets) is list and len(targets) == 1
++                    and type(origins) is list and len(origins) == 1 and type(origins[0]) is str):
++                return False
++            target = targets[0]
++            if not (type(target) is dict and set(target) == {'scheme', 'host', 'port', 'path', 'urlSha256'}
++                    and target['scheme'] == 'http' and target['host'] in ('localhost', '127.0.0.1', '::1')
++                    and positive(target['port']) and target['port'] < 65536
++                    and target['path'] == '/static/index.html' and digest(target['urlSha256'])):
++                return False
++            manager = row['managerTarget']
++            if not (type(manager) is dict and set(manager) == {'scheme', 'host', 'port'}
++                    and type(manager['scheme']) is str and manager['scheme'] == 'ws'
++                    and type(manager['host']) is str
++                    and manager['host'] in ('localhost', '127.0.0.1', '::1')
++                    and positive(manager['port']) and manager['port'] < 65536
++                    and manager['host'] == target['host'] and manager['port'] == target['port']):
++                return False
++            origin = urlsplit(origins[0])
++            if not (origin.scheme == 'http' and origin.hostname == target['host']
++                    and origin.port == target['port'] and origin.path == ''
++                    and origin.username is None and origin.password is None
++                    and not origin.query and not origin.fragment):
++                return False
++            listeners = row['debugListenerAddresses']
++            if type(listeners) is not list or not 1 <= len(listeners) <= 32:
++                return False
++            seen = set()
++            for listener in listeners:
++                if not (type(listener) is dict and set(listener) == {'address', 'port', 'family', 'status'}
++                        and type(listener['address']) is str and len(listener['address']) <= 64
++                        and type(listener['port']) is int and listener['port'] == port
++                        and listener['status'] == 'LISTEN' and listener['family'] in ('AF_INET', 'AF_INET6')):
++                    return False
++                address = ipaddress.ip_address(listener['address'])
++                if not (address.is_loopback and
++                        ((address.version == 4 and listener['family'] == 'AF_INET')
++                         or (address.version == 6 and listener['family'] == 'AF_INET6'))):
++                    return False
++                entry = (str(address), listener['port'], listener['family'], listener['status'])
++                if entry in seen:
++                    return False
++                seen.add(entry)
++        return True
++    except (KeyError, TypeError, ValueError, AttributeError, OverflowError):
++        return False
++
++
++def independent_browser13(raw, contract, module, log_pin):
+     """Derive the fixed reporter result from ordinary JSON; import no helper."""
+     require(type(contract) is dict and type(contract.get('schemaVersion')) is int
+             and contract['schemaVersion'] == 1 and contract.get('module') == 'apps/guardian'
+-            and contract.get('platform') == 'default Flutter VM tester'
++            and contract.get('platform') == 'Flutter chrome browser'
+             and same(contract.get('selectors'), SELECTORS)
+-            and type(contract.get('expectedVisibleCases')) is int and contract['expectedVisibleCases'] == 35
+-            and type(contract.get('expectedTestRoots')) is int and contract['expectedTestRoots'] == 4
+-            and same(contract.get('sourceCaseCounts'), [15, 6, 9, 5]), 'Exact VM35 case contract required')
+-    require(type(contract.get('cases')) is list and len(contract['cases']) == 35,
+-            'Thirty-five contract rows required')
++            and type(contract.get('expectedVisibleCases')) is int and contract['expectedVisibleCases'] == 13
++            and type(contract.get('expectedTestRoots')) is int and contract['expectedTestRoots'] == 1
++            and same(contract.get('sourceCaseCounts'), [13]), 'Exact BROWSER13 case contract required')
++    require(type(contract.get('cases')) is list and len(contract['cases']) == 13,
++            'Thirteen contract rows required')
+     wanted = []
+     for row in contract['cases']:
+         require(type(row) is dict and type(row.get('selector')) is str and row['selector'] in SELECTORS
+                 and type(row.get('name')) is str and bool(row['name'].strip()), 'Malformed expected case')
+         wanted.append((row['selector'], row['name']))
+-    require(len(set(wanted)) == 35 and [sum(path == selector for path, name in wanted)
+-            for selector in SELECTORS] == [15, 6, 9, 5], 'Duplicate/misallocated expected names')
++    require(len(set(wanted)) == 13 and [sum(path == selector for path, name in wanted)
++            for selector in SELECTORS] == [13], 'Duplicate/misallocated expected names')
+     require(type(raw) is bytes and 0 < len(raw) <= 16 * 1024 * 1024 and raw.endswith(b'\n'),
+             'Bounded complete JSONL log required')
+     text = raw.decode('utf-8-sig', errors='strict')
+@@ -288,7 +431,7 @@
+                     'Invalid reporter start')
+         elif kind == 'allSuites':
+             suite_count += 1
+-            require(suite_count == 1 and type(event.get('count')) is int and event['count'] == 4,
++            require(suite_count == 1 and type(event.get('count')) is int and event['count'] == 1,
+                     'Incorrect physical-suite discovery')
+         elif kind in ('suite', 'group', 'testStart'):
+             row = event.get({'suite': 'suite', 'group': 'group', 'testStart': 'test'}[kind])
+@@ -297,9 +440,9 @@
+             identifier = row['id']
+             identifiers.add(identifier)
+             if kind == 'suite':
+-                require(row.get('platform') == 'vm' and type(row.get('path')) is str
++                require(row.get('platform') == 'chrome' and type(row.get('path')) is str
+                         and bool(row['path']) and '\x00' not in row['path'] and '://' not in row['path']
+-                        and not row['path'].startswith(('\\\\', '//')), 'Non-VM or nonlocal suite')
++                        and not row['path'].startswith(('\\\\', '//')), 'Non-Chrome or nonlocal suite')
+                 path = row['path']
+                 drive, tail = ntpath.splitdrive(path)
+                 require(':' not in tail and (not drive or ntpath.isabs(path)), 'ADS/drive-relative suite')
+@@ -355,7 +498,7 @@
+             require(event.get('success') is True, 'Terminal done false/null/missing')
+         else:
+             raise ValueError('Unknown reporter event: ' + kind)
+-    require(start_count == suite_count == finish_count == 1 and len(suites) == 4
++    require(start_count == suite_count == finish_count == 1 and len(suites) == 1
+             and set(running) == set(done), 'Incomplete reporter stream')
+     visible, hidden = [], []
+     for identifier, pair in running.items():
+@@ -365,12 +508,12 @@
+     visible = sorted(visible, key=lambda row: (row['selector'], row['name']))
+     hidden = sorted(hidden, key=lambda row: (row['selector'], row['name']))
+     actual = [(row['selector'], row['name']) for row in visible]
+-    require(len(actual) == len(set(actual)) == 35 and set(actual) == set(wanted),
+-            '35 exact visible cases differ')
+-    return {'status': 'EXACT_VM35_REPORT_ACCEPTED', 'protocolVersion': '0.1.1',
+-            'expectedSuiteCount': 4, 'actualSuiteCount': 4, 'suiteCount': 4,
+-            'suitePaths': sorted(suites.values()), 'expectedVisibleTests': 35,
+-            'visibleTests': 35, 'successfulVisibleTests': 35, 'failures': 0, 'errors': 0, 'skipped': 0,
++    require(len(actual) == len(set(actual)) == 13 and set(actual) == set(wanted),
++            '13 exact visible cases differ')
++    return {'status': 'EXACT_BROWSER13_REPORT_ACCEPTED', 'protocolVersion': '0.1.1',
++            'expectedSuiteCount': 1, 'actualSuiteCount': 1, 'suiteCount': 1,
++            'suitePaths': sorted(suites.values()), 'expectedVisibleTests': 13,
++            'visibleTests': 13, 'successfulVisibleTests': 13, 'failures': 0, 'errors': 0, 'skipped': 0,
+             'actualVisibleCases': visible, 'hiddenSuccessfulTests': hidden,
+             'allStartedTestsCompleted': True, 'terminalDoneSuccess': True,
+             'eventCount': len(events), 'printEvents': output_count, 'bootstrapNotices': bootstrap,
+@@ -378,23 +521,23 @@
+ 
+ 
+ def main(approved_sha):
+-    require(approved_sha == PROPOSAL_SHA, 'Supply the fixed VM35 R1 approved proposal SHA')
++    require(approved_sha == PROPOSAL_SHA, 'Supply the fixed BROWSER13 R1 approved proposal SHA')
+     proposal_raw = read(BASE / 'proposal.json')
+     require(hashlib.sha256(proposal_raw).hexdigest() == approved_sha, 'Approved proposal drift')
+     proposal = decode(proposal_raw)
+     require(set(proposal) == {'schemaVersion', 'phase', 'sourceCommit', 'inputs', 'candidateFiles',
+             'runtimePins', 'pythonExecutable', 'budgets'}, 'Fixed proposal schema differs')
+     require(type(proposal['schemaVersion']) is int and proposal['schemaVersion'] == 1
+-            and proposal['phase'] == 'guardian-vm35' and proposal['sourceCommit'] == COMMIT
++            and proposal['phase'] == 'guardian-browser13' and proposal['sourceCommit'] == COMMIT
+             and proposal['pythonExecutable'] == 'C:/Python313/python.exe'
+             and same(proposal['budgets'], BUDGETS), 'Proposal scope or original budgets differ')
+-    require(type(proposal['candidateFiles']) is list and len(proposal['candidateFiles']) == 5
++    require(type(proposal['candidateFiles']) is list and len(proposal['candidateFiles']) == 6
+             and {row.get('path') for row in proposal['candidateFiles'] if type(row) is dict} == NAMES,
+             'Exact five candidate controls required')
+     for row in proposal['candidateFiles']:
+         descriptor(row, candidate=True)
+     require(Path(proposal['inputs']['path']) == BASE / 'inputs.json'
+-            and type(proposal['inputs']['bytes']) is int and proposal['inputs']['bytes'] == 17077
++            and type(proposal['inputs']['bytes']) is int and proposal['inputs']['bytes'] == 20238
+             and proposal['inputs']['sha256'] == INPUT_SHA, 'Fixed current input required')
+     descriptor(proposal['inputs'])
+     inputs = load(BASE / 'inputs.json')
+@@ -408,6 +551,17 @@
+             and inputs['sourceCount'] == 413 and inputs['sourceFiles'] == 413
+             and inputs['fullRegressionRootFiles'] == 183 and inputs['runtimeClosureComplete'] is False,
+             'Current413/full183 input boundary differs')
++    descriptor(inputs['ownedChromeEvidenceCode'])
++    require(Path(inputs['ownedChromeEvidenceCode']['path']) == BASE / 'owned_chrome_evidence.py',
++            'Fixed Chrome evidence code path differs')
++    descriptor(inputs['ownedChromeNativeQualification'])
++    chrome_qualification = load(Path(inputs['ownedChromeNativeQualification']['path']))
++    require(chrome_qualification['observerCodeSha256'] == inputs['ownedChromeEvidenceCode']['sha256']
++            and chrome_qualification['newNativeReadPathActuallyQualified'] is True
++            and chrome_qualification['sdkOrChromeLifecycleOrTcpQualified'] is False,
++            'Narrow actual reader qualification differs')
++    descriptor(chrome_qualification['actualQualificationResult'])
++    descriptor(chrome_qualification['actualOuterQualificationResult'])
+     grant = load(BASE / 'root-sdk-grant.json')
+     launcher_raw = read(LAUNCHER)
+     launcher_sha = hashlib.sha256(launcher_raw).hexdigest()
+@@ -417,7 +571,7 @@
+             and grant['sdkCallsAllowed'] == 1, 'Root exact grant/launcher does not match')
+     root_pre = load(BASE / 'root-attempt/preflight.json')
+     root = load(BASE / 'root-attempt/result.json')
+-    require(root_pre.get('status') == 'ROOT_FIXED_VM35_STARTED', 'Wrong Root preflight')
++    require(root_pre.get('status') == 'ROOT_FIXED_BROWSER13_STARTED', 'Wrong Root preflight')
+     for key, value in root_pre.items():
+         if key != 'status':
+             require(key in root and same(root[key], value), 'Root preflight/result field changed: ' + key)
+@@ -434,7 +588,7 @@
+                 and {item.get('Name') for item in row['disks']} == {'C', 'D'}, 'Root disk scope differs')
+         for disk in row['disks']:
+             integer(disk.get('Free'), 2**31)
+-    require(root.get('status') == 'ROOT_HOST_TERMINAL_PENDING_INDEPENDENT_VM35_POST'
++    require(root.get('status') == 'ROOT_HOST_TERMINAL_PENDING_INDEPENDENT_BROWSER13_POST'
+             and root.get('sameHandleSignaled') is True and type(root.get('actualHostExitCode')) is int
+             and root['actualHostExitCode'] == 0 and root.get('rootForcedOwnHost') is False
+             and root.get('emergencyCleanupAttempted') is False and root.get('failure') is None
+@@ -450,10 +604,10 @@
+     require(0.0 <= root_signal < 180.0 and number(root.get('rootElapsedBeforeReceiptSeconds')) >= root_signal,
+             'Root first same-handle signal was not within original180')
+ 
+-    require(type(proposal['runtimePins']) is list and len(proposal['runtimePins']) == 35, 'Runtime union changed')
++    require(type(proposal['runtimePins']) is list and len(proposal['runtimePins']) == 43, 'Runtime union changed')
+     runtime = [descriptor(row) for row in proposal['runtimePins']]
+     expected_runtime = [descriptor(row) for row in inputs['controlRuntimeFiles'] + inputs['extraRuntimeFiles']]
+-    require(len(runtime) == len(set(runtime)) == 35 and set(runtime) == set(expected_runtime),
++    require(len(runtime) == len(set(runtime)) == 43 and set(runtime) == set(expected_runtime),
+             'Runtime union does not match exact input runtime guards')
+     # Bound input metadata are read; external641MB cache payload is not rehashed
+     # by this file-only post. Actual pre/post guard reports are cross-checked below.
+@@ -463,26 +617,26 @@
+                 'cacheProjectionParentManifest', 'qualifiedHostRuntimeManifest'):
+         descriptor(inputs[key])
+ 
+-    require(grant.get('phase') == 'guardian-vm35' and grant.get('testsAllowed') is True
+-            and type(grant.get('selectedRoots')) is int and grant['selectedRoots'] == 4
+-            and type(grant.get('expectedVisibleCases')) is int and grant['expectedVisibleCases'] == 35,
+-            'Root VM35 selection grant differs')
++    require(grant.get('phase') == 'guardian-browser13' and grant.get('testsAllowed') is True
++            and type(grant.get('selectedRoots')) is int and grant['selectedRoots'] == 1
++            and type(grant.get('expectedVisibleCases')) is int and grant['expectedVisibleCases'] == 13,
++            'Root BROWSER13 selection grant differs')
+     require(Path(inputs['reporterContractCode']['path']) == BASE / 'reporter_contract.py'
+-            and type(inputs['reporterContractCode']['bytes']) is int and inputs['reporterContractCode']['bytes'] == 14369
++            and type(inputs['reporterContractCode']['bytes']) is int and inputs['reporterContractCode']['bytes'] == 14280
+             and inputs['reporterContractCode']['sha256'] == REPORTER_SHA
+-            and Path(inputs['testCaseContract']['path']) == BASE / 'expected-vm35-cases.json'
+-            and type(inputs['testCaseContract']['bytes']) is int and inputs['testCaseContract']['bytes'] == 15481
++            and Path(inputs['testCaseContract']['path']) == BASE / 'expected-browser13-cases.json'
++            and type(inputs['testCaseContract']['bytes']) is int and inputs['testCaseContract']['bytes'] == 6343
+             and inputs['testCaseContract']['sha256'] == CASE_SHA,
+             'Fixed reporter code/case contract descriptors differ')
+     descriptor(inputs['reporterContractCode'])
+     descriptor(inputs['testCaseContract'])
+     case_contract = load(Path(inputs['testCaseContract']['path']))
+     require(same(inputs.get('testSelectors'), SELECTORS)
+-            and type(inputs.get('expectedVisibleCases')) is int and inputs['expectedVisibleCases'] == 35
+-            and type(inputs.get('expectedVmTestRoots')) is int and inputs['expectedVmTestRoots'] == 4
+-            and type(inputs.get('remainingFullRegressionRootsUnrun')) is int
+-            and inputs['remainingFullRegressionRootsUnrun'] == 179,
+-            'VM35 versus full183 scope differs')
++            and type(inputs.get('expectedVisibleCases')) is int and inputs['expectedVisibleCases'] == 13
++            and type(inputs.get('expectedBrowserTestRoots')) is int and inputs['expectedBrowserTestRoots'] == 1
++            and type(inputs.get('otherFullRegressionRootsNotExecutedByThisBatch')) is int
++            and inputs['otherFullRegressionRootsNotExecutedByThisBatch'] == 182,
++            'BROWSER13 versus full183 scope differs')
+ 
+     attempt = BASE / 'attempt'
+     request = load(attempt / 'request.json')
+@@ -493,12 +647,12 @@
+             'cleanupDeadlineQpc', 'sourceCommit', 'phase'}, 'Host request schema differs')
+     anchor = qpc(request.get('qpcAnchor'))
+     require(request.get('approvedProposalSha256') == approved_sha and request.get('sourceCommit') == COMMIT
+-            and request.get('phase') == 'guardian-vm35'
++            and request.get('phase') == 'guardian-browser13'
+             and qpc(request.get('workDeadlineQpc')) == anchor + 174.0
+             and qpc(request.get('cleanupDeadlineQpc')) == anchor + 180.0, 'Host request budget anchor differs')
+     for key in request:
+         require(key in host and same(host[key], request[key]), 'Host request/result field differs: ' + key)
+-    require(host.get('status') == 'GUARDIAN_VM35_HOST_OBSERVED'
++    require(host.get('status') == 'GUARDIAN_BROWSER13_HOST_OBSERVED'
+             and host.get('naturalCompleteTerminalTimely') is True and host.get('forcedCleanupRequested') is False
+             and host.get('terminationCallSucceeded') is False and host.get('closedWithLiveOrUnknownMembers') is False
+             and host.get('deadlineReached') is False and host.get('candidateAndRuntimePinsMatchAfter') is True
+@@ -536,7 +690,7 @@
+             and 0.0 <= receipt['elapsedCompleteSeconds'] == finished - start < 165.0
+             and worker_terminal['firstCompleteTerminalQpc'] < start + 165.0,
+             'Original worker/command deadlines or actual observed worker exit invalid')
+-    require(receipt.get('phaseScope') == 'GUARDIAN_VM35'
++    require(receipt.get('phaseScope') == 'GUARDIAN_BROWSER13'
+             and receipt.get('workerBudgetSeconds') == 165 and type(receipt.get('workerBudgetSeconds')) is int
+             and receipt.get('commandWorkerRelativeSeconds') == 135 and type(receipt.get('commandWorkerRelativeSeconds')) is int
+             and receipt.get('commandCleanupWorkerRelativeSeconds') == 140 and type(receipt.get('commandCleanupWorkerRelativeSeconds')) is int
+@@ -569,14 +723,14 @@
+     require(first_command['pid'] == command['pid'] and first_command['creationFiletime'] == command['creationFiletime']
+             and first_command['firstSignaledQpc'] == command['firstSignaledQpc'], 'First command signal identity differs')
+     expected_argv = [r'C:\Windows\System32\cmd.exe', '/d', '/v:off', '/c',
+-        r'D:\softwares\flutter\bin\flutter.bat --no-version-check --suppress-analytics test --no-pub --concurrency=1 --reporter=json test/workbench_view_test.dart test/dialog_submit_guard_test.dart test/failure_view_test.dart test/login_view_test.dart']
++        r'D:\softwares\flutter\bin\flutter.bat --no-version-check --suppress-analytics test --platform=chrome --no-pub --concurrency=1 --reporter=json test/editor_submit_guard_test.dart']
+     require(same(launch.get('argv'), expected_argv)
+             and launch.get('workingDirectory') == str(REPO / '.cache/guardian-current-20261024-r15-login-schedule/src/apps/guardian')
+             and type(launch.get('pid')) is int and launch['pid'] == command['pid']
+             and type(launch.get('creationFiletime')) is int and launch['creationFiletime'] == command['creationFiletime']
+-            and type(launch.get('selectorCount')) is int and launch['selectorCount'] == 4
++            and type(launch.get('selectorCount')) is int and launch['selectorCount'] == 1
+             and same(launch.get('selectors'), SELECTORS)
+-            and type(launch.get('expectedVisibleCases')) is int and launch['expectedVisibleCases'] == 35
++            and type(launch.get('expectedVisibleCases')) is int and launch['expectedVisibleCases'] == 13
+             and same(launch.get('testCaseContractPin'), inputs['testCaseContract'])
+             and same(launch.get('reporterContractCodePin'), inputs['reporterContractCode']),
+             'Fixed command launch identity/argv/module differs')
+@@ -603,8 +757,25 @@
+         gate(value, inputs)
+         if name == 'postflight-gate.json':
+             require(same(value, receipt.get('resourceAfter')), 'Worker final resource raw/embedded gate differs')
++    chrome_pin = receipt.get('ownedChromeEvidencePin')
++    require(type(chrome_pin) is dict
++            and Path(chrome_pin.get('path', '')) == attempt / 'owned-chrome-evidence.json'
++            and receipt.get('ownedChromeBoundariesAccepted') is True
++            and same(receipt.get('ownedChromeEvidenceCodePin'), inputs['ownedChromeEvidenceCode'])
++            and same(receipt.get('browserExecutablePin'), inputs['browserExecutable']),
++            'Bound raw Chrome evidence descriptor missing')
++    descriptor(chrome_pin)
++    chrome_raw = load(Path(chrome_pin['path']))
++    descriptor(chrome_pin)
++    require(same(chrome_raw, receipt.get('ownedChromeEvidence'))
++            and chrome_evidence_valid(chrome_raw, inputs, command, start, start + 135.0, attempt),
++            'Chrome ownership/profile/actual-loopback evidence does not independently derive')
++    require(launch.get('chromeExecutable') == inputs['browserExecutable']['path']
++            and same(launch.get('browserToolSources'), inputs['browserToolSources'])
++            and same(launch.get('ownedChromeEvidenceCodePin'), inputs['ownedChromeEvidenceCode']),
++            'Fixed Chrome executable/tool-source environment launch differs')
+     log_path = attempt / 'out/tests.jsonl'
+-    require(Path(receipt.get('logPin', {}).get('path', '')) == log_path, 'Fixed VM35 JSON log required')
++    require(Path(receipt.get('logPin', {}).get('path', '')) == log_path, 'Fixed BROWSER13 JSON log required')
+     descriptor(receipt['logPin'])
+     raw_log = read(log_path, 16 * 1024 * 1024)
+     log_pin = {'path': str(log_path), 'bytes': len(raw_log), 'sha256': hashlib.sha256(raw_log).hexdigest()}
+@@ -616,7 +787,7 @@
+             'Fixed raw reporter validation path required')
+     descriptor(receipt['reporterValidationPin'])
+     raw_validation = load(attempt / 'reporter-validation.json')
+-    independently_derived = independent_vm30(raw_log, case_contract,
++    independently_derived = independent_browser13(raw_log, case_contract,
+         REPO / '.cache/guardian-current-20261024-r15-login-schedule/src/apps/guardian', log_pin)
+     require(same(raw_validation, receipt.get('reporterValidation'))
+             and same(independently_derived, raw_validation),
+@@ -626,19 +797,24 @@
+     descriptor(inputs['reporterContractCode'])
+     descriptor(inputs['testCaseContract'])
+     console = decode(read(attempt / 'worker-console.log', 1024 * 1024))
+-    require(same(console, {'status': 'GUARDIAN_VM35_WORKER_PASSED', 'sdkCalls': 1,
++    require(same(console, {'status': 'GUARDIAN_BROWSER13_WORKER_PASSED', 'sdkCalls': 1,
+                           'elapsedCompleteSeconds': receipt['elapsedCompleteSeconds']}), 'Worker console outcome differs')
+     derived_worker = True  # Reached only after independent file/timing/identity/guard checks above.
+-    reported_worker = receipt.get('status') == 'GUARDIAN_VM35_WORKER_PASSED'
++    reported_worker = receipt.get('status') == 'GUARDIAN_BROWSER13_WORKER_PASSED'
+     require(reported_worker is derived_worker and host.get('workerReportedPassed') is reported_worker
+             and host.get('workerDerivedPassed') is derived_worker and host.get('workerReportedDerivedConsistent') is True,
+             'Worker/host reported versus independently derived outcome differs')
+-    return {'status': 'DERIVED_VM35_CONSISTENT_PENDING_ROOT_RELEASE', 'sourceCommit': COMMIT,
++    return {'status': 'DERIVED_BROWSER13_CONSISTENT_PENDING_ROOT_RELEASE', 'sourceCommit': COMMIT,
+         'approvedProposalSha256': approved_sha, 'rootRecordedSameHandleNaturalZero': True,
+         'rootRecordedFirstWaitSeconds': root_signal, 'hostOriginalBudgets': BUDGETS,
+         'workerDerivedConsistent': True, 'sdkCalls': 1, 'applicationTestsRun': True,
+         'reporterDerivedConsistent': True, 'independentReporterValidation': independently_derived,
+-        'selectedTestRoots': 4, 'expectedVisibleCases': 35, 'otherFullRegressionRootsUnrun': 179,
++        'ownedChromeEvidenceIndependentlyDerived': True, 'ownedChromeEvidencePin': chrome_pin,
++        'chromeBoundaries': {'roots': len(chrome_raw['chromeRoots']),
++            'sameHandleOwnJobRead': True, 'privateProfiles': True, 'headless': True,
++            'testTargetLoopback': True, 'debugLoopbackListenerActuallyObserved': True,
++            'auxiliaryCleanupUsed': False, 'foreignCommandLinesRead': False},
++        'selectedTestRoots': 1, 'expectedVisibleCases': 13, 'otherFullRegressionRootsNotExecutedByThisBatch': 182,
+         'hostPreOutputElapsedNotUsedAsOuterExit': True,
+         'rootActualToolTerminalEvidenceInspected': False, 'freshFullProcessReleaseInspected': False,
+         'rootActualToolTerminalStillRequired': True, 'freshFullProcessReleaseStillRequired': True,

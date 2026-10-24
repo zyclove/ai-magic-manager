@@ -1,0 +1,9 @@
+{
+  "status": "NOT_ACCEPTED_FILE_READBACK",
+  "errorType": "ValueError",
+  "reason": "Usage: post.py <actual-approved-proposal-sha256>",
+  "testAccepted": false,
+  "rootActualToolTerminalStillRequired": true,
+  "freshFullProcessReleaseStillRequired": true,
+  "observedFilePins": []
+}

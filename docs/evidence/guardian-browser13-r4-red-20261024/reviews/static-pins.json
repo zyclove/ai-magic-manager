@@ -1,0 +1,358 @@
+{
+  "schemaVersion": 1,
+  "createdAtUtc": "2026-10-24T11:42:55.233748+00:00",
+  "status": "B4_MINIMAL_INDEPENDENT_STATIC_NO_NEW_BLOCKER_APPLICATION_UNRUN",
+  "corePins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\inputs.json",
+      "bytes": 20240,
+      "sha256": "906ca7d4c49602b8cb59fb9bb3cdd058f6bd1a0c6f1e10dae363c4a64fc17311"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\proposal.json",
+      "bytes": 11057,
+      "sha256": "849e0819fdce2cbb794f0c008a4e5c20aa5eff9517104c2d6902c970aac2a348"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\owned_chrome_evidence.py",
+      "bytes": 29439,
+      "sha256": "34e80553205db29267baf4299821ff40111adbc79bd2e83e49fbf20282eb5a3f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-post-20261024-r4-canonical-git\\post.py",
+      "bytes": 55004,
+      "sha256": "5aa635100c49e676b5ec4796781812ea27c5780215da847474b30734ba1920ce"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-root-launch-20261024-r4-canonical-git.ps1",
+      "bytes": 9255,
+      "sha256": "6edc2809f89ec8f63d8dc51e414a82ba514214cf26d0431d4342ae01aa667395"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-release-20261024-r4-canonical-git.ps1",
+      "bytes": 4445,
+      "sha256": "98a99e501d6106349b8cd0b88df6b8afdf7f964d9b03276819572489993ea251"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\sealed-preparation-pins.json",
+      "bytes": 8538,
+      "sha256": "26fdbba052b131fb4044a1f83d06b2419582bdc56d4ccac4349bd256eb98e942"
+    }
+  ],
+  "sealed27SmallPinsActuallyReadBy": "67495b",
+  "sealed27Pins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\inputs.json",
+      "bytes": 20240,
+      "sha256": "906ca7d4c49602b8cb59fb9bb3cdd058f6bd1a0c6f1e10dae363c4a64fc17311"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\proposal.json",
+      "bytes": 11057,
+      "sha256": "849e0819fdce2cbb794f0c008a4e5c20aa5eff9517104c2d6902c970aac2a348"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\worker.py",
+      "bytes": 54913,
+      "sha256": "5a92e0b70ee84047c727712732fd437ab99f13fb7ce07d20c9045bfa6ff38201"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\analysis-host.py",
+      "bytes": 34989,
+      "sha256": "34cbbb3d6654341dc20c3c4e8275251d931800766e284df870683d1b5d483cdc"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\process-inventory.ps1",
+      "bytes": 2439,
+      "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\reporter_contract.py",
+      "bytes": 14280,
+      "sha256": "dcd85cf451b20bd24857cef6726d0f1ebb406c67096146d3d3c82306942b67e8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\owned_chrome_evidence.py",
+      "bytes": 29439,
+      "sha256": "34e80553205db29267baf4299821ff40111adbc79bd2e83e49fbf20282eb5a3f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\chrome-evidence-json-guard.fragment",
+      "bytes": 8819,
+      "sha256": "12c62a6307e9c460b56ee1e58f7b2e930512fba74dd371609401a96370ca0868"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\expected-browser13-cases.json",
+      "bytes": 6343,
+      "sha256": "6ea16bdf3b93fbea589aa95a4aa7a9e808afbe9605938d755fb54d8ce748c340"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\cache-browser-projection.json",
+      "bytes": 773953,
+      "sha256": "3b74998cd55045e58c02b17b3de9151e878d78aab199e85bbcc3ec99d9c30166"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\base-pins.json",
+      "bytes": 5724,
+      "sha256": "4fc799ef42eef204603e90185c410f66b0af56dc1180e27a988fbf84ec9f4130"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\observer-runtime-pins.json",
+      "bytes": 3331,
+      "sha256": "1513a067e91e755f576484ba381c8f4640cf2586da638eaa0114170611bd34f3"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\observer-qualification-reuse.json",
+      "bytes": 1647,
+      "sha256": "9bdcaab0893be9ea0216c2fa0a26f355643337eb8264f60d231a25fd73487ce6"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\binding-pins.json",
+      "bytes": 9834,
+      "sha256": "60aa95010d655c123474f5f004ba0f4c32508686d72c584f23cb1667a782736e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\control-preparation-pins.json",
+      "bytes": 36964,
+      "sha256": "ac4f1e323e62f12846b9b59bf104da023b36c8bc18b0dfa38b875ca4367ebba3"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\r4-canonical-git-audit.json",
+      "bytes": 5458,
+      "sha256": "67bef78cb66702764532add20babd82992246ba7deb1aef91946f4d358c9fb95"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\r3-preservation-and-base-copy.json",
+      "bytes": 12399,
+      "sha256": "f149f5bc26f2e50a72e10a68f7e8c34aea6a9e70ed5f4b77728c0ad4df068601"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\preparation-review.md",
+      "bytes": 2321,
+      "sha256": "c08184237ee468bb863e7c26b44584cc9e841426c81c5723419ecb5c89ce25ff"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-post-20261024-r4-canonical-git\\post.py",
+      "bytes": 55004,
+      "sha256": "5aa635100c49e676b5ec4796781812ea27c5780215da847474b30734ba1920ce"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-post-20261024-r4-canonical-git\\pins.json",
+      "bytes": 25197,
+      "sha256": "284c4c85a4cf3ac00e82af09da2491c1528f0e1f40fa2e4fd8a229e151b1bc61"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-root-launch-20261024-r4-canonical-git.ps1",
+      "bytes": 9255,
+      "sha256": "6edc2809f89ec8f63d8dc51e414a82ba514214cf26d0431d4342ae01aa667395"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-release-20261024-r4-canonical-git.ps1",
+      "bytes": 4445,
+      "sha256": "98a99e501d6106349b8cd0b88df6b8afdf7f964d9b03276819572489993ea251"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-native-qualification-binding.json",
+      "bytes": 1307,
+      "sha256": "6e8ba3d2436bfa7ba1c80bad1bb24856f3eca27de6bf8476fd1c297c773a070a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-fixture\\result.json",
+      "bytes": 2321,
+      "sha256": "293eef8510874f37a6679dd932d4abef5ec437c71334ee8234828933507b927d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-fixture-host\\result.json",
+      "bytes": 314,
+      "sha256": "5982a79092aa4138f47350f676b6e8f9421659619494d3949bfbc7bfffd6ab2d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-git-diagnosis-20261024-r1\\actual-git-before-after.json",
+      "bytes": 9092,
+      "sha256": "1a0d09f608c1e0b858f7d176ded81d13075e1686b3e02bc5e0b29a5761779485"
+    }
+  ],
+  "r3Preservation28PinsActuallyReadBy": "67495b",
+  "r3PreservedInventory": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\inputs.json",
+      "bytes": 20250,
+      "sha256": "48466d5b67b8ebc13142ed2faf002481d66e483563045749bf3b6c8a63da0f7e"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\proposal.json",
+      "bytes": 11059,
+      "sha256": "1473afaec08c0506a1c634b3f40808c6dbe71fde33ae096bf0f8f54e1e38bfbd"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\worker.py",
+      "bytes": 54877,
+      "sha256": "11a446e1655fa6696bc4d6b76be4c7bd2e668022c5313b58e62f8e3b4ff43a8f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\analysis-host.py",
+      "bytes": 34991,
+      "sha256": "960a16cc3a2b51ace6d99417a4fa9249ceadea903394b7d1c1171eb8f8b34107"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\process-inventory.ps1",
+      "bytes": 2439,
+      "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\reporter_contract.py",
+      "bytes": 14280,
+      "sha256": "dcd85cf451b20bd24857cef6726d0f1ebb406c67096146d3d3c82306942b67e8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\owned_chrome_evidence.py",
+      "bytes": 29439,
+      "sha256": "34e80553205db29267baf4299821ff40111adbc79bd2e83e49fbf20282eb5a3f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\chrome-evidence-json-guard.fragment",
+      "bytes": 8819,
+      "sha256": "12c62a6307e9c460b56ee1e58f7b2e930512fba74dd371609401a96370ca0868"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\expected-browser13-cases.json",
+      "bytes": 6343,
+      "sha256": "6ea16bdf3b93fbea589aa95a4aa7a9e808afbe9605938d755fb54d8ce748c340"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\cache-browser-projection.json",
+      "bytes": 773953,
+      "sha256": "3b74998cd55045e58c02b17b3de9151e878d78aab199e85bbcc3ec99d9c30166"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\base-pins.json",
+      "bytes": 5730,
+      "sha256": "2818ef50852305dae2658f1afea520d4ee03f5187cff1941155c9c32cf1b8018"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-native-qualification-binding.json",
+      "bytes": 1307,
+      "sha256": "6e8ba3d2436bfa7ba1c80bad1bb24856f3eca27de6bf8476fd1c297c773a070a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-fixture\\result.json",
+      "bytes": 2321,
+      "sha256": "293eef8510874f37a6679dd932d4abef5ec437c71334ee8234828933507b927d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-fixture-host\\result.json",
+      "bytes": 314,
+      "sha256": "5982a79092aa4138f47350f676b6e8f9421659619494d3949bfbc7bfffd6ab2d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-runtime-pins.json",
+      "bytes": 3331,
+      "sha256": "1513a067e91e755f576484ba381c8f4640cf2586da638eaa0114170611bd34f3"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-diagnostic-pins.json",
+      "bytes": 2331,
+      "sha256": "68796bdc2715e02009863d6b0660ad7ebc49517a1d28777ec2975652e7e60c52"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-diagnostic-byteexact-proof.json",
+      "bytes": 1117,
+      "sha256": "7e5dc748432bbb22d3e7e24d360bee9f47a08759fff5487fe9ad00693ff9c9a8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-member-diagnostic-pure-result-r2.json",
+      "bytes": 1171,
+      "sha256": "62910a1e25d522bf7246a69c05c5212c4d16e5dfd77b58c185a052fa103f54d3"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\binding-pins.json",
+      "bytes": 9864,
+      "sha256": "9a6bf5238c6005b762d926cb3951b09d8bde695126c920766bf15bc81bb30a92"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\control-preparation-pins.json",
+      "bytes": 35822,
+      "sha256": "a425e9ef18678edf4213374ae7c373d736e4708abbd311ddebc1abd490bb765d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\r3-html-diagnostic-audit.json",
+      "bytes": 5558,
+      "sha256": "7a90d2458b5d42e704dc72de22dbf54a51b88c52fe19c910968d0042cbd6011c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\r2-preservation-and-base-copy.json",
+      "bytes": 10973,
+      "sha256": "d5beb104ded150d0560147b85c7e9aabc002c042f81420f50e4d2cfdd5f58fde"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\preparation-review.md",
+      "bytes": 3020,
+      "sha256": "3df855fb6298f60c281ca0d9149b6c7c9dbc926e9ae09d427afa58492aaa942d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-post-20261024-r3-html-diagnostic\\post.py",
+      "bytes": 54998,
+      "sha256": "f92b71e38b37b5e8d05e9a51ad4422ef7b80e135d460a4f2e5499021045ddd6c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-post-20261024-r3-html-diagnostic\\pins.json",
+      "bytes": 24982,
+      "sha256": "abec9ebcb72c7dd288ba82947d83ca4b17e11b0d317892182cdc1899d4bf3af9"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-root-launch-20261024-r3-html-diagnostic.ps1",
+      "bytes": 9235,
+      "sha256": "d1cbfa4167fdc8217fc699cc5a8dbbff6c348486c34add5a2dd136de8fcb0874"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-release-20261024-r3-html-diagnostic.ps1",
+      "bytes": 4449,
+      "sha256": "d6e8cfd39f77916d3d7e0f16d532e80d58a013b7daac4836f504b235c1910dcc"
+    }
+  ],
+  "fiveControlsInverseToActualR3ByteExact": true,
+  "inputNormalizedOnlyTimestampDelta": true,
+  "originalB3QualificationDirectReference": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-native-qualification-binding.json",
+    "bytes": 1307,
+    "sha256": "6e8ba3d2436bfa7ba1c80bad1bb24856f3eca27de6bf8476fd1c297c773a070a"
+  },
+  "observerByteExactR3": true,
+  "runtime43DescriptorsUnchanged": true,
+  "cacheAndNativeProviderReporterCaseGuardByteExactR3": true,
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "sourceFiles": 413,
+  "fullRegressionRoots": 183,
+  "selectedRoots": 1,
+  "expectedVisibleCases": 13,
+  "newSdkCalls": 0,
+  "newGitCalls": 0,
+  "fixturesOrCandidateImportsOrCompiles": 0,
+  "networkOrProcessApiCalls": 0,
+  "grantOrAttemptsAbsent": {
+    "root-sdk-grant.json": true,
+    "root-attempt": true,
+    "attempt": true
+  },
+  "applicationExecution": "UNRUN",
+  "readToolExits": {
+    "51c823": 0,
+    "67495b": 0,
+    "fc6341": 0
+  },
+  "review": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-static-independent-20261024-r4\\review.md",
+    "bytes": 4213,
+    "sha256": "44f390397475d7c58af9c68a44becc17f7bcce0e3d643de1f1c40d71be1a3150"
+  }
+}

@@ -1,0 +1,277 @@
+{
+  "schemaVersion": 1,
+  "createdAtUtc": "2026-10-24T11:01:11.045408+00:00",
+  "status": "READ_ONLY_DIAGNOSTIC_CONFIRMED_DUAL_LOCAL_CANVASKIT_JS_404",
+  "actualRunStatus": "R2_RED_NOT_ACCEPTED",
+  "newSdkCalls": 0,
+  "newBrowserCalls": 0,
+  "newObserverCalls": 0,
+  "fixtureOrReplayCalls": 0,
+  "newNetworkOrProcessApiCalls": 0,
+  "sourceOrSdkChanges": 0,
+  "prospectiveChecks": "UNRUN",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "sourceFiles": 413,
+  "wholeTestInventory": 183,
+  "actualVisibleCases": 0,
+  "causalLimit": "Dual local CanvasKit JS404 and reachable injected Windows path/prefix defect proven; no claim of uniquely explaining every timeout second.",
+  "sourceAndEvidencePins": [
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\lib\\src\\test\\flutter_web_platform.dart",
+      "bytes": 35444,
+      "sha256": "aac43b3f5ba51f73de80b9f3947bf48d2d86ffa56133f70fbd7e18dbed013448"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\lib\\src\\test\\runner.dart",
+      "bytes": 30326,
+      "sha256": "8b554db3ad2fc6e37447e9baddde9b24f37b5cf7f34daf4b351155b0473c2b3c"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\lib\\src\\commands\\test.dart",
+      "bytes": 30761,
+      "sha256": "24b0e34342940b98b538e5b35baf3710fb3c423df2998ff808ea50209c76ab1a"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\lib\\src\\base\\error_handling_io.dart",
+      "bytes": 27695,
+      "sha256": "1060e475296d29eae13b1c251f080c1274cb376e0c0023dd67cdfd9bbe85a71b"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\lib\\src\\base\\file_system.dart",
+      "bytes": 9134,
+      "sha256": "0bc9a0e1abebf96e7d18badd35eeb501eaad28143b47e4e6d2cff10f806d3284"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\lib\\src\\globals.dart",
+      "bytes": 10922,
+      "sha256": "d70b6fc3e6dee6bfeb353867946670e3dc42c43e23f00d8ccf813c5e79b62ce1"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\lib\\executable.dart",
+      "bytes": 11210,
+      "sha256": "0fef6c15a71e5f44ecafc9b622fde9ce61063d5edc6fb3eb5d5408e2594d510f"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\lib\\src\\context_runner.dart",
+      "bytes": 14180,
+      "sha256": "0b4761fa0d4c337ed953239816e08eb4cd0fab91fa6cb3a6240555294c5afa3b"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\.dart_tool\\package_config.json",
+      "bytes": 20035,
+      "sha256": "49d0a9ce1c70ca6edd29537570cfe7ea6539843da50c6a85a107d829330150e8"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_test\\lib\\src\\_test_selector_web.dart",
+      "bytes": 3175,
+      "sha256": "c7c32ddad696882667a6fb629764bae0f4618d065390f501980be6cfae98bf43"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\flutter_web_sdk\\lib\\_engine\\engine\\renderer.dart",
+      "bytes": 6547,
+      "sha256": "6554bdda743c25a236609b5e36507c95806cc7d0b5334e5988e3c77e52e80e52"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\flutter_web_sdk\\lib\\_engine\\engine\\canvaskit\\renderer.dart",
+      "bytes": 17263,
+      "sha256": "6b6973b43fd9d18e46d990716ce463cc526bc4b7df45491066ac98453a5b6ded"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\flutter_web_sdk\\lib\\_engine\\engine\\canvaskit\\canvaskit_api.dart",
+      "bytes": 99059,
+      "sha256": "ac932d7ee7c08a709e2b5eb5e8420078e0dd071d9d7f5a8b133cfbb542607f16"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\flutter_web_sdk\\lib\\_engine\\engine\\initialization.dart",
+      "bytes": 10918,
+      "sha256": "86f077c6a9606cf103ebdec13f0ed8771931af75ca9e0a80ac7e2563d230fa35"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\README.md",
+      "bytes": 4437,
+      "sha256": "a29162bc513e105bf35f95fb0b96fb417327cd671a383914c6ddc4eb37a99973"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\scripts\\build-deployment.ps1",
+      "bytes": 14829,
+      "sha256": "6969470c338fc6b8d4665ad6847b7caa763e7e31d555c343a4383e600b492604"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r15-login-schedule\\src\\apps\\guardian\\README.md",
+      "bytes": 4437,
+      "sha256": "a29162bc513e105bf35f95fb0b96fb417327cd671a383914c6ddc4eb37a99973"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\attempt\\launch.json",
+      "bytes": 2667,
+      "sha256": "1072e751db2f2405b4fa9ba3b5b31d362620f61bad683f6162806090aa193bb4"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\attempt\\owned-chrome-evidence.json",
+      "bytes": 2484,
+      "sha256": "6929925fc5f09c7604dc63fcab2bb45faf1779233c778827f39bdafe1838a164"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\attempt\\out\\tests.jsonl",
+      "bytes": 848,
+      "sha256": "801590197a51939b94bbdd9c6e376be933e43664f369848d36314021caab2337"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\guardian-browser38-20261023-r1\\attempt\\launch.json",
+      "bytes": 1025,
+      "sha256": "7c07cf348bed848261ed1bf4a3b765d48fd61b75873113766fb58f43c8e0dd8a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\guardian-browser80-20261023-r2\\attempt\\launch.json",
+      "bytes": 1169,
+      "sha256": "8e3e184414662da6d5205809f654694511d436a9bfaf55307d107a60a5bd2b71"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\guardian-browser38-20261023-r1\\attempt\\out\\browser38.jsonl",
+      "bytes": 21571,
+      "sha256": "2c61a046d5be978554d8b6df0851651fe662efaa9513a996a0abcbd869279ea8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\docs\\evidence\\guardian-browser80-20261023-r2\\attempt\\out\\browser80.jsonl",
+      "bytes": 32505,
+      "sha256": "5e537a317c9acc32b73f267d387f8df20cdb538b6f18a7c4392e74ee1f6c28c0"
+    }
+  ],
+  "pubSourcePinsReadAndHashedByNatural0Tool9cccf7": [
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\path-1.9.0\\lib\\src\\style\\windows.dart",
+      "bytes": 6238,
+      "sha256": "97a27830adafaa1c11d2821cd5a6c90aaa1f8d6e7804d94d25bcb9bc8bd52cc4",
+      "line": 101
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\path-1.9.0\\lib\\src\\style.dart",
+      "bytes": 3151,
+      "sha256": "b11b7f1bfef61ba7e20fab7a16f12d48836d0e8fd9166f8474f4aa9b8f2c7dff",
+      "line": 43
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\path-1.9.0\\lib\\src\\context.dart",
+      "bytes": 43525,
+      "sha256": "a2ae828191b8443c509a69315fecc8ba5588f463510426f5d11256785635a4c0",
+      "lines": [
+        38,
+        1040
+      ]
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\file-7.0.0\\lib\\src\\backends\\local\\local_file_system.dart",
+      "bytes": 2360,
+      "sha256": "0d3c49adaedc82fedd60e01a250c2dac8c4fcc286fc6951cf03742c53c150f7b",
+      "line": 32
+    }
+  ],
+  "directReadToolExits": {
+    "5b7b40": 0,
+    "351203": 0,
+    "80cc0b": 0,
+    "d63661": 0,
+    "9cccf7": 0
+  },
+  "boundedCacheEvidence": {
+    "schemaVersion": 1,
+    "cachePath": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r2-manager-proof\\attempt\\tmp\\flutter_tools.861447e7\\flutter_tools_chrome_device.51dd7e1e\\Default\\Cache\\Cache_Data\\data_1",
+    "sourceCacheBytesObserved": 532480,
+    "wholeCacheHashedByThisReviewer": false,
+    "entryFormat": {
+      "entryBlockBytes": 256,
+      "headerBytes": 8192,
+      "keyLengthOffset": 32,
+      "inlineKeyOffset": 96,
+      "dataSizeOffset": 40,
+      "dataAddressOffset": 56
+    },
+    "confirmedResponses": [
+      {
+        "variant": "chromium",
+        "entryOffset": 319232,
+        "keyOffset": 319328,
+        "keyLength": 96,
+        "url": "http://localhost:54407/canvaskit/chromium/canvaskit.js",
+        "metadataOffset": 319488,
+        "metadataLength": 312,
+        "bodyOffset": 320000,
+        "bodyLength": 9,
+        "httpStatus": 404,
+        "responseDate": "Sat, 24 Oct 2026 10:39:45 GMT",
+        "body": "Not Found"
+      },
+      {
+        "variant": "fallback",
+        "entryOffset": 320256,
+        "keyOffset": 320352,
+        "keyLength": 87,
+        "url": "http://localhost:54407/canvaskit/canvaskit.js",
+        "metadataOffset": 320512,
+        "metadataLength": 312,
+        "bodyOffset": 321024,
+        "bodyLength": 9,
+        "httpStatus": 404,
+        "responseDate": "Sat, 24 Oct 2026 10:39:45 GMT",
+        "body": "Not Found"
+      }
+    ],
+    "boundedArtifacts": [
+      {
+        "file": "chromium-entry.bin",
+        "sourceOffset": 319232,
+        "length": 256,
+        "sha256": "fe806cff227ffd4699ad17a9fa71517a4cc50f68d4e82b7df1d7a1f18169f323"
+      },
+      {
+        "file": "chromium-response-metadata.bin",
+        "sourceOffset": 319488,
+        "length": 312,
+        "sha256": "d4fb617139164d824bc06a486aa0b5e761d2af552135640052fc075b0ac07df3"
+      },
+      {
+        "file": "chromium-response-body.bin",
+        "sourceOffset": 320000,
+        "length": 9,
+        "sha256": "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+      },
+      {
+        "file": "fallback-entry.bin",
+        "sourceOffset": 320256,
+        "length": 256,
+        "sha256": "9d2e3c08187318106d4e1584c723c4bb884d880c8c0abd8bbc30eb7509d8fa48"
+      },
+      {
+        "file": "fallback-response-metadata.bin",
+        "sourceOffset": 320512,
+        "length": 312,
+        "sha256": "a6fa6c83c285282d4fd3748fbd3c4f71a22ea5b1bc9d86aacf83c0878b2d55d7"
+      },
+      {
+        "file": "fallback-response-body.bin",
+        "sourceOffset": 321024,
+        "length": 9,
+        "sha256": "0019dfc4b32d63c1392aa264aed2253c1e0c2fb09216f8e2cc269bbfb8bb49b5"
+      },
+      {
+        "file": "generated-wrapper.html",
+        "sourceOffset": 13320,
+        "length": 667,
+        "sha256": "3b43774f521fbaab090dc2f76282e4bc0c6722d26db6703db8a0104c25fe13ee"
+      }
+    ]
+  },
+  "writesRestrictedTo": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-loading-static-20261024-r1",
+  "deliverables": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-loading-static-20261024-r1\\review.md",
+      "bytes": 8832,
+      "sha256": "bc5241a7a5df418170403ef905500427eb5524c94711b6b91ad45da5e541dc88"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-loading-static-20261024-r1\\cache-entry-summary.json",
+      "bytes": 2694,
+      "sha256": "735e9a0323570bb862b710b31a2b3cc93b18fa0cabc0ba07b14729d0fbfdfbb0"
+    }
+  ]
+}

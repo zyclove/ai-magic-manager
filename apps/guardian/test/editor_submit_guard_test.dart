@@ -379,10 +379,12 @@ void main() {
         final date = _scheduleCallback(tester, _scheduleButton('添加关闭日期'));
         final day = tester.widget<FilterChip>(find.byType(FilterChip).first)
             .onSelected!;
-        final remove = tester.widget<IconButton>(
-            find.byTooltip('移除此时段').first).onPressed!;
-        final removeException = tester.widget<IconButton>(
-            find.byTooltip('移除例外').first).onPressed!;
+        final remove = tester.widget<IconButton>(find.byWidgetPredicate(
+            (widget) => widget is IconButton && widget.tooltip == '移除此时段')
+            .first).onPressed!;
+        final removeException = tester.widget<IconButton>(find.byWidgetPredicate(
+            (widget) => widget is IconButton && widget.tooltip == '移除例外')
+            .first).onPressed!;
         save();
         save();
         await _flush(tester);

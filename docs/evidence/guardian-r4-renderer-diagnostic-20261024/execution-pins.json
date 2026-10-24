@@ -1,0 +1,59 @@
+{
+  "status": "RED_RENDERER_DIAGNOSTIC_COMPLETE_WITHOUT_RENDERER_FACT_NOT_TEST_ACCEPTANCE",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r4-red-renderer-diagnostic-20261024-r1\\readback.py",
+      "bytes": 24247,
+      "sha256": "40ad99a90102f0b7d7db3b2ef4b0abd965f17c8769d3405eae3daf2eb30d860c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r4-red-renderer-diagnostic-20261024-r1\\derivation-pins.json",
+      "bytes": 9382,
+      "sha256": "c8ea7995d588b0a12005fbe26ddd00928189062610bd840992488eabf8d9af76"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r4-red-renderer-diagnostic-20261024-r1\\red-entrypoint-vs-original.patch",
+      "bytes": 9723,
+      "sha256": "5af77621ebcb293c0708d7a621b9d13a9f1cf2714fd837a0336e2c29d0abdb1c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r4-red-renderer-diagnostic-20261024-r1\\result.json",
+      "bytes": 539,
+      "sha256": "1b0eea4f15c541e6605c8826d002eff74d8a94060063cadaaa34b892fa15894a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r4-red-renderer-diagnostic-20261024-r1\\missing-path-receipt.json",
+      "bytes": 1684,
+      "sha256": "6ea27fb7e50ad074993facb14f5485963e0944612a88b0b8262ec7992f88c610"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r4-red-renderer-diagnostic-20261024-r1\\conclusion.md",
+      "bytes": 1563,
+      "sha256": "fae06039542470971f7fa65f9dd0bbefeaf427def6957fc18170c7c752df74b8"
+    }
+  ],
+  "originalB3Reader": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-r3-wrapper-readback-20261024-r1\\readback.py",
+    "bytes": 18244,
+    "sha256": "d085fdb73fc404bf336091289cf0e3ca2fe8a7c1a4a36e1009d6c6d8ff36f718"
+  },
+  "b4Seal": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r4-canonical-git\\sealed-preparation-pins.json",
+    "bytes": 8538,
+    "sha256": "26fdbba052b131fb4044a1f83d06b2419582bdc56d4ccac4349bd256eb98e942"
+  },
+  "b4TwentySevenSealedFilesStillMatch": true,
+  "actualPreparationChunk": "181290",
+  "actualPreparationExitCode": 0,
+  "actualSingleReadChunk": "daba44",
+  "actualSingleReadExitCode": 1,
+  "actualMetadataOnlyMissingPathChunk": "397c46",
+  "actualMetadataOnlyMissingPathExitCode": 0,
+  "rendererFactEstablished": false,
+  "testAccepted": false,
+  "bodyOrResponseFragmentProduced": false,
+  "readerRetried": false,
+  "otherProfilesRead": false,
+  "sdkChromeNetworkNativeProcessQueryOrCleanup": false,
+  "b5Prepared": false
+}

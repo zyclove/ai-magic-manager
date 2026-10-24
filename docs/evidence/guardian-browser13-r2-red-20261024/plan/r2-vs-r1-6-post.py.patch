@@ -1,0 +1,56 @@
+--- D:\codes\mobile\ai-manager\.cache\guardian-browser13-post-20261024-r1\post.py
++++ D:\codes\mobile\ai-manager\.cache\guardian-browser13-post-20261024-r2-manager-proof\post.py
+@@ -10,15 +10,15 @@
+ import sys
+ 
+ REPO = Path(r'D:\codes\mobile\ai-manager')
+-BASE = REPO / '.cache/guardian-browser13-20261024-r1'
+-OUT = REPO / '.cache/guardian-browser13-post-20261024-r1'
+-LAUNCHER = REPO / '.cache/guardian-browser13-root-launch-20261024-r1.ps1'
++BASE = REPO / '.cache/guardian-browser13-20261024-r2-manager-proof'
++OUT = REPO / '.cache/guardian-browser13-post-20261024-r2-manager-proof'
++LAUNCHER = REPO / '.cache/guardian-browser13-root-launch-20261024-r2-manager-proof.ps1'
+ COMMIT = '006ee45850c9b6b0f90570d9478bced3beb0e0fe'
+-INPUT_SHA = '03fe10e087bd8199cf67a5ce609e442b8f458ae4b113e91e896f4051b0e7ae4b'
++INPUT_SHA = '7f5252253aa92b29c0fe5e7c7203ef4d5e4d9054d4b47f381e90111dfcddc2c2'
+ BUDGETS = {'outer': 180, 'working': 174, 'worker': 165, 'command': 135,
+            'commandCleanup': 140, 'postflightReserve': 25}
+ NAMES = {'analysis-host.py', 'worker.py', 'owned_job.py', 'process-inventory.ps1', 'reporter_contract.py', 'owned_chrome_evidence.py'}
+-PROPOSAL_SHA = 'ce2a13b147b3cdb5f6700cf275484d732be288ac4f838bb99fba926b06e1d6d2'
++PROPOSAL_SHA = '669a8366f805044f7f9c0b2140b3b69975d86076bf380f1d749134dbb4d0d905'
+ SELECTORS = ['test/editor_submit_guard_test.dart']
+ REPORTER_SHA = 'dcd85cf451b20bd24857cef6726d0f1ebb406c67096146d3d3c82306942b67e8'
+ CASE_SHA = '6ea16bdf3b93fbea589aa95a4aa7a9e808afbe9605938d755fb54d8ce748c340'
+@@ -278,7 +278,7 @@
+             return False
+         identities, profiles, ports = set(), set(), set()
+         row_keys = {'pid', 'creationFiletime', 'commandCreationFiletime', 'imagePath', 'profile',
+-                    'debuggingPort', 'testServerOrigins', 'testTargets', 'headless',
++                    'debuggingPort', 'testServerOrigins', 'testTargets', 'managerTarget', 'headless',
+                     'argvTestTargetLoopback', 'flutterManagerTargetSameLoopbackOrigin',
+                     'commandLineUtf16Sha256', 'commandLineReadBeforeQpc', 'commandLineReadAfterQpc',
+                     'sameReadHandleVerified', 'ownedMembershipVerifiedBeforeAndAfter', 'liveBeforeAndAfter',
+@@ -321,6 +321,14 @@
+                     and target['scheme'] == 'http' and target['host'] in ('localhost', '127.0.0.1', '::1')
+                     and positive(target['port']) and target['port'] < 65536
+                     and target['path'] == '/static/index.html' and digest(target['urlSha256'])):
++                return False
++            manager = row['managerTarget']
++            if not (type(manager) is dict and set(manager) == {'scheme', 'host', 'port'}
++                    and type(manager['scheme']) is str and manager['scheme'] == 'ws'
++                    and type(manager['host']) is str
++                    and manager['host'] in ('localhost', '127.0.0.1', '::1')
++                    and positive(manager['port']) and manager['port'] < 65536
++                    and manager['host'] == target['host'] and manager['port'] == target['port']):
+                 return False
+             origin = urlsplit(origins[0])
+             if not (origin.scheme == 'http' and origin.hostname == target['host']
+@@ -529,7 +537,7 @@
+     for row in proposal['candidateFiles']:
+         descriptor(row, candidate=True)
+     require(Path(proposal['inputs']['path']) == BASE / 'inputs.json'
+-            and type(proposal['inputs']['bytes']) is int and proposal['inputs']['bytes'] == 20154
++            and type(proposal['inputs']['bytes']) is int and proposal['inputs']['bytes'] == 20238
+             and proposal['inputs']['sha256'] == INPUT_SHA, 'Fixed current input required')
+     descriptor(proposal['inputs'])
+     inputs = load(BASE / 'inputs.json')

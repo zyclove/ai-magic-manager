@@ -1,0 +1,8 @@
+{
+  "approvedProposalSha256": "8d8001ea23ddfc7295e8cb302d0eaa951280bc62ab4698036f4897419d2074d0",
+  "qpcAnchor": 110393.0463255,
+  "workDeadlineQpc": 110567.0463255,
+  "cleanupDeadlineQpc": 110573.0463255,
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "phase": "guardian-vm35"
+}

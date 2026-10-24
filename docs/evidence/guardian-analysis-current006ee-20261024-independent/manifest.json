@@ -1,0 +1,21 @@
+{
+  "status": "FILE_ONLY_INDEPENDENT_REVIEW_SUPPLEMENT_NO_SDK_RERUN",
+  "originalArchiveManifest": "docs/evidence/guardian-analysis-current006ee-20261024/manifest.json",
+  "originalArchiveManifestSha256": "2982308d73ef1512abb66c20564a3a6f6b607572d0f699de7e44e7a1d254cb9e",
+  "sourceCopies": [
+    {
+      "source": ".cache/guardian-analyze-r15-actual-independent-20261024-r1/review.md",
+      "archived": "review.md",
+      "bytes": 3284,
+      "sha256": "9c70652a792b6ce899217e7bc43c3d209c96b563298e34fb242207244087a8ff"
+    },
+    {
+      "source": ".cache/guardian-analyze-r15-actual-independent-20261024-r1/pins.json",
+      "archived": "pins.json",
+      "bytes": 26741,
+      "sha256": "fd18786d3351196452f9388f4f3303d29e85d5bfd70dcc518c6f2a06f5d988f4"
+    }
+  ],
+  "reviewActualToolChunk": "9d60d6",
+  "reviewActualExitCode": 0
+}

@@ -1,0 +1,50 @@
+{
+  "status": "FINAL_B3_DIAGNOSTICS_READY_FOR_BINDING_REVIEW_NOT_BROWSER_ACCEPTANCE",
+  "observerFinal": {
+    "bytes": 29439,
+    "sha256": "34e80553205db29267baf4299821ff40111adbc79bd2e83e49fbf20282eb5a3f"
+  },
+  "pureResultFinal": "observer-member-diagnostic-pure-result-r2.json",
+  "byteExactProof": "observer-diagnostic-byteexact-proof.json",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\owned_chrome_evidence.py",
+      "bytes": 29439,
+      "sha256": "34e80553205db29267baf4299821ff40111adbc79bd2e83e49fbf20282eb5a3f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-member-diagnostic-pure-check.py",
+      "bytes": 7468,
+      "sha256": "4345637ffe37a3be70ece134b1042a2757b6452df3819859a083f13f57d9eb78"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-member-diagnostic-pure-result.json",
+      "bytes": 1103,
+      "sha256": "665149223c55f3a8934be277a32e186adafb351b2b31944dd3f921654029689f"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-member-diagnostic-pure-check-r2.py",
+      "bytes": 7970,
+      "sha256": "2eb551ad0a85afe6b8c34ed60bdba8e67fd521e5de51d742f78352bd25039822"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-member-diagnostic-pure-result-r2.json",
+      "bytes": 1171,
+      "sha256": "62910a1e25d522bf7246a69c05c5212c4d16e5dfd77b58c185a052fa103f54d3"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-diagnostic-byteexact-proof.json",
+      "bytes": 1117,
+      "sha256": "7e5dc748432bbb22d3e7e24d360bee9f47a08759fff5487fe9ad00693ff9c9a8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\observer-diagnostic-notes.md",
+      "bytes": 4187,
+      "sha256": "276076cf9ae8744e0d70a20536f67d8faa3c444eebab33899f47d89fb113ef9b"
+    }
+  ],
+  "ownPythonFixtureRunByAuthor": false,
+  "actualBrowserOrSdkRunByAuthor": false,
+  "applicationCasesVerified": 0,
+  "r2CauseEstablished": false
+}

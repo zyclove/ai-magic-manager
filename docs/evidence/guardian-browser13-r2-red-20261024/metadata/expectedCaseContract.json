@@ -1,0 +1,1158 @@
+{
+  "status": "STATIC_LITERAL_SOURCE_NAMES_NOT_RUNTIME_DISCOVERY",
+  "sourceCommit": "006ee45850c9b6b0f90570d9478bced3beb0e0fe",
+  "sourceFiles": 413,
+  "sourceTreeSha256": "c5df8a3d2438b898b64638424fe4809289fa5da1c533151d716c04ee7dd8f172",
+  "selectors": [
+    "test/workspace_flow_entry_browser_test.dart",
+    "test/audit_export_route_test.dart",
+    "test/approval_help_flow_browser_test.dart",
+    "test/notification_help_scope_browser_test.dart",
+    "test/application_classification_scope_browser_test.dart",
+    "test/usage_reports_scope_browser_test.dart",
+    "test/observation_route_scope_browser_test.dart"
+  ],
+  "expectedPhysicalSuites": 7,
+  "expectedVisibleCases": 80,
+  "sourceCaseCounts": [
+    8,
+    4,
+    19,
+    7,
+    8,
+    21,
+    13
+  ],
+  "selectedSources": [
+    {
+      "selector": "test/workspace_flow_entry_browser_test.dart",
+      "expectedVisibleCases": 8,
+      "source": {
+        "path": "apps/guardian/test/workspace_flow_entry_browser_test.dart",
+        "gitBlob": "f97b1db8789ea265188a134a57f6f14feefc8f80",
+        "bytes": 11874,
+        "sha256": "15fb4c531970c6488438d78e4c35265c51286159c8c462a3f8938ad39c995736"
+      },
+      "declarations": [
+        {
+          "line": 123,
+          "nameTemplate": "audit entry recreates a readable page for a new scope generation",
+          "expandedNames": [
+            "audit entry recreates a readable page for a new scope generation"
+          ]
+        },
+        {
+          "line": 149,
+          "nameTemplate": "managed entry reloads and enables refresh after generation change",
+          "expandedNames": [
+            "managed entry reloads and enables refresh after generation change"
+          ]
+        },
+        {
+          "line": 180,
+          "nameTemplate": "export old repository rejects late data after $loss",
+          "expandedNames": [
+            "export old repository rejects late data after actor ABA",
+            "export old repository rejects late data after generation",
+            "export old repository rejects late data after dispose"
+          ]
+        },
+        {
+          "line": 226,
+          "nameTemplate": "workspace picker ignores its already selected tenant",
+          "expandedNames": [
+            "workspace picker ignores its already selected tenant"
+          ]
+        },
+        {
+          "line": 240,
+          "nameTemplate": "superseded workspace return cannot navigate or toast after newest selection fails",
+          "expandedNames": [
+            "superseded workspace return cannot navigate or toast after newest selection fails"
+          ]
+        },
+        {
+          "line": 281,
+          "nameTemplate": "newest successful workspace selection returns home",
+          "expandedNames": [
+            "newest successful workspace selection returns home"
+          ]
+        }
+      ]
+    },
+    {
+      "selector": "test/audit_export_route_test.dart",
+      "expectedVisibleCases": 4,
+      "source": {
+        "path": "apps/guardian/test/audit_export_route_test.dart",
+        "gitBlob": "696c38a6050769228855acad05b0c62c5160e891",
+        "bytes": 6429,
+        "sha256": "beff27499cbf2a10eeb469c930027218a56c8094a803f2e471fdb76f16659d20"
+      },
+      "declarations": [
+        {
+          "line": 90,
+          "nameTemplate": "covered export success preserves the cover and audit location",
+          "expandedNames": [
+            "covered export success preserves the cover and audit location"
+          ]
+        },
+        {
+          "line": 112,
+          "nameTemplate": "current export success opens the export jobs page",
+          "expandedNames": [
+            "current export success opens the export jobs page"
+          ]
+        },
+        {
+          "line": 126,
+          "nameTemplate": "covered success cannot redirect when the cover closes at completion",
+          "expandedNames": [
+            "covered success cannot redirect when the cover closes at completion"
+          ]
+        },
+        {
+          "line": 147,
+          "nameTemplate": "a cover during export closing prevents the late redirect",
+          "expandedNames": [
+            "a cover during export closing prevents the late redirect"
+          ]
+        }
+      ]
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "expectedVisibleCases": 19,
+      "source": {
+        "path": "apps/guardian/test/approval_help_flow_browser_test.dart",
+        "gitBlob": "c2846fccfd30f9a54be3598c98a9d7c95e7e12c4",
+        "bytes": 13713,
+        "sha256": "845cb4f4b5a65cf126080861b7e29bd579a0101f5b3be437c1394bf7c0be0127"
+      },
+      "declarations": [
+        {
+          "line": 193,
+          "nameTemplate": "$action cancellation preserves the original approval details",
+          "expandedNames": [
+            "批准 cancellation preserves the original approval details",
+            "拒绝 cancellation preserves the original approval details",
+            "撤销批准 cancellation preserves the original approval details"
+          ]
+        },
+        {
+          "line": 207,
+          "nameTemplate": "$action success closes its approval details",
+          "expandedNames": [
+            "批准 success closes its approval details",
+            "拒绝 success closes its approval details",
+            "撤销批准 success closes its approval details"
+          ]
+        },
+        {
+          "line": 221,
+          "nameTemplate": "$action success cannot dismiss an unrelated covering dialog",
+          "expandedNames": [
+            "批准 success cannot dismiss an unrelated covering dialog",
+            "拒绝 success cannot dismiss an unrelated covering dialog",
+            "撤销批准 success cannot dismiss an unrelated covering dialog"
+          ]
+        },
+        {
+          "line": 243,
+          "nameTemplate": "$action failed submission keeps the original details open",
+          "expandedNames": [
+            "批准 failed submission keeps the original details open",
+            "拒绝 failed submission keeps the original details open",
+            "撤销批准 failed submission keeps the original details open"
+          ]
+        },
+        {
+          "line": 267,
+          "nameTemplate": "help initial ${succeeds ? 'success' : 'error'} after disposal does not update the removed page",
+          "expandedNames": [
+            "help initial success after disposal does not update the removed page",
+            "help initial error after disposal does not update the removed page"
+          ]
+        },
+        {
+          "line": 283,
+          "nameTemplate": "help acknowledgement ${succeeds ? 'success' : 'error'} after disposal cannot start a follow-up read",
+          "expandedNames": [
+            "help acknowledgement success after disposal cannot start a follow-up read",
+            "help acknowledgement error after disposal cannot start a follow-up read"
+          ]
+        },
+        {
+          "line": 307,
+          "nameTemplate": "help actor ABA cannot revive a late read or old filter callback",
+          "expandedNames": [
+            "help actor ABA cannot revive a late read or old filter callback"
+          ]
+        },
+        {
+          "line": 331,
+          "nameTemplate": "help console entry creates a new page for the current generation",
+          "expandedNames": [
+            "help console entry creates a new page for the current generation"
+          ]
+        },
+        {
+          "line": 348,
+          "nameTemplate": "a captured help filter callback is inert after page disposal",
+          "expandedNames": [
+            "a captured help filter callback is inert after page disposal"
+          ]
+        }
+      ]
+    },
+    {
+      "selector": "test/notification_help_scope_browser_test.dart",
+      "expectedVisibleCases": 7,
+      "source": {
+        "path": "apps/guardian/test/notification_help_scope_browser_test.dart",
+        "gitBlob": "f5dd6826d25c6a9ecf8d608738bec722ce63a2b6",
+        "bytes": 22319,
+        "sha256": "8ab27ee265f4bd89c8a8ba2902c50d5d4f7540a1c3f1180d76c2363baaeb5d0f"
+      },
+      "declarations": [
+        {
+          "line": 155,
+          "nameTemplate": "real selection invalidates late inbox GET and Help count before membership resolves, and failure cannot restore them",
+          "expandedNames": [
+            "real selection invalidates late inbox GET and Help count before membership resolves, and failure cannot restore them"
+          ]
+        },
+        {
+          "line": 225,
+          "nameTemplate": "late markRead and retained actions stay inert after $loss",
+          "expandedNames": [
+            "late markRead and retained actions stay inert after real selection then failure",
+            "late markRead and retained actions stay inert after dispose"
+          ]
+        },
+        {
+          "line": 297,
+          "nameTemplate": "a fresh repository can read while the old read is pending; retained View callbacks and old completion keep their owner",
+          "expandedNames": [
+            "a fresh repository can read while the old read is pending; retained View callbacks and old completion keep their owner"
+          ]
+        },
+        {
+          "line": 380,
+          "nameTemplate": "fixed host keys fail closed when Session instance changes; fresh host keys attach and dispose listeners correctly",
+          "expandedNames": [
+            "fixed host keys fail closed when Session instance changes; fresh host keys attach and dispose listeners correctly"
+          ]
+        },
+        {
+          "line": 417,
+          "nameTemplate": "fresh shell entries navigate, read and open current approval after real successful workspace selection",
+          "expandedNames": [
+            "fresh shell entries navigate, read and open current approval after real successful workspace selection"
+          ]
+        },
+        {
+          "line": 501,
+          "nameTemplate": "SYNTHETIC optional actor ABA never revives held host scopes",
+          "expandedNames": [
+            "SYNTHETIC optional actor ABA never revives held host scopes"
+          ]
+        }
+      ]
+    },
+    {
+      "selector": "test/application_classification_scope_browser_test.dart",
+      "expectedVisibleCases": 8,
+      "source": {
+        "path": "apps/guardian/test/application_classification_scope_browser_test.dart",
+        "gitBlob": "dfe5f88d71138014503a055d37d58c1c5c8e6872",
+        "bytes": 20469,
+        "sha256": "50d5fb8f33c335f28c7a273e8d4b453ad526ef393fe497002df33e8ad555b9cf"
+      },
+      "declarations": [
+        {
+          "line": 145,
+          "nameTemplate": "already pending real workspace reload invalidates classification GET when selectTenant advances only generation",
+          "expandedNames": [
+            "already pending real workspace reload invalidates classification GET when selectTenant advances only generation"
+          ]
+        },
+        {
+          "line": 200,
+          "nameTemplate": "old application row and details entry cannot create a new classification journey after a real selection starts or fails",
+          "expandedNames": [
+            "old application row and details entry cannot create a new classification journey after a real selection starts or fails"
+          ]
+        },
+        {
+          "line": 246,
+          "nameTemplate": "late PUT and retained callbacks cannot mutate or pop a covering route after real generation loss",
+          "expandedNames": [
+            "late PUT and retained callbacks cannot mutate or pop a covering route after real generation loss"
+          ]
+        },
+        {
+          "line": 299,
+          "nameTemplate": "successful covered save finishes its own classification route and leaves the later dialog open",
+          "expandedNames": [
+            "successful covered save finishes its own classification route and leaves the later dialog open"
+          ]
+        },
+        {
+          "line": 325,
+          "nameTemplate": "closing the covered application details owner revokes its child classification without a Session change",
+          "expandedNames": [
+            "closing the covered application details owner revokes its child classification without a Session change"
+          ]
+        },
+        {
+          "line": 359,
+          "nameTemplate": "closing classification without saving keeps its application details parent open",
+          "expandedNames": [
+            "closing classification without saving keeps its application details parent open"
+          ]
+        },
+        {
+          "line": 387,
+          "nameTemplate": "successful classification save completes only its original application details while a later dialog covers both",
+          "expandedNames": [
+            "successful classification save completes only its original application details while a later dialog covers both"
+          ]
+        },
+        {
+          "line": 427,
+          "nameTemplate": "normal fresh classification retry preserves category, version and idempotency key",
+          "expandedNames": [
+            "normal fresh classification retry preserves category, version and idempotency key"
+          ]
+        }
+      ]
+    },
+    {
+      "selector": "test/usage_reports_scope_browser_test.dart",
+      "expectedVisibleCases": 21,
+      "source": {
+        "path": "apps/guardian/test/usage_reports_scope_browser_test.dart",
+        "gitBlob": "6980e17113f264c28db1a5e33624113f1ba2783b",
+        "bytes": 47589,
+        "sha256": "5960608f034c3db2a7ca45622f5b5445fdfddeee1c982ad9e27db9ba6185f1ae"
+      },
+      "declarations": [
+        {
+          "line": 255,
+          "nameTemplate": "pending real workspace reload rejects late report options and retained page actions when only generation has changed",
+          "expandedNames": [
+            "pending real workspace reload rejects late report options and retained page actions when only generation has changed"
+          ]
+        },
+        {
+          "line": 310,
+          "nameTemplate": "late synchronous result and retained filter callbacks cannot restore a report after real selection failure",
+          "expandedNames": [
+            "late synchronous result and retained filter callbacks cannot restore a report after real selection failure"
+          ]
+        },
+        {
+          "line": 356,
+          "nameTemplate": "late create result and retained submit, close and reauth stay owned after $loss under a covering route",
+          "expandedNames": [
+            "late create result and retained submit, close and reauth stay owned after selection under a covering route",
+            "late create result and retained submit, close and reauth stay owned after dispose under a covering route"
+          ]
+        },
+        {
+          "line": 420,
+          "nameTemplate": "successful covered creation completes only its own route and shows current jobs once",
+          "expandedNames": [
+            "successful covered creation completes only its own route and shows current jobs once"
+          ]
+        },
+        {
+          "line": 452,
+          "nameTemplate": "closing a covered create dialog cancels only that draft and keeps the query page and covering window",
+          "expandedNames": [
+            "closing a covered create dialog cancels only that draft and keeps the query page and covering window"
+          ]
+        },
+        {
+          "line": 479,
+          "nameTemplate": "closing a current create route rejects held submit during its reverse transition before any pump or disposal",
+          "expandedNames": [
+            "closing a current create route rejects held submit during its reverse transition before any pump or disposal"
+          ]
+        },
+        {
+          "line": 512,
+          "nameTemplate": "host foreground ABA rejects held create submit before deferred route finish without revoking the shared page repository",
+          "expandedNames": [
+            "host foreground ABA rejects held create submit before deferred route finish without revoking the shared page repository"
+          ]
+        },
+        {
+          "line": 554,
+          "nameTemplate": "standalone void dialog permits a covered retry but rejects held submit immediately after its own close completes the route",
+          "expandedNames": [
+            "standalone void dialog permits a covered retry but rejects held submit immediately after its own close completes the route"
+          ]
+        },
+        {
+          "line": 598,
+          "nameTemplate": "current create retry retains the exact draft and idempotency key and reauth receives the same resume without invented If-Match",
+          "expandedNames": [
+            "current create retry retains the exact draft and idempotency key and reauth receives the same resume without invented If-Match"
+          ]
+        },
+        {
+          "line": 633,
+          "nameTemplate": "class roster resolution does not dispatch its second request after real generation-only invalidation",
+          "expandedNames": [
+            "class roster resolution does not dispatch its second request after real generation-only invalidation"
+          ]
+        },
+        {
+          "line": 666,
+          "nameTemplate": "late job list, result bytes and browser export guard reject old workspace without closing the shared transport",
+          "expandedNames": [
+            "late job list, result bytes and browser export guard reject old workspace without closing the shared transport"
+          ]
+        },
+        {
+          "line": 724,
+          "nameTemplate": "covered job $action dialog completes its own Future; old callbacks cannot dispatch or pop the later route",
+          "expandedNames": [
+            "covered job result dialog completes its own Future; old callbacks cannot dispatch or pop the later route",
+            "covered job cancel dialog completes its own Future; old callbacks cannot dispatch or pop the later route"
+          ]
+        },
+        {
+          "line": 768,
+          "nameTemplate": "device picker completion and retained controls stay scoped after its covered owner is disposed",
+          "expandedNames": [
+            "device picker completion and retained controls stay scoped after its covered owner is disposed"
+          ]
+        },
+        {
+          "line": 793,
+          "nameTemplate": "official date picker saves its selection through the owning route and permits a fresh next selection",
+          "expandedNames": [
+            "official date picker saves its selection through the owning route and permits a fresh next selection"
+          ]
+        },
+        {
+          "line": 816,
+          "nameTemplate": "covered official date picker completes when its report owner leaves without removing the covering window",
+          "expandedNames": [
+            "covered official date picker completes when its report owner leaves without removing the covering window"
+          ]
+        },
+        {
+          "line": 833,
+          "nameTemplate": "late insight and retained insight button cannot restore private advice after real workspace selection invalidates its device card",
+          "expandedNames": [
+            "late insight and retained insight button cannot restore private advice after real workspace selection invalidates its device card"
+          ]
+        },
+        {
+          "line": 874,
+          "nameTemplate": "current ready job opens validated results, filters locally, returns exact JSON bytes and cancels through the existing contract",
+          "expandedNames": [
+            "current ready job opens validated results, filters locally, returns exact JSON bytes and cancels through the existing contract"
+          ]
+        },
+        {
+          "line": 932,
+          "nameTemplate": "fixed host fails closed for replacement Session; console key gives the fresh Session its own page state",
+          "expandedNames": [
+            "fixed host fails closed for replacement Session; console key gives the fresh Session its own page state"
+          ]
+        },
+        {
+          "line": 955,
+          "nameTemplate": "current workspace keeps query refresh, class version, local category filter, jobs mode and rule/device navigation usable",
+          "expandedNames": [
+            "current workspace keeps query refresh, class version, local category filter, jobs mode and rule/device navigation usable"
+          ]
+        }
+      ]
+    },
+    {
+      "selector": "test/observation_route_scope_browser_test.dart",
+      "expectedVisibleCases": 13,
+      "source": {
+        "path": "apps/guardian/test/observation_route_scope_browser_test.dart",
+        "gitBlob": "25421c87f65cd240cafa5851c3ecbcbe6035bfc7",
+        "bytes": 23707,
+        "sha256": "2cb3ff92b4052ad50076b060450899201032e43740ebc46ad276cd702433ffc2"
+      },
+      "declarations": [
+        {
+          "line": 154,
+          "nameTemplate": "current observation edit keeps confirmation requirements and refreshes its original detail once after save",
+          "expandedNames": [
+            "current observation edit keeps confirmation requirements and refreshes its original detail once after save"
+          ]
+        },
+        {
+          "line": 183,
+          "nameTemplate": "covered save completes only the original editor Future and refreshes once while preserving the later dialog",
+          "expandedNames": [
+            "covered save completes only the original editor Future and refreshes once while preserving the later dialog"
+          ]
+        },
+        {
+          "line": 204,
+          "nameTemplate": "covered cancel completes its own editor and retained close cannot remove a later dialog",
+          "expandedNames": [
+            "covered cancel completes its own editor and retained close cannot remove a later dialog"
+          ]
+        },
+        {
+          "line": 218,
+          "nameTemplate": "manual close synchronously rejects held submit before the editor reverse transition has disposed its State",
+          "expandedNames": [
+            "manual close synchronously rejects held submit before the editor reverse transition has disposed its State"
+          ]
+        },
+        {
+          "line": 232,
+          "nameTemplate": "current reauthentication works and a closed editor rejects its held reauth before disposal",
+          "expandedNames": [
+            "current reauthentication works and a closed editor rejects its held reauth before disposal"
+          ]
+        },
+        {
+          "line": 248,
+          "nameTemplate": "reopened editor has a fresh route and old submit or close cannot dispatch or finish the new journey",
+          "expandedNames": [
+            "reopened editor has a fresh route and old submit or close cannot dispatch or finish the new journey"
+          ]
+        },
+        {
+          "line": 261,
+          "nameTemplate": "pending real reload invalidates late consent PUT and retained callbacks when selectTenant changes only generation",
+          "expandedNames": [
+            "pending real reload invalidates late consent PUT and retained callbacks when selectTenant changes only generation"
+          ]
+        },
+        {
+          "line": 305,
+          "nameTemplate": "originating parent revocation rejects late GET and held detail refresh edit and reauth before parent disposal",
+          "expandedNames": [
+            "originating parent revocation rejects late GET and held detail refresh edit and reauth before parent disposal"
+          ]
+        },
+        {
+          "line": 330,
+          "nameTemplate": "finishing the original observation owner revokes its covered editor immediately and late PUT cannot refresh or remove the cover",
+          "expandedNames": [
+            "finishing the original observation owner revokes its covered editor immediately and late PUT cannot refresh or remove the cover"
+          ]
+        },
+        {
+          "line": 352,
+          "nameTemplate": "host refresh revokes idle editor submit and reauth before deferred route finish while keeping current detail usable",
+          "expandedNames": [
+            "host refresh revokes idle editor submit and reauth before deferred route finish while keeping current detail usable"
+          ]
+        },
+        {
+          "line": 394,
+          "nameTemplate": "unknown result retries exact payload original version and request identity then refreshes current settings once",
+          "expandedNames": [
+            "unknown result retries exact payload original version and request identity then refreshes current settings once"
+          ]
+        },
+        {
+          "line": 414,
+          "nameTemplate": "version conflict remains terminal until close and explicit fresh settings read without resending the stale edit",
+          "expandedNames": [
+            "version conflict remains terminal until close and explicit fresh settings read without resending the stale edit"
+          ]
+        },
+        {
+          "line": 428,
+          "nameTemplate": "unregistered owned notice completes its original Future while covered and old close leaves the later route untouched",
+          "expandedNames": [
+            "unregistered owned notice completes its original Future while covered and old close leaves the later route untouched"
+          ]
+        }
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "selector": "test/workspace_flow_entry_browser_test.dart",
+      "name": "audit entry recreates a readable page for a new scope generation",
+      "declarationLine": 123,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/workspace_flow_entry_browser_test.dart",
+      "name": "managed entry reloads and enables refresh after generation change",
+      "declarationLine": 149,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/workspace_flow_entry_browser_test.dart",
+      "name": "export old repository rejects late data after actor ABA",
+      "declarationLine": 180,
+      "loopBinding": {
+        "loss": "actor ABA"
+      }
+    },
+    {
+      "selector": "test/workspace_flow_entry_browser_test.dart",
+      "name": "export old repository rejects late data after generation",
+      "declarationLine": 180,
+      "loopBinding": {
+        "loss": "generation"
+      }
+    },
+    {
+      "selector": "test/workspace_flow_entry_browser_test.dart",
+      "name": "export old repository rejects late data after dispose",
+      "declarationLine": 180,
+      "loopBinding": {
+        "loss": "dispose"
+      }
+    },
+    {
+      "selector": "test/workspace_flow_entry_browser_test.dart",
+      "name": "workspace picker ignores its already selected tenant",
+      "declarationLine": 226,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/workspace_flow_entry_browser_test.dart",
+      "name": "superseded workspace return cannot navigate or toast after newest selection fails",
+      "declarationLine": 240,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/workspace_flow_entry_browser_test.dart",
+      "name": "newest successful workspace selection returns home",
+      "declarationLine": 281,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/audit_export_route_test.dart",
+      "name": "covered export success preserves the cover and audit location",
+      "declarationLine": 90,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/audit_export_route_test.dart",
+      "name": "current export success opens the export jobs page",
+      "declarationLine": 112,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/audit_export_route_test.dart",
+      "name": "covered success cannot redirect when the cover closes at completion",
+      "declarationLine": 126,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/audit_export_route_test.dart",
+      "name": "a cover during export closing prevents the late redirect",
+      "declarationLine": 147,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "批准 cancellation preserves the original approval details",
+      "declarationLine": 193,
+      "loopBinding": {
+        "action": "批准"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "拒绝 cancellation preserves the original approval details",
+      "declarationLine": 193,
+      "loopBinding": {
+        "action": "拒绝"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "撤销批准 cancellation preserves the original approval details",
+      "declarationLine": 193,
+      "loopBinding": {
+        "action": "撤销批准"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "批准 success closes its approval details",
+      "declarationLine": 207,
+      "loopBinding": {
+        "action": "批准"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "拒绝 success closes its approval details",
+      "declarationLine": 207,
+      "loopBinding": {
+        "action": "拒绝"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "撤销批准 success closes its approval details",
+      "declarationLine": 207,
+      "loopBinding": {
+        "action": "撤销批准"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "批准 success cannot dismiss an unrelated covering dialog",
+      "declarationLine": 221,
+      "loopBinding": {
+        "action": "批准"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "拒绝 success cannot dismiss an unrelated covering dialog",
+      "declarationLine": 221,
+      "loopBinding": {
+        "action": "拒绝"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "撤销批准 success cannot dismiss an unrelated covering dialog",
+      "declarationLine": 221,
+      "loopBinding": {
+        "action": "撤销批准"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "批准 failed submission keeps the original details open",
+      "declarationLine": 243,
+      "loopBinding": {
+        "action": "批准"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "拒绝 failed submission keeps the original details open",
+      "declarationLine": 243,
+      "loopBinding": {
+        "action": "拒绝"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "撤销批准 failed submission keeps the original details open",
+      "declarationLine": 243,
+      "loopBinding": {
+        "action": "撤销批准"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "help initial success after disposal does not update the removed page",
+      "declarationLine": 267,
+      "loopBinding": {
+        "succeeds": "true"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "help initial error after disposal does not update the removed page",
+      "declarationLine": 267,
+      "loopBinding": {
+        "succeeds": "false"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "help acknowledgement success after disposal cannot start a follow-up read",
+      "declarationLine": 283,
+      "loopBinding": {
+        "succeeds": "true"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "help acknowledgement error after disposal cannot start a follow-up read",
+      "declarationLine": 283,
+      "loopBinding": {
+        "succeeds": "false"
+      }
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "help actor ABA cannot revive a late read or old filter callback",
+      "declarationLine": 307,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "help console entry creates a new page for the current generation",
+      "declarationLine": 331,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/approval_help_flow_browser_test.dart",
+      "name": "a captured help filter callback is inert after page disposal",
+      "declarationLine": 348,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/notification_help_scope_browser_test.dart",
+      "name": "real selection invalidates late inbox GET and Help count before membership resolves, and failure cannot restore them",
+      "declarationLine": 155,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/notification_help_scope_browser_test.dart",
+      "name": "late markRead and retained actions stay inert after real selection then failure",
+      "declarationLine": 225,
+      "loopBinding": {
+        "loss": "real selection then failure"
+      }
+    },
+    {
+      "selector": "test/notification_help_scope_browser_test.dart",
+      "name": "late markRead and retained actions stay inert after dispose",
+      "declarationLine": 225,
+      "loopBinding": {
+        "loss": "dispose"
+      }
+    },
+    {
+      "selector": "test/notification_help_scope_browser_test.dart",
+      "name": "a fresh repository can read while the old read is pending; retained View callbacks and old completion keep their owner",
+      "declarationLine": 297,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/notification_help_scope_browser_test.dart",
+      "name": "fixed host keys fail closed when Session instance changes; fresh host keys attach and dispose listeners correctly",
+      "declarationLine": 380,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/notification_help_scope_browser_test.dart",
+      "name": "fresh shell entries navigate, read and open current approval after real successful workspace selection",
+      "declarationLine": 417,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/notification_help_scope_browser_test.dart",
+      "name": "SYNTHETIC optional actor ABA never revives held host scopes",
+      "declarationLine": 501,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/application_classification_scope_browser_test.dart",
+      "name": "already pending real workspace reload invalidates classification GET when selectTenant advances only generation",
+      "declarationLine": 145,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/application_classification_scope_browser_test.dart",
+      "name": "old application row and details entry cannot create a new classification journey after a real selection starts or fails",
+      "declarationLine": 200,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/application_classification_scope_browser_test.dart",
+      "name": "late PUT and retained callbacks cannot mutate or pop a covering route after real generation loss",
+      "declarationLine": 246,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/application_classification_scope_browser_test.dart",
+      "name": "successful covered save finishes its own classification route and leaves the later dialog open",
+      "declarationLine": 299,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/application_classification_scope_browser_test.dart",
+      "name": "closing the covered application details owner revokes its child classification without a Session change",
+      "declarationLine": 325,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/application_classification_scope_browser_test.dart",
+      "name": "closing classification without saving keeps its application details parent open",
+      "declarationLine": 359,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/application_classification_scope_browser_test.dart",
+      "name": "successful classification save completes only its original application details while a later dialog covers both",
+      "declarationLine": 387,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/application_classification_scope_browser_test.dart",
+      "name": "normal fresh classification retry preserves category, version and idempotency key",
+      "declarationLine": 427,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/usage_reports_scope_browser_test.dart",
+      "name": "pending real workspace reload rejects late report options and retained page actions when only generation has changed",
+      "declarationLine": 255,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/usage_reports_scope_browser_test.dart",
+      "name": "late synchronous result and retained filter callbacks cannot restore a report after real selection failure",
+      "declarationLine": 310,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/usage_reports_scope_browser_test.dart",
+      "name": "late create result and retained submit, close and reauth stay owned after selection under a covering route",
+      "declarationLine": 356,
+      "loopBinding": {
+        "loss": "selection"
+      }
+    },
+    {
+      "selector": "test/usage_reports_scope_browser_test.dart",
+      "name": "late create result and retained submit, close and reauth stay owned after dispose under a covering route",
+      "declarationLine": 356,
+      "loopBinding": {
+        "loss": "dispose"
+      }
+    },
+    {
+      "selector": "test/usage_reports_scope_browser_test.dart",
+      "name": "successful covered creation completes only its own route and shows current jobs once",
+      "declarationLine": 420,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/usage_reports_scope_browser_test.dart",
+      "name": "closing a covered create dialog cancels only that draft and keeps the query page and covering window",
+      "declarationLine": 452,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/usage_reports_scope_browser_test.dart",
+      "name": "closing a current create route rejects held submit during its reverse transition before any pump or disposal",
+      "declarationLine": 479,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/usage_reports_scope_browser_test.dart",
+      "name": "host foreground ABA rejects held create submit before deferred route finish without revoking the shared page repository",
+      "declarationLine": 512,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/usage_reports_scope_browser_test.dart",
+      "name": "standalone void dialog permits a covered retry but rejects held submit immediately after its own close completes the route",
+      "declarationLine": 554,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/usage_reports_scope_browser_test.dart",
+      "name": "current create retry retains the exact draft and idempotency key and reauth receives the same resume without invented If-Match",
+      "declarationLine": 598,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/usage_reports_scope_browser_test.dart",
+      "name": "class roster resolution does not dispatch its second request after real generation-only invalidation",
+      "declarationLine": 633,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/usage_reports_scope_browser_test.dart",
+      "name": "late job list, result bytes and browser export guard reject old workspace without closing the shared transport",
+      "declarationLine": 666,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/usage_reports_scope_browser_test.dart",
+      "name": "covered job result dialog completes its own Future; old callbacks cannot dispatch or pop the later route",
+      "declarationLine": 724,
+      "loopBinding": {
+        "action": "result"
+      }
+    },
+    {
+      "selector": "test/usage_reports_scope_browser_test.dart",
+      "name": "covered job cancel dialog completes its own Future; old callbacks cannot dispatch or pop the later route",
+      "declarationLine": 724,
+      "loopBinding": {
+        "action": "cancel"
+      }
+    },
+    {
+      "selector": "test/usage_reports_scope_browser_test.dart",
+      "name": "device picker completion and retained controls stay scoped after its covered owner is disposed",
+      "declarationLine": 768,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/usage_reports_scope_browser_test.dart",
+      "name": "official date picker saves its selection through the owning route and permits a fresh next selection",
+      "declarationLine": 793,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/usage_reports_scope_browser_test.dart",
+      "name": "covered official date picker completes when its report owner leaves without removing the covering window",
+      "declarationLine": 816,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/usage_reports_scope_browser_test.dart",
+      "name": "late insight and retained insight button cannot restore private advice after real workspace selection invalidates its device card",
+      "declarationLine": 833,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/usage_reports_scope_browser_test.dart",
+      "name": "current ready job opens validated results, filters locally, returns exact JSON bytes and cancels through the existing contract",
+      "declarationLine": 874,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/usage_reports_scope_browser_test.dart",
+      "name": "fixed host fails closed for replacement Session; console key gives the fresh Session its own page state",
+      "declarationLine": 932,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/usage_reports_scope_browser_test.dart",
+      "name": "current workspace keeps query refresh, class version, local category filter, jobs mode and rule/device navigation usable",
+      "declarationLine": 955,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/observation_route_scope_browser_test.dart",
+      "name": "current observation edit keeps confirmation requirements and refreshes its original detail once after save",
+      "declarationLine": 154,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/observation_route_scope_browser_test.dart",
+      "name": "covered save completes only the original editor Future and refreshes once while preserving the later dialog",
+      "declarationLine": 183,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/observation_route_scope_browser_test.dart",
+      "name": "covered cancel completes its own editor and retained close cannot remove a later dialog",
+      "declarationLine": 204,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/observation_route_scope_browser_test.dart",
+      "name": "manual close synchronously rejects held submit before the editor reverse transition has disposed its State",
+      "declarationLine": 218,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/observation_route_scope_browser_test.dart",
+      "name": "current reauthentication works and a closed editor rejects its held reauth before disposal",
+      "declarationLine": 232,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/observation_route_scope_browser_test.dart",
+      "name": "reopened editor has a fresh route and old submit or close cannot dispatch or finish the new journey",
+      "declarationLine": 248,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/observation_route_scope_browser_test.dart",
+      "name": "pending real reload invalidates late consent PUT and retained callbacks when selectTenant changes only generation",
+      "declarationLine": 261,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/observation_route_scope_browser_test.dart",
+      "name": "originating parent revocation rejects late GET and held detail refresh edit and reauth before parent disposal",
+      "declarationLine": 305,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/observation_route_scope_browser_test.dart",
+      "name": "finishing the original observation owner revokes its covered editor immediately and late PUT cannot refresh or remove the cover",
+      "declarationLine": 330,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/observation_route_scope_browser_test.dart",
+      "name": "host refresh revokes idle editor submit and reauth before deferred route finish while keeping current detail usable",
+      "declarationLine": 352,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/observation_route_scope_browser_test.dart",
+      "name": "unknown result retries exact payload original version and request identity then refreshes current settings once",
+      "declarationLine": 394,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/observation_route_scope_browser_test.dart",
+      "name": "version conflict remains terminal until close and explicit fresh settings read without resending the stale edit",
+      "declarationLine": 414,
+      "loopBinding": {}
+    },
+    {
+      "selector": "test/observation_route_scope_browser_test.dart",
+      "name": "unregistered owned notice completes its original Future while covered and old close leaves the later route untouched",
+      "declarationLine": 428,
+      "loopBinding": {}
+    }
+  ],
+  "sourceNameParser": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261023-r9-e303\\generated\\reference-source-name-contract-browser38.py",
+    "bytes": 5887,
+    "sha256": "7fe208bdb1cf46307185343fdc249a4e99fa2879dba44cff165d04675dc7f77b"
+  },
+  "parserConfiguration": {
+    "SELECTORS": [
+      "test/workspace_flow_entry_browser_test.dart",
+      "test/audit_export_route_test.dart",
+      "test/approval_help_flow_browser_test.dart",
+      "test/notification_help_scope_browser_test.dart",
+      "test/application_classification_scope_browser_test.dart",
+      "test/usage_reports_scope_browser_test.dart",
+      "test/observation_route_scope_browser_test.dart"
+    ],
+    "COUNTS": [
+      8,
+      4,
+      19,
+      7,
+      8,
+      21,
+      13
+    ],
+    "executedThisPreparation": false,
+    "change": "All seven selected browser files are byte-identical to previouse445;80 names/loops/declaration lines are inherited JSON. Changed editor_submit_guard_test.dart is browser-required but outside these7 selectors; its183 row is separately rebound. New login_view_test.dart is neutral and belongs to the separate VM35 contract. No AST/name helper executed."
+  },
+  "caseMetadataBasis": "ALL_SEVEN_SOURCE_BLOBS_BYTE_IDENTICAL_TO_PREVIOUS_E445",
+  "original80VisibleNamesAndLoopBindingsPreservedExactly": true,
+  "sevenUnmodifiedSelectedSourcesMetadataPreservedExactly": true,
+  "allSevenSelectedSourcePinsAndDeclarationLinesPreservedExactly": true,
+  "observation13CasesRetainedExactly": true,
+  "priorReport21CasesRetainedExactly": true,
+  "runtimeDiscoveryPerformed": false,
+  "dartParsingPerformed": false,
+  "sdkStarted": false,
+  "browserStarted": false,
+  "modifiedSelectedSources": [],
+  "allDeclarationLinesPreservedExactly": true,
+  "previousCaseContract": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r14-heade445\\out\\expected-cases.json",
+    "bytes": 47287,
+    "sha256": "cdb89eb09f9a31590f04c540f1c7eea54a85fbdf8f3e83ffcdf5f2bdd8334de3"
+  }
+}

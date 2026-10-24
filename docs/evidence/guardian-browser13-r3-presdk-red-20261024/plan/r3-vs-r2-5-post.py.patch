@@ -1,0 +1,41 @@
+--- D:\codes\mobile\ai-manager\.cache\guardian-browser13-post-20261024-r2-manager-proof\post.py
++++ D:\codes\mobile\ai-manager\.cache\guardian-browser13-post-20261024-r3-html-diagnostic\post.py
+@@ -10,15 +10,15 @@
+ import sys
+ 
+ REPO = Path(r'D:\codes\mobile\ai-manager')
+-BASE = REPO / '.cache/guardian-browser13-20261024-r2-manager-proof'
+-OUT = REPO / '.cache/guardian-browser13-post-20261024-r2-manager-proof'
+-LAUNCHER = REPO / '.cache/guardian-browser13-root-launch-20261024-r2-manager-proof.ps1'
++BASE = REPO / '.cache/guardian-browser13-20261024-r3-html-diagnostic'
++OUT = REPO / '.cache/guardian-browser13-post-20261024-r3-html-diagnostic'
++LAUNCHER = REPO / '.cache/guardian-browser13-root-launch-20261024-r3-html-diagnostic.ps1'
+ COMMIT = '006ee45850c9b6b0f90570d9478bced3beb0e0fe'
+-INPUT_SHA = '7f5252253aa92b29c0fe5e7c7203ef4d5e4d9054d4b47f381e90111dfcddc2c2'
++INPUT_SHA = '48466d5b67b8ebc13142ed2faf002481d66e483563045749bf3b6c8a63da0f7e'
+ BUDGETS = {'outer': 180, 'working': 174, 'worker': 165, 'command': 135,
+            'commandCleanup': 140, 'postflightReserve': 25}
+ NAMES = {'analysis-host.py', 'worker.py', 'owned_job.py', 'process-inventory.ps1', 'reporter_contract.py', 'owned_chrome_evidence.py'}
+-PROPOSAL_SHA = '669a8366f805044f7f9c0b2140b3b69975d86076bf380f1d749134dbb4d0d905'
++PROPOSAL_SHA = '1473afaec08c0506a1c634b3f40808c6dbe71fde33ae096bf0f8f54e1e38bfbd'
+ SELECTORS = ['test/editor_submit_guard_test.dart']
+ REPORTER_SHA = 'dcd85cf451b20bd24857cef6726d0f1ebb406c67096146d3d3c82306942b67e8'
+ CASE_SHA = '6ea16bdf3b93fbea589aa95a4aa7a9e808afbe9605938d755fb54d8ce748c340'
+@@ -537,7 +537,7 @@
+     for row in proposal['candidateFiles']:
+         descriptor(row, candidate=True)
+     require(Path(proposal['inputs']['path']) == BASE / 'inputs.json'
+-            and type(proposal['inputs']['bytes']) is int and proposal['inputs']['bytes'] == 20238
++            and type(proposal['inputs']['bytes']) is int and proposal['inputs']['bytes'] == 20250
+             and proposal['inputs']['sha256'] == INPUT_SHA, 'Fixed current input required')
+     descriptor(proposal['inputs'])
+     inputs = load(BASE / 'inputs.json')
+@@ -723,7 +723,7 @@
+     require(first_command['pid'] == command['pid'] and first_command['creationFiletime'] == command['creationFiletime']
+             and first_command['firstSignaledQpc'] == command['firstSignaledQpc'], 'First command signal identity differs')
+     expected_argv = [r'C:\Windows\System32\cmd.exe', '/d', '/v:off', '/c',
+-        r'D:\softwares\flutter\bin\flutter.bat --no-version-check --suppress-analytics test --platform=chrome --no-pub --concurrency=1 --reporter=json test/editor_submit_guard_test.dart']
++        r'D:\softwares\flutter\bin\flutter.bat --no-version-check --suppress-analytics test --platform=chrome --no-pub --web-renderer=html --reporter=json test/editor_submit_guard_test.dart']
+     require(same(launch.get('argv'), expected_argv)
+             and launch.get('workingDirectory') == str(REPO / '.cache/guardian-current-20261024-r15-login-schedule/src/apps/guardian')
+             and type(launch.get('pid')) is int and launch['pid'] == command['pid']

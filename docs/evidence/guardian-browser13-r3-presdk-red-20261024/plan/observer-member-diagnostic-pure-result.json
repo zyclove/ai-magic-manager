@@ -1,0 +1,27 @@
+{
+  "status": "PURE_MOCKED_JOB_MEMBER_DIAGNOSTICS_CHECKED_NOT_PROCESS_QUALIFICATION",
+  "cases": [
+    "gone-second-snapshot-recorded-still-rejected",
+    "twenty-failures-eight-records-eight-resamples-max",
+    "byte-cap-for-large-redacted-image-metadata",
+    "no-original-time-no-extra-query-still-rejected",
+    "resample-error-type-only-still-rejected",
+    "malformed-resample-cannot-bypass-original-failure",
+    "diagnostics-is-detached-pure-aggregation",
+    "no-unknown-row-no-diagnostic-resample",
+    "higher-caller-deadline-cannot-extend-original"
+  ],
+  "caseCount": 9,
+  "observerPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-browser13-20261024-r3-html-diagnostic\\owned_chrome_evidence.py",
+    "bytes": 29359,
+    "sha256": "81b57c23a16ed6cfa163ce8ae81951e12d15d8c1b74c1b364f023b1a21fbbdc6"
+  },
+  "nativeReaderInitialized": false,
+  "realJobOrProcessQueried": false,
+  "sdkOrChromeStarted": false,
+  "networkQueriedOrRequested": false,
+  "unknownMemberBypassed": false,
+  "r2CauseEstablished": false,
+  "applicationCasesVerified": 0
+}
