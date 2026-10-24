@@ -1,0 +1,57 @@
+{
+  "status": "STATIC_TEST_CHANGE_REVIEW_ONLY_NEW_CASES_UNRUN",
+  "test": {
+    "path": "apps/guardian/test/policy_details_scope_test.dart",
+    "bytes": 27929,
+    "sha256": "56a696ad762aa3ab25deed1d44a0742b7e999e9807823c869acf143566ff13be"
+  },
+  "change": {
+    "addedLines": 217,
+    "deletedLines": 1,
+    "addedLiteralTestCases": 5,
+    "existingMainBodyBytes": 11412,
+    "existingMainBodySha256": "c4b5027a9d7495c4141b2112e220aae9543f90ee7cdeb3f55d71d66cefd40e3b",
+    "existingMainBodyPreservedByteExactly": true,
+    "existingTailHelpersPreservedByteExactly": true,
+    "existingMainExpectExpressions": 55,
+    "existingWholeFileExpectExpressions": 65,
+    "fixtureChange": "Optional Api override defaults to the original PreviewSession Api; reuse existing mount, invocation, request interceptor, reply and finite flush."
+  },
+  "newCoverage": [
+    "Two inline checks retain the original plan until explicit close; a new pending check clears the old decision.",
+    "Actor and role same-frame away-and-back hide original plan/result and permanently block captured checks.",
+    "Scope loss while awaiting the authenticated client prevents the original evaluation GET.",
+    "An already-sent late evaluation cannot disclose private data or close an unrelated covering notice.",
+    "403 and WORKSPACE_CHANGED redact the detail; REAUTH_REQUIRED preserves the current scope and permits a later explicit check."
+  ],
+  "completedStaticChecks": [
+    {
+      "toolChunk": "7ea3af",
+      "exitCode": 0,
+      "kind": "Source bytes and SHA readback"
+    },
+    {
+      "toolChunk": "abcaa5",
+      "exitCode": 0,
+      "kind": "Read-only Git diff numstat"
+    },
+    {
+      "toolChunk": "095861",
+      "exitCode": 0,
+      "kind": "Original main body and tail helper byte preservation"
+    },
+    {
+      "toolChunk": "6e5a77",
+      "exitCode": 0,
+      "kind": "Read-only diff whitespace check with command-local core.whitespace=cr-at-eol"
+    }
+  ],
+  "newCasesExecution": "UNRUN",
+  "dartOrFlutterOrSdkInvoked": false,
+  "astOrFormatterInvoked": false,
+  "testExecutionPerformed": false,
+  "redGreenOrFunctionalAcceptanceClaimed": false,
+  "gitStageOrCommitPerformed": false,
+  "otherProductSourceModifiedByThisAuthor": false,
+  "note": "This receipt records static checks only; added browser regressions await a permitted validation window."
+}

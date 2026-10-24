@@ -899,38 +899,96 @@ class ConsoleActions {
   }
 
   Future<void> scheduleDetails(Json r) async {
+    if (!context.mounted || !s.authenticated || s.tenant == null ||
+        s.root != root || !s.canOpen('schedules')) return;
     final d = r['definition'] as Json;
-    await actionDetails(context, r['name'], {
-      '时区': d['timeZone'],
-      '每周时段': (d['weekly'] as List)
-          .map((w) => '${label(w['day'])}  ${w['start']} – ${w['end']}')
-          .join('\n'),
-      '日期例外': (d['exceptions'] as List)
-          .map((e) {
-            final windows = e['windows'] as List;
-            final hours = windows.isEmpty
-                ? '全天关闭'
-                : windows.map((w) => '${w['start']} – ${w['end']}').join('、');
-            return '${e['date']}: $hours';
-          })
-          .join('\n'),
-      '说明': '已保存计划不可变；需要调整时创建新计划。'
-    }, actions: [
+    var live = true;
+    final revoked = ValueNotifier<bool>(false);
+    final evaluation = ValueNotifier<Json?>(null);
+    final parentAccess = DialogAccessBinding(context);
+    final scope = DeviceSubflowScope(s,
+        permitted: () =>
+            live && !revoked.value && parentAccess.permitted() &&
+            context.mounted && s.tenant != null && s.root == root &&
+            s.canOpen('schedules'));
+    bool current() => live && scope.current;
+    final changes = Listenable.merge([scope, revoked, parentAccess.changes]);
+    try {
+      if (!current()) return;
+      await actionDetails(context, r['name'], {
+        '时区': d['timeZone'],
+        '每周时段': (d['weekly'] as List)
+            .map((w) => '${label(w['day'])}  ${w['start']} – ${w['end']}')
+            .join('\n'),
+        '日期例外': (d['exceptions'] as List)
+            .map((e) {
+              final windows = e['windows'] as List;
+              final hours = windows.isEmpty
+                  ? '全天关闭'
+                  : windows.map((w) => '${w['start']} – ${w['end']}').join('、');
+              return '${e['date']}: $hours';
+            })
+            .join('\n'),
+        '说明': '已保存计划不可变；需要调整时创建新计划。'
+      }, accessChanges: changes, hasAccess: current, reauth: reauth,
+        extraContent: ValueListenableBuilder<Json?>(
+            valueListenable: evaluation,
+            builder: (_, result, __) => result == null
+                ? const SizedBox.shrink()
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Divider(),
+                      const Text('时段计算结果',
+                          style: TextStyle(fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 8),
+                      for (final entry in result.entries)
+                        Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: SelectableText('${entry.key}：${entry.value}')),
+                      const Text('仅展示计划计算结果，设备实际执行请查看设备状态。',
+                          style: TextStyle(color: muted, fontSize: 12)),
+                    ])), actions: [
       DetailAction('检查此刻是否允许', (ctx) async {
-        final decision = await s.api.send('GET',
-                '$root/schedules/${r['id']}/evaluation?at=${Uri.encodeQueryComponent(DateTime.now().toUtc().toIso8601String())}')
-            as Json;
-        if (ctx.mounted) {
-          await showDetails(ctx, '时段计算结果', {
+        final route = ModalRoute.of(ctx);
+        bool requestCurrent() => current() && ctx.mounted &&
+            route?.isActive == true &&
+            (route is! OwnedDialogRoute<dynamic> || route.available);
+        if (!requestCurrent() || route?.isCurrent != true) return;
+        evaluation.value = null;
+        final at = DateTime.now().toUtc().toIso8601String();
+        final api = scope.api.scoped(requestCurrent);
+        try {
+          final decision = await api.send('GET',
+                  '$root/schedules/${Uri.encodeComponent(r['id'] as String)}/evaluation?at=${Uri.encodeQueryComponent(at)}')
+              as Json;
+          if (!requestCurrent()) return;
+          evaluation.value = {
+            '检查时间': dateLabel(at),
             '结果': decision['allowed'] == true ? '当前在允许时段内' : '当前不在允许时段内',
             '当前允许截止': dateLabel(decision['currentUntil']),
             '下次允许时间': dateLabel(decision['nextAllowedAt']),
             '计算时区': decision['timeZone'],
             '当地日期': decision['localDate']
-          });
+          };
+        } catch (failure) {
+          if (live && failure is ApiFailure &&
+              (failure.code == 'WORKSPACE_CHANGED' || failure.status == 403 ||
+                  (failure.status == 401 && failure.code != 'REAUTH_REQUIRED'))) {
+            revoked.value = true;
+          }
+          rethrow;
         }
-      })
-    ]);
+      }, closeOnSuccess: false)
+      ]);
+    } finally {
+      live = false;
+      scope.dispose();
+      parentAccess.dispose();
+      revoked.dispose();
+      evaluation.dispose();
+    }
   }
 
   Future<void> enrollment() => _connectEnrollment();

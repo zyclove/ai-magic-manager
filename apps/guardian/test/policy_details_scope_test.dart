@@ -11,7 +11,7 @@ import 'package:guardian/pages/console_pages.dart';
 import 'package:guardian/ui/design.dart';
 import 'package:http/http.dart' as http;
 
-import 'policy_preview_flow_test.dart' show PreviewSession;
+import 'policy_preview_flow_test.dart' show PreviewSession, flush;
 import 'policy_target_picker_test.dart' show reply, settle;
 
 const _policy = 'policy-private-a';
@@ -22,6 +22,10 @@ const _version = 'version-private-a';
 
 class _ScopeSession extends PreviewSession {
   _ScopeSession() : super(groups: true);
+
+  Api? requestApi;
+  @override
+  Api get api => requestApi ?? super.api;
 
   void awayAndBack(String dimension) {
     if (dimension == 'actor') {
@@ -209,6 +213,34 @@ void _expectNoPrivate(WidgetTester tester) {
       expect(button.onPressed, isNull,
           reason: 'Old actions must be absent or disabled after scope loss.');
     }
+  }
+}
+
+const _scheduleId = 'schedule-private-a';
+const _scheduleName = '原账户私有时间计划';
+
+Json _schedule() => {
+      'id': _scheduleId,
+      'name': _scheduleName,
+      'definition': {
+        'timeZone': 'Asia/Shanghai',
+        'weekly': [{'day': 'MONDAY', 'start': '18:00', 'end': '20:00'}],
+        'exceptions': <Json>[],
+      },
+    };
+
+Json _scheduleDecision({String date = '2091-08-09', bool allowed = true}) => {
+      'allowed': allowed,
+      'currentUntil': allowed ? '2091-08-09T11:00:00Z' : null,
+      'nextAllowedAt': allowed ? null : '2091-08-10T06:00:00Z',
+      'timeZone': 'Pacific/Auckland',
+      'localDate': date,
+    };
+
+void _expectNoSchedulePrivate(WidgetTester tester) {
+  for (final secret in [_scheduleName, '2091-08-09', 'Pacific/Auckland']) {
+    expect(find.textContaining(secret, skipOffstage: false), findsNothing,
+        reason: 'Both the plan and inline evaluation belong to the old scope.');
   }
 }
 
@@ -525,6 +557,190 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   }
+  testWidgets('schedule checks replace inline results without closing the plan',
+      (tester) async {
+    final fixture = _Fixture();
+    final second = Completer<http.Response>();
+    var checks = 0;
+    fixture.respond = (request) async {
+      expect(request.method, 'GET');
+      expect(request.url.path.endsWith('/schedules/$_scheduleId/evaluation'),
+          isTrue);
+      expect(request.url.queryParameters['at'], isNotEmpty);
+      return ++checks == 1 ? reply(_scheduleDecision()) : second.future;
+    };
+    await _mount(tester, fixture);
+    addTearDown(() {
+      if (!second.isCompleted) second.complete(reply(_scheduleDecision()));
+    });
+    final invocation = _Invocation(fixture.actions.scheduleDetails(_schedule()));
+    await settle(tester);
+    _capture(tester, '检查此刻是否允许')();
+    await settle(tester);
+    expect(find.text(_scheduleName), findsOneWidget);
+    expect(find.text('时段计算结果'), findsOneWidget);
+    expect(find.text('结果：当前在允许时段内'), findsOneWidget);
+    expect(find.text('当地日期：2091-08-09'), findsOneWidget);
+    expect(find.textContaining('检查时间：'), findsOneWidget);
+    expect(invocation.completed, isFalse);
+    _capture(tester, '检查此刻是否允许')();
+    await flush(tester);
+    expect(fixture.requests, hasLength(2));
+    expect(find.text('当地日期：2091-08-09'), findsNothing,
+        reason: 'An in-flight recheck must not present the old decision as current.');
+    second.complete(reply(_scheduleDecision(date: '2091-08-10', allowed: false)));
+    await settle(tester);
+    expect(find.text('时段计算结果'), findsOneWidget);
+    expect(find.text('结果：当前不在允许时段内'), findsOneWidget);
+    expect(find.text('当地日期：2091-08-10'), findsOneWidget);
+    expect(find.text('当地日期：2091-08-09'), findsNothing);
+    expect(find.text(_scheduleName), findsOneWidget);
+    expect(invocation.completed, isFalse);
+    _capture(tester, '关闭')();
+    await settle(tester);
+    expect(invocation.completed, isTrue);
+    expect(invocation.failure, isNull);
+    expect(fixture.requests, hasLength(2));
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('schedule actor and role ABA redact both plan and inline result',
+      (tester) async {
+    for (final dimension in ['actor', 'role']) {
+      final fixture = _Fixture();
+      fixture.respond = (_) async => reply(_scheduleDecision());
+      await _mount(tester, fixture);
+      final invocation = _Invocation(fixture.actions.scheduleDetails(_schedule()));
+      await settle(tester);
+      final check = _capture(tester, '检查此刻是否允许');
+      check();
+      await settle(tester);
+      expect(find.text('当地日期：2091-08-09'), findsOneWidget);
+      fixture.session.awayAndBack(dimension);
+      check();
+      await settle(tester);
+      _expectSameScopeValues(fixture);
+      _expectNoSchedulePrivate(tester);
+      expect(find.text('工作空间或权限已变化'), findsOneWidget);
+      expect(fixture.requests, hasLength(1),
+          reason: '$dimension ABA must permanently revoke a captured check.');
+      _capture(tester, '关闭')();
+      await settle(tester);
+      expect(invocation.completed, isTrue);
+      expect(tester.takeException(), isNull);
+    }
+  });
+
+  testWidgets('schedule scope loss while awaiting a client prevents the old GET',
+      (tester) async {
+    final fixture = _Fixture();
+    final client = Completer<http.Client>();
+    fixture.session.requestApi = Api(() => client.future,
+        baseUrl: 'https://fixture.invalid/api/v1');
+    fixture.respond = (_) async => reply(_scheduleDecision());
+    await _mount(tester, fixture);
+    addTearDown(() {
+      if (!client.isCompleted) client.complete(fixture.session.previewClient);
+    });
+    final invocation = _Invocation(fixture.actions.scheduleDetails(_schedule()));
+    await settle(tester);
+    _capture(tester, '检查此刻是否允许')();
+    await flush(tester);
+    expect(fixture.requests, isEmpty);
+    fixture.session.awayAndBack('actor');
+    client.complete(fixture.session.previewClient);
+    await settle(tester);
+    expect(fixture.requests, isEmpty,
+        reason: 'The authenticated client must not receive the old evaluation GET.');
+    _expectNoSchedulePrivate(tester);
+    expect(find.text('工作空间或权限已变化'), findsOneWidget);
+    _capture(tester, '关闭')();
+    await settle(tester);
+    expect(invocation.completed, isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('late schedule evaluation cannot disclose data or close a covering notice',
+      (tester) async {
+    final fixture = _Fixture();
+    final response = Completer<http.Response>();
+    fixture.respond = (_) async => response.future;
+    await _mount(tester, fixture);
+    addTearDown(() {
+      if (!response.isCompleted) response.complete(reply(_scheduleDecision()));
+    });
+    final invocation = _Invocation(fixture.actions.scheduleDetails(_schedule()));
+    await settle(tester);
+    _capture(tester, '检查此刻是否允许')();
+    await flush(tester);
+    expect(fixture.requests, hasLength(1));
+    var noticeClosed = false;
+    unawaited(showDialog<void>(
+        context: tester.element(find.text(_scheduleName)),
+        builder: (context) => AlertDialog(
+            title: const Text('独立通知'),
+            actions: [TextButton(onPressed: () => Navigator.pop(context),
+                child: const Text('关闭通知'))]))
+        .then((_) => noticeClosed = true));
+    await flush(tester);
+    fixture.session.awayAndBack('actor');
+    response.complete(reply(_scheduleDecision()));
+    await settle(tester);
+    expect(noticeClosed, isFalse);
+    expect(find.text('独立通知'), findsOneWidget);
+    expect(find.text('时段计算结果', skipOffstage: false), findsNothing);
+    _expectNoSchedulePrivate(tester);
+    expect(fixture.requests, hasLength(1));
+    expect(invocation.completed, isFalse);
+    _capture(tester, '关闭通知')();
+    await settle(tester);
+    expect(find.text('工作空间或权限已变化'), findsOneWidget);
+    _capture(tester, '关闭')();
+    await settle(tester);
+    expect(invocation.completed, isTrue);
+    expect(invocation.failure, isNull);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('schedule failures distinguish revoked access from reauthentication',
+      (tester) async {
+    for (final rejection in const {
+      403: 'ACCESS_DENIED',
+      409: 'WORKSPACE_CHANGED',
+      401: 'REAUTH_REQUIRED',
+    }.entries) {
+      final fixture = _Fixture();
+      var attempts = 0;
+      fixture.respond = (_) async => ++attempts == 1
+          ? reply({'errorCode': rejection.value}, rejection.key)
+          : reply(_scheduleDecision());
+      await _mount(tester, fixture);
+      final invocation = _Invocation(fixture.actions.scheduleDetails(_schedule()));
+      await settle(tester);
+      final check = _capture(tester, '检查此刻是否允许');
+      check();
+      await settle(tester);
+      if (rejection.value == 'REAUTH_REQUIRED') {
+        expect(find.text('工作空间或权限已变化'), findsNothing);
+        expect(find.text(_scheduleName), findsOneWidget);
+        _capture(tester, '检查此刻是否允许')();
+        await settle(tester);
+        expect(fixture.requests, hasLength(2));
+        expect(find.text('时段计算结果'), findsOneWidget);
+      } else {
+        expect(find.text('工作空间或权限已变化'), findsOneWidget);
+        _expectNoSchedulePrivate(tester);
+        check();
+        await flush(tester);
+        expect(fixture.requests, hasLength(1));
+      }
+      _capture(tester, '关闭')();
+      await settle(tester);
+      expect(invocation.completed, isTrue);
+      expect(invocation.failure, isNull);
+      expect(tester.takeException(), isNull);
+    }
+  });
 }
 
 void _expectNoEnabledPolicyActions(WidgetTester tester,

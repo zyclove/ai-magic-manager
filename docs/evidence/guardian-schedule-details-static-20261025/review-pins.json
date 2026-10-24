@@ -1,0 +1,47 @@
+{
+  "kind": "INDEPENDENT_STATIC_REVIEW",
+  "conclusion": "NO_CLEAR_BLOCKER_FOUND_STATIC_ONLY",
+  "parentPrefixReportedByRoot": "794df6d",
+  "sourceFiles": [
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "bytes": 96446,
+      "sha256": "15c7907f56964c1b3772328f8915a850901a4ddbf7d13c7bf19387194903fed1"
+    },
+    {
+      "path": "apps/guardian/test/policy_details_scope_test.dart",
+      "bytes": 27929,
+      "sha256": "56a696ad762aa3ab25deed1d44a0742b7e999e9807823c869acf143566ff13be"
+    }
+  ],
+  "newLiteralTestDeclarations": 5,
+  "newTests": "UNRUN",
+  "runtimeAcceptance": false,
+  "reviewedProductionRange": "ConsoleActions.scheduleDetails lines 901-992 with necessary existing scope/API/detail context",
+  "review": {
+    "path": ".cache/guardian-schedule-details-review-20261025-r1/review.md",
+    "bytes": 2021,
+    "sha256": "49be3827d4139d191fba4b9cb6d7c62d1fcf8a84043151b37d57a6fe43fba8fa"
+  },
+  "readOnlyToolExitEvidence": [
+    {
+      "id": "a41392",
+      "exitCode": 0
+    },
+    {
+      "id": "ec3311",
+      "exitCode": 0
+    },
+    {
+      "id": "443feb",
+      "exitCode": 0
+    },
+    {
+      "id": "92e022",
+      "exitCode": 0
+    }
+  ],
+  "sourceWrites": false,
+  "gitWrites": false,
+  "sdkOrTestCalls": 0
+}

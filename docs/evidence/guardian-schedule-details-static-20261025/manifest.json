@@ -1,0 +1,41 @@
+{
+  "schemaVersion": 1,
+  "status": "STATIC_ONLY_ALL_NEW_CASES_UNRUN",
+  "parent": "794df6d5e2267174d9b30fc4592a0026a51ba611",
+  "files": [
+    {
+      "path": "review.md",
+      "source": ".cache/guardian-schedule-details-review-20261025-r1/review.md",
+      "bytes": 2021,
+      "sha256": "49be3827d4139d191fba4b9cb6d7c62d1fcf8a84043151b37d57a6fe43fba8fa"
+    },
+    {
+      "path": "review-pins.json",
+      "source": ".cache/guardian-schedule-details-review-20261025-r1/pins.json",
+      "bytes": 1261,
+      "sha256": "9b5aadc164182722c41240e01addcc78d137499a743376439687703a8f3b37e6"
+    },
+    {
+      "path": "test-static.json",
+      "source": ".cache/guardian-schedule-details-test-static-20261025-r1.json",
+      "bytes": 2356,
+      "sha256": "26b6f9244e98f4be0442a3086ee80af994892be49d4ba449ad130e2f741f5fa3"
+    },
+    {
+      "path": "phase-commit-tools/exact-commit.py",
+      "source": ".cache/guardian-schedule-details-exact-commit-20261025-r1.py",
+      "bytes": 9523,
+      "sha256": "be46ddc30a3468796710d9c93188930fac8eea16d3c5f9114b51155de980fdbc"
+    },
+    {
+      "path": "phase-commit-tools/prepare.py",
+      "source": ".cache/guardian-schedule-details-phase-prepare-20261025-r1.py",
+      "bytes": 7628,
+      "sha256": "4ea54ea0af0d07650d5a1c454c155fd3add1427874070a0e66ab1882d4092d5e"
+    }
+  ],
+  "testsRun": false,
+  "sdkInvoked": false,
+  "pushed": false,
+  "deployed": false
+}
