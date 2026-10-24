@@ -1,0 +1,1370 @@
+{
+  "status": "KNOWN_VM_ASSET_INPUTS_PINNED_NOT_COMPLETE_RUNTIME_CLOSURE",
+  "defaultTestAssetsPreserved": true,
+  "baselineTrees": 70,
+  "baselineFixedFiles": 32,
+  "baselinePayloadRehashedDuringPreparation": false,
+  "newFixedFilesFreshlyHashed": 152,
+  "newFixedBytes": 7997977,
+  "added": [
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\async-2.11.0\\pubspec.yaml",
+      "bytes": 341,
+      "sha256": "c395995baaf250b2fcb5478a45ff2c141eb9f4be0f12aed070210113d26e59d8",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\async-2.11.0\\LICENSE",
+      "bytes": 1504,
+      "sha256": "ff15faa32a2e638107b7789592b14426162a75ba620044ee2340a20ec6ce5e73",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r12-head35\\src\\packages\\audit_client\\pubspec.yaml",
+      "bytes": 162,
+      "sha256": "4308293af1f06d9a5401ebab05f11a8f36bbbcba59bf37b9468007eb46ea4085",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\boolean_selector-2.1.1\\pubspec.yaml",
+      "bytes": 370,
+      "sha256": "aa3b56275dd53f182031a049c2bad6bd5ca5f97c0c6b4bf7a8f74d723b4916e8",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\boolean_selector-2.1.1\\LICENSE",
+      "bytes": 1503,
+      "sha256": "b71519245009a3b8f126196a5408ec031e216e8e0d985085958c6543f82a8a2a",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\characters-1.3.0\\pubspec.yaml",
+      "bytes": 263,
+      "sha256": "87c07e9ac2ac13d074a0fe2153ade64b1fa495ce85c51c6c4b82066383cf7110",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\characters-1.3.0\\LICENSE",
+      "bytes": 1504,
+      "sha256": "0371d1da6a57fb791db29d29b95333429205f51f3cb2eb3a0c12d91838a38744",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\clock-1.1.1\\pubspec.yaml",
+      "bytes": 222,
+      "sha256": "1cf4dc813102a5a285389f76dd6cb45e4d1bc1c3c8d0122453c6a9d7896fdfb2",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\clock-1.1.1\\LICENSE",
+      "bytes": 11357,
+      "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\collection-1.18.0\\pubspec.yaml",
+      "bytes": 308,
+      "sha256": "4bcc42c75c5df1ebeb145d39959fb25b9baebc269cd7182880125d9e8fa264ae",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\collection-1.18.0\\LICENSE",
+      "bytes": 1504,
+      "sha256": "ff15faa32a2e638107b7789592b14426162a75ba620044ee2340a20ec6ce5e73",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r12-head35\\src\\packages\\commerce_contracts\\pubspec.yaml",
+      "bytes": 171,
+      "sha256": "e4ec1940fc2bf024dcdde0296557eddfe22876aa7410290f07586b676dfc0ba0",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\crypto-3.0.7\\pubspec.yaml",
+      "bytes": 464,
+      "sha256": "7e80694c991709360b161f4af801646902127f120b864286dbc413e4f667f712",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\crypto-3.0.7\\LICENSE",
+      "bytes": 1503,
+      "sha256": "ad6a71997da90924b2cfb1fb47ec46537f70faf469efe016168794ae45ed6888",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\cupertino_icons-1.0.8\\pubspec.yaml",
+      "bytes": 580,
+      "sha256": "ab56989126ab7174e34320fe9e3385b7af81eefb3d036d140469a801fd410ac4",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\cupertino_icons-1.0.8\\LICENSE",
+      "bytes": 1086,
+      "sha256": "310d6ab6483280280c9db122bded0a63c09558bc5743720f61dbcbb494db370a",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\cupertino_icons-1.0.8\\assets\\CupertinoIcons.ttf",
+      "bytes": 257628,
+      "sha256": "67c44fe9183b002e79dde7f6977e2988661c9a3e4a3c5fce968787efdbed823c",
+      "reason": "sole font asset declared in current70 package pubspec intake"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r12-head35\\src\\packages\\device_operations\\pubspec.yaml",
+      "bytes": 459,
+      "sha256": "c6fd0fdbb4a2210ded4e010b6560f95e7ee2fa4f1e7217481f6f63a2f569f0fd",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\fake_async-1.3.1\\pubspec.yaml",
+      "bytes": 345,
+      "sha256": "4b3d583d4ce3ac599eab07cddde9a4337a27c6d63fa825aa4ca6f83302640810",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\fake_async-1.3.1\\LICENSE",
+      "bytes": 11357,
+      "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\ffi-2.1.3\\pubspec.yaml",
+      "bytes": 319,
+      "sha256": "ac64da1f978156442660e7c137e43f74f44c6b4ef9dc5e3830aad3634187cb44",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\ffi-2.1.3\\LICENSE",
+      "bytes": 1504,
+      "sha256": "0371d1da6a57fb791db29d29b95333429205f51f3cb2eb3a0c12d91838a38744",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\file-7.0.1\\pubspec.yaml",
+      "bytes": 438,
+      "sha256": "2431ce26b72e9f4000cda857183316cf98fcdc5f1c6143ef97ca54a333500d82",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\file-7.0.1\\LICENSE",
+      "bytes": 1523,
+      "sha256": "f6df86b1412172537273e8e80ee2fb8a66aa7307ce0b39ea5ddab47ca41b8c49",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\fixnum-1.1.1\\pubspec.yaml",
+      "bytes": 325,
+      "sha256": "0e4778875281ea0265bb1b00aa809ff5ac9fbd089e2fa2a0f23750c304d4ee3c",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\fixnum-1.1.1\\LICENSE",
+      "bytes": 1503,
+      "sha256": "ff0b91d4f3c32b25cb6ec84985e8da89b0ba2a2b2f7eef353cda5e5423a20390",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter\\pubspec.yaml",
+      "bytes": 2613,
+      "sha256": "0fcf44a7185eed2487d3f2f51e1ad3aabae546d481335253a0b034e07fe96b8d",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter\\LICENSE",
+      "bytes": 1544,
+      "sha256": "a3a9fd82f800a47377f7d3f60c60a5c91cae0495be8f329031e1448ce0f5dab9",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\flutter_lints-3.0.2\\pubspec.yaml",
+      "bytes": 504,
+      "sha256": "0ac172dfeec00ce69933f397e86fd3a940db76447fc3b1927f1e69d1daf93e03",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\flutter_lints-3.0.2\\LICENSE",
+      "bytes": 1519,
+      "sha256": "89519eca6f7b9529b35bdddd623a58c3af06a88c458dbd6531ddb4675acf75a9",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_localizations\\pubspec.yaml",
+      "bytes": 2732,
+      "sha256": "9686eeb1a88d8ec2da0f384addc05bc2813200afb11e85008de82cf95d8f09b4",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_test\\pubspec.yaml",
+      "bytes": 2590,
+      "sha256": "b9470695c9f5cdfaa3b94907bce8ec04df8dae8554eafd25ef286a474effaebb",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_web_plugins\\pubspec.yaml",
+      "bytes": 2603,
+      "sha256": "9da5a31f9c61ef66e7267583de21311d25661313397adbefb4f9aa6025aa625e",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\go_router-14.8.1\\pubspec.yaml",
+      "bytes": 700,
+      "sha256": "d09ba019d1d6146263562094c0a359d0ae856ae3ce10e0c626b74946e815886f",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\go_router-14.8.1\\LICENSE",
+      "bytes": 1519,
+      "sha256": "89519eca6f7b9529b35bdddd623a58c3af06a88c458dbd6531ddb4675acf75a9",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\http-1.6.0\\pubspec.yaml",
+      "bytes": 545,
+      "sha256": "ab9b20099e285fcabbdb52188d8a9205adee7eeb9b51f00727206edeb1e72420",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\http-1.6.0\\LICENSE",
+      "bytes": 1504,
+      "sha256": "3c32b53167c7dae9190c38dab5dd9fe1789c53623ebc7d1babcb29914c5b3f16",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\http_parser-4.0.2\\pubspec.yaml",
+      "bytes": 372,
+      "sha256": "4ab36f3af94ac1065309ea22ed2f8d7d66e432e7cb1c7e8a91accc838057b42b",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\http_parser-4.0.2\\LICENSE",
+      "bytes": 1504,
+      "sha256": "3c32b53167c7dae9190c38dab5dd9fe1789c53623ebc7d1babcb29914c5b3f16",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\idb_shim-2.6.0+5\\pubspec.yaml",
+      "bytes": 706,
+      "sha256": "89bb2e751000aa33863488e3ab2bfed1de612f325e6805ebeab7d9cd53f01ac5",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\idb_shim-2.6.0+5\\LICENSE",
+      "bytes": 1316,
+      "sha256": "8621b235d4e92c6f61540201c95c75cc920dd01386a0185e97b6be7e61a538b5",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\intl-0.19.0\\pubspec.yaml",
+      "bytes": 502,
+      "sha256": "29a5075dc480dd218f9d7e5ae47e59e91af56c1351f92298d2f1b724fd88215e",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\intl-0.19.0\\LICENSE",
+      "bytes": 1503,
+      "sha256": "7e124af6a556f045cb3a20cafbdaa31602ac2c82cbcb3c3b15faaaf514b06028",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\leak_tracker-10.0.4\\pubspec.yaml",
+      "bytes": 650,
+      "sha256": "4a37d2bdd41a57e19bd6049806a6f89670f4487d045c7d0c6586d33bea163b8b",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\leak_tracker-10.0.4\\LICENSE",
+      "bytes": 1503,
+      "sha256": "08a004aa8956c3cf3b24f7f69c966247233953e18e6afaa61191ea47b7eb70f6",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\leak_tracker_flutter_testing-3.0.3\\pubspec.yaml",
+      "bytes": 502,
+      "sha256": "f398b5efda1f1a4f793443f6ffa321e140ea35f34d0c8600e8a5dbd948423a2f",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\leak_tracker_flutter_testing-3.0.3\\LICENSE",
+      "bytes": 1503,
+      "sha256": "08a004aa8956c3cf3b24f7f69c966247233953e18e6afaa61191ea47b7eb70f6",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\leak_tracker_testing-3.0.1\\pubspec.yaml",
+      "bytes": 609,
+      "sha256": "0d62255b07137a02ce0b836697b0e087681d0a59f856ed176cc508ff2dd5ee39",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\leak_tracker_testing-3.0.1\\LICENSE",
+      "bytes": 1503,
+      "sha256": "08a004aa8956c3cf3b24f7f69c966247233953e18e6afaa61191ea47b7eb70f6",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\lints-3.0.0\\pubspec.yaml",
+      "bytes": 431,
+      "sha256": "08540cd91369c2c2c0169af5d58504d2b7b07cd0766fc48968b60c31e7e657be",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\lints-3.0.0\\LICENSE",
+      "bytes": 1503,
+      "sha256": "421fe78c3b5df297f8b4ab2c74f2450a274ee6d245a113091f6b9f90570af193",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\logging-1.3.0\\pubspec.yaml",
+      "bytes": 394,
+      "sha256": "c2880dbeafc99cd7b16c5b4da088c06d111498107476544d3cdb60f9735f05fa",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\logging-1.3.0\\LICENSE",
+      "bytes": 1504,
+      "sha256": "dfb09c74e29386cd3e2719f32d4995d59526179753931d31840757c77fbf2791",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\matcher-0.12.16+1\\pubspec.yaml",
+      "bytes": 473,
+      "sha256": "79506923c8a70265779ab7a31276f4cf73063e33f3426c90015da5c64ef70080",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\matcher-0.12.16+1\\LICENSE",
+      "bytes": 1504,
+      "sha256": "3c32b53167c7dae9190c38dab5dd9fe1789c53623ebc7d1babcb29914c5b3f16",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\material_color_utilities-0.8.0\\pubspec.yaml",
+      "bytes": 1613,
+      "sha256": "1f990254ecd6e22ab6dc740406d814e5b6b41fd96c5c2bda0b5bc386114d383c",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\material_color_utilities-0.8.0\\LICENSE",
+      "bytes": 10756,
+      "sha256": "e662e6c2fc7ba7bc613c7e4ddf852d4ad3fcc05faead7cbe16b1dac67b55f426",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\meta-1.12.0\\pubspec.yaml",
+      "bytes": 677,
+      "sha256": "bcca71e120a53b8933b9f8fabe6b3dd3466787369db9b3afd77677887a129486",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\meta-1.12.0\\LICENSE",
+      "bytes": 1503,
+      "sha256": "b71519245009a3b8f126196a5408ec031e216e8e0d985085958c6543f82a8a2a",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\nested-1.0.0\\pubspec.yaml",
+      "bytes": 323,
+      "sha256": "8aaa61986a374f0b186f5ac2eabc31a413c1d43610c8d64af543f5d7972d45c3",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\nested-1.0.0\\LICENSE",
+      "bytes": 1070,
+      "sha256": "fccaeae95a39c93176de9321c734c90d8e36f465c48fcf278840844d8eab1af4",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r12-head35\\src\\packages\\notification_client\\pubspec.yaml",
+      "bytes": 168,
+      "sha256": "e9175499f37e955de2a6f760d4d4eb4e9b5caff86e7bc83493e5f8ba3a2eef7c",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\oauth2-2.0.5\\pubspec.yaml",
+      "bytes": 576,
+      "sha256": "db23756b2e0ef0a47c05d2ea08cbd6c85b50b7a317b0a8a3c4e195e8bc82132c",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\oauth2-2.0.5\\LICENSE",
+      "bytes": 1503,
+      "sha256": "ff0b91d4f3c32b25cb6ec84985e8da89b0ba2a2b2f7eef353cda5e5423a20390",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\path-1.9.0\\pubspec.yaml",
+      "bytes": 352,
+      "sha256": "fbc8ea65dbc9c7156c8bda0eb6b5f04e9fe6ff65155385f01d3f9cf89cc289dd",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\path-1.9.0\\LICENSE",
+      "bytes": 1504,
+      "sha256": "3c32b53167c7dae9190c38dab5dd9fe1789c53623ebc7d1babcb29914c5b3f16",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\path_provider_linux-2.2.1\\pubspec.yaml",
+      "bytes": 758,
+      "sha256": "68d7e42fda1d9664efbe91d869186b5952b5b969c5ffcf222f2eb23a9c5a87a9",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\path_provider_linux-2.2.1\\LICENSE",
+      "bytes": 1519,
+      "sha256": "89519eca6f7b9529b35bdddd623a58c3af06a88c458dbd6531ddb4675acf75a9",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\path_provider_platform_interface-2.1.2\\pubspec.yaml",
+      "bytes": 764,
+      "sha256": "273fb973a9e123ae9fa114bd94adecf2744d61dd5930022c9fc35b66c2db8602",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\path_provider_platform_interface-2.1.2\\LICENSE",
+      "bytes": 1519,
+      "sha256": "89519eca6f7b9529b35bdddd623a58c3af06a88c458dbd6531ddb4675acf75a9",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\path_provider_windows-2.3.0\\pubspec.yaml",
+      "bytes": 712,
+      "sha256": "df8b451e532d00b0d4930523d60bede9ae04e0c2356291c38b7c7c30404a6296",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\path_provider_windows-2.3.0\\LICENSE",
+      "bytes": 1519,
+      "sha256": "89519eca6f7b9529b35bdddd623a58c3af06a88c458dbd6531ddb4675acf75a9",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\platform-3.1.6\\pubspec.yaml",
+      "bytes": 370,
+      "sha256": "f5a5f8d6babddb3fe6d7ed437537383a5e1c18d36b7e485d381ea528040bf64f",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\platform-3.1.6\\LICENSE",
+      "bytes": 1524,
+      "sha256": "143839f62c9b7f88143ea9f688361c27050888acde7696b34e04414bd254fafc",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\plugin_platform_interface-2.1.8\\pubspec.yaml",
+      "bytes": 1277,
+      "sha256": "f43e701a2009e7a535d2ef393f9375a0c131c0719243347a266827eea4c36c08",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\plugin_platform_interface-2.1.8\\LICENSE",
+      "bytes": 1519,
+      "sha256": "89519eca6f7b9529b35bdddd623a58c3af06a88c458dbd6531ddb4675acf75a9",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\provider-6.1.5+1\\pubspec.yaml",
+      "bytes": 550,
+      "sha256": "4ea3fd763648d65416810b41c86cd95d3a5f3d070ffe7414658a55981554e9ac",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\provider-6.1.5+1\\LICENSE",
+      "bytes": 1070,
+      "sha256": "fccaeae95a39c93176de9321c734c90d8e36f465c48fcf278840844d8eab1af4",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\qr-3.0.2\\pubspec.yaml",
+      "bytes": 434,
+      "sha256": "bd20bc5a828df927edff2c0f8a28cee03711f63699240a5d23ee219fb144ed88",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\qr-3.0.2\\LICENSE",
+      "bytes": 1527,
+      "sha256": "1d6c0bc8208cd835577eeb9195dc646f092728b62803abd60c404d984524abf7",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\qr_flutter-4.1.0\\pubspec.yaml",
+      "bytes": 410,
+      "sha256": "e354758701a9fee39397053354d9d6783b7c310c1d8c1802faa3f7aca5a21211",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\qr_flutter-4.1.0\\LICENSE",
+      "bytes": 1521,
+      "sha256": "1bc86cb2619634e54a97f88dd9c11fd99afcacd52c25bdf6f84c2700b4174203",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\sembast-3.7.2\\pubspec.yaml",
+      "bytes": 676,
+      "sha256": "470cb0b7097472cf252ab06d1f529d7ebbd97b96ec999d426e55c10a33df0409",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\sembast-3.7.2\\LICENSE",
+      "bytes": 1500,
+      "sha256": "1b4dce02c6164060f8dd3ca4e1e5aad990c559c18f77557c8a284b3445805094",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\shared_preferences-2.3.3\\pubspec.yaml",
+      "bytes": 1300,
+      "sha256": "8add9e5d481ea8ba97e0d6f7864157049bb511d192ad6464d3bf31a98bf60b4c",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\shared_preferences-2.3.3\\LICENSE",
+      "bytes": 1519,
+      "sha256": "89519eca6f7b9529b35bdddd623a58c3af06a88c458dbd6531ddb4675acf75a9",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\shared_preferences_android-2.3.2\\pubspec.yaml",
+      "bytes": 853,
+      "sha256": "7af85e83bc21b1ad1a0d00db1f76b898f36f7ac13951e9aef6ad5d85744993c1",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\shared_preferences_android-2.3.2\\LICENSE",
+      "bytes": 1519,
+      "sha256": "89519eca6f7b9529b35bdddd623a58c3af06a88c458dbd6531ddb4675acf75a9",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\shared_preferences_foundation-2.5.4\\pubspec.yaml",
+      "bytes": 988,
+      "sha256": "5dab860d29279202cb4e4491344c7de5e5714c0aadaa89a45874ec392e0ddafe",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\shared_preferences_foundation-2.5.4\\LICENSE",
+      "bytes": 1519,
+      "sha256": "89519eca6f7b9529b35bdddd623a58c3af06a88c458dbd6531ddb4675acf75a9",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\shared_preferences_linux-2.4.1\\pubspec.yaml",
+      "bytes": 839,
+      "sha256": "40b9f7c760097e8e6b284755641fff514af265cbe50eca5d335f68fd79b74c50",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\shared_preferences_linux-2.4.1\\LICENSE",
+      "bytes": 1519,
+      "sha256": "89519eca6f7b9529b35bdddd623a58c3af06a88c458dbd6531ddb4675acf75a9",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\shared_preferences_platform_interface-2.4.1\\pubspec.yaml",
+      "bytes": 618,
+      "sha256": "d7233f4272c1a2a2cf50d5c57d1f760e222f5e3e0fc0617ab26fe6f2f408d4ef",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\shared_preferences_platform_interface-2.4.1\\LICENSE",
+      "bytes": 1519,
+      "sha256": "89519eca6f7b9529b35bdddd623a58c3af06a88c458dbd6531ddb4675acf75a9",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\shared_preferences_web-2.4.3\\pubspec.yaml",
+      "bytes": 823,
+      "sha256": "2cafb88cb05a4debe328c441e82ed11d550237054b694f68842773943f38530e",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\shared_preferences_web-2.4.3\\LICENSE",
+      "bytes": 1519,
+      "sha256": "89519eca6f7b9529b35bdddd623a58c3af06a88c458dbd6531ddb4675acf75a9",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\shared_preferences_windows-2.4.1\\pubspec.yaml",
+      "bytes": 840,
+      "sha256": "bfac6c030216a487e6212b2a74cc58c8e29ef628640989015d9b9abf8a92162b",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\shared_preferences_windows-2.4.1\\LICENSE",
+      "bytes": 1519,
+      "sha256": "89519eca6f7b9529b35bdddd623a58c3af06a88c458dbd6531ddb4675acf75a9",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\pkg\\sky_engine\\pubspec.yaml",
+      "bytes": 280,
+      "sha256": "6351caaa30ca7c9d4519044f535f1e23700a2f5859bb277b7dba154d8db1be28",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\pkg\\sky_engine\\LICENSE",
+      "bytes": 1667090,
+      "sha256": "b39e1241218b74f64b701c29a3b15a8a08672e1dcb8127c284a439438c6e3bb9",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\source_span-1.10.0\\pubspec.yaml",
+      "bytes": 340,
+      "sha256": "6a21eb5ac20c2882428b16ca7e28c7b87e72405ca0637bab32d9088866c3bfed",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\source_span-1.10.0\\LICENSE",
+      "bytes": 1504,
+      "sha256": "3c32b53167c7dae9190c38dab5dd9fe1789c53623ebc7d1babcb29914c5b3f16",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\stack_trace-1.11.1\\pubspec.yaml",
+      "bytes": 288,
+      "sha256": "8a5e57b3fa17bb190f7eeb8ddc402a432a1e2a9729befef3001bccced01d88e7",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\stack_trace-1.11.1\\LICENSE",
+      "bytes": 1503,
+      "sha256": "ff0b91d4f3c32b25cb6ec84985e8da89b0ba2a2b2f7eef353cda5e5423a20390",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\stream_channel-2.1.2\\pubspec.yaml",
+      "bytes": 333,
+      "sha256": "fc772c74bb8227cfbf80712afe53590d07151202b11188f0c7cdfed2186dd2fb",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\stream_channel-2.1.2\\LICENSE",
+      "bytes": 1504,
+      "sha256": "ff15faa32a2e638107b7789592b14426162a75ba620044ee2340a20ec6ce5e73",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\string_scanner-1.2.0\\pubspec.yaml",
+      "bytes": 290,
+      "sha256": "f4150689767e8b88045edcfc79f9f5113bc047198f32413d5513525bba7e90b5",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\string_scanner-1.2.0\\LICENSE",
+      "bytes": 1504,
+      "sha256": "3c32b53167c7dae9190c38dab5dd9fe1789c53623ebc7d1babcb29914c5b3f16",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\synchronized-3.1.0+1\\pubspec.yaml",
+      "bytes": 500,
+      "sha256": "720efecf0702743c126827d23b31a972032a29e966914dedbe031c218730318d",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\synchronized-3.1.0+1\\LICENSE",
+      "bytes": 1081,
+      "sha256": "6d07c6bb60afb906049d507e19fcc4c6b59e35c0dd0f8a7302e87b3fb0576900",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\term_glyph-1.2.1\\pubspec.yaml",
+      "bytes": 267,
+      "sha256": "0d43f8f038dd2dd11cd9c5203d878a314c0d27fa9258466a26308d9fc5d06269",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\term_glyph-1.2.1\\LICENSE",
+      "bytes": 1504,
+      "sha256": "ea97a7558a7bd7cee4e2355f7529e3cbebb0dcbb546ddb9a90f10c9eb6b08da5",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\test_api-0.7.0\\pubspec.yaml",
+      "bytes": 612,
+      "sha256": "19a05bc72d54b13cdb48d7b7c5c8cb6b422d02f29aeca2525739b423cb0ffc1d",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\test_api-0.7.0\\LICENSE",
+      "bytes": 1504,
+      "sha256": "ff1b9f0df9036c04be424b1e3ce12789bea880ad5ffc3a48e069ae2d40a087a4",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\timezone-0.9.4\\pubspec.yaml",
+      "bytes": 328,
+      "sha256": "53b0290ea4a925541cc64f7c3434989a5e61d9637dfb9eb6bae4ca980b6e1cf4",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\timezone-0.9.4\\LICENSE",
+      "bytes": 1308,
+      "sha256": "d8f160d6dcdd4ec77522646d04c139d89d55910d6852792d2b441625763c012f",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\typed_data-1.3.2\\pubspec.yaml",
+      "bytes": 346,
+      "sha256": "9ba5c68428735ca31a03f1dcd14a466a9cd7c1868166351bbcf0b542c12858c0",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\typed_data-1.3.2\\LICENSE",
+      "bytes": 1504,
+      "sha256": "ff15faa32a2e638107b7789592b14426162a75ba620044ee2340a20ec6ce5e73",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r12-head35\\src\\packages\\usage_report_ui\\pubspec.yaml",
+      "bytes": 392,
+      "sha256": "8e7dca93c1d7a29b186afdf932f03e815796d90b7078f316ad8eb448853572bc",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r12-head35\\src\\packages\\usage_reporting\\pubspec.yaml",
+      "bytes": 279,
+      "sha256": "5d17164defb43bdfc7f3b6471e845ae3371d91adb78ff24971800341ea64c486",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\uuid-4.6.0\\pubspec.yaml",
+      "bytes": 525,
+      "sha256": "f22a82dceacc2f885ed9879652c815bbd7ee03ba1666615005b5d1508aa6d4ec",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\uuid-4.6.0\\LICENSE",
+      "bytes": 1064,
+      "sha256": "ad3e5523e51004e94ba9ce728805b1b4242dbccdb65e62b523800e35a8a7cfdc",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\vector_math-2.1.4\\pubspec.yaml",
+      "bytes": 358,
+      "sha256": "a35cc038833e5fadaac91070e85325ce849c2f60e0675d97a753e1ad9f0f7a3c",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\vector_math-2.1.4\\LICENSE",
+      "bytes": 2327,
+      "sha256": "b5d856a1e27e9ebea4957fc3526f1c65782a04894b113c6b3b0fb1321dbdec55",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\vm_service-14.2.1\\pubspec.yaml",
+      "bytes": 784,
+      "sha256": "f7a4aa1d0919644f5210d2babdb1bf8ce458a06d0a44831bca5885ea1a454c5b",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\vm_service-14.2.1\\LICENSE",
+      "bytes": 1503,
+      "sha256": "ad6a71997da90924b2cfb1fb47ec46537f70faf469efe016168794ae45ed6888",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\web-1.1.1\\pubspec.yaml",
+      "bytes": 253,
+      "sha256": "229e6d6763aa2095d73390e7f94af0aad306e7a8d31e97c7b75a47bc896ccfc5",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\web-1.1.1\\LICENSE",
+      "bytes": 1502,
+      "sha256": "aa913ff50d7542eb8cc35b9f48a80928ac6819ba9057f85d424655e3e8dc271c",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\xdg_directories-1.1.0\\pubspec.yaml",
+      "bytes": 473,
+      "sha256": "496acd920fa2de8cf62b9b57b35b9b97c59d197d1c02aaf865507ab0fc963c67",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\xdg_directories-1.1.0\\LICENSE",
+      "bytes": 1519,
+      "sha256": "89519eca6f7b9529b35bdddd623a58c3af06a88c458dbd6531ddb4675acf75a9",
+      "reason": "known package license file; conservative pin in addition to NOTICES precedence"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r12-head35\\src\\apps\\guardian\\pubspec.yaml",
+      "bytes": 943,
+      "sha256": "51f00819245d30c60289b9c4ae13910d5ebd14a2cedfe1ef977375626ad77661",
+      "reason": "default Flutter test asset-bundle package manifest"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\impellerc.exe",
+      "bytes": 5859328,
+      "sha256": "de49c4cc6fb0259318ae21e6da45112059cf4ee7f0631baf4a7ed72c6d00d118",
+      "reason": "default tester asset shader compiler verified in local Flutter source"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\shader_lib\\build.gn",
+      "bytes": 236,
+      "sha256": "dc85806b31527a04ad79922833397d8a024fc53f2f1e9dfc981fc00726b2ff2d",
+      "reason": "impellerc shader include library"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\shader_lib\\flutter\\build.gn",
+      "bytes": 292,
+      "sha256": "7ff58501ef0d85325fb8a3741b1576a0d4daa47f11cb6b78d2194a3cd953f5bd",
+      "reason": "impellerc shader include library"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\shader_lib\\flutter\\runtime_effect.glsl",
+      "bytes": 704,
+      "sha256": "a03472b0d701dbeb3b81a53aca85127cfa1bc89cfb2165c18fdc6d6463a72b48",
+      "reason": "impellerc shader include library"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\shader_lib\\impeller\\blending.glsl",
+      "bytes": 6808,
+      "sha256": "44712360db985066eb400734e51c64ba72127491580e53213d67fdec16b13e01",
+      "reason": "impellerc shader include library"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\shader_lib\\impeller\\branching.glsl",
+      "bytes": 2249,
+      "sha256": "a8e8969fb6aa5b9be7573c9cb57993395d423f0127d7dd661d35196a692df59c",
+      "reason": "impellerc shader include library"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\shader_lib\\impeller\\build.gn",
+      "bytes": 577,
+      "sha256": "ce5cf0d2384bd41e51e6e340d18e1cc0d1f0a108e4ddce2d0b9e385702f07720",
+      "reason": "impellerc shader include library"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\shader_lib\\impeller\\color.glsl",
+      "bytes": 1527,
+      "sha256": "24cb58b54c45be3342132f2bee41effb0ad3a24d3a9c2ca4ead7c65886c1f2e9",
+      "reason": "impellerc shader include library"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\shader_lib\\impeller\\constants.glsl",
+      "bytes": 930,
+      "sha256": "7328a39019ea80bee7d35dba0aeec1e08c024451940f56cca5c7fd8fc317b326",
+      "reason": "impellerc shader include library"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\shader_lib\\impeller\\conversions.glsl",
+      "bytes": 364,
+      "sha256": "74a976b3009ee953be00caec9f4f3d6dbc335a0aab490b8275deff9b4ce688b9",
+      "reason": "impellerc shader include library"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\shader_lib\\impeller\\dithering.glsl",
+      "bytes": 1892,
+      "sha256": "76d9c60855e6ab07ed59e17104bdcf8d9768539cd31e8df809bd01d1c120a2de",
+      "reason": "impellerc shader include library"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\shader_lib\\impeller\\external_texture_oes.glsl",
+      "bytes": 1216,
+      "sha256": "b2efadff72bd4a78be9a0e1dbbe76a474e94d48f41793e4e331460f286d0b1b4",
+      "reason": "impellerc shader include library"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\shader_lib\\impeller\\gaussian.glsl",
+      "bytes": 2451,
+      "sha256": "bddb5c376e26ed98fd485c9ae5011bdc5c55d442cef9b3d4950e222f134fe83c",
+      "reason": "impellerc shader include library"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\shader_lib\\impeller\\gradient.glsl",
+      "bytes": 4581,
+      "sha256": "216dbb291bcf893a2d449b44516c982f91ddec049258777f2233a2b99889c4ba",
+      "reason": "impellerc shader include library"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\shader_lib\\impeller\\path.glsl",
+      "bytes": 5137,
+      "sha256": "9a478cd3bd016f9ace11095a958c7ae14c3765a2ee21eb21fd058606e0c94cae",
+      "reason": "impellerc shader include library"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\shader_lib\\impeller\\prefix_sum.glsl",
+      "bytes": 2057,
+      "sha256": "ae1339f4a4d712931eb55c6de1705a1ef328045e59688d47613806dd80f1b4c2",
+      "reason": "impellerc shader include library"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\shader_lib\\impeller\\texture.glsl",
+      "bytes": 5795,
+      "sha256": "29bab50e20147a260b9d1802c1485ea862bf54cb825ee12656af176919874bd1",
+      "reason": "impellerc shader include library"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\shader_lib\\impeller\\tile_mode.glsl",
+      "bytes": 394,
+      "sha256": "ef51714734ab94fb61c89106643853c728de2160bdd73b30827e8691af63f925",
+      "reason": "impellerc shader include library"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\shader_lib\\impeller\\transform.glsl",
+      "bytes": 1928,
+      "sha256": "e6f527bd06b7f199abb5729c5bbc96488afdf03370da5e0038cc2e2c87875ec8",
+      "reason": "impellerc shader include library"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\bin\\cache\\artifacts\\engine\\windows-x64\\shader_lib\\impeller\\types.glsl",
+      "bytes": 813,
+      "sha256": "7111951e9bb4677f3ae960dea77fa725da22b26c3cdd447c77ebe7355def58af",
+      "reason": "impellerc shader include library"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\static\\Ahem.ttf",
+      "bytes": 12480,
+      "sha256": "63d2abd0041c3e3b4b52ad8d382353b53c51c6785e76ce56ed9dacad2d2e31c4",
+      "reason": "conservative test-font pin; direct VM consumption is not asserted"
+    }
+  ],
+  "licenseSelectionByActualLocalSdkRule": [
+    {
+      "package": "async",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\async-2.11.0\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "audit_client",
+      "selected": null,
+      "noticesExists": false,
+      "licenseExists": false
+    },
+    {
+      "package": "boolean_selector",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\boolean_selector-2.1.1\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "characters",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\characters-1.3.0\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "clock",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\clock-1.1.1\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "collection",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\collection-1.18.0\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "commerce_contracts",
+      "selected": null,
+      "noticesExists": false,
+      "licenseExists": false
+    },
+    {
+      "package": "crypto",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\crypto-3.0.7\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "cupertino_icons",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\cupertino_icons-1.0.8\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "device_operations",
+      "selected": null,
+      "noticesExists": false,
+      "licenseExists": false
+    },
+    {
+      "package": "fake_async",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\fake_async-1.3.1\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "ffi",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\ffi-2.1.3\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "file",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\file-7.0.1\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "fixnum",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\fixnum-1.1.1\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "flutter",
+      "selected": "D:\\softwares\\flutter\\packages\\flutter\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "flutter_lints",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\flutter_lints-3.0.2\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "flutter_localizations",
+      "selected": null,
+      "noticesExists": false,
+      "licenseExists": false
+    },
+    {
+      "package": "flutter_test",
+      "selected": null,
+      "noticesExists": false,
+      "licenseExists": false
+    },
+    {
+      "package": "flutter_web_plugins",
+      "selected": null,
+      "noticesExists": false,
+      "licenseExists": false
+    },
+    {
+      "package": "go_router",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\go_router-14.8.1\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "http",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\http-1.6.0\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "http_parser",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\http_parser-4.0.2\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "idb_shim",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\idb_shim-2.6.0+5\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "intl",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\intl-0.19.0\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "leak_tracker",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\leak_tracker-10.0.4\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "leak_tracker_flutter_testing",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\leak_tracker_flutter_testing-3.0.3\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "leak_tracker_testing",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\leak_tracker_testing-3.0.1\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "lints",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\lints-3.0.0\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "logging",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\logging-1.3.0\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "matcher",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\matcher-0.12.16+1\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "material_color_utilities",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\material_color_utilities-0.8.0\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "meta",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\meta-1.12.0\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "nested",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\nested-1.0.0\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "notification_client",
+      "selected": null,
+      "noticesExists": false,
+      "licenseExists": false
+    },
+    {
+      "package": "oauth2",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\oauth2-2.0.5\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "path",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\path-1.9.0\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "path_provider_linux",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\path_provider_linux-2.2.1\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "path_provider_platform_interface",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\path_provider_platform_interface-2.1.2\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "path_provider_windows",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\path_provider_windows-2.3.0\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "platform",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\platform-3.1.6\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "plugin_platform_interface",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\plugin_platform_interface-2.1.8\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "provider",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\provider-6.1.5+1\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "qr",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\qr-3.0.2\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "qr_flutter",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\qr_flutter-4.1.0\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "sembast",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\sembast-3.7.2\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "shared_preferences",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\shared_preferences-2.3.3\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "shared_preferences_android",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\shared_preferences_android-2.3.2\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "shared_preferences_foundation",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\shared_preferences_foundation-2.5.4\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "shared_preferences_linux",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\shared_preferences_linux-2.4.1\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "shared_preferences_platform_interface",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\shared_preferences_platform_interface-2.4.1\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "shared_preferences_web",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\shared_preferences_web-2.4.3\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "shared_preferences_windows",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\shared_preferences_windows-2.4.1\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "sky_engine",
+      "selected": "D:\\softwares\\flutter\\bin\\cache\\pkg\\sky_engine\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "source_span",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\source_span-1.10.0\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "stack_trace",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\stack_trace-1.11.1\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "stream_channel",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\stream_channel-2.1.2\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "string_scanner",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\string_scanner-1.2.0\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "synchronized",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\synchronized-3.1.0+1\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "term_glyph",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\term_glyph-1.2.1\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "test_api",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\test_api-0.7.0\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "timezone",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\timezone-0.9.4\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "typed_data",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\typed_data-1.3.2\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "usage_report_ui",
+      "selected": null,
+      "noticesExists": false,
+      "licenseExists": false
+    },
+    {
+      "package": "usage_reporting",
+      "selected": null,
+      "noticesExists": false,
+      "licenseExists": false
+    },
+    {
+      "package": "uuid",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\uuid-4.6.0\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "vector_math",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\vector_math-2.1.4\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "vm_service",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\vm_service-14.2.1\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "web",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\web-1.1.1\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "xdg_directories",
+      "selected": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.flutter-io.cn\\xdg_directories-1.1.0\\LICENSE",
+      "noticesExists": false,
+      "licenseExists": true
+    },
+    {
+      "package": "guardian",
+      "selected": null,
+      "noticesExists": false,
+      "licenseExists": false
+    }
+  ],
+  "shaderLibraryFiles": [
+    "build.gn",
+    "flutter\\build.gn",
+    "flutter\\runtime_effect.glsl",
+    "impeller\\blending.glsl",
+    "impeller\\branching.glsl",
+    "impeller\\build.gn",
+    "impeller\\color.glsl",
+    "impeller\\constants.glsl",
+    "impeller\\conversions.glsl",
+    "impeller\\dithering.glsl",
+    "impeller\\external_texture_oes.glsl",
+    "impeller\\gaussian.glsl",
+    "impeller\\gradient.glsl",
+    "impeller\\path.glsl",
+    "impeller\\prefix_sum.glsl",
+    "impeller\\texture.glsl",
+    "impeller\\tile_mode.glsl",
+    "impeller\\transform.glsl",
+    "impeller\\types.glsl"
+  ],
+  "pubspecIntakeWasTextReadNotGeneralYamlParser": true,
+  "runtimeClosureComplete": false,
+  "sdkOrTestsInvoked": false,
+  "externalFilesWritten": false
+}

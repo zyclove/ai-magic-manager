@@ -1,0 +1,24 @@
+{
+  "status": "ROOT_FIXED_VM13_STARTED",
+  "atUtc": "2026-10-23T17:06:55.8378439Z",
+  "sourceCommit": "35a4119b3d4558cf8c17c5bec3356e73243f0096",
+  "proposalSha256": "49d2c8645a6eb540cad724c30095b6924fcc03d27260a988fd38d9ca14833bd9",
+  "launcherSha256": "a6f39bdb9336cdd15b6994109e42091de70190ee7d2f43aff2464a502c596d03",
+  "sdkCount": 0,
+  "unknownCount": 0,
+  "availableRamBytes": 3809767424,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 4774322176
+    },
+    {
+      "Name": "D",
+      "Free": 19120041984
+    }
+  ],
+  "maximumHostSeconds": 180,
+  "reusedBudget": false,
+  "grant": "guardian-vm13-current-head35-single-sdk-call",
+  "applicationTestsRequested": true
+}

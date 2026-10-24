@@ -1,0 +1,109 @@
+{
+  "status": "STATIC_IMPLEMENTATION_AND_EIGHT_TEST_CASES_APPLIED_ALL_APPLICATION_TESTS_UNRUN",
+  "atUtc": "2026-10-24T01:46:49.628048+00:00",
+  "baseCommit": "35a4119b3d4558cf8c17c5bec3356e73243f0096",
+  "productionCopyOnlyFiles": 3,
+  "testSourceFiles": 2,
+  "additionalCases": 8,
+  "declaredSelectedCases": 21,
+  "declaredSourceCaseCounts": [
+    15,
+    6
+  ],
+  "fullRegressionFileRoots": 181,
+  "currentPhaseApplicationTestCommandsStarted": 0,
+  "currentPhaseApplicationCasesRun": 0,
+  "currentIncrementAnalyzedCompiledFormattedOrRendered": false,
+  "sourceApplicationChunks": {
+    "copy": "ee5324",
+    "tests": "3d7937"
+  },
+  "testApplicationInitialEncodingError": {
+    "chunk": "3b04ec",
+    "mainWritten": false,
+    "fixedBy": "explicit UTF-8 metadata read"
+  },
+  "rawDiffCheck": {
+    "initialChunk": "5bcf7c",
+    "initialFailure": "existing CRLF line treated as trailing whitespace",
+    "acceptedChunk": "7a028a",
+    "acceptedExitCode": 0,
+    "crAtEolRecognized": true
+  },
+  "vm13R1": {
+    "rootChunk": "a2baab",
+    "rootExitCode": 1,
+    "sdkCalls": 0,
+    "testsRun": false,
+    "postChunk": "7bf221",
+    "postExitCode": 1,
+    "releaseChunk": "cf6e2a",
+    "releaseExitCode": 1,
+    "windowReleased": true,
+    "testAccepted": false
+  },
+  "vm13R2": {
+    "rootPrelaunchChunk": "378540",
+    "rootPrelaunchExitCode": 1,
+    "ownHostOrWorkerCreated": false,
+    "sdkCalls": 0,
+    "testsRun": false,
+    "retired": true,
+    "reusable": false
+  },
+  "nextExecutionRequiresCurrentCommitFreezeAndExact21NameContract": true,
+  "sourceFiles": [
+    {
+      "path": "apps/guardian/lib/ui/design.dart",
+      "baseBytes": 33152,
+      "baseSha256": "5cc095cf4c46316defaef0aeaeb35380bf38cd3ef264372bf63e20e58acf0925",
+      "current": {
+        "path": "apps/guardian/lib/ui/design.dart",
+        "bytes": 33179,
+        "sha256": "73b706d034dd0de8827957d39bfce43fba11ca9b470a807136006719caa5f13d"
+      }
+    },
+    {
+      "path": "apps/guardian/lib/ui/class_action_dialog.dart",
+      "baseBytes": 10284,
+      "baseSha256": "76924ad78dcf7aaba92eebc4c50e319f7a90d5252331ed8a0e20c5192c72dfb6",
+      "current": {
+        "path": "apps/guardian/lib/ui/class_action_dialog.dart",
+        "bytes": 10311,
+        "sha256": "25c853c9e587bebb876456966d67e6cd14fad9eb55045609d2cca596328184a1"
+      }
+    },
+    {
+      "path": "apps/guardian/lib/ui/member_editor.dart",
+      "baseBytes": 24912,
+      "baseSha256": "d7a60dbd2f3197d4a9ce0a92485a4415dfd67ae40b2cd135b81d6d81f90ca838",
+      "current": {
+        "path": "apps/guardian/lib/ui/member_editor.dart",
+        "bytes": 24939,
+        "sha256": "d432f1122844db081ef8362f810e2c53aff50f49319efbc513d1f7647095871a"
+      }
+    },
+    {
+      "path": "apps/guardian/test/workbench_view_test.dart",
+      "baseBytes": 9963,
+      "baseSha256": "e89431e83bae25b4a6405805f95304c5831b686d116149c34ff65dde7670251b",
+      "current": {
+        "path": "apps/guardian/test/workbench_view_test.dart",
+        "bytes": 15881,
+        "sha256": "033973e571156f94b786bca14bdab1cac184ae185079e447140d9f24b3b3495b"
+      }
+    },
+    {
+      "path": "apps/guardian/test/dialog_submit_guard_test.dart",
+      "baseBytes": 1385,
+      "baseSha256": "6a12fc99850d87b81da7404398b711c7956423724d9e7918eb0429d0fa898837",
+      "current": {
+        "path": "apps/guardian/test/dialog_submit_guard_test.dart",
+        "bytes": 12362,
+        "sha256": "8cdc3af3763ec70d55c4188338c07479cdc93fe7c2224bbc093ffc7b12a5674d"
+      }
+    }
+  ],
+  "pushed": false,
+  "deployed": false
+}

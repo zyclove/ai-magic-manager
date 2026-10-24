@@ -1,0 +1,75 @@
+{
+  "status": "NOT_ACCEPTED_FILE_READBACK",
+  "errorType": "ValueError",
+  "reason": "Root retained-handle natural exit proof rejected",
+  "testAccepted": false,
+  "rootActualToolTerminalStillRequired": true,
+  "freshFullProcessReleaseStillRequired": true,
+  "observedFilePins": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm13-20261024-r1\\proposal.json",
+      "bytes": 9204,
+      "sha256": "49d2c8645a6eb540cad724c30095b6924fcc03d27260a988fd38d9ca14833bd9"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm13-20261024-r1\\analysis-host.py",
+      "bytes": 25165,
+      "sha256": "8c5ffa11177ac2d6b25e006204985d51060a171459cdb7ddbf78a81d89dadbc0"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm13-20261024-r1\\worker.py",
+      "bytes": 42136,
+      "sha256": "b6517371358d4acbd4aa413e84be0a8aa95de705322b677f3eaa20b6d087af08"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm13-20261024-r1\\owned_job.py",
+      "bytes": 13322,
+      "sha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm13-20261024-r1\\process-inventory.ps1",
+      "bytes": 2439,
+      "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm13-20261024-r1\\reporter_contract.py",
+      "bytes": 14169,
+      "sha256": "981fd6106e5542a577cd18ebcf3331eebf0f76c9e014dfdb02d568be81f3519b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm13-20261024-r1\\inputs.json",
+      "bytes": 16958,
+      "sha256": "a96f86738b0421749dc98d70339ecae3e42ed2ca5936322c7aace61d9bcef5c7"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm13-20261024-r1\\inputs.json",
+      "bytes": 16958,
+      "sha256": "a96f86738b0421749dc98d70339ecae3e42ed2ca5936322c7aace61d9bcef5c7"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm13-20261024-r1\\process-inventory.ps1",
+      "bytes": 2439,
+      "sha256": "f3c4349381fb6fc612b322e1a2a7ba59b6b21e4653e3212bfbac2b252028a046"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm13-20261024-r1\\root-sdk-grant.json",
+      "bytes": 2640,
+      "sha256": "4423be35e98d2e9ab77731d9bd0738de2a290afa60c4dddf3aadc5b149a91c4a"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm13-root-launch-20261024-r1.ps1",
+      "bytes": 9161,
+      "sha256": "a6f39bdb9336cdd15b6994109e42091de70190ee7d2f43aff2464a502c596d03"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm13-20261024-r1\\root-attempt\\preflight.json",
+      "bytes": 702,
+      "sha256": "136bbdc8f4bbbe1b97d5869fb1b680bb46f6ac5f8713307bb6f318b307acc3ac"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm13-20261024-r1\\root-attempt\\result.json",
+      "bytes": 1235,
+      "sha256": "22bf178f8b8309aa9052e397c1f8b1900e511efcaeedd0c8b6e3eb428987f6cc"
+    }
+  ]
+}

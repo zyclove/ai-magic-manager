@@ -1,0 +1,81 @@
+{
+  "status": "STATIC_SOURCE_PHASE_NO_RUNTIME_ACCEPTANCE",
+  "baseCommit": "35a4119b3d4558cf8c17c5bec3356e73243f0096",
+  "copies": [
+    {
+      "original": {
+        "path": ".cache/guardian-gap-test-design-20261024-r1/expected-new-cases.json",
+        "bytes": 3155,
+        "sha256": "258c07215e1698f7fb090ee9c4741252c6e6b2361cdd0238bed6d290c4fa403f"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-interaction-recovery-tests-20261024/new-case-contract.json",
+        "bytes": 3155,
+        "sha256": "258c07215e1698f7fb090ee9c4741252c6e6b2361cdd0238bed6d290c4fa403f"
+      }
+    },
+    {
+      "original": {
+        "path": ".cache/guardian-gap-test-design-20261024-r1/review.md",
+        "bytes": 2331,
+        "sha256": "541c2b0109afed8b526077fa9d21c35aaa6303c7f017daf42b51eda8d21c0238"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-interaction-recovery-tests-20261024/test-source-author-review.md",
+        "bytes": 2331,
+        "sha256": "541c2b0109afed8b526077fa9d21c35aaa6303c7f017daf42b51eda8d21c0238"
+      }
+    },
+    {
+      "original": {
+        "path": ".cache/guardian-interaction-final-independent-20261024-r1/review.md",
+        "bytes": 2874,
+        "sha256": "7cc0bbfbf1a4066c765253b04ed50ed6be9099d7cd2c73195c2d7c5de1097d39"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-interaction-recovery-tests-20261024/independent-source-review.md",
+        "bytes": 2874,
+        "sha256": "7cc0bbfbf1a4066c765253b04ed50ed6be9099d7cd2c73195c2d7c5de1097d39"
+      }
+    },
+    {
+      "original": {
+        "path": ".cache/guardian-access-copy-independent-20261024-r1.md",
+        "bytes": 2113,
+        "sha256": "331d4b1a88744a59c49a4a7c17e4bde23ec43de03d525acfea285925250ca534"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-interaction-recovery-tests-20261024/access-copy-review.md",
+        "bytes": 2113,
+        "sha256": "331d4b1a88744a59c49a4a7c17e4bde23ec43de03d525acfea285925250ca534"
+      }
+    },
+    {
+      "original": {
+        "path": ".cache/guardian-gap-test-design-20261024-r1/full.patch",
+        "bytes": 17975,
+        "sha256": "685cca0ca6a2fb1962ba629a0abbc529c45f446ef4a3861f75edfeddd0fb6c54"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-interaction-recovery-tests-20261024/test-source.patch",
+        "bytes": 17975,
+        "sha256": "685cca0ca6a2fb1962ba629a0abbc529c45f446ef4a3861f75edfeddd0fb6c54"
+      }
+    }
+  ],
+  "summary": {
+    "path": "docs/evidence/guardian-interaction-recovery-tests-20261024/source-summary.json",
+    "bytes": 3530,
+    "sha256": "4bbee0a235be040c1d50545dd8eb9ffa80e17421fdf25f8c153d8de61a90b4f9"
+  },
+  "humanReview": {
+    "path": "docs/reviews/guardian-interaction-recovery-tests-20261024.md",
+    "bytes": 2821,
+    "sha256": "f1febfa173d36bb63fb900bc1f90963febcf157f99ef309b2af818db15579bc4"
+  },
+  "intakeManifest": {
+    "path": "docs/evidence/guardian-regression-intake-20261024/manifest.json",
+    "bytes": 18569,
+    "sha256": "186eabe034270875e7c97752e36c8705c31f9ca8e84a23d40088e06084422f6a"
+  }
+}

@@ -1,0 +1,157 @@
+{
+  "schemaVersion": 1,
+  "status": "STATIC_EXACT_NAME_MAPPING_NOT_EXECUTION_RESULT",
+  "sourceAnalysisBasisCommit": "c90b1465eaed3bb14f281bfb07d3972bcd4e26f3",
+  "module": "apps/guardian",
+  "platform": "default Flutter VM tester",
+  "selectors": [
+    "test/workbench_view_test.dart",
+    "test/dialog_submit_guard_test.dart"
+  ],
+  "selectedSources": [
+    {
+      "selector": "test/workbench_view_test.dart",
+      "source": {
+        "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\workbench_view_test.dart",
+        "bytes": 9963,
+        "sha256": "e89431e83bae25b4a6405805f95304c5831b686d116149c34ff65dde7670251b"
+      },
+      "explicitTestOn": null,
+      "explicitTags": false,
+      "explicitSkip": false
+    },
+    {
+      "selector": "test/dialog_submit_guard_test.dart",
+      "source": {
+        "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\dialog_submit_guard_test.dart",
+        "bytes": 1385,
+        "sha256": "6a12fc99850d87b81da7404398b711c7956423724d9e7918eb0429d0fa898837"
+      },
+      "explicitTestOn": null,
+      "explicitTags": false,
+      "explicitSkip": false
+    }
+  ],
+  "expectedVisibleCases": 13,
+  "expectedTestRoots": 2,
+  "sourceCaseCounts": [
+    12,
+    1
+  ],
+  "cases": [
+    {
+      "name": "help takes priority over every other task",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 54,
+      "testDeclarationLine": 90,
+      "declarationKind": "seven-entry item.name loop",
+      "execution": "UNRUN"
+    },
+    {
+      "name": "pending approvals take priority over connection checks",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 59,
+      "testDeclarationLine": 90,
+      "declarationKind": "seven-entry item.name loop",
+      "execution": "UNRUN"
+    },
+    {
+      "name": "connection checks take priority over setup",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 64,
+      "testDeclarationLine": 90,
+      "declarationKind": "seven-entry item.name loop",
+      "execution": "UNRUN"
+    },
+    {
+      "name": "empty workspace opens the existing subject form",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 69,
+      "testDeclarationLine": 90,
+      "declarationKind": "seven-entry item.name loop",
+      "execution": "UNRUN"
+    },
+    {
+      "name": "existing subject without devices opens the existing device form",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 74,
+      "testDeclarationLine": 90,
+      "declarationKind": "seven-entry item.name loop",
+      "execution": "UNRUN"
+    },
+    {
+      "name": "no draft links to rules without claiming rules are absent",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 79,
+      "testDeclarationLine": 90,
+      "declarationKind": "seven-entry item.name loop",
+      "execution": "UNRUN"
+    },
+    {
+      "name": "established workspace offers reports instead of onboarding",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 84,
+      "testDeclarationLine": 90,
+      "declarationKind": "seven-entry item.name loop",
+      "execution": "UNRUN"
+    },
+    {
+      "name": "summary links and common actions keep their intended targets",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 121,
+      "testDeclarationLine": 121,
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN"
+    },
+    {
+      "name": "unavailable sections hide counts, actions and audit content",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 148,
+      "testDeclarationLine": 148,
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN"
+    },
+    {
+      "name": "loading and failures never show ready counts or connection claims",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 177,
+      "testDeclarationLine": 176,
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN"
+    },
+    {
+      "name": "refresh completion is explicit and active forms block duplicates",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 204,
+      "testDeclarationLine": 203,
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN"
+    },
+    {
+      "name": "narrow large text keeps urgent action and metrics operable",
+      "selector": "test/workbench_view_test.dart",
+      "nameDeclarationLine": 241,
+      "testDeclarationLine": 241,
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN"
+    },
+    {
+      "name": "queued edit callbacks submit only once before the next frame",
+      "selector": "test/dialog_submit_guard_test.dart",
+      "nameDeclarationLine": 9,
+      "testDeclarationLine": 9,
+      "declarationKind": "literal testWidgets name",
+      "execution": "UNRUN"
+    }
+  ],
+  "preparationMethod": "Manual transcription of existing test names; seven literal case-list rows expanded onto the existing item.name testWidgets declaration. Ordinary text membership/line readback only; no AST/test/parser helper executed.",
+  "fullRegressionRootScope": 181,
+  "selectedRootCount": 2,
+  "otherRootsRemainUnrun": 179,
+  "otherRootStatus": "UNRUN",
+  "critical80ContractModified": false,
+  "testsModified": false,
+  "sdkOrTestsRun": false,
+  "executionApprovedByThisFile": false,
+  "reporterBoundary": "Expected names are the13 visible product test cases. Framework loading/teardown records are separate; this mapping neither certifies runtime reporter output nor substitutes expanded console strings for JSON events."
+}

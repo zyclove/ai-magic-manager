@@ -176,7 +176,7 @@ class _ClassActionDialogState extends State<ClassActionDialog> {
   Widget build(BuildContext context) => !permitted
       ? AlertDialog(
           title: const Text('工作空间或权限已变化'),
-          content: const Text('已隐藏原表单内容。请在当前工作空间重新打开；提交过的操作请先刷新列表核对结果。'),
+          content: const Text('已隐藏原表单内容。请关闭后在当前工作空间重新打开；已提交的操作请回到原工作空间刷新列表核对结果。'),
           actions: [
             TextButton(
                 onPressed: () {

@@ -1,0 +1,153 @@
+{
+  "status": "SELECTED_HISTORICAL_BINDING_R2_RETIRED_NO_EXECUTION_AUTHORITY",
+  "actualAttemptSourceCommit": "35a4119b3d4558cf8c17c5bec3356e73243f0096",
+  "originalScopeSourceCommit": "c90b1465eaed3bb14f281bfb07d3972bcd4e26f3",
+  "originalCaseContractAnalysisBasisCommit": "c90b1465eaed3bb14f281bfb07d3972bcd4e26f3",
+  "scope": {
+    "fileEntries": 181,
+    "recommendedVm": 140,
+    "mustBrowser": 39,
+    "separateLiveHttpTools": 2,
+    "packageTestsOutsideSevenRootFreeze": 28,
+    "selectedRoots": 2,
+    "expectedVisibleCases": 13,
+    "allSelectedCases": "UNRUN",
+    "remainingRoots": 179,
+    "allRegressionApplicationTests": "UNRUN"
+  },
+  "r1": {
+    "actualRootToolChunk": "a2baab",
+    "actualRootExitCode": 1,
+    "actualPostToolChunk": "7bf221",
+    "actualPostExitCode": 1,
+    "actualReleaseToolChunk": "cf6e2a",
+    "actualReleaseExitCode": 1,
+    "sdkCalls": 0,
+    "testsRun": false,
+    "windowReleased": true,
+    "reason": "Foreign go/vet and later go/*.test observed by fixed gates; application command not started."
+  },
+  "r2": {
+    "actualRootPrelaunchToolChunk": "378540",
+    "actualRootPrelaunchExitCode": 1,
+    "rootAttemptExistsAtArchive": false,
+    "workerAttemptExistsAtArchive": false,
+    "sdkCalls": 0,
+    "testsRun": false,
+    "retired": true,
+    "oldPlanMustNotBeReused": true,
+    "earlierResourceObservation": {
+      "toolChunk": "0661fa",
+      "reportedAvailableRamGiBApprox": 2.79,
+      "source": "Root supplied observation; not a test or successful launch record"
+    },
+    "laterAvailableRamBytes": 1412272128
+  },
+  "futureRequirement": "Any new Main test/source commit requires fresh source/case/input binding and a new Root resource window/grant. Never execute this retired R2 grant.",
+  "pinsOnlyNotCopied": [
+    {
+      "path": ".cache/guardian-current-20261024-r12-head35/out/full-regression-181-bindings.json",
+      "bytes": 83400,
+      "sha256": "4a82182c92a2ce5b5af1c7e466621b638ed72f99493c23818b25827a93f7118a"
+    },
+    {
+      "path": ".cache/guardian-vm13-20261024-r1/inputs.json",
+      "bytes": 16958,
+      "sha256": "a96f86738b0421749dc98d70339ecae3e42ed2ca5936322c7aace61d9bcef5c7"
+    },
+    {
+      "path": ".cache/guardian-vm13-20261024-r1/proposal.json",
+      "bytes": 9204,
+      "sha256": "49d2c8645a6eb540cad724c30095b6924fcc03d27260a988fd38d9ca14833bd9"
+    },
+    {
+      "path": ".cache/guardian-vm13-20261024-r1/root-sdk-grant.json",
+      "bytes": 2640,
+      "sha256": "4423be35e98d2e9ab77731d9bd0738de2a290afa60c4dddf3aadc5b149a91c4a"
+    },
+    {
+      "path": ".cache/guardian-vm13-20261024-r2/inputs.json",
+      "bytes": 16958,
+      "sha256": "33688c916c5dd38a576dabe1160fe38b34e35950aff2b10e00219c0741364e1c"
+    },
+    {
+      "path": ".cache/guardian-vm13-20261024-r2/proposal.json",
+      "bytes": 9204,
+      "sha256": "f294c8a219fb0720ca372efd302b2e0edb52fe9cabc17f08ceba8e94302a1f1a"
+    },
+    {
+      "path": ".cache/guardian-vm13-20261024-r2/root-sdk-grant.json",
+      "bytes": 2971,
+      "sha256": "00af9ddba528a13e2bae75e13b223cd334596d9d685ae594dce820c08a4f5674"
+    },
+    {
+      "path": ".cache/guardian-vm13-root-launch-20261024-r1.ps1",
+      "bytes": 9161,
+      "sha256": "a6f39bdb9336cdd15b6994109e42091de70190ee7d2f43aff2464a502c596d03"
+    },
+    {
+      "path": ".cache/guardian-vm13-root-launch-20261024-r2.ps1",
+      "bytes": 9161,
+      "sha256": "e50c42ec1d5d2209aa3781ab65704f9b5c11b7f4d1358c4d3b31856c947a624c"
+    },
+    {
+      "path": ".cache/guardian-vm13-release-20261024-r1.ps1",
+      "bytes": 4392,
+      "sha256": "ef967a8da6c7cb256214c86671fc0db9494bd102e8bcf652c53ee56172e2b378"
+    },
+    {
+      "path": ".cache/guardian-vm13-release-20261024-r2.ps1",
+      "bytes": 4392,
+      "sha256": "0774aff3f0f38fe7eba75be6062c6be0a2ce7b6741eba65785e9b52493c5b46c"
+    },
+    {
+      "path": ".cache/guardian-vm13-post-20261024-r2/pins.json",
+      "bytes": 1555,
+      "sha256": "d5bb04f31adbf5f0e4762acbef9464adbb4e1160f6e8b4d7136de204291a446b"
+    },
+    {
+      "path": ".cache/guardian-vm13-post-20261024-r2/review.md",
+      "bytes": 644,
+      "sha256": "6fe09f968919c1078a7b93468aba4416421f7bad81a345f9860db58c7a4b6019"
+    },
+    {
+      "path": ".cache/guardian-vm13-assets-intake-20261024-r1.json",
+      "bytes": 50643,
+      "sha256": "4647d4a0b837285a15254fe65649553ffe3d1cce7386a8df346bdab276bc9540"
+    },
+    {
+      "path": ".cache/guardian-vm13-independent-20261024-r1/pins.json",
+      "bytes": 4054,
+      "sha256": "94d9077519c7c56e1472026105e60fdc875c1caa52b370a3f6ab39c2e1fa994b"
+    },
+    {
+      "path": ".cache/guardian-vm13-r1-actual-independent-20261024-r1/pins.json",
+      "bytes": 2620,
+      "sha256": "9211e45a2970f4f298a998c7c6e0dcb063ca14db23b31a6b11b77c33523a5bea"
+    },
+    {
+      "path": ".cache/guardian-vm13-r2-independent-20261024-r1/pins.json",
+      "bytes": 3840,
+      "sha256": "b46b8abab1b7c1aec46dcf88e990885f3a2ca945571209ea6d914f3fbba82625"
+    }
+  ],
+  "absenceObservedDuringThisFileOnlyArchive": [
+    ".cache/guardian-vm13-20261024-r1/attempt/launch.json",
+    ".cache/guardian-vm13-20261024-r1/attempt/launch-gate.json",
+    ".cache/guardian-vm13-20261024-r1/attempt/out/tests.jsonl",
+    ".cache/guardian-vm13-20261024-r1/attempt/reporter-validation.json",
+    ".cache/guardian-vm13-20261024-r2/root-attempt",
+    ".cache/guardian-vm13-20261024-r2/attempt",
+    ".cache/guardian-vm13-post-20261024-r2/post.json"
+  ],
+  "stageCompleteness": "Selected intake/preparation/failed-prelaunch evidence only. Root will separately add new-test counts and final phase summary. No complete phase acceptance claimed.",
+  "executionByThisArchive": {
+    "sdk": false,
+    "tests": false,
+    "candidateOrReporter": false,
+    "ast": false,
+    "network": false,
+    "processApi": false,
+    "git": false
+  }
+}

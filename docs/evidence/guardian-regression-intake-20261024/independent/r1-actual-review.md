@@ -1,0 +1,9 @@
+# VM13 R1 actual record readback
+
+Conclusion: **PRELAUNCH RESOURCE REJECTION; thirteen application cases UNRUN**, not thirteen failing tests. No rerun, process query, helper/predicate execution or SDK action was performed by this review.
+
+Root's same-handle record identifies host80376, natural exit1, first observed terminal2.8078977s (<180), no Root force/emergency cleanup and unchanged post pins. Host identifies worker111744 exit1 and final private Job activeProcesses0/terminatedProcesses0; final own-Job PID lists are both empty. Host forcedCleanupRequested=false, closedWithLiveOrUnknownMembers=false, deadlineReached=false. Worker forcedTermination=false/commandCloseFallback=false/processNameProviderForced=false. These are recorded end-of-attempt facts, not a fresh global process inventory.
+
+Worker reports sdkCalls0/testsRunfalse/exactTestReportAcceptedfalse, RuntimeError SDK/unknown process gate failed. postflight-skipped.json explicitly records SDK_NOT_STARTED. No test log/command launch or reporter validation is present in this attempt inventory. Initial gate contains go87796 and vet109400; post gate contains go87796, platform.test101216 and releasecontract.test15604. Both inventories enumerate successfully, with no provider errors or unknown names. These external SDK activities block the shared window; this record does not establish who launched them or a later all-machine SDK0 release.
+
+First worker-signaled Job state retained conhost82356, explicitly identified through the private Job; subsequent drain records the empty terminal Job. No cause is inferred from totalProcesses6. naturalCompleteTerminalTimely=false is not a test failure/timeout proof: exit1, deadlineReached=false and the raw QPC observations remain preserved. Host/worker/Root consistently reject acceptance. No source, old artifact, approval or budget was changed; all181 regression-root scope remains required.

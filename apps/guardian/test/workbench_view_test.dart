@@ -266,4 +266,137 @@ void main() {
     expect(opened, ['help-requests', 'approvals']);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('stale summary with 503 keeps common actions and previous data',
+      (tester) async {
+    var starts = 0;
+    final value = summary(subjects: 7, help: 2, activity: [
+      {
+        'id': 'activity-retained',
+        'action': 'SUBJECT_CREATED',
+        'resourceId': 'subject-retained',
+        'occurredAt': 1791849600000,
+      }
+    ]);
+    const failure = ApiFailure(503, 'SERVICE_UNAVAILABLE');
+    await tester.pumpWidget(host(WorkbenchView(
+        workspaceName: '我的家庭',
+        role: 'OWNER',
+        organization: false,
+        summary: value,
+        error: failure,
+        refreshedAt: DateTime(2026, 10, 14, 9, 30),
+        canOpen: sections.contains,
+        onOpen: (_) {},
+        onAddSubject: () => starts++,
+        onRefresh: () {},
+        onReauth: () {})));
+
+    expect(tester.widget<FailureView>(find.byType(FailureView)).error,
+        same(failure));
+    expect(find.byKey(const Key('workbench-next-action')), findsNothing);
+    expect(find.text('以下为上次成功读取的数据，当前状态尚未更新。'), findsOneWidget);
+    expect(find.descendant(
+        of: find.byKey(const Key('workbench-metric-subjects')),
+        matching: find.text('7')), findsOneWidget);
+    expect(find.text('创建儿童档案'), findsOneWidget);
+    expect(find.textContaining('上次读取完成：2026-10-14 09:30'), findsOneWidget);
+    final add = find.byKey(const Key('workbench-add-subject'));
+    expect(tester.widget<OutlinedButton>(add).onPressed, isNotNull);
+    await tester.ensureVisible(add);
+    await tester.tap(add);
+    expect(starts, 1);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('network retry keeps stale summary until a fresh result arrives',
+      (tester) async {
+    var retries = 0;
+    final previous = summary(subjects: 7, help: 2);
+    final recovered = summary(subjects: 9);
+    Widget view({required OverviewSummary value, Object? error,
+        bool refreshing = false, required DateTime readAt}) => host(WorkbenchView(
+            workspaceName: '我的家庭',
+            role: 'OWNER',
+            organization: false,
+            summary: value,
+            error: error,
+            refreshing: refreshing,
+            refreshedAt: readAt,
+            canOpen: sections.contains,
+            onOpen: (_) {},
+            onRefresh: () => retries++,
+            onReauth: () {}));
+    const failure = ApiFailure(0, 'NETWORK_ERROR');
+    final oldTime = DateTime(2026, 10, 14, 9, 30);
+    await tester.pumpWidget(view(value: previous, error: failure, readAt: oldTime));
+    final retry = find.ancestor(of: find.text('重试'),
+        matching: find.byWidgetPredicate((widget) => widget is TextButton));
+    expect(retry, findsOneWidget);
+    await tester.tap(retry);
+    expect(retries, 1);
+
+    await tester.pumpWidget(view(value: previous, error: failure,
+        refreshing: true, readAt: oldTime));
+    final currentFailure = tester.widget<FailureView>(find.byType(FailureView));
+    expect(currentFailure.retry, isNull);
+    expect(currentFailure.reauth, isNull);
+    expect(find.ancestor(of: find.text('重试'),
+        matching: find.byWidgetPredicate((widget) => widget is TextButton)), findsNothing);
+    expect(tester.widget<TextButton>(
+        find.ancestor(of: find.text('正在刷新…'),
+        matching: find.byWidgetPredicate((widget) => widget is TextButton))).onPressed, isNull);
+    expect(find.byKey(const Key('workbench-next-action')), findsNothing);
+    expect(find.descendant(
+        of: find.byKey(const Key('workbench-metric-subjects')),
+        matching: find.text('7')), findsOneWidget);
+    expect(find.textContaining('上次读取完成：2026-10-14 09:30'), findsOneWidget);
+
+    await tester.pumpWidget(view(value: recovered,
+        readAt: DateTime(2026, 10, 14, 10)));
+    expect(find.byType(FailureView), findsNothing);
+    expect(find.text('以下为上次成功读取的数据，当前状态尚未更新。'), findsNothing);
+    expect(find.byKey(const Key('workbench-next-action')), findsOneWidget);
+    expect(find.descendant(
+        of: find.byKey(const Key('workbench-metric-subjects')),
+        matching: find.text('9')), findsOneWidget);
+    expect(find.textContaining('上次读取完成：2026-10-14 10:00'), findsOneWidget);
+    expect(find.textContaining('上次读取完成：2026-10-14 09:30'), findsNothing);
+    expect(retries, 1);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('background refresh preserves prior activity and common actions',
+      (tester) async {
+    await tester.pumpWidget(host(WorkbenchView(
+        workspaceName: '我的家庭',
+        role: 'OWNER',
+        organization: false,
+        summary: summary(subjects: 7, help: 2, activity: [
+          {
+            'id': 'activity-retained',
+            'action': 'SUBJECT_CREATED',
+            'resourceId': 'subject-retained',
+            'occurredAt': 1791849600000,
+          }
+        ]),
+        refreshing: true,
+        refreshedAt: DateTime(2026, 10, 14, 9, 30),
+        canOpen: sections.contains,
+        onOpen: (_) {},
+        onAddSubject: () {},
+        onRefresh: () {},
+        onReauth: () {})));
+    expect(find.byType(FailureView), findsNothing);
+    expect(find.byKey(const Key('workbench-next-action')), findsNothing);
+    expect(find.text('以下为上次成功读取的数据，当前状态尚未更新。'), findsOneWidget);
+    expect(find.text('创建儿童档案'), findsOneWidget);
+    expect(find.textContaining('上次读取完成：2026-10-14 09:30'), findsOneWidget);
+    expect(tester.widget<TextButton>(
+        find.ancestor(of: find.text('正在刷新…'),
+        matching: find.byWidgetPredicate((widget) => widget is TextButton))).onPressed, isNull);
+    expect(tester.widget<OutlinedButton>(
+        find.byKey(const Key('workbench-add-subject'))).onPressed, isNotNull);
+    expect(tester.takeException(), isNull);
+  });
 }

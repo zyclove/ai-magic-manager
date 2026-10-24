@@ -1,0 +1,63 @@
+{
+  "status": "STATIC_TEST_SOURCE_CANDIDATE_ALL_UNRUN",
+  "additionalVisibleCases": 8,
+  "sourceRootCountBefore": 181,
+  "sourceRootCountAfter": 181,
+  "existingCasesUnchanged": 13,
+  "futureSelectedCaseTotalIfApplied": 21,
+  "futureSourceCaseCounts": [
+    15,
+    6
+  ],
+  "oldVm13PlansReusableAfterApply": false,
+  "cases": [
+    {
+      "source": "apps/guardian/test/workbench_view_test.dart",
+      "name": "stale summary with 503 keeps common actions and previous data",
+      "expected": "503 plus old summary keeps marked metrics/activity/time and actionable OutlinedButton common action, hides primary.",
+      "execution": "UNRUN"
+    },
+    {
+      "source": "apps/guardian/test/workbench_view_test.dart",
+      "name": "network retry keeps stale summary until a fresh result arrives",
+      "expected": "Retry callback once; while refreshing header disabled and FailureView retry/reauth absent, old count/time retained; fresh result clears error/stale notice and replaces count/time/primary.",
+      "execution": "UNRUN"
+    },
+    {
+      "source": "apps/guardian/test/workbench_view_test.dart",
+      "name": "background refresh preserves prior activity and common actions",
+      "expected": "Refresh without error retains marked activity/time/common action, disables header and hides data-dependent primary.",
+      "execution": "UNRUN"
+    },
+    {
+      "source": "apps/guardian/test/dialog_submit_guard_test.dart",
+      "name": "412 preserves the submitted draft and blocks held save callbacks",
+      "expected": "Synchronous duplicate submit lock; 412 selects submitted draft, no save controls/replay, close and held save do not resubmit; route Future returns null.",
+      "execution": "UNRUN"
+    },
+    {
+      "source": "apps/guardian/test/dialog_submit_guard_test.dart",
+      "name": "unknown result retries the same payload before a 412 stops replay",
+      "expected": "ApiFailure0 keeps original payload object; retry same object, then412 replaces unknown state with draft and rejects held retry; closes null.",
+      "execution": "UNRUN"
+    },
+    {
+      "source": "apps/guardian/test/dialog_submit_guard_test.dart",
+      "name": "access loss hides a 412 draft and gives original workspace guidance",
+      "expected": "Revocation synchronously blocks old callbacks before pump; draft hidden, precise current/original workspace guidance shown, safe close null.",
+      "execution": "UNRUN"
+    },
+    {
+      "source": "apps/guardian/test/dialog_submit_guard_test.dart",
+      "name": "access loss during submission hides a late 412 and prevents resubmit",
+      "expected": "Pending submit then revocation then late412 never exposes draft or replays, safe close null.",
+      "execution": "UNRUN"
+    },
+    {
+      "source": "apps/guardian/test/dialog_submit_guard_test.dart",
+      "name": "412 draft preserves trimmed text numeric labels and empty fields",
+      "expected": "Initial valid submit creates exact trimmed text/int/raw dropdown code/empty Map, then412 displays text/int/dropdown label/(空) in exact multiline SelectableText; held save no replay and close null.",
+      "execution": "UNRUN"
+    }
+  ]
+}
