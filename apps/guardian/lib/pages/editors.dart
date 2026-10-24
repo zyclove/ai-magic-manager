@@ -28,11 +28,11 @@ Map<String, String> entityOptions(List<Json> rows, String name) =>
 Future<void> scheduleEditor(BuildContext context, Session session) {
   final root = session.root;
   final timeZone = session.tenant?['timeZone'] as String? ?? 'Asia/Shanghai';
-  return showDialog<void>(
+  return presentOwnedDialog<void>(context, OwnedDialogRoute<void>(
       context: context,
       barrierDismissible: false,
       builder: (_) =>
-          ScheduleEditor(session: session, root: root, timeZone: timeZone));
+          ScheduleEditor(session: session, root: root, timeZone: timeZone)));
 }
 
 class ScheduleEditor extends StatefulWidget {
@@ -57,16 +57,100 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   List<Json> windows = [];
   List<Json> exceptions = [];
   Object? error;
-  bool busy = false;
+  bool busy = false, resultUnknown = false, closing = false, exitOpen = false;
+  Json? pendingBody;
+  ModalRoute<dynamic>? owner;
+  OwnedDialogRoute<bool>? exitRoute;
   final key = requestId();
+
+  bool get current => mounted && !closing && owner?.isActive == true &&
+      (owner is! OwnedDialogRoute<void> ||
+          (owner as OwnedDialogRoute<void>).available);
+  bool get interactive => current && owner?.isCurrent == true;
+  bool get locked => busy || resultUnknown || exitOpen;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final next = ModalRoute.of(context);
+    if (owner != null && !identical(owner, next)) closing = true;
+    owner = next;
+  }
+
   @override
   void dispose() {
+    closing = true;
+    final confirmation = exitRoute;
+    exitRoute = null;
+    if (confirmation != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (confirmation.available) confirmation.finish();
+      });
+    }
     name.dispose();
     zone.dispose();
     super.dispose();
   }
 
+  void closeOwnRoute() {
+    if (!mounted || closing) return;
+    final route = owner;
+    if (route is OwnedDialogRoute<void>) {
+      if (!route.available) return;
+      closing = true;
+      route.finish();
+    } else if (route?.isCurrent == true) {
+      closing = true;
+      route!.navigator?.pop();
+    }
+  }
+
+  Future<void> requestClose() async {
+    if (!interactive || busy || exitOpen) return;
+    if (!resultUnknown) {
+      closeOwnRoute();
+      return;
+    }
+    setState(() => exitOpen = true);
+    late final OwnedDialogRoute<bool> route;
+    bool canRespond() => current && !busy && resultUnknown &&
+        route.available && route.isCurrent;
+    route = OwnedDialogRoute<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => AlertDialog(
+            title: const Text('暂时关闭未确认的提交？'),
+            content: const Text('服务器可能已保存此计划，关闭不会取消已提交的操作。'
+                '关闭后请先刷新时间计划列表核对结果，确认后再创建，避免重复提交。'
+                '继续留在这里可以按原内容重试。'),
+            actions: [
+              TextButton(
+                  key: const Key('schedule-editor-keep-unknown'),
+                  onPressed: () {
+                    if (canRespond()) route.finish(false);
+                  },
+                  child: const Text('继续核对')),
+              TextButton(
+                  key: const Key('schedule-editor-confirm-close-unknown'),
+                  onPressed: () {
+                    if (canRespond()) route.finish(true);
+                  },
+                  child: const Text('暂时关闭')),
+            ]));
+    exitRoute = route;
+    try {
+      final confirmed = await presentOwnedDialog(context, route);
+      if (confirmed == true && current && !busy && resultUnknown) {
+        closeOwnRoute();
+      }
+    } finally {
+      if (identical(exitRoute, route)) exitRoute = null;
+      if (mounted && !closing) setState(() => exitOpen = false);
+    }
+  }
+
   Future<void> pickTime(bool first) async {
+    if (!interactive || locked) return;
     final text = first ? start : end;
     final v = await showTimePicker(
         context: context,
@@ -76,20 +160,35 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
         builder: (context, child) => MediaQuery(
             data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
             child: child!));
-    if (v != null) {
-      setState(() {
-        final value =
-            '${v.hour.toString().padLeft(2, '0')}:${v.minute.toString().padLeft(2, '0')}';
-        if (first) {
-          start = value;
-        } else {
-          end = value;
-        }
-      });
+    if (!interactive || locked || v == null) return;
+    setState(() {
+      final value =
+          '${v.hour.toString().padLeft(2, '0')}:${v.minute.toString().padLeft(2, '0')}';
+      if (first) {
+        start = value;
+      } else {
+        end = value;
+      }
+    });
+  }
+
+  Future<void> pickClosedDate() async {
+    if (!interactive || locked) return;
+    final now = DateTime.now();
+    final d = await showDatePicker(
+        context: context,
+        firstDate: now.subtract(const Duration(days: 1)),
+        lastDate: now.add(const Duration(days: 730)),
+        initialDate: now);
+    if (!interactive || locked || d == null) return;
+    final date = d.toIso8601String().split('T')[0];
+    if (!exceptions.any((e) => e['date'] == date)) {
+      setState(() => exceptions.add({'date': date, 'windows': []}));
     }
   }
 
   void addWindow() {
+    if (!interactive || locked) return;
     if (days.isEmpty || start == end) {
       setState(() => error = const ApiFailure(400, 'INVALID_TIME_WINDOW'));
       return;
@@ -105,38 +204,86 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
     });
   }
 
+  void removeWindow(Json window) {
+    if (!interactive || locked) return;
+    setState(() => windows.remove(window));
+  }
+
+  void removeException(Json exception) {
+    if (!interactive || locked) return;
+    setState(() => exceptions.remove(exception));
+  }
+
+  Object? freeze(Object? value) {
+    if (value is Map<String, dynamic>) {
+      return Map<String, dynamic>.unmodifiable(value.map(
+          (key, item) => MapEntry(key, freeze(item))));
+    }
+    if (value is List) return List<Object?>.unmodifiable(value.map(freeze));
+    return value;
+  }
+
   Future<void> save() async {
-    if (busy) return;
-    if (!form.currentState!.validate()) return;
+    if (!interactive || locked) return;
+    if (form.currentState?.validate() != true) return;
     if (windows.isEmpty) {
       setState(() => error = const ApiFailure(400, 'ADD_TIME_WINDOW'));
       return;
     }
+    // Freeze every nested map/list before client acquisition or transport waits.
+    pendingBody = freeze({
+      'name': name.text.trim(),
+      'definition': {
+        'timeZone': zone.text.trim(),
+        'weekly': windows,
+        'exceptions': exceptions,
+      }
+    }) as Json;
+    await submitOriginal();
+  }
+
+  Future<void> retryOriginal() async {
+    if (!interactive || busy || exitOpen || !resultUnknown || pendingBody == null) {
+      return;
+    }
+    await submitOriginal();
+  }
+
+  Future<void> submitOriginal() async {
+    if (!current || busy || exitOpen || pendingBody == null) return;
     setState(() {
       busy = true;
       error = null;
     });
     try {
-      await widget.session.api
-          .send('POST', '${widget.root}/schedules', key: key, body: {
-        'name': name.text.trim(),
-        'definition': {
-          'timeZone': zone.text.trim(),
-          'weekly': windows,
-          'exceptions': exceptions
-        }
+      await widget.session.api.send('POST', '${widget.root}/schedules',
+          key: key, body: pendingBody);
+      if (!current) return;
+      pendingBody = null;
+      resultUnknown = false;
+      closeOwnRoute();
+    } catch (failure) {
+      if (!current) return;
+      setState(() {
+        error = failure;
+        resultUnknown = resultUnknown || failure is! ApiFailure ||
+            failure.status == 0 || failure.status >= 500 ||
+            failure.code == 'PENDING_OPERATION_UNCHANGED';
+        if (!resultUnknown) pendingBody = null;
       });
-      if (mounted) Navigator.pop(context);
-    } catch (e) {
-      if (mounted) setState(() => error = e);
     } finally {
-      if (mounted) setState(() => busy = false);
+      if (mounted && !closing) setState(() => busy = false);
     }
   }
 
   @override
   Widget build(BuildContext context) => PopScope(
-      canPop: !busy,
+      canPop: !busy && !resultUnknown && !exitOpen,
+      onPopInvoked: (didPop) {
+        if (!didPop && resultUnknown && !busy && !exitOpen) {
+          unawaited(requestClose());
+        }
+      },
       child: AlertDialog(
           title: const Text('创建时间计划'),
           content: SizedBox(
@@ -153,6 +300,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                             const SizedBox(height: 20),
                             TextFormField(
                                 controller: name,
+                                enabled: !locked,
                                 maxLength: 100,
                                 decoration: const InputDecoration(
                                     labelText: '计划名称', hintText: '例如：放学后的自由时间'),
@@ -162,6 +310,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                             const SizedBox(height: 12),
                             TextFormField(
                                 controller: zone,
+                                enabled: !locked,
                                 decoration:
                                     const InputDecoration(labelText: '时区'),
                                 validator: (v) => v == null || v.trim().isEmpty
@@ -177,11 +326,18 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                                     .map((d) => FilterChip(
                                         label: Text(label(d)),
                                         selected: days.contains(d),
-                                        onSelected: busy
+                                        onSelected: locked
                                             ? null
-                                            : (v) => setState(() => v
-                                                ? days.add(d)
-                                                : days.remove(d))))
+                                            : (v) {
+                                                if (!interactive || locked) return;
+                                                setState(() {
+                                                  if (v) {
+                                                    days.add(d);
+                                                  } else {
+                                                    days.remove(d);
+                                                  }
+                                                });
+                                              }))
                                     .toList()),
                             const SizedBox(height: 12),
                             Wrap(
@@ -191,17 +347,17 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                                 children: [
                                   OutlinedButton.icon(
                                       onPressed:
-                                          busy ? null : () => pickTime(true),
+                                          locked ? null : () => pickTime(true),
                                       icon:
                                           const Icon(Icons.schedule, size: 18),
                                       label: Text(start)),
                                   const Text('至'),
                                   OutlinedButton(
                                       onPressed:
-                                          busy ? null : () => pickTime(false),
+                                          locked ? null : () => pickTime(false),
                                       child: Text(end)),
                                   TextButton.icon(
-                                      onPressed: busy ? null : addWindow,
+                                      onPressed: locked ? null : addWindow,
                                       icon: const Icon(Icons.add, size: 18),
                                       label: const Text('加入计划'))
                                 ]),
@@ -212,10 +368,9 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                                     '${label(e.value['day'])}  ${e.value['start']} – ${e.value['end']}'),
                                 trailing: IconButton(
                                     tooltip: '移除此时段',
-                                    onPressed: busy
+                                    onPressed: locked
                                         ? null
-                                        : () => setState(
-                                            () => windows.removeAt(e.key)),
+                                        : () => removeWindow(e.value),
                                     icon: const Icon(Icons.close, size: 18)))),
                             const Divider(),
                             const SizedBox(height: 14),
@@ -225,26 +380,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                             const Text('假期或特殊日期可设置整天不可用。',
                                 style: TextStyle(color: muted, fontSize: 12)),
                             TextButton.icon(
-                                onPressed: busy
-                                    ? null
-                                    : () async {
-                                        final d = await showDatePicker(
-                                            context: context,
-                                            firstDate: DateTime.now().subtract(
-                                                const Duration(days: 1)),
-                                            lastDate: DateTime.now()
-                                                .add(const Duration(days: 730)),
-                                            initialDate: DateTime.now());
-                                        if (d != null) {
-                                          final date =
-                                              d.toIso8601String().split('T')[0];
-                                          if (!exceptions
-                                              .any((e) => e['date'] == date)) {
-                                            setState(() => exceptions.add(
-                                                {'date': date, 'windows': []}));
-                                          }
-                                        }
-                                      },
+                                onPressed: locked ? null : pickClosedDate,
                                 icon: const Icon(Icons.event_busy, size: 18),
                                 label: const Text('添加关闭日期')),
                             ...exceptions.asMap().entries.map((e) => ListTile(
@@ -252,23 +388,41 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                                 title: Text('${e.value['date']} · 全天关闭'),
                                 trailing: IconButton(
                                     tooltip: '移除例外',
-                                    onPressed: busy
+                                    onPressed: locked
                                         ? null
-                                        : () => setState(
-                                            () => exceptions.removeAt(e.key)),
+                                        : () => removeException(e.value),
                                     icon: const Icon(Icons.close, size: 18)))),
+                            if (resultUnknown) ...[
+                              const Notice(
+                                  '尚不能确认保存结果，原内容已锁定。重试会使用同一次提交。'
+                                  '暂时关闭后请先刷新时间计划列表核对结果，避免重复创建。',
+                                  warning: true),
+                              const SizedBox(height: 12),
+                            ],
                             if (error != null)
-                              FailureView(error!,
-                                  reauth: () =>
-                                      widget.session.login(stepUp: true))
+                              FailureView(error!, reauth: resultUnknown || busy
+                                  ? null
+                                  : () {
+                                      if (interactive && !locked) {
+                                        widget.session.login(stepUp: true);
+                                      }
+                                    })
                           ])))),
           actions: [
             TextButton(
-                onPressed: busy ? null : () => Navigator.pop(context),
-                child: const Text('取消')),
-            FilledButton(
-                onPressed: busy ? null : save,
-                child: Text(busy ? '保存中…' : '保存计划'))
+                key: resultUnknown
+                    ? const Key('schedule-editor-close-unknown') : null,
+                onPressed: busy || exitOpen ? null : requestClose,
+                child: Text(resultUnknown ? '暂时关闭' : '取消')),
+            if (resultUnknown)
+              FilledButton(
+                  key: const Key('schedule-editor-retry-original'),
+                  onPressed: busy || exitOpen ? null : retryOriginal,
+                  child: Text(busy ? '恢复中…' : '重试原提交'))
+            else
+              FilledButton(
+                  onPressed: locked ? null : save,
+                  child: Text(busy ? '保存中…' : '保存计划'))
           ]));
 }
 

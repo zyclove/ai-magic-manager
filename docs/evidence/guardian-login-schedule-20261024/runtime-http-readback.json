@@ -1,0 +1,26 @@
+{
+  "status": "READ_ONLY_SERVICE_REACHABILITY_NOT_AUTHENTICATED_ACCEPTANCE",
+  "observedAtUtc": "2026-10-24T08:09:22.4243267Z",
+  "actualCommandChunk": "1fc822",
+  "observations": [
+    {
+      "url": "http://localhost:18101/healthz",
+      "status": 200,
+      "contentType": "text/plain"
+    },
+    {
+      "url": "http://localhost:18101/api/v1/me",
+      "status": 401,
+      "contentType": "application/problem+json"
+    },
+    {
+      "url": "http://localhost:18101/identity/realms/ai-manager/.well-known/openid-configuration",
+      "status": 200,
+      "contentType": "application/json",
+      "issuer": "http://localhost:18101/identity/realms/ai-manager"
+    }
+  ],
+  "authenticatedFlowsVerified": false,
+  "writesExecuted": false,
+  "deployedSourceVersionNotInferred": true
+}

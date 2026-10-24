@@ -1,0 +1,26 @@
+{
+  "status": "NEW_SCHEDULE_SOURCE_CASES_ALL_UNRUN",
+  "source": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\editor_submit_guard_test.dart",
+  "browserRequired": true,
+  "newCases": 9,
+  "names": [
+    "ScheduleEditor network outcome preserves the original retry",
+    "ScheduleEditor server outcome preserves the original retry",
+    "ScheduleEditor unexpected outcome preserves the original retry",
+    "ScheduleEditor known rejection permits a corrected submission",
+    "ScheduleEditor pending-operation rejection retains unknown content",
+    "ScheduleEditor unknown back navigation requires explicit close",
+    "ScheduleEditor late success preserves an unrelated covering dialog",
+    "ScheduleEditor late time result cannot edit a closed owner",
+    "ScheduleEditor late date result cannot edit a closed owner"
+  ],
+  "existingCasesRetained": 4,
+  "futureFileCases": 13,
+  "rootCountChangedByThisWork": false,
+  "testsRun": false,
+  "sourcePin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\editor_submit_guard_test.dart",
+    "bytes": 21431,
+    "sha256": "a8d24bca8147a38ffe0c5db9b620e533e47b18cf371c9198dc62d9ab33280ed9"
+  }
+}

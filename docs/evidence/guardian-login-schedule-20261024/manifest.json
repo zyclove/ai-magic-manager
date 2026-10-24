@@ -1,0 +1,103 @@
+{
+  "status": "STATIC_ARTIFACT_INVENTORY_NOT_RUNTIME_ACCEPTANCE",
+  "rows": [
+    {
+      "path": "docs/evidence/guardian-login-schedule-20261024/full-regression-183-scope.json",
+      "bytes": 93253,
+      "sha256": "131581691af9d2f7d4169006e1099b507af6ab2fd5bd1e2dec57e828cf035433",
+      "gitRawBlobSha1": "f80485c860b645a69fa47aeb4a996f5e553c95de"
+    },
+    {
+      "path": "docs/evidence/guardian-login-schedule-20261024/login-pins.json",
+      "bytes": 1385,
+      "sha256": "a6eb4aea13e7ca626a1bfee5b3d809a0ccc0bd36c63f0e4876d28e9df3a5ac16",
+      "gitRawBlobSha1": "a338fbf8364a97f8e4fc5a2c7b869fc702d5dc45"
+    },
+    {
+      "path": "docs/evidence/guardian-login-schedule-20261024/login-review.md",
+      "bytes": 2648,
+      "sha256": "f56d0c0ebe2126b0f2bef2a3039e87344eeea49cf72687a8db5adabcf53f60e1",
+      "gitRawBlobSha1": "ca350abdbd1093ac84d44474b5a4a90cbfcc67f1"
+    },
+    {
+      "path": "docs/evidence/guardian-login-schedule-20261024/runtime-http-readback.json",
+      "bytes": 811,
+      "sha256": "b5dac1b639939590ae0930d53f419fb0099c6ac41b0c0e4d1ce546c9f375122d",
+      "gitRawBlobSha1": "2b364f62641edb6b076cad9b0307215f33baccf4"
+    },
+    {
+      "path": "docs/evidence/guardian-login-schedule-20261024/schedule-implementation-new-test-cases.json",
+      "bytes": 1171,
+      "sha256": "888637b561e5aa7118b4c0222d78827d30a4ec737e4f944d3c79216640e8b245",
+      "gitRawBlobSha1": "6271df72a5afcfccb86e7efea8c64519a2c32499"
+    },
+    {
+      "path": "docs/evidence/guardian-login-schedule-20261024/schedule-implementation-pins.json",
+      "bytes": 2706,
+      "sha256": "5f68724c33206e629dedb1eb601baac223bcc1fcdf3383f8f7608701147803a8",
+      "gitRawBlobSha1": "90fb2092b5aa14e8cce8b9751221d98acafd1fb9"
+    },
+    {
+      "path": "docs/evidence/guardian-login-schedule-20261024/schedule-implementation-review.md",
+      "bytes": 2925,
+      "sha256": "8304530336232b7db218d80470d4c13d57fef15db90b947eb48b3f7965b97832",
+      "gitRawBlobSha1": "e173d1354fa27d1273892bf680cfa25b4e73982f"
+    },
+    {
+      "path": "docs/evidence/guardian-login-schedule-20261024/schedule-independent-pins.json",
+      "bytes": 1499,
+      "sha256": "8ab1fbbc09515b70e7479e35aa30d7262e5e63ce7fdaecc41618f73718112235",
+      "gitRawBlobSha1": "f4e7ede682ec30d0723333b37aa7e4f157079210"
+    },
+    {
+      "path": "docs/evidence/guardian-login-schedule-20261024/schedule-independent-review.md",
+      "bytes": 3151,
+      "sha256": "b8008370524bb31c65efd03b7580b58585cbc6fc4a168274034d901c43e692a5",
+      "gitRawBlobSha1": "03a61039b9164593886bd55607ab7cef46ce1daf"
+    },
+    {
+      "path": "docs/evidence/guardian-login-schedule-20261024/source-summary.json",
+      "bytes": 2223,
+      "sha256": "0cd6dcfe5630495a0551ac9e9660e003dba634a97e4acdee6630acee9e03bd30",
+      "gitRawBlobSha1": "c5fc132d24dfb3adf23050127d406ef9bc5ef914"
+    }
+  ],
+  "review": {
+    "path": "docs/reviews/guardian-login-schedule-20261024.md",
+    "bytes": 3808,
+    "sha256": "2a15633d6dd91b4625383e32f67f6edb0b26935db5b310067532ebbc893d95b7",
+    "gitRawBlobSha1": "3e89f63678ff675c5795d9be2476282b758fde50"
+  },
+  "sources": [
+    {
+      "path": "apps/guardian/lib/main.dart",
+      "bytes": 2591,
+      "sha256": "fb5dbe4da6bb2c06c4ae19484caaef7bf764570b3d79d466bb1837522963fc3c",
+      "gitRawBlobSha1": "a9e6dd45561b2132a1d3c710a35b3710445eaf55"
+    },
+    {
+      "path": "apps/guardian/lib/ui/login_view.dart",
+      "bytes": 6258,
+      "sha256": "eb19d4bc2d40844f580e43ca2acc586d23e352d0d00187a76fbfac38717de75f",
+      "gitRawBlobSha1": "7ce7061400aa66cba7afe5433f58a8036069e7bd"
+    },
+    {
+      "path": "apps/guardian/test/login_view_test.dart",
+      "bytes": 4185,
+      "sha256": "655608d669bac81e1fcbbff82a7d984061451c9bf9dff9667155feb592fff579",
+      "gitRawBlobSha1": "02d5a04ca914c29d0088e73be23e551c7b63196f"
+    },
+    {
+      "path": "apps/guardian/lib/pages/editors.dart",
+      "bytes": 52075,
+      "sha256": "208926fbdc201d66fc5bf3e261465d9d76488141c27ed1b30bcbf40a4d0ff957",
+      "gitRawBlobSha1": "8d1cf79738eddcdcaffabcf5b93feef6e7863aa7"
+    },
+    {
+      "path": "apps/guardian/test/editor_submit_guard_test.dart",
+      "bytes": 21431,
+      "sha256": "a8d24bca8147a38ffe0c5db9b620e533e47b18cf371c9198dc62d9ab33280ed9",
+      "gitRawBlobSha1": "af9e7369ae5ede1926980af8c9d972fbaf32311f"
+    }
+  ]
+}

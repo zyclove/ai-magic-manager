@@ -59,6 +59,63 @@ class _BlockedApi {
   }
 }
 
+
+class _ScheduleRecoveryFixture {
+  final requests = <http.Request>[];
+  final responses = <Completer<http.Response>>[];
+  late final transport = MockClient((request) {
+    requests.add(request);
+    final response = Completer<http.Response>();
+    responses.add(response);
+    return response.future;
+  });
+  late final api = Api(() async => transport,
+      baseUrl: 'https://fixture.invalid/api/v1');
+  late final session = _EditorSession(api);
+
+  void reply(int index, int status, Json body) => responses[index].complete(
+      http.Response(jsonEncode(body), status,
+          headers: {'content-type': 'application/json; charset=utf-8'}));
+
+  Future<void> cleanup(WidgetTester tester) async {
+    await tester.pumpWidget(const SizedBox.shrink());
+    for (final response in responses) {
+      if (!response.isCompleted) {
+        response.complete(http.Response('{}', 200,
+            headers: {'content-type': 'application/json; charset=utf-8'}));
+      }
+    }
+    await _flush(tester);
+    transport.close();
+    session.dispose();
+  }
+}
+
+Finder _scheduleButton(String text) => find.ancestor(
+    of: find.text(text),
+    matching: find.byWidgetPredicate((widget) => widget is ButtonStyleButton));
+
+VoidCallback _scheduleCallback(WidgetTester tester, Finder finder) =>
+    tester.widget<ButtonStyleButton>(finder).onPressed!;
+
+Future<void> _openSchedule(WidgetTester tester, _ScheduleRecoveryFixture fixture,
+    {bool withException = false}) async {
+  await _open(tester, ScheduleEditor(session: fixture.session, root: _root,
+      timeZone: 'Asia/Shanghai'));
+  await tester.enterText(find.widgetWithText(TextFormField, '计划名称'),
+      '  放学后的自由时间  ');
+  await tester.ensureVisible(_scheduleButton('加入计划'));
+  await tester.tap(_scheduleButton('加入计划'));
+  await tester.pumpAndSettle();
+  if (withException) {
+    await tester.ensureVisible(_scheduleButton('添加关闭日期'));
+    await tester.tap(_scheduleButton('添加关闭日期'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('OK'));
+    await tester.pumpAndSettle();
+  }
+}
+
 Future<void> _flush(WidgetTester tester) async {
   for (var i = 0; i < 6; i++) {
     await tester.runAsync(() => Future<void>.delayed(Duration.zero));
@@ -309,4 +366,239 @@ void main() {
       await cleanup();
     }
   });
+
+  for (final failure in ['network', 'server', 'unexpected']) {
+    testWidgets('ScheduleEditor $failure outcome preserves the original retry',
+        (tester) async {
+      final f = _ScheduleRecoveryFixture();
+      try {
+        await _openSchedule(tester, f, withException: true);
+        final save = _capturedSubmit(tester, '保存计划');
+        final add = _scheduleCallback(tester, _scheduleButton('加入计划'));
+        final time = _scheduleCallback(tester, _scheduleButton('18:00'));
+        final date = _scheduleCallback(tester, _scheduleButton('添加关闭日期'));
+        final day = tester.widget<FilterChip>(find.byType(FilterChip).first)
+            .onSelected!;
+        final remove = tester.widget<IconButton>(
+            find.byTooltip('移除此时段').first).onPressed!;
+        final removeException = tester.widget<IconButton>(
+            find.byTooltip('移除例外').first).onPressed!;
+        save();
+        save();
+        await _flush(tester);
+        expect(f.requests, hasLength(1));
+        final originalBody = f.requests.single.body;
+        final requestKey = f.requests.single.headers['Idempotency-Key'];
+        expect(requestKey, isNotEmpty);
+        expect(jsonDecode(originalBody)['name'], '放学后的自由时间');
+        expect(jsonDecode(originalBody)['definition']['weekly'], hasLength(5));
+        expect(jsonDecode(originalBody)['definition']['exceptions'], hasLength(1));
+        if (failure == 'server') {
+          f.reply(0, 503, {'errorCode': 'SERVICE_UNAVAILABLE'});
+        } else {
+          f.responses.single.completeError(failure == 'network'
+              ? http.ClientException('fixture connection lost')
+              : StateError('fixture unexpected transport error'));
+        }
+        await _flush(tester);
+        await tester.pumpAndSettle();
+        for (final field in tester.widgetList<TextFormField>(
+            find.byType(TextFormField))) {
+          expect(field.enabled, isFalse);
+        }
+        expect(tester.widget<PopScope>(find.byType(PopScope)).canPop, isFalse);
+        expect(find.text('重试原提交'), findsOneWidget);
+        day(false);
+        remove();
+        removeException();
+        add();
+        time();
+        date();
+        save();
+        await tester.pump();
+        expect(find.byType(TimePickerDialog), findsNothing);
+        expect(find.byType(DatePickerDialog), findsNothing);
+        expect(find.byTooltip('移除此时段'), findsNWidgets(5));
+        expect(find.byTooltip('移除例外'), findsOneWidget);
+        expect(tester.widget<FilterChip>(find.byType(FilterChip).first).selected,
+            isTrue);
+        expect(f.requests, hasLength(1));
+        final retry = _capturedSubmit(tester, '重试原提交');
+        retry();
+        retry();
+        await _flush(tester);
+        expect(f.requests, hasLength(2));
+        expect(f.requests.last.body, originalBody);
+        expect(f.requests.last.headers['Idempotency-Key'], requestKey);
+        f.reply(1, 200, {});
+        await _flush(tester);
+        await tester.pumpAndSettle();
+        expect(find.byType(ScheduleEditor), findsNothing);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await f.cleanup(tester);
+      }
+    });
+  }
+
+  testWidgets('ScheduleEditor known rejection permits a corrected submission',
+      (tester) async {
+    final f = _ScheduleRecoveryFixture();
+    try {
+      await _openSchedule(tester, f);
+      _capturedSubmit(tester, '保存计划')();
+      await _flush(tester);
+      f.reply(0, 400, {'errorCode': 'INVALID_TIME_WINDOW'});
+      await _flush(tester);
+      await tester.pumpAndSettle();
+      for (final field in tester.widgetList<TextFormField>(
+          find.byType(TextFormField))) {
+        expect(field.enabled, isTrue);
+      }
+      expect(find.text('重试原提交'), findsNothing);
+      await tester.enterText(find.widgetWithText(TextFormField, '计划名称'),
+          '修正后的计划');
+      _capturedSubmit(tester, '保存计划')();
+      await _flush(tester);
+      expect(f.requests, hasLength(2));
+      expect(jsonDecode(f.requests.last.body)['name'], '修正后的计划');
+      expect(f.requests.last.body, isNot(f.requests.first.body));
+      expect(f.requests.last.headers['Idempotency-Key'],
+          f.requests.first.headers['Idempotency-Key']);
+      f.reply(1, 200, {});
+      await _flush(tester);
+      await tester.pumpAndSettle();
+      expect(find.byType(ScheduleEditor), findsNothing);
+      expect(tester.takeException(), isNull);
+    } finally {
+      await f.cleanup(tester);
+    }
+  });
+
+  testWidgets('ScheduleEditor pending-operation rejection retains unknown content',
+      (tester) async {
+    final f = _ScheduleRecoveryFixture();
+    try {
+      await _openSchedule(tester, f);
+      _capturedSubmit(tester, '保存计划')();
+      await _flush(tester);
+      f.reply(0, 503, {'errorCode': 'SERVICE_UNAVAILABLE'});
+      await _flush(tester);
+      _capturedSubmit(tester, '重试原提交')();
+      await _flush(tester);
+      f.reply(1, 409, {'errorCode': 'PENDING_OPERATION_UNCHANGED'});
+      await _flush(tester);
+      await tester.pumpAndSettle();
+      expect(find.text('重试原提交'), findsOneWidget);
+      expect(tester.widget<TextFormField>(
+          find.widgetWithText(TextFormField, '计划名称')).enabled, isFalse);
+      _capturedSubmit(tester, '重试原提交')();
+      await _flush(tester);
+      expect(f.requests, hasLength(3));
+      expect(f.requests.map((r) => r.body).toSet(), hasLength(1));
+      expect(f.requests.map((r) => r.headers['Idempotency-Key']).toSet(),
+          hasLength(1));
+      f.reply(2, 200, {});
+      await _flush(tester);
+      await tester.pumpAndSettle();
+      expect(find.byType(ScheduleEditor), findsNothing);
+      expect(tester.takeException(), isNull);
+    } finally {
+      await f.cleanup(tester);
+    }
+  });
+
+  testWidgets('ScheduleEditor unknown back navigation requires explicit close',
+      (tester) async {
+    final f = _ScheduleRecoveryFixture();
+    try {
+      await _openSchedule(tester, f);
+      final staleSave = _capturedSubmit(tester, '保存计划');
+      staleSave();
+      await _flush(tester);
+      f.reply(0, 503, {'errorCode': 'SERVICE_UNAVAILABLE'});
+      await _flush(tester);
+      final navigator = tester.state<NavigatorState>(find.byType(Navigator));
+      await navigator.maybePop();
+      await tester.pumpAndSettle();
+      expect(find.text('暂时关闭未确认的提交？'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('schedule-editor-keep-unknown')));
+      await tester.pumpAndSettle();
+      expect(find.byType(ScheduleEditor), findsOneWidget);
+      expect(find.text('重试原提交'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('schedule-editor-close-unknown')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(
+          const Key('schedule-editor-confirm-close-unknown')));
+      staleSave();
+      await tester.pumpAndSettle();
+      expect(find.byType(ScheduleEditor), findsNothing);
+      expect(f.requests, hasLength(1));
+      expect(tester.takeException(), isNull);
+    } finally {
+      await f.cleanup(tester);
+    }
+  });
+
+  testWidgets('ScheduleEditor late success preserves an unrelated covering dialog',
+      (tester) async {
+    final f = _ScheduleRecoveryFixture();
+    try {
+      await _openSchedule(tester, f);
+      _capturedSubmit(tester, '保存计划')();
+      await _flush(tester);
+      var noticeClosed = false;
+      unawaited(showDialog<void>(
+          context: tester.element(find.byType(ScheduleEditor)),
+          builder: (context) => AlertDialog(
+              title: const Text('独立通知'),
+              actions: [TextButton(onPressed: () => Navigator.pop(context),
+                  child: const Text('关闭通知'))]))
+          .then((_) => noticeClosed = true));
+      await tester.pumpAndSettle();
+      f.reply(0, 200, {});
+      await _flush(tester);
+      await tester.pumpAndSettle();
+      expect(find.text('独立通知'), findsOneWidget);
+      expect(noticeClosed, isFalse);
+      expect(find.byType(ScheduleEditor, skipOffstage: false), findsNothing);
+      await tester.tap(find.text('关闭通知'));
+      await tester.pumpAndSettle();
+      expect(noticeClosed, isTrue);
+      expect(tester.takeException(), isNull);
+    } finally {
+      await f.cleanup(tester);
+    }
+  });
+
+  for (final picker in ['time', 'date']) {
+    testWidgets('ScheduleEditor late $picker result cannot edit a closed owner',
+        (tester) async {
+      final f = _ScheduleRecoveryFixture();
+      try {
+        await _openSchedule(tester, f);
+        final save = _capturedSubmit(tester, '保存计划');
+        final owner = ModalRoute.of(tester.element(find.byType(ScheduleEditor)))
+            as OwnedDialogRoute<void>;
+        final button = _scheduleButton(
+            picker == 'time' ? '18:00' : '添加关闭日期');
+        await tester.ensureVisible(button);
+        await tester.tap(button);
+        await tester.pumpAndSettle();
+        save();
+        await _flush(tester);
+        expect(f.requests, isEmpty);
+        owner.finish();
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('OK'));
+        await tester.pumpAndSettle();
+        expect(find.byType(ScheduleEditor), findsNothing);
+        expect(f.requests, isEmpty);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await f.cleanup(tester);
+      }
+    });
+  }
+
 }

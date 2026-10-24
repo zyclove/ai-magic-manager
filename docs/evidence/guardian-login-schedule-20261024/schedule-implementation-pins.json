@@ -1,0 +1,63 @@
+{
+  "status": "SCHEDULE_RECOVERY_IMPLEMENTED_STATIC_REVIEW_ALL_TESTS_UNRUN",
+  "atUtc": "2026-10-24T08:27:05.386199+00:00",
+  "baseHead": "e445b3b3384605b5427e00d912fb34eb973dfe2c",
+  "files": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\pages\\editors.dart",
+      "bytes": 52075,
+      "sha256": "208926fbdc201d66fc5bf3e261465d9d76488141c27ed1b30bcbf40a4d0ff957"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\editor_submit_guard_test.dart",
+      "bytes": 21431,
+      "sha256": "a8d24bca8147a38ffe0c5db9b620e533e47b18cf371c9198dc62d9ab33280ed9"
+    }
+  ],
+  "fullDiff": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-schedule-recovery-20261024-r1\\full.patch",
+    "bytes": 30482,
+    "sha256": "df929a68ffd81b6c11db0f816969aba67c7680455d3118e97a1ccdba31f8fc47"
+  },
+  "newCases": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-schedule-recovery-20261024-r1\\new-test-cases.json",
+    "bytes": 1171,
+    "sha256": "888637b561e5aa7118b4c0222d78827d30a4ec737e4f944d3c79216640e8b245"
+  },
+  "review": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-schedule-recovery-20261024-r1\\review.md",
+    "bytes": 2925,
+    "sha256": "8304530336232b7db218d80470d4c13d57fef15db90b947eb48b3f7965b97832"
+  },
+  "testFirstReceipt": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-schedule-recovery-20261024-r1\\test-first-receipt.json",
+    "bytes": 798,
+    "sha256": "01f60f2f79db373d48236d43d9a6dfa2f35e230636651d59e538622f4311395d"
+  },
+  "implementationReceipt": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-schedule-recovery-20261024-r1\\implementation-receipt.json",
+    "bytes": 884,
+    "sha256": "aa06a5927e0f54e28f2b1adccb3929e7be2bcdf46913e817c265370fd9e853e9"
+  },
+  "sourceBefore": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-schedule-recovery-20261024-r1\\before\\schedule-prefix.dart",
+      "bytes": 11925,
+      "sha256": "ee628d7008b42c4708013fa6e53aa3a16071bc70cfdcc03efa872632fd536478"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-schedule-recovery-20261024-r1\\before\\editor-submit-guard.dart",
+      "bytes": 9807,
+      "sha256": "8fde368ce0a34436be2118d1753b620b5bc043810db08574c4a132719d2f5733"
+    }
+  ],
+  "otherEditorTailBytes": 34495,
+  "otherEditorTailSha256": "76d99689d66e78a39bf62367e921f16352eddd90878276b4d59103aa2b6cd240",
+  "otherEditorTailByteExact": true,
+  "apiEqualsHead": true,
+  "existingFourCaseSourceRetained": true,
+  "newCasesCount": 9,
+  "futureFileCases": 13,
+  "runtimeAcceptanceClaimed": false,
+  "sdkAstFormatterTestsServiceHttpNetworkOrGitMutationRun": false
+}

@@ -1,0 +1,58 @@
+{
+  "status": "STATIC_CANDIDATE_ALL_SDK_AND_APPLICATION_TESTS_UNRUN",
+  "baseCommit": "e445b3b3384605b5427e00d912fb34eb973dfe2c",
+  "atUtc": "2026-10-24T08:35:38.996398+00:00",
+  "sources": [
+    {
+      "path": "apps/guardian/lib/main.dart",
+      "bytes": 2591,
+      "sha256": "fb5dbe4da6bb2c06c4ae19484caaef7bf764570b3d79d466bb1837522963fc3c",
+      "gitRawBlobSha1": "a9e6dd45561b2132a1d3c710a35b3710445eaf55"
+    },
+    {
+      "path": "apps/guardian/lib/ui/login_view.dart",
+      "bytes": 6258,
+      "sha256": "eb19d4bc2d40844f580e43ca2acc586d23e352d0d00187a76fbfac38717de75f",
+      "gitRawBlobSha1": "7ce7061400aa66cba7afe5433f58a8036069e7bd"
+    },
+    {
+      "path": "apps/guardian/test/login_view_test.dart",
+      "bytes": 4185,
+      "sha256": "655608d669bac81e1fcbbff82a7d984061451c9bf9dff9667155feb592fff579",
+      "gitRawBlobSha1": "02d5a04ca914c29d0088e73be23e551c7b63196f"
+    },
+    {
+      "path": "apps/guardian/lib/pages/editors.dart",
+      "bytes": 52075,
+      "sha256": "208926fbdc201d66fc5bf3e261465d9d76488141c27ed1b30bcbf40a4d0ff957",
+      "gitRawBlobSha1": "8d1cf79738eddcdcaffabcf5b93feef6e7863aa7"
+    },
+    {
+      "path": "apps/guardian/test/editor_submit_guard_test.dart",
+      "bytes": 21431,
+      "sha256": "a8d24bca8147a38ffe0c5db9b620e533e47b18cf371c9198dc62d9ab33280ed9",
+      "gitRawBlobSha1": "af9e7369ae5ede1926980af8c9d972fbaf32311f"
+    }
+  ],
+  "newLoginCasesDeclared": 5,
+  "newScheduleCasesDeclared": 9,
+  "existingScheduleFileCasesPreserved": 4,
+  "editorFileExpectedCases": 13,
+  "newCasesTotal": 14,
+  "wholeRegressionRoots": 183,
+  "otherEditorTailByteIdentical": true,
+  "otherEditorTailSha256": "9744c37e87187466e3dc9d2412fb64777952b336a927ebf1bf4aef7155f4ca43",
+  "sourceFreezeRefreshed": false,
+  "oldVm30PlanValidForCurrentIncrement": false,
+  "staticWhitespaceActualChunk": "a3c860",
+  "crlfAcceptedWithoutRewritingOtherEditors": true,
+  "sdkCalls": 0,
+  "testsRun": false,
+  "renderingVerified": false,
+  "authenticatedFlowVerified": false,
+  "backendOrDeviceIntegrationVerified": false,
+  "dependenciesChanged": false,
+  "pushed": false,
+  "deployed": false,
+  "wholeObjectiveAccepted": false
+}

@@ -1,0 +1,41 @@
+{
+  "status": "STATIC_REVIEW_NO_DEFINITE_BLOCKER_ALL_TESTS_UNRUN",
+  "sources": [
+    {
+      "path": "apps/guardian/lib/main.dart",
+      "bytes": 2591,
+      "sha256": "fb5dbe4da6bb2c06c4ae19484caaef7bf764570b3d79d466bb1837522963fc3c"
+    },
+    {
+      "path": "apps/guardian/lib/ui/login_view.dart",
+      "bytes": 6258,
+      "sha256": "eb19d4bc2d40844f580e43ca2acc586d23e352d0d00187a76fbfac38717de75f"
+    },
+    {
+      "path": "apps/guardian/test/login_view_test.dart",
+      "bytes": 4185,
+      "sha256": "655608d669bac81e1fcbbff82a7d984061451c9bf9dff9667155feb592fff579"
+    },
+    {
+      "path": ".cache/guardian-login-schedule-static-20261024-r1/before/main.dart",
+      "bytes": 6828,
+      "sha256": "a1a1221bb89b86ae2d29d648594822d8991478d24c4ad2109437527322de0c1b"
+    },
+    {
+      "path": "apps/guardian/lib/ui/design.dart",
+      "bytes": 34356,
+      "sha256": "9bbcac7001d0c325a1f00533e94f5ddd234417480e6449f26c8e3e48ff3dce23"
+    },
+    {
+      "path": "apps/guardian/lib/core/session.dart",
+      "bytes": 14334,
+      "sha256": "2c0c354df653359c24619fc1be3162030ae503127bbd3dd1a6ec2b96fce2a864"
+    }
+  ],
+  "review": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-login-layout-independent-20261024-r1\\review.md",
+    "bytes": 2648,
+    "sha256": "f56d0c0ebe2126b0f2bef2a3039e87344eeea49cf72687a8db5adabcf53f60e1"
+  },
+  "testsRun": false
+}

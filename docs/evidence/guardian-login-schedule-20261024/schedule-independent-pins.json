@@ -1,0 +1,45 @@
+{
+  "status": "INDEPENDENT_STATIC_REVIEW_NO_DEFINITE_BLOCKER_ALL_TESTS_UNRUN",
+  "sourceCommit": "e445b3b3384605b5427e00d912fb34eb973dfe2c",
+  "sources": [
+    {
+      "path": "apps/guardian/lib/pages/editors.dart",
+      "bytes": 52075,
+      "sha256": "208926fbdc201d66fc5bf3e261465d9d76488141c27ed1b30bcbf40a4d0ff957"
+    },
+    {
+      "path": "apps/guardian/test/editor_submit_guard_test.dart",
+      "bytes": 21431,
+      "sha256": "a8d24bca8147a38ffe0c5db9b620e533e47b18cf371c9198dc62d9ab33280ed9"
+    },
+    {
+      "path": "apps/guardian/lib/ui/owned_dialog_route.dart",
+      "bytes": 1419,
+      "sha256": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946"
+    },
+    {
+      "path": "apps/guardian/lib/core/api.dart",
+      "bytes": 22640,
+      "sha256": "020a8e7486865663112af073d9648079ba18dc3fbc6095d696bd71cee0cf2641"
+    }
+  ],
+  "review": {
+    "path": ".cache/guardian-schedule-final-independent-20261024-r1/review.md",
+    "bytes": 3151,
+    "sha256": "b8008370524bb31c65efd03b7580b58585cbc6fc4a168274034d901c43e692a5"
+  },
+  "observedReadOnlyChunks": [
+    "ab808a",
+    "117f84",
+    "b858bb",
+    "b74a45"
+  ],
+  "allReadOnlyCommandsNaturalExitZero": true,
+  "testsRun": false,
+  "sdkCalls": 0,
+  "newCasesDeclared": 9,
+  "existingCasesPreserved": 4,
+  "expectedBrowserFileCases": 13,
+  "otherEditorTailBytes": 34495,
+  "otherEditorTailSha256": "76d99689d66e78a39bf62367e921f16352eddd90878276b4d59103aa2b6cd240"
+}
