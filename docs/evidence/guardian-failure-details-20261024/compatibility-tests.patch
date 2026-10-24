@@ -1,0 +1,166 @@
+--- a/apps/guardian/test/managed_android_review_recovery_test.dart
++++ b/apps/guardian/test/managed_android_review_recovery_test.dart
+@@ -148,10 +148,32 @@
+         (request) async => ++calls == 1 ? unavailable() : queue([]);
+     await mount(tester, session);
+     expect(find.text('暂无待审核申请'), findsNothing);
+-    expect(find.text('SERVICE_UNAVAILABLE'), findsOneWidget);
++    final failure = find.byType(FailureView);
++    expect(failure, findsOneWidget);
++    expect(
++        tester.widget<Notice>(find.descendant(
++            of: failure, matching: find.byType(Notice))).text,
++        (const ApiFailure(503, 'SERVICE_UNAVAILABLE')).message);
++    expect(find.byType(SelectableText, skipOffstage: false), findsNothing);
++    final details =
++        find.descendant(of: failure, matching: find.text('错误详情'));
++    await tester.ensureVisible(details);
++    await tester.tap(details);
++    await flush(tester);
++    expect(
++        find.descendant(
++            of: failure,
++            matching: find.byWidgetPredicate((widget) =>
++                widget is SelectableText &&
++                widget.data == '错误代码：SERVICE_UNAVAILABLE')),
++        findsOneWidget);
++    await tester.ensureVisible(find.text('重试'));
+     await tester.tap(find.text('重试'));
+     await flush(tester);
+     expect(find.text('暂无待审核申请'), findsOneWidget);
++    expect(failure, findsNothing);
++    expect(find.text('错误详情'), findsNothing);
++    expect(find.byType(SelectableText, skipOffstage: false), findsNothing);
+     expect(find.text('SERVICE_UNAVAILABLE'), findsNothing);
+     expect(session.requests.length, 2);
+     expect(
+@@ -520,10 +542,34 @@
+     await tester.tap(find.text('确认批准'));
+     await flush(tester);
+     expect(find.byType(AlertDialog), findsOneWidget);
+-    expect(find.text('INVALID_OWNERSHIP_EVIDENCE'), findsOneWidget);
++    final failure = find.descendant(
++        of: find.byType(AlertDialog), matching: find.byType(FailureView));
++    expect(failure, findsOneWidget);
++    expect(
++        tester.widget<Notice>(find.descendant(
++            of: failure, matching: find.byType(Notice))).text,
++        (const ApiFailure(400, 'INVALID_OWNERSHIP_EVIDENCE')).message);
++    expect(
++        find.descendant(
++            of: failure,
++            matching: find.byType(SelectableText, skipOffstage: false)),
++        findsNothing);
++    final details =
++        find.descendant(of: failure, matching: find.text('错误详情'));
++    await tester.ensureVisible(details);
++    await tester.tap(details);
++    await flush(tester);
++    expect(
++        find.descendant(
++            of: failure,
++            matching: find.byWidgetPredicate((widget) =>
++                widget is SelectableText &&
++                widget.data == '错误代码：INVALID_OWNERSHIP_EVIDENCE')),
++        findsOneWidget);
+     expect(tester.widget<TextField>(fields.at(0)).controller!.text, 'short');
+     expect(tester.widget<TextField>(fields.at(1)).controller!.text, '独立核对完成');
+     expect(session.requests.where((r) => r.method == 'POST'), isEmpty);
++    await tester.ensureVisible(fields.at(0));
+     await tester.enterText(fields.at(0), 'evidence-001');
+     await tester.tap(find.text('确认批准'));
+     await flush(tester);
+@@ -672,6 +718,11 @@
+     await flush(tester);
+     expect(reads, 1);
+     expect(find.text('SERVICE_UNAVAILABLE'), findsNothing);
++    expect(
++        find.descendant(
++            of: lookupPanel(), matching: find.byType(FailureView)),
++        findsNothing);
++    expect(find.text('未完成的查询：$firstTenant'), findsNothing);
+     expect(tester.takeException(), isNull);
+     await lookup(tester, secondTenant);
+     expect(reads, 2);
+@@ -736,6 +787,10 @@
+     await flush(tester);
+     expect(find.byType(AlertDialog), findsNothing);
+     expect(find.text('INVALID_TENANT_ID'), findsNothing);
++    expect(
++        find.descendant(
++            of: lookupPanel(), matching: find.byType(FailureView)),
++        findsNothing);
+     expect(session.requests.where((r) => r.url.path != reviewRoot).length,
+         detailReads);
+     expect(session.requests.where((r) => r.method == 'POST'), isEmpty);
+--- a/apps/guardian/test/usage_reports_view_test.dart
++++ b/apps/guardian/test/usage_reports_view_test.dart
+@@ -148,9 +148,13 @@
+   });
+   testWidgets('malformed and duplicate devices fail before opening a selector',
+       (tester) async {
+-    final repo = UsageReportRepository(
+-        api: Api(() async =>
+-            MockClient((_) async => throw StateError('must not request'))),
++    var requests = 0, variants = 0;
++    final loadedVariants = <int>[];
++    final repo = UsageReportRepository(
++        api: Api(() async => MockClient((_) async {
++              requests++;
++              throw StateError('must not request');
++            })),
+         root: '/tenants/$subject',
+         current: () => true);
+     for (final devices in <List<UsageReportTarget>>[
+@@ -160,16 +164,49 @@
+       [const UsageReportTarget(device, registration, subject, '')],
+       [target, target],
+     ]) {
++      final variant = ++variants;
++      var loads = 0;
+       await tester.pumpWidget(host(UsageReportsView(
+           key: UniqueKey(),
+           repository: repo,
+-          loadTargets: () async => devices,
++          loadTargets: () async {
++            loads++;
++            loadedVariants.add(variant);
++            return devices;
++          },
+           timeZone: 'UTC')));
+       await tester.pumpAndSettle();
+-      expect(find.text('INVALID_USAGE_REPORT_RESPONSE'), findsOneWidget);
++      expect(loads, 1);
++      expect(loadedVariants, hasLength(variant));
++      expect(loadedVariants.last, variant);
++      final failure = find.byType(FailureView);
++      expect(failure, findsOneWidget);
++      expect(
++          tester.widget<Notice>(find.descendant(
++              of: failure, matching: find.byType(Notice))).text,
++          (const ApiFailure(502, 'INVALID_USAGE_REPORT_RESPONSE')).message);
++      expect(find.byType(SelectableText, skipOffstage: false), findsNothing);
++      final details =
++          find.descendant(of: failure, matching: find.text('错误详情'));
++      await tester.ensureVisible(details);
++      await tester.tap(details);
++      await tester.pumpAndSettle();
++      expect(
++          find.descendant(
++              of: failure,
++              matching: find.byWidgetPredicate((widget) =>
++                  widget is SelectableText &&
++                  widget.data == '错误代码：INVALID_USAGE_REPORT_RESPONSE')),
++          findsOneWidget);
+       expect(find.text('生成报表'), findsNothing);
++      expect(find.text('后台生成'), findsNothing);
++      expect(find.byType(UsageReportDeviceView), findsNothing);
++      expect(requests, 0);
++      expect(loads, 1);
+       expect(tester.takeException(), isNull);
+     }
++    expect(variants, 5);
++    expect(loadedVariants, [1, 2, 3, 4, 5]);
+   });
+   testWidgets('failed roster resolution never falls back to an unscoped query',
+       (tester) async {

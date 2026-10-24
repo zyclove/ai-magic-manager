@@ -1,0 +1,27 @@
+{
+  "atUtc": "2026-10-24T02:02:39.4086320Z",
+  "sdk": [
+    {
+      "Id": 18520,
+      "ProcessName": "go"
+    },
+    {
+      "Id": 66916,
+      "ProcessName": "platform.test"
+    }
+  ],
+  "unknown": [],
+  "availableRamBytes": 2172633088,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 3926876160
+    },
+    {
+      "Name": "D",
+      "Free": 17830060032
+    }
+  ],
+  "rootAttemptExists": false,
+  "workerAttemptExists": false
+}

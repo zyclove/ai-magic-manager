@@ -1,0 +1,271 @@
+--- a/apps/guardian/lib/ui/design.dart
++++ b/apps/guardian/lib/ui/design.dart
+@@ -178,27 +178,53 @@
+       UsageReportFailure value => ApiFailure(value.status, value.code),
+       _ => null,
+     };
++    final showReauth =
++        reauth != null && (failure?.status == 401 || failure == null);
+     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+       Notice(failure?.message ?? '加载未完成，请重试。', warning: true),
+-      if (failure != null)
+-        Padding(
+-            padding: const EdgeInsets.only(top: 8),
+-            child: SelectableText(
+-                '${failure.code}${failure.correlationId == null ? '' : ' · ${failure.correlationId}'}',
+-                style: const TextStyle(fontSize: 11, color: muted))),
+-      const SizedBox(height: 8),
+-      Wrap(spacing: 8, children: [
+-        if (retry != null)
+-          TextButton.icon(
+-              onPressed: retry,
+-              icon: const Icon(Icons.refresh, size: 18),
+-              label: const Text('重试')),
+-        if (reauth != null && (failure?.status == 401 || failure == null))
+-          TextButton.icon(
+-              onPressed: reauth,
+-              icon: const Icon(Icons.verified_user_outlined, size: 18),
+-              label: const Text('重新安全验证'))
+-      ])
++      if (retry != null || showReauth) ...[
++        const SizedBox(height: 8),
++        Wrap(spacing: 8, children: [
++          if (retry != null)
++            TextButton.icon(
++                onPressed: retry,
++                icon: const Icon(Icons.refresh, size: 18),
++                label: const Text('重试')),
++          if (showReauth)
++            TextButton.icon(
++                onPressed: reauth,
++                icon: const Icon(Icons.verified_user_outlined, size: 18),
++                label: const Text('重新安全验证'))
++        ]),
++      ],
++      if (failure != null) ...[
++        const SizedBox(height: 8),
++        PageStorage(
++            key: ValueKey((failure.code, failure.correlationId)),
++            bucket: PageStorageBucket(),
++            child: ExpansionTile(
++                tilePadding: EdgeInsets.zero,
++                childrenPadding: const EdgeInsets.only(top: 4, bottom: 8),
++                expandedAlignment: Alignment.centerLeft,
++                expandedCrossAxisAlignment: CrossAxisAlignment.start,
++                dense: true,
++                minTileHeight: 48,
++                shape: const Border(),
++                collapsedShape: const Border(),
++                title: const Text('错误详情',
++                    style: TextStyle(fontSize: 12, color: muted)),
++                children: [
++                  SelectableText('错误代码：${failure.code}',
++                      style: const TextStyle(
++                          fontSize: 12, color: muted, height: 1.6)),
++                  if (failure.correlationId?.isNotEmpty == true)
++                    Padding(
++                        padding: const EdgeInsets.only(top: 4),
++                        child: SelectableText('追踪编号：${failure.correlationId}',
++                            style: const TextStyle(
++                                fontSize: 12, color: muted, height: 1.6))),
++                ])),
++      ],
+     ]);
+   }
+ }
+--- /dev/null
++++ b/apps/guardian/test/failure_view_test.dart
+@@ -0,0 +1,193 @@
++import 'package:flutter/material.dart';
++import 'package:flutter_test/flutter_test.dart';
++import 'package:guardian/core/api.dart';
++import 'package:guardian/ui/design.dart';
++import 'package:usage_reporting/usage_reporting.dart' show UsageReportFailure;
++
++Widget _host(FailureView child, {double textScale = 1}) => MaterialApp(
++    theme: consoleTheme(),
++    builder: (context, value) => MediaQuery(
++        data: MediaQuery.of(context)
++            .copyWith(textScaler: TextScaler.linear(textScale)),
++        child: value!),
++    home: Scaffold(
++        body: SingleChildScrollView(
++            key: const PageStorageKey('failure-view-test-page'),
++            padding: const EdgeInsets.all(18), child: child)));
++
++Finder _action(String label) => find.ancestor(
++    of: find.text(label),
++    matching: find.byWidgetPredicate((widget) => widget is TextButton));
++
++Finder _diagnostic(String text) => find.byWidgetPredicate(
++    (widget) => widget is SelectableText && widget.data == text);
++
++void main() {
++  testWidgets('diagnostics are collapsed by default and toggle selectable details',
++      (tester) async {
++    const failure = ApiFailure(503, 'SERVICE_UNAVAILABLE', 'trace-visible');
++    await tester.pumpWidget(_host(const FailureView(failure)));
++    expect(tester.widget<Notice>(find.byType(Notice)).text, failure.message);
++    expect(find.text('错误详情'), findsOneWidget);
++    expect(find.byType(SelectableText, skipOffstage: false), findsNothing);
++    expect(find.textContaining('trace-visible'), findsNothing);
++
++    await tester.tap(find.text('错误详情'));
++    await tester.pumpAndSettle();
++    expect(_diagnostic('错误代码：SERVICE_UNAVAILABLE'), findsOneWidget);
++    expect(_diagnostic('追踪编号：trace-visible'), findsOneWidget);
++    await tester.tap(find.text('错误详情'));
++    await tester.pumpAndSettle();
++    expect(find.byType(SelectableText, skipOffstage: false), findsNothing);
++    expect(tester.takeException(), isNull);
++  });
++
++  testWidgets('recovery actions remain available before and after details open',
++      (tester) async {
++    var retries = 0, reauths = 0;
++    const failure = ApiFailure(401, 'REAUTH_REQUIRED', 'trace-reauth');
++    await tester.pumpWidget(_host(FailureView(
++        failure,
++        retry: () => retries++,
++        reauth: () => reauths++)));
++    expect(tester.getTopLeft(_action('重试')).dy,
++        lessThan(tester.getTopLeft(find.text('错误详情')).dy));
++    await tester.tap(_action('重试'));
++    await tester.tap(_action('重新安全验证'));
++    expect(retries, 1);
++    expect(reauths, 1);
++    await tester.tap(find.text('错误详情'));
++    await tester.pumpAndSettle();
++    await tester.tap(_action('重试'));
++    await tester.tap(_action('重新安全验证'));
++    expect(retries, 2);
++    expect(reauths, 2);
++    expect(_diagnostic('追踪编号：trace-reauth'), findsOneWidget);
++    await tester.pumpWidget(_host(const FailureView(failure)));
++    await tester.pumpAndSettle();
++    expect(_action('重试'), findsNothing);
++    expect(_action('重新安全验证'), findsNothing);
++    expect(_diagnostic('追踪编号：trace-reauth'), findsOneWidget);
++    expect(tester.takeException(), isNull);
++  });
++
++  testWidgets('reauth remains limited to authentication and unknown failures',
++      (tester) async {
++    var reauths = 0;
++    Widget view(Object failure) =>
++        _host(FailureView(failure, reauth: () => reauths++));
++    await tester.pumpWidget(view(const ApiFailure(401, 'UNAUTHENTICATED')));
++    await tester.tap(_action('重新安全验证'));
++    expect(reauths, 1);
++    await tester.pumpWidget(view(const ApiFailure(403, 'FORBIDDEN')));
++    expect(_action('重新安全验证'), findsNothing);
++    await tester.pumpWidget(view(Object()));
++    await tester.tap(_action('重新安全验证'));
++    expect(reauths, 2);
++    expect(find.byType(ExpansionTile), findsNothing);
++    expect(tester.takeException(), isNull);
++  });
++
++  testWidgets('changing the error code collapses previously expanded diagnostics',
++      (tester) async {
++    await tester.pumpWidget(_host(const FailureView(
++        ApiFailure(503, 'SERVICE_UNAVAILABLE', 'trace-same'))));
++    await tester.tap(find.text('错误详情'));
++    await tester.pumpAndSettle();
++    expect(_diagnostic('错误代码：SERVICE_UNAVAILABLE'), findsOneWidget);
++    await tester.pumpWidget(_host(const FailureView(
++        ApiFailure(0, 'NETWORK_ERROR', 'trace-same'))));
++    await tester.pumpAndSettle();
++    expect(find.byType(SelectableText, skipOffstage: false), findsNothing);
++    await tester.tap(find.text('错误详情'));
++    await tester.pumpAndSettle();
++    expect(_diagnostic('错误代码：NETWORK_ERROR'), findsOneWidget);
++    expect(_diagnostic('错误代码：SERVICE_UNAVAILABLE'), findsNothing);
++    expect(tester.takeException(), isNull);
++  });
++
++  testWidgets('changing the correlation ID collapses previously expanded details',
++      (tester) async {
++    await tester.pumpWidget(_host(const FailureView(
++        ApiFailure(503, 'SERVICE_UNAVAILABLE', 'trace-first'))));
++    await tester.tap(find.text('错误详情'));
++    await tester.pumpAndSettle();
++    expect(_diagnostic('追踪编号：trace-first'), findsOneWidget);
++    await tester.pumpWidget(_host(const FailureView(
++        ApiFailure(503, 'SERVICE_UNAVAILABLE', 'trace-second'))));
++    await tester.pumpAndSettle();
++    expect(find.byType(SelectableText, skipOffstage: false), findsNothing);
++    await tester.tap(find.text('错误详情'));
++    await tester.pumpAndSettle();
++    expect(_diagnostic('追踪编号：trace-second'), findsOneWidget);
++    expect(_diagnostic('追踪编号：trace-first'), findsNothing);
++    expect(tester.takeException(), isNull);
++  });
++
++  testWidgets('unknown errors keep private exception text out of the interface',
++      (tester) async {
++    await tester.pumpWidget(_host(FailureView(Exception('private payload'))));
++    expect(find.text('加载未完成，请重试。'), findsOneWidget);
++    expect(find.textContaining('private payload'), findsNothing);
++    expect(find.byType(ExpansionTile), findsNothing);
++    expect(find.byType(SelectableText, skipOffstage: false), findsNothing);
++    expect(_action('重试'), findsNothing);
++    expect(_action('重新安全验证'), findsNothing);
++    expect(tester.takeException(), isNull);
++  });
++
++  testWidgets('missing correlation IDs do not render an empty tracking label',
++      (tester) async {
++    await tester.pumpWidget(_host(
++        const FailureView(ApiFailure(503, 'SERVICE_UNAVAILABLE'))));
++    await tester.tap(find.text('错误详情'));
++    await tester.pumpAndSettle();
++    expect(_diagnostic('错误代码：SERVICE_UNAVAILABLE'), findsOneWidget);
++    expect(find.byType(SelectableText), findsOneWidget);
++    await tester.pumpWidget(_host(
++        const FailureView(ApiFailure(503, 'SERVICE_UNAVAILABLE', ''))));
++    await tester.pumpAndSettle();
++    expect(find.byType(SelectableText, skipOffstage: false), findsNothing);
++    await tester.tap(find.text('错误详情'));
++    await tester.pumpAndSettle();
++    expect(_diagnostic('错误代码：SERVICE_UNAVAILABLE'), findsOneWidget);
++    expect(find.byType(SelectableText), findsOneWidget);
++    expect(tester.takeException(), isNull);
++  });
++
++  testWidgets('usage report failures share the optional diagnostic disclosure',
++      (tester) async {
++    const failure = UsageReportFailure(400, 'INVALID_REPORT_SCOPE');
++    await tester.pumpWidget(_host(const FailureView(failure)));
++    expect(tester.widget<Notice>(find.byType(Notice)).text,
++        (const ApiFailure(400, 'INVALID_REPORT_SCOPE')).message);
++    expect(find.byType(SelectableText, skipOffstage: false), findsNothing);
++    await tester.tap(find.text('错误详情'));
++    await tester.pumpAndSettle();
++    expect(_diagnostic('错误代码：INVALID_REPORT_SCOPE'), findsOneWidget);
++    expect(find.byType(SelectableText), findsOneWidget);
++    expect(tester.takeException(), isNull);
++  });
++
++  testWidgets('narrow large text keeps recovery and diagnostic details operable',
++      (tester) async {
++    tester.view.physicalSize = const Size(320, 700);
++    tester.view.devicePixelRatio = 1;
++    addTearDown(tester.view.resetPhysicalSize);
++    addTearDown(tester.view.resetDevicePixelRatio);
++    var retries = 0;
++    const trace = 'trace-0123456789-abcdefghijklmnopqrstuvwxyz-0123456789';
++    await tester.pumpWidget(_host(
++        FailureView(const ApiFailure(503, 'SERVICE_UNAVAILABLE', trace),
++            retry: () => retries++),
++        textScale: 1.8));
++    await tester.ensureVisible(find.text('错误详情'));
++    await tester.tap(find.text('错误详情'));
++    await tester.pumpAndSettle();
++    expect(_diagnostic('追踪编号：$trace'), findsOneWidget);
++    await tester.ensureVisible(_action('重试'));
++    await tester.tap(_action('重试'));
++    expect(retries, 1);
++    expect(tester.takeException(), isNull);
++  });
++}

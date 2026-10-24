@@ -1,0 +1,301 @@
+{
+  "status": "READER_ONLY_REGRESSION_PASSED_NOT_NEW_SDK_OR_ATTEMPT_ACCEPTANCE",
+  "helper": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm21-20261024-r2\\reporter_contract.py",
+    "bytes": 14292,
+    "sha256": "83c527e3138e77afe7b7ecfbd5919ab25f6e2ea764bc0ec9db47d23362138ba5"
+  },
+  "originalLog": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm21-20261024-r1\\attempt\\out\\tests.jsonl",
+    "bytes": 12958,
+    "sha256": "15b449a5f7259c4789ff98d2e52b2c7bf3be90a474c53bd7293a0a110d6c7cce"
+  },
+  "contract": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm21-20261024-r2\\expected-vm21-cases.json",
+    "bytes": 9676,
+    "sha256": "75580a2ee13b232b8a86ba7cc9b205d030f965a0ecd0c2fddd26ec5d8fe536e3"
+  },
+  "validNullRawReport": {
+    "status": "EXACT_VM21_REPORT_ACCEPTED",
+    "protocolVersion": "0.1.1",
+    "expectedSuiteCount": 2,
+    "actualSuiteCount": 2,
+    "suiteCount": 2,
+    "suitePaths": [
+      "test/dialog_submit_guard_test.dart",
+      "test/workbench_view_test.dart"
+    ],
+    "expectedVisibleTests": 21,
+    "visibleTests": 21,
+    "successfulVisibleTests": 21,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "actualVisibleCases": [
+      {
+        "selector": "test/dialog_submit_guard_test.dart",
+        "name": "412 draft preserves trimmed text numeric labels and empty fields",
+        "testID": 26,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/dialog_submit_guard_test.dart",
+        "name": "412 preserves the submitted draft and blocks held save callbacks",
+        "testID": 22,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/dialog_submit_guard_test.dart",
+        "name": "access loss during submission hides a late 412 and prevents resubmit",
+        "testID": 25,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/dialog_submit_guard_test.dart",
+        "name": "access loss hides a 412 draft and gives original workspace guidance",
+        "testID": 24,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/dialog_submit_guard_test.dart",
+        "name": "queued edit callbacks submit only once before the next frame",
+        "testID": 21,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/dialog_submit_guard_test.dart",
+        "name": "unknown result retries the same payload before a 412 stops replay",
+        "testID": 23,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "background refresh preserves prior activity and common actions",
+        "testID": 17,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "connection checks take priority over setup",
+        "testID": 5,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "empty workspace opens the existing subject form",
+        "testID": 6,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "established workspace offers reports instead of onboarding",
+        "testID": 9,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "existing subject without devices opens the existing device form",
+        "testID": 7,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "help takes priority over every other task",
+        "testID": 3,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "loading and failures never show ready counts or connection claims",
+        "testID": 12,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "narrow large text keeps urgent action and metrics operable",
+        "testID": 14,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "network retry keeps stale summary until a fresh result arrives",
+        "testID": 16,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "no draft links to rules without claiming rules are absent",
+        "testID": 8,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "pending approvals take priority over connection checks",
+        "testID": 4,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "refresh completion is explicit and active forms block duplicates",
+        "testID": 13,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "stale summary with 503 keeps common actions and previous data",
+        "testID": 15,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "summary links and common actions keep their intended targets",
+        "testID": 10,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "unavailable sections hide counts, actions and audit content",
+        "testID": 11,
+        "result": "success",
+        "skipped": false,
+        "hidden": false
+      }
+    ],
+    "hiddenSuccessfulTests": [
+      {
+        "selector": "test/dialog_submit_guard_test.dart",
+        "name": "loading D:/codes/mobile/ai-manager/.cache/guardian-current-20261024-r13-headace/src/apps/guardian/test/dialog_submit_guard_test.dart",
+        "testID": 19,
+        "result": "success",
+        "skipped": false,
+        "hidden": true
+      },
+      {
+        "selector": "test/workbench_view_test.dart",
+        "name": "loading D:/codes/mobile/ai-manager/.cache/guardian-current-20261024-r13-headace/src/apps/guardian/test/workbench_view_test.dart",
+        "testID": 1,
+        "result": "success",
+        "skipped": false,
+        "hidden": true
+      }
+    ],
+    "allStartedTestsCompleted": true,
+    "terminalDoneSuccess": true,
+    "eventCount": 53,
+    "printEvents": 0,
+    "bootstrapNotices": 1,
+    "logPin": {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm21-20261024-r1\\attempt\\out\\tests.jsonl",
+      "bytes": 12958,
+      "sha256": "15b449a5f7259c4789ff98d2e52b2c7bf3be90a474c53bd7293a0a110d6c7cce"
+    },
+    "nativeExitAndJobChecksRemainCallerResponsibility": true
+  },
+  "invalidStartsRejected": [
+    {
+      "case": "missing",
+      "rejected": true,
+      "reason": "Invalid/duplicate reporter start",
+      "input": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-null-version-reader-check-20261024-r1\\missing.jsonl",
+        "bytes": 12944,
+        "sha256": "d8f3f23f7be4f66d73e34754022a06f4c70a0eb26963aa7f27b6d90fbeea340d"
+      }
+    },
+    {
+      "case": "false",
+      "rejected": true,
+      "reason": "Invalid/duplicate reporter start",
+      "input": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-null-version-reader-check-20261024-r1\\false.jsonl",
+        "bytes": 12968,
+        "sha256": "da6a555fcdc9d38203302bbc50e126a85765ce824436e3cc13b8fa3a1715eaa4"
+      }
+    },
+    {
+      "case": "zero",
+      "rejected": true,
+      "reason": "Invalid/duplicate reporter start",
+      "input": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-null-version-reader-check-20261024-r1\\zero.jsonl",
+        "bytes": 12964,
+        "sha256": "f63fafa1dd5495693b3215499eddb19543d167d8ab655a08827894b8193f088d"
+      }
+    },
+    {
+      "case": "empty",
+      "rejected": true,
+      "reason": "Invalid/duplicate reporter start",
+      "input": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-null-version-reader-check-20261024-r1\\empty.jsonl",
+        "bytes": 12965,
+        "sha256": "6c93910d8d43aab9113b96d982612b0e379d311aab117797e0441c9b99d592ec"
+      }
+    },
+    {
+      "case": "list",
+      "rejected": true,
+      "reason": "Invalid/duplicate reporter start",
+      "input": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-null-version-reader-check-20261024-r1\\list.jsonl",
+        "bytes": 12965,
+        "sha256": "ac63e6a66288a3a712d68165af37b78363b62458eb62212ef1061f79682fbb94"
+      }
+    },
+    {
+      "case": "object",
+      "rejected": true,
+      "reason": "Invalid/duplicate reporter start",
+      "input": {
+        "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-null-version-reader-check-20261024-r1\\object.jsonl",
+        "bytes": 12965,
+        "sha256": "016ac296cf069d7bd19d3eab0c1aa7fed8e62672c7b3a380323dd03f1d0bffa5"
+      }
+    }
+  ],
+  "newSdkCalls": 0,
+  "newApplicationTestsRun": false,
+  "reporterModuleActuallyImportedAndCalled": true,
+  "originalR1OverallRedUntouched": true,
+  "newR2RootPostReleaseStillRequired": true
+}

@@ -1,0 +1,19 @@
+{
+  "status": "STATIC_NEW_TEST_SOURCE_ALL_UNRUN",
+  "file": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\failure_view_test.dart",
+  "newCases": 9,
+  "names": [
+    "diagnostics are collapsed by default and toggle selectable details",
+    "recovery actions remain available before and after details open",
+    "reauth remains limited to authentication and unknown failures",
+    "changing the error code collapses previously expanded diagnostics",
+    "changing the correlation ID collapses previously expanded details",
+    "unknown errors keep private exception text out of the interface",
+    "missing correlation IDs do not render an empty tracking label",
+    "usage report failures share the optional diagnostic disclosure",
+    "narrow large text keeps recovery and diagnostic details operable"
+  ],
+  "wholeRegressionRootsBefore": 181,
+  "wholeRegressionRootsAfter": 182,
+  "previous181RootsRetained": true
+}

@@ -1,0 +1,46 @@
+{
+  "utc": "2026-10-24T01:54:40.854400+00:00",
+  "pid": 23548,
+  "creationFiletime": 134372804808478751,
+  "argv": [
+    "C:\\Windows\\System32\\cmd.exe",
+    "/d",
+    "/v:off",
+    "/c",
+    "D:\\softwares\\flutter\\bin\\flutter.bat --no-version-check --suppress-analytics test --no-pub --concurrency=1 --reporter=json test/workbench_view_test.dart test/dialog_submit_guard_test.dart"
+  ],
+  "workingDirectory": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r13-headace\\src\\apps\\guardian",
+  "selectorCount": 2,
+  "selectors": [
+    "test/workbench_view_test.dart",
+    "test/dialog_submit_guard_test.dart"
+  ],
+  "expectedVisibleCases": 21,
+  "testCaseContractPin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm21-20261024-r1\\expected-vm21-cases.json",
+    "bytes": 9676,
+    "sha256": "75580a2ee13b232b8a86ba7cc9b205d030f965a0ecd0c2fddd26ec5d8fe536e3"
+  },
+  "reporterContractCodePin": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm21-20261024-r1\\reporter_contract.py",
+    "bytes": 14173,
+    "sha256": "f70a6b30b165afb25eff914d610f458459c3620d79522500fd51a4979ccffeb0"
+  },
+  "workerStartQpc": 84970.0017922,
+  "commandDeadlineQpc": 85105.0017922,
+  "commandCleanupDeadlineQpc": 85110.0017922,
+  "workerDeadlineQpc": 85135.0017922,
+  "commandBudgetSeconds": 115.3304194999946,
+  "workerElapsedAtLaunch": 19.669581299996935,
+  "postflightReserveSeconds": 25,
+  "processLocalTemp": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm21-20261024-r1\\attempt\\tmp",
+  "pubAndStorageLoopbackDisabled": true,
+  "nativeProcessHandleRetained": true,
+  "atomicNestedJobMembership": true,
+  "launchRecordBeforeResume": true,
+  "sdkProcessSafeDirectories": [
+    "D:\\codes\\mobile\\ai-manager",
+    "D:\\softwares\\flutter"
+  ],
+  "nativeMemoryLimitClaimed": false
+}

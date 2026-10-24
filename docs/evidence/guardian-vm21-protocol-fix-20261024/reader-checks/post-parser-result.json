@@ -1,0 +1,52 @@
+{
+  "status": "INDEPENDENT_FILE_PARSER_REGRESSION_PASSED_NOT_ROOT_POST_ACCEPTANCE",
+  "postCode": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm21-post-20261024-r2\\post.py",
+    "bytes": 43536,
+    "sha256": "1e23da30c25311470366e27dc9c78cd3e21c5723c85d3b1e9889e4c18c6542ce"
+  },
+  "originalLog": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm21-20261024-r1\\attempt\\out\\tests.jsonl",
+    "bytes": 12958,
+    "sha256": "15b449a5f7259c4789ff98d2e52b2c7bf3be90a474c53bd7293a0a110d6c7cce"
+  },
+  "visibleSuccesses": 21,
+  "sameTypedReportAsFixedHelper": true,
+  "invalidStartsRejected": [
+    {
+      "case": "missing",
+      "rejected": true,
+      "reason": "Invalid reporter start"
+    },
+    {
+      "case": "false",
+      "rejected": true,
+      "reason": "Invalid reporter start"
+    },
+    {
+      "case": "zero",
+      "rejected": true,
+      "reason": "Invalid reporter start"
+    },
+    {
+      "case": "empty",
+      "rejected": true,
+      "reason": "Invalid reporter start"
+    },
+    {
+      "case": "list",
+      "rejected": true,
+      "reason": "Invalid reporter start"
+    },
+    {
+      "case": "object",
+      "rejected": true,
+      "reason": "Invalid reporter start"
+    }
+  ],
+  "pureParserActuallyImportedAndCalled": true,
+  "postMainEntryInvoked": false,
+  "newSdkCalls": 0,
+  "r1OverallRedUnchanged": true,
+  "r2ActualRootPostReleaseStillRequired": true
+}

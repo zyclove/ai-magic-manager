@@ -1,0 +1,20 @@
+{
+  "status": "RETIRED_UNCONSUMED_SOURCE_ACE_PLAN_DO_NOT_EXECUTE",
+  "sourceCommit": "ace559e69cca12b8b56b11fab9491bf60251e04f",
+  "reason": "Three startup attempts refused before creating host/worker while other SDK processes and low memory persisted. User-authorized static UI work now changes FailureView and adds a test root, so later execution must bind the new source and preserve all previous roots.",
+  "rootPrelaunchChunks": ["d777d3", "4118a8", "fb5086"],
+  "allPrelaunchExitCodes": [1, 1, 1],
+  "lastAbsenceAndResourceProbeChunk": "40d2b2",
+  "lastProbeAtUtc": "2026-10-24T02:13:25.9779602Z",
+  "rootAttemptCreated": false,
+  "workerAttemptCreated": false,
+  "sdkCalls": 0,
+  "applicationTestsRun": false,
+  "grantConsumed": false,
+  "ownLiveSdkHandle": false,
+  "sameAceSourceR1ApplicationLogHas21Successes": true,
+  "r1OverallAccepted": false,
+  "readerOnlyChecksDoNotChangeOverallAttemptResult": true,
+  "oldArtifactsPreserved": true,
+  "futureCurrentSourceBindingRequired": true
+}

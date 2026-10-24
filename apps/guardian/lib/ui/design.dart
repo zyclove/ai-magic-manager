@@ -178,27 +178,53 @@ class FailureView extends StatelessWidget {
       UsageReportFailure value => ApiFailure(value.status, value.code),
       _ => null,
     };
+    final showReauth =
+        reauth != null && (failure?.status == 401 || failure == null);
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Notice(failure?.message ?? '加载未完成，请重试。', warning: true),
-      if (failure != null)
-        Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: SelectableText(
-                '${failure.code}${failure.correlationId == null ? '' : ' · ${failure.correlationId}'}',
-                style: const TextStyle(fontSize: 11, color: muted))),
-      const SizedBox(height: 8),
-      Wrap(spacing: 8, children: [
-        if (retry != null)
-          TextButton.icon(
-              onPressed: retry,
-              icon: const Icon(Icons.refresh, size: 18),
-              label: const Text('重试')),
-        if (reauth != null && (failure?.status == 401 || failure == null))
-          TextButton.icon(
-              onPressed: reauth,
-              icon: const Icon(Icons.verified_user_outlined, size: 18),
-              label: const Text('重新安全验证'))
-      ])
+      if (retry != null || showReauth) ...[
+        const SizedBox(height: 8),
+        Wrap(spacing: 8, children: [
+          if (retry != null)
+            TextButton.icon(
+                onPressed: retry,
+                icon: const Icon(Icons.refresh, size: 18),
+                label: const Text('重试')),
+          if (showReauth)
+            TextButton.icon(
+                onPressed: reauth,
+                icon: const Icon(Icons.verified_user_outlined, size: 18),
+                label: const Text('重新安全验证'))
+        ]),
+      ],
+      if (failure != null) ...[
+        const SizedBox(height: 8),
+        PageStorage(
+            key: ValueKey((failure.code, failure.correlationId)),
+            bucket: PageStorageBucket(),
+            child: ExpansionTile(
+                tilePadding: EdgeInsets.zero,
+                childrenPadding: const EdgeInsets.only(top: 4, bottom: 8),
+                expandedAlignment: Alignment.centerLeft,
+                expandedCrossAxisAlignment: CrossAxisAlignment.start,
+                dense: true,
+                minTileHeight: 48,
+                shape: const Border(),
+                collapsedShape: const Border(),
+                title: const Text('错误详情',
+                    style: TextStyle(fontSize: 12, color: muted)),
+                children: [
+                  SelectableText('错误代码：${failure.code}',
+                      style: const TextStyle(
+                          fontSize: 12, color: muted, height: 1.6)),
+                  if (failure.correlationId?.isNotEmpty == true)
+                    Padding(
+                        padding: const EdgeInsets.only(top: 4),
+                        child: SelectableText('追踪编号：${failure.correlationId}',
+                            style: const TextStyle(
+                                fontSize: 12, color: muted, height: 1.6))),
+                ])),
+      ],
     ]);
   }
 }

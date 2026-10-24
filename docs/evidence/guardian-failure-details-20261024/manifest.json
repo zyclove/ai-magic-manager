@@ -1,0 +1,134 @@
+{
+  "status": "SOURCE_REVIEW_AND_SCOPE_EVIDENCE_NOT_RUNTIME_ACCEPTANCE",
+  "baseCommit": "ace559e69cca12b8b56b11fab9491bf60251e04f",
+  "copies": [
+    {
+      "source": {
+        "path": ".cache/guardian-failure-details-20261024-r2/full.patch",
+        "bytes": 12412,
+        "sha256": "28e3cf8f06d381f7c0d31e4075e51068eab4ed6ec37f0a6b90fa6b576aafeb19"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-failure-details-20261024/component.patch",
+        "bytes": 12412,
+        "sha256": "28e3cf8f06d381f7c0d31e4075e51068eab4ed6ec37f0a6b90fa6b576aafeb19"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-failure-details-20261024-r2/source-pins.json",
+        "bytes": 3223,
+        "sha256": "10a6d01ad0cfd75ef080d4c0f764e0330e3627963ccf677e0846005afc201eb1"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-failure-details-20261024/author-source-pins.json",
+        "bytes": 3223,
+        "sha256": "10a6d01ad0cfd75ef080d4c0f764e0330e3627963ccf677e0846005afc201eb1"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-failure-details-20261024-r2/test-names.json",
+        "bytes": 925,
+        "sha256": "2f19828ef0864f1d78b42b86724aeb6486844cbd5d0349130ce327c302dd70b3"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-failure-details-20261024/new-test-names.json",
+        "bytes": 925,
+        "sha256": "2f19828ef0864f1d78b42b86724aeb6486844cbd5d0349130ce327c302dd70b3"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-failure-details-20261024-r2/review.md",
+        "bytes": 2340,
+        "sha256": "def7acf2e773d308bc3e1be64bbb1361d4140fb2bc9f5a9ef4f8c6f7eb555bde"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-failure-details-20261024/author-review.md",
+        "bytes": 2340,
+        "sha256": "def7acf2e773d308bc3e1be64bbb1361d4140fb2bc9f5a9ef4f8c6f7eb555bde"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-failure-details-independent-20261024-r5/compatibility-tests.patch",
+        "bytes": 7089,
+        "sha256": "feac984e6ba34b57227d08c3dc53a3c2f7a445621759a1bd09e81ecce30c883b"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-failure-details-20261024/compatibility-tests.patch",
+        "bytes": 7089,
+        "sha256": "feac984e6ba34b57227d08c3dc53a3c2f7a445621759a1bd09e81ecce30c883b"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-failure-details-independent-20261024-r5/pins.json",
+        "bytes": 2713,
+        "sha256": "f88ecd5d24e8296621b18ed0215230d92793c46907898af0b56c7b955dfea5f7"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-failure-details-20261024/compatibility-pins.json",
+        "bytes": 2713,
+        "sha256": "f88ecd5d24e8296621b18ed0215230d92793c46907898af0b56c7b955dfea5f7"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-failure-details-independent-20261024-r5/review.md",
+        "bytes": 5603,
+        "sha256": "01bc93db4c990cf630c4654b55f25976536c6bac081b75e5e7440fc7d6093df6"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-failure-details-20261024/compatibility-review.md",
+        "bytes": 5603,
+        "sha256": "01bc93db4c990cf630c4654b55f25976536c6bac081b75e5e7440fc7d6093df6"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-failure-details-phase-final-review-20261024-r1/review.md",
+        "bytes": 3711,
+        "sha256": "3cfba1dc88ea6b17a140407b6cc975d4bc35e12d0870f70caa92983f58f56411"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-failure-details-20261024/final-review.md",
+        "bytes": 3711,
+        "sha256": "3cfba1dc88ea6b17a140407b6cc975d4bc35e12d0870f70caa92983f58f56411"
+      }
+    },
+    {
+      "source": {
+        "path": ".cache/guardian-failure-details-phase-final-review-20261024-r1/pins.json",
+        "bytes": 3002,
+        "sha256": "9d7efacf50532665d0f425228098a6cad2107d3f18b74582c0b5543dc202c089"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-failure-details-20261024/final-review-pins.json",
+        "bytes": 3002,
+        "sha256": "9d7efacf50532665d0f425228098a6cad2107d3f18b74582c0b5543dc202c089"
+      }
+    }
+  ],
+  "scope": {
+    "path": "docs/evidence/guardian-failure-details-20261024/full-regression-182-scope.json",
+    "bytes": 78184,
+    "sha256": "042445e111832fc1e0f3212cecf7eae9e1bd528116bc4dabe18082650c575ed5"
+  },
+  "summary": {
+    "path": "docs/evidence/guardian-failure-details-20261024/source-summary.json",
+    "bytes": 1452,
+    "sha256": "d17cdcd3bc21764d3d4c59c741ca1d0d479a57c16dfd861f9700a7bb8c717c8a"
+  },
+  "humanReview": {
+    "path": "docs/reviews/guardian-failure-details-20261024.md",
+    "bytes": 2697,
+    "sha256": "a2d8a065ef2c404a56a82be5ce3de4421ec87fe7e6de33ddd7d8434c0bc33908"
+  },
+  "protocolArchive": {
+    "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/manifest.json",
+    "bytes": 19269,
+    "sha256": "f99365f7c0f261423d962a62b1328595d13801d1f2dd744113f7ad80caae439c"
+  }
+}

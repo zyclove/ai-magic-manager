@@ -1,0 +1,11 @@
+# VM21 R1: independent actual-file readback
+
+Overall result remains **RED / NOT ACCEPTED**. This review does not override the R1 validator, replay it with corrected code, or grant acceptance from command-level successes.
+
+The original JSONL contains exactly2 VM suites and21 unique visible expected name/source pairs (15 Workbench +6 shared form). Every visible root URL and declaration line matches the pinned contract/current selected source. All23 starts (including2 hidden loading records) have exactly one success completion, no skips/errors/failures, and final done=true; timestamps are monotonic and IDs/ownership are consistent. The exact loopback banner precedes protocol0.1.1. The raw start explicitly has runnerVersion:null.
+
+The command retained identity naturally exits0 with complete private Job0 before the original135 deadline and0.5s drain limit; postflight retains the same command identity/terminal state. Its worker records sdkCalls1/testsRun=true but exactTestReportAccepted=false and logError="ValueError: Invalid/duplicate reporter start". Worker naturally exits1 with final Job0; host and Root remain NOT_ACCEPTED. Root same-handle first signal is48.7595584s, exit1, with no force/emergency. No forced termination/deadline/close fallback is recorded at any layer. Pre/post raw guard records equal the embedded receipt; this reviewer does not rehash external runtime/cache payloads.
+
+The post rejects Root's nonzero proof. The actual release names c66601/1 and c46e7b/1, records windowReleased=true, SDK0/unknown0 and no owned live SDK handle, while testAccepted=false. This is release-state evidence from that recorded instant, not a fresh whole-machine scan by this reviewer. The only reporter validation error recorded is the start condition; the independent command-level observation is not a claim of overall acceptance or current full181 regression acceptance.
+
+Only ordinary file/hash/JSON readback and new review artifacts were used. No candidate/reporter helper, corrected helper, AST/parser/compiler, SDK/test, process API, network, Main or Git mutation was invoked. Source freeze and qualifications were not repeated. Full181, browser/HTTP/backend/device/UI integration remain pending.

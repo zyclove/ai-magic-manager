@@ -148,9 +148,13 @@ void main() {
   });
   testWidgets('malformed and duplicate devices fail before opening a selector',
       (tester) async {
+    var requests = 0, variants = 0;
+    final loadedVariants = <int>[];
     final repo = UsageReportRepository(
-        api: Api(() async =>
-            MockClient((_) async => throw StateError('must not request'))),
+        api: Api(() async => MockClient((_) async {
+              requests++;
+              throw StateError('must not request');
+            })),
         root: '/tenants/$subject',
         current: () => true);
     for (final devices in <List<UsageReportTarget>>[
@@ -160,16 +164,49 @@ void main() {
       [const UsageReportTarget(device, registration, subject, '')],
       [target, target],
     ]) {
+      final variant = ++variants;
+      var loads = 0;
       await tester.pumpWidget(host(UsageReportsView(
           key: UniqueKey(),
           repository: repo,
-          loadTargets: () async => devices,
+          loadTargets: () async {
+            loads++;
+            loadedVariants.add(variant);
+            return devices;
+          },
           timeZone: 'UTC')));
       await tester.pumpAndSettle();
-      expect(find.text('INVALID_USAGE_REPORT_RESPONSE'), findsOneWidget);
+      expect(loads, 1);
+      expect(loadedVariants, hasLength(variant));
+      expect(loadedVariants.last, variant);
+      final failure = find.byType(FailureView);
+      expect(failure, findsOneWidget);
+      expect(
+          tester.widget<Notice>(find.descendant(
+              of: failure, matching: find.byType(Notice))).text,
+          (const ApiFailure(502, 'INVALID_USAGE_REPORT_RESPONSE')).message);
+      expect(find.byType(SelectableText, skipOffstage: false), findsNothing);
+      final details =
+          find.descendant(of: failure, matching: find.text('错误详情'));
+      await tester.ensureVisible(details);
+      await tester.tap(details);
+      await tester.pumpAndSettle();
+      expect(
+          find.descendant(
+              of: failure,
+              matching: find.byWidgetPredicate((widget) =>
+                  widget is SelectableText &&
+                  widget.data == '错误代码：INVALID_USAGE_REPORT_RESPONSE')),
+          findsOneWidget);
       expect(find.text('生成报表'), findsNothing);
+      expect(find.text('后台生成'), findsNothing);
+      expect(find.byType(UsageReportDeviceView), findsNothing);
+      expect(requests, 0);
+      expect(loads, 1);
       expect(tester.takeException(), isNull);
     }
+    expect(variants, 5);
+    expect(loadedVariants, [1, 2, 3, 4, 5]);
   });
   testWidgets('failed roster resolution never falls back to an unscoped query',
       (tester) async {

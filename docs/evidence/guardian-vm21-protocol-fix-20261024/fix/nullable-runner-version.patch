@@ -1,0 +1,28 @@
+--- vm21-r1/reporter_contract.py
++++ vm21-r2/reporter_contract.py
+@@ -189,8 +189,10 @@
+             _require(starts == 1 and event is events[0]
+                      and event.get('protocolVersion') == '0.1.1'
+                      and _integer(event.get('pid')) and event['pid'] > 0
+-                     and type(event.get('runnerVersion')) is str
+-                     and bool(event['runnerVersion']), 'Invalid/duplicate reporter start')
++                     and 'runnerVersion' in event
++                     and (event['runnerVersion'] is None
++                          or (type(event['runnerVersion']) is str
++                              and bool(event['runnerVersion']))), 'Invalid/duplicate reporter start')
+         elif kind == 'allSuites':
+             discovered += 1
+             _require(discovered == 1 and type(event.get('count')) is int
+--- vm21-r1/post.py
++++ vm21-r2/post-condition-only.py
+@@ -282,7 +282,9 @@
+             start_count += 1
+             require(start_count == 1 and event is events[0] and event.get('protocolVersion') == '0.1.1'
+                     and natural_id(event.get('pid')) and event['pid'] > 0
+-                    and type(event.get('runnerVersion')) is str and bool(event['runnerVersion']),
++                    and 'runnerVersion' in event
++                    and (event['runnerVersion'] is None
++                         or (type(event['runnerVersion']) is str and bool(event['runnerVersion']))),
+                     'Invalid reporter start')
+         elif kind == 'allSuites':
+             suite_count += 1

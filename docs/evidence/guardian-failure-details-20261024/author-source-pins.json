@@ -1,0 +1,77 @@
+{
+  "status": "FINAL_STATIC_FAILURE_DETAILS_IMPLEMENTATION_ALL_TESTS_UNRUN",
+  "baseCommit": "ace559e69cca12b8b56b11fab9491bf60251e04f",
+  "mainFiles": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\design.dart",
+      "bytes": 34356,
+      "sha256": "9bbcac7001d0c325a1f00533e94f5ddd234417480e6449f26c8e3e48ff3dce23"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\failure_view_test.dart",
+      "bytes": 8857,
+      "sha256": "4064e0c25b80f972c7e2d679d28eaa4782465f32875f2cf2b6b9293db20a9db4"
+    }
+  ],
+  "snapshots": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-failure-details-20261024-r2\\design-before.dart",
+      "bytes": 33179,
+      "sha256": "73b706d034dd0de8827957d39bfce43fba11ca9b470a807136006719caa5f13d"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-failure-details-20261024-r2\\design-r1-after.dart",
+      "bytes": 34198,
+      "sha256": "d9158f79aa21838b8d94a10953783210293afa35a44da5117d2d776a547d06c3"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-failure-details-20261024-r2\\failure-view-r1-test.dart",
+      "bytes": 8495,
+      "sha256": "70b43d46063eda835e00663e2a15e831e49cbe31448a893f16b52b54f63ed5d0"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-failure-details-20261024-r2\\design-after.dart",
+      "bytes": 34356,
+      "sha256": "9bbcac7001d0c325a1f00533e94f5ddd234417480e6449f26c8e3e48ff3dce23"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-failure-details-20261024-r2\\failure-view-test.dart",
+      "bytes": 8857,
+      "sha256": "4064e0c25b80f972c7e2d679d28eaa4782465f32875f2cf2b6b9293db20a9db4"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-failure-details-20261024-r2\\full.patch",
+      "bytes": 12412,
+      "sha256": "28e3cf8f06d381f7c0d31e4075e51068eab4ed6ec37f0a6b90fa6b576aafeb19"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-failure-details-20261024-r2\\test-names.json",
+      "bytes": 925,
+      "sha256": "2f19828ef0864f1d78b42b86724aeb6486844cbd5d0349130ce327c302dd70b3"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-failure-details-20261024-r2\\before-pins.json",
+      "bytes": 861,
+      "sha256": "72b5ed15dc3ee2becebb4a1486e0df86f415cb5049c433dce40fc8e34b2a6bf0"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-failure-details-20261024-r2\\review.md",
+      "bytes": 2340,
+      "sha256": "def7acf2e773d308bc3e1be64bbb1361d4140fb2bc9f5a9ef4f8c6f7eb555bde"
+    }
+  ],
+  "sdkPrimarySources": [
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter\\lib\\src\\material\\expansion_tile.dart",
+      "bytes": 37416,
+      "sha256": "038b6d5d29dcdd2dfe284470c243417a988d415fe66bb0fe8a856bf78197dadf"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter\\lib\\src\\widgets\\page_storage.dart",
+      "bytes": 8568,
+      "sha256": "ef963722a4d98a233aacb56387a14d13d6bde906e6b3e206661dd570ae1227ed"
+    }
+  ],
+  "outsideFailureViewClassBytesMatchBase": true,
+  "sdkTestsAstFormatterBrowserNetworkOrGitWrites": false
+}

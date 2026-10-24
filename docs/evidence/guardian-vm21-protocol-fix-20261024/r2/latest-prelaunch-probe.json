@@ -1,0 +1,83 @@
+{
+  "atUtc": "2026-10-24T02:13:25.9779602Z",
+  "sdk": [
+    {
+      "Id": 14436,
+      "ProcessName": "dart"
+    },
+    {
+      "Id": 27184,
+      "ProcessName": "dart"
+    },
+    {
+      "Id": 89928,
+      "ProcessName": "dart"
+    },
+    {
+      "Id": 115724,
+      "ProcessName": "dart"
+    },
+    {
+      "Id": 23596,
+      "ProcessName": "dartaotruntime"
+    },
+    {
+      "Id": 51388,
+      "ProcessName": "dartaotruntime"
+    },
+    {
+      "Id": 77648,
+      "ProcessName": "dartaotruntime"
+    },
+    {
+      "Id": 118576,
+      "ProcessName": "dartaotruntime"
+    },
+    {
+      "Id": 124832,
+      "ProcessName": "go"
+    },
+    {
+      "Id": 14044,
+      "ProcessName": "java"
+    },
+    {
+      "Id": 28136,
+      "ProcessName": "java"
+    },
+    {
+      "Id": 93452,
+      "ProcessName": "java"
+    },
+    {
+      "Id": 111728,
+      "ProcessName": "java"
+    },
+    {
+      "Id": 70224,
+      "ProcessName": "platform.test"
+    },
+    {
+      "Id": 124836,
+      "ProcessName": "platform.test"
+    },
+    {
+      "Id": 97576,
+      "ProcessName": "runner.test"
+    }
+  ],
+  "unknown": [],
+  "availableRamBytes": 1601384448,
+  "disks": [
+    {
+      "Name": "C",
+      "Free": 3315470336
+    },
+    {
+      "Name": "D",
+      "Free": 17551839232
+    }
+  ],
+  "rootAttemptExists": false,
+  "workerAttemptExists": false
+}

@@ -1,0 +1,92 @@
+{
+  "status": "NULLABLE_RUNNER_VERSION_PRIMARY_SOURCE_RECEIPT_NOT_TEST_VALIDATION",
+  "toolsPackageConfig": {
+    "path": "D:\\softwares\\flutter\\packages\\flutter_tools\\.dart_tool\\package_config.json",
+    "bytes": 20035,
+    "sha256": "49d0a9ce1c70ca6edd29537570cfe7ea6539843da50c6a85a107d829330150e8"
+  },
+  "toolsConfigMatchesExistingR1InputRuntimePin": true,
+  "toolsResolvedPackages": [
+    {
+      "name": "test",
+      "rootUri": "file:///C:/Users/Administrator/AppData/Local/Pub/Cache/hosted/pub.dev/test-1.25.2",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "test_api",
+      "rootUri": "file:///C:/Users/Administrator/AppData/Local/Pub/Cache/hosted/pub.dev/test_api-0.7.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    },
+    {
+      "name": "test_core",
+      "rootUri": "file:///C:/Users/Administrator/AppData/Local/Pub/Cache/hosted/pub.dev/test_core-0.6.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
+    }
+  ],
+  "sources": [
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\test-1.25.2\\doc\\json_reporter.md",
+      "bytes": 15351,
+      "sha256": "9e5b6b5cdd7fec6fbd5d7f23c6bf49632bef1ce0103d195bee25965380d253e9",
+      "lines": [
+        101,
+        104
+      ],
+      "supports": "StartEvent declares nullable runnerVersion; inability to load a version is an allowed reason for null.",
+      "role": "READ_ONLY_PRIMARY_SOURCE_REFERENCE_NOT_RUNTIME_REBASELINE"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\test-1.25.2\\doc\\json_reporter.schema.json",
+      "bytes": 5479,
+      "sha256": "dbd3b85b0e04f1fa0618857bf6df427d6e503c4cea0be313a7828a7fbe27ad96",
+      "lines": [
+        96,
+        105
+      ],
+      "supports": "Start requires runnerVersion and allows string or null.",
+      "role": "READ_ONLY_PRIMARY_SOURCE_REFERENCE_NOT_RUNTIME_REBASELINE"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\test_core-0.6.0\\lib\\src\\runner\\reporter\\json.dart",
+      "bytes": 10643,
+      "sha256": "702ffdd55010ab82cce9b36cff8cf3d70180ad3274f5ca98946c2f4b3d0397e7",
+      "lines": [
+        84,
+        85
+      ],
+      "supports": "Reporter emits protocol0.1.1 and the nullable testVersion value.",
+      "role": "READ_ONLY_PRIMARY_SOURCE_REFERENCE_NOT_RUNTIME_REBASELINE"
+    },
+    {
+      "path": "C:\\Users\\Administrator\\AppData\\Local\\Pub\\Cache\\hosted\\pub.dev\\test_core-0.6.0\\lib\\src\\runner\\version.dart",
+      "bytes": 1758,
+      "sha256": "deb9f914a2f5d2e05ef4fd6d72d8cac4aabd50d95362900d7dbe2729cec3178b",
+      "lines": [
+        9,
+        28
+      ],
+      "supports": "Version is nullable and returns null when current lockfile has no packages.test map.",
+      "role": "READ_ONLY_PRIMARY_SOURCE_REFERENCE_NOT_RUNTIME_REBASELINE"
+    }
+  ],
+  "frozenGuardianLock": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-current-20261024-r13-headace\\src\\apps\\guardian\\pubspec.lock",
+    "bytes": 15981,
+    "sha256": "a9591beb8b568839e7734f09727e1d588ab4caf400f1d5bb8470c7dab9c7501c"
+  },
+  "guardianLockHasNoTestPackage": true,
+  "observedRawLog": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm21-20261024-r1\\attempt\\out\\tests.jsonl",
+    "bytes": 12958,
+    "sha256": "15b449a5f7259c4789ff98d2e52b2c7bf3be90a474c53bd7293a0a110d6c7cce"
+  },
+  "observedStartRunnerVersion": null,
+  "inference": "The observed null agrees with the documented protocol and nullable version lookup. This receipt does not execute Dart or prove which source bytes built the already pinned tools snapshot.",
+  "initialReferenceSearchCorrection": "test1.25.8 and test_core0.6.5 were reference examples, not the Tools package_config resolved runtime dependencies; the four references above use the actual resolved1.25.2/0.6.0 paths.",
+  "runtimePinsReplaced": false,
+  "qualifiedHelperOrRuntimeRequalified": false,
+  "candidateReporterPostSdkAstTestsOrNetworkExecuted": false
+}

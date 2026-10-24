@@ -1,0 +1,63 @@
+{
+  "status": "FINAL_R5_STATIC_REVIEW_BINDING_ALL_TESTS_UNRUN",
+  "mainFiles": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\design.dart",
+      "bytes": 34356,
+      "sha256": "9bbcac7001d0c325a1f00533e94f5ddd234417480e6449f26c8e3e48ff3dce23"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\failure_view_test.dart",
+      "bytes": 8857,
+      "sha256": "4064e0c25b80f972c7e2d679d28eaa4782465f32875f2cf2b6b9293db20a9db4"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\managed_android_review_recovery_test.dart",
+      "bytes": 32110,
+      "sha256": "beca38185fab482b3ba87ddf084e3c07a491765eac1d3164c1cc0d3127e092a8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\usage_reports_view_test.dart",
+      "bytes": 18823,
+      "sha256": "aae58084b369c24a6f4828df5feabdbeacfa28e803b69b6f9c30c20da29f2975"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-failure-details-independent-20261024-r5\\compatibility-tests.patch",
+      "bytes": 7089,
+      "sha256": "feac984e6ba34b57227d08c3dc53a3c2f7a445621759a1bd09e81ecce30c883b"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-failure-details-independent-20261024-r5\\before-pins.json",
+      "bytes": 327,
+      "sha256": "e2c68dd8898fddbd95b840b76fd3ec0fdbdd4e73730d5063a0473a75904f1d31"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-failure-details-independent-20261024-r5\\changes.json",
+      "bytes": 1321,
+      "sha256": "9e89880a31e399ff4c6bd87015a61cfe093532d457bf63cdbf772a1e7d7b5a8c"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-failure-details-independent-20261024-r5\\review.md",
+      "bytes": 5603,
+      "sha256": "01bc93db4c990cf630c4654b55f25976536c6bac081b75e5e7440fc7d6093df6"
+    }
+  ],
+  "unchangedVariantAudit": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-failure-details-independent-20261024-r4\\variant-audit.json",
+    "bytes": 3688,
+    "sha256": "2b7700596c842aa14f794b8e1ff28c288ae9cdbe99d55eb4682577519ba13aca"
+  },
+  "priorReviewPins": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-failure-details-independent-20261024-r4\\pins.json",
+    "bytes": 3408,
+    "sha256": "10fb019a2a15293826755c6aca8b51b89f751524b1af2d161328dc957a368a5d"
+  },
+  "authorPins": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-failure-details-20261024-r2\\source-pins.json",
+    "bytes": 3223,
+    "sha256": "10a6d01ad0cfd75ef080d4c0f764e0330e3627963ccf677e0846005afc201eb1"
+  },
+  "sdkTestsAstFormatterBrowserNetworkOrGitWrites": false
+}

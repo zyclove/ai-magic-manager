@@ -1,0 +1,498 @@
+{
+  "status": "SELECTED_RAW_EVIDENCE_ARCHIVE_R1_RED_R2_UNRUN_RETIRED",
+  "createdAtUtc": "2026-10-24T02:20:29.140375+00:00",
+  "sourceCommit": "ace559e69cca12b8b56b11fab9491bf60251e04f",
+  "copies": [
+    {
+      "sourceBefore": {
+        "path": ".cache/guardian-vm21-20261024-r1/attempt/out/tests.jsonl",
+        "bytes": 12958,
+        "sha256": "15b449a5f7259c4789ff98d2e52b2c7bf3be90a474c53bd7293a0a110d6c7cce"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/r1/tests.jsonl",
+        "bytes": 12958,
+        "sha256": "15b449a5f7259c4789ff98d2e52b2c7bf3be90a474c53bd7293a0a110d6c7cce"
+      },
+      "sourceAfter": {
+        "path": ".cache/guardian-vm21-20261024-r1/attempt/out/tests.jsonl",
+        "bytes": 12958,
+        "sha256": "15b449a5f7259c4789ff98d2e52b2c7bf3be90a474c53bd7293a0a110d6c7cce"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/guardian-vm21-20261024-r1/root-attempt/result.json",
+        "bytes": 1240,
+        "sha256": "02b4140039acf6edcc0b30c8feb744d2628522d7c3bfa0a1cc191d47c0429f28"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/r1/root-result.json",
+        "bytes": 1240,
+        "sha256": "02b4140039acf6edcc0b30c8feb744d2628522d7c3bfa0a1cc191d47c0429f28"
+      },
+      "sourceAfter": {
+        "path": ".cache/guardian-vm21-20261024-r1/root-attempt/result.json",
+        "bytes": 1240,
+        "sha256": "02b4140039acf6edcc0b30c8feb744d2628522d7c3bfa0a1cc191d47c0429f28"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/guardian-vm21-20261024-r1/attempt/result.json",
+        "bytes": 72733,
+        "sha256": "d8131ab1f9b12b1185bef1d4540c960a1351c178190dd526079f7a4f9d5a7fda"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/r1/host-result.json",
+        "bytes": 72733,
+        "sha256": "d8131ab1f9b12b1185bef1d4540c960a1351c178190dd526079f7a4f9d5a7fda"
+      },
+      "sourceAfter": {
+        "path": ".cache/guardian-vm21-20261024-r1/attempt/result.json",
+        "bytes": 72733,
+        "sha256": "d8131ab1f9b12b1185bef1d4540c960a1351c178190dd526079f7a4f9d5a7fda"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/guardian-vm21-20261024-r1/attempt/receipt.json",
+        "bytes": 62629,
+        "sha256": "210ece5407dce64c5991dba68027ec1ad717dbf40c995fb6a2ee63ad383ed085"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/r1/worker-receipt.json",
+        "bytes": 62629,
+        "sha256": "210ece5407dce64c5991dba68027ec1ad717dbf40c995fb6a2ee63ad383ed085"
+      },
+      "sourceAfter": {
+        "path": ".cache/guardian-vm21-20261024-r1/attempt/receipt.json",
+        "bytes": 62629,
+        "sha256": "210ece5407dce64c5991dba68027ec1ad717dbf40c995fb6a2ee63ad383ed085"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/guardian-vm21-20261024-r1/attempt/launch.json",
+        "bytes": 1827,
+        "sha256": "1fc8668d715df86be2e6dfc088d4e023d5c104b82719d3dc5974eb44b0d8806d"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/r1/launch.json",
+        "bytes": 1827,
+        "sha256": "1fc8668d715df86be2e6dfc088d4e023d5c104b82719d3dc5974eb44b0d8806d"
+      },
+      "sourceAfter": {
+        "path": ".cache/guardian-vm21-20261024-r1/attempt/launch.json",
+        "bytes": 1827,
+        "sha256": "1fc8668d715df86be2e6dfc088d4e023d5c104b82719d3dc5974eb44b0d8806d"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/guardian-vm21-20261024-r1/attempt/preflight-pins.json",
+        "bytes": 1974,
+        "sha256": "0aebb9ef37efc46c941640cad7207852c66224ee4380da9c2726ab5d549397f8"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/r1/preflight-pins.json",
+        "bytes": 1974,
+        "sha256": "0aebb9ef37efc46c941640cad7207852c66224ee4380da9c2726ab5d549397f8"
+      },
+      "sourceAfter": {
+        "path": ".cache/guardian-vm21-20261024-r1/attempt/preflight-pins.json",
+        "bytes": 1974,
+        "sha256": "0aebb9ef37efc46c941640cad7207852c66224ee4380da9c2726ab5d549397f8"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/guardian-vm21-20261024-r1/attempt/postflight-pins.json",
+        "bytes": 1974,
+        "sha256": "7223fb6aa37d6442ca584f18a50b115b2a3546559022a1a5172f53362ce27eed"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/r1/postflight-pins.json",
+        "bytes": 1974,
+        "sha256": "7223fb6aa37d6442ca584f18a50b115b2a3546559022a1a5172f53362ce27eed"
+      },
+      "sourceAfter": {
+        "path": ".cache/guardian-vm21-20261024-r1/attempt/postflight-pins.json",
+        "bytes": 1974,
+        "sha256": "7223fb6aa37d6442ca584f18a50b115b2a3546559022a1a5172f53362ce27eed"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/guardian-vm21-post-20261024-r1/post.json",
+        "bytes": 3124,
+        "sha256": "140b09d478f40a326fbe50c4e8280770d6f23840dd08c7ccab6e3ee1211724f8"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/r1/post.json",
+        "bytes": 3124,
+        "sha256": "140b09d478f40a326fbe50c4e8280770d6f23840dd08c7ccab6e3ee1211724f8"
+      },
+      "sourceAfter": {
+        "path": ".cache/guardian-vm21-post-20261024-r1/post.json",
+        "bytes": 3124,
+        "sha256": "140b09d478f40a326fbe50c4e8280770d6f23840dd08c7ccab6e3ee1211724f8"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/guardian-vm21-20261024-r1/root-attempt/release.json",
+        "bytes": 1412,
+        "sha256": "63b3253c53c52844158ff49ee751af07d3bc9b716f1eb20f54cfbf23299b35da"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/r1/release.json",
+        "bytes": 1412,
+        "sha256": "63b3253c53c52844158ff49ee751af07d3bc9b716f1eb20f54cfbf23299b35da"
+      },
+      "sourceAfter": {
+        "path": ".cache/guardian-vm21-20261024-r1/root-attempt/release.json",
+        "bytes": 1412,
+        "sha256": "63b3253c53c52844158ff49ee751af07d3bc9b716f1eb20f54cfbf23299b35da"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/guardian-vm21-r1-actual-independent-20261024-r1/review.md",
+        "bytes": 2220,
+        "sha256": "8db892bbe06be1de9f44243dd7467455113a068d803ce213494333b916f170b7"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/r1/independent-review.md",
+        "bytes": 2220,
+        "sha256": "8db892bbe06be1de9f44243dd7467455113a068d803ce213494333b916f170b7"
+      },
+      "sourceAfter": {
+        "path": ".cache/guardian-vm21-r1-actual-independent-20261024-r1/review.md",
+        "bytes": 2220,
+        "sha256": "8db892bbe06be1de9f44243dd7467455113a068d803ce213494333b916f170b7"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/guardian-vm21-r1-actual-independent-20261024-r1/observations.json",
+        "bytes": 5130,
+        "sha256": "8829aa6b5f1bdffcc67cc61193b57cdaf6d0fea0f994a980bdd98fafd9a8c2f5"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/r1/independent-observations.json",
+        "bytes": 5130,
+        "sha256": "8829aa6b5f1bdffcc67cc61193b57cdaf6d0fea0f994a980bdd98fafd9a8c2f5"
+      },
+      "sourceAfter": {
+        "path": ".cache/guardian-vm21-r1-actual-independent-20261024-r1/observations.json",
+        "bytes": 5130,
+        "sha256": "8829aa6b5f1bdffcc67cc61193b57cdaf6d0fea0f994a980bdd98fafd9a8c2f5"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/guardian-vm21-null-runner-version-20261024-r1/fix.json",
+        "bytes": 2114,
+        "sha256": "c79fa46a40547f1420d6d3f680d8b51fefb8de5565159c85b880d922f20d1746"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/fix/fix.json",
+        "bytes": 2114,
+        "sha256": "c79fa46a40547f1420d6d3f680d8b51fefb8de5565159c85b880d922f20d1746"
+      },
+      "sourceAfter": {
+        "path": ".cache/guardian-vm21-null-runner-version-20261024-r1/fix.json",
+        "bytes": 2114,
+        "sha256": "c79fa46a40547f1420d6d3f680d8b51fefb8de5565159c85b880d922f20d1746"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/guardian-vm21-null-runner-version-20261024-r1/nullable-runner-version.patch",
+        "bytes": 1564,
+        "sha256": "95d39f28e6338f60f09c69ea4df02622c3601fa6802b28cbfb9cedeff92986b5"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/fix/nullable-runner-version.patch",
+        "bytes": 1564,
+        "sha256": "95d39f28e6338f60f09c69ea4df02622c3601fa6802b28cbfb9cedeff92986b5"
+      },
+      "sourceAfter": {
+        "path": ".cache/guardian-vm21-null-runner-version-20261024-r1/nullable-runner-version.patch",
+        "bytes": 1564,
+        "sha256": "95d39f28e6338f60f09c69ea4df02622c3601fa6802b28cbfb9cedeff92986b5"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/guardian-vm21-null-runner-version-20261024-r1/primary-source-pins.json",
+        "bytes": 4063,
+        "sha256": "63e38ffa53c0c049478e96c45bb699b98f651e9596a49b7c6ff133f6146e22ef"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/fix/primary-source-pins.json",
+        "bytes": 4063,
+        "sha256": "63e38ffa53c0c049478e96c45bb699b98f651e9596a49b7c6ff133f6146e22ef"
+      },
+      "sourceAfter": {
+        "path": ".cache/guardian-vm21-null-runner-version-20261024-r1/primary-source-pins.json",
+        "bytes": 4063,
+        "sha256": "63e38ffa53c0c049478e96c45bb699b98f651e9596a49b7c6ff133f6146e22ef"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/guardian-vm21-20261024-r2/reporter_contract.py",
+        "bytes": 14292,
+        "sha256": "83c527e3138e77afe7b7ecfbd5919ab25f6e2ea764bc0ec9db47d23362138ba5"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/fix/reporter_contract.py",
+        "bytes": 14292,
+        "sha256": "83c527e3138e77afe7b7ecfbd5919ab25f6e2ea764bc0ec9db47d23362138ba5"
+      },
+      "sourceAfter": {
+        "path": ".cache/guardian-vm21-20261024-r2/reporter_contract.py",
+        "bytes": 14292,
+        "sha256": "83c527e3138e77afe7b7ecfbd5919ab25f6e2ea764bc0ec9db47d23362138ba5"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/guardian-vm21-post-20261024-r2/post.py",
+        "bytes": 43536,
+        "sha256": "1e23da30c25311470366e27dc9c78cd3e21c5723c85d3b1e9889e4c18c6542ce"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/fix/post.py",
+        "bytes": 43536,
+        "sha256": "1e23da30c25311470366e27dc9c78cd3e21c5723c85d3b1e9889e4c18c6542ce"
+      },
+      "sourceAfter": {
+        "path": ".cache/guardian-vm21-post-20261024-r2/post.py",
+        "bytes": 43536,
+        "sha256": "1e23da30c25311470366e27dc9c78cd3e21c5723c85d3b1e9889e4c18c6542ce"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/check-guardian-null-reader-20261024.py",
+        "bytes": 2699,
+        "sha256": "53701c9c2e2e7fa76fc8e32bef27d29550bb3ea9162669ff02361bd8d18b6999"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/reader-checks/check-helper.py",
+        "bytes": 2699,
+        "sha256": "53701c9c2e2e7fa76fc8e32bef27d29550bb3ea9162669ff02361bd8d18b6999"
+      },
+      "sourceAfter": {
+        "path": ".cache/check-guardian-null-reader-20261024.py",
+        "bytes": 2699,
+        "sha256": "53701c9c2e2e7fa76fc8e32bef27d29550bb3ea9162669ff02361bd8d18b6999"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/guardian-null-version-reader-check-20261024-r1/result.json",
+        "bytes": 10040,
+        "sha256": "6d548aac2a3dccdafadb345e68843393ba35e2efd0cc8258872adda75241a469"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/reader-checks/helper-result.json",
+        "bytes": 10040,
+        "sha256": "6d548aac2a3dccdafadb345e68843393ba35e2efd0cc8258872adda75241a469"
+      },
+      "sourceAfter": {
+        "path": ".cache/guardian-null-version-reader-check-20261024-r1/result.json",
+        "bytes": 10040,
+        "sha256": "6d548aac2a3dccdafadb345e68843393ba35e2efd0cc8258872adda75241a469"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/check-guardian-null-post-reader-20261024.py",
+        "bytes": 2277,
+        "sha256": "033f86e968d33e187fcf6fc3a512fc76de13e571b91e40079d9b3889d9082ed6"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/reader-checks/check-post-parser.py",
+        "bytes": 2277,
+        "sha256": "033f86e968d33e187fcf6fc3a512fc76de13e571b91e40079d9b3889d9082ed6"
+      },
+      "sourceAfter": {
+        "path": ".cache/check-guardian-null-post-reader-20261024.py",
+        "bytes": 2277,
+        "sha256": "033f86e968d33e187fcf6fc3a512fc76de13e571b91e40079d9b3889d9082ed6"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/guardian-null-version-post-reader-check-20261024-r1/result.json",
+        "bytes": 1420,
+        "sha256": "4727c5310659ac620e05a5492413b1a8c908040d442f4ddc1d0335bd081f396d"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/reader-checks/post-parser-result.json",
+        "bytes": 1420,
+        "sha256": "4727c5310659ac620e05a5492413b1a8c908040d442f4ddc1d0335bd081f396d"
+      },
+      "sourceAfter": {
+        "path": ".cache/guardian-null-version-post-reader-check-20261024-r1/result.json",
+        "bytes": 1420,
+        "sha256": "4727c5310659ac620e05a5492413b1a8c908040d442f4ddc1d0335bd081f396d"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/guardian-vm21-20261024-r2/root-plan-retired.json",
+        "bytes": 996,
+        "sha256": "62d388a4dc7fa22d5d57706736e2b89410ecb72fd568e0a9f6254e9658014a33"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/r2/root-plan-retired.json",
+        "bytes": 996,
+        "sha256": "62d388a4dc7fa22d5d57706736e2b89410ecb72fd568e0a9f6254e9658014a33"
+      },
+      "sourceAfter": {
+        "path": ".cache/guardian-vm21-20261024-r2/root-plan-retired.json",
+        "bytes": 996,
+        "sha256": "62d388a4dc7fa22d5d57706736e2b89410ecb72fd568e0a9f6254e9658014a33"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/guardian-vm21-r2-prelaunch-refusal-20261024.json",
+        "bytes": 461,
+        "sha256": "f2e80a7aa3080f2e1dbe60fdd07c9d1d0f334149d4d447a990fa331d4320f1a2"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/r2/first-prelaunch-probe.json",
+        "bytes": 461,
+        "sha256": "f2e80a7aa3080f2e1dbe60fdd07c9d1d0f334149d4d447a990fa331d4320f1a2"
+      },
+      "sourceAfter": {
+        "path": ".cache/guardian-vm21-r2-prelaunch-refusal-20261024.json",
+        "bytes": 461,
+        "sha256": "f2e80a7aa3080f2e1dbe60fdd07c9d1d0f334149d4d447a990fa331d4320f1a2"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/guardian-vm21-r2-resources-20261024-next.json",
+        "bytes": 1418,
+        "sha256": "f13e8c875c590587cbfca7b92286e35052c9d2c82e0e705a68822a7ab559088c"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/r2/latest-prelaunch-probe.json",
+        "bytes": 1418,
+        "sha256": "f13e8c875c590587cbfca7b92286e35052c9d2c82e0e705a68822a7ab559088c"
+      },
+      "sourceAfter": {
+        "path": ".cache/guardian-vm21-r2-resources-20261024-next.json",
+        "bytes": 1418,
+        "sha256": "f13e8c875c590587cbfca7b92286e35052c9d2c82e0e705a68822a7ab559088c"
+      },
+      "byteExact": true
+    },
+    {
+      "sourceBefore": {
+        "path": ".cache/guardian-vm21-20261024-r1/expected-vm21-cases.json",
+        "bytes": 9676,
+        "sha256": "75580a2ee13b232b8a86ba7cc9b205d030f965a0ecd0c2fddd26ec5d8fe536e3"
+      },
+      "archive": {
+        "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/r1/expected-vm21-cases.json",
+        "bytes": 9676,
+        "sha256": "75580a2ee13b232b8a86ba7cc9b205d030f965a0ecd0c2fddd26ec5d8fe536e3"
+      },
+      "sourceAfter": {
+        "path": ".cache/guardian-vm21-20261024-r1/expected-vm21-cases.json",
+        "bytes": 9676,
+        "sha256": "75580a2ee13b232b8a86ba7cc9b205d030f965a0ecd0c2fddd26ec5d8fe536e3"
+      },
+      "byteExact": true
+    }
+  ],
+  "generatedFiles": [
+    {
+      "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/actual-summary.json",
+      "bytes": 3765,
+      "sha256": "1688fe8c1038816e2c7a65d0db0814baaa8ad7e8942a8d04876f54b22fcafe47"
+    },
+    {
+      "path": "docs/evidence/guardian-vm21-protocol-fix-20261024/README.md",
+      "bytes": 2096,
+      "sha256": "81c9f3400ebda5d9caeede4ecfd8bcd7c1f502f4149d85fc8d301f0a418a2abe"
+    }
+  ],
+  "humanReview": {
+    "path": "docs/reviews/guardian-vm21-protocol-fix-20261024.md",
+    "bytes": 1094,
+    "sha256": "0ea853fbc54a150c98163576ad4ac593d065f51897bebffa4d168f900bf1bfa9"
+  },
+  "pinOnlyReferences": [
+    {
+      "path": ".cache/guardian-vm21-20261024-r1/inputs.json",
+      "bytes": 16905,
+      "sha256": "2bc006c3fc639f5dc129e7ad7e1006cc319055cba433d8e24cdc9e159c6b4502"
+    },
+    {
+      "path": ".cache/guardian-vm21-20261024-r1/proposal.json",
+      "bytes": 9204,
+      "sha256": "1bdcae22da4976dbb6765874bc5cb9d49b229997a193cbd9836af4d48a79e083"
+    },
+    {
+      "path": ".cache/guardian-vm21-20261024-r1/root-sdk-grant.json",
+      "bytes": 2720,
+      "sha256": "6a973e455bf46c05c62f9768325a8b35c9ebfd89d4d0dc28af7db1edb33a942e"
+    },
+    {
+      "path": ".cache/guardian-vm21-20261024-r2/inputs.json",
+      "bytes": 16905,
+      "sha256": "490c115ccfcf2bc6ea32afd76abcba7943cbd5120233795e144dc644a3f5cf36"
+    },
+    {
+      "path": ".cache/guardian-vm21-20261024-r2/proposal.json",
+      "bytes": 9204,
+      "sha256": "78457bc96949bfa9f69eda8f36d029ef438accd880d2f5bcd170a705611834ef"
+    },
+    {
+      "path": ".cache/guardian-vm21-20261024-r2/root-sdk-grant.json",
+      "bytes": 3692,
+      "sha256": "d6e148baf15fbbdd976cc90f1778a74d681419718b110080e181ccd61e3b6fb8"
+    },
+    {
+      "path": ".cache/guardian-current-20261024-r13-headace/out/pins.json",
+      "bytes": 5172,
+      "sha256": "d3c25799a71f002e0779891b39954ad4a03ef25860be3c88839ab3076a9070bc"
+    }
+  ],
+  "runtimePayloadsOrQualificationCopied": false,
+  "archiveExecutedSdkTestsAstCandidateReadersOrProcessApi": false,
+  "r1OverallAccepted": false,
+  "r2Executed": false,
+  "currentLaterSourceAcceptanceClaimed": false
+}

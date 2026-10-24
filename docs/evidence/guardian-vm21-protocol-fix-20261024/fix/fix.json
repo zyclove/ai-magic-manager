@@ -1,0 +1,33 @@
+{
+  "status": "ONE_PROTOCOL_FIELD_NULLABILITY_FIX_NO_APPLICATION_OR_RESULT_REBASELINE",
+  "reporterBefore": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm21-20261024-r1\\reporter_contract.py",
+    "bytes": 14173,
+    "sha256": "f70a6b30b165afb25eff914d610f458459c3620d79522500fd51a4979ccffeb0"
+  },
+  "reporterAfter": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm21-20261024-r2\\reporter_contract.py",
+    "bytes": 14292,
+    "sha256": "83c527e3138e77afe7b7ecfbd5919ab25f6e2ea764bc0ec9db47d23362138ba5"
+  },
+  "postBefore": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm21-post-20261024-r1\\post.py",
+    "bytes": 43428,
+    "sha256": "969ec3dc68bf6066d6040e06daf89dcd31e5aa03979744f9ec31b37536fd29a3"
+  },
+  "postOldCondition": "                    and type(event.get('runnerVersion')) is str and bool(event['runnerVersion']),",
+  "postNewCondition": "                    and 'runnerVersion' in event\n                    and (event['runnerVersion'] is None\n                         or (type(event['runnerVersion']) is str and bool(event['runnerVersion']))),",
+  "reporterOldCondition": "                     and type(event.get('runnerVersion')) is str\n                     and bool(event['runnerVersion']), 'Invalid/duplicate reporter start')",
+  "reporterNewCondition": "                     and 'runnerVersion' in event\n                     and (event['runnerVersion'] is None\n                          or (type(event['runnerVersion']) is str\n                              and bool(event['runnerVersion']))), 'Invalid/duplicate reporter start')",
+  "patch": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-vm21-null-runner-version-20261024-r1\\nullable-runner-version.patch",
+    "bytes": 1564,
+    "sha256": "95d39f28e6338f60f09c69ea4df02622c3601fa6802b28cbfb9cedeff92986b5"
+  },
+  "fieldPresenceStillRequired": true,
+  "nullOrExistingNonemptyStringOnly": true,
+  "allOtherReporterAndNativeConditionsUnchanged": true,
+  "newPostWritten": false,
+  "sdkTestsAstCandidateOrPredicateExecuted": false,
+  "r1ActualRedUnmodified": true
+}

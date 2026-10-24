@@ -1,0 +1,75 @@
+{
+  "status": "FINAL_INDEPENDENT_STATIC_REVIEW_NO_NEW_BLOCKER_ALL_CURRENT_TESTS_UNRUN",
+  "baseCommit": "ace559e69cca12b8b56b11fab9491bf60251e04f",
+  "mainFiles": [
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\lib\\ui\\design.dart",
+      "bytes": 34356,
+      "sha256": "9bbcac7001d0c325a1f00533e94f5ddd234417480e6449f26c8e3e48ff3dce23"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\failure_view_test.dart",
+      "bytes": 8857,
+      "sha256": "4064e0c25b80f972c7e2d679d28eaa4782465f32875f2cf2b6b9293db20a9db4"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\managed_android_review_recovery_test.dart",
+      "bytes": 32110,
+      "sha256": "beca38185fab482b3ba87ddf084e3c07a491765eac1d3164c1cc0d3127e092a8"
+    },
+    {
+      "path": "D:\\codes\\mobile\\ai-manager\\apps\\guardian\\test\\usage_reports_view_test.dart",
+      "bytes": 18823,
+      "sha256": "aae58084b369c24a6f4828df5feabdbeacfa28e803b69b6f9c30c20da29f2975"
+    }
+  ],
+  "authorPins": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-failure-details-20261024-r2\\source-pins.json",
+    "bytes": 3223,
+    "sha256": "10a6d01ad0cfd75ef080d4c0f764e0330e3627963ccf677e0846005afc201eb1"
+  },
+  "compatibilityR5Pins": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-failure-details-independent-20261024-r5\\pins.json",
+    "bytes": 2713,
+    "sha256": "f88ecd5d24e8296621b18ed0215230d92793c46907898af0b56c7b955dfea5f7"
+  },
+  "review": {
+    "path": "D:\\codes\\mobile\\ai-manager\\.cache\\guardian-failure-details-phase-final-review-20261024-r1\\review.md",
+    "bytes": 3711,
+    "sha256": "3cfba1dc88ea6b17a140407b6cc975d4bc35e12d0870f70caa92983f58f56411"
+  },
+  "unchangedLiteralTestDeclarations": [
+    {
+      "path": "apps/guardian/test/managed_android_review_recovery_test.dart",
+      "unchangedLiteralDeclarationMarkers": 23
+    },
+    {
+      "path": "apps/guardian/test/usage_reports_view_test.dart",
+      "unchangedLiteralDeclarationMarkers": 9
+    }
+  ],
+  "normalizedCompatibilityPatchByteExact": true,
+  "originalUniqueKeyPresentInHeadAndMain": true,
+  "newCases": 9,
+  "newRootCount": 182,
+  "knownForeignTrackedWip": {
+    "path": "D:\\codes\\mobile\\ai-manager\\docs\\managed-publication-admission-plan.md",
+    "bytes": 96340,
+    "sha256": "4994781cf65a736611e648fe693d0bec9b5aef6cc4315b818a036447dff22d9d"
+  },
+  "indexEmpty": true,
+  "sdkPrimaryReferences": [
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter\\lib\\src\\material\\expansion_tile.dart",
+      "bytes": 37416,
+      "sha256": "038b6d5d29dcdd2dfe284470c243417a988d415fe66bb0fe8a856bf78197dadf"
+    },
+    {
+      "path": "D:\\softwares\\flutter\\packages\\flutter\\lib\\src\\widgets\\page_storage.dart",
+      "bytes": 8568,
+      "sha256": "ef963722a4d98a233aacb56387a14d13d6bde906e6b3e206661dd570ae1227ed"
+    }
+  ],
+  "sdkTestsAstFormatterBrowserNetworkProcessesOrGitWrites": false,
+  "reviewerMainWrites": false
+}

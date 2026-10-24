@@ -1,0 +1,128 @@
+{
+  "status": "R1_APPLICATION_LOG_21_SUCCESSES_BUT_OVERALL_RED_R2_RETIRED_WITHOUT_EXECUTION",
+  "sourceCommit": "ace559e69cca12b8b56b11fab9491bf60251e04f",
+  "sourceScope": "Historical frozen Ace source only; current later UI increment is not validated by this record.",
+  "r1": {
+    "actualRootTerminalChunk": "c66601",
+    "actualRootExitCode": 1,
+    "actualPostTerminalChunk": "c46e7b",
+    "actualPostExitCode": 1,
+    "sdkCalls": 1,
+    "testsRun": true,
+    "visibleExactSuccesses": 21,
+    "suiteCaseCounts": [
+      15,
+      6
+    ],
+    "skips": 0,
+    "errors": 0,
+    "failures": 0,
+    "doneSuccess": true,
+    "overallAccepted": false,
+    "validatorError": "ValueError: Invalid/duplicate reporter start",
+    "rootFirstSignalSeconds": 48.7595584,
+    "commandTerminalState": {
+      "pid": 23548,
+      "creationFiletime": 134372804808478751,
+      "firstSignaledQpc": 85001.5814913,
+      "sampleQpc": 85001.5921689,
+      "signaled": true,
+      "exitCode": 0,
+      "exitFiletime": 134372804927583655,
+      "kernel100ns": 468750,
+      "user100ns": 0,
+      "jobAccountingObservedQpc": 85001.592262,
+      "firstCompleteTerminalQpc": 85001.592262,
+      "activeProcesses": 0,
+      "totalProcesses": 19,
+      "terminatedProcesses": 0,
+      "terminal": true
+    },
+    "commandTerminalStateAfterPostflight": {
+      "pid": 23548,
+      "creationFiletime": 134372804808478751,
+      "firstSignaledQpc": 85001.5814913,
+      "sampleQpc": 85017.7322499,
+      "signaled": true,
+      "exitCode": 0,
+      "exitFiletime": 134372804927583655,
+      "kernel100ns": 468750,
+      "user100ns": 0,
+      "jobAccountingObservedQpc": 85017.7322916,
+      "firstCompleteTerminalQpc": 85001.592262,
+      "activeProcesses": 0,
+      "totalProcesses": 19,
+      "terminatedProcesses": 0,
+      "terminal": true
+    },
+    "workerTerminalState": {
+      "pid": 50044,
+      "creationFiletime": 134372804611316148,
+      "firstSignaledQpc": 85018.3268706,
+      "sampleQpc": 85018.3375352,
+      "signaled": true,
+      "exitCode": 1,
+      "exitFiletime": 134372805095033395,
+      "kernel100ns": 116093750,
+      "user100ns": 21718750,
+      "jobAccountingObservedQpc": 85018.3375914,
+      "firstCompleteTerminalQpc": 85018.3375914,
+      "activeProcesses": 0,
+      "totalProcesses": 51,
+      "terminatedProcesses": 0,
+      "terminal": true
+    },
+    "rootForced": false,
+    "workerForced": false,
+    "hostForced": false,
+    "preflightComplete": true,
+    "postflightComplete": true,
+    "windowReleasedAtRecordedRelease": true,
+    "releaseAccepted": false
+  },
+  "nullableProtocolFix": {
+    "requiredKey": true,
+    "allowedValues": [
+      "null",
+      "nonempty string"
+    ],
+    "pidProtocolUniqueStartTimingCasesErrorsSkipsNativeAndDeadlineConditionsUnchanged": true
+  },
+  "readerOnlyChecks": {
+    "helperActualChunk": "c8ff5c",
+    "postParserActualChunk": "c52114",
+    "invalidStartsRejectedByEach": 6,
+    "newSdkCalls": 0,
+    "newApplicationRun": false,
+    "r1OverallResultChanged": false,
+    "newPostMainEntryInvoked": false
+  },
+  "r2": {
+    "prelaunchChunks": [
+      "d777d3",
+      "4118a8",
+      "fb5086"
+    ],
+    "allPrelaunchExitCodes": [
+      1,
+      1,
+      1
+    ],
+    "retired": true,
+    "grantConsumed": false,
+    "ownHostOrWorkerCreated": false,
+    "sdkCalls": 0,
+    "testsRun": false,
+    "lastProbeChunk": "40d2b2",
+    "lastProbeAtUtc": "2026-10-24T02:13:25.9779602Z",
+    "sdkProcessesObserved": 16,
+    "availableRamBytesObserved": 1601384448
+  },
+  "archiveOperation": {
+    "sdkTestsAstProcessApiOrCandidateInvoked": false,
+    "mainOrGitWritten": false,
+    "originalArtifactsModified": false,
+    "runtimeOrQualificationRebaseline": false
+  },
+  "currentLaterSourceFullScopeAcceptance": false
+}
