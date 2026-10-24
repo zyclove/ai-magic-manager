@@ -1,0 +1,51 @@
+{
+  "kind": "INDEPENDENT_STATIC_REVIEW",
+  "conclusion": "NO_CLEAR_BLOCKER_FOUND_STATIC_ONLY",
+  "parentPrefixReportedByRoot": "4ba2fa3",
+  "sourceFiles": [
+    {
+      "path": "apps/guardian/lib/ui/resource_page.dart",
+      "bytes": 19698,
+      "sha256": "10e054c6005148c59a3f86f1f0087808235f85172d6d2aa7e05627164f0e2674"
+    },
+    {
+      "path": "apps/guardian/lib/pages/console_pages.dart",
+      "bytes": 93671,
+      "sha256": "6bc990334c2b5f865489fdfdab3021f2e3936f8c2c27be518297012848b3e761"
+    },
+    {
+      "path": "apps/guardian/test/resource_page_resilience_test.dart",
+      "bytes": 26516,
+      "sha256": "4125bce6cc1a7108b431f055a9a1d9ea8ff3bea8085599267dbd88eaae188a76"
+    }
+  ],
+  "newTestCases": 2,
+  "newTestCaseStatus": "UNRUN",
+  "runtimeAcceptance": false,
+  "observedReadOnlyCommands": [
+    {
+      "id": "f69894",
+      "exitCode": 0,
+      "purpose": "two production diffs"
+    },
+    {
+      "id": "1295f5",
+      "exitCode": 0,
+      "purpose": "production hashes and action/current callback context"
+    },
+    {
+      "id": "fdd493",
+      "exitCode": 0,
+      "purpose": "test diff"
+    }
+  ],
+  "review": {
+    "path": ".cache/guardian-readonly-details-review-20261024-r1/review.md",
+    "bytes": 1620,
+    "sha256": "0df8671c108d85b50b2889320eecedf9b38e298ae8209e7a6a9a3155699a798d"
+  },
+  "productionWrites": false,
+  "testWrites": false,
+  "gitWrites": false,
+  "sdkOrTestCalls": 0
+}

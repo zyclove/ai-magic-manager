@@ -32,7 +32,8 @@ Widget host(Api api,
         String path = '/records',
         Future<void> Function(Json)? onOpen,
         Future<void> Function()? create,
-        bool Function()? isCurrent}) =>
+        bool Function()? isCurrent,
+        bool refreshAfterOpen = true}) =>
     MaterialApp(
         theme: consoleTheme(),
         home: Scaffold(
@@ -48,7 +49,8 @@ Widget host(Api api,
                     ],
                     onOpen: onOpen,
                     create: create,
-                    isCurrent: isCurrent))));
+                    isCurrent: isCurrent,
+                    refreshAfterOpen: refreshAfterOpen))));
 
 Future<void> tap(WidgetTester tester, String label) async {
   final target = find.text(label);
@@ -573,5 +575,99 @@ void main() {
     expect(find.text('second'), findsOneWidget);
     expect(cursors, [null, 'page-2']);
     expect(actions, 1);
+  });
+
+  testWidgets('read-only detail preserves loaded pages search and next cursor',
+      (tester) async {
+    final cursors = <String?>[];
+    var opens = 0;
+    final api = apiFor((request) {
+      expect(request.method, 'GET');
+      final cursor = request.url.queryParameters['cursor'];
+      cursors.add(cursor);
+      return switch (cursor) {
+        null => page(['keep-first', 'unmatched'], cursor: 'page-2'),
+        'page-2' => page(['keep-second'], cursor: 'page-3'),
+        _ => page(['keep-third'])
+      };
+    });
+    await tester.pumpWidget(host(api, refreshAfterOpen: false, onOpen: (row) {
+      opens++;
+      return showDialog<void>(
+          context: tester.element(find.byType(ResourcePage)),
+          builder: (context) => AlertDialog(
+              title: Text('只读详情：${row['name']}'),
+              actions: [TextButton(onPressed: () => Navigator.pop(context),
+                  child: const Text('关闭只读详情'))]));
+    }));
+    await tester.pumpAndSettle();
+    await tap(tester, '加载更多');
+    await tester.enterText(find.byType(TextField), 'keep');
+    await tester.pumpAndSettle();
+    expect(find.text('已加载 3 条 · 匹配 2 条'), findsOneWidget);
+    final open = tester.widget<TextButton>(
+        find.widgetWithText(TextButton, '查看详情').first).onPressed!;
+    open();
+    open();
+    await tester.pumpAndSettle();
+    expect(opens, 1, reason: 'A pending detail must keep duplicate opens locked.');
+    expect(find.text('只读详情：keep-first'), findsOneWidget);
+    await tap(tester, '关闭只读详情');
+    expect(cursors, [null, 'page-2'],
+        reason: 'Returning from read-only details must not read the first page.');
+    expect(find.text('keep-first'), findsOneWidget);
+    expect(find.text('keep-second'), findsOneWidget);
+    expect(find.text('unmatched'), findsNothing);
+    expect(tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        'keep');
+    expect(find.text('已加载 3 条 · 匹配 2 条'), findsOneWidget);
+    expect(find.byType(FailureView), findsNothing);
+    await tester.tap(find.widgetWithText(TextButton, '查看详情').first);
+    await tester.pumpAndSettle();
+    expect(opens, 2, reason: 'Closing details must release the action lock.');
+    await tap(tester, '关闭只读详情');
+    expect(cursors, [null, 'page-2']);
+    await tap(tester, '加载更多');
+    expect(cursors, [null, 'page-2', 'page-3']);
+    expect(find.text('keep-first'), findsOneWidget);
+    expect(find.text('keep-second'), findsOneWidget);
+    expect(find.text('keep-third'), findsOneWidget);
+    expect(find.text('已加载 4 条 · 匹配 3 条'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('read-only detail success does not refresh after network loss',
+      (tester) async {
+    var offline = false, opens = 0, reads = 0;
+    final api = apiFor((request) {
+      expect(request.method, 'GET');
+      reads++;
+      if (offline) throw http.ClientException('fixture network is unavailable');
+      return page(['retained-after-detail'], cursor: 'still-readable');
+    });
+    await tester.pumpWidget(host(api, refreshAfterOpen: false, onOpen: (_) async {
+      opens++;
+      await showDialog<void>(
+          context: tester.element(find.byType(ResourcePage)),
+          builder: (context) => AlertDialog(
+              title: const Text('已读取的详情'),
+              actions: [TextButton(onPressed: () => Navigator.pop(context),
+                  child: const Text('关闭只读详情'))]));
+      offline = true;
+    }));
+    await tester.pumpAndSettle();
+    await tap(tester, '查看详情');
+    expect(find.text('已读取的详情'), findsOneWidget);
+    await tap(tester, '关闭只读详情');
+    expect(offline, isTrue);
+    expect(opens, 1);
+    expect(reads, 1,
+        reason: 'A successful read-only return must not start a now-offline GET.');
+    expect(find.text('retained-after-detail'), findsOneWidget);
+    expect(find.text('加载更多'), findsOneWidget);
+    expect(find.byType(FailureView), findsNothing);
+    expect(find.text('重新刷新列表'), findsNothing);
+    expect(find.text('刷新列表'), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 }

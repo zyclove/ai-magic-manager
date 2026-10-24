@@ -261,6 +261,7 @@ class ConsolePages extends StatelessWidget {
             Future<void> Function()? create,
             String createLabel = '新建',
             Future<void> Function(Json)? open,
+            bool refreshAfterOpen = true,
             String? notice,
             String empty = '暂无记录',
             String description = '创建第一条记录，开始管理。',
@@ -277,6 +278,7 @@ class ConsolePages extends StatelessWidget {
             create: create,
             createLabel: createLabel,
             onOpen: open,
+            refreshAfterOpen: refreshAfterOpen,
             notice: notice,
             emptyTitle: empty,
             emptyDescription: description,
@@ -382,6 +384,7 @@ class ConsolePages extends StatelessWidget {
             create: s.canWrite ? () => scheduleEditor(context, s) : null,
             createLabel: '创建计划',
             open: actions.scheduleDetails,
+            refreshAfterOpen: false,
             notice: '计划保存后保持不可变，调整时请创建新的计划并更新策略引用。');
       case 'policies':
         return resource(
@@ -903,8 +906,13 @@ class ConsoleActions {
           .map((w) => '${label(w['day'])}  ${w['start']} – ${w['end']}')
           .join('\n'),
       '日期例外': (d['exceptions'] as List)
-          .map((e) =>
-              '${e['date']}: ${(e['windows'] as List).isEmpty ? '全天关闭' : e['windows']}')
+          .map((e) {
+            final windows = e['windows'] as List;
+            final hours = windows.isEmpty
+                ? '全天关闭'
+                : windows.map((w) => '${w['start']} – ${w['end']}').join('、');
+            return '${e['date']}: $hours';
+          })
           .join('\n'),
       '说明': '已保存计划不可变；需要调整时创建新计划。'
     }, actions: [

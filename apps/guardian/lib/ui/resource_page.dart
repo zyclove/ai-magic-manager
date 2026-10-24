@@ -27,6 +27,8 @@ class ResourcePage extends StatefulWidget {
   final Api api;
   final List<ColumnSpec> columns;
   final Future<void> Function(Json)? onOpen;
+  /// Read-only details can keep the current pages and filter on return.
+  final bool refreshAfterOpen;
   final Future<void> Function()? create;
   final String createLabel;
   final List<Widget> toolbar;
@@ -44,6 +46,7 @@ class ResourcePage extends StatefulWidget {
       required this.api,
       required this.columns,
       this.onOpen,
+      this.refreshAfterOpen = true,
       this.create,
       this.createLabel = '新建',
       this.emptyTitle = '暂无记录',
@@ -177,7 +180,8 @@ class ResourcePageState extends State<ResourcePage> {
     }
   }
 
-  Future<void> action(Future<void> Function() callback) async {
+  Future<void> action(Future<void> Function() callback,
+      {bool refresh = true}) async {
     if (!_canInteract || acting || loading) return;
     final scope = resourceGeneration;
     final permitted = widget.isCurrent;
@@ -189,7 +193,7 @@ class ResourcePageState extends State<ResourcePage> {
     });
     try {
       await callback();
-      if (current()) await load();
+      if (current() && refresh) await load();
     } catch (e) {
       if (current()) {
         setState(() => actionError = e);
@@ -214,6 +218,7 @@ class ResourcePageState extends State<ResourcePage> {
     final path = widget.path;
     final create = widget.create;
     final onOpen = widget.onOpen;
+    final refreshAfterOpen = widget.refreshAfterOpen;
     final reauth = widget.reauth;
     bool viewCurrent() =>
         _canInteract && resourceGeneration == owner &&
@@ -232,7 +237,7 @@ class ResourcePageState extends State<ResourcePage> {
     }
     void openRecord(Json row) {
       if (viewCurrent() && onOpen != null && identical(widget.onOpen, onOpen)) {
-        action(() => onOpen(row));
+        action(() => onOpen(row), refresh: refreshAfterOpen);
       }
     }
     final guardedReauth = reauth == null ? null : guard(() {

@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "status": "STATIC_ONLY_TWO_NEW_CASES_UNRUN",
+  "parent": "4ba2fa3574b86d8364f2060a80c5256d9c9e32c6",
+  "newRuntimeAcceptance": false,
+  "sdkInvoked": false,
+  "newSourceDeployed": false,
+  "files": [
+    {
+      "path": "review.md",
+      "source": ".cache/guardian-readonly-details-review-20261024-r1/review.md",
+      "bytes": 1620,
+      "sha256": "0df8671c108d85b50b2889320eecedf9b38e298ae8209e7a6a9a3155699a798d"
+    },
+    {
+      "path": "review-pins.json",
+      "source": ".cache/guardian-readonly-details-review-20261024-r1/pins.json",
+      "bytes": 1426,
+      "sha256": "00abb50e3c6614900e1e41cbe61ee0c21e670b0210f98050d0c40b6d0b430992"
+    },
+    {
+      "path": "test-static.json",
+      "source": ".cache/guardian-readonly-details-test-static-20261024-r1.json",
+      "bytes": 1658,
+      "sha256": "a72e0e438417fdbf5c0a6b24a26311e5032cdc8944aa759e554fd24589dddb8a"
+    },
+    {
+      "path": "phase-commit-tools/exact-commit.py",
+      "source": ".cache/guardian-readonly-details-exact-commit-20261024-r1.py",
+      "bytes": 9571,
+      "sha256": "4ecfd24ecea5687594a46a006519cd34ef674fc043841c037d6883ac16555289"
+    },
+    {
+      "path": "phase-commit-tools/prepare.py",
+      "source": ".cache/guardian-readonly-details-phase-prepare-20261024-r1.py",
+      "bytes": 6559,
+      "sha256": "23a885187a611c8e605feeccd9739bdd5b465c92dd6ea363caa4dfb70f27ad7d"
+    }
+  ]
+}

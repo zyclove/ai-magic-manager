@@ -1,0 +1,50 @@
+{
+  "status": "STATIC_TEST_CHANGE_REVIEW_ONLY_NEW_CASES_UNRUN",
+  "test": {
+    "path": "apps/guardian/test/resource_page_resilience_test.dart",
+    "bytes": 26516,
+    "sha256": "4125bce6cc1a7108b431f055a9a1d9ea8ff3bea8085599267dbd88eaae188a76"
+  },
+  "diff": {
+    "addedLines": 98,
+    "deletedLines": 2,
+    "fixtureChange": "host adds refreshAfterOpen=true and forwards it to ResourcePage",
+    "addedCases": 2,
+    "originalMainBodyBytes": 20270,
+    "originalMainBodyByteExact": true,
+    "appendSeparatorNewlines": 2,
+    "originalExpectExpressionsPreserved": 107,
+    "defaultSuccessfulDetailRefreshCasePreserved": true,
+    "importsUnchanged": true
+  },
+  "newCoverage": [
+    "second-page rows/query/next cursor survive read-only details without an extra GET",
+    "duplicate detail action stays locked until close, then reopening works",
+    "pagination continues with the retained page-3 cursor",
+    "successful read-only detail return when network is unavailable has no extra GET or list error"
+  ],
+  "completedStaticChecks": [
+    {
+      "toolChunk": "162519",
+      "exitCode": 0,
+      "kind": "final source bytes and SHA readback"
+    },
+    {
+      "toolChunk": "3ea08b",
+      "exitCode": 0,
+      "kind": "read-only Git diff numstat"
+    },
+    {
+      "toolChunk": "17dbc3",
+      "exitCode": 0,
+      "kind": "Root-reported command-local whitespace check",
+      "provenance": "Root message"
+    }
+  ],
+  "newCasesExecution": "UNRUN",
+  "dartOrFlutterOrSdkInvoked": false,
+  "astOrFormatterInvoked": false,
+  "testExecutionPerformed": false,
+  "gitStageOrCommitPerformed": false,
+  "otherProductSourceModifiedByThisAuthor": false
+}
