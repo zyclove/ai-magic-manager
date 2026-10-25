@@ -94,7 +94,7 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "replicas": {"type": "integer", "minimum": 2},
+        "replicas": {"type": "integer", "minimum": 0},
         "autoscaling": {
           "type": "object",
           "additionalProperties": false,
@@ -108,7 +108,11 @@
         },
         "resources": {"$ref": "#/definitions/resources"}
       },
-      "required": ["replicas", "autoscaling", "resources"]
+      "required": ["replicas", "autoscaling", "resources"],
+      "allOf": [{
+        "if": {"properties": {"autoscaling": {"properties": {"enabled": {"const": false}}}}},
+        "then": {"properties": {"replicas": {"minimum": 2}}}
+      }]
     },
     "worker": {
       "type": "object",

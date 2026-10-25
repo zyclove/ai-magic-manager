@@ -27,7 +27,7 @@ app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
 {{- $_ = required "contract.jwkSetUri is required when evidence is enabled" .Values.contract.jwkSetUri -}}
 {{- end -}}
 {{- $_ = required "identity.serviceName is required" .Values.identity.serviceName -}}
-{{- if lt (int .Values.api.replicas) 2 -}}{{ fail "api.replicas must be at least 2 for the availability profile" }}{{- end -}}
+{{- if and (not .Values.api.autoscaling.enabled) (lt (int .Values.api.replicas) 2) -}}{{ fail "api.replicas must be at least 2 when autoscaling is disabled" }}{{- end -}}
 {{- if lt (int .Values.edge.replicas) 2 -}}{{ fail "edge.replicas must be at least 2 for the availability profile" }}{{- end -}}
 {{- if .Values.ingress.enabled -}}
 {{- $_ = required "ingress.host is required" .Values.ingress.host -}}

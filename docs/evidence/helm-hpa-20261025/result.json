@@ -1,0 +1,18 @@
+{
+  "status": "PASSED",
+  "exitCode": 0,
+  "tests": [
+    "ErasureHelmTest.test_hpa_owns_api_replicas_and_ignores_fixed_replica_count",
+    "ErasureHelmTest.test_fixed_api_replicas_still_require_two",
+    "ErasureHelmTest.test_hpa_does_not_allow_invalid_fixed_replica_types_or_negative_values",
+    "ErasureHelmTest.test_hpa_replica_bounds_remain_enforced"
+  ],
+  "resourcesBefore": {
+    "ram": 3887497216,
+    "cFree": 3056648192,
+    "dFree": 19334823936
+  },
+  "elapsedSeconds": 2.552386600000318,
+  "clusterAccess": false,
+  "installOrUpgrade": false
+}

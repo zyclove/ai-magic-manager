@@ -2,6 +2,7 @@
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import subprocess
 import tempfile
@@ -27,7 +28,9 @@ class ErasureHelmTest(unittest.TestCase):
 
     def render(self, values):
         self.assertIsNotNone(HELM, 'Helm is required for chart verification')
-        with tempfile.TemporaryDirectory(prefix='erasure-helm-', dir=ROOT/'.local') as folder:
+        cache = ROOT/'.cache'
+        cache.mkdir(exist_ok=True)
+        with tempfile.TemporaryDirectory(prefix='erasure-helm-', dir=cache) as folder:
             path = Path(folder)/'values.json'
             path.write_text(json.dumps(values), encoding='utf-8')
             return subprocess.run([HELM, 'template', 'verification', str(ROOT/'deploy/helm/ai-manager'),
@@ -50,6 +53,40 @@ class ErasureHelmTest(unittest.TestCase):
     def test_unknown_ledger_settings_are_rejected(self):
         values = self.values(); values['erasureLedger']['autoInitialize'] = True
         self.assertNotEqual(self.render(values).returncode, 0)
+
+    def test_hpa_owns_api_replicas_and_ignores_fixed_replica_count(self):
+        for replicas in (0, 1):
+            with self.subTest(replicas=replicas):
+                values = self.values()
+                values['api'] = dict(replicas=replicas, autoscaling=dict(enabled=True))
+                result = self.render(values)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                api = next(document for document in result.stdout.split('---')
+                           if 'kind: Deployment\n' in document and 'name: verification-ai-manager-api\n' in document)
+                self.assertNotRegex(api, re.compile(r'^  replicas:', re.MULTILINE))
+                self.assertIn('kind: HorizontalPodAutoscaler', result.stdout)
+                self.assertIn('minReplicas: 2', result.stdout)
+                self.assertIn('maxReplicas: 10', result.stdout)
+
+    def test_fixed_api_replicas_still_require_two(self):
+        values = self.values()
+        values['api'] = dict(replicas=1, autoscaling=dict(enabled=False))
+        self.assertNotEqual(self.render(values).returncode, 0)
+
+    def test_hpa_does_not_allow_invalid_fixed_replica_types_or_negative_values(self):
+        for replicas in (-1, True, '2', 1.5):
+            with self.subTest(replicas=replicas):
+                values = self.values()
+                values['api'] = dict(replicas=replicas, autoscaling=dict(enabled=True))
+                self.assertNotEqual(self.render(values).returncode, 0)
+
+    def test_hpa_replica_bounds_remain_enforced(self):
+        for minimum, maximum in ((1, 10), (2, 1), (4, 2)):
+            with self.subTest(minimum=minimum, maximum=maximum):
+                values = self.values()
+                values['api'] = dict(replicas=1, autoscaling=dict(
+                    enabled=True, minReplicas=minimum, maxReplicas=maximum))
+                self.assertNotEqual(self.render(values).returncode, 0)
 
 
 if __name__ == '__main__':

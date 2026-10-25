@@ -62,6 +62,7 @@ Chart 在缺少 HTTPS origin、镜像、业务或账本数据库地址/账号、
 ## 多副本与安全边界
 
 - API 和 Web 默认各两个副本、滚动更新时 `maxUnavailable=0`、各自 PDB `minAvailable=1`。可在具备 Metrics Server 的集群中启用 API CPU HPA（默认关闭，范围与目标值可配置）；它不能代替设备并发、数据库连接和队列容量压测。这些设置只约束副本数量与自愿驱逐；真实高可用仍取决于多节点调度、存储、入口、MySQL 和 Keycloak。给不同节点设置反亲和与拓扑分散的生产参数要基于部署环境和负载测试确定。
+- HPA 关闭时使用 `api.replicas`，最低为 2；启用后 API Deployment 不再设置固定副本，由 `minReplicas` / `maxReplicas` 管理，二者均至少为 2 且最小值不得超过最大值。启用 HPA 时无需同步调整未使用的固定值，但其类型仍须为非负整数；Web 固定副本要求不变。
 - 独立 worker 运行报表、导出、通知保留、额度物化、清理和审批到期作业；API 副本关闭这些作业。worker 保持单副本，升级时短时重叠仍需依赖业务事务幂等。使用摘要的旧批次清理目前在每个 Spring 实例上独立定时执行，采用有界、可重复删除；此项未作为全局唯一作业承诺。
 - Pod 使用固定非 root UID、只读根文件系统、禁用权限提升、丢弃 Linux capability、RuntimeDefault seccomp、禁用 ServiceAccount Token 自动挂载，并给 `/tmp` 等写入点加有界临时卷。不同环境仍需实施 NetworkPolicy、数据库/TLS 出站策略、Secret 加密与 RBAC；Chart 本身不宣称完成这些集群级措施。
 - Spring 用 Kubernetes Secret 作为 `configtree:` 数据库密码及只读签名文件；健康探针分 startup、liveness、readiness。工作 Pod 不对外路由。当前 Kafka/Artemis 通知传输默认关闭，启用前须补齐真实 Broker 的认证、TLS、ACL 和故障演练。
