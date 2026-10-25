@@ -127,10 +127,62 @@ void main() {
     }
   });
 
-  testWidgets('unknown result retries the same payload before a 412 stops replay',
+  for (final failure in <String, Object>{
+    '': const ApiFailure(0, 'NETWORK_ERROR'),
+    ' after a parsing failure': const FormatException('invalid response'),
+    ' after a pending-operation refusal':
+        const ApiFailure(409, 'PENDING_OPERATION_UNCHANGED'),
+  }.entries) {
+    testWidgets('unknown result${failure.key} retries the same payload '
+        'before a 412 stops replay', (tester) async {
+      final first = Completer<Json?>();
+      final second = Completer<Json?>();
+      final closed = Completer<Json?>();
+      final access = ValueNotifier(true);
+      final bodies = <Json>[];
+      try {
+        await _openRecoveryForm(tester, closed: closed, access: access,
+            onSubmit: (body) {
+              bodies.add(body);
+              return bodies.length == 1 ? first.future : second.future;
+            });
+        await tester.enterText(find.byType(TextFormField), '尚未确认的草稿');
+        _editCallback(tester, '保存')();
+        first.completeError(failure.value);
+        await tester.pumpAndSettle();
+        expect(find.text('上次提交结果尚未确认。重试将发送相同内容；离开后请先刷新列表核对结果，避免重复创建。'),
+            findsOneWidget);
+        expect(tester.widget<TextFormField>(find.byType(TextFormField)).enabled,
+            isFalse);
+        final heldRetry = _editCallback(tester, '重试原提交');
+        heldRetry();
+        expect(bodies, hasLength(2));
+        expect(identical(bodies.first, bodies.last), isTrue);
+        expect(bodies.last, {'name': '尚未确认的草稿'});
+        second.completeError(const ApiFailure(412, 'RESOURCE_VERSION_CONFLICT'));
+        await tester.pumpAndSettle();
+        expect(find.widgetWithText(FilledButton, '重试原提交'), findsNothing);
+        expect(find.text('上次提交结果尚未确认。重试将发送相同内容；离开后请先刷新列表核对结果，避免重复创建。'),
+            findsNothing);
+        expect(find.byWidgetPredicate((widget) => widget is SelectableText &&
+            widget.data == '名称：尚未确认的草稿'), findsOneWidget);
+        heldRetry();
+        expect(bodies, hasLength(2));
+        _editCallback(tester, '关闭表单')();
+        await tester.pumpAndSettle();
+        expect(closed.isCompleted, isTrue);
+        expect(await closed.future, isNull);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await _disposeRecoveryForm(tester, access, [first, second]);
+      }
+    });
+  }
+
+  testWidgets('reauth on an unknown retry keeps the original payload until success',
       (tester) async {
-    final first = Completer<Json?>();
-    final second = Completer<Json?>();
+    const reauthFailure = ApiFailure(401, 'REAUTH_REQUIRED');
+    final requests = List.generate(3, (_) => Completer<Json?>());
     final closed = Completer<Json?>();
     final access = ValueNotifier(true);
     final bodies = <Json>[];
@@ -138,37 +190,146 @@ void main() {
       await _openRecoveryForm(tester, closed: closed, access: access,
           onSubmit: (body) {
             bodies.add(body);
-            return bodies.length == 1 ? first.future : second.future;
+            return requests[bodies.length - 1].future;
           });
-      await tester.enterText(find.byType(TextFormField), '尚未确认的草稿');
+      await tester.enterText(find.byType(TextFormField), '等待安全验证的原草稿');
       _editCallback(tester, '保存')();
-      first.completeError(const ApiFailure(0, 'NETWORK_ERROR'));
+      requests[0].completeError(const ApiFailure(0, 'NETWORK_ERROR'));
       await tester.pumpAndSettle();
-      expect(find.text('上次提交结果尚未确认。重试将发送相同内容；离开后请先刷新列表核对结果，避免重复创建。'),
-          findsOneWidget);
-      expect(tester.widget<TextFormField>(find.byType(TextFormField)).enabled,
-          isFalse);
+
       final heldRetry = _editCallback(tester, '重试原提交');
+      heldRetry();
       heldRetry();
       expect(bodies, hasLength(2));
       expect(identical(bodies.first, bodies.last), isTrue);
-      expect(bodies.last, {'name': '尚未确认的草稿'});
-      second.completeError(const ApiFailure(412, 'RESOURCE_VERSION_CONFLICT'));
+      requests[1].completeError(reauthFailure);
       await tester.pumpAndSettle();
-      expect(find.widgetWithText(FilledButton, '重试原提交'), findsNothing);
-      expect(find.text('上次提交结果尚未确认。重试将发送相同内容；离开后请先刷新列表核对结果，避免重复创建。'),
-          findsNothing);
-      expect(find.byWidgetPredicate((widget) => widget is SelectableText &&
-          widget.data == '名称：尚未确认的草稿'), findsOneWidget);
+      expect(closed.isCompleted, isFalse);
+      expect(find.text(reauthFailure.message), findsOneWidget);
+      expect(tester.widget<TextFormField>(find.byType(TextFormField)).enabled,
+          isFalse);
+      expect(find.widgetWithText(FilledButton, '保存'), findsNothing);
+      expect(find.widgetWithText(FilledButton, '重试原提交'), findsOneWidget);
+
       heldRetry();
-      expect(bodies, hasLength(2));
-      _editCallback(tester, '关闭表单')();
+      heldRetry();
+      expect(bodies, hasLength(3));
+      expect(identical(bodies.first, bodies.last), isTrue);
+      expect(bodies.last, {'name': '等待安全验证的原草稿'});
+      requests[2].complete({'name': '等待安全验证的原草稿'});
+      await tester.pumpAndSettle();
+      expect(closed.isCompleted, isTrue);
+      expect(await closed.future, {'name': '等待安全验证的原草稿'});
+      expect(find.byType(EditDialog), findsNothing);
+      heldRetry();
+      expect(bodies, hasLength(3));
+      expect(tester.takeException(), isNull);
+    } finally {
+      await _disposeRecoveryForm(tester, access, requests);
+    }
+  });
+
+  for (final code in ['IDEMPOTENCY_RESULT_EXPIRED', 'IDEMPOTENCY_RESPONSE_ERASED']) {
+    testWidgets('$code keeps a read-only draft and stops stale save callbacks',
+        (tester) async {
+      final request = Completer<Json?>();
+      final closed = Completer<Json?>();
+      final access = ValueNotifier(true);
+      final bodies = <Json>[];
+      final failure = ApiFailure(410, code);
+      try {
+        await _openRecoveryForm(tester, closed: closed, access: access,
+            onSubmit: (body) {
+              bodies.add(body);
+              return request.future;
+            });
+        await tester.enterText(find.byType(TextFormField), '不可恢复结果的草稿');
+        final heldSave = _editCallback(tester, '保存');
+        heldSave();
+        request.completeError(failure);
+        await tester.pumpAndSettle();
+
+        expect(closed.isCompleted, isFalse);
+        expect(find.text(failure.message), findsOneWidget);
+        expect(find.text('原操作结果已无法恢复，已停止再次提交。请关闭后核对当前记录；不要把结果不可恢复当作操作未执行。'),
+            findsOneWidget);
+        expect(find.text('保留的草稿'), findsOneWidget);
+        expect(find.byWidgetPredicate((widget) => widget is SelectableText &&
+            widget.data == '名称：不可恢复结果的草稿'), findsOneWidget);
+        expect(find.byType(TextFormField), findsNothing);
+        expect(find.widgetWithText(FilledButton, '保存'), findsNothing);
+        expect(find.widgetWithText(FilledButton, '重试原提交'), findsNothing);
+        expect(find.byType(FilledButton), findsOneWidget);
+        heldSave();
+        expect(bodies, [{'name': '不可恢复结果的草稿'}]);
+        _editCallback(tester, '关闭表单')();
+        heldSave();
+        await tester.pumpAndSettle();
+        expect(bodies, hasLength(1));
+        expect(closed.isCompleted, isTrue);
+        expect(await closed.future, isNull);
+        expect(find.byType(EditDialog), findsNothing);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await _disposeRecoveryForm(tester, access, [request]);
+      }
+    });
+  }
+
+  testWidgets('unknown result confirms closing inside the original form',
+      (tester) async {
+    final request = Completer<Json?>();
+    final closed = Completer<Json?>();
+    final access = ValueNotifier(true);
+    var calls = 0;
+    try {
+      await _openRecoveryForm(tester, closed: closed, access: access,
+          onSubmit: (_) {
+            calls++;
+            return request.future;
+          });
+      _editCallback(tester, '保存')();
+      request.completeError(const ApiFailure(0, 'NETWORK_ERROR'));
+      await tester.pumpAndSettle();
+      final route = ModalRoute.of(tester.element(find.byType(EditDialog)));
+      expect(route, isNotNull);
+      expect(find.byKey(const Key('edit-dialog-unknown-close-notice')),
+          findsNothing);
+
+      await tester.binding.handlePopRoute();
+      await tester.pumpAndSettle();
+      expect(closed.isCompleted, isFalse);
+      expect(find.byKey(const Key('edit-dialog-unknown-close-notice')),
+          findsOneWidget);
+      expect(find.byType(AlertDialog, skipOffstage: false), findsOneWidget);
+      expect(ModalRoute.of(tester.element(find.byType(EditDialog))), same(route));
+      expect(find.widgetWithText(TextButton, '继续核对'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('edit-dialog-keep-original')));
+      await tester.pumpAndSettle();
+      expect(closed.isCompleted, isFalse);
+      expect(find.byKey(const Key('edit-dialog-unknown-close-notice')),
+          findsNothing);
+      expect(find.widgetWithText(FilledButton, '重试原提交'), findsOneWidget);
+      expect(tester.widget<TextFormField>(find.byType(TextFormField)).enabled,
+          isFalse);
+
+      await tester.tap(find.widgetWithText(TextButton, '暂时关闭'));
+      await tester.pumpAndSettle();
+      expect(closed.isCompleted, isFalse);
+      expect(find.byKey(const Key('edit-dialog-unknown-close-notice')),
+          findsOneWidget);
+      expect(find.byType(AlertDialog, skipOffstage: false), findsOneWidget);
+      expect(ModalRoute.of(tester.element(find.byType(EditDialog))), same(route));
+      expect(find.widgetWithText(FilledButton, '确认关闭'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('edit-dialog-confirm-close')));
       await tester.pumpAndSettle();
       expect(closed.isCompleted, isTrue);
       expect(await closed.future, isNull);
+      expect(find.byType(EditDialog), findsNothing);
+      expect(calls, 1, reason: 'Close confirmation must not resubmit the request.');
       expect(tester.takeException(), isNull);
     } finally {
-      await _disposeRecoveryForm(tester, access, [first, second]);
+      await _disposeRecoveryForm(tester, access, [request]);
     }
   });
 

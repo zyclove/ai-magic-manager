@@ -366,8 +366,9 @@ class _EditDialogState extends State<EditDialog> {
   final controls = <String, TextEditingController>{};
   final selected = <String, String?>{};
   Json? pendingValues;
-  Json? conflictValues;
+  Json? recoveryValues;
   bool busy = false;
+  bool confirmingUnknownClose = false;
   Object? error;
   ModalRoute<dynamic>? _route;
   bool _active = true, _revoked = false;
@@ -385,8 +386,15 @@ class _EditDialogState extends State<EditDialog> {
   bool get versionConflict =>
       error is ApiFailure && (error as ApiFailure).status == 412;
 
-  String get conflictDraft => widget.fields.map((field) {
-        final value = conflictValues?[field.key]?.toString() ?? '';
+  bool unavailableResult(Object? failure) => failure is ApiFailure &&
+      failure.status == 410 &&
+      const {'IDEMPOTENCY_RESULT_EXPIRED', 'IDEMPOTENCY_RESPONSE_ERASED'}
+          .contains(failure.code);
+
+  bool get recoveryStopped => versionConflict || unavailableResult(error);
+
+  String get recoveryDraft => widget.fields.map((field) {
+        final value = recoveryValues?[field.key]?.toString() ?? '';
         final display = field.options?[value] ?? value;
         return '${field.label}：${display.isEmpty ? "（空）" : display}';
       }).join('\n');
@@ -422,7 +430,26 @@ class _EditDialogState extends State<EditDialog> {
   }
 
   void cancel() {
-    if (current && !busy) finish();
+    if (!current || busy) return;
+    if (pendingValues != null) {
+      if (!confirmingUnknownClose) {
+        setState(() => confirmingUnknownClose = true);
+      }
+      return;
+    }
+    finish();
+  }
+
+  void keepOriginal() {
+    if (!current || busy || !confirmingUnknownClose) return;
+    setState(() => confirmingUnknownClose = false);
+  }
+
+  void confirmUnknownClose() {
+    if (!current || busy || !confirmingUnknownClose || pendingValues == null) {
+      return;
+    }
+    finish();
   }
 
   @override
@@ -483,8 +510,9 @@ class _EditDialogState extends State<EditDialog> {
   }
 
   Future<void> save() async {
-    if (!current || busy || versionConflict ||
+    if (!current || busy || recoveryStopped || confirmingUnknownClose ||
         form.currentState?.validate() != true) return;
+    final retryingUnknown = pendingValues != null;
     setState(() {
       busy = true;
       error = null;
@@ -504,10 +532,15 @@ class _EditDialogState extends State<EditDialog> {
       if (mounted && _active && permitted) finish(result ?? submitted);
     } catch (e) {
       final attempted = pendingValues;
-      if (e is ApiFailure && e.status == 412 && attempted != null) {
-        conflictValues = Map<String, dynamic>.unmodifiable(attempted);
+      final stopped = e is ApiFailure &&
+          (e.status == 412 || unavailableResult(e));
+      if (stopped && attempted != null) {
+        recoveryValues = Map<String, dynamic>.unmodifiable(attempted);
       }
-      if (e is! ApiFailure || (e.status != 0 && e.status < 500)) {
+      // A later rejection cannot prove that the first uncertain write failed.
+      final unknown = retryingUnknown || e is! ApiFailure || e.status == 0 ||
+          e.status >= 500 || e.code == 'PENDING_OPERATION_UNCHANGED';
+      if (stopped || !unknown) {
         pendingValues = null;
       }
       if (mounted && _active && permitted) setState(() => error = e);
@@ -523,7 +556,10 @@ class _EditDialogState extends State<EditDialog> {
           content: const Text('已隐藏原表单内容。请关闭后在当前工作空间重新打开；已提交的操作请回到原工作空间刷新列表核对结果。'),
           actions: [TextButton(onPressed: finish, child: const Text('关闭'))])
       : PopScope(
-      canPop: !busy,
+      canPop: !busy && pendingValues == null,
+      onPopInvoked: (didPop) {
+        if (!didPop) cancel();
+      },
       child: AlertDialog(
           title: Text(widget.title),
           content: SizedBox(
@@ -540,22 +576,28 @@ class _EditDialogState extends State<EditDialog> {
                                   padding: const EdgeInsets.only(bottom: 20),
                                   child: Notice(widget.description!)),
                             if (pendingValues != null && !busy)
-                              const Padding(
-                                  padding: EdgeInsets.only(bottom: 16),
+                              Padding(
+                                  padding: const EdgeInsets.only(bottom: 16),
                                   child: Notice(
-                                      '上次提交结果尚未确认。重试将发送相同内容；离开后请先刷新列表核对结果，避免重复创建。',
+                                      confirmingUnknownClose
+                                          ? '服务器可能已完成原操作，关闭不会取消提交。关闭后请先刷新列表核对结果，确认后再新建。'
+                                          : '上次提交结果尚未确认。重试将发送相同内容；离开后请先刷新列表核对结果，避免重复创建。',
+                                      key: confirmingUnknownClose
+                                          ? const Key('edit-dialog-unknown-close-notice')
+                                          : null,
                                       warning: true)),
-                            if (versionConflict) ...[
+                            if (recoveryStopped) ...[
                               FailureView(error!),
-                              const Text(
-                                  '记录已更新，已停止再次提交。可选中并复制下方草稿；关闭后请刷新原页面，再重新打开表单核对最新内容。',
-                                  style: TextStyle(height: 1.6)),
+                              Text(versionConflict
+                                  ? '记录已更新，已停止再次提交。可选中并复制下方草稿；关闭后请刷新原页面，再重新打开表单核对最新内容。'
+                                  : '原操作结果已无法恢复，已停止再次提交。请关闭后核对当前记录；不要把结果不可恢复当作操作未执行。',
+                                  style: const TextStyle(height: 1.6)),
                               if (widget.fields.isNotEmpty) ...[
                                 const SizedBox(height: 12),
                                 const Text('保留的草稿',
                                     style: TextStyle(fontWeight: FontWeight.w600)),
                                 const SizedBox(height: 8),
-                                SelectableText(conflictDraft,
+                                SelectableText(recoveryDraft,
                                     style: const TextStyle(height: 1.6)),
                               ],
                             ] else
@@ -579,7 +621,8 @@ class _EditDialogState extends State<EditDialog> {
                                             : (v) {
                                                 if (!current ||
                                                     busy ||
-                                                    versionConflict ||
+                                                    recoveryStopped ||
+                                                    confirmingUnknownClose ||
                                                     pendingValues != null ||
                                                     (v != null &&
                                                         !f.options!
@@ -624,25 +667,38 @@ class _EditDialogState extends State<EditDialog> {
                                           }
                                           return null;
                                         }))),
-                            if (error != null && !versionConflict)
+                            if (error != null && !recoveryStopped)
                               FailureView(error!,
                                   reauth: widget.reauth == null
                                       ? null
                                       : () {
-                                          if (current && !busy) {
+                                          if (current && !busy &&
+                                              !recoveryStopped &&
+                                              !confirmingUnknownClose) {
                                             widget.reauth!();
                                           }
                                         })
                           ])))),
           actions: [
-            if (versionConflict)
+            if (recoveryStopped)
               FilledButton(
                   onPressed: busy ? null : cancel,
                   child: const Text('关闭表单')),
-            if (!versionConflict)
+            if (!recoveryStopped && confirmingUnknownClose) ...[
               TextButton(
-                  onPressed: busy ? null : cancel, child: const Text('取消')),
-            if (!versionConflict)
+                  key: const Key('edit-dialog-keep-original'),
+                  onPressed: busy ? null : keepOriginal,
+                  child: const Text('继续核对')),
+              FilledButton(
+                  key: const Key('edit-dialog-confirm-close'),
+                  onPressed: busy ? null : confirmUnknownClose,
+                  child: const Text('确认关闭')),
+            ],
+            if (!recoveryStopped && !confirmingUnknownClose)
+              TextButton(
+                  onPressed: busy ? null : cancel,
+                  child: Text(pendingValues == null ? '取消' : '暂时关闭')),
+            if (!recoveryStopped && !confirmingUnknownClose)
               FilledButton(
                 onPressed: busy ? null : save,
                 child: busy
