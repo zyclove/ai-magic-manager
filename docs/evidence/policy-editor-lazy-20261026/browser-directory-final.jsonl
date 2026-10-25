@@ -1,0 +1,18 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":140052,"type":"start","time":0}
+{"suite":{"id":0,"platform":"chrome","path":"D:/codes/mobile/ai-manager/apps/guardian/test/policy_editor_lifecycle_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/policy_editor_lifecycle_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1}
+{"count":1,"time":5,"type":"allSuites"}
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":4502}
+{"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":5,"line":null,"column":null,"url":null},"type":"group","time":4505}
+{"test":{"id":3,"name":"new draft and domain rule open without directory requests","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":10414,"column":19,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/packages/flutter_test/src/test_text_input_key_handler.dart.js"},"type":"testStart","time":4506}
+{"testID":3,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5584}
+{"test":{"id":4,"name":"application directory failure keeps the draft and reloads only its options","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":10414,"column":19,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/packages/flutter_test/src/test_text_input_key_handler.dart.js"},"type":"testStart","time":5585}
+{"testID":4,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7075}
+{"test":{"id":5,"name":"closing the parent stops a late directory from paging or opening a rule","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":10414,"column":19,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/packages/flutter_test/src/test_text_input_key_handler.dart.js"},"type":"testStart","time":7076}
+{"testID":5,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7851}
+{"test":{"id":6,"name":"time-window directory 401 stops another pending directory page","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":10414,"column":19,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/packages/flutter_test/src/test_text_input_key_handler.dart.js"},"type":"testStart","time":7852}
+{"testID":6,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":8542}
+{"test":{"id":7,"name":"time-window directory 403 stops another pending directory page","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":10414,"column":19,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/packages/flutter_test/src/test_text_input_key_handler.dart.js"},"type":"testStart","time":8543}
+{"testID":7,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9282}
+{"success":true,"type":"done","time":9291}

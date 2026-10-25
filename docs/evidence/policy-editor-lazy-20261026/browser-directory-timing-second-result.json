@@ -1,0 +1,96 @@
+{
+  "status": "NOT_ACCEPTED",
+  "sdkCalls": 1,
+  "tests": [
+    "policy_editor_lifecycle_test.dart"
+  ],
+  "forceRequested": false,
+  "commandCloseFallback": false,
+  "checkType": "BROWSER_POLICY_LIFECYCLE_DIRECTORY",
+  "head": "815a7b07e8eef3cb7e931497342e5e94ba9c28ec",
+  "resourcesBefore": {
+    "ram": 3276500992,
+    "cFree": 2684403712,
+    "dFree": 17737744384
+  },
+  "sdkBefore": {
+    "sdk": [],
+    "unknown": 0
+  },
+  "pid": 193624,
+  "command": "D:\\softwares\\flutter\\bin\\flutter.bat --no-version-check --suppress-analytics test --platform=chrome --no-pub --web-renderer=html --reporter=json test/policy_editor_lifecycle_test.dart --plain-name=directory",
+  "commandFinalityCapture": null,
+  "terminal": {
+    "pid": 193624,
+    "creationFiletime": 134374445802070788,
+    "firstSignaledQpc": 249118.311627,
+    "sampleQpc": 249118.3751061,
+    "signaled": true,
+    "exitCode": 1,
+    "exitFiletime": 134374446005586086,
+    "kernel100ns": 468750,
+    "user100ns": 156250,
+    "jobAccountingObservedQpc": 249118.3751655,
+    "firstCompleteTerminalQpc": 249118.3751655,
+    "activeProcesses": 0,
+    "totalProcesses": 23,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "naturalZero": false,
+  "browserBoundariesAccepted": false,
+  "browserEvidenceStatus": "NOT_ACCEPTED",
+  "browserProblems": [
+    "COMMAND_JOB_FINALITY_UNPROVED",
+    "OWN_JOB_MEMBER_HARD_ERROR",
+    "OWN_JOB_MEMBER_IDENTITY_UNPROVED"
+  ],
+  "passed": 2,
+  "failed": 3,
+  "skipped": 0,
+  "reporterDone": false,
+  "suiteFilesMatch": true,
+  "sourceUnchanged": true,
+  "sourcePins": {
+    "apps\\guardian\\test\\policy_editor_lifecycle_test.dart": "5b8e3140ff3c2a6a48d01c4a74652701aed4dfcbeb08bac073a329d2b1d9d04e",
+    "apps\\guardian\\lib\\core\\api.dart": "afc2861510097d64ad93a067e675dc5a7f8777a1953f20b3feea25b4575e23fd",
+    "apps\\guardian\\lib\\core\\access.dart": "38380bc466101deff37beb212132d94b2b7cfe41c5d70588965cb1212eb41f2e",
+    "apps\\guardian\\lib\\core\\console_modules.dart": "b7df960a10b18a3bbd3707b1b1c77f8a7cb083f71ce7174d0b2f70c490b296a4",
+    "apps\\guardian\\lib\\core\\scoped_http_client.dart": "796c1c627a34ebded045ed6b8acdcf2b0705e16ce840b6ee3061c05e2d9352be",
+    "apps\\guardian\\lib\\core\\session.dart": "2c0c354df653359c24619fc1be3162030ae503127bbd3dd1a6ec2b96fce2a864",
+    "apps\\guardian\\lib\\core\\rule_parameter_labels.dart": "30b1c3cee64653f872aa79688c2e35f025658fad035732f67c10f4344920c70b",
+    "apps\\guardian\\lib\\core\\policy_domain_check.dart": "3139eabe8e0736d8c9418d76c760704ca15ba53cfecaa6cdfaa15ff4068593ea",
+    "apps\\guardian\\lib\\core\\policy_rule_directories.dart": "be0a2feacc06502dd6ba299f3b45ea67ea5002ef4ce83257b66b2cf008866118",
+    "apps\\guardian\\lib\\ui\\design.dart": "8a0394c0225107a0d947cb54b907e0cf77ed04bab3631c9e77a60542c6dfe851",
+    "apps\\guardian\\lib\\ui\\owned_dialog_route.dart": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946",
+    "apps\\guardian\\lib\\pages\\editors.dart": "af500cd26e5c7bf7d7c73d512c865a5c5b6f225e98dcf62bfe814eed548dd16e",
+    "apps\\guardian\\lib\\pages\\device_subflow_scope.dart": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e",
+    "apps\\guardian\\.dart_tool\\package_config.json": "7d56027a23fc233d28485accb53dc9e4a4e35ae7e4f082f5c7b9450b5f091922",
+    "apps\\guardian\\pubspec.lock": "c6f16b105ed81fd036675605a44b846474fb45fec17040796c1358cdebd0016c",
+    "apps\\guardian\\pubspec.yaml": "0e6fc775ba24cc541e918b7d74fde7ec7591c9badd47d5dfd2ee9f00fce24dcf"
+  },
+  "sdkAfter": {
+    "sdk": [],
+    "unknown": 0
+  },
+  "appTestsPassed": false,
+  "windowReleased": true,
+  "finalOwnedState": {
+    "pid": 193624,
+    "creationFiletime": 134374445802070788,
+    "firstSignaledQpc": 249118.311627,
+    "sampleQpc": 249119.0931201,
+    "signaled": true,
+    "exitCode": 1,
+    "exitFiletime": 134374446005586086,
+    "kernel100ns": 468750,
+    "user100ns": 156250,
+    "jobAccountingObservedQpc": 249119.0931702,
+    "firstCompleteTerminalQpc": 249118.3751655,
+    "activeProcesses": 0,
+    "totalProcesses": 23,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "elapsedSeconds": 21.81061650000629
+}

@@ -1,0 +1,30 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":212292,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"D:/codes/mobile/ai-manager/apps/guardian/test/policy_rule_directories_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/policy_rule_directories_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1}
+{"count":1,"time":4,"type":"allSuites"}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null,"observatoryUri":null}}]
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1528}
+{"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":10,"line":null,"column":null,"url":null},"type":"group","time":1530}
+{"test":{"id":3,"name":"empty references and domain rules make no directory requests","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":27,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_rule_directories_test.dart"},"type":"testStart","time":1532}
+{"testID":3,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1553}
+{"test":{"id":4,"name":"application pagination caches only immutable option fields","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":46,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_rule_directories_test.dart"},"type":"testStart","time":1554}
+{"testID":4,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1580}
+{"test":{"id":5,"name":"references load only referenced directories and time rules reuse them","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":83,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_rule_directories_test.dart"},"type":"testStart","time":1581}
+{"testID":5,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1588}
+{"test":{"id":6,"name":"explicit seeds and successful empty lists are authoritative caches","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":112,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_rule_directories_test.dart"},"type":"testStart","time":1588}
+{"testID":6,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1600}
+{"test":{"id":7,"name":"concurrent rules share each in-flight directory","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":148,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_rule_directories_test.dart"},"type":"testStart","time":1601}
+{"testID":7,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1607}
+{"test":{"id":8,"name":"ordinary failure and reauthentication remain explicit and retryable","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":182,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_rule_directories_test.dart"},"type":"testStart","time":1608}
+{"testID":8,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1616}
+{"test":{"id":9,"name":"malformed options are rejected and do not become empty successes","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":208,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_rule_directories_test.dart"},"type":"testStart","time":1616}
+{"testID":9,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1626}
+{"test":{"id":10,"name":"refresh only reads requested directories and keeps old data on failure","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":247,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_rule_directories_test.dart"},"type":"testStart","time":1627}
+{"testID":10,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1632}
+{"test":{"id":11,"name":"observed parent loss is sticky and blocks late authentication dispatch","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":275,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_rule_directories_test.dart"},"type":"testStart","time":1633}
+{"testID":11,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1636}
+{"test":{"id":12,"name":"private refresh failures clear both caches and stop another page","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":310,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_rule_directories_test.dart"},"type":"testStart","time":1637}
+{"testID":12,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1648}
+{"success":true,"type":"done","time":1674}

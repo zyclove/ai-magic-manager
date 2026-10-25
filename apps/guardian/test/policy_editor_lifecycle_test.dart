@@ -163,6 +163,34 @@ VoidCallback _save(WidgetTester tester) => tester
     .widget<FilledButton>(find.widgetWithText(FilledButton, '保存草稿'))
     .onPressed!;
 
+Future<void> _chooseRule(WidgetTester tester, String type) async {
+  final add = _textButton('添加规则');
+  await tester.ensureVisible(add);
+  await tester.tap(add);
+  await _flush(tester);
+  final option = find.widgetWithText(SimpleDialogOption, type);
+  await tester.ensureVisible(option);
+  await tester.tap(option);
+  // The editor awaits the completed pop transition before opening a rule.
+  // Do not pumpAndSettle: an intentionally pending directory animates progress.
+  await tester.pump(const Duration(milliseconds: 300));
+  await _flush(tester);
+  await tester.pump();
+}
+
+Finder _textButton(String label) => find.ancestor(
+    of: find.text(label),
+    matching: find.byWidgetPredicate((widget) => widget is TextButton));
+
+Future<void> _untilUi(WidgetTester tester, bool Function() ready) async {
+  await tester.pump();
+  for (var attempt = 0; attempt < 20; attempt++) {
+    if (ready()) return;
+    await _flush(tester);
+  }
+  expect(ready(), isTrue, reason: 'The observed UI operation must complete.');
+}
+
 Future<void> _press(WidgetTester tester, String key) async {
   final target = find.byKey(Key(key));
   await tester.ensureVisible(target);
@@ -211,7 +239,117 @@ void main() {
     });
   }
 
-  testWidgets('wrapper rejects an actor ABA while reference lists are pending',
+  for (final waitingForClient in [false, true]) {
+    testWidgets(
+        'opened editor rejects actor ABA during lazy application '
+        '${waitingForClient ? "client acquisition" : "response paging"}',
+        (tester) async {
+      final f = _Fixture();
+      final pending = Completer<http.Response>();
+      final client = Completer<http.Client>();
+      f.handler = (_) => pending.future;
+      addTearDown(() {
+        if (!client.isCompleted) client.complete(f.transport);
+        if (!pending.isCompleted) {
+          pending.complete(_reply({'items': [], 'nextCursor': null}));
+        }
+      });
+      final opened = await _mount(tester, f, wrapper: true);
+      expect(f.requests, isEmpty);
+      expect(find.byType(PolicyEditor), findsOneWidget);
+      final heldSave = _save(tester);
+      if (waitingForClient) f.lookup = () => client.future;
+      await _chooseRule(tester, '应用启动');
+      expect(f.requests.length, waitingForClient ? 0 : 1);
+
+      f.session.change('actor');
+      f.session.change('actor', restore: true);
+      if (waitingForClient) client.complete(f.transport);
+      pending.complete(_reply({'items': [], 'nextCursor': 'forbidden-next'}));
+      await _flush(tester);
+      heldSave();
+      await _flush(tester);
+
+      expect(f.requests.length, waitingForClient ? 0 : 1,
+          reason:
+              'A stale scope cannot dispatch a late client or continue pagination.');
+      expect(find.byType(EditDialog, skipOffstage: false), findsNothing);
+      expect(find.byType(TextFormField), findsNothing);
+      expect(f.writes, isEmpty);
+      await tester.tap(find.widgetWithText(TextButton, '关闭'));
+      await _untilUi(tester, () => opened.completed);
+      expect(find.byType(PolicyEditor), findsNothing);
+      expect(opened.completed, isTrue);
+      expect(tester.takeException(), isNull);
+    });
+  }
+
+  testWidgets('new draft and domain rule open without directory requests',
+      (tester) async {
+    final f = _Fixture();
+    await _mount(tester, f, wrapper: true, creating: true);
+    expect(find.byType(PolicyEditor), findsOneWidget);
+    expect(f.requests, isEmpty);
+    await _chooseRule(tester, '域名访问');
+    expect(find.byType(EditDialog), findsOneWidget);
+    expect(find.text('加入草稿'), findsOneWidget);
+    expect(f.requests, isEmpty,
+        reason:
+            'Opening a domain rule does not require app or schedule options.');
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+      'application directory failure keeps the draft and reloads only its options',
+      (tester) async {
+    final f = _Fixture();
+    const application = '44444444-4444-4444-8444-444444444444';
+    f.handler = (request) async {
+      expect(request.url.path, '/api/v1$_root/applications');
+      return f.requests.length == 1
+          ? _reply({'errorCode': 'TEMPORARY_FAILURE'}, status: 503)
+          : _reply({
+              'items': [
+                {'id': application, 'displayName': '已登记应用'}
+              ],
+              'nextCursor': null
+            });
+    };
+    await _mount(tester, f, wrapper: true);
+    await tester.enterText(find.byType(TextField), '目录失败后保留的策略名');
+    await _chooseRule(tester, '应用启动');
+
+    expect(f.requests, hasLength(1));
+    await _untilUi(tester,
+        () => find.byType(LinearProgressIndicator).evaluate().isEmpty);
+    expect(find.byType(FailureView), findsOneWidget);
+    expect(find.text('请先在应用目录登记目标应用。'), findsNothing,
+        reason: 'A failed read is not a successfully empty catalogue.');
+    expect(tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        '目录失败后保留的策略名');
+    await tester.ensureVisible(_textButton('重新加载选项'));
+    await tester.tap(_textButton('重新加载选项'));
+    await _untilUi(tester,
+        () => find.byType(LinearProgressIndicator).evaluate().isEmpty);
+    expect(f.requests, hasLength(2));
+    expect(find.byType(FailureView), findsNothing);
+    expect(tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        '目录失败后保留的策略名');
+    await _chooseRule(tester, '应用启动');
+    expect(find.byType(EditDialog), findsOneWidget);
+    await tester.ensureVisible(find.text('目标应用'));
+    await tester.tap(find.text('目标应用'));
+    await _flush(tester);
+    expect(find.text('已登记应用'), findsWidgets);
+    expect(f.requests, hasLength(2),
+        reason:
+            'A subsequent explicit rule action reuses the loaded app catalogue.');
+    expect(f.writes, isEmpty);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+      'closing the parent stops a late directory from paging or opening a rule',
       (tester) async {
     final f = _Fixture();
     final pending = Completer<http.Response>();
@@ -222,16 +360,22 @@ void main() {
       }
     });
     final opened = await _mount(tester, f, wrapper: true);
-    expect(f.requests.length, 2);
-
-    f.session.change('actor');
-    f.session.change('actor', restore: true);
-    pending.complete(_reply({'items': [], 'nextCursor': null}));
+    final heldSave = _save(tester);
+    await _chooseRule(tester, '应用启动');
+    expect(f.requests, hasLength(1));
+    expect(find.byType(LinearProgressIndicator), findsOneWidget);
+    await _requestTemporaryClose(tester);
+    expect(opened.completed, isTrue);
+    pending.complete(_reply({'items': [], 'nextCursor': 'forbidden-next'}));
+    await _flush(tester);
+    heldSave();
     await _flush(tester);
 
+    expect(f.requests, hasLength(1));
     expect(find.byType(PolicyEditor), findsNothing);
-    expect(opened.completed, isTrue);
+    expect(find.byType(EditDialog, skipOffstage: false), findsNothing);
     expect(f.writes, isEmpty);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('scope loss while acquiring a client prevents the physical write',
@@ -456,7 +600,8 @@ void main() {
   });
 
   for (final status in [401, 403]) {
-    testWidgets('directory $status stops another pending directory page',
+    testWidgets(
+        'time-window directory $status stops another pending directory page',
         (tester) async {
       final f = _Fixture();
       final page = Completer<http.Response>();
@@ -480,7 +625,11 @@ void main() {
         }
       });
       final opened = await _mount(tester, f, wrapper: true);
+      expect(f.requests, isEmpty);
+      await _chooseRule(tester, '使用时段');
       expect(f.requests.length, 2);
+      expect(f.requests.map((request) => request.url.path).toSet(),
+          {'/api/v1$_root/applications', '/api/v1$_root/schedules'});
 
       denied.complete(_reply({'errorCode': 'ACCESS_DENIED'}, status: status));
       await _flush(tester);
@@ -490,6 +639,11 @@ void main() {
       expect(f.requests.length, 2,
           reason:
               'A denied directory must revoke the shared read scope at once.');
+      expect(find.byType(TextFormField), findsNothing);
+      expect(find.byType(EditDialog, skipOffstage: false), findsNothing);
+      expect(f.writes, isEmpty);
+      await tester.tap(find.widgetWithText(TextButton, '关闭'));
+      await _untilUi(tester, () => opened.completed);
       expect(opened.completed, isTrue);
       expect(find.byType(PolicyEditor), findsNothing);
       expect(f.writes, isEmpty);

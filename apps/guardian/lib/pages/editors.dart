@@ -6,6 +6,7 @@ import 'package:flutter/scheduler.dart';
 import '../core/api.dart';
 import '../core/labels.dart';
 import '../core/policy_domain_check.dart';
+import '../core/policy_rule_directories.dart';
 import '../core/rule_parameter_labels.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
@@ -614,45 +615,13 @@ Future<void> policyEditor(BuildContext context, Session session,
           context.mounted &&
           session.canWrite &&
           session.canOpen('policies'));
-  Future<List<Json>> directory(String path) async {
-    try {
-      return await scope.api.all(path);
-    } catch (failure) {
-      if (failure is ApiFailure &&
-          ((failure.status == 401 && failure.code != 'REAUTH_REQUIRED') ||
-              failure.status == 403 ||
-              failure.code == 'WORKSPACE_CHANGED')) {
-        // Revoke both reads before the other directory can follow a cursor.
-        live = false;
-      }
-      rethrow;
-    }
-  }
-
   try {
-    late final List<List<Json>> data;
-    try {
-      data = await Future.wait<List<Json>>(
-          [directory('$root/applications'), directory('$root/schedules')],
-          eagerError: true);
-    } catch (failure) {
-      if (context.mounted && scope.current) {
-        toast(context,
-            failure is ApiFailure ? failure.message : '无法加载权限目录，请稍后重试。');
-      }
-      return;
-    }
     if (!context.mounted || !scope.current) return;
     final route = OwnedDialogRoute<void>(
         context: context,
         barrierDismissible: false,
         builder: (_) => PolicyEditor(
-            session: session,
-            root: root,
-            applications: data[0],
-            schedules: data[1],
-            draft: draft,
-            operationScope: scope));
+            session: session, root: root, draft: draft, operationScope: scope));
     await presentOwnedDialog(context, route);
   } finally {
     live = false;
@@ -699,15 +668,17 @@ RuntimePermissionCatalog parseRuntimePermissionCatalog(dynamic raw) {
 class PolicyEditor extends StatefulWidget {
   final Session session;
   final String root;
-  final List<Json> applications, schedules;
+
+  /// Null loads on demand; an explicit list (including empty) is already read.
+  final List<Json>? applications, schedules;
   final Json? draft;
   final DeviceSubflowScope? operationScope;
   const PolicyEditor(
       {super.key,
       required this.session,
       required this.root,
-      required this.applications,
-      required this.schedules,
+      this.applications,
+      this.schedules,
       this.draft,
       this.operationScope});
   @override
@@ -723,6 +694,9 @@ class _PolicyEditorState extends State<PolicyEditor> {
   final form = GlobalKey<FormState>();
   bool busy = false;
   bool loadingRule = false;
+  bool loadingNames = false;
+  Object? directoryError;
+  late final PolicyRuleDirectories directories;
   bool ruleOpen = false;
   bool resultUnknown = false,
       revoked = false,
@@ -765,12 +739,66 @@ class _PolicyEditorState extends State<PolicyEditor> {
                 widget.session.canWrite &&
                 widget.session.canOpen('policies'));
     api = scope.api.scoped(() => current);
+    directories = PolicyRuleDirectories(
+        api: api,
+        root: widget.root,
+        current: () => current,
+        applications: widget.applications,
+        schedules: widget.schedules);
     scope.addListener(scopeChanged);
     if (!scope.current) {
       revoked = true;
       name.clear();
       rules = [];
     }
+    if (rules.any((rule) =>
+        rule['applicationId'] != null || rule['scheduleId'] != null)) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (current) {
+          unawaited(readDirectories(() => directories.forReferences(rules),
+              namesOnly: true));
+        }
+      });
+    }
+  }
+
+  Future<bool> readDirectories(Future<void> Function() read,
+      {bool namesOnly = false}) async {
+    if (!current) return false;
+    setState(() {
+      directoryError = null;
+      if (namesOnly) {
+        loadingNames = true;
+      } else {
+        loadingRule = true;
+      }
+    });
+    try {
+      await read();
+      return current;
+    } catch (failure) {
+      if (!current || privateFailure(failure)) {
+        revoke();
+      } else if (mounted) {
+        setState(() => directoryError = failure);
+      }
+      return false;
+    } finally {
+      if (mounted && !disposed) {
+        setState(() {
+          if (namesOnly) {
+            loadingNames = false;
+          } else {
+            loadingRule = false;
+          }
+        });
+      }
+    }
+  }
+
+  Future<void> reloadDirectories() async {
+    if (!interactive || locked || loadingNames) return;
+    await readDirectories(directories.reloadRequested, namesOnly: true);
   }
 
   void scopeChanged() {
@@ -793,11 +821,14 @@ class _PolicyEditorState extends State<PolicyEditor> {
     if (disposed || revoked) return;
     revoked = true;
     lifetime.value = false;
+    directories.revoke();
     name.clear();
     rules = [];
     pendingBody = null;
     error = null;
     checkNotice = null;
+    directoryError = null;
+    loadingNames = false;
     resultUnknown = busy = loadingRule = ruleOpen = false;
     if (mounted) setState(() {});
   }
@@ -891,7 +922,7 @@ class _PolicyEditorState extends State<PolicyEditor> {
 
   Future<T?> ruleDialog<T>(Widget Function(BuildContext) builder,
       {bool barrierDismissible = false}) async {
-    if (!current || resultUnknown || busy) return null;
+    if (!interactive || resultUnknown || busy) return null;
     final changes = Listenable.merge([scope, lifetime]);
     final route = OwnedDialogRoute<T>(
         context: context,
@@ -925,6 +956,7 @@ class _PolicyEditorState extends State<PolicyEditor> {
   @override
   void dispose() {
     disposed = true;
+    directories.revoke();
     lifetime.value = false;
     scope.removeListener(scopeChanged);
     if (ownsScope) scope.dispose();
@@ -963,7 +995,7 @@ class _PolicyEditorState extends State<PolicyEditor> {
                 .toList()),
         barrierDismissible: true);
     if (!mounted) return;
-    if (type == null || !current) return;
+    if (type == null || !interactive) return;
     final selectedType = type;
     final requiresApp = [
       'APP_LAUNCH',
@@ -973,11 +1005,29 @@ class _PolicyEditorState extends State<PolicyEditor> {
       'SPECIAL_ACCESS'
     ].contains(type);
     final hasApp = type != 'DOMAIN_ACCESS';
-    if (requiresApp && widget.applications.isEmpty) {
+    if (hasApp &&
+        !await readDirectories(() => directories.forRule(selectedType))) {
+      return;
+    }
+    if (!mounted || !interactive) return;
+    final apps = entityOptions(directories.applications, 'displayName');
+    final plans = entityOptions(directories.schedules, 'name');
+    final original = index == null ? null : rules[index];
+    final oldApp = original?['applicationId'],
+        oldPlan = original?['scheduleId'];
+    final missingApp = oldApp is String && !apps.containsKey(oldApp);
+    final missingPlan = oldPlan is String && !plans.containsKey(oldPlan);
+    if (missingApp) {
+      apps[oldApp] = '原应用（目录未找到） · ${shortId(oldApp)}';
+    }
+    if (missingPlan) {
+      plans[oldPlan] = '原计划（目录未找到） · ${shortId(oldPlan)}';
+    }
+    if (requiresApp && apps.isEmpty) {
       toast(context, '请先在应用目录登记目标应用。');
       return;
     }
-    if (type == 'TIME_WINDOW' && widget.schedules.isEmpty) {
+    if (type == 'TIME_WINDOW' && plans.isEmpty) {
       toast(context, '请先创建时间计划。');
       return;
     }
@@ -1004,7 +1054,7 @@ class _PolicyEditorState extends State<PolicyEditor> {
         if (mounted) setState(() => loadingRule = false);
       }
     }
-    if (!mounted || !current) return;
+    if (!mounted || !interactive) return;
     if (index != null &&
         type == 'RUNTIME_PERMISSION' &&
         !runtimePermissions.containsKey(rules[index]['permission'])) {
@@ -1021,13 +1071,11 @@ class _PolicyEditorState extends State<PolicyEditor> {
     final fields = [
       FieldSpec('effect', '规则行为', options: options(editableEffects)),
       if (hasApp)
-        FieldSpec('applicationId', '目标应用', required: requiresApp, options: {
-          if (!requiresApp) '': '所有适用应用',
-          ...entityOptions(widget.applications, 'displayName')
-        }),
+        FieldSpec('applicationId', '目标应用',
+            required: requiresApp,
+            options: {if (!requiresApp) '': '所有适用应用', ...apps}),
       if (type == 'TIME_WINDOW')
-        FieldSpec('scheduleId', '时间计划',
-            options: entityOptions(widget.schedules, 'name')),
+        FieldSpec('scheduleId', '时间计划', options: plans),
       if (type == 'DAILY_QUOTA' || type == 'USAGE_REMINDER')
         const FieldSpec('seconds', '时长（秒，1–86400）',
             numeric: true, maxLength: 5),
@@ -1044,16 +1092,22 @@ class _PolicyEditorState extends State<PolicyEditor> {
     final initial = index == null
         ? <String, dynamic>{'effect': editableEffects.first, 'required': 'true'}
         : {...rules[index], 'required': rules[index]['required'].toString()};
+    final guidance = type == 'RUNTIME_PERMISSION'
+        ? '可选择系统默认提示或拒绝。自动授予尚未开放；此处仅保存规则草稿，设备预览会说明支持情况，最终仍需提供方和设备回执。'
+        : type == 'SPECIAL_ACCESS'
+            ? '特殊访问通常需要设备本地用户或受管系统单独授权；保存规则不表示已经授予。'
+            : type == 'DOMAIN_ACCESS'
+                ? '支持中文和大小写域名。确认后会显示规范格式，保存草稿前可再次核对；只匹配这个域名，不包含子域。此步骤不保存或执行设备策略。'
+                : null;
+    final notices = [
+      if (guidance != null) guidance,
+      if (missingApp || missingPlan)
+        '原应用或计划未在当前目录中找到，已保留原引用。请核对后选择可用项，不会自动替换成其他对象。'
+    ];
     final result = await ruleDialog<Json>((ruleContext) => EditDialog(
         title: '${index == null ? '添加' : '编辑'}${label(type)}',
         fields: fields,
-        description: type == 'RUNTIME_PERMISSION'
-            ? '可选择系统默认提示或拒绝。自动授予尚未开放；此处仅保存规则草稿，设备预览会说明支持情况，最终仍需提供方和设备回执。'
-            : type == 'SPECIAL_ACCESS'
-                ? '特殊访问通常需要设备本地用户或受管系统单独授权；保存规则不表示已经授予。'
-                : type == 'DOMAIN_ACCESS'
-                    ? '支持中文和大小写域名。确认后会显示规范格式，保存草稿前可再次核对；只匹配这个域名，不包含子域。此步骤不保存或执行设备策略。'
-                    : null,
+        description: notices.isEmpty ? null : notices.join('\n\n'),
         initial: initial,
         submit: type == 'DOMAIN_ACCESS'
             ? index == null
@@ -1305,7 +1359,20 @@ class _PolicyEditorState extends State<PolicyEditor> {
                                     icon: const Icon(Icons.add, size: 18),
                                     label: const Text('添加规则'))
                               ]),
-                              if (loadingRule) const LinearProgressIndicator(),
+                              if (loadingRule || loadingNames)
+                                const LinearProgressIndicator(),
+                              if (directoryError != null)
+                                FailureView(directoryError!),
+                              if (directories.hasRequested)
+                                Align(
+                                    alignment: Alignment.centerRight,
+                                    child: TextButton.icon(
+                                        onPressed: locked || loadingNames
+                                            ? null
+                                            : reloadDirectories,
+                                        icon:
+                                            const Icon(Icons.refresh, size: 18),
+                                        label: const Text('重新加载选项'))),
                               if (rules.isEmpty)
                                 const EmptyView('尚未添加规则', '可以先保存空草稿，稍后完善。'),
                               ...rules.asMap().entries.map((e) => Container(
@@ -1320,8 +1387,8 @@ class _PolicyEditorState extends State<PolicyEditor> {
                                           '${label(e.value['kind'])} · ${label(e.value['effect'])}'),
                                       subtitle: Text(ruleSummary(
                                           e.value,
-                                          widget.applications,
-                                          widget.schedules)),
+                                          directories.applications,
+                                          directories.schedules)),
                                       trailing: Wrap(children: [
                                         IconButton(
                                             tooltip: '编辑规则',

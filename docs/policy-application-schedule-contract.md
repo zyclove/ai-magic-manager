@@ -81,6 +81,8 @@ domain 只接受小写标准 ASCII/punycode DNS 名，不接受 URL、IP、尾�
 
 检查结果绑定策略编号与草稿版本，`effectiveEffect=null`、`matchMode=EXACT_DOMAIN`、`executionStatus=NOT_EVALUATED`，始终作为规则预测呈现。草稿并发变化须重新打开详情；输入变化立即清除旧结果，账号、工作空间、角色或父页面失效后清除私有输入和结果，旧响应不能恢复。日常配置只展示一个输入与检查动作，规则编号按需展开。
 
+策略／模板编辑先打开表单，不把应用与时间计划目录作为进入门槛。域名规则不读目录；应用相关规则只读应用选项，使用时段规则再读时间计划，额度／提醒仍可明确选择全部适用应用。已有规则按所引用目录补充名称，不阻塞表单；成功空结果与读取失败分别处理，失败保留草稿并提供“重新加载选项”，只刷新本窗口使用过的目录，不自动重开旧规则表单。缓存仅在本次授权生命周期内有效，重复读取共用进行中的请求；失权清除缓存并阻止后续分页。原引用不在目录中时保留并提示核对，不能静默改成第一项或清空。
+
 同类型、同应用/权限/域名/计划的规则合并：DENY 优先；卸载保护 PROTECT 优先；权限冲突 DEFAULT 比 GRANT 更保守；额度取更小值；required 只要有一条为 true 就保持必需。不同计划保留为独立限制，下游需求交集，不能当成允许窗口的并集。应用 ALLOW 也不覆盖总额度或时段限制。
 
 警告包括 SAME_LAYER_CONFLICT_RESTRICTIVE_WINS、SMALLER_QUOTA_WINS、INSTALL_DENY_MAY_REMOVE_EXISTING_APP 和 SYSTEM_USER_ACTION_REQUIRED。安装 DENY 与临时启动 DENY 是不同操作；尚未接通安装/移除的供应商后果确认流程，不能发出不可逆执行。

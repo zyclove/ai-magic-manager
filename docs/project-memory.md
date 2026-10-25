@@ -43,6 +43,10 @@
 
 [EditDialog](../apps/guardian/lib/ui/design.dart) 默认保留服务器写入的未知结果保护。只有明确不写服务器的校验／本地草稿准备才可使用 `canCommit=false`，错误后允许修改输入；不能将已经发出的写入切换成只读模式来解除保护。域名规则编辑的只读规范化与最终保存草稿分开，见[编辑器](../apps/guardian/lib/pages/editors.dart)。
 
+策略编辑目录由 [PolicyRuleDirectories](../apps/guardian/lib/core/policy_rule_directories.dart) 按规则／已有引用读取；`null` 初始值表示未读，显式列表（含空）表示已读。缓存和进行中请求只属于捕获的作用域，失败可重试，失权清空并停止分页；界面刷新只重载本窗口用过的目录。不要恢复打开编辑器前的双目录门禁，或把目录失败当成空目录。
+
+Flutter 回归优先稳定 Key／语义或类型谓词；`.icon` 按钮工厂可能返回子类，不能用精确运行类型查找代替。涉及 [OwnedDialogRoute](../apps/guardian/lib/ui/owned_dialog_route.dart) 的旅程应等待路由完成及可观察加载状态；固定少量 pump 不代表异步完成，含进行中进度动画时也不能无限依赖 `pumpAndSettle`。用有界等待保留原业务断言，不靠改产品期限或放宽取证消除测试误报。
+
 管理台异步旅程可复用 [DeviceSubflowScope](../apps/guardian/lib/pages/device_subflow_scope.dart) 捕获账号、租户、角色和会话代际；名称虽源自设备流程，通知与工作台也采用此机制。旧响应与回调必须核对原捕获，不能仅比较当前租户/角色。普通网络失败可保留已读数据，服务端拒绝访问则隐藏私有摘要并作废捕获。
 
 [通用 API](../apps/guardian/lib/core/api.dart) 使用已锁定 `http 1.6.0` 的 Abortable 协议；[作用域包装层](../apps/guardian/lib/core/scoped_http_client.dart)必须透传中止信号，在实际发送/终结请求前同时检查原作用域和请求期限，借用的客户端不能被单次请求关闭。纯时限单元测试使用原生 `FakeAsync`；共享完成 Future 的取消续程可能在其区域外调度，正常重试须保留有界真实异步断言，参考[超时回归](../apps/guardian/test/api_deadline_test.dart)，不要用无限等待或删除完成断言掩盖问题。
