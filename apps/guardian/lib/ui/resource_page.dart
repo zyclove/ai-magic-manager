@@ -256,6 +256,8 @@ class ResourcePageState extends State<ResourcePage> {
           }).toList();
     final narrow = MediaQuery.sizeOf(context).width < 760;
     final canAct = _canInteract && !loading && !acting;
+    final showActionProgress = acting && !loading && _canInteract &&
+        (ModalRoute.of(context)?.isCurrent ?? true);
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       PageHeading(widget.title, widget.subtitle,
           action: widget.create == null
@@ -309,6 +311,22 @@ class ResourcePageState extends State<ResourcePage> {
             const Divider(),
             if (loading && rows.isNotEmpty)
               const LinearProgressIndicator(minHeight: 2),
+            if (showActionProgress)
+              const Semantics(
+                  container: true,
+                  liveRegion: true,
+                  label: '正在处理，请稍候',
+                  child: ExcludeSemantics(
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                        LinearProgressIndicator(minHeight: 2),
+                        Padding(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 18, vertical: 10),
+                            child: Text('正在处理，请稍候',
+                                style: TextStyle(color: muted, fontSize: 12)))
+                      ]))),
             if (actionError != null)
               Padding(
                   padding: const EdgeInsets.all(18),

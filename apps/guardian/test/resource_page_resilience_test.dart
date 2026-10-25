@@ -471,16 +471,39 @@ void main() {
           create: creating ? open : null));
       await tester.pumpAndSettle();
       final button = find.text(creating ? '新建' : '查看详情');
+      expect(find.text('正在处理，请稍候'), findsNothing);
       await tester.tap(button);
       await tester.tap(button);
       await tester.pump();
       expect(actions, 1);
       expect(reads, 1);
       expect(find.text('first'), findsOneWidget);
+      expect(find.text('正在处理，请稍候'), findsOneWidget);
+      expect(find.byType(LinearProgressIndicator), findsOneWidget);
+      final status = tester.widget<Semantics>(find.byWidgetPredicate((widget) =>
+          widget is Semantics && widget.properties.label == '正在处理，请稍候'));
+      expect(status.properties.liveRegion, isTrue);
+
+      final dialog = showDialog<void>(
+          context: tester.element(find.byType(ResourcePage)),
+          builder: (_) => const AlertDialog(title: Text('操作窗口')));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.text('操作窗口'), findsOneWidget);
+      expect(find.text('正在处理，请稍候', skipOffstage: false), findsNothing,
+          reason: 'A covered list must not announce progress behind its dialog.');
+      Navigator.of(tester.element(find.text('操作窗口'))).pop();
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 300));
+      await dialog;
+      expect(find.text('正在处理，请稍候'), findsOneWidget);
+
       waiting.complete();
       await tester.pumpAndSettle();
       expect(actions, 1);
       expect(reads, 2, reason: 'The successful operation refreshes once.');
+      expect(find.text('正在处理，请稍候'), findsNothing);
+      expect(find.byType(LinearProgressIndicator), findsNothing);
     });
   }
 

@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../core/api.dart';
 import '../core/application_classification.dart';
+import '../core/console_modules.dart';
 import '../core/enrollment_recovery.dart';
 import '../core/device_management.dart';
 import '../core/managed_execution.dart';
@@ -71,6 +72,10 @@ class ConsolePages extends StatelessWidget {
   const ConsolePages({super.key, required this.section});
   @override
   Widget build(BuildContext context) {
+    if (consoleModule(section) == null) {
+      return const Panel(
+          child: EmptyView('页面不存在', '这个地址没有对应的功能，请从导航中选择可用页面。'));
+    }
     final s = context.watch<Session>();
     final actions = ConsoleActions(context, s);
     if (section == 'identity-providers') {

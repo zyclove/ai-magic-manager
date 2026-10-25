@@ -2,6 +2,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:guardian/core/access.dart';
 
 void main() {
+  test('unknown sections are unavailable even to workspace administrators', () {
+    for (final role in [
+      'OWNER', 'ORG_ADMIN', 'GUARDIAN', 'AUDITOR', 'TEACHER', 'CHILD', ''
+    ]) {
+      for (final section in [
+        '', 'unknown-feature', 'overview/', 'devices?tab=all', 'Devices',
+        '../devices', '/devices', 'catalog/new'
+      ]) {
+        expect(canOpenSection(role, section), isFalse,
+            reason: '$role / $section');
+      }
+    }
+  });
   test('notification navigation includes requesters and excludes auditors', () {
     for (final role in ['OWNER', 'GUARDIAN', 'ORG_ADMIN', 'TEACHER', 'CHILD']) {
       expect(canOpenSection(role, 'notifications'), isTrue, reason: role);

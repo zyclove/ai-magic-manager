@@ -49,7 +49,7 @@ const _destinationIcons = <String, IconData>{
 };
 
 String navigationLabel(String section, {bool organization = false}) =>
-    consoleModule(section)?.labelFor(organization: organization) ?? '工作台';
+    consoleModule(section)?.labelFor(organization: organization) ?? '页面不存在';
 
 /// Shared by the desktop sidebar and mobile drawer; access precedes search.
 class ConsoleNavigation extends StatefulWidget {

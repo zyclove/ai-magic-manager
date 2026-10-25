@@ -17,6 +17,7 @@ bool canOpenIdentityProviders(
       authenticated && (canRead || canManage || canTest || canPublish || canRollback);
 
 bool canOpenSection(String role, String section) {
+  if (consoleModule(section) == null) return false;
   if (section == 'identity-providers') return false;
   if (section == 'help-requests') {
     return ['OWNER', 'GUARDIAN', 'ORG_ADMIN', 'TEACHER'].contains(role);

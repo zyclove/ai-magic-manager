@@ -28,6 +28,7 @@ void main() {
     expect(grouped.toSet(), destinations.map((d) => d.$1).toSet());
     expect(navigationLabel('subjects', organization: true), '学生档案');
     expect(navigationLabel('help-requests', organization: true), '学生求助');
+    expect(navigationLabel('unknown-feature'), '页面不存在');
   });
 
   testWidgets('common tasks are visible and workspace tools start collapsed',
