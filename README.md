@@ -20,7 +20,7 @@
 
 从干净克隆部署新环境，使用 `scripts/initialize-deployment.ps1`、`scripts/build-deployment.ps1`、`scripts/start-deployment.ps1`；流程与身份初始化见[可复制部署手册](docs/deployment-runbook.md)。该流程使用独立 Compose 项目和文件凭据。
 
-历史 **1.0.0 首版验收环境**使用 [18100 入口](http://localhost:18100/)和独立 Compose 项目 `ai-manager-v1-next`，当时已检查真实浏览器登录、工作空间对话框和手机导航。当前入口与项目以选定环境的 `deployment.json` 和 `scripts/manager.ps1 status -Directory ...` 为准；历史端口和结果不能代替当前运行状态。管理员使用单独配置的凭据登录。
+历史 **1.0.0 首版验收环境**使用 [18100 入口](http://localhost:18100/)和独立 Compose 项目 `ai-manager-v1-next`，当时已检查真实浏览器登录、工作空间对话框和手机导航。使用 `scripts/manager.ps1 status -Active` 查看当前启用的项目、入口和容器状态，无需手动寻找部署目录；历史端口和结果不能代替当前运行状态。管理员使用单独配置的凭据登录。
 
 上述验收对应固定源码和修复组成的发布快照，范围与条件跳过项见 [发布构建证据](docs/releases/stage-deployment-build-completeness-verification.json)。后续受管 Android 管理功能未进入该运行包；相关表已并入 1.0.0 的 V1 初始化。此前 `18099` 的 `ai-manager-v1` 环境备份与保留状态须在操作前核实。源码后续变更需要重新构建部署才能生效。
 

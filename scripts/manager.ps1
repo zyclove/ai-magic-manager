@@ -14,6 +14,8 @@ Build and start retain all checks in the existing deployment scripts.
 ./scripts/manager.ps1 build -Directory .local/demo -Offline
 .EXAMPLE
 ./scripts/manager.ps1 status -Directory .local/demo
+.EXAMPLE
+./scripts/manager.ps1 status -Active
 #>
 [CmdletBinding()]
 param(
@@ -35,6 +37,7 @@ param(
     [switch]$ExternalTlsProxy,
     [switch]$Tls,
     [switch]$Offline,
+    [switch]$Active,
     [Alias('DryRun')][switch]$Plan,
     [switch]$Help
 )
@@ -47,7 +50,7 @@ $allowed = @{
     build = @('Directory', 'SourceDirectory', 'MavenCommand', 'FlutterCommand', 'DartCommand', 'MavenRepository', 'ConsumerIdentity', 'Offline')
     'init-ledger' = @('Directory')
     start = @('Directory', 'Tls', 'ExternalTlsProxy', 'IdentityAdminDirectory', 'IdentityRuntimeDirectory')
-    status = @('Directory')
+    status = @('Directory', 'Active')
     verify = @('Directory')
 }
 $forward = @{}
@@ -60,7 +63,10 @@ foreach ($name in $PSBoundParameters.Keys) {
 }
 
 $repository = [IO.Path]::GetFullPath((Split-Path $PSScriptRoot -Parent))
-if ($Action -ne 'doctor') {
+if ($Active -and $PSBoundParameters.ContainsKey('Directory')) {
+    throw 'Parameters -Active and -Directory cannot be combined.'
+}
+if ($Action -ne 'doctor' -and -not $Active) {
     $root = [IO.Path]::GetFullPath($Directory, $repository)
     $local = [IO.Path]::GetFullPath((Join-Path $repository '.local')) + [IO.Path]::DirectorySeparatorChar
     $comparison = if ($IsWindows) { [StringComparison]::OrdinalIgnoreCase } else { [StringComparison]::Ordinal }
@@ -99,6 +105,7 @@ if ($Plan) {
         action = $Action
         entry = if ($entries.ContainsKey($Action)) { 'scripts/' + $entries[$Action] } else { 'scripts/manager.ps1' }
         parameters = $parameters
+        selection = if ($Active) { 'ACTIVE_CONSOLE' } elseif ($Action -eq 'doctor') { 'NONE' } else { 'DIRECTORY' }
         mode = 'PLAN_ONLY'
         effect = switch ($Action) {
             doctor { 'Check command availability only; no SDK commands or service access.' }
@@ -139,10 +146,27 @@ if ($Action -eq 'doctor') {
 }
 if ($Action -eq 'status') {
     . (Join-Path $PSScriptRoot 'deployment-common.ps1')
-    $context = Get-DeploymentContext $forward.Directory
+    $selection = $null
+    if ($Active) {
+        . (Join-Path $PSScriptRoot 'console-activation.ps1')
+        $selection = Get-ActiveConsoleSelection -RepositoryRoot $repository
+        if ($null -eq $selection) { throw 'No active console deployment is selected. Use status -Directory for an explicit environment.' }
+        $statusDirectory = $selection.deploymentDirectory
+    } else {
+        $statusDirectory = $forward.Directory
+    }
+    $context = Get-DeploymentContext $statusDirectory
     $project = $context.Settings.projectName
     if ($project -isnot [string] -or $project -cnotmatch '^[a-z][a-z0-9-]{2,40}$') { throw 'Deployment project name is invalid.' }
-    $docker = Get-Command docker -CommandType Application -ErrorAction Stop
+    if ($Active) {
+        if ($project -cne $selection.project -or $context.Settings.publicUrl -cne $selection.publicUrl) {
+            throw 'Active console metadata changed; select the current environment again.'
+        }
+        Write-Output "Project: $project"
+        Write-Output "Public URL: $($selection.publicUrl)"
+    }
+    $docker = Get-Command docker -CommandType Application -ErrorAction Stop |
+        Select-Object -First 1
     & $docker.Source container ls --all --filter "label=com.docker.compose.project=$project" --format 'table {{.Names}}\t{{.State}}\t{{.Status}}\t{{.Ports}}'
     if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
     return

@@ -39,6 +39,7 @@
 | --- | --- |
 | 查看任一动作 | 加 `-Plan`（别名 `-DryRun`）；输出动作、非秘密参数和影响，不执行 |
 | 获取帮助 | `-Help`；所有动作仅接受相关参数，避免静默忽略 |
+| 查看当前已选环境 | `status -Active`；复用已提交的控制台选择，只读展示项目、公开入口与容器状态，无需记住快照路径 |
 | 更换本机端口 | `init -PublicUrl http://localhost:18120 -EdgePort 18120`；使用新的独立目录与项目名 |
 | 本地 TLS | `init -PublicUrl https://manager.example.com:8443 -EdgePort 8443`，准备证书后 `start -Tls` |
 | 外部 HTTPS 代理 | 初始化和启动均加 `-ExternalTlsProxy`；公开 URL 为标准 HTTPS，内部保持回环端口 |
@@ -54,6 +55,10 @@
 
 `status` 只读取选定环境元数据并列出其精确 Compose 项目标签下的容器，不打印环境变量、命令行或密钥；同标签的容器状态仅用于运维定位，不证明发布身份。`verify` 保留实际发布身份及入口检查，但不执行登录后的业务旅程或真机管控。
 
-## 本批验证边界
+已有控制台可用 `./scripts/manager.ps1 status -Active` 查看。`-Active` 仅用于只读 `status`，不能与显式 `-Directory` 同传；未选择环境时明确提示，不回退到其他项目。`status -Active -Plan` 只展示选择方式，不读取激活或部署元数据；构建、启动及验证仍显式指定部署目录，避免跨源码环境发布。
 
-新增的是统一调度和多平台入口，不改变数据库结构、发布配方或产品授权。Windows 本机已通过 PowerShell 语法检查及 5 项入口测试，覆盖动作计划、参数、路径、输入保护和预览不执行；没有运行实际构建、初始化或发布。Linux/macOS、真实安装和全产品验收仍按实际环境单独判断。详情见[本批记录](reviews/engineering-foundation-20261025.md)。
+## 验证范围
+
+初始入口已在 Windows 通过语法检查及 5 项计划/参数测试，见[初始记录](reviews/engineering-foundation-20261025.md)。新增 `-Active` 已单独通过计划与参数保护检查，并在当前选定环境实际查询成功；试用发现的 Windows 多 Docker 入口解析问题已修正为选择首个可执行入口。
+
+这些检查没有执行构建、初始化或发布，也不改变数据库结构、发布配方和产品授权。Linux/macOS、真实安装和全产品验收仍按实际环境单独判断。

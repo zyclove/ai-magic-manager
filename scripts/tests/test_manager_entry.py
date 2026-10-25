@@ -75,6 +75,21 @@ class ManagerEntryTest(unittest.TestCase):
         document = self.plan("status", "-Directory", ".local/manager plan", cwd=ROOT / "scripts/tests")
         self.assertEqual(Path(document["parameters"]["Directory"]), ROOT / ".local/manager plan")
 
+    def test_active_status_plans_without_resolving_and_rejects_ambiguous_targets(self):
+        document = self.plan("status", "-Active")
+        self.assertEqual(document["selection"], "ACTIVE_CONSOLE")
+        self.assertTrue(document["parameters"]["Active"])
+        self.assertNotIn("Directory", document["parameters"])
+        for arguments, message in [
+            (["status", "-Active", "-Directory", ".local/not-selected"],
+             "cannot be combined"),
+            (["start", "-Active"], "does not apply"),
+        ]:
+            with self.subTest(arguments=arguments):
+                result = self.invoke(*arguments, "-Plan")
+                self.assertNotEqual(result.returncode, 0)
+                self.assertIn(message, result.stdout + result.stderr)
+
     def test_invalid_options_fail_before_any_action(self):
         rows = [
             (["build", "-Tls"], "does not apply"),
