@@ -1,0 +1,87 @@
+{
+  "status": "PASSED",
+  "sdkCalls": 1,
+  "tests": [
+    "audit_export_deadline_test.dart",
+    "audit_exports_test.dart"
+  ],
+  "forceRequested": false,
+  "head": "244ac33f9c75add115737caa4614b2d448531485",
+  "resourcesBefore": {
+    "ram": 6060347392,
+    "cFree": 2989051904,
+    "dFree": 18475180032
+  },
+  "sdkBefore": {
+    "sdk": [],
+    "unknown": 0
+  },
+  "pid": 197776,
+  "command": "D:\\softwares\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe format lib/core/audit_exports.dart test/audit_export_deadline_test.dart",
+  "terminal": {
+    "pid": 197776,
+    "creationFiletime": 134374193950322705,
+    "firstSignaledQpc": 223913.1070533,
+    "sampleQpc": 223913.1185415,
+    "signaled": true,
+    "exitCode": 0,
+    "exitFiletime": 134374193953575591,
+    "kernel100ns": 156250,
+    "user100ns": 0,
+    "jobAccountingObservedQpc": 223913.1185721,
+    "firstCompleteTerminalQpc": 223913.1185721,
+    "activeProcesses": 0,
+    "totalProcesses": 3,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "naturalZero": true,
+  "passed": 0,
+  "failed": 0,
+  "skipped": 0,
+  "reporterDone": false,
+  "suiteFilesMatch": false,
+  "sourceUnchanged": false,
+  "sourcePins": {
+    "apps\\guardian\\lib\\core\\audit_exports.dart": "87e4368f36bc5debb7e365e1e0bdec5403435413c9b7415f4dd89464b7f6abbe",
+    "apps\\guardian\\test\\audit_export_deadline_test.dart": "3c9a673d721e8fbea79c566f1ebbe2827efcfa640d43c9443cf869744650c600",
+    "apps\\guardian\\test\\audit_exports_test.dart": "5cb7e268f4ab9f34aa945d90631acd63efc8d87b477e9b70928cd49001848a7c",
+    "apps\\guardian\\lib\\core\\api.dart": "9a7a862145e3bc845c2e8ca9ce70673154c2c3070621a2ea78142e1db5214ad8",
+    "apps\\guardian\\lib\\core\\scoped_http_client.dart": "796c1c627a34ebded045ed6b8acdcf2b0705e16ce840b6ee3061c05e2d9352be",
+    "apps\\guardian\\lib\\core\\audit.dart": "ee067fa9e3b2c1b6bc7bae32bf5877c4cc2146961b8dcb6d13980b5cff3f3fae",
+    "apps\\guardian\\lib\\ui\\audit_exports_view.dart": "977a0b82101c834784af284f02c4481268e4746c11f0f63ec74f9685f776a7af",
+    "apps\\guardian\\lib\\ui\\export_create_dialog.dart": "823e93225cfbccfe87c95217e77836ab1dd83c4d833a59df2cb1f40910e76645",
+    "apps\\guardian\\lib\\ui\\design.dart": "597b455b3f86f649d0dd1a3cf0b52fb74d27144e60f6972e804b5ea92de7114e",
+    "apps\\guardian\\pubspec.yaml": "0e6fc775ba24cc541e918b7d74fde7ec7591c9badd47d5dfd2ee9f00fce24dcf",
+    "apps\\guardian\\pubspec.lock": "c6f16b105ed81fd036675605a44b846474fb45fec17040796c1358cdebd0016c",
+    "apps\\guardian\\.dart_tool\\package_config.json": "7d56027a23fc233d28485accb53dc9e4a4e35ae7e4f082f5c7b9450b5f091922",
+    "packages\\audit_client\\lib\\audit_client.dart": "24d81bb99d9ec6c43b454076925cc5f8fbf2c915cfb885f1917e8a0bef33f87f",
+    "packages\\audit_client\\lib\\exports.dart": "07c51f0fd45bad6a9071085becd51257520a750f80d7ae1b27417fa556238451"
+  },
+  "sdkAfter": {
+    "sdk": [],
+    "unknown": 0
+  },
+  "appTestsPassed": false,
+  "windowReleased": true,
+  "analysisNoIssues": null,
+  "formatCompleted": true,
+  "finalOwnedState": {
+    "pid": 197776,
+    "creationFiletime": 134374193950322705,
+    "firstSignaledQpc": 223913.1070533,
+    "sampleQpc": 223913.5886413,
+    "signaled": true,
+    "exitCode": 0,
+    "exitFiletime": 134374193953575591,
+    "kernel100ns": 156250,
+    "user100ns": 0,
+    "jobAccountingObservedQpc": 223913.5886911,
+    "firstCompleteTerminalQpc": 223913.1185721,
+    "activeProcesses": 0,
+    "totalProcesses": 3,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "elapsedSeconds": 1.410732199990889
+}

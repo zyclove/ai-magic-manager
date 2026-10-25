@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import 'api.dart';
 import 'audit.dart';
+import 'scoped_http_client.dart';
 
 import 'package:audit_client/exports.dart';
 export 'package:audit_client/exports.dart';
@@ -83,10 +84,18 @@ class AuditExportRepository {
     if (job.state != 'READY') throw const ApiFailure(409, 'EXPORT_NOT_READY');
     StreamSubscription<List<int>>? subscription;
     bool ended = false, aborted = false;
+    final abort = Completer<void>();
+    void abortRequest() {
+      if (!abort.isCompleted) abort.complete();
+    }
+
     try {
       final bytes = await (() async {
-        final request = http.Request('GET',
-            Uri.parse('${api.baseUrl}$root/audit-exports/${job.id}/content'))
+        final request = ScopeGuardedRequest('GET',
+            Uri.parse('${api.baseUrl}$root/audit-exports/${job.id}/content'),
+            isCurrent: current,
+            abortTrigger: abort.future,
+            isAborted: () => aborted)
           ..followRedirects = false
           ..headers['Accept'] = 'application/json';
         final client = await api.client();
@@ -94,8 +103,7 @@ class AuditExportRepository {
         ensureCurrent();
         final response = await client.send(request);
         if (aborted || !current()) {
-          unawaited(
-              response.stream.listen(null).cancel().catchError((Object _) {}));
+          _discardResponse(response);
           ensureCurrent();
           throw const ApiFailure(0, 'NETWORK_ERROR');
         }
@@ -103,8 +111,8 @@ class AuditExportRepository {
         final maximum = response.statusCode == 200 ? exportByteLimit : 65536;
         if (response.contentLength != null &&
             response.contentLength! > maximum) {
-          unawaited(
-              response.stream.listen(null).cancel().catchError((Object _) {}));
+          abortRequest();
+          _discardResponse(response);
           _invalid();
         }
         final received = Completer<Uint8List>(),
@@ -112,9 +120,10 @@ class AuditExportRepository {
         subscription = response.stream.listen((chunk) {
           if (received.isCompleted) return;
           if (builder.length + chunk.length > maximum) {
+            abortRequest();
             received.completeError(
                 const ApiFailure(502, 'INVALID_EXPORT_RESPONSE'));
-            subscription?.cancel();
+            unawaited(subscription?.cancel().catchError((Object _) {}));
             return;
           }
           builder.add(chunk);
@@ -155,9 +164,16 @@ class AuditExportRepository {
         _validateContent(v, job);
         return bytes;
       })()
-          .timeout(const Duration(seconds: 25));
+          .timeout(const Duration(seconds: 25), onTimeout: () {
+        aborted = true;
+        abortRequest();
+        throw TimeoutException('Download deadline elapsed');
+      });
       ensureCurrent();
       return bytes;
+    } on ScopeChangedException {
+      abortRequest();
+      throw const ApiFailure(409, 'WORKSPACE_CHANGED');
     } on TimeoutException {
       ensureCurrent();
       throw const ApiFailure(0, 'NETWORK_ERROR');
@@ -170,6 +186,18 @@ class AuditExportRepository {
         unawaited(subscription!.cancel().catchError((Object _) {}));
       }
     }
+  }
+
+  void _discardResponse(http.StreamedResponse response) {
+    unawaited(Future<void>.sync(() async {
+      try {
+        await response.stream
+            .listen(null, onError: (Object _, StackTrace __) {})
+            .cancel();
+      } catch (_) {
+        // Cleanup must not replace the original deadline or protocol error.
+      }
+    }));
   }
 
   void _validateContent(dynamic v, AuditExportJob job) {

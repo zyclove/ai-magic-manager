@@ -1,0 +1,42 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":216228,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"D:/codes/mobile/ai-manager/apps/guardian/test/audit_export_deadline_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/audit_export_deadline_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1}
+{"count":2,"time":5,"type":"allSuites"}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null,"observatoryUri":null}}]
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1688}
+{"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":5,"line":null,"column":null,"url":null},"type":"group","time":1690}
+{"test":{"id":3,"name":"download deadline includes initial authentication","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":79,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/audit_export_deadline_test.dart"},"type":"testStart","time":1690}
+{"testID":3,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1734}
+{"test":{"id":4,"name":"download deadline aborts headers and discards a late private body","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":96,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/audit_export_deadline_test.dart"},"type":"testStart","time":1735}
+{"testID":4,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1740}
+{"test":{"id":5,"name":"streaming download aborts and cancels at the same total deadline","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":121,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/audit_export_deadline_test.dart"},"type":"testStart","time":1740}
+{"testID":5,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1745}
+{"test":{"id":6,"name":"late OAuth refresh cannot dispatch an expired nested-scope download","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":146,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/audit_export_deadline_test.dart"},"type":"testStart","time":1746}
+{"testID":6,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1751}
+{"test":{"id":7,"name":"scope loss during OAuth refresh keeps the download error contract","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":165,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/audit_export_deadline_test.dart"},"type":"testStart","time":1751}
+{"testID":7,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1755}
+{"suite":{"id":8,"platform":"vm","path":"D:/codes/mobile/ai-manager/apps/guardian/test/audit_exports_test.dart"},"type":"suite","time":1782}
+{"test":{"id":9,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/audit_exports_test.dart","suiteID":8,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1783}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null,"observatoryUri":null}}]
+{"testID":9,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":2406}
+{"group":{"id":10,"suiteID":8,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":8,"line":null,"column":null,"url":null},"type":"group","time":2406}
+{"test":{"id":11,"name":"shared event protocol failures retain the export API error contract","suiteID":8,"groupIDs":[10],"metadata":{"skip":false,"skipReason":null},"line":67,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/audit_exports_test.dart"},"type":"testStart","time":2406}
+{"testID":11,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2449}
+{"test":{"id":12,"name":"exports follow audit roles and login return paths are internal allowlisted routes","suiteID":8,"groupIDs":[10],"metadata":{"skip":false,"skipReason":null},"line":92,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/audit_exports_test.dart"},"type":"testStart","time":2449}
+{"testID":12,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2454}
+{"test":{"id":13,"name":"strict job model rejects missing ready artifact metadata and invalid intervals","suiteID":8,"groupIDs":[10],"metadata":{"skip":false,"skipReason":null},"line":110,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/audit_exports_test.dart"},"type":"testStart","time":2455}
+{"testID":13,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2457}
+{"test":{"id":14,"name":"authenticated download preserves bytes and rejects a different job payload","suiteID":8,"groupIDs":[10],"metadata":{"skip":false,"skipReason":null},"line":121,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/audit_exports_test.dart"},"type":"testStart","time":2458}
+{"testID":14,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2463}
+{"test":{"id":15,"name":"workspace change discards a completed download","suiteID":8,"groupIDs":[10],"metadata":{"skip":false,"skipReason":null},"line":135,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/audit_exports_test.dart"},"type":"testStart","time":2463}
+{"testID":15,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2467}
+{"test":{"id":16,"name":"unknown creation retries the original key and exact selection","suiteID":8,"groupIDs":[10],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":146,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/audit_exports_test.dart"},"type":"testStart","time":2468}
+{"testID":16,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3087}
+{"test":{"id":17,"name":"MFA failure offers reauthentication without saving a file","suiteID":8,"groupIDs":[10],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":172,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/audit_exports_test.dart"},"type":"testStart","time":3087}
+{"testID":17,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3318}
+{"test":{"id":18,"name":"mobile cancel requires confirmation and shows terminal state","suiteID":8,"groupIDs":[10],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":198,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/audit_exports_test.dart"},"type":"testStart","time":3318}
+{"testID":18,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3467}
+{"success":true,"type":"done","time":3500}

@@ -1,0 +1,13 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":215076,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"D:/codes/mobile/ai-manager/apps/guardian/test/audit_export_deadline_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/audit_export_deadline_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1}
+{"count":1,"time":4,"type":"allSuites"}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null,"observatoryUri":null}}]
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1674}
+{"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":1676}
+{"test":{"id":3,"name":"download deadline aborts headers and discards a late private body","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":94,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/audit_export_deadline_test.dart"},"type":"testStart","time":1677}
+{"testID":3,"error":"Expected: not null\n  Actual: <null>\n","stackTrace":"package:matcher                                     expect\npackage:flutter_test/src/widget_tester.dart 474:18  expect\ntest\\audit_export_deadline_test.dart 104:7          main.<fn>.<fn>\npackage:fake_async/fake_async.dart 182:54           FakeAsync.run.<fn>.<fn>\ndart:async                                          runZoned\npackage:clock/src/default.dart 52:10                withClock\npackage:fake_async/fake_async.dart 182:22           FakeAsync.run.<fn>\ndart:async                                          runZoned\npackage:fake_async/fake_async.dart 182:7            FakeAsync.run\npackage:fake_async/fake_async.dart 41:41            fakeAsync\ntest\\audit_export_deadline_test.dart 95:10          main.<fn>\n","isFailure":true,"type":"error","time":1729}
+{"testID":3,"result":"failure","skipped":false,"hidden":false,"type":"testDone","time":1730}
+{"success":false,"type":"done","time":1759}
