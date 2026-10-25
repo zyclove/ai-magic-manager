@@ -26,6 +26,8 @@ class ApiFailure implements Exception {
   final String? correlationId;
   const ApiFailure(this.status, this.code, [this.correlationId]);
   String get message => switch (code) {
+        'INVALID_RESPONSE' =>
+          '服务返回的数据无法读取，暂时不能确认结果。已提交的操作请先核对原记录，避免重复提交。',
         'IDEMPOTENCY_RESULT_EXPIRED' =>
           '原操作结果已超过 90 天保留期限，不能再恢复。请查看当前记录；不要重复提交原操作。',
         'IDEMPOTENCY_RESPONSE_ERASED' =>
@@ -288,15 +290,17 @@ class Api {
         return value;
       })()
           .timeout(const Duration(seconds: 25));
-      if (key != null && response.statusCode < 500) _pendingWrites.remove(key);
       dynamic decoded;
-      if (response.body.isNotEmpty) {
+      if (response.bodyBytes.isNotEmpty) {
         try {
           decoded = jsonDecode(utf8.decode(response.bodyBytes));
         } on FormatException {
-          decoded = null;
+          if (response.statusCode < 400) {
+            throw const ApiFailure(502, 'INVALID_RESPONSE');
+          }
         }
       }
+      if (key != null && response.statusCode < 500) _pendingWrites.remove(key);
       if (response.statusCode >= 400) {
         final errorCode = decoded is Map ? decoded['errorCode'] : null;
         final correlationId = decoded is Map ? decoded['correlationId'] : null;

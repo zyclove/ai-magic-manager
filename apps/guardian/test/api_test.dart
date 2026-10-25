@@ -55,6 +55,87 @@ void main() {
     expect(result['id'], 'same-result');
     expect(calls, 2);
   });
+  final malformedSuccessBodies = <String, List<int>>{
+    'invalid JSON': utf8.encode('{"id":'),
+    'invalid UTF-8': <int>[0xc3, 0x28],
+  };
+  for (final entry in malformedSuccessBodies.entries) {
+    test('malformed successful ${entry.key} preserves the original write',
+        () async {
+      var calls = 0;
+      final api = Api(() async => MockClient((request) async {
+            calls++;
+            expect(request.headers['idempotency-key'], 'malformed-key');
+            return calls == 1
+                ? http.Response.bytes(entry.value, 200,
+                    headers: {'content-type': 'application/json; charset=utf-8'})
+                : http.Response('{"id":"recovered-result"}', 200);
+          }));
+
+      await expectLater(
+          api.send('POST', '/copies',
+              body: {'name': 'original'}, key: 'malformed-key'),
+          throwsA(isA<ApiFailure>()
+              .having((error) => error.status, 'status', 502)
+              .having((error) => error.code, 'code', 'INVALID_RESPONSE')));
+      await expectLater(
+          api.send('POST', '/copies',
+              body: {'name': 'changed'}, key: 'malformed-key'),
+          throwsA(isA<ApiFailure>().having((error) => error.code, 'code',
+              'PENDING_OPERATION_UNCHANGED')));
+      expect(calls, 1);
+      final recovered = await api.send('POST', '/copies',
+          body: {'name': 'original'}, key: 'malformed-key');
+      expect(recovered['id'], 'recovered-result');
+      expect(calls, 2);
+    });
+  }
+  test('empty success and explicit JSON null complete the pending write',
+      () async {
+    for (final response in <http.Response>[
+      http.Response('', 200),
+      http.Response('', 204),
+      http.Response('null', 200),
+    ]) {
+      var calls = 0;
+      final api = Api(() async => MockClient((_) async {
+            calls++;
+            return response;
+          }));
+      expect(
+          await api.send('POST', '/copies',
+              body: {'name': 'original'}, key: 'empty-key'),
+          isNull);
+      expect(
+          await api.send('POST', '/copies',
+              body: {'name': 'changed'}, key: 'empty-key'),
+          isNull);
+      expect(calls, 2);
+    }
+  });
+  for (final entry in malformedSuccessBodies.entries) {
+    test('non-JSON HTTP 403 (${entry.key}) preserves the denial status',
+        () async {
+      var calls = 0;
+      final api = Api(() async => MockClient((_) async {
+            calls++;
+            return calls == 1
+                ? http.Response.bytes(entry.value, 403,
+                    headers: {'content-type': 'application/json; charset=utf-8'})
+                : http.Response('{"id":"next-result"}', 200);
+          }));
+      await expectLater(
+          api.send('POST', '/copies',
+              body: {'name': 'original'}, key: 'denied-key'),
+          throwsA(isA<ApiFailure>()
+              .having((error) => error.status, 'status', 403)
+              .having((error) => error.code, 'code', 'REQUEST_FAILED')));
+      final result = await api.send('POST', '/copies',
+          body: {'name': 'changed'}, key: 'denied-key');
+      expect(result['id'], 'next-result');
+      expect(calls, 2);
+    });
+  }
   test('writes carry version and idempotency without retrying conflicts',
       () async {
     var calls = 0;
