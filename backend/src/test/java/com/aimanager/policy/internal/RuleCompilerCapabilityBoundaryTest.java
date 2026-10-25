@@ -1,12 +1,14 @@
 package com.aimanager.policy.internal;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.aimanager.catalog.ApplicationDefinition;
 import com.aimanager.fleet.CapabilityView;
 import com.aimanager.fleet.Device;
 import com.aimanager.fleet.FleetPolicyAccess;
 import com.aimanager.policy.PolicyRule;
+import com.aimanager.shared.DomainException;
 import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.Test;
@@ -35,6 +37,27 @@ class RuleCompilerCapabilityBoundaryTest {
     assertThat(evaluation.status()).isEqualTo("SUPPORTED_PENDING");
     assertThat(evaluation.reasonCode()).isEqualTo("AWAITING_EXECUTION");
     assertThat(evaluation.effectiveEffect()).isNull();
+  }
+
+  @Test
+  void savedDomainRulesRemainCanonicalWhenTheNormalizerIsShared() {
+    for (String domain : List.of("example.invalid", "xn--bcher-kva.example")) {
+      compiler.validate(List.of(domainRule(domain)), Map.of());
+    }
+    for (String domain : List.of("EXAMPLE.invalid", "bücher.example")) {
+      assertThatThrownBy(() -> compiler.validate(List.of(domainRule(domain)), Map.of()))
+          .isInstanceOf(DomainException.class).hasMessage("DOMAIN_NOT_CANONICAL");
+    }
+    for (String domain : List.of(" example.invalid ", "https://example.invalid", "127.0.0.1",
+        "example.invalid.", "*.example.invalid")) {
+      assertThatThrownBy(() -> compiler.validate(List.of(domainRule(domain)), Map.of()))
+          .isInstanceOf(DomainException.class).hasMessage("INVALID_DOMAIN");
+    }
+  }
+
+  private static PolicyRule domainRule(String domain) {
+    return new PolicyRule("domain-rule", PolicyRule.Kind.DOMAIN_ACCESS, PolicyRule.Effect.DENY,
+        true, null, null, null, null, domain);
   }
 
   @Test

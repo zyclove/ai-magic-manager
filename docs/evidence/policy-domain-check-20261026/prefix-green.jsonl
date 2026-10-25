@@ -1,0 +1,26 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":217860,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_check_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_check_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1}
+{"count":1,"time":5,"type":"allSuites"}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null,"observatoryUri":null}}]
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1550}
+{"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":8,"line":null,"column":null,"url":null},"type":"group","time":1552}
+{"test":{"id":3,"name":"invalid prefixes cannot pass whole domain or rule identifier checks","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":40,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_check_test.dart"},"type":"testStart","time":1554}
+{"testID":3,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1601}
+{"test":{"id":4,"name":"check binds the exact draft version and keeps domains out of URLs","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":63,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_check_test.dart"},"type":"testStart","time":1602}
+{"testID":4,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1610}
+{"test":{"id":5,"name":"subdomains with no exact rule stay NO_MATCH instead of allowed","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":83,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_check_test.dart"},"type":"testStart","time":1610}
+{"testID":5,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1615}
+{"test":{"id":6,"name":"IDN normalization is provided by the same server policy normalizer","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":92,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_check_test.dart"},"type":"testStart","time":1615}
+{"testID":6,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1618}
+{"test":{"id":7,"name":"later changes to a borrowed draft cannot change the captured check","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":108,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_check_test.dart"},"type":"testStart","time":1619}
+{"testID":7,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1622}
+{"test":{"id":8,"name":"mismatched or execution-like results never become a rule prediction","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":121,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_check_test.dart"},"type":"testStart","time":1622}
+{"testID":8,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1636}
+{"test":{"id":9,"name":"invalid input is rejected locally without dispatching a request","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":159,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_check_test.dart"},"type":"testStart","time":1636}
+{"testID":9,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1639}
+{"test":{"id":10,"name":"stale versions and authorization failures preserve the API failure","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":182,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_check_test.dart"},"type":"testStart","time":1639}
+{"testID":10,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1643}
+{"success":true,"type":"done","time":1671}

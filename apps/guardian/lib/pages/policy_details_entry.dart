@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import '../core/api.dart';
 import '../core/labels.dart';
+import '../core/policy_domain_check.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
 import '../ui/dialog_access.dart';
 import '../ui/owned_dialog_route.dart';
+import '../ui/policy_domain_check_view.dart';
 import 'device_subflow_scope.dart';
 import 'editors.dart';
 
@@ -240,8 +242,9 @@ class _PolicyDetailsScope extends ChangeNotifier {
   bool _lost = false, _disposed = false;
 
   _PolicyDetailsScope(this.context, this.session, this.root,
-      {bool Function()? parentCurrent, Listenable? accessChanges,
-        this.readOnly = false}) {
+      {bool Function()? parentCurrent,
+      Listenable? accessChanges,
+      this.readOnly = false}) {
     // Capture the original route before the first read. Independent route
     // removal must revoke this entire details journey even without session I/O.
     _parentAccess = DialogAccessBinding(context,
@@ -320,7 +323,8 @@ Future<void> openPolicyDetails(BuildContext context, Session session,
     throw const ApiFailure(409, 'WORKSPACE_CHANGED');
   }
   final scope = _PolicyDetailsScope(context, session, root,
-      parentCurrent: parentCurrent, accessChanges: accessChanges,
+      parentCurrent: parentCurrent,
+      accessChanges: accessChanges,
       readOnly: readOnly);
   try {
     final id = row['id'];
@@ -346,6 +350,25 @@ Future<void> openPolicyDetails(BuildContext context, Session session,
         accessChanges: scope,
         hasAccess: () => scope.current,
         reauth: scope.reauthenticate,
+        extraContent: (draft['rules'] as List)
+                .any((rule) => rule['kind'] == 'DOMAIN_ACCESS')
+            ? ExpansionTile(
+                title: const Text('检查域名规则'),
+                subtitle: const Text('核对精确匹配，不执行设备策略'),
+                children: [
+                    Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: PolicyDomainCheckView(
+                            draftRevision: draft['revision'],
+                            accessChanges: scope,
+                            hasAccess: () => scope.current,
+                            evaluate: (domain) => scope.request((api) =>
+                                evaluatePolicyDomain(api,
+                                    root: scope.root,
+                                    draft: draft,
+                                    domain: domain))))
+                  ])
+            : null,
         actions: [
           if (scope.writable)
             DetailAction('编辑草稿', (dialog) async {

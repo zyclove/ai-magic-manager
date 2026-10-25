@@ -39,6 +39,8 @@
 
 管理台导航的名称、分组、搜索词和已知路由统一在 [console_modules.dart](../apps/guardian/lib/core/console_modules.dart)；[导航组件](../apps/guardian/lib/ui/console_navigation.dart)只负责呈现。目录不授予 API 权限，服务端与会话仍独立校验。
 
+网站规则的 IDN/ASCII 规范化统一在后端 policy 的 [DomainNames](../backend/src/main/java/com/aimanager/policy/internal/DomainNames.java)，保存规则与草稿域名检查共用；客户端不另建 IDN 转换算法。检查绑定草稿版本，只解释精确命中及拒绝优先，无命中保持 `NO_MATCH`；不做 DNS、网站访问或设备执行。契约与简明界面见[应用/时间/策略](policy-application-schedule-contract.md)。
+
 管理台异步旅程可复用 [DeviceSubflowScope](../apps/guardian/lib/pages/device_subflow_scope.dart) 捕获账号、租户、角色和会话代际；名称虽源自设备流程，通知与工作台也采用此机制。旧响应与回调必须核对原捕获，不能仅比较当前租户/角色。普通网络失败可保留已读数据，服务端拒绝访问则隐藏私有摘要并作废捕获。
 
 [通用 API](../apps/guardian/lib/core/api.dart) 使用已锁定 `http 1.6.0` 的 Abortable 协议；[作用域包装层](../apps/guardian/lib/core/scoped_http_client.dart)必须透传中止信号，在实际发送/终结请求前同时检查原作用域和请求期限，借用的客户端不能被单次请求关闭。纯时限单元测试使用原生 `FakeAsync`；共享完成 Future 的取消续程可能在其区域外调度，正常重试须保留有界真实异步断言，参考[超时回归](../apps/guardian/test/api_deadline_test.dart)，不要用无限等待或删除完成断言掩盖问题。

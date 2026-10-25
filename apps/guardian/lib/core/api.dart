@@ -26,6 +26,8 @@ class ApiFailure implements Exception {
   final String? correlationId;
   const ApiFailure(this.status, this.code, [this.correlationId]);
   String get message => switch (code) {
+        'INVALID_DOMAIN' => '请输入有效域名，不含协议、端口、路径、IP 地址或通配符。',
+        'INVALID_DOMAIN_CHECK_RESPONSE' => '域名检查结果与当前草稿不一致，已隐藏结果。请重新打开策略详情后检查。',
         'INVALID_RESPONSE' => '服务返回的数据无法读取，暂时不能确认结果。已提交的操作请先核对原记录，避免重复提交。',
         'IDEMPOTENCY_RESULT_EXPIRED' =>
           '原操作结果已超过 90 天保留期限，不能再恢复。请查看当前记录；不要重复提交原操作。',

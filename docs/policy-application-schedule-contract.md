@@ -75,6 +75,10 @@
 
 domain 只接受小写标准 ASCII/punycode DNS 名，不接受 URL、IP、尾部点或通配符。Unicode 名称需先 IDN 转换。域名规则不读取 HTTPS 页面内容，不提供所有媒体应用内部内容审查。
 
+管理台策略详情的“检查域名规则”可输入大小写或中文域名；检查与保存规则共用后端域名规范器，检查仅去掉首尾空白并转换为规范域名，不改变持久规则必须使用规范 ASCII 的要求。只检查当前草稿中的精确 `DOMAIN_ACCESS` 规则：`example.com` 不覆盖 `sub.example.com`；多个精确命中仍按 DENY 优先，无命中返回 `NO_MATCH`，不能默认解释为允许访问。该工具不访问目标网站、不做 DNS 查询、不保存检查历史，也不检查设备能力或实际流量。
+
+检查结果绑定策略编号与草稿版本，`effectiveEffect=null`、`matchMode=EXACT_DOMAIN`、`executionStatus=NOT_EVALUATED`，始终作为规则预测呈现。草稿并发变化须重新打开详情；输入变化立即清除旧结果，账号、工作空间、角色或父页面失效后清除私有输入和结果，旧响应不能恢复。日常配置只展示一个输入与检查动作，规则编号按需展开。
+
 同类型、同应用/权限/域名/计划的规则合并：DENY 优先；卸载保护 PROTECT 优先；权限冲突 DEFAULT 比 GRANT 更保守；额度取更小值；required 只要有一条为 true 就保持必需。不同计划保留为独立限制，下游需求交集，不能当成允许窗口的并集。应用 ALLOW 也不覆盖总额度或时段限制。
 
 警告包括 SAME_LAYER_CONFLICT_RESTRICTIVE_WINS、SMALLER_QUOTA_WINS、INSTALL_DENY_MAY_REMOVE_EXISTING_APP 和 SYSTEM_USER_ACTION_REQUIRED。安装 DENY 与临时启动 DENY 是不同操作；尚未接通安装/移除的供应商后果确认流程，不能发出不可逆执行。
@@ -88,6 +92,7 @@ domain 只接受小写标准 ASCII/punycode DNS 名，不接受 URL、IP、尾�
 | POST /policies | name、kind=POLICY/TEMPLATE、rules → PolicyDraft | 成人；可选幂等 |
 | GET /policies | limit、cursor、kind? | 成人/审计员；按 ID 分页 |
 | GET /policies/{policyId} | PolicyDraft、ETag | 成人/审计员 |
+| POST /policies/{policyId}/domain-evaluations | domain → policyId、draftRevision、canonicalDomain、matchingRuleIds（排序）、predictedEffect、effectiveEffect、matchMode、executionStatus | 成人/审计员；必需当前强 If-Match；只读、no-store；不要求写入幂等键或近期 MFA |
 | PUT /policies/{policyId} | name、rules → 新 revision、ETag | 成人；If-Match |
 | POST /policies/{policyId}/copies | name → POLICY 草稿 | 模板、成人、If-Match；可选幂等 |
 | POST /policies/{policyId}/previews | deviceIds → PolicyPreview | POLICY、成人、If-Match |

@@ -10,7 +10,6 @@ import com.aimanager.policy.*;
 import com.aimanager.shared.AndroidRuntimePermissions;
 import com.aimanager.shared.DomainException;
 import com.aimanager.shared.SafetyCriticalPackages;
-import java.net.IDN;
 import java.util.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -72,7 +71,7 @@ class RuleCompiler {
           required(rule.domain());
           used.add("domain");
           effects = Set.of(ALLOW, DENY);
-          if (!canonicalDomain(rule.domain()).equals(rule.domain()))
+          if (!DomainNames.canonical(rule.domain()).equals(rule.domain()))
             throw DomainException.invalid("DOMAIN_NOT_CANONICAL");
         }
         default -> throw DomainException.invalid("INVALID_RULE_KIND");
@@ -111,22 +110,6 @@ class RuleCompiler {
 
   private void required(String value) {
     if (value == null || value.isBlank()) throw DomainException.invalid("RULE_FIELD_REQUIRED");
-  }
-
-  private String canonicalDomain(String value) {
-    try {
-      String domain = IDN.toASCII(value, IDN.USE_STD3_ASCII_RULES).toLowerCase(Locale.ROOT);
-      if (domain.length() > 253
-          || !domain.contains(".")
-          || domain.endsWith(".")
-          || domain.matches("[0-9.]+")
-          || Arrays.stream(domain.split("\\.", -1))
-              .anyMatch(label -> label.isEmpty() || label.length() > 63))
-        throw DomainException.invalid("INVALID_DOMAIN");
-      return domain;
-    } catch (IllegalArgumentException failure) {
-      throw DomainException.invalid("INVALID_DOMAIN");
-    }
   }
 
   List<PolicySnapshot.RuleEvaluation> compile(

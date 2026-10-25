@@ -239,6 +239,28 @@ class PolicyService
     return readDraft(tenant, id, false);
   }
 
+  @Transactional(readOnly = true, timeout = 10)
+  public PolicyDomainEvaluation evaluateDomain(
+      String tenant, String actor, String id, String etag, String domain) {
+    var draft = get(tenant, actor, id);
+    ResourceVersions.check(ResourceVersions.require(etag), draft.revision());
+    String canonical = DomainNames.canonical(domain.strip());
+    var matches = draft.rules().stream()
+        .filter(rule -> rule.kind() == PolicyRule.Kind.DOMAIN_ACCESS)
+        .filter(rule -> canonical.equals(rule.domain()))
+        .sorted(Comparator.comparing(PolicyRule::id))
+        .toList();
+    var predicted = matches.stream().anyMatch(rule -> rule.effect() == PolicyRule.Effect.DENY)
+        ? PolicyDomainEvaluation.PredictedEffect.DENY
+        : matches.stream().anyMatch(rule -> rule.effect() == PolicyRule.Effect.ALLOW)
+            ? PolicyDomainEvaluation.PredictedEffect.ALLOW
+            : PolicyDomainEvaluation.PredictedEffect.NO_MATCH;
+    return new PolicyDomainEvaluation(draft.id(), draft.revision(), canonical,
+        matches.stream().map(PolicyRule::id).toList(), predicted, null,
+        PolicyDomainEvaluation.MatchMode.EXACT_DOMAIN,
+        PolicyDomainEvaluation.ExecutionStatus.NOT_EVALUATED);
+  }
+
   ItemPage<PolicyDraft> list(
       String tenant, String actor, int limit, String cursor, PolicyDraft.Kind kind) {
     access.requireRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN, AUDITOR);

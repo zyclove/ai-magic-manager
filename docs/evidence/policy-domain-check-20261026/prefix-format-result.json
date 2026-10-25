@@ -1,0 +1,79 @@
+{
+  "status": "PASSED",
+  "sdkCalls": 1,
+  "tests": [
+    "policy_domain_check_test.dart"
+  ],
+  "forceRequested": false,
+  "head": "d535ac86659a3148a21ac8d76bb6deac9f28224b",
+  "resourcesBefore": {
+    "ram": 5012197376,
+    "cFree": 2960711680,
+    "dFree": 18349326336
+  },
+  "sdkBefore": {
+    "sdk": [],
+    "unknown": 0
+  },
+  "pid": 221288,
+  "command": "D:\\softwares\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe format lib/core/policy_domain_check.dart test/policy_domain_check_test.dart",
+  "terminal": {
+    "pid": 221288,
+    "creationFiletime": 134374211504787530,
+    "firstSignaledQpc": 225668.59001,
+    "sampleQpc": 225668.6004523,
+    "signaled": true,
+    "exitCode": 0,
+    "exitFiletime": 134374211508408025,
+    "kernel100ns": 0,
+    "user100ns": 0,
+    "jobAccountingObservedQpc": 225668.6004595,
+    "firstCompleteTerminalQpc": 225668.6004595,
+    "activeProcesses": 0,
+    "totalProcesses": 3,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "naturalZero": true,
+  "passed": 0,
+  "failed": 0,
+  "skipped": 0,
+  "reporterDone": false,
+  "suiteFilesMatch": false,
+  "sourceUnchanged": false,
+  "sourcePins": {
+    "apps\\guardian\\lib\\core\\policy_domain_check.dart": "0ff7282feb48517ff01ce6c5a734a8159ff4d09c33c663f5d2f7fd65c6fcb006",
+    "apps\\guardian\\test\\policy_domain_check_test.dart": "bfa844090dc5a8ab0131316af0470e8eb851e095d5c9c6ffc0e0a3b516048778",
+    "apps\\guardian\\lib\\core\\api.dart": "cf59234187449213043955ab351a218b0bf8c2c7dfa9973c93071a37cb9e6efc",
+    "apps\\guardian\\lib\\core\\scoped_http_client.dart": "796c1c627a34ebded045ed6b8acdcf2b0705e16ce840b6ee3061c05e2d9352be",
+    "apps\\guardian\\pubspec.yaml": "0e6fc775ba24cc541e918b7d74fde7ec7591c9badd47d5dfd2ee9f00fce24dcf",
+    "apps\\guardian\\pubspec.lock": "c6f16b105ed81fd036675605a44b846474fb45fec17040796c1358cdebd0016c",
+    "apps\\guardian\\.dart_tool\\package_config.json": "7d56027a23fc233d28485accb53dc9e4a4e35ae7e4f082f5c7b9450b5f091922"
+  },
+  "sdkAfter": {
+    "sdk": [],
+    "unknown": 0
+  },
+  "appTestsPassed": false,
+  "windowReleased": true,
+  "analysisNoIssues": null,
+  "formatCompleted": true,
+  "finalOwnedState": {
+    "pid": 221288,
+    "creationFiletime": 134374211504787530,
+    "firstSignaledQpc": 225668.59001,
+    "sampleQpc": 225669.1752975,
+    "signaled": true,
+    "exitCode": 0,
+    "exitFiletime": 134374211508408025,
+    "kernel100ns": 0,
+    "user100ns": 0,
+    "jobAccountingObservedQpc": 225669.1753506,
+    "firstCompleteTerminalQpc": 225668.6004595,
+    "activeProcesses": 0,
+    "totalProcesses": 3,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "elapsedSeconds": 1.5937255000171717
+}

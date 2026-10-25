@@ -42,6 +42,15 @@ class PolicyController {
         var draft = policies.get(tenantId, actor.getSubject(), policyId);
         return ResponseEntity.ok().eTag(ResourceVersions.tag(draft.revision())).body(draft);
     }
+    /** Keep submitted domains out of URLs and prevent shared/browser response caching. */
+    @PostMapping("/policies/{policyId}/domain-evaluations")
+    ResponseEntity<PolicyDomainEvaluation> evaluateDomain(@AuthenticationPrincipal Jwt actor,
+            @PathVariable String tenantId, @PathVariable String policyId,
+            @Valid @RequestBody DomainEvaluation input,
+            @RequestHeader(name = "If-Match", required = false) String etag) {
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore())
+            .body(policies.evaluateDomain(tenantId, actor.getSubject(), policyId, etag, input.domain()));
+    }
     @PutMapping("/policies/{policyId}")
     ResponseEntity<PolicyDraft> edit(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId, @PathVariable String policyId,
                                     @Valid @RequestBody EditDraft input, @RequestHeader(name = "If-Match", required = false) String etag) {
@@ -100,6 +109,7 @@ class PolicyController {
                        @NotNull @Size(max = 100) List<@NotNull @Valid PolicyRule> rules) {}
     record EditDraft(@NotBlank @Size(max = 100) String name, @NotNull @Size(max = 100) List<@NotNull @Valid PolicyRule> rules) {}
     record Named(@NotBlank @Size(max = 100) String name) {}
+    record DomainEvaluation(@NotBlank @Size(max = 253) String domain) {}
     enum CreationOperation { EMPTY_DRAFT, TEMPLATE_COPY }
     record CreationQuery(@NotNull CreationOperation operation, @NotBlank @Size(max = 100) String name,
                          @NotNull PolicyDraft.Kind kind,
