@@ -171,6 +171,78 @@ void main() {
     await expectLater(failing.page('/tenants'), throwsA(isA<ApiFailure>()));
   });
 
+  final invalidPageResponse = isA<ApiFailure>()
+      .having((error) => error.status, 'status', 502)
+      .having((error) => error.code, 'code', 'INVALID_RESPONSE');
+  test('pagination rejects malformed items and cursor values as invalid responses',
+      () async {
+    Future<void> rejects(Json body) async {
+      var calls = 0;
+      final api = Api(() async => MockClient((_) async {
+            calls++;
+            return http.Response(jsonEncode(body), 200);
+          }));
+      await expectLater(api.page('/tenants'), throwsA(invalidPageResponse),
+          reason: jsonEncode(body));
+      expect(calls, 1);
+    }
+
+    for (final item in <Object?>[null, 'unexpected', <Object>[], 7, true]) {
+      await rejects({
+        'items': [
+          {'id': 'must-not-leak-as-a-partial-page'},
+          item,
+        ],
+        'nextCursor': null,
+      });
+    }
+    for (final cursor in <Object>['', 7, true, <Object>[], <String, Object>{}]) {
+      await rejects({
+        'items': [
+          {'id': 'must-not-leak-with-an-invalid-cursor'}
+        ],
+        'nextCursor': cursor,
+      });
+    }
+  });
+
+  test('pagination rejects a continuation cursor that does not advance', () async {
+    var calls = 0;
+    final api = Api(() async => MockClient((request) async {
+          calls++;
+          expect(request.url.queryParameters['cursor'], 'same-token');
+          return http.Response(
+              '{"items":[{"id":"repeated"}],"nextCursor":"same-token"}', 200);
+        }));
+    await expectLater(api.page('/tenants', cursor: 'same-token'),
+        throwsA(invalidPageResponse));
+    expect(calls, 1);
+  });
+
+  test('pagination preserves valid empty opaque-cursor and final pages', () async {
+    const opaque = 'opaque+/=_%&?#token';
+    final cursors = <String?>[];
+    final responses = <Json>[
+      {'items': <Json>[], 'nextCursor': null},
+      {'items': [{'id': 'first'}], 'nextCursor': opaque},
+      {'items': [{'id': 'last'}], 'nextCursor': null},
+    ];
+    final api = Api(() async => MockClient((request) async {
+          cursors.add(request.url.queryParameters['cursor']);
+          return http.Response(jsonEncode(responses[cursors.length - 1]), 200);
+        }));
+    final empty = await api.page('/tenants');
+    expect(empty.items, isEmpty);
+    expect(empty.nextCursor, isNull);
+    final first = await api.page('/tenants');
+    expect(first.items, [{'id': 'first'}]);
+    expect(first.nextCursor, opaque);
+    final last = await api.page('/tenants', cursor: first.nextCursor);
+    expect(last.items, [{'id': 'last'}]);
+    expect(last.nextCursor, isNull);
+    expect(cursors, [null, null, opaque]);
+  });
+
   final nonStringErrorValues = <String, Object>{
     'number': 17,
     'boolean': true,

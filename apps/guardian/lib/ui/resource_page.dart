@@ -65,6 +65,7 @@ class ResourcePageState extends State<ResourcePage> {
   final searchFocus = FocusNode(debugLabel: 'resource-search');
   List<Json> rows = [];
   String? cursor;
+  final _receivedCursors = <String>{};
   bool cursorExpired = false;
   String query = '';
   bool loading = true;
@@ -91,6 +92,7 @@ class ResourcePageState extends State<ResourcePage> {
       resourceGeneration++;
       rows = [];
       cursor = null;
+      _receivedCursors.clear();
       cursorExpired = false;
       query = '';
       search.clear();
@@ -141,9 +143,16 @@ class ResourcePageState extends State<ResourcePage> {
       final result =
           await api.page(path, cursor: requestCursor, isCurrent: current);
       if (current() && generation == epoch) {
+        final nextCursor = result.nextCursor;
+        if (append && nextCursor != null &&
+            _receivedCursors.contains(nextCursor)) {
+          throw const ApiFailure(502, 'INVALID_RESPONSE');
+        }
         setState(() {
+          if (!append) _receivedCursors.clear();
+          if (nextCursor != null) _receivedCursors.add(nextCursor);
           rows = append ? [...rows, ...result.items] : result.items;
-          cursor = result.nextCursor;
+          cursor = nextCursor;
           cursorExpired = false;
         });
       }
@@ -156,6 +165,7 @@ class ResourcePageState extends State<ResourcePage> {
                   e.code == 'WORKSPACE_CHANGED')) {
             rows = [];
             cursor = null;
+            _receivedCursors.clear();
             cursorExpired = false;
             appendError = null;
             error = e;

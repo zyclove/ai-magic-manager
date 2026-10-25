@@ -335,11 +335,19 @@ class Api {
     if (result is! Map || result['items'] is! List) {
       throw const ApiFailure(502, 'INVALID_RESPONSE');
     }
-    return PageResult(
-        (result['items'] as List)
-            .map((e) => Map<String, dynamic>.from(e))
-            .toList(),
-        result['nextCursor']);
+    final nextCursor = result['nextCursor'];
+    if (nextCursor != null &&
+        (nextCursor is! String || nextCursor.isEmpty || nextCursor == cursor)) {
+      throw const ApiFailure(502, 'INVALID_RESPONSE');
+    }
+    final items = <Json>[];
+    for (final item in result['items'] as List) {
+      if (item is! Map || item.keys.any((key) => key is! String)) {
+        throw const ApiFailure(502, 'INVALID_RESPONSE');
+      }
+      items.add(Map<String, dynamic>.from(item));
+    }
+    return PageResult(items, nextCursor as String?);
   }
 
   Future<List<Json>> all(String path, {bool Function()? isCurrent}) async {

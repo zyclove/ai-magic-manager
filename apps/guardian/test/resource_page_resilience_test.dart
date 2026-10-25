@@ -339,6 +339,54 @@ void main() {
     expect(find.text('fresh-more'), findsOneWidget);
   });
 
+  testWidgets('cyclic next cursors preserve rows and recover on retry or refresh',
+      (tester) async {
+    final cursors = <String?>[];
+    final api = apiFor((request) {
+      cursors.add(request.url.queryParameters['cursor']);
+      return switch (cursors.length) {
+        1 => page(['first'], cursor: 'A'),
+        2 => page(['second'], cursor: 'B'),
+        3 => unavailable(),
+        4 => page(['must-not-append'], cursor: 'A'),
+        5 => page(['third']),
+        6 => page(['fresh'], cursor: 'A'),
+        _ => page(['fresh-more'], cursor: 'B'),
+      };
+    });
+    await tester.pumpWidget(host(api));
+    await tester.pumpAndSettle();
+    await tap(tester, '加载更多');
+    await tester.ensureVisible(find.byTooltip('刷新'));
+    await tester.tap(find.byTooltip('刷新'));
+    await tester.pumpAndSettle();
+    expect(find.text('刷新未完成，已保留已加载记录'), findsOneWidget);
+    await tap(tester, '加载更多');
+    expect(find.text('first'), findsOneWidget);
+    expect(find.text('second'), findsOneWidget);
+    expect(find.text('must-not-append'), findsNothing,
+        reason: 'A failed refresh must not erase the accepted cursor history.');
+    expect(find.text('重试加载更多'), findsOneWidget);
+    expect(cursors, [null, 'A', null, 'B']);
+
+    await tap(tester, '重试加载更多');
+    expect(find.text('third'), findsOneWidget);
+    expect(find.text('加载更多'), findsNothing);
+    expect(find.text('重试加载更多'), findsNothing);
+    await tester.ensureVisible(find.byTooltip('刷新'));
+    await tester.tap(find.byTooltip('刷新'));
+    await tester.pumpAndSettle();
+    expect(find.text('fresh'), findsOneWidget);
+    expect(find.text('first'), findsNothing);
+    expect(find.text('second'), findsNothing);
+    expect(find.text('third'), findsNothing);
+    await tap(tester, '加载更多');
+    expect(find.text('fresh-more'), findsOneWidget,
+        reason: 'A successful refresh must allow its new traversal to reuse tokens.');
+    expect(find.text('加载更多'), findsOneWidget);
+    expect(cursors, [null, 'A', null, 'B', 'B', null, 'A']);
+  });
+
   for (final changeApi in [false, true]) {
     testWidgets('${changeApi ? 'API' : 'path'} change isolates old page errors',
         (tester) async {
