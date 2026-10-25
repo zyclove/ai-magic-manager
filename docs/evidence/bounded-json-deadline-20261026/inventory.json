@@ -1,0 +1,49 @@
+{
+  "files": [
+    {
+      "file": "red-result.json",
+      "bytes": 3481,
+      "sha256": "957b3853c9e4b5f52312ddeefc7b4ddddfcae7dc93a435e14e7c971900119856"
+    },
+    {
+      "file": "red-output.jsonl",
+      "bytes": 2302,
+      "sha256": "f08aa183be0de5dc92262ad6a05d74b8100ae72a9a971d446eaa13cc1e5314e1"
+    },
+    {
+      "file": "format-result.json",
+      "bytes": 3664,
+      "sha256": "cc93f6b06c416e9d32b134ec0925d3e3d2ab8b08652710cf546b7f01569d86ca"
+    },
+    {
+      "file": "format-output.log",
+      "bytes": 131,
+      "sha256": "0f68f1b3331f80d3008407bbd82a3f7a4f69d25575a74c7191ebf6432226325c"
+    },
+    {
+      "file": "tests-result.json",
+      "bytes": 3747,
+      "sha256": "022ed69b40cd110ddc0e1f3f60c5b531bfa176d7186ab16b1e1200633bac6911"
+    },
+    {
+      "file": "tests-output.jsonl",
+      "bytes": 27079,
+      "sha256": "184d3be3b8dcc8d0728f047897b2a211d5b8e1c4079b89fa538e9bdfb3fd30b0"
+    },
+    {
+      "file": "analysis-result.json",
+      "bytes": 3709,
+      "sha256": "834d0ce7eae22a6d79fd8abaf4dc1247153d89c0159980dafc39007efefe62ba"
+    },
+    {
+      "file": "analysis-output.log",
+      "bytes": 188,
+      "sha256": "3659717ebcbd0a4cd92bf4dd0bf1ad8e683124ff7aa0ce7122e5395bcc936dcc"
+    },
+    {
+      "file": "executed-runner.py.txt",
+      "bytes": 9137,
+      "sha256": "1604b4a0903160e4071d4bdb0bcfe7d0a1ff41808f38356af1e8db9310544603"
+    }
+  ]
+}

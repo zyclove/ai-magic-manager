@@ -1,0 +1,146 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":223048,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_deadline_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_deadline_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1}
+{"count":5,"time":6,"type":"allSuites"}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null,"observatoryUri":null}}]
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1527}
+{"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":6,"line":null,"column":null,"url":null},"type":"group","time":1530}
+{"test":{"id":3,"name":"late-refresh cannot dispatch a timed-out bounded POST","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":117,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_deadline_test.dart"},"type":"testStart","time":1531}
+{"testID":3,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1575}
+{"test":{"id":4,"name":"nested scopes share abort and use one total streaming deadline","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":139,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_deadline_test.dart"},"type":"testStart","time":1575}
+{"testID":4,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1587}
+{"test":{"id":5,"name":"unsupported late headers and a failing body only clean up after timeout","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":186,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_deadline_test.dart"},"type":"testStart","time":1588}
+{"testID":5,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1594}
+{"test":{"id":6,"name":"an incomplete HTTP 410 times out as untrusted request failure","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":216,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_deadline_test.dart"},"type":"testStart","time":1595}
+{"testID":6,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1599}
+{"test":{"id":7,"name":"scope interruptions preserve original errors without HTTP evidence","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":246,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_deadline_test.dart"},"type":"testStart","time":1599}
+{"testID":7,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1605}
+{"test":{"id":8,"name":"completed bounded reads cancel their deadline and keep the client reusable","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":279,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_deadline_test.dart"},"type":"testStart","time":1605}
+{"testID":8,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1611}
+{"suite":{"id":9,"platform":"vm","path":"D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_test.dart"},"type":"suite","time":1637}
+{"test":{"id":10,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_test.dart","suiteID":9,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1637}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null,"observatoryUri":null}}]
+{"testID":10,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":2238}
+{"group":{"id":11,"suiteID":9,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":16,"line":null,"column":null,"url":null},"type":"group","time":2238}
+{"test":{"id":12,"name":"oversized headers cancel only the response and absorb cancellation failure","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":27,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_test.dart"},"type":"testStart","time":2238}
+{"testID":12,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2272}
+{"test":{"id":13,"name":"streamed bytes are bounded when content length is absent","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":48,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_test.dart"},"type":"testStart","time":2273}
+{"testID":13,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2279}
+{"test":{"id":14,"name":"HTTP 401 oversized content length preserves authorization failure","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":62,"column":5,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_test.dart"},"type":"testStart","time":2280}
+{"testID":14,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2284}
+{"test":{"id":15,"name":"HTTP 401 chunked body over limit preserves authorization failure","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":88,"column":5,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_test.dart"},"type":"testStart","time":2285}
+{"testID":15,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2292}
+{"test":{"id":16,"name":"HTTP 403 oversized content length preserves authorization failure","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":62,"column":5,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_test.dart"},"type":"testStart","time":2293}
+{"testID":16,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2296}
+{"test":{"id":17,"name":"HTTP 403 chunked body over limit preserves authorization failure","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":88,"column":5,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_test.dart"},"type":"testStart","time":2296}
+{"testID":17,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2301}
+{"test":{"id":18,"name":"HTTP 401 client interrupted body preserves hard denial","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":119,"column":7,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_test.dart"},"type":"testStart","time":2302}
+{"testID":18,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2309}
+{"test":{"id":19,"name":"HTTP 401 timeout interrupted body preserves hard denial","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":119,"column":7,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_test.dart"},"type":"testStart","time":2309}
+{"testID":19,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2312}
+{"test":{"id":20,"name":"HTTP 401 scope loss during denied body remains workspace changed","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":146,"column":5,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_test.dart"},"type":"testStart","time":2313}
+{"testID":20,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2316}
+{"test":{"id":21,"name":"HTTP 401 unfinished body deadline preserves hard denial","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":176,"root_column":5,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_test.dart"},"type":"testStart","time":2317}
+{"testID":21,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2469}
+{"test":{"id":22,"name":"HTTP 403 client interrupted body preserves hard denial","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":119,"column":7,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_test.dart"},"type":"testStart","time":2470}
+{"testID":22,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2474}
+{"test":{"id":23,"name":"HTTP 403 timeout interrupted body preserves hard denial","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":119,"column":7,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_test.dart"},"type":"testStart","time":2475}
+{"testID":23,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2477}
+{"test":{"id":24,"name":"HTTP 403 scope loss during denied body remains workspace changed","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":146,"column":5,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_test.dart"},"type":"testStart","time":2478}
+{"testID":24,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2480}
+{"test":{"id":25,"name":"HTTP 403 unfinished body deadline preserves hard denial","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":176,"root_column":5,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_test.dart"},"type":"testStart","time":2480}
+{"testID":25,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2488}
+{"test":{"id":26,"name":"bounded HTTP 401 preserves explicit recent authentication recovery","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":201,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_test.dart"},"type":"testStart","time":2488}
+{"testID":26,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2493}
+{"test":{"id":27,"name":"result length and content type must match the metadata contract","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":219,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_test.dart"},"type":"testStart","time":2493}
+{"testID":27,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2501}
+{"suite":{"id":28,"platform":"vm","path":"D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_http_error_test.dart"},"type":"suite","time":2525}
+{"test":{"id":29,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_http_error_test.dart","suiteID":28,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":2525}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null,"observatoryUri":null}}]
+{"testID":29,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":3103}
+{"group":{"id":30,"suiteID":28,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":13,"line":null,"column":null,"url":null},"type":"group","time":3103}
+{"test":{"id":31,"name":"complete JSON HTTP denial emits evidence for the exact failure instance","suiteID":28,"groupIDs":[30],"metadata":{"skip":false,"skipReason":null},"line":20,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_http_error_test.dart"},"type":"testStart","time":3103}
+{"testID":31,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3131}
+{"test":{"id":32,"name":"content-type denial cannot establish a complete HTTP rejection","suiteID":28,"groupIDs":[30],"metadata":{"skip":false,"skipReason":null},"line":47,"column":5,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_http_error_test.dart"},"type":"testStart","time":3132}
+{"testID":32,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3135}
+{"test":{"id":33,"name":"length denial cannot establish a complete HTTP rejection","suiteID":28,"groupIDs":[30],"metadata":{"skip":false,"skipReason":null},"line":47,"column":5,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_http_error_test.dart"},"type":"testStart","time":3136}
+{"testID":33,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3138}
+{"test":{"id":34,"name":"invalid-json denial cannot establish a complete HTTP rejection","suiteID":28,"groupIDs":[30],"metadata":{"skip":false,"skipReason":null},"line":47,"column":5,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_http_error_test.dart"},"type":"testStart","time":3139}
+{"testID":34,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3142}
+{"test":{"id":35,"name":"trailing-code denial cannot establish a complete HTTP rejection","suiteID":28,"groupIDs":[30],"metadata":{"skip":false,"skipReason":null},"line":47,"column":5,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_http_error_test.dart"},"type":"testStart","time":3143}
+{"testID":35,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3146}
+{"test":{"id":36,"name":"no-code denial cannot establish a complete HTTP rejection","suiteID":28,"groupIDs":[30],"metadata":{"skip":false,"skipReason":null},"line":47,"column":5,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_http_error_test.dart"},"type":"testStart","time":3147}
+{"testID":36,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3149}
+{"test":{"id":37,"name":"too-large denial cannot establish a complete HTTP rejection","suiteID":28,"groupIDs":[30],"metadata":{"skip":false,"skipReason":null},"line":47,"column":5,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_http_error_test.dart"},"type":"testStart","time":3150}
+{"testID":37,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3154}
+{"test":{"id":38,"name":"an authenticated-client exception is not HTTP response evidence","suiteID":28,"groupIDs":[30],"metadata":{"skip":false,"skipReason":null},"line":73,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_http_error_test.dart"},"type":"testStart","time":3154}
+{"testID":38,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3157}
+{"test":{"id":39,"name":"an interrupted denial stream does not emit rejection evidence","suiteID":28,"groupIDs":[30],"metadata":{"skip":false,"skipReason":null},"line":83,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_http_error_test.dart"},"type":"testStart","time":3157}
+{"testID":39,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3163}
+{"test":{"id":40,"name":"scope loss suppresses both the body and HTTP evidence","suiteID":28,"groupIDs":[30],"metadata":{"skip":false,"skipReason":null},"line":107,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_http_error_test.dart"},"type":"testStart","time":3164}
+{"testID":40,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3167}
+{"test":{"id":41,"name":"an accepted response never supplies HTTP rejection evidence","suiteID":28,"groupIDs":[30],"metadata":{"skip":false,"skipReason":null},"line":127,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_http_error_test.dart"},"type":"testStart","time":3167}
+{"testID":41,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3169}
+{"test":{"id":42,"name":"complete ProblemDetail denial emits the exact failure evidence","suiteID":28,"groupIDs":[30],"metadata":{"skip":false,"skipReason":null},"line":143,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_http_error_test.dart"},"type":"testStart","time":3169}
+{"testID":42,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3174}
+{"test":{"id":43,"name":"vendor and other +json denials cannot establish HTTP rejection evidence","suiteID":28,"groupIDs":[30],"metadata":{"skip":false,"skipReason":null},"line":175,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/bounded_json_http_error_test.dart"},"type":"testStart","time":3174}
+{"testID":43,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3178}
+{"suite":{"id":44,"platform":"vm","path":"D:/codes/mobile/ai-manager/apps/guardian/test/policy_publication_repository_test.dart"},"type":"suite","time":3204}
+{"test":{"id":45,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/policy_publication_repository_test.dart","suiteID":44,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":3204}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null,"observatoryUri":null}}]
+{"testID":45,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":3761}
+{"group":{"id":46,"suiteID":44,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":13,"line":null,"column":null,"url":null},"type":"group","time":3761}
+{"test":{"id":47,"name":"POST uses the exact immutable intent and only accepts a complete 201 receipt","suiteID":44,"groupIDs":[46],"metadata":{"skip":false,"skipReason":null},"line":52,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_publication_repository_test.dart"},"type":"testStart","time":3761}
+{"testID":47,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3809}
+{"test":{"id":48,"name":"invalid 201 receipt {} cannot confirm publication","suiteID":44,"groupIDs":[46],"metadata":{"skip":false,"skipReason":null},"line":78,"column":5,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_publication_repository_test.dart"},"type":"testStart","time":3810}
+{"testID":48,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3819}
+{"test":{"id":49,"name":"invalid 201 receipt {\"id\":\"publication-a\",\"versionId\":\"version-a\",\"sequence\":1,\"mode\":\"CONFIGURE_ONLY\",\"state\":\"CONFIGURED_NOT_ENFORCED\",\"createdAt\":1000,\"extra\":true} cannot confirm publication","suiteID":44,"groupIDs":[46],"metadata":{"skip":false,"skipReason":null},"line":78,"column":5,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_publication_repository_test.dart"},"type":"testStart","time":3820}
+{"testID":49,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3826}
+{"test":{"id":50,"name":"invalid 201 receipt {\"id\":\"publication-a\",\"versionId\":\"version-a\",\"sequence\":1,\"mode\":\"ENFORCE\",\"state\":\"PENDING_EXECUTION\",\"createdAt\":1000} cannot confirm publication","suiteID":44,"groupIDs":[46],"metadata":{"skip":false,"skipReason":null},"line":78,"column":5,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_publication_repository_test.dart"},"type":"testStart","time":3827}
+{"testID":50,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3831}
+{"test":{"id":51,"name":"a 200 POST is not the declared 201 creation contract","suiteID":44,"groupIDs":[46],"metadata":{"skip":false,"skipReason":null},"line":89,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_publication_repository_test.dart"},"type":"testStart","time":3831}
+{"testID":51,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3836}
+{"test":{"id":52,"name":"expired original preview still permits exact mode-bound GET without POST","suiteID":44,"groupIDs":[46],"metadata":{"skip":false,"skipReason":null},"line":95,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_publication_repository_test.dart"},"type":"testStart","time":3837}
+{"testID":52,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3842}
+{"test":{"id":53,"name":"only the exact unavailable lookup is an inconclusive null","suiteID":44,"groupIDs":[46],"metadata":{"skip":false,"skipReason":null},"line":118,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_publication_repository_test.dart"},"type":"testStart","time":3842}
+{"testID":53,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3848}
+{"test":{"id":54,"name":"a trusted POST rejection is tied to the exact attempted durable record","suiteID":44,"groupIDs":[46],"metadata":{"skip":false,"skipReason":null},"line":133,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_publication_repository_test.dart"},"type":"testStart","time":3849}
+{"testID":54,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3857}
+{"test":{"id":55,"name":"client acquisition 401 is not a trusted rejection from the publication POST","suiteID":44,"groupIDs":[46],"metadata":{"skip":false,"skipReason":null},"line":148,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_publication_repository_test.dart"},"type":"testStart","time":3857}
+{"testID":55,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3860}
+{"test":{"id":56,"name":"non JSON 401 cannot permit another mutation","suiteID":44,"groupIDs":[46],"metadata":{"skip":false,"skipReason":null},"line":163,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_publication_repository_test.dart"},"type":"testStart","time":3861}
+{"testID":56,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3864}
+{"test":{"id":57,"name":"a hard HTTP denial permanently closes child and ancestor repositories","suiteID":44,"groupIDs":[46],"metadata":{"skip":false,"skipReason":null},"line":171,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_publication_repository_test.dart"},"type":"testStart","time":3865}
+{"testID":57,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3868}
+{"test":{"id":58,"name":"scope revoked while acquiring the borrowed client blocks physical dispatch","suiteID":44,"groupIDs":[46],"metadata":{"skip":false,"skipReason":null},"line":188,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_publication_repository_test.dart"},"type":"testStart","time":3869}
+{"testID":58,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3872}
+{"test":{"id":59,"name":"preview expiry during client acquisition blocks POST while lookup authority survives","suiteID":44,"groupIDs":[46],"metadata":{"skip":false,"skipReason":null},"line":213,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_publication_repository_test.dart"},"type":"testStart","time":3872}
+{"testID":59,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":3877}
+{"suite":{"id":60,"platform":"vm","path":"D:/codes/mobile/ai-manager/apps/guardian/test/usage_report_jobs_test.dart"},"type":"suite","time":3901}
+{"test":{"id":61,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/usage_report_jobs_test.dart","suiteID":60,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":3901}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null,"observatoryUri":null}}]
+{"testID":61,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":4612}
+{"group":{"id":62,"suiteID":60,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":8,"line":null,"column":null,"url":null},"type":"group","time":4612}
+{"test":{"id":63,"name":"download validates the stored result before producing JSON bytes","suiteID":60,"groupIDs":[62],"metadata":{"skip":false,"skipReason":null},"line":54,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/usage_report_jobs_test.dart"},"type":"testStart","time":4612}
+{"testID":63,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4715}
+{"test":{"id":64,"name":"strict immutable task metadata binds selection and completed parts","suiteID":60,"groupIDs":[62],"metadata":{"skip":false,"skipReason":null},"line":68,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/usage_report_jobs_test.dart"},"type":"testStart","time":4716}
+{"testID":64,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4720}
+{"test":{"id":65,"name":"draft allows 200 devices but rejects duplicates and invalid dates","suiteID":60,"groupIDs":[62],"metadata":{"skip":false,"skipReason":null},"line":87,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/usage_report_jobs_test.dart"},"type":"testStart","time":4721}
+{"testID":65,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4728}
+{"test":{"id":66,"name":"unknown creation retries exact key and frozen body","suiteID":60,"groupIDs":[62],"metadata":{"skip":false,"skipReason":null},"line":119,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/usage_report_jobs_test.dart"},"type":"testStart","time":4728}
+{"testID":66,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4735}
+{"test":{"id":67,"name":"mismatched creation response is rejected","suiteID":60,"groupIDs":[62],"metadata":{"skip":false,"skipReason":null},"line":133,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/usage_report_jobs_test.dart"},"type":"testStart","time":4736}
+{"testID":67,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4739}
+{"test":{"id":68,"name":"late workspace response cannot publish","suiteID":60,"groupIDs":[62],"metadata":{"skip":false,"skipReason":null},"line":140,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/usage_report_jobs_test.dart"},"type":"testStart","time":4740}
+{"testID":68,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4745}
+{"test":{"id":69,"name":"saved report reuses strict report parser and checks authorization version","suiteID":60,"groupIDs":[62],"metadata":{"skip":false,"skipReason":null},"line":152,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/usage_report_jobs_test.dart"},"type":"testStart","time":4746}
+{"testID":69,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4754}
+{"test":{"id":70,"name":"task page rejects duplicate and invalid cursor metadata","suiteID":60,"groupIDs":[62],"metadata":{"skip":false,"skipReason":null},"line":171,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/usage_report_jobs_test.dart"},"type":"testStart","time":4754}
+{"testID":70,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4759}
+{"success":true,"type":"done","time":4785}

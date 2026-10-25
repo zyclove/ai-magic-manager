@@ -27,13 +27,25 @@ Future<dynamic> boundedJson(Api api, String method, String path,
     int? expectedBytes}) async {
   StreamSubscription<List<int>>? subscription;
   bool ended = false, aborted = false;
+  final abort = Completer<void>();
+  void abortRequest() {
+    if (!abort.isCompleted) abort.complete();
+  }
+
   int? failedResponseStatus;
   ensureCurrent();
   try {
     return await (() async {
-      final request = http.Request(method, Uri.parse('${api.baseUrl}$path'))
-        ..followRedirects = false
-        ..headers['Accept'] = 'application/json';
+      final request =
+          ScopeGuardedRequest(method, Uri.parse('${api.baseUrl}$path'),
+              isCurrent: () {
+                ensureCurrent();
+                return true;
+              },
+              abortTrigger: abort.future,
+              isAborted: () => aborted)
+            ..followRedirects = false
+            ..headers['Accept'] = 'application/json';
       if (body != null) {
         request.headers['Content-Type'] = 'application/json';
         request.body = jsonEncode(body);
@@ -45,15 +57,13 @@ Future<dynamic> boundedJson(Api api, String method, String path,
       if (aborted) throw const ApiFailure(0, 'NETWORK_ERROR');
       final response = await client.send(request);
       if (aborted) {
-        unawaited(
-            response.stream.listen(null).cancel().catchError((Object _) {}));
+        _discardResponse(response);
         throw const ApiFailure(0, 'NETWORK_ERROR');
       }
       try {
         ensureCurrent();
       } catch (_) {
-        unawaited(
-            response.stream.listen(null).cancel().catchError((Object _) {}));
+        _discardResponse(response);
         rethrow;
       }
       final accepted = response.statusCode == successStatus ||
@@ -61,8 +71,7 @@ Future<dynamic> boundedJson(Api api, String method, String path,
       if (!accepted) failedResponseStatus = response.statusCode;
       final limit = accepted ? maxBytes : 65536;
       if (response.contentLength != null && response.contentLength! > limit) {
-        unawaited(
-            response.stream.listen(null).cancel().catchError((Object _) {}));
+        _discardResponse(response);
         throw accepted
             ? const ApiFailure(502, 'INVALID_REPORT_JOB_RESPONSE')
             : ApiFailure(response.statusCode, 'REQUEST_FAILED');
@@ -128,8 +137,11 @@ Future<dynamic> boundedJson(Api api, String method, String path,
             (response.contentLength == null ||
                 response.contentLength == payload.length)) {
           ensureCurrent();
-          onHttpError(BoundedHttpErrorEvidence._(failure,
-              result is Json && result['status'] is int ? result['status'] : null));
+          onHttpError(BoundedHttpErrorEvidence._(
+              failure,
+              result is Json && result['status'] is int
+                  ? result['status']
+                  : null));
         }
         throw failure;
       }
@@ -146,7 +158,11 @@ Future<dynamic> boundedJson(Api api, String method, String path,
       }
       return result;
     })()
-        .timeout(const Duration(seconds: 25));
+        .timeout(const Duration(seconds: 25), onTimeout: () {
+      aborted = true;
+      abortRequest();
+      throw TimeoutException('Response deadline elapsed');
+    });
   } on TimeoutException {
     ensureCurrent();
     throw failedResponseStatus == null
@@ -159,8 +175,21 @@ Future<dynamic> boundedJson(Api api, String method, String path,
         : ApiFailure(failedResponseStatus!, 'REQUEST_FAILED');
   } finally {
     aborted = true;
+    if (!ended) abortRequest();
     if (!ended && subscription != null) {
       unawaited(subscription!.cancel().catchError((Object _) {}));
     }
   }
+}
+
+void _discardResponse(http.StreamedResponse response) {
+  unawaited(Future<void>.sync(() async {
+    try {
+      await response.stream
+          .listen(null, onError: (Object _, StackTrace __) {})
+          .cancel();
+    } catch (_) {
+      // Cleanup must preserve the original deadline, scope or protocol error.
+    }
+  }));
 }
