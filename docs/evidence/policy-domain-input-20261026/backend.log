@@ -1,0 +1,114 @@
+Picked up JAVA_TOOL_OPTIONS: -Xmx768m -Djava.io.tmpdir=D:\codes\mobile\ai-manager\.cache\policy-domain-input-20261026-r1\backend\tmp
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -------------------< com.aimanager:manager-backend >--------------------
+[INFO] Building AI Manager Backend 1.0.0
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ manager-backend ---
+[INFO] Copying 1 resource from src\main\resources to ..\.cache\backend-core-20261025-r1\out\classes
+[INFO] Copying 15 resources from src\main\resources to ..\.cache\backend-core-20261025-r1\out\classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ manager-backend ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 434 source files with javac [debug parameters release 17] to ..\.cache\backend-core-20261025-r1\out\classes
+[INFO] Extracting Javadoc into D:\codes\mobile\ai-manager\.\build\generated-spring-modulith\javadoc.json.
+[INFO] /D:/codes/mobile/ai-manager/backend/src/main/java/com/aimanager/managedandroid/internal/GoogleApplicationPolicySupport.java: 某些输入文件使用或覆盖了已过时的 API。
+[INFO] /D:/codes/mobile/ai-manager/backend/src/main/java/com/aimanager/managedandroid/internal/GoogleApplicationPolicySupport.java: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ manager-backend ---
+[INFO] skip non existing resourceDirectory D:\codes\mobile\ai-manager\backend\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.14.1:testCompile (default-testCompile) @ manager-backend ---
+[INFO] Recompiling the module because of changed dependency.
+[INFO] Compiling 227 source files with javac [debug parameters release 17] to ..\.cache\backend-core-20261025-r1\out\test-classes
+[INFO] Extracting Javadoc into D:\codes\mobile\ai-manager\.\build\generated-spring-modulith\javadoc.json.
+[WARNING] /D:/codes/mobile/ai-manager/backend/src/test/java/com/aimanager/commerce/internal/FamilySubscriptionPaymentJourneyTest.java:[334,134] 最后一个参数使用了不准确的变量类型的 varargs 方法的非 varargs 调用; 
+  对于 varargs 调用, 应使用 com.aimanager.commerce.internal.FamilyPaymentGateway.PaymentEvidence
+  对于非 varargs 调用, 应使用 com.aimanager.commerce.internal.FamilyPaymentGateway.PaymentEvidence[], 这样也可以抑制此警告
+[INFO] /D:/codes/mobile/ai-manager/backend/src/test/java/com/aimanager/identityproviders/internal/ProviderControlledReleaseJourneyTest.java: 某些输入文件使用或覆盖了已过时的 API。
+[INFO] /D:/codes/mobile/ai-manager/backend/src/test/java/com/aimanager/identityproviders/internal/ProviderControlledReleaseJourneyTest.java: 有关详细信息, 请使用 -Xlint:deprecation 重新编译。
+[INFO] /D:/codes/mobile/ai-manager/backend/src/test/java/com/aimanager/FamilyCoreJourneyTest.java: 某些输入文件使用了未经检查或不安全的操作。
+[INFO] /D:/codes/mobile/ai-manager/backend/src/test/java/com/aimanager/FamilyCoreJourneyTest.java: 有关详细信息, 请使用 -Xlint:unchecked 重新编译。
+[INFO] 
+[INFO] --- surefire:3.5.6:test (default-test) @ manager-backend ---
+[INFO] Using auto detected provider org.apache.maven.surefire.junitplatform.JUnitPlatformProvider
+[INFO] 
+[INFO] -------------------------------------------------------
+[INFO]  T E S T S
+[INFO] -------------------------------------------------------
+Picked up JAVA_TOOL_OPTIONS: -Xmx768m -Djava.io.tmpdir=D:\codes\mobile\ai-manager\.cache\policy-domain-input-20261026-r1\backend\tmp
+[INFO] Running com.aimanager.PolicyDomainEvaluationJourneyTest
+01:09:54.667 [main] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.aimanager.PolicyDomainEvaluationJourneyTest]: PolicyDomainEvaluationJourneyTest does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+01:09:55.071 [main] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.aimanager.ManagerApplication for test class com.aimanager.PolicyDomainEvaluationJourneyTest
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::               (v3.5.16)
+
+2026-10-26T01:09:55.676+08:00  INFO 207256 --- [ai-manager] [           main] c.a.PolicyDomainEvaluationJourneyTest    : Starting PolicyDomainEvaluationJourneyTest using Java 17.0.14 with PID 207256 (started by Administrator in D:\codes\mobile\ai-manager\backend)
+2026-10-26T01:09:55.678+08:00  INFO 207256 --- [ai-manager] [           main] c.a.PolicyDomainEvaluationJourneyTest    : No active profile set, falling back to 1 default profile: "default"
+Java HotSpot(TM) 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended
+2026-10-26T01:10:00.700+08:00  INFO 207256 --- [ai-manager] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-10-26T01:10:01.261+08:00  INFO 207256 --- [ai-manager] [           main] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn0: url=jdbc:h2:mem:policy-domain-evaluation user=SA
+2026-10-26T01:10:01.266+08:00  INFO 207256 --- [ai-manager] [           main] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-10-26T01:10:01.894+08:00  INFO 207256 --- [ai-manager] [           main] org.flywaydb.core.FlywayExecutor         : Database: jdbc:h2:mem:policy-domain-evaluation (H2 2.3)
+2026-10-26T01:10:01.995+08:00  INFO 207256 --- [ai-manager] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Schema history table "public"."flyway_schema_history" does not exist yet
+2026-10-26T01:10:02.000+08:00  INFO 207256 --- [ai-manager] [           main] o.f.core.internal.command.DbValidate     : Successfully validated 2 migrations (execution time 00:00.042s)
+2026-10-26T01:10:02.017+08:00  INFO 207256 --- [ai-manager] [           main] o.f.c.i.s.JdbcTableSchemaHistory         : Creating Schema History table "public"."flyway_schema_history" ...
+2026-10-26T01:10:02.119+08:00  INFO 207256 --- [ai-manager] [           main] o.f.core.internal.command.DbMigrate      : Current version of schema "public": << Empty Schema >>
+2026-10-26T01:10:02.236+08:00  INFO 207256 --- [ai-manager] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "1 - initial schema"
+2026-10-26T01:10:02.616+08:00  INFO 207256 --- [ai-manager] [           main] o.f.core.internal.command.DbMigrate      : Migrating schema "public" to version "2 - event publication"
+2026-10-26T01:10:02.647+08:00  INFO 207256 --- [ai-manager] [           main] o.f.core.internal.command.DbMigrate      : Successfully applied 2 migrations to schema "public", now at version v2 (execution time 00:00.346s)
+2026-10-26T01:10:07.423+08:00  INFO 207256 --- [ai-manager] [           main] o.s.b.a.e.web.EndpointLinksResolver      : Exposing 2 endpoints beneath base path '/actuator'
+2026-10-26T01:10:09.456+08:00  INFO 207256 --- [ai-manager] [           main] o.s.b.t.m.w.SpringBootMockServletContext : Initializing Spring TestDispatcherServlet ''
+2026-10-26T01:10:09.457+08:00  INFO 207256 --- [ai-manager] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Initializing Servlet ''
+2026-10-26T01:10:09.458+08:00  INFO 207256 --- [ai-manager] [           main] o.s.t.web.servlet.TestDispatcherServlet  : Completed initialization in 1 ms
+2026-10-26T01:10:09.605+08:00  INFO 207256 --- [ai-manager] [           main] c.a.PolicyDomainEvaluationJourneyTest    : Started PolicyDomainEvaluationJourneyTest in 14.378 seconds (process running for 15.796)
+2026-10-26T01:10:09.743+08:00  WARN 207256 --- [ai-manager] [           main] o.s.w.s.h.HandlerMappingIntrospector     : Cache miss for REQUEST dispatch to '/api/v1/tenants' (previous null). Performing MatchableHandlerMapping lookup. This is logged once only at WARN level, and every time at TRACE.
+2026-10-26T01:10:09.852+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=201 durationMs=89 correlationId=bb889119-57ba-439a-b023-7ed58317420a
+2026-10-26T01:10:09.878+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=201 durationMs=6 correlationId=5bf5bbbb-7a53-405a-8bba-30671808f4a0
+2026-10-26T01:10:09.904+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=201 durationMs=17 correlationId=8da4b04f-8815-4a06-9dcd-880f33c8f8e4
+2026-10-26T01:10:09.955+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=200 durationMs=31 correlationId=543b2260-676e-4a16-a9c5-f363a58aa4bf
+2026-10-26T01:10:09.964+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=200 durationMs=5 correlationId=e3daa5b6-a61b-4bfa-82e8-5b3b503a3f7e
+2026-10-26T01:10:09.973+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=200 durationMs=4 correlationId=11a251d7-2355-4f63-b264-db50f22c380b
+2026-10-26T01:10:09.986+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=200 durationMs=6 correlationId=02e4c486-1d1d-4fc6-9c9a-c874adfa819d
+2026-10-26T01:10:10.023+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=403 durationMs=33 correlationId=b8bda6b0-f56e-425c-8aea-dcd85c0b5969
+2026-10-26T01:10:10.033+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=403 durationMs=5 correlationId=4129365c-5e9f-4b65-ad75-250877caa6a1
+2026-10-26T01:10:10.042+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=403 durationMs=5 correlationId=c7e1b581-a985-452c-bad7-682bc7da3546
+2026-10-26T01:10:10.050+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=403 durationMs=5 correlationId=086d732e-f520-447e-bda6-d2214d057e65
+2026-10-26T01:10:10.073+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=401 durationMs=20 correlationId=0d81ebba-4352-479b-8584-4e854d5399f8
+2026-10-26T01:10:10.225+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=201 durationMs=6 correlationId=c32faedf-4627-44f9-ac88-1dd5e7dc3095
+2026-10-26T01:10:10.259+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=400 durationMs=28 correlationId=d694852f-cac2-4e58-9b55-01088db8a680
+2026-10-26T01:10:10.264+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=400 durationMs=2 correlationId=c22019a3-4081-444b-9abf-ccf4601cd6e1
+2026-10-26T01:10:10.271+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=400 durationMs=4 correlationId=55e06615-09be-4fca-bf21-13529b1690fb
+2026-10-26T01:10:10.279+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=400 durationMs=4 correlationId=2510f485-50cf-45cd-ad5c-2f4fb0c4e3f9
+2026-10-26T01:10:10.286+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=400 durationMs=4 correlationId=ac4b73ab-c382-47ee-a662-3e388877a3da
+2026-10-26T01:10:10.294+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=400 durationMs=5 correlationId=23f56ebe-dc84-405c-8be8-be3a3df9bd16
+2026-10-26T01:10:10.302+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=400 durationMs=5 correlationId=2381be62-e1be-46ae-a977-c5ac1d4ef421
+2026-10-26T01:10:10.314+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=400 durationMs=8 correlationId=5d9cfe6d-986b-4a63-b33d-a0922b8d1f7f
+2026-10-26T01:10:10.321+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=400 durationMs=3 correlationId=b76050dd-01d4-4d7d-9d84-ba0869d5b8a3
+2026-10-26T01:10:10.325+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=400 durationMs=3 correlationId=85f5429b-9257-4d07-a045-bf43e6efd1f6
+2026-10-26T01:10:10.336+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=400 durationMs=7 correlationId=2a936afb-a183-41e3-a5e4-1f9f39fb03b1
+2026-10-26T01:10:10.354+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=201 durationMs=4 correlationId=94271e63-ceb4-4b8d-8c8f-bc9f1d773cc2
+2026-10-26T01:10:10.438+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=200 durationMs=62 correlationId=717c247c-1808-474a-a3af-b00eb4485227
+2026-10-26T01:10:10.495+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=200 durationMs=4 correlationId=98fd2dc7-f461-486e-b6ac-0a2f9e78b81e
+2026-10-26T01:10:10.501+08:00  INFO 207256 --- [ai-manager] [           main] c.a.shared.RequestCorrelationFilter      : request method=POST status=200 durationMs=5 correlationId=22cd0930-b39e-4b5a-8155-0d19e46ae40c
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 16.06 s -- in com.aimanager.PolicyDomainEvaluationJourneyTest
+[INFO] 
+[INFO] Results:
+[INFO] 
+[INFO] Tests run: 3, Failures: 0, Errors: 0, Skipped: 0
+[INFO] 
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  47.845 s
+[INFO] Finished at: 2026-10-26T01:10:11+08:00
+[INFO] ------------------------------------------------------------------------

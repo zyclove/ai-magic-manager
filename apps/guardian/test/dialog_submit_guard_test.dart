@@ -4,6 +4,37 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:guardian/core/api.dart';
 import 'package:guardian/ui/design.dart';
+import 'package:guardian/ui/owned_dialog_route.dart';
+
+Future<void> _openPreparationForm(WidgetTester tester,
+    {required Completer<Json?> closed,
+    required ValueNotifier<bool> access,
+    required Future<Json?> Function(Json) onSubmit}) async {
+  await tester.pumpWidget(MaterialApp(
+      theme: consoleTheme(),
+      home: Scaffold(
+          body: Builder(
+              builder: (context) => TextButton(
+                  onPressed: () async {
+                    closed.complete(await presentOwnedDialog<Json>(
+                        context,
+                        OwnedDialogRoute<Json>(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (_) => EditDialog(
+                                title: '准备规则',
+                                fields: const [FieldSpec('name', '名称')],
+                                initial: const {'name': '原始输入'},
+                                submit: '准备草稿',
+                                canCommit: false,
+                                accessChanges: access,
+                                hasAccess: () => access.value,
+                                onSubmit: onSubmit))));
+                  },
+                  child: const Text('打开准备表单'))))));
+  await tester.tap(find.text('打开准备表单'));
+  await tester.pumpAndSettle();
+}
 
 Future<void> _openRecoveryForm(WidgetTester tester,
     {required Completer<Json?> closed,
@@ -13,25 +44,28 @@ Future<void> _openRecoveryForm(WidgetTester tester,
     Json initial = const {'name': '原始名称'}}) async {
   await tester.pumpWidget(MaterialApp(
     theme: consoleTheme(),
-    home: Scaffold(body: Builder(builder: (context) => TextButton(
-        onPressed: () async {
-          closed.complete(await formDialog(context,
-              title: '编辑名称',
-              fields: fields,
-              initial: initial,
-              accessChanges: access,
-              hasAccess: () => access.value,
-              onSubmit: onSubmit));
-        },
-        child: const Text('打开恢复表单')))),
+    home: Scaffold(
+        body: Builder(
+            builder: (context) => TextButton(
+                onPressed: () async {
+                  closed.complete(await formDialog(context,
+                      title: '编辑名称',
+                      fields: fields,
+                      initial: initial,
+                      accessChanges: access,
+                      hasAccess: () => access.value,
+                      onSubmit: onSubmit));
+                },
+                child: const Text('打开恢复表单')))),
   ));
   await tester.tap(find.text('打开恢复表单'));
   await tester.pumpAndSettle();
 }
 
 VoidCallback _editCallback(WidgetTester tester, String label) {
-  final callback = tester.widget<FilledButton>(
-      find.widgetWithText(FilledButton, label)).onPressed;
+  final callback = tester
+      .widget<FilledButton>(find.widgetWithText(FilledButton, label))
+      .onPressed;
   expect(callback, isNotNull);
   return callback!;
 }
@@ -47,6 +81,116 @@ Future<void> _disposeRecoveryForm(WidgetTester tester,
 }
 
 void main() {
+  testWidgets(
+      'read-only preparation failures keep editable input and retry new values',
+      (tester) async {
+    for (final failure in <Object>[
+      const ApiFailure(0, 'NETWORK_ERROR'),
+      const FormatException('invalid normalization response'),
+      const ApiFailure(412, 'RESOURCE_VERSION_CONFLICT'),
+      const ApiFailure(410, 'IDEMPOTENCY_RESULT_EXPIRED'),
+    ]) {
+      final closed = Completer<Json?>();
+      final access = ValueNotifier(true);
+      final bodies = <Json>[];
+      try {
+        await _openPreparationForm(tester, closed: closed, access: access,
+            onSubmit: (body) async {
+          bodies.add(body);
+          if (bodies.length == 1) throw failure;
+          return body;
+        });
+        _editCallback(tester, '准备草稿')();
+        await tester.pumpAndSettle();
+        expect(find.byType(FailureView), findsOneWidget);
+        if (failure is ApiFailure) {
+          expect(find.text(failure.message), findsOneWidget);
+        }
+        expect(tester.widget<TextFormField>(find.byType(TextFormField)).enabled,
+            isTrue);
+        expect(find.text('重试原提交'), findsNothing);
+        expect(find.text('保留的草稿'), findsNothing);
+        expect(find.text('原始输入'), findsOneWidget);
+        await tester.enterText(find.byType(TextFormField), '修改后重新准备');
+        _editCallback(tester, '准备草稿')();
+        await tester.pumpAndSettle();
+        expect(bodies, [
+          {'name': '原始输入'},
+          {'name': '修改后重新准备'}
+        ]);
+        expect(identical(bodies.first, bodies.last), isFalse);
+        expect(closed.isCompleted, isTrue);
+        expect(await closed.future, {'name': '修改后重新准备'});
+        expect(tester.takeException(), isNull);
+      } finally {
+        await _disposeRecoveryForm(tester, access, []);
+      }
+    }
+  });
+
+  testWidgets(
+      'read-only preparation can cancel after failure without unknown-write confirmation',
+      (tester) async {
+    final closed = Completer<Json?>();
+    final access = ValueNotifier(true);
+    try {
+      await _openPreparationForm(tester,
+          closed: closed,
+          access: access,
+          onSubmit: (_) async => throw const ApiFailure(0, 'NETWORK_ERROR'));
+      _editCallback(tester, '准备草稿')();
+      await tester.pumpAndSettle();
+      expect(find.byKey(const Key('edit-dialog-unknown-close-notice')),
+          findsNothing);
+      await tester.tap(find.widgetWithText(TextButton, '取消'));
+      await tester.pumpAndSettle();
+      expect(closed.isCompleted, isTrue);
+      expect(await closed.future, isNull);
+      expect(find.byType(EditDialog), findsNothing);
+      expect(find.text('确认关闭'), findsNothing);
+      expect(tester.takeException(), isNull);
+    } finally {
+      await _disposeRecoveryForm(tester, access, []);
+    }
+  });
+
+  testWidgets(
+      'read-only preparation rejects duplicate callbacks and late results after scope ABA',
+      (tester) async {
+    final pending = Completer<Json?>();
+    final closed = Completer<Json?>();
+    final access = ValueNotifier(true);
+    var calls = 0;
+    try {
+      await _openPreparationForm(tester, closed: closed, access: access,
+          onSubmit: (_) {
+        calls++;
+        return pending.future;
+      });
+      final heldSubmit = _editCallback(tester, '准备草稿');
+      heldSubmit();
+      heldSubmit();
+      expect(calls, 1);
+      access.value = false;
+      access.value = true;
+      pending.complete({'name': '失效的私有准备结果'});
+      await tester.pumpAndSettle();
+      heldSubmit();
+      expect(calls, 1);
+      expect(closed.isCompleted, isFalse);
+      expect(find.text('工作空间或权限已变化'), findsOneWidget);
+      expect(find.byType(TextFormField), findsNothing);
+      expect(find.text('失效的私有准备结果'), findsNothing);
+      await tester.tap(find.widgetWithText(TextButton, '关闭'));
+      await tester.pumpAndSettle();
+      expect(closed.isCompleted, isTrue);
+      expect(await closed.future, isNull);
+      expect(tester.takeException(), isNull);
+    } finally {
+      await _disposeRecoveryForm(tester, access, [pending]);
+    }
+  });
+
   testWidgets('queued edit callbacks submit only once before the next frame',
       (tester) async {
     final pending = Completer<Json?>();
@@ -83,7 +227,8 @@ void main() {
     }
   });
 
-  testWidgets('412 preserves the submitted draft and blocks held save callbacks',
+  testWidgets(
+      '412 preserves the submitted draft and blocks held save callbacks',
       (tester) async {
     final request = Completer<Json?>();
     final closed = Completer<Json?>();
@@ -92,14 +237,16 @@ void main() {
     try {
       await _openRecoveryForm(tester, closed: closed, access: access,
           onSubmit: (body) {
-            bodies.add(body);
-            return request.future;
-          });
+        bodies.add(body);
+        return request.future;
+      });
       await tester.enterText(find.byType(TextFormField), '保留的冲突草稿');
       final heldSave = _editCallback(tester, '保存');
       heldSave();
       heldSave();
-      expect(bodies, [{'name': '保留的冲突草稿'}]);
+      expect(bodies, [
+        {'name': '保留的冲突草稿'}
+      ]);
       request.completeError(const ApiFailure(412, 'RESOURCE_VERSION_CONFLICT'));
       await tester.pumpAndSettle();
 
@@ -107,8 +254,10 @@ void main() {
       expect(find.byType(TextFormField), findsNothing);
       expect(find.widgetWithText(FilledButton, '保存'), findsNothing);
       expect(find.text('保留的草稿'), findsOneWidget);
-      expect(find.byWidgetPredicate((widget) => widget is SelectableText &&
-          widget.data == '名称：保留的冲突草稿'), findsOneWidget);
+      expect(
+          find.byWidgetPredicate((widget) =>
+              widget is SelectableText && widget.data == '名称：保留的冲突草稿'),
+          findsOneWidget);
       expect(find.text('记录已更新，已停止再次提交。可选中并复制下方草稿；关闭后请刷新原页面，再重新打开表单核对最新内容。'),
           findsOneWidget);
       heldSave();
@@ -133,7 +282,8 @@ void main() {
     ' after a pending-operation refusal':
         const ApiFailure(409, 'PENDING_OPERATION_UNCHANGED'),
   }.entries) {
-    testWidgets('unknown result${failure.key} retries the same payload '
+    testWidgets(
+        'unknown result${failure.key} retries the same payload '
         'before a 412 stops replay', (tester) async {
       final first = Completer<Json?>();
       final second = Completer<Json?>();
@@ -143,9 +293,9 @@ void main() {
       try {
         await _openRecoveryForm(tester, closed: closed, access: access,
             onSubmit: (body) {
-              bodies.add(body);
-              return bodies.length == 1 ? first.future : second.future;
-            });
+          bodies.add(body);
+          return bodies.length == 1 ? first.future : second.future;
+        });
         await tester.enterText(find.byType(TextFormField), '尚未确认的草稿');
         _editCallback(tester, '保存')();
         first.completeError(failure.value);
@@ -159,13 +309,16 @@ void main() {
         expect(bodies, hasLength(2));
         expect(identical(bodies.first, bodies.last), isTrue);
         expect(bodies.last, {'name': '尚未确认的草稿'});
-        second.completeError(const ApiFailure(412, 'RESOURCE_VERSION_CONFLICT'));
+        second
+            .completeError(const ApiFailure(412, 'RESOURCE_VERSION_CONFLICT'));
         await tester.pumpAndSettle();
         expect(find.widgetWithText(FilledButton, '重试原提交'), findsNothing);
         expect(find.text('上次提交结果尚未确认。重试将发送相同内容；离开后请先刷新列表核对结果，避免重复创建。'),
             findsNothing);
-        expect(find.byWidgetPredicate((widget) => widget is SelectableText &&
-            widget.data == '名称：尚未确认的草稿'), findsOneWidget);
+        expect(
+            find.byWidgetPredicate((widget) =>
+                widget is SelectableText && widget.data == '名称：尚未确认的草稿'),
+            findsOneWidget);
         heldRetry();
         expect(bodies, hasLength(2));
         _editCallback(tester, '关闭表单')();
@@ -179,7 +332,8 @@ void main() {
     });
   }
 
-  testWidgets('reauth on an unknown retry keeps the original payload until success',
+  testWidgets(
+      'reauth on an unknown retry keeps the original payload until success',
       (tester) async {
     const reauthFailure = ApiFailure(401, 'REAUTH_REQUIRED');
     final requests = List.generate(3, (_) => Completer<Json?>());
@@ -189,9 +343,9 @@ void main() {
     try {
       await _openRecoveryForm(tester, closed: closed, access: access,
           onSubmit: (body) {
-            bodies.add(body);
-            return requests[bodies.length - 1].future;
-          });
+        bodies.add(body);
+        return requests[bodies.length - 1].future;
+      });
       await tester.enterText(find.byType(TextFormField), '等待安全验证的原草稿');
       _editCallback(tester, '保存')();
       requests[0].completeError(const ApiFailure(0, 'NETWORK_ERROR'));
@@ -229,7 +383,10 @@ void main() {
     }
   });
 
-  for (final code in ['IDEMPOTENCY_RESULT_EXPIRED', 'IDEMPOTENCY_RESPONSE_ERASED']) {
+  for (final code in [
+    'IDEMPOTENCY_RESULT_EXPIRED',
+    'IDEMPOTENCY_RESPONSE_ERASED'
+  ]) {
     testWidgets('$code keeps a read-only draft and stops stale save callbacks',
         (tester) async {
       final request = Completer<Json?>();
@@ -240,9 +397,9 @@ void main() {
       try {
         await _openRecoveryForm(tester, closed: closed, access: access,
             onSubmit: (body) {
-              bodies.add(body);
-              return request.future;
-            });
+          bodies.add(body);
+          return request.future;
+        });
         await tester.enterText(find.byType(TextFormField), '不可恢复结果的草稿');
         final heldSave = _editCallback(tester, '保存');
         heldSave();
@@ -254,14 +411,18 @@ void main() {
         expect(find.text('原操作结果已无法恢复，已停止再次提交。请关闭后核对当前记录；不要把结果不可恢复当作操作未执行。'),
             findsOneWidget);
         expect(find.text('保留的草稿'), findsOneWidget);
-        expect(find.byWidgetPredicate((widget) => widget is SelectableText &&
-            widget.data == '名称：不可恢复结果的草稿'), findsOneWidget);
+        expect(
+            find.byWidgetPredicate((widget) =>
+                widget is SelectableText && widget.data == '名称：不可恢复结果的草稿'),
+            findsOneWidget);
         expect(find.byType(TextFormField), findsNothing);
         expect(find.widgetWithText(FilledButton, '保存'), findsNothing);
         expect(find.widgetWithText(FilledButton, '重试原提交'), findsNothing);
         expect(find.byType(FilledButton), findsOneWidget);
         heldSave();
-        expect(bodies, [{'name': '不可恢复结果的草稿'}]);
+        expect(bodies, [
+          {'name': '不可恢复结果的草稿'}
+        ]);
         _editCallback(tester, '关闭表单')();
         heldSave();
         await tester.pumpAndSettle();
@@ -285,9 +446,9 @@ void main() {
     try {
       await _openRecoveryForm(tester, closed: closed, access: access,
           onSubmit: (_) {
-            calls++;
-            return request.future;
-          });
+        calls++;
+        return request.future;
+      });
       _editCallback(tester, '保存')();
       request.completeError(const ApiFailure(0, 'NETWORK_ERROR'));
       await tester.pumpAndSettle();
@@ -302,7 +463,8 @@ void main() {
       expect(find.byKey(const Key('edit-dialog-unknown-close-notice')),
           findsOneWidget);
       expect(find.byType(AlertDialog, skipOffstage: false), findsOneWidget);
-      expect(ModalRoute.of(tester.element(find.byType(EditDialog))), same(route));
+      expect(
+          ModalRoute.of(tester.element(find.byType(EditDialog))), same(route));
       expect(find.widgetWithText(TextButton, '继续核对'), findsOneWidget);
       await tester.tap(find.byKey(const Key('edit-dialog-keep-original')));
       await tester.pumpAndSettle();
@@ -319,21 +481,24 @@ void main() {
       expect(find.byKey(const Key('edit-dialog-unknown-close-notice')),
           findsOneWidget);
       expect(find.byType(AlertDialog, skipOffstage: false), findsOneWidget);
-      expect(ModalRoute.of(tester.element(find.byType(EditDialog))), same(route));
+      expect(
+          ModalRoute.of(tester.element(find.byType(EditDialog))), same(route));
       expect(find.widgetWithText(FilledButton, '确认关闭'), findsOneWidget);
       await tester.tap(find.byKey(const Key('edit-dialog-confirm-close')));
       await tester.pumpAndSettle();
       expect(closed.isCompleted, isTrue);
       expect(await closed.future, isNull);
       expect(find.byType(EditDialog), findsNothing);
-      expect(calls, 1, reason: 'Close confirmation must not resubmit the request.');
+      expect(calls, 1,
+          reason: 'Close confirmation must not resubmit the request.');
       expect(tester.takeException(), isNull);
     } finally {
       await _disposeRecoveryForm(tester, access, [request]);
     }
   });
 
-  testWidgets('access loss hides a 412 draft and gives original workspace guidance',
+  testWidgets(
+      'access loss hides a 412 draft and gives original workspace guidance',
       (tester) async {
     final request = Completer<Json?>();
     final closed = Completer<Json?>();
@@ -342,17 +507,19 @@ void main() {
     try {
       await _openRecoveryForm(tester, closed: closed, access: access,
           onSubmit: (_) {
-            calls++;
-            return request.future;
-          });
+        calls++;
+        return request.future;
+      });
       await tester.enterText(find.byType(TextFormField), '失权后隐藏的草稿');
       final heldSave = _editCallback(tester, '保存');
       heldSave();
       request.completeError(const ApiFailure(412, 'RESOURCE_VERSION_CONFLICT'));
       await tester.pumpAndSettle();
       final heldClose = _editCallback(tester, '关闭表单');
-      expect(find.byWidgetPredicate((widget) => widget is SelectableText &&
-          widget.data == '名称：失权后隐藏的草稿'), findsOneWidget);
+      expect(
+          find.byWidgetPredicate((widget) =>
+              widget is SelectableText && widget.data == '名称：失权后隐藏的草稿'),
+          findsOneWidget);
       access.value = false;
       heldSave();
       heldClose();
@@ -375,7 +542,8 @@ void main() {
     }
   });
 
-  testWidgets('access loss during submission hides a late 412 and prevents resubmit',
+  testWidgets(
+      'access loss during submission hides a late 412 and prevents resubmit',
       (tester) async {
     final request = Completer<Json?>();
     final closed = Completer<Json?>();
@@ -384,9 +552,9 @@ void main() {
     try {
       await _openRecoveryForm(tester, closed: closed, access: access,
           onSubmit: (_) {
-            calls++;
-            return request.future;
-          });
+        calls++;
+        return request.future;
+      });
       await tester.enterText(find.byType(TextFormField), '不得重新展示的草稿');
       final heldSave = _editCallback(tester, '保存');
       heldSave();
@@ -413,7 +581,8 @@ void main() {
     }
   });
 
-  testWidgets('412 draft preserves trimmed text numeric labels and empty fields',
+  testWidgets(
+      '412 draft preserves trimmed text numeric labels and empty fields',
       (tester) async {
     final request = Completer<Json?>();
     final closed = Completer<Json?>();
@@ -434,11 +603,10 @@ void main() {
             'minutes': 25,
             'mode': 'daily',
             'note': '   ',
-          },
-          onSubmit: (body) {
-            bodies.add(body);
-            return request.future;
-          });
+          }, onSubmit: (body) {
+        bodies.add(body);
+        return request.future;
+      });
       final heldSave = _editCallback(tester, '保存');
       heldSave();
       expect(bodies, [
@@ -450,8 +618,10 @@ void main() {
           '分钟：25\n'
           '模式：每天\n'
           '备注：（空）';
-      expect(find.byWidgetPredicate((widget) => widget is SelectableText &&
-          widget.data == draft), findsOneWidget);
+      expect(
+          find.byWidgetPredicate(
+              (widget) => widget is SelectableText && widget.data == draft),
+          findsOneWidget);
       expect(find.byType(TextFormField), findsNothing);
       expect(find.byType(DropdownButtonFormField<String>), findsNothing);
       heldSave();

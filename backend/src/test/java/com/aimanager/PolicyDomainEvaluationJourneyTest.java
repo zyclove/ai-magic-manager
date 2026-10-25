@@ -60,6 +60,29 @@ class PolicyDomainEvaluationJourneyTest {
     return new Scope(owner, tenantId, draft.path("id").asText());
   }
 
+  private Scope workspaceWithoutDraft(String kind) throws Exception {
+    String owner = "normalization-owner-" + UUID.randomUUID();
+    var tenant = mapper.readTree(mvc.perform(post("/api/v1/tenants").with(actor(owner))
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(mapper.writeValueAsString(Map.of("name", "域名输入", "kind", kind,
+            "timeZone", "Asia/Shanghai"))))
+        .andExpect(status().isCreated()).andReturn().getResponse().getContentAsString());
+    return new Scope(owner, tenant.path("id").asText(), null);
+  }
+
+  private String normalizationPath(Scope scope) {
+    return "/api/v1/tenants/" + scope.tenant() + "/policy-domain-normalizations";
+  }
+
+  private MockHttpServletRequestBuilder normalize(Scope scope, String who, String domain)
+      throws Exception {
+    return post(normalizationPath(scope))
+        .with(jwt().jwt(token -> token.subject(who)
+            .claim("amr", List.of("pwd")).claim("auth_time", 1L)))
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(mapper.writeValueAsString(Map.of("domain", domain)));
+  }
+
   private Map<String, Object> rule(String id, String effect, String domain) {
     return Map.of("id", id, "kind", "DOMAIN_ACCESS", "effect", effect,
         "required", true, "domain", domain);
@@ -209,6 +232,64 @@ class PolicyDomainEvaluationJourneyTest {
           .contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isBadRequest());
     }
     assertThat(writeCounts(scope)).isEqualTo(counts);
+  }
+
+  @Test
+  void normalizationAcceptsUnicodeAndCaseWithoutADraftOrSensitiveWriteCredentials() throws Exception {
+    var scope = workspaceWithoutDraft("FAMILY");
+    var counts = writeCounts(scope);
+    assertThat(counts.get("policy_drafts")).isZero();
+    for (var input : Map.of(" BÜCHER.Example ", "xn--bcher-kva.example",
+        " EXAMPLE.INVALID ", "example.invalid",
+        "Sub.Example.Invalid", "sub.example.invalid").entrySet()) {
+      var answer = mapper.readTree(mvc.perform(normalize(scope, scope.owner(), input.getKey()))
+          .andExpect(status().isOk()).andExpect(header().string("Cache-Control", "no-store"))
+          .andReturn().getResponse().getContentAsString());
+      assertThat(answer).isEqualTo(mapper.valueToTree(Map.of("canonicalDomain", input.getValue())));
+    }
+    assertThat(writeCounts(scope)).isEqualTo(counts);
+  }
+
+  @Test
+  void normalizationRejectsMalformedDomainsAndUnknownFieldsWithoutCreatingState() throws Exception {
+    var scope = workspaceWithoutDraft("FAMILY");
+    var counts = writeCounts(scope);
+    for (String invalid : List.of("", "   ", "https://example.invalid/path", "127.0.0.1",
+        "*.example.invalid", "example.invalid.", "example.invalid:443", "a".repeat(250) + ".com")) {
+      mvc.perform(normalize(scope, scope.owner(), invalid)).andExpect(status().isBadRequest());
+    }
+    for (String body : List.of("{}", "{\"domain\":null}",
+        "{\"domain\":\"example.invalid\",\"execute\":true}")) {
+      mvc.perform(post(normalizationPath(scope)).with(actor(scope.owner()))
+          .contentType(MediaType.APPLICATION_JSON).content(body)).andExpect(status().isBadRequest());
+    }
+    assertThat(writeCounts(scope)).isEqualTo(counts);
+  }
+
+  @Test
+  void normalizationRequiresCurrentPolicyReadMembershipAndNeverWritesBusinessData() throws Exception {
+    var family = workspaceWithoutDraft("FAMILY");
+    var organization = workspaceWithoutDraft("ORGANIZATION");
+    String guardian = member(family, "GUARDIAN"), auditor = member(family, "AUDITOR");
+    String administrator = member(organization, "ORG_ADMIN");
+    String child = member(family, "CHILD"), teacher = member(organization, "TEACHER");
+    String revoked = member(family, "AUDITOR");
+    database.update("UPDATE tenant_members SET revoked_at=CURRENT_TIMESTAMP WHERE tenant_id=? AND actor_key=?",
+        family.tenant(), ActorKeys.key(revoked));
+    var familyCounts = writeCounts(family);
+    var organizationCounts = writeCounts(organization);
+    for (String who : List.of(family.owner(), guardian, auditor)) {
+      mvc.perform(normalize(family, who, "EXAMPLE.INVALID")).andExpect(status().isOk());
+    }
+    mvc.perform(normalize(organization, administrator, "example.invalid")).andExpect(status().isOk());
+    mvc.perform(normalize(family, child, "example.invalid")).andExpect(status().isForbidden());
+    mvc.perform(normalize(organization, teacher, "example.invalid")).andExpect(status().isForbidden());
+    mvc.perform(normalize(family, revoked, "example.invalid")).andExpect(status().isForbidden());
+    mvc.perform(normalize(organization, family.owner(), "example.invalid")).andExpect(status().isForbidden());
+    mvc.perform(post(normalizationPath(family)).contentType(MediaType.APPLICATION_JSON)
+        .content("{\"domain\":\"example.invalid\"}")).andExpect(status().isUnauthorized());
+    assertThat(writeCounts(family)).isEqualTo(familyCounts);
+    assertThat(writeCounts(organization)).isEqualTo(organizationCounts);
   }
 
   private record Scope(String owner, String tenant, String policy) {}

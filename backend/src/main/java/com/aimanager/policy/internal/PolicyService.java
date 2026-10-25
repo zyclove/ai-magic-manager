@@ -240,6 +240,12 @@ class PolicyService
   }
 
   @Transactional(readOnly = true, timeout = 10)
+  public String normalizeDomain(String tenant, String actor, String domain) {
+    access.requireRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN, AUDITOR);
+    return DomainNames.canonical(domain.strip());
+  }
+
+  @Transactional(readOnly = true, timeout = 10)
   public PolicyDomainEvaluation evaluateDomain(
       String tenant, String actor, String id, String etag, String domain) {
     var draft = get(tenant, actor, id);

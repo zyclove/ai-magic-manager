@@ -1,0 +1,7 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+Analyzing 6 items...                                            
+
+   info - Statements in an if should be enclosed in a block - lib\pages\editors.dart:482:53 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - test\dialog_submit_guard_test.dart:107:11 - curly_braces_in_flow_control_structures
+
+2 issues found. (ran in 2.9s)

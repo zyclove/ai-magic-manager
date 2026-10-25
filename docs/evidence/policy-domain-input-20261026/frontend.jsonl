@@ -1,0 +1,80 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":207764,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_normalization_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_normalization_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1}
+{"count":3,"time":4,"type":"allSuites"}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null,"observatoryUri":null}}]
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1594}
+{"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":6,"line":null,"column":null,"url":null},"type":"group","time":1596}
+{"test":{"id":3,"name":"normalization needs no saved draft or write recovery identifiers","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":16,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_normalization_test.dart"},"type":"testStart","time":1597}
+{"testID":3,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1636}
+{"test":{"id":4,"name":"Unicode input uses the shared server normalizer","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":32,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_normalization_test.dart"},"type":"testStart","time":1636}
+{"testID":4,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1640}
+{"test":{"id":5,"name":"bad canonical names and mismatched ASCII responses are rejected","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":40,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_normalization_test.dart"},"type":"testStart","time":1640}
+{"testID":5,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1655}
+{"test":{"id":6,"name":"invalid input never starts a request","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":58,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_normalization_test.dart"},"type":"testStart","time":1655}
+{"testID":6,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1658}
+{"test":{"id":7,"name":"scope loss while authentication waits prevents normalization dispatch","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":78,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_normalization_test.dart"},"type":"testStart","time":1659}
+{"testID":7,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1662}
+{"test":{"id":8,"name":"a failed read can be corrected without locking a write payload","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":96,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_normalization_test.dart"},"type":"testStart","time":1662}
+{"testID":8,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1667}
+{"suite":{"id":9,"platform":"vm","path":"D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_check_test.dart"},"type":"suite","time":1698}
+{"test":{"id":10,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_check_test.dart","suiteID":9,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1698}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null,"observatoryUri":null}}]
+{"testID":10,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":2236}
+{"group":{"id":11,"suiteID":9,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":8,"line":null,"column":null,"url":null},"type":"group","time":2236}
+{"test":{"id":12,"name":"invalid prefixes cannot pass whole domain or rule identifier checks","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":40,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_check_test.dart"},"type":"testStart","time":2237}
+{"testID":12,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2283}
+{"test":{"id":13,"name":"check binds the exact draft version and keeps domains out of URLs","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":63,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_check_test.dart"},"type":"testStart","time":2283}
+{"testID":13,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2290}
+{"test":{"id":14,"name":"subdomains with no exact rule stay NO_MATCH instead of allowed","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":83,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_check_test.dart"},"type":"testStart","time":2290}
+{"testID":14,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2294}
+{"test":{"id":15,"name":"IDN normalization is provided by the same server policy normalizer","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":92,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_check_test.dart"},"type":"testStart","time":2294}
+{"testID":15,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2298}
+{"test":{"id":16,"name":"later changes to a borrowed draft cannot change the captured check","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":108,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_check_test.dart"},"type":"testStart","time":2299}
+{"testID":16,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2302}
+{"test":{"id":17,"name":"mismatched or execution-like results never become a rule prediction","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":121,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_check_test.dart"},"type":"testStart","time":2302}
+{"testID":17,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2316}
+{"test":{"id":18,"name":"invalid input is rejected locally without dispatching a request","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":159,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_check_test.dart"},"type":"testStart","time":2317}
+{"testID":18,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2319}
+{"test":{"id":19,"name":"stale versions and authorization failures preserve the API failure","suiteID":9,"groupIDs":[11],"metadata":{"skip":false,"skipReason":null},"line":182,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/policy_domain_check_test.dart"},"type":"testStart","time":2320}
+{"testID":19,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2324}
+{"suite":{"id":20,"platform":"vm","path":"D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"suite","time":2346}
+{"test":{"id":21,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart","suiteID":20,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":2347}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null,"observatoryUri":null}}]
+{"testID":21,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":3152}
+{"group":{"id":22,"suiteID":20,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":15,"line":null,"column":null,"url":null},"type":"group","time":3153}
+{"test":{"id":23,"name":"read-only preparation failures keep editable input and retry new values","suiteID":20,"groupIDs":[22],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":84,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":3153}
+{"testID":23,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4357}
+{"test":{"id":24,"name":"read-only preparation can cancel after failure without unknown-write confirmation","suiteID":20,"groupIDs":[22],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":131,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":4358}
+{"testID":24,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4456}
+{"test":{"id":25,"name":"read-only preparation rejects duplicate callbacks and late results after scope ABA","suiteID":20,"groupIDs":[22],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":157,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":4456}
+{"testID":25,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4548}
+{"test":{"id":26,"name":"queued edit callbacks submit only once before the next frame","suiteID":20,"groupIDs":[22],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":194,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":4548}
+{"testID":26,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4635}
+{"test":{"id":27,"name":"412 preserves the submitted draft and blocks held save callbacks","suiteID":20,"groupIDs":[22],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":230,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":4636}
+{"testID":27,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4730}
+{"test":{"id":28,"name":"unknown result retries the same payload before a 412 stops replay","suiteID":20,"groupIDs":[22],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":285,"root_column":5,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":4731}
+{"testID":28,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4842}
+{"test":{"id":29,"name":"unknown result after a parsing failure retries the same payload before a 412 stops replay","suiteID":20,"groupIDs":[22],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":285,"root_column":5,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":4843}
+{"testID":29,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4962}
+{"test":{"id":30,"name":"unknown result after a pending-operation refusal retries the same payload before a 412 stops replay","suiteID":20,"groupIDs":[22],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":285,"root_column":5,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":4962}
+{"testID":30,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5116}
+{"test":{"id":31,"name":"reauth on an unknown retry keeps the original payload until success","suiteID":20,"groupIDs":[22],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":335,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":5117}
+{"testID":31,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5223}
+{"test":{"id":32,"name":"IDEMPOTENCY_RESULT_EXPIRED keeps a read-only draft and stops stale save callbacks","suiteID":20,"groupIDs":[22],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":390,"root_column":5,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":5224}
+{"testID":32,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5303}
+{"test":{"id":33,"name":"IDEMPOTENCY_RESPONSE_ERASED keeps a read-only draft and stops stale save callbacks","suiteID":20,"groupIDs":[22],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":390,"root_column":5,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":5304}
+{"testID":33,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5396}
+{"test":{"id":34,"name":"unknown result confirms closing inside the original form","suiteID":20,"groupIDs":[22],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":440,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":5397}
+{"testID":34,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5559}
+{"test":{"id":35,"name":"access loss hides a 412 draft and gives original workspace guidance","suiteID":20,"groupIDs":[22],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":500,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":5559}
+{"testID":35,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5654}
+{"test":{"id":36,"name":"access loss during submission hides a late 412 and prevents resubmit","suiteID":20,"groupIDs":[22],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":545,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":5654}
+{"testID":36,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5723}
+{"test":{"id":37,"name":"412 draft preserves trimmed text numeric labels and empty fields","suiteID":20,"groupIDs":[22],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":584,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":5723}
+{"testID":37,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5834}
+{"success":true,"type":"done","time":5865}

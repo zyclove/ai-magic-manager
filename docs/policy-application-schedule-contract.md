@@ -75,6 +75,8 @@
 
 domain 只接受小写标准 ASCII/punycode DNS 名，不接受 URL、IP、尾部点或通配符。Unicode 名称需先 IDN 转换。域名规则不读取 HTTPS 页面内容，不提供所有媒体应用内部内容审查。
 
+管理台添加／编辑域名规则时可直接输入中文或大小写域名。确认规则前调用只读规范化入口，再把规范 ASCII 名称加入本地规则列表；管理员可在最终“保存草稿”前核对。新建策略尚无草稿编号也可使用，不因此预先创建空草稿或写入恢复记录。校验超时／失败保留可修改输入；真正保存草稿仍沿用原内容、防重复提交与未知结果恢复。规范化请求绑定原会话、工作空间和规则子窗口，子窗口结束后的迟到身份或响应不能再加入规则。
+
 管理台策略详情的“检查域名规则”可输入大小写或中文域名；检查与保存规则共用后端域名规范器，检查仅去掉首尾空白并转换为规范域名，不改变持久规则必须使用规范 ASCII 的要求。只检查当前草稿中的精确 `DOMAIN_ACCESS` 规则：`example.com` 不覆盖 `sub.example.com`；多个精确命中仍按 DENY 优先，无命中返回 `NO_MATCH`，不能默认解释为允许访问。该工具不访问目标网站、不做 DNS 查询、不保存检查历史，也不检查设备能力或实际流量。
 
 检查结果绑定策略编号与草稿版本，`effectiveEffect=null`、`matchMode=EXACT_DOMAIN`、`executionStatus=NOT_EVALUATED`，始终作为规则预测呈现。草稿并发变化须重新打开详情；输入变化立即清除旧结果，账号、工作空间、角色或父页面失效后清除私有输入和结果，旧响应不能恢复。日常配置只展示一个输入与检查动作，规则编号按需展开。
@@ -92,6 +94,7 @@ domain 只接受小写标准 ASCII/punycode DNS 名，不接受 URL、IP、尾�
 | POST /policies | name、kind=POLICY/TEMPLATE、rules → PolicyDraft | 成人；可选幂等 |
 | GET /policies | limit、cursor、kind? | 成人/审计员；按 ID 分页 |
 | GET /policies/{policyId} | PolicyDraft、ETag | 成人/审计员 |
+| POST /policy-domain-normalizations | domain → canonicalDomain | 当前策略读取角色；只读、no-store；不需草稿编号、版本、幂等键或近期 MFA，不保存规则 |
 | POST /policies/{policyId}/domain-evaluations | domain → policyId、draftRevision、canonicalDomain、matchingRuleIds（排序）、predictedEffect、effectiveEffect、matchMode、executionStatus | 成人/审计员；必需当前强 If-Match；只读、no-store；不要求写入幂等键或近期 MFA |
 | PUT /policies/{policyId} | name、rules → 新 revision、ETag | 成人；If-Match |
 | POST /policies/{policyId}/copies | name → POLICY 草稿 | 模板、成人、If-Match；可选幂等 |

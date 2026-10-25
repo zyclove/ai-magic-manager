@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import '../core/api.dart';
 import '../core/labels.dart';
+import '../core/policy_domain_check.dart';
 import '../core/rule_parameter_labels.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
@@ -46,14 +47,16 @@ Future<void> scheduleEditor(BuildContext context, Session session) async {
           session.canOpen('schedules'));
   try {
     if (!scope.current) return;
-    await presentOwnedDialog<void>(context, OwnedDialogRoute<void>(
-        context: context,
-        barrierDismissible: false,
-        builder: (_) => ScheduleEditor(
-            session: session,
-            root: root,
-            timeZone: timeZone,
-            operationScope: scope)));
+    await presentOwnedDialog<void>(
+        context,
+        OwnedDialogRoute<void>(
+            context: context,
+            barrierDismissible: false,
+            builder: (_) => ScheduleEditor(
+                session: session,
+                root: root,
+                timeZone: timeZone,
+                operationScope: scope)));
   } finally {
     live = false;
     scope.dispose();
@@ -94,7 +97,11 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   late final Api api;
   final key = requestId();
 
-  bool get current => mounted && !closing && !revoked && scope.current &&
+  bool get current =>
+      mounted &&
+      !closing &&
+      !revoked &&
+      scope.current &&
       owner?.isActive == true &&
       (owner is! OwnedDialogRoute<void> ||
           (owner as OwnedDialogRoute<void>).available);
@@ -218,30 +225,30 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
     }
     setState(() => exitOpen = true);
     late final OwnedDialogRoute<bool> route;
-    bool canRespond() => current && !busy && resultUnknown &&
-        route.available && route.isCurrent;
+    bool canRespond() =>
+        current && !busy && resultUnknown && route.available && route.isCurrent;
     route = OwnedDialogRoute<bool>(
         context: context,
         barrierDismissible: false,
         builder: (_) => AlertDialog(
-            title: const Text('暂时关闭未确认的提交？'),
-            content: const Text('服务器可能已保存此计划，关闭不会取消已提交的操作。'
-                '关闭后请先刷新时间计划列表核对结果，确认后再创建，避免重复提交。'
-                '继续留在这里可以按原内容重试。'),
-            actions: [
-              TextButton(
-                  key: const Key('schedule-editor-keep-unknown'),
-                  onPressed: () {
-                    if (canRespond()) route.finish(false);
-                  },
-                  child: const Text('继续核对')),
-              TextButton(
-                  key: const Key('schedule-editor-confirm-close-unknown'),
-                  onPressed: () {
-                    if (canRespond()) route.finish(true);
-                  },
-                  child: const Text('暂时关闭')),
-            ]));
+                title: const Text('暂时关闭未确认的提交？'),
+                content: const Text('服务器可能已保存此计划，关闭不会取消已提交的操作。'
+                    '关闭后请先刷新时间计划列表核对结果，确认后再创建，避免重复提交。'
+                    '继续留在这里可以按原内容重试。'),
+                actions: [
+                  TextButton(
+                      key: const Key('schedule-editor-keep-unknown'),
+                      onPressed: () {
+                        if (canRespond()) route.finish(false);
+                      },
+                      child: const Text('继续核对')),
+                  TextButton(
+                      key: const Key('schedule-editor-confirm-close-unknown'),
+                      onPressed: () {
+                        if (canRespond()) route.finish(true);
+                      },
+                      child: const Text('暂时关闭')),
+                ]));
     exitRoute = route;
     try {
       final confirmed = await presentOwnedDialog(context, route);
@@ -321,8 +328,8 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
 
   Object? freeze(Object? value) {
     if (value is Map<String, dynamic>) {
-      return Map<String, dynamic>.unmodifiable(value.map(
-          (key, item) => MapEntry(key, freeze(item))));
+      return Map<String, dynamic>.unmodifiable(
+          value.map((key, item) => MapEntry(key, freeze(item))));
     }
     if (value is List) return List<Object?>.unmodifiable(value.map(freeze));
     return value;
@@ -348,7 +355,11 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   }
 
   Future<void> retryOriginal() async {
-    if (!interactive || busy || exitOpen || !resultUnknown || pendingBody == null) {
+    if (!interactive ||
+        busy ||
+        exitOpen ||
+        !resultUnknown ||
+        pendingBody == null) {
       return;
     }
     await submitOriginal();
@@ -375,8 +386,10 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
       }
       setState(() {
         error = failure;
-        resultUnknown = resultUnknown || failure is! ApiFailure ||
-            failure.status == 0 || failure.status >= 500 ||
+        resultUnknown = resultUnknown ||
+            failure is! ApiFailure ||
+            failure.status == 0 ||
+            failure.status >= 500 ||
             failure.code == 'PENDING_OPERATION_UNCHANGED';
         if (!resultUnknown) pendingBody = null;
       });
@@ -410,152 +423,166 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
           ]);
     }
     return PopScope(
-      canPop: !busy && !resultUnknown && !exitOpen,
-      onPopInvoked: (didPop) {
-        if (!didPop && resultUnknown && !busy && !exitOpen) {
-          unawaited(requestClose());
-        }
-      },
-      child: AlertDialog(
-          title: const Text('创建时间计划'),
-          content: SizedBox(
-              width: 640,
-              child: SingleChildScrollView(
-                  child: Form(
-                      key: form,
-                      child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Notice(
-                                '按当地时区设置允许使用的时段。结束时间早于开始时间表示跨午夜；日期例外会覆盖当天计划。'),
-                            const SizedBox(height: 20),
-                            TextFormField(
-                                controller: name,
-                                enabled: !locked,
-                                maxLength: 100,
-                                decoration: const InputDecoration(
-                                    labelText: '计划名称', hintText: '例如：放学后的自由时间'),
-                                validator: (v) => v == null || v.trim().isEmpty
-                                    ? '请输入计划名称'
-                                    : null),
-                            const SizedBox(height: 12),
-                            TextFormField(
-                                controller: zone,
-                                enabled: !locked,
-                                decoration:
-                                    const InputDecoration(labelText: '时区'),
-                                validator: (v) => v == null || v.trim().isEmpty
-                                    ? '请输入时区'
-                                    : null),
-                            const SizedBox(height: 22),
-                            const Text('每周时段',
-                                style: TextStyle(fontWeight: FontWeight.w600)),
-                            const SizedBox(height: 10),
-                            Wrap(
-                                spacing: 6,
-                                children: weekdays
-                                    .map((d) => FilterChip(
-                                        label: Text(label(d)),
-                                        selected: days.contains(d),
-                                        onSelected: locked
-                                            ? null
-                                            : (v) {
-                                                if (!interactive || locked) return;
-                                                setState(() {
-                                                  if (v) {
-                                                    days.add(d);
-                                                  } else {
-                                                    days.remove(d);
-                                                  }
-                                                });
-                                              }))
-                                    .toList()),
-                            const SizedBox(height: 12),
-                            Wrap(
-                                spacing: 12,
-                                runSpacing: 10,
-                                crossAxisAlignment: WrapCrossAlignment.center,
-                                children: [
-                                  OutlinedButton.icon(
-                                      onPressed:
-                                          locked ? null : () => pickTime(true),
-                                      icon:
-                                          const Icon(Icons.schedule, size: 18),
-                                      label: Text(start)),
-                                  const Text('至'),
-                                  OutlinedButton(
-                                      onPressed:
-                                          locked ? null : () => pickTime(false),
-                                      child: Text(end)),
-                                  TextButton.icon(
-                                      onPressed: locked ? null : addWindow,
-                                      icon: const Icon(Icons.add, size: 18),
-                                      label: const Text('加入计划'))
-                                ]),
-                            ...windows.asMap().entries.map((e) => ListTile(
-                                dense: true,
-                                contentPadding: EdgeInsets.zero,
-                                title: Text(
-                                    '${label(e.value['day'])}  ${e.value['start']} – ${e.value['end']}'),
-                                trailing: IconButton(
-                                    tooltip: '移除此时段',
-                                    onPressed: locked
-                                        ? null
-                                        : () => removeWindow(e.value),
-                                    icon: const Icon(Icons.close, size: 18)))),
-                            const Divider(),
-                            const SizedBox(height: 14),
-                            const Text('日期例外',
-                                style: TextStyle(fontWeight: FontWeight.w600)),
-                            const SizedBox(height: 6),
-                            const Text('假期或特殊日期可设置整天不可用。',
-                                style: TextStyle(color: muted, fontSize: 12)),
-                            TextButton.icon(
-                                onPressed: locked ? null : pickClosedDate,
-                                icon: const Icon(Icons.event_busy, size: 18),
-                                label: const Text('添加关闭日期')),
-                            ...exceptions.asMap().entries.map((e) => ListTile(
-                                dense: true,
-                                title: Text('${e.value['date']} · 全天关闭'),
-                                trailing: IconButton(
-                                    tooltip: '移除例外',
-                                    onPressed: locked
-                                        ? null
-                                        : () => removeException(e.value),
-                                    icon: const Icon(Icons.close, size: 18)))),
-                            if (resultUnknown) ...[
+        canPop: !busy && !resultUnknown && !exitOpen,
+        onPopInvoked: (didPop) {
+          if (!didPop && resultUnknown && !busy && !exitOpen) {
+            unawaited(requestClose());
+          }
+        },
+        child: AlertDialog(
+            title: const Text('创建时间计划'),
+            content: SizedBox(
+                width: 640,
+                child: SingleChildScrollView(
+                    child: Form(
+                        key: form,
+                        child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
                               const Notice(
-                                  '尚不能确认保存结果，原内容已锁定。重试会使用同一次提交。'
-                                  '暂时关闭后请先刷新时间计划列表核对结果，避免重复创建。',
-                                  warning: true),
+                                  '按当地时区设置允许使用的时段。结束时间早于开始时间表示跨午夜；日期例外会覆盖当天计划。'),
+                              const SizedBox(height: 20),
+                              TextFormField(
+                                  controller: name,
+                                  enabled: !locked,
+                                  maxLength: 100,
+                                  decoration: const InputDecoration(
+                                      labelText: '计划名称',
+                                      hintText: '例如：放学后的自由时间'),
+                                  validator: (v) =>
+                                      v == null || v.trim().isEmpty
+                                          ? '请输入计划名称'
+                                          : null),
                               const SizedBox(height: 12),
-                            ],
-                            if (error != null)
-                              FailureView(error!, reauth: resultUnknown || busy
-                                  ? null
-                                  : () {
-                                      if (interactive && !locked) {
-                                        widget.session.login(stepUp: true);
-                                      }
-                                    })
-                          ])))),
-          actions: [
-            TextButton(
-                key: resultUnknown
-                    ? const Key('schedule-editor-close-unknown') : null,
-                onPressed: busy || exitOpen ? null : requestClose,
-                child: Text(resultUnknown ? '暂时关闭' : '取消')),
-            if (resultUnknown)
-              FilledButton(
-                  key: const Key('schedule-editor-retry-original'),
-                  onPressed: busy || exitOpen ? null : retryOriginal,
-                  child: Text(busy ? '恢复中…' : '重试原提交'))
-            else
-              FilledButton(
-                  onPressed: locked ? null : save,
-                  child: Text(busy ? '保存中…' : '保存计划'))
-          ]));
+                              TextFormField(
+                                  controller: zone,
+                                  enabled: !locked,
+                                  decoration:
+                                      const InputDecoration(labelText: '时区'),
+                                  validator: (v) =>
+                                      v == null || v.trim().isEmpty
+                                          ? '请输入时区'
+                                          : null),
+                              const SizedBox(height: 22),
+                              const Text('每周时段',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.w600)),
+                              const SizedBox(height: 10),
+                              Wrap(
+                                  spacing: 6,
+                                  children: weekdays
+                                      .map((d) => FilterChip(
+                                          label: Text(label(d)),
+                                          selected: days.contains(d),
+                                          onSelected: locked
+                                              ? null
+                                              : (v) {
+                                                  if (!interactive || locked) {
+                                                    return;
+                                                  }
+                                                  setState(() {
+                                                    if (v) {
+                                                      days.add(d);
+                                                    } else {
+                                                      days.remove(d);
+                                                    }
+                                                  });
+                                                }))
+                                      .toList()),
+                              const SizedBox(height: 12),
+                              Wrap(
+                                  spacing: 12,
+                                  runSpacing: 10,
+                                  crossAxisAlignment: WrapCrossAlignment.center,
+                                  children: [
+                                    OutlinedButton.icon(
+                                        onPressed: locked
+                                            ? null
+                                            : () => pickTime(true),
+                                        icon: const Icon(Icons.schedule,
+                                            size: 18),
+                                        label: Text(start)),
+                                    const Text('至'),
+                                    OutlinedButton(
+                                        onPressed: locked
+                                            ? null
+                                            : () => pickTime(false),
+                                        child: Text(end)),
+                                    TextButton.icon(
+                                        onPressed: locked ? null : addWindow,
+                                        icon: const Icon(Icons.add, size: 18),
+                                        label: const Text('加入计划'))
+                                  ]),
+                              ...windows.asMap().entries.map((e) => ListTile(
+                                  dense: true,
+                                  contentPadding: EdgeInsets.zero,
+                                  title: Text(
+                                      '${label(e.value['day'])}  ${e.value['start']} – ${e.value['end']}'),
+                                  trailing: IconButton(
+                                      tooltip: '移除此时段',
+                                      onPressed: locked
+                                          ? null
+                                          : () => removeWindow(e.value),
+                                      icon:
+                                          const Icon(Icons.close, size: 18)))),
+                              const Divider(),
+                              const SizedBox(height: 14),
+                              const Text('日期例外',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.w600)),
+                              const SizedBox(height: 6),
+                              const Text('假期或特殊日期可设置整天不可用。',
+                                  style: TextStyle(color: muted, fontSize: 12)),
+                              TextButton.icon(
+                                  onPressed: locked ? null : pickClosedDate,
+                                  icon: const Icon(Icons.event_busy, size: 18),
+                                  label: const Text('添加关闭日期')),
+                              ...exceptions.asMap().entries.map((e) => ListTile(
+                                  dense: true,
+                                  title: Text('${e.value['date']} · 全天关闭'),
+                                  trailing: IconButton(
+                                      tooltip: '移除例外',
+                                      onPressed: locked
+                                          ? null
+                                          : () => removeException(e.value),
+                                      icon:
+                                          const Icon(Icons.close, size: 18)))),
+                              if (resultUnknown) ...[
+                                const Notice(
+                                    '尚不能确认保存结果，原内容已锁定。重试会使用同一次提交。'
+                                    '暂时关闭后请先刷新时间计划列表核对结果，避免重复创建。',
+                                    warning: true),
+                                const SizedBox(height: 12),
+                              ],
+                              if (error != null)
+                                FailureView(error!,
+                                    reauth: resultUnknown || busy
+                                        ? null
+                                        : () {
+                                            if (interactive && !locked) {
+                                              widget.session
+                                                  .login(stepUp: true);
+                                            }
+                                          })
+                            ])))),
+            actions: [
+              TextButton(
+                  key: resultUnknown
+                      ? const Key('schedule-editor-close-unknown')
+                      : null,
+                  onPressed: busy || exitOpen ? null : requestClose,
+                  child: Text(resultUnknown ? '暂时关闭' : '取消')),
+              if (resultUnknown)
+                FilledButton(
+                    key: const Key('schedule-editor-retry-original'),
+                    onPressed: busy || exitOpen ? null : retryOriginal,
+                    child: Text(busy ? '恢复中…' : '重试原提交'))
+              else
+                FilledButton(
+                    onPressed: locked ? null : save,
+                    child: Text(busy ? '保存中…' : '保存计划'))
+            ]));
   }
 }
 
@@ -1017,16 +1044,23 @@ class _PolicyEditorState extends State<PolicyEditor> {
     final initial = index == null
         ? <String, dynamic>{'effect': editableEffects.first, 'required': 'true'}
         : {...rules[index], 'required': rules[index]['required'].toString()};
-    final result = await ruleDialog<Json>((_) => EditDialog(
+    final result = await ruleDialog<Json>((ruleContext) => EditDialog(
         title: '${index == null ? '添加' : '编辑'}${label(type)}',
         fields: fields,
         description: type == 'RUNTIME_PERMISSION'
             ? '可选择系统默认提示或拒绝。自动授予尚未开放；此处仅保存规则草稿，设备预览会说明支持情况，最终仍需提供方和设备回执。'
             : type == 'SPECIAL_ACCESS'
                 ? '特殊访问通常需要设备本地用户或受管系统单独授权；保存规则不表示已经授予。'
-                : null,
+                : type == 'DOMAIN_ACCESS'
+                    ? '支持中文和大小写域名。确认后会显示规范格式，保存草稿前可再次核对；只匹配这个域名，不包含子域。此步骤不保存或执行设备策略。'
+                    : null,
         initial: initial,
-        submit: '保存',
+        submit: type == 'DOMAIN_ACCESS'
+            ? index == null
+                ? '加入草稿'
+                : '更新规则'
+            : '保存',
+        canCommit: false,
         onSubmit: (data) async {
           if (!current || resultUnknown) {
             throw const ApiFailure(409, 'WORKSPACE_CHANGED');
@@ -1052,6 +1086,24 @@ class _PolicyEditorState extends State<PolicyEditor> {
           ]) {
             if (data[field] != null && data[field] != '') {
               r[field] = data[field];
+            }
+          }
+          if (selectedType == 'DOMAIN_ACCESS') {
+            final route = ModalRoute.of(ruleContext);
+            bool childActive() =>
+                ruleContext.mounted &&
+                route?.isActive == true &&
+                (route is! OwnedDialogRoute<dynamic> || route.available);
+            bool ruleCurrent() => current && !resultUnknown && childActive();
+            try {
+              r['domain'] = await normalizePolicyDomain(api.scoped(ruleCurrent),
+                  root: widget.root, domain: data['domain'] as String);
+              if (!ruleCurrent()) {
+                throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+              }
+            } catch (failure) {
+              if (privateFailure(failure) && childActive()) revoke();
+              rethrow;
             }
           }
           return r;

@@ -25,16 +25,41 @@ bool _canonicalDomain(Object? value) =>
     value.split('.').every(
         (label) => _whole(label, r'[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?'));
 
-/// This is a read-only prediction against one frozen draft, with no DNS lookup
-/// or device execution. IDN conversion stays with the server's rule normalizer.
-Future<PolicyDomainEvaluation> evaluatePolicyDomain(Api api,
-    {required String root, required Json draft, required String domain}) async {
-  final input = domain.trim();
+String _domainInput(String value) {
+  final input = value.trim();
   if (input.isEmpty ||
       input.length > 253 ||
       RegExp(r'[:/\\?#*@\s]').hasMatch(input)) {
     throw const ApiFailure(400, 'INVALID_DOMAIN');
   }
+  return input;
+}
+
+/// Prepare a local rule without creating a policy, journal or execution job.
+Future<String> normalizePolicyDomain(Api api,
+    {required String root, required String domain}) async {
+  final input = _domainInput(domain);
+  final value = await api.send('POST', '$root/policy-domain-normalizations',
+      body: {'domain': input});
+  if (value is! Json ||
+      value.length != 1 ||
+      !value.containsKey('canonicalDomain') ||
+      !_canonicalDomain(value['canonicalDomain'])) {
+    throw const ApiFailure(502, 'INVALID_DOMAIN_NORMALIZATION_RESPONSE');
+  }
+  final canonical = value['canonicalDomain'] as String;
+  if (input.codeUnits.every((unit) => unit < 128) &&
+      input.toLowerCase() != canonical) {
+    throw const ApiFailure(502, 'INVALID_DOMAIN_NORMALIZATION_RESPONSE');
+  }
+  return canonical;
+}
+
+/// This is a read-only prediction against one frozen draft, with no DNS lookup
+/// or device execution. IDN conversion stays with the server's rule normalizer.
+Future<PolicyDomainEvaluation> evaluatePolicyDomain(Api api,
+    {required String root, required Json draft, required String domain}) async {
+  final input = _domainInput(domain);
   final id = draft['id'], revision = draft['revision'], rules = draft['rules'];
   if (id is! String ||
       id.isEmpty ||

@@ -281,20 +281,22 @@ VoidCallback captureDialogCompletion(BuildContext context) {
 }
 
 Future<Json?> formDialog(BuildContext context,
-        {required String title,
-        required List<FieldSpec> fields,
-        Json initial = const {},
-        String? description,
-        String submit = '保存',
-        required Future<Json?> Function(Json) onSubmit,
-        VoidCallback? reauth,
-        Listenable? accessChanges,
-        bool Function()? hasAccess}) async {
+    {required String title,
+    required List<FieldSpec> fields,
+    Json initial = const {},
+    String? description,
+    String submit = '保存',
+    required Future<Json?> Function(Json) onSubmit,
+    VoidCallback? reauth,
+    Listenable? accessChanges,
+    bool Function()? hasAccess}) async {
   final parent = ModalRoute.of(context);
   final parentClosed = ValueNotifier<bool>(false);
   var live = true, allowed = true;
   bool permitted() {
-    if (!live || !context.mounted || parentClosed.value ||
+    if (!live ||
+        !context.mounted ||
+        parentClosed.value ||
         (parent != null && !parent.isActive) ||
         (hasAccess != null && !hasAccess())) allowed = false;
     return allowed;
@@ -315,10 +317,8 @@ Future<Json?> formDialog(BuildContext context,
                 initial: initial,
                 description: description,
                 submit: submit,
-                accessChanges: Listenable.merge([
-                  parentClosed,
-                  if (accessChanges != null) accessChanges
-                ]),
+                accessChanges: Listenable.merge(
+                    [parentClosed, if (accessChanges != null) accessChanges]),
                 hasAccess: permitted,
                 onSubmit: (values) async {
                   if (!permitted()) {
@@ -346,6 +346,11 @@ class EditDialog extends StatefulWidget {
   final VoidCallback? reauth;
   final Listenable? accessChanges;
   final bool Function()? hasAccess;
+
+  /// Keep true for server writes. False is only for callbacks that do not
+  /// persist remote state, such as read-only checks and local draft preparation.
+  /// The caller must guarantee that false callbacks perform no remote writes.
+  final bool canCommit;
   const EditDialog(
       {super.key,
       required this.title,
@@ -356,7 +361,8 @@ class EditDialog extends StatefulWidget {
       required this.onSubmit,
       this.reauth,
       this.accessChanges,
-      this.hasAccess});
+      this.hasAccess,
+      this.canCommit = true});
   @override
   State<EditDialog> createState() => _EditDialogState();
 }
@@ -386,12 +392,14 @@ class _EditDialogState extends State<EditDialog> {
   bool get versionConflict =>
       error is ApiFailure && (error as ApiFailure).status == 412;
 
-  bool unavailableResult(Object? failure) => failure is ApiFailure &&
+  bool unavailableResult(Object? failure) =>
+      failure is ApiFailure &&
       failure.status == 410 &&
       const {'IDEMPOTENCY_RESULT_EXPIRED', 'IDEMPOTENCY_RESPONSE_ERASED'}
           .contains(failure.code);
 
-  bool get recoveryStopped => versionConflict || unavailableResult(error);
+  bool get recoveryStopped =>
+      widget.canCommit && (versionConflict || unavailableResult(error));
 
   String get recoveryDraft => widget.fields.map((field) {
         final value = recoveryValues?[field.key]?.toString() ?? '';
@@ -478,6 +486,8 @@ class _EditDialogState extends State<EditDialog> {
   @override
   void didUpdateWidget(EditDialog oldWidget) {
     super.didUpdateWidget(oldWidget);
+    // Never reinterpret an in-flight write as read-only within the same form.
+    if (oldWidget.canCommit != widget.canCommit) _revoked = true;
     if (!identical(oldWidget.accessChanges, widget.accessChanges)) {
       oldWidget.accessChanges?.removeListener(_accessChanged);
       widget.accessChanges?.addListener(_accessChanged);
@@ -510,9 +520,13 @@ class _EditDialogState extends State<EditDialog> {
   }
 
   Future<void> save() async {
-    if (!current || busy || recoveryStopped || confirmingUnknownClose ||
+    if (!current ||
+        busy ||
+        recoveryStopped ||
+        confirmingUnknownClose ||
         form.currentState?.validate() != true) return;
-    final retryingUnknown = pendingValues != null;
+    final canCommit = widget.canCommit;
+    final retryingUnknown = canCommit && pendingValues != null;
     setState(() {
       busy = true;
       error = null;
@@ -525,23 +539,30 @@ class _EditDialogState extends State<EditDialog> {
         values[f.key] =
             f.numeric ? (v == null || v.isEmpty ? null : int.parse(v)) : v;
       }
-      final submitted = pendingValues ?? values;
-      pendingValues = submitted;
+      final submitted = canCommit ? (pendingValues ?? values) : values;
+      if (canCommit) pendingValues = submitted;
       if (!current) return;
       final result = await widget.onSubmit(submitted);
       if (mounted && _active && permitted) finish(result ?? submitted);
     } catch (e) {
-      final attempted = pendingValues;
-      final stopped = e is ApiFailure &&
-          (e.status == 412 || unavailableResult(e));
-      if (stopped && attempted != null) {
-        recoveryValues = Map<String, dynamic>.unmodifiable(attempted);
-      }
-      // A later rejection cannot prove that the first uncertain write failed.
-      final unknown = retryingUnknown || e is! ApiFailure || e.status == 0 ||
-          e.status >= 500 || e.code == 'PENDING_OPERATION_UNCHANGED';
-      if (stopped || !unknown) {
+      if (canCommit) {
+        final attempted = pendingValues;
+        final stopped =
+            e is ApiFailure && (e.status == 412 || unavailableResult(e));
+        if (stopped && attempted != null) {
+          recoveryValues = Map<String, dynamic>.unmodifiable(attempted);
+        }
+        // A later rejection cannot prove that the first uncertain write failed.
+        final unknown = retryingUnknown ||
+            e is! ApiFailure ||
+            e.status == 0 ||
+            e.status >= 500 ||
+            e.code == 'PENDING_OPERATION_UNCHANGED';
+        if (stopped || !unknown) pendingValues = null;
+      } else {
         pendingValues = null;
+        recoveryValues = null;
+        confirmingUnknownClose = false;
       }
       if (mounted && _active && permitted) setState(() => error = e);
     } finally {
@@ -553,161 +574,172 @@ class _EditDialogState extends State<EditDialog> {
   Widget build(BuildContext context) => !permitted
       ? AlertDialog(
           title: const Text('工作空间或权限已变化'),
-          content: const Text('已隐藏原表单内容。请关闭后在当前工作空间重新打开；已提交的操作请回到原工作空间刷新列表核对结果。'),
+          content: Text(widget.canCommit
+              ? '已隐藏原表单内容。请关闭后在当前工作空间重新打开；已提交的操作请回到原工作空间刷新列表核对结果。'
+              : '已隐藏原表单内容。请关闭后在当前工作空间重新打开。'),
           actions: [TextButton(onPressed: finish, child: const Text('关闭'))])
       : PopScope(
-      canPop: !busy && pendingValues == null,
-      onPopInvoked: (didPop) {
-        if (!didPop) cancel();
-      },
-      child: AlertDialog(
-          title: Text(widget.title),
-          content: SizedBox(
-              width: 520,
-              child: SingleChildScrollView(
-                  child: Form(
-                      key: form,
-                      child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            if (widget.description != null)
-                              Padding(
-                                  padding: const EdgeInsets.only(bottom: 20),
-                                  child: Notice(widget.description!)),
-                            if (pendingValues != null && !busy)
-                              Padding(
-                                  padding: const EdgeInsets.only(bottom: 16),
-                                  child: Notice(
-                                      confirmingUnknownClose
-                                          ? '服务器可能已完成原操作，关闭不会取消提交。关闭后请先刷新列表核对结果，确认后再新建。'
-                                          : '上次提交结果尚未确认。重试将发送相同内容；离开后请先刷新列表核对结果，避免重复创建。',
-                                      key: confirmingUnknownClose
-                                          ? const Key('edit-dialog-unknown-close-notice')
-                                          : null,
-                                      warning: true)),
-                            if (recoveryStopped) ...[
-                              FailureView(error!),
-                              Text(versionConflict
-                                  ? '记录已更新，已停止再次提交。可选中并复制下方草稿；关闭后请刷新原页面，再重新打开表单核对最新内容。'
-                                  : '原操作结果已无法恢复，已停止再次提交。请关闭后核对当前记录；不要把结果不可恢复当作操作未执行。',
-                                  style: const TextStyle(height: 1.6)),
-                              if (widget.fields.isNotEmpty) ...[
-                                const SizedBox(height: 12),
-                                const Text('保留的草稿',
-                                    style: TextStyle(fontWeight: FontWeight.w600)),
-                                const SizedBox(height: 8),
-                                SelectableText(recoveryDraft,
-                                    style: const TextStyle(height: 1.6)),
-                              ],
-                            ] else
-                              ...widget.fields.map((f) => Padding(
-                                padding: const EdgeInsets.only(bottom: 18),
-                                child: f.options != null
-                                    ? DropdownButtonFormField<String>(
-                                        value: selected[f.key],
-                                        isExpanded: true,
-                                        decoration:
-                                            InputDecoration(labelText: f.label),
-                                        items: f.options!.entries
-                                            .map((e) => DropdownMenuItem(
-                                                value: e.key,
-                                                child: Text(e.value,
-                                                    overflow:
-                                                        TextOverflow.ellipsis)))
-                                            .toList(),
-                                        onChanged: busy || pendingValues != null
-                                            ? null
-                                            : (v) {
-                                                if (!current ||
-                                                    busy ||
-                                                    recoveryStopped ||
-                                                    confirmingUnknownClose ||
-                                                    pendingValues != null ||
-                                                    (v != null &&
-                                                        !f.options!
-                                                            .containsKey(v))) {
-                                                  return;
+          canPop: !busy && pendingValues == null,
+          onPopInvoked: (didPop) {
+            if (!didPop) cancel();
+          },
+          child: AlertDialog(
+              title: Text(widget.title),
+              content: SizedBox(
+                  width: 520,
+                  child: SingleChildScrollView(
+                      child: Form(
+                          key: form,
+                          child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (widget.description != null)
+                                  Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 20),
+                                      child: Notice(widget.description!)),
+                                if (pendingValues != null && !busy)
+                                  Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 16),
+                                      child: Notice(
+                                          confirmingUnknownClose
+                                              ? '服务器可能已完成原操作，关闭不会取消提交。关闭后请先刷新列表核对结果，确认后再新建。'
+                                              : '上次提交结果尚未确认。重试将发送相同内容；离开后请先刷新列表核对结果，避免重复创建。',
+                                          key: confirmingUnknownClose
+                                              ? const Key(
+                                                  'edit-dialog-unknown-close-notice')
+                                              : null,
+                                          warning: true)),
+                                if (recoveryStopped) ...[
+                                  FailureView(error!),
+                                  Text(
+                                      versionConflict
+                                          ? '记录已更新，已停止再次提交。可选中并复制下方草稿；关闭后请刷新原页面，再重新打开表单核对最新内容。'
+                                          : '原操作结果已无法恢复，已停止再次提交。请关闭后核对当前记录；不要把结果不可恢复当作操作未执行。',
+                                      style: const TextStyle(height: 1.6)),
+                                  if (widget.fields.isNotEmpty) ...[
+                                    const SizedBox(height: 12),
+                                    const Text('保留的草稿',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600)),
+                                    const SizedBox(height: 8),
+                                    SelectableText(recoveryDraft,
+                                        style: const TextStyle(height: 1.6)),
+                                  ],
+                                ] else
+                                  ...widget.fields.map((f) => Padding(
+                                      padding:
+                                          const EdgeInsets.only(bottom: 18),
+                                      child: f.options != null
+                                          ? DropdownButtonFormField<String>(
+                                              value: selected[f.key],
+                                              isExpanded: true,
+                                              decoration: InputDecoration(
+                                                  labelText: f.label),
+                                              items: f.options!.entries
+                                                  .map((e) => DropdownMenuItem(
+                                                      value: e.key,
+                                                      child: Text(e.value,
+                                                          overflow: TextOverflow
+                                                              .ellipsis)))
+                                                  .toList(),
+                                              onChanged: busy ||
+                                                      pendingValues != null
+                                                  ? null
+                                                  : (v) {
+                                                      if (!current ||
+                                                          busy ||
+                                                          recoveryStopped ||
+                                                          confirmingUnknownClose ||
+                                                          pendingValues !=
+                                                              null ||
+                                                          (v != null &&
+                                                              !f.options!
+                                                                  .containsKey(
+                                                                      v))) {
+                                                        return;
+                                                      }
+                                                      setState(() =>
+                                                          selected[f.key] = v);
+                                                    },
+                                              validator: (v) => f.required && (v == null || v.isEmpty)
+                                                  ? '请选择${f.label}'
+                                                  : null)
+                                          : TextFormField(
+                                              controller: controls[f.key],
+                                              enabled: !busy &&
+                                                  pendingValues == null,
+                                              autofocus:
+                                                  f == widget.fields.first,
+                                              decoration: InputDecoration(
+                                                  labelText: f.label,
+                                                  hintText: f.hint),
+                                              maxLines: f.lines,
+                                              maxLength: f.maxLength,
+                                              keyboardType: f.numeric
+                                                  ? TextInputType.number
+                                                  : TextInputType.text,
+                                              inputFormatters: f.numeric
+                                                  ? [FilteringTextInputFormatter.digitsOnly]
+                                                  : null,
+                                              validator: (v) {
+                                                if (f.required &&
+                                                    (v ?? '').trim().isEmpty) {
+                                                  return '请输入${f.label}';
                                                 }
-                                                setState(
-                                                    () => selected[f.key] = v);
-                                              },
-                                        validator: (v) => f.required &&
-                                                (v == null || v.isEmpty)
-                                            ? '请选择${f.label}'
-                                            : null)
-                                    : TextFormField(
-                                        controller: controls[f.key],
-                                        enabled: !busy && pendingValues == null,
-                                        autofocus: f == widget.fields.first,
-                                        decoration: InputDecoration(
-                                            labelText: f.label,
-                                            hintText: f.hint),
-                                        maxLines: f.lines,
-                                        maxLength: f.maxLength,
-                                        keyboardType: f.numeric
-                                            ? TextInputType.number
-                                            : TextInputType.text,
-                                        inputFormatters: f.numeric
-                                            ? [
-                                                FilteringTextInputFormatter
-                                                    .digitsOnly
-                                              ]
-                                            : null,
-                                        validator: (v) {
-                                          if (f.required &&
-                                              (v ?? '').trim().isEmpty) {
-                                            return '请输入${f.label}';
-                                          }
-                                          if (f.numeric &&
-                                              v != null &&
-                                              v.isNotEmpty &&
-                                              int.tryParse(v) == null) {
-                                            return '请输入有效整数';
-                                          }
-                                          return null;
-                                        }))),
-                            if (error != null && !recoveryStopped)
-                              FailureView(error!,
-                                  reauth: widget.reauth == null
-                                      ? null
-                                      : () {
-                                          if (current && !busy &&
-                                              !recoveryStopped &&
-                                              !confirmingUnknownClose) {
-                                            widget.reauth!();
-                                          }
-                                        })
-                          ])))),
-          actions: [
-            if (recoveryStopped)
-              FilledButton(
-                  onPressed: busy ? null : cancel,
-                  child: const Text('关闭表单')),
-            if (!recoveryStopped && confirmingUnknownClose) ...[
-              TextButton(
-                  key: const Key('edit-dialog-keep-original'),
-                  onPressed: busy ? null : keepOriginal,
-                  child: const Text('继续核对')),
-              FilledButton(
-                  key: const Key('edit-dialog-confirm-close'),
-                  onPressed: busy ? null : confirmUnknownClose,
-                  child: const Text('确认关闭')),
-            ],
-            if (!recoveryStopped && !confirmingUnknownClose)
-              TextButton(
-                  onPressed: busy ? null : cancel,
-                  child: Text(pendingValues == null ? '取消' : '暂时关闭')),
-            if (!recoveryStopped && !confirmingUnknownClose)
-              FilledButton(
-                onPressed: busy ? null : save,
-                child: busy
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2))
-                    : Text(pendingValues == null ? widget.submit : '重试原提交'))
-          ]));
+                                                if (f.numeric &&
+                                                    v != null &&
+                                                    v.isNotEmpty &&
+                                                    int.tryParse(v) == null) {
+                                                  return '请输入有效整数';
+                                                }
+                                                return null;
+                                              }))),
+                                if (error != null && !recoveryStopped)
+                                  FailureView(error!,
+                                      reauth: widget.reauth == null
+                                          ? null
+                                          : () {
+                                              if (current &&
+                                                  !busy &&
+                                                  !recoveryStopped &&
+                                                  !confirmingUnknownClose) {
+                                                widget.reauth!();
+                                              }
+                                            })
+                              ])))),
+              actions: [
+                if (recoveryStopped)
+                  FilledButton(
+                      onPressed: busy ? null : cancel,
+                      child: const Text('关闭表单')),
+                if (!recoveryStopped && confirmingUnknownClose) ...[
+                  TextButton(
+                      key: const Key('edit-dialog-keep-original'),
+                      onPressed: busy ? null : keepOriginal,
+                      child: const Text('继续核对')),
+                  FilledButton(
+                      key: const Key('edit-dialog-confirm-close'),
+                      onPressed: busy ? null : confirmUnknownClose,
+                      child: const Text('确认关闭')),
+                ],
+                if (!recoveryStopped && !confirmingUnknownClose)
+                  TextButton(
+                      onPressed: busy ? null : cancel,
+                      child: Text(pendingValues == null ? '取消' : '暂时关闭')),
+                if (!recoveryStopped && !confirmingUnknownClose)
+                  FilledButton(
+                      onPressed: busy ? null : save,
+                      child: busy
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(strokeWidth: 2))
+                          : Text(
+                              pendingValues == null ? widget.submit : '重试原提交'))
+              ]));
 }
 
 Future<bool> confirmAction(BuildContext context, String title, String body,

@@ -42,6 +42,14 @@ class PolicyController {
         var draft = policies.get(tenantId, actor.getSubject(), policyId);
         return ResponseEntity.ok().eTag(ResourceVersions.tag(draft.revision())).body(draft);
     }
+    /** Normalize an input before a draft exists; never make a network request or save a rule. */
+    @PostMapping("/policy-domain-normalizations")
+    ResponseEntity<DomainNormalization> normalizeDomain(@AuthenticationPrincipal Jwt actor,
+            @PathVariable String tenantId, @Valid @RequestBody DomainEvaluation input) {
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore())
+            .body(new DomainNormalization(
+                policies.normalizeDomain(tenantId, actor.getSubject(), input.domain())));
+    }
     /** Keep submitted domains out of URLs and prevent shared/browser response caching. */
     @PostMapping("/policies/{policyId}/domain-evaluations")
     ResponseEntity<PolicyDomainEvaluation> evaluateDomain(@AuthenticationPrincipal Jwt actor,
@@ -110,6 +118,7 @@ class PolicyController {
     record EditDraft(@NotBlank @Size(max = 100) String name, @NotNull @Size(max = 100) List<@NotNull @Valid PolicyRule> rules) {}
     record Named(@NotBlank @Size(max = 100) String name) {}
     record DomainEvaluation(@NotBlank @Size(max = 253) String domain) {}
+    record DomainNormalization(String canonicalDomain) {}
     enum CreationOperation { EMPTY_DRAFT, TEMPLATE_COPY }
     record CreationQuery(@NotNull CreationOperation operation, @NotBlank @Size(max = 100) String name,
                          @NotNull PolicyDraft.Kind kind,
