@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:guardian/core/api.dart';
@@ -67,6 +69,12 @@ Future<void> submit(WidgetTester tester, [String title = '提交申请']) async 
   await tester.pumpAndSettle();
 }
 
+DropdownButton<String> _deviceDropdown(WidgetTester tester, Finder field) =>
+    tester.widget<DropdownButton<String>>(find.descendant(
+        of: field,
+        matching: find
+            .byWidgetPredicate((widget) => widget is DropdownButton<String>)));
+
 void main() {
   testWidgets('requires device application rules and bounded minutes',
       (tester) async {
@@ -129,6 +137,200 @@ void main() {
     expect(cursors, [null, 'next-policy']);
     expect(find.text('申请放宽的规则（2/20）'), findsOneWidget);
   });
+  testWidgets(
+      'expired device cursor restarts from the first page without losing the draft',
+      (tester) async {
+    final selectedDevice = (await load('devices', null)).items.first;
+    final restarted = Completer<PageResult>();
+    final cursors = <String?>[];
+    Json? sent;
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (!restarted.isCompleted) restarted.complete(PageResult([], null));
+      await tester.pumpAndSettle();
+    });
+    await open(tester, (body) async {
+      sent = body;
+      return body;
+    }, loader: (path, cursor) async {
+      if (path != 'devices') return load(path, cursor);
+      cursors.add(cursor);
+      return switch (cursors.length) {
+        1 => PageResult([
+            selectedDevice,
+            {'id': 'old-unselected', 'displayName': '旧列表设备', 'state': 'ACTIVE'},
+          ], 'expired-page'),
+        2 => throw const ApiFailure(400, 'INVALID_CURSOR'),
+        3 => restarted.future,
+        _ => PageResult([], null),
+      };
+    });
+    await selectDevice(tester);
+    await selectApp(tester);
+    await tester.enterText(find.byKey(const Key('request-minutes')), '7');
+    await tester.enterText(find.byKey(const Key('request-reason')), '保留的申请理由');
+    await tester.ensureVisible(find.text('加载更多设备'));
+    await tester.tap(find.text('加载更多设备'));
+    await tester.pumpAndSettle();
+    expect(find.text('从首页重新加载设备'), findsOneWidget);
+    expect(find.text('重试加载设备'), findsNothing);
+    final deviceField = find.byKey(const Key('request-device'));
+    expect(tester.state<FormFieldState<String>>(deviceField).value, deviceId);
+    final restart = tester
+        .widget<TextButton>(find.widgetWithText(TextButton, '从首页重新加载设备'))
+        .onPressed!;
+    restart();
+    restart();
+    await tester.pump();
+    expect(cursors, [null, 'expired-page', null]);
+    expect(
+        _deviceDropdown(tester, deviceField).items!.map((item) => item.value),
+        contains('old-unselected'),
+        reason:
+            'Keep the existing choices until the replacement page succeeds.');
+    restarted.complete(PageResult([
+      {'id': 'new-first', 'displayName': '新首页设备', 'state': 'ACTIVE'},
+    ], 'fresh-next'));
+    await tester.pumpAndSettle();
+    expect(
+        _deviceDropdown(tester, deviceField).items!.map((item) => item.value),
+        unorderedEquals(['new-first', deviceId]));
+    expect(tester.state<FormFieldState<String>>(deviceField).value, deviceId);
+    expect(
+        tester
+            .widget<TextFormField>(find.byKey(const Key('request-minutes')))
+            .controller!
+            .text,
+        '7');
+    expect(
+        tester
+            .widget<TextFormField>(find.byKey(const Key('request-reason')))
+            .controller!
+            .text,
+        '保留的申请理由');
+    expect(find.text('申请放宽的规则（2/20）'), findsOneWidget);
+    await tester.ensureVisible(find.text('加载更多设备'));
+    await tester.tap(find.text('加载更多设备'));
+    await tester.pumpAndSettle();
+    expect(cursors, [null, 'expired-page', null, 'fresh-next']);
+    await submit(tester);
+    expect(sent?['deviceId'], deviceId);
+    expect(sent?['requestedWindowSeconds'], 420);
+    expect(sent?['reason'], '保留的申请理由');
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+      'restarting devices clears an explicitly revoked selection and ignores its late rules error',
+      (tester) async {
+    const replacement = '33333333-3333-3333-3333-333333333333';
+    const targetChanged = ApiFailure(409, 'ACCESS_TARGET_CHANGED');
+    final selectedDevice = (await load('devices', null)).items.first;
+    final oldRules = Completer<PageResult>();
+    var deviceReads = 0, ruleReads = 0;
+    addTearDown(() async {
+      await tester.pumpWidget(const SizedBox.shrink());
+      if (!oldRules.isCompleted) oldRules.complete(PageResult([], null));
+      await tester.pumpAndSettle();
+    });
+    await open(tester, (body) async => body, loader: (path, cursor) async {
+      if (path != 'devices') {
+        return ++ruleReads == 2
+            ? oldRules.future
+            : PageResult([policy()], null);
+      }
+      return switch (++deviceReads) {
+        1 => PageResult([selectedDevice], 'expired-page'),
+        2 => throw const ApiFailure(400, 'INVALID_CURSOR'),
+        _ => PageResult([
+            {...selectedDevice, 'state': 'REVOKED'},
+            {'id': replacement, 'displayName': '替代设备', 'state': 'ACTIVE'},
+          ], null),
+      };
+    });
+    await selectDevice(tester);
+    await selectApp(tester);
+    await tester.enterText(find.byKey(const Key('request-minutes')), '8');
+    await tester.enterText(find.byKey(const Key('request-reason')), '不要丢失的理由');
+    await tester.ensureVisible(find.text('加载更多设备'));
+    await tester.tap(find.text('加载更多设备'));
+    await tester.pumpAndSettle();
+    final refreshRules = tester
+        .widget<TextButton>(find.widgetWithText(TextButton, '刷新可申请规则'))
+        .onPressed!;
+    refreshRules();
+    await tester.pump();
+    expect(ruleReads, 2);
+    final restart = tester
+        .widget<TextButton>(find.widgetWithText(TextButton, '从首页重新加载设备'))
+        .onPressed!;
+    restart();
+    await tester.pumpAndSettle();
+
+    final deviceField = find.byKey(const Key('request-device'));
+    expect(tester.state<FormFieldState<String>>(deviceField).value, isNull);
+    final dropdown = _deviceDropdown(tester, deviceField);
+    expect(dropdown.items!.map((item) => item.value), [replacement]);
+    expect(dropdown.onChanged, isNotNull);
+    expect(find.text('当前选择的设备已失效，已保留时长和理由。请重新选择设备。'), findsOneWidget);
+    oldRules.completeError(const ApiFailure(503, 'TEMPORARY_FAILURE'));
+    await tester.pumpAndSettle();
+    expect(find.text(targetChanged.message), findsOneWidget,
+        reason:
+            'The old device rules request must not replace the recovery reason.');
+    expect(find.byKey(const ValueKey('option-$deviceId')), findsNothing);
+    expect(find.text('申请放宽的规则（2/20）'), findsNothing);
+    expect(
+        tester
+            .widget<TextFormField>(find.byKey(const Key('request-minutes')))
+            .controller!
+            .text,
+        '8');
+    expect(
+        tester
+            .widget<TextFormField>(find.byKey(const Key('request-reason')))
+            .controller!
+            .text,
+        '不要丢失的理由');
+    expect(
+        tester
+            .widget<FilledButton>(find.widgetWithText(FilledButton, '提交申请'))
+            .onPressed,
+        isNull);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('ordinary device load failure retries the same cursor',
+      (tester) async {
+    final selectedDevice = (await load('devices', null)).items.first;
+    final cursors = <String?>[];
+    await open(tester, (body) async => body, loader: (path, cursor) async {
+      if (path != 'devices') return load(path, cursor);
+      cursors.add(cursor);
+      return switch (cursors.length) {
+        1 => PageResult([selectedDevice], 'retry-page'),
+        2 => throw const ApiFailure(503, 'TEMPORARY_FAILURE'),
+        _ => PageResult([
+            {'id': 'next-device', 'displayName': '后续设备', 'state': 'ACTIVE'},
+          ], null),
+      };
+    });
+    await tester.ensureVisible(find.text('加载更多设备'));
+    await tester.tap(find.text('加载更多设备'));
+    await tester.pumpAndSettle();
+    expect(find.text('从首页重新加载设备'), findsNothing);
+    await tester.ensureVisible(find.text('重试加载设备'));
+    await tester.tap(find.text('重试加载设备'));
+    await tester.pumpAndSettle();
+    expect(cursors, [null, 'retry-page', 'retry-page']);
+    final deviceField = find.byKey(const Key('request-device'));
+    expect(
+        _deviceDropdown(tester, deviceField).items!.map((item) => item.value),
+        unorderedEquals([deviceId, 'next-device']));
+    expect(find.text('加载更多设备'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('unknown submission freezes values and retries the original body',
       (tester) async {
     final writes = <Json>[];

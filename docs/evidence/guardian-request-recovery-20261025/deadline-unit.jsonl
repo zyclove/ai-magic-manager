@@ -1,0 +1,21 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":195196,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"D:/codes/mobile/ai-manager/apps/guardian/test/api_deadline_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/api_deadline_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1}
+{"count":1,"time":4,"type":"allSuites"}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null,"observatoryUri":null}}]
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1810}
+{"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":5,"line":null,"column":null,"url":null},"type":"group","time":1812}
+{"test":{"id":3,"name":"late authentication cannot dispatch an expired request","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":173,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_deadline_test.dart"},"type":"testStart","time":1812}
+{"testID":3,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1856}
+{"test":{"id":4,"name":"nested scopes preserve abort through a streaming deadline","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":194,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_deadline_test.dart"},"type":"testStart","time":1857}
+{"testID":4,"error":"Expected: true\n  Actual: <false>\nThe response must have completed.\n","stackTrace":"package:matcher                                     expect\npackage:flutter_test/src/widget_tester.dart 474:18  expect\ntest\\api_deadline_test.dart 159:3                   _value\ntest\\api_deadline_test.dart 218:14                  main.<fn>.<fn>\npackage:fake_async/fake_async.dart 182:54           FakeAsync.run.<fn>.<fn>\ndart:async                                          runZoned\npackage:clock/src/default.dart 52:10                withClock\npackage:fake_async/fake_async.dart 182:22           FakeAsync.run.<fn>\ndart:async                                          runZoned\npackage:fake_async/fake_async.dart 182:7            FakeAsync.run\npackage:fake_async/fake_async.dart 41:41            fakeAsync\ntest\\api_deadline_test.dart 195:10                  main.<fn>\n","isFailure":true,"type":"error","time":1887}
+{"testID":4,"result":"failure","skipped":false,"hidden":false,"type":"testDone","time":1888}
+{"test":{"id":5,"name":"completed responses do not abort after the old deadline","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":223,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_deadline_test.dart"},"type":"testStart","time":1888}
+{"testID":5,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1896}
+{"test":{"id":6,"name":"late headers are discarded without releasing the pending write","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":243,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_deadline_test.dart"},"type":"testStart","time":1896}
+{"testID":6,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1900}
+{"test":{"id":7,"name":"late OAuth refresh cannot forward an expired unscoped request","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":272,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_deadline_test.dart"},"type":"testStart","time":1901}
+{"testID":7,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1905}
+{"success":false,"type":"done","time":1934}

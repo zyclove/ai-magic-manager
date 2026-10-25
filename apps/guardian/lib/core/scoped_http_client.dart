@@ -11,13 +11,21 @@ abstract interface class _ScopeCheckedRequest {
 }
 
 /// Keeps a request tied to the scope that authorized its creation.
-class ScopeGuardedRequest extends http.Request implements _ScopeCheckedRequest {
+class ScopeGuardedRequest extends http.Request
+    implements _ScopeCheckedRequest, http.Abortable {
   final bool Function() isCurrent;
-  ScopeGuardedRequest(super.method, super.url, {required this.isCurrent});
+  final bool Function()? isAborted;
+  @override
+  final Future<void>? abortTrigger;
+  ScopeGuardedRequest(super.method, super.url,
+      {required this.isCurrent, this.abortTrigger, this.isAborted});
 
   @override
   void ensureCurrent() {
     if (!isCurrent()) throw const ScopeChangedException();
+    if (isAborted?.call() == true) {
+      throw http.RequestAbortedException(url);
+    }
   }
 
   @override
@@ -75,7 +83,8 @@ class ScopeBindingClient extends http.BaseClient {
       rethrow;
     }
     return http.StreamedResponse(
-        _guardResponse(response.stream, bound.ensureCurrent), response.statusCode,
+        _guardResponse(response.stream, bound.ensureCurrent),
+        response.statusCode,
         contentLength: response.contentLength,
         request: response.request,
         headers: response.headers,
@@ -90,11 +99,18 @@ class ScopeBindingClient extends http.BaseClient {
 }
 
 class _ScopeBoundRequest extends http.BaseRequest
-    implements _ScopeCheckedRequest {
+    implements _ScopeCheckedRequest, http.Abortable {
   final http.BaseRequest inner;
   final bool Function() isCurrent;
 
-  _ScopeBoundRequest(this.inner, this.isCurrent) : super(inner.method, inner.url);
+  _ScopeBoundRequest(this.inner, this.isCurrent)
+      : super(inner.method, inner.url);
+
+  @override
+  Future<void>? get abortTrigger {
+    final original = inner;
+    return original is http.Abortable ? original.abortTrigger : null;
+  }
 
   // Share headers so OAuth additions and finalize-time headers (for example a
   // multipart boundary) remain attached to the exact original body stream.
@@ -157,8 +173,11 @@ Stream<List<int>> _guardResponse(
     output.addError(error, trace);
     // Clean up the source even if the consumer stops on this error. A cleanup
     // failure must not replace the guard error or disclose the private body.
-    unawaited(cancelSource().then<void>((_) { output.close(); },
-        onError: (Object _, StackTrace __) { output.close(); }));
+    unawaited(cancelSource().then<void>((_) {
+      output.close();
+    }, onError: (Object _, StackTrace __) {
+      output.close();
+    }));
   }
 
   output = StreamController<List<int>>(
@@ -170,24 +189,27 @@ Stream<List<int>> _guardResponse(
           fail(error, trace);
           return;
         }
-        upstream = source.listen((chunk) {
-          if (ended) return;
-          try {
-            ensureCurrent();
-            output.add(chunk);
-          } catch (error, trace) {
-            fail(error, trace);
-          }
-        }, onError: fail, onDone: () {
-          if (ended) return;
-          try {
-            ensureCurrent();
-            ended = true;
-            output.close();
-          } catch (error, trace) {
-            fail(error, trace);
-          }
-        });
+        upstream = source.listen(
+            (chunk) {
+              if (ended) return;
+              try {
+                ensureCurrent();
+                output.add(chunk);
+              } catch (error, trace) {
+                fail(error, trace);
+              }
+            },
+            onError: fail,
+            onDone: () {
+              if (ended) return;
+              try {
+                ensureCurrent();
+                ended = true;
+                output.close();
+              } catch (error, trace) {
+                fail(error, trace);
+              }
+            });
       },
       onPause: () => upstream?.pause(),
       onResume: () => upstream?.resume(),
@@ -201,39 +223,37 @@ Stream<List<int>> _guardResponse(
   return output.stream.transform(
       StreamTransformer<List<int>, List<int>>.fromHandlers(
           handleData: (chunk, sink) {
-            if (deliveredError) return;
-            try {
-              ensureCurrent();
-              sink.add(chunk);
-            } catch (error, trace) {
-              deliveredError = true;
-              ended = true;
-              sink.addError(error, trace);
-              unawaited(cancelSource().then<void>((_) {
-                if (!output.isClosed) output.close();
-              }));
-            }
-          },
-          handleError: (error, trace, sink) {
-            if (deliveredError) return;
-            deliveredError = true;
-            try {
-              ensureCurrent();
-              sink.addError(error, trace);
-            } catch (scopeError, scopeTrace) {
-              sink.addError(scopeError, scopeTrace);
-            }
-          },
-          handleDone: (sink) {
-            if (!deliveredError) {
-              try {
-                ensureCurrent();
-              } catch (error, trace) {
-                sink.addError(error, trace);
-              }
-            }
-            sink.close();
-          }));
+    if (deliveredError) return;
+    try {
+      ensureCurrent();
+      sink.add(chunk);
+    } catch (error, trace) {
+      deliveredError = true;
+      ended = true;
+      sink.addError(error, trace);
+      unawaited(cancelSource().then<void>((_) {
+        if (!output.isClosed) output.close();
+      }));
+    }
+  }, handleError: (error, trace, sink) {
+    if (deliveredError) return;
+    deliveredError = true;
+    try {
+      ensureCurrent();
+      sink.addError(error, trace);
+    } catch (scopeError, scopeTrace) {
+      sink.addError(scopeError, scopeTrace);
+    }
+  }, handleDone: (sink) {
+    if (!deliveredError) {
+      try {
+        ensureCurrent();
+      } catch (error, trace) {
+        sink.addError(error, trace);
+      }
+    }
+    sink.close();
+  }));
 }
 
 /// Credential persistence belongs to one authentication lifetime. Workspace

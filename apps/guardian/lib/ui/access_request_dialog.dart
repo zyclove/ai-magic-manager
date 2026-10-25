@@ -22,8 +22,8 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
   final options = <String, Json>{};
   final selectedRules = <String>{};
   String? device, option, deviceCursor, optionCursor;
-  bool loadingDevices = true, loadingOptions = false, busy = false;
-  bool deviceFailed = false, optionFailed = false;
+  bool loadingDevices = false, loadingOptions = false, busy = false;
+  bool deviceFailed = false, deviceCursorExpired = false, optionFailed = false;
   Object? error;
   Json? pending;
   int generation = 0;
@@ -54,25 +54,59 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
   }
 
   Future<void> loadDevices() async {
+    if (!mounted || locked || loadingDevices) return;
+    final restarting = deviceCursorExpired;
+    final requestCursor = restarting ? null : deviceCursor;
     setState(() {
       loadingDevices = true;
       error = null;
     });
     try {
-      final page = await widget.load('devices', deviceCursor);
+      final page = await widget.load('devices', requestCursor);
       if (!mounted) return;
       setState(() {
+        final selectionReturned = restarting &&
+            device != null &&
+            page.items.any((entry) => entry['id'] == device);
+        final selectionRevoked = selectionReturned &&
+            page.items.any(
+                (entry) => entry['id'] == device && entry['state'] != 'ACTIVE');
+        final retained = restarting && device != null && !selectionReturned
+            ? devices.where((entry) => entry['id'] == device).toList()
+            : const <Json>[];
+        if (restarting) devices.clear();
         final existing = devices.map((e) => e['id']).toSet();
-        devices.addAll(page.items.where(
-            (e) => e['state'] == 'ACTIVE' && !existing.contains(e['id'])));
+        for (final entry in page.items) {
+          if (entry['state'] == 'ACTIVE' && existing.add(entry['id'])) {
+            devices.add(entry);
+          }
+        }
+        for (final entry in retained) {
+          if (existing.add(entry['id'])) devices.add(entry);
+        }
         deviceCursor = page.nextCursor;
         deviceFailed = false;
+        deviceCursorExpired = false;
+        if (selectionRevoked) {
+          generation++;
+          device = null;
+          option = null;
+          options.clear();
+          selectedRules.clear();
+          optionCursor = null;
+          optionFailed = false;
+          loadingOptions = false;
+          error = const ApiFailure(409, 'ACCESS_TARGET_CHANGED');
+        }
       });
     } catch (e) {
       if (mounted) {
         setState(() {
           error = e;
           deviceFailed = true;
+          if (e is ApiFailure && e.code == 'INVALID_CURSOR') {
+            deviceCursorExpired = true;
+          }
         });
       }
     } finally {
@@ -228,13 +262,30 @@ class _AccessRequestDialogState extends State<AccessRequestDialog> {
                             const Padding(
                                 padding: EdgeInsets.only(top: 8),
                                 child: Text('当前没有可申请的已连接设备。')),
+                          if (device == null &&
+                              error is ApiFailure &&
+                              (error as ApiFailure).code ==
+                                  'ACCESS_TARGET_CHANGED')
+                            const Padding(
+                                padding: EdgeInsets.only(top: 8),
+                                child: Notice('当前选择的设备已失效，已保留时长和理由。请重新选择设备。',
+                                    warning: true)),
+                          if (deviceCursorExpired)
+                            const Padding(
+                                padding: EdgeInsets.only(top: 8),
+                                child: Notice(
+                                    '设备列表位置已失效，已保留当前选择和填写内容。请从首页重新加载设备。',
+                                    warning: true)),
                           if (deviceCursor != null || deviceFailed)
                             TextButton(
                                 onPressed: locked || loadingDevices
                                     ? null
                                     : loadDevices,
-                                child:
-                                    Text(deviceFailed ? '重试加载设备' : '加载更多设备')),
+                                child: Text(deviceCursorExpired
+                                    ? '从首页重新加载设备'
+                                    : deviceFailed
+                                        ? '重试加载设备'
+                                        : '加载更多设备')),
                           if (device != null) ...[
                             const SizedBox(height: 20),
                             DropdownButtonFormField<String>(

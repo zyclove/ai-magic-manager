@@ -1,0 +1,12 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":24404,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"D:/codes/mobile/ai-manager/apps/guardian/test/api_deadline_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/api_deadline_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1}
+{"count":1,"time":4,"type":"allSuites"}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null,"observatoryUri":null}}]
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1991}
+{"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":1994}
+{"test":{"id":3,"name":"nested scopes preserve abort through a streaming deadline","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":194,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_deadline_test.dart"},"type":"testStart","time":1996}
+{"testID":3,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":2094}
+{"success":true,"type":"done","time":2131}

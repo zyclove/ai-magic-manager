@@ -24,7 +24,7 @@ dependencies:
     path: ../../packages/usage_reporting
   usage_report_ui:
     path: ../../packages/usage_report_ui
-  http: ^1.2.1
+  http: ^1.6.0
   idb_shim: 2.6.0+5
   oauth2: ^2.0.3
   crypto: ^3.0.3
@@ -35,6 +35,7 @@ dependencies:
   qr_flutter: ^4.1.0
   timezone: ^0.9.4
 dev_dependencies:
+  fake_async: ^1.3.1
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0

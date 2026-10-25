@@ -1,0 +1,12 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":111732,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"D:/codes/mobile/ai-manager/apps/guardian/test/api_deadline_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/api_deadline_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1}
+{"count":1,"time":4,"type":"allSuites"}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null,"observatoryUri":null}}]
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":1621}
+{"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":5,"line":null,"column":null,"url":null},"type":"group","time":1623}
+{"test":{"id":3,"name":"late authentication cannot dispatch an expired request","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":136,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_deadline_test.dart"},"type":"testStart","time":1624}
+{"testID":3,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":1818}
+{"test":{"id":4,"name":"nested scopes preserve abort through a streaming deadline","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":159,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_deadline_test.dart"},"type":"testStart","time":1818}

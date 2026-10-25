@@ -26,14 +26,11 @@ class ApiFailure implements Exception {
   final String? correlationId;
   const ApiFailure(this.status, this.code, [this.correlationId]);
   String get message => switch (code) {
-        'INVALID_RESPONSE' =>
-          '服务返回的数据无法读取，暂时不能确认结果。已提交的操作请先核对原记录，避免重复提交。',
+        'INVALID_RESPONSE' => '服务返回的数据无法读取，暂时不能确认结果。已提交的操作请先核对原记录，避免重复提交。',
         'IDEMPOTENCY_RESULT_EXPIRED' =>
           '原操作结果已超过 90 天保留期限，不能再恢复。请查看当前记录；不要重复提交原操作。',
-        'IDEMPOTENCY_RESPONSE_ERASED' =>
-          '原操作结果已清除，不能再恢复。清除结果不代表取消了已发生的操作。',
-        'PUBLICATION_RESULT_TERMINAL' =>
-          '原操作已结束结果恢复，不能再次提交。请查看当前策略或审计记录。',
+        'IDEMPOTENCY_RESPONSE_ERASED' => '原操作结果已清除，不能再恢复。清除结果不代表取消了已发生的操作。',
+        'PUBLICATION_RESULT_TERMINAL' => '原操作已结束结果恢复，不能再次提交。请查看当前策略或审计记录。',
         'PREVIEW_EXPIRED' => '此预览已过期，请关闭窗口后重新预览。',
         'ERASURE_MAINTENANCE_REQUIRED' =>
           '系统正在暂停或恢复数据处理，暂时无法确认本次结果。请保留原操作内容，稍后重试。',
@@ -251,6 +248,11 @@ class Api {
       String? clientRequestId,
       bool Function()? isCurrent}) async {
     final current = _withScope(isCurrent);
+    final abort = Completer<void>();
+    void abortRequest() {
+      if (!abort.isCompleted) abort.complete();
+    }
+
     try {
       _ensureCurrent(current);
       if (clientRequestId != null) {
@@ -267,9 +269,10 @@ class Api {
         throw const ApiFailure(409, 'PENDING_OPERATION_UNCHANGED');
       }
       final uri = Uri.parse('$baseUrl$path');
-      final req = current == null
-          ? http.Request(method, uri)
-          : ScopeGuardedRequest(method, uri, isCurrent: current);
+      final req = ScopeGuardedRequest(method, uri,
+          isCurrent: current ?? () => true,
+          abortTrigger: abort.future,
+          isAborted: () => abort.isCompleted);
       req.headers['Accept'] = 'application/json';
       if (body != null) {
         req.headers['Content-Type'] = 'application/json';
@@ -284,12 +287,32 @@ class Api {
       final response = await (() async {
         final authenticated = await client();
         _ensureCurrent(current);
-        final value =
-            await http.Response.fromStream(await authenticated.send(req));
+        // Authentication may finish after the caller has already timed out.
+        // Never dispatch a new write after that deadline.
+        if (abort.isCompleted) {
+          throw TimeoutException('Request deadline elapsed');
+        }
+        final streamed = await authenticated.send(req);
+        if (abort.isCompleted) {
+          _discardResponse(streamed);
+          throw TimeoutException('Request deadline elapsed');
+        }
+        try {
+          _ensureCurrent(current);
+        } catch (_) {
+          _discardResponse(streamed);
+          rethrow;
+        }
+        final value = await http.Response.fromStream(streamed);
         _ensureCurrent(current);
         return value;
       })()
-          .timeout(const Duration(seconds: 25));
+          .timeout(const Duration(seconds: 25), onTimeout: () {
+        // package:http aborts only this request, including a streaming body;
+        // the authenticated client remains owned by the session.
+        abortRequest();
+        throw TimeoutException('Request deadline elapsed');
+      });
       dynamic decoded;
       if (response.bodyBytes.isNotEmpty) {
         try {
@@ -313,6 +336,7 @@ class Api {
     } on ApiFailure {
       rethrow;
     } on ScopeChangedException {
+      abortRequest();
       throw const ApiFailure(409, 'WORKSPACE_CHANGED');
     } on TimeoutException {
       _ensureCurrent(current);
@@ -321,6 +345,20 @@ class Api {
       _ensureCurrent(current);
       throw const ApiFailure(0, 'NETWORK_ERROR');
     }
+  }
+
+  // Custom transports may deliver late headers without honoring Abortable.
+  // Discard their body without awaiting cleanup or closing the shared client.
+  void _discardResponse(http.StreamedResponse response) {
+    unawaited(Future<void>.sync(() async {
+      try {
+        await response.stream
+            .listen(null, onError: (Object _, StackTrace __) {})
+            .cancel();
+      } catch (_) {
+        // Cleanup must not replace the deadline/scope error.
+      }
+    }));
   }
 
   Future<PageResult> page(String path,
