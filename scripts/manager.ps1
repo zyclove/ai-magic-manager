@@ -73,13 +73,6 @@ if ($Action -ne 'doctor' -and -not $Active) {
     if (-not $root.StartsWith($local, $comparison)) { throw 'Deployment directory must be inside this repository .local directory.' }
     $forward.Directory = $root
 }
-if ($Action -eq 'init') {
-    # Show the effective public entry and project in plans, not just overrides.
-    foreach ($item in @(@{name='PublicUrl'; value='http://localhost:18090'},
-        @{name='EdgePort'; value=18090}, @{name='ProjectName'; value='ai-manager-repro'})) {
-        if (-not $forward.ContainsKey($item.name)) { $forward[$item.name] = $item.value }
-    }
-}
 if ($PSBoundParameters.ContainsKey('PublicUrl')) {
     $origin = $null
     if (-not [Uri]::TryCreate($PublicUrl, [UriKind]::Absolute, [ref]$origin) -or
@@ -87,6 +80,21 @@ if ($PSBoundParameters.ContainsKey('PublicUrl')) {
         $origin.Fragment -or $origin.AbsolutePath -ne '/') {
         throw 'PublicUrl must be an HTTP(S) origin without credentials, path, query, or fragment.'
     }
+}
+if ($Action -eq 'init') {
+    # Resolve defaults once for both the plan and the actual initializer.
+    # Explicit settings are never rewritten; the initializer validates the pair.
+    if (-not $forward.ContainsKey('PublicUrl')) {
+        $localPort = if ($forward.ContainsKey('EdgePort')) { $forward.EdgePort } else { 18090 }
+        $forward.PublicUrl = "http://localhost:$localPort"
+    }
+    if (-not $forward.ContainsKey('EdgePort')) {
+        $forward.EdgePort = if ($ExternalTlsProxy) { 18090 } else { ([Uri]$forward.PublicUrl).Port }
+    }
+    if ($forward.EdgePort -lt 1 -or $forward.EdgePort -gt 65535) {
+        throw 'Public entry port must be between 1 and 65535.'
+    }
+    if (-not $forward.ContainsKey('ProjectName')) { $forward.ProjectName = 'ai-manager-repro' }
 }
 $entries = @{
     init = 'initialize-deployment.ps1'

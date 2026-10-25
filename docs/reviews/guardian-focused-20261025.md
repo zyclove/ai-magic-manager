@@ -25,4 +25,12 @@
 
 分析启动回显的 `files=5` 和结果里的 `tests` 是复用入口的测试列表元数据；实际分析范围以命令及原生日志中的 12 项为准。分析结果里的旧字段 `appTestsPassed` 只表示该分析退出验收，不计作额外测试。原件按原样保留。
 
-本记录仅覆盖这五个 VM 测试文件及列出的静态分析范围。浏览器专属编辑器/详情回归、后端与真实数据库、登录后联合流程、设备/提供方、发布构建及多平台安装仍需对应验证，不能据此宣称全产品验收完成。
+## 浏览器编辑器补充
+
+在 `75c5cff` 源码上单独执行 `editor_submit_guard_test.dart`：27 项成功、0 失败、0 跳过，约 39.3 秒自然退出 0，无强制终止，源码前后相同，终态 Job 成员及后置 SDK 计数为 0。
+
+**整体仍为 `NOT_ACCEPTED`**。采样遇到 before 清单中的短命成员在打开句柄前消失，未能完整证明其身份；后续失败快照超过既定 8 条上限，记录 `OWN_JOB_MEMBER_HARD_ERROR`、`MEMBER_ACCEPTANCE_LEDGER_OVERFLOW` 和 `OWN_JOB_MEMBER_IDENTITY_UNPROVED`。同 Job 的自然退出终态证据完整，但不能抵消上述拒绝。只读排查未发现运行器接合错误或隔离逃逸证据；不放宽判定、不为追绿重复执行。
+
+原件：[运行结果](../evidence/guardian-focused-20261025/browser-editor-result.json)、[测试输出](../evidence/guardian-focused-20261025/browser-editor-output.jsonl)、[浏览器证据](../evidence/guardian-focused-20261025/browser-editor-evidence.json)。后者已包含成员失败账本和终态记录，不再重复归档相同内容。
+
+本记录覆盖五个 VM 文件、列出的静态分析及本次浏览器编辑器应用结果与未验收边界。浏览器详情 18 项尚未运行；后端与真实数据库、登录后联合流程、设备/提供方、发布构建及多平台安装仍需对应验证，不能据此宣称全产品验收完成。

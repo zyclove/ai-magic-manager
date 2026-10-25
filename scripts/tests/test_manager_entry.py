@@ -75,6 +75,28 @@ class ManagerEntryTest(unittest.TestCase):
         document = self.plan("status", "-Directory", ".local/manager plan", cwd=ROOT / "scripts/tests")
         self.assertEqual(Path(document["parameters"]["Directory"]), ROOT / ".local/manager plan")
 
+    def test_initialization_resolves_one_public_entry_without_repeating_its_port(self):
+        rows = [
+            ([], "http://localhost:18090", 18090),
+            (["-EdgePort", "18120"], "http://localhost:18120", 18120),
+            (["-PublicUrl", "http://127.0.0.1:18121"], "http://127.0.0.1:18121", 18121),
+            (["-PublicUrl", "https://manager.example.com:8443"], "https://manager.example.com:8443", 8443),
+            (["-PublicUrl", "https://manager.example.com"], "https://manager.example.com", 443),
+            (["-PublicUrl", "http://localhost:18123", "-EdgePort", "18123"], "http://localhost:18123", 18123),
+            (["-PublicUrl", "http://localhost:18123", "-EdgePort", "18124"], "http://localhost:18123", 18124),
+            (["-PublicUrl", "https://manager.example.com:8443", "-ExternalTlsProxy:$false"], "https://manager.example.com:8443", 8443),
+            (["-PublicUrl", "https://manager.example.com", "-ExternalTlsProxy"], "https://manager.example.com", 18090),
+            (["-PublicUrl", "https://manager.example.com", "-ExternalTlsProxy", "-EdgePort", "18124"], "https://manager.example.com", 18124),
+        ]
+        for arguments, public_url, edge_port in rows:
+            with self.subTest(arguments=arguments):
+                document = self.plan("init", *arguments)
+                self.assertEqual(document["parameters"]["PublicUrl"], public_url)
+                self.assertEqual(document["parameters"]["EdgePort"], edge_port)
+        result = self.invoke("init", "-PublicUrl", "http://localhost:0", "-Plan")
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("port must be between 1 and 65535", result.stdout + result.stderr)
+
     def test_active_status_plans_without_resolving_and_rejects_ambiguous_targets(self):
         document = self.plan("status", "-Active")
         self.assertEqual(document["selection"], "ACTIVE_CONSOLE")

@@ -31,6 +31,8 @@
 
 默认入口是 `http://localhost:18090`，默认项目名是 `ai-manager-repro`，只绑定本机。`-Offline` 要求已有完整依赖缓存，缺失时失败；需要联网解析时由维护者明确选择移除此参数。每条命令单独执行，遇到失败先查看该环境的受限日志，不继续启动。
 
+更换本机端口只需填写 `init -EdgePort 18120`，公开入口自动使用 `http://localhost:18120`。只填写 `-PublicUrl` 时，内部端口默认跟随 URL；使用 `-ExternalTlsProxy` 时内部端口仍默认为 `18090`，可单独指定。两项均显式填写时保留原值，由实际初始化校验其一致性；`-Plan` 展示相同的最终参数。
+
 `init-ledger` 是显式的一次性数据初始化操作，仅用于完成构建后的**新账本**，会启动独立账本数据库、构建并运行初始化器及收紧运行账号权限；不会被 `start` 自动调用。正常重启与故障恢复必须保留账本身份和初始化记录，不重复执行此操作。
 
 ## 常用配置
@@ -40,8 +42,8 @@
 | 查看任一动作 | 加 `-Plan`（别名 `-DryRun`）；输出动作、非秘密参数和影响，不执行 |
 | 获取帮助 | `-Help`；所有动作仅接受相关参数，避免静默忽略 |
 | 查看当前已选环境 | `status -Active`；复用已提交的控制台选择，只读展示项目、公开入口与容器状态，无需记住快照路径 |
-| 更换本机端口 | `init -PublicUrl http://localhost:18120 -EdgePort 18120`；使用新的独立目录与项目名 |
-| 本地 TLS | `init -PublicUrl https://manager.example.com:8443 -EdgePort 8443`，准备证书后 `start -Tls` |
+| 更换本机端口 | `init -EdgePort 18120`；使用新的独立目录与项目名 |
+| 本地 TLS | `init -PublicUrl https://manager.example.com:8443`，端口自动取 `8443`；准备证书后 `start -Tls` |
 | 外部 HTTPS 代理 | 初始化和启动均加 `-ExternalTlsProxy`；公开 URL 为标准 HTTPS，内部保持回环端口 |
 | 家庭身份扩展 | 初始化和构建均加 `-ConsumerIdentity`，仍遵守身份提供方准入流程 |
 | 指定源码或工具 | `build -SourceDirectory ... -MavenCommand ... -FlutterCommand ... -DartCommand ... -MavenRepository ...` |
@@ -60,5 +62,7 @@
 ## 验证范围
 
 初始入口已在 Windows 通过语法检查及 5 项计划/参数测试，见[初始记录](reviews/engineering-foundation-20261025.md)。新增 `-Active` 已单独通过计划与参数保护检查，并在当前选定环境实际查询成功；试用发现的 Windows 多 Docker 入口解析问题已修正为选择首个可执行入口。
+
+初始化端口联动另通过 1 个定向用例，覆盖 10 组最终参数及端口 0 拒绝；仅执行计划/输入检查，没有新建环境或启动 SDK。
 
 这些检查没有执行构建、初始化或发布，也不改变数据库结构、发布配方和产品授权。Linux/macOS、真实安装和全产品验收仍按实际环境单独判断。
