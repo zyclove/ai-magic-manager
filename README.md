@@ -4,6 +4,8 @@
 
 当前统一按 **1.0.0 首版**初始化和开发，不承担历史开发版本的兼容与数据升级迁移。全新安装、版本与数据库基线见 [1.0.0 初始化约定](docs/version-1.0.0-initialization.md)。
 
+开发从 [SPEC 规格入口](docs/SPEC.md)与[领域模块标准](docs/architecture/module-design.md)开始；安装操作使用[简明部署入口](docs/deployment-quickstart.md)，项目上下文见[项目记忆](docs/project-memory.md)。
+
 ## 工程结构
 
 - `backend/`：Spring Boot 模块化后端、全新数据库初始化和行为测试。
@@ -18,9 +20,9 @@
 
 从干净克隆部署新环境，使用 `scripts/initialize-deployment.ps1`、`scripts/build-deployment.ps1`、`scripts/start-deployment.ps1`；流程与身份初始化见[可复制部署手册](docs/deployment-runbook.md)。该流程使用独立 Compose 项目和文件凭据。
 
-本机 **1.0.0 首版环境**入口为 [管理工作台](http://localhost:18100/)，前端、业务 API 和身份服务通过同一入口访问，使用独立 Compose 项目 `ai-manager-v1-next`。管理员账号为 `admin@super.com`，密码使用本机已配置的凭据。真实浏览器登录、工作空间对话框和手机导航已完成检查。
+历史 **1.0.0 首版验收环境**使用 [18100 入口](http://localhost:18100/)和独立 Compose 项目 `ai-manager-v1-next`，当时已检查真实浏览器登录、工作空间对话框和手机导航。当前入口与项目以选定环境的 `deployment.json` 和 `scripts/manager.ps1 status -Directory ...` 为准；历史端口和结果不能代替当前运行状态。管理员使用单独配置的凭据登录。
 
-当前运行的是固定源码和修复组成的已验证发布快照，范围与条件跳过项见 [发布构建证据](docs/releases/stage-deployment-build-completeness-verification.json)。后续受管 Android 管理功能尚未进入本次运行包；最新源码的相关表已并入 1.0.0 的 V1 初始化。此前 `18099` 的 `ai-manager-v1` 环境已备份并保留，源码后续变更需要重新构建部署才能生效。
+上述验收对应固定源码和修复组成的发布快照，范围与条件跳过项见 [发布构建证据](docs/releases/stage-deployment-build-completeness-verification.json)。后续受管 Android 管理功能未进入该运行包；相关表已并入 1.0.0 的 V1 初始化。此前 `18099` 的 `ai-manager-v1` 环境备份与保留状态须在操作前核实。源码后续变更需要重新构建部署才能生效。
 
 `http://localhost:3000`、后端 8082、身份服务 8081 和 MySQL 3308 属于此前保留的本机开发环境。`scripts/start-local.ps1` 仅恢复这套既有环境，不是 1.0.0 首版初始化入口。新开发环境按上述部署手册使用独立数据库创建。
 

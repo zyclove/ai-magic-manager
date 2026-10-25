@@ -1,3 +1,5 @@
+import 'console_modules.dart';
+
 /// Mirrors the server's persisted membership permissions; never grants API access.
 bool canOpenFamilyFinance(
         {required bool authenticated,
@@ -63,35 +65,4 @@ class SelectionGeneration {
 }
 
 /// Only known internal destinations may be restored after authentication.
-String trustedReturnPath(String? value) => const {
-      '/',
-      '/overview',
-      '/subjects',
-      '/classes',
-      '/devices',
-      '/managed-android',
-      '/managed-android-review',
-      '/device-groups',
-      '/applications',
-      '/schedules',
-      '/quota',
-      '/policies',
-      '/approvals',
-      '/notifications',
-      '/help-requests',
-      '/members',
-      '/ownership',
-      '/audit',
-      '/exports',
-      '/reports',
-      '/commercial',
-      '/catalog',
-      '/contracts',
-      '/family-finance',
-      '/identity-providers',
-      '/institution-contracts',
-      '/settings',
-      '/support'
-    }.contains(value)
-        ? value!
-        : '/';
+String trustedReturnPath(String? value) => consoleReturnPath(value);

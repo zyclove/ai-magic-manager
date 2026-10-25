@@ -1,5 +1,12 @@
 # Project working agreements
 
+## Project context and skills
+
+- For substantial work, read `docs/project-memory.md`, then open only the relevant specification and source links. `docs/SPEC.md` is the specification entry point.
+- Reuse the most relevant existing skills; avoid overlapping workflows and unnecessary skill loading. Project conventions belong here or in linked docs, not in duplicate skills.
+- Do not automatically install or modify global skills. Create a new skill only for an actual reusable workflow that existing tools and instructions do not cover.
+- Update project memory when stable decisions or module boundaries change; keep secrets, personal data, resource samples, and one-off execution history out of it.
+
 ## Efficient implementation and verification
 
 - Follow the user's latest scope. Deliver focused code and design improvements; avoid expanding a small task into a repository-wide audit.

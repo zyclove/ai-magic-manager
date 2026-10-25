@@ -1,128 +1,55 @@
 import 'package:flutter/material.dart';
+import '../core/console_modules.dart';
 import 'design.dart';
 
-const destinations = [
-  ('overview', '工作台', Icons.space_dashboard_outlined),
-  ('subjects', '儿童档案', Icons.person_outline),
-  ('classes', '班级与名册', Icons.school_outlined),
-  ('device-groups', '机构设备组', Icons.grid_view_outlined),
-  ('managed-android', '受管 Android', Icons.phonelink_lock_outlined),
-  ('devices', '设备管理', Icons.devices_outlined),
-  ('applications', '应用目录', Icons.apps_outlined),
-  ('schedules', '时间计划', Icons.schedule_outlined),
-  ('quota', '共享额度', Icons.timelapse_outlined),
-  ('policies', '策略中心', Icons.shield_outlined),
-  ('approvals', '访问审批', Icons.task_alt_outlined),
-  ('notifications', '通知中心', Icons.notifications_none_outlined),
-  ('help-requests', '儿童求助', Icons.volunteer_activism_outlined),
-  ('reports', '使用报表', Icons.bar_chart_outlined),
-  ('commercial', '商业账户', Icons.workspace_premium_outlined),
-  ('catalog', '平台产品目录', Icons.inventory_2_outlined),
-  ('contracts', '平台机构合同', Icons.description_outlined),
-  ('family-finance', '家庭售后与对账', Icons.payments_outlined),
-  ('identity-providers', '短信与微信', Icons.verified_user_outlined),
-  ('managed-android-review', '企业绑定审核', Icons.fact_check_outlined),
-  ('institution-contracts', '机构合同', Icons.fact_check_outlined),
-  ('members', '成员与邀请', Icons.group_outlined),
-  ('ownership', '所有者交接', Icons.swap_horiz_outlined),
-  ('audit', '审计日志', Icons.receipt_long_outlined),
-  ('exports', '导出任务', Icons.file_download_outlined),
-  ('support', '支持协作', Icons.support_agent_outlined),
-  ('settings', '设置', Icons.settings_outlined),
-];
+final destinations = List<(String, String, IconData)>.unmodifiable([
+  for (final module in consoleModules)
+    (module.id, module.label, _destinationIcons[module.id]!),
+]);
 
-const navigationGroups = [
-  (
-    'daily',
-    '日常管理',
-    [
-      'overview',
-      'subjects',
-      'devices',
-      'approvals',
-      'help-requests',
-      'notifications'
-    ]
-  ),
-  (
-    'rules',
-    '规则与报表',
-    ['policies', 'schedules', 'quota', 'applications', 'reports']
-  ),
-  (
-    'workspace',
-    '工作空间',
-    [
-      'classes',
-      'device-groups',
-      'managed-android',
-      'members',
-      'commercial',
-      'institution-contracts',
-      'ownership',
-      'audit',
-      'exports',
-      'support',
-      'settings'
-    ]
-  ),
-  (
-    'platform',
-    '平台管理',
-    [
-      'catalog',
-      'contracts',
-      'managed-android-review',
-      'family-finance',
-      'identity-providers'
-    ]
-  ),
-];
+final navigationGroups = List<(String, String, List<String>)>.unmodifiable([
+  for (final group in ConsoleModuleGroup.values)
+    (
+      group.id,
+      group.label,
+      List<String>.unmodifiable(consoleModules
+          .where((module) => module.group == group)
+          .map((module) => module.id)),
+    ),
+]);
 
-const _navigationSearchTerms = <String, List<String>>{
-  'overview': ['首页', '总览', '仪表盘', '待办'],
-  'subjects': ['儿童', '孩子', '学生', '档案'],
-  'classes': ['班级', '名册', '花名册', '分班'],
-  'device-groups': ['设备分组', '分组', '批量管理'],
-  'managed-android': ['安卓', '受管设备', '企业接入', '设备接入', '接入'],
-  'devices': ['手机', '平板', '终端', '配对', '绑定设备'],
-  'applications': ['应用', 'app', '软件', '白名单'],
-  'schedules': ['时间', '时段', '作息', '定时'],
-  'quota': ['时长', '配额', '限额', '限时', '共享时长'],
-  'policies': ['规则', '管控规则', '限制', '应用限制', '发布规则'],
-  'approvals': ['申请', '审批', '访问申请', '授权审批'],
-  'notifications': ['消息', '提醒', '通知', '告警'],
-  'help-requests': ['求助', '帮助', '孩子求助', '学生求助'],
-  'reports': ['统计', '使用统计', '使用时长', '报告', '用量'],
-  'commercial': ['套餐', '订阅', '续费', '会员', '计费', '账单'],
-  'catalog': ['产品', '商品', '上架', '下架', '定价', '套餐配置'],
-  'contracts': ['平台合同', '机构签约', '签约', '合约'],
-  'family-finance': ['退款', '售后', '对账', '退费', '结算', '家庭订单', '家庭账单'],
-  'identity-providers': [
-    '短信',
-    '微信',
-    '验证码',
-    '身份接入',
-    '短信接入',
-    '微信接入',
-    '服务商',
-    '接入'
-  ],
-  'managed-android-review': ['绑定审核', '企业审核', '企业绑定', '接入审核'],
-  'institution-contracts': ['机构合同', '机构签约', '签约', '合约'],
-  'members': ['成员', '邀请', '加入', '老师', '家长'],
-  'ownership': ['交接', '转让', '移交', '所有者', '负责人'],
-  'audit': ['日志', '操作记录', '审计', '追溯'],
-  'exports': ['导出', '下载', '数据导出'],
-  'support': ['支持', '客服', '协作', '工单', '帮助', '售后支持'],
-  'settings': ['设置', '配置', '偏好', '工作空间设置'],
+const _destinationIcons = <String, IconData>{
+  'overview': Icons.space_dashboard_outlined,
+  'subjects': Icons.person_outline,
+  'classes': Icons.school_outlined,
+  'device-groups': Icons.grid_view_outlined,
+  'managed-android': Icons.phonelink_lock_outlined,
+  'devices': Icons.devices_outlined,
+  'applications': Icons.apps_outlined,
+  'schedules': Icons.schedule_outlined,
+  'quota': Icons.timelapse_outlined,
+  'policies': Icons.shield_outlined,
+  'approvals': Icons.task_alt_outlined,
+  'notifications': Icons.notifications_none_outlined,
+  'help-requests': Icons.volunteer_activism_outlined,
+  'reports': Icons.bar_chart_outlined,
+  'commercial': Icons.workspace_premium_outlined,
+  'catalog': Icons.inventory_2_outlined,
+  'contracts': Icons.description_outlined,
+  'family-finance': Icons.payments_outlined,
+  'identity-providers': Icons.verified_user_outlined,
+  'managed-android-review': Icons.fact_check_outlined,
+  'institution-contracts': Icons.fact_check_outlined,
+  'members': Icons.group_outlined,
+  'ownership': Icons.swap_horiz_outlined,
+  'audit': Icons.receipt_long_outlined,
+  'exports': Icons.file_download_outlined,
+  'support': Icons.support_agent_outlined,
+  'settings': Icons.settings_outlined,
 };
 
-String navigationLabel(String section, {bool organization = false}) {
-  if (organization && section == 'subjects') return '学生档案';
-  if (organization && section == 'help-requests') return '学生求助';
-  return destinations.where((d) => d.$1 == section).firstOrNull?.$2 ?? '工作台';
-}
+String navigationLabel(String section, {bool organization = false}) =>
+    consoleModule(section)?.labelFor(organization: organization) ?? '工作台';
 
 /// Shared by the desktop sidebar and mobile drawer; access precedes search.
 class ConsoleNavigation extends StatefulWidget {
@@ -143,7 +70,10 @@ class ConsoleNavigation extends StatefulWidget {
 class _ConsoleNavigationState extends State<ConsoleNavigation> {
   final search = TextEditingController();
   final searchFocus = FocusNode(debugLabel: 'console-function-search');
-  final expanded = <String, bool>{'daily': true, 'rules': true};
+  final expanded = <String, bool>{
+    for (final group in ConsoleModuleGroup.values)
+      group.id: group.initiallyExpanded,
+  };
   String query = '';
   Set<String> _allowedIds = {};
   String? _lastSubmittedQuery;
@@ -199,7 +129,7 @@ class _ConsoleNavigationState extends State<ConsoleNavigation> {
     final text = [
       title(destination),
       destination.$2,
-      ...?_navigationSearchTerms[destination.$1]
+      ...?consoleModule(destination.$1)?.searchTerms
     ].join(' ').toLowerCase();
     return value.split(' ').every((word) => text.contains(word));
   }
