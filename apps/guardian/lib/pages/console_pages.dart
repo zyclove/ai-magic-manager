@@ -209,7 +209,8 @@ class ConsolePages extends StatelessWidget {
     }
     if (section == 'overview' && !s.canWrite) {
       return ScopedOverviewPage(
-          key: ValueKey('${s.root}/${s.role}'), session: s);
+          key: ValueKey((s, s.profile?['subject'], s.tenant?['id'],
+              s.role, s.scopeGeneration)), session: s);
     }
     if (section == 'classes') {
       return ClassesPage(key: ValueKey((s.profile?['subject'],
@@ -2039,7 +2040,7 @@ class _DashboardState extends State<Dashboard> {
   Object? _scopeOwner;
   Object? _actionOwner;
   bool actionBusy = false, reading = false;
-  bool _active = true, _rebuildPending = false;
+  bool _active = true, _rebuildPending = false, _serverDenied = false;
   int generation = 0;
 
   @override
@@ -2051,18 +2052,26 @@ class _DashboardState extends State<Dashboard> {
   @override
   void didUpdateWidget(Dashboard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!current(_scope)) {
+    if (!_sameContext(_scope) || (!_serverDenied && !current(_scope))) {
       load();
     }
   }
 
+  bool _sameContext(DeviceSubflowScope? scope) {
+    if (scope == null || !mounted || !_active || !identical(_scope, scope)) {
+      return false;
+    }
+    final session = scope.session;
+    return identical(widget.session, session) && session.authenticated &&
+        session.tenant != null && session.canWrite &&
+        session.canOpen('overview') &&
+        session.scopeGeneration == scope.generation &&
+        session.profile?['subject'] == scope.actorId &&
+        session.tenant?['id'] == scope.tenantId && session.role == scope.role;
+  }
+
   bool current(DeviceSubflowScope? scope) =>
-      scope != null &&
-      mounted &&
-      _active &&
-      identical(_scope, scope) &&
-      identical(widget.session, scope.session) &&
-      scope.current;
+      _sameContext(scope) && scope!.current;
 
   void _requestBuild() {
     if (!mounted || !_active || _rebuildPending) {
@@ -2091,6 +2100,19 @@ class _DashboardState extends State<Dashboard> {
     _actionOwner = null;
   }
 
+  void _recordFailure(DeviceSubflowScope scope, Object failure) {
+    if (failure is ApiFailure && (failure.status == 401 ||
+        failure.status == 403 || failure.code == 'WORKSPACE_CHANGED')) {
+      _clearScopeState();
+      _serverDenied = true;
+      // Session may still carry the old membership until its next reload.
+      // Preserve only the rejection, never its previous private projection.
+      scope.dispose();
+    }
+    error = failure;
+    _requestBuild();
+  }
+
   void _scopeChanged() {
     if (current(_scope)) {
       return;
@@ -2110,8 +2132,10 @@ class _DashboardState extends State<Dashboard> {
     if (current(_scope)) {
       return _scope;
     }
+    if (_serverDenied && _sameContext(_scope)) return null;
     _releaseScope();
     _clearScopeState();
+    _serverDenied = false;
     final s = widget.session;
     if (!mounted || !_active || !s.authenticated ||
         s.tenant == null || !s.canWrite) {
@@ -2163,7 +2187,7 @@ class _DashboardState extends State<Dashboard> {
       }
     } catch (e) {
       if (epoch == generation && current(scope)) {
-        error = e;
+        _recordFailure(scope, e);
       }
     } finally {
       if (epoch == generation && current(scope)) {
@@ -2195,7 +2219,7 @@ class _DashboardState extends State<Dashboard> {
       }
     } catch (e) {
       if (current(scope) && identical(_actionOwner, owner)) {
-        error = e;
+        _recordFailure(scope!, e);
       }
     } finally {
       if (current(scope) && identical(_actionOwner, owner)) {
@@ -2217,9 +2241,8 @@ class _DashboardState extends State<Dashboard> {
   @override
   void deactivate() {
     _active = false;
-    // Evaluating current also permanently revokes this capture before a
-    // possible reactivation; old requests and callbacks cannot be revived.
-    _scopeChanged();
+    _clearScopeState();
+    _releaseScope();
     super.deactivate();
   }
 
@@ -2245,6 +2268,16 @@ class _DashboardState extends State<Dashboard> {
       return const Panel(child: EmptyView('工作空间或权限已变化', '请重新打开工作台。'));
     }
     final scope = _scope;
+    if (_serverDenied && _sameContext(scope)) {
+      return Panel(child: Column(children: [
+        const EmptyView('工作空间或权限已变化',
+            '已隐藏旧工作台数据，请重新打开当前工作空间，或联系管理员核对权限。'),
+        if (error != null)
+          FailureView(error!, reauth: () {
+            if (_serverDenied && _sameContext(scope)) s.login(stepUp: true);
+          }),
+      ]));
+    }
     final visible = current(scope);
     bool canOpen(String section) =>
         visible && current(scope) && s.canOpen(section);

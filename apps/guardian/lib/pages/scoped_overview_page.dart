@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../core/api.dart';
 import '../core/labels.dart';
 import '../core/overview_summary.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
+import 'device_subflow_scope.dart';
 
 /// Read-only workbench for roles without family/organization administration rights.
 class ScopedOverviewPage extends StatefulWidget {
@@ -18,44 +20,170 @@ class _ScopedOverviewPageState extends State<ScopedOverviewPage> {
   OverviewSummary? summary;
   Object? error;
   int generation = 0;
+  DeviceSubflowScope? _scope;
+  bool reading = false, _active = true, _serverDenied = false;
+  bool _rebuildPending = false;
 
   @override
   void initState() {
     super.initState();
-    load();
+    _bindScope();
   }
 
-  Future<void> load() async {
-    final epoch = ++generation;
+  bool _sameContext(DeviceSubflowScope? scope) {
+    if (scope == null || !mounted || !_active || !identical(_scope, scope)) {
+      return false;
+    }
+    final session = scope.session;
+    return identical(widget.session, session) &&
+        session.authenticated &&
+        session.tenant != null &&
+        !session.canWrite &&
+        session.canOpen('overview') &&
+        session.scopeGeneration == scope.generation &&
+        session.profile?['subject'] == scope.actorId &&
+        session.tenant?['id'] == scope.tenantId &&
+        session.role == scope.role;
+  }
+
+  bool _current(DeviceSubflowScope? scope) =>
+      _sameContext(scope) && scope!.current;
+
+  void _requestBuild() {
+    if (!mounted || !_active || _rebuildPending) return;
+    _rebuildPending = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _rebuildPending = false;
+      if (mounted && _active) setState(() {});
+    });
+    WidgetsBinding.instance.ensureVisualUpdate();
+  }
+
+  void _clear() {
+    generation++;
+    summary = null;
+    error = null;
+    reading = false;
+  }
+
+  void _scopeChanged() {
+    if (_current(_scope)) return;
+    _clear();
+    _requestBuild();
+  }
+
+  void _releaseScope() {
+    final previous = _scope;
+    _scope = null;
+    previous?.removeListener(_scopeChanged);
+    previous?.dispose();
+  }
+
+  void _bindScope() {
+    _releaseScope();
+    _clear();
+    _serverDenied = false;
     final session = widget.session;
-    final root = session.root, role = session.role;
+    if (!_active ||
+        !session.authenticated ||
+        session.tenant == null ||
+        session.canWrite ||
+        !session.canOpen('overview')) return;
+    final scope = DeviceSubflowScope(session,
+        permitted: () =>
+            mounted &&
+            _active &&
+            !_serverDenied &&
+            identical(widget.session, session) &&
+            !session.canWrite &&
+            session.canOpen('overview'));
+    _scope = scope;
+    scope.addListener(_scopeChanged);
+    _load(scope);
+  }
+
+  @override
+  void didUpdateWidget(ScopedOverviewPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!_sameContext(_scope)) _bindScope();
+  }
+
+  Future<void> _load(DeviceSubflowScope? scope) async {
+    if (!_current(scope) || reading) return;
+    final epoch = ++generation;
+    final root = scope!.session.root;
     setState(() {
-      summary = null;
+      reading = true;
       error = null;
     });
     try {
-      final next = OverviewSummary.parse(
-          await session.api.send('GET', '$root/overview'));
-      if (mounted &&
-          epoch == generation &&
-          session.tenant != null &&
-          session.root == root &&
-          session.role == role) {
+      final next =
+          OverviewSummary.parse(await scope.api.send('GET', '$root/overview'));
+      if (epoch == generation && _current(scope)) {
         setState(() => summary = next);
       }
     } catch (failure) {
-      if (mounted &&
-          epoch == generation &&
-          session.tenant != null &&
-          session.root == root &&
-          session.role == role) {
-        setState(() => error = failure);
+      if (epoch == generation && _current(scope)) {
+        setState(() {
+          error = failure;
+          if (failure is ApiFailure &&
+              (failure.status == 401 ||
+                  failure.status == 403 ||
+                  failure.code == 'WORKSPACE_CHANGED')) {
+            summary = null;
+            reading = false;
+            _serverDenied = true;
+            // Permanently revoke this capture even if Session has not yet
+            // received the server's authorization change.
+            scope.dispose();
+          }
+        });
+      }
+    } finally {
+      if (epoch == generation && _current(scope)) {
+        setState(() => reading = false);
       }
     }
   }
 
   @override
+  void deactivate() {
+    _active = false;
+    _releaseScope();
+    _clear();
+    super.deactivate();
+  }
+
+  @override
+  void activate() {
+    super.activate();
+    _active = true;
+    _bindScope();
+  }
+
+  @override
+  void dispose() {
+    _active = false;
+    _clear();
+    _releaseScope();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final scope = _scope;
+    if (!_current(scope)) {
+      return Panel(
+          child: Column(children: [
+        const EmptyView('工作空间或权限已变化', '已隐藏旧数据，请重新打开当前工作空间的工作台。'),
+        if (_serverDenied && error != null && _sameContext(scope))
+          FailureView(error!, reauth: () {
+            if (_serverDenied && _sameContext(scope)) {
+              scope!.session.login(stepUp: true);
+            }
+          }),
+      ]));
+    }
     final session = widget.session;
     final role = session.role;
     final description = switch (role) {
@@ -66,21 +194,39 @@ class _ScopedOverviewPageState extends State<ScopedOverviewPage> {
     };
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       PageHeading('欢迎，${session.displayName}',
-          '${label(role)} · ${session.tenant!['name']}'),
+          '${label(role)} · ${session.tenant!['name']}',
+          action: TextButton.icon(
+              onPressed: reading ? null : () => _load(scope),
+              icon: reading
+                  ? const SizedBox.square(
+                      dimension: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2))
+                  : const Icon(Icons.refresh, size: 18),
+              label: Text(reading ? '正在刷新…' : '刷新状态'))),
       Padding(
           padding: const EdgeInsets.only(bottom: 20),
           child: Notice(description)),
       if (error != null)
         Panel(
             child: FailureView(error!,
-                retry: load, reauth: () => session.login(stepUp: true)))
-      else if (summary == null)
+                retry: reading ? null : () => _load(scope),
+                reauth: reading
+                    ? null
+                    : () {
+                        if (_current(scope)) session.login(stepUp: true);
+                      })),
+      if (summary == null && error == null)
         const Panel(
             child: SizedBox(
                 height: 180,
                 child:
                     Center(child: CircularProgressIndicator(strokeWidth: 2))))
-      else ...[
+      else if (summary != null) ...[
+        if (error != null || reading) ...[
+          const SizedBox(height: 16),
+          Notice('以下为上次成功读取的数据，当前状态尚未更新。', warning: error != null),
+          const SizedBox(height: 16),
+        ],
         LayoutBuilder(
             builder: (context, box) =>
                 Wrap(spacing: 16, runSpacing: 16, children: [
@@ -115,76 +261,80 @@ class _ScopedOverviewPageState extends State<ScopedOverviewPage> {
               '当前授权范围有 ${summary!.openHelpRequestCount} 条学生求助尚未确认看到。请打开收件记录，并按机构流程实际联系与跟进。',
               warning: true),
         ],
+      ],
+      const SizedBox(height: 20),
+      Panel(
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text('可用入口', style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 16),
+        Wrap(spacing: 10, runSpacing: 10, children: [
+          if (session.canOpen('classes'))
+            _link('我的班级', Icons.school_outlined, '/classes'),
+          if (session.canOpen('subjects'))
+            _link('我的档案', Icons.person_outline, '/subjects'),
+          if (session.canOpen('devices'))
+            _link('我的设备', Icons.devices_outlined, '/devices'),
+          if (session.canOpen('approvals'))
+            _link('访问申请', Icons.task_alt_outlined, '/approvals'),
+          if (session.canOpen('help-requests'))
+            _link(
+                '授权学生求助', Icons.volunteer_activism_outlined, '/help-requests'),
+          if (session.canOpen('policies'))
+            _link('策略中心', Icons.shield_outlined, '/policies'),
+          if (session.canOpen('audit'))
+            _link('审计日志', Icons.receipt_long_outlined, '/audit'),
+        ])
+      ])),
+      if (summary != null &&
+          role == 'AUDITOR' &&
+          summary!.recentActivity.isNotEmpty) ...[
         const SizedBox(height: 20),
         Panel(
             child:
                 Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text('可用入口', style: Theme.of(context).textTheme.titleMedium),
-          const SizedBox(height: 16),
-          Wrap(spacing: 10, runSpacing: 10, children: [
-            if (session.canOpen('classes'))
-              _link('我的班级', Icons.school_outlined, '/classes'),
-            if (session.canOpen('subjects'))
-              _link('我的档案', Icons.person_outline, '/subjects'),
-            if (session.canOpen('devices'))
-              _link('我的设备', Icons.devices_outlined, '/devices'),
-            if (session.canOpen('approvals'))
-              _link('访问申请', Icons.task_alt_outlined, '/approvals'),
-            if (session.canOpen('help-requests'))
-              _link('授权学生求助', Icons.volunteer_activism_outlined,
-                  '/help-requests'),
-            if (session.canOpen('policies'))
-              _link('策略中心', Icons.shield_outlined, '/policies'),
-            if (session.canOpen('audit'))
-              _link('审计日志', Icons.receipt_long_outlined, '/audit'),
-          ])
-        ])),
-        if (role == 'AUDITOR' && summary!.recentActivity.isNotEmpty) ...[
-          const SizedBox(height: 20),
-          Panel(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                Text('最近审计事实', style: Theme.of(context).textTheme.titleMedium),
-                const SizedBox(height: 8),
-                for (final activity in summary!.recentActivity)
-                  ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      leading: const Icon(Icons.receipt_long_outlined),
-                      title: Text(label(activity.action)),
-                      subtitle: Text(shortId(activity.resourceId)),
-                      trailing: Text(dateLabel(activity.occurredAt))),
-              ]))
-        ],
-        const SizedBox(height: 16),
-        Align(
-            alignment: Alignment.centerRight,
-            child: TextButton.icon(
-                onPressed: load,
-                icon: const Icon(Icons.refresh, size: 18),
-                label: const Text('刷新状态')))
-      ]
+          Text('最近审计事实', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
+          for (final activity in summary!.recentActivity)
+            ListTile(
+                contentPadding: EdgeInsets.zero,
+                leading: const Icon(Icons.receipt_long_outlined),
+                title: Text(label(activity.action)),
+                subtitle: Text(shortId(activity.resourceId)),
+                trailing: Text(dateLabel(activity.occurredAt))),
+        ]))
+      ],
     ]);
   }
 
-  Widget _metric(double width, String title, int value, IconData icon) =>
-      SizedBox(
-          width: width < 560 ? (width - 16) / 2 : 194,
-          child: Panel(
-              child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                Icon(icon, size: 25, color: muted),
-                const SizedBox(height: 12),
-                Text('$value',
-                    style: const TextStyle(
-                        fontSize: 28, fontWeight: FontWeight.w700, color: ink)),
-                const SizedBox(height: 4),
-                Text(title, style: const TextStyle(color: muted, fontSize: 13))
-              ])));
+  Widget _metric(double width, String title, int value, IconData icon) {
+    final minimum = MediaQuery.textScalerOf(context).scale(1) > 1.2 ? 240 : 170;
+    final columns = (width / minimum).floor().clamp(1, 3);
+    return SizedBox(
+        width: (width - (columns - 1) * 16) / columns,
+        child: Panel(
+            child:
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Icon(icon, size: 25, color: muted),
+          const SizedBox(height: 12),
+          Text('$value',
+              style: const TextStyle(
+                  fontSize: 28, fontWeight: FontWeight.w700, color: ink)),
+          const SizedBox(height: 4),
+          Text(title, style: const TextStyle(color: muted, fontSize: 13))
+        ])));
+  }
 
-  Widget _link(String text, IconData icon, String route) => OutlinedButton.icon(
-      onPressed: () => context.go(route),
-      icon: Icon(icon, size: 18),
-      label: Text(text));
+  Widget _link(String text, IconData icon, String route) {
+    final scope = _scope;
+    final section = route.substring(1);
+    return OutlinedButton.icon(
+        onPressed: () {
+        if (_current(scope) && scope!.session.canOpen(section)) {
+            context.go(route);
+        }
+        },
+        icon: Icon(icon, size: 18),
+        label: Text(text));
+  }
 }

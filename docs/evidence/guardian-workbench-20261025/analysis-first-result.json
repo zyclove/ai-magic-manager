@@ -1,0 +1,87 @@
+{
+  "status": "NOT_ACCEPTED",
+  "sdkCalls": 1,
+  "targets": [
+    "lib/pages/scoped_overview_page.dart",
+    "lib/pages/console_pages.dart",
+    "test/scoped_overview_page_test.dart",
+    "test/dashboard_read_authority_test.dart"
+  ],
+  "forceRequested": false,
+  "head": "dbe72031e3e1a93290033aae82277618a3a99f98",
+  "resourcesBefore": {
+    "ram": 4376268800,
+    "cFree": 3077287936,
+    "dFree": 19518320640
+  },
+  "sdkBefore": {
+    "sdk": [],
+    "unknown": 0
+  },
+  "pid": 196148,
+  "command": "D:\\softwares\\flutter\\bin\\flutter.bat analyze --no-pub --fatal-infos --fatal-warnings lib/pages/scoped_overview_page.dart lib/pages/console_pages.dart test/scoped_overview_page_test.dart test/dashboard_read_authority_test.dart",
+  "terminal": {
+    "pid": 196148,
+    "creationFiletime": 134374116302859340,
+    "firstSignaledQpc": 216152.4971417,
+    "sampleQpc": 216152.5082045,
+    "signaled": true,
+    "exitCode": 1,
+    "exitFiletime": 134374116347457486,
+    "kernel100ns": 0,
+    "user100ns": 0,
+    "jobAccountingObservedQpc": 216152.5082137,
+    "firstCompleteTerminalQpc": 216152.5082137,
+    "activeProcesses": 0,
+    "totalProcesses": 12,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "naturalZero": false,
+  "analysisNoIssues": false,
+  "sourceUnchanged": true,
+  "sourcePins": {
+    "apps\\guardian\\lib\\pages\\scoped_overview_page.dart": "a2a4c2d47703170cedcdcdccb97d4e0775fde46829efac872f5778af4c79a923",
+    "apps\\guardian\\lib\\pages\\console_pages.dart": "3bc459a1f9f37e79ab0c94f111827b3f7cfe94ac2c5a8004bdafc73ae91c30bc",
+    "apps\\guardian\\test\\scoped_overview_page_test.dart": "c9da72dd48f6d28738b0a87c52a486295ce5b6de9f4d8718665ebaa2c76171d8",
+    "apps\\guardian\\test\\dashboard_read_authority_test.dart": "0bb461bd174ab3994009914aa52c350e1463319c37c81a1d6d721e0e0a9fc6f2",
+    "apps\\guardian\\lib\\core\\api.dart": "b3de2ae637ca83518bc27e550e548b1c69a654a10bb3365c3b3514c173253e7e",
+    "apps\\guardian\\lib\\core\\access.dart": "38380bc466101deff37beb212132d94b2b7cfe41c5d70588965cb1212eb41f2e",
+    "apps\\guardian\\lib\\core\\console_modules.dart": "b7df960a10b18a3bbd3707b1b1c77f8a7cb083f71ce7174d0b2f70c490b296a4",
+    "apps\\guardian\\lib\\core\\overview_summary.dart": "5fdc0f4a130fd30c82571f96daac8697d81a25e96463fb430efc390cdc99170e",
+    "apps\\guardian\\lib\\core\\session.dart": "2c0c354df653359c24619fc1be3162030ae503127bbd3dd1a6ec2b96fce2a864",
+    "apps\\guardian\\lib\\core\\scoped_http_client.dart": "dc8653e88438bc9678c28e634f9a176db86493a601fede7f2db15df54c1c61ad",
+    "apps\\guardian\\lib\\pages\\device_subflow_scope.dart": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e",
+    "apps\\guardian\\lib\\ui\\design.dart": "597b455b3f86f649d0dd1a3cf0b52fb74d27144e60f6972e804b5ea92de7114e",
+    "apps\\guardian\\lib\\ui\\workbench_view.dart": "198b85c003e310ab4fa1cd1cfbc7c77ab29ea8e6ecc007c8c4cb02d06ce5d5ce",
+    "apps\\guardian\\test\\device_management_entry_test.dart": "bf41e4e882a21d1560f35f999667ea506c617a327d2896b102bccbadd596e4a1",
+    "apps\\guardian\\.dart_tool\\package_config.json": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7",
+    "apps\\guardian\\pubspec.lock": "a9591beb8b568839e7734f09727e1d588ab4caf400f1d5bb8470c7dab9c7501c",
+    "apps\\guardian\\pubspec.yaml": "d5d12259e8d6670b4c18081a505627c9375e932f032c0185b023e4d592d80dbb"
+  },
+  "sdkAfter": {
+    "sdk": [],
+    "unknown": 0
+  },
+  "analysisPassed": false,
+  "checkType": "FLUTTER_TARGETED_ANALYSIS",
+  "windowReleased": true,
+  "finalOwnedState": {
+    "pid": 196148,
+    "creationFiletime": 134374116302859340,
+    "firstSignaledQpc": 216152.4971417,
+    "sampleQpc": 216153.0100403,
+    "signaled": true,
+    "exitCode": 1,
+    "exitFiletime": 134374116347457486,
+    "kernel100ns": 0,
+    "user100ns": 0,
+    "jobAccountingObservedQpc": 216153.0100846,
+    "firstCompleteTerminalQpc": 216152.5082137,
+    "activeProcesses": 0,
+    "totalProcesses": 12,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "elapsedSeconds": 5.595095900003798
+}

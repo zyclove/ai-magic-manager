@@ -1,0 +1,22 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":219592,"type":"start","time":0}
+{"suite":{"id":0,"platform":"chrome","path":"D:/codes/mobile/ai-manager/apps/guardian/test/scoped_overview_page_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/scoped_overview_page_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1}
+{"count":1,"time":4,"type":"allSuites"}
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":3577}
+{"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":7,"line":null,"column":null,"url":null},"type":"group","time":3581}
+{"test":{"id":3,"name":"same-tenant same-role account ABA discards a late summary","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":10414,"column":19,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/packages/flutter_test/src/test_text_input_key_handler.dart.js"},"type":"testStart","time":3582}
+{"testID":3,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4115}
+{"test":{"id":4,"name":"generation changes and role ABA hide loaded data and held callbacks","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":10414,"column":19,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/packages/flutter_test/src/test_text_input_key_handler.dart.js"},"type":"testStart","time":4116}
+{"testID":4,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4701}
+{"test":{"id":5,"name":"refresh deduplicates clicks and preserves a readable summary after 500","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":10414,"column":19,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/packages/flutter_test/src/test_text_input_key_handler.dart.js"},"type":"testStart","time":4701}
+{"testID":5,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5283}
+{"test":{"id":6,"name":"a replacement session with the same page key rejects the old response","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":10414,"column":19,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/packages/flutter_test/src/test_text_input_key_handler.dart.js"},"type":"testStart","time":5284}
+{"testID":6,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5605}
+{"test":{"id":7,"name":"leaving the overview invalidates held refresh and navigation callbacks","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":10414,"column":19,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/packages/flutter_test/src/test_text_input_key_handler.dart.js"},"type":"testStart","time":5605}
+{"testID":7,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5965}
+{"test":{"id":8,"name":"403 hides loaded data and invalidates the retained refresh callback","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":10414,"column":19,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/packages/flutter_test/src/test_text_input_key_handler.dart.js"},"type":"testStart","time":5965}
+{"testID":8,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":6256}
+{"test":{"id":9,"name":"unauthenticated and writing roles never request a scoped overview","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":10414,"column":19,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/packages/flutter_test/src/test_text_input_key_handler.dart.js"},"type":"testStart","time":6256}
+{"testID":9,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":6520}
+{"success":true,"type":"done","time":6530}
