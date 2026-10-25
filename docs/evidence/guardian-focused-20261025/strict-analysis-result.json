@@ -1,0 +1,86 @@
+{
+  "status": "PASSED",
+  "sdkCalls": 1,
+  "tests": [
+    "api_test.dart",
+    "access_test.dart",
+    "console_navigation_test.dart",
+    "dialog_submit_guard_test.dart",
+    "resource_page_resilience_test.dart"
+  ],
+  "forceRequested": false,
+  "head": "702ed57e7189834d70ce90a12058ac6ee6ca1a12",
+  "resourcesBefore": {
+    "ram": 5085728768,
+    "cFree": 3159396352,
+    "dFree": 18696626176
+  },
+  "sdkBefore": {
+    "sdk": [],
+    "unknown": 0
+  },
+  "pid": 214656,
+  "command": "D:\\softwares\\flutter\\bin\\flutter.bat analyze --no-pub --fatal-infos --fatal-warnings test/api_test.dart test/access_test.dart test/console_navigation_test.dart test/dialog_submit_guard_test.dart test/resource_page_resilience_test.dart lib/core/api.dart lib/core/access.dart lib/core/console_modules.dart lib/ui/design.dart lib/ui/console_navigation.dart lib/ui/resource_page.dart lib/pages/console_pages.dart",
+  "terminal": {
+    "pid": 214656,
+    "creationFiletime": 134374072909318357,
+    "firstSignaledQpc": 211815.2583089,
+    "sampleQpc": 211815.2685086,
+    "signaled": true,
+    "exitCode": 0,
+    "exitFiletime": 134374072975081414,
+    "kernel100ns": 0,
+    "user100ns": 0,
+    "jobAccountingObservedQpc": 211815.2685157,
+    "firstCompleteTerminalQpc": 211815.2685157,
+    "activeProcesses": 0,
+    "totalProcesses": 12,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "naturalZero": true,
+  "analysisNoIssues": true,
+  "sourceUnchanged": true,
+  "sourcePins": {
+    "apps\\guardian\\test\\api_test.dart": "a5db544c65cd5772da2ddfd3a12235b7366088391f6a865bb2e68173632543c3",
+    "apps\\guardian\\test\\access_test.dart": "57df882ad8f23ece66af2b3c8b977778c42f76dbef1027bb5c6a5edeecb58297",
+    "apps\\guardian\\test\\console_navigation_test.dart": "4fd3f120625388f3a11ac1f23dab40001ea01d89abb996a363e6e972ad732261",
+    "apps\\guardian\\test\\dialog_submit_guard_test.dart": "026d5319e53c4ab64fc71484c872caf82246bcb571f4dcecc6ee8f27d49d976b",
+    "apps\\guardian\\test\\resource_page_resilience_test.dart": "cc1d06e7acd24b4c38dc69a65e086e13d795d1e4c9e8a252bae6fdedfcf618a3",
+    "apps\\guardian\\lib\\core\\api.dart": "b3de2ae637ca83518bc27e550e548b1c69a654a10bb3365c3b3514c173253e7e",
+    "apps\\guardian\\lib\\core\\access.dart": "38380bc466101deff37beb212132d94b2b7cfe41c5d70588965cb1212eb41f2e",
+    "apps\\guardian\\lib\\core\\console_modules.dart": "b7df960a10b18a3bbd3707b1b1c77f8a7cb083f71ce7174d0b2f70c490b296a4",
+    "apps\\guardian\\lib\\ui\\design.dart": "597b455b3f86f649d0dd1a3cf0b52fb74d27144e60f6972e804b5ea92de7114e",
+    "apps\\guardian\\lib\\ui\\console_navigation.dart": "958d598d04c73c555e64204828661f9086a0d99ef83b304db9b88defc10d8dd8",
+    "apps\\guardian\\lib\\ui\\resource_page.dart": "07cb154001df9b41aeafdade3753bc10e6d36ade53f8759e14b91a3a9bdb49a7",
+    "apps\\guardian\\lib\\pages\\console_pages.dart": "bb5b373f3517aa25ab75ef002ad000815625d67f251bdd8ab2b69d6061715874",
+    "apps\\guardian\\.dart_tool\\package_config.json": "41148fec23b8b4d7133b6e3e3a9ca1ca325549c06a3d28a17cf42fbc19d1ceb7",
+    "apps\\guardian\\pubspec.lock": "a9591beb8b568839e7734f09727e1d588ab4caf400f1d5bb8470c7dab9c7501c",
+    "apps\\guardian\\pubspec.yaml": "d5d12259e8d6670b4c18081a505627c9375e932f032c0185b023e4d592d80dbb"
+  },
+  "sdkAfter": {
+    "sdk": [],
+    "unknown": 0
+  },
+  "appTestsPassed": true,
+  "checkType": "FLUTTER_TARGETED_ANALYSIS",
+  "windowReleased": true,
+  "finalOwnedState": {
+    "pid": 214656,
+    "creationFiletime": 134374072909318357,
+    "firstSignaledQpc": 211815.2583089,
+    "sampleQpc": 211815.9401254,
+    "signaled": true,
+    "exitCode": 0,
+    "exitFiletime": 134374072975081414,
+    "kernel100ns": 0,
+    "user100ns": 0,
+    "jobAccountingObservedQpc": 211815.9401715,
+    "firstCompleteTerminalQpc": 211815.2685157,
+    "activeProcesses": 0,
+    "totalProcesses": 12,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "elapsedSeconds": 7.91804509999929
+}

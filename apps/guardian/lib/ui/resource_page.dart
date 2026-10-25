@@ -322,11 +322,11 @@ class ResourcePageState extends State<ResourcePage> {
             if (loading && rows.isNotEmpty)
               const LinearProgressIndicator(minHeight: 2),
             if (showActionProgress)
-              const Semantics(
+              Semantics(
                   container: true,
                   liveRegion: true,
                   label: '正在处理，请稍候',
-                  child: ExcludeSemantics(
+                  child: const ExcludeSemantics(
                       child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [

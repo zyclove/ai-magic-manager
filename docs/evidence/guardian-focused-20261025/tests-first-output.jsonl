@@ -1,0 +1,154 @@
+
+┌─────────────────────────────────────────────────────────┐
+│ A new version of Flutter is available!                  │
+│                                                         │
+│ To update to the latest version, run "flutter upgrade". │
+└─────────────────────────────────────────────────────────┘
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":215132,"type":"start","time":0}
+{"suite":{"id":0,"platform":"vm","path":"D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1}
+{"count":5,"time":8,"type":"allSuites"}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null,"observatoryUri":null}}]
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":4180}
+{"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":29,"line":null,"column":null,"url":null},"type":"group","time":4183}
+{"test":{"id":3,"name":"maintenance explains uncertainty and preserves the original operation","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":8,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4184}
+{"testID":3,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4232}
+{"test":{"id":4,"name":"unknown writes retain original key and reject changed retry payload","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":35,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4232}
+{"testID":4,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4238}
+{"test":{"id":5,"name":"malformed successful invalid JSON preserves the original write","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":63,"column":5,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4239}
+{"testID":5,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4245}
+{"test":{"id":6,"name":"malformed successful invalid UTF-8 preserves the original write","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":63,"column":5,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4246}
+{"testID":6,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4251}
+{"test":{"id":7,"name":"empty success and explicit JSON null complete the pending write","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":93,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4251}
+{"testID":7,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4255}
+{"test":{"id":8,"name":"non-JSON HTTP 403 (invalid JSON) preserves the denial status","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":117,"column":5,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4256}
+{"testID":8,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4260}
+{"test":{"id":9,"name":"non-JSON HTTP 403 (invalid UTF-8) preserves the denial status","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":117,"column":5,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4261}
+{"testID":9,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4264}
+{"test":{"id":10,"name":"writes carry version and idempotency without retrying conflicts","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":139,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4264}
+{"testID":10,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4268}
+{"test":{"id":11,"name":"pagination preserves cursor and errors never appear as empty success","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":159,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4269}
+{"testID":11,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4276}
+{"test":{"id":12,"name":"pagination rejects malformed items and cursor values as invalid responses","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":177,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4277}
+{"testID":12,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4286}
+{"test":{"id":13,"name":"pagination rejects a continuation cursor that does not advance","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":209,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4287}
+{"testID":13,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4291}
+{"test":{"id":14,"name":"pagination preserves valid empty opaque-cursor and final pages","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":222,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4291}
+{"testID":14,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4297}
+{"test":{"id":15,"name":"HTTP 401 with non-string errorCode (number) preserves denial status","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":255,"column":9,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4298}
+{"testID":15,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4301}
+{"test":{"id":16,"name":"HTTP 401 with non-string errorCode (boolean) preserves denial status","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":255,"column":9,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4302}
+{"testID":16,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4305}
+{"test":{"id":17,"name":"HTTP 401 with non-string errorCode (list) preserves denial status","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":255,"column":9,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4306}
+{"testID":17,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4309}
+{"test":{"id":18,"name":"HTTP 401 with non-string errorCode (map) preserves denial status","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":255,"column":9,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4309}
+{"testID":18,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4312}
+{"test":{"id":19,"name":"HTTP 401 with non-string correlationId (number) preserves denial status","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":255,"column":9,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4312}
+{"testID":19,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4315}
+{"test":{"id":20,"name":"HTTP 401 with non-string correlationId (boolean) preserves denial status","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":255,"column":9,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4315}
+{"testID":20,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4318}
+{"test":{"id":21,"name":"HTTP 401 with non-string correlationId (list) preserves denial status","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":255,"column":9,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4319}
+{"testID":21,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4322}
+{"test":{"id":22,"name":"HTTP 401 with non-string correlationId (map) preserves denial status","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":255,"column":9,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4323}
+{"testID":22,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4326}
+{"test":{"id":23,"name":"HTTP 403 with non-string errorCode (number) preserves denial status","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":255,"column":9,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4327}
+{"testID":23,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4329}
+{"test":{"id":24,"name":"HTTP 403 with non-string errorCode (boolean) preserves denial status","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":255,"column":9,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4330}
+{"testID":24,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4333}
+{"test":{"id":25,"name":"HTTP 403 with non-string errorCode (list) preserves denial status","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":255,"column":9,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4333}
+{"testID":25,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4337}
+{"test":{"id":26,"name":"HTTP 403 with non-string errorCode (map) preserves denial status","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":255,"column":9,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4338}
+{"testID":26,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4342}
+{"test":{"id":27,"name":"HTTP 403 with non-string correlationId (number) preserves denial status","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":255,"column":9,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4342}
+{"testID":27,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4346}
+{"test":{"id":28,"name":"HTTP 403 with non-string correlationId (boolean) preserves denial status","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":255,"column":9,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4346}
+{"testID":28,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4349}
+{"test":{"id":29,"name":"HTTP 403 with non-string correlationId (list) preserves denial status","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":255,"column":9,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4349}
+{"testID":29,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4352}
+{"test":{"id":30,"name":"HTTP 403 with non-string correlationId (map) preserves denial status","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":255,"column":9,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4352}
+{"testID":30,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4355}
+{"test":{"id":31,"name":"HTTP 401 REAUTH_REQUIRED preserves explicit reauthentication code","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":284,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/api_test.dart"},"type":"testStart","time":4356}
+{"testID":31,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":4360}
+{"suite":{"id":32,"platform":"vm","path":"D:/codes/mobile/ai-manager/apps/guardian/test/access_test.dart"},"type":"suite","time":4401}
+{"test":{"id":33,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/access_test.dart","suiteID":32,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":4401}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null,"observatoryUri":null}}]
+{"testID":33,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":5084}
+{"group":{"id":34,"suiteID":32,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":9,"line":null,"column":null,"url":null},"type":"group","time":5084}
+{"test":{"id":35,"name":"unknown sections are unavailable even to workspace administrators","suiteID":32,"groupIDs":[34],"metadata":{"skip":false,"skipReason":null},"line":5,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/access_test.dart"},"type":"testStart","time":5084}
+{"testID":35,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5106}
+{"test":{"id":36,"name":"notification navigation includes requesters and excludes auditors","suiteID":32,"groupIDs":[34],"metadata":{"skip":false,"skipReason":null},"line":18,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/access_test.dart"},"type":"testStart","time":5106}
+{"testID":36,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5109}
+{"test":{"id":37,"name":"role navigation mirrors restricted resources","suiteID":32,"groupIDs":[34],"metadata":{"skip":false,"skipReason":null},"line":25,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/access_test.dart"},"type":"testStart","time":5110}
+{"testID":37,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5113}
+{"test":{"id":38,"name":"commercial account is read only for adult administrators and auditors","suiteID":32,"groupIDs":[34],"metadata":{"skip":false,"skipReason":null},"line":35,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/access_test.dart"},"type":"testStart","time":5113}
+{"testID":38,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5118}
+{"test":{"id":39,"name":"authentication returns to the requested /managed-android page","suiteID":32,"groupIDs":[34],"metadata":{"skip":false,"skipReason":null},"line":51,"column":5,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/access_test.dart"},"type":"testStart","time":5119}
+{"testID":39,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5122}
+{"test":{"id":40,"name":"authentication returns to the requested /managed-android-review page","suiteID":32,"groupIDs":[34],"metadata":{"skip":false,"skipReason":null},"line":51,"column":5,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/access_test.dart"},"type":"testStart","time":5122}
+{"testID":40,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5124}
+{"test":{"id":41,"name":"authentication returns to the requested /device-groups page","suiteID":32,"groupIDs":[34],"metadata":{"skip":false,"skipReason":null},"line":51,"column":5,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/access_test.dart"},"type":"testStart","time":5124}
+{"testID":41,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5126}
+{"test":{"id":42,"name":"authentication rejects external, altered and unknown return paths","suiteID":32,"groupIDs":[34],"metadata":{"skip":false,"skipReason":null},"line":55,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/access_test.dart"},"type":"testStart","time":5126}
+{"testID":42,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5129}
+{"test":{"id":43,"name":"late workspace responses and logout cannot restore stale selection","suiteID":32,"groupIDs":[34],"metadata":{"skip":false,"skipReason":null},"line":85,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/access_test.dart"},"type":"testStart","time":5130}
+{"testID":43,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":5132}
+{"suite":{"id":44,"platform":"vm","path":"D:/codes/mobile/ai-manager/apps/guardian/test/console_navigation_test.dart"},"type":"suite","time":5179}
+{"test":{"id":45,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/console_navigation_test.dart","suiteID":44,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":5179}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null,"observatoryUri":null}}]
+{"testID":45,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":6081}
+{"group":{"id":46,"suiteID":44,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":6,"line":null,"column":null,"url":null},"type":"group","time":6082}
+{"test":{"id":47,"name":"every existing destination belongs to exactly one group","suiteID":44,"groupIDs":[46],"metadata":{"skip":false,"skipReason":null},"line":24,"column":3,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/console_navigation_test.dart"},"type":"testStart","time":6082}
+{"testID":47,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":6113}
+{"test":{"id":48,"name":"common tasks are visible and workspace tools start collapsed","suiteID":44,"groupIDs":[46],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":34,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/console_navigation_test.dart"},"type":"testStart","time":6113}
+{"testID":48,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":6871}
+{"test":{"id":49,"name":"search reveals allowed collapsed tools and opens the exact route","suiteID":44,"groupIDs":[46],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":51,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/console_navigation_test.dart"},"type":"testStart","time":6872}
+{"testID":49,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7243}
+{"test":{"id":50,"name":"search never exposes destinations outside current access","suiteID":44,"groupIDs":[46],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":67,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/console_navigation_test.dart"},"type":"testStart","time":7244}
+{"testID":50,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7368}
+{"test":{"id":51,"name":"current section opens its group and user can expand another group","suiteID":44,"groupIDs":[46],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":82,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/console_navigation_test.dart"},"type":"testStart","time":7369}
+{"testID":51,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7466}
+{"test":{"id":52,"name":"organization labels and narrow large text remain readable","suiteID":44,"groupIDs":[46],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":107,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/console_navigation_test.dart"},"type":"testStart","time":7466}
+{"testID":52,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7512}
+{"suite":{"id":53,"platform":"vm","path":"D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"suite","time":7552}
+{"test":{"id":54,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart","suiteID":53,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":7552}
+
+[{"event":"test.startedProcess","params":{"vmServiceUri":null,"observatoryUri":null}}]
+{"testID":54,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":8327}
+{"group":{"id":55,"suiteID":53,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":12,"line":null,"column":null,"url":null},"type":"group","time":8328}
+{"test":{"id":56,"name":"queued edit callbacks submit only once before the next frame","suiteID":53,"groupIDs":[55],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":50,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":8328}
+{"testID":56,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9290}
+{"test":{"id":57,"name":"412 preserves the submitted draft and blocks held save callbacks","suiteID":53,"groupIDs":[55],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":86,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":9291}
+{"testID":57,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9466}
+{"test":{"id":58,"name":"unknown result retries the same payload before a 412 stops replay","suiteID":53,"groupIDs":[55],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":136,"root_column":5,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":9466}
+{"testID":58,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9611}
+{"test":{"id":59,"name":"unknown result after a parsing failure retries the same payload before a 412 stops replay","suiteID":53,"groupIDs":[55],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":136,"root_column":5,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":9611}
+{"testID":59,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9740}
+{"test":{"id":60,"name":"unknown result after a pending-operation refusal retries the same payload before a 412 stops replay","suiteID":53,"groupIDs":[55],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":136,"root_column":5,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":9740}
+{"testID":60,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":9871}
+{"test":{"id":61,"name":"reauth on an unknown retry keeps the original payload until success","suiteID":53,"groupIDs":[55],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":182,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":9871}
+{"testID":61,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":10021}
+{"test":{"id":62,"name":"IDEMPOTENCY_RESULT_EXPIRED keeps a read-only draft and stops stale save callbacks","suiteID":53,"groupIDs":[55],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":233,"root_column":5,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":10021}
+{"testID":62,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":10116}
+{"test":{"id":63,"name":"IDEMPOTENCY_RESPONSE_ERASED keeps a read-only draft and stops stale save callbacks","suiteID":53,"groupIDs":[55],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":233,"root_column":5,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":10117}
+{"testID":63,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":10208}
+{"test":{"id":64,"name":"unknown result confirms closing inside the original form","suiteID":53,"groupIDs":[55],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":279,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":10209}
+{"testID":64,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":10368}
+{"test":{"id":65,"name":"access loss hides a 412 draft and gives original workspace guidance","suiteID":53,"groupIDs":[55],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":336,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":10368}
+{"testID":65,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":10462}
+{"test":{"id":66,"name":"access loss during submission hides a late 412 and prevents resubmit","suiteID":53,"groupIDs":[55],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":378,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":10462}
+{"testID":66,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":10536}
+{"test":{"id":67,"name":"412 draft preserves trimmed text numeric labels and empty fields","suiteID":53,"groupIDs":[55],"metadata":{"skip":false,"skipReason":null},"line":165,"column":5,"url":"package:flutter_test/src/widget_tester.dart","root_line":416,"root_column":3,"root_url":"file:///D:/codes/mobile/ai-manager/apps/guardian/test/dialog_submit_guard_test.dart"},"type":"testStart","time":10537}
+{"testID":67,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":10664}
+{"suite":{"id":68,"platform":"vm","path":"D:/codes/mobile/ai-manager/apps/guardian/test/resource_page_resilience_test.dart"},"type":"suite","time":10705}
+{"test":{"id":69,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/resource_page_resilience_test.dart","suiteID":68,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":10705}
+lib/ui/resource_page.dart:325:21: Error: Cannot invoke a non-'const' constructor where a const expression is expected.
+Try using a constructor or factory that is 'const'.
+              const Semantics(
+                    ^^^^^^^^^
+{"testID":69,"error":"Failed to load \"D:/codes/mobile/ai-manager/apps/guardian/test/resource_page_resilience_test.dart\": Compilation failed for testPath=D:/codes/mobile/ai-manager/apps/guardian/test/resource_page_resilience_test.dart","stackTrace":"","isFailure":false,"type":"error","time":11008}
+{"testID":69,"result":"error","skipped":false,"hidden":false,"type":"testDone","time":11009}
+{"success":false,"type":"done","time":11010}
