@@ -35,6 +35,8 @@
 
 优先复用现有领域服务、共享包和成熟框架。新增抽象应解决实际重复或明确边界，不为小改动另建一套模块、脚手架或技能。
 
+[后端 Maven](../backend/pom.xml)可用 `-Dbackend.build.directory=<绝对目录>` 隔离产物，默认仍为 `backend/target`；优先用已有工具和缓存，不为改输出目录复制源码或清空旧 JAR。ArchUnit 默认排除依赖目录约定，[模块边界测试](../backend/src/test/java/com/aimanager/ModuleBoundariesTest.java)额外按真实测试 CodeSource 排除夹具并防止误排生产目录；修改验证目录不能靠忽略 `*Test` 名称或关闭边界规则解决。
+
 管理台导航的名称、分组、搜索词和已知路由统一在 [console_modules.dart](../apps/guardian/lib/core/console_modules.dart)；[导航组件](../apps/guardian/lib/ui/console_navigation.dart)只负责呈现。目录不授予 API 权限，服务端与会话仍独立校验。
 
 管理台异步旅程可复用 [DeviceSubflowScope](../apps/guardian/lib/pages/device_subflow_scope.dart) 捕获账号、租户、角色和会话代际；名称虽源自设备流程，通知与工作台也采用此机制。旧响应与回调必须核对原捕获，不能仅比较当前租户/角色。普通网络失败可保留已读数据，服务端拒绝访问则隐藏私有摘要并作废捕获。

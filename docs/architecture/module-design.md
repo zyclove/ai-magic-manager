@@ -67,4 +67,6 @@ com.aimanager.<domain>/
 
 用一份领域契约记录范围、状态、错误和边界；重要且难逆转的取舍才新增简短决策记录。文档和配置不重复生成源码副本或证据清单。
 
+后端 Maven 支持 `-Dbackend.build.directory=<绝对目录>`，默认仍为 `backend/target`；定向验证可将输出放在项目忽略的 `.cache` 中，无需清空旧产物或复制源码。`test` 阶段不打包服务 JAR。[模块门禁](../../backend/src/test/java/com/aimanager/ModuleBoundariesTest.java)按本次测试类 CodeSource 精确排除测试输出，先核对生产目录不会被排除，再保留完整 `verify()`；不依赖 `target/test-classes` 等固定目录名，也不按类名或包名整体忽略违规。
+
 只运行与本批变化有关的检查：纯文档看差异；领域行为选受影响测试；跨域依赖调整运行已有模块边界检查；接口、权限或数据一致性变动再扩展到对应集成。部署模板可用不代表真实集群、设备或提供方已经验收。
