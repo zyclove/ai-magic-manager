@@ -1,6 +1,6 @@
 # 领域模块设计标准
 
-更新：2026-10-25。沿用已有 Spring Boot / Spring Modulith 模块化单体与 Flutter 共享包；本轮统一增改标准，不进行无收益的全仓迁移或拆分微服务。
+更新：2026-10-26。沿用已有 Spring Boot / Spring Modulith 模块化单体与 Flutter 共享包；本轮统一增改标准，不进行无收益的全仓迁移或拆分微服务。
 
 ## 当前边界与所有权
 
@@ -12,6 +12,7 @@
 | 同级 `commerce`、`reporting`、`audit`、`lifecycle` | 商业权益、报表、审计及生命周期；不能直接修改其他域的内部表 |
 | `apps/guardian/lib/core`、`pages`、`ui` | API/会话与领域呈现、页面编排、通用交互组件；浏览器存储与平台能力留在明确边界 |
 | `apps/parent`、`apps/child` | 端侧宿主、导航、身份与平台适配；不复制服务端授权规则作为最终权限依据 |
+| `packages/schedule_contracts` | 两端时间安排示例的纯响应解析与不可变值；宿主负责有界网络、授权、草稿、保存和发布 |
 | `packages/device_identity`、`device_policy`、`device_access` 等 | 可复用协议、校验、持久化与同步；宿主注入凭据、安全存储、可信上下文和调度 |
 | `deploy/compose`、`deploy/helm/ai-manager`、`scripts` | 部署拓扑、环境参数和受控操作；不承担业务规则和用户权限判定 |
 

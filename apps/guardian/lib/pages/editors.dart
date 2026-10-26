@@ -3,7 +3,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:schedule_contracts/schedule_contracts.dart' as schedule_contracts;
 import '../core/api.dart';
+import '../core/bounded_json.dart';
 import '../core/labels.dart';
 import '../core/policy_domain_check.dart';
 import '../core/policy_rule_directories.dart';
@@ -16,6 +18,7 @@ import '../ui/editor_draft_text.dart';
 import '../ui/owned_dialog_route.dart';
 import 'device_subflow_scope.dart';
 import 'schedule_exception_editor.dart';
+import 'schedule_preset_picker.dart';
 
 const weekdays = [
   'MONDAY',
@@ -153,8 +156,10 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   Object? error;
   bool busy = false, resultUnknown = false, closing = false, exitOpen = false;
   bool revoked = false, reviewPriorSubmission = false, exceptionOpen = false;
-  String? exceptionNotice;
-  final exceptionLifetime = _EditorLifetime();
+  String? exceptionNotice, presetNotice;
+  Object? presetFailure;
+  bool choosingPresets = false, loadingPresets = false;
+  final subflowLifetime = _EditorLifetime();
   Json? pendingBody, recoveryBody;
   ModalRoute<dynamic>? owner;
   OwnedDialogRoute<bool>? exitRoute;
@@ -175,7 +180,12 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   bool get interactive => current && owner?.isCurrent == true;
   bool get recoveryStopped => _stopsEditorReplay(error);
   bool get locked =>
-      busy || resultUnknown || exitOpen || exceptionOpen || recoveryStopped;
+      busy ||
+      resultUnknown ||
+      exitOpen ||
+      exceptionOpen ||
+      choosingPresets ||
+      recoveryStopped;
 
   @override
   void initState() {
@@ -234,7 +244,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
     // Latch before any deferred rebuild: returning to the old scope cannot
     // revive captured callbacks or a request waiting for an authenticated client.
     revoked = true;
-    exceptionLifetime.value = false;
+    subflowLifetime.value = false;
     reviewPriorSubmission = busy || resultUnknown || pendingBody != null;
     pendingBody = null;
     recoveryBody = null;
@@ -243,6 +253,9 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
     days.clear();
     error = null;
     exceptionNotice = null;
+    presetNotice = null;
+    presetFailure = null;
+    choosingPresets = loadingPresets = false;
     exceptionOpen = false;
     busy = resultUnknown = false;
 
@@ -281,8 +294,8 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   @override
   void dispose() {
     closing = true;
-    exceptionLifetime.value = false;
-    exceptionLifetime.dispose();
+    subflowLifetime.value = false;
+    subflowLifetime.dispose();
     scope.removeListener(scopeChanged);
     parentChanges?.removeListener(scopeChanged);
     if (ownsScope) scope.dispose();
@@ -401,6 +414,75 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
     }
   }
 
+  Future<void> choosePreset() async {
+    if (!interactive || locked) return;
+    setState(() {
+      choosingPresets = loadingPresets = true;
+      presetFailure = null;
+      presetNotice = null;
+    });
+    bool permitted() =>
+        current &&
+        subflowLifetime.value &&
+        !busy &&
+        !resultUnknown &&
+        !recoveryStopped;
+    final changes = Listenable.merge([
+      scope,
+      subflowLifetime,
+      if (parentChanges != null) parentChanges!,
+    ]);
+    try {
+      final raw = await boundedJson(api, 'GET', '${widget.root}/schedule-presets',
+          maxBytes: 65536,
+          ensureCurrent: () {
+            if (!permitted()) {
+              throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+            }
+          });
+      if (!mounted || !permitted()) return;
+      List<schedule_contracts.SchedulePreset> presets;
+      try {
+        presets = schedule_contracts.SchedulePreset.readCatalog(raw);
+      } on FormatException {
+        throw const ApiFailure(502, 'INVALID_SCHEDULE_PRESETS');
+      }
+      setState(() => loadingPresets = false);
+      if (presets.isEmpty) {
+        setState(() => presetNotice = '暂未提供时间安排示例，可以继续手动设置。');
+        return;
+      }
+      if (!interactive) return;
+      final selected = await pickSchedulePreset(context,
+          presets: presets, accessChanges: changes, hasAccess: permitted);
+      if (!mounted || !permitted() || !interactive || selected == null) return;
+      if (windows.isNotEmpty) {
+        final replace = await confirmSchedulePresetReplacement(context,
+            preset: selected,
+            currentWindowCount: windows.length,
+            accessChanges: changes,
+            hasAccess: permitted);
+        if (!replace || !permitted()) return;
+      }
+      if (!mounted || !permitted()) return;
+      setState(() {
+        windows = selected.weekly.map((window) => Json.from(window)).toList();
+        if (name.text.trim().isEmpty) name.text = selected.name;
+        presetNotice = '已填入示例，尚未保存。请检查时段后保存计划。';
+      });
+    } catch (failure) {
+      if (!current || privateFailure(failure)) {
+        if (mounted && !closing) revoke();
+      } else {
+        setState(() => presetFailure = failure);
+      }
+    } finally {
+      if (mounted && !closing && !revoked) {
+        setState(() => choosingPresets = loadingPresets = false);
+      }
+    }
+  }
+
   Future<void> editException({Json? initial}) async {
     if (!interactive || locked) return;
     setState(() {
@@ -409,13 +491,13 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
     });
     bool permitted() =>
         current &&
-        exceptionLifetime.value &&
+        subflowLifetime.value &&
         !busy &&
         !resultUnknown &&
         !recoveryStopped;
     final changes = Listenable.merge([
       scope,
-      exceptionLifetime,
+      subflowLifetime,
       if (parentChanges != null) parentChanges!,
     ]);
     try {
@@ -612,6 +694,27 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                                     '如需替换，请在策略草稿中明确选择新计划。'),
                                 const SizedBox(height: 12),
                               ],
+                              OutlinedButton.icon(
+                                  key: const Key('schedule-choose-preset'),
+                                  onPressed: locked ? null : choosePreset,
+                                  icon: const Icon(Icons.event_note_outlined,
+                                      size: 18),
+                                  label: Text(loadingPresets
+                                      ? '正在读取示例…'
+                                      : '选择时间安排示例')),
+                              const SizedBox(height: 8),
+                              const Text('示例仅供填写参考，也可以直接手动设置。',
+                                  style: TextStyle(color: muted, fontSize: 12)),
+                              if (loadingPresets)
+                                const LinearProgressIndicator(),
+                              if (presetNotice != null)
+                                Semantics(
+                                    liveRegion: true,
+                                    child: Notice(presetNotice!)),
+                              if (presetFailure != null)
+                                FailureView(presetFailure!,
+                                    retry: locked ? null : choosePreset),
+                              const SizedBox(height: 12),
                               const Notice(
                                   '按当地时区设置允许使用的时段。结束时间早于开始时间表示跨午夜；日期例外会覆盖当天计划。'),
                               const SizedBox(height: 20),

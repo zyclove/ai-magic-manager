@@ -1,6 +1,6 @@
 # 1.0.0 规格入口与设计约定
 
-更新：2026-10-25。本页统一规格导航与后续实现约束；详细业务定义仍由下列领域契约维护，不另建重复规格。本文不是全功能验收或部署完成声明。
+更新：2026-10-26。本页统一规格导航与后续实现约束；详细业务定义仍由下列领域契约维护，不另建重复规格。本文不是全功能验收或部署完成声明。
 
 ## 产品范围与事实来源
 
@@ -10,6 +10,7 @@
 | --- | --- |
 | 产品范围、设备模式与能力限制 | [平台蓝图](parental-control-platform-design.md)、[功能规格](parental-control-functional-spec.md) |
 | 全量功能、页面和业务闭环 | [产品交付规格](parental-control-product-delivery-spec.md)、[运营模型](parental-control-product-operating-model.md) |
+| 时间计划示例与本地草稿交互 | [示例选择、确认与配置契约](schedule-preset-ux-delivery.md) |
 | 实际接口与当前未完成项 | [后端接口状态](backend-api-status.md)、[管理台交付记录](management-console-delivery.md) |
 | 首版版本与建库 | [1.0.0 初始化约定](version-1.0.0-initialization.md) |
 | 领域边界与扩展方式 | [模块设计标准](architecture/module-design.md) |

@@ -1,0 +1,66 @@
+{
+  "createdAt": "2026-10-26T04:38:33.232777+00:00",
+  "baseCommit": "106b96c20a6a2c17157132618616cfb6ff3b5c88",
+  "status": "STATIC_IMPLEMENTATION_RUNTIME_NOT_VERIFIED",
+  "scope": "Guardian on-demand schedule examples and a pure shared Dart response contract; Parent adapter only",
+  "preflight": {
+    "status": "NO_START",
+    "sdkCalls": 0,
+    "raw": "pub-guardian-no-start.json"
+  },
+  "userDirection": "Continue static improvement; do not retry SDK work while original resource gates are unmet.",
+  "checks": {
+    "sourceReview": "REVIEWED_NO_PROVEN_DEFECT",
+    "scopedWhitespace": "CHECKED_CHANGED_LINES_AND_NEW_FILES",
+    "relatedDocumentLinks": {
+      "status": "CHECKED_TARGET_EXISTS",
+      "localLinks": 84
+    },
+    "offlineDependencyResolution": "NOT_RUN",
+    "dartFormat": "NOT_RUN",
+    "dartAnalyze": "NOT_RUN",
+    "guardianContractCases5": "NOT_RUN",
+    "existingExceptionCases6": "NOT_RUN",
+    "parentModelCase1": "NOT_RUN",
+    "newBrowserJourneys3": "NOT_RUN",
+    "staticHygieneNote": "Existing Guardian pubspec trailing blank line was preserved; no new blank EOF introduced."
+  },
+  "lockfilesUnchangedFromBase": true,
+  "lockfileSha256": {
+    "apps/guardian/pubspec.lock": "c6f16b105ed81fd036675605a44b846474fb45fec17040796c1358cdebd0016c",
+    "apps/parent/pubspec.lock": "f1c4834fe90949a34d6240001fe3431c0fd4486090f10c05866d8ace517b7ea1"
+  },
+  "sourcePins": {
+    "apps/guardian/lib/core/api.dart": "2f897af6aa852e3b00a0130c744679f995aab08b1f56e15857df65da3ebde107",
+    "apps/guardian/lib/pages/editors.dart": "979d72282d6d327ae42fd191f933b04336244f373598bb4ca14f901de6311dc5",
+    "apps/guardian/lib/pages/schedule_exception_editor.dart": "68bedb9888932550de9329a556d4ccbdbced7ff2c4d26d6575bf349d469834ac",
+    "apps/guardian/lib/pages/schedule_preset_picker.dart": "17ffb063d8dd1771d2cbb30e06e8c6f4c1c8a3f245b2c2b0c5bb82bcc147255e",
+    "apps/guardian/lib/ui/leased_dialog.dart": "c71a4b4709be7d06a0ebda70018abee850d88d1a1698bc952a51f332330d4412",
+    "apps/guardian/pubspec.yaml": "0a38ebd172eb1beaf9a18b1904a12f2e780625bdf76d8c226f8df11986a03eae",
+    "apps/guardian/test/schedule_copy_flow_test.dart": "c0d817eecf32c26522d7c0b1d4ce1fb203303d12225cdd814986b12c6dfcac8d",
+    "apps/guardian/test/schedule_presets_contract_test.dart": "453cf0f4eaf94f1c767f9ddbe96887728c521e8bbca88c28f2cc87ed85346015",
+    "apps/parent/lib/core/schedule_presets.dart": "423886721bdb9be61a1f7fa63156cd7b89e6064d8a82138e2a32399b50cba244",
+    "apps/parent/pubspec.yaml": "1a3732c0197bf6fd0a361b3fe7bfb63ddbbad2837d575f4f7fc0e091d6b92a4f",
+    "packages/schedule_contracts/pubspec.yaml": "78f0325acc3563c655358f6050186eb1831174387c90adc9a30e5184e0bb1aa9",
+    "packages/schedule_contracts/lib/schedule_contracts.dart": "3f0e4296532f89728f089a790f90e4816d9c242dd55d090a51c1631b6b4e8579",
+    "packages/schedule_contracts/README.md": "2ff6f4a6519df3371b607d540d78a8c2b5f45e1664e20cbb92e437246782657a",
+    "docs/SPEC.md": "00f967edf91ad24bc71178d9d845f72ba1c0cd7d23f0595b9d3eb93149d5aa0b",
+    "docs/architecture/module-design.md": "508faefd0c377b79ddd985c267663f0e3b9eebd6f41947c7aa330f0c810281ea",
+    "docs/project-memory.md": "af5565dbfbf301e2844dc602231a2198116a83870c9ed3ae5ab5d99b3ec80a8c",
+    "docs/schedule-preset-ux-delivery.md": "7b8b97f25ca6eba97de01ee1499cdf77b322e66b00eda6e3ebf6b49485174e24",
+    "docs/reviews/schedule-presets-20261026.md": "b41b790d9f90f4a3cae9801dc30dc38b7955de08923431577b648714996016b7"
+  },
+  "artifacts": [
+    {
+      "path": "pub-guardian-no-start.json",
+      "sha256": "cdd7e2f2ee75845f9b9a9a841596b8032b0ba0adceab9772c3501b8d437e857c"
+    }
+  ],
+  "runtimeUpdated": false,
+  "pushed": false,
+  "limits": [
+    "Local path dependency is declared in both applications but has not been resolved into lockfiles or generated package configurations.",
+    "Earlier Parent and date-exception results are historical and do not prove this changed source passes.",
+    "No compilation, test, visual, real-provider, device, deployment or full-product acceptance is claimed."
+  ]
+}

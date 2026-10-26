@@ -1,0 +1,6 @@
+name: schedule_contracts
+description: Immutable schedule drafting example contracts shared by clients.
+version: 1.0.0
+publish_to: none
+environment:
+  sdk: '>=3.4.0 <4.0.0'

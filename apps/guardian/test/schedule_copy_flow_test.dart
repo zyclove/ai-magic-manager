@@ -1,6 +1,7 @@
 @TestOn('browser')
 library;
 
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -46,6 +47,18 @@ Json _source({Json? definition}) => {
       'definition': definition ?? _definition(),
     };
 
+Json _presetCatalog() => {
+      'schemaVersion': 1,
+      'items': [{
+        'id': 'weekend-morning', 'name': '周末上午示例',
+        'description': '仅供填写参考，请按实际安排调整。',
+        'weekly': [
+          {'day': 'SATURDAY', 'start': '09:00', 'end': '11:00'},
+          {'day': 'SUNDAY', 'start': '09:00', 'end': '11:00'},
+        ],
+      }],
+    };
+
 class _Session extends Session {
   _Session(this.testApi, {String initialRole = 'OWNER'}) {
     profile = {'subject': 'adult-a'};
@@ -79,6 +92,11 @@ class _Fixture {
   Json? saved;
   late final transport = MockClient((request) async {
     requests.add(request);
+    if (request.method == 'GET' &&
+        request.url.path == '/api/v1/tenants/$_tenant/schedule-presets') {
+      if (presetResponse != null) return await presetResponse!(request);
+      return _reply(_presetCatalog());
+    }
     if (request.method == 'GET' && request.url.path == _path) {
       return _reply({
         'items': [_source(definition: definition), if (saved != null) saved!],
@@ -101,7 +119,9 @@ class _Fixture {
   final String initialRole;
   final Json? definition;
   final ApiFailure? createFailure;
-  _Fixture({this.initialRole = 'OWNER', this.definition, this.createFailure});
+  final Future<http.Response> Function(http.Request)? presetResponse;
+  _Fixture({this.initialRole = 'OWNER', this.definition, this.createFailure,
+      this.presetResponse});
 
   List<http.Request> get reads =>
       requests.where((request) => request.method == 'GET').toList();
@@ -303,6 +323,108 @@ void main() {
     expect(jsonEncode(definition), original);
     expect(details.available, isFalse);
     expect(fixture.reads, hasLength(2));
+  });
+
+  testWidgets('schedule-preset fills an empty draft only on demand', (tester) async {
+    final definition = _definition()..['weekly'] = <Json>[];
+    final original = jsonEncode(definition);
+    final fixture = _Fixture(definition: definition);
+    await _openDetails(tester, fixture);
+    await _openCopy(tester);
+    expect(fixture.requests.where((r) => r.url.path.endsWith('/schedule-presets')), isEmpty);
+    final name = find.widgetWithText(TextFormField, '计划名称');
+    await tester.enterText(name, '');
+    final choose = find.byKey(const Key('schedule-choose-preset'));
+    await tester.ensureVisible(choose);
+    await tester.tap(choose);
+    final use = find.byKey(const Key('schedule-preset-use-weekend-morning'));
+    await _until(tester, () => use.evaluate().length == 1);
+    expect(fixture.writes, isEmpty);
+    await tester.tap(use);
+    await _until(tester, () => tester.widget<ButtonStyleButton>(choose).onPressed != null);
+    expect(tester.widget<TextFormField>(name).controller!.text, '周末上午示例');
+    expect(find.byKey(const Key('schedule-preset-replace-confirm')), findsNothing);
+    await tester.ensureVisible(_button('保存副本'));
+    await tester.tap(_button('保存副本'));
+    await _until(tester, () => fixture.saved != null);
+    final expected = jsonDecode(original) as Json;
+    expected['weekly'] = (_presetCatalog()['items'] as List).single['weekly'];
+    expect(jsonDecode(fixture.writes.single.body), {'name': '周末上午示例', 'definition': expected});
+    expect(jsonEncode(definition), original);
+    expect(fixture.requests.where((r) => r.url.path.endsWith('/schedule-presets')), hasLength(1));
+  });
+
+  testWidgets('schedule-preset replacement requires confirmation and preserves other fields',
+      (tester) async {
+    final definition = _definition();
+    final original = jsonEncode(definition);
+    final fixture = _Fixture(definition: definition);
+    await _openDetails(tester, fixture);
+    await _openCopy(tester);
+    final choose = find.byKey(const Key('schedule-choose-preset'));
+    final use = find.byKey(const Key('schedule-preset-use-weekend-morning'));
+    final cancel = find.byKey(const Key('schedule-preset-replace-cancel'));
+    await tester.ensureVisible(choose);
+    await tester.tap(choose);
+    await _until(tester, () => use.evaluate().length == 1);
+    await tester.tap(use);
+    await _until(tester, () => cancel.evaluate().length == 1);
+    await tester.tap(cancel);
+    await _until(tester, () => tester.widget<ButtonStyleButton>(choose).onPressed != null);
+    expect(_editorText('2026-12-24 · 09:00 – 11:00、14:00 – 16:00'), findsOneWidget);
+    expect(find.textContaining('22:30 – 01:15'), findsWidgets);
+    expect(fixture.writes, isEmpty);
+    await tester.tap(choose);
+    await _until(tester, () => use.evaluate().length == 1);
+    await tester.tap(use);
+    final confirm = find.byKey(const Key('schedule-preset-replace-confirm'));
+    await _until(tester, () => confirm.evaluate().length == 1);
+    await tester.tap(confirm);
+    await _until(tester, () => tester.widget<ButtonStyleButton>(choose).onPressed != null);
+    expect(fixture.writes, isEmpty);
+    await tester.ensureVisible(_button('保存副本'));
+    await tester.tap(_button('保存副本'));
+    await _until(tester, () => fixture.saved != null);
+    final expected = jsonDecode(original) as Json;
+    expected['weekly'] = (_presetCatalog()['items'] as List).single['weekly'];
+    expect(jsonDecode(fixture.writes.single.body), {'name': '$_sourceName（副本）', 'definition': expected});
+    expect(jsonEncode(definition), original);
+  });
+
+  testWidgets('schedule-preset read failure keeps manual editing and revokes late results',
+      (tester) async {
+    final pending = Completer<http.Response>();
+    var attempts = 0;
+    final fixture = _Fixture(presetResponse: (_) async {
+      attempts++;
+      return attempts == 1 ? _reply({'schemaVersion': 2, 'items': []}) : await pending.future;
+    });
+    await _openDetails(tester, fixture);
+    final heldSave = await _openCopy(tester);
+    final choose = find.byKey(const Key('schedule-choose-preset'));
+    await tester.ensureVisible(choose);
+    await tester.tap(choose);
+    await _until(tester, () => tester.widget<ButtonStyleButton>(choose).onPressed != null);
+    expect(find.textContaining('时间安排示例无法校验'), findsOneWidget);
+    expect(tester.widget<ButtonStyleButton>(_button('保存副本')).onPressed, isNotNull);
+    expect(find.byKey(const Key('schedule-editor-retry-original')), findsNothing);
+    final heldChoose = tester.widget<ButtonStyleButton>(choose).onPressed!;
+    await tester.tap(choose);
+    for (var turn = 0; turn < 24 && attempts != 2; turn++) {
+      await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    expect(attempts, 2);
+    fixture.session.actorAwayAndBack();
+    pending.complete(_reply(_presetCatalog()));
+    await _flush(tester);
+    heldChoose();
+    heldSave();
+    await _flush(tester);
+    expect(attempts, 2);
+    expect(fixture.writes, isEmpty);
+    expect(find.byKey(const Key('schedule-preset-use-weekend-morning')), findsNothing);
+    expect(find.byType(TextFormField), findsNothing);
   });
 
   testWidgets('schedule-copy saves exception-only and fully closed definitions',

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import '../core/api.dart';
 import '../ui/design.dart';
 import '../ui/dialog_access.dart';
+import '../ui/leased_dialog.dart';
 import '../ui/owned_dialog_route.dart';
 
 String _dateText(DateTime date) => '${date.year.toString().padLeft(4, '0')}-'
@@ -22,7 +23,7 @@ Future<DateTime?> pickScheduleExceptionDate(BuildContext context,
       : today.isAfter(last)
           ? last
           : today;
-  return _exceptionRoute<DateTime>(context,
+  return leasedDialog<DateTime>(context,
       accessChanges: accessChanges,
       hasAccess: hasAccess, builder: (dialog, route, access) {
     bool interactive() =>
@@ -80,7 +81,7 @@ Future<Json?> editScheduleException(BuildContext context,
       windows.add(jsonDecode(jsonEncode(window)) as Json);
     }
   }
-  return _exceptionRoute<Json>(context,
+  return leasedDialog<Json>(context,
       accessChanges: accessChanges,
       hasAccess: hasAccess,
       builder: (dialog, route, access) => _ExceptionEditor(
@@ -95,54 +96,6 @@ bool _validTime(Object? value) {
   if (value is! String) return false;
   final match = RegExp(r'(?:[01][0-9]|2[0-3]):[0-5][0-9]').firstMatch(value);
   return match != null && match.start == 0 && match.end == value.length;
-}
-
-/// Each picker has a lease on the caller's original route and access scope.
-Future<T?> _exceptionRoute<T>(BuildContext context,
-    {required Listenable accessChanges,
-    required bool Function() hasAccess,
-    required Widget Function(
-            BuildContext, OwnedDialogRoute<T>, DialogAccessBinding)
-        builder}) async {
-  if (!context.mounted || !hasAccess()) return null;
-  final access = DialogAccessBinding(context,
-      accessChanges: accessChanges, hasAccess: hasAccess);
-  var live = true;
-  late final OwnedDialogRoute<T> route;
-  void observe() {
-    if (live && !access.permitted() && route.available) route.finish();
-  }
-
-  try {
-    if (!access.permitted()) return null;
-    route = OwnedDialogRoute<T>(
-        context: context,
-        barrierDismissible: false,
-        builder: (dialog) => AnimatedBuilder(
-            animation: Listenable.merge([accessChanges, access.changes]),
-            builder: (_, __) => access.permitted()
-                ? builder(dialog, route, access)
-                : const SizedBox.shrink()));
-    accessChanges.addListener(observe);
-    access.changes.addListener(observe);
-    access.parent?.popped.then((_) {
-      if (live) observe();
-    });
-    final parent = access.parent;
-    if (parent != null) {
-      // Raw removeRoute does not complete popped on the supported Flutter SDK.
-      parent.completed.then((_) {
-        if (live) observe();
-      });
-    }
-    final value = await presentOwnedDialog(context, route);
-    return access.permitted() ? value : null;
-  } finally {
-    live = false;
-    accessChanges.removeListener(observe);
-    access.changes.removeListener(observe);
-    access.dispose();
-  }
 }
 
 class _ExceptionEditor extends StatefulWidget {
@@ -194,7 +147,7 @@ class _ExceptionEditorState extends State<_ExceptionEditor> {
     final text = window[field] as String;
     setState(() => picking = true);
     try {
-      final value = await _exceptionRoute<TimeOfDay>(context,
+      final value = await leasedDialog<TimeOfDay>(context,
           accessChanges: widget.access.changes,
           hasAccess: () => current && windows.contains(window),
           builder: (dialog, route, access) => MediaQuery(

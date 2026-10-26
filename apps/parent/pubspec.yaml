@@ -39,6 +39,8 @@ dependencies:
     path: ../../packages/audit_client
   commerce_contracts:
     path: ../../packages/commerce_contracts
+  schedule_contracts:
+    path: ../../packages/schedule_contracts
   notification_client:
     path: ../../packages/notification_client
   device_operations:

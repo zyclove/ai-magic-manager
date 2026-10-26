@@ -1,0 +1,25 @@
+{
+  "status": "NO_START",
+  "sdkCalls": 0,
+  "tests": [
+    "schedule_presets_contract_test.dart",
+    "schedule_exception_editor_test.dart"
+  ],
+  "forceRequested": false,
+  "head": "106b96c20a6a2c17157132618616cfb6ff3b5c88",
+  "resourcesBefore": {
+    "ram": 1872093184,
+    "cFree": 1726185472,
+    "dFree": 14403883008
+  },
+  "sdkBefore": {
+    "sdk": [
+      "dart",
+      "dartaotruntime",
+      "flutter_tester"
+    ],
+    "unknown": 0
+  },
+  "error": "Original resource gate not met",
+  "elapsedSeconds": 0.818866399989929
+}

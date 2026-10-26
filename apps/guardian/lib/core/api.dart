@@ -37,6 +37,7 @@ class ApiFailure implements Exception {
         'INVALID_POLICY_DIRECTORY_RESPONSE' => '规则选项资料不完整，未打开规则表单。请重新加载选项。',
         'INVALID_DOMAIN' => '请输入有效域名，不含协议、端口、路径、IP 地址或通配符。',
         'INVALID_DOMAIN_CHECK_RESPONSE' => '域名检查结果与当前草稿不一致，已隐藏结果。请重新打开策略详情后检查。',
+        'INVALID_SCHEDULE_PRESETS' => '时间安排示例无法校验，未修改当前草稿。请重试或手动设置。',
         'INVALID_DOMAIN_NORMALIZATION_RESPONSE' =>
           '域名格式校验结果无法确认，未加入规则。请核对输入后重试。',
         'INVALID_RESPONSE' => '服务返回的数据无法读取，暂时不能确认结果。已提交的操作请先核对原记录，避免重复提交。',
