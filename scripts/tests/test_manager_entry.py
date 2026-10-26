@@ -1,4 +1,5 @@
-"""Exercise only the new entry's plans and input guards; no SDK or deployment."""
+"""Exercise plans, guards and controlled command inventories; no SDK or deployment."""
+import base64
 import json
 import os
 from pathlib import Path
@@ -11,6 +12,30 @@ import uuid
 ROOT = Path(__file__).resolve().parents[2]
 ENTRY = ROOT / "scripts/manager.ps1"
 PWSH = os.environ.get("PWSH") or shutil.which("pwsh")
+
+DOCTOR_WRAPPER = r'''
+$ErrorActionPreference = 'Stop'
+$fixture = [Text.Encoding]::UTF8.GetString([Convert]::FromBase64String('__PAYLOAD__')) | ConvertFrom-Json
+$global:doctorLookups = [Collections.Generic.List[object]]::new()
+function global:docker { throw 'Diagnostic discovery must not invoke Docker.' }
+function global:git { throw 'Diagnostic discovery must not invoke Git.' }
+function global:java { throw 'Diagnostic discovery must not invoke Java.' }
+function global:mvn { throw 'Diagnostic discovery must not invoke Maven.' }
+function global:flutter { throw 'Diagnostic discovery must not invoke Flutter.' }
+function global:dart { throw 'Diagnostic discovery must not invoke Dart.' }
+function global:configured-flutter { throw 'Diagnostic discovery must not invoke configured tools.' }
+function global:Get-Command {
+    param([string]$Name, [object]$CommandType, [string]$ErrorAction)
+    $global:doctorLookups.Add(@{name=$Name; externalScriptAllowed=
+        (([Management.Automation.CommandTypes]$CommandType -band [Management.Automation.CommandTypes]::ExternalScript) -ne 0)})
+    if ($fixture.available -contains $Name) { return [pscustomobject]@{Source=$Name} }
+}
+$parameters = @{}
+foreach ($property in $fixture.parameters.PSObject.Properties) { $parameters[$property.Name]=$property.Value }
+$raw = @(& $fixture.entry doctor @parameters)
+[ordered]@{inventory=(($raw -join "`n") | ConvertFrom-Json); lookups=@($global:doctorLookups.ToArray())} |
+    ConvertTo-Json -Depth 10 -Compress
+'''
 
 
 @unittest.skipUnless(PWSH, "Set PWSH to PowerShell 7 or put pwsh on PATH")
@@ -32,10 +57,53 @@ class ManagerEntryTest(unittest.TestCase):
         self.assertEqual(document["action"], action)
         return document
 
+    def doctor_with_command_inventory(self, parameters, available):
+        payload = base64.b64encode(json.dumps({
+            "entry": str(ENTRY), "parameters": parameters, "available": available,
+        }).encode("utf-8")).decode("ascii")
+        script = DOCTOR_WRAPPER.replace("__PAYLOAD__", payload)
+        encoded = base64.b64encode(script.encode("utf-16-le")).decode("ascii")
+        result = subprocess.run([PWSH, "-NoLogo", "-NoProfile", "-EncodedCommand", encoded],
+                                cwd=ROOT, capture_output=True, text=True,
+                                encoding="utf-8", timeout=20)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        return json.loads(result.stdout)
+
+    def test_doctor_runtime_does_not_require_source_build_commands(self):
+        runtime = self.doctor_with_command_inventory({"Toolset": "Runtime"}, ["docker"])
+        self.assertEqual(runtime["inventory"]["toolset"], "Runtime")
+        self.assertEqual(runtime["inventory"]["missingTools"], [])
+        self.assertEqual([item["name"] for item in runtime["lookups"]], ["docker"])
+        build = self.doctor_with_command_inventory({}, ["docker"])
+        self.assertEqual(build["inventory"]["toolset"], "Build")
+        self.assertEqual(build["inventory"]["missingTools"], ["git", "java", "mvn", "flutter"])
+        self.assertEqual([item["name"] for item in build["lookups"]],
+                         ["docker", "git", "java", "mvn", "flutter"])
+        self.assertIn("not verified", runtime["inventory"]["scope"])
+
+    def test_doctor_checks_explicit_build_tools_as_file_commands_without_invocation(self):
+        absent = Path(".cache") / ("doctor absent tools-" + uuid.uuid4().hex)
+        self.assertFalse((ROOT / absent).exists())
+        maven = str(ROOT / absent / "mvn.ps1")
+        dart = str(ROOT / absent / "dart.ps1")
+        result = self.doctor_with_command_inventory({
+            "Toolset": "Build", "MavenCommand": str(absent / "mvn.ps1"),
+            "FlutterCommand": "configured-flutter", "DartCommand": str(absent / "dart.ps1"),
+        }, ["docker", "git", "java", maven, "configured-flutter", dart])
+        inventory = result["inventory"]
+        self.assertEqual(inventory["missingTools"], [])
+        self.assertEqual({item["tool"]: item["command"] for item in inventory["tools"]}, {
+            "docker": "docker", "git": "git", "java": "java", "mvn": maven,
+            "flutter": "configured-flutter", "dart": dart,
+        })
+        self.assertEqual([item["name"] for item in result["lookups"]
+                          if item["externalScriptAllowed"]], [maven, "configured-flutter", dart])
+
     def test_each_action_has_the_expected_entry_and_forwarded_parameters(self):
         source = str(ROOT / "input source")
         rows = [
-            ("doctor", "manager.ps1", [], {}),
+            ("doctor", "manager.ps1", [], {"Toolset": "Build"}),
+            ("doctor", "manager.ps1", ["-Toolset", "Runtime"], {"Toolset": "Runtime"}),
             ("init", "initialize-deployment.ps1", [], {
                 "PublicUrl": "http://localhost:18090", "EdgePort": 18090,
                 "ProjectName": "ai-manager-repro",
@@ -140,6 +208,8 @@ class ManagerEntryTest(unittest.TestCase):
     def test_invalid_options_fail_before_any_action(self):
         rows = [
             (["build", "-Tls"], "does not apply"),
+            (["build", "-Toolset", "Runtime"], "does not apply"),
+            (["doctor", "-Toolset", "Runtime", "-MavenCommand", "configured-mvn"], "requires doctor -Toolset Build"),
             (["resume", "-Offline"], "does not apply"),
             (["init-ledger", "-Offline"], "does not apply"),
             (["status", "-Directory", "../outside-manager"], "Deployment directory"),

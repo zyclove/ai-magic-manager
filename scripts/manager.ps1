@@ -22,6 +22,7 @@ param(
     [Parameter(Position=0)]
     [ValidateSet('doctor', 'init', 'build', 'init-ledger', 'start', 'resume', 'status', 'verify')]
     [string]$Action = 'doctor',
+    [ValidateSet('Build', 'Runtime')][string]$Toolset = 'Build',
     [string]$Directory = '.local/deployment',
     [string]$PublicUrl,
     [ValidateRange(1, 65535)][int]$EdgePort,
@@ -45,7 +46,7 @@ $ErrorActionPreference = 'Stop'
 if ($Help) { Get-Help $PSCommandPath -Detailed; return }
 
 $allowed = @{
-    doctor = @()
+    doctor = @('Toolset', 'MavenCommand', 'FlutterCommand', 'DartCommand')
     init = @('Directory', 'PublicUrl', 'EdgePort', 'ProjectName', 'ExternalTlsProxy', 'ConsumerIdentity')
     build = @('Directory', 'SourceDirectory', 'MavenCommand', 'FlutterCommand', 'DartCommand', 'MavenRepository', 'ConsumerIdentity', 'Offline')
     'init-ledger' = @('Directory')
@@ -61,6 +62,14 @@ foreach ($name in $PSBoundParameters.Keys) {
     $value = $PSBoundParameters[$name]
     if ($value -is [string] -and [string]::IsNullOrWhiteSpace($value)) { throw "Parameter -$name must not be empty." }
     $forward[$name] = $value
+}
+if ($Action -eq 'doctor') {
+    $forward.Toolset = if ($Toolset -ieq 'Runtime') { 'Runtime' } else { 'Build' }
+    if ($forward.Toolset -eq 'Runtime') {
+        foreach ($name in @('MavenCommand', 'FlutterCommand', 'DartCommand')) {
+            if ($forward.ContainsKey($name)) { throw "Parameter -$name requires doctor -Toolset Build." }
+        }
+    }
 }
 
 $repository = [IO.Path]::GetFullPath((Split-Path $PSScriptRoot -Parent))
@@ -149,26 +158,37 @@ if ($Plan) {
 }
 
 if ($Action -eq 'doctor') {
-    $tools = @(
-        @{ name='docker'; purpose='Run the selected Compose deployment' }
-        @{ name='git'; purpose='Bind the source revision when building release artifacts' }
-        @{ name='java'; purpose='Build backend artifacts' }
-        @{ name='mvn'; purpose='Build backend artifacts' }
-        @{ name='flutter'; purpose='Build Flutter applications' }
-    )
+    $tools = @(@{ name='docker'; command='docker'; purpose='Run the selected Compose deployment' })
+    if ($forward.Toolset -eq 'Build') {
+        $tools += @(
+            @{ name='git'; command='git'; purpose='Bind the source revision when building release artifacts' }
+            @{ name='java'; command='java'; purpose='Build backend artifacts' }
+            @{ name='mvn'; command=$(if ($forward.ContainsKey('MavenCommand')) { $forward.MavenCommand } else { 'mvn' }); purpose='Build backend artifacts' }
+            @{ name='flutter'; command=$(if ($forward.ContainsKey('FlutterCommand')) { $forward.FlutterCommand } else { 'flutter' }); purpose='Build Flutter applications' }
+        )
+        if ($forward.ContainsKey('DartCommand')) {
+            $tools += @{ name='dart'; command=$forward.DartCommand; purpose='Use the explicitly configured Dart command for client verification' }
+        }
+    }
     $availability = foreach ($tool in $tools) {
+        $commandKinds = [Management.Automation.CommandTypes]::Application
+        if ($tool.name -in @('mvn', 'flutter', 'dart')) {
+            $commandKinds = $commandKinds -bor [Management.Automation.CommandTypes]::ExternalScript
+        }
         [ordered]@{
             tool = $tool.name
-            available = $null -ne (Get-Command $tool.name -CommandType Application -ErrorAction SilentlyContinue)
+            command = $tool.command
+            available = $null -ne (Get-Command $tool.command -CommandType $commandKinds -ErrorAction SilentlyContinue)
             purpose = $tool.purpose
         }
     }
     [ordered]@{
         powershell = $PSVersionTable.PSVersion.ToString()
+        toolset = $forward.Toolset
         tools = @($availability)
         missingTools = @($availability | Where-Object { -not $_.available } | ForEach-Object { $_.tool })
         scope = 'Command availability only; versions, Compose support, daemon health, and platform compatibility are not verified.'
-        next = 'Use init -Plan to inspect initialization; see docs/deployment-quickstart.md.'
+        next = if ($forward.Toolset -eq 'Runtime') { 'Use status -Active -Plan to inspect the selected existing environment; see docs/deployment-quickstart.md.' } else { 'Use init -Plan to inspect initialization; see docs/deployment-quickstart.md.' }
     } | ConvertTo-Json -Depth 5
     return
 }

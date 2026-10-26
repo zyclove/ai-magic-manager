@@ -10,13 +10,14 @@
 | Linux / macOS | `sh scripts/manager.sh` | 相同参数与核心；本批未做这两个系统的真实部署验收 |
 | 已在 PowerShell 7 中 | `./scripts/manager.ps1` | 可直接使用全部动作 |
 
-需要预先准备 PowerShell 7、Docker Engine/Desktop 与 Compose 插件。源码构建另需 Git、Java 17、Maven、Flutter/Dart；精确版本和完整安全要求以[部署手册](deployment-runbook.md)为准。入口不会下载或升级它们。`doctor` 的 `missingTools` 列出未找到的命令，仍需人工核对实际版本和环境。
+需要预先准备 PowerShell 7、Docker Engine/Desktop 与 Compose 插件。源码构建另需 Git、Java 17、Maven、Flutter/Dart；精确版本和完整安全要求以[部署手册](deployment-runbook.md)为准。入口不会下载或升级它们。`doctor` 默认使用 `-Toolset Build` 盘点源码构建命令；只运行或恢复已有环境时使用 `doctor -Toolset Runtime`，只检查 Docker，不把缺少 Java/Maven/Flutter 当成运行工具缺失。`missingTools` 仅表示所选档位中未找到的命令，不代表 Compose 插件、服务、SDK 版本或安装已验收。
 
 下面以 PowerShell 7 为例；其他系统只替换命令前缀，参数相同。
 
 ```powershell
 # 只检查命令是否可找到，不调用 SDK、连接服务或输出凭据
 ./scripts/manager.ps1 doctor
+# 只准备运行已有环境时，可改用：doctor -Toolset Runtime
 # 先看计划：不创建文件、不读取部署凭据、不启动命令
 ./scripts/manager.ps1 init -Directory .local/demo -ProjectName ai-manager-demo -Plan
 # 确认计划后，创建全新环境；已有目录会拒绝覆盖
@@ -40,6 +41,7 @@
 | 需要 | 参数与说明 |
 | --- | --- |
 | 查看任一动作 | 加 `-Plan`（别名 `-DryRun`）；输出动作、非秘密参数和影响，不执行 |
+| 按用途检查工具 | `doctor -Toolset Runtime` 用于已有环境；默认 `Build` 检查源码工具。Build 可复用 `-MavenCommand`、`-FlutterCommand`、`-DartCommand` 指定命令；Runtime 传构建覆盖项会明确拒绝 |
 | 获取帮助 | `-Help`；所有动作仅接受相关参数，避免静默忽略 |
 | 恢复已创建环境 | `resume -Directory .local/demo -Plan` 查看计划；实际恢复仅启动同批已有容器，不构建、不创建、不重写原发布记录。TLS/身份配置参数沿用该环境原启动参数 |
 | 查看当前已选环境 | `status -Active`；复用已提交的控制台选择，只读展示项目、公开入口与容器状态，无需记住快照路径 |
@@ -53,6 +55,8 @@
 部署目录统一位于仓库 `.local/`。多个环境用不同目录、Compose 项目名与端口。显式 `Directory`、`SourceDirectory`、`MavenRepository`、`IdentityAdminDirectory`、`IdentityRuntimeDirectory` 的相对路径都按该入口所在仓库根目录解析，绝对路径保持其含义；`-Plan` 显示最终绝对路径，避免从其他工作目录执行时指向不同文件。
 
 `MavenCommand`、`FlutterCommand`、`DartCommand` 若填写带本系统目录分隔符的文件路径，也按同一仓库基准解析；只填 `mvn`、`flutter` 等命令名时继续从 PATH 查找。路径规范化只处理参数字符串，不检查配置内容、不执行工具；实际文件、权限及 SDK 目标仍由对应动作校验。
+
+`doctor -Toolset Build` 返回各工具的逻辑名称、实际查询命令、可找到状态及用途，显式工具路径与构建动作共用相同的仓库基址规则。Maven/Flutter/显式 Dart 的文件型脚本可以参与发现；这里不执行脚本或检查 SDK 内部内容。未显式指定 Dart 时沿用构建的 Flutter SDK 选择，不另要求系统 PATH 安装 Dart。诊断新档位的参数及受控发现回归尚未运行，见[阶段记录](reviews/doctor-toolsets-20261026.md)。
 
 `-FlutterCommand` 支持 SDK `bin` 入口及其文件符号链接，实际调用与 Dart／工具缓存定位使用同一解析路径。若 PATH 中是普通转发脚本，请改填真实 SDK 的 `bin/flutter` 或 `bin/flutter.bat`；入口不会猜测版本管理器的内部目录。
 
