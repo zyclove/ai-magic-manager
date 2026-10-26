@@ -341,6 +341,8 @@ void main() {
       expect(find.text('first'), findsOneWidget);
       expect(actions, 1);
       expect(cursors, [null]);
+      expect(find.text('操作结果待核对，已保留当前列表'), findsOneWidget);
+      expect(find.text('操作未完成，已保留当前列表'), findsNothing);
       expect(find.text('刷新列表'), findsOneWidget);
       await tap(tester, '刷新列表');
       expect(actions, 1, reason: 'Refresh must not replay an unknown write.');
@@ -671,6 +673,83 @@ void main() {
       expect(find.byType(FailureView), findsNothing);
     });
   }
+
+  testWidgets('read denial retires captured actions until an accepted new page',
+      (tester) async {
+    final append = Completer<http.Response>();
+    final detail = Completer<bool>();
+    final cursors = <String?>[];
+    var opens = 0, creates = 0;
+    final api = apiFor((request) {
+      cursors.add(request.url.queryParameters['cursor']);
+      return switch (cursors.length) {
+        1 => page(['private-before-denied'], cursor: 'private-next'),
+        2 => append.future,
+        _ => page(['current-after-retry'], cursor: 'current-next'),
+      };
+    });
+    addTearDown(() {
+      if (!append.isCompleted) append.complete(unavailable());
+      if (!detail.isCompleted) detail.complete(false);
+    });
+    await tester.pumpWidget(host(api,
+        create: () async { creates++; },
+        onOpenChanged: (row) {
+          opens++;
+          expect(row['name'], 'private-before-denied');
+          return detail.future;
+        }));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'private');
+    await tester.pumpAndSettle();
+    Finder button(String text) => find.ancestor(
+        of: find.text(text),
+        matching: find.byWidgetPredicate((widget) => widget is ButtonStyleButton));
+    final heldOpen = tester.widget<ButtonStyleButton>(button('查看详情')).onPressed!;
+    final heldCreate = tester.widget<ButtonStyleButton>(button('新建')).onPressed!;
+    final heldRefresh = tester.widget<IconButton>(find.byWidgetPredicate(
+        (widget) => widget is IconButton && widget.tooltip == '刷新')).onPressed!;
+    await tester.ensureVisible(find.text('加载更多'));
+    await tester.tap(find.text('加载更多'));
+    await tester.pump();
+    expect(cursors, [null, 'private-next']);
+    heldOpen();
+    await tester.pump();
+    expect(opens, 1);
+    append.complete(http.Response('{"errorCode":"SCOPE_DENIED"}', 403));
+    await tester.pumpAndSettle();
+    expect(find.text('private-before-denied'), findsNothing);
+    expect(tester.widget<TextField>(find.byType(TextField)).controller!.text, isEmpty);
+    expect(tester.widget<ButtonStyleButton>(button('新建')).onPressed, isNull);
+    heldOpen();
+    heldCreate();
+    heldRefresh();
+    await tester.pump();
+    expect(opens, 1);
+    expect(creates, 0);
+    expect(cursors, [null, 'private-next']);
+    await tap(tester, '重试');
+    expect(cursors, [null, 'private-next', null]);
+    expect(find.text('current-after-retry'), findsOneWidget);
+    expect(tester.widget<ButtonStyleButton>(button('新建')).onPressed, isNotNull);
+    detail.complete(true);
+    await tester.pumpAndSettle();
+    heldOpen();
+    heldCreate();
+    heldRefresh();
+    await tester.pump();
+    expect(opens, 1);
+    expect(creates, 0);
+    expect(cursors, [null, 'private-next', null],
+        reason: 'The previous action and retired callbacks cannot refresh a new view.');
+    expect(find.text('current-after-retry'), findsOneWidget);
+    expect(find.text('private-before-denied'), findsNothing);
+    expect(find.byType(FailureView), findsNothing);
+    await tap(tester, '新建');
+    expect(creates, 1);
+    expect(cursors, [null, 'private-next', null, null]);
+    expect(tester.takeException(), isNull);
+  });
 
   for (final append in [false, true]) {
     for (final status in [401, 403]) {

@@ -75,6 +75,7 @@ class ResourcePageState extends State<ResourcePage> {
   String? cursor;
   final _receivedCursors = <String>{};
   bool cursorExpired = false;
+  bool readDenied = false;
   String query = '';
   bool loading = true;
   bool more = false;
@@ -125,6 +126,26 @@ class ResourcePageState extends State<ResourcePage> {
     searchFocus.requestFocus();
   }
 
+  // Retire all callbacks that captured a formerly readable batch. Only a new
+  // authorized read can enable new actions; write-only MFA errors do not enter here.
+  void _discardDeniedRead(Object failure) {
+    resourceGeneration++;
+    generation++;
+    rows = [];
+    cursor = null;
+    _receivedCursors.clear();
+    cursorExpired = false;
+    readDenied = true;
+    query = '';
+    search.clear();
+    loading = false;
+    more = false;
+    acting = false;
+    appendError = null;
+    actionError = null;
+    error = failure;
+  }
+
   Future<void> load({bool append = false}) async {
     if (!_currentOwner) return;
     if (append && (loading || more || acting || cursor == null)) return;
@@ -167,6 +188,7 @@ class ResourcePageState extends State<ResourcePage> {
           rows = append ? [...rows, ...pageRows] : pageRows;
           cursor = nextCursor;
           cursorExpired = false;
+          readDenied = false;
         });
       }
     } catch (e) {
@@ -176,12 +198,7 @@ class ResourcePageState extends State<ResourcePage> {
               (e.status == 401 ||
                   e.status == 403 ||
                   e.code == 'WORKSPACE_CHANGED')) {
-            rows = [];
-            cursor = null;
-            _receivedCursors.clear();
-            cursorExpired = false;
-            appendError = null;
-            error = e;
+            _discardDeniedRead(e);
           } else if (append) {
             appendError = e;
             if (e is ApiFailure && e.code == 'INVALID_CURSOR') {
@@ -205,7 +222,7 @@ class ResourcePageState extends State<ResourcePage> {
 
   Future<void> action(Future<void> Function() callback,
       {bool refresh = true}) async {
-    if (!_canInteract || acting || loading) return;
+    if (!_canInteract || readDenied || acting || loading) return;
     final scope = resourceGeneration;
     final permitted = widget.isCurrent;
     bool current() =>
@@ -291,7 +308,7 @@ class ResourcePageState extends State<ResourcePage> {
             return terms.every((term) => text.contains(term));
           }).toList();
     final narrow = MediaQuery.sizeOf(context).width < 760;
-    final canAct = _canInteract && !loading && !acting;
+    final canAct = _canInteract && !readDenied && !loading && !acting;
     final showActionProgress = acting && !loading && _canInteract &&
         (ModalRoute.of(context)?.isCurrent ?? true);
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -369,7 +386,7 @@ class ResourcePageState extends State<ResourcePage> {
                   child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('操作未完成，已保留当前列表',
+                        const Text('操作结果待核对，已保留当前列表',
                             style: TextStyle(fontWeight: FontWeight.w600)),
                         const SizedBox(height: 8),
                         FailureView(actionError!, reauth: guardedReauth),
