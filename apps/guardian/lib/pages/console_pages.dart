@@ -364,6 +364,7 @@ class ConsolePages extends StatelessWidget {
             createLabel: '登记应用',
             open: (r) =>
                 actions.applicationDetails(r, isCurrent: resourceCurrent),
+            refreshAfterOpen: false,
             notice: '目录中的身份由管理员登记，不代表应用已经安装或完成安全认证。');
       case 'schedules':
         return resource(

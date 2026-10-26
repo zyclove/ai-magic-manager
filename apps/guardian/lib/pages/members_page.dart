@@ -5,6 +5,7 @@ import '../core/member_access.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
 import '../ui/dialog_access.dart';
+import '../ui/member_class_scope.dart';
 import '../ui/member_editor.dart';
 import '../ui/owned_dialog_route.dart';
 import '../ui/resource_page.dart';
@@ -224,19 +225,11 @@ class _MembersPageState extends State<MembersPage> {
       if (!current(scope)) return;
       final kind = s.tenant!['kind'] as String, operatorRole = s.role;
       final path = '$root/members/${row['cursor']}/access';
-      final sources = await Future.wait([
-        scope.api.send('GET', path),
-        if (kind == 'ORGANIZATION')
-          scope.api.all('$root/classes?includeArchived=true')
-      ]);
+      final access = await scope.api.send('GET', path) as Json;
       if (!mounted || !current(scope)) return;
-      final access = sources[0] as Json;
-      final classNames = {
-        if (sources.length > 1)
-          for (final c in sources[1] as List<Json>)
-            c['id']: '${c['name']}${c['state'] == 'ARCHIVED' ? '（已归档）' : ''}'
-      };
-      final member = <String, dynamic>{...row, ...access};
+      final classIds = List<String>.unmodifiable(
+          List<String>.from(access['classIds'] as List? ?? const []));
+      final member = <String, dynamic>{...row, ...access, 'classIds': classIds};
       if (access['subjectId'] != row['subjectId']) {
         member['subjectName'] = null;
         member['subjectArchived'] = false;
@@ -245,6 +238,8 @@ class _MembersPageState extends State<MembersPage> {
           currentRole: access['role']);
       var edit = false;
       final removalKey = requestId();
+      final changes = flowChanges(scope);
+      Api? classScopeApi;
       await scopedDetailsDialog(
           context,
           '成员详情',
@@ -256,17 +251,27 @@ class _MembersPageState extends State<MembersPage> {
             '角色': label(member['role']),
             '访问范围': memberScope(member),
             if (member['subjectId'] != null) '档案标识': member['subjectId'],
-            if ((member['classIds'] as List? ?? []).isNotEmpty)
-              '获授班级': (member['classIds'] as List)
-                  .map((id) => '${classNames[id] ?? '不可用班级'} · $id')
-                  .join('\n'),
             '权限版本': member['version'],
             '资料最近同步': dateLabel(member['profileUpdatedAt']),
             if (member['role'] == 'OWNER') '所有者权限': '如需转交，请使用“所有者交接”，由对方确认接收。',
           },
           reauth: reauth,
-          accessChanges: flowChanges(scope),
+          accessChanges: changes,
           hasAccess: () => current(scope),
+          extraContent: classIds.isEmpty ? null : Builder(builder: (dialog) {
+            if (!dialog.mounted || !current(scope)) return const SizedBox.shrink();
+            final route = ModalRoute.of(dialog);
+            bool available() => dialog.mounted && current(scope) &&
+                route?.isActive == true &&
+                (route is! OwnedDialogRoute<dynamic> || route.available);
+            if (!available()) return const SizedBox.shrink();
+            return MemberClassScope(
+                api: classScopeApi ??= dialogApi(dialog, scope),
+                path: '$root/classes?includeArchived=true',
+                classIds: classIds,
+                accessChanges: changes,
+                isCurrent: available);
+          }),
           actions: [
             DetailAction('权限变更记录', (dialog) => history(dialog, root, member, scope),
                 closeOnSuccess: false),

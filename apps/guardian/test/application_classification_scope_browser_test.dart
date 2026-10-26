@@ -357,11 +357,32 @@ void main() {
   });
 
   testWidgets('closing classification without saving keeps its application '
-      'details parent open', (tester) async {
-    final session = await _session(tester, (request) async => _normal(request));
+      'details and loaded list position', (tester) async {
+    final applicationReads = <http.Request>[];
+    final session = await _session(tester, (request) async {
+      if (request.url.path.endsWith('/applications')) {
+        applicationReads.add(request);
+        if (request.url.queryParameters['cursor'] != null) {
+          return _reply({'items': [{..._application(), 'id': _b,
+            'displayName': '第二个应用'}], 'nextCursor': null});
+        }
+        return _reply({'items': [_application()], 'nextCursor': _app});
+      }
+      return _normal(request);
+    });
     await _mount(tester, session, applications: true);
-    final row = tester.widget<ResourcePage>(find.byType(ResourcePage)).onOpen!;
-    final opening = _Invocation(row(_application()));
+    await tester.ensureVisible(find.widgetWithText(OutlinedButton, '加载更多'));
+    await tester.tap(find.widgetWithText(OutlinedButton, '加载更多'));
+    await workspace.flushReads(tester);
+    expect(applicationReads, hasLength(2));
+    expect(applicationReads.last.url.queryParameters['cursor'], _app);
+    expect(find.text('第二个应用'), findsOneWidget);
+    final search = find.byType(TextField);
+    await tester.enterText(search, '应用');
+    await tester.pump();
+    final details = find.widgetWithText(TextButton, '查看详情').first;
+    await tester.ensureVisible(details);
+    await tester.tap(details);
     await workspace.flushReads(tester);
     final parent = ModalRoute.of(tester.element(find.descendant(
         of: find.byType(AlertDialog), matching: find.text(_name))));
@@ -373,14 +394,17 @@ void main() {
     await workspace.flushReads(tester);
     expect(find.byType(ApplicationClassificationDialog), findsNothing);
     expect(find.text('查看与设置分类'), findsOneWidget);
-    expect((parent! as OwnedDialogRoute<void>).available, isTrue);
-    expect(opening.completed, isFalse,
+    final detailsRoute = parent! as OwnedDialogRoute<void>;
+    expect(detailsRoute.available, isTrue,
         reason: 'Cancelling the child must not finish the application details.');
     expect(session.requests.where((r) => r.method == 'PUT'), isEmpty);
     await tester.tap(find.widgetWithText(TextButton, '关闭').last);
     await workspace.flushReads(tester);
-    expect(opening.completed, isTrue);
-    expect(opening.failure, isNull);
+    expect(detailsRoute.available, isFalse);
+    expect(applicationReads, hasLength(2),
+        reason: 'A read-only return must preserve the loaded pages.');
+    expect(find.text('第二个应用'), findsOneWidget);
+    expect(tester.widget<TextField>(search).controller!.text, '应用');
     expect(tester.takeException(), isNull);
   });
 
