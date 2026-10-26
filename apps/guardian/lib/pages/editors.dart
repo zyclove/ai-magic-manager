@@ -16,6 +16,7 @@ import '../ui/design.dart';
 import '../ui/dialog_access.dart';
 import '../ui/editor_draft_text.dart';
 import '../ui/owned_dialog_route.dart';
+import '../ui/schedule_week_view.dart';
 import 'device_subflow_scope.dart';
 import 'schedule_exception_editor.dart';
 import 'schedule_preset_picker.dart';
@@ -156,7 +157,8 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   Object? error;
   bool busy = false, resultUnknown = false, closing = false, exitOpen = false;
   bool revoked = false, reviewPriorSubmission = false, exceptionOpen = false;
-  String? exceptionNotice, presetNotice;
+  String? exceptionNotice, presetNotice, weeklyNotice;
+  bool weeklyWarning = false;
   Object? presetFailure;
   bool choosingPresets = false, loadingPresets = false;
   final subflowLifetime = _EditorLifetime();
@@ -254,6 +256,8 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
     error = null;
     exceptionNotice = null;
     presetNotice = null;
+    weeklyNotice = null;
+    weeklyWarning = false;
     presetFailure = null;
     choosingPresets = loadingPresets = false;
     exceptionOpen = false;
@@ -389,6 +393,8 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
       } else {
         end = value;
       }
+      weeklyNotice = null;
+      weeklyWarning = false;
     });
   }
 
@@ -467,6 +473,8 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
       if (!mounted || !permitted()) return;
       setState(() {
         windows = selected.weekly.map((window) => Json.from(window)).toList();
+        weeklyNotice = null;
+        weeklyWarning = false;
         if (name.text.trim().isEmpty) name.text = selected.name;
         presetNotice = '已填入示例，尚未保存。请检查时段后保存计划。';
       });
@@ -535,26 +543,63 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
     }
   }
 
+  void selectDays(Iterable<String> selected) {
+    if (!interactive || locked) return;
+    setState(() {
+      days
+        ..clear()
+        ..addAll(selected);
+      weeklyNotice = null;
+      weeklyWarning = false;
+    });
+  }
+
   void addWindow() {
     if (!interactive || locked) return;
-    if (days.isEmpty || start == end) {
-      setState(() => error = const ApiFailure(400, 'INVALID_TIME_WINDOW'));
+    final List<Map<String, String>> additions;
+    try {
+      additions = schedule_contracts.weeklyWindowAdditions(
+          existing: windows, selectedDays: days, start: start, end: end);
+    } on FormatException {
+      setState(() {
+        weeklyNotice = days.isEmpty
+            ? '请先选择至少一个星期，再加入计划。'
+            : '请选择有效且不同的起止时间；结束早于开始表示跨午夜。';
+        weeklyWarning = true;
+      });
+      return;
+    }
+    if (additions.isEmpty) {
+      setState(() {
+        weeklyNotice = '所选时段已在计划中，无需重复添加。';
+        weeklyWarning = false;
+      });
+      return;
+    }
+    if (windows.length + additions.length >
+        schedule_contracts.maximumWeeklyWindows) {
+      setState(() {
+        weeklyNotice = '每周最多 ${schedule_contracts.maximumWeeklyWindows} 个时段。'
+            '当前有 ${windows.length} 个，本次需新增 ${additions.length} 个；请先移除一些时段。';
+        weeklyWarning = true;
+      });
       return;
     }
     setState(() {
+      windows.addAll(additions.map((window) => Json.from(window)));
       error = null;
-      for (final day in days) {
-        if (!windows.any(
-            (w) => w['day'] == day && w['start'] == start && w['end'] == end)) {
-          windows.add({'day': day, 'start': start, 'end': end});
-        }
-      }
+      weeklyNotice = '已加入 ${additions.length} 个时段，尚未保存。';
+      weeklyWarning = false;
     });
   }
 
   void removeWindow(Json window) {
     if (!interactive || locked) return;
-    setState(() => windows.remove(window));
+    setState(() {
+      windows.remove(window);
+      weeklyNotice = null;
+      weeklyWarning = false;
+    });
   }
 
   void removeException(Json exception) {
@@ -577,6 +622,14 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   Future<void> save() async {
     if (!interactive || locked) return;
     if (form.currentState?.validate() != true) return;
+    if (windows.length > schedule_contracts.maximumWeeklyWindows) {
+      setState(() {
+        weeklyNotice = '每周最多 ${schedule_contracts.maximumWeeklyWindows} 个时段，'
+            '请移除不需要的时段后保存。';
+        weeklyWarning = true;
+      });
+      return;
+    }
     // Freeze every nested map/list before client acquisition or transport waits.
     pendingBody = freeze({
       'name': name.text.trim(),
@@ -747,10 +800,37 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                               if (windows.isEmpty)
                                 const Notice('当前没有每周允许时段。日期例外仍按各自设置生效；'
                                     '没有允许例外的日期不可用。'),
+                              ScheduleWeekView(
+                                  windows: windows,
+                                  onRemove: locked ? null : removeWindow),
+                              const SizedBox(height: 16),
+                              const Text('添加每周时段'),
+                              Wrap(spacing: 8, children: [
+                                TextButton(
+                                    key: const Key('schedule-days-weekdays'),
+                                    onPressed: locked
+                                        ? null
+                                        : () => selectDays(weekdays.take(5)),
+                                    child: const Text('工作日')),
+                                TextButton(
+                                    key: const Key('schedule-days-weekend'),
+                                    onPressed: locked
+                                        ? null
+                                        : () => selectDays(weekdays.skip(5)),
+                                    child: const Text('周末')),
+                                TextButton(
+                                    key: const Key('schedule-days-everyday'),
+                                    onPressed: locked
+                                        ? null
+                                        : () => selectDays(weekdays),
+                                    child: const Text('每天')),
+                              ]),
                               Wrap(
                                   spacing: 6,
+                                  runSpacing: 6,
                                   children: weekdays
                                       .map((d) => FilterChip(
+                                          key: Key('schedule-day-$d'),
                                           label: Text(label(d)),
                                           selected: days.contains(d),
                                           onSelected: locked
@@ -765,6 +845,8 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                                                     } else {
                                                       days.remove(d);
                                                     }
+                                                    weeklyNotice = null;
+                                                    weeklyWarning = false;
                                                   });
                                                 }))
                                       .toList()),
@@ -788,22 +870,18 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                                             : () => pickTime(false),
                                         child: Text(end)),
                                     TextButton.icon(
+                                        key: const Key(
+                                            'schedule-add-weekly-window'),
                                         onPressed: locked ? null : addWindow,
                                         icon: const Icon(Icons.add, size: 18),
                                         label: const Text('加入计划'))
                                   ]),
-                              ...windows.asMap().entries.map((e) => ListTile(
-                                  dense: true,
-                                  contentPadding: EdgeInsets.zero,
-                                  title: Text(
-                                      '${label(e.value['day'])}  ${e.value['start']} – ${e.value['end']}'),
-                                  trailing: IconButton(
-                                      tooltip: '移除此时段',
-                                      onPressed: locked
-                                          ? null
-                                          : () => removeWindow(e.value),
-                                      icon:
-                                          const Icon(Icons.close, size: 18)))),
+                              if (weeklyNotice != null)
+                                Semantics(
+                                    key: const Key('schedule-weekly-notice'),
+                                    liveRegion: true,
+                                    child: Notice(weeklyNotice!,
+                                        warning: weeklyWarning)),
                               const Divider(),
                               const SizedBox(height: 14),
                               const Text('日期例外',

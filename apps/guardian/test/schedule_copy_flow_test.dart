@@ -427,6 +427,55 @@ void main() {
     expect(find.byType(TextFormField), findsNothing);
   });
 
+  testWidgets('schedule-weekly batches count new rows and reject overflow atomically',
+      (tester) async {
+    final definition = _definition();
+    definition['weekly'] = <Json>[
+      for (final day in ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY'])
+        {'day': day, 'start': '18:00', 'end': '20:00'},
+      for (var index = 0; index < 51; index++)
+        {
+          'day': weekdays[index % 7],
+          'start': '${(index ~/ 7).toString().padLeft(2, '0')}:00',
+          'end': '${(index ~/ 7).toString().padLeft(2, '0')}:30',
+        },
+    ];
+    final original = jsonEncode(definition);
+    final fixture = _Fixture(definition: definition);
+    await _openDetails(tester, fixture);
+    await _openCopy(tester);
+    final workdays = find.byKey(const Key('schedule-days-weekdays'));
+    final weekend = find.byKey(const Key('schedule-days-weekend'));
+    final add = find.byKey(const Key('schedule-add-weekly-window'));
+    await tester.ensureVisible(workdays);
+    await tester.tap(workdays);
+    expect(find.byType(InputChip), findsNWidgets(55));
+    await tester.ensureVisible(add);
+    await tester.tap(add);
+    await tester.pump();
+    expect(find.text('已加入 1 个时段，尚未保存。'), findsOneWidget);
+    expect(find.byType(InputChip), findsNWidgets(56));
+    await tester.tap(add);
+    await tester.pump();
+    expect(find.text('所选时段已在计划中，无需重复添加。'), findsOneWidget);
+    await tester.ensureVisible(weekend);
+    await tester.tap(weekend);
+    await tester.ensureVisible(add);
+    await tester.tap(add);
+    await tester.pump();
+    expect(find.textContaining('本次需新增 2 个'), findsOneWidget);
+    expect(find.byType(InputChip), findsNWidgets(56));
+    expect(fixture.writes, isEmpty);
+    await tester.ensureVisible(_button('保存副本'));
+    await tester.tap(_button('保存副本'));
+    await _until(tester, () => fixture.saved != null);
+    final expected = jsonDecode(original) as Json;
+    (expected['weekly'] as List).add(
+        {'day': 'FRIDAY', 'start': '18:00', 'end': '20:00'});
+    expect((jsonDecode(fixture.writes.single.body) as Json)['definition'], expected);
+    expect(jsonEncode(definition), original);
+  });
+
   testWidgets('schedule-copy saves exception-only and fully closed definitions',
       (tester) async {
     for (final exceptions in <List<Json>>[

@@ -1,6 +1,6 @@
 # Schedule contracts 1.0.0
 
-Pure Dart response contracts for deployment-provided schedule drafting examples.
+Pure Dart schedule contracts for deployment examples and local weekly drafting.
 The package has no runtime dependencies and supports Dart 3.4 through Dart 3.x.
 
 `SchedulePreset.readCatalog(Object?)` reads the complete response atomically:
@@ -30,8 +30,24 @@ save only after explicit confirmation. This package performs no I/O, time-zone o
 DST evaluation, recommendation, persistence, or device operation. The HTTP layer
 owns authentication, tenant/role authorization and response-size limits.
 
+`maximumWeeklyWindows` defines the 56-row storage limit. The pure
+`weeklyWindowAdditions(existing: ..., selectedDays: ..., start: ..., end: ...)`
+helper returns only genuinely new weekday/start/end rows, ordered Monday through
+Sunday. Repeated selections and rows already present are ignored; existing rows,
+including duplicates, remain unchanged. New lists and maps are immutable. Invalid
+weekdays, wall times, equal endpoints or existing row shapes throw a constant
+`FormatException` without the supplied input. Empty selections are invalid.
+
+The helper performs no mutation or partial insertion and does not enforce the
+resulting plan size. Hosts compare `existing.length + additions.length` with
+`maximumWeeklyWindows` and reject the entire oversized batch before inserting.
+A plan with 55 rows can therefore add one new row selected alongside four rows
+already present, rather than rejecting all five selected weekdays. Date-exception
+windows keep their separate eight-row limit and do not use this helper.
+
 Guardian contract tests live in
-`apps/guardian/test/schedule_presets_contract_test.dart`. Parent retains its
+`apps/guardian/test/schedule_presets_contract_test.dart` and
+`apps/guardian/test/weekly_window_additions_test.dart`. Parent retains its
 existing `SchedulePreset` adapter and maps parser errors to its existing API
 exception. Backend origin:
 `backend/src/main/java/com/aimanager/schedule/internal/SchedulePresetCatalog.java`.

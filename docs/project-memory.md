@@ -59,7 +59,7 @@ Windows 私有进程验证的稳定工具源位于 [scripts/verification](../scr
 
 恢复草稿的中文字段清单统一在[领域化展示模块](../apps/guardian/lib/ui/editor_draft_text.dart)，只读取已捕获的提交与现有目录。名称缺失保留完整对象编号，未知字段也保留；展示层不得读取网络、改写原提交或解除重试保护。
 
-时间安排示例的不可变模型与严格响应校验统一在 [schedule_contracts](../packages/schedule_contracts/README.md)，Parent 保留轻量适配，Guardian 直接消费。目录仅按需读取，回填本地草稿、保留时区与日期例外，已有每周时段须确认替换；宿主负责授权、有界读取和显式保存，不能将示例选择解释为已保存或已发布。交互契约及当前验证状态见[示例交付说明](schedule-preset-ux-delivery.md)。
+时间安排示例的不可变模型与严格响应校验统一在 [schedule_contracts](../packages/schedule_contracts/README.md)，Parent 保留轻量适配，Guardian 直接消费。目录仅按需读取，回填本地草稿、保留时区与日期例外，已有每周时段须确认替换；同包的 `weeklyWindowAdditions` 只计算独立新增项，两个宿主按实际新增数整体检查 56 条上限，不部分添加，不清除既有重复行。Guardian 的 [ScheduleWeekView](../apps/guardian/lib/ui/schedule_week_view.dart) 只做分组展示，删除仍由原编辑器的交互和权限门禁处理。宿主负责授权、有界读取和显式保存，不能将示例选择解释为已保存或已发布。交互契约及当前验证状态见[示例交付说明](schedule-preset-ux-delivery.md)。
 
 时间计划的[日期例外编辑器](../apps/guardian/lib/pages/schedule_exception_editor.dart)只返回独立本地草稿；取消不写回，保存整个计划才提交。日期例外与示例弹窗共用 [leasedDialog](../apps/guardian/lib/ui/leased_dialog.dart) 绑定原父路由及权限租约；系统选择器的返回限制在局部 Navigator，不能关闭独立覆盖通知。
 

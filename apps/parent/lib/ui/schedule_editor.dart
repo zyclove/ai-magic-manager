@@ -1,6 +1,7 @@
 import 'operation_result_terminal_panel.dart';
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:schedule_contracts/schedule_contracts.dart' as contracts;
 import '../core/parent_api.dart';
 import '../core/parent_session.dart';
 import '../core/schedules.dart';
@@ -451,22 +452,19 @@ class _ScheduleEditorPageState extends State<ScheduleEditorPage> {
                                         dirty = true;
                                       });
                                     }),
-                              Text('每周时段 · ${weekly.length}/56',
+                              Text(
+                                  '每周时段 · ${weekly.length}/${contracts.maximumWeeklyWindows}',
                                   style:
                                       Theme.of(context).textTheme.titleLarge),
                               ScheduleWindowComposer(
                                   weekly: true,
-                                  remaining: 56 - weekly.length,
+                                  existingWeekly: weekly,
+                                  remaining: contracts.maximumWeeklyWindows -
+                                      weekly.length,
                                   onAdd: (rows) {
                                     if (current) {
                                       setState(() {
-                                        weekly.addAll(rows.where((row) =>
-                                            !weekly.any((existing) =>
-                                                existing['day'] == row['day'] &&
-                                                existing['start'] ==
-                                                    row['start'] &&
-                                                existing['end'] ==
-                                                    row['end'])));
+                                        weekly.addAll(rows);
                                         dirty = true;
                                       });
                                     }
@@ -553,11 +551,13 @@ class _WeeklyOverview extends StatelessWidget {
 class ScheduleWindowComposer extends StatefulWidget {
   final bool weekly;
   final int remaining;
+  final List<Json> existingWeekly;
   final ValueChanged<List<Json>> onAdd;
   const ScheduleWindowComposer(
       {super.key,
       required this.weekly,
       required this.remaining,
+      this.existingWeekly = const [],
       required this.onAdd});
   @override
   State<ScheduleWindowComposer> createState() => _ScheduleWindowComposerState();
@@ -589,15 +589,39 @@ class _ScheduleWindowComposerState extends State<ScheduleWindowComposer> {
   }
 
   void add() {
-    final count = widget.weekly ? days.length : 1;
-    if (text(start) == text(end) || count == 0 || count > widget.remaining) {
-      setState(() => error = '请检查星期和起止时间，并确认未超过时段数量上限。');
-      return;
+    final List<Json> rows;
+    if (widget.weekly) {
+      try {
+        final additions = contracts.weeklyWindowAdditions(
+            existing: widget.existingWeekly,
+            selectedDays: days,
+            start: text(start),
+            end: text(end));
+        rows = additions.map((row) => Json.from(row)).toList();
+      } on FormatException {
+        setState(() => error = '请选择星期，并使用不同的起止时间。');
+        return;
+      }
+      if (rows.isEmpty) {
+        setState(() => error = '所选时段已在计划中，无需重复添加。');
+        return;
+      }
+      if (rows.length > widget.remaining ||
+          widget.existingWeekly.length + rows.length >
+              contracts.maximumWeeklyWindows) {
+        setState(() => error = '加入后将超过每周时段上限，请减少所选星期或移除不需要的时段。');
+        return;
+      }
+    } else {
+      if (text(start) == text(end) || widget.remaining < 1) {
+        setState(() => error = '请检查星期和起止时间，并确认未超过时段数量上限。');
+        return;
+      }
+      rows = [
+        {'start': text(start), 'end': text(end)}
+      ];
     }
-    widget.onAdd([
-      for (final day in widget.weekly ? days : [''])
-        {if (widget.weekly) 'day': day, 'start': text(start), 'end': text(end)}
-    ]);
+    widget.onAdd(rows);
     setState(() => error = null);
   }
 

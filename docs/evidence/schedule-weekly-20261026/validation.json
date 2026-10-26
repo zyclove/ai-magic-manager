@@ -1,0 +1,58 @@
+{
+  "createdAt": "2026-10-26T04:54:20.153912+00:00",
+  "baseCommit": "f9a418fa96749906997d76f89118f07e8dc03498",
+  "status": "STATIC_IMPLEMENTATION_RUNTIME_NOT_VERIFIED",
+  "scope": "Atomic weekly draft additions in both clients and grouped Guardian weekly editing",
+  "sdkCalls": 0,
+  "userDirection": "Continue static improvement while resources and verification window are unavailable; no SDK retries.",
+  "priorPreflight": {
+    "path": "../schedule-presets-20261026/pub-guardian-no-start.json",
+    "sha256": "cdd7e2f2ee75845f9b9a9a841596b8032b0ba0adceab9772c3501b8d437e857c",
+    "currentResourceResample": false
+  },
+  "checks": {
+    "sourceAndCallSiteReview": "REVIEWED_STATICALLY",
+    "scopedWhitespace": "CHECKED",
+    "relatedDocumentLinks": {
+      "status": "CHECKED_TARGET_EXISTS",
+      "localLinks": 82
+    },
+    "offlineDependencyResolution": "NOT_RUN",
+    "dartFormatAndAnalysis": "NOT_RUN",
+    "newSharedCases2": "NOT_RUN",
+    "newGuardianViewCase1": "NOT_RUN",
+    "newParentComposerCase1": "NOT_RUN",
+    "newGuardianBrowserJourney1": "NOT_RUN"
+  },
+  "pendingCombinedChecks": {
+    "changedDartFiles": 14,
+    "guardianVmCases": 14,
+    "parentVmCases": 2,
+    "browserJourneys": 5,
+    "notes": "Includes pending affected checks from f9a418f; historical passes are not reused as proof for changed sources."
+  },
+  "localPathDependencyResolved": false,
+  "lockfilesUnchangedFromBase": true,
+  "sourcePins": {
+    "apps/guardian/lib/pages/editors.dart": "26fd41dee29739f49a1ea9f8704e98c970b4b827b5d904212ba17b9e43532c6a",
+    "apps/guardian/lib/ui/schedule_week_view.dart": "447875085762cd1111d026b9395e1077b310859d348c009ebeafe7185672d776",
+    "apps/guardian/test/schedule_copy_flow_test.dart": "71d1848cb64cbcf1b3b8d4cba6fe33d8be7b90ed01f08d56f6fe4b4eb2e7de6b",
+    "apps/guardian/test/schedule_week_view_test.dart": "3ac78910e8d22f33ca98bd3cd9fd88a64a4bb9ef73360982b9f8513baafa1878",
+    "apps/guardian/test/weekly_window_additions_test.dart": "8158ac9f3ef7cb03318864ee8cfa7fef45171f28c32e30c36779805bed15cbeb",
+    "apps/parent/lib/ui/schedule_editor.dart": "7d8ce180d9e69951395ca9648d7ddce2d55d983f0c045a16ec244db6289c8824",
+    "apps/parent/test/schedule_window_composer_test.dart": "079ef436b924ecd191419b8ae3de4d5ae3f7b74ba706604063eb3956e29ba859",
+    "packages/schedule_contracts/lib/schedule_contracts.dart": "4f52106c7e15d57f2cc104f5963c61683eb39ecca8c1f9b07f9a85cabe0b155d",
+    "packages/schedule_contracts/README.md": "9c93185ac43a490ab80f4f2d6ef5c86eb656786b1db3ed89fab2824dfbc98072",
+    "docs/architecture/module-design.md": "40c8d66e5d81f26c08d69f20c25d995363e59439ce2e8154c778a1265dca212e",
+    "docs/policy-application-schedule-contract.md": "f2f87b129e7a1806f0dc3e2d468441dc5c447c2f818bede57bd99bdeea4ee37e",
+    "docs/schedule-preset-ux-delivery.md": "b969ec44a7bcc0c534e186e3f889bab1316231bf22ff2e0bee1a15ed286dadf6",
+    "docs/project-memory.md": "43c2b5f0cbc48a740525c1d79c6c155d06c34b4eca2a37c6d3fa088453f70d3a",
+    "docs/reviews/schedule-weekly-20261026.md": "a45e7b0cbf0d3c4723be581c443c6cfe65b0ef084c55446928027c8053429652"
+  },
+  "runtimeUpdated": false,
+  "pushed": false,
+  "limits": [
+    "No compilation, execution, rendered visual or accessibility acceptance claimed.",
+    "Existing service snapshot, backend, real-provider and device acceptance remain separate."
+  ]
+}

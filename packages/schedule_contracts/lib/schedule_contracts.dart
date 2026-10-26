@@ -1,3 +1,37 @@
+/// Maximum stored weekly windows, including any existing duplicate rows.
+const maximumWeeklyWindows = 56;
+
+/// Computes a detached batch without changing or deduplicating existing rows.
+/// Callers reject the complete batch if the resulting plan exceeds the limit.
+List<Map<String, String>> weeklyWindowAdditions({
+  required Iterable<Map<String, Object?>> existing,
+  required Iterable<String> selectedDays,
+  required String start,
+  required String end,
+}) {
+  try {
+    final selected = selectedDays.toSet();
+    if (selected.isEmpty ||
+        selected.any((day) => !_days.contains(day)) ||
+        !_wallTimes(start, end)) {
+      throw _invalid;
+    }
+    final present = <String>{};
+    for (final value in existing) {
+      final row = _weeklyWindow(value);
+      present.add('${row['day']}/${row['start']}/${row['end']}');
+    }
+    return List<Map<String, String>>.unmodifiable([
+      for (final day in _days)
+        if (selected.contains(day) && !present.contains('$day/$start/$end'))
+          Map<String, String>.unmodifiable(
+              {'day': day, 'start': start, 'end': end}),
+    ]);
+  } on FormatException {
+    throw const FormatException('Invalid weekly time window input.');
+  }
+}
+
 /// A deployment-provided drafting example, never a saved or active schedule.
 class SchedulePreset {
   final String id;
@@ -33,28 +67,17 @@ class SchedulePreset {
           !_text(description, 300) ||
           weekly is! List ||
           weekly.isEmpty ||
-          weekly.length > 56) {
+          weekly.length > maximumWeeklyWindows) {
         throw _invalid;
       }
       final seen = <String>{};
       final windows = <Map<String, String>>[];
       for (final value in weekly) {
-        final row = _object(value, const {'day', 'start', 'end'});
-        final day = row['day'];
-        final start = row['start'];
-        final end = row['end'];
-        if (day is! String ||
-            !_days.contains(day) ||
-            start is! String ||
-            !_exact(_time, start) ||
-            end is! String ||
-            !_exact(_time, end) ||
-            start == end ||
-            !seen.add('$day/$start/$end')) {
+        final row = _weeklyWindow(value);
+        if (!seen.add('${row['day']}/${row['start']}/${row['end']}')) {
           throw _invalid;
         }
-        windows.add(Map<String, String>.unmodifiable(
-            {'day': day, 'start': start, 'end': end}));
+        windows.add(row);
       }
       result.add(SchedulePreset._(id, name as String, description as String,
           windows));
@@ -86,6 +109,25 @@ Map<String, Object?> _object(Object? raw, Set<String> fields) {
   }
   return Map<String, Object?>.from(raw);
 }
+
+Map<String, String> _weeklyWindow(Object? raw) {
+  final row = _object(raw, const {'day', 'start', 'end'});
+  final day = row['day'], start = row['start'], end = row['end'];
+  if (day is! String ||
+      !_days.contains(day) ||
+      !_wallTimes(start, end)) {
+    throw _invalid;
+  }
+  return Map<String, String>.unmodifiable(
+      {'day': day, 'start': start as String, 'end': end as String});
+}
+
+bool _wallTimes(Object? start, Object? end) =>
+    start is String &&
+    end is String &&
+    _exact(_time, start) &&
+    _exact(_time, end) &&
+    start != end;
 
 bool _exact(RegExp pattern, String value) {
   final match = pattern.firstMatch(value);
