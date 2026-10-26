@@ -10,6 +10,7 @@ import '../core/member_scope_directories.dart';
 import 'design.dart';
 import 'dialog_access.dart';
 import 'editor_draft_text.dart';
+import 'member_class_picker.dart';
 import 'owned_dialog_route.dart';
 
 Future<Json?> memberEditorDialog(BuildContext context,
@@ -176,15 +177,10 @@ class _MemberEditorState extends State<MemberEditor> {
       : memberNeedsSubject(role) ? MemberScopeDirectory.subjects : null;
   Map<String, String>? optionsFor(MemberScopeDirectory directory) =>
       directory == MemberScopeDirectory.subjects ? subjectOptions : classOptions;
-  bool get directoryReady {
+  bool get optionsReady {
     final directory = requiredDirectory;
-    if (directory == null) return true;
-    final options = optionsFor(directory);
-    if (directoryLoading.contains(directory) || options == null) return false;
-    return directory == MemberScopeDirectory.subjects
-        ? subject != null && options.containsKey(subject)
-        : selectedClasses.isNotEmpty && selectedClasses.length <= 50 &&
-            selectedClasses.every(options.containsKey);
+    return directory == null ||
+        (!directoryLoading.contains(directory) && optionsFor(directory) != null);
   }
 
   void ensureRequiredDirectory() {
@@ -460,7 +456,7 @@ class _MemberEditorState extends State<MemberEditor> {
         (pending != null && !widget.retryUncertain)) return;
     final retryingUnknown = pending != null;
     if (!retryingUnknown &&
-        (!directoryReady || form.currentState?.validate() != true || roles.isEmpty || !changed)) return;
+        (!optionsReady || form.currentState?.validate() != true || roles.isEmpty || !changed)) return;
     final classes = selectedClasses.toList()..sort();
     final body = pending ?? Map<String, dynamic>.unmodifiable({
       if (!editing) 'recipientEmail': email.text.trim(),
@@ -645,53 +641,31 @@ class _MemberEditorState extends State<MemberEditor> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                          '已选 ${selectedClasses.length} 个班级 · 最多 50 个',
-                                          style: const TextStyle(color: muted)),
-                                      const SizedBox(height: 8),
                                       if (classOptions?.isEmpty == true &&
                                           selectedClasses.isEmpty)
                                         const Notice('暂无可选班级。请先在“班级与名册”中新建班级。'),
-                                      ConstrainedBox(
-                                          constraints: const BoxConstraints(
-                                              maxHeight: 240),
-                                          child: SingleChildScrollView(
-                                              child: Column(children: [
-                                            for (final id in {
-                                              ...(classOptions ?? const <String, String>{}).keys,
-                                              ...selectedClasses
-                                            })
-                                              CheckboxListTile(
-                                                contentPadding: EdgeInsets.zero,
-                                                controlAffinity:
-                                                    ListTileControlAffinity
-                                                        .leading,
-                                                title: Text((classOptions ?? const <String, String>{})[id] ??
-                                                    missingDirectoryReference(MemberScopeDirectory.classes, id)),
-                                                value: selectedClasses
-                                                    .contains(id),
-                                                onChanged: locked
-                                                    ? null
-                                                    : (v) {
-                                                        if (!current ||
-                                                            locked ||
-                                                            (v == true &&
-                                                                !(classOptions ?? const <String, String>{})
-                                                                    .containsKey(id))) return;
-                                                        setState(() {
-                                                          if (v == true) {
-                                                            selectedClasses
-                                                                .add(id);
-                                                          } else {
-                                                            selectedClasses
-                                                                .remove(id);
-                                                          }
-                                                        });
-                                                        field.didChange(Set.of(
-                                                            selectedClasses));
-                                                      },
-                                              ),
-                                          ]))),
+                                      MemberClassPicker(
+                                          options: classOptions,
+                                          selectedIds: Set<String>.unmodifiable(selectedClasses),
+                                          enabled: !locked,
+                                          canInteract: () => current && !locked &&
+                                              role == 'TEACHER' && classMode,
+                                          unavailableLabel: (id) => missingDirectoryReference(
+                                              MemberScopeDirectory.classes, id),
+                                          onChanged: (id, selected) {
+                                            if (!current || locked || role != 'TEACHER' || !classMode ||
+                                                selectedClasses.contains(id) == selected ||
+                                                (selected && (selectedClasses.length >= 50 ||
+                                                    classOptions?.containsKey(id) != true))) return;
+                                            setState(() {
+                                              if (selected) {
+                                                selectedClasses.add(id);
+                                              } else {
+                                                selectedClasses.remove(id);
+                                              }
+                                            });
+                                            field.didChange(Set.of(selectedClasses));
+                                          }),
                                       if (field.hasError)
                                         Padding(
                                             padding:
@@ -728,8 +702,8 @@ class _MemberEditorState extends State<MemberEditor> {
                                 onChanged: locked
                                     ? null
                                     : (v) {
-                                        if (!current ||
-                                            locked ||
+                                        if (!current || locked || !memberNeedsSubject(role) ||
+                                            (role == 'TEACHER' && classMode) ||
                                             (v != null &&
                                                 !(subjectOptions ?? const <String, String>{}).containsKey(v))) return;
                                         setState(() => subject = v);
@@ -792,7 +766,7 @@ class _MemberEditorState extends State<MemberEditor> {
             if (pending == null || widget.retryUncertain)
               FilledButton(
                   key: const Key('member-editor-save'),
-                  onPressed: busy || roles.isEmpty || (pending == null && (!changed || !directoryReady))
+                  onPressed: busy || roles.isEmpty || (pending == null && (!changed || !optionsReady))
                       ? null : save,
                   child: busy
                       ? const Row(mainAxisSize: MainAxisSize.min, children: [
