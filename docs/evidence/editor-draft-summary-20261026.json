@@ -1,0 +1,49 @@
+{
+  "createdAt": "2026-10-26T02:47:46.376402+00:00",
+  "baseCommit": "b732d9b28c2dc0969e2d4c10a129df2cc64fa134",
+  "status": "STATIC_ONLY",
+  "format": "NOT_RUN",
+  "strictAnalysis": "NOT_RUN",
+  "unitTests": {
+    "status": "NOT_RUN",
+    "file": "editor_draft_text_test.dart",
+    "registeredCases": 6
+  },
+  "resourceGateReceipt": {
+    "status": "NO_START",
+    "sdkCalls": 0,
+    "tests": [
+      "editor_draft_text_test.dart"
+    ],
+    "forceRequested": false,
+    "head": "b732d9b28c2dc0969e2d4c10a129df2cc64fa134",
+    "resourcesBefore": {
+      "ram": 2017132544,
+      "cFree": 2336837632,
+      "dFree": 14147244032
+    },
+    "sdkBefore": {
+      "sdk": [],
+      "unknown": 0
+    },
+    "error": "Original resource gate not met",
+    "elapsedSeconds": 0.6639227000123356
+  },
+  "sourcePins": {
+    "apps/guardian/lib/pages/editors.dart": "a1e4850effab2d674bb9438a18eabcc18238da2c981ea6e9a4474e296addba19",
+    "apps/guardian/lib/ui/editor_draft_text.dart": "18da423642dbf089fe633db92ae89e62691a0c593fd17d47e87b21ae89d86d15",
+    "apps/guardian/test/editor_draft_text_test.dart": "5b0e79c6ba2f7545e15374d5de4d9f02321e4293309c339e9293be0efdf16445",
+    "apps/guardian/lib/core/labels.dart": "af993d51e8f460bada004033c86b59193d7a5a933ce54e0a363f79cec1f3161a",
+    "apps/guardian/lib/core/rule_parameter_labels.dart": "30b1c3cee64653f872aa79688c2e35f025658fad035732f67c10f4344920c70b",
+    "apps/guardian/pubspec.yaml": "0e6fc775ba24cc541e918b7d74fde7ec7591c9badd47d5dfd2ee9f00fce24dcf",
+    "apps/guardian/pubspec.lock": "c6f16b105ed81fd036675605a44b846474fb45fec17040796c1358cdebd0016c",
+    "apps/guardian/.dart_tool/package_config.json": "7d56027a23fc233d28485accb53dc9e4a4e35ae7e4f082f5c7b9450b5f091922"
+  },
+  "runtimeUpdated": false,
+  "pushed": false,
+  "pending": [
+    "Format and strictly analyze the three affected Dart files when the original resource and SDK-idle gates recover.",
+    "Run only editor_draft_text_test.dart using existing offline dependencies."
+  ],
+  "review": "docs/reviews/editor-draft-summary-20261026.md"
+}

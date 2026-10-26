@@ -12,6 +12,7 @@ import '../core/schedule_copy.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
 import '../ui/dialog_access.dart';
+import '../ui/editor_draft_text.dart';
 import '../ui/owned_dialog_route.dart';
 import 'device_subflow_scope.dart';
 
@@ -33,7 +34,8 @@ bool _stopsEditorReplay(Object? failure) =>
     failure is ApiFailure &&
     (failure.status == 412 || isUnavailableOperationResult(failure));
 
-Widget _stoppedDraftDialog(Object failure, Json? draft, VoidCallback? close,
+Widget _stoppedDraftDialog(
+        Object failure, String? draftText, VoidCallback? close,
         {Widget? review, String? checkNotice}) =>
     PopScope(
         canPop: false,
@@ -57,13 +59,12 @@ Widget _stoppedDraftDialog(Object failure, Json? draft, VoidCallback? close,
                         const SizedBox(height: 12),
                         Text(checkNotice),
                       ],
-                      if (draft != null)
+                      if (draftText != null)
                         ExpansionTile(
                             title: const Text('保留的草稿'),
                             subtitle: const Text('展开查看并选中复制'),
                             children: [
-                              SelectableText(const JsonEncoder.withIndent('  ')
-                                  .convert(draft)),
+                              SelectableText(draftText),
                             ]),
                     ])),
             actions: [
@@ -510,8 +511,9 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
           ]);
     }
     if (recoveryStopped) {
-      return _stoppedDraftDialog(
-          error!, recoveryBody ?? pendingBody, closeOwnRoute);
+      final draft = recoveryBody ?? pendingBody;
+      return _stoppedDraftDialog(error!,
+          draft == null ? null : scheduleDraftText(draft), closeOwnRoute);
     }
     return PopScope(
         canPop: !busy && !resultUnknown && !exitOpen,
@@ -1455,8 +1457,16 @@ class _PolicyEditorState extends State<PolicyEditor> {
           ]);
     }
     if (recoveryStopped) {
-      return _stoppedDraftDialog(error ?? recoveryFailure!,
-          recoveryBody ?? pendingBody, busy ? null : closeOwnRoute,
+      final draft = recoveryBody ?? pendingBody;
+      return _stoppedDraftDialog(
+          error ?? recoveryFailure!,
+          draft == null
+              ? null
+              : policyDraftText(draft,
+                  kind: kind,
+                  applications: directories.applications,
+                  schedules: directories.schedules),
+          busy ? null : closeOwnRoute,
           checkNotice: checkNotice,
           review: policyId == null
               ? null

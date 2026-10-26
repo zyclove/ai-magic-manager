@@ -55,6 +55,8 @@ Flutter 回归优先稳定 Key／语义或类型谓词；`.icon` 按钮工厂可
 
 时间计划副本通过 [ScheduleCopy](../apps/guardian/lib/core/schedule_copy.dart) 隔离来源，保留原时区、空每周定义、跨午夜与全部日期例外；创建副本不替换策略引用。[ResourcePage](../apps/guardian/lib/ui/resource_page.dart) 的 `onOpenChanged` 只接收是否需要核对列表的信号：保存或明确关闭未知写入时重读，普通取消和只读返回不刷新；不能把子窗口正常返回或需重读推断成已保存。具体流程见[时间计划契约](policy-application-schedule-contract.md)。 停止旧提交后仍可只读核对已有策略；查询时清除临时错误不能解除原写入停止状态。原提交输入与停止原因分别保存，作用域失效一并清空；核对失败或不匹配不恢复旧 POST。
 
+恢复草稿的中文字段清单统一在[领域化展示模块](../apps/guardian/lib/ui/editor_draft_text.dart)，只读取已捕获的提交与现有目录。名称缺失保留完整对象编号，未知字段也保留；展示层不得读取网络、改写原提交或解除重试保护。
+
 在仓库根目录可用 `pwsh -File scripts/manager.ps1 status -Active` 只读定位已选环境（2026-10-25 已实际执行）。前提是 PowerShell 7、可访问的 Docker 及完整的环境选择记录；显式目录查询使用 `status -Directory ...`。状态查询不自动恢复或发布服务，也不代替业务验收。[入口实现](../scripts/manager.ps1)会选取首个 Docker 可执行入口，避免 Windows 多个同名命令被拼成路径。
 
 统一部署入口的初始化默认值由同一处解析，预览与执行共用：本机换端口只填 `-EdgePort`，指定公开 URL 时自动采用其端口；外部 TLS 代理保留独立内部端口。显式填写的 URL/端口仍交给初始化器校验，见[简明部署入口](deployment-quickstart.md)。
