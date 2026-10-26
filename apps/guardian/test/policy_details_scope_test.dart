@@ -7,9 +7,14 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:guardian/core/api.dart';
+import 'package:guardian/core/session.dart';
 import 'package:guardian/pages/console_pages.dart';
+import 'package:guardian/pages/editors.dart';
 import 'package:guardian/ui/design.dart';
+import 'package:guardian/ui/owned_dialog_route.dart';
+import 'package:guardian/ui/resource_page.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 
 import 'policy_preview_flow_test.dart' show PreviewSession, flush;
 import 'policy_target_picker_test.dart' show reply, settle;
@@ -24,8 +29,14 @@ class _ScopeSession extends PreviewSession {
   _ScopeSession() : super(groups: true);
 
   Api? requestApi;
+  int securityChecks = 0;
   @override
   Api get api => requestApi ?? super.api;
+
+  @override
+  void login({bool stepUp = false}) {
+    if (stepUp) securityChecks++;
+  }
 
   void awayAndBack(String dimension) {
     if (dimension == 'actor') {
@@ -49,12 +60,25 @@ class _Fixture {
   final bool template;
   Future<http.Response?> Function(http.Request)? respond;
   late ConsoleActions actions;
+  bool fromList = false;
+  int revision = 7;
+  String currentName = _name;
+  String? sourceVersionId;
+  Json? copied;
 
   _Fixture({this.template = false}) {
     session.intercept = (request) async {
       requests.add(request);
       final response = await respond?.call(request);
       if (response != null) return response;
+      if (fromList &&
+          request.method == 'GET' &&
+          request.url.path.endsWith('/policies')) {
+        return reply({
+          'items': [draft(), if (copied != null) copied!],
+          'nextCursor': null,
+        });
+      }
       if (request.method == 'GET' &&
           request.url.path.endsWith('/policies/$_policy')) {
         return reply(draft());
@@ -62,20 +86,37 @@ class _Fixture {
       if (request.method == 'GET' &&
           request.url.path.endsWith('/policies/$_policy/versions')) {
         return reply({
-          'items': [version()],
+          'items': [fromList ? _contractVersion(this) : version()],
           'nextCursor': null
         });
       }
+      if (fromList &&
+          request.method == 'PUT' &&
+          request.url.path.endsWith('/policies/$_policy')) {
+        currentName = (jsonDecode(request.body) as Json)['name'] as String;
+        revision++;
+        return reply(draft());
+      }
+      if (fromList &&
+          request.method == 'POST' &&
+          request.url.path.endsWith(
+              '/policies/$_policy/versions/$_version/rollback-drafts')) {
+        sourceVersionId = _version;
+        revision++;
+        return reply(draft());
+      }
       if (request.method == 'POST' &&
           request.url.path.endsWith('/policies/$_policy/copies')) {
-        return reply({
+        final value = <String, dynamic>{
           ...draft(),
           'id': 'copy-private-a',
           'kind': 'POLICY',
           'name': (jsonDecode(request.body) as Json)['name'],
           'revision': 0,
           'sourceVersionId': null
-        });
+        };
+        if (fromList) copied = value;
+        return reply(value);
       }
       throw StateError(
           'Unexpected HTTP boundary: ${request.method} ${request.url}');
@@ -84,10 +125,10 @@ class _Fixture {
 
   Json draft() => {
         'id': _policy,
-        'name': _name,
+        'name': currentName,
         'kind': template ? 'TEMPLATE' : 'POLICY',
-        'revision': 7,
-        'sourceVersionId': null,
+        'revision': revision,
+        'sourceVersionId': sourceVersionId,
         'rules': <Json>[
           {
             'id': 'private-rule-a',
@@ -134,6 +175,14 @@ class _Fixture {
           request.method == 'GET' &&
           request.url.path.endsWith('/policies/$_policy/versions'))
       .toList();
+
+  List<http.Request> get listReads => requests
+      .where((request) =>
+          request.method == 'GET' && request.url.path.endsWith('/policies'))
+      .toList();
+
+  List<http.Request> get writes =>
+      requests.where((request) => request.method != 'GET').toList();
 }
 
 class _Invocation {
@@ -149,16 +198,24 @@ class _Invocation {
   }
 }
 
-Future<void> _mount(WidgetTester tester, _Fixture fixture) async {
+Future<void> _mount(WidgetTester tester, _Fixture fixture,
+    {bool policiesList = false}) async {
   tester.view.physicalSize = const Size(1100, 900);
   tester.view.devicePixelRatio = 1;
+  fixture.fromList = policiesList;
   late BuildContext host;
-  await tester.pumpWidget(MaterialApp(
-      theme: consoleTheme(),
-      home: Scaffold(body: Builder(builder: (context) {
-        host = context;
-        return const Text('策略详情宿主');
-      }))));
+  await tester.pumpWidget(ChangeNotifierProvider<Session>.value(
+      value: fixture.session,
+      child: MaterialApp(
+          key: ObjectKey(fixture),
+          theme: consoleTheme(),
+          home: Scaffold(body: Builder(builder: (context) {
+            host = context;
+            return policiesList
+                ? const SingleChildScrollView(
+                    child: ConsolePages(section: 'policies'))
+                : const Text('策略详情宿主');
+          })))));
   fixture.actions = ConsoleActions(host, fixture.session);
   addTearDown(() async {
     await tester.pumpWidget(const SizedBox.shrink());
@@ -169,6 +226,38 @@ Future<void> _mount(WidgetTester tester, _Fixture fixture) async {
     tester.view.resetPhysicalSize();
     tester.view.resetDevicePixelRatio();
   });
+}
+
+Future<void> _waitUntil(WidgetTester tester, bool Function() ready) async {
+  for (var turn = 0; turn < 40 && !ready(); turn++) {
+    await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+    await tester.pump(const Duration(milliseconds: 50));
+  }
+  expect(ready(), isTrue, reason: 'The observed policy flow must complete.');
+  // A deliberately pending client keeps progress animations running. Complete
+  // only bounded route transitions after observing the requested state.
+  await tester.pump(const Duration(milliseconds: 350));
+  await tester.pump();
+}
+
+Finder _topButton(String text) =>
+    find.descendant(of: find.byType(AlertDialog).last, matching: _button(text));
+
+OwnedDialogRoute<dynamic> _topRoute(WidgetTester tester) =>
+    ModalRoute.of(tester.element(find.byType(AlertDialog).last))!
+        as OwnedDialogRoute<dynamic>;
+
+Future<OwnedDialogRoute<dynamic>> _openFromList(
+    WidgetTester tester, _Fixture fixture) async {
+  await _mount(tester, fixture, policiesList: true);
+  final row = find.descendant(
+      of: find.byType(ResourcePage), matching: find.text(_name));
+  await _waitUntil(tester, () => row.evaluate().length == 1);
+  expect(fixture.listReads, hasLength(1));
+  await tester.tap(row);
+  await _waitUntil(
+      tester, () => find.byType(AlertDialog).evaluate().length == 1);
+  return _topRoute(tester);
 }
 
 Finder _button(String label) => find.ancestor(
@@ -224,7 +313,9 @@ Json _schedule() => {
       'name': _scheduleName,
       'definition': {
         'timeZone': 'Asia/Shanghai',
-        'weekly': [{'day': 'MONDAY', 'start': '18:00', 'end': '20:00'}],
+        'weekly': [
+          {'day': 'MONDAY', 'start': '18:00', 'end': '20:00'}
+        ],
         'exceptions': <Json>[],
       },
     };
@@ -245,6 +336,339 @@ void _expectNoSchedulePrivate(WidgetTester tester) {
 }
 
 void main() {
+  testWidgets(
+      'policy-return history closes back to details without list refresh',
+      (tester) async {
+    final fixture = _Fixture();
+    final details = await _openFromList(tester, fixture);
+    _capture(tester, '版本历史')();
+    await _waitUntil(
+        tester, () => find.text('版本 98731').evaluate().length == 1);
+    final history = _topRoute(tester);
+    await tester.tap(_topButton('关闭'));
+    await _waitUntil(tester, () => !history.available);
+    expect(details.available, isTrue);
+    expect(details.isCurrent, isTrue);
+    expect(_button('编辑草稿'), findsOneWidget);
+    expect(fixture.listReads, hasLength(1));
+    expect(fixture.versionReads, hasLength(1));
+    expect(fixture.writes, isEmpty);
+  });
+
+  testWidgets(
+      'policy-return cancelling edit or template copy keeps old details',
+      (tester) async {
+    for (final template in [false, true]) {
+      final fixture = _Fixture(template: template);
+      final details = await _openFromList(tester, fixture);
+      _capture(tester, template ? '从模板创建策略' : '编辑草稿')();
+      await _waitUntil(
+          tester,
+          () => template
+              ? find.text('复制为策略').evaluate().isNotEmpty
+              : find.byType(PolicyEditor).evaluate().isNotEmpty);
+      final editor = _topRoute(tester);
+      await tester.tap(_topButton('取消'));
+      await _waitUntil(tester, () => !editor.available);
+      expect(details.available, isTrue);
+      expect(details.isCurrent, isTrue);
+      expect(_button('编辑草稿'), findsOneWidget);
+      expect(fixture.listReads, hasLength(1));
+      expect(fixture.writes, isEmpty);
+    }
+  });
+
+  testWidgets('policy-return edit saves once and refreshes the revised list',
+      (tester) async {
+    final fixture = _Fixture();
+    final details = await _openFromList(tester, fixture);
+    _capture(tester, '编辑草稿')();
+    await _waitUntil(
+        tester, () => find.byType(PolicyEditor).evaluate().isNotEmpty);
+    await tester.enterText(
+        find.widgetWithText(TextFormField, '策略名称'), '调整后的私有策略');
+    _capture(tester, '保存草稿')();
+    await _waitUntil(
+        tester,
+        () =>
+            fixture.listReads.length == 2 &&
+            find.text('调整后的私有策略').evaluate().length == 1);
+    expect(details.available, isFalse);
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(find.text('v8'), findsOneWidget);
+    expect(fixture.writes, hasLength(1));
+    final sent = fixture.writes.single;
+    expect(sent.method, 'PUT');
+    expect(sent.url.path, '/api/v1/tenants/tenant-a/policies/$_policy');
+    expect(sent.headers['If-Match'], '"7"');
+    expect(sent.headers['Idempotency-Key'], isNotEmpty);
+    final body = jsonDecode(sent.body) as Json;
+    expect(body.keys, unorderedEquals(['name', 'rules']));
+    expect(body['name'], '调整后的私有策略');
+    expect(body['rules'], isNotEmpty);
+    expect(fixture.listReads, hasLength(2));
+  });
+
+  testWidgets(
+      'policy-return template copy saves a new policy and refreshes once',
+      (tester) async {
+    final fixture = _Fixture(template: true);
+    final details = await _openFromList(tester, fixture);
+    _capture(tester, '从模板创建策略')();
+    await _waitUntil(tester, () => find.text('复制为策略').evaluate().isNotEmpty);
+    await tester.enterText(find.byType(TextFormField), _copyName);
+    _capture(tester, '保存')();
+    await _waitUntil(
+        tester,
+        () =>
+            fixture.listReads.length == 2 &&
+            find.text(_copyName).evaluate().length == 1);
+    expect(details.available, isFalse);
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(fixture.copies, hasLength(1));
+    final sent = fixture.copies.single;
+    expect(sent.headers['If-Match'], '"7"');
+    expect(sent.headers['Idempotency-Key'], isNotEmpty);
+    expect(sent.headers['Idempotency-Key'], isNot(_policy));
+    expect(jsonDecode(sent.body), {'name': _copyName});
+    expect(fixture.copied!['id'], isNot(_policy));
+    expect(fixture.copied!['kind'], 'POLICY');
+    expect(fixture.copied!['revision'], 0);
+    expect(find.text(_name), findsOneWidget);
+    expect(find.text('v0'), findsOneWidget);
+    expect(fixture.listReads, hasLength(2));
+    expect(fixture.writes, hasLength(1));
+  });
+
+  testWidgets(
+      'policy-return rollback cancellation keeps version and confirm refreshes',
+      (tester) async {
+    final fixture = _Fixture();
+    final details = await _openFromList(tester, fixture);
+    _capture(tester, '版本历史')();
+    await _waitUntil(tester, () => find.text('版本 98731').evaluate().isNotEmpty);
+    final history = _topRoute(tester);
+    await tester.tap(find.text('版本 98731'));
+    await _waitUntil(tester, () => find.text('历史版本').evaluate().isNotEmpty);
+    final version = _topRoute(tester);
+    _capture(tester, '回滚为草稿')();
+    await _waitUntil(tester, () => _topButton('确认').evaluate().isNotEmpty);
+    await tester.tap(_topButton('取消'));
+    await _waitUntil(tester, () => version.isCurrent);
+    expect(version.available, isTrue);
+    expect(history.available, isTrue);
+    expect(details.available, isTrue);
+    expect(fixture.writes, isEmpty);
+    expect(fixture.listReads, hasLength(1));
+
+    _capture(tester, '回滚为草稿')();
+    await _waitUntil(tester, () => _topButton('确认').evaluate().isNotEmpty);
+    await tester.tap(_topButton('确认'));
+    await _waitUntil(
+        tester,
+        () =>
+            fixture.listReads.length == 2 &&
+            find.text('v8').evaluate().length == 1);
+    expect(version.available, isFalse);
+    expect(history.available, isFalse);
+    expect(details.available, isFalse);
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(fixture.writes, hasLength(1));
+    final sent = fixture.writes.single;
+    expect(sent.method, 'POST');
+    expect(
+        sent.url.path,
+        '/api/v1/tenants/tenant-a/policies/$_policy/'
+        'versions/$_version/rollback-drafts');
+    expect(sent.headers['If-Match'], '"7"');
+    expect(sent.headers['Idempotency-Key'], isNotEmpty);
+    expect(jsonDecode(sent.body), {'name': _name});
+    expect(fixture.sourceVersionId, _version);
+    expect(fixture.listReads, hasLength(2));
+  });
+
+  testWidgets(
+      'policy-return unknown copy survives MFA and closes only for review',
+      (tester) async {
+    final fixture = _Fixture(template: true);
+    var attempts = 0;
+    fixture.respond = (request) async {
+      if (request.method != 'POST' ||
+          !request.url.path.endsWith('/policies/$_policy/copies')) return null;
+      attempts++;
+      return attempts == 2
+          ? reply({'errorCode': 'REAUTH_REQUIRED'}, 401)
+          : reply({'errorCode': 'SERVICE_UNAVAILABLE'}, 503);
+    };
+    final details = await _openFromList(tester, fixture);
+    _capture(tester, '从模板创建策略')();
+    await _waitUntil(tester, () => find.text('复制为策略').evaluate().isNotEmpty);
+    await tester.enterText(find.byType(TextFormField), _copyName);
+    _capture(tester, '保存')();
+    await _waitUntil(
+        tester, () => attempts == 1 && _button('重试原提交').evaluate().isNotEmpty);
+    final original = fixture.copies.single;
+    _capture(tester, '重试原提交')();
+    await _waitUntil(
+        tester, () => attempts == 2 && _button('重新安全验证').evaluate().isNotEmpty);
+    var field = tester.widget<TextFormField>(find.byType(TextFormField));
+    expect(field.controller!.text, _copyName);
+    expect(field.enabled, isFalse);
+    expect(_button('重试原提交'), findsOneWidget);
+    _capture(tester, '重新安全验证')();
+    await _waitUntil(tester, () => fixture.session.securityChecks == 1);
+    expect(attempts, 2, reason: 'MFA does not submit a pending write.');
+    _capture(tester, '重试原提交')();
+    await _waitUntil(
+        tester, () => attempts == 3 && _button('重试原提交').evaluate().isNotEmpty);
+    field = tester.widget<TextFormField>(find.byType(TextFormField));
+    expect(field.controller!.text, _copyName);
+    expect(field.enabled, isFalse);
+    for (final retried in fixture.copies.skip(1)) {
+      expect(retried.headers['Idempotency-Key'],
+          original.headers['Idempotency-Key']);
+      expect(retried.headers['If-Match'], original.headers['If-Match']);
+      expect(retried.body, original.body);
+    }
+    expect(fixture.listReads, hasLength(1));
+    expect(details.available, isTrue);
+    await tester.tap(find.descendant(
+        of: find.byKey(const Key('policy-copy-form')),
+        matching: _button('暂时关闭')));
+    await _waitUntil(
+        tester,
+        () => find
+            .byKey(const Key('edit-dialog-confirm-close'))
+            .evaluate()
+            .isNotEmpty);
+    await tester.tap(find.byKey(const Key('edit-dialog-confirm-close')));
+    await _waitUntil(
+        tester, () => fixture.listReads.length == 2 && !details.available);
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(fixture.copied, isNull);
+    expect(fixture.revision, 7);
+    expect(fixture.copies, hasLength(3));
+    expect(find.text(_copyName), findsNothing);
+    expect(find.textContaining('保存成功'), findsNothing);
+    expect(fixture.listReads, hasLength(2));
+  });
+
+  testWidgets(
+      'policy-return closed or ABA parent blocks late client under a cover',
+      (tester) async {
+    for (final loss in ['closed', 'actor']) {
+      final fixture = _Fixture(template: true);
+      final client = Completer<http.Client>();
+      var blocked = false,
+          waiting = false,
+          delivered = false,
+          coverClosed = false;
+      fixture.session.requestApi = Api(() {
+        if (!blocked) return Future.value(fixture.session.previewClient);
+        waiting = true;
+        return client.future.then((value) {
+          delivered = true;
+          return value;
+        });
+      }, baseUrl: 'https://fixture.invalid/api/v1');
+      addTearDown(() {
+        if (!client.isCompleted) client.complete(fixture.session.previewClient);
+      });
+      final details = await _openFromList(tester, fixture);
+      _capture(tester, '从模板创建策略')();
+      await _waitUntil(tester, () => find.text('复制为策略').evaluate().isNotEmpty);
+      await tester.enterText(find.byType(TextFormField), _copyName);
+      blocked = true;
+      _capture(tester, '保存')();
+      await _waitUntil(tester, () => waiting);
+      unawaited(showDialog<void>(
+              context: tester.element(find.byType(TextFormField)),
+              builder: (_) => const AlertDialog(title: Text('独立提示')))
+          .then<void>((_) {
+        coverClosed = true;
+      }));
+      await _waitUntil(tester, () => find.text('独立提示').evaluate().isNotEmpty);
+      final cover = ModalRoute.of(tester.element(find.text('独立提示')))!;
+      if (loss == 'closed') {
+        details.finish();
+      } else {
+        fixture.session.awayAndBack('actor');
+      }
+      client.complete(fixture.session.previewClient);
+      await _waitUntil(
+          tester,
+          () =>
+              delivered &&
+              find.text('复制为策略', skipOffstage: false).evaluate().isEmpty);
+      expect(fixture.writes, isEmpty);
+      expect(fixture.listReads, hasLength(1));
+      expect(coverClosed, isFalse);
+      expect(cover.isCurrent, isTrue);
+      expect(find.text('独立提示'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    }
+  });
+
+  testWidgets(
+      'policy-return stopped edit preserves input and closes for refresh',
+      (tester) async {
+    const stoppedName = '并发后应保留的私有草稿';
+    for (final rejection in const {
+      412: 'RESOURCE_VERSION_CONFLICT',
+      409: 'IDEMPOTENCY_KEY_EXPIRED',
+      410: 'IDEMPOTENCY_RESPONSE_ERASED',
+    }.entries) {
+      final fixture = _Fixture();
+      fixture.respond = (request) async => request.method == 'PUT' &&
+              request.url.path.endsWith('/policies/$_policy')
+          ? reply({'errorCode': rejection.value}, rejection.key)
+          : null;
+      final details = await _openFromList(tester, fixture);
+      _capture(tester, '编辑草稿')();
+      await _waitUntil(
+          tester, () => find.byType(PolicyEditor).evaluate().isNotEmpty);
+      await tester.enterText(
+          find.widgetWithText(TextFormField, '策略名称'), stoppedName);
+      final oldSave = _capture(tester, '保存草稿');
+      oldSave();
+      await _waitUntil(
+          tester,
+          () => find
+              .byKey(const Key('editor-close-stopped'))
+              .evaluate()
+              .isNotEmpty);
+      expect(fixture.writes, hasLength(1));
+      expect(fixture.writes.single.method, 'PUT');
+      expect((jsonDecode(fixture.writes.single.body) as Json)['name'],
+          stoppedName);
+      expect(find.byType(TextFormField), findsNothing);
+      expect(_button('保存草稿'), findsNothing);
+      expect(_button('按原内容恢复'), findsNothing);
+      expect(_button('重试原提交'), findsNothing);
+      await tester.ensureVisible(find.text('保留的草稿'));
+      await tester.tap(find.text('保留的草稿'));
+      await _waitUntil(
+          tester, () => find.textContaining(stoppedName).evaluate().isNotEmpty);
+      oldSave();
+      await settle(tester);
+      expect(fixture.writes, hasLength(1),
+          reason:
+              'A stopped revision or expired request cannot be resubmitted.');
+      expect(fixture.listReads, hasLength(1));
+      expect(details.available, isTrue);
+      final close = find.byKey(const Key('editor-close-stopped'));
+      expect(find.descendant(of: close, matching: find.text('关闭并刷新')),
+          findsOneWidget);
+      await tester.tap(close);
+      await _waitUntil(
+          tester, () => fixture.listReads.length == 2 && !details.available);
+      expect(find.byType(AlertDialog), findsNothing);
+      expect(fixture.revision, 7);
+      expect(fixture.listReads, hasLength(2));
+      expect(find.textContaining('保存成功'), findsNothing);
+    }
+  });
+
   for (final dimension in ['actor', 'role']) {
     testWidgets('late policy GET after $dimension ABA cannot disclose details',
         (tester) async {
@@ -573,7 +997,8 @@ void main() {
     addTearDown(() {
       if (!second.isCompleted) second.complete(reply(_scheduleDecision()));
     });
-    final invocation = _Invocation(fixture.actions.scheduleDetails(_schedule()));
+    final invocation =
+        _Invocation(fixture.actions.scheduleDetails(_schedule()));
     await settle(tester);
     _capture(tester, '检查此刻是否允许')();
     await settle(tester);
@@ -587,8 +1012,10 @@ void main() {
     await flush(tester);
     expect(fixture.requests, hasLength(2));
     expect(find.text('当地日期：2091-08-09'), findsNothing,
-        reason: 'An in-flight recheck must not present the old decision as current.');
-    second.complete(reply(_scheduleDecision(date: '2091-08-10', allowed: false)));
+        reason:
+            'An in-flight recheck must not present the old decision as current.');
+    second
+        .complete(reply(_scheduleDecision(date: '2091-08-10', allowed: false)));
     await settle(tester);
     expect(find.text('时段计算结果'), findsOneWidget);
     expect(find.text('结果：当前不在允许时段内'), findsOneWidget);
@@ -610,7 +1037,8 @@ void main() {
       final fixture = _Fixture();
       fixture.respond = (_) async => reply(_scheduleDecision());
       await _mount(tester, fixture);
-      final invocation = _Invocation(fixture.actions.scheduleDetails(_schedule()));
+      final invocation =
+          _Invocation(fixture.actions.scheduleDetails(_schedule()));
       await settle(tester);
       final check = _capture(tester, '检查此刻是否允许');
       check();
@@ -631,18 +1059,20 @@ void main() {
     }
   });
 
-  testWidgets('schedule scope loss while awaiting a client prevents the old GET',
+  testWidgets(
+      'schedule scope loss while awaiting a client prevents the old GET',
       (tester) async {
     final fixture = _Fixture();
     final client = Completer<http.Client>();
-    fixture.session.requestApi = Api(() => client.future,
-        baseUrl: 'https://fixture.invalid/api/v1');
+    fixture.session.requestApi =
+        Api(() => client.future, baseUrl: 'https://fixture.invalid/api/v1');
     fixture.respond = (_) async => reply(_scheduleDecision());
     await _mount(tester, fixture);
     addTearDown(() {
       if (!client.isCompleted) client.complete(fixture.session.previewClient);
     });
-    final invocation = _Invocation(fixture.actions.scheduleDetails(_schedule()));
+    final invocation =
+        _Invocation(fixture.actions.scheduleDetails(_schedule()));
     await settle(tester);
     _capture(tester, '检查此刻是否允许')();
     await flush(tester);
@@ -651,7 +1081,8 @@ void main() {
     client.complete(fixture.session.previewClient);
     await settle(tester);
     expect(fixture.requests, isEmpty,
-        reason: 'The authenticated client must not receive the old evaluation GET.');
+        reason:
+            'The authenticated client must not receive the old evaluation GET.');
     _expectNoSchedulePrivate(tester);
     expect(find.text('工作空间或权限已变化'), findsOneWidget);
     _capture(tester, '关闭')();
@@ -660,7 +1091,8 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('late schedule evaluation cannot disclose data or close a covering notice',
+  testWidgets(
+      'late schedule evaluation cannot disclose data or close a covering notice',
       (tester) async {
     final fixture = _Fixture();
     final response = Completer<http.Response>();
@@ -669,7 +1101,8 @@ void main() {
     addTearDown(() {
       if (!response.isCompleted) response.complete(reply(_scheduleDecision()));
     });
-    final invocation = _Invocation(fixture.actions.scheduleDetails(_schedule()));
+    final invocation =
+        _Invocation(fixture.actions.scheduleDetails(_schedule()));
     await settle(tester);
     _capture(tester, '检查此刻是否允许')();
     await flush(tester);
@@ -677,11 +1110,11 @@ void main() {
     var noticeClosed = false;
     unawaited(showDialog<void>(
         context: tester.element(find.text(_scheduleName)),
-        builder: (context) => AlertDialog(
-            title: const Text('独立通知'),
-            actions: [TextButton(onPressed: () => Navigator.pop(context),
-                child: const Text('关闭通知'))]))
-        .then((_) => noticeClosed = true));
+        builder: (context) => AlertDialog(title: const Text('独立通知'), actions: [
+              TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('关闭通知'))
+            ])).then((_) => noticeClosed = true));
     await flush(tester);
     fixture.session.awayAndBack('actor');
     response.complete(reply(_scheduleDecision()));
@@ -702,7 +1135,8 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('schedule failures distinguish revoked access from reauthentication',
+  testWidgets(
+      'schedule failures distinguish revoked access from reauthentication',
       (tester) async {
     for (final rejection in const {
       403: 'ACCESS_DENIED',
@@ -715,7 +1149,8 @@ void main() {
           ? reply({'errorCode': rejection.value}, rejection.key)
           : reply(_scheduleDecision());
       await _mount(tester, fixture);
-      final invocation = _Invocation(fixture.actions.scheduleDetails(_schedule()));
+      final invocation =
+          _Invocation(fixture.actions.scheduleDetails(_schedule()));
       await settle(tester);
       final check = _capture(tester, '检查此刻是否允许');
       check();

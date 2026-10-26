@@ -86,6 +86,10 @@ class _Fixture {
       });
     }
     if (request.method == 'POST' && request.url.path == _path) {
+      if (createFailure != null) {
+        return _reply({'errorCode': createFailure!.code},
+            status: createFailure!.status);
+      }
       saved = {'id': _copyId, ...(jsonDecode(request.body) as Json)};
       return _reply(saved!, status: 201);
     }
@@ -96,7 +100,8 @@ class _Fixture {
   late final session = _Session(api, initialRole: initialRole);
   final String initialRole;
   final Json? definition;
-  _Fixture({this.initialRole = 'OWNER', this.definition});
+  final ApiFailure? createFailure;
+  _Fixture({this.initialRole = 'OWNER', this.definition, this.createFailure});
 
   List<http.Request> get reads =>
       requests.where((request) => request.method == 'GET').toList();
@@ -326,5 +331,74 @@ void main() {
     expect(details.available, isFalse);
     expect(fixture.requests, hasLength(1));
     expect(fixture.writes, isEmpty);
+  });
+
+  testWidgets('schedule-copy unknown close reconciles without claiming saved',
+      (tester) async {
+    final fixture =
+        _Fixture(createFailure: const ApiFailure(503, 'REQUEST_FAILED'));
+    final details = await _openDetails(tester, fixture);
+    await _openCopy(tester);
+    await tester.tap(_button('保存副本'));
+    final close = find.byKey(const Key('schedule-editor-close-unknown'));
+    await _until(tester, () => close.evaluate().isNotEmpty);
+    expect(fixture.writes, hasLength(1));
+    expect(details.available, isTrue);
+    await tester.tap(close);
+    await _flush(tester);
+    expect(find.text('暂时关闭未确认的提交？'), findsOneWidget);
+    await tester.tap(find.byKey(const Key('schedule-editor-keep-unknown')));
+    await _flush(tester);
+    expect(fixture.reads, hasLength(1));
+    expect(details.available, isTrue);
+    await tester.tap(close);
+    await _flush(tester);
+    await tester
+        .tap(find.byKey(const Key('schedule-editor-confirm-close-unknown')));
+    await _until(
+        tester,
+        () =>
+            fixture.reads.length == 2 &&
+            find.byType(AlertDialog).evaluate().isEmpty);
+    expect(details.available, isFalse);
+    expect(fixture.reads, hasLength(2));
+    expect(fixture.writes, hasLength(1));
+    expect(fixture.saved, isNull);
+    expect(find.text('保存成功'), findsNothing);
+  });
+
+  testWidgets(
+      'schedule-copy expired key keeps the draft and requires list review',
+      (tester) async {
+    final fixture = _Fixture(
+        createFailure: const ApiFailure(409, 'IDEMPOTENCY_KEY_EXPIRED'));
+    final details = await _openDetails(tester, fixture);
+    final oldSave = await _openCopy(tester);
+    oldSave();
+    final close = find.byKey(const Key('editor-close-stopped'));
+    await _until(tester, () => close.evaluate().isNotEmpty);
+    expect(find.byType(TextFormField), findsNothing);
+    expect(find.text('保存副本'), findsNothing);
+    expect(fixture.writes, hasLength(1));
+    await tester.tap(find.text('保留的草稿'));
+    await _flush(tester);
+    expect(
+        find.byWidgetPredicate((widget) =>
+            widget is SelectableText &&
+            (widget.data ?? '').contains('$_sourceName（副本）')),
+        findsOneWidget);
+    oldSave();
+    await _flush(tester);
+    expect(fixture.writes, hasLength(1));
+    await tester.tap(close);
+    await _until(
+        tester,
+        () =>
+            fixture.reads.length == 2 &&
+            find.byType(AlertDialog).evaluate().isEmpty);
+    expect(details.available, isFalse);
+    expect(fixture.saved, isNull);
+    expect(fixture.writes, hasLength(1));
+    expect(find.text('保存成功'), findsNothing);
   });
 }

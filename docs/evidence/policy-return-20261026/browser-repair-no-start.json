@@ -1,0 +1,27 @@
+{
+  "status": "NO_START",
+  "sdkCalls": 0,
+  "tests": [
+    "policy_details_scope_test.dart",
+    "policy_editor_lifecycle_test.dart",
+    "schedule_copy_flow_test.dart"
+  ],
+  "forceRequested": false,
+  "commandCloseFallback": false,
+  "checkType": "BROWSER_POLICY_RETURN",
+  "head": "7d7a05b0f349272531818b79cecf1fccb6644660",
+  "resourcesBefore": {
+    "ram": 3362074624,
+    "cFree": 2351058944,
+    "dFree": 16349388800
+  },
+  "sdkBefore": {
+    "sdk": [
+      "go",
+      "runner.test"
+    ],
+    "unknown": 0
+  },
+  "error": "SDKs busy or unknown names",
+  "elapsedSeconds": 0.9513742999988608
+}

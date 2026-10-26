@@ -1,0 +1,76 @@
+{
+  "status": "PASSED",
+  "sdkCalls": 1,
+  "tests": [
+    "dialog_submit_guard_test.dart"
+  ],
+  "forceRequested": false,
+  "head": "7d7a05b0f349272531818b79cecf1fccb6644660",
+  "resourcesBefore": {
+    "ram": 4283944960,
+    "cFree": 2385215488,
+    "dFree": 16520785920
+  },
+  "sdkBefore": {
+    "sdk": [],
+    "unknown": 0
+  },
+  "pid": 224160,
+  "command": "D:\\softwares\\flutter\\bin\\flutter.bat test --no-pub --concurrency=1 --machine test/dialog_submit_guard_test.dart",
+  "terminal": {
+    "pid": 224160,
+    "creationFiletime": 134374529424153898,
+    "firstSignaledQpc": 257465.6040102,
+    "sampleQpc": 257465.614908,
+    "signaled": true,
+    "exitCode": 0,
+    "exitFiletime": 134374529478534049,
+    "kernel100ns": 0,
+    "user100ns": 0,
+    "jobAccountingObservedQpc": 257465.6149425,
+    "firstCompleteTerminalQpc": 257465.6149425,
+    "activeProcesses": 0,
+    "totalProcesses": 14,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "naturalZero": true,
+  "passed": 16,
+  "failed": 0,
+  "skipped": 0,
+  "reporterDone": true,
+  "suiteFilesMatch": true,
+  "sourceUnchanged": true,
+  "sourcePins": {
+    "apps\\guardian\\lib\\ui\\design.dart": "0aa64f5c4bf05b55ab8d1a1f032448e61483228d9c8bea293725c8d4a2a99489",
+    "apps\\guardian\\lib\\core\\api.dart": "9fb8e8284d3381635e276756872160ddf5abf108aaf24dc928032cef613e31ed",
+    "apps\\guardian\\test\\dialog_submit_guard_test.dart": "b87e602c5f299ec47d596469902e06ab805934bc20ef43e042b6bea126dd95cb",
+    "apps\\guardian\\pubspec.yaml": "0e6fc775ba24cc541e918b7d74fde7ec7591c9badd47d5dfd2ee9f00fce24dcf",
+    "apps\\guardian\\pubspec.lock": "c6f16b105ed81fd036675605a44b846474fb45fec17040796c1358cdebd0016c",
+    "apps\\guardian\\.dart_tool\\package_config.json": "7d56027a23fc233d28485accb53dc9e4a4e35ae7e4f082f5c7b9450b5f091922"
+  },
+  "sdkAfter": {
+    "sdk": [],
+    "unknown": 0
+  },
+  "appTestsPassed": true,
+  "windowReleased": true,
+  "finalOwnedState": {
+    "pid": 224160,
+    "creationFiletime": 134374529424153898,
+    "firstSignaledQpc": 257465.6040102,
+    "sampleQpc": 257466.1019838,
+    "signaled": true,
+    "exitCode": 0,
+    "exitFiletime": 134374529478534049,
+    "kernel100ns": 0,
+    "user100ns": 0,
+    "jobAccountingObservedQpc": 257466.1020257,
+    "firstCompleteTerminalQpc": 257465.6149425,
+    "activeProcesses": 0,
+    "totalProcesses": 14,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "elapsedSeconds": 6.581806800008053
+}

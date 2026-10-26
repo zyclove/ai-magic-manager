@@ -384,6 +384,7 @@ void main() {
   });
 
   for (final code in [
+    'IDEMPOTENCY_KEY_EXPIRED',
     'IDEMPOTENCY_RESULT_EXPIRED',
     'IDEMPOTENCY_RESPONSE_ERASED'
   ]) {
@@ -393,7 +394,8 @@ void main() {
       final closed = Completer<Json?>();
       final access = ValueNotifier(true);
       final bodies = <Json>[];
-      final failure = ApiFailure(410, code);
+      final failure =
+          ApiFailure(code == 'IDEMPOTENCY_KEY_EXPIRED' ? 409 : 410, code);
       try {
         await _openRecoveryForm(tester, closed: closed, access: access,
             onSubmit: (body) {

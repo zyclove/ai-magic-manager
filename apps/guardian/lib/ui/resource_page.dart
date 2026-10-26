@@ -27,7 +27,8 @@ class ResourcePage extends StatefulWidget {
   final Api api;
   final List<ColumnSpec> columns;
   final Future<void> Function(Json)? onOpen;
-  /// Only an explicit saved result refreshes details that may write.
+  /// Explicit write outcomes request refresh, including unresolved writes
+  /// closed with user confirmation; true does not imply a successful save.
   final Future<bool> Function(Json)? onOpenChanged;
   /// Read-only details can keep the current pages and filter on return.
   final bool refreshAfterOpen;

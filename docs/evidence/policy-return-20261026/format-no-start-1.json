@@ -1,0 +1,23 @@
+{
+  "status": "NO_START",
+  "sdkCalls": 0,
+  "tests": [
+    "dialog_submit_guard_test.dart"
+  ],
+  "forceRequested": false,
+  "head": "7d7a05b0f349272531818b79cecf1fccb6644660",
+  "resourcesBefore": {
+    "ram": 3215929344,
+    "cFree": 2373132288,
+    "dFree": 16450957312
+  },
+  "sdkBefore": {
+    "sdk": [
+      "go",
+      "runner.test"
+    ],
+    "unknown": 0
+  },
+  "error": "SDKs busy or unknown names",
+  "elapsedSeconds": 0.9111623999779113
+}

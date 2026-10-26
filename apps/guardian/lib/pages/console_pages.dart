@@ -410,7 +410,7 @@ class ConsolePages extends StatelessWidget {
             ],
             create: s.canWrite ? () => policyEditor(context, s) : null,
             createLabel: '创建策略',
-            open: actions.policyDetails,
+            openChanged: actions.policyDetails,
             notice: '当前支持云端配置保存。设备系统执行适配器未配置时，不会显示“策略已生效”。');
       case 'approvals':
         return resource(
@@ -912,7 +912,7 @@ class ConsoleActions {
         s.root != root || !s.canOpen('schedules')) return false;
     final d = r['definition'] as Json;
     var live = true;
-    var saved = false;
+    var needsRefresh = false;
     final revoked = ValueNotifier<bool>(false);
     final evaluation = ValueNotifier<Json?>(null);
     final parentAccess = DialogAccessBinding(context);
@@ -1000,15 +1000,15 @@ class ConsoleActions {
           if (!parentCurrent() || route?.isCurrent != true) return;
           final copy = ScheduleCopy.fromSchedule(r);
           final finish = captureDialogCompletion(ctx);
-          final created = await scheduleEditor(ctx, s,
+          final reconcile = await scheduleEditor(ctx, s,
               copy: copy, accessChanges: changes, hasAccess: parentCurrent);
-          if (created && parentCurrent()) {
-            saved = true;
+          if (reconcile && parentCurrent()) {
+            needsRefresh = true;
             finish();
           }
         }, closeOnSuccess: false)
       ]);
-      return saved && current();
+      return needsRefresh && current();
     } finally {
       live = false;
       scope.dispose();
@@ -1277,7 +1277,7 @@ class ConsoleActions {
     }
   }
 
-  Future<void> policyDetails(Json row) => openPolicyDetails(context, s,
+  Future<bool> policyDetails(Json row) => openPolicyDetails(context, s,
       root: root, row: row, preview: previewPolicy);
 
   Future<void> previewPolicy(BuildContext ctx, Json draft,

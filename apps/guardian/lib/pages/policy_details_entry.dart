@@ -279,15 +279,24 @@ class _PolicyDetailsScope extends ChangeNotifier {
   }
 
   Future<T> request<T>(Future<T> Function(Api) operation,
-      {bool write = false}) async {
+      {bool write = false, bool Function()? hasAccess}) async {
+    void requireAvailable() {
+      requireCurrent(write: write);
+      if (hasAccess?.call() == false) {
+        throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+      }
+    }
+
     try {
-      requireCurrent(write: write);
-      final result = await operation(_scope.api.scoped(() => current));
-      requireCurrent(write: write);
+      requireAvailable();
+      final result = await operation(_scope.api.scoped(
+          () => current && (!write || writable) && hasAccess?.call() != false));
+      requireAvailable();
       return result;
     } catch (failure) {
       if (failure is ApiFailure &&
-          (failure.code == 'WORKSPACE_CHANGED' ||
+          ((failure.code == 'WORKSPACE_CHANGED' &&
+                  hasAccess?.call() != false) ||
               failure.status == 403 ||
               (failure.status == 401 && failure.code != 'REAUTH_REQUIRED'))) {
         _revoke();
@@ -312,7 +321,8 @@ class _PolicyDetailsScope extends ChangeNotifier {
   }
 }
 
-Future<void> openPolicyDetails(BuildContext context, Session session,
+/// True means the list must reread its rows, not that a write succeeded.
+Future<bool> openPolicyDetails(BuildContext context, Session session,
     {required String root,
     required Json row,
     required Future<void> Function(BuildContext, Json) preview,
@@ -326,13 +336,14 @@ Future<void> openPolicyDetails(BuildContext context, Session session,
       parentCurrent: parentCurrent,
       accessChanges: accessChanges,
       readOnly: readOnly);
+  var needsRefresh = false;
   try {
     final id = row['id'];
     if (!_nonemptyText(id)) throw const ApiFailure(502, 'INVALID_RESPONSE');
     final value =
         await scope.request((api) => api.send('GET', '$root/policies/$id'));
     scope.requireCurrent();
-    if (!context.mounted) return;
+    if (!context.mounted) return false;
     final draft = _readPolicyDraft(value, expectedId: id as String);
     await actionDetails(
         context,
@@ -373,19 +384,39 @@ Future<void> openPolicyDetails(BuildContext context, Session session,
           if (scope.writable)
             DetailAction('编辑草稿', (dialog) async {
               scope.requireCurrent(write: true);
-              await policyEditor(dialog, session, draft: draft);
-            }),
+              final owner = ModalRoute.of(dialog);
+              final changed = await policyEditor(dialog, session,
+                  draft: draft,
+                  accessChanges: scope,
+                  hasAccess: () =>
+                      scope.writable && _policyRouteAvailable(owner));
+              if (changed) {
+                needsRefresh = true;
+                _finishPolicyRoute(owner);
+              }
+            }, closeOnSuccess: false),
           if (scope.writable && draft['kind'] == 'TEMPLATE')
-            DetailAction(
-                '从模板创建策略', (dialog) => _copyPolicy(dialog, scope, draft)),
+            DetailAction('从模板创建策略', (dialog) async {
+              final owner = ModalRoute.of(dialog);
+              if (await _copyPolicy(dialog, scope, draft)) {
+                needsRefresh = true;
+                _finishPolicyRoute(owner);
+              }
+            }, closeOnSuccess: false),
           if (scope.writable && draft['kind'] == 'POLICY')
             DetailAction('预览与发布', (dialog) async {
               scope.requireCurrent(write: true);
               await preview(dialog, draft);
             }, closeOnSuccess: false),
-          DetailAction(
-              '版本历史', (dialog) => _policyVersions(dialog, scope, draft))
+          DetailAction('版本历史', (dialog) async {
+            final owner = ModalRoute.of(dialog);
+            if (await _policyVersions(dialog, scope, draft)) {
+              needsRefresh = true;
+              _finishPolicyRoute(owner);
+            }
+          }, closeOnSuccess: false)
         ]);
+    return needsRefresh && scope.current;
   } finally {
     scope.dispose();
   }
@@ -401,185 +432,140 @@ Future<void> openPolicyVersions(BuildContext context, Session session,
   }
 }
 
-/// Scope loss removes this route, including when another route covers it.
+bool _policyRouteAvailable(ModalRoute<dynamic>? route) =>
+    route != null &&
+    route.isActive &&
+    (route is! OwnedDialogRoute<dynamic> || route.available);
+
+void _finishPolicyRoute(ModalRoute<dynamic>? route) {
+  if (route is OwnedDialogRoute<dynamic> && route.available) route.finish();
+}
+
+bool _policyWriteUncertain(Object failure) =>
+    failure is! ApiFailure ||
+    failure.status == 0 ||
+    failure.status >= 500 ||
+    const {
+      'PENDING_OPERATION_UNCHANGED',
+      'WORKSPACE_CHANGED',
+      'IDEMPOTENCY_KEY_EXPIRED',
+      'IDEMPOTENCY_RESPONSE_ERASED'
+    }.contains(failure.code);
+
+/// Coverage gates UI actions; removal revokes late authenticated requests.
 Future<T?> _scopedDialog<T>(BuildContext context, _PolicyDetailsScope scope,
-    {required Widget Function(OwnedDialogRoute<T>) builder,
+    {required Widget Function(
+            BuildContext, OwnedDialogRoute<T>, DialogAccessBinding)
+        builder,
+    Listenable? accessChanges,
+    bool Function()? hasAccess,
     VoidCallback? redact}) async {
   scope.requireCurrent();
+  final changes =
+      accessChanges == null ? scope : Listenable.merge([scope, accessChanges]);
+  final access = DialogAccessBinding(context,
+      accessChanges: changes,
+      hasAccess: () => scope.current && hasAccess?.call() != false);
   late final OwnedDialogRoute<T> route;
   void observe() {
-    if (!scope.current) {
+    if (!access.permitted()) {
       redact?.call();
       route.finish();
     }
   }
 
-  route = OwnedDialogRoute<T>(
-      context: context,
-      barrierDismissible: false,
-      builder: (_) => AnimatedBuilder(
-          animation: scope,
-          builder: (_, __) =>
-              scope.current ? builder(route) : const SizedBox.shrink()));
-  scope.addListener(observe);
   try {
-    scope.requireCurrent();
+    if (!access.permitted()) return null;
+    route = OwnedDialogRoute<T>(
+        context: context,
+        barrierDismissible: false,
+        builder: (dialog) => AnimatedBuilder(
+            animation: access.changes,
+            builder: (_, __) => access.permitted()
+                ? builder(dialog, route, access)
+                : const SizedBox.shrink()));
+    access.changes.addListener(observe);
     return await presentOwnedDialog(context, route);
   } finally {
-    scope.removeListener(observe);
+    access.changes.removeListener(observe);
+    access.dispose();
   }
 }
 
-Future<void> _copyPolicy(
+Future<bool> _copyPolicy(
     BuildContext context, _PolicyDetailsScope scope, Json draft) async {
   scope.requireCurrent(write: true);
   final original = _readPolicyDraft(draft);
   final id = original['id'], revision = original['revision'];
   final key = requestId();
-  final name = TextEditingController(text: '${original['name']} · 副本');
-  try {
-    await _scopedDialog<Json>(context, scope,
-        redact: name.clear,
-        builder: (route) => _CopyPolicyForm(
-            name: name,
-            scope: scope,
-            route: route,
-            submit: (values) => scope.request((api) async {
-                  final value = await api.send(
-                      'POST', '${scope.root}/policies/$id/copies',
-                      version: revision, key: key, body: values);
-                  final copied = _readPolicyDraft(value);
-                  if (copied['id'] == id ||
-                      copied['kind'] != 'POLICY' ||
-                      copied['revision'] != 0 ||
-                      copied['name'] != values['name'] ||
-                      copied['sourceVersionId'] != null ||
-                      !_samePolicyValue(copied['rules'], original['rules'])) {
-                    throw const ApiFailure(502, 'INVALID_RESPONSE');
-                  }
-                  return copied;
-                }, write: true)));
-  } finally {
-    name.clear();
-    name.dispose();
-  }
+  var mayHaveChanged = false, staleDraft = false;
+  await _scopedDialog<Json>(context, scope,
+      builder: (dialog, route, access) => EditDialog(
+          key: const Key('policy-copy-form'),
+          title: '复制为策略',
+          fields: const [FieldSpec('name', '新策略名称')],
+          initial: {'name': '${original['name']} · 副本'},
+          submit: '保存',
+          accessChanges: access.changes,
+          hasAccess: () =>
+              scope.writable && access.permitted() && route.available,
+          reauth: () {
+            if (access.permitted() && route.available && route.isCurrent) {
+              scope.reauthenticate();
+            }
+          },
+          onSubmit: (values) async {
+            final body =
+                Map<String, dynamic>.unmodifiable({'name': values['name']});
+            try {
+              final copied = await scope.request((api) async {
+                final value = await api.send(
+                    'POST', '${scope.root}/policies/$id/copies',
+                    version: revision, key: key, body: body);
+                final copied = _readPolicyDraft(value);
+                if (copied['id'] == id ||
+                    copied['kind'] != 'POLICY' ||
+                    copied['revision'] != 0 ||
+                    copied['name'] != body['name'] ||
+                    copied['sourceVersionId'] != null ||
+                    !_samePolicyValue(copied['rules'], original['rules'])) {
+                  throw _invalidPolicyResponse;
+                }
+                return copied;
+              },
+                  write: true,
+                  hasAccess: () => access.permitted() && route.available);
+              mayHaveChanged = true;
+              return copied;
+            } catch (failure) {
+              mayHaveChanged = mayHaveChanged || _policyWriteUncertain(failure);
+              staleDraft =
+                  staleDraft || failure is ApiFailure && failure.status == 412;
+              rethrow;
+            }
+          }));
+  return mayHaveChanged || staleDraft;
 }
 
-class _CopyPolicyForm extends StatefulWidget {
-  final TextEditingController name;
-  final _PolicyDetailsScope scope;
-  final OwnedDialogRoute<Json> route;
-  final Future<Json> Function(Json) submit;
-  const _CopyPolicyForm(
-      {required this.name,
-      required this.scope,
-      required this.route,
-      required this.submit});
-  @override
-  State<_CopyPolicyForm> createState() => _CopyPolicyFormState();
-}
-
-class _CopyPolicyFormState extends State<_CopyPolicyForm> {
-  final form = GlobalKey<FormState>();
-  bool busy = false;
-  Json? pending;
-  Object? error;
-  bool get current =>
-      mounted &&
-      widget.scope.writable &&
-      widget.route.available &&
-      widget.route.isCurrent;
-
-  Future<void> save() async {
-    if (!current || busy || form.currentState?.validate() != true) return;
-    setState(() {
-      busy = true;
-      error = null;
-    });
-    final submitted = pending ??
-        Map<String, dynamic>.unmodifiable({'name': widget.name.text.trim()});
-    pending = submitted;
-    try {
-      final result = await widget.submit(submitted);
-      if (mounted && widget.scope.writable) widget.route.finish(result);
-    } catch (failure) {
-      if (failure is ApiFailure &&
-          failure.status != 0 &&
-          failure.status < 500) {
-        pending = null;
-      }
-      if (mounted && widget.scope.current) setState(() => error = failure);
-    } finally {
-      if (mounted) setState(() => busy = false);
-    }
-  }
-
-  @override
-  void dispose() {
-    pending = null;
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) => PopScope(
-      canPop: !busy,
-      child: AlertDialog(
-          title: const Text('复制为策略'),
-          content: SizedBox(
-              width: 520,
-              child: SingleChildScrollView(
-                  child: Form(
-                      key: form,
-                      child: Column(mainAxisSize: MainAxisSize.min, children: [
-                        if (pending != null && !busy)
-                          const Notice('上次提交结果尚未确认。重试将发送相同名称；离开后请先刷新策略列表核对结果。',
-                              warning: true),
-                        TextFormField(
-                            controller: widget.name,
-                            enabled: !busy && pending == null,
-                            autofocus: true,
-                            maxLength: 100,
-                            decoration:
-                                const InputDecoration(labelText: '新策略名称'),
-                            validator: (value) => (value ?? '').trim().isEmpty
-                                ? '请输入新策略名称'
-                                : null),
-                        if (error != null)
-                          FailureView(error!, reauth: () {
-                            if (current && !busy) widget.scope.reauthenticate();
-                          })
-                      ])))),
-          actions: [
-            TextButton(
-                onPressed: busy
-                    ? null
-                    : () {
-                        if (current) widget.route.finish();
-                      },
-                child: const Text('取消')),
-            FilledButton(
-                onPressed: busy ? null : save,
-                child: Text(busy
-                    ? '保存中…'
-                    : pending == null
-                        ? '保存'
-                        : '重试原提交'))
-          ]));
-}
-
-Future<void> _policyVersions(
+Future<bool> _policyVersions(
     BuildContext context, _PolicyDetailsScope scope, Json draft) async {
-  final rows = await scope.request(
-      (api) => api.all('${scope.root}/policies/${draft['id']}/versions'));
-  scope.requireCurrent();
-  if (!context.mounted) return;
+  final access = DialogAccessBinding(context,
+      accessChanges: scope, hasAccess: () => scope.current);
+  List<Json>? rows;
   try {
-    final versions = rows
+    final loaded = await scope.request(
+        (api) => api.all('${scope.root}/policies/${draft['id']}/versions'),
+        hasAccess: access.permitted);
+    rows = loaded;
+    if (!context.mounted || !access.permitted()) return false;
+    final versions = loaded
         .map((value) => _readPolicyVersion(value, draft['id'] as String))
         .toList(growable: false);
-    await _scopedDialog<void>(context, scope,
-        redact: rows.clear,
-        builder: (route) => AlertDialog(
+    final changed = await _scopedDialog<bool>(context, scope,
+        accessChanges: access.changes,
+        hasAccess: access.permitted,
+        redact: loaded.clear,
+        builder: (dialog, route, dialogAccess) => AlertDialog(
                 title: const Text('版本历史'),
                 content: SizedBox(
                     width: 620,
@@ -594,79 +580,134 @@ Future<void> _policyVersions(
                           trailing: const Icon(Icons.chevron_right),
                           onTap: () async {
                             if (!scope.current ||
+                                !dialogAccess.permitted() ||
                                 !route.available ||
                                 !route.isCurrent) return;
-                            await _versionDetails(
-                                context, scope, draft, version);
+                            final changed = await _versionDetails(
+                                dialog, scope, draft, version,
+                                accessChanges: dialogAccess.changes,
+                                hasAccess: () =>
+                                    dialogAccess.permitted() &&
+                                    route.available);
+                            if (changed && route.available) route.finish(true);
                           }))
                     ]))),
                 actions: [
                   TextButton(
                       onPressed: () {
-                        if (route.available && route.isCurrent) route.finish();
+                        if (route.available && route.isCurrent) {
+                          route.finish(false);
+                        }
                       },
                       child: const Text('关闭'))
                 ]));
+    return changed == true;
   } finally {
-    rows.clear();
+    rows?.clear();
+    access.dispose();
   }
 }
 
-Future<void> _versionDetails(BuildContext context, _PolicyDetailsScope scope,
-    Json draft, Json version) async {
+Future<bool> _versionDetails(
+    BuildContext context, _PolicyDetailsScope scope, Json draft, Json version,
+    {Listenable? accessChanges, bool Function()? hasAccess}) async {
   scope.requireCurrent();
+  final changes =
+      accessChanges == null ? scope : Listenable.merge([scope, accessChanges]);
+  final access = DialogAccessBinding(context,
+      accessChanges: changes,
+      hasAccess: () => scope.current && hasAccess?.call() != false);
+  var needsRefresh = false;
+  try {
+    if (!access.permitted()) return false;
+    await actionDetails(
+        context,
+        '历史版本',
+        {
+          '版本': version['sequence'],
+          '发布方式': label(version['mode']),
+          '发布时间': dateLabel(version['createdAt']),
+          '规则数': (version['snapshot']['sourceRules'] as List).length,
+          '目标设备数': (version['snapshot']['targets'] as List).length,
+          '版本编号': version['id']
+        },
+        accessChanges: access.changes,
+        hasAccess: access.permitted,
+        reauth: scope.reauthenticate,
+        actions: scope.writable
+            ? [
+                DetailAction('回滚为草稿', (dialog) async {
+                  final owner = ModalRoute.of(dialog);
+                  if (await _rollbackPolicy(dialog, scope, draft, version,
+                      accessChanges: access.changes,
+                      hasAccess: access.permitted)) {
+                    needsRefresh = true;
+                    _finishPolicyRoute(owner);
+                  }
+                }, closeOnSuccess: false)
+              ]
+            : []);
+    return needsRefresh;
+  } finally {
+    access.dispose();
+  }
+}
+
+Future<bool> _rollbackPolicy(
+    BuildContext context, _PolicyDetailsScope scope, Json draft, Json version,
+    {required Listenable accessChanges,
+    required bool Function() hasAccess}) async {
+  scope.requireCurrent(write: true);
   final key = requestId();
-  await actionDetails(
-      context,
-      '历史版本',
-      {
-        '版本': version['sequence'],
-        '发布方式': label(version['mode']),
-        '发布时间': dateLabel(version['createdAt']),
-        '规则数': (version['snapshot']['sourceRules'] as List).length,
-        '目标设备数': (version['snapshot']['targets'] as List).length,
-        '版本编号': version['id']
-      },
-      accessChanges: scope,
-      hasAccess: () => scope.current,
-      reauth: scope.reauthenticate,
-      actions: scope.writable
-          ? [
-              DetailAction('回滚为草稿', (dialog) async {
-                scope.requireCurrent(write: true);
-                final confirmed = await _scopedDialog<bool>(dialog, scope,
-                    builder: (route) => AlertDialog(
-                            title: const Text('回滚为草稿'),
-                            content: const SizedBox(
-                                width: 460,
-                                child: Text(
-                                    '将历史规则恢复到当前策略草稿。不会改变已经发布的版本，仍需重新预览并发布。',
-                                    style: TextStyle(height: 1.8))),
-                            actions: [
-                              TextButton(
-                                  onPressed: () {
-                                    if (route.available && route.isCurrent) {
-                                      route.finish(false);
-                                    }
-                                  },
-                                  child: const Text('取消')),
-                              FilledButton(
-                                  onPressed: () {
-                                    if (scope.writable &&
-                                        route.available &&
-                                        route.isCurrent) route.finish(true);
-                                  },
-                                  child: const Text('确认'))
-                            ]));
-                if (confirmed != true) return;
-                await scope.request(
-                    (api) => api.send('POST',
-                        '${scope.root}/policies/${draft['id']}/versions/${version['id']}/rollback-drafts',
-                        version: draft['revision'],
-                        key: key,
-                        body: {'name': draft['name']}),
-                    write: true);
-              })
-            ]
-          : []);
+  final body = Map<String, dynamic>.unmodifiable({'name': draft['name']});
+  var mayHaveChanged = false, staleDraft = false;
+  await _scopedDialog<Json>(context, scope,
+      accessChanges: accessChanges,
+      hasAccess: hasAccess,
+      builder: (dialog, route, access) => EditDialog(
+          key: const Key('policy-rollback-form'),
+          title: '回滚为草稿',
+          description: '策略名称：${draft['name']}。\n'
+              '将历史规则恢复到当前策略草稿。不会改变已经发布的版本，仍需重新预览并发布。',
+          fields: const [],
+          initial: const {},
+          submit: '确认',
+          accessChanges: access.changes,
+          hasAccess: () =>
+              scope.writable && access.permitted() && route.available,
+          reauth: () {
+            if (access.permitted() && route.available && route.isCurrent) {
+              scope.reauthenticate();
+            }
+          },
+          onSubmit: (_) async {
+            try {
+              final restored = await scope.request((api) async {
+                final value = await api.send('POST',
+                    '${scope.root}/policies/${draft['id']}/versions/${version['id']}/rollback-drafts',
+                    version: draft['revision'], key: key, body: body);
+                final restored =
+                    _readPolicyDraft(value, expectedId: draft['id']);
+                if (restored['kind'] != draft['kind'] ||
+                    restored['revision'] != draft['revision'] + 1 ||
+                    restored['sourceVersionId'] != version['id'] ||
+                    restored['name'] != body['name'] ||
+                    !_samePolicyValue(restored['rules'],
+                        version['snapshot']['sourceRules'])) {
+                  throw _invalidPolicyResponse;
+                }
+                return restored;
+              },
+                  write: true,
+                  hasAccess: () => access.permitted() && route.available);
+              mayHaveChanged = true;
+              return restored;
+            } catch (failure) {
+              mayHaveChanged = mayHaveChanged || _policyWriteUncertain(failure);
+              staleDraft =
+                  staleDraft || failure is ApiFailure && failure.status == 412;
+              rethrow;
+            }
+          }));
+  return mayHaveChanged || staleDraft;
 }

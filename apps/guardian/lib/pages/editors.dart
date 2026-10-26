@@ -29,6 +29,51 @@ Map<String, String> options(Iterable<String> keys) =>
 Map<String, String> entityOptions(List<Json> rows, String name) =>
     {for (final r in rows) r['id'] as String: r[name] as String};
 
+bool _stopsEditorReplay(Object? failure) =>
+    failure is ApiFailure &&
+    (failure.status == 412 || isUnavailableOperationResult(failure));
+
+Widget _stoppedDraftDialog(Object failure, Json? draft, VoidCallback? close,
+        {Widget? review, String? checkNotice}) =>
+    PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          if (!didPop) close?.call();
+        },
+        child: AlertDialog(
+            scrollable: true,
+            title: const Text('原提交需要重新核对'),
+            content: SizedBox(
+                width: 640,
+                child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      FailureView(failure),
+                      const SizedBox(height: 12),
+                      const Text('旧请求已停止重试。以下保留的是本次输入，不代表已保存。'
+                          '关闭后请核对最新记录，再重新打开编辑。'),
+                      if (checkNotice != null) ...[
+                        const SizedBox(height: 12),
+                        Text(checkNotice),
+                      ],
+                      if (draft != null)
+                        ExpansionTile(
+                            title: const Text('保留的草稿'),
+                            subtitle: const Text('展开查看并选中复制'),
+                            children: [
+                              SelectableText(const JsonEncoder.withIndent('  ')
+                                  .convert(draft)),
+                            ]),
+                    ])),
+            actions: [
+              if (review != null) review,
+              TextButton(
+                  key: const Key('editor-close-stopped'),
+                  onPressed: close,
+                  child: const Text('关闭并刷新')),
+            ]));
+
 Future<bool> scheduleEditor(BuildContext context, Session session,
     {ScheduleCopy? copy,
     Listenable? accessChanges,
@@ -106,7 +151,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   Object? error;
   bool busy = false, resultUnknown = false, closing = false, exitOpen = false;
   bool revoked = false, reviewPriorSubmission = false;
-  Json? pendingBody;
+  Json? pendingBody, recoveryBody;
   ModalRoute<dynamic>? owner;
   OwnedDialogRoute<bool>? exitRoute;
   late final DeviceSubflowScope scope;
@@ -124,7 +169,8 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
       (owner is! OwnedDialogRoute<dynamic> ||
           (owner as OwnedDialogRoute<dynamic>).available);
   bool get interactive => current && owner?.isCurrent == true;
-  bool get locked => busy || resultUnknown || exitOpen;
+  bool get recoveryStopped => _stopsEditorReplay(error);
+  bool get locked => busy || resultUnknown || exitOpen || recoveryStopped;
 
   @override
   void initState() {
@@ -185,6 +231,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
     revoked = true;
     reviewPriorSubmission = busy || resultUnknown || pendingBody != null;
     pendingBody = null;
+    recoveryBody = null;
     windows = [];
     exceptions = [];
     days.clear();
@@ -244,13 +291,14 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   void closeOwnRoute({bool saved = false}) {
     if (!mounted || closing) return;
     final route = owner;
+    final needsRefresh = saved || resultUnknown || recoveryStopped;
     if (route is OwnedDialogRoute<dynamic>) {
       if (!route.available) return;
       closing = true;
-      route.finish(saved);
+      route.finish(needsRefresh);
     } else if (route?.isCurrent == true) {
       closing = true;
-      route!.navigator?.pop(saved);
+      route!.navigator?.pop(needsRefresh);
     }
   }
 
@@ -419,12 +467,18 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
       }
       setState(() {
         error = failure;
-        resultUnknown = resultUnknown ||
-            failure is! ApiFailure ||
-            failure.status == 0 ||
-            failure.status >= 500 ||
-            failure.code == 'PENDING_OPERATION_UNCHANGED';
-        if (!resultUnknown) pendingBody = null;
+        if (_stopsEditorReplay(failure)) {
+          recoveryBody ??= pendingBody;
+          pendingBody = null;
+          resultUnknown = false;
+        } else {
+          resultUnknown = resultUnknown ||
+              failure is! ApiFailure ||
+              failure.status == 0 ||
+              failure.status >= 500 ||
+              failure.code == 'PENDING_OPERATION_UNCHANGED';
+          if (!resultUnknown) pendingBody = null;
+        }
       });
     } finally {
       if (mounted && !closing && !revoked) setState(() => busy = false);
@@ -454,6 +508,10 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
           actions: [
             TextButton(onPressed: closeOwnRoute, child: const Text('关闭'))
           ]);
+    }
+    if (recoveryStopped) {
+      return _stoppedDraftDialog(
+          error!, recoveryBody ?? pendingBody, closeOwnRoute);
     }
     return PopScope(
         canPop: !busy && !resultUnknown && !exitOpen,
@@ -646,34 +704,50 @@ const ruleEffects = {
   'DOMAIN_ACCESS': ['ALLOW', 'DENY'],
   'USAGE_REMINDER': ['REMIND'],
 };
-Future<void> policyEditor(BuildContext context, Session session,
-    {Json? draft}) async {
+
+/// True requests a fresh list after a saved or explicitly closed unknown write.
+/// It never means that an unknown write has been confirmed successful.
+Future<bool> policyEditor(BuildContext context, Session session,
+    {Json? draft,
+    Listenable? accessChanges,
+    bool Function()? hasAccess}) async {
   if (!session.authenticated) {
     throw const ApiFailure(401, 'UNAUTHENTICATED');
   }
   if (!session.canWrite || !session.canOpen('policies')) {
     throw const ApiFailure(403, 'ACCESS_DENIED');
   }
-  if (!context.mounted || session.tenant == null) return;
+  if (!context.mounted || session.tenant == null) return false;
   final root = session.root;
+  final access = DialogAccessBinding(context,
+      accessChanges: accessChanges, hasAccess: hasAccess);
   var live = true;
   final scope = DeviceSubflowScope(session,
       permitted: () =>
           live &&
+          access.permitted() &&
           context.mounted &&
+          session.tenant != null &&
+          session.root == root &&
           session.canWrite &&
           session.canOpen('policies'));
   try {
-    if (!context.mounted || !scope.current) return;
-    final route = OwnedDialogRoute<void>(
+    if (!scope.current) return false;
+    final route = OwnedDialogRoute<bool>(
         context: context,
         barrierDismissible: false,
         builder: (_) => PolicyEditor(
-            session: session, root: root, draft: draft, operationScope: scope));
-    await presentOwnedDialog(context, route);
+            session: session,
+            root: root,
+            draft: draft,
+            accessChanges: access.changes,
+            operationScope: scope));
+    final needsRefresh = await presentOwnedDialog(context, route);
+    return needsRefresh == true && scope.current;
   } finally {
     live = false;
     scope.dispose();
+    access.dispose();
   }
 }
 
@@ -721,6 +795,7 @@ class PolicyEditor extends StatefulWidget {
   final List<Json>? applications, schedules;
   final Json? draft;
   final DeviceSubflowScope? operationScope;
+  final Listenable? accessChanges;
   const PolicyEditor(
       {super.key,
       required this.session,
@@ -728,6 +803,7 @@ class PolicyEditor extends StatefulWidget {
       this.applications,
       this.schedules,
       this.draft,
+      this.accessChanges,
       this.operationScope});
   @override
   State<PolicyEditor> createState() => _PolicyEditorState();
@@ -751,11 +827,13 @@ class _PolicyEditorState extends State<PolicyEditor> {
       closing = false,
       disposed = false;
   bool saved = false, exitOpen = false;
-  Object? error;
+  Object? error, recoveryFailure;
   String? checkNotice;
-  Json? pendingBody;
+  Json? pendingBody, recoveryBody;
   late final DeviceSubflowScope scope;
   late final bool ownsScope;
+  late final Listenable? parentChanges;
+  ModalRoute<dynamic>? owner;
   late final Api api;
   final lifetime = _PolicyEditorLifetime();
   final ruleRoutes = <OwnedDialogRoute<dynamic>>{};
@@ -769,9 +847,16 @@ class _PolicyEditorState extends State<PolicyEditor> {
       !closing &&
       !revoked &&
       lifetime.value &&
-      scope.current;
-  bool get interactive => current && ModalRoute.of(context)?.isCurrent == true;
-  bool get locked => busy || loadingRule || ruleOpen || resultUnknown;
+      scope.current &&
+      (owner == null ||
+          (owner!.isActive &&
+              (owner is! OwnedDialogRoute<dynamic> ||
+                  (owner as OwnedDialogRoute<dynamic>).available)));
+  bool get interactive => current && owner?.isCurrent == true;
+  bool get recoveryStopped =>
+      recoveryFailure != null || _stopsEditorReplay(error);
+  bool get locked =>
+      busy || loadingRule || ruleOpen || resultUnknown || recoveryStopped;
 
   @override
   void initState() {
@@ -794,6 +879,8 @@ class _PolicyEditorState extends State<PolicyEditor> {
         applications: widget.applications,
         schedules: widget.schedules);
     scope.addListener(scopeChanged);
+    parentChanges = widget.accessChanges;
+    parentChanges?.addListener(scopeChanged);
     if (!scope.current) {
       revoked = true;
       name.clear();
@@ -854,11 +941,20 @@ class _PolicyEditorState extends State<PolicyEditor> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final next = ModalRoute.of(context);
+    if (owner != null && !identical(owner, next)) revoke();
+    owner = next;
+  }
+
+  @override
   void didUpdateWidget(covariant PolicyEditor oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (!identical(oldWidget.session, widget.session) ||
         oldWidget.root != widget.root ||
         oldWidget.operationScope != widget.operationScope ||
+        !identical(oldWidget.accessChanges, widget.accessChanges) ||
         oldWidget.draft?['id'] != widget.draft?['id'] ||
         oldWidget.draft?['revision'] != widget.draft?['revision']) {
       revoke();
@@ -873,6 +969,8 @@ class _PolicyEditorState extends State<PolicyEditor> {
     name.clear();
     rules = [];
     pendingBody = null;
+    recoveryBody = null;
+    recoveryFailure = null;
     error = null;
     checkNotice = null;
     directoryError = null;
@@ -895,11 +993,12 @@ class _PolicyEditorState extends State<PolicyEditor> {
 
   void closeOwnRoute() {
     if (!mounted || disposed || closing) return;
-    final route = ModalRoute.of(context);
-    if (route is! OwnedDialogRoute<void>) return;
+    final route = owner;
+    if (route is! OwnedDialogRoute<dynamic> || !route.available) return;
+    final needsRefresh = saved || resultUnknown || recoveryStopped;
     closing = true;
     lifetime.value = false;
-    route.finish();
+    route.finish(needsRefresh);
   }
 
   Future<void> requestClose() async {
@@ -1007,6 +1106,7 @@ class _PolicyEditorState extends State<PolicyEditor> {
     directories.revoke();
     lifetime.value = false;
     scope.removeListener(scopeChanged);
+    parentChanges?.removeListener(scopeChanged);
     if (ownsScope) scope.dispose();
     if (ruleRoutes.isEmpty) lifetime.dispose();
     name.dispose();
@@ -1264,12 +1364,19 @@ class _PolicyEditorState extends State<PolicyEditor> {
       }
       setState(() {
         error = failure;
-        resultUnknown = resultUnknown ||
-            failure is! ApiFailure ||
-            failure.status == 0 ||
-            failure.status >= 500 ||
-            failure.code == 'PENDING_OPERATION_UNCHANGED';
-        if (!resultUnknown) pendingBody = null;
+        if (_stopsEditorReplay(failure)) {
+          recoveryBody ??= pendingBody;
+          recoveryFailure = failure;
+          pendingBody = null;
+          resultUnknown = false;
+        } else {
+          resultUnknown = resultUnknown ||
+              failure is! ApiFailure ||
+              failure.status == 0 ||
+              failure.status >= 500 ||
+              failure.code == 'PENDING_OPERATION_UNCHANGED';
+          if (!resultUnknown) pendingBody = null;
+        }
       });
     } finally {
       if (mounted && !disposed) setState(() => busy = false);
@@ -1279,9 +1386,9 @@ class _PolicyEditorState extends State<PolicyEditor> {
   Future<void> checkResult() async {
     if (!interactive ||
         busy ||
-        !resultUnknown ||
+        (!resultUnknown && !recoveryStopped) ||
         policyId == null ||
-        pendingBody == null) return;
+        (pendingBody == null && recoveryBody == null)) return;
     setState(() {
       busy = true;
       error = null;
@@ -1292,6 +1399,8 @@ class _PolicyEditorState extends State<PolicyEditor> {
       if (!current) return;
       if (matchesPendingDraft(value)) {
         pendingBody = null;
+        recoveryBody = null;
+        recoveryFailure = null;
         resultUnknown = false;
         finishOwnRoute();
       } else {
@@ -1309,7 +1418,7 @@ class _PolicyEditorState extends State<PolicyEditor> {
   }
 
   bool matchesPendingDraft(Object? value) {
-    final body = pendingBody;
+    final body = pendingBody ?? recoveryBody;
     if (body == null ||
         value is! Json ||
         value['id'] is! String ||
@@ -1335,14 +1444,26 @@ class _PolicyEditorState extends State<PolicyEditor> {
   Widget build(BuildContext context) {
     if (!current) {
       return AlertDialog(
-          title: Text(closing && saved ? '草稿已保存' : '工作空间或权限已变化'),
-          content: Text(
-              closing && saved ? '当前草稿已保存。' : '原策略和规则内容已隐藏。请关闭窗口，在当前工作空间重新打开。'),
+          title: Text(closing ? (saved ? '草稿已保存' : '正在返回原页面') : '工作空间或权限已变化'),
+          content: Text(closing
+              ? (saved ? '当前草稿已保存。' : '正在关闭当前编辑窗口。')
+              : '原策略和规则内容已隐藏。请关闭窗口，在当前工作空间重新打开。'),
           actions: [
             TextButton(
                 onPressed: closing ? null : closeOwnRoute,
                 child: const Text('关闭'))
           ]);
+    }
+    if (recoveryStopped) {
+      return _stoppedDraftDialog(error ?? recoveryFailure!,
+          recoveryBody ?? pendingBody, busy ? null : closeOwnRoute,
+          checkNotice: checkNotice,
+          review: policyId == null
+              ? null
+              : FilledButton(
+                  key: const Key('policy-editor-check-result'),
+                  onPressed: busy ? null : checkResult,
+                  child: Text(busy ? '核对中…' : '读取并核对')));
     }
     return PopScope(
         canPop: !busy && !resultUnknown,

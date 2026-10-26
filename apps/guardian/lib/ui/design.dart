@@ -392,14 +392,9 @@ class _EditDialogState extends State<EditDialog> {
   bool get versionConflict =>
       error is ApiFailure && (error as ApiFailure).status == 412;
 
-  bool unavailableResult(Object? failure) =>
-      failure is ApiFailure &&
-      failure.status == 410 &&
-      const {'IDEMPOTENCY_RESULT_EXPIRED', 'IDEMPOTENCY_RESPONSE_ERASED'}
-          .contains(failure.code);
-
   bool get recoveryStopped =>
-      widget.canCommit && (versionConflict || unavailableResult(error));
+      widget.canCommit &&
+      (versionConflict || isUnavailableOperationResult(error));
 
   String get recoveryDraft => widget.fields.map((field) {
         final value = recoveryValues?[field.key]?.toString() ?? '';
@@ -547,8 +542,8 @@ class _EditDialogState extends State<EditDialog> {
     } catch (e) {
       if (canCommit) {
         final attempted = pendingValues;
-        final stopped =
-            e is ApiFailure && (e.status == 412 || unavailableResult(e));
+        final stopped = e is ApiFailure &&
+            (e.status == 412 || isUnavailableOperationResult(e));
         if (stopped && attempted != null) {
           recoveryValues = Map<String, dynamic>.unmodifiable(attempted);
         }
