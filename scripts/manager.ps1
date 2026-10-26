@@ -1,21 +1,54 @@
 #Requires -Version 7.0
 <#
 .SYNOPSIS
-One entry point for the existing, isolated AI Manager deployment workflow.
+独立部署环境的统一入口：预览、初始化、构建、启动与恢复。
 .DESCRIPTION
-Use -Plan to inspect an action without executing it. No action installs tools,
-clears data, stops another deployment, or reads credentials into its output.
-Build and start retain all checks in the existing deployment scripts.
+使用 -Plan 先查看动作和非秘密参数，不创建文件或执行命令。所有动作均不自动安装工具、
+清空环境、停止其他部署，或将凭据写入输出；实际动作保留底层完整校验。
+
+doctor 只盘点所选 Toolset 的命令是否可找到：默认 Build，已有环境可选 Runtime。
+它不执行 SDK，也不证明版本、Compose 插件、服务健康或部署已经可用。
+build -Offline 要求已有完整依赖缓存，缓存缺失时失败；需要联网解析时由维护者明确移除该参数。
+
+首次部署依次完成 init、build、init-ledger、start。init-ledger 仅用于全新账本的一次性初始化，
+会启动其数据库并运行初始化器，不用于正常重启或故障恢复。每条命令单独执行，失败后先核对日志。
+start 通过 up --build 更新指定项目的发布；resume 仅恢复同批已有容器，不构建或创建容器。
+resume 保留原发布记录、镜像、挂载、身份、账本及健康校验，并要求 Compose 支持 start 等待健康；
+缺少容器、记录不符或能力不足时拒绝恢复，不改成重新部署。
+.PARAMETER Action
+doctor 盘点工具；init 创建新环境；build 构建产物；init-ledger 初始化新账本；
+start 更新并启动发布；resume 恢复已有容器；status 只读查看状态；verify 核验发布及入口。
+.PARAMETER Directory
+建议使用仓库 .local 下的独立环境目录，默认为 .local/deployment；以下首次部署示例统一使用 .local/demo。
 .EXAMPLE
 ./scripts/manager.ps1 doctor
+./scripts/manager.ps1 doctor -Toolset Runtime
+
+按用途选择工具盘点；Runtime 不把缺少源码构建工具列为运行工具缺失。
 .EXAMPLE
 ./scripts/manager.ps1 init -Directory .local/demo -ProjectName ai-manager-demo -Plan
-.EXAMPLE
+./scripts/manager.ps1 init -Directory .local/demo -ProjectName ai-manager-demo
 ./scripts/manager.ps1 build -Directory .local/demo -Offline
-.EXAMPLE
+./scripts/manager.ps1 init-ledger -Directory .local/demo
+./scripts/manager.ps1 start -Directory .local/demo
 ./scripts/manager.ps1 status -Directory .local/demo
+./scripts/manager.ps1 verify -Directory .local/demo
+
+全新环境的完整顺序：预览不等于创建环境；init-ledger 仅对新账本执行一次。
+Offline 需先准备完整缓存；按顺序逐条执行，失败时停止后续步骤。
+.EXAMPLE
+./scripts/manager.ps1 resume -Directory .local/demo -Plan
+./scripts/manager.ps1 resume -Directory .local/demo
+
+已有环境恢复；TLS、代理及身份配置沿用该环境原启动参数，不重复初始化账本。
 .EXAMPLE
 ./scripts/manager.ps1 status -Active
+
+只读查看控制台当前已选环境，不会隐式选作构建或发布目标。
+.LINK
+docs/deployment-quickstart.md
+.LINK
+docs/deployment-runbook.md
 #>
 [CmdletBinding()]
 param(

@@ -42,7 +42,7 @@
 | --- | --- |
 | 查看任一动作 | 加 `-Plan`（别名 `-DryRun`）；输出动作、非秘密参数和影响，不执行 |
 | 按用途检查工具 | `doctor -Toolset Runtime` 用于已有环境；默认 `Build` 检查源码工具。Build 可复用 `-MavenCommand`、`-FlutterCommand`、`-DartCommand` 指定命令；Runtime 传构建覆盖项会明确拒绝 |
-| 获取帮助 | `-Help`；所有动作仅接受相关参数，避免静默忽略 |
+| 获取帮助 | `./scripts/manager.ps1 -Help`（其他系统替换命令前缀）；内置帮助包含首次部署完整顺序、离线缓存前提及恢复示例，完整要求见[部署手册](deployment-runbook.md)。所有动作仅接受相关参数，避免静默忽略 |
 | 恢复已创建环境 | `resume -Directory .local/demo -Plan` 查看计划；实际恢复仅启动同批已有容器，不构建、不创建、不重写原发布记录。TLS/身份配置参数沿用该环境原启动参数 |
 | 查看当前已选环境 | `status -Active`；复用已提交的控制台选择，只读展示项目、公开入口与容器状态，无需记住快照路径 |
 | 更换本机端口 | `init -EdgePort 18120`；使用新的独立目录与项目名 |
@@ -71,6 +71,8 @@
 已有控制台可用 `./scripts/manager.ps1 status -Active` 查看。`-Active` 仅用于只读 `status`，不能与显式 `-Directory` 同传；未选择环境时明确提示，不回退到其他项目。`status -Active -Plan` 只展示选择方式，不读取激活或部署元数据；构建、启动及验证仍显式指定部署目录，避免跨源码环境发布。
 
 ## 验证范围
+
+内置帮助已对齐本页首次部署顺序、离线缓存前提与恢复条件。本次只修正文档和脚本注释，未执行初始化、构建或服务操作。
 
 初始入口已在 Windows 通过语法检查及 5 项计划/参数测试，见[初始记录](reviews/engineering-foundation-20261025.md)。新增 `-Active` 已单独通过计划与参数保护检查，并在当前选定环境实际查询成功；试用发现的 Windows 多 Docker 入口解析问题已修正为选择首个可执行入口。
 
