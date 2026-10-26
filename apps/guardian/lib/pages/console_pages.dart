@@ -34,6 +34,7 @@ import '../ui/dialog_access.dart';
 import '../ui/device_observation_status.dart';
 import '../ui/application_classification_dialog.dart';
 import '../ui/resource_page.dart';
+import 'access_requests_page.dart';
 import '../ui/workbench_view.dart';
 import '../ui/workspace_welcome.dart';
 import '../ui/family_finance_page.dart';
@@ -413,32 +414,18 @@ class ConsolePages extends StatelessWidget {
             openChanged: actions.policyDetails,
             notice: '当前支持云端配置保存。设备系统执行适配器未配置时，不会显示“策略已生效”。');
       case 'approvals':
-        return resource(
-            title: s.role == 'TEACHER' ? '我的访问申请' : '访问审批',
-            subtitle: s.role == 'TEACHER'
-                ? '仅查看当前授课范围内由本人提交的申请；范围失效后申请将同步失效。'
-                : '查看临时访问请求，保留有期限的决定记录。',
-            path: 'access-requests',
-            columns: [
-              ColumnSpec('请求',
-                  (r) => _name(shortId(r['id']), Icons.task_alt_outlined)),
-              ColumnSpec(
-                  '申请时长',
-                  (r) =>
-                      Text('${(r['requestedWindowSeconds'] / 60).ceil()} 分钟')),
-              ColumnSpec('状态', (r) => StatusTag(r['state'])),
-              ColumnSpec('创建时间', (r) => Text(dateLabel(r['createdAt'])))
-            ],
+        return AccessRequestsPage(
+            key: ValueKey((section, resourceActor, resourceRoot, resourceRole,
+                resourceGeneration)),
+            api: s.api,
+            path: '${s.root}/access-requests',
+            role: resourceRole,
+            isCurrent: resourceCurrent,
+            onOpen: actions.approvalDetails,
             create: ['TEACHER', 'CHILD'].contains(s.role)
                 ? actions.createAccessRequest
                 : null,
-            createLabel: '申请临时访问',
-            open: actions.approvalDetails,
-            empty: '暂无访问申请',
-            description: ['TEACHER', 'CHILD'].contains(s.role)
-                ? '选择范围内的设备，向管理员说明需要临时访问的应用与时长。'
-                : '儿童或教师提交申请后，将在这里显示。',
-            notice: '批准后设备可获取带固定截止时间的签名文档。接收与保存回执单独记录；当前尚未接入设备例外执行。');
+            reauth: () => s.login(stepUp: true));
       case 'members':
         return MembersPage(key: ValueKey((s.profile?['subject'],
             s.tenant?['id'], s.role, s.scopeGeneration)),

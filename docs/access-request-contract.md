@@ -1,6 +1,6 @@
 # 临时访问申请与审批：实际后端契约
 
-更新日期：2026-10-09。本文记录当前 `approval` 模块的实际接口，配合[功能规格](parental-control-functional-spec.md)、[完整实施计划](implementation-plan.md)和[实施记录](implementation-progress.md)阅读。
+更新日期：2026-10-26。本文记录当前 `approval` 模块的实际接口，配合[功能规格](parental-control-functional-spec.md)、[完整实施计划](implementation-plan.md)和[实施记录](implementation-progress.md)阅读。
 
 ## 1. 已实现与执行边界
 
@@ -73,6 +73,10 @@ TEACHER 不获得审批权限、策略修改或设备管理权限。教师仅提
 AccessRequest 包含 id、subjectId、deviceId、registrationId、policyId、baseVersionId、applicationId、ruleIds、requestedWindowSeconds、reason、state、requestExpiresAt、grantedWindowSeconds、issuedAt、absoluteNotAfter、reasonCode、executionState、version 和 createdAt。
 
 管理侧 `GET /access-requests` 列表在原授权范围内可额外返回 `subjectName`、`deviceName`、`applicationName`、`applicationPackageName` 四个可选展示字段；审计角色不获得这些名称。单条查询、写入响应和设备侧仍只返回核心字段。名称与包名是目录资料，不能当作安装证据、应用安全评级或规则执行证明。
+
+管理台工作台提供“待处理 / 全部”切换。所有者、监护人和机构管理员默认优先待处理；儿童、教师与审计员默认查看全部。待处理模式调用既有 `state=PENDING` 服务端筛选，再按响应的实际状态接收待办；读取时已协调为过期或失效的记录不继续显示为待办，未知状态使该页失败，不把坏响应当成空列表。筛选后空页仍保留服务端下一页游标，由用户继续加载，不自动遍历所有页。切换筛选重建列表范围，旧页、旧游标及晚到结果不进入新范围。
+
+列表直接消费已授权返回的对象、设备和应用展示资料；没有名称则显示完整核心编号，不额外查询目录。审计视图忽略这些名称与包名，即使响应意外附带也不展示。申请对象不被误写成申请人，名称不替代真实对象编号与后端授权。原详情、申请、决定及重新验证流程继续复用，列表切换不创建或审批申请。静态实施和当前未运行范围见[审批工作台阶段记录](reviews/access-request-worklist-20261026.md)。
 
 瞬时时间为 UTC epoch 毫秒，窗口时长为整数秒。审批人身份只在受保护的决定记录和审计中保存，不在该响应返回。DTO 的 toString 不输出儿童理由。
 

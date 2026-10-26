@@ -35,6 +35,7 @@ Widget host(Api api,
         Future<void> Function()? create,
         bool Function()? isCurrent,
         bool Function()? canInteract,
+        bool Function(Json)? includeRow,
         bool refreshAfterOpen = true}) =>
     MaterialApp(
         theme: consoleTheme(),
@@ -46,6 +47,7 @@ Widget host(Api api,
                     subtitle: '查看与管理记录',
                     path: path,
                     api: api,
+                    includeRow: includeRow,
                     columns: [
                       ColumnSpec('名称', (row) => Text(row['name'] as String))
                     ],
@@ -64,6 +66,41 @@ Future<void> tap(WidgetTester tester, String label) async {
 }
 
 void main() {
+  testWidgets('changed row admission isolates late pages and keeps the new cursor',
+      (tester) async {
+    final previous = Completer<http.Response>();
+    var reads = 0;
+    final api = apiFor((request) {
+      reads++;
+      if (reads == 1) return previous.future;
+      if (reads == 2) return page(['hidden', 'visible'], cursor: 'next-visible');
+      expect(request.url.queryParameters['cursor'], 'next-visible');
+      return page(['visible-next']);
+    });
+    addTearDown(() {
+      if (!previous.isCompleted) previous.complete(page(['old-private']));
+    });
+    final key = GlobalKey<ResourcePageState>();
+    bool oldRows(Json row) => row['name'] == 'old-private';
+    bool newRows(Json row) => (row['name'] as String).startsWith('visible');
+    await tester.pumpWidget(host(api, resourceKey: key, includeRow: oldRows));
+    await tester.pump();
+    expect(reads, 1);
+    await tester.pumpWidget(host(api, resourceKey: key, includeRow: newRows));
+    await tester.pumpAndSettle();
+    previous.complete(page(['old-private'], cursor: 'obsolete'));
+    await tester.pumpAndSettle();
+    expect(reads, 2);
+    expect(find.text('old-private'), findsNothing);
+    expect(find.text('hidden'), findsNothing);
+    expect(find.text('visible'), findsOneWidget);
+    await tap(tester, '加载更多');
+    expect(reads, 3);
+    expect(find.text('visible-next'), findsOneWidget);
+    expect(find.byType(FailureView), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('wide list grows multi-line cells with large text and keeps details usable',
       (tester) async {
     tester.view.physicalSize = const Size(1200, 1000);

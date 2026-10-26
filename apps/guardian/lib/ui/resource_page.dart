@@ -26,6 +26,9 @@ class ResourcePage extends StatefulWidget {
   final String title, subtitle, emptyTitle, emptyDescription, path;
   final Api api;
   final List<ColumnSpec> columns;
+  /// Pure admission of accepted page rows; never replaces server authorization.
+  /// Keep the callback stable. A changed predicate starts a new list lifecycle.
+  final bool Function(Json)? includeRow;
   final Future<void> Function(Json)? onOpen;
   /// Explicit write outcomes request refresh, including unresolved writes
   /// closed with user confirmation; true does not imply a successful save.
@@ -48,6 +51,7 @@ class ResourcePage extends StatefulWidget {
       required this.path,
       required this.api,
       required this.columns,
+      this.includeRow,
       this.onOpen,
       this.onOpenChanged,
       this.refreshAfterOpen = true,
@@ -92,7 +96,8 @@ class ResourcePageState extends State<ResourcePage> {
   @override
   void didUpdateWidget(ResourcePage oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.path != widget.path || oldWidget.api != widget.api) {
+    if (oldWidget.path != widget.path || oldWidget.api != widget.api ||
+        oldWidget.includeRow != widget.includeRow) {
       resourceGeneration++;
       rows = [];
       cursor = null;
@@ -128,6 +133,7 @@ class ResourcePageState extends State<ResourcePage> {
     final path = widget.path;
     final scope = resourceGeneration;
     final permitted = widget.isCurrent;
+    final includeRow = widget.includeRow;
     bool current() =>
         mounted && resourceGeneration == scope && permitted?.call() != false;
     final requestCursor = append ? cursor : null;
@@ -147,6 +153,9 @@ class ResourcePageState extends State<ResourcePage> {
       final result =
           await api.page(path, cursor: requestCursor, isCurrent: current);
       if (current() && generation == epoch) {
+        final pageRows = includeRow == null
+            ? result.items
+            : result.items.where(includeRow).toList(growable: false);
         final nextCursor = result.nextCursor;
         if (append && nextCursor != null &&
             _receivedCursors.contains(nextCursor)) {
@@ -155,7 +164,7 @@ class ResourcePageState extends State<ResourcePage> {
         setState(() {
           if (!append) _receivedCursors.clear();
           if (nextCursor != null) _receivedCursors.add(nextCursor);
-          rows = append ? [...rows, ...result.items] : result.items;
+          rows = append ? [...rows, ...pageRows] : pageRows;
           cursor = nextCursor;
           cursorExpired = false;
         });
