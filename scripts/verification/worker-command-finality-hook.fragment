@@ -1,0 +1,30 @@
+def capture_command_finality(job, initial):
+    """One transaction on this held command Job, within its original drain."""
+    if not (natural_command(initial) and job.force_requested is False
+            and receipt.get('commandCloseFallback') is False):
+        return None
+    finality_end = min(COMMAND_END, initial['firstSignaledQpc'] + 0.5)
+    proof = {'schemaVersion': 1, 'source': 'SAME_COMMAND_OWNED_JOB',
+             'jobRootPid': job.pid, 'jobRootCreationFiletime': job.identity,
+             'originalCommandDeadlineQpc': COMMAND_END, 'deadlineQpc': finality_end,
+             'naturalDrainSeconds': 0.5, 'A0': None, 'M': None, 'A1': None,
+             'forceRequested': job.force_requested,
+             'closeFallback': receipt.get('commandCloseFallback')}
+    try:
+        require(monotonic() < finality_end, 'Original command finality window exhausted')
+        proof['A0'] = job.sample(0)
+        require(natural_command(proof['A0']) and all(
+            same_json(proof['A0'][key], initial[key]) for key in (
+                'pid', 'creationFiletime', 'firstSignaledQpc', 'firstCompleteTerminalQpc',
+                'exitFiletime', 'totalProcesses', 'terminatedProcesses')),
+            'Command retained terminal identity changed before empty inventory')
+        require(monotonic() < finality_end, 'Original command finality window exhausted before inventory')
+        proof['M'] = job.member_identities(float(finality_end))
+        require(monotonic() < finality_end, 'Original command finality window exhausted after inventory')
+        proof['A1'] = job.sample(0)
+    except Exception as finality_error:
+        receipt['commandFinalityCaptureError'] = type(finality_error).__name__
+    proof['forceRequested'] = job.force_requested
+    proof['closeFallback'] = receipt.get('commandCloseFallback')
+    return proof
+

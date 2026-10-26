@@ -47,6 +47,8 @@
 
 Flutter 回归优先稳定 Key／语义或类型谓词；`.icon` 按钮工厂可能返回子类，不能用精确运行类型查找代替。 `find.byTooltip` 命中提示包装器，读取按钮属性时须用类型和 tooltip 谓词定位实际按钮。涉及 [OwnedDialogRoute](../apps/guardian/lib/ui/owned_dialog_route.dart) 的旅程应等待路由完成及可观察加载状态；固定少量 pump 不代表异步完成，含进行中进度动画时也不能无限依赖 `pumpAndSettle`。用有界等待保留原业务断言，不靠改产品期限或放宽取证消除测试误报。
 
+Windows 私有进程验证的稳定工具源位于 [scripts/verification](../scripts/verification/README.md)。已证明的同 Job 成员保留只读句柄并持续核验创建身份，禁止在失败后按 PID 重开来补证；固定容量及原期限、分类器、终态标准保持。浏览器驱动须固定源码摘要，历史 NOT_ACCEPTED 不由新工具追认，清理缓存不能删除唯一工具源。
+
 管理台异步旅程可复用 [DeviceSubflowScope](../apps/guardian/lib/pages/device_subflow_scope.dart) 捕获账号、租户、角色和会话代际；名称虽源自设备流程，通知与工作台也采用此机制。旧响应与回调必须核对原捕获，不能仅比较当前租户/角色。普通网络失败可保留已读数据，服务端拒绝访问则隐藏私有摘要并作废捕获。
 
 [通用 API](../apps/guardian/lib/core/api.dart) 使用已锁定 `http 1.6.0` 的 Abortable 协议；[作用域包装层](../apps/guardian/lib/core/scoped_http_client.dart)必须透传中止信号，在实际发送/终结请求前同时检查原作用域和请求期限，借用的客户端不能被单次请求关闭。纯时限单元测试使用原生 `FakeAsync`；共享完成 Future 的取消续程可能在其区域外调度，正常重试须保留有界真实异步断言，参考[超时回归](../apps/guardian/test/api_deadline_test.dart)，不要用无限等待或删除完成断言掩盖问题。

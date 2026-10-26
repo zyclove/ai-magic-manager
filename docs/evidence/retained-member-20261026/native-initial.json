@@ -1,0 +1,42 @@
+{
+  "status": "NOT_ACCEPTED",
+  "sdkCalls": 0,
+  "nativeRoots": 1,
+  "foreignProcessesRead": 0,
+  "commandLinesRead": 0,
+  "childEnvironmentsRead": 0,
+  "browserAcceptanceClaimed": false,
+  "resourcesBefore": {
+    "ram": 3981434880,
+    "cFree": 2174836736,
+    "dFree": 14418857984
+  },
+  "error": "Expected exactly one retained child",
+  "forceRequested": true,
+  "finalOwnedState": {
+    "pid": 231008,
+    "creationFiletime": 134374600651084158,
+    "firstSignaledQpc": 264582.961787,
+    "sampleQpc": 264582.961787,
+    "signaled": true,
+    "exitCode": 124,
+    "exitFiletime": 134374600652034676,
+    "kernel100ns": 0,
+    "user100ns": 0,
+    "jobAccountingObservedQpc": 264582.9618598,
+    "firstCompleteTerminalQpc": 264582.9618598,
+    "activeProcesses": 0,
+    "totalProcesses": 3,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "statsClosed": {
+    "limit": 256,
+    "opens": 2,
+    "reuses": 0,
+    "retained": 0,
+    "rejected": 0,
+    "capacityFailures": 0,
+    "closeErrors": 0
+  }
+}

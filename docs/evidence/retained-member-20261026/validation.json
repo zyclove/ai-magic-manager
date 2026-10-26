@@ -1,0 +1,107 @@
+{
+  "createdAt": "2026-10-26T03:59:57.930092+00:00",
+  "baseCommit": "3cc0e939d13b983ca67c995c1416b15d3d422a91",
+  "status": "QUALIFIED_FOR_THIS_WINDOWS_BROWSER_RUN",
+  "unitCases": {
+    "passed": 6,
+    "failed": 0,
+    "nativeCalls": 0,
+    "initialRedRetained": true
+  },
+  "nativeProbe": {
+    "passed": true,
+    "originalClassifierKinds": [
+      "complete",
+      "complete",
+      "pending"
+    ],
+    "originalFinalityAccepted": true,
+    "forceRequested": false,
+    "initialRejectedProbeRetained": true
+  },
+  "browser": {
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "fullOriginalEvidenceAccepted": true,
+    "problems": [],
+    "cacheBeforeClose": {
+      "limit": 256,
+      "opens": 21,
+      "reuses": 2485,
+      "retained": 21,
+      "rejected": 0,
+      "capacityFailures": 0,
+      "closeErrors": 0
+    },
+    "cacheAfterClose": {
+      "limit": 256,
+      "opens": 21,
+      "reuses": 2485,
+      "retained": 0,
+      "rejected": 0,
+      "capacityFailures": 0,
+      "closeErrors": 0
+    },
+    "sourceUnchanged": true,
+    "windowReleased": true
+  },
+  "baselineOwnedJobSha256": "f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b",
+  "unchangedLegacySha256": {
+    "owned_chrome_evidence.py": "81be26d61faf4b2a77a18b0c2cd8b34c908e776517dc95159b3c903b8e2371b0",
+    "chrome-evidence-json-guard.fragment": "0f44fe849b8dbdacdca28c111232f8ad29511ad35d87d935df423b08d9547a3d",
+    "worker-command-finality-hook.fragment": "332e6e3830b33d26208f0bc42ec3fa089d1812c9972b1ce94eb062c5d4ab89b4"
+  },
+  "sourcePins": {
+    "scripts/verification/owned_job.py": "4fe9af9efda326986044163bb48ac1447813cab07730fdfaa689a9c7307ca5ec",
+    "scripts/verification/owned_chrome_evidence.py": "81be26d61faf4b2a77a18b0c2cd8b34c908e776517dc95159b3c903b8e2371b0",
+    "scripts/verification/chrome-evidence-json-guard.fragment": "0f44fe849b8dbdacdca28c111232f8ad29511ad35d87d935df423b08d9547a3d",
+    "scripts/verification/worker-command-finality-hook.fragment": "332e6e3830b33d26208f0bc42ec3fa089d1812c9972b1ce94eb062c5d4ab89b4",
+    "scripts/verification/probe_owned_job_members.py": "554c0b29f372c56ea70167f41d1a1b2a0503b508d0559271906f4faaa672a550",
+    "scripts/tests/test_owned_job_members.py": "61ad8ccdf314f2d6e194f0d417672a729e6fcaeaef18ad96674eb519cd5c950d"
+  },
+  "runtimeUpdated": false,
+  "pushed": false,
+  "limits": [
+    "This qualification applies to this retained helper and this Windows/browser run; it does not retroactively accept historical NOT_ACCEPTED evidence.",
+    "No full-product, deployment, real identity-provider or device acceptance is claimed."
+  ],
+  "artifacts": [
+    {
+      "path": "browser-evidence.json",
+      "bytes": 38518,
+      "sha256": "aff3ae154aa5a24d100256e285715292eaef614cdb93b9ec8901117f7ccdb3ae"
+    },
+    {
+      "path": "browser-result.json",
+      "bytes": 7492,
+      "sha256": "ca9ccadb4335421c0833ecc9c2416a08c409338627630e735095e81bedb1043f"
+    },
+    {
+      "path": "browser.log",
+      "bytes": 1349,
+      "sha256": "8b51252223b4b30d6551fd0f10734ca2ec0ccb6dcae1e0b55a4dc7ccc3810888"
+    },
+    {
+      "path": "native-final.json",
+      "bytes": 8316,
+      "sha256": "cb375d8ddb421ab8253eab9af669cffda0e90044aa014277112ce0e76db49587"
+    },
+    {
+      "path": "native-initial.json",
+      "bytes": 1054,
+      "sha256": "824b343735014b5d76cb26b702c97d967f66f8e751dde275cd2c1fed729a5728"
+    },
+    {
+      "path": "unit-green.txt",
+      "bytes": 1069,
+      "sha256": "345645b84c58136f6e818fbdd4ce3f8dad6cd70bcd58baaedb061703e747da56"
+    },
+    {
+      "path": "unit-red.txt",
+      "bytes": 1479,
+      "sha256": "d2896e8bb150524dd3efdd9b2f411d1def92f78469ed5c20ae9be8666294ac91"
+    }
+  ],
+  "baselineSourcePath": ".cache/guardian-browser13-20261024-r6-owned-member-finality/owned_job.py"
+}

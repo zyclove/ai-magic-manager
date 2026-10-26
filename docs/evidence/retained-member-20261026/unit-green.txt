@@ -1,0 +1,11 @@
+test_cached_identity_change_or_query_failure_never_reopens (__main__.OwnedJobMemberTest.test_cached_identity_change_or_query_failure_never_reopens) ... ok
+test_close_is_idempotent_and_constructor_failure_releases_resources (__main__.OwnedJobMemberTest.test_close_is_idempotent_and_constructor_failure_releases_resources) ... ok
+test_first_open_error_87_is_unproved_and_never_retried_by_pid (__main__.OwnedJobMemberTest.test_first_open_error_87_is_unproved_and_never_retried_by_pid) ... ok
+test_fixed_capacity_rejects_without_eviction_or_partial_success (__main__.OwnedJobMemberTest.test_fixed_capacity_rejects_without_eviction_or_partial_success) ... ok
+test_nonmember_is_not_admitted_and_cannot_be_reopened (__main__.OwnedJobMemberTest.test_nonmember_is_not_admitted_and_cannot_be_reopened) ... ok
+test_repeated_sample_reuses_proven_handle_without_early_close (__main__.OwnedJobMemberTest.test_repeated_sample_reuses_proven_handle_without_early_close) ... ok
+
+----------------------------------------------------------------------
+Ran 6 tests in 0.010s
+
+OK

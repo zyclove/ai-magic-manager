@@ -1,0 +1,10 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":230624,"type":"start","time":0}
+{"suite":{"id":0,"platform":"chrome","path":"D:/codes/mobile/ai-manager/apps/guardian/test/schedule_copy_flow_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/schedule_copy_flow_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1}
+{"count":1,"time":6,"type":"allSuites"}
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":4221}
+{"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":4224}
+{"test":{"id":3,"name":"schedule-copy special-date changes only the outgoing draft","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":10414,"column":19,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/packages/flutter_test/src/test_text_input_key_handler.dart.js"},"type":"testStart","time":4226}
+{"testID":3,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":7722}
+{"success":true,"type":"done","time":7730}

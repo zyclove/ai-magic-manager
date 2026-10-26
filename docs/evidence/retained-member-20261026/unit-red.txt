@@ -1,0 +1,27 @@
+test_repeated_sample_reuses_proven_handle_without_early_close (__main__.OwnedJobMemberTest.test_repeated_sample_reuses_proven_handle_without_early_close) ... FAIL
+
+======================================================================
+FAIL: test_repeated_sample_reuses_proven_handle_without_early_close (__main__.OwnedJobMemberTest.test_repeated_sample_reuses_proven_handle_without_early_close)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\codes\mobile\ai-manager\scripts\tests\test_owned_job_members.py", line 146, in test_repeated_sample_reuses_proven_handle_without_early_close
+    self.assertEqual({
+    ~~~~~~~~~~~~~~~~^^
+        "openCount": len(self.kernel.opens),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<3 lines>...
+    }, {"openCount": 1, "closedChildHandles": [], "creation": 5000,
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        "openError": None})
+        ^^^^^^^^^^^^^^^^^^^
+AssertionError: {'openCount': 2, 'closedChildHandles': [10001], 'creati[22 chars]: 87} != {'openCount': 1, 'closedChildHandles': [], 'creation': [19 chars]None}
++ {'closedChildHandles': [], 'creation': 5000, 'openCount': 1, 'openError': None}
+- {'closedChildHandles': [10001],
+-  'creation': None,
+-  'openCount': 2,
+-  'openError': 87}
+
+----------------------------------------------------------------------
+Ran 1 test in 0.002s
+
+FAILED (failures=1)

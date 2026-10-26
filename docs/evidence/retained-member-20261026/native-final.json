@@ -1,0 +1,303 @@
+{
+  "status": "PASSED",
+  "sdkCalls": 0,
+  "nativeRoots": 1,
+  "foreignProcessesRead": 0,
+  "commandLinesRead": 0,
+  "childEnvironmentsRead": 0,
+  "browserAcceptanceClaimed": false,
+  "resourcesBefore": {
+    "ram": 3912286208,
+    "cFree": 2172862464,
+    "dFree": 14418624512
+  },
+  "firstSnapshot": {
+    "startedQpc": 264690.1879915,
+    "deadlineQpc": 264702.0893361,
+    "before": {
+      "qpc": 264690.1879915,
+      "complete": true,
+      "assigned": 3,
+      "listed": 3,
+      "limit": 32,
+      "error": 0,
+      "pids": [
+        230056,
+        224668,
+        230592
+      ]
+    },
+    "identities": [
+      {
+        "pid": 230056,
+        "openedFromOwnJobList": true,
+        "verifiedOwnMembership": true,
+        "retainedRootHandleUsed": true,
+        "creationFiletime": 134374601723516346,
+        "exitFiletime": 0,
+        "kernel100ns": 156250,
+        "user100ns": 0,
+        "sampleQpc": 264690.1880384,
+        "signaled": false,
+        "imagePath": "C:\\Python313\\python.exe"
+      },
+      {
+        "pid": 224668,
+        "openedFromOwnJobList": true,
+        "verifiedOwnMembership": true,
+        "retainedRootHandleUsed": false,
+        "creationFiletime": 134374601723639993,
+        "exitFiletime": 0,
+        "kernel100ns": 156250,
+        "user100ns": 0,
+        "sampleQpc": 264690.1881838,
+        "signaled": false,
+        "imagePath": "C:\\Windows\\System32\\conhost.exe"
+      },
+      {
+        "pid": 230592,
+        "openedFromOwnJobList": true,
+        "verifiedOwnMembership": true,
+        "retainedRootHandleUsed": false,
+        "creationFiletime": 134374601724334141,
+        "exitFiletime": 0,
+        "kernel100ns": 0,
+        "user100ns": 0,
+        "sampleQpc": 264690.1882516,
+        "signaled": false,
+        "imagePath": "C:\\Python313\\python.exe"
+      }
+    ],
+    "after": {
+      "qpc": 264690.1882922,
+      "complete": true,
+      "assigned": 3,
+      "listed": 3,
+      "limit": 32,
+      "error": 0,
+      "pids": [
+        230056,
+        224668,
+        230592
+      ]
+    },
+    "identityRowsLimitedByDeadline": false,
+    "scope": "This private Job only; read-only handles, no command line/environment, no PID termination",
+    "causeClassified": false
+  },
+  "statsBefore": {
+    "limit": 256,
+    "opens": 2,
+    "reuses": 0,
+    "retained": 2,
+    "rejected": 0,
+    "capacityFailures": 0,
+    "closeErrors": 0
+  },
+  "exitedSnapshot": {
+    "startedQpc": 264690.2496511,
+    "deadlineQpc": 264702.0893361,
+    "before": {
+      "qpc": 264690.2496511,
+      "complete": true,
+      "assigned": 3,
+      "listed": 3,
+      "limit": 32,
+      "error": 0,
+      "pids": [
+        230056,
+        224668,
+        230592
+      ]
+    },
+    "identities": [
+      {
+        "pid": 230056,
+        "openedFromOwnJobList": true,
+        "verifiedOwnMembership": true,
+        "retainedRootHandleUsed": true,
+        "creationFiletime": 134374601723516346,
+        "exitFiletime": 0,
+        "kernel100ns": 156250,
+        "user100ns": 0,
+        "sampleQpc": 264690.2497109,
+        "signaled": false,
+        "imagePath": "C:\\Python313\\python.exe"
+      },
+      {
+        "pid": 224668,
+        "openedFromOwnJobList": true,
+        "verifiedOwnMembership": true,
+        "retainedRootHandleUsed": false,
+        "creationFiletime": 134374601723639993,
+        "exitFiletime": 0,
+        "kernel100ns": 156250,
+        "user100ns": 0,
+        "sampleQpc": 264690.249815,
+        "signaled": false,
+        "imagePath": "C:\\Windows\\System32\\conhost.exe"
+      },
+      {
+        "pid": 230592,
+        "openedFromOwnJobList": true,
+        "verifiedOwnMembership": true,
+        "retainedRootHandleUsed": false,
+        "creationFiletime": 134374601724334141,
+        "exitFiletime": 134374601724950369,
+        "kernel100ns": 156250,
+        "user100ns": 0,
+        "sampleQpc": 264690.2498689,
+        "signaled": true,
+        "exitCode": 0,
+        "imageError": 31
+      }
+    ],
+    "after": {
+      "qpc": 264690.2498957,
+      "complete": true,
+      "assigned": 2,
+      "listed": 2,
+      "limit": 32,
+      "error": 0,
+      "pids": [
+        230056,
+        224668
+      ]
+    },
+    "identityRowsLimitedByDeadline": false,
+    "scope": "This private Job only; read-only handles, no command line/environment, no PID termination",
+    "causeClassified": false
+  },
+  "originalClassifierKinds": [
+    "complete",
+    "complete",
+    "pending"
+  ],
+  "classifierSha256": "81be26d61faf4b2a77a18b0c2cd8b34c908e776517dc95159b3c903b8e2371b0",
+  "originalFinality": {
+    "schemaVersion": 1,
+    "source": "SAME_COMMAND_OWNED_JOB",
+    "jobRootPid": 230056,
+    "jobRootCreationFiletime": 134374601723516346,
+    "originalCommandDeadlineQpc": 264702.0893361,
+    "deadlineQpc": 264690.7859877,
+    "naturalDrainSeconds": 0.5,
+    "A0": {
+      "pid": 230056,
+      "creationFiletime": 134374601723516346,
+      "firstSignaledQpc": 264690.2859877,
+      "sampleQpc": 264690.298701,
+      "signaled": true,
+      "exitCode": 0,
+      "exitFiletime": 134374601725334031,
+      "kernel100ns": 156250,
+      "user100ns": 0,
+      "jobAccountingObservedQpc": 264690.2987227,
+      "firstCompleteTerminalQpc": 264690.2979294,
+      "activeProcesses": 0,
+      "totalProcesses": 3,
+      "terminatedProcesses": 0,
+      "terminal": true
+    },
+    "M": {
+      "startedQpc": 264690.2987963,
+      "deadlineQpc": 264690.7859877,
+      "before": {
+        "qpc": 264690.2987963,
+        "complete": true,
+        "assigned": 0,
+        "listed": 0,
+        "limit": 32,
+        "error": 0,
+        "pids": []
+      },
+      "identities": [],
+      "after": {
+        "qpc": 264690.2988011,
+        "complete": true,
+        "assigned": 0,
+        "listed": 0,
+        "limit": 32,
+        "error": 0,
+        "pids": []
+      },
+      "identityRowsLimitedByDeadline": false,
+      "scope": "This private Job only; read-only handles, no command line/environment, no PID termination",
+      "causeClassified": false
+    },
+    "A1": {
+      "pid": 230056,
+      "creationFiletime": 134374601723516346,
+      "firstSignaledQpc": 264690.2859877,
+      "sampleQpc": 264690.298805,
+      "signaled": true,
+      "exitCode": 0,
+      "exitFiletime": 134374601725334031,
+      "kernel100ns": 156250,
+      "user100ns": 0,
+      "jobAccountingObservedQpc": 264690.298817,
+      "firstCompleteTerminalQpc": 264690.2979294,
+      "activeProcesses": 0,
+      "totalProcesses": 3,
+      "terminatedProcesses": 0,
+      "terminal": true
+    },
+    "forceRequested": false,
+    "closeFallback": false
+  },
+  "originalFinalityAccepted": true,
+  "finalityHookSha256": "332e6e3830b33d26208f0bc42ec3fa089d1812c9972b1ce94eb062c5d4ab89b4",
+  "statsAfter": {
+    "limit": 256,
+    "opens": 2,
+    "reuses": 2,
+    "retained": 2,
+    "rejected": 0,
+    "capacityFailures": 0,
+    "closeErrors": 0
+  },
+  "terminal": {
+    "pid": 230056,
+    "creationFiletime": 134374601723516346,
+    "firstSignaledQpc": 264690.2859877,
+    "sampleQpc": 264690.2979198,
+    "signaled": true,
+    "exitCode": 0,
+    "exitFiletime": 134374601725334031,
+    "kernel100ns": 156250,
+    "user100ns": 0,
+    "jobAccountingObservedQpc": 264690.2979294,
+    "firstCompleteTerminalQpc": 264690.2979294,
+    "activeProcesses": 0,
+    "totalProcesses": 3,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "forceRequested": false,
+  "finalOwnedState": {
+    "pid": 230056,
+    "creationFiletime": 134374601723516346,
+    "firstSignaledQpc": 264690.2859877,
+    "sampleQpc": 264690.2988566,
+    "signaled": true,
+    "exitCode": 0,
+    "exitFiletime": 134374601725334031,
+    "kernel100ns": 156250,
+    "user100ns": 0,
+    "jobAccountingObservedQpc": 264690.2988659,
+    "firstCompleteTerminalQpc": 264690.2979294,
+    "activeProcesses": 0,
+    "totalProcesses": 3,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "statsClosed": {
+    "limit": 256,
+    "opens": 2,
+    "reuses": 2,
+    "retained": 0,
+    "rejected": 0,
+    "capacityFailures": 0,
+    "closeErrors": 0
+  }
+}

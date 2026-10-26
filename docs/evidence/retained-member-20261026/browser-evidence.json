@@ -1,0 +1,1144 @@
+{
+  "schemaVersion": 2,
+  "status": "OWNED_CHROME_BOUNDARIES_OBSERVED",
+  "chromeRoots": [
+    {
+      "imagePath": "c:\\program files\\google\\chrome\\application\\chrome.exe",
+      "profile": "d:\\codes\\mobile\\ai-manager\\.cache\\retained-member-20261026-r1\\browser-native\\tmp\\flutter_tools.b594c511\\flutter_tools_chrome_device.85618957",
+      "debuggingPort": 64911,
+      "testServerOrigins": [
+        "http://localhost:64909"
+      ],
+      "managerTarget": {
+        "scheme": "ws",
+        "host": "localhost",
+        "port": 64909
+      },
+      "testTargets": [
+        {
+          "scheme": "http",
+          "host": "localhost",
+          "port": 64909,
+          "path": "/static/index.html",
+          "urlSha256": "852f8ae3f8da35d9d619b71d0b8b4d41813a94690b2f0640ebeee972ac66cbe2"
+        }
+      ],
+      "headless": true,
+      "argvTestTargetLoopback": true,
+      "flutterManagerTargetSameLoopbackOrigin": true,
+      "commandLineUtf16Sha256": "7293586c9cbe2f1f404e04ea0a9e00ee547e27c15ec9fec5fb9d84b3a1766812",
+      "commandLineReadBeforeQpc": 264874.2240953,
+      "commandLineReadAfterQpc": 264874.224361,
+      "pid": 230136,
+      "creationFiletime": 134374603528611703,
+      "commandCreationFiletime": 134374603396661995,
+      "sameReadHandleVerified": true,
+      "ownedMembershipVerifiedBeforeAndAfter": true,
+      "liveBeforeAndAfter": true,
+      "observedQpc": 264875.1864275,
+      "debugListenerAddresses": [
+        {
+          "address": "127.0.0.1",
+          "port": 64911,
+          "family": "AF_INET",
+          "status": "LISTEN"
+        }
+      ],
+      "listenerReadBeforeQpc": 264875.1829573,
+      "listenerReadAfterQpc": 264875.1864275,
+      "listenerSameHandleIdentityVerifiedBeforeAndAfter": true,
+      "debugBindingLoopbackObserved": true
+    }
+  ],
+  "problems": [],
+  "sampleCalls": 350,
+  "pinnedBrowserPath": "c:\\program files\\google\\chrome\\application\\chrome.exe",
+  "temporaryRoot": "d:\\codes\\mobile\\ai-manager\\.cache\\retained-member-20261026-r1\\browser-native\\tmp",
+  "commandCreationFiletime": 134374603396661995,
+  "observationDeadlineQpc": 264995.3744329,
+  "commandLineSource": "SAME_RETAINED_HANDLE_PBI0_READPROCESSMEMORY",
+  "debugBindingProof": "PID_FILTERED_LISTEN_ROWS_BRACKETED_BY_SAME_HANDLE_IDENTITY",
+  "foreignCommandLinesRead": false,
+  "processesTerminated": false,
+  "environmentRead": false,
+  "nativeReadPathQualificationSeparate": true,
+  "observedProblems": [
+    "OWN_JOB_MEMBER_IDENTITY_UNPROVED"
+  ],
+  "failureLedger": {
+    "schemaVersion": 1,
+    "maximumFailureSnapshots": 8,
+    "maximumSerializedBytes": 262144,
+    "totalFailureSnapshotsSeen": 4,
+    "storedFailureSnapshots": 4,
+    "droppedFailureSnapshots": 0,
+    "overflow": false,
+    "snapshots": [
+      {
+        "sampleOrdinal": 337,
+        "jobRootPid": 221412,
+        "jobRootCreationFiletime": 134374603396661995,
+        "rawSnapshot": {
+          "startedQpc": 264881.9270109,
+          "deadlineQpc": 264995.3744329,
+          "before": {
+            "qpc": 264881.9270109,
+            "complete": true,
+            "assigned": 14,
+            "listed": 14,
+            "limit": 32,
+            "error": 0,
+            "pids": [
+              221412,
+              178420,
+              230624,
+              230948,
+              229560,
+              230136,
+              231836,
+              120836,
+              227640,
+              231324,
+              232564,
+              232652,
+              232736,
+              232804
+            ]
+          },
+          "identities": [
+            {
+              "pid": 221412,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": true,
+              "creationFiletime": 134374603396661995,
+              "exitFiletime": 0,
+              "kernel100ns": 156250,
+              "user100ns": 0,
+              "sampleQpc": 264881.9270481,
+              "signaled": false,
+              "imagePath": "C:\\Windows\\System32\\cmd.exe"
+            },
+            {
+              "pid": 178420,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603396799991,
+              "exitFiletime": 0,
+              "kernel100ns": 0,
+              "user100ns": 0,
+              "sampleQpc": 264881.9271679,
+              "signaled": false,
+              "imagePath": "C:\\Windows\\System32\\conhost.exe"
+            },
+            {
+              "pid": 230624,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603398686915,
+              "exitFiletime": 0,
+              "kernel100ns": 2812500,
+              "user100ns": 4687500,
+              "sampleQpc": 264881.9272451,
+              "signaled": false,
+              "imagePath": "D:\\softwares\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe"
+            },
+            {
+              "pid": 230948,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603402306782,
+              "exitFiletime": 0,
+              "kernel100ns": 2343750,
+              "user100ns": 62656250,
+              "sampleQpc": 264881.9273197,
+              "signaled": false,
+              "imagePath": "D:\\softwares\\flutter\\bin\\cache\\dart-sdk\\bin\\dartaotruntime.exe"
+            },
+            {
+              "pid": 229560,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603402484289,
+              "exitFiletime": 0,
+              "kernel100ns": 0,
+              "user100ns": 0,
+              "sampleQpc": 264881.9273892,
+              "signaled": false,
+              "imagePath": "C:\\Windows\\System32\\conhost.exe"
+            },
+            {
+              "pid": 230136,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603528611703,
+              "exitFiletime": 134374603605558690,
+              "kernel100ns": 6093750,
+              "user100ns": 1406250,
+              "sampleQpc": 264881.9274562,
+              "signaled": false,
+              "imageError": 5
+            },
+            {
+              "pid": 231836,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603530225359,
+              "exitFiletime": 0,
+              "kernel100ns": 0,
+              "user100ns": 0,
+              "sampleQpc": 264881.9274748,
+              "signaled": false,
+              "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+            },
+            {
+              "pid": 120836,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603537398501,
+              "exitFiletime": 134374603605777592,
+              "kernel100ns": 468750,
+              "user100ns": 312500,
+              "sampleQpc": 264881.9275171,
+              "signaled": false,
+              "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+            },
+            {
+              "pid": 227640,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603538431808,
+              "exitFiletime": 0,
+              "kernel100ns": 0,
+              "user100ns": 0,
+              "sampleQpc": 264881.9275591,
+              "signaled": false,
+              "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+            },
+            {
+              "pid": 231324,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603538873592,
+              "exitFiletime": 0,
+              "kernel100ns": 312500,
+              "user100ns": 468750,
+              "sampleQpc": 264881.9275978,
+              "signaled": false,
+              "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+            },
+            {
+              "pid": 232564,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603539723313,
+              "exitFiletime": 0,
+              "kernel100ns": 1875000,
+              "user100ns": 27031250,
+              "sampleQpc": 264881.92764,
+              "signaled": false,
+              "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+            },
+            {
+              "pid": 232652,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603540141583,
+              "exitFiletime": 0,
+              "kernel100ns": 156250,
+              "user100ns": 0,
+              "sampleQpc": 264881.9276851,
+              "signaled": false,
+              "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+            },
+            {
+              "pid": 232736,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603540594550,
+              "exitFiletime": 0,
+              "kernel100ns": 312500,
+              "user100ns": 0,
+              "sampleQpc": 264881.9277323,
+              "signaled": false,
+              "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+            },
+            {
+              "pid": 232804,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603541016426,
+              "exitFiletime": 0,
+              "kernel100ns": 0,
+              "user100ns": 0,
+              "sampleQpc": 264881.9277655,
+              "signaled": false,
+              "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+            }
+          ],
+          "after": {
+            "qpc": 264881.9277919,
+            "complete": true,
+            "assigned": 14,
+            "listed": 14,
+            "limit": 32,
+            "error": 0,
+            "pids": [
+              221412,
+              178420,
+              230624,
+              230948,
+              229560,
+              230136,
+              231836,
+              120836,
+              227640,
+              231324,
+              232564,
+              232652,
+              232736,
+              232804
+            ]
+          },
+          "identityRowsLimitedByDeadline": false,
+          "scope": "This private Job only; read-only handles, no command line/environment, no PID termination",
+          "causeClassified": false
+        },
+        "afterOnlyNotQueried": []
+      },
+      {
+        "sampleOrdinal": 339,
+        "jobRootPid": 221412,
+        "jobRootCreationFiletime": 134374603396661995,
+        "rawSnapshot": {
+          "startedQpc": 264882.0495606,
+          "deadlineQpc": 264995.3744329,
+          "before": {
+            "qpc": 264882.0495606,
+            "complete": true,
+            "assigned": 7,
+            "listed": 7,
+            "limit": 32,
+            "error": 0,
+            "pids": [
+              221412,
+              178420,
+              230624,
+              230948,
+              229560,
+              231836,
+              232564
+            ]
+          },
+          "identities": [
+            {
+              "pid": 221412,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": true,
+              "creationFiletime": 134374603396661995,
+              "exitFiletime": 0,
+              "kernel100ns": 156250,
+              "user100ns": 0,
+              "sampleQpc": 264882.0496093,
+              "signaled": false,
+              "imagePath": "C:\\Windows\\System32\\cmd.exe"
+            },
+            {
+              "pid": 178420,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603396799991,
+              "exitFiletime": 0,
+              "kernel100ns": 0,
+              "user100ns": 0,
+              "sampleQpc": 264882.0497822,
+              "signaled": false,
+              "imagePath": "C:\\Windows\\System32\\conhost.exe"
+            },
+            {
+              "pid": 230624,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603398686915,
+              "exitFiletime": 0,
+              "kernel100ns": 2968750,
+              "user100ns": 4687500,
+              "sampleQpc": 264882.0498838,
+              "signaled": false,
+              "imagePath": "D:\\softwares\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe"
+            },
+            {
+              "pid": 230948,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603402306782,
+              "exitFiletime": 0,
+              "kernel100ns": 2343750,
+              "user100ns": 62656250,
+              "sampleQpc": 264882.049969,
+              "signaled": false,
+              "imagePath": "D:\\softwares\\flutter\\bin\\cache\\dart-sdk\\bin\\dartaotruntime.exe"
+            },
+            {
+              "pid": 229560,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603402484289,
+              "exitFiletime": 0,
+              "kernel100ns": 0,
+              "user100ns": 0,
+              "sampleQpc": 264882.0500581,
+              "signaled": false,
+              "imagePath": "C:\\Windows\\System32\\conhost.exe"
+            },
+            {
+              "pid": 231836,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603530225359,
+              "exitFiletime": 0,
+              "kernel100ns": 0,
+              "user100ns": 0,
+              "sampleQpc": 264882.050285,
+              "signaled": false,
+              "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+            },
+            {
+              "pid": 232564,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603539723313,
+              "exitFiletime": 134374603606036521,
+              "kernel100ns": 2187500,
+              "user100ns": 27031250,
+              "sampleQpc": 264882.0503923,
+              "signaled": false,
+              "imageError": 5
+            }
+          ],
+          "after": {
+            "qpc": 264882.0504137,
+            "complete": true,
+            "assigned": 7,
+            "listed": 7,
+            "limit": 32,
+            "error": 0,
+            "pids": [
+              221412,
+              178420,
+              230624,
+              230948,
+              229560,
+              231836,
+              232564
+            ]
+          },
+          "identityRowsLimitedByDeadline": false,
+          "scope": "This private Job only; read-only handles, no command line/environment, no PID termination",
+          "causeClassified": false
+        },
+        "afterOnlyNotQueried": []
+      },
+      {
+        "sampleOrdinal": 348,
+        "jobRootPid": 221412,
+        "jobRootCreationFiletime": 134374603396661995,
+        "rawSnapshot": {
+          "startedQpc": 264882.5506469,
+          "deadlineQpc": 264883.0393868,
+          "before": {
+            "qpc": 264882.5506469,
+            "complete": true,
+            "assigned": 3,
+            "listed": 3,
+            "limit": 32,
+            "error": 0,
+            "pids": [
+              178420,
+              230948,
+              229560
+            ]
+          },
+          "identities": [
+            {
+              "pid": 178420,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603396799991,
+              "exitFiletime": 134374603611981437,
+              "kernel100ns": 0,
+              "user100ns": 0,
+              "sampleQpc": 264882.5506711,
+              "signaled": false,
+              "imageError": 5
+            },
+            {
+              "pid": 230948,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603402306782,
+              "exitFiletime": 0,
+              "kernel100ns": 2812500,
+              "user100ns": 62656250,
+              "sampleQpc": 264882.5507035,
+              "signaled": false,
+              "imagePath": "D:\\softwares\\flutter\\bin\\cache\\dart-sdk\\bin\\dartaotruntime.exe"
+            },
+            {
+              "pid": 229560,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603402484289,
+              "exitFiletime": 0,
+              "kernel100ns": 0,
+              "user100ns": 0,
+              "sampleQpc": 264882.5508231,
+              "signaled": false,
+              "imagePath": "C:\\Windows\\System32\\conhost.exe"
+            }
+          ],
+          "after": {
+            "qpc": 264882.5508731,
+            "complete": true,
+            "assigned": 3,
+            "listed": 3,
+            "limit": 32,
+            "error": 0,
+            "pids": [
+              178420,
+              230948,
+              229560
+            ]
+          },
+          "identityRowsLimitedByDeadline": false,
+          "scope": "This private Job only; read-only handles, no command line/environment, no PID termination",
+          "causeClassified": false
+        },
+        "afterOnlyNotQueried": []
+      },
+      {
+        "sampleOrdinal": 350,
+        "jobRootPid": 221412,
+        "jobRootCreationFiletime": 134374603396661995,
+        "rawSnapshot": {
+          "startedQpc": 264882.5733079,
+          "deadlineQpc": 264883.0393868,
+          "before": {
+            "qpc": 264882.5733079,
+            "complete": true,
+            "assigned": 2,
+            "listed": 2,
+            "limit": 32,
+            "error": 0,
+            "pids": [
+              230948,
+              229560
+            ]
+          },
+          "identities": [
+            {
+              "pid": 230948,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603402306782,
+              "exitFiletime": 134374603612214007,
+              "kernel100ns": 2812500,
+              "user100ns": 62656250,
+              "sampleQpc": 264882.5733497,
+              "signaled": false,
+              "imageError": 5
+            },
+            {
+              "pid": 229560,
+              "openedFromOwnJobList": true,
+              "verifiedOwnMembership": true,
+              "retainedRootHandleUsed": false,
+              "creationFiletime": 134374603402484289,
+              "exitFiletime": 0,
+              "kernel100ns": 0,
+              "user100ns": 0,
+              "sampleQpc": 264882.5733987,
+              "signaled": false,
+              "imagePath": "C:\\Windows\\System32\\conhost.exe"
+            }
+          ],
+          "after": {
+            "qpc": 264882.5735426,
+            "complete": true,
+            "assigned": 2,
+            "listed": 2,
+            "limit": 32,
+            "error": 0,
+            "pids": [
+              230948,
+              229560
+            ]
+          },
+          "identityRowsLimitedByDeadline": false,
+          "scope": "This private Job only; read-only handles, no command line/environment, no PID termination",
+          "causeClassified": false
+        },
+        "afterOnlyNotQueried": []
+      }
+    ],
+    "firstIdentityObservations": [
+      {
+        "sampleOrdinal": 1,
+        "pid": 221412,
+        "creationFiletime": 134374603396661995,
+        "rawRow": {
+          "pid": 221412,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": true,
+          "creationFiletime": 134374603396661995,
+          "exitFiletime": 0,
+          "kernel100ns": 156250,
+          "user100ns": 0,
+          "sampleQpc": 264861.0786724,
+          "signaled": false,
+          "imagePath": "C:\\Windows\\System32\\cmd.exe"
+        }
+      },
+      {
+        "sampleOrdinal": 1,
+        "pid": 178420,
+        "creationFiletime": 134374603396799991,
+        "rawRow": {
+          "pid": 178420,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134374603396799991,
+          "exitFiletime": 0,
+          "kernel100ns": 0,
+          "user100ns": 0,
+          "sampleQpc": 264861.0788742,
+          "signaled": false,
+          "imagePath": "C:\\Windows\\System32\\conhost.exe"
+        }
+      },
+      {
+        "sampleOrdinal": 2,
+        "pid": 220980,
+        "creationFiletime": 134374603397429537,
+        "rawRow": {
+          "pid": 220980,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134374603397429537,
+          "exitFiletime": 0,
+          "kernel100ns": 0,
+          "user100ns": 0,
+          "sampleQpc": 264861.1419197,
+          "signaled": false,
+          "imagePath": "C:\\Windows\\System32\\cmd.exe"
+        }
+      },
+      {
+        "sampleOrdinal": 2,
+        "pid": 232308,
+        "creationFiletime": 134374603397581373,
+        "rawRow": {
+          "pid": 232308,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134374603397581373,
+          "exitFiletime": 0,
+          "kernel100ns": 0,
+          "user100ns": 0,
+          "sampleQpc": 264861.1419831,
+          "signaled": false,
+          "imagePath": "C:\\Program Files\\Git\\cmd\\git.exe"
+        }
+      },
+      {
+        "sampleOrdinal": 2,
+        "pid": 225992,
+        "creationFiletime": 134374603397769384,
+        "rawRow": {
+          "pid": 225992,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134374603397769384,
+          "exitFiletime": 134374603397983588,
+          "kernel100ns": 156250,
+          "user100ns": 0,
+          "sampleQpc": 264861.1420493,
+          "signaled": false,
+          "imagePath": "C:\\Program Files\\Git\\mingw64\\bin\\git.exe"
+        }
+      },
+      {
+        "sampleOrdinal": 4,
+        "pid": 230624,
+        "creationFiletime": 134374603398686915,
+        "rawRow": {
+          "pid": 230624,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134374603398686915,
+          "exitFiletime": 0,
+          "kernel100ns": 0,
+          "user100ns": 0,
+          "sampleQpc": 264861.2652263,
+          "signaled": false,
+          "imagePath": "D:\\softwares\\flutter\\bin\\cache\\dart-sdk\\bin\\dart.exe"
+        }
+      },
+      {
+        "sampleOrdinal": 9,
+        "pid": 230948,
+        "creationFiletime": 134374603402306782,
+        "rawRow": {
+          "pid": 230948,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134374603402306782,
+          "exitFiletime": 0,
+          "kernel100ns": 0,
+          "user100ns": 0,
+          "sampleQpc": 264861.5811387,
+          "signaled": false,
+          "imagePath": "D:\\softwares\\flutter\\bin\\cache\\dart-sdk\\bin\\dartaotruntime.exe"
+        }
+      },
+      {
+        "sampleOrdinal": 10,
+        "pid": 229560,
+        "creationFiletime": 134374603402484289,
+        "rawRow": {
+          "pid": 229560,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134374603402484289,
+          "exitFiletime": 0,
+          "kernel100ns": 0,
+          "user100ns": 0,
+          "sampleQpc": 264861.6372943,
+          "signaled": false,
+          "imagePath": "C:\\Windows\\System32\\conhost.exe"
+        }
+      },
+      {
+        "sampleOrdinal": 213,
+        "pid": 230136,
+        "creationFiletime": 134374603528611703,
+        "rawRow": {
+          "pid": 230136,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134374603528611703,
+          "exitFiletime": 0,
+          "kernel100ns": 0,
+          "user100ns": 0,
+          "sampleQpc": 264874.2230348,
+          "signaled": false,
+          "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+        }
+      },
+      {
+        "sampleOrdinal": 215,
+        "pid": 231836,
+        "creationFiletime": 134374603530225359,
+        "rawRow": {
+          "pid": 231836,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134374603530225359,
+          "exitFiletime": 0,
+          "kernel100ns": 0,
+          "user100ns": 0,
+          "sampleQpc": 264874.3675229,
+          "signaled": false,
+          "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+        }
+      },
+      {
+        "sampleOrdinal": 227,
+        "pid": 120836,
+        "creationFiletime": 134374603537398501,
+        "rawRow": {
+          "pid": 120836,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134374603537398501,
+          "exitFiletime": 0,
+          "kernel100ns": 0,
+          "user100ns": 0,
+          "sampleQpc": 264875.1208641,
+          "signaled": false,
+          "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+        }
+      },
+      {
+        "sampleOrdinal": 228,
+        "pid": 224496,
+        "creationFiletime": 134374603537820518,
+        "rawRow": {
+          "pid": 224496,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134374603537820518,
+          "exitFiletime": 0,
+          "kernel100ns": 0,
+          "user100ns": 0,
+          "sampleQpc": 264875.1822793,
+          "signaled": false,
+          "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+        }
+      },
+      {
+        "sampleOrdinal": 229,
+        "pid": 227640,
+        "creationFiletime": 134374603538431808,
+        "rawRow": {
+          "pid": 227640,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134374603538431808,
+          "exitFiletime": 0,
+          "kernel100ns": 0,
+          "user100ns": 0,
+          "sampleQpc": 264875.2441533,
+          "signaled": false,
+          "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+        }
+      },
+      {
+        "sampleOrdinal": 229,
+        "pid": 231324,
+        "creationFiletime": 134374603538873592,
+        "rawRow": {
+          "pid": 231324,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134374603538873592,
+          "exitFiletime": 0,
+          "kernel100ns": 0,
+          "user100ns": 0,
+          "sampleQpc": 264875.2442186,
+          "signaled": false,
+          "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+        }
+      },
+      {
+        "sampleOrdinal": 230,
+        "pid": 232456,
+        "creationFiletime": 134374603539393178,
+        "rawRow": {
+          "pid": 232456,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134374603539393178,
+          "exitFiletime": 0,
+          "kernel100ns": 0,
+          "user100ns": 0,
+          "sampleQpc": 264875.3044073,
+          "signaled": false,
+          "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+        }
+      },
+      {
+        "sampleOrdinal": 231,
+        "pid": 232564,
+        "creationFiletime": 134374603539723313,
+        "rawRow": {
+          "pid": 232564,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134374603539723313,
+          "exitFiletime": 0,
+          "kernel100ns": 0,
+          "user100ns": 0,
+          "sampleQpc": 264875.3690056,
+          "signaled": false,
+          "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+        }
+      },
+      {
+        "sampleOrdinal": 231,
+        "pid": 232652,
+        "creationFiletime": 134374603540141583,
+        "rawRow": {
+          "pid": 232652,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134374603540141583,
+          "exitFiletime": 0,
+          "kernel100ns": 0,
+          "user100ns": 0,
+          "sampleQpc": 264875.3692913,
+          "signaled": false,
+          "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+        }
+      },
+      {
+        "sampleOrdinal": 232,
+        "pid": 232736,
+        "creationFiletime": 134374603540594550,
+        "rawRow": {
+          "pid": 232736,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134374603540594550,
+          "exitFiletime": 0,
+          "kernel100ns": 0,
+          "user100ns": 0,
+          "sampleQpc": 264875.4309455,
+          "signaled": false,
+          "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+        }
+      },
+      {
+        "sampleOrdinal": 233,
+        "pid": 232804,
+        "creationFiletime": 134374603541016426,
+        "rawRow": {
+          "pid": 232804,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134374603541016426,
+          "exitFiletime": 0,
+          "kernel100ns": 0,
+          "user100ns": 0,
+          "sampleQpc": 264875.493085,
+          "signaled": false,
+          "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+        }
+      },
+      {
+        "sampleOrdinal": 271,
+        "pid": 233432,
+        "creationFiletime": 134374603564533231,
+        "rawRow": {
+          "pid": 233432,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134374603564533231,
+          "exitFiletime": 0,
+          "kernel100ns": 0,
+          "user100ns": 0,
+          "sampleQpc": 264877.8417303,
+          "signaled": false,
+          "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+        }
+      },
+      {
+        "sampleOrdinal": 271,
+        "pid": 233440,
+        "creationFiletime": 134374603564939209,
+        "rawRow": {
+          "pid": 233440,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134374603564939209,
+          "exitFiletime": 0,
+          "kernel100ns": 0,
+          "user100ns": 0,
+          "sampleQpc": 264877.841815,
+          "signaled": false,
+          "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+        }
+      },
+      {
+        "sampleOrdinal": 273,
+        "pid": 230692,
+        "creationFiletime": 134374603565785058,
+        "rawRow": {
+          "pid": 230692,
+          "openedFromOwnJobList": true,
+          "verifiedOwnMembership": true,
+          "retainedRootHandleUsed": false,
+          "creationFiletime": 134374603565785058,
+          "exitFiletime": 0,
+          "kernel100ns": 0,
+          "user100ns": 0,
+          "sampleQpc": 264877.9631449,
+          "signaled": false,
+          "imagePath": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe"
+        }
+      }
+    ],
+    "identityConflicts": [],
+    "pendingOccurrences": [
+      {
+        "snapshotIndex": 0,
+        "rowIndex": 5,
+        "sampleOrdinal": 337,
+        "pid": 230136,
+        "creationFiletime": 134374603528611703
+      },
+      {
+        "snapshotIndex": 1,
+        "rowIndex": 6,
+        "sampleOrdinal": 339,
+        "pid": 232564,
+        "creationFiletime": 134374603539723313
+      },
+      {
+        "snapshotIndex": 2,
+        "rowIndex": 0,
+        "sampleOrdinal": 348,
+        "pid": 178420,
+        "creationFiletime": 134374603396799991
+      },
+      {
+        "snapshotIndex": 3,
+        "rowIndex": 0,
+        "sampleOrdinal": 350,
+        "pid": 230948,
+        "creationFiletime": 134374603402306782
+      }
+    ],
+    "resolvedOccurrences": [
+      {
+        "snapshotIndex": 0,
+        "rowIndex": 5,
+        "sampleOrdinal": 337,
+        "pid": 230136,
+        "creationFiletime": 134374603528611703,
+        "resolution": "OWNED_MEMBER_CLOSED_IMAGE_UNKNOWN"
+      },
+      {
+        "snapshotIndex": 1,
+        "rowIndex": 6,
+        "sampleOrdinal": 339,
+        "pid": 232564,
+        "creationFiletime": 134374603539723313,
+        "resolution": "OWNED_MEMBER_CLOSED_IMAGE_UNKNOWN"
+      },
+      {
+        "snapshotIndex": 2,
+        "rowIndex": 0,
+        "sampleOrdinal": 348,
+        "pid": 178420,
+        "creationFiletime": 134374603396799991,
+        "resolution": "OWNED_MEMBER_CLOSED_IMAGE_UNKNOWN"
+      },
+      {
+        "snapshotIndex": 3,
+        "rowIndex": 0,
+        "sampleOrdinal": 350,
+        "pid": 230948,
+        "creationFiletime": 134374603402306782,
+        "resolution": "OWNED_MEMBER_CLOSED_IMAGE_UNKNOWN"
+      }
+    ],
+    "fatalProblems": []
+  },
+  "terminalFinality": {
+    "schemaVersion": 1,
+    "source": "SAME_COMMAND_OWNED_JOB",
+    "jobRootPid": 221412,
+    "jobRootCreationFiletime": 134374603396661995,
+    "originalCommandDeadlineQpc": 264995.3744329,
+    "deadlineQpc": 264883.0393868,
+    "naturalDrainSeconds": 0.5,
+    "A0": {
+      "pid": 221412,
+      "creationFiletime": 134374603396661995,
+      "firstSignaledQpc": 264882.5393868,
+      "sampleQpc": 264882.5851358,
+      "signaled": true,
+      "exitCode": 0,
+      "exitFiletime": 134374603611866391,
+      "kernel100ns": 156250,
+      "user100ns": 0,
+      "jobAccountingObservedQpc": 264882.5851537,
+      "firstCompleteTerminalQpc": 264882.5851071,
+      "activeProcesses": 0,
+      "totalProcesses": 23,
+      "terminatedProcesses": 0,
+      "terminal": true
+    },
+    "M": {
+      "startedQpc": 264882.5852442,
+      "deadlineQpc": 264883.0393868,
+      "before": {
+        "qpc": 264882.5852442,
+        "complete": true,
+        "assigned": 0,
+        "listed": 0,
+        "limit": 32,
+        "error": 0,
+        "pids": []
+      },
+      "identities": [],
+      "after": {
+        "qpc": 264882.5852515,
+        "complete": true,
+        "assigned": 0,
+        "listed": 0,
+        "limit": 32,
+        "error": 0,
+        "pids": []
+      },
+      "identityRowsLimitedByDeadline": false,
+      "scope": "This private Job only; read-only handles, no command line/environment, no PID termination",
+      "causeClassified": false
+    },
+    "A1": {
+      "pid": 221412,
+      "creationFiletime": 134374603396661995,
+      "firstSignaledQpc": 264882.5393868,
+      "sampleQpc": 264882.5852573,
+      "signaled": true,
+      "exitCode": 0,
+      "exitFiletime": 134374603611866391,
+      "kernel100ns": 156250,
+      "user100ns": 0,
+      "jobAccountingObservedQpc": 264882.5852755,
+      "firstCompleteTerminalQpc": 264882.5851071,
+      "activeProcesses": 0,
+      "totalProcesses": 23,
+      "terminatedProcesses": 0,
+      "terminal": true
+    },
+    "forceRequested": false,
+    "closeFallback": false
+  }
+}
