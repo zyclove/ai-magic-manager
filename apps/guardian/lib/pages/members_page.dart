@@ -5,6 +5,7 @@ import '../core/member_access.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
 import '../ui/dialog_access.dart';
+import '../ui/leased_dialog.dart';
 import '../ui/member_class_scope.dart';
 import '../ui/member_editor.dart';
 import '../ui/owned_dialog_route.dart';
@@ -23,6 +24,7 @@ class MembersPage extends StatefulWidget {
 class _MembersPageState extends State<MembersPage> {
   bool invitations = false;
   bool _active = true, _rebuildPending = false, _pageClosed = false;
+  bool _retirementQueued = false;
   final _ownerLost = ValueNotifier<bool>(false);
   late final DeviceSubflowScope _pageScope;
   Session get s => widget.session;
@@ -50,11 +52,22 @@ class _MembersPageState extends State<MembersPage> {
     WidgetsBinding.instance.ensureVisualUpdate();
   }
 
-  @override
-  void deactivate() {
+  void _retirePage() {
     _active = false;
     _pageClosed = true;
-    _ownerLost.value = true;
+    if (_retirementQueued) return;
+    _retirementQueued = true;
+    // Old callbacks stop immediately; route retirement waits for the tree lock.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _ownerLost.value = true;
+      _ownerLost.dispose();
+    });
+    WidgetsBinding.instance.ensureVisualUpdate();
+  }
+
+  @override
+  void deactivate() {
+    _retirePage();
     super.deactivate();
   }
 
@@ -66,12 +79,9 @@ class _MembersPageState extends State<MembersPage> {
 
   @override
   void dispose() {
-    _active = false;
-    _pageClosed = true;
-    _ownerLost.value = true;
+    _retirePage();
     _pageScope.removeListener(_accessChanged);
     _pageScope.dispose();
-    _ownerLost.dispose();
     super.dispose();
   }
 
@@ -173,18 +183,20 @@ class _MembersPageState extends State<MembersPage> {
       emptyTitle: invitations ? '暂无邀请记录' : '暂无成员',
       emptyDescription:
           invitations ? '创建邀请后可在这里查看状态、取消未使用的邀请。' : '成员加入后将在这里显示。',
-      onOpen: (row) async {
-        if (!pageCurrent || viewingInvitations != invitations) return;
-        await (viewingInvitations
-            ? openInvitation(root, row) : openMember(root, row));
+      onOpenChanged: (row) async {
+        if (!pageCurrent || viewingInvitations != invitations) return false;
+        return viewingInvitations
+            ? await openInvitation(root, row) : await openMember(root, row);
       },
     );
   }
 
-  Future<void> openInvitation(String root, Json row) async {
+  Future<bool> openInvitation(String root, Json row) async {
     final scope = capture(root);
+    final changes = flowChanges(scope);
+    var needsReview = false;
     try {
-      if (!current(scope)) return;
+      if (!current(scope)) return false;
       await scopedDetailsDialog(
           context,
           '邀请详情',
@@ -199,7 +211,7 @@ class _MembersPageState extends State<MembersPage> {
             '令牌说明': '令牌仅在创建成功时展示。未取得令牌时，请取消此邀请，再重新创建。',
           },
           reauth: reauth,
-          accessChanges: flowChanges(scope),
+          accessChanges: changes,
           hasAccess: () => current(scope),
           actions: [
             if (row['state'] == 'PENDING' &&
@@ -207,26 +219,32 @@ class _MembersPageState extends State<MembersPage> {
               DetailAction('取消邀请', (dialog) async {
                 final complete = captureDialogCompletion(dialog);
                 final api = dialogApi(dialog, scope);
-                if (!await confirmAction(dialog, '取消邀请', '取消后此邀请令牌将不再有效。')) {
-                  return;
-                }
+                if (!await confirmLeasedAction(dialog, '取消邀请',
+                    '邀请编号：${row['id']}\n角色：${label(row['role'])}\n'
+                    '有效期至：${dateLabel(row['expiresAt'])}\n\n取消后此邀请令牌将不再有效。',
+                    accessChanges: changes, hasAccess: () => current(scope),
+                    confirm: '确认取消邀请')) return;
+                if (!current(scope)) return;
+                needsReview = true;
                 await api.send('DELETE', '$root/invitations/${row['id']}');
                 complete();
               }, destructive: true, closeOnSuccess: false),
           ]);
+      return current(scope) && needsReview;
     } finally {
       scope.dispose();
     }
   }
 
-  Future<void> openMember(String root, Json row) async {
+  Future<bool> openMember(String root, Json row) async {
     final scope = capture(root);
+    var needsReview = false;
     try {
-      if (!current(scope)) return;
+      if (!current(scope)) return false;
       final kind = s.tenant!['kind'] as String, operatorRole = s.role;
       final path = '$root/members/${row['cursor']}/access';
       final access = await scope.api.send('GET', path) as Json;
-      if (!mounted || !current(scope)) return;
+      if (!mounted || !current(scope)) return false;
       final classIds = List<String>.unmodifiable(
           List<String>.from(access['classIds'] as List? ?? const []));
       final member = <String, dynamic>{...row, ...access, 'classIds': classIds};
@@ -284,10 +302,14 @@ class _MembersPageState extends State<MembersPage> {
               DetailAction('撤销访问', (dialog) async {
                 final complete = captureDialogCompletion(dialog);
                 final api = dialogApi(dialog, scope);
-                if (!await confirmAction(dialog, '撤销成员访问',
-                    '将撤销 ${memberName(member)} 的工作空间访问。相关未使用邀请、待确认配对、临时授权和预览会失效。')) {
-                  return;
-                }
+                if (!await confirmLeasedAction(dialog, '撤销成员访问',
+                    '成员：${memberName(member)}\n账号：${member['actorId']}\n'
+                    '成员编号：${member['memberKey']}\n权限版本：${access['version']}\n\n'
+                    '将撤销该成员的工作空间访问。相关未使用邀请、待确认配对、临时授权和预览会失效。',
+                    accessChanges: changes, hasAccess: () => current(scope),
+                    confirm: '确认撤销访问')) return;
+                if (!current(scope)) return;
+                needsReview = true;
                 await api.send('DELETE', path,
                     version: access['version'] as int, key: removalKey);
                 complete();
@@ -302,7 +324,7 @@ class _MembersPageState extends State<MembersPage> {
           scope.api.all('$root/subjects'),
           if (kind == 'ORGANIZATION') scope.api.all('$root/classes')
         ]);
-        if (!mounted || !current(scope)) return;
+        if (!mounted || !current(scope)) return false;
         final latest = results[0] as Json;
         final children = results[1] as List<Json>;
         final key = requestId();
@@ -330,6 +352,7 @@ class _MembersPageState extends State<MembersPage> {
                   },
                   reauth: reauth,
                   onSubmit: (body, permitted) async {
+                    needsReview = true;
                     final updated = await scope.api.send('PATCH', path,
                         body: body,
                         version: latest['version'] as int,
@@ -344,11 +367,13 @@ class _MembersPageState extends State<MembersPage> {
                     return updated;
                   },
                 );
+        if (result != null) needsReview = true;
         if (mounted && result != null && result['refresh'] != true &&
             current(scope)) {
           toast(context, '成员权限已更新。');
         }
       }
+      return current(scope) && needsReview;
     } finally {
       scope.dispose();
     }
@@ -386,6 +411,7 @@ class _MembersPageState extends State<MembersPage> {
                   title: '权限变更记录',
                   subtitle: '${memberName(member)} · 按权限版本从新到旧显示角色调整与撤销记录。',
                   emptyTitle: '暂无权限调整记录',
+                  refreshAfterOpen: false,
                   emptyDescription: '角色或档案范围调整、撤销访问后会记录在这里。所有者交接请查看交接记录。',
                   columns: [
                     ColumnSpec('版本', (r) => Text('v${r['memberVersion']}')),

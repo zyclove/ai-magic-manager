@@ -53,7 +53,7 @@ Windows 私有进程验证的稳定工具源位于 [scripts/verification](../scr
 
 [SettingsPage](../apps/guardian/lib/pages/settings_page.dart) 独立持有展示期的原始会话 scope，所有账号/工作空间入口共用交互门禁和防重；路由 key 包含账号、工作空间、角色与代际。页面捕获立即退役，编辑器则独立持有 scope/lifetime 至 formDialog 完整结束后释放；帧后退役通知避免晚建表单监听已释放对象，旧结果不触发当前工作空间重载。创建与接受邀请仍调用原已有认证捕获流程，不绕过服务端授权。
 
-[成员详情](../apps/guardian/lib/pages/members_page.dart)只以最新 access 读取决定角色、版本和获授编号；[MemberClassScope](../apps/guardian/lib/ui/member_class_scope.dart)仅在有获授班级时异步读取名称，绑定原详情 API 和租约，不阻塞核心资料或决定授权。目录失败保留完整编号并就地重试 GET；编辑仍走原有重新读取与版本保护。应用分类存于独立资源，应用身份详情返回不重读身份目录，保留原分页和搜索。
+[成员详情](../apps/guardian/lib/pages/members_page.dart)只以最新 access 读取决定角色、版本和获授编号；[MemberClassScope](../apps/guardian/lib/ui/member_class_scope.dart)仅在有获授班级时异步读取名称，绑定原详情 API 和租约，不阻塞核心资料或决定授权。目录失败保留完整编号并就地重试 GET；编辑仍走原有重新读取与版本保护。成员与邀请通过 ResourcePage.onOpenChanged 返回需核对信号，PATCH/DELETE 发出前置位，不能只看表单非空结果；只读返回保留列表。危险确认复用 [confirmLeasedAction](../apps/guardian/lib/ui/leased_dialog.dart)，页面同步退役、帧后通知租约并释放通知器，避免导航重入。应用分类存于独立资源，应用身份详情返回不重读身份目录，保留原分页和搜索。
 
 [通用 API](../apps/guardian/lib/core/api.dart) 使用已锁定 `http 1.6.0` 的 Abortable 协议；[作用域包装层](../apps/guardian/lib/core/scoped_http_client.dart)必须透传中止信号，在实际发送/终结请求前同时检查原作用域和请求期限，借用的客户端不能被单次请求关闭。纯时限单元测试使用原生 `FakeAsync`；共享完成 Future 的取消续程可能在其区域外调度，正常重试须保留有界真实异步断言，参考[超时回归](../apps/guardian/test/api_deadline_test.dart)，不要用无限等待或删除完成断言掩盖问题。
 
