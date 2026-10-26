@@ -263,13 +263,19 @@ class FieldSpec {
   final int maxLength;
   final int lines;
   final bool numeric;
+  final int? minValue, maxValue;
   const FieldSpec(this.key, this.label,
       {this.options,
       this.required = true,
       this.hint,
       this.maxLength = 100,
       this.lines = 1,
-      this.numeric = false});
+      this.numeric = false,
+      this.minValue,
+      this.maxValue})
+      : assert((minValue == null && maxValue == null) ||
+            (numeric && options == null)),
+        assert(minValue == null || maxValue == null || minValue <= maxValue);
 }
 
 /// Capture before an asynchronous action; completion cannot pop a later cover.
@@ -686,9 +692,19 @@ class _EditDialogState extends State<EditDialog> {
                                                 }
                                                 if (f.numeric &&
                                                     v != null &&
-                                                    v.isNotEmpty &&
-                                                    int.tryParse(v) == null) {
-                                                  return '请输入有效整数';
+                                                    v.isNotEmpty) {
+                                                  final number = int.tryParse(v);
+                                                  if (number == null) {
+                                                    return '请输入有效整数';
+                                                  }
+                                                  final minimum = f.minValue;
+                                                  final maximum = f.maxValue;
+                                                  if (minimum != null && number < minimum) {
+                                                    return '不能小于 $minimum';
+                                                  }
+                                                  if (maximum != null && number > maximum) {
+                                                    return '不能大于 $maximum';
+                                                  }
                                                 }
                                                 return null;
                                               }))),

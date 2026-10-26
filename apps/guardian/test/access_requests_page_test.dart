@@ -58,6 +58,7 @@ void main() {
     final detail = Completer<void>();
     final pending = {
       ..._row('request-pending', 'PENDING'),
+      'requestedWindowSeconds': 95,
       'subjectName': '小明',
       'deviceName': '客厅平板',
       'applicationName': '绘画应用',
@@ -93,6 +94,7 @@ void main() {
     expect(find.text('设备：客厅平板'), findsOneWidget);
     expect(find.text('绘画应用'), findsOneWidget);
     expect(find.text('软件包：com.example.draw'), findsOneWidget);
+    expect(find.text('申请时长：1 分钟 35 秒'), findsOneWidget);
     expect(requests, hasLength(2));
     expect(requests.last.url.queryParameters['cursor'], 'next-requests');
     final open = find.ancestor(

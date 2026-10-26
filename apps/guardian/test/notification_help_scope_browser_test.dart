@@ -426,7 +426,8 @@ void main() {
           'id': _requestId, 'state': 'APPROVED_PENDING_DELIVERY',
           'requestedWindowSeconds': 60, 'reason': '合成申请',
           'requestExpiresAt': 2000000000000, 'deviceId': _requestId,
-          'subjectId': _requestId, 'absoluteNotAfter': null,
+          'subjectId': _requestId, 'applicationId': _requestId,
+          'absoluteNotAfter': null,
           'executionState': 'NOT_ENFORCED', 'version': 1,
         });
       }

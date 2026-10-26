@@ -180,6 +180,7 @@ class ApiFailure implements Exception {
         'EXCEPTION_RULE_INVALID' => '请选择 1–20 条当前应用支持的规则。',
         'EXCEPTION_KIND_UNSUPPORTED' => '当前只能申请应用启动与使用时段规则。',
         'GRANT_EXCEEDS_REQUEST' => '批准时长不能超过申请时长。',
+        'INVALID_APPROVAL_DURATION' => '请填写有效的分钟和秒，合计至少 1 秒，且不超过申请时长。',
         'ACCESS_SELF_DECISION_FORBIDDEN' => '不能审批本人提交的申请。',
         'INVALID_QUOTA_PERIOD' => '请填写有效日期（YYYY-MM-DD）和 IANA 时区。',
         'QUOTA_LIMIT_INVALID' => '额度应在 0–1440 分钟内，调整分钟数至少为 1。',

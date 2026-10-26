@@ -81,6 +81,39 @@ Future<void> _disposeRecoveryForm(WidgetTester tester,
 }
 
 void main() {
+  testWidgets('bounded numeric fields reject invalid input before submitting',
+      (tester) async {
+    final access = ValueNotifier(true);
+    final closed = Completer<Json?>();
+    final bodies = <Json>[];
+    try {
+      await _openRecoveryForm(tester, closed: closed, access: access,
+          fields: const [FieldSpec('count', '数量', numeric: true,
+              minValue: 1, maxValue: 10)],
+          initial: const {'count': 1}, onSubmit: (body) async {
+        bodies.add(body);
+        return body;
+      });
+      for (final sample in [(0, '不能小于 1'), (11, '不能大于 10')]) {
+        await tester.enterText(find.byType(TextFormField), '${sample.$1}');
+        await tester.tap(find.widgetWithText(FilledButton, '保存'));
+        await tester.pumpAndSettle();
+        expect(find.text(sample.$2), findsOneWidget);
+        expect(bodies, isEmpty);
+        expect(closed.isCompleted, isFalse);
+      }
+      await tester.enterText(find.byType(TextFormField), '5');
+      await tester.tap(find.widgetWithText(FilledButton, '保存'));
+      await tester.pumpAndSettle();
+      expect(bodies, [{'count': 5}]);
+      expect(closed.isCompleted, isTrue);
+      expect(await closed.future, {'count': 5});
+      expect(tester.takeException(), isNull);
+    } finally {
+      await _disposeRecoveryForm(tester, access, []);
+    }
+  });
+
   testWidgets(
       'read-only preparation failures keep editable input and retry new values',
       (tester) async {

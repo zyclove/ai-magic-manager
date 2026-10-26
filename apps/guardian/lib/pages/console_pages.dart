@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../core/api.dart';
+import '../core/approval_decision.dart';
 import '../core/application_classification.dart';
 import '../core/console_modules.dart';
 import '../core/enrollment_recovery.dart';
@@ -1621,6 +1622,7 @@ class ConsoleActions {
   }
 
   Future<void> approvalDetails(Json row) async {
+    final listContext = ApprovalListContext.capture(row, role: s.role);
     final workspace = root;
     final scope = DeviceSubflowScope(s,
         permitted: () => context.mounted && s.tenant != null &&
@@ -1630,39 +1632,56 @@ class ConsoleActions {
     if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
     final api = scope.api;
     final cancelKey = requestId();
-    final r = await api.send('GET', '$workspace/access-requests/${row['id']}')
-        as Json;
-    final delivery = await api.send(
-        'GET', '$workspace/access-requests/${row['id']}/delivery') as Json;
+    final raw = await api.send('GET',
+        '$workspace/access-requests/${listContext.requestId}');
+    final request = ApprovalRequestSnapshot.read(raw,
+        expectedId: listContext.requestId, context: listContext);
+    final r = raw as Json;
+    Json? delivery;
+    if (request.state != 'PENDING') {
+      delivery = await api.send('GET',
+          '$workspace/access-requests/${request.id}/delivery') as Json;
+    }
     if (!context.mounted) return;
     if (!current()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
     await actionDetails(
         context,
         '临时访问申请',
         {
-          '状态': label(r['state']),
+          '申请编号': request.id,
+          '申请对象': request.subjectName ?? request.subjectId,
+          if (request.subjectName != null) '对象编号': request.subjectId,
+          '设备': request.deviceName ?? request.deviceId,
+          if (request.deviceName != null) '设备编号': request.deviceId,
+          '应用': request.applicationName ?? request.applicationId,
+          if (request.applicationName != null) '应用编号': request.applicationId,
+          if (request.applicationPackageName != null)
+            '应用包名': request.applicationPackageName,
+          '状态': label(request.state),
           if (r['reasonCode'] != null) '状态说明': label(r['reasonCode']),
-          '申请时长': '${r['requestedWindowSeconds']} 秒',
+          '申请时长': approvalDuration(request.requestedSeconds),
           '申请理由': r['reason'],
-          '有效期': dateLabel(r['requestExpiresAt']),
-          '设备编号': r['deviceId'],
-          '学生 / 儿童编号': r['subjectId'],
+          '申请有效期': dateLabel(r['requestExpiresAt']),
           '批准截止': dateLabel(r['absoluteNotAfter']),
-          '当前文档': label(delivery['action']),
-          '文档交付 / 设备报告': delivery['approvalVersion'] == r['version']
-              ? label(delivery['deliveryState'])
-              : '审批状态已更新，请关闭后重新打开',
-          '最近回执': dateLabel(delivery['receivedAt']),
-          '交付尝试': delivery['deliveryAttempt'] == null
-              ? '尚未开始'
-              : '第 ${delivery['deliveryAttempt']} 次（最多 10 次）',
-          if (delivery['reasonCode'] != null)
-            '设备拒收原因': accessRejectionLabel(delivery['reasonCode']),
-          if (delivery['deliveryState'] == 'REJECTED') ...{
-            '恢复状态': accessRetryLabel(delivery['retryStatus']),
-            if (delivery['retryAfter'] != null)
-              '最早可重试': dateLabel(delivery['retryAfter']),
-            '恢复说明': '重试由设备端发起，原文档和批准截止时间保持不变。旧尝试的回执仅保留追溯。'
+          if (delivery == null)
+            '当前文档': '尚未批准，暂无文档'
+          else ...{
+            '当前文档': label(delivery['action']),
+            '文档交付 / 设备报告': delivery['approvalVersion'] == r['version']
+                ? label(delivery['deliveryState'])
+                : '审批状态已更新，请关闭后重新打开',
+            '最近回执': dateLabel(delivery['receivedAt']),
+            '交付尝试': delivery['deliveryAttempt'] == null
+                ? '尚未开始'
+                : '第 ${delivery['deliveryAttempt']} 次（最多 10 次）',
+            if (delivery['reasonCode'] != null)
+              '设备拒收原因': accessRejectionLabel(delivery['reasonCode']),
+            if (delivery['deliveryState'] == 'REJECTED') ...{
+              '恢复状态': accessRetryLabel(delivery['retryStatus']),
+              if (delivery['retryAfter'] != null)
+                '最早可重试': dateLabel(delivery['retryAfter']),
+              '恢复说明': '重试由设备端发起，原文档和批准截止时间保持不变。旧尝试的回执仅保留追溯。'
+            },
           },
           '执行状态': label(r['executionState']),
           '回执说明': '当前尚未接入设备例外执行。接收或保存回执仅表示文档状态；下载与重试不会延长原批准截止时间。'
@@ -1671,7 +1690,7 @@ class ConsoleActions {
         hasAccess: current,
         reauth: reauth,
         actions: [
-          if (['TEACHER', 'CHILD'].contains(s.role) && r['state'] == 'PENDING')
+          if (['TEACHER', 'CHILD'].contains(s.role) && request.state == 'PENDING')
             DetailAction('取消我的申请', (ctx) async {
               final finish = captureDialogCompletion(ctx);
               if (await confirmAction(ctx, '取消我的申请', '取消后管理员将无法批准此申请。')) {
@@ -1679,14 +1698,15 @@ class ConsoleActions {
                   throw const ApiFailure(409, 'WORKSPACE_CHANGED');
                 }
                 await api.send(
-                    'POST', '$workspace/access-requests/${r['id']}/cancel',
-                    version: r['version'], key: cancelKey);
+                    'POST', '$workspace/access-requests/${request.id}/cancel',
+                    version: request.version, key: cancelKey);
                 finish();
               }
             }, destructive: true, closeOnSuccess: false),
-          DetailAction('交付历史', (ctx) => approvalDeliveryHistory(ctx, r['id']),
-              closeOnSuccess: false),
-          if (s.canWrite && r['state'] == 'PENDING') ...[
+          if (delivery != null)
+            DetailAction('交付历史', (ctx) => approvalDeliveryHistory(ctx, request.id),
+                closeOnSuccess: false),
+          if (s.canWrite && request.state == 'PENDING') ...[
             DetailAction('批准', (ctx) async {
               final finish = captureDialogCompletion(ctx);
               final key = requestId();
@@ -1694,20 +1714,30 @@ class ConsoleActions {
                   parent: ctx,
                   title: '批准临时访问',
                   section: 'approvals',
-                  description: '批准只保存有期限的访问窗口，当前不会直接解锁设备。',
-                  fields: const [
-                    FieldSpec('seconds', '批准时长（秒，最多 3600）',
-                        numeric: true, maxLength: 4)
+                  description: '对象：${request.subjectName ?? request.subjectId}\n'
+                      '设备：${request.deviceName ?? request.deviceId}\n'
+                      '应用：${request.applicationName ?? request.applicationId}\n'
+                      '申请 ${approvalDuration(request.requestedSeconds)}，批准总时长不能超过申请值。'
+                      '填写分钟和秒；当前只保存限时窗口，不直接解锁设备。',
+                  fields: [
+                    FieldSpec('minutes', '分钟', numeric: true, maxLength: 2,
+                        minValue: 0, maxValue: request.requestedSeconds ~/ 60),
+                    FieldSpec('seconds', '秒', numeric: true, maxLength: 2,
+                        minValue: 0,
+                        maxValue: request.requestedSeconds < 60
+                            ? request.requestedSeconds : 59),
                   ],
-                  initial: {'seconds': r['requestedWindowSeconds']},
-                  onSubmit: (api, v) async => await api.send(
-                          'POST', '$root/access-requests/${r['id']}/decisions',
-                          version: r['version'],
-                          key: key,
-                          body: {
-                            'decision': 'APPROVE',
-                            'grantedWindowSeconds': v['seconds']
-                          }) as Json);
+                  initial: {
+                    'minutes': request.requestedSeconds ~/ 60,
+                    'seconds': request.requestedSeconds % 60,
+                  },
+                  onSubmit: (api, v) async {
+                    final body = approvalGrantBody(v,
+                        requestedSeconds: request.requestedSeconds);
+                    return await api.send('POST',
+                        '$root/access-requests/${request.id}/decisions',
+                        version: request.version, key: key, body: body) as Json;
+                  });
               if (result != null && current()) finish();
             }, closeOnSuccess: false),
             DetailAction('拒绝', (ctx) async {
@@ -1725,14 +1755,14 @@ class ConsoleActions {
                     })
                   ],
                   onSubmit: (api, v) async => await api.send(
-                      'POST', '$root/access-requests/${r['id']}/decisions',
-                      version: r['version'],
+                      'POST', '$root/access-requests/${request.id}/decisions',
+                      version: request.version,
                       key: key,
                       body: {'decision': 'DENY', ...v}) as Json);
               if (result != null && current()) finish();
             }, destructive: true, closeOnSuccess: false)
           ],
-          if (s.canWrite && r['state'] == 'APPROVED_PENDING_DELIVERY')
+          if (s.canWrite && request.state == 'APPROVED_PENDING_DELIVERY')
             DetailAction('撤销批准', (ctx) async {
               final finish = captureDialogCompletion(ctx);
               if (await confirmAction(ctx, '撤销批准', '撤销此访问窗口并记录审计。')) {
@@ -1740,8 +1770,8 @@ class ConsoleActions {
                   throw const ApiFailure(409, 'WORKSPACE_CHANGED');
                 }
                 await api.send(
-                    'POST', '$root/access-requests/${r['id']}/revoke',
-                    version: r['version'], key: requestId());
+                    'POST', '$root/access-requests/${request.id}/revoke',
+                    version: request.version, key: requestId());
                 if (current()) finish();
               }
             }, destructive: true, closeOnSuccess: false)

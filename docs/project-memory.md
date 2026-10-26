@@ -59,7 +59,7 @@ Windows 私有进程验证的稳定工具源位于 [scripts/verification](../scr
 
 [ResourcePage](../apps/guardian/lib/ui/resource_page.dart) 的宽屏表格保留主题最小行高，最大行高按内容增长；不修改全局表格主题。可用稳定的纯 `includeRow` 谓词接收已授权分页中的可展示行，保留原下一页游标；谓词改变按新的列表生命周期隔离，不能代替服务端筛选与授权。默认空态使用中性说明，有创建能力时由现有按钮提供入口；业务页面仍可明确覆盖领域空态文案。
 
-访问审批的 [AccessRequestsPage](../apps/guardian/lib/pages/access_requests_page.dart) 编排待处理/全部筛选与行摘要，复用 ResourcePage 的读取、分页及错误恢复；管理角色默认待处理，其他角色默认全部。消费实际返回的名称，不追加目录请求；审计视图只用核心编号。列表筛选后的空批次不等于后续页无待办，原详情与决定流程继续独立授权。
+访问审批的 [AccessRequestsPage](../apps/guardian/lib/pages/access_requests_page.dart) 编排待处理/全部筛选与行摘要，复用 ResourcePage 的读取、分页及错误恢复；管理角色默认待处理，其他角色默认全部。消费实际返回的名称，不追加目录请求；审计视图只用核心编号。列表筛选后的空批次不等于后续页无待办，原详情与决定流程继续独立授权。[approval_decision](../apps/guardian/lib/core/approval_decision.dart) 集中七种状态、当前申请快照和精确秒数正文转换；列表名称先脱离原行，再以完整引用匹配，不能覆盖最新核心事实。通用 FieldSpec 可选整数范围由既有表单就近校验，跨字段合计在提交前验证；继续使用原未知结果与幂等保护。
 
 恢复草稿的中文字段清单统一在[领域化展示模块](../apps/guardian/lib/ui/editor_draft_text.dart)，只读取已捕获的提交与现有目录。名称缺失保留完整对象编号，未知字段也保留；展示层不得读取网络、改写原提交或解除重试保护。
 

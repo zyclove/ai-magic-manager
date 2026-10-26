@@ -17,20 +17,24 @@ import 'package:provider/provider.dart';
 import 'device_management_entry_test.dart' show EntrySession, settleReads;
 
 const _approvalId = '11111111-1111-4111-8111-111111111111';
+const _applicationId = '66666666-6666-4666-8666-666666666666';
+const _registrationId = '77777777-7777-4777-8777-777777777777';
 const _helpId = '22222222-2222-4222-8222-222222222222';
 
 http.Response _reply(Object body, [int status = 200]) => http.Response(
     jsonEncode(body), status,
     headers: {'content-type': 'application/json; charset=utf-8'});
 
-Json _approval(String state) => {
+Json _approval(String state, {int requestedSeconds = 60}) => {
       'id': _approvalId,
       'state': state,
-      'requestedWindowSeconds': 60,
+      'requestedWindowSeconds': requestedSeconds,
       'reason': '查看学习资料',
       'requestExpiresAt': 2000000000000,
       'deviceId': '33333333-3333-4333-8333-333333333333',
       'subjectId': '44444444-4444-4444-8444-444444444444',
+      'applicationId': _applicationId,
+      'registrationId': _registrationId,
       'absoluteNotAfter': null,
       'executionState': 'NOT_ENFORCED',
       'version': 3,
@@ -59,9 +63,13 @@ Future<void> _flushPending(WidgetTester tester) async {
 }
 
 class _ApprovalFixture {
-  _ApprovalFixture(this.action);
+  _ApprovalFixture(this.action,
+      {this.requestedSeconds = 60, this.listRow});
 
   final String action;
+  final int requestedSeconds;
+  final Json? listRow;
+  int deliveryReads = 0;
   final pending = Completer<http.Response>();
   final posts = <http.Request>[];
   late BuildContext host;
@@ -70,9 +78,11 @@ class _ApprovalFixture {
     final path = request.url.path;
     if (request.method == 'GET' && path.endsWith('/$_approvalId')) {
       return _reply(_approval(
-          action == '撤销批准' ? 'APPROVED_PENDING_DELIVERY' : 'PENDING'));
+          action == '撤销批准' ? 'APPROVED_PENDING_DELIVERY' : 'PENDING',
+          requestedSeconds: requestedSeconds));
     }
     if (request.method == 'GET' && path.endsWith('/$_approvalId/delivery')) {
+      deliveryReads++;
       return _reply({
         'approvalVersion': 3,
         'action': 'CONFIGURE_ONLY',
@@ -89,7 +99,7 @@ class _ApprovalFixture {
     throw StateError('Unexpected approval fixture request.');
   });
 
-  Future<void> open(WidgetTester tester) async {
+  Future<void> open(WidgetTester tester, {bool openAction = true}) async {
     addTearDown(() async {
       if (!pending.isCompleted) pending.complete(_reply({'id': _approvalId}));
       await tester.pumpWidget(const SizedBox.shrink());
@@ -103,15 +113,18 @@ class _ApprovalFixture {
           host = context;
           return TextButton(
               onPressed: () => ConsoleActions(context, session)
-                  .approvalDetails({'id': _approvalId})
+                  .approvalDetails(listRow ?? {'id': _approvalId})
                   .then((_) => detailsCompleted = true),
               child: const Text('打开申请'));
         }))));
     await tester.tap(find.text('打开申请'));
     await settleReads(tester);
     expect(find.text('临时访问申请'), findsOneWidget);
-    await tester.tap(find.widgetWithText(OutlinedButton, action));
-    await settleReads(tester);
+    expect(deliveryReads, action == '撤销批准' ? 1 : 0);
+    if (openAction) {
+      await tester.tap(find.widgetWithText(OutlinedButton, action));
+      await settleReads(tester);
+    }
   }
 
   Future<void> submit(WidgetTester tester) async {
@@ -189,6 +202,52 @@ class _HelpFixture {
 }
 
 void main() {
+  testWidgets('approval keeps named context and validates exact total before POST',
+      (tester) async {
+    final fixture = _ApprovalFixture('批准', requestedSeconds: 90, listRow: {
+      ..._approval('PENDING'),
+      'subjectName': '示例儿童',
+      'deviceName': '学习平板',
+      'applicationName': '绘画应用',
+      'applicationPackageName': 'com.example.draw',
+    });
+    await fixture.open(tester, openAction: false);
+    for (final value in ['示例儿童', '学习平板', '绘画应用',
+      'com.example.draw', _applicationId,
+      '33333333-3333-4333-8333-333333333333',
+      '44444444-4444-4444-8444-444444444444']) {
+      expect(find.byWidgetPredicate(
+          (widget) => widget is SelectableText && widget.data == value),
+          findsOneWidget);
+    }
+    expect(find.byWidgetPredicate((widget) => widget is SelectableText &&
+        widget.data == '1 分钟 30 秒'), findsOneWidget);
+    await tester.tap(find.widgetWithText(OutlinedButton, '批准'));
+    await settleReads(tester);
+    final minutes = find.byWidgetPredicate((widget) => widget is TextField &&
+        widget.decoration?.labelText == '分钟');
+    final seconds = find.byWidgetPredicate((widget) => widget is TextField &&
+        widget.decoration?.labelText == '秒');
+    expect(tester.widget<TextField>(minutes).controller!.text, '1');
+    expect(tester.widget<TextField>(seconds).controller!.text, '30');
+    await tester.enterText(seconds, '31');
+    await tester.tap(find.widgetWithText(FilledButton, '保存'));
+    await settleReads(tester);
+    expect(fixture.posts, isEmpty);
+    expect(find.text('批准时长不能超过申请时长。'), findsOneWidget);
+    expect(tester.widget<TextField>(minutes).enabled, isTrue);
+    await tester.enterText(minutes, '0');
+    await tester.enterText(seconds, '45');
+    await fixture.submit(tester);
+    expect(jsonDecode(fixture.posts.single.body),
+        {'decision': 'APPROVE', 'grantedWindowSeconds': 45});
+    expect(fixture.deliveryReads, 0);
+    fixture.succeed();
+    await settleReads(tester);
+    expect(fixture.detailsCompleted, isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
   for (final action in ['批准', '拒绝', '撤销批准']) {
     testWidgets('$action cancellation preserves the original approval details',
         (tester) async {

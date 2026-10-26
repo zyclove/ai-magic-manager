@@ -1,24 +1,15 @@
 import 'package:flutter/material.dart';
 
 import '../core/api.dart';
+import '../core/approval_decision.dart';
 import '../core/labels.dart';
 import '../ui/design.dart';
 import '../ui/resource_page.dart';
 
-const _requestStates = {
-  'PENDING',
-  'APPROVED_PENDING_DELIVERY',
-  'DENIED',
-  'CANCELLED',
-  'EXPIRED',
-  'REVOKED',
-  'INVALIDATED',
-};
-
 /// A pending query can return a row reconciled to another state during reading.
 bool includePendingAccessRequest(Json row) {
   final state = row['state'];
-  if (state is! String || !_requestStates.contains(state)) {
+  if (state is! String || !accessRequestStates.contains(state)) {
     throw const ApiFailure(502, 'INVALID_RESPONSE');
   }
   return state == 'PENDING';
@@ -175,7 +166,7 @@ Widget _requestContent(Json row, {required bool showNames}) {
         if (package != null)
           Text('软件包：$package', style: const TextStyle(color: muted)),
         Text(seconds is int && seconds > 0
-            ? '申请时长：${(seconds / 60).ceil()} 分钟'
+            ? '申请时长：${approvalDuration(seconds)}'
             : '申请时长未提供'),
         if (reason != null) ...[
           const SizedBox(height: 4),
