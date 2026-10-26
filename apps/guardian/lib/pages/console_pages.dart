@@ -581,7 +581,7 @@ class ConsoleActions {
             const FieldSpec('name', '工作空间名称'),
             FieldSpec('kind', '类型',
                 options: options(['FAMILY', 'ORGANIZATION'])),
-            const FieldSpec('timeZone', '时区', hint: 'Asia/Shanghai')
+            const FieldSpec.timeZone('timeZone', '时区')
           ],
           initial: {'kind': 'FAMILY', 'timeZone': 'Asia/Shanghai'},
           onSubmit: (v) async => await scope.api
@@ -1996,7 +1996,7 @@ class SettingsPage extends StatelessWidget {
                       hasAccess: () => scope.current,
                       fields: const [
                         FieldSpec('name', '名称'),
-                        FieldSpec('timeZone', '时区')
+                        FieldSpec.timeZone('timeZone', '时区')
                       ],
                       initial: tenant,
                       onSubmit: (v) async => await scope.api.send('PATCH', root,

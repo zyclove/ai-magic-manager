@@ -67,6 +67,8 @@ Windows 私有进程验证的稳定工具源位于 [scripts/verification](../scr
 
 [HelpRequestsPage](../apps/guardian/lib/pages/help_requests_page.dart) 的服务端明确拒绝锁存为当前页面失权，清除私有列表并失效晚到读取；本地会话未变化也不能继续使用旧捕获。带目标信息的确认使用 [confirmLeasedAction](../apps/guardian/lib/ui/leased_dialog.dart)，沿用原路由与权限租约。未知确认的行内核对只发 GET，复用既有操作代次条件，不自动重发 POST。
 
+时区输入统一使用 [TimeZoneField](../apps/guardian/lib/ui/time_zone_field.dart)，通用表单通过 `FieldSpec.timeZone` 显式选择。复用已锁定 timezone 数据，按需加载并缓存公共目录；只建议、不替服务端决定有效时区或执行时区换算，手填保持可用。宿主必须同时传可视禁用状态与同步 `canInteract`，在重建前阻止旧选项改变控制器；目录初载保留可读取的原本地时区，字段不拥有调用方控制器。
+
 恢复草稿的中文字段清单统一在[领域化展示模块](../apps/guardian/lib/ui/editor_draft_text.dart)，只读取已捕获的提交与现有目录。名称缺失保留完整对象编号，未知字段也保留；展示层不得读取网络、改写原提交或解除重试保护。
 
 时间安排示例的不可变模型与严格响应校验统一在 [schedule_contracts](../packages/schedule_contracts/README.md)，Parent 保留轻量适配，Guardian 直接消费。目录仅按需读取，回填本地草稿、保留时区与日期例外，已有每周时段须确认替换；同包的 `weeklyWindowAdditions` 只计算独立新增项，两个宿主按实际新增数整体检查 56 条上限，不部分添加，不清除既有重复行。Guardian 的 [ScheduleWeekView](../apps/guardian/lib/ui/schedule_week_view.dart) 只做分组展示，删除仍由原编辑器的交互和权限门禁处理。宿主负责授权、有界读取和显式保存，不能将示例选择解释为已保存或已发布。交互契约及当前验证状态见[示例交付说明](schedule-preset-ux-delivery.md)。

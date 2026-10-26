@@ -13,6 +13,7 @@ import '../core/rule_parameter_labels.dart';
 import '../core/schedule_copy.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
+import '../ui/time_zone_field.dart';
 import '../ui/dialog_access.dart';
 import '../ui/editor_draft_text.dart';
 import '../ui/leased_time_picker.dart';
@@ -792,11 +793,10 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                                           ? '请输入计划名称'
                                           : null),
                               const SizedBox(height: 12),
-                              TextFormField(
+                              TimeZoneField(
                                   controller: zone,
                                   enabled: !locked,
-                                  decoration:
-                                      const InputDecoration(labelText: '时区'),
+                                  canInteract: () => interactive && !locked,
                                   validator: (v) =>
                                       v == null || v.trim().isEmpty
                                           ? '请输入时区'

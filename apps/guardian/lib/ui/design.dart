@@ -4,6 +4,7 @@ import 'package:flutter/scheduler.dart';
 import '../core/api.dart';
 import '../core/labels.dart';
 import 'owned_dialog_route.dart';
+import 'time_zone_field.dart';
 import 'package:usage_reporting/usage_reporting.dart' show UsageReportFailure;
 
 const navy = Color(0xFF19335C);
@@ -262,7 +263,7 @@ class FieldSpec {
   final String? hint;
   final int maxLength;
   final int lines;
-  final bool numeric;
+  final bool numeric, isTimeZone;
   final int? minValue, maxValue;
   const FieldSpec(this.key, this.label,
       {this.options,
@@ -271,11 +272,18 @@ class FieldSpec {
       this.maxLength = 100,
       this.lines = 1,
       this.numeric = false,
+      this.isTimeZone = false,
       this.minValue,
       this.maxValue})
       : assert((minValue == null && maxValue == null) ||
             (numeric && options == null)),
-        assert(minValue == null || maxValue == null || minValue <= maxValue);
+        assert(minValue == null || maxValue == null || minValue <= maxValue),
+        assert(!isTimeZone || (!numeric && options == null && lines == 1));
+
+  const FieldSpec.timeZone(String key, String label,
+      {bool required = true, String? hint, int maxLength = 100})
+      : this(key, label, required: required, hint: hint,
+            maxLength: maxLength, isTimeZone: true);
 }
 
 /// Capture before an asynchronous action; completion cannot pop a later cover.
@@ -668,7 +676,20 @@ class _EditDialogState extends State<EditDialog> {
                                               validator: (v) => f.required && (v == null || v.isEmpty)
                                                   ? '请选择${f.label}'
                                                   : null)
-                                          : TextFormField(
+                                          : f.isTimeZone
+                                              ? TimeZoneField(
+                                                  controller: controls[f.key]!,
+                                                  enabled: !busy && pendingValues == null,
+                                                  canInteract: () => current && !busy &&
+                                                      pendingValues == null && !recoveryStopped &&
+                                                      !confirmingUnknownClose,
+                                                  label: f.label, hint: f.hint,
+                                                  autofocus: f == widget.fields.first,
+                                                  maxLength: f.maxLength,
+                                                  validator: (v) => f.required &&
+                                                      (v ?? '').trim().isEmpty
+                                                      ? '请输入${f.label}' : null)
+                                              : TextFormField(
                                               controller: controls[f.key],
                                               enabled: !busy &&
                                                   pendingValues == null,

@@ -5,6 +5,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:guardian/core/api.dart';
 import 'package:guardian/ui/design.dart';
 import 'package:guardian/ui/owned_dialog_route.dart';
+import 'package:guardian/ui/time_zone_field.dart';
 
 Future<void> _openPreparationForm(WidgetTester tester,
     {required Completer<Json?> closed,
@@ -81,6 +82,52 @@ Future<void> _disposeRecoveryForm(WidgetTester tester,
 }
 
 void main() {
+  testWidgets('time-zone choices cannot alter a submitted unknown form before rebuild',
+      (tester) async {
+    final access = ValueNotifier(true);
+    final closed = Completer<Json?>();
+    final request = Completer<Json?>();
+    final bodies = <Json>[];
+    try {
+      await _openRecoveryForm(tester, closed: closed, access: access,
+          fields: const [FieldSpec.timeZone('timeZone', '时区')],
+          initial: const {'timeZone': 'Asia/Shanghai'}, onSubmit: (body) {
+        bodies.add(body);
+        return bodies.length == 1 ? request.future : Future<Json?>.value(body);
+      });
+      await tester.enterText(find.byType(TextFormField), '东京');
+      await tester.pumpAndSettle();
+      final tokyo = find.byKey(const ValueKey('time-zone-option-Asia/Tokyo'));
+      final heldTokyo = tester.widget<ListTile>(tokyo).onTap!;
+      await tester.tap(tokyo);
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byType(TextFormField), 'UTC');
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('time-zone-option-UTC')));
+      await tester.pumpAndSettle();
+      _editCallback(tester, '保存')();
+      // The child still has its old enabled widget until the next frame.
+      heldTokyo();
+      expect(bodies, [{'timeZone': 'UTC'}]);
+      expect(tester.widget<TextFormField>(find.byType(TextFormField))
+          .controller!.text, 'UTC');
+      await tester.pump();
+      expect(tester.widget<TimeZoneField>(find.byType(TimeZoneField)).enabled, isFalse);
+      request.completeError(const ApiFailure(503, 'SERVICE_UNAVAILABLE'));
+      await tester.pumpAndSettle();
+      heldTokyo();
+      expect(tester.widget<TextFormField>(find.byType(TextFormField))
+          .controller!.text, 'UTC');
+      _editCallback(tester, '重试原提交')();
+      await tester.pumpAndSettle();
+      expect(bodies, [{'timeZone': 'UTC'}, {'timeZone': 'UTC'}]);
+      expect(await closed.future, {'timeZone': 'UTC'});
+      expect(tester.takeException(), isNull);
+    } finally {
+      await _disposeRecoveryForm(tester, access, [request]);
+    }
+  });
+
   testWidgets('bounded numeric fields reject invalid input before submitting',
       (tester) async {
     final access = ValueNotifier(true);

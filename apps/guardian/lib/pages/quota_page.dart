@@ -198,7 +198,7 @@ class _QuotaPageState extends State<QuotaPage> {
               required: false),
           const FieldSpec('periodId', '当地日期',
               hint: 'YYYY-MM-DD', maxLength: 10),
-          const FieldSpec('timeZone', '额度时区', hint: 'Asia/Shanghai'),
+          const FieldSpec.timeZone('timeZone', '额度时区'),
           const FieldSpec('minutes', '额度（分钟，0–1440）',
               numeric: true, maxLength: 4),
         ],
