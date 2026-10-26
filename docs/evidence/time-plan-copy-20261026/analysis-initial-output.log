@@ -1,0 +1,17 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+Analyzing 7 items...                                            
+
+   info - Use 'const' for final variables initialized to a constant value - lib\core\schedule_copy.dart:40:5 - prefer_const_declarations
+   info - Statements in an if should be enclosed in a block - lib\pages\console_pages.dart:744:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\console_pages.dart:750:7 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\console_pages.dart:898:23 - curly_braces_in_flow_control_structures
+   info - Statements in an if should be enclosed in a block - lib\pages\console_pages.dart:917:23 - curly_braces_in_flow_control_structures
+  error - The method 'current' isn't defined for the type 'ConsoleActions' - lib\pages\console_pages.dart:1013:21 - undefined_method
+  error - Undefined name 'r' - lib\pages\console_pages.dart:1019:56 - undefined_identifier
+  error - Undefined name 'changes' - lib\pages\console_pages.dart:1023:36 - undefined_identifier
+  error - Undefined name 'saved' - lib\pages\console_pages.dart:1026:19 - undefined_identifier
+warning - Dead code - lib\pages\console_pages.dart:1180:20 - dead_code
+   info - Statements in an if should be enclosed in a block - lib\ui\resource_page.dart:334:35 - curly_braces_in_flow_control_structures
+   info - Unnecessary braces in a string interpolation - test\schedule_copy_test.dart:139:52 - unnecessary_brace_in_string_interps
+
+12 issues found. (ran in 4.6s)

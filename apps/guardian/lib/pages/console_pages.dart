@@ -23,6 +23,7 @@ import 'package:uuid/uuid.dart';
 import '../core/labels.dart';
 import '../core/observation.dart' show canReadObservation;
 import '../core/overview_summary.dart';
+import '../core/schedule_copy.dart';
 import '../core/session.dart';
 import '../core/workspace_read_recovery.dart';
 import 'device_subflow_scope.dart';
@@ -267,6 +268,7 @@ class ConsolePages extends StatelessWidget {
             Future<void> Function()? create,
             String createLabel = '新建',
             Future<void> Function(Json)? open,
+            Future<bool> Function(Json)? openChanged,
             bool refreshAfterOpen = true,
             String? notice,
             String empty = '暂无记录',
@@ -284,6 +286,7 @@ class ConsolePages extends StatelessWidget {
             create: create,
             createLabel: createLabel,
             onOpen: open,
+            onOpenChanged: openChanged,
             refreshAfterOpen: refreshAfterOpen,
             notice: notice,
             emptyTitle: empty,
@@ -389,9 +392,9 @@ class ConsolePages extends StatelessWidget {
             ],
             create: s.canWrite ? () => scheduleEditor(context, s) : null,
             createLabel: '创建计划',
-            open: actions.scheduleDetails,
+            openChanged: actions.scheduleDetails,
             refreshAfterOpen: false,
-            notice: '计划保存后保持不可变，调整时请创建新的计划并更新策略引用。');
+            notice: '计划保存后保持不可变。打开详情可复制并调整；新计划需要在策略草稿中明确选择。');
       case 'policies':
         return resource(
             title: '策略中心',
@@ -904,11 +907,12 @@ class ConsoleActions {
     }
   }
 
-  Future<void> scheduleDetails(Json r) async {
+  Future<bool> scheduleDetails(Json r) async {
     if (!context.mounted || !s.authenticated || s.tenant == null ||
-        s.root != root || !s.canOpen('schedules')) return;
+        s.root != root || !s.canOpen('schedules')) return false;
     final d = r['definition'] as Json;
     var live = true;
+    var saved = false;
     final revoked = ValueNotifier<bool>(false);
     final evaluation = ValueNotifier<Json?>(null);
     final parentAccess = DialogAccessBinding(context);
@@ -920,7 +924,7 @@ class ConsoleActions {
     bool current() => live && scope.current;
     final changes = Listenable.merge([scope, revoked, parentAccess.changes]);
     try {
-      if (!current()) return;
+      if (!current()) return false;
       await actionDetails(context, r['name'], {
         '时区': d['timeZone'],
         '每周时段': (d['weekly'] as List)
@@ -986,8 +990,25 @@ class ConsoleActions {
           }
           rethrow;
         }
-      }, closeOnSuccess: false)
+      }, closeOnSuccess: false),
+      if (s.canWrite)
+        DetailAction('复制并调整', (ctx) async {
+          final route = ModalRoute.of(ctx);
+          bool parentCurrent() => current() && s.canWrite && ctx.mounted &&
+              route?.isActive == true &&
+              (route is! OwnedDialogRoute<dynamic> || route.available);
+          if (!parentCurrent() || route?.isCurrent != true) return;
+          final copy = ScheduleCopy.fromSchedule(r);
+          final finish = captureDialogCompletion(ctx);
+          final created = await scheduleEditor(ctx, s,
+              copy: copy, accessChanges: changes, hasAccess: parentCurrent);
+          if (created && parentCurrent()) {
+            saved = true;
+            finish();
+          }
+        }, closeOnSuccess: false)
       ]);
+      return saved && current();
     } finally {
       live = false;
       scope.dispose();

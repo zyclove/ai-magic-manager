@@ -1,0 +1,23 @@
+{
+  "status": "NO_START",
+  "sdkCalls": 0,
+  "tests": [
+    "schedule_copy_test.dart",
+    "resource_page_resilience_test.dart"
+  ],
+  "forceRequested": false,
+  "head": "0ab97277421e2fe3e37781548e8c075df392baa9",
+  "resourcesBefore": {
+    "ram": 2211618816,
+    "cFree": 2457534464,
+    "dFree": 16791994368
+  },
+  "sdkBefore": {
+    "sdk": [
+      "java"
+    ],
+    "unknown": 0
+  },
+  "error": "SDKs busy or unknown names",
+  "elapsedSeconds": 0.7188590000150725
+}

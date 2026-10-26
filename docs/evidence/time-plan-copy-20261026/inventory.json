@@ -1,0 +1,44 @@
+{
+  "status": "VERIFICATION_DEFERRED",
+  "files": [
+    {
+      "file": "browser-red-result.json",
+      "bytes": 4336,
+      "sha256": "68ed3830cb5753ba6e605a73d2a256c5e3a27024cc2342dfbd3017acd4a24fb8"
+    },
+    {
+      "file": "browser-red-output.jsonl",
+      "bytes": 5880,
+      "sha256": "1703efddccc39b598aaaae20a22d087fb234c398cfff7d06dbc88c3ead483c7c"
+    },
+    {
+      "file": "browser-red-owned-evidence.json",
+      "bytes": 46243,
+      "sha256": "250628fb18939bfeb6419711ac0d9b49d0cba2d599784655660ab5570e84f42b"
+    },
+    {
+      "file": "analysis-initial-result.json",
+      "bytes": 4419,
+      "sha256": "57355201b3fd9dfaf09a51ae00638cdf62405e60fa74cc8dc26cfbe8cf6223d9"
+    },
+    {
+      "file": "analysis-initial-output.log",
+      "bytes": 1640,
+      "sha256": "cc737bae9978df367719a4bfc2d3b8f7d356fa979b190b365968d3a0cebb8106"
+    },
+    {
+      "file": "verification-deferred-result.json",
+      "bytes": 490,
+      "sha256": "f07df9acc76e5fc10d682929e3c932ca49036619374280828070d2858cbecccd"
+    }
+  ],
+  "pendingSourcePins": {
+    "apps/guardian/lib/core/schedule_copy.dart": "4972a687ed71487b7e00b69b1fddcaa08774f0f1ea93112cc73dc480f65d1ba7",
+    "apps/guardian/lib/pages/editors.dart": "992f75ae3c001935dfcd41274185f3361d967d5adf11c6109f1c82b40e6f1e1c",
+    "apps/guardian/lib/pages/console_pages.dart": "00a87957e92fe97d3bd64b94426c2539fb202e3fcd8e5921b993499e79ba32d9",
+    "apps/guardian/lib/ui/resource_page.dart": "43f0acf769fdc8de5f3b1bd6a8b996240d08344b5e6c0872a91caabdb02814a7",
+    "apps/guardian/test/schedule_copy_test.dart": "f4f0a179fe83bc92cdcab939a1da0c6cff2819e864a4d1b49ebca6cf8451c801",
+    "apps/guardian/test/schedule_copy_flow_test.dart": "a05300e9fe8e1c307a71d4b63bb4cf2287d9158d2080dfc504e47ebe19b266c6",
+    "apps/guardian/test/resource_page_resilience_test.dart": "7c5d03a624845c922968fbdb111f43fce568a2d16bd4c699e309fbeabb8695a0"
+  }
+}

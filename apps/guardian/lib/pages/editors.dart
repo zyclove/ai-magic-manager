@@ -8,8 +8,10 @@ import '../core/labels.dart';
 import '../core/policy_domain_check.dart';
 import '../core/policy_rule_directories.dart';
 import '../core/rule_parameter_labels.dart';
+import '../core/schedule_copy.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
+import '../ui/dialog_access.dart';
 import '../ui/owned_dialog_route.dart';
 import 'device_subflow_scope.dart';
 
@@ -27,40 +29,50 @@ Map<String, String> options(Iterable<String> keys) =>
 Map<String, String> entityOptions(List<Json> rows, String name) =>
     {for (final r in rows) r['id'] as String: r[name] as String};
 
-Future<void> scheduleEditor(BuildContext context, Session session) async {
+Future<bool> scheduleEditor(BuildContext context, Session session,
+    {ScheduleCopy? copy,
+    Listenable? accessChanges,
+    bool Function()? hasAccess}) async {
   if (!session.authenticated) {
     throw const ApiFailure(401, 'UNAUTHENTICATED');
   }
   if (!session.canWrite || !session.canOpen('schedules')) {
     throw const ApiFailure(403, 'ACCESS_DENIED');
   }
-  if (!context.mounted || session.tenant == null) return;
+  if (!context.mounted || session.tenant == null) return false;
   final root = session.root;
   final timeZone = session.tenant?['timeZone'] as String? ?? 'Asia/Shanghai';
+  final access = DialogAccessBinding(context,
+      accessChanges: accessChanges, hasAccess: hasAccess);
   var live = true;
   final scope = DeviceSubflowScope(session,
       permitted: () =>
           live &&
+          access.permitted() &&
           context.mounted &&
           session.tenant != null &&
           session.root == root &&
           session.canWrite &&
           session.canOpen('schedules'));
   try {
-    if (!scope.current) return;
-    await presentOwnedDialog<void>(
+    if (!scope.current) return false;
+    final saved = await presentOwnedDialog<bool>(
         context,
-        OwnedDialogRoute<void>(
+        OwnedDialogRoute<bool>(
             context: context,
             barrierDismissible: false,
             builder: (_) => ScheduleEditor(
                 session: session,
                 root: root,
                 timeZone: timeZone,
+                copy: copy,
+                accessChanges: access.changes,
                 operationScope: scope)));
+    return saved == true && scope.current;
   } finally {
     live = false;
     scope.dispose();
+    access.dispose();
   }
 }
 
@@ -69,11 +81,15 @@ class ScheduleEditor extends StatefulWidget {
   final String root;
   final String timeZone;
   final DeviceSubflowScope? operationScope;
+  final ScheduleCopy? copy;
+  final Listenable? accessChanges;
   const ScheduleEditor(
       {super.key,
       required this.session,
       required this.root,
       required this.timeZone,
+      this.copy,
+      this.accessChanges,
       this.operationScope});
   @override
   State<ScheduleEditor> createState() => _ScheduleEditorState();
@@ -95,6 +111,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   OwnedDialogRoute<bool>? exitRoute;
   late final DeviceSubflowScope scope;
   late final bool ownsScope;
+  late final Listenable? parentChanges;
   late final Api api;
   final key = requestId();
 
@@ -104,14 +121,28 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
       !revoked &&
       scope.current &&
       owner?.isActive == true &&
-      (owner is! OwnedDialogRoute<void> ||
-          (owner as OwnedDialogRoute<void>).available);
+      (owner is! OwnedDialogRoute<dynamic> ||
+          (owner as OwnedDialogRoute<dynamic>).available);
   bool get interactive => current && owner?.isCurrent == true;
   bool get locked => busy || resultUnknown || exitOpen;
 
   @override
   void initState() {
     super.initState();
+    final copy = widget.copy;
+    if (copy != null) {
+      name.text = copy.suggestedName;
+      zone.text = copy.timeZone;
+      windows = copy.weekly.map((window) => Json.from(window)).toList();
+      exceptions = copy.exceptions
+          .map((exception) => {
+                ...exception,
+                'windows': (exception['windows'] as List)
+                    .map((window) => Json.from(window as Json))
+                    .toList(),
+              })
+          .toList();
+    }
     ownsScope = widget.operationScope == null;
     scope = widget.operationScope ??
         DeviceSubflowScope(widget.session,
@@ -126,6 +157,8 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
     // A covering dialog must not revoke an otherwise valid in-flight request.
     api = scope.api.scoped(() => current);
     scope.addListener(scopeChanged);
+    parentChanges = widget.accessChanges;
+    parentChanges?.addListener(scopeChanged);
     if (!scope.current) revoke();
   }
 
@@ -138,6 +171,8 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
     super.didUpdateWidget(oldWidget);
     if (!identical(oldWidget.session, widget.session) ||
         oldWidget.root != widget.root ||
+        !identical(oldWidget.copy, widget.copy) ||
+        !identical(oldWidget.accessChanges, widget.accessChanges) ||
         !identical(oldWidget.operationScope, widget.operationScope)) {
       revoke();
     }
@@ -192,6 +227,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   void dispose() {
     closing = true;
     scope.removeListener(scopeChanged);
+    parentChanges?.removeListener(scopeChanged);
     if (ownsScope) scope.dispose();
     final confirmation = exitRoute;
     exitRoute = null;
@@ -205,16 +241,16 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
     super.dispose();
   }
 
-  void closeOwnRoute() {
+  void closeOwnRoute({bool saved = false}) {
     if (!mounted || closing) return;
     final route = owner;
-    if (route is OwnedDialogRoute<void>) {
+    if (route is OwnedDialogRoute<dynamic>) {
       if (!route.available) return;
       closing = true;
-      route.finish();
+      route.finish(saved);
     } else if (route?.isCurrent == true) {
       closing = true;
-      route!.navigator?.pop();
+      route!.navigator?.pop(saved);
     }
   }
 
@@ -339,10 +375,6 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   Future<void> save() async {
     if (!interactive || locked) return;
     if (form.currentState?.validate() != true) return;
-    if (windows.isEmpty) {
-      setState(() => error = const ApiFailure(400, 'ADD_TIME_WINDOW'));
-      return;
-    }
     // Freeze every nested map/list before client acquisition or transport waits.
     pendingBody = freeze({
       'name': name.text.trim(),
@@ -378,7 +410,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
       if (!current) return;
       pendingBody = null;
       resultUnknown = false;
-      closeOwnRoute();
+      closeOwnRoute(saved: true);
     } catch (failure) {
       if (!current) return;
       if (privateFailure(failure)) {
@@ -431,7 +463,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
           }
         },
         child: AlertDialog(
-            title: const Text('创建时间计划'),
+            title: Text(widget.copy == null ? '创建时间计划' : '复制并调整时间计划'),
             content: SizedBox(
                 width: 640,
                 child: SingleChildScrollView(
@@ -441,6 +473,14 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                             mainAxisSize: MainAxisSize.min,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
+                              if (widget.copy != null) ...[
+                                Text('复制自：${widget.copy!.name}',
+                                    style: const TextStyle(color: muted)),
+                                const SizedBox(height: 8),
+                                const Notice('保存为新的时间计划，现有策略仍使用原计划。'
+                                    '如需替换，请在策略草稿中明确选择新计划。'),
+                                const SizedBox(height: 12),
+                              ],
                               const Notice(
                                   '按当地时区设置允许使用的时段。结束时间早于开始时间表示跨午夜；日期例外会覆盖当天计划。'),
                               const SizedBox(height: 20),
@@ -470,6 +510,9 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                                   style:
                                       TextStyle(fontWeight: FontWeight.w600)),
                               const SizedBox(height: 10),
+                              if (windows.isEmpty)
+                                const Notice('当前没有每周允许时段。日期例外仍按各自设置生效；'
+                                    '没有允许例外的日期不可用。'),
                               Wrap(
                                   spacing: 6,
                                   children: weekdays
@@ -541,7 +584,8 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                                   label: const Text('添加关闭日期')),
                               ...exceptions.asMap().entries.map((e) => ListTile(
                                   dense: true,
-                                  title: Text('${e.value['date']} · 全天关闭'),
+                                  title: Text('${e.value['date']} · '
+                                      '${(e.value['windows'] as List).isEmpty ? '全天关闭' : (e.value['windows'] as List).map((window) => '${window['start']} – ${window['end']}').join('、')}'),
                                   trailing: IconButton(
                                       tooltip: '移除例外',
                                       onPressed: locked
@@ -582,7 +626,11 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
               else
                 FilledButton(
                     onPressed: locked ? null : save,
-                    child: Text(busy ? '保存中…' : '保存计划'))
+                    child: Text(busy
+                        ? '保存中…'
+                        : widget.copy == null
+                            ? '保存计划'
+                            : '保存副本'))
             ]));
   }
 }

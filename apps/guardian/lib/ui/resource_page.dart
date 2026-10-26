@@ -27,6 +27,8 @@ class ResourcePage extends StatefulWidget {
   final Api api;
   final List<ColumnSpec> columns;
   final Future<void> Function(Json)? onOpen;
+  /// Only an explicit saved result refreshes details that may write.
+  final Future<bool> Function(Json)? onOpenChanged;
   /// Read-only details can keep the current pages and filter on return.
   final bool refreshAfterOpen;
   final Future<void> Function()? create;
@@ -46,6 +48,7 @@ class ResourcePage extends StatefulWidget {
       required this.api,
       required this.columns,
       this.onOpen,
+      this.onOpenChanged,
       this.refreshAfterOpen = true,
       this.create,
       this.createLabel = '新建',
@@ -55,7 +58,7 @@ class ResourcePage extends StatefulWidget {
       this.notice,
       this.reauth,
       this.isCurrent,
-      this.canInteract});
+      this.canInteract}) : assert(onOpen == null || onOpenChanged == null);
   @override
   State<ResourcePage> createState() => ResourcePageState();
 }
@@ -228,12 +231,16 @@ class ResourcePageState extends State<ResourcePage> {
     final path = widget.path;
     final create = widget.create;
     final onOpen = widget.onOpen;
+    final onOpenChanged = widget.onOpenChanged;
+    final canOpen = onOpen != null || onOpenChanged != null;
     final refreshAfterOpen = widget.refreshAfterOpen;
     final reauth = widget.reauth;
-    bool viewCurrent() =>
-        _canInteract && resourceGeneration == owner &&
+    bool resultCurrent() =>
+        _currentOwner && resourceGeneration == owner &&
         identical(widget.api, api) && widget.path == path &&
-        permitted?.call() != false && interact?.call() != false;
+        permitted?.call() != false;
+    bool viewCurrent() =>
+        resultCurrent() && _canInteract && interact?.call() != false;
     VoidCallback guard(VoidCallback callback) => () {
           if (viewCurrent()) callback();
         };
@@ -246,6 +253,15 @@ class ResourcePageState extends State<ResourcePage> {
       }
     }
     void openRecord(Json row) {
+      if (!viewCurrent()) return;
+      if (onOpenChanged != null &&
+          identical(widget.onOpenChanged, onOpenChanged)) {
+        action(() async {
+          final changed = await onOpenChanged(row);
+          if (changed && resultCurrent()) await load();
+        }, refresh: false);
+        return;
+      }
       if (viewCurrent() && onOpen != null && identical(widget.onOpen, onOpen)) {
         action(() => onOpen(row), refresh: refreshAfterOpen);
       }
@@ -400,7 +416,7 @@ class ResourcePageState extends State<ResourcePage> {
                       label: const Text('清除搜索')))
             else if (narrow)
               ...filtered.map((row) => InkWell(
-                  onTap: widget.onOpen == null || !canAct
+                  onTap: !canOpen || !canAct
                       ? null
                       : () => openRecord(row),
                   child: Container(
@@ -425,7 +441,7 @@ class ResourcePageState extends State<ResourcePage> {
                                                     fontSize: 12))),
                                         Expanded(child: c.build(row))
                                       ])),
-                            if (widget.onOpen != null)
+                            if (canOpen)
                               const Align(
                                   alignment: Alignment.centerRight,
                                   child:
@@ -443,13 +459,13 @@ class ResourcePageState extends State<ResourcePage> {
                               columns: [
                                 ...widget.columns.map(
                                     (c) => DataColumn(label: Text(c.title))),
-                                if (widget.onOpen != null)
+                                if (canOpen)
                                   const DataColumn(label: Text('操作'))
                               ],
                               rows: filtered
                                   .map((row) => DataRow(
                                           onSelectChanged:
-                                              widget.onOpen == null || !canAct
+                                              !canOpen || !canAct
                                               ? null
                                               : (_) => openRecord(row),
                                           cells: [
@@ -459,7 +475,7 @@ class ResourcePageState extends State<ResourcePage> {
                                                         const BoxConstraints(
                                                             maxWidth: 280),
                                                     child: c.build(row)))),
-                                            if (widget.onOpen != null)
+                                            if (canOpen)
                                               DataCell(TextButton(
                                                   onPressed: canAct
                                                       ? () => openRecord(row)

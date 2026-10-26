@@ -31,8 +31,10 @@ Widget host(Api api,
         {Key? resourceKey,
         String path = '/records',
         Future<void> Function(Json)? onOpen,
+        Future<bool> Function(Json)? onOpenChanged,
         Future<void> Function()? create,
         bool Function()? isCurrent,
+        bool Function()? canInteract,
         bool refreshAfterOpen = true}) =>
     MaterialApp(
         theme: consoleTheme(),
@@ -48,8 +50,10 @@ Widget host(Api api,
                       ColumnSpec('名称', (row) => Text(row['name'] as String))
                     ],
                     onOpen: onOpen,
+                    onOpenChanged: onOpenChanged,
                     create: create,
                     isCurrent: isCurrent,
+                    canInteract: canInteract,
                     refreshAfterOpen: refreshAfterOpen))));
 
 Future<void> tap(WidgetTester tester, String label) async {
@@ -739,6 +743,127 @@ void main() {
     expect(find.byType(FailureView), findsNothing);
     expect(find.text('重新刷新列表'), findsNothing);
     expect(find.text('刷新列表'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+      'cancelled change-aware detail does not refresh and late change cannot cross owners',
+      (tester) async {
+    final key = GlobalKey<ResourcePageState>();
+    final pending = Completer<bool>();
+    var owner = 1, oldReads = 0, newReads = 0, oldOpens = 0, newOpens = 0;
+    final oldApi = apiFor((_) {
+      oldReads++;
+      return page(['old-row'], cursor: 'old-next');
+    });
+    final newApi = apiFor((request) {
+      expect(request.url.path.endsWith('/new-records'), isTrue);
+      newReads++;
+      return page(['new-row']);
+    });
+    addTearDown(() {
+      if (!pending.isCompleted) pending.complete(false);
+    });
+    await tester.pumpWidget(host(oldApi,
+        resourceKey: key,
+        isCurrent: () => owner == 1,
+        onOpenChanged: (_) {
+          oldOpens++;
+          return oldOpens == 1 ? Future.value(false) : pending.future;
+        }));
+    await tester.pumpAndSettle();
+    expect(
+        tester.widget<ResourcePage>(find.byType(ResourcePage)).refreshAfterOpen,
+        isTrue);
+    await tap(tester, '查看详情');
+    expect(oldReads, 1,
+        reason:
+            'A cancelled detail cannot refresh even with the old default enabled.');
+    expect(oldOpens, 1);
+    expect(find.text('old-row'), findsOneWidget);
+    expect(find.text('加载更多'), findsOneWidget);
+
+    final oldCallback = tester
+        .widget<TextButton>(find.widgetWithText(TextButton, '查看详情'))
+        .onPressed!;
+    oldCallback();
+    await tester.pump();
+    expect(oldOpens, 2);
+    owner = 2;
+    await tester.pumpWidget(host(newApi,
+        resourceKey: key,
+        path: '/new-records',
+        isCurrent: () => owner == 2,
+        onOpenChanged: (_) async {
+          newOpens++;
+          return true;
+        }));
+    await tester.pumpAndSettle();
+    expect(newReads, 1);
+    pending.complete(true);
+    await tester.pumpAndSettle();
+    oldCallback();
+    await tester.pumpAndSettle();
+
+    expect(oldReads, 1);
+    expect(newReads, 1,
+        reason: 'An old saved detail cannot refresh the replacement owner.');
+    expect(oldOpens, 2);
+    expect(newOpens, 0);
+    expect(find.text('old-row'), findsNothing);
+    expect(find.text('new-row'), findsOneWidget);
+    expect(find.byType(FailureView), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets(
+      'a changed detail refreshes once and keeps duplicate opens locked until refresh ends',
+      (tester) async {
+    final detail = Completer<bool>();
+    final refresh = Completer<http.Response>();
+    var reads = 0, opens = 0;
+    var interact = true;
+    final api = apiFor((_) {
+      reads++;
+      return reads == 1 ? page(['before-save']) : refresh.future;
+    });
+    addTearDown(() {
+      if (!detail.isCompleted) detail.complete(false);
+      if (!refresh.isCompleted) refresh.complete(page(['after-save']));
+    });
+    await tester.pumpWidget(host(api, canInteract: () => interact, onOpenChanged: (_) {
+      opens++;
+      return detail.future;
+    }));
+    await tester.pumpAndSettle();
+    final callback = tester
+        .widget<TextButton>(find.widgetWithText(TextButton, '查看详情'))
+        .onPressed!;
+    callback();
+    callback();
+    await tester.pump();
+    expect(opens, 1);
+    expect(reads, 1);
+    interact = false;
+    detail.complete(true);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 20));
+    expect(reads, 2, reason: 'Confirmed results still refresh while new interaction is gated.');
+    interact = true;
+    callback();
+    await tester.pump();
+    expect(opens, 1,
+        reason:
+            'Saving keeps the original action locked while its refresh is pending.');
+    expect(reads, 2);
+    refresh.complete(page(['after-save']));
+    await tester.pumpAndSettle();
+
+    expect(reads, 2);
+    expect(opens, 1);
+    expect(find.text('before-save'), findsNothing);
+    expect(find.text('after-save'), findsOneWidget);
+    expect(find.byType(FailureView), findsNothing);
     expect(tester.takeException(), isNull);
   });
 }
