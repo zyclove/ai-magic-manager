@@ -190,6 +190,22 @@ String memberDraftText(Json draft,
   return lines.join('\n');
 }
 
+/// Single class mutations retain the original field and any future settings.
+String classActionDraftText(Json draft,
+    {required String field, required String fieldLabel,
+    Map<String, String>? options}) {
+  final value = draft[field];
+  var display = _field(draft, field);
+  if (options != null && value is String && value.isNotEmpty) {
+    final name = options[value];
+    display = name != null && name.trim().isNotEmpty
+        ? '$name（编号：$value）' : '编号：$value';
+  }
+  final lines = <String>['$fieldLabel：$display'];
+  _otherSettings(lines, draft, {field});
+  return lines.join('\n');
+}
+
 String _field(Map source, String key) =>
     source.containsKey(key) ? _value(source[key]) : '未提供';
 

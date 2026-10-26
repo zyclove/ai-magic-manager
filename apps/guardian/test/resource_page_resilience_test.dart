@@ -33,6 +33,7 @@ Widget host(Api api,
         Future<void> Function(Json)? onOpen,
         Future<bool> Function(Json)? onOpenChanged,
         Future<void> Function()? create,
+        Future<bool> Function()? onCreateChanged,
         bool Function()? isCurrent,
         bool Function()? canInteract,
         bool Function(Json)? includeRow,
@@ -54,6 +55,7 @@ Widget host(Api api,
                     onOpen: onOpen,
                     onOpenChanged: onOpenChanged,
                     create: create,
+                    onCreateChanged: onCreateChanged,
                     isCurrent: isCurrent,
                     canInteract: canInteract,
                     refreshAfterOpen: refreshAfterOpen))));
@@ -66,6 +68,65 @@ Future<void> tap(WidgetTester tester, String label) async {
 }
 
 void main() {
+  testWidgets('creation review signals keep cancelled pages and refresh accepted current results only',
+      (tester) async {
+    var reads = 0, creates = 0;
+    var allowed = true;
+    final outcomes = [Completer<bool>(), Completer<bool>(), Completer<bool>()];
+    addTearDown(() {
+      for (final outcome in outcomes) {
+        if (!outcome.isCompleted) outcome.complete(false);
+      }
+    });
+    final api = apiFor((request) {
+      reads++;
+      return request.url.queryParameters['cursor'] == 'next'
+          ? page(['beta']) : page(['alpha-$reads'], cursor: 'next');
+    });
+    await tester.pumpWidget(host(api, isCurrent: () => allowed,
+        onCreateChanged: () => outcomes[creates++].future));
+    await tester.pumpAndSettle();
+    await tap(tester, '加载更多');
+    expect(reads, 2);
+    await tester.enterText(find.byType(TextField), 'alpha');
+    await tester.pump();
+    Finder createButton() => find.ancestor(of: find.text('新建'),
+        matching: find.byWidgetPredicate((widget) => widget is FilledButton));
+    final heldCreate = tester.widget<ButtonStyleButton>(createButton()).onPressed!;
+    heldCreate();
+    heldCreate();
+    await tester.pump();
+    expect(creates, 1);
+    outcomes[0].complete(false);
+    await tester.pumpAndSettle();
+    expect(reads, 2);
+    expect(tester.widget<TextField>(find.byType(TextField)).controller!.text, 'alpha');
+    await tester.enterText(find.byType(TextField), '');
+    await tester.pump();
+    expect(find.text('beta'), findsOneWidget,
+        reason: 'A cancelled creation must keep the loaded second page.');
+    tester.widget<ButtonStyleButton>(createButton()).onPressed!();
+    await tester.pump();
+    expect(creates, 2);
+    outcomes[1].complete(true);
+    await tester.pumpAndSettle();
+    expect(reads, 3, reason: 'A current review signal performs one first-page read.');
+    expect(find.text('alpha-3'), findsOneWidget);
+    expect(find.text('beta'), findsNothing);
+    tester.widget<ButtonStyleButton>(createButton()).onPressed!();
+    await tester.pump();
+    expect(creates, 3);
+    allowed = false;
+    // Real owners rebuild when their access changes; remove the old progress
+    // indicator before settling the rejected late completion.
+    await tester.pumpWidget(host(api, isCurrent: () => allowed,
+        onCreateChanged: () => outcomes[creates++].future));
+    outcomes[2].complete(true);
+    await tester.pumpAndSettle();
+    expect(reads, 3, reason: 'A late signal cannot refresh a lost list owner.');
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('changed row admission isolates late pages and keeps the new cursor',
       (tester) async {
     final previous = Completer<http.Response>();

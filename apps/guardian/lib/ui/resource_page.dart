@@ -36,6 +36,8 @@ class ResourcePage extends StatefulWidget {
   /// Read-only details can keep the current pages and filter on return.
   final bool refreshAfterOpen;
   final Future<void> Function()? create;
+  /// Like onOpenChanged: true requests a read, including unresolved creation.
+  final Future<bool> Function()? onCreateChanged;
   final String createLabel;
   final List<Widget> toolbar;
   final String? notice;
@@ -56,6 +58,7 @@ class ResourcePage extends StatefulWidget {
       this.onOpenChanged,
       this.refreshAfterOpen = true,
       this.create,
+      this.onCreateChanged,
       this.createLabel = '新建',
       this.emptyTitle = '暂无记录',
       this.emptyDescription = '当前没有可显示的记录。',
@@ -63,7 +66,8 @@ class ResourcePage extends StatefulWidget {
       this.notice,
       this.reauth,
       this.isCurrent,
-      this.canInteract}) : assert(onOpen == null || onOpenChanged == null);
+      this.canInteract}) : assert(onOpen == null || onOpenChanged == null),
+        assert(create == null || onCreateChanged == null);
   @override
   State<ResourcePage> createState() => ResourcePageState();
 }
@@ -257,6 +261,8 @@ class ResourcePageState extends State<ResourcePage> {
     final api = widget.api;
     final path = widget.path;
     final create = widget.create;
+    final onCreateChanged = widget.onCreateChanged;
+    final canCreate = create != null || onCreateChanged != null;
     final onOpen = widget.onOpen;
     final onOpenChanged = widget.onOpenChanged;
     final canOpen = onOpen != null || onOpenChanged != null;
@@ -275,9 +281,16 @@ class ResourcePageState extends State<ResourcePage> {
       if (viewCurrent() && !loading && !acting) load();
     }
     void createRecord() {
-      if (viewCurrent() && create != null && identical(widget.create, create)) {
-        action(create);
+      if (!viewCurrent()) return;
+      if (onCreateChanged != null &&
+          identical(widget.onCreateChanged, onCreateChanged)) {
+        action(() async {
+          final needsReview = await onCreateChanged();
+          if (needsReview && resultCurrent()) await load();
+        }, refresh: false);
+        return;
       }
+      if (create != null && identical(widget.create, create)) action(create);
     }
     void openRecord(Json row) {
       if (!viewCurrent()) return;
@@ -313,7 +326,7 @@ class ResourcePageState extends State<ResourcePage> {
         (ModalRoute.of(context)?.isCurrent ?? true);
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       PageHeading(widget.title, widget.subtitle,
-          action: widget.create == null
+          action: !canCreate
               ? null
               : FilledButton.icon(
                   onPressed: canAct ? createRecord : null,
@@ -425,7 +438,7 @@ class ResourcePageState extends State<ResourcePage> {
                       reauth: guardedReauth))
             else if (rows.isEmpty)
               EmptyView(widget.emptyTitle, widget.emptyDescription,
-                  action: widget.create == null
+                  action: !canCreate
                       ? null
                       : OutlinedButton.icon(
                           onPressed: canAct ? createRecord : null,

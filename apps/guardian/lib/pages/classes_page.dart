@@ -7,6 +7,7 @@ import '../core/session.dart';
 import '../ui/design.dart';
 import '../ui/dialog_access.dart';
 import '../ui/class_action_dialog.dart';
+import '../ui/leased_dialog.dart';
 import '../ui/resource_page.dart';
 import '../ui/owned_dialog_route.dart';
 import 'device_subflow_scope.dart';
@@ -22,14 +23,14 @@ class _ClassesPageState extends State<ClassesPage> {
   Session get s => widget.session;
   late final DeviceSubflowScope pageScope;
   late final String root;
-  bool archived = false, loading = false;
-  bool _active = true, _rebuildPending = false;
+  bool archived = false, loading = false, acting = false;
+  bool _active = true, _rebuildPending = false, _pageClosed = false;
   final ownerLost = ValueNotifier<bool>(false);
   Json? selected;
-  Object? error;
-  int revision = 0, generation = 0;
+  Object? error, actionError;
+  int revision = 0, generation = 0, operation = 0;
 
-  bool get current => mounted && _active && !ownerLost.value &&
+  bool get current => mounted && _active && !_pageClosed &&
       s.tenant != null && pageScope.current;
 
   @override
@@ -38,7 +39,7 @@ class _ClassesPageState extends State<ClassesPage> {
     root = s.tenant == null ? '' : s.root;
     final session = s;
     pageScope = DeviceSubflowScope(session,
-        permitted: () => mounted && _active && !ownerLost.value &&
+        permitted: () => mounted && _active && !_pageClosed &&
             identical(widget.session, session) && session.canOpen('classes'));
     pageScope.addListener(accessChanged);
   }
@@ -46,9 +47,12 @@ class _ClassesPageState extends State<ClassesPage> {
   void accessChanged() {
     if (current) return;
     generation++;
+    operation++;
     selected = null;
     error = null;
+    actionError = null;
     loading = false;
+    acting = false;
     if (!mounted || !_active) return;
     if (SchedulerBinding.instance.schedulerPhase ==
         SchedulerPhase.persistentCallbacks) {
@@ -63,21 +67,40 @@ class _ClassesPageState extends State<ClassesPage> {
     }
   }
 
+  void _retirePage() {
+    _active = false;
+    if (_pageClosed) return;
+    _pageClosed = true;
+    generation++;
+    operation++;
+    selected = null;
+    error = null;
+    actionError = null;
+    loading = false;
+    acting = false;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ownerLost.value = true;
+      ownerLost.dispose();
+    });
+  }
+
+  @override
+  void didUpdateWidget(ClassesPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(oldWidget.session, widget.session)) _retirePage();
+  }
+
   @override
   void deactivate() {
-    _active = false;
-    ownerLost.value = true;
+    _retirePage();
     super.deactivate();
   }
 
   @override
   void dispose() {
-    _active = false;
-    ownerLost.value = true;
-    generation++;
+    _retirePage();
     pageScope.removeListener(accessChanged);
     pageScope.dispose();
-    ownerLost.dispose();
     super.dispose();
   }
 
@@ -103,6 +126,11 @@ class _ClassesPageState extends State<ClassesPage> {
   }
 
   Future<void> open(Json row) async {
+    if (!current || acting || loading) return;
+    await _loadClass(row);
+  }
+
+  Future<void> _loadClass(Json row) async {
     if (!current) return;
     final requested = ++generation;
     setState(() {
@@ -186,6 +214,7 @@ class _ClassesPageState extends State<ClassesPage> {
     });
     try {
       final result = await presentOwnedDialog<Json>(parentContext, route);
+      // Recovery-only refresh signals require a read; they do not prove success.
       return permitted() && result != null;
     } finally {
       live = false;
@@ -193,11 +222,11 @@ class _ClassesPageState extends State<ClassesPage> {
     }
   }
 
-  Future<void> create() async {
-    if (!current || !s.canManage) return;
+  Future<bool> create() async {
+    if (!current || !s.canManage) return false;
     final scope = capture(write: true), key = requestId();
     try {
-      await form(
+      return await form(
           scope: scope,
           title: '新建班级',
           description: '创建后可添加已有学生档案，并在成员管理中分配任课教师。',
@@ -211,13 +240,13 @@ class _ClassesPageState extends State<ClassesPage> {
     }
   }
 
-  Future<void> rename() async {
-    if (!current || !s.canManage || selected == null) return;
+  Future<bool> rename() async {
+    if (!current || !s.canManage || selected == null) return false;
     final scope = capture(write: true),
         selectedClass = Map<String, dynamic>.of(selected!),
         key = requestId();
     try {
-      await form(
+      return await form(
           scope: scope,
           title: '修改班级名称',
           description: '班级标识和已有名册保持关联。',
@@ -228,14 +257,13 @@ class _ClassesPageState extends State<ClassesPage> {
           send: (api, body) async => response(await api.send(
               'PATCH', '$root/classes/${selectedClass['id']}',
               body: body, version: selectedClass['version'], key: key)));
-      if (current && scope.current) await open(selectedClass);
     } finally {
       scope.dispose();
     }
   }
 
-  Future<void> addStudent() async {
-    if (!current || !s.canManage || selected == null) return;
+  Future<bool> addStudent() async {
+    if (!current || !s.canManage || selected == null) return false;
     final scope = capture(write: true),
         selectedClass = Map<String, dynamic>.of(selected!),
         key = requestId();
@@ -244,7 +272,7 @@ class _ClassesPageState extends State<ClassesPage> {
         scope.api.all('$root/subjects'),
         scope.api.all('$root/classes/${selectedClass['id']}/students')
       ]);
-      if (!current || !scope.current) return;
+      if (!current || !scope.current) return false;
       final existing = lists[1].map((r) => r['id']).toSet();
       final choices = {
         for (final row in lists[0])
@@ -252,7 +280,7 @@ class _ClassesPageState extends State<ClassesPage> {
               row['archivedAt'] == null)
             row['id'] as String: row['nickname'] as String
       };
-      await form(
+      return await form(
           scope: scope,
           title: '添加学生',
           description: '关联本机构的已有档案。一个班级最多 500 人；家庭档案不会被导入。',
@@ -263,7 +291,6 @@ class _ClassesPageState extends State<ClassesPage> {
           send: (api, body) async => response(await api.send(
               'POST', '$root/classes/${selectedClass['id']}/students',
               body: body, version: selectedClass['version'], key: key)));
-      if (current && scope.current) await open(selectedClass);
     } finally {
       scope.dispose();
     }
@@ -316,8 +343,9 @@ class _ClassesPageState extends State<ClassesPage> {
     }
   }
 
-  Future<void> student(Json row) async {
-    if (!current || selected == null) return;
+  Future<bool> student(Json row) async {
+    if (!current || selected == null) return false;
+    var needsReview = false;
     final scope = capture(),
         selectedClass = Map<String, dynamic>.of(selected!),
         key = requestId();
@@ -334,7 +362,10 @@ class _ClassesPageState extends State<ClassesPage> {
             DetailAction('转班', (dialog) async {
               if (!dialog.mounted || !scope.current) return;
               final complete = captureDialogCompletion(dialog);
-              if (scope.current && await transfer(row, parent: dialog)) complete();
+              if (scope.current && await transfer(row, parent: dialog)) {
+                needsReview = true;
+                complete();
+              }
             }, closeOnSuccess: false),
           DetailAction('移出班级', (dialog) async {
             if (!dialog.mounted || !scope.current) return;
@@ -344,23 +375,13 @@ class _ClassesPageState extends State<ClassesPage> {
                 current && scope.current && s.canManage &&
                 (route is! OwnedDialogRoute<dynamic> || route.available);
             if (!actionCurrent()) return;
-            final confirmationAccess = DialogAccessBinding(dialog,
+            final confirmed = await confirmLeasedAction(dialog, '移出班级',
+                '将 ${row['nickname']}（${row['id']}）移出 ${selectedClass['name']}（${selectedClass['id']}）。学生档案和设备保留；仅依靠本班取得的教师访问权限将失效。',
+                confirm: '确认移出',
                 accessChanges: Listenable.merge([scope, ownerLost]),
                 hasAccess: actionCurrent);
-            Json? confirmed;
-            try {
-              confirmed = await formDialog(dialog,
-                  title: '移出班级',
-                  description:
-                      '将 ${row['nickname']} 移出 ${selectedClass['name']}。学生档案和设备保留；仅依靠本班取得的教师访问权限将失效。',
-                  fields: const [], initial: const {}, submit: '确认移出',
-                  accessChanges: confirmationAccess.changes,
-                  hasAccess: confirmationAccess.permitted,
-                  onSubmit: (_) async => <String, dynamic>{'confirmed': true});
-            } finally {
-              confirmationAccess.dispose();
-            }
-            if (!actionCurrent() || confirmed?['confirmed'] != true) return;
+            if (!actionCurrent() || !confirmed) return;
+            needsReview = true;
             await scope.api.send('DELETE',
                 '$root/classes/${selectedClass['id']}/students/${row['id']}',
                 version: selectedClass['version'], key: key,
@@ -369,14 +390,15 @@ class _ClassesPageState extends State<ClassesPage> {
           }, destructive: true, closeOnSuccess: false),
         ]
       ]);
-      if (current && scope.current) await open(selectedClass);
+      return current && scope.current && needsReview;
     } finally {
       scope.dispose();
     }
   }
 
-  Future<void> archive() async {
-    if (!current || !s.canManage || selected == null) return;
+  Future<bool> archive() async {
+    if (!current || !s.canManage || selected == null) return false;
+    var needsReview = false;
     final scope = capture(write: true),
         selectedClass = Map<String, dynamic>.of(selected!),
         key = requestId();
@@ -395,27 +417,41 @@ class _ClassesPageState extends State<ClassesPage> {
               current && scope.current && s.canManage &&
               (route is! OwnedDialogRoute<dynamic> || route.available);
           if (!actionCurrent()) return;
+          needsReview = true;
           await scope.api.send('POST',
               '$root/classes/${selectedClass['id']}/archive',
               version: selectedClass['version'], key: key,
               isCurrent: actionCurrent);
         }, destructive: true)
       ]);
-      if (current && scope.current) await open(selectedClass);
+      return current && scope.current && needsReview;
     } finally {
       scope.dispose();
     }
   }
 
-  Future<void> act(Future<void> Function() action) async {
-    if (!current) return;
+  Future<bool> act(Future<bool> Function() action) async {
+    if (!current || acting || loading || error != null) return false;
     final scope = capture();
+    final selectedClass = selected == null ? null : Map<String, dynamic>.of(selected!);
+    final requested = ++operation;
+    setState(() {
+      acting = true;
+      actionError = null;
+    });
     try {
-      await action();
+      final needsReview = await action();
+      final reviewBound = current && operation == requested && scope.current && needsReview;
+      if (reviewBound && selectedClass != null) await _loadClass(selectedClass);
+      return reviewBound;
     } catch (failure) {
-      if (current && scope.current) setState(() => error = failure);
+      if (current && operation == requested && scope.current) {
+        setState(() => actionError = failure);
+      }
+      return false;
     } finally {
       scope.dispose();
+      if (current && operation == requested) setState(() => acting = false);
     }
   }
 
@@ -427,10 +463,40 @@ class _ClassesPageState extends State<ClassesPage> {
     if (!current) {
       return const Notice('工作空间或权限已变化，请重新打开班级与名册。', warning: true);
     }
+    final viewGeneration = generation;
+    final viewId = selected?['id'];
+    final viewArchived = archived;
+    final route = ModalRoute.of(context);
+    bool viewCurrent() => current && generation == viewGeneration &&
+        selected?['id'] == viewId && (viewId != null || archived == viewArchived);
+    bool available() => viewCurrent() && !acting && !loading &&
+        (route?.isCurrent ?? true);
+    bool interactive() => available() && error == null;
+    Future<bool> mutate(Future<bool> Function() action) async {
+      if (!interactive()) return false;
+      return await act(action);
+    }
+    final feedback = <Widget>[
+      if ((acting || loading) && (route?.isCurrent ?? true))
+        const LinearProgressIndicator(),
+      if (actionError != null)
+        Padding(padding: const EdgeInsets.symmetric(vertical: 16),
+            child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              const Text('请核对操作结果，当前已读记录仍保留。'),
+              const SizedBox(height: 8),
+              FailureView(actionError!, reauth: () {
+                if (available()) reauth();
+              }),
+            ])),
+    ];
     if (selected == null) {
-      return ResourcePage(
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        ...feedback,
+        ResourcePage(
         key: ValueKey('$root-$archived'),
         api: pageScope.api,
+        isCurrent: viewCurrent,
+        canInteract: () => !acting && !loading && error == null,
         path: '$root/classes${archived ? '?includeArchived=true' : ''}',
         title: '班级与名册',
         subtitle: s.role == 'TEACHER'
@@ -439,16 +505,21 @@ class _ClassesPageState extends State<ClassesPage> {
         emptyTitle: '暂无可查看班级',
         emptyDescription:
             s.canManage ? '新建班级后，添加学生并为教师分配班级范围。' : '管理员分配班级后，名册会显示在这里。',
-        reauth: reauth,
-        create: s.canManage ? create : null,
+        reauth: () { if (available()) reauth(); },
+        onCreateChanged: s.canManage ? () => mutate(create) : null,
         createLabel: '新建班级',
         toolbar: [
           if (s.canManage)
             FilterChip(
                 label: const Text('包含已归档'),
                 selected: archived,
-                onSelected: (v) {
-                  if (current) setState(() => archived = v);
+                onSelected: acting || loading ? null : (v) {
+                  if (!interactive() || archived == v) return;
+                  setState(() {
+                    generation++;
+                    archived = v;
+                    actionError = null;
+                  });
                 })
         ],
         columns: [
@@ -460,40 +531,48 @@ class _ClassesPageState extends State<ClassesPage> {
           ColumnSpec('状态', (r) => StatusTag(r['state'])),
           ColumnSpec('最近更新', (r) => Text(dateLabel(r['updatedAt'])))
         ],
-        onOpen: open,
-      );
+        refreshAfterOpen: false,
+        onOpen: (row) async {
+          if (interactive()) await open(row);
+        },
+      )]);
     }
     final c = selected!, editable = s.canManage && c['state'] == 'ACTIVE';
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       TextButton.icon(
-          onPressed: () {
-            if (!current) return;
+          onPressed: acting || loading ? null : () {
+            if (!available()) return;
             setState(() {
               generation++;
               selected = null;
               error = null;
+              actionError = null;
               loading = false;
             });
           },
           icon: const Icon(Icons.arrow_back, size: 18),
           label: const Text('返回班级列表')),
       const SizedBox(height: 12),
-      if (loading) const LinearProgressIndicator(),
+      ...feedback,
       if (error != null)
         Padding(
             padding: const EdgeInsets.symmetric(vertical: 16),
-            child: FailureView(error!, retry: () => open(c), reauth: reauth)),
+            child: FailureView(error!, retry: () {
+              if (available()) open(c);
+            }, reauth: () { if (available()) reauth(); })),
       if (!loading && error == null)
         ResourcePage(
           key: ValueKey('${c['id']}-$revision'),
           api: pageScope.api,
+          isCurrent: viewCurrent,
+          canInteract: () => !acting && !loading && error == null,
           path: '$root/classes/${c['id']}/students',
           title: c['name'],
           subtitle: s.role == 'TEACHER'
               ? '名册含 ${c['studentCount']} 个关联 · 仅显示未归档学生'
               : '${c['state'] == 'ARCHIVED' ? '已归档 · ' : ''}${c['studentCount']} 位学生 · 权限随当前名册生效',
-          reauth: reauth,
-          create: editable ? addStudent : null,
+          reauth: () { if (available()) reauth(); },
+          onCreateChanged: editable ? () => mutate(addStudent) : null,
           createLabel: '添加学生',
           emptyTitle: '名册为空',
           emptyDescription:
@@ -502,14 +581,16 @@ class _ClassesPageState extends State<ClassesPage> {
           toolbar: [
             if (editable) ...[
               OutlinedButton(
-                  onPressed: () => act(rename), child: const Text('修改名称')),
+                  onPressed: interactive() ? () => mutate(rename) : null,
+                  child: const Text('修改名称')),
               OutlinedButton(
-                  onPressed: () {
-                    if (current && s.canManage) context.go('/members');
-                  },
+                  onPressed: interactive() ? () {
+                    if (interactive() && s.canManage) context.go('/members');
+                  } : null,
                   child: const Text('分配教师')),
               TextButton(
-                  onPressed: () => act(archive), child: const Text('归档班级'))
+                  onPressed: interactive() ? () => mutate(archive) : null,
+                  child: const Text('归档班级'))
             ]
           ],
           columns: [
@@ -518,7 +599,7 @@ class _ClassesPageState extends State<ClassesPage> {
                 '档案状态', (r) => Text(r['archived'] == true ? '已归档' : '有效')),
             ColumnSpec('加入时间', (r) => Text(dateLabel(r['addedAt'])))
           ],
-          onOpen: student,
+          onOpenChanged: (row) => mutate(() => student(row)),
         ),
     ]);
   }

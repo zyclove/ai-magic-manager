@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show mapEquals;
 import 'package:flutter/scheduler.dart';
 import '../core/api.dart';
 import 'design.dart';
+import 'editor_draft_text.dart';
 import 'owned_dialog_route.dart';
 
 /// Short focused mutations preserve their payload when the server result is unknown.
@@ -36,10 +38,15 @@ class _ClassActionDialogState extends State<ClassActionDialog> {
   String? choice;
   bool busy = false;
   Object? error;
-  Json? pending;
+  Json? pending, recoveryValues;
+  bool confirmingUnknownClose = false, _listening = false;
+  late final String initialTitle, initialField, initialFieldLabel;
+  late final String? initialInput;
+  late final Map<String, String>? initialOptions;
   ModalRoute<dynamic>? _route;
   bool _active = true, _revoked = false, _rebuildPending = false;
-  bool get locked => busy || pending != null;
+  bool get locked => busy || pending != null || recoveryStopped || confirmingUnknownClose;
+  bool get recoveryStopped => versionConflict || isUnavailableOperationResult(error);
   bool get versionConflict =>
       error is ApiFailure && (error as ApiFailure).status == 412;
 
@@ -85,23 +92,49 @@ class _ClassActionDialogState extends State<ClassActionDialog> {
   }
 
   void close() {
-    if (current && !busy) {
-      finish(refreshRequired ? <String, dynamic>{'refresh': true} : null);
+    if (!current || busy) return;
+    if (recoveryStopped) {
+      finish(<String, dynamic>{'refresh': true});
+    } else if (pending != null) {
+      if (!confirmingUnknownClose) setState(() => confirmingUnknownClose = true);
+    } else {
+      finish();
     }
   }
 
-  void reauthenticate() {
-    if (current && !busy) widget.reauth?.call();
+  void keepOriginal() {
+    if (!current || busy || recoveryStopped ||
+        !confirmingUnknownClose || pending == null) return;
+    setState(() => confirmingUnknownClose = false);
   }
-  bool get refreshRequired =>
-      pending != null ||
-      error is ApiFailure && (error as ApiFailure).status == 412;
+
+  void confirmUnknownClose() {
+    if (!current || busy || recoveryStopped ||
+        !confirmingUnknownClose || pending == null) return;
+    finish(<String, dynamic>{'refresh': true});
+  }
+
+  void reauthenticate() {
+    if (current && !busy && !recoveryStopped && !confirmingUnknownClose) {
+      widget.reauth?.call();
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    name = TextEditingController(text: widget.initialName);
+    initialTitle = widget.title;
+    initialField = widget.field;
+    initialFieldLabel = widget.fieldLabel;
+    initialInput = widget.initialName;
+    initialOptions = widget.options == null ? null
+        : Map<String, String>.unmodifiable(widget.options!);
+    name = TextEditingController(text: initialInput);
     _observeAccess();
-    widget.accessChanges?.addListener(_accessChanged);
+    if (!_revoked && widget.accessChanges != null) {
+      widget.accessChanges!.addListener(_accessChanged);
+      _listening = true;
+    }
   }
 
   @override
@@ -115,11 +148,20 @@ class _ClassActionDialogState extends State<ClassActionDialog> {
   @override
   void didUpdateWidget(ClassActionDialog oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!identical(oldWidget.accessChanges, widget.accessChanges)) {
-      oldWidget.accessChanges?.removeListener(_accessChanged);
-      widget.accessChanges?.addListener(_accessChanged);
+    if (oldWidget.hasAccess?.call() == false || initialTitle != widget.title ||
+        initialField != widget.field || initialFieldLabel != widget.fieldLabel ||
+        initialInput != widget.initialName || !mapEquals(initialOptions, widget.options)) {
+      _revoked = true;
     }
     _observeAccess();
+    if (!identical(oldWidget.accessChanges, widget.accessChanges)) {
+      if (_listening) oldWidget.accessChanges?.removeListener(_accessChanged);
+      _listening = false;
+      if (!_revoked && _active && widget.accessChanges != null) {
+        widget.accessChanges!.addListener(_accessChanged);
+        _listening = true;
+      }
+    }
   }
 
   @override
@@ -139,38 +181,73 @@ class _ClassActionDialogState extends State<ClassActionDialog> {
   void dispose() {
     _active = false;
     _revoked = true;
-    widget.accessChanges?.removeListener(_accessChanged);
+    if (_listening) widget.accessChanges?.removeListener(_accessChanged);
     name.dispose();
     super.dispose();
   }
 
   Future<void> submit() async {
-    if (!current || busy || versionConflict) return;
-    if (form.currentState?.validate() != true) return;
-    final body = pending ??
-        <String, dynamic>{
-          widget.field: widget.options == null ? name.text.trim() : choice
-        };
+    if (!current || busy || recoveryStopped || confirmingUnknownClose) return;
+    final retryingUnknown = pending != null;
+    if (!retryingUnknown && form.currentState?.validate() != true) return;
+    final body = pending ?? Map<String, dynamic>.unmodifiable({
+      initialField: initialOptions == null ? name.text.trim() : choice,
+    });
     setState(() {
       busy = true;
       error = null;
+      pending = body;
     });
     try {
+      if (!current) return;
       final result = await widget.onSubmit(body);
       if (mounted && _active && permitted) finish(result);
-    } catch (e) {
+    } catch (failure) {
       if (mounted && _active && permitted) {
         setState(() {
-          error = e;
-          pending = e is! ApiFailure || e.status == 0 || e.status >= 500
-              ? Map.unmodifiable(body)
-              : null;
+          error = failure;
+          final stopped = failure is ApiFailure &&
+              (failure.status == 412 || isUnavailableOperationResult(failure));
+          final unknown = retryingUnknown || failure is! ApiFailure ||
+              failure.status == 0 || failure.status >= 500 ||
+              failure.code == 'PENDING_OPERATION_UNCHANGED';
+          if (stopped) {
+            recoveryValues ??= body;
+            pending = null;
+            confirmingUnknownClose = false;
+          } else if (!unknown) {
+            pending = null;
+          }
         });
       }
     } finally {
       if (mounted && _active) setState(() => busy = false);
     }
   }
+
+  Widget stoppedDialog() => PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) { if (!didPop) close(); },
+      child: AlertDialog(
+          title: const Text('已停止再次提交'),
+          content: SizedBox(width: 520, child: SingleChildScrollView(
+              child: Column(mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start, children: [
+                FailureView(error!),
+                Text(versionConflict
+                    ? '记录已更新，已停止再次提交。可复制下方草稿；关闭后先核对最新记录，再重新操作。'
+                    : '原操作结果已无法恢复，已停止再次提交。请核对当前记录；结果不可恢复不代表操作未执行。',
+                    style: const TextStyle(height: 1.6)),
+                const SizedBox(height: 12),
+                const Text('保留的草稿', style: TextStyle(fontWeight: FontWeight.w600)),
+                const SizedBox(height: 8),
+                SelectableText(classActionDraftText(recoveryValues ?? const {},
+                    field: initialField, fieldLabel: initialFieldLabel, options: initialOptions),
+                    key: const Key('class-action-recovery-draft'),
+                    style: const TextStyle(height: 1.6)),
+              ]))),
+          actions: [TextButton(key: const Key('class-action-close'),
+              onPressed: busy ? null : close, child: const Text('关闭并核对记录'))]));
 
   @override
   Widget build(BuildContext context) => !permitted
@@ -184,8 +261,9 @@ class _ClassActionDialogState extends State<ClassActionDialog> {
                 },
                 child: const Text('关闭'))
           ])
-      : PopScope(
-      canPop: !busy,
+      : recoveryStopped ? stoppedDialog() : PopScope(
+      canPop: !busy && pending == null && !confirmingUnknownClose,
+      onPopInvoked: (didPop) { if (!didPop) close(); },
       child: AlertDialog(
           title: Text(widget.title),
           content: SizedBox(
@@ -197,6 +275,12 @@ class _ClassActionDialogState extends State<ClassActionDialog> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
+                            if (confirmingUnknownClose) ...[
+                              const Notice(
+                                  '服务器可能已完成原操作，关闭不会取消提交。关闭后请先核对原记录，确认结果后再操作，避免重复提交。',
+                                  key: Key('class-action-unknown-close-notice'), warning: true),
+                              const SizedBox(height: 16),
+                            ],
                             Text(widget.description,
                                 style:
                                     const TextStyle(color: muted, height: 1.6)),
@@ -247,10 +331,11 @@ class _ClassActionDialogState extends State<ClassActionDialog> {
                               Padding(
                                   padding: const EdgeInsets.only(top: 16),
                                   child: FailureView(error!,
-                                      reauth: widget.reauth == null
+                                      reauth: widget.reauth == null || recoveryStopped ||
+                                              confirmingUnknownClose
                                           ? null
                                           : reauthenticate)),
-                            if (pending != null)
+                            if (pending != null && !confirmingUnknownClose)
                               const Padding(
                                   padding: EdgeInsets.only(top: 12),
                                   child: Text(
@@ -258,19 +343,19 @@ class _ClassActionDialogState extends State<ClassActionDialog> {
                                       style: TextStyle(height: 1.6))),
                           ])))),
           actions: [
-            TextButton(
-                onPressed: busy ? null : close,
-                child: Text(refreshRequired ? '关闭并刷新' : '关闭')),
-            FilledButton(
-                onPressed: busy ||
-                        widget.options?.isEmpty == true ||
-                        versionConflict
-                    ? null
-                    : submit,
-                child: Text(busy
-                    ? '提交中…'
-                    : pending != null
-                        ? '重试原提交'
-                        : widget.submitLabel))
+            if (confirmingUnknownClose) ...[
+              TextButton(onPressed: busy ? null : keepOriginal,
+                  child: const Text('继续处理原提交')),
+              FilledButton(onPressed: busy ? null : confirmUnknownClose,
+                  child: const Text('关闭并核对记录')),
+            ] else ...[
+              TextButton(key: const Key('class-action-close'),
+                  onPressed: busy ? null : close,
+                  child: Text(pending != null ? '暂时关闭' : '关闭')),
+              FilledButton(key: const Key('class-action-submit'),
+                  onPressed: busy || (pending == null && widget.options?.isEmpty == true)
+                      ? null : submit,
+                  child: Text(busy ? '提交中…' : pending != null ? '重试原提交' : widget.submitLabel)),
+            ],
           ]));
 }

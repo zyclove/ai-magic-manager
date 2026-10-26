@@ -5,6 +5,23 @@ import 'package:guardian/core/api.dart';
 import 'package:guardian/ui/editor_draft_text.dart';
 
 void main() {
+  test('class action recovery preserves its field complete reference and extra settings', () {
+    final draft = {'targetClassId': 'target-class-full-reference', 'targetVersion': 7};
+    final before = jsonEncode(draft);
+    final text = classActionDraftText(draft,
+        field: 'targetClassId', fieldLabel: '目标班级',
+        options: const {'target-class-full-reference': '七年级二班'});
+    expect(text, contains('目标班级：七年级二班（编号：target-class-full-reference）'));
+    expect(text, contains('targetVersion'));
+    expect(text, contains('7'));
+    expect(jsonEncode(draft), before);
+    expect(classActionDraftText(draft,
+        field: 'targetClassId', fieldLabel: '目标班级', options: const {}),
+        contains('编号：target-class-full-reference'));
+    expect(classActionDraftText({'name': '原班级名称'},
+        field: 'name', fieldLabel: '班级名称'), '班级名称：原班级名称');
+  });
+
   test('member recovery keeps full scope references and never rewrites inputs', () {
     final draft = <String, dynamic>{
       'recipientEmail': 'teacher@fixture.invalid',
