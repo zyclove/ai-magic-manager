@@ -180,8 +180,8 @@ void main() {
   testWidgets('schedule-copy copy-cancel keeps details without refreshing rows',
       (tester) async {
     final fixture = _Fixture();
-    final details = await _openDetails(tester, fixture,
-        viewport: const Size(390, 844));
+    final details =
+        await _openDetails(tester, fixture, viewport: const Size(390, 844));
     await _openCopy(tester);
     await tester.tap(_button('取消'));
     await _flush(tester);
@@ -246,19 +246,31 @@ void main() {
   testWidgets('schedule-copy saves exception-only and fully closed definitions',
       (tester) async {
     for (final exceptions in <List<Json>>[
-      [{'date': '2026-12-24', 'windows': [{'start': '09:00', 'end': '11:00'}]}],
+      [
+        {
+          'date': '2026-12-24',
+          'windows': [
+            {'start': '09:00', 'end': '11:00'}
+          ]
+        }
+      ],
       [],
     ]) {
       final definition = <String, dynamic>{
-        'timeZone': 'UTC', 'weekly': <Json>[], 'exceptions': exceptions,
+        'timeZone': 'UTC',
+        'weekly': <Json>[],
+        'exceptions': exceptions,
       };
       final fixture = _Fixture(definition: definition);
       await _openDetails(tester, fixture);
       await _openCopy(tester);
       expect(find.textContaining('当前没有每周允许时段'), findsOneWidget);
       await tester.tap(_button('保存副本'));
-      await _until(tester, () => fixture.reads.length == 2 &&
-          find.byType(AlertDialog).evaluate().isEmpty);
+      await _until(
+          tester,
+          () =>
+              fixture.reads.length == 2 &&
+              find.byType(AlertDialog).evaluate().isEmpty);
       expect(fixture.writes, hasLength(1));
       expect((jsonDecode(fixture.writes.single.body) as Json)['definition'],
           definition);

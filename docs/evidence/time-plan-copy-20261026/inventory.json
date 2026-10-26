@@ -1,5 +1,5 @@
 {
-  "status": "VERIFICATION_DEFERRED",
+  "status": "PARTIAL_VERIFICATION",
   "files": [
     {
       "file": "browser-red-result.json",
@@ -30,15 +30,90 @@
       "file": "verification-deferred-result.json",
       "bytes": 490,
       "sha256": "f07df9acc76e5fc10d682929e3c932ca49036619374280828070d2858cbecccd"
+    },
+    {
+      "file": "format-final-result.json",
+      "bytes": 4297,
+      "sha256": "8c7107a02cc37288d2fc95a51ab5774b46c3fe88a65e3ff487701834aa2dc27f"
+    },
+    {
+      "file": "format-final-output.log",
+      "bytes": 130,
+      "sha256": "63239c53b204af68325b64a75e9ddde228e6c0c8a2e3bf23356bb3dcbb37d72c"
+    },
+    {
+      "file": "analysis-final-result.json",
+      "bytes": 4404,
+      "sha256": "c74dd15806623bfd6d346746f2f34948509af9177c61580266e8ce7a3a32cf97"
+    },
+    {
+      "file": "analysis-final-output.log",
+      "bytes": 188,
+      "sha256": "30fb26d1183355fc1326a67313098457cbc365223d12a0906c0d7d198a03b3d0"
+    },
+    {
+      "file": "vm-result.json",
+      "bytes": 4207,
+      "sha256": "8b7ebb48b1ab06d0c3fcc977174140d8faaa6e604077169699ac9c5b573f1914"
+    },
+    {
+      "file": "vm-output.jsonl",
+      "bytes": 20747,
+      "sha256": "589be2bf7f0000903f6f84ac8f96b850262b3def1a830a3aba74e96e921ae7d6"
+    },
+    {
+      "file": "browser-final-result.json",
+      "bytes": 6648,
+      "sha256": "dde7c03806f7b122bb00e4955f362e226f53cd82e4be8fb72cf7a3f989b9f313"
+    },
+    {
+      "file": "browser-final-output.jsonl",
+      "bytes": 17458,
+      "sha256": "c209707c4b86b2a0643d8581db163ab223f763be9cac7d3258b4b542dfee2041"
+    },
+    {
+      "file": "browser-final-owned-evidence.json",
+      "bytes": 109220,
+      "sha256": "b439f853ab58ef7bd55ab0e4e8915e45892e9329e029e845b170cbbfa68be681"
+    },
+    {
+      "file": "executed-vm-runner.py.txt",
+      "bytes": 9361,
+      "sha256": "83943b5ff9ca364af394744a3c72289d8f9d6b54a028777ba4442b88ee141714"
+    },
+    {
+      "file": "executed-browser-runner.py.txt",
+      "bytes": 13642,
+      "sha256": "0bdae2a71bf58b41475d188ac2ecf763051ceaf3355633ae74524aa379e2f9fc"
     }
   ],
-  "pendingSourcePins": {
-    "apps/guardian/lib/core/schedule_copy.dart": "4972a687ed71487b7e00b69b1fddcaa08774f0f1ea93112cc73dc480f65d1ba7",
-    "apps/guardian/lib/pages/editors.dart": "992f75ae3c001935dfcd41274185f3361d967d5adf11c6109f1c82b40e6f1e1c",
-    "apps/guardian/lib/pages/console_pages.dart": "00a87957e92fe97d3bd64b94426c2539fb202e3fcd8e5921b993499e79ba32d9",
-    "apps/guardian/lib/ui/resource_page.dart": "43f0acf769fdc8de5f3b1bd6a8b996240d08344b5e6c0872a91caabdb02814a7",
-    "apps/guardian/test/schedule_copy_test.dart": "f4f0a179fe83bc92cdcab939a1da0c6cff2819e864a4d1b49ebca6cf8451c801",
-    "apps/guardian/test/schedule_copy_flow_test.dart": "a05300e9fe8e1c307a71d4b63bb4cf2287d9158d2080dfc504e47ebe19b266c6",
-    "apps/guardian/test/resource_page_resilience_test.dart": "7c5d03a624845c922968fbdb111f43fce568a2d16bd4c699e309fbeabb8695a0"
+  "strictAnalysis": "PASSED",
+  "vmPassed": 40,
+  "browserAssertionsPassed": 35,
+  "browserFullEvidence": "NOT_ACCEPTED",
+  "browserProblems": [
+    "OWN_JOB_MEMBER_HARD_ERROR",
+    "OWN_JOB_MEMBER_IDENTITY_UNPROVED"
+  ],
+  "currentSourcePins": {
+    "apps\\guardian\\lib\\core\\schedule_copy.dart": "4972a687ed71487b7e00b69b1fddcaa08774f0f1ea93112cc73dc480f65d1ba7",
+    "apps\\guardian\\lib\\pages\\editors.dart": "992f75ae3c001935dfcd41274185f3361d967d5adf11c6109f1c82b40e6f1e1c",
+    "apps\\guardian\\lib\\pages\\console_pages.dart": "00a87957e92fe97d3bd64b94426c2539fb202e3fcd8e5921b993499e79ba32d9",
+    "apps\\guardian\\lib\\ui\\resource_page.dart": "43f0acf769fdc8de5f3b1bd6a8b996240d08344b5e6c0872a91caabdb02814a7",
+    "apps\\guardian\\test\\schedule_copy_test.dart": "36f2acf1268d767d3650628443c8bddab47b1adc06f710ec4967fb9ead75e71f",
+    "apps\\guardian\\test\\resource_page_resilience_test.dart": "7c5d03a624845c922968fbdb111f43fce568a2d16bd4c699e309fbeabb8695a0",
+    "apps\\guardian\\test\\schedule_copy_flow_test.dart": "887cbec33f9be175a5ec0b03611ce8ac66923ff9a9dc56660e5e3f783fe2fa3f",
+    "apps\\guardian\\lib\\core\\api.dart": "afc2861510097d64ad93a067e675dc5a7f8777a1953f20b3feea25b4575e23fd",
+    "apps\\guardian\\lib\\core\\scoped_http_client.dart": "796c1c627a34ebded045ed6b8acdcf2b0705e16ce840b6ee3061c05e2d9352be",
+    "apps\\guardian\\lib\\core\\session.dart": "2c0c354df653359c24619fc1be3162030ae503127bbd3dd1a6ec2b96fce2a864",
+    "apps\\guardian\\lib\\ui\\design.dart": "8a0394c0225107a0d947cb54b907e0cf77ed04bab3631c9e77a60542c6dfe851",
+    "apps\\guardian\\lib\\ui\\dialog_access.dart": "8fe7c3d9ee1b7a038dc08939ea5cd40572a411ced63a01ba6eb12a88e50145d5",
+    "apps\\guardian\\lib\\ui\\owned_dialog_route.dart": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946",
+    "apps\\guardian\\lib\\pages\\device_subflow_scope.dart": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e",
+    "apps\\guardian\\test\\editor_submit_guard_test.dart": "55e9198b605e5b4c3113d1421709c7a52fc80ee6135b3b5d27e728235af09278",
+    "apps\\guardian\\test\\policy_details_scope_test.dart": "56a696ad762aa3ab25deed1d44a0742b7e999e9807823c869acf143566ff13be",
+    "apps\\guardian\\pubspec.yaml": "0e6fc775ba24cc541e918b7d74fde7ec7591c9badd47d5dfd2ee9f00fce24dcf",
+    "apps\\guardian\\pubspec.lock": "c6f16b105ed81fd036675605a44b846474fb45fec17040796c1358cdebd0016c",
+    "apps\\guardian\\.dart_tool\\package_config.json": "7d56027a23fc233d28485accb53dc9e4a4e35ae7e4f082f5c7b9450b5f091922"
   }
 }

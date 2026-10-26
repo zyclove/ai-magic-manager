@@ -1,0 +1,92 @@
+{
+  "status": "PASSED",
+  "sdkCalls": 1,
+  "tests": [
+    "schedule_copy_test.dart",
+    "resource_page_resilience_test.dart"
+  ],
+  "forceRequested": false,
+  "head": "be99d5377842336edfe5a9b4a541c1bd3f0226e5",
+  "resourcesBefore": {
+    "ram": 6068592640,
+    "cFree": 2453024768,
+    "dFree": 15308447744
+  },
+  "sdkBefore": {
+    "sdk": [],
+    "unknown": 0
+  },
+  "pid": 224756,
+  "command": "D:\\softwares\\flutter\\bin\\flutter.bat analyze --no-pub --fatal-infos --fatal-warnings lib/core/schedule_copy.dart lib/pages/editors.dart lib/pages/console_pages.dart lib/ui/resource_page.dart test/schedule_copy_test.dart test/resource_page_resilience_test.dart test/schedule_copy_flow_test.dart",
+  "terminal": {
+    "pid": 224756,
+    "creationFiletime": 134374488444098641,
+    "firstSignaledQpc": 253368.9773522,
+    "sampleQpc": 253368.9891134,
+    "signaled": true,
+    "exitCode": 0,
+    "exitFiletime": 134374488512256813,
+    "kernel100ns": 0,
+    "user100ns": 0,
+    "jobAccountingObservedQpc": 253368.9891263,
+    "firstCompleteTerminalQpc": 253368.9891263,
+    "activeProcesses": 0,
+    "totalProcesses": 12,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "naturalZero": true,
+  "passed": 0,
+  "failed": 0,
+  "skipped": 0,
+  "reporterDone": false,
+  "suiteFilesMatch": false,
+  "sourceUnchanged": true,
+  "sourcePins": {
+    "apps\\guardian\\lib\\core\\schedule_copy.dart": "4972a687ed71487b7e00b69b1fddcaa08774f0f1ea93112cc73dc480f65d1ba7",
+    "apps\\guardian\\lib\\pages\\editors.dart": "992f75ae3c001935dfcd41274185f3361d967d5adf11c6109f1c82b40e6f1e1c",
+    "apps\\guardian\\lib\\pages\\console_pages.dart": "00a87957e92fe97d3bd64b94426c2539fb202e3fcd8e5921b993499e79ba32d9",
+    "apps\\guardian\\lib\\ui\\resource_page.dart": "43f0acf769fdc8de5f3b1bd6a8b996240d08344b5e6c0872a91caabdb02814a7",
+    "apps\\guardian\\test\\schedule_copy_test.dart": "36f2acf1268d767d3650628443c8bddab47b1adc06f710ec4967fb9ead75e71f",
+    "apps\\guardian\\test\\resource_page_resilience_test.dart": "7c5d03a624845c922968fbdb111f43fce568a2d16bd4c699e309fbeabb8695a0",
+    "apps\\guardian\\test\\schedule_copy_flow_test.dart": "887cbec33f9be175a5ec0b03611ce8ac66923ff9a9dc56660e5e3f783fe2fa3f",
+    "apps\\guardian\\lib\\core\\api.dart": "afc2861510097d64ad93a067e675dc5a7f8777a1953f20b3feea25b4575e23fd",
+    "apps\\guardian\\lib\\core\\scoped_http_client.dart": "796c1c627a34ebded045ed6b8acdcf2b0705e16ce840b6ee3061c05e2d9352be",
+    "apps\\guardian\\lib\\core\\session.dart": "2c0c354df653359c24619fc1be3162030ae503127bbd3dd1a6ec2b96fce2a864",
+    "apps\\guardian\\lib\\ui\\design.dart": "8a0394c0225107a0d947cb54b907e0cf77ed04bab3631c9e77a60542c6dfe851",
+    "apps\\guardian\\lib\\ui\\dialog_access.dart": "8fe7c3d9ee1b7a038dc08939ea5cd40572a411ced63a01ba6eb12a88e50145d5",
+    "apps\\guardian\\lib\\ui\\owned_dialog_route.dart": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946",
+    "apps\\guardian\\lib\\pages\\device_subflow_scope.dart": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e",
+    "apps\\guardian\\test\\editor_submit_guard_test.dart": "55e9198b605e5b4c3113d1421709c7a52fc80ee6135b3b5d27e728235af09278",
+    "apps\\guardian\\test\\policy_details_scope_test.dart": "56a696ad762aa3ab25deed1d44a0742b7e999e9807823c869acf143566ff13be",
+    "apps\\guardian\\pubspec.yaml": "0e6fc775ba24cc541e918b7d74fde7ec7591c9badd47d5dfd2ee9f00fce24dcf",
+    "apps\\guardian\\pubspec.lock": "c6f16b105ed81fd036675605a44b846474fb45fec17040796c1358cdebd0016c",
+    "apps\\guardian\\.dart_tool\\package_config.json": "7d56027a23fc233d28485accb53dc9e4a4e35ae7e4f082f5c7b9450b5f091922"
+  },
+  "sdkAfter": {
+    "sdk": [],
+    "unknown": 0
+  },
+  "appTestsPassed": false,
+  "windowReleased": true,
+  "analysisNoIssues": true,
+  "formatCompleted": null,
+  "finalOwnedState": {
+    "pid": 224756,
+    "creationFiletime": 134374488444098641,
+    "firstSignaledQpc": 253368.9773522,
+    "sampleQpc": 253369.5934546,
+    "signaled": true,
+    "exitCode": 0,
+    "exitFiletime": 134374488512256813,
+    "kernel100ns": 0,
+    "user100ns": 0,
+    "jobAccountingObservedQpc": 253369.5934971,
+    "firstCompleteTerminalQpc": 253368.9891263,
+    "activeProcesses": 0,
+    "totalProcesses": 12,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "elapsedSeconds": 8.030244299996411
+}

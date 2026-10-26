@@ -135,8 +135,7 @@ void main() {
     expect(full.name.length, 100);
     expect(full.suggestedName, '${List.filled(96, '名').join()}（副本）');
     final prefix = List.filled(95, 'a').join();
-    final unicode =
-        ScheduleCopy.fromSchedule(_schedule(name: '$prefix😀bbb'));
+    final unicode = ScheduleCopy.fromSchedule(_schedule(name: '$prefix😀bbb'));
     expect(unicode.name.length, 100);
     expect(unicode.suggestedName, '$prefix（副本）');
     expect(unicode.suggestedName.length, lessThanOrEqualTo(100));
