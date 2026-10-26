@@ -1,9 +1,12 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import '../core/api.dart';
 import '../core/labels.dart';
 import '../core/member_access.dart';
+import '../core/member_scope_directories.dart';
 import 'design.dart';
 import 'dialog_access.dart';
 import 'editor_draft_text.dart';
@@ -12,15 +15,19 @@ import 'owned_dialog_route.dart';
 Future<Json?> memberEditorDialog(BuildContext context,
     {required String kind,
     required String operatorRole,
-    required Map<String, String> subjects,
+    Map<String, String> subjects = const {},
     Map<String, String> classes = const {},
+    MemberScopeDirectories? directories,
     Json? member,
     required Future<Json> Function(Json, bool Function()) onSubmit,
     VoidCallback? reauth,
     bool retryUncertain = true,
     Listenable? accessChanges,
     bool Function()? hasAccess}) async {
-  if (!context.mounted || hasAccess?.call() == false) return null;
+  if (!context.mounted || hasAccess?.call() == false) {
+    directories?.revoke();
+    return null;
+  }
   final access = DialogAccessBinding(context,
       accessChanges: accessChanges, hasAccess: hasAccess);
   late final OwnedDialogRoute<Json> route;
@@ -36,6 +43,7 @@ Future<Json?> memberEditorDialog(BuildContext context,
                 operatorRole: operatorRole,
                 subjects: subjects,
                 classes: classes,
+                directories: directories,
                 member: member,
                 retryUncertain: retryUncertain,
                 accessChanges: access.changes,
@@ -53,6 +61,7 @@ Future<Json?> memberEditorDialog(BuildContext context,
                 reauth: reauth));
     return await presentOwnedDialog<Json>(context, route);
   } finally {
+    directories?.revoke();
     access.dispose();
   }
 }
@@ -62,6 +71,9 @@ class MemberEditor extends StatefulWidget {
   final String kind, operatorRole;
   final Map<String, String> subjects;
   final Map<String, String> classes;
+  /// The sole option source when supplied; direct maps apply only without it.
+  /// Retired with this editor window and never shared across windows.
+  final MemberScopeDirectories? directories;
   final Json? member;
   final Future<Json> Function(Json) onSubmit;
   final VoidCallback? reauth;
@@ -72,8 +84,9 @@ class MemberEditor extends StatefulWidget {
       {super.key,
       required this.kind,
       required this.operatorRole,
-      required this.subjects,
+      this.subjects = const {},
       this.classes = const {},
+      this.directories,
       required this.onSubmit,
       this.member,
       this.reauth,
@@ -99,6 +112,11 @@ class _MemberEditorState extends State<MemberEditor> {
   late final bool initialRetryUncertain;
   late final Json? initialMember;
   late final Map<String, String> initialSubjects, initialClasses;
+  late final MemberScopeDirectories? initialDirectories;
+  final directoryLoading = <MemberScopeDirectory>{};
+  final directoryAttempted = <MemberScopeDirectory>{};
+  final directoryErrors = <MemberScopeDirectory, Object>{};
+  int directoryGeneration = 0;
   Object? error;
   ModalRoute<dynamic>? _route;
   bool _active = true, _revoked = false;
@@ -114,7 +132,12 @@ class _MemberEditorState extends State<MemberEditor> {
       : <String, dynamic>{'reviewInvitations': true};
 
   void _observeAccess() {
-    if (!_revoked && widget.hasAccess?.call() == false) _revoked = true;
+    if (!_revoked && (widget.hasAccess?.call() == false ||
+        initialDirectories?.current == false)) {
+      _revoked = true;
+      directoryGeneration++;
+      initialDirectories?.revoke();
+    }
   }
 
   bool get permitted {
@@ -142,6 +165,127 @@ class _MemberEditorState extends State<MemberEditor> {
     } else {
       setState(() {});
     }
+  }
+
+  Map<String, String>? get subjectOptions => initialDirectories == null
+      ? initialSubjects : initialDirectories!.subjects;
+  Map<String, String>? get classOptions => initialDirectories == null
+      ? initialClasses : initialDirectories!.classes;
+  MemberScopeDirectory? get requiredDirectory => role == 'TEACHER' && classMode
+      ? MemberScopeDirectory.classes
+      : memberNeedsSubject(role) ? MemberScopeDirectory.subjects : null;
+  Map<String, String>? optionsFor(MemberScopeDirectory directory) =>
+      directory == MemberScopeDirectory.subjects ? subjectOptions : classOptions;
+  bool get directoryReady {
+    final directory = requiredDirectory;
+    if (directory == null) return true;
+    final options = optionsFor(directory);
+    if (directoryLoading.contains(directory) || options == null) return false;
+    return directory == MemberScopeDirectory.subjects
+        ? subject != null && options.containsKey(subject)
+        : selectedClasses.isNotEmpty && selectedClasses.length <= 50 &&
+            selectedClasses.every(options.containsKey);
+  }
+
+  void ensureRequiredDirectory() {
+    final directory = requiredDirectory;
+    if (directory == null || initialDirectories == null || !current || locked ||
+        optionsFor(directory) != null || directoryAttempted.contains(directory)) return;
+    unawaited(loadDirectory(directory));
+  }
+
+  Future<void> loadDirectory(MemberScopeDirectory directory, {bool refresh = false}) async {
+    final repository = initialDirectories;
+    if (!current || locked || repository == null || requiredDirectory != directory ||
+        directoryLoading.contains(directory) ||
+        (!refresh && (optionsFor(directory) != null || directoryAttempted.contains(directory)))) return;
+    final generation = directoryGeneration;
+    bool belongs() => mounted && _active && generation == directoryGeneration &&
+        identical(initialDirectories, repository) && _route?.isActive == true &&
+        (_route is! OwnedDialogRoute<dynamic> ||
+            (_route as OwnedDialogRoute<dynamic>).available);
+    bool accepts() => belongs() && permitted;
+    setState(() {
+      directoryLoading.add(directory);
+      directoryAttempted.add(directory);
+      directoryErrors.remove(directory);
+    });
+    try {
+      await repository.load(directory, refresh: refresh);
+    } catch (failure) {
+      if (belongs()) {
+        if (!repository.current ||
+            (failure is ApiFailure && failure.code == 'WORKSPACE_CHANGED')) {
+          repository.revoke();
+          _revoked = true;
+          directoryGeneration++;
+          setState(() {});
+        } else if (accepts()) {
+          setState(() => directoryErrors[directory] = failure);
+        }
+      }
+    } finally {
+      if (accepts()) setState(() => directoryLoading.remove(directory));
+    }
+  }
+
+  String missingDirectoryReference(MemberScopeDirectory directory, String id) {
+    final kind = directory == MemberScopeDirectory.subjects ? '档案' : '班级';
+    return optionsFor(directory) != null ? '原${kind}已不可选：$id'
+        : directoryErrors.containsKey(directory) ? '原${kind}（选项读取失败）：$id'
+        : '原${kind}（选项未读取）：$id';
+  }
+
+  String? validateSubject(String? value) {
+    if (subjectOptions == null) return '请先读取档案选项';
+    if (value == null) return '请选择关联档案';
+    return subjectOptions!.containsKey(value) ? null : '该档案已不可选，请重新选择';
+  }
+
+  String? validateClasses() {
+    if (classOptions == null) return '请先读取班级选项';
+    if (selectedClasses.isEmpty) return '请至少选择一个班级';
+    if (selectedClasses.length > 50) return '最多选择 50 个班级';
+    return selectedClasses.every(classOptions!.containsKey)
+        ? null : '请移除不可用班级后重新选择';
+  }
+
+  Widget directoryStatus(MemberScopeDirectory directory) {
+    if (initialDirectories == null) return const SizedBox.shrink();
+    final kind = directory == MemberScopeDirectory.subjects ? '档案' : '班级';
+    final keyName = directory == MemberScopeDirectory.subjects ? 'subjects' : 'classes';
+    final options = optionsFor(directory);
+    final failure = directoryErrors[directory];
+    final loading = directoryLoading.contains(directory);
+    final invalidReference = options != null &&
+        (directory == MemberScopeDirectory.subjects
+            ? subject != null && !options.containsKey(subject)
+            : selectedClasses.any((id) => !options.containsKey(id)));
+    void refresh() => unawaited(loadDirectory(directory, refresh: true));
+    return Padding(padding: const EdgeInsets.only(bottom: 12), child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start, children: [
+      if (loading) ...[
+        LinearProgressIndicator(key: Key('member-$keyName-loading')),
+        const SizedBox(height: 6),
+        Text('正在读取${kind}选项；仍可切换角色或访问范围。',
+            style: const TextStyle(color: muted, fontSize: 12)),
+      ] else if (failure != null) ...[
+        Text('${kind}选项读取未完成，原关联编号已保留。可重试或切换角色。'),
+        FailureView(failure, retry: locked ? null : refresh,
+            reauth: widget.reauth == null || locked ? null : () {
+              if (current && !locked && requiredDirectory == directory) {
+                widget.reauth!();
+              }
+            }),
+      ] else
+        TextButton.icon(key: Key('member-$keyName-refresh'),
+            onPressed: locked ? null : refresh,
+            icon: const Icon(Icons.refresh, size: 16),
+            label: Text(options == null ? '读取${kind}选项' : '重新加载选项')),
+      if (invalidReference)
+        Text('原${kind}已不在当前可选范围，请重新选择后保存。',
+            style: const TextStyle(color: muted, fontSize: 12)),
+    ]));
   }
 
   void finish([Json? result]) {
@@ -198,6 +342,7 @@ class _MemberEditorState extends State<MemberEditor> {
     initialKind = widget.kind;
     initialOperatorRole = widget.operatorRole;
     initialRetryUncertain = widget.retryUncertain;
+    initialDirectories = widget.directories;
     initialSubjects = Map<String, String>.unmodifiable(widget.subjects);
     initialClasses = Map<String, String>.unmodifiable(widget.classes);
     initialMember = widget.member == null ? null : Map<String, dynamic>.unmodifiable({
@@ -222,7 +367,9 @@ class _MemberEditorState extends State<MemberEditor> {
     classMode = subject == null;
     selectedClasses.addAll(
         List<String>.from(widget.member?['classIds'] as List? ?? const []));
-    if (!widget.subjects.containsKey(subject)) subject = null;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && _active) ensureRequiredDirectory();
+    });
   }
 
   @override
@@ -244,12 +391,19 @@ class _MemberEditorState extends State<MemberEditor> {
   @override
   void didUpdateWidget(MemberEditor oldWidget) {
     super.didUpdateWidget(oldWidget);
+    final wasRevoked = _revoked;
     if (oldWidget.hasAccess?.call() == false ||
         initialKind != widget.kind || initialOperatorRole != widget.operatorRole ||
         initialRetryUncertain != widget.retryUncertain ||
-        !mapEquals(initialSubjects, widget.subjects) ||
-        !mapEquals(initialClasses, widget.classes) ||
+        !identical(initialDirectories, widget.directories) ||
+        (initialDirectories == null &&
+            (!mapEquals(initialSubjects, widget.subjects) ||
+             !mapEquals(initialClasses, widget.classes))) ||
         !sameMember(initialMember, widget.member)) _revoked = true;
+    if (_revoked) {
+      if (!wasRevoked) directoryGeneration++;
+      initialDirectories?.revoke();
+    }
     _observeAccess();
     if (!identical(oldWidget.accessChanges, widget.accessChanges)) {
       if (_listening) oldWidget.accessChanges?.removeListener(_accessChanged);
@@ -265,6 +419,8 @@ class _MemberEditorState extends State<MemberEditor> {
   void deactivate() {
     _active = false;
     _revoked = true;
+    directoryGeneration++;
+    initialDirectories?.revoke();
     super.deactivate();
   }
 
@@ -278,6 +434,8 @@ class _MemberEditorState extends State<MemberEditor> {
   void dispose() {
     _active = false;
     _revoked = true;
+    directoryGeneration++;
+    initialDirectories?.revoke();
     if (_listening) widget.accessChanges?.removeListener(_accessChanged);
     email.dispose();
     super.dispose();
@@ -302,7 +460,7 @@ class _MemberEditorState extends State<MemberEditor> {
         (pending != null && !widget.retryUncertain)) return;
     final retryingUnknown = pending != null;
     if (!retryingUnknown &&
-        (form.currentState?.validate() != true || roles.isEmpty || !changed)) return;
+        (!directoryReady || form.currentState?.validate() != true || roles.isEmpty || !changed)) return;
     final classes = selectedClasses.toList()..sort();
     final body = pending ?? Map<String, dynamic>.unmodifiable({
       if (!editing) 'recipientEmail': email.text.trim(),
@@ -363,7 +521,7 @@ class _MemberEditorState extends State<MemberEditor> {
                 const Text('保留的草稿', style: TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 8),
                 SelectableText(memberDraftText(recoveryValues ?? const {},
-                    subjects: initialSubjects, classes: initialClasses),
+                    subjects: subjectOptions ?? const {}, classes: classOptions ?? const {}),
                     key: const Key('member-editor-recovery-draft'),
                     style: const TextStyle(height: 1.6)),
               ]))),
@@ -448,6 +606,7 @@ class _MemberEditorState extends State<MemberEditor> {
                                           v == null ||
                                           !roles.contains(v)) return;
                                       setState(() => role = v);
+                                      ensureRequiredDirectory();
                                     },
                               validator: (v) =>
                                   v == null ? '当前成员不可调整角色' : null),
@@ -473,20 +632,15 @@ class _MemberEditorState extends State<MemberEditor> {
                                   : (v) {
                                       if (!current || locked || v == null) return;
                                       setState(() => classMode = v);
+                                      ensureRequiredDirectory();
                                     },
                             ),
                             if (classMode) ...[
                               const SizedBox(height: 14),
+                              directoryStatus(MemberScopeDirectory.classes),
                               FormField<Set<String>>(
                                 initialValue: selectedClasses,
-                                validator: (_) => selectedClasses.isEmpty
-                                    ? '请至少选择一个班级'
-                                    : selectedClasses.length > 50
-                                        ? '最多选择 50 个班级'
-                                        : selectedClasses.any((id) =>
-                                                !widget.classes.containsKey(id))
-                                            ? '请移除不可用班级后重新选择'
-                                            : null,
+                                validator: (_) => validateClasses(),
                                 builder: (field) => Column(
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
@@ -495,7 +649,7 @@ class _MemberEditorState extends State<MemberEditor> {
                                           '已选 ${selectedClasses.length} 个班级 · 最多 50 个',
                                           style: const TextStyle(color: muted)),
                                       const SizedBox(height: 8),
-                                      if (widget.classes.isEmpty &&
+                                      if (classOptions?.isEmpty == true &&
                                           selectedClasses.isEmpty)
                                         const Notice('暂无可选班级。请先在“班级与名册”中新建班级。'),
                                       ConstrainedBox(
@@ -504,7 +658,7 @@ class _MemberEditorState extends State<MemberEditor> {
                                           child: SingleChildScrollView(
                                               child: Column(children: [
                                             for (final id in {
-                                              ...widget.classes.keys,
+                                              ...(classOptions ?? const <String, String>{}).keys,
                                               ...selectedClasses
                                             })
                                               CheckboxListTile(
@@ -512,9 +666,8 @@ class _MemberEditorState extends State<MemberEditor> {
                                                 controlAffinity:
                                                     ListTileControlAffinity
                                                         .leading,
-                                                title: Text(widget
-                                                        .classes[id] ??
-                                                    '不可用班级（${shortId(id)}）'),
+                                                title: Text((classOptions ?? const <String, String>{})[id] ??
+                                                    missingDirectoryReference(MemberScopeDirectory.classes, id)),
                                                 value: selectedClasses
                                                     .contains(id),
                                                 onChanged: locked
@@ -523,7 +676,7 @@ class _MemberEditorState extends State<MemberEditor> {
                                                         if (!current ||
                                                             locked ||
                                                             (v == true &&
-                                                                !widget.classes
+                                                                !(classOptions ?? const <String, String>{})
                                                                     .containsKey(id))) return;
                                                         setState(() {
                                                           if (v == true) {
@@ -555,29 +708,34 @@ class _MemberEditorState extends State<MemberEditor> {
                           if (memberNeedsSubject(role) &&
                               !(role == 'TEACHER' && classMode)) ...[
                             const SizedBox(height: 20),
+                            directoryStatus(MemberScopeDirectory.subjects),
                             DropdownButtonFormField<String>(
                                 key: const Key('member-subject'),
                                 value: subject,
                                 isExpanded: true,
                                 decoration: const InputDecoration(
                                     labelText: '关联档案', hintText: '请选择档案'),
-                                items: widget.subjects.entries
-                                    .map((s) => DropdownMenuItem(
-                                        value: s.key,
-                                        child: Text(s.value,
-                                            overflow: TextOverflow.ellipsis)))
-                                    .toList(),
+                                items: [
+                                  for (final entry in (subjectOptions ?? const <String, String>{}).entries)
+                                    DropdownMenuItem(value: entry.key,
+                                        child: Text(entry.value, overflow: TextOverflow.ellipsis)),
+                                  if (subject != null && subjectOptions?.containsKey(subject) != true)
+                                    DropdownMenuItem(value: subject, enabled: false,
+                                        child: Text(missingDirectoryReference(
+                                            MemberScopeDirectory.subjects, subject!),
+                                            overflow: TextOverflow.ellipsis)),
+                                ],
                                 onChanged: locked
                                     ? null
                                     : (v) {
                                         if (!current ||
                                             locked ||
                                             (v != null &&
-                                                !widget.subjects.containsKey(v))) return;
+                                                !(subjectOptions ?? const <String, String>{}).containsKey(v))) return;
                                         setState(() => subject = v);
                                       },
-                                validator: (v) => v == null ? '请选择关联档案' : null),
-                            if (widget.subjects.isEmpty)
+                                validator: validateSubject),
+                            if (subjectOptions?.isEmpty == true)
                               const Padding(
                                   padding: EdgeInsets.only(top: 10),
                                   child: Notice('暂无可选档案。请先在“儿童档案”中创建档案。',
@@ -634,7 +792,7 @@ class _MemberEditorState extends State<MemberEditor> {
             if (pending == null || widget.retryUncertain)
               FilledButton(
                   key: const Key('member-editor-save'),
-                  onPressed: busy || roles.isEmpty || (pending == null && !changed)
+                  onPressed: busy || roles.isEmpty || (pending == null && (!changed || !directoryReady))
                       ? null : save,
                   child: busy
                       ? const Row(mainAxisSize: MainAxisSize.min, children: [

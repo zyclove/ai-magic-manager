@@ -73,7 +73,9 @@ Windows 私有进程验证的稳定工具源位于 [scripts/verification](../scr
 
 时区输入统一使用 [TimeZoneField](../apps/guardian/lib/ui/time_zone_field.dart)，通用表单通过 `FieldSpec.timeZone` 显式选择。复用已锁定 timezone 数据，按需加载并缓存公共目录；只建议、不替服务端决定有效时区或执行时区换算，手填保持可用。宿主必须同时传可视禁用状态与同步 `canInteract`，在重建前阻止旧选项改变控制器；目录初载保留可读取的原本地时区，字段不拥有调用方控制器。
 
-[MemberEditor](../apps/guardian/lib/ui/member_editor.dart) 在回调前冻结原 Map 与班级 List；已有未知提交后，认证/权限等普通拒绝不清 pending。412 与通用不可恢复结果停止旧请求重试，保留原草稿；未知关闭先就地确认，再返回 refresh/reviewInvitations 核对信号。输入和原目录按初始快照绑定，换绑或失权不能复活旧窗口。
+[MemberEditor](../apps/guardian/lib/ui/member_editor.dart) 在回调前冻结原 Map 与班级 List；已有未知提交后，认证/权限等普通拒绝不清 pending。412 与通用不可恢复结果停止旧请求重试，保留原草稿；未知关闭先就地确认，再返回 refresh/reviewInvitations 核对信号。输入与目录来源绑定当前窗口，换绑或失权不能复活旧窗口。
+
+成员范围的 [MemberScopeDirectories](../apps/guardian/lib/core/member_scope_directories.dart) 按窗口捕获缓存/并发读取，null 未读与不可变空 Map 区分。MemberEditor 按角色和范围加载所需一类目录，现有引用始终保留完整编号占位；目录对象内部补名称不等于换绑，重载不改提交或版本。每窗独立实例在退役时 revoke，阻止晚到页继续读取；直接注入已读 Map 的组件路径仍使用原快照，不能与异步目录形成双重数据来源。
 
 恢复草稿的中文字段清单统一在[领域化展示模块](../apps/guardian/lib/ui/editor_draft_text.dart)，计划、策略与成员的展示只读取已捕获提交与原目录。名称缺失保留完整对象编号，未知字段也保留；展示层不得读取网络、改写原提交或解除重试保护。
 

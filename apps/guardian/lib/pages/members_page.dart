@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../core/api.dart';
 import '../core/labels.dart';
 import '../core/member_access.dart';
+import '../core/member_scope_directories.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
 import '../ui/dialog_access.dart';
@@ -319,14 +320,8 @@ class _MembersPageState extends State<MembersPage> {
           ]);
       if (edit && current(scope)) {
         // Fetch again after leaving the detail dialog: never silently replace the version on submit.
-        final results = await Future.wait([
-          scope.api.send('GET', path),
-          scope.api.all('$root/subjects'),
-          if (kind == 'ORGANIZATION') scope.api.all('$root/classes')
-        ]);
+        final latest = await scope.api.send('GET', path) as Json;
         if (!mounted || !current(scope)) return false;
-        final latest = results[0] as Json;
-        final children = results[1] as List<Json>;
         final key = requestId();
         final result = await memberEditorDialog(context,
                   kind: kind,
@@ -336,20 +331,12 @@ class _MembersPageState extends State<MembersPage> {
                   member: {
                     ...member,
                     ...latest,
-                    'subjectName': {
-                      for (final c in children) c['id']: c['nickname']
-                    }[latest['subjectId']],
+                    'subjectName': null,
+                    'subjectArchived': false,
                   },
-                  subjects: {
-                    for (final c in children)
-                      if (c['archived'] != true && c['archivedAt'] == null)
-                        c['id'] as String: c['nickname'] as String
-                  },
-                  classes: {
-                    if (results.length > 2)
-                      for (final c in results[2] as List<Json>)
-                        c['id'] as String: c['name'] as String
-                  },
+                  directories: MemberScopeDirectories(
+                      api: scope.api, root: root,
+                      current: () => current(scope)),
                   reauth: reauth,
                   onSubmit: (body, permitted) async {
                     needsReview = true;

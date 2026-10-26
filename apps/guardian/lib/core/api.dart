@@ -34,6 +34,7 @@ class ApiFailure implements Exception {
   final String? correlationId;
   const ApiFailure(this.status, this.code, [this.correlationId]);
   String get message => switch (code) {
+        'INVALID_MEMBER_SCOPE_OPTIONS' => '范围选项资料不完整，请重新加载。原选择已保留。',
         'INVALID_POLICY_DIRECTORY_RESPONSE' => '规则选项资料不完整，未打开规则表单。请重新加载选项。',
         'INVALID_DOMAIN' => '请输入有效域名，不含协议、端口、路径、IP 地址或通配符。',
         'INVALID_DOMAIN_CHECK_RESPONSE' => '域名检查结果与当前草稿不一致，已隐藏结果。请重新打开策略详情后检查。',

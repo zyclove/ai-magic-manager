@@ -23,6 +23,7 @@ import '../core/browser_enrollment_journal.dart';
 import '../ui/enrollment_dialog.dart';
 import 'package:uuid/uuid.dart';
 import '../core/labels.dart';
+import '../core/member_scope_directories.dart';
 import '../core/observation.dart' show canReadObservation;
 import '../core/overview_summary.dart';
 import '../core/schedule_copy.dart';
@@ -1895,24 +1896,14 @@ class ConsoleActions {
     ]);
     try {
       if (!scope.current) return false;
-      final children = await scope.api.all('$capturedRoot/subjects');
-      final classes = kind == 'ORGANIZATION'
-          ? await scope.api.all('$capturedRoot/classes')
-          : <Json>[];
-      if (!context.mounted || !scope.current) return false;
       final result = await memberEditorDialog(context,
                 kind: kind,
                 operatorRole: operatorRole,
                 accessChanges: changes,
                 hasAccess: () => scope.current,
-                subjects: {
-                  for (final child in children)
-                    if (child['archived'] != true && child['archivedAt'] == null)
-                      child['id'] as String: child['nickname'] as String
-                },
-                classes: {
-                  for (final c in classes) c['id'] as String: c['name'] as String
-                },
+                directories: MemberScopeDirectories(
+                    api: scope.api, root: capturedRoot,
+                    current: () => scope.current),
                 reauth: reauth,
                 retryUncertain: false,
                 onSubmit: (body, permitted) async {

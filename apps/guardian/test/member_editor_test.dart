@@ -1,13 +1,20 @@
+import 'dart:async';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:guardian/core/api.dart';
 import 'package:guardian/core/member_access.dart';
+import 'package:guardian/core/member_scope_directories.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:guardian/ui/member_editor.dart';
 import 'package:guardian/ui/design.dart';
 
 Future<void> open(WidgetTester tester, Future<Json> Function(Json) submit,
     {Json? member, bool retryUncertain = true,
-    VoidCallback? reauth, void Function(Json?)? onResult}) async {
+    VoidCallback? reauth, void Function(Json?)? onResult,
+    MemberScopeDirectories? directories, bool wait = true}) async {
   await tester.pumpWidget(MaterialApp(
       theme: consoleTheme(),
       home: Scaffold(
@@ -19,8 +26,11 @@ Future<void> open(WidgetTester tester, Future<Json> Function(Json) submit,
                       builder: (_) => MemberEditor(
                             kind: 'ORGANIZATION',
                             operatorRole: 'OWNER',
-                            subjects: const {'a': '小明', 'b': '小雨'},
-                            classes: const {'c1': '七年级一班', 'c2': '七年级二班'},
+                            subjects: directories == null
+                                ? const {'a': '小明', 'b': '小雨'} : const {},
+                            classes: directories == null
+                                ? const {'c1': '七年级一班', 'c2': '七年级二班'} : const {},
+                            directories: directories,
                             member: member,
                             onSubmit: submit,
                             retryUncertain: retryUncertain,
@@ -30,10 +40,147 @@ Future<void> open(WidgetTester tester, Future<Json> Function(Json) submit,
                   },
                   child: const Text('打开'))))));
   await tester.tap(find.text('打开'));
-  await tester.pumpAndSettle();
+  if (wait) {
+    await tester.pumpAndSettle();
+  } else {
+    await tester.pump();
+  }
 }
 
 void main() {
+  testWidgets('scope options load only when needed and leaving stops late pagination',
+      (tester) async {
+    final reads = <http.Request>[];
+    final pending = Completer<http.Response>();
+    addTearDown(() {
+      if (!pending.isCompleted) pending.complete(http.Response(
+          '{"items":[],"nextCursor":null}', 200,
+          headers: {'content-type': 'application/json; charset=utf-8'}));
+    });
+    final client = MockClient((request) async {
+      reads.add(request);
+      expect(request.method, 'GET');
+      expect(request.url.path, '/api/v1/tenants/fixture/classes');
+      return pending.future;
+    });
+    addTearDown(client.close);
+    final directories = MemberScopeDirectories(
+        api: Api(() async => client, baseUrl: 'http://fixture.invalid/api/v1'),
+        root: '/tenants/fixture', current: () => true);
+    Json? sent;
+    await open(tester, (body) async { sent = body; return body; },
+        directories: directories);
+    expect(reads, isEmpty);
+    await tester.enterText(find.byKey(const Key('member-email')), 'audit@fixture.invalid');
+    await tester.tap(find.byKey(const Key('member-role')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('教师').last);
+    for (var frame = 0; frame < 6; frame++) {
+      await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    expect(reads, hasLength(1));
+    expect(find.byKey(const Key('member-classes-loading')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('member-role')));
+    // The pending indicator keeps animating while the menu is open.
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.text('审计员').last);
+    await tester.pump(const Duration(milliseconds: 300));
+    await tester.tap(find.text('创建邀请'));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(sent, {'recipientEmail': 'audit@fixture.invalid', 'role': 'AUDITOR'});
+    expect(find.byType(MemberEditor), findsNothing);
+    pending.complete(http.Response(jsonEncode({
+      'items': [{'id': 'class-full', 'name': '晚到班级', 'state': 'ACTIVE'}],
+      'nextCursor': 'must-not-load',
+    }), 200, headers: {'content-type': 'application/json; charset=utf-8'}));
+    await tester.pumpAndSettle();
+    expect(reads, hasLength(1));
+    expect(directories.current, isFalse);
+    expect(find.textContaining('晚到班级'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a missing original subject survives option failure and retry without changing an unknown write',
+      (tester) async {
+    final pending = Completer<http.Response>();
+    addTearDown(() {
+      if (!pending.isCompleted) pending.complete(http.Response(
+          '{"items":[],"nextCursor":null}', 200,
+          headers: {'content-type': 'application/json; charset=utf-8'}));
+    });
+    var reads = 0;
+    final client = MockClient((request) async {
+      expect(request.method, 'GET');
+      expect(request.url.path, '/api/v1/tenants/fixture/subjects');
+      reads++;
+      if (reads == 1) return pending.future;
+      return http.Response(jsonEncode({'items': [
+        {'id': 'available-subject-full', 'nickname': '小雨', 'archived': false},
+      ], 'nextCursor': null}), 200,
+          headers: {'content-type': 'application/json; charset=utf-8'});
+    });
+    addTearDown(client.close);
+    final directories = MemberScopeDirectories(
+        api: Api(() async => client, baseUrl: 'http://fixture.invalid/api/v1'),
+        root: '/tenants/fixture', current: () => true);
+    final sent = <Json>[];
+    var authentications = 0;
+    await open(tester, (body) async {
+      sent.add(body);
+      if (sent.length == 1) throw const ApiFailure(503, 'REQUEST_FAILED');
+      return body;
+    }, directories: directories, wait: false,
+        reauth: () { authentications++; }, member: {
+      'actorId': 'teacher', 'displayName': '林老师', 'role': 'TEACHER',
+      'subjectId': 'original-subject-full', 'classIds': <String>[], 'version': 7,
+    });
+    for (var frame = 0; frame < 6; frame++) {
+      await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    expect(reads, 1);
+    expect(tester.widget<DropdownButtonFormField<String>>(
+        find.byKey(const Key('member-subject'))).initialValue, 'original-subject-full');
+    expect(find.textContaining('original-subject-full'), findsWidgets);
+    pending.complete(http.Response('{"errorCode":"REAUTH_REQUIRED"}', 401));
+    await tester.pumpAndSettle();
+    expect(tester.widget<DropdownButtonFormField<String>>(
+        find.byKey(const Key('member-subject'))).initialValue, 'original-subject-full');
+    final originalRetry = tester.widget<FailureView>(find.byType(FailureView)).retry!;
+    await tester.ensureVisible(find.text('重新安全验证'));
+    await tester.tap(find.text('重新安全验证'));
+    await tester.pumpAndSettle();
+    expect(authentications, 1);
+    expect(reads, 1);
+    expect(sent, isEmpty);
+    await tester.ensureVisible(find.text('重试'));
+    await tester.tap(find.text('重试'));
+    await tester.pumpAndSettle();
+    expect(reads, 2);
+    expect(tester.widget<DropdownButtonFormField<String>>(
+        find.byKey(const Key('member-subject'))).initialValue, 'original-subject-full');
+    expect(sent, isEmpty);
+    await tester.ensureVisible(find.byKey(const Key('member-subject')));
+    await tester.tap(find.byKey(const Key('member-subject')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('小雨').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('保存权限'));
+    await tester.pumpAndSettle();
+    originalRetry();
+    await tester.pumpAndSettle();
+    expect(reads, 2, reason: 'A retained option retry cannot refresh while a write is unknown.');
+    await tester.tap(find.text('重试原提交'));
+    await tester.pumpAndSettle();
+    expect(sent, [
+      {'role': 'TEACHER', 'subjectId': 'available-subject-full'},
+      {'role': 'TEACHER', 'subjectId': 'available-subject-full'},
+    ]);
+    expect(reads, 2);
+    expect(tester.takeException(), isNull);
+  });
+
   test('class-scoped teachers are never labelled as workspace-wide', () {
     expect(
         memberScope({
