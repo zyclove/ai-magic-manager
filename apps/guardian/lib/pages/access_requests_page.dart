@@ -22,6 +22,8 @@ class AccessRequestsPage extends StatefulWidget {
   final Future<void> Function(Json) onOpen;
   final Future<void> Function()? create;
   final VoidCallback? reauth;
+  final bool pendingFilter;
+  final ValueChanged<bool> onFilterChanged;
 
   const AccessRequestsPage(
       {super.key,
@@ -30,6 +32,8 @@ class AccessRequestsPage extends StatefulWidget {
       required this.role,
       required this.isCurrent,
       required this.onOpen,
+      required this.pendingFilter,
+      required this.onFilterChanged,
       this.create,
       this.reauth});
 
@@ -38,7 +42,7 @@ class AccessRequestsPage extends StatefulWidget {
 }
 
 class _AccessRequestsPageState extends State<AccessRequestsPage> {
-  late bool pending;
+  bool get pending => widget.pendingFilter;
   bool busy = false;
   ModalRoute<dynamic>? owner;
 
@@ -50,12 +54,6 @@ class _AccessRequestsPageState extends State<AccessRequestsPage> {
   bool get interactive => ownerInteractive && !busy;
 
   @override
-  void initState() {
-    super.initState();
-    pending = const ['OWNER', 'GUARDIAN', 'ORG_ADMIN'].contains(widget.role);
-  }
-
-  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     owner ??= ModalRoute.of(context);
@@ -65,7 +63,7 @@ class _AccessRequestsPageState extends State<AccessRequestsPage> {
     if (!interactive || selection.length != 1 || selection.single == pending) {
       return;
     }
-    setState(() => pending = selection.single);
+    widget.onFilterChanged(selection.single);
   }
 
   Future<void> perform(Future<void> Function() callback) async {

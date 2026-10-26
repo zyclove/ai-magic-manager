@@ -1,4 +1,4 @@
-const deviceConnectionCheckPath = '/devices?connection=NEEDS_CHECK';
+import 'console_routes.dart';
 
 /// Client presentation metadata only; API authorization stays on the server.
 enum ConsoleModuleGroup {
@@ -99,7 +99,7 @@ ConsoleModule? consoleModule(String id) => _modulesById[id];
 // Exact strings only: no URL decoding, normalization, or unlisted queries/fragments.
 final _returnPaths = Set<String>.unmodifiable({
   '/',
-  deviceConnectionCheckPath,
+  ...filteredConsolePaths,
   for (final module in consoleModules) '/${module.id}',
 });
 

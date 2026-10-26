@@ -13,6 +13,7 @@ import '../core/api.dart';
 import '../core/approval_decision.dart';
 import '../core/application_classification.dart';
 import '../core/console_modules.dart';
+import '../core/console_routes.dart';
 import '../core/enrollment_recovery.dart';
 import '../core/device_management.dart';
 import '../core/managed_execution.dart';
@@ -73,9 +74,9 @@ final _openEnrollmentScopes = <String>{};
 
 class ConsolePages extends StatelessWidget {
   final String section;
-  final bool needsConnectionCheck;
+  final ConsoleListView listView;
   const ConsolePages({super.key, required this.section,
-      this.needsConnectionCheck = false});
+      this.listView = ConsoleListView.automatic});
   @override
   Widget build(BuildContext context) {
     if (consoleModule(section) == null) {
@@ -327,9 +328,9 @@ class ConsolePages extends StatelessWidget {
           enrollmentRecoveryNotice(s, actions),
           DevicesPage(
               key: ValueKey((resourceActor, resourceRoot, resourceRole,
-                  resourceGeneration, needsConnectionCheck)),
+                  resourceGeneration, listView)),
               api: s.api, path: '${s.root}/devices',
-              needsConnectionCheck: needsConnectionCheck,
+              needsConnectionCheck: listView == ConsoleListView.connectionCheck,
               isCurrent: resourceCurrent,
               onFilterChanged: (next) {
                 if (resourceCurrent()) {
@@ -406,10 +407,16 @@ class ConsolePages extends StatelessWidget {
       case 'approvals':
         return AccessRequestsPage(
             key: ValueKey((section, resourceActor, resourceRoot, resourceRole,
-                resourceGeneration)),
+                resourceGeneration, listView)),
             api: s.api,
             path: '${s.root}/access-requests',
             role: resourceRole,
+            pendingFilter: listView.pendingFor(resourceRole),
+            onFilterChanged: (pending) {
+              if (resourceCurrent()) {
+                context.go(pending ? accessRequestsPendingPath : accessRequestsAllPath);
+              }
+            },
             isCurrent: resourceCurrent,
             onOpen: actions.approvalDetails,
             create: ['TEACHER', 'CHILD'].contains(s.role)

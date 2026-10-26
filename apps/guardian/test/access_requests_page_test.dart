@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:guardian/core/api.dart';
+import 'package:guardian/core/console_routes.dart';
 import 'package:guardian/pages/access_requests_page.dart';
 import 'package:guardian/ui/design.dart';
 import 'package:http/http.dart' as http;
@@ -31,17 +32,36 @@ http.Response _page(List<Json> rows, {String? cursor}) => http.Response.bytes(
 
 Widget _host(Api api, String role, bool Function() isCurrent,
         Future<void> Function(Json) onOpen) =>
-    MaterialApp(
-        theme: consoleTheme(),
-        home: Scaffold(
-            body: SingleChildScrollView(
-                child: AccessRequestsPage(
-                    key: ValueKey(role),
-                    api: api,
-                    path: _path,
-                    role: role,
-                    isCurrent: isCurrent,
-                    onOpen: onOpen))));
+    MaterialApp(theme: consoleTheme(), home: _ControlledHost(
+        key: ValueKey((api, role)), api: api, role: role,
+        isCurrent: isCurrent, onOpen: onOpen));
+
+class _ControlledHost extends StatefulWidget {
+  final Api api;
+  final String role;
+  final bool Function() isCurrent;
+  final Future<void> Function(Json) onOpen;
+  const _ControlledHost({super.key, required this.api, required this.role,
+      required this.isCurrent, required this.onOpen});
+  @override
+  State<_ControlledHost> createState() => _ControlledHostState();
+}
+
+class _ControlledHostState extends State<_ControlledHost> {
+  late bool pending;
+  @override
+  void initState() {
+    super.initState();
+    pending = ConsoleListView.automatic.pendingFor(widget.role);
+  }
+  @override
+  Widget build(BuildContext context) => Scaffold(body: SingleChildScrollView(
+      child: AccessRequestsPage(
+          key: ValueKey(widget.role), api: widget.api, path: _path,
+          role: widget.role, isCurrent: widget.isCurrent, onOpen: widget.onOpen,
+          pendingFilter: pending,
+          onFilterChanged: (value) => setState(() => pending = value))));
+}
 
 void _wide(WidgetTester tester) {
   tester.view.physicalSize = const Size(1200, 1000);

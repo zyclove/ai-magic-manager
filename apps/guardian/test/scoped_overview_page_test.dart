@@ -7,12 +7,15 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:guardian/pages/console_pages.dart';
 import 'package:guardian/core/api.dart';
+import 'package:guardian/core/console_routes.dart';
 import 'package:guardian/core/session.dart';
 import 'package:guardian/pages/scoped_overview_page.dart';
 import 'package:guardian/ui/design.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
+import 'package:provider/provider.dart';
 
 http.Response _summary(int count,
         {int pending = 0, int? help, int? connections}) => http.Response(
@@ -81,6 +84,13 @@ class _Host {
       GoRoute(
           path: '/subjects',
           builder: (_, state) => const Scaffold(body: Text('档案目的页'))),
+      GoRoute(
+          path: '/approvals',
+          builder: (_, state) => ChangeNotifierProvider<Session>.value(
+              value: selected.value,
+              child: Scaffold(body: SingleChildScrollView(child: ConsolePages(
+                  section: 'approvals',
+                  listView: consoleListViewFor('approvals', state.uri)))))),
       GoRoute(
           path: '/help-requests',
           builder: (_, state) => const Scaffold(body: Text('授权求助目的页'))),
@@ -151,6 +161,48 @@ VoidCallback _navigate(WidgetTester tester) => tester
     .onPressed!;
 
 void main() {
+  testWidgets('child next step opens its pending queue and all switches only the read filter',
+      (tester) async {
+    final requestStates = <String?>[];
+    var overviewReads = 0;
+    final session = _OverviewSession((request) {
+      if (request.url.path.endsWith('/overview')) {
+        overviewReads++;
+        return _summary(1, pending: 2);
+      }
+      if (request.url.path.endsWith('/access-requests')) {
+        requestStates.add(request.url.queryParameters['state']);
+        return http.Response(jsonEncode({'items': [], 'nextCursor': null}), 200,
+            headers: {'content-type': 'application/json; charset=utf-8'});
+      }
+      throw StateError('Unexpected scoped queue request.');
+    });
+    session.role = 'CHILD';
+    session.tenant = {...session.tenant!, 'kind': 'FAMILY'};
+    final host = await _mount(tester, session);
+    await _settle(tester);
+    final next = find.byKey(const Key('scoped-overview-next-action'));
+    expect(next, findsOneWidget);
+    await tester.ensureVisible(next);
+    await tester.tap(next);
+    await _settle(tester);
+    expect(host.router.routeInformationProvider.value.uri.toString(),
+        accessRequestsPendingPath);
+    final selector = find.byKey(const Key('access-requests-state-filter'));
+    expect(tester.widget<SegmentedButton<bool>>(selector).selected, {true});
+    expect(requestStates, ['PENDING']);
+    await tester.ensureVisible(find.text('全部'));
+    await tester.tap(find.text('全部'));
+    await _settle(tester);
+    expect(host.router.routeInformationProvider.value.uri.toString(),
+        accessRequestsAllPath);
+    expect(tester.widget<SegmentedButton<bool>>(selector).selected, {false});
+    expect(requestStates, ['PENDING', null]);
+    expect(overviewReads, 1);
+    expect(session.role, 'CHILD');
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('teacher next step opens authorized help and retires its old route callback',
       (tester) async {
     tester.view.physicalSize = const Size(390, 844);

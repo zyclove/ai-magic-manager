@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../core/session.dart';
+import '../core/console_routes.dart';
 import '../core/notifications.dart';
 import '../core/labels.dart';
 import '../pages/console_pages.dart';
@@ -12,9 +13,9 @@ import 'console_navigation.dart';
 
 class ConsoleShell extends StatelessWidget {
   final String section;
-  final bool needsConnectionCheck;
+  final ConsoleListView listView;
   const ConsoleShell({super.key, required this.section,
-      this.needsConnectionCheck = false});
+      this.listView = ConsoleListView.automatic});
   NotificationRepository notificationRepository(Session session) {
     final root = session.root, role = session.role;
     final actor = session.profile?['subject'], tenant = session.tenant?['id'];
@@ -225,7 +226,7 @@ class ConsoleShell extends StatelessWidget {
                     padding: EdgeInsets.all(wide ? 32 : 18),
                     child: ConsolePages(
                         section: section,
-                        needsConnectionCheck: needsConnectionCheck,
+                        listView: listView,
                         key: ValueKey('${s.tenant?['id']}-$section'))))
           ]))
         ])));

@@ -42,6 +42,8 @@ void main() {
     }
     expect(trustedReturnPath('/commercial'), '/commercial');
     expect(trustedReturnPath('/catalog'), '/catalog');
+    expect(trustedReturnPath('/approvals?state=PENDING'), '/approvals?state=PENDING');
+    expect(trustedReturnPath('/approvals?state=ALL'), '/approvals?state=ALL');
     expect(trustedReturnPath('/devices?connection=NEEDS_CHECK'),
         '/devices?connection=NEEDS_CHECK');
   });
@@ -77,6 +79,10 @@ void main() {
       ' /managed-android',
       '/managed-android ',
       '/devices/../managed-android',
+      '/approvals?state=pending',
+      '/approvals?state=PENDING&next=/devices',
+      '/approvals?state=PENDING&state=ALL',
+      '/approvals?state=ALL#devices',
       '/devices?connection=needs_check',
       '/devices?connection=NEEDS_CHECK&next=/subjects',
       '/devices?connection=NEEDS_CHECK&connection=NEEDS_CHECK',

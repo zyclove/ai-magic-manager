@@ -38,6 +38,7 @@ void main() {
             '有 3 条申请等待处理。先查看申请理由，再决定是否允许临时访问。');
         expect(requests.label, '查看待处理审批');
         expect(requests.section, 'approvals');
+        expect(requests.location, '/approvals?state=PENDING');
         expect(requests.urgent, isFalse);
         final connection = OverviewAttention.pick(value, role: role,
             organization: organization,
@@ -70,6 +71,7 @@ void main() {
       expect(requests.title, '跟进我的访问申请');
       expect(requests.label, '查看我的申请');
       expect(requests.section, 'approvals');
+      expect(requests.location, '/approvals?state=PENDING');
       expect(requests.description, isNot(contains('决定是否允许')));
       final connection = OverviewAttention.pick(value, role: role,
           organization: true, canOpen: (section) => section == 'devices')!;
@@ -88,6 +90,7 @@ void main() {
     expect(audit.kind, OverviewAttentionKind.requests);
     expect(audit.description, contains('只读'));
     expect(audit.label, '只读查看申请');
+    expect(audit.location, '/approvals?state=PENDING');
     expect(auditLookups, ['approvals']);
     expect(OverviewAttention.pick(_summary(help: 2, connection: 4),
         role: 'AUDITOR', organization: true, canOpen: (_) => true), isNull);

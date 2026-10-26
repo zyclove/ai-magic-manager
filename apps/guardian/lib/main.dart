@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'core/console_routes.dart';
 import 'core/session.dart';
 import 'ui/design.dart';
 import 'ui/login_view.dart';
@@ -42,8 +43,7 @@ class _GuardianAppState extends State<GuardianApp> {
         GoRoute(
             path: '/:section',
             builder: (_, s) => Entry(s.pathParameters['section']!,
-                needsConnectionCheck: s.pathParameters['section'] == 'devices' &&
-                    s.uri.queryParameters['connection'] == 'NEEDS_CHECK'))
+                listView: consoleListViewFor(s.pathParameters['section']!, s.uri)))
       ],
       errorBuilder: (_, __) => const Entry('overview'));
   @override
@@ -59,8 +59,8 @@ class _GuardianAppState extends State<GuardianApp> {
 
 class Entry extends StatelessWidget {
   final String section;
-  final bool needsConnectionCheck;
-  const Entry(this.section, {super.key, this.needsConnectionCheck = false});
+  final ConsoleListView listView;
+  const Entry(this.section, {super.key, this.listView = ConsoleListView.automatic});
   @override
   Widget build(BuildContext context) {
     final session = context.watch<Session>();
@@ -68,7 +68,7 @@ class Entry extends StatelessWidget {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     if (!session.authenticated) return const LoginPage();
-    return ConsoleShell(section: section, needsConnectionCheck: needsConnectionCheck);
+    return ConsoleShell(section: section, listView: listView);
   }
 }
 
