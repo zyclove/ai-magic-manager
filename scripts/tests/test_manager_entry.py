@@ -51,13 +51,13 @@ class ManagerEntryTest(unittest.TestCase):
                 "-MavenRepository", "repository cache", "-ConsumerIdentity", "-Offline",
             ], {"SourceDirectory": source, "MavenCommand": "custom-mvn",
                 "FlutterCommand": "custom-flutter", "DartCommand": "custom-dart",
-                "MavenRepository": "repository cache", "ConsumerIdentity": True, "Offline": True}),
+                "MavenRepository": str(ROOT / "repository cache"), "ConsumerIdentity": True, "Offline": True}),
             ("init-ledger", "initialize-erasure-ledger.ps1", [], {}),
             ("start", "start-deployment.ps1", [
                 "-Tls", "-IdentityAdminDirectory", ".local/identity admin",
                 "-IdentityRuntimeDirectory", ".local/identity runtime",
-            ], {"Tls": True, "IdentityAdminDirectory": ".local/identity admin",
-                "IdentityRuntimeDirectory": ".local/identity runtime"}),
+            ], {"Tls": True, "IdentityAdminDirectory": str(ROOT / ".local/identity admin"),
+                "IdentityRuntimeDirectory": str(ROOT / ".local/identity runtime")}),
             ("start", "start-deployment.ps1", ["-ExternalTlsProxy"], {"ExternalTlsProxy": True}),
             ("status", "manager.ps1", [], {}),
             ("verify", "verify-deployment.ps1", [], {}),
@@ -74,6 +74,30 @@ class ManagerEntryTest(unittest.TestCase):
     def test_relative_workspace_does_not_change_with_callers_working_directory(self):
         document = self.plan("status", "-Directory", ".local/manager plan", cwd=ROOT / "scripts/tests")
         self.assertEqual(Path(document["parameters"]["Directory"]), ROOT / ".local/manager plan")
+
+    def test_explicit_file_options_use_the_repository_base_from_every_working_directory(self):
+        cases = [
+            ("build", {
+                "SourceDirectory": "input source/../source snapshot",
+                "MavenRepository": ".cache/maven plan",
+                "MavenCommand": "tools/maven bin/mvn",
+                "FlutterCommand": "tools/flutter bin/flutter",
+                "DartCommand": "tools/dart bin/dart",
+            }),
+            ("start", {
+                "IdentityAdminDirectory": ".local/identity admin",
+                "IdentityRuntimeDirectory": ".local/identity runtime",
+            }),
+        ]
+        for cwd in [ROOT, ROOT / "scripts/tests"]:
+            for action, options in cases:
+                with self.subTest(cwd=cwd, action=action):
+                    arguments = [part for key, value in options.items()
+                                 for part in ("-" + key, value)]
+                    result = self.plan(action, *arguments, cwd=cwd)
+                    for key, value in options.items():
+                        self.assertEqual(Path(result["parameters"][key]),
+                                         Path(os.path.abspath(ROOT / value)))
 
     def test_initialization_resolves_one_public_entry_without_repeating_its_port(self):
         rows = [

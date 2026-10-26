@@ -49,7 +49,9 @@
 | 指定源码或工具 | `build -SourceDirectory ... -MavenCommand ... -FlutterCommand ... -DartCommand ... -MavenRepository ...` |
 | 已批准的身份配置 | `start -IdentityAdminDirectory ... -IdentityRuntimeDirectory ...`，保留底层完整核验 |
 
-部署目录统一位于仓库 `.local/`。多个环境用不同目录、Compose 项目名与端口；相对路径按仓库根目录解析，避免从不同工作目录启动到错误环境。
+部署目录统一位于仓库 `.local/`。多个环境用不同目录、Compose 项目名与端口。显式 `Directory`、`SourceDirectory`、`MavenRepository`、`IdentityAdminDirectory`、`IdentityRuntimeDirectory` 的相对路径都按该入口所在仓库根目录解析，绝对路径保持其含义；`-Plan` 显示最终绝对路径，避免从其他工作目录执行时指向不同文件。
+
+`MavenCommand`、`FlutterCommand`、`DartCommand` 若填写带本系统目录分隔符的文件路径，也按同一仓库基准解析；只填 `mvn`、`flutter` 等命令名时继续从 PATH 查找。路径规范化只处理参数字符串，不检查配置内容、不执行工具；实际文件、权限及 SDK 目标仍由对应动作校验。
 
 `-FlutterCommand` 支持 SDK `bin` 入口及其文件符号链接，实际调用与 Dart／工具缓存定位使用同一解析路径。若 PATH 中是普通转发脚本，请改填真实 SDK 的 `bin/flutter` 或 `bin/flutter.bat`；入口不会猜测版本管理器的内部目录。
 

@@ -63,6 +63,22 @@ foreach ($name in $PSBoundParameters.Keys) {
 }
 
 $repository = [IO.Path]::GetFullPath((Split-Path $PSScriptRoot -Parent))
+# Explicit filesystem options share the repository base across every launcher.
+# Normalize strings only: a plan must not inspect identity files or invoke tools.
+foreach ($name in @('SourceDirectory', 'MavenRepository', 'IdentityAdminDirectory', 'IdentityRuntimeDirectory')) {
+    if ($forward.ContainsKey($name)) {
+        $forward[$name] = [IO.Path]::GetFullPath([string]$forward[$name], $repository)
+    }
+}
+[char[]]$pathSeparators = @([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar)
+foreach ($name in @('MavenCommand', 'FlutterCommand', 'DartCommand')) {
+    if (-not $forward.ContainsKey($name)) { continue }
+    $command = [string]$forward[$name]
+    if ([IO.Path]::IsPathRooted($command) -or $command.IndexOfAny($pathSeparators) -ge 0) {
+        $forward[$name] = [IO.Path]::GetFullPath($command, $repository)
+    }
+    # Bare command names retain normal PATH resolution.
+}
 if ($Active -and $PSBoundParameters.ContainsKey('Directory')) {
     throw 'Parameters -Active and -Directory cannot be combined.'
 }
