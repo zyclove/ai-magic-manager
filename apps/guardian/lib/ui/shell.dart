@@ -12,7 +12,9 @@ import 'console_navigation.dart';
 
 class ConsoleShell extends StatelessWidget {
   final String section;
-  const ConsoleShell({super.key, required this.section});
+  final bool needsConnectionCheck;
+  const ConsoleShell({super.key, required this.section,
+      this.needsConnectionCheck = false});
   NotificationRepository notificationRepository(Session session) {
     final root = session.root, role = session.role;
     final actor = session.profile?['subject'], tenant = session.tenant?['id'];
@@ -223,6 +225,7 @@ class ConsoleShell extends StatelessWidget {
                     padding: EdgeInsets.all(wide ? 32 : 18),
                     child: ConsolePages(
                         section: section,
+                        needsConnectionCheck: needsConnectionCheck,
                         key: ValueKey('${s.tenant?['id']}-$section'))))
           ]))
         ])));

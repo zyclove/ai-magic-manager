@@ -42,6 +42,8 @@ void main() {
     }
     expect(trustedReturnPath('/commercial'), '/commercial');
     expect(trustedReturnPath('/catalog'), '/catalog');
+    expect(trustedReturnPath('/devices?connection=NEEDS_CHECK'),
+        '/devices?connection=NEEDS_CHECK');
   });
   for (final path in [
     '/managed-android',
@@ -75,6 +77,10 @@ void main() {
       ' /managed-android',
       '/managed-android ',
       '/devices/../managed-android',
+      '/devices?connection=needs_check',
+      '/devices?connection=NEEDS_CHECK&next=/subjects',
+      '/devices?connection=NEEDS_CHECK&connection=NEEDS_CHECK',
+      '/devices?connection=NEEDS_CHECK#subjects',
       '/unknown',
       '/login',
       '/auth/callback',

@@ -208,10 +208,14 @@ class Session extends ChangeNotifier {
   void login({bool stepUp = false}) {
     final verifier = requestId() + requestId();
     final state = requestId();
+    final requestedPath = html.window.location.pathname;
+    final requestedLocation = trustedReturnPath('$requestedPath${html.window.location.search}');
+    final returnPath = requestedLocation == '/'
+        ? trustedReturnPath(requestedPath) : requestedLocation;
     html.window.sessionStorage['ai-manager.pkce'] = jsonEncode({
       'verifier': verifier,
       'state': state,
-      'returnPath': trustedReturnPath(html.window.location.pathname),
+      'returnPath': returnPath,
       'created': DateTime.now().millisecondsSinceEpoch
     });
     // This grant builds a redirect URL only; it never owns a signed-in client.

@@ -1,3 +1,4 @@
+import 'console_modules.dart';
 import 'overview_summary.dart';
 
 enum OverviewAttentionKind { help, requests, connection }
@@ -10,6 +11,9 @@ class OverviewAttention {
 
   const OverviewAttention._(this.kind, this.title, this.description, this.label,
       this.section, {this.urgent = false});
+
+  String get location => kind == OverviewAttentionKind.connection
+      ? deviceConnectionCheckPath : '/$section';
 
   static OverviewAttention? pick(OverviewSummary value,
       {required String role,

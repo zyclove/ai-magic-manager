@@ -62,6 +62,7 @@ import 'notifications_page.dart';
 import 'support_page.dart';
 import 'help_requests_page.dart';
 import 'scoped_overview_page.dart';
+import 'devices_page.dart';
 import 'commercial_account_page.dart';
 import 'commercial_catalog_page.dart';
 import 'contracts_page.dart';
@@ -72,7 +73,9 @@ final _openEnrollmentScopes = <String>{};
 
 class ConsolePages extends StatelessWidget {
   final String section;
-  const ConsolePages({super.key, required this.section});
+  final bool needsConnectionCheck;
+  const ConsolePages({super.key, required this.section,
+      this.needsConnectionCheck = false});
   @override
   Widget build(BuildContext context) {
     if (consoleModule(section) == null) {
@@ -322,37 +325,23 @@ class ConsolePages extends StatelessWidget {
       case 'devices':
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           enrollmentRecoveryNotice(s, actions),
-          resource(
-              title: '设备管理',
-              subtitle: '查看设备注册、连接状态和实际管理能力。',
-              path: 'devices',
-              columns: [
-                ColumnSpec(
-                    '设备',
-                    (r) => _name(
-                        r['displayName'],
-                        r['platform'] == 'ANDROID_TV'
-                            ? Icons.tv_outlined
-                            : Icons.smartphone_outlined)),
-                ColumnSpec('平台', (r) => Text(label(r['platform']))),
-                ColumnSpec('注册状态', (r) => StatusTag(r['state'])),
-                ColumnSpec('心跳观察',
-                    (r) => DeviceObservationStatus(r['observationStatus'])),
-                ColumnSpec('最近心跳', (r) => Text(dateLabel(r['lastHeartbeatAt'])))
-              ],
+          DevicesPage(
+              key: ValueKey((resourceActor, resourceRoot, resourceRole,
+                  resourceGeneration, needsConnectionCheck)),
+              api: s.api, path: '${s.root}/devices',
+              needsConnectionCheck: needsConnectionCheck,
+              isCurrent: resourceCurrent,
+              onFilterChanged: (next) {
+                if (resourceCurrent()) {
+                  context.go(next ? deviceConnectionCheckPath : '/devices');
+                }
+              },
+              onOpen: actions.deviceDetails,
               create: s.canWrite ? actions.enrollment : null,
-              createLabel: '添加设备',
-              open: actions.deviceDetails,
-              notice:
-                  '心跳仅反映服务端近期能否观察设备。心跳过期需检查连接，不能据此判断规则已失效。策略执行仍以设备能力和执行回执为准。',
-              empty: '尚未连接设备',
-              description: '先创建儿童档案，再通过配对流程绑定 Android 或 TV 设备。',
-              toolbar: [
-                if (s.canWrite)
-                  TextButton(
-                      onPressed: actions.findEnrollment,
-                      child: const Text('查询注册进度'))
-              ]),
+              findEnrollment: s.canWrite ? actions.findEnrollment : null,
+              reauth: () {
+                if (resourceCurrent()) s.login(stepUp: true);
+              }),
         ]);
       case 'applications':
         return resource(
@@ -2268,12 +2257,12 @@ class _DashboardState extends State<Dashboard> {
     }
   }
 
-  void open(DeviceSubflowScope? scope, String section) {
+  void open(DeviceSubflowScope? scope, String section, {String? location}) {
     if (actionBusy || !current(scope) ||
         !widget.session.canOpen(section)) {
       return;
     }
-    context.go('/$section');
+    context.go(location ?? '/$section');
   }
 
   @override
@@ -2330,6 +2319,8 @@ class _DashboardState extends State<Dashboard> {
         refreshing: reading,
         canOpen: canOpen,
         onOpen: (section) => open(scope, section),
+        onOpenAttention: (attention) =>
+            open(scope, attention.section, location: attention.location),
         onAddSubject: canOpen('subjects')
             ? () => perform(scope, () => widget.actions.subject())
             : null,

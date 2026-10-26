@@ -15,6 +15,7 @@ class WorkbenchView extends StatelessWidget {
   final DateTime? refreshedAt;
   final bool Function(String section) canOpen;
   final ValueChanged<String> onOpen;
+  final ValueChanged<OverviewAttention>? onOpenAttention;
   final VoidCallback? onAddSubject, onAddDevice;
   final VoidCallback onRefresh, onReauth;
 
@@ -26,6 +27,7 @@ class WorkbenchView extends StatelessWidget {
     required this.summary,
     required this.canOpen,
     required this.onOpen,
+    this.onOpenAttention,
     required this.onRefresh,
     required this.onReauth,
     this.onAddSubject,
@@ -40,6 +42,16 @@ class WorkbenchView extends StatelessWidget {
 
   void _open(String section) {
     if (canOpen(section)) onOpen(section);
+  }
+
+  void _openAttention(OverviewAttention value) {
+    if (!canOpen(value.section)) return;
+    final callback = onOpenAttention;
+    if (callback != null) {
+      callback(value);
+    } else {
+      onOpen(value.section);
+    }
   }
 
   _WorkbenchAction? _nextAction(OverviewSummary value) {
@@ -135,7 +147,7 @@ class WorkbenchView extends StatelessWidget {
         ],
         if (attention != null) ...[
           WorkbenchTaskCard.attention(attention,
-              busy: busy, onPressed: () => _open(attention.section)),
+              busy: busy, onPressed: () => _openAttention(attention)),
           const SizedBox(height: 20),
         ] else if (action != null) ...[
           WorkbenchTaskCard(title: action.title, description: action.description,

@@ -48,6 +48,7 @@ void main() {
             '4 台设备尚无近期心跳。请检查连接；心跳缺失不能证明设备规则已失效。');
         expect(connection.label, '查看设备连接');
         expect(connection.section, 'devices');
+        expect(connection.location, '/devices?connection=NEEDS_CHECK');
         expect(connection.urgent, isFalse);
       }
     }

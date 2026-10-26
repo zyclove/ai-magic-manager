@@ -1,3 +1,5 @@
+const deviceConnectionCheckPath = '/devices?connection=NEEDS_CHECK';
+
 /// Client presentation metadata only; API authorization stays on the server.
 enum ConsoleModuleGroup {
   daily('daily', '日常管理', initiallyExpanded: true),
@@ -94,9 +96,10 @@ final _modulesById = Map<String, ConsoleModule>.unmodifiable({
 
 ConsoleModule? consoleModule(String id) => _modulesById[id];
 
-// Exact strings only: no URL decoding, normalization, queries or fragments.
+// Exact strings only: no URL decoding, normalization, or unlisted queries/fragments.
 final _returnPaths = Set<String>.unmodifiable({
   '/',
+  deviceConnectionCheckPath,
   for (final module in consoleModules) '/${module.id}',
 });
 

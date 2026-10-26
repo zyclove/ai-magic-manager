@@ -60,8 +60,13 @@ class FleetController {
 
     @GetMapping("/tenants/{tenantId}/devices")
     ItemPage<Device> devices(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId,
-                             @RequestParam(defaultValue = "50") int limit, @RequestParam(required = false) String cursor) {
-        return reads.devices(tenantId, actor.getSubject(), limit, cursor);
+                             @RequestParam(defaultValue = "50") int limit, @RequestParam(required = false) String cursor,
+                             @RequestParam(required = false) String connection) {
+        var connectionFilter = connection == null ? null : switch (connection) {
+            case "NEEDS_CHECK" -> FleetReads.Connection.NEEDS_CHECK;
+            default -> throw DomainException.invalid("INVALID_CONNECTION_FILTER");
+        };
+        return reads.devices(tenantId, actor.getSubject(), limit, cursor, connectionFilter);
     }
 
     @GetMapping("/tenants/{tenantId}/devices/{id}")

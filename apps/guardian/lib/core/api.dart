@@ -179,6 +179,7 @@ class ApiFailure implements Exception {
           '连接中断，云端撤销可能已提交。请关闭窗口并刷新设备状态，再决定是否需要重试。此结果不代表设备本地数据已清理。',
         'EXCEPTION_RULE_INVALID' => '请选择 1–20 条当前应用支持的规则。',
         'EXCEPTION_KIND_UNSUPPORTED' => '当前只能申请应用启动与使用时段规则。',
+        'INVALID_CONNECTION_FILTER' => '连接筛选条件无效，请切换为“全部设备”后重试。',
         'GRANT_EXCEEDS_REQUEST' => '批准时长不能超过申请时长。',
         'INVALID_APPROVAL_DURATION' => '请填写有效的分钟和秒，合计至少 1 秒，且不超过申请时长。',
         'ACCESS_SELF_DECISION_FORBIDDEN' => '不能审批本人提交的申请。',

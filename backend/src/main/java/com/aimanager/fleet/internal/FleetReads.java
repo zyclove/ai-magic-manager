@@ -93,16 +93,24 @@ class FleetReads
         : state;
   }
 
-  ItemPage<Device> devices(String tenant, String actor, int limit, String cursor) {
+  enum Connection { NEEDS_CHECK }
+
+  ItemPage<Device> devices(
+      String tenant, String actor, int limit, String cursor, Connection connection) {
     var grant = access.requireRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN, TEACHER, CHILD);
     ItemPage.validate(limit, cursor);
     var filter = access.subjectFilter(tenant, actor, grant, "subject_id");
+    String connectionSql = connection == Connection.NEEDS_CHECK
+        ? " AND state='ACTIVE' AND (last_heartbeat_at IS NULL OR last_heartbeat_at<?)"
+        : "";
     String sql =
         "SELECT * FROM devices WHERE tenant_id=? AND id>? AND "
             + filter.sql()
+            + connectionSql
             + " ORDER BY id LIMIT ?";
     var parameters = new ArrayList<Object>(List.of(tenant, cursor == null ? "" : cursor));
     parameters.addAll(filter.args());
+    if (connection == Connection.NEEDS_CHECK) parameters.add(clock.millis() - observationAgeMillis);
     parameters.add(limit + 1);
     var rows = jdbc.query(sql, (row, index) -> map(row), parameters.toArray());
     return ItemPage.from(rows, limit, Device::id);

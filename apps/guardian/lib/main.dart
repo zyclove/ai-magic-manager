@@ -41,7 +41,9 @@ class _GuardianAppState extends State<GuardianApp> {
             builder: (_, __) => const Entry('overview')),
         GoRoute(
             path: '/:section',
-            builder: (_, s) => Entry(s.pathParameters['section']!))
+            builder: (_, s) => Entry(s.pathParameters['section']!,
+                needsConnectionCheck: s.pathParameters['section'] == 'devices' &&
+                    s.uri.queryParameters['connection'] == 'NEEDS_CHECK'))
       ],
       errorBuilder: (_, __) => const Entry('overview'));
   @override
@@ -57,7 +59,8 @@ class _GuardianAppState extends State<GuardianApp> {
 
 class Entry extends StatelessWidget {
   final String section;
-  const Entry(this.section, {super.key});
+  final bool needsConnectionCheck;
+  const Entry(this.section, {super.key, this.needsConnectionCheck = false});
   @override
   Widget build(BuildContext context) {
     final session = context.watch<Session>();
@@ -65,7 +68,7 @@ class Entry extends StatelessWidget {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
     if (!session.authenticated) return const LoginPage();
-    return ConsoleShell(section: section);
+    return ConsoleShell(section: section, needsConnectionCheck: needsConnectionCheck);
   }
 }
 

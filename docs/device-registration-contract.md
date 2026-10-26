@@ -35,10 +35,17 @@ CONFIRMED 只表示云端设备绑定和凭证授权完成。Device.ACTIVE 不�
 | GET /enrollment-creation-results/{id} | 按预保存的创建请求编号返回安全 Enrollment 视图 | 仅原创建者且仍有成人管理角色；不存在或非本人均返回 404，不含 token |
 | POST /enrollments/{id}/confirm | pairingCode → Device | 当前管理员与原授权者仍有权；近期 MFA；期限/状态校验 |
 | DELETE /enrollments/{id} | 204 | 取消幂等；仅未确认状态；已有 pending 凭证同时撤销 |
-| GET /devices | limit/cursor → ItemPage<Device> | 成人租户范围；CHILD 只看绑定主体设备 |
+| GET /devices | limit/cursor，可选 connection=NEEDS_CHECK → ItemPage<Device> | 当前租户及主体范围；CHILD 只看绑定主体设备，TEACHER 只看获授权学生 |
 | GET /devices/{id} | Device + ETag | 同租户与儿童对象范围 |
 | GET /devices/{id}/capabilities | CapabilityView.items | 证据来源、新鲜度、支持限制 |
 | POST /devices/{id}/revoke | 204 | 有权成人、近期 MFA；注册凭证域及全部凭证立即撤销 |
+
+### 设备连接检查队列
+
+`GET /devices?connection=NEEDS_CHECK` 只返回注册为 ACTIVE 且 `last_heartbeat_at` 缺失或严格早于当前观察截止的设备。沿用 `manager.devices.observation-max-age-seconds`，缺省 180 秒、范围 30～86400 秒；恰在截止点仍属近期，不纳入队列。这个谓词与概览连接检查计数一致，应用在现有租户/主体授权和 ID 游标范围内、ORDER/LIMIT 之前，不在客户端筛选单页冒充全局结果。缺省不传参数仍查询全部设备；显式空值、大小写不同或未知值返回 400 `INVALID_CONNECTION_FILTER`。原 limit/cursor 与返回字段不变。
+
+管理台提供“全部设备 / 待检查连接”两个选项，筛选状态由当前路由控制。工作台连接检查建议直达 `/devices?connection=NEEDS_CHECK`，普通设备入口仍查看全部；只有此精确地址新增到登录回跳白名单，其他查询仍不能作为任意返回位置。原配对、注册查询与详情继续复用原权限和操作锁，查询注册进度不额外刷新设备列表。计数和分页是各自读取时的事实，心跳可能在两次读取间更新；暂无待检查项不能解释为规则已执行或设备永远在线。本批静态候选及未运行范围见[连接队列阶段记录](reviews/device-connection-queue-20261026.md)。
+
 
 创建示例（由真实主体 ID 替换占位符）：
 

@@ -243,7 +243,7 @@ class _ScopedOverviewPageState extends State<ScopedOverviewPage> {
         if (attention != null) ...[
           WorkbenchTaskCard.attention(attention,
               buttonKey: const Key('scoped-overview-next-action'),
-              onPressed: () => _open(scope, attention.section)),
+              onPressed: () => _open(scope, attention.section, location: attention.location)),
           const SizedBox(height: 20),
         ],
         LayoutBuilder(
@@ -351,9 +351,9 @@ class _ScopedOverviewPageState extends State<ScopedOverviewPage> {
         ])));
   }
 
-  void _open(DeviceSubflowScope? scope, String section) {
+  void _open(DeviceSubflowScope? scope, String section, {String? location}) {
     if (_current(scope) && scope!.session.canOpen(section)) {
-      context.go('/$section');
+      context.go(location ?? '/$section');
     }
   }
 

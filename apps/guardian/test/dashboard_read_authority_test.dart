@@ -17,11 +17,11 @@ import 'package:http/testing.dart';
 
 import 'device_management_entry_test.dart' show settleReads;
 
-http.Response _summary([int subjects = 137]) => http.Response(
+http.Response _summary([int subjects = 137, int connectionChecks = 0]) => http.Response(
     jsonEncode({
       'subjectCount': subjects,
       'activeDeviceCount': 2,
-      'connectionCheckCount': 0,
+      'connectionCheckCount': connectionChecks,
       'policyDraftCount': 1,
       'pendingRequestCount': 0,
       'openHelpRequestCount': 0,
@@ -105,6 +105,9 @@ class _Host {
                           actions:
                               _FixtureActions(context, session, actions)))))),
       GoRoute(
+          path: '/devices',
+          builder: (_, state) => const Scaffold(body: Text('设备目的页'))),
+      GoRoute(
           path: '/subjects',
           builder: (_, state) => const Scaffold(body: Text('档案目的页'))),
     ]);
@@ -136,6 +139,27 @@ void _expectHidden() {
 }
 
 void main() {
+  testWidgets('connection next step opens the canonical filtered device route',
+      (tester) async {
+    var reads = 0;
+    final session = _DashboardSession((_) {
+      reads++;
+      return _summary(137, 2);
+    });
+    final host = await _mount(tester, session, _ActionRecord());
+    final next = find.byKey(const Key('workbench-next-action'));
+    expect(next, findsOneWidget);
+    await tester.ensureVisible(next);
+    await tester.tap(next);
+    await settleReads(tester);
+    final uri = host.router.routeInformationProvider.value.uri;
+    expect(uri.path, '/devices');
+    expect(uri.queryParameters, {'connection': 'NEEDS_CHECK'});
+    expect(find.text('设备目的页'), findsOneWidget);
+    expect(reads, 1);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('refresh denial hides private data and revokes held actions',
       (tester) async {
     var reads = 0;
