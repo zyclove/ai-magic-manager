@@ -63,6 +63,7 @@ import 'notifications_page.dart';
 import 'support_page.dart';
 import 'help_requests_page.dart';
 import 'scoped_overview_page.dart';
+import 'settings_page.dart';
 import 'devices_page.dart';
 import 'commercial_account_page.dart';
 import 'commercial_catalog_page.dart';
@@ -438,7 +439,12 @@ class ConsolePages extends StatelessWidget {
             key: ValueKey((s.profile?['subject'], s.tenant?['id'], s.role,
                 s.scopeGeneration)), session: s);
       case 'settings':
-        return SettingsPage(session: s, actions: actions);
+        return SettingsPage(
+            key: ValueKey((s, s.profile?['subject'], s.tenant?['id'],
+                s.role, s.scopeGeneration)),
+            session: s,
+            onCreateWorkspace: () => actions.createTenant(),
+            onAcceptInvitation: () => actions.acceptInvitation());
       default:
         return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           enrollmentRecoveryNotice(s, actions),
@@ -1957,105 +1963,6 @@ class ConsoleActions {
       scope.dispose();
     }
   }
-}
-
-class SettingsPage extends StatelessWidget {
-  final Session session;
-  final ConsoleActions actions;
-  const SettingsPage({super.key, required this.session, required this.actions});
-  @override
-  Widget build(BuildContext context) {
-    final s = session;
-    final tenant = Map<String, dynamic>.from(s.tenant!);
-    final root = s.root;
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      const PageHeading('设置', '管理工作空间资料、账号安全与连接信息。'),
-      Panel(
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Text('工作空间',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-        const SizedBox(height: 20),
-        _setting('名称', s.tenant!['name']),
-        _setting('类型', label(s.tenant!['kind'])),
-        _setting('时区', s.tenant!['timeZone']),
-        _setting('我的角色', label(s.role)),
-        const SizedBox(height: 12),
-        Wrap(spacing: 12, runSpacing: 10, children: [
-          if (s.canManage)
-            OutlinedButton.icon(
-                onPressed: () async {
-                  final scope = DeviceSubflowScope(s,
-                      permitted: () => context.mounted && s.tenant != null &&
-                          s.root == root && s.canManage);
-                  try {
-                  if (!scope.current) return;
-                  final result = await formDialog(context,
-                      title: '编辑工作空间',
-                      accessChanges: scope,
-                      hasAccess: () => scope.current,
-                      fields: const [
-                        FieldSpec('name', '名称'),
-                        FieldSpec.timeZone('timeZone', '时区')
-                      ],
-                      initial: tenant,
-                      onSubmit: (v) async => await scope.api.send('PATCH', root,
-                          body: v, version: tenant['version']) as Json);
-                  if (result != null && scope.current) await s.loadTenants();
-                  } finally {
-                    scope.dispose();
-                  }
-                },
-                icon: const Icon(Icons.edit_outlined, size: 18),
-                label: const Text('编辑资料')),
-          if (s.profile?['canCreateTenant'] == true)
-            OutlinedButton(
-                onPressed: actions.createTenant, child: const Text('新建工作空间')),
-          TextButton(
-              onPressed: actions.acceptInvitation, child: const Text('接受邀请'))
-        ])
-      ])),
-      const SizedBox(height: 20),
-      Panel(
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        const Text('账户安全',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-        const SizedBox(height: 16),
-        _setting('登录邮箱', s.profile?['email'] ?? s.displayName),
-        const Notice('邀请成员、发布策略、设备退出等操作需要近期多因素认证。先在账户中心绑定验证器，再重新安全验证。'),
-        const SizedBox(height: 18),
-        Wrap(spacing: 12, runSpacing: 10, children: [
-          OutlinedButton.icon(
-              onPressed: s.account,
-              icon: const Icon(Icons.open_in_new, size: 18),
-              label: const Text('账户与验证器')),
-          FilledButton(
-              onPressed: () => s.login(stepUp: true),
-              child: const Text('重新安全验证')),
-          TextButton(onPressed: s.logout, child: const Text('退出登录'))
-        ])
-      ])),
-      const SizedBox(height: 20),
-      const Panel(
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text('能力说明',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-        SizedBox(height: 12),
-        Text('管理端连接真实业务 API，配置与审计保存在数据库中。设备系统执行、第三方通知、支付及模型服务需完成相应接入后开放。',
-            style: TextStyle(color: muted, height: 1.8))
-      ]))
-    ]);
-  }
-
-  Widget _setting(String key, String value) => Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        SizedBox(
-            width: 110, child: Text(key, style: const TextStyle(color: muted))),
-        Expanded(child: SelectableText(value))
-      ]));
 }
 
 class Dashboard extends StatefulWidget {

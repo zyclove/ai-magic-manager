@@ -51,6 +51,8 @@ Windows 私有进程验证的稳定工具源位于 [scripts/verification](../scr
 
 管理台异步旅程可复用 [DeviceSubflowScope](../apps/guardian/lib/pages/device_subflow_scope.dart) 捕获账号、租户、角色和会话代际；名称虽源自设备流程，通知与工作台也采用此机制。旧响应与回调必须核对原捕获，不能仅比较当前租户/角色。普通网络失败可保留已读数据，服务端拒绝访问则隐藏私有摘要并作废捕获。
 
+[SettingsPage](../apps/guardian/lib/pages/settings_page.dart) 独立持有展示期的原始会话 scope，所有账号/工作空间入口共用交互门禁和防重；路由 key 包含账号、工作空间、角色与代际。页面捕获立即退役，编辑器则独立持有 scope/lifetime 至 formDialog 完整结束后释放；帧后退役通知避免晚建表单监听已释放对象，旧结果不触发当前工作空间重载。创建与接受邀请仍调用原已有认证捕获流程，不绕过服务端授权。
+
 [通用 API](../apps/guardian/lib/core/api.dart) 使用已锁定 `http 1.6.0` 的 Abortable 协议；[作用域包装层](../apps/guardian/lib/core/scoped_http_client.dart)必须透传中止信号，在实际发送/终结请求前同时检查原作用域和请求期限，借用的客户端不能被单次请求关闭。纯时限单元测试使用原生 `FakeAsync`；共享完成 Future 的取消续程可能在其区域外调度，正常重试须保留有界真实异步断言，参考[超时回归](../apps/guardian/test/api_deadline_test.dart)，不要用无限等待或删除完成断言掩盖问题。
 
 [有界 JSON 读取](../apps/guardian/lib/core/bounded_json.dart)同时覆盖身份刷新、发送和正文读取，保留调用方原始作用域／预览异常。已知拒绝状态下正文不完整，只保留 HTTP 失败而不给完整拒绝证据；不要把超时或中止当成操作未执行，或解除原请求的持久化防重复保护。
