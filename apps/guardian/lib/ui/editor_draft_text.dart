@@ -151,6 +151,45 @@ String policyDraftText(Json draft,
   return lines.join('\n');
 }
 
+/// Member recovery reads only captured inputs and the caller's known names.
+String memberDraftText(Json draft,
+    {Map<String, String> subjects = const {},
+    Map<String, String> classes = const {}}) {
+  String reference(Object? id, Map<String, String> names) {
+    if (id is! String || id.isEmpty) return _value(id);
+    final name = names[id];
+    return name != null && name.trim().isNotEmpty
+        ? '$name（编号：$id）' : '编号：$id';
+  }
+
+  final lines = <String>[
+    if (draft.containsKey('recipientEmail'))
+      '收件人邮箱：${_field(draft, 'recipientEmail')}',
+    '成员角色：${_caption(draft, 'role')}',
+    if (draft.containsKey('subjectId'))
+      '关联档案：${reference(draft['subjectId'], subjects)}',
+  ];
+  if (draft.containsKey('classIds')) {
+    final ids = draft['classIds'];
+    lines.add('获授班级：');
+    if (ids is! List) {
+      lines.add('  ${_value(ids)}');
+    } else if (ids.isEmpty) {
+      lines.add('  未选择班级');
+    } else {
+      for (final id in ids) {
+        lines.add('  ${reference(id, classes)}');
+      }
+    }
+  } else if (!draft.containsKey('subjectId')) {
+    lines.add(draft['role'] == 'TEACHER' || draft['role'] == 'CHILD'
+        ? '访问范围：未提供档案或班级，请核对原提交。' : '访问范围：工作空间范围');
+  }
+  _otherSettings(lines, draft,
+      const {'recipientEmail', 'role', 'subjectId', 'classIds'});
+  return lines.join('\n');
+}
+
 String _field(Map source, String key) =>
     source.containsKey(key) ? _value(source[key]) : '未提供';
 

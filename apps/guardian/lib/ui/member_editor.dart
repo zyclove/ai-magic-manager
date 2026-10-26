@@ -6,6 +6,7 @@ import '../core/labels.dart';
 import '../core/member_access.dart';
 import 'design.dart';
 import 'dialog_access.dart';
+import 'editor_draft_text.dart';
 import 'owned_dialog_route.dart';
 
 Future<Json?> memberEditorDialog(BuildContext context,
@@ -92,7 +93,12 @@ class _MemberEditorState extends State<MemberEditor> {
   late bool classMode;
   final selectedClasses = <String>{};
   bool busy = false;
-  Json? pending;
+  Json? pending, recoveryValues;
+  bool confirmingUnknownClose = false, _listening = false;
+  late final String initialKind, initialOperatorRole;
+  late final bool initialRetryUncertain;
+  late final Json? initialMember;
+  late final Map<String, String> initialSubjects, initialClasses;
   Object? error;
   ModalRoute<dynamic>? _route;
   bool _active = true, _revoked = false;
@@ -100,7 +106,12 @@ class _MemberEditorState extends State<MemberEditor> {
   bool get editing => widget.member != null;
   bool get versionConflict =>
       error is ApiFailure && (error as ApiFailure).status == 412;
-  bool get locked => busy || pending != null || versionConflict;
+  bool get recoveryStopped =>
+      versionConflict || isUnavailableOperationResult(error);
+  bool get locked => busy || pending != null || recoveryStopped || confirmingUnknownClose;
+  Json get reviewResult => editing || widget.retryUncertain
+      ? <String, dynamic>{'refresh': true}
+      : <String, dynamic>{'reviewInvitations': true};
 
   void _observeAccess() {
     if (!_revoked && widget.hasAccess?.call() == false) _revoked = true;
@@ -145,11 +156,27 @@ class _MemberEditorState extends State<MemberEditor> {
 
   void cancel() {
     if (!current || busy) return;
-    finish(versionConflict
-        ? <String, dynamic>{'refresh': true}
-        : pending != null && !widget.retryUncertain
-            ? <String, dynamic>{'reviewInvitations': true}
-            : null);
+    if (recoveryStopped) {
+      finish(reviewResult);
+    } else if (pending != null) {
+      if (!confirmingUnknownClose) {
+        setState(() => confirmingUnknownClose = true);
+      }
+    } else {
+      finish();
+    }
+  }
+
+  void keepOriginal() {
+    if (!current || busy || recoveryStopped ||
+        !confirmingUnknownClose || pending == null) return;
+    setState(() => confirmingUnknownClose = false);
+  }
+
+  void confirmUnknownClose() {
+    if (!current || busy || recoveryStopped ||
+        !confirmingUnknownClose || pending == null) return;
+    finish(reviewResult);
   }
 
   void closeRevoked() {
@@ -168,8 +195,21 @@ class _MemberEditorState extends State<MemberEditor> {
   @override
   void initState() {
     super.initState();
+    initialKind = widget.kind;
+    initialOperatorRole = widget.operatorRole;
+    initialRetryUncertain = widget.retryUncertain;
+    initialSubjects = Map<String, String>.unmodifiable(widget.subjects);
+    initialClasses = Map<String, String>.unmodifiable(widget.classes);
+    initialMember = widget.member == null ? null : Map<String, dynamic>.unmodifiable({
+      ...widget.member!,
+      if (widget.member!['classIds'] is List)
+        'classIds': List<Object?>.unmodifiable(widget.member!['classIds'] as List),
+    });
     _observeAccess();
-    widget.accessChanges?.addListener(_accessChanged);
+    if (!_revoked && widget.accessChanges != null) {
+      widget.accessChanges!.addListener(_accessChanged);
+      _listening = true;
+    }
     roles = memberRoles(widget.kind, widget.operatorRole,
         currentRole: widget.member?['role']);
     role = widget.member?['role'] as String? ??
@@ -193,14 +233,32 @@ class _MemberEditorState extends State<MemberEditor> {
     _route = next;
   }
 
+  bool sameMember(Json? first, Json? second) {
+    if (first == null || second == null) return first == null && second == null;
+    final left = Map<String, dynamic>.from(first)..remove('classIds');
+    final right = Map<String, dynamic>.from(second)..remove('classIds');
+    return mapEquals(left, right) &&
+        listEquals(first['classIds'] as List?, second['classIds'] as List?);
+  }
+
   @override
   void didUpdateWidget(MemberEditor oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (!identical(oldWidget.accessChanges, widget.accessChanges)) {
-      oldWidget.accessChanges?.removeListener(_accessChanged);
-      widget.accessChanges?.addListener(_accessChanged);
-    }
+    if (oldWidget.hasAccess?.call() == false ||
+        initialKind != widget.kind || initialOperatorRole != widget.operatorRole ||
+        initialRetryUncertain != widget.retryUncertain ||
+        !mapEquals(initialSubjects, widget.subjects) ||
+        !mapEquals(initialClasses, widget.classes) ||
+        !sameMember(initialMember, widget.member)) _revoked = true;
     _observeAccess();
+    if (!identical(oldWidget.accessChanges, widget.accessChanges)) {
+      if (_listening) oldWidget.accessChanges?.removeListener(_accessChanged);
+      _listening = false;
+      if (!_revoked && _active && widget.accessChanges != null) {
+        widget.accessChanges!.addListener(_accessChanged);
+        _listening = true;
+      }
+    }
   }
 
   @override
@@ -220,7 +278,7 @@ class _MemberEditorState extends State<MemberEditor> {
   void dispose() {
     _active = false;
     _revoked = true;
-    widget.accessChanges?.removeListener(_accessChanged);
+    if (_listening) widget.accessChanges?.removeListener(_accessChanged);
     email.dispose();
     super.dispose();
   }
@@ -240,35 +298,44 @@ class _MemberEditorState extends State<MemberEditor> {
   }
 
   Future<void> save() async {
-    if (!current ||
-        busy ||
-        versionConflict ||
+    if (!current || busy || recoveryStopped || confirmingUnknownClose ||
         (pending != null && !widget.retryUncertain)) return;
-    if (form.currentState?.validate() != true || roles.isEmpty || !changed) return;
-    final body = pending ??
-        <String, dynamic>{
-          if (!editing) 'recipientEmail': email.text.trim(),
-          'role': role,
-          if (memberNeedsSubject(role) && !(role == 'TEACHER' && classMode))
-            'subjectId': subject,
-          if (role == 'TEACHER' && classMode)
-            'classIds': selectedClasses.toList()..sort(),
-        };
+    final retryingUnknown = pending != null;
+    if (!retryingUnknown &&
+        (form.currentState?.validate() != true || roles.isEmpty || !changed)) return;
+    final classes = selectedClasses.toList()..sort();
+    final body = pending ?? Map<String, dynamic>.unmodifiable({
+      if (!editing) 'recipientEmail': email.text.trim(),
+      'role': role,
+      if (memberNeedsSubject(role) && !(role == 'TEACHER' && classMode))
+        'subjectId': subject,
+      if (role == 'TEACHER' && classMode)
+        'classIds': List<String>.unmodifiable(classes),
+    });
     setState(() {
       busy = true;
       error = null;
+      pending = body;
     });
     try {
       if (!current) return;
       final result = await widget.onSubmit(body);
       if (mounted && _active && permitted) finish(result);
-    } catch (e) {
+    } catch (failure) {
       if (mounted && _active && permitted) {
         setState(() {
-          error = e;
-          if (e is! ApiFailure || e.status == 0 || e.status >= 500) {
-            pending = Map.unmodifiable(body);
-          } else {
+          error = failure;
+          final stopped = failure is ApiFailure &&
+              (failure.status == 412 || isUnavailableOperationResult(failure));
+          // Rejection of a retry cannot prove that the first write failed.
+          final unknown = retryingUnknown || failure is! ApiFailure ||
+              failure.status == 0 || failure.status >= 500 ||
+              failure.code == 'PENDING_OPERATION_UNCHANGED';
+          if (stopped) {
+            recoveryValues ??= body;
+            pending = null;
+            confirmingUnknownClose = false;
+          } else if (!unknown) {
             pending = null;
           }
         });
@@ -279,14 +346,40 @@ class _MemberEditorState extends State<MemberEditor> {
     }
   }
 
+  Widget stoppedDialog() => PopScope(
+      canPop: false,
+      onPopInvoked: (didPop) { if (!didPop) cancel(); },
+      child: AlertDialog(
+          title: const Text('已停止再次提交'),
+          content: SizedBox(width: 560, child: SingleChildScrollView(
+              child: Column(mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start, children: [
+                FailureView(error!),
+                Text(versionConflict
+                    ? '记录已更新，已停止再次提交。可复制下方草稿；关闭后先核对最新记录，再重新操作。'
+                    : '原操作结果已无法恢复，已停止再次提交。请核对当前记录；结果不可恢复不代表操作未执行。',
+                    style: const TextStyle(height: 1.6)),
+                const SizedBox(height: 12),
+                const Text('保留的草稿', style: TextStyle(fontWeight: FontWeight.w600)),
+                const SizedBox(height: 8),
+                SelectableText(memberDraftText(recoveryValues ?? const {},
+                    subjects: initialSubjects, classes: initialClasses),
+                    key: const Key('member-editor-recovery-draft'),
+                    style: const TextStyle(height: 1.6)),
+              ]))),
+          actions: [TextButton(key: const Key('member-editor-close'),
+              onPressed: busy ? null : cancel,
+              child: const Text('关闭并核对记录'))]));
+
   @override
   Widget build(BuildContext context) => !permitted
       ? AlertDialog(
           title: const Text('工作空间或权限已变化'),
           content: const Text('已隐藏原表单内容。请关闭后在当前工作空间重新打开；已提交的操作请回到原工作空间刷新列表核对结果。'),
           actions: [TextButton(onPressed: closeRevoked, child: const Text('关闭'))])
-      : PopScope(
-      canPop: !busy,
+      : recoveryStopped ? stoppedDialog() : PopScope(
+      canPop: !busy && pending == null && !confirmingUnknownClose,
+      onPopInvoked: (didPop) { if (!didPop) cancel(); },
       child: AlertDialog(
         title: Text(editing ? '调整成员权限' : '邀请成员'),
         content: SizedBox(
@@ -299,6 +392,13 @@ class _MemberEditorState extends State<MemberEditor> {
                         mainAxisSize: MainAxisSize.min,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          if (confirmingUnknownClose) ...[
+                            const Notice(
+                                '服务器可能已完成原操作，关闭不会取消提交。关闭后请先核对原记录，确认结果后再创建或调整，避免重复操作。',
+                                key: Key('member-editor-unknown-close-notice'),
+                                warning: true),
+                            const SizedBox(height: 16),
+                          ],
                           if (editing) ...[
                             Text(memberName(widget.member!),
                                 style: const TextStyle(
@@ -496,22 +596,18 @@ class _MemberEditorState extends State<MemberEditor> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       FailureView(error!,
-                                          reauth: widget.reauth == null
+                                          reauth: widget.reauth == null ||
+                                                  recoveryStopped || confirmingUnknownClose
                                               ? null
                                               : () {
                                                   if (current &&
                                                       !busy &&
-                                                      !versionConflict) {
+                                                      !recoveryStopped &&
+                                                      !confirmingUnknownClose) {
                                                     widget.reauth!();
                                                   }
                                                 }),
-                                      if (versionConflict)
-                                        const Padding(
-                                            padding: EdgeInsets.only(top: 10),
-                                            child: Text(
-                                                '成员权限已更新。请关闭并刷新，核对最新权限后再调整。',
-                                                style: TextStyle(height: 1.6))),
-                                      if (pending != null)
+                                      if (pending != null && !confirmingUnknownClose)
                                         Padding(
                                             padding:
                                                 const EdgeInsets.only(top: 10),
@@ -524,28 +620,32 @@ class _MemberEditorState extends State<MemberEditor> {
                                     ])),
                         ])))),
         actions: [
-          TextButton(
-              onPressed: busy ? null : cancel,
-              child: Text(versionConflict
-                  ? '关闭并刷新'
-                  : pending != null && !widget.retryUncertain
-                      ? '查看邀请记录'
-                      : '取消')),
-          if (!versionConflict && (pending == null || widget.retryUncertain))
-            FilledButton(
-                onPressed: busy || roles.isEmpty || !changed ? null : save,
-                child: busy
-                    ? const Row(mainAxisSize: MainAxisSize.min, children: [
-                        SizedBox(width: 16, height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2)),
-                        SizedBox(width: 8),
-                        Text('提交中…')
-                      ])
-                    : Text(pending != null
-                        ? '重试原提交'
-                        : editing
-                            ? '保存权限'
-                            : '创建邀请')),
+          if (confirmingUnknownClose) ...[
+            TextButton(onPressed: busy ? null : keepOriginal,
+                child: const Text('继续核对原提交')),
+            FilledButton(onPressed: busy ? null : confirmUnknownClose,
+                child: const Text('关闭并核对记录')),
+          ] else ...[
+            TextButton(key: const Key('member-editor-close'),
+                onPressed: busy ? null : cancel,
+                child: Text(pending != null
+                    ? widget.retryUncertain ? '暂时关闭' : '查看邀请记录'
+                    : '取消')),
+            if (pending == null || widget.retryUncertain)
+              FilledButton(
+                  key: const Key('member-editor-save'),
+                  onPressed: busy || roles.isEmpty || (pending == null && !changed)
+                      ? null : save,
+                  child: busy
+                      ? const Row(mainAxisSize: MainAxisSize.min, children: [
+                          SizedBox(width: 16, height: 16,
+                              child: CircularProgressIndicator(strokeWidth: 2)),
+                          SizedBox(width: 8),
+                          Text('提交中…')
+                        ])
+                      : Text(pending != null ? '重试原提交'
+                          : editing ? '保存权限' : '创建邀请')),
+          ],
         ],
       ));
 }

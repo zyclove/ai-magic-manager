@@ -5,6 +5,29 @@ import 'package:guardian/core/api.dart';
 import 'package:guardian/ui/editor_draft_text.dart';
 
 void main() {
+  test('member recovery keeps full scope references and never rewrites inputs', () {
+    final draft = <String, dynamic>{
+      'recipientEmail': 'teacher@fixture.invalid',
+      'role': 'TEACHER',
+      'classIds': ['class-a-full', 'missing-class-full'],
+      'futureSetting': {'enabled': false},
+    };
+    final before = jsonEncode(draft);
+    final text = memberDraftText(draft,
+        classes: const {'class-a-full': '七年级一班'});
+    for (final value in ['teacher@fixture.invalid', '教师',
+        '七年级一班（编号：class-a-full）', '编号：missing-class-full',
+        'futureSetting', 'false']) {
+      expect(text, contains(value));
+    }
+    expect(jsonEncode(draft), before);
+    expect(memberDraftText({'role': 'CHILD', 'subjectId': 'subject-full'},
+        subjects: const {'subject-full': '小明'}),
+        contains('小明（编号：subject-full）'));
+    expect(memberDraftText({'role': 'TEACHER', 'classIds': null}),
+        contains('未提供（null）'));
+  });
+
   test('schedule review keeps every window exception and overnight boundary',
       () {
     final text = scheduleDraftText({
