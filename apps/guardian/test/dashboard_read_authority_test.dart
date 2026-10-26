@@ -72,6 +72,7 @@ class _DashboardSession extends Session {
 
 class _ActionRecord {
   int starts = 0;
+  bool needsReview = true;
   ApiFailure? failure;
 }
 
@@ -80,10 +81,11 @@ class _FixtureActions extends ConsoleActions {
   _FixtureActions(super.context, super.s, this.record);
 
   @override
-  Future<void> subject([Json? existing]) async {
+  Future<bool> subject([Json? existing]) async {
     record.starts++;
     final failure = record.failure;
     if (failure != null) throw failure;
+    return record.needsReview;
   }
 }
 
@@ -139,6 +141,66 @@ void _expectHidden() {
 }
 
 void main() {
+  testWidgets('cancelled subject creation preserves summary errors and resumes an interrupted read',
+      (tester) async {
+    var reads = 0;
+    final pending = Completer<http.Response>();
+    addTearDown(() {
+      if (!pending.isCompleted) pending.complete(_summary());
+    });
+    final actions = _ActionRecord()..needsReview = false;
+    final session = _DashboardSession((_) {
+      reads++;
+      return switch (reads) {
+        1 => _summary(137),
+        2 => http.Response('{"errorCode":"SERVICE_UNAVAILABLE"}', 503),
+        3 => pending.future,
+        4 => _summary(291),
+        _ => throw StateError('Unexpected extra overview read.'),
+      };
+    });
+    await _mount(tester, session, actions);
+    final originalTime = _view(tester).refreshedAt;
+    _view(tester).onAddSubject!();
+    await settleReads(tester);
+    expect(reads, 1);
+    expect(_view(tester).summary!.subjectCount, 137);
+    expect(_view(tester).refreshedAt, originalTime);
+    expect(actions.starts, 1);
+    _view(tester).onRefresh();
+    await settleReads(tester);
+    expect(reads, 2);
+    final previousFailure = _view(tester).error;
+    expect(previousFailure, isA<ApiFailure>().having((e) => e.status, 'status', 503));
+    _view(tester).onAddSubject!();
+    await settleReads(tester);
+    expect(reads, 2);
+    expect(_view(tester).error, same(previousFailure));
+    expect(_view(tester).refreshedAt, originalTime);
+    _view(tester).onRefresh();
+    for (var frame = 0; frame < 6; frame++) {
+      await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    expect(reads, 3);
+    expect(_view(tester).refreshing, isTrue);
+    _view(tester).onAddSubject!();
+    for (var frame = 0; frame < 24 &&
+        (_view(tester).refreshing || _view(tester).summary?.subjectCount != 291); frame++) {
+      await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+      await tester.pump(const Duration(milliseconds: 50));
+    }
+    expect(reads, 4, reason: 'An interrupted overview read needs one replacement after cancellation.');
+    expect(_view(tester).summary!.subjectCount, 291);
+    expect(_view(tester).error, isNull);
+    expect(actions.starts, 3);
+    pending.complete(_summary(999));
+    await settleReads(tester);
+    expect(_view(tester).summary!.subjectCount, 291);
+    expect(reads, 4);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('connection next step opens the canonical filtered device route',
       (tester) async {
     var reads = 0;

@@ -81,6 +81,8 @@ Windows 私有进程验证的稳定工具源位于 [scripts/verification](../scr
 
 [ClassesPage](../apps/guardian/lib/pages/classes_page.dart) 将表单/转班返回值统一解释为需核对，由独立acting/operation锁编排一次当前班级与名册读取；view捕获generation/id/筛选，不能在宿主重建前由旧ResourcePage再读。取消保留列表，操作错误与读取错误分开。创建可使用 [ResourcePage](../apps/guardian/lib/ui/resource_page.dart) 的 onCreateChanged（与create互斥），false不重读，true只核对当前列表，不代表创建成功。[ClassActionDialog](../apps/guardian/lib/ui/class_action_dialog.dart) 保留不可变原提交/停止草稿与未知关闭确认。
 
+[ConsolePages](../apps/guardian/lib/pages/console_pages.dart) 的资源适配器将儿童/应用/时间/策略创建的布尔核对结果传给 onCreateChanged，档案详情传给 onOpenChanged。私有表单仍返回Json回执，档案另以发送前回调记录尝试，未知关闭返回null也不能漏核对；布尔结果不作成功提示。概览操作只在需核对或曾中断读取/无摘要时补读，普通取消恢复原错误并保留数据/时间，不能因关闭窗口将旧失败抹掉。
+
 恢复草稿的中文字段清单统一在[领域化展示模块](../apps/guardian/lib/ui/editor_draft_text.dart)，计划、策略与成员的展示只读取已捕获提交与原目录。名称缺失保留完整对象编号，未知字段也保留；展示层不得读取网络、改写原提交或解除重试保护。
 
 时间安排示例的不可变模型与严格响应校验统一在 [schedule_contracts](../packages/schedule_contracts/README.md)，Parent 保留轻量适配，Guardian 直接消费。目录仅按需读取，回填本地草稿、保留时区与日期例外，已有每周时段须确认替换；同包的 `weeklyWindowAdditions` 只计算独立新增项，两个宿主按实际新增数整体检查 56 条上限，不部分添加，不清除既有重复行。Guardian 的 [ScheduleWeekView](../apps/guardian/lib/ui/schedule_week_view.dart) 只做分组展示，删除仍由原编辑器的交互和权限门禁处理。宿主负责授权、有界读取和显式保存，不能将示例选择解释为已保存或已发布。交互契约及当前验证状态见[示例交付说明](schedule-preset-ux-delivery.md)。

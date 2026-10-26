@@ -274,6 +274,7 @@ class ConsolePages extends StatelessWidget {
             required String path,
             required List<ColumnSpec> columns,
             Future<void> Function()? create,
+            Future<bool> Function()? createChanged,
             String createLabel = '新建',
             Future<void> Function(Json)? open,
             Future<bool> Function(Json)? openChanged,
@@ -292,6 +293,7 @@ class ConsolePages extends StatelessWidget {
             isCurrent: resourceCurrent,
             columns: columns,
             create: create,
+            onCreateChanged: createChanged,
             createLabel: createLabel,
             onOpen: open,
             onOpenChanged: openChanged,
@@ -320,9 +322,9 @@ class ConsolePages extends StatelessWidget {
                   (r) => Text(shortId(r['id']),
                       style: const TextStyle(color: muted)))
             ],
-            create: s.canWrite ? () => actions.subject() : null,
+            createChanged: s.canWrite ? () => actions.subject() : null,
             createLabel: '添加儿童',
-            open: actions.subjectDetails,
+            openChanged: actions.subjectDetails,
             empty: '还没有儿童档案',
             description: '只记录昵称和年龄段，不需要完整生日。');
       case 'devices':
@@ -361,7 +363,7 @@ class ConsolePages extends StatelessWidget {
                       Text('${label(r['platform'])} · ${label(r['profile'])}')),
               ColumnSpec('身份状态', (r) => StatusTag(r['evidenceStatus']))
             ],
-            create: s.canWrite ? actions.application : null,
+            createChanged: s.canWrite ? actions.application : null,
             createLabel: '登记应用',
             open: (r) =>
                 actions.applicationDetails(r, isCurrent: resourceCurrent),
@@ -385,7 +387,7 @@ class ConsolePages extends StatelessWidget {
                   (r) => Text(
                       '${(r['definition']['exceptions'] as List).length} 个'))
             ],
-            create: s.canWrite ? () => scheduleEditor(context, s) : null,
+            createChanged: s.canWrite ? () => scheduleEditor(context, s) : null,
             createLabel: '创建计划',
             openChanged: actions.scheduleDetails,
             refreshAfterOpen: false,
@@ -403,7 +405,7 @@ class ConsolePages extends StatelessWidget {
                   '规则数', (r) => Text('${(r['rules'] as List).length} 条')),
               ColumnSpec('草稿修订', (r) => Text('v${r['revision']}'))
             ],
-            create: s.canWrite ? () => policyEditor(context, s) : null,
+            createChanged: s.canWrite ? () => policyEditor(context, s) : null,
             createLabel: '创建策略',
             openChanged: actions.policyDetails,
             notice: '当前支持云端配置保存。设备系统执行适配器未配置时，不会显示“策略已生效”。');
@@ -633,13 +635,16 @@ class ConsoleActions {
     }
   }
 
-  Future<void> subject([Json? existing]) async {
-    await _subjectForm(existing);
+  Future<bool> subject([Json? existing]) async {
+    var attempted = false;
+    final result = await _subjectForm(existing,
+        onSubmitAttempt: () => attempted = true);
+    return attempted || result != null;
   }
 
   Future<Json?> _subjectForm(Json? existing,
       {BuildContext? parent, Listenable? accessChanges,
-      bool Function()? hasAccess}) async {
+      bool Function()? hasAccess, VoidCallback? onSubmitAttempt}) async {
     final owner = parent ?? context;
     if (!context.mounted || !owner.mounted || hasAccess?.call() == false) return null;
     final parentRoute = ModalRoute.of(owner);
@@ -675,9 +680,11 @@ class ConsoleActions {
           reauth: () {
             if (access.permitted()) reauth();
           },
-          onSubmit: (values) async => await api.send(
-              existing == null ? 'POST' : 'PATCH', path,
-              body: values, key: key, version: version) as Json);
+          onSubmit: (values) async {
+            onSubmitAttempt?.call();
+            return await api.send(existing == null ? 'POST' : 'PATCH', path,
+                body: values, key: key, version: version) as Json;
+          });
     } finally {
       access.dispose();
       scope.dispose();
@@ -686,7 +693,7 @@ class ConsoleActions {
 
   Future<bool> _archiveSubject(BuildContext owner, Json subject,
       {required Api api, required Listenable accessChanges,
-      required bool Function() hasAccess}) async {
+      required bool Function() hasAccess, VoidCallback? onSubmitAttempt}) async {
     if (!context.mounted || !owner.mounted || !hasAccess()) return false;
     final parent = ModalRoute.of(owner);
     if (parent is! OwnedDialogRoute<void> ||
@@ -730,6 +737,7 @@ class ConsoleActions {
       final confirmed = await presentOwnedDialog<bool>(owner, route);
       if (confirmed != true || !access.permitted() ||
           !parent.available || !parent.isCurrent) return false;
+      onSubmitAttempt?.call();
       await boundApi.send('POST', path, version: version);
       return access.permitted();
     } finally {
@@ -737,23 +745,24 @@ class ConsoleActions {
     }
   }
 
-  Future<void> subjectDetails(Json row) async {
-    if (!context.mounted) return;
+  Future<bool> subjectDetails(Json row) async {
+    if (!context.mounted) return false;
     final parent = ModalRoute.of(context);
     bool onTop() => context.mounted && parent?.isCurrent == true &&
         parent?.isActive == true &&
         (parent is! OwnedDialogRoute<dynamic> || parent.available);
-    if (!onTop()) return;
+    if (!onTop()) return false;
+    var needsReview = false;
     final scope = DeviceSubflowScope(s,
         permitted: () => context.mounted && s.tenant != null &&
             s.root == root && s.canOpen('subjects'));
     final access = DialogAccessBinding(context,
         accessChanges: scope, hasAccess: () => scope.current);
     try {
-      if (!access.permitted()) return;
+      if (!access.permitted()) return false;
       final api = scope.api.scoped(access.permitted);
       final r = await api.send('GET', '$root/subjects/${row['id']}') as Json;
-      if (!context.mounted || !onTop() || !access.permitted()) return;
+      if (!context.mounted || !onTop() || !access.permitted()) return false;
       await actionDetails(context, r['nickname'], {
         '昵称': r['nickname'],
         '年龄段': label(r['ageBand']),
@@ -775,9 +784,14 @@ class ConsoleActions {
                     final finish = captureDialogCompletion(owner);
                     bool accepted() => access.permitted() && s.canWrite &&
                         route.available && route.isActive;
+                    var attempted = false;
                     final result = await _subjectForm(r, parent: owner,
-                        accessChanges: access.changes, hasAccess: accepted);
-                    if (result != null && accepted()) finish();
+                        accessChanges: access.changes, hasAccess: accepted,
+                        onSubmitAttempt: () => attempted = true);
+                    if ((attempted || result != null) && accepted()) {
+                      needsReview = true;
+                      finish();
+                    }
                   }, closeOnSuccess: false),
                   DetailAction('归档', (owner) async {
                     if (!owner.mounted || !access.permitted() || !s.canWrite) return;
@@ -788,20 +802,23 @@ class ConsoleActions {
                     bool accepted() => access.permitted() && s.canWrite &&
                         route.available && route.isActive;
                     final saved = await _archiveSubject(owner, r,
-                        api: api, accessChanges: access.changes, hasAccess: accepted);
+                        api: api, accessChanges: access.changes, hasAccess: accepted,
+                        onSubmitAttempt: () { if (accepted()) needsReview = true; });
                     if (saved && accepted()) finish();
                   }, destructive: true, closeOnSuccess: false)
                 ]
               : []);
+      return access.permitted() && needsReview;
     } finally {
       access.dispose();
       scope.dispose();
     }
   }
 
-  Future<void> application() async {
+  Future<bool> application() async {
     final key = requestId();
-    await _tenantForm(
+    var attempted = false;
+    final result = await _tenantForm(
         title: '登记应用',
         section: 'applications',
         description: '填写准确的 Android 包名。签名摘要可选，使用小写 SHA-256，多个摘要用逗号分隔。',
@@ -827,9 +844,11 @@ class ConsoleActions {
           .map((e) => e.trim())
           .where((e) => e.isNotEmpty)
           .toList();
+      attempted = true;
       return await api
           .send('POST', '$root/applications', body: data, key: key) as Json;
     });
+    return attempted || result != null;
   }
 
   Future<void> applicationDetails(Json application,
@@ -2131,11 +2150,13 @@ class _DashboardState extends State<Dashboard> {
   }
 
   Future<void> perform(DeviceSubflowScope? scope,
-      Future<void> Function() action) async {
+      Future<bool> Function() action) async {
     if (actionBusy || !current(scope)) {
       return;
     }
     final owner = Object();
+    final previousError = error;
+    final resumeRead = reading || data == null;
     // A previously started refresh must not overwrite this action's outcome.
     generation++;
     reading = false;
@@ -2144,11 +2165,15 @@ class _DashboardState extends State<Dashboard> {
     error = null;
     _requestBuild();
     try {
-      await action();
+      final needsReview = await action();
       if (current(scope) && identical(_actionOwner, owner)) {
-        // A read started before the action may finish afterwards. Supersede it
-        // with a fresh read rather than displaying its pre-action summary.
-        await load(refreshAfterAction: true);
+        if (needsReview || resumeRead) {
+          // Supersede any read retired by the action, including on cancellation.
+          await load(refreshAfterAction: true);
+        } else {
+          error = previousError;
+          _requestBuild();
+        }
       }
     } catch (e) {
       if (current(scope) && identical(_actionOwner, owner)) {
@@ -2231,7 +2256,10 @@ class _DashboardState extends State<Dashboard> {
             ? () => perform(scope, () => widget.actions.subject())
             : null,
         onAddDevice: canOpen('devices')
-            ? () => perform(scope, widget.actions.enrollment)
+            ? () => perform(scope, () async {
+                await widget.actions.enrollment();
+                return true;
+              })
             : null,
         onRefresh: () async {
           if (current(scope)) {
