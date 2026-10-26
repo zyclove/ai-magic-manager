@@ -52,10 +52,19 @@ $global:httpSwitched = $false
 function global:Invoke-CommandFixtureInspection {
     param([string[]]$Arguments)
     $global:commandCalls.Add(@{boundary='inspect'; arguments=@($Arguments)})
+    if (($Arguments -join '|') -ceq 'compose|start|--help') {
+        if ($global:commandMode -ceq 'resume-no-wait') { return 'start [SERVICE...]' }
+        return "      --wait Wait for health`n      --wait-timeout Maximum wait"
+    }
     if ($Arguments[0] -ceq 'compose' -and ($Arguments[-5..-1] -join '|') -ceq 'ps|--all|--quiet|backend|edge') {
         return $global:commandFixture.ids -join "`n"
     }
     if ($Arguments[0] -ceq 'container' -and $Arguments[1] -ceq 'inspect') {
+        if ($Arguments[3] -clike '*"status"*') {
+            $item=$global:commandFixture.containers[$Arguments[-1]]
+            return @{id=$item.id;project=$item.project;service=$item.service;oneoff=$item.oneoff;
+                status=$(if ($item.running) {'running'} else {'exited'})} | ConvertTo-Json -Compress
+        }
         return $global:commandFixture.containers[$Arguments[-1]] | ConvertTo-Json -Depth 16 -Compress
     }
     if ($Arguments[0] -ceq 'image' -and $Arguments[1] -ceq 'inspect') {
@@ -82,6 +91,16 @@ function global:docker {
         return
     }
     if ($arguments -contains 'exec') { return '{"status":"UP"}' }
+    if ($arguments -contains 'start') {
+        if ($global:commandMode -ceq 'resume-fail') { $global:LASTEXITCODE=73; return 'controlled resume failure' }
+        foreach ($container in $global:commandFixture.containers.Values) {
+            $container.running=$true; $container.health='healthy'
+        }
+        if ($global:commandMode -ceq 'resume-receipt-switch') {
+            [IO.File]::AppendAllText($global:commandFixture.receipt,"`n")
+        }
+        return
+    }
     throw 'Unexpected Docker command; real Docker is forbidden.'
 }
 function global:Invoke-WebRequest {
@@ -115,7 +134,11 @@ foreach ($name in $global:commandFixture.environmentBefore.Keys) {
     else { [Environment]::SetEnvironmentVariable($name,$global:commandFixture.environmentBefore[$name],'Process') }
 }
 $ok=$false; $failure=$null; $output=@()
-try { $output=@(& $Entry -Directory $Deployment); $ok=$true }
+try {
+    if ($Action -ceq 'resume') { $output=@(& $Entry -Directory $Deployment -ResumeExisting) }
+    else { $output=@(& $Entry -Directory $Deployment) }
+    $ok=$true
+}
 catch { $failure=$_.Exception.Message }
 $after=@{}
 foreach ($name in $global:commandFixture.environmentBefore.Keys) { $after[$name]=[Environment]::GetEnvironmentVariable($name,'Process') }
@@ -243,7 +266,7 @@ class DeploymentProvenanceCommandsTest(unittest.TestCase):
         self.write_json(self.fixture_path, self.fixture)
         completed = subprocess.run(
             [PWSH, "-NoProfile", "-NonInteractive", "-File", str(self.wrapper),
-             "-Fixture", str(self.fixture_path), "-Entry", str(self.repository / f"scripts/{action}-deployment.ps1"),
+             "-Fixture", str(self.fixture_path), "-Entry", str(self.repository / f"scripts/{'start' if action == 'resume' else action}-deployment.ps1"),
              "-Deployment", str(self.deployment), "-Action", action, "-Mode", mode],
             cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=30)
         self.assertEqual(completed.returncode == 0, success, completed.stdout + completed.stderr)
@@ -251,6 +274,49 @@ class DeploymentProvenanceCommandsTest(unittest.TestCase):
         self.assertEqual(payload["ok"], success, payload)
         self.assertEqual(payload["environmentAfter"], RELEASE_ENV)
         return payload
+
+    def prepare_resume(self):
+        self.write_json(self.receipt, self.initial_receipt())
+        self.fixture["receipt"] = str(self.receipt)
+        for container in self.fixture["containers"].values():
+            container.update(running=False, health=None)
+
+    def test_resume_starts_only_existing_containers_and_preserves_receipt_bytes(self):
+        self.prepare_resume()
+        before = self.receipt.read_bytes()
+        payload = self.invoke("resume")
+        mutations = [call["arguments"] for call in payload["calls"]
+                     if call["boundary"] == "docker" and "start" in call["arguments"]]
+        self.assertEqual(len(mutations), 1)
+        self.assertEqual(mutations[0][-6:],
+                         ["start", "--wait", "--wait-timeout", "300", "backend", "edge"])
+        self.assertFalse(any("up" in call.get("arguments", []) for call in payload["calls"]))
+        self.assertEqual(self.receipt.read_bytes(), before)
+        self.assertEqual((self.deployment / "release-manifest.json").read_bytes(), self.manifest_bytes)
+
+    def test_resume_failures_do_not_fall_back_to_build_or_replace_receipts(self):
+        for mode in ["resume-no-wait", "resume-no-receipt", "resume-other-container",
+                     "resume-fail", "resume-receipt-switch"]:
+            with self.subTest(mode=mode):
+                self.prepare_resume()
+                if mode == "resume-no-receipt":
+                    self.receipt.unlink()
+                elif mode == "resume-other-container":
+                    old = self.initial_receipt()
+                    old["services"]["backend"]["containerIds"] = ["c" * 64]
+                    self.write_json(self.receipt, old)
+                before = self.receipt.read_bytes() if self.receipt.exists() else None
+                payload = self.invoke("resume", mode=mode, success=False)
+                starts = [call for call in payload["calls"]
+                          if call["boundary"] == "docker" and "start" in call["arguments"]]
+                self.assertEqual(len(starts), 1 if mode in
+                                 ("resume-fail", "resume-receipt-switch") else 0)
+                self.assertFalse(any("up" in call.get("arguments", []) for call in payload["calls"]))
+                if before is None:
+                    self.assertFalse(self.receipt.exists())
+                else:
+                    expected = before + b"\n" if mode == "resume-receipt-switch" else before
+                    self.assertEqual(self.receipt.read_bytes(), expected)
 
     def test_start_writes_separate_actual_image_receipt_without_changing_manifest(self):
         payload = self.invoke("start")

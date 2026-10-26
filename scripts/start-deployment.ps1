@@ -1,7 +1,7 @@
 #Requires -Version 7.0
 <# Starts only the specified Compose project. Existing local runtime is untouched. #>
 [CmdletBinding()]
-param([string]$Directory = '.local/deployment', [switch]$Tls, [switch]$ExternalTlsProxy,
+param([string]$Directory = '.local/deployment', [switch]$Tls, [switch]$ExternalTlsProxy, [switch]$ResumeExisting,
     [string]$IdentityAdminDirectory='', [string]$IdentityRuntimeDirectory='')
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'deployment-common.ps1')
@@ -9,6 +9,16 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'deployment-provenance.ps1')
 . (Join-Path $PSScriptRoot 'deployment-runtime-provenance.ps1')
 $context = Get-DeploymentContext $Directory
+if ($ResumeExisting) {
+    # Older supported Compose versions may lack start's wait options. Refuse
+    # before acquiring the host lock or touching any containers; never fall back
+    # to up, which can create containers even with --no-recreate.
+    $startHelp = Invoke-DeploymentProvenanceDocker -Arguments @('compose', 'start', '--help')
+    if ($startHelp -cnotmatch '(?m)^\s+--wait\s' -or
+        $startHelp -cnotmatch '(?m)^\s+--wait-timeout\s') {
+        throw 'Resume requires Docker Compose start with --wait and --wait-timeout support. No containers were changed; use a supported Compose installation.'
+    }
+}
 $identityHostLock = Enter-IdentityReleaseHostLock $context.Root
 $previousReleaseEnvironment = @{}
 try {
@@ -107,16 +117,35 @@ $receiptPath = Join-Path $context.Root 'erasure-ledger-initialized.json'
 if (-not (Test-Path -LiteralPath $receiptPath)) { throw 'Explicit ledger initialization is required; run initialize-erasure-ledger.ps1 once for a new ledger.' }
 $receipt = Get-Content -LiteralPath $receiptPath -Raw | ConvertFrom-Json
 if ($receipt.schemaVersion -ne 1 -or $receipt.ledgerId -cne $configuration.services.backend.environment.ERASURE_LEDGER_ID -or $configuration.services.backend.environment.ERASURE_RECOVERY_REQUIRED -ne 'true') { throw 'Ledger identity or mandatory recovery protection differs from the initialized deployment.' }
-$buildArguments = @('--build')
-Invoke-DeploymentNative 'docker' ($arguments + @('up', '-d') + $buildArguments + @('--wait', '--wait-timeout', '300')) (Join-Path $logs 'compose-start.log')
+if ($ResumeExisting) {
+    $resumeServices = @($configuration.services.PSObject.Properties.Name | Sort-Object)
+    Assert-DeploymentResumeServices -ComposeArguments $arguments -Project $configuration.name -Services $resumeServices
+    $priorBindings = @(Get-DeploymentImageBindings -ComposeArguments $arguments -Project $configuration.name -Labels $provenance.Labels -Context $context -AllowStopped)
+    $priorReceipt = Assert-DeploymentRuntimeReceipt -Context $context -Provenance $provenance -Bindings $priorBindings -Project $configuration.name -RequireSameContainers -PassThru
+    $beforeResume = Read-DeploymentProvenance -Context $context
+    if ($beforeResume.ManifestSha256 -cne $provenance.ManifestSha256) { throw 'Release manifest changed before recovery; no containers were started.' }
+    Invoke-DeploymentNative 'docker' ($arguments + @('start', '--wait', '--wait-timeout', '300') + $resumeServices) (Join-Path $logs 'compose-resume.log')
+} else {
+    $buildArguments = @('--build')
+    Invoke-DeploymentNative 'docker' ($arguments + @('up', '-d') + $buildArguments + @('--wait', '--wait-timeout', '300')) (Join-Path $logs 'compose-start.log')
+}
 # Bind the receipt to the images actually running after Compose has finished,
 # never mutable tags or labels supplied only on a container.
 $bindings = @(Get-DeploymentImageBindings -ComposeArguments $arguments -Project $configuration.name -Labels $provenance.Labels -Context $context)
 $verifiedAgain = Read-DeploymentProvenance -Context $context
 if ($verifiedAgain.ManifestSha256 -cne $provenance.ManifestSha256) { throw 'Release manifest changed during startup.' }
-Write-DeploymentRuntimeReceipt -Context $context -Provenance $provenance -Bindings $bindings -Project $configuration.name
-Write-Output "Deployment is healthy: $($context.Settings.publicUrl)"
-Write-Output 'Identity setup: /identity/admin/ (bootstrap-admin; password is the restricted bootstrap_admin file).'
+if ($ResumeExisting) {
+    $resumedReceipt = Assert-DeploymentRuntimeReceipt -Context $context -Provenance $provenance -Bindings $bindings -Project $configuration.name -RequireSameContainers -PassThru
+    if ($resumedReceipt -cne $priorReceipt) { throw 'Runtime receipt changed during recovery; verify the existing deployment before continuing.' }
+} else {
+    Write-DeploymentRuntimeReceipt -Context $context -Provenance $provenance -Bindings $bindings -Project $configuration.name
+}
+if ($ResumeExisting) {
+    Write-Output "Existing deployment resumed and is healthy: $($context.Settings.publicUrl)"
+} else {
+    Write-Output "Deployment is healthy: $($context.Settings.publicUrl)"
+    Write-Output 'Identity setup: /identity/admin/ (bootstrap-admin; password is the restricted bootstrap_admin file).'
+}
 } finally {
     foreach ($name in $previousReleaseEnvironment.Keys) {
         if ($null -eq $previousReleaseEnvironment[$name]) { Remove-Item -LiteralPath "Env:$name" -ErrorAction SilentlyContinue }

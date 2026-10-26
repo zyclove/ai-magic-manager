@@ -161,6 +161,22 @@ docker compose --env-file .local/deployment/.env -f deploy/compose/compose.yaml 
 
 签名私钥备份必须受控；轮换时配置新的 SIGN 密钥并保留旧 VERIFY 公钥到所有有效离线配置/清理/额度许可到期。数据库密码轮换需同时更新实际数据库账号与 secret 文件；再次运行初始化不是轮换程序。区域驻留、保留删除、事件响应和灾难恢复遵循平台安全与数据库规格。
 
+### 已有容器的无构建恢复
+
+`resume` 用于已有完整发布记录、原应用容器仍在的环境。它复用启动入口的产物、配置、TLS、身份及账本校验，恢复前检查所有目标服务的持久容器，再启动原容器并等待健康；不构建镜像、不创建或重建容器，不补建或重写 `release-runtime.json`。
+
+```powershell
+./scripts/manager.ps1 resume -Directory .local/demo -Plan
+# 完成该动作验收后执行；TLS/外部代理/身份参数须与该环境原配置一致
+./scripts/manager.ps1 resume -Directory .local/demo
+./scripts/manager.ps1 status -Directory .local/demo
+./scripts/manager.ps1 verify -Directory .local/demo
+```
+
+服务缺失、只有一次性容器、处于暂停/重启中/删除中/死亡状态，或原记录、镜像、挂载与原应用容器编号不匹配时，恢复前停止。恢复后再次执行默认运行/健康核验，并严格核对原记录字节摘要和应用容器集合；不会通过重新写记录来接受变化。命令部分失败时可能已有容器启动，应先查询和核对状态；不会自动回滚、重建或清理卷。健康状态不代替登录后的业务、提供方或设备验收。
+
+新动作要求 [Compose start 的等待健康选项](https://docs.docker.com/reference/cli/docker/compose/start/)，执行前只读探测，不支持则拒绝容器变更；不会自动安装或升级。原基础 `start` 支持范围不因此改写。本批尚未执行参数、受控传输或真实 Docker 恢复验收，范围见[阶段记录](reviews/deployment-resume-20261026.md)。
+
 ## 验收与剩余门槛
 
 2026-10-09 已验证基于提交 `40bfd5c` 加内部 JWK 适配的独立发布快照。并行开发的共享额度/周期计划未混入此快照，不将这些新功能算作本阶段部署证据。

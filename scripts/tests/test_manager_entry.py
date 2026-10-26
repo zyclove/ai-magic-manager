@@ -59,6 +59,7 @@ class ManagerEntryTest(unittest.TestCase):
             ], {"Tls": True, "IdentityAdminDirectory": str(ROOT / ".local/identity admin"),
                 "IdentityRuntimeDirectory": str(ROOT / ".local/identity runtime")}),
             ("start", "start-deployment.ps1", ["-ExternalTlsProxy"], {"ExternalTlsProxy": True}),
+            ("resume", "start-deployment.ps1", [], {"ResumeExisting": True}),
             ("status", "manager.ps1", [], {}),
             ("verify", "verify-deployment.ps1", [], {}),
         ]
@@ -139,6 +140,7 @@ class ManagerEntryTest(unittest.TestCase):
     def test_invalid_options_fail_before_any_action(self):
         rows = [
             (["build", "-Tls"], "does not apply"),
+            (["resume", "-Offline"], "does not apply"),
             (["init-ledger", "-Offline"], "does not apply"),
             (["status", "-Directory", "../outside-manager"], "Deployment directory"),
             (["init", "-PublicUrl", "https://operator:synthetic-private@manager.example.com"], "without credentials"),

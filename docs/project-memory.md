@@ -67,6 +67,8 @@ Windows 私有进程验证的稳定工具源位于 [scripts/verification](../scr
 
 在仓库根目录可用 `pwsh -File scripts/manager.ps1 status -Active` 只读定位已选环境（2026-10-25 已实际执行）。前提是 PowerShell 7、可访问的 Docker 及完整的环境选择记录；显式目录查询使用 `status -Directory ...`。状态查询不自动恢复或发布服务，也不代替业务验收。[入口实现](../scripts/manager.ps1)会选取首个 Docker 可执行入口，避免 Windows 多个同名命令被拼成路径。
 
+已有发布的无构建恢复入口为 `manager.ps1 resume`，复用原启动的配置、来源和账本校验，先确认目标持久容器齐全，再只启动原容器；恢复前后严格绑定原应用容器集合和原运行记录摘要，不通过重写记录接受变化。该能力仍以[部署手册](deployment-runbook.md)的当前验证状态为准，不能把源码接线当作真实恢复验收。
+
 统一部署入口的显式目录及带目录分隔符的工具路径统一按该仓库根目录解析；裸工具名称保留 PATH 查找，预览与执行共用最终参数，不为预览读取身份配置或启动工具。参数契约见[简明部署入口](deployment-quickstart.md)。
 
 统一部署入口的初始化默认值由同一处解析，预览与执行共用：本机换端口只填 `-EdgePort`，指定公开 URL 时自动采用其端口；外部 TLS 代理保留独立内部端口。显式填写的 URL/端口仍交给初始化器校验，见[简明部署入口](deployment-quickstart.md)。

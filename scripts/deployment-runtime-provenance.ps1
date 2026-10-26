@@ -198,7 +198,8 @@ function Get-DeploymentImageBindings {
         [Parameter(Mandatory)]$Context,
         [Parameter(Mandatory)][string[]]$ComposeArguments,
         [Parameter(Mandatory)][string]$Project,
-        [Parameter(Mandatory)][Collections.IDictionary]$Labels
+        [Parameter(Mandatory)][Collections.IDictionary]$Labels,
+        [switch]$AllowStopped
     )
     Set-StrictMode -Version 3.0
     if ($ComposeArguments.Count -eq 0 -or $ComposeArguments[0] -cne 'compose' -or
@@ -240,12 +241,16 @@ function Get-DeploymentImageBindings {
         }
         $container = ConvertFrom-DeploymentRuntimeJson (Invoke-ScopedInspection @('container', 'inspect', '--format', $format, $id))
         Assert-DeploymentRuntimeProperties $container @('id', 'imageId', 'running', 'health', 'project', 'service', 'oneoff', 'mounts')
+        $validHealth = $null -eq $container.health -or
+            ($container.health -is [string] -and @('starting', 'healthy', 'unhealthy') -ccontains $container.health)
         if ($container.id -isnot [string] -or $container.id -cnotmatch '^[0-9a-f]{64}$' -or
             -not $container.id.StartsWith($id, [StringComparison]::Ordinal) -or -not $actual.Add($container.id) -or
             $container.imageId -isnot [string] -or $container.imageId -cnotmatch '^sha256:[0-9a-f]{64}$' -or
             $container.project -cne $Project -or @('backend', 'edge') -cnotcontains $container.service -or
             $container.oneoff -isnot [string] -or $container.oneoff -ine 'False' -or
-            $container.running -isnot [bool] -or -not $container.running -or $container.health -cne 'healthy') {
+            $container.running -isnot [bool] -or -not $validHealth -or
+            (-not $container.running -and -not $AllowStopped) -or
+            ($container.running -and $container.health -cne 'healthy')) {
             throw 'Deployment container ownership, identity or health does not match the selected release.'
         }
         Assert-DeploymentRuntimeMounts -Container $container -ExpectedEdgeMounts $expectedEdgeMounts
@@ -277,6 +282,63 @@ function Get-DeploymentImageBindings {
         }
     )
     return $result
+}
+
+# Read-only preflight for every service that compose start will target.
+function Assert-DeploymentResumeServices {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)][string[]]$ComposeArguments,
+        [Parameter(Mandatory)][string]$Project,
+        [Parameter(Mandatory)][string[]]$Services
+    )
+    Set-StrictMode -Version 3.0
+    if ($ComposeArguments.Count -eq 0 -or $ComposeArguments[0] -cne 'compose' -or
+        $Project -cnotmatch '^[a-z][a-z0-9-]{2,40}$' -or $Services.Count -eq 0) {
+        throw 'Invalid deployment resume inspection scope.'
+    }
+    $targets = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    foreach ($service in $Services) {
+        if ($service -isnot [string] -or $service -cnotmatch '\A[A-Za-z0-9_.][A-Za-z0-9_.-]*\z' -or
+            -not $targets.Add($service)) { throw 'Invalid or duplicate deployment resume service.' }
+    }
+    $clock = [Diagnostics.Stopwatch]::StartNew()
+    function Invoke-ResumeInspection([string[]]$Arguments) {
+        $remaining = 60 - [int][Math]::Ceiling($clock.Elapsed.TotalSeconds)
+        if ($remaining -lt 1) { throw 'Deployment resume inspection exceeded its time budget.' }
+        return Invoke-DeploymentProvenanceDocker -Arguments $Arguments -TimeoutSeconds ([Math]::Min(15, $remaining))
+    }
+    $output = Invoke-ResumeInspection ($ComposeArguments + @('ps', '--all', '--quiet') + $Services)
+    $ids = @($output -split '[\r\n]+' | Where-Object { $_ })
+    $requested = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    $actual = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    $found = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+    # Project/service labels and state only; never inspect private Config or Env.
+    $format = '{"id":{{json .Id}},"project":{{json (index .Config.Labels "com.docker.compose.project")}},"service":{{json (index .Config.Labels "com.docker.compose.service")}},"oneoff":{{json (index .Config.Labels "com.docker.compose.oneoff")}},"status":{{json .State.Status}}}'
+    foreach ($id in $ids) {
+        if ($id -cnotmatch '^[0-9a-f]{12,64}$' -or -not $requested.Add($id)) {
+            throw 'Invalid or duplicate deployment resume container reference.'
+        }
+        $container = ConvertFrom-DeploymentRuntimeJson (Invoke-ResumeInspection @('container', 'inspect', '--format', $format, $id))
+        Assert-DeploymentRuntimeProperties $container @('id', 'project', 'service', 'oneoff', 'status')
+        if ($container.id -isnot [string] -or $container.id -cnotmatch '^[0-9a-f]{64}$' -or
+            -not $container.id.StartsWith($id, [StringComparison]::Ordinal) -or -not $actual.Add($container.id) -or
+            $container.project -isnot [string] -or $container.project -cne $Project -or
+            $container.service -isnot [string] -or -not $targets.Contains($container.service) -or
+            $container.oneoff -isnot [string] -or @('True', 'False') -notcontains $container.oneoff -or
+            $container.status -isnot [string] -or
+            @('running', 'created', 'exited', 'paused', 'restarting', 'removing', 'dead') -cnotcontains $container.status) {
+            throw 'Deployment resume container ownership or metadata is invalid.'
+        }
+        if ($container.oneoff -ieq 'True') { continue }
+        if (@('running', 'created', 'exited') -cnotcontains $container.status) {
+            throw 'Deployment resume requires persistent containers to be running, created or exited.'
+        }
+        [void]$found.Add($container.service)
+    }
+    if (-not $found.SetEquals([string[]]$Services)) {
+        throw 'Deployment resume requires existing persistent containers for every service.'
+    }
 }
 
 function Get-DeploymentRuntimeReceiptPath {
@@ -347,7 +409,8 @@ function Write-DeploymentRuntimeReceipt {
 function Assert-DeploymentRuntimeReceipt {
     [CmdletBinding()]
     param([Parameter(Mandatory)]$Context, [Parameter(Mandatory)]$Provenance,
-        [Parameter(Mandatory)][object[]]$Bindings, [Parameter(Mandatory)][string]$Project)
+        [Parameter(Mandatory)][object[]]$Bindings, [Parameter(Mandatory)][string]$Project,
+        [switch]$RequireSameContainers, [switch]$PassThru)
     Set-StrictMode -Version 3.0
     $path = Get-DeploymentRuntimeReceiptPath $Context
     if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { throw 'Deployment runtime receipt is missing; start the verified release first.' }
@@ -389,12 +452,27 @@ function Assert-DeploymentRuntimeReceipt {
             [ordered]@{ service = $service; imageId = $receipt.services[$service].imageId; containerIds = $receipt.services[$service].containerIds }
         }
     )
-    [void](Get-DeploymentRuntimeBindingMap $recorded)
+    $recordedMap = Get-DeploymentRuntimeBindingMap $recorded
     foreach ($service in @('backend', 'edge')) {
         if ($receipt.services[$service].imageId -cne $map[$service].imageId) {
             throw 'Running deployment image differs from the activation receipt.'
         }
+        if ($RequireSameContainers) {
+            $recordedIds = [Collections.Generic.HashSet[string]]::new([StringComparer]::Ordinal)
+            foreach ($id in $recordedMap[$service].containerIds) { [void]$recordedIds.Add($id) }
+            $currentIds = [string[]]($map[$service].containerIds)
+            if (-not $recordedIds.SetEquals($currentIds)) {
+                throw 'Deployment container identities differ from the activation receipt.'
+            }
+        }
     }
-    # Container IDs document activation; a legitimate recreation using the same
-    # immutable image is allowed. Verification never creates or repairs receipts.
+    # Default verification permits recreation using the same immutable images.
+    # Resuming requires the recorded containers. Neither mode repairs receipts.
+    if ($PassThru) {
+        $sha256 = [Security.Cryptography.SHA256]::Create()
+        try {
+            $digest = $sha256.ComputeHash($bytes)
+            return ([BitConverter]::ToString($digest)).Replace('-', '').ToLowerInvariant()
+        } finally { $sha256.Dispose() }
+    }
 }

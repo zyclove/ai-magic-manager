@@ -5,6 +5,7 @@ functions run against isolated fixtures under the repository's ignored .cache.
 Full application/SDK and deployment verification remain separate release gates.
 """
 import copy
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -35,22 +36,35 @@ LABELS = {
 }
 
 WRAPPER = r'''
-param([string]$Helper, [string]$Fixture, [string]$Deployment, [string]$Action)
+param([string]$Helper, [string]$Fixture, [string]$Deployment, [string]$Action,
+    [switch]$AllowStopped, [switch]$RequireSameContainers, [switch]$PassThru)
 $ErrorActionPreference = 'Stop'
 . $Helper
 $script:fixtureData = Get-Content -LiteralPath $Fixture -Raw | ConvertFrom-Json -AsHashtable -Depth 16
 $script:dockerCalls = [Collections.Generic.List[object]]::new()
+$script:resumeProjectionFormat = '{"id":{{json .Id}},"project":{{json (index .Config.Labels "com.docker.compose.project")}},"service":{{json (index .Config.Labels "com.docker.compose.service")}},"oneoff":{{json (index .Config.Labels "com.docker.compose.oneoff")}},"status":{{json .State.Status}}}'
 function Invoke-DeploymentProvenanceDocker {
     param([string[]]$Arguments, [int]$TimeoutSeconds)
     $script:dockerCalls.Add(@($Arguments))
     if ($TimeoutSeconds -lt 1 -or $TimeoutSeconds -gt 15) { throw 'Unexpected inspection timeout.' }
     if ($Arguments[0] -ceq 'compose') {
-        if (($Arguments[-5..-1] -join '|') -cne 'ps|--all|--quiet|backend|edge') { throw 'Unexpected Compose inspection.' }
+        $services = if ($Action -ceq 'resume-services') { [string[]]$script:fixtureData.resumeServices } else { @('backend', 'edge') }
+        $tail = @('ps', '--all', '--quiet') + $services
+        if ($Arguments.Count -lt $tail.Count -or
+            ($Arguments[(-$tail.Count)..-1] -join '|') -cne ($tail -join '|')) { throw 'Unexpected Compose inspection.' }
         return $script:fixtureData.ids -join "`n"
     }
     if ($Arguments[0] -ceq 'container' -and $Arguments[1] -ceq 'inspect' -and $Arguments[2] -ceq '--format') {
         if (-not $script:fixtureData.containers.Contains($Arguments[-1])) { throw 'Unknown fixture container.' }
-        return $script:fixtureData.containers[$Arguments[-1]] | ConvertTo-Json -Depth 8 -Compress
+        $metadata = $script:fixtureData.containers[$Arguments[-1]]
+        if ($Arguments[3] -ceq $script:resumeProjectionFormat) {
+            $projection = [ordered]@{}
+            foreach ($name in @('id', 'project', 'service', 'oneoff', 'status')) {
+                if ($metadata.Contains($name)) { $projection[$name] = $metadata[$name] }
+            }
+            return $projection | ConvertTo-Json -Depth 8 -Compress
+        }
+        return $metadata | ConvertTo-Json -Depth 8 -Compress
     }
     if ($Arguments[0] -ceq 'image' -and $Arguments[1] -ceq 'inspect' -and
         $Arguments[2] -ceq '--format' -and $Arguments[3] -ceq '{{json .Config.Labels}}') {
@@ -65,15 +79,32 @@ $provenance = @{ ManifestSha256=$script:fixtureData.manifestSha256; Manifest=@{
     applicationVersion='1.0.0'; sourceTreeSha256=$script:fixtureData.sourceTreeSha256;
     artifactTreeSha256=$script:fixtureData.artifactTreeSha256 }; Labels=$script:fixtureData.labels }
 try {
-    $bindings = @(Get-DeploymentImageBindings -Context $context -ComposeArguments @('compose','--project-name',$script:fixtureData.project) `
-        -Project $script:fixtureData.project -Labels $script:fixtureData.labels)
-    switch ($Action) {
-        'bindings' { }
-        'write' { Write-DeploymentRuntimeReceipt -Context $context -Provenance $provenance -Bindings $bindings -Project $script:fixtureData.project }
-        'assert' { Assert-DeploymentRuntimeReceipt -Context $context -Provenance $provenance -Bindings $bindings -Project $script:fixtureData.project }
-        default { throw 'Unknown fixture action.' }
+    $receiptDigest = $null
+    $bindings = @()
+    if ($Action -ceq 'resume-services') {
+        Assert-DeploymentResumeServices -ComposeArguments @('compose', '--project-name', $script:fixtureData.project) `
+            -Project $script:fixtureData.project -Services ([string[]]$script:fixtureData.resumeServices)
+    } else {
+        $bindings = @(Get-DeploymentImageBindings -Context $context -ComposeArguments @('compose','--project-name',$script:fixtureData.project) `
+            -Project $script:fixtureData.project -Labels $script:fixtureData.labels -AllowStopped:$AllowStopped)
+        switch ($Action) {
+            'bindings' { }
+            'write' { Write-DeploymentRuntimeReceipt -Context $context -Provenance $provenance -Bindings $bindings -Project $script:fixtureData.project }
+            'assert' {
+                if ($PassThru) {
+                    $receiptDigest = Assert-DeploymentRuntimeReceipt -Context $context -Provenance $provenance -Bindings $bindings `
+                        -Project $script:fixtureData.project -RequireSameContainers:$RequireSameContainers -PassThru
+                } else {
+                    Assert-DeploymentRuntimeReceipt -Context $context -Provenance $provenance -Bindings $bindings `
+                        -Project $script:fixtureData.project -RequireSameContainers:$RequireSameContainers
+                }
+            }
+            default { throw 'Unknown fixture action.' }
+        }
     }
-    [ordered]@{ok=$true; bindings=$bindings; calls=@($script:dockerCalls.ToArray())} | ConvertTo-Json -Depth 12 -Compress
+    $result = [ordered]@{ok=$true; bindings=$bindings; calls=@($script:dockerCalls.ToArray())}
+    if ($PassThru) { $result['receiptSha256'] = $receiptDigest }
+    $result | ConvertTo-Json -Depth 12 -Compress
 } catch {
     [ordered]@{ok=$false; error=$_.Exception.Message; calls=@($script:dockerCalls.ToArray())} | ConvertTo-Json -Depth 12 -Compress
     exit 1
@@ -149,17 +180,102 @@ class DeploymentRuntimeProvenanceTest(unittest.TestCase):
     def write_receipt(self, receipt=None):
         self.receipt_path.write_text(json.dumps(self.receipt() if receipt is None else receipt), encoding="utf-8")
 
-    def invoke(self, action="bindings", success=True):
+    def invoke(self, action="bindings", success=True, *, allow_stopped=False,
+               require_same_containers=False, pass_thru=False):
         self.fixture_path.write_text(json.dumps(self.fixture), encoding="utf-8")
+        arguments = [PWSH, "-NoProfile", "-NonInteractive", "-File", str(self.wrapper),
+                     "-Helper", str(HELPER), "-Fixture", str(self.fixture_path),
+                     "-Deployment", str(self.deployment), "-Action", action]
+        if allow_stopped:
+            arguments.append("-AllowStopped")
+        if require_same_containers:
+            arguments.append("-RequireSameContainers")
+        if pass_thru:
+            arguments.append("-PassThru")
         completed = subprocess.run(
-            [PWSH, "-NoProfile", "-NonInteractive", "-File", str(self.wrapper),
-             "-Helper", str(HELPER), "-Fixture", str(self.fixture_path),
-             "-Deployment", str(self.deployment), "-Action", action],
+            arguments,
             cwd=ROOT, capture_output=True, text=True, encoding="utf-8", timeout=20)
         self.assertEqual(completed.returncode == 0, success, completed.stdout + completed.stderr)
         result = json.loads(completed.stdout)
         self.assertEqual(result["ok"], success, result)
         return result
+
+    def test_stopped_preflight_is_explicit_and_never_relaxes_running_health(self):
+        backend = self.fixture["containers"][BACKEND]
+        backend.update(running=False, health=None)
+        rejected = self.invoke(success=False)
+        self.assertIn("ownership, identity or health", rejected["error"])
+        for health in (None, "healthy", "starting", "unhealthy"):
+            with self.subTest(stopped_health=health):
+                backend.update(running=False, health=health)
+                result = self.invoke(allow_stopped=True)
+                self.assertEqual(result["bindings"][0]["containerIds"], [BACKEND])
+        backend.update(running=True, health="unhealthy")
+        rejected = self.invoke(allow_stopped=True, success=False)
+        self.assertIn("ownership, identity or health", rejected["error"])
+        backend.update(running=False, health=["healthy"])
+        rejected = self.invoke(allow_stopped=True, success=False)
+        self.assertIn("ownership, identity or health", rejected["error"])
+        self.assertFalse(self.receipt_path.exists())
+
+    def test_strict_receipt_requires_original_container_ids_without_repairing_it(self):
+        self.write_receipt()
+        before = self.receipt_path.read_bytes()
+        first = self.invoke("assert", require_same_containers=True, pass_thru=True)
+        same = self.invoke("assert", require_same_containers=True, pass_thru=True)
+        self.assertEqual(first["receiptSha256"], hashlib.sha256(before).hexdigest())
+        self.assertEqual(first["receiptSha256"], same["receiptSha256"])
+        # Semantically identical JSON still changes the exact receipt bytes.
+        self.receipt_path.write_bytes((json.dumps(self.receipt(), indent=2) + "\n").encode("utf-8"))
+        changed = self.receipt_path.read_bytes()
+        updated = self.invoke("assert", require_same_containers=True, pass_thru=True)
+        self.assertEqual(updated["receiptSha256"], hashlib.sha256(changed).hexdigest())
+        self.assertNotEqual(first["receiptSha256"], updated["receiptSha256"])
+        replacement = "c" * 64
+        backend = self.fixture["containers"].pop(BACKEND)
+        backend["id"] = replacement
+        self.fixture["containers"][replacement] = backend
+        self.fixture["ids"] = [replacement, EDGE]
+        self.invoke("assert")
+        rejected = self.invoke("assert", require_same_containers=True, pass_thru=True, success=False)
+        self.assertIn("container identities differ", rejected["error"])
+        self.assertNotIn("receiptSha256", rejected)
+        self.assertEqual(self.receipt_path.read_bytes(), changed)
+
+    def test_resume_preflight_requires_persistent_containers_for_every_service(self):
+        database = "d" * 64
+        oneoff = "e" * 64
+        self.fixture["resumeServices"] = ["backend", "edge", "database"]
+        self.fixture["ids"] = [BACKEND, EDGE, database, oneoff]
+        self.fixture["containers"][BACKEND]["status"] = "running"
+        self.fixture["containers"][EDGE].update(status="exited", running=False)
+        self.fixture["containers"][database] = self.container(database, "database", "sha256:" + "6" * 64)
+        self.fixture["containers"][database].update(status="created", running=False, health=None)
+        self.fixture["containers"][oneoff] = self.container(oneoff, "edge", EDGE_IMAGE)
+        self.fixture["containers"][oneoff].update(status="exited", running=False, oneoff="True")
+        result = self.invoke("resume-services")
+        self.assertEqual(result["calls"][0], [
+            "compose", "--project-name", PROJECT, "ps", "--all", "--quiet",
+            "backend", "edge", "database"])
+        self.assertFalse(any(call[0] == "image" for call in result["calls"]))
+        for call in (call for call in result["calls"] if call[0] == "container"):
+            self.assertIn("{{json .State.Status}}", call[3])
+            self.assertNotIn(".Config.Env", call[3])
+            self.assertNotIn(".Config.Cmd", call[3])
+            self.assertNotIn("{{json .Config}}", call[3])
+        for condition in ("missing", "oneoff", "paused", "dead"):
+            with self.subTest(condition=condition):
+                self.fixture["ids"] = [BACKEND, EDGE, database, oneoff]
+                self.fixture["containers"][database].update(oneoff="False", status="created")
+                if condition == "missing":
+                    self.fixture["ids"].remove(database)
+                elif condition == "oneoff":
+                    self.fixture["containers"][database]["oneoff"] = "True"
+                else:
+                    self.fixture["containers"][database]["status"] = condition
+                rejected = self.invoke("resume-services", success=False)
+                self.assertIn("persistent containers", rejected["error"])
+        self.assertFalse(self.receipt_path.exists())
 
     def test_binds_actual_image_ids_and_reads_image_labels(self):
         result = self.invoke()

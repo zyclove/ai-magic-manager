@@ -20,7 +20,7 @@ Build and start retain all checks in the existing deployment scripts.
 [CmdletBinding()]
 param(
     [Parameter(Position=0)]
-    [ValidateSet('doctor', 'init', 'build', 'init-ledger', 'start', 'status', 'verify')]
+    [ValidateSet('doctor', 'init', 'build', 'init-ledger', 'start', 'resume', 'status', 'verify')]
     [string]$Action = 'doctor',
     [string]$Directory = '.local/deployment',
     [string]$PublicUrl,
@@ -50,6 +50,7 @@ $allowed = @{
     build = @('Directory', 'SourceDirectory', 'MavenCommand', 'FlutterCommand', 'DartCommand', 'MavenRepository', 'ConsumerIdentity', 'Offline')
     'init-ledger' = @('Directory')
     start = @('Directory', 'Tls', 'ExternalTlsProxy', 'IdentityAdminDirectory', 'IdentityRuntimeDirectory')
+    resume = @('Directory', 'Tls', 'ExternalTlsProxy', 'IdentityAdminDirectory', 'IdentityRuntimeDirectory')
     status = @('Directory', 'Active')
     verify = @('Directory')
 }
@@ -117,8 +118,10 @@ $entries = @{
     build = 'build-deployment.ps1'
     'init-ledger' = 'initialize-erasure-ledger.ps1'
     start = 'start-deployment.ps1'
+    resume = 'start-deployment.ps1'
     verify = 'verify-deployment.ps1'
 }
+if ($Action -eq 'resume') { $forward.ResumeExisting = $true }
 if ($Plan) {
     $parameters = [ordered]@{}
     foreach ($name in @($forward.Keys | Sort-Object)) {
@@ -137,6 +140,7 @@ if ($Plan) {
             build { 'Verify an isolated source snapshot and build artifacts; may resolve dependencies unless -Offline is selected.' }
             'init-ledger' { 'Explicit one-time provisioning of a NEW erasure ledger; starts its database and builds/runs the initializer. Never used for routine startup or recovery.' }
             start { 'Validate release provenance, then build/start this selected Compose project.' }
+            resume { 'Validate the prior runtime receipt, then start existing containers only; no build, creation or receipt replacement.' }
             status { 'Read selected deployment metadata and list containers with its exact Compose project label.' }
             verify { 'Check selected release provenance, HTTP entry, OIDC discovery, and backend health.' }
         }
