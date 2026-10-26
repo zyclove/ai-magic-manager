@@ -50,3 +50,31 @@ Future<T?> leasedDialog<T>(BuildContext context,
     access.dispose();
   }
 }
+
+/// Confirmation keeps private context under the original route and access lease.
+Future<bool> confirmLeasedAction(
+    BuildContext context, String title, String body,
+    {required Listenable accessChanges,
+    required bool Function() hasAccess,
+    String confirm = '确认'}) async =>
+    await leasedDialog<bool>(context,
+        accessChanges: accessChanges,
+        hasAccess: hasAccess,
+        builder: (dialog, route, access) {
+      void finish(bool value) {
+        if (access.permitted() && route.available && route.isCurrent) {
+          route.finish(value);
+        }
+      }
+
+      return AlertDialog(
+          scrollable: true,
+          title: Text(title),
+          content: SizedBox(
+              width: 460,
+              child: Text(body, style: const TextStyle(height: 1.8))),
+          actions: [
+            TextButton(onPressed: () => finish(false), child: const Text('取消')),
+            FilledButton(onPressed: () => finish(true), child: Text(confirm))
+          ]);
+    }) ?? false;

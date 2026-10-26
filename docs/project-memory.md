@@ -61,6 +61,8 @@ Windows 私有进程验证的稳定工具源位于 [scripts/verification](../scr
 
 访问审批的 [AccessRequestsPage](../apps/guardian/lib/pages/access_requests_page.dart) 编排待处理/全部筛选与行摘要，复用 ResourcePage 的读取、分页及错误恢复；管理角色默认待处理，其他角色默认全部。消费实际返回的名称，不追加目录请求；审计视图只用核心编号。列表筛选后的空批次不等于后续页无待办，原详情与决定流程继续独立授权。[approval_decision](../apps/guardian/lib/core/approval_decision.dart) 集中七种状态、当前申请快照和精确秒数正文转换；列表名称先脱离原行，再以完整引用匹配，不能覆盖最新核心事实。通用 FieldSpec 可选整数范围由既有表单就近校验，跨字段合计在提交前验证；继续使用原未知结果与幂等保护。
 
+[HelpRequestsPage](../apps/guardian/lib/pages/help_requests_page.dart) 的服务端明确拒绝锁存为当前页面失权，清除私有列表并失效晚到读取；本地会话未变化也不能继续使用旧捕获。带目标信息的确认使用 [confirmLeasedAction](../apps/guardian/lib/ui/leased_dialog.dart)，沿用原路由与权限租约。未知确认的行内核对只发 GET，复用既有操作代次条件，不自动重发 POST。
+
 恢复草稿的中文字段清单统一在[领域化展示模块](../apps/guardian/lib/ui/editor_draft_text.dart)，只读取已捕获的提交与现有目录。名称缺失保留完整对象编号，未知字段也保留；展示层不得读取网络、改写原提交或解除重试保护。
 
 时间安排示例的不可变模型与严格响应校验统一在 [schedule_contracts](../packages/schedule_contracts/README.md)，Parent 保留轻量适配，Guardian 直接消费。目录仅按需读取，回填本地草稿、保留时区与日期例外，已有每周时段须确认替换；同包的 `weeklyWindowAdditions` 只计算独立新增项，两个宿主按实际新增数整体检查 56 条上限，不部分添加，不清除既有重复行。Guardian 的 [ScheduleWeekView](../apps/guardian/lib/ui/schedule_week_view.dart) 只做分组展示，删除仍由原编辑器的交互和权限门禁处理。宿主负责授权、有界读取和显式保存，不能将示例选择解释为已保存或已发布。交互契约及当前验证状态见[示例交付说明](schedule-preset-ux-delivery.md)。

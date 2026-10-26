@@ -4,6 +4,7 @@ import '../core/help_requests.dart';
 import '../core/labels.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
+import '../ui/leased_dialog.dart';
 import 'device_subflow_scope.dart';
 
 /// Acknowledgement means an authorized adult opened the record, not that help was delivered.
@@ -18,6 +19,8 @@ class HelpRequestsPage extends StatefulWidget {
 class _HelpRequestsPageState extends State<HelpRequestsPage> {
   late final Session sessionOwner;
   late final DeviceSubflowScope scope;
+  late final Listenable accessChanges;
+  final pageAccess = ValueNotifier<bool>(true);
   late final String root, role;
   List<HelpRequest> requests = const [];
   String? cursor;
@@ -32,6 +35,7 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
 
   bool permitted() =>
       mounted &&
+      pageAccess.value &&
       identical(widget.session, sessionOwner) &&
       sessionOwner.tenant != null &&
       sessionOwner.canOpen('help-requests');
@@ -42,6 +46,27 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
       pageError is ApiFailure &&
       (pageError as ApiFailure).code == 'INVALID_CURSOR';
 
+  bool _accessFailure(Object failure) =>
+      failure is ApiFailure &&
+      (failure.status == 401 ||
+          failure.status == 403 ||
+          failure.code == 'WORKSPACE_CHANGED' ||
+          failure.code == 'HELP_REQUEST_UNAVAILABLE');
+
+  // A server rejection invalidates this capture, including older in-flight reads.
+  // Retain uncertain write markers until disposal; losing access never retries them.
+  void _loseAccess() {
+    generation++;
+    requests = const [];
+    cursor = null;
+    firstPageLoaded = false;
+    loading = false;
+    loadingMore = false;
+    error = null;
+    pageError = null;
+    pageAccess.value = false;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -49,6 +74,7 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
     root = sessionOwner.root;
     role = sessionOwner.role;
     scope = DeviceSubflowScope(sessionOwner, permitted: permitted);
+    accessChanges = Listenable.merge([scope, pageAccess]);
     load();
   }
 
@@ -56,6 +82,12 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
   void dispose() {
     generation++;
     scope.dispose();
+    // Dispose may run while the widget tree is locked. Revoke the lease's
+    // notification after the frame; scope disposal already blocks callbacks.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      pageAccess.value = false;
+      pageAccess.dispose();
+    });
     super.dispose();
   }
 
@@ -98,7 +130,9 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
         });
       }
     } catch (failure) {
-      if (current && generation == epoch) {
+      if (current && _accessFailure(failure)) {
+        setState(_loseAccess);
+      } else if (current && generation == epoch) {
         setState(() {
           if (more) {
             pageError = failure;
@@ -143,9 +177,18 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
       return;
     }
     final openedAtSequence = lastDispatchedSequence[item.id];
-    final confirmed = await confirmAction(context, '确认已看到求助',
+    final subject = item.subjectNickname == null
+        ? item.subjectId
+        : '${item.subjectNickname}（${item.subjectId}）';
+    final confirmed = await confirmLeasedAction(context, '确认已看到求助',
+        '求助对象：$subject\n'
+        '求助类型：${helpReason(item.reasonCode)}\n'
+        '设备：${item.deviceId}\n'
+        '提交时间：${dateLabel(item.createdAt)}\n\n'
         '此操作只记录你已看到这条求助，不代表已联系孩子、问题已解决或紧急服务已接收。请根据实际情况尽快联系并提供帮助。',
-        confirm: '已看到');
+        confirm: '已看到',
+        accessChanges: accessChanges,
+        hasAccess: () => current);
     if (!confirmed || !current || sending.contains(item.id) ||
         uncertain.containsKey(item.id) ||
         lastDispatchedSequence[item.id] != openedAtSequence) return;
@@ -167,8 +210,12 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
     } catch (failure) {
       if (current) {
         setState(() {
-          uncertain[item.id] = operation;
-          error = failure;
+          if (_accessFailure(failure)) {
+            _loseAccess();
+          } else {
+            uncertain[item.id] = operation;
+            error = failure;
+          }
         });
       }
     } finally {
@@ -278,9 +325,10 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
               StatusTag(item.state)
             ]),
         const SizedBox(height: 6),
-        Text(
-            '提交：${dateLabel(item.createdAt)} · ${item.subjectNickname ?? '档案 ${shortId(item.subjectId)}'} · 设备 ${shortId(item.deviceId)}',
+        Text('对象：${item.subjectNickname ?? item.subjectId}'),
+        Text('提交：${dateLabel(item.createdAt)}',
             style: const TextStyle(color: muted)),
+        Text('设备：${item.deviceId}', style: const TextStyle(color: muted)),
         if (item.acknowledgedAt != null)
           Text('已在管理台确认看到：${dateLabel(item.acknowledgedAt)}。实际帮助仍需线下跟进。',
               style: const TextStyle(color: muted)),
@@ -288,14 +336,19 @@ class _HelpRequestsPageState extends State<HelpRequestsPage> {
           Align(
               alignment: Alignment.centerRight,
               child: OutlinedButton(
-                  onPressed:
-                      sending.contains(item.id) || uncertain.containsKey(item.id)
-                          ? null
+                  onPressed: sending.contains(item.id)
+                      ? null
+                      : uncertain.containsKey(item.id)
+                          ? loadingMore
+                              ? null
+                              : () {
+                                  if (!loading && !loadingMore) load();
+                                }
                           : () => acknowledge(item),
                   child: Text(sending.contains(item.id)
                       ? '处理中'
                       : uncertain.containsKey(item.id)
-                          ? '请先刷新核对'
+                          ? '刷新核对'
                           : '确认已看到')))
       ]));
 }

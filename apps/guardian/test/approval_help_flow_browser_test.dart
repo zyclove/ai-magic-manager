@@ -7,10 +7,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:guardian/core/api.dart';
+import 'package:guardian/core/labels.dart';
 import 'package:guardian/core/session.dart';
 import 'package:guardian/pages/console_pages.dart';
 import 'package:guardian/pages/help_requests_page.dart';
 import 'package:guardian/ui/design.dart';
+import 'package:guardian/ui/owned_dialog_route.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
@@ -60,6 +62,18 @@ Future<void> _flushPending(WidgetTester tester) async {
     await tester.runAsync(() => Future<void>.delayed(Duration.zero));
     await tester.pump(const Duration(milliseconds: 50));
   }
+}
+
+Finder _helpButton(String text) => find.ancestor(
+    of: find.text(text),
+    matching: find.byWidgetPredicate((widget) => widget is ButtonStyleButton));
+
+Future<void> _openHelpConfirmation(WidgetTester tester) async {
+  final open = _helpButton('确认已看到');
+  await tester.ensureVisible(open);
+  await tester.tap(open);
+  await _flushPending(tester);
+  expect(find.text('确认已看到求助'), findsOneWidget);
 }
 
 class _ApprovalFixture {
@@ -154,15 +168,18 @@ class _ApprovalFixture {
 }
 
 class _HelpFixture {
-  _HelpFixture({this.initialPending = false});
+  _HelpFixture({this.initialPending = false, this.listRead});
 
   final bool initialPending;
+  final FutureOr<http.Response> Function(http.Request, int)? listRead;
   final pending = Completer<http.Response>();
   int reads = 0, acknowledgements = 0;
   late final session = EntrySession((request) async {
     if (request.method == 'GET' &&
         request.url.path.endsWith('/help-requests')) {
       reads++;
+      final read = listRead;
+      if (read != null) return await read(request, reads);
       if (initialPending) return pending.future;
       return _reply({'items': [_help()], 'nextCursor': null});
     }
@@ -321,6 +338,132 @@ void main() {
       expect(tester.takeException(), isNull);
     });
   }
+
+  testWidgets('help append denial hides private rows and its covered confirmation',
+      (tester) async {
+    final append = Completer<http.Response>();
+    const next = '88888888-8888-4888-8888-888888888888';
+    final fixture = _HelpFixture(listRead: (request, read) {
+      if (read == 1) return _reply({'items': [_help()], 'nextCursor': next});
+      expect(request.url.queryParameters['cursor'], next);
+      return append.future;
+    });
+    await fixture.mount(tester);
+    addTearDown(() {
+      if (!append.isCompleted) append.complete(_reply({'items': [], 'nextCursor': null}));
+    });
+    final before = fixture.session.scopeGeneration;
+    final heldFilter = tester.widget<ChoiceChip>(
+        find.widgetWithText(ChoiceChip, '全部')).onSelected!;
+    final more = _helpButton('加载更多');
+    await tester.ensureVisible(more);
+    await tester.tap(more);
+    await _flushPending(tester);
+    expect(fixture.reads, 2);
+    await _openHelpConfirmation(tester);
+    final heldConfirm = tester.widget<ButtonStyleButton>(_helpButton('已看到'))
+        .onPressed!;
+    final pageContext = tester.element(find.byType(HelpRequestsPage));
+    final notice = OwnedDialogRoute<void>(context: pageContext,
+        builder: (_) => const AlertDialog(title: Text('独立通知')));
+    addTearDown(() {
+      if (notice.available) notice.finish();
+    });
+    unawaited(presentOwnedDialog(pageContext, notice));
+    await _flushPending(tester);
+    append.complete(_reply({'errorCode': 'SCOPE_DENIED'}, 403));
+    await settleReads(tester);
+    expect(fixture.session.scopeGeneration, before);
+    expect(find.textContaining('示例儿童', skipOffstage: false), findsNothing);
+    expect(find.textContaining(_help()['deviceId'] as String,
+        skipOffstage: false), findsNothing);
+    expect(find.text('确认已看到求助', skipOffstage: false), findsNothing);
+    heldConfirm();
+    heldFilter(true);
+    await _flushPending(tester);
+    expect(fixture.reads, 2);
+    expect(fixture.acknowledgements, 0);
+    expect(notice.available, isTrue);
+    expect(notice.isCurrent, isTrue);
+    expect(find.text('独立通知'), findsOneWidget);
+    notice.finish();
+    await settleReads(tester);
+    expect(find.text('已隐藏旧求助记录，请重新打开当前工作空间。'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('help unavailable acknowledgement invalidates an in-flight list read',
+      (tester) async {
+    final lateRead = Completer<http.Response>();
+    final fixture = _HelpFixture(listRead: (_, read) {
+      if (read == 1) return _reply({'items': [_help()], 'nextCursor': null});
+      return lateRead.future;
+    });
+    await fixture.mount(tester);
+    addTearDown(() {
+      if (!lateRead.isCompleted) lateRead.complete(_reply({'items': [], 'nextCursor': null}));
+    });
+    final heldRefresh = tester.widget<ButtonStyleButton>(_helpButton('刷新'))
+        .onPressed!;
+    await _openHelpConfirmation(tester);
+    await tester.tap(_helpButton('已看到'));
+    await _flushPending(tester);
+    expect(fixture.acknowledgements, 1);
+    heldRefresh();
+    await _flushPending(tester);
+    expect(fixture.reads, 2);
+    fixture.pending.complete(_reply({'errorCode': 'HELP_REQUEST_UNAVAILABLE'}, 404));
+    await settleReads(tester);
+    expect(find.textContaining('示例儿童', skipOffstage: false), findsNothing);
+    lateRead.complete(_reply({'items': [_help()], 'nextCursor': null}));
+    await settleReads(tester);
+    heldRefresh();
+    await _flushPending(tester);
+    expect(fixture.reads, 2);
+    expect(fixture.acknowledgements, 1);
+    expect(find.text('已隐藏旧求助记录，请重新打开当前工作空间。'), findsOneWidget);
+    expect(find.textContaining('示例儿童', skipOffstage: false), findsNothing);
+    expect(find.text('确认已看到', skipOffstage: false), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('help confirmation identifies its target and refreshes unknown results without POST',
+      (tester) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final fixture = _HelpFixture();
+    await fixture.mount(tester);
+    await _openHelpConfirmation(tester);
+    final confirmation = find.byType(AlertDialog);
+    for (final detail in ['示例儿童', _help()['subjectId'] as String,
+        _help()['deviceId'] as String, '需要监护人帮助',
+        dateLabel(_help()['createdAt']), '不代表已联系孩子']) {
+      expect(find.descendant(of: confirmation,
+          matching: find.textContaining(detail)), findsOneWidget);
+    }
+    final confirm = _helpButton('已看到');
+    await tester.ensureVisible(confirm);
+    await tester.tap(confirm);
+    await _flushPending(tester);
+    expect(fixture.acknowledgements, 1);
+    fixture.pending.complete(_reply({'errorCode': 'SERVICE_UNAVAILABLE'}, 503));
+    await settleReads(tester);
+    final reconcile = _helpButton('刷新核对');
+    expect(reconcile, findsOneWidget);
+    expect(tester.widget<ButtonStyleButton>(reconcile).onPressed, isNotNull);
+    await tester.ensureVisible(reconcile);
+    await tester.tap(reconcile);
+    await settleReads(tester);
+    expect(fixture.reads, 2);
+    expect(fixture.acknowledgements, 1,
+        reason: 'Reconciliation is a GET, not another acknowledgement.');
+    expect(_helpButton('刷新核对'), findsNothing);
+    expect(tester.widget<ButtonStyleButton>(_helpButton('确认已看到')).onPressed,
+        isNotNull);
+    expect(tester.takeException(), isNull);
+  });
 
   for (final succeeds in [true, false]) {
     testWidgets('help initial ${succeeds ? 'success' : 'error'} after disposal '
