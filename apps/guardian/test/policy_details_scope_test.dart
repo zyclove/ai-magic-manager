@@ -454,7 +454,13 @@ void main() {
     _capture(tester, '回滚为草稿')();
     await _waitUntil(tester, () => _topButton('确认').evaluate().isNotEmpty);
     await tester.tap(_topButton('取消'));
-    await _waitUntil(tester, () => version.isCurrent);
+    // Route.current precedes completion of the child action's async cleanup.
+    await _waitUntil(tester, () {
+      final rollback = _topButton('回滚为草稿');
+      return version.isCurrent &&
+          rollback.evaluate().length == 1 &&
+          tester.widget<ButtonStyleButton>(rollback).onPressed != null;
+    });
     expect(version.available, isTrue);
     expect(history.available, isTrue);
     expect(details.available, isTrue);

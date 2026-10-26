@@ -1,7 +1,7 @@
 {
   "createdAt": "2026-10-26T02:17:59.244707+00:00",
   "baseCommit": "7d7a05b0f349272531818b79cecf1fccb6644660",
-  "status": "PARTIAL_VERIFICATION",
+  "status": "FUNCTIONAL_CHECKS_PASSED_NATIVE_EVIDENCE_PENDING",
   "runtimeUpdated": false,
   "pushed": false,
   "currentSourceChecks": {
@@ -10,7 +10,8 @@
       "files": 9,
       "receipts": [
         "analysis-initial-result.json",
-        "analysis-repair-result.json"
+        "analysis-repair-result.json",
+        "analysis-cancel-result.json"
       ]
     },
     "unchangedVm": {
@@ -18,12 +19,16 @@
       "passed": 16,
       "receipt": "vm-result.json"
     },
-    "browserAfterRepair": {
-      "accepted": false,
-      "status": "NOT_STARTED_SDK_BUSY",
-      "receipt": "browser-repair-no-start.json"
-    },
-    "fullBrowserEvidenceAccepted": false
+    "fullBrowserEvidenceAccepted": false,
+    "browserFunctionalAssertions": {
+      "accepted": true,
+      "uniqueCases": 68,
+      "receipts": [
+        "browser-repair-result.json",
+        "rollback-result.json"
+      ],
+      "method": "67 passed in the three-file run; its sole failed case passed in a focused rerun after changing only that test body. Product source and all other tests were unchanged; no claim of one all-green three-file run."
+    }
   },
   "historicalBrowserAssertions": {
     "passed": 65,
@@ -41,8 +46,8 @@
     ]
   },
   "pending": [
-    "Rerun the three affected browser files (68 cases) after the original resource and SDK-idle gates recover.",
-    "Complete the unchanged full native browser evidence gate before claiming release acceptance."
+    "Complete the unchanged full native browser evidence gate before claiming release acceptance.",
+    "Joint release and real provider/device acceptance remain outside this frontend phase."
   ],
   "sourcePins": {
     "apps/guardian/lib/core/api.dart": "9fb8e8284d3381635e276756872160ddf5abf108aaf24dc928032cef613e31ed",
@@ -52,16 +57,27 @@
     "apps/guardian/lib/ui/design.dart": "0aa64f5c4bf05b55ab8d1a1f032448e61483228d9c8bea293725c8d4a2a99489",
     "apps/guardian/lib/ui/resource_page.dart": "5262a736607a5f930411943fbe9537bf3acbf7e19788fb8cfb827b00432267eb",
     "apps/guardian/test/dialog_submit_guard_test.dart": "b87e602c5f299ec47d596469902e06ab805934bc20ef43e042b6bea126dd95cb",
-    "apps/guardian/test/policy_details_scope_test.dart": "5779aa6760c724338790d0f56e5f664111675d52387b4eb3a56702f99144fc7c",
+    "apps/guardian/test/policy_details_scope_test.dart": "22d44decaba03209e34cca0b516f7d4bc3951125998d0a661a637de8a1dcb5ae",
     "apps/guardian/test/schedule_copy_flow_test.dart": "3d5726465c77c7aebfa7946d879c37b061b9a165e12407a47608328cb9ba1dd4"
   },
   "notes": [
     "Original failures and raw outputs retained; NO_START is never counted as a passing check.",
     "No lower resource gate, global process termination, dependency download, service replacement or database operation.",
     "Runner archives are the final local runner sources; historical receipts retain their original input hashes.",
-    "Native evidence already contains member ledger and command-finality data; duplicate standalone ledgers are omitted."
+    "Native evidence already contains member ledger and command-finality data; duplicate standalone ledgers are omitted.",
+    "The final cancellation fixture waits for both the current version route and an enabled rollback button, preserving the original assertion. Its bounded wait still fails if the action never recovers."
   ],
   "files": [
+    {
+      "path": "analysis-cancel-output.log",
+      "bytes": 188,
+      "sha256": "0034d18063213c192b50c6bb698f63bc2f63357fbb4702919bfbabffa20d9b07"
+    },
+    {
+      "path": "analysis-cancel-result.json",
+      "bytes": 4334,
+      "sha256": "77034df39da46cb1dd3ba8308ba6949e6c987009d5858884aad3780fdbfe67a5"
+    },
     {
       "path": "analysis-initial-output.log",
       "bytes": 188,
@@ -98,14 +114,39 @@
       "sha256": "816b9f560ee0a975eef13148b360536752a57a7bf7cd88264d2cf4e8109097bc"
     },
     {
+      "path": "browser-repair-native-evidence.json",
+      "bytes": 99319,
+      "sha256": "b1fd32dfd9733b151f03aa44269f8c626663ebd4630f67631dce72a750a2377b"
+    },
+    {
       "path": "browser-repair-no-start.json",
       "bytes": 628,
       "sha256": "6f7eb453959dcac9b5cdfc1f79da8666050e66207ee338123267a82e8284b699"
     },
     {
+      "path": "browser-repair-output.log",
+      "bytes": 35897,
+      "sha256": "41064e3cbbf36bf56ccaf77c60d64bdd3981c829fca0b3c93d6322af9502b7ec"
+    },
+    {
+      "path": "browser-repair-result.json",
+      "bytes": 4942,
+      "sha256": "b98f69e3e53ac63835d7b70b078f033c06de74a77694a08254f75b3c903e1b99"
+    },
+    {
       "path": "browser-runner.py.txt",
-      "bytes": 13591,
-      "sha256": "b344f43adf8c15267b2926b280dac4a5eec85b34c3adf6649916132cccf76110"
+      "bytes": 13806,
+      "sha256": "fdd74ff36e0e1b892f7f702fc25a77a27a22ed46cda14f32f29f2f631fb0e462"
+    },
+    {
+      "path": "format-cancel-output.log",
+      "bytes": 46,
+      "sha256": "9f7da4c4835019e1387f1f0dda34d2d500fb41ea70783f0643466f55f1084135"
+    },
+    {
+      "path": "format-cancel-result.json",
+      "bytes": 4310,
+      "sha256": "cd244d96ae9d019772631133f02c893ea7d241cb29a6dafb18f1224100dc21f4"
     },
     {
       "path": "format-no-start-1.json",
@@ -129,8 +170,8 @@
     },
     {
       "path": "offline-runner.py.txt",
-      "bytes": 10100,
-      "sha256": "1d4da95627501dbbf1aa4b073c13bbbf7d2f4300a1a93721b5d542ec669d979a"
+      "bytes": 10341,
+      "sha256": "46ec89ba82df04e4f175d6835287775a90c58b307cf658d16f676f0ebdad9d5b"
     },
     {
       "path": "red-output.log",
@@ -143,6 +184,21 @@
       "sha256": "1ebc441c2725e4b92ff2104a4b81e1cc9350d8f0765364d7850f2c17efd18066"
     },
     {
+      "path": "rollback-native-evidence.json",
+      "bytes": 42627,
+      "sha256": "0ac607a071d3f6eddcbc8793c0135485d2d435338ddd907d2a1c22749aa1b641"
+    },
+    {
+      "path": "rollback-output.log",
+      "bytes": 1366,
+      "sha256": "c81e9a16c48e5c2408b2039002fba89ca3475719884bfa1056604c447bb1d51d"
+    },
+    {
+      "path": "rollback-result.json",
+      "bytes": 6693,
+      "sha256": "7de7e4ad8a297046b6a30bfd984a0e47ccbcfd1f1e6eb57b0beb4f29c7af4a31"
+    },
+    {
       "path": "vm-output.log",
       "bytes": 9018,
       "sha256": "e175d8a2fddbdd71c7c139b6a735dd7b6c60a31154c4305ba5af6f1d8e8151a4"
@@ -152,5 +208,7 @@
       "bytes": 2514,
       "sha256": "8f1b4f5d69ce4a0ce2b06d3e9a6b7d57025326741d1d39412b2e22dac857cc5d"
     }
-  ]
+  ],
+  "updatedAt": "2026-10-26T02:32:00.554729+00:00",
+  "implementationCommit": "29377d031f44c7498f297d8e00ec8d0ac596433d"
 }

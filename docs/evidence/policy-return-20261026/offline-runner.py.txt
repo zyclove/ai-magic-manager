@@ -12,7 +12,7 @@ START = time.monotonic()
 COMMAND_END, CLEANUP_END = START + 60, START + 65
 ROOT = Path(__file__).resolve().parents[2]
 MODE = __import__('sys').argv[1]
-assert MODE in ('red','vm','analysis','analysis-fix','format','format-final','analysis-final','vm-final','format-repair','analysis-repair','format-repair-r2','analysis-repair-r2','format-repair-r3')
+assert MODE in ('red','vm','analysis','analysis-fix','format','format-final','analysis-final','vm-final','format-repair','analysis-repair','format-repair-r2','analysis-repair-r2','format-repair-r3','format-cancel','analysis-cancel')
 BASE = Path(__file__).resolve().parent / MODE
 BASE.mkdir()
 MODULE = ROOT / 'apps/guardian'
@@ -22,8 +22,8 @@ HELPER = ROOT / '.cache/guardian-resource-vm30-20261025-r1/owned_job.py'
 HELPER_SHA = 'f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b'
 TESTS = ['dialog_submit_guard_test.dart']
 TARGETS = ['lib/pages/editors.dart', 'lib/pages/policy_details_entry.dart', 'lib/pages/console_pages.dart', 'lib/ui/resource_page.dart', 'lib/ui/design.dart', 'lib/core/api.dart', 'test/dialog_submit_guard_test.dart', 'test/policy_details_scope_test.dart', 'test/schedule_copy_flow_test.dart']
-ANALYSIS_TARGETS = ['lib/pages/editors.dart', 'test/policy_details_scope_test.dart'] if MODE.startswith('analysis-repair') else ['test/schedule_copy_flow_test.dart'] if MODE == 'analysis-fix' else TARGETS
-FORMAT_TARGETS = ['lib/pages/editors.dart', 'test/policy_details_scope_test.dart'] if MODE.startswith('format-repair') else [path for path in TARGETS if path not in ('lib/pages/console_pages.dart', 'lib/ui/resource_page.dart', 'test/resource_page_resilience_test.dart')]
+ANALYSIS_TARGETS = ['test/policy_details_scope_test.dart'] if MODE == 'analysis-cancel' else ['lib/pages/editors.dart', 'test/policy_details_scope_test.dart'] if MODE.startswith('analysis-repair') else ['test/schedule_copy_flow_test.dart'] if MODE == 'analysis-fix' else TARGETS
+FORMAT_TARGETS = ['test/policy_details_scope_test.dart'] if MODE == 'format-cancel' else ['lib/pages/editors.dart', 'test/policy_details_scope_test.dart'] if MODE.startswith('format-repair') else [path for path in TARGETS if path not in ('lib/pages/console_pages.dart', 'lib/ui/resource_page.dart', 'test/resource_page_resilience_test.dart')]
 RELEVANT = ['lib/ui/design.dart', 'lib/core/api.dart', 'test/dialog_submit_guard_test.dart'] if MODE == 'red' or MODE.startswith('vm') else [*TARGETS, 'test/policy_editor_lifecycle_test.dart', 'test/policy_preview_flow_test.dart', 'test/policy_target_picker_test.dart', 'lib/pages/device_subflow_scope.dart', 'lib/core/session.dart', 'lib/core/scoped_http_client.dart', 'lib/ui/dialog_access.dart', 'lib/ui/owned_dialog_route.dart']
 INPUTS = [MODULE / path for path in [*RELEVANT, 'pubspec.yaml', 'pubspec.lock', '.dart_tool/package_config.json']]
 
@@ -122,7 +122,7 @@ try:
     if (MODE.startswith('analysis') or MODE.startswith('format')):
         output = (BASE / 'out/tests.jsonl').read_text(encoding='utf-8-sig')
         receipt['analysisNoIssues'] = 'No issues found!' in output if MODE.startswith('analysis') else None
-        receipt['formatCompleted'] = ('Formatted 2 files' in output if MODE.startswith('format-repair') else 'Formatted 7 files' in output) if MODE.startswith('format') else None
+        receipt['formatCompleted'] = ('Formatted 1 file' in output if MODE == 'format-cancel' else 'Formatted 2 files' in output if MODE.startswith('format-repair') else 'Formatted 7 files' in output) if MODE.startswith('format') else None
         receipt['status'] = 'PASSED' if receipt['naturalZero'] and receipt['windowReleased'] and (receipt['analysisNoIssues'] if MODE.startswith('analysis') else receipt['formatCompleted']) and (receipt['sourceUnchanged'] or MODE.startswith('format')) else 'NOT_ACCEPTED'
     else:
         receipt['status'] = 'PASSED' if receipt['appTestsPassed'] and receipt['windowReleased'] else 'NOT_ACCEPTED'

@@ -14,7 +14,7 @@ START = time.monotonic()
 COMMAND_END, CLEANUP_END = START + 135, START + 140
 ROOT = Path(__file__).resolve().parents[2]
 MODE = sys.argv[1]
-assert MODE in ('red','green','green-r2')
+assert MODE in ('red','green','green-r2','green-r3','rollback')
 BASE = Path(__file__).resolve().parent / ('browser-'+MODE)
 BASE.mkdir()
 MODULE = ROOT / 'apps/guardian'
@@ -23,7 +23,8 @@ PWSH = Path('C:/Users/Administrator/.cache/codex-runtimes/codex-primary-runtime/
 HELPER = ROOT / '.cache/guardian-resource-vm30-20261025-r1/owned_job.py'
 HELPER_SHA = 'f8b44764ed30d638781b7dc913e651fbbc6311b8f0945cc0d71b67c65abc141b'
 TESTS = ['policy_details_scope_test.dart', 'policy_editor_lifecycle_test.dart', 'schedule_copy_flow_test.dart']
-EXPECTED_TEST_SHA = '5779aa6760c724338790d0f56e5f664111675d52387b4eb3a56702f99144fc7c'
+if MODE == 'rollback': TESTS = TESTS[:1]
+EXPECTED_TEST_SHA = '22d44decaba03209e34cca0b516f7d4bc3951125998d0a661a637de8a1dcb5ae'
 CHROME = Path('C:/Program Files/Google/Chrome/Application/chrome.exe')
 COMPONENTS = ROOT / '.cache/guardian-browser13-20261024-r6-owned-member-finality'
 
@@ -113,7 +114,8 @@ try:
         GIT_CONFIG_KEY_0='safe.directory', GIT_CONFIG_VALUE_0=ROOT.as_posix(),
         GIT_CONFIG_KEY_1='safe.directory', GIT_CONFIG_VALUE_1=SDK.as_posix())
     command = str(SDK / 'bin/flutter.bat') + ' --no-version-check --suppress-analytics test --platform=chrome --no-pub --web-renderer=html --reporter=json ' + ' '.join('test/' + name for name in TESTS)
-    assert MODE in ('green','green-r2')
+    if MODE == 'rollback': command += ' --name=cancellation'
+    assert MODE in ('green','green-r2','green-r3','rollback')
     assert not any(c in command for c in '&|<>^%!"\r\n'), 'Unsafe fixed command text'
     assert time.monotonic() + 1 < COMMAND_END, 'No original command budget remains'
     job.create_suspended([r'C:\Windows\System32\cmd.exe', '/d', '/v:off', '/c', command],
@@ -189,7 +191,7 @@ try:
         name = by_suite[by_test[e['testID']]]
         counts[name] = counts.get(name, 0) + 1
     receipt['caseCounts'] = counts
-    expected_cases = counts == {'policy_details_scope_test.dart': 26, 'policy_editor_lifecycle_test.dart': 34, 'schedule_copy_flow_test.dart': 8}
+    expected_cases = counts == ({'policy_details_scope_test.dart': 1} if MODE == 'rollback' else {'policy_details_scope_test.dart': 26, 'policy_editor_lifecycle_test.dart': 34, 'schedule_copy_flow_test.dart': 8})
     receipt['appTestsPassed'] = bool(receipt['naturalZero'] and receipt['reporterDone'] and endings
         and expected_cases and not receipt['failed'] and not receipt['skipped'] and receipt['suiteFilesMatch'] and receipt['sourceUnchanged'] and receipt['browserBoundariesAccepted'])
     receipt['windowReleased'] = not receipt['sdkAfter']['sdk'] and receipt['sdkAfter']['unknown'] == 0

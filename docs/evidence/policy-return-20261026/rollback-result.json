@@ -1,0 +1,171 @@
+{
+  "status": "NOT_ACCEPTED",
+  "sdkCalls": 1,
+  "tests": [
+    "policy_details_scope_test.dart"
+  ],
+  "forceRequested": false,
+  "commandCloseFallback": false,
+  "checkType": "BROWSER_POLICY_RETURN",
+  "head": "29377d031f44c7498f297d8e00ec8d0ac596433d",
+  "resourcesBefore": {
+    "ram": 3645423616,
+    "cFree": 2336858112,
+    "dFree": 16274890752
+  },
+  "sdkBefore": {
+    "sdk": [],
+    "unknown": 0
+  },
+  "pid": 173212,
+  "command": "D:\\softwares\\flutter\\bin\\flutter.bat --no-version-check --suppress-analytics test --platform=chrome --no-pub --web-renderer=html --reporter=json test/policy_details_scope_test.dart --name=cancellation",
+  "commandFinalityCapture": {
+    "schemaVersion": 1,
+    "source": "SAME_COMMAND_OWNED_JOB",
+    "jobRootPid": 173212,
+    "jobRootCreationFiletime": 134374554086321072,
+    "originalCommandDeadlineQpc": 260060.7718314,
+    "deadlineQpc": 259946.5331661,
+    "naturalDrainSeconds": 0.5,
+    "A0": {
+      "pid": 173212,
+      "creationFiletime": 134374554086321072,
+      "firstSignaledQpc": 259946.0331661,
+      "sampleQpc": 259946.0993592,
+      "signaled": true,
+      "exitCode": 0,
+      "exitFiletime": 134374554282820889,
+      "kernel100ns": 156250,
+      "user100ns": 0,
+      "jobAccountingObservedQpc": 259946.0993739,
+      "firstCompleteTerminalQpc": 259946.0993287,
+      "activeProcesses": 0,
+      "totalProcesses": 21,
+      "terminatedProcesses": 0,
+      "terminal": true
+    },
+    "M": {
+      "startedQpc": 259946.0994394,
+      "deadlineQpc": 259946.5331661,
+      "before": {
+        "qpc": 259946.0994394,
+        "complete": true,
+        "assigned": 0,
+        "listed": 0,
+        "limit": 32,
+        "error": 0,
+        "pids": []
+      },
+      "identities": [],
+      "after": {
+        "qpc": 259946.0994442,
+        "complete": true,
+        "assigned": 0,
+        "listed": 0,
+        "limit": 32,
+        "error": 0,
+        "pids": []
+      },
+      "identityRowsLimitedByDeadline": false,
+      "scope": "This private Job only; read-only handles, no command line/environment, no PID termination",
+      "causeClassified": false
+    },
+    "A1": {
+      "pid": 173212,
+      "creationFiletime": 134374554086321072,
+      "firstSignaledQpc": 259946.0331661,
+      "sampleQpc": 259946.0994483,
+      "signaled": true,
+      "exitCode": 0,
+      "exitFiletime": 134374554282820889,
+      "kernel100ns": 156250,
+      "user100ns": 0,
+      "jobAccountingObservedQpc": 259946.0994596,
+      "firstCompleteTerminalQpc": 259946.0993287,
+      "activeProcesses": 0,
+      "totalProcesses": 21,
+      "terminatedProcesses": 0,
+      "terminal": true
+    },
+    "forceRequested": false,
+    "closeFallback": false
+  },
+  "terminal": {
+    "pid": 173212,
+    "creationFiletime": 134374554086321072,
+    "firstSignaledQpc": 259946.0331661,
+    "sampleQpc": 259946.0992701,
+    "signaled": true,
+    "exitCode": 0,
+    "exitFiletime": 134374554282820889,
+    "kernel100ns": 156250,
+    "user100ns": 0,
+    "jobAccountingObservedQpc": 259946.0993287,
+    "firstCompleteTerminalQpc": 259946.0993287,
+    "activeProcesses": 0,
+    "totalProcesses": 21,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "naturalZero": true,
+  "browserBoundariesAccepted": false,
+  "browserEvidenceStatus": "NOT_ACCEPTED",
+  "browserProblems": [
+    "OWN_JOB_MEMBER_HARD_ERROR",
+    "OWN_JOB_MEMBER_IDENTITY_UNPROVED"
+  ],
+  "passed": 1,
+  "failed": 0,
+  "skipped": 0,
+  "reporterDone": true,
+  "suiteFilesMatch": true,
+  "sourceUnchanged": true,
+  "sourcePins": {
+    "apps\\guardian\\lib\\pages\\editors.dart": "ad32dbad20c7e679cf35fe975cdd375c74b363cdec07492708eed0c673b8ca16",
+    "apps\\guardian\\lib\\pages\\policy_details_entry.dart": "6579faa2d7518ed553218b6c54247cbd7277b5855abdae604e2aee8a69be977c",
+    "apps\\guardian\\lib\\pages\\console_pages.dart": "4fc838a0347502b6c1f4215914ca52da4e3a8171f03dd783f4044c414387495b",
+    "apps\\guardian\\lib\\ui\\resource_page.dart": "5262a736607a5f930411943fbe9537bf3acbf7e19788fb8cfb827b00432267eb",
+    "apps\\guardian\\lib\\ui\\design.dart": "0aa64f5c4bf05b55ab8d1a1f032448e61483228d9c8bea293725c8d4a2a99489",
+    "apps\\guardian\\lib\\core\\api.dart": "9fb8e8284d3381635e276756872160ddf5abf108aaf24dc928032cef613e31ed",
+    "apps\\guardian\\test\\policy_details_scope_test.dart": "22d44decaba03209e34cca0b516f7d4bc3951125998d0a661a637de8a1dcb5ae",
+    "apps\\guardian\\test\\policy_editor_lifecycle_test.dart": "d3319a7206a36453e7c3e09d9283fb5fda096e31b176983182b7d55a10c5af56",
+    "apps\\guardian\\test\\schedule_copy_flow_test.dart": "3d5726465c77c7aebfa7946d879c37b061b9a165e12407a47608328cb9ba1dd4",
+    "apps\\guardian\\test\\policy_preview_flow_test.dart": "2da8ae71537e7548dd47ee2239a4ebfe752ff315b6e7e8ed16bc53bea037060a",
+    "apps\\guardian\\test\\policy_target_picker_test.dart": "59759dc6a9b6e50106fb062e8b22cd8b99eb92b94e9c2cfa2e9996b9a3fa162b",
+    "apps\\guardian\\lib\\core\\session.dart": "2c0c354df653359c24619fc1be3162030ae503127bbd3dd1a6ec2b96fce2a864",
+    "apps\\guardian\\lib\\core\\scoped_http_client.dart": "796c1c627a34ebded045ed6b8acdcf2b0705e16ce840b6ee3061c05e2d9352be",
+    "apps\\guardian\\lib\\ui\\dialog_access.dart": "8fe7c3d9ee1b7a038dc08939ea5cd40572a411ced63a01ba6eb12a88e50145d5",
+    "apps\\guardian\\lib\\ui\\owned_dialog_route.dart": "d49a6fc20950c2335b06f8bcb1d89fcdb38a857fca2169de6f0bf43bfb786946",
+    "apps\\guardian\\lib\\pages\\device_subflow_scope.dart": "31fde644fb27be3ceadcb0fae374e27655777c91b2b77ecc196e6aac60ec395e",
+    "apps\\guardian\\.dart_tool\\package_config.json": "7d56027a23fc233d28485accb53dc9e4a4e35ae7e4f082f5c7b9450b5f091922",
+    "apps\\guardian\\pubspec.lock": "c6f16b105ed81fd036675605a44b846474fb45fec17040796c1358cdebd0016c",
+    "apps\\guardian\\pubspec.yaml": "0e6fc775ba24cc541e918b7d74fde7ec7591c9badd47d5dfd2ee9f00fce24dcf"
+  },
+  "sdkAfter": {
+    "sdk": [],
+    "unknown": 0
+  },
+  "caseCounts": {
+    "policy_details_scope_test.dart": 1
+  },
+  "appTestsPassed": false,
+  "windowReleased": true,
+  "finalOwnedState": {
+    "pid": 173212,
+    "creationFiletime": 134374554086321072,
+    "firstSignaledQpc": 259946.0331661,
+    "sampleQpc": 259946.814807,
+    "signaled": true,
+    "exitCode": 0,
+    "exitFiletime": 134374554282820889,
+    "kernel100ns": 156250,
+    "user100ns": 0,
+    "jobAccountingObservedQpc": 259946.8148534,
+    "firstCompleteTerminalQpc": 259946.0993287,
+    "activeProcesses": 0,
+    "totalProcesses": 21,
+    "terminatedProcesses": 0,
+    "terminal": true
+  },
+  "elapsedSeconds": 21.043120899994392
+}

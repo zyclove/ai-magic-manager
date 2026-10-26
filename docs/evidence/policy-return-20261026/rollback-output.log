@@ -1,0 +1,10 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+{"protocolVersion":"0.1.1","runnerVersion":null,"pid":215512,"type":"start","time":0}
+{"suite":{"id":0,"platform":"chrome","path":"D:/codes/mobile/ai-manager/apps/guardian/test/policy_details_scope_test.dart"},"type":"suite","time":0}
+{"test":{"id":1,"name":"loading D:/codes/mobile/ai-manager/apps/guardian/test/policy_details_scope_test.dart","suiteID":0,"groupIDs":[],"metadata":{"skip":false,"skipReason":null},"line":null,"column":null,"url":null},"type":"testStart","time":1}
+{"count":1,"time":5,"type":"allSuites"}
+{"testID":1,"result":"success","skipped":false,"hidden":true,"type":"testDone","time":3926}
+{"group":{"id":2,"suiteID":0,"parentID":null,"name":"","metadata":{"skip":false,"skipReason":null},"testCount":1,"line":null,"column":null,"url":null},"type":"group","time":3929}
+{"test":{"id":3,"name":"policy-return rollback cancellation keeps version and confirm refreshes","suiteID":0,"groupIDs":[2],"metadata":{"skip":false,"skipReason":null},"line":10414,"column":19,"url":"file:///D:/codes/mobile/ai-manager/apps/guardian/packages/flutter_test/src/test_text_input_key_handler.dart.js"},"type":"testStart","time":3930}
+{"testID":3,"result":"success","skipped":false,"hidden":false,"type":"testDone","time":6474}
+{"success":true,"type":"done","time":6481}
