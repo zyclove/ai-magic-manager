@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../core/labels.dart';
 import '../core/overview_summary.dart';
+import '../core/overview_attention.dart';
+import 'workbench_task_card.dart';
 import 'design.dart';
 
 /// Presentation only: counts and availability come from the current workspace.
@@ -41,34 +43,6 @@ class WorkbenchView extends StatelessWidget {
   }
 
   _WorkbenchAction? _nextAction(OverviewSummary value) {
-    if ((value.openHelpRequestCount ?? 0) > 0 && canOpen('help-requests')) {
-      return _WorkbenchAction(
-          '先查看$subjectWord求助',
-          '有 ${value.openHelpRequestCount} 条求助尚未确认看到。请核对内容，并实际联系与跟进。',
-          '查看求助',
-          Icons.volunteer_activism_outlined,
-          () => onOpen('help-requests'),
-          section: 'help-requests',
-          urgent: true);
-    }
-    if (value.pendingRequestCount > 0 && canOpen('approvals')) {
-      return _WorkbenchAction(
-          '处理待审批的访问申请',
-          '有 ${value.pendingRequestCount} 条申请等待处理。先查看申请理由，再决定是否允许临时访问。',
-          '查看待处理审批',
-          Icons.task_alt_outlined,
-          () => onOpen('approvals'),
-          section: 'approvals');
-    }
-    if ((value.connectionCheckCount ?? 0) > 0 && canOpen('devices')) {
-      return _WorkbenchAction(
-          '检查设备连接',
-          '${value.connectionCheckCount} 台设备尚无近期心跳。请检查连接；心跳缺失不能证明设备规则已失效。',
-          '查看设备连接',
-          Icons.wifi_off_outlined,
-          () => onOpen('devices'),
-          section: 'devices');
-    }
     if (value.subjectCount == 0 &&
         canOpen('subjects') &&
         onAddSubject != null) {
@@ -120,7 +94,11 @@ class WorkbenchView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final value = summary;
-    final action = value == null || error != null || refreshing
+    final attention = value == null || error != null || refreshing
+        ? null
+        : OverviewAttention.pick(value,
+            role: role, organization: organization, canOpen: canOpen);
+    final action = value == null || error != null || refreshing || attention != null
         ? null
         : _nextAction(value);
     final commonActions = _commonActions(context, action?.shortcut);
@@ -155,8 +133,16 @@ class WorkbenchView extends StatelessWidget {
           Notice('以下为上次成功读取的数据，当前状态尚未更新。', warning: error != null),
           const SizedBox(height: 20),
         ],
-        if (action != null) ...[
-          _primaryAction(context, action),
+        if (attention != null) ...[
+          WorkbenchTaskCard.attention(attention,
+              busy: busy, onPressed: () => _open(attention.section)),
+          const SizedBox(height: 20),
+        ] else if (action != null) ...[
+          WorkbenchTaskCard(title: action.title, description: action.description,
+              label: action.label, icon: action.icon, urgent: action.urgent,
+              busy: busy, onPressed: () {
+                if (canOpen(action.section)) action.run();
+              }),
           const SizedBox(height: 20),
         ],
         _metrics(context, value),
@@ -176,48 +162,6 @@ class WorkbenchView extends StatelessWidget {
                 style: const TextStyle(color: muted, fontSize: 12))),
     ]);
   }
-
-  Widget _primaryAction(BuildContext context, _WorkbenchAction action) => Panel(
-          child:
-              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
-          Icon(action.icon,
-              size: 24, color: action.urgent ? const Color(0xFFA7473C) : navy),
-          const SizedBox(width: 10),
-          Expanded(
-              child: Text(action.urgent ? '需要优先关注' : '接下来可以做',
-                  style: TextStyle(
-                      color: action.urgent ? const Color(0xFFA7473C) : muted,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600))),
-        ]),
-        const SizedBox(height: 16),
-        Text(action.title, style: Theme.of(context).textTheme.titleLarge),
-        const SizedBox(height: 8),
-        Text(action.description,
-            style: const TextStyle(color: muted, height: 1.7)),
-        const SizedBox(height: 18),
-        Semantics(
-            liveRegion: busy,
-            child: FilledButton.icon(
-                key: const Key('workbench-next-action'),
-                onPressed: busy
-                    ? null
-                    : () {
-                        if (canOpen(action.section)) action.run();
-                      },
-                icon: busy
-                    ? SizedBox.square(
-                        dimension: 18,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurfaceVariant))
-                    : const Icon(Icons.arrow_forward, size: 18),
-                label: Text(busy ? '处理中…' : action.label,
-                    textAlign: TextAlign.center))),
-      ]));
 
   Widget _metrics(BuildContext context, OverviewSummary value) {
     final entries = <({

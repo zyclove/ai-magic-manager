@@ -14,10 +14,13 @@ import 'package:guardian/ui/design.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
-http.Response _summary(int count) => http.Response(
+http.Response _summary(int count,
+        {int pending = 0, int? help, int? connections}) => http.Response(
     jsonEncode({
       'subjectCount': count,
-      'pendingRequestCount': 0,
+      'pendingRequestCount': pending,
+      if (help != null) 'openHelpRequestCount': help,
+      if (connections != null) 'connectionCheckCount': connections,
       'recentActivity': <Object>[],
     }),
     200,
@@ -78,6 +81,9 @@ class _Host {
       GoRoute(
           path: '/subjects',
           builder: (_, state) => const Scaffold(body: Text('档案目的页'))),
+      GoRoute(
+          path: '/help-requests',
+          builder: (_, state) => const Scaffold(body: Text('授权求助目的页'))),
       GoRoute(
           path: '/elsewhere',
           builder: (_, state) => const Scaffold(body: Text('另一页面'))),
@@ -145,6 +151,40 @@ VoidCallback _navigate(WidgetTester tester) => tester
     .onPressed!;
 
 void main() {
+  testWidgets('teacher next step opens authorized help and retires its old route callback',
+      (tester) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    var reads = 0;
+    final session = _OverviewSession((request) {
+      reads++;
+      expect(request.url.path, endsWith('/tenants/tenant-a/overview'));
+      return _summary(4, pending: 3, help: 2, connections: 1);
+    });
+    final host = await _mount(tester, session, textScale: 1.5);
+    await _settle(tester);
+    final next = find.byKey(const Key('scoped-overview-next-action'));
+    expect(next, findsOneWidget);
+    expect(find.textContaining('上次读取完成：'), findsOneWidget);
+    expect(reads, 1, reason: 'The next step reuses the authorized overview.');
+    final held = tester.widget<FilledButton>(next).onPressed!;
+    await tester.ensureVisible(next);
+    await tester.tap(next);
+    await _settle(tester);
+    expect(host.router.routeInformationProvider.value.uri.path, '/help-requests');
+    expect(find.text('授权求助目的页'), findsOneWidget);
+    host.router.go('/elsewhere');
+    await _settle(tester);
+    held();
+    await _settle(tester);
+    expect(host.router.routeInformationProvider.value.uri.path, '/elsewhere');
+    expect(find.text('另一页面'), findsOneWidget);
+    expect(reads, 1);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('same-tenant same-role account ABA discards a late summary',
       (tester) async {
     final response = Completer<http.Response>();

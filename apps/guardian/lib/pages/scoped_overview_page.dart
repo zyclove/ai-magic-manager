@@ -3,8 +3,10 @@ import 'package:go_router/go_router.dart';
 import '../core/api.dart';
 import '../core/labels.dart';
 import '../core/overview_summary.dart';
+import '../core/overview_attention.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
+import '../ui/workbench_task_card.dart';
 import 'device_subflow_scope.dart';
 
 /// Read-only workbench for roles without family/organization administration rights.
@@ -18,6 +20,7 @@ class ScopedOverviewPage extends StatefulWidget {
 
 class _ScopedOverviewPageState extends State<ScopedOverviewPage> {
   OverviewSummary? summary;
+  DateTime? refreshedAt;
   Object? error;
   int generation = 0;
   DeviceSubflowScope? _scope;
@@ -62,6 +65,7 @@ class _ScopedOverviewPageState extends State<ScopedOverviewPage> {
   void _clear() {
     generation++;
     summary = null;
+    refreshedAt = null;
     error = null;
     reading = false;
   }
@@ -120,7 +124,10 @@ class _ScopedOverviewPageState extends State<ScopedOverviewPage> {
       final next =
           OverviewSummary.parse(await scope.api.send('GET', '$root/overview'));
       if (epoch == generation && _current(scope)) {
-        setState(() => summary = next);
+        setState(() {
+          summary = next;
+          refreshedAt = DateTime.now();
+        });
       }
     } catch (failure) {
       if (epoch == generation && _current(scope)) {
@@ -131,6 +138,7 @@ class _ScopedOverviewPageState extends State<ScopedOverviewPage> {
                   failure.status == 403 ||
                   failure.code == 'WORKSPACE_CHANGED')) {
             summary = null;
+            refreshedAt = null;
             reading = false;
             _serverDenied = true;
             // Permanently revoke this capture even if Session has not yet
@@ -192,6 +200,11 @@ class _ScopedOverviewPageState extends State<ScopedOverviewPage> {
       'AUDITOR' => '查看策略草稿、待处理申请和最近的审计事实。',
       _ => '仅展示当前身份获准查看的信息。',
     };
+    final attention = summary == null || error != null || reading
+        ? null
+        : OverviewAttention.pick(summary!, role: role,
+            organization: session.tenant!['kind'] == 'ORGANIZATION',
+            canOpen: session.canOpen);
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       PageHeading('欢迎，${session.displayName}',
           '${label(role)} · ${session.tenant!['name']}',
@@ -227,6 +240,12 @@ class _ScopedOverviewPageState extends State<ScopedOverviewPage> {
           Notice('以下为上次成功读取的数据，当前状态尚未更新。', warning: error != null),
           const SizedBox(height: 16),
         ],
+        if (attention != null) ...[
+          WorkbenchTaskCard.attention(attention,
+              buttonKey: const Key('scoped-overview-next-action'),
+              onPressed: () => _open(scope, attention.section)),
+          const SizedBox(height: 20),
+        ],
         LayoutBuilder(
             builder: (context, box) =>
                 Wrap(spacing: 16, runSpacing: 16, children: [
@@ -249,13 +268,15 @@ class _ScopedOverviewPageState extends State<ScopedOverviewPage> {
                         summary!.openHelpRequestCount!,
                         Icons.volunteer_activism_outlined),
                 ])),
-        if (role != 'AUDITOR' && (summary!.connectionCheckCount ?? 0) > 0) ...[
+        if (role != 'AUDITOR' && (summary!.connectionCheckCount ?? 0) > 0 &&
+            attention?.kind != OverviewAttentionKind.connection) ...[
           const SizedBox(height: 16),
           Notice(
               '${summary!.connectionCheckCount} 台可见设备尚无近期心跳。请检查连接；失联不能证明规则已失效。',
               warning: true),
         ],
-        if (role == 'TEACHER' && (summary!.openHelpRequestCount ?? 0) > 0) ...[
+        if (role == 'TEACHER' && (summary!.openHelpRequestCount ?? 0) > 0 &&
+            attention?.kind != OverviewAttentionKind.help) ...[
           const SizedBox(height: 16),
           Notice(
               '当前授权范围有 ${summary!.openHelpRequestCount} 条学生求助尚未确认看到。请打开收件记录，并按机构流程实际联系与跟进。',
@@ -304,6 +325,11 @@ class _ScopedOverviewPageState extends State<ScopedOverviewPage> {
                 trailing: Text(dateLabel(activity.occurredAt))),
         ]))
       ],
+      if (summary != null && refreshedAt != null)
+        Padding(
+            padding: const EdgeInsets.only(top: 16),
+            child: Text('上次读取完成：${dateLabel(refreshedAt!.toIso8601String())}',
+                style: const TextStyle(color: muted, fontSize: 12))),
     ]);
   }
 
@@ -325,15 +351,17 @@ class _ScopedOverviewPageState extends State<ScopedOverviewPage> {
         ])));
   }
 
+  void _open(DeviceSubflowScope? scope, String section) {
+    if (_current(scope) && scope!.session.canOpen(section)) {
+      context.go('/$section');
+    }
+  }
+
   Widget _link(String text, IconData icon, String route) {
     final scope = _scope;
     final section = route.substring(1);
     return OutlinedButton.icon(
-        onPressed: () {
-        if (_current(scope) && scope!.session.canOpen(section)) {
-            context.go(route);
-        }
-        },
+        onPressed: () => _open(scope, section),
         icon: Icon(icon, size: 18),
         label: Text(text));
   }
