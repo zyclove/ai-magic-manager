@@ -1,0 +1,6 @@
+test_linked_build_uses_resolved_flutter_for_sdk_and_all_calls (__main__.FlutterResolutionTest.test_linked_build_uses_resolved_flutter_for_sdk_and_all_calls) ... skipped 'Windows did not grant file-symlink creation; real link case not verified'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.114s
+
+OK (skipped=1)

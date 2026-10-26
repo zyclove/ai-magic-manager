@@ -1,0 +1,22 @@
+import hashlib,json,os,subprocess,sys,time
+from pathlib import Path
+ROOT=Path(__file__).resolve().parents[2]
+MODE=sys.argv[1]
+assert MODE in ('red','red-elevated','green','green-r2','green-r3')
+BASE=Path(__file__).resolve().parent/MODE
+(BASE/'out').mkdir(parents=True)
+(BASE/'tmp').mkdir()
+script=ROOT/'scripts/build-deployment.ps1'
+test=ROOT/'scripts/tests/test_build_flutter_resolution.py'
+pins={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (script,test)}
+env=os.environ.copy();env.update(PWSH='C:/Users/Administrator/.cache/codex-runtimes/codex-primary-runtime/dependencies/native/powershell/pwsh.exe',TEMP=str(BASE/'tmp'),TMP=str(BASE/'tmp'),PYTHONDONTWRITEBYTECODE='1',NO_COLOR='1')
+command=[sys.executable,'-I','-B',str(test)]
+if MODE.startswith('red'):command+=['FlutterResolutionTest.test_linked_build_uses_resolved_flutter_for_sdk_and_all_calls']
+command+=['-v']
+start=time.monotonic()
+with (BASE/'out/output.log').open('wb') as stream:
+ result=subprocess.run(command,cwd=ROOT,env=env,stdout=stream,stderr=subprocess.STDOUT,timeout=75)
+r={'checkType':'ISOLATED_POWERSHELL_FAKE_TOOLS','mode':MODE,'exitCode':result.returncode,'elapsedSeconds':time.monotonic()-start,'actualSdkCalls':0,'sourcePins':pins,'sourceUnchanged':pins=={str(p.relative_to(ROOT)):hashlib.sha256(p.read_bytes()).hexdigest() for p in (script,test)}}
+(BASE/'result.json').write_text(json.dumps(r,indent=2)+'\n',encoding='utf-8')
+print(json.dumps(r))
+raise SystemExit(result.returncode)

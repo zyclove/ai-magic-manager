@@ -18,6 +18,61 @@ param(
     [switch]$Offline
 )
 $ErrorActionPreference = 'Stop'
+
+function Resolve-DeploymentFlutterInstallation {
+    [CmdletBinding()]
+    param([Parameter(Mandatory)][ValidateNotNullOrEmpty()][string]$Command)
+
+    # Inspect explicit links without requiring their final target to exist first.
+    # For PATH names, accept file-backed commands only; never infer a SDK from
+    # a function, alias, or the contents of a shell/package-manager shim.
+    if ([IO.Path]::IsPathRooted($Command) -or $Command.Contains('/') -or $Command.Contains('\')) {
+        $candidate = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Command)
+    } else {
+        $entryCommand = Get-Command $Command -ErrorAction Stop | Select-Object -First 1
+        if ($entryCommand.CommandType -notin @('Application', 'ExternalScript') -or
+            [string]::IsNullOrWhiteSpace($entryCommand.Source)) {
+            throw 'FlutterCommand must name an SDK bin entry or a file symbolic link to it.'
+        }
+        $candidate = [IO.Path]::GetFullPath($entryCommand.Source)
+    }
+    $comparer = if ($IsWindows) { [StringComparer]::OrdinalIgnoreCase } else { [StringComparer]::Ordinal }
+    $visited = [Collections.Generic.HashSet[string]]::new($comparer)
+    for ($hop = 0; $hop -le 16; $hop++) {
+        if (-not $visited.Add($candidate)) { throw 'Flutter command symbolic link cycle detected.' }
+        try {
+            $entry = Get-Item -LiteralPath $candidate -Force -ErrorAction Stop
+        } catch {
+            throw 'Flutter command cannot resolve to an existing file (missing target or cycle).'
+        }
+        if ($entry -isnot [IO.FileInfo]) { throw 'Flutter command must resolve to an existing file.' }
+        if ($entry.LinkType -eq 'SymbolicLink') {
+            if ($hop -eq 16) { throw 'Flutter command exceeds the maximum of 16 symbolic links.' }
+            $targets = @($entry.Target)
+            if ($targets.Count -ne 1 -or [string]::IsNullOrWhiteSpace($targets[0])) {
+                throw 'Flutter command has an unsupported symbolic link target.'
+            }
+            $candidate = [IO.Path]::GetFullPath([string]$targets[0], [IO.Path]::GetDirectoryName($entry.FullName))
+            continue
+        }
+        if ($entry.Attributes -band [IO.FileAttributes]::ReparsePoint) {
+            throw 'Flutter command contains an unsupported reparse point.'
+        }
+        $bin = [IO.Path]::GetDirectoryName($entry.FullName)
+        $tool = Join-Path $bin 'cache/flutter_tools.snapshot'
+        if ((Split-Path $bin -Leaf) -ne 'bin') {
+            throw 'FlutterCommand must point to the installed SDK bin entry or a symbolic link to it.'
+        }
+        # Flutter dependency preparation may generate this snapshot. Keep the
+        # existence check at the original pre-Maven gate after preparation.
+        return [pscustomobject]@{
+            FlutterPath = $entry.FullName
+            DefaultDartCommand = Join-Path $bin $(if ($IsWindows) { 'dart.bat' } else { 'dart' })
+            FlutterTool = $tool
+        }
+    }
+}
+
 . (Join-Path $PSScriptRoot 'deployment-common.ps1')
 . (Join-Path $PSScriptRoot 'deployment-provenance.ps1')
 $context = Get-DeploymentContext $Directory
@@ -47,12 +102,14 @@ if ($ConsumerIdentity) {
 foreach ($name in $required) {
     if (-not (Test-Path -LiteralPath (Join-Path $source $name) -PathType Leaf)) { throw 'Source snapshot is missing a required project file.' }
 }
-foreach ($command in @($MavenCommand, $FlutterCommand)) {
-    if (-not (Get-Command $command -ErrorAction SilentlyContinue)) { throw 'Configure Maven and Flutter executable paths before building.' }
-}
-$flutterPath = (Get-Command $FlutterCommand).Source
+if (-not (Get-Command $MavenCommand -ErrorAction SilentlyContinue)) { throw 'Configure Maven and Flutter executable paths before building.' }
+$flutterInstallation = Resolve-DeploymentFlutterInstallation -Command $FlutterCommand
+$flutterPath = $flutterInstallation.FlutterPath
+# Use the same resolved installation for every invocation, even if its original
+# PATH link is switched while the build is in progress.
+$FlutterCommand = $flutterPath
 if (-not $DartCommand) {
-    $DartCommand = Join-Path (Split-Path $flutterPath -Parent) $(if ($IsWindows) { 'dart.bat' } else { 'dart' })
+    $DartCommand = $flutterInstallation.DefaultDartCommand
 }
 if (-not (Get-Command $DartCommand -ErrorAction SilentlyContinue)) { throw 'Configure the Dart executable path for client verification.' }
 $snapshot = Join-Path $context.Root ('source-' + [Guid]::NewGuid().ToString('N'))
@@ -129,8 +186,7 @@ if ($IsWindows -and [IO.Path]::GetExtension($dartExecutable) -in @('.bat', '.cmd
 if (-not (Test-Path -LiteralPath $dartExecutable -PathType Leaf)) { throw 'Device HTTP interoperability requires a directly executable Dart SDK.' }
 $mavenArgs += "-Ddevice.dart.command=$dartExecutable"
 $mavenArgs += "-Ddevice.flutter.command=$flutterPath"
-$flutterSdk = Split-Path (Split-Path $flutterPath -Parent) -Parent
-$flutterTool = Join-Path $flutterSdk 'bin/cache/flutter_tools.snapshot'
+$flutterTool = $flutterInstallation.FlutterTool
 if (-not (Test-Path -LiteralPath $flutterTool -PathType Leaf)) {
     throw 'Parent and guardian HTTP interoperability require the installed Flutter tools snapshot.'
 }

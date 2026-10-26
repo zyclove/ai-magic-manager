@@ -1,0 +1,45 @@
+{
+  "status": "SCOPED_PASSED",
+  "passed": 7,
+  "failed": 0,
+  "skipped": 0,
+  "platform": "Windows PowerShell 7, isolated fake compiler boundaries",
+  "realSdkOrDeploymentValidated": false,
+  "files": [
+    {
+      "file": "restricted-skip-result.json",
+      "bytes": 440,
+      "sha256": "c5c37dca44135c6a938a62858e0d7e460b92e7019e8c0bae68022cb2efa146ff"
+    },
+    {
+      "file": "restricted-skip-output.log",
+      "bytes": 359,
+      "sha256": "5ec0603af376caf45893208c88c418384133f56b9a315047108ef8013b4e2a53"
+    },
+    {
+      "file": "red-result.json",
+      "bytes": 446,
+      "sha256": "c2f99f1547e1e50fc95237aadf900e085ccd7fd6a759a0be7a6bdf13cddb909a"
+    },
+    {
+      "file": "red-output.log",
+      "bytes": 1326,
+      "sha256": "c2adc398354a4bcba857142ab7317f65127376a070a09445130c88e3a84ec4ff"
+    },
+    {
+      "file": "green-result.json",
+      "bytes": 443,
+      "sha256": "cf89f6697c7412adc406bd2821f98ca875faad48a7060cdbc76dde20db90a77a"
+    },
+    {
+      "file": "green-output.log",
+      "bytes": 1110,
+      "sha256": "54ae636c678354f65883f6c72da933b6dd2623decc0d826b4e5dbb08a0d5bc4c"
+    },
+    {
+      "file": "executed-runner.py.txt",
+      "bytes": 1518,
+      "sha256": "2d52716499524daae828e47c379361c343d5eef9e4f3187dae1e9ca94d74ae8f"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+test_cyclic_links_are_rejected_within_the_bound (__main__.FlutterResolutionTest.test_cyclic_links_are_rejected_within_the_bound) ... ok
+test_dangling_links_are_rejected (__main__.FlutterResolutionTest.test_dangling_links_are_rejected) ... ok
+test_linked_build_uses_resolved_flutter_for_sdk_and_all_calls (__main__.FlutterResolutionTest.test_linked_build_uses_resolved_flutter_for_sdk_and_all_calls) ... ok
+test_missing_snapshot_keeps_preparation_order_and_preserves_old_release (__main__.FlutterResolutionTest.test_missing_snapshot_keeps_preparation_order_and_preserves_old_release) ... ok
+test_overlong_link_chain_is_rejected (__main__.FlutterResolutionTest.test_overlong_link_chain_is_rejected) ... ok
+test_regular_sdk_path_preserves_its_bin_and_default_dart (__main__.FlutterResolutionTest.test_regular_sdk_path_preserves_its_bin_and_default_dart) ... ok
+test_relative_multi_hop_links_resolve_the_same_sdk (__main__.FlutterResolutionTest.test_relative_multi_hop_links_resolve_the_same_sdk) ... ok
+
+----------------------------------------------------------------------
+Ran 7 tests in 8.742s
+
+OK

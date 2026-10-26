@@ -1,0 +1,12 @@
+{
+  "checkType": "ISOLATED_POWERSHELL_FAKE_TOOLS",
+  "mode": "green-r3",
+  "exitCode": 0,
+  "elapsedSeconds": 8.898817999986932,
+  "actualSdkCalls": 0,
+  "sourcePins": {
+    "scripts\\build-deployment.ps1": "79bb6b1d50815362fb1b94845ddfe84d8c03e61243cadf9aa06e9d9a49b44f9a",
+    "scripts\\tests\\test_build_flutter_resolution.py": "1e6ccef271bf26181b0151f8d77328398861c9345b1996714e462b9ccd4edfb4"
+  },
+  "sourceUnchanged": true
+}

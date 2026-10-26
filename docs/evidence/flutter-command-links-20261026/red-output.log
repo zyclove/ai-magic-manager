@@ -1,0 +1,20 @@
+test_linked_build_uses_resolved_flutter_for_sdk_and_all_calls (__main__.FlutterResolutionTest.test_linked_build_uses_resolved_flutter_for_sdk_and_all_calls) ... FAIL
+
+======================================================================
+FAIL: test_linked_build_uses_resolved_flutter_for_sdk_and_all_calls (__main__.FlutterResolutionTest.test_linked_build_uses_resolved_flutter_for_sdk_and_all_calls)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\codes\mobile\ai-manager\scripts\tests\test_build_flutter_resolution.py", line 154, in test_linked_build_uses_resolved_flutter_for_sdk_and_all_calls
+    self.assertEqual(result.returncode, 0, result.stderr)
+    ~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: 1 != 0 : Exception: D:\codes\mobile\ai-manager\.cache\build-flutter-resolution-ld2_y7dn\repository\scripts\build-deployment.ps1:135
+Line |
+ 135 |      throw 'Parent and guardian HTTP interoperability require the inst бн
+     |      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | Parent and guardian HTTP interoperability require the installed Flutter tools snapshot.
+
+
+----------------------------------------------------------------------
+Ran 1 test in 2.075s
+
+FAILED (failures=1)
