@@ -75,7 +75,9 @@ String policyDraftText(Json draft,
     List<Json> schedules = const []}) {
   final lines = <String>[
     '策略名称：${_field(draft, 'name')}',
-    '策略类型：${_caption(draft.containsKey('kind') ? draft : {'kind': kind}, 'kind')}',
+    '策略类型：${_caption(draft.containsKey('kind') ? draft : {
+        'kind': kind
+      }, 'kind')}',
   ];
   final rules = draft['rules'];
   if (rules is! List) {
@@ -104,14 +106,17 @@ String policyDraftText(Json draft,
         lines.add('  优先级：${_field(rule, 'priority')}');
       }
       if (rule.containsKey('applicationId')) {
-        lines.add('  应用：${_referenceText(rule['applicationId'], applications, 'displayName')}');
+        lines.add(
+            '  应用：${_referenceText(rule['applicationId'], applications, 'displayName')}');
       }
       if (rule.containsKey('scheduleId')) {
-        lines.add('  时间计划：${_referenceText(rule['scheduleId'], schedules, 'name')}');
+        lines.add(
+            '  时间计划：${_referenceText(rule['scheduleId'], schedules, 'name')}');
       }
       if (rule.containsKey('seconds')) {
         final seconds = rule['seconds'];
-        lines.add('  时长：${_field(rule, 'seconds')}${seconds is num ? ' 秒' : ''}');
+        lines.add(
+            '  时长：${_field(rule, 'seconds')}${seconds is num ? ' 秒' : ''}');
       }
       if (rule.containsKey('domain')) {
         lines.add('  域名：${_field(rule, 'domain')}');
@@ -121,14 +126,24 @@ String policyDraftText(Json draft,
         const androidPrefix = 'android.permission.';
         final name = permission is String
             ? (permission.startsWith(androidPrefix)
-                ? runtimePermissionNames[permission.substring(androidPrefix.length)]
+                ? runtimePermissionNames[
+                    permission.substring(androidPrefix.length)]
                 : specialAccessNames[permission])
             : null;
-        lines.add('  权限：${name == null ? _field(rule, 'permission') : '$name（$permission）'}');
+        lines.add(
+            '  权限：${name == null ? _field(rule, 'permission') : '$name（$permission）'}');
       }
       _otherSettings(lines, rule, const {
-        'id', 'kind', 'effect', 'required', 'priority', 'applicationId',
-        'scheduleId', 'seconds', 'domain', 'permission',
+        'id',
+        'kind',
+        'effect',
+        'required',
+        'priority',
+        'applicationId',
+        'scheduleId',
+        'seconds',
+        'domain',
+        'permission',
       });
     }
   }

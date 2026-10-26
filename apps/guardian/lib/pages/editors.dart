@@ -15,6 +15,7 @@ import '../ui/dialog_access.dart';
 import '../ui/editor_draft_text.dart';
 import '../ui/owned_dialog_route.dart';
 import 'device_subflow_scope.dart';
+import 'schedule_exception_editor.dart';
 
 const weekdays = [
   'MONDAY',
@@ -151,7 +152,9 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   List<Json> exceptions = [];
   Object? error;
   bool busy = false, resultUnknown = false, closing = false, exitOpen = false;
-  bool revoked = false, reviewPriorSubmission = false;
+  bool revoked = false, reviewPriorSubmission = false, exceptionOpen = false;
+  String? exceptionNotice;
+  final exceptionLifetime = _EditorLifetime();
   Json? pendingBody, recoveryBody;
   ModalRoute<dynamic>? owner;
   OwnedDialogRoute<bool>? exitRoute;
@@ -171,7 +174,8 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
           (owner as OwnedDialogRoute<dynamic>).available);
   bool get interactive => current && owner?.isCurrent == true;
   bool get recoveryStopped => _stopsEditorReplay(error);
-  bool get locked => busy || resultUnknown || exitOpen || recoveryStopped;
+  bool get locked =>
+      busy || resultUnknown || exitOpen || exceptionOpen || recoveryStopped;
 
   @override
   void initState() {
@@ -230,6 +234,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
     // Latch before any deferred rebuild: returning to the old scope cannot
     // revive captured callbacks or a request waiting for an authenticated client.
     revoked = true;
+    exceptionLifetime.value = false;
     reviewPriorSubmission = busy || resultUnknown || pendingBody != null;
     pendingBody = null;
     recoveryBody = null;
@@ -237,6 +242,8 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
     exceptions = [];
     days.clear();
     error = null;
+    exceptionNotice = null;
+    exceptionOpen = false;
     busy = resultUnknown = false;
 
     void refresh() {
@@ -274,6 +281,8 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   @override
   void dispose() {
     closing = true;
+    exceptionLifetime.value = false;
+    exceptionLifetime.dispose();
     scope.removeListener(scopeChanged);
     parentChanges?.removeListener(scopeChanged);
     if (ownsScope) scope.dispose();
@@ -304,7 +313,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   }
 
   Future<void> requestClose() async {
-    if (!interactive || busy || exitOpen) return;
+    if (!interactive || busy || exitOpen || exceptionOpen) return;
     if (!resultUnknown) {
       closeOwnRoute();
       return;
@@ -375,13 +384,72 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
     final now = DateTime.now();
     final d = await showDatePicker(
         context: context,
-        firstDate: now.subtract(const Duration(days: 1)),
-        lastDate: now.add(const Duration(days: 730)),
+        firstDate: DateTime(1900),
+        lastDate: DateTime(2200, 12, 31),
         initialDate: now);
     if (!interactive || locked || d == null) return;
     final date = d.toIso8601String().split('T')[0];
-    if (!exceptions.any((e) => e['date'] == date)) {
-      setState(() => exceptions.add({'date': date, 'windows': []}));
+    if (exceptions.any((e) => e['date'] == date)) {
+      setState(() => exceptionNotice = '该日期已有例外，可在下方调整。');
+    } else if (exceptions.length >= 366) {
+      setState(() => exceptionNotice = '日期例外最多 366 个，请先移除不需要的日期。');
+    } else {
+      setState(() {
+        exceptionNotice = null;
+        exceptions.add({'date': date, 'windows': <Json>[]});
+      });
+    }
+  }
+
+  Future<void> editException({Json? initial}) async {
+    if (!interactive || locked) return;
+    setState(() {
+      exceptionOpen = true;
+      exceptionNotice = null;
+    });
+    bool permitted() =>
+        current &&
+        exceptionLifetime.value &&
+        !busy &&
+        !resultUnknown &&
+        !recoveryStopped;
+    final changes = Listenable.merge([
+      scope,
+      exceptionLifetime,
+      if (parentChanges != null) parentChanges!,
+    ]);
+    try {
+      final date = initial == null
+          ? await pickScheduleExceptionDate(context,
+              accessChanges: changes, hasAccess: permitted)
+          : DateTime.parse(initial['date'] as String);
+      if (date == null || !mounted || !permitted() || !interactive) return;
+      final day = date.toIso8601String().split('T')[0];
+      final existing = exceptions.where((e) => e['date'] == day).firstOrNull;
+      if (existing == null && exceptions.length >= 366) {
+        setState(() => exceptionNotice = '日期例外最多 366 个，请先移除不需要的日期。');
+        return;
+      }
+      final result = await editScheduleException(context,
+          date: date,
+          initial: existing,
+          accessChanges: changes,
+          hasAccess: permitted);
+      if (result == null || !permitted() || result['date'] != day) return;
+      setState(() {
+        final index = exceptions.indexWhere((e) => e['date'] == day);
+        if (index < 0) {
+          exceptions.add(result);
+        } else {
+          exceptions[index] = result;
+        }
+        error = null;
+        exceptionNotice = null;
+      });
+    } finally {
+      if (mounted && !closing && !revoked) {
+        setState(() => exceptionOpen = false);
+      }
     }
   }
 
@@ -409,7 +477,10 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
 
   void removeException(Json exception) {
     if (!interactive || locked) return;
-    setState(() => exceptions.remove(exception));
+    setState(() {
+      exceptions.remove(exception);
+      exceptionNotice = null;
+    });
   }
 
   Object? freeze(Object? value) {
@@ -516,7 +587,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
           draft == null ? null : scheduleDraftText(draft), closeOwnRoute);
     }
     return PopScope(
-        canPop: !busy && !resultUnknown && !exitOpen,
+        canPop: !busy && !resultUnknown && !exitOpen && !exceptionOpen,
         onPopInvoked: (didPop) {
           if (!didPop && resultUnknown && !busy && !exitOpen) {
             unawaited(requestClose());
@@ -636,23 +707,52 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                                   style:
                                       TextStyle(fontWeight: FontWeight.w600)),
                               const SizedBox(height: 6),
-                              const Text('假期或特殊日期可设置整天不可用。',
+                              const Text('特殊日期可全天关闭，或使用独立时段覆盖每周安排。',
                                   style: TextStyle(color: muted, fontSize: 12)),
-                              TextButton.icon(
-                                  onPressed: locked ? null : pickClosedDate,
-                                  icon: const Icon(Icons.event_busy, size: 18),
-                                  label: const Text('添加关闭日期')),
+                              Wrap(spacing: 8, children: [
+                                TextButton.icon(
+                                    onPressed: locked ? null : pickClosedDate,
+                                    icon:
+                                        const Icon(Icons.event_busy, size: 18),
+                                    label: const Text('添加关闭日期')),
+                                TextButton.icon(
+                                    key: const Key(
+                                        'schedule-add-custom-exception'),
+                                    onPressed:
+                                        locked ? null : () => editException(),
+                                    icon: const Icon(
+                                        Icons.edit_calendar_outlined,
+                                        size: 18),
+                                    label: const Text('设置特殊时段')),
+                              ]),
+                              if (exceptionNotice != null)
+                                Notice(exceptionNotice!, warning: true),
                               ...exceptions.asMap().entries.map((e) => ListTile(
+                                  key: Key(
+                                      'schedule-exception-${e.value['date']}'),
                                   dense: true,
+                                  onTap: locked
+                                      ? null
+                                      : () => editException(initial: e.value),
                                   title: Text('${e.value['date']} · '
                                       '${(e.value['windows'] as List).isEmpty ? '全天关闭' : (e.value['windows'] as List).map((window) => '${window['start']} – ${window['end']}').join('、')}'),
-                                  trailing: IconButton(
-                                      tooltip: '移除例外',
-                                      onPressed: locked
-                                          ? null
-                                          : () => removeException(e.value),
-                                      icon:
-                                          const Icon(Icons.close, size: 18)))),
+                                  trailing: Wrap(children: [
+                                    IconButton(
+                                        tooltip: '调整日期例外',
+                                        onPressed: locked
+                                            ? null
+                                            : () =>
+                                                editException(initial: e.value),
+                                        icon: const Icon(Icons.edit_outlined,
+                                            size: 18)),
+                                    IconButton(
+                                        tooltip: '移除例外',
+                                        onPressed: locked
+                                            ? null
+                                            : () => removeException(e.value),
+                                        icon:
+                                            const Icon(Icons.close, size: 18)),
+                                  ]))),
                               if (resultUnknown) ...[
                                 const Notice(
                                     '尚不能确认保存结果，原内容已锁定。重试会使用同一次提交。'
@@ -676,7 +776,8 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                   key: resultUnknown
                       ? const Key('schedule-editor-close-unknown')
                       : null,
-                  onPressed: busy || exitOpen ? null : requestClose,
+                  onPressed:
+                      busy || exitOpen || exceptionOpen ? null : requestClose,
                   child: Text(resultUnknown ? '暂时关闭' : '取消')),
               if (resultUnknown)
                 FilledButton(
@@ -837,7 +938,7 @@ class _PolicyEditorState extends State<PolicyEditor> {
   late final Listenable? parentChanges;
   ModalRoute<dynamic>? owner;
   late final Api api;
-  final lifetime = _PolicyEditorLifetime();
+  final lifetime = _EditorLifetime();
   final ruleRoutes = <OwnedDialogRoute<dynamic>>{};
   final key = requestId();
   late final Object? policyId = widget.draft?['id'];
@@ -1687,9 +1788,9 @@ bool _samePolicyValue(Object? left, Object? right) {
   return left == right;
 }
 
-class _PolicyEditorLifetime extends ValueNotifier<bool> {
+class _EditorLifetime extends ValueNotifier<bool> {
   bool scheduled = false, disposed = false;
-  _PolicyEditorLifetime() : super(true);
+  _EditorLifetime() : super(true);
 
   @override
   void notifyListeners() {

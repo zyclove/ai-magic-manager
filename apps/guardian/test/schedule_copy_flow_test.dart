@@ -248,6 +248,63 @@ void main() {
     expect(fixture.saved!['id'], _copyId);
   });
 
+  testWidgets('schedule-copy special-date changes only the outgoing draft',
+      (tester) async {
+    final definition = _definition();
+    final original = jsonEncode(definition);
+    final fixture = _Fixture(definition: definition);
+    final details = await _openDetails(tester, fixture);
+    await _openCopy(tester);
+    final row = find.byKey(const Key('schedule-exception-2026-12-24'));
+    final edit = find.descendant(
+        of: row,
+        matching: find.byWidgetPredicate((widget) =>
+            widget is IconButton && widget.tooltip == '调整日期例外'));
+    final apply = find.byKey(const Key('schedule-exception-apply'));
+    await tester.ensureVisible(edit);
+    await tester.tap(edit);
+    await _until(tester, () => apply.evaluate().length == 1);
+    expect(fixture.writes, isEmpty);
+    await tester.tap(find.byKey(const Key('schedule-exception-cancel')));
+    await _until(
+        tester,
+        () =>
+            edit.evaluate().length == 1 &&
+            tester.widget<IconButton>(edit).onPressed != null);
+    expect(_editorText('2026-12-24 · 09:00 – 11:00、14:00 – 16:00'),
+        findsOneWidget);
+    expect(jsonEncode(definition), original);
+    expect(fixture.writes, isEmpty);
+
+    await tester.tap(edit);
+    await _until(tester, () => apply.evaluate().length == 1);
+    await tester.tap(find.byKey(const Key('schedule-exception-mode-closed')));
+    await tester.tap(apply);
+    await _until(
+        tester,
+        () =>
+            _editorText('2026-12-24 · 全天关闭').evaluate().length == 1 &&
+            tester.widget<IconButton>(edit).onPressed != null);
+    expect(fixture.writes, isEmpty,
+        reason: 'Applying a date exception only updates the local draft.');
+    expect(jsonEncode(definition), original);
+    await tester.ensureVisible(_button('保存副本'));
+    await tester.tap(_button('保存副本'));
+    await _until(
+        tester,
+        () =>
+            fixture.saved != null &&
+            find.byType(AlertDialog).evaluate().isEmpty);
+    final expected = jsonDecode(original) as Json;
+    (expected['exceptions'] as List).first['windows'] = <Json>[];
+    expect(fixture.writes, hasLength(1));
+    expect((jsonDecode(fixture.writes.single.body) as Json)['definition'],
+        expected);
+    expect(jsonEncode(definition), original);
+    expect(details.available, isFalse);
+    expect(fixture.reads, hasLength(2));
+  });
+
   testWidgets('schedule-copy saves exception-only and fully closed definitions',
       (tester) async {
     for (final exceptions in <List<Json>>[

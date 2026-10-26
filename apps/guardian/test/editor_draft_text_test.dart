@@ -5,7 +5,8 @@ import 'package:guardian/core/api.dart';
 import 'package:guardian/ui/editor_draft_text.dart';
 
 void main() {
-  test('schedule review keeps every window exception and overnight boundary', () {
+  test('schedule review keeps every window exception and overnight boundary',
+      () {
     final text = scheduleDraftText({
       'name': '完整计划名称（保留原文）',
       'definition': {
@@ -73,51 +74,56 @@ void main() {
     expect(scheduleDraftText({'name': '缺少定义'}), contains('定义：未提供'));
   });
 
-  test('policy review keeps rule order all fields names and complete references',
+  test(
+      'policy review keeps rule order all fields names and complete references',
       () {
     const app = '11111111-2222-3333-4444-555555555555';
     const schedule = 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee';
-    final text = policyDraftText({
-      'name': '完整策略名称',
-      'kind': 'TEMPLATE',
-      'rules': [
+    final text = policyDraftText(
         {
-          'id': 'camera_rule',
-          'kind': 'RUNTIME_PERMISSION',
-          'effect': 'DENY',
-          'required': true,
-          'applicationId': app,
-          'permission': 'android.permission.CAMERA',
+          'name': '完整策略名称',
+          'kind': 'TEMPLATE',
+          'rules': [
+            {
+              'id': 'camera_rule',
+              'kind': 'RUNTIME_PERMISSION',
+              'effect': 'DENY',
+              'required': true,
+              'applicationId': app,
+              'permission': 'android.permission.CAMERA',
+            },
+            {
+              'id': 'time_rule',
+              'kind': 'TIME_WINDOW',
+              'effect': 'ALLOW',
+              'required': false,
+              'applicationId': app,
+              'scheduleId': schedule,
+            },
+            {
+              'id': 'quota_rule',
+              'kind': 'DAILY_QUOTA',
+              'effect': 'LIMIT',
+              'required': false,
+              'priority': 0,
+              'seconds': 300,
+            },
+            {
+              'id': 'domain_rule',
+              'kind': 'DOMAIN_ACCESS',
+              'effect': 'DENY',
+              'required': true,
+              'domain': '例子.中国',
+            },
+          ],
         },
-        {
-          'id': 'time_rule',
-          'kind': 'TIME_WINDOW',
-          'effect': 'ALLOW',
-          'required': false,
-          'applicationId': app,
-          'scheduleId': schedule,
-        },
-        {
-          'id': 'quota_rule',
-          'kind': 'DAILY_QUOTA',
-          'effect': 'LIMIT',
-          'required': false,
-          'priority': 0,
-          'seconds': 300,
-        },
-        {
-          'id': 'domain_rule',
-          'kind': 'DOMAIN_ACCESS',
-          'effect': 'DENY',
-          'required': true,
-          'domain': '例子.中国',
-        },
-      ],
-    }, kind: 'POLICY', applications: const [
-      {'id': app, 'displayName': '学习应用'},
-    ], schedules: const [
-      {'id': schedule, 'name': '晚间时段'},
-    ]);
+        kind: 'POLICY',
+        applications: const [
+          {'id': app, 'displayName': '学习应用'},
+        ],
+        schedules: const [
+          {'id': schedule, 'name': '晚间时段'},
+        ]);
 
     for (final value in [
       '完整策略名称',
@@ -158,7 +164,9 @@ void main() {
           'applicationId': app,
           'scheduleId': schedule,
           'permission': 'VPN',
-          'futureRule': {'values': [false, null, '原值']},
+          'futureRule': {
+            'values': [false, null, '原值']
+          },
         },
         {
           'id': 'custom_permission',
@@ -219,7 +227,8 @@ void main() {
     }
   });
 
-  test('missing or null policy values never become an allow or optional default',
+  test(
+      'missing or null policy values never become an allow or optional default',
       () {
     final text = policyDraftText({
       'name': '不推断默认值',
@@ -233,13 +242,14 @@ void main() {
     expect(text, contains('支持要求：未提供（null）'));
     expect(text, isNot(contains('允许')));
     expect(text, isNot(contains('可选')));
-    expect(policyDraftText({'name': '缺少规则'}, kind: 'POLICY'),
-        contains('规则：未提供'));
+    expect(
+        policyDraftText({'name': '缺少规则'}, kind: 'POLICY'), contains('规则：未提供'));
     expect(policyDraftText({'name': '空规则', 'rules': <Json>[]}, kind: 'POLICY'),
         contains('规则：无'));
   });
 
-  test('both formatters leave deeply immutable drafts and directories unchanged',
+  test(
+      'both formatters leave deeply immutable drafts and directories unchanged',
       () {
     const Json policy = {
       'name': '只读策略',

@@ -1,13 +1,14 @@
 {
   "createdAt": "2026-10-26T02:47:46.376402+00:00",
   "baseCommit": "b732d9b28c2dc0969e2d4c10a129df2cc64fa134",
-  "status": "STATIC_ONLY",
-  "format": "NOT_RUN",
-  "strictAnalysis": "NOT_RUN",
+  "status": "FUNCTIONAL_CHECKS_PASSED_IN_COMBINED_SCOPE",
+  "format": "PASSED_IN_COMBINED_SCOPE",
+  "strictAnalysis": "PASSED_IN_COMBINED_SCOPE",
   "unitTests": {
-    "status": "NOT_RUN",
+    "status": "PASSED_IN_COMBINED_SCOPE",
     "file": "editor_draft_text_test.dart",
-    "registeredCases": 6
+    "registeredCases": 6,
+    "passed": 6
   },
   "resourceGateReceipt": {
     "status": "NO_START",
@@ -29,7 +30,11 @@
     "error": "Original resource gate not met",
     "elapsedSeconds": 0.6639227000123356
   },
-  "sourcePins": {
+  "runtimeUpdated": false,
+  "pushed": false,
+  "pending": [],
+  "review": "docs/reviews/editor-draft-summary-20261026.md",
+  "initialCandidateSourcePins": {
     "apps/guardian/lib/pages/editors.dart": "a1e4850effab2d674bb9438a18eabcc18238da2c981ea6e9a4474e296addba19",
     "apps/guardian/lib/ui/editor_draft_text.dart": "18da423642dbf089fe633db92ae89e62691a0c593fd17d47e87b21ae89d86d15",
     "apps/guardian/test/editor_draft_text_test.dart": "5b0e79c6ba2f7545e15374d5de4d9f02321e4293309c339e9293be0efdf16445",
@@ -39,11 +44,8 @@
     "apps/guardian/pubspec.lock": "c6f16b105ed81fd036675605a44b846474fb45fec17040796c1358cdebd0016c",
     "apps/guardian/.dart_tool/package_config.json": "7d56027a23fc233d28485accb53dc9e4a4e35ae7e4f082f5c7b9450b5f091922"
   },
-  "runtimeUpdated": false,
-  "pushed": false,
-  "pending": [
-    "Format and strictly analyze the three affected Dart files when the original resource and SDK-idle gates recover.",
-    "Run only editor_draft_text_test.dart using existing offline dependencies."
-  ],
-  "review": "docs/reviews/editor-draft-summary-20261026.md"
+  "verificationEvidence": "docs/evidence/schedule-exception-20261026/validation.json",
+  "notes": [
+    "Original NO_START and initial candidate hashes remain historical. Current source hashes and combined verification facts are maintained in verificationEvidence; this is not release acceptance."
+  ]
 }

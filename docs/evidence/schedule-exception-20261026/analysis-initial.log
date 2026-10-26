@@ -1,0 +1,7 @@
+Flutter assets will be downloaded from http://127.0.0.1:9. Make sure you trust this source!
+Analyzing 6 items...                                            
+
+   info - Don't use 'BuildContext's across async gaps - lib\pages\editors.dart:433:50 - use_build_context_synchronously
+  error - The property 'completed' can't be unconditionally accessed because the receiver can be 'null' - lib\pages\schedule_exception_editor.dart:134:14 - unchecked_use_of_nullable_value
+
+2 issues found. (ran in 3.4s)
