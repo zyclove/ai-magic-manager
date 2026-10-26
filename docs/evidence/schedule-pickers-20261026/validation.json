@@ -1,0 +1,50 @@
+{
+  "createdAt": "2026-10-26T05:03:53.397619+00:00",
+  "baseCommit": "eea47a9dd5af794626b585694ad373a82820f02a",
+  "status": "STATIC_IMPLEMENTATION_RUNTIME_NOT_VERIFIED",
+  "scope": "Guardian weekly time and closed-date picker lifecycle; reuse existing leased picker controls",
+  "sdkCalls": 0,
+  "userDirection": "Continue static improvement; defer SDK work until original resources and verification window recover.",
+  "priorPreflight": {
+    "path": "../schedule-presets-20261026/pub-guardian-no-start.json",
+    "sha256": "cdd7e2f2ee75845f9b9a9a841596b8032b0ba0adceab9772c3501b8d437e857c",
+    "currentResourceResample": false
+  },
+  "checks": {
+    "sourceAndIndependentReview": "REVIEWED_NO_PROVEN_DEFECT",
+    "unrelatedPolicyEditorSuffix": "UNCHANGED_BYTES",
+    "scopedWhitespace": "CHECKED",
+    "relatedDocumentLinks": {
+      "status": "CHECKED_TARGET_EXISTS",
+      "localLinks": 72
+    },
+    "offlineDependencyResolution": "NOT_RUN",
+    "dartFormatAndAnalysis": "NOT_RUN",
+    "existingExceptionCases6": "NOT_RUN",
+    "newPickerBrowserJourneys2": "NOT_RUN"
+  },
+  "pendingCombinedChecks": {
+    "dartFiles": 15,
+    "guardianVmCases": 14,
+    "parentVmCases": 2,
+    "browserJourneys": 7,
+    "notes": "Combines the still-pending relevant checks of f9a418f and eea47a9; earlier results are not proof for changed source."
+  },
+  "localPathDependencyResolved": false,
+  "lockfilesUnchangedFromBase": true,
+  "sourcePins": {
+    "apps/guardian/lib/pages/editors.dart": "f7f4f1ff1581c2c3a5772f25e2dd59ff7360c7936616fd02418fdc1cf166cb38",
+    "apps/guardian/lib/pages/schedule_exception_editor.dart": "44b7278628648dd6428bbb3935eaeb52efad8ebe0751b7357e3ccbfa4cec8eae",
+    "apps/guardian/lib/ui/leased_time_picker.dart": "53ba317e681c1e9aa801a83728b246fe72ca0501bd6a70b7426231bb3f6d15e7",
+    "apps/guardian/test/schedule_copy_flow_test.dart": "701b2745ab4e8297709c7e71668ea54232ee6161091390cf6bea0449f1d8f184",
+    "docs/policy-application-schedule-contract.md": "8f8a55f496f6739430ccce7772d702b1e7f3a26e50b202c0a9c1fa2c9b7f0e0e",
+    "docs/project-memory.md": "660d31efbef0bf9702306e714b15e8afbbefd934cc38baff4384f9e87869cfe7",
+    "docs/reviews/schedule-pickers-20261026.md": "371c35407aef7c2725d1aab2d8fab69838473747daf4e2c92637925f650f0596"
+  },
+  "runtimeUpdated": false,
+  "pushed": false,
+  "limits": [
+    "Compilation, actual route timing, rendered visual and accessibility behavior are not verified.",
+    "No full-product, service release, real-provider or device acceptance claimed."
+  ]
+}

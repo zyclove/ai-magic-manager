@@ -15,6 +15,7 @@ import '../core/session.dart';
 import '../ui/design.dart';
 import '../ui/dialog_access.dart';
 import '../ui/editor_draft_text.dart';
+import '../ui/leased_time_picker.dart';
 import '../ui/owned_dialog_route.dart';
 import '../ui/schedule_week_view.dart';
 import 'device_subflow_scope.dart';
@@ -157,6 +158,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   Object? error;
   bool busy = false, resultUnknown = false, closing = false, exitOpen = false;
   bool revoked = false, reviewPriorSubmission = false, exceptionOpen = false;
+  bool pickerOpen = false;
   String? exceptionNotice, presetNotice, weeklyNotice;
   bool weeklyWarning = false;
   Object? presetFailure;
@@ -181,11 +183,23 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
           (owner as OwnedDialogRoute<dynamic>).available);
   bool get interactive => current && owner?.isCurrent == true;
   bool get recoveryStopped => _stopsEditorReplay(error);
+  bool get subflowPermitted =>
+      current &&
+      subflowLifetime.value &&
+      !busy &&
+      !resultUnknown &&
+      !recoveryStopped;
+  Listenable get subflowChanges => Listenable.merge([
+        scope,
+        subflowLifetime,
+        if (parentChanges != null) parentChanges!,
+      ]);
   bool get locked =>
       busy ||
       resultUnknown ||
       exitOpen ||
       exceptionOpen ||
+      pickerOpen ||
       choosingPresets ||
       recoveryStopped;
 
@@ -261,6 +275,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
     presetFailure = null;
     choosingPresets = loadingPresets = false;
     exceptionOpen = false;
+    pickerOpen = false;
     busy = resultUnknown = false;
 
     void refresh() {
@@ -330,7 +345,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   }
 
   Future<void> requestClose() async {
-    if (!interactive || busy || exitOpen || exceptionOpen) return;
+    if (!interactive || busy || exitOpen || exceptionOpen || pickerOpen) return;
     if (!resultUnknown) {
       closeOwnRoute();
       return;
@@ -376,47 +391,58 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   Future<void> pickTime(bool first) async {
     if (!interactive || locked) return;
     final text = first ? start : end;
-    final v = await showTimePicker(
-        context: context,
-        initialTime: TimeOfDay(
-            hour: int.parse(text.split(':')[0]),
-            minute: int.parse(text.split(':')[1])),
-        builder: (context, child) => MediaQuery(
-            data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: true),
-            child: child!));
-    if (!interactive || locked || v == null) return;
-    setState(() {
-      final value =
-          '${v.hour.toString().padLeft(2, '0')}:${v.minute.toString().padLeft(2, '0')}';
-      if (first) {
-        start = value;
-      } else {
-        end = value;
+    setState(() => pickerOpen = true);
+    try {
+      final value = await pickLeasedTime(context,
+          initialTime: TimeOfDay(
+              hour: int.parse(text.substring(0, 2)),
+              minute: int.parse(text.substring(3, 5))),
+          helpText: first ? '选择开始时间' : '选择结束时间',
+          accessChanges: subflowChanges,
+          hasAccess: () => subflowPermitted);
+      if (!interactive || !subflowPermitted || value == null) return;
+      setState(() {
+        final formatted = '${value.hour.toString().padLeft(2, '0')}:'
+            '${value.minute.toString().padLeft(2, '0')}';
+        if (first) {
+          start = formatted;
+        } else {
+          end = formatted;
+        }
+        weeklyNotice = null;
+        weeklyWarning = false;
+      });
+    } finally {
+      if (mounted && !closing && !revoked) {
+        setState(() => pickerOpen = false);
       }
-      weeklyNotice = null;
-      weeklyWarning = false;
-    });
+    }
   }
 
   Future<void> pickClosedDate() async {
     if (!interactive || locked) return;
-    final now = DateTime.now();
-    final d = await showDatePicker(
-        context: context,
-        firstDate: DateTime(1900),
-        lastDate: DateTime(2200, 12, 31),
-        initialDate: now);
-    if (!interactive || locked || d == null) return;
-    final date = d.toIso8601String().split('T')[0];
-    if (exceptions.any((e) => e['date'] == date)) {
-      setState(() => exceptionNotice = '该日期已有例外，可在下方调整。');
-    } else if (exceptions.length >= 366) {
-      setState(() => exceptionNotice = '日期例外最多 366 个，请先移除不需要的日期。');
-    } else {
-      setState(() {
-        exceptionNotice = null;
-        exceptions.add({'date': date, 'windows': <Json>[]});
-      });
+    setState(() => pickerOpen = true);
+    try {
+      final value = await pickScheduleExceptionDate(context,
+          title: '选择关闭日期',
+          accessChanges: subflowChanges,
+          hasAccess: () => subflowPermitted);
+      if (!interactive || !subflowPermitted || value == null) return;
+      final date = value.toIso8601String().split('T')[0];
+      if (exceptions.any((e) => e['date'] == date)) {
+        setState(() => exceptionNotice = '该日期已有例外，可在下方调整。');
+      } else if (exceptions.length >= 366) {
+        setState(() => exceptionNotice = '日期例外最多 366 个，请先移除不需要的日期。');
+      } else {
+        setState(() {
+          exceptionNotice = null;
+          exceptions.add({'date': date, 'windows': <Json>[]});
+        });
+      }
+    } finally {
+      if (mounted && !closing && !revoked) {
+        setState(() => pickerOpen = false);
+      }
     }
   }
 
@@ -427,17 +453,8 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
       presetFailure = null;
       presetNotice = null;
     });
-    bool permitted() =>
-        current &&
-        subflowLifetime.value &&
-        !busy &&
-        !resultUnknown &&
-        !recoveryStopped;
-    final changes = Listenable.merge([
-      scope,
-      subflowLifetime,
-      if (parentChanges != null) parentChanges!,
-    ]);
+    bool permitted() => subflowPermitted;
+    final changes = subflowChanges;
     try {
       final raw = await boundedJson(api, 'GET', '${widget.root}/schedule-presets',
           maxBytes: 65536,
@@ -497,17 +514,8 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
       exceptionOpen = true;
       exceptionNotice = null;
     });
-    bool permitted() =>
-        current &&
-        subflowLifetime.value &&
-        !busy &&
-        !resultUnknown &&
-        !recoveryStopped;
-    final changes = Listenable.merge([
-      scope,
-      subflowLifetime,
-      if (parentChanges != null) parentChanges!,
-    ]);
+    bool permitted() => subflowPermitted;
+    final changes = subflowChanges;
     try {
       final date = initial == null
           ? await pickScheduleExceptionDate(context,
@@ -722,7 +730,8 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
           draft == null ? null : scheduleDraftText(draft), closeOwnRoute);
     }
     return PopScope(
-        canPop: !busy && !resultUnknown && !exitOpen && !exceptionOpen,
+        canPop:
+            !busy && !resultUnknown && !exitOpen && !exceptionOpen && !pickerOpen,
         onPopInvoked: (didPop) {
           if (!didPop && resultUnknown && !busy && !exitOpen) {
             unawaited(requestClose());
@@ -857,6 +866,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                                   crossAxisAlignment: WrapCrossAlignment.center,
                                   children: [
                                     OutlinedButton.icon(
+                                        key: const Key('schedule-weekly-start'),
                                         onPressed: locked
                                             ? null
                                             : () => pickTime(true),
@@ -865,6 +875,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                                         label: Text(start)),
                                     const Text('至'),
                                     OutlinedButton(
+                                        key: const Key('schedule-weekly-end'),
                                         onPressed: locked
                                             ? null
                                             : () => pickTime(false),
@@ -892,6 +903,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                                   style: TextStyle(color: muted, fontSize: 12)),
                               Wrap(spacing: 8, children: [
                                 TextButton.icon(
+                                    key: const Key('schedule-add-closed-exception'),
                                     onPressed: locked ? null : pickClosedDate,
                                     icon:
                                         const Icon(Icons.event_busy, size: 18),
@@ -957,8 +969,9 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                   key: resultUnknown
                       ? const Key('schedule-editor-close-unknown')
                       : null,
-                  onPressed:
-                      busy || exitOpen || exceptionOpen ? null : requestClose,
+                  onPressed: busy || exitOpen || exceptionOpen || pickerOpen
+                      ? null
+                      : requestClose,
                   child: Text(resultUnknown ? '暂时关闭' : '取消')),
               if (resultUnknown)
                 FilledButton(

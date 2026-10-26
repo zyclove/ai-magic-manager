@@ -6,6 +6,7 @@ import '../core/api.dart';
 import '../ui/design.dart';
 import '../ui/dialog_access.dart';
 import '../ui/leased_dialog.dart';
+import '../ui/leased_time_picker.dart';
 import '../ui/owned_dialog_route.dart';
 
 String _dateText(DateTime date) => '${date.year.toString().padLeft(4, '0')}-'
@@ -14,7 +15,8 @@ String _dateText(DateTime date) => '${date.year.toString().padLeft(4, '0')}-'
 
 /// Selects a date only. Creating or saving its exception is a separate local step.
 Future<DateTime?> pickScheduleExceptionDate(BuildContext context,
-    {required Listenable accessChanges,
+    {String title = '选择日期例外',
+    required Listenable accessChanges,
     required bool Function() hasAccess}) async {
   final first = DateTime(1900), last = DateTime(2200, 12, 31);
   final today = DateUtils.dateOnly(DateTime.now());
@@ -30,7 +32,7 @@ Future<DateTime?> pickScheduleExceptionDate(BuildContext context,
         access.permitted() && route.available && route.isCurrent;
     return AlertDialog(
         scrollable: true,
-        title: const Text('选择日期例外'),
+        title: Text(title),
         content: SizedBox(
             width: 360,
             height: 360,
@@ -147,35 +149,13 @@ class _ExceptionEditorState extends State<_ExceptionEditor> {
     final text = window[field] as String;
     setState(() => picking = true);
     try {
-      final value = await leasedDialog<TimeOfDay>(context,
+      final value = await pickLeasedTime(context,
+          initialTime: TimeOfDay(
+              hour: int.parse(text.substring(0, 2)),
+              minute: int.parse(text.substring(3, 5))),
+          helpText: field == 'start' ? '选择开始时间' : '选择结束时间',
           accessChanges: widget.access.changes,
-          hasAccess: () => current && windows.contains(window),
-          builder: (dialog, route, access) => MediaQuery(
-              data: MediaQuery.of(dialog).copyWith(alwaysUse24HourFormat: true),
-              child: Navigator(
-                  pages: [
-                    MaterialPage<TimeOfDay>(
-                        child: TimePickerDialog(
-                            initialTime: TimeOfDay(
-                                hour: int.parse(text.substring(0, 2)),
-                                minute: int.parse(text.substring(3, 5))),
-                            initialEntryMode: TimePickerEntryMode.input,
-                            helpText: field == 'start' ? '选择开始时间' : '选择结束时间',
-                            cancelText: '取消',
-                            confirmText: '确定',
-                            hourLabelText: '时',
-                            minuteLabelText: '分',
-                            errorInvalidText: '请输入有效时间')),
-                  ],
-                  // Keep the stock picker's Navigator.pop local to this lease.
-                  onPopPage: (_, result) {
-                    if (access.permitted() &&
-                        route.available &&
-                        route.isCurrent) {
-                      route.finish(result is TimeOfDay ? result : null);
-                    }
-                    return false;
-                  })));
+          hasAccess: () => current && windows.contains(window));
       if (!current ||
           !widget.route.isCurrent ||
           !windows.contains(window) ||

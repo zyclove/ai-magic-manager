@@ -201,6 +201,20 @@ Future<VoidCallback> _openCopy(WidgetTester tester) async {
   return tester.widget<ButtonStyleButton>(_button('保存副本')).onPressed!;
 }
 
+Future<void> _weeklyTime(WidgetTester tester, String key,
+    String hour, String minute) async {
+  final button = find.byKey(Key(key));
+  await tester.ensureVisible(button);
+  await tester.tap(button);
+  await _until(tester, () => find.byType(TimePickerDialog).evaluate().length == 1);
+  final fields = find.descendant(
+      of: find.byType(TimePickerDialog), matching: find.byType(TextFormField));
+  await tester.enterText(fields.at(0), hour);
+  await tester.enterText(fields.at(1), minute);
+  await tester.tap(_button('确定'));
+  await _until(tester, () => find.byType(TimePickerDialog).evaluate().isEmpty);
+}
+
 void main() {
   testWidgets('schedule-copy copy-cancel keeps details without refreshing rows',
       (tester) async {
@@ -425,6 +439,98 @@ void main() {
     expect(fixture.writes, isEmpty);
     expect(find.byKey(const Key('schedule-preset-use-weekend-morning')), findsNothing);
     expect(find.byType(TextFormField), findsNothing);
+  });
+
+  testWidgets('schedule-picker values stay local until the complete plan is saved',
+      (tester) async {
+    final definition = _definition();
+    final original = jsonEncode(definition);
+    final fixture = _Fixture(definition: definition);
+    await _openDetails(tester, fixture);
+    await _openCopy(tester);
+    await _weeklyTime(tester, 'schedule-weekly-start', '21', '30');
+    await _weeklyTime(tester, 'schedule-weekly-end', '01', '15');
+    final weekend = find.byKey(const Key('schedule-days-weekend'));
+    await tester.ensureVisible(weekend);
+    await tester.tap(weekend);
+    final add = find.byKey(const Key('schedule-add-weekly-window'));
+    await tester.ensureVisible(add);
+    await tester.tap(add);
+    final date = find.byKey(const Key('schedule-add-closed-exception'));
+    await tester.ensureVisible(date);
+    await tester.tap(date);
+    await _until(tester,
+        () => find.byType(CalendarDatePicker).evaluate().length == 1);
+    tester.widget<CalendarDatePicker>(find.byType(CalendarDatePicker))
+        .onDateChanged(DateTime(2026, 12, 26));
+    await tester.tap(find.byKey(const Key('schedule-exception-date-apply')));
+    await _until(tester,
+        () => find.byType(CalendarDatePicker).evaluate().isEmpty);
+    expect(fixture.writes, isEmpty);
+    expect(_editorText('2026-12-26 · 全天关闭'), findsOneWidget);
+    await tester.ensureVisible(_button('保存副本'));
+    await tester.tap(_button('保存副本'));
+    await _until(tester, () => fixture.saved != null);
+    final expected = jsonDecode(original) as Json;
+    (expected['weekly'] as List).addAll([
+      {'day': 'SATURDAY', 'start': '21:30', 'end': '01:15'},
+      {'day': 'SUNDAY', 'start': '21:30', 'end': '01:15'},
+    ]);
+    (expected['exceptions'] as List).add({'date': '2026-12-26', 'windows': []});
+    expect((jsonDecode(fixture.writes.single.body) as Json)['definition'], expected);
+    expect(jsonEncode(definition), original);
+  });
+
+  testWidgets('schedule-picker lease preserves a covering notice during revocation',
+      (tester) async {
+    for (final time in [true, false]) {
+      final fixture = _Fixture();
+      await _openDetails(tester, fixture);
+      final heldSave = await _openCopy(tester);
+      final editorContext = tester.element(find.byType(ScheduleEditor));
+      final editor = ModalRoute.of(editorContext)! as OwnedDialogRoute<dynamic>;
+      final entry = find.byKey(Key(time
+          ? 'schedule-weekly-start'
+          : 'schedule-add-closed-exception'));
+      final heldEntry = tester.widget<ButtonStyleButton>(entry).onPressed!;
+      await tester.ensureVisible(entry);
+      await tester.tap(entry);
+      await _until(tester, () => time
+          ? find.byType(TimePickerDialog).evaluate().length == 1
+          : find.byType(CalendarDatePicker).evaluate().length == 1);
+      final heldConfirm = tester.widget<ButtonStyleButton>(time
+          ? _button('确定')
+          : find.byKey(const Key('schedule-exception-date-apply'))).onPressed!;
+      final rootContext = tester.element(find.byType(ConsolePages));
+      final notice = OwnedDialogRoute<void>(context: rootContext,
+          builder: (_) => const AlertDialog(title: Text('独立通知')));
+      unawaited(presentOwnedDialog(rootContext, notice));
+      await _flush(tester);
+      // The stock time picker must pop its local Navigator, never this notice.
+      heldConfirm();
+      await _flush(tester);
+      expect(notice.available, isTrue);
+      expect(notice.isCurrent, isTrue);
+      if (time) {
+        fixture.session.actorAwayAndBack();
+      } else {
+        editor.navigator!.removeRoute(editor);
+      }
+      await _flush(tester);
+      heldEntry();
+      heldSave();
+      await _flush(tester);
+      expect(notice.available, isTrue);
+      expect(notice.isCurrent, isTrue);
+      expect(find.text('独立通知'), findsOneWidget);
+      expect(find.byType(TimePickerDialog, skipOffstage: false), findsNothing);
+      expect(find.byType(CalendarDatePicker, skipOffstage: false), findsNothing);
+      expect(find.byType(ScheduleEditor, skipOffstage: false), findsNothing);
+      expect(fixture.writes, isEmpty);
+      expect(tester.takeException(), isNull);
+      notice.finish();
+      await _flush(tester);
+    }
   });
 
   testWidgets('schedule-weekly batches count new rows and reject overflow atomically',
