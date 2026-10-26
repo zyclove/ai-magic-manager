@@ -272,7 +272,7 @@ class ConsolePages extends StatelessWidget {
             bool refreshAfterOpen = true,
             String? notice,
             String empty = '暂无记录',
-            String description = '创建第一条记录，开始管理。',
+            String description = '当前没有可显示的记录。',
             List<Widget> toolbar = const []}) =>
         ResourcePage(
             key: ValueKey((path, resourceActor, resourceRoot, resourceRole,

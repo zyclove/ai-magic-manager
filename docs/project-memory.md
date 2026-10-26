@@ -57,6 +57,8 @@ Windows 私有进程验证的稳定工具源位于 [scripts/verification](../scr
 
 时间计划副本通过 [ScheduleCopy](../apps/guardian/lib/core/schedule_copy.dart) 隔离来源，保留原时区、空每周定义、跨午夜与全部日期例外；创建副本不替换策略引用。[ResourcePage](../apps/guardian/lib/ui/resource_page.dart) 的 `onOpenChanged` 只接收是否需要核对列表的信号：保存或明确关闭未知写入时重读，普通取消和只读返回不刷新；不能把子窗口正常返回或需重读推断成已保存。具体流程见[时间计划契约](policy-application-schedule-contract.md)。 停止旧提交后仍可只读核对已有策略；查询时清除临时错误不能解除原写入停止状态。原提交输入与停止原因分别保存，作用域失效一并清空；核对失败或不匹配不恢复旧 POST。
 
+[ResourcePage](../apps/guardian/lib/ui/resource_page.dart) 的宽屏表格保留主题最小行高，最大行高按内容增长；不修改全局表格主题。默认空态使用中性说明，有创建能力时由现有按钮提供入口；业务页面仍可明确覆盖领域空态文案。
+
 恢复草稿的中文字段清单统一在[领域化展示模块](../apps/guardian/lib/ui/editor_draft_text.dart)，只读取已捕获的提交与现有目录。名称缺失保留完整对象编号，未知字段也保留；展示层不得读取网络、改写原提交或解除重试保护。
 
 时间安排示例的不可变模型与严格响应校验统一在 [schedule_contracts](../packages/schedule_contracts/README.md)，Parent 保留轻量适配，Guardian 直接消费。目录仅按需读取，回填本地草稿、保留时区与日期例外，已有每周时段须确认替换；同包的 `weeklyWindowAdditions` 只计算独立新增项，两个宿主按实际新增数整体检查 56 条上限，不部分添加，不清除既有重复行。Guardian 的 [ScheduleWeekView](../apps/guardian/lib/ui/schedule_week_view.dart) 只做分组展示，删除仍由原编辑器的交互和权限门禁处理。宿主负责授权、有界读取和显式保存，不能将示例选择解释为已保存或已发布。交互契约及当前验证状态见[示例交付说明](schedule-preset-ux-delivery.md)。

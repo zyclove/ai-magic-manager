@@ -64,6 +64,56 @@ Future<void> tap(WidgetTester tester, String label) async {
 }
 
 void main() {
+  testWidgets('wide list grows multi-line cells with large text and keeps details usable',
+      (tester) async {
+    tester.view.physicalSize = const Size(1200, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    var reads = 0, opens = 0;
+    final api = apiFor((_) {
+      reads++;
+      return page(['真实记录']);
+    });
+    const cellKey = Key('multiline-resource-cell');
+    await tester.pumpWidget(MaterialApp(
+        theme: consoleTheme(),
+        builder: (context, child) => MediaQuery(
+            data: MediaQuery.of(context)
+                .copyWith(textScaler: const TextScaler.linear(2)),
+            child: child!),
+        home: Scaffold(
+            body: SingleChildScrollView(
+                child: ResourcePage(
+                    title: '记录',
+                    subtitle: '查看完整说明后打开详情',
+                    path: '/records',
+                    api: api,
+                    columns: [
+                      ColumnSpec('说明', (row) => Column(
+                          key: cellKey,
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(row['name'] as String),
+                            const Text('较长的状态和范围说明应按内容换行，放大字号后仍能完整阅读。'),
+                            const Text('完整说明末行'),
+                          ])),
+                    ],
+                    refreshAfterOpen: false,
+                    onOpen: (_) async { opens++; })))));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    final cell = tester.getRect(find.byKey(cellKey));
+    expect(cell.height, greaterThan(80));
+    expect(tester.getRect(find.text('完整说明末行')).bottom,
+        lessThanOrEqualTo(cell.bottom + 0.5));
+    await tap(tester, '查看详情');
+    expect(opens, 1);
+    expect(reads, 1);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('revoked list scope blocks a GET waiting for authentication',
       (tester) async {
     var generation = 1, sends = 0;

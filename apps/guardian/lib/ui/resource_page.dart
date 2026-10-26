@@ -54,7 +54,7 @@ class ResourcePage extends StatefulWidget {
       this.create,
       this.createLabel = '新建',
       this.emptyTitle = '暂无记录',
-      this.emptyDescription = '创建第一条记录，开始管理。',
+      this.emptyDescription = '当前没有可显示的记录。',
       this.toolbar = const [],
       this.notice,
       this.reauth,
@@ -455,6 +455,7 @@ class ResourcePageState extends State<ResourcePage> {
                       child: ConstrainedBox(
                           constraints: BoxConstraints(minWidth: box.maxWidth),
                           child: DataTable(
+                              dataRowMaxHeight: double.infinity,
                               showCheckboxColumn: false,
                               columnSpacing: 32,
                               columns: [
