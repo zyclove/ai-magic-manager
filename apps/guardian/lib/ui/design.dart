@@ -297,18 +297,23 @@ VoidCallback captureDialogCompletion(BuildContext context) {
   };
 }
 
+/// Keep [canCommit] true for server writes. False is only for callbacks that do
+/// not persist remote state, such as read-only checks and local draft preparation.
+/// The caller must guarantee that false callbacks perform no remote writes.
 Future<Json?> formDialog(BuildContext context,
     {required String title,
     required List<FieldSpec> fields,
     Json initial = const {},
     String? description,
     String submit = '保存',
+    bool canCommit = true,
     required Future<Json?> Function(Json) onSubmit,
     Future<Json> Function(Json)? onRecoverUnknown,
     String recoverLabel = '查询原结果',
     VoidCallback? reauth,
     Listenable? accessChanges,
     bool Function()? hasAccess}) async {
+  assert(onRecoverUnknown == null || canCommit);
   final parent = ModalRoute.of(context);
   final parentClosed = ValueNotifier<bool>(false);
   var live = true, allowed = true;
@@ -336,6 +341,7 @@ Future<Json?> formDialog(BuildContext context,
                 initial: initial,
                 description: description,
                 submit: submit,
+                canCommit: canCommit,
                 recoverLabel: recoverLabel,
                 accessChanges: Listenable.merge(
                     [parentClosed, if (accessChanges != null) accessChanges]),

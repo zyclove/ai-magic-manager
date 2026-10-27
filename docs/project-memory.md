@@ -43,6 +43,8 @@
 
 [EditDialog](../apps/guardian/lib/ui/design.dart) 默认保留服务器写入的未知结果保护。只有明确不写服务器的校验／本地草稿准备才可使用 `canCommit=false`，错误后允许修改输入；不能将已经发出的写入切换成只读模式来解除保护。域名规则编辑的只读规范化与最终保存草稿分开，见[编辑器](../apps/guardian/lib/pages/editors.dart)。
 
+formDialog 同样显式透传 canCommit（默认true），false不能配置原结果查询hook；仅用于不持久化远端状态的本地准备。额度计划的[日期编辑](../apps/guardian/lib/pages/quota_plan_editor.dart)使用该入口，直接编辑已有日期并精确保留分钟／余秒；0合法、总计不超过24小时。每周复制按源的当前精确秒数更新保留值，手动更改分钟才替换为整分钟。完整计划保存冻结外层与两个额度Map；未知、终态停止与关闭确认由父编辑器管理，不由日期窗口解除。关闭确认捕获每次独立标识，收起再打开也不复活旧确认回调。
+
 FieldSpec.validator 在原必填/数值规则后执行纯领域校验，文本、选项及时区字段共用此扩展。EditDialog/formDialog 可显式配置 onRecoverUnknown 与 recoverLabel，成对捕获首次提交及只读查询回调并冻结原值；恢复跳过当前控件校验/解析，408保持未知，查询404/401不解锁，模式切换则退役。不提供查询hook的表单仍使用原重试入口；不能把只读查询用于 canCommit=false 的本地准备流程。
 
 应用登记规范化与严格回执匹配集中在 [application_registration.dart](../apps/guardian/lib/core/application_registration.dart)，复用既有 ApplicationClassificationIdentity 契约。包名保留大小写，摘要接受原始或冒号指纹后转小写排序，空项/重复/超限就地拒绝；application 使用UUID键及既有 creation-results 原结果查询，未知后不重放创建。返回仍为管理员声明，不据此宣称设备核验或执行，详见[应用契约](policy-application-schedule-contract.md)。

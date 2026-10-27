@@ -196,6 +196,7 @@ class ApiFailure implements Exception {
         'ACCESS_SELF_DECISION_FORBIDDEN' => '不能审批本人提交的申请。',
         'INVALID_QUOTA_PERIOD' => '请填写有效日期（YYYY-MM-DD）和 IANA 时区。',
         'QUOTA_LIMIT_INVALID' => '额度应在 0–1440 分钟内，调整分钟数至少为 1。',
+        'INVALID_QUOTA_DATE_DURATION' => '日期额度合计应为 0 秒至 24 小时，请检查分钟和秒。',
         'QUOTA_PERIOD_UNAVAILABLE' ||
         'QUOTA_PERIOD_CLOSED' =>
           '该额度日期已经结束，或超出可配置日期范围。请选择当前或未来日期。',

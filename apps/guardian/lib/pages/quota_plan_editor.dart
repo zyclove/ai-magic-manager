@@ -55,7 +55,7 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
   final errorAnchor = GlobalKey();
   late final TextEditingController name;
   final days = <String, TextEditingController>{};
-  final originalSeconds = <String, int>{};
+  final preservedSeconds = <String, int>{};
   final changedDays = <String>{};
   final overrides = <String, int>{};
   String? subject;
@@ -63,8 +63,11 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
   bool tomorrow = false, busy = false;
   int calendarGeneration = 0;
   Json? calendar, pending;
-  Object? error;
-  bool get locked => busy || pending != null || overrideOperation != null;
+  Object? error, recoveryFailure;
+  Object? closeConfirmation;
+  bool get confirmingUnknownClose => closeConfirmation != null;
+  bool get recoveryStopped => recoveryFailure != null;
+  bool get locked => busy || pending != null || recoveryStopped || overrideOperation != null;
   bool get editing => owner.plan != null;
   bool get accepted {
     if (!mounted || !active || closed || !lifetime.active || !bound) return false;
@@ -77,7 +80,11 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
   }
   bool get current => accepted && route?.isCurrent == true;
   bool get canAct => current && !busy && overrideOperation == null;
-  bool get canEdit => canAct && pending == null;
+  bool get canEdit => canAct && pending == null && !recoveryStopped;
+
+  bool privateFailure(Object failure) => failure is ApiFailure &&
+      (failure.code == 'WORKSPACE_CHANGED' || failure.status == 403 ||
+          (failure.status == 401 && failure.code != 'REAUTH_REQUIRED'));
 
   void invalidate() {
     calendarGeneration++;
@@ -115,11 +122,30 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
 
   void cancel() {
     if (!canAct) return;
+    if (pending != null && !recoveryStopped) {
+      if (!confirmingUnknownClose) {
+        setState(() => closeConfirmation = Object());
+      }
+      return;
+    }
     finish();
   }
 
+  void keepUnknown(Object confirmation) {
+    if (canAct && identical(closeConfirmation, confirmation)) {
+      setState(() => closeConfirmation = null);
+    }
+  }
+
+  void closeUnknown(Object confirmation) {
+    if (canAct && identical(closeConfirmation, confirmation) &&
+        pending != null && !recoveryStopped) {
+      finish();
+    }
+  }
+
   void reauthenticate() {
-    if (!canAct) return;
+    if (!canAct || confirmingUnknownClose) return;
     owner.reauth?.call();
   }
 
@@ -171,7 +197,7 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
     for (final day in quotaWeek.keys) {
       final seconds =
           ((p?['weeklyLimits'] as Map?)?[day] as num?)?.toInt() ?? 3600;
-      originalSeconds[day] = seconds;
+      preservedSeconds[day] = seconds;
       days[day] = TextEditingController(text: (seconds ~/ 60).toString());
     }
     for (final entry in ((p?['dateOverrides'] as Map?) ?? {}).entries) {
@@ -200,6 +226,10 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
       }
     } catch (e) {
       if (accepted && generation == calendarGeneration && subject == selected) {
+        if (privateFailure(e)) {
+          invalidate();
+          return;
+        }
         setState(() => error = e);
         revealError();
       }
@@ -249,9 +279,17 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
     if (!canEdit || !days.containsKey(source)) return;
     final selected = targets.toList(growable: false);
     if (selected.any((day) => !days.containsKey(day))) return;
+    final minutes = int.tryParse(days[source]!.text);
+    if (minutes == null || minutes < 0 || minutes > 1440) {
+      toast(context, '请先为${quotaWeek[source]}填写 0–1440 分钟。');
+      return;
+    }
+    final seconds = changedDays.contains(source)
+        ? minutes * 60 : preservedSeconds[source]!;
     for (final day in selected) {
       days[day]!.text = days[source]!.text;
-      changedDays.add(day);
+      preservedSeconds[day] = seconds;
+      changedDays.remove(day);
     }
     setState(() {});
   }
@@ -290,9 +328,10 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
     setState(() => overrides.remove(date));
   }
 
-  Future<void> addOverride() async {
+  Future<void> editOverride([String? existingDate]) async {
     if (!canEdit || calendar == null) return;
-    if (overrides.length >= 60) {
+    if (existingDate != null && !overrides.containsKey(existingDate)) return;
+    if (existingDate == null && overrides.length >= 60) {
       toast(context, '最多设置 60 个日期例外，请先删除不再需要的日期。');
       return;
     }
@@ -309,54 +348,66 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
     bool childPermitted() => permitted() && childAccess.permitted();
     try {
       if (!childPermitted() || route?.isCurrent != true) return;
-      final today = DateTime.parse(selectedCalendar!['currentDate']);
-      late final OwnedDialogRoute<DateTime> dateRoute;
-      bool dateCurrent() => childPermitted() && dateRoute.available &&
-          dateRoute.isCurrent;
-      void closeDate() {
-        if (dateRoute.available && dateRoute.isCurrent) dateRoute.finish();
+      String? chosenDate = existingDate;
+      if (chosenDate == null) {
+        final today = DateTime.parse(selectedCalendar!['currentDate']);
+        late final OwnedDialogRoute<DateTime> dateRoute;
+        bool dateCurrent() => childPermitted() && dateRoute.available &&
+            dateRoute.isCurrent;
+        void closeDate() {
+          if (dateRoute.available && dateRoute.isCurrent) dateRoute.finish();
+        }
+        dateRoute = OwnedDialogRoute<DateTime>(
+            context: context,
+            barrierDismissible: false,
+            builder: (_) => AnimatedBuilder(
+                animation: childAccess.changes,
+                builder: (_, __) => !childPermitted()
+                    ? AlertDialog(
+                        title: const Text('工作空间或权限已变化'),
+                        content: const Text('已隐藏原日期选择。请关闭后重新打开当前计划。'),
+                        actions: [
+                          TextButton(onPressed: closeDate, child: const Text('关闭'))
+                        ])
+                    : Navigator(
+                        pages: [
+                          MaterialPage<DateTime>(
+                              child: DatePickerDialog(
+                                  initialDate: today,
+                                  firstDate: today,
+                                  lastDate: DateTime(
+                                      today.year, today.month, today.day + 366),
+                                  helpText: '选择单独设置额度的日期'))
+                        ],
+                        // The stock picker pops its nearest navigator. Keep that
+                        // pop local, and complete only its captured owned dialog.
+                        onPopPage: (_, result) {
+                          if (dateCurrent()) {
+                            dateRoute.finish(result is DateTime ? result : null);
+                          }
+                          return false;
+                        })));
+        final selected = await presentOwnedDialog<DateTime>(context, dateRoute);
+        if (!mounted || !childPermitted() || !current || selected == null) return;
+        chosenDate = DateFormat('yyyy-MM-dd').format(selected);
       }
-      dateRoute = OwnedDialogRoute<DateTime>(
-          context: context,
-          barrierDismissible: false,
-          builder: (_) => AnimatedBuilder(
-              animation: childAccess.changes,
-              builder: (_, __) => !childPermitted()
-                  ? AlertDialog(
-                      title: const Text('工作空间或权限已变化'),
-                      content: const Text('已隐藏原日期选择。请关闭后重新打开当前计划。'),
-                      actions: [
-                        TextButton(onPressed: closeDate, child: const Text('关闭'))
-                      ])
-                  : Navigator(
-                      pages: [
-                        MaterialPage<DateTime>(
-                            child: DatePickerDialog(
-                                initialDate: today,
-                                firstDate: today,
-                                lastDate: DateTime(
-                                    today.year, today.month, today.day + 366),
-                                helpText: '选择单独设置额度的日期'))
-                      ],
-                      // The stock picker pops its nearest navigator. Keep that
-                      // pop local, and complete only its captured owned dialog.
-                      onPopPage: (_, result) {
-                        if (dateCurrent()) {
-                          dateRoute.finish(result is DateTime ? result : null);
-                        }
-                        return false;
-                      })));
-      final selected = await presentOwnedDialog<DateTime>(context, dateRoute);
-      if (!mounted || !childPermitted() || !current || selected == null) return;
-      final date = DateFormat('yyyy-MM-dd').format(selected);
+      final date = chosenDate;
+      final originalLimitSeconds = overrides[date] ?? 3600;
       final result = await formDialog(context,
           title: '$date 的额度',
-          description: '此日期使用这里的额度，覆盖星期规则。0 分钟表示该日无可分配时间。',
+          description: '此日期额度覆盖星期规则，合计 0 表示计划不分配时间。'
+              '这里只修改草稿，最终保存计划后按生效日处理，已生成的每日额度保持原样。',
+          submit: '应用到草稿',
+          canCommit: false,
           fields: const [
-            FieldSpec('minutes', '额度（分钟，0–1440）', numeric: true, maxLength: 4)
+            FieldSpec('minutes', '分钟', numeric: true, maxLength: 4,
+                minValue: 0, maxValue: 1440),
+            FieldSpec('seconds', '秒', numeric: true, required: false,
+                maxLength: 2, minValue: 0, maxValue: 59, hint: '可留空，按 0 秒计算'),
           ],
           initial: {
-            'minutes': (overrides[date] ?? 3600) ~/ 60
+            'minutes': originalLimitSeconds ~/ 60,
+            'seconds': originalLimitSeconds % 60,
           },
           accessChanges: childAccess.changes,
           hasAccess: childPermitted,
@@ -367,9 +418,13 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
             if (!childPermitted()) {
               throw const ApiFailure(409, 'WORKSPACE_CHANGED');
             }
-            final minutes = value['minutes'] as int;
-            if (minutes > 1440) throw const ApiFailure(400, 'QUOTA_LIMIT_INVALID');
-            return {'seconds': minutes * 60};
+            final minutes = value['minutes'], seconds = value['seconds'] ?? 0;
+            if (minutes is! int || minutes < 0 || minutes > 1440 ||
+                seconds is! int || seconds < 0 || seconds > 59 ||
+                minutes * 60 + seconds > 86400) {
+              throw const ApiFailure(400, 'INVALID_QUOTA_DATE_DURATION');
+            }
+            return {'seconds': minutes * 60 + seconds};
           });
       if (childPermitted() && current && result != null) {
         setState(() => overrides[date] = result['seconds'] as int);
@@ -383,12 +438,13 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
   }
 
   Future<void> save() async {
-    if (!canAct) return;
-    if (form.currentState?.validate() != true || calendar == null || subject == null) {
+    if (!canAct || recoveryStopped || confirmingUnknownClose) return;
+    if ((pending == null && form.currentState?.validate() != true) ||
+        calendar == null || subject == null) {
       return;
     }
     final data = pending ??
-        <String, dynamic>{
+        Map<String, dynamic>.unmodifiable({
           'name': name.text.trim(),
           if (editing) 'state': state,
           if (!editing) ...{
@@ -398,14 +454,14 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
             'timeZone': calendar!['timeZone'],
             'effectiveFrom': effectiveDate,
           },
-          'weeklyLimits': {
+          'weeklyLimits': Map<String, int>.unmodifiable({
             for (final day in quotaWeek.keys)
               day: changedDays.contains(day)
                   ? int.parse(days[day]!.text) * 60
-                  : originalSeconds[day]
-          },
-          'dateOverrides': Map<String, int>.from(overrides),
-        };
+                  : preservedSeconds[day]!
+          }),
+          'dateOverrides': Map<String, int>.unmodifiable(overrides),
+        });
     final operation = Object();
     saveOperation = operation;
     setState(() {
@@ -419,9 +475,19 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
       }
     } catch (e) {
       if (accepted && identical(saveOperation, operation)) {
+        if (privateFailure(e)) {
+          invalidate();
+          return;
+        }
         setState(() {
           error = e;
-          if (e is! ApiFailure || e.status == 0 || e.status >= 500) {
+          if (e is ApiFailure &&
+              (e.status == 412 || isUnavailableOperationResult(e))) {
+            recoveryFailure = e;
+            pending = data;
+          } else if (pending != null || e is! ApiFailure || e.status == 0 ||
+              e.status == 408 || e.status >= 500 ||
+              e.code == 'PENDING_OPERATION_UNCHANGED') {
             pending = data;
           }
         });
@@ -454,10 +520,12 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
   Widget editor(BuildContext context) {
     final generation = calendarGeneration;
     final selected = subject;
+    final confirmation = closeConfirmation;
     return PopScope(
-      canPop: !busy,
+      canPop: !busy && (pending == null || recoveryStopped),
       onPopInvoked: (didPop) {
         if (didPop) markClosed();
+        if (!didPop && pending != null && !recoveryStopped && canAct) cancel();
       },
       child: AlertDialog(
         title: Text(editing ? '修改重复计划' : '创建重复计划'),
@@ -580,15 +648,13 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
                                               maxLength: 4,
                                               decoration: InputDecoration(
                                                   labelText: '${day.value}（分钟）',
-                                                  helperText: originalSeconds[
-                                                                  day.key]! %
-                                                              60 !=
-                                                          0
-                                                      ? '原额度 ${quotaDuration(originalSeconds[day.key])}，不改此项会保留秒数'
+                                                  helperText: !changedDays.contains(day.key) &&
+                                                      preservedSeconds[day.key]! % 60 != 0
+                                                      ? '当前额度 ${quotaDuration(preservedSeconds[day.key])}，不改此项会保留秒数'
                                                       : null),
                                               onChanged: (_) {
                                                 if (!canEdit) return;
-                                                changedDays.add(day.key);
+                                                setState(() => changedDays.add(day.key));
                                               },
                                               validator: (v) {
                                                 final n = int.tryParse(v ?? '');
@@ -609,7 +675,7 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
                             TextButton.icon(
                                 onPressed: !canEdit || calendar == null
                                     ? null
-                                    : addOverride,
+                                    : () => editOverride(),
                                 icon: const Icon(Icons.add, size: 18),
                                 label: const Text('添加日期'))
                           ]),
@@ -619,14 +685,22 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
                           for (final date in (overrides.keys.toList()..sort()))
                             ListTile(
                                 contentPadding: EdgeInsets.zero,
+                                onTap: !canEdit ? null : () => editOverride(date),
                                 title: Text(date),
                                 subtitle: Text(quotaDuration(overrides[date])),
-                                trailing: IconButton(
+                                trailing: Wrap(children: [
+                                  IconButton(
+                                      key: Key('quota-plan-edit-override-$date'),
+                                      tooltip: '编辑 $date 的例外',
+                                      onPressed: !canEdit ? null : () => editOverride(date),
+                                      icon: const Icon(Icons.edit_outlined, size: 18)),
+                                  IconButton(
                                     tooltip: '删除 $date 的例外',
                                     onPressed: !canEdit
                                         ? null
                                         : () => removeOverride(date),
-                                    icon: const Icon(Icons.close, size: 18))),
+                                    icon: const Icon(Icons.close, size: 18)),
+                                ])),
                           if (editing) ...[
                             const SizedBox(height: 20),
                             DropdownButtonFormField<String>(
@@ -644,10 +718,16 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
                                     ? null
                                     : changePlanState)
                           ],
-                          if (pending != null) ...[
+                          if (recoveryStopped) ...[
                             const SizedBox(height: 16),
-                            const Notice('上次提交结果尚未确认。输入已保留，重试将发送完全相同的内容。',
-                                warning: true)
+                            const Notice('原提交已停止，输入以只读方式保留。请关闭后核对当前计划与版本；'
+                                '结果到期或清除不代表保存没有发生。', warning: true),
+                          ] else if (pending != null) ...[
+                            const SizedBox(height: 16),
+                            Notice(confirmingUnknownClose
+                                ? '暂时关闭不会取消已经发出的保存。关闭后请先核对原工作空间的计划列表，避免重复创建或修改。'
+                                : '上次提交结果尚未确认。输入已保留，重试将发送完全相同的内容。',
+                                warning: true),
                           ],
                           if (error != null) ...[
                             Padding(
@@ -665,16 +745,32 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
                           ],
                         ])))),
         actions: [
-          TextButton(
-              onPressed: canAct ? cancel : null,
-              child: const Text('取消')),
-          FilledButton(
-              onPressed: !canAct || calendar == null ? null : save,
-              child: Text(busy
-                  ? '保存中…'
-                  : pending != null
-                      ? '重试原提交'
-                      : '保存计划'))
+          if (confirmation != null) ...[
+            TextButton(
+                key: const Key('quota-plan-keep-unknown'),
+                onPressed: canAct ? () => keepUnknown(confirmation) : null,
+                child: const Text('继续核对')),
+            FilledButton(
+                key: const Key('quota-plan-confirm-close-unknown'),
+                onPressed: canAct ? () => closeUnknown(confirmation) : null,
+                child: const Text('确认关闭')),
+          ] else ...[
+            TextButton(
+                key: pending != null && !recoveryStopped
+                    ? const Key('quota-plan-close-unknown') : null,
+                onPressed: canAct ? cancel : null,
+                child: Text(recoveryStopped ? '关闭'
+                    : pending != null ? '暂时关闭' : '取消')),
+            FilledButton(
+                onPressed: !canAct || recoveryStopped || calendar == null ? null : save,
+                child: Text(busy
+                    ? '保存中…'
+                    : recoveryStopped
+                        ? '已停止旧提交'
+                        : pending != null
+                            ? '重试原提交'
+                            : '保存计划')),
+          ],
         ],
       ));
   }
