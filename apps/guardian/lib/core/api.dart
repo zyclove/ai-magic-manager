@@ -151,6 +151,9 @@ class ApiFailure implements Exception {
         'CLASS_TRANSFER_SAME_TARGET' => '请选择不同的目标班级。',
         'INVALID_DEVICE_GROUP_NAME' => '请输入 1–100 字的设备组名称，不能包含控制字符。',
         'INVALID_DEVICE_GROUP_RESPONSE' => '设备组数据校验未通过，已隐藏结果。请刷新后重试。',
+        'DEVICE_GROUP_RESULT_UNAVAILABLE' =>
+          '尚未查到原设备组操作结果，不能据此判断操作未执行。请稍后再查询，或核对当前设备组。',
+        'INVALID_DEVICE_GROUP_RECOVERY' => '原设备组操作信息不完整，请保留当前内容并核对设备组记录。',
         'DEVICE_GROUP_NAME_EXISTS' => '本机构已有同名设备组，请使用其他名称。',
         'DEVICE_GROUP_ARCHIVED' => '设备组已归档，无法继续修改。请刷新查看最新状态。',
         'DEVICE_GROUP_DEVICE_UNAVAILABLE' => '设备未激活或注册周期已变化，请刷新设备后重新选择。',

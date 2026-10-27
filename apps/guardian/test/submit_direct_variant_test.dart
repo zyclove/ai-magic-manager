@@ -158,6 +158,8 @@ Json _group() => {
       'state': 'ACTIVE',
       'version': 3,
       'deviceCount': 0,
+      'createdAt': 1000,
+      'updatedAt': 1003,
     };
 
 Object _groupRead(http.Request request) {

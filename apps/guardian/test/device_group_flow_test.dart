@@ -38,6 +38,7 @@ const _devices = <Json>[
 
 class _GroupSession extends Session {
   final Api testApi;
+  int stepUps = 0;
   _GroupSession(this.testApi) {
     profile = {'subject': 'device-group-flow-owner'};
     tenant = {'id': _tenant, 'kind': 'ORGANIZATION'};
@@ -48,6 +49,10 @@ class _GroupSession extends Session {
   Api get api => testApi;
   @override
   bool get authenticated => true;
+  @override
+  void login({bool stepUp = false}) {
+    if (stepUp) stepUps++;
+  }
 }
 
 http.Response _reply(Object value, [int status = 200]) => http.Response(
@@ -57,31 +62,49 @@ http.Response _reply(Object value, [int status = 200]) => http.Response(
 // Public-page transport fixtures assert client orchestration, not server or
 // device acceptance. Mutations remain pending until their request is inspected.
 class _Fixture {
+  final String? recoveryOperation;
   final requests = <http.Request>[];
   final members = <Json>[];
   int version = 3;
+  String name = '七年级设备组', state = 'ACTIVE';
+  Json? committed;
   Completer<http.Response>? pending;
   late final transport = MockClient(handle);
   late final api = Api(() async => transport,
       baseUrl: 'https://fixture.invalid/api/v1');
   late final session = _GroupSession(api);
 
+  _Fixture({this.recoveryOperation}) {
+    if (recoveryOperation == 'REMOVE') members.add(_member(_devices.first));
+  }
+
   Json get group => {
-    'id': _groupId, 'name': '七年级设备组', 'state': 'ACTIVE',
+    'id': _groupId, 'name': name, 'state': state,
     'version': version, 'deviceCount': members.length,
+    'createdAt': 1000, 'updatedAt': 1000 + version,
+  };
+
+  Json _member(Json device) => {
+    'deviceId': device['id'], 'registrationId': device['registrationId'],
+    'displayName': device['displayName'], 'platform': device['platform'],
+    'state': device['state'], 'membershipStatus': 'CURRENT', 'addedAt': 1000,
   };
 
   List<http.Request> reads(String path) => requests.where((request) =>
       request.method == 'GET' && request.url.path == path).toList();
-  List<http.Request> get writes =>
-      requests.where((request) => request.method != 'GET').toList();
+  List<http.Request> get queries => requests.where((request) =>
+      request.url.path.startsWith('$_groups/operation-results/')).toList();
+  List<http.Request> get writes => requests.where((request) =>
+      request.method != 'GET' &&
+      !request.url.path.startsWith('$_groups/operation-results/')).toList();
 
   Future<http.Response> handle(http.Request request) async {
     requests.add(request);
     final path = request.url.path;
     if (request.method == 'GET') {
       if (path == _groups) {
-        return _reply({'items': [group], 'nextCursor': null});
+        return _reply({'items': recoveryOperation == 'CREATE' && committed == null
+            ? <Json>[] : [group], 'nextCursor': null});
       }
       if (path == _groupPath) return _reply(group);
       if (path == '$_groupPath/devices') {
@@ -98,6 +121,52 @@ class _Fixture {
         return _reply({'items': _devices, 'nextCursor': null});
       }
     }
+    if (recoveryOperation != null && request.method == 'POST' &&
+        path.startsWith('$_groups/operation-results/')) {
+      if (queries.length == 1) {
+        return _reply({'errorCode': 'DEVICE_GROUP_RESULT_UNAVAILABLE'}, 404);
+      }
+      if (queries.length == 2) {
+        return _reply({'errorCode': 'REAUTH_REQUIRED'}, 401);
+      }
+      return _reply({'operation': recoveryOperation,
+        'committed': committed!, 'current': group});
+    }
+    if (recoveryOperation != null && request.method != 'GET') {
+      if (committed != null) throw StateError('An unknown write must not be replayed');
+      final body = request.body.isEmpty ? <String, dynamic>{}
+          : jsonDecode(request.body) as Json;
+      switch (recoveryOperation) {
+        case 'CREATE':
+          name = body['name'] as String;
+          version = 0;
+          break;
+        case 'RENAME':
+          name = body['name'] as String;
+          version++;
+          break;
+        case 'ARCHIVE':
+          state = 'ARCHIVED';
+          version++;
+          break;
+        case 'ADD':
+          members.add(_member(_devices.first));
+          version++;
+          break;
+        case 'REMOVE':
+          members.clear();
+          version++;
+          break;
+        default:
+          throw StateError('Unexpected recovery operation: $recoveryOperation');
+      }
+      committed = Map<String, dynamic>.of(group);
+      if (recoveryOperation != 'ARCHIVE') {
+        name = '后来核对的设备组';
+        version++;
+      }
+      return _reply({'errorCode': 'REQUEST_TIMEOUT'}, 408);
+    }
     if (request.method == 'POST' && path == '$_groupPath/devices/batches') {
       if (pending != null) throw StateError('A group mutation is already pending');
       pending = Completer<http.Response>();
@@ -111,11 +180,7 @@ class _Fixture {
     final body = jsonDecode(writes.last.body) as Json;
     for (final selected in body['devices'] as List<dynamic>) {
       final device = _devices.singleWhere((row) => row['id'] == selected['deviceId']);
-      members.add({
-        'deviceId': device['id'], 'registrationId': device['registrationId'],
-        'displayName': device['displayName'], 'platform': device['platform'],
-        'state': device['state'], 'membershipStatus': 'CURRENT', 'addedAt': 1,
-      });
+      members.add(_member(device));
     }
     version++;
     pending = null;
@@ -182,21 +247,24 @@ Future<void> _tap(WidgetTester tester, Finder finder) async {
   await tester.pump();
 }
 
-Future<void> _mount(WidgetTester tester, _Fixture fixture) async {
+Future<void> _mount(WidgetTester tester, _Fixture fixture,
+    {bool openGroup = true}) async {
   tester.view.physicalSize = const Size(1200, 1200);
   tester.view.devicePixelRatio = 1;
   await tester.pumpWidget(MaterialApp(theme: consoleTheme(),
       home: Scaffold(body: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
           child: DeviceGroupsPage(session: fixture.session)))));
-  await _until(tester, () => find.text('七年级设备组').evaluate().length == 1);
-  await _openGroup(tester);
+  await _until(tester, () => fixture.recoveryOperation == 'CREATE'
+      ? find.text('暂无设备组').evaluate().length == 1
+      : find.text('七年级设备组').evaluate().length == 1);
+  if (openGroup) await _openGroup(tester, count: fixture.members.length);
 }
 
-Future<void> _openGroup(WidgetTester tester) async {
+Future<void> _openGroup(WidgetTester tester, {int count = 0}) async {
   await _tap(tester, find.text('七年级设备组'));
   await _until(tester, () => _enabled(tester, '加入设备') &&
-      _chip('全部 0').evaluate().length == 1);
+      _chip('全部 $count').evaluate().length == 1);
 }
 
 Future<void> _pickerReady(WidgetTester tester) => _until(tester, () =>
@@ -223,6 +291,37 @@ Future<void> _cancel(WidgetTester tester, String label) async {
       _enabled(tester, '加入设备'));
 }
 
+Future<String> _openRecoveryOperation(WidgetTester tester, String operation) async {
+  switch (operation) {
+    case 'CREATE':
+    case 'RENAME':
+      await _tap(tester, _button(operation == 'CREATE' ? '新建设备组' : '修改名称'));
+      final submit = operation == 'CREATE' ? '创建设备组' : '保存名称';
+      await _until(tester, () => _enabled(tester, submit) &&
+          _routeReady(tester, _button(submit)));
+      await tester.enterText(find.descendant(of: find.byType(EditDialog),
+          matching: find.byType(TextFormField)), '恢复目标名称');
+      return submit;
+    case 'ARCHIVE':
+      await _tap(tester, _button('归档设备组'));
+      break;
+    case 'ADD':
+      await _openPicker(tester);
+      await _choose(tester, [_devices.first]);
+      return '确认加入 1 台';
+    case 'REMOVE':
+      await _tap(tester, find.byWidgetPredicate((widget) => widget is IconButton &&
+          widget.tooltip == '移出 阅读平板'));
+      break;
+    default:
+      throw StateError('Unexpected recovery operation: $operation');
+  }
+  final submit = operation == 'ARCHIVE' ? '确认归档' : '确认移出';
+  await _until(tester, () => _enabled(tester, submit) &&
+      _routeReady(tester, _button(submit)));
+  return submit;
+}
+
 void main() {
   testWidgets('one or several devices use one version-bound batch and cancellation writes nothing',
       (tester) async {
@@ -236,7 +335,7 @@ void main() {
       await _cancel(tester, '取消');
       await _openPicker(tester);
       await _choose(tester, [_devices.first]);
-      await _cancel(tester, '关闭');
+      await _cancel(tester, '取消');
       expect(fixture.writes, isEmpty);
       expect(fixture.reads(_groupPath), hasLength(initialReads));
 
@@ -331,6 +430,112 @@ void main() {
       expect(tester.takeException(), isNull);
     } finally {
       await fixture.cleanup(tester);
+    }
+  });
+
+  testWidgets('all five uncertain group changes only query their fixed original operation',
+      (tester) async {
+    for (final operation in ['CREATE', 'RENAME', 'ARCHIVE', 'ADD', 'REMOVE']) {
+      final fixture = _Fixture(recoveryOperation: operation);
+      try {
+        await _mount(tester, fixture, openGroup: operation != 'CREATE');
+        var submit = await _openRecoveryOperation(tester, operation);
+        if (operation == 'CREATE') {
+          final listReads = fixture.reads(_groups).length;
+          await _tap(tester, _button('取消'));
+          await _until(tester, () => find.byType(EditDialog).evaluate().isEmpty &&
+              _enabled(tester, '新建设备组'));
+          expect(fixture.reads(_groups), hasLength(listReads));
+          expect(fixture.writes, isEmpty);
+          submit = await _openRecoveryOperation(tester, operation);
+        }
+        await _tap(tester, _button(submit));
+        await _until(tester, () => fixture.writes.length == 1 &&
+            _enabled(tester, '查询原操作结果'));
+        expect(find.byType(EditDialog), findsOneWidget);
+        final original = fixture.writes.single;
+        final key = original.headers['Idempotency-Key'];
+        expect(key, matches(RegExp(
+            r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')));
+        expect(original.headers['If-Match'], operation == 'CREATE' ? null : '"3"');
+        final (method, path) = switch (operation) {
+          'CREATE' => ('POST', _groups),
+          'RENAME' => ('PATCH', _groupPath),
+          'ARCHIVE' => ('POST', '$_groupPath/archive'),
+          'ADD' => ('POST', '$_groupPath/devices/batches'),
+          _ => ('POST', '$_groupPath/devices/removals'),
+        };
+        expect(original.method, method);
+        expect(original.url.path, path);
+        final targets = [<String, dynamic>{
+          'deviceId': _devices.first['id'],
+          'registrationId': _devices.first['registrationId'],
+        }];
+        final Json body = switch (operation) {
+          'CREATE' || 'RENAME' => {'name': '恢复目标名称'},
+          'ADD' || 'REMOVE' => {'devices': targets},
+          _ => <String, dynamic>{},
+        };
+        if (operation == 'ARCHIVE') {
+          expect(original.body, isEmpty);
+        } else {
+          expect(jsonDecode(original.body), body);
+        }
+        final expectedQuery = <String, dynamic>{
+          'operation': operation,
+          if (operation != 'CREATE') ...{'groupId': _groupId, 'version': 3},
+          ...body,
+        };
+        expect(fixture.queries, isEmpty,
+            reason: '$operation recovery starts only from an explicit query.');
+
+        for (var query = 1; query <= 2; query++) {
+          await _tap(tester, _button('查询原操作结果'));
+          await _until(tester, () => fixture.queries.length == query &&
+              _enabled(tester, '查询原操作结果'));
+          expect(fixture.writes, hasLength(1));
+          expect(find.byType(EditDialog), findsOneWidget);
+          expect(find.text(submit), findsNothing);
+          if (operation == 'CREATE' || operation == 'RENAME') {
+            final input = tester.widget<TextFormField>(find.descendant(
+                of: find.byType(EditDialog), matching: find.byType(TextFormField)));
+            expect(input.enabled, isFalse);
+            expect(input.controller!.text, '恢复目标名称');
+          }
+        }
+        final beforeMfa = fixture.requests.length;
+        await _tap(tester, _button('重新安全验证'));
+        await _flush(tester);
+        expect(fixture.session.stepUps, 1);
+        expect(fixture.requests, hasLength(beforeMfa),
+            reason: 'MFA must not automatically write or query the original operation.');
+        expect(_enabled(tester, '查询原操作结果'), isTrue);
+
+        await _tap(tester, _button('查询原操作结果'));
+        await _until(tester, () => fixture.queries.length == 3 &&
+            find.byType(EditDialog).evaluate().isEmpty &&
+            find.text('编号 $_groupId · 版本 ${fixture.version}').evaluate().length == 1);
+        expect(fixture.writes, hasLength(1));
+        for (final query in fixture.queries) {
+          expect(query.method, 'POST');
+          expect(query.url.path, '$_groups/operation-results/$key/query');
+          expect(query.headers['If-Match'], isNull);
+          expect(query.headers['Idempotency-Key'], isNull);
+          expect(jsonDecode(query.body), expectedQuery);
+        }
+        expect(find.text(fixture.name), findsOneWidget);
+        expect(fixture.reads(_groupPath).last.method, 'GET');
+        if (operation == 'ARCHIVE') {
+          expect(find.text('加入设备'), findsNothing);
+          expect(fixture.group['state'], 'ARCHIVED');
+        } else {
+          expect(fixture.version, greaterThan(fixture.committed!['version'] as int));
+          expect(find.text('原操作已核对，设备组已有后续修改，请核对当前记录。'), findsOneWidget);
+        }
+        expect(tester.takeException(), isNull);
+      } finally {
+        await fixture.cleanup(tester);
+      }
     }
   });
 }
