@@ -59,6 +59,21 @@ class _EditorSession extends Session {
 
 const _tenantId = fixture.tenant;
 const _root = '/tenants/$_tenantId';
+const _scheduleId = '88888888-8888-4888-8888-888888888888';
+
+Json _savedSchedule(http.Request request) => {
+      'id': _scheduleId,
+      ...jsonDecode(request.body) as Json,
+    };
+
+void _expectScheduleQuery(http.Request request, http.Request original) {
+  expect(request.method, 'POST');
+  expect(request.url.path,
+      '/api/v1$_root/schedules/creation-results/'
+      '${original.headers['Idempotency-Key']}/query');
+  expect(request.body, original.body);
+  expect(request.headers['Idempotency-Key'], isNull);
+}
 
 class _BlockedApi {
   final clientReady = Completer<http.Client>();
@@ -267,6 +282,9 @@ void main() {
       final request = blocked.requests.single;
       expect(request.method, 'POST');
       expect(request.url.path, '/api/v1$_root/schedules');
+      expect(request.headers['Idempotency-Key'], matches(RegExp(
+          r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$',
+          caseSensitive: false)));
       expect(jsonDecode(request.body), {
         'name': '放学后的自由时间',
         'definition': {
@@ -411,8 +429,8 @@ void main() {
     }
   });
 
-  for (final failure in ['network', 'server', 'unexpected']) {
-    testWidgets('ScheduleEditor $failure outcome preserves the original retry',
+  for (final failure in ['network', 'server', 'timeout', 'unexpected', 'receipt']) {
+    testWidgets('ScheduleEditor $failure outcome only queries the original save',
         (tester) async {
       final f = _ScheduleRecoveryFixture();
       try {
@@ -441,6 +459,10 @@ void main() {
         expect(jsonDecode(originalBody)['definition']['exceptions'], hasLength(1));
         if (failure == 'server') {
           f.reply(0, 503, {'errorCode': 'SERVICE_UNAVAILABLE'});
+        } else if (failure == 'timeout') {
+          f.reply(0, 408, {'errorCode': 'REQUEST_TIMEOUT'});
+        } else if (failure == 'receipt') {
+          f.reply(0, 200, {});
         } else {
           f.responses.single.completeError(failure == 'network'
               ? http.ClientException('fixture connection lost')
@@ -453,7 +475,10 @@ void main() {
           expect(field.enabled, isFalse);
         }
         expect(tester.widget<PopScope>(find.byType(PopScope)).canPop, isFalse);
-        expect(find.text('重试原提交'), findsOneWidget);
+        expect(find.text('查询保存结果'), findsOneWidget);
+        expect(find.byKey(const Key('schedule-editor-query-original')),
+            findsOneWidget);
+        expect(find.text('重试原提交'), findsNothing);
         day(false);
         remove();
         removeException();
@@ -469,17 +494,22 @@ void main() {
         expect(tester.widget<FilterChip>(find.byType(FilterChip).first).selected,
             isTrue);
         expect(f.requests, hasLength(1));
-        final retry = _capturedSubmit(tester, '重试原提交');
-        retry();
-        retry();
+        final query = _capturedSubmit(tester, '查询保存结果');
+        query();
+        query();
         await _flush(tester);
         expect(f.requests, hasLength(2));
-        expect(f.requests.last.body, originalBody);
-        expect(f.requests.last.headers['Idempotency-Key'], requestKey);
-        f.reply(1, 200, {});
+        _expectScheduleQuery(f.requests.last, f.requests.first);
+        expect(f.requests.where((request) =>
+            request.url.path == '/api/v1$_root/schedules'), hasLength(1));
+        f.reply(1, 200, _savedSchedule(f.requests.first));
         await _flush(tester);
         await tester.pumpAndSettle();
         expect(find.byType(ScheduleEditor), findsNothing);
+        query();
+        save();
+        await _flush(tester);
+        expect(f.requests, hasLength(2));
         expect(tester.takeException(), isNull);
       } finally {
         await f.cleanup(tester);
@@ -502,6 +532,7 @@ void main() {
         expect(field.enabled, isTrue);
       }
       expect(find.text('重试原提交'), findsNothing);
+      expect(find.text('查询保存结果'), findsNothing);
       await tester.enterText(find.widgetWithText(TextFormField, '计划名称'),
           '修正后的计划');
       _capturedSubmit(tester, '保存计划')();
@@ -511,7 +542,7 @@ void main() {
       expect(f.requests.last.body, isNot(f.requests.first.body));
       expect(f.requests.last.headers['Idempotency-Key'],
           f.requests.first.headers['Idempotency-Key']);
-      f.reply(1, 200, {});
+      f.reply(1, 200, _savedSchedule(f.requests.last));
       await _flush(tester);
       await tester.pumpAndSettle();
       expect(find.byType(ScheduleEditor), findsNothing);
@@ -521,38 +552,98 @@ void main() {
     }
   });
 
-  testWidgets('ScheduleEditor pending-operation rejection retains unknown content',
-      (tester) async {
-    final f = _ScheduleRecoveryFixture();
-    try {
-      await _openSchedule(tester, f);
-      _capturedSubmit(tester, '保存计划')();
-      await _flush(tester);
-      f.reply(0, 503, {'errorCode': 'SERVICE_UNAVAILABLE'});
-      await _flush(tester);
-      _capturedSubmit(tester, '重试原提交')();
-      await _flush(tester);
-      f.reply(1, 409, {'errorCode': 'PENDING_OPERATION_UNCHANGED'});
-      await _flush(tester);
-      await tester.pumpAndSettle();
-      expect(find.text('重试原提交'), findsOneWidget);
-      expect(tester.widget<TextFormField>(
-          find.widgetWithText(TextFormField, '计划名称')).enabled, isFalse);
-      _capturedSubmit(tester, '重试原提交')();
-      await _flush(tester);
-      expect(f.requests, hasLength(3));
-      expect(f.requests.map((r) => r.body).toSet(), hasLength(1));
-      expect(f.requests.map((r) => r.headers['Idempotency-Key']).toSet(),
-          hasLength(1));
-      f.reply(2, 200, {});
-      await _flush(tester);
-      await tester.pumpAndSettle();
-      expect(find.byType(ScheduleEditor), findsNothing);
-      expect(tester.takeException(), isNull);
-    } finally {
-      await f.cleanup(tester);
-    }
-  });
+  for (final outcome in ['confirmed', 'conflict', 'expired']) {
+    testWidgets('ScheduleEditor preserves locked lookup content until $outcome',
+        (tester) async {
+      final f = _ScheduleRecoveryFixture();
+      try {
+        await _openSchedule(tester, f, withException: true);
+        final staleSave = _capturedSubmit(tester, '保存计划');
+        staleSave();
+        await _flush(tester);
+        final original = f.requests.single;
+        f.reply(0, 503, {'errorCode': 'SERVICE_UNAVAILABLE'});
+        await _flush(tester);
+        final query = _capturedSubmit(tester, '查询保存结果');
+        final receipt = _savedSchedule(original);
+        final refusals = <(int, Json)>[
+          (404, {'errorCode': 'SCHEDULE_CREATION_RESULT_NOT_FOUND'}),
+          (401, {'errorCode': 'REAUTH_REQUIRED'}),
+          (409, {'errorCode': 'PENDING_OPERATION_UNCHANGED'}),
+          (200, {}),
+          (200, {...receipt, 'id': 'invalid-schedule-id'}),
+          (200, {...receipt, 'name': '其他计划'}),
+          (200, {...receipt, 'definition': {
+            ...receipt['definition'] as Json,
+            'weekly': <Json>[],
+          }}),
+        ];
+        for (var index = 0; index < refusals.length; index++) {
+          query();
+          query();
+          await _flush(tester);
+          expect(f.requests, hasLength(index + 2));
+          _expectScheduleQuery(f.requests.last, original);
+          f.reply(index + 1, refusals[index].$1, refusals[index].$2);
+          await _flush(tester);
+          await tester.pumpAndSettle();
+          expect(find.byType(ScheduleEditor), findsOneWidget);
+          expect(find.text('当前操作已失效'), findsNothing);
+          expect(find.text('查询保存结果'), findsOneWidget);
+          expect(find.widgetWithText(FilledButton, '保存计划'), findsNothing);
+          for (final field in tester.widgetList<TextFormField>(
+              find.byType(TextFormField))) {
+            expect(field.enabled, isFalse);
+          }
+          expect(f.requests.where((request) =>
+              request.url.path == '/api/v1$_root/schedules'), hasLength(1));
+        }
+        query();
+        query();
+        await _flush(tester);
+        expect(f.requests, hasLength(refusals.length + 2));
+        _expectScheduleQuery(f.requests.last, original);
+        final finalIndex = f.requests.length - 1;
+        if (outcome == 'confirmed') {
+          f.reply(finalIndex, 200, receipt);
+        } else {
+          f.reply(finalIndex, outcome == 'conflict' ? 412 : 410, {
+            'errorCode': outcome == 'conflict'
+                ? 'RESOURCE_VERSION_CONFLICT' : 'IDEMPOTENCY_RESULT_EXPIRED'
+          });
+        }
+        await _flush(tester);
+        await tester.pumpAndSettle();
+        if (outcome == 'confirmed') {
+          expect(find.byType(ScheduleEditor), findsNothing);
+        } else {
+          expect(find.text('原提交需要重新核对'), findsOneWidget);
+          expect(find.text('保留的草稿'), findsOneWidget);
+          expect(find.byType(TextFormField), findsNothing);
+          expect(find.text('查询保存结果'), findsNothing);
+          await tester.tap(find.text('保留的草稿'));
+          await tester.pumpAndSettle();
+          expect(find.byWidgetPredicate((widget) => widget is SelectableText &&
+              widget.data?.contains('放学后的自由时间') == true &&
+              widget.data?.contains('Asia/Shanghai') == true), findsOneWidget);
+          query();
+          staleSave();
+          await _flush(tester);
+          expect(f.requests, hasLength(refusals.length + 2));
+          await tester.tap(find.byKey(const Key('editor-close-stopped')));
+          await tester.pumpAndSettle();
+          expect(find.byType(ScheduleEditor), findsNothing);
+        }
+        query();
+        staleSave();
+        await _flush(tester);
+        expect(f.requests, hasLength(refusals.length + 2));
+        expect(tester.takeException(), isNull);
+      } finally {
+        await f.cleanup(tester);
+      }
+    });
+  }
 
   testWidgets('ScheduleEditor unknown back navigation requires explicit close',
       (tester) async {
@@ -571,7 +662,7 @@ void main() {
       await tester.tap(find.byKey(const Key('schedule-editor-keep-unknown')));
       await tester.pumpAndSettle();
       expect(find.byType(ScheduleEditor), findsOneWidget);
-      expect(find.text('重试原提交'), findsOneWidget);
+      expect(find.text('查询保存结果'), findsOneWidget);
       await tester.tap(find.byKey(const Key('schedule-editor-close-unknown')));
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(
@@ -602,7 +693,7 @@ void main() {
                   child: const Text('关闭通知'))]))
           .then((_) => noticeClosed = true));
       await tester.pumpAndSettle();
-      f.reply(0, 200, {});
+      f.reply(0, 200, _savedSchedule(f.requests.single));
       await _flush(tester);
       await tester.pumpAndSettle();
       expect(find.text('独立通知'), findsOneWidget);
@@ -721,7 +812,7 @@ void main() {
       await _flush(tester);
       f.reply(0, 503, {'errorCode': 'SERVICE_UNAVAILABLE'});
       await _flush(tester);
-      final retry = _capturedSubmit(tester, '重试原提交');
+      final query = _capturedSubmit(tester, '查询保存结果');
       await tester.tap(find.byKey(const Key('schedule-editor-close-unknown')));
       await tester.pumpAndSettle();
       final confirm = tester.widget<TextButton>(find.byKey(
@@ -729,7 +820,7 @@ void main() {
       var noticeClosed = false;
       await _coverScopeNotice(tester, () => noticeClosed = true);
       f.session.changeScope('actor');
-      retry();
+      query();
       save();
       confirm();
       await _flush(tester);
@@ -765,7 +856,8 @@ void main() {
         await _coverScopeNotice(tester, () => noticeClosed = true);
         f.session.changeScope('tenant');
         await tester.pump();
-        f.reply(0, status, status == 200 ? {} : {'errorCode': 'SERVICE_UNAVAILABLE'});
+        f.reply(0, status, status == 200 ? _savedSchedule(f.requests.single)
+            : {'errorCode': 'SERVICE_UNAVAILABLE'});
         await _flush(tester);
         await tester.pumpAndSettle();
         expect(noticeClosed, isFalse);
@@ -775,7 +867,7 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.text('当前操作已失效'), findsOneWidget);
         expect(find.byType(TextFormField), findsNothing);
-        expect(find.text('重试原提交'), findsNothing);
+        expect(find.text('查询保存结果'), findsNothing);
         expect(f.requests, hasLength(1));
         await tester.tap(find.widgetWithText(TextButton, '关闭'));
         await tester.pumpAndSettle();
@@ -792,30 +884,43 @@ void main() {
     403: 'ACCESS_DENIED',
     409: 'WORKSPACE_CHANGED',
   }.entries) {
-    testWidgets('ScheduleEditor ${rejection.value} hides a revoked submission',
-        (tester) async {
-      final f = _ScheduleRecoveryFixture();
-      try {
-        await _openSchedule(tester, f);
-        final save = _capturedSubmit(tester, '保存计划');
-        save();
-        await _flush(tester);
-        f.reply(0, rejection.key, {'errorCode': rejection.value});
-        await _flush(tester);
-        await tester.pumpAndSettle();
-        expect(find.text('当前操作已失效'), findsOneWidget);
-        expect(find.byType(TextFormField), findsNothing);
-        save();
-        await _flush(tester);
-        expect(f.requests, hasLength(1));
-        await tester.tap(find.widgetWithText(TextButton, '关闭'));
-        await tester.pumpAndSettle();
-        expect(find.byType(ScheduleEditor), findsNothing);
-        expect(tester.takeException(), isNull);
-      } finally {
-        await f.cleanup(tester);
-      }
-    });
+    for (final querying in [false, true]) {
+      testWidgets('ScheduleEditor ${rejection.value} revokes '
+          '${querying ? 'lookup' : 'submission'} content',
+          (tester) async {
+        final f = _ScheduleRecoveryFixture();
+        try {
+          await _openSchedule(tester, f);
+          final save = _capturedSubmit(tester, '保存计划');
+          save();
+          await _flush(tester);
+          var staleAction = save;
+          if (querying) {
+            f.reply(0, 503, {'errorCode': 'SERVICE_UNAVAILABLE'});
+            await _flush(tester);
+            staleAction = _capturedSubmit(tester, '查询保存结果');
+            staleAction();
+            await _flush(tester);
+            _expectScheduleQuery(f.requests.last, f.requests.first);
+          }
+          f.reply(querying ? 1 : 0, rejection.key, {'errorCode': rejection.value});
+          await _flush(tester);
+          await tester.pumpAndSettle();
+          expect(find.text('当前操作已失效'), findsOneWidget);
+          expect(find.byType(TextFormField), findsNothing);
+          save();
+          staleAction();
+          await _flush(tester);
+          expect(f.requests, hasLength(querying ? 2 : 1));
+          await tester.tap(find.widgetWithText(TextButton, '关闭'));
+          await tester.pumpAndSettle();
+          expect(find.byType(ScheduleEditor), findsNothing);
+          expect(tester.takeException(), isNull);
+        } finally {
+          await f.cleanup(tester);
+        }
+      });
+    }
   }
 
   testWidgets('ScheduleEditor reauthentication requirement is not scope revocation',
@@ -834,7 +939,7 @@ void main() {
       _capturedSubmit(tester, '保存计划')();
       await _flush(tester);
       expect(f.requests, hasLength(2));
-      f.reply(1, 200, {});
+      f.reply(1, 200, _savedSchedule(f.requests.last));
       await _flush(tester);
       await tester.pumpAndSettle();
       expect(find.byType(ScheduleEditor), findsNothing);

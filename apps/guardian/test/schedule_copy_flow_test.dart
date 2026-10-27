@@ -89,6 +89,7 @@ class _Session extends Session {
 
 class _Fixture {
   final requests = <http.Request>[];
+  final queryStatuses = <int>[];
   Json? saved;
   late final transport = MockClient((request) async {
     requests.add(request);
@@ -104,12 +105,27 @@ class _Fixture {
       });
     }
     if (request.method == 'POST' && request.url.path == _path) {
+      expect(request.headers['idempotency-key'], matches(
+          RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')));
       if (createFailure != null) {
         return _reply({'errorCode': createFailure!.code},
             status: createFailure!.status);
       }
       saved = {'id': _copyId, ...(jsonDecode(request.body) as Json)};
       return _reply(saved!, status: 201);
+    }
+    if (request.method == 'POST' &&
+        request.url.path.startsWith('$_path/creation-results/') && request.url.path.endsWith('/query')) {
+      final original = creations.single;
+      expect(request.url.path, '$_path/creation-results/${original.headers['idempotency-key']}/query');
+      expect(request.body, original.body);
+      expect(request.headers['idempotency-key'], isNull);
+      final status = queryStatuses.isEmpty ? 200 : queryStatuses.removeAt(0);
+      if (status != 200) {
+        return _reply({'errorCode': 'SCHEDULE_CREATION_RESULT_UNAVAILABLE'}, status: status);
+      }
+      saved = {'id': _copyId, ...(jsonDecode(original.body) as Json)};
+      return _reply(saved!);
     }
     throw StateError('Unexpected request: ${request.method} ${request.url}');
   });
@@ -127,6 +143,10 @@ class _Fixture {
       requests.where((request) => request.method == 'GET').toList();
   List<http.Request> get writes =>
       requests.where((request) => request.method != 'GET').toList();
+  List<http.Request> get creations => requests.where((request) =>
+      request.method == 'POST' && request.url.path == _path).toList();
+  List<http.Request> get queries => requests.where((request) =>
+      request.method == 'POST' && request.url.path.startsWith('$_path/creation-results/')).toList();
 
   Future<void> cleanup(WidgetTester tester) async {
     await tester.pumpWidget(const SizedBox.shrink());
@@ -282,6 +302,71 @@ void main() {
     expect(fixture.saved!['id'], _copyId);
   });
 
+  testWidgets('schedule-copy queries an unknown original save without replay and preserves the complete source definition',
+      (tester) async {
+    final fixture = _Fixture(createFailure: const ApiFailure(503, 'REQUEST_FAILED'));
+    fixture.queryStatuses.addAll([404, 200]);
+    final details = await _openDetails(tester, fixture);
+    await _openCopy(tester);
+    final name = find.widgetWithText(TextFormField, '计划名称');
+    final zone = find.widgetWithText(TextFormField, '时区');
+    final query = find.byKey(const Key('schedule-editor-query-original'));
+    bool queryReady() => query.evaluate().length == 1 &&
+        tester.widget<ButtonStyleButton>(query).onPressed != null;
+    await tester.enterText(name, _copyName);
+    await tester.ensureVisible(_button('保存副本'));
+    await tester.tap(_button('保存副本'));
+    await _until(tester, () => fixture.creations.length == 1 && queryReady());
+    final original = fixture.creations.single;
+    expect(jsonDecode(original.body), {'name': _copyName, 'definition': _definition()});
+    expect(_button('保存副本'), findsNothing);
+    expect(tester.widget<TextFormField>(name).enabled, isFalse);
+    expect(tester.widget<TextFormField>(zone).enabled, isFalse);
+    expect(fixture.reads, hasLength(1));
+    await tester.ensureVisible(query);
+    await tester.tap(query);
+    await _until(tester, () => fixture.queries.length == 1 && queryReady());
+    expect(tester.widget<TextFormField>(name).controller!.text, _copyName);
+    expect(tester.widget<TextFormField>(zone).controller!.text, 'America/New_York');
+    expect(tester.widget<TextFormField>(name).enabled, isFalse);
+    expect(tester.widget<TextFormField>(zone).enabled, isFalse);
+    expect(_editorText('2026-12-24 · 09:00 – 11:00、14:00 – 16:00'), findsOneWidget);
+    expect(_editorText('2026-12-25 · 全天关闭'), findsOneWidget);
+    expect(fixture.creations, hasLength(1));
+    expect(fixture.reads, hasLength(1));
+    expect(fixture.saved, isNull);
+
+    await tester.ensureVisible(query);
+    await tester.tap(query);
+    await _until(tester, () => fixture.queries.length == 2 && fixture.reads.length == 2 &&
+        find.byType(AlertDialog).evaluate().isEmpty && find.text(_copyName).evaluate().length == 1);
+    expect(fixture.creations, hasLength(1));
+    expect(fixture.queries.every((request) => request.body == original.body &&
+        request.headers['idempotency-key'] == null &&
+        request.url.path == '$_path/creation-results/${original.headers['idempotency-key']}/query'), isTrue);
+    expect(fixture.writes, hasLength(3));
+    expect(fixture.requests.every((request) =>
+        request.method == 'GET' && request.url.path == _path ||
+        request.method == 'POST' && (request.url.path == _path ||
+            request.url.path.startsWith('$_path/creation-results/'))), isTrue,
+        reason: 'Saving a copy must not update the source plan or policy references.');
+    expect(details.available, isFalse);
+    expect(fixture.saved!['id'], _copyId);
+    expect(fixture.saved!['id'], isNot(_sourceId));
+    expect(fixture.saved!['definition'], _definition());
+    expect(find.text(_sourceName), findsOneWidget);
+    await tester.ensureVisible(find.text(_copyName));
+    await tester.tap(find.text(_copyName));
+    await _until(tester, () => find.byType(AlertDialog).evaluate().length == 1);
+    final copyDetails = find.byType(AlertDialog).last;
+    expect(find.descendant(of: copyDetails, matching: find.text('America/New_York')), findsOneWidget);
+    for (final text in ['22:30 – 01:15', '2026-12-24: 09:00 – 11:00、14:00 – 16:00', '2026-12-25: 全天关闭']) {
+      expect(find.descendant(of: copyDetails, matching: find.textContaining(text)), findsOneWidget);
+    }
+    expect(fixture.reads, hasLength(2), reason: 'Viewing the recovered copy must preserve the current list.');
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('schedule-copy special-date changes only the outgoing draft',
       (tester) async {
     final definition = _definition();
@@ -421,7 +506,7 @@ void main() {
     await _until(tester, () => tester.widget<ButtonStyleButton>(choose).onPressed != null);
     expect(find.textContaining('时间安排示例无法校验'), findsOneWidget);
     expect(tester.widget<ButtonStyleButton>(_button('保存副本')).onPressed, isNotNull);
-    expect(find.byKey(const Key('schedule-editor-retry-original')), findsNothing);
+    expect(find.byKey(const Key('schedule-editor-query-original')), findsNothing);
     final heldChoose = tester.widget<ButtonStyleButton>(choose).onPressed!;
     await tester.tap(choose);
     for (var turn = 0; turn < 24 && attempts != 2; turn++) {

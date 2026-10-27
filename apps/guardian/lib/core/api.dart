@@ -46,6 +46,8 @@ class ApiFailure implements Exception {
           '尚未查到原档案操作结果，不能据此判断操作未执行。请稍后再查询，或核对当前档案。',
         'APPLICATION_CREATION_RESULT_UNAVAILABLE' =>
           '尚未查到原应用登记结果，不能据此判断登记未完成。请稍后再查询，或核对当前应用目录。',
+        'SCHEDULE_CREATION_RESULT_UNAVAILABLE' =>
+          '尚未查到原时间计划保存结果，不能据此判断保存未完成。请稍后再查询，或核对当前时间计划。',
         'IDEMPOTENCY_KEY_EXPIRED' => '原请求已超过有效期限，不能再次提交。请查看当前记录；请求到期不代表操作未执行。',
         'IDEMPOTENCY_RESULT_EXPIRED' =>
           '原操作结果已超过 90 天保留期限，不能再恢复。请查看当前记录；不要重复提交原操作。',

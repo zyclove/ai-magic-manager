@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:uuid/uuid.dart';
 import 'package:schedule_contracts/schedule_contracts.dart' as schedule_contracts;
 import '../core/api.dart';
 import '../core/bounded_json.dart';
@@ -11,6 +12,7 @@ import '../core/policy_domain_check.dart';
 import '../core/policy_rule_directories.dart';
 import '../core/rule_parameter_labels.dart';
 import '../core/schedule_copy.dart';
+import '../core/schedule_creation.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
 import '../ui/time_zone_field.dart';
@@ -172,7 +174,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
   late final bool ownsScope;
   late final Listenable? parentChanges;
   late final Api api;
-  final key = requestId();
+  final key = const Uuid().v4();
 
   bool get current =>
       mounted &&
@@ -362,7 +364,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                 title: const Text('暂时关闭未确认的提交？'),
                 content: const Text('服务器可能已保存此计划，关闭不会取消已提交的操作。'
                     '关闭后请先刷新时间计划列表核对结果，确认后再创建，避免重复提交。'
-                    '继续留在这里可以按原内容重试。'),
+                    '继续留在这里可以查询原保存结果，不会再次创建。'),
                 actions: [
                   TextButton(
                       key: const Key('schedule-editor-keep-unknown'),
@@ -648,10 +650,10 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
         'exceptions': exceptions,
       }
     }) as Json;
-    await submitOriginal();
+    await resolveOriginal(query: false);
   }
 
-  Future<void> retryOriginal() async {
+  Future<void> queryOriginal() async {
     if (!interactive ||
         busy ||
         exitOpen ||
@@ -659,19 +661,23 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
         pendingBody == null) {
       return;
     }
-    await submitOriginal();
+    await resolveOriginal(query: true);
   }
 
-  Future<void> submitOriginal() async {
-    if (!current || busy || exitOpen || pendingBody == null) return;
+  Future<void> resolveOriginal({required bool query}) async {
+    if (!current || busy || exitOpen || pendingBody == null || recoveryStopped ||
+        (query ? !resultUnknown : resultUnknown)) return;
+    final original = pendingBody!;
     setState(() {
       busy = true;
       error = null;
     });
     try {
-      await api.send('POST', '${widget.root}/schedules',
-          key: key, body: pendingBody);
+      final result = await api.send('POST', query
+          ? '${widget.root}/schedules/creation-results/$key/query'
+          : '${widget.root}/schedules', key: query ? null : key, body: original);
       if (!current) return;
+      requireScheduleCreationResult(result, original);
       pendingBody = null;
       resultUnknown = false;
       closeOwnRoute(saved: true);
@@ -691,6 +697,7 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
           resultUnknown = resultUnknown ||
               failure is! ApiFailure ||
               failure.status == 0 ||
+              failure.status == 408 ||
               failure.status >= 500 ||
               failure.code == 'PENDING_OPERATION_UNCHANGED';
           if (!resultUnknown) pendingBody = null;
@@ -948,17 +955,18 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                                   ]))),
                               if (resultUnknown) ...[
                                 const Notice(
-                                    '尚不能确认保存结果，原内容已锁定。重试会使用同一次提交。'
+                                    '尚不能确认保存结果，原内容已锁定。查询只核对原操作，不会再次创建。'
                                     '暂时关闭后请先刷新时间计划列表核对结果，避免重复创建。',
                                     warning: true),
                                 const SizedBox(height: 12),
                               ],
                               if (error != null)
                                 FailureView(error!,
-                                    reauth: resultUnknown || busy
+                                    reauth: busy || recoveryStopped
                                         ? null
                                         : () {
-                                            if (interactive && !locked) {
+                                            if (interactive && !busy && !exitOpen &&
+                                                !recoveryStopped) {
                                               widget.session
                                                   .login(stepUp: true);
                                             }
@@ -975,9 +983,9 @@ class _ScheduleEditorState extends State<ScheduleEditor> {
                   child: Text(resultUnknown ? '暂时关闭' : '取消')),
               if (resultUnknown)
                 FilledButton(
-                    key: const Key('schedule-editor-retry-original'),
-                    onPressed: busy || exitOpen ? null : retryOriginal,
-                    child: Text(busy ? '恢复中…' : '重试原提交'))
+                    key: const Key('schedule-editor-query-original'),
+                    onPressed: busy || exitOpen ? null : queryOriginal,
+                    child: Text(busy ? '查询中…' : '查询保存结果'))
               else
                 FilledButton(
                     onPressed: locked ? null : save,
