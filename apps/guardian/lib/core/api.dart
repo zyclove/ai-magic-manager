@@ -50,6 +50,9 @@ class ApiFailure implements Exception {
           '尚未查到原时间计划保存结果，不能据此判断保存未完成。请稍后再查询，或核对当前时间计划。',
         'POLICY_DRAFT_RESULT_UNAVAILABLE' =>
           '尚未查到原草稿保存结果，不能据此判断保存未完成。请稍后再查询，或核对当前策略列表。',
+        'POLICY_BRANCH_RESULT_UNAVAILABLE' =>
+          '尚未查到原复制或回滚结果，不能据此判断操作未完成。请稍后再查询，或核对当前策略列表。',
+        'INVALID_POLICY_RESULT_REFERENCE' => '原操作编号无效，请保留当前内容并核对策略列表。',
         'INVALID_POLICY_DRAFT_CHANGE' => '草稿保存信息不完整，请关闭后重新打开并检查输入。',
         'INVALID_DURATION' => '请输入有效的分钟和秒，合计需为 1 秒至 24 小时。',
         'IDEMPOTENCY_KEY_EXPIRED' => '原请求已超过有效期限，不能再次提交。请查看当前记录；请求到期不代表操作未执行。',

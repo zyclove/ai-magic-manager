@@ -75,7 +75,7 @@
 
 日期例外保留“添加关闭日期”快捷操作，并支持选择日期后设置特殊时段、直接调整已有例外。在本地子窗口选择全天关闭或自定义时段，最多 8 段，精确到分钟且允许跨午夜；相同起止时间及空的自定义时段不能应用。确认只更新当前草稿，取消保留原例外；保存整个计划时才提交。相同日期复用已有例外，不静默覆盖其他日期，最多 366 个日期；父编辑器或原权限结束时，其子草稿失效，不得写回或关闭独立覆盖通知。
 
-取消副本编辑返回原详情且不重载列表；确认保存后结束原详情并刷新计划列表。复制入口只对当前写入角色显示，副本仍绑定原账户、工作空间和父详情生命周期；身份或父详情失效后，旧回调与迟到认证不能提交。网络结果未知时保留原正文与防重复键，只允许既有的原内容重试；明确确认关闭未知写入后返回列表核对，不显示保存成功。
+取消副本编辑返回原详情且不重载列表；确认保存后结束原详情并刷新计划列表。复制入口只对当前写入角色显示，副本仍绑定原账户、工作空间和父详情生命周期；身份或父详情失效后，旧回调与迟到认证不能提交。网络结果未知时保留原正文与 UUID，只查询原保存结果；明确确认关闭未知写入后返回列表核对，不显示保存成功。
 
 ## 3. 规则模式与冲突
 
@@ -126,6 +126,7 @@ domain 只接受小写标准 ASCII/punycode DNS 名，不接受 URL、IP、尾�
 | POST /policies/{policyId}/domain-evaluations | domain → policyId、draftRevision、canonicalDomain、matchingRuleIds（排序）、predictedEffect、effectiveEffect、matchMode、executionStatus | 成人/审计员；必需当前强 If-Match；只读、no-store；不要求写入幂等键或近期 MFA |
 | PUT /policies/{policyId} | name、rules → 新 revision、ETag | 成人；If-Match |
 | POST /policies/{policyId}/copies | name → POLICY 草稿 | 模板、成人、If-Match；可选幂等 |
+| POST /policies/{policyId}/copy-results/{requestId}/query | 原 name、原 If-Match → requestId、operation=TEMPLATE_COPY、committed、current | 当前成人写权限；同租户／操作者／UUID／原正文；只读、no-store，不传写入幂等头，不需新近期 MFA |
 | POST /policies/{policyId}/previews | deviceIds → PolicyPreview | POLICY、成人、If-Match |
 
 ETag 使用强单值版本，如 `"0"`；缺失 428、旧值 412。模板需先复制成 POLICY 才可预览，复制结果不随模板后续编辑变化。
@@ -136,7 +137,11 @@ ETag 使用强单值版本，如 `"0"`；缺失 428、旧值 412。模板需先�
 
 管理台策略详情中的编辑、模板复制和历史查询分别返回明确处理结果。普通取消编辑／复制或关闭只读历史时保留原详情与列表，不重复读取；确认保存、创建副本、回滚草稿后结束旧详情并重读列表，避免继续使用旧修订。回滚确认取消保留历史版本详情；回滚只影响草稿，仍须重新预览并发布。父详情／历史层失效后，其子流程与迟到身份准备不得继续提交，独立覆盖通知不被误关闭。
 
-复制和回滚复用通用写入表单，结果未知时固定原正文、防重复键与版本；重试遇到近期身份验证或其他拒绝不能释放先前不明的提交。明确关闭未知结果需就近确认，再返回列表核对，不当作成功。真实 POST 的 `409 IDEMPOTENCY_KEY_EXPIRED` 及既有不可恢复结果停止旧请求重试并保留只读草稿；保留实际状态码与错误码，不能伪装成结果查询的 `410 IDEMPOTENCY_RESULT_EXPIRED`，也不能由到期推断操作未执行。已有策略可只读获取当前草稿供核对，读取失败、匹配或不匹配均不恢复旧请求提交，也不据此确认原保存。
+复制和回滚共用通用表单，名称默认副本建议或当前草稿名称；没有多余的流程选择。首次使用小写标准 UUID，结果未知时冻结原名称、键与 If-Match，只提供“查询原保存结果”，不重放写入。查询不传 Idempotency-Key，不补读最新版本覆盖原 If-Match；当前写权限在日志查询前重新检查，查询不要求新近期 MFA，回滚首次写入仍要求近期 MFA。`404 POLICY_BRANCH_RESULT_UNAVAILABLE` 不证明原操作未执行，404／认证要求／普通拒绝均不能解除未知保护。
+
+查询复用既有 `policy.template.copy` 与 `policy.rollback-draft` 日志，不另建业务写入或数据表。返回恰为 requestId、operation、committed、current；复制的原回执须为新 POLICY、revision=0、sourceVersionId=null，完整规则等于原模板；回滚须为原策略、原 revision+1、选定来源版本及其完整 sourceRules。当前草稿必须同编号／类型且修订不倒退，同修订须完全一致；更高修订可有后续改名、规则或回滚来源变化，界面单独提示核对当前列表。坏回执不确认成功，读取当前 GET 不能代替原操作证明。
+
+明确关闭未知结果需就近确认，再结束旧详情并返回列表核对，不当作成功。首次写入的 `409 IDEMPOTENCY_KEY_EXPIRED` 与查询的 `410 IDEMPOTENCY_RESULT_EXPIRED`、`IDEMPOTENCY_RESPONSE_ERASED` 保留真实状态码，按既有90天约定停止旧操作并保留只读内容；到期／清除不代表操作未执行。旧 creation-results 的当前草稿返回语义保留供其现有调用方，管理台复制不再以它证明原复制结果。
 
 保留输入以可选中复制的中文字段展示全部规则与时间安排，保留完整对象编号及其他设置；名称只使用当前窗口已有目录，缺失名称不隐式读取，也不换成其他对象。
 
@@ -153,6 +158,7 @@ ETag 使用强单值版本，如 `"0"`；缺失 428、旧值 412。模板需先�
 | GET /policies/{policyId}/versions | limit、cursor → PolicyVersion 列表 | 成人/审计员；sequence 倒序 |
 | GET /policies/{policyId}/versions/{versionId} | 不可变版本快照 | 成人/审计员；策略/租户范围 |
 | POST /policies/{policyId}/versions/{versionId}/rollback-drafts | name → 新草稿 revision | 成人、近期 MFA、If-Match；可选幂等 |
+| POST /policies/{policyId}/versions/{versionId}/rollback-draft-results/{requestId}/query | 原 name、原 If-Match → requestId、operation=ROLLBACK_DRAFT、committed、current | 当前成人写权限；同租户／操作者／UUID／原正文；只读、no-store，不传写入幂等头，不需新近期 MFA |
 
 发布前重新检查管理员成员事实、近期 MFA、草稿版本、预览归属/期限/哈希及锁定的当前设备证据。设备撤销、能力证据改变/过期或观察状态变化导致 409 `PREVIEW_STALE`，需重新审核；不会把旧设备注册周期的预览投到新周期。
 

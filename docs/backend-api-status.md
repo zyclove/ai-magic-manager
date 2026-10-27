@@ -138,6 +138,8 @@ V18 成员资料、权限调整和历史见[成员权限合同](member-access-pl
 
 新增 catalog/schedule/policy 模块的实际路由与数据契约见[应用、时间与策略契约](policy-application-schedule-contract.md)。覆盖应用身份声明、设备可见清单上报/查询、IANA 计划/计算、草稿/模板复制、能力/冲突预览、配置版本、操作状态与原策略内的回滚草稿修订。
 
+模板复制及历史回滚草稿新增只读原结果查询，复用原日志并分别返回 committed/current；不重放写入、不要求查询近期 MFA，仍校验当前写权限及原租户／操作者／正文／版本。限定静态实现与回归源码见[阶段记录](reviews/policy-draft-branch-results-20261028.md)，运行验证 **NOT_RUN**，尚未更新服务。
+
 完整草稿的 `policy-draft-changes` 与 `policy-draft-operation-results/{requestId}/query` 源码已接合 Guardian。保存复用既有领域服务并原子记录原结果，查询区分 committed/current、重新检查写权限；当前 GET 不作为原提交证明。本轮仅静态检查，新增后端集成与前端回归源码均 **NOT_RUN**，未部署，不据此声明环境验收通过。
 
 仅 `CONFIGURE_ONLY` 可保存配置版本，结果为 `CONFIGURED_NOT_ENFORCED`；`ENFORCE` 不产生虚假执行成功。代理清单标为 `AGENT_REPORTED_UNVERIFIED`，不认证所有应用或安装签名。接口和完整系统执行的验收分开记录。

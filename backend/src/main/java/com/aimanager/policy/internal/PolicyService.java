@@ -365,6 +365,16 @@ class PolicyService
         });
   }
 
+  @Transactional(timeout = 10)
+  public IdempotencyLookupOutcome<BranchResult> copyResult(
+      String tenant, String actor, String policyId, String requestId, String name, String ifMatch) {
+    access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
+    requireBranchResultKey(requestId);
+    long originalRevision = ResourceVersions.require(ifMatch);
+    return branchResult(tenant, actor, requestId, "policy.template.copy", "TEMPLATE_COPY",
+        Map.of("id", policyId, "name", name, "revision", originalRevision));
+  }
+
   @Transactional(isolation = Isolation.READ_COMMITTED, timeout = 10)
   public PolicyPreview preview(
       String tenant, String actor, String id, String ifMatch, PolicyController.Preview input) {
@@ -972,6 +982,38 @@ class PolicyService
               source.snapshot().sourceRules(),
               source.id());
         });
+  }
+
+  @Transactional(timeout = 10)
+  public IdempotencyLookupOutcome<BranchResult> rollbackDraftResult(
+      String tenant, String actor, String policyId, String versionId, String requestId,
+      String name, String ifMatch) {
+    access.requireWriteRole(tenant, actor, OWNER, GUARDIAN, ORG_ADMIN);
+    requireBranchResultKey(requestId);
+    long originalRevision = ResourceVersions.require(ifMatch);
+    return branchResult(tenant, actor, requestId, "policy.rollback-draft", "ROLLBACK_DRAFT",
+        Map.of("policyId", policyId, "versionId", versionId, "name", name,
+            "revision", originalRevision));
+  }
+
+  record BranchResult(String requestId, String operation, PolicyDraft committed, PolicyDraft current) {}
+
+  private IdempotencyLookupOutcome<BranchResult> branchResult(
+      String tenant, String actor, String requestId, String namespace, String operation,
+      Map<String, ?> attributes) {
+    return idempotency.findCommitted(tenant, actor, namespace, requestId, attributes, PolicyDraft.class)
+        .requirePresent(() -> new DomainException(HttpStatus.NOT_FOUND, "POLICY_BRANCH_RESULT_UNAVAILABLE"))
+        .map(committed -> new BranchResult(requestId, operation, committed,
+            get(tenant, actor, committed.id())));
+  }
+
+  private void requireBranchResultKey(String requestId) {
+    try {
+      if (requestId != null && UUID.fromString(requestId).toString().equals(requestId)) return;
+    } catch (IllegalArgumentException ignored) {
+      // Keep malformed identifiers out of the lookup without disclosing stored results.
+    }
+    throw DomainException.invalid("INVALID_POLICY_RESULT_REFERENCE");
   }
 
   private Resolved resolve(String tenant, String actor, List<PolicyRule> rules) {

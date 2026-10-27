@@ -72,6 +72,15 @@ class PolicyController {
         var draft = policies.copyTemplate(tenantId, actor.getSubject(), policyId, input.name(), etag, key);
         return ResponseEntity.status(HttpStatus.CREATED).eTag(ResourceVersions.tag(draft.revision())).body(draft);
     }
+    @PostMapping("/policies/{policyId}/copy-results/{requestId}/query")
+    ResponseEntity<PolicyService.BranchResult> copyResult(@AuthenticationPrincipal Jwt actor,
+            @PathVariable String tenantId, @PathVariable String policyId, @PathVariable String requestId,
+            @Valid @RequestBody Named input,
+            @RequestHeader(name = "If-Match", required = false) String etag) {
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore())
+            .body(policies.copyResult(tenantId, actor.getSubject(), policyId, requestId,
+                input.name(), etag).toHttpResult());
+    }
     @PostMapping("/policies/{policyId}/previews") @ResponseStatus(HttpStatus.CREATED)
     PolicyPreview preview(@AuthenticationPrincipal Jwt actor, @PathVariable String tenantId, @PathVariable String policyId,
                           @Valid @RequestBody Preview input, @RequestHeader(name = "If-Match", required = false) String etag) {
@@ -112,6 +121,15 @@ class PolicyController {
                                         @RequestHeader(name = "Idempotency-Key", required = false) String key) {
         var draft = policies.rollbackDraft(tenantId, actor, policyId, versionId, input.name(), etag, key);
         return ResponseEntity.status(HttpStatus.CREATED).eTag(ResourceVersions.tag(draft.revision())).body(draft);
+    }
+    @PostMapping("/policies/{policyId}/versions/{versionId}/rollback-draft-results/{requestId}/query")
+    ResponseEntity<PolicyService.BranchResult> rollbackResult(@AuthenticationPrincipal Jwt actor,
+            @PathVariable String tenantId, @PathVariable String policyId, @PathVariable String versionId,
+            @PathVariable String requestId, @Valid @RequestBody Named input,
+            @RequestHeader(name = "If-Match", required = false) String etag) {
+        return ResponseEntity.ok().cacheControl(CacheControl.noStore())
+            .body(policies.rollbackDraftResult(tenantId, actor.getSubject(), policyId, versionId,
+                requestId, input.name(), etag).toHttpResult());
     }
     record CreateDraft(@NotBlank @Size(max = 100) String name, @NotNull PolicyDraft.Kind kind,
                        @NotNull @Size(max = 100) List<@NotNull @Valid PolicyRule> rules) {}

@@ -26,6 +26,8 @@ const _name = '原账户私有策略';
 const _domain = 'private-policy.example';
 const _copyName = '原账户私有策略 · 新副本';
 const _version = 'version-private-a';
+final _v4Key = RegExp(
+    r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$');
 
 class _ScopeSession extends PreviewSession {
   _ScopeSession() : super(groups: true);
@@ -67,6 +69,7 @@ class _Fixture {
   String currentName = _name;
   String? sourceVersionId;
   Json? copied;
+  bool laterBranch = false;
 
   _Fixture({this.template = false}) {
     session.intercept = (request) async {
@@ -111,22 +114,43 @@ class _Fixture {
           request.method == 'POST' &&
           request.url.path.endsWith(
               '/policies/$_policy/versions/$_version/rollback-drafts')) {
+        currentName = (jsonDecode(request.body) as Json)['name'] as String;
         sourceVersionId = _version;
         revision++;
         return reply(draft());
       }
       if (request.method == 'POST' &&
           request.url.path.endsWith('/policies/$_policy/copies')) {
-        final value = <String, dynamic>{
-          ...draft(),
-          'id': 'copy-private-a',
-          'kind': 'POLICY',
-          'name': (jsonDecode(request.body) as Json)['name'],
-          'revision': 0,
-          'sourceVersionId': null
-        };
+        final value = branchReceipt(request);
         if (fromList) copied = value;
         return reply(value);
+      }
+      if (request.method == 'POST' &&
+          request.url.path.endsWith('/query') &&
+          (request.url.path.contains('/copy-results/') ||
+              request.url.path.contains('/rollback-draft-results/'))) {
+        final original = [...copies, ...rollbacks].singleWhere((original) =>
+            request.url.path.endsWith('/${original.headers['Idempotency-Key']}/query'));
+        expect(request.body, original.body);
+        expect(request.headers['If-Match'], original.headers['If-Match']);
+        expect(request.headers['Idempotency-Key'], isNull);
+        final committed = branchReceipt(original);
+        final current = laterBranch
+            ? {...committed, 'revision': (committed['revision'] as int) + 2,
+                'name': '后续修改后的草稿',
+                'sourceVersionId': 'later-rollback-version'}
+            : committed;
+        final copy = original.url.path.endsWith('/copies');
+        if (copy) {
+          copied = current;
+        } else {
+          currentName = current['name'] as String;
+          revision = current['revision'] as int;
+          sourceVersionId = current['sourceVersionId'] as String?;
+        }
+        return reply({'requestId': original.headers['Idempotency-Key'],
+          'operation': copy ? 'TEMPLATE_COPY' : 'ROLLBACK_DRAFT',
+          'committed': committed, 'current': current});
       }
       throw StateError(
           'Unexpected HTTP boundary: ${request.method} ${request.url}');
@@ -174,11 +198,28 @@ class _Fixture {
         },
       };
 
+  Json branchReceipt(http.Request original) {
+    final copy = original.url.path.endsWith('/copies');
+    return {...draft(), 'id': copy ? 'copy-private-a' : _policy,
+      'kind': copy ? 'POLICY' : draft()['kind'],
+      'name': (jsonDecode(original.body) as Json)['name'],
+      'revision': copy ? 0 : 8, 'sourceVersionId': copy ? null : _version};
+  }
+
   List<http.Request> get copies => requests
       .where((request) =>
           request.method == 'POST' &&
           request.url.path.endsWith('/policies/$_policy/copies'))
       .toList();
+
+  List<http.Request> get rollbacks => requests.where((request) =>
+      request.method == 'POST' && request.url.path.endsWith(
+          '/policies/$_policy/versions/$_version/rollback-drafts')).toList();
+
+  List<http.Request> get branchQueries => requests.where((request) =>
+      request.method == 'POST' && request.url.path.endsWith('/query') &&
+      (request.url.path.contains('/copy-results/') ||
+          request.url.path.contains('/rollback-draft-results/'))).toList();
 
   List<http.Request> get versionReads => requests
       .where((request) =>
@@ -291,6 +332,12 @@ VoidCallback _capture(WidgetTester tester, String label) {
   final callback = tester.widget<ButtonStyleButton>(button).onPressed;
   expect(callback, isNotNull);
   return callback!;
+}
+
+bool _ready(WidgetTester tester, String label) {
+  final button = _button(label);
+  return button.evaluate().length == 1 &&
+      tester.widget<ButtonStyleButton>(button).onPressed != null;
 }
 
 Future<_Invocation> _open(WidgetTester tester, _Fixture fixture) async {
@@ -495,7 +542,7 @@ void main() {
     expect(fixture.copies, hasLength(1));
     final sent = fixture.copies.single;
     expect(sent.headers['If-Match'], '"7"');
-    expect(sent.headers['Idempotency-Key'], isNotEmpty);
+    expect(sent.headers['Idempotency-Key'], matches(_v4Key));
     expect(sent.headers['Idempotency-Key'], isNot(_policy));
     expect(jsonDecode(sent.body), {'name': _copyName});
     expect(fixture.copied!['id'], isNot(_policy));
@@ -554,54 +601,138 @@ void main() {
         '/api/v1/tenants/tenant-a/policies/$_policy/'
         'versions/$_version/rollback-drafts');
     expect(sent.headers['If-Match'], '"7"');
-    expect(sent.headers['Idempotency-Key'], isNotEmpty);
+    expect(sent.headers['Idempotency-Key'], matches(_v4Key));
     expect(jsonDecode(sent.body), {'name': _name});
     expect(fixture.sourceVersionId, _version);
     expect(fixture.listReads, hasLength(2));
   });
 
   testWidgets(
+      'policy branch original-result queries confirm copies and rollbacks without replaying writes',
+      (tester) async {
+    for (final template in [true, false]) {
+      final fixture = _Fixture(template: template)..laterBranch = true;
+      fixture.respond = (request) async {
+        if (request.method != 'POST') return null;
+        if (request.url.path.endsWith('/copies') ||
+            request.url.path.endsWith('/rollback-drafts')) {
+          return reply({'errorCode': 'SERVICE_UNAVAILABLE'}, 408);
+        }
+        if (request.url.path.endsWith('/query')) {
+          if (fixture.branchQueries.length == 1) {
+            return reply({'errorCode': 'POLICY_BRANCH_RESULT_UNAVAILABLE'}, 404);
+          }
+          if (fixture.branchQueries.length == 2) {
+            return reply({'errorCode': 'REAUTH_REQUIRED'}, 401);
+          }
+        }
+        return null;
+      };
+      final details = await _openFromList(tester, fixture);
+      if (template) {
+        _capture(tester, '从模板创建策略')();
+        await _waitUntil(tester, () => _ready(tester, '保存'));
+      } else {
+        _capture(tester, '版本历史')();
+        await _waitUntil(tester, () => find.text('版本 98731').evaluate().length == 1);
+        await tester.tap(find.text('版本 98731'));
+        await _waitUntil(tester, () => _ready(tester, '回滚为草稿'));
+        _capture(tester, '回滚为草稿')();
+        await _waitUntil(tester, () => _ready(tester, '确认'));
+        expect(tester.widget<TextFormField>(find.byType(TextFormField)).controller!.text, _name);
+      }
+      final name = template ? _copyName : '恢复历史规则后的草稿';
+      await tester.enterText(find.byType(TextFormField), name);
+      final heldSubmit = _capture(tester, template ? '保存' : '确认');
+      heldSubmit();
+      await _waitUntil(tester, () => fixture.copies.length + fixture.rollbacks.length == 1 &&
+          _ready(tester, '查询原保存结果'));
+      final original = [...fixture.copies, ...fixture.rollbacks].single;
+      final key = original.headers['Idempotency-Key'];
+      expect(key, matches(_v4Key));
+      expect(original.headers['If-Match'], '"7"');
+      expect(jsonDecode(original.body), {'name': name});
+      fixture.currentName = '当前草稿的后续名称';
+      for (var query = 1; query <= 2; query++) {
+        (query == 1 ? _capture(tester, '查询原保存结果') : heldSubmit)();
+        await _waitUntil(tester, () => fixture.branchQueries.length == query &&
+            _ready(tester, '查询原保存结果'));
+        final field = tester.widget<TextFormField>(find.byType(TextFormField));
+        expect(field.controller!.text, name);
+        expect(field.enabled, isFalse);
+        expect(fixture.copies.length + fixture.rollbacks.length, 1);
+        expect(fixture.listReads, hasLength(1));
+        expect(details.available, isTrue);
+      }
+      _capture(tester, '查询原保存结果')();
+      await _waitUntil(tester, () => fixture.branchQueries.length == 3 &&
+          fixture.listReads.length == 2 && !details.available);
+      for (final query in fixture.branchQueries) {
+        expect(query.url.path, template
+            ? '/api/v1/tenants/tenant-a/policies/$_policy/copy-results/$key/query'
+            : '/api/v1/tenants/tenant-a/policies/$_policy/versions/$_version/rollback-draft-results/$key/query');
+        expect(query.body, original.body);
+        expect(query.headers['If-Match'], original.headers['If-Match']);
+        expect(query.headers['Idempotency-Key'], isNull);
+      }
+      expect(fixture.copies, hasLength(template ? 1 : 0));
+      expect(fixture.rollbacks, hasLength(template ? 0 : 1));
+      expect(fixture.listReads, hasLength(2));
+      expect(find.byType(AlertDialog), findsNothing);
+      expect(find.text('后续修改后的草稿'), findsOneWidget);
+      expect(find.textContaining('原操作已核对，草稿已有后续修改'), findsOneWidget);
+      expect(template ? fixture.copied!['revision'] : fixture.revision, template ? 2 : 10);
+      expect(template ? fixture.copied!['sourceVersionId'] : fixture.sourceVersionId,
+          'later-rollback-version');
+      expect(tester.takeException(), isNull);
+    }
+  });
+
+  testWidgets(
       'policy-return unknown copy survives MFA and closes only for review',
       (tester) async {
     final fixture = _Fixture(template: true);
-    var attempts = 0;
     fixture.respond = (request) async {
-      if (request.method != 'POST' ||
-          !request.url.path.endsWith('/policies/$_policy/copies')) return null;
-      attempts++;
-      return attempts == 2
-          ? reply({'errorCode': 'REAUTH_REQUIRED'}, 401)
-          : reply({'errorCode': 'SERVICE_UNAVAILABLE'}, 503);
+      if (request.method != 'POST') return null;
+      if (request.url.path.endsWith('/policies/$_policy/copies')) {
+        return reply({'errorCode': 'SERVICE_UNAVAILABLE'}, 503);
+      }
+      if (request.url.path.contains('/copy-results/')) {
+        return fixture.branchQueries.length == 1
+            ? reply({'errorCode': 'REAUTH_REQUIRED'}, 401)
+            : reply({'errorCode': 'SERVICE_UNAVAILABLE'}, 408);
+      }
+      return null;
     };
     final details = await _openFromList(tester, fixture);
     _capture(tester, '从模板创建策略')();
     await _waitUntil(tester, () => find.text('复制为策略').evaluate().isNotEmpty);
     await tester.enterText(find.byType(TextFormField), _copyName);
     _capture(tester, '保存')();
-    await _waitUntil(
-        tester, () => attempts == 1 && _button('重试原提交').evaluate().isNotEmpty);
+    await _waitUntil(tester, () => fixture.copies.length == 1 &&
+        _ready(tester, '查询原保存结果'));
     final original = fixture.copies.single;
-    _capture(tester, '重试原提交')();
+    _capture(tester, '查询原保存结果')();
     await _waitUntil(
-        tester, () => attempts == 2 && _button('重新安全验证').evaluate().isNotEmpty);
+        tester, () => fixture.branchQueries.length == 1 && _ready(tester, '重新安全验证'));
     var field = tester.widget<TextFormField>(find.byType(TextFormField));
     expect(field.controller!.text, _copyName);
     expect(field.enabled, isFalse);
-    expect(_button('重试原提交'), findsOneWidget);
+    expect(_button('查询原保存结果'), findsOneWidget);
     _capture(tester, '重新安全验证')();
     await _waitUntil(tester, () => fixture.session.securityChecks == 1);
-    expect(attempts, 2, reason: 'MFA does not submit a pending write.');
-    _capture(tester, '重试原提交')();
-    await _waitUntil(
-        tester, () => attempts == 3 && _button('重试原提交').evaluate().isNotEmpty);
+    expect(fixture.branchQueries, hasLength(1), reason: 'MFA does not query or submit automatically.');
+    expect(fixture.copies, hasLength(1));
+    _capture(tester, '查询原保存结果')();
+    await _waitUntil(tester, () => fixture.branchQueries.length == 2 &&
+        _ready(tester, '查询原保存结果'));
     field = tester.widget<TextFormField>(find.byType(TextFormField));
     expect(field.controller!.text, _copyName);
     expect(field.enabled, isFalse);
-    for (final retried in fixture.copies.skip(1)) {
-      expect(retried.headers['Idempotency-Key'],
-          original.headers['Idempotency-Key']);
-      expect(retried.headers['If-Match'], original.headers['If-Match']);
-      expect(retried.body, original.body);
+    for (final query in fixture.branchQueries) {
+      expect(query.headers['Idempotency-Key'], isNull);
+      expect(query.headers['If-Match'], original.headers['If-Match']);
+      expect(query.body, original.body);
     }
     expect(fixture.listReads, hasLength(1));
     expect(details.available, isTrue);
@@ -620,7 +751,8 @@ void main() {
     expect(find.byType(AlertDialog), findsNothing);
     expect(fixture.copied, isNull);
     expect(fixture.revision, 7);
-    expect(fixture.copies, hasLength(3));
+    expect(fixture.copies, hasLength(1));
+    expect(fixture.branchQueries, hasLength(2));
     expect(find.text(_copyName), findsNothing);
     expect(find.textContaining('保存成功'), findsNothing);
     expect(fixture.listReads, hasLength(2));
@@ -892,7 +1024,7 @@ void main() {
     final sent = fixture.copies.single;
     expect(sent.url.path, '/api/v1/tenants/tenant-a/policies/$_policy/copies');
     expect(sent.headers['If-Match'], '"7"');
-    expect(sent.headers['Idempotency-Key'], isNotEmpty);
+    expect(sent.headers['Idempotency-Key'], matches(_v4Key));
     expect(jsonDecode(sent.body), {'name': _copyName});
     expect(invocation.completed, isTrue);
     expect(invocation.failure, isNull);
@@ -1004,28 +1136,16 @@ void main() {
   for (final invalid in <Object?>[<String, dynamic>{}, null]) {
     final description = invalid == null ? 'null' : 'empty object';
     testWidgets(
-        'copy 201 $description retains original name and key until explicit retry',
+        'copy 201 $description retains original name and key until original-result query',
         (tester) async {
       final fixture = _Fixture(template: true);
-      var attempts = 0;
       fixture.respond = (request) async {
         if (request.method != 'POST' ||
             !request.url.path.endsWith('/policies/$_policy/copies')) {
           return null;
         }
-        attempts++;
-        if (attempts == 1) {
-          return http.Response(jsonEncode(invalid), 201,
-              headers: {'content-type': 'application/json; charset=utf-8'});
-        }
-        return reply({
-          ...fixture.draft(),
-          'id': 'copy-private-a',
-          'name': _copyName,
-          'kind': 'POLICY',
-          'revision': 0,
-          'sourceVersionId': null,
-        });
+        return http.Response(jsonEncode(invalid), 201,
+            headers: {'content-type': 'application/json; charset=utf-8'});
       };
       await _mount(tester, fixture);
       final invocation = await _open(tester, fixture);
@@ -1045,18 +1165,18 @@ void main() {
       expect(fixture.copies, hasLength(1),
           reason: 'Recovery must never submit automatically.');
       final original = fixture.copies.single;
-      expect(original.headers['Idempotency-Key'], isNotEmpty);
+      expect(original.headers['Idempotency-Key'], matches(_v4Key));
       expect(jsonDecode(original.body), {'name': _copyName});
 
-      _capture(tester, '重试原提交')();
+      _capture(tester, '查询原保存结果')();
       await settle(tester);
 
-      expect(fixture.copies, hasLength(2));
-      final retried = fixture.copies.last;
-      expect(retried.headers['Idempotency-Key'],
-          original.headers['Idempotency-Key']);
-      expect(retried.headers['If-Match'], original.headers['If-Match']);
-      expect(retried.body, original.body);
+      expect(fixture.copies, hasLength(1));
+      expect(fixture.branchQueries, hasLength(1));
+      final query = fixture.branchQueries.single;
+      expect(query.headers['Idempotency-Key'], isNull);
+      expect(query.headers['If-Match'], original.headers['If-Match']);
+      expect(query.body, original.body);
       expect(invocation.completed, isTrue);
       expect(invocation.failure, isNull);
       expect(tester.takeException(), isNull);
