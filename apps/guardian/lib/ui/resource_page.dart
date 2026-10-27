@@ -44,6 +44,8 @@ class ResourcePage extends StatefulWidget {
   final List<Widget> toolbar;
   final String? notice;
   final VoidCallback? reauth;
+  /// Lets a domain owner retire its scope after an authoritative read denial.
+  final ValueChanged<Object>? onReadDenied;
   /// Captures this list's owner; its page key must change with the owner scope.
   final bool Function()? isCurrent;
   /// Gates new user events without invalidating accepted or in-flight reads.
@@ -67,6 +69,7 @@ class ResourcePage extends StatefulWidget {
       this.toolbar = const [],
       this.notice,
       this.reauth,
+      this.onReadDenied,
       this.isCurrent,
       this.canInteract}) : assert(onOpen == null || onOpenChanged == null),
         assert(create == null || onCreateChanged == null);
@@ -184,6 +187,7 @@ class ResourcePageState extends State<ResourcePage> {
     final scope = resourceGeneration;
     final permitted = widget.isCurrent;
     final includeRow = widget.includeRow;
+    final onReadDenied = widget.onReadDenied;
     bool current() =>
         mounted && resourceGeneration == scope && permitted?.call() != false;
     final requestCursor = append ? cursor : null;
@@ -222,12 +226,14 @@ class ResourcePageState extends State<ResourcePage> {
       }
     } catch (e) {
       if (mounted && generation == epoch) {
+        var denied = false;
         setState(() {
           if (e is ApiFailure &&
               (e.status == 401 ||
                   e.status == 403 ||
                   e.code == 'WORKSPACE_CHANGED')) {
             _discardDeniedRead(e);
+            denied = true;
           } else if (append) {
             appendError = e;
             if (e is ApiFailure && e.code == 'INVALID_CURSOR') {
@@ -238,6 +244,7 @@ class ResourcePageState extends State<ResourcePage> {
             error = e;
           }
         });
+        if (denied) onReadDenied?.call(e);
       }
     } finally {
       if (mounted && generation == epoch) {

@@ -25,6 +25,8 @@ class QuotaPlanEditor extends StatefulWidget {
   final String? targetDescription;
   final Future<Json> Function(String subject) loadCalendar;
   final Future<void> Function(Json body) onSubmit;
+  /// Read the original result without sending the write again.
+  final Future<void> Function(Json body) onRecoverUnknown;
   final VoidCallback? reauth;
   final Listenable? accessChanges;
   final bool Function()? hasAccess;
@@ -36,6 +38,7 @@ class QuotaPlanEditor extends StatefulWidget {
       this.targetDescription,
       required this.loadCalendar,
       required this.onSubmit,
+      required this.onRecoverUnknown,
       this.reauth,
       this.accessChanges,
       this.hasAccess});
@@ -170,6 +173,16 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (accepted && subject != null) readCalendar();
     });
+  }
+
+  @override
+  void didUpdateWidget(covariant QuotaPlanEditor oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!identical(widget.accessChanges, owner.accessChanges) ||
+        widget.plan?['id'] != owner.plan?['id'] ||
+        widget.plan?['version'] != owner.plan?['version']) {
+      invalidate();
+    }
   }
 
   @override
@@ -438,7 +451,18 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
   }
 
   Future<void> save() async {
+    if (pending != null) return;
+    await submitOriginal(recovering: false);
+  }
+
+  Future<void> recoverOriginal() async {
+    if (pending == null) return;
+    await submitOriginal(recovering: true);
+  }
+
+  Future<void> submitOriginal({required bool recovering}) async {
     if (!canAct || recoveryStopped || confirmingUnknownClose) return;
+    if (recovering ? pending == null : pending != null) return;
     if ((pending == null && form.currentState?.validate() != true) ||
         calendar == null || subject == null) {
       return;
@@ -469,7 +493,11 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
       error = null;
     });
     try {
-      await owner.onSubmit(data);
+      if (recovering) {
+        await owner.onRecoverUnknown(data);
+      } else {
+        await owner.onSubmit(data);
+      }
       if (accepted && identical(saveOperation, operation)) {
         finish(allowCovered: true);
       }
@@ -726,7 +754,7 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
                             const SizedBox(height: 16),
                             Notice(confirmingUnknownClose
                                 ? '暂时关闭不会取消已经发出的保存。关闭后请先核对原工作空间的计划列表，避免重复创建或修改。'
-                                : '上次提交结果尚未确认。输入已保留，重试将发送完全相同的内容。',
+                                : '上次提交结果尚未确认。输入已保留，请查询原保存结果。',
                                 warning: true),
                           ],
                           if (error != null) ...[
@@ -762,13 +790,16 @@ class _QuotaPlanEditorState extends State<QuotaPlanEditor> {
                 child: Text(recoveryStopped ? '关闭'
                     : pending != null ? '暂时关闭' : '取消')),
             FilledButton(
-                onPressed: !canAct || recoveryStopped || calendar == null ? null : save,
+                key: pending != null && !recoveryStopped
+                    ? const Key('quota-plan-query-original') : null,
+                onPressed: !canAct || recoveryStopped || calendar == null
+                    ? null : pending == null ? save : recoverOriginal,
                 child: Text(busy
                     ? '保存中…'
                     : recoveryStopped
                         ? '已停止旧提交'
                         : pending != null
-                            ? '重试原提交'
+                            ? '查询原保存结果'
                             : '保存计划')),
           ],
         ],

@@ -37,6 +37,7 @@ Widget host(Api api,
         bool Function()? isCurrent,
         bool Function()? canInteract,
         bool Function(Json)? includeRow,
+        ValueChanged<Object>? onReadDenied,
         bool refreshAfterOpen = true}) =>
     MaterialApp(
         theme: consoleTheme(),
@@ -49,6 +50,7 @@ Widget host(Api api,
                     path: path,
                     api: api,
                     includeRow: includeRow,
+                    onReadDenied: onReadDenied,
                     columns: [
                       ColumnSpec('名称', (row) => Text(row['name'] as String))
                     ],
@@ -492,6 +494,7 @@ void main() {
   testWidgets('refresh failure keeps every loaded page and its next cursor',
       (tester) async {
     final cursors = <String?>[];
+    final denials = <Object>[];
     final api = apiFor((request) {
       cursors.add(request.url.queryParameters['cursor']);
       return switch (cursors.length) {
@@ -501,7 +504,7 @@ void main() {
         _ => page(['third'])
       };
     });
-    await tester.pumpWidget(host(api));
+    await tester.pumpWidget(host(api, onReadDenied: denials.add));
     await tester.pumpAndSettle();
     await tap(tester, '加载更多');
     await tester.tap(find.byTooltip('刷新'));
@@ -512,6 +515,7 @@ void main() {
     await tap(tester, '加载更多');
     expect(find.text('third'), findsOneWidget);
     expect(cursors, [null, 'page-2', null, 'page-3']);
+    expect(denials, isEmpty);
   });
 
   testWidgets('refresh retry reads the first page instead of appending',
@@ -702,6 +706,8 @@ void main() {
       final key = GlobalKey<ResourcePageState>();
       final waiting = Completer<http.Response>();
       var oldReads = 0;
+      final oldDenials = <Object>[];
+      final newDenials = <Object>[];
       final api = apiFor((request) {
         if (request.url.path.endsWith('/new-records')) return page(['new']);
         return ++oldReads == 1
@@ -709,20 +715,24 @@ void main() {
             : waiting.future;
       });
       final replacement = changeApi ? apiFor((_) => page(['new'])) : api;
-      await tester.pumpWidget(host(api, resourceKey: key));
+      await tester.pumpWidget(host(api, resourceKey: key,
+          onReadDenied: oldDenials.add));
       await tester.pumpAndSettle();
       await tester.tap(find.text('加载更多'));
       await tester.pump();
       await tester.pumpWidget(host(replacement,
-          resourceKey: key, path: changeApi ? '/records' : '/new-records'));
+          resourceKey: key, path: changeApi ? '/records' : '/new-records',
+          onReadDenied: newDenials.add));
       await tester.pumpAndSettle();
       expect(find.text('new'), findsOneWidget);
       expect(find.text('old'), findsNothing);
-      waiting.complete(unavailable());
+      waiting.complete(http.Response('{"errorCode":"SCOPE_DENIED"}', 403));
       await tester.pumpAndSettle();
       expect(find.text('new'), findsOneWidget);
       expect(find.byType(FailureView), findsNothing);
       expect(find.text('加载中…'), findsNothing);
+      expect(oldDenials, isEmpty);
+      expect(newDenials, isEmpty);
     });
   }
 
@@ -972,6 +982,7 @@ void main() {
       testWidgets('${append ? 'append' : 'refresh'} GET $status hides private '
           'rows and discards the cursor', (tester) async {
         final cursors = <String?>[];
+        final denials = <Object>[];
         final api = apiFor((request) {
           expect(request.method, 'GET');
           cursors.add(request.url.queryParameters['cursor']);
@@ -985,7 +996,7 @@ void main() {
             _ => page(['authorized-after-retry'])
           };
         });
-        await tester.pumpWidget(host(api));
+        await tester.pumpWidget(host(api, onReadDenied: denials.add));
         await tester.pumpAndSettle();
         expect(find.text('private-before-denied'), findsOneWidget);
         if (append) {
@@ -999,9 +1010,13 @@ void main() {
         expect(find.text('加载更多'), findsNothing);
         expect(find.text('重试加载更多'), findsNothing);
         expect(find.byType(FailureView), findsOneWidget);
+        expect(denials, hasLength(1));
+        expect(denials.single, isA<ApiFailure>()
+            .having((failure) => failure.status, 'status', status));
         await tap(tester, '重试');
         expect(find.text('authorized-after-retry'), findsOneWidget);
         expect(cursors, [null, append ? 'private-next' : null, null]);
+        expect(denials, hasLength(1));
       });
     }
   }
@@ -1009,6 +1024,7 @@ void main() {
   testWidgets('action MFA 401 preserves rows and the readable next page',
       (tester) async {
     final cursors = <String?>[];
+    final denials = <Object>[];
     var actions = 0;
     final api = apiFor((request) {
       cursors.add(request.url.queryParameters['cursor']);
@@ -1016,7 +1032,7 @@ void main() {
           ? page(['first'], cursor: 'page-2')
           : page(['second']);
     });
-    await tester.pumpWidget(host(api, onOpen: (_) async {
+    await tester.pumpWidget(host(api, onReadDenied: denials.add, onOpen: (_) async {
       actions++;
       throw const ApiFailure(401, 'REAUTH_REQUIRED');
     }));
@@ -1032,6 +1048,7 @@ void main() {
     expect(find.text('second'), findsOneWidget);
     expect(cursors, [null, 'page-2']);
     expect(actions, 1);
+    expect(denials, isEmpty);
   });
 
   testWidgets('read-only detail preserves loaded pages search and next cursor',

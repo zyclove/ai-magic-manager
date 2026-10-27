@@ -41,9 +41,15 @@
 | `GET /quota-plans/calendar` | `subjectId, defaultTimeZone`；返回该儿童已有额度时区及服务端当地日期，无已有日历时使用有效默认时区 |
 | `GET /quota-plans/{id}` | 最新保存配置和强 ETag |
 | `PUT /quota-plans/{id}` | `name, state, weeklyLimits, dateOverrides`；成人、近期 MFA、If-Match、幂等键；从次日生效 |
+| `POST /quota-plans/creation-results/{requestId}/query` | 原完整创建正文；当前成人写权限、活动主体范围；只查原结果，不需近期 MFA或写入幂等头 |
+| `POST /quota-plans/{id}/update-results/{requestId}/query` | 原完整更新正文与原If-Match；当前成人写权限、活动主体范围；只查原结果，不重放更新 |
 | `GET /quota-plans/{id}/revisions` | limit/数字版本 cursor 分页；不可变历史配置，版本倒序 |
 
 `weeklyLimits` 必须提供 MONDAY 至 SUNDAY 七个键，每个值为 0～86400 整数秒。`dateOverrides` 最多 60 个日期，值同单位；日期例外优先。新计划从其时区的今天或明天开始，一个儿童每种范围只保留一个长期计划。暂停、恢复和编辑保存新版本并从次日开始；同一生效日采用最后确认的版本。
+
+原结果接口返回 `{requestId,operation,committed,current}`，operation为PLAN_CREATE或PLAN_UPDATE；原UUID、操作者、租户、版本及正文必须对应，响应no-store。缺失是 `404 QUOTA_RESULT_UNAVAILABLE`，不证明业务未提交；结果90天到期／清除沿既有终态。Guardian未知后只查原结果，404／近期认证不解锁、不换键；更新查询保留原If-Match且不携带写入Idempotency-Key。初次及查询的committed完整匹配原配置；CREATE为ACTIVE/version0且匹配生效日，UPDATE为原version+1并保留资源身份与createdAt，更新生效日由服务端决定。current同资源且版本不倒退，同版本须全等；后续版本仅提示核对当前计划，不能替代原提交证明。
+
+管理台列表接收前、详情、日历和保存结果使用同一纯模型校验；七日键、全部日期、整数秒与安全版本严格检查后脱离原Map。列表操作租约贯穿详情／历史／编辑及HTTP范围，失效后迟到响应和旧操作失效。普通取消或只读返回不刷新列表；已尝试保存及未知关闭仅返回需核对信号，不当作保存成功。
 
 V14 保存计划、修订、自动池的 `planId/planVersion`。手工已有池不被覆盖；已生成池、消费和预留不随计划编辑重置。停机恢复只生成当前日。应用在当日已有租约且尚无应用池时，创建当天应用计划也会被拒绝，防止漏计早先消费。
 

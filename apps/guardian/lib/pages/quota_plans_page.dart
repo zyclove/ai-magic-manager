@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import '../core/api.dart';
+import '../core/quota_plan_change.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
 import '../ui/dialog_access.dart';
@@ -38,6 +40,24 @@ class _QuotaPlansPageState extends State<QuotaPlansPage> {
   bool get canWrite => current && owner.canWrite;
   bool onTop(BuildContext parent) => current && parent.mounted &&
       ModalRoute.of(parent)?.isCurrent == true;
+
+  void rejectPrivateAccess(Object failure, {ResourceActionLease? lease}) {
+    if (!current || lease?.current == false || failure is! ApiFailure) return;
+    if (failure.status != 403 && failure.code != 'WORKSPACE_CHANGED' &&
+        (failure.status != 401 || failure.code == 'REAUTH_REQUIRED')) return;
+    lease?.retire();
+    lifetime.invalidate();
+  }
+
+  Future<T> request<T>(ResourceActionLease lease, Future<T> Function() send) async {
+    if (!current || !lease.current) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+    try {
+      return await send();
+    } catch (failure) {
+      rejectPrivateAccess(failure, lease: lease);
+      rethrow;
+    }
+  }
 
   @override
   void initState() {
@@ -107,6 +127,12 @@ class _QuotaPlansPageState extends State<QuotaPlansPage> {
   String targetDescription(Json plan) =>
       '儿童：${childLabel(plan)}\n额度范围：${scopeLabel(plan)}';
 
+  // Validate the authorized page before ResourcePage accepts or renders it.
+  bool includePlanRow(Json row) {
+    readQuotaPlanSnapshot(row);
+    return true;
+  }
+
   @override
   Widget build(BuildContext context) {
     return AnimatedBuilder(
@@ -122,17 +148,21 @@ class _QuotaPlansPageState extends State<QuotaPlansPage> {
         isCurrent: () => current,
         canInteract: () => onTop(context),
         path: '$root/quota-plans',
+        includeRow: includePlanRow,
+        onReadDenied: (failure) => rejectPrivateAccess(failure),
         title: '重复计划',
         subtitle: '按星期安排额度，日期例外单独设置，每天自动生成。',
         createLabel: '创建重复计划',
-        create: canWrite ? () => edit(context) : null,
+        onCreateChanged: canWrite ? (lease) => edit(context, lease) : null,
         reauth: () {
           if (onTop(context)) owner.login(stepUp: true);
         },
         notice:
             '计划修改或暂停从次日生效。已经生成的每日额度保留，已结算和待确认预留不会被重置。设备执行能力尚未验证时，额度配置不会被标为已执行。',
         emptyTitle: '还没有重复计划',
-        emptyDescription: '为儿童创建总额度计划，再按需添加应用计划，免去每天手工配置。',
+        emptyDescription: canWrite
+            ? '为儿童创建总额度计划，再按需添加应用计划，免去每天手工配置。'
+            : '当前范围内没有可查看的重复计划。',
         columns: [
           ColumnSpec(
               '计划',
@@ -154,39 +184,43 @@ class _QuotaPlansPageState extends State<QuotaPlansPage> {
           ColumnSpec(
               '配置版本', (r) => Text('第 ${(r['version'] as num).toInt() + 1} 版')),
         ],
-        onOpen: (r) => details(context, r['id'])));
+        onOpenChanged: (r, lease) => details(context, r['id'], lease)));
   }
 
-  Future<void> edit(BuildContext parent, {Json? plan}) async {
-    if (!onTop(parent) || !canWrite) return;
+  Future<bool> edit(BuildContext parent, ResourceActionLease lease, {Json? plan}) async {
+    if (!onTop(parent) || !canWrite || !lease.current) return false;
+    var attempted = false;
     final access = DialogAccessBinding(parent,
-        accessChanges: changes, hasAccess: () => canWrite);
+        accessChanges: Listenable.merge([changes, lease]),
+        hasAccess: () => canWrite && lease.current);
     try {
-      if (!access.permitted()) return;
+      if (!access.permitted()) return false;
       final api = scope.api.scoped(access.permitted);
       final defaultZone = plan?['timeZone'] as String? ??
           owner.tenant?['timeZone'] as String? ?? 'Asia/Shanghai';
-      final key = requestId();
+      final key = const Uuid().v4();
       final version = plan?['version'] as int?;
       final path = plan == null
           ? '$root/quota-plans' : '$root/quota-plans/${plan['id']}';
       final children = plan == null
-          ? await api.all('$root/subjects') : <Json>[];
-      if (!parent.mounted) return;
-      if (!onTop(parent) || !access.permitted()) return;
+          ? await request(lease, () => api.all('$root/subjects')) : <Json>[];
+      if (!parent.mounted) return false;
+      if (!onTop(parent) || !access.permitted()) return false;
       if (plan == null && children.isEmpty) {
         toast(parent, '请先添加儿童档案。');
-        return;
+        return false;
       }
       final apps = plan == null
-          ? await api.all('$root/applications') : <Json>[];
-      if (!parent.mounted) return;
-      if (!onTop(parent) || !access.permitted()) return;
+          ? await request(lease, () => api.all('$root/applications')) : <Json>[];
+      if (!parent.mounted) return false;
+      if (!onTop(parent) || !access.permitted()) return false;
       late final OwnedDialogRoute<void> route;
       bool accepted() => canWrite && access.permitted() &&
           route.available && route.isActive;
       final editorApi = api.scoped(accepted);
       final editorChanges = access.changes;
+      QuotaPlanChange change(Json body) => plan == null
+          ? QuotaPlanChange.create(body) : QuotaPlanChange.update(plan, body);
       route = OwnedDialogRoute<void>(
           context: parent,
           barrierDismissible: false,
@@ -201,8 +235,9 @@ class _QuotaPlansPageState extends State<QuotaPlansPage> {
                 if (!accepted()) {
                   throw const ApiFailure(409, 'WORKSPACE_CHANGED');
                 }
-                return await editorApi.send('GET',
-                    '$root/quota-plans/calendar?subjectId=${Uri.encodeQueryComponent(subject)}&defaultTimeZone=${Uri.encodeQueryComponent(defaultZone)}') as Json;
+                final value = await request(lease, () => editorApi.send('GET',
+                    '$root/quota-plans/calendar?subjectId=${Uri.encodeQueryComponent(subject)}&defaultTimeZone=${Uri.encodeQueryComponent(defaultZone)}'));
+                return readQuotaPlanCalendar(value);
               },
               reauth: () {
                 if (accepted() && route.isCurrent) owner.login(stepUp: true);
@@ -211,25 +246,46 @@ class _QuotaPlansPageState extends State<QuotaPlansPage> {
                 if (!accepted()) {
                   throw const ApiFailure(409, 'WORKSPACE_CHANGED');
                 }
-                await editorApi.send(plan == null ? 'POST' : 'PUT', path,
-                    key: key, version: version, body: body);
+                final original = change(body);
+                attempted = true;
+                final value = await request(lease, () => editorApi.send(plan == null ? 'POST' : 'PUT', path,
+                    key: key, version: version, body: original.body));
+                if (!accepted()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+                original.committed(value);
+              },
+              onRecoverUnknown: (body) async {
+                if (!accepted()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+                final original = change(body);
+                final value = await request(lease, () => editorApi.send('POST', plan == null
+                    ? '$path/creation-results/$key/query'
+                    : '$path/update-results/$key/query',
+                    version: version, body: original.body));
+                if (!accepted()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+                final result = original.queryResult(value, requestId: key);
+                if (result.current['version'] > result.committed['version'] &&
+                    route.isCurrent) {
+                  toast(parent, '原保存已核对，计划已有后续修改，请核对当前列表。');
+                }
               }));
       await presentOwnedDialog<void>(parent, route);
+      return attempted && current && lease.current && access.permitted();
     } finally {
       access.dispose();
     }
   }
 
-  Future<void> details(BuildContext parent, String id) async {
-    if (!onTop(parent)) return;
+  Future<bool> details(BuildContext parent, String id, ResourceActionLease lease) async {
+    if (!onTop(parent) || !lease.current) return false;
     final access = DialogAccessBinding(parent,
-        accessChanges: changes, hasAccess: () => current);
+        accessChanges: Listenable.merge([changes, lease]),
+        hasAccess: () => current && lease.current);
     try {
-      if (!access.permitted()) return;
+      if (!access.permitted()) return false;
       final api = scope.api.scoped(access.permitted);
-      final plan = await api.send('GET', '$root/quota-plans/$id') as Json;
-      if (!parent.mounted) return;
-      if (!onTop(parent) || !access.permitted()) return;
+      final value = await request(lease, () => api.send('GET', '$root/quota-plans/$id'));
+      if (!parent.mounted) return false;
+      if (!onTop(parent) || !access.permitted()) return false;
+      final plan = readQuotaPlanSnapshot(value, expectedId: id);
       final overrides = Map<String, dynamic>.from(plan['dateOverrides'] as Map);
       final detailChanges = access.changes;
       var requestedEdit = false;
@@ -278,7 +334,7 @@ class _QuotaPlansPageState extends State<QuotaPlansPage> {
               if (!current || !access.permitted() ||
                   route is! OwnedDialogRoute<void> ||
                   !route.available || !route.isCurrent) return;
-              await history(dialog, plan);
+              await history(dialog, plan, lease);
             }, closeOnSuccess: false),
             if (canWrite)
               DetailAction('修改计划', (dialog) async {
@@ -290,19 +346,21 @@ class _QuotaPlansPageState extends State<QuotaPlansPage> {
                 route.finish();
               }, closeOnSuccess: false),
           ]);
-      if (!parent.mounted) return;
+      if (!parent.mounted) return false;
       if (requestedEdit && onTop(parent) && canWrite && access.permitted()) {
-        await edit(parent, plan: plan);
+        return await edit(parent, lease, plan: plan);
       }
+      return false;
     } finally {
       access.dispose();
     }
   }
 
-  Future<void> history(BuildContext parent, Json plan) async {
-    if (!onTop(parent)) return;
+  Future<void> history(BuildContext parent, Json plan, ResourceActionLease lease) async {
+    if (!onTop(parent) || !lease.current) return;
     final access = DialogAccessBinding(parent,
-        accessChanges: changes, hasAccess: () => current);
+        accessChanges: Listenable.merge([changes, lease]),
+        hasAccess: () => current && lease.current);
     try {
       if (!access.permitted()) return;
       late final OwnedDialogRoute<void> route;
@@ -338,6 +396,8 @@ class _QuotaPlansPageState extends State<QuotaPlansPage> {
                                             child: ResourcePage(
                                                 api: api,
                                                 isCurrent: accepted,
+                                                onReadDenied: (failure) =>
+                                                    rejectPrivateAccess(failure, lease: lease),
                                                 canInteract: () => route.isCurrent,
                                                 path: '$root/quota-plans/${plan['id']}/revisions',
                                                 title: '计划版本历史',

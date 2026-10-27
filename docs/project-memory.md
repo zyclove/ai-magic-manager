@@ -45,6 +45,8 @@
 
 formDialog 同样显式透传 canCommit（默认true），false不能配置原结果查询hook；仅用于不持久化远端状态的本地准备。额度计划的[日期编辑](../apps/guardian/lib/pages/quota_plan_editor.dart)使用该入口，直接编辑已有日期并精确保留分钟／余秒；0合法、总计不超过24小时。每周复制按源的当前精确秒数更新保留值，手动更改分钟才替换为整分钟。完整计划保存冻结外层与两个额度Map；未知、终态停止与关闭确认由父编辑器管理，不由日期窗口解除。关闭确认捕获每次独立标识，收起再打开也不复活旧确认回调。
 
+[quota_plan_change.dart](../apps/guardian/lib/core/quota_plan_change.dart) 集中额度计划／日历解析、固定原正文与完整回执匹配，保留7天及全部日期整数秒，不接受日期归一化或浮点版本。QuotaPlanEditor 必需只读 onRecoverUnknown，未知后只查询，原保存回调不能触发查询或重放写入。[QuotaPlansPage](../apps/guardian/lib/pages/quota_plans_page.dart) 使用 UUID 与既有 creation-results/update-results 查询，更新保留原 If-Match，查询无写入幂等头；committed/current分开。详情、编辑、历史与API借用 ResourceActionLease，onCreateChanged/onOpenChanged 只返回列表核对信号，普通取消及只读不重读。
+
 FieldSpec.validator 在原必填/数值规则后执行纯领域校验，文本、选项及时区字段共用此扩展。EditDialog/formDialog 可显式配置 onRecoverUnknown 与 recoverLabel，成对捕获首次提交及只读查询回调并冻结原值；恢复跳过当前控件校验/解析，408保持未知，查询404/401不解锁，模式切换则退役。不提供查询hook的表单仍使用原重试入口；不能把只读查询用于 canCommit=false 的本地准备流程。
 
 应用登记规范化与严格回执匹配集中在 [application_registration.dart](../apps/guardian/lib/core/application_registration.dart)，复用既有 ApplicationClassificationIdentity 契约。包名保留大小写，摘要接受原始或冒号指纹后转小写排序，空项/重复/超限就地拒绝；application 使用UUID键及既有 creation-results 原结果查询，未知后不重放创建。返回仍为管理员声明，不据此宣称设备核验或执行，详见[应用契约](policy-application-schedule-contract.md)。
@@ -98,6 +100,8 @@ Windows 私有进程验证的稳定工具源位于 [scripts/verification](../scr
 [SubjectsPage](../apps/guardian/lib/pages/subjects_page.dart) 独立编排档案筛选与操作锁，复用 ResourcePage；成人管理员读取 subjects/management 并可包含归档，其余角色沿用获授权的活动列表。管理详情重新读取当前 state，只有 ACTIVE 提供变更入口，ARCHIVED 和未知状态只读；归档确认包含完整档案身份与影响。筛选使用递增视图代次，不能因往返相同值复活旧回调，也不把操作锁混入读取权限捕获。操作借用 ResourcePage 提供的统一租约，父页面仅退役、不释放，不给窗口传入已释放的父 scope；ConsolePages 元素被其他模块复用也不能让旧详情晚到弹出。
 
 [ResourceActionLease](../apps/guardian/lib/ui/resource_action_lease.dart) 由 [ResourcePage](../apps/guardian/lib/ui/resource_page.dart) 每次 action 创建并最终释放；onCreateChanged(lease)、onOpenChanged(row, lease) 返回需核对信号。租约绑定原资源代际、API、路径与宿主捕获，独立于 busy/canInteract/子窗口置顶；退役同步拒绝旧操作、帧后单次通知，完整回调结束才 dispose。页面离开、资源变化、拒绝读取及 owner 失效推进相应有效期/交互代际，旧 finally 不能解新锁；同键重挂不因此新增普通列表读取。领域授权仍独立保留，成员/班级历史与编辑、应用登记/详情、时间计划和策略预览须取租约交集。既有 void 入口保持自身返回与授权语义，需要子流程有效期时使用布尔租约入口。
+
+ResourcePage.onReadDenied 可通知领域父范围：只在原有效读取代次真正清除拒绝数据后调用原捕获回调，置于setState外；旧资源晚到失败不通知新owner。额度计划据此退役其页面／租约并隐藏旧内容；近期认证要求由领域保留，不把普通网络或写入MFA错误当作该读取通知。
 
 [SubjectChangeDraft](../apps/guardian/lib/core/subject_change.dart) 统一 CREATE/UPDATE/ARCHIVE 的固定正文、档案快照与回执校验，分开 committed/current；待变更必须活动且版本可递增，同版本内容不得变化，较新编辑/归档作为当前事实核对。创建/编辑复用 EditDialog 查询钩子，使用一次UUID及既有 subjects/changes、operation-results/{key}/query，未知后不重放，后续事实只在原窗口/权限仍有效时提示并核对列表。管理详情读取也绑定原编号，昵称按服务端UTF-16长度就近校验。
 

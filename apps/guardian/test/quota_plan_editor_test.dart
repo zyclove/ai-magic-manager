@@ -7,7 +7,8 @@ import 'package:guardian/pages/quota_plan_editor.dart';
 import 'package:guardian/ui/design.dart';
 
 Future<void> open(WidgetTester tester, Future<void> Function(Json) submit,
-    {Json? plan, String? targetDescription}) async {
+    {Json? plan, String? targetDescription,
+    Future<void> Function(Json)? recover}) async {
   await tester.pumpWidget(MaterialApp(
       theme: consoleTheme(),
       home: Scaffold(
@@ -25,6 +26,7 @@ Future<void> open(WidgetTester tester, Future<void> Function(Json) submit,
                               'currentDate': '2026-10-08'
                             },
                             onSubmit: submit,
+                            onRecoverUnknown: recover ?? ((_) async {}),
                           )),
                   child: const Text('打开'))))));
   await tester.tap(find.text('打开'));
@@ -172,18 +174,23 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('uncertain plan writes freeze nested data and retain it through reauthentication',
+  testWidgets('uncertain plan writes freeze nested data and recover only through original result queries',
       (tester) async {
     final submitted = <Json>[];
+    final queried = <Json>[];
     await open(tester, (value) async {
       submitted.add(value);
-      if (submitted.length == 1) throw const ApiFailure(408, 'REQUEST_TIMEOUT');
-      if (submitted.length == 2) throw const ApiFailure(401, 'REAUTH_REQUIRED');
+      throw const ApiFailure(408, 'REQUEST_TIMEOUT');
+    }, recover: (value) async {
+      queried.add(value);
+      if (queried.length == 1) throw const ApiFailure(404, 'QUOTA_RESULT_UNAVAILABLE');
+      if (queried.length == 2) throw const ApiFailure(401, 'REAUTH_REQUIRED');
     }, plan: {
       'name': '原精确额度', 'subjectId': 'child',
       'weeklyLimits': {'MONDAY': 3661}, 'dateOverrides': {'2026-10-09': 3661},
     });
-    await tester.tap(find.text('保存计划'));
+    final heldSave = tester.widget<ButtonStyleButton>(_button('保存计划')).onPressed!;
+    heldSave();
     await tester.pumpAndSettle();
     expect(
         tester.widget<TextFormField>(find.byType(TextFormField).first).enabled,
@@ -192,18 +199,28 @@ void main() {
     expect(() => submitted.single['name'] = 'changed', throwsUnsupportedError);
     expect(() => (submitted.single['weeklyLimits'] as Map)['MONDAY'] = 0, throwsUnsupportedError);
     expect(() => (submitted.single['dateOverrides'] as Map)['2026-10-09'] = 0, throwsUnsupportedError);
-    await tester.tap(find.text('重试原提交'));
+    heldSave();
     await tester.pumpAndSettle();
-    expect(submitted, hasLength(2));
+    expect(submitted, hasLength(1));
+    expect(queried, isEmpty, reason: 'A retained save callback cannot silently switch into a recovery query.');
+    final query = find.byKey(const Key('quota-plan-query-original'));
+    await tester.tap(query);
+    await tester.pumpAndSettle();
+    expect(queried, hasLength(1));
     expect(tester.widget<TextFormField>(find.byType(TextFormField).first).enabled, isFalse);
-    expect(find.text('重试原提交'), findsOneWidget);
+    expect(find.text('查询原保存结果'), findsOneWidget);
     expect(find.text('保存计划'), findsNothing);
-    await tester.tap(find.text('重试原提交'));
+    await tester.tap(query);
     await tester.pumpAndSettle();
-    expect(submitted, hasLength(3));
-    expect(submitted.every((body) => jsonEncode(body) == frozen), isTrue);
-    expect((submitted.last['weeklyLimits'] as Map)['MONDAY'], 3661);
-    expect((submitted.last['dateOverrides'] as Map)['2026-10-09'], 3661);
+    expect(queried, hasLength(2));
+    expect(tester.widget<TextFormField>(find.byType(TextFormField).first).enabled, isFalse);
+    await tester.tap(query);
+    await tester.pumpAndSettle();
+    expect(queried, hasLength(3));
+    expect(submitted, hasLength(1));
+    expect(queried.every((body) => jsonEncode(body) == frozen), isTrue);
+    expect((queried.last['weeklyLimits'] as Map)['MONDAY'], 3661);
+    expect((queried.last['dateOverrides'] as Map)['2026-10-09'], 3661);
     expect(find.byType(QuotaPlanEditor), findsNothing);
   });
 
@@ -225,7 +242,7 @@ void main() {
       expect(tester.widget<ButtonStyleButton>(_button('已停止旧提交')).onPressed, isNull);
       expect(tester.widget<TextFormField>(find.byType(TextFormField).first).enabled, isFalse);
       expect(find.textContaining('输入以只读方式保留'), findsOneWidget);
-      expect(find.text('重试原提交'), findsNothing);
+      expect(find.byKey(const Key('quota-plan-query-original')), findsNothing);
       originalSave();
       await tester.pumpAndSettle();
       expect(attempts, 1, reason: 'A stopped plan must never resend through an old save callback.');
