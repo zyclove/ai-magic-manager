@@ -21,6 +21,7 @@
 | POST /applications | displayName、platform、packageName、profile、signingDigests | 声明应用；可选 Idempotency-Key；201 |
 | GET /applications | limit、cursor | 按 ID 分页 |
 | GET /applications/{applicationId} | ApplicationDefinition | 仅本租户 |
+| POST /applications/creation-results/{requestId}/query | 原登记正文 | 查询原应用登记结果，不重放创建；200，禁止缓存 |
 | POST /schedules | name、definition | 不可变时间计划；可选幂等；201 |
 | GET /schedules | limit、cursor | 按 ID 分页 |
 | GET /schedules/{scheduleId} | ScheduleEntry | 仅本租户 |
@@ -29,6 +30,10 @@
 应用身份由 platform、精确 packageName、profile 与排序后的 signingDigests 共同确定；租户内摘要唯一。同身份重复创建 409 `APPLICATION_IDENTITY_EXISTS`。名称不是身份，签名集合不是经过验证的更新 lineage。profile 为 PRIMARY/WORK/SECONDARY/UNKNOWN；当前非 PRIMARY 的执行范围未验证。声明为 ANDROID 的记录不会自动覆盖 ANDROID_TV。
 
 签名摘要最多 8 个，为小写 SHA-256 十六进制；未知签名可传空集合，不会因此获得认证状态。当前 `evidenceStatus=ADMIN_DECLARED`，既不证明已安装，也不提供内容安全评级。应用与计划定义不可原地改写；变更时建立新 ID，再编辑策略引用。
+
+管理台登记保留包名大小写，仅去除首尾空白，并在字段旁提示格式问题。签名输入可整体为空；支持 64 位十六进制或冒号分隔的 32 字节指纹，可用逗号、中文逗号或换行分隔，提交前转为小写无冒号并排序。内部空项、格式错误、超过8份及归一化后重复都阻止提交并保留可编辑输入；不静默删除摘要或重复项。
+
+管理台每次登记使用一次 UUID 请求键。结果未知后保留原表单快照，仅以原键和完全相同的规范化正文查询上述接口，不传写入幂等头、不再次创建。未查到或查询认证失败不表示登记未完成，也不解除锁定；结果到期/清除后停止恢复并引导核对目录。查询成功必须完整匹配原名称、平台、精确包名、资料空间、摘要集合和合法应用编号，且仍为 ADMIN_DECLARED；未知结果关闭仍先确认并核对列表，不将布尔核对信号解释为登记成功。
 
 时间定义示例：
 

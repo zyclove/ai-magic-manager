@@ -74,6 +74,7 @@ class _Fixture {
   final unknownCreates = <String>{};
   final created = <String, Json>{};
   final archiveQueryStatuses = <int>[];
+  final applicationQueryStatuses = <int>[];
   Completer<http.Response>? subjectDetailsResponse;
   bool unknownSubjectEdit = false, unknownArchive = false, closed = false;
   bool subjectArchived = false;
@@ -130,14 +131,35 @@ class _Fixture {
     }
     for (final section in ['subjects', 'applications']) {
       if (request.method == 'POST' && path == '$_root/$section') {
+        if (section == 'applications') {
+          expect(request.headers['idempotency-key'], matches(
+              RegExp(r'^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$')));
+        }
         if (unknownCreates.contains(section)) {
           return _reply({'errorCode': 'SERVICE_UNAVAILABLE'}, status: 503);
         }
         final record = <String, dynamic>{..._record(section),
-          ...(jsonDecode(request.body) as Json), 'id': _created};
+          ...(jsonDecode(request.body) as Json), 'id': _created,
+          if (section == 'applications') 'evidenceStatus': 'ADMIN_DECLARED'};
         created[section] = record;
         return _reply(record, status: 201);
       }
+    }
+    if (request.method == 'POST' &&
+        path.startsWith('$_root/applications/creation-results/') && path.endsWith('/query')) {
+      final original = requests.firstWhere((sent) =>
+          sent.method == 'POST' && sent.url.path == '$_root/applications');
+      expect(path, '$_root/applications/creation-results/${original.headers['idempotency-key']}/query');
+      expect(request.body, original.body);
+      expect(request.headers['idempotency-key'], isNull);
+      final status = applicationQueryStatuses.isEmpty ? 200 : applicationQueryStatuses.removeAt(0);
+      if (status != 200) {
+        return _reply({'errorCode': 'APPLICATION_CREATION_RESULT_UNAVAILABLE'}, status: status);
+      }
+      final record = <String, dynamic>{..._record('applications'),
+        ...(jsonDecode(original.body) as Json), 'id': _created, 'evidenceStatus': 'ADMIN_DECLARED'};
+      created['applications'] = record;
+      return _reply(record);
     }
     if (request.method == 'PATCH' && path == '$_root/subjects/$_first') {
       if (unknownSubjectEdit) return _reply({'errorCode': 'SERVICE_UNAVAILABLE'}, status: 503);
@@ -302,6 +324,88 @@ void main() {
       expect(tester.takeException(), isNull);
       await fixture.cleanup(tester);
     }
+  });
+
+  testWidgets('application registration validates locally and recovers a normalized original request without replay',
+      (tester) async {
+    _wide(tester);
+    final fixture = _Fixture();
+    fixture.unknownCreates.add('applications');
+    fixture.applicationQueryStatuses.addAll([404, 200]);
+    addTearDown(() => fixture.cleanup(tester));
+    const name = '专注学习';
+    const packageName = 'com.Example.FocusApp';
+    final colonDigest = List<String>.filled(32, 'AB').join(':');
+    final plainUpperDigest = List<String>.filled(32, 'AB').join();
+    final canonicalDigest = List<String>.filled(32, 'ab').join();
+    final packageField = find.widgetWithText(TextFormField, 'Android 包名');
+    final digestField = find.widgetWithText(TextFormField, '签名摘要');
+    List<http.Request> creations() => fixture.requests.where((request) =>
+        request.method == 'POST' && request.url.path == '$_root/applications').toList();
+    List<http.Request> queries() => fixture.requests.where((request) =>
+        request.method == 'POST' &&
+        request.url.path.startsWith('$_root/applications/creation-results/')).toList();
+    bool queryReady() {
+      if (find.byType(AlertDialog).evaluate().isEmpty) return false;
+      final query = _dialogButton('查询登记结果');
+      return query.evaluate().length == 1 &&
+          tester.widget<ButtonStyleButton>(query).onPressed != null;
+    }
+
+    await _mount(tester, fixture, 'applications');
+    await _until(tester, () => _listReady(tester, 'applications'));
+    await _tap(tester, _button('登记应用'));
+    await _until(tester, () => find.byType(EditDialog).evaluate().length == 1);
+    await tester.enterText(find.widgetWithText(TextFormField, '应用名称'), name);
+    await tester.enterText(packageField, 'invalid package name');
+    await _tap(tester, _dialogButton('保存'));
+    await tester.pump();
+    expect(tester.state<FormFieldState<String>>(packageField).errorText, isNotEmpty);
+    expect(tester.widget<TextFormField>(packageField).enabled, isTrue);
+    expect(fixture.writes, isEmpty);
+
+    await tester.enterText(packageField, packageName);
+    await tester.enterText(digestField, '$colonDigest\n$plainUpperDigest');
+    await _tap(tester, _dialogButton('保存'));
+    await tester.pump();
+    expect(tester.state<FormFieldState<String>>(digestField).errorText, isNotEmpty);
+    expect(tester.widget<TextFormField>(digestField).enabled, isTrue);
+    expect(fixture.writes, isEmpty, reason: 'Equivalent colon and plain digests must be rejected before HTTP.');
+
+    await tester.enterText(digestField, colonDigest);
+    await _tap(tester, _dialogButton('保存'));
+    await _until(tester, () => creations().length == 1 && queryReady());
+    final original = creations().single;
+    expect(jsonDecode(original.body), {
+      'displayName': name, 'packageName': packageName, 'platform': 'ANDROID',
+      'profile': 'PRIMARY', 'signingDigests': [canonicalDigest],
+    });
+    expect(tester.widget<TextFormField>(packageField).enabled, isFalse);
+    expect(tester.widget<TextFormField>(digestField).enabled, isFalse);
+    expect(_dialogButton('保存'), findsNothing);
+    expect(fixture.listReads('applications'), hasLength(1));
+    await _tap(tester, _dialogButton('查询登记结果'));
+    await _until(tester, () => queries().length == 1 && queryReady());
+    expect(creations(), hasLength(1));
+    expect(tester.widget<TextFormField>(packageField).controller!.text, packageName);
+    expect(tester.widget<TextFormField>(digestField).controller!.text, colonDigest);
+    expect(tester.widget<TextFormField>(packageField).enabled, isFalse);
+    expect(tester.widget<TextFormField>(digestField).enabled, isFalse);
+    expect(_dialogButton('保存'), findsNothing);
+    expect(fixture.listReads('applications'), hasLength(1));
+
+    await _tap(tester, _dialogButton('查询登记结果'));
+    await _until(tester, () => queries().length == 2 &&
+        fixture.listReads('applications').length == 2 && _listReady(tester, 'applications'));
+    expect(creations(), hasLength(1));
+    expect(queries().every((request) => request.body == original.body &&
+        request.headers['idempotency-key'] == null &&
+        request.url.path == '$_root/applications/creation-results/${original.headers['idempotency-key']}/query'), isTrue);
+    expect(fixture.writes, hasLength(3));
+    expect(find.text(name), findsOneWidget);
+    expect(find.text(packageName), findsOneWidget);
+    expect(find.byType(AlertDialog), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('subject detail cancellation preserves pages and unknown edits and archives only read back',

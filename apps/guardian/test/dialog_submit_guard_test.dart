@@ -41,6 +41,8 @@ Future<void> _openRecoveryForm(WidgetTester tester,
     {required Completer<Json?> closed,
     required ValueNotifier<bool> access,
     required Future<Json?> Function(Json) onSubmit,
+    Future<Json> Function(Json)? onRecoverUnknown,
+    String recoverLabel = '查询原结果',
     List<FieldSpec> fields = const [FieldSpec('name', '名称')],
     Json initial = const {'name': '原始名称'}}) async {
   await tester.pumpWidget(MaterialApp(
@@ -55,6 +57,8 @@ Future<void> _openRecoveryForm(WidgetTester tester,
                       initial: initial,
                       accessChanges: access,
                       hasAccess: () => access.value,
+                      onRecoverUnknown: onRecoverUnknown,
+                      recoverLabel: recoverLabel,
                       onSubmit: onSubmit));
                 },
                 child: const Text('打开恢复表单')))),
@@ -158,6 +162,139 @@ void main() {
       expect(tester.takeException(), isNull);
     } finally {
       await _disposeRecoveryForm(tester, access, []);
+    }
+  });
+
+  testWidgets('custom field errors stay inline until the values are repaired',
+      (tester) async {
+    for (final sample in [
+      (FieldSpec('name', '名称', validator: (value) =>
+          (value ?? '').contains(' ') ? '名称不能包含空格' : null),
+          '两 段', '修正名称', '名称不能包含空格'),
+      (FieldSpec('mode', '模式', options: const {'old': '旧模式', 'new': '新模式'},
+          validator: (value) => value == 'old' ? '请选择新模式' : null),
+          'old', 'new', '请选择新模式'),
+      (FieldSpec.timeZone('timeZone', '时区', validator: (value) =>
+          value == 'Mars/Olympus' ? '请核对时区编号' : null),
+          'Mars/Olympus', 'Asia/Shanghai', '请核对时区编号'),
+    ]) {
+      final access = ValueNotifier(true);
+      final closed = Completer<Json?>();
+      final bodies = <Json>[];
+      try {
+        await _openRecoveryForm(tester, closed: closed, access: access,
+            fields: [sample.$1], initial: {sample.$1.key: sample.$2},
+            onSubmit: (body) async {
+          bodies.add(body);
+          return body;
+        });
+        _editCallback(tester, '保存')();
+        await tester.pumpAndSettle();
+        expect(find.text(sample.$4), findsOneWidget);
+        expect(find.byType(FailureView), findsNothing);
+        expect(bodies, isEmpty);
+        expect(closed.isCompleted, isFalse);
+        if (sample.$1.options != null) {
+          await tester.tap(find.byType(DropdownButtonFormField<String>));
+          await tester.pumpAndSettle();
+          await tester.tap(find.text('新模式').last);
+          await tester.pumpAndSettle();
+        } else {
+          await tester.enterText(find.byType(TextFormField), sample.$3);
+        }
+        _editCallback(tester, '保存')();
+        await tester.pumpAndSettle();
+        expect(bodies, [{sample.$1.key: sample.$3}]);
+        expect(closed.isCompleted, isTrue);
+        expect(await closed.future, {sample.$1.key: sample.$3});
+        expect(tester.takeException(), isNull);
+      } finally {
+        await _disposeRecoveryForm(tester, access, []);
+      }
+    }
+  });
+
+  testWidgets(
+      '408 recovery queries the frozen original through 404 and reauth to success',
+      (tester) async {
+    final request = Completer<Json?>();
+    final closed = Completer<Json?>();
+    final access = ValueNotifier(true);
+    final submissions = <Json>[];
+    final queries = <Json>[];
+    var rejectLiveValue = false;
+    var validations = 0;
+    const recoverLabel = '核对原申请';
+    const confirmed = {'id': 'original-application', 'name': '原申请'};
+    const failures = [
+      ApiFailure(404, 'APPLICATION_REGISTRATION_RESULT_NOT_FOUND'),
+      ApiFailure(401, 'REAUTH_REQUIRED'),
+    ];
+    try {
+      await _openRecoveryForm(tester, closed: closed, access: access,
+          fields: [FieldSpec('name', '名称', validator: (_) {
+            validations++;
+            return rejectLiveValue ? '当前输入已不可提交' : null;
+          })],
+          initial: const {'name': '  原申请  '},
+          recoverLabel: recoverLabel, onSubmit: (body) {
+        submissions.add(body);
+        return request.future;
+      }, onRecoverUnknown: (body) async {
+        queries.add(body);
+        if (queries.length <= failures.length) {
+          throw failures[queries.length - 1];
+        }
+        return confirmed;
+      });
+      final heldSave = _editCallback(tester, '保存');
+      heldSave();
+      heldSave();
+      expect(submissions, [{'name': '原申请'}]);
+      expect(() => submissions.single['name'] = '改写提交',
+          throwsUnsupportedError);
+      request.completeError(const ApiFailure(408, 'REQUEST_TIMEOUT'));
+      await tester.pumpAndSettle();
+      expect(find.widgetWithText(FilledButton, recoverLabel), findsOneWidget);
+      expect(find.widgetWithText(FilledButton, '重试原提交'), findsNothing);
+      expect(tester.widget<TextFormField>(find.byType(TextFormField)).enabled,
+          isFalse);
+      final validatedOriginal = validations;
+      rejectLiveValue = true;
+      final heldRecovery = _editCallback(tester, recoverLabel);
+      for (var index = 0; index < failures.length; index++) {
+        heldRecovery();
+        heldRecovery();
+        expect(queries, hasLength(index + 1));
+        await tester.pumpAndSettle();
+        expect(find.text(failures[index].message), findsOneWidget);
+        expect(find.widgetWithText(FilledButton, recoverLabel), findsOneWidget);
+        expect(find.widgetWithText(FilledButton, '保存'), findsNothing);
+        expect(tester.widget<TextFormField>(find.byType(TextFormField)).enabled,
+            isFalse);
+        expect(closed.isCompleted, isFalse);
+        expect(submissions, hasLength(1));
+        expect(identical(queries.last, submissions.single), isTrue);
+        expect(queries.last, {'name': '原申请'});
+        expect(validations, validatedOriginal);
+      }
+      expect(() => queries.last['name'] = '改写核对', throwsUnsupportedError);
+      heldRecovery();
+      heldRecovery();
+      await tester.pumpAndSettle();
+      expect(queries, hasLength(3));
+      expect(identical(queries.last, submissions.single), isTrue);
+      expect(validations, validatedOriginal);
+      expect(closed.isCompleted, isTrue);
+      expect(await closed.future, confirmed);
+      expect(find.byType(EditDialog), findsNothing);
+      heldSave();
+      heldRecovery();
+      expect(submissions, hasLength(1));
+      expect(queries, hasLength(3));
+      expect(tester.takeException(), isNull);
+    } finally {
+      await _disposeRecoveryForm(tester, access, [request]);
     }
   });
 

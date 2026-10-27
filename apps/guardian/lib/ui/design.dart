@@ -265,6 +265,7 @@ class FieldSpec {
   final int lines;
   final bool numeric, isTimeZone;
   final int? minValue, maxValue;
+  final FormFieldValidator<String>? validator;
   const FieldSpec(this.key, this.label,
       {this.options,
       this.required = true,
@@ -274,16 +275,18 @@ class FieldSpec {
       this.numeric = false,
       this.isTimeZone = false,
       this.minValue,
-      this.maxValue})
+      this.maxValue,
+      this.validator})
       : assert((minValue == null && maxValue == null) ||
             (numeric && options == null)),
         assert(minValue == null || maxValue == null || minValue <= maxValue),
         assert(!isTimeZone || (!numeric && options == null && lines == 1));
 
   const FieldSpec.timeZone(String key, String label,
-      {bool required = true, String? hint, int maxLength = 100})
+      {bool required = true, String? hint, int maxLength = 100,
+      FormFieldValidator<String>? validator})
       : this(key, label, required: required, hint: hint,
-            maxLength: maxLength, isTimeZone: true);
+            maxLength: maxLength, isTimeZone: true, validator: validator);
 }
 
 /// Capture before an asynchronous action; completion cannot pop a later cover.
@@ -301,6 +304,8 @@ Future<Json?> formDialog(BuildContext context,
     String? description,
     String submit = '保存',
     required Future<Json?> Function(Json) onSubmit,
+    Future<Json> Function(Json)? onRecoverUnknown,
+    String recoverLabel = '查询原结果',
     VoidCallback? reauth,
     Listenable? accessChanges,
     bool Function()? hasAccess}) async {
@@ -331,6 +336,7 @@ Future<Json?> formDialog(BuildContext context,
                 initial: initial,
                 description: description,
                 submit: submit,
+                recoverLabel: recoverLabel,
                 accessChanges: Listenable.merge(
                     [parentClosed, if (accessChanges != null) accessChanges]),
                 hasAccess: permitted,
@@ -342,6 +348,12 @@ Future<Json?> formDialog(BuildContext context,
                   if (!permitted()) {
                     throw const ApiFailure(409, 'WORKSPACE_CHANGED');
                   }
+                  return result;
+                },
+                onRecoverUnknown: onRecoverUnknown == null ? null : (values) async {
+                  if (!permitted()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+                  final result = await onRecoverUnknown(values);
+                  if (!permitted()) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
                   return result;
                 },
                 reauth: reauth)));
@@ -357,6 +369,9 @@ class EditDialog extends StatefulWidget {
   final List<FieldSpec> fields;
   final Json initial;
   final Future<Json?> Function(Json) onSubmit;
+  /// A read-only lookup of the original operation, paired with the first submit.
+  final Future<Json> Function(Json)? onRecoverUnknown;
+  final String recoverLabel;
   final VoidCallback? reauth;
   final Listenable? accessChanges;
   final bool Function()? hasAccess;
@@ -373,10 +388,12 @@ class EditDialog extends StatefulWidget {
       this.description,
       required this.submit,
       required this.onSubmit,
+      this.onRecoverUnknown,
+      this.recoverLabel = '查询原结果',
       this.reauth,
       this.accessChanges,
       this.hasAccess,
-      this.canCommit = true});
+      this.canCommit = true}) : assert(onRecoverUnknown == null || canCommit);
   @override
   State<EditDialog> createState() => _EditDialogState();
 }
@@ -393,6 +410,9 @@ class _EditDialogState extends State<EditDialog> {
   ModalRoute<dynamic>? _route;
   bool _active = true, _revoked = false;
   bool _rebuildPending = false;
+  late final Future<Json?> Function(Json) originalSubmit;
+  late final Future<Json> Function(Json)? recoverUnknown;
+  late final String unknownRecoveryLabel;
 
   void _observeAccess() {
     if (!_revoked && widget.hasAccess?.call() == false) _revoked = true;
@@ -472,6 +492,9 @@ class _EditDialogState extends State<EditDialog> {
   @override
   void initState() {
     super.initState();
+    originalSubmit = widget.onSubmit;
+    recoverUnknown = widget.onRecoverUnknown;
+    unknownRecoveryLabel = widget.recoverLabel;
     _observeAccess();
     widget.accessChanges?.addListener(_accessChanged);
     for (final f in widget.fields) {
@@ -496,7 +519,10 @@ class _EditDialogState extends State<EditDialog> {
   void didUpdateWidget(EditDialog oldWidget) {
     super.didUpdateWidget(oldWidget);
     // Never reinterpret an in-flight write as read-only within the same form.
-    if (oldWidget.canCommit != widget.canCommit) _revoked = true;
+    if (oldWidget.canCommit != widget.canCommit ||
+        (oldWidget.onRecoverUnknown == null) != (widget.onRecoverUnknown == null)) {
+      _revoked = true;
+    }
     if (!identical(oldWidget.accessChanges, widget.accessChanges)) {
       oldWidget.accessChanges?.removeListener(_accessChanged);
       widget.accessChanges?.addListener(_accessChanged);
@@ -532,26 +558,33 @@ class _EditDialogState extends State<EditDialog> {
     if (!current ||
         busy ||
         recoveryStopped ||
-        confirmingUnknownClose ||
-        form.currentState?.validate() != true) return;
+        confirmingUnknownClose) return;
     final canCommit = widget.canCommit;
     final retryingUnknown = canCommit && pendingValues != null;
+    if (!retryingUnknown && form.currentState?.validate() != true) return;
     setState(() {
       busy = true;
       error = null;
     });
     try {
       final values = <String, dynamic>{};
-      for (final f in widget.fields) {
-        final v =
-            f.options != null ? selected[f.key] : controls[f.key]!.text.trim();
-        values[f.key] =
-            f.numeric ? (v == null || v.isEmpty ? null : int.parse(v)) : v;
+      if (!retryingUnknown) {
+        for (final f in widget.fields) {
+          final v =
+              f.options != null ? selected[f.key] : controls[f.key]!.text.trim();
+          values[f.key] =
+              f.numeric ? (v == null || v.isEmpty ? null : int.parse(v)) : v;
+        }
       }
-      final submitted = canCommit ? (pendingValues ?? values) : values;
-      if (canCommit) pendingValues = submitted;
+      if (canCommit && pendingValues == null) {
+        pendingValues = recoverUnknown == null
+            ? values : Map<String, dynamic>.unmodifiable(values);
+      }
+      final submitted = canCommit ? pendingValues! : values;
       if (!current) return;
-      final result = await widget.onSubmit(submitted);
+      final result = retryingUnknown && recoverUnknown != null
+          ? await recoverUnknown!(submitted)
+          : await (recoverUnknown == null ? widget.onSubmit : originalSubmit)(submitted);
       if (mounted && _active && permitted) finish(result ?? submitted);
     } catch (e) {
       if (canCommit) {
@@ -565,6 +598,7 @@ class _EditDialogState extends State<EditDialog> {
         final unknown = retryingUnknown ||
             e is! ApiFailure ||
             e.status == 0 ||
+            e.status == 408 ||
             e.status >= 500 ||
             e.code == 'PENDING_OPERATION_UNCHANGED';
         if (stopped || !unknown) pendingValues = null;
@@ -615,7 +649,9 @@ class _EditDialogState extends State<EditDialog> {
                                       child: Notice(
                                           confirmingUnknownClose
                                               ? '服务器可能已完成原操作，关闭不会取消提交。关闭后请先刷新列表核对结果，确认后再新建。'
-                                              : '上次提交结果尚未确认。重试将发送相同内容；离开后请先刷新列表核对结果，避免重复创建。',
+                                              : recoverUnknown != null
+                                                  ? '上次提交结果尚未确认。查询只核对原操作，不会再次提交；离开后请先刷新列表核对结果。'
+                                                  : '上次提交结果尚未确认。重试将发送相同内容；离开后请先刷新列表核对结果，避免重复创建。',
                                           key: confirmingUnknownClose
                                               ? const Key(
                                                   'edit-dialog-unknown-close-notice')
@@ -675,7 +711,7 @@ class _EditDialogState extends State<EditDialog> {
                                                     },
                                               validator: (v) => f.required && (v == null || v.isEmpty)
                                                   ? '请选择${f.label}'
-                                                  : null)
+                                                  : f.validator?.call(v))
                                           : f.isTimeZone
                                               ? TimeZoneField(
                                                   controller: controls[f.key]!,
@@ -688,7 +724,7 @@ class _EditDialogState extends State<EditDialog> {
                                                   maxLength: f.maxLength,
                                                   validator: (v) => f.required &&
                                                       (v ?? '').trim().isEmpty
-                                                      ? '请输入${f.label}' : null)
+                                                      ? '请输入${f.label}' : f.validator?.call(v))
                                               : TextFormField(
                                               controller: controls[f.key],
                                               enabled: !busy &&
@@ -727,7 +763,7 @@ class _EditDialogState extends State<EditDialog> {
                                                     return '不能大于 $maximum';
                                                   }
                                                 }
-                                                return null;
+                                                return f.validator?.call(v);
                                               }))),
                                 if (error != null && !recoveryStopped)
                                   FailureView(error!,
@@ -770,7 +806,8 @@ class _EditDialogState extends State<EditDialog> {
                               height: 18,
                               child: CircularProgressIndicator(strokeWidth: 2))
                           : Text(
-                              pendingValues == null ? widget.submit : '重试原提交'))
+                              pendingValues == null ? widget.submit
+                                  : recoverUnknown != null ? unknownRecoveryLabel : '重试原提交'))
               ]));
 }
 

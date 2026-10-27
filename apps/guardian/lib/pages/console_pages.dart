@@ -12,6 +12,7 @@ import 'package:provider/provider.dart';
 import '../core/api.dart';
 import '../core/approval_decision.dart';
 import '../core/application_classification.dart';
+import '../core/application_registration.dart';
 import '../core/console_modules.dart';
 import '../core/console_routes.dart';
 import '../core/enrollment_recovery.dart';
@@ -502,6 +503,8 @@ class ConsoleActions {
       required List<FieldSpec> fields,
       Json initial = const {},
       String? description,
+      Future<Json> Function(Api, Json)? onRecoverUnknown,
+      String recoverLabel = '查询原结果',
       required Future<Json?> Function(Api, Json) onSubmit}) async {
     final owner = parent ?? context;
     final scope = DeviceSubflowScope(s,
@@ -516,10 +519,13 @@ class ConsoleActions {
           fields: fields,
           initial: initial,
           description: description,
+          recoverLabel: recoverLabel,
           accessChanges: scope,
           hasAccess: () => scope.current,
           reauth: reauth,
-          onSubmit: (values) => onSubmit(scope.api, values));
+          onSubmit: (values) => onSubmit(scope.api, values),
+          onRecoverUnknown: onRecoverUnknown == null ? null
+              : (values) => onRecoverUnknown(scope.api, values));
     } finally {
       scope.dispose();
     }
@@ -780,38 +786,43 @@ class ConsoleActions {
   }
 
   Future<bool> application() async {
-    final key = requestId();
+    final key = const Uuid().v4();
     var attempted = false;
     final result = await _tenantForm(
         title: '登记应用',
         section: 'applications',
-        description: '填写准确的 Android 包名。签名摘要可选，使用小写 SHA-256，多个摘要用逗号分隔。',
+        description: '填写应用名称和准确的 Android 包名。平台与资料空间已提供常用值，签名摘要可选。',
         fields: [
           const FieldSpec('displayName', '应用名称'),
           const FieldSpec('packageName', 'Android 包名',
-              hint: 'com.example.app', maxLength: 255),
+              hint: 'com.example.app', maxLength: 255,
+              validator: validateAndroidPackageName),
           FieldSpec('platform', '平台',
               options: options(['ANDROID', 'ANDROID_TV'])),
           FieldSpec('profile', '资料空间',
               options: options(['PRIMARY', 'WORK', 'SECONDARY', 'UNKNOWN'])),
           const FieldSpec('digests', '签名摘要',
-              required: false, maxLength: 519, lines: 2)
+              required: false, maxLength: 1024, lines: 3,
+              hint: '最多8份，用逗号或换行分隔；支持64位摘要或带冒号的指纹',
+              validator: validateApplicationSigningDigests)
         ],
         initial: {
           'platform': 'ANDROID',
           'profile': 'PRIMARY'
-        }, onSubmit: (api, v) async {
-      final data = Map<String, dynamic>.from(v);
-      final raw = data.remove('digests') as String;
-      data['signingDigests'] = raw
-          .split(',')
-          .map((e) => e.trim())
-          .where((e) => e.isNotEmpty)
-          .toList();
-      attempted = true;
-      return await api
-          .send('POST', '$root/applications', body: data, key: key) as Json;
-    });
+        },
+        recoverLabel: '查询登记结果',
+        onSubmit: (api, values) async {
+          final body = applicationRegistrationPayload(values);
+          attempted = true;
+          final result = await api.send('POST', '$root/applications', body: body, key: key);
+          return requireApplicationRegistrationResult(result, body);
+        },
+        onRecoverUnknown: (api, values) async {
+          final body = applicationRegistrationPayload(values);
+          final result = await api.send('POST',
+              '$root/applications/creation-results/$key/query', body: body);
+          return requireApplicationRegistrationResult(result, body);
+        });
     return attempted || result != null;
   }
 

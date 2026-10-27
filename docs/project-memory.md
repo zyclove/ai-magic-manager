@@ -43,6 +43,10 @@
 
 [EditDialog](../apps/guardian/lib/ui/design.dart) 默认保留服务器写入的未知结果保护。只有明确不写服务器的校验／本地草稿准备才可使用 `canCommit=false`，错误后允许修改输入；不能将已经发出的写入切换成只读模式来解除保护。域名规则编辑的只读规范化与最终保存草稿分开，见[编辑器](../apps/guardian/lib/pages/editors.dart)。
 
+FieldSpec.validator 在原必填/数值规则后执行纯领域校验，文本、选项及时区字段共用此扩展。EditDialog/formDialog 可显式配置 onRecoverUnknown 与 recoverLabel，成对捕获首次提交及只读查询回调并冻结原值；恢复跳过当前控件校验/解析，408保持未知，查询404/401不解锁，模式切换则退役。不提供查询hook的表单仍使用原重试入口；不能把只读查询用于 canCommit=false 的本地准备流程。
+
+应用登记规范化与严格回执匹配集中在 [application_registration.dart](../apps/guardian/lib/core/application_registration.dart)，复用既有 ApplicationClassificationIdentity 契约。包名保留大小写，摘要接受原始或冒号指纹后转小写排序，空项/重复/超限就地拒绝；application 使用UUID键及既有 creation-results 原结果查询，未知后不重放创建。返回仍为管理员声明，不据此宣称设备核验或执行，详见[应用契约](policy-application-schedule-contract.md)。
+
 策略编辑目录由 [PolicyRuleDirectories](../apps/guardian/lib/core/policy_rule_directories.dart) 按规则／已有引用读取；`null` 初始值表示未读，显式列表（含空）表示已读。缓存和进行中请求只属于捕获的作用域，失败可重试，失权清空并停止分页；界面刷新只重载本窗口用过的目录。不要恢复打开编辑器前的双目录门禁，或把目录失败当成空目录。
 
 Flutter 回归优先稳定 Key／语义或类型谓词；`.icon` 按钮工厂可能返回子类，不能用精确运行类型查找代替。 `find.byTooltip` 命中提示包装器，读取按钮属性时须用类型和 tooltip 谓词定位实际按钮。涉及 [OwnedDialogRoute](../apps/guardian/lib/ui/owned_dialog_route.dart) 的旅程应等待路由完成及可观察加载状态；固定少量 pump 不代表异步完成，含进行中进度动画时也不能无限依赖 `pumpAndSettle`。用有界等待保留原业务断言，不靠改产品期限或放宽取证消除测试误报。
