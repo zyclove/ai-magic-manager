@@ -1,6 +1,9 @@
 package com.aimanager.quota;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 /** Ledger facts, not a claim that a device stopped an application. Seconds are integer units. */
+@JsonInclude(JsonInclude.Include.ALWAYS)
 public record QuotaPool(
     String id,
     String subjectId,

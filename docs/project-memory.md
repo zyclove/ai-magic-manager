@@ -47,6 +47,8 @@ formDialog 同样显式透传 canCommit（默认true），false不能配置原�
 
 [quota_plan_change.dart](../apps/guardian/lib/core/quota_plan_change.dart) 集中额度计划／日历解析、固定原正文与完整回执匹配，保留7天及全部日期整数秒，不接受日期归一化或浮点版本。QuotaPlanEditor 必需只读 onRecoverUnknown，未知后只查询，原保存回调不能触发查询或重放写入。[QuotaPlansPage](../apps/guardian/lib/pages/quota_plans_page.dart) 使用 UUID 与既有 creation-results/update-results 查询，更新保留原 If-Match，查询无写入幂等头；committed/current分开。详情、编辑、历史与API借用 ResourceActionLease，onCreateChanged/onOpenChanged 只返回列表核对信号，普通取消及只读不重读。
 
+[quota_pool_change.dart](../apps/guardian/lib/core/quota_pool_change.dart) 集中每日池18字段、流水、日期、余额恒等式及原操作回执校验。分钟＋可选秒仅转为limitSeconds/deltaSeconds，不转发控件值；used/reserved与原调整回执保持。[QuotaPage](../apps/guardian/lib/pages/quota_page.dart) 借用列表租约查询原CREATE/ADJUST，区分committed/current；两个页签捕获同步推进的viewGeneration，旧结果／拒绝不影响新视图。后端QuotaPool显式JsonInclude.ALWAYS保障空关联字段完整，现有余额视图只接收已解析事实。
+
 FieldSpec.validator 在原必填/数值规则后执行纯领域校验，文本、选项及时区字段共用此扩展。EditDialog/formDialog 可显式配置 onRecoverUnknown 与 recoverLabel，成对捕获首次提交及只读查询回调并冻结原值；恢复跳过当前控件校验/解析，408保持未知，查询404/401不解锁，模式切换则退役。不提供查询hook的表单仍使用原重试入口；不能把只读查询用于 canCommit=false 的本地准备流程。
 
 应用登记规范化与严格回执匹配集中在 [application_registration.dart](../apps/guardian/lib/core/application_registration.dart)，复用既有 ApplicationClassificationIdentity 契约。包名保留大小写，摘要接受原始或冒号指纹后转小写排序，空项/重复/超限就地拒绝；application 使用UUID键及既有 creation-results 原结果查询，未知后不重放创建。返回仍为管理员声明，不据此宣称设备核验或执行，详见[应用契约](policy-application-schedule-contract.md)。

@@ -26,9 +26,17 @@
 | `GET /quota-pools` | limit/cursor 分页；成人及审计角色按租户读取，儿童只读本人 |
 | `GET /quota-pools/{id}` | 当前余额和强 ETag；响应 `status=CONFIGURED, evidenceStatus=LEDGER_ONLY` |
 | `POST /quota-pools/{id}/adjustments` | `deltaSeconds, reason`；EXTRA_TIME/CORRECTION、成人、近期 MFA、If-Match 和幂等键 |
+| `POST /quota-pools/creation-results/{requestId}/query` | 原完整创建正文；当前成人写权限及活动主体范围；只查原结果、不需近期MFA或写入幂等头 |
+| `POST /quota-pools/{id}/adjustment-results/{requestId}/query` | 原完整调整正文与原If-Match；当前成人写权限及活动主体范围；不重放调整、不传写入幂等头 |
 | `GET /quota-pools/{id}/ledger` | 分页读取 CREATED/ADJUSTED/RESERVED/SETTLED/RELEASED 及秒数变化 |
 
 每池 0～86400 秒；日期最多提前 366 天。关闭周期不能调整。减少额度不能低于已结算和预留之和。响应错误沿用 ProblemDetail 和关联 ID。
+
+池响应完整包含18字段，包括明确可空的applicationId／planId／planVersion；QuotaPool显式保留null，不受部署全局NON_NULL设置影响。管理台严格校验整数秒、`limit=used+reserved+available`、来源关联、版本与有效时间戳；不把周期假定为24小时，保留DST时长。流水按类型、带符号增量、序号与时间校验后展示；status=CONFIGURED/evidenceStatus=LEDGER_ONLY继续只表明账本配置事实。
+
+原结果返回 `{requestId,operation,committed,current}`，operation为CREATE或ADJUST；原UUID、租户、操作者、正文及调整版本必须对应，响应no-store。管理台创建／调整均用分钟（0～1440）＋可选秒（0～59），合计不超过24小时，调整合计必须大于0；唯一儿童自动预选。控件值只转换成limitSeconds或带符号deltaSeconds与原因，不进入协议。原回执完整匹配原操作：手工创建version0、used/reserved为0且无计划来源；调整为原version+1、精确增减limit且used/reserved不变。查询current同资源且版本不倒退，同版本须全等；后续余额／版本变化单独提示，不作为原提交证明。
+
+未知后只查原键，不重新写入；404／近期认证不解锁，结果90天到期／清除则停止旧操作。列表租约贯穿详情、流水、表单与API，普通取消及只读不重读；已尝试写入或明确未知关闭才返回列表核对信号，不能解释成保存成功。页签切换同步推进视图代际，旧读取在下一帧前已失效，晚到拒绝不会退役新视图；明确读取／操作失权隐藏旧资料，安全验证不解除原未知保护。
 
 ## 重复计划 API
 

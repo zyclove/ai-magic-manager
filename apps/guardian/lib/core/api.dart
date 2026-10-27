@@ -198,6 +198,8 @@ class ApiFailure implements Exception {
         'QUOTA_LIMIT_INVALID' => '额度应在 0–1440 分钟内，调整分钟数至少为 1。',
         'INVALID_QUOTA_DATE_DURATION' => '日期额度合计应为 0 秒至 24 小时，请检查分钟和秒。',
         'INVALID_QUOTA_PLAN_RESPONSE' => '额度计划资料无法完整核对，暂不能确认保存结果。请保留原提交并核对当前计划。',
+        'INVALID_QUOTA_POOL_RESPONSE' => '每日额度资料无法完整核对，暂不能确认操作结果。请保留原提交并核对当前账本。',
+        'INVALID_QUOTA_DURATION' => '额度合计应在 0 秒至 24 小时内，调整时长须大于 0。',
         'QUOTA_RESULT_UNAVAILABLE' => '尚未查到原额度操作结果，不能据此判断保存未完成。请稍后再查询或核对当前记录。',
         'QUOTA_PERIOD_UNAVAILABLE' ||
         'QUOTA_PERIOD_CLOSED' =>

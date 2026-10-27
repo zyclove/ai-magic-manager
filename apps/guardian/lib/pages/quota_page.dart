@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 import '../core/api.dart';
 import '../core/labels.dart';
 import '../core/local_date.dart';
+import '../core/quota_pool_change.dart';
 import '../core/session.dart';
 import '../ui/design.dart';
 import '../ui/dialog_access.dart';
@@ -29,6 +30,7 @@ class _QuotaPageState extends State<QuotaPage> {
   final lifetime = ViewLifetime();
   late final Listenable changes;
   bool showPlans = false;
+  int viewGeneration = 0;
 
   bool permitted() => mounted && lifetime.active &&
       identical(widget.session, session) && session.tenant != null &&
@@ -39,6 +41,34 @@ class _QuotaPageState extends State<QuotaPage> {
     final route = ModalRoute.of(target);
     return route?.isActive == true && route?.isCurrent == true &&
         (route is! OwnedDialogRoute<dynamic> || route.available);
+  }
+
+  void rejectPrivateAccess(Object failure, {ResourceActionLease? lease}) {
+    if (!current() || lease?.current == false || failure is! ApiFailure) return;
+    if (failure.status != 403 && failure.code != 'WORKSPACE_CHANGED' &&
+        (failure.status != 401 || failure.code == 'REAUTH_REQUIRED')) return;
+    lease?.retire();
+    lifetime.invalidate();
+  }
+
+  Future<T> request<T>(ResourceActionLease lease, Future<T> Function() send) async {
+    if (!current() || !lease.current) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+    try {
+      return await send();
+    } catch (failure) {
+      rejectPrivateAccess(failure, lease: lease);
+      rethrow;
+    }
+  }
+
+  bool includePoolRow(Json row) {
+    readQuotaPoolSnapshot(row);
+    return true;
+  }
+
+  bool includeLedgerRow(Json row) {
+    readQuotaLedgerEntry(row);
+    return true;
   }
 
   @override
@@ -79,6 +109,8 @@ class _QuotaPageState extends State<QuotaPage> {
 
   Widget content(BuildContext context) {
     final root = ownerRoot;
+    final generation = viewGeneration;
+    bool viewCurrent() => current() && viewGeneration == generation;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       SegmentedButton<bool>(
           segments: const [
@@ -95,33 +127,46 @@ class _QuotaPageState extends State<QuotaPage> {
             showPlans
           },
           onSelectionChanged: (value) {
-            if (interactive(context)) setState(() => showPlans = value.single);
+            if (value.length == 1 && value.single != showPlans &&
+                viewCurrent() && interactive(context)) {
+              setState(() {
+                viewGeneration++;
+                showPlans = value.single;
+              });
+            }
           }),
       const SizedBox(height: 24),
       if (showPlans)
         QuotaPlansPage(
-            key: ValueKey((root, pageScope)), session: session,
-            parentCurrent: current, accessChanges: changes)
+            key: ValueKey((root, pageScope, generation)), session: session,
+            parentCurrent: viewCurrent, accessChanges: changes)
       else
         ResourcePage(
-          key: ValueKey((root, pageScope)),
+          key: ValueKey((root, pageScope, generation)),
           api: pageScope.api,
-          isCurrent: current,
-          canInteract: () => interactive(context),
+          isCurrent: viewCurrent,
+          canInteract: () => viewCurrent() && interactive(context),
           path: '$root/quota-pools',
+          includeRow: includePoolRow,
+          onReadDenied: (failure) {
+            if (viewCurrent()) rejectPrivateAccess(failure);
+          },
           title: '共享额度',
           subtitle: '按儿童与日期规划总额度，查看跨设备预留和结算。',
           createLabel: '创建每日额度',
-          create: session.canWrite ? () => create(context, root) : null,
+          onCreateChanged: session.canWrite
+              ? (lease) => create(context, root, lease) : null,
           reauth: () {
-            if (interactive(context)) session.login(stepUp: true);
+            if (viewCurrent() && interactive(context)) session.login(stepUp: true);
           },
           notice: '已结算、预留和可分配余额分别记录。设备尚未完成计时与停止能力验证时，不发放硬额度租约；配置额度不代表设备已经受到限制。',
           emptyTitle: '还没有每日额度',
-          emptyDescription: '先为儿童设置当天的总额度，再按需添加应用额度。总额度与应用额度共同约束使用。',
+          emptyDescription: session.canWrite
+              ? '先为儿童设置当天的总额度，再按需添加应用额度。总额度与应用额度共同约束使用。'
+              : '当前范围内没有可查看的每日额度。',
           columns: [
             ColumnSpec(
-                '额度计划',
+                '每日额度',
                 (r) => Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
@@ -149,103 +194,116 @@ class _QuotaPageState extends State<QuotaPage> {
                     style: const TextStyle(
                         fontWeight: FontWeight.w600, color: navy))),
           ],
-          onOpen: (r) => details(context, root, r['id']),
+          onOpenChanged: (r, lease) => details(context, root, r['id'], lease),
         )
     ]);
   }
 
-  Future<void> create(BuildContext context, String root) async {
-    if (!interactive(context) || root != ownerRoot || !session.canWrite) return;
+  Future<bool> create(BuildContext context, String root, ResourceActionLease lease) async {
+    if (!interactive(context) || root != ownerRoot ||
+        !session.canWrite || !lease.current) return false;
+    var attempted = false;
+    String? reviewNotice;
     final s = session;
     final access = DialogAccessBinding(context,
-        accessChanges: changes, hasAccess: current);
+        accessChanges: Listenable.merge([changes, lease]),
+        hasAccess: () => current() && lease.current);
     final scope = DeviceSubflowScope(s,
         permitted: () => current() && access.permitted() &&
             context.mounted && identical(session, s) &&
             s.tenant != null && s.root == root && s.canWrite);
     try {
-    if (!scope.current) return;
-    final zone = s.tenant?['timeZone'] as String? ?? 'Asia/Shanghai';
-    final children = await scope.api.all('$root/subjects');
-    if (!context.mounted) return;
-    if (!scope.current || !interactive(context)) return;
-    if (children.isEmpty) {
-      toast(context, '请先添加儿童档案。');
-      return;
-    }
-    final apps = await scope.api.all('$root/applications');
-    if (!context.mounted) return;
-    if (!scope.current || !interactive(context)) return;
-    final key = requestId();
-    await formDialog(context,
-        title: '创建每日额度',
-        accessChanges: access.changes,
-        hasAccess: () => scope.current,
-        description:
-            '每个日期、儿童和应用范围只能创建一份额度。日期按下方时区计算；同一儿童的额度时区保持一致，避免切换时区重置余额。保存需要近期多因素认证。',
-        reauth: () {
-          if (scope.current) s.login(stepUp: true);
-        },
-        fields: [
-          const FieldSpec('name', '计划名称'),
-          FieldSpec('subjectId', '儿童',
-              options: entityOptions(children, 'nickname')),
-          FieldSpec('applicationId', '额度范围',
-              options: {
-                '': '总额度 · 所有适用应用',
-                ...entityOptions(apps, 'displayName')
-              },
-              required: false),
-          const FieldSpec('periodId', '当地日期',
-              hint: 'YYYY-MM-DD', maxLength: 10),
-          const FieldSpec.timeZone('timeZone', '额度时区'),
-          const FieldSpec('minutes', '额度（分钟，0–1440）',
-              numeric: true, maxLength: 4),
-        ],
-        initial: {
-          'name': '每日使用额度',
-          'applicationId': '',
-          'periodId': localDateInZone(DateTime.now(), zone),
-          'timeZone': zone,
-          'minutes': 60
-        },
-        onSubmit: (v) async {
-          final minutes = v['minutes'] as int;
-          if (minutes > 1440) {
-            throw const ApiFailure(400, 'QUOTA_LIMIT_INVALID');
-          }
-          final date = DateTime.tryParse(v['periodId']);
-          if (date == null ||
-              DateFormat('yyyy-MM-dd').format(date) != v['periodId']) {
-            throw const ApiFailure(400, 'INVALID_QUOTA_PERIOD');
-          }
-          final app = v['applicationId'] as String?;
-          return await scope.api
-              .send('POST', '$root/quota-pools', key: key, body: {
-            'name': v['name'],
-            'subjectId': v['subjectId'],
-            'scope': app == null || app.isEmpty ? 'TOTAL' : 'APPLICATION',
-            if (app != null && app.isNotEmpty) 'applicationId': app,
-            'periodId': v['periodId'],
-            'timeZone': v['timeZone'],
-            'limitSeconds': minutes * 60,
-          }) as Json;
-        });
+      if (!scope.current) return false;
+      final zone = s.tenant?['timeZone'] as String? ?? 'Asia/Shanghai';
+      final children = await request(lease, () => scope.api.all('$root/subjects'));
+      if (!context.mounted) return false;
+      if (!scope.current || !interactive(context)) return false;
+      if (children.isEmpty) {
+        toast(context, '请先添加儿童档案。');
+        return false;
+      }
+      final apps = await request(lease, () => scope.api.all('$root/applications'));
+      if (!context.mounted) return false;
+      if (!scope.current || !interactive(context)) return false;
+      final key = const Uuid().v4();
+      final result = await formDialog(context,
+          title: '创建每日额度',
+          accessChanges: access.changes,
+          hasAccess: () => scope.current,
+          description:
+              '每个日期、儿童和应用范围只能创建一份额度。日期按下方时区计算；同一儿童的额度时区保持一致，避免切换时区重置余额。保存需要近期多因素认证。',
+          reauth: () {
+            if (scope.current) s.login(stepUp: true);
+          },
+          fields: [
+            const FieldSpec('name', '额度名称'),
+            FieldSpec('subjectId', '儿童',
+                options: entityOptions(children, 'nickname')),
+            FieldSpec('applicationId', '额度范围',
+                options: {
+                  '': '总额度 · 所有适用应用',
+                  ...entityOptions(apps, 'displayName')
+                },
+                required: false),
+            FieldSpec('periodId', '当地日期', hint: 'YYYY-MM-DD', maxLength: 10,
+                validator: quotaPoolPeriodError),
+            const FieldSpec.timeZone('timeZone', '额度时区'),
+            const FieldSpec('minutes', '额度（分钟，0–1440）',
+                numeric: true, maxLength: 4, minValue: 0, maxValue: 1440),
+            const FieldSpec('seconds', '秒（可选）', numeric: true, required: false,
+                maxLength: 2, minValue: 0, maxValue: 59, hint: '可留空，按 0 秒计算'),
+          ],
+          initial: {
+            'name': '每日使用额度',
+            if (children.length == 1) 'subjectId': children.single['id'],
+            'applicationId': '',
+            'periodId': localDateInZone(DateTime.now(), zone),
+            'timeZone': zone,
+            'minutes': 60,
+            'seconds': 0,
+          },
+          recoverLabel: '查询原保存结果',
+          onSubmit: (v) async {
+            final original = QuotaPoolChange.create(v);
+            attempted = true;
+            final value = await request(lease, () => scope.api.send('POST',
+                '$root/quota-pools', key: key, body: original.body));
+            if (!scope.current) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+            return original.committed(value);
+          },
+          onRecoverUnknown: (v) async {
+            final original = QuotaPoolChange.create(v);
+            final value = await request(lease, () => scope.api.send('POST',
+                '$root/quota-pools/creation-results/$key/query', body: original.body));
+            if (!scope.current) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+            final result = original.queryResult(value, requestId: key);
+            if (result.current['version'] > result.committed['version']) {
+              reviewNotice = '原操作已核对，账本已有后续变化，请核对当前列表。';
+            }
+            return result.committed;
+          });
+      if (result != null && reviewNotice != null && scope.current && interactive(context)) {
+        toast(context, reviewNotice!);
+      }
+      return attempted && scope.current && lease.current;
     } finally {
       scope.dispose();
       access.dispose();
     }
   }
 
-  Future<void> details(BuildContext context, String root, String id) async {
-    if (!interactive(context) || root != ownerRoot) return;
+  Future<bool> details(BuildContext context, String root, String id, ResourceActionLease lease) async {
+    if (!interactive(context) || root != ownerRoot || !lease.current) return false;
+    var needsReview = false;
     final access = DialogAccessBinding(context,
-        accessChanges: changes, hasAccess: current);
+        accessChanges: Listenable.merge([changes, lease]),
+        hasAccess: () => current() && lease.current);
     final api = pageScope.api.scoped(access.permitted);
     try {
-      final pool = await api.send('GET', '$root/quota-pools/$id') as Json;
-      if (!context.mounted) return;
-      if (!access.permitted() || !interactive(context)) return;
+      final value = await request(lease, () => api.send('GET', '$root/quota-pools/$id'));
+      if (!context.mounted) return false;
+      if (!access.permitted() || !interactive(context)) return false;
+      final pool = readQuotaPoolSnapshot(value, expectedId: id);
       await scopedDetailsDialog(context, pool['name'], const {},
           accessChanges: access.changes,
           hasAccess: access.permitted,
@@ -271,7 +329,9 @@ class _QuotaPageState extends State<QuotaPage> {
               ]),
           actions: [
             DetailAction('查看账本', (dialogContext) async {
-              if (access.permitted()) await ledger(dialogContext, root, pool);
+              if (access.permitted() && interactive(dialogContext)) {
+                await ledger(dialogContext, root, pool, lease);
+              }
             }, closeOnSuccess: false),
             if (session.canWrite &&
                 DateTime.fromMillisecondsSinceEpoch(pool['periodEnd'])
@@ -280,68 +340,89 @@ class _QuotaPageState extends State<QuotaPage> {
                 final route = ModalRoute.of(dialogContext);
                 if (!access.permitted() || route is! OwnedDialogRoute<void> ||
                     !route.available || !route.isCurrent) return;
-                final result = await adjust(dialogContext, root, pool);
-                if (result != null && access.permitted() && route.available) {
+                final changed = await adjust(dialogContext, root, pool, lease);
+                needsReview = needsReview || changed;
+                if (changed && access.permitted() && route.available) {
                   route.finish();
                 }
               }, closeOnSuccess: false),
           ]);
+      return needsReview && current() && lease.current && access.permitted();
     } finally {
       access.dispose();
     }
   }
 
-  Future<Json?> adjust(BuildContext context, String root, Json pool) async {
-    if (!interactive(context) || root != ownerRoot || !session.canWrite) return null;
+  Future<bool> adjust(BuildContext context, String root, Json pool, ResourceActionLease lease) async {
+    if (!interactive(context) || root != ownerRoot ||
+        !session.canWrite || !lease.current) return false;
+    var attempted = false;
+    String? reviewNotice;
     final s = session;
     final access = DialogAccessBinding(context,
-        accessChanges: changes, hasAccess: current);
+        accessChanges: Listenable.merge([changes, lease]),
+        hasAccess: () => current() && lease.current);
     final scope = DeviceSubflowScope(s,
         permitted: () => current() && access.permitted() &&
             context.mounted && identical(session, s) &&
             s.tenant != null && s.root == root && s.canWrite);
     try {
-    if (!scope.current) return null;
-    final key = requestId();
-    return await formDialog(context,
-        title: '调整当日额度',
-        accessChanges: access.changes,
-        hasAccess: () => scope.current,
-        description: '增加时间与减少额度均记入账本。减少后的总额度不能低于已结算与待确认预留之和，需要近期多因素认证。',
-        reauth: () {
-          if (scope.current) s.login(stepUp: true);
-        },
-        fields: const [
-          FieldSpec('direction', '调整方式',
-              options: {'ADD': '追加使用时间', 'SUBTRACT': '减少额度'}),
-          FieldSpec('minutes', '调整分钟数（1–1440）', numeric: true, maxLength: 4)
-        ],
-        initial: {'direction': 'ADD', 'minutes': 15},
-        onSubmit: (v) async {
-          final minutes = v['minutes'] as int;
-          if (minutes < 1 || minutes > 1440) {
-            throw const ApiFailure(400, 'QUOTA_LIMIT_INVALID');
-          }
-          final add = v['direction'] == 'ADD';
-          return await scope.api.send(
-              'POST', '$root/quota-pools/${pool['id']}/adjustments',
-              key: key,
-              version: pool['version'],
-              body: {
-                'deltaSeconds': minutes * 60 * (add ? 1 : -1),
-                'reason': add ? 'EXTRA_TIME' : 'CORRECTION',
-              }) as Json;
-        });
+      if (!scope.current) return false;
+      final key = const Uuid().v4();
+      final result = await formDialog(context,
+          title: '调整当日额度',
+          accessChanges: access.changes,
+          hasAccess: () => scope.current,
+          description: '增加时间与减少额度均记入账本。减少后的总额度不能低于已结算与待确认预留之和，需要近期多因素认证。',
+          reauth: () {
+            if (scope.current) s.login(stepUp: true);
+          },
+          fields: const [
+            FieldSpec('direction', '调整方式',
+                options: {'ADD': '追加使用时间', 'SUBTRACT': '减少额度'}),
+            FieldSpec('minutes', '调整分钟数（0–1440）', numeric: true, maxLength: 4,
+                minValue: 0, maxValue: 1440),
+            FieldSpec('seconds', '秒（可选）', numeric: true, required: false,
+                maxLength: 2, minValue: 0, maxValue: 59, hint: '可留空，按 0 秒计算'),
+          ],
+          initial: {'direction': 'ADD', 'minutes': 15, 'seconds': 0},
+          recoverLabel: '查询原保存结果',
+          onSubmit: (v) async {
+            final original = QuotaPoolChange.adjust(pool, v);
+            attempted = true;
+            final value = await request(lease, () => scope.api.send('POST',
+                '$root/quota-pools/${pool['id']}/adjustments', key: key,
+                version: pool['version'], body: original.body));
+            if (!scope.current) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+            return original.committed(value);
+          },
+          onRecoverUnknown: (v) async {
+            final original = QuotaPoolChange.adjust(pool, v);
+            final value = await request(lease, () => scope.api.send('POST',
+                '$root/quota-pools/${pool['id']}/adjustment-results/$key/query',
+                version: pool['version'], body: original.body));
+            if (!scope.current) throw const ApiFailure(409, 'WORKSPACE_CHANGED');
+            final result = original.queryResult(value, requestId: key);
+            if (result.current['version'] > result.committed['version']) {
+              reviewNotice = '原操作已核对，账本已有后续变化，请核对当前列表。';
+            }
+            return result.committed;
+          });
+      if (result != null && reviewNotice != null && scope.current && interactive(context)) {
+        toast(context, reviewNotice!);
+      }
+      return attempted && scope.current && lease.current;
     } finally {
       scope.dispose();
       access.dispose();
     }
   }
 
-  Future<void> ledger(BuildContext context, String root, Json pool) async {
-    if (!interactive(context) || root != ownerRoot) return;
+  Future<void> ledger(BuildContext context, String root, Json pool, ResourceActionLease lease) async {
+    if (!interactive(context) || root != ownerRoot || !lease.current) return;
     final access = DialogAccessBinding(context,
-        accessChanges: changes, hasAccess: current);
+        accessChanges: Listenable.merge([changes, lease]),
+        hasAccess: () => current() && lease.current);
     late final OwnedDialogRoute<void> route;
     late final Api api;
     bool accepted() => access.permitted() && route.available && route.isActive;
@@ -361,6 +442,8 @@ class _QuotaPageState extends State<QuotaPage> {
                     child: Column(mainAxisSize: MainAxisSize.min, children: [
                       Flexible(child: SingleChildScrollView(child: ResourcePage(
                           api: api, isCurrent: accepted,
+                          includeRow: includeLedgerRow,
+                          onReadDenied: (failure) => rejectPrivateAccess(failure, lease: lease),
                           canInteract: () => route.isCurrent,
                           reauth: () {
                             if (accepted() && route.isCurrent) session.login(stepUp: true);
