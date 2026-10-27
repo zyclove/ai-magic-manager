@@ -88,11 +88,13 @@ class _MembersPageState extends State<MembersPage> {
 
   bool current(DeviceSubflowScope scope) => pageCurrent && scope.current;
 
-  Listenable flowChanges(DeviceSubflowScope scope) =>
-      Listenable.merge([scope, _ownerLost]);
+  Listenable flowChanges(DeviceSubflowScope scope,
+      {ResourceActionLease? listLease}) =>
+      Listenable.merge([scope, _ownerLost, if (listLease != null) listLease]);
 
-  DeviceSubflowScope capture(String root) => DeviceSubflowScope(s,
-      permitted: () => pageCurrent && s.tenant != null && s.root == root);
+  DeviceSubflowScope capture(String root, {ResourceActionLease? listLease}) =>
+      DeviceSubflowScope(s, permitted: () => pageCurrent &&
+          s.tenant != null && s.root == root && listLease?.current != false);
 
   Api dialogApi(BuildContext dialog, DeviceSubflowScope scope) {
     final route = ModalRoute.of(dialog);
@@ -184,17 +186,21 @@ class _MembersPageState extends State<MembersPage> {
       emptyTitle: invitations ? '暂无邀请记录' : '暂无成员',
       emptyDescription:
           invitations ? '创建邀请后可在这里查看状态、取消未使用的邀请。' : '成员加入后将在这里显示。',
-      onOpenChanged: (row) async {
-        if (!pageCurrent || viewingInvitations != invitations) return false;
+      onOpenChanged: (row, lease) async {
+        if (!pageCurrent || !lease.current || viewingInvitations != invitations) {
+          return false;
+        }
         return viewingInvitations
-            ? await openInvitation(root, row) : await openMember(root, row);
+            ? await openInvitation(root, row, listLease: lease)
+            : await openMember(root, row, listLease: lease);
       },
     );
   }
 
-  Future<bool> openInvitation(String root, Json row) async {
-    final scope = capture(root);
-    final changes = flowChanges(scope);
+  Future<bool> openInvitation(String root, Json row,
+      {ResourceActionLease? listLease}) async {
+    final scope = capture(root, listLease: listLease);
+    final changes = flowChanges(scope, listLease: listLease);
     var needsReview = false;
     try {
       if (!current(scope)) return false;
@@ -237,8 +243,9 @@ class _MembersPageState extends State<MembersPage> {
     }
   }
 
-  Future<bool> openMember(String root, Json row) async {
-    final scope = capture(root);
+  Future<bool> openMember(String root, Json row,
+      {ResourceActionLease? listLease}) async {
+    final scope = capture(root, listLease: listLease);
     var needsReview = false;
     try {
       if (!current(scope)) return false;
@@ -257,7 +264,7 @@ class _MembersPageState extends State<MembersPage> {
           currentRole: access['role']);
       var edit = false;
       final removalKey = requestId();
-      final changes = flowChanges(scope);
+      final changes = flowChanges(scope, listLease: listLease);
       Api? classScopeApi;
       await scopedDetailsDialog(
           context,
@@ -292,7 +299,8 @@ class _MembersPageState extends State<MembersPage> {
                 isCurrent: available);
           }),
           actions: [
-            DetailAction('权限变更记录', (dialog) => history(dialog, root, member, scope),
+            DetailAction('权限变更记录', (dialog) =>
+                history(dialog, root, member, scope, listLease: listLease),
                 closeOnSuccess: false),
             if (allowed.isNotEmpty) ...[
               DetailAction('调整权限', (dialog) async {
@@ -326,7 +334,7 @@ class _MembersPageState extends State<MembersPage> {
         final result = await memberEditorDialog(context,
                   kind: kind,
                   operatorRole: operatorRole,
-                  accessChanges: flowChanges(scope),
+                  accessChanges: changes,
                   hasAccess: () => current(scope),
                   member: {
                     ...member,
@@ -367,7 +375,7 @@ class _MembersPageState extends State<MembersPage> {
   }
 
   Future<void> history(BuildContext parent, String root, Json member,
-      DeviceSubflowScope owner) async {
+      DeviceSubflowScope owner, {ResourceActionLease? listLease}) async {
     final route = ModalRoute.of(parent);
     final parentChanged = ValueNotifier<bool>(false);
     var live = true, parentClosed = false;
@@ -382,7 +390,9 @@ class _MembersPageState extends State<MembersPage> {
     final scope = DeviceSubflowScope(s,
         permitted: () => !parentClosed && current(owner) && parent.mounted &&
             route?.isActive == true);
-    final changes = Listenable.merge([scope, parentChanged, _ownerLost]);
+    final changes = Listenable.merge([
+      scope, parentChanged, _ownerLost, if (listLease != null) listLease
+    ]);
     try {
       if (!current(scope)) return;
       Api? historyApi;

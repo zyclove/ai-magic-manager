@@ -7,6 +7,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:guardian/core/api.dart';
+import 'package:guardian/core/policy_publication.dart';
 import 'package:guardian/core/session.dart';
 import 'package:guardian/pages/console_pages.dart';
 import 'package:guardian/pages/editors.dart';
@@ -18,6 +19,7 @@ import 'package:provider/provider.dart';
 
 import 'policy_preview_flow_test.dart' show PreviewSession, flush;
 import 'policy_target_picker_test.dart' show reply, settle;
+import 'publication_test_journal.dart' show MemoryPublicationJournal;
 
 const _policy = 'policy-private-a';
 const _name = '原账户私有策略';
@@ -198,6 +200,17 @@ class _Invocation {
   }
 }
 
+class _PendingPreviewJournal extends MemoryPublicationJournal {
+  final response = Completer<PublicationPending?>();
+  int reads = 0;
+
+  @override
+  Future<PublicationPending?> read(PublicationOwner owner, String policyId) {
+    reads++;
+    return response.future;
+  }
+}
+
 Future<void> _mount(WidgetTester tester, _Fixture fixture,
     {bool policiesList = false}) async {
   tester.view.physicalSize = const Size(1100, 900);
@@ -336,6 +349,48 @@ void _expectNoSchedulePrivate(WidgetTester tester) {
 }
 
 void main() {
+  testWidgets('preview resource loss during journal read stops child work while its parent route stays active',
+      (tester) async {
+    final fixture = _Fixture();
+    final journal = _PendingPreviewJournal();
+    final changes = ValueNotifier<int>(0);
+    var allowed = true;
+    await _mount(tester, fixture);
+    addTearDown(() {
+      if (!journal.response.isCompleted) journal.response.complete(null);
+      changes.dispose();
+    });
+    final context = tester.element(find.text('策略详情宿主'));
+    final parent = ModalRoute.of(context)!;
+    final tenant = fixture.session.tenant;
+    final invocation = _Invocation(fixture.actions.previewPolicy(
+        context, fixture.draft(), journal: journal,
+        accessChanges: changes, hasAccess: () => allowed));
+    await _waitUntil(tester, () => journal.reads == 1);
+    expect(invocation.completed, isFalse);
+    expect(parent.isActive, isTrue);
+    expect(parent.isCurrent, isTrue);
+    expect(fixture.requests, isEmpty);
+
+    allowed = false;
+    changes.value++;
+    journal.response.complete(null);
+    await _waitUntil(tester, () => invocation.completed);
+    expect(invocation.failure, isNull);
+    _expectSameScopeValues(fixture);
+    expect(fixture.session.tenant, same(tenant));
+    expect(parent.isActive, isTrue);
+    expect(parent.isCurrent, isTrue);
+    expect(find.text('策略详情宿主'), findsOneWidget);
+    expect(find.byType(AlertDialog), findsNothing);
+    _expectNoPrivate(tester);
+    expect(fixture.requests, isEmpty,
+        reason: 'A late journal read cannot open the target picker or start preview HTTP after resource loss.');
+    expect(fixture.session.previews, isEmpty);
+    expect(fixture.session.publications, isEmpty);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
       'policy-return history closes back to details without list refresh',
       (tester) async {

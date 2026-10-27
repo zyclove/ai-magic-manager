@@ -31,9 +31,9 @@ Widget host(Api api,
         {Key? resourceKey,
         String path = '/records',
         Future<void> Function(Json)? onOpen,
-        Future<bool> Function(Json)? onOpenChanged,
+        Future<bool> Function(Json, ResourceActionLease)? onOpenChanged,
         Future<void> Function()? create,
-        Future<bool> Function()? onCreateChanged,
+        Future<bool> Function(ResourceActionLease)? onCreateChanged,
         bool Function()? isCurrent,
         bool Function()? canInteract,
         bool Function(Json)? includeRow,
@@ -68,6 +68,161 @@ Future<void> tap(WidgetTester tester, String label) async {
 }
 
 void main() {
+  testWidgets('action leases retire before completion and retain listeners through owner and resource changes',
+      (tester) async {
+    for (final change in ['owner', 'path', 'includeRow', 'leave']) {
+      var allowed = true, reads = 0, notices = 0;
+      final pending = Completer<bool>();
+      addTearDown(() { if (!pending.isCompleted) pending.complete(false); });
+      final key = GlobalKey<ResourcePageState>();
+      ResourceActionLease? captured;
+      bool include(Json _) => true;
+      bool replacementInclude(Json _) => true;
+      final api = apiFor((_) { reads++; return page(['alpha-$reads']); });
+      Future<bool> create(ResourceActionLease lease) {
+        captured = lease;
+        lease.addListener(() => notices++);
+        return pending.future;
+      }
+      await tester.pumpWidget(host(api, resourceKey: key,
+          isCurrent: () => allowed, includeRow: include, onCreateChanged: create));
+      await tester.pumpAndSettle();
+      final button = find.ancestor(of: find.text('新建'),
+          matching: find.byWidgetPredicate((widget) => widget is ButtonStyleButton));
+      final originalCreate = tester.widget<ButtonStyleButton>(button).onPressed!;
+      originalCreate();
+      await tester.pump();
+      final lease = captured!;
+      expect(lease.current, isTrue);
+      if (change == 'owner') {
+        allowed = false;
+        expect(lease.current, isFalse, reason: 'Authority retires synchronously.');
+        expect(notices, 0, reason: 'Dialog listeners wait for the next frame.');
+      }
+      if (change == 'leave') {
+        await tester.pumpWidget(const SizedBox.shrink());
+      } else {
+        await tester.pumpWidget(host(api, resourceKey: key,
+            path: change == 'path' ? '/replacement-records' : '/records',
+            isCurrent: () => allowed,
+            includeRow: change == 'includeRow' ? replacementInclude : include,
+            onCreateChanged: create));
+      }
+      expect(lease.current, isFalse);
+      expect(notices, 1, reason: 'Retirement publishes only once.');
+      void lateListener() {}
+      // A flow may build a leased form after its host was replaced. Its
+      // notifier must remain alive until the complete callback has returned.
+      expect(() => lease.addListener(lateListener), returnsNormally);
+      lease.removeListener(lateListener);
+      lease.retire();
+      await tester.pump();
+      expect(notices, 1);
+      if (change == 'owner') {
+        allowed = true;
+        await tester.pumpWidget(host(api, resourceKey: key,
+            isCurrent: () => allowed, includeRow: include, onCreateChanged: create));
+        originalCreate();
+        expect(captured, same(lease),
+            reason: 'Restoring the same owner values cannot revive an old event.');
+        expect(reads, 1);
+      }
+      pending.complete(true);
+      await tester.pumpAndSettle();
+      expect(reads, change == 'path' || change == 'includeRow' ? 2 : 1,
+          reason: 'An old true result cannot refresh its replacement.');
+      expect(tester.takeException(), isNull);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+    }
+  });
+
+  testWidgets('reparented resources reject old events and old completion cannot unlock a new action',
+      (tester) async {
+    tester.view.physicalSize = const Size(1200, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final key = GlobalKey<ResourcePageState>();
+    final outcomes = [Completer<bool>(), Completer<bool>(), Completer<bool>()];
+    addTearDown(() {
+      for (final outcome in outcomes) {
+        if (!outcome.isCompleted) outcome.complete(false);
+      }
+    });
+    final leases = <ResourceActionLease>[];
+    var right = false, reads = 0, creates = 0, opens = 0;
+    late StateSetter rebuild;
+    final api = apiFor((_) { reads++; return page(['alpha']); });
+    await tester.pumpWidget(MaterialApp(theme: consoleTheme(),
+        home: Scaffold(body: SingleChildScrollView(child: StatefulBuilder(
+          builder: (context, setState) {
+            rebuild = setState;
+            final resource = ResourcePage(key: key, api: api, path: '/records',
+                title: '记录', subtitle: '查看与管理记录',
+                columns: [ColumnSpec('名称', (row) => Text(row['name'] as String))],
+                onCreateChanged: (lease) {
+                  leases.add(lease);
+                  return outcomes[creates++].future;
+                },
+                onOpenChanged: (_, __) async { opens++; return false; });
+            return Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+              SizedBox(width: 500, child: right ? const SizedBox.shrink() : resource),
+              SizedBox(width: 500, child: right ? resource : const SizedBox.shrink()),
+            ]);
+          },
+        )))));
+    await tester.pumpAndSettle();
+    Finder createButton() => find.ancestor(of: find.text('新建'),
+        matching: find.byWidgetPredicate((widget) => widget is ButtonStyleButton));
+    final originalState = key.currentState;
+    final originalCreate = tester.widget<ButtonStyleButton>(createButton()).onPressed!;
+    final originalOpen = tester.widget<TextButton>(
+        find.widgetWithText(TextButton, '查看详情')).onPressed!;
+    originalCreate();
+    await tester.pump();
+    expect(creates, 1);
+    rebuild(() => right = true);
+    await tester.pump();
+    expect(key.currentState, same(originalState));
+    expect(leases[0].current, isFalse);
+    originalCreate();
+    originalOpen();
+    expect(creates, 1);
+    expect(opens, 0);
+    final rightCreate = tester.widget<ButtonStyleButton>(createButton()).onPressed!;
+    rightCreate();
+    await tester.pump();
+    expect(creates, 2);
+    outcomes[0].complete(true);
+    await tester.pump();
+    expect(key.currentState!.acting, isTrue,
+        reason: 'An old finally cannot unlock the replacement action.');
+    expect(leases[1].current, isTrue);
+    expect(reads, 1);
+    rebuild(() => right = false);
+    await tester.pump();
+    expect(key.currentState, same(originalState));
+    expect(leases[1].current, isFalse);
+    originalCreate();
+    originalOpen();
+    rightCreate();
+    expect(creates, 2, reason: 'Returning to the same location cannot revive old callbacks.');
+    expect(opens, 0);
+    tester.widget<ButtonStyleButton>(createButton()).onPressed!();
+    await tester.pump();
+    expect(creates, 3);
+    outcomes[1].complete(true);
+    await tester.pump();
+    expect(key.currentState!.acting, isTrue);
+    expect(leases[2].current, isTrue);
+    outcomes[2].complete(false);
+    await tester.pumpAndSettle();
+    expect(key.currentState!.acting, isFalse);
+    expect(reads, 1, reason: 'Reparenting changes action ownership without extra list reads.');
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('creation review signals keep cancelled pages and refresh accepted current results only',
       (tester) async {
     var reads = 0, creates = 0;
@@ -84,7 +239,7 @@ void main() {
           ? page(['beta']) : page(['alpha-$reads'], cursor: 'next');
     });
     await tester.pumpWidget(host(api, isCurrent: () => allowed,
-        onCreateChanged: () => outcomes[creates++].future));
+        onCreateChanged: (_) => outcomes[creates++].future));
     await tester.pumpAndSettle();
     await tap(tester, '加载更多');
     expect(reads, 2);
@@ -120,7 +275,7 @@ void main() {
     // Real owners rebuild when their access changes; remove the old progress
     // indicator before settling the rejected late completion.
     await tester.pumpWidget(host(api, isCurrent: () => allowed,
-        onCreateChanged: () => outcomes[creates++].future));
+        onCreateChanged: (_) => outcomes[creates++].future));
     outcomes[2].complete(true);
     await tester.pumpAndSettle();
     expect(reads, 3, reason: 'A late signal cannot refresh a lost list owner.');
@@ -755,7 +910,7 @@ void main() {
     });
     await tester.pumpWidget(host(api,
         create: () async { creates++; },
-        onOpenChanged: (row) {
+        onOpenChanged: (row, _) {
           opens++;
           expect(row['name'], 'private-before-denied');
           return detail.future;
@@ -994,7 +1149,7 @@ void main() {
     await tester.pumpWidget(host(oldApi,
         resourceKey: key,
         isCurrent: () => owner == 1,
-        onOpenChanged: (_) {
+        onOpenChanged: (_, __) {
           oldOpens++;
           return oldOpens == 1 ? Future.value(false) : pending.future;
         }));
@@ -1021,7 +1176,7 @@ void main() {
         resourceKey: key,
         path: '/new-records',
         isCurrent: () => owner == 2,
-        onOpenChanged: (_) async {
+        onOpenChanged: (_, __) async {
           newOpens++;
           return true;
         }));
@@ -1058,7 +1213,7 @@ void main() {
       if (!detail.isCompleted) detail.complete(false);
       if (!refresh.isCompleted) refresh.complete(page(['after-save']));
     });
-    await tester.pumpWidget(host(api, canInteract: () => interact, onOpenChanged: (_) {
+    await tester.pumpWidget(host(api, canInteract: () => interact, onOpenChanged: (_, __) {
       opens++;
       return detail.future;
     }));

@@ -79,7 +79,7 @@ class _DevicesPageState extends State<DevicesPage> {
     if (!interactive || callback == null) return;
     // Share the table's action lock/progress/error boundary without refreshing
     // its records after this separate, read-only registration lookup.
-    await resources.currentState?.action(() => perform(callback), refresh: false);
+    await resources.currentState?.action((_) => perform(callback), refresh: false);
   }
 
   @override

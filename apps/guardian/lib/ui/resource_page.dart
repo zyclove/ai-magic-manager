@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../core/api.dart';
 import '../core/labels.dart';
 import 'design.dart';
+import 'resource_action_lease.dart';
+export 'resource_action_lease.dart' show ResourceActionLease;
 
 // Search server values and the same localized labels displayed by status cells.
 // JSON rows are acyclic; traverse nested values without constructing widgets.
@@ -32,12 +34,12 @@ class ResourcePage extends StatefulWidget {
   final Future<void> Function(Json)? onOpen;
   /// Explicit write outcomes request refresh, including unresolved writes
   /// closed with user confirmation; true does not imply a successful save.
-  final Future<bool> Function(Json)? onOpenChanged;
+  final Future<bool> Function(Json, ResourceActionLease)? onOpenChanged;
   /// Read-only details can keep the current pages and filter on return.
   final bool refreshAfterOpen;
   final Future<void> Function()? create;
   /// Like onOpenChanged: true requests a read, including unresolved creation.
-  final Future<bool> Function()? onCreateChanged;
+  final Future<bool> Function(ResourceActionLease)? onCreateChanged;
   final String createLabel;
   final List<Widget> toolbar;
   final String? notice;
@@ -89,9 +91,12 @@ class ResourcePageState extends State<ResourcePage> {
   Object? actionError;
   int generation = 0;
   int resourceGeneration = 0;
+  int _interactionEpoch = 0;
+  bool _active = true;
+  ResourceActionLease? _actionLease;
 
   bool get _currentOwner => mounted && widget.isCurrent?.call() != false;
-  bool get _canInteract => _currentOwner && widget.canInteract?.call() != false;
+  bool get _canInteract => _active && _currentOwner && widget.canInteract?.call() != false;
   @override
   void initState() {
     super.initState();
@@ -103,6 +108,7 @@ class ResourcePageState extends State<ResourcePage> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.path != widget.path || oldWidget.api != widget.api ||
         oldWidget.includeRow != widget.includeRow) {
+      _actionLease?.retire();
       resourceGeneration++;
       rows = [];
       cursor = null;
@@ -117,7 +123,25 @@ class ResourcePageState extends State<ResourcePage> {
   }
 
   @override
+  void deactivate() {
+    _active = false;
+    _interactionEpoch++;
+    _actionLease?.retire();
+    acting = false;
+    super.deactivate();
+  }
+
+  @override
+  void activate() {
+    super.activate();
+    _active = true;
+  }
+
+  @override
   void dispose() {
+    _active = false;
+    _interactionEpoch++;
+    _actionLease?.retire();
     searchFocus.dispose();
     search.dispose();
     super.dispose();
@@ -133,6 +157,7 @@ class ResourcePageState extends State<ResourcePage> {
   // Retire all callbacks that captured a formerly readable batch. Only a new
   // authorized read can enable new actions; write-only MFA errors do not enter here.
   void _discardDeniedRead(Object failure) {
+    _actionLease?.retire();
     resourceGeneration++;
     generation++;
     rows = [];
@@ -224,38 +249,50 @@ class ResourcePageState extends State<ResourcePage> {
     }
   }
 
-  Future<void> action(Future<void> Function() callback,
+  Future<void> action(Future<void> Function(ResourceActionLease) callback,
       {bool refresh = true}) async {
     if (!_canInteract || readDenied || acting || loading) return;
     final scope = resourceGeneration;
+    final epoch = _interactionEpoch;
     final permitted = widget.isCurrent;
-    bool current() =>
-        mounted && resourceGeneration == scope && permitted?.call() != false;
+    final api = widget.api;
+    final path = widget.path;
+    final lease = ResourceActionLease(isCurrent: () => mounted && _active &&
+        _interactionEpoch == epoch && resourceGeneration == scope &&
+        identical(widget.api, api) && widget.path == path &&
+        _currentOwner && permitted?.call() != false);
+    _actionLease = lease;
+    bool current() => identical(_actionLease, lease) && lease.current;
     setState(() {
       acting = true;
       actionError = null;
     });
     try {
-      await callback();
+      await callback(lease);
       if (current() && refresh) await load();
     } catch (e) {
       if (current()) {
         setState(() => actionError = e);
       }
     } finally {
-      if (current()) {
-        setState(() => acting = false);
-      }
+      final unlock = current();
+      if (identical(_actionLease, lease)) _actionLease = null;
+      lease.dispose();
+      if (unlock) setState(() => acting = false);
     }
   }
 
   @override
   Widget build(BuildContext context) {
     if (widget.isCurrent?.call() == false) {
+      _actionLease?.retire();
+      _interactionEpoch++;
+      acting = false;
       return const Panel(
           child: EmptyView('工作空间或权限已变化', '已隐藏旧记录，请重新打开当前工作空间的页面。'));
     }
     final owner = resourceGeneration;
+    final interaction = _interactionEpoch;
     final permitted = widget.isCurrent;
     final interact = widget.canInteract;
     final api = widget.api;
@@ -269,6 +306,7 @@ class ResourcePageState extends State<ResourcePage> {
     final refreshAfterOpen = widget.refreshAfterOpen;
     final reauth = widget.reauth;
     bool resultCurrent() =>
+        _active && _interactionEpoch == interaction &&
         _currentOwner && resourceGeneration == owner &&
         identical(widget.api, api) && widget.path == path &&
         permitted?.call() != false;
@@ -284,26 +322,26 @@ class ResourcePageState extends State<ResourcePage> {
       if (!viewCurrent()) return;
       if (onCreateChanged != null &&
           identical(widget.onCreateChanged, onCreateChanged)) {
-        action(() async {
-          final needsReview = await onCreateChanged();
-          if (needsReview && resultCurrent()) await load();
+        action((lease) async {
+          final needsReview = await onCreateChanged(lease);
+          if (needsReview && lease.current && resultCurrent()) await load();
         }, refresh: false);
         return;
       }
-      if (create != null && identical(widget.create, create)) action(create);
+      if (create != null && identical(widget.create, create)) action((_) => create());
     }
     void openRecord(Json row) {
       if (!viewCurrent()) return;
       if (onOpenChanged != null &&
           identical(widget.onOpenChanged, onOpenChanged)) {
-        action(() async {
-          final changed = await onOpenChanged(row);
-          if (changed && resultCurrent()) await load();
+        action((lease) async {
+          final changed = await onOpenChanged(row, lease);
+          if (changed && lease.current && resultCurrent()) await load();
         }, refresh: false);
         return;
       }
       if (viewCurrent() && onOpen != null && identical(widget.onOpen, onOpen)) {
-        action(() => onOpen(row), refresh: refreshAfterOpen);
+        action((_) => onOpen(row), refresh: refreshAfterOpen);
       }
     }
     final guardedReauth = reauth == null ? null : guard(() {

@@ -602,6 +602,14 @@ void main() {
     final filter = find.widgetWithText(FilterChip, '包含已归档');
     final oldFilter = tester.widget<FilterChip>(filter).onSelected!;
     final oldOpen = tester.widget<ResourcePage>(find.byType(ResourcePage)).onOpenChanged!;
+    Future<bool> openWithIndependentLease(Json row) async {
+      final lease = ResourceActionLease(isCurrent: () => true);
+      try {
+        return await oldOpen(row, lease);
+      } finally {
+        lease.dispose();
+      }
+    }
     await _tap(tester, filter);
     await _until(tester, () => fixture.listReads('subjects').length == 2 &&
         _listReady(tester, 'subjects') && find.text(_archivedName).evaluate().length == 1);
@@ -631,7 +639,7 @@ void main() {
     expect(find.text(_archivedName), findsNothing);
     final beforeStale = fixture.requests.length;
     oldFilter(true);
-    expect(await oldOpen(_archivedRecord()), isFalse);
+    expect(await openWithIndependentLease(_archivedRecord()), isFalse);
     await tester.pump();
     expect(fixture.requests, hasLength(beforeStale),
         reason: 'Returning to the same filter value must not revive an older view.');
@@ -647,7 +655,7 @@ void main() {
     expect(_button('添加儿童'), findsNothing);
     final beforeRoleStale = fixture.requests.length;
     oldFilter(true);
-    expect(await oldOpen(_archivedRecord()), isFalse);
+    expect(await openWithIndependentLease(_archivedRecord()), isFalse);
     await tester.pump();
     expect(fixture.requests, hasLength(beforeRoleStale));
     await _tap(tester, find.text(_name('subjects')));
@@ -705,6 +713,56 @@ void main() {
     expect(fixture.listReads('applications'), hasLength(1));
     expect(fixture.listReads('subjects'), hasLength(1));
     expect(fixture.writes, isEmpty);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('changing section hides an unknown application form and retires its captured commands',
+      (tester) async {
+    _wide(tester);
+    final fixture = _Fixture();
+    fixture.unknownCreates.add('applications');
+    addTearDown(() => fixture.cleanup(tester));
+    await _mount(tester, fixture, 'applications');
+    await _until(tester, () => _listReady(tester, 'applications'));
+    final app = tester.element(find.byType(MaterialApp));
+    final provider = tester.element(find.byType(ChangeNotifierProvider<Session>));
+    final console = tester.element(find.byType(ConsolePages));
+    await _tap(tester, _button('登记应用'));
+    await _until(tester, () => find.byType(EditDialog).evaluate().length == 1);
+    await _fillCreation(tester, 'applications', '旧页面中的待核对应用');
+    final oldSave = tester.widget<ButtonStyleButton>(_dialogButton('保存')).onPressed!;
+    await _tap(tester, _dialogButton('保存'));
+    await _until(tester, () {
+      if (find.byType(AlertDialog).evaluate().isEmpty) return false;
+      final query = _dialogButton('查询登记结果');
+      return fixture.writes.length == 1 && query.evaluate().length == 1 &&
+          tester.widget<ButtonStyleButton>(query).onPressed != null;
+    });
+    final oldQuery = tester.widget<ButtonStyleButton>(
+        _dialogButton('查询登记结果')).onPressed!;
+
+    await _mount(tester, fixture, 'subjects', settle: false);
+    expect(tester.element(find.byType(MaterialApp)), same(app));
+    expect(tester.element(find.byType(ChangeNotifierProvider<Session>)), same(provider));
+    expect(tester.element(find.byType(ConsolePages)), same(console),
+        reason: 'Changing the resource must retire its operation while the host context stays mounted.');
+    await _until(tester, () => fixture.listReads('subjects').length == 1 &&
+        find.text(_name('subjects')).evaluate().length == 1 &&
+        find.byType(TextFormField).evaluate().isEmpty);
+    expect(find.text('旧页面中的待核对应用'), findsNothing);
+    final beforeStale = fixture.requests.length;
+    oldSave();
+    oldQuery();
+    await tester.pump();
+    await tester.runAsync(() => Future<void>.delayed(Duration.zero));
+    await tester.pump(const Duration(milliseconds: 400));
+    expect(fixture.requests, hasLength(beforeStale));
+    expect(fixture.writes, hasLength(1));
+    expect(fixture.writes.single.url.path, '$_root/applications');
+    expect(fixture.listReads('subjects'), hasLength(1));
+    expect(fixture.listReads('applications'), hasLength(1));
+    expect(find.text('旧页面中的待核对应用'), findsNothing);
+    await fixture.cleanup(tester);
     expect(tester.takeException(), isNull);
   });
 }

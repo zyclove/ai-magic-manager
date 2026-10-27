@@ -108,13 +108,15 @@ class _ClassesPageState extends State<ClassesPage> {
     if (current) s.login(stepUp: true);
   }
 
-  DeviceSubflowScope capture({bool write = false}) {
+  DeviceSubflowScope capture({bool write = false,
+      ResourceActionLease? listLease}) {
     final selectedId = selected?['id'];
     final capturedGeneration = generation;
     return DeviceSubflowScope(s,
         permitted: () => current &&
             generation == capturedGeneration &&
             selected?['id'] == selectedId &&
+            listLease?.current != false &&
             (!write || s.canManage));
   }
 
@@ -169,6 +171,7 @@ class _ClassesPageState extends State<ClassesPage> {
       required String fieldLabel,
       required String submit,
       required Future<Json> Function(Api, Json) send,
+      ResourceActionLease? listLease,
       BuildContext? parent,
       String? name,
       Map<String, String>? options}) async {
@@ -182,7 +185,9 @@ class _ClassesPageState extends State<ClassesPage> {
         (parentRoute is! OwnedDialogRoute<dynamic> || parentRoute.available);
     if (!permitted()) return false;
     final access = DialogAccessBinding(parentContext,
-        accessChanges: Listenable.merge([scope, ownerLost]),
+        accessChanges: Listenable.merge([
+          scope, ownerLost, if (listLease != null) listLease
+        ]),
         hasAccess: permitted);
     late final OwnedDialogRoute<Json> route;
     late final Api api;
@@ -222,12 +227,13 @@ class _ClassesPageState extends State<ClassesPage> {
     }
   }
 
-  Future<bool> create() async {
+  Future<bool> create({ResourceActionLease? listLease}) async {
     if (!current || !s.canManage) return false;
-    final scope = capture(write: true), key = requestId();
+    final scope = capture(write: true, listLease: listLease), key = requestId();
     try {
       return await form(
           scope: scope,
+          listLease: listLease,
           title: '新建班级',
           description: '创建后可添加已有学生档案，并在成员管理中分配任课教师。',
           field: 'name',
@@ -262,9 +268,9 @@ class _ClassesPageState extends State<ClassesPage> {
     }
   }
 
-  Future<bool> addStudent() async {
+  Future<bool> addStudent({ResourceActionLease? listLease}) async {
     if (!current || !s.canManage || selected == null) return false;
-    final scope = capture(write: true),
+    final scope = capture(write: true, listLease: listLease),
         selectedClass = Map<String, dynamic>.of(selected!),
         key = requestId();
     try {
@@ -282,6 +288,7 @@ class _ClassesPageState extends State<ClassesPage> {
       };
       return await form(
           scope: scope,
+          listLease: listLease,
           title: '添加学生',
           description: '关联本机构的已有档案。一个班级最多 500 人；家庭档案不会被导入。',
           field: 'subjectId',
@@ -296,7 +303,8 @@ class _ClassesPageState extends State<ClassesPage> {
     }
   }
 
-  Future<bool> transfer(Json student, {required BuildContext parent}) async {
+  Future<bool> transfer(Json student, {required BuildContext parent,
+      ResourceActionLease? listLease}) async {
     if (!parent.mounted) return false;
     final parentRoute = ModalRoute.of(parent);
     bool parentActive() => parent.mounted && parentRoute?.isActive == true &&
@@ -304,7 +312,7 @@ class _ClassesPageState extends State<ClassesPage> {
     if (!current || !s.canManage || selected == null || !parentActive()) {
       return false;
     }
-    final scope = capture(write: true),
+    final scope = capture(write: true, listLease: listLease),
         selectedClass = Map<String, dynamic>.of(selected!),
         key = requestId();
     try {
@@ -320,6 +328,7 @@ class _ClassesPageState extends State<ClassesPage> {
       };
       return await form(
           scope: scope,
+          listLease: listLease,
           parent: parent,
           title: '转移学生到其他班级',
           description:
@@ -343,10 +352,10 @@ class _ClassesPageState extends State<ClassesPage> {
     }
   }
 
-  Future<bool> student(Json row) async {
+  Future<bool> student(Json row, {ResourceActionLease? listLease}) async {
     if (!current || selected == null) return false;
     var needsReview = false;
-    final scope = capture(),
+    final scope = capture(listLease: listLease),
         selectedClass = Map<String, dynamic>.of(selected!),
         key = requestId();
     try {
@@ -355,14 +364,17 @@ class _ClassesPageState extends State<ClassesPage> {
         '档案标识': row['id'],
         '状态': row['archived'] == true ? '档案已归档' : '在班',
         '加入时间': dateLabel(row['addedAt'])
-      }, reauth: reauth, accessChanges: Listenable.merge([scope, ownerLost]),
+      }, reauth: reauth, accessChanges: Listenable.merge([
+        scope, ownerLost, if (listLease != null) listLease
+      ]),
           hasAccess: () => current && scope.current, actions: [
         if (s.canManage && selectedClass['state'] == 'ACTIVE') ...[
           if (row['archived'] != true)
             DetailAction('转班', (dialog) async {
               if (!dialog.mounted || !scope.current) return;
               final complete = captureDialogCompletion(dialog);
-              if (scope.current && await transfer(row, parent: dialog)) {
+              if (scope.current && await transfer(row, parent: dialog,
+                  listLease: listLease)) {
                 needsReview = true;
                 complete();
               }
@@ -378,7 +390,9 @@ class _ClassesPageState extends State<ClassesPage> {
             final confirmed = await confirmLeasedAction(dialog, '移出班级',
                 '将 ${row['nickname']}（${row['id']}）移出 ${selectedClass['name']}（${selectedClass['id']}）。学生档案和设备保留；仅依靠本班取得的教师访问权限将失效。',
                 confirm: '确认移出',
-                accessChanges: Listenable.merge([scope, ownerLost]),
+                accessChanges: Listenable.merge([
+                  scope, ownerLost, if (listLease != null) listLease
+                ]),
                 hasAccess: actionCurrent);
             if (!actionCurrent() || !confirmed) return;
             needsReview = true;
@@ -430,9 +444,11 @@ class _ClassesPageState extends State<ClassesPage> {
     }
   }
 
-  Future<bool> act(Future<bool> Function() action) async {
-    if (!current || acting || loading || error != null) return false;
-    final scope = capture();
+  Future<bool> act(Future<bool> Function() action,
+      {ResourceActionLease? listLease}) async {
+    if (!current || acting || loading || error != null ||
+        listLease?.current == false) return false;
+    final scope = capture(listLease: listLease);
     final selectedClass = selected == null ? null : Map<String, dynamic>.of(selected!);
     final requested = ++operation;
     setState(() {
@@ -472,9 +488,10 @@ class _ClassesPageState extends State<ClassesPage> {
     bool available() => viewCurrent() && !acting && !loading &&
         (route?.isCurrent ?? true);
     bool interactive() => available() && error == null;
-    Future<bool> mutate(Future<bool> Function() action) async {
-      if (!interactive()) return false;
-      return await act(action);
+    Future<bool> mutate(Future<bool> Function() action,
+        {ResourceActionLease? listLease}) async {
+      if (!interactive() || listLease?.current == false) return false;
+      return await act(action, listLease: listLease);
     }
     final feedback = <Widget>[
       if ((acting || loading) && (route?.isCurrent ?? true))
@@ -506,7 +523,8 @@ class _ClassesPageState extends State<ClassesPage> {
         emptyDescription:
             s.canManage ? '新建班级后，添加学生并为教师分配班级范围。' : '管理员分配班级后，名册会显示在这里。',
         reauth: () { if (available()) reauth(); },
-        onCreateChanged: s.canManage ? () => mutate(create) : null,
+        onCreateChanged: s.canManage ? (lease) =>
+            mutate(() => create(listLease: lease), listLease: lease) : null,
         createLabel: '新建班级',
         toolbar: [
           if (s.canManage)
@@ -572,7 +590,8 @@ class _ClassesPageState extends State<ClassesPage> {
               ? '名册含 ${c['studentCount']} 个关联 · 仅显示未归档学生'
               : '${c['state'] == 'ARCHIVED' ? '已归档 · ' : ''}${c['studentCount']} 位学生 · 权限随当前名册生效',
           reauth: () { if (available()) reauth(); },
-          onCreateChanged: editable ? () => mutate(addStudent) : null,
+          onCreateChanged: editable ? (lease) =>
+              mutate(() => addStudent(listLease: lease), listLease: lease) : null,
           createLabel: '添加学生',
           emptyTitle: '名册为空',
           emptyDescription:
@@ -599,7 +618,8 @@ class _ClassesPageState extends State<ClassesPage> {
                 '档案状态', (r) => Text(r['archived'] == true ? '已归档' : '有效')),
             ColumnSpec('加入时间', (r) => Text(dateLabel(r['addedAt'])))
           ],
-          onOpenChanged: (row) => mutate(() => student(row)),
+          onOpenChanged: (row, lease) =>
+              mutate(() => student(row, listLease: lease), listLease: lease),
         ),
     ]);
   }

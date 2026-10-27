@@ -264,6 +264,8 @@ class ConsolePages extends StatelessWidget {
     final resourceGeneration = s.scopeGeneration;
     bool resourceCurrent() =>
         context.mounted &&
+        context.widget is ConsolePages &&
+        (context.widget as ConsolePages).section == section &&
         s.authenticated &&
         s.tenant != null &&
         s.profile?['subject'] == resourceActor &&
@@ -277,10 +279,10 @@ class ConsolePages extends StatelessWidget {
             required String path,
             required List<ColumnSpec> columns,
             Future<void> Function()? create,
-            Future<bool> Function()? createChanged,
+            Future<bool> Function(ResourceActionLease)? createChanged,
             String createLabel = '新建',
             Future<void> Function(Json)? open,
-            Future<bool> Function(Json)? openChanged,
+            Future<bool> Function(Json, ResourceActionLease)? openChanged,
             bool refreshAfterOpen = true,
             String? notice,
             String empty = '暂无记录',
@@ -356,11 +358,15 @@ class ConsolePages extends StatelessWidget {
                       Text('${label(r['platform'])} · ${label(r['profile'])}')),
               ColumnSpec('身份状态', (r) => StatusTag(r['evidenceStatus']))
             ],
-            createChanged: s.canWrite ? actions.application : null,
+            createChanged: s.canWrite ? (lease) => actions.application(
+                accessChanges: lease, hasAccess: () => lease.current) : null,
             createLabel: '登记应用',
-            open: (r) =>
-                actions.applicationDetails(r, isCurrent: resourceCurrent),
-            refreshAfterOpen: false,
+            openChanged: (row, lease) async {
+              await actions.applicationDetails(row,
+                  isCurrent: () => resourceCurrent() && lease.current,
+                  accessChanges: lease);
+              return false;
+            },
             notice: '目录中的身份由管理员登记，不代表应用已经安装或完成安全认证。');
       case 'schedules':
         return resource(
@@ -380,10 +386,11 @@ class ConsolePages extends StatelessWidget {
                   (r) => Text(
                       '${(r['definition']['exceptions'] as List).length} 个'))
             ],
-            createChanged: s.canWrite ? () => scheduleEditor(context, s) : null,
+            createChanged: s.canWrite ? (lease) => scheduleEditor(context, s,
+                accessChanges: lease, hasAccess: () => lease.current) : null,
             createLabel: '创建计划',
-            openChanged: actions.scheduleDetails,
-            refreshAfterOpen: false,
+            openChanged: (row, lease) => actions.scheduleDetails(row,
+                accessChanges: lease, hasAccess: () => lease.current),
             notice: '计划保存后保持不可变。打开详情可复制并调整；新计划需要在策略草稿中明确选择。');
       case 'policies':
         return resource(
@@ -398,9 +405,11 @@ class ConsolePages extends StatelessWidget {
                   '规则数', (r) => Text('${(r['rules'] as List).length} 条')),
               ColumnSpec('草稿修订', (r) => Text('v${r['revision']}'))
             ],
-            createChanged: s.canWrite ? () => policyEditor(context, s) : null,
+            createChanged: s.canWrite ? (lease) => policyEditor(context, s,
+                accessChanges: lease, hasAccess: () => lease.current) : null,
             createLabel: '创建策略',
-            openChanged: actions.policyDetails,
+            openChanged: (row, lease) => actions.policyDetails(row,
+                accessChanges: lease, hasAccess: () => lease.current),
             notice: '当前支持云端配置保存。设备系统执行适配器未配置时，不会显示“策略已生效”。');
       case 'approvals':
         return AccessRequestsPage(
@@ -504,12 +513,15 @@ class ConsoleActions {
       Json initial = const {},
       String? description,
       Future<Json> Function(Api, Json)? onRecoverUnknown,
+      Listenable? accessChanges,
+      bool Function()? hasAccess,
       String recoverLabel = '查询原结果',
       required Future<Json?> Function(Api, Json) onSubmit}) async {
     final owner = parent ?? context;
     final scope = DeviceSubflowScope(s,
         permitted: () =>
             context.mounted && owner.mounted &&
+            hasAccess?.call() != false &&
             s.tenant != null && s.root == root &&
             s.canWrite && s.canOpen(section));
     try {
@@ -520,7 +532,7 @@ class ConsoleActions {
           initial: initial,
           description: description,
           recoverLabel: recoverLabel,
-          accessChanges: scope,
+          accessChanges: Listenable.merge([scope, if (accessChanges != null) accessChanges]),
           hasAccess: () => scope.current,
           reauth: reauth,
           onSubmit: (values) => onSubmit(scope.api, values),
@@ -785,12 +797,14 @@ class ConsoleActions {
     }
   }
 
-  Future<bool> application() async {
+  Future<bool> application(
+      {Listenable? accessChanges, bool Function()? hasAccess}) async {
     final key = const Uuid().v4();
     var attempted = false;
     final result = await _tenantForm(
         title: '登记应用',
         section: 'applications',
+        accessChanges: accessChanges, hasAccess: hasAccess,
         description: '填写应用名称和准确的 Android 包名。平台与资料空间已提供常用值，签名摘要可选。',
         fields: [
           const FieldSpec('displayName', '应用名称'),
@@ -827,13 +841,14 @@ class ConsoleActions {
   }
 
   Future<void> applicationDetails(Json application,
-      {required bool Function() isCurrent}) async {
+      {required bool Function() isCurrent, Listenable? accessChanges}) async {
     if (!context.mounted || !isCurrent()) return;
     final scope = DeviceSubflowScope(s,
         permitted: () => context.mounted && isCurrent() &&
             s.tenant != null && s.root == root && s.canOpen('applications'));
     final access = DialogAccessBinding(context,
-        accessChanges: scope, hasAccess: () => scope.current);
+        accessChanges: Listenable.merge([scope, if (accessChanges != null) accessChanges]),
+        hasAccess: () => scope.current);
     try {
       if (!access.permitted()) return;
       await actionDetails(context, application['displayName'], {
@@ -893,15 +908,17 @@ class ConsoleActions {
     }
   }
 
-  Future<bool> scheduleDetails(Json r) async {
+  Future<bool> scheduleDetails(Json r,
+      {Listenable? accessChanges, bool Function()? hasAccess}) async {
     if (!context.mounted || !s.authenticated || s.tenant == null ||
-        s.root != root || !s.canOpen('schedules')) return false;
+        s.root != root || !s.canOpen('schedules') || hasAccess?.call() == false) return false;
     final d = r['definition'] as Json;
     var live = true;
     var needsRefresh = false;
     final revoked = ValueNotifier<bool>(false);
     final evaluation = ValueNotifier<Json?>(null);
-    final parentAccess = DialogAccessBinding(context);
+    final parentAccess = DialogAccessBinding(context,
+        accessChanges: accessChanges, hasAccess: hasAccess);
     final scope = DeviceSubflowScope(s,
         permitted: () =>
             live && !revoked.value && parentAccess.permitted() &&
@@ -1263,16 +1280,22 @@ class ConsoleActions {
     }
   }
 
-  Future<bool> policyDetails(Json row) => openPolicyDetails(context, s,
-      root: root, row: row, preview: previewPolicy);
+  Future<bool> policyDetails(Json row,
+      {Listenable? accessChanges, bool Function()? hasAccess}) => openPolicyDetails(context, s,
+      root: root, row: row,
+      preview: (ctx, draft) => previewPolicy(ctx, draft,
+          accessChanges: accessChanges, hasAccess: hasAccess),
+      accessChanges: accessChanges, parentCurrent: hasAccess);
 
   Future<void> previewPolicy(BuildContext ctx, Json draft,
-      {PublicationJournal? journal}) async {
+      {PublicationJournal? journal, Listenable? accessChanges,
+      bool Function()? hasAccess}) async {
     final policyValue = draft['id'], revisionValue = draft['revision'];
     final actor = s.profile?['subject'], tenant = s.tenant?['id'];
     final role = s.role, workspace = root;
     final parentRoute = ModalRoute.of(ctx);
     if (!ctx.mounted ||
+        hasAccess?.call() == false ||
         parentRoute == null ||
         !parentRoute.isActive ||
         !parentRoute.isCurrent ||
@@ -1293,7 +1316,8 @@ class ConsoleActions {
     final revoked = ValueNotifier<bool>(false);
     // Capture the originating route before local storage or HTTP can await.
     // Its permanent revocation is published safely to independently pushed pages.
-    final parentAccess = DialogAccessBinding(ctx);
+    final parentAccess = DialogAccessBinding(ctx,
+        accessChanges: accessChanges, hasAccess: hasAccess);
     // Capture and listen before the very first await, including local storage.
     // An actor/tenant/role/generation ABA cannot establish a fresh scope later.
     final scope = DeviceSubflowScope(s,

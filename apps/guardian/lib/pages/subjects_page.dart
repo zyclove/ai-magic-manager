@@ -25,7 +25,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
   bool _archived = false, _acting = false, _retired = false;
   bool _rebuildPending = false;
   int _viewGeneration = 0;
-  ValueNotifier<bool>? _operationLifetime, _retiringLifetime;
+  ResourceActionLease? _activeLease;
   Session get s => widget.session;
   bool get current => mounted && !_retired && _scope.current;
 
@@ -43,25 +43,12 @@ class _SubjectsPageState extends State<SubjectsPage> {
 
   void _accessChanged() {
     if (current) return;
-    _retireOperation();
+    _activeLease?.retire();
     if (!mounted || _retired || _rebuildPending) return;
     _rebuildPending = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _rebuildPending = false;
       if (mounted && !_retired) setState(() {});
-    });
-    WidgetsBinding.instance.ensureVisualUpdate();
-  }
-
-  void _retireOperation() {
-    final lifetime = _operationLifetime;
-    if (lifetime == null || identical(_retiringLifetime, lifetime)) return;
-    _retiringLifetime = lifetime;
-    // The operation owns this notifier until every dialog route has finished.
-    // Page authority stops synchronously; notify after any pending form build.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (identical(_operationLifetime, lifetime)) lifetime.value = false;
-      if (identical(_retiringLifetime, lifetime)) _retiringLifetime = null;
     });
     WidgetsBinding.instance.ensureVisualUpdate();
   }
@@ -72,7 +59,7 @@ class _SubjectsPageState extends State<SubjectsPage> {
     if (!identical(oldWidget.session, widget.session)) {
       _retired = true;
       _viewGeneration++;
-      _retireOperation();
+      _activeLease?.retire();
     }
   }
 
@@ -80,14 +67,14 @@ class _SubjectsPageState extends State<SubjectsPage> {
   void deactivate() {
     _retired = true;
     _viewGeneration++;
-    _retireOperation();
+    _activeLease?.retire();
     super.deactivate();
   }
 
   @override
   void dispose() {
     _retired = true;
-    _retireOperation();
+    _activeLease?.retire();
     _scope.removeListener(_accessChanged);
     _scope.dispose();
     super.dispose();
@@ -105,19 +92,17 @@ class _SubjectsPageState extends State<SubjectsPage> {
     bool interactive() => viewCurrent() && !_acting &&
         (route?.isCurrent ?? true);
 
-    Future<bool> act(Future<bool> Function(Listenable, bool Function()) action) async {
-      if (!interactive()) return false;
-      final lifetime = ValueNotifier(true);
-      _operationLifetime = lifetime;
-      bool permitted() => viewCurrent() && lifetime.value;
+    Future<bool> act(Future<bool> Function(Listenable, bool Function()) action,
+        ResourceActionLease lease) async {
+      if (!interactive() || !lease.current) return false;
+      _activeLease = lease;
+      bool permitted() => viewCurrent() && lease.current;
       setState(() => _acting = true);
       try {
-        final needsReview = await action(lifetime, permitted);
+        final needsReview = await action(lease, permitted);
         return permitted() && needsReview;
       } finally {
-        if (identical(_operationLifetime, lifetime)) _operationLifetime = null;
-        if (identical(_retiringLifetime, lifetime)) _retiringLifetime = null;
-        lifetime.dispose();
+        if (identical(_activeLease, lease)) _activeLease = null;
         if (mounted && !_retired) setState(() => _acting = false);
       }
     }
@@ -142,9 +127,9 @@ class _SubjectsPageState extends State<SubjectsPage> {
             ? '添加档案只需昵称和年龄段，不需要完整生日。'
             : '请联系工作空间管理员核对档案访问范围。',
         createLabel: '添加儿童',
-        onCreateChanged: managed ? () => act(widget.onCreate) : null,
-        onOpenChanged: (row) => act((changes, permitted) =>
-            widget.onOpen(row, changes, permitted)),
+        onCreateChanged: managed ? (lease) => act(widget.onCreate, lease) : null,
+        onOpenChanged: (row, lease) => act((changes, permitted) =>
+            widget.onOpen(row, changes, permitted), lease),
         reauth: () { if (interactive()) s.login(stepUp: true); },
         toolbar: [
           if (managed)
